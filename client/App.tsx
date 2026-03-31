@@ -15,6 +15,12 @@ import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
 import PlaceholderPage from "./pages/PlaceholderPage";
 import Payment from "./pages/Payment";
+import DiagnosticLanding from "./pages/DiagnosticLanding";
+import DiagnosticSurvey from "./pages/DiagnosticSurvey";
+
+// Import statements
+
+
 
 const queryClient = new QueryClient();
 
@@ -55,6 +61,9 @@ const App = () => (
           <Route path="/network" element={<PlaceholderPage title="Network" />} />
           <Route path="/blog" element={<PlaceholderPage title="Our Blog" />} />
 
+          {/* Diagnostics */}
+          <Route path="/diagnostics" element={<DiagnosticLanding />} />
+          <Route path="/diagnostic" element={<DiagnosticSurvey />} />
           {/* CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
