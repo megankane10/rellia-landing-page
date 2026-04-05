@@ -2,6 +2,7 @@ import "./loadEnv"
 import cors from "cors"
 import express, { type Request, type RequestHandler } from "express"
 import { handleDemo } from "./routes/demo"
+import { handleContactSubmit } from "./routes/contact"
 import { handleCreateEmbeddedCheckout } from "./routes/stripe-embedded-checkout"
 
 const headerOne = (req: Request, name: string): string | undefined => {
@@ -57,6 +58,7 @@ export function createServer() {
   })
 
   app.get("/api/demo", handleDemo)
+  app.post("/api/contact", handleContactSubmit)
   app.post("/api/create-embedded-checkout", handleCreateEmbeddedCheckout)
 
   return app
