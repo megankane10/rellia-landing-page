@@ -281,7 +281,7 @@ export default function PrivacyPolicy() {
       <Navbar />
 
       <main>
-        <section className="relative flex h-[36rem] flex-shrink-0 flex-col overflow-hidden bg-rellia-teal pt-32 pb-16 md:h-[42rem] md:pt-40 md:pb-24">
+        <section className="relative flex h-[28rem] flex-shrink-0 flex-col overflow-hidden bg-rellia-teal pt-32 pb-12 md:h-[32rem] md:pt-40 md:pb-16">
           <div className="absolute inset-0 opacity-10 pointer-events-none">
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-rellia-mint via-transparent to-transparent blur-3xl" />
           </div>
@@ -301,14 +301,10 @@ export default function PrivacyPolicy() {
               <h1 className="text-white text-4xl md:text-6xl font-bold leading-tight tracking-tight mb-6">
                 Privacy <span className="text-rellia-mint">Policy</span>
               </h1>
-              <p className="text-white/80 text-base md:text-lg max-w-2xl font-urbanist leading-relaxed mb-4">
+              <p className="text-white/80 text-base md:text-lg max-w-2xl font-urbanist leading-relaxed">
                 Rellia Health is committed to handling your personal information with care and transparency. This
                 Privacy Policy describes how we collect, use, store, and share information in connection with our
                 incubator programs, events, community, website, and communications.
-              </p>
-              <p className="text-white/75 text-base md:text-lg max-w-2xl font-urbanist leading-relaxed">
-                Rellia Health operates in accordance with the Personal Information Protection and Electronic Documents
-                Act (PIPEDA) and applicable provincial privacy legislation in Canada.
               </p>
             </ScrollReveal>
           </div>
@@ -317,6 +313,10 @@ export default function PrivacyPolicy() {
         <section className="py-20 md:py-32 bg-white">
           <div className="max-w-[860px] mx-auto px-6 md:px-10">
             <ScrollReveal>
+              <p className="mb-10 text-lg font-urbanist italic leading-relaxed text-black/65 md:mb-12 md:text-xl">
+                Rellia Health operates in accordance with the Personal Information Protection and Electronic Documents
+                Act (PIPEDA) and applicable provincial privacy legislation in Canada.
+              </p>
               <div className="space-y-12">
                 {SECTIONS.map((section) => (
                   <SectionBlock key={section.title} section={section} />

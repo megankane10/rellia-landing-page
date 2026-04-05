@@ -1,0 +1,10 @@
+{
+  "plugins": {
+    "sanity": {
+      "enabled": true
+    },
+    "figma": {
+      "enabled": true
+    }
+  }
+}

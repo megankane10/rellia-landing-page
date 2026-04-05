@@ -64,7 +64,6 @@ const App = () => (
           {/* Legal */}
           <Route path="/terms" element={<TermsofUse />} />
           <Route path="/privacy" element={<PrivacyPolicy />} />
-          <Route path="/terms-of-service" element={<Navigate to="/terms" replace />} />
 
           {/* Diagnostics */}
           <Route path="/diagnostics" element={<DiagnosticLanding />} />
