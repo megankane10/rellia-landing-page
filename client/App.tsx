@@ -2,7 +2,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
 import ScrollToTop from "@/components/ScrollToTop";
@@ -14,6 +14,9 @@ import ProgramsQms from "./pages/ProgramsQms";
 import NotFound from "./pages/NotFound";
 import PlaceholderPage from "./pages/PlaceholderPage";
 import Payment from "./pages/Payment";
+import Contact from "./pages/Contact";
+import TermsofService from "./pages/TermsofUse";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
 
 const queryClient = new QueryClient();
 
@@ -49,11 +52,13 @@ const App = () => (
           <Route path="/programs/advisors" element={<PlaceholderPage title="Advisors" />} />
 
           {/* Misc */}
-          <Route path="/contact" element={<PlaceholderPage title="Contact" />} />
+          <Route path="/contact" element={<Contact />} />
           <Route path="/payment" element={<Payment />} />
           <Route path="/network" element={<PlaceholderPage title="Network" />} />
           <Route path="/blog" element={<PlaceholderPage title="Our Blog" />} />
-
+          <Route path="/terms" element={<TermsofService />} />
+          <Route path="/privacy" element={<PrivacyPolicy />} />
+          <Route path="/terms-of-service" element={<Navigate to="/terms" replace />} />
           {/* CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
