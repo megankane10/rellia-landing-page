@@ -11,7 +11,15 @@ const SECTIONS = [
   },
   {
     title: "2. Scope of These Terms",
-    body: `These Terms of Use apply to: Rellia Health's website and any associated online platforms or member portals; incubator programming, including structured programs, advisory meetings, and events (in-person and virtual); educational content, newsletters, and published resources; and community spaces, discussion forums, or group communications facilitated by Rellia Health.\n\nParticipation in specific programs may be subject to additional terms outlined in a program agreement or application process. In the event of a conflict, program-specific terms take precedence.`,
+    preamble: "These Terms of Use apply to:",
+    bullets: [
+      "Rellia Health's website and any associated online platforms or member portals",
+      "Incubator programming, including structured programs, advisory meetings, and events (in-person and virtual)",
+      "Educational content, newsletters, and published resources",
+      "Community spaces, discussion forums, or group communications facilitated by Rellia Health",
+    ],
+    closing:
+      "Participation in specific programs may be subject to additional terms outlined in a program agreement or application process. In the event of a conflict, program-specific terms take precedence.",
   },
   {
     title: "3. Regulatory or Legal Advice",
@@ -26,7 +34,13 @@ const SECTIONS = [
       },
       {
         subtitle: "4.2 Conduct",
-        body: `Participants are expected to engage respectfully and professionally. By participating in Rellia Health programming, membership, or events, you agree not to: misrepresent your identity, credentials, or company; share confidential information belonging to other participants without consent; use programming, content, or connections made through Rellia Health for purposes that harm other participants or the broader community; or engage in harassment, discrimination, or disruptive behaviour at events or in community spaces.`,
+        body: `Participants are expected to engage respectfully and professionally. By participating in Rellia Health programming, membership, or events, you agree not to:`,
+        bullets: [
+          "Misrepresent your identity, credentials, or company",
+          "Share confidential information belonging to other participants without consent",
+          "Use programming, content, or connections made through Rellia Health for purposes that harm other participants or the broader community",
+          "Engage in harassment, discrimination, or disruptive behaviour at events or in community spaces",
+        ],
       },
       {
         subtitle: "4.3 Removal",
@@ -57,7 +71,13 @@ const SECTIONS = [
   },
   {
     title: "6. Fees and Payments",
-    body: `Certain Rellia Health programs and membership tiers require payment of fees. Fee amounts, payment schedules, and refund terms will be communicated at the time of enrollment. Unless otherwise stated: fees are non-refundable once a program has commenced; Rellia Health reserves the right to modify program fees for future cohorts; and payment obligations are not contingent on program outcomes or results.`,
+    preamble:
+      "Certain Rellia Health programs and membership tiers require payment of fees. Fee amounts, payment schedules, and refund terms will be communicated at the time of enrollment. Unless otherwise stated:",
+    bullets: [
+      "Fees are non-refundable once a program has commenced",
+      "Rellia Health reserves the right to modify program fees for future cohorts",
+      "Payment obligations are not contingent on program outcomes or results",
+    ],
   },
   {
     title: "7. Third-Party Speakers, Mentors, and Resources",
@@ -91,10 +111,19 @@ const SECTIONS = [
   },
 ];
 
+type Subsection = {
+  subtitle: string;
+  body?: string;
+  bullets?: string[];
+};
+
 type Section = {
   title: string;
   body?: string;
-  subsections?: { subtitle: string; body: string }[];
+  preamble?: string;
+  bullets?: string[];
+  closing?: string;
+  subsections?: Subsection[];
   contactInfo?: {
     intro: string;
     email: string;
@@ -109,6 +138,19 @@ const sectionTitleClass =
 
 const subsectionTitleClass =
   "font-host-grotesk text-lg md:text-xl font-semibold tracking-tight text-rellia-teal mb-3";
+
+const bulletListClass =
+  "list-disc space-y-2 pl-6 font-urbanist text-lg leading-relaxed text-black/70 marker:text-rellia-mint";
+
+const BulletList = ({ items }: { items: string[] }) => (
+  <ul className={bulletListClass}>
+    {items.map((item) => (
+      <li key={item} className="pl-1">
+        {item}
+      </li>
+    ))}
+  </ul>
+);
 
 function SectionBlock({ section }: { section: Section }) {
   if (section.contactInfo) {
@@ -161,6 +203,17 @@ function SectionBlock({ section }: { section: Section }) {
   return (
     <div>
       <h2 className={sectionTitleClass}>{section.title}</h2>
+      {section.preamble ? (
+        <p className="mb-4 text-black/80 text-lg font-urbanist leading-relaxed">{section.preamble}</p>
+      ) : null}
+      {section.bullets?.length ? (
+        <div className="mb-6">
+          <BulletList items={section.bullets} />
+        </div>
+      ) : null}
+      {section.closing ? (
+        <p className="text-black/70 text-lg font-urbanist leading-relaxed">{section.closing}</p>
+      ) : null}
       {section.body && (
         <div className="space-y-4">
           {section.body.split("\n\n").map((para, i) => (
@@ -175,7 +228,18 @@ function SectionBlock({ section }: { section: Section }) {
           {section.subsections.map((sub) => (
             <div key={sub.subtitle}>
               <h3 className={subsectionTitleClass}>{sub.subtitle}</h3>
-              <p className="text-black/70 text-lg font-urbanist leading-relaxed">{sub.body}</p>
+              {sub.body ? (
+                <p
+                  className={
+                    sub.bullets?.length
+                      ? "mb-4 text-black/70 text-lg font-urbanist leading-relaxed"
+                      : "text-black/70 text-lg font-urbanist leading-relaxed"
+                  }
+                >
+                  {sub.body}
+                </p>
+              ) : null}
+              {sub.bullets?.length ? <BulletList items={sub.bullets} /> : null}
             </div>
           ))}
         </div>
