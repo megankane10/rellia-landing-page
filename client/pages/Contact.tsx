@@ -1,4 +1,5 @@
 import { useMemo } from "react"
+import { Link } from "react-router-dom"
 import { useForm, Controller, type Resolver } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
@@ -318,23 +319,19 @@ export default function Contact() {
 
                 <p className="mt-4 shrink-0 px-1 text-center font-urbanist text-[11px] leading-snug text-black/45 md:px-2 md:text-xs">
                   By submitting this form you agree to our{" "}
-                  <a
-                    href="https://docs.google.com/document/d/1wiC9mW3mDsCeqXz-dqr93RBr_pehru-h/edit"
-                    target="_blank"
-                    rel="noopener noreferrer"
+                  <Link
+                    to="/terms"
                     className="text-black/55 underline underline-offset-2 hover:text-rellia-teal"
                   >
                     Terms of Use
-                  </a>{" "}
+                  </Link>{" "}
                   and{" "}
-                  <a
-                    href="https://docs.google.com/document/d/17ZVWt9jSSCEfHKX0Np_D01ua4NuIb_Su/edit"
-                    target="_blank"
-                    rel="noopener noreferrer"
+                  <Link
+                    to="/privacy"
                     className="text-black/55 underline underline-offset-2 hover:text-rellia-teal"
                   >
                     Privacy Policy
-                  </a>
+                  </Link>
                   .
                 </p>
 

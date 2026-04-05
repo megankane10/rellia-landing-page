@@ -45,8 +45,12 @@ export default function Footer() {
             <h4 className="font-host-grotesk font-bold text-lg text-white">Company</h4>
             <nav className="flex flex-col gap-3">
               <Link to="/about" className="font-urbanist text-white/70 hover:text-rellia-mint transition-colors text-[15px]">About Us</Link>
-              <a href="https://docs.google.com/document/d/1wiC9mW3mDsCeqXz-dqr93RBr_pehru-h/edit" target="_blank" rel="noopener noreferrer" className="font-urbanist text-white/70 hover:text-rellia-mint transition-colors text-[15px]">Terms of Use</a>
-              <a href="https://docs.google.com/document/d/17ZVWt9jSSCEfHKX0Np_D01ua4NuIb_Su/edit" target="_blank" rel="noopener noreferrer" className="font-urbanist text-white/70 hover:text-rellia-mint transition-colors text-[15px]">Privacy Policy</a>
+              <Link to="/terms" className="font-urbanist text-white/70 hover:text-rellia-mint transition-colors text-[15px]">
+                Terms of Use
+              </Link>
+              <Link to="/privacy" className="font-urbanist text-white/70 hover:text-rellia-mint transition-colors text-[15px]">
+                Privacy Policy
+              </Link>
             </nav>
           </div>
 

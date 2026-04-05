@@ -2,7 +2,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
 import ScrollToTop from "@/components/ScrollToTop";
@@ -17,8 +17,8 @@ import PlaceholderPage from "./pages/PlaceholderPage";
 import Payment from "./pages/Payment";
 import DiagnosticLanding from "./pages/DiagnosticLanding";
 import DiagnosticSurvey from "./pages/DiagnosticSurvey";
-
-// Import statements
+import TermsofUse from "./pages/TermsofUse";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
 
 
 
@@ -61,9 +61,15 @@ const App = () => (
           <Route path="/network" element={<PlaceholderPage title="Network" />} />
           <Route path="/blog" element={<PlaceholderPage title="Our Blog" />} />
 
+          {/* Legal */}
+          <Route path="/terms" element={<TermsofUse />} />
+          <Route path="/privacy" element={<PrivacyPolicy />} />
+          <Route path="/terms-of-service" element={<Navigate to="/terms" replace />} />
+
           {/* Diagnostics */}
           <Route path="/diagnostics" element={<DiagnosticLanding />} />
           <Route path="/diagnostic" element={<DiagnosticSurvey />} />
+
           {/* CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
