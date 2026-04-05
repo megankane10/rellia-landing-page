@@ -65,7 +65,9 @@ export default function Navbar({ ctaRadiusClassName = "rounded-full" }: NavbarPr
     !navFilled &&
     (location.pathname === "/" ||
       location.pathname === "/about" ||
-      location.pathname === "/programs");
+      location.pathname === "/programs" ||
+      location.pathname === "/terms" ||
+      location.pathname === "/privacy");
 
   const textCls = useLightNav
     ? "text-white hover:text-white/85"

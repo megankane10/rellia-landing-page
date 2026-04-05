@@ -22,7 +22,7 @@ export const SurfaceFormField = ({
   children,
 }: SurfaceFormFieldProps) => {
   return (
-    <div className={cn("flex flex-col gap-2.5 w-full min-w-0", className)}>
+    <div className={cn("flex w-full min-w-0 flex-col gap-2.5", className)}>
       <label
         htmlFor={htmlFor}
         className="font-urbanist text-base font-medium text-black/80"
@@ -32,7 +32,7 @@ export const SurfaceFormField = ({
       </label>
       <div className="min-w-0">{children}</div>
       {error ? (
-        <p id={`${htmlFor}-error`} className="text-sm text-red-600 font-urbanist" role="alert">
+        <p id={`${htmlFor}-error`} className="font-urbanist text-sm text-red-600" role="alert">
           {error}
         </p>
       ) : null}
