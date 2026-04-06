@@ -11,12 +11,9 @@ import About from "./pages/About";
 import FAQ from "./pages/FAQ";
 import ProgramsEvents from "./pages/ProgramsEvents";
 import ProgramsQms from "./pages/ProgramsQms";
-import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
 import PlaceholderPage from "./pages/PlaceholderPage";
 import Payment from "./pages/Payment";
-import DiagnosticLanding from "./pages/DiagnosticLanding";
-import DiagnosticSurvey from "./pages/DiagnosticSurvey";
 import TermsofUse from "./pages/TermsofUse";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 
@@ -56,7 +53,7 @@ const App = () => (
           <Route path="/programs/advisors" element={<PlaceholderPage title="Advisors" />} />
 
           {/* Misc */}
-          <Route path="/contact" element={<Contact />} />
+          <Route path="/contact" element={<PlaceholderPage title="Contact" />} />
           <Route path="/payment" element={<Payment />} />
           <Route path="/network" element={<PlaceholderPage title="Network" />} />
           <Route path="/blog" element={<PlaceholderPage title="Our Blog" />} />
@@ -66,8 +63,8 @@ const App = () => (
           <Route path="/privacy" element={<PrivacyPolicy />} />
 
           {/* Diagnostics */}
-          <Route path="/diagnostics" element={<DiagnosticLanding />} />
-          <Route path="/diagnostic" element={<DiagnosticSurvey />} />
+          <Route path="/diagnostics" element={<PlaceholderPage title="Diagnostics" />} />
+          <Route path="/diagnostic" element={<PlaceholderPage title="Diagnostic Survey" />} />
 
           {/* CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
