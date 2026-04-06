@@ -1,57 +1,54 @@
-import { Link } from "react-router-dom";
+import { Link } from "react-router-dom"
+import RelliaAction from "@/components/RelliaAction"
+import { cn } from "@/lib/utils"
 
 export type ProgramCardProps = {
-  tag?: string;
-  title: string;
-  description: string;
-  imageSrc: string;
-  href: string;
-  buttonText: string;
-};
+  tag?: string
+  title: string
+  description: string
+  imageSrc: string
+  href: string
+  buttonText: string
+  className?: string
+}
 
-export function ProgramCard({
+export const ProgramCard = ({
   tag,
   title,
   description,
   imageSrc,
   href,
   buttonText,
-}: ProgramCardProps) {
+  className,
+}: ProgramCardProps) => {
   return (
-    <div className="rounded-3xl overflow-hidden border border-black/5 shadow-sm bg-white h-full">
-      <div className="relative aspect-[16/9] bg-rellia-cream/40">
-        <img
-          src={imageSrc}
-          alt={title}
-          className="h-full w-full object-cover"
-        />
+    <div
+      className={cn(
+        "flex h-full flex-col rounded-2xl border border-black/5 bg-white p-6 shadow-sm transition-all hover:shadow-md",
+        className,
+      )}
+    >
+      <div className="relative mb-5 aspect-video overflow-hidden rounded-xl bg-rellia-teal/5">
+        <img src={imageSrc} alt={title} className="h-full w-full object-cover" />
       </div>
 
-      <div className="p-6 md:p-7">
+      <div className="flex flex-1 flex-col text-left">
         {tag ? (
-          <span className="inline-flex items-center rounded-full border border-rellia-teal/15 bg-rellia-teal/5 px-4 py-1 text-[11px] md:text-xs font-urbanist text-rellia-teal mb-4">
+          <span className="mb-4 inline-flex items-center rounded-full border border-rellia-teal/15 bg-rellia-teal/5 px-4 py-1 font-urbanist text-[11px] text-rellia-teal md:text-xs">
             {tag}
           </span>
         ) : null}
 
-        <h3 className="font-host-grotesk font-bold text-black text-2xl md:text-3xl leading-tight mb-3">
-          {title}
-        </h3>
+        <h3 className="mb-3 font-host-grotesk text-lg font-bold leading-tight text-black">{title}</h3>
 
-        <p className="font-urbanist text-black/65 text-base leading-relaxed">
-          {description}
-        </p>
+        <p className="mb-6 font-urbanist text-sm leading-relaxed text-black/60">{description}</p>
 
-        <div className="mt-6">
-          <Link
-            to={href}
-            className="inline-flex items-center justify-center rounded-full bg-rellia-teal text-white font-host-grotesk font-semibold px-6 py-3 md:px-8 md:py-4 border-2 border-rellia-teal hover:bg-white hover:text-rellia-teal transition-all duration-200 w-full sm:w-auto"
-          >
-            {buttonText}
-          </Link>
+        <div className="mt-auto">
+          <RelliaAction asChild variant="tealCardFull" size="compact">
+            <Link to={href}>{buttonText}</Link>
+          </RelliaAction>
         </div>
       </div>
     </div>
-  );
+  )
 }
-

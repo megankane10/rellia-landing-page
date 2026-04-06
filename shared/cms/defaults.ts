@@ -93,8 +93,7 @@ export const DEFAULT_HOME_PAGE: HomePageContent = {
   ctaTitle: "Are you the next Rellia Health success story?",
   ctaButtonLabel: "Apply to Join Now",
   ctaButtonPath: "/network",
-  ctaImageUrl:
-    "https://api.builder.io/api/v1/image/assets/TEMP/8f739cef8f0df3b598f7661fb2212eab44955a7a?width=1200",
+  ctaImageUrl: "/images/cta-home-conference.webp",
   ctaImageAlt: "Man speaking at conference",
   testimonialsTitleLead: "Trusted by the next generation of",
   testimonialsTitleAccent: "healthcare leaders",

@@ -1,21 +1,9 @@
 const logos = [
-  {
-    name: "miraei",
-    src: "https://api.builder.io/api/v1/image/assets/TEMP/1f1a58b68543f65dfe25124f5b09305254072718?width=664",
-  },
-  {
-    name: "CarePathStudio",
-    src: "https://api.builder.io/api/v1/image/assets/TEMP/0395f3d79af738c4c3bd0a9029dc97494e3e4c4d?width=660",
-  },
-  {
-    name: "Newgen Health",
-    src: "https://api.builder.io/api/v1/image/assets/TEMP/b85275518f3e69584b17e270d0eac5724f763ca6?width=660",
-  },
-  {
-    name: "Glowlytics",
-    src: "https://api.builder.io/api/v1/image/assets/TEMP/62de522c69d85e066e7b1842624fedd22b6c37fc?width=660",
-  },
-];
+  { name: "miraei", src: "/images/marquee-partner-1.webp" },
+  { name: "CarePathStudio", src: "/images/marquee-partner-2.webp" },
+  { name: "Newgen Health", src: "/images/marquee-partner-3.webp" },
+  { name: "Glowlytics", src: "/images/marquee-partner-4.webp" },
+]
 
 // Duplicate for seamless loop
 const allLogos = [...logos, ...logos, ...logos];
