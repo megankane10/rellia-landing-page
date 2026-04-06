@@ -12,7 +12,7 @@ export default function Footer() {
           <div className="flex flex-col gap-6">
             <Link to="/" className="flex items-center">
               <img
-                src="https://cdn.builder.io/api/v1/image/assets%2Fc82f69c03d1a4d3a8a3c2651cae51f04%2F24a5e5f030e249c8a711be872a794c6f?format=webp&width=300"
+                src="/images/logo-rellia-footer.webp"
                 alt="Rellia"
                 className="h-10 w-auto"
               />

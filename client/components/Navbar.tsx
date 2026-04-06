@@ -35,8 +35,7 @@ const SOLID_NAVBAR_PATHS = new Set<string>([
   "/programs/advisors",
 ])
 
-const LOGO_FILLED =
-  "https://cdn.builder.io/api/v1/image/assets%2Fc82f69c03d1a4d3a8a3c2651cae51f04%2Faf0e0a18ee0243cb98fca22f296d3c0c?format=webp&width=400";
+const LOGO_FILLED = "/images/logo-rellia-filled.webp"
 
 export type NavbarProps = {
   /** Navbar CTA link shape; default pill. Use e.g. rounded-[14px] to match Figma contact header. */

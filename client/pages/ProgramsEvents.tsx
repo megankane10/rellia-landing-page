@@ -1,6 +1,7 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import ScrollReveal from "@/components/ScrollReveal";
+import { EventCard, eventKey, ProgramCard } from "@/components/cards";
 import {
   Carousel,
   CarouselContent,
@@ -9,7 +10,8 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import { cn } from "@/lib/utils";
-import { CalendarDays, ArrowRight, User } from "lucide-react";
+import RelliaAction from "@/components/RelliaAction";
+import { ArrowRight } from "lucide-react";
 import { useProgramsLandingPage } from "@/hooks/useCmsDocuments";
 import { DEFAULT_PROGRAMS_LANDING } from "@shared/cms/defaults";
 
@@ -53,28 +55,30 @@ export default function ProgramsEvents() {
 
             <div className="mt-10 flex flex-col sm:flex-row gap-4 items-start sm:items-center">
               <ScrollReveal delay={0.1}>
-                <a
-                  href="#view-programs"
-                  className="inline-flex items-center justify-center rounded-full bg-white text-rellia-teal font-host-grotesk font-semibold px-8 py-4 border-2 border-white hover:bg-rellia-mint hover:border-rellia-mint transition-all duration-200"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    handleScrollToId("view-programs");
-                  }}
-                >
-                  {pl.heroPrimaryCtaLabel}
-                </a>
+                <RelliaAction asChild variant="heroSolidOnTeal">
+                  <a
+                    href="#view-programs"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleScrollToId("view-programs");
+                    }}
+                  >
+                    {pl.heroPrimaryCtaLabel}
+                  </a>
+                </RelliaAction>
               </ScrollReveal>
               <ScrollReveal delay={0.18}>
-                <a
-                  href="#view-events"
-                  className="inline-flex items-center justify-center rounded-full bg-transparent text-white font-host-grotesk font-semibold px-8 py-4 border-2 border-white/30 hover:bg-white hover:text-rellia-teal transition-all duration-200"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    handleScrollToId("view-events");
-                  }}
-                >
-                  {pl.heroSecondaryCtaLabel}
-                </a>
+                <RelliaAction asChild variant="heroGhostOnTeal">
+                  <a
+                    href="#view-events"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleScrollToId("view-events");
+                    }}
+                  >
+                    {pl.heroSecondaryCtaLabel}
+                  </a>
+                </RelliaAction>
               </ScrollReveal>
             </div>
           </div>
@@ -94,32 +98,14 @@ export default function ProgramsEvents() {
             <ScrollReveal>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 {pl.programs.map((p) => (
-                  <div
+                  <ProgramCard
                     key={p.href}
-                    className="bg-white rounded-2xl border border-black/5 p-6 shadow-sm hover:shadow-md transition-all flex flex-col h-full"
-                  >
-                    <div className="rounded-xl overflow-hidden mb-5 aspect-video bg-rellia-teal/5">
-                      <img src={p.imageSrc} alt={p.title} className="w-full h-full object-cover" />
-                    </div>
-
-                    <div className="flex flex-col flex-1 text-left">
-                      <h3 className="font-host-grotesk font-bold text-black text-lg mb-3 leading-tight">
-                        {p.title}
-                      </h3>
-                      <p className="font-urbanist text-black/60 text-sm leading-relaxed mb-6">
-                        {p.description}
-                      </p>
-
-                      <div className="mt-auto">
-                        <a
-                          href={p.href}
-                          className="w-full inline-flex items-center justify-center rounded-full bg-rellia-teal text-white text-sm font-semibold py-2.5 border-2 border-rellia-teal hover:bg-white hover:text-rellia-teal transition-all"
-                        >
-                          {p.buttonText}
-                        </a>
-                      </div>
-                    </div>
-                  </div>
+                    title={p.title}
+                    description={p.description}
+                    imageSrc={p.imageSrc}
+                    href={p.href}
+                    buttonText={p.buttonText}
+                  />
                 ))}
               </div>
             </ScrollReveal>
@@ -137,52 +123,7 @@ export default function ProgramsEvents() {
             <ScrollReveal>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {pl.upcomingEvents.map((event) => (
-                  <div
-                    key={event.title}
-                    className="bg-white rounded-2xl border border-black/5 p-6 shadow-sm hover:shadow-md transition-all flex flex-col h-full"
-                  >
-                    <div className="rounded-xl overflow-hidden mb-5 aspect-video bg-rellia-teal/5">
-                      <img
-                        src={event.imageSrc}
-                        alt={event.title}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-
-                    <div className="flex flex-col flex-1 text-left">
-                      <h4 className="font-host-grotesk font-bold text-black text-lg mb-3 leading-tight">
-                        {event.title}
-                      </h4>
-
-                      <div className="flex flex-col gap-2 text-sm font-urbanist text-black/60 mb-6">
-                        <p className="flex items-center gap-2">
-                          <CalendarDays className="w-4 h-4 text-rellia-mint shrink-0" />
-                          {event.dateTime}
-                        </p>
-                        <p className="flex items-center gap-2">
-                          <User className="w-4 h-4 text-rellia-mint shrink-0" />
-                          {event.person}
-                        </p>
-                      </div>
-
-                      <div className="mt-auto">
-                        {event.comingSoon ? (
-                          <div className="w-full text-center py-2.5 bg-black/5 text-black/30 rounded-full text-sm font-semibold">
-                            Coming Soon
-                          </div>
-                        ) : (
-                          <a
-                            href={event.href}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="w-full inline-flex items-center justify-center rounded-full bg-rellia-teal text-white text-sm font-semibold py-2.5 border-2 border-rellia-teal hover:bg-white hover:text-rellia-teal transition-all"
-                          >
-                            Register Now
-                          </a>
-                        )}
-                      </div>
-                    </div>
-                  </div>
+                  <EventCard key={eventKey(event)} event={event} variant="upcoming" />
                 ))}
               </div>
             </ScrollReveal>
@@ -211,42 +152,10 @@ export default function ProgramsEvents() {
                   <CarouselContent className="-ml-4 md:-ml-6">
                     {pl.pastEvents.map((event) => (
                       <CarouselItem
-                        key={event.dateTime + event.person}
+                        key={eventKey(event)}
                         className="pl-4 md:pl-6 basis-full sm:basis-1/2 lg:basis-1/3"
                       >
-                        <div className="bg-white rounded-2xl border border-black/5 p-6 shadow-sm hover:shadow-md transition-shadow h-full flex flex-col">
-                          <div className="rounded-xl overflow-hidden mb-5">
-                            <img
-                              src={event.imageSrc}
-                              alt={event.person}
-                              className="h-40 w-full object-cover"
-                            />
-                          </div>
-                          <h4 className="font-host-grotesk font-bold text-black text-lg mb-4">
-                            {event.title}
-                          </h4>
-
-                          <div className="flex flex-col gap-2 text-sm font-urbanist text-black/60 mb-6">
-                            <p className="text-black/60 flex items-center gap-2">
-                              <CalendarDays className="w-4 h-4 text-rellia-mint shrink-0" />
-                              {event.dateTime}
-                            </p>
-                            <p className="text-black/60 flex items-center gap-2">
-                              <User className="w-4 h-4 text-rellia-mint shrink-0" />
-                              {event.person}
-                            </p>
-                          </div>
-                          <div className="mt-auto">
-                            <a
-                              href={event.href}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="w-full inline-flex items-center justify-center rounded-full bg-rellia-teal text-white text-sm font-semibold py-2.5 border-2 border-rellia-teal hover:bg-white hover:text-rellia-teal transition-all"
-                            >
-                              {event.buttonText}
-                            </a>
-                          </div>
-                        </div>
+                        <EventCard event={event} variant="past" />
                       </CarouselItem>
                     ))}
                   </CarouselContent>
@@ -271,13 +180,12 @@ export default function ProgramsEvents() {
                 <p className="font-urbanist text-white/80 text-lg md:text-xl max-w-xl mx-auto mb-8">
                   {pl.ctaBody}
                 </p>
-                <a
-                  href={pl.ctaButtonHref}
-                  className="inline-flex items-center gap-2 bg-rellia-mint text-rellia-teal font-host-grotesk font-semibold px-8 py-4 rounded-full hover:bg-white transition-colors duration-200"
-                >
-                  {pl.ctaButtonLabel}
-                  <ArrowRight className="w-4 h-4" />
-                </a>
+                <RelliaAction asChild variant="mintOnTealStrip" size="comfortable">
+                  <a href={pl.ctaButtonHref}>
+                    {pl.ctaButtonLabel}
+                    <ArrowRight className="w-4 h-4" />
+                  </a>
+                </RelliaAction>
               </div>
             </ScrollReveal>
           </div>
