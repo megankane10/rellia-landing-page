@@ -78,19 +78,20 @@ export function createServer() {
   app.use(helmet())
 
   // CORS — only allow explicitly configured origins
-  const allowedOrigins = process.env.ALLOWED_ORIGINS
-    ? process.env.ALLOWED_ORIGINS.split(",").map((o) => o.trim())
-    : []
+  const isProduction = process.env.NODE_ENV === "production"
+  const allowedOrigins = (process.env.ALLOWED_ORIGINS ?? "")
+    .split(",")
+    .map((o) => o.trim())
+    .filter(Boolean)
 
   if (allowedOrigins.length === 0) {
-    if (process.env.NODE_ENV === "development") {
+    if (!isProduction) {
       console.warn(
-        "[CORS] ALLOWED_ORIGINS is not set — allowing all origins in development mode"
+        "[CORS] ALLOWED_ORIGINS is not set — allowing all origins outside production"
       )
     } else {
-      console.warn(
-        "[CORS] ALLOWED_ORIGINS is not set — all browser requests will be blocked. " +
-          "Set ALLOWED_ORIGINS to a comma-separated list of allowed origins."
+      throw new Error(
+        "ALLOWED_ORIGINS must be set in production to a comma-separated list of allowed origins"
       )
     }
   }
@@ -100,8 +101,8 @@ export function createServer() {
       origin: (origin, callback) => {
         // Allow requests with no origin (e.g. curl, server-to-server)
         if (!origin) return callback(null, true)
-        // In development with no ALLOWED_ORIGINS set, allow all origins
-        if (allowedOrigins.length === 0 && process.env.NODE_ENV === "development") {
+        // Outside production with no ALLOWED_ORIGINS set, allow all origins
+        if (allowedOrigins.length === 0 && !isProduction) {
           return callback(null, true)
         }
         if (allowedOrigins.includes(origin)) return callback(null, true)
