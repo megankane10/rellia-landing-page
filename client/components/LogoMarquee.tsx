@@ -11,7 +11,7 @@ const allLogos = [...logos, ...logos, ...logos];
 export default function LogoMarquee() {
   return (
     <section className="w-full bg-white py-8 md:py-12 overflow-hidden border-y border-black/5">
-      <p className="text-center font-urbanist text-sm md:text-base font-medium text-black/60 mb-6 md:mb-8 px-6">
+      <p className="text-center font-urbanist text-2xl md:text-3xl font-medium text-black/60 mb-6 md:mb-8 px-6">
         Portfolio Companies
       </p>
       <div className="relative flex items-center">
