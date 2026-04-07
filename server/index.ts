@@ -1,9 +1,13 @@
 import "./loadEnv"
 import cors from "cors"
 import express, { type Request, type RequestHandler } from "express"
+import helmet from "helmet"
+import rateLimit from "express-rate-limit"
 import { handleDemo } from "./routes/demo"
 import { handleContactSubmit } from "./routes/contact"
 import { handleCreateEmbeddedCheckout } from "./routes/stripe-embedded-checkout"
+import { handleStripeWebhook } from "./routes/stripe-webhook"
+import { handleDiagnosticAnalysis } from "./routes/diagnostic-analysis"
 
 const headerOne = (req: Request, name: string): string | undefined => {
   const v = req.headers[name]
@@ -41,25 +45,72 @@ const fixVercelRewrittenApiPath: RequestHandler = (req, _res, next) => {
   next()
 }
 
+const contactLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 5,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { ok: false, error: "Too many requests, please try again later" },
+})
+
+const checkoutLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  max: 10,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { ok: false, error: "Too many requests, please try again later" },
+})
+
+const diagnosticLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  max: 10,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { ok: false, error: "Too many requests, please try again later" },
+})
+
 export function createServer() {
   const app = express()
 
   app.use(fixVercelRewrittenApiPath)
 
-  // Middleware
-  app.use(cors())
-  app.use(express.json())
-  app.use(express.urlencoded({ extended: true }))
+  // Security headers
+  app.use(helmet())
 
-  // Example API routes
+  // CORS — only allow explicitly configured origins
+  const allowedOrigins = process.env.ALLOWED_ORIGINS
+    ? process.env.ALLOWED_ORIGINS.split(",").map((o) => o.trim())
+    : []
+
+  app.use(
+    cors({
+      origin: (origin, callback) => {
+        // Allow requests with no origin (e.g. curl, server-to-server)
+        if (!origin) return callback(null, true)
+        if (allowedOrigins.includes(origin)) return callback(null, true)
+        callback(new Error(`Origin ${origin} not allowed by CORS`))
+      },
+      credentials: true,
+    })
+  )
+
+  // Stripe webhook must receive the raw body — register BEFORE express.json()
+  app.post("/api/stripe/webhook", express.raw({ type: "application/json" }), handleStripeWebhook)
+
+  // Body parsers with size limit
+  app.use(express.json({ limit: "16kb" }))
+  app.use(express.urlencoded({ extended: true, limit: "16kb" }))
+
+  // Routes
   app.get("/api/ping", (_req, res) => {
     const ping = process.env.PING_MESSAGE ?? "ping"
     res.json({ message: ping })
   })
 
   app.get("/api/demo", handleDemo)
-  app.post("/api/contact", handleContactSubmit)
-  app.post("/api/create-embedded-checkout", handleCreateEmbeddedCheckout)
+  app.post("/api/contact", contactLimiter, handleContactSubmit)
+  app.post("/api/create-embedded-checkout", checkoutLimiter, handleCreateEmbeddedCheckout)
+  app.post("/api/diagnostic-analysis", diagnosticLimiter, handleDiagnosticAnalysis)
 
   return app
 }
