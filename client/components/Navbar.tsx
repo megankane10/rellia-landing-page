@@ -17,21 +17,16 @@ import {
 } from "lucide-react";
 
 const networkItems = [
-  { label: "Investors", icon: TrendingUp, href: "/programs/investment" },
-  { label: "Founders", icon: Users, href: "/programs/future" },
-  { label: "Industry Partners", icon: Building2, href: "/programs/industry-partners" },
-  { label: "Advisors", icon: GraduationCap, href: "/programs/advisors" },
+  { label: "Founders", icon: Users, href: "/network#founders" },
+  { label: "Advisors", icon: GraduationCap, href: "/network#advisors" },
+  { label: "Investors", icon: TrendingUp, href: "/network#investors" },
+  { label: "Industry Partners", icon: Building2, href: "/network#partners" },
 ]
 
 /** Cream pages that use PlaceholderPage — match solid navbar like scrolled state */
 const SOLID_NAVBAR_PATHS = new Set<string>([
   "/contact",
-  "/network",
   "/blog",
-  "/programs/investment",
-  "/programs/industry-partners",
-  "/programs/future",
-  "/programs/advisors",
 ])
 
 const LOGO_FILLED = "/images/logo-rellia-filled.webp"
@@ -55,7 +50,7 @@ export default function Navbar({ ctaRadiusClassName = "rounded-full" }: NavbarPr
   }, []);
 
   const isActive = (path: string) => location.pathname === path;
-  const isNetworkActive = networkItems.some((item) => location.pathname === item.href);
+  const isNetworkActive = location.pathname === "/network";
 
   const solidNavFromRoute = SOLID_NAVBAR_PATHS.has(location.pathname)
   const navFilled = scrolled || mobileOpen || solidNavFromRoute
@@ -66,7 +61,8 @@ export default function Navbar({ ctaRadiusClassName = "rounded-full" }: NavbarPr
       location.pathname === "/programs" ||
       location.pathname === "/payment" ||
       location.pathname === "/terms" ||
-      location.pathname === "/privacy");
+      location.pathname === "/privacy" ||
+      location.pathname === "/network");
 
   const textCls = useLightNav
     ? "text-white hover:text-white/85"
@@ -134,9 +130,10 @@ export default function Navbar({ ctaRadiusClassName = "rounded-full" }: NavbarPr
             )}
           </Link>
 
-          {/* Network dropdown */}
+          {/* Network — direct link to /network, hover reveals the section dropdown */}
           <div className="relative group">
-            <button
+            <Link
+              to="/network"
               className={`relative flex items-center gap-1.5 font-host-grotesk text-[15px] lg:text-[16px] font-medium transition-colors pb-1 ${textCls}`}
             >
               <Users className="w-4 h-4 shrink-0" />
@@ -145,7 +142,7 @@ export default function Navbar({ ctaRadiusClassName = "rounded-full" }: NavbarPr
               {isNetworkActive && (
                 <span className={`absolute bottom-0 left-0 right-0 h-[2px] rounded-full ${underlineCls} transition-colors`} />
               )}
-            </button>
+            </Link>
 
             <div className="absolute top-full left-1/2 -translate-x-1/2 pt-3 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
               <div className="bg-white rounded-xl shadow-2xl border border-black/5 overflow-hidden min-w-[220px]">
@@ -180,6 +177,18 @@ export default function Navbar({ ctaRadiusClassName = "rounded-full" }: NavbarPr
 
         {/* CTA buttons */}
         <div className="hidden md:flex items-center gap-3 shrink-0 justify-self-end">
+          <Link
+            to="/contact"
+            className={cn(
+              "font-host-grotesk font-semibold text-[14px] lg:text-[15px] px-5 py-3 border-2 transition-all duration-200 whitespace-nowrap tracking-tight hover:-translate-y-0.5",
+              ctaRadiusClassName,
+              useLightNav
+                ? "border-white/70 text-white bg-transparent hover:bg-white/10 hover:border-white"
+                : "border-rellia-teal text-rellia-teal bg-transparent hover:bg-rellia-teal/5",
+            )}
+          >
+            Contact
+          </Link>
           <Link
             to="/network"
             className={cn(
@@ -237,20 +246,29 @@ export default function Navbar({ ctaRadiusClassName = "rounded-full" }: NavbarPr
             Programs &amp; Events
           </Link>
 
-          {/* Network accordion */}
+          {/* Network — link navigates to /network; chevron toggles the section sub-list */}
           <div className="border-b border-black/5">
-            <button
-              className="flex items-center justify-between w-full py-4 font-host-grotesk text-base font-medium text-rellia-teal"
-              onClick={() => setNetworkOpen(!networkOpen)}
-            >
-              <span className="flex items-center gap-3">
+            <div className="flex items-center justify-between w-full">
+              <Link
+                to="/network"
+                className="flex items-center gap-3 py-4 font-host-grotesk text-base font-medium text-rellia-teal flex-1"
+                onClick={() => setMobileOpen(false)}
+              >
                 <Users className="w-5 h-5 text-rellia-mint" />
                 Network
-              </span>
-              <ChevronDown
-                className={`w-5 h-5 text-rellia-teal transition-transform duration-200 ${networkOpen ? "rotate-180" : ""}`}
-              />
-            </button>
+              </Link>
+              <button
+                type="button"
+                aria-label={networkOpen ? "Collapse Network sections" : "Expand Network sections"}
+                aria-expanded={networkOpen}
+                className="p-3 -mr-2"
+                onClick={() => setNetworkOpen(!networkOpen)}
+              >
+                <ChevronDown
+                  className={`w-5 h-5 text-rellia-teal transition-transform duration-200 ${networkOpen ? "rotate-180" : ""}`}
+                />
+              </button>
+            </div>
             {networkOpen && (
               <div className="pl-8 pb-3 flex flex-col gap-1">
                 {networkItems.map((item) => {
@@ -282,11 +300,22 @@ export default function Navbar({ ctaRadiusClassName = "rounded-full" }: NavbarPr
 
           <div className="mt-5 flex flex-col gap-3">
             <Link
+              to="/contact"
+              className={cn(
+                "flex items-center justify-center font-host-grotesk font-semibold text-base px-7 py-3.5 border-2 border-rellia-teal text-rellia-teal bg-transparent hover:bg-rellia-teal/5 transition-all duration-200 w-full",
+                ctaRadiusClassName,
+              )}
+              onClick={() => setMobileOpen(false)}
+            >
+              Contact
+            </Link>
+            <Link
               to="/network"
               className={cn(
                 "flex items-center justify-center gap-2 bg-rellia-teal text-white font-host-grotesk font-semibold text-base px-7 py-3.5 border-2 border-rellia-teal hover:bg-transparent hover:text-rellia-teal transition-all duration-200 w-full",
                 ctaRadiusClassName,
               )}
+              onClick={() => setMobileOpen(false)}
             >
               <UserPlus className="w-5 h-5" />
               Get Involved

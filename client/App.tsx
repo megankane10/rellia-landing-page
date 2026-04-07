@@ -13,6 +13,8 @@ import ProgramsEvents from "./pages/ProgramsEvents";
 import ProgramsQms from "./pages/ProgramsQms";
 import NotFound from "./pages/NotFound";
 import PlaceholderPage from "./pages/PlaceholderPage";
+import Contact from "./pages/Contact";
+import Network from "./pages/Network";
 import DiagnosticLanding from "./pages/DiagnosticLanding";
 import Payment from "./pages/Payment";
 import TermsofUse from "./pages/TermsofUse";
@@ -47,16 +49,12 @@ const App = () => (
           <Route path="/programs" element={<ProgramsEvents />} />
           <Route path="/programs/qms" element={<ProgramsQms />} />
 
-          {/* Network Subroutes */}
-          <Route path="/programs/investment" element={<PlaceholderPage title="Investment Programs" />} />
-          <Route path="/programs/industry-partners" element={<PlaceholderPage title="Industry Partners" />} />
-          <Route path="/programs/future" element={<PlaceholderPage title="Founders Network" />} />
-          <Route path="/programs/advisors" element={<PlaceholderPage title="Advisors" />} />
+          {/* Network — unified audience hub (founders / investors / advisors / partners) */}
+          <Route path="/network" element={<Network />} />
 
           {/* Misc */}
-          <Route path="/contact" element={<PlaceholderPage title="Contact" />} />
+          <Route path="/contact" element={<Contact />} />
           <Route path="/payment" element={<Payment />} />
-          <Route path="/network" element={<PlaceholderPage title="Network" />} />
           <Route path="/blog" element={<PlaceholderPage title="Our Blog" />} />
 
           {/* Legal */}

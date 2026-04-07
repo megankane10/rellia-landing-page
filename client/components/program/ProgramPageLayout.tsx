@@ -3,6 +3,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
 import ScrollReveal from "@/components/ScrollReveal"
+import RelliaCta, { ctaActionFromHref } from "@/components/RelliaCta"
 import { CheckCircle2, ArrowRight } from "lucide-react"
 import RelliaAction from "@/components/RelliaAction"
 import type { QmsProgramContent } from "@shared/cms/types"
@@ -264,20 +265,11 @@ const ProgramPageLayout = ({
           </div>
         </section>
 
-        <section className="py-16 md:py-24 bg-white">
-          <div className="max-w-[1300px] mx-auto px-6 md:px-10">
-            <ScrollReveal>
-              <div className="bg-rellia-teal rounded-3xl px-8 py-14 md:px-16 md:py-20 text-center">
-                <h3 className="text-white text-3xl md:text-4xl font-bold tracking-tight mb-4">{q.bottomCtaTitle}</h3>
-                <p className="font-urbanist text-white/80 text-lg md:text-xl max-w-xl mx-auto mb-8">{q.bottomCtaBody}</p>
-
-                <RelliaAction asChild variant="mintOnTealStrip">
-                  <a href={q.bottomContactHref}>{q.bottomCtaButtonLabel}</a>
-                </RelliaAction>
-              </div>
-            </ScrollReveal>
-          </div>
-        </section>
+        <RelliaCta
+          title={q.bottomCtaTitle}
+          body={q.bottomCtaBody}
+          primary={ctaActionFromHref(q.bottomCtaButtonLabel, q.bottomContactHref)}
+        />
       </main>
 
       <Footer />
