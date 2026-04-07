@@ -7,6 +7,7 @@ import {contactPage} from './documents/contactPage'
 import {qmsProgramPage} from './documents/qmsProgramPage'
 import {notFoundPage} from './documents/notFoundPage'
 import {marketingPage} from './documents/marketingPage'
+import {paymentPage} from './documents/paymentPage'
 
 export const schemaTypes = [
   globalSettings,
@@ -18,4 +19,5 @@ export const schemaTypes = [
   qmsProgramPage,
   notFoundPage,
   marketingPage,
+  paymentPage,
 ]

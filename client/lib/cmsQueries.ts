@@ -145,6 +145,47 @@ export const notFoundQuery = `*[_type == "notFoundPage"][0]{
   ctaLabel
 }`
 
+export const paymentPageQuery = `*[_type == "paymentPage"][0]{
+  badge,
+  headline,
+  introCheckout,
+  introFallback,
+  introFallbackError,
+  benefitsTitle,
+  benefits,
+  successTitle,
+  successBody,
+  discountBannerEnabled,
+  discountBannerBadge,
+  discountBannerTitle,
+  discountBannerSubtitle,
+  discountBannerApplyLabel,
+  discountBannerApplyHref,
+  heroHeadlinePrefix,
+  heroHeadlineAccent,
+  heroHeadlineSuffix,
+  heroSubheadline,
+  imageCardBadge,
+  imageCardHeadlinePrefix,
+  imageCardHeadlineAccent,
+  imageCardSrc,
+  imageCardAlt,
+  highlightBenefits,
+  pricingMonthlyBadge,
+  pricingAnnualBadge,
+  pricingMonthlyAmount,
+  pricingAnnualAmount,
+  pricingPerSuffix,
+  popularLabel,
+  monthlyProceedLabel,
+  annualProceedLabel,
+  questionsTitle,
+  questionsFaqLabel,
+  questionsFaqPath,
+  questionsContactLabel,
+  questionsContactPath
+}`
+
 export const marketingPageBySlugQuery = `*[_type == "marketingPage" && slug.current == $slug][0]{
   title,
   subtitle,

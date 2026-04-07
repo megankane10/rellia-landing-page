@@ -7,6 +7,7 @@ import type {
   HomePageContent,
   MarketingPageContent,
   NotFoundContent,
+  PaymentPageContent,
   ProgramsLandingContent,
   QmsProgramContent,
 } from "./types"
@@ -512,6 +513,63 @@ export const DEFAULT_QMS_PROGRAM: QmsProgramContent = {
   bottomContactHref: "/contact",
 }
 
+export const DEFAULT_PAYMENT_PAGE: PaymentPageContent = {
+  badge: "Rellia Health",
+  headline: "You're approved for the Rellia program!",
+  introCheckout: "Complete your enrollment with the secure checkout below.",
+  introFallback:
+    "Complete your enrollment with the secure Stripe payment page (opens in a new tab).",
+  introFallbackError:
+    "We couldn't load embedded checkout. Use the secure Stripe payment page below (opens in a new tab).",
+  benefitsTitle: "Join the Rellia Health Network",
+  benefits: [
+    "Personalized warm introductions to the right investors, partners, and clinicians",
+    "Healthcare industry templates and resources ready to use in your business",
+    "Exclusive workshops, webinars, and networking events with industry leaders",
+    "Access to advisory consulting that would cost >$300/hr anywhere else",
+    "Cancel any time — no long-term commitment required",
+  ],
+  successTitle: "Payment received",
+  successBody:
+    "Thank you — your enrollment payment went through. We'll be in touch with next steps.",
+  discountBannerEnabled: false,
+  discountBannerBadge: "LIMITED OFFER",
+  discountBannerTitle:
+    "Founding members get 50% off your first purchase — use code RELLIA50",
+  discountBannerSubtitle: "",
+  discountBannerApplyLabel: "Apply code",
+  discountBannerApplyHref: "",
+  heroHeadlinePrefix: "Join the ",
+  heroHeadlineAccent: "kindest place",
+  heroHeadlineSuffix: " in health tech",
+  heroSubheadline:
+    "Where founders, mentors, investors, and clinicians build the future of healthcare — together.",
+  imageCardBadge: "The benefits",
+  imageCardHeadlinePrefix: "Warm introductions can make ",
+  imageCardHeadlineAccent: "all the difference",
+  imageCardSrc: "/images/cta-home-conference.webp",
+  imageCardAlt: "Healthcare community event space",
+  highlightBenefits: [
+    "Find investors who are excited about your healthcare",
+    "Get feedback directly from clinicians and patients",
+    "Secure placement in hospital pilot programs",
+    "Partner with digital health industry leaders",
+  ],
+  pricingMonthlyBadge: "Monthly membership",
+  pricingAnnualBadge: "Annual membership",
+  pricingMonthlyAmount: "$30",
+  pricingAnnualAmount: "$25",
+  pricingPerSuffix: "/month",
+  popularLabel: "POPULAR",
+  monthlyProceedLabel: "Proceed to payment",
+  annualProceedLabel: "Proceed to payment",
+  questionsTitle: "Questions before getting started?",
+  questionsFaqLabel: "See Frequently Asked Questions",
+  questionsFaqPath: "/faq",
+  questionsContactLabel: "Get in Touch",
+  questionsContactPath: "/contact",
+}
+
 export const DEFAULT_NOT_FOUND: NotFoundContent = {
   title: "Page not found",
   message: "The page you're looking for doesn't exist or has been moved.",
@@ -634,6 +692,65 @@ export function mergeQmsProgram(
   const pricingBullets = compactList(p.pricingBullets)
   base.pricingBullets =
     pricingBullets.length > 0 ? pricingBullets : DEFAULT_QMS_PROGRAM.pricingBullets
+  return base
+}
+
+export function mergePaymentPage(
+  partial: Partial<PaymentPageContent> | null | undefined,
+): PaymentPageContent {
+  const p = omitNullish((partial ?? {}) as Record<string, unknown>) as Partial<PaymentPageContent>
+  const base = { ...DEFAULT_PAYMENT_PAGE, ...p }
+  const benefits = compactList(p.benefits).filter((x): x is string => typeof x === "string" && x.trim() !== "")
+  base.benefits = benefits.length > 0 ? benefits : DEFAULT_PAYMENT_PAGE.benefits
+  const highlightBenefits = compactList(p.highlightBenefits).filter(
+    (x): x is string => typeof x === "string" && x.trim() !== "",
+  )
+  base.highlightBenefits =
+    highlightBenefits.length > 0 ? highlightBenefits : DEFAULT_PAYMENT_PAGE.highlightBenefits
+  const fill = (key: keyof PaymentPageContent, fallback: string) => {
+    const v = base[key]
+    if (typeof v === "string" && !v.trim()) {
+      ;(base as Record<string, unknown>)[key as string] = fallback
+    }
+  }
+  fill("badge", DEFAULT_PAYMENT_PAGE.badge)
+  fill("headline", DEFAULT_PAYMENT_PAGE.headline)
+  fill("introCheckout", DEFAULT_PAYMENT_PAGE.introCheckout)
+  fill("introFallback", DEFAULT_PAYMENT_PAGE.introFallback)
+  fill("introFallbackError", DEFAULT_PAYMENT_PAGE.introFallbackError)
+  fill("benefitsTitle", DEFAULT_PAYMENT_PAGE.benefitsTitle)
+  fill("successTitle", DEFAULT_PAYMENT_PAGE.successTitle)
+  fill("successBody", DEFAULT_PAYMENT_PAGE.successBody)
+  fill("discountBannerBadge", DEFAULT_PAYMENT_PAGE.discountBannerBadge)
+  fill("discountBannerTitle", DEFAULT_PAYMENT_PAGE.discountBannerTitle)
+  fill("discountBannerSubtitle", DEFAULT_PAYMENT_PAGE.discountBannerSubtitle)
+  fill("discountBannerApplyLabel", DEFAULT_PAYMENT_PAGE.discountBannerApplyLabel)
+  fill("discountBannerApplyHref", DEFAULT_PAYMENT_PAGE.discountBannerApplyHref)
+  fill("heroHeadlinePrefix", DEFAULT_PAYMENT_PAGE.heroHeadlinePrefix)
+  fill("heroHeadlineAccent", DEFAULT_PAYMENT_PAGE.heroHeadlineAccent)
+  fill("heroHeadlineSuffix", DEFAULT_PAYMENT_PAGE.heroHeadlineSuffix)
+  fill("heroSubheadline", DEFAULT_PAYMENT_PAGE.heroSubheadline)
+  fill("imageCardBadge", DEFAULT_PAYMENT_PAGE.imageCardBadge)
+  fill("imageCardHeadlinePrefix", DEFAULT_PAYMENT_PAGE.imageCardHeadlinePrefix)
+  fill("imageCardHeadlineAccent", DEFAULT_PAYMENT_PAGE.imageCardHeadlineAccent)
+  fill("imageCardSrc", DEFAULT_PAYMENT_PAGE.imageCardSrc)
+  fill("imageCardAlt", DEFAULT_PAYMENT_PAGE.imageCardAlt)
+  fill("pricingMonthlyBadge", DEFAULT_PAYMENT_PAGE.pricingMonthlyBadge)
+  fill("pricingAnnualBadge", DEFAULT_PAYMENT_PAGE.pricingAnnualBadge)
+  fill("pricingMonthlyAmount", DEFAULT_PAYMENT_PAGE.pricingMonthlyAmount)
+  fill("pricingAnnualAmount", DEFAULT_PAYMENT_PAGE.pricingAnnualAmount)
+  fill("pricingPerSuffix", DEFAULT_PAYMENT_PAGE.pricingPerSuffix)
+  fill("popularLabel", DEFAULT_PAYMENT_PAGE.popularLabel)
+  fill("monthlyProceedLabel", DEFAULT_PAYMENT_PAGE.monthlyProceedLabel)
+  fill("annualProceedLabel", DEFAULT_PAYMENT_PAGE.annualProceedLabel)
+  fill("questionsTitle", DEFAULT_PAYMENT_PAGE.questionsTitle)
+  fill("questionsFaqLabel", DEFAULT_PAYMENT_PAGE.questionsFaqLabel)
+  fill("questionsFaqPath", DEFAULT_PAYMENT_PAGE.questionsFaqPath)
+  fill("questionsContactLabel", DEFAULT_PAYMENT_PAGE.questionsContactLabel)
+  fill("questionsContactPath", DEFAULT_PAYMENT_PAGE.questionsContactPath)
+  if (typeof base.discountBannerEnabled !== "boolean") {
+    base.discountBannerEnabled = DEFAULT_PAYMENT_PAGE.discountBannerEnabled
+  }
   return base
 }
 

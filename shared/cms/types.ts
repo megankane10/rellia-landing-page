@@ -234,3 +234,44 @@ export type NotFoundContent = {
   message: string
   ctaLabel: string
 }
+
+export type PaymentPageContent = {
+  badge: string
+  headline: string
+  introCheckout: string
+  introFallback: string
+  introFallbackError: string
+  benefitsTitle: string
+  benefits: string[]
+  successTitle: string
+  successBody: string
+  discountBannerEnabled: boolean
+  discountBannerBadge: string
+  discountBannerTitle: string
+  discountBannerSubtitle: string
+  discountBannerApplyLabel: string
+  discountBannerApplyHref: string
+  heroHeadlinePrefix: string
+  heroHeadlineAccent: string
+  heroHeadlineSuffix: string
+  heroSubheadline: string
+  imageCardBadge: string
+  imageCardHeadlinePrefix: string
+  imageCardHeadlineAccent: string
+  imageCardSrc: string
+  imageCardAlt: string
+  highlightBenefits: string[]
+  pricingMonthlyBadge: string
+  pricingAnnualBadge: string
+  pricingMonthlyAmount: string
+  pricingAnnualAmount: string
+  pricingPerSuffix: string
+  popularLabel: string
+  monthlyProceedLabel: string
+  annualProceedLabel: string
+  questionsTitle: string
+  questionsFaqLabel: string
+  questionsFaqPath: string
+  questionsContactLabel: string
+  questionsContactPath: string
+}
