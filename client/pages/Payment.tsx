@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react"
 import { Link } from "react-router-dom"
 import { loadStripe } from "@stripe/stripe-js"
 import type { StripeEmbeddedCheckout } from "@stripe/stripe-js"
-import { ArrowRight, CheckCircle2, X } from "lucide-react"
+import { ArrowRight, Check, CheckCircle2, Copy } from "lucide-react"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
 import RelliaAction from "@/components/RelliaAction"
@@ -32,30 +32,14 @@ export default function Payment() {
   const [checkoutError, setCheckoutError] = useState(false)
   const checkoutRef = useRef<StripeEmbeddedCheckout | null>(null)
   const containerRef = useRef<HTMLDivElement>(null)
-  const [discountDismissed, setDiscountDismissed] = useState(false)
+  const [codeCopied, setCodeCopied] = useState(false)
 
-  const showDiscountBanner =
-    p.discountBannerEnabled &&
-    !discountDismissed &&
-    (p.discountBannerTitle.trim().length > 0 ||
-      p.discountBannerSubtitle.trim().length > 0 ||
-      p.discountBannerBadge.trim().length > 0)
-
-  useEffect(() => {
-    try {
-      setDiscountDismissed(localStorage.getItem("rellia_discount_dismissed") === "1")
-    } catch {
-      setDiscountDismissed(false)
-    }
-  }, [])
-
-  const handleDismissDiscount = () => {
-    setDiscountDismissed(true)
-    try {
-      localStorage.setItem("rellia_discount_dismissed", "1")
-    } catch {
-      // ignore
-    }
+  const handleCopyCode = () => {
+    const code = p.discountBannerSubtitle.trim() || "RELLIA50"
+    void navigator.clipboard.writeText(code).then(() => {
+      setCodeCopied(true)
+      setTimeout(() => setCodeCopied(false), 2000)
+    })
   }
 
   const introBody = useFallbackLink
@@ -177,7 +161,6 @@ export default function Payment() {
     scrollToEmbeddedCheckout()
   }
 
-  const applyHref = p.discountBannerApplyHref.trim()
   const benefitsImageSrc = "/images/benefits-payment.jpg"
 
   return (
@@ -203,39 +186,39 @@ export default function Payment() {
           </section>
         ) : (
           <>
-            <section className="relative overflow-hidden bg-rellia-teal pt-[87px] md:pt-[87px]">
-              <div
-                className="pointer-events-none absolute -right-4 bottom-0 top-[14%] w-[min(100vw,620px)] opacity-[0.07] md:right-8 lg:right-16"
-                aria-hidden
-              >
-                <img
-                  src="/images/hologram-logo.png"
-                  alt=""
-                  className="h-full w-full object-contain object-right"
-                />
+            <section className="relative overflow-hidden bg-rellia-teal pt-[87px]">
+              <div className="pointer-events-none absolute inset-0 opacity-10">
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-rellia-mint via-transparent to-transparent blur-3xl" />
               </div>
+              <img
+                src="/images/hologram-logo.png"
+                alt=""
+                aria-hidden
+                className="pointer-events-none absolute right-0 top-1/2 -translate-y-1/2 h-[70%] md:h-[90%] w-auto object-contain opacity-[0.07] select-none"
+              />
 
-              <div className="relative z-10 mx-auto flex min-h-[727px] max-w-[1100px] items-center px-6 py-20 md:px-10 md:py-24">
-                <div className="w-full">
-                  <h1 className="max-w-[760px] font-host-grotesk text-4xl font-bold leading-[1.08] tracking-[-0.02em] text-white drop-shadow-[0_4px_20px_rgba(0,0,0,0.28)] md:text-6xl md:leading-[1.05]">
-                    <span>{p.heroHeadlinePrefix}</span>
-                    <span className="text-rellia-mint">{p.heroHeadlineAccent}</span>
-                    <span>{p.heroHeadlineSuffix}</span>
-                  </h1>
-                  <p className="mt-6 max-w-2xl font-urbanist text-base leading-7 text-white/90 drop-shadow-[0_2px_14px_rgba(0,0,0,0.25)] md:mt-8 md:text-xl md:leading-8">
-                    {p.heroSubheadline}
-                  </p>
-                </div>
+              <div className="relative z-10 max-w-[1300px] mx-auto px-6 md:px-10 pt-20 pb-48 md:pt-28 md:pb-64">
+                <h1 className="text-white text-5xl md:text-7xl lg:text-8xl font-bold leading-tight tracking-tight mb-8">
+                  <span>{p.heroHeadlinePrefix}</span>
+                  <span className="text-rellia-mint">{p.heroHeadlineAccent}</span>
+                  <br />
+                  <span>{p.heroHeadlineSuffix}</span>
+                </h1>
+                <p className="text-white/80 text-lg md:text-2xl max-w-3xl font-urbanist leading-relaxed">
+                  {p.heroSubheadline}
+                </p>
               </div>
             </section>
 
-            <section className="relative z-10 -mt-44 bg-white px-4 md:-mt-52 md:px-8">
-              <div className="mx-auto max-w-[1300px]">
+            <section className="relative z-10 -mt-24 px-4 md:-mt-36 md:px-8">
+              {/* Cream background starts exactly where the hero naturally ends (offset = negative margin) */}
+              <div className="absolute inset-x-0 bottom-0 top-24 bg-rellia-cream md:top-36" aria-hidden />
+              <div className="relative mx-auto max-w-[1300px]">
                 <div
-                  className="relative overflow-hidden rounded-[56px] bg-fixed bg-cover bg-center"
+                  className="relative overflow-hidden rounded-[40px] bg-cover bg-center md:rounded-[56px]"
                   style={{ backgroundImage: `url(${benefitsImageSrc})` }}
                 >
-                  <div className="absolute inset-0 bg-white/14" aria-hidden />
+                  <div className="absolute inset-0 bg-black/30" aria-hidden />
                   <div
                     className="absolute inset-0"
                     style={{
@@ -245,12 +228,12 @@ export default function Payment() {
                     aria-hidden
                   />
 
-                  <div className="relative min-h-[82vh] max-h-[820px] px-6 pb-[240px] pt-12 md:min-h-[720px] md:px-10 md:pb-[277px] md:pt-14 lg:px-12">
-                    <div className="max-w-2xl space-y-4 md:space-y-6">
+                  <div className="relative px-6 pb-[170px] pt-10 md:px-10 md:pb-[250px] md:pt-12 lg:px-12">
+                    <div className="max-w-2xl space-y-3 md:space-y-4">
                       <span className="inline-flex w-fit items-center rounded-[20px] border border-rellia-mint/70 bg-rellia-mint/90 px-4 py-1.5 font-urbanist text-sm font-semibold text-rellia-teal">
                         {p.imageCardBadge}
                       </span>
-                    <h2 className="font-host-grotesk text-3xl font-bold leading-tight tracking-[-0.02em] text-white md:text-[40px] md:leading-tight">
+                      <h2 className="font-host-grotesk text-3xl font-bold leading-tight tracking-[-0.02em] text-white md:text-[40px] md:leading-tight w-3/4">
                         <span>{p.imageCardHeadlinePrefix}</span>
                         <span className="text-rellia-mint">{p.imageCardHeadlineAccent}</span>
                       </h2>
@@ -262,7 +245,7 @@ export default function Payment() {
                           <div
                             key={`${index}-${line.slice(0, 20)}`}
                             className={cn(
-                              "group relative flex min-h-[200px] items-center justify-center overflow-hidden px-8 py-10 text-center md:min-h-[240px] lg:min-h-[277px]",
+                              "group relative flex min-h-[140px] items-center justify-center overflow-hidden px-6 py-7 text-center md:min-h-[160px] md:px-8 lg:min-h-[190px]",
                               index > 0 && "border-t border-white/35 sm:border-t-0 sm:border-l lg:border-t-0",
                             )}
                           >
@@ -301,10 +284,11 @@ export default function Payment() {
                   ))}
                 </ul>
 
-                <div className="mt-12 grid grid-cols-1 items-stretch gap-5 md:mt-14 md:grid-cols-2 md:gap-6">
-                  <div className="flex min-h-[349px] flex-col rounded-[24px] border border-black/5 bg-white/85 p-6 shadow-sm backdrop-blur md:p-8">
-                    <div className="mx-auto mb-6 flex h-[30px] w-fit items-center justify-center rounded-full border border-rellia-teal/20 bg-rellia-teal/5 px-4">
-                      <span className="font-urbanist text-sm text-rellia-teal">{p.pricingMonthlyBadge}</span>
+                <div className="mt-12 grid grid-cols-1 items-end gap-5 md:mt-14 md:grid-cols-2 md:gap-6">
+                  {/* Monthly card */}
+                  <div className="flex flex-col rounded-[24px] border border-black/8 bg-white p-6 shadow-sm md:p-8">
+                    <div className="mx-auto mb-6 flex h-[30px] w-fit items-center justify-center rounded-full border border-black/15 bg-transparent px-4">
+                      <span className="font-urbanist text-sm text-black/60">{p.pricingMonthlyBadge}</span>
                     </div>
                     <div className="mb-6 text-center">
                       <span className="font-host-grotesk text-5xl font-bold tracking-[-0.02em] text-rellia-teal md:text-6xl">
@@ -318,7 +302,7 @@ export default function Payment() {
                       <div className="mb-6 h-px w-full bg-black/10" />
                       {useFallbackLink ? (
                         <RelliaAction asChild variant="tealCardFull" className="h-[52px] text-base">
-                          <a href={STRIPE_PAYMENT_FALLBACK_URL} target="_blank" rel="noopener noreferrer">
+                          <a href={import.meta.env.VITE_STRIPE_MONTHLY_PLAN_LINK as string | undefined ?? STRIPE_PAYMENT_FALLBACK_URL} target="_blank" rel="noopener noreferrer">
                             {p.monthlyProceedLabel}
                             <ArrowRight />
                           </a>
@@ -337,103 +321,77 @@ export default function Payment() {
                     </div>
                   </div>
 
-                  <div className="flex min-h-[349px] flex-col rounded-[24px] border border-black/5 bg-white/85 p-6 shadow-sm backdrop-blur md:p-8">
-                    <div className="mx-auto mb-5 flex h-[30px] w-fit items-center justify-center rounded-full bg-rellia-teal px-4">
-                      <span className="font-host-grotesk text-xs font-extrabold uppercase tracking-wide text-white">
+                  {/* Annual card — teal outer wrapper with inset white card */}
+                  <div className="flex flex-col rounded-[28px] bg-rellia-teal p-2 shadow-sm">
+                    <div className="pb-2 pt-3 text-center">
+                      <span className="font-host-grotesk text-xs font-extrabold uppercase tracking-[0.15em] text-white">
                         {p.popularLabel}
                       </span>
                     </div>
-                    <div id="rellia-annual-checkout" className="flex h-full flex-col">
-                        <div className="mx-auto mb-6 flex h-[30px] w-fit items-center justify-center rounded-full border border-rellia-teal/20 bg-rellia-teal/5 px-4">
-                          <span className="font-urbanist text-sm text-rellia-teal">{p.pricingAnnualBadge}</span>
-                        </div>
-                        <div className="mb-6 text-center">
-                          <span className="font-host-grotesk text-5xl font-bold tracking-[-0.02em] text-rellia-teal md:text-6xl">
-                            {p.pricingAnnualAmount}
-                          </span>
-                          <span className="font-host-grotesk text-xl font-bold text-[#5e5c5c] md:text-[23px]">
-                            {p.pricingPerSuffix}
-                          </span>
-                        </div>
-                        <div className="mt-auto">
-                          <div className="mb-6 h-px w-full bg-black/10" />
-                          {useFallbackLink ? (
-                            <RelliaAction asChild variant="tealCardFull" className="h-[52px] text-base">
-                              <a href={STRIPE_PAYMENT_FALLBACK_URL} target="_blank" rel="noopener noreferrer">
-                                {p.annualProceedLabel}
-                                <ArrowRight />
-                              </a>
-                            </RelliaAction>
-                          ) : (
-                            <RelliaAction
-                              type="button"
-                              onClick={handleAnnualProceed}
-                              variant="tealCardFull"
-                              className="h-[52px] text-base"
-                            >
+                    <div id="rellia-annual-checkout" className="flex flex-1 flex-col rounded-[20px] bg-white p-6 md:p-8">
+                      <div className="mx-auto mb-6 flex h-[30px] w-fit items-center justify-center rounded-full border border-black/15 bg-transparent px-4">
+                        <span className="font-urbanist text-sm text-black/60">{p.pricingAnnualBadge}</span>
+                      </div>
+                      <div className="mb-6 text-center">
+                        <span className="font-host-grotesk text-5xl font-bold tracking-[-0.02em] text-rellia-teal md:text-6xl">
+                          {p.pricingAnnualAmount}
+                        </span>
+                        <span className="font-host-grotesk text-xl font-bold text-[#5e5c5c] md:text-[23px]">
+                          {p.pricingPerSuffix}
+                        </span>
+                      </div>
+                      <div className="mt-auto">
+                        <div className="mb-6 h-px w-full bg-black/10" />
+                        {useFallbackLink ? (
+                          <RelliaAction asChild variant="tealCardFull" className="h-[52px] text-base">
+                            <a href={import.meta.env.VITE_STRIPE_ANNUAL_PLAN_LINK as string | undefined ?? STRIPE_PAYMENT_FALLBACK_URL} target="_blank" rel="noopener noreferrer">
                               {p.annualProceedLabel}
                               <ArrowRight />
-                            </RelliaAction>
-                          )}
-                        </div>
+                            </a>
+                          </RelliaAction>
+                        ) : (
+                          <RelliaAction
+                            type="button"
+                            onClick={handleAnnualProceed}
+                            variant="tealCardFull"
+                            className="h-[52px] text-base"
+                          >
+                            {p.annualProceedLabel}
+                            <ArrowRight />
+                          </RelliaAction>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>
 
-                {showDiscountBanner ? (
-                  <div
-                    className="mx-auto mt-12 flex max-w-[1100px] flex-col items-stretch gap-4 rounded-[22px] bg-black px-4 py-5 text-white md:mt-14 md:flex-row md:items-center md:justify-between md:gap-6 md:px-7 md:py-5"
-                    role="region"
-                    aria-label="Promotional offer"
-                  >
-                    <div className="flex flex-1 flex-col items-start gap-3 sm:flex-row sm:items-center sm:gap-4">
-                      {p.discountBannerBadge.trim() ? (
-                        <span className="inline-flex shrink-0 items-center rounded-[20px] border border-[#05d66a] bg-[rgba(38,221,127,0.28)] px-4 py-1.5 font-urbanist text-sm font-bold text-[#08d36a]">
-                          {p.discountBannerBadge.trim()}
-                        </span>
-                      ) : null}
-                      <p className="font-host-grotesk text-base font-medium leading-snug tracking-[-0.01em] md:text-lg lg:text-xl">
-                        {p.discountBannerTitle.trim()}
-                        {p.discountBannerSubtitle.trim() ? (
-                          <span className="ml-1 font-mono text-lg md:text-xl">{p.discountBannerSubtitle.trim()}</span>
-                        ) : null}
-                      </p>
-                    </div>
-                    {p.discountBannerApplyLabel.trim() ? (
-                      applyHref ? (
-                        applyHref.startsWith("http") ? (
-                          <a
-                            href={applyHref}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex h-[52px] shrink-0 items-center justify-center rounded-[25px] border border-white bg-black px-8 font-host-grotesk text-lg font-medium text-white transition-colors hover:bg-white/10 md:min-w-[190px]"
-                          >
-                            {p.discountBannerApplyLabel.trim()}
-                          </a>
-                        ) : (
-                          <Link
-                            to={applyHref}
-                            className="inline-flex h-[52px] shrink-0 items-center justify-center rounded-[25px] border border-white bg-black px-8 font-host-grotesk text-lg font-medium text-white transition-colors hover:bg-white/10 md:min-w-[190px]"
-                          >
-                            {p.discountBannerApplyLabel.trim()}
-                          </Link>
-                        )
-                      ) : (
-                        <span className="inline-flex h-[52px] shrink-0 items-center justify-center rounded-[25px] border border-white bg-black px-8 font-host-grotesk text-lg font-medium text-white md:min-w-[190px]">
-                          {p.discountBannerApplyLabel.trim()}
-                        </span>
-                      )
+                <div
+                  className="mt-8 flex flex-col items-stretch gap-4 rounded-[24px] bg-black px-5 py-4 text-white md:mt-10 md:flex-row md:items-center md:justify-between md:gap-6 md:px-8 md:py-5"
+                  role="region"
+                  aria-label="Promotional offer"
+                >
+                  <div className="flex flex-1 flex-col items-start gap-3 sm:flex-row sm:items-center sm:gap-4">
+                    {p.discountBannerBadge.trim() ? (
+                      <span className="inline-flex shrink-0 items-center rounded-full border border-[#05d66a] bg-[rgba(38,221,127,0.28)] px-4 py-1.5 font-urbanist text-sm font-bold text-[#08d36a]">
+                        {p.discountBannerBadge.trim()}
+                      </span>
                     ) : null}
-                    <button
-                      type="button"
-                      onClick={handleDismissDiscount}
-                      className="inline-flex h-[52px] w-[52px] shrink-0 items-center justify-center rounded-[25px] border border-white/40 bg-black text-white transition-colors hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-black"
-                      aria-label="Dismiss offer"
-                    >
-                      <X className="h-5 w-5" aria-hidden />
-                    </button>
+                    <p className="inline-flex flex-wrap items-center gap-2 font-host-grotesk text-base font-medium leading-snug tracking-[-0.01em] md:text-lg">
+                      {p.discountBannerTitle.trim()}
+                      {p.discountBannerSubtitle.trim() ? (
+                        <span className="font-mono">{p.discountBannerSubtitle.trim()}</span>
+                      ) : null}
+                      <button
+                        type="button"
+                        onClick={handleCopyCode}
+                        aria-label="Copy promo code"
+                        className="inline-flex items-center justify-center rounded-md p-1 text-white/70 transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50"
+                      >
+                        {codeCopied ? <Check className="h-4 w-4 text-[#08d36a]" /> : <Copy className="h-4 w-4" />}
+                      </button>
+                    </p>
                   </div>
-                ) : null}
+                </div>
 
                 {!useFallbackLink ? (
                   <div
