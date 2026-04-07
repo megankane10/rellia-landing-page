@@ -8,6 +8,7 @@ import {
   homePageQuery,
   marketingPageBySlugQuery,
   notFoundQuery,
+  paymentPageQuery,
   programsLandingQuery,
   qmsProgramQuery,
 } from "@/lib/cmsQueries"
@@ -19,6 +20,7 @@ import {
   mergeHomePage,
   mergeMarketingPage,
   mergeNotFound,
+  mergePaymentPage,
   mergeProgramsLanding,
   mergeQmsProgram,
 } from "@shared/cms/defaults"
@@ -30,6 +32,7 @@ import type {
   HomePageContent,
   MarketingPageContent,
   NotFoundContent,
+  PaymentPageContent,
   ProgramsLandingContent,
   QmsProgramContent,
 } from "@shared/cms/types"
@@ -112,6 +115,16 @@ export const useNotFoundPage = () =>
     queryFn: async () => {
       const raw = await sanityFetch<Partial<NotFoundContent>>(notFoundQuery)
       return mergeNotFound(raw ?? undefined)
+    },
+    staleTime: staleTimeMs,
+  })
+
+export const usePaymentPage = () =>
+  useQuery({
+    queryKey: ["cms", "paymentPage"],
+    queryFn: async () => {
+      const raw = await sanityFetch<Partial<PaymentPageContent>>(paymentPageQuery)
+      return mergePaymentPage(raw ?? undefined)
     },
     staleTime: staleTimeMs,
   })
