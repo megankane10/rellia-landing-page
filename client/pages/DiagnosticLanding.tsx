@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 const styles = `
   @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap');
@@ -164,11 +165,11 @@ export default function DiagnosticLanding() {
 
       {/* NAV */}
       <nav className="dl-nav">
-        <a className="dl-nav-logo" href="/">
+        <Link className="dl-nav-logo" to="/">
           <LogoMark size={32} />
           <span className="dl-nav-logo-text">Rellia</span>
-        </a>
-        <a className="dl-nav-cta" href="/diagnostic">Begin Assessment →</a>
+        </Link>
+        <Link className="dl-nav-cta" to="/diagnostic">Begin Assessment →</Link>
       </nav>
 
       {/* HERO */}
@@ -179,7 +180,7 @@ export default function DiagnosticLanding() {
         <h1 className="dl-h1">How ready is your<br /><em>startup, really?</em></h1>
         <p className="dl-sub">A structured assessment across 13 domains — from regulatory and clinical to go-to-market and operations. Honest answers give you an accurate picture of where you stand today.</p>
         <div className="dl-cta-row">
-          <a className="dl-btn-primary" href="/diagnostic">Take the Diagnostic →</a>
+          <Link className="dl-btn-primary" to="/diagnostic">Take the Diagnostic →</Link>
           <a className="dl-btn-secondary" href="#how-it-works">See how it works</a>
         </div>
         <p className="dl-hero-note">Free · No account required · Takes ~15 minutes</p>
@@ -248,8 +249,8 @@ export default function DiagnosticLanding() {
           <p className="dl-eyebrow-text">Ready to begin?</p>
           <h2 className="dl-h2">Get your diagnostic report today</h2>
           <p>15 minutes of honest reflection. A clear picture of where you're strong, where you're exposed, and exactly what to do next.</p>
-          <a className="dl-btn-primary" href="/diagnostic" style={{ display: 'inline-flex' }}>Take the Diagnostic →</a>
-          <p className="dl-member-note">Rellia Health member? Your report includes mentor matching. <a href="/join">Join here →</a></p>
+          <Link className="dl-btn-primary" to="/diagnostic" style={{ display: 'inline-flex' }}>Take the Diagnostic →</Link>
+          <p className="dl-member-note">Rellia Health member? Your report includes mentor matching. <Link to="/network">Join here →</Link></p>
         </div>
       </section>
 

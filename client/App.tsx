@@ -13,6 +13,7 @@ import ProgramsEvents from "./pages/ProgramsEvents";
 import ProgramsQms from "./pages/ProgramsQms";
 import NotFound from "./pages/NotFound";
 import PlaceholderPage from "./pages/PlaceholderPage";
+import Contact from "./pages/Contact";
 import Network from "./pages/Network";
 import DiagnosticLanding from "./pages/DiagnosticLanding";
 import Payment from "./pages/Payment";
@@ -52,7 +53,7 @@ const App = () => (
           <Route path="/network" element={<Network />} />
 
           {/* Misc */}
-          <Route path="/contact" element={<PlaceholderPage title="Contact" />} />
+          <Route path="/contact" element={<Contact />} />
           <Route path="/payment" element={<Payment />} />
           <Route path="/blog" element={<PlaceholderPage title="Our Blog" />} />
 

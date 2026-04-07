@@ -1,7 +1,7 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import ScrollReveal from "@/components/ScrollReveal";
-import RelliaCta from "@/components/RelliaCta";
+import RelliaCta, { ctaActionFromHref } from "@/components/RelliaCta";
 import { EventCard, eventKey, ProgramCard } from "@/components/cards";
 import {
   Carousel,
@@ -173,7 +173,7 @@ export default function ProgramsEvents() {
         <RelliaCta
           title={pl.ctaTitle}
           body={pl.ctaBody}
-          primary={{ label: pl.ctaButtonLabel, href: pl.ctaButtonHref }}
+          primary={ctaActionFromHref(pl.ctaButtonLabel, pl.ctaButtonHref)}
         />
       </main>
 

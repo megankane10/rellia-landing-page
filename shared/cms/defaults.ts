@@ -239,16 +239,27 @@ export const DEFAULT_ABOUT_PAGE: AboutPageContent = {
       name: "Megan Kane",
       role: "Executive Director, Co-Founder",
       bio: "Regulatory and Quality Management executive specializing in global market entry strategy and FDA/Health Canada submissions for SaMD and digital health companies.",
-      imageSrc: "/images/megankane-team.jpeg",
+      imageSrc: "/images/megankane-team.jpg",
     },
     {
       name: "Deena Al-Sammak",
-      role: "Program Manager",
-      imageSrc: "/images/deenasammak-team.jpeg",
+      role: "Program Manager, Co-Founder",
+      bio: "Deena brings startup experience in the health tech space and leverages her experience to lead our program development and management",
+      imageSrc: "/images/deenasammak-team.png",
     },
-    { name: "Priyanka", imageSrc: "/images/nopicture-female.jpg" },
+    {
+      name: "Priyanka Ramjagsingh",
+      role: "Operations Director",
+      bio: "With a decade of experience embedded in early-stage health companies, Priyanka converts her deep regulatory and quality expertise into operational momentum, turning complexity into the strategic edge that moves teams forward.",
+      imageSrc: "/images/priyankaR-team.jpeg",
+    },
     { name: "Khali", imageSrc: "/images/nopicture-male.jpg" },
-    { name: "Kelly", imageSrc: "/images/nopicture-female.jpg" },
+    {
+      name: "Kelly Hu",
+      role: "Social Media Manager",
+      bio: "A digital health founder herself, Kelly plans and executes content creation to boost engagement and showcase Rellia's growing network.",
+      imageSrc: "/images/KellyH-team.jpeg",
+    },
   ],
   ctaTitle: "You're in the right place.",
   ctaBody:
@@ -415,7 +426,7 @@ export const DEFAULT_PROGRAMS_LANDING: ProgramsLandingContent = {
   ctaBody:
     "Join the Rellia community to get access to all programs, events, mentors, and resources.",
   ctaButtonLabel: "Get Involved",
-  ctaButtonHref: "mailto:hello@relliahealth.com?subject=Join%20Rellia",
+  ctaButtonHref: "/network",
 }
 
 export const DEFAULT_CONTACT_PAGE: ContactPageContent = {
@@ -426,9 +437,9 @@ export const DEFAULT_CONTACT_PAGE: ContactPageContent = {
   sideImageSrc: "/images/hero-contact.png",
   sideImageAlt: "Rellia contact — team and collaboration",
   quoteText:
-    "Lorem ipsum dolor sit amet consectetur. Eu tellus cursus sapien elementum.",
+    "We meet health tech founders where they’re at, surrounding them with people who get it and get them",
   quoteAttributionName: "Megan Kane",
-  quoteAttributionRole: "Founder & CEO",
+  quoteAttributionRole: "Executive Director",
   successTitle: "Message sent",
   successBody: "Thanks for reaching out. We'll be in touch shortly.",
   labels: {

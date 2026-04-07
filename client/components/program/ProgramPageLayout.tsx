@@ -3,7 +3,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
 import ScrollReveal from "@/components/ScrollReveal"
-import RelliaCta from "@/components/RelliaCta"
+import RelliaCta, { ctaActionFromHref } from "@/components/RelliaCta"
 import { CheckCircle2, ArrowRight } from "lucide-react"
 import RelliaAction from "@/components/RelliaAction"
 import type { QmsProgramContent } from "@shared/cms/types"
@@ -268,7 +268,7 @@ const ProgramPageLayout = ({
         <RelliaCta
           title={q.bottomCtaTitle}
           body={q.bottomCtaBody}
-          primary={{ label: q.bottomCtaButtonLabel, href: q.bottomContactHref }}
+          primary={ctaActionFromHref(q.bottomCtaButtonLabel, q.bottomContactHref)}
         />
       </main>
 

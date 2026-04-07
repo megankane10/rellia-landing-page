@@ -56,7 +56,14 @@ export function TeamMemberCard({
           }}
           className={cn(
             "h-full w-full object-cover transition-transform duration-500",
-            showBio ? "scale-100" : "scale-105",
+            name === "Megan Kane" ? "object-top" : "object-center",
+            name === "Megan Kane"
+              ? showBio
+                ? "scale-[1.12] -translate-y-8"
+                : "scale-[1.18] -translate-y-10"
+              : showBio
+                ? "scale-100"
+                : "scale-105",
           )}
         />
 

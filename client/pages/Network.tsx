@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
 import LogoMarquee from "@/components/LogoMarquee"
@@ -17,16 +18,12 @@ import { DEFAULT_GLOBAL_SETTINGS } from "@shared/cms/defaults"
 
 const SUPPORT_EMAIL = DEFAULT_GLOBAL_SETTINGS.supportEmail
 
-/** Build a mailto: with a subject line tagged for routing on the inbox side. */
-const mailto = (subject: string) =>
-  `mailto:${SUPPORT_EMAIL}?subject=${encodeURIComponent(subject)}`
-
 const CTA = {
-  founder: mailto("Founder application — Rellia Network"),
-  investorNotify: mailto("Pitch event notifications — Rellia Network"),
-  investorContact: mailto("Investor inquiry — Rellia Network"),
-  advisor: mailto("Mentor interest — Rellia Network"),
-  partner: mailto("Partnership inquiry — Rellia Network"),
+  founder: "/contact",
+  investorNotify: "/contact",
+  investorContact: "/contact",
+  advisor: "/contact",
+  partner: "/contact",
 } as const
 
 type SectionId = "founders" | "investors" | "advisors" | "partners"
@@ -233,10 +230,10 @@ export default function Network() {
                   Applications are required. <span className="text-rellia-teal font-semibold">Membership is selective.</span>
                 </p>
                 <RelliaAction asChild variant="tealFilledLift" size="comfortable">
-                  <a href={CTA.founder}>
+                  <Link to={CTA.founder}>
                     Apply to Join as a Founder
                     <ArrowRight />
-                  </a>
+                  </Link>
                 </RelliaAction>
               </div>
             </ScrollReveal>
@@ -246,13 +243,95 @@ export default function Network() {
         {/* Marquee — sits between Founders and Investors as the proof strip */}
         <LogoMarquee />
 
-        {/* ─────────────────────────── 02 · INVESTORS ────────────────────── */}
+        {/* ─────────────────────────── 02 · ADVISORS ─────────────────────── */}
+        <section
+          id="advisors"
+          className="relative scroll-mt-24 md:scroll-mt-28 bg-white py-20 md:py-32 overflow-hidden"
+        >
+          <div className="relative max-w-[1300px] mx-auto px-6 md:px-10">
+            <SectionNumeral value="02" />
+
+            <ScrollReveal>
+              <SectionTag>Advisors</SectionTag>
+              <h2 className="mt-5 text-black text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight leading-[1.05] max-w-3xl">
+                Some people are just wired to help others succeed.
+              </h2>
+            </ScrollReveal>
+
+            <ScrollReveal delay={0.1}>
+              <p className="mt-6 md:mt-8 text-black/70 text-lg md:text-xl font-urbanist leading-relaxed max-w-3xl">
+                Rellia advisors are experienced operators, clinicians, executives, and specialists who want to stay
+                connected to health tech innovation and support founders they believe in. If you've spent your career in
+                healthcare, sharing your experience can change someone's trajectory
+              </p>
+            </ScrollReveal>
+
+            <div className="mt-14 grid grid-cols-1 lg:grid-cols-[1.1fr_0.9fr] gap-10 md:gap-14 items-start">
+              <ScrollReveal delay={0.15}>
+                <div className="rounded-3xl border border-black/[0.08] bg-rellia-cream/50 p-8 md:p-10">
+                  <h3 className="font-host-grotesk text-sm font-semibold uppercase tracking-[0.16em] text-rellia-teal/70">
+                    What to expect
+                  </h3>
+                  <ul className="mt-6 space-y-4">
+                    <CheckItem>Structured, high-quality engagements — not open-ended commitments</CheckItem>
+                    <CheckItem>Maximum impact with minimum time investment</CheckItem>
+                    <CheckItem>Meaningful interactions with serious, vetted founders</CheckItem>
+                    <CheckItem>A front-row seat to the latest advancements in digital health</CheckItem>
+                  </ul>
+                </div>
+              </ScrollReveal>
+
+              <ScrollReveal delay={0.2}>
+                <div className="relative rounded-3xl border-2 border-rellia-teal bg-rellia-teal text-white p-8 md:p-10 overflow-hidden">
+                  <div
+                    aria-hidden
+                    className="absolute inset-0 opacity-[0.07] pointer-events-none"
+                    style={{
+                      backgroundImage:
+                        "linear-gradient(to right, white 1px, transparent 1px), linear-gradient(to bottom, white 1px, transparent 1px)",
+                      backgroundSize: "60px 60px",
+                    }}
+                  />
+                  <div className="relative">
+                    <span className="font-host-grotesk text-xs font-semibold uppercase tracking-[0.18em] text-rellia-mint">
+                      A note on your time
+                    </span>
+                    <p className="mt-5 font-urbanist text-lg md:text-xl leading-relaxed text-white/90">
+                      Your time is valuable. Mentorship at Rellia is a volunteer role, and we
+                      respect that completely.
+                    </p>
+                    <p className="mt-4 font-urbanist text-base leading-relaxed text-white/70">
+                      You'll have full flexibility over your level of involvement. Engage as much or as little as your
+                      schedule allows.
+                    </p>
+                  </div>
+                </div>
+              </ScrollReveal>
+            </div>
+
+            <ScrollReveal delay={0.25}>
+              <div className="mt-14 flex flex-col md:flex-row md:items-center md:justify-between gap-6 border-t border-black/10 pt-10">
+                <p className="font-urbanist text-base md:text-lg text-black/60 max-w-xl">
+                  The founders in our community are the kind of people worth showing up for. Let's find your match.
+                </p>
+                <RelliaAction asChild variant="tealFilledLift" size="comfortable">
+                  <Link to={CTA.advisor}>
+                    Express Interest in Mentoring
+                    <ArrowRight />
+                  </Link>
+                </RelliaAction>
+              </div>
+            </ScrollReveal>
+          </div>
+        </section>
+
+        {/* ─────────────────────────── 03 · INVESTORS ────────────────────── */}
         <section
           id="investors"
           className="relative scroll-mt-24 md:scroll-mt-28 bg-rellia-cream/40 py-20 md:py-32 overflow-hidden"
         >
           <div className="relative max-w-[1300px] mx-auto px-6 md:px-10">
-            <SectionNumeral value="02" />
+            <SectionNumeral value="03" />
 
             <ScrollReveal>
               <SectionTag>Investors</SectionTag>
@@ -313,99 +392,17 @@ export default function Network() {
                 </p>
                 <div className="flex flex-col sm:flex-row gap-3">
                   <RelliaAction asChild variant="tealFilledLift" size="comfortable">
-                    <a href={CTA.investorNotify}>
+                    <Link to={CTA.investorNotify}>
                       Get Notified About Pitch Events
                       <ArrowRight />
-                    </a>
+                    </Link>
                   </RelliaAction>
                   <RelliaAction asChild variant="outlineOnWhite" size="comfortable">
-                    <a href={CTA.investorContact}>
+                    <Link to={CTA.investorContact}>
                       Contact Us Directly
-                    </a>
+                    </Link>
                   </RelliaAction>
                 </div>
-              </div>
-            </ScrollReveal>
-          </div>
-        </section>
-
-        {/* ─────────────────────────── 03 · ADVISORS ─────────────────────── */}
-        <section
-          id="advisors"
-          className="relative scroll-mt-24 md:scroll-mt-28 bg-white py-20 md:py-32 overflow-hidden"
-        >
-          <div className="relative max-w-[1300px] mx-auto px-6 md:px-10">
-            <SectionNumeral value="03" />
-
-            <ScrollReveal>
-              <SectionTag>Advisors</SectionTag>
-              <h2 className="mt-5 text-black text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight leading-[1.05] max-w-3xl">
-                Some people are just wired to help others succeed.
-              </h2>
-            </ScrollReveal>
-
-            <ScrollReveal delay={0.1}>
-              <p className="mt-6 md:mt-8 text-black/70 text-lg md:text-xl font-urbanist leading-relaxed max-w-3xl">
-                Rellia advisors are experienced operators, clinicians, executives, and specialists who want to stay
-                connected to health tech innovation and support founders they believe in. If you've spent your career in
-                healthcare, sharing your experience can change someone's trajectory
-              </p>
-            </ScrollReveal>
-
-            <div className="mt-14 grid grid-cols-1 lg:grid-cols-[1.1fr_0.9fr] gap-10 md:gap-14 items-start">
-              <ScrollReveal delay={0.15}>
-                <div className="rounded-3xl border border-black/[0.08] bg-rellia-cream/50 p-8 md:p-10">
-                  <h3 className="font-host-grotesk text-sm font-semibold uppercase tracking-[0.16em] text-rellia-teal/70">
-                    What to expect
-                  </h3>
-                  <ul className="mt-6 space-y-4">
-                    <CheckItem>Structured, high-quality engagements — not open-ended commitments</CheckItem>
-                    <CheckItem>Maximum impact with minimum time investment</CheckItem>
-                    <CheckItem>Meaningful interactions with serious, vetted founders</CheckItem>
-                    <CheckItem>A front-row seat to the latest advancements in digital health</CheckItem>
-                  </ul>
-                </div>
-              </ScrollReveal>
-
-              <ScrollReveal delay={0.2}>
-                <div className="relative rounded-3xl border-2 border-rellia-teal bg-rellia-teal text-white p-8 md:p-10 overflow-hidden">
-                  <div
-                    aria-hidden
-                    className="absolute inset-0 opacity-[0.07] pointer-events-none"
-                    style={{
-                      backgroundImage:
-                        "linear-gradient(to right, white 1px, transparent 1px), linear-gradient(to bottom, white 1px, transparent 1px)",
-                      backgroundSize: "60px 60px",
-                    }}
-                  />
-                  <div className="relative">
-                    <span className="font-host-grotesk text-xs font-semibold uppercase tracking-[0.18em] text-rellia-mint">
-                      A note on your time
-                    </span>
-                    <p className="mt-5 font-urbanist text-lg md:text-xl leading-relaxed text-white/90">
-                      Your time is valuable. Mentorship at Rellia is a volunteer role, and we
-                      respect that completely.
-                    </p>
-                    <p className="mt-4 font-urbanist text-base leading-relaxed text-white/70">
-                      Every session is designed to be worthwhile — for you and for the founder
-                      you're guiding.
-                    </p>
-                  </div>
-                </div>
-              </ScrollReveal>
-            </div>
-
-            <ScrollReveal delay={0.25}>
-              <div className="mt-14 flex flex-col md:flex-row md:items-center md:justify-between gap-6 border-t border-black/10 pt-10">
-                <p className="font-urbanist text-base md:text-lg text-black/60 max-w-xl">
-                  Selective by design. We onboard advisors thoughtfully and match them to the right founders.
-                </p>
-                <RelliaAction asChild variant="tealFilledLift" size="comfortable">
-                  <a href={CTA.advisor}>
-                    Express Interest in Mentoring
-                    <ArrowRight />
-                  </a>
-                </RelliaAction>
               </div>
             </ScrollReveal>
           </div>
@@ -428,9 +425,9 @@ export default function Network() {
 
             <ScrollReveal delay={0.1}>
               <p className="mt-6 md:mt-8 text-black/70 text-lg md:text-xl font-urbanist leading-relaxed max-w-3xl">
-                Some of the best partners for early-stage health tech founders aren't investors —
-                they're the service providers, specialists, and organizations who help them build.
-                If your clients are health tech founders, Rellia is where you should be.
+                If your clients are early-stage health tech companies, Rellia is where they live. The founders in our
+                community trust what we recommend, and we are always looking for the best resources to put in front of
+                them.
               </p>
             </ScrollReveal>
 
@@ -441,11 +438,11 @@ export default function Network() {
                     Great fits include
                   </h3>
                   <ul className="mt-6 space-y-4">
-                    <CheckItem>Legal and regulatory counsel</CheckItem>
+                    <CheckItem>Legal, intellectual property, or privacy counsel</CheckItem>
                     <CheckItem>Consultants and strategy advisors</CheckItem>
                     <CheckItem>Contract manufacturing and design services</CheckItem>
                     <CheckItem>Contract research organizations (CROs)</CheckItem>
-                    <CheckItem>And other resource providers who serve early-stage health tech companies</CheckItem>
+                    <CheckItem>Any organization who works to help health tech founders succeed</CheckItem>
                   </ul>
                 </div>
               </ScrollReveal>
@@ -458,19 +455,20 @@ export default function Network() {
                   <div className="mt-6 space-y-6">
                     <div className="border-l-2 border-rellia-mint pl-5">
                       <p className="font-host-grotesk text-lg md:text-xl font-bold text-black tracking-tight">
-                        Event or Program Sponsorship
+                        Sponsor a Program or Event
                       </p>
                       <p className="mt-2 font-urbanist text-base leading-relaxed text-black/65">
-                        Align your brand with a specific Rellia event or program relevant to your business.
+                        Participate in a program or event directly relevant to your business. Position yourself as a
+                        subject matter expert, not just a logo.
                       </p>
                     </div>
                     <div className="border-l-2 border-rellia-teal pl-5">
                       <p className="font-host-grotesk text-lg md:text-xl font-bold text-black tracking-tight">
-                        Annual Sponsorship
+                        Become Part of the Community
                       </p>
                       <p className="mt-2 font-urbanist text-base leading-relaxed text-black/65">
-                        Maintain year-round visibility and access to Rellia's growing community of
-                        health tech founders.
+                        Become a familiar face in the community. Annual partners get personalized introductions to
+                        founders who are actively looking for exactly what they offer.
                       </p>
                     </div>
                   </div>
@@ -481,13 +479,14 @@ export default function Network() {
             <ScrollReveal delay={0.25}>
               <div className="mt-14 flex flex-col md:flex-row md:items-center md:justify-between gap-6 border-t border-black/10 pt-10">
                 <p className="font-urbanist text-base md:text-lg text-black/60 max-w-xl">
-                  Tell us a little about your offering and we'll find the right fit.
+                  Put your brand in front of founders at the exact moment they're making decisions about who to work
+                  with.
                 </p>
                 <RelliaAction asChild variant="tealFilledLift" size="comfortable">
-                  <a href={CTA.partner}>
+                  <Link to={CTA.partner}>
                     Get in Touch About Partnering
                     <ArrowRight />
-                  </a>
+                  </Link>
                 </RelliaAction>
               </div>
             </ScrollReveal>
@@ -496,9 +495,9 @@ export default function Network() {
 
         <RelliaCta
           title="One network. Four doors in."
-          body="Whichever door is yours, the goal is the same — move health innovation forward, faster. Pick the one that fits and we'll take it from there."
+          body="Founders, advisors, investors, and industry partners all showing up for the same reason - to move health innovation forward. That's what this community here for."
           primary={{ label: "Learn About Rellia", to: "/about" }}
-          secondary={{ label: SUPPORT_EMAIL, href: `mailto:${SUPPORT_EMAIL}` }}
+          secondary={{ label: "Not sure where you fit? Contact us!", to: "/contact" }}
         />
       </main>
 

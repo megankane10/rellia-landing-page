@@ -16,6 +16,14 @@ export type RelliaCtaAction = {
   external?: boolean
 }
 
+/** Use `to` for same-origin app routes so the SPA navigates without a full reload. */
+export const ctaActionFromHref = (label: string, href: string): RelliaCtaAction => {
+  if (href.startsWith("/") && !href.startsWith("//")) {
+    return { label, to: href }
+  }
+  return { label, href }
+}
+
 export type RelliaCtaProps = {
   /** Main headline inside the card. */
   title: string

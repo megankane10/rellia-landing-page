@@ -1,4 +1,5 @@
 import React, { useState, useCallback } from 'react';
+import { Link } from 'react-router-dom';
 
 // ─── TYPES ───────────────────────────────────────────────────────────────────
 
@@ -682,13 +683,13 @@ Return: {"summary":"2-3 sentences to founder in second person","top3_strengths":
                 <div className="ds-mentor-gate">
                   <h3>Unlock your mentor matches</h3>
                   <p>Based on your results, we've identified three areas where a Rellia mentor can make the biggest difference. Join Rellia Health to see your matched mentors and book a session directly from this report.</p>
-                  <a className="ds-join-btn" href="/join">Join Rellia Health →</a>
+                  <Link className="ds-join-btn" to="/network">Join Rellia Health →</Link>
                 </div>
               </div>
 
               <div className="ds-report-footer">
                 <p>A copy of this report has been sent to {memberInfo.email || 'your email'} and to the Rellia team.<br />
-                Questions? <a href="mailto:hello@relliahealth.com">hello@relliahealth.com</a></p>
+                Questions? <Link to="/contact">Contact us</Link></p>
                 <button className="ds-reset-btn" onClick={() => { setView('intro'); setAnswers({}); setCurrentSection(-1); setAiResult(null); }}>
                   ← Start a new assessment
                 </button>
