@@ -1,8 +1,9 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import ScrollReveal from "@/components/ScrollReveal";
+import RelliaCta from "@/components/RelliaCta";
 import { Heart, Stethoscope, Globe, Zap, type LucideIcon } from "lucide-react";
-import { IconFeatureCard, TeamMemberCard, AboutCtaBanner } from "@/components/cards";
+import { IconFeatureCard, TeamMemberCard } from "@/components/cards";
 import { useAboutPage } from "@/hooks/useCmsDocuments";
 import { DEFAULT_ABOUT_PAGE } from "@shared/cms/defaults";
 
@@ -121,20 +122,12 @@ export default function About() {
           </div>
         </section>
 
-        <section className="py-20 md:py-32 px-6">
-          <div className="max-w-[1300px] mx-auto">
-            <ScrollReveal>
-              <AboutCtaBanner
-                founderApplyHref={FOUNDER_APPLY_HREF}
-                teamCareersPath="/contact"
-                title={about.ctaTitle}
-                body={about.ctaBody}
-                founderLabel={about.ctaFounderLabel}
-                teamLabel={about.ctaTeamLabel}
-              />
-            </ScrollReveal>
-          </div>
-        </section>
+        <RelliaCta
+          title={about.ctaTitle}
+          body={about.ctaBody}
+          primary={{ label: about.ctaFounderLabel, to: FOUNDER_APPLY_HREF }}
+          secondary={{ label: about.ctaTeamLabel, to: "/contact" }}
+        />
       </main>
 
       <Footer />

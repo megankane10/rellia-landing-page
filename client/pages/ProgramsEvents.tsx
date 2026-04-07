@@ -1,6 +1,7 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import ScrollReveal from "@/components/ScrollReveal";
+import RelliaCta from "@/components/RelliaCta";
 import { EventCard, eventKey, ProgramCard } from "@/components/cards";
 import {
   Carousel,
@@ -11,7 +12,6 @@ import {
 } from "@/components/ui/carousel";
 import { cn } from "@/lib/utils";
 import RelliaAction from "@/components/RelliaAction";
-import { ArrowRight } from "lucide-react";
 import { useProgramsLandingPage } from "@/hooks/useCmsDocuments";
 import { DEFAULT_PROGRAMS_LANDING } from "@shared/cms/defaults";
 
@@ -170,26 +170,11 @@ export default function ProgramsEvents() {
           </div>
         </section>
 
-        <section className="py-16 md:py-24 px-6">
-          <div className="max-w-[1300px] mx-auto">
-            <ScrollReveal>
-              <div className="bg-rellia-teal rounded-3xl px-8 py-14 md:px-16 md:py-20 text-center">
-                <h3 className="text-white text-3xl md:text-4xl font-bold tracking-tight mb-4">
-                  {pl.ctaTitle}
-                </h3>
-                <p className="font-urbanist text-white/80 text-lg md:text-xl max-w-xl mx-auto mb-8">
-                  {pl.ctaBody}
-                </p>
-                <RelliaAction asChild variant="mintOnTealStrip" size="comfortable">
-                  <a href={pl.ctaButtonHref}>
-                    {pl.ctaButtonLabel}
-                    <ArrowRight className="w-4 h-4" />
-                  </a>
-                </RelliaAction>
-              </div>
-            </ScrollReveal>
-          </div>
-        </section>
+        <RelliaCta
+          title={pl.ctaTitle}
+          body={pl.ctaBody}
+          primary={{ label: pl.ctaButtonLabel, href: pl.ctaButtonHref }}
+        />
       </main>
 
       <Footer />
