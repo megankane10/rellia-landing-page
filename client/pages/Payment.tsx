@@ -250,10 +250,10 @@ export default function Payment() {
                             )}
                           >
                             <span
-                              className="pointer-events-none absolute inset-0 origin-bottom scale-y-0 bg-primary transition-transform duration-700 ease-in-out group-hover:scale-y-100"
+                              className="pointer-events-none absolute inset-0 bg-primary opacity-0 transition-opacity duration-300 ease-out group-hover:opacity-100"
                               aria-hidden
                             />
-                            <p className="relative z-10 font-urbanist text-base font-semibold leading-snug tracking-[-0.01em] text-white/90 transition-colors duration-700 ease-in-out group-hover:text-primary-foreground md:text-lg">
+                            <p className="relative z-10 font-urbanist text-base font-semibold leading-snug tracking-[-0.01em] text-white/90 transition-all duration-300 ease-out group-hover:-translate-y-0.5 group-hover:text-primary-foreground md:text-lg">
                               {line}
                             </p>
                           </div>
