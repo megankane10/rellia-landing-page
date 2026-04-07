@@ -1,6 +1,7 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import ScrollReveal from "@/components/ScrollReveal";
+import RelliaCta from "@/components/RelliaCta";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Link } from "react-router-dom";
 import { useFaqPage } from "@/hooks/useCmsDocuments";
@@ -85,31 +86,11 @@ export default function FAQ() {
           </div>
         </section>
 
-        <section className="pb-20 md:pb-28 px-6">
-          <div className="max-w-[1100px] mx-auto">
-            <ScrollReveal>
-              <div className="relative overflow-hidden rounded-[32px] md:rounded-[40px] bg-rellia-teal text-white px-8 py-10 md:px-12 md:py-14 flex flex-col md:flex-row items-start md:items-center gap-6 md:gap-10">
-                <div className="absolute inset-0 opacity-30 pointer-events-none">
-                  <div className="absolute -top-20 right-0 w-64 h-64 bg-rellia-mint/40 rounded-full blur-3xl" />
-                </div>
-                <div className="relative z-10 flex-1 space-y-3 md:space-y-4">
-                  <h3 className="text-2xl md:text-3xl font-bold tracking-tight">{faq.bottomTitle}</h3>
-                  <p className="text-white/80 font-urbanist text-sm md:text-base leading-relaxed max-w-xl">
-                    {faq.bottomBody}
-                  </p>
-                </div>
-                <div className="relative z-10">
-                  <Link
-                    to={faq.bottomCtaPath}
-                    className="inline-flex items-center justify-center rounded-full bg-white text-rellia-teal font-semibold text-sm md:text-base px-7 py-3 md:px-8 md:py-3.5 shadow-sm hover:bg-rellia-mint transition-colors"
-                  >
-                    {faq.bottomCtaLabel}
-                  </Link>
-                </div>
-              </div>
-            </ScrollReveal>
-          </div>
-        </section>
+        <RelliaCta
+          title={faq.bottomTitle}
+          body={faq.bottomBody}
+          primary={{ label: faq.bottomCtaLabel, to: faq.bottomCtaPath }}
+        />
       </main>
 
       <Footer />
