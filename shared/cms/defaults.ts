@@ -243,12 +243,23 @@ export const DEFAULT_ABOUT_PAGE: AboutPageContent = {
     },
     {
       name: "Deena Al-Sammak",
-      role: "Program Manager",
+      role: "Program Manager, Co-Founder",
+      bio: "Deena brings startup experience in the health tech space and leverages her experience to lead our program development and management",
       imageSrc: "/images/deenasammak-team.jpeg",
     },
-    { name: "Priyanka", imageSrc: "/images/nopicture-female.jpg" },
+    {
+      name: "Priyanka Ramjagsingh",
+      role: "Operations Director",
+      bio: "With a decade of experience embedded in early-stage health companies, Priyanka converts her deep regulatory and quality expertise into operational momentum, turning complexity into the strategic edge that moves teams forward.",
+      imageSrc: "/images/nopicture-female.jpg",
+    },
     { name: "Khali", imageSrc: "/images/nopicture-male.jpg" },
-    { name: "Kelly", imageSrc: "/images/nopicture-female.jpg" },
+    {
+      name: "Kelly Hu",
+      role: "Social Media Manager",
+      bio: "A digital health founder herself, Kelly plans and executes content creation to boost engagement and showcase Rellia's growing network.",
+      imageSrc: "/images/nopicture-female.jpg",
+    },
   ],
   ctaTitle: "You're in the right place.",
   ctaBody:
