@@ -178,18 +178,6 @@ export default function Navbar({ ctaRadiusClassName = "rounded-full" }: NavbarPr
         {/* CTA buttons */}
         <div className="hidden md:flex items-center gap-3 shrink-0 justify-self-end">
           <Link
-            to="/contact"
-            className={cn(
-              "font-host-grotesk font-semibold text-[14px] lg:text-[15px] px-5 py-3 border-2 transition-all duration-200 whitespace-nowrap tracking-tight hover:-translate-y-0.5",
-              ctaRadiusClassName,
-              useLightNav
-                ? "border-white/70 text-white bg-transparent hover:bg-white/10 hover:border-white"
-                : "border-rellia-teal text-rellia-teal bg-transparent hover:bg-rellia-teal/5",
-            )}
-          >
-            Contact
-          </Link>
-          <Link
             to="/network"
             className={cn(
               "flex items-center gap-2 font-host-grotesk font-semibold text-[14px] lg:text-[15px] px-6 py-3 border-2 transition-all duration-200 whitespace-nowrap tracking-tight hover:-translate-y-0.5 hover:shadow-lg",
@@ -299,16 +287,6 @@ export default function Navbar({ ctaRadiusClassName = "rounded-full" }: NavbarPr
           </Link>
 
           <div className="mt-5 flex flex-col gap-3">
-            <Link
-              to="/contact"
-              className={cn(
-                "flex items-center justify-center font-host-grotesk font-semibold text-base px-7 py-3.5 border-2 border-rellia-teal text-rellia-teal bg-transparent hover:bg-rellia-teal/5 transition-all duration-200 w-full",
-                ctaRadiusClassName,
-              )}
-              onClick={() => setMobileOpen(false)}
-            >
-              Contact
-            </Link>
             <Link
               to="/network"
               className={cn(
