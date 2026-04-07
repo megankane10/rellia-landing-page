@@ -26,7 +26,7 @@ export const handleCreateEmbeddedCheckout: RequestHandler = async (_req, res) =>
 
     res.status(200).json({ ok: true, clientSecret: session.client_secret })
   } catch (err) {
-    console.error("[api/create-embedded-checkout]", err)
+    console.error("[api/create-embedded-checkout]:", err instanceof Error ? err.message : String(err))
     res.status(500).json({ ok: false, error: "Could not start checkout" })
   }
 }

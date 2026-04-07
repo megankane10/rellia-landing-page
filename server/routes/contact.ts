@@ -64,7 +64,7 @@ export const handleContactSubmit: RequestHandler = async (req, res) => {
     await appendSubmissionRecord(payload)
     fileSaved = true
   } catch (err) {
-    console.error("[api/contact] Failed to persist submission", err)
+    console.error("[api/contact] Failed to persist submission:", err instanceof Error ? err.message : String(err))
   }
 
   let emailSent = false
@@ -73,7 +73,7 @@ export const handleContactSubmit: RequestHandler = async (req, res) => {
       await sendContactNotificationEmail(payload as ContactEmailPayload)
       emailSent = true
     } catch (err) {
-      console.error("[api/contact] Failed to send notification email", err)
+      console.error("[api/contact] Failed to send notification email:", err instanceof Error ? err.message : String(err))
     }
   }
 
