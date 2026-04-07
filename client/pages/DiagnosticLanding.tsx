@@ -169,7 +169,7 @@ export default function DiagnosticLanding() {
           <LogoMark size={32} />
           <span className="dl-nav-logo-text">Rellia</span>
         </Link>
-        <Link className="dl-nav-cta" to="/diagnostic">Begin Assessment →</Link>
+        <Link className="dl-nav-cta" to="/diagnosticSurvey">Begin Assessment →</Link>
       </nav>
 
       {/* HERO */}
@@ -180,7 +180,7 @@ export default function DiagnosticLanding() {
         <h1 className="dl-h1">How ready is your<br /><em>startup, really?</em></h1>
         <p className="dl-sub">A structured assessment across 13 domains — from regulatory and clinical to go-to-market and operations. Honest answers give you an accurate picture of where you stand today.</p>
         <div className="dl-cta-row">
-          <Link className="dl-btn-primary" to="/diagnostic">Take the Diagnostic →</Link>
+          <Link className="dl-btn-primary" to="/diagnosticSurvey">Take the Diagnostic →</Link>
           <a className="dl-btn-secondary" href="#how-it-works">See how it works</a>
         </div>
         <p className="dl-hero-note">Free · No account required · Takes ~15 minutes</p>
@@ -249,7 +249,7 @@ export default function DiagnosticLanding() {
           <p className="dl-eyebrow-text">Ready to begin?</p>
           <h2 className="dl-h2">Get your diagnostic report today</h2>
           <p>15 minutes of honest reflection. A clear picture of where you're strong, where you're exposed, and exactly what to do next.</p>
-          <Link className="dl-btn-primary" to="/diagnostic" style={{ display: 'inline-flex' }}>Take the Diagnostic →</Link>
+          <Link className="dl-btn-primary" to="/diagnosticSurvey" style={{ display: 'inline-flex' }}>Take the Diagnostic →</Link>
           <p className="dl-member-note">Rellia Health member? Your report includes mentor matching. <Link to="/network">Join here →</Link></p>
         </div>
       </section>
