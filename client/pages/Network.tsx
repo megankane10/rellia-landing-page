@@ -88,7 +88,7 @@ export default function Network() {
         <section className="relative pt-32 pb-20 md:pt-48 md:pb-28 bg-rellia-teal overflow-hidden">
           {/* Background photograph */}
           <img
-            src="/images/hero-network.png"
+            src="/images/hero-network.jpg"
             alt=""
             aria-hidden
             className="absolute inset-0 h-full w-full object-cover object-center select-none"
