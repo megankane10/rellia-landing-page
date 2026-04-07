@@ -13,7 +13,6 @@ import {
   TrendingUp,
   Building2,
   Users,
-  Mail,
   GraduationCap,
 } from "lucide-react";
 
@@ -182,19 +181,6 @@ export default function Navbar({ ctaRadiusClassName = "rounded-full" }: NavbarPr
         {/* CTA buttons */}
         <div className="hidden md:flex items-center gap-3 shrink-0 justify-self-end">
           <Link
-            to="/contact"
-            className={cn(
-              "flex items-center gap-2 font-host-grotesk font-semibold text-[14px] lg:text-[15px] px-6 py-3 border transition-all duration-200 whitespace-nowrap tracking-tight hover:-translate-y-0.5 hover:shadow-lg",
-              ctaRadiusClassName,
-              useLightNav
-                ? "border-white text-white hover:bg-white hover:text-rellia-teal"
-                : "border-rellia-teal text-rellia-teal hover:bg-rellia-teal hover:text-white",
-            )}
-          >
-            <Mail className="w-4 h-4" />
-            Contact Us
-          </Link>
-          <Link
             to="/network"
             className={cn(
               "flex items-center gap-2 font-host-grotesk font-semibold text-[14px] lg:text-[15px] px-6 py-3 border-2 transition-all duration-200 whitespace-nowrap tracking-tight hover:-translate-y-0.5 hover:shadow-lg",
@@ -295,17 +281,6 @@ export default function Navbar({ ctaRadiusClassName = "rounded-full" }: NavbarPr
           </Link>
 
           <div className="mt-5 flex flex-col gap-3">
-            <Link
-              to="/contact"
-              className={cn(
-                "flex items-center justify-center gap-2 border border-rellia-teal text-rellia-teal font-host-grotesk font-semibold text-base px-7 py-3.5 hover:bg-rellia-teal hover:text-white transition-all duration-200 w-full",
-                ctaRadiusClassName,
-              )}
-              onClick={() => setMobileOpen(false)}
-            >
-              <Mail className="w-5 h-5" />
-              Contact Us
-            </Link>
             <Link
               to="/network"
               className={cn(
