@@ -541,7 +541,7 @@ export default function DiagnosticSurvey() {
             </div>
           )}
 
-          {/* SUBMIT */}k
+          {/* SUBMIT */}
           {view === 'submit' && (
             <div className="ds-submit ds-fade">
               <div className="ds-submit-hero">

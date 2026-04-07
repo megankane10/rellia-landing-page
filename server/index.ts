@@ -47,7 +47,7 @@ const fixVercelRewrittenApiPath: RequestHandler = (req, _res, next) => {
 
 const contactLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 5,
+  max: 15,
   standardHeaders: true,
   legacyHeaders: false,
   message: { ok: false, error: "Too many requests, please try again later" },
@@ -71,7 +71,7 @@ const diagnosticLimiter = rateLimit({
 
 export function createServer() {
   const app = express()
-
+  app.set("trust proxy", 1)
   app.use(fixVercelRewrittenApiPath)
 
   // Security headers
@@ -82,11 +82,28 @@ export function createServer() {
     ? process.env.ALLOWED_ORIGINS.split(",").map((o) => o.trim())
     : []
 
+  if (allowedOrigins.length === 0) {
+    if (process.env.NODE_ENV === "development") {
+      console.warn(
+        "[CORS] ALLOWED_ORIGINS is not set — allowing all origins in development mode"
+      )
+    } else {
+      console.warn(
+        "[CORS] ALLOWED_ORIGINS is not set — all browser requests will be blocked. " +
+          "Set ALLOWED_ORIGINS to a comma-separated list of allowed origins."
+      )
+    }
+  }
+
   app.use(
     cors({
       origin: (origin, callback) => {
         // Allow requests with no origin (e.g. curl, server-to-server)
         if (!origin) return callback(null, true)
+        // In development with no ALLOWED_ORIGINS set, allow all origins
+        if (allowedOrigins.length === 0 && process.env.NODE_ENV === "development") {
+          return callback(null, true)
+        }
         if (allowedOrigins.includes(origin)) return callback(null, true)
         callback(new Error(`Origin ${origin} not allowed by CORS`))
       },
