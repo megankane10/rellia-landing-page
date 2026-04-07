@@ -15,7 +15,6 @@ import NotFound from "./pages/NotFound";
 import PlaceholderPage from "./pages/PlaceholderPage";
 import Contact from "./pages/Contact";
 import Network from "./pages/Network";
-import DiagnosticLanding from "./pages/DiagnosticLanding";
 import Payment from "./pages/Payment";
 import TermsofUse from "./pages/TermsofUse";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
@@ -61,9 +60,9 @@ const App = () => (
           <Route path="/terms" element={<TermsofUse />} />
           <Route path="/privacy" element={<PrivacyPolicy />} />
 
-          {/* Diagnostics */}
-          <Route path="/diagnostics" element={<DiagnosticLanding />} />
-          <Route path="/diagnostic" element={<PlaceholderPage title="Diagnostic Survey" />} />
+          {/* Diagnostics — placeholders on main; full pages on Additions branch */}
+          <Route path="/diagnostics" element={<PlaceholderPage title="Diagnostic Landing" />} />
+          <Route path="/diagnosticSurvey" element={<PlaceholderPage title="Diagnostic Survey" />} />
 
           {/* CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
