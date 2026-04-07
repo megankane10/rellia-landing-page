@@ -33,8 +33,8 @@ type SectionId = "founders" | "investors" | "advisors" | "partners"
 
 const JUMP_LINKS: Array<{ id: SectionId; numeral: string; label: string; icon: LucideIcon }> = [
   { id: "founders", numeral: "01", label: "Founders", icon: Rocket },
-  { id: "investors", numeral: "02", label: "Investors", icon: TrendingUp },
-  { id: "advisors", numeral: "03", label: "Advisors & Mentors", icon: GraduationCap },
+  { id: "advisors", numeral: "02", label: "Advisors", icon: GraduationCap },
+  { id: "investors", numeral: "03", label: "Investors", icon: TrendingUp },
   { id: "partners", numeral: "04", label: "Industry Partners", icon: Building2 },
 ]
 
@@ -190,11 +190,9 @@ export default function Network() {
 
             <ScrollReveal delay={0.1}>
               <p className="mt-6 md:mt-8 text-black/70 text-lg md:text-xl font-urbanist leading-relaxed max-w-3xl">
-                Rellia is for founders who are serious about building real companies in health
-                tech — including digital health, medical devices, diagnostics, Software as a
-                Medical Device (SaMD), and wellness. Whether you're selling to hospitals, clinics,
-                providers, or directly to patients and consumers, if you're solving a real problem
-                in healthcare, you belong here.
+                Rellia is for founders who are serious about building in health tech. Whether you're working on
+                digital health, a medical device, diagnostics, or a wellness product, and whether your customer is a
+                hospital system or a patient at home, if you're solving a real problem in healthcare, you belong here.
               </p>
             </ScrollReveal>
 
@@ -205,7 +203,7 @@ export default function Network() {
                     We welcome founders who are
                   </h3>
                   <ul className="mt-6 space-y-4">
-                    <CheckItem>Mid-career, mature, or deeply committed — not casually exploring ideas</CheckItem>
+                    <CheckItem>Committed to building their company, not casually exploring ideas</CheckItem>
                     <CheckItem>Technical, clinical, or commercially experienced</CheckItem>
                     <CheckItem>At any stage — idea, prototype, early users, or paying customers</CheckItem>
                     <CheckItem>Incorporated or not, funded or not, raising or not</CheckItem>
@@ -220,7 +218,7 @@ export default function Network() {
                     What you'll get
                   </h3>
                   <ul className="mt-6 space-y-4">
-                    <CheckItem>Clear, tangible next steps — no fluff</CheckItem>
+                    <CheckItem>Clear, tangible outcomes. No fluff.</CheckItem>
                     <CheckItem>Direct access to domain experts who've been where you are</CheckItem>
                     <CheckItem>Guidance that will meaningfully improve your ability to raise funds</CheckItem>
                     <CheckItem>An efficient, high-signal experience that respects your time</CheckItem>
@@ -259,16 +257,15 @@ export default function Network() {
             <ScrollReveal>
               <SectionTag>Investors</SectionTag>
               <h2 className="mt-5 text-black text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight leading-[1.05] max-w-3xl">
-                Meet your <span className="text-rellia-teal">next investment.</span>
+                Stop sorting through cold pitch decks.
               </h2>
             </ScrollReveal>
 
             <ScrollReveal delay={0.1}>
               <p className="mt-6 md:mt-8 text-black/70 text-lg md:text-xl font-urbanist leading-relaxed max-w-3xl">
-                Rellia surfaces the health tech founders worth watching — vetted, prepared, and
-                guided by a deep bench of experienced advisors. Our founders aren't just
-                building — they're being shaped into fundable, scalable ventures before they ever
-                reach your desk.
+                Rellia surfaces health tech founders worth your attention: vetted, prepared, and supported by advisors
+                with real industry experience. By the time they reach you, they've already done the hard work of
+                validating their assumptions and sharpening their strategies.
               </p>
             </ScrollReveal>
 
@@ -277,21 +274,21 @@ export default function Network() {
                 {[
                   {
                     n: "I",
-                    title: "Curated pipeline",
+                    title: "Individually selected founders",
                     body:
-                      "Access a curated pipeline of early-stage health tech companies that have been pressure-tested before they reach you.",
+                      "Every founder in our pipeline has been individually selected. We bring you only the most committed and pressure-tested builders that are genuinely worth your time.",
                   },
                   {
                     n: "II",
                     title: "Operator-coached",
                     body:
-                      "Founders are coached and guided by operators who've built and scaled in the industry — not generalist advisors.",
+                      "Founders are coached by operators who've built and scaled in healthcare, not generalist advisors.",
                   },
                   {
                     n: "III",
-                    title: "Structured pitch events",
+                    title: "Virtual pitch events",
                     body:
-                      "Pitch events bring together investors and founders in a structured, high-quality format — no time wasted.",
+                      "Curated to your portfolio focus and hosted virtually, our pitch events cut straight to the conversations that matter. No travel, no bad drinks, just founders worth meeting.",
                   },
                 ].map((item) => (
                   <div key={item.title} className="bg-white p-8 md:p-10 flex flex-col gap-4">
@@ -312,7 +309,7 @@ export default function Network() {
             <ScrollReveal delay={0.2}>
               <div className="mt-14 flex flex-col md:flex-row md:items-center md:justify-between gap-6 border-t border-black/10 pt-10">
                 <p className="font-urbanist text-base md:text-lg text-black/60 max-w-xl">
-                  Get on the list for our next pitch event, or reach out directly for a private intro.
+                  Get early access to founders we're backing before they're on anyone else's radar.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-3">
                   <RelliaAction asChild variant="tealFilledLift" size="comfortable">
@@ -341,19 +338,17 @@ export default function Network() {
             <SectionNumeral value="03" />
 
             <ScrollReveal>
-              <SectionTag>Advisors &amp; Mentors</SectionTag>
+              <SectionTag>Advisors</SectionTag>
               <h2 className="mt-5 text-black text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight leading-[1.05] max-w-3xl">
-                Share your expertise. <br />
-                <span className="text-rellia-teal">Shape what's next.</span>
+                Some people are just wired to help others succeed.
               </h2>
             </ScrollReveal>
 
             <ScrollReveal delay={0.1}>
               <p className="mt-6 md:mt-8 text-black/70 text-lg md:text-xl font-urbanist leading-relaxed max-w-3xl">
-                Rellia advisors are experienced operators, clinicians, executives, and specialists
-                who want to stay connected to health tech innovation and give back to the next
-                generation of founders. If you've built, scaled, regulated, or commercialized in
-                healthcare — your insight is exactly what these founders need.
+                Rellia advisors are experienced operators, clinicians, executives, and specialists who want to stay
+                connected to health tech innovation and support founders they believe in. If you've spent your career in
+                healthcare, sharing your experience can change someone's trajectory
               </p>
             </ScrollReveal>
 
