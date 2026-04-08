@@ -27,7 +27,7 @@ export default function About() {
       <Navbar />
 
       <main>
-        <section className="relative pt-32 pb-20 md:pt-48 md:pb-32 bg-rellia-teal overflow-hidden">
+        <section className="relative pt-28 pb-16 md:pt-40 md:pb-24 bg-rellia-teal overflow-hidden">
           <div className="absolute inset-0 opacity-10 pointer-events-none">
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-rellia-mint via-transparent to-transparent blur-3xl" />
           </div>
@@ -41,12 +41,12 @@ export default function About() {
 
           <div className="relative z-10 max-w-[1300px] mx-auto px-6 md:px-10">
             <ScrollReveal>
-              <h1 className="text-white text-5xl md:text-7xl lg:text-8xl font-bold leading-tight tracking-tight mb-8">
+              <h1 className="text-white text-5xl md:text-6xl lg:text-7xl font-bold leading-tight tracking-tight mb-6">
                 {about.heroLine1} <br />
                 <span className="text-rellia-mint">{about.heroLine2Mint}</span> <br />
                 {about.heroLine3}
               </h1>
-              <p className="text-white/80 text-lg md:text-2xl max-w-3xl font-urbanist leading-relaxed">
+              <p className="text-white/80 text-lg md:text-xl max-w-3xl font-urbanist leading-relaxed">
                 {about.heroIntro}
               </p>
             </ScrollReveal>

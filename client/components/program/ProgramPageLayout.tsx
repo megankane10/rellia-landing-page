@@ -1,14 +1,20 @@
 import { useState, type KeyboardEvent } from "react"
+import { Link } from "react-router-dom"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
 import ScrollReveal from "@/components/ScrollReveal"
 import RelliaCta, { ctaActionFromHref } from "@/components/RelliaCta"
-import { CheckCircle2, ArrowRight } from "lucide-react"
+import { CheckCircle2, ArrowRight, ChevronRight } from "lucide-react"
 import RelliaAction from "@/components/RelliaAction"
 import type { QmsProgramContent } from "@shared/cms/types"
 import type { ProgramPageStaticBlocks } from "@shared/cms/programs/types"
 
+/**
+ * Shared layout for **program detail** pages under `/programs/…` (not the `/programs` hub).
+ * Each program supplies CMS copy (`paymentUrl` = Stripe Payment Link) and route-specific static blocks.
+ * Add new programs by new routes + Sanity types; consider generalizing `QmsProgramContent` when shapes align.
+ */
 export type ProgramPageLayoutProps = {
   cms: QmsProgramContent
   heroImageSrc: string
@@ -16,6 +22,8 @@ export type ProgramPageLayoutProps = {
   /** Anchor id for the "Learn more" in-hero control */
   outcomesSectionId: string
   staticBlocks: ProgramPageStaticBlocks
+  /** Last segment of the breadcrumb (defaults to hero title) */
+  breadcrumbCurrentLabel?: string
 }
 
 const ProgramPageLayout = ({
@@ -23,8 +31,10 @@ const ProgramPageLayout = ({
   heroImageSrc,
   heroImageAlt,
   outcomesSectionId,
+  breadcrumbCurrentLabel,
   staticBlocks: { howItWorksCards, pillars, timeline },
 }: ProgramPageLayoutProps) => {
+  const crumbCurrent = breadcrumbCurrentLabel ?? q.heroTitle
   const [timelineOpen, setTimelineOpen] = useState<string | undefined>(undefined)
 
   const handleLearnMoreClick = () => {
@@ -45,8 +55,32 @@ const ProgramPageLayout = ({
     <div className="min-h-screen bg-white font-host-grotesk overflow-x-hidden">
       <Navbar />
 
-      <main>
-        <section className="py-20 md:py-32 bg-white">
+      <main className="pt-[72px] md:pt-[86px]">
+        <nav
+          aria-label="Breadcrumb"
+          className="border-b border-black/[0.06] bg-gradient-to-r from-rellia-cream/80 to-white"
+        >
+          <div className="max-w-[1300px] mx-auto px-6 md:px-10 py-3.5 md:py-4">
+            <ol className="flex flex-wrap items-center gap-2 text-sm md:text-[15px] font-urbanist">
+              <li>
+                <Link
+                  to="/programs"
+                  className="font-semibold text-rellia-teal transition-colors hover:text-rellia-teal/85 hover:underline underline-offset-4"
+                >
+                  Programs &amp; Events
+                </Link>
+              </li>
+              <li className="flex items-center text-black/30" aria-hidden>
+                <ChevronRight className="h-4 w-4 shrink-0" />
+              </li>
+              <li className="text-black/55 font-medium max-w-[min(100%,42rem)] truncate" title={crumbCurrent}>
+                {crumbCurrent}
+              </li>
+            </ol>
+          </div>
+        </nav>
+
+        <section className="py-16 md:py-24 bg-white">
           <div className="max-w-[1300px] mx-auto px-6 md:px-10">
             <ScrollReveal>
               <div className="flex flex-col lg:flex-row lg:items-center gap-16">

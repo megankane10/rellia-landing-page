@@ -16,13 +16,9 @@ interface AIResult {
   mentor_areas_needed: string[];
 }
 
-// ─── CONFIG ──────────────────────────────────────────────────────────────────
-// Update PROXY_URL after deploying your Cloudflare Worker
-
-const CONFIG = {
-  PROXY_URL: 'https://YOUR-WORKER.YOUR-SUBDOMAIN.workers.dev',
-  RELLIA_COPY_EMAIL: 'hello@relliahealth.com',
-};
+// ─── AI (diagnostic report) ─────────────────────────────────────────────────
+// Report generation is proxied via our own server route (`POST /api/diagnostic-report`)
+// so no third-party API keys ever live in the browser bundle.
 
 // ─── QUESTION DATA ───────────────────────────────────────────────────────────
 
@@ -327,7 +323,7 @@ export default function DiagnosticSurvey() {
   const [answers, setAnswers] = useState<Answers>({});
   const [memberInfo, setMemberInfo] = useState<MemberInfo>({ name:'', company:'', stage:'', email:'', desc:'' });
   const [aiResult, setAiResult] = useState<AIResult | null>(null);
-  const [processingSteps, setProcessingSteps] = useState<('idle'|'active'|'done')[]>(['idle','idle','idle','idle']);
+  const [processingSteps, setProcessingSteps] = useState<('idle'|'active'|'done')[]>(['idle','idle','idle']);
 
   const completedSections = SECTIONS.filter(s =>
     answers[s.id] && Object.keys(answers[s.id]).length === s.questions.length
@@ -347,7 +343,7 @@ export default function DiagnosticSurvey() {
 
   const submitSurvey = async () => {
     setView('processing');
-    const steps: ('idle'|'active'|'done')[] = ['active','idle','idle','idle'];
+    const steps: ('idle'|'active'|'done')[] = ['active','idle','idle'];
     setProcessingSteps([...steps]);
 
     const scores: Record<string, number> = {};
@@ -355,37 +351,25 @@ export default function DiagnosticSurvey() {
     const summaryLines = SECTIONS.map(s => `- ${s.title}: ${scores[s.id]}%`).join('\n');
 
     try {
-      // Step 1 → 2
-      const prompt = `You are a health tech startup advisor at Rellia Health. Analyze this startup diagnostic and return ONLY valid JSON (no markdown, no backticks).
-Company: ${memberInfo.company}
-Stage: ${memberInfo.stage}
-Product: ${memberInfo.desc}
-Section scores: ${summaryLines}
-Return: {"summary":"2-3 sentences to founder in second person","top3_strengths":[{"category":"","score":0,"note":""}],"top3_weaknesses":[{"category":"","score":0,"note":"","priority":"Critical"}],"recommendations":[""],"mentor_areas_needed":[""]}`;
-
-      setProcessingSteps(['done','active','idle','idle']);
-      const res = await fetch('https://api.anthropic.com/v1/messages', {
+      setProcessingSteps(['done','active','idle']);
+      const res = await fetch('/api/diagnostic-report', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 1200, messages: [{ role: 'user', content: prompt }] })
+        body: JSON.stringify({
+          company: memberInfo.company,
+          stage: memberInfo.stage,
+          desc: memberInfo.desc,
+          sectionScoresMarkdown: summaryLines,
+        })
       });
-      const data = await res.json();
-      const text = data.content.map((b: { text?: string }) => b.text || '').join('');
-      const result: AIResult = JSON.parse(text.replace(/```json|```/g, '').trim());
+      if (!res.ok) {
+        throw new Error(`Report generation failed (${res.status})`)
+      }
+      const result: AIResult = await res.json()
       setAiResult(result);
 
-      setProcessingSteps(['done','done','active','idle']);
-
-      // Send emails
-      try {
-        const emailBody = buildEmailHTML(result, scores, memberInfo);
-        await proxyPost('/gmail/send', { to: CONFIG.RELLIA_COPY_EMAIL, subject: `[Diagnostic] ${memberInfo.company} — ${new Date().toLocaleDateString('en-CA')}`, body: emailBody, isHtml: true });
-        if (memberInfo.email) {
-          await proxyPost('/gmail/send', { to: memberInfo.email, subject: `Your Rellia Startup Diagnostic — ${memberInfo.company}`, body: emailBody, isHtml: true });
-        }
-      } catch(e) { console.warn('Email send failed', e); }
-
-      setProcessingSteps(['done','done','done','done']);
+      setProcessingSteps(['done','done','active']);
+      setProcessingSteps(['done','done','done']);
       setTimeout(() => setView('report'), 400);
 
     } catch(err) {
@@ -603,7 +587,7 @@ Return: {"summary":"2-3 sentences to founder in second person","top3_strengths":
                 <h2>Analysing your results</h2>
                 <p>We're reviewing your diagnostic across all 13 sections and building your personalized report.</p>
                 <div className="ds-p-steps">
-                  {['Analysing your section scores', 'Identifying strengths and gaps', 'Generating your recommendations', 'Sending your copy to Rellia'].map((label, i) => (
+                  {['Analysing your section scores', 'Identifying strengths and gaps', 'Generating your recommendations'].map((label, i) => (
                     <div key={i} className={`ds-p-step ${processingSteps[i]}`}>
                       <div className="ds-p-dot" />{label}
                     </div>
@@ -688,8 +672,9 @@ Return: {"summary":"2-3 sentences to founder in second person","top3_strengths":
               </div>
 
               <div className="ds-report-footer">
-                <p>A copy of this report has been sent to {memberInfo.email || 'your email'} and to the Rellia team.<br />
-                Questions? <Link to="/contact">Contact us</Link></p>
+                <p>
+                  Questions? <a href="mailto:hello@relliahealth.com">hello@relliahealth.com</a>
+                </p>
                 <button className="ds-reset-btn" onClick={() => { setView('intro'); setAnswers({}); setCurrentSection(-1); setAiResult(null); }}>
                   ← Start a new assessment
                 </button>
@@ -701,42 +686,4 @@ Return: {"summary":"2-3 sentences to founder in second person","top3_strengths":
       </div>
     </div>
   );
-}
-
-// ─── EMAIL ───────────────────────────────────────────────────────────────────
-
-function buildEmailHTML(analysis: AIResult, scores: Record<string, number>, info: MemberInfo): string {
-  const scoreRows = SECTIONS.map(s =>
-    `<tr><td style="padding:4px 8px;font-size:13px;color:#5a6a6e;">${s.title}</td><td style="padding:4px 8px;font-size:13px;font-weight:500;color:#0c3d49;">${scores[s.id]}%</td></tr>`
-  ).join('');
-  return `<div style="font-family:sans-serif;max-width:680px;margin:0 auto;">
-    <div style="background:#0c3d49;padding:2rem;border-radius:16px 16px 0 0;">
-      <p style="color:#a7dbd6;font-size:11px;text-transform:uppercase;letter-spacing:0.12em;margin:0 0 4px;">Rellia Health — Startup Diagnostic</p>
-      <h1 style="color:white;font-size:1.6rem;margin:0 0 4px;">${info.company}</h1>
-      <p style="color:rgba(255,255,255,0.5);font-size:13px;margin:0;">${info.stage} · ${new Date().toLocaleDateString('en-CA')}</p>
-    </div>
-    <div style="background:white;padding:2rem;">
-      <h2 style="color:#0c3d49;font-size:1rem;margin:0 0 8px;">Summary</h2>
-      <p style="font-size:14px;color:#3a4a4e;line-height:1.65;">${analysis.summary}</p>
-      <h2 style="color:#0c3d49;font-size:1rem;margin:1.5rem 0 8px;">Section Scores</h2>
-      <table style="width:100%;border-collapse:collapse;">${scoreRows}</table>
-      <h2 style="color:#0c3d49;font-size:1rem;margin:1.5rem 0 8px;">Priority Gaps</h2>
-      ${analysis.top3_weaknesses.map(w => `<p style="font-size:14px;margin:5px 0;"><strong style="color:#a32d2d;">${w.priority}</strong> — <strong>${w.category}</strong> (${w.score}%): ${w.note}</p>`).join('')}
-      <h2 style="color:#0c3d49;font-size:1rem;margin:1.5rem 0 8px;">Recommendations</h2>
-      ${analysis.recommendations.map((r,i) => `<p style="font-size:14px;margin:4px 0;"><strong>${i+1}.</strong> ${r}</p>`).join('')}
-    </div>
-    <div style="background:#f8f1e8;padding:1rem 2rem;border-radius:0 0 16px 16px;">
-      <p style="font-size:12px;color:#8a9ea2;margin:0;">Rellia Health Startup Diagnostic · hello@relliahealth.com</p>
-    </div>
-  </div>`;
-}
-
-async function proxyPost(path: string, body: object): Promise<unknown> {
-  const res = await fetch(CONFIG.PROXY_URL + path, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(body)
-  });
-  if (!res.ok) throw new Error('Proxy error ' + res.status);
-  return res.json();
 }

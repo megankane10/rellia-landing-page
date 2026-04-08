@@ -1,4 +1,4 @@
-import { Instagram, Linkedin, Mail } from "lucide-react";
+import { Instagram, Linkedin } from "lucide-react";
 import { Link } from "react-router-dom";
 import { DEFAULT_GLOBAL_SETTINGS } from "@shared/cms/defaults";
 
@@ -8,7 +8,7 @@ export default function Footer() {
   return (
     <footer className="bg-rellia-teal text-white pt-20 pb-10 px-6 md:px-10 border-t border-white/5">
       <div className="max-w-[1300px] mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 mb-16">
           <div className="flex flex-col gap-6">
             <Link to="/" className="flex items-center">
               <img
@@ -71,19 +71,6 @@ export default function Footer() {
                 Contact Us
               </Link>
             </nav>
-          </div>
-
-          {/* Contact */}
-          <div className="flex flex-col gap-6">
-            <h4 className="font-host-grotesk font-bold text-lg text-white">Contact us</h4>
-            <div className="flex flex-col gap-5">
-              <a href={`mailto:${g.supportEmail}`} className="flex items-center gap-3 group">
-                <Mail className="w-5 h-5 text-rellia-mint shrink-0" />
-                <span className="font-urbanist text-white/70 group-hover:text-rellia-mint transition-colors text-[15px]">
-                  {g.supportEmail}
-                </span>
-              </a>
-            </div>
           </div>
         </div>
 

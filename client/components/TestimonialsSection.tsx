@@ -60,15 +60,15 @@ function TestimonialCard({ t }: { t: Testimonial }) {
   const imgSrc = t.imageSrc;
 
   return (
-    <div className="bg-white rounded-3xl p-8 md:p-10 h-full min-h-[420px] sm:min-h-[440px] flex flex-col min-w-0 shadow-[0_20px_50px_rgba(0,0,0,0.04)] border border-black/5 hover:shadow-xl transition-shadow duration-300">
-      <div className="flex-1 min-h-[8rem]">
-        <p className="font-urbanist text-lg md:text-xl text-black/80 leading-relaxed italic">
+    <div className="bg-white rounded-3xl p-7 md:p-8 h-full min-h-[360px] sm:min-h-[380px] flex flex-col min-w-0 shadow-sm border border-black/5 hover:shadow-lg transition-shadow duration-300">
+      <div className="flex-1 min-h-[7rem]">
+        <p className="font-urbanist text-base md:text-lg text-black/80 leading-relaxed italic">
           &ldquo;{t.quote}&rdquo;
         </p>
       </div>
 
       {/* Avatar vertically centered with name + role block (reference layout) */}
-      <div className="flex items-center gap-4 mt-8 pt-6 border-t border-black/5">
+      <div className="flex items-center gap-4 mt-7 pt-5 border-t border-black/5">
         <Avatar className="h-14 w-14 border-2 border-rellia-mint/30 shadow-sm shrink-0">
           <AvatarImage src={imgSrc} alt={t.name} className="object-cover" />
           <AvatarFallback className="bg-rellia-teal text-white text-sm font-semibold">
@@ -104,9 +104,9 @@ type TestimonialsSectionProps = {
 
 export default function TestimonialsSection({ titleLead, titleAccent, testimonials }: TestimonialsSectionProps) {
   return (
-    <section className="w-full bg-rellia-cream/30 py-20 md:py-32 px-6 md:px-10 overflow-x-hidden">
+    <section className="w-full bg-rellia-cream/40 py-14 md:py-20 px-6 md:px-10 overflow-x-hidden">
       <div className="max-w-[1300px] mx-auto w-full min-w-0">
-        <ScrollReveal className="mb-16 md:mb-24 flex flex-col items-center text-center">
+        <ScrollReveal className="mb-10 md:mb-14 flex flex-col items-center text-center">
           <h2 className="font-host-grotesk font-semibold text-black text-3xl md:text-[40px] leading-tight tracking-tight max-w-3xl">
             {titleLead}{" "}
             <span className="text-rellia-teal">{titleAccent}</span>
@@ -122,7 +122,7 @@ export default function TestimonialsSection({ titleLead, titleAccent, testimonia
             }}
             className="w-full max-w-full min-w-0"
           >
-            <div className="flex flex-col gap-8">
+            <div className="flex flex-col gap-6 md:gap-7">
               {/*
                 Viewport clips horizontally; each slide min-w-0 prevents flex overflow.
                 1 / 2 / 3 cards visible — same proportional width as the old 3-col grid.

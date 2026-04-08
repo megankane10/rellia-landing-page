@@ -21,8 +21,6 @@ export const EventCard = ({
   registerLabel = "Register Now",
   className,
 }: EventCardProps) => {
-  const isPast = variant === "past"
-
   return (
     <div
       className={cn(
@@ -33,13 +31,13 @@ export const EventCard = ({
       <div
         className={cn(
           "mb-5 overflow-hidden rounded-xl bg-rellia-teal/5",
-          isPast ? "" : "aspect-video",
+          "aspect-video",
         )}
       >
         <img
           src={event.imageSrc}
-          alt={isPast ? event.person : event.title}
-          className={cn("w-full object-cover", isPast ? "h-40" : "h-full")}
+          alt={variant === "past" ? event.person : event.title}
+          className="h-full w-full object-cover"
         />
       </div>
 

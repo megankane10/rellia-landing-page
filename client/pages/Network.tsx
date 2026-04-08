@@ -1,3 +1,4 @@
+import { useEffect, useId, useMemo, useState } from "react"
 import { Link } from "react-router-dom"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
@@ -5,6 +6,8 @@ import LogoMarquee from "@/components/LogoMarquee"
 import ScrollReveal from "@/components/ScrollReveal"
 import RelliaAction from "@/components/RelliaAction"
 import RelliaCta from "@/components/RelliaCta"
+import SectionPillBadge from "@/components/SectionPillBadge"
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import {
   ArrowRight,
   Check,
@@ -47,13 +50,9 @@ function SectionNumeral({ value }: { value: string }) {
   )
 }
 
-/** Section tag pill — matches the FAQ hero badge style (rounded, white/70, backdrop blur). */
+/** Section tag pill — shared style used across pages. */
 function SectionTag({ children }: { children: React.ReactNode }) {
-  return (
-    <span className="inline-flex items-center rounded-full border border-black/10 bg-white/70 px-4 py-1 text-xs md:text-sm font-urbanist text-black/60 backdrop-blur">
-      {children}
-    </span>
-  )
+  return <SectionPillBadge>{children}</SectionPillBadge>
 }
 
 /** Bullet item used inside the section feature lists. */
@@ -78,7 +77,131 @@ const handleScrollToId = (id: string) => {
   window.scrollTo({ top: y, behavior: "smooth" })
 }
 
+type HubspotEmbedConfig = {
+  region: string
+  portalId: string
+  formId: string
+}
+
+const HUBSPOT_FORM: HubspotEmbedConfig = {
+  region: "na3",
+  portalId: "342926478",
+  formId: "fa4bb92b-2e44-4a3c-9601-773b36e3e3d8",
+}
+
+const HUBSPOT_V2_SCRIPT_SRC = "https://js.hsforms.net/forms/v2.js"
+
+const loadHubspotV2Script = (): Promise<void> => {
+  const existing = document.querySelector<HTMLScriptElement>(`script[src="${HUBSPOT_V2_SCRIPT_SRC}"]`)
+  if (existing) {
+    if (existing.dataset.loaded === "true") return Promise.resolve()
+    return new Promise((resolve, reject) => {
+      existing.addEventListener("load", () => resolve(), { once: true })
+      existing.addEventListener("error", () => reject(new Error("Failed to load HubSpot v2 script")), { once: true })
+    })
+  }
+
+  return new Promise((resolve, reject) => {
+    const script = document.createElement("script")
+    script.src = HUBSPOT_V2_SCRIPT_SRC
+    script.async = true
+    script.addEventListener(
+      "load",
+      () => {
+        script.dataset.loaded = "true"
+        resolve()
+      },
+      { once: true },
+    )
+    script.addEventListener("error", () => reject(new Error("Failed to load HubSpot v2 script")), { once: true })
+    document.body.appendChild(script)
+  })
+}
+
+function InvestorNotifyDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (next: boolean) => void }) {
+  const targetIdRaw = useId()
+  const targetId = useMemo(() => `hubspot-form-${targetIdRaw.replace(/[^a-zA-Z0-9_-]/g, "")}`, [targetIdRaw])
+  const [status, setStatus] = useState<"idle" | "loading" | "ready" | "error">("idle")
+
+  useEffect(() => {
+    if (!open) return
+
+    let cancelled = false
+
+    const mountForm = async () => {
+      setStatus("loading")
+      try {
+        await loadHubspotV2Script()
+        if (cancelled) return
+
+        const target = document.getElementById(targetId)
+        if (!target) {
+          setStatus("error")
+          return
+        }
+
+        target.innerHTML = ""
+
+        const create = window.hbspt?.forms?.create
+        if (typeof create !== "function") {
+          setStatus("error")
+          return
+        }
+
+        create({
+          region: HUBSPOT_FORM.region,
+          portalId: HUBSPOT_FORM.portalId,
+          formId: HUBSPOT_FORM.formId,
+          target: `#${targetId}`,
+        })
+
+        setStatus("ready")
+      } catch {
+        if (cancelled) return
+        setStatus("error")
+      }
+    }
+
+    mountForm()
+    return () => {
+      cancelled = true
+    }
+  }, [open, targetId])
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent
+        aria-label="Pitch event notifications form"
+        className="w-[min(92vw,720px)] max-w-none rounded-3xl border border-black/10 bg-white p-0 overflow-hidden shadow-2xl"
+      >
+        <div className="p-6 md:p-8">
+          {status === "loading" ? (
+            <p className="font-urbanist text-black/60">Loading form…</p>
+          ) : status === "error" ? (
+            <div className="space-y-2">
+              <p className="font-urbanist text-black/70">
+                We couldn’t load the form right now. Please try again in a moment.
+              </p>
+              <p className="font-urbanist text-black/60">
+                Or email{" "}
+                <a className="underline decoration-black/25 hover:decoration-black/60" href={`mailto:${SUPPORT_EMAIL}`}>
+                  {SUPPORT_EMAIL}
+                </a>
+                .
+              </p>
+            </div>
+          ) : (
+            <div id={targetId} />
+          )}
+        </div>
+      </DialogContent>
+    </Dialog>
+  )
+}
+
 export default function Network() {
+  const [isInvestorNotifyOpen, setIsInvestorNotifyOpen] = useState(false)
+
   return (
     <div className="min-h-screen bg-white font-host-grotesk overflow-x-hidden">
       <Navbar />
@@ -392,10 +515,15 @@ export default function Network() {
                 </p>
                 <div className="flex flex-col sm:flex-row gap-3">
                   <RelliaAction asChild variant="tealFilledLift" size="comfortable">
-                    <Link to={CTA.investorNotify}>
+                    <button
+                      type="button"
+                      aria-label="Get notified about pitch events"
+                      aria-haspopup="dialog"
+                      onClick={() => setIsInvestorNotifyOpen(true)}
+                    >
                       Get Notified About Pitch Events
                       <ArrowRight />
-                    </Link>
+                    </button>
                   </RelliaAction>
                   <RelliaAction asChild variant="outlineOnWhite" size="comfortable">
                     <Link to={CTA.investorContact}>
@@ -502,6 +630,8 @@ export default function Network() {
       </main>
 
       <Footer />
+
+      <InvestorNotifyDialog open={isInvestorNotifyOpen} onOpenChange={setIsInvestorNotifyOpen} />
     </div>
   )
 }

@@ -9,6 +9,7 @@ import type {
   NotFoundContent,
   PaymentPageContent,
   ProgramsLandingContent,
+  ProgramsProgramCard,
   QmsProgramContent,
 } from "./types"
 
@@ -104,10 +105,10 @@ export const DEFAULT_HOME_PAGE: HomePageContent = {
       role: "Founder",
       company: "NovusTex Corp",
       quote:
-        "Rellia has been nothing short of exceptional—a truly dynamic incubator where early ventures are not only given space to grow, but are actively empowered to connect, refine, pitch, and evolve.",
+        "Rellia has been nothing short of exceptional- a truly dynamic incubator where early ventures are not only given space to grow, but are actively empowered to connect, refine, pitch, and evolve. The ecosystem is deeply professional, energizing, and genuinely supportive of innovation. Rellia is not just an incubator - it’s a launchpad for ambitious founders.",
       companyInfo:
         "A rehabilitation-focused company bringing novel performance textiles and assistive solutions to support mobility, reduce injury risk, and enhance comfort during recovery for patients with musculoskeletal and neurological conditions.",
-      imageSrc: "/images/sahilkhan-testimonials.jpeg",
+      imageSrc: "/images/testimonials-sahilkhan.jpeg",
     },
     {
       name: "Dhandre Weekes",
@@ -117,7 +118,7 @@ export const DEFAULT_HOME_PAGE: HomePageContent = {
         "Rellia is full of driven founders and healthcare innovators, which is actually where I connected with my advisory council members.",
       companyInfo:
         "An elder care platform to help assisted living, memory care, and specialized residential homes manage daily care, reporting, and family communication.",
-      imageSrc: "/images/dhandreW-testimonials.jpeg",
+      imageSrc: "/images/testimonials-dhandreW.jpeg",
     },
     {
       name: "Melissa Williams",
@@ -127,7 +128,7 @@ export const DEFAULT_HOME_PAGE: HomePageContent = {
         "Being part of this group has been a great experience. Rellia has created a supportive space for health tech founders, with valuable resources and opportunities to connect.",
       companyInfo:
         "HorminaCare provides virtual access to expert medical professionals for science-backed treatment for hormone-related conditions such as PCOS, adult acne, PMDD, and beyond.",
-      imageSrc: "/images/melissaW-testimonials.jpeg",
+      imageSrc: "/images/testimonials-melissaW.jpeg",
     },
     {
       name: "Irene Saliandra",
@@ -137,7 +138,7 @@ export const DEFAULT_HOME_PAGE: HomePageContent = {
         "I've thoroughly enjoyed being part of the Rellia community—not only has it opened doors to expand my network, but also given me opportunities to test my ideas with like minded folks.",
       companyInfo:
         "Digital Flow empowers entrepreneurs and small business owners through their digital transformation journey.",
-      imageSrc: "/images/ireneS-testimonials.jpeg",
+      imageSrc: "/images/testimonials-ireneS.jpeg",
     },
     {
       name: "Michelle Risinger",
@@ -147,7 +148,7 @@ export const DEFAULT_HOME_PAGE: HomePageContent = {
         "I've found the Rellia community full of smart, inclusive and generous members eager to provide support, connections and ideas.",
       companyInfo:
         "Restore is an API that optimizes daily performance using chronobiology.",
-      imageSrc: "/images/michelleR-testimonials.png",
+      imageSrc: "/images/testimonials-michelleR.png",
     },
     {
       name: "Rafael Rodeiro",
@@ -157,7 +158,7 @@ export const DEFAULT_HOME_PAGE: HomePageContent = {
         "In a matter of days, Rellia was able to connect me with exactly the right people. Specific, high-quality introductions that would have taken me weeks to find on my own.",
       companyInfo:
         "Roster is the first AI-native employee giving platform built specifically for health systems.",
-      imageSrc: "/images/rafaelR-testimonials.jpeg",
+      imageSrc: "/images/testimonials-rafaelR.jpeg",
     },
     {
       name: "Nick Sabamehr",
@@ -167,7 +168,7 @@ export const DEFAULT_HOME_PAGE: HomePageContent = {
         "Rellia has been a big support in our journey from the first conversation, and we have built our strongest relationships through Rellia's support.",
       companyInfo:
         "MA Edtech Solutions helps immigrant children and their parents experience a better life in their country of residence.",
-      imageSrc: "/images/nickS-testimonials.jpeg",
+      imageSrc: "/images/testimonials-nickS.jpeg",
     },
     {
       name: "Rooaa Shanshal",
@@ -176,7 +177,7 @@ export const DEFAULT_HOME_PAGE: HomePageContent = {
       quote:
         "Being part of Rellia has been so incredibly valuable. Since joining, we've made real progress on building our QMS which is something that previously felt overwhelming.",
       companyInfo: "Power of Play takes a play-based approach to pediatric rehabilitation",
-      imageSrc: "/images/rooaaS-testimonials.jpeg",
+      imageSrc: "/images/testimonials-rooaaS.jpeg",
     },
     {
       name: "Rebecca Lyons",
@@ -186,7 +187,7 @@ export const DEFAULT_HOME_PAGE: HomePageContent = {
         "Rellia has been a great resource for our team as we have navigated early stage validation and finding market fit.",
       companyInfo:
         "HerSay is an AI-powered doctor visit companion designed to help women feel seen, heard and prepared while navigating the healthcare system.",
-      imageSrc: "/images/rebeccaL-testimonials.jpeg",
+      imageSrc: "/images/testimonials-rebeccaL.jpeg",
     },
   ],
 }
@@ -239,26 +240,26 @@ export const DEFAULT_ABOUT_PAGE: AboutPageContent = {
       name: "Megan Kane",
       role: "Executive Director, Co-Founder",
       bio: "Regulatory and Quality Management executive specializing in global market entry strategy and FDA/Health Canada submissions for SaMD and digital health companies.",
-      imageSrc: "/images/megankane-team.jpg",
+      imageSrc: "/images/team-megankane.jpg",
     },
     {
       name: "Deena Al-Sammak",
       role: "Program Manager, Co-Founder",
       bio: "Deena brings startup experience in the health tech space and leverages her experience to lead our program development and management",
-      imageSrc: "/images/deenasammak-team.png",
+      imageSrc: "/images/team-deenasammak.png",
     },
     {
       name: "Priyanka Ramjagsingh",
       role: "Operations Director",
       bio: "With a decade of experience embedded in early-stage health companies, Priyanka converts her deep regulatory and quality expertise into operational momentum, turning complexity into the strategic edge that moves teams forward.",
-      imageSrc: "/images/priyankaR-team.jpeg",
+      imageSrc: "/images/team-priyankaR.jpeg",
     },
     { name: "Khali", imageSrc: "/images/nopicture-male.jpg" },
     {
       name: "Kelly Hu",
       role: "Social Media Manager",
       bio: "A digital health founder herself, Kelly plans and executes content creation to boost engagement and showcase Rellia's growing network.",
-      imageSrc: "/images/KellyH-team.jpeg",
+      imageSrc: "/images/team-KellyH.jpeg",
     },
   ],
   ctaTitle: "You're in the right place.",
@@ -377,7 +378,7 @@ export const DEFAULT_PROGRAMS_LANDING: ProgramsLandingContent = {
       title: "Health System Adoption for Startups",
       dateTime: "April 9th at 2PM",
       person: "Rellia Health",
-      imageSrc: "/images/healthsystem-events.jpg",
+      imageSrc: "/images/events-healthsystem.jpg",
       href: "https://luma.com/ao1g8a7h",
     },
     {
@@ -385,7 +386,7 @@ export const DEFAULT_PROGRAMS_LANDING: ProgramsLandingContent = {
       dateTime: "May 6th at 12PM",
       person: "Rellia Health",
       imageSrc: "/images/leadership-mindset.jpg",
-      comingSoon: true,
+      href: "https://luma.com/bgvqn7ia",
     },
   ],
   pastEvents: [
@@ -393,7 +394,7 @@ export const DEFAULT_PROGRAMS_LANDING: ProgramsLandingContent = {
       title: "Why Healthcare Keeps Saying No to Your AI (And How to Fix It)",
       dateTime: "Thursday, March 12 — 1:00 PM EDT",
       person: "Brenton Hill | Coalition for Health AI",
-      imageSrc: "/images/banner-whitelogo.png",
+      imageSrc: "/images/event-WhyHealthcareSayingNo.jpg",
       href: "https://luma.com/1vx5stu2",
       buttonText: "View Event",
     },
@@ -401,7 +402,7 @@ export const DEFAULT_PROGRAMS_LANDING: ProgramsLandingContent = {
       title: "Ask a QMS Expert",
       dateTime: "Thursday, February 19 — 12:00 PM EST",
       person: "Rellia Health",
-      imageSrc: "/images/banner-whitelogo.png",
+      imageSrc: "/images/event-askQmsExpert.jpg",
       href: "https://luma.com/w61qj0g5",
       buttonText: "View Event",
     },
@@ -409,7 +410,7 @@ export const DEFAULT_PROGRAMS_LANDING: ProgramsLandingContent = {
       title: "Set Your Stage",
       dateTime: "Thursday, December 4, 2025 — 12:00 PM EST",
       person: "Alexis Orchard | Rellia Health",
-      imageSrc: "/images/banner-darklogo.png",
+      imageSrc: "/images/event-setYourStage.jpg",
       href: "https://luma.com/5s736thc",
       buttonText: "View Event",
     },
@@ -417,7 +418,7 @@ export const DEFAULT_PROGRAMS_LANDING: ProgramsLandingContent = {
       title: "Clinician Connect: Women's Health",
       dateTime: "Thursday, November 20, 2025 — 12:00 PM EST",
       person: "Rellia Health",
-      imageSrc: "/images/banner-darklogo.png",
+      imageSrc: "/images/event-clinicianConnect.jpg",
       href: "https://luma.com/k6fbogr8",
       buttonText: "View Event",
     },
@@ -484,8 +485,11 @@ export const DEFAULT_CONTACT_PAGE: ContactPageContent = {
   sendingLabel: "Sending…",
 }
 
+/** Stripe Payment Link used as fallback for `/payment` and QMS CTAs when env/CMS do not override */
+export const DEFAULT_STRIPE_PAYMENT_LINK_FALLBACK = "https://buy.stripe.com/14A4gs2jF6Lla0HgCC6wE03"
+
 export const DEFAULT_QMS_PROGRAM: QmsProgramContent = {
-  paymentUrl: "https://forms.fillout.com/t/1GPWpbBbWcus",
+  paymentUrl: DEFAULT_STRIPE_PAYMENT_LINK_FALLBACK,
   heroTitle: "Build Your QMS",
   heroDescription:
     "A simplified, mentor-led program that helps medical device founders build an audit-ready Quality Management System - without needing a background in regulatory affairs",
@@ -638,7 +642,23 @@ export function mergeProgramsLanding(
   const p = omitNullish((partial ?? {}) as Record<string, unknown>) as Partial<ProgramsLandingContent>
   const base = { ...DEFAULT_PROGRAMS_LANDING, ...p }
   const programs = compactList(p.programs)
-  base.programs = programs.length > 0 ? programs : DEFAULT_PROGRAMS_LANDING.programs
+  const sourcePrograms = programs.length > 0 ? programs : DEFAULT_PROGRAMS_LANDING.programs
+
+  const enrichProgramPricing = (program: ProgramsProgramCard): ProgramsProgramCard => {
+    if (program.href === "/programs/qms") {
+      const amount = `${DEFAULT_QMS_PROGRAM.pricingAmount}${DEFAULT_QMS_PROGRAM.pricingSubAmount}`
+      return {
+        ...program,
+        priceLabel: DEFAULT_QMS_PROGRAM.pricingBadge,
+        priceAmount: amount,
+        priceSuffix: "/mo",
+      }
+    }
+
+    return program
+  }
+
+  base.programs = sourcePrograms.map(enrichProgramPricing)
   const upcomingEvents = compactList(p.upcomingEvents)
   base.upcomingEvents =
     upcomingEvents.length > 0 ? upcomingEvents : DEFAULT_PROGRAMS_LANDING.upcomingEvents
@@ -703,6 +723,9 @@ export function mergeQmsProgram(
   const pricingBullets = compactList(p.pricingBullets)
   base.pricingBullets =
     pricingBullets.length > 0 ? pricingBullets : DEFAULT_QMS_PROGRAM.pricingBullets
+  if (typeof base.paymentUrl !== "string" || !base.paymentUrl.trim()) {
+    base.paymentUrl = DEFAULT_QMS_PROGRAM.paymentUrl
+  }
   return base
 }
 

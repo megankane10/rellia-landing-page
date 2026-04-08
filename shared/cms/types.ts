@@ -136,6 +136,10 @@ export type ProgramsProgramCard = {
   imageSrc: string
   href: string
   buttonText: string
+  /** Optional; can be derived from the program detail page pricing for known programs. */
+  priceLabel?: string
+  priceAmount?: string
+  priceSuffix?: string
 }
 
 export type ProgramsLandingContent = {

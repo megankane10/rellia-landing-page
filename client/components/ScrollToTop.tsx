@@ -9,22 +9,29 @@ export default function ScrollToTop() {
   const { pathname, hash } = useLocation();
 
   useEffect(() => {
-    if (hash) {
-      // Wait for the target section to render before scrolling to it.
-      const id = hash.replace(/^#/, "");
-      const tryScroll = () => {
-        const el = document.getElementById(id);
-        if (el) {
-          el.scrollIntoView({ behavior: "smooth", block: "start" });
-        } else {
-          window.scrollTo(0, 0);
-        }
-      };
-      // rAF twice = after layout + paint
-      requestAnimationFrame(() => requestAnimationFrame(tryScroll));
-      return;
+    const id = hash?.replace("#", "").trim()
+
+    if (!id) {
+      window.scrollTo(0, 0)
+      return
     }
-    window.scrollTo(0, 0);
+
+    const scrollToId = () => {
+      const el = document.getElementById(id)
+      if (!el) return false
+      const y = el.getBoundingClientRect().top + window.scrollY - 92
+      window.scrollTo({ top: y, behavior: "smooth" })
+      return true
+    }
+
+    // Wait for route paint; retry briefly in case content mounts after navigation.
+    if (scrollToId()) return
+    const t1 = window.setTimeout(() => scrollToId(), 50)
+    const t2 = window.setTimeout(() => scrollToId(), 150)
+    return () => {
+      window.clearTimeout(t1)
+      window.clearTimeout(t2)
+    }
   }, [pathname, hash]);
 
   return null;
