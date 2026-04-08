@@ -1,6 +1,8 @@
 import { Link } from "react-router-dom"
+import { useState } from "react"
 import RelliaAction from "@/components/RelliaAction"
 import { cn } from "@/lib/utils"
+import FilloutPopupDialog from "@/components/FilloutPopupDialog"
 
 export type ProgramCardProps = {
   tag?: string
@@ -31,6 +33,7 @@ export const ProgramCard = ({
 }: ProgramCardProps) => {
   const hasHref = Boolean(href && href.trim().length > 0)
   const hasWaitlistHref = Boolean(waitlistHref && waitlistHref.trim().length > 0)
+  const [waitlistOpen, setWaitlistOpen] = useState(false)
 
   return (
     <div
@@ -93,9 +96,19 @@ export const ProgramCard = ({
             {hasHref ? (
               <Link to={href as string}>{buttonText || "Learn more"}</Link>
             ) : hasWaitlistHref ? (
-              <a href={waitlistHref} target="_blank" rel="noopener noreferrer">
+              <button
+                type="button"
+                onClick={() => setWaitlistOpen(true)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault()
+                    setWaitlistOpen(true)
+                  }
+                }}
+                aria-label={`Join waitlist for ${title}`}
+              >
                 {buttonText || "Join Waitlist"}
-              </a>
+              </button>
             ) : (
               <button type="button" disabled aria-disabled className="opacity-60 cursor-not-allowed">
                 {buttonText || "Join Waitlist"}
@@ -104,6 +117,16 @@ export const ProgramCard = ({
           </RelliaAction>
         </div>
       </div>
+
+      {hasWaitlistHref ? (
+        <FilloutPopupDialog
+          open={waitlistOpen}
+          onOpenChange={setWaitlistOpen}
+          formUrl={waitlistHref as string}
+          title="Join the program waitlist"
+          description="Share a few details and we’ll reach out when this program opens."
+        />
+      ) : null}
     </div>
   )
 }

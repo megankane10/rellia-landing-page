@@ -1,29 +1,29 @@
-import { useEffect } from "react";
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { Analytics } from "@vercel/analytics/react";
-import { SpeedInsights } from "@vercel/speed-insights/react";
-import ScrollToTop from "@/components/ScrollToTop";
-import RouteSeo from "@/components/RouteSeo";
-import Index from "./pages/Index";
-import About from "./pages/About";
-import FAQ from "./pages/FAQ";
-import ProgramsEvents from "./pages/ProgramsEvents";
-import ProgramsQms from "./pages/ProgramsQms";
-import NotFound from "./pages/NotFound";
-import PlaceholderPage from "./pages/PlaceholderPage";
-import Contact from "./pages/Contact";
-import Network from "./pages/Network";
-import Payment from "./pages/Payment";
-import TermsofUse from "./pages/TermsofUse";
-import PrivacyPolicy from "./pages/PrivacyPolicy";
+import { useEffect } from "react"
+import { Toaster } from "@/components/ui/toaster"
+import { Toaster as Sonner } from "@/components/ui/sonner"
+import { TooltipProvider } from "@/components/ui/tooltip"
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
+import { BrowserRouter, Routes, Route } from "react-router-dom"
+import { Analytics } from "@vercel/analytics/react"
+import { SpeedInsights } from "@vercel/speed-insights/react"
+import ScrollToTop from "@/components/ScrollToTop"
+import RouteSeo from "@/components/RouteSeo"
+import Index from "./pages/Index"
+import About from "./pages/About"
+import FAQ from "./pages/FAQ"
+import ProgramsEvents from "./pages/ProgramsEvents"
+import ProgramsQms from "./pages/ProgramsQms"
+import NotFound from "./pages/NotFound"
+import PlaceholderPage from "./pages/PlaceholderPage"
+import Contact from "./pages/Contact"
+import Network from "./pages/Network"
+import Payment from "./pages/Payment"
+import TermsofUse from "./pages/TermsofUse"
+import PrivacyPolicy from "./pages/PrivacyPolicy"
 
 
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient()
 
 const ThirdPartyPreloads = () => {
   useEffect(() => {
@@ -97,16 +97,12 @@ const App = () => (
           <Route path="/terms" element={<TermsofUse />} />
           <Route path="/privacy" element={<PrivacyPolicy />} />
 
-          {/* Diagnostics — placeholders on main; full pages on Additions branch */}
-          <Route path="/diagnostics" element={<PlaceholderPage title="Diagnostic Landing" />} />
-          <Route path="/diagnosticSurvey" element={<PlaceholderPage title="Diagnostic Survey" />} />
-
           {/* CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
-);
+)
 
-export default App;
+export default App
