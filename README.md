@@ -1,5 +1,6 @@
 ![Project Snapshot](public/ogimage.png)
-> Marketing website for **Rellia Health** — connecting founders, clinicians, and health systems to build the future of care.
+## Rellia Health - Landing Page
+Connecting founders, clinicians, and health systems to build the future of care.
 - **Live**: `https://relliahealth.com`
 
 
@@ -24,8 +25,10 @@ From `package.json`:
 - `@sanity/client`, `@portabletext/react`
 - `express`
 
+---
+
 # Getting Started
-> Follow these steps to clone a local copy of the repo and to install the prequsites for this project
+Follow these steps to clone a local copy of the repo and to install the prequsites for this project
 
 ## Cloning
 
@@ -66,7 +69,7 @@ Other runtime env vars used by the server:
 - `PORT`: server port when running the Node build locally (defaults to `3000`)
 - `VERCEL`: set by Vercel in deployed environments (used to detect platform runtime)
 - `NODE_ENV`: standard Node environment (set by tooling/platform)
-
+---
 ## Repo structure
 
 - `client/`: React app (routes, components, styles)
