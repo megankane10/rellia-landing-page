@@ -1,7 +1,4 @@
-# Rellia Health
-
-![Rellia Health](public/ogimage.png)
-> Marketing website for **Rellia Health** — connecting founders, clinicians, and health systems to build the future of care.
+<img src="public/ogimage.png" alt="Rellia Health" width="100%" style="border-radius:16px;" />> Marketing website for **Rellia Health** — connecting founders, clinicians, and health systems to build the future of care.
 - **Live**: `https://relliahealth.com`
 - **Open Graph image**: `public/ogimage.png` (served at `https://relliahealth.com/ogimage.png`)
 
@@ -31,6 +28,9 @@ From `package.json`:
 - `@sanity/client`, `@portabletext/react`
 - `express`
 
+# Getting Started
+> Follow these steps to clone a local copy of the repo and to install the prequsites for this project
+
 ## Cloning
 
 ```bash
@@ -46,7 +46,7 @@ cd rellia-landing-page
 
 ## Local installation
 
-Prereqs: **Node.js (LTS)** and **pnpm** (enable via Corepack).
+Prerequesites: **Node.js (LTS)** and **pnpm** (enable via Corepack).
 
 ```bash
 corepack enable
