@@ -215,16 +215,24 @@ export default function Navbar({ ctaRadiusClassName = "rounded-full" }: NavbarPr
         <div className="md:hidden bg-rellia-cream border-t border-black/10 px-6 pb-6 flex flex-col">
           <Link
             to="/"
-            className="flex items-center gap-3 py-4 border-b border-black/5 font-host-grotesk text-base font-medium text-rellia-teal"
+            className={cn(
+              "flex items-center gap-3 py-4 border-b border-black/5 font-host-grotesk text-base font-medium text-rellia-teal",
+              isActive("/") && "bg-rellia-teal/5 border-l-4 border-l-rellia-mint pl-5 -ml-1",
+            )}
             onClick={() => setMobileOpen(false)}
+            aria-current={isActive("/") ? "page" : undefined}
           >
             <Home className="w-5 h-5 text-rellia-mint" />
             Home
           </Link>
           <Link
             to="/about"
-            className="flex items-center gap-3 py-4 border-b border-black/5 font-host-grotesk text-base font-medium text-rellia-teal"
+            className={cn(
+              "flex items-center gap-3 py-4 border-b border-black/5 font-host-grotesk text-base font-medium text-rellia-teal",
+              isActive("/about") && "bg-rellia-teal/5 border-l-4 border-l-rellia-mint pl-5 -ml-1",
+            )}
             onClick={() => setMobileOpen(false)}
+            aria-current={isActive("/about") ? "page" : undefined}
           >
             <Info className="w-5 h-5 text-rellia-mint" />
             About
@@ -248,8 +256,12 @@ export default function Navbar({ ctaRadiusClassName = "rounded-full" }: NavbarPr
             <div className="flex items-center justify-between w-full">
               <Link
                 to="/network"
-                className="flex items-center gap-3 py-4 font-host-grotesk text-base font-medium text-rellia-teal flex-1"
+                className={cn(
+                  "flex items-center gap-3 py-4 font-host-grotesk text-base font-medium text-rellia-teal flex-1",
+                  isNetworkActive && "bg-rellia-teal/5 border-l-4 border-l-rellia-mint pl-5 -ml-1",
+                )}
                 onClick={() => setMobileOpen(false)}
+                aria-current={isNetworkActive ? "page" : undefined}
               >
                 <Users className="w-5 h-5 text-rellia-mint" />
                 Network
@@ -288,8 +300,12 @@ export default function Navbar({ ctaRadiusClassName = "rounded-full" }: NavbarPr
 
           <Link
             to="/faq"
-            className="flex items-center gap-3 py-4 border-b border-black/5 font-host-grotesk text-base font-medium text-rellia-teal"
+            className={cn(
+              "flex items-center gap-3 py-4 border-b border-black/5 font-host-grotesk text-base font-medium text-rellia-teal",
+              isActive("/faq") && "bg-rellia-teal/5 border-l-4 border-l-rellia-mint pl-5 -ml-1",
+            )}
             onClick={() => setMobileOpen(false)}
+            aria-current={isActive("/faq") ? "page" : undefined}
           >
             <HelpCircle className="w-5 h-5 text-rellia-mint" />
             FAQ

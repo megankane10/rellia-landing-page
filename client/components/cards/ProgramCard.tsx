@@ -26,7 +26,7 @@ export const ProgramCard = ({
   priceSuffix,
   className,
 }: ProgramCardProps) => {
-  const billingLabel = "per month"
+  const periodSuffix = priceSuffix?.trim() || "/month"
 
   return (
     <div
@@ -69,22 +69,24 @@ export const ProgramCard = ({
         </div>
 
         {priceAmount ? (
-          <div className="mt-auto border-t border-black/10 px-4 py-[14px]">
-            <div className="flex items-center justify-between gap-4">
-              <div className="min-w-0">
-                <p className="font-host-grotesk text-[18px] font-semibold leading-none text-rellia-teal">
+          <div className="mt-auto flex min-h-[56px] items-stretch border-t border-black/10">
+            <div className="flex min-w-0 flex-1 items-center bg-white px-4 py-3">
+              <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
+                <span className="font-host-grotesk text-[22px] font-semibold leading-none tracking-tight text-rellia-teal sm:text-2xl">
                   {priceAmount}
-                </p>
-                <p className="mt-2 font-urbanist text-[11px] font-medium leading-none text-black/50">
-                  {billingLabel}
-                </p>
+                </span>
+                <span className="font-host-grotesk text-base font-semibold leading-none text-rellia-teal/85 sm:text-lg">
+                  {periodSuffix}
+                </span>
               </div>
+            </div>
 
+            <div className="flex shrink-0 items-stretch px-3 py-2.5 sm:px-4">
               <RelliaAction
                 asChild
                 variant="outlineOnWhite"
                 size="compact"
-                className="shrink-0 px-4 transition-colors hover:bg-rellia-teal hover:text-white"
+                className="self-center px-4 transition-colors hover:bg-rellia-teal hover:text-white"
               >
                 <Link to={href}>Learn more</Link>
               </RelliaAction>

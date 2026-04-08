@@ -12,7 +12,7 @@
       "destination": "/api"
     },
     {
-      "source": "/((?!api/)(?!_vercel/)(?!assets/)(?!images/)(?!videos/)(?!favicon\\.ico$)(?!robots\\.txt$)(?!placeholder\\.svg$).*)",
+      "source": "/((?!api/)(?!_vercel/)(?!assets/)(?!images/)(?!videos/)(?!favicon\\.ico$)(?!robots\\.txt$)(?!sitemap\\.xml$)(?!placeholder\\.svg$).*)",
       "destination": "/index.html"
     }
   ]

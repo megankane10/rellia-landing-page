@@ -55,12 +55,12 @@ export function TeamMemberCard({
             setCandidateIndex((i) => Math.min(i + 1, candidates.length - 1));
           }}
           className={cn(
-            "h-full w-full object-cover transition-transform duration-500",
-            name === "Megan Kane" ? "object-top" : "object-center",
+            "absolute inset-0 h-full w-full object-cover transition-transform duration-500",
+            name === "Megan Kane" ? "origin-[center_top] object-[center_24%]" : "object-center",
             name === "Megan Kane"
               ? showBio
-                ? "scale-[1.12] -translate-y-8"
-                : "scale-[1.18] -translate-y-10"
+                ? "scale-[1.06]"
+                : "scale-[1.12]"
               : showBio
                 ? "scale-100"
                 : "scale-105",

@@ -1,6 +1,8 @@
 /// <reference types="vite/client" />
 
 interface ImportMetaEnv {
+  /** Canonical origin for SEO (optional; defaults to production URL) */
+  readonly VITE_SITE_URL?: string
   /** Stripe Payment Link URLs for /payment (optional; see `.env.example`) */
   readonly VITE_STRIPE_MONTHLY_PLAN_LINK?: string
   readonly VITE_STRIPE_ANNUAL_PLAN_LINK?: string

@@ -425,7 +425,7 @@ export const DEFAULT_PROGRAMS_LANDING: ProgramsLandingContent = {
   ],
   ctaTitle: "Want the full experience?",
   ctaBody:
-    "Join the Rellia community to get access to all programs, events, mentors, and resources.",
+    "Rellia members get access to all event recordings, program discounts, and individual mentorship.",
   ctaButtonLabel: "Get Involved",
   ctaButtonHref: "/network",
 }
@@ -651,7 +651,7 @@ export function mergeProgramsLanding(
         ...program,
         priceLabel: DEFAULT_QMS_PROGRAM.pricingBadge,
         priceAmount: amount,
-        priceSuffix: "/mo",
+        priceSuffix: "/month",
       }
     }
 
