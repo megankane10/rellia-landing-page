@@ -56,11 +56,12 @@ export function TeamMemberCard({
           }}
           className={cn(
             "absolute inset-0 h-full w-full object-cover transition-transform duration-500",
-            name === "Megan Kane" ? "origin-[center_top] object-[center_24%]" : "object-center",
+            /* Top-anchored so portrait headroom isn’t cropped; scale from top on hover */
+            name === "Megan Kane" ? "origin-top object-top" : "object-center",
             name === "Megan Kane"
               ? showBio
-                ? "scale-[1.06]"
-                : "scale-[1.12]"
+                ? "scale-100"
+                : "scale-[1.03]"
               : showBio
                 ? "scale-100"
                 : "scale-105",
