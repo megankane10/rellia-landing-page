@@ -34,6 +34,7 @@ export const ProgramCard = ({
   const hasHref = Boolean(href && href.trim().length > 0)
   const hasWaitlistHref = Boolean(waitlistHref && waitlistHref.trim().length > 0)
   const [waitlistOpen, setWaitlistOpen] = useState(false)
+  const displayTag = tag?.trim() ? tag : !hasHref && hasWaitlistHref ? "Waitlist" : ""
 
   return (
     <div
@@ -46,7 +47,15 @@ export const ProgramCard = ({
       )}
     >
       <div className="flex h-full flex-col">
-        <div className="aspect-video w-full shrink-0 overflow-hidden bg-rellia-teal/5">
+        <div className="relative aspect-video w-full shrink-0 overflow-hidden bg-rellia-teal/5">
+          {displayTag ? (
+            <div className="absolute right-3 top-3 z-10">
+              <span className="inline-flex items-center rounded-full bg-rellia-mint/90 px-3 py-1 font-host-grotesk text-[11px] font-extrabold uppercase tracking-[0.16em] text-rellia-teal shadow-lg ring-1 ring-white/50">
+                {displayTag}
+              </span>
+            </div>
+          ) : null}
+
           {hasHref ? (
             <Link to={href as string} aria-label={`Learn more about ${title}`} className="block h-full w-full">
               <img
@@ -67,12 +76,6 @@ export const ProgramCard = ({
         </div>
 
         <div className="flex flex-1 flex-col p-6">
-          {tag ? (
-            <span className="mb-2 inline-flex w-fit items-center rounded-full border border-rellia-teal/15 bg-rellia-teal/5 px-3 py-1 font-urbanist text-[11px] font-semibold text-rellia-teal">
-              {tag}
-            </span>
-          ) : null}
-
           <h3 className="font-host-grotesk text-[16px] font-medium leading-snug text-black">
             {hasHref ? (
               <Link
