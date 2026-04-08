@@ -92,8 +92,16 @@ const HUBSPOT_FORM: HubspotEmbedConfig = {
 const HUBSPOT_V2_SCRIPT_SRC = "https://js.hsforms.net/forms/v2.js"
 
 const loadHubspotV2Script = (): Promise<void> => {
+  // If HubSpot is already available (e.g. loaded by another page/embed), do not wait on script events.
+  if (typeof window !== "undefined" && typeof window.hbspt?.forms?.create === "function") {
+    return Promise.resolve()
+  }
+
   const existing = document.querySelector<HTMLScriptElement>(`script[src="${HUBSPOT_V2_SCRIPT_SRC}"]`)
   if (existing) {
+    // Script tag exists; if it has already finished loading (or loaded before we attached listeners),
+    // rely on the global being present.
+    if (typeof window.hbspt?.forms?.create === "function") return Promise.resolve()
     if (existing.dataset.loaded === "true") return Promise.resolve()
     return new Promise((resolve, reject) => {
       existing.addEventListener("load", () => resolve(), { once: true })
