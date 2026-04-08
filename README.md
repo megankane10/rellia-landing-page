@@ -1,12 +1,7 @@
-<img src="public/ogimage.png" alt="Rellia Health" width="100%" style="border-radius:16px;" />
+![Project Snapshot](public/ogimage.png)
 > Marketing website for **Rellia Health** — connecting founders, clinicians, and health systems to build the future of care.
 - **Live**: `https://relliahealth.com`
-- **Open Graph image**: `public/ogimage.png` (served at `https://relliahealth.com/ogimage.png`)
 
-## Branches
-
-- **main**: production-ready code deployed to `https://relliahealth.com`
-- **Additions**: active development branch used for edits and new work before merging into `main`
 
 ## Workflow
 
