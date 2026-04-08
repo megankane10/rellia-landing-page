@@ -4,6 +4,8 @@ import { ArrowRight, Check, CheckCircle2, Copy } from "lucide-react"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
 import RelliaAction from "@/components/RelliaAction"
+import PromoBanner from "@/components/PromoBanner"
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 import { usePaymentPage } from "@/hooks/useCmsDocuments"
 import { DEFAULT_PAYMENT_PAGE, DEFAULT_STRIPE_PAYMENT_LINK_FALLBACK } from "@shared/cms/defaults"
 import { cn } from "@/lib/utils"
@@ -13,11 +15,35 @@ export default function Payment() {
   const p = paymentCms ?? DEFAULT_PAYMENT_PAGE
 
   const [codeCopied, setCodeCopied] = useState(false)
+  const [billingCadence, setBillingCadence] = useState<"monthly" | "annual">("annual")
 
   const monthlyHref =
     (import.meta.env.VITE_STRIPE_MONTHLY_PLAN_LINK as string | undefined)?.trim() || DEFAULT_STRIPE_PAYMENT_LINK_FALLBACK
   const annualHref =
     (import.meta.env.VITE_STRIPE_ANNUAL_PLAN_LINK as string | undefined)?.trim() || DEFAULT_STRIPE_PAYMENT_LINK_FALLBACK
+
+  const selectedPlan = useMemo(() => {
+    const isAnnual = billingCadence === "annual"
+    return {
+      cadence: billingCadence,
+      href: isAnnual ? annualHref : monthlyHref,
+      badge: isAnnual ? p.pricingAnnualBadge : p.pricingMonthlyBadge,
+      amount: isAnnual ? p.pricingAnnualAmount : p.pricingMonthlyAmount,
+      proceedLabel: isAnnual ? p.annualProceedLabel : p.monthlyProceedLabel,
+      highlightLabel: isAnnual ? p.popularLabel : "",
+    }
+  }, [
+    annualHref,
+    billingCadence,
+    monthlyHref,
+    p.annualProceedLabel,
+    p.monthlyProceedLabel,
+    p.popularLabel,
+    p.pricingAnnualAmount,
+    p.pricingAnnualBadge,
+    p.pricingMonthlyAmount,
+    p.pricingMonthlyBadge,
+  ])
 
   const handleCopyCode = () => {
     const code = p.discountBannerSubtitle.trim() || "RELLIA50"
@@ -140,47 +166,87 @@ export default function Payment() {
                 ))}
               </ul>
 
-              <div className="mt-12 grid grid-cols-1 items-end gap-5 md:mt-14 md:grid-cols-2 md:gap-6">
-                <div className="flex flex-col rounded-[24px] border border-black/8 bg-white p-6 shadow-sm md:p-8">
-                  <div className="mx-auto mb-6 flex h-[30px] w-fit items-center justify-center rounded-full border border-black/15 bg-transparent px-4">
-                    <span className="font-urbanist text-sm text-black/60">{p.pricingMonthlyBadge}</span>
-                  </div>
-                  <div className="mb-6 text-center">
-                    <span className="font-host-grotesk text-5xl font-bold tracking-[-0.02em] text-rellia-teal md:text-6xl">
-                      {p.pricingMonthlyAmount}
+              <div className="mt-8 md:mt-10">
+                <div className="mx-auto flex w-fit flex-col items-center gap-3">
+                  <ToggleGroup
+                    type="single"
+                    value={billingCadence}
+                    onValueChange={(next) => {
+                      if (next !== "monthly" && next !== "annual") return
+                      setBillingCadence(next)
+                    }}
+                    aria-label="Billing cadence"
+                    className="rounded-full border border-black/10 bg-white p-1 shadow-sm"
+                  >
+                    <ToggleGroupItem
+                      value="monthly"
+                      aria-label="Monthly billing"
+                      className="rounded-full px-4 py-2 font-urbanist text-sm data-[state=on]:bg-rellia-teal data-[state=on]:text-white"
+                    >
+                      Monthly
+                    </ToggleGroupItem>
+                    <ToggleGroupItem
+                      value="annual"
+                      aria-label="Annual billing"
+                      className="rounded-full px-4 py-2 font-urbanist text-sm data-[state=on]:bg-rellia-teal data-[state=on]:text-white"
+                    >
+                      Annual
+                    </ToggleGroupItem>
+                  </ToggleGroup>
+
+                  <div className="flex items-center gap-2">
+                    <span className="inline-flex items-center rounded-full bg-rellia-mint/70 px-3 py-1 font-urbanist text-xs font-semibold text-rellia-teal">
+                      Best value
                     </span>
-                    <span className="font-host-grotesk text-xl font-bold text-[#5e5c5c] md:text-[23px]">{p.pricingPerSuffix}</span>
-                  </div>
-                  <div className="mt-auto">
-                    <div className="mb-6 h-px w-full bg-black/10" />
-                    <RelliaAction asChild variant="tealCardFull" className="h-[52px] text-base">
-                      <a href={monthlyHref} target="_blank" rel="noopener noreferrer">
-                        {p.monthlyProceedLabel}
-                        <ArrowRight />
-                      </a>
-                    </RelliaAction>
+                    <span className="font-urbanist text-xs text-black/55">Annual is recommended</span>
                   </div>
                 </div>
 
-                <div className="flex flex-col rounded-[28px] bg-rellia-teal p-2 shadow-sm">
-                  <div className="pb-2 pt-3 text-center">
-                    <span className="font-host-grotesk text-xs font-extrabold uppercase tracking-[0.15em] text-white">{p.popularLabel}</span>
-                  </div>
-                  <div className="flex flex-1 flex-col rounded-[20px] bg-white p-6 md:p-8">
-                    <div className="mx-auto mb-6 flex h-[30px] w-fit items-center justify-center rounded-full border border-black/15 bg-transparent px-4">
-                      <span className="font-urbanist text-sm text-black/60">{p.pricingAnnualBadge}</span>
+                <div className="mx-auto mt-6 max-w-[560px]">
+                  <div
+                    className={cn(
+                      "relative overflow-hidden rounded-[28px] border border-black/10 bg-white p-6 shadow-sm md:p-8",
+                      billingCadence === "annual" && "ring-2 ring-rellia-teal/20",
+                    )}
+                    role="region"
+                    aria-label="Membership pricing"
+                  >
+                    {selectedPlan.highlightLabel ? (
+                      <div className="absolute right-4 top-4">
+                        <span className="inline-flex items-center rounded-full bg-rellia-teal px-3 py-1 font-host-grotesk text-[11px] font-extrabold uppercase tracking-[0.16em] text-white">
+                          {selectedPlan.highlightLabel}
+                        </span>
+                      </div>
+                    ) : null}
+
+                    <div className="flex flex-col items-center text-center">
+                      <div className="mb-5 flex items-center gap-2">
+                        <span className="inline-flex h-[30px] items-center justify-center rounded-full border border-black/15 bg-transparent px-4 font-urbanist text-sm text-black/60">
+                          {selectedPlan.badge}
+                        </span>
+                        {billingCadence === "annual" ? (
+                          <span className="inline-flex h-[30px] items-center justify-center rounded-full bg-rellia-mint/70 px-4 font-urbanist text-sm font-semibold text-rellia-teal">
+                            Best value
+                          </span>
+                        ) : null}
+                      </div>
+
+                      <div className="mb-6">
+                        <span className="font-host-grotesk text-6xl font-bold tracking-[-0.03em] text-rellia-teal">
+                          {selectedPlan.amount}
+                        </span>
+                        <span className="ml-2 font-host-grotesk text-xl font-bold text-[#5e5c5c]">
+                          {p.pricingPerSuffix}
+                        </span>
+                      </div>
                     </div>
-                    <div className="mb-6 text-center">
-                      <span className="font-host-grotesk text-5xl font-bold tracking-[-0.02em] text-rellia-teal md:text-6xl">
-                        {p.pricingAnnualAmount}
-                      </span>
-                      <span className="font-host-grotesk text-xl font-bold text-[#5e5c5c] md:text-[23px]">{p.pricingPerSuffix}</span>
-                    </div>
-                    <div className="mt-auto">
-                      <div className="mb-6 h-px w-full bg-black/10" />
+
+                    <div className="h-px w-full bg-black/10" />
+
+                    <div className="mt-6">
                       <RelliaAction asChild variant="tealCardFull" className="h-[52px] text-base">
-                        <a href={annualHref} target="_blank" rel="noopener noreferrer">
-                          {p.annualProceedLabel}
+                        <a href={selectedPlan.href} target="_blank" rel="noopener noreferrer">
+                          {selectedPlan.proceedLabel}
                           <ArrowRight />
                         </a>
                       </RelliaAction>
@@ -189,33 +255,14 @@ export default function Payment() {
                 </div>
               </div>
 
-              <div
-                className="mt-8 flex flex-col items-stretch gap-4 rounded-[24px] bg-black px-5 py-4 text-white md:mt-10 md:flex-row md:items-center md:justify-between md:gap-6 md:px-8 md:py-5"
-                role="region"
-                aria-label="Promotional offer"
-              >
-                <div className="flex flex-1 flex-col items-start gap-3 sm:flex-row sm:items-center sm:gap-4">
-                  {p.discountBannerBadge.trim() ? (
-                    <span className="inline-flex shrink-0 items-center rounded-full border border-[#05d66a] bg-[rgba(38,221,127,0.28)] px-4 py-1.5 font-urbanist text-sm font-bold text-[#08d36a]">
-                      {p.discountBannerBadge.trim()}
-                    </span>
-                  ) : null}
-                  <p className="inline-flex flex-wrap items-center gap-2 font-host-grotesk text-base font-medium leading-snug tracking-[-0.01em] md:text-lg">
-                    {p.discountBannerTitle.trim()}
-                    {p.discountBannerSubtitle.trim() ? (
-                      <span className="font-mono">{p.discountBannerSubtitle.trim()}</span>
-                    ) : null}
-                    <button
-                      type="button"
-                      onClick={handleCopyCode}
-                      aria-label="Copy promo code"
-                      className="inline-flex items-center justify-center rounded-md p-1 text-white/70 transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50"
-                    >
-                      {codeCopied ? <Check className="h-4 w-4 text-[#08d36a]" /> : <Copy className="h-4 w-4" />}
-                    </button>
-                  </p>
-                </div>
-              </div>
+              <PromoBanner
+                className="mt-8 md:mt-10"
+                badge={p.discountBannerBadge}
+                title={p.discountBannerTitle}
+                code={p.discountBannerSubtitle.trim() || "RELLIA50"}
+                copied={codeCopied}
+                onCopy={handleCopyCode}
+              />
 
               <div className="mt-16 rounded-3xl bg-rellia-teal px-8 py-14 text-center md:mt-20 md:px-16 md:py-20">
                 <h3 className="mx-auto mb-8 max-w-[760px] font-host-grotesk text-3xl font-bold leading-tight tracking-tight text-white md:text-[40px]">
