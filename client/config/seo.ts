@@ -4,7 +4,7 @@ export const getSiteUrl = (): string => {
   if (raw && raw.trim().length > 0) {
     return raw.replace(/\/$/, "")
   }
-  return "https://relliahealth.com"
+  return "https://www.relliahealth.com"
 }
 
 export type RouteSeoConfig = {

@@ -1,4 +1,4 @@
-Sitemap: https://relliahealth.com/sitemap.xml
+Sitemap: https://www.relliahealth.com/sitemap.xml
 
 User-agent: Googlebot
 Allow: /
