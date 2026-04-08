@@ -63,7 +63,7 @@ export default function Navbar({ ctaRadiusClassName = "rounded-full" }: NavbarPr
     (location.pathname === "/" ||
       location.pathname === "/about" ||
       location.pathname === "/programs" ||
-      location.pathname === "/payment" ||
+      location.pathname === "/membership" ||
       location.pathname === "/terms" ||
       location.pathname === "/privacy" ||
       location.pathname === "/network");

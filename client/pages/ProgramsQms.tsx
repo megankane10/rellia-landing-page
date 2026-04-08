@@ -19,8 +19,8 @@ export default function ProgramsQms() {
   return (
     <ProgramPageLayout
       cms={q}
-      heroImageSrc="/images/banner-whitelogo.png"
-      heroImageAlt="Build Your QMS program"
+      heroImageSrc="/images/QMS-programs.webp"
+      heroImageAlt="Quality Management System program"
       outcomesSectionId={QMS_OUTCOMES_SECTION_ID}
       staticBlocks={QMS_PROGRAM_STATIC_BLOCKS}
     />

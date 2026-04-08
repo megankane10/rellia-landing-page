@@ -7,8 +7,9 @@ export type ProgramCardProps = {
   title: string
   description: string
   imageSrc: string
-  href: string
+  href?: string
   buttonText: string
+  waitlistHref?: string
   priceLabel?: string
   priceAmount?: string
   priceSuffix?: string
@@ -21,11 +22,16 @@ export const ProgramCard = ({
   description,
   imageSrc,
   href,
+  buttonText,
+  waitlistHref,
   priceLabel: _priceLabel,
   priceAmount: _priceAmount,
   priceSuffix: _priceSuffix,
   className,
 }: ProgramCardProps) => {
+  const hasHref = Boolean(href && href.trim().length > 0)
+  const hasWaitlistHref = Boolean(waitlistHref && waitlistHref.trim().length > 0)
+
   return (
     <div
       aria-label={`Program: ${title}`}
@@ -38,14 +44,23 @@ export const ProgramCard = ({
     >
       <div className="flex h-full flex-col">
         <div className="aspect-video w-full shrink-0 overflow-hidden bg-rellia-teal/5">
-          <Link to={href} aria-label={`Learn more about ${title}`} className="block h-full w-full">
+          {hasHref ? (
+            <Link to={href as string} aria-label={`Learn more about ${title}`} className="block h-full w-full">
+              <img
+                src={imageSrc}
+                alt={title}
+                className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                loading="lazy"
+              />
+            </Link>
+          ) : (
             <img
               src={imageSrc}
               alt={title}
-              className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+              className="h-full w-full object-cover"
               loading="lazy"
             />
-          </Link>
+          )}
         </div>
 
         <div className="flex flex-1 flex-col p-6">
@@ -56,9 +71,16 @@ export const ProgramCard = ({
           ) : null}
 
           <h3 className="font-host-grotesk text-[16px] font-medium leading-snug text-black">
-            <Link to={href} className="transition-colors hover:text-rellia-teal focus-visible:outline-none">
-              {title}
-            </Link>
+            {hasHref ? (
+              <Link
+                to={href as string}
+                className="transition-colors hover:text-rellia-teal focus-visible:outline-none"
+              >
+                {title}
+              </Link>
+            ) : (
+              title
+            )}
           </h3>
 
           <p className="mt-2 flex-1 font-urbanist text-[14px] leading-[1.55] text-black/60">
@@ -68,7 +90,17 @@ export const ProgramCard = ({
 
         <div className="mt-auto p-4">
           <RelliaAction asChild variant="tealCardFull" className="w-full h-[48px] text-base">
-            <Link to={href}>Learn more</Link>
+            {hasHref ? (
+              <Link to={href as string}>{buttonText || "Learn more"}</Link>
+            ) : hasWaitlistHref ? (
+              <a href={waitlistHref} target="_blank" rel="noopener noreferrer">
+                {buttonText || "Join Waitlist"}
+              </a>
+            ) : (
+              <button type="button" disabled aria-disabled className="opacity-60 cursor-not-allowed">
+                {buttonText || "Join Waitlist"}
+              </button>
+            )}
           </RelliaAction>
         </div>
       </div>

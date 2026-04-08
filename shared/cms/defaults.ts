@@ -370,7 +370,70 @@ export const DEFAULT_PROGRAMS_LANDING: ProgramsLandingContent = {
         "Build a lean, scalable QMS to comply with ISO 13485, MDSAP, FDA, and MDR requirements, with personalized guidance from quality experts every step of the way",
       imageSrc: "/images/programs-qms.png",
       href: "/programs/qms",
-      buttonText: "Get Started",
+      buttonText: "Learn more",
+    },
+    {
+      title: "Advance: Data Room Deep Dive",
+      description: "Join the waitlist — details coming soon.",
+      imageSrc: "/images/program-DataRoomDeepDive.png",
+      buttonText: "Join Waitlist",
+      waitlistHref: "",
+    },
+    {
+      title: "Advisory Board Match",
+      description: "Join the waitlist — details coming soon.",
+      imageSrc: "/images/program-advisoryboard.png",
+      buttonText: "Join Waitlist",
+      waitlistHref: "",
+    },
+    {
+      title: "Design Your Brand Strategy",
+      description: "Join the waitlist — details coming soon.",
+      imageSrc: "/images/program-designYourBrand.png",
+      buttonText: "Join Waitlist",
+      waitlistHref: "",
+    },
+    {
+      title: "Elevate: Healthcare Capital",
+      description: "Join the waitlist — details coming soon.",
+      imageSrc: "/images/program-HealthcareCapital.png",
+      buttonText: "Join Waitlist",
+      waitlistHref: "",
+    },
+    {
+      title: "First 50 Users: A Clinical Feedback Intensive",
+      description: "Join the waitlist — details coming soon.",
+      imageSrc: "/images/program-first50users.png",
+      buttonText: "Join Waitlist",
+      waitlistHref: "",
+    },
+    {
+      title: "Health Tech Financial Modeling",
+      description: "Join the waitlist — details coming soon.",
+      imageSrc: "/images/program-healthTechModelling.png",
+      buttonText: "Join Waitlist",
+      waitlistHref: "",
+    },
+    {
+      title: "Ignite: Pitch Foundations",
+      description: "Join the waitlist — details coming soon.",
+      imageSrc: "/images/program-ignitePitch.png",
+      buttonText: "Join Waitlist",
+      waitlistHref: "",
+    },
+    {
+      title: "Prototype Lab: Build Your Proof of Concept",
+      description: "Join the waitlist — details coming soon.",
+      imageSrc: "/images/program-prototype%20lab.png",
+      buttonText: "Join Waitlist",
+      waitlistHref: "",
+    },
+    {
+      title: "Regulatory Roadmap",
+      description: "Join the waitlist — details coming soon.",
+      imageSrc: "/images/program-regulatoryRoadmap.png",
+      buttonText: "Join Waitlist",
+      waitlistHref: "",
     },
   ],
   upcomingEvents: [
@@ -647,10 +710,9 @@ export function mergeProgramsLanding(
     const hasTitle = typeof program.title === "string" && program.title.trim() !== ""
     const hasDescription = typeof program.description === "string" && program.description.trim() !== ""
     const hasImageSrc = typeof program.imageSrc === "string" && program.imageSrc.trim() !== ""
-    const hasHref = typeof program.href === "string" && program.href.trim() !== ""
     const hasButtonText = typeof program.buttonText === "string" && program.buttonText.trim() !== ""
 
-    return hasTitle && hasDescription && hasImageSrc && hasHref && hasButtonText
+    return hasTitle && hasDescription && hasImageSrc && hasButtonText
   })
   const sourcePrograms = programs.length > 0 ? programs : DEFAULT_PROGRAMS_LANDING.programs
 

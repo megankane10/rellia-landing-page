@@ -57,7 +57,7 @@ const ROUTE_SEO: Record<string, RouteSeoConfig> = {
       "Get in touch with Rellia Health about partnerships, programs, or press. We respond to serious inquiries from builders and collaborators.",
     indexable: true,
   },
-  "/payment": {
+  "/membership": {
     title: "Membership — Rellia Health",
     description:
       "Complete your Rellia Health membership checkout securely. Manage your plan and access member benefits.",

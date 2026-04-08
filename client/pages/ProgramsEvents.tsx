@@ -96,21 +96,43 @@ export default function ProgramsEvents() {
             </ScrollReveal>
 
             <ScrollReveal>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                {pl.programs.map((p) => (
-                  <ProgramCard
-                    key={p.href}
-                    title={p.title}
-                    description={p.description}
-                    imageSrc={p.imageSrc}
-                    href={p.href}
-                    buttonText={p.buttonText}
-                      priceLabel={p.priceLabel}
-                      priceAmount={p.priceAmount}
-                      priceSuffix={p.priceSuffix}
-                  />
-                ))}
-              </div>
+              <Carousel
+                opts={{
+                  align: "start",
+                  loop: false,
+                  dragFree: false,
+                  containScroll: "trimSnaps",
+                }}
+                className="w-full"
+              >
+                <div className="flex flex-col gap-8">
+                  <CarouselContent className="-ml-4 md:-ml-6">
+                    {pl.programs.map((p) => (
+                      <CarouselItem
+                        key={`${p.title}-${p.imageSrc}`}
+                        className="pl-4 md:pl-6 basis-full sm:basis-1/2 lg:basis-1/3"
+                      >
+                        <ProgramCard
+                          title={p.title}
+                          description={p.description}
+                          imageSrc={p.imageSrc}
+                          href={p.href}
+                          buttonText={p.buttonText}
+                          waitlistHref={p.waitlistHref}
+                          priceLabel={p.priceLabel}
+                          priceAmount={p.priceAmount}
+                          priceSuffix={p.priceSuffix}
+                        />
+                      </CarouselItem>
+                    ))}
+                  </CarouselContent>
+
+                  <div className="flex items-center justify-center gap-4">
+                    <CarouselPrevious className={carouselArrowClass} />
+                    <CarouselNext className={carouselArrowClass} />
+                  </div>
+                </div>
+              </Carousel>
             </ScrollReveal>
           </div>
         </section>

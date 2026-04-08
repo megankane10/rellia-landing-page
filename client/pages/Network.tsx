@@ -227,8 +227,12 @@ function FilloutInterestDialog({ open, onOpenChange }: { open: boolean; onOpenCh
     if (!open) return
 
     const src = "https://server.fillout.com/embed/v1/"
+    // Fillout's embed script often only hydrates embeds present at load time.
+    // Since this dialog mounts dynamically, re-inject the script on open to ensure hydration.
     const existing = document.querySelector<HTMLScriptElement>(`script[src="${src}"]`)
-    if (existing) return
+    if (existing) {
+      existing.remove()
+    }
 
     const script = document.createElement("script")
     script.src = src
@@ -283,21 +287,21 @@ export default function Network() {
 
         {/* ───────────────────────────── HERO ───────────────────────────── */}
         <section className="relative pt-32 pb-20 md:pt-48 md:pb-28 bg-rellia-teal overflow-hidden">
-          {/* Background photograph */}
+          {/* Background image */}
           <img
-            src="/images/hero-network.jpg"
+            src="/images/network-hero.png"
             alt=""
             aria-hidden
             className="absolute inset-0 h-full w-full object-cover object-center select-none"
           />
 
-          {/* Teal wash for text contrast */}
-          <div aria-hidden className="absolute inset-0 bg-rellia-teal/40" />
+          {/* Softer teal wash so image stays visible */}
+          <div aria-hidden className="absolute inset-0 bg-rellia-teal/25" />
 
           {/* Left-to-right gradient — extra contrast under the headline */}
           <div
             aria-hidden
-            className="absolute inset-0 bg-gradient-to-r from-rellia-teal via-rellia-teal/40 to-rellia-teal/30"
+            className="absolute inset-0 bg-gradient-to-r from-rellia-teal/75 via-rellia-teal/35 to-rellia-teal/20"
           />
 
           {/* Decorative grid lines — modernist structure cue */}
@@ -335,7 +339,7 @@ export default function Network() {
             <ScrollReveal delay={0.15}>
               <nav
                 aria-label="Jump to section"
-                className="mt-12 md:mt-16 grid grid-cols-2 md:grid-cols-4 gap-px bg-white/15 border border-white/15 rounded-2xl overflow-hidden"
+                className="mt-[calc(theme(spacing.12)+15px)] md:mt-[calc(theme(spacing.16)+15px)] grid grid-cols-2 md:grid-cols-4 gap-px bg-white/15 border border-white/15 rounded-2xl overflow-hidden"
               >
                 {JUMP_LINKS.map(({ id, numeral, label, icon: Icon }) => (
                   <a
@@ -511,15 +515,15 @@ export default function Network() {
                 <p className="font-urbanist text-base md:text-lg text-black/60 max-w-xl">
                   The founders in our community are the kind of people worth showing up for. Let's find your match.
                 </p>
-                <RelliaAction asChild variant="tealFilledLift" size="comfortable">
-                  <button
-                    type="button"
-                    onClick={() => setIsFilloutOpen(true)}
-                    aria-label="Express interest in mentoring"
-                  >
-                    Express Interest in Mentoring
-                    <ArrowRight />
-                  </button>
+                <RelliaAction
+                  type="button"
+                  variant="tealFilledLift"
+                  size="comfortable"
+                  onClick={() => setIsFilloutOpen(true)}
+                  aria-label="Express interest in mentoring"
+                >
+                  Express Interest in Mentoring
+                  <ArrowRight />
                 </RelliaAction>
               </div>
             </ScrollReveal>
@@ -688,15 +692,15 @@ export default function Network() {
                   Put your brand in front of founders at the exact moment they're making decisions about who to work
                   with.
                 </p>
-                <RelliaAction asChild variant="tealFilledLift" size="comfortable">
-                  <button
-                    type="button"
-                    onClick={() => setIsFilloutOpen(true)}
-                    aria-label="Get in touch about partnering"
-                  >
-                    Get in Touch About Partnering
-                    <ArrowRight />
-                  </button>
+                <RelliaAction
+                  type="button"
+                  variant="tealFilledLift"
+                  size="comfortable"
+                  onClick={() => setIsFilloutOpen(true)}
+                  aria-label="Get in touch about partnering"
+                >
+                  Get in Touch About Partnering
+                  <ArrowRight />
                 </RelliaAction>
               </div>
             </ScrollReveal>
