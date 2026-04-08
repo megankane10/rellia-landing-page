@@ -5,7 +5,7 @@ import NetworkMetricsSection from "@/components/NetworkMetricsSection";
 import WhyRellia from "@/components/WhyRellia";
 import HowItWorks from "@/components/HowItWorks";
 import TestimonialsSection from "@/components/TestimonialsSection";
-import CTASection from "@/components/CTASection";
+import RelliaCta from "@/components/RelliaCta";
 import Footer from "@/components/Footer";
 import { useHomePage } from "@/hooks/useCmsDocuments";
 import { DEFAULT_HOME_PAGE } from "@shared/cms/defaults";
@@ -32,12 +32,9 @@ export default function Index() {
           testimonials={home.testimonials}
         />
         <LogoMarquee />
-        <CTASection
+        <RelliaCta
           title={home.ctaTitle}
-          buttonLabel={home.ctaButtonLabel}
-          buttonPath={home.ctaButtonPath}
-          imageUrl={home.ctaImageUrl}
-          imageAlt={home.ctaImageAlt}
+          primary={{ label: home.ctaButtonLabel, to: home.ctaButtonPath }}
         />
       </main>
       <Footer />

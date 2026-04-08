@@ -72,8 +72,8 @@ export default {
           to: { height: "0" },
         },
         marquee: {
-          "0%": { transform: "translateX(0%)" },
-          "100%": { transform: "translateX(-50%)" },
+          "0%": { transform: "translate3d(0%, 0, 0)" },
+          "100%": { transform: "translate3d(-50%, 0, 0)" },
         },
         "fade-up": {
           "0%": { opacity: "0", transform: "translateY(40px)" },
@@ -88,7 +88,8 @@ export default {
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
-        marquee: "marquee 28s linear infinite",
+        marquee: "marquee 22s linear infinite",
+        marqueeFast: "marquee 14s linear infinite",
         "fade-up": "fade-up 0.75s ease-out both",
         /** `both` = start state during delay (stays clipped), `forwards` = stay filled at end */
         "healthcare-fill":

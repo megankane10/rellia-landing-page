@@ -45,17 +45,19 @@ export function IconFeatureCard({
   return (
     <div
       className={cn(
-        "flex h-full flex-col gap-5 rounded-3xl border border-black/[0.08] bg-white p-8 shadow-md transition-all duration-300 md:gap-6 md:p-9",
-        "hover:shadow-xl hover:-translate-y-1",
+        "flex h-full min-w-0 flex-col gap-4 rounded-2xl border border-black/[0.08] bg-white p-7 shadow-md transition-all duration-300 md:gap-5 md:p-8",
+        "hover:-translate-y-1 hover:shadow-xl",
         className,
       )}
     >
-      <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-neutral-100 md:h-14 md:w-14">
-        <Icon className="h-6 w-6 text-neutral-800 md:h-7 md:w-7" strokeWidth={1.75} />
+      <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-rellia-mint/25 md:h-14 md:w-14">
+        <Icon className="h-6 w-6 text-rellia-teal md:h-7 md:w-7" strokeWidth={1.75} />
       </div>
+
       <h3 className="font-host-grotesk text-xl font-bold leading-tight tracking-tight text-black md:text-2xl">
         {title}
       </h3>
+
       <p className="font-urbanist text-base leading-relaxed text-black/60">{description}</p>
     </div>
   );

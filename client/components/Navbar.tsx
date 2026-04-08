@@ -27,6 +27,8 @@ const networkItems = [
 const SOLID_NAVBAR_PATHS = new Set<string>([
   "/contact",
   "/blog",
+  /** Program detail pages (white hero) — solid bar for contrast; hub `/programs` keeps transparent hero nav */
+  "/programs/qms",
 ])
 
 const LOGO_FILLED = "/images/logo-rellia-filled.webp"
@@ -51,6 +53,8 @@ export default function Navbar({ ctaRadiusClassName = "rounded-full" }: NavbarPr
 
   const isActive = (path: string) => location.pathname === path;
   const isNetworkActive = location.pathname === "/network";
+  const isProgramsHubActive =
+    location.pathname === "/programs" || location.pathname.startsWith("/programs/");
 
   const solidNavFromRoute = SOLID_NAVBAR_PATHS.has(location.pathname)
   const navFilled = scrolled || mobileOpen || solidNavFromRoute
@@ -67,7 +71,7 @@ export default function Navbar({ ctaRadiusClassName = "rounded-full" }: NavbarPr
   const textCls = useLightNav
     ? "text-white hover:text-white/85"
     : "text-rellia-teal hover:text-rellia-teal/70";
-  const underlineCls = "bg-rellia-mint";
+  const underlineCls = navFilled ? "bg-rellia-teal" : "bg-rellia-mint"
 
   return (
     <nav
@@ -122,10 +126,11 @@ export default function Navbar({ ctaRadiusClassName = "rounded-full" }: NavbarPr
           <Link
             to="/programs"
             className={`relative flex items-center gap-1.5 font-host-grotesk text-[15px] lg:text-[16px] font-medium transition-colors pb-1 ${textCls}`}
+            aria-current={isProgramsHubActive ? "page" : undefined}
           >
             <CalendarDays className="w-4 h-4 shrink-0" />
             Programs &amp; Events
-            {isActive("/programs") && (
+            {isProgramsHubActive && (
               <span className={`absolute bottom-0 left-0 right-0 h-[2px] rounded-full ${underlineCls} transition-colors`} />
             )}
           </Link>
@@ -227,8 +232,12 @@ export default function Navbar({ ctaRadiusClassName = "rounded-full" }: NavbarPr
 
           <Link
             to="/programs"
-            className="flex items-center gap-3 py-4 border-b border-black/5 font-host-grotesk text-base font-medium text-rellia-teal"
+            className={cn(
+              "flex items-center gap-3 py-4 border-b border-black/5 font-host-grotesk text-base font-medium text-rellia-teal",
+              isProgramsHubActive && "bg-rellia-teal/5 border-l-4 border-l-rellia-mint pl-5 -ml-1",
+            )}
             onClick={() => setMobileOpen(false)}
+            aria-current={isProgramsHubActive ? "page" : undefined}
           >
             <CalendarDays className="w-5 h-5 text-rellia-mint" />
             Programs &amp; Events

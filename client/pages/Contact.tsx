@@ -4,12 +4,7 @@ import Footer from "@/components/Footer"
 import { useContactPage } from "@/hooks/useCmsDocuments"
 import { DEFAULT_CONTACT_PAGE } from "@shared/cms/defaults"
 import { Mail } from "lucide-react"
-
-declare global {
-  interface Window {
-    hbspt?: unknown
-  }
-}
+import SectionPillBadge from "@/components/SectionPillBadge"
 
 const HUBSPOT_SCRIPT_SRC = "https://js-na3.hsforms.net/forms/embed/342926478.js"
 
@@ -39,10 +34,10 @@ export default function Contact() {
             {/* Left: copy + quote */}
             <div className="flex min-h-0 min-w-0 flex-1 flex-col gap-8">
               <div className="shrink-0">
-                <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-black/5 bg-white/80 px-4 py-2 text-sm font-semibold text-rellia-teal">
+                <SectionPillBadge className="mb-6 gap-2 px-4 py-2 text-sm">
                   <Mail className="h-4 w-4 text-rellia-mint" aria-hidden />
                   <span>{copy.heroBadge}</span>
-                </div>
+                </SectionPillBadge>
                 <h1 className="mb-4 text-3xl font-bold leading-tight tracking-tight text-rellia-teal md:text-5xl">
                   {copy.pageTitle}
                 </h1>
@@ -59,7 +54,7 @@ export default function Contact() {
                 <div className="mt-6 flex items-center gap-4">
                   <div className="h-14 w-14 overflow-hidden rounded-full border border-black/10 bg-rellia-cream/50">
                     <img
-                      src="/images/megankane-team.jpg"
+                      src="/images/team-megankane.jpg"
                       alt={copy.quoteAttributionName}
                       className="h-full w-full object-cover object-top"
                       loading="lazy"

@@ -5,7 +5,13 @@ export const qmsProgramPage = defineType({
   title: 'QMS program page',
   type: 'document',
   fields: [
-    defineField({name: 'paymentUrl', type: 'url'}),
+    defineField({
+      name: 'paymentUrl',
+      type: 'url',
+      title: 'Payment link (Stripe Payment Link)',
+      description:
+        'Opens in a new tab — use a Stripe Payment Link (e.g. buy.stripe.com/…). Optional: override with VITE_QMS_PAYMENT_LINK in env.',
+    }),
     defineField({name: 'heroTitle', type: 'string'}),
     defineField({name: 'heroDescription', type: 'text', rows: 4}),
     defineField({name: 'heroCtaLabel', type: 'string'}),

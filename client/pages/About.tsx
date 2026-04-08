@@ -1,8 +1,9 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import ScrollReveal from "@/components/ScrollReveal";
+import RelliaCta from "@/components/RelliaCta";
 import { Heart, Stethoscope, Globe, Zap, type LucideIcon } from "lucide-react";
-import { IconFeatureCard, TeamMemberCard, AboutCtaBanner } from "@/components/cards";
+import { IconFeatureCard, TeamMemberCard } from "@/components/cards";
 import { useAboutPage } from "@/hooks/useCmsDocuments";
 import { DEFAULT_ABOUT_PAGE } from "@shared/cms/defaults";
 
@@ -26,7 +27,7 @@ export default function About() {
       <Navbar />
 
       <main>
-        <section className="relative pt-32 pb-20 md:pt-48 md:pb-32 bg-rellia-teal overflow-hidden">
+        <section className="relative pt-28 pb-16 md:pt-40 md:pb-24 bg-rellia-teal overflow-hidden">
           <div className="absolute inset-0 opacity-10 pointer-events-none">
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-rellia-mint via-transparent to-transparent blur-3xl" />
           </div>
@@ -40,12 +41,12 @@ export default function About() {
 
           <div className="relative z-10 max-w-[1300px] mx-auto px-6 md:px-10">
             <ScrollReveal>
-              <h1 className="text-white text-5xl md:text-7xl lg:text-8xl font-bold leading-tight tracking-tight mb-8">
+              <h1 className="text-white text-5xl md:text-6xl lg:text-7xl font-bold leading-tight tracking-tight mb-6">
                 {about.heroLine1} <br />
                 <span className="text-rellia-mint">{about.heroLine2Mint}</span> <br />
                 {about.heroLine3}
               </h1>
-              <p className="text-white/80 text-lg md:text-2xl max-w-3xl font-urbanist leading-relaxed">
+              <p className="text-white/80 text-lg md:text-xl max-w-3xl font-urbanist leading-relaxed">
                 {about.heroIntro}
               </p>
             </ScrollReveal>
@@ -121,20 +122,12 @@ export default function About() {
           </div>
         </section>
 
-        <section className="py-20 md:py-32 px-6">
-          <div className="max-w-[1300px] mx-auto">
-            <ScrollReveal>
-              <AboutCtaBanner
-                founderApplyHref={FOUNDER_APPLY_HREF}
-                teamCareersPath="/contact"
-                title={about.ctaTitle}
-                body={about.ctaBody}
-                founderLabel={about.ctaFounderLabel}
-                teamLabel={about.ctaTeamLabel}
-              />
-            </ScrollReveal>
-          </div>
-        </section>
+        <RelliaCta
+          title={about.ctaTitle}
+          body={about.ctaBody}
+          primary={{ label: about.ctaFounderLabel, to: FOUNDER_APPLY_HREF }}
+          secondary={{ label: about.ctaTeamLabel, to: "/contact" }}
+        />
       </main>
 
       <Footer />

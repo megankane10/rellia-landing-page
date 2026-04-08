@@ -84,7 +84,7 @@ export default function ProgramsEvents() {
           </div>
         </section>
 
-        <section id="view-programs" className="py-16 md:py-24 bg-white">
+        <section id="view-programs" className="py-12 md:py-16 bg-white">
           <div className="max-w-[1300px] mx-auto px-6 md:px-10">
             <ScrollReveal className="mb-12 text-center">
               <h2 className="font-host-grotesk font-semibold text-black text-3xl md:text-[40px] leading-tight tracking-tight">
@@ -105,6 +105,9 @@ export default function ProgramsEvents() {
                     imageSrc={p.imageSrc}
                     href={p.href}
                     buttonText={p.buttonText}
+                      priceLabel={p.priceLabel}
+                      priceAmount={p.priceAmount}
+                      priceSuffix={p.priceSuffix}
                   />
                 ))}
               </div>
@@ -130,7 +133,7 @@ export default function ProgramsEvents() {
           </div>
         </section>
 
-        <section className="py-16 md:py-24 bg-white overflow-x-hidden">
+        <section className="py-12 md:py-16 bg-white overflow-x-hidden">
           <div className="max-w-[1300px] mx-auto px-6 md:px-10">
             <ScrollReveal className="mb-12 text-center">
               <h3 className="font-host-grotesk font-semibold text-black text-3xl md:text-[40px] leading-tight tracking-tight">

@@ -25,12 +25,9 @@ dist-ssr
 *.sw?
 
 .config/
-
-# Environment — never commit secrets (.env.example is the safe template)
 .env
-.env.local
-.env.*.local
-
+.env.*
+!.env.example
 .vercel
 
 # Local contact form storage (append-only pretty JSON per submission). Folder stays visible; only the file is ignored.
