@@ -368,7 +368,7 @@ export const DEFAULT_PROGRAMS_LANDING: ProgramsLandingContent = {
       title: "Build Your Quality Management System",
       description:
         "Build a lean, scalable QMS to comply with ISO 13485, MDSAP, FDA, and MDR requirements, with personalized guidance from quality experts every step of the way",
-      imageSrc: "/images/QMS-programs.webp",
+      imageSrc: "/images/programs-qms.png",
       href: "/programs/qms",
       buttonText: "Get Started",
     },
@@ -393,7 +393,7 @@ export const DEFAULT_PROGRAMS_LANDING: ProgramsLandingContent = {
     {
       title: "Why Healthcare Keeps Saying No to Your AI (And How to Fix It)",
       dateTime: "Thursday, March 12 — 1:00 PM EDT",
-      person: "Brenton Hill | Coalition for Health AI",
+      person: "Brenton Hill, CHAI",
       imageSrc: "/images/event-WhyHealthcareSayingNo.jpg",
       href: "https://luma.com/1vx5stu2",
       buttonText: "View Event",
@@ -401,7 +401,7 @@ export const DEFAULT_PROGRAMS_LANDING: ProgramsLandingContent = {
     {
       title: "Ask a QMS Expert",
       dateTime: "Thursday, February 19 — 12:00 PM EST",
-      person: "Rellia Health",
+      person: "QMS Expert Panel",
       imageSrc: "/images/event-askQmsExpert.jpg",
       href: "https://luma.com/w61qj0g5",
       buttonText: "View Event",
@@ -409,7 +409,7 @@ export const DEFAULT_PROGRAMS_LANDING: ProgramsLandingContent = {
     {
       title: "Set Your Stage",
       dateTime: "Thursday, December 4, 2025 — 12:00 PM EST",
-      person: "Alexis Orchard | Rellia Health",
+      person: "Alexis Orchard, Orchard Presents",
       imageSrc: "/images/event-setYourStage.jpg",
       href: "https://luma.com/5s736thc",
       buttonText: "View Event",
@@ -641,7 +641,17 @@ export function mergeProgramsLanding(
 ): ProgramsLandingContent {
   const p = omitNullish((partial ?? {}) as Record<string, unknown>) as Partial<ProgramsLandingContent>
   const base = { ...DEFAULT_PROGRAMS_LANDING, ...p }
-  const programs = compactList(p.programs)
+  const programs = compactList(p.programs).filter((program): program is ProgramsProgramCard => {
+    if (typeof program !== "object" || program == null) return false
+
+    const hasTitle = typeof program.title === "string" && program.title.trim() !== ""
+    const hasDescription = typeof program.description === "string" && program.description.trim() !== ""
+    const hasImageSrc = typeof program.imageSrc === "string" && program.imageSrc.trim() !== ""
+    const hasHref = typeof program.href === "string" && program.href.trim() !== ""
+    const hasButtonText = typeof program.buttonText === "string" && program.buttonText.trim() !== ""
+
+    return hasTitle && hasDescription && hasImageSrc && hasHref && hasButtonText
+  })
   const sourcePrograms = programs.length > 0 ? programs : DEFAULT_PROGRAMS_LANDING.programs
 
   const enrichProgramPricing = (program: ProgramsProgramCard): ProgramsProgramCard => {
@@ -649,6 +659,7 @@ export function mergeProgramsLanding(
       const amount = `${DEFAULT_QMS_PROGRAM.pricingAmount}${DEFAULT_QMS_PROGRAM.pricingSubAmount}`
       return {
         ...program,
+        imageSrc: "/images/programs-qms.png",
         priceLabel: DEFAULT_QMS_PROGRAM.pricingBadge,
         priceAmount: amount,
         priceSuffix: "/month",

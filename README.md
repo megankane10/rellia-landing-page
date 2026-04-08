@@ -1,12 +1,18 @@
-![Project Snapshot](public/ogimage.png)
-## Rellia Health - Landing Page
-Connecting founders, clinicians, and health systems to build the future of care.
-- **Live**: `https://relliahealth.com`
+# Rellia Health
 
+Marketing website for **Rellia Health** — connecting founders, clinicians, and health systems to build the future of care.
+
+- **Live**: `https://relliahealth.com`
+- **Open Graph image**: `public/ogimage.png` (served at `https://relliahealth.com/ogimage.png`)
+
+## Branches
+
+- **main**: production-ready code deployed to `https://relliahealth.com`
+- **Additions**: active development branch used for edits and new work before merging into `main`
 
 ## Workflow
 
-Unapproved changes should be made on **`Additions`** branch - deployments can be previewed on [staging url](https://relliahealth.vercel.app). Once reviewed/approved, merge into **`main`** for production.
+Unapproved changes should be made on **`Additions`**. Once reviewed/approved, merge into **`main`** for production.
 
 ## Tech stack
 
@@ -25,11 +31,6 @@ From `package.json`:
 - `@sanity/client`, `@portabletext/react`
 - `express`
 
----
-
-# Getting Started
-Follow these steps to clone a local copy of the repo and to install the prequsites for this project
-
 ## Cloning
 
 ```bash
@@ -45,7 +46,7 @@ cd rellia-landing-page
 
 ## Local installation
 
-Prerequesites: **Node.js (LTS)** and **pnpm** (enable via Corepack).
+Prereqs: **Node.js (LTS)** and **pnpm** (enable via Corepack).
 
 ```bash
 corepack enable
@@ -69,7 +70,7 @@ Other runtime env vars used by the server:
 - `PORT`: server port when running the Node build locally (defaults to `3000`)
 - `VERCEL`: set by Vercel in deployed environments (used to detect platform runtime)
 - `NODE_ENV`: standard Node environment (set by tooling/platform)
----
+
 ## Repo structure
 
 - `client/`: React app (routes, components, styles)

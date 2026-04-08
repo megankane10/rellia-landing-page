@@ -8,6 +8,7 @@ import RelliaAction from "@/components/RelliaAction"
 import RelliaCta from "@/components/RelliaCta"
 import SectionPillBadge from "@/components/SectionPillBadge"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { cn } from "@/lib/utils"
 import {
   ArrowRight,
   Check,
@@ -180,9 +181,13 @@ function InvestorNotifyDialog({ open, onOpenChange }: { open: boolean; onOpenCha
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
         aria-label="Pitch event notifications form"
-        className="w-[min(92vw,720px)] max-w-none rounded-3xl border border-black/10 bg-white p-0 overflow-hidden shadow-2xl"
+        className={cn(
+          "w-[min(92vw,720px)] max-w-none",
+          "max-h-[min(86vh,780px)] overflow-hidden",
+          "rounded-2xl md:rounded-3xl border border-black/10 bg-white p-0 shadow-2xl",
+        )}
       >
-        <div className="p-6 md:p-8">
+        <div className="max-h-[min(86vh,780px)] overflow-y-auto p-4 sm:p-5 md:p-8">
           {status === "error" ? (
             <div className="space-y-2">
               <p className="font-urbanist text-black/70">
@@ -197,7 +202,7 @@ function InvestorNotifyDialog({ open, onOpenChange }: { open: boolean; onOpenCha
               </p>
             </div>
           ) : (
-            <div className="relative min-h-[140px]">
+            <div className="relative min-h-[160px]">
               {/* Mount node must stay in the DOM while status is loading — otherwise getElementById fails after the script loads */}
               <div id={targetId} />
               {status === "loading" ? (
@@ -217,14 +222,65 @@ function InvestorNotifyDialog({ open, onOpenChange }: { open: boolean; onOpenCha
   )
 }
 
+function FilloutInterestDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (next: boolean) => void }) {
+  useEffect(() => {
+    if (!open) return
+
+    const src = "https://server.fillout.com/embed/v1/"
+    const existing = document.querySelector<HTMLScriptElement>(`script[src="${src}"]`)
+    if (existing) return
+
+    const script = document.createElement("script")
+    script.src = src
+    script.async = true
+    document.body.appendChild(script)
+  }, [open])
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent
+        aria-label="Rellia interest form"
+        className={cn(
+          "w-[min(92vw,880px)] max-w-none",
+          "max-h-[min(86vh,820px)] overflow-hidden",
+          "rounded-2xl md:rounded-3xl border border-black/10 bg-white p-0 shadow-2xl",
+        )}
+      >
+        <div className="flex items-center justify-between gap-3 border-b border-black/10 px-4 py-3 sm:px-5 sm:py-4">
+          <div className="min-w-0">
+            <DialogTitle className="font-host-grotesk text-base font-semibold text-black">
+              Get involved with Rellia
+            </DialogTitle>
+            <DialogDescription className="font-urbanist text-sm text-black/55">
+              Fill out this short form and we’ll follow up.
+            </DialogDescription>
+          </div>
+        </div>
+
+        <div className="max-h-[calc(min(86vh,820px)-72px)] overflow-y-auto p-3 sm:p-4">
+          <div
+            data-fillout-id="r5hdDmQodfus"
+            data-fillout-embed-type="standard"
+            style={{ width: "100%", height: "70vh" }}
+            data-fillout-inherit-parameters
+          />
+        </div>
+      </DialogContent>
+    </Dialog>
+  )
+}
+
 export default function Network() {
   const [isInvestorNotifyOpen, setIsInvestorNotifyOpen] = useState(false)
+  const [isFilloutOpen, setIsFilloutOpen] = useState(false)
 
   return (
     <div className="min-h-screen bg-white font-host-grotesk overflow-x-hidden">
       <Navbar />
 
       <main>
+        <FilloutInterestDialog open={isFilloutOpen} onOpenChange={setIsFilloutOpen} />
+
         {/* ───────────────────────────── HERO ───────────────────────────── */}
         <section className="relative pt-32 pb-20 md:pt-48 md:pb-28 bg-rellia-teal overflow-hidden">
           {/* Background photograph */}
@@ -371,10 +427,10 @@ export default function Network() {
                   Applications are required. <span className="text-rellia-teal font-semibold">Membership is selective.</span>
                 </p>
                 <RelliaAction asChild variant="tealFilledLift" size="comfortable">
-                  <Link to={CTA.founder}>
+                  <button type="button" onClick={() => setIsFilloutOpen(true)} aria-label="Apply to join as a founder">
                     Apply to Join as a Founder
                     <ArrowRight />
-                  </Link>
+                  </button>
                 </RelliaAction>
               </div>
             </ScrollReveal>
@@ -382,7 +438,7 @@ export default function Network() {
         </section>
 
         {/* Marquee — sits between Founders and Investors as the proof strip */}
-        <LogoMarquee />
+        <LogoMarquee showHeading sectionClassName="py-10 md:py-14" />
 
         {/* ─────────────────────────── 02 · ADVISORS ─────────────────────── */}
         <section
@@ -456,10 +512,14 @@ export default function Network() {
                   The founders in our community are the kind of people worth showing up for. Let's find your match.
                 </p>
                 <RelliaAction asChild variant="tealFilledLift" size="comfortable">
-                  <Link to={CTA.advisor}>
+                  <button
+                    type="button"
+                    onClick={() => setIsFilloutOpen(true)}
+                    aria-label="Express interest in mentoring"
+                  >
                     Express Interest in Mentoring
                     <ArrowRight />
-                  </Link>
+                  </button>
                 </RelliaAction>
               </div>
             </ScrollReveal>
@@ -629,10 +689,14 @@ export default function Network() {
                   with.
                 </p>
                 <RelliaAction asChild variant="tealFilledLift" size="comfortable">
-                  <Link to={CTA.partner}>
+                  <button
+                    type="button"
+                    onClick={() => setIsFilloutOpen(true)}
+                    aria-label="Get in touch about partnering"
+                  >
                     Get in Touch About Partnering
                     <ArrowRight />
-                  </Link>
+                  </button>
                 </RelliaAction>
               </div>
             </ScrollReveal>
