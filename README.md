@@ -1,4 +1,5 @@
-<img src="public/ogimage.png" alt="Rellia Health" width="100%" style="border-radius:16px;" />> Marketing website for **Rellia Health** — connecting founders, clinicians, and health systems to build the future of care.
+<img src="public/ogimage.png" alt="Rellia Health" width="100%" style="border-radius:16px;" />
+> Marketing website for **Rellia Health** — connecting founders, clinicians, and health systems to build the future of care.
 - **Live**: `https://relliahealth.com`
 - **Open Graph image**: `public/ogimage.png` (served at `https://relliahealth.com/ogimage.png`)
 
