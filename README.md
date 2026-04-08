@@ -1,7 +1,7 @@
 # Rellia Health
 
-Marketing website for **Rellia Health** — connecting founders, clinicians, and health systems to build the future of care.
 ![Rellia Health](public/ogimage.png)
+> Marketing website for **Rellia Health** — connecting founders, clinicians, and health systems to build the future of care.
 - **Live**: `https://relliahealth.com`
 - **Open Graph image**: `public/ogimage.png` (served at `https://relliahealth.com/ogimage.png`)
 
@@ -12,7 +12,7 @@ Marketing website for **Rellia Health** — connecting founders, clinicians, and
 
 ## Workflow
 
-Unapproved changes should be made on **`Additions`**. Once reviewed/approved, merge into **`main`** for production.
+Unapproved changes should be made on **`Additions`** branch - deployments can be previewed on [staging url](https://relliahealth.vercel.app). Once reviewed/approved, merge into **`main`** for production.
 
 ## Tech stack
 
