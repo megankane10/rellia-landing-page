@@ -30,7 +30,6 @@ export default function Payment() {
       badge: isAnnual ? p.pricingAnnualBadge : p.pricingMonthlyBadge,
       amount: isAnnual ? p.pricingAnnualAmount : p.pricingMonthlyAmount,
       proceedLabel: isAnnual ? p.annualProceedLabel : p.monthlyProceedLabel,
-      highlightLabel: isAnnual ? p.popularLabel : "",
     }
   }, [
     annualHref,
@@ -38,7 +37,6 @@ export default function Payment() {
     monthlyHref,
     p.annualProceedLabel,
     p.monthlyProceedLabel,
-    p.popularLabel,
     p.pricingAnnualAmount,
     p.pricingAnnualBadge,
     p.pricingMonthlyAmount,
@@ -194,12 +192,7 @@ export default function Payment() {
                     </ToggleGroupItem>
                   </ToggleGroup>
 
-                  <div className="flex items-center gap-2">
-                    <span className="inline-flex items-center rounded-full bg-rellia-mint/70 px-3 py-1 font-urbanist text-xs font-semibold text-rellia-teal">
-                      Best value
-                    </span>
-                    <span className="font-urbanist text-xs text-black/55">Annual is recommended</span>
-                  </div>
+                  <span className="font-urbanist text-xs text-black/55">Choose monthly or annual billing</span>
                 </div>
 
                 <div className="mx-auto mt-6 max-w-[560px]">
@@ -211,24 +204,11 @@ export default function Payment() {
                     role="region"
                     aria-label="Membership pricing"
                   >
-                    {selectedPlan.highlightLabel ? (
-                      <div className="absolute right-4 top-4">
-                        <span className="inline-flex items-center rounded-full bg-rellia-teal px-3 py-1 font-host-grotesk text-[11px] font-extrabold uppercase tracking-[0.16em] text-white">
-                          {selectedPlan.highlightLabel}
-                        </span>
-                      </div>
-                    ) : null}
-
                     <div className="flex flex-col items-center text-center">
                       <div className="mb-5 flex items-center gap-2">
                         <span className="inline-flex h-[30px] items-center justify-center rounded-full border border-black/15 bg-transparent px-4 font-urbanist text-sm text-black/60">
                           {selectedPlan.badge}
                         </span>
-                        {billingCadence === "annual" ? (
-                          <span className="inline-flex h-[30px] items-center justify-center rounded-full bg-rellia-mint/70 px-4 font-urbanist text-sm font-semibold text-rellia-teal">
-                            Best value
-                          </span>
-                        ) : null}
                       </div>
 
                       <div className="mb-6">

@@ -21,6 +21,8 @@ export type ProgramPageLayoutProps = {
   heroImageAlt: string
   /** Anchor id for the "Learn more" in-hero control */
   outcomesSectionId: string
+  /** Anchor id for the pricing/payment card section */
+  paymentSectionId?: string
   staticBlocks: ProgramPageStaticBlocks
   /** Last segment of the breadcrumb (defaults to hero title) */
   breadcrumbCurrentLabel?: string
@@ -31,6 +33,7 @@ const ProgramPageLayout = ({
   heroImageSrc,
   heroImageAlt,
   outcomesSectionId,
+  paymentSectionId = "program-payment",
   breadcrumbCurrentLabel,
   staticBlocks: { howItWorksCards, pillars, timeline },
 }: ProgramPageLayoutProps) => {
@@ -42,6 +45,20 @@ const ProgramPageLayout = ({
       behavior: "smooth",
       block: "start",
     })
+  }
+
+  const handleGetStartedClick = () => {
+    document.getElementById(paymentSectionId)?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    })
+  }
+
+  const handleGetStartedKeyDown = (e: KeyboardEvent<HTMLButtonElement>) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault()
+      handleGetStartedClick()
+    }
   }
 
   const handleLearnMoreKeyDown = (e: KeyboardEvent<HTMLButtonElement>) => {
@@ -97,12 +114,16 @@ const ProgramPageLayout = ({
                   </p>
 
                   <div className="mt-8 flex flex-col sm:flex-row flex-wrap gap-4 items-stretch sm:items-center">
-                    <RelliaAction asChild variant="tealFilled">
-                      <a href={q.paymentUrl} target="_blank" rel="noopener noreferrer">
-                        {q.heroCtaLabel}
-                        <ArrowRight className="ml-2" />
-                      </a>
-                    </RelliaAction>
+                  <RelliaAction
+                    type="button"
+                    variant="tealFilled"
+                    onClick={handleGetStartedClick}
+                    onKeyDown={handleGetStartedKeyDown}
+                    aria-label="Get started — scroll to pricing and enrollment"
+                  >
+                    {q.heroCtaLabel}
+                    <ArrowRight className="ml-2" />
+                  </RelliaAction>
                     <RelliaAction
                       type="button"
                       variant="outlineOnWhite"
@@ -254,7 +275,7 @@ const ProgramPageLayout = ({
           </div>
         </section>
 
-        <section className="py-16 md:py-24 bg-rellia-teal/5">
+        <section id={paymentSectionId} className="py-16 md:py-24 bg-rellia-teal/5">
           <div className="max-w-[620px] mx-auto px-6 md:px-10">
             <ScrollReveal>
               <div className="bg-white rounded-3xl border border-black/5 shadow-lg p-8 md:p-10 text-center">
@@ -290,7 +311,7 @@ const ProgramPageLayout = ({
 
                 <RelliaAction asChild variant="tealFilledLift" className="mt-8 w-full">
                   <a href={q.paymentUrl} target="_blank" rel="noopener noreferrer">
-                    {q.heroCtaLabel}
+                    Start Now
                     <ArrowRight className="ml-2" />
                   </a>
                 </RelliaAction>

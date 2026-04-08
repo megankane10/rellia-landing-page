@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -26,6 +27,39 @@ import PrivacyPolicy from "./pages/PrivacyPolicy";
 
 const queryClient = new QueryClient();
 
+const ThirdPartyPreloads = () => {
+  useEffect(() => {
+    const ensurePreconnect = (href: string) => {
+      const existing = document.querySelector<HTMLLinkElement>(`link[rel="preconnect"][href="${href}"]`)
+      if (existing) return
+      const link = document.createElement("link")
+      link.rel = "preconnect"
+      link.href = href
+      document.head.appendChild(link)
+    }
+
+    ensurePreconnect("https://js-na3.hsforms.net")
+    ensurePreconnect("https://js.hsforms.net")
+    ensurePreconnect("https://server.fillout.com")
+
+    const ensureScript = (src: string) => {
+      const existing = document.querySelector<HTMLScriptElement>(`script[src="${src}"]`)
+      if (existing) return
+      const script = document.createElement("script")
+      script.src = src
+      script.async = true
+      document.body.appendChild(script)
+    }
+
+    // HubSpot embed script used on Contact page
+    ensureScript("https://js-na3.hsforms.net/forms/embed/342926478.js")
+    // Fillout embed script used on Network modals
+    ensureScript("https://server.fillout.com/embed/v1/")
+  }, [])
+
+  return null
+}
+
 /** Auto-tracked SPA views; avoid manual route/path props (can mis-track or error on some paths). */
 const VercelObservability = () => (
   <>
@@ -42,6 +76,7 @@ const App = () => (
       <BrowserRouter>
         <RouteSeo />
         <VercelObservability />
+        <ThirdPartyPreloads />
         <ScrollToTop />
         <Routes>
           <Route path="/" element={<Index />} />
@@ -57,7 +92,7 @@ const App = () => (
 
           {/* Misc */}
           <Route path="/contact" element={<Contact />} />
-          <Route path="/payment" element={<Payment />} />
+          <Route path="/membership" element={<Payment />} />
           <Route path="/blog" element={<PlaceholderPage title="Our Blog" />} />
 
           {/* Legal */}

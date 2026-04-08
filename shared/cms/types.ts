@@ -134,8 +134,11 @@ export type ProgramsProgramCard = {
   title: string
   description: string
   imageSrc: string
-  href: string
+  /** Route for program details (optional for waitlist/coming soon programs). */
+  href?: string
   buttonText: string
+  /** Optional: external waitlist form URL. If omitted, button can be shown disabled. */
+  waitlistHref?: string
   /** Optional; can be derived from the program detail page pricing for known programs. */
   priceLabel?: string
   priceAmount?: string
