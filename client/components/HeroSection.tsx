@@ -81,11 +81,11 @@ export default function HeroSection({ content }: HeroSectionProps) {
         >
           {content.headlinePrefix}{" "}
           <span className="relative inline-block align-bottom">
-            <span className="text-white font-extrabold">{content.headlineAccent}</span>
-            <span
-              className="absolute left-0 top-0 whitespace-nowrap font-extrabold text-rellia-mint motion-safe:animate-healthcare-fill motion-reduce:clip-path-none"
-              aria-hidden
-            >
+            {/* White underlay is decorative; mint span is the single semantic copy for SR/SEO */}
+            <span className="text-white font-extrabold" aria-hidden>
+              {content.headlineAccent}
+            </span>
+            <span className="absolute left-0 top-0 whitespace-nowrap font-extrabold text-rellia-mint motion-safe:animate-healthcare-fill motion-reduce:clip-path-none">
               {content.headlineAccent}
             </span>
           </span>
