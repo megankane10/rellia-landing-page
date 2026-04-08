@@ -254,7 +254,6 @@ export const DEFAULT_ABOUT_PAGE: AboutPageContent = {
       bio: "With a decade of experience embedded in early-stage health companies, Priyanka converts her deep regulatory and quality expertise into operational momentum, turning complexity into the strategic edge that moves teams forward.",
       imageSrc: "/images/team-priyankaR.jpeg",
     },
-    { name: "Khali", imageSrc: "/images/nopicture-male.jpg" },
     {
       name: "Kelly Hu",
       role: "Social Media Manager",
