@@ -320,11 +320,10 @@ export default function Network() {
               <h1 className="text-white text-5xl md:text-7xl lg:text-[88px] font-extrabold leading-[0.95] tracking-tight">
                 The Rellia <br />
                 <span className="relative inline-block align-bottom">
-                  <span className="text-white">Network</span>
-                  <span
-                    className="absolute left-0 top-0 whitespace-nowrap text-rellia-mint motion-safe:animate-healthcare-fill motion-reduce:clip-path-none"
-                    aria-hidden
-                  >
+                  <span className="text-white" aria-hidden>
+                    Network
+                  </span>
+                  <span className="absolute left-0 top-0 whitespace-nowrap text-rellia-mint motion-safe:animate-healthcare-fill motion-reduce:clip-path-none">
                     Network
                   </span>
                 </span>
