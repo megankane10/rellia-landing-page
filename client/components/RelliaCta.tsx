@@ -51,16 +51,19 @@ function CtaActionButton({
     </>
   )
 
+  const responsiveCtaClass =
+    "w-full min-w-0 max-w-full justify-center px-4 py-3.5 text-sm leading-snug sm:w-auto sm:px-8 sm:py-4 sm:text-base sm:leading-normal whitespace-normal sm:whitespace-nowrap"
+
   if (action.to) {
     return (
-      <RelliaAction asChild variant={variant} size="comfortable">
+      <RelliaAction asChild variant={variant} size="comfortable" className={responsiveCtaClass}>
         <Link to={action.to}>{content}</Link>
       </RelliaAction>
     )
   }
 
   return (
-    <RelliaAction asChild variant={variant} size="comfortable">
+    <RelliaAction asChild variant={variant} size="comfortable" className={responsiveCtaClass}>
       <a
         href={action.href}
         {...(action.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
@@ -94,7 +97,7 @@ export default function RelliaCta({
     >
       <div className="max-w-[1300px] mx-auto">
         <ScrollReveal>
-          <div className="relative overflow-hidden rounded-[32px] md:rounded-[40px] bg-rellia-teal text-white px-8 py-14 md:px-16 md:py-20 text-center shadow-2xl">
+          <div className="relative overflow-hidden rounded-[32px] md:rounded-[40px] bg-rellia-teal text-white px-4 py-12 sm:px-8 sm:py-14 md:px-16 md:py-20 text-center shadow-2xl">
             {/* Decorative grid lines — same modernist cue as the Network hero */}
             <div
               aria-hidden
@@ -113,7 +116,7 @@ export default function RelliaCta({
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_60%,_var(--tw-gradient-stops))] from-rellia-mint via-transparent to-transparent blur-3xl" />
             </div>
 
-            <div className="relative z-10 mx-auto flex max-w-3xl flex-col items-center">
+            <div className="relative z-10 mx-auto flex w-full max-w-3xl flex-col items-center px-1 sm:px-0">
               <h2 className="text-white text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight leading-[1.1]">
                 {title}
               </h2>
@@ -124,7 +127,7 @@ export default function RelliaCta({
                 </p>
               ) : null}
 
-              <div className="mt-10 flex flex-col sm:flex-row gap-3 justify-center">
+              <div className="mt-10 flex w-full max-w-full flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-center sm:px-0">
                 <CtaActionButton action={primary} variant="mintOnTealStrip" />
                 {secondary ? (
                   <CtaActionButton action={secondary} variant="heroGhostOnTeal" />

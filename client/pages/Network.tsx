@@ -183,9 +183,7 @@ function InvestorNotifyDialog({ open, onOpenChange }: { open: boolean; onOpenCha
         className="w-[min(92vw,720px)] max-w-none rounded-3xl border border-black/10 bg-white p-0 overflow-hidden shadow-2xl"
       >
         <div className="p-6 md:p-8">
-          {status === "loading" ? (
-            <p className="font-urbanist text-black/60">Loading form…</p>
-          ) : status === "error" ? (
+          {status === "error" ? (
             <div className="space-y-2">
               <p className="font-urbanist text-black/70">
                 We couldn’t load the form right now. Please try again in a moment.
@@ -199,7 +197,19 @@ function InvestorNotifyDialog({ open, onOpenChange }: { open: boolean; onOpenCha
               </p>
             </div>
           ) : (
-            <div id={targetId} />
+            <div className="relative min-h-[140px]">
+              {/* Mount node must stay in the DOM while status is loading — otherwise getElementById fails after the script loads */}
+              <div id={targetId} />
+              {status === "loading" ? (
+                <div
+                  className="absolute inset-0 flex items-center justify-center rounded-xl bg-white/80"
+                  aria-busy="true"
+                  aria-live="polite"
+                >
+                  <p className="font-urbanist text-black/60">Loading form…</p>
+                </div>
+              ) : null}
+            </div>
           )}
         </div>
       </DialogContent>

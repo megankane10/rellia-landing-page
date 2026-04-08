@@ -1,3 +1,4 @@
+import HomeOrganizationJsonLd from "@/components/HomeOrganizationJsonLd";
 import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/HeroSection";
 import LogoMarquee from "@/components/LogoMarquee";
@@ -16,6 +17,7 @@ export default function Index() {
 
   return (
     <div className="min-h-screen bg-white font-host-grotesk overflow-x-hidden">
+      <HomeOrganizationJsonLd />
       <Navbar />
       <main>
         <HeroSection content={home} />
