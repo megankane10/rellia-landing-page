@@ -1,12 +1,10 @@
+![Project Snapshot](public/ogimage.png)
 # Rellia Health — marketing site
 
 React SPA for **Rellia Health**, connecting founders, clinicians, and health systems around the future of care.
 
-| | |
-|---|---|
-| **Production** | [relliahealth.com](https://www.relliahealth.com) |
-| **Open Graph asset** | `public/ogimage.png` |
-| **Stage 2 plan** | [STAGE-2.md](./STAGE-2.md) |
+**Production**: [relliahealth.com](https://www.relliahealth.com) <br>
+**Stage 2 plan**: [STAGE-2.md](./STAGE-2.md) 
 
 ---
 
@@ -142,11 +140,3 @@ Values are documented in **`.env.example`**. Nothing secret is required for a ba
 - **`POST /api/diagnostic-report`** — Startup diagnostic report (requires `ANTHROPIC_API_KEY`, body validated with Zod)
 
 Contact and membership flows use **HubSpot**, **Fillout**, and **Stripe Payment Links** in the client, not custom form POST routes.
-
----
-
-## Contributing
-
-1. Branch from **`Additions`** (or follow your team’s naming).  
-2. Run **`pnpm typecheck`** and **`pnpm test`** before opening a PR.  
-3. For larger planned work, align with **[STAGE-2.md](./STAGE-2.md)**.
