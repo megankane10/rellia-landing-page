@@ -1,3 +1,6 @@
+"use client"
+
+import type { CSSProperties, ReactNode } from "react"
 import { cn } from "@/lib/utils"
 
 const logos = [
@@ -30,18 +33,14 @@ const SPEED_MAP = {
 type LogoMarqueeSpeed = keyof typeof SPEED_MAP
 type LogoMarqueeDirection = "left" | "right"
 
+/** Matches SmoothUI logo-cloud-3 (Logo Marquee) cell layout; images sit inside the same wrapper as SVG logos in the block. */
 const LogoItem = ({ logo }: { logo: Logo }) => (
-  <div className="flex shrink-0 items-center justify-center px-10 md:px-14 py-6">
+  <div className="flex shrink-0 items-center justify-center px-8 py-5 opacity-80 transition-opacity duration-200 *:fill-foreground hover:opacity-100 md:py-6">
     <img
       src={logo.src}
       alt={logo.name}
       loading="lazy"
-      className={cn(
-        "h-20 md:h-24 w-auto max-w-[320px] object-contain",
-        "filter-none saturate-100",
-        "transition-transform duration-200 hover:scale-110 hover:drop-shadow-md",
-        logo.name === "Glowlytics" && "scale-[1.12]",
-      )}
+      className="h-16 w-auto max-w-[min(100%,17.5rem)] object-contain md:h-20 lg:h-24"
     />
   </div>
 )
@@ -55,7 +54,7 @@ export default function LogoMarquee({
   showHeading = true,
   sectionClassName,
 }: {
-  title?: string
+  title?: ReactNode
   description?: string
   speed?: LogoMarqueeSpeed
   direction?: LogoMarqueeDirection
@@ -99,18 +98,18 @@ export default function LogoMarquee({
       <div className="mx-auto max-w-7xl px-6">
         {showHeading ? (
           <div className="mb-12 text-center">
-            <h2 className="mb-3 font-host-grotesk font-semibold tracking-tight text-xl text-black lg:text-2xl">
-              Our <span className="text-rellia-teal">Portfolio</span> Companies
+            <h2 className="mb-4 font-bold text-2xl text-foreground lg:text-3xl">
+              {title}
             </h2>
             {description ? (
-              <p className="text-black/70 text-lg">{description}</p>
+              <p className="text-foreground/70 text-lg">{description}</p>
             ) : null}
           </div>
         ) : null}
 
         <div
           className="marquee-container relative overflow-hidden"
-          aria-label="Portfolio companies logo marquee"
+          aria-label="Partner and portfolio logo marquee"
           style={{
             maskImage:
               "linear-gradient(to right, transparent, black 10%, black 90%, transparent)",
@@ -125,7 +124,7 @@ export default function LogoMarquee({
                 "--marquee-duration": animationDuration,
                 "--marquee-direction": animationDirection,
                 "--marquee-pause-on-hover": pauseOnHover ? "paused" : "running",
-              } as React.CSSProperties
+              } as CSSProperties
             }
           >
             {logos.map((logo, index) => (

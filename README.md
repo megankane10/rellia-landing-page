@@ -1,81 +1,152 @@
-# Rellia Health
+# Rellia Health — marketing site
 
-Marketing website for **Rellia Health** — connecting founders, clinicians, and health systems to build the future of care.
+React SPA for **Rellia Health**, connecting founders, clinicians, and health systems around the future of care.
 
-- **Live**: `https://relliahealth.com`
-- **Open Graph image**: `public/ogimage.png` (served at `https://relliahealth.com/ogimage.png`)
+| | |
+|---|---|
+| **Production** | [relliahealth.com](https://www.relliahealth.com) |
+| **Open Graph asset** | `public/ogimage.png` |
+| **Stage 2 plan** | [STAGE-2.md](./STAGE-2.md) |
 
-## Branches
+---
 
-- **main**: production-ready code deployed to `https://relliahealth.com`
-- **Additions**: active development branch used for edits and new work before merging into `main`
+## Branches and workflow
 
-## Workflow
+| Branch | Role |
+|--------|------|
+| **`main`** | Production; deploys to the live site. |
+| **`Additions`** | Integration branch for new work before merge to `main`. |
 
-Unapproved changes should be made on **`Additions`**. Once reviewed/approved, merge into **`main`** for production.
+Do day-to-day work on **`Additions`**. After review, merge into **`main`** for production.
+
+---
 
 ## Tech stack
 
-- **Frontend**: React + TypeScript, Vite, React Router, Tailwind CSS, Radix UI
-- **Content**: Sanity (read-only fetching in the app; Studio lives in `website-cms/`)
-- **Server**: Express (optional server build / Vercel API entry)
-- **Analytics**: Vercel Analytics, Vercel Speed Insights
+- **UI:** React 18, TypeScript, Vite, Tailwind CSS, Radix-based components
+- **Routing:** React Router
+- **Content:** Sanity — the browser fetches published documents read-only; editors use **Sanity Studio** in `website-cms/`
+- **Data loading:** TanStack Query for CMS-backed pages
+- **Server:** Express app used for **`/api`** on Vercel and for optional local full-stack runs (`pnpm build` + `pnpm start`)
+- **Analytics:** Vercel Analytics, Vercel Speed Insights
+- **Deployment:** Vercel (static SPA + serverless API)
 
-## Key dependencies
+---
 
-From `package.json`:
+## Repository layout
 
-- `react`, `react-dom`
-- `react-router-dom`
-- `tailwindcss`
-- `@sanity/client`, `@portabletext/react`
-- `express`
+| Path | Purpose |
+|------|---------|
+| `client/` | React app: pages, components, hooks, styles |
+| `server/` | Express application and local server entry |
+| `api/` | Vercel serverless handler that mounts the Express app |
+| `shared/` | Shared CMS types, merge helpers, and default fallbacks |
+| `public/` | Static files (`robots.txt`, `sitemap.xml`, images, `favicon.ico`, `ogimage.png`) |
+| `website-cms/` | Sanity Studio (separate `package.json`; run its own install for Studio dev) |
 
-## Cloning
+---
 
-```bash
-# HTTPS
-git clone https://github.com/Agrolax/rellia-landing-page.git
+## Getting started
 
-# or SSH
-git clone git@github.com:Agrolax/rellia-landing-page.git
-
-cd rellia-landing-page
-
-```
-
-## Local installation
-
-Prereqs: **Node.js (LTS)** and **pnpm** (enable via Corepack).
+**Requirements:** Node.js (LTS) and **pnpm** (recommended). Enable pnpm via Corepack:
 
 ```bash
 corepack enable
+```
+
+**Clone and install**
+
+```bash
+git clone https://github.com/Agrolax/rellia-landing-page.git
+cd rellia-landing-page
 pnpm install
+```
+
+**Environment**
+
+```bash
 cp .env.example .env
+```
+
+Edit `.env` if you need non-default Sanity project, Stripe links, site URL, or server keys (see below).
+
+**Run the Vite dev server**
+
+```bash
 pnpm dev
 ```
 
+**Sanity Studio** (content editing UI), from the studio package:
+
+```bash
+cd website-cms
+pnpm install
+pnpm dev
+```
+
+**Production-like build** (client + server bundles)
+
+```bash
+pnpm build
+pnpm start
+```
+
+Starts the Node server that serves the built SPA and API (default port from `PORT` or `3000`).
+
+---
+
+## Scripts
+
+| Command | Description |
+|---------|-------------|
+| `pnpm dev` | Vite dev server (hot reload) |
+| `pnpm build` | Build SPA and server |
+| `pnpm start` | Run production Node server locally |
+| `pnpm test` | Vitest |
+| `pnpm typecheck` | TypeScript (`tsc`) |
+| `pnpm format.fix` | Prettier write |
+
+`npm run <script>` works as well if you use npm.
+
+---
+
 ## Environment variables
 
-The app is designed to run without secrets locally. Optional variables (see `.env.example`):
+Values are documented in **`.env.example`**. Nothing secret is required for a basic local UI; Sanity reads use public project id + dataset by default.
 
-- `VITE_SITE_URL`: canonical URL for SEO/OG/JSON-LD (defaults to `https://relliahealth.com`)
-- `VITE_SANITY_PROJECT_ID`, `VITE_SANITY_DATASET`: override Sanity project/dataset
-- `VITE_STRIPE_MONTHLY_PLAN_LINK`, `VITE_STRIPE_ANNUAL_PLAN_LINK`: Stripe Payment Links for `/payment`
-- `VITE_QMS_PAYMENT_LINK`: Stripe Payment Link override for `/programs/qms`
-- `ANTHROPIC_API_KEY`: server-only (diagnostics report generation), never `VITE_*`
+**Client (Vite — exposed to the browser; never put secrets in `VITE_*`)**
 
-Other runtime env vars used by the server:
+| Variable | Purpose |
+|----------|---------|
+| `VITE_SITE_URL` | Canonical origin for SEO, Open Graph, JSON-LD (omit trailing slash) |
+| `VITE_SANITY_PROJECT_ID` | Sanity project id |
+| `VITE_SANITY_DATASET` | Sanity dataset (e.g. `production`) |
+| `VITE_STRIPE_MONTHLY_PLAN_LINK` | Stripe Payment Link for `/payment` (monthly) |
+| `VITE_STRIPE_ANNUAL_PLAN_LINK` | Stripe Payment Link for `/payment` (annual) |
+| `VITE_QMS_PAYMENT_LINK` | Optional override for QMS program checkout URL |
 
-- `PORT`: server port when running the Node build locally (defaults to `3000`)
-- `VERCEL`: set by Vercel in deployed environments (used to detect platform runtime)
-- `NODE_ENV`: standard Node environment (set by tooling/platform)
+**Server only**
 
-## Repo structure
+| Variable | Purpose |
+|----------|---------|
+| `ANTHROPIC_API_KEY` | Used by `POST /api/diagnostic-report` on Vercel / Node; omit locally if you do not use that endpoint |
+| `PORT` | HTTP port for `pnpm start` (default `3000`) |
+| `VERCEL` | Set automatically on Vercel |
+| `NODE_ENV` | Set by tooling / platform |
 
-- `client/`: React app (routes, components, styles)
-- `server/`: Express server (serves the built SPA and API wiring)
-- `api/`: Vercel function entrypoint
-- `shared/`: shared CMS defaults / utilities used by client + server
-- `public/`: static assets (includes `ogimage.png`)
-- `website-cms/`: Sanity Studio project
+---
+
+## API (Express / Vercel)
+
+- **`GET /health`** — Health check  
+- **`POST /api/diagnostic-report`** — Startup diagnostic report (requires `ANTHROPIC_API_KEY`, body validated with Zod)
+
+Contact and membership flows use **HubSpot**, **Fillout**, and **Stripe Payment Links** in the client, not custom form POST routes.
+
+---
+
+## Contributing
+
+1. Branch from **`Additions`** (or follow your team’s naming).  
+2. Run **`pnpm typecheck`** and **`pnpm test`** before opening a PR.  
+3. For larger planned work, align with **[STAGE-2.md](./STAGE-2.md)**.

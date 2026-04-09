@@ -441,7 +441,15 @@ export default function Network() {
         </section>
 
         {/* Marquee — sits between Founders and Investors as the proof strip */}
-        <LogoMarquee showHeading sectionClassName="py-10 md:py-14" />
+        <LogoMarquee
+          showHeading
+          sectionClassName="py-10 md:py-14"
+          title={
+            <>
+              Our <span className="text-rellia-teal">Portfolio</span> Companies
+            </>
+          }
+        />
 
         {/* ─────────────────────────── 02 · ADVISORS ─────────────────────── */}
         <section

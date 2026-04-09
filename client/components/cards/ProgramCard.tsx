@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom"
 import { useState } from "react"
+import { Bell } from "lucide-react"
 import RelliaAction from "@/components/RelliaAction"
 import { cn } from "@/lib/utils"
 import FilloutPopupDialog from "@/components/FilloutPopupDialog"
@@ -33,22 +34,25 @@ export const ProgramCard = ({
 }: ProgramCardProps) => {
   const hasHref = Boolean(href && href.trim().length > 0)
   const hasWaitlistHref = Boolean(waitlistHref && waitlistHref.trim().length > 0)
+  const isWaitlistCard = !hasHref && hasWaitlistHref
   const [waitlistOpen, setWaitlistOpen] = useState(false)
-  const displayTag = tag?.trim() ? tag : !hasHref && hasWaitlistHref ? "Waitlist" : ""
+  const displayTag = tag?.trim() ?? ""
+  const showCornerBadge = Boolean(displayTag) && !isWaitlistCard
 
   return (
     <div
-      aria-label={`Program: ${title}`}
+      aria-label={`Program: ${title}${isWaitlistCard ? ". Coming soon — join the waitlist." : ""}`}
       className={cn(
-        "group h-full w-full max-w-[420px] mx-auto overflow-hidden rounded-2xl border border-black/5 bg-white shadow-sm transition-all hover:shadow-md",
-        "hover:-translate-y-0.5 hover:shadow-lg hover:ring-black/[0.06]",
+        "group h-full w-full max-w-[420px] mx-auto overflow-hidden rounded-2xl border border-black/5 bg-white shadow-sm",
+        "transition-[transform,box-shadow] duration-200 ease-out",
+        "hover:-translate-y-0.5 hover:shadow-md hover:shadow-lg hover:ring-1 hover:ring-black/[0.06]",
         "focus-within:outline-none focus-within:ring-2 focus-within:ring-rellia-teal focus-within:ring-offset-2",
         className,
       )}
     >
       <div className="flex h-full flex-col">
         <div className="relative aspect-video w-full shrink-0 overflow-hidden bg-rellia-teal/5">
-          {displayTag ? (
+          {showCornerBadge ? (
             <div className="absolute right-3 top-3 z-10">
               <span className="inline-flex items-center rounded-full bg-rellia-mint/90 px-3 py-1 font-host-grotesk text-[11px] font-extrabold uppercase tracking-[0.16em] text-rellia-teal shadow-lg ring-1 ring-white/50">
                 {displayTag}
@@ -61,7 +65,7 @@ export const ProgramCard = ({
               <img
                 src={imageSrc}
                 alt={title}
-                className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
                 loading="lazy"
               />
             </Link>
@@ -69,10 +73,25 @@ export const ProgramCard = ({
             <img
               src={imageSrc}
               alt={title}
-              className="h-full w-full object-cover"
+              className={cn(
+                "h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105",
+                isWaitlistCard && "opacity-[0.88] saturate-[0.65]",
+              )}
               loading="lazy"
             />
           )}
+
+          {isWaitlistCard ? (
+            <div
+              className="pointer-events-none absolute inset-x-0 top-0 z-20 flex items-center justify-center gap-2 border-b border-rellia-teal/15 bg-rellia-mint py-2.5 px-4 text-rellia-teal shadow-[0_4px_12px_rgba(13,53,64,0.12)]"
+              aria-hidden
+            >
+              <Bell className="h-4 w-4 shrink-0" strokeWidth={2.25} />
+              <span className="font-host-grotesk text-[11px] font-bold uppercase tracking-[0.14em]">
+                Join the Waitlist
+              </span>
+            </div>
+          ) : null}
         </div>
 
         <div className="flex flex-1 flex-col p-6">
