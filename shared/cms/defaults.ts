@@ -372,64 +372,73 @@ export const DEFAULT_PROGRAMS_LANDING: ProgramsLandingContent = {
       buttonText: "Learn more",
     },
     {
+      title: "Ignite: Pitch Foundations",
+      description:
+        "Master the essentials of fundraising by crafting your first pitch deck and presentation. Perfect for early-stage founders looking for a structured starting point to build investor confidence.",
+      imageSrc: "/images/program-ignitePitch.png",
+      buttonText: "Join Waitlist",
+      waitlistHref: "https://forms.fillout.com/t/bLGtn6S2jtus",
+    },
+    {
       title: "Advance: Data Room Deep Dive",
-      description: "Join the waitlist — details coming soon.",
+      description:
+        "Move beyond the basics into the mechanics of due diligence and data room management. Gain the practical tools and execution tips needed to navigate the complexities of the raising process.",
       imageSrc: "/images/program-DataRoomDeepDive.png",
       buttonText: "Join Waitlist",
       waitlistHref: "https://forms.fillout.com/t/bLGtn6S2jtus",
     },
     {
-      title: "Advisory Board Match",
-      description: "Join the waitlist — details coming soon.",
-      imageSrc: "/images/program-advisoryboard.png",
-      buttonText: "Join Waitlist",
-      waitlistHref: "https://forms.fillout.com/t/bLGtn6S2jtus",
-    },
-    {
-      title: "Design Your Brand Strategy",
-      description: "Join the waitlist — details coming soon.",
-      imageSrc: "/images/program-designYourBrand.png",
-      buttonText: "Join Waitlist",
-      waitlistHref: "https://forms.fillout.com/t/bLGtn6S2jtus",
-    },
-    {
       title: "Elevate: Healthcare Capital",
-      description: "Join the waitlist — details coming soon.",
+      description:
+        "Refine your existing fundraising strategy for the specialized world of health tech. Upgrade your pitch to meet the specific technical and clinical expectations of healthcare investors.",
       imageSrc: "/images/program-HealthcareCapital.png",
       buttonText: "Join Waitlist",
       waitlistHref: "https://forms.fillout.com/t/bLGtn6S2jtus",
     },
     {
       title: "First 50 Users: A Clinical Feedback Intensive",
-      description: "Join the waitlist — details coming soon.",
+      description:
+        'Validate your product through facilitated usability testing and "assumption audits" with Rellia\'s clinician network. Gain the IRB guidance and professional feedback needed to bridge the gap between prototype and clinical use.',
       imageSrc: "/images/program-first50users.png",
       buttonText: "Join Waitlist",
       waitlistHref: "https://forms.fillout.com/t/bLGtn6S2jtus",
     },
     {
       title: "Health Tech Financial Modeling",
-      description: "Join the waitlist — details coming soon.",
+      description:
+        "Build a board-ready, 3-year financial model tailored to health tech's unique sales cycles and regulatory costs. Work 1:1 with a fractional CFO to stress-test your unit economics and burn runway.",
       imageSrc: "/images/program-healthTechModelling.png",
       buttonText: "Join Waitlist",
       waitlistHref: "https://forms.fillout.com/t/bLGtn6S2jtus",
     },
     {
-      title: "Ignite: Pitch Foundations",
-      description: "Join the waitlist — details coming soon.",
-      imageSrc: "/images/program-ignitePitch.png",
-      buttonText: "Join Waitlist",
-      waitlistHref: "https://forms.fillout.com/t/bLGtn6S2jtus",
-    },
-    {
-      title: "Prototype Lab: Build Your Proof of Concept",
-      description: "Join the waitlist — details coming soon.",
+      title: "A Low-Fidelity Prototype Lab",
+      description:
+        "Transform your vision into a functional low-fidelity prototype and a vendor-ready requirements document. Finish the program by connecting with vetted development firms and testing experts to build your proof of concept.",
       imageSrc: "/images/program-prototype%20lab.png",
       buttonText: "Join Waitlist",
       waitlistHref: "https://forms.fillout.com/t/bLGtn6S2jtus",
     },
     {
+      title: "Advisory Board Match",
+      description:
+        "Identify and recruit the ideal experts for your startup using Rellia's vetted advisor network. We provide the matchmaking, equity benchmarking, and legal frameworks to ensure your advisory relationships are productive from day one.",
+      imageSrc: "/images/program-advisoryboard.png",
+      buttonText: "Join Waitlist",
+      waitlistHref: "https://forms.fillout.com/t/bLGtn6S2jtus",
+    },
+    {
+      title: "Design Your Brand Strategy",
+      description:
+        "Develop a professionally positioned brand identity that earns trust from both clinicians and investors. This intensive includes specialized sprints for your website copy, UI design, and sales collateral to ensure a cohesive market presence.",
+      imageSrc: "/images/program-designYourBrand.png",
+      buttonText: "Join Waitlist",
+      waitlistHref: "https://forms.fillout.com/t/bLGtn6S2jtus",
+    },
+    {
       title: "Regulatory Roadmap",
-      description: "Join the waitlist — details coming soon.",
+      description:
+        "Navigate the complexities of medical device classification and global commercialization milestones. Leave with a documented regulatory strategy and intended use statements to support your investor due diligence.",
       imageSrc: "/images/program-regulatoryRoadmap.png",
       buttonText: "Join Waitlist",
       waitlistHref: "https://forms.fillout.com/t/bLGtn6S2jtus",
