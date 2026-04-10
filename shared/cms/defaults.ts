@@ -446,13 +446,6 @@ export const DEFAULT_PROGRAMS_LANDING: ProgramsLandingContent = {
   ],
   upcomingEvents: [
     {
-      title: "Health System Adoption for Startups",
-      dateTime: "April 9th at 2PM",
-      person: "Rellia Health",
-      imageSrc: "/images/events-healthsystem.jpg",
-      href: "https://luma.com/ao1g8a7h",
-    },
-    {
       title: "Leadership Mindset for Health tech founders",
       dateTime: "May 6th at 12PM",
       person: "Rellia Health",
@@ -461,6 +454,14 @@ export const DEFAULT_PROGRAMS_LANDING: ProgramsLandingContent = {
     },
   ],
   pastEvents: [
+    {
+      title: "Health System Adoption for Startups",
+      dateTime: "Thursday, April 9 — 2:00 PM EDT",
+      person: "Rellia Health",
+      imageSrc: "/images/events-healthsystem.jpg",
+      href: "https://luma.com/ao1g8a7h",
+      buttonText: "View Event",
+    },
     {
       title: "Why Healthcare Keeps Saying No to Your AI (And How to Fix It)",
       dateTime: "Thursday, March 12 — 1:00 PM EDT",
