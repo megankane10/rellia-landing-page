@@ -23,7 +23,7 @@ export const relliaActionVariants = cva(
         tealCardFull:
           "w-full rounded-full border-2 border-rellia-teal bg-rellia-teal text-sm text-white hover:bg-white hover:text-rellia-teal",
         mintCardFull:
-          "w-full rounded-full border-2 border-rellia-teal/15 bg-rellia-mint text-sm text-rellia-teal hover:border-rellia-teal hover:bg-rellia-teal hover:text-white",
+          "w-full rounded-full border-2 border-rellia-teal/15 bg-rellia-mint text-sm text-rellia-teal hover:border-rellia-mint hover:bg-white hover:text-rellia-mint-dark",
         brandSolid:
           "rounded-full border-2 border-rellia-teal bg-rellia-teal text-white hover:border-rellia-mint hover:bg-transparent hover:text-rellia-mint",
         brandOutline:
