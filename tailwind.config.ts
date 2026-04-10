@@ -54,6 +54,8 @@ export default {
         rellia: {
           teal: "#0D3540",
           mint: "#9DD6D0",
+          /** Darker mint for text on white (waitlist CTA hover, etc.) */
+          mintDark: "#1A5C56",
           cream: "#F7EFE5",
         },
       },
