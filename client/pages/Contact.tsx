@@ -1,28 +1,76 @@
-import { useEffect } from "react"
+import { useEffect, useId, useMemo, useState } from "react"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
 import { useContactPage } from "@/hooks/useCmsDocuments"
-import { DEFAULT_CONTACT_PAGE } from "@shared/cms/defaults"
+import { DEFAULT_CONTACT_PAGE, DEFAULT_GLOBAL_SETTINGS } from "@shared/cms/defaults"
 import { Mail } from "lucide-react"
 import SectionPillBadge from "@/components/SectionPillBadge"
+import { loadHubspotV2Script } from "@/lib/hubspotForms"
 
-const HUBSPOT_SCRIPT_SRC = "https://js-na3.hsforms.net/forms/embed/342926478.js"
+const SUPPORT_EMAIL = DEFAULT_GLOBAL_SETTINGS.supportEmail
+
+/** Same portal/region as previous embed; form id from `data-form-id` on `.hs-form-frame` */
+const CONTACT_HUBSPOT_FORM = {
+  region: "na3",
+  portalId: "342926478",
+  formId: "4a03a495-ecb1-475b-a845-3ec2ccfdbf65",
+} as const
 
 export default function Contact() {
   const { data } = useContactPage()
   const copy = data ?? DEFAULT_CONTACT_PAGE
 
+  const targetIdRaw = useId()
+  const targetId = useMemo(
+    () => `contact-hubspot-${targetIdRaw.replace(/[^a-zA-Z0-9_-]/g, "")}`,
+    [targetIdRaw],
+  )
+  const [formStatus, setFormStatus] = useState<"loading" | "ready" | "error">("loading")
+
   useEffect(() => {
-    const existing = document.querySelector(`script[src="${HUBSPOT_SCRIPT_SRC}"]`)
-    if (existing) {
-      return
+    let cancelled = false
+
+    const mountForm = async () => {
+      setFormStatus("loading")
+      try {
+        await loadHubspotV2Script()
+        if (cancelled) return
+
+        const target = document.getElementById(targetId)
+        if (!target) {
+          setFormStatus("error")
+          return
+        }
+
+        target.innerHTML = ""
+
+        const create = window.hbspt?.forms?.create
+        if (typeof create !== "function") {
+          setFormStatus("error")
+          return
+        }
+
+        create({
+          region: CONTACT_HUBSPOT_FORM.region,
+          portalId: CONTACT_HUBSPOT_FORM.portalId,
+          formId: CONTACT_HUBSPOT_FORM.formId,
+          target: `#${targetId}`,
+        })
+
+        if (!cancelled) setFormStatus("ready")
+      } catch {
+        if (!cancelled) setFormStatus("error")
+      }
     }
 
-    const script = document.createElement("script")
-    script.src = HUBSPOT_SCRIPT_SRC
-    script.defer = true
-    document.body.appendChild(script)
-  }, [])
+    mountForm()
+
+    return () => {
+      cancelled = true
+      const target = document.getElementById(targetId)
+      if (target) target.innerHTML = ""
+    }
+  }, [targetId])
 
   return (
     <div className="min-h-screen bg-white font-host-grotesk">
@@ -70,15 +118,39 @@ export default function Contact() {
               </div>
             </div>
 
-            {/* Right: HubSpot form embed */}
+            {/* Right: HubSpot form — v2 API so it mounts after React (SPA + direct visits) */}
             <div className="flex min-h-0 min-w-0 flex-1 flex-col lg:h-full">
               <div className="flex flex-col rounded-2xl border border-black/10 bg-white/95 p-6 shadow-[0_8px_40px_rgba(0,0,0,0.06)] backdrop-blur-sm md:p-7 lg:flex-1 lg:p-6">
-                <div
-                  className="hs-form-frame"
-                  data-region="na3"
-                  data-form-id="4a03a495-ecb1-475b-a845-3ec2ccfdbf65"
-                  data-portal-id="342926478"
-                />
+                {formStatus === "error" ? (
+                  <div className="space-y-2 py-4">
+                    <p className="font-urbanist text-black/70">
+                      We couldn’t load the form right now. Please try again in a moment.
+                    </p>
+                    <p className="font-urbanist text-black/60">
+                      Or email{" "}
+                      <a
+                        className="underline decoration-black/25 hover:decoration-black/60"
+                        href={`mailto:${SUPPORT_EMAIL}`}
+                      >
+                        {SUPPORT_EMAIL}
+                      </a>
+                      .
+                    </p>
+                  </div>
+                ) : (
+                  <div className="relative min-h-[min(420px,55vh)] w-full flex-1">
+                    <div id={targetId} className="min-h-[200px]" />
+                    {formStatus === "loading" ? (
+                      <div
+                        className="absolute inset-0 flex items-center justify-center rounded-xl bg-white/85"
+                        aria-busy="true"
+                        aria-live="polite"
+                      >
+                        <p className="font-urbanist text-black/60">Loading form…</p>
+                      </div>
+                    ) : null}
+                  </div>
+                )}
               </div>
             </div>
           </div>

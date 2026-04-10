@@ -52,8 +52,7 @@ const ThirdPartyPreloads = () => {
       document.body.appendChild(script)
     }
 
-    // HubSpot embed script used on Contact page
-    ensureScript("https://js-na3.hsforms.net/forms/embed/342926478.js")
+    // Contact + Network load HubSpot Forms v2 via `hbspt.forms.create` when needed (SPA-safe).
     // Fillout embed script used on Network modals
     ensureScript("https://server.fillout.com/embed/v1/")
   }, [])
