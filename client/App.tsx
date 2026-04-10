@@ -14,7 +14,6 @@ import FAQ from "./pages/FAQ"
 import ProgramsEvents from "./pages/ProgramsEvents"
 import ProgramsQms from "./pages/ProgramsQms"
 import NotFound from "./pages/NotFound"
-import PlaceholderPage from "./pages/PlaceholderPage"
 import Contact from "./pages/Contact"
 import Network from "./pages/Network"
 import DiagnosticLanding from "./pages/DiagnosticLanding"
@@ -22,6 +21,8 @@ import DiagnosticSurvey from "./pages/DiagnosticSurvey"
 import Payment from "./pages/Payment"
 import TermsofUse from "./pages/TermsofUse"
 import PrivacyPolicy from "./pages/PrivacyPolicy"
+import ProgramsLayout from "./pages/programs/ProgramsLayout"
+import PlaceholderPage from "./pages/PlaceholderPage"
 
 
 
@@ -84,8 +85,10 @@ const App = () => (
           {/* Main Pages */}
           <Route path="/about" element={<About />} />
           <Route path="/faq" element={<FAQ />} />
-          <Route path="/programs" element={<ProgramsEvents />} />
-          <Route path="/programs/qms" element={<ProgramsQms />} />
+          <Route path="/programs" element={<ProgramsLayout />}>
+            <Route index element={<ProgramsEvents />} />
+            <Route path="qms" element={<ProgramsQms />} />
+          </Route>
 
           {/* Network — unified audience hub (founders / investors / advisors / partners) */}
           <Route path="/network" element={<Network />} />
@@ -93,7 +96,11 @@ const App = () => (
           {/* Misc */}
           <Route path="/contact" element={<Contact />} />
           <Route path="/membership" element={<Payment />} />
-          <Route path="/blog" element={<PlaceholderPage title="Our Blog" />} />
+          <Route path="/diagnostics" element={<PlaceholderPage title="Diagnostics" />} />
+          <Route
+            path="/diagnosticSurvey"
+            element={<PlaceholderPage title="Diagnostic survey" subtitle="This experience is coming soon." />}
+          />
 
           {/* Legal */}
           <Route path="/terms" element={<TermsofUse />} />

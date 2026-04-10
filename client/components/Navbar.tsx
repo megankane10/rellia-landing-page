@@ -23,10 +23,9 @@ const networkItems = [
   { label: "Industry Partners", icon: Building2, href: "/network#partners" },
 ]
 
-/** Cream pages that use PlaceholderPage — match solid navbar like scrolled state */
+/** Routes that should use the solid navbar style by default */
 const SOLID_NAVBAR_PATHS = new Set<string>([
   "/contact",
-  "/blog",
   /** Program detail pages (white hero) — solid bar for contrast; hub `/programs` keeps transparent hero nav */
   "/programs/qms",
 ])

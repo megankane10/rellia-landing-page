@@ -1,6 +1,7 @@
 import "./loadEnv"
 import cors from "cors"
 import express, { type Request, type RequestHandler } from "express"
+import helmet from "helmet"
 import { z } from "zod"
 
 const headerOne = (req: Request, name: string): string | undefined => {
@@ -59,9 +60,49 @@ export function createServer() {
 
   app.use(fixVercelRewrittenApiPath)
 
-  app.use(cors())
-  app.use(express.json())
-  app.use(express.urlencoded({ extended: true }))
+  const isDev = process.env.NODE_ENV !== "production"
+
+  app.use(helmet())
+
+  const allowedOrigins = (process.env.ALLOWED_ORIGINS || "")
+    .split(",")
+    .map((o) => o.trim())
+    .filter(Boolean)
+
+  if (!isDev && allowedOrigins.length === 0) {
+    // Safer default for production: don't accidentally lock everyone out,
+    // but do make it obvious that this should be configured.
+    console.warn(
+      "ALLOWED_ORIGINS is not set. CORS will allow all browser origins. Set ALLOWED_ORIGINS to restrict cross-origin requests.",
+    )
+  }
+
+  app.use(
+    cors({
+      origin: (origin, cb) => {
+        // Non-browser requests often omit Origin (health checks, curl, server-to-server)
+        if (!origin) {
+          cb(null, true)
+          return
+        }
+
+        if (isDev) {
+          cb(null, true)
+          return
+        }
+
+        if (allowedOrigins.length === 0) {
+          cb(null, true)
+          return
+        }
+
+        cb(null, allowedOrigins.includes(origin))
+      },
+    }),
+  )
+
+  app.use(express.json({ limit: "32kb" }))
+  app.use(express.urlencoded({ extended: true, limit: "32kb" }))
 
   app.get("/health", (_req, res) => {
     res.status(200).json({ ok: true })
@@ -72,6 +113,27 @@ export function createServer() {
     stage: z.string().trim().min(1).max(120),
     desc: z.string().trim().min(1).max(600),
     sectionScoresMarkdown: z.string().trim().min(1).max(6000),
+  })
+
+  const diagnosticReportResponseSchema = z.object({
+    summary: z.string(),
+    top3_strengths: z.array(
+      z.object({
+        category: z.string(),
+        score: z.number(),
+        note: z.string(),
+      }),
+    ),
+    top3_weaknesses: z.array(
+      z.object({
+        category: z.string(),
+        score: z.number(),
+        note: z.string(),
+        priority: z.string(),
+      }),
+    ),
+    recommendations: z.array(z.string()),
+    mentor_areas_needed: z.array(z.string()),
   })
 
   type RateState = { windowStartMs: number; count: number }
@@ -137,7 +199,11 @@ Return this shape exactly:
 
       if (!anthropicRes.ok) {
         const text = await anthropicRes.text().catch(() => "")
-        res.status(502).json({ error: "Anthropic request failed", status: anthropicRes.status, text })
+        res.status(502).json({
+          error: "Anthropic request failed",
+          status: anthropicRes.status,
+          ...(isDev ? { text } : {}),
+        })
         return
       }
 
@@ -147,9 +213,14 @@ Return this shape exactly:
       const text =
         data.content?.map((b) => (typeof b.text === "string" ? b.text : "")).join("") ?? ""
       const cleaned = text.replace(/```json|```/g, "").trim()
-      const result = JSON.parse(cleaned) as unknown
+      const parsed = JSON.parse(cleaned) as unknown
+      const checked = diagnosticReportResponseSchema.safeParse(parsed)
+      if (!checked.success) {
+        res.status(502).json({ error: "Invalid model response" })
+        return
+      }
 
-      res.status(200).json(result)
+      res.status(200).json(checked.data)
     } catch (err) {
       res.status(500).json({ error: "Unexpected error", message: err instanceof Error ? err.message : String(err) })
     }

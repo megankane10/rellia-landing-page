@@ -63,12 +63,6 @@ const ROUTE_SEO: Record<string, RouteSeoConfig> = {
       "Complete your Rellia Health membership checkout securely. Manage your plan and access member benefits.",
     indexable: false,
   },
-  "/blog": {
-    title: "Blog — Rellia Health",
-    description:
-      "Stories and updates from Rellia Health. This section is coming soon.",
-    indexable: false,
-  },
   "/terms": {
     title: "Terms of use — Rellia Health",
     description:

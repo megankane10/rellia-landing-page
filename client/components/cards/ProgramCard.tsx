@@ -114,7 +114,11 @@ export const ProgramCard = ({
         </div>
 
         <div className="mt-auto p-4">
-          <RelliaAction asChild variant="tealCardFull" className="w-full h-[48px] text-base">
+          <RelliaAction
+            asChild
+            variant={isWaitlistCard ? "mintCardFull" : "tealCardFull"}
+            className="w-full h-[48px] text-base"
+          >
             {hasHref ? (
               <Link to={href as string}>{buttonText || "Learn more"}</Link>
             ) : hasWaitlistHref ? (
