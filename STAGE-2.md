@@ -17,6 +17,7 @@ Stage 2 extends what is already live: the team continues to author content in **
 - [ ] Add a **partner** schema, publish partner entries, and align field descriptions with the front end (Stripe links, alt text, CTAs, discovery links).
 - [ ] Production should rarely depend on **`shared/cms/defaults.ts`** except as fallback; optional **dev-only warning** when important fields fall back.
 - [ ] Keep **`paymentUrl`** per program in Sanity; optional env overrides for staging (e.g. `VITE_QMS_PAYMENT_LINK`).
+- [ ] Ensure website can be indexed by Google for SEO & implement pre-rendering or SSG/SSR so SEO can index and crawl the website properly
 
 ---
 
