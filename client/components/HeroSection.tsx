@@ -74,7 +74,7 @@ export default function HeroSection({ content }: HeroSectionProps) {
       </div>
 
       <div className="relative z-10 max-w-[1300px] mx-auto w-full px-6 md:px-10 pt-24 pb-16 md:pt-28 md:pb-24">
-        <div className="max-w-3xl">
+        <div className="mx-auto flex max-w-4xl flex-col items-center text-center">
           <motion.div
             initial={reduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: -18 }}
             animate={{ opacity: 1, y: 0 }}
@@ -92,7 +92,7 @@ export default function HeroSection({ content }: HeroSectionProps) {
             initial={reduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}
             transition={reduceMotion ? undefined : { duration: 1.0, ease: "easeOut", delay: 0.35 }}
-            className="mt-8 text-white/85 text-lg md:text-2xl font-urbanist leading-snug max-w-2xl"
+            className="mt-10 md:mt-12 text-white/85 text-lg md:text-2xl font-urbanist leading-snug max-w-2xl"
           >
             {content.subheadline}
           </motion.p>
@@ -101,7 +101,7 @@ export default function HeroSection({ content }: HeroSectionProps) {
             initial={reduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}
             transition={reduceMotion ? undefined : { duration: 1.0, ease: "easeOut", delay: 0.55 }}
-            className="mt-10 flex flex-col sm:flex-row gap-4 items-stretch sm:items-center"
+            className="mt-10 flex w-full flex-col items-stretch justify-center gap-4 sm:w-auto sm:flex-row sm:items-center"
           >
             <RelliaAction
               type="button"

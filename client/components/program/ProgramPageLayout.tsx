@@ -72,30 +72,31 @@ const ProgramPageLayout = ({
     <div className="min-h-screen bg-white font-host-grotesk overflow-x-hidden">
       <Navbar />
 
-      <main id="main-content" className="pt-[72px] md:pt-[86px]">
-        <nav
-          aria-label="Breadcrumb"
-          className="border-b border-black/[0.06] bg-gradient-to-r from-rellia-cream/80 to-white"
-        >
-          <div className="max-w-[1300px] mx-auto px-6 md:px-10 py-3.5 md:py-4">
-            <ol className="flex flex-wrap items-center gap-2 text-sm md:text-[15px] font-urbanist">
-              <li>
-                <Link
-                  to="/programs"
-                  className="font-semibold text-rellia-teal transition-colors hover:text-rellia-teal/85 hover:underline underline-offset-4"
-                >
-                  Programs &amp; Events
-                </Link>
-              </li>
-              <li className="flex items-center text-black/30" aria-hidden>
-                <ChevronRight className="h-4 w-4 shrink-0" />
-              </li>
-              <li className="text-black/55 font-medium max-w-[min(100%,42rem)] truncate" title={crumbCurrent}>
-                {crumbCurrent}
-              </li>
-            </ol>
-          </div>
-        </nav>
+      <nav
+        aria-label="Breadcrumb"
+        className="fixed inset-x-0 top-[72px] md:top-[86px] z-40 border-b border-black/[0.06] bg-gradient-to-r from-rellia-cream/90 to-white/95 backdrop-blur-md"
+      >
+        <div className="max-w-[1300px] mx-auto px-6 md:px-10 py-3.5 md:py-4">
+          <ol className="flex flex-wrap items-center gap-2 text-sm md:text-[15px] font-urbanist">
+            <li>
+              <Link
+                to="/programs"
+                className="font-semibold text-rellia-teal transition-colors hover:text-rellia-teal/85 hover:underline underline-offset-4"
+              >
+                Programs &amp; Events
+              </Link>
+            </li>
+            <li className="flex items-center text-black/30" aria-hidden>
+              <ChevronRight className="h-4 w-4 shrink-0" />
+            </li>
+            <li className="text-black/55 font-medium max-w-[min(100%,42rem)] truncate" title={crumbCurrent}>
+              {crumbCurrent}
+            </li>
+          </ol>
+        </div>
+      </nav>
+
+      <main id="main-content" className="pt-[128px] md:pt-[146px]">
 
         <section className="py-16 md:py-24 bg-white">
           <div className="max-w-[1300px] mx-auto px-6 md:px-10">

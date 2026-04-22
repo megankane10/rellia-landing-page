@@ -6,6 +6,7 @@ import ScrollReveal from "@/components/ScrollReveal"
 import { cn } from "@/lib/utils"
 import { getStoryBySlug } from "@/content/stories"
 import { getSiteUrl } from "@/config/seo"
+import { ChevronRight } from "lucide-react"
 
 export default function StoryPost() {
   const { slug } = useParams()
@@ -67,16 +68,34 @@ export default function StoryPost() {
       </Helmet>
 
       <Navbar />
-      <main id="main-content" className="pt-[110px] md:pt-[132px]">
+      <nav
+        aria-label="Breadcrumb"
+        className="fixed inset-x-0 top-[72px] md:top-[86px] z-40 border-b border-black/[0.06] bg-gradient-to-r from-rellia-cream/90 to-white/95 backdrop-blur-md"
+      >
+        <div className="max-w-[1300px] mx-auto px-6 md:px-10 py-3.5 md:py-4">
+          <ol className="flex flex-wrap items-center gap-2 text-sm md:text-[15px] font-urbanist">
+            <li>
+              <Link
+                to="/stories"
+                className="font-semibold text-rellia-teal transition-colors hover:text-rellia-teal/85 hover:underline underline-offset-4"
+              >
+                Stories
+              </Link>
+            </li>
+            <li className="flex items-center text-black/30" aria-hidden>
+              <ChevronRight className="h-4 w-4 shrink-0" />
+            </li>
+            <li className="text-black/55 font-medium max-w-[min(100%,42rem)] truncate" title={story.title}>
+              {story.title}
+            </li>
+          </ol>
+        </div>
+      </nav>
+
+      <main id="main-content" className="pt-[128px] md:pt-[146px]">
         <section className="px-6 md:px-10 py-10 md:py-14">
           <div className="max-w-[900px] mx-auto">
             <div className="flex flex-wrap items-center gap-3 text-xs font-semibold uppercase tracking-[0.14em] text-black/55">
-              <Link to="/stories" className="hover:text-rellia-teal focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 rounded-md">
-                Stories
-              </Link>
-              <span className="text-black/25" aria-hidden>
-                /
-              </span>
               <span className="text-black/45">{story.tag}</span>
               <span className="text-black/25" aria-hidden>
                 •

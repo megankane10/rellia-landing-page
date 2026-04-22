@@ -86,12 +86,15 @@ export default function Navbar({ ctaRadiusClassName = "rounded-full" }: NavbarPr
 
   const isActive = (path: string) => location.pathname === path
 
+  const pathname = location.pathname
+
   const hasTealHero =
-    location.pathname === "/" ||
-    location.pathname === "/about" ||
-    location.pathname === "/stories" ||
-    location.pathname === "/terms" ||
-    location.pathname === "/network"
+    pathname === "/" ||
+    pathname === "/about" ||
+    pathname === "/stories" ||
+    pathname === "/terms" ||
+    pathname === "/network" ||
+    pathname === "/programs"
 
   const desktopTone: "light" | "dark" =
     !mobileOpen && !scrolled && !hasTealHero ? "light" : "dark"
@@ -124,7 +127,7 @@ export default function Navbar({ ctaRadiusClassName = "rounded-full" }: NavbarPr
     "before:pointer-events-none before:absolute before:inset-0 before:-z-10 before:origin-left before:scale-x-0 before:transition-transform before:duration-300 before:ease-out hover:before:scale-x-100",
     "px-6 py-3 text-[14px] lg:text-[15px]",
     ctaRadiusClassName,
-    "border-rellia-mint bg-rellia-mint text-rellia-teal focus-visible:ring-offset-transparent before:bg-rellia-cream hover:border-rellia-cream hover:text-rellia-teal",
+    "border-rellia-mint bg-rellia-mint text-rellia-teal focus-visible:ring-offset-transparent before:bg-white hover:border-white hover:text-rellia-teal",
   )
 
   const menuIconBtnCls = cn(
@@ -176,7 +179,7 @@ export default function Navbar({ ctaRadiusClassName = "rounded-full" }: NavbarPr
               alt="Rellia"
               className={cn(
                 "h-9 w-auto object-contain transition-[filter] duration-300 motion-reduce:transition-none md:h-11",
-                desktopTone === "dark" ? "brightness-0 invert" : "brightness-100",
+                "brightness-100",
               )}
             />
           </Link>

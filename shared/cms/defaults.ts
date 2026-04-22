@@ -38,9 +38,10 @@ export const DEFAULT_GLOBAL_SETTINGS: GlobalSettingsContent = {
 }
 
 export const DEFAULT_HOME_PAGE: HomePageContent = {
-  headlinePrefix: "You are the future of",
-  headlineAccent: "healthcare.",
-  subheadline: "The expertise you need. The support you deserve.",
+  headlinePrefix: "Empowering the Future of",
+  headlineAccent: "Healthcare",
+  subheadline:
+    "Rellia connects founders with clinicians, advisors, and investors to validate and scale healthcare solutions.",
   primaryCtaLabel: "Get Involved Now",
   primaryCtaPath: "/network",
   secondaryCtaLabel: "See our Programs",
