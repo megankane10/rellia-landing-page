@@ -77,7 +77,7 @@ export default function Payment() {
     <div className="min-h-screen bg-white font-host-grotesk overflow-x-hidden">
       <Navbar />
 
-      <main>
+      <main id="main-content">
         <>
           <section className="relative overflow-hidden bg-rellia-teal pt-[87px]">
             <div className="pointer-events-none absolute inset-0 opacity-10">

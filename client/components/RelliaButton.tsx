@@ -16,7 +16,6 @@ export default function RelliaButton({
       variant={actionVariant}
       className={cn(
         size === "lg" ? "text-base md:text-lg px-10 py-5" : "text-base md:text-lg px-9 py-4",
-        "hover:-translate-y-1 hover:shadow-xl",
         className,
       )}
       {...props}

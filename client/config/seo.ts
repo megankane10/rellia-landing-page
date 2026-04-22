@@ -57,6 +57,12 @@ const ROUTE_SEO: Record<string, RouteSeoConfig> = {
       "Get in touch with Rellia Health about partnerships, programs, or press. We respond to serious inquiries from builders and collaborators.",
     indexable: true,
   },
+  "/stories": {
+    title: "Stories & Insights — Rellia Health",
+    description:
+      "Founder stories, industry insight, and program updates from the Rellia Health network.",
+    indexable: true,
+  },
   "/membership": {
     title: "Membership — Rellia Health",
     description:
@@ -107,6 +113,12 @@ export const getSeoForPathname = (pathname: string): RouteSeoConfig => {
   const key = normalizePathname(pathname)
   return ROUTE_SEO[key] ?? NOT_FOUND_SEO
 }
+
+/** Paths emitted as static HTML at build time (see `client/prerender.tsx`). */
+export const PRERENDER_PATHS: string[] = [
+  "/",
+  ...Object.keys(ROUTE_SEO).filter((p) => p !== "/"),
+]
 
 export const getDefaultOgImageUrl = (): string => {
   return `${getSiteUrl()}/ogimage.png`

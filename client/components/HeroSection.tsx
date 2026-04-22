@@ -1,11 +1,10 @@
-import { useCallback, useRef, useState } from "react";
-import { Pause, Play } from "lucide-react";
-import { cn } from "@/lib/utils";
-import RelliaButton from "@/components/RelliaButton";
-import { useNavigate } from "react-router-dom";
-import type { HomePageContent } from "@shared/cms/types";
-
-const HERO_VIDEO_POSTER = "/images/heroPoster-home.png";
+import { useCallback, useRef, useState } from "react"
+import { useNavigate } from "react-router-dom"
+import type { HomePageContent } from "@shared/cms/types"
+import { ArrowRight, Pause, Play } from "lucide-react"
+import RelliaAction from "@/components/RelliaAction"
+import WordRevealHeading from "@/components/WordRevealHeading"
+import { motion, useReducedMotion } from "framer-motion"
 
 type HeroSectionProps = {
   content: Pick<
@@ -21,100 +20,113 @@ type HeroSectionProps = {
 };
 
 export default function HeroSection({ content }: HeroSectionProps) {
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const [isPaused, setIsPaused] = useState(false);
-  const navigate = useNavigate();
+  const navigate = useNavigate()
+  const reduceMotion = useReducedMotion()
+  const videoRef = useRef<HTMLVideoElement>(null)
+  const [isPaused, setIsPaused] = useState(false)
 
-  const togglePlayback = useCallback(() => {
-    const el = videoRef.current;
-    if (!el) return;
+  const handleTogglePlayback = useCallback(() => {
+    const el = videoRef.current
+    if (!el) return
     if (el.paused) {
-      void el.play();
+      void el.play()
     } else {
-      el.pause();
+      el.pause()
     }
-  }, []);
+  }, [])
 
   return (
-    <section className="relative w-full min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Video background — ref lets us pause/play from the control button */}
+    <section className="relative min-h-screen flex items-center bg-rellia-teal overflow-hidden">
+      {/* Video background */}
       <video
         ref={videoRef}
-        poster={HERO_VIDEO_POSTER}
-        autoPlay
+        poster="/images/heroPoster-home.png"
+        autoPlay={!reduceMotion}
         muted
         loop
         playsInline
-        className="absolute inset-0 w-full h-full object-cover"
+        className="absolute inset-0 h-full w-full object-cover object-center"
         onPlay={() => setIsPaused(false)}
         onPause={() => setIsPaused(true)}
       >
         <source src="/videos/homehero.mp4" type="video/mp4" />
       </video>
 
-      {/* Overlay */}
-      <div className="absolute inset-0 bg-rellia-teal/65" />
+      {/* Softer teal wash so image stays visible */}
+      <div aria-hidden className="absolute inset-0 bg-rellia-teal/25" />
+
+      {/* Left-to-right gradient — extra contrast under the headline */}
+      <div
+        aria-hidden
+        className="absolute inset-0 bg-gradient-to-r from-rellia-teal/75 via-rellia-teal/35 to-rellia-teal/20"
+      />
 
       {/* Pause / play — sits above overlay so it stays visible & clickable */}
       <div className="absolute bottom-6 right-6 z-20 md:bottom-10 md:right-10">
         <button
           type="button"
-          onClick={togglePlayback}
-          className={cn(
-            "flex h-12 w-12 items-center justify-center rounded-full",
-            "border border-white/40 bg-white/15 text-white backdrop-blur-sm",
-            "transition hover:bg-white/25 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white",
-          )}
+          onClick={handleTogglePlayback}
+          className="flex h-12 w-12 items-center justify-center rounded-full border border-white/40 bg-white/15 text-white backdrop-blur-sm transition hover:bg-white/25 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white motion-reduce:transition-none"
           aria-label={isPaused ? "Play background video" : "Pause background video"}
         >
           {isPaused ? <Play className="h-5 w-5" fill="currentColor" /> : <Pause className="h-5 w-5" />}
         </button>
       </div>
 
-      {/* Content — padded for fixed navbar */}
-      <div className="relative z-10 flex flex-col items-center text-center px-6 pt-24 pb-16 md:pt-28 md:pb-24 max-w-5xl mx-auto w-full">
-
-        {/* Headline — rises on load */}
-        <h1
-          className="font-host-grotesk font-extrabold text-white text-4xl sm:text-5xl md:text-6xl lg:text-[80px] leading-tight animate-fade-up"
-          style={{ animationDelay: "0s" }}
-        >
-          {content.headlinePrefix}{" "}
-          <span className="relative inline-block align-bottom">
-            {/* White underlay is decorative; mint span is the single semantic copy for SR/SEO */}
-            <span className="text-white font-extrabold" aria-hidden>
-              {content.headlineAccent}
-            </span>
-            <span className="absolute left-0 top-0 whitespace-nowrap font-extrabold text-rellia-mint motion-safe:animate-healthcare-fill motion-reduce:clip-path-none">
-              {content.headlineAccent}
-            </span>
-          </span>
-        </h1>
-
-        <p
-          className="font-urbanist font-semibold text-white text-lg md:text-2xl mt-10 mb-10 animate-fade-up"
-          style={{ animationDelay: "0.2s" }}
-        >
-          {content.subheadline}
-        </p>
-
-        {/* CTA Buttons */}
-        <div
-          className="flex flex-col sm:flex-row gap-4 items-center animate-fade-up"
-          style={{ animationDelay: "0.4s" }}
-        >
-          <RelliaButton
-            className="bg-rellia-mint text-rellia-teal border-rellia-mint hover:bg-white hover:text-rellia-teal hover:border-white hover:shadow-xl"
-            onClick={() => navigate(content.primaryCtaPath)}
+      <div className="relative z-10 max-w-[1300px] mx-auto w-full px-6 md:px-10 pt-24 pb-16 md:pt-28 md:pb-24">
+        <div className="max-w-3xl">
+          <motion.div
+            initial={reduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: -18 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={reduceMotion ? undefined : { duration: 1.1, ease: "easeOut" }}
           >
-            {content.primaryCtaLabel}
-          </RelliaButton>
+            <WordRevealHeading
+              text={`${content.headlinePrefix} ${content.headlineAccent}`}
+              as="h1"
+              className="font-host-grotesk font-medium text-white text-5xl md:text-7xl lg:text-[88px] leading-[0.95] tracking-tight"
+              wordClassName="will-change-transform"
+            />
+          </motion.div>
 
-          <RelliaButton variant="secondary" onClick={() => navigate(content.secondaryCtaPath)}>
-            {content.secondaryCtaLabel}
-          </RelliaButton>
+          <motion.p
+            initial={reduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 18 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={reduceMotion ? undefined : { duration: 1.0, ease: "easeOut", delay: 0.35 }}
+            className="mt-8 text-white/85 text-lg md:text-2xl font-urbanist leading-snug max-w-2xl"
+          >
+            {content.subheadline}
+          </motion.p>
+
+          <motion.div
+            initial={reduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 18 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={reduceMotion ? undefined : { duration: 1.0, ease: "easeOut", delay: 0.55 }}
+            className="mt-10 flex flex-col sm:flex-row gap-4 items-stretch sm:items-center"
+          >
+            <RelliaAction
+              type="button"
+              variant="heroSolidOnTeal"
+              size="comfortable"
+              onClick={() => navigate(content.primaryCtaPath)}
+              aria-label={content.primaryCtaLabel}
+            >
+              {content.primaryCtaLabel}
+              <ArrowRight aria-hidden />
+            </RelliaAction>
+
+            <RelliaAction
+              type="button"
+              variant="heroGhostOnTeal"
+              size="comfortable"
+              onClick={() => navigate(content.secondaryCtaPath)}
+              aria-label={content.secondaryCtaLabel}
+            >
+              {content.secondaryCtaLabel}
+              <ArrowRight aria-hidden />
+            </RelliaAction>
+          </motion.div>
         </div>
       </div>
     </section>
-  );
+  )
 }

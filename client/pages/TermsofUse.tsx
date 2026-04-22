@@ -253,7 +253,7 @@ export default function Terms() {
     <div className="min-h-screen bg-white font-host-grotesk overflow-x-hidden">
       <Navbar />
 
-      <main>
+      <main id="main-content">
         {/* Hero */}
         <section className="relative flex h-[28rem] flex-shrink-0 flex-col overflow-hidden bg-rellia-teal pt-32 pb-12 md:h-[32rem] md:pt-40 md:pb-16">
           <div className="absolute inset-0 opacity-10 pointer-events-none">

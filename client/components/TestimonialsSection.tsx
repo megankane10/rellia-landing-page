@@ -1,23 +1,24 @@
-import { Info } from "lucide-react";
-import ScrollReveal from "./ScrollReveal";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { useMemo, useState } from "react"
+import { ChevronDown, Info } from "lucide-react"
+import ScrollReveal from "./ScrollReveal"
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import {
   Carousel,
   CarouselContent,
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
-} from "@/components/ui/carousel";
-import { cn } from "@/lib/utils";
-import type { HomeTestimonial } from "@shared/cms/types";
+} from "@/components/ui/carousel"
+import { cn } from "@/lib/utils"
+import type { HomeTestimonial } from "@shared/cms/types"
 
 const carouselArrowClass = cn(
   "static translate-x-0 translate-y-0 relative",
   "h-12 w-12 rounded-full border-2 border-rellia-teal bg-white text-rellia-teal shadow-md",
   "hover:bg-rellia-teal hover:text-white",
   "disabled:opacity-40 disabled:pointer-events-none",
-);
+)
 
 type Testimonial = HomeTestimonial;
 
@@ -53,47 +54,96 @@ function CompanyInfoPopover({ t }: { t: Testimonial }) {
         </div>
       </PopoverContent>
     </Popover>
-  );
+  )
 }
 
 function TestimonialCard({ t }: { t: Testimonial }) {
-  const imgSrc = t.imageSrc;
+  const imgSrc = t.imageSrc
+  const initials = useMemo(
+    () =>
+      t.name
+        .replace(/^(dr|mr|mrs|ms|prof)\.?\s+/i, "")
+        .split(" ")
+        .map((n) => n[0])
+        .join("")
+        .slice(0, 3),
+    [t.name],
+  )
+
+  const shouldTruncate = t.quote.length > 260
+  const [expanded, setExpanded] = useState(false)
+  const showExpand = shouldTruncate
+
+  const handleToggleExpand = () => setExpanded((v) => !v)
 
   return (
-    <div className="bg-white rounded-3xl p-7 md:p-8 h-full min-h-[360px] sm:min-h-[380px] flex flex-col min-w-0 shadow-sm border border-black/5 hover:shadow-lg transition-shadow duration-300">
-      <div className="flex-1 min-h-[7rem]">
-        <p className="font-urbanist text-base md:text-lg text-black/80 leading-relaxed italic">
-          &ldquo;{t.quote}&rdquo;
-        </p>
+    <div
+      className={cn(
+        "bg-white rounded-3xl p-7 md:p-8 w-full min-w-0 shadow-sm border border-black/5 hover:shadow-lg transition-shadow duration-300",
+        "flex flex-col",
+        !expanded ? "md:aspect-[4/3]" : "md:aspect-auto",
+      )}
+    >
+      <div className="flex-1 min-h-0">
+        <div className={cn("relative", showExpand && !expanded && "overflow-hidden")}>
+          <p
+            className={cn(
+              "font-urbanist text-base md:text-lg text-black/80 leading-relaxed italic",
+              showExpand && !expanded && "max-h-[8.25rem] md:max-h-[9.5rem]",
+            )}
+          >
+            &ldquo;{t.quote}&rdquo;
+          </p>
+          {showExpand && !expanded ? (
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-white via-white/85 to-transparent"
+            />
+          ) : null}
+        </div>
       </div>
 
-      {/* Avatar vertically centered with name + role block (reference layout) */}
-      <div className="flex items-center gap-4 mt-7 pt-5 border-t border-black/5">
-        <Avatar className="h-14 w-14 border-2 border-rellia-mint/30 shadow-sm shrink-0">
-          <AvatarImage src={imgSrc} alt={t.name} className="object-cover" />
-          <AvatarFallback className="bg-rellia-teal text-white text-sm font-semibold">
-            {t.name
-              .replace(/^(dr|mr|mrs|ms|prof)\.?\s+/i, "")
-              .split(" ")
-              .map((n) => n[0])
-              .join("")
-              .slice(0, 3)}
-          </AvatarFallback>
-        </Avatar>
+      {/* Footer block — divider + expand control + avatar row */}
+      <div className="relative mt-7 pt-5 border-t border-black/5">
+        {showExpand ? (
+          <button
+            type="button"
+            onClick={handleToggleExpand}
+            className={cn(
+              "absolute left-1/2 top-0 -translate-x-1/2 -translate-y-1/2",
+              "h-9 w-9 rounded-full border border-black/10 bg-white text-black/55 shadow-sm",
+              "transition-[transform,box-shadow,color,border-color] duration-200 motion-reduce:transition-none",
+              "hover:text-rellia-teal hover:border-rellia-teal/30 hover:shadow-md",
+              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2",
+            )}
+            aria-label={expanded ? "Collapse testimonial" : "Expand testimonial"}
+            aria-expanded={expanded}
+          >
+            <ChevronDown className={cn("h-4 w-4 mx-auto transition-transform duration-200", expanded && "rotate-180")} aria-hidden />
+          </button>
+        ) : null}
 
-        <div className="flex-1 min-w-0">
-          <h4 className="font-host-grotesk font-bold text-black text-lg leading-snug">{t.name}</h4>
-          {/* Keep company + info popover on their own line under the name */}
-          <div className="mt-2 flex items-start justify-between gap-3">
-            <p className="font-urbanist text-black/60 text-sm leading-snug">
-              {t.role}, <span className="text-rellia-teal font-semibold">{t.company}</span>
-            </p>
-            <CompanyInfoPopover t={t} />
+        <div className="flex items-center gap-4">
+          <Avatar className="h-14 w-14 rounded-2xl border-2 border-rellia-mint/30 shadow-sm shrink-0">
+            <AvatarImage src={imgSrc} alt={t.name} className="object-cover" />
+            <AvatarFallback className="rounded-2xl bg-rellia-teal text-white text-sm font-semibold">
+              {initials}
+            </AvatarFallback>
+          </Avatar>
+
+          <div className="flex-1 min-w-0">
+            <h4 className="font-host-grotesk font-bold text-black text-lg leading-snug">{t.name}</h4>
+            <div className="mt-2 flex items-start justify-between gap-3">
+              <p className="font-urbanist text-black/60 text-sm leading-snug">
+                {t.role}, <span className="text-rellia-teal font-semibold">{t.company}</span>
+              </p>
+              <CompanyInfoPopover t={t} />
+            </div>
           </div>
         </div>
       </div>
     </div>
-  );
+  )
 }
 
 type TestimonialsSectionProps = {
@@ -150,5 +200,5 @@ export default function TestimonialsSection({ titleLead, titleAccent, testimonia
         </ScrollReveal>
       </div>
     </section>
-  );
+  )
 }

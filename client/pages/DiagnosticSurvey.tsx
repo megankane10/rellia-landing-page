@@ -433,7 +433,7 @@ export default function DiagnosticSurvey() {
         </aside>
 
         {/* ── MAIN ── */}
-        <main className="ds-main">
+        <main id="main-content" className="ds-main">
 
           {/* INTRO */}
           {view === 'intro' && (

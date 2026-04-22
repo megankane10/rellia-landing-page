@@ -246,7 +246,7 @@ export default function Network() {
     <div className="min-h-screen bg-white font-host-grotesk overflow-x-hidden">
       <Navbar />
 
-      <main>
+      <main id="main-content">
         <FilloutInterestDialog open={isFilloutOpen} onOpenChange={setIsFilloutOpen} />
 
         {/* ───────────────────────────── HERO ───────────────────────────── */}

@@ -280,7 +280,7 @@ export default function PrivacyPolicy() {
     <div className="min-h-screen bg-white font-host-grotesk overflow-x-hidden">
       <Navbar />
 
-      <main>
+      <main id="main-content">
         <section className="relative flex h-[28rem] flex-shrink-0 flex-col overflow-hidden bg-rellia-teal pt-32 pb-12 md:h-[32rem] md:pt-40 md:pb-16">
           <div className="absolute inset-0 opacity-10 pointer-events-none">
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-rellia-mint via-transparent to-transparent blur-3xl" />

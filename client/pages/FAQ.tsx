@@ -17,7 +17,7 @@ export default function FAQ() {
     <div className="min-h-screen bg-white font-host-grotesk overflow-x-hidden">
       <Navbar />
 
-      <main>
+      <main id="main-content">
         <section className="relative pt-32 pb-16 md:pt-44 md:pb-24 bg-rellia-cream/80 overflow-hidden">
           <div className="absolute inset-0 pointer-events-none">
             <div className="absolute -top-24 -left-10 w-64 h-64 bg-rellia-mint/40 rounded-full blur-3xl" />

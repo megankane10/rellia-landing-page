@@ -76,7 +76,7 @@ export default function Contact() {
     <div className="min-h-screen bg-white font-host-grotesk">
       <Navbar />
 
-      <main>
+      <main id="main-content">
         <section className="relative bg-rellia-cream pb-16 pt-[92px] md:pb-24 md:pt-[110px]">
           <div className="mx-auto flex w-full max-w-[1300px] flex-col items-stretch gap-8 px-6 md:px-10 lg:flex-row lg:items-stretch lg:gap-10">
             {/* Left: copy + quote */}

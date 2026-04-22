@@ -42,7 +42,7 @@ function CtaActionButton({
   variant,
 }: {
   action: RelliaCtaAction
-  variant: "mintOnTealStrip" | "heroGhostOnTeal"
+  variant: "heroSolidOnTeal" | "heroGhostOnTeal"
 }) {
   const content = (
     <>
@@ -101,19 +101,19 @@ export default function RelliaCta({
             {/* Decorative grid lines — same modernist cue as the Network hero */}
             <div
               aria-hidden
-              className="absolute inset-0 opacity-[0.06] pointer-events-none"
+              className="absolute inset-0 opacity-[0.08] pointer-events-none"
               style={{
                 backgroundImage:
-                  "linear-gradient(to right, white 1px, transparent 1px), linear-gradient(to bottom, white 1px, transparent 1px)",
+                  "linear-gradient(to right, rgba(255,255,255,0.9) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.9) 1px, transparent 1px)",
                 backgroundSize: "80px 80px",
               }}
             />
-            {/* Mint glow */}
+            {/* Cream glow */}
             <div
               aria-hidden
               className="absolute inset-0 opacity-25 pointer-events-none"
             >
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_60%,_var(--tw-gradient-stops))] from-rellia-mint via-transparent to-transparent blur-3xl" />
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_60%,_var(--tw-gradient-stops))] from-rellia-cream via-transparent to-transparent blur-3xl" />
             </div>
 
             <div className="relative z-10 mx-auto flex w-full max-w-3xl flex-col items-center px-1 sm:px-0">
@@ -122,13 +122,13 @@ export default function RelliaCta({
               </h2>
 
               {body ? (
-                <p className="mt-5 font-urbanist text-white/75 text-lg md:text-xl leading-relaxed max-w-2xl">
+                <p className="mt-5 font-urbanist text-white/85 text-lg md:text-xl leading-relaxed max-w-2xl">
                   {body}
                 </p>
               ) : null}
 
               <div className="mt-10 flex w-full max-w-full flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-center sm:px-0">
-                <CtaActionButton action={primary} variant="mintOnTealStrip" />
+                <CtaActionButton action={primary} variant="heroSolidOnTeal" />
                 {secondary ? (
                   <CtaActionButton action={secondary} variant="heroGhostOnTeal" />
                 ) : null}

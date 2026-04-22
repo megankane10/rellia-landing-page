@@ -40,7 +40,7 @@ const LogoItem = ({ logo }: { logo: Logo }) => (
       src={logo.src}
       alt={logo.name}
       loading="lazy"
-      className="h-16 w-auto max-w-[min(100%,17.5rem)] object-contain md:h-20 lg:h-24"
+      className="h-[72px] w-auto max-w-[min(100%,18.5rem)] object-contain md:h-[88px] lg:h-[104px]"
     />
   </div>
 )
@@ -50,7 +50,7 @@ export default function LogoMarquee({
   description = "",
   speed = "normal",
   direction = "left",
-  pauseOnHover = true,
+  pauseOnHover = false,
   showHeading = true,
   sectionClassName,
 }: {

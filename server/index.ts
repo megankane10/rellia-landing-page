@@ -28,8 +28,8 @@ const fixVercelRewrittenApiPath: RequestHandler = (req, _res, next) => {
   }
   try {
     const u = new URL(req.url, "http://v.internal")
-    const path = u.pathname
-    if (path !== "/api" && path !== "/api/") {
+    const p = u.pathname
+    if (p !== "/api" && p !== "/api/") {
       next()
       return
     }
@@ -50,11 +50,6 @@ const fixVercelRewrittenApiPath: RequestHandler = (req, _res, next) => {
   next()
 }
 
-/**
- * Express app for Vercel `/api` and local `pnpm start`.
- * No payment API routes — `/payment` uses Stripe Payment Links in the client only.
- * Add Stage 2 routes here when needed.
- */
 export function createServer() {
   const app = express()
 
@@ -62,7 +57,15 @@ export function createServer() {
 
   const isDev = process.env.NODE_ENV !== "production"
 
-  app.use(helmet())
+  // Default Helmet CSP blocks Vite's inline dev scripts (React Refresh / HMR), which yields a blank page locally.
+  app.use(
+    isDev
+      ? helmet({
+          contentSecurityPolicy: false,
+          strictTransportSecurity: false,
+        })
+      : helmet(),
+  )
 
   const allowedOrigins = (process.env.ALLOWED_ORIGINS || "")
     .split(",")
@@ -70,8 +73,6 @@ export function createServer() {
     .filter(Boolean)
 
   if (!isDev && allowedOrigins.length === 0) {
-    // Safer default for production: don't accidentally lock everyone out,
-    // but do make it obvious that this should be configured.
     console.warn(
       "ALLOWED_ORIGINS is not set. CORS will allow all browser origins. Set ALLOWED_ORIGINS to restrict cross-origin requests.",
     )
@@ -80,7 +81,6 @@ export function createServer() {
   app.use(
     cors({
       origin: (origin, cb) => {
-        // Non-browser requests often omit Origin (health checks, curl, server-to-server)
         if (!origin) {
           cb(null, true)
           return
@@ -145,8 +145,7 @@ export function createServer() {
     const apiKey = process.env.ANTHROPIC_API_KEY?.trim()
     if (!apiKey) {
       res.status(501).json({
-        error:
-          "Anthropic is not configured. Set ANTHROPIC_API_KEY in the server environment.",
+        error: "Anthropic is not configured. Set ANTHROPIC_API_KEY in the server environment.",
       })
       return
     }
@@ -210,11 +209,10 @@ Return this shape exactly:
       const data = (await anthropicRes.json()) as {
         content?: Array<{ type?: string; text?: string }>
       }
-      const text =
-        data.content?.map((b) => (typeof b.text === "string" ? b.text : "")).join("") ?? ""
+      const text = data.content?.map((b) => (typeof b.text === "string" ? b.text : "")).join("") ?? ""
       const cleaned = text.replace(/```json|```/g, "").trim()
-      const parsed = JSON.parse(cleaned) as unknown
-      const checked = diagnosticReportResponseSchema.safeParse(parsed)
+      const modelJson = JSON.parse(cleaned) as unknown
+      const checked = diagnosticReportResponseSchema.safeParse(modelJson)
       if (!checked.success) {
         res.status(502).json({ error: "Invalid model response" })
         return
@@ -222,9 +220,13 @@ Return this shape exactly:
 
       res.status(200).json(checked.data)
     } catch (err) {
-      res.status(500).json({ error: "Unexpected error", message: err instanceof Error ? err.message : String(err) })
+      res.status(500).json({
+        error: "Unexpected error",
+        message: err instanceof Error ? err.message : String(err),
+      })
     }
   })
 
   return app
 }
+

@@ -72,7 +72,7 @@ const ProgramPageLayout = ({
     <div className="min-h-screen bg-white font-host-grotesk overflow-x-hidden">
       <Navbar />
 
-      <main className="pt-[72px] md:pt-[86px]">
+      <main id="main-content" className="pt-[72px] md:pt-[86px]">
         <nav
           aria-label="Breadcrumb"
           className="border-b border-black/[0.06] bg-gradient-to-r from-rellia-cream/80 to-white"
