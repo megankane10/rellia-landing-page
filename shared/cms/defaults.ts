@@ -244,6 +244,12 @@ export const DEFAULT_ABOUT_PAGE: AboutPageContent = {
       imageSrc: "/images/team-megankane.jpg",
     },
     {
+      name: "Khali Abdi",
+      role: "User Experience & Community Strategy Manager",
+      bio: "A Chemical Engineer & digital health founder, Khali blends her technical background with a deep commitment to human-centred design to ensure Rellia’s ecosystem is as intuitive as it is impactful.",
+      imageSrc: "/images/nopicture-male.jpg",
+    },
+    {
       name: "Deena Al-Sammak",
       role: "Program Manager, Co-Founder",
       bio: "Deena brings startup experience in the health tech space and leverages her experience to lead our program development and management",

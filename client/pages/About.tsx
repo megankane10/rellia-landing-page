@@ -6,6 +6,7 @@ import { Heart, Stethoscope, Globe, Zap, type LucideIcon } from "lucide-react";
 import { IconFeatureCard, TeamMemberCard } from "@/components/cards";
 import { useAboutPage } from "@/hooks/useCmsDocuments";
 import { DEFAULT_ABOUT_PAGE } from "@shared/cms/defaults";
+import { useState } from "react";
 
 const VALUE_ICONS: Record<string, LucideIcon> = {
   heart: Heart,
@@ -21,6 +22,7 @@ const FOUNDER_APPLY_HREF = "/network";
 export default function About() {
   const { data } = useAboutPage();
   const about = data ?? DEFAULT_ABOUT_PAGE;
+  const [openTeamBioName, setOpenTeamBioName] = useState<string | null>(null);
 
   return (
     <div className="min-h-screen bg-white font-host-grotesk overflow-x-hidden">
@@ -115,7 +117,14 @@ export default function About() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {about.team.map((t) => (
                 <div key={t.name}>
-                  <TeamMemberCard name={t.name} role={t.role} bio={t.bio} imageSrc={t.imageSrc} />
+                  <TeamMemberCard
+                    name={t.name}
+                    role={t.role}
+                    bio={t.bio}
+                    imageSrc={t.imageSrc}
+                    bioOpen={openTeamBioName === t.name}
+                    onBioOpenChange={(next) => setOpenTeamBioName(next ? t.name : null)}
+                  />
                 </div>
               ))}
             </div>
