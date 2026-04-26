@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom"
 import { useState } from "react"
-import { Bell } from "lucide-react"
+import { ArrowRight, Bell } from "lucide-react"
 import RelliaAction from "@/components/RelliaAction"
 import { cn } from "@/lib/utils"
 import FilloutPopupDialog from "@/components/FilloutPopupDialog"
@@ -116,11 +116,13 @@ export const ProgramCard = ({
         <div className="mt-auto p-4">
           <RelliaAction
             asChild
-            variant={isWaitlistCard ? "mintCardFull" : "creamCardFull"}
+            variant="mintCardTealFill"
             className="w-full h-[48px] text-base"
           >
             {hasHref ? (
-              <Link to={href as string}>{buttonText || "Learn more"}</Link>
+              <Link to={href as string}>
+                Get Started <ArrowRight />
+              </Link>
             ) : hasWaitlistHref ? (
               <button
                 type="button"
@@ -133,7 +135,10 @@ export const ProgramCard = ({
                 }}
                 aria-label={`Join waitlist for ${title}`}
               >
-                {buttonText || "Join Waitlist"}
+                <span className="inline-flex items-center justify-center gap-2">
+                  <Bell className="h-4 w-4 shrink-0" strokeWidth={2.25} />
+                  {buttonText || "Join Waitlist"}
+                </span>
               </button>
             ) : (
               <button type="button" disabled aria-disabled className="opacity-60 cursor-not-allowed">

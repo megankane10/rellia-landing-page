@@ -19,10 +19,27 @@ export default function FAQ() {
 
       <main id="main-content">
         <section className="relative pt-32 pb-16 md:pt-44 md:pb-24 bg-rellia-cream/80 overflow-hidden">
+          {/* Header effects: soft color wash + subtle grid + holomark */}
           <div className="absolute inset-0 pointer-events-none">
-            <div className="absolute -top-24 -left-10 w-64 h-64 bg-rellia-mint/40 rounded-full blur-3xl" />
-            <div className="absolute -bottom-24 -right-10 w-80 h-80 bg-rellia-teal/10 rounded-full blur-3xl" />
+            <div className="absolute -top-24 -left-10 h-64 w-64 rounded-full bg-rellia-mint/55 blur-3xl" />
+            <div className="absolute -bottom-24 -right-10 h-80 w-80 rounded-full bg-rellia-teal/25 blur-3xl" />
+            <div
+              className="absolute inset-0 opacity-[0.12]"
+              style={{
+                backgroundImage:
+                  "linear-gradient(to right, rgba(2,44,46,0.45) 1px, transparent 1px), linear-gradient(to bottom, rgba(2,44,46,0.45) 1px, transparent 1px)",
+                backgroundSize: "64px 64px",
+              }}
+              aria-hidden
+            />
           </div>
+
+          <img
+            src="/images/hologram-logo.png"
+            alt=""
+            aria-hidden
+            className="pointer-events-none absolute right-0 top-1/2 -translate-y-1/2 h-[60%] md:h-[85%] w-auto object-contain opacity-[0.14] select-none"
+          />
 
           <div className="relative z-10 max-w-[1100px] mx-auto px-6 md:px-10">
             <ScrollReveal>

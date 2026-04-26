@@ -3,7 +3,8 @@ import Footer from "@/components/Footer";
 import ScrollReveal from "@/components/ScrollReveal";
 import RelliaCta from "@/components/RelliaCta";
 import { Heart, Stethoscope, Globe, Zap, type LucideIcon } from "lucide-react";
-import { IconFeatureCard, TeamMemberCard } from "@/components/cards";
+import { IconFeatureCard } from "@/components/cards/IconFeatureCard";
+import { TeamMemberCard } from "@/components/cards/TeamMemberCard";
 import { useAboutPage } from "@/hooks/useCmsDocuments";
 import { DEFAULT_ABOUT_PAGE } from "@shared/cms/defaults";
 import { useState } from "react";
@@ -30,9 +31,28 @@ export default function About() {
 
       <main id="main-content">
         <section className="relative pt-28 pb-16 md:pt-40 md:pb-24 bg-rellia-teal overflow-hidden">
-          <div className="absolute inset-0 opacity-10 pointer-events-none">
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-rellia-mint via-transparent to-transparent blur-3xl" />
+          {/* Mint blob — richer fade like other headers */}
+          <div className="absolute inset-0 opacity-[0.14] pointer-events-none">
+            <div className="absolute -left-24 -top-24 h-[520px] w-[520px] rounded-full bg-rellia-mint blur-3xl" />
+            <div className="absolute right-[-120px] bottom-[-140px] h-[520px] w-[520px] rounded-full bg-rellia-mint/70 blur-3xl" />
           </div>
+
+          {/* Left-to-right gradient — adds depth/contrast */}
+          <div
+            aria-hidden
+            className="absolute inset-0 bg-gradient-to-r from-rellia-teal/75 via-rellia-teal/35 to-rellia-teal/20"
+          />
+
+          {/* Decorative grid lines — match other header style */}
+          <div
+            aria-hidden
+            className="absolute inset-0 opacity-[0.06] pointer-events-none"
+            style={{
+              backgroundImage:
+                "linear-gradient(to right, white 1px, transparent 1px), linear-gradient(to bottom, white 1px, transparent 1px)",
+              backgroundSize: "80px 80px",
+            }}
+          />
 
           <img
             src="/images/hologram-logo.png"
@@ -122,6 +142,8 @@ export default function About() {
                     role={t.role}
                     bio={t.bio}
                     imageSrc={t.imageSrc}
+                    linkedinUrl={t.linkedinUrl}
+                    websiteUrl={t.websiteUrl}
                     bioOpen={openTeamBioName === t.name}
                     onBioOpenChange={(next) => setOpenTeamBioName(next ? t.name : null)}
                   />

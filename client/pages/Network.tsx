@@ -678,12 +678,14 @@ export default function Network() {
           </div>
         </section>
 
-        <RelliaCta
-          title="One network. Four doors in."
-          body="Founders, advisors, investors, and industry partners all showing up for the same reason - to move health innovation forward. That's what this community here for."
-          primary={{ label: "Learn About Rellia", to: "/about" }}
-          secondary={{ label: "Not sure where you fit? Contact us!", to: "/contact" }}
-        />
+        <section id="how-they-work-together" className="scroll-mt-24 md:scroll-mt-28">
+          <RelliaCta
+            title="One network. Four doors in."
+            body="Founders, advisors, investors, and industry partners all showing up for the same reason - to move health innovation forward. That's what this community here for."
+            primary={{ label: "Learn About Rellia", to: "/about" }}
+            secondary={{ label: "Not sure where you fit? Contact us!", to: "/contact" }}
+          />
+        </section>
       </main>
 
       <Footer />

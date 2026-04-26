@@ -38,8 +38,8 @@ export const DEFAULT_GLOBAL_SETTINGS: GlobalSettingsContent = {
 }
 
 export const DEFAULT_HOME_PAGE: HomePageContent = {
-  headlinePrefix: "Empowering the Future of",
-  headlineAccent: "Healthcare",
+  headlinePrefix: "You are the Future of Health Tech.",
+  headlineAccent: "",
   subheadline:
     "Rellia connects founders with clinicians, advisors, and investors to validate and scale healthcare solutions.",
   primaryCtaLabel: "Get Involved Now",
@@ -194,9 +194,9 @@ export const DEFAULT_HOME_PAGE: HomePageContent = {
 }
 
 export const DEFAULT_ABOUT_PAGE: AboutPageContent = {
-  heroLine1: "Empowering the",
-  heroLine2Mint: "next generation",
-  heroLine3: "of health tech.",
+  heroLine1: "You are the",
+  heroLine2Mint: "Future of",
+  heroLine3: "Health Tech.",
   heroIntro:
     "Rellia Health is a virtual incubator dedicated to accelerating the commercialization of digital health solutions that matter.",
   missionTitle: "Our Mission",
@@ -242,24 +242,29 @@ export const DEFAULT_ABOUT_PAGE: AboutPageContent = {
       role: "Executive Director, Co-Founder",
       bio: "Regulatory and Quality Management executive specializing in global market entry strategy and FDA/Health Canada submissions for SaMD and digital health companies.",
       imageSrc: "/images/team-megankane.jpg",
-    },
-    {
-      name: "Khali Abdi",
-      role: "User Experience & Community Strategy Manager",
-      bio: "A Chemical Engineer & digital health founder, Khali blends her technical background with a deep commitment to human-centred design to ensure Rellia’s ecosystem is as intuitive as it is impactful.",
-      imageSrc: "/images/nopicture-male.jpg",
+      linkedinUrl: "https://www.linkedin.com/in/megankane1/",
+      websiteUrl: "https://megankaneportfolio.carrd.co/",
     },
     {
       name: "Deena Al-Sammak",
       role: "Program Manager, Co-Founder",
       bio: "Deena brings startup experience in the health tech space and leverages her experience to lead our program development and management",
       imageSrc: "/images/team-deenasammak.png",
+      linkedinUrl: "https://www.linkedin.com/in/deena-al-sammak/",
+    },
+    {
+      name: "Khali Abdi",
+      role: "User Experience, Community Strategy Manager",
+      bio: "A Chemical Engineer & digital health founder, Khali blends her technical background with a deep commitment to human-centred design to ensure Rellia’s ecosystem is as intuitive as it is impactful.",
+      imageSrc: "/images/team-abdi.JPG",
+      linkedinUrl: "https://www.linkedin.com/in/khali-abdi/",
     },
     {
       name: "Priyanka Ramjagsingh",
       role: "Operations Director",
       bio: "With a decade of experience embedded in early-stage health companies, Priyanka converts her deep regulatory and quality expertise into operational momentum, turning complexity into the strategic edge that moves teams forward.",
       imageSrc: "/images/team-priyankaR.jpeg",
+      linkedinUrl: "https://www.linkedin.com/in/shyama-ramjagsingh/",
     },
     {
       name: "Kelly Hu",
@@ -321,6 +326,11 @@ export const DEFAULT_FAQ_PAGE: FaqPageContent = {
       question: "Can I join a program without becoming a member?",
       answer:
         "Yes, most Rellia programs are available to non-members as well. If you decide to become a member, you will get discounted access to programs alongside everything else membership includes.",
+    },
+    {
+      id: "member-required-for-program",
+      question: "Do I need to become a member to join a program?",
+      answer: "No - programs are open to members and non-members",
     },
     {
       id: "advisor-time",

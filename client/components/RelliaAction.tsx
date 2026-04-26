@@ -13,11 +13,11 @@ export const relliaActionVariants = cva(
         tealFilledLift:
           "rounded-full border-2 border-rellia-mint bg-rellia-mint text-rellia-teal hover:-translate-y-0.5 hover:bg-transparent hover:text-rellia-teal hover:border-white hover:shadow-[0_22px_60px_-34px_rgba(15,77,77,0.55)] before:bg-white",
         outlineOnWhite:
-          "rounded-full border-2 border-rellia-teal bg-white text-rellia-teal hover:border-white hover:shadow-[0_18px_50px_-32px_rgba(15,77,77,0.35)] before:bg-white",
+          "rounded-full border-2 border-rellia-teal bg-white text-rellia-teal hover:bg-transparent hover:text-white hover:border-rellia-teal hover:shadow-[0_18px_50px_-32px_rgba(15,77,77,0.35)] before:bg-rellia-teal",
         heroSolidOnTeal:
-          "rounded-full border-2 border-rellia-cream bg-rellia-cream text-rellia-teal hover:-translate-y-0.5 hover:bg-transparent hover:text-rellia-teal hover:border-white hover:shadow-[0_22px_60px_-34px_rgba(0,0,0,0.45)] before:bg-white",
+          "rounded-full border-2 border-rellia-mint bg-rellia-mint text-rellia-teal hover:-translate-y-0.5 hover:bg-transparent hover:text-rellia-teal hover:border-white hover:shadow-[0_22px_60px_-34px_rgba(0,0,0,0.45)] before:bg-white",
         heroGhostOnTeal:
-          "rounded-full border-2 border-rellia-cream bg-transparent text-rellia-cream hover:-translate-y-0.5 hover:text-rellia-teal hover:border-white before:bg-white",
+          "rounded-full border-2 border-rellia-mint bg-transparent text-white hover:-translate-y-0.5 hover:text-rellia-teal hover:border-white before:bg-white",
         mintOnTealStrip:
           "rounded-full bg-rellia-mint text-rellia-teal border-2 border-rellia-mint hover:bg-transparent hover:text-rellia-teal hover:border-white hover:shadow-[0_18px_50px_-32px_rgba(0,0,0,0.35)] before:bg-white",
         tealCardFull:
@@ -26,10 +26,18 @@ export const relliaActionVariants = cva(
           "w-full rounded-full border-2 border-rellia-cream bg-rellia-cream text-sm text-rellia-teal hover:bg-transparent hover:text-rellia-teal hover:border-white before:bg-white",
         mintCardFull:
           "w-full rounded-full border-2 border-rellia-mint bg-rellia-mint text-sm text-rellia-teal hover:bg-transparent hover:text-rellia-teal hover:border-white before:bg-white",
+        mintCardTealFill:
+          "w-full rounded-full border-2 border-rellia-mint bg-rellia-mint text-sm text-rellia-teal hover:bg-transparent hover:text-white hover:border-rellia-teal before:bg-rellia-teal",
+        mintTealFill:
+          "rounded-full border-2 border-rellia-mint bg-rellia-mint text-rellia-teal hover:bg-transparent hover:text-white hover:border-rellia-teal before:bg-rellia-teal",
         brandSolid:
           "rounded-full border-2 border-rellia-mint bg-rellia-mint text-rellia-teal hover:bg-transparent hover:text-rellia-teal hover:border-white hover:shadow-[0_22px_60px_-34px_rgba(15,77,77,0.55)] before:bg-white",
         brandOutline:
           "rounded-full border-2 border-rellia-teal bg-transparent text-white hover:text-rellia-teal hover:border-white before:bg-white",
+        calmPrimary:
+          "rounded-2xl border border-blue-600/15 bg-blue-600 text-white shadow-sm hover:shadow-md hover:scale-[1.02] before:bg-blue-700 focus-visible:ring-blue-600 focus-visible:ring-offset-slate-50",
+        calmSecondary:
+          "rounded-2xl border border-slate-900/10 bg-white text-slate-900 hover:bg-slate-50 hover:scale-[1.02] before:bg-slate-50 focus-visible:ring-blue-600 focus-visible:ring-offset-slate-50",
       },
       size: {
         comfortable: "px-8 py-4 text-base",

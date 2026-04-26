@@ -1,15 +1,11 @@
 import { createClient, type SanityClient } from "@sanity/client"
 
-const DEFAULT_PROJECT_ID = "ggbt0o98"
-const DEFAULT_DATASET = "production"
+export const getSanityProjectId = (): string => import.meta.env.VITE_SANITY_PROJECT_ID || ""
 
-export const getSanityProjectId = (): string =>
-  import.meta.env.VITE_SANITY_PROJECT_ID || DEFAULT_PROJECT_ID
+export const getSanityDataset = (): string => import.meta.env.VITE_SANITY_DATASET || ""
 
-export const getSanityDataset = (): string =>
-  import.meta.env.VITE_SANITY_DATASET || DEFAULT_DATASET
-
-export const isSanityConfigured = (): boolean => Boolean(getSanityProjectId())
+export const isSanityConfigured = (): boolean =>
+  Boolean(import.meta.env.VITE_SANITY_PROJECT_ID && import.meta.env.VITE_SANITY_DATASET)
 
 let client: SanityClient | null = null
 

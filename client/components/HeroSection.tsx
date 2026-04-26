@@ -1,10 +1,9 @@
-import { useCallback, useRef, useState } from "react"
+import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import type { HomePageContent } from "@shared/cms/types"
 import { ArrowRight, Pause, Play } from "lucide-react"
 import RelliaAction from "@/components/RelliaAction"
-import WordRevealHeading from "@/components/WordRevealHeading"
-import { motion, useReducedMotion } from "framer-motion"
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion"
 
 type HeroSectionProps = {
   content: Pick<
@@ -19,11 +18,157 @@ type HeroSectionProps = {
   >;
 };
 
+const AnimatedHeadline = ({
+  reduceMotion,
+  onComplete,
+  text,
+}: {
+  reduceMotion: boolean
+  onComplete: () => void
+  text: string
+}) => {
+  const normalized = useMemo(() => text.trim().replace(/\s+/g, " "), [text])
+  const words = useMemo(() => (normalized.length > 0 ? normalized.split(" ") : []), [normalized])
+  const breakBeforeWordIndex = useMemo(() => words.findIndex((w) => w.toLowerCase() === "of"), [words])
+
+  if (reduceMotion) {
+    const fallbackBreakIndex = breakBeforeWordIndex >= 0 ? breakBeforeWordIndex : undefined
+    return (
+      <h1 className="relative font-host-grotesk font-medium text-5xl md:text-7xl lg:text-[88px] leading-[0.95] tracking-tight">
+        <span className="text-rellia-cream">
+          {words.map((w, idx) => (
+            <span key={`${idx}-${w}`} className="inline">
+              {fallbackBreakIndex != null && idx === fallbackBreakIndex ? <span className="hidden md:block" /> : null}
+              {w}
+              {idx === words.length - 1 ? " " : " "}
+            </span>
+          ))}
+        </span>
+      </h1>
+    )
+  }
+
+  // Controls the perceived "one word at a time" cadence.
+  // Keep this intentionally slow/smooth for the hero load-in.
+  // Time between each word starting its reveal.
+  // ~5% faster than 0.38s for a slightly tighter cadence.
+  const baseStaggerSeconds = 0.361
+
+  const container = {
+    hidden: {},
+    show: {},
+  } as const
+
+  const word = {
+    hidden: { opacity: 0, y: 18, filter: "blur(22px)" },
+    show: (idx: number) => ({
+      opacity: 1,
+      y: 0,
+      filter: "blur(0px)",
+      transition: {
+        duration: 1.6,
+        ease: [0.16, 1, 0.3, 1] as [number, number, number, number],
+        delay: idx * baseStaggerSeconds,
+      },
+    }),
+  } as const
+
+  // Trigger "headline done" as soon as the final word finishes animating.
+  const headlineDoneDelaySeconds = (words.length - 1) * baseStaggerSeconds + 1.6
+
+  return (
+    <h1
+      className="relative font-host-grotesk font-medium text-5xl md:text-7xl lg:text-[88px] leading-[0.95] tracking-tight"
+      aria-label={normalized}
+    >
+      <motion.span
+        variants={container}
+        initial="hidden"
+        animate="show"
+        className="text-rellia-cream"
+      >
+        {words.map((w, idx) => (
+          <span key={`${idx}-${w}`} className="inline">
+            {breakBeforeWordIndex >= 0 && idx === breakBeforeWordIndex ? <span className="hidden md:block" /> : null}
+            <motion.span custom={idx} variants={word} className="inline-block">
+              {w}
+            </motion.span>
+            {idx === words.length - 1 ? (
+              ""
+            ) : breakBeforeWordIndex >= 0 && idx === breakBeforeWordIndex - 1 ? (
+              <>
+                <span className="inline md:hidden">{"\u00A0"}</span>
+                <span className="hidden md:block" />
+              </>
+            ) : (
+              "\u00A0"
+            )}
+          </span>
+        ))}
+      </motion.span>
+      <motion.span
+        aria-hidden
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 0 }}
+        transition={{ delay: headlineDoneDelaySeconds, duration: 0 }}
+        onAnimationComplete={onComplete}
+      >
+        .
+      </motion.span>
+    </h1>
+  )
+}
+
 export default function HeroSection({ content }: HeroSectionProps) {
   const navigate = useNavigate()
   const reduceMotion = useReducedMotion()
   const videoRef = useRef<HTMLVideoElement>(null)
   const [isPaused, setIsPaused] = useState(false)
+  const [rotatingLineIndex, setRotatingLineIndex] = useState(0)
+  const [isVideoReady, setIsVideoReady] = useState(false)
+  const [canShowHeadline, setCanShowHeadline] = useState(false)
+  const [isHeadlineDone, setIsHeadlineDone] = useState(false)
+
+  const rotatingLines = useMemo(
+    () => [
+      "launch sooner",
+      "scale smarter",
+      "move faster",
+      "reach market sooner",
+      "grow with confidence",
+    ],
+    [],
+  )
+
+  useEffect(() => {
+    if (reduceMotion) {
+      setIsVideoReady(true)
+      setCanShowHeadline(true)
+      setIsHeadlineDone(true)
+      return
+    }
+  }, [reduceMotion])
+
+  useEffect(() => {
+    if (reduceMotion) return
+    if (isVideoReady) {
+      setCanShowHeadline(true)
+      return
+    }
+    const timeout = window.setTimeout(() => {
+      setCanShowHeadline(true)
+    }, 900)
+    return () => window.clearTimeout(timeout)
+  }, [reduceMotion, isVideoReady])
+
+  useEffect(() => {
+    if (reduceMotion) return
+    if (!isVideoReady) return
+    const interval = window.setInterval(() => {
+      setRotatingLineIndex((idx) => (idx + 1) % rotatingLines.length)
+    }, 1750)
+    return () => window.clearInterval(interval)
+  }, [reduceMotion, isVideoReady, rotatingLines.length])
 
   const handleTogglePlayback = useCallback(() => {
     const el = videoRef.current
@@ -48,6 +193,9 @@ export default function HeroSection({ content }: HeroSectionProps) {
         className="absolute inset-0 h-full w-full object-cover object-center"
         onPlay={() => setIsPaused(false)}
         onPause={() => setIsPaused(true)}
+        onLoadedData={() => setIsVideoReady(true)}
+        onCanPlay={() => setIsVideoReady(true)}
+        onError={() => setIsVideoReady(false)}
       >
         <source src="/videos/homehero.mp4" type="video/mp4" />
       </video>
@@ -74,34 +222,66 @@ export default function HeroSection({ content }: HeroSectionProps) {
       </div>
 
       <div className="relative z-10 max-w-[1300px] mx-auto w-full px-6 md:px-10 pt-24 pb-16 md:pt-28 md:pb-24">
-        <div className="mx-auto flex max-w-4xl flex-col items-center text-center">
+        <div className="mx-auto flex max-w-4xl flex-col items-start text-left">
           <motion.div
-            initial={reduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: -18 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={reduceMotion ? undefined : { duration: 1.1, ease: "easeOut" }}
+            initial={reduceMotion ? { opacity: 1 } : { opacity: 0 }}
+            animate={canShowHeadline ? { opacity: 1 } : { opacity: 0 }}
+            transition={reduceMotion ? undefined : { duration: 0.55, ease: "easeOut", delay: 0.05 }}
           >
-            <WordRevealHeading
-              text={`${content.headlinePrefix} ${content.headlineAccent}`}
-              as="h1"
-              className="font-host-grotesk font-medium text-white text-5xl md:text-7xl lg:text-[88px] leading-[0.95] tracking-tight"
-              wordClassName="will-change-transform"
-            />
+            {canShowHeadline ? (
+              <AnimatedHeadline
+                reduceMotion={!!reduceMotion}
+                onComplete={() => setIsHeadlineDone(true)}
+                text={`${content.headlinePrefix} ${content.headlineAccent ?? ""}`.trim()}
+              />
+            ) : null}
+          </motion.div>
+
+          <motion.div
+            initial={reduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 14 }}
+            animate={isHeadlineDone ? { opacity: 1, y: 0 } : { opacity: 0, y: 14 }}
+            transition={reduceMotion ? undefined : { duration: 0.45, ease: "easeOut", delay: 0 }}
+            className="mt-6 md:mt-7"
+          >
+            <div
+              className="min-h-[2.25rem] md:min-h-[2.75rem] text-white text-xl md:text-3xl font-urbanist"
+              aria-live="polite"
+              aria-atomic="true"
+            >
+              <span className="text-white">We help you </span>
+              {reduceMotion ? (
+                <span className="text-white">{rotatingLines[0]}</span>
+              ) : (
+                <AnimatePresence mode="wait" initial={false}>
+                  <motion.span
+                    key={rotatingLineIndex}
+                    initial={{ opacity: 0, y: 10, filter: "blur(6px)" }}
+                    animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                    exit={{ opacity: 0, y: -10, filter: "blur(6px)" }}
+                    transition={{ duration: 0.32, ease: "easeOut" }}
+                    className="inline-block text-white"
+                  >
+                    {rotatingLines[rotatingLineIndex]}
+                  </motion.span>
+                </AnimatePresence>
+              )}
+            </div>
           </motion.div>
 
           <motion.p
             initial={reduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 18 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={reduceMotion ? undefined : { duration: 1.0, ease: "easeOut", delay: 0.35 }}
+            animate={isHeadlineDone ? { opacity: 1, y: 0 } : { opacity: 0, y: 18 }}
+            transition={reduceMotion ? undefined : { duration: 0.55, ease: "easeOut", delay: 0 }}
             className="mt-10 md:mt-12 text-white/85 text-lg md:text-2xl font-urbanist leading-snug max-w-2xl"
           >
-            {content.subheadline}
+            Rellia helps founders achieve their milestones to launch their healthcare innovations.
           </motion.p>
 
           <motion.div
             initial={reduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 18 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={reduceMotion ? undefined : { duration: 1.0, ease: "easeOut", delay: 0.55 }}
-            className="mt-10 flex w-full flex-col items-stretch justify-center gap-4 sm:w-auto sm:flex-row sm:items-center"
+            animate={isHeadlineDone ? { opacity: 1, y: 0 } : { opacity: 0, y: 18 }}
+            transition={reduceMotion ? undefined : { duration: 0.6, ease: "easeOut", delay: 0 }}
+            className="mt-10 flex w-full flex-col items-stretch justify-start gap-4 sm:w-auto sm:flex-row sm:items-center"
           >
             <RelliaAction
               type="button"

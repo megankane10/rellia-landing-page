@@ -110,7 +110,7 @@ export default function PathsSection({ items = defaultItems }: { items?: PathIte
               <div className="mt-8 flex flex-col" onMouseLeave={() => setHoverKey(null)}>
                 {list.map((item) => {
                   const isHovered = item.key === hoverKey
-                  const to = `/paths/${item.key}`
+                  const to = `/${item.key}`
                   return (
                     <Link
                       key={item.key}

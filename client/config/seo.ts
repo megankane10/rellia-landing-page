@@ -51,6 +51,30 @@ const ROUTE_SEO: Record<string, RouteSeoConfig> = {
       "Join the Rellia Health network of founders, investors, advisors, and partners building the next generation of healthcare companies.",
     indexable: true,
   },
+  "/founders": {
+    title: "Founders — Rellia Health Network",
+    description:
+      "For health tech founders: launch sooner, scale smarter, and get support from operators, clinicians, and investors.",
+    indexable: true,
+  },
+  "/advisors": {
+    title: "Advisors — Rellia Health Network",
+    description:
+      "For advisors and mentors: support serious health tech founders through structured, high-impact engagements.",
+    indexable: true,
+  },
+  "/investors": {
+    title: "Investors — Rellia Health Network",
+    description:
+      "For investors: meet vetted, operator-coached health tech founders and get early access to teams worth your time.",
+    indexable: true,
+  },
+  "/partners": {
+    title: "Partners — Rellia Health Network",
+    description:
+      "For partners: reach health tech founders with programs, resources, and trusted community-driven introductions.",
+    indexable: true,
+  },
   "/contact": {
     title: "Contact — Rellia Health",
     description:

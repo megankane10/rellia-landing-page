@@ -1,0 +1,309 @@
+import { useMemo, useState } from "react"
+import { motion, useReducedMotion } from "framer-motion"
+import { cn } from "@/lib/utils"
+import RelliaAction from "@/components/RelliaAction"
+
+export const NETWORK_BG = "#022c2e"
+export const NETWORK_MINT = "#ccfbf1"
+
+export function Reveal({
+  children,
+  className,
+  delay = 0,
+}: {
+  children: React.ReactNode
+  className?: string
+  delay?: number
+}) {
+  const reduceMotion = useReducedMotion()
+  return (
+    <motion.div
+      className={className}
+      initial={reduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 18, filter: "blur(10px)" }}
+      whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+      viewport={{ once: true, margin: "-10% 0px -10% 0px" }}
+      transition={reduceMotion ? undefined : { duration: 0.7, ease: "easeOut", delay }}
+    >
+      {children}
+    </motion.div>
+  )
+}
+
+export function GlassCard({
+  children,
+  className,
+}: {
+  children: React.ReactNode
+  className?: string
+}) {
+  return (
+    <div
+      className={cn(
+        "rounded-3xl border border-white/15 bg-white/5 backdrop-blur-md shadow-[0_22px_70px_-55px_rgba(0,0,0,0.75)]",
+        className,
+      )}
+    >
+      {children}
+    </div>
+  )
+}
+
+export function SectionShell({
+  children,
+  className,
+}: {
+  children: React.ReactNode
+  className?: string
+}) {
+  return (
+    <section className={cn("px-6 md:px-10", className)} style={{ backgroundColor: NETWORK_BG }}>
+      <div className="max-w-[1440px] mx-auto w-full">{children}</div>
+    </section>
+  )
+}
+
+export function AiGeneratedNote() {
+  return (
+    <div className="rounded-2xl border border-white/15 bg-white/10 backdrop-blur-md px-4 py-3 text-white/85 shadow-sm">
+      <p className="font-urbanist text-sm leading-relaxed">
+        <span className="font-semibold text-white">Note:</span> This page was fully generated with AI and hasn’t been
+        reworked yet with deeper thinking and section refinement.
+      </p>
+    </div>
+  )
+}
+
+export function ProblemBlock({
+  items,
+}: {
+  items: Array<{ title: string; body: string }>
+}) {
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      {items.map((i) => (
+        <GlassCard key={i.title} className="p-7">
+          <p className="font-host-grotesk text-xl font-semibold tracking-tight text-white">{i.title}</p>
+          <p className="mt-3 font-urbanist text-white/75 leading-relaxed">{i.body}</p>
+        </GlassCard>
+      ))}
+    </div>
+  )
+}
+
+export function BentoGrid({
+  items,
+}: {
+  items: Array<{
+    title: string
+    body: string
+    imageUrl: string
+    span?: "wide" | "tall" | "normal"
+  }>
+}) {
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
+      {items.map((i) => (
+        <GlassCard
+          key={i.title}
+          className={cn(
+            "overflow-hidden",
+            i.span === "wide" && "md:col-span-8",
+            i.span === "tall" && "md:col-span-6 md:row-span-2",
+            (!i.span || i.span === "normal") && "md:col-span-6",
+          )}
+        >
+          <div className="grid grid-cols-1 sm:grid-cols-[0.9fr_1.1fr]">
+            <div className="relative min-h-[220px] sm:min-h-[280px]">
+              <img
+                src={i.imageUrl}
+                alt=""
+                aria-hidden
+                loading="lazy"
+                className="absolute inset-0 h-full w-full object-cover"
+              />
+              <div aria-hidden className="absolute inset-0 bg-gradient-to-t from-black/45 via-black/15 to-transparent" />
+            </div>
+            <div className="bg-white p-7 sm:p-9">
+              <p className="font-host-grotesk text-2xl font-semibold tracking-tight text-rellia-teal">{i.title}</p>
+              <p className="mt-3 font-urbanist text-black/70 leading-relaxed">{i.body}</p>
+            </div>
+          </div>
+        </GlassCard>
+      ))}
+    </div>
+  )
+}
+
+export function PathToSuccess({
+  steps,
+}: {
+  steps: Array<{ title: string; body: string }>
+}) {
+  return (
+    <GlassCard className="p-7 md:p-9">
+      {/* Mobile: stacked */}
+      <div className="flex flex-col gap-5 md:hidden">
+        {steps.map((s, idx) => (
+          <div key={s.title} className="flex items-start gap-4">
+            <div
+              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-white/20 bg-white/10 text-white font-host-grotesk font-bold"
+              aria-hidden
+            >
+              {idx + 1}
+            </div>
+            <div>
+              <p className="font-host-grotesk text-lg font-semibold text-white tracking-tight">{s.title}</p>
+              <p className="mt-2 font-urbanist text-white/75 leading-relaxed">{s.body}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Desktop: icons row with centered connectors (no line over text) */}
+      <div className="hidden md:block relative">
+        <div aria-hidden className="absolute left-10 right-10 top-5 h-px bg-white/20" />
+        <div className="grid grid-cols-4 gap-8">
+          {steps.map((s, idx) => (
+            <div key={s.title} className="relative z-10">
+              <div
+                className="flex h-10 w-10 items-center justify-center rounded-2xl border border-white/20 bg-white/10 text-white font-host-grotesk font-bold"
+                aria-hidden
+              >
+                {idx + 1}
+              </div>
+              <div className="mt-5">
+                <p className="font-host-grotesk text-lg font-semibold text-white tracking-tight">{s.title}</p>
+                <p className="mt-2 font-urbanist text-white/75 leading-relaxed">{s.body}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </GlassCard>
+  )
+}
+
+type FormState = "step1" | "step2" | "success"
+
+export function MultiStepSignupForm({
+  ctaLabel,
+  roleLabel,
+  step2Fields,
+}: {
+  ctaLabel: string
+  roleLabel: string
+  step2Fields: Array<{ name: string; label: string; placeholder: string }>
+}) {
+  const [state, setState] = useState<FormState>("step1")
+  const [name, setName] = useState("")
+  const [email, setEmail] = useState("")
+  const [details, setDetails] = useState<Record<string, string>>({})
+
+  const canContinue = useMemo(() => name.trim().length > 1 && email.includes("@"), [name, email])
+
+  return (
+    <GlassCard className="p-7 md:p-9">
+      <div className="flex items-start justify-between gap-6">
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-white/60">High-conversion signup</p>
+          <p className="mt-2 font-host-grotesk text-2xl md:text-3xl font-semibold tracking-tight text-white">
+            Insert Value Prop Here
+          </p>
+          <p className="mt-3 font-urbanist text-white/75 leading-relaxed max-w-2xl">
+            Lorem ipsum for health-tech venture building: a focused first step to align on your goals, surface the
+            highest-leverage next actions, and route you into the right path without wasting weeks.
+          </p>
+        </div>
+        <div className="hidden md:flex items-center gap-2">
+          <span className={cn("h-2.5 w-2.5 rounded-full", state !== "step1" ? "bg-white/35" : "bg-[#ccfbf1]")} />
+          <span className={cn("h-2.5 w-2.5 rounded-full", state == "success" ? "bg-[#ccfbf1]" : "bg-white/20")} />
+        </div>
+      </div>
+
+      <div className="mt-8">
+        {state === "success" ? (
+          <div className="rounded-2xl border border-white/15 bg-white/10 p-6">
+            <p className="font-host-grotesk text-xl font-semibold text-white tracking-tight">You’re in.</p>
+            <p className="mt-2 font-urbanist text-white/75 leading-relaxed">
+              We’ll follow up soon. In the meantime, keep building—momentum wins.
+            </p>
+          </div>
+        ) : state === "step1" ? (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <label className="block">
+              <span className="text-sm font-semibold text-white/80">Name</span>
+              <input
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Your name"
+                className="mt-2 w-full rounded-2xl border border-white/15 bg-white/10 px-4 py-3 text-white placeholder:text-white/40 outline-none focus:border-white/25"
+              />
+            </label>
+            <label className="block md:col-span-2">
+              <span className="text-sm font-semibold text-white/80">Email</span>
+              <input
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="you@company.com"
+                className="mt-2 w-full rounded-2xl border border-white/15 bg-white/10 px-4 py-3 text-white placeholder:text-white/40 outline-none focus:border-white/25"
+              />
+            </label>
+            <div className="md:col-span-3 flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between pt-2">
+              <p className="font-urbanist text-white/60 text-sm">
+                Step 1 of 2 — quick start (Name + Email)
+              </p>
+              <RelliaAction
+                type="button"
+                variant="mintOnTealStrip"
+                size="comfortable"
+                className="bg-[#ccfbf1] border-[#ccfbf1] hover:bg-transparent hover:border-white text-[#022c2e]"
+                disabled={!canContinue}
+                onClick={() => setState("step2")}
+                aria-label="Continue to step 2"
+              >
+                Continue
+              </RelliaAction>
+            </div>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            <p className="text-sm font-semibold text-white/80">{roleLabel} details</p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {step2Fields.map((f) => (
+                <label key={f.name} className="block">
+                  <span className="text-sm font-semibold text-white/80">{f.label}</span>
+                  <input
+                    value={details[f.name] ?? ""}
+                    onChange={(e) => setDetails((d) => ({ ...d, [f.name]: e.target.value }))}
+                    placeholder={f.placeholder}
+                    className="mt-2 w-full rounded-2xl border border-white/15 bg-white/10 px-4 py-3 text-white placeholder:text-white/40 outline-none focus:border-white/25"
+                  />
+                </label>
+              ))}
+            </div>
+            <div className="flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between pt-2">
+              <button
+                type="button"
+                onClick={() => setState("step1")}
+                className="text-left text-sm font-semibold text-white/70 hover:text-white"
+              >
+                Back
+              </button>
+              <RelliaAction
+                type="button"
+                variant="mintOnTealStrip"
+                size="comfortable"
+                className="bg-[#ccfbf1] border-[#ccfbf1] hover:bg-transparent hover:border-white text-[#022c2e]"
+                onClick={() => setState("success")}
+                aria-label={ctaLabel}
+              >
+                {ctaLabel}
+              </RelliaAction>
+            </div>
+          </div>
+        )}
+      </div>
+    </GlassCard>
+  )
+}
+

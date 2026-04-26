@@ -86,6 +86,12 @@ export default {
           from: { clipPath: "inset(0 100% 0 0)" },
           to: { clipPath: "inset(0 0% 0 0)" },
         },
+        /** Moving brand gradient for hero headline text */
+        "rellia-gradient": {
+          "0%": { backgroundPosition: "0% 50%" },
+          "50%": { backgroundPosition: "100% 50%" },
+          "100%": { backgroundPosition: "0% 50%" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -96,6 +102,7 @@ export default {
         /** `both` = start state during delay (stays clipped), `forwards` = stay filled at end */
         "healthcare-fill":
           "healthcare-fill 1.15s cubic-bezier(0.22, 1, 0.36, 1) 0.65s both forwards",
+        "rellia-gradient": "rellia-gradient 6s ease-in-out infinite",
       },
     },
   },

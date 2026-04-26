@@ -71,7 +71,7 @@ export default function Footer() {
                 to="/faq"
                 className="font-urbanist text-white/70 hover:text-rellia-mint transition-colors text-[15px]"
               >
-                Frequently Asked Questions
+                FAQ
               </Link>
               <Link
                 to="/contact"

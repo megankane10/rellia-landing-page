@@ -56,13 +56,13 @@ export const EventCard = ({
               Coming Soon
             </div>
           ) : variant === "upcoming" && event.href ? (
-            <RelliaAction asChild variant="tealCardFull" size="compact">
+            <RelliaAction asChild variant="mintCardTealFill" size="compact">
               <a href={event.href} target="_blank" rel="noopener noreferrer">
                 {registerLabel}
               </a>
             </RelliaAction>
           ) : variant === "past" && event.href ? (
-            <RelliaAction asChild variant="tealCardFull" size="compact">
+            <RelliaAction asChild variant="mintCardTealFill" size="compact">
               <a href={event.href} target="_blank" rel="noopener noreferrer">
                 {event.buttonText ?? "View"}
               </a>

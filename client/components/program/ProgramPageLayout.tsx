@@ -117,7 +117,7 @@ const ProgramPageLayout = ({
                   <div className="mt-8 flex flex-col sm:flex-row flex-wrap gap-4 items-stretch sm:items-center">
                   <RelliaAction
                     type="button"
-                    variant="tealFilled"
+                    variant="mintTealFill"
                     onClick={handleGetStartedClick}
                     onKeyDown={handleGetStartedKeyDown}
                     aria-label="Get started — scroll to pricing and enrollment"
@@ -310,7 +310,7 @@ const ProgramPageLayout = ({
                   ))}
                 </ul>
 
-                <RelliaAction asChild variant="tealFilledLift" className="mt-8 w-full">
+                <RelliaAction asChild variant="mintCardTealFill" className="mt-8 w-full">
                   <a href={q.paymentUrl} target="_blank" rel="noopener noreferrer">
                     Start Now
                     <ArrowRight className="ml-2" />

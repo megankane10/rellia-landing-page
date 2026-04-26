@@ -6,7 +6,6 @@ export const homePage = defineType({
   type: 'document',
   fields: [
     defineField({name: 'headlinePrefix', type: 'string'}),
-    defineField({name: 'headlineAccent', type: 'string'}),
     defineField({name: 'subheadline', type: 'string'}),
     defineField({name: 'primaryCtaLabel', type: 'string'}),
     defineField({name: 'primaryCtaPath', type: 'string'}),

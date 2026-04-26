@@ -36,7 +36,7 @@ export type HomeTestimonial = {
 
 export type HomePageContent = {
   headlinePrefix: string
-  headlineAccent: string
+  headlineAccent?: string
   subheadline: string
   primaryCtaLabel: string
   primaryCtaPath: string
@@ -76,6 +76,8 @@ export type AboutTeamMember = {
   role?: string
   bio?: string
   imageSrc: string
+  linkedinUrl?: string
+  websiteUrl?: string
 }
 
 export type AboutPageContent = {

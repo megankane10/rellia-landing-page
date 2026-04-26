@@ -12,6 +12,10 @@ import ProgramsQms from "./pages/ProgramsQms"
 import NotFound from "./pages/NotFound"
 import Contact from "./pages/Contact"
 import Network from "./pages/Network"
+import Founders from "./pages/network/Founders"
+import Advisors from "./pages/network/Advisors"
+import Investors from "./pages/network/Investors"
+import Partners from "./pages/network/Partners"
 import DiagnosticLanding from "./pages/DiagnosticLanding"
 import DiagnosticSurvey from "./pages/DiagnosticSurvey"
 import Payment from "./pages/Payment"
@@ -21,6 +25,7 @@ import ProgramsLayout from "./pages/programs/ProgramsLayout"
 import Stories from "./pages/Stories"
 import StoryPost from "./pages/StoryPost"
 import PlaceholderPage from "./pages/PlaceholderPage"
+import IndustryPartnersDirectory from "./pages/IndustryPartnersDirectory"
 
 const ThirdPartyPreloads = () => {
   useEffect(() => {
@@ -81,44 +86,18 @@ export const AppRoutes = () => (
     </Route>
 
     <Route path="/network" element={<Network />} />
-    <Route
-      path="/network/founders"
-      element={<PlaceholderPage title="Founders" subtitle="The Founders network page is coming soon." />}
-    />
-    <Route
-      path="/network/advisors"
-      element={<PlaceholderPage title="Advisors" subtitle="The Advisors network page is coming soon." />}
-    />
-    <Route
-      path="/network/investors"
-      element={<PlaceholderPage title="Investors" subtitle="The Investors network page is coming soon." />}
-    />
-    <Route
-      path="/network/partners"
-      element={<PlaceholderPage title="Partners" subtitle="The Partners network page is coming soon." />}
-    />
+    <Route path="/founders" element={<Founders />} />
+    <Route path="/advisors" element={<Advisors />} />
+    <Route path="/investors" element={<Investors />} />
+    <Route path="/partners" element={<Partners />} />
 
     <Route path="/contact" element={<Contact />} />
     <Route path="/membership" element={<Payment />} />
     <Route path="/stories" element={<Stories />} />
     <Route path="/stories/:slug" element={<StoryPost />} />
 
-    <Route
-      path="/paths/founders"
-      element={<PlaceholderPage title="Founders" subtitle="A dedicated page for founders is coming soon." />}
-    />
-    <Route
-      path="/paths/advisors"
-      element={<PlaceholderPage title="Advisors" subtitle="A dedicated page for advisors is coming soon." />}
-    />
-    <Route
-      path="/paths/investors"
-      element={<PlaceholderPage title="Investors" subtitle="A dedicated page for investors is coming soon." />}
-    />
-    <Route
-      path="/paths/partners"
-      element={<PlaceholderPage title="Industry partners" subtitle="A dedicated page for industry partners is coming soon." />}
-    />
+    {/* Dedicated role pages live at /founders, /advisors, /investors, /partners */}
+    <Route path="/industry-partners/directory" element={<IndustryPartnersDirectory />} />
 
     <Route path="/terms" element={<TermsofUse />} />
     <Route path="/privacy" element={<PrivacyPolicy />} />
