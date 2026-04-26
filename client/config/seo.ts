@@ -16,7 +16,7 @@ export type RouteSeoConfig = {
 
 const ROUTE_SEO: Record<string, RouteSeoConfig> = {
   "/": {
-    title: "Rellia Health — You are the future of healthcare.",
+    title: "Rellia Health — You are the future of health tech.",
     description:
       "Rellia Health connects founders, clinicians, and health systems to build the future of care. Join our network, explore programs, and move healthcare forward together.",
     indexable: true,
