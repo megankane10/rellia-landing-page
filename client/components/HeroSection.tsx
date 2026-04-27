@@ -297,7 +297,7 @@ export default function HeroSection({ content }: HeroSectionProps) {
             className="mt-6 md:mt-7"
           >
             <div
-              className="min-h-[2.25rem] md:min-h-[2.75rem] text-rellia-mint text-xl md:text-3xl font-urbanist"
+              className="min-h-[2.25rem] md:min-h-[2.75rem] text-rellia-mint text-xl md:text-3xl font-urbanist font-bold"
               aria-live="polite"
               aria-atomic="true"
             >

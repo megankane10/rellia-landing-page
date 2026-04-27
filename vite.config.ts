@@ -60,8 +60,10 @@ export default defineConfig(() => ({
         const siteUrl = getVercelSiteUrl() ?? "https://www.relliahealth.com"
         const version = getOgImageVersion()
         return html
-          .replaceAll("%VITE_SITE_URL%", siteUrl)
-          .replaceAll("%VITE_OG_IMAGE_VERSION%", version)
+          .split("%VITE_SITE_URL%")
+          .join(siteUrl)
+          .split("%VITE_OG_IMAGE_VERSION%")
+          .join(version)
       },
     },
     ...vitePrerenderPlugin({

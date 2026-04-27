@@ -94,75 +94,56 @@ export default function PathsSection({ items = defaultItems }: { items?: PathIte
         transition={reduceMotion ? undefined : { duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
       >
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_10%,rgba(12,61,73,0.10),transparent_55%),radial-gradient(circle_at_90%_40%,rgba(167,219,214,0.22),transparent_52%),radial-gradient(circle_at_50%_100%,rgba(12,61,73,0.06),transparent_55%)]" />
+
+        {/* Faint grid texture (adds depth without noise assets) */}
+        <div
+          className="absolute inset-0 opacity-[0.06]"
+          style={{
+            backgroundImage:
+              "linear-gradient(to right, rgba(12,61,73,0.9) 1px, transparent 1px), linear-gradient(to bottom, rgba(12,61,73,0.9) 1px, transparent 1px)",
+            backgroundSize: "92px 92px",
+          }}
+        />
+
+        {/* Gentle vignette to keep content readable */}
+        <div className="absolute inset-0 bg-gradient-to-b from-white/0 via-white/0 to-white/55" />
       </motion.div>
 
-      {/* Abstract left linework (teal + draws on enter) */}
+      {/* Blur blobs (hero-style) */}
       <motion.div
         aria-hidden
-        className="pointer-events-none absolute left-0 top-0 h-full w-[180px] opacity-[0.22]"
-        initial={reduceMotion ? { y: 0 } : { y: -12 }}
-        animate={reduceMotion ? { y: 0 } : isInView ? { y: 56 } : { y: -12 }}
-        transition={reduceMotion ? undefined : { duration: 1.1, ease: [0.16, 1, 0.3, 1] }}
+        className="pointer-events-none absolute inset-0"
+        initial={reduceMotion ? { opacity: 1 } : { opacity: 0 }}
+        animate={reduceMotion ? { opacity: 1 } : isInView ? { opacity: 1 } : { opacity: 0 }}
+        transition={reduceMotion ? undefined : { duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
       >
-        <motion.svg
-          className="h-full w-full"
-          viewBox="0 0 180 900"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-          preserveAspectRatio="none"
-          initial={reduceMotion ? { opacity: 1 } : { opacity: 0 }}
-          animate={reduceMotion ? { opacity: 1 } : isInView ? { opacity: 1 } : { opacity: 0 }}
-          transition={reduceMotion ? undefined : { duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
-        >
-          <motion.path
-            d="M110 -40C72 40 152 110 108 180C64 250 26 308 78 380C130 452 146 520 92 596C38 672 132 742 96 820C74 868 54 908 46 940"
-            stroke="hsl(var(--rellia-teal))"
-            strokeOpacity={0.55}
-            strokeWidth="2.2"
-            initial={reduceMotion ? { pathLength: 1 } : { pathLength: 0 }}
-            animate={reduceMotion ? { pathLength: 1 } : isInView ? { pathLength: 1 } : { pathLength: 0 }}
-            transition={reduceMotion ? undefined : { duration: 1.35, ease: [0.16, 1, 0.3, 1] }}
-          />
-          <motion.path
-            d="M38 40C30 120 102 160 78 230C54 300 6 360 50 430C94 500 118 560 74 628C30 696 96 760 70 840"
-            stroke="hsl(var(--rellia-teal))"
-            strokeOpacity={0.32}
-            strokeWidth="1.4"
-            initial={reduceMotion ? { pathLength: 1 } : { pathLength: 0 }}
-            animate={reduceMotion ? { pathLength: 1 } : isInView ? { pathLength: 1 } : { pathLength: 0 }}
-            transition={reduceMotion ? undefined : { duration: 1.15, ease: [0.16, 1, 0.3, 1], delay: 0.08 }}
-          />
-          <motion.circle
-            cx="110"
-            cy="180"
-            r="7"
-            fill="hsl(var(--rellia-teal))"
-            fillOpacity={0.14}
-            initial={reduceMotion ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.7 }}
-            animate={reduceMotion ? { opacity: 1, scale: 1 } : isInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.7 }}
-            transition={reduceMotion ? undefined : { duration: 0.55, ease: [0.16, 1, 0.3, 1], delay: 0.32 }}
-          />
-          <motion.circle
-            cx="92"
-            cy="596"
-            r="10"
-            fill="hsl(var(--rellia-teal))"
-            fillOpacity={0.1}
-            initial={reduceMotion ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.7 }}
-            animate={reduceMotion ? { opacity: 1, scale: 1 } : isInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.7 }}
-            transition={reduceMotion ? undefined : { duration: 0.55, ease: [0.16, 1, 0.3, 1], delay: 0.44 }}
-          />
-          <motion.circle
-            cx="70"
-            cy="840"
-            r="6"
-            fill="hsl(var(--rellia-teal))"
-            fillOpacity={0.12}
-            initial={reduceMotion ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.7 }}
-            animate={reduceMotion ? { opacity: 1, scale: 1 } : isInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.7 }}
-            transition={reduceMotion ? undefined : { duration: 0.55, ease: [0.16, 1, 0.3, 1], delay: 0.56 }}
-          />
-        </motion.svg>
+        <motion.div
+          className="absolute -top-24 -left-24 h-[340px] w-[340px] rounded-full bg-rellia-mint/35 blur-3xl"
+          animate={shouldAnimate ? { y: [0, 18, 0] } : { y: 0 }}
+          transition={shouldAnimate ? { duration: 8, ease: [0.45, 0, 0.55, 1], repeat: Infinity, repeatType: "mirror" } : undefined}
+        />
+        <motion.div
+          className="absolute -bottom-28 left-[12%] h-[460px] w-[460px] rounded-full bg-rellia-mint/20 blur-3xl"
+          animate={shouldAnimate ? { y: [0, -14, 0] } : { y: 0 }}
+          transition={shouldAnimate ? { duration: 10, ease: [0.45, 0, 0.55, 1], repeat: Infinity, repeatType: "mirror" } : undefined}
+        />
+        <motion.div
+          className="absolute top-1/2 -right-32 h-[420px] w-[420px] -translate-y-1/2 rounded-full bg-rellia-teal/10 blur-3xl"
+          animate={shouldAnimate ? { x: [0, -16, 0] } : { x: 0 }}
+          transition={shouldAnimate ? { duration: 9, ease: [0.45, 0, 0.55, 1], repeat: Infinity, repeatType: "mirror" } : undefined}
+        />
+
+        {/* Small accent blobs for richer composition */}
+        <motion.div
+          className="absolute right-[22%] top-[18%] h-36 w-36 rounded-full bg-rellia-teal/10 blur-2xl"
+          animate={shouldAnimate ? { y: [0, 10, 0], x: [0, 6, 0] } : { y: 0, x: 0 }}
+          transition={shouldAnimate ? { duration: 7.5, ease: [0.45, 0, 0.55, 1], repeat: Infinity, repeatType: "mirror" } : undefined}
+        />
+        <motion.div
+          className="absolute left-[58%] bottom-[12%] h-44 w-44 rounded-full bg-rellia-mint/18 blur-2xl"
+          animate={shouldAnimate ? { y: [0, -12, 0] } : { y: 0 }}
+          transition={shouldAnimate ? { duration: 9.5, ease: [0.45, 0, 0.55, 1], repeat: Infinity, repeatType: "mirror" } : undefined}
+        />
       </motion.div>
 
       {/* Animated abstract blob (appears + animates on enter) */}
@@ -205,8 +186,8 @@ export default function PathsSection({ items = defaultItems }: { items?: PathIte
             {/* Left panel */}
             <div className="rounded-[28px] p-7 md:p-9 text-black">
               <div>
-                <h2 className="font-host-grotesk font-semibold text-rellia-teal text-3xl md:text-[44px] leading-tight tracking-tight max-w-xl">
-                  Reimagining healthcare, together.
+                <h2 className="font-host-grotesk font-semibold text-black text-3xl md:text-[44px] leading-tight tracking-tight max-w-xl">
+                  Reimagining healthcare, <span className="text-rellia-teal">together</span>.
                 </h2>
                 <p className="mt-4 font-urbanist text-black/70 text-base md:text-lg leading-relaxed max-w-xl">
                   Join a global ecosystem built to scale healthcare innovation. Select your role to see how we partner.

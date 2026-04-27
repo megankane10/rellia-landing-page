@@ -62,8 +62,7 @@ function AccentHeading({ text }: { text: string }) {
 
   return (
     <>
-      {before}
-      <br />
+      <span className="inline">{before} </span>
       <span className="text-rellia-mint">{match}</span>
       {after}
     </>
