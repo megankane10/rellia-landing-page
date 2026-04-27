@@ -285,7 +285,7 @@ export default function HeroSection({ content }: HeroSectionProps) {
               <AnimatedHeadline
                 reduceMotion={!!reduceMotion}
                 onComplete={() => setIsHeadlineDone(true)}
-                text={`${content.headlinePrefix} ${content.headlineAccent ?? ""}`.trim()}
+                text="You are the future of health tech."
               />
             ) : null}
           </motion.div>
@@ -297,26 +297,28 @@ export default function HeroSection({ content }: HeroSectionProps) {
             className="mt-6 md:mt-7"
           >
             <div
-              className="min-h-[2.25rem] md:min-h-[2.75rem] text-white text-xl md:text-3xl font-urbanist"
+              className="min-h-[2.25rem] md:min-h-[2.75rem] text-rellia-mint text-xl md:text-3xl font-urbanist"
               aria-live="polite"
               aria-atomic="true"
             >
-              <span className="text-white">We help you </span>
+              <span className="text-rellia-mint">We help you </span>
               {reduceMotion ? (
-                <span className="text-white">{rotatingLines[0]}</span>
+                <span className="text-rellia-mint">{rotatingLines[0]}</span>
               ) : (
-                <AnimatePresence mode="wait" initial={false}>
-                  <motion.span
-                    key={rotatingLineIndex}
-                    initial={{ opacity: 0, y: 10, filter: "blur(6px)" }}
-                    animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                    exit={{ opacity: 0, y: -10, filter: "blur(6px)" }}
-                    transition={{ duration: 0.32, ease: "easeOut" }}
-                    className="inline-block text-white"
-                  >
-                    {rotatingLines[rotatingLineIndex]}
-                  </motion.span>
-                </AnimatePresence>
+                <span className="inline-grid align-baseline">
+                  <AnimatePresence mode="sync" initial={false}>
+                    <motion.span
+                      key={rotatingLineIndex}
+                      initial={{ opacity: 0, y: 10, filter: "blur(10px)" }}
+                      animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                      exit={{ opacity: 0, y: -10, filter: "blur(10px)" }}
+                      transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
+                      className="col-start-1 row-start-1 inline-block text-rellia-mint"
+                    >
+                      {rotatingLines[rotatingLineIndex]}
+                    </motion.span>
+                  </AnimatePresence>
+                </span>
               )}
             </div>
           </motion.div>

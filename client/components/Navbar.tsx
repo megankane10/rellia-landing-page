@@ -141,9 +141,6 @@ export type NavbarProps = {
 export default function Navbar({ ctaRadiusClassName = "rounded-full" }: NavbarProps) {
   const [scrolled, setScrolled] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
-  const [mobilePanelMounted, setMobilePanelMounted] = useState(false)
-  const [mobileBackdropVisible, setMobileBackdropVisible] = useState(false)
-  const [mobilePanelVisible, setMobilePanelVisible] = useState(false)
   const [mobileNetworkOpen, setMobileNetworkOpen] = useState(false)
   const [desktopNetworkOpen, setDesktopNetworkOpen] = useState(false)
   const desktopNetworkRef = useRef<HTMLDivElement | null>(null)
@@ -168,24 +165,6 @@ export default function Navbar({ ctaRadiusClassName = "rounded-full" }: NavbarPr
     if (!mobileOpen) {
       setMobileNetworkOpen(false)
     }
-  }, [mobileOpen])
-
-  useEffect(() => {
-    if (mobileOpen) {
-      setMobilePanelMounted(true)
-      // Show the backdrop first, then slide the panel in on the next frame
-      // so the background never "lags" behind the text.
-      setMobileBackdropVisible(true)
-      const raf = window.requestAnimationFrame(() => setMobilePanelVisible(true))
-      return () => window.cancelAnimationFrame(raf)
-    }
-
-    setMobilePanelVisible(false)
-    setMobilePanelVisible(false)
-    setMobileBackdropVisible(false)
-    // Keep mounted long enough to animate closed.
-    const t = window.setTimeout(() => setMobilePanelMounted(false), 650)
-    return () => window.clearTimeout(t)
   }, [mobileOpen])
 
   useEffect(() => {
@@ -299,7 +278,7 @@ export default function Navbar({ ctaRadiusClassName = "rounded-full" }: NavbarPr
   const shellCls = cn(
     "mx-auto grid w-full max-w-[1300px] grid-cols-[1fr_auto] items-center gap-3 transition-[height,padding] duration-500 ease-out motion-reduce:transition-none md:grid-cols-[1fr_auto_1fr] md:gap-4",
     mobileOpen &&
-      "min-h-[72px] rounded-b-2xl border-x border-b border-white/10 border-t-transparent bg-rellia-teal px-6 shadow-[0_18px_50px_-20px_rgba(0,0,0,0.35)] backdrop-blur-md md:min-h-[86px] md:rounded-b-3xl md:px-10",
+      "min-h-[72px] rounded-b-2xl border-x border-b border-white/10 border-t-transparent bg-rellia-teal/80 px-6 shadow-[0_18px_50px_-20px_rgba(0,0,0,0.35)] backdrop-blur-xl md:min-h-[86px] md:rounded-b-3xl md:px-10",
     !mobileOpen &&
       "h-[72px] md:h-[86px] px-6 md:px-10",
   )
@@ -339,7 +318,7 @@ export default function Navbar({ ctaRadiusClassName = "rounded-full" }: NavbarPr
         !mobileOpen &&
           scrolled &&
           "border-b border-white/10 bg-rellia-teal shadow-[0_10px_30px_-24px_rgba(0,0,0,0.35)] backdrop-blur-2xl",
-        mobileOpen && "bg-rellia-teal",
+        mobileOpen && "border-b border-white/10 bg-rellia-teal/75 backdrop-blur-2xl shadow-[0_10px_30px_-24px_rgba(0,0,0,0.35)]",
       )}
     >
       <a
@@ -438,33 +417,34 @@ export default function Navbar({ ctaRadiusClassName = "rounded-full" }: NavbarPr
         </div>
       </div>
 
-      {mobilePanelMounted && (
-        <>
-          {/* Backdrop (below the navbar bar) */}
-          <button
-            type="button"
-            className={cn(
-              "fixed inset-x-0 bottom-0 top-[72px] z-[55] cursor-pointer bg-black/30 backdrop-blur-[2px] transition-[opacity] duration-700 ease-in-out motion-reduce:transition-none md:hidden",
-              mobileBackdropVisible ? "opacity-100" : "pointer-events-none opacity-0",
-            )}
-            aria-label="Close navigation menu"
-            onClick={handleCloseMobile}
-          />
+      {/* Mobile menu (always mounted; animates via translate) */}
+      <>
+        {/* Backdrop (below the navbar bar) */}
+        <button
+          type="button"
+          className={cn(
+            "fixed inset-x-0 top-[72px] z-[55] h-[calc(100dvh-72px)] cursor-pointer bg-black/30 transition-opacity duration-300 ease-out motion-reduce:transition-none md:hidden",
+            mobileOpen ? "opacity-100" : "pointer-events-none opacity-0",
+          )}
+          aria-label="Close navigation menu"
+          onClick={handleCloseMobile}
+        />
 
-          {/* Panel slides in from the right, under the navbar */}
-          <div
-            id="mobile-nav-panel"
-            className={cn(
-              "fixed inset-y-0 right-0 top-[72px] z-[56] w-full bg-rellia-teal md:hidden",
-              "will-change-transform transition-[transform,opacity] duration-700 ease-in-out motion-reduce:transition-none",
-              mobilePanelVisible ? "translate-x-0 opacity-100" : "pointer-events-none translate-x-full opacity-0",
-            )}
-            role="dialog"
-            aria-modal="true"
-            aria-label="Site navigation"
-          >
-            <div className="relative flex h-full w-full flex-col overflow-y-auto px-6 pb-8 pt-8">
-              <div className="flex flex-col">
+        {/* Panel slides in from the right, under the navbar */}
+        <div
+          id="mobile-nav-panel"
+          className={cn(
+            "fixed inset-x-0 top-[72px] z-[56] h-[calc(100dvh-72px)] w-full shadow-2xl md:hidden transform-gpu",
+            "bg-rellia-teal/75 backdrop-blur-2xl",
+            "will-change-transform transition-transform duration-400 ease-out motion-reduce:transition-none",
+            mobileOpen ? "translate-x-0" : "pointer-events-none translate-x-full",
+          )}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Site navigation"
+        >
+          <div className="relative flex h-full w-full flex-col overflow-y-auto bg-rellia-teal/65 px-6 pb-8 pt-8 backdrop-blur-2xl">
+            <div className="flex flex-1 flex-col min-h-0">
               <button
                 type="button"
                 className={cn(
@@ -594,9 +574,8 @@ export default function Navbar({ ctaRadiusClassName = "rounded-full" }: NavbarPr
                   Get Involved
                 </Link>
               </div>
-              </div>
 
-              <div className="mt-auto pt-10">
+              <div className="mt-auto pt-14">
                 <div className="flex items-center justify-center gap-4">
                   <a
                     href={DEFAULT_GLOBAL_SETTINGS.linkedinUrl}
@@ -627,8 +606,8 @@ export default function Navbar({ ctaRadiusClassName = "rounded-full" }: NavbarPr
               </div>
             </div>
           </div>
-        </>
-      )}
+        </div>
+      </>
     </nav>
   )
 }
