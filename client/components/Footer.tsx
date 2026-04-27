@@ -10,17 +10,13 @@ export default function Footer() {
       <div className="max-w-[1300px] mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 mb-16">
           <div className="flex flex-col gap-6">
-            <Link to="/" className="flex items-center">
-              <img
-                src="/images/logo-rellia-footer.webp"
-                alt="Rellia"
-                className="h-10 w-auto"
-              />
+            <Link to="/" className="hidden md:flex items-center">
+              <img src="/images/hologram-logo.png" alt="Rellia" className="h-10 w-auto" />
             </Link>
-            <p className="font-urbanist text-white/70 text-[15px] leading-relaxed max-w-[280px]">
+            <p className="hidden md:block font-urbanist text-white/70 text-[15px] leading-relaxed max-w-[280px]">
               {g.footerTagline}
             </p>
-            <div className="flex gap-4">
+            <div className="hidden md:flex gap-4">
               <a
                 href={g.linkedinUrl}
                 target="_blank"
@@ -80,6 +76,42 @@ export default function Footer() {
                 Contact Us
               </Link>
             </nav>
+          </div>
+        </div>
+
+        <div className="md:hidden pb-10 flex flex-col gap-5">
+          <Link to="/" className="flex items-center justify-start">
+            <img src="/images/hologram-logo.png" alt="Rellia" className="h-10 w-auto" />
+          </Link>
+          <p className="font-urbanist text-white/70 text-[15px] leading-relaxed">
+            {g.footerTagline}
+          </p>
+          <div className="flex gap-4 justify-start">
+            <a
+              href={g.linkedinUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="p-2 bg-white/5 rounded-full hover:bg-white/10 transition-colors"
+              aria-label="Rellia Health on LinkedIn"
+            >
+              <Linkedin className="w-5 h-5 text-white/80" />
+            </a>
+            <a
+              href={g.instagramUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="p-2 bg-white/5 rounded-full hover:bg-white/10 transition-colors"
+              aria-label="Rellia Health on Instagram"
+            >
+              <Instagram className="w-5 h-5 text-white/80" />
+            </a>
+            <a
+              href={`mailto:${g.supportEmail}`}
+              className="p-2 bg-white/5 rounded-full hover:bg-white/10 transition-colors"
+              aria-label={`Email ${g.supportEmail}`}
+            >
+              <Mail className="w-5 h-5 text-white/80" />
+            </a>
           </div>
         </div>
 

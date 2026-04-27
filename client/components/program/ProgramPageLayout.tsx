@@ -2,6 +2,7 @@ import { useState, type KeyboardEvent } from "react"
 import { Link } from "react-router-dom"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import Navbar from "@/components/Navbar"
+import { ScrollUpPinnedNav } from "@/components/ScrollUpPinnedNav"
 import Footer from "@/components/Footer"
 import ScrollReveal from "@/components/ScrollReveal"
 import RelliaCta, { ctaActionFromHref } from "@/components/RelliaCta"
@@ -72,10 +73,7 @@ const ProgramPageLayout = ({
     <div className="min-h-screen bg-white font-host-grotesk overflow-x-hidden">
       <Navbar />
 
-      <nav
-        aria-label="Breadcrumb"
-        className="fixed inset-x-0 top-[72px] md:top-[86px] z-40 border-b border-black/[0.06] bg-gradient-to-r from-rellia-cream/90 to-white/95 backdrop-blur-md"
-      >
+      <ScrollUpPinnedNav ariaLabel="Breadcrumb">
         <div className="max-w-[1300px] mx-auto px-6 md:px-10 py-3.5 md:py-4">
           <ol className="flex flex-wrap items-center gap-2 text-sm md:text-[15px] font-urbanist">
             <li>
@@ -94,7 +92,7 @@ const ProgramPageLayout = ({
             </li>
           </ol>
         </div>
-      </nav>
+      </ScrollUpPinnedNav>
 
       <main id="main-content" className="pt-[128px] md:pt-[146px]">
 

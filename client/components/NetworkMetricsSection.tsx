@@ -62,7 +62,13 @@ function AccentHeading({ text }: { text: string }) {
 
   return (
     <>
-      <span className="inline">{before} </span>
+      {before ? (
+        <>
+          <span className="inline">{before}</span>
+          <span className="md:hidden"> </span>
+          <br className="hidden md:block" aria-hidden />
+        </>
+      ) : null}
       <span className="text-rellia-mint">{match}</span>
       {after}
     </>
@@ -122,14 +128,19 @@ export default function NetworkMetricsSection({ heading, subheading, metrics }: 
 
   return (
     <section
-      className="w-full bg-white py-16 md:py-20"
+      className="relative z-[2] w-full bg-transparent pt-10 pb-12 md:pt-12 md:pb-16"
     >
-      <div className="px-6 md:px-10">
+      {/* Soft top wash (contained in this section — does not overlap Paths above) */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 top-0 z-[1] h-28 bg-gradient-to-b from-rellia-mint/[0.14] via-rellia-teal/[0.05] to-transparent md:h-36"
+      />
+      <div className="relative z-[3] px-6 md:px-10">
         <div
           ref={(node) => {
             sectionRef.current = node
           }}
-          className="relative mx-auto w-full max-w-[1300px] overflow-hidden rounded-3xl border border-black/10 shadow-[0_40px_90px_-60px_rgba(0,0,0,0.45)]"
+          className="relative z-[4] mx-auto w-full max-w-[1300px] overflow-hidden rounded-3xl border border-black/10 shadow-[0_40px_90px_-60px_rgba(0,0,0,0.45)]"
         >
           {/* Image container */}
           <div className="absolute inset-0 overflow-hidden" aria-hidden>

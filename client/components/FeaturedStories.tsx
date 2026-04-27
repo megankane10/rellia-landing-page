@@ -1,96 +1,22 @@
 import { Link } from "react-router-dom"
-import { ArrowRight } from "lucide-react"
+import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react"
 import ScrollReveal from "@/components/ScrollReveal"
-import SectionHeading from "@/components/SectionHeading"
 import { cn } from "@/lib/utils"
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel"
 import RelliaAction from "@/components/RelliaAction"
-import { getFeaturedStories, type Story, type StoryTag } from "@/content/stories"
+import { getFeaturedStories } from "@/content/stories"
+import { AnimatePresence, motion } from "framer-motion"
+import { useEffect, useMemo, useState } from "react"
 
-const tagTone = (tag: StoryTag) => {
-  switch (tag) {
-    case "Founder Story":
-      return "bg-rellia-mint/18 text-rellia-teal border-rellia-mint/35"
-    case "Industry Insight":
-      return "bg-rellia-teal/8 text-rellia-teal border-rellia-teal/15"
-    case "Program Update":
-      return "bg-black/5 text-black/70 border-black/10"
-  }
-}
-
-const arrowClass = cn(
-  "static translate-x-0 translate-y-0 relative",
-  "h-12 w-12 rounded-full border-2 border-rellia-teal bg-white text-rellia-teal shadow-md",
-  "hover:bg-rellia-teal hover:text-white",
-  "disabled:opacity-40 disabled:pointer-events-none",
-)
-
-const formatDate = (iso: string) => {
-  const d = new Date(iso)
-  if (Number.isNaN(d.getTime())) return iso
-  return d.toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" })
-}
-
-const StoryCard = ({ story }: { story: Story }) => {
-  return (
-    <article className="h-[440px] md:h-[460px] overflow-hidden rounded-[28px] border border-black/10 bg-white shadow-sm transition-shadow duration-300 hover:shadow-lg">
-      <div className="flex h-full flex-col">
-        <Link
-          to={`/stories/${story.slug}`}
-          className="block outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-white rounded-[28px]"
-          aria-label={`Read ${story.title}`}
-        >
-          <img
-            src={story.coverImageSrc}
-            alt={story.coverImageAlt}
-            className="h-[220px] w-full object-cover"
-            loading="lazy"
-          />
-        </Link>
-
-        <div className="flex flex-1 flex-col p-6 md:p-7">
-          <span
-            className={cn(
-              "inline-flex w-fit items-center rounded-full border px-3 py-1 text-xs font-semibold uppercase tracking-[0.14em]",
-              tagTone(story.tag),
-            )}
-          >
-            {story.tag}
-          </span>
-
-          <h3 className="mt-4 font-host-grotesk font-semibold text-black text-xl md:text-2xl tracking-tight leading-snug">
-            {story.title}
-          </h3>
-
-          <div className="mt-auto flex items-center justify-between gap-4 border-t border-black/10 pt-4">
-            <time dateTime={story.publishedAt} className="text-xs font-semibold uppercase tracking-[0.14em] text-black/45">
-              {formatDate(story.publishedAt)}
-            </time>
-            <Link
-              to={`/stories/${story.slug}`}
-              className="inline-flex items-center gap-2 font-host-grotesk font-semibold text-rellia-teal outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-white rounded-md"
-              aria-label={`Read more: ${story.title}`}
-            >
-              Open <ArrowRight className="h-4 w-4" aria-hidden />
-            </Link>
-          </div>
-        </div>
-      </div>
-    </article>
-  )
-}
+/** Auto-advance interval (progress bar uses same duration) */
+const ROTATE_MS = 6500
+/** Crossfade duration — longer overlap reads smoother (keep ≪ ROTATE_MS) */
+const CROSSFADE_S = 1.05
 
 export default function FeaturedStories({
   showHeading = true,
   showViewAll = true,
-  title = "Stories & Insights",
-  description = "Founder stories, industry insight, and program updates — all in one place.",
+  title = "Featured Stories",
+  description,
 }: {
   showHeading?: boolean
   showViewAll?: boolean
@@ -98,16 +24,63 @@ export default function FeaturedStories({
   description?: string
 }) {
   const featured = getFeaturedStories()
+  const [activeIndex, setActiveIndex] = useState(0)
+  const [cycleKey, setCycleKey] = useState(0)
+
+  const activeStory = featured[activeIndex]
+
+  const canRotate = featured.length > 1
+
+  const handleSetIndex = (nextIndex: number) => {
+    if (featured.length === 0) return
+    const normalized = ((nextIndex % featured.length) + featured.length) % featured.length
+    setActiveIndex(normalized)
+    setCycleKey((k) => k + 1)
+  }
+
+  const handlePrev = () => handleSetIndex(activeIndex - 1)
+  const handleNext = () => handleSetIndex(activeIndex + 1)
+
+  useEffect(() => {
+    getFeaturedStories().forEach((story) => {
+      const img = new Image()
+      img.src = story.coverImageSrc
+    })
+  }, [])
+
+  useEffect(() => {
+    if (!canRotate) return
+    const t = window.setTimeout(() => {
+      handleSetIndex(activeIndex + 1)
+    }, ROTATE_MS)
+
+    return () => window.clearTimeout(t)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeIndex, canRotate, cycleKey])
+
+  const storyHref = useMemo(() => (activeStory ? `/stories/${activeStory.slug}` : "/stories"), [activeStory])
+
+  const arrowInsideClass =
+    "inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-white/35 bg-white/10 text-white shadow-sm transition hover:bg-white/20 disabled:pointer-events-none disabled:opacity-40"
 
   return (
-    <section className="w-full bg-white py-16 md:py-24 px-6 md:px-10 overflow-x-hidden">
-      <div className="max-w-[1300px] mx-auto">
+    <section className="w-full bg-white py-16 md:py-24 overflow-x-hidden">
+      <div className="mx-auto w-full max-w-[1300px] px-6 md:px-10">
         {showHeading ? (
-          <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6">
-            <SectionHeading title={title} description={description} align="left" className="max-w-2xl" />
+          <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
+            <ScrollReveal className="max-w-2xl">
+              <h2 className="font-host-grotesk font-medium text-black text-2xl leading-snug tracking-tight md:text-[30px]">
+                {title}
+              </h2>
+              {description ? (
+                <p className="mt-3 font-urbanist text-sm leading-relaxed text-black/60 md:text-[15px] md:leading-relaxed">
+                  {description}
+                </p>
+              ) : null}
+            </ScrollReveal>
 
             {showViewAll ? (
-              <div className="flex items-center gap-3">
+              <div className="flex shrink-0 items-center gap-3">
                 <RelliaAction asChild variant="outlineOnWhite" size="compact" className="px-5">
                   <Link to="/stories" aria-label="View all stories">
                     View all
@@ -118,28 +91,129 @@ export default function FeaturedStories({
           </div>
         ) : null}
 
-        <div className={cn(showHeading ? "mt-10" : "")}>
+        <div className={cn(showHeading ? "mt-8 md:mt-10" : "")}>
           <ScrollReveal>
-            <Carousel opts={{ align: "start", loop: false, containScroll: "trimSnaps" }} className="w-full max-w-full min-w-0">
-              <div className="flex flex-col gap-7">
-                <CarouselContent className="-ml-4 md:-ml-6">
-                  {featured.map((story) => (
-                    <CarouselItem key={story.slug} className="pl-4 md:pl-6 min-w-0 basis-full md:basis-1/2 xl:basis-1/3">
-                      <StoryCard story={story} />
-                    </CarouselItem>
-                  ))}
-                </CarouselContent>
+            <div className="relative w-full overflow-hidden rounded-2xl bg-rellia-teal shadow-[0_22px_56px_-18px_rgba(12,61,73,0.42),0_8px_24px_-12px_rgba(0,0,0,0.14)] md:rounded-3xl">
+              <div className="relative h-[480px] w-full overflow-hidden sm:h-[520px] md:h-[580px] lg:h-[620px]">
+                <AnimatePresence mode="sync" initial={false}>
+                  {activeStory ? (
+                    <motion.img
+                      key={activeStory.slug}
+                      src={activeStory.coverImageSrc}
+                      alt={activeStory.coverImageAlt}
+                      className="absolute inset-0 z-0 h-full w-full object-cover"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{
+                        opacity: {
+                          duration: CROSSFADE_S,
+                          ease: [0.45, 0.05, 0.55, 0.95],
+                        },
+                      }}
+                      loading="eager"
+                      decoding="async"
+                      fetchPriority="high"
+                    />
+                  ) : null}
+                </AnimatePresence>
 
-                <div className="flex items-center justify-center gap-4">
-                  <CarouselPrevious className={arrowClass} />
-                  <CarouselNext className={arrowClass} />
+                <div
+                  aria-hidden
+                  className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/35 to-black/10"
+                />
+
+                <div className="absolute inset-0 flex flex-col px-6 pt-8 pb-4 md:px-10 md:pt-10 md:pb-5 lg:px-12 lg:pt-12 lg:pb-5">
+                  {activeStory ? (
+                    <>
+                      <div className="flex min-h-0 flex-1 flex-col items-start text-left">
+                        <div className="mb-5 inline-flex w-fit items-center gap-1.5 rounded-full border border-black/15 bg-white px-3 py-1.5 shadow-[0_8px_28px_-10px_rgba(0,0,0,0.4)] ring-1 ring-white/90">
+                          <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-rellia-teal ring-1 ring-rellia-mint/80" aria-hidden />
+                          <span className="font-host-grotesk text-[10px] font-semibold uppercase tracking-[0.14em] text-rellia-teal md:text-[11px]">
+                            {activeStory.tag}
+                          </span>
+                        </div>
+
+                        <h3 className="font-host-grotesk font-semibold text-white text-3xl tracking-tight leading-[1.05] sm:text-4xl md:text-5xl lg:text-[52px]">
+                          {activeStory.title}
+                        </h3>
+
+                        <p className="mt-4 max-w-2xl text-pretty text-white/85 text-sm font-urbanist leading-relaxed md:mt-5 md:text-base lg:max-w-3xl">
+                          {activeStory.excerpt}
+                        </p>
+                      </div>
+
+                      <div className="mt-6 md:mt-8">
+                        <RelliaAction
+                          asChild
+                          variant="heroSolidOnTeal"
+                          size="comfortable"
+                          className="inline-flex h-11 min-h-[44px] px-5 text-sm !py-0 md:h-auto md:min-h-0 md:px-8 md:text-base md:!py-4"
+                        >
+                          <Link to={storyHref} aria-label={`Read: ${activeStory.title}`}>
+                            Read story <ArrowRight className="h-4 w-4" aria-hidden />
+                          </Link>
+                        </RelliaAction>
+                      </div>
+
+                      <div
+                        aria-hidden
+                        className="pointer-events-none z-[15] mt-10 h-1 w-full overflow-hidden rounded-full bg-white/25"
+                      >
+                        {activeStory ? (
+                          <motion.div
+                            key={`${activeStory.slug}-${cycleKey}`}
+                            className="h-full bg-white"
+                            initial={{ width: "0%" }}
+                            animate={{ width: "100%" }}
+                            transition={{
+                              duration: ROTATE_MS / 1000,
+                              ease: "linear",
+                            }}
+                          />
+                        ) : null}
+                      </div>
+
+                      <div
+                        className={cn(
+                          "mt-3 flex w-full min-w-0 items-center gap-4",
+                          featured.length > 0 ? "justify-between" : "justify-end",
+                        )}
+                      >
+                        {featured.length > 0 ? (
+                          <p className="min-w-0 text-left text-[10px] font-semibold uppercase tracking-[0.14em] text-white/55 md:text-xs">
+                            {`${activeIndex + 1} / ${featured.length}`}
+                          </p>
+                        ) : null}
+                        <div className="flex shrink-0 items-center gap-2">
+                          <button
+                            type="button"
+                            onClick={handlePrev}
+                            disabled={!canRotate}
+                            className={arrowInsideClass}
+                            aria-label="Previous featured story"
+                          >
+                            <ChevronLeft className="h-5 w-5" aria-hidden />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={handleNext}
+                            disabled={!canRotate}
+                            className={arrowInsideClass}
+                            aria-label="Next featured story"
+                          >
+                            <ChevronRight className="h-5 w-5" aria-hidden />
+                          </button>
+                        </div>
+                      </div>
+                    </>
+                  ) : null}
                 </div>
               </div>
-            </Carousel>
+            </div>
           </ScrollReveal>
         </div>
       </div>
     </section>
   )
 }
-

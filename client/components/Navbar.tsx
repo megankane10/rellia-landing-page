@@ -270,6 +270,7 @@ export default function Navbar({ ctaRadiusClassName = "rounded-full" }: NavbarPr
       { to: "/stories", label: "STORIES", active: location.pathname === "/stories" || location.pathname.startsWith("/stories/") },
       { to: "/about", label: "ABOUT", active: isActive("/about") },
       { to: "/faq", label: "FAQ", active: isActive("/faq") },
+      { to: "/contact", label: "CONTACT", active: isActive("/contact") },
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [location.pathname],
@@ -317,8 +318,8 @@ export default function Navbar({ ctaRadiusClassName = "rounded-full" }: NavbarPr
               : "bg-white/85 backdrop-blur-xl border-b border-black/5"),
         !mobileOpen &&
           scrolled &&
-          "border-b border-white/10 bg-rellia-teal shadow-[0_10px_30px_-24px_rgba(0,0,0,0.35)] backdrop-blur-2xl",
-        mobileOpen && "border-b border-white/10 bg-rellia-teal/75 backdrop-blur-2xl shadow-[0_10px_30px_-24px_rgba(0,0,0,0.35)]",
+          "bg-rellia-teal shadow-[0_10px_30px_-24px_rgba(0,0,0,0.35)] backdrop-blur-2xl",
+        mobileOpen && "bg-rellia-teal/75 backdrop-blur-2xl shadow-[0_10px_30px_-24px_rgba(0,0,0,0.35)]",
       )}
     >
       <a
@@ -560,6 +561,18 @@ export default function Navbar({ ctaRadiusClassName = "rounded-full" }: NavbarPr
                 aria-current={isActive("/faq") ? "page" : undefined}
               >
                 FAQ
+              </Link>
+
+              <Link
+                to="/contact"
+                className={cn(
+                  "flex min-h-12 cursor-pointer items-center gap-3 rounded-xl px-3 py-3 font-host-grotesk text-base font-medium text-white outline-none transition-colors hover:bg-white/10 focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-rellia-teal",
+                  isActive("/contact") && "bg-white/10 ring-1 ring-white/15 text-rellia-mint",
+                )}
+                onClick={handleCloseMobile}
+                aria-current={isActive("/contact") ? "page" : undefined}
+              >
+                CONTACT
               </Link>
 
               <div className="mt-6 border-t border-white/15 pt-6">

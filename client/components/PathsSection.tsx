@@ -182,9 +182,25 @@ export default function PathsSection({ items = defaultItems }: { items?: PathIte
           animate={reduceMotion ? { opacity: 1, y: 0 } : isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 26 }}
           transition={reduceMotion ? undefined : { duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
         >
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-10 items-stretch">
-            {/* Left panel */}
-            <div className="rounded-[28px] p-7 md:p-9 text-black">
+          <div className="relative isolate grid grid-cols-1 gap-8 md:gap-10 lg:grid-cols-2 items-stretch">
+            {/* Gradient over the grid; masked out behind the path links (clear / section bg shows through) */}
+            <div
+              aria-hidden
+              className={cn(
+                "pointer-events-none absolute inset-0 z-0 max-lg:rounded-none lg:rounded-[28px]",
+                /* mobile: fade gradient out across the vertical band where the link list sits */
+                "[mask-image:linear-gradient(to_bottom,black_0%,black_14%,transparent_26%,transparent_62%,black_72%,black_100%)] [-webkit-mask-image:linear-gradient(to_bottom,black_0%,black_14%,transparent_26%,transparent_62%,black_72%,black_100%)]",
+                /* lg: only the right column + seam carries the wash; left stays clear for buttons */
+                "lg:[mask-image:linear-gradient(to_right,transparent_0%,transparent_calc(50%-0.625rem),black_calc(50%-0.125rem),black_100%)] lg:[-webkit-mask-image:linear-gradient(to_right,transparent_0%,transparent_calc(50%-0.625rem),black_calc(50%-0.125rem),black_100%)]",
+              )}
+              style={{
+                background:
+                  "linear-gradient(118deg, rgba(12,61,73,0.10) 0%, rgba(167,219,214,0.16) 42%, rgba(255,255,255,0.72) 68%, rgba(12,61,73,0.06) 100%)",
+              }}
+            />
+
+            {/* Left panel — full-bleed text + links on small screens; card shell only from lg */}
+            <div className="relative z-10 max-lg:p-0 text-black lg:rounded-[28px] lg:p-9">
               <div>
                 <h2 className="font-host-grotesk font-semibold text-black text-3xl md:text-[44px] leading-tight tracking-tight max-w-xl">
                   Reimagining healthcare, <span className="text-rellia-teal">together</span>.
@@ -260,7 +276,7 @@ export default function PathsSection({ items = defaultItems }: { items?: PathIte
             {/* Right panel (full image) */}
             <div
               className={cn(
-                "hidden lg:block group relative overflow-hidden rounded-[28px] border border-black/10",
+                "relative z-10 hidden overflow-hidden rounded-[28px] border border-black/10 lg:block group",
                 "bg-white shadow-[0_18px_60px_-36px_rgba(0,0,0,0.25)]",
                 "min-h-[72vh]",
               )}

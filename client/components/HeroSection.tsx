@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom"
 import type { HomePageContent } from "@shared/cms/types"
 import { ArrowRight, Pause, Play } from "lucide-react"
 import RelliaAction from "@/components/RelliaAction"
-import { AnimatePresence, motion, useInView, useReducedMotion, useScroll, useTransform } from "framer-motion"
+import { AnimatePresence, motion, useReducedMotion, useScroll, useTransform } from "framer-motion"
 
 type HeroSectionProps = {
   content: Pick<
@@ -123,13 +123,11 @@ export default function HeroSection({ content }: HeroSectionProps) {
   const sectionRef = useRef<HTMLElement | null>(null)
   const videoRef = useRef<HTMLVideoElement>(null)
   const [heroHeight, setHeroHeight] = useState(0)
-  const hasSmoothScrolledRef = useRef(false)
   const [isPaused, setIsPaused] = useState(false)
   const [rotatingLineIndex, setRotatingLineIndex] = useState(0)
   const [isVideoReady, setIsVideoReady] = useState(false)
   const [canShowHeadline, setCanShowHeadline] = useState(false)
   const [isHeadlineDone, setIsHeadlineDone] = useState(false)
-  const isHeroInView = useInView(sectionRef, { amount: 0.6 })
 
   const { scrollYProgress } = useScroll({
     target: sectionRef,
@@ -153,28 +151,6 @@ export default function HeroSection({ content }: HeroSectionProps) {
   // We do this by translating the video down by the same amount the section scrolls up.
   const videoY = useTransform(scrollYProgress, [0, 1], [0, heroHeight])
   const videoScale = useTransform(scrollYProgress, [0, 1], [1.06, 1.06])
-
-  useEffect(() => {
-    if (reduceMotion) return
-    const handleWheel = (event: WheelEvent) => {
-      if (hasSmoothScrolledRef.current) return
-      if (event.deltaY <= 0) return
-      if (!isHeroInView) return
-
-      // Only intercept while the user is still essentially at the top of the hero.
-      if (window.scrollY > 32) return
-
-      const target = document.getElementById("paths-section")
-      if (!target) return
-
-      hasSmoothScrolledRef.current = true
-      event.preventDefault()
-      target.scrollIntoView({ behavior: "smooth", block: "start" })
-    }
-
-    window.addEventListener("wheel", handleWheel, { passive: false })
-    return () => window.removeEventListener("wheel", handleWheel)
-  }, [reduceMotion, isHeroInView])
 
   const rotatingLines = useMemo(
     () => [
@@ -297,7 +273,7 @@ export default function HeroSection({ content }: HeroSectionProps) {
             className="mt-6 md:mt-7"
           >
             <div
-              className="min-h-[2.25rem] md:min-h-[2.75rem] text-rellia-mint text-xl md:text-3xl font-urbanist font-bold"
+              className="min-h-[2.25rem] md:min-h-[2.75rem] text-rellia-mint text-xl md:text-3xl font-urbanist font-medium"
               aria-live="polite"
               aria-atomic="true"
             >

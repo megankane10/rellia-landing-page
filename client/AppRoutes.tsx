@@ -4,6 +4,7 @@ import { Analytics } from "@vercel/analytics/react"
 import { SpeedInsights } from "@vercel/speed-insights/react"
 import ScrollToTop from "@/components/ScrollToTop"
 import RouteSeo from "@/components/RouteSeo"
+import PageTransition from "@/components/PageTransition"
 import Index from "./pages/Index"
 import About from "./pages/About"
 import FAQ from "./pages/FAQ"
@@ -66,6 +67,7 @@ const VercelObservability = () => (
 
 export const RouterShell = ({ children }: { children: ReactNode }) => (
   <>
+    <PageTransition />
     <RouteSeo />
     <VercelObservability />
     <ThirdPartyPreloads />

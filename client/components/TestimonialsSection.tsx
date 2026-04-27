@@ -81,7 +81,9 @@ function TestimonialCard({ t }: { t: Testimonial }) {
       className={cn(
         "bg-white rounded-3xl p-7 md:p-8 w-full min-w-0 shadow-sm border border-black/5 hover:shadow-lg transition-shadow duration-300",
         "flex flex-col",
-        !expanded ? "md:aspect-[4/3]" : "md:aspect-auto",
+        expanded
+          ? "max-md:h-auto md:aspect-auto"
+          : "max-md:h-[440px] md:aspect-[4/3]",
       )}
     >
       <div className="flex-1 min-h-0">
