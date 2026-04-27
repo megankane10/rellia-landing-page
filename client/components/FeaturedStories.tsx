@@ -3,7 +3,6 @@ import { ArrowRight } from "lucide-react"
 import ScrollReveal from "@/components/ScrollReveal"
 import SectionHeading from "@/components/SectionHeading"
 import { cn } from "@/lib/utils"
-import { useEffect, useRef, useState } from "react"
 import {
   Carousel,
   CarouselContent,
@@ -39,27 +38,8 @@ const formatDate = (iso: string) => {
 }
 
 const StoryCard = ({ story }: { story: Story }) => {
-  const excerptRef = useRef<HTMLParagraphElement | null>(null)
-  const [expanded, setExpanded] = useState(false)
-  const [canExpand, setCanExpand] = useState(false)
-
-  useEffect(() => {
-    const el = excerptRef.current
-    if (!el) return
-
-    const check = () => {
-      const next = el.scrollHeight > el.clientHeight + 1
-      setCanExpand(next)
-    }
-
-    check()
-    const ro = new ResizeObserver(() => check())
-    ro.observe(el)
-    return () => ro.disconnect()
-  }, [])
-
   return (
-    <article className="h-[520px] md:h-[540px] overflow-hidden rounded-[28px] border border-black/10 bg-white shadow-sm transition-shadow duration-300 hover:shadow-lg">
+    <article className="h-[440px] md:h-[460px] overflow-hidden rounded-[28px] border border-black/10 bg-white shadow-sm transition-shadow duration-300 hover:shadow-lg">
       <div className="flex h-full flex-col">
         <Link
           to={`/stories/${story.slug}`}
@@ -87,36 +67,6 @@ const StoryCard = ({ story }: { story: Story }) => {
           <h3 className="mt-4 font-host-grotesk font-semibold text-black text-xl md:text-2xl tracking-tight leading-snug">
             {story.title}
           </h3>
-
-          <div className="mt-3">
-            <p
-              ref={excerptRef}
-              className={cn(
-                "font-urbanist text-black/70 text-base leading-relaxed",
-                !expanded && "line-clamp-3",
-              )}
-            >
-              {story.excerpt}
-            </p>
-
-            {canExpand ? (
-              <button
-                type="button"
-                onClick={() => setExpanded((v) => !v)}
-                className="mt-3 inline-flex items-center gap-2 rounded-full border border-black/10 bg-white px-4 py-2 text-xs font-semibold uppercase tracking-[0.14em] text-rellia-teal transition-colors hover:border-rellia-teal/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2"
-                aria-label={expanded ? "Collapse story description" : "Expand story description"}
-              >
-                {expanded ? "Show less" : "Read more"}
-                <ArrowRight
-                  className={cn(
-                    "h-4 w-4 transition-transform duration-200 motion-reduce:transition-none",
-                    expanded ? "-rotate-90" : "rotate-90",
-                  )}
-                  aria-hidden
-                />
-              </button>
-            ) : null}
-          </div>
 
           <div className="mt-auto flex items-center justify-between gap-4 border-t border-black/10 pt-4">
             <time dateTime={story.publishedAt} className="text-xs font-semibold uppercase tracking-[0.14em] text-black/45">

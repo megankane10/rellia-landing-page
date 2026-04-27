@@ -9,6 +9,7 @@
   /* Avoid layout shift when scrollbars appear (e.g. Radix portaled dropdowns) — keeps fixed navbar stable */
   html {
     scrollbar-gutter: stable;
+    scroll-behavior: smooth;
   }
 
   :root {

@@ -69,11 +69,23 @@ const ROUTE_SEO: Record<string, RouteSeoConfig> = {
       "For investors: meet vetted, operator-coached health tech founders and get early access to teams worth your time.",
     indexable: true,
   },
-  "/partners": {
-    title: "Partners — Rellia Health Network",
+  "/industry-partners": {
+    title: "Industry Partners — Rellia Health Network",
     description:
       "For partners: reach health tech founders with programs, resources, and trusted community-driven introductions.",
     indexable: true,
+  },
+  "/industry-partners/directory": {
+    title: "Industry Partners Directory — Rellia Health",
+    description:
+      "Browse a curated directory of vetted industry partners and resources recommended by Rellia.",
+    indexable: false,
+  },
+  "/partners": {
+    title: "Partners — Rellia Health Network",
+    description:
+      "This page has moved to /industry-partners. For partners: reach health tech founders with programs, resources, and trusted community-driven introductions.",
+    indexable: false,
   },
   "/contact": {
     title: "Contact — Rellia Health",

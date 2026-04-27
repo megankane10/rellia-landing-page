@@ -38,13 +38,39 @@ export default function ProgramsEvents() {
       <Navbar />
 
       <main id="main-content">
-        <section className="relative pt-32 pb-20 md:pt-44 md:pb-24 bg-rellia-teal overflow-hidden">
-          <div className="absolute inset-0 opacity-10 pointer-events-none">
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-rellia-mint via-transparent to-transparent blur-3xl" />
+        <section className="relative pt-28 pb-16 md:pt-40 md:pb-24 bg-rellia-teal overflow-hidden">
+          {/* Mint blob — richer fade like other headers */}
+          <div className="absolute inset-0 opacity-[0.14] pointer-events-none">
+            <div className="absolute -left-24 -top-24 h-[520px] w-[520px] rounded-full bg-rellia-mint blur-3xl" />
+            <div className="absolute right-[-120px] bottom-[-140px] h-[520px] w-[520px] rounded-full bg-rellia-mint/70 blur-3xl" />
           </div>
+
+          {/* Left-to-right gradient — adds depth/contrast */}
+          <div
+            aria-hidden
+            className="absolute inset-0 bg-gradient-to-r from-rellia-teal/75 via-rellia-teal/35 to-rellia-teal/20"
+          />
+
+          {/* Decorative grid lines — match other header style */}
+          <div
+            aria-hidden
+            className="absolute inset-0 opacity-[0.06] pointer-events-none"
+            style={{
+              backgroundImage:
+                "linear-gradient(to right, white 1px, transparent 1px), linear-gradient(to bottom, white 1px, transparent 1px)",
+              backgroundSize: "80px 80px",
+            }}
+          />
+
+          <img
+            src="/images/hologram-logo.png"
+            alt=""
+            aria-hidden
+            className="pointer-events-none absolute right-0 top-1/2 -translate-y-1/2 h-[70%] md:h-[90%] w-auto object-contain opacity-[0.07] select-none"
+          />
           <div className="relative z-10 max-w-[1300px] mx-auto px-6 md:px-10">
             <ScrollReveal>
-              <h1 className="text-white text-5xl md:text-7xl lg:text-8xl font-bold leading-tight tracking-tight mb-6">
+              <h1 className="text-white text-5xl md:text-6xl lg:text-7xl font-bold leading-tight tracking-tight mb-6">
                 {pl.heroTitleLine1}{" "}
                 <span className="text-rellia-mint">{pl.heroTitleMint}</span>
               </h1>

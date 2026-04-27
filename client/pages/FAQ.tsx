@@ -6,7 +6,6 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { Link } from "react-router-dom";
 import { useFaqPage } from "@/hooks/useCmsDocuments";
 import { DEFAULT_FAQ_PAGE } from "@shared/cms/defaults";
-import SectionPillBadge from "@/components/SectionPillBadge";
 
 export default function FAQ() {
   const { data } = useFaqPage();
@@ -43,7 +42,12 @@ export default function FAQ() {
 
           <div className="relative z-10 max-w-[1100px] mx-auto px-6 md:px-10">
             <ScrollReveal>
-              <SectionPillBadge className="mb-6">{faq.badge}</SectionPillBadge>
+              <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-black/10 bg-white/70 px-4 py-2 shadow-sm backdrop-blur-sm">
+                <span className="h-2 w-2 rounded-full bg-rellia-mint" aria-hidden />
+                <span className="font-host-grotesk text-xs font-semibold uppercase tracking-[0.18em] text-rellia-teal">
+                  {faq.badge}
+                </span>
+              </div>
               <h1 className="text-black text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight leading-tight mb-5">
                 {faq.title}
               </h1>

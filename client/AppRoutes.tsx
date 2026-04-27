@@ -1,5 +1,5 @@
 import { useEffect, type ReactNode } from "react"
-import { Routes, Route } from "react-router-dom"
+import { Routes, Route, Navigate } from "react-router-dom"
 import { Analytics } from "@vercel/analytics/react"
 import { SpeedInsights } from "@vercel/speed-insights/react"
 import ScrollToTop from "@/components/ScrollToTop"
@@ -89,7 +89,8 @@ export const AppRoutes = () => (
     <Route path="/founders" element={<Founders />} />
     <Route path="/advisors" element={<Advisors />} />
     <Route path="/investors" element={<Investors />} />
-    <Route path="/partners" element={<Partners />} />
+    <Route path="/industry-partners" element={<Partners />} />
+    <Route path="/partners" element={<Navigate to="/industry-partners" replace />} />
 
     <Route path="/contact" element={<Contact />} />
     <Route path="/membership" element={<Payment />} />

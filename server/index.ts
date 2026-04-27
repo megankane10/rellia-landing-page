@@ -11,6 +11,10 @@ const headerOne = (req: Request, name: string): string | undefined => {
 }
 
 const getClientIp = (req: Request): string => {
+  if (process.env.VERCEL) {
+    const realIp = headerOne(req, "x-real-ip")?.trim()
+    if (realIp) return realIp
+  }
   const forwarded = headerOne(req, "x-forwarded-for")
   if (forwarded) {
     const first = forwarded.split(",")[0]?.trim()
@@ -140,6 +144,7 @@ export function createServer() {
   const perIpRate = new Map<string, RateState>()
   const RATE_WINDOW_MS = 60_000
   const RATE_MAX = 10
+  const RATE_MAP_MAX = 5000
 
   app.post("/api/diagnostic-report", async (req, res) => {
     const apiKey = process.env.ANTHROPIC_API_KEY?.trim()
@@ -152,6 +157,11 @@ export function createServer() {
 
     const ip = getClientIp(req)
     const now = Date.now()
+
+    if (perIpRate.size > RATE_MAP_MAX) {
+      perIpRate.clear()
+    }
+
     const current = perIpRate.get(ip)
     if (!current || now - current.windowStartMs > RATE_WINDOW_MS) {
       perIpRate.set(ip, { windowStartMs: now, count: 1 })

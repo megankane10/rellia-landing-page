@@ -1,9 +1,9 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react"
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import type { HomePageContent } from "@shared/cms/types"
 import { ArrowRight, Pause, Play } from "lucide-react"
 import RelliaAction from "@/components/RelliaAction"
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion"
+import { AnimatePresence, motion, useInView, useReducedMotion, useScroll, useTransform } from "framer-motion"
 
 type HeroSectionProps = {
   content: Pick<
@@ -49,10 +49,8 @@ const AnimatedHeadline = ({
   }
 
   // Controls the perceived "one word at a time" cadence.
-  // Keep this intentionally slow/smooth for the hero load-in.
-  // Time between each word starting its reveal.
-  // ~5% faster than 0.38s for a slightly tighter cadence.
-  const baseStaggerSeconds = 0.361
+  // Keep it smooth, but get to readable text faster.
+  const baseStaggerSeconds = 0.22
 
   const container = {
     hidden: {},
@@ -60,21 +58,21 @@ const AnimatedHeadline = ({
   } as const
 
   const word = {
-    hidden: { opacity: 0, y: 18, filter: "blur(22px)" },
+    hidden: { opacity: 0, y: 16, filter: "blur(18px)" },
     show: (idx: number) => ({
       opacity: 1,
       y: 0,
       filter: "blur(0px)",
       transition: {
-        duration: 1.6,
-        ease: [0.16, 1, 0.3, 1] as [number, number, number, number],
+        duration: 1.15,
+        ease: [0.42, 0, 0.58, 1] as [number, number, number, number],
         delay: idx * baseStaggerSeconds,
       },
     }),
   } as const
 
   // Trigger "headline done" as soon as the final word finishes animating.
-  const headlineDoneDelaySeconds = (words.length - 1) * baseStaggerSeconds + 1.6
+  const headlineDoneDelaySeconds = (words.length - 1) * baseStaggerSeconds + 1.15
 
   return (
     <h1
@@ -122,12 +120,61 @@ const AnimatedHeadline = ({
 export default function HeroSection({ content }: HeroSectionProps) {
   const navigate = useNavigate()
   const reduceMotion = useReducedMotion()
+  const sectionRef = useRef<HTMLElement | null>(null)
   const videoRef = useRef<HTMLVideoElement>(null)
+  const [heroHeight, setHeroHeight] = useState(0)
+  const hasSmoothScrolledRef = useRef(false)
   const [isPaused, setIsPaused] = useState(false)
   const [rotatingLineIndex, setRotatingLineIndex] = useState(0)
   const [isVideoReady, setIsVideoReady] = useState(false)
   const [canShowHeadline, setCanShowHeadline] = useState(false)
   const [isHeadlineDone, setIsHeadlineDone] = useState(false)
+  const isHeroInView = useInView(sectionRef, { amount: 0.6 })
+
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start start", "end start"],
+  })
+
+  useLayoutEffect(() => {
+    const el = sectionRef.current
+    if (!el) return
+
+    const update = () => setHeroHeight(el.getBoundingClientRect().height)
+    update()
+
+    if (typeof ResizeObserver === "undefined") return
+    const ro = new ResizeObserver(() => update())
+    ro.observe(el)
+    return () => ro.disconnect()
+  }, [])
+
+  // Keep the video visually "stationary" in the viewport as the page scrolls past the hero.
+  // We do this by translating the video down by the same amount the section scrolls up.
+  const videoY = useTransform(scrollYProgress, [0, 1], [0, heroHeight])
+  const videoScale = useTransform(scrollYProgress, [0, 1], [1.06, 1.06])
+
+  useEffect(() => {
+    if (reduceMotion) return
+    const handleWheel = (event: WheelEvent) => {
+      if (hasSmoothScrolledRef.current) return
+      if (event.deltaY <= 0) return
+      if (!isHeroInView) return
+
+      // Only intercept while the user is still essentially at the top of the hero.
+      if (window.scrollY > 32) return
+
+      const target = document.getElementById("paths-section")
+      if (!target) return
+
+      hasSmoothScrolledRef.current = true
+      event.preventDefault()
+      target.scrollIntoView({ behavior: "smooth", block: "start" })
+    }
+
+    window.addEventListener("wheel", handleWheel, { passive: false })
+    return () => window.removeEventListener("wheel", handleWheel)
+  }, [reduceMotion, isHeroInView])
 
   const rotatingLines = useMemo(
     () => [
@@ -157,7 +204,7 @@ export default function HeroSection({ content }: HeroSectionProps) {
     }
     const timeout = window.setTimeout(() => {
       setCanShowHeadline(true)
-    }, 900)
+    }, 250)
     return () => window.clearTimeout(timeout)
   }, [reduceMotion, isVideoReady])
 
@@ -181,9 +228,14 @@ export default function HeroSection({ content }: HeroSectionProps) {
   }, [])
 
   return (
-    <section className="relative min-h-screen flex items-center bg-rellia-teal overflow-hidden">
+    <section
+      ref={(node) => {
+        sectionRef.current = node
+      }}
+      className="relative min-h-screen flex items-center bg-rellia-teal overflow-hidden"
+    >
       {/* Video background */}
-      <video
+      <motion.video
         ref={videoRef}
         poster="/images/heroPoster-home.png"
         autoPlay={!reduceMotion}
@@ -191,6 +243,7 @@ export default function HeroSection({ content }: HeroSectionProps) {
         loop
         playsInline
         className="absolute inset-0 h-full w-full object-cover object-center"
+        style={reduceMotion ? undefined : { y: videoY, scale: videoScale }}
         onPlay={() => setIsPaused(false)}
         onPause={() => setIsPaused(true)}
         onLoadedData={() => setIsVideoReady(true)}
@@ -198,7 +251,7 @@ export default function HeroSection({ content }: HeroSectionProps) {
         onError={() => setIsVideoReady(false)}
       >
         <source src="/videos/homehero.mp4" type="video/mp4" />
-      </video>
+      </motion.video>
 
       {/* Softer teal wash so image stays visible */}
       <div aria-hidden className="absolute inset-0 bg-rellia-teal/25" />

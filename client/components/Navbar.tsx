@@ -248,7 +248,7 @@ export default function Navbar({ ctaRadiusClassName = "rounded-full" }: NavbarPr
     pathname === "/founders" ||
     pathname === "/advisors" ||
     pathname === "/investors" ||
-    pathname === "/partners" ||
+    pathname === "/industry-partners" ||
     pathname === "/programs"
 
   const desktopTone: "light" | "dark" =
@@ -259,7 +259,11 @@ export default function Navbar({ ctaRadiusClassName = "rounded-full" }: NavbarPr
       { to: "/founders", label: "For founders", active: location.pathname === "/founders" },
       { to: "/advisors", label: "For advisors", active: location.pathname === "/advisors" },
       { to: "/investors", label: "For investors", active: location.pathname === "/investors" },
-      { to: "/partners", label: "For partners", active: location.pathname === "/partners" },
+      {
+        to: "/industry-partners",
+        label: "For partners",
+        active: location.pathname === "/industry-partners" || location.pathname.startsWith("/industry-partners/"),
+      },
     ],
     [location.pathname],
   )

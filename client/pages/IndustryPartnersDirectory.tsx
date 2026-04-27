@@ -7,6 +7,7 @@ import { Calendar, Search, ShieldCheck, Mail, FileText } from "lucide-react"
 import RelliaAction from "@/components/RelliaAction"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel"
+import { AiGeneratedNote } from "@/pages/network/_shared"
 
 type PartnerCategory = "Legal" | "Manufacturing" | "Clinical Research" | "Design"
 
@@ -207,6 +208,11 @@ export default function IndustryPartnersDirectory() {
               <p className="inline-flex items-center rounded-full border border-black/10 bg-white px-4 py-2 text-xs font-semibold uppercase tracking-[0.16em] text-rellia-teal/70">
                 Industry partners
               </p>
+              <div className="mt-6 flex justify-center">
+                <div className="rounded-2xl border border-black/10 bg-black/70 backdrop-blur-md shadow-sm">
+                  <AiGeneratedNote />
+                </div>
+              </div>
               <h1 className="mt-6 font-host-grotesk text-4xl font-extrabold tracking-tight text-black md:text-6xl leading-[1.05]">
                 Industry Partner & Resource Directory
               </h1>

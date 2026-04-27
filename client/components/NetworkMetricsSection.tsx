@@ -56,14 +56,15 @@ function AccentHeading({ text }: { text: string }) {
   const idx = raw.toLowerCase().indexOf(target)
   if (idx === -1) return <>{raw}</>
 
-  const before = raw.slice(0, idx)
+  const before = raw.slice(0, idx).trimEnd()
   const match = raw.slice(idx, idx + target.length)
   const after = raw.slice(idx + target.length)
 
   return (
     <>
       {before}
-      <span className="text-rellia-teal">{match}</span>
+      <br />
+      <span className="text-rellia-mint">{match}</span>
       {after}
     </>
   )
@@ -94,7 +95,7 @@ function MetricValue({
 }
 
 export default function NetworkMetricsSection({ heading, subheading, metrics }: NetworkMetricsSectionProps) {
-  const sectionRef = useRef<HTMLElement | null>(null);
+  const sectionRef = useRef<HTMLDivElement | null>(null);
   const [entered, setEntered] = useState(false);
 
   const metricList = useMemo(() => metrics, [metrics]);
@@ -102,65 +103,95 @@ export default function NetworkMetricsSection({ heading, subheading, metrics }: 
   useEffect(() => {
     const el = sectionRef.current;
     if (!el) return;
-    if (entered) return;
+
+    if (entered) return
 
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          setEntered(true);
-          observer.disconnect();
+          setEntered(true)
+          observer.disconnect()
         }
       },
-      { threshold: 0.25 },
-    );
+      // Trigger reveals when the section is meaningfully in view
+      { threshold: 0.35 },
+    )
 
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, [entered]);
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [entered])
 
   return (
     <section
-      ref={(node) => {
-        sectionRef.current = node;
-      }}
-      className="w-full bg-white"
+      className="w-full bg-white py-16 md:py-20"
     >
-      <div className="bg-rellia-cream px-6 md:px-10 pt-20 pb-32 md:pt-24 md:pb-40">
-        <div className="max-w-[1300px] mx-auto">
-          <ScrollReveal className="flex flex-col items-center text-center">
-            <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-black/10 bg-white/70 px-4 py-2 shadow-sm">
-              <span className="h-2 w-2 rounded-full bg-rellia-mint" aria-hidden />
-              <span className="font-host-grotesk text-xs font-semibold uppercase tracking-[0.18em] text-rellia-teal">
-                Network impact
-              </span>
-            </div>
-            <h2 className="font-host-grotesk font-semibold text-black text-4xl md:text-6xl leading-[1.05] tracking-tight max-w-3xl">
-              <AccentHeading text={heading} />
-            </h2>
-            <p className="font-urbanist font-medium text-black/70 leading-relaxed tracking-tight mt-5 text-base md:text-lg max-w-[720px] mx-auto">
-              {subheading}
-            </p>
-            <div aria-hidden className="mt-10 h-px w-28 bg-gradient-to-r from-transparent via-rellia-teal/25 to-transparent" />
-          </ScrollReveal>
-        </div>
-      </div>
-
       <div className="px-6 md:px-10">
-        <div className="max-w-[1300px] mx-auto">
-          <div className="-mt-20 md:-mt-24 pb-20 md:pb-28">
-            <div className="rounded-3xl bg-gradient-to-br from-rellia-teal via-[#2BB8A6] to-[#BFF6E6] p-6 sm:p-8 md:p-12 shadow-[0_28px_90px_-44px_rgba(0,0,0,0.55)]">
-              <div className="mx-auto grid max-w-[1100px] grid-cols-1 gap-5 sm:grid-cols-3">
-                {metricList.slice(0, 3).map((m, i) => {
-                  return (
+        <div
+          ref={(node) => {
+            sectionRef.current = node
+          }}
+          className="relative mx-auto w-full max-w-[1300px] overflow-hidden rounded-3xl border border-black/10 shadow-[0_40px_90px_-60px_rgba(0,0,0,0.45)]"
+        >
+          {/* Image container */}
+          <div className="absolute inset-0 overflow-hidden" aria-hidden>
+            <img src="/images/metrics-bg.jpg" alt="" className="h-full w-full object-cover" />
+            <div className="absolute inset-0 bg-rellia-teal/35" />
+            <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/25 to-black/45" />
+          </div>
+
+          <div className="relative px-6 py-14 md:px-12 md:py-16">
+          {entered ? (
+            <ScrollReveal className="flex flex-col items-center text-center">
+              <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 shadow-sm backdrop-blur-sm">
+                <span className="h-2 w-2 rounded-full bg-rellia-mint" aria-hidden />
+                <span className="font-host-grotesk text-xs font-semibold uppercase tracking-[0.18em] text-white">
+                  Network impact
+                </span>
+              </div>
+              <h2 className="font-host-grotesk font-semibold text-white text-4xl md:text-6xl leading-[1.05] tracking-tight max-w-3xl">
+                <AccentHeading text={heading} />
+              </h2>
+              <ScrollReveal className="mt-10">
+                <div aria-hidden className="h-px w-28 bg-gradient-to-r from-transparent via-white/55 to-transparent" />
+              </ScrollReveal>
+            </ScrollReveal>
+          ) : (
+            <div className="opacity-0">
+              <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 shadow-sm backdrop-blur-sm">
+                <span className="h-2 w-2 rounded-full bg-rellia-mint" aria-hidden />
+                <span className="font-host-grotesk text-xs font-semibold uppercase tracking-[0.18em] text-white">
+                  Network impact
+                </span>
+              </div>
+              <h2 className="font-host-grotesk font-semibold text-white text-4xl md:text-6xl leading-[1.05] tracking-tight max-w-3xl">
+                <AccentHeading text={heading} />
+              </h2>
+              <div className="mt-10 h-px w-28 bg-gradient-to-r from-transparent via-white/55 to-transparent" aria-hidden />
+            </div>
+          )}
+
+          <div className="mt-12 md:mt-14">
+            <div className="mx-auto grid max-w-[1100px] grid-cols-1 gap-5 sm:grid-cols-3">
+              {metricList.slice(0, 3).map((m, i) => {
+                return (
+                  entered ? (
                     <ScrollReveal key={m.label} delay={i * 0.08}>
-                      <div className="h-full rounded-2xl border border-white/40 bg-white/95 px-6 py-9 md:px-7 md:py-10 shadow-[0_24px_60px_-22px_rgba(0,0,0,0.25)]">
+                      <div className="h-full rounded-2xl border border-white/15 bg-white/90 px-6 py-9 md:px-7 md:py-10 shadow-[0_30px_70px_-40px_rgba(0,0,0,0.45)] backdrop-blur-sm">
                         <MetricValue metric={m} index={i} entered={entered} />
                       </div>
                     </ScrollReveal>
-                  );
-                })}
-              </div>
+                  ) : (
+                    <div
+                      key={m.label}
+                      className="opacity-0 h-full rounded-2xl border border-white/15 bg-white/90 px-6 py-9 md:px-7 md:py-10 shadow-[0_30px_70px_-40px_rgba(0,0,0,0.45)] backdrop-blur-sm"
+                    >
+                      <MetricValue metric={m} index={i} entered={entered} />
+                    </div>
+                  )
+                )
+              })}
             </div>
+          </div>
           </div>
         </div>
       </div>
