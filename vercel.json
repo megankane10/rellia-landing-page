@@ -6,13 +6,24 @@
       "includeFiles": "server/**"
     }
   },
+  "headers": [
+    {
+      "source": "/ogimage.png",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, must-revalidate"
+        }
+      ]
+    }
+  ],
   "rewrites": [
     {
       "source": "/api/(.*)",
       "destination": "/api"
     },
     {
-      "source": "/((?!api/)(?!_vercel/)(?!assets/)(?!images/)(?!videos/)(?!favicon\\.ico$)(?!robots\\.txt$)(?!sitemap\\.xml$)(?!placeholder\\.svg$).*)",
+      "source": "/((?!api/)(?!_vercel/)(?!assets/)(?!images/)(?!videos/)(?!ogimage\\.png$)(?!favicon\\.ico$)(?!robots\\.txt$)(?!sitemap\\.xml$)(?!placeholder\\.svg$).*)",
       "destination": "/index.html"
     }
   ]

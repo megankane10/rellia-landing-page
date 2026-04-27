@@ -157,7 +157,11 @@ export const PRERENDER_PATHS: string[] = [
 ]
 
 export const getDefaultOgImageUrl = (): string => {
-  return `${getSiteUrl()}/ogimage.png`
+  const ogImageVersion = ((import.meta as unknown as { env?: Record<string, unknown> })?.env
+    ?.VITE_OG_IMAGE_VERSION as string | undefined)?.trim()
+  const base = `${getSiteUrl()}/ogimage.png`
+  if (!ogImageVersion) return base
+  return `${base}?v=${encodeURIComponent(ogImageVersion)}`
 }
 
 export const getDefaultOgImageAlt = (): string => {

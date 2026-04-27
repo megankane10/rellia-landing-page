@@ -5,7 +5,7 @@ import Footer from "@/components/Footer"
 import ScrollReveal from "@/components/ScrollReveal"
 import { cn } from "@/lib/utils"
 import { getStoryBySlug } from "@/content/stories"
-import { getSiteUrl } from "@/config/seo"
+import { getDefaultOgImageUrl, getSiteUrl } from "@/config/seo"
 import { ChevronRight } from "lucide-react"
 
 export default function StoryPost() {
@@ -16,7 +16,7 @@ export default function StoryPost() {
   const canonical = story ? `${base}/stories/${story.slug}` : `${base}/stories`
   const title = story?.seoTitle ?? (story ? `${story.title} — Rellia Health` : "Stories — Rellia Health")
   const description = story?.seoDescription ?? story?.excerpt ?? "Stories and insights from Rellia Health."
-  const imageUrl = story ? `${base}${story.coverImageSrc}` : `${base}/ogimage.png`
+  const imageUrl = story ? `${base}${story.coverImageSrc}` : getDefaultOgImageUrl()
 
   if (!story) {
     return (
