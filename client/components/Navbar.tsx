@@ -211,7 +211,7 @@ export default function Navbar({ ctaRadiusClassName = "rounded-full" }: NavbarPr
     () => [
       { to: "/programs", label: "PROGRAMS", active: location.pathname === "/programs" || location.pathname.startsWith("/programs/") },
       { to: "/events", label: "EVENTS", active: isActive("/events") },
-      { to: "/network", label: "HOW THEY WORK TOGETHER", active: isActive("/network") },
+      { to: "/network", label: "NETWORK", active: isActive("/network") },
       { to: "/about", label: "ABOUT", active: isActive("/about") },
       { to: "/faq", label: "FAQ", active: isActive("/faq") },
       { to: "/contact", label: "CONTACT", active: isActive("/contact") },
@@ -385,7 +385,7 @@ export default function Navbar({ ctaRadiusClassName = "rounded-full" }: NavbarPr
                 onClick={handleCloseMobile}
                 aria-current={isActive("/network") ? "page" : undefined}
               >
-                HOW THEY WORK TOGETHER
+                NETWORK
               </Link>
 
               <Link
