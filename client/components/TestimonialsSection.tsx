@@ -83,7 +83,7 @@ function TestimonialCard({ t }: { t: Testimonial }) {
         "flex flex-col",
         expanded
           ? "max-md:h-auto md:aspect-auto"
-          : "max-md:h-[440px] md:aspect-[4/3]",
+          : "max-md:h-[320px] md:aspect-[4/3]",
       )}
     >
       <div className="flex-1 min-h-0">
@@ -91,7 +91,7 @@ function TestimonialCard({ t }: { t: Testimonial }) {
           <p
             className={cn(
               "font-urbanist text-base md:text-lg text-black/80 leading-relaxed italic",
-              showExpand && !expanded && "max-h-[8.25rem] md:max-h-[9.5rem]",
+              showExpand && !expanded && "max-h-[6.75rem] md:max-h-[9.5rem]",
             )}
           >
             &ldquo;{t.quote}&rdquo;
@@ -156,7 +156,7 @@ type TestimonialsSectionProps = {
 
 export default function TestimonialsSection({ titleLead, titleAccent, testimonials }: TestimonialsSectionProps) {
   return (
-    <section className="w-full bg-rellia-cream/40 py-14 md:py-20 px-6 md:px-10 overflow-x-hidden">
+    <section className="w-full bg-rellia-cream/40 py-16 md:py-24 px-6 md:px-10 overflow-x-hidden">
       <div className="max-w-[1300px] mx-auto w-full min-w-0">
         <ScrollReveal className="mb-10 md:mb-14 flex flex-col items-center text-center">
           <h2 className="font-host-grotesk font-semibold text-black text-3xl md:text-[40px] leading-tight tracking-tight max-w-3xl">

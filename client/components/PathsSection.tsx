@@ -85,31 +85,7 @@ export default function PathsSection({ items = defaultItems }: { items?: PathIte
       id="paths-section"
       className="relative w-full bg-white min-h-screen flex items-center px-6 md:px-10 overflow-hidden"
     >
-      {/* Soft background wash (subtle, animated on enter) */}
-      <motion.div
-        aria-hidden
-        className="pointer-events-none absolute inset-0"
-        initial={reduceMotion ? { opacity: 1 } : { opacity: 0 }}
-        animate={reduceMotion ? { opacity: 1 } : isInView ? { opacity: 1 } : { opacity: 0 }}
-        transition={reduceMotion ? undefined : { duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
-      >
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_10%,rgba(12,61,73,0.10),transparent_55%),radial-gradient(circle_at_90%_40%,rgba(167,219,214,0.22),transparent_52%),radial-gradient(circle_at_50%_100%,rgba(12,61,73,0.06),transparent_55%)]" />
-
-        {/* Faint grid texture (adds depth without noise assets) */}
-        <div
-          className="absolute inset-0 opacity-[0.06]"
-          style={{
-            backgroundImage:
-              "linear-gradient(to right, rgba(12,61,73,0.9) 1px, transparent 1px), linear-gradient(to bottom, rgba(12,61,73,0.9) 1px, transparent 1px)",
-            backgroundSize: "92px 92px",
-          }}
-        />
-
-        {/* Gentle vignette to keep content readable */}
-        <div className="absolute inset-0 bg-gradient-to-b from-white/0 via-white/0 to-white/55" />
-      </motion.div>
-
-      {/* Blur blobs (hero-style) */}
+      {/* Gradient blobs only */}
       <motion.div
         aria-hidden
         className="pointer-events-none absolute inset-0"
@@ -132,48 +108,7 @@ export default function PathsSection({ items = defaultItems }: { items?: PathIte
           animate={shouldAnimate ? { x: [0, -16, 0] } : { x: 0 }}
           transition={shouldAnimate ? { duration: 9, ease: [0.45, 0, 0.55, 1], repeat: Infinity, repeatType: "mirror" } : undefined}
         />
-
-        {/* Small accent blobs for richer composition */}
-        <motion.div
-          className="absolute right-[22%] top-[18%] h-36 w-36 rounded-full bg-rellia-teal/10 blur-2xl"
-          animate={shouldAnimate ? { y: [0, 10, 0], x: [0, 6, 0] } : { y: 0, x: 0 }}
-          transition={shouldAnimate ? { duration: 7.5, ease: [0.45, 0, 0.55, 1], repeat: Infinity, repeatType: "mirror" } : undefined}
-        />
-        <motion.div
-          className="absolute left-[58%] bottom-[12%] h-44 w-44 rounded-full bg-rellia-mint/18 blur-2xl"
-          animate={shouldAnimate ? { y: [0, -12, 0] } : { y: 0 }}
-          transition={shouldAnimate ? { duration: 9.5, ease: [0.45, 0, 0.55, 1], repeat: Infinity, repeatType: "mirror" } : undefined}
-        />
       </motion.div>
-
-      {/* Animated abstract blob (appears + animates on enter) */}
-      <motion.div
-        aria-hidden
-        className="pointer-events-none absolute right-[-140px] top-0 bottom-0 h-full w-[560px] blur-3xl"
-        initial={reduceMotion ? { opacity: 0.22, scale: 1, y: 0 } : { opacity: 0, scale: 0.94, y: -18 }}
-        animate={
-          reduceMotion
-            ? { opacity: 0.22, scale: 1, y: 0 }
-            : shouldAnimate
-              ? { opacity: 0.32, scale: 1, y: [0, 16, 0] }
-              : { opacity: 0, scale: 0.92, y: -18 }
-        }
-        transition={
-          reduceMotion
-            ? undefined
-            : shouldAnimate
-              ? {
-                  opacity: { duration: 0.6, ease: [0.16, 1, 0.3, 1] },
-                  scale: { duration: 0.6, ease: [0.16, 1, 0.3, 1] },
-                  y: { duration: 6.5, ease: [0.45, 0, 0.55, 1], repeat: Infinity, repeatType: "mirror" },
-                }
-              : { duration: 0.6, ease: [0.16, 1, 0.3, 1] }
-        }
-        style={{
-          background:
-            "radial-gradient(circle at 30% 30%, rgba(167,219,214,0.85), rgba(167,219,214,0) 60%), radial-gradient(circle at 70% 60%, rgba(12,61,73,0.55), rgba(12,61,73,0) 62%)",
-        }}
-      />
 
       <div className="max-w-[1300px] mx-auto w-full py-16 md:py-24">
         <motion.div
@@ -183,22 +118,6 @@ export default function PathsSection({ items = defaultItems }: { items?: PathIte
           transition={reduceMotion ? undefined : { duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
         >
           <div className="relative isolate grid grid-cols-1 gap-8 md:gap-10 lg:grid-cols-2 items-stretch">
-            {/* Gradient over the grid; masked out behind the path links (clear / section bg shows through) */}
-            <div
-              aria-hidden
-              className={cn(
-                "pointer-events-none absolute inset-0 z-0 max-lg:rounded-none lg:rounded-[28px]",
-                /* mobile: fade gradient out across the vertical band where the link list sits */
-                "[mask-image:linear-gradient(to_bottom,black_0%,black_14%,transparent_26%,transparent_62%,black_72%,black_100%)] [-webkit-mask-image:linear-gradient(to_bottom,black_0%,black_14%,transparent_26%,transparent_62%,black_72%,black_100%)]",
-                /* lg: only the right column + seam carries the wash; left stays clear for buttons */
-                "lg:[mask-image:linear-gradient(to_right,transparent_0%,transparent_calc(50%-0.625rem),black_calc(50%-0.125rem),black_100%)] lg:[-webkit-mask-image:linear-gradient(to_right,transparent_0%,transparent_calc(50%-0.625rem),black_calc(50%-0.125rem),black_100%)]",
-              )}
-              style={{
-                background:
-                  "linear-gradient(118deg, rgba(12,61,73,0.10) 0%, rgba(167,219,214,0.16) 42%, rgba(255,255,255,0.72) 68%, rgba(12,61,73,0.06) 100%)",
-              }}
-            />
-
             {/* Left panel — full-bleed text + links on small screens; card shell only from lg */}
             <div className="relative z-10 max-lg:p-0 text-black lg:rounded-[28px] lg:p-9">
               <div>

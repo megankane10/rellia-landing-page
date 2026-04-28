@@ -2,10 +2,12 @@ import { useMemo, useState } from "react"
 import { Link } from "react-router-dom"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
-import SectionHeading from "@/components/SectionHeading"
 import ScrollReveal from "@/components/ScrollReveal"
 import { cn } from "@/lib/utils"
 import { STORIES, type StoryTag } from "@/content/stories"
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { AnimatePresence, motion } from "framer-motion"
 
 const tags: Array<StoryTag | "All"> = ["All", "Founder Story", "Industry Insight", "Program Update"]
 
@@ -22,45 +24,67 @@ const StoryGridCard = ({
     publishedAt: string
   }
 }) => {
+  const dateParts = useMemo(() => {
+    const raw = (story.publishedAt ?? "").trim()
+    const [y, m, d] = raw.split("-").map((x) => x?.trim())
+    const month = Number(m)
+    const day = Number(d)
+
+    const monthLabel =
+      month >= 1 && month <= 12
+        ? ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"][month - 1]
+        : ""
+
+    return {
+      monthLabel,
+      dayLabel: Number.isFinite(day) ? String(day).padStart(2, "0") : "",
+    }
+  }, [story.publishedAt])
+
   return (
-    <article className="h-[440px] md:h-[460px] overflow-hidden rounded-[28px] border border-black/10 bg-white shadow-sm transition-shadow duration-300 hover:shadow-lg">
-      <div className="flex h-full flex-col">
-        <Link
-          to={`/stories/${story.slug}`}
-          className="block outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-white rounded-[28px]"
-          aria-label={`Read ${story.title}`}
-        >
+    <article className="w-full">
+      <Link
+        to={`/stories/${story.slug}`}
+        className={cn(
+          "group block w-full overflow-hidden rounded-3xl border border-black/5 bg-[#FAFAFA]",
+          "shadow-sm transition-[transform,box-shadow] duration-300 motion-reduce:transition-none",
+          "hover:-translate-y-1 hover:bg-[#F5F5F5] hover:shadow-lg hover:shadow-[0_20px_55px_-35px_rgba(0,0,0,0.45)]",
+          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-white",
+        )}
+        aria-label={`Read ${story.title}`}
+      >
+        <div className="overflow-hidden">
           <img
             src={story.coverImageSrc}
             alt={story.coverImageAlt}
-            className="h-[220px] w-full object-cover"
+            className="h-[240px] w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.04]"
             loading="lazy"
           />
-        </Link>
+        </div>
 
-        <div className="flex flex-1 flex-col p-6 md:p-7">
-          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-black/50">{story.tag}</p>
-          <h3 className="mt-2 font-host-grotesk font-semibold text-black text-xl md:text-2xl tracking-tight leading-snug">
+        <div className="flex h-[180px] flex-col px-6 pb-6 pt-5 md:px-7 md:pb-7">
+          <div className="flex items-center gap-2">
+            <span className="h-2 w-2 rounded-full bg-rellia-teal" aria-hidden />
+            <span className="font-host-grotesk text-[11px] font-semibold uppercase tracking-[0.14em] text-rellia-teal">
+              {story.tag}
+            </span>
+          </div>
+
+          <h3 className="mt-3 font-host-grotesk font-normal text-black text-xl md:text-2xl tracking-tight leading-snug line-clamp-2">
             {story.title}
           </h3>
 
-          <div className="mt-auto flex items-center justify-between gap-4 border-t border-black/10 pt-4">
-            <time dateTime={story.publishedAt} className="text-xs font-semibold uppercase tracking-[0.14em] text-black/45">
+          <div className="mt-auto pt-3">
+            <div aria-hidden className="mb-3 h-px w-full bg-black/10" />
+            <span className="text-xs font-semibold uppercase tracking-[0.14em] text-black/50">
+              {dateParts.monthLabel} {dateParts.dayLabel}
+            </span>
+            <time dateTime={story.publishedAt} className="sr-only">
               {story.publishedAt}
             </time>
-            <Link
-              to={`/stories/${story.slug}`}
-              className="inline-flex items-center gap-2 font-host-grotesk font-semibold text-rellia-teal outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-white rounded-md"
-              aria-label={`Read more: ${story.title}`}
-            >
-              Open
-              <span aria-hidden className="translate-y-[1px]">
-                →
-              </span>
-            </Link>
           </div>
         </div>
-      </div>
+      </Link>
     </article>
   )
 }
@@ -120,41 +144,89 @@ export default function Stories() {
 
         <section className="px-6 md:px-10 pt-12 md:pt-14 pb-16 md:pb-20 bg-white">
           <div className="max-w-[1300px] mx-auto">
-            <SectionHeading
-              title="All stories"
-              description="Browse founder stories, industry insight, and program updates."
-              align="left"
-              className="max-w-2xl"
-            />
-
-            <div className="mt-8 flex flex-wrap gap-2">
-              {tags.map((t) => {
-                const isActive = t === activeTag
-                return (
-                  <button
-                    key={t}
-                    type="button"
-                    onClick={() => setActiveTag(t)}
+            <div>
+              {/* Mobile: dropdown */}
+              <div className="md:hidden">
+                <Select value={activeTag} onValueChange={(v) => setActiveTag(v as (typeof tags)[number])}>
+                  <SelectTrigger
                     className={cn(
-                      "rounded-full border px-4 py-2 text-xs font-semibold uppercase tracking-[0.14em] transition-colors duration-200 motion-reduce:transition-none",
-                      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2",
-                      isActive ? "border-rellia-teal bg-rellia-teal text-white" : "border-black/10 bg-white text-black/70 hover:border-rellia-teal/30 hover:text-rellia-teal",
+                      "h-12 rounded-2xl border-black/10 bg-white px-4",
+                      "font-host-grotesk text-[13px] font-semibold uppercase tracking-[0.14em] text-black/80",
+                      "focus:ring-rellia-mint focus:ring-offset-2",
                     )}
-                    aria-pressed={isActive}
+                    aria-label="Filter stories"
                   >
-                    {t}
-                  </button>
-                )
-              })}
+                    <SelectValue placeholder="Filter stories" />
+                  </SelectTrigger>
+                  <SelectContent className="rounded-2xl border-black/10">
+                    {tags.map((t) => (
+                      <SelectItem
+                        key={t}
+                        value={t}
+                        className="rounded-xl font-host-grotesk text-[12px] font-semibold uppercase tracking-[0.14em] text-black/80"
+                      >
+                        {t}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Desktop: segmented tabs */}
+              <div className="hidden md:block">
+                <Tabs value={activeTag} onValueChange={(v) => setActiveTag(v as (typeof tags)[number])}>
+                  <TabsList
+                    className={cn(
+                      "relative h-auto w-fit gap-1 rounded-full bg-white p-1.5",
+                      "border border-black/10 shadow-[0_12px_32px_-22px_rgba(0,0,0,0.22)]",
+                    )}
+                  >
+                    {tags.map((t) => (
+                      <TabsTrigger
+                        key={t}
+                        value={t}
+                        className={cn(
+                          "relative z-10 rounded-full px-4 py-2.5",
+                          "font-host-grotesk text-[12px] font-semibold uppercase tracking-[0.14em]",
+                          "text-black/80 hover:text-rellia-teal",
+                          "data-[state=active]:text-white",
+                          "focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-white",
+                        )}
+                      >
+                        {activeTag === t ? (
+                          <motion.span
+                            layoutId="stories-filter-pill"
+                            className="absolute inset-0 -z-10 rounded-full bg-rellia-teal shadow-sm"
+                            transition={{ duration: 0.32, ease: "easeInOut" }}
+                            aria-hidden
+                          />
+                        ) : null}
+                        {t}
+                      </TabsTrigger>
+                    ))}
+                  </TabsList>
+                </Tabs>
+              </div>
             </div>
 
-            <div className="mt-10 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 md:gap-8">
-              {filtered.map((story, i) => (
-                <ScrollReveal key={story.slug} delay={i * 0.05}>
-                  <StoryGridCard story={story} />
-                </ScrollReveal>
-              ))}
-            </div>
+            <motion.div layout className="mt-10 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 md:gap-8">
+              <AnimatePresence mode="popLayout" initial={false}>
+                {filtered.map((story, i) => (
+                  <motion.div
+                    key={story.slug}
+                    layout
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 10 }}
+                    transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+                  >
+                    <ScrollReveal delay={i * 0.05}>
+                      <StoryGridCard story={story} />
+                    </ScrollReveal>
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            </motion.div>
           </div>
         </section>
       </main>

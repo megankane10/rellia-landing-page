@@ -127,7 +127,7 @@ export default function FeaturedStories({
                   {activeStory ? (
                     <>
                       <div className="flex min-h-0 flex-1 flex-col items-start text-left">
-                        <div className="mb-5 inline-flex w-fit items-center gap-1.5 rounded-full border border-black/15 bg-white px-3 py-1.5 shadow-[0_8px_28px_-10px_rgba(0,0,0,0.4)] ring-1 ring-white/90">
+                        <div className="mb-5 inline-flex w-fit items-center gap-1.5 rounded-full border border-black/10 bg-white/85 px-3 py-1.5 shadow-[0_8px_28px_-10px_rgba(0,0,0,0.4)] ring-1 ring-white/70 backdrop-blur-sm">
                           <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-rellia-teal ring-1 ring-rellia-mint/80" aria-hidden />
                           <span className="font-host-grotesk text-[10px] font-semibold uppercase tracking-[0.14em] text-rellia-teal md:text-[11px]">
                             {activeStory.tag}
@@ -156,22 +156,39 @@ export default function FeaturedStories({
                         </RelliaAction>
                       </div>
 
-                      <div
-                        aria-hidden
-                        className="pointer-events-none z-[15] mt-10 h-1 w-full overflow-hidden rounded-full bg-white/25"
-                      >
-                        {activeStory ? (
-                          <motion.div
-                            key={`${activeStory.slug}-${cycleKey}`}
-                            className="h-full bg-white"
-                            initial={{ width: "0%" }}
-                            animate={{ width: "100%" }}
-                            transition={{
-                              duration: ROTATE_MS / 1000,
-                              ease: "linear",
-                            }}
-                          />
-                        ) : null}
+                      <div aria-hidden className="pointer-events-none z-[15] mt-10 w-full">
+                        <div className="flex w-full items-center gap-2">
+                          {featured.map((story, idx) => {
+                            const isPast = idx < activeIndex
+                            const isActive = idx === activeIndex
+                            const isFuture = idx > activeIndex
+
+                            return (
+                              <div
+                                key={story.slug}
+                                className={cn(
+                                  "relative h-1 flex-1 overflow-hidden rounded-full",
+                                  "bg-white/25",
+                                )}
+                              >
+                                {isPast ? <div className="h-full w-full bg-white" /> : null}
+                                {isFuture ? null : null}
+                                {isActive ? (
+                                  <motion.div
+                                    key={`${story.slug}-${cycleKey}`}
+                                    className="h-full bg-white"
+                                    initial={{ width: "0%" }}
+                                    animate={{ width: "100%" }}
+                                    transition={{
+                                      duration: ROTATE_MS / 1000,
+                                      ease: "linear",
+                                    }}
+                                  />
+                                ) : null}
+                              </div>
+                            )
+                          })}
+                        </div>
                       </div>
 
                       <div

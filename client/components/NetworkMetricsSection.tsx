@@ -88,11 +88,11 @@ function MetricValue({
 
   return (
     <div className="flex flex-col items-center text-center">
-      <div className="font-host-grotesk font-bold text-rellia-teal text-5xl md:text-6xl tracking-tight leading-none">
+      <div className="font-host-grotesk font-bold text-white text-5xl md:text-6xl tracking-tight leading-none drop-shadow-[0_2px_10px_rgba(0,0,0,0.35)]">
         {count}
         {metric.suffix ?? ""}
       </div>
-      <p className="mt-3 font-urbanist text-black/70 text-sm md:text-base font-medium leading-snug max-w-[18rem]">
+      <p className="mt-3 font-urbanist text-white/85 text-sm md:text-base font-medium leading-snug max-w-[18rem] drop-shadow-[0_1px_8px_rgba(0,0,0,0.35)]">
         {metric.label}
       </p>
     </div>
@@ -128,7 +128,7 @@ export default function NetworkMetricsSection({ heading, subheading, metrics }: 
 
   return (
     <section
-      className="relative z-[2] w-full bg-transparent pt-10 pb-12 md:pt-12 md:pb-16"
+      className="relative z-[2] w-full bg-transparent py-16 md:py-24"
     >
       {/* Soft top wash (contained in this section — does not overlap Paths above) */}
       <div
@@ -186,14 +186,14 @@ export default function NetworkMetricsSection({ heading, subheading, metrics }: 
                 return (
                   entered ? (
                     <ScrollReveal key={m.label} delay={i * 0.08}>
-                      <div className="h-full rounded-2xl border border-white/15 bg-white/90 px-6 py-9 md:px-7 md:py-10 shadow-[0_30px_70px_-40px_rgba(0,0,0,0.45)] backdrop-blur-sm">
+                      <div className="h-full rounded-2xl border border-white/20 bg-white/10 px-6 py-9 md:px-7 md:py-10 shadow-[0_30px_70px_-40px_rgba(0,0,0,0.55)] backdrop-blur-md">
                         <MetricValue metric={m} index={i} entered={entered} />
                       </div>
                     </ScrollReveal>
                   ) : (
                     <div
                       key={m.label}
-                      className="opacity-0 h-full rounded-2xl border border-white/15 bg-white/90 px-6 py-9 md:px-7 md:py-10 shadow-[0_30px_70px_-40px_rgba(0,0,0,0.45)] backdrop-blur-sm"
+                      className="opacity-0 h-full rounded-2xl border border-white/20 bg-white/10 px-6 py-9 md:px-7 md:py-10 shadow-[0_30px_70px_-40px_rgba(0,0,0,0.55)] backdrop-blur-md"
                     >
                       <MetricValue metric={m} index={i} entered={entered} />
                     </div>

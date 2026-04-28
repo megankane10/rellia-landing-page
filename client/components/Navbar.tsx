@@ -295,12 +295,12 @@ export default function Navbar({ ctaRadiusClassName = "rounded-full" }: NavbarPr
   )
 
   const menuIconBtnCls = cn(
-    "inline-flex min-h-11 min-w-11 cursor-pointer items-center justify-center rounded-full border transition-[color,background-color,border-color] duration-200 motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 md:hidden",
+    "inline-flex min-h-11 min-w-11 cursor-pointer items-center justify-center transition-[color] duration-200 motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 md:hidden",
     !mobileOpen &&
       (desktopTone === "dark"
-        ? "border-white/35 bg-white/10 text-white focus-visible:ring-white/80 focus-visible:ring-offset-transparent hover:bg-white/18"
-        : "border-black/10 bg-white text-rellia-teal focus-visible:ring-rellia-mint focus-visible:ring-offset-white hover:bg-rellia-cream"),
-    mobileOpen && "border-white/25 bg-white/10 text-white focus-visible:ring-rellia-mint focus-visible:ring-offset-transparent hover:bg-white/15",
+        ? "text-white focus-visible:ring-white/80 focus-visible:ring-offset-transparent hover:text-white/90"
+        : "text-rellia-teal focus-visible:ring-rellia-mint focus-visible:ring-offset-white hover:text-rellia-teal/80"),
+    mobileOpen && "text-white focus-visible:ring-rellia-mint focus-visible:ring-offset-transparent hover:text-white/90",
   )
 
   return (
@@ -348,7 +348,7 @@ export default function Navbar({ ctaRadiusClassName = "rounded-full" }: NavbarPr
               src={desktopTone === "light" ? LOGO_FILLED : LOGO_DEFAULT}
               alt="Rellia"
               className={cn(
-                "h-9 w-auto object-contain transition-[filter] duration-300 motion-reduce:transition-none md:h-11",
+                "h-11 w-auto object-contain transition-[filter] duration-300 motion-reduce:transition-none md:h-11",
                 "brightness-100",
               )}
             />

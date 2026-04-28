@@ -3,9 +3,8 @@ import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
 import { useContactPage } from "@/hooks/useCmsDocuments"
 import { DEFAULT_CONTACT_PAGE, DEFAULT_GLOBAL_SETTINGS } from "@shared/cms/defaults"
-import { Mail } from "lucide-react"
-import SectionPillBadge from "@/components/SectionPillBadge"
 import { loadHubspotV2Script } from "@/lib/hubspotForms"
+import { Quote } from "lucide-react"
 
 const SUPPORT_EMAIL = DEFAULT_GLOBAL_SETTINGS.supportEmail
 
@@ -77,80 +76,109 @@ export default function Contact() {
       <Navbar />
 
       <main id="main-content">
-        <section className="relative bg-rellia-cream pb-16 pt-[92px] md:pb-24 md:pt-[110px]">
-          <div className="mx-auto flex w-full max-w-[1300px] flex-col items-stretch gap-8 px-6 md:px-10 lg:flex-row lg:items-stretch lg:gap-10">
-            {/* Left: copy + quote */}
-            <div className="flex min-h-0 min-w-0 flex-1 flex-col gap-8">
-              <div className="shrink-0">
-                <SectionPillBadge className="mb-6 gap-2 px-4 py-2 text-sm">
-                  <Mail className="h-4 w-4 text-rellia-mint" aria-hidden />
-                  <span>{copy.heroBadge}</span>
-                </SectionPillBadge>
-                <h1 className="mb-4 text-3xl font-bold leading-tight tracking-tight text-rellia-teal md:text-5xl">
-                  {copy.pageTitle}
-                </h1>
-                <p className="max-w-xl whitespace-pre-line font-urbanist text-base leading-relaxed text-black/70 md:text-lg">
-                  {copy.intro}
-                </p>
-              </div>
-
-              <div className="rounded-3xl border border-black/10 bg-white/70 p-7 shadow-[0_10px_40px_rgba(0,0,0,0.06)] backdrop-blur-sm md:p-9">
-                <p className="font-urbanist text-lg leading-relaxed text-black/80 md:text-xl">
-                  “{copy.quoteText}”
-                </p>
-
-                <div className="mt-6 flex items-center gap-4">
-                  <div className="h-14 w-14 overflow-hidden rounded-full border border-black/10 bg-rellia-cream/50">
+        <section className="relative bg-white pb-16 pt-[92px] md:pb-24 md:pt-[110px]">
+          <div className="mx-auto w-full max-w-[1300px] px-6 md:px-10">
+            <div className="overflow-hidden rounded-3xl border border-black/10 bg-white shadow-[0_16px_60px_rgba(0,0,0,0.08)]">
+              <div className="grid grid-cols-1 lg:grid-cols-2">
+                {/* Left: image + copy + quote (connected panel) */}
+                <div className="relative flex flex-col justify-between border-b border-black/10 bg-rellia-teal lg:border-b-0 lg:border-r">
+                  <div className="pointer-events-none absolute inset-0">
                     <img
-                      src="/images/team-megankane.jpg"
-                      alt={copy.quoteAttributionName}
-                      className="h-full w-full object-cover object-top"
+                      src="https://images.pexels.com/photos/355948/pexels-photo-355948.jpeg?auto=compress&cs=tinysrgb&w=1600"
+                      alt=""
+                      className="h-full w-full object-cover object-center opacity-60"
                       loading="lazy"
                     />
+                    <div
+                      className="absolute inset-0 bg-gradient-to-b from-rellia-teal/35 via-rellia-teal/60 to-rellia-teal"
+                      aria-hidden="true"
+                    />
                   </div>
-                  <div className="min-w-0">
-                    <p className="font-host-grotesk text-base font-semibold text-rellia-teal">
-                      {copy.quoteAttributionName}
+
+                  <div className="relative flex flex-col px-7 pb-7 pt-14 md:px-10 md:pb-10 md:pt-16 min-h-[540px] md:min-h-[620px]">
+                    <h1 className="text-3xl font-bold leading-tight tracking-tight text-white md:text-5xl">
+                      {copy.pageTitle}
+                    </h1>
+                    <p className="mt-4 max-w-xl font-urbanist text-base leading-relaxed text-white/80 md:text-lg">
+                      {copy.intro}
                     </p>
-                    <p className="font-urbanist text-sm text-black/60">{copy.quoteAttributionRole}</p>
+
+                    <div className="mt-auto pt-10">
+                      <div aria-hidden className="h-px w-full bg-gradient-to-r from-transparent via-white/30 to-transparent" />
+
+                      <div className="mt-6">
+                        <div className="flex items-start gap-2">
+                          <Quote className="mt-1 h-5 w-5 shrink-0 text-white/80" aria-hidden />
+                          <p className="font-urbanist text-xl leading-relaxed text-white/95 md:text-2xl">
+                            {copy.quoteText}
+                          </p>
+                        </div>
+
+                        <div className="mt-6 flex items-center gap-4">
+                          <div className="h-16 w-16 shrink-0 overflow-hidden rounded-2xl border border-white/20 bg-white/10">
+                            <img
+                              src="/images/team-megankane.jpg"
+                              alt={copy.quoteAttributionName}
+                              className="h-full w-full object-cover object-top"
+                              loading="lazy"
+                            />
+                          </div>
+                          <div className="min-w-0">
+                            <p className="font-host-grotesk text-base font-semibold text-white">
+                              {copy.quoteAttributionName}
+                            </p>
+                            <p className="font-urbanist text-sm text-white/75">{copy.quoteAttributionRole}</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="relative flex items-center justify-between gap-4 border-t border-white/10 px-7 py-5 text-sm text-white/75 md:px-10">
+                    <span className="font-urbanist">{copy.heroBadge}</span>
+                    <a
+                      href={`mailto:${SUPPORT_EMAIL}`}
+                      className="font-urbanist underline decoration-white/25 underline-offset-4 hover:decoration-white/60"
+                      aria-label={`Email ${SUPPORT_EMAIL}`}
+                    >
+                      {SUPPORT_EMAIL}
+                    </a>
                   </div>
                 </div>
-              </div>
-            </div>
 
-            {/* Right: HubSpot form — v2 API so it mounts after React (SPA + direct visits) */}
-            <div className="flex min-h-0 min-w-0 flex-1 flex-col lg:h-full">
-              <div className="flex flex-col rounded-2xl border border-black/10 bg-white/95 p-6 shadow-[0_8px_40px_rgba(0,0,0,0.06)] backdrop-blur-sm md:p-7 lg:flex-1 lg:p-6">
-                {formStatus === "error" ? (
-                  <div className="space-y-2 py-4">
-                    <p className="font-urbanist text-black/70">
-                      We couldn’t load the form right now. Please try again in a moment.
-                    </p>
-                    <p className="font-urbanist text-black/60">
-                      Or email{" "}
-                      <a
-                        className="underline decoration-black/25 hover:decoration-black/60"
-                        href={`mailto:${SUPPORT_EMAIL}`}
-                      >
-                        {SUPPORT_EMAIL}
-                      </a>
-                      .
-                    </p>
-                  </div>
-                ) : (
-                  <div className="relative min-h-[min(420px,55vh)] w-full flex-1">
-                    <div id={targetId} className="min-h-[200px]" />
-                    {formStatus === "loading" ? (
-                      <div
-                        className="absolute inset-0 flex items-center justify-center rounded-xl bg-white/85"
-                        aria-busy="true"
-                        aria-live="polite"
-                      >
-                        <p className="font-urbanist text-black/60">Loading form…</p>
-                      </div>
-                    ) : null}
-                  </div>
-                )}
+                {/* Right: HubSpot form — v2 API so it mounts after React (SPA + direct visits) */}
+                <div className="flex min-h-0 min-w-0 flex-col bg-white p-6 md:p-10 lg:h-full">
+                  {formStatus === "error" ? (
+                    <div className="space-y-2 py-4">
+                      <p className="font-urbanist text-black/70">
+                        We couldn’t load the form right now. Please try again in a moment.
+                      </p>
+                      <p className="font-urbanist text-black/60">
+                        Or email{" "}
+                        <a
+                          className="underline decoration-black/25 hover:decoration-black/60"
+                          href={`mailto:${SUPPORT_EMAIL}`}
+                        >
+                          {SUPPORT_EMAIL}
+                        </a>
+                        .
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="relative min-h-[min(420px,55vh)] w-full flex-1">
+                      <div id={targetId} className="min-h-[200px]" />
+                      {formStatus === "loading" ? (
+                        <div
+                          className="absolute inset-0 flex items-center justify-center rounded-xl bg-white/85"
+                          aria-busy="true"
+                          aria-live="polite"
+                        >
+                          <p className="font-urbanist text-black/60">Loading form…</p>
+                        </div>
+                      ) : null}
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           </div>
