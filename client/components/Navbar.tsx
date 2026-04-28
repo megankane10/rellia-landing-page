@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect, useCallback, useRef, type KeyboardEvent } from "react"
+import { useMemo, useState, useEffect, useCallback, type KeyboardEvent } from "react"
 import { Link, useLocation } from "react-router-dom"
 import { cn } from "@/lib/utils"
 import { ChevronDown, Instagram, Linkedin, Mail, Menu, X } from "lucide-react"
@@ -141,12 +141,6 @@ export type NavbarProps = {
 export default function Navbar({ ctaRadiusClassName = "rounded-full" }: NavbarProps) {
   const [scrolled, setScrolled] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
-  const [mobileNetworkOpen, setMobileNetworkOpen] = useState(false)
-  const [mobileAboutOpen, setMobileAboutOpen] = useState(false)
-  const [desktopNetworkOpen, setDesktopNetworkOpen] = useState(false)
-  const desktopNetworkRef = useRef<HTMLDivElement | null>(null)
-  const [desktopAboutOpen, setDesktopAboutOpen] = useState(false)
-  const desktopAboutRef = useRef<HTMLDivElement | null>(null)
   const location = useLocation()
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 12)
@@ -166,14 +160,10 @@ export default function Navbar({ ctaRadiusClassName = "rounded-full" }: NavbarPr
 
   useEffect(() => {
     if (!mobileOpen) {
-      setMobileNetworkOpen(false)
-      setMobileAboutOpen(false)
     }
   }, [mobileOpen])
 
   useEffect(() => {
-    setDesktopNetworkOpen(false)
-    setDesktopAboutOpen(false)
   }, [location.pathname])
 
   useEffect(() => {
@@ -185,43 +175,7 @@ export default function Navbar({ ctaRadiusClassName = "rounded-full" }: NavbarPr
     return () => window.removeEventListener("keydown", handleKeyDown)
   }, [mobileOpen])
 
-  useEffect(() => {
-    if (!desktopNetworkOpen) return
-    const handleKeyDown = (e: globalThis.KeyboardEvent) => {
-      if (e.key === "Escape") setDesktopNetworkOpen(false)
-    }
-    const handlePointerDown = (e: MouseEvent | PointerEvent) => {
-      const root = desktopNetworkRef.current
-      if (!root) return
-      if (e.target instanceof Node && root.contains(e.target)) return
-      setDesktopNetworkOpen(false)
-    }
-    window.addEventListener("keydown", handleKeyDown)
-    window.addEventListener("pointerdown", handlePointerDown)
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown)
-      window.removeEventListener("pointerdown", handlePointerDown)
-    }
-  }, [desktopNetworkOpen])
-
-  useEffect(() => {
-    if (!desktopAboutOpen) return
-    const handleKeyDown = (e: globalThis.KeyboardEvent) => {
-      if (e.key === "Escape") setDesktopAboutOpen(false)
-    }
-    const handlePointerDown = (e: MouseEvent | PointerEvent) => {
-      const root = desktopAboutRef.current
-      if (!root) return
-      if (e.target instanceof Node && root.contains(e.target)) return
-      setDesktopAboutOpen(false)
-    }
-    window.addEventListener("keydown", handleKeyDown)
-    window.addEventListener("pointerdown", handlePointerDown)
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown)
-      window.removeEventListener("pointerdown", handlePointerDown)
-    }
-  }, [desktopAboutOpen])
+  // Dropdown logic removed on main: About is a single link, and Network is a single "How they work together" link.
 
   const handleToggleMobile = useCallback(() => {
     setMobileOpen((o) => !o)
@@ -245,75 +199,23 @@ export default function Navbar({ ctaRadiusClassName = "rounded-full" }: NavbarPr
   const hasTealHero =
     pathname === "/" ||
     pathname === "/about" ||
-    pathname === "/stories" ||
     pathname === "/terms" ||
-    pathname.startsWith("/network") ||
-    pathname === "/founders" ||
-    pathname === "/advisors" ||
-    pathname === "/investors" ||
-    pathname === "/industry-partners" ||
+    pathname === "/network" ||
     pathname === "/events" ||
     pathname === "/programs"
 
   const desktopTone: "light" | "dark" =
     !mobileOpen && !scrolled && !hasTealHero ? "light" : "dark"
 
-  const networkItems = useMemo<NetworkItem[]>(
+  const navLinks = useMemo<NetworkItem[]>(
     () => [
-      { to: "/founders", label: "For founders", active: location.pathname === "/founders" },
-      { to: "/advisors", label: "For advisors", active: location.pathname === "/advisors" },
-      { to: "/investors", label: "For investors", active: location.pathname === "/investors" },
-      {
-        to: "/industry-partners",
-        label: "For partners",
-        active: location.pathname === "/industry-partners" || location.pathname.startsWith("/industry-partners/"),
-      },
-    ],
-    [location.pathname],
-  )
-
-  const howTheyWorkTogetherItem = useMemo(
-    () => ({
-      to: "/network",
-      label: "How they work together",
-      active: location.pathname === "/network",
-    }),
-    [location.pathname],
-  )
-
-  const isNetworkActive =
-    location.pathname === "/network" ||
-    networkItems.some((i) => i.active)
-
-  const aboutItems = useMemo<NetworkItem[]>(
-    () => [
-      { to: "/about", label: "About Us", active: location.pathname === "/about" },
-      { to: "/stories", label: "Stories", active: location.pathname === "/stories" || location.pathname.startsWith("/stories/") },
-    ],
-    [location.pathname],
-  )
-
-  const isAboutActive = aboutItems.some((i) => i.active)
-
-  const primaryLinks = useMemo(
-    () => [
-      {
-        to: "/programs",
-        label: "PROGRAMS",
-        active: location.pathname === "/programs" || location.pathname.startsWith("/programs/"),
-      },
+      { to: "/programs", label: "PROGRAMS", active: location.pathname === "/programs" || location.pathname.startsWith("/programs/") },
       { to: "/events", label: "EVENTS", active: isActive("/events") },
-    ],
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [location.pathname],
-  )
-
-  const secondaryLinks = useMemo(
-    () => [
+      { to: "/network", label: "HOW THEY WORK TOGETHER", active: isActive("/network") },
+      { to: "/about", label: "ABOUT", active: isActive("/about") },
       { to: "/faq", label: "FAQ", active: isActive("/faq") },
       { to: "/contact", label: "CONTACT", active: isActive("/contact") },
     ],
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [location.pathname],
   )
 
@@ -396,50 +298,7 @@ export default function Navbar({ ctaRadiusClassName = "rounded-full" }: NavbarPr
           </Link>
 
           <div className={desktopRailCls}>
-            <div ref={desktopNetworkRef}>
-              <DesktopNavDropdown
-                label="NETWORK"
-                to="/network"
-                items={networkItems}
-                extraItem={howTheyWorkTogetherItem}
-                active={isNetworkActive}
-                tone={desktopTone}
-                open={desktopNetworkOpen}
-                onToggle={() => {
-                  setDesktopAboutOpen(false)
-                  setDesktopNetworkOpen((o) => !o)
-                }}
-                onClose={() => setDesktopNetworkOpen(false)}
-              />
-            </div>
-
-            {primaryLinks.map((l) => (
-              <DesktopNavLink
-                key={l.to}
-                to={l.to}
-                label={l.label}
-                active={l.active}
-                tone={desktopTone}
-              />
-            ))}
-
-            <div ref={desktopAboutRef}>
-              <DesktopNavDropdown
-                label="ABOUT"
-                to="/about"
-                items={aboutItems}
-                active={isAboutActive}
-                tone={desktopTone}
-                open={desktopAboutOpen}
-                onToggle={() => {
-                  setDesktopNetworkOpen(false)
-                  setDesktopAboutOpen((o) => !o)
-                }}
-                onClose={() => setDesktopAboutOpen(false)}
-              />
-            </div>
-
-            {secondaryLinks.map((l) => (
+            {navLinks.map((l) => (
               <DesktopNavLink
                 key={l.to}
                 to={l.to}
@@ -517,64 +376,17 @@ export default function Navbar({ ctaRadiusClassName = "rounded-full" }: NavbarPr
         >
           <div className="relative flex h-full w-full flex-col overflow-y-auto bg-rellia-teal/65 px-6 pb-8 pt-8 backdrop-blur-2xl">
             <div className="flex flex-1 flex-col min-h-0">
-              <button
-                type="button"
+              <Link
+                to="/network"
                 className={cn(
-                  "flex min-h-12 w-full cursor-pointer items-center justify-between rounded-xl px-3 py-3 font-host-grotesk text-base font-medium text-white outline-none transition-colors hover:bg-white/10 focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-rellia-teal",
-                  (location.pathname === "/network" || networkItems.some((i) => i.active)) &&
-                    "bg-white/10 ring-1 ring-white/15 text-rellia-mint",
+                  "flex min-h-12 cursor-pointer items-center gap-3 rounded-xl px-3 py-3 font-host-grotesk text-base font-medium text-white outline-none transition-colors hover:bg-white/10 focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-rellia-teal",
+                  isActive("/network") && "bg-white/10 ring-1 ring-white/15 text-rellia-mint",
                 )}
-                onClick={() => setMobileNetworkOpen((o) => !o)}
-                aria-expanded={mobileNetworkOpen}
+                onClick={handleCloseMobile}
+                aria-current={isActive("/network") ? "page" : undefined}
               >
-                <span>NETWORK</span>
-                <ChevronDown
-                  aria-hidden
-                  className={cn(
-                      "h-5 w-5 transition-transform duration-300 ease-out motion-reduce:transition-none",
-                    mobileNetworkOpen ? "rotate-180" : "rotate-0",
-                  )}
-                />
-              </button>
-
-                <div
-                  className={cn(
-                    "grid will-change-[grid-template-rows,opacity] transition-[grid-template-rows,opacity] duration-450 ease-out motion-reduce:transition-none",
-                    mobileNetworkOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0",
-                  )}
-                >
-                  <div className="overflow-hidden">
-                    <div className="mb-2 mt-2 space-y-1 border-l-2 border-rellia-mint/80 pl-4 ml-3">
-                      {networkItems.map((item) => (
-                        <Link
-                          key={item.to}
-                          to={item.to}
-                          className={cn(
-                            "flex min-h-11 cursor-pointer items-center rounded-xl px-3 py-2.5 font-urbanist text-[15px] font-semibold text-white/90 outline-none transition-colors hover:bg-white/10 hover:text-white focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-rellia-teal",
-                            item.active && "bg-white/10 ring-1 ring-white/15 text-rellia-mint",
-                          )}
-                          onClick={handleCloseMobile}
-                          aria-current={item.active ? "page" : undefined}
-                        >
-                          {item.label}
-                        </Link>
-                      ))}
-
-                      <div className="my-2 h-px bg-white/10" aria-hidden />
-                      <Link
-                        to={howTheyWorkTogetherItem.to}
-                        className={cn(
-                          "flex min-h-11 cursor-pointer items-center rounded-xl px-3 py-2.5 font-urbanist text-[15px] font-semibold text-white/90 outline-none transition-colors hover:bg-white/10 hover:text-white focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-rellia-teal",
-                          howTheyWorkTogetherItem.active && "bg-white/10 ring-1 ring-white/15 text-rellia-mint",
-                        )}
-                        onClick={handleCloseMobile}
-                        aria-current={howTheyWorkTogetherItem.active ? "page" : undefined}
-                      >
-                        {howTheyWorkTogetherItem.label}
-                      </Link>
-                    </div>
-                  </div>
-                </div>
+                HOW THEY WORK TOGETHER
+              </Link>
 
               <Link
                 to="/programs"
@@ -605,51 +417,17 @@ export default function Navbar({ ctaRadiusClassName = "rounded-full" }: NavbarPr
                 EVENTS
               </Link>
 
-              <button
-                type="button"
+              <Link
+                to="/about"
                 className={cn(
-                  "flex min-h-12 w-full cursor-pointer items-center justify-between rounded-xl px-3 py-3 font-host-grotesk text-base font-medium text-white outline-none transition-colors hover:bg-white/10 focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-rellia-teal",
-                  isAboutActive && "bg-white/10 ring-1 ring-white/15 text-rellia-mint",
+                  "flex min-h-12 cursor-pointer items-center gap-3 rounded-xl px-3 py-3 font-host-grotesk text-base font-medium text-white outline-none transition-colors hover:bg-white/10 focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-rellia-teal",
+                  isActive("/about") && "bg-white/10 ring-1 ring-white/15 text-rellia-mint",
                 )}
-                onClick={() => setMobileAboutOpen((o) => !o)}
-                aria-expanded={mobileAboutOpen}
-                aria-label="Toggle About menu"
+                onClick={handleCloseMobile}
+                aria-current={isActive("/about") ? "page" : undefined}
               >
-                <span>ABOUT</span>
-                <ChevronDown
-                  aria-hidden
-                  className={cn(
-                    "h-5 w-5 transition-transform duration-300 ease-out motion-reduce:transition-none",
-                    mobileAboutOpen ? "rotate-180" : "rotate-0",
-                  )}
-                />
-              </button>
-
-              <div
-                className={cn(
-                  "grid will-change-[grid-template-rows,opacity] transition-[grid-template-rows,opacity] duration-450 ease-out motion-reduce:transition-none",
-                  mobileAboutOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0",
-                )}
-              >
-                <div className="overflow-hidden">
-                  <div className="mb-2 mt-2 space-y-1 border-l-2 border-rellia-mint/80 pl-4 ml-3">
-                    {aboutItems.map((item) => (
-                      <Link
-                        key={item.to}
-                        to={item.to}
-                        className={cn(
-                          "flex min-h-11 cursor-pointer items-center rounded-xl px-3 py-2.5 font-urbanist text-[15px] font-semibold text-white/90 outline-none transition-colors hover:bg-white/10 hover:text-white focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-rellia-teal",
-                          item.active && "bg-white/10 ring-1 ring-white/15 text-rellia-mint",
-                        )}
-                        onClick={handleCloseMobile}
-                        aria-current={item.active ? "page" : undefined}
-                      >
-                        {item.label}
-                      </Link>
-                    ))}
-                  </div>
-                </div>
-              </div>
+                ABOUT
+              </Link>
 
               <Link
                 to="/faq"
