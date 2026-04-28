@@ -38,9 +38,10 @@ export const DEFAULT_GLOBAL_SETTINGS: GlobalSettingsContent = {
 }
 
 export const DEFAULT_HOME_PAGE: HomePageContent = {
-  headlinePrefix: "You are the future of",
-  headlineAccent: "healthcare.",
-  subheadline: "The expertise you need. The support you deserve.",
+  headlinePrefix: "You are the Future of Health Tech.",
+  headlineAccent: "",
+  subheadline:
+    "Rellia connects founders with clinicians, advisors, and investors to validate and scale healthcare solutions.",
   primaryCtaLabel: "Get Involved Now",
   primaryCtaPath: "/network",
   secondaryCtaLabel: "See our Programs",
@@ -109,6 +110,26 @@ export const DEFAULT_HOME_PAGE: HomePageContent = {
       companyInfo:
         "A rehabilitation-focused company bringing novel performance textiles and assistive solutions to support mobility, reduce injury risk, and enhance comfort during recovery for patients with musculoskeletal and neurological conditions.",
       imageSrc: "/images/testimonials-sahilkhan.jpeg",
+    },
+    {
+      name: "Mazhar Shahen",
+      role: "CEO",
+      company: "NewGen Health",
+      quote:
+        "Rellia has been an invaluable partner in our journey. Their regulatory expertise gave us the clarity and confidence to better understand Health Canada and FDA pathways as a health-tech startup. The team genuinely cares about helping early-stage companies succeed, not just with advice, but with hands-on support when it matters most.",
+      companyInfo:
+        "NewGen Health is a health-tech startup focused on building patient-centered solutions and navigating regulatory pathways across Health Canada and the FDA.",
+      imageSrc: "/images/nopicture-male.jpg",
+    },
+    {
+      name: "Zarrah Uy",
+      role: "CEO",
+      company: "Syncara",
+      quote:
+        "As an early-stage healthtech startup, Rellia gave us access to resources and people that would have otherwise been incredibly difficult to reach on our own, that access alone accelerated our work in such valuable ways.",
+      companyInfo:
+        "Syncara is an early-stage healthtech company building healthcare solutions with support from specialized mentors, resources, and connections.",
+      imageSrc: "/images/nopicture-female.jpg",
     },
     {
       name: "Dhandre Weekes",
@@ -241,24 +262,36 @@ export const DEFAULT_ABOUT_PAGE: AboutPageContent = {
       role: "Executive Director, Co-Founder",
       bio: "Regulatory and Quality Management executive specializing in global market entry strategy and FDA/Health Canada submissions for SaMD and digital health companies.",
       imageSrc: "/images/team-megankane.jpg",
+      linkedinUrl: "https://www.linkedin.com/in/megankane1/",
+      websiteUrl: "https://megankaneportfolio.carrd.co/",
     },
     {
       name: "Deena Al-Sammak",
       role: "Program Manager, Co-Founder",
       bio: "Deena brings startup experience in the health tech space and leverages her experience to lead our program development and management",
       imageSrc: "/images/team-deenasammak.png",
+      linkedinUrl: "https://www.linkedin.com/in/deena-al-sammak/",
+    },
+    {
+      name: "Khali Abdi",
+      role: "User Experience, Community Strategy Manager",
+      bio: "A Chemical Engineer & digital health founder, Khali blends her technical background with a deep commitment to human-centred design to ensure Rellia’s ecosystem is as intuitive as it is impactful.",
+      imageSrc: "/images/team-abdi.JPG",
+      linkedinUrl: "https://www.linkedin.com/in/khali-abdi/",
     },
     {
       name: "Priyanka Ramjagsingh",
       role: "Operations Director",
       bio: "With a decade of experience embedded in early-stage health companies, Priyanka converts her deep regulatory and quality expertise into operational momentum, turning complexity into the strategic edge that moves teams forward.",
       imageSrc: "/images/team-priyankaR.jpeg",
+      linkedinUrl: "https://www.linkedin.com/in/shyama-ramjagsingh/",
     },
     {
       name: "Kelly Hu",
       role: "Social Media Manager",
       bio: "A digital health founder herself, Kelly plans and executes content creation to boost engagement and showcase Rellia's growing network.",
       imageSrc: "/images/team-KellyH.jpeg",
+      linkedinUrl: "https://forms.fillout.com/t/1GPWpbBbWcus",
     },
   ],
   ctaTitle: "You're in the right place.",
@@ -316,6 +349,11 @@ export const DEFAULT_FAQ_PAGE: FaqPageContent = {
         "Yes, most Rellia programs are available to non-members as well. If you decide to become a member, you will get discounted access to programs alongside everything else membership includes.",
     },
     {
+      id: "member-required-for-program",
+      question: "Do I need to become a member to join a program?",
+      answer: "No - programs are open to members and non-members",
+    },
+    {
       id: "advisor-time",
       question: "How much time do advisors commit to?",
       answer:
@@ -368,7 +406,7 @@ export const DEFAULT_PROGRAMS_LANDING: ProgramsLandingContent = {
       description:
         "Build a lean, scalable QMS to comply with ISO 13485, MDSAP, FDA, and MDR requirements, with personalized guidance from quality experts every step of the way",
       imageSrc: "/images/programs-qms.png",
-      href: "/programs/qms",
+      href: "/programs/build-your-qms",
       buttonText: "Learn more",
     },
     {
@@ -400,14 +438,6 @@ export const DEFAULT_PROGRAMS_LANDING: ProgramsLandingContent = {
       description:
         'Validate your product through facilitated usability testing and "assumption audits" with Rellia\'s clinician network. Gain the IRB guidance and professional feedback needed to bridge the gap between prototype and clinical use.',
       imageSrc: "/images/program-first50users.png",
-      buttonText: "Join Waitlist",
-      waitlistHref: "https://forms.fillout.com/t/bLGtn6S2jtus",
-    },
-    {
-      title: "Health Tech Financial Modeling",
-      description:
-        "Build a board-ready, 3-year financial model tailored to health tech's unique sales cycles and regulatory costs. Work 1:1 with a fractional CFO to stress-test your unit economics and burn runway.",
-      imageSrc: "/images/program-healthTechModelling.png",
       buttonText: "Join Waitlist",
       waitlistHref: "https://forms.fillout.com/t/bLGtn6S2jtus",
     },
@@ -446,10 +476,10 @@ export const DEFAULT_PROGRAMS_LANDING: ProgramsLandingContent = {
   ],
   upcomingEvents: [
     {
-      title: "Leadership Mindset for Health tech founders",
+      title: "Leadership Under Pressure",
       dateTime: "May 6th at 12PM",
-      person: "Rellia Health",
-      imageSrc: "/images/leadership-mindset.jpg",
+      person: "Dr. Sabina Nagpal • Radiate Mind",
+      imageSrc: "/images/event-leadershipUnderPressure.jpg",
       href: "https://luma.com/bgvqn7ia",
     },
   ],
@@ -457,7 +487,7 @@ export const DEFAULT_PROGRAMS_LANDING: ProgramsLandingContent = {
     {
       title: "Health System Adoption for Startups",
       dateTime: "Thursday, April 9 — 2:00 PM EDT",
-      person: "Rellia Health",
+      person: "Rellia Health • Rellia Health",
       imageSrc: "/images/events-healthsystem.jpg",
       href: "https://luma.com/ao1g8a7h",
       buttonText: "View Event",
@@ -465,7 +495,7 @@ export const DEFAULT_PROGRAMS_LANDING: ProgramsLandingContent = {
     {
       title: "Why Healthcare Keeps Saying No to Your AI (And How to Fix It)",
       dateTime: "Thursday, March 12 — 1:00 PM EDT",
-      person: "Brenton Hill, CHAI",
+      person: "Brenton Hill • CHAI",
       imageSrc: "/images/event-WhyHealthcareSayingNo.jpg",
       href: "https://luma.com/1vx5stu2",
       buttonText: "View Event",
@@ -473,7 +503,7 @@ export const DEFAULT_PROGRAMS_LANDING: ProgramsLandingContent = {
     {
       title: "Ask a QMS Expert",
       dateTime: "Thursday, February 19 — 12:00 PM EST",
-      person: "QMS Expert Panel",
+      person: "QMS Expert Panel • Rellia Health",
       imageSrc: "/images/event-askQmsExpert.jpg",
       href: "https://luma.com/w61qj0g5",
       buttonText: "View Event",
@@ -481,7 +511,7 @@ export const DEFAULT_PROGRAMS_LANDING: ProgramsLandingContent = {
     {
       title: "Set Your Stage",
       dateTime: "Thursday, December 4, 2025 — 12:00 PM EST",
-      person: "Alexis Orchard, Orchard Presents",
+      person: "Alexis Orchard • Orchard Presents",
       imageSrc: "/images/event-setYourStage.jpg",
       href: "https://luma.com/5s736thc",
       buttonText: "View Event",
@@ -489,7 +519,7 @@ export const DEFAULT_PROGRAMS_LANDING: ProgramsLandingContent = {
     {
       title: "Clinician Connect: Women's Health",
       dateTime: "Thursday, November 20, 2025 — 12:00 PM EST",
-      person: "Rellia Health",
+      person: "Rellia Health • Rellia Health",
       imageSrc: "/images/event-clinicianConnect.jpg",
       href: "https://luma.com/k6fbogr8",
       buttonText: "View Event",
@@ -561,7 +591,7 @@ export const DEFAULT_CONTACT_PAGE: ContactPageContent = {
 export const DEFAULT_STRIPE_PAYMENT_LINK_FALLBACK = "https://buy.stripe.com/14A4gs2jF6Lla0HgCC6wE03"
 
 export const DEFAULT_QMS_PROGRAM: QmsProgramContent = {
-  paymentUrl: DEFAULT_STRIPE_PAYMENT_LINK_FALLBACK,
+  paymentUrl: "https://forms.fillout.com/t/1GPWpbBbWcus",
   heroTitle: "Build Your QMS",
   heroDescription:
     "A simplified, mentor-led program that helps medical device founders build an audit-ready Quality Management System - without needing a background in regulatory affairs",

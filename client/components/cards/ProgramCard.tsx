@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom"
 import { useState } from "react"
-import { Bell } from "lucide-react"
+import { ArrowRight, Bell } from "lucide-react"
 import RelliaAction from "@/components/RelliaAction"
 import { cn } from "@/lib/utils"
 import FilloutPopupDialog from "@/components/FilloutPopupDialog"
@@ -38,6 +38,7 @@ export const ProgramCard = ({
   const [waitlistOpen, setWaitlistOpen] = useState(false)
   const displayTag = tag?.trim() ?? ""
   const showCornerBadge = Boolean(displayTag) && !isWaitlistCard
+  const showWaitlistBadge = isWaitlistCard
 
   return (
     <div
@@ -52,6 +53,14 @@ export const ProgramCard = ({
     >
       <div className="flex h-full flex-col">
         <div className="relative aspect-video w-full shrink-0 overflow-hidden bg-rellia-teal/5">
+          {showWaitlistBadge ? (
+            <div className="absolute right-3 top-3 z-10">
+              <span className="inline-flex items-center rounded-full border border-white/25 bg-black/35 px-3 py-1.5 font-host-grotesk text-[11px] font-bold uppercase tracking-[0.18em] text-white shadow-sm backdrop-blur-md">
+                Waitlist
+              </span>
+            </div>
+          ) : null}
+
           {showCornerBadge ? (
             <div className="absolute right-3 top-3 z-10">
               <span className="inline-flex items-center rounded-full bg-rellia-mint/90 px-3 py-1 font-host-grotesk text-[11px] font-extrabold uppercase tracking-[0.16em] text-rellia-teal shadow-lg ring-1 ring-white/50">
@@ -81,17 +90,7 @@ export const ProgramCard = ({
             />
           )}
 
-          {isWaitlistCard ? (
-            <div
-              className="pointer-events-none absolute inset-x-0 top-0 z-20 flex items-center justify-center gap-2 border-b border-rellia-teal/15 bg-rellia-mint py-2.5 px-4 text-rellia-teal shadow-[0_4px_12px_rgba(13,53,64,0.12)]"
-              aria-hidden
-            >
-              <Bell className="h-4 w-4 shrink-0" strokeWidth={2.25} />
-              <span className="font-host-grotesk text-[11px] font-bold uppercase tracking-[0.14em]">
-                Join the Waitlist
-              </span>
-            </div>
-          ) : null}
+          {isWaitlistCard ? null : null}
         </div>
 
         <div className="flex flex-1 flex-col p-6">
@@ -116,11 +115,13 @@ export const ProgramCard = ({
         <div className="mt-auto p-4">
           <RelliaAction
             asChild
-            variant={isWaitlistCard ? "mintCardFull" : "tealCardFull"}
+            variant="mintCardTealFill"
             className="w-full h-[48px] text-base"
           >
             {hasHref ? (
-              <Link to={href as string}>{buttonText || "Learn more"}</Link>
+              <Link to={href as string}>
+                Get Started <ArrowRight />
+              </Link>
             ) : hasWaitlistHref ? (
               <button
                 type="button"
@@ -133,7 +134,10 @@ export const ProgramCard = ({
                 }}
                 aria-label={`Join waitlist for ${title}`}
               >
-                {buttonText || "Join Waitlist"}
+                <span className="inline-flex items-center justify-center gap-2">
+                  <Bell className="h-4 w-4 shrink-0" strokeWidth={2.25} />
+                  {buttonText || "Join Waitlist"}
+                </span>
               </button>
             ) : (
               <button type="button" disabled aria-disabled className="opacity-60 cursor-not-allowed">

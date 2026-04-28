@@ -3,7 +3,7 @@ import { Toaster } from "@/components/ui/toaster"
 import { Toaster as Sonner } from "@/components/ui/sonner"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
-import { BrowserRouter, Routes, Route } from "react-router-dom"
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"
 import { Analytics } from "@vercel/analytics/react"
 import { SpeedInsights } from "@vercel/speed-insights/react"
 import ScrollToTop from "@/components/ScrollToTop"
@@ -13,6 +13,7 @@ import About from "./pages/About"
 import FAQ from "./pages/FAQ"
 import ProgramsEvents from "./pages/ProgramsEvents"
 import ProgramsQms from "./pages/ProgramsQms"
+import Events from "./pages/Events"
 import NotFound from "./pages/NotFound"
 import Contact from "./pages/Contact"
 import Network from "./pages/Network"
@@ -82,9 +83,11 @@ const App = () => (
           {/* Main Pages */}
           <Route path="/about" element={<About />} />
           <Route path="/faq" element={<FAQ />} />
+          <Route path="/events" element={<Events />} />
           <Route path="/programs" element={<ProgramsLayout />}>
             <Route index element={<ProgramsEvents />} />
-            <Route path="qms" element={<ProgramsQms />} />
+            <Route path="build-your-qms" element={<ProgramsQms />} />
+            <Route path="qms" element={<Navigate to="/programs/build-your-qms" replace />} />
           </Route>
 
           {/* Network — unified audience hub (founders / investors / advisors / partners) */}
