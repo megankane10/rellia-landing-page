@@ -405,7 +405,7 @@ export const DEFAULT_PROGRAMS_LANDING: ProgramsLandingContent = {
       description:
         "Build a lean, scalable QMS to comply with ISO 13485, MDSAP, FDA, and MDR requirements, with personalized guidance from quality experts every step of the way",
       imageSrc: "/images/programs-qms.png",
-      href: "/programs/qms",
+      href: "/programs/build-your-qms",
       buttonText: "Learn more",
     },
     {

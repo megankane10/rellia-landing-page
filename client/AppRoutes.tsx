@@ -86,7 +86,8 @@ export const AppRoutes = () => (
     <Route path="/events" element={<Events />} />
     <Route path="/programs" element={<ProgramsLayout />}>
       <Route index element={<ProgramsEvents />} />
-      <Route path="qms" element={<ProgramsQms />} />
+      <Route path="build-your-qms" element={<ProgramsQms />} />
+      <Route path="qms" element={<Navigate to="/programs/build-your-qms" replace />} />
     </Route>
 
     <Route path="/network" element={<Network />} />

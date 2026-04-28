@@ -45,11 +45,17 @@ const ROUTE_SEO: Record<string, RouteSeoConfig> = {
       "Explore Rellia Health programs and events designed to help healthcare builders learn, connect, and grow with the right stakeholders.",
     indexable: true,
   },
-  "/programs/qms": {
+  "/programs/build-your-qms": {
     title: "QMS Program — Rellia Health",
     description:
       "Quality Management System (QMS) support for medtech and digital health teams navigating design controls, documentation, and regulatory readiness.",
     indexable: true,
+  },
+  "/programs/qms": {
+    title: "QMS Program — Rellia Health",
+    description:
+      "This page has moved to /programs/build-your-qms.",
+    indexable: false,
   },
   "/network": {
     title: "Network — Rellia Health",

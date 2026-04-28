@@ -253,7 +253,7 @@ export default function Navbar({ ctaRadiusClassName = "rounded-full" }: NavbarPr
     pathname === "/investors" ||
     pathname === "/industry-partners" ||
     pathname === "/events" ||
-    pathname.startsWith("/programs")
+    pathname === "/programs"
 
   const desktopTone: "light" | "dark" =
     !mobileOpen && !scrolled && !hasTealHero ? "light" : "dark"
