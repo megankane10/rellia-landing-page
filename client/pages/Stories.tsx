@@ -23,43 +23,41 @@ const StoryGridCard = ({
     publishedAt: string
   }
 }) => {
+  const cleanTitle = useMemo(() => {
+    const raw = (story.title ?? "").trim()
+    return raw.replace(/^(founder story|industry insight|program update)\s*:\s*/i, "")
+  }, [story.title])
+
   return (
     <article className="w-full">
       <Link
         to={`/stories/${story.slug}`}
         className={cn(
-          "group block w-full overflow-hidden rounded-3xl border border-black/5 bg-[#FAFAFA]",
-          "shadow-sm transition-[transform,box-shadow] duration-300 motion-reduce:transition-none",
-          "hover:-translate-y-1 hover:bg-[#F5F5F5] hover:shadow-lg hover:shadow-[0_20px_55px_-35px_rgba(0,0,0,0.45)]",
-          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-white",
+          "group block h-full w-full overflow-hidden rounded-2xl border border-black/5 bg-white shadow-sm",
+          "transition-[transform,box-shadow] duration-200 ease-out",
+          "hover:-translate-y-0.5 hover:shadow-md hover:shadow-lg hover:ring-1 hover:ring-black/[0.06]",
+          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-teal focus-visible:ring-offset-2",
         )}
         aria-label={`Read ${story.title}`}
       >
-        <div className="overflow-hidden">
+        <div className="relative aspect-video w-full shrink-0 overflow-hidden bg-rellia-teal/5">
+          <div className="absolute right-3 top-3 z-10">
+            <span className="inline-flex items-center rounded-full bg-rellia-mint/90 px-3 py-1 font-host-grotesk text-[11px] font-extrabold uppercase tracking-[0.16em] text-rellia-teal shadow-lg ring-1 ring-white/50">
+              {story.tag}
+            </span>
+          </div>
           <img
             src={story.coverImageSrc}
             alt={story.coverImageAlt}
-            className="h-[240px] w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.04]"
+            className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
             loading="lazy"
           />
         </div>
 
-        <div className="flex h-[180px] flex-col px-6 pb-6 pt-5 md:px-7 md:pb-7">
-          <div className="flex items-center gap-2">
-            <span className="h-2 w-2 rounded-full bg-rellia-teal" aria-hidden />
-            <span className="font-host-grotesk text-[11px] font-semibold uppercase tracking-[0.14em] text-rellia-teal">
-              {story.tag}
-            </span>
-          </div>
-
-          <h3 className="mt-3 font-host-grotesk font-normal text-black text-xl md:text-2xl tracking-tight leading-snug line-clamp-2">
-            {story.title}
+        <div className="flex flex-1 flex-col p-6">
+          <h3 className="font-host-grotesk text-[16px] md:text-lg font-medium leading-snug text-black line-clamp-3">
+            {cleanTitle}
           </h3>
-
-          <div className="mt-auto pt-3">
-            <div aria-hidden className="mb-3 h-px w-full bg-black/10" />
-            <span className="text-xs font-semibold uppercase tracking-[0.14em] text-black/50">Read story</span>
-          </div>
         </div>
       </Link>
     </article>

@@ -54,7 +54,7 @@ export const ProgramCard = ({
       <div className="flex h-full flex-col">
         <div className="relative aspect-video w-full shrink-0 overflow-hidden bg-rellia-teal/5">
           {showWaitlistBadge ? (
-            <div className="absolute left-3 top-3 z-10">
+            <div className="absolute right-3 top-3 z-10">
               <span className="inline-flex items-center rounded-full border border-white/25 bg-black/35 px-3 py-1.5 font-host-grotesk text-[11px] font-bold uppercase tracking-[0.18em] text-white shadow-sm backdrop-blur-md">
                 Waitlist
               </span>

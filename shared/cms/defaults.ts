@@ -291,6 +291,7 @@ export const DEFAULT_ABOUT_PAGE: AboutPageContent = {
       role: "Social Media Manager",
       bio: "A digital health founder herself, Kelly plans and executes content creation to boost engagement and showcase Rellia's growing network.",
       imageSrc: "/images/team-KellyH.jpeg",
+      linkedinUrl: "https://forms.fillout.com/t/1GPWpbBbWcus",
     },
   ],
   ctaTitle: "You're in the right place.",
@@ -437,14 +438,6 @@ export const DEFAULT_PROGRAMS_LANDING: ProgramsLandingContent = {
       description:
         'Validate your product through facilitated usability testing and "assumption audits" with Rellia\'s clinician network. Gain the IRB guidance and professional feedback needed to bridge the gap between prototype and clinical use.',
       imageSrc: "/images/program-first50users.png",
-      buttonText: "Join Waitlist",
-      waitlistHref: "https://forms.fillout.com/t/bLGtn6S2jtus",
-    },
-    {
-      title: "Health Tech Financial Modeling",
-      description:
-        "Build a board-ready, 3-year financial model tailored to health tech's unique sales cycles and regulatory costs. Work 1:1 with a fractional CFO to stress-test your unit economics and burn runway.",
-      imageSrc: "/images/program-healthTechModelling.png",
       buttonText: "Join Waitlist",
       waitlistHref: "https://forms.fillout.com/t/bLGtn6S2jtus",
     },
@@ -598,7 +591,7 @@ export const DEFAULT_CONTACT_PAGE: ContactPageContent = {
 export const DEFAULT_STRIPE_PAYMENT_LINK_FALLBACK = "https://buy.stripe.com/14A4gs2jF6Lla0HgCC6wE03"
 
 export const DEFAULT_QMS_PROGRAM: QmsProgramContent = {
-  paymentUrl: DEFAULT_STRIPE_PAYMENT_LINK_FALLBACK,
+  paymentUrl: "https://forms.fillout.com/t/1GPWpbBbWcus",
   heroTitle: "Build Your QMS",
   heroDescription:
     "A simplified, mentor-led program that helps medical device founders build an audit-ready Quality Management System - without needing a background in regulatory affairs",
