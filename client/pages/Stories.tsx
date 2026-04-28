@@ -6,7 +6,6 @@ import ScrollReveal from "@/components/ScrollReveal"
 import { cn } from "@/lib/utils"
 import { STORIES, type StoryTag } from "@/content/stories"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { AnimatePresence, motion } from "framer-motion"
 
 const tags: Array<StoryTag | "All"> = ["All", "Founder Story", "Industry Insight", "Program Update"]
@@ -24,23 +23,6 @@ const StoryGridCard = ({
     publishedAt: string
   }
 }) => {
-  const dateParts = useMemo(() => {
-    const raw = (story.publishedAt ?? "").trim()
-    const [y, m, d] = raw.split("-").map((x) => x?.trim())
-    const month = Number(m)
-    const day = Number(d)
-
-    const monthLabel =
-      month >= 1 && month <= 12
-        ? ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"][month - 1]
-        : ""
-
-    return {
-      monthLabel,
-      dayLabel: Number.isFinite(day) ? String(day).padStart(2, "0") : "",
-    }
-  }, [story.publishedAt])
-
   return (
     <article className="w-full">
       <Link
@@ -76,12 +58,7 @@ const StoryGridCard = ({
 
           <div className="mt-auto pt-3">
             <div aria-hidden className="mb-3 h-px w-full bg-black/10" />
-            <span className="text-xs font-semibold uppercase tracking-[0.14em] text-black/50">
-              {dateParts.monthLabel} {dateParts.dayLabel}
-            </span>
-            <time dateTime={story.publishedAt} className="sr-only">
-              {story.publishedAt}
-            </time>
+            <span className="text-xs font-semibold uppercase tracking-[0.14em] text-black/50">Read story</span>
           </div>
         </div>
       </Link>
@@ -147,29 +124,26 @@ export default function Stories() {
             <div>
               {/* Mobile: dropdown */}
               <div className="md:hidden">
-                <Select value={activeTag} onValueChange={(v) => setActiveTag(v as (typeof tags)[number])}>
-                  <SelectTrigger
-                    className={cn(
-                      "h-12 rounded-2xl border-black/10 bg-white px-4",
-                      "font-host-grotesk text-[13px] font-semibold uppercase tracking-[0.14em] text-black/80",
-                      "focus:ring-rellia-mint focus:ring-offset-2",
-                    )}
-                    aria-label="Filter stories"
-                  >
-                    <SelectValue placeholder="Filter stories" />
-                  </SelectTrigger>
-                  <SelectContent className="rounded-2xl border-black/10">
-                    {tags.map((t) => (
-                      <SelectItem
-                        key={t}
-                        value={t}
-                        className="rounded-xl font-host-grotesk text-[12px] font-semibold uppercase tracking-[0.14em] text-black/80"
-                      >
-                        {t}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <label className="sr-only" htmlFor="stories-filter">
+                  Filter stories
+                </label>
+                <select
+                  id="stories-filter"
+                  value={activeTag}
+                  onChange={(e) => setActiveTag(e.target.value as (typeof tags)[number])}
+                  className={cn(
+                    "h-12 w-full rounded-2xl border border-black/10 bg-white px-4",
+                    "font-host-grotesk text-[13px] font-semibold uppercase tracking-[0.14em] text-black/80",
+                    "focus:outline-none focus:ring-2 focus:ring-rellia-mint focus:ring-offset-2 focus:ring-offset-white",
+                  )}
+                  aria-label="Filter stories"
+                >
+                  {tags.map((t) => (
+                    <option key={t} value={t}>
+                      {t}
+                    </option>
+                  ))}
+                </select>
               </div>
 
               {/* Desktop: segmented tabs */}

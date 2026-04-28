@@ -142,8 +142,11 @@ export default function Navbar({ ctaRadiusClassName = "rounded-full" }: NavbarPr
   const [scrolled, setScrolled] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
   const [mobileNetworkOpen, setMobileNetworkOpen] = useState(false)
+  const [mobileAboutOpen, setMobileAboutOpen] = useState(false)
   const [desktopNetworkOpen, setDesktopNetworkOpen] = useState(false)
   const desktopNetworkRef = useRef<HTMLDivElement | null>(null)
+  const [desktopAboutOpen, setDesktopAboutOpen] = useState(false)
+  const desktopAboutRef = useRef<HTMLDivElement | null>(null)
   const location = useLocation()
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 12)
@@ -164,11 +167,13 @@ export default function Navbar({ ctaRadiusClassName = "rounded-full" }: NavbarPr
   useEffect(() => {
     if (!mobileOpen) {
       setMobileNetworkOpen(false)
+      setMobileAboutOpen(false)
     }
   }, [mobileOpen])
 
   useEffect(() => {
     setDesktopNetworkOpen(false)
+    setDesktopAboutOpen(false)
   }, [location.pathname])
 
   useEffect(() => {
@@ -199,6 +204,25 @@ export default function Navbar({ ctaRadiusClassName = "rounded-full" }: NavbarPr
     }
   }, [desktopNetworkOpen])
 
+  useEffect(() => {
+    if (!desktopAboutOpen) return
+    const handleKeyDown = (e: globalThis.KeyboardEvent) => {
+      if (e.key === "Escape") setDesktopAboutOpen(false)
+    }
+    const handlePointerDown = (e: MouseEvent | PointerEvent) => {
+      const root = desktopAboutRef.current
+      if (!root) return
+      if (e.target instanceof Node && root.contains(e.target)) return
+      setDesktopAboutOpen(false)
+    }
+    window.addEventListener("keydown", handleKeyDown)
+    window.addEventListener("pointerdown", handlePointerDown)
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown)
+      window.removeEventListener("pointerdown", handlePointerDown)
+    }
+  }, [desktopAboutOpen])
+
   const handleToggleMobile = useCallback(() => {
     setMobileOpen((o) => !o)
   }, [])
@@ -228,7 +252,8 @@ export default function Navbar({ ctaRadiusClassName = "rounded-full" }: NavbarPr
     pathname === "/advisors" ||
     pathname === "/investors" ||
     pathname === "/industry-partners" ||
-    pathname === "/programs"
+    pathname === "/events" ||
+    pathname.startsWith("/programs")
 
   const desktopTone: "light" | "dark" =
     !mobileOpen && !scrolled && !hasTealHero ? "light" : "dark"
@@ -260,15 +285,31 @@ export default function Navbar({ ctaRadiusClassName = "rounded-full" }: NavbarPr
     location.pathname === "/network" ||
     networkItems.some((i) => i.active)
 
-  const navLinks = useMemo(
+  const aboutItems = useMemo<NetworkItem[]>(
+    () => [
+      { to: "/about", label: "About Us", active: location.pathname === "/about" },
+      { to: "/stories", label: "Stories", active: location.pathname === "/stories" || location.pathname.startsWith("/stories/") },
+    ],
+    [location.pathname],
+  )
+
+  const isAboutActive = aboutItems.some((i) => i.active)
+
+  const primaryLinks = useMemo(
     () => [
       {
         to: "/programs",
         label: "PROGRAMS",
         active: location.pathname === "/programs" || location.pathname.startsWith("/programs/"),
       },
-      { to: "/stories", label: "STORIES", active: location.pathname === "/stories" || location.pathname.startsWith("/stories/") },
-      { to: "/about", label: "ABOUT", active: isActive("/about") },
+      { to: "/events", label: "EVENTS", active: isActive("/events") },
+    ],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [location.pathname],
+  )
+
+  const secondaryLinks = useMemo(
+    () => [
       { to: "/faq", label: "FAQ", active: isActive("/faq") },
       { to: "/contact", label: "CONTACT", active: isActive("/contact") },
     ],
@@ -364,11 +405,41 @@ export default function Navbar({ ctaRadiusClassName = "rounded-full" }: NavbarPr
                 active={isNetworkActive}
                 tone={desktopTone}
                 open={desktopNetworkOpen}
-                onToggle={() => setDesktopNetworkOpen((o) => !o)}
+                onToggle={() => {
+                  setDesktopAboutOpen(false)
+                  setDesktopNetworkOpen((o) => !o)
+                }}
                 onClose={() => setDesktopNetworkOpen(false)}
               />
             </div>
-            {navLinks.map((l) => (
+
+            {primaryLinks.map((l) => (
+              <DesktopNavLink
+                key={l.to}
+                to={l.to}
+                label={l.label}
+                active={l.active}
+                tone={desktopTone}
+              />
+            ))}
+
+            <div ref={desktopAboutRef}>
+              <DesktopNavDropdown
+                label="ABOUT"
+                to="/about"
+                items={aboutItems}
+                active={isAboutActive}
+                tone={desktopTone}
+                open={desktopAboutOpen}
+                onToggle={() => {
+                  setDesktopNetworkOpen(false)
+                  setDesktopAboutOpen((o) => !o)
+                }}
+                onClose={() => setDesktopAboutOpen(false)}
+              />
+            </div>
+
+            {secondaryLinks.map((l) => (
               <DesktopNavLink
                 key={l.to}
                 to={l.to}
@@ -523,33 +594,62 @@ export default function Navbar({ ctaRadiusClassName = "rounded-full" }: NavbarPr
               </Link>
 
               <Link
-                to="/stories"
                 className={cn(
                   "flex min-h-12 cursor-pointer items-center gap-3 rounded-xl px-3 py-3 font-host-grotesk text-base font-medium text-white outline-none transition-colors hover:bg-white/10 focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-rellia-teal",
-                  (location.pathname === "/stories" || location.pathname.startsWith("/stories/")) &&
-                    "bg-white/10 ring-1 ring-white/15 text-rellia-mint",
+                  isActive("/events") && "bg-white/10 ring-1 ring-white/15 text-rellia-mint",
                 )}
+                to="/events"
                 onClick={handleCloseMobile}
-                aria-current={
-                  location.pathname === "/stories" || location.pathname.startsWith("/stories/")
-                    ? "page"
-                    : undefined
-                }
+                aria-current={isActive("/events") ? "page" : undefined}
               >
-                STORIES
+                EVENTS
               </Link>
 
-              <Link
-                to="/about"
+              <button
+                type="button"
                 className={cn(
-                  "flex min-h-12 cursor-pointer items-center gap-3 rounded-xl px-3 py-3 font-host-grotesk text-base font-medium text-white outline-none transition-colors hover:bg-white/10 focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-rellia-teal",
-                  isActive("/about") && "bg-white/10 ring-1 ring-white/15 text-rellia-mint",
+                  "flex min-h-12 w-full cursor-pointer items-center justify-between rounded-xl px-3 py-3 font-host-grotesk text-base font-medium text-white outline-none transition-colors hover:bg-white/10 focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-rellia-teal",
+                  isAboutActive && "bg-white/10 ring-1 ring-white/15 text-rellia-mint",
                 )}
-                onClick={handleCloseMobile}
-                aria-current={isActive("/about") ? "page" : undefined}
+                onClick={() => setMobileAboutOpen((o) => !o)}
+                aria-expanded={mobileAboutOpen}
+                aria-label="Toggle About menu"
               >
-                ABOUT
-              </Link>
+                <span>ABOUT</span>
+                <ChevronDown
+                  aria-hidden
+                  className={cn(
+                    "h-5 w-5 transition-transform duration-300 ease-out motion-reduce:transition-none",
+                    mobileAboutOpen ? "rotate-180" : "rotate-0",
+                  )}
+                />
+              </button>
+
+              <div
+                className={cn(
+                  "grid will-change-[grid-template-rows,opacity] transition-[grid-template-rows,opacity] duration-450 ease-out motion-reduce:transition-none",
+                  mobileAboutOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0",
+                )}
+              >
+                <div className="overflow-hidden">
+                  <div className="mb-2 mt-2 space-y-1 border-l-2 border-rellia-mint/80 pl-4 ml-3">
+                    {aboutItems.map((item) => (
+                      <Link
+                        key={item.to}
+                        to={item.to}
+                        className={cn(
+                          "flex min-h-11 cursor-pointer items-center rounded-xl px-3 py-2.5 font-urbanist text-[15px] font-semibold text-white/90 outline-none transition-colors hover:bg-white/10 hover:text-white focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-rellia-teal",
+                          item.active && "bg-white/10 ring-1 ring-white/15 text-rellia-mint",
+                        )}
+                        onClick={handleCloseMobile}
+                        aria-current={item.active ? "page" : undefined}
+                      >
+                        {item.label}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              </div>
 
               <Link
                 to="/faq"

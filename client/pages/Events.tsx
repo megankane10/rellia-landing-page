@@ -1,35 +1,32 @@
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
-import ScrollReveal from "@/components/ScrollReveal";
-import RelliaCta, { ctaActionFromHref } from "@/components/RelliaCta";
-import { ProgramCard } from "@/components/cards";
-import { useProgramsLandingPage } from "@/hooks/useCmsDocuments";
-import { DEFAULT_PROGRAMS_LANDING } from "@shared/cms/defaults";
-import { useMemo, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import Navbar from "@/components/Navbar"
+import Footer from "@/components/Footer"
+import ScrollReveal from "@/components/ScrollReveal"
+import RelliaCta, { ctaActionFromHref } from "@/components/RelliaCta"
+import { EventCard, eventKey } from "@/components/cards"
+import { useProgramsLandingPage } from "@/hooks/useCmsDocuments"
+import { DEFAULT_PROGRAMS_LANDING } from "@shared/cms/defaults"
+import { useMemo, useState } from "react"
+import { AnimatePresence, motion } from "framer-motion"
 
-type ProgramFilter = "all" | "available" | "waitlist";
+type EventsFilter = "all" | "upcoming" | "past"
 
-export default function ProgramsEvents() {
-  const { data } = useProgramsLandingPage();
-  const pl = data ?? DEFAULT_PROGRAMS_LANDING;
-  const [programFilter, setProgramFilter] = useState<ProgramFilter>("all");
+export default function Events() {
+  const { data } = useProgramsLandingPage()
+  const pl = data ?? DEFAULT_PROGRAMS_LANDING
+  const [eventsFilter, setEventsFilter] = useState<EventsFilter>("all")
 
-  const { availablePrograms, waitlistPrograms } = useMemo(() => {
-    const programs = pl.programs ?? []
-    const available = programs.filter((p) => Boolean(p.href && p.href.trim().length > 0))
-    const waitlist = programs.filter(
-      (p) => !Boolean(p.href && p.href.trim().length > 0) && Boolean(p.waitlistHref && p.waitlistHref.trim().length > 0),
-    )
-    return { availablePrograms: available, waitlistPrograms: waitlist }
-  }, [pl.programs])
-
-  const visiblePrograms =
-    programFilter === "all"
-      ? pl.programs
-      : programFilter === "available"
-        ? availablePrograms
-        : waitlistPrograms
+  const visibleEvents = useMemo(() => {
+    if (eventsFilter === "upcoming") {
+      return pl.upcomingEvents.map((e) => ({ ...e, _variant: "upcoming" as const }))
+    }
+    if (eventsFilter === "past") {
+      return pl.pastEvents.map((e) => ({ ...e, _variant: "past" as const }))
+    }
+    return [
+      ...pl.upcomingEvents.map((e) => ({ ...e, _variant: "upcoming" as const })),
+      ...pl.pastEvents.map((e) => ({ ...e, _variant: "past" as const })),
+    ]
+  }, [eventsFilter, pl.pastEvents, pl.upcomingEvents])
 
   return (
     <div className="min-h-screen bg-white font-host-grotesk overflow-x-hidden">
@@ -45,46 +42,47 @@ export default function ProgramsEvents() {
             <div className="absolute left-1/3 bottom-[-220px] h-[620px] w-[620px] -translate-x-1/2 rounded-full bg-rellia-mint/15 blur-3xl" />
             <div className="absolute inset-0 opacity-[0.22] mix-blend-soft-light [background-image:radial-gradient(circle_at_20%_10%,rgba(255,255,255,0.18),transparent_55%),radial-gradient(circle_at_80%_35%,rgba(255,255,255,0.12),transparent_52%),radial-gradient(circle_at_40%_95%,rgba(255,255,255,0.14),transparent_55%)]" />
           </div>
+
           <div className="relative z-10 max-w-[1300px] mx-auto px-6 md:px-10">
             <ScrollReveal>
               <h1 className="text-white text-4xl md:text-5xl lg:text-6xl font-bold leading-tight tracking-tight mb-5">
-                {pl.heroTitleLine1}{" "}
-                <span className="text-rellia-mint">{pl.heroTitleMint}</span>
+                Connect &amp; <span className="text-rellia-mint">Learn</span>
               </h1>
               <p className="text-white/80 text-lg md:text-2xl max-w-3xl font-urbanist leading-relaxed">
-                {pl.heroSubtitle}
+                Join live sessions with operators, clinicians, and health tech leaders. Register on Luma to save your
+                seat.
               </p>
             </ScrollReveal>
           </div>
         </section>
 
-        <section id="view-programs" className="py-12 md:py-16 bg-white">
+        <section className="py-16 md:py-20 bg-rellia-cream/50">
           <div className="max-w-[1300px] mx-auto px-6 md:px-10">
-            <ScrollReveal className="mb-12 text-center">
+            <ScrollReveal className="mb-10 flex flex-col items-center text-center">
               <h2 className="font-host-grotesk font-semibold text-black text-3xl md:text-[40px] leading-tight tracking-tight">
-                {pl.programsSectionTitle}
+                Events
               </h2>
-              <p className="font-urbanist text-black/60 text-base md:text-lg mt-4 max-w-2xl mx-auto leading-relaxed">
-                {pl.programsSectionSubtitle}
+              <p className="font-urbanist text-black/60 text-base md:text-lg mt-4 max-w-2xl leading-relaxed">
+                Switch between upcoming and past events, or view everything in one place.
               </p>
             </ScrollReveal>
 
             <ScrollReveal>
-              <div className="mb-8 flex flex-col items-center gap-4">
+              <div className="mb-10 flex flex-col items-center gap-4">
                 <div className="inline-flex rounded-full border border-black/10 bg-white p-1 shadow-sm">
                   <button
                     type="button"
-                    onClick={() => setProgramFilter("all")}
+                    onClick={() => setEventsFilter("all")}
                     onKeyDown={(e) => {
                       if (e.key === "Enter" || e.key === " ") {
                         e.preventDefault()
-                        setProgramFilter("all")
+                        setEventsFilter("all")
                       }
                     }}
-                    aria-label="Show all programs"
+                    aria-label="Show all events"
                     className={[
                       "min-h-11 rounded-full px-4 text-sm font-semibold transition-colors",
-                      programFilter === "all"
+                      eventsFilter === "all"
                         ? "bg-rellia-teal text-white"
                         : "text-black/70 hover:text-black",
                     ].join(" ")}
@@ -93,83 +91,59 @@ export default function ProgramsEvents() {
                   </button>
                   <button
                     type="button"
-                    onClick={() => setProgramFilter("available")}
+                    onClick={() => setEventsFilter("upcoming")}
                     onKeyDown={(e) => {
                       if (e.key === "Enter" || e.key === " ") {
                         e.preventDefault()
-                        setProgramFilter("available")
+                        setEventsFilter("upcoming")
                       }
                     }}
-                    aria-label="Show available programs"
+                    aria-label="Show upcoming events"
                     className={[
                       "min-h-11 rounded-full px-4 text-sm font-semibold transition-colors",
-                      programFilter === "available"
+                      eventsFilter === "upcoming"
                         ? "bg-rellia-teal text-white"
                         : "text-black/70 hover:text-black",
                     ].join(" ")}
                   >
-                    Available
+                    Upcoming
                   </button>
                   <button
                     type="button"
-                    onClick={() => setProgramFilter("waitlist")}
+                    onClick={() => setEventsFilter("past")}
                     onKeyDown={(e) => {
                       if (e.key === "Enter" || e.key === " ") {
                         e.preventDefault()
-                        setProgramFilter("waitlist")
+                        setEventsFilter("past")
                       }
                     }}
-                    aria-label="Show waitlist programs"
+                    aria-label="Show past events"
                     className={[
                       "min-h-11 rounded-full px-4 text-sm font-semibold transition-colors",
-                      programFilter === "waitlist"
+                      eventsFilter === "past"
                         ? "bg-rellia-teal text-white"
                         : "text-black/70 hover:text-black",
                     ].join(" ")}
                   >
-                    Waitlist
+                    Past
                   </button>
                 </div>
-
-                <p className="font-urbanist text-black/55 text-sm">
-                  {programFilter === "all"
-                    ? "Browse all programs."
-                    : programFilter === "available"
-                      ? "Programs you can join now."
-                      : "Programs opening soon — join the waitlist."}
-                </p>
               </div>
+            </ScrollReveal>
 
-              <motion.div
-                layout
-                transition={{ layout: { duration: 0.32, ease: [0.16, 1, 0.3, 1] } }}
-                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 will-change-transform"
-              >
-                <AnimatePresence mode="sync" initial={false}>
-                  {visiblePrograms.map((p) => (
+            <ScrollReveal>
+              <motion.div layout className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <AnimatePresence mode="popLayout" initial={false}>
+                  {visibleEvents.map((event) => (
                     <motion.div
-                      key={`${p.title}-${p.imageSrc}`}
-                      layout="position"
+                      key={eventKey(event)}
+                      layout
                       initial={{ opacity: 0, y: 14 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: 10 }}
-                      transition={{
-                        duration: 0.26,
-                        ease: [0.16, 1, 0.3, 1],
-                        layout: { duration: 0.32, ease: [0.16, 1, 0.3, 1] },
-                      }}
+                      transition={{ duration: 0.26, ease: [0.16, 1, 0.3, 1] }}
                     >
-                      <ProgramCard
-                        title={p.title}
-                        description={p.description}
-                        imageSrc={p.imageSrc}
-                        href={p.href}
-                        buttonText={p.buttonText}
-                        waitlistHref={p.waitlistHref}
-                        priceLabel={p.priceLabel}
-                        priceAmount={p.priceAmount}
-                        priceSuffix={p.priceSuffix}
-                      />
+                      <EventCard event={event} variant={event._variant} />
                     </motion.div>
                   ))}
                 </AnimatePresence>
@@ -177,15 +151,16 @@ export default function ProgramsEvents() {
             </ScrollReveal>
           </div>
         </section>
-
         <RelliaCta
-          title={pl.ctaTitle}
-          body={pl.ctaBody}
-          primary={ctaActionFromHref(pl.ctaButtonLabel, pl.ctaButtonHref)}
+          title="Want to speak at a Rellia event?"
+          body="If you have a practical playbook for founders building in health tech, we’d love to hear from you. Share your topic and availability — we’ll follow up quickly."
+          primary={ctaActionFromHref("Contact page", "/contact")}
+          secondary={ctaActionFromHref("Join the network", "/network")}
         />
       </main>
 
       <Footer />
     </div>
-  );
+  )
 }
+

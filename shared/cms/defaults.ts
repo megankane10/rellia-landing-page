@@ -483,10 +483,10 @@ export const DEFAULT_PROGRAMS_LANDING: ProgramsLandingContent = {
   ],
   upcomingEvents: [
     {
-      title: "Leadership Mindset for Health tech founders",
+      title: "Leadership Under Pressure",
       dateTime: "May 6th at 12PM",
-      person: "Rellia Health",
-      imageSrc: "/images/leadership-mindset.jpg",
+      person: "Dr. Sabina Nagpal • Radiate Mind",
+      imageSrc: "/images/event-leadershipUnderPressure.jpg",
       href: "https://luma.com/bgvqn7ia",
     },
   ],
@@ -494,7 +494,7 @@ export const DEFAULT_PROGRAMS_LANDING: ProgramsLandingContent = {
     {
       title: "Health System Adoption for Startups",
       dateTime: "Thursday, April 9 — 2:00 PM EDT",
-      person: "Rellia Health",
+      person: "Rellia Health • Rellia Health",
       imageSrc: "/images/events-healthsystem.jpg",
       href: "https://luma.com/ao1g8a7h",
       buttonText: "View Event",
@@ -502,7 +502,7 @@ export const DEFAULT_PROGRAMS_LANDING: ProgramsLandingContent = {
     {
       title: "Why Healthcare Keeps Saying No to Your AI (And How to Fix It)",
       dateTime: "Thursday, March 12 — 1:00 PM EDT",
-      person: "Brenton Hill, CHAI",
+      person: "Brenton Hill • CHAI",
       imageSrc: "/images/event-WhyHealthcareSayingNo.jpg",
       href: "https://luma.com/1vx5stu2",
       buttonText: "View Event",
@@ -510,7 +510,7 @@ export const DEFAULT_PROGRAMS_LANDING: ProgramsLandingContent = {
     {
       title: "Ask a QMS Expert",
       dateTime: "Thursday, February 19 — 12:00 PM EST",
-      person: "QMS Expert Panel",
+      person: "QMS Expert Panel • Rellia Health",
       imageSrc: "/images/event-askQmsExpert.jpg",
       href: "https://luma.com/w61qj0g5",
       buttonText: "View Event",
@@ -518,7 +518,7 @@ export const DEFAULT_PROGRAMS_LANDING: ProgramsLandingContent = {
     {
       title: "Set Your Stage",
       dateTime: "Thursday, December 4, 2025 — 12:00 PM EST",
-      person: "Alexis Orchard, Orchard Presents",
+      person: "Alexis Orchard • Orchard Presents",
       imageSrc: "/images/event-setYourStage.jpg",
       href: "https://luma.com/5s736thc",
       buttonText: "View Event",
@@ -526,7 +526,7 @@ export const DEFAULT_PROGRAMS_LANDING: ProgramsLandingContent = {
     {
       title: "Clinician Connect: Women's Health",
       dateTime: "Thursday, November 20, 2025 — 12:00 PM EST",
-      person: "Rellia Health",
+      person: "Rellia Health • Rellia Health",
       imageSrc: "/images/event-clinicianConnect.jpg",
       href: "https://luma.com/k6fbogr8",
       buttonText: "View Event",

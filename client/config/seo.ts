@@ -33,6 +33,12 @@ const ROUTE_SEO: Record<string, RouteSeoConfig> = {
       "Answers to common questions about Rellia Health programs, membership, events, and how we work with founders and partners.",
     indexable: true,
   },
+  "/events": {
+    title: "Events — Rellia Health",
+    description:
+      "Register for upcoming Rellia Health events on Luma and explore past event pages. Practical sessions for builders in health tech.",
+    indexable: true,
+  },
   "/programs": {
     title: "Programs & Events — Rellia Health",
     description:
