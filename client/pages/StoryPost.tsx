@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils"
 import { getStoryBySlug } from "@/content/stories"
 import { getDefaultOgImageUrl, getSiteUrl } from "@/config/seo"
 import { ChevronLeft } from "lucide-react"
+import { AnimatePresence, motion } from "framer-motion"
 
 const shareButtonClassName =
   "inline-flex h-11 w-11 items-center justify-center rounded-full bg-white text-rellia-teal transition-transform transition-colors hover:-translate-y-0.5 hover:bg-rellia-mint focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-rellia-teal"
@@ -126,10 +127,9 @@ export default function StoryPost() {
             <img
               src={toAbsoluteImageUrl(story.coverImageSrc)}
               alt=""
-              className="absolute inset-0 h-full w-full object-cover opacity-[0.28]"
+              className="absolute inset-0 h-full w-full object-cover opacity-[0.62]"
             />
-            <div className="absolute inset-0 bg-black/15" />
-            <div className="absolute inset-0 bg-gradient-to-b from-rellia-cream/70 via-rellia-cream/65 to-rellia-cream" />
+            <div className="absolute inset-0 bg-gradient-to-r from-rellia-cream/90 via-rellia-cream/55 to-transparent" />
             <div className="absolute -left-28 -top-32 h-[520px] w-[520px] rounded-full bg-rellia-mint/20 blur-3xl" />
             <div className="absolute -right-40 top-1/3 h-[560px] w-[560px] -translate-y-1/2 rounded-full bg-rellia-teal/10 blur-3xl" />
             <div className="absolute left-1/3 bottom-[-220px] h-[620px] w-[620px] -translate-x-1/2 rounded-full bg-rellia-mint/15 blur-3xl" />
@@ -150,7 +150,7 @@ export default function StoryPost() {
                   <h1 className="mt-6 text-rellia-teal text-3xl md:text-4xl lg:text-5xl font-medium leading-tight tracking-tight">
                     {story.title}
                   </h1>
-                  <p className="mt-4 text-black/65 text-base md:text-lg max-w-3xl font-urbanist font-normal leading-relaxed">
+                  <p className="mt-4 text-black text-base md:text-lg max-w-3xl font-urbanist font-normal leading-relaxed">
                     {story.excerpt}
                   </p>
 
@@ -205,6 +205,21 @@ export default function StoryPost() {
                       >
                         <CopyFilledIcon className="h-4 w-4" />
                       </button>
+
+                      <AnimatePresence mode="wait" initial={false}>
+                        {copyState === "copied" ? (
+                          <motion.span
+                            key="copied-feedback"
+                            className="font-host-grotesk text-sm font-semibold text-rellia-teal"
+                            initial={{ opacity: 0, y: 4, scale: 0.98 }}
+                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                            exit={{ opacity: 0, y: -4, scale: 0.98 }}
+                            transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+                          >
+                            Copied!
+                          </motion.span>
+                        ) : null}
+                      </AnimatePresence>
                     </div>
                   </div>
                 </ScrollReveal>
@@ -312,8 +327,10 @@ export default function StoryPost() {
             <div className="mt-12 border-t border-black/10 pt-8">
               <Link
                 to="/stories"
-                className="inline-flex items-center rounded-full border-2 border-rellia-teal bg-white px-6 py-3 font-host-grotesk font-semibold text-rellia-teal transition-colors hover:bg-rellia-teal hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2"
+                className="inline-flex items-center gap-2 font-host-grotesk text-sm font-semibold text-rellia-teal hover:underline hover:underline-offset-4"
+                aria-label="Back to stories"
               >
+                <ChevronLeft className="h-4 w-4" aria-hidden />
                 Back to stories
               </Link>
             </div>

@@ -73,7 +73,7 @@ export default function FeaturedStories({
         {showHeading ? (
           <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
             <ScrollReveal className="max-w-2xl">
-              <h2 className="font-host-grotesk font-medium text-black text-2xl leading-snug tracking-tight md:text-[30px]">
+              <h2 className="font-host-grotesk font-medium text-black text-[22px] leading-snug tracking-tight md:text-[28px]">
                 {title}
               </h2>
               {description ? (
@@ -82,16 +82,6 @@ export default function FeaturedStories({
                 </p>
               ) : null}
             </ScrollReveal>
-
-            {showViewAll ? (
-              <div className="flex shrink-0 items-center gap-3">
-                <RelliaAction asChild variant="outlineOnWhite" size="compact" className="px-5">
-                  <Link to="/stories" aria-label="View all stories">
-                    View all
-                  </Link>
-                </RelliaAction>
-              </div>
-            ) : null}
           </div>
         ) : null}
 
@@ -147,20 +137,12 @@ export default function FeaturedStories({
                           {activeStory.title}
                         </h3>
 
-                        <Link
-                          to={storyHref}
-                          className="mt-4 inline-flex items-center gap-2 font-host-grotesk text-sm font-semibold text-rellia-mint hover:underline hover:underline-offset-4 md:hidden"
-                          aria-label={`Read: ${activeStory.title}`}
-                        >
-                          Read story <ArrowRight className="h-4 w-4" aria-hidden />
-                        </Link>
-
                         <p className="mt-4 max-w-2xl text-pretty text-white/85 text-sm font-urbanist leading-relaxed md:mt-5 md:text-base lg:max-w-3xl line-clamp-3">
                           {activeStory.excerpt}
                         </p>
                       </div>
 
-                      <div className="mt-6 md:mt-8 hidden md:block">
+                      <div className="mt-6 md:mt-8 hidden md:flex items-center gap-3">
                         <RelliaAction
                           asChild
                           variant="heroSolidOnTeal"
@@ -171,6 +153,36 @@ export default function FeaturedStories({
                             Read story <ArrowRight className="h-4 w-4" aria-hidden />
                           </Link>
                         </RelliaAction>
+
+                        {showViewAll ? (
+                          <RelliaAction asChild variant="heroGhostOnTeal" size="comfortable" className="md:px-7">
+                            <Link to="/stories" aria-label="View all stories">
+                              View all
+                            </Link>
+                          </RelliaAction>
+                        ) : null}
+                      </div>
+
+                      <div className="mt-6 w-full md:hidden">
+                        <div className="flex items-center justify-between gap-4">
+                          <Link
+                            to={storyHref}
+                            className="inline-flex items-center gap-2 font-host-grotesk text-sm font-semibold text-rellia-mint hover:underline hover:underline-offset-4"
+                            aria-label={`Read: ${activeStory.title}`}
+                          >
+                            Read story <ArrowRight className="h-4 w-4" aria-hidden />
+                          </Link>
+
+                          {showViewAll ? (
+                            <Link
+                              to="/stories"
+                              className="inline-flex items-center gap-2 font-host-grotesk text-sm font-semibold text-white hover:underline hover:underline-offset-4"
+                              aria-label="View all stories"
+                            >
+                              Read all <ArrowRight className="h-4 w-4" aria-hidden />
+                            </Link>
+                          ) : null}
+                        </div>
                       </div>
 
                       <div aria-hidden className="pointer-events-none z-[15] mt-6 w-full">
@@ -216,7 +228,7 @@ export default function FeaturedStories({
                         )}
                       >
                         {featured.length > 0 ? (
-                          <p className="min-w-0 text-left text-[10px] font-semibold uppercase tracking-[0.14em] text-white/55 md:text-xs">
+                          <p className="min-w-0 text-left text-xs font-semibold uppercase tracking-[0.14em] text-white/55 md:text-xs">
                             {`${activeIndex + 1} / ${featured.length}`}
                           </p>
                         ) : null}

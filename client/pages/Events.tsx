@@ -3,7 +3,9 @@ import Footer from "@/components/Footer"
 import ScrollReveal from "@/components/ScrollReveal"
 import RelliaCta, { ctaActionFromHref } from "@/components/RelliaCta"
 import { EventCard, eventKey } from "@/components/cards"
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useProgramsLandingPage } from "@/hooks/useCmsDocuments"
+import { cn } from "@/lib/utils"
 import { DEFAULT_PROGRAMS_LANDING } from "@shared/cms/defaults"
 import { useEffect, useMemo, useState } from "react"
 import { AnimatePresence, motion } from "framer-motion"
@@ -17,6 +19,12 @@ export default function Events() {
   const pl = data ?? DEFAULT_PROGRAMS_LANDING
   const [eventsFilter, setEventsFilter] = useState<EventsFilter>("all")
   const [page, setPage] = useState(1)
+
+  const filters: Array<{ label: string; value: EventsFilter }> = [
+    { label: "All", value: "all" },
+    { label: "Upcoming", value: "upcoming" },
+    { label: "Past", value: "past" },
+  ]
 
   const visibleEvents = useMemo(() => {
     if (eventsFilter === "upcoming") {
@@ -54,7 +62,7 @@ export default function Events() {
           <div aria-hidden className="absolute inset-0 pointer-events-none">
             <div className="absolute inset-0 bg-gradient-to-r from-rellia-teal/85 via-rellia-teal/55 to-rellia-teal/30" />
             <div className="absolute -left-28 -top-32 h-[520px] w-[520px] rounded-full bg-rellia-mint/25 blur-3xl" />
-            <div className="absolute -right-40 top-1/3 h-[560px] w-[560px] -translate-y-1/2 rounded-full bg-white/10 blur-3xl" />
+            <div className="absolute -right-16 sm:-right-28 md:-right-40 top-1/3 h-[560px] w-[560px] -translate-y-1/2 rounded-full bg-white/10 blur-3xl" />
             <div className="absolute left-1/3 bottom-[-220px] h-[620px] w-[620px] -translate-x-1/2 rounded-full bg-rellia-mint/15 blur-3xl" />
             <div className="absolute inset-0 opacity-[0.22] mix-blend-soft-light [background-image:radial-gradient(circle_at_20%_10%,rgba(255,255,255,0.18),transparent_55%),radial-gradient(circle_at_80%_35%,rgba(255,255,255,0.12),transparent_52%),radial-gradient(circle_at_40%_95%,rgba(255,255,255,0.14),transparent_55%)]" />
           </div>
@@ -75,64 +83,78 @@ export default function Events() {
           <div className="max-w-[1300px] mx-auto px-6 md:px-10">
             <ScrollReveal>
               <div className="mb-10 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-                <div className="inline-flex rounded-full border border-black/10 bg-white p-1 shadow-sm w-fit">
-                  <button
-                    type="button"
-                    onClick={() => setEventsFilter("all")}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter" || e.key === " ") {
-                        e.preventDefault()
-                        setEventsFilter("all")
-                      }
-                    }}
-                    aria-label="Show all events"
-                    className={[
-                      "min-h-11 rounded-full px-4 text-sm font-semibold transition-colors",
-                      eventsFilter === "all"
-                        ? "bg-rellia-teal text-white"
-                        : "text-black/70 hover:text-black",
-                    ].join(" ")}
-                  >
-                    All
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setEventsFilter("upcoming")}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter" || e.key === " ") {
-                        e.preventDefault()
-                        setEventsFilter("upcoming")
-                      }
-                    }}
-                    aria-label="Show upcoming events"
-                    className={[
-                      "min-h-11 rounded-full px-4 text-sm font-semibold transition-colors",
-                      eventsFilter === "upcoming"
-                        ? "bg-rellia-teal text-white"
-                        : "text-black/70 hover:text-black",
-                    ].join(" ")}
-                  >
-                    Upcoming
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setEventsFilter("past")}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter" || e.key === " ") {
-                        e.preventDefault()
-                        setEventsFilter("past")
-                      }
-                    }}
-                    aria-label="Show past events"
-                    className={[
-                      "min-h-11 rounded-full px-4 text-sm font-semibold transition-colors",
-                      eventsFilter === "past"
-                        ? "bg-rellia-teal text-white"
-                        : "text-black/70 hover:text-black",
-                    ].join(" ")}
-                  >
-                    Past
-                  </button>
+                <div className="w-full md:w-auto">
+                  {/* Mobile: full-width segmented options */}
+                  <div className="md:hidden">
+                    <Tabs value={eventsFilter} onValueChange={(v) => setEventsFilter(v as EventsFilter)}>
+                      <TabsList
+                        className={cn(
+                          "relative h-auto w-full gap-1 rounded-full bg-white p-1.5",
+                          "border border-black/10 shadow-[0_12px_32px_-22px_rgba(0,0,0,0.22)]",
+                        )}
+                      >
+                        {filters.map((f) => (
+                          <TabsTrigger
+                            key={f.value}
+                            value={f.value}
+                            className={cn(
+                              "relative z-10 flex-1 rounded-full px-3 py-2.5 text-center",
+                              "font-host-grotesk text-[12px] font-semibold uppercase tracking-[0.14em]",
+                              "text-black/80 hover:text-rellia-teal",
+                              "data-[state=active]:text-white",
+                              "focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-white",
+                            )}
+                          >
+                            {eventsFilter === f.value ? (
+                              <motion.span
+                                layoutId="events-filter-pill"
+                                className="absolute inset-0 -z-10 rounded-full bg-rellia-teal shadow-sm"
+                                transition={{ type: "spring", stiffness: 520, damping: 42 }}
+                                aria-hidden
+                              />
+                            ) : null}
+                            {f.label}
+                          </TabsTrigger>
+                        ))}
+                      </TabsList>
+                    </Tabs>
+                  </div>
+
+                  {/* Desktop: segmented tabs */}
+                  <div className="hidden md:block">
+                    <Tabs value={eventsFilter} onValueChange={(v) => setEventsFilter(v as EventsFilter)}>
+                      <TabsList
+                        className={cn(
+                          "relative h-auto w-fit gap-1 rounded-full bg-white p-1.5",
+                          "border border-black/10 shadow-[0_12px_32px_-22px_rgba(0,0,0,0.22)]",
+                        )}
+                      >
+                        {filters.map((f) => (
+                          <TabsTrigger
+                            key={f.value}
+                            value={f.value}
+                            className={cn(
+                              "relative z-10 rounded-full px-4 py-2.5",
+                              "font-host-grotesk text-[12px] font-semibold uppercase tracking-[0.14em]",
+                              "text-black/80 hover:text-rellia-teal",
+                              "data-[state=active]:text-white",
+                              "focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-white",
+                            )}
+                          >
+                            {eventsFilter === f.value ? (
+                              <motion.span
+                                layoutId="events-filter-pill"
+                                className="absolute inset-0 -z-10 rounded-full bg-rellia-teal shadow-sm"
+                                transition={{ type: "spring", stiffness: 520, damping: 42 }}
+                                aria-hidden
+                              />
+                            ) : null}
+                            {f.label}
+                          </TabsTrigger>
+                        ))}
+                      </TabsList>
+                    </Tabs>
+                  </div>
                 </div>
 
                 <p className="font-urbanist text-sm text-black/55 md:text-right">
@@ -142,16 +164,24 @@ export default function Events() {
             </ScrollReveal>
 
             <ScrollReveal>
-              <motion.div layout className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <AnimatePresence mode="popLayout" initial={false}>
+              <motion.div
+                layout
+                transition={{ layout: { duration: 0.32, ease: [0.16, 1, 0.3, 1] } }}
+                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 will-change-transform"
+              >
+                <AnimatePresence mode="sync" initial={false}>
                   {pageEvents.map((event) => (
                     <motion.div
                       key={eventKey(event)}
-                      layout
+                      layout="position"
                       initial={{ opacity: 0, y: 14 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: 10 }}
-                      transition={{ duration: 0.26, ease: [0.16, 1, 0.3, 1] }}
+                      transition={{
+                        duration: 0.26,
+                        ease: [0.16, 1, 0.3, 1],
+                        layout: { duration: 0.32, ease: [0.16, 1, 0.3, 1] },
+                      }}
                     >
                       <EventCard event={event} variant={event._variant} />
                     </motion.div>

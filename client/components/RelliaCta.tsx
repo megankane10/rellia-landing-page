@@ -33,6 +33,10 @@ export type RelliaCtaProps = {
   primary: RelliaCtaAction
   /** Optional secondary action — rendered as a ghost-on-teal button. */
   secondary?: RelliaCtaAction
+  /** Smaller typography for shorter CTAs (FAQ, etc.) */
+  size?: "default" | "compact"
+  /** Render the primary action as a button or a text link. */
+  primaryStyle?: "button" | "text"
   /** Override the outer section className (advanced — defaults handle spacing/footer gap). */
   className?: string
 }
@@ -74,6 +78,37 @@ function CtaActionButton({
   )
 }
 
+function CtaActionTextLink({ action }: { action: RelliaCtaAction }) {
+  const content = (
+    <>
+      {action.label}
+      <ArrowRight className="h-4 w-4" aria-hidden />
+    </>
+  )
+
+  const linkClassName =
+    "inline-flex items-center justify-center gap-2 font-host-grotesk text-sm font-semibold text-white hover:underline hover:underline-offset-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-rellia-teal"
+
+  if (action.to) {
+    return (
+      <Link to={action.to} className={linkClassName} aria-label={action.label}>
+        {content}
+      </Link>
+    )
+  }
+
+  return (
+    <a
+      href={action.href}
+      className={linkClassName}
+      aria-label={action.label}
+      {...(action.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+    >
+      {content}
+    </a>
+  )
+}
+
 /**
  * Modular bottom-of-page call to action.
  *
@@ -86,6 +121,8 @@ export default function RelliaCta({
   body,
   primary,
   secondary,
+  size = "default",
+  primaryStyle = "button",
   className,
 }: RelliaCtaProps) {
   return (
@@ -117,22 +154,36 @@ export default function RelliaCta({
             </div>
 
             <div className="relative z-10 mx-auto flex w-full max-w-3xl flex-col items-center px-1 sm:px-0">
-              <h2 className="text-white text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight leading-[1.1]">
+              <h2
+                className={cn(
+                  "text-white font-bold tracking-tight leading-[1.1]",
+                  size === "compact" ? "text-2xl md:text-3xl lg:text-4xl" : "text-3xl md:text-4xl lg:text-5xl",
+                )}
+              >
                 {title}
               </h2>
 
               {body ? (
-                <p className="mt-5 font-urbanist text-white/85 text-lg md:text-xl leading-relaxed max-w-2xl">
+                <p
+                  className={cn(
+                    "mt-4 font-urbanist text-white/85 leading-relaxed max-w-2xl",
+                    size === "compact" ? "text-sm md:text-base" : "text-lg md:text-xl",
+                  )}
+                >
                   {body}
                 </p>
               ) : null}
 
-              <div className="mt-10 flex w-full max-w-full flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-center sm:px-0">
-                <CtaActionButton action={primary} variant="heroSolidOnTeal" />
-                {secondary ? (
-                  <CtaActionButton action={secondary} variant="heroGhostOnTeal" />
-                ) : null}
-              </div>
+              {primaryStyle === "text" ? (
+                <div className="mt-6">
+                  <CtaActionTextLink action={primary} />
+                </div>
+              ) : (
+                <div className="mt-10 flex w-full max-w-full flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-center sm:px-0">
+                  <CtaActionButton action={primary} variant="heroSolidOnTeal" />
+                  {secondary ? <CtaActionButton action={secondary} variant="heroGhostOnTeal" /> : null}
+                </div>
+              )}
             </div>
           </div>
         </ScrollReveal>

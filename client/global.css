@@ -12,6 +12,13 @@
     scroll-behavior: smooth;
   }
 
+  /* Fallback for browsers that don't support scrollbar-gutter */
+  @supports not (scrollbar-gutter: stable) {
+    html {
+      overflow-y: scroll;
+    }
+  }
+
   :root {
     --background: 0 0% 100%;
     --foreground: 222.2 84% 4.9%;

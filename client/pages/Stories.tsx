@@ -119,7 +119,7 @@ export default function Stories() {
           <div aria-hidden className="absolute inset-0 pointer-events-none">
             <div className="absolute inset-0 bg-gradient-to-r from-rellia-teal/85 via-rellia-teal/55 to-rellia-teal/30" />
             <div className="absolute -left-28 -top-32 h-[520px] w-[520px] rounded-full bg-rellia-mint/25 blur-3xl" />
-            <div className="absolute -right-40 top-1/3 h-[560px] w-[560px] -translate-y-1/2 rounded-full bg-white/10 blur-3xl" />
+            <div className="absolute -right-16 sm:-right-28 md:-right-40 top-1/3 h-[560px] w-[560px] -translate-y-1/2 rounded-full bg-white/10 blur-3xl" />
             <div className="absolute left-1/3 bottom-[-220px] h-[620px] w-[620px] -translate-x-1/2 rounded-full bg-rellia-mint/15 blur-3xl" />
             <div className="absolute inset-0 opacity-[0.22] mix-blend-soft-light [background-image:radial-gradient(circle_at_20%_10%,rgba(255,255,255,0.18),transparent_55%),radial-gradient(circle_at_80%_35%,rgba(255,255,255,0.12),transparent_52%),radial-gradient(circle_at_40%_95%,rgba(255,255,255,0.14),transparent_55%)]" />
           </div>
@@ -127,7 +127,7 @@ export default function Stories() {
           <div className="relative z-10 max-w-[1300px] mx-auto px-6 md:px-10">
             <ScrollReveal>
               <h1 className="text-white text-4xl md:text-5xl lg:text-6xl font-bold leading-tight tracking-tight mb-5">
-                News & <span className="text-rellia-mint">Updates</span>
+                Rellia <span className="text-rellia-mint">Stories</span>
               </h1>
               <p className="text-white/80 text-base md:text-lg max-w-3xl font-urbanist font-normal leading-relaxed">
                 The latest founder spotlights, industry insights, & program updates. Stay current with the people and ideas shaping the future of health.
@@ -136,7 +136,7 @@ export default function Stories() {
           </div>
         </section>
 
-        <FeaturedStories showViewAll={false} compact />
+        <FeaturedStories showViewAll={false} />
 
         <section className="px-6 md:px-10 pt-12 md:pt-14 pb-16 md:pb-20 bg-white">
           <div className="max-w-[1300px] mx-auto">
@@ -199,7 +199,7 @@ export default function Stories() {
                             <motion.span
                               layoutId="stories-filter-pill"
                               className="absolute inset-0 -z-10 rounded-full bg-rellia-teal shadow-sm"
-                              transition={{ duration: 0.32, ease: "easeInOut" }}
+                              transition={{ type: "spring", stiffness: 520, damping: 42 }}
                               aria-hidden
                             />
                           ) : null}
@@ -211,21 +211,29 @@ export default function Stories() {
                 </div>
               </div>
 
-              <p className="font-urbanist text-base text-black/55 md:text-right">
+              <p className="font-urbanist text-sm text-black/55 md:text-right">
                 Showing {pageStories.length} of {filtered.length} stories
               </p>
             </div>
 
-            <motion.div layout className="mt-6 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 md:gap-8">
-              <AnimatePresence mode="popLayout" initial={false}>
+            <motion.div
+              layout
+              transition={{ layout: { duration: 0.32, ease: [0.16, 1, 0.3, 1] } }}
+              className="mt-6 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 md:gap-8 will-change-transform"
+            >
+              <AnimatePresence mode="sync" initial={false}>
                 {pageStories.map((story, i) => (
                   <motion.div
                     key={story.slug}
-                    layout
+                    layout="position"
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 10 }}
-                    transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+                    transition={{
+                      duration: 0.22,
+                      ease: [0.16, 1, 0.3, 1],
+                      layout: { duration: 0.32, ease: [0.16, 1, 0.3, 1] },
+                    }}
                   >
                     <ScrollReveal delay={i * 0.05}>
                       <StoryGridCard story={story} />
