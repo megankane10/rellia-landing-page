@@ -6,15 +6,20 @@ import {
   getSeoForPathname,
   getStoriesOgImageUrl,
   getSiteUrl,
+  normalizePathname,
 } from "@/config/seo"
 
 const RouteSeo = () => {
   const { pathname } = useLocation()
+  const normalizedPathname = normalizePathname(pathname)
   const base = getSiteUrl()
-  const { title, description, indexable } = getSeoForPathname(pathname)
-  const canonicalUrl = indexable ? `${base}${pathname === "/" ? "" : pathname}` : undefined
-  const ogUrl = `${base}${pathname === "/" ? "" : pathname}`
-  const imageUrl = pathname === "/stories" ? getStoriesOgImageUrl() : getDefaultOgImageUrl()
+  const { title, description, indexable } = getSeoForPathname(normalizedPathname)
+  const canonicalUrl = indexable
+    ? `${base}${normalizedPathname === "/" ? "" : normalizedPathname}`
+    : undefined
+  const ogUrl = `${base}${normalizedPathname === "/" ? "" : normalizedPathname}`
+  const imageUrl =
+    normalizedPathname === "/stories" ? getStoriesOgImageUrl() : getDefaultOgImageUrl()
   const imageAlt = getDefaultOgImageAlt()
 
   return (
