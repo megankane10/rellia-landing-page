@@ -5,15 +5,18 @@ import RelliaCta, { ctaActionFromHref } from "@/components/RelliaCta";
 import { ProgramCard } from "@/components/cards";
 import { useProgramsLandingPage } from "@/hooks/useCmsDocuments";
 import { DEFAULT_PROGRAMS_LANDING } from "@shared/cms/defaults";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 type ProgramFilter = "all" | "available" | "waitlist";
+const PAGE_SIZE = 12
 
 export default function ProgramsEvents() {
   const { data } = useProgramsLandingPage();
   const pl = data ?? DEFAULT_PROGRAMS_LANDING;
   const [programFilter, setProgramFilter] = useState<ProgramFilter>("all");
+  const [page, setPage] = useState(1)
 
   const { availablePrograms, waitlistPrograms } = useMemo(() => {
     const programs = pl.programs ?? []
@@ -24,12 +27,27 @@ export default function ProgramsEvents() {
     return { availablePrograms: available, waitlistPrograms: waitlist }
   }, [pl.programs])
 
+  const programs = pl.programs ?? []
+
   const visiblePrograms =
     programFilter === "all"
-      ? pl.programs
+      ? programs
       : programFilter === "available"
         ? availablePrograms
         : waitlistPrograms
+
+  useEffect(() => {
+    setPage(1)
+  }, [programFilter])
+
+  const totalPages = Math.max(1, Math.ceil(visiblePrograms.length / PAGE_SIZE))
+  const pagePrograms = useMemo(() => {
+    const start = (page - 1) * PAGE_SIZE
+    return visiblePrograms.slice(start, start + PAGE_SIZE)
+  }, [page, visiblePrograms])
+
+  const handlePrevPage = () => setPage((p) => Math.max(1, p - 1))
+  const handleNextPage = () => setPage((p) => Math.min(totalPages, p + 1))
 
   return (
     <div className="min-h-screen bg-white font-host-grotesk overflow-x-hidden">
@@ -48,11 +66,10 @@ export default function ProgramsEvents() {
           <div className="relative z-10 max-w-[1300px] mx-auto px-6 md:px-10">
             <ScrollReveal>
               <h1 className="text-white text-4xl md:text-5xl lg:text-6xl font-bold leading-tight tracking-tight mb-5">
-                {pl.heroTitleLine1}{" "}
-                <span className="text-rellia-mint">{pl.heroTitleMint}</span>
+                Programs that <span className="text-rellia-mint">fits your startup</span>
               </h1>
-              <p className="text-white/80 text-lg md:text-2xl max-w-3xl font-urbanist leading-relaxed">
-                {pl.heroSubtitle}
+              <p className="text-white/80 text-base md:text-lg max-w-3xl font-urbanist font-normal leading-relaxed">
+                {pl.programsSectionSubtitle}
               </p>
             </ScrollReveal>
           </div>
@@ -60,18 +77,9 @@ export default function ProgramsEvents() {
 
         <section id="view-programs" className="py-12 md:py-16 bg-white">
           <div className="max-w-[1300px] mx-auto px-6 md:px-10">
-            <ScrollReveal className="mb-12 text-center">
-              <h2 className="font-host-grotesk font-semibold text-black text-3xl md:text-[40px] leading-tight tracking-tight">
-                {pl.programsSectionTitle}
-              </h2>
-              <p className="font-urbanist text-black/60 text-base md:text-lg mt-4 max-w-2xl mx-auto leading-relaxed">
-                {pl.programsSectionSubtitle}
-              </p>
-            </ScrollReveal>
-
             <ScrollReveal>
-              <div className="mb-8 flex flex-col items-center gap-4">
-                <div className="inline-flex rounded-full border border-black/10 bg-white p-1 shadow-sm">
+              <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                <div className="inline-flex rounded-full border border-black/10 bg-white p-1 shadow-sm w-fit">
                   <button
                     type="button"
                     onClick={() => setProgramFilter("all")}
@@ -84,9 +92,7 @@ export default function ProgramsEvents() {
                     aria-label="Show all programs"
                     className={[
                       "min-h-11 rounded-full px-4 text-sm font-semibold transition-colors",
-                      programFilter === "all"
-                        ? "bg-rellia-teal text-white"
-                        : "text-black/70 hover:text-black",
+                      programFilter === "all" ? "bg-rellia-teal text-white" : "text-black/70 hover:text-black",
                     ].join(" ")}
                   >
                     All
@@ -103,9 +109,7 @@ export default function ProgramsEvents() {
                     aria-label="Show available programs"
                     className={[
                       "min-h-11 rounded-full px-4 text-sm font-semibold transition-colors",
-                      programFilter === "available"
-                        ? "bg-rellia-teal text-white"
-                        : "text-black/70 hover:text-black",
+                      programFilter === "available" ? "bg-rellia-teal text-white" : "text-black/70 hover:text-black",
                     ].join(" ")}
                   >
                     Available
@@ -122,21 +126,15 @@ export default function ProgramsEvents() {
                     aria-label="Show waitlist programs"
                     className={[
                       "min-h-11 rounded-full px-4 text-sm font-semibold transition-colors",
-                      programFilter === "waitlist"
-                        ? "bg-rellia-teal text-white"
-                        : "text-black/70 hover:text-black",
+                      programFilter === "waitlist" ? "bg-rellia-teal text-white" : "text-black/70 hover:text-black",
                     ].join(" ")}
                   >
                     Waitlist
                   </button>
                 </div>
 
-                <p className="font-urbanist text-black/55 text-sm">
-                  {programFilter === "all"
-                    ? "Browse all programs."
-                    : programFilter === "available"
-                      ? "Programs you can join now."
-                      : "Programs opening soon — join the waitlist."}
+                <p className="font-urbanist text-sm text-black/55 md:text-right">
+                  Showing {pagePrograms.length} of {visiblePrograms.length} programs
                 </p>
               </div>
 
@@ -146,7 +144,7 @@ export default function ProgramsEvents() {
                 className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 will-change-transform"
               >
                 <AnimatePresence mode="sync" initial={false}>
-                  {visiblePrograms.map((p) => (
+                  {pagePrograms.map((p) => (
                     <motion.div
                       key={`${p.title}-${p.imageSrc}`}
                       layout="position"
@@ -174,6 +172,44 @@ export default function ProgramsEvents() {
                   ))}
                 </AnimatePresence>
               </motion.div>
+
+              {totalPages > 1 ? (
+                <div className="mt-10 flex items-center justify-center gap-4">
+                  <button
+                    type="button"
+                    onClick={handlePrevPage}
+                    disabled={page <= 1}
+                    className={[
+                      "inline-flex h-12 w-12 items-center justify-center rounded-full border font-host-grotesk font-semibold transition-colors",
+                      page <= 1
+                        ? "cursor-not-allowed border-black/10 bg-white text-black/30"
+                        : "border-black/10 bg-white text-rellia-teal hover:border-rellia-teal hover:text-rellia-teal",
+                    ].join(" ")}
+                    aria-label="Previous programs page"
+                  >
+                    <ChevronLeft className="h-5 w-5" aria-hidden />
+                  </button>
+
+                  <p className="font-urbanist text-base text-black/60" aria-label="Programs page indicator">
+                    Page {page} of {totalPages}
+                  </p>
+
+                  <button
+                    type="button"
+                    onClick={handleNextPage}
+                    disabled={page >= totalPages}
+                    className={[
+                      "inline-flex h-12 w-12 items-center justify-center rounded-full border font-host-grotesk font-semibold transition-colors",
+                      page >= totalPages
+                        ? "cursor-not-allowed border-black/10 bg-white text-black/30"
+                        : "border-black/10 bg-white text-rellia-teal hover:border-rellia-teal hover:text-rellia-teal",
+                    ].join(" ")}
+                    aria-label="Next programs page"
+                  >
+                    <ChevronRight className="h-5 w-5" aria-hidden />
+                  </button>
+                </div>
+              ) : null}
             </ScrollReveal>
           </div>
         </section>

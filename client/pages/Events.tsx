@@ -5,15 +5,18 @@ import RelliaCta, { ctaActionFromHref } from "@/components/RelliaCta"
 import { EventCard, eventKey } from "@/components/cards"
 import { useProgramsLandingPage } from "@/hooks/useCmsDocuments"
 import { DEFAULT_PROGRAMS_LANDING } from "@shared/cms/defaults"
-import { useMemo, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { AnimatePresence, motion } from "framer-motion"
+import { ChevronLeft, ChevronRight } from "lucide-react"
 
 type EventsFilter = "all" | "upcoming" | "past"
+const PAGE_SIZE = 12
 
 export default function Events() {
   const { data } = useProgramsLandingPage()
   const pl = data ?? DEFAULT_PROGRAMS_LANDING
   const [eventsFilter, setEventsFilter] = useState<EventsFilter>("all")
+  const [page, setPage] = useState(1)
 
   const visibleEvents = useMemo(() => {
     if (eventsFilter === "upcoming") {
@@ -27,6 +30,19 @@ export default function Events() {
       ...pl.pastEvents.map((e) => ({ ...e, _variant: "past" as const })),
     ]
   }, [eventsFilter, pl.pastEvents, pl.upcomingEvents])
+
+  useEffect(() => {
+    setPage(1)
+  }, [eventsFilter])
+
+  const totalPages = Math.max(1, Math.ceil(visibleEvents.length / PAGE_SIZE))
+  const pageEvents = useMemo(() => {
+    const start = (page - 1) * PAGE_SIZE
+    return visibleEvents.slice(start, start + PAGE_SIZE)
+  }, [page, visibleEvents])
+
+  const handlePrevPage = () => setPage((p) => Math.max(1, p - 1))
+  const handleNextPage = () => setPage((p) => Math.min(totalPages, p + 1))
 
   return (
     <div className="min-h-screen bg-white font-host-grotesk overflow-x-hidden">
@@ -46,30 +62,20 @@ export default function Events() {
           <div className="relative z-10 max-w-[1300px] mx-auto px-6 md:px-10">
             <ScrollReveal>
               <h1 className="text-white text-4xl md:text-5xl lg:text-6xl font-bold leading-tight tracking-tight mb-5">
-                Connect &amp; <span className="text-rellia-mint">Learn</span>
+                Our <span className="text-rellia-mint">Events</span>
               </h1>
-              <p className="text-white/80 text-lg md:text-2xl max-w-3xl font-urbanist leading-relaxed">
-                Join live sessions with operators, clinicians, and health tech leaders. Register on Luma to save your
-                seat.
+              <p className="text-white/80 text-base md:text-lg max-w-3xl font-urbanist leading-relaxed">
+                Discover what’s coming up, revisit past sessions, and join the conversations shaping the future of health.
               </p>
             </ScrollReveal>
           </div>
         </section>
 
-        <section className="py-16 md:py-20 bg-rellia-cream/50">
+        <section className="py-16 md:py-20 bg-white">
           <div className="max-w-[1300px] mx-auto px-6 md:px-10">
-            <ScrollReveal className="mb-10 flex flex-col items-center text-center">
-              <h2 className="font-host-grotesk font-semibold text-black text-3xl md:text-[40px] leading-tight tracking-tight">
-                Events
-              </h2>
-              <p className="font-urbanist text-black/60 text-base md:text-lg mt-4 max-w-2xl leading-relaxed">
-                Switch between upcoming and past events, or view everything in one place.
-              </p>
-            </ScrollReveal>
-
             <ScrollReveal>
-              <div className="mb-10 flex flex-col items-center gap-4">
-                <div className="inline-flex rounded-full border border-black/10 bg-white p-1 shadow-sm">
+              <div className="mb-10 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                <div className="inline-flex rounded-full border border-black/10 bg-white p-1 shadow-sm w-fit">
                   <button
                     type="button"
                     onClick={() => setEventsFilter("all")}
@@ -128,13 +134,17 @@ export default function Events() {
                     Past
                   </button>
                 </div>
+
+                <p className="font-urbanist text-sm text-black/55 md:text-right">
+                  Showing {pageEvents.length} of {visibleEvents.length} events
+                </p>
               </div>
             </ScrollReveal>
 
             <ScrollReveal>
               <motion.div layout className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 <AnimatePresence mode="popLayout" initial={false}>
-                  {visibleEvents.map((event) => (
+                  {pageEvents.map((event) => (
                     <motion.div
                       key={eventKey(event)}
                       layout
@@ -149,6 +159,44 @@ export default function Events() {
                 </AnimatePresence>
               </motion.div>
             </ScrollReveal>
+
+            {totalPages > 1 ? (
+              <div className="mt-10 flex items-center justify-center gap-4">
+                <button
+                  type="button"
+                  onClick={handlePrevPage}
+                  disabled={page <= 1}
+                  className={[
+                    "inline-flex h-12 w-12 items-center justify-center rounded-full border font-host-grotesk font-semibold transition-colors",
+                    page <= 1
+                      ? "cursor-not-allowed border-black/10 bg-white text-black/30"
+                      : "border-black/10 bg-white text-rellia-teal hover:border-rellia-teal hover:text-rellia-teal",
+                  ].join(" ")}
+                  aria-label="Previous events page"
+                >
+                  <ChevronLeft className="h-5 w-5" aria-hidden />
+                </button>
+
+                <p className="font-urbanist text-base text-black/60" aria-label="Events page indicator">
+                  Page {page} of {totalPages}
+                </p>
+
+                <button
+                  type="button"
+                  onClick={handleNextPage}
+                  disabled={page >= totalPages}
+                  className={[
+                    "inline-flex h-12 w-12 items-center justify-center rounded-full border font-host-grotesk font-semibold transition-colors",
+                    page >= totalPages
+                      ? "cursor-not-allowed border-black/10 bg-white text-black/30"
+                      : "border-black/10 bg-white text-rellia-teal hover:border-rellia-teal hover:text-rellia-teal",
+                  ].join(" ")}
+                  aria-label="Next events page"
+                >
+                  <ChevronRight className="h-5 w-5" aria-hidden />
+                </button>
+              </div>
+            ) : null}
           </div>
         </section>
         <RelliaCta

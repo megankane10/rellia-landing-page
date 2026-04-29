@@ -17,41 +17,21 @@ export default function FAQ() {
       <Navbar />
 
       <main id="main-content">
-        <section className="relative pt-32 pb-16 md:pt-44 md:pb-24 bg-rellia-cream/80 overflow-hidden">
-          {/* Header effects: soft color wash + subtle grid + holomark */}
-          <div className="absolute inset-0 pointer-events-none">
-            <div className="absolute -top-24 -left-10 h-64 w-64 rounded-full bg-rellia-mint/55 blur-3xl" />
-            <div className="absolute -bottom-24 -right-10 h-80 w-80 rounded-full bg-rellia-teal/25 blur-3xl" />
-            <div
-              className="absolute inset-0 opacity-[0.12]"
-              style={{
-                backgroundImage:
-                  "linear-gradient(to right, rgba(2,44,46,0.45) 1px, transparent 1px), linear-gradient(to bottom, rgba(2,44,46,0.45) 1px, transparent 1px)",
-                backgroundSize: "64px 64px",
-              }}
-              aria-hidden
-            />
+        <section className="relative pt-24 pb-12 md:pt-32 md:pb-16 bg-rellia-cream overflow-hidden">
+          <div aria-hidden className="absolute inset-0 pointer-events-none">
+            <div className="absolute inset-0 bg-gradient-to-r from-rellia-cream via-white/60 to-rellia-cream" />
+            <div className="absolute -left-28 -top-32 h-[520px] w-[520px] rounded-full bg-rellia-mint/20 blur-3xl" />
+            <div className="absolute -right-40 top-1/3 h-[560px] w-[560px] -translate-y-1/2 rounded-full bg-rellia-teal/10 blur-3xl" />
+            <div className="absolute left-1/3 bottom-[-220px] h-[620px] w-[620px] -translate-x-1/2 rounded-full bg-rellia-mint/15 blur-3xl" />
+            <div className="absolute inset-0 opacity-[0.18] mix-blend-multiply [background-image:radial-gradient(circle_at_20%_10%,rgba(13,53,64,0.10),transparent_55%),radial-gradient(circle_at_80%_35%,rgba(13,53,64,0.08),transparent_52%),radial-gradient(circle_at_40%_95%,rgba(13,53,64,0.09),transparent_55%)]" />
           </div>
 
-          <img
-            src="/images/hologram-logo.png"
-            alt=""
-            aria-hidden
-            className="pointer-events-none absolute right-0 top-1/2 -translate-y-1/2 h-[60%] md:h-[85%] w-auto object-contain opacity-[0.14] select-none"
-          />
-
-          <div className="relative z-10 max-w-[1100px] mx-auto px-6 md:px-10">
+          <div className="relative z-10 max-w-[1300px] mx-auto px-6 md:px-10">
             <ScrollReveal>
-              <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-black/10 bg-white/70 px-4 py-2 shadow-sm backdrop-blur-sm">
-                <span className="h-2 w-2 rounded-full bg-rellia-mint" aria-hidden />
-                <span className="font-host-grotesk text-xs font-semibold uppercase tracking-[0.18em] text-rellia-teal">
-                  {faq.badge}
-                </span>
-              </div>
-              <h1 className="text-black text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight leading-tight mb-5">
+              <h1 className="text-rellia-teal text-4xl md:text-5xl lg:text-6xl font-bold leading-tight tracking-tight mb-5">
                 {faq.title}
               </h1>
-              <p className="font-urbanist text-black/60 text-base md:text-lg leading-relaxed max-w-2xl">
+              <p className="font-urbanist text-black/65 text-base md:text-lg leading-relaxed max-w-3xl">
                 {faq.subtitle}
               </p>
             </ScrollReveal>
@@ -61,44 +41,42 @@ export default function FAQ() {
         <section className="py-16 md:py-24 bg-white">
           <div className="max-w-[1300px] mx-auto px-6 md:px-10">
             <div className="flex flex-col lg:flex-row gap-12 lg:gap-20">
-              <div className="lg:w-[340px] lg:shrink-0">
+              <div className="flex-1 min-w-0 order-1 lg:order-2">
+                <ScrollReveal delay={0.1}>
+                  <Accordion type="single" collapsible defaultValue={firstId}>
+                    {faq.items.map((item, index) => (
+                      <AccordionItem
+                        key={item.id}
+                        value={item.id}
+                        className={index === faq.items.length - 1 ? "border-b-0" : "border-b border-black/10"}
+                      >
+                        <AccordionTrigger className="text-left text-base md:text-lg font-medium text-black py-5">
+                          {item.question}
+                        </AccordionTrigger>
+                        <AccordionContent className="pb-5 text-black/70 font-urbanist text-sm md:text-base leading-relaxed">
+                          {item.answer}
+                        </AccordionContent>
+                      </AccordionItem>
+                    ))}
+                  </Accordion>
+                </ScrollReveal>
+              </div>
+
+              <div className="lg:w-[320px] lg:shrink-0 order-2 lg:order-1">
                 <ScrollReveal>
                   <div className="lg:sticky lg:top-28">
-                    <h3 className="font-host-grotesk font-bold text-black text-2xl md:text-3xl tracking-tight mb-4">
+                    <h3 className="font-host-grotesk font-semibold text-black text-xl md:text-2xl tracking-tight mb-3">
                       {faq.sidebarTitle}
                     </h3>
-                    <p className="font-urbanist text-black/60 text-base leading-relaxed mb-6">
+                    <p className="font-urbanist text-black/60 text-sm md:text-base leading-relaxed mb-5">
                       {faq.sidebarBody}
                     </p>
                     <Link
                       to={faq.sidebarCtaPath}
-                      className="inline-flex items-center justify-center rounded-full bg-rellia-teal text-white font-host-grotesk font-semibold px-7 py-3 border-2 border-rellia-teal hover:bg-white hover:text-rellia-teal transition-all duration-200 text-sm"
+                      className="inline-flex items-center justify-center rounded-full bg-rellia-teal text-white font-host-grotesk font-semibold px-6 py-2.5 border-2 border-rellia-teal hover:bg-white hover:text-rellia-teal transition-all duration-200 text-sm"
                     >
                       {faq.sidebarCtaLabel}
                     </Link>
-                  </div>
-                </ScrollReveal>
-              </div>
-
-              <div className="flex-1 min-w-0">
-                <ScrollReveal delay={0.1}>
-                  <div className="rounded-3xl border border-black/5 bg-white/80 shadow-sm">
-                    <Accordion type="single" collapsible defaultValue={firstId}>
-                      {faq.items.map((item, index) => (
-                        <AccordionItem
-                          key={item.id}
-                          value={item.id}
-                          className={index === faq.items.length - 1 ? "border-b-0" : undefined}
-                        >
-                          <AccordionTrigger className="text-left text-base md:text-lg font-medium text-black py-5 px-5 md:px-6">
-                            {item.question}
-                          </AccordionTrigger>
-                          <AccordionContent className="px-5 md:px-6 pb-5 text-black/70 font-urbanist text-sm md:text-base leading-relaxed">
-                            {item.answer}
-                          </AccordionContent>
-                        </AccordionItem>
-                      ))}
-                    </Accordion>
                   </div>
                 </ScrollReveal>
               </div>

@@ -1,23 +1,73 @@
+import { useState } from "react"
 import { Helmet } from "react-helmet-async"
 import { Link, useParams } from "react-router-dom"
 import Navbar from "@/components/Navbar"
-import { ScrollUpPinnedNav } from "@/components/ScrollUpPinnedNav"
 import Footer from "@/components/Footer"
 import ScrollReveal from "@/components/ScrollReveal"
 import { cn } from "@/lib/utils"
 import { getStoryBySlug } from "@/content/stories"
 import { getDefaultOgImageUrl, getSiteUrl } from "@/config/seo"
-import { ChevronRight } from "lucide-react"
+import { ChevronLeft } from "lucide-react"
+
+const shareButtonClassName =
+  "inline-flex h-11 w-11 items-center justify-center rounded-full bg-white text-rellia-teal transition-transform transition-colors hover:-translate-y-0.5 hover:bg-rellia-mint focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-rellia-teal"
+
+const XFilledIcon = ({ className }: { className?: string }) => (
+  <svg viewBox="0 0 24 24" aria-hidden className={className} fill="currentColor">
+    <path d="M18.9 2H22l-6.77 7.73L23.2 22h-6.26l-4.9-7.4L5.57 22H2.46l7.24-8.28L1.8 2h6.42l4.43 6.8L18.9 2Z" />
+  </svg>
+)
+
+const LinkedinFilledIcon = ({ className }: { className?: string }) => (
+  <svg viewBox="0 0 24 24" aria-hidden className={className} fill="currentColor">
+    <path d="M6.94 8.5H3.56V20h3.38V8.5ZM5.25 3A1.97 1.97 0 1 0 5.3 6.94 1.97 1.97 0 0 0 5.25 3ZM20 12.78c0-3.44-1.84-5.04-4.29-5.04-1.98 0-2.87 1.1-3.37 1.86V8.5H8.96c.04.73 0 11.5 0 11.5h3.38v-6.42c0-.34.02-.68.12-.93.27-.68.88-1.39 1.91-1.39 1.35 0 1.89 1.03 1.89 2.55V20H20v-7.22Z" />
+  </svg>
+)
+
+const FacebookFilledIcon = ({ className }: { className?: string }) => (
+  <svg viewBox="0 0 24 24" aria-hidden className={className} fill="currentColor">
+    <path d="M13.62 21v-8.2h2.76l.41-3.2h-3.17V7.56c0-.93.26-1.56 1.59-1.56H16.9V3.14c-.29-.04-1.29-.14-2.46-.14-2.43 0-4.09 1.48-4.09 4.21v2.39H7.6v3.2h2.75V21h3.27Z" />
+  </svg>
+)
+
+const MailFilledIcon = ({ className }: { className?: string }) => (
+  <svg viewBox="0 0 24 24" aria-hidden className={className} fill="currentColor">
+    <path d="M3 6.75A2.75 2.75 0 0 1 5.75 4h12.5A2.75 2.75 0 0 1 21 6.75v10.5A2.75 2.75 0 0 1 18.25 20H5.75A2.75 2.75 0 0 1 3 17.25V6.75Zm2.12-.25 6.45 5.36a.67.67 0 0 0 .86 0l6.45-5.36H5.12Zm13.38 2.3-5.03 4.18a2.67 2.67 0 0 1-3.42 0L5.02 8.8v8.45c0 .4.33.75.73.75h12.5c.4 0 .75-.34.75-.75V8.8Z" />
+  </svg>
+)
+
+const CopyFilledIcon = ({ className }: { className?: string }) => (
+  <svg viewBox="0 0 24 24" aria-hidden className={className} fill="currentColor">
+    <path d="M8.5 3A2.5 2.5 0 0 0 6 5.5v10A2.5 2.5 0 0 0 8.5 18h8a2.5 2.5 0 0 0 2.5-2.5v-10A2.5 2.5 0 0 0 16.5 3h-8Zm-3 4A2.5 2.5 0 0 0 3 9.5v9A2.5 2.5 0 0 0 5.5 21h8.75a2.5 2.5 0 0 0 2.45-2H8.5A3.5 3.5 0 0 1 5 15.5V7.3c.16-.2.33-.4.5-.3Z" />
+  </svg>
+)
 
 export default function StoryPost() {
   const { slug } = useParams()
   const story = slug ? getStoryBySlug(slug) : undefined
+  const [copyState, setCopyState] = useState<"idle" | "copied">("idle")
 
   const base = getSiteUrl()
   const canonical = story ? `${base}/stories/${story.slug}` : `${base}/stories`
   const title = story?.seoTitle ?? (story ? `${story.title} — Rellia Health` : "Stories — Rellia Health")
   const description = story?.seoDescription ?? story?.excerpt ?? "Stories and insights from Rellia Health."
-  const imageUrl = story ? `${base}${story.coverImageSrc}` : getDefaultOgImageUrl()
+  const toAbsoluteImageUrl = (src: string): string => {
+    if (/^https?:\/\//i.test(src)) return src
+    if (!src.startsWith("/")) return `${base}/${src}`
+    return `${base}${src}`
+  }
+
+  const imageUrl = story ? toAbsoluteImageUrl(story.coverImageSrc) : `${base}/stories-ogimage.png`
+
+  const handleCopyLink = async () => {
+    try {
+      await navigator.clipboard.writeText(canonical)
+      setCopyState("copied")
+      window.setTimeout(() => setCopyState("idle"), 2000)
+    } catch {
+      setCopyState("idle")
+    }
+  }
 
   if (!story) {
     return (
@@ -69,67 +119,193 @@ export default function StoryPost() {
       </Helmet>
 
       <Navbar />
-      <ScrollUpPinnedNav ariaLabel="Breadcrumb">
-        <div className="max-w-[1300px] mx-auto px-6 md:px-10 py-3.5 md:py-4">
-          <ol className="flex flex-wrap items-center gap-2 text-sm md:text-[15px] font-urbanist">
-            <li>
-              <Link
-                to="/stories"
-                className="font-semibold text-rellia-teal transition-colors hover:text-rellia-teal/85 hover:underline underline-offset-4"
-              >
-                Stories
-              </Link>
-            </li>
-            <li className="flex items-center text-black/30" aria-hidden>
-              <ChevronRight className="h-4 w-4 shrink-0" />
-            </li>
-            <li className="text-black/55 font-medium max-w-[min(100%,42rem)] truncate" title={story.title}>
-              {story.title}
-            </li>
-          </ol>
-        </div>
-      </ScrollUpPinnedNav>
 
-      <main id="main-content" className="pt-[128px] md:pt-[146px]">
+      <main id="main-content">
+        <section className="relative pt-24 pb-12 md:pt-32 md:pb-16 bg-rellia-cream overflow-hidden">
+          <div aria-hidden className="absolute inset-0 pointer-events-none">
+            <img
+              src={toAbsoluteImageUrl(story.coverImageSrc)}
+              alt=""
+              className="absolute inset-0 h-full w-full object-cover opacity-[0.28]"
+            />
+            <div className="absolute inset-0 bg-black/15" />
+            <div className="absolute inset-0 bg-gradient-to-b from-rellia-cream/70 via-rellia-cream/65 to-rellia-cream" />
+            <div className="absolute -left-28 -top-32 h-[520px] w-[520px] rounded-full bg-rellia-mint/20 blur-3xl" />
+            <div className="absolute -right-40 top-1/3 h-[560px] w-[560px] -translate-y-1/2 rounded-full bg-rellia-teal/10 blur-3xl" />
+            <div className="absolute left-1/3 bottom-[-220px] h-[620px] w-[620px] -translate-x-1/2 rounded-full bg-rellia-mint/15 blur-3xl" />
+            <div className="absolute inset-0 opacity-[0.18] mix-blend-multiply [background-image:radial-gradient(circle_at_20%_10%,rgba(13,53,64,0.10),transparent_55%),radial-gradient(circle_at_80%_35%,rgba(13,53,64,0.08),transparent_52%),radial-gradient(circle_at_40%_95%,rgba(13,53,64,0.09),transparent_55%)]" />
+          </div>
+
+          <div className="relative z-10 max-w-[1300px] mx-auto px-6 md:px-10">
+            <div className="mx-auto w-full max-w-[1100px]">
+              <div className="flex flex-col">
+                <ScrollReveal>
+                  <div className="inline-flex items-center gap-2 rounded-full bg-rellia-mint px-3 py-1.5">
+                    <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-rellia-teal" aria-hidden />
+                    <span className="font-host-grotesk text-[11px] font-semibold uppercase tracking-[0.14em] text-rellia-teal">
+                      {story.tag}
+                    </span>
+                  </div>
+
+                  <h1 className="mt-6 text-rellia-teal text-3xl md:text-4xl lg:text-5xl font-medium leading-tight tracking-tight">
+                    {story.title}
+                  </h1>
+                  <p className="mt-4 text-black/65 text-base md:text-lg max-w-3xl font-urbanist font-normal leading-relaxed">
+                    {story.excerpt}
+                  </p>
+
+                  <div className="h-8 md:h-10" aria-hidden />
+
+                  <div className="mt-8 flex flex-col items-start gap-4">
+                    <p className="font-host-grotesk text-[12px] font-semibold uppercase tracking-[0.14em] text-black/55">
+                      Share this story
+                    </p>
+                    <div className="h-px w-full bg-black/10" aria-hidden />
+
+                    <div className="flex flex-wrap items-center gap-3">
+                      <a
+                        href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(canonical)}&text=${encodeURIComponent(title)}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={cn(shareButtonClassName, "focus-visible:ring-offset-rellia-cream")}
+                        aria-label="Share on X"
+                      >
+                        <XFilledIcon className="h-4 w-4" />
+                      </a>
+                      <a
+                        href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(canonical)}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={cn(shareButtonClassName, "focus-visible:ring-offset-rellia-cream")}
+                        aria-label="Share on LinkedIn"
+                      >
+                        <LinkedinFilledIcon className="h-4 w-4" />
+                      </a>
+                      <a
+                        href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(canonical)}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={cn(shareButtonClassName, "focus-visible:ring-offset-rellia-cream")}
+                        aria-label="Share on Facebook"
+                      >
+                        <FacebookFilledIcon className="h-4 w-4" />
+                      </a>
+                      <a
+                        href={`mailto:?subject=${encodeURIComponent(title)}&body=${encodeURIComponent(`${title}\n${canonical}`)}`}
+                        className={cn(shareButtonClassName, "focus-visible:ring-offset-rellia-cream")}
+                        aria-label="Share via email"
+                      >
+                        <MailFilledIcon className="h-4 w-4" />
+                      </a>
+                      <button
+                        type="button"
+                        onClick={handleCopyLink}
+                        className={cn(shareButtonClassName, "focus-visible:ring-offset-rellia-cream")}
+                        aria-label={copyState === "copied" ? "Link copied" : "Copy story link"}
+                      >
+                        <CopyFilledIcon className="h-4 w-4" />
+                      </button>
+                    </div>
+                  </div>
+                </ScrollReveal>
+              </div>
+            </div>
+          </div>
+        </section>
+
         <section className="px-6 md:px-10 py-10 md:py-14">
           <div className="max-w-[900px] mx-auto">
-            <div className="flex flex-wrap items-center gap-3 text-xs font-semibold uppercase tracking-[0.14em] text-black/55">
-              <span className="text-black/45">{story.tag}</span>
-              <span className="text-black/25" aria-hidden>
-                •
-              </span>
-              <time dateTime={story.publishedAt} className="text-black/45">
-                {story.publishedAt}
-              </time>
+            <div className="mb-8">
+              <Link
+                to="/stories"
+                className="inline-flex items-center gap-2 font-host-grotesk text-sm font-semibold text-rellia-teal hover:underline hover:underline-offset-4"
+                aria-label="Back to stories"
+              >
+                <ChevronLeft className="h-4 w-4" aria-hidden />
+                Back to stories
+              </Link>
             </div>
 
-            <ScrollReveal>
-              <h1 className="mt-5 font-host-grotesk font-extrabold text-black text-3xl sm:text-4xl md:text-6xl tracking-tight leading-[1.06]">
-                {story.title}
-              </h1>
-              <p className="mt-6 font-urbanist text-black/70 text-base md:text-lg leading-relaxed">
-                {story.excerpt}
-              </p>
-            </ScrollReveal>
-
-            <div className="mt-10 overflow-hidden rounded-[32px] border border-black/10 bg-rellia-cream/40">
-              <img
-                src={story.coverImageSrc}
-                alt={story.coverImageAlt}
-                className="h-[280px] md:h-[420px] w-full object-cover"
-              />
-            </div>
-
-            <div className="mt-10">
+            <div>
               <div className="prose prose-neutral max-w-none">
-                {story.body.map((b, i) => (
-                  <p
-                    key={`${b.type}-${i}`}
-                    className={cn("font-urbanist text-black/80 text-base md:text-lg leading-relaxed")}
-                  >
-                    {b.text}
-                  </p>
-                ))}
+                {story.body.map((b, i) => {
+                  const key = `${b.type}-${i}`
+
+                  if (b.type === "h2") {
+                    return (
+                      <h2 key={key} className="mt-10 font-host-grotesk text-2xl md:text-3xl font-semibold tracking-tight text-black">
+                        {b.text}
+                      </h2>
+                    )
+                  }
+
+                  if (b.type === "h3") {
+                    return (
+                      <h3 key={key} className="mt-8 font-host-grotesk text-xl md:text-2xl font-semibold tracking-tight text-black">
+                        {b.text}
+                      </h3>
+                    )
+                  }
+
+                  if (b.type === "quote") {
+                    return (
+                      <figure key={key} className="my-10 rounded-2xl bg-rellia-teal/5 px-6 py-6">
+                        <blockquote className="font-urbanist text-black/80 text-base md:text-lg leading-relaxed italic">
+                          “{b.text}”
+                        </blockquote>
+                        {b.attribution ? (
+                          <figcaption className="mt-4 font-host-grotesk text-sm font-semibold tracking-wide text-black/60">
+                            — {b.attribution}
+                          </figcaption>
+                        ) : null}
+                      </figure>
+                    )
+                  }
+
+                  if (b.type === "image") {
+                    return (
+                      <figure key={key} className="my-10">
+                        <div className="overflow-hidden rounded-2xl bg-black/5 aspect-video">
+                          <img src={b.src} alt={b.alt} className="h-full w-full object-cover" loading="lazy" />
+                        </div>
+                        {b.caption ? (
+                          <figcaption className="mt-3 font-urbanist text-sm text-black/55">{b.caption}</figcaption>
+                        ) : null}
+                      </figure>
+                    )
+                  }
+
+                  if (b.type === "cta") {
+                    return (
+                      <div key={key} className="my-12 rounded-3xl border border-black/10 bg-white px-7 py-7 md:px-10 md:py-9">
+                        <h3 className="font-host-grotesk text-xl md:text-2xl font-semibold tracking-tight text-black">
+                          {b.title}
+                        </h3>
+                        <p className="mt-3 font-urbanist text-black/65 text-base md:text-lg leading-relaxed">
+                          {b.body}
+                        </p>
+                        <div className="mt-6">
+                          <Link
+                            to={b.buttonHref}
+                            className="inline-flex items-center rounded-full border-2 border-rellia-teal bg-white px-6 py-3 font-host-grotesk font-semibold text-rellia-teal transition-colors hover:bg-rellia-teal hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2"
+                            aria-label={b.buttonLabel}
+                          >
+                            {b.buttonLabel}
+                          </Link>
+                        </div>
+                      </div>
+                    )
+                  }
+
+                  return (
+                    <p
+                      key={key}
+                      className={cn("font-urbanist text-black/80 text-base md:text-lg leading-[1.85] mb-6")}
+                    >
+                      {b.text}
+                    </p>
+                  )
+                })}
               </div>
             </div>
 

@@ -1,14 +1,18 @@
-import { useMemo, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { Link } from "react-router-dom"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
 import ScrollReveal from "@/components/ScrollReveal"
 import { cn } from "@/lib/utils"
 import { STORIES, type StoryTag } from "@/content/stories"
+import FeaturedStories from "@/components/FeaturedStories"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { AnimatePresence, motion } from "framer-motion"
+import { ChevronLeft, ChevronRight } from "lucide-react"
 
 const tags: Array<StoryTag | "All"> = ["All", "Founder Story", "Industry Insight", "Program Update"]
+
+const PAGE_SIZE = 12
 
 const StoryGridCard = ({
   story,
@@ -33,19 +37,13 @@ const StoryGridCard = ({
       <Link
         to={`/stories/${story.slug}`}
         className={cn(
-          "group block h-full w-full overflow-hidden rounded-2xl border border-black/5 bg-white shadow-sm",
-          "transition-[transform,box-shadow] duration-200 ease-out",
-          "hover:-translate-y-0.5 hover:shadow-md hover:shadow-lg hover:ring-1 hover:ring-black/[0.06]",
-          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-teal focus-visible:ring-offset-2",
+          "group flex h-[390px] md:h-[410px] w-full flex-col overflow-hidden rounded-2xl",
+          "transition-transform duration-200 ease-out hover:-translate-y-0.5",
+          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-white",
         )}
         aria-label={`Read ${story.title}`}
       >
-        <div className="relative aspect-video w-full shrink-0 overflow-hidden bg-rellia-teal/5">
-          <div className="absolute right-3 top-3 z-10">
-            <span className="inline-flex items-center rounded-full bg-rellia-mint/90 px-3 py-1 font-host-grotesk text-[11px] font-extrabold uppercase tracking-[0.16em] text-rellia-teal shadow-lg ring-1 ring-white/50">
-              {story.tag}
-            </span>
-          </div>
+        <div className="relative aspect-video w-full shrink-0 overflow-hidden rounded-2xl bg-rellia-teal/5">
           <img
             src={story.coverImageSrc}
             alt={story.coverImageAlt}
@@ -54,10 +52,37 @@ const StoryGridCard = ({
           />
         </div>
 
-        <div className="flex flex-1 flex-col p-6">
-          <h3 className="font-host-grotesk text-[16px] md:text-lg font-medium leading-snug text-black line-clamp-3">
+        <div className="flex min-h-0 flex-1 flex-col overflow-hidden px-1.5 pt-3 pb-1">
+          <div className="inline-flex items-center gap-2 w-fit">
+            <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-rellia-teal" aria-hidden />
+            <span className="font-host-grotesk text-[11px] font-semibold uppercase tracking-[0.14em] text-rellia-teal">
+              {story.tag}
+            </span>
+          </div>
+
+          <h3
+            className="mt-1 font-host-grotesk text-[16px] md:text-lg font-semibold leading-snug text-black group-hover:underline group-hover:underline-offset-4"
+            style={{
+              display: "-webkit-box",
+              WebkitLineClamp: 2,
+              WebkitBoxOrient: "vertical",
+              overflow: "hidden",
+            }}
+          >
             {cleanTitle}
           </h3>
+
+          <p
+            className="mt-1.5 min-h-0 flex-1 overflow-hidden font-urbanist text-black/70 text-sm md:text-base leading-relaxed break-words"
+            style={{
+              display: "-webkit-box",
+              WebkitLineClamp: 3,
+              WebkitBoxOrient: "vertical",
+              overflow: "hidden",
+            }}
+          >
+            {story.excerpt}
+          </p>
         </div>
       </Link>
     </article>
@@ -66,124 +91,134 @@ const StoryGridCard = ({
 
 export default function Stories() {
   const [activeTag, setActiveTag] = useState<(typeof tags)[number]>("All")
+  const [page, setPage] = useState(1)
 
   const filtered = useMemo(() => {
     if (activeTag === "All") return STORIES
     return STORIES.filter((s) => s.tag === activeTag)
   }, [activeTag])
 
+  useEffect(() => {
+    setPage(1)
+  }, [activeTag])
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE))
+  const pageStories = useMemo(() => {
+    const start = (page - 1) * PAGE_SIZE
+    return filtered.slice(start, start + PAGE_SIZE)
+  }, [filtered, page])
+
+  const handlePrevPage = () => setPage((p) => Math.max(1, p - 1))
+  const handleNextPage = () => setPage((p) => Math.min(totalPages, p + 1))
+
   return (
     <div className="min-h-screen bg-white font-host-grotesk overflow-x-hidden">
       <Navbar />
       <main id="main-content">
-        <section className="relative flex h-[24rem] flex-shrink-0 flex-col overflow-hidden bg-rellia-teal pt-28 pb-16 md:h-[28rem] md:pt-36 md:pb-20">
-          {/* Decorative background */}
+        <section className="relative pt-24 pb-12 md:pt-32 md:pb-16 bg-rellia-teal overflow-hidden">
           <div aria-hidden className="absolute inset-0 pointer-events-none">
-            {/* Modernist grid texture */}
-            <div
-              className="absolute inset-0 opacity-[0.07]"
-              style={{
-                backgroundImage:
-                  "linear-gradient(to right, rgba(255,255,255,0.9) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.9) 1px, transparent 1px)",
-                backgroundSize: "84px 84px",
-              }}
-            />
-
-            {/* Mint glow blobs */}
-            <div className="absolute -top-24 -left-24 h-[320px] w-[320px] rounded-full bg-rellia-mint/35 blur-3xl" />
-            <div className="absolute -bottom-28 left-[18%] h-[420px] w-[420px] rounded-full bg-rellia-mint/20 blur-3xl" />
-            <div className="absolute top-1/2 -right-32 h-[360px] w-[360px] -translate-y-1/2 rounded-full bg-rellia-mint/25 blur-3xl" />
-
-            {/* Faint brand mark */}
-            <img
-              src="/images/hologram-logo.png"
-              alt=""
-              className="absolute right-0 top-1/2 -translate-y-1/2 h-[70%] md:h-[88%] w-auto object-contain opacity-[0.08]"
-            />
-
-            {/* Gentle vignette for contrast */}
-            <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-black/25" />
+            <div className="absolute inset-0 bg-gradient-to-r from-rellia-teal/85 via-rellia-teal/55 to-rellia-teal/30" />
+            <div className="absolute -left-28 -top-32 h-[520px] w-[520px] rounded-full bg-rellia-mint/25 blur-3xl" />
+            <div className="absolute -right-40 top-1/3 h-[560px] w-[560px] -translate-y-1/2 rounded-full bg-white/10 blur-3xl" />
+            <div className="absolute left-1/3 bottom-[-220px] h-[620px] w-[620px] -translate-x-1/2 rounded-full bg-rellia-mint/15 blur-3xl" />
+            <div className="absolute inset-0 opacity-[0.22] mix-blend-soft-light [background-image:radial-gradient(circle_at_20%_10%,rgba(255,255,255,0.18),transparent_55%),radial-gradient(circle_at_80%_35%,rgba(255,255,255,0.12),transparent_52%),radial-gradient(circle_at_40%_95%,rgba(255,255,255,0.14),transparent_55%)]" />
           </div>
 
-          <div className="relative z-10 mx-auto flex w-full max-w-[1300px] flex-1 flex-col justify-center px-6 md:px-10">
+          <div className="relative z-10 max-w-[1300px] mx-auto px-6 md:px-10">
             <ScrollReveal>
-              <h1 className="text-white text-4xl md:text-6xl font-bold leading-tight tracking-tight">
-                Stories & <span className="text-rellia-mint">Insights</span>
+              <h1 className="text-white text-4xl md:text-5xl lg:text-6xl font-bold leading-tight tracking-tight mb-5">
+                News & <span className="text-rellia-mint">Updates</span>
               </h1>
-              <p className="mt-6 text-white/80 text-base md:text-lg max-w-2xl font-urbanist leading-relaxed">
-                Founder stories, industry insight, and program updates — all in one place.
+              <p className="text-white/80 text-base md:text-lg max-w-3xl font-urbanist font-normal leading-relaxed">
+                The latest founder spotlights, industry insights, & program updates. Stay current with the people and ideas shaping the future of health.
               </p>
             </ScrollReveal>
           </div>
         </section>
 
+        <FeaturedStories showViewAll={false} compact />
+
         <section className="px-6 md:px-10 pt-12 md:pt-14 pb-16 md:pb-20 bg-white">
           <div className="max-w-[1300px] mx-auto">
-            <div>
-              {/* Mobile: dropdown */}
-              <div className="md:hidden">
-                <label className="sr-only" htmlFor="stories-filter">
-                  Filter stories
-                </label>
-                <select
-                  id="stories-filter"
-                  value={activeTag}
-                  onChange={(e) => setActiveTag(e.target.value as (typeof tags)[number])}
-                  className={cn(
-                    "h-12 w-full rounded-2xl border border-black/10 bg-white px-4",
-                    "font-host-grotesk text-[13px] font-semibold uppercase tracking-[0.14em] text-black/80",
-                    "focus:outline-none focus:ring-2 focus:ring-rellia-mint focus:ring-offset-2 focus:ring-offset-white",
-                  )}
-                  aria-label="Filter stories"
-                >
-                  {tags.map((t) => (
-                    <option key={t} value={t}>
-                      {t}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Desktop: segmented tabs */}
-              <div className="hidden md:block">
-                <Tabs value={activeTag} onValueChange={(v) => setActiveTag(v as (typeof tags)[number])}>
-                  <TabsList
-                    className={cn(
-                      "relative h-auto w-fit gap-1 rounded-full bg-white p-1.5",
-                      "border border-black/10 shadow-[0_12px_32px_-22px_rgba(0,0,0,0.22)]",
-                    )}
-                  >
-                    {tags.map((t) => (
-                      <TabsTrigger
-                        key={t}
-                        value={t}
-                        className={cn(
-                          "relative z-10 rounded-full px-4 py-2.5",
-                          "font-host-grotesk text-[12px] font-semibold uppercase tracking-[0.14em]",
-                          "text-black/80 hover:text-rellia-teal",
-                          "data-[state=active]:text-white",
-                          "focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-white",
-                        )}
-                      >
-                        {activeTag === t ? (
-                          <motion.span
-                            layoutId="stories-filter-pill"
-                            className="absolute inset-0 -z-10 rounded-full bg-rellia-teal shadow-sm"
-                            transition={{ duration: 0.32, ease: "easeInOut" }}
-                            aria-hidden
-                          />
-                        ) : null}
-                        {t}
-                      </TabsTrigger>
-                    ))}
-                  </TabsList>
-                </Tabs>
-              </div>
+            <div className="mt-8">
+              <ScrollReveal>
+                <h2 className="font-host-grotesk font-semibold text-black text-2xl md:text-3xl leading-tight tracking-tight">
+                  All stories
+                </h2>
+              </ScrollReveal>
             </div>
 
-            <motion.div layout className="mt-10 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 md:gap-8">
+            <div className="mt-5 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+              <div className="w-full md:w-auto">
+                {/* Mobile: dropdown */}
+                <div className="md:hidden">
+                  <label className="sr-only" htmlFor="stories-filter">
+                    Filter stories
+                  </label>
+                  <select
+                    id="stories-filter"
+                    value={activeTag}
+                    onChange={(e) => setActiveTag(e.target.value as (typeof tags)[number])}
+                    className={cn(
+                      "h-12 w-full rounded-2xl border border-black/10 bg-white px-4",
+                      "font-host-grotesk text-[13px] font-semibold uppercase tracking-[0.14em] text-black/80",
+                      "focus:outline-none focus:ring-2 focus:ring-rellia-mint focus:ring-offset-2 focus:ring-offset-white",
+                    )}
+                    aria-label="Filter stories"
+                  >
+                    {tags.map((t) => (
+                      <option key={t} value={t}>
+                        {t}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Desktop: segmented tabs */}
+                <div className="hidden md:block">
+                  <Tabs value={activeTag} onValueChange={(v) => setActiveTag(v as (typeof tags)[number])}>
+                    <TabsList
+                      className={cn(
+                        "relative h-auto w-fit gap-1 rounded-full bg-white p-1.5",
+                        "border border-black/10 shadow-[0_12px_32px_-22px_rgba(0,0,0,0.22)]",
+                      )}
+                    >
+                      {tags.map((t) => (
+                        <TabsTrigger
+                          key={t}
+                          value={t}
+                          className={cn(
+                            "relative z-10 rounded-full px-4 py-2.5",
+                            "font-host-grotesk text-[12px] font-semibold uppercase tracking-[0.14em]",
+                            "text-black/80 hover:text-rellia-teal",
+                            "data-[state=active]:text-white",
+                            "focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-white",
+                          )}
+                        >
+                          {activeTag === t ? (
+                            <motion.span
+                              layoutId="stories-filter-pill"
+                              className="absolute inset-0 -z-10 rounded-full bg-rellia-teal shadow-sm"
+                              transition={{ duration: 0.32, ease: "easeInOut" }}
+                              aria-hidden
+                            />
+                          ) : null}
+                          {t}
+                        </TabsTrigger>
+                      ))}
+                    </TabsList>
+                  </Tabs>
+                </div>
+              </div>
+
+              <p className="font-urbanist text-base text-black/55 md:text-right">
+                Showing {pageStories.length} of {filtered.length} stories
+              </p>
+            </div>
+
+            <motion.div layout className="mt-6 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 md:gap-8">
               <AnimatePresence mode="popLayout" initial={false}>
-                {filtered.map((story, i) => (
+                {pageStories.map((story, i) => (
                   <motion.div
                     key={story.slug}
                     layout
@@ -199,6 +234,44 @@ export default function Stories() {
                 ))}
               </AnimatePresence>
             </motion.div>
+
+            {totalPages > 1 ? (
+              <div className="mt-10 flex items-center justify-center gap-4">
+                <button
+                  type="button"
+                  onClick={handlePrevPage}
+                  disabled={page <= 1}
+                  className={cn(
+                    "inline-flex h-12 w-12 items-center justify-center rounded-full border font-host-grotesk font-semibold transition-colors",
+                    page <= 1
+                      ? "cursor-not-allowed border-black/10 bg-white text-black/30"
+                      : "border-black/10 bg-white text-rellia-teal hover:border-rellia-teal hover:text-rellia-teal",
+                  )}
+                  aria-label="Previous stories page"
+                >
+                  <ChevronLeft className="h-5 w-5" aria-hidden />
+                </button>
+
+                <p className="font-urbanist text-base text-black/60" aria-label="Stories page indicator">
+                  Page {page} of {totalPages}
+                </p>
+
+                <button
+                  type="button"
+                  onClick={handleNextPage}
+                  disabled={page >= totalPages}
+                  className={cn(
+                    "inline-flex h-12 w-12 items-center justify-center rounded-full border font-host-grotesk font-semibold transition-colors",
+                    page >= totalPages
+                      ? "cursor-not-allowed border-black/10 bg-white text-black/30"
+                      : "border-black/10 bg-white text-rellia-teal hover:border-rellia-teal hover:text-rellia-teal",
+                  )}
+                  aria-label="Next stories page"
+                >
+                  <ChevronRight className="h-5 w-5" aria-hidden />
+                </button>
+              </div>
+            ) : null}
           </div>
         </section>
       </main>

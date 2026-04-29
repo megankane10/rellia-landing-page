@@ -9,6 +9,8 @@ import { useEffect, useMemo, useState } from "react"
 
 /** Auto-advance interval (progress bar uses same duration) */
 const ROTATE_MS = 6500
+/** Small pause before progress begins on each slide */
+const START_DELAY_MS = 1000
 /** Crossfade duration — longer overlap reads smoother (keep ≪ ROTATE_MS) */
 const CROSSFADE_S = 1.05
 
@@ -17,11 +19,13 @@ export default function FeaturedStories({
   showViewAll = true,
   title = "Featured Stories",
   description,
+  compact = false,
 }: {
   showHeading?: boolean
   showViewAll?: boolean
   title?: string
   description?: string
+  compact?: boolean
 }) {
   const featured = getFeaturedStories()
   const [activeIndex, setActiveIndex] = useState(0)
@@ -52,7 +56,7 @@ export default function FeaturedStories({
     if (!canRotate) return
     const t = window.setTimeout(() => {
       handleSetIndex(activeIndex + 1)
-    }, ROTATE_MS)
+    }, ROTATE_MS + START_DELAY_MS)
 
     return () => window.clearTimeout(t)
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -64,7 +68,7 @@ export default function FeaturedStories({
     "inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-white/35 bg-white/10 text-white shadow-sm transition hover:bg-white/20 disabled:pointer-events-none disabled:opacity-40"
 
   return (
-    <section className="w-full bg-white py-16 md:py-24 overflow-x-hidden">
+    <section className={cn("w-full bg-white overflow-x-hidden", compact ? "py-10 md:py-14" : "py-16 md:py-24")}>
       <div className="mx-auto w-full max-w-[1300px] px-6 md:px-10">
         {showHeading ? (
           <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
@@ -73,7 +77,7 @@ export default function FeaturedStories({
                 {title}
               </h2>
               {description ? (
-                <p className="mt-3 font-urbanist text-sm leading-relaxed text-black/60 md:text-[15px] md:leading-relaxed">
+                <p className="mt-3 font-urbanist text-sm leading-relaxed text-black/60 md:text-[15px] md:leading-relaxed line-clamp-2">
                   {description}
                 </p>
               ) : null}
@@ -91,10 +95,15 @@ export default function FeaturedStories({
           </div>
         ) : null}
 
-        <div className={cn(showHeading ? "mt-8 md:mt-10" : "")}>
+        <div className={cn(showHeading ? "mt-10 md:mt-12" : "")}>
           <ScrollReveal>
             <div className="relative w-full overflow-hidden rounded-2xl bg-rellia-teal shadow-[0_22px_56px_-18px_rgba(12,61,73,0.42),0_8px_24px_-12px_rgba(0,0,0,0.14)] md:rounded-3xl">
-              <div className="relative h-[480px] w-full overflow-hidden sm:h-[520px] md:h-[580px] lg:h-[620px]">
+              <div
+                className={cn(
+                  "relative w-full overflow-hidden",
+                  compact ? "h-[320px] sm:h-[360px] md:h-[420px] lg:h-[460px]" : "h-[480px] sm:h-[520px] md:h-[580px] lg:h-[620px]",
+                )}
+              >
                 <AnimatePresence mode="sync" initial={false}>
                   {activeStory ? (
                     <motion.img
@@ -126,24 +135,32 @@ export default function FeaturedStories({
                 <div className="absolute inset-0 flex flex-col px-6 pt-8 pb-4 md:px-10 md:pt-10 md:pb-5 lg:px-12 lg:pt-12 lg:pb-5">
                   {activeStory ? (
                     <>
-                      <div className="flex min-h-0 flex-1 flex-col items-start text-left">
-                        <div className="mb-5 inline-flex w-fit items-center gap-1.5 rounded-full border border-black/10 bg-white/85 px-3 py-1.5 shadow-[0_8px_28px_-10px_rgba(0,0,0,0.4)] ring-1 ring-white/70 backdrop-blur-sm">
-                          <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-rellia-teal ring-1 ring-rellia-mint/80" aria-hidden />
-                          <span className="font-host-grotesk text-[10px] font-semibold uppercase tracking-[0.14em] text-rellia-teal md:text-[11px]">
+                      <div className="flex min-h-0 flex-1 flex-col items-start text-left overflow-hidden">
+                        <div className="mb-4 inline-flex w-fit items-center gap-2">
+                          <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-rellia-mint" aria-hidden />
+                          <span className="font-host-grotesk text-[10px] font-semibold uppercase tracking-[0.14em] text-rellia-mint md:text-[11px]">
                             {activeStory.tag}
                           </span>
                         </div>
 
-                        <h3 className="font-host-grotesk font-semibold text-white text-3xl tracking-tight leading-[1.05] sm:text-4xl md:text-5xl lg:text-[52px]">
+                        <h3 className="font-host-grotesk font-semibold text-white text-3xl tracking-tight leading-[1.05] sm:text-4xl md:text-5xl lg:text-[52px] line-clamp-3 md:line-clamp-none">
                           {activeStory.title}
                         </h3>
 
-                        <p className="mt-4 max-w-2xl text-pretty text-white/85 text-sm font-urbanist leading-relaxed md:mt-5 md:text-base lg:max-w-3xl">
+                        <Link
+                          to={storyHref}
+                          className="mt-4 inline-flex items-center gap-2 font-host-grotesk text-sm font-semibold text-rellia-mint hover:underline hover:underline-offset-4 md:hidden"
+                          aria-label={`Read: ${activeStory.title}`}
+                        >
+                          Read story <ArrowRight className="h-4 w-4" aria-hidden />
+                        </Link>
+
+                        <p className="mt-4 max-w-2xl text-pretty text-white/85 text-sm font-urbanist leading-relaxed md:mt-5 md:text-base lg:max-w-3xl line-clamp-3">
                           {activeStory.excerpt}
                         </p>
                       </div>
 
-                      <div className="mt-6 md:mt-8">
+                      <div className="mt-6 md:mt-8 hidden md:block">
                         <RelliaAction
                           asChild
                           variant="heroSolidOnTeal"
@@ -156,7 +173,7 @@ export default function FeaturedStories({
                         </RelliaAction>
                       </div>
 
-                      <div aria-hidden className="pointer-events-none z-[15] mt-10 w-full">
+                      <div aria-hidden className="pointer-events-none z-[15] mt-6 w-full">
                         <div className="flex w-full items-center gap-2">
                           {featured.map((story, idx) => {
                             const isPast = idx < activeIndex
@@ -181,6 +198,7 @@ export default function FeaturedStories({
                                     animate={{ width: "100%" }}
                                     transition={{
                                       duration: ROTATE_MS / 1000,
+                                      delay: START_DELAY_MS / 1000,
                                       ease: "linear",
                                     }}
                                   />

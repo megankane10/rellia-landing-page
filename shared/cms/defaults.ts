@@ -397,7 +397,7 @@ export const DEFAULT_PROGRAMS_LANDING: ProgramsLandingContent = {
     "Targeted programs and live events designed to help you accomplish your next milestone, not just learn about it.",
   heroPrimaryCtaLabel: "View Programs",
   heroSecondaryCtaLabel: "View Events",
-  programsSectionTitle: "Programming that fits your startup",
+  programsSectionTitle: "Programs that fit your startup",
   programsSectionSubtitle:
     "Every program is built around a single, focused outcome. Spend your time on exactly what you need right now, and leave the rest for later.",
   programs: [

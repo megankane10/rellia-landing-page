@@ -4,6 +4,7 @@ import {
   getDefaultOgImageUrl,
   getDefaultOgImageAlt,
   getSeoForPathname,
+  getStoriesOgImageUrl,
   getSiteUrl,
 } from "@/config/seo"
 
@@ -13,7 +14,7 @@ const RouteSeo = () => {
   const { title, description, indexable } = getSeoForPathname(pathname)
   const canonicalUrl = indexable ? `${base}${pathname === "/" ? "" : pathname}` : undefined
   const ogUrl = `${base}${pathname === "/" ? "" : pathname}`
-  const imageUrl = getDefaultOgImageUrl()
+  const imageUrl = pathname === "/stories" ? getStoriesOgImageUrl() : getDefaultOgImageUrl()
   const imageAlt = getDefaultOgImageAlt()
 
   return (

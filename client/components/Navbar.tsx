@@ -16,11 +16,23 @@ const getNavItemClass = (active: boolean, tone: "light" | "dark") =>
     active &&
       (tone === "dark"
         ? "!text-rellia-mint focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"
-        : "!text-rellia-mint bg-rellia-mint/10 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-white"),
+        : "!text-rellia-teal bg-rellia-teal/10 focus-visible:ring-rellia-teal focus-visible:ring-offset-2 focus-visible:ring-offset-white"),
     !active &&
       tone === "dark"
         ? "text-white/90 hover:text-rellia-mint focus-visible:ring-white/70 focus-visible:ring-offset-transparent"
         : "text-black/75 hover:text-rellia-mint focus-visible:ring-rellia-mint focus-visible:ring-offset-white",
+  )
+
+const getCtaClassName = (tone: "light" | "dark", radiusClassName: string) =>
+  cn(
+    "group relative isolate inline-flex cursor-pointer items-center gap-2 overflow-hidden border-2 font-host-grotesk font-semibold outline-none transition-[transform,box-shadow,colors,background-color,border-color] duration-300 motion-reduce:transition-none focus-visible:ring-2 focus-visible:ring-offset-2 motion-safe:hover:-translate-y-0.5 motion-safe:hover:shadow-lg",
+    "before:pointer-events-none before:absolute before:inset-0 before:-z-10 before:origin-left before:scale-x-0 before:transition-transform before:duration-300 before:ease-out hover:before:scale-x-100",
+    "px-6 py-3 text-[14px] lg:text-[15px]",
+    radiusClassName,
+    tone === "dark" &&
+      "border-rellia-mint bg-rellia-mint text-rellia-teal focus-visible:ring-rellia-mint focus-visible:ring-offset-transparent before:bg-white hover:border-white hover:text-rellia-teal",
+    tone === "light" &&
+      "border-rellia-teal bg-white text-rellia-teal focus-visible:ring-rellia-teal focus-visible:ring-offset-white before:bg-rellia-teal hover:border-rellia-teal hover:text-white",
   )
 
 type DesktopNavLinkProps = {
@@ -93,10 +105,12 @@ const DesktopNavDropdown = ({ label, to, items, extraItem, active, tone, open, o
                 className={cn(
                   "flex items-center justify-between rounded-xl px-3 py-2.5 font-host-grotesk text-sm font-semibold tracking-wide outline-none transition-colors duration-150 motion-reduce:transition-none",
                   item.active
-                    ? "bg-white/10 text-rellia-mint ring-1 ring-white/10"
+                    ? tone === "dark"
+                      ? "bg-white/10 text-rellia-mint ring-1 ring-white/10"
+                      : "bg-rellia-teal/10 text-rellia-teal ring-1 ring-rellia-teal/15"
                     : tone === "dark"
                       ? "text-white/90 hover:bg-white/10 hover:text-rellia-mint focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"
-                      : "text-black/70 hover:bg-black/5 hover:text-rellia-mint focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-white",
+                      : "text-black/70 hover:bg-black/5 hover:text-rellia-teal focus-visible:ring-2 focus-visible:ring-rellia-teal focus-visible:ring-offset-2 focus-visible:ring-offset-white",
                 )}
                 onClick={onClose}
                 aria-current={item.active ? "page" : undefined}
@@ -114,10 +128,12 @@ const DesktopNavDropdown = ({ label, to, items, extraItem, active, tone, open, o
                   className={cn(
                     "flex items-center justify-between rounded-xl px-3 py-2.5 font-host-grotesk text-sm font-semibold tracking-wide outline-none transition-colors duration-150 motion-reduce:transition-none",
                     extraItem.active
-                      ? "bg-white/10 text-rellia-mint ring-1 ring-white/10"
+                      ? tone === "dark"
+                        ? "bg-white/10 text-rellia-mint ring-1 ring-white/10"
+                        : "bg-rellia-teal/10 text-rellia-teal ring-1 ring-rellia-teal/15"
                       : tone === "dark"
                         ? "text-white/90 hover:bg-white/10 hover:text-rellia-mint focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"
-                        : "text-black/70 hover:bg-black/5 hover:text-rellia-mint focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-white",
+                        : "text-black/70 hover:bg-black/5 hover:text-rellia-teal focus-visible:ring-2 focus-visible:ring-rellia-teal focus-visible:ring-offset-2 focus-visible:ring-offset-white",
                   )}
                   onClick={onClose}
                   aria-current={extraItem.active ? "page" : undefined}
@@ -327,13 +343,7 @@ export default function Navbar({ ctaRadiusClassName = "rounded-full" }: NavbarPr
 
   const desktopRailCls = cn("hidden items-center md:flex gap-1")
 
-  const ctaCls = cn(
-    "group relative isolate inline-flex cursor-pointer items-center gap-2 overflow-hidden border-2 font-host-grotesk font-semibold outline-none transition-[transform,box-shadow,colors,background-color,border-color] duration-300 motion-reduce:transition-none focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 motion-safe:hover:-translate-y-0.5 motion-safe:hover:shadow-lg",
-    "before:pointer-events-none before:absolute before:inset-0 before:-z-10 before:origin-left before:scale-x-0 before:transition-transform before:duration-300 before:ease-out hover:before:scale-x-100",
-    "px-6 py-3 text-[14px] lg:text-[15px]",
-    ctaRadiusClassName,
-    "border-rellia-mint bg-rellia-mint text-rellia-teal focus-visible:ring-offset-transparent before:bg-white hover:border-white hover:text-rellia-teal",
-  )
+  const ctaCls = getCtaClassName(desktopTone, ctaRadiusClassName)
 
   const menuIconBtnCls = cn(
     "inline-flex min-h-11 min-w-11 cursor-pointer items-center justify-center transition-[color] duration-200 motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 md:hidden",

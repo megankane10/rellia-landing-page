@@ -106,9 +106,9 @@ const ROUTE_SEO: Record<string, RouteSeoConfig> = {
     indexable: true,
   },
   "/stories": {
-    title: "Stories & Insights — Rellia Health",
+    title: "News & Updates — Rellia Health",
     description:
-      "Founder stories, industry insight, and program updates from the Rellia Health network.",
+      "The latest founder spotlights, industry insights, & program updates. Stay current with the people and ideas shaping the future of health.",
     indexable: true,
   },
   "/membership": {
@@ -172,6 +172,14 @@ export const getDefaultOgImageUrl = (): string => {
   const ogImageVersion = ((import.meta as unknown as { env?: Record<string, unknown> })?.env
     ?.VITE_OG_IMAGE_VERSION as string | undefined)?.trim()
   const base = `${getSiteUrl()}/ogimage.png`
+  if (!ogImageVersion) return base
+  return `${base}?v=${encodeURIComponent(ogImageVersion)}`
+}
+
+export const getStoriesOgImageUrl = (): string => {
+  const ogImageVersion = ((import.meta as unknown as { env?: Record<string, unknown> })?.env
+    ?.VITE_OG_IMAGE_VERSION as string | undefined)?.trim()
+  const base = `${getSiteUrl()}/stories-ogimage.png`
   if (!ogImageVersion) return base
   return `${base}?v=${encodeURIComponent(ogImageVersion)}`
 }
