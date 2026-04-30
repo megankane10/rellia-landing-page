@@ -85,9 +85,27 @@ export function TeamMemberCard({
     setCandidateIndex(0);
   }, [name, imageSrc]);
 
+  const handleToggleBio = () => {
+    setBioOpen(!bioOpen)
+  }
+
   return (
     <div className={cn("cursor-default", className)}>
-      <div className="group relative mb-6 aspect-square overflow-hidden rounded-3xl bg-rellia-cream/40 shadow-md">
+      <div
+        className="group relative mb-6 aspect-square overflow-hidden rounded-3xl bg-rellia-cream/40 shadow-md cursor-pointer"
+        role="button"
+        tabIndex={0}
+        aria-label={bioOpen ? `Close bio for ${name}` : `Open bio for ${name}`}
+        aria-controls={bioId}
+        aria-expanded={bioOpen}
+        onClick={handleToggleBio}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault()
+            handleToggleBio()
+          }
+        }}
+      >
         <img
           src={src}
           alt={name}
@@ -117,10 +135,14 @@ export function TeamMemberCard({
         <div className="absolute bottom-4 right-4 z-30">
           <button
             type="button"
-            onClick={() => setBioOpen(!bioOpen)}
+            onClick={(e) => {
+              e.stopPropagation()
+              setBioOpen(!bioOpen)
+            }}
             onKeyDown={(e) => {
               if (e.key === "Enter" || e.key === " ") {
                 e.preventDefault();
+                e.stopPropagation()
                 setBioOpen(!bioOpen);
               }
             }}
@@ -128,7 +150,8 @@ export function TeamMemberCard({
               "inline-flex h-12 w-12 items-center justify-center rounded-full border",
               "border-white/20 bg-white/10 text-white backdrop-blur-sm",
               "transition-[background-color,border-color,transform] duration-200 motion-reduce:transition-none",
-              "hover:bg-white/15 hover:border-white/30 motion-safe:hover:-translate-y-[1px]",
+              "hover:bg-rellia-mint hover:border-rellia-mint hover:text-rellia-teal motion-safe:hover:-translate-y-[1px]",
+              "group-hover:bg-rellia-mint group-hover:border-rellia-mint group-hover:text-rellia-teal motion-safe:group-hover:-translate-y-[1px]",
               "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-rellia-teal",
             )}
             aria-label={bioOpen ? `Close bio for ${name}` : `Open bio for ${name}`}
@@ -137,12 +160,12 @@ export function TeamMemberCard({
           >
             <span className="relative block h-5 w-5" aria-hidden>
               <motion.span
-                className="absolute inset-0 m-auto h-[2px] w-5 rounded-full bg-white"
+                className="absolute inset-0 m-auto h-[2px] w-5 rounded-full bg-current"
                 animate={{ rotate: bioOpen ? 45 : 0, opacity: 1 }}
                 transition={reduceMotion ? undefined : { duration: 0.18, ease: "easeOut" }}
               />
               <motion.span
-                className="absolute inset-0 m-auto h-[2px] w-5 rounded-full bg-white"
+                className="absolute inset-0 m-auto h-[2px] w-5 rounded-full bg-current"
                 animate={{ rotate: bioOpen ? -45 : 90, opacity: bioOpen ? 1 : 0.9 }}
                 transition={reduceMotion ? undefined : { duration: 0.18, ease: "easeOut" }}
               />

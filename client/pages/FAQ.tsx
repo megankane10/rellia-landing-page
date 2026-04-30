@@ -6,6 +6,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { Link } from "react-router-dom";
 import { useFaqPage } from "@/hooks/useCmsDocuments";
 import { DEFAULT_FAQ_PAGE } from "@shared/cms/defaults";
+import PageHeader from "@/components/PageHeader"
 import { ArrowRight } from "lucide-react"
 
 export default function FAQ() {
@@ -20,34 +21,23 @@ export default function FAQ() {
       <Navbar />
 
       <main id="main-content">
-        <section className="relative pt-24 pb-12 md:pt-32 md:pb-16 bg-rellia-cream overflow-hidden">
-          <div aria-hidden className="absolute inset-0 pointer-events-none">
-            <div className="absolute inset-0 bg-gradient-to-r from-rellia-cream via-white/60 to-rellia-cream" />
-            <div className="absolute -left-28 -top-32 h-[520px] w-[520px] rounded-full bg-rellia-mint/20 blur-3xl" />
-            <div className="absolute -right-40 top-1/3 h-[560px] w-[560px] -translate-y-1/2 rounded-full bg-rellia-teal/10 blur-3xl" />
-            <div className="absolute left-1/3 bottom-[-220px] h-[620px] w-[620px] -translate-x-1/2 rounded-full bg-rellia-mint/15 blur-3xl" />
-            <div className="absolute inset-0 opacity-[0.18] mix-blend-multiply [background-image:radial-gradient(circle_at_20%_10%,rgba(13,53,64,0.10),transparent_55%),radial-gradient(circle_at_80%_35%,rgba(13,53,64,0.08),transparent_52%),radial-gradient(circle_at_40%_95%,rgba(13,53,64,0.09),transparent_55%)]" />
-          </div>
-
-          <div className="relative z-10 max-w-[1300px] mx-auto px-6 md:px-10">
-            <ScrollReveal>
-              <h1 className="text-black text-4xl md:text-5xl lg:text-6xl font-bold leading-tight tracking-tight mb-5">
-                {highlightIndex >= 0 ? (
-                  <>
-                    {faq.title.slice(0, highlightIndex)}
-                    <span className="text-rellia-teal">{faq.title.slice(highlightIndex, highlightIndex + highlightPhrase.length)}</span>
-                    {faq.title.slice(highlightIndex + highlightPhrase.length)}
-                  </>
-                ) : (
-                  faq.title
-                )}
-              </h1>
-              <p className="font-urbanist text-black/65 text-base md:text-lg leading-relaxed max-w-3xl">
-                {faq.subtitle}
-              </p>
-            </ScrollReveal>
-          </div>
-        </section>
+        <PageHeader
+          variant="light"
+          title={
+            highlightIndex >= 0 ? (
+              <>
+                {faq.title.slice(0, highlightIndex)}
+                <span className="text-rellia-teal">
+                  {faq.title.slice(highlightIndex, highlightIndex + highlightPhrase.length)}
+                </span>
+                {faq.title.slice(highlightIndex + highlightPhrase.length)}
+              </>
+            ) : (
+              faq.title
+            )
+          }
+          subtitle={faq.subtitle}
+        />
 
         <section className="py-16 md:py-24 bg-white">
           <div className="max-w-[1300px] mx-auto px-6 md:px-10">

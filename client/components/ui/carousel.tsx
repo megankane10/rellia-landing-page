@@ -157,7 +157,7 @@ const CarouselContent = React.forwardRef<
   return (
     <div
       ref={carouselRef}
-      className="overflow-x-hidden overflow-y-visible pb-6 md:pb-8"
+      className="overflow-x-visible overflow-y-visible pb-4 md:pb-5"
     >
       <div
         ref={ref}

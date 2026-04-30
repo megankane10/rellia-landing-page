@@ -173,7 +173,7 @@ export default function NetworkMetricsSection({ heading, subheading, metrics }: 
         </div>
 
         <div className="relative z-10 mx-auto flex h-full w-full max-w-[1300px] flex-col px-6 md:px-10 pt-12 md:pt-14 pb-14 md:pb-18">
-          <div className="flex flex-col items-center text-center mt-8 md:mt-10 lg:mt-36">
+          <div className="flex flex-col items-start text-left mt-8 md:mt-10 lg:mt-24">
             <motion.div
               initial={reduceMotion ? { opacity: 1, y: 0, filter: "blur(0px)" } : { opacity: 0, y: 22, filter: "blur(18px)" }}
               animate={
@@ -184,9 +184,9 @@ export default function NetworkMetricsSection({ heading, subheading, metrics }: 
                     : { opacity: 0, y: 22, filter: "blur(18px)" }
               }
               transition={reduceMotion ? undefined : { duration: 0.65, ease: [0.16, 1, 0.3, 1] }}
-              className="flex flex-col items-center text-center w-full"
+              className="flex flex-col items-start text-left w-full"
             >
-              <div className="mb-9 md:mb-10">
+              <div className="mb-7 md:mb-8">
                 <PillTag
                   label="Network impact"
                   dot={
@@ -206,9 +206,9 @@ export default function NetworkMetricsSection({ heading, subheading, metrics }: 
             </motion.div>
           </div>
 
-          <div className="mt-10 sm:mt-12 md:mt-8 lg:mt-0 lg:flex-1 lg:flex lg:items-center lg:-translate-y-10">
+          <div className="mt-10 sm:mt-12 lg:flex-1 lg:flex lg:items-center lg:-translate-y-6">
             <div className="w-full">
-              <div className="mx-auto grid max-w-[1100px] grid-cols-1 gap-4 sm:grid-cols-3 md:gap-5">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 md:gap-5 justify-items-start">
                 {metricList.slice(0, 3).map((m, i) => {
                   const label = labels[i] ?? m.label.toUpperCase()
                   return (
@@ -224,8 +224,10 @@ export default function NetworkMetricsSection({ heading, subheading, metrics }: 
                       }
                       transition={reduceMotion ? undefined : { duration: 0.45, ease: [0.16, 1, 0.3, 1], delay: 0.12 + i * 0.08 }}
                       className={cn(
-                        "h-full rounded-2xl border border-white/18 px-6 py-9 md:px-7 md:py-10",
-                        "bg-white/14 backdrop-blur-md",
+                        "rounded-2xl border border-white/18 px-6 py-9 md:px-7 md:py-10",
+                        "bg-white/10 backdrop-blur-lg shadow-[0_18px_60px_-36px_rgba(0,0,0,0.65)]",
+                        "flex items-center justify-center h-[200px] sm:h-[210px] md:h-[220px]",
+                        "w-full max-w-[300px] md:max-w-[320px]",
                       )}
                     >
                       <MetricValue metric={m} label={label} index={i} entered={entered && countReady} />

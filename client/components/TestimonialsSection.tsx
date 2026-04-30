@@ -282,7 +282,7 @@ export default function TestimonialsSection({ titleLead, titleAccent, testimonia
             setApi={(api) => setCarouselApi(api as unknown)}
             className="w-full max-w-full min-w-0"
           >
-            <div className="relative flex flex-col gap-6 md:gap-7">
+            <div className="relative flex flex-col gap-4 md:gap-5">
               {/*
                 Viewport clips horizontally; each slide min-w-0 prevents flex overflow.
                 1 / 2 / 3 cards visible — same proportional width as the old 3-col grid.
@@ -307,7 +307,7 @@ export default function TestimonialsSection({ titleLead, titleAccent, testimonia
               </CarouselContent>
 
               {/* FeaturedStories-style control strip: loading bar + count + arrows */}
-              <div className="flex w-full flex-col gap-3">
+              <div className="flex w-full flex-col gap-2">
                 <div aria-hidden className="relative h-1 w-full overflow-hidden rounded-full bg-black/10">
                   <div
                     className="h-full bg-rellia-teal transition-[width] duration-500 ease-out motion-reduce:transition-none"

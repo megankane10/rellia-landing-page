@@ -3,6 +3,7 @@ import Footer from "@/components/Footer";
 import ScrollReveal from "@/components/ScrollReveal";
 import RelliaCta, { ctaActionFromHref } from "@/components/RelliaCta";
 import { ProgramCard } from "@/components/cards";
+import PageHeader from "@/components/PageHeader"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useProgramsLandingPage } from "@/hooks/useCmsDocuments";
 import { cn } from "@/lib/utils"
@@ -62,30 +63,24 @@ export default function ProgramsEvents() {
       <Navbar />
 
       <main id="main-content">
-        <section className="relative pt-24 pb-12 md:pt-32 md:pb-16 bg-rellia-teal overflow-hidden">
-          {/* Less busy header background (no grid, no hologram) */}
-          <div aria-hidden className="absolute inset-0 pointer-events-none">
-            <div className="absolute inset-0 bg-gradient-to-r from-rellia-teal/85 via-rellia-teal/55 to-rellia-teal/30" />
-            <div className="absolute -left-28 -top-32 h-[520px] w-[520px] rounded-full bg-rellia-mint/25 blur-3xl" />
-            <div className="absolute -right-16 sm:-right-28 md:-right-40 top-1/3 h-[560px] w-[560px] -translate-y-1/2 rounded-full bg-white/10 blur-3xl" />
-            <div className="absolute left-1/3 bottom-[-220px] h-[620px] w-[620px] -translate-x-1/2 rounded-full bg-rellia-mint/15 blur-3xl" />
-            <div className="absolute inset-0 opacity-[0.22] mix-blend-soft-light [background-image:radial-gradient(circle_at_20%_10%,rgba(255,255,255,0.18),transparent_55%),radial-gradient(circle_at_80%_35%,rgba(255,255,255,0.12),transparent_52%),radial-gradient(circle_at_40%_95%,rgba(255,255,255,0.14),transparent_55%)]" />
-          </div>
-          <div className="relative z-10 max-w-[1300px] mx-auto px-6 md:px-10">
-            <ScrollReveal>
-              <h1 className="text-white text-4xl md:text-5xl lg:text-6xl font-bold leading-tight tracking-tight mb-5">
-                Programming that <span className="text-rellia-mint">fits your startup</span>
-              </h1>
-              <p className="text-white/80 text-base md:text-lg max-w-3xl font-urbanist font-normal leading-relaxed">
-                {pl.programsSectionSubtitle}
-              </p>
-            </ScrollReveal>
-          </div>
-        </section>
+        <PageHeader
+          variant="dark"
+          title={
+            <>
+              Programming that <span className="text-rellia-mint">fits your startup</span>
+            </>
+          }
+          subtitle={pl.programsSectionSubtitle}
+        />
 
-        <section id="view-programs" className="py-12 md:py-16 bg-white">
+        <section id="view-programs" className="pt-8 pb-12 md:pt-10 md:pb-16 bg-white">
           <div className="max-w-[1300px] mx-auto px-6 md:px-10">
             <ScrollReveal>
+              <div className="mb-4">
+                <h2 className="font-host-grotesk text-2xl md:text-3xl font-semibold leading-tight tracking-tight text-black">
+                  Browse Programs
+                </h2>
+              </div>
               <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                 <div className="w-full md:w-auto">
                   {/* Mobile: full-width segmented options */}
