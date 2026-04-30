@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react"
-import { ChevronDown, ChevronLeft, ChevronRight, ChevronUp, Info } from "lucide-react"
+import { CircleHelp, ChevronDown, ChevronLeft, ChevronRight, ChevronUp } from "lucide-react"
 import ScrollReveal from "./ScrollReveal"
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
@@ -30,7 +30,7 @@ function CompanyInfoPopover({ t }: { t: Testimonial }) {
           )}
           aria-label={`About ${t.company}`}
         >
-          <Info className="h-3.5 w-3.5" aria-hidden />
+          <CircleHelp className="h-3.5 w-3.5" aria-hidden />
         </button>
       </PopoverTrigger>
       <PopoverContent

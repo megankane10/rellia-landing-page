@@ -11,7 +11,6 @@ import { ArrowRight } from "lucide-react"
 export default function FAQ() {
   const { data } = useFaqPage();
   const faq = data ?? DEFAULT_FAQ_PAGE;
-  const firstId = faq.items[0]?.id ?? "first";
   const highlightPhrase = "need to know"
   const titleLower = (faq.title ?? "").toLowerCase()
   const highlightIndex = titleLower.indexOf(highlightPhrase)
@@ -54,23 +53,37 @@ export default function FAQ() {
           <div className="max-w-[1300px] mx-auto px-6 md:px-10">
             <div className="flex flex-col lg:flex-row lg:items-start gap-12 lg:gap-20">
               <div className="flex-1 min-w-0 order-1 lg:order-2">
-                <ScrollReveal delay={0.1}>
-                  <Accordion type="single" collapsible defaultValue={firstId}>
-                    {faq.items.map((item, index) => (
-                      <AccordionItem
-                        key={item.id}
-                        value={item.id}
-                        className={index === faq.items.length - 1 ? "border-b-0" : "border-b border-black/10"}
-                      >
-                        <AccordionTrigger className="text-left text-base md:text-lg font-medium text-black py-5">
-                          {item.question}
-                        </AccordionTrigger>
-                        <AccordionContent className="pb-5 text-black/70 font-urbanist text-sm md:text-base leading-relaxed">
-                          {item.answer}
-                        </AccordionContent>
-                      </AccordionItem>
-                    ))}
-                  </Accordion>
+                <ScrollReveal>
+                  <div className="rounded-3xl border border-black/10 bg-white px-7 py-0 shadow-sm">
+                    <Accordion type="single" collapsible>
+                      {faq.items.map((item, index) => (
+                        // Tighter first/last padding so the container feels balanced
+                        <AccordionItem
+                          key={item.id}
+                          value={item.id}
+                          className={index === faq.items.length - 1 ? "-mx-7 px-7 border-b-0" : "-mx-7 px-7 border-b border-black/10"}
+                        >
+                          <AccordionTrigger
+                            className={[
+                              "text-left text-base md:text-lg font-medium text-black",
+                              "py-4 md:py-5",
+                              "min-h-[64px] md:min-h-[72px]",
+                              "[&>span:first-child]:line-clamp-2 [&>span:first-child]:leading-snug",
+                            ].join(" ")}
+                          >
+                            {item.question}
+                          </AccordionTrigger>
+                          <AccordionContent
+                            className={[
+                              "pb-5 text-black/70 font-urbanist text-sm md:text-base leading-relaxed",
+                            ].join(" ")}
+                          >
+                            {item.answer}
+                          </AccordionContent>
+                        </AccordionItem>
+                      ))}
+                    </Accordion>
+                  </div>
                 </ScrollReveal>
               </div>
 

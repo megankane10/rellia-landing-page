@@ -206,7 +206,7 @@ export default function NetworkMetricsSection({ heading, subheading, metrics }: 
             </motion.div>
           </div>
 
-          <div className="mt-10 sm:mt-12 md:mt-8 lg:mt-0 lg:flex-1 lg:flex lg:items-center">
+          <div className="mt-10 sm:mt-12 md:mt-8 lg:mt-0 lg:flex-1 lg:flex lg:items-center lg:-translate-y-10">
             <div className="w-full">
               <div className="mx-auto grid max-w-[1100px] grid-cols-1 gap-4 sm:grid-cols-3 md:gap-5">
                 {metricList.slice(0, 3).map((m, i) => {

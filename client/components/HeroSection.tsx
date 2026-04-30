@@ -169,7 +169,7 @@ export default function HeroSection({ content }: HeroSectionProps) {
             initial={reduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
             transition={reduceMotion ? undefined : { duration: 0.45, ease: "easeOut", delay: 0.05 }}
-            className="mt-2 md:mt-3"
+            className="-mt-2 md:-mt-1"
           >
             <motion.h1
               initial={reduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 18 }}
@@ -209,7 +209,7 @@ export default function HeroSection({ content }: HeroSectionProps) {
             initial={reduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 18 }}
             animate={reduceMotion || hasHeadlineRevealed ? { opacity: 1, y: 0 } : { opacity: 0, y: 18 }}
             transition={reduceMotion ? undefined : { duration: 0.55, ease: [0.16, 1, 0.3, 1], delay: 0.08 }}
-            className="mt-6 md:mt-7"
+            className="mt-8 md:mt-9"
           >
             <p className="font-host-grotesk font-normal text-3xl md:text-[34px] tracking-tight text-white/90">
               You are the future of health tech.

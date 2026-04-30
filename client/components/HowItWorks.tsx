@@ -134,11 +134,21 @@ export default function HowItWorks() {
         className="pointer-events-none absolute -right-20 top-8 w-[360px] max-w-[55vw] opacity-[0.05] md:right-0 md:top-0 md:w-[460px]"
       />
       <div aria-hidden className="pointer-events-none absolute inset-0">
-        <div className="absolute -left-24 top-20 h-[420px] w-[420px] rounded-full bg-rellia-mint/18 blur-3xl" />
-        <div className="absolute right-[-160px] bottom-[-200px] h-[560px] w-[560px] rounded-full bg-rellia-teal/10 blur-3xl" />
+        {/* Mint blobs behind the entire section */}
+        <div className="absolute -left-28 top-10 h-[520px] w-[520px] rounded-full bg-rellia-mint/22 blur-3xl" />
+        <div className="absolute right-[-220px] bottom-[-240px] h-[680px] w-[680px] rounded-full bg-rellia-mint/18 blur-3xl" />
+        <div className="absolute left-[35%] top-[55%] h-[520px] w-[520px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-rellia-mint/10 blur-3xl" />
         <div className="absolute inset-0 opacity-[0.22] [background-image:radial-gradient(circle_at_20%_10%,rgba(13,53,64,0.08),transparent_52%),radial-gradient(circle_at_80%_30%,rgba(157,214,208,0.10),transparent_55%),radial-gradient(circle_at_35%_95%,rgba(13,53,64,0.07),transparent_55%)]" />
       </div>
       <div className="relative z-10 max-w-[1300px] mx-auto">
+        {/* Abstract line elements above the heading */}
+        <div aria-hidden className="pointer-events-none absolute left-0 right-0 top-0 z-20">
+          <div className="relative mx-auto w-full max-w-[1300px]">
+            <div className="absolute left-0 top-8 h-[2px] w-full origin-left rotate-[10deg] bg-gradient-to-r from-rellia-mint/35 via-rellia-mint/16 to-transparent" />
+            <div className="absolute left-0 top-[3.15rem] h-[1px] w-full origin-left rotate-[10deg] bg-gradient-to-r from-rellia-mint/28 via-rellia-mint/12 to-transparent" />
+            <div className="absolute left-0 top-[3.85rem] h-[2px] w-full origin-left rotate-[10deg] bg-gradient-to-r from-rellia-teal/16 via-rellia-teal/10 to-transparent" />
+          </div>
+        </div>
         <ScrollReveal delay={0.1}>
           <SectionHeading
             title="How we help you move faster"

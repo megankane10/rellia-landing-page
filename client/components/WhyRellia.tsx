@@ -80,7 +80,7 @@ export default function WhyRellia({ sectionTitle, features }: WhyRelliaProps) {
   }, [cards.length])
 
   return (
-    <section className="w-full bg-rellia-cream/25 py-16 md:py-24 px-6 md:px-10 overflow-x-hidden">
+    <section className="w-full bg-rellia-cream/25 px-6 md:px-10 lg:px-10 py-16 md:py-24 overflow-x-hidden">
       <div className="max-w-[1300px] mx-auto">
         <SectionHeading
           align="left"
@@ -208,9 +208,7 @@ export default function WhyRellia({ sectionTitle, features }: WhyRelliaProps) {
                         <div
                           className={cn(
                             "absolute inset-0",
-                            isActive
-                              ? "bg-gradient-to-t from-black/80 via-black/40 to-black/16"
-                              : "bg-gradient-to-t from-black/74 via-black/36 to-black/14",
+                            "bg-gradient-to-t from-black/85 via-black/42 to-black/18",
                           )}
                         />
                         <div aria-hidden className="absolute inset-0 bg-black/10" />
