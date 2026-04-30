@@ -1,6 +1,6 @@
-import { Instagram, Linkedin, Mail } from "lucide-react";
 import { Link } from "react-router-dom";
 import { DEFAULT_GLOBAL_SETTINGS } from "@shared/cms/defaults";
+import { InstagramFilled, LinkedInFilled, MailFilled } from "@/components/icons/SocialIcons"
 
 const g = DEFAULT_GLOBAL_SETTINGS
 
@@ -34,7 +34,7 @@ export default function Footer() {
                 className="p-2 bg-white/5 rounded-full hover:bg-white/10 transition-colors"
                 aria-label="Rellia Health on LinkedIn"
               >
-                <Linkedin className="w-5 h-5 text-white/80" />
+                <LinkedInFilled className="w-5 h-5 text-white/85" />
               </a>
               <a
                 href={g.instagramUrl}
@@ -43,14 +43,14 @@ export default function Footer() {
                 className="p-2 bg-white/5 rounded-full hover:bg-white/10 transition-colors"
                 aria-label="Rellia Health on Instagram"
               >
-                <Instagram className="w-5 h-5 text-white/80" />
+                <InstagramFilled className="w-5 h-5 text-white/85" />
               </a>
               <a
                 href={`mailto:${g.supportEmail}`}
                 className="p-2 bg-white/5 rounded-full hover:bg-white/10 transition-colors"
                 aria-label={`Email ${g.supportEmail}`}
               >
-                <Mail className="w-5 h-5 text-white/80" />
+                <MailFilled className="w-5 h-5 text-white/85" />
               </a>
             </div>
           </div>
@@ -98,7 +98,7 @@ export default function Footer() {
             className="p-2 bg-white/5 rounded-full hover:bg-white/10 transition-colors"
             aria-label="Rellia Health on LinkedIn"
           >
-            <Linkedin className="w-5 h-5 text-white/80" />
+            <LinkedInFilled className="w-5 h-5 text-white/85" />
           </a>
           <a
             href={g.instagramUrl}
@@ -107,14 +107,14 @@ export default function Footer() {
             className="p-2 bg-white/5 rounded-full hover:bg-white/10 transition-colors"
             aria-label="Rellia Health on Instagram"
           >
-            <Instagram className="w-5 h-5 text-white/80" />
+            <InstagramFilled className="w-5 h-5 text-white/85" />
           </a>
           <a
             href={`mailto:${g.supportEmail}`}
             className="p-2 bg-white/5 rounded-full hover:bg-white/10 transition-colors"
             aria-label={`Email ${g.supportEmail}`}
           >
-            <Mail className="w-5 h-5 text-white/80" />
+            <MailFilled className="w-5 h-5 text-white/85" />
           </a>
         </div>
 

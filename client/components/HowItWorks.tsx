@@ -200,7 +200,7 @@ export default function HowItWorks() {
                     transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
                     className="relative z-0 flex h-[190px] w-full min-w-0 shrink-0 flex-col overflow-hidden md:h-[210px]"
                   >
-                    <div className="relative z-10 flex h-full min-h-0 w-full flex-col px-4 pb-12 pt-4 md:px-5 md:pb-12 md:pt-5 lg:px-6 lg:pt-6">
+                    <div className="relative z-10 flex h-full min-h-0 w-full flex-col px-4 pb-12 pt-6 md:px-5 md:pb-12 md:pt-7 lg:px-6 lg:pt-8">
                       <button
                         type="button"
                         onClick={() => handleToggle(step.title)}

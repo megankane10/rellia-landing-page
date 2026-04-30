@@ -1,8 +1,9 @@
 import { useMemo, useState, useEffect, useCallback, useRef, type KeyboardEvent } from "react"
 import { Link, useLocation } from "react-router-dom"
 import { cn } from "@/lib/utils"
-import { ChevronDown, Instagram, Linkedin, Mail, Menu, X } from "lucide-react"
+import { ChevronDown } from "lucide-react"
 import { DEFAULT_GLOBAL_SETTINGS } from "@shared/cms/defaults"
+import { InstagramFilled, LinkedInFilled, MailFilled } from "@/components/icons/SocialIcons"
 
 const LOGO_DEFAULT = "/images/logo-rellia-footer.webp"
 const LOGO_FILLED = "/images/logo-rellia-filled.webp"
@@ -272,7 +273,7 @@ export default function Navbar({ ctaRadiusClassName = "rounded-full" }: NavbarPr
     pathname === "/programs"
 
   const desktopTone: "light" | "dark" =
-    !mobileOpen && !scrolled && !hasTealHero ? "light" : "dark"
+    !scrolled && !hasTealHero ? "light" : "dark"
 
   const networkItems = useMemo<NetworkItem[]>(
     () => [
@@ -334,11 +335,9 @@ export default function Navbar({ ctaRadiusClassName = "rounded-full" }: NavbarPr
   )
 
   const shellCls = cn(
-    "mx-auto grid w-full max-w-[1300px] grid-cols-[1fr_auto] items-center gap-3 transition-[height,padding] duration-500 ease-out motion-reduce:transition-none md:grid-cols-[1fr_auto_1fr] md:gap-4",
-    mobileOpen &&
-      "min-h-[72px] rounded-b-2xl border-x border-b border-white/10 border-t-transparent bg-rellia-teal/80 px-6 shadow-[0_18px_50px_-20px_rgba(0,0,0,0.35)] backdrop-blur-xl md:min-h-[86px] md:rounded-b-3xl md:px-10",
-    !mobileOpen &&
-      "h-[72px] md:h-[86px] px-6 md:px-10",
+    "mx-auto grid w-full max-w-[1300px] grid-cols-[1fr_auto] items-center gap-3",
+    "h-[72px] md:h-[86px] px-6 md:px-10",
+    "md:grid-cols-[1fr_auto_1fr] md:gap-4",
   )
 
   const desktopRailCls = cn("hidden items-center md:flex gap-1")
@@ -359,17 +358,14 @@ export default function Navbar({ ctaRadiusClassName = "rounded-full" }: NavbarPr
       aria-label="Main navigation"
       className={cn(
         "fixed inset-x-0 top-0 z-[9999] transition-[background-color,backdrop-filter,border-color,box-shadow] duration-500 ease-out motion-reduce:transition-none",
-        !mobileOpen &&
-          !scrolled &&
+        !scrolled &&
           (pathname === "/faq"
             ? "bg-transparent"
             : desktopTone === "dark"
               ? "bg-transparent"
               : "bg-white/85 backdrop-blur-xl border-b border-black/5"),
-        !mobileOpen &&
-          scrolled &&
-          "bg-rellia-teal shadow-[0_10px_30px_-24px_rgba(0,0,0,0.35)] backdrop-blur-2xl",
-        mobileOpen && "bg-rellia-teal/75 backdrop-blur-2xl shadow-[0_10px_30px_-24px_rgba(0,0,0,0.35)]",
+        scrolled && "bg-rellia-teal shadow-[0_10px_30px_-24px_rgba(0,0,0,0.35)] backdrop-blur-2xl",
+        mobileOpen && "bg-rellia-teal shadow-[0_10px_30px_-24px_rgba(0,0,0,0.35)] backdrop-blur-2xl",
       )}
     >
       <a
@@ -500,31 +496,24 @@ export default function Navbar({ ctaRadiusClassName = "rounded-full" }: NavbarPr
 
       {/* Mobile menu (always mounted; animates via translate) */}
       <>
-        {/* Backdrop (below the navbar bar) */}
-        <button
-          type="button"
-          className={cn(
-            "fixed inset-x-0 top-[72px] z-[55] h-[calc(100dvh-72px)] cursor-pointer bg-black/30 transition-opacity duration-300 ease-out motion-reduce:transition-none md:hidden",
-            mobileOpen ? "opacity-100" : "pointer-events-none opacity-0",
-          )}
-          aria-label="Close navigation menu"
-          onClick={handleCloseMobile}
-        />
-
-        {/* Panel slides in from the right, under the navbar */}
+        {/* Full-screen teal overlay slides in under the navbar */}
         <div
           id="mobile-nav-panel"
           className={cn(
-            "fixed inset-x-0 top-[72px] z-[56] h-[calc(100dvh-72px)] w-full shadow-2xl md:hidden transform-gpu",
-            "bg-rellia-teal/75 backdrop-blur-2xl",
-            "will-change-transform transition-transform duration-400 ease-out motion-reduce:transition-none",
+            "fixed inset-x-0 top-[72px] z-[56] h-[calc(100dvh-72px)] w-full md:hidden transform-gpu",
+            "bg-rellia-teal backdrop-blur-[56px] backdrop-saturate-150 shadow-2xl border-l border-white/10",
+            "will-change-transform transition-transform duration-500 ease-[cubic-bezier(0.42,0,0.58,1)] motion-reduce:transition-none",
             mobileOpen ? "translate-x-0" : "pointer-events-none translate-x-full",
           )}
           role="dialog"
           aria-modal="true"
           aria-label="Site navigation"
+          onClick={handleCloseMobile}
         >
-          <div className="relative flex h-full w-full flex-col overflow-y-auto bg-rellia-teal/65 px-6 pb-8 pt-8 backdrop-blur-2xl">
+          <div
+            className="relative flex h-full w-full flex-col overflow-y-auto px-6 pb-8 pt-8 drop-shadow-[0_10px_18px_rgba(0,0,0,0.35)]"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="flex flex-1 flex-col min-h-0">
               <button
                 type="button"
@@ -706,7 +695,7 @@ export default function Navbar({ ctaRadiusClassName = "rounded-full" }: NavbarPr
                     className="rounded-full border border-white/15 bg-white/5 p-2 transition-colors hover:bg-white/10"
                     aria-label="Rellia Health on LinkedIn"
                   >
-                    <Linkedin className="h-5 w-5 text-white/80" />
+                    <LinkedInFilled className="h-5 w-5 text-white/85" />
                   </a>
                   <a
                     href={DEFAULT_GLOBAL_SETTINGS.instagramUrl}
@@ -715,14 +704,14 @@ export default function Navbar({ ctaRadiusClassName = "rounded-full" }: NavbarPr
                     className="rounded-full border border-white/15 bg-white/5 p-2 transition-colors hover:bg-white/10"
                     aria-label="Rellia Health on Instagram"
                   >
-                    <Instagram className="h-5 w-5 text-white/80" />
+                    <InstagramFilled className="h-5 w-5 text-white/85" />
                   </a>
                   <a
                     href={`mailto:${DEFAULT_GLOBAL_SETTINGS.supportEmail}`}
                     className="rounded-full border border-white/15 bg-white/5 p-2 transition-colors hover:bg-white/10"
                     aria-label={`Email ${DEFAULT_GLOBAL_SETTINGS.supportEmail}`}
                   >
-                    <Mail className="h-5 w-5 text-white/80" />
+                    <MailFilled className="h-5 w-5 text-white/85" />
                   </a>
                 </div>
               </div>

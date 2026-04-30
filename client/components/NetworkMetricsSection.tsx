@@ -1,6 +1,7 @@
 import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion"
 import { useEffect, useMemo, useRef, useState } from "react"
 import { cn } from "@/lib/utils"
+import PillTag from "@/components/PillTag"
 
 function useCountUp(target: number, enabled: boolean, durationMs = 1200) {
   const [value, setValue] = useState(0);
@@ -95,7 +96,7 @@ function MetricValue({
         {count}
         {metric.suffix ?? ""}
       </div>
-      <p className="mt-3 font-host-grotesk text-rellia-mint text-xs font-semibold uppercase tracking-[0.18em]">
+      <p className="mt-3 font-host-grotesk text-rellia-mint text-sm font-extrabold uppercase tracking-[0.18em]">
         {label}
       </p>
     </div>
@@ -158,75 +159,80 @@ export default function NetworkMetricsSection({ heading, subheading, metrics }: 
         ref={(node) => {
           sectionRef.current = node
         }}
-        className="relative w-full overflow-hidden h-[760px] sm:h-[720px] md:h-[820px] lg:h-[1080px]"
+        className="relative w-full overflow-hidden h-[900px] sm:h-[840px] md:h-[920px] lg:h-[1080px]"
       >
         <div className="absolute inset-0 overflow-hidden" aria-hidden>
           <motion.img
             src="/images/metrics-bg-pexels-2.jpg"
             alt=""
-            className="h-full w-full object-cover scale-[1.12]"
+            className="h-full w-full object-cover scale-[1.12] object-[62%_50%]"
             style={reduceMotion ? undefined : { y: bgY }}
           />
           <div className="absolute inset-0 bg-rellia-teal/35" />
           <div className="absolute inset-0 bg-gradient-to-b from-black/55 via-black/25 to-black/55" />
         </div>
 
-        <div className="relative z-10 mx-auto flex h-full w-full max-w-[1300px] flex-col justify-center px-6 md:px-10">
-          <motion.div
-            initial={reduceMotion ? { opacity: 1, y: 0, filter: "blur(0px)" } : { opacity: 0, y: 22, filter: "blur(18px)" }}
-            animate={
-              reduceMotion
-                ? { opacity: 1, y: 0, filter: "blur(0px)" }
-                : entered
+        <div className="relative z-10 mx-auto flex h-full w-full max-w-[1300px] flex-col px-6 md:px-10 pt-12 md:pt-14 pb-14 md:pb-18">
+          <div className="flex flex-col items-center text-center mt-8 md:mt-10 lg:mt-36">
+            <motion.div
+              initial={reduceMotion ? { opacity: 1, y: 0, filter: "blur(0px)" } : { opacity: 0, y: 22, filter: "blur(18px)" }}
+              animate={
+                reduceMotion
                   ? { opacity: 1, y: 0, filter: "blur(0px)" }
-                  : { opacity: 0, y: 22, filter: "blur(18px)" }
-            }
-            transition={reduceMotion ? undefined : { duration: 0.65, ease: [0.16, 1, 0.3, 1] }}
-            className="flex flex-col items-center text-center"
-          >
-            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/12 px-4 py-2 shadow-sm backdrop-blur-md">
-              <motion.span
-                aria-hidden
-                className="relative inline-flex h-2 w-2 rounded-full bg-rellia-mint"
-                initial={false}
-                animate={reduceMotion ? undefined : { opacity: [1, 1, 1], transform: ["scale(1)", "scale(1.35)", "scale(1)"] }}
-                transition={reduceMotion ? undefined : { duration: 1.6, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" }}
-              />
-              <span className="font-host-grotesk text-xs font-semibold uppercase tracking-[0.18em] text-white">
-                Network impact
-              </span>
-            </div>
-            <h2 className="font-host-grotesk font-medium text-white text-4xl md:text-6xl leading-[1.05] tracking-tight max-w-3xl">
-              <AccentHeading text={heading} />
-            </h2>
-            <div aria-hidden className="mt-10 h-px w-28 bg-gradient-to-r from-transparent via-white/55 to-transparent" />
-          </motion.div>
+                  : entered
+                    ? { opacity: 1, y: 0, filter: "blur(0px)" }
+                    : { opacity: 0, y: 22, filter: "blur(18px)" }
+              }
+              transition={reduceMotion ? undefined : { duration: 0.65, ease: [0.16, 1, 0.3, 1] }}
+              className="flex flex-col items-center text-center w-full"
+            >
+              <div className="mb-9 md:mb-10">
+                <PillTag
+                  label="Network impact"
+                  dot={
+                    <motion.span
+                      aria-hidden
+                      className="relative inline-flex h-2 w-2 rounded-full bg-rellia-mint"
+                      initial={false}
+                      animate={reduceMotion ? undefined : { opacity: [1, 1, 1], transform: ["scale(1)", "scale(1.35)", "scale(1)"] }}
+                      transition={reduceMotion ? undefined : { duration: 1.6, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" }}
+                    />
+                  }
+                />
+              </div>
+              <h2 className="font-host-grotesk font-medium text-white text-4xl md:text-6xl leading-[1.05] tracking-tight max-w-3xl">
+                <AccentHeading text={heading} />
+              </h2>
+            </motion.div>
+          </div>
 
-          <div className="mt-12 md:mt-14">
-            <div className="mx-auto grid max-w-[1100px] grid-cols-1 gap-4 sm:grid-cols-3 md:gap-5">
-              {metricList.slice(0, 3).map((m, i) => {
-                const label = labels[i] ?? m.label.toUpperCase()
-                return (
-                  <motion.div
-                    key={`${m.label}-${label}`}
-                    initial={reduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
-                    animate={
-                      reduceMotion
-                        ? { opacity: 1, y: 0 }
-                        : entered
+          <div className="mt-10 sm:mt-12 md:mt-8 lg:mt-0 lg:flex-1 lg:flex lg:items-center">
+            <div className="w-full">
+              <div className="mx-auto grid max-w-[1100px] grid-cols-1 gap-4 sm:grid-cols-3 md:gap-5">
+                {metricList.slice(0, 3).map((m, i) => {
+                  const label = labels[i] ?? m.label.toUpperCase()
+                  return (
+                    <motion.div
+                      key={`${m.label}-${label}`}
+                      initial={reduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
+                      animate={
+                        reduceMotion
                           ? { opacity: 1, y: 0 }
-                          : { opacity: 0, y: 10 }
-                    }
-                    transition={reduceMotion ? undefined : { duration: 0.45, ease: [0.16, 1, 0.3, 1], delay: 0.12 + i * 0.08 }}
-                    className={cn(
-                      "h-full rounded-2xl border border-white/18 px-6 py-9 md:px-7 md:py-10",
-                      "bg-white/14 backdrop-blur-md",
-                    )}
-                  >
-                    <MetricValue metric={m} label={label} index={i} entered={entered && countReady} />
-                  </motion.div>
-                )
-              })}
+                          : entered
+                            ? { opacity: 1, y: 0 }
+                            : { opacity: 0, y: 10 }
+                      }
+                      transition={reduceMotion ? undefined : { duration: 0.45, ease: [0.16, 1, 0.3, 1], delay: 0.12 + i * 0.08 }}
+                      className={cn(
+                        "h-full rounded-2xl border border-white/18 px-6 py-9 md:px-7 md:py-10",
+                        "bg-white/14 backdrop-blur-md",
+                      )}
+                    >
+                      <MetricValue metric={m} label={label} index={i} entered={entered && countReady} />
+                    </motion.div>
+                  )
+                })}
+              </div>
             </div>
           </div>
         </div>

@@ -63,6 +63,7 @@ export default function PathsSection({ items = defaultItems }: { items?: PathIte
   const shouldAnimate = Boolean(isInView) && !reduceMotion
 
   const active = useMemo(() => list.find((x) => x.key === activeKey) ?? list[0], [activeKey, list])
+  const founders = useMemo(() => list.find((x) => x.key === "founders") ?? list[0], [list])
   const showOverlay = Boolean(hoverKey) && !isImageHovered
 
   useEffect(() => {
@@ -110,7 +111,7 @@ export default function PathsSection({ items = defaultItems }: { items?: PathIte
         />
       </motion.div>
 
-      <div className="max-w-[1300px] mx-auto w-full py-16 md:py-24">
+      <div className="max-w-[1300px] mx-auto w-full py-12 md:py-24">
         <motion.div
           className="w-full"
           initial={reduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 26 }}
@@ -126,7 +127,15 @@ export default function PathsSection({ items = defaultItems }: { items?: PathIte
             {/* Left panel — full-bleed text + links on small screens; card shell only from lg */}
             <div className="relative z-10 max-lg:p-0 text-black lg:rounded-[28px] lg:p-9">
               <div>
-                <h2 className="font-host-grotesk font-semibold text-black text-3xl md:text-[44px] leading-tight tracking-tight max-w-xl">
+                <h2 className="relative font-host-grotesk font-semibold text-black text-3xl md:text-[44px] leading-tight tracking-tight max-w-xl">
+                  <span
+                    aria-hidden
+                    className="pointer-events-none absolute -inset-x-8 -inset-y-6 -z-10 opacity-70 blur-2xl"
+                    style={{
+                      background:
+                        "radial-gradient(50% 55% at 30% 35%, rgba(157,214,208,0.75), rgba(157,214,208,0.0) 70%)",
+                    }}
+                  />
                   Find <span className="text-rellia-teal">your place</span> in the Rellia community.
                 </h2>
                 <p className="mt-4 font-urbanist text-black/70 text-base md:text-lg leading-relaxed max-w-xl">
@@ -193,7 +202,52 @@ export default function PathsSection({ items = defaultItems }: { items?: PathIte
                   })}
                 </div>
 
-                {/* Mobile: no preview image (keeps section compact) */}
+                {/* Mobile: show the preview image after the left content */}
+                <div
+                  className={cn(
+                    "relative mt-8 overflow-hidden rounded-[22px] border border-black/10 lg:hidden",
+                    "bg-white shadow-[0_18px_60px_-36px_rgba(0,0,0,0.25)]",
+                    "h-[260px] sm:h-[300px]",
+                  )}
+                >
+                  {/*
+                    Mobile default: show Founders image only (no overlay).
+                    When a link is hovered/focused, show that role's image + overlay content.
+                  */}
+                  <AnimatePresence mode="sync" initial={false}>
+                    <motion.img
+                      key={showOverlay ? activeKey : "mobile-founders"}
+                      src={(showOverlay ? active?.imageSrc : founders?.imageSrc) ?? "/images/hero-network.png"}
+                      alt={(showOverlay ? active?.imageAlt : founders?.imageAlt) ?? "Preview image"}
+                      className="absolute inset-0 h-full w-full object-cover"
+                      loading="eager"
+                      decoding="async"
+                      fetchPriority="high"
+                      initial={reduceMotion ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 1.015 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={reduceMotion ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.995 }}
+                      transition={reduceMotion ? undefined : { duration: 0.48, ease: [0.16, 1, 0.3, 1] }}
+                    />
+                  </AnimatePresence>
+
+                  {showOverlay ? (
+                    <>
+                      <div aria-hidden className="absolute inset-0 bg-gradient-to-t from-black/35 via-black/10 to-transparent" />
+                      <div aria-hidden className="absolute inset-0 bg-black/20" />
+
+                      <div className="absolute inset-0 flex items-end p-6">
+                        <div className="max-w-[34rem]">
+                          <p className="font-host-grotesk font-medium text-white text-xl tracking-tight leading-tight">
+                            {active?.title ?? ""}
+                          </p>
+                          <p className="mt-2 font-urbanist text-white/85 text-sm leading-relaxed">
+                            {active?.description ?? ""}
+                          </p>
+                        </div>
+                      </div>
+                    </>
+                  ) : null}
+                </div>
               </div>
             </div>
 

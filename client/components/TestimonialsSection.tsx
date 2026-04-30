@@ -7,8 +7,6 @@ import {
   Carousel,
   CarouselContent,
   CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
 } from "@/components/ui/carousel"
 import { cn } from "@/lib/utils"
 import type { HomeTestimonial } from "@shared/cms/types"
@@ -219,6 +217,11 @@ type TestimonialsSectionProps = {
 
 export default function TestimonialsSection({ titleLead, titleAccent, testimonials }: TestimonialsSectionProps) {
   const [expandedName, setExpandedName] = useState<string | null>(null)
+  const [carouselApi, setCarouselApi] = useState<unknown>(null)
+  const [carouselIndex, setCarouselIndex] = useState(0)
+  const [carouselCount, setCarouselCount] = useState(1)
+  const [canScrollPrev, setCanScrollPrev] = useState(false)
+  const [canScrollNext, setCanScrollNext] = useState(false)
   const orderedTestimonials = useMemo(() => {
     const list = [...testimonials]
     const melissaIndex = list.findIndex((t) => t.name.toLowerCase().includes("melissa"))
@@ -231,6 +234,26 @@ export default function TestimonialsSection({ titleLead, titleAccent, testimonia
     list.splice(insertAt, 0, mazhar)
     return list
   }, [testimonials])
+
+  useEffect(() => {
+    const api = carouselApi as any
+    if (!api) return
+
+    const handleSelect = () => {
+      setCarouselIndex(api.selectedScrollSnap?.() ?? 0)
+      setCarouselCount(api.scrollSnapList?.().length ?? 1)
+      setCanScrollPrev(Boolean(api.canScrollPrev?.()))
+      setCanScrollNext(Boolean(api.canScrollNext?.()))
+    }
+
+    handleSelect()
+    api.on?.("select", handleSelect)
+    api.on?.("reInit", handleSelect)
+    return () => {
+      api.off?.("select", handleSelect)
+      api.off?.("reInit", handleSelect)
+    }
+  }, [carouselApi])
 
   return (
     <div className="w-full bg-white">
@@ -256,6 +279,7 @@ export default function TestimonialsSection({ titleLead, titleAccent, testimonia
               loop: false,
               containScroll: "trimSnaps",
             }}
+            setApi={(api) => setCarouselApi(api as unknown)}
             className="w-full max-w-full min-w-0"
           >
             <div className="relative flex flex-col gap-6 md:gap-7">
@@ -282,13 +306,50 @@ export default function TestimonialsSection({ titleLead, titleAccent, testimonia
                 ))}
               </CarouselContent>
 
-              <div className="flex w-full items-center justify-end gap-2">
-                <CarouselPrevious className={carouselArrowClass} aria-label="Previous testimonial">
-                  <ChevronLeft className="h-5 w-5" aria-hidden />
-                </CarouselPrevious>
-                <CarouselNext className={carouselArrowClass} aria-label="Next testimonial">
-                  <ChevronRight className="h-5 w-5" aria-hidden />
-                </CarouselNext>
+              {/* FeaturedStories-style control strip: loading bar + count + arrows */}
+              <div className="flex w-full flex-col gap-3">
+                <div aria-hidden className="relative h-1 w-full overflow-hidden rounded-full bg-black/10">
+                  <div
+                    className="h-full bg-rellia-teal transition-[width] duration-500 ease-out motion-reduce:transition-none"
+                    style={{
+                      width:
+                        carouselCount <= 1
+                          ? "100%"
+                          : `${(carouselIndex / Math.max(1, carouselCount - 1)) * 100}%`,
+                    }}
+                  />
+                </div>
+
+                <div className="flex w-full items-center justify-between gap-4">
+                  <p className="min-w-0 text-left text-xs font-semibold uppercase tracking-[0.14em] text-black/55">
+                    {(() => {
+                      const totalSwipes = Math.max(0, carouselCount - 1)
+                      const current = Math.min(carouselIndex, totalSwipes)
+                      return `${current} / ${totalSwipes}`
+                    })()}
+                  </p>
+
+                  <div className="flex shrink-0 items-center gap-2">
+                    <button
+                      type="button"
+                      className={carouselArrowClass}
+                      onClick={() => (carouselApi as any)?.scrollPrev?.()}
+                      disabled={!canScrollPrev}
+                      aria-label="Previous testimonial"
+                    >
+                      <ChevronLeft className="h-5 w-5" aria-hidden />
+                    </button>
+                    <button
+                      type="button"
+                      className={carouselArrowClass}
+                      onClick={() => (carouselApi as any)?.scrollNext?.()}
+                      disabled={!canScrollNext}
+                      aria-label="Next testimonial"
+                    >
+                      <ChevronRight className="h-5 w-5" aria-hidden />
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
           </Carousel>

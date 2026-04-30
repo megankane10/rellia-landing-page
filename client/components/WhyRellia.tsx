@@ -178,7 +178,7 @@ export default function WhyRellia({ sectionTitle, features }: WhyRelliaProps) {
                   aria-label="Why Rellia features"
                 >
                   {cards.map((c, idx) => {
-                    const isActive = activeIndex === idx
+                    const isActive = mobileIndex === idx
                     const img = imageByIndex[idx] ?? "/images/whyrellia-network.jpg"
 
                     return (
@@ -247,17 +247,11 @@ export default function WhyRellia({ sectionTitle, features }: WhyRelliaProps) {
               </div>
 
               <div className="mt-6 flex flex-col gap-3">
-                <div aria-hidden className="flex w-full items-center gap-2">
-                  {cards.map((c, idx) => {
-                    const isPast = idx < mobileIndex
-                    const isActive = idx === mobileIndex
-                    return (
-                      <div key={c.title} className="relative h-1 flex-1 overflow-hidden rounded-full bg-black/10">
-                        {isPast ? <div className="h-full w-full bg-rellia-teal" /> : null}
-                        {isActive ? <div className="h-full w-full bg-rellia-teal" /> : null}
-                      </div>
-                    )
-                  })}
+                <div aria-hidden className="relative h-1 w-full overflow-hidden rounded-full bg-black/10">
+                  <div
+                    className="h-full bg-rellia-teal transition-[width] duration-500 ease-out motion-reduce:transition-none"
+                    style={{ width: `${((mobileIndex + 1) / Math.max(1, cards.length)) * 100}%` }}
+                  />
                 </div>
 
                 <div className="flex w-full items-center justify-between">

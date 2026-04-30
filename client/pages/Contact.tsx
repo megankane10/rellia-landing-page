@@ -54,6 +54,7 @@ export default function Contact() {
           portalId: CONTACT_HUBSPOT_FORM.portalId,
           formId: CONTACT_HUBSPOT_FORM.formId,
           target: `#${targetId}`,
+          cssClass: "hubspot-form--contact",
         })
 
         if (!cancelled) setFormStatus("ready")
@@ -76,110 +77,101 @@ export default function Contact() {
       <Navbar />
 
       <main id="main-content">
-        <section className="relative bg-white pb-16 pt-[92px] md:pb-24 md:pt-[110px]">
-          <div className="mx-auto w-full max-w-[1300px] px-6 md:px-10">
-            <div className="overflow-hidden rounded-3xl border border-black/10 bg-white shadow-[0_16px_60px_rgba(0,0,0,0.08)]">
-              <div className="grid grid-cols-1 lg:grid-cols-2">
-                {/* Left: image + copy + quote (connected panel) */}
-                <div className="relative flex flex-col justify-between border-b border-black/10 bg-rellia-teal lg:border-b-0 lg:border-r">
-                  <div className="pointer-events-none absolute inset-0">
-                    <img
-                      src="https://images.pexels.com/photos/355948/pexels-photo-355948.jpeg?auto=compress&cs=tinysrgb&w=1600"
-                      alt=""
-                      className="h-full w-full object-cover object-center opacity-60"
-                      loading="lazy"
-                    />
-                    <div
-                      className="absolute inset-0 bg-gradient-to-b from-rellia-teal/35 via-rellia-teal/60 to-rellia-teal"
-                      aria-hidden="true"
-                    />
-                  </div>
+        <section className="relative bg-white">
+          <div className="grid min-h-[100dvh] grid-cols-1 lg:grid-cols-2">
+            {/* Left: full-bleed panel */}
+            <div className="relative flex flex-col bg-rellia-teal px-6 pb-12 pt-[92px] md:px-10 md:pb-16 md:pt-[110px]">
+              <div className="pointer-events-none absolute inset-0">
+                <img
+                  src="/images/contact-nature.jpg"
+                  alt=""
+                  className="h-full w-full object-cover object-center opacity-60"
+                  loading="lazy"
+                />
+                <div
+                  className="absolute inset-0 bg-gradient-to-b from-rellia-teal/35 via-rellia-teal/60 to-rellia-teal"
+                  aria-hidden="true"
+                />
+              </div>
 
-                  <div className="relative flex flex-col px-7 pb-7 pt-14 md:px-10 md:pb-10 md:pt-16 min-h-[540px] md:min-h-[620px]">
-                    <h1 className="text-3xl font-bold leading-tight tracking-tight text-white md:text-5xl">
-                      {copy.pageTitle}
-                    </h1>
-                    <p className="mt-4 max-w-xl font-urbanist text-base leading-relaxed text-white/80 md:text-lg">
-                      {copy.intro}
-                    </p>
+              <div className="relative mx-auto flex h-full w-full max-w-2xl flex-col">
+                {/* Top: heading + intro closer to top */}
+                <div>
+                  <h1 className="mt-16 md:mt-24 text-3xl font-bold leading-tight tracking-tight text-white md:text-5xl">
+                    {copy.pageTitle}
+                  </h1>
+                  <p className="mt-4 max-w-xl font-urbanist text-base leading-relaxed text-white/80 md:text-lg">
+                    {copy.intro}
+                  </p>
+                </div>
 
-                    <div className="mt-auto pt-10">
-                      <div aria-hidden className="h-px w-full bg-gradient-to-r from-transparent via-white/30 to-transparent" />
+                {/* Middle: quote centered */}
+                <div className="flex flex-1 flex-col justify-center pt-10 md:pt-12">
+                  <div aria-hidden className="h-px w-full max-w-xl bg-gradient-to-r from-transparent via-white/30 to-transparent" />
 
-                      <div className="mt-6">
-                        <div className="flex items-start gap-2">
-                          <Quote className="mt-1 h-5 w-5 shrink-0 text-white/80" aria-hidden />
-                          <p className="font-urbanist text-xl leading-relaxed text-white/95 md:text-2xl">
-                            {copy.quoteText}
-                          </p>
-                        </div>
+                  <div className="mt-6">
+                    <div className="flex items-start gap-2">
+                      <Quote className="mt-1 h-5 w-5 shrink-0 text-white/80" aria-hidden />
+                      <p className="max-w-xl font-urbanist text-xl leading-relaxed text-white/95 md:text-2xl">
+                        {copy.quoteText}
+                      </p>
+                    </div>
 
-                        <div className="mt-6 flex items-center gap-4">
-                          <div className="h-16 w-16 shrink-0 overflow-hidden rounded-2xl border border-white/20 bg-white/10">
-                            <img
-                              src="/images/team-megankane.jpg"
-                              alt={copy.quoteAttributionName}
-                              className="h-full w-full object-cover object-top"
-                              loading="lazy"
-                            />
-                          </div>
-                          <div className="min-w-0">
-                            <p className="font-host-grotesk text-base font-semibold text-white">
-                              {copy.quoteAttributionName}
-                            </p>
-                            <p className="font-urbanist text-sm text-white/75">{copy.quoteAttributionRole}</p>
-                          </div>
-                        </div>
+                    <div className="mt-6 flex items-center gap-4">
+                      <div className="h-16 w-16 shrink-0 overflow-hidden rounded-2xl border border-white/20 bg-white/10">
+                        <img
+                          src="/images/team-megankane.jpg"
+                          alt={copy.quoteAttributionName}
+                          className="h-full w-full object-cover object-top"
+                          loading="lazy"
+                        />
+                      </div>
+                      <div className="min-w-0">
+                        <p className="font-host-grotesk text-base font-semibold text-white">
+                          {copy.quoteAttributionName}
+                        </p>
+                        <p className="font-urbanist text-sm text-white/75">{copy.quoteAttributionRole}</p>
                       </div>
                     </div>
                   </div>
+                </div>
+              </div>
+            </div>
 
-                  <div className="relative flex items-center justify-between gap-4 border-t border-white/10 px-7 py-5 text-sm text-white/75 md:px-10">
-                    <span className="font-urbanist">{copy.heroBadge}</span>
+            {/* Right: white form container */}
+            <div className="bg-white px-6 pb-12 pt-[92px] md:px-10 md:pb-16 md:pt-[110px] lg:border-l lg:border-black/10">
+              {formStatus === "error" ? (
+                <div className="space-y-2 py-4">
+                  <p className="font-urbanist text-black/70">
+                    We couldn’t load the form right now. Please try again in a moment.
+                  </p>
+                  <p className="font-urbanist text-black/60">
+                    Or email{" "}
                     <a
+                      className="underline decoration-black/25 hover:decoration-black/60"
                       href={`mailto:${SUPPORT_EMAIL}`}
-                      className="font-urbanist underline decoration-white/25 underline-offset-4 hover:decoration-white/60"
-                      aria-label={`Email ${SUPPORT_EMAIL}`}
                     >
                       {SUPPORT_EMAIL}
                     </a>
+                    .
+                  </p>
+                </div>
+              ) : (
+                <div className="relative min-h-[min(520px,65vh)] w-full">
+                  <div className="hubspot-form hubspot-form--contact">
+                    <div id={targetId} className="min-h-[200px]" />
                   </div>
-                </div>
-
-                {/* Right: HubSpot form — v2 API so it mounts after React (SPA + direct visits) */}
-                <div className="flex min-h-0 min-w-0 flex-col bg-white p-6 md:p-10 lg:h-full">
-                  {formStatus === "error" ? (
-                    <div className="space-y-2 py-4">
-                      <p className="font-urbanist text-black/70">
-                        We couldn’t load the form right now. Please try again in a moment.
-                      </p>
-                      <p className="font-urbanist text-black/60">
-                        Or email{" "}
-                        <a
-                          className="underline decoration-black/25 hover:decoration-black/60"
-                          href={`mailto:${SUPPORT_EMAIL}`}
-                        >
-                          {SUPPORT_EMAIL}
-                        </a>
-                        .
-                      </p>
+                  {formStatus === "loading" ? (
+                    <div
+                      className="absolute inset-0 flex items-center justify-center bg-white/85"
+                      aria-busy="true"
+                      aria-live="polite"
+                    >
+                      <p className="font-urbanist text-black/60">Loading form…</p>
                     </div>
-                  ) : (
-                    <div className="relative min-h-[min(420px,55vh)] w-full flex-1">
-                      <div id={targetId} className="min-h-[200px]" />
-                      {formStatus === "loading" ? (
-                        <div
-                          className="absolute inset-0 flex items-center justify-center rounded-xl bg-white/85"
-                          aria-busy="true"
-                          aria-live="polite"
-                        >
-                          <p className="font-urbanist text-black/60">Loading form…</p>
-                        </div>
-                      ) : null}
-                    </div>
-                  )}
+                  ) : null}
                 </div>
-              </div>
+              )}
             </div>
           </div>
         </section>

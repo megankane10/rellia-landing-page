@@ -7,6 +7,7 @@ import { getFeaturedStories } from "@/content/stories"
 import { AnimatePresence, motion } from "framer-motion"
 import { useEffect, useMemo, useState } from "react"
 import SectionHeading from "@/components/SectionHeading"
+import PillTag from "@/components/PillTag"
 
 /** Auto-advance interval (progress bar uses same duration) */
 const ROTATE_MS = 6500
@@ -118,11 +119,11 @@ export default function FeaturedStories({
                   {activeStory ? (
                     <>
                       <div className="flex min-h-0 flex-1 w-full flex-col items-start text-left overflow-hidden">
-                        <div className="mb-5 inline-flex w-fit items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1.5 md:px-4 md:py-2">
-                          <span className="h-2 w-2 shrink-0 rounded-full bg-rellia-mint" aria-hidden />
-                          <span className="font-host-grotesk text-[11px] font-semibold uppercase tracking-[0.14em] text-rellia-mint md:text-[12px]">
-                            {activeStory.tag}
-                          </span>
+                        <div className="mb-5">
+                          <PillTag
+                            label={activeStory.tag}
+                            dot={<span className="h-2 w-2 shrink-0 rounded-full bg-rellia-mint" aria-hidden />}
+                          />
                         </div>
 
                         <h3 className="max-w-[1100px] font-host-grotesk font-medium text-white text-3xl tracking-tight leading-[1.05] sm:text-4xl md:text-5xl lg:text-[52px] line-clamp-3 md:line-clamp-none">
