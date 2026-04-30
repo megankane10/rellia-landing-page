@@ -32,27 +32,44 @@ export default function PageHeader({ title, subtitle, variant = "dark", classNam
         <div
           className={cn(
             "absolute inset-0 bg-gradient-to-r",
-            isDark ? "from-rellia-teal/85 via-rellia-teal/55 to-rellia-teal/30" : "from-rellia-cream via-white/60 to-rellia-cream",
+            isDark ? "from-rellia-teal/92 via-rellia-teal/70 to-rellia-teal/45" : "from-rellia-cream via-white/60 to-rellia-cream",
           )}
         />
         <div
           className={cn(
-            "absolute -left-28 -top-32 h-[520px] w-[520px] rounded-full blur-3xl",
-            isDark ? "bg-rellia-mint/25" : "bg-rellia-mint/20",
+            "absolute -left-24 -top-28 h-[420px] w-[420px] md:h-[520px] md:w-[520px] rounded-full blur-3xl",
+            isDark ? "bg-rellia-mint/16 md:bg-rellia-mint/25" : "bg-rellia-mint/20",
           )}
         />
         <div
           className={cn(
-            "absolute -right-16 sm:-right-28 md:-right-40 top-1/3 h-[560px] w-[560px] -translate-y-1/2 rounded-full blur-3xl",
-            isDark ? "bg-white/10" : "bg-rellia-teal/10",
+            "absolute -right-16 sm:-right-28 md:-right-40 top-1/3 h-[520px] w-[520px] md:h-[560px] md:w-[560px] -translate-y-1/2 rounded-full blur-3xl",
+            isDark ? "bg-white/7 md:bg-white/10" : "bg-rellia-teal/10",
           )}
         />
         <div
           className={cn(
-            "absolute left-1/3 bottom-[-220px] h-[620px] w-[620px] -translate-x-1/2 rounded-full blur-3xl",
-            "bg-rellia-mint/15",
+            "absolute left-1/3 bottom-[-220px] h-[520px] w-[520px] md:h-[620px] md:w-[620px] -translate-x-1/2 rounded-full blur-3xl",
+            "bg-rellia-mint/10 md:bg-rellia-mint/15",
           )}
         />
+        {/* Extra small mint blobs on mobile (adds depth without overpowering teal) */}
+        {isDark ? (
+          <>
+            <div
+              aria-hidden
+              className="md:hidden absolute right-10 top-16 h-24 w-24 rounded-full bg-rellia-mint/18 blur-2xl"
+            />
+            <div
+              aria-hidden
+              className="md:hidden absolute left-10 bottom-20 h-20 w-20 rounded-full bg-rellia-mint/14 blur-2xl"
+            />
+            <div
+              aria-hidden
+              className="md:hidden absolute right-20 bottom-10 h-16 w-16 rounded-full bg-rellia-mint/12 blur-2xl"
+            />
+          </>
+        ) : null}
         <div
           className={cn(
             "absolute inset-0 opacity-[0.22] mix-blend-soft-light",

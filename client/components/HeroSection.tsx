@@ -139,7 +139,7 @@ export default function HeroSection({ content }: HeroSectionProps) {
       ref={(node) => {
         sectionRef.current = node
       }}
-      className="relative min-h-screen flex items-center bg-rellia-teal overflow-hidden"
+      className="relative min-h-[100svh] md:min-h-screen flex items-center bg-rellia-teal overflow-hidden"
     >
       <div aria-hidden className="absolute inset-0">
         <video
@@ -163,7 +163,7 @@ export default function HeroSection({ content }: HeroSectionProps) {
         className="absolute inset-0 bg-gradient-to-r from-rellia-teal/85 via-rellia-teal/55 to-rellia-teal/35"
       />
 
-      <div className="relative z-10 max-w-[1300px] mx-auto w-full px-6 md:px-10 pt-24 pb-16 md:pt-28 md:pb-24">
+      <div className="relative z-10 max-w-[1300px] mx-auto w-full px-6 md:px-10 pt-24 pb-12 md:pt-28 md:pb-24">
         <div className="mx-auto flex max-w-4xl flex-col items-start text-left">
           <motion.div
             initial={reduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 14 }}

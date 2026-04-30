@@ -1,4 +1,4 @@
-import { useEffect, useId, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { personImageByFirstName } from "@/lib/person-image";
 import { cn } from "@/lib/utils";
@@ -56,6 +56,7 @@ export function TeamMemberCard({
   const [uncontrolledBioOpen, setUncontrolledBioOpen] = useState(false);
   const reduceMotion = useReducedMotion();
   const bioId = useId();
+  const rootRef = useRef<HTMLDivElement | null>(null)
   const descriptionText = bio?.trim() ? bio.trim() : "No description";
   const hasSocialLinks = Boolean(linkedinUrl || websiteUrl);
   const bioOpen = typeof bioOpenProp === "boolean" ? bioOpenProp : uncontrolledBioOpen;
@@ -85,12 +86,32 @@ export function TeamMemberCard({
     setCandidateIndex(0);
   }, [name, imageSrc]);
 
+  useEffect(() => {
+    if (!bioOpen) return
+
+    const handlePointerDown = (event: MouseEvent | TouchEvent) => {
+      const root = rootRef.current
+      const target = event.target as Node | null
+      if (!root || !target) return
+      if (root.contains(target)) return
+      setBioOpen(false)
+    }
+
+    document.addEventListener("mousedown", handlePointerDown)
+    document.addEventListener("touchstart", handlePointerDown, { passive: true })
+
+    return () => {
+      document.removeEventListener("mousedown", handlePointerDown)
+      document.removeEventListener("touchstart", handlePointerDown)
+    }
+  }, [bioOpen, setBioOpen])
+
   const handleToggleBio = () => {
     setBioOpen(!bioOpen)
   }
 
   return (
-    <div className={cn("cursor-default", className)}>
+    <div ref={rootRef} className={cn("cursor-default", className)}>
       <div
         className="group relative mb-6 aspect-square overflow-hidden rounded-3xl bg-rellia-cream/40 shadow-md cursor-pointer"
         role="button"

@@ -133,7 +133,7 @@ export default function About() {
           className="relative w-full overflow-hidden bg-white"
         >
           <div className="relative w-full overflow-hidden">
-            <div className="relative w-full overflow-hidden h-[960px] sm:h-[900px] md:h-[980px] lg:h-[1040px]">
+            <div className="relative w-full overflow-hidden h-[1160px] sm:h-[1020px] md:h-[980px] lg:h-[1040px]">
             <div className="absolute inset-0 overflow-hidden" aria-hidden>
               <motion.img
                 src={valuesBgImage}
