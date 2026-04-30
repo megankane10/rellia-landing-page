@@ -6,6 +6,7 @@ import RelliaAction from "@/components/RelliaAction"
 import { getFeaturedStories } from "@/content/stories"
 import { AnimatePresence, motion } from "framer-motion"
 import { useEffect, useMemo, useState } from "react"
+import SectionHeading from "@/components/SectionHeading"
 
 /** Auto-advance interval (progress bar uses same duration) */
 const ROTATE_MS = 6500
@@ -72,16 +73,7 @@ export default function FeaturedStories({
       <div className="mx-auto w-full max-w-[1300px] px-6 md:px-10">
         {showHeading ? (
           <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
-            <ScrollReveal className="max-w-2xl">
-              <h2 className="font-host-grotesk font-medium text-black text-[22px] leading-snug tracking-tight md:text-[28px]">
-                {title}
-              </h2>
-              {description ? (
-                <p className="mt-3 font-urbanist text-sm leading-relaxed text-black/60 md:text-[15px] md:leading-relaxed line-clamp-2">
-                  {description}
-                </p>
-              ) : null}
-            </ScrollReveal>
+            <SectionHeading align="left" title={title} description={description} className="max-w-2xl" />
           </div>
         ) : null}
 
@@ -125,24 +117,24 @@ export default function FeaturedStories({
                 <div className="absolute inset-0 flex flex-col px-6 pt-8 pb-4 md:px-10 md:pt-10 md:pb-5 lg:px-12 lg:pt-12 lg:pb-5">
                   {activeStory ? (
                     <>
-                      <div className="flex min-h-0 flex-1 flex-col items-start text-left overflow-hidden">
-                        <div className="mb-4 inline-flex w-fit items-center gap-2">
-                          <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-rellia-mint" aria-hidden />
-                          <span className="font-host-grotesk text-[10px] font-semibold uppercase tracking-[0.14em] text-rellia-mint md:text-[11px]">
+                      <div className="flex min-h-0 flex-1 w-full flex-col items-start text-left overflow-hidden">
+                        <div className="mb-5 inline-flex w-fit items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1.5 md:px-4 md:py-2">
+                          <span className="h-2 w-2 shrink-0 rounded-full bg-rellia-mint" aria-hidden />
+                          <span className="font-host-grotesk text-[11px] font-semibold uppercase tracking-[0.14em] text-rellia-mint md:text-[12px]">
                             {activeStory.tag}
                           </span>
                         </div>
 
-                        <h3 className="font-host-grotesk font-semibold text-white text-3xl tracking-tight leading-[1.05] sm:text-4xl md:text-5xl lg:text-[52px] line-clamp-3 md:line-clamp-none">
+                        <h3 className="max-w-[1100px] font-host-grotesk font-medium text-white text-3xl tracking-tight leading-[1.05] sm:text-4xl md:text-5xl lg:text-[52px] line-clamp-3 md:line-clamp-none">
                           {activeStory.title}
                         </h3>
 
-                        <p className="mt-4 max-w-2xl text-pretty text-white/85 text-sm font-urbanist leading-relaxed md:mt-5 md:text-base lg:max-w-3xl line-clamp-3">
+                        <p className="mt-4 max-w-[780px] text-pretty text-white/85 text-sm font-urbanist leading-relaxed md:mt-5 md:text-base line-clamp-3">
                           {activeStory.excerpt}
                         </p>
                       </div>
 
-                      <div className="mt-6 md:mt-8 hidden md:flex items-center gap-3">
+                      <div className="mt-7 md:mt-9 hidden md:flex items-center gap-4 pb-5">
                         <RelliaAction
                           asChild
                           variant="heroSolidOnTeal"
@@ -155,7 +147,12 @@ export default function FeaturedStories({
                         </RelliaAction>
 
                         {showViewAll ? (
-                          <RelliaAction asChild variant="heroGhostOnTeal" size="comfortable" className="md:px-7">
+                          <RelliaAction
+                            asChild
+                            variant="heroGhostOnTeal"
+                            size="comfortable"
+                            className="md:px-7 border-white/45 text-white hover:border-white/80"
+                          >
                             <Link to="/stories" aria-label="View all stories">
                               View all
                             </Link>
@@ -163,7 +160,7 @@ export default function FeaturedStories({
                         ) : null}
                       </div>
 
-                      <div className="mt-6 w-full md:hidden">
+                      <div className="mt-6 w-full md:hidden pb-4">
                         <div className="flex items-center justify-between gap-4">
                           <Link
                             to={storyHref}
@@ -185,7 +182,7 @@ export default function FeaturedStories({
                         </div>
                       </div>
 
-                      <div aria-hidden className="pointer-events-none z-[15] mt-6 w-full">
+                      <div aria-hidden className="pointer-events-none z-[15] mt-8 w-full">
                         <div className="flex w-full items-center gap-2">
                           {featured.map((story, idx) => {
                             const isPast = idx < activeIndex

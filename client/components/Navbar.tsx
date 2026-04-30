@@ -358,8 +358,7 @@ export default function Navbar({ ctaRadiusClassName = "rounded-full" }: NavbarPr
     <nav
       aria-label="Main navigation"
       className={cn(
-        "fixed inset-x-0 top-0 z-50 transition-[background-color,backdrop-filter,border-color,box-shadow] duration-500 ease-out motion-reduce:transition-none",
-        !mobileOpen && "pointer-events-none",
+        "fixed inset-x-0 top-0 z-[9999] transition-[background-color,backdrop-filter,border-color,box-shadow] duration-500 ease-out motion-reduce:transition-none",
         !mobileOpen &&
           !scrolled &&
           (pathname === "/faq"

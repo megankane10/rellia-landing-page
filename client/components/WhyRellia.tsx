@@ -1,9 +1,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { Link } from "react-router-dom"
-import { ArrowLeft, ArrowRight } from "lucide-react"
+import { ChevronLeft, ChevronRight } from "lucide-react"
 import ScrollReveal from "./ScrollReveal"
 import SectionHeading from "@/components/SectionHeading"
-import RelliaAction from "@/components/RelliaAction"
 import { cn } from "@/lib/utils"
 import type { HomeWhyFeature } from "@shared/cms/types"
 
@@ -19,16 +18,13 @@ export default function WhyRellia({ sectionTitle, features }: WhyRelliaProps) {
   const mobileScrollerRef = useRef<HTMLDivElement | null>(null)
   const mobileCardRefs = useRef<Array<HTMLElement | null>>([])
 
-  const imageMap = useMemo(
-    () =>
-      ({
-        target: "/images/hero-network.png",
-        userRound: "/images/team-megankane.jpg",
-        bookOpen: "/images/TabletMeeting.png",
-        users: "/images/cta-home-conference.webp",
-        circleDollarSign: "/images/portfolio-pop.png",
-        stethoscope: "/images/hero-contact.png",
-      }) as Record<string, string>,
+  const imageByIndex = useMemo(
+    () => [
+      "/images/whyrellia-network-2.jpg",
+      "/images/whyrellia-founders-2.jpg",
+      "/images/whyrellia-programs-2.jpg",
+      "/images/whyrellia-outcomes-2.jpg",
+    ],
     [],
   )
 
@@ -48,6 +44,9 @@ export default function WhyRellia({ sectionTitle, features }: WhyRelliaProps) {
     handleScrollToIndex(next)
   }, [cards.length, handleScrollToIndex, mobileIndex])
 
+  const arrowBtnClassName =
+    "inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-black/10 bg-white text-rellia-teal shadow-sm transition hover:bg-black/5 disabled:pointer-events-none disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-white motion-reduce:transition-none"
+
   useEffect(() => {
     const root = mobileScrollerRef.current
     if (!root) return
@@ -56,7 +55,7 @@ export default function WhyRellia({ sectionTitle, features }: WhyRelliaProps) {
     if (observed.length === 0) return
 
     setMobileIndex(0)
-    setActiveIndex(0)
+    setActiveIndex(null)
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -69,7 +68,9 @@ export default function WhyRellia({ sectionTitle, features }: WhyRelliaProps) {
         const idx = observed.findIndex((el) => el === inView.target)
         if (idx < 0) return
         setMobileIndex(idx)
-        setActiveIndex(idx)
+        // Keep mobile cards in their collapsed state by default. Users can still
+        // interact with the carousel controls without forced expansion.
+        setActiveIndex(null)
       },
       { root, threshold: [0.55, 0.6, 0.7] },
     )
@@ -79,9 +80,14 @@ export default function WhyRellia({ sectionTitle, features }: WhyRelliaProps) {
   }, [cards.length])
 
   return (
-    <section className="w-full bg-white py-16 md:py-24 px-6 md:px-10">
+    <section className="w-full bg-rellia-cream/25 py-16 md:py-24 px-6 md:px-10 overflow-x-hidden">
       <div className="max-w-[1300px] mx-auto">
-        <SectionHeading align="left" title={sectionTitle} className="mb-12 md:mb-16" />
+        <SectionHeading
+          align="left"
+          title={sectionTitle}
+          description="A curated network and practical support system to help you move through the moments that make or break a healthcare startup."
+          className="mb-12 md:mb-16"
+        />
 
         <ScrollReveal>
           <>
@@ -93,7 +99,7 @@ export default function WhyRellia({ sectionTitle, features }: WhyRelliaProps) {
               {cards.map((c, idx) => {
                 const hasActive = activeIndex != null
                 const isActive = activeIndex === idx
-                const img = imageMap[c.iconKey] ?? "/images/hero-network.png"
+                const img = imageByIndex[idx] ?? "/images/whyrellia-network.jpg"
 
                 return (
                   <article
@@ -101,12 +107,14 @@ export default function WhyRellia({ sectionTitle, features }: WhyRelliaProps) {
                     onMouseEnter={() => setActiveIndex(idx)}
                     className={cn(
                       "group relative overflow-hidden rounded-2xl border border-black/10 bg-white",
-                      "transition-[flex-grow] duration-[1400ms] ease-[cubic-bezier(0.83,0,0.17,1)] motion-reduce:transition-none",
-                      "min-h-[460px]",
-                      !hasActive && "flex-1",
-                      hasActive && isActive && "flex-[2.25]",
-                      hasActive && !isActive && "flex-[0.95]",
+                      "transition-[flex-grow] duration-[900ms] ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:transition-none",
+                      "will-change-[flex-grow]",
+                      "min-h-[440px]",
                     )}
+                    style={{
+                      flexBasis: 0,
+                      flexGrow: !hasActive ? 1 : isActive ? 2.25 : 0.95,
+                    }}
                   >
                     <button
                       type="button"
@@ -116,24 +124,19 @@ export default function WhyRellia({ sectionTitle, features }: WhyRelliaProps) {
                       aria-label={`Select ${c.title}`}
                     />
 
-                    <img
-                      src={img}
-                      alt=""
-                      aria-hidden="true"
-                      className={cn(
-                        "absolute inset-0 h-full w-full object-cover",
-                        "transition-transform duration-[1200ms] ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:transition-none",
-                        isActive ? "scale-[1.04]" : "scale-100",
-                      )}
-                    />
-                    <div
-                      className={cn(
-                        "absolute inset-0",
-                        isActive
-                          ? "bg-gradient-to-t from-black/70 via-black/35 to-black/15"
-                          : "bg-gradient-to-t from-black/60 via-black/30 to-black/10",
-                      )}
-                    />
+                    <div aria-hidden className="absolute inset-0">
+                      <img
+                        src={img}
+                        alt=""
+                        className={cn(
+                          "absolute inset-0 h-full w-full object-cover",
+                          "transition-transform duration-[1200ms] ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:transition-none",
+                          isActive ? "scale-[1.03]" : "scale-100",
+                        )}
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/42 to-black/18" />
+                      <div className="absolute inset-0 bg-black/10" />
+                    </div>
 
                     <div className="relative z-20 flex h-full flex-col justify-end p-7">
                       <h3
@@ -158,13 +161,6 @@ export default function WhyRellia({ sectionTitle, features }: WhyRelliaProps) {
                         <p className="font-urbanist text-white/85 text-base leading-relaxed max-w-[40ch]">
                           {c.description}
                         </p>
-                        <div className="mt-5 pb-1">
-                          <RelliaAction asChild variant="mintOnTealStrip" size="compact" className="px-4">
-                            <Link to="/network" aria-label={`Learn more about ${c.title}`}>
-                              Learn more
-                            </Link>
-                          </RelliaAction>
-                        </div>
                       </div>
                     </div>
                   </article>
@@ -177,13 +173,13 @@ export default function WhyRellia({ sectionTitle, features }: WhyRelliaProps) {
               <div className="relative">
                 <div
                   ref={mobileScrollerRef}
-                  className="flex gap-4 overflow-x-auto pb-2 pr-6 snap-x snap-mandatory scroll-smooth overscroll-x-contain"
+                  className="flex gap-4 overflow-x-auto pb-2 snap-x snap-mandatory scroll-smooth overscroll-x-contain -mx-6 px-6 scroll-px-6"
                   style={{ WebkitOverflowScrolling: "touch" }}
                   aria-label="Why Rellia features"
                 >
                   {cards.map((c, idx) => {
                     const isActive = activeIndex === idx
-                    const img = imageMap[c.iconKey] ?? "/images/hero-network.png"
+                    const img = imageByIndex[idx] ?? "/images/whyrellia-network.jpg"
 
                     return (
                       <article
@@ -195,7 +191,7 @@ export default function WhyRellia({ sectionTitle, features }: WhyRelliaProps) {
                         aria-label={c.title}
                         className={cn(
                           "relative shrink-0 snap-start overflow-hidden rounded-2xl border border-black/10 bg-white",
-                          "min-h-[340px] w-[86%]",
+                          "min-h-[360px] w-[92%]",
                           "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-white",
                         )}
                       >
@@ -213,10 +209,11 @@ export default function WhyRellia({ sectionTitle, features }: WhyRelliaProps) {
                           className={cn(
                             "absolute inset-0",
                             isActive
-                              ? "bg-gradient-to-t from-black/70 via-black/35 to-black/15"
-                              : "bg-gradient-to-t from-black/60 via-black/30 to-black/10",
+                              ? "bg-gradient-to-t from-black/80 via-black/40 to-black/16"
+                              : "bg-gradient-to-t from-black/74 via-black/36 to-black/14",
                           )}
                         />
+                        <div aria-hidden className="absolute inset-0 bg-black/10" />
 
                         <div className="relative z-20 flex h-full flex-col justify-end p-6">
                           <h3
@@ -241,13 +238,6 @@ export default function WhyRellia({ sectionTitle, features }: WhyRelliaProps) {
                             <p className="font-urbanist text-white/85 text-base leading-relaxed">
                               {c.description}
                             </p>
-                            <div className="mt-5 pb-1">
-                              <RelliaAction asChild variant="mintOnTealStrip" size="compact" className="px-4">
-                                <Link to="/network" aria-label={`Learn more about ${c.title}`}>
-                                  Learn more
-                                </Link>
-                              </RelliaAction>
-                            </div>
                           </div>
                         </div>
                       </article>
@@ -256,40 +246,45 @@ export default function WhyRellia({ sectionTitle, features }: WhyRelliaProps) {
                 </div>
               </div>
 
-              <div className="mt-6 flex items-center gap-4">
-                <div className="relative h-1.5 flex-1 overflow-hidden rounded-full bg-black/10">
-                  <div
-                    className="absolute left-0 top-0 h-full rounded-full bg-rellia-teal transition-[width] duration-500 ease-out motion-reduce:transition-none"
-                    style={{ width: `${((mobileIndex + 1) / Math.max(1, cards.length)) * 100}%` }}
-                    aria-hidden
-                  />
+              <div className="mt-6 flex flex-col gap-3">
+                <div aria-hidden className="flex w-full items-center gap-2">
+                  {cards.map((c, idx) => {
+                    const isPast = idx < mobileIndex
+                    const isActive = idx === mobileIndex
+                    return (
+                      <div key={c.title} className="relative h-1 flex-1 overflow-hidden rounded-full bg-black/10">
+                        {isPast ? <div className="h-full w-full bg-rellia-teal" /> : null}
+                        {isActive ? <div className="h-full w-full bg-rellia-teal" /> : null}
+                      </div>
+                    )
+                  })}
                 </div>
 
-                <div className="flex items-center gap-2">
-                  <button
-                    type="button"
-                    onClick={handleGoPrev}
-                    disabled={mobileIndex === 0}
-                    className={cn(
-                      "inline-flex h-10 w-10 items-center justify-center rounded-full border border-black/10 bg-white text-rellia-teal transition hover:bg-black/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-white motion-reduce:transition-none",
-                      mobileIndex === 0 && "opacity-40",
-                    )}
-                    aria-label="Previous card"
-                  >
-                    <ArrowLeft className="h-4 w-4" aria-hidden />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={handleGoNext}
-                    disabled={mobileIndex === cards.length - 1}
-                    className={cn(
-                      "inline-flex h-10 w-10 items-center justify-center rounded-full border border-black/10 bg-white text-rellia-teal transition hover:bg-black/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-white motion-reduce:transition-none",
-                      mobileIndex === cards.length - 1 && "opacity-40",
-                    )}
-                    aria-label="Next card"
-                  >
-                    <ArrowRight className="h-4 w-4" aria-hidden />
-                  </button>
+                <div className="flex w-full items-center justify-between">
+                  <p className="min-w-0 text-left text-xs font-semibold uppercase tracking-[0.14em] text-black/55">
+                    {`${mobileIndex + 1} / ${Math.max(1, cards.length)}`}
+                  </p>
+
+                  <div className="flex shrink-0 items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={handleGoPrev}
+                      disabled={mobileIndex === 0}
+                      className={arrowBtnClassName}
+                      aria-label="Previous card"
+                    >
+                      <ChevronLeft className="h-5 w-5" aria-hidden />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleGoNext}
+                      disabled={mobileIndex === cards.length - 1}
+                      className={arrowBtnClassName}
+                      aria-label="Next card"
+                    >
+                      <ChevronRight className="h-5 w-5" aria-hidden />
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>

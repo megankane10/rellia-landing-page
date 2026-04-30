@@ -1,5 +1,5 @@
-import { useMemo, useState } from "react"
-import { ChevronDown, Info } from "lucide-react"
+import { useEffect, useMemo, useRef, useState } from "react"
+import { ChevronDown, ChevronLeft, ChevronRight, ChevronUp, Info } from "lucide-react"
 import ScrollReveal from "./ScrollReveal"
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
@@ -12,13 +12,10 @@ import {
 } from "@/components/ui/carousel"
 import { cn } from "@/lib/utils"
 import type { HomeTestimonial } from "@shared/cms/types"
+import LogoMarquee from "@/components/LogoMarquee"
 
-const carouselArrowClass = cn(
-  "static translate-x-0 translate-y-0 relative",
-  "h-12 w-12 rounded-full border-2 border-rellia-teal bg-white text-rellia-teal shadow-md",
-  "hover:bg-rellia-teal hover:text-white",
-  "disabled:opacity-40 disabled:pointer-events-none",
-)
+const carouselArrowClass =
+  "inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-black/10 bg-white text-rellia-teal shadow-sm transition hover:bg-rellia-teal hover:text-white hover:border-rellia-teal disabled:pointer-events-none disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-white motion-reduce:transition-none"
 
 type Testimonial = HomeTestimonial;
 
@@ -47,7 +44,7 @@ function CompanyInfoPopover({ t }: { t: Testimonial }) {
         )}
       >
         <div className="flex flex-col gap-2">
-          <h5 className="font-host-grotesk font-bold text-rellia-mint border-b border-white/10 pb-2 mb-1">
+          <h5 className="font-host-grotesk font-semibold text-rellia-mint border-b border-white/10 pb-2 mb-1">
             About {t.company}
           </h5>
           <p className="font-urbanist text-sm leading-relaxed text-white/90">{t.companyInfo}</p>
@@ -57,8 +54,21 @@ function CompanyInfoPopover({ t }: { t: Testimonial }) {
   )
 }
 
-function TestimonialCard({ t }: { t: Testimonial }) {
-  const imgSrc = t.imageSrc
+function TestimonialCard({
+  t,
+  isExpanded,
+  onRequestExpand,
+  onRequestCollapse,
+}: {
+  t: Testimonial
+  isExpanded: boolean
+  onRequestExpand: () => void
+  onRequestCollapse: () => void
+}) {
+  const isMelissa = t.name.toLowerCase().includes("melissa")
+  const imgSrc = isMelissa ? "/images/testimonials-melissaW.jpg" : t.imageSrc
+  const role = isMelissa ? "Founder" : t.role
+  const quoteRef = useRef<HTMLParagraphElement | null>(null)
   const initials = useMemo(
     () =>
       t.name
@@ -70,80 +80,133 @@ function TestimonialCard({ t }: { t: Testimonial }) {
     [t.name],
   )
 
-  const shouldTruncate = t.quote.length > 260
-  const [expanded, setExpanded] = useState(false)
-  const showExpand = shouldTruncate
+  const [showExpand, setShowExpand] = useState(false)
 
-  const handleToggleExpand = () => setExpanded((v) => !v)
+  useEffect(() => {
+    if (isExpanded) return
+    const el = quoteRef.current
+    if (!el) return
+
+    const compute = () => {
+      const next = el.scrollHeight > el.clientHeight + 1
+      setShowExpand(next)
+    }
+
+    const raf = requestAnimationFrame(compute)
+    const ro = new ResizeObserver(() => compute())
+    ro.observe(el)
+    window.addEventListener("resize", compute)
+
+    return () => {
+      cancelAnimationFrame(raf)
+      ro.disconnect()
+      window.removeEventListener("resize", compute)
+    }
+  }, [isExpanded, t.quote])
 
   return (
     <div
       className={cn(
-        "bg-white rounded-3xl p-7 md:p-8 w-full min-w-0 shadow-sm border border-black/5 hover:shadow-lg transition-shadow duration-300",
-        "flex flex-col",
-        expanded
-          ? "max-md:h-auto md:aspect-auto"
-          : "max-md:h-[320px] md:aspect-[4/3]",
+        "bg-white rounded-2xl p-5 md:p-6 w-full min-w-0 border border-black/10",
+        "flex flex-col overflow-hidden",
+        "transition-[max-height] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:transition-none",
+        isExpanded ? "h-auto max-h-[2400px]" : "h-[220px] md:h-[232px] max-h-[220px] md:max-h-[232px]",
       )}
     >
-      <div className="flex-1 min-h-0">
-        <div className={cn("relative", showExpand && !expanded && "overflow-hidden")}>
-          <p
-            className={cn(
-              "font-urbanist text-base md:text-lg text-black/80 leading-relaxed italic",
-              showExpand && !expanded && "max-h-[6.75rem] md:max-h-[9.5rem]",
-            )}
-          >
-            &ldquo;{t.quote}&rdquo;
-          </p>
-          {showExpand && !expanded ? (
-            <div
-              aria-hidden
-              className="pointer-events-none absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-white via-white/85 to-transparent"
-            />
-          ) : null}
-        </div>
-      </div>
+      <div className="flex items-start gap-4">
+        <Avatar className="h-12 w-12 rounded-lg border border-black/10 shrink-0">
+          <AvatarImage
+            src={imgSrc}
+            alt={t.name}
+            className={cn("object-cover", isMelissa && "object-[38%_50%]")}
+          />
+          <AvatarFallback className="rounded-lg bg-rellia-teal text-white text-xs font-semibold">
+            {initials}
+          </AvatarFallback>
+        </Avatar>
 
-      {/* Footer block — divider + expand control + avatar row */}
-      <div className="relative mt-7 pt-5 border-t border-black/5">
-        {showExpand ? (
-          <button
-            type="button"
-            onClick={handleToggleExpand}
-            className={cn(
-              "absolute left-1/2 top-0 -translate-x-1/2 -translate-y-1/2",
-              "h-9 w-9 rounded-full border border-black/10 bg-white text-black/55 shadow-sm",
-              "transition-[transform,box-shadow,color,border-color] duration-200 motion-reduce:transition-none",
-              "hover:text-rellia-teal hover:border-rellia-teal/30 hover:shadow-md",
-              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2",
-            )}
-            aria-label={expanded ? "Collapse testimonial" : "Expand testimonial"}
-            aria-expanded={expanded}
-          >
-            <ChevronDown className={cn("h-4 w-4 mx-auto transition-transform duration-200", expanded && "rotate-180")} aria-hidden />
-          </button>
-        ) : null}
-
-        <div className="flex items-center gap-4">
-          <Avatar className="h-14 w-14 rounded-2xl border-2 border-rellia-mint/30 shadow-sm shrink-0">
-            <AvatarImage src={imgSrc} alt={t.name} className="object-cover" />
-            <AvatarFallback className="rounded-2xl bg-rellia-teal text-white text-sm font-semibold">
-              {initials}
-            </AvatarFallback>
-          </Avatar>
-
-          <div className="flex-1 min-w-0">
-            <h4 className="font-host-grotesk font-bold text-black text-lg leading-snug">{t.name}</h4>
-            <div className="mt-2 flex items-start justify-between gap-3">
-              <p className="font-urbanist text-black/60 text-sm leading-snug">
-                {t.role}, <span className="text-rellia-teal font-semibold">{t.company}</span>
+        <div className="min-w-0 flex-1">
+          <div className="flex items-start justify-between gap-3">
+            <div className="min-w-0">
+              <h4 className="font-host-grotesk font-semibold text-black text-base leading-snug truncate">
+                {t.name}
+              </h4>
+              <p className="mt-1 font-urbanist text-black/75 text-sm leading-snug truncate">
+                <span className="font-medium text-black/80">{role}</span>,{" "}
+                <span className="text-black/45">{t.company}</span>
               </p>
+            </div>
+
+            <div className="flex items-center gap-2 shrink-0">
               <CompanyInfoPopover t={t} />
             </div>
           </div>
         </div>
       </div>
+
+      <div className={cn("mt-4", isExpanded ? "flex-1" : "flex-1 min-h-0")}>
+        <div
+          className={cn(
+            "relative",
+            !isExpanded && "h-full",
+            showExpand && !isExpanded && "overflow-hidden",
+          )}
+        >
+          <p
+            ref={quoteRef}
+            className={cn(
+              "font-urbanist text-[15px] md:text-base text-black/75 leading-relaxed",
+              isExpanded ? "whitespace-normal opacity-100" : "line-clamp-5 opacity-90",
+              "transition-opacity duration-300 ease-out motion-reduce:transition-none",
+            )}
+          >
+            &ldquo;{t.quote}&rdquo;
+          </p>
+          {showExpand ? (
+            <>
+              {!isExpanded ? (
+                <>
+                  <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-white via-white/90 to-transparent" />
+                  <button
+                    type="button"
+                    onClick={onRequestExpand}
+                    className={cn(
+                      "absolute inset-x-0 bottom-0 mx-auto w-fit",
+                      "inline-flex items-center justify-center rounded-full border border-black/10 bg-white px-4 py-2 text-rellia-teal shadow-sm",
+                      "transition-colors hover:bg-rellia-teal hover:text-white hover:border-rellia-teal",
+                      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-white",
+                    )}
+                    aria-label="Expand testimonial"
+                    aria-expanded={isExpanded}
+                  >
+                    <ChevronDown className="h-5 w-5" aria-hidden />
+                  </button>
+                </>
+              ) : (
+                null
+              )}
+            </>
+          ) : null}
+        </div>
+      </div>
+
+      {isExpanded ? (
+        <div className="mt-5 flex justify-center">
+          <button
+            type="button"
+            onClick={onRequestCollapse}
+            className={cn(
+              "inline-flex items-center justify-center rounded-full border border-black/10 bg-white px-4 py-2 text-rellia-teal shadow-sm",
+              "transition-colors hover:bg-rellia-teal hover:text-white hover:border-rellia-teal",
+              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-white",
+            )}
+            aria-label="Collapse testimonial"
+            aria-expanded={true}
+          >
+            <ChevronUp className="h-5 w-5" aria-hidden />
+          </button>
+        </div>
+      ) : null}
     </div>
   )
 }
@@ -155,9 +218,30 @@ type TestimonialsSectionProps = {
 };
 
 export default function TestimonialsSection({ titleLead, titleAccent, testimonials }: TestimonialsSectionProps) {
+  const [expandedName, setExpandedName] = useState<string | null>(null)
+  const orderedTestimonials = useMemo(() => {
+    const list = [...testimonials]
+    const melissaIndex = list.findIndex((t) => t.name.toLowerCase().includes("melissa"))
+    const mazharIndex = list.findIndex((t) => t.name.toLowerCase().includes("mazhar"))
+    if (melissaIndex < 0 || mazharIndex < 0) return list
+    if (mazharIndex === melissaIndex + 1) return list
+
+    const [mazhar] = list.splice(mazharIndex, 1)
+    const insertAt = melissaIndex + 1
+    list.splice(insertAt, 0, mazhar)
+    return list
+  }, [testimonials])
+
   return (
-    <section className="w-full bg-rellia-cream/40 py-16 md:py-24 px-6 md:px-10 overflow-x-hidden">
-      <div className="max-w-[1300px] mx-auto w-full min-w-0">
+    <div className="w-full bg-white">
+      <div aria-hidden className="px-6 md:px-10">
+        <div className="mx-auto max-w-[1300px]">
+          <div className="h-px w-full bg-gradient-to-r from-transparent via-black/10 to-transparent" />
+        </div>
+      </div>
+
+      <section className="w-full bg-white py-16 md:py-24 px-6 md:px-10 overflow-x-hidden">
+      <div className="relative max-w-[1300px] mx-auto w-full min-w-0">
         <ScrollReveal className="mb-10 md:mb-14 flex flex-col items-center text-center">
           <h2 className="font-host-grotesk font-semibold text-black text-3xl md:text-[40px] leading-tight tracking-tight max-w-3xl">
             {titleLead}{" "}
@@ -174,33 +258,47 @@ export default function TestimonialsSection({ titleLead, titleAccent, testimonia
             }}
             className="w-full max-w-full min-w-0"
           >
-            <div className="flex flex-col gap-6 md:gap-7">
+            <div className="relative flex flex-col gap-6 md:gap-7">
               {/*
                 Viewport clips horizontally; each slide min-w-0 prevents flex overflow.
                 1 / 2 / 3 cards visible — same proportional width as the old 3-col grid.
               */}
               <CarouselContent className="-ml-4 md:-ml-6">
-                {testimonials.map((t) => (
+                {orderedTestimonials.map((t, idx) => (
                   <CarouselItem
                     key={t.name}
                     className={cn(
                       "pl-4 md:pl-6 min-w-0",
-                      "basis-full md:basis-1/2 xl:basis-1/3",
+                      "basis-[88%] sm:basis-[78%] md:basis-1/2 xl:basis-1/3",
                     )}
                   >
-                    <TestimonialCard t={t} />
+                    <TestimonialCard
+                      t={t}
+                      isExpanded={expandedName === t.name}
+                      onRequestExpand={() => setExpandedName(t.name)}
+                      onRequestCollapse={() => setExpandedName(null)}
+                    />
                   </CarouselItem>
                 ))}
               </CarouselContent>
 
-              <div className="flex items-center justify-center gap-4">
-                <CarouselPrevious className={carouselArrowClass} />
-                <CarouselNext className={carouselArrowClass} />
+              <div className="flex w-full items-center justify-end gap-2">
+                <CarouselPrevious className={carouselArrowClass} aria-label="Previous testimonial">
+                  <ChevronLeft className="h-5 w-5" aria-hidden />
+                </CarouselPrevious>
+                <CarouselNext className={carouselArrowClass} aria-label="Next testimonial">
+                  <ChevronRight className="h-5 w-5" aria-hidden />
+                </CarouselNext>
               </div>
             </div>
           </Carousel>
         </ScrollReveal>
+
+        <div className="mt-8 md:mt-10">
+          <LogoMarquee showHeading={false} sectionClassName="py-0" />
+        </div>
       </div>
-    </section>
+      </section>
+    </div>
   )
 }

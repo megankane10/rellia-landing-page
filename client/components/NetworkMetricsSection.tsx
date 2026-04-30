@@ -1,5 +1,6 @@
-import ScrollReveal from "@/components/ScrollReveal";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion"
+import { useEffect, useMemo, useRef, useState } from "react"
+import { cn } from "@/lib/utils"
 
 function useCountUp(target: number, enabled: boolean, durationMs = 1200) {
   const [value, setValue] = useState(0);
@@ -77,10 +78,12 @@ function AccentHeading({ text }: { text: string }) {
 
 function MetricValue({
   metric,
+  label,
   index,
   entered,
 }: {
   metric: NetworkMetric;
+  label: string;
   index: number;
   entered: boolean;
 }) {
@@ -88,12 +91,12 @@ function MetricValue({
 
   return (
     <div className="flex flex-col items-center text-center">
-      <div className="font-host-grotesk font-bold text-white text-5xl md:text-6xl tracking-tight leading-none drop-shadow-[0_2px_10px_rgba(0,0,0,0.35)]">
+      <div className="font-host-grotesk font-normal text-white text-5xl md:text-6xl tracking-tight leading-none drop-shadow-[0_2px_12px_rgba(0,0,0,0.35)]">
         {count}
         {metric.suffix ?? ""}
       </div>
-      <p className="mt-3 font-urbanist text-white/85 text-sm md:text-base font-medium leading-snug max-w-[18rem] drop-shadow-[0_1px_8px_rgba(0,0,0,0.35)]">
-        {metric.label}
+      <p className="mt-3 font-host-grotesk text-rellia-mint text-xs font-semibold uppercase tracking-[0.18em]">
+        {label}
       </p>
     </div>
   );
@@ -102,8 +105,16 @@ function MetricValue({
 export default function NetworkMetricsSection({ heading, subheading, metrics }: NetworkMetricsSectionProps) {
   const sectionRef = useRef<HTMLDivElement | null>(null);
   const [entered, setEntered] = useState(false);
+  const [countReady, setCountReady] = useState(false)
+  const reduceMotion = useReducedMotion()
 
   const metricList = useMemo(() => metrics, [metrics]);
+  const labels = useMemo(() => ["MEMBERS", "STARTUPS", "COUNTRIES"], [])
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start 95%", "end 5%"],
+  })
+  const bgY = useTransform(scrollYProgress, [0, 1], ["-18%", "18%"])
 
   useEffect(() => {
     const el = sectionRef.current;
@@ -126,82 +137,97 @@ export default function NetworkMetricsSection({ heading, subheading, metrics }: 
     return () => observer.disconnect()
   }, [entered])
 
+  useEffect(() => {
+    if (!entered) return
+    if (reduceMotion) {
+      setCountReady(true)
+      return
+    }
+
+    // Let the metric tiles slide in first, then start counting.
+    // Matches the last tile's delay (~0.28s) + duration (~0.45s) + a small buffer.
+    const t = window.setTimeout(() => setCountReady(true), 820)
+    return () => window.clearTimeout(t)
+  }, [entered, reduceMotion])
+
   return (
     <section
-      className="relative z-[2] w-full bg-transparent py-16 md:py-24"
+      className="relative z-[2] w-full bg-white overflow-x-hidden"
     >
-      {/* Soft top wash (contained in this section — does not overlap Paths above) */}
       <div
-        aria-hidden
-        className="pointer-events-none absolute inset-x-0 top-0 z-[1] h-28 bg-gradient-to-b from-rellia-mint/[0.14] via-rellia-teal/[0.05] to-transparent md:h-36"
-      />
-      <div className="relative z-[3] px-6 md:px-10">
-        <div
-          ref={(node) => {
-            sectionRef.current = node
-          }}
-          className="relative z-[4] mx-auto w-full max-w-[1300px] overflow-hidden rounded-3xl border border-black/10 shadow-[0_40px_90px_-60px_rgba(0,0,0,0.45)]"
-        >
-          {/* Image container */}
-          <div className="absolute inset-0 overflow-hidden" aria-hidden>
-            <img src="/images/metrics-bg.jpg" alt="" className="h-full w-full object-cover" />
-            <div className="absolute inset-0 bg-rellia-teal/35" />
-            <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/25 to-black/45" />
-          </div>
+        ref={(node) => {
+          sectionRef.current = node
+        }}
+        className="relative w-full overflow-hidden h-[760px] sm:h-[720px] md:h-[820px] lg:h-[1080px]"
+      >
+        <div className="absolute inset-0 overflow-hidden" aria-hidden>
+          <motion.img
+            src="/images/metrics-bg-pexels-2.jpg"
+            alt=""
+            className="h-full w-full object-cover scale-[1.12]"
+            style={reduceMotion ? undefined : { y: bgY }}
+          />
+          <div className="absolute inset-0 bg-rellia-teal/35" />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/55 via-black/25 to-black/55" />
+        </div>
 
-          <div className="relative px-6 py-14 md:px-12 md:py-16">
-          {entered ? (
-            <ScrollReveal className="flex flex-col items-center text-center">
-              <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 shadow-sm backdrop-blur-sm">
-                <span className="h-2 w-2 rounded-full bg-rellia-mint" aria-hidden />
-                <span className="font-host-grotesk text-xs font-semibold uppercase tracking-[0.18em] text-white">
-                  Network impact
-                </span>
-              </div>
-              <h2 className="font-host-grotesk font-semibold text-white text-4xl md:text-6xl leading-[1.05] tracking-tight max-w-3xl">
-                <AccentHeading text={heading} />
-              </h2>
-              <ScrollReveal className="mt-10">
-                <div aria-hidden className="h-px w-28 bg-gradient-to-r from-transparent via-white/55 to-transparent" />
-              </ScrollReveal>
-            </ScrollReveal>
-          ) : (
-            <div className="opacity-0">
-              <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 shadow-sm backdrop-blur-sm">
-                <span className="h-2 w-2 rounded-full bg-rellia-mint" aria-hidden />
-                <span className="font-host-grotesk text-xs font-semibold uppercase tracking-[0.18em] text-white">
-                  Network impact
-                </span>
-              </div>
-              <h2 className="font-host-grotesk font-semibold text-white text-4xl md:text-6xl leading-[1.05] tracking-tight max-w-3xl">
-                <AccentHeading text={heading} />
-              </h2>
-              <div className="mt-10 h-px w-28 bg-gradient-to-r from-transparent via-white/55 to-transparent" aria-hidden />
+        <div className="relative z-10 mx-auto flex h-full w-full max-w-[1300px] flex-col justify-center px-6 md:px-10">
+          <motion.div
+            initial={reduceMotion ? { opacity: 1, y: 0, filter: "blur(0px)" } : { opacity: 0, y: 22, filter: "blur(18px)" }}
+            animate={
+              reduceMotion
+                ? { opacity: 1, y: 0, filter: "blur(0px)" }
+                : entered
+                  ? { opacity: 1, y: 0, filter: "blur(0px)" }
+                  : { opacity: 0, y: 22, filter: "blur(18px)" }
+            }
+            transition={reduceMotion ? undefined : { duration: 0.65, ease: [0.16, 1, 0.3, 1] }}
+            className="flex flex-col items-center text-center"
+          >
+            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/12 px-4 py-2 shadow-sm backdrop-blur-md">
+              <motion.span
+                aria-hidden
+                className="relative inline-flex h-2 w-2 rounded-full bg-rellia-mint"
+                initial={false}
+                animate={reduceMotion ? undefined : { opacity: [1, 1, 1], transform: ["scale(1)", "scale(1.35)", "scale(1)"] }}
+                transition={reduceMotion ? undefined : { duration: 1.6, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" }}
+              />
+              <span className="font-host-grotesk text-xs font-semibold uppercase tracking-[0.18em] text-white">
+                Network impact
+              </span>
             </div>
-          )}
+            <h2 className="font-host-grotesk font-medium text-white text-4xl md:text-6xl leading-[1.05] tracking-tight max-w-3xl">
+              <AccentHeading text={heading} />
+            </h2>
+            <div aria-hidden className="mt-10 h-px w-28 bg-gradient-to-r from-transparent via-white/55 to-transparent" />
+          </motion.div>
 
           <div className="mt-12 md:mt-14">
-            <div className="mx-auto grid max-w-[1100px] grid-cols-1 gap-5 sm:grid-cols-3">
+            <div className="mx-auto grid max-w-[1100px] grid-cols-1 gap-4 sm:grid-cols-3 md:gap-5">
               {metricList.slice(0, 3).map((m, i) => {
+                const label = labels[i] ?? m.label.toUpperCase()
                 return (
-                  entered ? (
-                    <ScrollReveal key={m.label} delay={i * 0.08}>
-                      <div className="h-full rounded-2xl border border-white/20 bg-white/10 px-6 py-9 md:px-7 md:py-10 shadow-[0_30px_70px_-40px_rgba(0,0,0,0.55)] backdrop-blur-md">
-                        <MetricValue metric={m} index={i} entered={entered} />
-                      </div>
-                    </ScrollReveal>
-                  ) : (
-                    <div
-                      key={m.label}
-                      className="opacity-0 h-full rounded-2xl border border-white/20 bg-white/10 px-6 py-9 md:px-7 md:py-10 shadow-[0_30px_70px_-40px_rgba(0,0,0,0.55)] backdrop-blur-md"
-                    >
-                      <MetricValue metric={m} index={i} entered={entered} />
-                    </div>
-                  )
+                  <motion.div
+                    key={`${m.label}-${label}`}
+                    initial={reduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
+                    animate={
+                      reduceMotion
+                        ? { opacity: 1, y: 0 }
+                        : entered
+                          ? { opacity: 1, y: 0 }
+                          : { opacity: 0, y: 10 }
+                    }
+                    transition={reduceMotion ? undefined : { duration: 0.45, ease: [0.16, 1, 0.3, 1], delay: 0.12 + i * 0.08 }}
+                    className={cn(
+                      "h-full rounded-2xl border border-white/18 px-6 py-9 md:px-7 md:py-10",
+                      "bg-white/14 backdrop-blur-md",
+                    )}
+                  >
+                    <MetricValue metric={m} label={label} index={i} entered={entered && countReady} />
+                  </motion.div>
                 )
               })}
             </div>
-          </div>
           </div>
         </div>
       </div>

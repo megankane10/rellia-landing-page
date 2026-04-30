@@ -3,6 +3,7 @@ import { ArrowRight } from "lucide-react"
 import { cn } from "@/lib/utils"
 import ScrollReveal from "@/components/ScrollReveal"
 import RelliaAction from "@/components/RelliaAction"
+import { BackgroundBeams } from "@/components/ui/beams"
 
 /**
  * One CTA action — either an internal route (`to`) or an external link / mailto (`href`).
@@ -134,29 +135,25 @@ export default function RelliaCta({
     >
       <div className="max-w-[1300px] mx-auto">
         <ScrollReveal>
-          <div className="relative overflow-hidden rounded-[32px] md:rounded-[40px] bg-rellia-teal text-white px-4 py-12 sm:px-8 sm:py-14 md:px-16 md:py-20 text-center shadow-2xl">
-            {/* Decorative grid lines — same modernist cue as the Network hero */}
-            <div
-              aria-hidden
-              className="absolute inset-0 opacity-[0.08] pointer-events-none"
-              style={{
-                backgroundImage:
-                  "linear-gradient(to right, rgba(255,255,255,0.9) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.9) 1px, transparent 1px)",
-                backgroundSize: "80px 80px",
-              }}
-            />
-            {/* Cream glow */}
-            <div
-              aria-hidden
-              className="absolute inset-0 opacity-25 pointer-events-none"
-            >
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_60%,_var(--tw-gradient-stops))] from-rellia-cream via-transparent to-transparent blur-3xl" />
+          <div
+            className={cn(
+              "relative overflow-hidden rounded-[24px] md:rounded-[28px]",
+              "bg-rellia-teal text-white",
+              "px-6 py-12 sm:px-10 sm:py-14 md:px-14 md:py-16",
+              "border border-white/10",
+              "shadow-[0_40px_110px_-85px_rgba(0,0,0,0.7)]",
+            )}
+          >
+            <div aria-hidden className="pointer-events-none absolute inset-0">
+              <BackgroundBeams className="opacity-[0.16]" />
+              <div className="absolute inset-0 bg-gradient-to-b from-black/15 via-transparent to-black/25" />
+              <div className="absolute inset-0 opacity-40 [background-image:radial-gradient(circle_at_15%_25%,rgba(157,214,208,0.38),transparent_52%),radial-gradient(circle_at_70%_40%,rgba(255,255,255,0.14),transparent_55%),radial-gradient(circle_at_40%_95%,rgba(157,214,208,0.26),transparent_55%)]" />
             </div>
 
-            <div className="relative z-10 mx-auto flex w-full max-w-3xl flex-col items-center px-1 sm:px-0">
+            <div className="relative z-10 mx-auto flex w-full flex-col items-start text-left">
               <h2
                 className={cn(
-                  "text-white font-bold tracking-tight leading-[1.1]",
+                  "text-white font-medium tracking-tight leading-[1.1] w-full",
                   size === "compact" ? "text-2xl md:text-3xl lg:text-4xl" : "text-3xl md:text-4xl lg:text-5xl",
                 )}
               >
@@ -179,7 +176,7 @@ export default function RelliaCta({
                   <CtaActionTextLink action={primary} />
                 </div>
               ) : (
-                <div className="mt-10 flex w-full max-w-full flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-center sm:px-0">
+                <div className="mt-10 flex w-full max-w-full flex-col items-stretch justify-start gap-4 sm:flex-row sm:items-center sm:px-0">
                   <CtaActionButton action={primary} variant="heroSolidOnTeal" />
                   {secondary ? <CtaActionButton action={secondary} variant="heroGhostOnTeal" /> : null}
                 </div>

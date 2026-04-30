@@ -1,9 +1,9 @@
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import type { HomePageContent } from "@shared/cms/types"
-import { ArrowRight, Pause, Play } from "lucide-react"
+import { ArrowRight } from "lucide-react"
 import RelliaAction from "@/components/RelliaAction"
-import { AnimatePresence, motion, useReducedMotion, useScroll, useTransform } from "framer-motion"
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion"
 
 type HeroSectionProps = {
   content: Pick<
@@ -18,15 +18,7 @@ type HeroSectionProps = {
   >;
 };
 
-const AnimatedHeadline = ({
-  reduceMotion,
-  onComplete,
-  text,
-}: {
-  reduceMotion: boolean
-  onComplete: () => void
-  text: string
-}) => {
+const AnimatedHeadline = ({ reduceMotion, text }: { reduceMotion: boolean; text: string }) => {
   const normalized = useMemo(() => text.trim().replace(/\s+/g, " "), [text])
   const words = useMemo(() => (normalized.length > 0 ? normalized.split(" ") : []), [normalized])
   const breakBeforeWordIndex = useMemo(() => words.findIndex((w) => w.toLowerCase() === "of"), [words])
@@ -34,8 +26,8 @@ const AnimatedHeadline = ({
   if (reduceMotion) {
     const fallbackBreakIndex = breakBeforeWordIndex >= 0 ? breakBeforeWordIndex : undefined
     return (
-      <h1 className="relative font-host-grotesk font-medium text-5xl md:text-7xl lg:text-[88px] leading-[0.95] tracking-tight">
-        <span className="text-rellia-cream">
+      <p className="relative font-host-grotesk font-normal text-3xl md:text-4xl lg:text-[44px] leading-[1.05] tracking-tight">
+        <span className="text-rellia-cream/95">
           {words.map((w, idx) => (
             <span key={`${idx}-${w}`} className="inline">
               {fallbackBreakIndex != null && idx === fallbackBreakIndex ? <span className="hidden md:block" /> : null}
@@ -44,7 +36,7 @@ const AnimatedHeadline = ({
             </span>
           ))}
         </span>
-      </h1>
+      </p>
     )
   }
 
@@ -71,19 +63,13 @@ const AnimatedHeadline = ({
     }),
   } as const
 
-  // Trigger "headline done" as soon as the final word finishes animating.
-  const headlineDoneDelaySeconds = (words.length - 1) * baseStaggerSeconds + 1.15
-
   return (
-    <h1
-      className="relative font-host-grotesk font-medium text-5xl md:text-7xl lg:text-[88px] leading-[0.95] tracking-tight"
-      aria-label={normalized}
-    >
+    <p className="relative font-host-grotesk font-normal text-3xl md:text-4xl lg:text-[44px] leading-[1.05] tracking-tight" aria-label={normalized}>
       <motion.span
         variants={container}
         initial="hidden"
         animate="show"
-        className="text-rellia-cream"
+        className="text-rellia-cream/95"
       >
         {words.map((w, idx) => (
           <span key={`${idx}-${w}`} className="inline">
@@ -104,16 +90,7 @@ const AnimatedHeadline = ({
           </span>
         ))}
       </motion.span>
-      <motion.span
-        aria-hidden
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 0 }}
-        transition={{ delay: headlineDoneDelaySeconds, duration: 0 }}
-        onAnimationComplete={onComplete}
-      >
-        .
-      </motion.span>
-    </h1>
+    </p>
   )
 }
 
@@ -121,36 +98,9 @@ export default function HeroSection({ content }: HeroSectionProps) {
   const navigate = useNavigate()
   const reduceMotion = useReducedMotion()
   const sectionRef = useRef<HTMLElement | null>(null)
-  const videoRef = useRef<HTMLVideoElement>(null)
-  const [heroHeight, setHeroHeight] = useState(0)
-  const [isPaused, setIsPaused] = useState(false)
   const [rotatingLineIndex, setRotatingLineIndex] = useState(0)
-  const [isVideoReady, setIsVideoReady] = useState(false)
-  const [canShowHeadline, setCanShowHeadline] = useState(false)
-  const [isHeadlineDone, setIsHeadlineDone] = useState(false)
-
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start start", "end start"],
-  })
-
-  useLayoutEffect(() => {
-    const el = sectionRef.current
-    if (!el) return
-
-    const update = () => setHeroHeight(el.getBoundingClientRect().height)
-    update()
-
-    if (typeof ResizeObserver === "undefined") return
-    const ro = new ResizeObserver(() => update())
-    ro.observe(el)
-    return () => ro.disconnect()
-  }, [])
-
-  // Keep the video visually "stationary" in the viewport as the page scrolls past the hero.
-  // We do this by translating the video down by the same amount the section scrolls up.
-  const videoY = useTransform(scrollYProgress, [0, 1], [0, heroHeight])
-  const videoScale = useTransform(scrollYProgress, [0, 1], [1.06, 1.06])
+  const [canRotate, setCanRotate] = useState(false)
+  const [hasHeadlineRevealed, setHasHeadlineRevealed] = useState(false)
 
   const rotatingLines = useMemo(
     () => [
@@ -165,43 +115,24 @@ export default function HeroSection({ content }: HeroSectionProps) {
 
   useEffect(() => {
     if (reduceMotion) {
-      setIsVideoReady(true)
-      setCanShowHeadline(true)
-      setIsHeadlineDone(true)
+      setHasHeadlineRevealed(true)
+      setCanRotate(true)
       return
     }
-  }, [reduceMotion])
+
+    setCanRotate(false)
+    setHasHeadlineRevealed(false)
+    setRotatingLineIndex(0)
+  }, [reduceMotion, rotatingLines.length])
 
   useEffect(() => {
     if (reduceMotion) return
-    if (isVideoReady) {
-      setCanShowHeadline(true)
-      return
-    }
-    const timeout = window.setTimeout(() => {
-      setCanShowHeadline(true)
-    }, 250)
-    return () => window.clearTimeout(timeout)
-  }, [reduceMotion, isVideoReady])
-
-  useEffect(() => {
-    if (reduceMotion) return
-    if (!isVideoReady) return
+    if (!canRotate) return
     const interval = window.setInterval(() => {
       setRotatingLineIndex((idx) => (idx + 1) % rotatingLines.length)
-    }, 1750)
+    }, 2400)
     return () => window.clearInterval(interval)
-  }, [reduceMotion, isVideoReady, rotatingLines.length])
-
-  const handleTogglePlayback = useCallback(() => {
-    const el = videoRef.current
-    if (!el) return
-    if (el.paused) {
-      void el.play()
-    } else {
-      el.pause()
-    }
-  }, [])
+  }, [canRotate, reduceMotion, rotatingLines.length])
 
   return (
     <section
@@ -210,118 +141,98 @@ export default function HeroSection({ content }: HeroSectionProps) {
       }}
       className="relative min-h-screen flex items-center bg-rellia-teal overflow-hidden"
     >
-      {/* Video background */}
-      <motion.video
-        ref={videoRef}
-        poster="/images/heroPoster-home.png"
-        autoPlay={!reduceMotion}
-        muted
-        loop
-        playsInline
-        className="absolute inset-0 h-full w-full object-cover object-center"
-        style={reduceMotion ? undefined : { y: videoY, scale: videoScale }}
-        onPlay={() => setIsPaused(false)}
-        onPause={() => setIsPaused(true)}
-        onLoadedData={() => setIsVideoReady(true)}
-        onCanPlay={() => setIsVideoReady(true)}
-        onError={() => setIsVideoReady(false)}
-      >
-        <source src="/videos/homehero.mp4" type="video/mp4" />
-      </motion.video>
+      <div aria-hidden className="absolute inset-0">
+        <video
+          className="absolute inset-0 h-full w-full object-cover"
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="auto"
+        >
+          <source src="/videos/homehero.mp4" type="video/mp4" />
+        </video>
+      </div>
 
       {/* Softer teal wash so image stays visible */}
-      <div aria-hidden className="absolute inset-0 bg-rellia-teal/25" />
+      <div aria-hidden className="absolute inset-0 bg-rellia-teal/45" />
 
       {/* Left-to-right gradient — extra contrast under the headline */}
       <div
         aria-hidden
-        className="absolute inset-0 bg-gradient-to-r from-rellia-teal/75 via-rellia-teal/35 to-rellia-teal/20"
+        className="absolute inset-0 bg-gradient-to-r from-rellia-teal/85 via-rellia-teal/55 to-rellia-teal/35"
       />
-
-      {/* Pause / play — sits above overlay so it stays visible & clickable */}
-      <div className="absolute bottom-6 right-6 z-20 md:bottom-10 md:right-10">
-        <button
-          type="button"
-          onClick={handleTogglePlayback}
-          className="flex h-12 w-12 items-center justify-center rounded-full border border-white/40 bg-white/15 text-white backdrop-blur-sm transition hover:bg-white/25 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white motion-reduce:transition-none"
-          aria-label={isPaused ? "Play background video" : "Pause background video"}
-        >
-          {isPaused ? <Play className="h-5 w-5" fill="currentColor" /> : <Pause className="h-5 w-5" />}
-        </button>
-      </div>
 
       <div className="relative z-10 max-w-[1300px] mx-auto w-full px-6 md:px-10 pt-24 pb-16 md:pt-28 md:pb-24">
         <div className="mx-auto flex max-w-4xl flex-col items-start text-left">
           <motion.div
-            initial={reduceMotion ? { opacity: 1 } : { opacity: 0 }}
-            animate={canShowHeadline ? { opacity: 1 } : { opacity: 0 }}
-            transition={reduceMotion ? undefined : { duration: 0.55, ease: "easeOut", delay: 0.05 }}
-          >
-            {canShowHeadline ? (
-              <AnimatedHeadline
-                reduceMotion={!!reduceMotion}
-                onComplete={() => setIsHeadlineDone(true)}
-                text="You are the future of health tech."
-              />
-            ) : null}
-          </motion.div>
-
-          <motion.div
             initial={reduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 14 }}
-            animate={isHeadlineDone ? { opacity: 1, y: 0 } : { opacity: 0, y: 14 }}
-            transition={reduceMotion ? undefined : { duration: 0.45, ease: "easeOut", delay: 0 }}
-            className="mt-6 md:mt-7"
+            animate={{ opacity: 1, y: 0 }}
+            transition={reduceMotion ? undefined : { duration: 0.45, ease: "easeOut", delay: 0.05 }}
+            className="mt-2 md:mt-3"
           >
-            <div
-              className="min-h-[2.25rem] md:min-h-[2.75rem] text-rellia-mint text-xl md:text-3xl font-urbanist font-medium"
+            <motion.h1
+              initial={reduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 18 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={reduceMotion ? undefined : { duration: 0.9, ease: [0.42, 0, 0.58, 1] }}
+              onAnimationComplete={() => {
+                if (reduceMotion) return
+                if (hasHeadlineRevealed) return
+                setHasHeadlineRevealed(true)
+                window.setTimeout(() => setCanRotate(true), 650)
+              }}
+              className="text-rellia-mint text-5xl md:text-7xl lg:text-[88px] font-host-grotesk font-medium tracking-tight leading-[0.95]"
               aria-live="polite"
               aria-atomic="true"
             >
-              <span className="text-rellia-mint">We help you </span>
-              {reduceMotion ? (
-                <span className="text-rellia-mint">{rotatingLines[0]}</span>
-              ) : (
+              <span className="block">We help you</span>
+              <span className="block min-h-[3.25rem] md:min-h-[4.1rem] lg:min-h-[5.1rem]">
                 <span className="inline-grid align-baseline">
                   <AnimatePresence mode="sync" initial={false}>
                     <motion.span
                       key={rotatingLineIndex}
-                      initial={{ opacity: 0, y: 10, filter: "blur(10px)" }}
+                      initial={{ opacity: 0, y: 14, filter: "blur(8px)" }}
                       animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                      exit={{ opacity: 0, y: -10, filter: "blur(10px)" }}
-                      transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
+                      exit={{ opacity: 0, y: -14, filter: "blur(10px)" }}
+                      transition={{ duration: 0.38, ease: [0.42, 0, 0.58, 1] }}
                       className="col-start-1 row-start-1 inline-block text-rellia-mint"
                     >
                       {rotatingLines[rotatingLineIndex]}
                     </motion.span>
                   </AnimatePresence>
                 </span>
-              )}
-            </div>
+              </span>
+            </motion.h1>
           </motion.div>
-
-          <motion.p
-            initial={reduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 18 }}
-            animate={isHeadlineDone ? { opacity: 1, y: 0 } : { opacity: 0, y: 18 }}
-            transition={reduceMotion ? undefined : { duration: 0.55, ease: "easeOut", delay: 0 }}
-            className="mt-10 md:mt-12 text-white/85 text-lg md:text-2xl font-urbanist leading-snug max-w-2xl"
-          >
-            Rellia helps founders achieve their milestones to launch their healthcare innovations.
-          </motion.p>
 
           <motion.div
             initial={reduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 18 }}
-            animate={isHeadlineDone ? { opacity: 1, y: 0 } : { opacity: 0, y: 18 }}
-            transition={reduceMotion ? undefined : { duration: 0.6, ease: "easeOut", delay: 0 }}
-            className="mt-10 flex w-full flex-col items-stretch justify-start gap-4 sm:w-auto sm:flex-row sm:items-center"
+            animate={reduceMotion || hasHeadlineRevealed ? { opacity: 1, y: 0 } : { opacity: 0, y: 18 }}
+            transition={reduceMotion ? undefined : { duration: 0.55, ease: [0.16, 1, 0.3, 1], delay: 0.08 }}
+            className="mt-6 md:mt-7"
+          >
+            <p className="font-host-grotesk font-normal text-3xl md:text-[34px] tracking-tight text-white/90">
+              You are the future of health tech.
+            </p>
+            <p className="mt-4 text-white/85 text-lg md:text-xl font-urbanist leading-relaxed max-w-2xl">
+              Rellia helps founders achieve their milestones to launch their healthcare innovations.
+            </p>
+          </motion.div>
+
+          <motion.div
+            initial={reduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 18 }}
+            animate={reduceMotion || hasHeadlineRevealed ? { opacity: 1, y: 0 } : { opacity: 0, y: 18 }}
+            transition={reduceMotion ? undefined : { duration: 0.6, ease: [0.16, 1, 0.3, 1], delay: 0.18 }}
+            className="mt-12 md:mt-14 flex w-full flex-col items-stretch justify-start gap-4 sm:w-auto sm:flex-row sm:items-center"
           >
             <RelliaAction
               type="button"
               variant="heroSolidOnTeal"
               size="comfortable"
               onClick={() => navigate(content.primaryCtaPath)}
-              aria-label={content.primaryCtaLabel}
+              aria-label="Apply to Join"
             >
-              {content.primaryCtaLabel}
+              Apply to Join
               <ArrowRight aria-hidden />
             </RelliaAction>
 
@@ -330,9 +241,10 @@ export default function HeroSection({ content }: HeroSectionProps) {
               variant="heroGhostOnTeal"
               size="comfortable"
               onClick={() => navigate(content.secondaryCtaPath)}
-              aria-label={content.secondaryCtaLabel}
+              aria-label="Explore Programs"
+              className="border-white/45 text-white hover:border-white/80"
             >
-              {content.secondaryCtaLabel}
+              Explore Programs
               <ArrowRight aria-hidden />
             </RelliaAction>
           </motion.div>

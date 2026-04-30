@@ -2,7 +2,6 @@ import HomeOrganizationJsonLd from "@/components/HomeOrganizationJsonLd";
 import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/HeroSection";
 import PathsSection from "@/components/PathsSection";
-import LogoMarquee from "@/components/LogoMarquee";
 import NetworkMetricsSection from "@/components/NetworkMetricsSection";
 import WhyRellia from "@/components/WhyRellia";
 import HowItWorks from "@/components/HowItWorks";
@@ -36,7 +35,6 @@ export default function Index() {
           titleAccent={home.testimonialsTitleAccent}
           testimonials={home.testimonials}
         />
-        <LogoMarquee />
         <FeaturedStories />
         <RelliaCta
           title={home.ctaTitle}

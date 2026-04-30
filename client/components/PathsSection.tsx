@@ -117,15 +117,20 @@ export default function PathsSection({ items = defaultItems }: { items?: PathIte
           animate={reduceMotion ? { opacity: 1, y: 0 } : isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 26 }}
           transition={reduceMotion ? undefined : { duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
         >
-          <div className="relative isolate grid grid-cols-1 gap-8 md:gap-10 lg:grid-cols-2 items-stretch">
+          <div
+            className={cn(
+              "relative isolate grid grid-cols-1 gap-8 md:gap-10 items-start",
+              "lg:grid-cols-[minmax(0,1fr)_520px] xl:grid-cols-[minmax(0,1fr)_560px]",
+            )}
+          >
             {/* Left panel — full-bleed text + links on small screens; card shell only from lg */}
             <div className="relative z-10 max-lg:p-0 text-black lg:rounded-[28px] lg:p-9">
               <div>
                 <h2 className="font-host-grotesk font-semibold text-black text-3xl md:text-[44px] leading-tight tracking-tight max-w-xl">
-                  Reimagining healthcare, <span className="text-rellia-teal">together</span>.
+                  Find <span className="text-rellia-teal">your place</span> in the Rellia community.
                 </h2>
                 <p className="mt-4 font-urbanist text-black/70 text-base md:text-lg leading-relaxed max-w-xl">
-                  Join a global ecosystem built to scale healthcare innovation. Select your role to see how we partner.
+                  Select your role to see where you fit in
                 </p>
 
                 <div className="mt-9 flex flex-col" onMouseLeave={() => setHoverKey(null)}>
@@ -197,7 +202,8 @@ export default function PathsSection({ items = defaultItems }: { items?: PathIte
               className={cn(
                 "relative z-10 hidden overflow-hidden rounded-[28px] border border-black/10 lg:block group",
                 "bg-white shadow-[0_18px_60px_-36px_rgba(0,0,0,0.25)]",
-                "min-h-[72vh]",
+                "lg:sticky lg:top-28",
+                "h-[560px] xl:h-[620px]",
               )}
               onMouseEnter={() => setIsImageHovered(true)}
               onMouseLeave={() => setIsImageHovered(false)}
@@ -218,6 +224,13 @@ export default function PathsSection({ items = defaultItems }: { items?: PathIte
                 />
               </AnimatePresence>
               <div aria-hidden className="absolute inset-0 bg-gradient-to-t from-black/35 via-black/10 to-transparent" />
+              <div
+                aria-hidden
+                className={cn(
+                  "absolute inset-0 bg-black/30 transition-opacity duration-300 motion-reduce:transition-none",
+                  showOverlay ? "opacity-100" : "opacity-0",
+                )}
+              />
 
               <div
                 className={cn(
@@ -227,10 +240,7 @@ export default function PathsSection({ items = defaultItems }: { items?: PathIte
                 )}
               >
                 <div className="max-w-[34rem]">
-                  <p className="text-xs font-semibold uppercase tracking-[0.16em] text-white/70">
-                    {active?.label ?? ""}
-                  </p>
-                  <p className="mt-3 font-host-grotesk font-semibold text-white text-2xl md:text-3xl tracking-tight leading-tight">
+                  <p className="font-host-grotesk font-medium text-white text-2xl md:text-3xl tracking-tight leading-tight">
                     {active?.title ?? ""}
                   </p>
                   <p className="mt-3 font-urbanist text-white/80 text-base md:text-lg leading-relaxed">
