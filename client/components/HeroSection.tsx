@@ -181,7 +181,7 @@ export default function HeroSection({ content }: HeroSectionProps) {
                 setHasHeadlineRevealed(true)
                 window.setTimeout(() => setCanRotate(true), 650)
               }}
-              className="text-rellia-mint text-4xl md:text-6xl lg:text-[72px] font-host-grotesk font-medium tracking-tight leading-[0.95]"
+              className="text-rellia-mint text-[46px] md:text-[68px] lg:text-[82px] font-host-grotesk font-medium tracking-tight leading-[0.95]"
               aria-live="polite"
               aria-atomic="true"
             >

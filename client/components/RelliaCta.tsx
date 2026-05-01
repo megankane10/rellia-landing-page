@@ -1,4 +1,5 @@
 import type { ReactNode } from "react"
+import { useEffect } from "react"
 import { Link } from "react-router-dom"
 import { ArrowRight } from "lucide-react"
 import { cn } from "@/lib/utils"
@@ -75,7 +76,7 @@ function CtaActionButton({
   const responsiveCtaClass =
     "w-full min-w-0 max-w-full justify-center px-4 py-3.5 text-sm leading-snug sm:w-auto sm:px-8 sm:py-4 sm:text-base sm:leading-normal whitespace-normal sm:whitespace-nowrap focus-visible:ring-offset-rellia-greyTeal"
 
-  const relliaVariant = variant === "primary" ? "relliaCtaPrimary" : "outlineOnWhite"
+  const relliaVariant = variant === "primary" ? "relliaCtaPrimary" : "relliaCtaSecondary"
 
   if (action.to) {
     return (
@@ -141,6 +142,14 @@ export default function RelliaCta({
   primaryStyle = "button",
   className,
 }: RelliaCtaProps) {
+  useEffect(() => {
+    const root = document.documentElement
+    root.style.setProperty("--footer-backdrop", "#C5D8D5")
+    return () => {
+      root.style.removeProperty("--footer-backdrop")
+    }
+  }, [])
+
   return (
     <section
       className={cn(
@@ -154,10 +163,10 @@ export default function RelliaCta({
         className="pointer-events-none absolute inset-0 z-0 flex items-center justify-center overflow-hidden"
       >
         <div
-          className="absolute left-1/2 top-[42%] h-[min(140vw,720px)] w-[min(140vw,720px)] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-[0.88] blur-[18px] sm:h-[min(130vw,820px)] sm:w-[min(130vw,820px)] sm:blur-[22px] md:top-1/2 md:h-[min(95vw,960px)] md:w-[min(95vw,960px)] md:blur-[26px] lg:h-[min(85vw,1040px)] lg:w-[min(85vw,1040px)] lg:blur-[32px]"
+          className="absolute left-1/2 top-[18%] h-[min(92vw,520px)] w-[min(92vw,520px)] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-100 blur-[20px] sm:top-[22%] sm:h-[min(82vw,600px)] sm:w-[min(82vw,600px)] md:top-[26%] md:h-[min(60vw,720px)] md:w-[min(60vw,720px)] lg:top-[28%] lg:h-[min(52vw,760px)] lg:w-[min(52vw,760px)]"
           style={{
             background:
-              "radial-gradient(circle at center, #B8FFF1 0%, #6FE6D8 28%, #2AAFA1 58%, #0F6B67 100%)",
+              "linear-gradient(180deg, #C5D8D5 0%, #9DD6D0 52%, #EEF2F2 100%)",
           }}
         />
       </ScrollReveal>

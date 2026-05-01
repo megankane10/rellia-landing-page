@@ -12,6 +12,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { motion, useReducedMotion } from "framer-motion"
 import { ExternalLink, HeartPulse, Laptop, Plane, Sparkles } from "lucide-react"
 import type { HomeWhyFeature } from "@shared/cms/types"
+import { DEFAULT_GLOBAL_SETTINGS } from "@shared/cms/defaults"
 
 type OpenRole = {
   id: string
@@ -53,6 +54,8 @@ const OPEN_ROLES: OpenRole[] = [
     linkedInApplyUrl: "https://www.linkedin.com/company/relliahealth/jobs/",
   },
 ]
+
+const g = DEFAULT_GLOBAL_SETTINGS
 
 /** Pexels — team, collaboration, workspace (hotlinked per Pexels guidelines) */
 const TEAM_MARQUEE_IMAGES: string[] = [
@@ -278,10 +281,10 @@ const CareersJoinTeamSection = () => {
               <RelliaAction
                 asChild
                 variant="creamCtaHeroFill"
-                size="comfortable"
+                size="compact"
                 className="shadow-sm focus-visible:ring-offset-rellia-greyTeal"
               >
-                <a href="#open-roles">Open roles</a>
+                <a href="#open-roles">See open roles</a>
               </RelliaAction>
             </div>
           </div>
@@ -334,10 +337,11 @@ export default function Careers() {
         <CareersJoinTeamSection />
 
         <WhyRellia
-          sectionTitle="Why Rellia"
+          sectionTitle="Building What Matters Most"
           sectionDescription="What it feels like to build here: pace without panic, depth without gatekeeping, and a team that sweats the small stuff so members do not have to."
           features={CAREERS_WHY_FEATURES}
           cardImages={CAREERS_WHY_CARD_IMAGES}
+          sectionClassName="bg-white pt-28 md:pt-32"
         />
 
         <HowItWorks
@@ -355,75 +359,99 @@ export default function Careers() {
           columns={2}
         />
 
-        <section id="open-roles" className="scroll-mt-28 bg-rellia-cream/60 py-16 md:py-24">
-          <div className="mx-auto max-w-[1300px] px-6 md:px-10">
+        <section
+          id="open-roles"
+          className="scroll-mt-28 bg-rellia-cream/60 h-[92svh] min-h-[46rem] overflow-hidden"
+        >
+          <div className="mx-auto max-w-[1300px] h-full px-6 md:px-10 py-16 md:py-20 flex flex-col">
             <ScrollReveal>
-              <h2 className="font-host-grotesk text-3xl font-semibold tracking-tight text-black md:text-4xl">
-                Open Roles
-              </h2>
+              <div className="flex h-full flex-col">
+                <h2 className="font-host-grotesk text-3xl font-semibold tracking-tight text-black md:text-4xl">
+                  Open Roles
+                </h2>
 
-              <div className="mt-10 rounded-3xl border border-black/10 bg-white px-0 shadow-sm md:px-2">
-                <Accordion type="single" collapsible className="w-full">
-                  {OPEN_ROLES.map((role, index) => (
-                    <AccordionItem
-                      key={role.id}
-                      value={role.id}
-                      className={
-                        index === OPEN_ROLES.length - 1
-                          ? "border-b-0 px-6 md:px-8"
-                          : "border-b border-black/10 px-6 md:px-8"
-                      }
-                    >
-                      <AccordionTrigger
-                        className={[
-                          "items-start gap-3 py-5 hover:no-underline md:gap-4 md:py-6",
-                          "[&>svg]:mt-1 [&>svg]:shrink-0 [&>svg]:text-rellia-teal",
-                        ].join(" ")}
-                      >
-                        <span className="flex min-w-0 flex-1 flex-col gap-1.5 text-left sm:flex-row sm:items-start sm:justify-between sm:gap-6">
-                          <span className="min-w-0 text-lg font-medium text-black md:text-xl">{role.title}</span>
-                          <span className="shrink-0 font-urbanist text-sm font-normal leading-snug text-black/55 sm:max-w-[min(280px,42%)] sm:pt-0.5 sm:text-right md:text-base">
-                            {role.location}
-                          </span>
-                        </span>
-                      </AccordionTrigger>
-                      <AccordionContent className="pb-6 pt-0 md:pb-8">
-                        <span className="inline-flex rounded-full bg-rellia-teal/10 px-3 py-1 font-urbanist text-sm font-medium text-rellia-teal">
-                          {role.employmentType}
-                        </span>
-
-                        <p className="mt-5 font-urbanist text-sm leading-relaxed text-black/75 md:text-base">
-                          {role.description}
-                        </p>
-
-                        <div className="mt-6">
-                          <h3 className="font-host-grotesk text-sm font-semibold uppercase tracking-wider text-black/80">
-                            Role highlights
-                          </h3>
-                          <ul className="mt-3 list-disc space-y-2 pl-5 font-urbanist text-sm leading-relaxed text-black/70 md:text-base">
-                            {role.responsibilities.map((line) => (
-                              <li key={line}>{line}</li>
-                            ))}
-                          </ul>
-                        </div>
-
-                        <div className="mt-8">
-                          <RelliaAction asChild variant="outlineOnWhite" size="comfortable" className="gap-2">
-                            <a
-                              href={role.linkedInApplyUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              aria-label={`Apply for ${role.title} on LinkedIn (opens in new tab)`}
+                <div className="mt-10 min-h-0 flex-1">
+                  <div className="h-full rounded-3xl border border-black/10 bg-white px-0 shadow-sm md:px-2 overflow-hidden flex flex-col">
+                    <div className="min-h-0 flex-1 overflow-y-auto">
+                      <Accordion type="single" collapsible className="w-full">
+                        {OPEN_ROLES.map((role, index) => (
+                          <AccordionItem
+                            key={role.id}
+                            value={role.id}
+                            className={
+                              index === OPEN_ROLES.length - 1
+                                ? "border-b-0 px-6 md:px-8"
+                                : "border-b border-black/10 px-6 md:px-8"
+                            }
+                          >
+                            <AccordionTrigger
+                              className={[
+                                "items-start gap-3 py-5 hover:no-underline md:gap-4 md:py-6",
+                                "[&>svg]:mt-1 [&>svg]:shrink-0 [&>svg]:text-rellia-teal",
+                              ].join(" ")}
                             >
-                              Apply on LinkedIn
-                              <ExternalLink className="h-4 w-4" aria-hidden />
-                            </a>
-                          </RelliaAction>
-                        </div>
-                      </AccordionContent>
-                    </AccordionItem>
-                  ))}
-                </Accordion>
+                              <span className="flex min-w-0 flex-1 flex-col gap-1.5 text-left sm:flex-row sm:items-start sm:justify-between sm:gap-6">
+                                <span className="min-w-0 text-lg font-medium text-black md:text-xl">
+                                  {role.title}
+                                </span>
+                                <span className="shrink-0 font-urbanist text-sm font-normal leading-snug text-black/55 sm:max-w-[min(280px,42%)] sm:pt-0.5 sm:text-right md:text-base">
+                                  {role.location}
+                                </span>
+                              </span>
+                            </AccordionTrigger>
+                            <AccordionContent className="pb-6 pt-0 md:pb-8">
+                              <span className="inline-flex rounded-full bg-rellia-teal/10 px-3 py-1 font-urbanist text-sm font-medium text-rellia-teal">
+                                {role.employmentType}
+                              </span>
+
+                              <p className="mt-5 font-urbanist text-sm leading-relaxed text-black/75 md:text-base">
+                                {role.description}
+                              </p>
+
+                              <div className="mt-6">
+                                <h3 className="font-host-grotesk text-sm font-semibold uppercase tracking-wider text-black/80">
+                                  Role highlights
+                                </h3>
+                                <ul className="mt-3 list-disc space-y-2 pl-5 font-urbanist text-sm leading-relaxed text-black/70 md:text-base">
+                                  {role.responsibilities.map((line) => (
+                                    <li key={line}>{line}</li>
+                                  ))}
+                                </ul>
+                              </div>
+
+                              <div className="mt-8">
+                                <RelliaAction asChild variant="outlineOnWhite" size="comfortable" className="gap-2">
+                                  <a
+                                    href={role.linkedInApplyUrl}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    aria-label={`Apply for ${role.title} on LinkedIn (opens in new tab)`}
+                                  >
+                                    Apply on LinkedIn
+                                    <ExternalLink className="h-4 w-4" aria-hidden />
+                                  </a>
+                                </RelliaAction>
+                              </div>
+                            </AccordionContent>
+                          </AccordionItem>
+                        ))}
+                      </Accordion>
+                    </div>
+                  </div>
+                </div>
+
+                <p className="mt-auto pt-6 text-center font-urbanist text-sm leading-relaxed text-black/70 md:text-base">
+                  Follow us on{" "}
+                  <a
+                    href={g.linkedinUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="font-semibold text-rellia-teal underline underline-offset-4 transition-colors hover:text-rellia-mint"
+                    aria-label="Follow Rellia on LinkedIn (opens in new tab)"
+                  >
+                    LinkedIn
+                  </a>
+                </p>
               </div>
             </ScrollReveal>
           </div>

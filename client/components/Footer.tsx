@@ -6,7 +6,10 @@ const g = DEFAULT_GLOBAL_SETTINGS
 
 export default function Footer() {
   return (
-    <footer className="bg-rellia-greyTeal px-2 pb-3 pt-0 sm:px-4 md:px-[30px] md:pb-[15px]">
+    <footer
+      className="p-2 sm:p-4 md:p-[30px]"
+      style={{ backgroundColor: "var(--footer-backdrop, transparent)" }}
+    >
       <div className="w-full rounded-2xl border border-white/10 bg-rellia-teal text-white shadow-[0_28px_80px_-40px_rgba(13,53,64,0.55)] md:rounded-[28px]">
         <div className="px-4 py-10 md:px-10 md:py-16 lg:px-12">
           {/* Mobile header (logo + tagline first) */}
@@ -14,7 +17,7 @@ export default function Footer() {
             <Link to="/" className="flex items-center justify-start">
               <img src="/images/hologram-logo.png" alt="Rellia" className="h-9 w-auto md:h-10" />
             </Link>
-            <p className="font-urbanist text-[14px] leading-snug text-white/70 md:text-[15px] md:leading-relaxed">
+            <p className="font-urbanist text-[14px] leading-snug text-white md:text-[15px] md:leading-relaxed">
               {g.footerTagline}
             </p>
           </div>
@@ -24,7 +27,7 @@ export default function Footer() {
               <Link to="/" className="flex items-center">
                 <img src="/images/hologram-logo.png" alt="Rellia" className="h-10 w-auto" />
               </Link>
-              <p className="max-w-[280px] font-urbanist text-[15px] leading-relaxed text-white/70">{g.footerTagline}</p>
+              <p className="max-w-[280px] font-urbanist text-[15px] leading-relaxed text-white">{g.footerTagline}</p>
               <div className="flex gap-4">
                 <a
                   href={g.linkedinUrl}
@@ -56,31 +59,31 @@ export default function Footer() {
 
             {/* Company */}
             <div className="flex min-w-0 flex-col gap-4 md:gap-6">
-              <h4 className="font-host-grotesk text-lg font-bold tracking-normal text-white">
+              <h4 className="font-host-grotesk text-[14px] font-semibold leading-snug tracking-normal text-rellia-mint md:text-[15px] md:leading-normal">
                 Company
               </h4>
               <nav className="flex flex-col gap-2 md:gap-3">
                 <Link
                   to="/about"
-                  className="font-urbanist text-[14px] leading-snug text-white/75 transition-colors hover:text-rellia-mint md:text-[15px] md:leading-normal"
+                  className="font-urbanist text-[14px] leading-snug text-white transition-colors hover:text-rellia-mint md:text-[15px] md:leading-normal"
                 >
                   About Us
                 </Link>
                 <Link
                   to="/careers"
-                  className="font-urbanist text-[14px] leading-snug text-white/75 transition-colors hover:text-rellia-mint md:text-[15px] md:leading-normal"
+                  className="font-urbanist text-[14px] leading-snug text-white transition-colors hover:text-rellia-mint md:text-[15px] md:leading-normal"
                 >
                   Careers
                 </Link>
                 <Link
                   to="/terms"
-                  className="font-urbanist text-[14px] leading-snug text-white/75 transition-colors hover:text-rellia-mint md:text-[15px] md:leading-normal"
+                  className="font-urbanist text-[14px] leading-snug text-white transition-colors hover:text-rellia-mint md:text-[15px] md:leading-normal"
                 >
                   Terms of Use
                 </Link>
                 <Link
                   to="/privacy"
-                  className="font-urbanist text-[14px] leading-snug text-white/75 transition-colors hover:text-rellia-mint md:text-[15px] md:leading-normal"
+                  className="font-urbanist text-[14px] leading-snug text-white transition-colors hover:text-rellia-mint md:text-[15px] md:leading-normal"
                 >
                   Privacy Policy
                 </Link>
@@ -89,19 +92,19 @@ export default function Footer() {
 
             {/* Support */}
             <div className="flex min-w-0 flex-col gap-4 md:gap-6">
-              <h4 className="font-host-grotesk text-lg font-bold tracking-normal text-white">
+              <h4 className="font-host-grotesk text-[14px] font-semibold leading-snug tracking-normal text-rellia-mint md:text-[15px] md:leading-normal">
                 Support
               </h4>
               <nav className="flex flex-col gap-2 md:gap-3">
                 <Link
                   to="/faq"
-                  className="font-urbanist text-[14px] leading-snug text-white/75 transition-colors hover:text-rellia-mint md:text-[15px] md:leading-normal"
+                  className="font-urbanist text-[14px] leading-snug text-white transition-colors hover:text-rellia-mint md:text-[15px] md:leading-normal"
                 >
                   FAQ
                 </Link>
                 <Link
                   to="/contact"
-                  className="font-urbanist text-[14px] leading-snug text-white/75 transition-colors hover:text-rellia-mint md:text-[15px] md:leading-normal"
+                  className="font-urbanist text-[14px] leading-snug text-white transition-colors hover:text-rellia-mint md:text-[15px] md:leading-normal"
                 >
                   Contact Us
                 </Link>
@@ -140,7 +143,7 @@ export default function Footer() {
 
           <div className="flex items-center justify-center border-t border-white/10 pt-6 md:pt-8">
             <p className="text-center font-urbanist text-[13px] leading-snug text-white/55 md:text-sm">
-              &copy; {new Date().getFullYear()} {g.copyrightLine}
+              &copy; {new Date().getFullYear()} {g.copyrightLine} · Ontario, Canada
             </p>
           </div>
         </div>

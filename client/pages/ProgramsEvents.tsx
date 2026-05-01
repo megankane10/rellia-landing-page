@@ -100,7 +100,7 @@ export default function ProgramsEvents() {
                               "relative flex-1 rounded-full px-3 py-2.5 text-center",
                               "font-host-grotesk text-[12px] font-semibold uppercase tracking-[0.14em]",
                               "text-black/80 hover:text-rellia-teal",
-                              "data-[state=active]:text-white data-[state=active]:!bg-transparent data-[state=active]:shadow-none",
+                              "bg-transparent data-[state=active]:bg-rellia-teal data-[state=active]:text-white data-[state=active]:shadow-none",
                               "focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-white",
                             )}
                           >
@@ -136,7 +136,7 @@ export default function ProgramsEvents() {
                               "relative rounded-full px-4 py-2.5",
                               "font-host-grotesk text-[12px] font-semibold uppercase tracking-[0.14em]",
                               "text-black/80 hover:text-rellia-teal",
-                              "data-[state=active]:text-white data-[state=active]:!bg-transparent data-[state=active]:shadow-none",
+                              "bg-transparent data-[state=active]:bg-rellia-teal data-[state=active]:text-white data-[state=active]:shadow-none",
                               "focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-white",
                             )}
                           >
