@@ -69,6 +69,12 @@ const ROUTE_SEO: Record<string, RouteSeoConfig> = {
       "Join the Rellia Health network of founders, investors, advisors, and partners building the next generation of healthcare companies.",
     indexable: true,
   },
+  "/apply": {
+    title: "Apply — Rellia Health",
+    description:
+      "Apply to join the Rellia Network. Built for founders, advisors, investors, and industry partners shaping the future of health.",
+    indexable: true,
+  },
   "/founders": {
     title: "Founders — Rellia Health Network",
     description:

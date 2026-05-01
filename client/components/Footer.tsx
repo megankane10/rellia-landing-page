@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom"
 import { DEFAULT_GLOBAL_SETTINGS } from "@shared/cms/defaults"
+import { CareersHiringBadge } from "@/components/CareersHiringBadge"
 import { InstagramFilled, LinkedInFilled, MailFilled } from "@/components/icons/SocialIcons"
 
 const g = DEFAULT_GLOBAL_SETTINGS
@@ -71,9 +72,10 @@ export default function Footer() {
                 </Link>
                 <Link
                   to="/careers"
-                  className="font-urbanist text-[14px] leading-snug text-white transition-colors hover:text-rellia-mint md:text-[15px] md:leading-normal"
+                  className="inline-flex max-w-full flex-wrap items-center gap-2 font-urbanist text-[14px] leading-snug text-white transition-colors hover:text-rellia-mint md:text-[15px] md:leading-normal"
                 >
-                  Careers
+                  <span>Careers</span>
+                  <CareersHiringBadge />
                 </Link>
                 <Link
                   to="/terms"

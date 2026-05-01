@@ -187,69 +187,14 @@ function InvestorNotifyDialog({ open, onOpenChange }: { open: boolean; onOpenCha
   )
 }
 
-function FilloutInterestDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (next: boolean) => void }) {
-  useEffect(() => {
-    if (!open) return
-
-    const src = "https://server.fillout.com/embed/v1/"
-    // Fillout's embed script often only hydrates embeds present at load time.
-    // Since this dialog mounts dynamically, re-inject the script on open to ensure hydration.
-    const existing = document.querySelector<HTMLScriptElement>(`script[src="${src}"]`)
-    if (existing) {
-      existing.remove()
-    }
-
-    const script = document.createElement("script")
-    script.src = src
-    script.async = true
-    document.body.appendChild(script)
-  }, [open])
-
-  return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent
-        aria-label="Rellia interest form"
-        className={cn(
-          "w-[min(92vw,880px)] max-w-none",
-          "max-h-[min(86vh,820px)] overflow-hidden",
-          "rounded-2xl md:rounded-3xl border border-black/10 bg-white p-0 shadow-2xl",
-        )}
-      >
-        <div className="flex items-center justify-between gap-3 border-b border-black/10 px-4 py-3 sm:px-5 sm:py-4">
-          <div className="min-w-0">
-            <DialogTitle className="font-host-grotesk text-base font-semibold text-black">
-              Get involved with Rellia
-            </DialogTitle>
-            <DialogDescription className="font-urbanist text-sm text-black/55">
-              Fill out this short form and we’ll follow up.
-            </DialogDescription>
-          </div>
-        </div>
-
-        <div className="max-h-[calc(min(86vh,820px)-72px)] overflow-y-auto p-3 sm:p-4">
-          <div
-            data-fillout-id="r5hdDmQodfus"
-            data-fillout-embed-type="standard"
-            style={{ width: "100%", height: "70vh" }}
-            data-fillout-inherit-parameters
-          />
-        </div>
-      </DialogContent>
-    </Dialog>
-  )
-}
-
 export default function Network() {
   const [isInvestorNotifyOpen, setIsInvestorNotifyOpen] = useState(false)
-  const [isFilloutOpen, setIsFilloutOpen] = useState(false)
 
   return (
     <div className="min-h-screen bg-white font-host-grotesk overflow-x-hidden">
       <Navbar />
 
       <main id="main-content">
-        <FilloutInterestDialog open={isFilloutOpen} onOpenChange={setIsFilloutOpen} />
-
         {/* ───────────────────────────── HERO ───────────────────────────── */}
         <section className="relative pt-32 pb-20 md:pt-48 md:pb-28 bg-rellia-teal overflow-hidden">
           {/* Background image */}
@@ -400,10 +345,10 @@ export default function Network() {
                   Applications are required. <span className="text-rellia-teal font-semibold">Membership is selective.</span>
                 </p>
                 <RelliaAction asChild variant="tealFilledLift" size="comfortable">
-                  <button type="button" onClick={() => setIsFilloutOpen(true)} aria-label="Apply to join as a founder">
-                    Apply to Join as a Founder
+                  <Link to="/apply" aria-label="Apply to join the Rellia Network">
+                    Apply to Join
                     <ArrowRight />
-                  </button>
+                  </Link>
                 </RelliaAction>
               </div>
             </ScrollReveal>
@@ -492,15 +437,11 @@ export default function Network() {
                 <p className="font-urbanist text-base md:text-lg text-black/60 max-w-xl">
                   The founders in our community are the kind of people worth showing up for. Let's find your match.
                 </p>
-                <RelliaAction
-                  type="button"
-                  variant="tealFilledLift"
-                  size="comfortable"
-                  onClick={() => setIsFilloutOpen(true)}
-                  aria-label="Express interest in mentoring"
-                >
-                  Express Interest in Mentoring
-                  <ArrowRight />
+                <RelliaAction asChild variant="tealFilledLift" size="comfortable">
+                  <Link to="/apply" aria-label="Apply to join the Rellia Network">
+                    Apply to Join
+                    <ArrowRight />
+                  </Link>
                 </RelliaAction>
               </div>
             </ScrollReveal>
@@ -669,15 +610,11 @@ export default function Network() {
                   Put your brand in front of founders at the exact moment they're making decisions about who to work
                   with.
                 </p>
-                <RelliaAction
-                  type="button"
-                  variant="tealFilledLift"
-                  size="comfortable"
-                  onClick={() => setIsFilloutOpen(true)}
-                  aria-label="Get in touch about partnering"
-                >
-                  Get in Touch About Partnering
-                  <ArrowRight />
+                <RelliaAction asChild variant="tealFilledLift" size="comfortable">
+                  <Link to="/apply" aria-label="Apply to join the Rellia Network">
+                    Apply to Join
+                    <ArrowRight />
+                  </Link>
                 </RelliaAction>
               </div>
             </ScrollReveal>

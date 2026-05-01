@@ -3,6 +3,7 @@ import { Link, useLocation } from "react-router-dom"
 import { cn } from "@/lib/utils"
 import { ChevronDown } from "lucide-react"
 import { DEFAULT_GLOBAL_SETTINGS } from "@shared/cms/defaults"
+import { CareersHiringBadge } from "@/components/CareersHiringBadge"
 import { InstagramFilled, LinkedInFilled, MailFilled } from "@/components/icons/SocialIcons"
 
 const LOGO_DEFAULT = "/images/logo-rellia-footer.webp"
@@ -95,7 +96,7 @@ const DesktopNavDropdown = ({ label, to, items, extraItem, active, tone, open, o
             role="menu"
             aria-label={`${label} submenu`}
             className={cn(
-              "absolute left-0 top-full z-50 mt-2 w-56 translate-y-0 rounded-2xl border p-2 shadow-[0_20px_60px_-30px_rgba(0,0,0,0.55)] backdrop-blur-xl",
+              "absolute left-0 top-full z-50 mt-2 min-w-[15rem] w-60 max-w-[calc(100vw-2rem)] translate-y-0 rounded-2xl border p-2 shadow-[0_20px_60px_-30px_rgba(0,0,0,0.55)] backdrop-blur-xl",
               tone === "dark" ? "border-white/10 bg-rellia-teal/80" : "border-black/10 bg-white/90",
             )}
           >
@@ -105,7 +106,7 @@ const DesktopNavDropdown = ({ label, to, items, extraItem, active, tone, open, o
                 to={item.to}
                 role="menuitem"
                 className={cn(
-                  "flex items-center justify-between rounded-xl px-3 py-2.5 font-host-grotesk text-sm font-semibold tracking-wide outline-none transition-colors duration-150 motion-reduce:transition-none",
+                  "flex items-center justify-start gap-2 rounded-xl px-3 py-2.5 font-host-grotesk text-sm font-semibold tracking-wide outline-none transition-colors duration-150 motion-reduce:transition-none",
                   item.active
                     ? tone === "dark"
                       ? "bg-white/10 text-rellia-mint ring-1 ring-white/10"
@@ -117,7 +118,14 @@ const DesktopNavDropdown = ({ label, to, items, extraItem, active, tone, open, o
                 onClick={onClose}
                 aria-current={item.active ? "page" : undefined}
               >
-                <span>{item.label}</span>
+                {item.to === "/careers" ? (
+                  <span className="flex min-w-0 items-center gap-1.5">
+                    <span className="truncate">{item.label}</span>
+                    <CareersHiringBadge />
+                  </span>
+                ) : (
+                  <span className="min-w-0 truncate">{item.label}</span>
+                )}
               </Link>
             ))}
 
@@ -653,13 +661,20 @@ export default function Navbar({ ctaRadiusClassName = "rounded-full" }: NavbarPr
                         key={item.to}
                         to={item.to}
                         className={cn(
-                          "flex min-h-11 cursor-pointer items-center rounded-xl px-3 py-2.5 font-urbanist text-[15px] font-semibold text-white/90 outline-none transition-colors hover:bg-white/10 hover:text-white focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-rellia-teal",
+                          "flex min-h-11 cursor-pointer items-center justify-start gap-2 rounded-xl px-3 py-2.5 font-urbanist text-[15px] font-semibold text-white/90 outline-none transition-colors hover:bg-white/10 hover:text-white focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-rellia-teal",
                           item.active && "bg-white/10 ring-1 ring-white/15 text-rellia-mint",
                         )}
                         onClick={handleCloseMobile}
                         aria-current={item.active ? "page" : undefined}
                       >
-                        {item.label}
+                        {item.to === "/careers" ? (
+                          <span className="flex min-w-0 items-center gap-1.5">
+                            <span>{item.label}</span>
+                            <CareersHiringBadge />
+                          </span>
+                        ) : (
+                          <span className="min-w-0">{item.label}</span>
+                        )}
                       </Link>
                     ))}
                   </div>

@@ -15,6 +15,7 @@ import Events from "./pages/Events"
 import NotFound from "./pages/NotFound"
 import Contact from "./pages/Contact"
 import Network from "./pages/Network"
+import Apply from "./pages/Apply"
 import Founders from "./pages/network/Founders"
 import Advisors from "./pages/network/Advisors"
 import Investors from "./pages/network/Investors"
@@ -93,6 +94,7 @@ export const AppRoutes = () => (
     </Route>
 
     <Route path="/network" element={<Network />} />
+    <Route path="/apply" element={<Apply />} />
     <Route path="/founders" element={<Founders />} />
     <Route path="/advisors" element={<Advisors />} />
     <Route path="/investors" element={<Investors />} />
