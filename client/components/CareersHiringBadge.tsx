@@ -1,23 +1,32 @@
 import { cn } from "@/lib/utils"
-import { hasOpenCareersRoles } from "@shared/careersOpenRoles"
+import { CAREERS_VOLUNTEER_ENABLED, careersHasPublishedOpenRoles } from "@shared/careersPageConfig"
 
 type CareersHiringBadgeProps = {
   className?: string
 }
 
-/** Mint pill with teal “HIRING” — only renders when `CAREERS_OPEN_ROLES` is non-empty */
+const badgeClassName =
+  "inline-flex shrink-0 items-center justify-center rounded-sm bg-rellia-mint px-2 py-0.5 font-host-grotesk font-bold uppercase tracking-normal text-rellia-teal"
+
+/** Mint pills next to Careers — hiring and/or volunteer when each mode is enabled */
 export const CareersHiringBadge = ({ className }: CareersHiringBadgeProps) => {
-  if (!hasOpenCareersRoles()) return null
+  const showHiring = careersHasPublishedOpenRoles()
+  const showVolunteer = CAREERS_VOLUNTEER_ENABLED
+
+  if (!showHiring && !showVolunteer) return null
 
   return (
-    <span
-      className={cn(
-        "inline-flex shrink-0 items-center justify-center rounded-sm bg-rellia-mint px-2 py-0.5 font-host-grotesk text-[10px] font-bold uppercase tracking-normal text-rellia-teal",
-        className,
-      )}
-      aria-hidden
-    >
-      HIRING
+    <span className={cn("inline-flex flex-wrap items-center gap-1", className)}>
+      {showHiring ? (
+        <span className={cn(badgeClassName, "text-[10px]")} aria-hidden>
+          HIRING
+        </span>
+      ) : null}
+      {showVolunteer ? (
+        <span className={cn(badgeClassName, "text-[10px]")} aria-hidden>
+          VOLUNTEER
+        </span>
+      ) : null}
     </span>
   )
 }

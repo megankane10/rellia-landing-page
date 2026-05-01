@@ -1,213 +1,133 @@
-import { PAGE_HEADER_DARK_SUBTITLE_CLASS, PAGE_HEADER_TITLE_SIZE_CLASS } from "@/components/PageHeader"
+import PageHeader from "@/components/PageHeader"
 import Navbar from "@/components/Navbar"
-import { cn } from "@/lib/utils"
 import Footer from "@/components/Footer"
 import RelliaAction from "@/components/RelliaAction"
-import { ArrowRight } from "lucide-react"
-import {
-  AiGeneratedNote,
-  BentoGrid,
-  GlassCard,
-  MultiStepSignupForm,
-  PathToSuccess,
-  ProblemBlock,
-  Reveal,
-  SectionShell,
-  NETWORK_BG,
-} from "./_shared"
+import SectionPillBadge from "@/components/SectionPillBadge"
+import { Check } from "lucide-react"
+import { Link } from "react-router-dom"
+import { CreamSection, GlassCardLight, LightSection, Reveal } from "./_shared"
 
-const HERO_IMAGE =
-  "https://images.pexels.com/photos/30493646/pexels-photo-30493646.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"
+const ENGAGEMENT = [
+  {
+    title: "Join directory",
+    body: "List your organization so founders can discover the right integration, pilot, and procurement paths.",
+    to: "/industry-partners/directory",
+    cta: "Open directory",
+  },
+  {
+    title: "Sponsor",
+    body: "Put your brand behind programs and events where execution-quality teams spend their time.",
+    to: "/contact",
+    cta: "Talk sponsorship",
+  },
+  {
+    title: "Become a partner",
+    body: "Co-design pilots, APIs, and enterprise handoffs with a community that treats adoption as the product.",
+    to: "/contact",
+    cta: "Start a conversation",
+  },
+] as const
 
-function CapabilityIcon({ label }: { label: string }) {
-  return (
-    <div className="flex items-center gap-3 rounded-2xl border border-white/15 bg-white/5 px-4 py-3">
-      <span className="h-9 w-9 rounded-2xl border border-white/15 bg-white/10" aria-hidden />
-      <span className="font-urbanist text-white/80">{label}</span>
-    </div>
-  )
-}
+const BENEFITS = [
+  "Pilot-ready founders with clearer scope and success metrics",
+  "Structured introductions to technical and clinical leaders",
+  "Shared language on security, compliance, and deployment",
+  "Credibility inside a network built for health system reality",
+  "Long-term relationships—not one-off vendor fairs",
+] as const
 
 export default function Partners() {
   return (
-    <div className="min-h-screen font-host-grotesk overflow-x-hidden" style={{ backgroundColor: NETWORK_BG }}>
+    <div className="min-h-screen overflow-x-hidden bg-white font-host-grotesk">
       <Navbar />
 
       <main id="main-content">
-        {/* Hero */}
-        <section className="relative pt-32 pb-16 md:pt-44 md:pb-24 px-6 md:px-10 overflow-hidden">
-          <img src={HERO_IMAGE} alt="" aria-hidden className="absolute inset-0 h-full w-full object-cover object-center" />
-          <div aria-hidden className="absolute inset-0 bg-[#022c2e]/70" />
-          <div aria-hidden className="absolute inset-0 bg-gradient-to-r from-[#022c2e] via-[#022c2e]/60 to-[#022c2e]/25" />
+        <PageHeader
+          title={
+            <>
+              Industry partners for <span className="text-rellia-mint">real adoption</span>
+            </>
+          }
+          subtitle="Pilot design, integration support, and enterprise credibility—so promising products don’t die in procurement limbo."
+          variant="dark"
+        />
 
-          <div className="relative z-10 max-w-[1300px] mx-auto">
-            <Reveal>
-              <div className="max-w-3xl">
-                <AiGeneratedNote />
-                <h1
-                  className={`mt-8 text-white font-bold leading-tight tracking-tight ${PAGE_HEADER_TITLE_SIZE_CLASS}`}
+        <LightSection className="pt-10 md:pt-14">
+          <Reveal>
+            <SectionPillBadge>Engage</SectionPillBadge>
+            <h2 className="mt-4 text-3xl font-bold tracking-tight text-black md:text-4xl">Three ways to work with Rellia</h2>
+            <p className="mt-4 max-w-2xl font-urbanist text-lg leading-relaxed text-black/70">
+              Large cards, clear intent—pick the path that matches how your team likes to start.
+            </p>
+          </Reveal>
+          <div className="mt-10 grid grid-cols-1 gap-6 lg:grid-cols-3">
+            {ENGAGEMENT.map((card, idx) => (
+              <Reveal key={card.title} delay={0.06 * idx}>
+                <Link
+                  to={card.to}
+                  className="group block h-full rounded-3xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-teal focus-visible:ring-offset-2"
                 >
-                  The Ecosystem
-                  <br />
-                  that accelerates adoption
-                </h1>
-                <p className={cn(PAGE_HEADER_DARK_SUBTITLE_CLASS, "mt-6")}>
-                  Lorem ipsum: Insert Value Prop Here—pilot programs, integration support, and credibility inside health
-                  systems.
+                  <GlassCardLight className="flex h-full min-h-[280px] flex-col p-8 transition-all duration-300 group-hover:-translate-y-1 group-hover:border-rellia-mint/50 group-hover:shadow-[0_24px_80px_-40px_rgba(13,53,64,0.35)]">
+                    <h3 className="font-host-grotesk text-2xl font-semibold tracking-tight text-rellia-teal">{card.title}</h3>
+                    <p className="mt-4 flex-1 font-urbanist leading-relaxed text-black/70">{card.body}</p>
+                    <span className="mt-6 inline-flex items-center gap-2 font-host-grotesk text-sm font-semibold text-rellia-teal">
+                      {card.cta}
+                      <span aria-hidden className="transition-transform group-hover:translate-x-0.5">
+                        →
+                      </span>
+                    </span>
+                  </GlassCardLight>
+                </Link>
+              </Reveal>
+            ))}
+          </div>
+        </LightSection>
+
+        <CreamSection>
+          <Reveal>
+            <SectionPillBadge>Benefits</SectionPillBadge>
+            <h2 className="mt-4 text-3xl font-bold tracking-tight text-black md:text-4xl">Benefits of partnering</h2>
+            <p className="mt-4 max-w-2xl font-urbanist text-lg leading-relaxed text-black/70">
+              What partners tell us they value most once programs are underway.
+            </p>
+          </Reveal>
+          <ul className="mt-10 max-w-2xl space-y-4" aria-label="Partner benefits">
+            {BENEFITS.map((line, idx) => (
+              <Reveal key={line} delay={0.04 * idx}>
+                <li className="flex gap-3 font-urbanist text-base leading-relaxed text-black/80 md:text-[17px]">
+                  <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-rellia-mint/35">
+                    <Check className="h-3.5 w-3.5 text-rellia-teal" strokeWidth={3} aria-hidden />
+                  </span>
+                  {line}
+                </li>
+              </Reveal>
+            ))}
+          </ul>
+        </CreamSection>
+
+        <LightSection>
+          <Reveal>
+            <GlassCardLight className="relative overflow-hidden px-8 py-10 md:px-12 md:py-14">
+              <div aria-hidden className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full bg-rellia-mint/25 blur-3xl" />
+              <div aria-hidden className="pointer-events-none absolute -bottom-24 left-10 h-72 w-72 rounded-full bg-rellia-teal/10 blur-3xl" />
+              <div className="relative max-w-2xl">
+                <h2 className="text-3xl font-bold tracking-tight text-rellia-teal md:text-4xl">Get in touch</h2>
+                <p className="mt-4 font-urbanist text-lg leading-relaxed text-black/70">
+                  Tell us about your organization, integration surface area, and the founder profiles you want to see more
+                  of. We&apos;ll route you to the right partner lead.
                 </p>
-                <div className="mt-10 flex flex-col sm:flex-row gap-3">
-                  <RelliaAction
-                    asChild
-                    variant="mintOnTealStrip"
-                    size="comfortable"
-                    className="bg-[#ccfbf1] border-[#ccfbf1] text-[#022c2e] hover:bg-transparent hover:border-white"
-                  >
-                    <a href="#signup" aria-label="Get started">
-                      Get Started
-                      <ArrowRight aria-hidden />
-                    </a>
-                  </RelliaAction>
-                  <RelliaAction
-                    asChild
-                    variant="heroGhostOnTeal"
-                    size="comfortable"
-                    className="border-[#ccfbf1] text-[#ccfbf1]"
-                  >
-                    <a href="/industry-partners/directory" aria-label="Open the industry partners directory">
-                      View directory
-                      <ArrowRight aria-hidden />
-                    </a>
-                  </RelliaAction>
-                </div>
+                <RelliaAction asChild variant="tealFilledLift" size="comfortable" className="mt-8">
+                  <Link to="/contact" aria-label="Go to contact page">
+                    Contact Rellia
+                  </Link>
+                </RelliaAction>
               </div>
-            </Reveal>
-          </div>
-        </section>
-
-        {/* Problem */}
-        <SectionShell className="py-16 md:py-24">
-          <Reveal>
-            <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-white">The problem</h2>
-            <p className="mt-4 font-urbanist text-white/75 text-lg leading-relaxed max-w-2xl">
-              Lorem ipsum: partnerships fail when pilots, integration, and handoffs aren’t designed up front. Insert
-              Value Prop Here.
-            </p>
+            </GlassCardLight>
           </Reveal>
-          <div className="mt-10">
-            <Reveal delay={0.1}>
-              <ProblemBlock
-                items={[
-                  { title: "Pilot friction", body: "Lorem ipsum: hard to scope pilots that actually prove value." },
-                  { title: "Integration gaps", body: "Lorem ipsum: unclear APIs, workflows, and compliance needs." },
-                  { title: "Enterprise handoff", body: "Lorem ipsum: founders need support scaling the relationship." },
-                ]}
-              />
-            </Reveal>
-          </div>
-        </SectionShell>
-
-        {/* Solution */}
-        <SectionShell className="py-16 md:py-24">
-          <Reveal>
-            <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-white">The Rellia solution</h2>
-          </Reveal>
-          <div className="mt-10">
-            <Reveal delay={0.1}>
-              <BentoGrid
-                items={[
-                  {
-                    title: "Pilot-ready founders",
-                    body: "Lorem ipsum: better-scoped pilots with real outcomes.",
-                    imageUrl:
-                      "https://images.pexels.com/photos/6129679/pexels-photo-6129679.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
-                    span: "wide",
-                  },
-                  {
-                    title: "Integration guidance",
-                    body: "Lorem ipsum: workflows, security, and compliance built in.",
-                    imageUrl:
-                      "https://images.pexels.com/photos/4416539/pexels-photo-4416539.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
-                  },
-                  {
-                    title: "Partner signal",
-                    body: "Lorem ipsum: community trust + credibility.",
-                    imageUrl:
-                      "https://images.pexels.com/photos/5875565/pexels-photo-5875565.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
-                  },
-                  {
-                    title: "Enterprise handoff",
-                    body: "Lorem ipsum: support the transition from pilot to scale.",
-                    imageUrl:
-                      "https://images.pexels.com/photos/15277956/pexels-photo-15277956.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
-                    span: "wide",
-                  },
-                ]}
-              />
-            </Reveal>
-          </div>
-        </SectionShell>
-
-        {/* Process */}
-        <SectionShell className="py-16 md:py-24">
-          <Reveal>
-            <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-white">Path to success</h2>
-          </Reveal>
-          <div className="mt-10">
-            <Reveal delay={0.1}>
-              <PathToSuccess
-                steps={[
-                  { title: "Align", body: "Lorem ipsum: define the right pilot and integration scope." },
-                  { title: "Pilot", body: "Lorem ipsum: prove value with real users and workflows." },
-                  { title: "Integrate", body: "Lorem ipsum: de-risk security, compliance, and deployment." },
-                  { title: "Scale", body: "Lorem ipsum: enterprise handoff that doesn’t stall momentum." },
-                ]}
-              />
-            </Reveal>
-          </div>
-        </SectionShell>
-
-        {/* Unique: Integration capabilities */}
-        <SectionShell className="py-16 md:py-24">
-          <Reveal>
-            <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-white">Integration Capabilities</h2>
-            <p className="mt-4 font-urbanist text-white/75 text-lg leading-relaxed max-w-2xl">
-              Lorem ipsum: placeholder icons for API, Clinical Pilots, and Enterprise Handoff. Insert Value Prop Here.
-            </p>
-          </Reveal>
-          <div className="mt-10 grid grid-cols-1 md:grid-cols-3 gap-4">
-            <Reveal delay={0.05}>
-              <CapabilityIcon label="API" />
-            </Reveal>
-            <Reveal delay={0.08}>
-              <CapabilityIcon label="Clinical Pilots" />
-            </Reveal>
-            <Reveal delay={0.11}>
-              <CapabilityIcon label="Enterprise Handoff" />
-            </Reveal>
-          </div>
-        </SectionShell>
-
-        {/* Signup */}
-        <SectionShell className="py-16 md:py-24">
-          <div id="signup" className="scroll-mt-28">
-            <Reveal>
-              <MultiStepSignupForm
-                ctaLabel="Download the Partnership Deck"
-                roleLabel="Partner"
-                step2Fields={[
-                  { name: "company", label: "Company", placeholder: "Insert Value Prop Here Inc." },
-                  { name: "offering", label: "Offering", placeholder: "Services, platform, infrastructure…" },
-                  { name: "ideal", label: "Ideal founder profile", placeholder: "Stage + category" },
-                  { name: "integration", label: "Integration needs", placeholder: "API, pilots, enterprise handoff…" },
-                ]}
-              />
-            </Reveal>
-          </div>
-        </SectionShell>
+        </LightSection>
       </main>
 
       <Footer />
     </div>
   )
 }
-

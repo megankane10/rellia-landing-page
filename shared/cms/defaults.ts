@@ -38,7 +38,7 @@ export const DEFAULT_GLOBAL_SETTINGS: GlobalSettingsContent = {
 }
 
 export const DEFAULT_HOME_PAGE: HomePageContent = {
-  headlinePrefix: "You are the Future of Health Tech.",
+  headlinePrefix: "You are the future of health tech.",
   headlineAccent: "",
   subheadline:
     "Rellia connects founders with clinicians, advisors, and investors to validate and scale healthcare solutions.",
@@ -102,16 +102,6 @@ export const DEFAULT_HOME_PAGE: HomePageContent = {
   testimonialsTitleAccent: "healthcare leaders",
   testimonials: [
     {
-      name: "Dr. Sahil Khan",
-      role: "Founder",
-      company: "NovusTex Corp",
-      quote:
-        "Rellia has been nothing short of exceptional- a truly dynamic incubator where early ventures are not only given space to grow, but are actively empowered to connect, refine, pitch, and evolve. The ecosystem is deeply professional, energizing, and genuinely supportive of innovation. Rellia is not just an incubator - it’s a launchpad for ambitious founders.",
-      companyInfo:
-        "A rehabilitation-focused company bringing novel performance textiles and assistive solutions to support mobility, reduce injury risk, and enhance comfort during recovery for patients with musculoskeletal and neurological conditions.",
-      imageSrc: "/images/testimonials-sahilkhan.jpeg",
-    },
-    {
       name: "Mazhar Shahen",
       role: "CEO",
       company: "NewGen Health",
@@ -130,6 +120,16 @@ export const DEFAULT_HOME_PAGE: HomePageContent = {
       companyInfo:
         "Syncara is a patient-first digital health platform designed to help Canadians organize, track, and manage their health records. ",
       imageSrc: "/images/testimonials-ZarrahU.jpeg",
+    },
+    {
+      name: "Dr. Sahil Khan",
+      role: "Founder",
+      company: "NovusTex Corp",
+      quote:
+        "Rellia has been nothing short of exceptional- a truly dynamic incubator where early ventures are not only given space to grow, but are actively empowered to connect, refine, pitch, and evolve. The ecosystem is deeply professional, energizing, and genuinely supportive of innovation. Rellia is not just an incubator - it’s a launchpad for ambitious founders.",
+      companyInfo:
+        "A rehabilitation-focused company bringing novel performance textiles and assistive solutions to support mobility, reduce injury risk, and enhance comfort during recovery for patients with musculoskeletal and neurological conditions.",
+      imageSrc: "/images/testimonials-sahilkhan.jpeg",
     },
     {
       name: "Dhandre Weekes",
@@ -227,7 +227,7 @@ export const DEFAULT_ABOUT_PAGE: AboutPageContent = {
   missionImageSrc: "/images/TabletMeeting.png",
   missionImageAlt: "Team collaborating over a tablet in a meeting",
   valuesTitle: "Values",
-  valuesSubtitle: "These principles guide every partnership, program, and decision we make.",
+  valuesSubtitle: "These principles guide every decision we make.",
   values: [
     {
       iconKey: "heart",
@@ -298,7 +298,7 @@ export const DEFAULT_ABOUT_PAGE: AboutPageContent = {
   ctaBody:
     "If you're a founder who wants to do this right, we have the network and expertise to make it happen.",
   ctaFounderLabel: "Apply to join as a founder",
-  ctaTeamLabel: "Contact us to join the Rellia team",
+  ctaTeamLabel: "Join the Rellia team",
 }
 
 export const DEFAULT_FAQ_PAGE: FaqPageContent = {
@@ -381,8 +381,8 @@ export const DEFAULT_FAQ_PAGE: FaqPageContent = {
   sidebarTitle: "Still have questions?",
   sidebarBody:
     "Learn more about how Rellia works and explore the different pathways available for founders, advisors, investors, and industry partners.",
-  sidebarCtaLabel: "Explore the Network",
-  sidebarCtaPath: "/network",
+  sidebarCtaLabel: "Apply to join",
+  sidebarCtaPath: "/apply",
   bottomTitle: "Every startup is **different**",
   bottomBody:
     "Tell us more about where you are today and where you want to be in the next 12–18 months. We'll share how Rellia can help accelerate that path, or recommend a better fit if we're not it.",
@@ -528,8 +528,8 @@ export const DEFAULT_PROGRAMS_LANDING: ProgramsLandingContent = {
   ctaTitle: "Want the **full** experience?",
   ctaBody:
     "Rellia members get access to all event recordings, program discounts, and individual mentorship.",
-  ctaButtonLabel: "Get Involved",
-  ctaButtonHref: "/network",
+  ctaButtonLabel: "Apply to join",
+  ctaButtonHref: "/apply",
 }
 
 export const DEFAULT_CONTACT_PAGE: ContactPageContent = {

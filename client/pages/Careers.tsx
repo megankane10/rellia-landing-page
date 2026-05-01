@@ -8,11 +8,14 @@ import PillTag from "@/components/PillTag"
 import WhyRellia from "@/components/WhyRellia"
 import HowItWorks from "@/components/HowItWorks"
 import type { HowItWorksStep } from "@/components/HowItWorks"
+import { FilloutStandardEmbed } from "@fillout/react"
+import { FILLOUT_APPLY_FORM_ID, FILLOUT_EMBED_VIEWPORT_MIN_CLASS } from "@/lib/filloutApplyForm"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { motion, useReducedMotion } from "framer-motion"
-import { BriefcaseBusiness, ExternalLink, HeartPulse, Laptop, Plane, Sparkles } from "lucide-react"
+import { BriefcaseBusiness, Building2, ExternalLink, Laptop, MapPin, Users } from "lucide-react"
 import type { HomeWhyFeature } from "@shared/cms/types"
 import { DEFAULT_GLOBAL_SETTINGS } from "@shared/cms/defaults"
+import { CAREERS_VOLUNTEER_ENABLED, careersHasPublishedOpenRoles } from "@shared/careersPageConfig"
 import { CAREERS_OPEN_ROLES } from "@shared/careersOpenRoles"
 import { cn } from "@/lib/utils"
 
@@ -64,24 +67,28 @@ const CAREERS_WHY_CARD_IMAGES: string[] = [
 
 const CAREERS_PERKS: HowItWorksStep[] = [
   {
-    icon: HeartPulse,
-    title: "Health & wellbeing",
-    description: "Medical, dental, and vision options plus a wellness stipend so you can take care of yourself while you support others.",
+    icon: Users,
+    title: "In the room with the industry",
+    description:
+      "Clinicians, founders, and operators show up in our programs—you hear what actually moves care and procurement, not polished slide stories.",
+  },
+  {
+    icon: Building2,
+    title: "Office when it helps",
+    description:
+      "Remote-first with intentional in-person weeks: cohort sessions, workshops, and shared space when you want to work beside the team.",
   },
   {
     icon: Laptop,
-    title: "Flexible work",
-    description: "Remote-friendly roles with intentional in-person moments—offsites, member events, and team weeks that actually build connection.",
+    title: "Small team, real ownership",
+    description:
+      "Startup reality: clear priorities, direct feedback, and permission to fix how we work—without layers of process for its own sake.",
   },
   {
-    icon: Plane,
-    title: "Time to recharge",
-    description: "Generous PTO, company holidays, and quiet summers where we protect focus time for the team and our members.",
-  },
-  {
-    icon: Sparkles,
-    title: "Growth budget",
-    description: "Learning stipend for courses, conferences, and coaching—because leveling up your craft makes the whole community stronger.",
+    icon: MapPin,
+    title: "Out with the community",
+    description:
+      "Member events, partner conversations, and field context on how buying decisions get made—so you are not guessing from a distance.",
   },
 ]
 
@@ -89,8 +96,31 @@ const joinTeamMarqueeImages = [...TEAM_MARQUEE_IMAGES, ...TEAM_MARQUEE_IMAGES]
 
 const JOIN_TEAM_MARQUEE_LOOP_SEC = 56
 
+/** Shared geometry + mint sweep hover so primary and outline CTAs match pixel-for-pixel */
+const joinTeamCtaSharedClass = cn(
+  "group relative isolate inline-flex cursor-pointer items-center justify-center overflow-hidden rounded-full border-2 border-rellia-teal outline-none",
+  "px-7 py-3 font-host-grotesk text-sm font-semibold leading-none tracking-tight md:px-9 md:py-3.5 md:text-base",
+  "transition-[transform,box-shadow,border-color,background-color] duration-300 motion-reduce:transition-none",
+  "before:pointer-events-none before:absolute before:inset-0 before:z-0 before:origin-left before:scale-x-0 before:rounded-full before:bg-rellia-mint before:transition-transform before:duration-300 before:ease-out",
+  "hover:before:scale-x-100",
+  "focus-visible:ring-2 focus-visible:ring-rellia-teal focus-visible:ring-offset-2 focus-visible:ring-offset-rellia-greyTeal",
+  "motion-safe:hover:-translate-y-0.5 motion-safe:hover:shadow-lg",
+)
+
+type CareersJoinTeamCta = {
+  href: string
+  label: string
+  ariaLabel: string
+}
+
 /** Grey-teal band: fixed viewport height; marquee overflows horizontally with soft edge mask */
-const CareersJoinTeamSection = () => {
+const CareersJoinTeamSection = ({
+  primaryCta,
+  secondaryCta,
+}: {
+  primaryCta: CareersJoinTeamCta | null
+  secondaryCta: CareersJoinTeamCta | null
+}) => {
   const reduceMotion = useReducedMotion()
 
   /** Narrow fade only at viewport edges; full-opacity center so the strip clearly overflows */
@@ -238,25 +268,35 @@ const CareersJoinTeamSection = () => {
               Help us <span className="text-rellia-teal">empower the founders</span> who are changing the world.
             </h2>
 
-            <div className="mt-8 md:mt-10">
-              <a
-                href="#open-roles"
-                className={cn(
-                  "group relative isolate inline-flex cursor-pointer items-center justify-center overflow-hidden rounded-full border-0 bg-rellia-teal outline-none",
-                  "px-7 py-3 font-host-grotesk text-sm font-semibold leading-none tracking-tight md:px-9 md:py-3.5 md:text-base",
-                  "transition-[transform,box-shadow] duration-300 motion-reduce:transition-none",
-                  "before:pointer-events-none before:absolute before:inset-0 before:z-0 before:origin-left before:scale-x-0 before:bg-rellia-mint before:transition-transform before:duration-300 before:ease-out",
-                  "hover:before:scale-x-100",
-                  "focus-visible:ring-2 focus-visible:ring-rellia-teal focus-visible:ring-offset-2 focus-visible:ring-offset-rellia-greyTeal",
-                  "motion-safe:hover:-translate-y-0.5 motion-safe:hover:shadow-lg",
-                )}
-                aria-label="See open roles"
-              >
-                <span className="relative z-10 text-white transition-colors duration-300 group-hover:text-rellia-teal">
-                  See open roles
-                </span>
-              </a>
-            </div>
+            {primaryCta || secondaryCta ? (
+              <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center md:mt-10">
+                {primaryCta ? (
+                  <a
+                    href={primaryCta.href}
+                    className={cn(joinTeamCtaSharedClass, "bg-rellia-teal")}
+                    aria-label={primaryCta.ariaLabel}
+                  >
+                    <span className="relative z-10 text-white transition-colors duration-300 group-hover:text-rellia-teal">
+                      {primaryCta.label}
+                    </span>
+                  </a>
+                ) : null}
+                {secondaryCta ? (
+                  <a
+                    href={secondaryCta.href}
+                    className={cn(
+                      joinTeamCtaSharedClass,
+                      "bg-white hover:border-rellia-mint",
+                    )}
+                    aria-label={secondaryCta.ariaLabel}
+                  >
+                    <span className="relative z-10 text-rellia-teal transition-colors duration-300 group-hover:text-rellia-teal">
+                      {secondaryCta.label}
+                    </span>
+                  </a>
+                ) : null}
+              </div>
+            ) : null}
           </div>
 
           {/* Full-bleed marquee: must sit outside max-w-[1300px] so w-max track isn’t clipped horizontally */}
@@ -289,6 +329,32 @@ const CareersJoinTeamSection = () => {
 }
 
 export default function Careers() {
+  const hiring = careersHasPublishedOpenRoles()
+  const volunteer = CAREERS_VOLUNTEER_ENABLED
+
+  const joinTeamPrimaryCta: CareersJoinTeamCta | null = hiring
+    ? {
+        href: "#open-roles",
+        label: "See open roles",
+        ariaLabel: "See open roles",
+      }
+    : volunteer
+      ? {
+          href: "#careers-volunteer",
+          label: "Volunteer with us",
+          ariaLabel: "Volunteer with us — jump to form",
+        }
+      : null
+
+  const joinTeamSecondaryCta: CareersJoinTeamCta | null =
+    hiring && volunteer
+      ? {
+          href: "#careers-volunteer",
+          label: "Volunteer with us",
+          ariaLabel: "Volunteer with us — jump to form",
+        }
+      : null
+
   return (
     <div className="min-h-screen overflow-x-hidden bg-white font-host-grotesk">
       <Navbar />
@@ -304,7 +370,7 @@ export default function Careers() {
           subtitle="We connect founders, clinicians, and capital so the right ideas reach patients. If you thrive in fast-moving, mission-driven environments, we would love to meet you."
         />
 
-        <CareersJoinTeamSection />
+        <CareersJoinTeamSection primaryCta={joinTeamPrimaryCta} secondaryCta={joinTeamSecondaryCta} />
 
         <WhyRellia
           sectionTitle="Building What Matters Most"
@@ -317,24 +383,25 @@ export default function Careers() {
         <HowItWorks
           heading={
             <h2 className="font-host-grotesk text-3xl font-semibold leading-tight tracking-tight text-white md:text-[40px]">
-              Benefits &amp; <span className="text-rellia-mint">perks</span>
+              How we <span className="text-rellia-mint">work</span>
             </h2>
           }
           subheading={
             <p className="mt-4 font-urbanist text-base font-medium leading-relaxed tracking-tight text-white/80 md:text-lg">
-              A few ways we invest in people who invest in the mission—details can flex by role and location.
+              A lean health-tech team: industry proximity, intentional office time, and the pace of a startup—not a corporate perks sheet.
             </p>
           }
           steps={CAREERS_PERKS}
           columns={2}
         />
 
+        {careersHasPublishedOpenRoles() ? (
         <section
           id="open-roles"
-          className="scroll-mt-28 flex h-[92svh] min-h-[46rem] flex-col overflow-hidden bg-rellia-cream/60"
+          className="scroll-mt-28 flex min-h-[max(46rem,92svh)] flex-col bg-rellia-cream/60"
         >
-          <div className="mx-auto flex h-full min-h-0 w-full max-w-[1300px] flex-1 flex-col px-6 py-16 md:px-10 md:py-20">
-            <ScrollReveal className="flex min-h-0 min-w-0 flex-1 flex-col">
+          <div className="mx-auto flex w-full max-w-[1300px] flex-col px-6 py-16 md:px-10 md:py-20">
+            <ScrollReveal className="flex min-w-0 flex-col">
               <h2 className="font-host-grotesk text-3xl font-semibold tracking-tight text-black md:text-4xl">
                 Open Roles
               </h2>
@@ -435,6 +502,20 @@ export default function Careers() {
             </p>
           </div>
         </section>
+        ) : null}
+
+        {CAREERS_VOLUNTEER_ENABLED ? (
+          <section
+            id="careers-volunteer"
+            className={cn("scroll-mt-28 w-full bg-white", FILLOUT_EMBED_VIEWPORT_MIN_CLASS)}
+          >
+            <FilloutStandardEmbed
+              filloutId={FILLOUT_APPLY_FORM_ID}
+              inheritParameters
+              dynamicResize
+            />
+          </section>
+        ) : null}
 
         <RelliaCta
           title="Questions before you **apply**?"

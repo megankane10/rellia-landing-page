@@ -143,7 +143,7 @@ export default function WhyRellia({
                       type="button"
                       onFocus={() => setActiveIndex(idx)}
                       onClick={() => setActiveIndex(idx)}
-                      className="absolute inset-0 z-10 cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-white rounded-2xl"
+                      className="absolute inset-0 z-10 cursor-pointer rounded-2xl outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-white"
                       aria-label={`Select ${c.title}`}
                     />
 
@@ -181,7 +181,7 @@ export default function WhyRellia({
                             : "delay-0 max-h-0 opacity-0 translate-y-6",
                         )}
                       >
-                        <p className="font-urbanist text-white/85 text-base leading-relaxed max-w-[40ch]">
+                        <p className="max-w-[40ch] font-urbanist text-base leading-relaxed text-white/85">
                           {c.description}
                         </p>
                       </div>
@@ -256,7 +256,7 @@ export default function WhyRellia({
                                 : "delay-0 max-h-0 opacity-0 translate-y-6",
                             )}
                           >
-                            <p className="font-urbanist text-white/85 text-base leading-relaxed">
+                            <p className="font-urbanist text-base leading-relaxed text-white/85">
                               {c.description}
                             </p>
                           </div>

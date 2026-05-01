@@ -227,7 +227,7 @@ export default function Events() {
           title="Want to **speak** at a Rellia event?"
           body="If you have a practical playbook for founders building in health tech, we’d love to hear from you."
           primary={ctaActionFromHref("Contact page", "/contact")}
-          secondary={ctaActionFromHref("Join the network", "/network")}
+          secondary={ctaActionFromHref("Apply to join", "/apply")}
         />
       </main>
 

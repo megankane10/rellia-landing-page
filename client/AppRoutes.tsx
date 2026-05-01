@@ -14,8 +14,8 @@ import ProgramsQms from "./pages/ProgramsQms"
 import Events from "./pages/Events"
 import NotFound from "./pages/NotFound"
 import Contact from "./pages/Contact"
-import Network from "./pages/Network"
 import Apply from "./pages/Apply"
+import Network from "./pages/Network"
 import Founders from "./pages/network/Founders"
 import Advisors from "./pages/network/Advisors"
 import Investors from "./pages/network/Investors"
@@ -44,18 +44,7 @@ const ThirdPartyPreloads = () => {
 
     ensurePreconnect("https://js-na3.hsforms.net")
     ensurePreconnect("https://js.hsforms.net")
-    ensurePreconnect("https://server.fillout.com")
-
-    const ensureScript = (src: string) => {
-      const existing = document.querySelector<HTMLScriptElement>(`script[src="${src}"]`)
-      if (existing) return
-      const script = document.createElement("script")
-      script.src = src
-      script.async = true
-      document.body.appendChild(script)
-    }
-
-    ensureScript("https://server.fillout.com/embed/v1/")
+    ensurePreconnect("https://embed.fillout.com")
   }, [])
 
   return null

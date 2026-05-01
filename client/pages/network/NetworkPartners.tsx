@@ -148,7 +148,7 @@ export default function NetworkPartners() {
           title="Want to **partner** with the Rellia network?"
           body="Tell us what you do and who you help. We’ll follow up with options that fit."
           primary={{ label: "Partner with Rellia", to: "/contact" }}
-          secondary={{ label: "Explore the Network", to: "/network" }}
+          secondary={{ label: "Apply to join", to: "/apply" }}
         />
       </main>
 

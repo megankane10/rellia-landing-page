@@ -3,9 +3,6 @@ import { motion, useReducedMotion } from "framer-motion"
 import { cn } from "@/lib/utils"
 import RelliaAction from "@/components/RelliaAction"
 
-export const NETWORK_BG = "#022c2e"
-export const NETWORK_MINT = "#ccfbf1"
-
 export function Reveal({
   children,
   className,
@@ -48,6 +45,9 @@ export function GlassCard({
   )
 }
 
+/** Inner width aligned with `PageHeader` and marketing pages */
+export const PATH_INNER = "max-w-[1300px] mx-auto w-full"
+
 export function SectionShell({
   children,
   className,
@@ -56,9 +56,61 @@ export function SectionShell({
   className?: string
 }) {
   return (
-    <section className={cn("px-6 md:px-10", className)} style={{ backgroundColor: NETWORK_BG }}>
+    <section className={cn("bg-rellia-teal px-6 md:px-10 text-white", className)}>
       <div className="max-w-[1440px] mx-auto w-full">{children}</div>
     </section>
+  )
+}
+
+export function LightSection({
+  children,
+  className,
+  id,
+}: {
+  children: React.ReactNode
+  className?: string
+  id?: string
+}) {
+  return (
+    <section id={id} className={cn("bg-white px-6 md:px-10 py-16 md:py-24 text-black", className)}>
+      <div className={PATH_INNER}>{children}</div>
+    </section>
+  )
+}
+
+export function CreamSection({
+  children,
+  className,
+  id,
+}: {
+  children: React.ReactNode
+  className?: string
+  id?: string
+}) {
+  return (
+    <section id={id} className={cn("bg-rellia-cream/35 px-6 md:px-10 py-16 md:py-24 text-black", className)}>
+      <div className={PATH_INNER}>{children}</div>
+    </section>
+  )
+}
+
+/** Glass surface for light backgrounds — matches site blur + subtle border */
+export function GlassCardLight({
+  children,
+  className,
+}: {
+  children: React.ReactNode
+  className?: string
+}) {
+  return (
+    <div
+      className={cn(
+        "rounded-3xl border border-black/10 bg-white/80 backdrop-blur-md shadow-[0_22px_70px_-55px_rgba(13,53,64,0.22)]",
+        className,
+      )}
+    >
+      {children}
+    </div>
   )
 }
 
@@ -207,11 +259,11 @@ export function MultiStepSignupForm({
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-white/60">High-conversion signup</p>
           <p className="mt-2 font-host-grotesk text-2xl md:text-3xl font-semibold tracking-tight text-white">
-            Insert Value Prop Here
+            Tell us who you are
           </p>
           <p className="mt-3 font-urbanist text-white/75 leading-relaxed max-w-2xl">
-            Lorem ipsum for health-tech venture building: a focused first step to align on your goals, surface the
-            highest-leverage next actions, and route you into the right path without wasting weeks.
+            A quick first step so we can match you to the right programs, introductions, and resources—without a long
+            back-and-forth.
           </p>
         </div>
         <div className="hidden md:flex items-center gap-2">

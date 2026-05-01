@@ -8,7 +8,7 @@ export type CareersOpenRole = {
   linkedInApplyUrl: string
 }
 
-/** Source of truth for Careers open roles — Navbar/Footer badges and /careers#open-roles read from this list */
+/** Source of truth for open roles on /careers#open-roles when `CAREERS_OPEN_ROLES_PUBLISHED` is true — see `shared/careersPageConfig.ts` */
 export const CAREERS_OPEN_ROLES: CareersOpenRole[] = [
   {
     id: "program-operations-manager",
@@ -39,5 +39,3 @@ export const CAREERS_OPEN_ROLES: CareersOpenRole[] = [
     linkedInApplyUrl: "https://www.linkedin.com/company/relliahealth/jobs/",
   },
 ]
-
-export const hasOpenCareersRoles = (): boolean => CAREERS_OPEN_ROLES.length > 0

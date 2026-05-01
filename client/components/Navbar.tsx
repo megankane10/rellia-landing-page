@@ -2,7 +2,8 @@ import { useMemo, useState, useEffect, useCallback, useRef, type KeyboardEvent }
 import { Link, useLocation } from "react-router-dom"
 import { cn } from "@/lib/utils"
 import { ChevronDown } from "lucide-react"
-import { DEFAULT_GLOBAL_SETTINGS } from "@shared/cms/defaults"
+import { DEFAULT_GLOBAL_SETTINGS, DEFAULT_HOME_PAGE } from "@shared/cms/defaults"
+import { useHomePage } from "@/hooks/useCmsDocuments"
 import { CareersHiringBadge } from "@/components/CareersHiringBadge"
 import { InstagramFilled, LinkedInFilled, MailFilled } from "@/components/icons/SocialIcons"
 
@@ -55,9 +56,7 @@ type NetworkItem = { to: string; label: string; active: boolean }
 
 type DesktopNavDropdownProps = {
   label: string
-  to: string
   items: NetworkItem[]
-  extraItem?: { to: string; label: string; active: boolean }
   active: boolean
   tone: "light" | "dark"
   open: boolean
@@ -65,7 +64,7 @@ type DesktopNavDropdownProps = {
   onClose: () => void
 }
 
-const DesktopNavDropdown = ({ label, to, items, extraItem, active, tone, open, onToggle, onClose }: DesktopNavDropdownProps) => {
+const DesktopNavDropdown = ({ label, items, active, tone, open, onToggle, onClose }: DesktopNavDropdownProps) => {
   const panelId = `${label.toLowerCase()}-submenu`
 
   return (
@@ -128,30 +127,6 @@ const DesktopNavDropdown = ({ label, to, items, extraItem, active, tone, open, o
                 )}
               </Link>
             ))}
-
-            {extraItem ? (
-              <>
-                <div className={cn("my-2 h-px", tone === "dark" ? "bg-white/10" : "bg-black/10")} aria-hidden />
-                <Link
-                  to={extraItem.to}
-                  role="menuitem"
-                  className={cn(
-                    "flex items-center justify-between rounded-xl px-3 py-2.5 font-host-grotesk text-sm font-semibold tracking-wide outline-none transition-colors duration-150 motion-reduce:transition-none",
-                    extraItem.active
-                      ? tone === "dark"
-                        ? "bg-white/10 text-rellia-mint ring-1 ring-white/10"
-                        : "bg-rellia-teal/10 text-rellia-teal ring-1 ring-rellia-teal/15"
-                      : tone === "dark"
-                        ? "text-white/90 hover:bg-white/10 hover:text-rellia-mint focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"
-                        : "text-black/70 hover:bg-black/5 hover:text-rellia-teal focus-visible:ring-2 focus-visible:ring-rellia-teal focus-visible:ring-offset-2 focus-visible:ring-offset-white",
-                  )}
-                  onClick={onClose}
-                  aria-current={extraItem.active ? "page" : undefined}
-                >
-                  <span>{extraItem.label}</span>
-                </Link>
-              </>
-            ) : null}
           </div>
         )}
       </div>
@@ -165,6 +140,8 @@ export type NavbarProps = {
 }
 
 export default function Navbar({ ctaRadiusClassName = "rounded-full" }: NavbarProps) {
+  const { data: homePageData } = useHomePage()
+  const homePage = homePageData ?? DEFAULT_HOME_PAGE
   const [scrolled, setScrolled] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
   const [mobileNetworkOpen, setMobileNetworkOpen] = useState(false)
@@ -273,7 +250,7 @@ export default function Navbar({ ctaRadiusClassName = "rounded-full" }: NavbarPr
     pathname === "/about" ||
     pathname === "/stories" ||
     pathname === "/terms" ||
-    pathname.startsWith("/network") ||
+    pathname === "/network" ||
     pathname === "/founders" ||
     pathname === "/advisors" ||
     pathname === "/investors" ||
@@ -296,36 +273,25 @@ export default function Navbar({ ctaRadiusClassName = "rounded-full" }: NavbarPr
 
   const networkItems = useMemo<NetworkItem[]>(
     () => [
-      { to: "/founders", label: "For founders", active: location.pathname === "/founders" },
-      { to: "/advisors", label: "For advisors", active: location.pathname === "/advisors" },
-      { to: "/investors", label: "For investors", active: location.pathname === "/investors" },
+      { to: "/founders", label: "Founders", active: location.pathname === "/founders" },
+      { to: "/advisors", label: "Advisors", active: location.pathname === "/advisors" },
+      { to: "/investors", label: "Investors", active: location.pathname === "/investors" },
       {
         to: "/industry-partners",
-        label: "For partners",
+        label: "Industry partners",
         active: location.pathname === "/industry-partners" || location.pathname.startsWith("/industry-partners/"),
       },
     ],
     [location.pathname],
   )
 
-  const howTheyWorkTogetherItem = useMemo(
-    () => ({
-      to: "/network",
-      label: "How they work together",
-      active: location.pathname === "/network",
-    }),
-    [location.pathname],
-  )
-
-  const isNetworkActive =
-    location.pathname === "/network" ||
-    networkItems.some((i) => i.active)
+  const isNetworkActive = location.pathname === "/network" || networkItems.some((i) => i.active)
 
   const aboutItems = useMemo<NetworkItem[]>(
     () => [
       { to: "/about", label: "About Us", active: location.pathname === "/about" },
-      { to: "/careers", label: "Careers", active: location.pathname === "/careers" },
       { to: "/stories", label: "Stories", active: location.pathname === "/stories" || location.pathname.startsWith("/stories/") },
+      { to: "/careers", label: "Careers", active: location.pathname === "/careers" },
     ],
     [location.pathname],
   )
@@ -429,9 +395,7 @@ export default function Navbar({ ctaRadiusClassName = "rounded-full" }: NavbarPr
             <div ref={desktopNetworkRef}>
               <DesktopNavDropdown
                 label="NETWORK"
-                to="/network"
                 items={networkItems}
-                extraItem={howTheyWorkTogetherItem}
                 active={isNetworkActive}
                 tone={desktopTone}
                 open={desktopNetworkOpen}
@@ -456,7 +420,6 @@ export default function Navbar({ ctaRadiusClassName = "rounded-full" }: NavbarPr
             <div ref={desktopAboutRef}>
               <DesktopNavDropdown
                 label="ABOUT"
-                to="/about"
                 items={aboutItems}
                 active={isAboutActive}
                 tone={desktopTone}
@@ -480,9 +443,9 @@ export default function Navbar({ ctaRadiusClassName = "rounded-full" }: NavbarPr
             ))}
           </div>
 
-          <div className="hidden shrink-0 justify-self-end md:flex">
-            <Link to="/network" className={ctaCls}>
-              Get Involved
+            <div className="hidden shrink-0 justify-self-end md:flex">
+            <Link to={homePage.primaryCtaPath} className={ctaCls}>
+              {homePage.primaryCtaLabel}
             </Link>
           </div>
 
@@ -544,8 +507,7 @@ export default function Navbar({ ctaRadiusClassName = "rounded-full" }: NavbarPr
                 type="button"
                 className={cn(
                   "flex min-h-12 w-full cursor-pointer items-center justify-between rounded-xl px-3 py-3 font-host-grotesk text-base font-medium text-white outline-none transition-colors hover:bg-white/10 focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-rellia-teal",
-                  (location.pathname === "/network" || networkItems.some((i) => i.active)) &&
-                    "bg-white/10 ring-1 ring-white/15 text-rellia-mint",
+                  isNetworkActive && "bg-white/10 ring-1 ring-white/15 text-rellia-mint",
                 )}
                 onClick={() => setMobileNetworkOpen((o) => !o)}
                 aria-expanded={mobileNetworkOpen}
@@ -582,19 +544,6 @@ export default function Navbar({ ctaRadiusClassName = "rounded-full" }: NavbarPr
                           {item.label}
                         </Link>
                       ))}
-
-                      <div className="my-2 h-px bg-white/10" aria-hidden />
-                      <Link
-                        to={howTheyWorkTogetherItem.to}
-                        className={cn(
-                          "flex min-h-11 cursor-pointer items-center rounded-xl px-3 py-2.5 font-urbanist text-[15px] font-semibold text-white/90 outline-none transition-colors hover:bg-white/10 hover:text-white focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-rellia-teal",
-                          howTheyWorkTogetherItem.active && "bg-white/10 ring-1 ring-white/15 text-rellia-mint",
-                        )}
-                        onClick={handleCloseMobile}
-                        aria-current={howTheyWorkTogetherItem.active ? "page" : undefined}
-                      >
-                        {howTheyWorkTogetherItem.label}
-                      </Link>
                     </div>
                   </div>
                 </div>
@@ -707,14 +656,14 @@ export default function Navbar({ ctaRadiusClassName = "rounded-full" }: NavbarPr
 
               <div className="mt-6 border-t border-white/15 pt-6">
                 <Link
-                  to="/network"
+                  to={homePage.primaryCtaPath}
                   className={cn(
                     "flex min-h-12 w-full cursor-pointer items-center justify-center gap-2 border-2 border-rellia-mint bg-rellia-mint px-6 py-3.5 font-host-grotesk text-base font-semibold text-rellia-teal outline-none transition-colors hover:bg-transparent hover:border-rellia-cream hover:text-white focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-rellia-teal",
                     ctaRadiusClassName,
                   )}
                   onClick={handleCloseMobile}
                 >
-                  Get Involved
+                  {homePage.primaryCtaLabel}
                 </Link>
               </div>
 

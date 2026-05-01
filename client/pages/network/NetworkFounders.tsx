@@ -77,7 +77,7 @@ export default function NetworkFounders() {
                     </a>
                   </RelliaAction>
                   <RelliaAction asChild variant="heroGhostOnTeal" size="comfortable">
-                    <a href="/network" aria-label="Explore the full network">
+                    <a href="/apply" aria-label="Apply to join Rellia">
                       Explore the Network
                       <ArrowRight aria-hidden />
                     </a>
@@ -182,7 +182,7 @@ export default function NetworkFounders() {
           title="Ready to **build** with the right people behind you?"
           body="Apply to join the founders network and get the clarity, credibility, and momentum you need."
           primary={{ label: "Apply to Join", to: "/apply" }}
-          secondary={{ label: "Explore the full Network", to: "/network" }}
+          secondary={{ label: "Apply to join", to: "/apply" }}
         />
       </main>
 

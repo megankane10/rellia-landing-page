@@ -9,6 +9,8 @@ import PageHeader, { PAGE_HEADER_TITLE_SIZE_CLASS } from "@/components/PageHeade
 import PillTag from "@/components/PillTag"
 import { useAboutPage } from "@/hooks/useCmsDocuments";
 import { DEFAULT_ABOUT_PAGE } from "@shared/cms/defaults";
+import { relliaTealGlassCardClass } from "@/lib/relliaTealGlassCard";
+import { cn } from "@/lib/utils";
 import { useRef, useState } from "react";
 import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
 
@@ -20,8 +22,6 @@ const VALUE_ICONS: Record<string, LucideIcon> = {
 };
 
 const resolveValueIcon = (key: string): LucideIcon => VALUE_ICONS[key] ?? Heart;
-
-const FOUNDER_APPLY_HREF = "/network";
 
 const accentLastWords = (text: string, wordCount = 3) => {
   const raw = (text ?? "").trim()
@@ -35,28 +35,6 @@ const accentLastWords = (text: string, wordCount = 3) => {
   return (
     <>
       {head} <span className="text-rellia-mint">{tail}</span>
-    </>
-  )
-}
-
-const accentBetween = (text: string, startWord: string, endWord: string) => {
-  const raw = (text ?? "").trim()
-  if (!raw) return null
-
-  const lower = raw.toLowerCase()
-  const startIdx = lower.indexOf(startWord.toLowerCase())
-  const endIdx = lower.lastIndexOf(endWord.toLowerCase())
-  if (startIdx === -1 || endIdx === -1 || endIdx < startIdx) return raw
-
-  const before = raw.slice(0, startIdx)
-  const mid = raw.slice(startIdx, endIdx + endWord.length)
-  const after = raw.slice(endIdx + endWord.length)
-
-  return (
-    <>
-      {before}
-      <span className="text-rellia-mint">{mid}</span>
-      {after}
     </>
   )
 }
@@ -133,7 +111,7 @@ export default function About() {
           className="relative w-full overflow-hidden bg-white"
         >
           <div className="relative w-full overflow-hidden">
-            <div className="relative w-full overflow-hidden min-h-[1080px] sm:min-h-[920px] md:min-h-[900px] lg:min-h-[980px]">
+            <div className="relative min-h-[880px] w-full overflow-hidden sm:min-h-[920px] md:min-h-[900px] lg:min-h-[980px]">
             <div className="absolute inset-0 overflow-hidden" aria-hidden>
               <motion.img
                 src={valuesBgImage}
@@ -154,25 +132,33 @@ export default function About() {
                   <h2
                     className={`font-host-grotesk font-bold leading-tight tracking-tight text-white max-w-4xl ${PAGE_HEADER_TITLE_SIZE_CLASS}`}
                   >
-                    {accentBetween(about.valuesSubtitle, "every", "decision")}
+                    {accentLastWords(about.valuesSubtitle, 4)}
                   </h2>
                 </ScrollReveal>
               </div>
 
-              <div className="mt-[4.8rem] sm:mt-[6rem] md:mt-[7.2rem] lg:mt-[8.4rem] lg:flex-1 lg:flex lg:items-center">
+              <div className="mt-12 sm:mt-[4.8rem] md:mt-[7.2rem] lg:mt-[8.4rem] lg:flex lg:flex-1 lg:items-center">
                 <div className="w-full">
-                  <div className="grid grid-cols-1 items-start gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 md:gap-5">
+                  <div className="grid grid-cols-1 items-stretch gap-4 sm:grid-cols-2 md:gap-5 lg:grid-cols-3 xl:grid-cols-4">
                 {about.values.map((v, i) => {
                   const Icon = resolveValueIcon(v.iconKey);
 
                   return (
-                    <ScrollReveal key={v.title} delay={i * 0.08}>
-                      <div className="flex flex-col rounded-2xl border border-white/18 bg-white/10 px-6 py-6 md:px-7 md:py-7 backdrop-blur-lg shadow-[0_18px_60px_-36px_rgba(0,0,0,0.65)]">
-                        <Icon className="h-7 w-7 shrink-0 text-rellia-mint" aria-hidden />
-                        <p className="mt-4 text-white text-lg md:text-xl font-semibold tracking-tight leading-snug">
+                    <ScrollReveal key={v.title} delay={i * 0.08} className="h-full">
+                      <div
+                        className={cn(
+                          relliaTealGlassCardClass,
+                          "flex h-full min-h-[300px] flex-col px-6 py-9 md:min-h-[320px] md:px-7 md:py-10",
+                        )}
+                      >
+                        <Icon
+                          className="h-6 w-6 shrink-0 text-rellia-mint sm:h-7 sm:w-7"
+                          aria-hidden
+                        />
+                        <p className="mt-3 font-host-grotesk text-base font-semibold leading-snug tracking-tight text-white sm:mt-4 sm:text-lg md:text-xl">
                           {v.title}
                         </p>
-                        <p className="mt-3 text-white/80 text-base md:text-lg leading-relaxed font-urbanist [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:4] overflow-hidden">
+                        <p className="mt-2 flex-1 font-urbanist text-sm leading-normal text-white/80 sm:mt-3 sm:text-base md:text-lg">
                           {v.description}
                         </p>
                       </div>
@@ -218,8 +204,8 @@ export default function About() {
         <RelliaCta
           title={about.ctaTitle}
           body={about.ctaBody}
-          primary={{ label: about.ctaFounderLabel, to: FOUNDER_APPLY_HREF }}
-          secondary={{ label: about.ctaTeamLabel, to: "/contact" }}
+          primary={{ label: about.ctaFounderLabel, to: "/apply" }}
+          secondary={{ label: about.ctaTeamLabel, to: "/careers" }}
         />
       </main>
 

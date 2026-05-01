@@ -5,6 +5,15 @@ import { InstagramFilled, LinkedInFilled, MailFilled } from "@/components/icons/
 
 const g = DEFAULT_GLOBAL_SETTINGS
 
+const footerLinkClass =
+  "font-urbanist text-[14px] leading-snug text-white transition-colors hover:text-rellia-mint md:text-[15px] md:leading-normal"
+
+const footerSectionHeadingClass =
+  "font-host-grotesk text-[14px] font-semibold leading-snug tracking-normal text-rellia-mint md:text-[15px] md:leading-normal"
+
+const legalLinkClass =
+  "font-urbanist text-[13px] leading-snug text-white/70 transition-colors hover:text-rellia-mint md:text-sm"
+
 export default function Footer() {
   return (
     <footer
@@ -23,8 +32,8 @@ export default function Footer() {
             </p>
           </div>
 
-          <div className="mb-14 grid grid-cols-2 gap-x-6 gap-y-11 md:mb-16 md:grid-cols-2 md:gap-x-12 md:gap-y-12 lg:grid-cols-3">
-            <div className="hidden flex-col gap-6 md:flex">
+          <div className="mb-14 flex flex-col gap-10 md:mb-16 md:flex-row md:items-start md:gap-16 lg:gap-24 xl:gap-28">
+            <div className="hidden min-w-0 flex-col gap-6 md:flex md:max-w-[280px] md:shrink-0">
               <Link to="/" className="flex items-center">
                 <img src="/images/hologram-logo.png" alt="Rellia" className="h-10 w-auto" />
               </Link>
@@ -58,59 +67,67 @@ export default function Footer() {
               </div>
             </div>
 
-            {/* Company */}
-            <div className="flex min-w-0 flex-col gap-4 md:gap-6">
-              <h4 className="font-host-grotesk text-[14px] font-semibold leading-snug tracking-normal text-rellia-mint md:text-[15px] md:leading-normal">
-                Company
-              </h4>
-              <nav className="flex flex-col gap-2 md:gap-3">
-                <Link
-                  to="/about"
-                  className="font-urbanist text-[14px] leading-snug text-white transition-colors hover:text-rellia-mint md:text-[15px] md:leading-normal"
-                >
-                  About Us
-                </Link>
-                <Link
-                  to="/careers"
-                  className="inline-flex max-w-full flex-wrap items-center gap-2 font-urbanist text-[14px] leading-snug text-white transition-colors hover:text-rellia-mint md:text-[15px] md:leading-normal"
-                >
-                  <span>Careers</span>
-                  <CareersHiringBadge />
-                </Link>
-                <Link
-                  to="/terms"
-                  className="font-urbanist text-[14px] leading-snug text-white transition-colors hover:text-rellia-mint md:text-[15px] md:leading-normal"
-                >
-                  Terms of Use
-                </Link>
-                <Link
-                  to="/privacy"
-                  className="font-urbanist text-[14px] leading-snug text-white transition-colors hover:text-rellia-mint md:text-[15px] md:leading-normal"
-                >
-                  Privacy Policy
-                </Link>
-              </nav>
-            </div>
+            <div className="grid min-w-0 flex-1 grid-cols-2 gap-x-8 gap-y-10 sm:gap-x-10 md:gap-x-12 md:pl-6 lg:grid-cols-3 lg:gap-x-14 lg:pl-10 xl:gap-x-20 xl:pl-14">
+              {/* Network */}
+              <div className="flex min-w-0 flex-col gap-4 md:gap-6">
+                <h4 className={footerSectionHeadingClass}>Network</h4>
+                <nav className="flex flex-col gap-2 md:gap-3" aria-label="Network links">
+                  <Link to="/founders" className={footerLinkClass}>
+                    Founders
+                  </Link>
+                  <Link to="/advisors" className={footerLinkClass}>
+                    Advisors
+                  </Link>
+                  <Link to="/investors" className={footerLinkClass}>
+                    Investors
+                  </Link>
+                  <Link to="/industry-partners" className={footerLinkClass}>
+                    Industry partners
+                  </Link>
+                </nav>
+              </div>
 
-            {/* Support */}
-            <div className="flex min-w-0 flex-col gap-4 md:gap-6">
-              <h4 className="font-host-grotesk text-[14px] font-semibold leading-snug tracking-normal text-rellia-mint md:text-[15px] md:leading-normal">
-                Support
-              </h4>
-              <nav className="flex flex-col gap-2 md:gap-3">
-                <Link
-                  to="/faq"
-                  className="font-urbanist text-[14px] leading-snug text-white transition-colors hover:text-rellia-mint md:text-[15px] md:leading-normal"
-                >
-                  FAQ
-                </Link>
-                <Link
-                  to="/contact"
-                  className="font-urbanist text-[14px] leading-snug text-white transition-colors hover:text-rellia-mint md:text-[15px] md:leading-normal"
-                >
-                  Contact Us
-                </Link>
-              </nav>
+              {/* Solutions */}
+              <div className="flex min-w-0 flex-col gap-4 md:gap-6">
+                <h4 className={footerSectionHeadingClass}>Solutions</h4>
+                <nav className="flex flex-col gap-2 md:gap-3" aria-label="Solutions links">
+                  <Link to="/apply" className={footerLinkClass}>
+                    Apply
+                  </Link>
+                  <Link to="/programs" className={footerLinkClass}>
+                    Programs
+                  </Link>
+                  <Link to="/events" className={footerLinkClass}>
+                    Events
+                  </Link>
+                </nav>
+              </div>
+
+              {/* Company */}
+              <div className="col-span-2 flex min-w-0 flex-col gap-4 md:gap-6 lg:col-span-1">
+                <h4 className={footerSectionHeadingClass}>Company</h4>
+                <nav className="flex flex-col gap-2 md:gap-3" aria-label="Company links">
+                  <Link to="/about" className={footerLinkClass}>
+                    About Us
+                  </Link>
+                  <Link to="/faq" className={footerLinkClass}>
+                    FAQ
+                  </Link>
+                  <Link to="/stories" className={footerLinkClass}>
+                    Stories
+                  </Link>
+                  <Link
+                    to="/careers"
+                    className={`inline-flex max-w-full flex-wrap items-center gap-2 ${footerLinkClass}`}
+                  >
+                    <span>Careers</span>
+                    <CareersHiringBadge />
+                  </Link>
+                  <Link to="/contact" className={footerLinkClass}>
+                    Contact
+                  </Link>
+                </nav>
+              </div>
             </div>
           </div>
 
@@ -143,10 +160,21 @@ export default function Footer() {
             </a>
           </div>
 
-          <div className="flex items-center justify-center border-t border-white/10 pt-6 md:pt-8">
-            <p className="text-center font-urbanist text-[13px] leading-snug text-white/55 md:text-sm">
+          <div className="flex flex-col gap-4 border-t border-white/10 pt-6 sm:flex-row sm:items-center sm:justify-between sm:gap-6 md:pt-8">
+            <p className="text-left font-urbanist text-[13px] leading-snug text-white/55 md:text-sm sm:max-w-[min(100%,28rem)]">
               &copy; {new Date().getFullYear()} {g.copyrightLine} · Ontario, Canada
             </p>
+            <nav
+              className="flex flex-wrap items-center gap-x-5 gap-y-2 sm:ml-auto sm:shrink-0 sm:justify-end lg:gap-x-8 lg:pr-2"
+              aria-label="Legal"
+            >
+              <Link to="/terms" className={legalLinkClass}>
+                Terms of Service
+              </Link>
+              <Link to="/privacy" className={legalLinkClass}>
+                Privacy Policy
+              </Link>
+            </nav>
           </div>
         </div>
       </div>

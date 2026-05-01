@@ -1,6 +1,8 @@
 import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion"
+import { Globe, Rocket, Users, type LucideIcon } from "lucide-react"
 import { useEffect, useMemo, useRef, useState } from "react"
 import { cn } from "@/lib/utils"
+import { relliaTealGlassCardClass } from "@/lib/relliaTealGlassCard"
 import PillTag from "@/components/PillTag"
 import { PAGE_HEADER_TITLE_SIZE_CLASS } from "@/components/PageHeader"
 
@@ -78,6 +80,8 @@ function AccentHeading({ text }: { text: string }) {
   )
 }
 
+const METRIC_ROW_ICONS: LucideIcon[] = [Users, Rocket, Globe]
+
 function MetricValue({
   metric,
   label,
@@ -90,14 +94,22 @@ function MetricValue({
   entered: boolean;
 }) {
   const count = useCountUp(metric.value, entered, 1200 + index * 150);
+  const Icon = METRIC_ROW_ICONS[index] ?? Users
 
   return (
-    <div className="flex flex-col items-center text-center">
-      <div className="font-host-grotesk font-normal text-white text-5xl md:text-6xl tracking-tight leading-none drop-shadow-[0_2px_12px_rgba(0,0,0,0.35)]">
-        {count}
-        {metric.suffix ?? ""}
+    <div className="inline-flex max-w-full flex-col items-center">
+      <div className="flex items-center gap-3 md:gap-4">
+        <Icon
+          className="h-9 w-9 shrink-0 text-white md:h-10 md:w-10"
+          strokeWidth={1.35}
+          aria-hidden
+        />
+        <div className="font-host-grotesk text-5xl font-normal leading-none tracking-normal text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.35)] md:text-6xl">
+          {count}
+          {metric.suffix ?? ""}
+        </div>
       </div>
-      <p className="mt-3 font-host-grotesk text-rellia-mint text-sm font-extrabold uppercase tracking-[0.18em]">
+      <p className="mt-3 w-full text-center font-host-grotesk text-sm font-extrabold uppercase tracking-[0.18em] text-rellia-mint">
         {label}
       </p>
     </div>
@@ -160,7 +172,7 @@ export default function NetworkMetricsSection({ heading, subheading, metrics }: 
         ref={(node) => {
           sectionRef.current = node
         }}
-        className="relative w-full overflow-hidden h-[980px] sm:h-[900px] md:h-[920px] lg:h-[1080px]"
+        className="relative w-full overflow-hidden h-[900px] sm:h-[840px] md:h-[860px] lg:h-[1000px]"
       >
         <div className="absolute inset-0 overflow-hidden" aria-hidden>
           <motion.img
@@ -173,8 +185,8 @@ export default function NetworkMetricsSection({ heading, subheading, metrics }: 
           <div className="absolute inset-0 bg-gradient-to-b from-black/55 via-black/25 to-black/55" />
         </div>
 
-        <div className="relative z-10 mx-auto flex h-full w-full max-w-[1300px] flex-col px-6 md:px-10 pt-12 md:pt-14 pb-14 md:pb-18">
-          <div className="flex flex-col items-start text-left mt-8 md:mt-10 lg:mt-24">
+        <div className="relative z-10 mx-auto flex h-full w-full max-w-[1300px] flex-col px-6 md:px-10 pt-10 md:pt-12 pb-12 md:pb-14">
+          <div className="flex flex-col items-start text-left mt-6 md:mt-8 lg:mt-16">
             <motion.div
               initial={reduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 22 }}
               animate={
@@ -187,7 +199,7 @@ export default function NetworkMetricsSection({ heading, subheading, metrics }: 
               transition={reduceMotion ? undefined : { duration: 0.65, ease: [0.16, 1, 0.3, 1] }}
               className="flex flex-col items-start text-left w-full"
             >
-              <div className="mb-7 md:mb-8">
+              <div className="mb-5 md:mb-6">
                 <PillTag
                   label="Network impact"
                   className="border-white/35 bg-transparent shadow-none backdrop-blur-2xl"
@@ -210,7 +222,7 @@ export default function NetworkMetricsSection({ heading, subheading, metrics }: 
             </motion.div>
           </div>
 
-          <div className="mt-10 sm:mt-12 lg:flex-1 lg:flex lg:items-center lg:-translate-y-6">
+          <div className="mt-6 sm:mt-8 lg:flex-1 lg:flex lg:items-center lg:-translate-y-4">
             <div className="w-full">
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 md:gap-5 justify-items-start">
                 {metricList.slice(0, 3).map((m, i) => {
@@ -228,10 +240,8 @@ export default function NetworkMetricsSection({ heading, subheading, metrics }: 
                       }
                       transition={reduceMotion ? undefined : { duration: 0.45, ease: [0.16, 1, 0.3, 1], delay: 0.12 + i * 0.08 }}
                       className={cn(
-                        "rounded-2xl border border-white/18 px-6 py-9 md:px-7 md:py-10",
-                        "bg-white/10 backdrop-blur-lg shadow-[0_18px_60px_-36px_rgba(0,0,0,0.65)]",
-                        "flex items-center justify-center h-[200px] sm:h-[210px] md:h-[220px]",
-                        "w-full max-w-[300px] md:max-w-[320px]",
+                        relliaTealGlassCardClass,
+                        "flex h-[200px] w-full max-w-[300px] items-center justify-center px-6 py-9 sm:h-[210px] md:h-[220px] md:max-w-[320px] md:px-7 md:py-10",
                       )}
                     >
                       <MetricValue metric={m} label={label} index={i} entered={entered && countReady} />

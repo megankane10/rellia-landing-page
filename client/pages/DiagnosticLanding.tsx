@@ -250,7 +250,7 @@ export default function DiagnosticLanding() {
           <h2 className="dl-h2">Get your diagnostic report today</h2>
           <p>15 minutes of honest reflection. A clear picture of where you're strong, where you're exposed, and exactly what to do next.</p>
           <Link className="dl-btn-primary" to="/diagnosticSurvey" style={{ display: 'inline-flex' }}>Take the Diagnostic →</Link>
-          <p className="dl-member-note">Rellia Health member? Your report includes mentor matching. <Link to="/network">Join here →</Link></p>
+          <p className="dl-member-note">Rellia Health member? Your report includes mentor matching. <Link to="/apply">Join here →</Link></p>
         </div>
       </section>
 

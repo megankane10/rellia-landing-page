@@ -287,9 +287,9 @@ export function TeamMemberCard({
 
       {/* Name/role */}
       <div>
-        <h3 className="mb-1 text-2xl font-bold text-black">{name}</h3>
+        <h3 className="mb-1 text-lg font-semibold text-black md:text-xl">{name}</h3>
         {role ? (
-          <p className="text-sm font-semibold uppercase tracking-wider text-rellia-teal">{role}</p>
+          <p className="text-sm font-semibold uppercase tracking-wider text-rellia-teal md:text-base">{role}</p>
         ) : null}
       </div>
     </div>

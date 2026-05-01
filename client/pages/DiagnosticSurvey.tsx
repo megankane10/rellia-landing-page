@@ -667,7 +667,7 @@ export default function DiagnosticSurvey() {
                 <div className="ds-mentor-gate">
                   <h3>Unlock your mentor matches</h3>
                   <p>Based on your results, we've identified three areas where a Rellia mentor can make the biggest difference. Join Rellia Health to see your matched mentors and book a session directly from this report.</p>
-                  <Link className="ds-join-btn" to="/network">Join Rellia Health →</Link>
+                  <Link className="ds-join-btn" to="/apply">Join Rellia Health →</Link>
                 </div>
               </div>
 

@@ -1,4 +1,4 @@
-import { useEffect } from "react"
+import { FilloutStandardEmbed } from "@fillout/react"
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog"
 import { cn } from "@/lib/utils"
 
@@ -14,7 +14,6 @@ const getFilloutIdFromUrl = (url: string) => {
   const trimmed = url.trim()
   if (!trimmed) return ""
 
-  // Expected: https://forms.fillout.com/t/<id>
   const marker = "/t/"
   const index = trimmed.indexOf(marker)
   if (index === -1) return ""
@@ -29,25 +28,9 @@ export default function FilloutPopupDialog({
   onOpenChange,
   formUrl,
   title = "Join the waitlist",
-  description = "Fill out this short form and we’ll follow up.",
+  description = "Fill out this short form and we'll follow up.",
 }: FilloutPopupDialogProps) {
   const filloutId = getFilloutIdFromUrl(formUrl)
-
-  useEffect(() => {
-    if (!open) return
-    if (!filloutId) return
-
-    const src = "https://server.fillout.com/embed/v1/"
-    // Fillout often hydrates only embeds present at load time. Since this dialog mounts dynamically,
-    // re-inject the script on open to ensure hydration.
-    const existing = document.querySelector<HTMLScriptElement>(`script[src="${src}"]`)
-    if (existing) existing.remove()
-
-    const script = document.createElement("script")
-    script.src = src
-    script.async = true
-    document.body.appendChild(script)
-  }, [open, filloutId])
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -56,7 +39,7 @@ export default function FilloutPopupDialog({
         className={cn(
           "w-[min(92vw,900px)] max-w-none",
           "max-h-[min(86vh,860px)] overflow-hidden",
-          "rounded-2xl md:rounded-3xl border border-black/10 bg-white p-0 shadow-2xl",
+          "rounded-2xl border border-black/10 bg-white p-0 shadow-2xl md:rounded-3xl",
         )}
       >
         <div className="flex items-center justify-between gap-3 border-b border-black/10 px-4 py-3 sm:px-5 sm:py-4">
@@ -70,18 +53,19 @@ export default function FilloutPopupDialog({
           </div>
         </div>
 
-        <div className="max-h-[min(86vh,860px)] overflow-y-auto p-3 sm:p-4">
+        <div className="max-h-[min(72vh,720px)] overflow-y-auto p-3 sm:p-4">
           {filloutId ? (
-            <div
-              data-fillout-id={filloutId}
-              data-fillout-embed-type="standard"
-              data-fillout-inherit-parameters
-              style={{ width: "100%", height: "70vh" }}
-            />
+            <div className="w-full min-h-[256px]">
+              <FilloutStandardEmbed
+                filloutId={filloutId}
+                inheritParameters
+                dynamicResize
+              />
+            </div>
           ) : (
             <div className="rounded-2xl border border-black/10 bg-black/[0.02] p-4 text-center">
               <p className="font-urbanist text-sm text-black/60">
-                We couldn’t load the embedded form.{" "}
+                We couldn't load the embedded form.{" "}
                 <a
                   href={formUrl}
                   target="_blank"
@@ -99,4 +83,3 @@ export default function FilloutPopupDialog({
     </Dialog>
   )
 }
-

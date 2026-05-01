@@ -17,7 +17,10 @@ const carouselArrowClass =
 
 const testimonialHeadingLineStops = [11, 27, 43, 59, 75, 89] as const
 
-type Testimonial = HomeTestimonial;
+/** Collapsed quote viewport: exactly 5 lines (15px Urbanist + `leading-relaxed` 1.625). Gradient + expand overlay this area only. */
+const COLLAPSED_QUOTE_BLOCK_CLASS = "h-[calc(5*1.625*15px)]"
+
+type Testimonial = HomeTestimonial
 
 function CompanyInfoPopover({ t }: { t: Testimonial }) {
   return (
@@ -104,109 +107,102 @@ function TestimonialCard({
     }
   }, [isExpanded, t.quote])
 
+  const expandPillClass = cn(
+    "inline-flex items-center justify-center gap-1 rounded-full border border-black/10 bg-white px-3 py-1.5 text-sm text-rellia-teal shadow-sm",
+    "transition-colors hover:border-rellia-teal hover:bg-rellia-teal hover:text-white",
+    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-white",
+  )
+
   return (
     <div
       className={cn(
-        "bg-white rounded-2xl p-5 md:p-6 w-full min-w-0 border border-black/10",
-        "flex flex-col overflow-hidden",
+        "flex w-full min-w-0 flex-col overflow-hidden rounded-2xl border border-black/10 bg-white p-4 md:p-5",
         "transition-[max-height] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:transition-none",
-        isExpanded ? "h-auto max-h-[2400px]" : "h-[220px] md:h-[232px] max-h-[220px] md:max-h-[232px]",
+        isExpanded && "max-h-[min(92vh,2400px)] min-h-0",
       )}
     >
-      <div className="flex items-start gap-4">
-        <Avatar className="h-12 w-12 rounded-lg border border-black/10 shrink-0">
-          <AvatarImage
-            src={imgSrc}
-            alt={t.name}
-            className={cn("object-cover", isMelissa && "object-[38%_50%]")}
-          />
-          <AvatarFallback className="rounded-lg bg-rellia-teal text-white text-xs font-semibold">
-            {initials}
-          </AvatarFallback>
-        </Avatar>
-
-        <div className="min-w-0 flex-1">
-          <div className="flex items-start justify-between gap-3">
-            <div className="min-w-0">
-              <h4 className="font-host-grotesk font-semibold text-black text-base leading-snug truncate">
-                {t.name}
-              </h4>
-              <p className="mt-1 font-urbanist text-black/75 text-sm leading-snug truncate">
-                <span className="font-medium text-black/80">{role}</span>,{" "}
-                <span className="text-black/45">{t.company}</span>
-              </p>
-            </div>
-
-            <div className="flex items-center gap-2 shrink-0">
-              <CompanyInfoPopover t={t} />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className={cn("mt-4", isExpanded ? "flex-1" : "flex-1 min-h-0")}>
+      <div className={cn("flex flex-col", isExpanded && "min-h-0 flex-1")}>
         <div
           className={cn(
-            "relative",
-            !isExpanded && "h-full",
-            showExpand && !isExpanded && "overflow-hidden",
+            "relative shrink-0 overflow-hidden",
+            !isExpanded && COLLAPSED_QUOTE_BLOCK_CLASS,
+            isExpanded && "min-h-0",
           )}
         >
           <p
             ref={quoteRef}
             className={cn(
-              "font-urbanist text-[15px] md:text-base text-black/75 leading-relaxed",
+              "relative z-0 font-urbanist text-[15px] leading-relaxed text-black/75",
               isExpanded ? "whitespace-normal opacity-100" : "line-clamp-5 opacity-90",
               "transition-opacity duration-300 ease-out motion-reduce:transition-none",
             )}
           >
             &ldquo;{t.quote}&rdquo;
           </p>
-          {showExpand ? (
+          {showExpand && !isExpanded ? (
             <>
-              {!isExpanded ? (
-                <>
-                  <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-white via-white/90 to-transparent" />
-                  <button
-                    type="button"
-                    onClick={onRequestExpand}
-                    className={cn(
-                      "absolute inset-x-0 bottom-0 mx-auto w-fit",
-                      "inline-flex items-center justify-center rounded-full border border-black/10 bg-white px-4 py-2 text-rellia-teal shadow-sm",
-                      "transition-colors hover:bg-rellia-teal hover:text-white hover:border-rellia-teal",
-                      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-white",
-                    )}
-                    aria-label="Expand testimonial"
-                    aria-expanded={isExpanded}
-                  >
-                    <ChevronDown className="h-5 w-5" aria-hidden />
-                  </button>
-                </>
-              ) : (
-                null
-              )}
+              <div
+                aria-hidden
+                className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-[3.25rem] bg-gradient-to-t from-white from-20% via-white/90 to-transparent"
+              />
+              <button
+                type="button"
+                onClick={onRequestExpand}
+                className={cn(
+                  "absolute bottom-1 left-1/2 z-20 -translate-x-1/2 shadow-md",
+                  expandPillClass,
+                )}
+                aria-label="Expand testimonial"
+                aria-expanded={false}
+              >
+                <ChevronDown className="h-4 w-4 shrink-0" aria-hidden />
+              </button>
             </>
           ) : null}
         </div>
+
+        {isExpanded ? (
+          <div className="mt-4 flex shrink-0 justify-center">
+            <button
+              type="button"
+              onClick={onRequestCollapse}
+              className={expandPillClass}
+              aria-label="Collapse testimonial"
+              aria-expanded={true}
+            >
+              <ChevronUp className="h-4 w-4 shrink-0" aria-hidden />
+            </button>
+          </div>
+        ) : null}
       </div>
 
-      {isExpanded ? (
-        <div className="mt-5 flex justify-center">
-          <button
-            type="button"
-            onClick={onRequestCollapse}
-            className={cn(
-              "inline-flex items-center justify-center rounded-full border border-black/10 bg-white px-4 py-2 text-rellia-teal shadow-sm",
-              "transition-colors hover:bg-rellia-teal hover:text-white hover:border-rellia-teal",
-              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-white",
-            )}
-            aria-label="Collapse testimonial"
-            aria-expanded={true}
-          >
-            <ChevronUp className="h-5 w-5" aria-hidden />
-          </button>
+      <div className={cn("shrink-0", isExpanded ? "mt-6" : "mt-4 md:mt-5")}>
+        <div className="flex items-start gap-3 md:gap-3.5">
+          <Avatar className="h-12 w-12 shrink-0 rounded-lg border border-black/10">
+            <AvatarImage
+              src={imgSrc}
+              alt={t.name}
+              className={cn("object-cover", isMelissa && "object-[38%_50%]")}
+            />
+            <AvatarFallback className="rounded-lg bg-rellia-teal text-xs font-semibold text-white">
+              {initials}
+            </AvatarFallback>
+          </Avatar>
+
+          <div className="min-w-0 flex-1">
+            <h4 className="font-host-grotesk text-base font-semibold leading-snug text-black">
+              {t.name}
+            </h4>
+            <p className="mt-0.5 font-urbanist text-sm leading-snug text-black/75">
+              <span className="font-medium text-black/80">{role},</span>{" "}
+              <span className="inline-flex items-center gap-1 text-black/55">
+                <span className="min-w-0 break-words">{t.company}</span>
+                <CompanyInfoPopover t={t} />
+              </span>
+            </p>
+          </div>
         </div>
-      ) : null}
+      </div>
     </div>
   )
 }
@@ -228,12 +224,19 @@ export default function TestimonialsSection({ titleLead, titleAccent, testimonia
     const list = [...testimonials]
     const melissaIndex = list.findIndex((t) => t.name.toLowerCase().includes("melissa"))
     const mazharIndex = list.findIndex((t) => t.name.toLowerCase().includes("mazhar"))
-    if (melissaIndex < 0 || mazharIndex < 0) return list
-    if (mazharIndex === melissaIndex + 1) return list
+    if (melissaIndex >= 0 && mazharIndex >= 0 && mazharIndex !== melissaIndex + 1) {
+      const [mazhar] = list.splice(mazharIndex, 1)
+      const insertAt = melissaIndex + 1
+      list.splice(insertAt, 0, mazhar)
+    }
 
-    const [mazhar] = list.splice(mazharIndex, 1)
-    const insertAt = melissaIndex + 1
-    list.splice(insertAt, 0, mazhar)
+    const sahilIndex = list.findIndex((t) => t.name.toLowerCase().includes("sahil"))
+    const targetIndex = 2
+    if (sahilIndex >= 0 && sahilIndex !== targetIndex) {
+      const [sahil] = list.splice(sahilIndex, 1)
+      list.splice(targetIndex, 0, sahil)
+    }
+
     return list
   }, [testimonials])
 
@@ -323,12 +326,12 @@ export default function TestimonialsSection({ titleLead, titleAccent, testimonia
                 Viewport clips horizontally; each slide min-w-0 prevents flex overflow.
                 1 / 2 / 3 cards visible — same proportional width as the old 3-col grid.
               */}
-              <CarouselContent className="-ml-4 md:-ml-6">
+              <CarouselContent className="-ml-4 items-start md:-ml-6">
                 {orderedTestimonials.map((t, idx) => (
                   <CarouselItem
                     key={t.name}
                     className={cn(
-                      "pl-4 md:pl-6 min-w-0",
+                      "flex min-h-0 min-w-0 pl-4 md:pl-6",
                       "basis-[88%] sm:basis-[78%] md:basis-1/2 xl:basis-1/3",
                     )}
                   >

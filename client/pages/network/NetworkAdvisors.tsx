@@ -76,7 +76,7 @@ export default function NetworkAdvisors() {
                     </a>
                   </RelliaAction>
                   <RelliaAction asChild variant="heroGhostOnTeal" size="comfortable">
-                    <a href="/network" aria-label="Learn about the network">
+                    <a href="/apply" aria-label="Apply to join Rellia">
                       Learn about the Network
                       <ArrowRight aria-hidden />
                     </a>
@@ -138,7 +138,7 @@ export default function NetworkAdvisors() {
           title="Want to **mentor** health tech founders that actually execute?"
           body="Tell us what you’re great at. We’ll match you with founders who need exactly that."
           primary={{ label: "Express interest", to: "/contact" }}
-          secondary={{ label: "Explore the Network", to: "/network" }}
+          secondary={{ label: "Apply to join", to: "/apply" }}
         />
       </main>
 
