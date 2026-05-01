@@ -9,6 +9,7 @@ import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 import { usePaymentPage } from "@/hooks/useCmsDocuments"
 import { DEFAULT_PAYMENT_PAGE, DEFAULT_STRIPE_PAYMENT_LINK_FALLBACK } from "@shared/cms/defaults"
 import { cn } from "@/lib/utils"
+import { PAGE_HEADER_DARK_SUBTITLE_CLASS, PAGE_HEADER_TITLE_SIZE_CLASS } from "@/components/PageHeader"
 
 export default function Payment() {
   const { data: paymentCms } = usePaymentPage()
@@ -91,13 +92,15 @@ export default function Payment() {
             />
 
             <div className="relative z-10 max-w-[1300px] mx-auto px-6 md:px-10 pt-16 pb-36 md:pt-24 md:pb-44">
-              <h1 className="text-white text-5xl md:text-6xl lg:text-7xl font-bold leading-tight tracking-tight mb-6">
+              <h1
+                className={cn("mb-6 text-white font-bold leading-tight tracking-tight", PAGE_HEADER_TITLE_SIZE_CLASS)}
+              >
                 <span>{p.heroHeadlinePrefix}</span>
                 <span className="text-rellia-mint">{p.heroHeadlineAccent}</span>
                 <br />
                 <span>{p.heroHeadlineSuffix}</span>
               </h1>
-              <p className="text-white/80 text-lg md:text-xl max-w-3xl font-urbanist leading-relaxed">{p.heroSubheadline}</p>
+              <p className={PAGE_HEADER_DARK_SUBTITLE_CLASS}>{p.heroSubheadline}</p>
             </div>
           </section>
 
@@ -115,7 +118,12 @@ export default function Payment() {
                     <span className="inline-flex w-fit items-center rounded-[20px] border border-rellia-mint/70 bg-rellia-mint/90 px-4 py-1.5 font-urbanist text-sm font-semibold text-rellia-teal">
                       {p.imageCardBadge}
                     </span>
-                    <h2 className="font-host-grotesk text-3xl font-bold leading-tight tracking-[-0.02em] text-white md:text-[40px] md:leading-tight w-3/4">
+                    <h2
+                      className={cn(
+                        "w-3/4 font-host-grotesk font-bold leading-tight tracking-[-0.02em] text-white",
+                        PAGE_HEADER_TITLE_SIZE_CLASS,
+                      )}
+                    >
                       <span>{p.imageCardHeadlinePrefix}</span>
                       <span className="text-rellia-mint">{p.imageCardHeadlineAccent}</span>
                     </h2>

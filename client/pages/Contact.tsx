@@ -3,7 +3,9 @@ import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
 import { useContactPage } from "@/hooks/useCmsDocuments"
 import { DEFAULT_CONTACT_PAGE, DEFAULT_GLOBAL_SETTINGS } from "@shared/cms/defaults"
+import { PAGE_HEADER_DARK_SUBTITLE_CLASS, PAGE_HEADER_TITLE_SIZE_CLASS } from "@/components/PageHeader"
 import { loadHubspotV2Script } from "@/lib/hubspotForms"
+import { cn } from "@/lib/utils"
 import { Quote } from "lucide-react"
 
 const SUPPORT_EMAIL = DEFAULT_GLOBAL_SETTINGS.supportEmail
@@ -83,9 +85,9 @@ export default function Contact() {
             <div className="relative flex flex-col bg-rellia-teal px-6 pb-12 pt-[92px] md:px-10 md:pb-16 md:pt-[110px]">
               <div className="pointer-events-none absolute inset-0">
                 <img
-                  src="/images/contact-nature.jpg"
+                  src="/images/whyrellia-founders-2.jpg"
                   alt=""
-                  className="h-full w-full object-cover object-center opacity-60"
+                  className="h-full w-full object-cover object-[center_35%] opacity-55"
                   loading="lazy"
                 />
                 <div
@@ -97,19 +99,19 @@ export default function Contact() {
               <div className="relative mx-auto flex h-full w-full max-w-2xl flex-col">
                 {/* Top: heading + intro closer to top */}
                 <div>
-                  <h1 className="mt-16 md:mt-24 text-3xl font-bold leading-tight tracking-tight text-white md:text-5xl">
+                  <h1
+                    className={`mt-16 md:mt-24 font-semibold leading-tight tracking-tight text-white ${PAGE_HEADER_TITLE_SIZE_CLASS}`}
+                  >
                     {copy.pageTitle}
                   </h1>
-                  <p className="mt-4 max-w-xl font-urbanist text-base leading-relaxed text-white/80 md:text-lg">
-                    {copy.intro}
-                  </p>
+                  <p className={cn(PAGE_HEADER_DARK_SUBTITLE_CLASS, "mt-4 max-w-xl")}>{copy.intro}</p>
                 </div>
 
                 {/* Middle: quote centered */}
                 <div className="flex flex-1 flex-col justify-center pt-10 md:pt-12">
                   <div aria-hidden className="h-px w-full max-w-xl bg-gradient-to-r from-transparent via-white/30 to-transparent" />
 
-                  <div className="mt-6">
+                  <div className="mt-10 md:mt-14">
                     <div className="flex items-start gap-2">
                       <Quote className="mt-1 h-5 w-5 shrink-0 text-white/80" aria-hidden />
                       <p className="max-w-xl font-urbanist text-xl leading-relaxed text-white/95 md:text-2xl">

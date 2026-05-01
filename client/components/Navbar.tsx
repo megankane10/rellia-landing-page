@@ -6,6 +6,7 @@ import { DEFAULT_GLOBAL_SETTINGS } from "@shared/cms/defaults"
 import { InstagramFilled, LinkedInFilled, MailFilled } from "@/components/icons/SocialIcons"
 
 const LOGO_DEFAULT = "/images/logo-rellia-footer.webp"
+/** Wordmark for transparent bar on light heroes (FAQ, story posts) */
 const LOGO_FILLED = "/images/logo-rellia-filled.webp"
 
 const navItemBase =
@@ -270,10 +271,20 @@ export default function Navbar({ ctaRadiusClassName = "rounded-full" }: NavbarPr
     pathname === "/investors" ||
     pathname === "/industry-partners" ||
     pathname === "/events" ||
-    pathname === "/programs"
+    pathname === "/programs" ||
+    pathname === "/faq" ||
+    pathname === "/careers"
 
-  const desktopTone: "light" | "dark" =
-    !scrolled && !hasTealHero ? "light" : "dark"
+  /** Light cream/white heroes (individual story posts only): transparent bar + dark nav chrome */
+  const isLightHeroNav = /^\/stories\/.+/.test(pathname)
+
+  const hasTransparentTopBar = hasTealHero || isLightHeroNav
+
+  const useLightNavChrome = isLightHeroNav && !scrolled && !mobileOpen
+
+  const desktopTone: "light" | "dark" = useLightNavChrome ? "light" : "dark"
+
+  const logoSrc = useLightNavChrome ? LOGO_FILLED : LOGO_DEFAULT
 
   const networkItems = useMemo<NetworkItem[]>(
     () => [
@@ -305,6 +316,7 @@ export default function Navbar({ ctaRadiusClassName = "rounded-full" }: NavbarPr
   const aboutItems = useMemo<NetworkItem[]>(
     () => [
       { to: "/about", label: "About Us", active: location.pathname === "/about" },
+      { to: "/careers", label: "Careers", active: location.pathname === "/careers" },
       { to: "/stories", label: "Stories", active: location.pathname === "/stories" || location.pathname.startsWith("/stories/") },
     ],
     [location.pathname],
@@ -346,11 +358,14 @@ export default function Navbar({ ctaRadiusClassName = "rounded-full" }: NavbarPr
 
   const menuIconBtnCls = cn(
     "inline-flex min-h-11 min-w-11 cursor-pointer items-center justify-center transition-[color] duration-200 motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 md:hidden",
+    mobileOpen &&
+      "text-white focus-visible:ring-rellia-mint focus-visible:ring-offset-transparent hover:text-white/90",
     !mobileOpen &&
-      (desktopTone === "dark"
-        ? "text-white focus-visible:ring-white/80 focus-visible:ring-offset-transparent hover:text-white/90"
-        : "text-rellia-teal focus-visible:ring-rellia-mint focus-visible:ring-offset-white hover:text-rellia-teal/80"),
-    mobileOpen && "text-white focus-visible:ring-rellia-mint focus-visible:ring-offset-transparent hover:text-white/90",
+      useLightNavChrome &&
+      "text-black/80 focus-visible:ring-rellia-teal focus-visible:ring-offset-transparent hover:text-black",
+    !mobileOpen &&
+      !useLightNavChrome &&
+      "text-white focus-visible:ring-white/80 focus-visible:ring-offset-transparent hover:text-white/90",
   )
 
   return (
@@ -358,14 +373,16 @@ export default function Navbar({ ctaRadiusClassName = "rounded-full" }: NavbarPr
       aria-label="Main navigation"
       className={cn(
         "fixed inset-x-0 top-0 z-[9999] transition-[background-color,backdrop-filter,border-color,box-shadow] duration-500 ease-out motion-reduce:transition-none",
-        !scrolled &&
-          (pathname === "/faq"
-            ? "bg-transparent"
-            : desktopTone === "dark"
-              ? "bg-transparent"
-              : "bg-white/85 backdrop-blur-xl border-b border-black/5"),
-        scrolled && "bg-rellia-teal shadow-[0_10px_30px_-24px_rgba(0,0,0,0.35)] backdrop-blur-2xl",
-        mobileOpen && "bg-rellia-teal shadow-[0_10px_30px_-24px_rgba(0,0,0,0.35)] backdrop-blur-2xl",
+        mobileOpen && "border-b border-white/10 bg-rellia-teal shadow-[0_10px_30px_-24px_rgba(0,0,0,0.35)] backdrop-blur-2xl",
+        !mobileOpen && scrolled && "bg-rellia-teal shadow-[0_10px_30px_-24px_rgba(0,0,0,0.35)] backdrop-blur-2xl",
+        !mobileOpen &&
+          !scrolled &&
+          hasTransparentTopBar &&
+          "border-b border-transparent bg-transparent",
+        !mobileOpen &&
+          !scrolled &&
+          !hasTransparentTopBar &&
+          "bg-rellia-teal shadow-[0_10px_30px_-24px_rgba(0,0,0,0.35)] backdrop-blur-2xl",
       )}
     >
       <a
@@ -391,11 +408,11 @@ export default function Navbar({ ctaRadiusClassName = "rounded-full" }: NavbarPr
             aria-label="Rellia Health Home"
           >
             <img
-              src={desktopTone === "light" ? LOGO_FILLED : LOGO_DEFAULT}
+              src={logoSrc}
               alt="Rellia"
               className={cn(
                 "h-11 w-auto object-contain transition-[filter] duration-300 motion-reduce:transition-none md:h-11",
-                "brightness-100",
+                logoSrc === LOGO_DEFAULT && "brightness-100",
               )}
             />
           </Link>

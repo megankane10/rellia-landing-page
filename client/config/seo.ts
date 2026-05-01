@@ -33,6 +33,12 @@ const ROUTE_SEO: Record<string, RouteSeoConfig> = {
       "Answers to common questions about Rellia Health programs, membership, events, and how we work with founders and partners.",
     indexable: true,
   },
+  "/careers": {
+    title: "Careers — Rellia Health",
+    description:
+      "Explore open roles at Rellia Health. Join a mission-driven team connecting health tech founders with clinicians, advisors, and investors.",
+    indexable: true,
+  },
   "/events": {
     title: "Events — Rellia Health",
     description:

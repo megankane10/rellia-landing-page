@@ -1,4 +1,6 @@
+import { PAGE_HEADER_DARK_SUBTITLE_CLASS, PAGE_HEADER_TITLE_SIZE_CLASS } from "@/components/PageHeader"
 import Navbar from "@/components/Navbar"
+import { cn } from "@/lib/utils"
 import Footer from "@/components/Footer"
 import ScrollReveal from "@/components/ScrollReveal"
 import RelliaAction from "@/components/RelliaAction"
@@ -55,12 +57,14 @@ export default function NetworkPartners() {
                   <Building2 className="h-4 w-4 text-rellia-mint" />
                   Partners
                 </p>
-                <h1 className="mt-6 text-rellia-cream text-5xl md:text-7xl lg:text-[84px] font-semibold leading-[0.95] tracking-tight">
+                <h1
+                  className={`mt-6 text-white font-bold leading-tight tracking-tight ${PAGE_HEADER_TITLE_SIZE_CLASS}`}
+                >
                   Reach founders at the moment
                   <br />
                   they’re making real decisions
                 </h1>
-                <p className="mt-7 font-urbanist text-white/85 text-lg md:text-2xl leading-snug max-w-2xl">
+                <p className={cn(PAGE_HEADER_DARK_SUBTITLE_CLASS, "mt-7 max-w-2xl")}>
                   Sponsor programs, provide resources, and build trusted relationships with health tech founders.
                 </p>
 
@@ -141,7 +145,7 @@ export default function NetworkPartners() {
         </section>
 
         <RelliaCta
-          title="Want to partner with the Rellia network?"
+          title="Want to **partner** with the Rellia network?"
           body="Tell us what you do and who you help. We’ll follow up with options that fit."
           primary={{ label: "Partner with Rellia", to: "/contact" }}
           secondary={{ label: "Explore the Network", to: "/network" }}

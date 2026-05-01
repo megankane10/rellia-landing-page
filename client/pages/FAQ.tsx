@@ -22,12 +22,12 @@ export default function FAQ() {
 
       <main id="main-content">
         <PageHeader
-          variant="light"
+          variant="dark"
           title={
             highlightIndex >= 0 ? (
               <>
                 {faq.title.slice(0, highlightIndex)}
-                <span className="text-rellia-teal">
+                <span className="text-rellia-mint">
                   {faq.title.slice(highlightIndex, highlightIndex + highlightPhrase.length)}
                 </span>
                 {faq.title.slice(highlightIndex + highlightPhrase.length)}

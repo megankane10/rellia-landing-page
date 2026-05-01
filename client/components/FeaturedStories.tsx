@@ -22,12 +22,15 @@ export default function FeaturedStories({
   title = "Featured Stories",
   description,
   compact = false,
+  /** Merges into the section wrapper (e.g. tighter `pt-*` after Logo Marquee on home) */
+  sectionClassName,
 }: {
   showHeading?: boolean
   showViewAll?: boolean
   title?: string
   description?: string
   compact?: boolean
+  sectionClassName?: string
 }) {
   const featured = getFeaturedStories()
   const [activeIndex, setActiveIndex] = useState(0)
@@ -70,11 +73,22 @@ export default function FeaturedStories({
     "inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-white/35 bg-white/10 text-white shadow-sm transition hover:bg-white/20 disabled:pointer-events-none disabled:opacity-40"
 
   return (
-    <section className={cn("w-full bg-white overflow-x-hidden", compact ? "py-10 md:py-14" : "py-16 md:py-24")}>
+    <section
+      className={cn(
+        "w-full overflow-x-hidden bg-white",
+        compact ? "py-10 md:py-14" : sectionClassName ? sectionClassName : "py-16 md:py-24",
+      )}
+    >
       <div className="mx-auto w-full max-w-[1300px] px-6 md:px-10">
         {showHeading ? (
           <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
-            <SectionHeading align="left" title={title} description={description} className="max-w-2xl" />
+            <SectionHeading
+              align="left"
+              title={title}
+              description={description}
+              className="max-w-2xl"
+              titleClassName="text-2xl md:text-3xl"
+            />
           </div>
         ) : null}
 

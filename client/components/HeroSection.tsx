@@ -181,12 +181,12 @@ export default function HeroSection({ content }: HeroSectionProps) {
                 setHasHeadlineRevealed(true)
                 window.setTimeout(() => setCanRotate(true), 650)
               }}
-              className="text-rellia-mint text-5xl md:text-7xl lg:text-[88px] font-host-grotesk font-medium tracking-tight leading-[0.95]"
+              className="text-rellia-mint text-4xl md:text-6xl lg:text-[72px] font-host-grotesk font-medium tracking-tight leading-[0.95]"
               aria-live="polite"
               aria-atomic="true"
             >
               <span className="block">We help you</span>
-              <span className="block min-h-[3.25rem] md:min-h-[4.1rem] lg:min-h-[5.1rem]">
+              <span className="block min-h-[2.85rem] md:min-h-[3.5rem] lg:min-h-[4.35rem]">
                 <span className="inline-grid align-baseline">
                   <AnimatePresence mode="sync" initial={false}>
                     <motion.span
@@ -211,10 +211,7 @@ export default function HeroSection({ content }: HeroSectionProps) {
             transition={reduceMotion ? undefined : { duration: 0.55, ease: [0.16, 1, 0.3, 1], delay: 0.08 }}
             className="mt-8 md:mt-9"
           >
-            <p className="font-host-grotesk font-normal text-3xl md:text-[34px] tracking-tight text-white/90">
-              You are the future of health tech.
-            </p>
-            <p className="mt-4 text-white/85 text-lg md:text-xl font-urbanist leading-relaxed max-w-2xl">
+            <p className="text-white text-xl md:text-2xl font-urbanist leading-relaxed max-w-2xl">
               Rellia helps founders achieve their milestones to launch their healthcare innovations.
             </p>
           </motion.div>

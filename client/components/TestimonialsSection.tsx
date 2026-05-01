@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react"
-import { CircleHelp, ChevronDown, ChevronLeft, ChevronRight, ChevronUp } from "lucide-react"
+import { CircleHelp, ChevronDown, ChevronLeft, ChevronRight, ChevronUp, Quote } from "lucide-react"
 import ScrollReveal from "./ScrollReveal"
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
@@ -14,6 +14,8 @@ import LogoMarquee from "@/components/LogoMarquee"
 
 const carouselArrowClass =
   "inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-black/10 bg-white text-rellia-teal shadow-sm transition hover:bg-rellia-teal hover:text-white hover:border-rellia-teal disabled:pointer-events-none disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-white motion-reduce:transition-none"
+
+const testimonialHeadingLineStops = [11, 27, 43, 59, 75, 89] as const
 
 type Testimonial = HomeTestimonial;
 
@@ -263,13 +265,47 @@ export default function TestimonialsSection({ titleLead, titleAccent, testimonia
         </div>
       </div>
 
-      <section className="w-full bg-white py-16 md:py-24 px-6 md:px-10 overflow-x-hidden">
+      <section className="w-full overflow-x-hidden bg-white px-6 pb-10 pt-16 md:pb-12 md:pt-24">
       <div className="relative max-w-[1300px] mx-auto w-full min-w-0">
-        <ScrollReveal className="mb-10 md:mb-14 flex flex-col items-center text-center">
-          <h2 className="font-host-grotesk font-semibold text-black text-3xl md:text-[40px] leading-tight tracking-tight max-w-3xl">
-            {titleLead}{" "}
-            <span className="text-rellia-teal">{titleAccent}</span>
-          </h2>
+        <ScrollReveal className="mb-10 md:mb-14">
+          <div className="relative isolate mx-auto flex w-full max-w-3xl flex-col items-center text-center">
+            <div
+              className="pointer-events-none absolute -inset-x-6 -inset-y-8 overflow-visible sm:-inset-x-10 md:-inset-x-14 md:-inset-y-10"
+              aria-hidden
+            >
+              <div
+                className="absolute left-1/2 top-[54%] w-[min(116%,520px)] -translate-x-1/2 -translate-y-1/2 md:w-[min(122%,640px)]"
+                style={{
+                  height: "min(14rem, 38vw)",
+                  background:
+                    "radial-gradient(ellipse 72% 82% at 50% 48%, rgba(157, 214, 208, 0.38) 0%, rgba(157, 214, 208, 0.14) 42%, transparent 68%)",
+                }}
+              />
+              <div className="absolute left-1/2 top-1/2 w-[158%] max-w-4xl -translate-x-1/2 -translate-y-1/2 -rotate-[14deg] opacity-[0.18] sm:opacity-[0.22] md:w-[150%] md:-rotate-[11deg] md:opacity-[0.26]">
+                <div className="relative h-[min(13.5rem,46vw)] w-full md:h-[min(15rem,40vw)]">
+                  {testimonialHeadingLineStops.map((top) => (
+                    <div
+                      key={top}
+                      className="absolute left-0 right-0 h-[1.5px] rounded-full bg-gradient-to-r from-transparent from-[5%] via-rellia-teal/30 via-[50%] to-transparent to-[95%] sm:h-px sm:via-rellia-teal/25"
+                      style={{ top: `${top}%` }}
+                    />
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <div className="relative z-[1] flex flex-col items-center">
+              <Quote
+                className="mb-5 h-9 w-9 shrink-0 text-rellia-teal md:mb-6 md:h-10 md:w-10"
+                strokeWidth={1.35}
+                aria-hidden
+              />
+              <h2 className="font-host-grotesk font-semibold text-black text-3xl md:text-[40px] leading-tight tracking-tight max-w-3xl text-balance">
+                {titleLead}{" "}
+                <span className="text-rellia-teal">{titleAccent}</span>
+              </h2>
+            </div>
+          </div>
         </ScrollReveal>
 
         <ScrollReveal>
@@ -355,8 +391,8 @@ export default function TestimonialsSection({ titleLead, titleAccent, testimonia
           </Carousel>
         </ScrollReveal>
 
-        <div className="mt-8 md:mt-10">
-          <LogoMarquee showHeading={false} sectionClassName="py-0" />
+        <div className="mt-6 md:mt-8">
+          <LogoMarquee flush showHeading={false} sectionClassName="py-0" />
         </div>
       </div>
       </section>

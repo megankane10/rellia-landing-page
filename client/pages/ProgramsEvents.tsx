@@ -97,22 +97,22 @@ export default function ProgramsEvents() {
                             key={f.value}
                             value={f.value}
                             className={cn(
-                              "relative z-10 flex-1 rounded-full px-3 py-2.5 text-center",
+                              "relative flex-1 rounded-full px-3 py-2.5 text-center",
                               "font-host-grotesk text-[12px] font-semibold uppercase tracking-[0.14em]",
                               "text-black/80 hover:text-rellia-teal",
-                              "data-[state=active]:text-white data-[state=active]:bg-transparent data-[state=active]:shadow-none",
+                              "data-[state=active]:text-white data-[state=active]:!bg-transparent data-[state=active]:shadow-none",
                               "focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-white",
                             )}
                           >
                             {programFilter === f.value ? (
                               <motion.span
                                 layoutId="programs-filter-pill"
-                                className="absolute inset-0 -z-10 rounded-full bg-rellia-teal shadow-sm"
+                                className="absolute inset-0 z-0 rounded-full bg-rellia-teal shadow-sm"
                                 transition={{ type: "spring", stiffness: 520, damping: 42 }}
                                 aria-hidden
                               />
                             ) : null}
-                            {f.label}
+                            <span className="relative z-[1]">{f.label}</span>
                           </TabsTrigger>
                         ))}
                       </TabsList>
@@ -133,22 +133,22 @@ export default function ProgramsEvents() {
                             key={f.value}
                             value={f.value}
                             className={cn(
-                              "relative z-10 rounded-full px-4 py-2.5",
+                              "relative rounded-full px-4 py-2.5",
                               "font-host-grotesk text-[12px] font-semibold uppercase tracking-[0.14em]",
                               "text-black/80 hover:text-rellia-teal",
-                              "data-[state=active]:text-white data-[state=active]:bg-transparent data-[state=active]:shadow-none",
+                              "data-[state=active]:text-white data-[state=active]:!bg-transparent data-[state=active]:shadow-none",
                               "focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-white",
                             )}
                           >
                             {programFilter === f.value ? (
                               <motion.span
                                 layoutId="programs-filter-pill"
-                                className="absolute inset-0 -z-10 rounded-full bg-rellia-teal shadow-sm"
+                                className="absolute inset-0 z-0 rounded-full bg-rellia-teal shadow-sm"
                                 transition={{ type: "spring", stiffness: 520, damping: 42 }}
                                 aria-hidden
                               />
                             ) : null}
-                            {f.label}
+                            <span className="relative z-[1]">{f.label}</span>
                           </TabsTrigger>
                         ))}
                       </TabsList>

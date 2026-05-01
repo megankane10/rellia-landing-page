@@ -2,6 +2,16 @@ import type { ReactNode } from "react"
 import ScrollReveal from "@/components/ScrollReveal"
 import { cn } from "@/lib/utils"
 
+/** Default page title size — matches Stories and standard `PageHeader` pages. Use with `font-bold leading-tight tracking-tight` plus text color. */
+export const PAGE_HEADER_TITLE_SIZE_CLASS = "text-4xl md:text-5xl lg:text-6xl"
+
+/** Default subtitle size under the page title. */
+export const PAGE_HEADER_SUBTITLE_SIZE_CLASS = "text-base md:text-lg"
+
+/** Dark hero subtitle — same rhythm as default `PageHeader` subtitle (Urbanist, relaxed, white/80). */
+export const PAGE_HEADER_DARK_SUBTITLE_CLASS =
+  "max-w-3xl font-urbanist leading-relaxed text-white/80 text-base md:text-lg"
+
 type PageHeaderVariant = "dark" | "light"
 
 export type PageHeaderProps = {
@@ -9,6 +19,9 @@ export type PageHeaderProps = {
   subtitle?: ReactNode
   variant?: PageHeaderVariant
   className?: string
+  /** Override default display title scale (e.g. tighter About page) */
+  titleClassName?: string
+  subtitleClassName?: string
 }
 
 const DARK_BG = [
@@ -23,7 +36,14 @@ const LIGHT_BG = [
   "pt-24 pb-12 md:pt-32 md:pb-16",
 ].join(" ")
 
-export default function PageHeader({ title, subtitle, variant = "dark", className }: PageHeaderProps) {
+export default function PageHeader({
+  title,
+  subtitle,
+  variant = "dark",
+  className,
+  titleClassName,
+  subtitleClassName,
+}: PageHeaderProps) {
   const isDark = variant === "dark"
 
   return (
@@ -87,7 +107,7 @@ export default function PageHeader({ title, subtitle, variant = "dark", classNam
               className={cn(
                 "relative font-bold leading-tight tracking-tight",
                 isDark ? "text-white" : "text-black",
-                "text-4xl md:text-5xl lg:text-6xl",
+                titleClassName ?? PAGE_HEADER_TITLE_SIZE_CLASS,
                 "mb-5",
               )}
             >
@@ -100,7 +120,7 @@ export default function PageHeader({ title, subtitle, variant = "dark", classNam
               className={cn(
                 "max-w-3xl font-urbanist leading-relaxed",
                 isDark ? "text-white/80" : "text-black/65",
-                "text-base md:text-lg",
+                subtitleClassName ?? PAGE_HEADER_SUBTITLE_SIZE_CLASS,
               )}
             >
               {subtitle}

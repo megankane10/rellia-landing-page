@@ -8,6 +8,7 @@ import PageTransition from "@/components/PageTransition"
 import Index from "./pages/Index"
 import About from "./pages/About"
 import FAQ from "./pages/FAQ"
+import Careers from "./pages/Careers"
 import ProgramsEvents from "./pages/ProgramsEvents"
 import ProgramsQms from "./pages/ProgramsQms"
 import Events from "./pages/Events"
@@ -83,6 +84,7 @@ export const AppRoutes = () => (
 
     <Route path="/about" element={<About />} />
     <Route path="/faq" element={<FAQ />} />
+    <Route path="/careers" element={<Careers />} />
     <Route path="/events" element={<Events />} />
     <Route path="/programs" element={<ProgramsLayout />}>
       <Route index element={<ProgramsEvents />} />

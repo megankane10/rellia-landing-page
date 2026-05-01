@@ -1,129 +1,150 @@
-import { Link } from "react-router-dom";
-import { DEFAULT_GLOBAL_SETTINGS } from "@shared/cms/defaults";
+import { Link } from "react-router-dom"
+import { DEFAULT_GLOBAL_SETTINGS } from "@shared/cms/defaults"
 import { InstagramFilled, LinkedInFilled, MailFilled } from "@/components/icons/SocialIcons"
 
 const g = DEFAULT_GLOBAL_SETTINGS
 
 export default function Footer() {
   return (
-    <footer className="bg-rellia-teal text-white pt-14 md:pt-20 pb-10 px-6 md:px-10 border-t border-white/5">
-      <div className="max-w-[1300px] mx-auto">
-        {/* Mobile header (logo + tagline first) */}
-        <div className="md:hidden mb-12 flex flex-col gap-5">
-          <Link to="/" className="flex items-center justify-start">
-            <img src="/images/hologram-logo.png" alt="Rellia" className="h-10 w-auto" />
-          </Link>
-          <p className="font-urbanist text-white/70 text-[15px] leading-relaxed">
-            {g.footerTagline}
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 mb-16">
-          <div className="hidden md:flex flex-col gap-6">
-            <Link to="/" className="flex items-center">
-              <img src="/images/hologram-logo.png" alt="Rellia" className="h-10 w-auto" />
+    <footer className="bg-rellia-greyTeal px-2 pb-3 pt-0 sm:px-4 md:px-[30px] md:pb-[15px]">
+      <div className="w-full rounded-2xl border border-white/10 bg-rellia-teal text-white shadow-[0_28px_80px_-40px_rgba(13,53,64,0.55)] md:rounded-[28px]">
+        <div className="px-4 py-10 md:px-10 md:py-16 lg:px-12">
+          {/* Mobile header (logo + tagline first) */}
+          <div className="mb-10 flex flex-col gap-4 md:hidden">
+            <Link to="/" className="flex items-center justify-start">
+              <img src="/images/hologram-logo.png" alt="Rellia" className="h-9 w-auto md:h-10" />
             </Link>
-            <p className="font-urbanist text-white/70 text-[15px] leading-relaxed max-w-[280px]">
+            <p className="font-urbanist text-[14px] leading-snug text-white/70 md:text-[15px] md:leading-relaxed">
               {g.footerTagline}
             </p>
-            <div className="flex gap-4">
-              <a
-                href={g.linkedinUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="p-2 bg-white/5 rounded-full hover:bg-white/10 transition-colors"
-                aria-label="Rellia Health on LinkedIn"
-              >
-                <LinkedInFilled className="w-5 h-5 text-white/85" />
-              </a>
-              <a
-                href={g.instagramUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="p-2 bg-white/5 rounded-full hover:bg-white/10 transition-colors"
-                aria-label="Rellia Health on Instagram"
-              >
-                <InstagramFilled className="w-5 h-5 text-white/85" />
-              </a>
-              <a
-                href={`mailto:${g.supportEmail}`}
-                className="p-2 bg-white/5 rounded-full hover:bg-white/10 transition-colors"
-                aria-label={`Email ${g.supportEmail}`}
-              >
-                <MailFilled className="w-5 h-5 text-white/85" />
-              </a>
+          </div>
+
+          <div className="mb-14 grid grid-cols-2 gap-x-6 gap-y-11 md:mb-16 md:grid-cols-2 md:gap-x-12 md:gap-y-12 lg:grid-cols-3">
+            <div className="hidden flex-col gap-6 md:flex">
+              <Link to="/" className="flex items-center">
+                <img src="/images/hologram-logo.png" alt="Rellia" className="h-10 w-auto" />
+              </Link>
+              <p className="max-w-[280px] font-urbanist text-[15px] leading-relaxed text-white/70">{g.footerTagline}</p>
+              <div className="flex gap-4">
+                <a
+                  href={g.linkedinUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="rounded-full bg-white/5 p-2 transition-colors hover:bg-white/10"
+                  aria-label="Rellia Health on LinkedIn"
+                >
+                  <LinkedInFilled className="h-5 w-5 text-white/85" />
+                </a>
+                <a
+                  href={g.instagramUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="rounded-full bg-white/5 p-2 transition-colors hover:bg-white/10"
+                  aria-label="Rellia Health on Instagram"
+                >
+                  <InstagramFilled className="h-5 w-5 text-white/85" />
+                </a>
+                <a
+                  href={`mailto:${g.supportEmail}`}
+                  className="rounded-full bg-white/5 p-2 transition-colors hover:bg-white/10"
+                  aria-label={`Email ${g.supportEmail}`}
+                >
+                  <MailFilled className="h-5 w-5 text-white/85" />
+                </a>
+              </div>
+            </div>
+
+            {/* Company */}
+            <div className="flex min-w-0 flex-col gap-4 md:gap-6">
+              <h4 className="font-host-grotesk text-lg font-bold tracking-normal text-white">
+                Company
+              </h4>
+              <nav className="flex flex-col gap-2 md:gap-3">
+                <Link
+                  to="/about"
+                  className="font-urbanist text-[14px] leading-snug text-white/75 transition-colors hover:text-rellia-mint md:text-[15px] md:leading-normal"
+                >
+                  About Us
+                </Link>
+                <Link
+                  to="/careers"
+                  className="font-urbanist text-[14px] leading-snug text-white/75 transition-colors hover:text-rellia-mint md:text-[15px] md:leading-normal"
+                >
+                  Careers
+                </Link>
+                <Link
+                  to="/terms"
+                  className="font-urbanist text-[14px] leading-snug text-white/75 transition-colors hover:text-rellia-mint md:text-[15px] md:leading-normal"
+                >
+                  Terms of Use
+                </Link>
+                <Link
+                  to="/privacy"
+                  className="font-urbanist text-[14px] leading-snug text-white/75 transition-colors hover:text-rellia-mint md:text-[15px] md:leading-normal"
+                >
+                  Privacy Policy
+                </Link>
+              </nav>
+            </div>
+
+            {/* Support */}
+            <div className="flex min-w-0 flex-col gap-4 md:gap-6">
+              <h4 className="font-host-grotesk text-lg font-bold tracking-normal text-white">
+                Support
+              </h4>
+              <nav className="flex flex-col gap-2 md:gap-3">
+                <Link
+                  to="/faq"
+                  className="font-urbanist text-[14px] leading-snug text-white/75 transition-colors hover:text-rellia-mint md:text-[15px] md:leading-normal"
+                >
+                  FAQ
+                </Link>
+                <Link
+                  to="/contact"
+                  className="font-urbanist text-[14px] leading-snug text-white/75 transition-colors hover:text-rellia-mint md:text-[15px] md:leading-normal"
+                >
+                  Contact Us
+                </Link>
+              </nav>
             </div>
           </div>
 
-          {/* Company */}
-          <div className="flex flex-col gap-6">
-            <h4 className="font-host-grotesk font-bold text-lg text-white">Company</h4>
-            <nav className="flex flex-col gap-3">
-              <Link to="/about" className="font-urbanist text-white/70 hover:text-rellia-mint transition-colors text-[15px]">About Us</Link>
-              <Link to="/terms" className="font-urbanist text-white/70 hover:text-rellia-mint transition-colors text-[15px]">
-                Terms of Use
-              </Link>
-              <Link to="/privacy" className="font-urbanist text-white/70 hover:text-rellia-mint transition-colors text-[15px]">
-                Privacy Policy
-              </Link>
-            </nav>
+          {/* Mobile socials after links, before divider */}
+          <div className="mb-10 flex items-center justify-center gap-3 md:mb-12 md:hidden">
+            <a
+              href={g.linkedinUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="rounded-full bg-white/5 p-2 transition-colors hover:bg-white/10"
+              aria-label="Rellia Health on LinkedIn"
+            >
+              <LinkedInFilled className="h-5 w-5 text-white/85" />
+            </a>
+            <a
+              href={g.instagramUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="rounded-full bg-white/5 p-2 transition-colors hover:bg-white/10"
+              aria-label="Rellia Health on Instagram"
+            >
+              <InstagramFilled className="h-5 w-5 text-white/85" />
+            </a>
+            <a
+              href={`mailto:${g.supportEmail}`}
+              className="rounded-full bg-white/5 p-2 transition-colors hover:bg-white/10"
+              aria-label={`Email ${g.supportEmail}`}
+            >
+              <MailFilled className="h-5 w-5 text-white/85" />
+            </a>
           </div>
 
-          {/* Support */}
-          <div className="flex flex-col gap-6">
-            <h4 className="font-host-grotesk font-bold text-lg text-white">Support</h4>
-            <nav className="flex flex-col gap-3">
-              <Link
-                to="/faq"
-                className="font-urbanist text-white/70 hover:text-rellia-mint transition-colors text-[15px]"
-              >
-                FAQ
-              </Link>
-              <Link
-                to="/contact"
-                className="font-urbanist text-white/70 hover:text-rellia-mint transition-colors text-[15px]"
-              >
-                Contact Us
-              </Link>
-            </nav>
+          <div className="flex items-center justify-center border-t border-white/10 pt-6 md:pt-8">
+            <p className="text-center font-urbanist text-[13px] leading-snug text-white/55 md:text-sm">
+              &copy; {new Date().getFullYear()} {g.copyrightLine}
+            </p>
           </div>
-        </div>
-
-        {/* Mobile socials after links, before divider */}
-        <div className="md:hidden mb-12 flex items-center justify-center gap-4">
-          <a
-            href={g.linkedinUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="p-2 bg-white/5 rounded-full hover:bg-white/10 transition-colors"
-            aria-label="Rellia Health on LinkedIn"
-          >
-            <LinkedInFilled className="w-5 h-5 text-white/85" />
-          </a>
-          <a
-            href={g.instagramUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="p-2 bg-white/5 rounded-full hover:bg-white/10 transition-colors"
-            aria-label="Rellia Health on Instagram"
-          >
-            <InstagramFilled className="w-5 h-5 text-white/85" />
-          </a>
-          <a
-            href={`mailto:${g.supportEmail}`}
-            className="p-2 bg-white/5 rounded-full hover:bg-white/10 transition-colors"
-            aria-label={`Email ${g.supportEmail}`}
-          >
-            <MailFilled className="w-5 h-5 text-white/85" />
-          </a>
-        </div>
-
-        <div className="pt-8 border-t border-white/10 flex items-center justify-center">
-          <p className="font-urbanist text-white/50 text-sm text-center">
-            &copy; {new Date().getFullYear()} {g.copyrightLine}
-          </p>
         </div>
       </div>
     </footer>
-  );
+  )
 }

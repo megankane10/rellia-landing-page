@@ -35,7 +35,7 @@ export default function Index() {
           titleAccent={home.testimonialsTitleAccent}
           testimonials={home.testimonials}
         />
-        <FeaturedStories />
+        <FeaturedStories sectionClassName="pb-16 pt-10 md:pb-24 md:pt-12" />
         <RelliaCta
           title={home.ctaTitle}
           primary={{ label: home.ctaButtonLabel, to: home.ctaButtonPath }}

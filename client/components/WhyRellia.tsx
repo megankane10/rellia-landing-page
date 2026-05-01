@@ -1,24 +1,38 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
-import { Link } from "react-router-dom"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import ScrollReveal from "./ScrollReveal"
 import SectionHeading from "@/components/SectionHeading"
 import { cn } from "@/lib/utils"
 import type { HomeWhyFeature } from "@shared/cms/types"
 
-type WhyRelliaProps = {
-  sectionTitle: string;
-  features: HomeWhyFeature[];
-};
+const DEFAULT_SECTION_DESCRIPTION =
+  "A curated network and practical support system to help you move through the moments that make or break a healthcare startup."
 
-export default function WhyRellia({ sectionTitle, features }: WhyRelliaProps) {
+type WhyRelliaProps = {
+  sectionTitle: string
+  features: HomeWhyFeature[]
+  /** Overrides the default SectionHeading paragraph under the title */
+  sectionDescription?: string
+  /** Per-card hero images (first four slots). When omitted, uses built-in homepage art direction */
+  cardImages?: string[]
+  /** Outer section background (e.g. careers band) */
+  sectionClassName?: string
+}
+
+export default function WhyRellia({
+  sectionTitle,
+  features,
+  sectionDescription,
+  cardImages,
+  sectionClassName,
+}: WhyRelliaProps) {
   const cards = useMemo(() => features.slice(0, 4), [features])
   const [activeIndex, setActiveIndex] = useState<number | null>(null)
   const [mobileIndex, setMobileIndex] = useState(0)
   const mobileScrollerRef = useRef<HTMLDivElement | null>(null)
   const mobileCardRefs = useRef<Array<HTMLElement | null>>([])
 
-  const imageByIndex = useMemo(
+  const defaultCardImages = useMemo(
     () => [
       "/images/whyrellia-network-2.jpg",
       "/images/whyrellia-founders-2.jpg",
@@ -27,6 +41,10 @@ export default function WhyRellia({ sectionTitle, features }: WhyRelliaProps) {
     ],
     [],
   )
+
+  const imageByIndex = useMemo(() => {
+    return cards.map((_, idx) => cardImages?.[idx] ?? defaultCardImages[idx] ?? "/images/whyrellia-network.jpg")
+  }, [cardImages, cards, defaultCardImages])
 
   const handleScrollToIndex = useCallback((idx: number) => {
     const el = mobileCardRefs.current[idx]
@@ -80,12 +98,17 @@ export default function WhyRellia({ sectionTitle, features }: WhyRelliaProps) {
   }, [cards.length])
 
   return (
-    <section className="w-full bg-rellia-cream/25 px-6 md:px-10 lg:px-10 py-16 md:py-24 overflow-x-hidden">
-      <div className="max-w-[1300px] mx-auto">
+    <section
+      className={cn(
+        "w-full overflow-x-hidden bg-rellia-cream/25 px-6 py-16 md:px-10 md:py-24 lg:px-10",
+        sectionClassName,
+      )}
+    >
+      <div className="mx-auto max-w-[1300px]">
         <SectionHeading
           align="left"
           title={sectionTitle}
-          description="A curated network and practical support system to help you move through the moments that make or break a healthcare startup."
+          description={sectionDescription ?? DEFAULT_SECTION_DESCRIPTION}
           className="mb-12 md:mb-16"
         />
 

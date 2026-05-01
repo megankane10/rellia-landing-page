@@ -1,17 +1,23 @@
-import { useEffect, useRef, ReactNode } from "react";
+import { useEffect, useRef, type HTMLAttributes, type ReactNode } from "react"
+import { useReducedMotion } from "framer-motion"
 
-interface ScrollRevealProps {
-  children: ReactNode;
-  delay?: number;
-  className?: string;
-}
+type ScrollRevealProps = {
+  children: ReactNode
+  delay?: number
+  className?: string
+  /** `ctaReveal`: slide up + unblur (e.g. bottom CTA band) */
+  variant?: "default" | "ctaReveal"
+} & Pick<HTMLAttributes<HTMLDivElement>, "aria-hidden">
 
 export default function ScrollReveal({
   children,
   delay = 0,
   className = "",
+  variant = "default",
+  "aria-hidden": ariaHidden,
 }: ScrollRevealProps) {
-  const ref = useRef<HTMLDivElement>(null);
+  const ref = useRef<HTMLDivElement>(null)
+  const reduceMotion = useReducedMotion()
 
   useEffect(() => {
     const el = ref.current;
@@ -22,7 +28,16 @@ export default function ScrollReveal({
       if (revealed) return;
       revealed = true;
       el.style.animationDelay = `${delay}s`;
-      el.classList.add("animate-fade-up");
+      if (reduceMotion) {
+        if (variant === "ctaReveal") {
+          el.classList.remove("opacity-0", "translate-y-8", "blur-[14px]")
+        } else {
+          el.classList.remove("opacity-0")
+        }
+        el.classList.add("opacity-100")
+        return
+      }
+      el.classList.add(variant === "ctaReveal" ? "animate-cta-reveal" : "animate-fade-up");
     };
 
     const observer = new IntersectionObserver(
@@ -51,14 +66,14 @@ export default function ScrollReveal({
     });
 
     return () => observer.disconnect();
-  }, [delay]);
+  }, [delay, reduceMotion, variant]);
+
+  const initialCls =
+    variant === "ctaReveal" ? "opacity-0 translate-y-8 blur-[14px]" : "opacity-0"
 
   return (
-    <div
-      ref={ref}
-      className={`opacity-0 ${className}`}
-    >
+    <div ref={ref} className={`${initialCls} ${className}`} aria-hidden={ariaHidden}>
       {children}
     </div>
-  );
+  )
 }

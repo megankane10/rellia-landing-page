@@ -56,7 +56,10 @@ export default {
           mint: "#9DD6D0",
           /** Darker mint for text on white (waitlist CTA hover, etc.) */
           mintDark: "#1A5C56",
-          cream: "#F7EFE5",
+          /** Light grey-teal wash (CTA/footer band, light headers) */
+          cream: "#EEF2F2",
+          /** Muted grey-teal band behind CTA + footer padding (continuous with footer) */
+          greyTeal: "#C5D8D5",
         },
       },
       borderRadius: {
@@ -81,6 +84,11 @@ export default {
           "0%": { opacity: "0", transform: "translateY(40px)" },
           "100%": { opacity: "1", transform: "translateY(0)" },
         },
+        /** Bottom CTA: slide up + unblur on scroll into view */
+        "cta-reveal": {
+          "0%": { opacity: "0", transform: "translateY(36px)", filter: "blur(14px)" },
+          "100%": { opacity: "1", transform: "translateY(0)", filter: "blur(0)" },
+        },
         /** Reveals text left→right as if filling with color (clip-path) */
         "healthcare-fill": {
           from: { clipPath: "inset(0 100% 0 0)" },
@@ -99,6 +107,7 @@ export default {
         marquee: "marquee 22s linear infinite",
         marqueeFast: "marquee 14s linear infinite",
         "fade-up": "fade-up 0.75s ease-out both",
+        "cta-reveal": "cta-reveal 0.95s cubic-bezier(0.22, 1, 0.36, 1) both",
         /** `both` = start state during delay (stays clipped), `forwards` = stay filled at end */
         "healthcare-fill":
           "healthcare-fill 1.15s cubic-bezier(0.22, 1, 0.36, 1) 0.65s both forwards",

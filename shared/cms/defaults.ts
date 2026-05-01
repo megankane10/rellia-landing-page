@@ -93,7 +93,7 @@ export const DEFAULT_HOME_PAGE: HomePageContent = {
         "Design the right product from the start by developing alongside healthcare practitioners",
     },
   ],
-  ctaTitle: "Are you the next Rellia Health success story?",
+  ctaTitle: "Are you the next **Rellia Health** success story?",
   ctaButtonLabel: "Apply to Join Now",
   ctaButtonPath: "/network",
   ctaImageUrl: "/images/cta-home-conference.webp",
@@ -294,7 +294,7 @@ export const DEFAULT_ABOUT_PAGE: AboutPageContent = {
       linkedinUrl: "https://forms.fillout.com/t/1GPWpbBbWcus",
     },
   ],
-  ctaTitle: "You're in the right place.",
+  ctaTitle: "You're in the **right** place.",
   ctaBody:
     "If you're a founder who wants to do this right, we have the network and expertise to make it happen.",
   ctaFounderLabel: "Apply to join as a founder",
@@ -383,7 +383,7 @@ export const DEFAULT_FAQ_PAGE: FaqPageContent = {
     "Learn more about how Rellia works and explore the different pathways available for founders, advisors, investors, and industry partners.",
   sidebarCtaLabel: "Explore the Network",
   sidebarCtaPath: "/network",
-  bottomTitle: "Every startup is different",
+  bottomTitle: "Every startup is **different**",
   bottomBody:
     "Tell us more about where you are today and where you want to be in the next 12–18 months. We'll share how Rellia can help accelerate that path, or recommend a better fit if we're not it.",
   bottomCtaLabel: "Get in Touch",
@@ -525,7 +525,7 @@ export const DEFAULT_PROGRAMS_LANDING: ProgramsLandingContent = {
       buttonText: "View Event",
     },
   ],
-  ctaTitle: "Want the full experience?",
+  ctaTitle: "Want the **full** experience?",
   ctaBody:
     "Rellia members get access to all event recordings, program discounts, and individual mentorship.",
   ctaButtonLabel: "Get Involved",
@@ -623,7 +623,7 @@ export const DEFAULT_QMS_PROGRAM: QmsProgramContent = {
     "Instructional content",
     "Frameworks & templates",
   ],
-  bottomCtaTitle: "Let's Build Your QMS",
+  bottomCtaTitle: "Let's **Build** Your QMS",
   bottomCtaBody:
     "Still have questions or want to learn more about the program? Reach out at any time to speak with us directly.",
   bottomCtaButtonLabel: "Contact",

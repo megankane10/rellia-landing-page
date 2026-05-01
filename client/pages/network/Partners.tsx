@@ -1,4 +1,6 @@
+import { PAGE_HEADER_DARK_SUBTITLE_CLASS, PAGE_HEADER_TITLE_SIZE_CLASS } from "@/components/PageHeader"
 import Navbar from "@/components/Navbar"
+import { cn } from "@/lib/utils"
 import Footer from "@/components/Footer"
 import RelliaAction from "@/components/RelliaAction"
 import { ArrowRight } from "lucide-react"
@@ -42,12 +44,14 @@ export default function Partners() {
             <Reveal>
               <div className="max-w-3xl">
                 <AiGeneratedNote />
-                <h1 className="mt-8 text-5xl md:text-7xl font-semibold tracking-tight leading-[0.95] text-[#f7efe5]">
+                <h1
+                  className={`mt-8 text-white font-bold leading-tight tracking-tight ${PAGE_HEADER_TITLE_SIZE_CLASS}`}
+                >
                   The Ecosystem
                   <br />
                   that accelerates adoption
                 </h1>
-                <p className="mt-6 font-urbanist text-white/80 text-lg md:text-2xl leading-snug">
+                <p className={cn(PAGE_HEADER_DARK_SUBTITLE_CLASS, "mt-6")}>
                   Lorem ipsum: Insert Value Prop Here—pilot programs, integration support, and credibility inside health
                   systems.
                 </p>

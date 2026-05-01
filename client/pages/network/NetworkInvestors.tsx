@@ -1,4 +1,6 @@
+import { PAGE_HEADER_DARK_SUBTITLE_CLASS, PAGE_HEADER_TITLE_SIZE_CLASS } from "@/components/PageHeader"
 import Navbar from "@/components/Navbar"
+import { cn } from "@/lib/utils"
 import Footer from "@/components/Footer"
 import ScrollReveal from "@/components/ScrollReveal"
 import RelliaAction from "@/components/RelliaAction"
@@ -55,12 +57,14 @@ export default function NetworkInvestors() {
                   <BarChart3 className="h-4 w-4 text-rellia-mint" />
                   Investors
                 </p>
-                <h1 className="mt-6 text-rellia-cream text-5xl md:text-7xl lg:text-[84px] font-semibold leading-[0.95] tracking-tight">
+                <h1
+                  className={`mt-6 text-white font-bold leading-tight tracking-tight ${PAGE_HEADER_TITLE_SIZE_CLASS}`}
+                >
                   Meet founders worth your time
                   <br />
                   before the crowd does
                 </h1>
-                <p className="mt-7 font-urbanist text-white/85 text-lg md:text-2xl leading-snug max-w-2xl">
+                <p className={cn(PAGE_HEADER_DARK_SUBTITLE_CLASS, "mt-7 max-w-2xl")}>
                   Vetted, operator-coached health tech teams—closer to real traction, clearer on the path through
                   healthcare.
                 </p>
@@ -130,7 +134,7 @@ export default function NetworkInvestors() {
         </section>
 
         <RelliaCta
-          title="Want early access to the next wave of health tech?"
+          title="Want **early access** to the next wave of health tech?"
           body="Tell us your thesis and what you’re looking for. We’ll follow up with next steps."
           primary={{ label: "Request access", to: "/contact" }}
           secondary={{ label: "Explore the Network", to: "/network" }}

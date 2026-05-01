@@ -1,3 +1,4 @@
+import type { ReactNode } from "react"
 import {
   Activity,
   BadgeCheck,
@@ -9,14 +10,15 @@ import {
 } from "lucide-react"
 import type { LucideIcon } from "lucide-react"
 import ScrollReveal from "./ScrollReveal"
+import { cn } from "@/lib/utils"
 
-type Step = {
+export type HowItWorksStep = {
   icon: LucideIcon
   title: string
   description: string
 }
 
-const steps: Step[] = [
+const defaultSteps: HowItWorksStep[] = [
   {
     icon: BriefcaseBusiness,
     title: "Product Design and Development",
@@ -73,7 +75,23 @@ const steps: Step[] = [
   },
 ]
 
-export default function HowItWorks() {
+export type HowItWorksProps = {
+  /** When set, replaces the default “How we help you…” heading block */
+  heading?: ReactNode
+  /** Subcopy under the heading */
+  subheading?: ReactNode
+  /** Custom steps (e.g. careers perks). When omitted, uses the homepage roadmap grid */
+  steps?: HowItWorksStep[]
+  /** Homepage uses 3 columns on large screens; careers uses 2×2 */
+  columns?: 2 | 3
+}
+
+export default function HowItWorks(props?: HowItWorksProps) {
+  const { heading, subheading, steps: stepsProp, columns: columnsProp } = props ?? {}
+  const steps = stepsProp ?? defaultSteps
+  /** Careers-style overrides default to 2 columns; homepage keeps three-up on large screens */
+  const columns = columnsProp ?? (stepsProp != null ? 2 : 3)
+
   return (
     <section className="relative w-full bg-rellia-teal py-16 md:py-24 px-6 md:px-10 overflow-hidden">
       <img
@@ -112,18 +130,27 @@ export default function HowItWorks() {
 
         <ScrollReveal delay={0.1}>
           <div className="mb-12 md:mb-16">
-            <h2 className="font-host-grotesk font-semibold leading-tight tracking-tight text-white text-3xl md:text-[40px]">
-              How we help you <span className="text-rellia-mint">move faster</span>
-            </h2>
-            <p className="font-urbanist font-medium leading-relaxed tracking-tight mt-4 text-white/80 text-base md:text-lg">
-              Healthcare commercialization has different rules. We give you targeted guidance in the areas that unlock the
-              next milestone.
-            </p>
+            {heading ?? (
+              <h2 className="font-host-grotesk text-3xl font-semibold leading-tight tracking-tight text-white md:text-[40px]">
+                How we help you <span className="text-rellia-mint">move faster</span>
+              </h2>
+            )}
+            {subheading ?? (
+              <p className="mt-4 font-urbanist text-base font-medium leading-relaxed tracking-tight text-white/80 md:text-lg">
+                Healthcare commercialization has different rules. We give you targeted guidance in the areas that unlock
+                the next milestone.
+              </p>
+            )}
           </div>
         </ScrollReveal>
 
         <ScrollReveal delay={0.2}>
-          <div className="grid w-full grid-cols-1 gap-6 md:grid-cols-2 md:gap-7 lg:grid-cols-3 lg:gap-8 justify-items-start">
+          <div
+            className={cn(
+              "grid w-full grid-cols-1 justify-items-start gap-6 md:grid-cols-2 md:gap-7",
+              columns === 3 && "lg:grid-cols-3 lg:gap-8",
+            )}
+          >
             {steps.map((step) => {
               const Icon = step.icon
 

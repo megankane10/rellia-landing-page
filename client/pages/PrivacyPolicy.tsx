@@ -1,6 +1,8 @@
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
-import ScrollReveal from "@/components/ScrollReveal";
+import Navbar from "@/components/Navbar"
+import Footer from "@/components/Footer"
+import ScrollReveal from "@/components/ScrollReveal"
+import { PAGE_HEADER_DARK_SUBTITLE_CLASS, PAGE_HEADER_TITLE_SIZE_CLASS } from "@/components/PageHeader"
+import { cn } from "@/lib/utils"
 
 const EFFECTIVE_DATE = "March 18, 2026";
 
@@ -298,10 +300,12 @@ export default function PrivacyPolicy() {
               <p className="text-rellia-mint/80 text-sm md:text-base font-urbanist uppercase tracking-widest mb-4">
                 Effective {EFFECTIVE_DATE}
               </p>
-              <h1 className="text-white text-4xl md:text-6xl font-bold leading-tight tracking-tight mb-6">
+              <h1
+                className={`mb-6 text-white font-bold leading-tight tracking-tight ${PAGE_HEADER_TITLE_SIZE_CLASS}`}
+              >
                 Privacy <span className="text-rellia-mint">Policy</span>
               </h1>
-              <p className="text-white/80 text-base md:text-lg max-w-2xl font-urbanist leading-relaxed">
+              <p className={cn(PAGE_HEADER_DARK_SUBTITLE_CLASS, "max-w-2xl")}>
                 Rellia Health is committed to handling your personal information with care and transparency. This
                 Privacy Policy describes how we collect, use, store, and share information in connection with our
                 incubator programs, events, community, website, and communications.

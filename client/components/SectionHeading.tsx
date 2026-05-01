@@ -9,6 +9,7 @@ export default function SectionHeading({
   tone = "dark",
   animated = true,
   className,
+  titleClassName,
 }: {
   title: string;
   description?: string;
@@ -16,6 +17,7 @@ export default function SectionHeading({
   tone?: "dark" | "light";
   animated?: boolean;
   className?: string;
+  titleClassName?: string;
 }) {
   const isCenter = align === "center";
   const isLight = tone === "light";
@@ -29,7 +31,7 @@ export default function SectionHeading({
           className={cn(
             "font-host-grotesk font-semibold leading-tight tracking-tight",
             isLight ? "text-white" : "text-black",
-            "text-3xl md:text-[40px]",
+            titleClassName ?? "text-3xl md:text-[40px]",
           )}
         />
       ) : (
@@ -37,7 +39,7 @@ export default function SectionHeading({
           className={cn(
             "font-host-grotesk font-semibold leading-tight tracking-tight",
             isLight ? "text-white" : "text-black",
-            "text-3xl md:text-[40px]",
+            titleClassName ?? "text-3xl md:text-[40px]",
           )}
         >
           {title}

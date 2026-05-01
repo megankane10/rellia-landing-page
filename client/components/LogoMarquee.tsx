@@ -39,7 +39,8 @@ const LogoItem = ({ logo }: { logo: Logo }) => (
     <img
       src={logo.src}
       alt={logo.name}
-      loading="lazy"
+      loading="eager"
+      decoding="async"
       className="h-[72px] w-auto max-w-[min(100%,18.5rem)] object-contain md:h-[88px] lg:h-[104px]"
     />
   </div>
@@ -53,6 +54,8 @@ export default function LogoMarquee({
   pauseOnHover = false,
   showHeading = true,
   sectionClassName,
+  /** No inner horizontal padding — use inside layouts that already use max-w-[1300px] + section px */
+  flush = false,
 }: {
   title?: ReactNode
   description?: string
@@ -61,6 +64,7 @@ export default function LogoMarquee({
   pauseOnHover?: boolean
   showHeading?: boolean
   sectionClassName?: string
+  flush?: boolean
 }) {
   const animationDuration = SPEED_MAP[speed]
   const animationDirection = direction === "right" ? "reverse" : "normal"
@@ -71,16 +75,20 @@ export default function LogoMarquee({
         {`
           @keyframes marquee-scroll {
             from {
-              transform: translateX(0);
+              transform: translate3d(0, 0, 0);
             }
             to {
-              transform: translateX(-50%);
+              transform: translate3d(-50%, 0, 0);
             }
           }
 
           .marquee-track {
             animation: marquee-scroll var(--marquee-duration, 40s) linear infinite;
             animation-direction: var(--marquee-direction, normal);
+            /* Compositor layer + stable subpixel loop (avoids visible snap on repeat) */
+            will-change: transform;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
           }
 
           .marquee-container:hover .marquee-track {
@@ -92,10 +100,40 @@ export default function LogoMarquee({
               animation: none;
             }
           }
+
+          /* Pixel-based fade so it stays visible on narrow screens; aligns to ~content gutter */
+          .marquee-fade-edges {
+            mask-image: linear-gradient(
+              to right,
+              transparent 0,
+              black 2.5rem,
+              black calc(100% - 2.5rem),
+              transparent 100%
+            );
+            -webkit-mask-image: linear-gradient(
+              to right,
+              transparent 0,
+              black 2.5rem,
+              black calc(100% - 2.5rem),
+              transparent 100%
+            );
+          }
+
+          @media (min-width: 768px) {
+            .marquee-fade-edges {
+              mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+              -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+            }
+          }
         `}
       </style>
 
-      <div className="mx-auto max-w-7xl px-6">
+      <div
+        className={cn(
+          "mx-auto w-full max-w-7xl",
+          flush ? "max-w-none px-0" : "px-6 md:px-10",
+        )}
+      >
         {showHeading ? (
           <div className="mb-12 text-center">
             <h2 className="mb-4 font-bold text-2xl text-foreground lg:text-3xl">
@@ -110,30 +148,35 @@ export default function LogoMarquee({
         <div
           className="marquee-container relative overflow-hidden"
           aria-label="Partner and portfolio logo marquee"
-          style={{
-            maskImage:
-              "linear-gradient(to right, transparent, black 10%, black 90%, transparent)",
-            WebkitMaskImage:
-              "linear-gradient(to right, transparent, black 10%, black 90%, transparent)",
-          }}
         >
-          <div
-            className="marquee-track flex w-max"
-            style={
-              {
-                "--marquee-duration": animationDuration,
-                "--marquee-direction": animationDirection,
-                "--marquee-pause-on-hover": pauseOnHover ? "paused" : "running",
-              } as CSSProperties
-            }
-          >
-            {logos.map((logo, index) => (
-              <LogoItem key={`first-${logo.name}-${index}`} logo={logo} />
-            ))}
-            {logos.map((logo, index) => (
-              <LogoItem key={`second-${logo.name}-${index}`} logo={logo} />
-            ))}
+          <div className="marquee-fade-edges relative overflow-hidden">
+            <div
+              className="marquee-track flex w-max"
+              style={
+                {
+                  "--marquee-duration": animationDuration,
+                  "--marquee-direction": animationDirection,
+                  "--marquee-pause-on-hover": pauseOnHover ? "paused" : "running",
+                } as CSSProperties
+              }
+            >
+              {logos.map((logo, index) => (
+                <LogoItem key={`first-${logo.name}-${index}`} logo={logo} />
+              ))}
+              {logos.map((logo, index) => (
+                <LogoItem key={`second-${logo.name}-${index}`} logo={logo} />
+              ))}
+            </div>
           </div>
+          {/* White scrim — reliable on iOS; sits above masked track, same edge as marquee */}
+          <div
+            className="pointer-events-none absolute inset-y-0 left-0 z-[2] w-10 bg-gradient-to-r from-white via-white/90 to-transparent sm:w-11 md:hidden"
+            aria-hidden
+          />
+          <div
+            className="pointer-events-none absolute inset-y-0 right-0 z-[2] w-10 bg-gradient-to-l from-white via-white/90 to-transparent sm:w-11 md:hidden"
+            aria-hidden
+          />
         </div>
       </div>
     </section>

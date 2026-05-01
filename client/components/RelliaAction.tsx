@@ -38,6 +38,12 @@ export const relliaActionVariants = cva(
           "rounded-2xl border border-blue-600/15 bg-blue-600 text-white shadow-sm hover:shadow-md hover:scale-[1.02] before:bg-blue-700 focus-visible:ring-blue-600 focus-visible:ring-offset-slate-50",
         calmSecondary:
           "rounded-2xl border border-slate-900/10 bg-white text-slate-900 hover:bg-slate-50 hover:scale-[1.02] before:bg-slate-50 focus-visible:ring-blue-600 focus-visible:ring-offset-slate-50",
+        /** Teal on cream CTA; hero-style horizontal fill on hover (mint sweep, readable on teal). */
+        creamCtaHeroFill:
+          "rounded-full border-2 border-rellia-teal bg-rellia-teal text-white hover:-translate-y-0.5 hover:bg-transparent hover:text-rellia-teal hover:border-rellia-teal hover:shadow-[0_22px_60px_-34px_rgba(15,77,77,0.32)] before:bg-rellia-mint focus-visible:ring-offset-rellia-cream",
+        /** Grey-teal band CTA: teal pill; hover reveals white horizontal fill + teal label. */
+        relliaCtaPrimary:
+          "rounded-full border-2 border-rellia-teal bg-rellia-teal text-white hover:-translate-y-0.5 hover:bg-transparent hover:text-rellia-teal hover:border-rellia-teal hover:shadow-[0_22px_60px_-34px_rgba(15,77,77,0.32)] before:bg-white focus-visible:ring-offset-rellia-greyTeal",
       },
       size: {
         comfortable: "px-8 py-4 text-base",

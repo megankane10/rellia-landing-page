@@ -1,4 +1,6 @@
+import { PAGE_HEADER_DARK_SUBTITLE_CLASS, PAGE_HEADER_TITLE_SIZE_CLASS } from "@/components/PageHeader"
 import Navbar from "@/components/Navbar"
+import { cn } from "@/lib/utils"
 import Footer from "@/components/Footer"
 import ScrollReveal from "@/components/ScrollReveal"
 import RelliaAction from "@/components/RelliaAction"
@@ -55,12 +57,14 @@ export default function NetworkAdvisors() {
                   <GraduationCap className="h-4 w-4 text-rellia-mint" />
                   Advisors
                 </p>
-                <h1 className="mt-6 text-rellia-cream text-5xl md:text-7xl lg:text-[84px] font-semibold leading-[0.95] tracking-tight">
+                <h1
+                  className={`mt-6 text-white font-bold leading-tight tracking-tight ${PAGE_HEADER_TITLE_SIZE_CLASS}`}
+                >
                   Be the person you wish you had
                   <br />
                   when you were building
                 </h1>
-                <p className="mt-7 font-urbanist text-white/85 text-lg md:text-2xl leading-snug max-w-2xl">
+                <p className={cn(PAGE_HEADER_DARK_SUBTITLE_CLASS, "mt-7 max-w-2xl")}>
                   Mentor serious health tech founders in structured, high-impact engagements—without the chaos.
                 </p>
 
@@ -131,7 +135,7 @@ export default function NetworkAdvisors() {
         </section>
 
         <RelliaCta
-          title="Want to mentor health tech founders that actually execute?"
+          title="Want to **mentor** health tech founders that actually execute?"
           body="Tell us what you’re great at. We’ll match you with founders who need exactly that."
           primary={{ label: "Express interest", to: "/contact" }}
           secondary={{ label: "Explore the Network", to: "/network" }}

@@ -5,7 +5,7 @@ import RelliaCta from "@/components/RelliaCta";
 import { Heart, Stethoscope, Globe, Zap, type LucideIcon } from "lucide-react";
 import { IconFeatureCard } from "@/components/cards/IconFeatureCard";
 import { TeamMemberCard } from "@/components/cards/TeamMemberCard";
-import PageHeader from "@/components/PageHeader";
+import PageHeader, { PAGE_HEADER_TITLE_SIZE_CLASS } from "@/components/PageHeader"
 import PillTag from "@/components/PillTag"
 import { useAboutPage } from "@/hooks/useCmsDocuments";
 import { DEFAULT_ABOUT_PAGE } from "@shared/cms/defaults";
@@ -101,20 +101,20 @@ export default function About() {
         <section className="py-20 md:py-32 bg-white">
           <div className="max-w-[1300px] mx-auto px-6 md:px-10">
             <ScrollReveal>
-              <div className="flex flex-col lg:flex-row lg:items-stretch gap-12 md:gap-16">
-                <div className="relative min-h-0 w-full lg:w-1/2 lg:flex lg:flex-col lg:justify-center lg:h-[460px]">
+              <div className="flex flex-col gap-12 md:gap-16 lg:flex-row lg:items-start">
+                <div className="relative min-h-0 w-full lg:min-w-0 lg:flex-1 lg:pr-2">
                   <div className="absolute -top-4 -left-4 h-24 w-24 rounded-full bg-rellia-mint/20 blur-2xl pointer-events-none" />
-                  <h2 className="relative text-black text-4xl md:text-5xl font-bold tracking-tight mb-8">
+                  <h2 className="relative text-black text-3xl md:text-4xl font-bold tracking-tight mb-6">
                     {about.missionTitle}
                   </h2>
-                  <div className="relative space-y-6 text-black/70 text-lg md:text-xl font-urbanist leading-relaxed">
+                  <div className="relative space-y-5 text-black/70 text-base md:text-lg font-urbanist leading-relaxed">
                     {about.missionParagraphs.map((paragraph) => (
                       <p key={paragraph.slice(0, 48)}>{paragraph}</p>
                     ))}
                   </div>
                 </div>
 
-                <div className="relative w-full overflow-hidden rounded-3xl shadow-2xl lg:w-1/2 h-[360px] sm:h-[420px] lg:h-[460px]">
+                <div className="relative h-[360px] w-full shrink-0 overflow-hidden rounded-3xl shadow-2xl sm:h-[420px] lg:h-[460px] lg:w-[42%] lg:max-w-[480px]">
                   <img
                     src={missionImageSrc}
                     alt={about.missionImageAlt}
@@ -133,7 +133,7 @@ export default function About() {
           className="relative w-full overflow-hidden bg-white"
         >
           <div className="relative w-full overflow-hidden">
-            <div className="relative w-full overflow-hidden h-[1160px] sm:h-[1020px] md:h-[980px] lg:h-[1040px]">
+            <div className="relative w-full overflow-hidden min-h-[1080px] sm:min-h-[920px] md:min-h-[900px] lg:min-h-[980px]">
             <div className="absolute inset-0 overflow-hidden" aria-hidden>
               <motion.img
                 src={valuesBgImage}
@@ -145,32 +145,34 @@ export default function About() {
               <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/30 to-black/60" />
             </div>
 
-            <div className="relative z-10 mx-auto flex h-full w-full max-w-[1300px] flex-col px-6 md:px-10 pt-12 md:pt-14 pb-14 md:pb-18">
+            <div className="relative z-10 mx-auto flex w-full max-w-[1300px] flex-col px-6 md:px-10 pt-12 md:pt-14 pb-16 md:pb-18">
               <div className="flex flex-col items-start text-left mt-8 md:mt-10 lg:mt-24">
                 <ScrollReveal>
                   <div className="mb-7 md:mb-8">
-                    <PillTag label="Values" />
+                    <PillTag label="OUR VALUES" />
                   </div>
-                  <h2 className="font-host-grotesk font-medium text-white text-4xl md:text-6xl leading-[1.05] tracking-tight max-w-4xl">
+                  <h2
+                    className={`font-host-grotesk font-bold leading-tight tracking-tight text-white max-w-4xl ${PAGE_HEADER_TITLE_SIZE_CLASS}`}
+                  >
                     {accentBetween(about.valuesSubtitle, "every", "decision")}
                   </h2>
                 </ScrollReveal>
               </div>
 
-              <div className="mt-10 sm:mt-12 lg:flex-1 lg:flex lg:items-center">
+              <div className="mt-[4.8rem] sm:mt-[6rem] md:mt-[7.2rem] lg:mt-[8.4rem] lg:flex-1 lg:flex lg:items-center">
                 <div className="w-full">
-                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 md:gap-5">
+                  <div className="grid grid-cols-1 items-start gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 md:gap-5">
                 {about.values.map((v, i) => {
                   const Icon = resolveValueIcon(v.iconKey);
 
                   return (
                     <ScrollReveal key={v.title} delay={i * 0.08}>
-                      <div className="flex h-[240px] sm:h-[240px] md:h-[260px] lg:h-[260px] flex-col rounded-2xl border border-white/18 bg-white/10 px-6 py-8 md:px-7 md:py-9 backdrop-blur-lg shadow-[0_18px_60px_-36px_rgba(0,0,0,0.65)]">
-                        <Icon className="h-6 w-6 text-rellia-mint" aria-hidden />
-                        <p className="mt-5 text-white text-lg md:text-xl font-semibold tracking-tight leading-snug">
+                      <div className="flex flex-col rounded-2xl border border-white/18 bg-white/10 px-6 py-6 md:px-7 md:py-7 backdrop-blur-lg shadow-[0_18px_60px_-36px_rgba(0,0,0,0.65)]">
+                        <Icon className="h-7 w-7 shrink-0 text-rellia-mint" aria-hidden />
+                        <p className="mt-4 text-white text-lg md:text-xl font-semibold tracking-tight leading-snug">
                           {v.title}
                         </p>
-                        <p className="mt-3 text-white/80 text-sm md:text-[15px] leading-relaxed font-urbanist overflow-hidden [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:4]">
+                        <p className="mt-3 text-white/80 text-base md:text-lg leading-relaxed font-urbanist [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:4] overflow-hidden">
                           {v.description}
                         </p>
                       </div>
@@ -187,9 +189,9 @@ export default function About() {
 
         <section className="py-20 md:py-32 bg-white">
           <div className="max-w-[1300px] mx-auto px-6 md:px-10">
-            <ScrollReveal className="text-center mb-16">
-              <h2 className="text-black text-4xl md:text-5xl font-bold tracking-tight mb-6">{about.teamTitle}</h2>
-              <p className="text-black/60 text-lg md:text-xl font-urbanist max-w-2xl mx-auto leading-relaxed">
+            <ScrollReveal className="text-center mb-12 md:mb-14">
+              <h2 className="text-black text-3xl md:text-4xl font-bold tracking-tight mb-4">{about.teamTitle}</h2>
+              <p className="text-black/60 text-base md:text-lg font-urbanist max-w-2xl mx-auto leading-relaxed">
                 {about.teamSubtitle}
               </p>
             </ScrollReveal>

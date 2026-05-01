@@ -2,6 +2,7 @@ import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion
 import { useEffect, useMemo, useRef, useState } from "react"
 import { cn } from "@/lib/utils"
 import PillTag from "@/components/PillTag"
+import { PAGE_HEADER_TITLE_SIZE_CLASS } from "@/components/PageHeader"
 
 function useCountUp(target: number, enabled: boolean, durationMs = 1200) {
   const [value, setValue] = useState(0);
@@ -175,13 +176,13 @@ export default function NetworkMetricsSection({ heading, subheading, metrics }: 
         <div className="relative z-10 mx-auto flex h-full w-full max-w-[1300px] flex-col px-6 md:px-10 pt-12 md:pt-14 pb-14 md:pb-18">
           <div className="flex flex-col items-start text-left mt-8 md:mt-10 lg:mt-24">
             <motion.div
-              initial={reduceMotion ? { opacity: 1, y: 0, filter: "blur(0px)" } : { opacity: 0, y: 22, filter: "blur(18px)" }}
+              initial={reduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 22 }}
               animate={
                 reduceMotion
-                  ? { opacity: 1, y: 0, filter: "blur(0px)" }
+                  ? { opacity: 1, y: 0 }
                   : entered
-                    ? { opacity: 1, y: 0, filter: "blur(0px)" }
-                    : { opacity: 0, y: 22, filter: "blur(18px)" }
+                    ? { opacity: 1, y: 0 }
+                    : { opacity: 0, y: 22 }
               }
               transition={reduceMotion ? undefined : { duration: 0.65, ease: [0.16, 1, 0.3, 1] }}
               className="flex flex-col items-start text-left w-full"
@@ -189,6 +190,7 @@ export default function NetworkMetricsSection({ heading, subheading, metrics }: 
               <div className="mb-7 md:mb-8">
                 <PillTag
                   label="Network impact"
+                  className="border-white/35 bg-transparent shadow-none backdrop-blur-2xl"
                   dot={
                     <motion.span
                       aria-hidden
@@ -200,7 +202,9 @@ export default function NetworkMetricsSection({ heading, subheading, metrics }: 
                   }
                 />
               </div>
-              <h2 className="font-host-grotesk font-medium text-white text-4xl md:text-6xl leading-[1.05] tracking-tight max-w-3xl">
+              <h2
+                className={`font-host-grotesk max-w-3xl font-bold leading-tight tracking-tight text-white ${PAGE_HEADER_TITLE_SIZE_CLASS}`}
+              >
                 <AccentHeading text={heading} />
               </h2>
             </motion.div>

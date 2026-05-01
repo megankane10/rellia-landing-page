@@ -1,10 +1,11 @@
+import { PAGE_HEADER_DARK_SUBTITLE_CLASS, PAGE_HEADER_TITLE_SIZE_CLASS } from "@/components/PageHeader"
 import Navbar from "@/components/Navbar"
+import { cn } from "@/lib/utils"
 import Footer from "@/components/Footer"
 import ScrollReveal from "@/components/ScrollReveal"
 import RelliaAction from "@/components/RelliaAction"
 import RelliaCta from "@/components/RelliaCta"
 import { ArrowRight, Check, Sparkles } from "lucide-react"
-import { cn } from "@/lib/utils"
 
 const HERO_IMAGE =
   "https://images.pexels.com/photos/7414216/pexels-photo-7414216.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"
@@ -56,12 +57,14 @@ export default function NetworkFounders() {
                   <Sparkles className="h-4 w-4 text-rellia-mint" />
                   Founders
                 </p>
-                <h1 className="mt-6 text-rellia-cream text-5xl md:text-7xl lg:text-[84px] font-semibold leading-[0.95] tracking-tight">
+                <h1
+                  className={`mt-6 text-white font-bold leading-tight tracking-tight ${PAGE_HEADER_TITLE_SIZE_CLASS}`}
+                >
                   You’re building in health tech.
                   <br />
                   We’ll help you ship with confidence.
                 </h1>
-                <p className="mt-7 font-urbanist text-white/85 text-lg md:text-2xl leading-snug max-w-2xl">
+                <p className={cn(PAGE_HEADER_DARK_SUBTITLE_CLASS, "mt-7 max-w-2xl")}>
                   A high-signal network of operators, clinicians, and investors focused on getting you to your next
                   milestone faster.
                 </p>
@@ -176,7 +179,7 @@ export default function NetworkFounders() {
         </section>
 
         <RelliaCta
-          title="Ready to build with the right people behind you?"
+          title="Ready to **build** with the right people behind you?"
           body="Apply to join the founders network and get the clarity, credibility, and momentum you need."
           primary={{ label: "Apply to Join", to: "/contact" }}
           secondary={{ label: "Explore the full Network", to: "/network" }}

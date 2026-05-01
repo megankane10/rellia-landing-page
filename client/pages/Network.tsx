@@ -20,6 +20,7 @@ import {
 } from "lucide-react"
 import { loadHubspotV2Script } from "@/lib/hubspotForms"
 import { DEFAULT_GLOBAL_SETTINGS } from "@shared/cms/defaults"
+import { PAGE_HEADER_DARK_SUBTITLE_CLASS, PAGE_HEADER_TITLE_SIZE_CLASS } from "@/components/PageHeader"
 
 const SUPPORT_EMAIL = DEFAULT_GLOBAL_SETTINGS.supportEmail
 
@@ -281,7 +282,12 @@ export default function Network() {
 
           <div className="relative z-10 max-w-[1300px] mx-auto px-6 md:px-10">
             <ScrollReveal>
-              <h1 className="text-white text-5xl md:text-7xl lg:text-[88px] font-extrabold leading-[0.95] tracking-tight">
+              <h1
+                className={cn(
+                  "text-white font-bold leading-tight tracking-tight",
+                  PAGE_HEADER_TITLE_SIZE_CLASS,
+                )}
+              >
                 The Rellia <br />
                 <span className="relative inline-block align-bottom">
                   <span className="text-white" aria-hidden>
@@ -293,7 +299,7 @@ export default function Network() {
                 </span>
               </h1>
 
-              <p className="mt-8 text-white/85 text-xl md:text-2xl font-urbanist leading-snug max-w-2xl">
+              <p className={cn(PAGE_HEADER_DARK_SUBTITLE_CLASS, "mt-8 max-w-2xl")}>
                 Built for the people building the future of health.
               </p>
             </ScrollReveal>
@@ -678,14 +684,14 @@ export default function Network() {
           </div>
         </section>
 
-        <section id="how-they-work-together" className="scroll-mt-24 md:scroll-mt-28">
+        <div id="how-they-work-together" className="scroll-mt-24 md:scroll-mt-28">
           <RelliaCta
-            title="One network. Four doors in."
+            title="One **network**. Four **doors** in."
             body="Founders, advisors, investors, and industry partners all showing up for the same reason - to move health innovation forward. That's what this community here for."
             primary={{ label: "Learn About Rellia", to: "/about" }}
             secondary={{ label: "Not sure where you fit? Contact us!", to: "/contact" }}
           />
-        </section>
+        </div>
       </main>
 
       <Footer />
