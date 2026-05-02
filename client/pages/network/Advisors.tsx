@@ -184,7 +184,7 @@ export default function Advisors() {
         <PageHeader
           title={
             <>
-              Guidance from operators who&apos;ve <span className="text-rellia-mint">lived the work</span>
+              Some people are just wired to help others succeed.
             </>
           }
           subtitle={

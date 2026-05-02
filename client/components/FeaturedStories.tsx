@@ -22,6 +22,7 @@ export default function FeaturedStories({
   title = "Featured Stories",
   description,
   compact = false,
+  viewAllTo = "/stories",
   /** Merges into the section wrapper (e.g. tighter `pt-*` after Logo Marquee on home) */
   sectionClassName,
 }: {
@@ -30,6 +31,7 @@ export default function FeaturedStories({
   title?: string
   description?: string
   compact?: boolean
+  viewAllTo?: string
   sectionClassName?: string
 }) {
   const featured = getFeaturedStories()
@@ -168,7 +170,7 @@ export default function FeaturedStories({
                             size="comfortable"
                             className="md:px-7 border-white/45 text-white hover:border-white/80"
                           >
-                            <Link to="/stories" aria-label="View all stories">
+                            <Link to={viewAllTo} aria-label="View all stories">
                               View all
                             </Link>
                           </RelliaAction>
@@ -187,11 +189,11 @@ export default function FeaturedStories({
 
                           {showViewAll ? (
                             <Link
-                              to="/stories"
+                              to={viewAllTo}
                               className="inline-flex items-center gap-2 font-host-grotesk text-sm font-semibold text-white hover:underline hover:underline-offset-4"
                               aria-label="View all stories"
                             >
-                              Read all <ArrowRight className="h-4 w-4" aria-hidden />
+                              View all <ArrowRight className="h-4 w-4" aria-hidden />
                             </Link>
                           ) : null}
                         </div>

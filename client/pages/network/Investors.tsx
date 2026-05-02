@@ -209,7 +209,7 @@ export default function Investors() {
         <PageHeader
           title={
             <>
-              Invest where operators <span className="text-rellia-mint">already add signal</span>
+              Stop sorting through cold pitch decks.
             </>
           }
           subtitle={

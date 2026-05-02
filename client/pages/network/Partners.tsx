@@ -260,7 +260,7 @@ export default function Partners() {
         <PageHeader
           title={
             <>
-              Industry partners for <span className="text-rellia-mint">real adoption</span>
+              Reach the health tech founders <span className="text-rellia-mint">who need you.</span>
             </>
           }
           subtitle="Pilot design, integration support, and enterprise credibility—so promising products don’t die in procurement limbo."

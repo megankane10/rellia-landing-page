@@ -148,7 +148,7 @@ export default function About() {
                       <div
                         className={cn(
                           relliaTealGlassCardClass,
-                          "flex h-full min-h-[300px] flex-col px-6 py-9 md:min-h-[320px] md:px-7 md:py-10",
+                          "flex h-full min-h-[260px] flex-col px-6 py-7 md:min-h-[280px] md:px-7 md:py-8",
                         )}
                       >
                         <Icon

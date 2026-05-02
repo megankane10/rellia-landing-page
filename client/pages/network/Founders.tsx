@@ -5,29 +5,36 @@ import SectionHeading from "@/components/SectionHeading"
 import MembershipPathTimeline from "@/components/MembershipPathTimeline"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
+import LogoMarquee from "@/components/LogoMarquee"
 import RelliaAction from "@/components/RelliaAction"
 import RelliaCta from "@/components/RelliaCta"
 import { relliaTealGlassCardClass } from "@/lib/relliaTealGlassCard"
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { cn } from "@/lib/utils"
 import {
   ArrowRight,
   BookOpen,
+  Check,
   CheckCircle2,
   GraduationCap,
+  Hammer,
+  Lightbulb,
   Mail,
   MessagesSquare,
   Percent,
+  Rocket,
+  ShieldCheck,
+  Stethoscope,
+  Target,
   UserPlus,
   Users,
   Video,
+  X,
 } from "lucide-react"
 import { Link } from "react-router-dom"
 import ScrollReveal from "@/components/ScrollReveal"
 import { CreamSection, LightSection, Reveal } from "./_shared"
 
-const HERO_FALLBACK =
-  "https://images.pexels.com/photos/7414216/pexels-photo-7414216.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=1400"
+const HERO_FALLBACK = "/images/founders-header.jpg"
 
 const ELIGIBILITY_CATEGORIES = [
   "Digital health & care delivery software",
@@ -169,22 +176,118 @@ const ENGAGEMENT = [
   },
 ] as const
 
-function FoundersHero() {
-  const heroSrc = usePexelsPhoto({
-    query: "health technology startup team collaboration",
-    fallbackUrl: HERO_FALLBACK,
+const CONSULTING_FEATURES = [
+  {
+    title: "Regulatory + evidence planning",
+    body: "QMS foundations, pathway mapping, and study planning you can take to diligence and buyers.",
+    icon: CheckCircle2,
+  },
+  {
+    title: "Narrative + diligence preparation",
+    body: "Positioning, milestones, and materials built for healthcare scrutiny—not pitch-deck theater.",
+    icon: BookOpen,
+  },
+  {
+    title: "Commercial + buyer workflow",
+    body: "Procurement reality checks, pricing logic, and adoption constraints that show up in pilots.",
+    icon: Users,
+  },
+  {
+    title: "Warm intros (when you're ready)",
+    body: "Introductions matched to your roadmap so you talk to the right operators, partners, and investors.",
+    icon: UserPlus,
+  },
+] as const
+
+function DeeperHelpValuesSection() {
+  const bgSrc = usePexelsPhoto({
+    query: "healthcare startup team meeting",
+    fallbackUrl: "https://images.pexels.com/photos/3184325/pexels-photo-3184325.jpeg?auto=compress&cs=tinysrgb&w=1600",
     orientation: "landscape",
   })
 
   return (
-    <section className="relative overflow-hidden bg-rellia-teal pt-[72px] md:pt-[86px]">
+    <section className="relative w-full overflow-hidden bg-white">
+      <div className="relative w-full overflow-hidden">
+        <div className="relative min-h-[880px] w-full overflow-hidden sm:min-h-[920px] md:min-h-[900px] lg:min-h-[980px]">
+          <div className="absolute inset-0 overflow-hidden" aria-hidden>
+            <img
+              src={bgSrc}
+              alt=""
+              className="h-full w-full object-cover scale-[1.12] object-[55%_50%]"
+              loading="lazy"
+            />
+            <div className="absolute inset-0 bg-rellia-teal/35" />
+            <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/30 to-black/60" />
+          </div>
+
+          <div className="relative z-10 mx-auto flex w-full max-w-[1300px] flex-col px-6 pb-16 pt-12 md:px-10 md:pb-18 md:pt-14">
+            <div className="flex flex-col items-start text-left mt-8 md:mt-10 lg:mt-24">
+              <ScrollReveal>
+                <div className="mb-7 md:mb-8">
+                  <NetworkEyebrow label="1:1 depth" tone="onDark" />
+                </div>
+                <h2 className={cn("max-w-4xl font-host-grotesk font-bold leading-tight tracking-tight text-white", PAGE_HEADER_TITLE_SIZE_CLASS)}>
+                  Need deeper help?
+                </h2>
+                <p className="mt-5 max-w-2xl font-urbanist text-lg leading-relaxed text-white/80 md:text-xl">
+                  Scoped working sessions beyond community rhythm—clear deliverables for the milestone you&apos;re staring down.
+                </p>
+                <RelliaAction asChild variant="mintOnTealStrip" size="comfortable" className="mt-8">
+                  <Link to="/consulting" className="inline-flex cursor-pointer items-center gap-2" aria-label="Explore consulting">
+                    Explore consulting
+                    <ArrowRight className="h-4 w-4" aria-hidden />
+                  </Link>
+                </RelliaAction>
+              </ScrollReveal>
+            </div>
+
+            <div className="mt-12 sm:mt-[4.8rem] md:mt-[7.2rem] lg:mt-[8.4rem] lg:flex lg:flex-1 lg:items-center">
+              <div className="w-full">
+                <div className="grid grid-cols-1 items-stretch gap-4 sm:grid-cols-2 md:gap-5 lg:grid-cols-3 xl:grid-cols-4">
+                  {CONSULTING_FEATURES.map((v, i) => {
+                    const Icon = v.icon
+                    return (
+                      <ScrollReveal key={v.title} delay={i * 0.08} className="h-full">
+                        <div
+                          className={cn(
+                            relliaTealGlassCardClass,
+                            "flex h-full min-h-[260px] flex-col px-6 py-7 md:min-h-[280px] md:px-7 md:py-8",
+                          )}
+                        >
+                          <Icon className="h-6 w-6 shrink-0 text-rellia-mint sm:h-7 sm:w-7" aria-hidden />
+                          <p className="mt-3 font-host-grotesk text-base font-semibold leading-snug tracking-tight text-white sm:mt-4 sm:text-lg md:text-xl">
+                            {v.title}
+                          </p>
+                          <p className="mt-2 flex-1 font-urbanist text-sm leading-normal text-white/80 sm:mt-3 sm:text-base md:text-lg">
+                            {v.body}
+                          </p>
+                        </div>
+                      </ScrollReveal>
+                    )
+                  })}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+function FoundersHero() {
+  const heroSrc = HERO_FALLBACK
+
+  return (
+    <section className="relative overflow-hidden bg-rellia-teal pt-[72px] md:pt-[86px] lg:flex lg:flex-1 lg:flex-col lg:min-h-0 lg:pt-[96px]">
       <img
         src={heroSrc}
         alt=""
-        className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-40"
+        className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-60"
       />
-      <div className="absolute inset-0 bg-gradient-to-br from-rellia-teal/[0.97] via-rellia-teal/85 to-[#0a2830]/90" aria-hidden />
-      <div aria-hidden className="pointer-events-none absolute inset-0 opacity-30 [background-image:radial-gradient(circle_at_20%_20%,rgba(167,219,214,0.35),transparent_50%),radial-gradient(circle_at_85%_30%,rgba(255,255,255,0.12),transparent_45%)]" />
+      <div className="absolute inset-0 bg-gradient-to-br from-rellia-teal/[0.88] via-rellia-teal/72 to-[#0a2830]/82" aria-hidden />
+      <div aria-hidden className="pointer-events-none absolute inset-0 opacity-35 [background-image:radial-gradient(circle_at_20%_20%,rgba(167,219,214,0.35),transparent_50%),radial-gradient(circle_at_85%_30%,rgba(255,255,255,0.14),transparent_45%)]" />
       <img
         src="/images/hologram-logo.png"
         alt=""
@@ -192,7 +295,7 @@ function FoundersHero() {
         className="pointer-events-none absolute -right-16 bottom-0 w-[min(52vw,420px)] opacity-[0.07] md:right-0"
       />
 
-      <div className="relative z-10 mx-auto max-w-[1300px] px-6 pb-20 pt-10 md:px-10 md:pb-28 md:pt-14">
+      <div className="relative z-10 mx-auto max-w-[1300px] px-6 pb-20 pt-10 md:px-10 md:pb-28 md:pt-14 lg:flex lg:flex-1 lg:flex-col lg:justify-center lg:pb-20 lg:pt-0">
         <NetworkEyebrow label="Founders" tone="onDark" className="mb-6 md:mb-8" />
         <h1
           className={cn(
@@ -200,22 +303,27 @@ function FoundersHero() {
             PAGE_HEADER_TITLE_SIZE_CLASS,
           )}
         >
-          The home for <span className="text-rellia-mint">health tech founders</span>
+          Are you building in <span className="text-rellia-mint">health tech?</span>
         </h1>
         <p className={cn("mt-6 max-w-2xl", PAGE_HEADER_DARK_SUBTITLE_CLASS)}>
           You&apos;re building something that can change healthcare. We bring the experts, programs, and connections to help
           you get there.
         </p>
         <div className="mt-10 flex flex-wrap gap-3">
-          <RelliaAction asChild variant="mintOnTealStrip" size="comfortable">
+          <RelliaAction asChild variant="mintOnTealStrip" size="comfortable" className="min-w-[220px] justify-center">
             <Link to="/apply" className="inline-flex cursor-pointer items-center gap-2" aria-label="Apply to join Rellia">
               Apply to join
               <ArrowRight className="h-4 w-4" aria-hidden />
             </Link>
           </RelliaAction>
-          <RelliaAction asChild variant="heroGhostOnTeal" size="comfortable">
-            <Link to="/founders/directory" className="cursor-pointer">
-              Browse founder directory
+          <RelliaAction
+            asChild
+            variant="heroGhostOnTeal"
+            size="comfortable"
+            className="min-w-[220px] justify-center border-white/45 hover:border-white/70"
+          >
+            <Link to="/founders/directory" className="inline-flex cursor-pointer items-center justify-center">
+              Browse startups
             </Link>
           </RelliaAction>
         </div>
@@ -281,7 +389,7 @@ function EngageTealBand() {
 
       <div className="relative z-10 mx-auto max-w-[1300px]">
         <ScrollReveal>
-          <div className="mb-12 md:mb-14">
+          <div className="mb-8 md:mb-10">
             <NetworkEyebrow label="Engage" tone="onDark" />
             <h2 className="mt-5 font-host-grotesk text-3xl font-semibold leading-tight tracking-tight text-white md:text-[40px]">
               How to <span className="text-rellia-mint">plug in</span> this week
@@ -293,7 +401,7 @@ function EngageTealBand() {
         </ScrollReveal>
 
         <ScrollReveal delay={0.12}>
-          <div className="grid grid-cols-1 gap-7 md:grid-cols-2 lg:grid-cols-4 lg:gap-6">
+          <div className="mt-16 grid grid-cols-1 gap-7 md:mt-20 md:grid-cols-2 lg:mt-24 lg:grid-cols-4 lg:gap-6">
             {ENGAGEMENT.map((item) => {
               const Icon = item.icon
               return (
@@ -332,7 +440,7 @@ function MembershipDifferentSection() {
           description="Operator-led support in a community where quality is defended by application review—not open signup churn."
           className="mt-5"
         />
-        <div className="mt-14 grid grid-cols-1 gap-12 sm:grid-cols-2 md:gap-x-14 md:gap-y-12 lg:gap-x-16">
+        <div className="mt-20 grid grid-cols-1 gap-12 sm:grid-cols-2 md:mt-24 md:gap-x-14 md:gap-y-12 lg:mt-28 lg:gap-x-16">
           {MEMBERSHIP_VALUE_PROPS.map((item, idx) => {
             const Icon = item.icon
             return (
@@ -352,73 +460,93 @@ function MembershipDifferentSection() {
 }
 
 function JourneySplitSection() {
-  const visualSrc = usePexelsPhoto({
-    query: "healthcare startup roadmap planning whiteboard",
-    fallbackUrl: "https://images.pexels.com/photos/3184296/pexels-photo-3184296.jpeg?auto=compress&cs=tinysrgb&w=1200",
-    orientation: "landscape",
-  })
+  const relliaSteps = JOURNEY_TIMELINE.filter((s) => s.zone === "rellia")
+  const outsideSteps = JOURNEY_TIMELINE.filter((s) => s.zone === "outside")
+
+  const journeyIconById = {
+    idea: Lightbulb,
+    edu: GraduationCap,
+    problem: MessagesSquare,
+    mvp: Hammer,
+    feedback: MessagesSquare,
+    funding: Percent,
+    reg: ShieldCheck,
+    clinical: Stethoscope,
+    commercial: Target,
+    launch: Rocket,
+  } satisfies Record<JourneyStep["id"], typeof Lightbulb>
 
   return (
-    <LightSection className="bg-rellia-cream/20">
+    <LightSection className="bg-rellia-cream/20 py-14 md:py-20">
       <div className="mx-auto max-w-[1300px]">
-        <div className="grid gap-12 lg:grid-cols-[1fr_380px] lg:gap-14 xl:grid-cols-[1fr_min(40%,440px)]">
-          <div>
-            <NetworkEyebrow label="Journey" tone="onLight" />
-            <SectionHeading
-              animated={false}
-              title="Where Rellia meets your trajectory"
-              description="Early discovery stays yours. Once you have product direction, we compound through MVP, evidence, regulation, and commercial traction."
-              className="mt-5"
-            />
+        <NetworkEyebrow label="Journey" tone="onLight" />
+        <SectionHeading
+          animated={false}
+          title="Where Rellia meets your trajectory"
+          description="We help you execute in healthcare complexity once you have direction—without replacing early discovery."
+          className="mt-5 max-w-3xl"
+        />
 
-            <div className="mt-8 flex gap-2 overflow-x-auto pb-2 [scrollbar-width:thin] md:flex-wrap md:overflow-visible">
-              {JOURNEY_TIMELINE.map((m) => (
-                <div
-                  key={m.id}
-                  className={cn(
-                    "shrink-0 rounded-full border px-3 py-1.5 font-host-grotesk text-xs font-semibold md:text-sm",
-                    m.zone === "outside"
-                      ? "border-black/15 bg-black/[0.04] text-black/45"
-                      : "border-rellia-mint/60 bg-rellia-mint/20 text-rellia-teal",
-                  )}
-                >
-                  {m.label}
-                </div>
-              ))}
+        <div className="mt-16 space-y-12 md:mt-20 md:space-y-16">
+          <div className="grid grid-cols-1 gap-7 lg:grid-cols-[200px_1fr] lg:gap-12">
+            <div>
+              <p className="font-host-grotesk text-base font-semibold uppercase tracking-[0.14em] text-black/55">
+                You own
+              </p>
+              <p className="mt-3 font-urbanist text-base leading-relaxed text-black/70">
+                We won&apos;t replace early thinking—problem selection, learning, and narrative formation stays yours.
+              </p>
             </div>
 
-            <Accordion type="multiple" className="mt-10 space-y-2">
-              {JOURNEY_TIMELINE.map((m) => (
-                <AccordionItem
-                  key={m.id}
-                  value={m.id}
-                  className="overflow-hidden rounded-2xl border border-black/10 bg-white shadow-sm"
-                >
-                  <AccordionTrigger className="px-5 py-4 text-left hover:no-underline md:px-6">
-                    <span className="flex w-full flex-1 items-center justify-between gap-3">
-                      <span className="font-host-grotesk text-base font-semibold text-rellia-teal md:text-lg">{m.label}</span>
-                      <span
-                        className={cn(
-                          "shrink-0 rounded-full px-2.5 py-1 font-urbanist text-[10px] font-bold uppercase tracking-wide md:text-[11px]",
-                          m.zone === "outside" ? "bg-black/[0.06] text-black/50" : "bg-rellia-mint/40 text-rellia-teal",
-                        )}
-                      >
-                        {m.zone === "outside" ? "Discovery" : "Rellia"}
-                      </span>
+            <div className="grid grid-cols-1 justify-items-start gap-10 sm:grid-cols-2 sm:justify-items-end sm:gap-6 xl:grid-cols-3">
+              {outsideSteps.map((m) => {
+                const Icon = journeyIconById[m.id]
+                return (
+                  <div key={m.id} className="w-full max-w-[280px] text-left">
+                    <span className="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-rellia-teal/5 text-rellia-teal">
+                      <Icon className="h-5 w-5" aria-hidden />
                     </span>
-                  </AccordionTrigger>
-                  <AccordionContent className="px-5 pb-5 font-urbanist leading-relaxed text-black/75 md:px-6">
-                    {m.detail}
-                  </AccordionContent>
-                </AccordionItem>
-              ))}
-            </Accordion>
+                    <p className="mt-3 font-host-grotesk text-lg font-semibold leading-snug text-black">
+                      {m.label}
+                    </p>
+                    <p className="mt-1.5 font-urbanist text-sm leading-relaxed text-black/65">
+                      {m.detail}
+                    </p>
+                  </div>
+                )
+              })}
+            </div>
           </div>
 
-          <div className="relative lg:sticky lg:top-28">
-            <div className="overflow-hidden rounded-[28px] border border-black/10 shadow-xl">
-              <img src={visualSrc} alt="" className="aspect-[4/5] w-full object-cover lg:aspect-[3/4]" />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/35 via-transparent to-transparent" aria-hidden />
+          <div className="h-px w-full bg-black/10" aria-hidden />
+
+          <div className="grid grid-cols-1 gap-7 lg:grid-cols-[200px_1fr] lg:gap-12">
+            <div>
+              <p className="font-host-grotesk text-base font-semibold uppercase tracking-[0.14em] text-rellia-teal/80">
+                We help with
+              </p>
+              <p className="mt-3 font-urbanist text-base leading-relaxed text-black/70">
+                Programs, operators, and warm intros aligned to milestones that survive clinical, regulatory, and buyer scrutiny.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 justify-items-start gap-10 sm:grid-cols-2 sm:justify-items-end sm:gap-6 xl:grid-cols-3">
+              {relliaSteps.map((m) => {
+                const Icon = journeyIconById[m.id]
+                return (
+                  <div key={m.id} className="w-full max-w-[280px] text-left">
+                    <span className="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-rellia-teal text-white">
+                      <Icon className="h-5 w-5" aria-hidden />
+                    </span>
+                    <p className="mt-3 font-host-grotesk text-lg font-semibold leading-snug text-rellia-teal">
+                      {m.label}
+                    </p>
+                    <p className="mt-1.5 font-urbanist text-sm leading-relaxed text-rellia-teal/80">
+                      {m.detail}
+                    </p>
+                  </div>
+                )
+              })}
             </div>
           </div>
         </div>
@@ -433,7 +561,14 @@ export default function Founders() {
       <Navbar />
 
       <main id="main-content">
-        <FoundersHero />
+        <div className="lg:flex lg:min-h-screen lg:flex-col">
+          <FoundersHero />
+          <LogoMarquee
+            showHeading={false}
+            density="compact"
+            sectionClassName="border-b border-black/[0.06] bg-white py-6 md:py-8 lg:flex lg:h-[18vh] lg:min-h-[140px] lg:items-center lg:py-0"
+          />
+        </div>
         <EligibilitySection />
         <EngageTealBand />
         <MembershipDifferentSection />
@@ -452,78 +587,75 @@ export default function Founders() {
 
         <JourneySplitSection />
 
-        <CreamSection>
-          <div className="mx-auto grid max-w-[1300px] gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
-            <Reveal>
-              <NetworkEyebrow label="1:1 depth" tone="onLight" />
-              <h2 className="mt-5 font-host-grotesk text-3xl font-semibold tracking-tight text-black md:text-[40px]">
-                Need <span className="text-rellia-teal">deeper</span> support?
-              </h2>
-              <p className="mt-4 font-urbanist text-lg leading-relaxed text-black/70">
-                Focused working sessions beyond community rhythm—regulatory planning, narrative, diligence prep—with specialists for scoped engagements.
-              </p>
-              <RelliaAction asChild variant="tealFilledLift" size="comfortable" className="mt-8">
-                <Link to="/consulting" className="cursor-pointer">
-                  Explore consulting
-                  <ArrowRight className="h-4 w-4" aria-hidden />
-                </Link>
-              </RelliaAction>
-            </Reveal>
-            <Reveal delay={0.08}>
-              <div className={cn(relliaTealGlassCardClass, "relative overflow-hidden border-white/30 p-8 md:p-10")}>
-                <div aria-hidden className="pointer-events-none absolute -right-10 -top-10 h-40 w-40 rounded-full bg-rellia-mint/30 blur-3xl" />
-                <Users className="relative h-10 w-10 text-rellia-teal" aria-hidden />
-                <p className="relative mt-4 font-host-grotesk text-xl font-semibold text-rellia-teal">Consulting snapshot</p>
-                <p className="relative mt-3 font-urbanist leading-relaxed text-black/75">
-                  Scoped deliverables and senior judgment on the milestone you are staring down—not an endless retainer.
-                </p>
-              </div>
-            </Reveal>
-          </div>
-        </CreamSection>
+        <DeeperHelpValuesSection />
 
         <LightSection>
           <div className="mx-auto max-w-[1300px]">
-            <div className="grid gap-12 lg:grid-cols-2 lg:gap-16">
-              <Reveal>
-                <NetworkEyebrow label="Directories" tone="onLight" />
-                <SectionHeading
-                  animated={false}
-                  title="Explore founders and advisors"
-                  description="See who is building alongside you—and browse mentors by expertise before you apply for intros."
-                  className="mt-5"
-                />
-                <div className="mt-10 flex flex-col gap-4 sm:flex-row sm:flex-wrap">
-                  <RelliaAction asChild variant="outlineOnWhite" size="comfortable">
-                    <Link to="/founders/directory" className="cursor-pointer">
-                      Founder directory
-                    </Link>
-                  </RelliaAction>
-                  <RelliaAction asChild variant="tealFilledLift" size="comfortable">
-                    <Link to="/advisors/directory" className="cursor-pointer">
-                      Advisor directory
-                    </Link>
-                  </RelliaAction>
-                </div>
-              </Reveal>
-              <Reveal delay={0.06}>
-                <div className="flex h-full flex-col justify-center rounded-[28px] border border-black/10 bg-gradient-to-br from-rellia-teal to-[#0a2830] p-8 text-white shadow-xl md:p-12">
-                  <NetworkEyebrow label="Warm intros" tone="onDark" />
-                  <p className="mt-6 font-host-grotesk text-2xl font-semibold leading-snug md:text-3xl">
-                    Meet operators who&apos;ve shipped in your lane.
-                  </p>
-                  <p className="mt-4 font-urbanist leading-relaxed text-white/85">
-                    The advisor directory shows regulatory, clinical, GTM, and technical depth—apply so we can route you intentionally.
-                  </p>
-                  <Link
-                    to="/advisors/directory"
-                    className="mt-8 inline-flex items-center gap-2 font-host-grotesk font-semibold text-rellia-mint underline-offset-4 transition hover:underline cursor-pointer"
-                  >
-                    Open advisor directory
-                    <ArrowRight className="h-4 w-4" aria-hidden />
-                  </Link>
-                </div>
-              </Reveal>
+            <Reveal>
+              <NetworkEyebrow label="Directories" tone="onLight" />
+              <SectionHeading
+                animated={false}
+                title="Explore the network"
+                description="Browse startups and advisors—then apply when you want curated intros and the right programming for your stage."
+                className="mt-5"
+              />
+            </Reveal>
+
+            <div className="mt-14 grid grid-cols-1 gap-6 md:mt-16 md:grid-cols-2 md:gap-7">
+              {[
+                {
+                  label: "Founders",
+                  title: "See what founders are building",
+                  subtitle: "Search by category, stage, and collaboration notes.",
+                  to: "/founders/directory",
+                  imageSrc: "/images/founders-header.jpg",
+                },
+                {
+                  label: "Advisors",
+                  title: "Find the operators you want",
+                  subtitle: "Browse mentors by focus area, industry, and style.",
+                  to: "/advisors/directory",
+                  imageSrc: "/images/paths-advisor-pexels.jpg",
+                },
+              ].map((card, idx) => (
+                <Reveal key={card.to} delay={0.06 * idx}>
+                  <article className="group relative overflow-hidden rounded-[28px] bg-white shadow-sm transition-[transform,box-shadow] duration-300 hover:-translate-y-[1px] hover:shadow-md motion-reduce:transition-none">
+                    <div className="relative aspect-[5/4] w-full overflow-hidden md:aspect-[4/3]">
+                      <img
+                        src={card.imageSrc}
+                        alt=""
+                        className="h-full w-full object-cover transition duration-500 ease-out group-hover:scale-[1.03] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
+                        loading="lazy"
+                      />
+                      <div aria-hidden className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/70 via-black/25 to-transparent" />
+
+                      <div className="absolute left-5 top-5 inline-flex items-center rounded-full bg-black/45 px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-white/90 backdrop-blur md:left-6 md:top-6">
+                        {card.label}
+                      </div>
+
+                      <div className="absolute inset-x-0 bottom-0 p-5 md:p-6">
+                        <p className="font-host-grotesk text-2xl font-semibold tracking-tight text-white md:text-3xl">
+                          {card.title}
+                        </p>
+                        <p className="mt-2 max-w-[44ch] font-urbanist text-sm leading-relaxed text-white/85 md:text-base">
+                          {card.subtitle}
+                        </p>
+
+                        <RelliaAction
+                          asChild
+                          variant="relliaCtaSecondary"
+                          size="compact"
+                          className="mt-5 w-fit px-5 py-3 text-sm shadow-sm"
+                        >
+                          <Link to={card.to} className="inline-flex cursor-pointer items-center justify-center" aria-label={card.label}>
+                            Browse {card.label} directory
+                          </Link>
+                        </RelliaAction>
+                      </div>
+                    </div>
+                  </article>
+                </Reveal>
+              ))}
             </div>
           </div>
         </LightSection>

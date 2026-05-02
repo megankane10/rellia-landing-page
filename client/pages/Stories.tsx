@@ -126,9 +126,9 @@ export default function Stories() {
           subtitle="The latest founder spotlights, industry insights, & program updates. Stay current with the people and ideas shaping the future of health."
         />
 
-        <FeaturedStories showViewAll={false} />
+        <FeaturedStories showViewAll viewAllTo="#all-stories" />
 
-        <section className="px-6 md:px-10 pt-8 md:pt-10 pb-16 md:pb-20 bg-white">
+        <section id="all-stories" className="px-6 md:px-10 pt-8 md:pt-10 pb-16 md:pb-20 bg-white">
           <div className="max-w-[1300px] mx-auto">
             <ScrollReveal>
               <div className="mb-4">

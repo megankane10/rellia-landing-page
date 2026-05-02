@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react"
-import { CircleHelp, ChevronDown, ChevronLeft, ChevronRight, ChevronUp, Quote } from "lucide-react"
+import { Link } from "react-router-dom"
+import { CircleHelp, ChevronDown, ChevronLeft, ChevronRight, ChevronUp, Medal } from "lucide-react"
 import ScrollReveal from "./ScrollReveal"
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
@@ -14,8 +15,6 @@ import LogoMarquee from "@/components/LogoMarquee"
 
 const carouselArrowClass =
   "inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-black/10 bg-white text-rellia-teal shadow-sm transition hover:bg-rellia-teal hover:text-white hover:border-rellia-teal disabled:pointer-events-none disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-white motion-reduce:transition-none"
-
-const testimonialHeadingLineStops = [11, 27, 43, 59, 75, 89] as const
 
 /** Collapsed quote viewport: exactly 5 lines (15px Urbanist + `leading-relaxed` 1.625). Gradient + expand overlay this area only. */
 const COLLAPSED_QUOTE_BLOCK_CLASS = "h-[calc(5*1.625*15px)]"
@@ -284,21 +283,10 @@ export default function TestimonialsSection({ titleLead, titleAccent, testimonia
                     "radial-gradient(ellipse 72% 82% at 50% 48%, rgba(157, 214, 208, 0.38) 0%, rgba(157, 214, 208, 0.14) 42%, transparent 68%)",
                 }}
               />
-              <div className="absolute left-1/2 top-1/2 w-[158%] max-w-4xl -translate-x-1/2 -translate-y-1/2 -rotate-[14deg] opacity-[0.18] sm:opacity-[0.22] md:w-[150%] md:-rotate-[11deg] md:opacity-[0.26]">
-                <div className="relative h-[min(13.5rem,46vw)] w-full md:h-[min(15rem,40vw)]">
-                  {testimonialHeadingLineStops.map((top) => (
-                    <div
-                      key={top}
-                      className="absolute left-0 right-0 h-[1.5px] rounded-full bg-gradient-to-r from-transparent from-[5%] via-rellia-teal/30 via-[50%] to-transparent to-[95%] sm:h-px sm:via-rellia-teal/25"
-                      style={{ top: `${top}%` }}
-                    />
-                  ))}
-                </div>
-              </div>
             </div>
 
             <div className="relative z-[1] flex flex-col items-center">
-              <Quote
+              <Medal
                 className="mb-5 h-9 w-9 shrink-0 text-rellia-teal md:mb-6 md:h-10 md:w-10"
                 strokeWidth={1.35}
                 aria-hidden
@@ -359,14 +347,20 @@ export default function TestimonialsSection({ titleLead, titleAccent, testimonia
                   />
                 </div>
 
-                <div className="flex w-full items-center justify-between gap-4">
-                  <p className="min-w-0 text-left text-xs font-semibold uppercase tracking-[0.14em] text-black/55">
-                    {(() => {
-                      const totalSwipes = Math.max(0, carouselCount - 1)
-                      const current = Math.min(carouselIndex, totalSwipes)
-                      return `${current} / ${totalSwipes}`
-                    })()}
-                  </p>
+                <div className="flex w-full flex-wrap items-center justify-between gap-3">
+                  <Link
+                    to="/founders/directory"
+                    className={cn(
+                      "inline-flex shrink-0 items-center justify-center rounded-full border border-rellia-teal bg-rellia-teal",
+                      "px-3.5 py-1.5 font-host-grotesk text-xs font-semibold text-white shadow-sm",
+                      "transition-[transform,background-color,color,border-color,box-shadow] duration-300 ease-out motion-reduce:transition-none",
+                      "hover:-translate-y-0.5 hover:border-rellia-mint hover:bg-rellia-mint hover:text-rellia-teal hover:shadow-md",
+                      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-white",
+                      "md:px-4 md:py-2 md:text-sm",
+                    )}
+                  >
+                    Discover startups
+                  </Link>
 
                   <div className="flex shrink-0 items-center gap-2">
                     <button

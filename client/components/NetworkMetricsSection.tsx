@@ -82,6 +82,13 @@ function AccentHeading({ text }: { text: string }) {
 
 const METRIC_ROW_ICONS: LucideIcon[] = [Users, Rocket, Globe]
 
+const sentenceCase = (text: string) => {
+  const raw = (text ?? "").trim()
+  if (!raw) return ""
+  const normalized = raw.toLowerCase()
+  return normalized.charAt(0).toUpperCase() + normalized.slice(1)
+}
+
 function MetricValue({
   metric,
   label,
@@ -97,19 +104,13 @@ function MetricValue({
   const Icon = METRIC_ROW_ICONS[index] ?? Users
 
   return (
-    <div className="inline-flex max-w-full flex-col items-center">
-      <div className="flex items-center gap-2.5 md:gap-3">
-        <Icon
-          className="h-8 w-8 shrink-0 text-white md:h-9 md:w-9"
-          strokeWidth={1.35}
-          aria-hidden
-        />
-        <div className="font-host-grotesk text-4xl font-normal leading-none tracking-normal text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.35)] md:text-5xl">
-          {count}
-          {metric.suffix ?? ""}
-        </div>
+    <div className="inline-flex max-w-full flex-col items-start">
+      <Icon className="h-10 w-10 text-rellia-mint md:h-11 md:w-11" strokeWidth={1.35} aria-hidden />
+      <div className="mt-4 font-host-grotesk text-5xl font-semibold leading-none tracking-tight text-white md:text-6xl">
+        {count}
+        {metric.suffix ?? ""}
       </div>
-      <p className="mt-2.5 w-full text-center font-host-grotesk text-xs font-extrabold uppercase tracking-[0.16em] text-rellia-mint md:text-sm md:tracking-[0.18em]">
+      <p className="mt-3 font-urbanist text-lg font-medium leading-snug text-white/80 md:text-xl">
         {label}
       </p>
     </div>
@@ -123,7 +124,7 @@ export default function NetworkMetricsSection({ heading, subheading, metrics }: 
   const reduceMotion = useReducedMotion()
 
   const metricList = useMemo(() => metrics, [metrics]);
-  const labels = useMemo(() => ["MEMBERS", "STARTUPS", "COUNTRIES"], [])
+  const labels = useMemo(() => ["Members", "Startups", "Countries"], [])
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ["start 95%", "end 5%"],
@@ -226,24 +227,38 @@ export default function NetworkMetricsSection({ heading, subheading, metrics }: 
             <div className="w-full">
               <div className="flex w-full flex-col items-start gap-10 sm:flex-row sm:flex-wrap sm:justify-start sm:gap-x-12 sm:gap-y-10 md:gap-x-14 md:gap-y-11 lg:gap-x-16 lg:gap-y-11 xl:gap-x-[4.25rem]">
                 {metricList.slice(0, 3).map((m, i) => {
-                  const label = labels[i] ?? m.label.toUpperCase()
+                  const label = labels[i] ?? sentenceCase(m.label)
                   return (
                     <motion.div
                       key={`${m.label}-${label}`}
-                      initial={reduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
+                      initial={reduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 18 }}
                       animate={
                         reduceMotion
                           ? { opacity: 1, y: 0 }
                           : entered
                             ? { opacity: 1, y: 0 }
-                            : { opacity: 0, y: 10 }
+                            : { opacity: 0, y: 18 }
                       }
-                      transition={reduceMotion ? undefined : { duration: 0.45, ease: [0.16, 1, 0.3, 1], delay: 0.12 + i * 0.08 }}
-                      className={cn(
-                        relliaTealGlassCardClass,
-                        "flex h-[168px] w-full max-w-[260px] shrink-0 items-center justify-center px-5 py-6 sm:h-[176px] md:h-[186px] md:max-w-[276px] md:px-6 md:py-7",
-                      )}
+                      transition={reduceMotion ? undefined : { duration: 0.52, ease: [0.16, 1, 0.3, 1], delay: 0.14 + i * 0.12 }}
+                      className="relative w-full max-w-[260px] shrink-0 pl-6 md:max-w-[300px] md:pl-7"
                     >
+                      <motion.span
+                        aria-hidden
+                        className="absolute left-0 top-1 bottom-1 w-[2px] rounded-full bg-rellia-mint origin-top"
+                        initial={reduceMotion ? { scaleY: 1, opacity: 1 } : { scaleY: 0, opacity: 0.6 }}
+                        animate={
+                          reduceMotion
+                            ? { scaleY: 1, opacity: 1 }
+                            : entered
+                              ? { scaleY: 1, opacity: 1 }
+                              : { scaleY: 0, opacity: 0.6 }
+                        }
+                        transition={
+                          reduceMotion
+                            ? undefined
+                            : { duration: 0.6, ease: [0.22, 1, 0.36, 1], delay: 0.1 + i * 0.12 }
+                        }
+                      />
                       <MetricValue metric={m} label={label} index={i} entered={entered && countReady} />
                     </motion.div>
                   )

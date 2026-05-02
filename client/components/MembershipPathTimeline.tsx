@@ -207,7 +207,7 @@ const MembershipPathTimeline = ({
               aria-hidden
               className="pointer-events-none absolute top-[1.25rem] h-0.5 -translate-y-1/2 bg-black/10"
               style={{
-                left: `calc(100% / ${2 * stepCount})`,
+                left: "20px",
                 width: `calc(100% * ${stepCount - 1} / ${stepCount})`,
               }}
             />
@@ -215,7 +215,7 @@ const MembershipPathTimeline = ({
               aria-hidden
               className="pointer-events-none absolute top-[1.25rem] h-0.5 -translate-y-1/2 origin-left bg-rellia-teal"
               style={{
-                left: `calc(100% / ${2 * stepCount})`,
+                left: "20px",
                 width: `calc(100% * ${stepCount - 1} / ${stepCount})`,
               }}
               initial={{ scaleX: 0 }}
@@ -232,7 +232,7 @@ const MembershipPathTimeline = ({
                 <motion.div
                   key={step.title}
                   role="listitem"
-                  className="flex min-w-0 flex-col items-center text-center md:text-left"
+                  className="flex min-w-0 flex-col items-start text-left"
                   initial={{ opacity: 0, y: 26 }}
                   animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 26 }}
                   transition={stepRiseTransition(index)}
@@ -261,11 +261,11 @@ const MembershipPathTimeline = ({
           <div className={cn("relative", showDesktopHorizontal ? "hidden lg:block" : "hidden")}>
             <div
               aria-hidden
-              className="pointer-events-none absolute left-[12.5%] top-[1.25rem] h-0.5 w-[75%] -translate-y-1/2 bg-black/10"
+              className="pointer-events-none absolute left-[20px] top-[1.25rem] h-0.5 w-[75%] -translate-y-1/2 bg-black/10"
             />
             <motion.div
               aria-hidden
-              className="pointer-events-none absolute left-[12.5%] top-[1.25rem] h-0.5 w-[75%] -translate-y-1/2 origin-left bg-rellia-teal"
+              className="pointer-events-none absolute left-[20px] top-[1.25rem] h-0.5 w-[75%] -translate-y-1/2 origin-left bg-rellia-teal"
               initial={{ scaleX: 0 }}
               animate={isInView ? { scaleX: 1 } : { scaleX: 0 }}
               transition={lineTransition}
@@ -279,7 +279,7 @@ const MembershipPathTimeline = ({
                 <motion.div
                   key={step.title}
                   role="listitem"
-                  className="flex min-w-0 flex-col items-center text-left"
+                  className="flex min-w-0 flex-col items-start text-left"
                   initial={{ opacity: 0, y: 26 }}
                   animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 26 }}
                   transition={stepRiseTransition(index)}

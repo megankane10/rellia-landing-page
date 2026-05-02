@@ -60,15 +60,35 @@ const SPEED_MAP = {
 type LogoMarqueeSpeed = keyof typeof SPEED_MAP
 type LogoMarqueeDirection = "left" | "right"
 
+type LogoMarqueeDensity = "default" | "compact"
+
+const DENSITY_CELL_PADDING: Record<LogoMarqueeDensity, string> = {
+  default: "py-5 md:py-6",
+  compact: "py-3 md:py-4",
+}
+
+const DENSITY_IMG_HEIGHT: Record<LogoMarqueeDensity, string> = {
+  default: "h-[72px] md:h-[88px] lg:h-[104px]",
+  compact: "h-[56px] md:h-[64px] lg:h-[72px]",
+}
+
 /** Matches SmoothUI logo-cloud-3 (Logo Marquee) cell layout; images sit inside the same wrapper as SVG logos in the block. */
-const LogoItem = ({ logo }: { logo: LogoMark }) => (
-  <div className="flex shrink-0 items-center justify-center px-8 py-5 opacity-80 transition-opacity duration-200 *:fill-foreground hover:opacity-100 md:py-6">
+const LogoItem = ({ logo, density }: { logo: LogoMark; density: LogoMarqueeDensity }) => (
+  <div
+    className={cn(
+      "flex shrink-0 items-center justify-center px-8 opacity-80 transition-opacity duration-200 *:fill-foreground hover:opacity-100",
+      DENSITY_CELL_PADDING[density],
+    )}
+  >
     <img
       src={logo.src}
       alt={logo.name}
       loading="eager"
       decoding="async"
-      className="h-[72px] w-auto max-w-[min(100%,18.5rem)] object-contain md:h-[88px] lg:h-[104px]"
+      className={cn(
+        "w-auto max-w-[min(100%,18.5rem)] object-contain",
+        DENSITY_IMG_HEIGHT[density],
+      )}
     />
   </div>
 )
@@ -84,6 +104,7 @@ export default function LogoMarquee({
   /** No inner horizontal padding — use inside layouts that already use max-w-[1300px] + section px */
   flush = false,
   marks,
+  density = "default",
 }: {
   title?: ReactNode
   description?: string
@@ -95,6 +116,8 @@ export default function LogoMarquee({
   flush?: boolean
   /** Override default portfolio marks (e.g. placeholder investor logos). */
   marks?: readonly LogoMark[]
+  /** Smaller cells and logos (use for thin strips under heroes). */
+  density?: LogoMarqueeDensity
 }) {
   const logos = marks ?? PORTFOLIO_LOGO_MARKS
   const animationDuration = SPEED_MAP[speed]
@@ -192,10 +215,10 @@ export default function LogoMarquee({
               }
             >
               {logos.map((logo, index) => (
-                <LogoItem key={`first-${logo.name}-${index}`} logo={logo} />
+                <LogoItem key={`first-${logo.name}-${index}`} logo={logo} density={density} />
               ))}
               {logos.map((logo, index) => (
-                <LogoItem key={`second-${logo.name}-${index}`} logo={logo} />
+                <LogoItem key={`second-${logo.name}-${index}`} logo={logo} density={density} />
               ))}
             </div>
           </div>
