@@ -28,7 +28,7 @@ export default function NetworkDirectoryModal({
         <SheetContent
           side="bottom"
           className={cn(
-            "flex max-h-[92dvh] flex-col gap-0 rounded-t-[28px] border-0 bg-white p-0 pt-2",
+            "flex max-h-[96dvh] flex-col gap-0 rounded-t-[28px] border-0 bg-white p-0 pt-2",
             "mt-[max(0.75rem,env(safe-area-inset-top))]",
           )}
           aria-describedby={undefined}
@@ -48,7 +48,7 @@ export default function NetworkDirectoryModal({
           >
             <div className="h-1.5 w-12 rounded-full bg-black/20" aria-hidden />
           </motion.div>
-          <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] pt-2 md:px-8">
+          <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-5 pb-[max(1.5rem,env(safe-area-inset-bottom))] pt-3 sm:px-8 md:px-10">
             {children}
           </div>
         </SheetContent>
@@ -58,8 +58,10 @@ export default function NetworkDirectoryModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="flex max-h-[min(92vh,920px)] w-[min(92vw,960px)] max-w-none flex-col gap-0 overflow-hidden rounded-2xl border border-black/10 bg-white p-0 sm:max-w-none">
-        <div className="min-h-0 flex-1 overflow-y-auto px-6 py-8 md:px-10 md:py-10">{children}</div>
+      <DialogContent className="flex max-h-[min(96vh,1080px)] w-[min(98vw,1440px)] max-w-none flex-col gap-0 overflow-hidden rounded-2xl border border-black/10 bg-white p-0 sm:max-w-none lg:rounded-3xl">
+        <div className="min-h-0 flex-1 overflow-y-auto px-6 py-10 md:px-12 md:py-12 lg:px-16 lg:py-14">
+          {children}
+        </div>
       </DialogContent>
     </Dialog>
   )

@@ -3,17 +3,29 @@
 import type { CSSProperties, ReactNode } from "react"
 import { cn } from "@/lib/utils"
 
-/** Grayscale Simple Icons CDN — placeholder “big tech” marks for investor sections (not endorsements). */
-export const BIG_TECH_PLACEHOLDER_MARKS = [
-  { name: "Google", src: "https://cdn.simpleicons.org/google/9ca3af" },
-  { name: "Microsoft", src: "https://cdn.simpleicons.org/microsoft/9ca3af" },
-  { name: "Amazon", src: "https://cdn.simpleicons.org/amazon/9ca3af" },
-  { name: "Apple", src: "https://cdn.simpleicons.org/apple/9ca3af" },
-  { name: "Meta", src: "https://cdn.simpleicons.org/meta/9ca3af" },
-  { name: "IBM", src: "https://cdn.simpleicons.org/ibm/9ca3af" },
-  { name: "Oracle", src: "https://cdn.simpleicons.org/oracle/9ca3af" },
-  { name: "Salesforce", src: "https://cdn.simpleicons.org/salesforce/9ca3af" },
+/**
+ * Brand SVG logos from Simple Icons (pinned npm package on unpkg — stable paths; `cdn.simpleicons.org`
+ * was returning 404 for several slugs).
+ * Illustrative placeholders only; not an endorsement or affiliation claim.
+ */
+const SI_V = "9.0.0"
+const si = (slug: string) => `https://unpkg.com/simple-icons@${SI_V}/icons/${slug}.svg`
+
+export const INVESTOR_BRAND_SVG_MARKS = [
+  { name: "Google", src: si("google") },
+  { name: "Microsoft", src: si("microsoft") },
+  { name: "Amazon", src: si("amazon") },
+  { name: "Apple", src: si("apple") },
+  { name: "Meta", src: si("meta") },
+  { name: "IBM", src: si("ibm") },
+  { name: "Oracle", src: si("oracle") },
+  { name: "Salesforce", src: si("salesforce") },
+  { name: "Siemens", src: si("siemens") },
+  { name: "Intel", src: si("intel") },
 ] as const
+
+/** @deprecated Use INVESTOR_BRAND_SVG_MARKS */
+export const BIG_TECH_PLACEHOLDER_MARKS = INVESTOR_BRAND_SVG_MARKS
 
 /** Exported for founder directory cards and other reuse — keep in sync with marquee below */
 export const PORTFOLIO_LOGO_MARKS = [
@@ -35,7 +47,9 @@ export const PORTFOLIO_LOGO_MARKS = [
   { name: "SeeMira", src: "/images/portfolio-seemira.png" },
 ] as const
 
-type LogoMark = (typeof PORTFOLIO_LOGO_MARKS)[number] | (typeof BIG_TECH_PLACEHOLDER_MARKS)[number]
+type LogoMark =
+  | (typeof PORTFOLIO_LOGO_MARKS)[number]
+  | (typeof INVESTOR_BRAND_SVG_MARKS)[number]
 
 const SPEED_MAP = {
   slow: "60s",

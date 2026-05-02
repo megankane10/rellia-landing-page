@@ -32,6 +32,10 @@ type FounderCompany = {
   category: FounderCategory
   shortDescription: string
   longDescription: string
+  /** Illustrative company site — placeholder domain */
+  websiteUrl: string
+  traction: string
+  relliaCollaboration: string
 }
 
 const STAGES_CYCLE: StageTag[] = ["Pre-seed", "Seed", "Seed", "Series A", "Pre-seed", "Idea"]
@@ -45,6 +49,11 @@ const CATEGORY_CYCLE: FounderCategory[] = [
 ]
 
 const ALL_STAGES = ["Idea", "Pre-seed", "Seed", "Series A"] as const
+
+const slugFromName = (name: string) => {
+  const s = name.toLowerCase().replace(/[^a-z0-9]+/g, "").slice(0, 32)
+  return s || "company"
+}
 
 const FOUNDER_DIRECTORY: FounderCompany[] = PORTFOLIO_LOGO_MARKS.slice(0, 12).map((logo, index) => {
   const summaries = [
@@ -61,15 +70,20 @@ const FOUNDER_DIRECTORY: FounderCompany[] = PORTFOLIO_LOGO_MARKS.slice(0, 12).ma
     "Employer-facing benefits analytics tying biometric pilots to absenteeism deltas.",
     "Credentialing automation prototype shortening onboarding without sacrificing audit trails.",
   ]
+  const base = summaries[index % summaries.length]
+  const slug = slugFromName(logo.name)
   return {
     id: `fc-${index + 1}`,
     logoName: logo.name,
     logoSrc: logo.src,
-    tagline: summaries[index % summaries.length].split(" ").slice(0, 4).join(" ") + "…",
+    tagline: base.split(" ").slice(0, 4).join(" ") + "…",
     stages: [STAGES_CYCLE[index % STAGES_CYCLE.length]],
     category: CATEGORY_CYCLE[index % CATEGORY_CYCLE.length],
-    shortDescription: summaries[index % summaries.length],
-    longDescription: `${summaries[index % summaries.length]} Teams in Rellia use membership for warm introductions, advisor sessions, and programs mapped to regulatory and evidence milestones—not generic accelerator fluff.`,
+    shortDescription: base,
+    longDescription: `${base} The team structures pilots with clear clinical owners, success criteria, and a defensible data plan for the next financing conversation.`,
+    websiteUrl: `https://www.${slug}.example`,
+    traction: `Active pilots with health system and specialty partners; expanding integration surface area and outcome readouts in line with ${CATEGORY_CYCLE[index % CATEGORY_CYCLE.length].toLowerCase()} buyer expectations. Roadmap tied to evidence milestones, not vanity releases.`,
+    relliaCollaboration: `Rellia membership is used for warm operator intros, advisor deep-dives on protocol and procurement, and program cadence that matches regulatory and study timelines—so the company isn’t building in a silo while the market moves.`,
   }
 })
 
@@ -100,11 +114,11 @@ function FounderDirectoryCard({
       aria-label={`Open details for ${company.logoName}`}
     >
       <div className="flex flex-1 flex-col p-6 md:p-7">
-        <div className="flex min-h-[132px] items-center justify-start py-1">
+        <div className="flex min-h-[132px] w-full items-center justify-center py-1">
           <img
             src={company.logoSrc}
             alt=""
-            className="max-h-[120px] w-auto max-w-full object-contain object-left"
+            className="max-h-[120px] w-auto max-w-full object-contain object-center"
           />
         </div>
         <h3 className="mt-5 font-host-grotesk text-lg font-semibold tracking-tight text-rellia-teal">
@@ -146,7 +160,7 @@ export default function FoundersDirectory() {
       if (categoryFilter !== "all" && c.category !== categoryFilter) return false
       if (!q) return true
       const blob =
-        `${c.logoName} ${c.shortDescription} ${c.stages.join(" ")} ${c.category}`.toLowerCase()
+        `${c.logoName} ${c.shortDescription} ${c.stages.join(" ")} ${c.category} ${c.traction}`.toLowerCase()
       return blob.includes(q)
     })
   }, [query, stageFilter, categoryFilter])
@@ -322,17 +336,20 @@ export default function FoundersDirectory() {
 
         <NetworkDirectoryModal open={Boolean(active)} onOpenChange={(open) => (!open ? setActiveId(null) : undefined)}>
           {active ? (
-            <>
-              <div className="flex flex-col">
-                <div className="flex min-h-[160px] items-center justify-center py-4 md:min-h-[200px]">
-                  <img
-                    src={active.logoSrc}
-                    alt=""
-                    className="max-h-[min(40vh,220px)] w-auto max-w-full object-contain"
-                  />
-                </div>
-                <h2 className="pt-2 font-host-grotesk text-2xl text-rellia-teal">{active.logoName}</h2>
-                <div className="flex flex-wrap gap-2 pt-2">
+            <article className="mx-auto max-w-4xl">
+              <div className="flex min-h-[140px] items-center justify-center border-b border-black/10 pb-8 md:min-h-[180px] md:pb-10">
+                <img
+                  src={active.logoSrc}
+                  alt=""
+                  className="max-h-[min(36vh,260px)] w-auto max-w-full object-contain object-center"
+                />
+              </div>
+              <header className="pt-8 md:pt-10">
+                <h2 className="font-host-grotesk text-2xl font-semibold tracking-tight text-rellia-teal md:text-3xl">
+                  {active.logoName}
+                </h2>
+                <p className="mt-2 font-urbanist text-sm text-black/55">{active.tagline}</p>
+                <div className="mt-4 flex flex-wrap gap-2">
                   <span className="inline-flex rounded-full border border-black/10 bg-black/[0.03] px-3 py-1 font-urbanist text-xs font-semibold text-black/70">
                     {active.category}
                   </span>
@@ -345,21 +362,40 @@ export default function FoundersDirectory() {
                     </span>
                   ))}
                 </div>
-                <p className="pt-4 font-urbanist text-base leading-relaxed text-black/75">{active.longDescription}</p>
-              </div>
-              <div className="mt-6 flex flex-wrap gap-3">
-                <RelliaAction asChild variant="tealFilledLift" size="comfortable">
-                  <Link to="/apply" className="cursor-pointer">
-                    Apply to join
-                  </Link>
-                </RelliaAction>
-                <RelliaAction asChild variant="outlineOnWhite" size="comfortable">
-                  <Link to="/advisors/directory" className="cursor-pointer">
-                    Browse advisors
-                  </Link>
-                </RelliaAction>
-              </div>
-            </>
+              </header>
+
+              <section className="mt-10 border-t border-black/10 pt-10">
+                <h3 className="font-host-grotesk text-lg font-semibold text-black">Overview</h3>
+                <p className="mt-3 font-urbanist text-base leading-relaxed text-black/80">{active.longDescription}</p>
+              </section>
+
+              <section className="mt-10">
+                <h3 className="font-host-grotesk text-lg font-semibold text-black">Traction & roadmap</h3>
+                <p className="mt-3 font-urbanist text-base leading-relaxed text-black/80">{active.traction}</p>
+              </section>
+
+              <section className="mt-10">
+                <h3 className="font-host-grotesk text-lg font-semibold text-black">Collaborating through Rellia</h3>
+                <p className="mt-3 font-urbanist text-base leading-relaxed text-black/80">{active.relliaCollaboration}</p>
+              </section>
+
+              <section className="mt-10 rounded-2xl border border-black/10 bg-rellia-cream/25 px-5 py-5 md:px-6 md:py-6">
+                <h3 className="font-host-grotesk text-sm font-semibold uppercase tracking-[0.12em] text-black/55">
+                  Company website
+                </h3>
+                <a
+                  href={active.websiteUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-2 inline-flex max-w-full break-all font-urbanist text-base font-semibold text-rellia-teal underline decoration-rellia-teal/30 underline-offset-4 transition-colors hover:decoration-rellia-teal"
+                >
+                  {active.websiteUrl.replace(/^https?:\/\//, "")}
+                </a>
+                <p className="mt-2 font-urbanist text-xs leading-relaxed text-black/50">
+                  External link opens in a new tab. Domain shown is illustrative for this directory preview.
+                </p>
+              </section>
+            </article>
           ) : null}
         </NetworkDirectoryModal>
       </main>

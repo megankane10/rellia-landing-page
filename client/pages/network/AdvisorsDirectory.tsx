@@ -4,7 +4,7 @@ import Footer from "@/components/Footer"
 import RelliaAction from "@/components/RelliaAction"
 import { cn } from "@/lib/utils"
 import { motion, AnimatePresence, useReducedMotion, type Variants } from "framer-motion"
-import { ExternalLink, Search } from "lucide-react"
+import { Globe, Linkedin, Search } from "lucide-react"
 import {
   ADVISOR_DIRECTORY_SEED,
   ADVISOR_FILTER_OPTIONS,
@@ -18,15 +18,6 @@ const DIRECTORY_KICKER_CLASS = "font-urbanist text-sm font-semibold uppercase tr
 const DIRECTORY_TITLE_CLASS =
   "font-host-grotesk text-4xl font-extrabold tracking-tight text-[#4F6562] md:text-5xl"
 
-function initials(name: string) {
-  return name
-    .split(/\s+/)
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((p) => p[0]?.toUpperCase() ?? "")
-    .join("")
-}
-
 function AdvisorCard({
   advisor,
   onDetails,
@@ -38,33 +29,37 @@ function AdvisorCard({
     <motion.article
       layout
       className={cn(
-        "flex h-full flex-col overflow-hidden rounded-2xl border border-black/10 bg-white",
+        "group flex h-full cursor-pointer flex-col overflow-hidden rounded-2xl border border-black/10 bg-white",
         "shadow-sm transition-[box-shadow,transform] duration-300 motion-reduce:transition-none",
         "hover:shadow-md hover:-translate-y-[1px]",
       )}
+      onClick={onDetails}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault()
+          onDetails()
+        }
+      }}
+      role="button"
+      tabIndex={0}
+      aria-label={`Open profile for ${advisor.name}`}
     >
+      <div className="relative aspect-[4/3] w-full overflow-hidden bg-gradient-to-br from-rellia-cream to-rellia-cream/40">
+        <img
+          src={advisor.photoSrc}
+          alt=""
+          className="h-full w-full object-cover object-top transition duration-500 ease-out group-hover:scale-[1.03] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
+          loading="lazy"
+        />
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/25 via-transparent to-transparent opacity-80"
+        />
+      </div>
       <div className="flex flex-1 flex-col p-6 md:p-7">
-        <div className="flex items-start gap-4">
-          {advisor.logoSrc ? (
-            <img
-              src={advisor.logoSrc}
-              alt=""
-              className="h-14 w-14 shrink-0 rounded-xl border border-black/10 object-contain p-1"
-            />
-          ) : (
-            <span
-              aria-hidden
-              className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl border border-rellia-teal/20 bg-rellia-mint/25 font-host-grotesk text-sm font-bold text-rellia-teal"
-            >
-              {initials(advisor.organization)}
-            </span>
-          )}
-          <div className="min-w-0">
-            <h3 className="font-host-grotesk text-lg font-semibold tracking-tight text-rellia-teal">{advisor.name}</h3>
-            <p className="mt-0.5 font-urbanist text-sm text-black/65">{advisor.organization}</p>
-            <p className="mt-1 font-urbanist text-sm text-black/70">{advisor.role}</p>
-          </div>
-        </div>
+        <h3 className="font-host-grotesk text-lg font-semibold tracking-tight text-rellia-teal">{advisor.name}</h3>
+        <p className="mt-1 font-urbanist text-sm font-medium text-black/70">{advisor.organization}</p>
+        <p className="mt-0.5 font-urbanist text-sm text-black/60">{advisor.role}</p>
         <div className="mt-4 flex flex-wrap gap-2">
           <span className="rounded-full border border-rellia-teal/20 bg-rellia-mint/15 px-3 py-1 font-urbanist text-xs font-semibold text-rellia-teal">
             {advisor.filter}
@@ -79,16 +74,9 @@ function AdvisorCard({
           ))}
         </div>
         <p className="mt-4 line-clamp-3 flex-1 font-urbanist text-sm leading-relaxed text-black/75">{advisor.focus}</p>
-        <RelliaAction
-          type="button"
-          variant="outlineOnWhite"
-          size="compact"
-          className="mt-6 w-fit px-5 cursor-pointer"
-          onClick={onDetails}
-          aria-label={`View details for ${advisor.name}`}
-        >
+        <span className="mt-auto pt-5 font-host-grotesk text-sm font-semibold text-rellia-teal underline-offset-4 transition group-hover:underline">
           View profile
-        </RelliaAction>
+        </span>
       </div>
     </motion.article>
   )
@@ -105,7 +93,8 @@ export default function AdvisorsDirectory() {
     return ADVISOR_DIRECTORY_SEED.filter((a) => {
       if (filter !== "all" && a.filter !== filter) return false
       if (!q) return true
-      const blob = `${a.name} ${a.organization} ${a.role} ${a.industries.join(" ")} ${a.focus}`.toLowerCase()
+      const blob =
+        `${a.name} ${a.organization} ${a.role} ${a.industries.join(" ")} ${a.focus} ${a.bio}`.toLowerCase()
       return blob.includes(q)
     })
   }, [filter, query])
@@ -224,54 +213,110 @@ export default function AdvisorsDirectory() {
 
         <NetworkDirectoryModal open={Boolean(active)} onOpenChange={(open) => (!open ? setActiveId(null) : undefined)}>
           {active ? (
-            <>
-              <div className="flex flex-col">
-                <div className="flex min-h-[120px] flex-col justify-center gap-6 md:flex-row md:items-center md:gap-8">
-                  {active.logoSrc ? (
-                    <img
-                      src={active.logoSrc}
-                      alt=""
-                      className="mx-auto max-h-[min(28vh,180px)] w-auto max-w-[min(88vw,280px)] object-contain md:mx-0"
-                    />
-                  ) : (
-                    <span className="mx-auto flex h-28 w-28 shrink-0 items-center justify-center rounded-2xl border border-rellia-teal/25 bg-rellia-mint/20 font-host-grotesk text-2xl font-bold text-rellia-teal md:mx-0 md:h-32 md:w-32">
-                      {initials(active.organization)}
-                    </span>
-                  )}
-                  <div className="min-w-0 text-center md:text-left">
-                    <h2 className="font-host-grotesk text-2xl text-rellia-teal md:text-3xl">{active.name}</h2>
-                    <p className="mt-1 font-urbanist text-sm text-black/65">{active.organization}</p>
-                    <p className="mt-1 font-urbanist text-sm text-black/70">{active.role}</p>
+            <article className="mx-auto max-w-5xl">
+              <div className="grid gap-10 lg:grid-cols-[minmax(260px,380px)_minmax(0,1fr)] lg:gap-x-14 lg:gap-y-0 xl:grid-cols-[400px_1fr]">
+                <div className="flex flex-col gap-6 lg:sticky lg:top-6 lg:self-start">
+                  <div className="overflow-hidden rounded-2xl border border-black/10 bg-rellia-cream/20 shadow-sm">
+                    <div className="aspect-[4/5] w-full max-h-[min(56vh,560px)]">
+                      <img
+                        src={active.photoSrc}
+                        alt=""
+                        className="h-full w-full object-cover object-top"
+                      />
+                    </div>
+                  </div>
+                  <div className="rounded-2xl border border-black/10 bg-white px-4 py-4 md:px-5">
+                    <p className="font-host-grotesk text-xs font-semibold uppercase tracking-[0.14em] text-black/45">
+                      Connect
+                    </p>
+                    <ul className="mt-3 flex flex-col gap-3">
+                      <li>
+                        <a
+                          href={active.linkedInUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-2 font-urbanist text-sm font-semibold text-rellia-teal underline decoration-rellia-teal/25 underline-offset-4 transition hover:decoration-rellia-teal"
+                        >
+                          <Linkedin className="h-4 w-4 shrink-0" aria-hidden />
+                          LinkedIn profile
+                        </a>
+                      </li>
+                      {active.websiteUrl ? (
+                        <li>
+                          <a
+                            href={active.websiteUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-2 font-urbanist text-sm font-semibold text-rellia-teal underline decoration-rellia-teal/25 underline-offset-4 transition hover:decoration-rellia-teal"
+                          >
+                            <Globe className="h-4 w-4 shrink-0" aria-hidden />
+                            Website
+                          </a>
+                        </li>
+                      ) : null}
+                    </ul>
                   </div>
                 </div>
-                <div className="flex flex-wrap justify-center gap-2 pt-6 md:justify-start">
-                  {active.industries.map((tag) => (
-                    <span
-                      key={tag}
-                      className="rounded-full border border-black/10 bg-black/[0.02] px-3 py-1 font-urbanist text-xs font-medium text-black/70"
-                    >
-                      {tag}
-                    </span>
-                  ))}
+
+                <div className="min-w-0 space-y-10 pb-2">
+                  <header className="border-b border-black/10 pb-8">
+                    <p className="font-urbanist text-xs font-semibold uppercase tracking-[0.14em] text-rellia-teal">
+                      {active.filter}
+                    </p>
+                    <h2 className="mt-3 font-host-grotesk text-3xl font-semibold tracking-tight text-black md:text-[2rem] md:leading-tight">
+                      {active.name}
+                    </h2>
+                    <p className="mt-2 font-urbanist text-lg font-medium text-black/75">{active.organization}</p>
+                    <p className="mt-1 font-urbanist text-base text-black/65">{active.role}</p>
+                    <div className="mt-5 flex flex-wrap gap-2">
+                      {active.industries.map((tag) => (
+                        <span
+                          key={tag}
+                          className="rounded-full border border-black/10 bg-black/[0.03] px-3 py-1 font-urbanist text-xs font-medium text-black/75"
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  </header>
+
+                  <section>
+                    <h3 className="font-host-grotesk text-xl font-semibold text-black">About</h3>
+                    <p className="mt-4 font-urbanist text-base leading-relaxed text-black/80 md:text-[17px] md:leading-relaxed">
+                      {active.bio}
+                    </p>
+                  </section>
+
+                  <section>
+                    <h3 className="font-host-grotesk text-xl font-semibold text-black">How they mentor</h3>
+                    <p className="mt-4 font-urbanist text-base leading-relaxed text-black/80 md:text-[17px] md:leading-relaxed">
+                      {active.mentoringStyle}
+                    </p>
+                  </section>
+
+                  <section>
+                    <h3 className="font-host-grotesk text-xl font-semibold text-black">Highlights</h3>
+                    <ul className="mt-4 list-none space-y-3 pl-0">
+                      {active.highlights.map((line) => (
+                        <li
+                          key={line.slice(0, 40)}
+                          className="relative pl-6 font-urbanist text-base leading-relaxed text-black/80 before:absolute before:left-0 before:top-[0.55em] before:h-1.5 before:w-1.5 before:rounded-full before:bg-rellia-teal md:text-[17px]"
+                        >
+                          {line}
+                        </li>
+                      ))}
+                    </ul>
+                  </section>
+
+                  <section className="rounded-2xl bg-rellia-cream/35 px-5 py-5 md:px-6">
+                    <h3 className="font-host-grotesk text-sm font-semibold uppercase tracking-[0.12em] text-black/55">
+                      Snapshot
+                    </h3>
+                    <p className="mt-3 font-urbanist text-base leading-relaxed text-black/75">{active.focus}</p>
+                  </section>
                 </div>
-                <p className="pt-4 text-center font-urbanist text-base leading-relaxed text-black/75 md:text-left">{active.focus}</p>
               </div>
-              <div className="mt-6 flex flex-wrap justify-center gap-3 md:justify-start">
-                <RelliaAction asChild variant="tealFilledLift" size="comfortable">
-                  <Link to="/apply" className="cursor-pointer">
-                    Apply as advisor
-                  </Link>
-                </RelliaAction>
-                {active.linkedInUrl ? (
-                  <RelliaAction asChild variant="outlineOnWhite" size="comfortable">
-                    <a href={active.linkedInUrl} target="_blank" rel="noreferrer" className="cursor-pointer">
-                      LinkedIn
-                      <ExternalLink className="h-4 w-4" aria-hidden />
-                    </a>
-                  </RelliaAction>
-                ) : null}
-              </div>
-            </>
+            </article>
           ) : null}
         </NetworkDirectoryModal>
       </main>

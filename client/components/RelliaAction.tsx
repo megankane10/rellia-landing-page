@@ -18,8 +18,9 @@ export const relliaActionVariants = cva(
           "rounded-full border-2 border-rellia-mint bg-rellia-mint text-rellia-teal hover:-translate-y-0.5 hover:bg-transparent hover:text-rellia-teal hover:border-white before:bg-white",
         heroGhostOnTeal:
           "rounded-full border-2 border-rellia-mint bg-transparent text-white hover:-translate-y-0.5 hover:text-rellia-teal hover:border-white before:bg-white",
+        /** Mint pill on teal bands — same white fill sweep + lift as `heroSolidOnTeal` / `heroGhostOnTeal` */
         mintOnTealStrip:
-          "rounded-full bg-rellia-mint text-rellia-teal border-2 border-rellia-mint hover:bg-transparent hover:text-white hover:border-rellia-teal hover:shadow-[0_18px_50px_-32px_rgba(0,0,0,0.35)] before:bg-rellia-teal",
+          "rounded-full border-2 border-rellia-mint bg-rellia-mint text-rellia-teal hover:-translate-y-0.5 hover:bg-transparent hover:text-rellia-teal hover:border-white hover:shadow-[0_22px_60px_-34px_rgba(0,0,0,0.45)] before:bg-white",
         tealCardFull:
           "w-full rounded-full border-2 border-rellia-mint bg-rellia-mint text-sm text-rellia-teal hover:bg-transparent hover:text-white hover:border-rellia-teal before:bg-rellia-teal",
         creamCardFull:

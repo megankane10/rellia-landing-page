@@ -7,7 +7,7 @@ import NetworkEyebrow from "@/components/network/NetworkEyebrow"
 import SectionHeading from "@/components/SectionHeading"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
-import LogoMarquee, { BIG_TECH_PLACEHOLDER_MARKS } from "@/components/LogoMarquee"
+import LogoMarquee, { INVESTOR_BRAND_SVG_MARKS } from "@/components/LogoMarquee"
 import InvestorNotifyDialog from "@/components/network/InvestorNotifyDialog"
 import RelliaAction from "@/components/RelliaAction"
 import RelliaCta from "@/components/RelliaCta"
@@ -346,7 +346,7 @@ export default function Investors() {
             />
           </div>
           <LogoMarquee
-            marks={BIG_TECH_PLACEHOLDER_MARKS}
+            marks={INVESTOR_BRAND_SVG_MARKS}
             showHeading={false}
             flush
             speed="slow"
