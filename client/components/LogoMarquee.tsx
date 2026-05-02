@@ -3,6 +3,18 @@
 import type { CSSProperties, ReactNode } from "react"
 import { cn } from "@/lib/utils"
 
+/** Grayscale Simple Icons CDN — placeholder “big tech” marks for investor sections (not endorsements). */
+export const BIG_TECH_PLACEHOLDER_MARKS = [
+  { name: "Google", src: "https://cdn.simpleicons.org/google/9ca3af" },
+  { name: "Microsoft", src: "https://cdn.simpleicons.org/microsoft/9ca3af" },
+  { name: "Amazon", src: "https://cdn.simpleicons.org/amazon/9ca3af" },
+  { name: "Apple", src: "https://cdn.simpleicons.org/apple/9ca3af" },
+  { name: "Meta", src: "https://cdn.simpleicons.org/meta/9ca3af" },
+  { name: "IBM", src: "https://cdn.simpleicons.org/ibm/9ca3af" },
+  { name: "Oracle", src: "https://cdn.simpleicons.org/oracle/9ca3af" },
+  { name: "Salesforce", src: "https://cdn.simpleicons.org/salesforce/9ca3af" },
+] as const
+
 /** Exported for founder directory cards and other reuse — keep in sync with marquee below */
 export const PORTFOLIO_LOGO_MARKS = [
   { name: "Akesyn", src: "/images/portfolio-akesyn.png" },
@@ -23,9 +35,7 @@ export const PORTFOLIO_LOGO_MARKS = [
   { name: "SeeMira", src: "/images/portfolio-seemira.png" },
 ] as const
 
-const logos = PORTFOLIO_LOGO_MARKS
-
-type Logo = (typeof logos)[number]
+type LogoMark = (typeof PORTFOLIO_LOGO_MARKS)[number] | (typeof BIG_TECH_PLACEHOLDER_MARKS)[number]
 
 const SPEED_MAP = {
   slow: "60s",
@@ -37,7 +47,7 @@ type LogoMarqueeSpeed = keyof typeof SPEED_MAP
 type LogoMarqueeDirection = "left" | "right"
 
 /** Matches SmoothUI logo-cloud-3 (Logo Marquee) cell layout; images sit inside the same wrapper as SVG logos in the block. */
-const LogoItem = ({ logo }: { logo: Logo }) => (
+const LogoItem = ({ logo }: { logo: LogoMark }) => (
   <div className="flex shrink-0 items-center justify-center px-8 py-5 opacity-80 transition-opacity duration-200 *:fill-foreground hover:opacity-100 md:py-6">
     <img
       src={logo.src}
@@ -59,6 +69,7 @@ export default function LogoMarquee({
   sectionClassName,
   /** No inner horizontal padding — use inside layouts that already use max-w-[1300px] + section px */
   flush = false,
+  marks,
 }: {
   title?: ReactNode
   description?: string
@@ -68,7 +79,10 @@ export default function LogoMarquee({
   showHeading?: boolean
   sectionClassName?: string
   flush?: boolean
+  /** Override default portfolio marks (e.g. placeholder investor logos). */
+  marks?: readonly LogoMark[]
 }) {
+  const logos = marks ?? PORTFOLIO_LOGO_MARKS
   const animationDuration = SPEED_MAP[speed]
   const animationDirection = direction === "right" ? "reverse" : "normal"
 

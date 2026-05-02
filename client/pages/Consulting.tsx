@@ -7,10 +7,11 @@ import NetworkEyebrow from "@/components/network/NetworkEyebrow"
 import SectionHeading from "@/components/SectionHeading"
 import MembershipPathTimeline from "@/components/MembershipPathTimeline"
 import RelliaAction from "@/components/RelliaAction"
+import RelliaCta from "@/components/RelliaCta"
 import ScrollReveal from "@/components/ScrollReveal"
 import { CheckCircle2, ClipboardList, MessagesSquare, UsersRound } from "lucide-react"
 import { Link } from "react-router-dom"
-import { CreamSection, LightSection, Reveal, SectionShell } from "./network/_shared"
+import { CreamSection, LightSection, Reveal } from "./network/_shared"
 
 const WHEN_TO_USE = [
   "You need scoped deep dives—FDA strategy, clinical evidence design, enterprise sales narrative—in focused sessions",
@@ -129,6 +130,7 @@ export default function Consulting() {
           steps={CONSULTING_PATH_STEPS}
           timelineAriaLabel="Consulting engagement steps"
           showRoleLinks={false}
+          horizontalFromMd
           className="border-t-0 bg-white py-16 md:py-24 lg:py-28"
         />
 
@@ -169,25 +171,12 @@ export default function Consulting() {
           </div>
         </CreamSection>
 
-        <SectionShell className="py-16 md:py-20">
-          <Reveal>
-            <div className="flex flex-col items-start justify-between gap-8 md:flex-row md:items-center">
-              <div className="max-w-2xl">
-                <h2 className="font-host-grotesk text-2xl font-semibold tracking-tight text-white md:text-3xl">
-                  Not sure which path fits?
-                </h2>
-                <p className="mt-3 font-urbanist text-base leading-relaxed text-white/85 md:text-lg">
-                  Tell us your milestone—we&apos;ll recommend membership, consulting, or a blended rhythm.
-                </p>
-              </div>
-              <RelliaAction asChild variant="mintOnTealStrip" size="comfortable">
-                <Link to="/contact" className="inline-flex cursor-pointer items-center gap-2">
-                  Talk to us
-                </Link>
-              </RelliaAction>
-            </div>
-          </Reveal>
-        </SectionShell>
+        <RelliaCta
+          title="Not sure which **path** fits?"
+          body="Tell us your milestone—we'll recommend membership, consulting, or a blended rhythm."
+          primary={{ label: "Talk to us", to: "/contact" }}
+          secondary={{ label: "Apply for membership", to: "/apply" }}
+        />
       </main>
 
       <Footer />

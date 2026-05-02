@@ -5,11 +5,12 @@ import SectionHeading from "@/components/SectionHeading"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
 import RelliaAction from "@/components/RelliaAction"
+import RelliaCta from "@/components/RelliaCta"
 import ScrollReveal from "@/components/ScrollReveal"
 import { cn } from "@/lib/utils"
-import { ArrowRight, Award, BookOpen, Clock, Crosshair, Gauge, HeartHandshake, Network, Scale, ShieldCheck, Sparkles, Users } from "lucide-react"
+import { ArrowRight, Award, BookOpen, Clock, Crosshair, Gauge, HeartHandshake, Network, Scale, ShieldCheck, Sparkles } from "lucide-react"
 import { Link } from "react-router-dom"
-import { CreamSection, GlassCardLight, LightSection, Reveal, SectionShell } from "./_shared"
+import { CreamSection, GlassCardLight, LightSection, Reveal } from "./_shared"
 
 const BENEFITS = [
   {
@@ -278,29 +279,12 @@ export default function Advisors() {
           </div>
         </LightSection>
 
-        <SectionShell className="relative overflow-hidden py-16 md:py-24">
-          <div aria-hidden className="pointer-events-none absolute inset-0 opacity-30 [background-image:radial-gradient(circle_at_30%_0%,rgba(167,219,214,0.2),transparent_50%)]" />
-          <Reveal>
-            <div className="relative flex flex-col items-start justify-between gap-8 md:flex-row md:items-center">
-              <div className="max-w-2xl">
-                <NetworkEyebrow label="Join" tone="onDark" />
-                <div className="mt-4 flex items-center gap-2 text-white/90">
-                  <Users className="h-6 w-6 text-rellia-mint" aria-hidden />
-                </div>
-                <h2 className="mt-3 font-host-grotesk text-3xl font-bold tracking-tight text-white md:text-4xl">Apply as an advisor</h2>
-                <p className="mt-4 font-urbanist text-lg leading-relaxed text-white/85">
-                  Share your background—we’ll follow up with fit, expectations, and onboarding paths.
-                </p>
-              </div>
-              <RelliaAction asChild variant="mintOnTealStrip" size="comfortable">
-                <Link to="/apply" className="inline-flex cursor-pointer items-center gap-2" aria-label="Apply as advisor">
-                  Apply to join
-                  <ArrowRight className="h-4 w-4" aria-hidden />
-                </Link>
-              </RelliaAction>
-            </div>
-          </Reveal>
-        </SectionShell>
+        <RelliaCta
+          title="**Apply** as an advisor"
+          body="Share your background—we'll follow up with fit, expectations, and onboarding paths."
+          primary={{ label: "Apply to join", to: "/apply" }}
+          secondary={{ label: "Contact", to: "/contact" }}
+        />
       </main>
 
       <Footer />

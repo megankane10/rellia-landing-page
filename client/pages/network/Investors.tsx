@@ -1,4 +1,5 @@
 import type { ReactNode } from "react"
+import { useState } from "react"
 import { PEXELS_OFFICE_COLLABORATION } from "@/config/pexelsFallbacks"
 import { usePexelsPhoto } from "@/hooks/usePexelsPhoto"
 import PageHeader from "@/components/PageHeader"
@@ -6,9 +7,11 @@ import NetworkEyebrow from "@/components/network/NetworkEyebrow"
 import SectionHeading from "@/components/SectionHeading"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
+import LogoMarquee, { BIG_TECH_PLACEHOLDER_MARKS } from "@/components/LogoMarquee"
+import InvestorNotifyDialog from "@/components/network/InvestorNotifyDialog"
 import RelliaAction from "@/components/RelliaAction"
+import RelliaCta from "@/components/RelliaCta"
 import ScrollReveal from "@/components/ScrollReveal"
-import { cn } from "@/lib/utils"
 import { ArrowRight, BarChart3, ShieldCheck, Sparkles, Users } from "lucide-react"
 import { Link } from "react-router-dom"
 import {
@@ -19,7 +22,7 @@ import {
   ResponsiveContainer,
   Tooltip,
 } from "recharts"
-import { CreamSection, GlassCard, GlassCardLight, LightSection, Reveal, SectionShell } from "./_shared"
+import { CreamSection, GlassCard, GlassCardLight, LightSection, Reveal } from "./_shared"
 
 const COLORS = {
   blue: "#2563eb",
@@ -152,29 +155,19 @@ function PortfolioSplit() {
 
   return (
     <CreamSection>
-      <div className="mx-auto grid max-w-[1300px] gap-10 md:grid-cols-[1.05fr_0.95fr] md:items-center">
+      <div className="mx-auto grid max-w-[1300px] gap-10 md:grid-cols-[1.05fr_0.95fr] md:items-start">
         <Reveal>
-          <NetworkEyebrow label="Portfolio support" tone="onLight" />
-          <h2 className="mt-5 font-host-grotesk text-3xl font-semibold leading-tight tracking-tight text-black md:text-[40px]">
-            Offer Rellia to <span className="text-rellia-teal">your portfolio</span>
-          </h2>
-          <p className="mt-4 font-urbanist text-lg leading-relaxed text-black/70">
-            If you already back exceptional teams, plug them into operators, advisors, and partner pathways that shorten cycles from pilot to procurement.
-          </p>
-          <div className="mt-6 flex items-center gap-2 text-rellia-teal">
-            <Users className="h-5 w-5 shrink-0" aria-hidden />
-            <span className="font-urbanist text-sm font-medium">Operator touchpoints, not generic coaching</span>
-          </div>
-        </Reveal>
-        <Reveal delay={0.08}>
-          <div className="grid gap-6">
-            <div className="overflow-hidden rounded-2xl border border-rellia-teal/10 shadow-lg">
-              <img
-                src={sideImage}
-                alt="Team collaboration in a professional setting"
-                className="aspect-[4/3] h-full w-full object-cover"
-                loading="lazy"
-              />
+          <div className="flex flex-col gap-8">
+            <NetworkEyebrow label="Portfolio support" tone="onLight" />
+            <h2 className="mt-0 font-host-grotesk text-3xl font-semibold leading-tight tracking-tight text-black md:text-[40px]">
+              Offer Rellia to <span className="text-rellia-teal">your portfolio</span>
+            </h2>
+            <p className="font-urbanist text-lg leading-relaxed text-black/70">
+              If you already back exceptional teams, plug them into operators, advisors, and partner pathways that shorten cycles from pilot to procurement.
+            </p>
+            <div className="flex items-center gap-2 text-rellia-teal">
+              <Users className="h-5 w-5 shrink-0" aria-hidden />
+              <span className="font-urbanist text-sm font-medium">Operator touchpoints, not generic coaching</span>
             </div>
             <GlassCardLight className="p-8">
               <p className="font-host-grotesk text-lg font-semibold text-rellia-teal">Partner concierge</p>
@@ -190,23 +183,24 @@ function PortfolioSplit() {
             </GlassCardLight>
           </div>
         </Reveal>
+        <Reveal delay={0.08}>
+          <div className="overflow-hidden rounded-2xl border border-rellia-teal/10 shadow-lg">
+            <img
+              src={sideImage}
+              alt="Team collaboration in a professional setting"
+              className="aspect-[4/3] h-full w-full object-cover"
+              loading="lazy"
+            />
+          </div>
+        </Reveal>
       </div>
     </CreamSection>
   )
 }
 
-const VC_NAMES = [
-  "Harbor Health Ventures",
-  "Northline BioCapital",
-  "Relay Angel Network",
-  "Atlas Clinical Fund",
-  "Brightwave Partners",
-  "Cedar Grove VC",
-  "Signalline Angels",
-  "Maritime MedTech",
-] as const
-
 export default function Investors() {
+  const [isPitchNotifyOpen, setIsPitchNotifyOpen] = useState(false)
+
   return (
     <div className="min-h-screen overflow-x-hidden bg-white font-host-grotesk">
       <Navbar />
@@ -328,10 +322,14 @@ export default function Investors() {
                   Request a session
                 </Link>
               </RelliaAction>
-              <RelliaAction asChild variant="heroGhostOnTeal" size="comfortable">
-                <Link to="/apply" className="cursor-pointer">
-                  Apply for investor updates
-                </Link>
+              <RelliaAction
+                type="button"
+                variant="heroGhostOnTeal"
+                size="comfortable"
+                onClick={() => setIsPitchNotifyOpen(true)}
+                aria-haspopup="dialog"
+              >
+                Get Notified About Pitch Events
               </RelliaAction>
             </div>
           </div>
@@ -347,43 +345,25 @@ export default function Investors() {
               className="mt-5"
             />
           </div>
-          <div className="mx-auto mt-12 flex max-w-[1300px] flex-wrap items-center justify-center gap-x-10 gap-y-8 md:gap-x-14">
-            {VC_NAMES.map((name, idx) => (
-              <Reveal key={name} delay={0.02 * idx}>
-                <span
-                  className={cn(
-                    "block max-w-[200px] text-center font-host-grotesk text-base font-bold transition-all duration-300 md:text-lg",
-                    "text-black/35 grayscale hover:scale-[1.02] hover:grayscale-0 hover:text-rellia-teal cursor-default",
-                  )}
-                >
-                  {name}
-                </span>
-              </Reveal>
-            ))}
-          </div>
+          <LogoMarquee
+            marks={BIG_TECH_PLACEHOLDER_MARKS}
+            showHeading={false}
+            flush
+            speed="slow"
+            sectionClassName="bg-white py-10 md:py-14"
+          />
         </LightSection>
 
         <PortfolioSplit />
 
+        <RelliaCta
+          title="Get **investor** access"
+          body="Apply once—we route serious investors to curated intros, showcases, and diligence-friendly updates."
+          primary={{ label: "Apply", to: "/apply" }}
+          secondary={{ label: "Contact", to: "/contact" }}
+        />
 
-        <SectionShell className="py-16 md:py-24">
-          <Reveal>
-            <div className="flex flex-col items-start justify-between gap-8 md:flex-row md:items-center">
-              <div className="max-w-2xl">
-                <h2 className="font-host-grotesk text-3xl font-bold tracking-tight md:text-4xl">Get investor access</h2>
-                <p className="mt-4 font-urbanist text-lg leading-relaxed text-white/80">
-                  Apply once—we route serious investors to curated intros, showcases, and diligence-friendly updates.
-                </p>
-              </div>
-              <RelliaAction asChild variant="mintOnTealStrip" size="comfortable">
-                <Link to="/apply" className="inline-flex cursor-pointer items-center gap-2" aria-label="Apply as investor">
-                  Apply
-                  <ArrowRight className="h-4 w-4" aria-hidden />
-                </Link>
-              </RelliaAction>
-            </div>
-          </Reveal>
-        </SectionShell>
+        <InvestorNotifyDialog open={isPitchNotifyOpen} onOpenChange={setIsPitchNotifyOpen} />
       </main>
 
       <Footer />

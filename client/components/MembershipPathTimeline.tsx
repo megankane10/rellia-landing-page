@@ -72,6 +72,8 @@ export type MembershipPathTimelineProps = {
   steps?: readonly MembershipPathStep[]
   /** Accessible name for the step list */
   timelineAriaLabel?: string
+  /** Horizontal timeline from `md` (e.g. consulting’s 3 steps); default membership keeps vertical until `lg` when there are 4 steps */
+  horizontalFromMd?: boolean
 }
 
 const defaultHeadingTitle = (
@@ -92,9 +94,12 @@ const MembershipPathTimeline = ({
   showRoleLinks = true,
   steps,
   timelineAriaLabel = "Membership application steps",
+  horizontalFromMd = false,
 }: MembershipPathTimelineProps = {}) => {
   const stepsToRender = steps ?? MEMBERSHIP_PATH_STEPS
-  const showDesktopHorizontal = stepsToRender.length === 4
+  const stepCount = stepsToRender.length
+  const showDesktopHorizontal = stepCount === 4 && !horizontalFromMd
+  const showMdHorizontalRow = horizontalFromMd && stepCount > 0
   const timelineRef = useRef<HTMLDivElement>(null)
   const isInView = useInView(timelineRef, { once: true, margin: "-10% 0px -12% 0px" })
   const reduceMotion = useReducedMotion()
@@ -146,8 +151,14 @@ const MembershipPathTimeline = ({
         ) : null}
 
         <div ref={timelineRef}>
-          {/* Mobile: vertical spine through circles; number left, copy beside */}
-          <div className={cn("relative", showDesktopHorizontal ? "lg:hidden" : "")}>
+          {/* Mobile / narrow: vertical spine through circles; number left, copy beside */}
+          <div
+            className={cn(
+              "relative",
+              showMdHorizontalRow ? "md:hidden" : "",
+              showDesktopHorizontal ? "lg:hidden" : "",
+            )}
+          >
             <div
               aria-hidden
               className="pointer-events-none absolute bottom-4 left-[1.25rem] top-[1.25rem] w-0.5 -translate-x-1/2 rounded-full bg-black/10"
@@ -190,7 +201,63 @@ const MembershipPathTimeline = ({
             </ol>
           </div>
 
-          {/* Desktop: one row; horizontal line through circle centers */}
+          {/* Tablet/desktop: horizontal row (consulting & similar — any step count) */}
+          <div className={cn("relative", showMdHorizontalRow ? "hidden md:block" : "hidden")}>
+            <div
+              aria-hidden
+              className="pointer-events-none absolute top-[1.25rem] h-0.5 -translate-y-1/2 bg-black/10"
+              style={{
+                left: `calc(100% / ${2 * stepCount})`,
+                width: `calc(100% * ${stepCount - 1} / ${stepCount})`,
+              }}
+            />
+            <motion.div
+              aria-hidden
+              className="pointer-events-none absolute top-[1.25rem] h-0.5 -translate-y-1/2 origin-left bg-rellia-teal"
+              style={{
+                left: `calc(100% / ${2 * stepCount})`,
+                width: `calc(100% * ${stepCount - 1} / ${stepCount})`,
+              }}
+              initial={{ scaleX: 0 }}
+              animate={isInView ? { scaleX: 1 } : { scaleX: 0 }}
+              transition={lineTransition}
+            />
+            <div
+              role="list"
+              aria-label={timelineAriaLabel}
+              className="relative z-[1] grid gap-5 xl:gap-8"
+              style={{ gridTemplateColumns: `repeat(${stepCount}, minmax(0, 1fr))` }}
+            >
+              {stepsToRender.map((step, index) => (
+                <motion.div
+                  key={step.title}
+                  role="listitem"
+                  className="flex min-w-0 flex-col items-center text-center md:text-left"
+                  initial={{ opacity: 0, y: 26 }}
+                  animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 26 }}
+                  transition={stepRiseTransition(index)}
+                >
+                  <motion.span
+                    className={cn(stepCircleBaseClass, "bg-white")}
+                    initial={false}
+                    animate={circleAnimate}
+                    transition={circleFillTransition(index)}
+                    aria-hidden
+                  >
+                    {index + 1}
+                  </motion.span>
+                  <h3 className="mt-5 w-full font-host-grotesk text-base font-semibold leading-snug text-black xl:text-lg">
+                    {step.title}
+                  </h3>
+                  <p className="mt-2 w-full font-urbanist text-sm leading-relaxed text-black/70">
+                    {step.description}
+                  </p>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+
+          {/* Large desktop: four-column membership path */}
           <div className={cn("relative", showDesktopHorizontal ? "hidden lg:block" : "hidden")}>
             <div
               aria-hidden

@@ -10,7 +10,8 @@ import ScrollReveal from "@/components/ScrollReveal"
 import { GETPROVEN_VENDORS_GRID_URL } from "@/config/partnerLinks"
 import { ArrowRight, Check, ExternalLink, Handshake, LayoutGrid, Megaphone } from "lucide-react"
 import { Link } from "react-router-dom"
-import { CreamSection, GlassCardLight, LightSection, Reveal, SectionShell } from "./_shared"
+import RelliaCta from "@/components/RelliaCta"
+import { CreamSection, GlassCardLight, LightSection, Reveal } from "./_shared"
 
 const engagementCardClass =
   "group flex min-h-[240px] flex-col rounded-2xl border border-white/15 bg-white/5 p-8 backdrop-blur-md transition-colors duration-300 hover:border-rellia-mint/40 hover:bg-white/10 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-rellia-teal"
@@ -292,31 +293,16 @@ export default function Partners() {
           </Reveal>
         </LightSection>
 
-        <SectionShell className="py-16 md:py-20">
-          <Reveal>
-            <div className="flex flex-col items-start justify-between gap-8 md:flex-row md:items-center">
-              <div className="max-w-2xl">
-                <h2 className="font-host-grotesk text-2xl font-semibold tracking-tight text-white md:text-3xl">
-                  List your org in the partner directory
-                </h2>
-                <p className="mt-3 font-urbanist text-base leading-relaxed text-white/85 md:text-lg">
-                  Make it easy for founders to find the right integration and procurement paths.
-                </p>
-              </div>
-              <RelliaAction asChild variant="mintOnTealStrip" size="comfortable">
-                <a
-                  href={GETPROVEN_VENDORS_GRID_URL}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex cursor-pointer items-center gap-2"
-                >
-                  Open directory
-                  <ExternalLink className="h-4 w-4" aria-hidden />
-                </a>
-              </RelliaAction>
-            </div>
-          </Reveal>
-        </SectionShell>
+        <RelliaCta
+          title="**Partner** with Rellia"
+          body="Apply to collaborate or list your org in the directory—founders use both paths to find the right integration and procurement fit."
+          primary={{ label: "Apply", to: "/apply" }}
+          secondary={{
+            label: "Open directory",
+            href: GETPROVEN_VENDORS_GRID_URL,
+            external: true,
+          }}
+        />
       </main>
 
       <Footer />

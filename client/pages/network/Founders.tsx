@@ -24,7 +24,7 @@ import {
 } from "lucide-react"
 import { Link } from "react-router-dom"
 import ScrollReveal from "@/components/ScrollReveal"
-import { CreamSection, LightSection, Reveal, SectionShell } from "./_shared"
+import { CreamSection, LightSection, Reveal } from "./_shared"
 
 const HERO_FALLBACK =
   "https://images.pexels.com/photos/7414216/pexels-photo-7414216.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=1400"
@@ -528,34 +528,11 @@ export default function Founders() {
           </div>
         </LightSection>
 
-        <SectionShell className="relative overflow-hidden py-16 md:py-24">
-          <div aria-hidden className="pointer-events-none absolute inset-0 opacity-40 [background-image:radial-gradient(circle_at_70%_20%,rgba(167,219,214,0.25),transparent_45%)]" />
-          <Reveal>
-            <div className="relative flex flex-col items-start justify-between gap-8 md:flex-row md:items-center">
-              <div className="max-w-2xl">
-                <NetworkEyebrow label="Join" tone="onDark" />
-                <h2 className="mt-5 font-host-grotesk text-3xl font-bold tracking-tight text-white md:text-4xl">
-                  Ready to join?
-                </h2>
-                <p className="mt-4 font-urbanist text-lg leading-relaxed text-white/85">
-                  Apply once—we&apos;ll follow up with fit, onboarding, and the fastest path into programs and intros.
-                </p>
-              </div>
-              <RelliaAction asChild variant="mintOnTealStrip" size="comfortable">
-                <Link to="/apply" className="inline-flex cursor-pointer items-center gap-2" aria-label="Apply to Rellia">
-                  Apply to join
-                  <ArrowRight className="h-4 w-4" aria-hidden />
-                </Link>
-              </RelliaAction>
-            </div>
-          </Reveal>
-        </SectionShell>
-
         <RelliaCta
-          title="Still exploring?"
-          body="Read programs and events—or send a short note and we’ll point you to the right conversation."
-          primary={{ label: "View programs", to: "/programs" }}
-          secondary={{ label: "Contact", to: "/contact" }}
+          title="**Ready** to join?"
+          body="Apply once—we'll follow up with fit, onboarding, and the fastest path into programs and intros."
+          primary={{ label: "Apply to join", to: "/apply" }}
+          secondary={{ label: "View programs", to: "/programs" }}
         />
       </main>
 
