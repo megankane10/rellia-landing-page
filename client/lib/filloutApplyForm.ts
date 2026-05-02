@@ -7,4 +7,8 @@ export const FILLOUT_APPLY_FORM_ID = "r5hdDmQodfus"
  * under the fixed nav; larger resize heights still win via max(height, min-height).
  */
 export const FILLOUT_EMBED_VIEWPORT_MIN_CLASS =
-  "[&_.fillout-standard-embed]:min-h-[calc(100svh-72px)] md:[&_.fillout-standard-embed]:min-h-[calc(100svh-86px)]"
+  [
+    "[&_.fillout-standard-embed]:min-h-[calc(100svh-72px)] md:[&_.fillout-standard-embed]:min-h-[calc(100svh-86px)]",
+    /** @fillout/react sets iframe style borderRadius:10; square corners for Apply + Careers */
+    "[&_iframe]:!rounded-none",
+  ].join(" ")

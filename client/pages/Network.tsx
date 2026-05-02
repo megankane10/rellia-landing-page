@@ -4,20 +4,13 @@ import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
 import LogoMarquee from "@/components/LogoMarquee"
 import ScrollReveal from "@/components/ScrollReveal"
+import NetworkJumpNav from "@/components/NetworkJumpNav"
 import RelliaAction from "@/components/RelliaAction"
 import RelliaCta from "@/components/RelliaCta"
 import SectionPillBadge from "@/components/SectionPillBadge"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { cn } from "@/lib/utils"
-import {
-  ArrowRight,
-  Check,
-  Rocket,
-  TrendingUp,
-  GraduationCap,
-  Building2,
-  type LucideIcon,
-} from "lucide-react"
+import { ArrowRight, Check } from "lucide-react"
 import { loadHubspotV2Script } from "@/lib/hubspotForms"
 import { DEFAULT_GLOBAL_SETTINGS } from "@shared/cms/defaults"
 import { PAGE_HEADER_DARK_SUBTITLE_CLASS, PAGE_HEADER_TITLE_SIZE_CLASS } from "@/components/PageHeader"
@@ -31,15 +24,6 @@ const CTA = {
   advisor: "/contact",
   partner: "/contact",
 } as const
-
-type SectionId = "founders" | "investors" | "advisors" | "partners"
-
-const JUMP_LINKS: Array<{ id: SectionId; numeral: string; label: string; icon: LucideIcon }> = [
-  { id: "founders", numeral: "01", label: "Founders", icon: Rocket },
-  { id: "advisors", numeral: "02", label: "Advisors", icon: GraduationCap },
-  { id: "investors", numeral: "03", label: "Investors", icon: TrendingUp },
-  { id: "partners", numeral: "04", label: "Industry Partners", icon: Building2 },
-]
 
 /** Oversized section numeral — absolutely positioned so it doesn't push the body copy down. */
 function SectionNumeral({ value }: { value: string }) {
@@ -70,14 +54,6 @@ function CheckItem({ children }: { children: React.ReactNode }) {
       </span>
     </li>
   )
-}
-
-/** Smooth-scroll to a section, accounting for the fixed navbar height (~92px). */
-const handleScrollToId = (id: string) => {
-  const el = document.getElementById(id)
-  if (!el) return
-  const y = el.getBoundingClientRect().top + window.scrollY - 92
-  window.scrollTo({ top: y, behavior: "smooth" })
 }
 
 type HubspotEmbedConfig = {
@@ -249,38 +225,11 @@ export default function Network() {
               </p>
             </ScrollReveal>
 
-            {/* Anchor jump nav — four doors */}
             <ScrollReveal delay={0.15}>
-              <nav
-                aria-label="Jump to section"
-                className="mt-[calc(theme(spacing.12)+15px)] md:mt-[calc(theme(spacing.16)+15px)] grid grid-cols-2 md:grid-cols-4 gap-px bg-white/15 border border-white/15 rounded-2xl overflow-hidden"
-              >
-                {JUMP_LINKS.map(({ id, numeral, label, icon: Icon }) => (
-                  <a
-                    key={id}
-                    href={`#${id}`}
-                    onClick={(e) => {
-                      e.preventDefault()
-                      handleScrollToId(id)
-                    }}
-                    className="group flex flex-col gap-3 md:gap-4 lg:gap-5 bg-rellia-teal p-5 md:p-7 lg:p-9 transition-colors hover:bg-rellia-teal/70"
-                  >
-                    <div className="flex items-center justify-between">
-                      <span className="font-host-grotesk text-xs lg:text-sm font-semibold tracking-[0.18em] text-rellia-mint">
-                        {numeral}
-                      </span>
-                      <Icon className="h-4 w-4 lg:h-5 lg:w-5 text-rellia-mint/80" strokeWidth={1.75} />
-                    </div>
-                    <span className="font-host-grotesk text-base md:text-xl lg:text-2xl font-semibold text-white leading-tight">
-                      {label}
-                    </span>
-                    <span className="mt-auto inline-flex items-center gap-1 font-urbanist text-[13px] lg:text-sm text-white/70 group-hover:text-rellia-mint transition-colors">
-                      Jump to section
-                      <ArrowRight className="h-3.5 w-3.5 lg:h-4 lg:w-4 transition-transform group-hover:translate-x-0.5" />
-                    </span>
-                  </a>
-                ))}
-              </nav>
+              <NetworkJumpNav
+                mode="samePage"
+                className="mt-[calc(theme(spacing.12)+15px)] md:mt-[calc(theme(spacing.16)+15px)]"
+              />
             </ScrollReveal>
           </div>
         </section>
