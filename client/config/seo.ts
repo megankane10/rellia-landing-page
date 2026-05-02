@@ -78,31 +78,49 @@ const ROUTE_SEO: Record<string, RouteSeoConfig> = {
   "/founders": {
     title: "Founders — Rellia Health Network",
     description:
-      "For health tech founders: launch sooner, scale smarter, and get support from operators, clinicians, and investors.",
+      "The home for health tech founders: membership pathway, programs, advisor access, and directories—built for operators scaling in healthcare.",
+    indexable: true,
+  },
+  "/founders/directory": {
+    title: "Founder directory — Rellia Health",
+    description:
+      "Browse representative health tech companies in the Rellia portfolio network—stage tags and profiles for founder discovery.",
+    indexable: true,
+  },
+  "/consulting": {
+    title: "Founder consulting — Rellia Health",
+    description:
+      "One-to-one and scoped consulting for health tech founders—regulatory, clinical, commercial, and narrative depth beyond community rhythm.",
     indexable: true,
   },
   "/advisors": {
     title: "Advisors — Rellia Health Network",
     description:
-      "For advisors and mentors: support serious health tech founders through structured, high-impact engagements.",
+      "Mentor health tech founders with flexible 1–3 hour engagements—benefits, criteria, and how to join Rellia as an advisor.",
+    indexable: true,
+  },
+  "/advisors/directory": {
+    title: "Advisor directory — Rellia Health",
+    description:
+      "Search and filter Rellia advisors by expertise—operators, clinicians, and specialists who mentor serious health tech founders.",
     indexable: true,
   },
   "/investors": {
     title: "Investors — Rellia Health Network",
     description:
-      "For investors: meet vetted, operator-coached health tech founders and get early access to teams worth your time.",
+      "Benefits of Rellia-backed startups, thesis-aware pitch formats, and partner pathways for funds and angel groups.",
     indexable: true,
   },
   "/industry-partners": {
     title: "Industry Partners — Rellia Health Network",
     description:
-      "For partners: reach health tech founders with programs, resources, and trusted community-driven introductions.",
+      "Sponsor programs, join directories, and partner with Rellia—including GetProven vendor marketplace benefits for portfolios.",
     indexable: true,
   },
   "/industry-partners/directory": {
     title: "Industry Partners Directory — Rellia Health",
     description:
-      "Browse a curated directory of vetted industry partners and resources recommended by Rellia.",
+      "Opens the Rellia Health Resources vendor directory on GetProven (external). Bookmark-friendly redirect from rellia.health.",
     indexable: false,
   },
   "/partners": {

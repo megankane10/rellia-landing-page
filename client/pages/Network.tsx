@@ -7,7 +7,7 @@ import ScrollReveal from "@/components/ScrollReveal"
 import NetworkJumpNav from "@/components/NetworkJumpNav"
 import RelliaAction from "@/components/RelliaAction"
 import RelliaCta from "@/components/RelliaCta"
-import SectionPillBadge from "@/components/SectionPillBadge"
+import NetworkEyebrow from "@/components/network/NetworkEyebrow"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { cn } from "@/lib/utils"
 import { ArrowRight, Check } from "lucide-react"
@@ -37,9 +37,9 @@ function SectionNumeral({ value }: { value: string }) {
   )
 }
 
-/** Section tag pill — shared style used across pages. */
-function SectionTag({ children }: { children: React.ReactNode }) {
-  return <SectionPillBadge>{children}</SectionPillBadge>
+/** Section tag — Network impact pill (not SectionPillBadge). */
+function SectionTag({ children }: { children: string }) {
+  return <NetworkEyebrow label={children} tone="onLight" />
 }
 
 /** Bullet item used inside the section feature lists. */

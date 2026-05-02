@@ -142,9 +142,100 @@ export function createServer() {
 
   type RateState = { windowStartMs: number; count: number }
   const perIpRate = new Map<string, RateState>()
+  const pexelsIpRate = new Map<string, RateState>()
   const RATE_WINDOW_MS = 60_000
   const RATE_MAX = 10
   const RATE_MAP_MAX = 5000
+  const PEXELS_RATE_MAX = 40
+
+  const applyRateLimit = (
+    map: Map<string, RateState>,
+    ip: string,
+    max: number,
+  ): boolean => {
+    const now = Date.now()
+    if (map.size > RATE_MAP_MAX) map.clear()
+    const current = map.get(ip)
+    if (!current || now - current.windowStartMs > RATE_WINDOW_MS) {
+      map.set(ip, { windowStartMs: now, count: 1 })
+      return true
+    }
+    current.count += 1
+    return current.count <= max
+  }
+
+  const pexelsSearchQuerySchema = z.object({
+    query: z.string().trim().min(1).max(120),
+    per_page: z.coerce.number().int().min(1).max(15).optional().default(1),
+    orientation: z.enum(["landscape", "portrait", "square"]).optional(),
+  })
+
+  app.get("/api/pexels/search", async (req, res) => {
+    const apiKey = process.env.PEXELS_API_KEY?.trim()
+    if (!apiKey) {
+      res.status(501).json({
+        error: "Pexels is not configured. Set PEXELS_API_KEY in the server environment.",
+      })
+      return
+    }
+
+    const ip = getClientIp(req)
+    if (!applyRateLimit(pexelsIpRate, ip, PEXELS_RATE_MAX)) {
+      res.status(429).json({ error: "Too many requests. Please try again shortly." })
+      return
+    }
+
+    const raw = {
+      query: typeof req.query.query === "string" ? req.query.query : "",
+      per_page: req.query.per_page,
+      orientation: req.query.orientation,
+    }
+    const parsed = pexelsSearchQuerySchema.safeParse(raw)
+    if (!parsed.success) {
+      res.status(400).json({ error: "Invalid query", details: parsed.error.flatten() })
+      return
+    }
+
+    const { query, per_page, orientation } = parsed.data
+    const params = new URLSearchParams({
+      query,
+      per_page: String(per_page),
+    })
+    if (orientation) params.set("orientation", orientation)
+
+    try {
+      const pexelsRes = await fetch(`https://api.pexels.com/v1/search?${params.toString()}`, {
+        headers: { Authorization: apiKey },
+      })
+
+      if (!pexelsRes.ok) {
+        const text = await pexelsRes.text().catch(() => "")
+        res.status(502).json({
+          error: "Pexels request failed",
+          status: pexelsRes.status,
+          ...(isDev ? { text } : {}),
+        })
+        return
+      }
+
+      const data = (await pexelsRes.json()) as {
+        photos?: Array<{ src?: { large?: string; large2x?: string; medium?: string } }>
+      }
+      const first = data.photos?.[0]?.src
+      const url = first?.large2x ?? first?.large ?? first?.medium
+      if (!url) {
+        res.status(502).json({ error: "No photos returned" })
+        return
+      }
+
+      res.status(200).json({ url })
+    } catch (err) {
+      res.status(500).json({
+        error: "Unexpected error",
+        message: err instanceof Error ? err.message : String(err),
+      })
+    }
+  })
 
   app.post("/api/diagnostic-report", async (req, res) => {
     const apiKey = process.env.ANTHROPIC_API_KEY?.trim()
@@ -156,21 +247,9 @@ export function createServer() {
     }
 
     const ip = getClientIp(req)
-    const now = Date.now()
-
-    if (perIpRate.size > RATE_MAP_MAX) {
-      perIpRate.clear()
-    }
-
-    const current = perIpRate.get(ip)
-    if (!current || now - current.windowStartMs > RATE_WINDOW_MS) {
-      perIpRate.set(ip, { windowStartMs: now, count: 1 })
-    } else {
-      current.count += 1
-      if (current.count > RATE_MAX) {
-        res.status(429).json({ error: "Too many requests. Please try again shortly." })
-        return
-      }
+    if (!applyRateLimit(perIpRate, ip, RATE_MAX)) {
+      res.status(429).json({ error: "Too many requests. Please try again shortly." })
+      return
     }
 
     const parsed = diagnosticReportPayloadSchema.safeParse(req.body)

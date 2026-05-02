@@ -153,7 +153,7 @@ export default function RelliaCta({
   return (
     <section
       className={cn(
-        "relative flex w-full flex-col justify-center overflow-hidden bg-rellia-greyTeal px-[30px] pt-[7.5rem] pb-[9rem] md:pt-[10.5rem] md:pb-48 lg:pt-[13.5rem] lg:pb-[15rem]",
+        "relative flex w-full flex-col justify-center overflow-hidden rounded-t-[28px] md:rounded-t-[36px] bg-rellia-greyTeal px-[30px] pt-[7.5rem] pb-[9rem] md:pt-[10.5rem] md:pb-48 lg:pt-[13.5rem] lg:pb-[15rem]",
         className,
       )}
     >

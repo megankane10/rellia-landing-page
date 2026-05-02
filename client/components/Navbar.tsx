@@ -252,18 +252,27 @@ export default function Navbar({ ctaRadiusClassName = "rounded-full" }: NavbarPr
     pathname === "/terms" ||
     pathname === "/network" ||
     pathname === "/founders" ||
+    pathname.startsWith("/founders/") ||
     pathname === "/advisors" ||
+    pathname.startsWith("/advisors/") ||
     pathname === "/investors" ||
     pathname === "/industry-partners" ||
+    pathname === "/consulting" ||
     pathname === "/events" ||
     pathname === "/programs" ||
     pathname === "/faq" ||
     pathname === "/careers"
 
+  /** Light backgrounds but nav should stay solid teal until scroll (not transparent over white). */
+  const isNetworkDirectoryPage =
+    pathname === "/founders/directory" ||
+    pathname === "/advisors/directory" ||
+    pathname === "/industry-partners/directory"
+
   /** Light cream/white heroes (individual story posts only): transparent bar + dark nav chrome */
   const isLightHeroNav = /^\/stories\/.+/.test(pathname)
 
-  const hasTransparentTopBar = hasTealHero || isLightHeroNav
+  const hasTransparentTopBar = (hasTealHero || isLightHeroNav) && !isNetworkDirectoryPage
 
   const useLightNavChrome = isLightHeroNav && !scrolled && !mobileOpen
 
@@ -273,8 +282,8 @@ export default function Navbar({ ctaRadiusClassName = "rounded-full" }: NavbarPr
 
   const networkItems = useMemo<NetworkItem[]>(
     () => [
-      { to: "/founders", label: "Founders", active: location.pathname === "/founders" },
-      { to: "/advisors", label: "Advisors", active: location.pathname === "/advisors" },
+      { to: "/founders", label: "Founders", active: location.pathname === "/founders" || location.pathname.startsWith("/founders/") },
+      { to: "/advisors", label: "Advisors", active: location.pathname === "/advisors" || location.pathname.startsWith("/advisors/") },
       { to: "/investors", label: "Investors", active: location.pathname === "/investors" },
       {
         to: "/industry-partners",

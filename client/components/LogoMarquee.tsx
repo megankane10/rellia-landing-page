@@ -3,7 +3,8 @@
 import type { CSSProperties, ReactNode } from "react"
 import { cn } from "@/lib/utils"
 
-const logos = [
+/** Exported for founder directory cards and other reuse — keep in sync with marquee below */
+export const PORTFOLIO_LOGO_MARKS = [
   { name: "Akesyn", src: "/images/portfolio-akesyn.png" },
   { name: "CarePathStudio", src: "/images/portfolio-carepathstudio.png" },
   { name: "Dott", src: "/images/portfolio-dott.png" },
@@ -21,6 +22,8 @@ const logos = [
   { name: "Salve Therapeutics", src: "/images/portfolio-salvetherapeutics.png" },
   { name: "SeeMira", src: "/images/portfolio-seemira.png" },
 ] as const
+
+const logos = PORTFOLIO_LOGO_MARKS
 
 type Logo = (typeof logos)[number]
 

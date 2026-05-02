@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom"
 import { DEFAULT_GLOBAL_SETTINGS } from "@shared/cms/defaults"
+import { GETPROVEN_VENDORS_GRID_URL } from "@/config/partnerLinks"
 import { CareersHiringBadge } from "@/components/CareersHiringBadge"
 import { InstagramFilled, LinkedInFilled, MailFilled } from "@/components/icons/SocialIcons"
 
@@ -67,7 +68,7 @@ export default function Footer() {
               </div>
             </div>
 
-            <div className="grid min-w-0 flex-1 grid-cols-2 gap-x-8 gap-y-10 sm:gap-x-10 md:gap-x-12 md:pl-6 lg:grid-cols-3 lg:gap-x-14 lg:pl-10 xl:gap-x-20 xl:pl-14">
+            <div className="grid min-w-0 flex-1 grid-cols-2 gap-x-8 gap-y-10 sm:gap-x-10 md:gap-x-12 md:pl-6 lg:grid-cols-4 lg:gap-x-8 lg:pl-10 xl:gap-x-12 xl:pl-14">
               {/* Network */}
               <div className="flex min-w-0 flex-col gap-4 md:gap-6">
                 <h4 className={footerSectionHeadingClass}>Network</h4>
@@ -82,7 +83,7 @@ export default function Footer() {
                     Investors
                   </Link>
                   <Link to="/industry-partners" className={footerLinkClass}>
-                    Industry partners
+                    Industry Partners
                   </Link>
                 </nav>
               </div>
@@ -100,11 +101,38 @@ export default function Footer() {
                   <Link to="/events" className={footerLinkClass}>
                     Events
                   </Link>
+                  <Link to="/consulting" className={footerLinkClass}>
+                    Consulting
+                  </Link>
+                </nav>
+              </div>
+
+              {/* Resources */}
+              <div className="flex min-w-0 flex-col gap-4 md:gap-6">
+                <h4 className={footerSectionHeadingClass}>Resources</h4>
+                <nav className="flex flex-col gap-2 md:gap-3" aria-label="Resources links">
+                  <Link to="/founders/directory" className={footerLinkClass}>
+                    Startups Directory
+                  </Link>
+                  <Link to="/advisors/directory" className={footerLinkClass}>
+                    Advisors Directory
+                  </Link>
+                  <a
+                    href={GETPROVEN_VENDORS_GRID_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={footerLinkClass}
+                  >
+                    Industry Partners Directory
+                  </a>
+                  <Link to="/stories" className={footerLinkClass}>
+                    Stories
+                  </Link>
                 </nav>
               </div>
 
               {/* Company */}
-              <div className="col-span-2 flex min-w-0 flex-col gap-4 md:gap-6 lg:col-span-1">
+              <div className="flex min-w-0 flex-col gap-4 md:gap-6">
                 <h4 className={footerSectionHeadingClass}>Company</h4>
                 <nav className="flex flex-col gap-2 md:gap-3" aria-label="Company links">
                   <Link to="/about" className={footerLinkClass}>
@@ -112,9 +140,6 @@ export default function Footer() {
                   </Link>
                   <Link to="/faq" className={footerLinkClass}>
                     FAQ
-                  </Link>
-                  <Link to="/stories" className={footerLinkClass}>
-                    Stories
                   </Link>
                   <Link
                     to="/careers"

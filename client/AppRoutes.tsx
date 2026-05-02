@@ -30,6 +30,9 @@ import Stories from "./pages/Stories"
 import StoryPost from "./pages/StoryPost"
 import PlaceholderPage from "./pages/PlaceholderPage"
 import IndustryPartnersDirectory from "./pages/IndustryPartnersDirectory"
+import Consulting from "./pages/Consulting"
+import FoundersDirectory from "./pages/network/FoundersDirectory"
+import AdvisorsDirectory from "./pages/network/AdvisorsDirectory"
 
 const ThirdPartyPreloads = () => {
   useEffect(() => {
@@ -84,8 +87,11 @@ export const AppRoutes = () => (
 
     <Route path="/network" element={<Network />} />
     <Route path="/apply" element={<Apply />} />
+    <Route path="/consulting" element={<Consulting />} />
     <Route path="/founders" element={<Founders />} />
+    <Route path="/founders/directory" element={<FoundersDirectory />} />
     <Route path="/advisors" element={<Advisors />} />
+    <Route path="/advisors/directory" element={<AdvisorsDirectory />} />
     <Route path="/investors" element={<Investors />} />
     <Route path="/industry-partners" element={<Partners />} />
     <Route path="/partners" element={<Navigate to="/industry-partners" replace />} />

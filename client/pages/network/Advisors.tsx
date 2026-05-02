@@ -1,122 +1,180 @@
-import { useMemo, useState } from "react"
+import { usePexelsPhoto } from "@/hooks/usePexelsPhoto"
 import PageHeader from "@/components/PageHeader"
+import NetworkEyebrow from "@/components/network/NetworkEyebrow"
+import SectionHeading from "@/components/SectionHeading"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
 import RelliaAction from "@/components/RelliaAction"
-import SectionPillBadge from "@/components/SectionPillBadge"
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import ScrollReveal from "@/components/ScrollReveal"
 import { cn } from "@/lib/utils"
-import {
-  ArrowRight,
-  Award,
-  BookOpen,
-  Clock,
-  HeartHandshake,
-  Network,
-  Sparkles,
-  Users,
-} from "lucide-react"
+import { ArrowRight, Award, BookOpen, Clock, Crosshair, Gauge, HeartHandshake, Network, Scale, ShieldCheck, Sparkles, Users } from "lucide-react"
 import { Link } from "react-router-dom"
 import { CreamSection, GlassCardLight, LightSection, Reveal, SectionShell } from "./_shared"
 
-type AdvisorRow = {
-  name: string
-  role: string
-  industries: string[]
-  focus: string
-  filter: string
-}
-
-const ADVISORS: AdvisorRow[] = [
-  {
-    name: "Dr. Elena Ruiz",
-    role: "Former Chief Medical Officer, health system",
-    industries: ["Clinical ops", "Digital health"],
-    focus: "Care pathway design, clinician adoption, and evidence planning for early deployments.",
-    filter: "Clinical",
-  },
-  {
-    name: "Jordan Blake",
-    role: "Regulatory & quality advisor",
-    industries: ["MedTech", "SaMD"],
-    focus: "FDA strategy, QMS readiness, and design controls without slowing product iteration.",
-    filter: "Regulatory",
-  },
-  {
-    name: "Priya Nair",
-    role: "GTM & partnerships operator",
-    industries: ["B2B", "Payers"],
-    focus: "Enterprise sales motion, pilot contracting, and procurement navigation.",
-    filter: "GTM",
-  },
-  {
-    name: "Dr. Henry Moss",
-    role: "Academic PI, outcomes research",
-    industries: ["Clinical evidence", "Diagnostics"],
-    focus: "Study design, endpoints, and publication strategy aligned to buyer questions.",
-    filter: "Clinical",
-  },
-  {
-    name: "Alex Rivera",
-    role: "Product & interoperability lead",
-    industries: ["Digital health", "Infrastructure"],
-    focus: "EHR integration patterns, security reviews, and scalable data contracts.",
-    filter: "Technical",
-  },
-  {
-    name: "Sam Okonkwo",
-    role: "Finance & venture advisor",
-    industries: ["Fundraising", "MedTech"],
-    focus: "Modeling, diligence prep, and milestone planning for seed–Series A.",
-    filter: "GTM",
-  },
-]
-
-const FILTER_CHIPS = ["All", "Clinical", "Regulatory", "GTM", "Technical"] as const
-
 const BENEFITS = [
   {
-    title: "Stay up to date",
-    body: "See how care delivery, reimbursement, and regulation are shifting—without living on social feeds.",
+    title: "Stay current",
+    body: "See how delivery models, reimbursement, and regulation shift—grounded in founder reality, not hype cycles.",
     icon: BookOpen,
   },
   {
-    title: "Sharpen skills",
-    body: "Practice crisp advising: scoped questions, clear decisions, and repeatable frameworks.",
+    title: "Sharpen craft",
+    body: "Practice crisp advising: scoped questions, decisive feedback, and repeatable frameworks operators respect.",
     icon: Sparkles,
   },
   {
     title: "Build network",
-    body: "Meet founders and peers who respect your time and bring real operational context.",
+    body: "Meet founders and peers who respect your time and bring operational context to every conversation.",
     icon: Network,
   },
   {
-    title: "Expert status",
-    body: "Be known for a specific edge—so introductions match your strengths, not generic “pick your brain” asks.",
+    title: "Expert visibility",
+    body: "Be highlighted for a defined edge—so introductions match your strengths, not generic office hours.",
     icon: Award,
   },
   {
-    title: "Help patients",
-    body: "Translate experience into fewer dead-ends: better products reach the bedside faster.",
+    title: "Impact patients",
+    body: "Translate experience into fewer dead-ends: safer pilots, clearer evidence, faster adoption where care happens.",
     icon: HeartHandshake,
   },
 ] as const
 
+type SupportModel = {
+  title: string
+  body: string
+  linkTo?: string
+  linkLabel?: string
+}
+
+const SUPPORT_MODELS: SupportModel[] = [
+  {
+    title: "Community & network",
+    body: "Engage on your terms inside Slack and curated introductions—meet founders and fellow advisors without rigid mandates.",
+  },
+  {
+    title: "Advisory board roles",
+    body: "Serve as a formal advisor when there is mutual fit—typically lightweight charters scoped to milestone cadence.",
+  },
+  {
+    title: "Program advisor",
+    body: "Shape cohort sessions and office hours inside Rellia programs—see our curriculum on the programs page.",
+    linkTo: "/programs",
+    linkLabel: "Browse programs",
+  },
+]
+
+const CRITERIA_ITEMS = [
+  {
+    title: "Senior judgment",
+    summary: "You have led, practiced, or scaled inside healthcare—not only consulted from the sidelines.",
+    detail:
+      "Hospital operations, regulatory submissions, enterprise sales, outcomes research, or technical architecture at depth.",
+    icon: Scale,
+  },
+  {
+    title: "Specific edge",
+    summary: "A narrow expertise beats a general resume—matching works best when your strengths are obvious.",
+    detail:
+      "Whether regulatory strategy, payer contracting, or interoperability—you know what you will say no to as clearly as yes.",
+    icon: Crosshair,
+  },
+  {
+    title: "Boundaries with generosity",
+    summary: "You protect scope and safety while still leaving founders with a crisp next step.",
+    detail:
+      "You decline cleanly when misaligned, show up prepared when aligned, and respect confidentiality inside healthcare norms.",
+    icon: ShieldCheck,
+  },
+  {
+    title: "Momentum-aware advice",
+    summary: "Guidance is timed to milestones founders must hit—not theoretical debates detached from evidence plans.",
+    detail:
+      "Clinical workflow, regulatory sequencing, buyer diligence—aligned to what investors and systems actually review.",
+    icon: Gauge,
+  },
+] as const
+
+function BenefitsTealBand() {
+  return (
+    <section className="relative w-full overflow-hidden bg-rellia-teal px-6 py-16 md:px-10 md:py-24">
+      <img
+        src="/images/hologram-logo.png"
+        alt=""
+        aria-hidden
+        className="pointer-events-none absolute -right-12 bottom-0 w-[340px] max-w-[50vw] opacity-[0.06]"
+      />
+      <div aria-hidden className="pointer-events-none absolute inset-0">
+        <div className="absolute left-[-20%] top-1/4 h-[420px] w-[420px] rounded-full bg-rellia-mint/18 blur-3xl" />
+        <div className="absolute bottom-[-10%] right-[-10%] h-[380px] w-[380px] rounded-full bg-white/5 blur-3xl" />
+      </div>
+      <div className="relative z-10 mx-auto max-w-[1300px]">
+        <ScrollReveal>
+          <NetworkEyebrow label="Benefits" tone="onDark" />
+          <h2 className="mt-5 font-host-grotesk text-3xl font-semibold leading-tight tracking-tight text-white md:text-[40px]">
+            Mentorship that <span className="text-rellia-mint">compounds</span>
+          </h2>
+          <p className="mt-4 max-w-2xl font-urbanist text-base leading-relaxed text-white/80 md:text-lg">
+            Stay close to innovation without ambient noise—sharp conversations with founders who execute.
+          </p>
+        </ScrollReveal>
+        <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {BENEFITS.map((b) => {
+            const Icon = b.icon
+            return (
+              <div
+                key={b.title}
+                className="rounded-2xl border border-white/15 bg-white/5 p-6 backdrop-blur-md transition duration-300 hover:border-rellia-mint/35 hover:bg-white/10"
+              >
+                <Icon className="h-7 w-7 text-rellia-mint" aria-hidden />
+                <p className="mt-5 font-host-grotesk text-lg font-semibold leading-snug text-white">{b.title}</p>
+                <p className="mt-3 font-urbanist text-sm leading-relaxed text-white/80">{b.body}</p>
+              </div>
+            )
+          })}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+function ScheduleSplit() {
+  const img = usePexelsPhoto({
+    query: "business mentor meeting healthcare professional",
+    fallbackUrl: "https://images.pexels.com/photos/8376155/pexels-photo-8376155.jpeg?auto=compress&cs=tinysrgb&w=1000",
+    orientation: "landscape",
+  })
+
+  return (
+    <section className="w-full bg-rellia-cream/25 px-6 py-16 md:px-10 md:py-24">
+      <div className="mx-auto grid max-w-[1300px] gap-10 lg:grid-cols-[min(44%,480px)_1fr] lg:items-center lg:gap-16">
+        <div className="relative overflow-hidden rounded-[28px] border border-black/10 shadow-lg lg:order-2">
+          <img src={img} alt="" className="aspect-[5/4] w-full object-cover md:aspect-[4/3]" />
+          <div className="absolute inset-0 bg-gradient-to-tr from-rellia-teal/40 to-transparent" aria-hidden />
+        </div>
+        <div className="lg:order-1">
+          <NetworkEyebrow label="Your time" tone="onLight" />
+          <h2 className="mt-5 font-host-grotesk text-3xl font-semibold tracking-tight text-black md:text-[40px]">
+            Flexible for <span className="text-rellia-teal">senior</span> schedules
+          </h2>
+          <div className="mt-8 flex gap-4 rounded-2xl border border-rellia-teal/15 bg-white p-6 shadow-sm">
+            <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-rellia-mint/30 text-rellia-teal">
+              <Clock className="h-6 w-6" aria-hidden />
+            </span>
+            <div>
+              <p className="font-host-grotesk text-lg font-semibold text-rellia-teal">1–3 hours, on your terms</p>
+              <p className="mt-2 font-urbanist leading-relaxed text-black/75">
+                Advisory roles are designed for short, high-leverage blocks—adjustable as your capacity changes. Depth when
+                you opt in, never a second job by default.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}
+
 export default function Advisors() {
-  const [query, setQuery] = useState("")
-  const [filter, setFilter] = useState<(typeof FILTER_CHIPS)[number]>("All")
-
-  const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase()
-    return ADVISORS.filter((a) => {
-      if (filter !== "All" && a.filter !== filter) return false
-      if (!q) return true
-      const blob = `${a.name} ${a.role} ${a.industries.join(" ")} ${a.focus}`.toLowerCase()
-      return blob.includes(q)
-    })
-  }, [filter, query])
-
   return (
     <div className="min-h-screen overflow-x-hidden bg-white font-host-grotesk">
       <Navbar />
@@ -125,211 +183,119 @@ export default function Advisors() {
         <PageHeader
           title={
             <>
-              Advisors who <span className="text-rellia-mint">elevate founders</span>
+              Guidance from operators who&apos;ve <span className="text-rellia-mint">lived the work</span>
             </>
           }
-          subtitle="High-signal mentorship with structured matches—built for clinicians, operators, and domain experts who want their time to compound."
+          subtitle={
+            <p className="font-urbanist">
+              Mentor serious health tech founders through structured, respectful engagements—stay sharp on innovation while
+              keeping flexibility for your career.
+            </p>
+          }
           variant="dark"
         />
 
-        <LightSection className="pt-10 md:pt-14">
-          <Reveal>
-            <Alert
-              role="status"
-              className="border-rellia-mint/50 bg-rellia-mint/20 backdrop-blur-md supports-[backdrop-filter]:bg-rellia-mint/15"
-            >
-              <Clock className="h-5 w-5 text-rellia-teal" aria-hidden />
-              <AlertTitle className="font-host-grotesk text-lg text-rellia-teal">Flexible to fit your schedule</AlertTitle>
-              <AlertDescription className="font-urbanist text-base text-black/75">
-                Most advisors contribute about <strong className="text-black">1–3 hours</strong> per month—enough to matter,
-                without becoming a second job. You choose depth, cadence, and boundaries up front.
-              </AlertDescription>
-            </Alert>
-          </Reveal>
+        <ScheduleSplit />
+        <BenefitsTealBand />
+
+        <LightSection>
+          <div className="mx-auto max-w-[1300px]">
+            <NetworkEyebrow label="Support models" tone="onLight" />
+            <SectionHeading
+              animated={false}
+              title="How advisors can engage"
+              description="Community presence, formal advisory work, or program leadership—pick surfaces that fit your cadence."
+              className="mt-5"
+            />
+            <div className="mt-12 grid grid-cols-1 gap-6 md:grid-cols-3">
+              {SUPPORT_MODELS.map((row, idx) => (
+                <Reveal key={row.title} delay={0.06 * idx}>
+                  <GlassCardLight className="flex h-full flex-col p-8 transition duration-300 hover:-translate-y-0.5 hover:shadow-md cursor-default">
+                    <h3 className="font-host-grotesk text-xl font-semibold text-rellia-teal">{row.title}</h3>
+                    <p className="mt-3 flex-1 font-urbanist leading-relaxed text-black/75">{row.body}</p>
+                    {row.linkTo && row.linkLabel ? (
+                      <Link
+                        to={row.linkTo}
+                        className="mt-6 inline-flex cursor-pointer items-center gap-2 font-host-grotesk text-sm font-semibold text-rellia-teal underline-offset-4 hover:underline"
+                      >
+                        {row.linkLabel}
+                        <ArrowRight className="h-4 w-4" aria-hidden />
+                      </Link>
+                    ) : null}
+                  </GlassCardLight>
+                </Reveal>
+              ))}
+            </div>
+          </div>
         </LightSection>
 
         <CreamSection>
-          <Reveal>
-            <SectionPillBadge>Benefits</SectionPillBadge>
-            <h2 className="mt-4 text-3xl font-bold tracking-tight text-black md:text-4xl">Why advisors join</h2>
-            <p className="mt-4 max-w-2xl font-urbanist text-lg leading-relaxed text-black/70">
-              A membership-shaped network that treats advising like a craft—clarity, respect, and outcomes.
-            </p>
-          </Reveal>
-          <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
-            {BENEFITS.map((b, idx) => {
-              const Icon = b.icon
-              return (
-                <Reveal key={b.title} delay={0.05 * idx}>
-                  <GlassCardLight className="flex h-full flex-col p-6">
-                    <span className="flex h-11 w-11 items-center justify-center rounded-2xl border border-rellia-teal/15 bg-rellia-mint/25 text-rellia-teal">
-                      <Icon className="h-5 w-5" aria-hidden />
-                    </span>
-                    <h3 className="mt-4 font-host-grotesk text-lg font-semibold tracking-tight text-rellia-teal">{b.title}</h3>
-                    <p className="mt-2 font-urbanist text-sm leading-relaxed text-black/70">{b.body}</p>
-                  </GlassCardLight>
-                </Reveal>
-              )
-            })}
+          <div className="mx-auto flex max-w-[1300px] flex-col gap-10 lg:flex-row lg:items-center lg:justify-between">
+            <Reveal className="max-w-xl">
+              <NetworkEyebrow label="Directory" tone="onLight" />
+              <h2 className="mt-5 font-host-grotesk text-3xl font-semibold tracking-tight text-black md:text-[40px]">
+                Meet the advisor bench
+              </h2>
+              <p className="mt-4 font-urbanist text-lg leading-relaxed text-black/70">
+                Filter by expertise, search by keyword, and open profiles—representative of how we route founders.
+              </p>
+            </Reveal>
+            <Reveal delay={0.06}>
+              <RelliaAction asChild variant="tealFilledLift" size="comfortable">
+                <Link to="/advisors/directory" className="inline-flex cursor-pointer items-center gap-2">
+                  Open advisor directory
+                  <ArrowRight className="h-4 w-4" aria-hidden />
+                </Link>
+              </RelliaAction>
+            </Reveal>
           </div>
         </CreamSection>
 
         <LightSection>
-          <Reveal>
-            <div className="flex flex-col justify-between gap-8 lg:flex-row lg:items-end">
-              <div>
-                <SectionPillBadge>Directory</SectionPillBadge>
-                <h2 className="mt-4 text-3xl font-bold tracking-tight text-black md:text-4xl">Advisor directory</h2>
-                <p className="mt-4 max-w-2xl font-urbanist text-lg leading-relaxed text-black/70">
-                  Search by name or keyword, then filter by how you like to help. This is a representative sample of the
-                  profiles we route to founders.
-                </p>
-              </div>
-              <label className="w-full max-w-md font-urbanist text-sm font-semibold text-black/80">
-                Search
-                <input
-                  type="search"
-                  value={query}
-                  onChange={(e) => setQuery(e.target.value)}
-                  placeholder="e.g. regulatory, payer, EHR…"
-                  className="mt-2 w-full rounded-2xl border border-black/10 bg-white px-4 py-3 text-base text-black outline-none ring-rellia-teal/30 placeholder:text-black/40 focus:ring-2"
-                  aria-label="Search advisors"
-                />
-              </label>
+          <div className="mx-auto max-w-[1300px]">
+            <NetworkEyebrow label="Criteria" tone="onLight" />
+            <SectionHeading
+              animated={false}
+              title="What we look for"
+              description="Effective advisors combine depth, specificity, and respect for founder momentum."
+              className="mt-5"
+            />
+            <div className="mt-14 grid grid-cols-1 gap-12 md:grid-cols-2 md:gap-x-14 md:gap-y-12 lg:gap-x-16">
+              {CRITERIA_ITEMS.map((c) => {
+                const Icon = c.icon
+                return (
+                  <Reveal key={c.title}>
+                    <div className="flex max-w-xl flex-col gap-3">
+                      <Icon className="h-8 w-8 shrink-0 text-rellia-teal" aria-hidden />
+                      <h3 className="font-host-grotesk text-lg font-semibold text-rellia-teal md:text-xl">{c.title}</h3>
+                      <p className="font-urbanist text-base font-medium leading-relaxed text-black/65">{c.summary}</p>
+                      <p className="font-urbanist text-base leading-relaxed text-black/70">{c.detail}</p>
+                    </div>
+                  </Reveal>
+                )
+              })}
             </div>
-          </Reveal>
-
-          <div className="mt-6 flex flex-wrap gap-2">
-            {FILTER_CHIPS.map((chip) => {
-              const active = filter === chip
-              return (
-                <button
-                  key={chip}
-                  type="button"
-                  onClick={() => setFilter(chip)}
-                  className={cn(
-                    "rounded-full border px-4 py-2 font-urbanist text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-teal focus-visible:ring-offset-2",
-                    active
-                      ? "border-rellia-teal bg-rellia-teal text-white"
-                      : "border-black/10 bg-white text-black/70 hover:border-rellia-teal/40 hover:text-rellia-teal",
-                  )}
-                  aria-pressed={active}
-                >
-                  {chip}
-                </button>
-              )
-            })}
           </div>
-
-          <ul className="mt-10 grid list-none grid-cols-1 gap-4 md:grid-cols-2" aria-label="Advisor results">
-            {filtered.map((a, idx) => (
-              <Reveal key={a.name} delay={0.03 * idx}>
-                <li>
-                  <GlassCardLight className="p-7">
-                    <div className="flex flex-wrap items-start justify-between gap-4">
-                      <div>
-                        <p className="font-host-grotesk text-xl font-semibold tracking-tight text-rellia-teal">{a.name}</p>
-                        <p className="mt-1 font-urbanist text-black/65">{a.role}</p>
-                      </div>
-                      <span className="rounded-full border border-rellia-teal/20 bg-rellia-mint/15 px-3 py-1 font-urbanist text-xs font-semibold text-rellia-teal">
-                        {a.filter}
-                      </span>
-                    </div>
-                    <div className="mt-4 flex flex-wrap gap-2">
-                      {a.industries.map((tag) => (
-                        <span
-                          key={tag}
-                          className="rounded-full border border-black/10 bg-black/[0.02] px-3 py-1 font-urbanist text-xs font-medium text-black/70"
-                        >
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
-                    <div className="mt-5 border-t border-black/10 pt-5">
-                      <p className="font-host-grotesk text-sm font-semibold uppercase tracking-wide text-black/50">
-                        Mentorship focus
-                      </p>
-                      <p className="mt-2 font-urbanist leading-relaxed text-black/75">{a.focus}</p>
-                    </div>
-                  </GlassCardLight>
-                </li>
-              </Reveal>
-            ))}
-          </ul>
-
-          {filtered.length === 0 ? (
-            <p className="mt-8 font-urbanist text-black/60">No advisors match that search—try a broader keyword.</p>
-          ) : null}
         </LightSection>
 
-        <CreamSection>
+        <SectionShell className="relative overflow-hidden py-16 md:py-24">
+          <div aria-hidden className="pointer-events-none absolute inset-0 opacity-30 [background-image:radial-gradient(circle_at_30%_0%,rgba(167,219,214,0.2),transparent_50%)]" />
           <Reveal>
-            <SectionPillBadge>Criteria</SectionPillBadge>
-            <h2 className="mt-4 text-3xl font-bold tracking-tight text-black md:text-4xl">What we look for</h2>
-            <p className="mt-4 max-w-2xl font-urbanist text-lg leading-relaxed text-black/70">
-              We optimize for depth, kindness, and specificity—so founders get advice they can actually execute.
-            </p>
-          </Reveal>
-          <div className="mt-8 max-w-3xl">
-            <Accordion type="single" collapsible className="w-full rounded-2xl border border-black/10 bg-white/90 px-2">
-              <AccordionItem value="item-1">
-                <AccordionTrigger className="px-4 font-host-grotesk text-left text-lg text-rellia-teal hover:no-underline">
-                  Real-world execution experience
-                </AccordionTrigger>
-                <AccordionContent className="px-4 pb-4 font-urbanist leading-relaxed text-black/70">
-                  You’ve shipped, regulated, sold, studied, or scaled inside healthcare—not only advised from the sidelines.
-                </AccordionContent>
-              </AccordionItem>
-              <AccordionItem value="item-2">
-                <AccordionTrigger className="px-4 font-host-grotesk text-left text-lg text-rellia-teal hover:no-underline">
-                  Clear boundaries and generosity
-                </AccordionTrigger>
-                <AccordionContent className="px-4 pb-4 font-urbanist leading-relaxed text-black/70">
-                  You can say no cleanly, protect patient safety, and still leave founders with a crisp next step.
-                </AccordionContent>
-              </AccordionItem>
-              <AccordionItem value="item-3">
-                <AccordionTrigger className="px-4 font-host-grotesk text-left text-lg text-rellia-teal hover:no-underline">
-                  Specific “superpowers”
-                </AccordionTrigger>
-                <AccordionContent className="px-4 pb-4 font-urbanist leading-relaxed text-black/70">
-                  A narrow expertise beats a generalist resume—our matching works best when your edge is obvious.
-                </AccordionContent>
-              </AccordionItem>
-              <AccordionItem value="item-4">
-                <AccordionTrigger className="px-4 font-host-grotesk text-left text-lg text-rellia-teal hover:no-underline">
-                  Respect for founder momentum
-                </AccordionTrigger>
-                <AccordionContent className="px-4 pb-4 font-urbanist leading-relaxed text-black/70">
-                  Advice is timed to milestones: evidence, regulatory, clinical workflow, and commercial traction—not
-                  theoretical debates.
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion>
-          </div>
-        </CreamSection>
-
-        <SectionShell className="py-16 md:py-24">
-          <Reveal>
-            <div className="flex flex-col items-start justify-between gap-8 md:flex-row md:items-center">
+            <div className="relative flex flex-col items-start justify-between gap-8 md:flex-row md:items-center">
               <div className="max-w-2xl">
-                <div className="flex items-center gap-2 text-white/90">
-                  <Users className="h-5 w-5 text-rellia-mint" aria-hidden />
-                  <span className="font-urbanist text-sm font-semibold uppercase tracking-wider">Join</span>
+                <NetworkEyebrow label="Join" tone="onDark" />
+                <div className="mt-4 flex items-center gap-2 text-white/90">
+                  <Users className="h-6 w-6 text-rellia-mint" aria-hidden />
                 </div>
-                <h2 className="mt-3 font-host-grotesk text-3xl font-bold tracking-tight md:text-4xl">Apply to join as an advisor</h2>
-                <p className="mt-4 font-urbanist text-lg leading-relaxed text-white/80">
-                  Share your background and availability—we’ll follow up with fit, expectations, and onboarding.
+                <h2 className="mt-3 font-host-grotesk text-3xl font-bold tracking-tight text-white md:text-4xl">Apply as an advisor</h2>
+                <p className="mt-4 font-urbanist text-lg leading-relaxed text-white/85">
+                  Share your background—we’ll follow up with fit, expectations, and onboarding paths.
                 </p>
               </div>
               <RelliaAction asChild variant="mintOnTealStrip" size="comfortable">
-                <Link
-                  to="/apply?type=advisor"
-                  className="inline-flex items-center gap-2"
-                  aria-label="Apply to join as an advisor"
-                >
+                <Link to="/apply" className="inline-flex cursor-pointer items-center gap-2" aria-label="Apply as advisor">
                   Apply to join
-                  <ArrowRight aria-hidden className="h-4 w-4" />
+                  <ArrowRight className="h-4 w-4" aria-hidden />
                 </Link>
               </RelliaAction>
             </div>

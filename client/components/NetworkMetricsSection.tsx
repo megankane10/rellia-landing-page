@@ -224,7 +224,7 @@ export default function NetworkMetricsSection({ heading, subheading, metrics }: 
 
           <div className="mt-10 flex-1 sm:mt-8 lg:flex lg:items-center lg:-translate-y-2">
             <div className="w-full">
-              <div className="grid grid-cols-1 justify-items-start gap-6 sm:grid-cols-3 sm:gap-3 md:gap-2.5 lg:gap-3">
+              <div className="flex w-full flex-col items-start gap-10 sm:flex-row sm:flex-wrap sm:justify-start sm:gap-x-12 sm:gap-y-10 md:gap-x-14 md:gap-y-11 lg:gap-x-16 lg:gap-y-11 xl:gap-x-[4.25rem]">
                 {metricList.slice(0, 3).map((m, i) => {
                   const label = labels[i] ?? m.label.toUpperCase()
                   return (
@@ -241,7 +241,7 @@ export default function NetworkMetricsSection({ heading, subheading, metrics }: 
                       transition={reduceMotion ? undefined : { duration: 0.45, ease: [0.16, 1, 0.3, 1], delay: 0.12 + i * 0.08 }}
                       className={cn(
                         relliaTealGlassCardClass,
-                        "flex h-[168px] w-full max-w-[260px] items-center justify-center px-5 py-6 sm:h-[176px] md:h-[186px] md:max-w-[276px] md:px-6 md:py-7",
+                        "flex h-[168px] w-full max-w-[260px] shrink-0 items-center justify-center px-5 py-6 sm:h-[176px] md:h-[186px] md:max-w-[276px] md:px-6 md:py-7",
                       )}
                     >
                       <MetricValue metric={m} label={label} index={i} entered={entered && countReady} />

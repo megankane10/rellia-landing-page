@@ -1,175 +1,429 @@
-import PageHeader from "@/components/PageHeader"
+import { usePexelsPhoto } from "@/hooks/usePexelsPhoto"
+import { PAGE_HEADER_DARK_SUBTITLE_CLASS, PAGE_HEADER_TITLE_SIZE_CLASS } from "@/components/PageHeader"
+import NetworkEyebrow from "@/components/network/NetworkEyebrow"
+import SectionHeading from "@/components/SectionHeading"
+import MembershipPathTimeline from "@/components/MembershipPathTimeline"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
 import RelliaAction from "@/components/RelliaAction"
-import SectionPillBadge from "@/components/SectionPillBadge"
-import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card"
+import RelliaCta from "@/components/RelliaCta"
+import { relliaTealGlassCardClass } from "@/lib/relliaTealGlassCard"
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { cn } from "@/lib/utils"
-import { ArrowRight, BookOpen, Mail, UserPlus, Video } from "lucide-react"
-import { Link } from "react-router-dom"
 import {
-  CreamSection,
-  GlassCardLight,
-  LightSection,
-  MultiStepSignupForm,
-  Reveal,
-  SectionShell,
-} from "./_shared"
+  ArrowRight,
+  BookOpen,
+  CheckCircle2,
+  GraduationCap,
+  Mail,
+  MessagesSquare,
+  Percent,
+  UserPlus,
+  Users,
+  Video,
+} from "lucide-react"
+import { Link } from "react-router-dom"
+import ScrollReveal from "@/components/ScrollReveal"
+import { CreamSection, LightSection, Reveal, SectionShell } from "./_shared"
 
-type PathMilestone = {
+const HERO_FALLBACK =
+  "https://images.pexels.com/photos/7414216/pexels-photo-7414216.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=1400"
+
+const ELIGIBILITY_CATEGORIES = [
+  "Digital health & care delivery software",
+  "Software as a medical device (SaMD) and connected devices",
+  "Diagnostics, lab, and decision-support platforms",
+  "Medtech and DTx with a credible path to evidence and regulation",
+  "Founding teams from idea through Series A who can execute in healthcare complexity",
+] as const
+
+const MEMBERSHIP_VALUE_PROPS = [
+  {
+    title: "Warm, qualified intros",
+    body: "Introductions to investors, partners, and clinicians who understand your stage—not spray-and-pray blasts.",
+    icon: UserPlus,
+  },
+  {
+    title: "Slack community with signal",
+    body: "A vetted network where people answer with operator context because application review keeps quality high.",
+    icon: MessagesSquare,
+  },
+  {
+    title: "Programs for healthcare reality",
+    body: "Workshops and tracks built for regulatory, clinical, and commercial work—not generic startup content.",
+    icon: GraduationCap,
+  },
+  {
+    title: "Equity-friendly access",
+    body: "Depth from experienced advisors and operators without giving up ownership to join.",
+    icon: Percent,
+  },
+] as const
+
+type JourneyZone = "outside" | "rellia"
+
+type JourneyStep = {
+  id: string
   label: string
+  zone: JourneyZone
   detail: string
-  phase: "early" | "acceleration"
 }
 
-const ACCELERATION_MILESTONES: PathMilestone[] = [
+const JOURNEY_TIMELINE: JourneyStep[] = [
   {
+    id: "idea",
     label: "Product idea",
-    phase: "early",
-    detail: "Clarify the problem, care setting, and what “success” looks like for patients and buyers before you over-build.",
+    zone: "outside",
+    detail:
+      "Exploring problems and narratives on your own or with peers—the groundwork before scoped execution. Not where Rellia substitutes for your discovery process.",
   },
   {
-    label: "Education",
-    phase: "early",
-    detail: "Learn the guardrails that matter in health tech—evidence expectations, regulatory paths, and common failure modes.",
+    id: "edu",
+    label: "Industry education",
+    zone: "outside",
+    detail:
+      "Learning reimbursement, stakeholder maps, and regulatory vocabulary broadly available through courses and content—foundational, not a substitute for operator feedback.",
   },
   {
-    label: "MVP",
-    phase: "acceleration",
-    detail: "Ship a credible MVP with the right scope: interoperability, safety basics, and a validation plan operators can review.",
+    id: "problem",
+    label: "Problem statement",
+    zone: "outside",
+    detail:
+      "Clarifying who benefits and what would count as success in a care or buyer workflow. Rellia does not write your strategy doc for you—but we help pressure-test it once you’re building.",
   },
   {
+    id: "mvp",
+    label: "MVP development",
+    zone: "rellia",
+    detail:
+      "Ship a scope operators can review: safety basics, interoperability touchpoints, and a validation plan that won’t be thrown away in the next phase.",
+  },
+  {
+    id: "feedback",
+    label: "User feedback",
+    zone: "rellia",
+    detail:
+      "Structured feedback from clinicians, patients, and buyers so you learn what to fix before you scale sales or studies.",
+  },
+  {
+    id: "funding",
     label: "Funding",
-    phase: "acceleration",
-    detail: "Shape a de-risked narrative for investors: milestones, clinical or economic logic, and a realistic use-of-funds plan.",
+    zone: "rellia",
+    detail:
+      "A de-risked story: milestones, clinical or economic logic, and a use-of-funds plan that matches healthcare diligence.",
   },
   {
+    id: "reg",
     label: "Regulatory",
-    phase: "acceleration",
-    detail: "Map obligations early (quality system, labeling, risk management) so validation work doesn’t get thrown away later.",
+    zone: "rellia",
+    detail:
+      "Map QMS, labeling, and risk early so evidence and software releases stay aligned to submission pathways.",
   },
   {
+    id: "clinical",
     label: "Clinical evidence",
-    phase: "acceleration",
-    detail: "Run pilots and studies that produce decision-grade signal—usability, outcomes, and workflow fit.",
+    zone: "rellia",
+    detail:
+      "Pilots and studies that produce decision-grade signal: workflow fit, outcomes, and endpoints buyers actually care about.",
   },
   {
+    id: "commercial",
     label: "Commercialization",
-    phase: "acceleration",
-    detail: "Move from proof to repeatable revenue: pricing, procurement, channel partners, and scalable delivery.",
+    zone: "rellia",
+    detail:
+      "Repeatable revenue: pricing, procurement, channel partners, and delivery that holds up at scale.",
+  },
+  {
+    id: "launch",
+    label: "Launch & scale",
+    zone: "rellia",
+    detail:
+      "Grow into health systems and markets with the intros, playbooks, and peer network to sustain momentum after first revenue.",
   },
 ]
 
 const ENGAGEMENT = [
   {
-    title: "Join membership",
-    body: "Get ongoing access to programs, office hours, and a community built for health tech execution.",
-    to: "/membership",
+    title: "Apply for membership",
+    body: "Single application—we route you to the right onboarding.",
+    to: "/apply",
     icon: UserPlus,
   },
   {
     title: "Browse programs",
-    body: "Pick structured tracks that match your stage—from QMS foundations to cohort-based accelerators.",
+    body: "Structured tracks from QMS foundations to cohort programs.",
     to: "/programs",
     icon: BookOpen,
   },
   {
     title: "Virtual events",
-    body: "Learn from operators and clinicians, and meet peers who are solving adjacent problems.",
+    body: "Learn from operators and meet peers in health tech.",
     to: "/events",
     icon: Video,
   },
   {
-    title: "Contact",
-    body: "Share your roadmap and we’ll point you to the fastest next step inside the network.",
+    title: "Contact us",
+    body: "We’ll point you to the fastest next step.",
     to: "/contact",
     icon: Mail,
   },
 ] as const
 
-const FEATURED_FOUNDERS = [
-  {
-    name: "Amina Okoro",
-    company: "Northline Dx",
-    tag: "Diagnostics",
-    initials: "AO",
-    avatar:
-      "https://images.pexels.com/photos/3785079/pexels-photo-3785079.jpeg?auto=compress&cs=tinysrgb&w=120&h=120&dpr=2",
-  },
-  {
-    name: "James Patel",
-    company: "Relay Care OS",
-    tag: "Digital health",
-    initials: "JP",
-    avatar:
-      "https://images.pexels.com/photos/2379005/pexels-photo-2379005.jpeg?auto=compress&cs=tinysrgb&w=120&h=120&dpr=2",
-  },
-  {
-    name: "Sofia Lind",
-    company: "Vireo Surgical",
-    tag: "MedTech",
-    initials: "SL",
-    avatar:
-      "https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=120&h=120&dpr=2",
-  },
-  {
-    name: "Marcus Chen",
-    company: "Helix Rehab",
-    tag: "Rehab tech",
-    initials: "MC",
-    avatar:
-      "https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?auto=compress&cs=tinysrgb&w=120&h=120&dpr=2",
-  },
-] as const
+function FoundersHero() {
+  const heroSrc = usePexelsPhoto({
+    query: "health technology startup team collaboration",
+    fallbackUrl: HERO_FALLBACK,
+    orientation: "landscape",
+  })
 
-const AccelerationPath = () => {
   return (
-    <div className="relative">
-      <div
-        aria-hidden
-        className="pointer-events-none absolute left-0 right-0 top-[26px] hidden h-px bg-gradient-to-r from-black/10 via-rellia-teal/25 to-rellia-mint/40 md:block"
+    <section className="relative overflow-hidden bg-rellia-teal pt-[72px] md:pt-[86px]">
+      <img
+        src={heroSrc}
+        alt=""
+        className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-40"
       />
-      <div className="flex gap-3 overflow-x-auto pb-2 pt-1 [scrollbar-width:thin] md:gap-4 md:pb-0 snap-x snap-mandatory md:snap-none">
-        {ACCELERATION_MILESTONES.map((m) => {
-          const isEarly = m.phase === "early"
-          return (
-            <HoverCard key={m.label} openDelay={180} closeDelay={80}>
-              <HoverCardTrigger asChild>
-                <button
-                  type="button"
-                  className={cn(
-                    "relative z-10 min-w-[132px] max-w-[160px] shrink-0 snap-start rounded-2xl border px-4 py-3 text-left transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-teal focus-visible:ring-offset-2",
-                    isEarly
-                      ? "border-black/10 bg-black/[0.03] text-black/50 grayscale"
-                      : "border-rellia-mint/60 bg-white text-rellia-teal shadow-[0_0_0_1px_rgba(167,219,214,0.35),0_16px_48px_-28px_rgba(13,53,64,0.45)] ring-2 ring-rellia-mint/35 hover:-translate-y-0.5",
-                  )}
-                  aria-label={`${m.label}. Hover or focus for details.`}
-                >
-                  <span className="font-host-grotesk text-sm font-semibold tracking-tight">{m.label}</span>
-                  {!isEarly ? (
-                    <span className="mt-1 block font-urbanist text-[11px] font-medium uppercase tracking-wider text-rellia-teal/70">
-                      Acceleration
-                    </span>
-                  ) : (
-                    <span className="mt-1 block font-urbanist text-[11px] font-medium uppercase tracking-wider text-black/40">
-                      Early
-                    </span>
-                  )}
-                </button>
-              </HoverCardTrigger>
-              <HoverCardContent
-                side="top"
-                align="center"
-                className="w-72 border border-rellia-teal/15 bg-white p-4 text-black shadow-lg"
-              >
-                <p className="font-host-grotesk text-base font-semibold text-rellia-teal">{m.label}</p>
-                <p className="mt-2 font-urbanist text-sm leading-relaxed text-black/70">{m.detail}</p>
-              </HoverCardContent>
-            </HoverCard>
-          )
-        })}
+      <div className="absolute inset-0 bg-gradient-to-br from-rellia-teal/[0.97] via-rellia-teal/85 to-[#0a2830]/90" aria-hidden />
+      <div aria-hidden className="pointer-events-none absolute inset-0 opacity-30 [background-image:radial-gradient(circle_at_20%_20%,rgba(167,219,214,0.35),transparent_50%),radial-gradient(circle_at_85%_30%,rgba(255,255,255,0.12),transparent_45%)]" />
+      <img
+        src="/images/hologram-logo.png"
+        alt=""
+        aria-hidden
+        className="pointer-events-none absolute -right-16 bottom-0 w-[min(52vw,420px)] opacity-[0.07] md:right-0"
+      />
+
+      <div className="relative z-10 mx-auto max-w-[1300px] px-6 pb-20 pt-10 md:px-10 md:pb-28 md:pt-14">
+        <NetworkEyebrow label="Founders" tone="onDark" className="mb-6 md:mb-8" />
+        <h1
+          className={cn(
+            "max-w-4xl font-bold leading-[1.08] tracking-tight text-white drop-shadow-sm",
+            PAGE_HEADER_TITLE_SIZE_CLASS,
+          )}
+        >
+          The home for <span className="text-rellia-mint">health tech founders</span>
+        </h1>
+        <p className={cn("mt-6 max-w-2xl", PAGE_HEADER_DARK_SUBTITLE_CLASS)}>
+          You&apos;re building something that can change healthcare. We bring the experts, programs, and connections to help
+          you get there.
+        </p>
+        <div className="mt-10 flex flex-wrap gap-3">
+          <RelliaAction asChild variant="mintOnTealStrip" size="comfortable">
+            <Link to="/apply" className="inline-flex cursor-pointer items-center gap-2" aria-label="Apply to join Rellia">
+              Apply to join
+              <ArrowRight className="h-4 w-4" aria-hidden />
+            </Link>
+          </RelliaAction>
+          <RelliaAction asChild variant="heroGhostOnTeal" size="comfortable">
+            <Link to="/founders/directory" className="cursor-pointer">
+              Browse founder directory
+            </Link>
+          </RelliaAction>
+        </div>
       </div>
-    </div>
+    </section>
+  )
+}
+
+function EligibilitySection() {
+  const sideSrc = usePexelsPhoto({
+    query: "medical technology innovation laboratory",
+    fallbackUrl: "https://images.pexels.com/photos/3825539/pexels-photo-3825539.jpeg?auto=compress&cs=tinysrgb&w=900",
+    orientation: "portrait",
+  })
+
+  return (
+    <section className="w-full bg-rellia-cream/25 px-6 py-16 md:px-10 md:py-24">
+      <div className="mx-auto grid max-w-[1300px] gap-12 lg:grid-cols-[1fr_min(42%,480px)] lg:items-center lg:gap-16">
+        <div>
+          <NetworkEyebrow label="Who it's for" tone="onLight" />
+          <SectionHeading
+            animated={false}
+            title="Built for serious health tech teams"
+            description="Rellia works with companies where healthcare complexity is core to the product—evidence, regulation, workflow, and traction at once."
+            className="mt-5"
+          />
+          <ul className="mt-10 max-w-xl space-y-4" role="list">
+            {ELIGIBILITY_CATEGORIES.map((line) => (
+              <li key={line} className="flex gap-3 font-urbanist text-base leading-relaxed text-black/80 md:text-[17px]">
+                <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-rellia-teal" aria-hidden />
+                {line}
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div className="relative overflow-hidden rounded-[28px] border border-black/10 shadow-[0_28px_80px_-48px_rgba(13,53,64,0.55)]">
+          <img src={sideSrc} alt="" className="aspect-[4/5] w-full object-cover md:aspect-auto md:min-h-[420px]" />
+          <div className="absolute inset-0 bg-gradient-to-t from-rellia-teal/50 to-transparent" aria-hidden />
+          <p className="absolute bottom-6 left-6 right-6 font-urbanist text-sm font-medium text-white drop-shadow-md md:text-base">
+            Operators, clinicians, and builders—focused on outcomes that survive procurement and regulation.
+          </p>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+/** Visual shell aligned with homepage {@link HowItWorks} — teal band, ambient blobs, hologram watermark */
+function EngageTealBand() {
+  return (
+    <section className="relative w-full overflow-hidden bg-rellia-teal px-6 py-16 md:px-10 md:py-24">
+      <img
+        src="/images/hologram-logo.png"
+        alt=""
+        aria-hidden
+        className="pointer-events-none absolute -right-16 top-6 w-[320px] max-w-[55vw] opacity-[0.06] md:right-0 md:top-4 md:w-[420px]"
+      />
+      <div aria-hidden className="pointer-events-none absolute inset-0">
+        <div className="absolute -left-28 top-10 h-[420px] w-[420px] rounded-full bg-rellia-mint/22 blur-3xl" />
+        <div className="absolute -right-32 bottom-0 h-[480px] w-[480px] rounded-full bg-rellia-mint/16 blur-3xl" />
+        <div className="absolute inset-0 opacity-[0.2] [background-image:radial-gradient(circle_at_30%_15%,rgba(255,255,255,0.14),transparent_52%),radial-gradient(circle_at_75%_40%,rgba(157,214,208,0.12),transparent_55%)]" />
+      </div>
+
+      <div className="relative z-10 mx-auto max-w-[1300px]">
+        <ScrollReveal>
+          <div className="mb-12 md:mb-14">
+            <NetworkEyebrow label="Engage" tone="onDark" />
+            <h2 className="mt-5 font-host-grotesk text-3xl font-semibold leading-tight tracking-tight text-white md:text-[40px]">
+              How to <span className="text-rellia-mint">plug in</span> this week
+            </h2>
+            <p className="mt-4 max-w-2xl font-urbanist text-base font-medium leading-relaxed text-white/80 md:text-lg">
+              Every path reconnects to the same high-trust network—pick what fits your sprint.
+            </p>
+          </div>
+        </ScrollReveal>
+
+        <ScrollReveal delay={0.12}>
+          <div className="grid grid-cols-1 gap-7 md:grid-cols-2 lg:grid-cols-4 lg:gap-6">
+            {ENGAGEMENT.map((item) => {
+              const Icon = item.icon
+              return (
+                <Link
+                  key={item.title}
+                  to={item.to}
+                  className="group flex min-h-[200px] flex-col rounded-2xl border border-white/15 bg-white/5 p-6 backdrop-blur-md transition duration-300 hover:border-rellia-mint/40 hover:bg-white/10 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-rellia-teal"
+                >
+                  <Icon className="h-7 w-7 text-rellia-mint transition-transform duration-300 group-hover:scale-105" aria-hidden />
+                  <p className="mt-5 font-host-grotesk text-lg font-semibold leading-snug tracking-tight text-white">
+                    {item.title}
+                  </p>
+                  <p className="mt-3 flex-1 font-urbanist text-sm leading-relaxed text-white/80">{item.body}</p>
+                  <span className="mt-4 inline-flex items-center gap-1 font-urbanist text-sm font-semibold text-rellia-mint">
+                    Continue
+                    <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" aria-hidden />
+                  </span>
+                </Link>
+              )
+            })}
+          </div>
+        </ScrollReveal>
+      </div>
+    </section>
+  )
+}
+
+function MembershipDifferentSection() {
+  return (
+    <section className="w-full bg-white px-6 py-16 md:px-10 md:py-24">
+      <div className="mx-auto max-w-[1300px]">
+        <NetworkEyebrow label="Membership" tone="onLight" />
+        <SectionHeading
+          animated={false}
+          title="What makes Rellia membership different"
+          description="Operator-led support in a community where quality is defended by application review—not open signup churn."
+          className="mt-5"
+        />
+        <div className="mt-14 grid grid-cols-1 gap-12 sm:grid-cols-2 md:gap-x-14 md:gap-y-12 lg:gap-x-16">
+          {MEMBERSHIP_VALUE_PROPS.map((item, idx) => {
+            const Icon = item.icon
+            return (
+              <Reveal key={item.title} delay={0.05 * idx}>
+                <div className="flex max-w-xl flex-col gap-3">
+                  <Icon className="h-8 w-8 shrink-0 text-rellia-teal" aria-hidden />
+                  <h3 className="font-host-grotesk text-lg font-semibold text-rellia-teal md:text-xl">{item.title}</h3>
+                  <p className="font-urbanist text-base leading-relaxed text-black/75">{item.body}</p>
+                </div>
+              </Reveal>
+            )
+          })}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+function JourneySplitSection() {
+  const visualSrc = usePexelsPhoto({
+    query: "healthcare startup roadmap planning whiteboard",
+    fallbackUrl: "https://images.pexels.com/photos/3184296/pexels-photo-3184296.jpeg?auto=compress&cs=tinysrgb&w=1200",
+    orientation: "landscape",
+  })
+
+  return (
+    <LightSection className="bg-rellia-cream/20">
+      <div className="mx-auto max-w-[1300px]">
+        <div className="grid gap-12 lg:grid-cols-[1fr_380px] lg:gap-14 xl:grid-cols-[1fr_min(40%,440px)]">
+          <div>
+            <NetworkEyebrow label="Journey" tone="onLight" />
+            <SectionHeading
+              animated={false}
+              title="Where Rellia meets your trajectory"
+              description="Early discovery stays yours. Once you have product direction, we compound through MVP, evidence, regulation, and commercial traction."
+              className="mt-5"
+            />
+
+            <div className="mt-8 flex gap-2 overflow-x-auto pb-2 [scrollbar-width:thin] md:flex-wrap md:overflow-visible">
+              {JOURNEY_TIMELINE.map((m) => (
+                <div
+                  key={m.id}
+                  className={cn(
+                    "shrink-0 rounded-full border px-3 py-1.5 font-host-grotesk text-xs font-semibold md:text-sm",
+                    m.zone === "outside"
+                      ? "border-black/15 bg-black/[0.04] text-black/45"
+                      : "border-rellia-mint/60 bg-rellia-mint/20 text-rellia-teal",
+                  )}
+                >
+                  {m.label}
+                </div>
+              ))}
+            </div>
+
+            <Accordion type="multiple" className="mt-10 space-y-2">
+              {JOURNEY_TIMELINE.map((m) => (
+                <AccordionItem
+                  key={m.id}
+                  value={m.id}
+                  className="overflow-hidden rounded-2xl border border-black/10 bg-white shadow-sm"
+                >
+                  <AccordionTrigger className="px-5 py-4 text-left hover:no-underline md:px-6">
+                    <span className="flex w-full flex-1 items-center justify-between gap-3">
+                      <span className="font-host-grotesk text-base font-semibold text-rellia-teal md:text-lg">{m.label}</span>
+                      <span
+                        className={cn(
+                          "shrink-0 rounded-full px-2.5 py-1 font-urbanist text-[10px] font-bold uppercase tracking-wide md:text-[11px]",
+                          m.zone === "outside" ? "bg-black/[0.06] text-black/50" : "bg-rellia-mint/40 text-rellia-teal",
+                        )}
+                      >
+                        {m.zone === "outside" ? "Discovery" : "Rellia"}
+                      </span>
+                    </span>
+                  </AccordionTrigger>
+                  <AccordionContent className="px-5 pb-5 font-urbanist leading-relaxed text-black/75 md:px-6">
+                    {m.detail}
+                  </AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
+          </div>
+
+          <div className="relative lg:sticky lg:top-28">
+            <div className="overflow-hidden rounded-[28px] border border-black/10 shadow-xl">
+              <img src={visualSrc} alt="" className="aspect-[4/5] w-full object-cover lg:aspect-[3/4]" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/35 via-transparent to-transparent" aria-hidden />
+            </div>
+          </div>
+        </div>
+      </div>
+    </LightSection>
   )
 }
 
@@ -179,158 +433,130 @@ export default function Founders() {
       <Navbar />
 
       <main id="main-content">
-        <PageHeader
-          title={
+        <FoundersHero />
+        <EligibilitySection />
+        <EngageTealBand />
+        <MembershipDifferentSection />
+
+        <MembershipPathTimeline
+          showRoleLinks={false}
+          headingId="founders-membership-path-heading"
+          headingTitle={
             <>
-              The launchpad for <span className="text-rellia-mint">health tech founders</span>
+              From <span className="text-rellia-teal">application</span> to your first warm intro
             </>
           }
-          subtitle={
-            <p className="font-urbanist">
-              Move faster through regulatory complexity, clinical validation, and commercialization—with a network built
-              for operators, clinicians, and builders.
-            </p>
-          }
-          variant="dark"
+          subheading="Apply, get approved, choose your membership, join Slack, then reach out when you want introductions matched to your roadmap."
+          className="border-t border-black/10"
         />
 
-        <LightSection className="pt-12 md:pt-16">
-          <Reveal>
-            <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-              <div className="max-w-2xl">
-                <SectionPillBadge>Acceleration</SectionPillBadge>
-                <h2 className="mt-4 text-3xl font-bold tracking-tight text-black md:text-4xl">Rellia Acceleration Path</h2>
-                <p className="mt-4 font-urbanist text-lg leading-relaxed text-black/70">
-                  Hover each milestone for what we help you pressure-test. Early exploration stays intentionally light; the
-                  acceleration lane is where execution compounds.
-                </p>
-              </div>
-              <RelliaAction asChild variant="tealFilledLift" size="comfortable" className="shrink-0">
-                <a href="#signup" className="inline-flex items-center gap-2" aria-label="Start founder signup">
-                  Get started
-                  <ArrowRight aria-hidden className="h-4 w-4" />
-                </a>
-              </RelliaAction>
-            </div>
-          </Reveal>
-          <div className="mt-10">
-            <Reveal delay={0.08}>
-              <AccelerationPath />
-            </Reveal>
-          </div>
-        </LightSection>
+        <JourneySplitSection />
 
         <CreamSection>
-          <Reveal>
-            <h2 className="text-3xl font-bold tracking-tight text-black md:text-4xl">How to engage</h2>
-            <p className="mt-4 max-w-2xl font-urbanist text-lg leading-relaxed text-black/70">
-              Pick the front door that fits your week—every path connects back to the same high-trust community.
-            </p>
-          </Reveal>
-          <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2">
-            {ENGAGEMENT.map((item, idx) => {
-              const Icon = item.icon
-              return (
-                <Reveal key={item.title} delay={0.05 * idx}>
-                  <Link
-                    to={item.to}
-                    className="group block h-full rounded-3xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-teal focus-visible:ring-offset-2"
-                  >
-                    <GlassCardLight className="flex h-full flex-col p-7 transition-transform duration-300 group-hover:-translate-y-1">
-                      <div className="flex items-start justify-between gap-4">
-                        <span className="flex h-12 w-12 items-center justify-center rounded-2xl border border-rellia-teal/15 bg-rellia-mint/25 text-rellia-teal">
-                          <Icon className="h-5 w-5" aria-hidden />
-                        </span>
-                        <ArrowRight
-                          aria-hidden
-                          className="mt-1 h-5 w-5 shrink-0 text-rellia-teal/40 transition-transform group-hover:translate-x-0.5 group-hover:text-rellia-teal"
-                        />
-                      </div>
-                      <h3 className="mt-5 font-host-grotesk text-xl font-semibold tracking-tight text-rellia-teal">
-                        {item.title}
-                      </h3>
-                      <p className="mt-3 font-urbanist leading-relaxed text-black/70">{item.body}</p>
-                    </GlassCardLight>
-                  </Link>
-                </Reveal>
-              )
-            })}
+          <div className="mx-auto grid max-w-[1300px] gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
+            <Reveal>
+              <NetworkEyebrow label="1:1 depth" tone="onLight" />
+              <h2 className="mt-5 font-host-grotesk text-3xl font-semibold tracking-tight text-black md:text-[40px]">
+                Need <span className="text-rellia-teal">deeper</span> support?
+              </h2>
+              <p className="mt-4 font-urbanist text-lg leading-relaxed text-black/70">
+                Focused working sessions beyond community rhythm—regulatory planning, narrative, diligence prep—with specialists for scoped engagements.
+              </p>
+              <RelliaAction asChild variant="tealFilledLift" size="comfortable" className="mt-8">
+                <Link to="/consulting" className="cursor-pointer">
+                  Explore consulting
+                  <ArrowRight className="h-4 w-4" aria-hidden />
+                </Link>
+              </RelliaAction>
+            </Reveal>
+            <Reveal delay={0.08}>
+              <div className={cn(relliaTealGlassCardClass, "relative overflow-hidden border-white/30 p-8 md:p-10")}>
+                <div aria-hidden className="pointer-events-none absolute -right-10 -top-10 h-40 w-40 rounded-full bg-rellia-mint/30 blur-3xl" />
+                <Users className="relative h-10 w-10 text-rellia-teal" aria-hidden />
+                <p className="relative mt-4 font-host-grotesk text-xl font-semibold text-rellia-teal">Consulting snapshot</p>
+                <p className="relative mt-3 font-urbanist leading-relaxed text-black/75">
+                  Scoped deliverables and senior judgment on the milestone you are staring down—not an endless retainer.
+                </p>
+              </div>
+            </Reveal>
           </div>
         </CreamSection>
 
         <LightSection>
-          <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-            <Reveal>
-              <div>
-                <SectionPillBadge>Directory</SectionPillBadge>
-                <h2 className="mt-4 text-3xl font-bold tracking-tight text-black md:text-4xl">Featured founders</h2>
-                <p className="mt-4 max-w-2xl font-urbanist text-lg leading-relaxed text-black/70">
-                  A snapshot of teams building across diagnostics, devices, and care delivery—representative of the caliber
-                  inside Rellia.
-                </p>
-              </div>
-            </Reveal>
-            <Reveal delay={0.06}>
-              <RelliaAction asChild variant="outlineOnWhite" size="comfortable" className="shrink-0">
-                <Link to="/apply" className="inline-flex items-center gap-2" aria-label="Apply to join Rellia">
-                  Apply to join
-                  <ArrowRight aria-hidden className="h-4 w-4" />
-                </Link>
-              </RelliaAction>
-            </Reveal>
-          </div>
-          <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {FEATURED_FOUNDERS.map((f, idx) => (
-              <Reveal key={f.name} delay={0.05 * idx}>
-                <GlassCardLight className="p-6">
-                  <div className="flex items-start gap-4">
-                    <img
-                      src={f.avatar}
-                      alt=""
-                      width={48}
-                      height={48}
-                      className="h-12 w-12 rounded-full object-cover ring-2 ring-rellia-mint/40"
-                    />
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-center gap-2">
-                        <span
-                          aria-hidden
-                          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-black/10 bg-rellia-teal text-[10px] font-bold text-white"
-                        >
-                          {f.initials}
-                        </span>
-                        <div className="min-w-0">
-                          <p className="truncate font-host-grotesk font-semibold text-rellia-teal">{f.company}</p>
-                          <p className="truncate font-urbanist text-sm text-black/60">{f.name}</p>
-                        </div>
-                      </div>
-                      <span className="mt-3 inline-flex rounded-full border border-rellia-teal/20 bg-rellia-mint/20 px-3 py-1 font-urbanist text-xs font-semibold text-rellia-teal">
-                        {f.tag}
-                      </span>
-                    </div>
-                  </div>
-                </GlassCardLight>
+          <div className="mx-auto max-w-[1300px]">
+            <div className="grid gap-12 lg:grid-cols-2 lg:gap-16">
+              <Reveal>
+                <NetworkEyebrow label="Directories" tone="onLight" />
+                <SectionHeading
+                  animated={false}
+                  title="Explore founders and advisors"
+                  description="See who is building alongside you—and browse mentors by expertise before you apply for intros."
+                  className="mt-5"
+                />
+                <div className="mt-10 flex flex-col gap-4 sm:flex-row sm:flex-wrap">
+                  <RelliaAction asChild variant="outlineOnWhite" size="comfortable">
+                    <Link to="/founders/directory" className="cursor-pointer">
+                      Founder directory
+                    </Link>
+                  </RelliaAction>
+                  <RelliaAction asChild variant="tealFilledLift" size="comfortable">
+                    <Link to="/advisors/directory" className="cursor-pointer">
+                      Advisor directory
+                    </Link>
+                  </RelliaAction>
+                </div>
               </Reveal>
-            ))}
+              <Reveal delay={0.06}>
+                <div className="flex h-full flex-col justify-center rounded-[28px] border border-black/10 bg-gradient-to-br from-rellia-teal to-[#0a2830] p-8 text-white shadow-xl md:p-12">
+                  <NetworkEyebrow label="Warm intros" tone="onDark" />
+                  <p className="mt-6 font-host-grotesk text-2xl font-semibold leading-snug md:text-3xl">
+                    Meet operators who&apos;ve shipped in your lane.
+                  </p>
+                  <p className="mt-4 font-urbanist leading-relaxed text-white/85">
+                    The advisor directory shows regulatory, clinical, GTM, and technical depth—apply so we can route you intentionally.
+                  </p>
+                  <Link
+                    to="/advisors/directory"
+                    className="mt-8 inline-flex items-center gap-2 font-host-grotesk font-semibold text-rellia-mint underline-offset-4 transition hover:underline cursor-pointer"
+                  >
+                    Open advisor directory
+                    <ArrowRight className="h-4 w-4" aria-hidden />
+                  </Link>
+                </div>
+              </Reveal>
+            </div>
           </div>
         </LightSection>
 
-        <SectionShell className="py-16 md:py-24">
-          <div id="signup" className="scroll-mt-28">
-            <Reveal>
-              <MultiStepSignupForm
-                ctaLabel="Apply for the next cohort"
-                roleLabel="Founder"
-                step2Fields={[
-                  { name: "company", label: "Company / project", placeholder: "Your company or working name" },
-                  { name: "stage", label: "Stage", placeholder: "Idea / MVP / Pilot / Revenue" },
-                  { name: "focus", label: "Focus area", placeholder: "Digital health, med device, diagnostics…" },
-                  { name: "timeline", label: "Target milestone", placeholder: "e.g. FDA strategy, pilot launch, Series A" },
-                ]}
-              />
-            </Reveal>
-          </div>
+        <SectionShell className="relative overflow-hidden py-16 md:py-24">
+          <div aria-hidden className="pointer-events-none absolute inset-0 opacity-40 [background-image:radial-gradient(circle_at_70%_20%,rgba(167,219,214,0.25),transparent_45%)]" />
+          <Reveal>
+            <div className="relative flex flex-col items-start justify-between gap-8 md:flex-row md:items-center">
+              <div className="max-w-2xl">
+                <NetworkEyebrow label="Join" tone="onDark" />
+                <h2 className="mt-5 font-host-grotesk text-3xl font-bold tracking-tight text-white md:text-4xl">
+                  Ready to join?
+                </h2>
+                <p className="mt-4 font-urbanist text-lg leading-relaxed text-white/85">
+                  Apply once—we&apos;ll follow up with fit, onboarding, and the fastest path into programs and intros.
+                </p>
+              </div>
+              <RelliaAction asChild variant="mintOnTealStrip" size="comfortable">
+                <Link to="/apply" className="inline-flex cursor-pointer items-center gap-2" aria-label="Apply to Rellia">
+                  Apply to join
+                  <ArrowRight className="h-4 w-4" aria-hidden />
+                </Link>
+              </RelliaAction>
+            </div>
+          </Reveal>
         </SectionShell>
+
+        <RelliaCta
+          title="Still exploring?"
+          body="Read programs and events—or send a short note and we’ll point you to the right conversation."
+          primary={{ label: "View programs", to: "/programs" }}
+          secondary={{ label: "Contact", to: "/contact" }}
+        />
       </main>
 
       <Footer />
