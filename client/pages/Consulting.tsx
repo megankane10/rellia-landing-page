@@ -1,3 +1,4 @@
+import { PEXELS_HEALTH_MEETING } from "@/config/pexelsFallbacks"
 import { usePexelsPhoto } from "@/hooks/usePexelsPhoto"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
@@ -7,9 +8,9 @@ import SectionHeading from "@/components/SectionHeading"
 import MembershipPathTimeline from "@/components/MembershipPathTimeline"
 import RelliaAction from "@/components/RelliaAction"
 import ScrollReveal from "@/components/ScrollReveal"
-import { CheckCircle2 } from "lucide-react"
+import { CheckCircle2, ClipboardList, MessagesSquare, UsersRound } from "lucide-react"
 import { Link } from "react-router-dom"
-import { CreamSection, GlassCardLight, LightSection, Reveal, SectionShell } from "./network/_shared"
+import { CreamSection, LightSection, Reveal, SectionShell } from "./network/_shared"
 
 const WHEN_TO_USE = [
   "You need scoped deep dives—FDA strategy, clinical evidence design, enterprise sales narrative—in focused sessions",
@@ -18,9 +19,18 @@ const WHEN_TO_USE = [
 ] as const
 
 const WHAT_TO_EXPECT = [
-  "Scoped engagements with clear deliverables and timelines—distinct from always-on community membership",
-  "Aligned with Rellia’s advisor bench; we match expertise to the milestone you are staring down",
-  "Transparent scoping after we understand constraints—start with a conversation, not a vague retainer",
+  {
+    icon: ClipboardList,
+    text: "Scoped engagements with clear deliverables and timelines—distinct from always-on community membership",
+  },
+  {
+    icon: UsersRound,
+    text: "Aligned with Rellia’s advisor bench; we match expertise to the milestone you are staring down",
+  },
+  {
+    icon: MessagesSquare,
+    text: "Transparent scoping after we understand constraints—start with a conversation, not a vague retainer",
+  },
 ] as const
 
 const CONSULTING_PATH_STEPS = [
@@ -44,7 +54,7 @@ const CONSULTING_PATH_STEPS = [
 function FitSectionSplit() {
   const img = usePexelsPhoto({
     query: "healthcare medical technology meeting discussion",
-    fallbackUrl: "/images/hero-pexels-1.jpg",
+    fallbackUrl: PEXELS_HEALTH_MEETING,
     orientation: "landscape",
   })
 
@@ -132,14 +142,18 @@ export default function Consulting() {
               className="mt-5"
             />
           </ScrollReveal>
-          <div className="mt-12 grid grid-cols-1 gap-5 md:grid-cols-3 md:gap-6">
-            {WHAT_TO_EXPECT.map((line, idx) => (
-              <Reveal key={line.slice(0, 24)} delay={0.05 * idx}>
-                <GlassCardLight className="h-full p-7 transition-colors duration-200 hover:border-rellia-teal/25 cursor-default">
-                  <p className="font-urbanist leading-relaxed text-black/75">{line}</p>
-                </GlassCardLight>
-              </Reveal>
-            ))}
+          <div className="mt-14 grid grid-cols-1 gap-12 md:grid-cols-3 md:gap-x-10 md:gap-y-12 lg:gap-x-12">
+            {WHAT_TO_EXPECT.map((item, idx) => {
+              const Icon = item.icon
+              return (
+                <Reveal key={item.text.slice(0, 32)} delay={0.05 * idx}>
+                  <div className="flex max-w-xl flex-col gap-3">
+                    <Icon className="h-8 w-8 shrink-0 text-rellia-teal" aria-hidden />
+                    <p className="font-urbanist text-base leading-relaxed text-black/75">{item.text}</p>
+                  </div>
+                </Reveal>
+              )
+            })}
           </div>
           <div className="mt-12 flex flex-wrap gap-3">
             <RelliaAction asChild variant="tealFilledLift" size="comfortable">

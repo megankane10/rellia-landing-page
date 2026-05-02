@@ -1,4 +1,5 @@
 import type { ReactNode } from "react"
+import { PEXELS_OFFICE_COLLABORATION } from "@/config/pexelsFallbacks"
 import { usePexelsPhoto } from "@/hooks/usePexelsPhoto"
 import PageHeader from "@/components/PageHeader"
 import NetworkEyebrow from "@/components/network/NetworkEyebrow"
@@ -145,7 +146,7 @@ function PipelinePhotoSection({
 function PortfolioSplit() {
   const sideImage = usePexelsPhoto({
     query: "team collaboration office healthcare meeting",
-    fallbackUrl: "/images/hero-pexels-1.jpg",
+    fallbackUrl: PEXELS_OFFICE_COLLABORATION,
     orientation: "landscape",
   })
 

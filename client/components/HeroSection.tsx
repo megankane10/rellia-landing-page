@@ -98,11 +98,13 @@ export default function HeroSection({ content }: HeroSectionProps) {
         </video>
       </div>
 
-      <div aria-hidden className="absolute inset-0 bg-rellia-teal/30" />
+      {/* Softer teal wash so image stays visible */}
+      <div aria-hidden className="absolute inset-0 bg-rellia-teal/45" />
 
+      {/* Left-to-right gradient — extra contrast under the headline */}
       <div
         aria-hidden
-        className="absolute inset-0 bg-gradient-to-r from-black/60 to-black/10"
+        className="absolute inset-0 bg-gradient-to-r from-rellia-teal/85 via-rellia-teal/55 to-rellia-teal/35"
       />
 
       <div className="relative z-10 max-w-[1300px] mx-auto w-full px-6 md:px-10 pt-24 pb-12 md:pt-28 md:pb-24">
@@ -161,7 +163,7 @@ export default function HeroSection({ content }: HeroSectionProps) {
                 ? undefined
                 : { duration: 0.45, ease: BELOW_FOLD_EASE, delay: 0 }
             }
-            className="mt-12 flex w-full max-w-3xl flex-col gap-4 sm:mt-14 sm:flex-row sm:items-center sm:justify-start"
+            className="mt-12 flex w-full max-w-3xl flex-col gap-4 sm:mt-14 sm:flex-row sm:items-stretch"
           >
             <RelliaAction
               type="button"
@@ -169,6 +171,7 @@ export default function HeroSection({ content }: HeroSectionProps) {
               size="comfortable"
               onClick={() => navigate(content.primaryCtaPath)}
               aria-label={content.primaryCtaLabel || "Apply to Join"}
+              className="w-full justify-center sm:flex-1 sm:min-w-0"
             >
               {content.primaryCtaLabel || "Apply to Join"}
               <ArrowRight aria-hidden />
@@ -180,7 +183,7 @@ export default function HeroSection({ content }: HeroSectionProps) {
               size="comfortable"
               onClick={() => navigate(content.secondaryCtaPath)}
               aria-label={content.secondaryCtaLabel || "Explore Programs"}
-              className="border-white/45 text-white hover:border-white/80"
+              className="w-full justify-center border-white/45 text-white hover:border-white/80 sm:flex-1 sm:min-w-0"
             >
               {content.secondaryCtaLabel || "Explore Programs"}
               <ArrowRight aria-hidden />
