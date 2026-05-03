@@ -51,11 +51,11 @@ const EventDetailBackToEventsLink = ({ variant = "footer" }: { variant?: "top" |
 const eventDetailMetaLabelClassName =
   "font-host-grotesk text-[10px] font-semibold uppercase tracking-[0.16em] text-black/45 sm:text-[11px]"
 
-/** Time, speaker name, location — same font, size, weight */
+/** Calendar date line, speaker name, location — same font, size, weight */
 const eventDetailMetaPrimaryValueClassName =
   "font-urbanist text-[15px] font-medium leading-snug text-black md:text-base"
 
-/** Calendar date line & speaker company — same size and weight */
+/** Time line & speaker company — same size and weight */
 const eventDetailMetaSecondaryValueClassName =
   "font-urbanist text-[15px] font-normal leading-snug text-black/70 md:text-base"
 
@@ -245,11 +245,19 @@ export default function EventDetail() {
                           <div className="min-w-0">
                             <p className={eventDetailMetaLabelClassName}>Date & time</p>
                             <div className="mt-2.5 space-y-1">
-                              {detailTimeEst ? (
-                                <p className={eventDetailMetaPrimaryValueClassName}>{detailTimeEst}</p>
-                              ) : null}
                               {detailDateLine ? (
-                                <p className={eventDetailMetaSecondaryValueClassName}>{detailDateLine}</p>
+                                <p className={eventDetailMetaPrimaryValueClassName}>{detailDateLine}</p>
+                              ) : null}
+                              {detailTimeEst ? (
+                                <p
+                                  className={
+                                    detailDateLine
+                                      ? eventDetailMetaSecondaryValueClassName
+                                      : eventDetailMetaPrimaryValueClassName
+                                  }
+                                >
+                                  {detailTimeEst}
+                                </p>
                               ) : null}
                             </div>
                           </div>
