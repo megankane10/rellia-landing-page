@@ -10,7 +10,8 @@ import { cn } from "@/lib/utils"
 import { DEFAULT_PROGRAMS_LANDING } from "@shared/cms/defaults";
 import { useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, LayoutGrid } from "lucide-react";
+import FilteredListEmptyState from "@/components/FilteredListEmptyState";
 
 type ProgramFilter = "all" | "available" | "waitlist";
 const PAGE_SIZE = 12
@@ -161,40 +162,49 @@ export default function ProgramsEvents() {
                 </p>
               </div>
 
-              <motion.div
-                layout
-                transition={{ layout: { duration: 0.32, ease: [0.16, 1, 0.3, 1] } }}
-                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 will-change-transform"
-              >
-                <AnimatePresence mode="sync" initial={false}>
-                  {pagePrograms.map((p) => (
-                    <motion.div
-                      key={`${p.title}-${p.imageSrc}`}
-                      layout="position"
-                      initial={{ opacity: 0, y: 14 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: 10 }}
-                      transition={{
-                        duration: 0.26,
-                        ease: [0.16, 1, 0.3, 1],
-                        layout: { duration: 0.32, ease: [0.16, 1, 0.3, 1] },
-                      }}
-                    >
-                      <ProgramCard
-                        title={p.title}
-                        description={p.description}
-                        imageSrc={p.imageSrc}
-                        href={p.href}
-                        buttonText={p.buttonText}
-                        waitlistHref={p.waitlistHref}
-                        priceLabel={p.priceLabel}
-                        priceAmount={p.priceAmount}
-                        priceSuffix={p.priceSuffix}
-                      />
-                    </motion.div>
-                  ))}
-                </AnimatePresence>
-              </motion.div>
+              {visiblePrograms.length === 0 ? (
+                <FilteredListEmptyState
+                  className="mt-6"
+                  icon={LayoutGrid}
+                  title="No programs match this filter"
+                  description="Try the All tab, or check back as we open new cohorts and waitlists."
+                />
+              ) : (
+                <motion.div
+                  layout
+                  transition={{ layout: { duration: 0.32, ease: [0.16, 1, 0.3, 1] } }}
+                  className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 will-change-transform"
+                >
+                  <AnimatePresence mode="sync" initial={false}>
+                    {pagePrograms.map((p) => (
+                      <motion.div
+                        key={`${p.title}-${p.imageSrc}`}
+                        layout="position"
+                        initial={{ opacity: 0, y: 14 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: 10 }}
+                        transition={{
+                          duration: 0.26,
+                          ease: [0.16, 1, 0.3, 1],
+                          layout: { duration: 0.32, ease: [0.16, 1, 0.3, 1] },
+                        }}
+                      >
+                        <ProgramCard
+                          title={p.title}
+                          description={p.description}
+                          imageSrc={p.imageSrc}
+                          href={p.href}
+                          buttonText={p.buttonText}
+                          waitlistHref={p.waitlistHref}
+                          priceLabel={p.priceLabel}
+                          priceAmount={p.priceAmount}
+                          priceSuffix={p.priceSuffix}
+                        />
+                      </motion.div>
+                    ))}
+                  </AnimatePresence>
+                </motion.div>
+              )}
 
               {totalPages > 1 ? (
                 <div className="mt-10 flex items-center justify-center gap-4">

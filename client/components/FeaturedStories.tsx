@@ -71,6 +71,8 @@ export default function FeaturedStories({
 
   const storyHref = useMemo(() => (activeStory ? `/stories/${activeStory.slug}` : "/stories"), [activeStory])
 
+  if (featured.length === 0) return null
+
   const arrowInsideClass =
     "inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-white/35 bg-white/10 text-white shadow-sm transition hover:bg-white/20 disabled:pointer-events-none disabled:opacity-40"
 

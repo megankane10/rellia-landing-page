@@ -9,39 +9,14 @@ import { getStoryBySlug } from "@/content/stories"
 import { getDefaultOgImageUrl, getSiteUrl } from "@/config/seo"
 import { ChevronLeft } from "lucide-react"
 import { AnimatePresence, motion } from "framer-motion"
-
-const shareButtonClassName =
-  "inline-flex h-11 w-11 items-center justify-center rounded-full bg-white text-rellia-teal transition-transform transition-colors hover:-translate-y-0.5 hover:bg-rellia-mint focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-rellia-teal"
-
-const XFilledIcon = ({ className }: { className?: string }) => (
-  <svg viewBox="0 0 24 24" aria-hidden className={className} fill="currentColor">
-    <path d="M18.9 2H22l-6.77 7.73L23.2 22h-6.26l-4.9-7.4L5.57 22H2.46l7.24-8.28L1.8 2h6.42l4.43 6.8L18.9 2Z" />
-  </svg>
-)
-
-const LinkedinFilledIcon = ({ className }: { className?: string }) => (
-  <svg viewBox="0 0 24 24" aria-hidden className={className} fill="currentColor">
-    <path d="M6.94 8.5H3.56V20h3.38V8.5ZM5.25 3A1.97 1.97 0 1 0 5.3 6.94 1.97 1.97 0 0 0 5.25 3ZM20 12.78c0-3.44-1.84-5.04-4.29-5.04-1.98 0-2.87 1.1-3.37 1.86V8.5H8.96c.04.73 0 11.5 0 11.5h3.38v-6.42c0-.34.02-.68.12-.93.27-.68.88-1.39 1.91-1.39 1.35 0 1.89 1.03 1.89 2.55V20H20v-7.22Z" />
-  </svg>
-)
-
-const FacebookFilledIcon = ({ className }: { className?: string }) => (
-  <svg viewBox="0 0 24 24" aria-hidden className={className} fill="currentColor">
-    <path d="M13.62 21v-8.2h2.76l.41-3.2h-3.17V7.56c0-.93.26-1.56 1.59-1.56H16.9V3.14c-.29-.04-1.29-.14-2.46-.14-2.43 0-4.09 1.48-4.09 4.21v2.39H7.6v3.2h2.75V21h3.27Z" />
-  </svg>
-)
-
-const MailFilledIcon = ({ className }: { className?: string }) => (
-  <svg viewBox="0 0 24 24" aria-hidden className={className} fill="currentColor">
-    <path d="M3 6.75A2.75 2.75 0 0 1 5.75 4h12.5A2.75 2.75 0 0 1 21 6.75v10.5A2.75 2.75 0 0 1 18.25 20H5.75A2.75 2.75 0 0 1 3 17.25V6.75Zm2.12-.25 6.45 5.36a.67.67 0 0 0 .86 0l6.45-5.36H5.12Zm13.38 2.3-5.03 4.18a2.67 2.67 0 0 1-3.42 0L5.02 8.8v8.45c0 .4.33.75.73.75h12.5c.4 0 .75-.34.75-.75V8.8Z" />
-  </svg>
-)
-
-const CopyFilledIcon = ({ className }: { className?: string }) => (
-  <svg viewBox="0 0 24 24" aria-hidden className={className} fill="currentColor">
-    <path d="M8.5 3A2.5 2.5 0 0 0 6 5.5v10A2.5 2.5 0 0 0 8.5 18h8a2.5 2.5 0 0 0 2.5-2.5v-10A2.5 2.5 0 0 0 16.5 3h-8Zm-3 4A2.5 2.5 0 0 0 3 9.5v9A2.5 2.5 0 0 0 5.5 21h8.75a2.5 2.5 0 0 0 2.45-2H8.5A3.5 3.5 0 0 1 5 15.5V7.3c.16-.2.33-.4.5-.3Z" />
-  </svg>
-)
+import {
+  ShareIconCopy,
+  ShareIconFacebook,
+  ShareIconLinkedIn,
+  ShareIconMail,
+  ShareIconX,
+  shareToolbarButtonClassName,
+} from "@/components/share/sharePageIcons"
 
 export default function StoryPost() {
   const { slug } = useParams()
@@ -167,43 +142,43 @@ export default function StoryPost() {
                         href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(canonical)}&text=${encodeURIComponent(title)}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className={cn(shareButtonClassName, "focus-visible:ring-offset-rellia-cream")}
+                        className={shareToolbarButtonClassName}
                         aria-label="Share on X"
                       >
-                        <XFilledIcon className="h-4 w-4" />
+                        <ShareIconX />
                       </a>
                       <a
                         href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(canonical)}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className={cn(shareButtonClassName, "focus-visible:ring-offset-rellia-cream")}
+                        className={shareToolbarButtonClassName}
                         aria-label="Share on LinkedIn"
                       >
-                        <LinkedinFilledIcon className="h-4 w-4" />
+                        <ShareIconLinkedIn />
                       </a>
                       <a
                         href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(canonical)}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className={cn(shareButtonClassName, "focus-visible:ring-offset-rellia-cream")}
+                        className={shareToolbarButtonClassName}
                         aria-label="Share on Facebook"
                       >
-                        <FacebookFilledIcon className="h-4 w-4" />
+                        <ShareIconFacebook />
                       </a>
                       <a
                         href={`mailto:?subject=${encodeURIComponent(title)}&body=${encodeURIComponent(`${title}\n${canonical}`)}`}
-                        className={cn(shareButtonClassName, "focus-visible:ring-offset-rellia-cream")}
+                        className={shareToolbarButtonClassName}
                         aria-label="Share via email"
                       >
-                        <MailFilledIcon className="h-4 w-4" />
+                        <ShareIconMail />
                       </a>
                       <button
                         type="button"
                         onClick={handleCopyLink}
-                        className={cn(shareButtonClassName, "focus-visible:ring-offset-rellia-cream")}
+                        className={shareToolbarButtonClassName}
                         aria-label={copyState === "copied" ? "Link copied" : "Copy story link"}
                       >
-                        <CopyFilledIcon className="h-4 w-4" />
+                        <ShareIconCopy />
                       </button>
 
                       <AnimatePresence mode="wait" initial={false}>

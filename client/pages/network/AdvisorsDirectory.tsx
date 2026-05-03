@@ -4,7 +4,8 @@ import Footer from "@/components/Footer"
 import RelliaAction from "@/components/RelliaAction"
 import { cn } from "@/lib/utils"
 import { motion, AnimatePresence, useReducedMotion, type Variants } from "framer-motion"
-import { Globe, Linkedin, Search } from "lucide-react"
+import { Globe, Linkedin, Search, UserSearch } from "lucide-react"
+import FilteredListEmptyState from "@/components/FilteredListEmptyState"
 import {
   ADVISOR_DIRECTORY_SEED,
   ADVISOR_FILTER_OPTIONS,
@@ -190,24 +191,29 @@ export default function AdvisorsDirectory() {
               </div>
             </div>
 
-            <motion.div
-              variants={container}
-              initial="hidden"
-              animate="show"
-              className="mt-10 grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3"
-            >
-              <AnimatePresence mode="popLayout">
-                {filtered.map((a) => (
-                  <motion.div key={a.id} variants={item} layout>
-                    <AdvisorCard advisor={a} onDetails={() => setActiveId(a.id)} />
-                  </motion.div>
-                ))}
-              </AnimatePresence>
-            </motion.div>
-
             {filtered.length === 0 ? (
-              <p className="mt-10 font-urbanist text-black/60">No advisors match—try another keyword or filter.</p>
-            ) : null}
+              <FilteredListEmptyState
+                className="mt-10"
+                icon={UserSearch}
+                title="No advisors match this search"
+                description="Try another keyword or filter to find operators and specialists in the directory."
+              />
+            ) : (
+              <motion.div
+                variants={container}
+                initial="hidden"
+                animate="show"
+                className="mt-10 grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3"
+              >
+                <AnimatePresence mode="popLayout">
+                  {filtered.map((a) => (
+                    <motion.div key={a.id} variants={item} layout>
+                      <AdvisorCard advisor={a} onDetails={() => setActiveId(a.id)} />
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
+              </motion.div>
+            )}
           </div>
         </section>
 

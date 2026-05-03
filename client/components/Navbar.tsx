@@ -27,16 +27,15 @@ const getNavItemClass = (active: boolean, tone: "light" | "dark") =>
         : "text-black/75 hover:text-rellia-mint focus-visible:ring-rellia-mint focus-visible:ring-offset-white",
   )
 
-const getCtaClassName = (tone: "light" | "dark", radiusClassName: string) =>
+const getCtaClassName = (radiusClassName: string, lightNavHover: boolean) =>
   cn(
     "group relative isolate inline-flex cursor-pointer items-center gap-2 overflow-hidden border-2 font-host-grotesk font-semibold outline-none transition-[transform,box-shadow,colors,background-color,border-color] duration-300 motion-reduce:transition-none focus-visible:ring-2 focus-visible:ring-offset-2 motion-safe:hover:-translate-y-0.5 motion-safe:hover:shadow-lg",
     "before:pointer-events-none before:absolute before:inset-0 before:-z-10 before:origin-left before:scale-x-0 before:transition-transform before:duration-300 before:ease-out hover:before:scale-x-100",
     "px-6 py-3 text-[14px] lg:text-[15px]",
     radiusClassName,
-    tone === "dark" &&
-      "border-rellia-mint bg-rellia-mint text-rellia-teal focus-visible:ring-rellia-mint focus-visible:ring-offset-transparent before:bg-white hover:border-white hover:text-rellia-teal",
-    tone === "light" &&
-      "border-rellia-teal bg-white text-rellia-teal focus-visible:ring-rellia-teal focus-visible:ring-offset-white before:bg-rellia-teal hover:border-rellia-teal hover:text-white",
+    lightNavHover
+      ? "border-rellia-teal bg-rellia-teal text-white focus-visible:ring-rellia-teal focus-visible:ring-offset-white before:bg-rellia-mint hover:border-rellia-mint hover:text-rellia-teal"
+      : "border-rellia-mint bg-rellia-mint text-rellia-teal focus-visible:ring-rellia-mint focus-visible:ring-offset-transparent before:bg-white hover:border-white hover:text-rellia-teal",
   )
 
 type DesktopNavLinkProps = {
@@ -269,8 +268,8 @@ export default function Navbar({ ctaRadiusClassName = "rounded-full" }: NavbarPr
     pathname === "/advisors/directory" ||
     pathname === "/industry-partners/directory"
 
-  /** Light cream/white heroes (individual story posts only): transparent bar + dark nav chrome */
-  const isLightHeroNav = /^\/stories\/.+/.test(pathname)
+  /** Light cream/white heroes (story posts, event detail): transparent bar + light nav chrome until scroll */
+  const isLightHeroNav = /^\/stories\/.+/.test(pathname) || /^\/events\/.+/.test(pathname)
 
   const hasTransparentTopBar = (hasTealHero || isLightHeroNav) && !isNetworkDirectoryPage
 
@@ -337,7 +336,7 @@ export default function Navbar({ ctaRadiusClassName = "rounded-full" }: NavbarPr
 
   const desktopRailCls = cn("hidden items-center md:flex gap-1")
 
-  const ctaCls = getCtaClassName(desktopTone, ctaRadiusClassName)
+  const ctaCls = getCtaClassName(ctaRadiusClassName, useLightNavChrome)
 
   const menuIconBtnCls = cn(
     "inline-flex min-h-11 min-w-11 cursor-pointer items-center justify-center transition-[color] duration-200 motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 md:hidden",

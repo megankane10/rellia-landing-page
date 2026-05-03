@@ -16,6 +16,8 @@ export default function Apply() {
         id="main-content"
         className="flex w-full flex-1 flex-col pt-[72px] md:pt-[86px]"
       >
+        <MembershipPathTimeline className="pt-7 pb-14 md:pt-8 md:pb-20 lg:pt-9 lg:pb-24" />
+
         <div
           id="apply-form"
           className={cn("w-full flex-1 scroll-mt-[88px] md:scroll-mt-[100px]", FILLOUT_EMBED_VIEWPORT_MIN_CLASS)}
@@ -26,8 +28,6 @@ export default function Apply() {
             dynamicResize
           />
         </div>
-
-        <MembershipPathTimeline />
 
         <RelliaCta
           title="Explore the **Rellia network**"

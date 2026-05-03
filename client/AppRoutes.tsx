@@ -12,6 +12,7 @@ import Careers from "./pages/Careers"
 import ProgramsEvents from "./pages/ProgramsEvents"
 import ProgramsQms from "./pages/ProgramsQms"
 import Events from "./pages/Events"
+import EventDetail from "./pages/EventDetail"
 import NotFound from "./pages/NotFound"
 import Contact from "./pages/Contact"
 import Apply from "./pages/Apply"
@@ -28,7 +29,6 @@ import PrivacyPolicy from "./pages/PrivacyPolicy"
 import ProgramsLayout from "./pages/programs/ProgramsLayout"
 import Stories from "./pages/Stories"
 import StoryPost from "./pages/StoryPost"
-import PlaceholderPage from "./pages/PlaceholderPage"
 import IndustryPartnersDirectory from "./pages/IndustryPartnersDirectory"
 import Consulting from "./pages/Consulting"
 import FoundersDirectory from "./pages/network/FoundersDirectory"
@@ -79,6 +79,7 @@ export const AppRoutes = () => (
     <Route path="/faq" element={<FAQ />} />
     <Route path="/careers" element={<Careers />} />
     <Route path="/events" element={<Events />} />
+    <Route path="/events/:slug" element={<EventDetail />} />
     <Route path="/programs" element={<ProgramsLayout />}>
       <Route index element={<ProgramsEvents />} />
       <Route path="build-your-qms" element={<ProgramsQms />} />

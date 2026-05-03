@@ -1,5 +1,5 @@
 import { usePexelsPhoto } from "@/hooks/usePexelsPhoto"
-import { PAGE_HEADER_DARK_SUBTITLE_CLASS, PAGE_HEADER_TITLE_SIZE_CLASS } from "@/components/PageHeader"
+import { PAGE_HEADER_TITLE_SIZE_CLASS } from "@/components/PageHeader"
 import NetworkEyebrow from "@/components/network/NetworkEyebrow"
 import SectionHeading from "@/components/SectionHeading"
 import MembershipPathTimeline from "@/components/MembershipPathTimeline"
@@ -305,7 +305,7 @@ function FoundersHero() {
         >
           Are you building in <span className="text-rellia-mint">health tech?</span>
         </h1>
-        <p className={cn("mt-6 max-w-2xl", PAGE_HEADER_DARK_SUBTITLE_CLASS)}>
+        <p className="mt-6 max-w-2xl font-urbanist text-lg leading-relaxed text-white/80 md:text-xl">
           You&apos;re building something that can change healthcare. We bring the experts, programs, and connections to help
           you get there.
         </p>

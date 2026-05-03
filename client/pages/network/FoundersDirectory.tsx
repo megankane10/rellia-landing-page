@@ -6,7 +6,8 @@ import { PORTFOLIO_LOGO_MARKS } from "@/components/LogoMarquee"
 import RelliaAction from "@/components/RelliaAction"
 import { cn } from "@/lib/utils"
 import { motion, AnimatePresence, useReducedMotion, type Variants } from "framer-motion"
-import { Search } from "lucide-react"
+import { Building2, Search } from "lucide-react"
+import FilteredListEmptyState from "@/components/FilteredListEmptyState"
 import { Link } from "react-router-dom"
 
 /** Gray-teal tone for directory heroes */
@@ -313,24 +314,29 @@ export default function FoundersDirectory() {
               </div>
             </div>
 
-            <motion.div
-              variants={container}
-              initial="hidden"
-              animate="show"
-              className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3"
-            >
-              <AnimatePresence mode="popLayout">
-                {filtered.map((c) => (
-                  <motion.div key={c.id} variants={item} layout>
-                    <FounderDirectoryCard company={c} onOpen={() => setActiveId(c.id)} />
-                  </motion.div>
-                ))}
-              </AnimatePresence>
-            </motion.div>
-
             {filtered.length === 0 ? (
-              <p className="mt-10 font-urbanist text-black/60">No companies match that search or filters.</p>
-            ) : null}
+              <FilteredListEmptyState
+                className="mt-10"
+                icon={Building2}
+                title="No companies match this search"
+                description="Adjust your keywords, stage, or category filters to explore the founder directory."
+              />
+            ) : (
+              <motion.div
+                variants={container}
+                initial="hidden"
+                animate="show"
+                className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3"
+              >
+                <AnimatePresence mode="popLayout">
+                  {filtered.map((c) => (
+                    <motion.div key={c.id} variants={item} layout>
+                      <FounderDirectoryCard company={c} onOpen={() => setActiveId(c.id)} />
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
+              </motion.div>
+            )}
           </div>
         </section>
 

@@ -130,6 +130,12 @@ export type ProgramsEventCard = {
   href?: string
   comingSoon?: boolean
   buttonText?: string
+  /** Optional stable path segment for `/events/:slug`. Generated from title + date when omitted. */
+  slug?: string
+  /** Defaults to "Virtual" in the UI when empty. */
+  location?: string
+  /** Luma API-style id (`evt-…`) for the `/embed/event/evt-…/simple` iframe. */
+  lumaEventId?: string
 }
 
 export type ProgramsProgramCard = {

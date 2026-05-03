@@ -55,10 +55,6 @@ export default function About() {
   const valuesBgImage =
     "https://images.pexels.com/photos/3184465/pexels-photo-3184465.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=1600";
 
-  // Pexels image (hotlinked) for mission section
-  const missionImageSrc =
-    "https://images.pexels.com/photos/3912958/pexels-photo-3912958.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=1600"
-
   return (
     <div className="min-h-screen bg-white font-host-grotesk overflow-x-hidden">
       <Navbar />
@@ -79,8 +75,8 @@ export default function About() {
         <section className="py-20 md:py-32 bg-white">
           <div className="max-w-[1300px] mx-auto px-6 md:px-10">
             <ScrollReveal>
-              <div className="flex flex-col gap-12 md:gap-16 lg:flex-row lg:items-start">
-                <div className="relative min-h-0 w-full lg:min-w-0 lg:flex-1 lg:pr-2">
+              <div className="grid grid-cols-1 gap-12 md:gap-16 lg:grid-cols-2 lg:items-stretch lg:gap-10 xl:gap-12">
+                <div className="relative min-h-0 w-full min-w-0 lg:pr-2 xl:pr-4">
                   <div className="absolute -top-4 -left-4 h-24 w-24 rounded-full bg-rellia-mint/20 blur-2xl pointer-events-none" />
                   <h2 className="relative text-black text-3xl md:text-4xl font-bold tracking-tight mb-6">
                     {about.missionTitle}
@@ -92,12 +88,14 @@ export default function About() {
                   </div>
                 </div>
 
-                <div className="relative h-[360px] w-full shrink-0 overflow-hidden rounded-3xl shadow-2xl sm:h-[420px] lg:h-[460px] lg:w-[42%] lg:max-w-[480px]">
-                  <img
-                    src={missionImageSrc}
-                    alt={about.missionImageAlt}
-                    className="h-full w-full object-cover"
-                  />
+                <div className="relative min-h-0 w-full min-w-0">
+                  <div className="relative mx-auto aspect-[5/4] w-full max-w-full overflow-hidden rounded-xl shadow-lg sm:aspect-[5/4] lg:mx-0 lg:aspect-auto lg:h-full lg:min-h-[400px]">
+                    <img
+                      src={about.missionImageSrc}
+                      alt={about.missionImageAlt}
+                      className="h-full w-full object-cover"
+                    />
+                  </div>
                 </div>
               </div>
             </ScrollReveal>

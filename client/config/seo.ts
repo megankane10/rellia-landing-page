@@ -1,3 +1,6 @@
+import { DEFAULT_PROGRAMS_LANDING } from "../../shared/cms/defaults"
+import { programsEventDetailPath } from "../../shared/cms/eventSlug"
+
 /** Base URL for canonical links, Open Graph, and JSON-LD. Override via `VITE_SITE_URL` in env. */
 export const getSiteUrl = (): string => {
   const raw = import.meta.env.VITE_SITE_URL as string | undefined
@@ -187,15 +190,31 @@ export const normalizePathname = (pathname: string): string => {
   return pathname || "/"
 }
 
+const EVENT_DETAIL_SEO: RouteSeoConfig = {
+  title: "Event — Rellia Health",
+  description:
+    "Event details, location, and registration for Rellia Health sessions. Explore upcoming and past programs.",
+  indexable: true,
+}
+
 export const getSeoForPathname = (pathname: string): RouteSeoConfig => {
   const key = normalizePathname(pathname)
+  if (key.startsWith("/events/") && key !== "/events") {
+    return EVENT_DETAIL_SEO
+  }
   return ROUTE_SEO[key] ?? NOT_FOUND_SEO
 }
+
+const PROGRAMS_EVENT_PRERENDER_PATHS = [
+  ...DEFAULT_PROGRAMS_LANDING.upcomingEvents.map(programsEventDetailPath),
+  ...DEFAULT_PROGRAMS_LANDING.pastEvents.map(programsEventDetailPath),
+]
 
 /** Paths emitted as static HTML at build time (see `client/prerender.tsx`). */
 export const PRERENDER_PATHS: string[] = [
   "/",
   ...Object.keys(ROUTE_SEO).filter((p) => p !== "/"),
+  ...PROGRAMS_EVENT_PRERENDER_PATHS,
 ]
 
 export const getDefaultOgImageUrl = (): string => {

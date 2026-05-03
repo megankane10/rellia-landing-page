@@ -9,7 +9,8 @@ import { STORIES, type StoryTag } from "@/content/stories"
 import FeaturedStories from "@/components/FeaturedStories"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { AnimatePresence, motion } from "framer-motion"
-import { ChevronLeft, ChevronRight } from "lucide-react"
+import { BookOpen, ChevronLeft, ChevronRight } from "lucide-react"
+import FilteredListEmptyState from "@/components/FilteredListEmptyState"
 
 const tags: Array<StoryTag | "All"> = ["All", "Founder Story", "Industry Insight", "Program Update"]
 
@@ -206,32 +207,41 @@ export default function Stories() {
               </div>
             </ScrollReveal>
 
-            <motion.div
-              layout
-              transition={{ layout: { duration: 0.32, ease: [0.16, 1, 0.3, 1] } }}
-              className="mt-6 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 md:gap-8 will-change-transform"
-            >
-              <AnimatePresence mode="sync" initial={false}>
-                {pageStories.map((story, i) => (
-                  <motion.div
-                    key={story.slug}
-                    layout="position"
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: 10 }}
-                    transition={{
-                      duration: 0.22,
-                      ease: [0.16, 1, 0.3, 1],
-                      layout: { duration: 0.32, ease: [0.16, 1, 0.3, 1] },
-                    }}
-                  >
-                    <ScrollReveal delay={i * 0.05}>
-                      <StoryGridCard story={story} />
-                    </ScrollReveal>
-                  </motion.div>
-                ))}
-              </AnimatePresence>
-            </motion.div>
+            {filtered.length === 0 ? (
+              <FilteredListEmptyState
+                className="mt-6"
+                icon={BookOpen}
+                title="No stories match this filter"
+                description="Try another category or choose All to browse every story."
+              />
+            ) : (
+              <motion.div
+                layout
+                transition={{ layout: { duration: 0.32, ease: [0.16, 1, 0.3, 1] } }}
+                className="mt-6 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 md:gap-8 will-change-transform"
+              >
+                <AnimatePresence mode="sync" initial={false}>
+                  {pageStories.map((story, i) => (
+                    <motion.div
+                      key={story.slug}
+                      layout="position"
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 10 }}
+                      transition={{
+                        duration: 0.22,
+                        ease: [0.16, 1, 0.3, 1],
+                        layout: { duration: 0.32, ease: [0.16, 1, 0.3, 1] },
+                      }}
+                    >
+                      <ScrollReveal delay={i * 0.05}>
+                        <StoryGridCard story={story} />
+                      </ScrollReveal>
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
+              </motion.div>
+            )}
 
             {totalPages > 1 ? (
               <div className="mt-10 flex items-center justify-center gap-4">

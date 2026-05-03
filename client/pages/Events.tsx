@@ -10,7 +10,8 @@ import { cn } from "@/lib/utils"
 import { DEFAULT_PROGRAMS_LANDING } from "@shared/cms/defaults"
 import { useEffect, useMemo, useState } from "react"
 import { AnimatePresence, motion } from "framer-motion"
-import { ChevronLeft, ChevronRight } from "lucide-react"
+import { CalendarDays, ChevronLeft, ChevronRight } from "lucide-react"
+import FilteredListEmptyState from "@/components/FilteredListEmptyState"
 
 type EventsFilter = "all" | "upcoming" | "past"
 const PAGE_SIZE = 12
@@ -158,30 +159,39 @@ export default function Events() {
             </ScrollReveal>
 
             <ScrollReveal>
-              <motion.div
-                layout
-                transition={{ layout: { duration: 0.32, ease: [0.16, 1, 0.3, 1] } }}
-                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 will-change-transform"
-              >
-                <AnimatePresence mode="sync" initial={false}>
-                  {pageEvents.map((event) => (
-                    <motion.div
-                      key={eventKey(event)}
-                      layout="position"
-                      initial={{ opacity: 0, y: 14 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: 10 }}
-                      transition={{
-                        duration: 0.26,
-                        ease: [0.16, 1, 0.3, 1],
-                        layout: { duration: 0.32, ease: [0.16, 1, 0.3, 1] },
-                      }}
-                    >
-                      <EventCard event={event} variant={event._variant} />
-                    </motion.div>
-                  ))}
-                </AnimatePresence>
-              </motion.div>
+              {visibleEvents.length === 0 ? (
+                <FilteredListEmptyState
+                  className="mt-6"
+                  icon={CalendarDays}
+                  title="No events in this view"
+                  description="Switch to All, Upcoming, or Past to see sessions, or check back as we add new dates."
+                />
+              ) : (
+                <motion.div
+                  layout
+                  transition={{ layout: { duration: 0.32, ease: [0.16, 1, 0.3, 1] } }}
+                  className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 will-change-transform"
+                >
+                  <AnimatePresence mode="sync" initial={false}>
+                    {pageEvents.map((event) => (
+                      <motion.div
+                        key={eventKey(event)}
+                        layout="position"
+                        initial={{ opacity: 0, y: 14 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: 10 }}
+                        transition={{
+                          duration: 0.26,
+                          ease: [0.16, 1, 0.3, 1],
+                          layout: { duration: 0.32, ease: [0.16, 1, 0.3, 1] },
+                        }}
+                      >
+                        <EventCard event={event} variant={event._variant} />
+                      </motion.div>
+                    ))}
+                  </AnimatePresence>
+                </motion.div>
+              )}
             </ScrollReveal>
 
             {totalPages > 1 ? (
