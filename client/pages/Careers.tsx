@@ -286,7 +286,8 @@ const CareersJoinTeamSection = ({
                     href={secondaryCta.href}
                     className={cn(
                       joinTeamCtaSharedClass,
-                      "bg-white hover:border-rellia-mint",
+                      "bg-white",
+                      "hover:!border-rellia-mint focus-visible:!border-rellia-mint focus-visible:!ring-rellia-mint",
                     )}
                     aria-label={secondaryCta.ariaLabel}
                   >

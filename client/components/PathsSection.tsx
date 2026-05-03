@@ -1,14 +1,12 @@
 import { useRef } from "react"
 import { Link } from "react-router-dom"
 import { motion, useInView, useReducedMotion } from "framer-motion"
-import {
-  Building2,
-  GraduationCap,
-  Rocket,
-  TrendingUp,
-  type LucideIcon,
-} from "lucide-react"
+import { Users } from "lucide-react"
 import { cn } from "@/lib/utils"
+import {
+  NETWORK_PATH_ROLE_TAG,
+  type NetworkPathRoleId,
+} from "@/lib/networkPathRoles"
 import RelliaAction from "@/components/RelliaAction"
 
 /** Layered soft mint blurs — kept in the upper band so hero copy stays clean */
@@ -23,24 +21,26 @@ const MintBlurField = () => (
   </div>
 )
 
-const ROLE_IDS = ["founder", "advisor", "investor", "partner"] as const
-type RoleId = (typeof ROLE_IDS)[number]
+const ROLE_IDS: NetworkPathRoleId[] = ["founder", "advisor", "investor", "partner"]
+
+const CTA_PHRASE: Record<NetworkPathRoleId, string> = {
+  founder: "I'm a founder",
+  advisor: "I'm an advisor",
+  investor: "I'm an investor",
+  partner: "I'm a partner",
+}
 
 const ROLE_META: Record<
-  RoleId,
+  NetworkPathRoleId,
   {
-    label: string
     title: string
     subtitle: string
-    icon: LucideIcon
     imageSrc: string
     imageAlt: string
     ctaTo: string
   }
 > = {
   founder: {
-    label: "Founder",
-    icon: Rocket,
     title: "Build with signal",
     subtitle: "Programs, mentors, and warm intros aligned to healthcare reality.",
     imageSrc: "/images/paths-founder-pexels.jpg",
@@ -48,8 +48,6 @@ const ROLE_META: Record<
     ctaTo: "/founders",
   },
   advisor: {
-    label: "Advisor",
-    icon: GraduationCap,
     title: "Mentor decisively",
     subtitle: "Join a bench built for outcomes—not open-ended overhead.",
     imageSrc: "/images/paths-advisor-pexels.jpg",
@@ -57,8 +55,6 @@ const ROLE_META: Record<
     ctaTo: "/advisors",
   },
   investor: {
-    label: "Investor",
-    icon: TrendingUp,
     title: "See founder quality",
     subtitle: "Curated pitch events and diligence-friendly updates.",
     imageSrc: "/images/paths-investor-pexels.jpg",
@@ -66,8 +62,6 @@ const ROLE_META: Record<
     ctaTo: "/investors",
   },
   partner: {
-    label: "Partner",
-    icon: Building2,
     title: "Drive adoption",
     subtitle: "Partner pathways designed for pilots, integration, and trust.",
     imageSrc: "/images/paths-partner-pexels.jpg",
@@ -135,26 +129,22 @@ export default function PathsSection() {
           }
           className="relative mx-auto flex w-full max-w-4xl flex-col items-center text-center"
         >
-          <span
+          <div
             aria-hidden
-            className="pointer-events-none absolute inset-x-[-20%] top-[-92%] bottom-[72%] -z-10 opacity-75 blur-[52px] md:blur-[68px]"
-            style={{
-              background:
-                "radial-gradient(ellipse 88% 70% at 50% 98%, rgba(157,214,208,0.58), rgba(157,214,208,0.28) 48%, rgba(157,214,208,0) 72%)",
-            }}
+            className="pointer-events-none absolute left-1/2 top-[38%] z-0 h-[min(52vw,260px)] w-[min(92vw,400px)] -translate-x-1/2 -translate-y-1/2 rounded-[55%] bg-gradient-to-br from-rellia-mint/58 via-rellia-mint/38 to-rellia-mint/22 blur-[56px] md:top-[40%] md:h-[300px] md:w-[460px] md:blur-[76px]"
           />
-          <span
-            className="pointer-events-none absolute inset-x-[-28%] top-[-72%] bottom-[78%] -z-10 opacity-45 blur-3xl md:blur-[38px]"
+
+          <Users
+            className="relative z-10 mb-5 h-10 w-10 shrink-0 text-rellia-teal md:mb-6 md:h-12 md:w-12"
+            strokeWidth={1.35}
             aria-hidden
-          >
-            <span className="absolute left-[18%] top-[62%] h-[48%] w-[62%] rounded-full bg-rellia-mint/45 blur-3xl" />
-          </span>
+          />
 
           <motion.h2
             variants={headingContainerVariants}
             initial="hidden"
             animate={isInView ? "visible" : "hidden"}
-            className="flex flex-wrap justify-center gap-x-[0.22em] gap-y-2 text-balance font-host-grotesk text-3xl font-semibold leading-tight tracking-tight text-black md:text-[44px] md:leading-[1.15]"
+            className="relative z-10 flex flex-wrap justify-center gap-x-[0.22em] gap-y-2 text-balance font-host-grotesk text-3xl font-semibold leading-tight tracking-tight text-black md:text-[44px] md:leading-[1.15]"
           >
             {["Find", "your", "place", "in", "the", "community"].flatMap((word, idx) => {
               const isAccent = word === "your" || word === "place"
@@ -192,7 +182,9 @@ export default function PathsSection() {
           <div className="mx-auto grid w-full max-w-[1240px] grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-4 lg:gap-4 xl:gap-5">
             {ROLE_IDS.map((id, idx) => {
               const card = ROLE_META[id]
-              const Icon = card.icon
+              const tag = NETWORK_PATH_ROLE_TAG[id]
+              const Icon = tag.icon
+              const ctaText = CTA_PHRASE[id]
               return (
                 <motion.article
                   key={id}
@@ -218,11 +210,11 @@ export default function PathsSection() {
                     />
                     <div
                       aria-hidden
-                      className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/65 via-black/20 to-transparent"
+                      className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/65 via-black/25 to-transparent backdrop-blur-[2px]"
                     />
-                    <div className="absolute right-3 top-3 inline-flex items-center gap-2 rounded-full bg-black/45 px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-white/90 backdrop-blur sm:right-4 sm:top-4">
-                      <Icon className="h-3.5 w-3.5" aria-hidden />
-                      {card.label}
+                    <div className="absolute right-3 top-3 inline-flex items-center gap-2 rounded-full bg-black/40 px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-white/95 ring-1 ring-white/15 backdrop-blur-md sm:right-4 sm:top-4">
+                      <Icon className="h-3.5 w-3.5 shrink-0" aria-hidden />
+                      {tag.label}
                     </div>
 
                     <div className="absolute inset-x-0 bottom-0 p-5 md:p-6">
@@ -242,9 +234,9 @@ export default function PathsSection() {
                         <Link
                           to={card.ctaTo}
                           className="inline-flex cursor-pointer items-center justify-center"
-                          aria-label={`I'm a ${card.label}`}
+                          aria-label={ctaText}
                         >
-                          I&apos;m a {card.label}
+                          {ctaText}
                         </Link>
                       </RelliaAction>
                     </div>

@@ -11,6 +11,7 @@ import type {
   ProgramsLandingContent,
   ProgramsProgramCard,
   QmsProgramContent,
+  SanityPortableText,
 } from "./types"
 
 /** Drop nullish values so `{ ...defaults, ...partial }` cannot wipe strings with CMS nulls */
@@ -19,6 +20,928 @@ const omitNullish = <T extends Record<string, unknown>>(obj: T): Partial<T> =>
 
 const compactList = <T>(arr: T[] | null | undefined): NonNullable<T>[] =>
   (arr ?? []).filter((x): x is NonNullable<T> => x != null)
+
+/** Default portable text for Leadership Under Pressure — mirrors CMS-authored blocks. */
+const LEADERSHIP_UNDER_PRESSURE_DETAIL_BODY: SanityPortableText = [
+  {
+    _type: "block",
+    _key: "leadership-p1",
+    style: "normal",
+    markDefs: [],
+    children: [
+      {
+        _type: "span",
+        _key: "leadership-p1span",
+        text: "Founders and Investors often operate under intense responsibility and visibility.",
+        marks: [],
+      },
+    ],
+  },
+  {
+    _type: "block",
+    _key: "leadership-p2",
+    style: "normal",
+    markDefs: [],
+    children: [
+      {
+        _type: "span",
+        _key: "leadership-p2span",
+        text: "Join Dr Sabina Nagpal for this interactive, neuroscience-informed session which focuses on maintaining judgment, clarity, and presence when navigating complex decisions, competing priorities and high-pressure situations.",
+        marks: [],
+      },
+    ],
+  },
+]
+
+const WHY_HEALTHCARE_SAYS_NO_DETAIL_BODY: SanityPortableText = [
+  {
+    _type: "block",
+    _key: "chai-noai-p1",
+    style: "normal",
+    markDefs: [],
+    children: [
+      {
+        _type: "span",
+        _key: "chai-noai-p1s",
+        text: "You've built something that works. So why are you struggling to make the sale?",
+        marks: [],
+      },
+    ],
+  },
+  {
+    _type: "block",
+    _key: "chai-noai-p2",
+    style: "normal",
+    markDefs: [],
+    children: [
+      {
+        _type: "span",
+        _key: "chai-noai-p2s",
+        text: 'The problem is that healthcare buyers have a different definition of "ready to purchase" than most founders expect.',
+        marks: [],
+      },
+    ],
+  },
+  {
+    _type: "block",
+    _key: "chai-noai-p3",
+    style: "normal",
+    markDefs: [],
+    children: [
+      {
+        _type: "span",
+        _key: "chai-noai-p3s",
+        text: "This webinar will help you get in the door.",
+        marks: [],
+      },
+    ],
+  },
+  {
+    _type: "block",
+    _key: "chai-noai-h3",
+    style: "h3",
+    markDefs: [],
+    children: [
+      {
+        _type: "span",
+        _key: "chai-noai-h3s",
+        text: "What you'll walk away with:",
+        marks: [],
+      },
+    ],
+  },
+  {
+    _type: "block",
+    _key: "chai-noai-li1",
+    style: "normal",
+    listItem: "bullet",
+    level: 1,
+    markDefs: [],
+    children: [
+      {
+        _type: "span",
+        _key: "chai-noai-li1s",
+        text: "How to revise your pitch for what healthcare buyers actually care about",
+        marks: [],
+      },
+    ],
+  },
+  {
+    _type: "block",
+    _key: "chai-noai-li2",
+    style: "normal",
+    listItem: "bullet",
+    level: 1,
+    markDefs: [],
+    children: [
+      {
+        _type: "span",
+        _key: "chai-noai-li2s",
+        text: "How to turn your model card into your most persuasive sales asset",
+        marks: [],
+      },
+    ],
+  },
+  {
+    _type: "block",
+    _key: "chai-noai-li3",
+    style: "normal",
+    listItem: "bullet",
+    level: 1,
+    markDefs: [],
+    children: [
+      {
+        _type: "span",
+        _key: "chai-noai-li3s",
+        text: "What AI regulations actually mean for your product and timeline",
+        marks: [],
+      },
+    ],
+  },
+  {
+    _type: "block",
+    _key: "chai-noai-li4",
+    style: "normal",
+    listItem: "bullet",
+    level: 1,
+    markDefs: [],
+    children: [
+      {
+        _type: "span",
+        _key: "chai-noai-li4s",
+        text: "How to align your positioning with health system priorities instead of only selling your features",
+        marks: [],
+      },
+    ],
+  },
+  {
+    _type: "block",
+    _key: "chai-noai-p4",
+    style: "normal",
+    markDefs: [],
+    children: [
+      {
+        _type: "span",
+        _key: "chai-noai-p4label",
+        text: "Your speaker:",
+        marks: ["strong"],
+      },
+      {
+        _type: "span",
+        _key: "chai-noai-p4body",
+        text: " Brenton Hill, Head of Operations and General Counsel at the Coalition for Health AI (CHAI). Before CHAI, Brenton spent years at Mayo Clinic Platform doing exactly what health system buyers do: evaluating AI vendors, assessing regulatory risk, and deciding what gets purchased.",
+        marks: [],
+      },
+    ],
+  },
+  {
+    _type: "block",
+    _key: "chai-noai-p5",
+    style: "normal",
+    markDefs: [],
+    children: [
+      {
+        _type: "span",
+        _key: "chai-noai-p5label",
+        text: "About CHAI:",
+        marks: ["strong"],
+      },
+      {
+        _type: "span",
+        _key: "chai-noai-p5body",
+        text: " The nonprofit setting the gold standard for responsible AI in healthcare, representing 3,000+ organizations across health systems, academia, and industry. Their frameworks are increasingly what buyers reference when evaluating AI vendors.",
+        marks: [],
+      },
+    ],
+  },
+]
+
+const ASK_QMS_EXPERT_DETAIL_BODY: SanityPortableText = [
+  {
+    _type: "block",
+    _key: "qms-p1",
+    style: "normal",
+    markDefs: [],
+    children: [
+      {
+        _type: "span",
+        _key: "qms-p1s",
+        text: "Whether you are building a quality management system for the first time or trying to improve the QMS you already have, this session is designed to help you answer your questions.",
+        marks: [],
+      },
+    ],
+  },
+  {
+    _type: "block",
+    _key: "qms-p2",
+    style: "normal",
+    markDefs: [],
+    children: [
+      {
+        _type: "span",
+        _key: "qms-p2s",
+        text: "Join this live 1:1 session with quality experts who have supported medical device teams through writing SOPs, passing certification audits, and securing regulatory approvals.",
+        marks: [],
+      },
+    ],
+  },
+  {
+    _type: "block",
+    _key: "qms-p3",
+    style: "normal",
+    markDefs: [],
+    children: [
+      {
+        _type: "span",
+        _key: "qms-p3s",
+        text: "This is a safe space to ask questions and get guidance on how to build the right-sized QMS processes for your company.",
+        marks: [],
+      },
+    ],
+  },
+  {
+    _type: "block",
+    _key: "qms-h3",
+    style: "h3",
+    markDefs: [],
+    children: [
+      {
+        _type: "span",
+        _key: "qms-h3s",
+        text: "The quality reviewers bring knowledge and experience in:",
+        marks: [],
+      },
+    ],
+  },
+  {
+    _type: "block",
+    _key: "qms-b1",
+    style: "normal",
+    listItem: "bullet",
+    level: 1,
+    markDefs: [],
+    children: [{ _type: "span", _key: "qms-b1s", text: "ISO 13485", marks: [] }],
+  },
+  {
+    _type: "block",
+    _key: "qms-b2",
+    style: "normal",
+    listItem: "bullet",
+    level: 1,
+    markDefs: [],
+    children: [{ _type: "span", _key: "qms-b2s", text: "ISO 14971", marks: [] }],
+  },
+  {
+    _type: "block",
+    _key: "qms-b3",
+    style: "normal",
+    listItem: "bullet",
+    level: 1,
+    markDefs: [],
+    children: [{ _type: "span", _key: "qms-b3s", text: "IEC 62304", marks: [] }],
+  },
+  {
+    _type: "block",
+    _key: "qms-b4",
+    style: "normal",
+    listItem: "bullet",
+    level: 1,
+    markDefs: [],
+    children: [{ _type: "span", _key: "qms-b4s", text: "ISO 27001", marks: [] }],
+  },
+  {
+    _type: "block",
+    _key: "qms-b5",
+    style: "normal",
+    listItem: "bullet",
+    level: 1,
+    markDefs: [],
+    children: [{ _type: "span", _key: "qms-b5s", text: "21 CFR Part 820", marks: [] }],
+  },
+  {
+    _type: "block",
+    _key: "qms-b6",
+    style: "normal",
+    listItem: "bullet",
+    level: 1,
+    markDefs: [],
+    children: [{ _type: "span", _key: "qms-b6s", text: "MDSAP", marks: [] }],
+  },
+  {
+    _type: "block",
+    _key: "qms-b7",
+    style: "normal",
+    listItem: "bullet",
+    level: 1,
+    markDefs: [],
+    children: [{ _type: "span", _key: "qms-b7s", text: "MDR/IVDR and more", marks: [] }],
+  },
+  {
+    _type: "block",
+    _key: "qms-p4",
+    style: "normal",
+    markDefs: [],
+    children: [
+      {
+        _type: "span",
+        _key: "qms-p4s",
+        text: "Building or updating your QMS does not have to feel overwhelming. Our experts are excited to help you.",
+        marks: [],
+      },
+    ],
+  },
+]
+
+const SET_YOUR_STAGE_DETAIL_BODY: SanityPortableText = [
+  {
+    _type: "block",
+    _key: "sys-p1",
+    style: "normal",
+    markDefs: [],
+    children: [
+      {
+        _type: "span",
+        _key: "sys-p1s",
+        text: "Learn about how small adjustments to your physicality and storytelling create a big stage presence, with public speaking coach, Alexis Orchard.",
+        marks: [],
+      },
+    ],
+  },
+  {
+    _type: "block",
+    _key: "sys-p2",
+    style: "normal",
+    markDefs: [],
+    children: [
+      {
+        _type: "span",
+        _key: "sys-p2s",
+        text: "We will share quick, practical adjustments you can start using right away so you can deliver your health tech pitch with more ease and authority.",
+        marks: [],
+      },
+    ],
+  },
+  {
+    _type: "block",
+    _key: "sys-p3",
+    style: "normal",
+    markDefs: [],
+    children: [
+      {
+        _type: "span",
+        _key: "sys-p3s",
+        text: "This session will focus on how you show up: body language, vocal tone, and the way you tell your story so people actually remember it.",
+        marks: [],
+      },
+    ],
+  },
+]
+
+const CLINICIAN_CONNECT_WOMENS_HEALTH_DETAIL_BODY: SanityPortableText = [
+  {
+    _type: "block",
+    _key: "cc-p1",
+    style: "normal",
+    markDefs: [],
+    children: [
+      {
+        _type: "span",
+        _key: "cc-p1s",
+        text: "This event is for clinicians and founders to meet and share ideas to make healthcare technology better.",
+        marks: [],
+      },
+    ],
+  },
+  {
+    _type: "block",
+    _key: "cc-p2",
+    style: "normal",
+    markDefs: [],
+    children: [
+      {
+        _type: "span",
+        _key: "cc-p2s",
+        text: "For healthcare professionals, this is a chance to share your expertise on what works and what doesn't. We know you're tired of being told to adopt technology that doesn't function the way it should. Your feedback can make a major impact for founders, while also opening potential avenues for advisory or leadership opportunities in the tech industry.",
+        marks: [],
+      },
+    ],
+  },
+  {
+    _type: "block",
+    _key: "cc-p3",
+    style: "normal",
+    markDefs: [],
+    children: [
+      {
+        _type: "span",
+        _key: "cc-p3s",
+        text: "For founders, this is a unique opportunity to gain 1:1 feedback directly from interested clinicians. Understanding how your technology will fit into real workflows will help strengthen your product's design and adoption.",
+        marks: [],
+      },
+    ],
+  },
+  {
+    _type: "block",
+    _key: "cc-h3",
+    style: "h3",
+    markDefs: [],
+    children: [
+      {
+        _type: "span",
+        _key: "cc-h3s",
+        text: "These sessions can open doors to:",
+        marks: [],
+      },
+    ],
+  },
+  {
+    _type: "block",
+    _key: "cc-b1",
+    style: "normal",
+    listItem: "bullet",
+    level: 1,
+    markDefs: [],
+    children: [
+      {
+        _type: "span",
+        _key: "cc-b1s",
+        text: "Co-developing solutions based on real unmet needs",
+        marks: [],
+      },
+    ],
+  },
+  {
+    _type: "block",
+    _key: "cc-b2",
+    style: "normal",
+    listItem: "bullet",
+    level: 1,
+    markDefs: [],
+    children: [
+      {
+        _type: "span",
+        _key: "cc-b2s",
+        text: "Filling advisory board member, co-founder, or chief medical officer roles",
+        marks: [],
+      },
+    ],
+  },
+  {
+    _type: "block",
+    _key: "cc-b3",
+    style: "normal",
+    listItem: "bullet",
+    level: 1,
+    markDefs: [],
+    children: [
+      {
+        _type: "span",
+        _key: "cc-b3s",
+        text: "Discussing feedback to help make innovations more practical and effective in clinical settings",
+        marks: [],
+      },
+    ],
+  },
+  {
+    _type: "block",
+    _key: "cc-b4",
+    style: "normal",
+    listItem: "bullet",
+    level: 1,
+    markDefs: [],
+    children: [
+      {
+        _type: "span",
+        _key: "cc-b4s",
+        text: "Exploring pilot programs, validation studies, or new business opportunities",
+        marks: [],
+      },
+    ],
+  },
+  {
+    _type: "block",
+    _key: "cc-p4",
+    style: "normal",
+    markDefs: [],
+    children: [
+      {
+        _type: "span",
+        _key: "cc-p4s",
+        text: "Like everything we do at Rellia and Thrive MD Connect, this event is about genuine connection. There are no obligations to commit to anything, but you may find someone here who changes the course of your career for the better.",
+        marks: [],
+      },
+    ],
+  },
+]
+
+const SCALING_WITH_PURPOSE_DETAIL_BODY: SanityPortableText = [
+  {
+    _type: "block",
+    _key: "swp-p1",
+    style: "normal",
+    markDefs: [],
+    children: [
+      {
+        _type: "span",
+        _key: "swp-p1s",
+        text: "This session explores the commercialization journey for health startups, focusing on how to move beyond the prototype stage and build a purposeful business strategy that connects your idea to your customer's needs.",
+        marks: [],
+      },
+    ],
+  },
+  {
+    _type: "block",
+    _key: "swp-p2",
+    style: "normal",
+    markDefs: [],
+    children: [
+      {
+        _type: "span",
+        _key: "swp-p2s",
+        text: "Drawing on real-world expertise, we'll cover the critical elements of funding and business strategy from prototype to scale, and why understanding the foundations of your business creates the path for success.",
+        marks: [],
+      },
+    ],
+  },
+  {
+    _type: "block",
+    _key: "swp-p3",
+    style: "normal",
+    markDefs: [],
+    children: [
+      {
+        _type: "span",
+        _key: "swp-p3s",
+        text: "Attendees will leave with actionable insights on how to avoid common pitfalls, position their product for adoption, and scale with intention in the competitive health innovation landscape.",
+        marks: [],
+      },
+    ],
+  },
+]
+
+const BEYOND_THE_PRODUCT_DETAIL_BODY: SanityPortableText = [
+  {
+    _type: "block",
+    _key: "btp-p1",
+    style: "normal",
+    markDefs: [],
+    children: [
+      {
+        _type: "span",
+        _key: "btp-p1s",
+        text: "Most digital health founders lead with technology, but growth starts with trust. Beyond the Product helps you turn complex science into a clear, credible brand that connects with the people who matter most—investors, partners, and patients.",
+        marks: [],
+      },
+    ],
+  },
+  {
+    _type: "block",
+    _key: "btp-p2",
+    style: "normal",
+    markDefs: [],
+    children: [
+      {
+        _type: "span",
+        _key: "btp-p2s",
+        text: "Rellia has partnered with Brave Tale to bring you a workshop for translating your technical product features into a compelling brand story.",
+        marks: [],
+      },
+    ],
+  },
+]
+
+const RELLIA_PITCH_EVENT_FORUM_DETAIL_BODY: SanityPortableText = [
+  {
+    _type: "block",
+    _key: "pv-p1",
+    style: "normal",
+    markDefs: [],
+    children: [
+      {
+        _type: "span",
+        _key: "pv-p1s",
+        text: "Rellia members get exclusive access to 1:1 pitch opportunities with Forum Ventures, a leading early-stage fund for B2B SaaS founders.",
+        marks: [],
+      },
+    ],
+  },
+  {
+    _type: "block",
+    _key: "pv-p2",
+    style: "normal",
+    markDefs: [],
+    children: [
+      {
+        _type: "span",
+        _key: "pv-p2s",
+        text: "No crowded competitions or flashy events—just direct conversations about what you're building with people who want to help you grow.",
+        marks: [],
+      },
+    ],
+  },
+  {
+    _type: "block",
+    _key: "pv-p3",
+    style: "normal",
+    markDefs: [],
+    children: [
+      {
+        _type: "span",
+        _key: "pv-p3s",
+        text: "Forum has backed 500+ companies who went on to raise over $1B in follow-on funding. Now they're looking at healthcare startups innovating in:",
+        marks: [],
+      },
+    ],
+  },
+  {
+    _type: "block",
+    _key: "pv-b1",
+    style: "normal",
+    listItem: "bullet",
+    level: 1,
+    markDefs: [],
+    children: [
+      {
+        _type: "span",
+        _key: "pv-b1s",
+        text: "Staff management: tackling shortages and burnout with tools that improve retention, create flexible staffing, or offload manual work.",
+        marks: [],
+      },
+    ],
+  },
+  {
+    _type: "block",
+    _key: "pv-b2",
+    style: "normal",
+    listItem: "bullet",
+    level: 1,
+    markDefs: [],
+    children: [
+      {
+        _type: "span",
+        _key: "pv-b2s",
+        text: "Operational efficiency: reducing patient length of stay, preventing denials, and streamlining communication through AI and automation.",
+        marks: [],
+      },
+    ],
+  },
+  {
+    _type: "block",
+    _key: "pv-b3",
+    style: "normal",
+    listItem: "bullet",
+    level: 1,
+    markDefs: [],
+    children: [
+      {
+        _type: "span",
+        _key: "pv-b3s",
+        text: "Access to care: hybrid and virtual models that expand reach, improve patient engagement, and tie directly to outcomes in risk-based contracts.",
+        marks: [],
+      },
+    ],
+  },
+  {
+    _type: "block",
+    _key: "pv-p4",
+    style: "normal",
+    markDefs: [],
+    children: [
+      {
+        _type: "span",
+        _key: "pv-p4s",
+        text: "This is your chance to connect with investors who are actively writing checks and genuinely excited about healthcare innovation.",
+        marks: [],
+      },
+    ],
+  },
+]
+
+const ETHICS_IN_AI_DETAIL_BODY: SanityPortableText = [
+  {
+    _type: "block",
+    _key: "eth-ai-p1",
+    style: "normal",
+    markDefs: [],
+    children: [
+      {
+        _type: "span",
+        _key: "eth-ai-p1s",
+        text: "AI ethics is often framed as a technical checklist—fairness, transparency, accountability. But the truth is, the biggest risks in AI don't come from the machines. They come from us. From the assumptions we code in, the decisions we greenlight, and the people we leave out of the room.",
+        marks: [],
+      },
+    ],
+  },
+  {
+    _type: "block",
+    _key: "eth-ai-p2",
+    style: "normal",
+    markDefs: [],
+    children: [
+      {
+        _type: "span",
+        _key: "eth-ai-p2s",
+        text: "Join Argentina Beltran, founder of InclusifAI and author of What We Teach the Machines, for a provocative and honest talk on the human side of AI ethics. Through real-world case studies and personal storytelling, she'll challenge us to see ethics not as an abstract framework, but as a mirror—asking what we're teaching the machines, and whether we're willing to learn from ourselves.",
+        marks: [],
+      },
+    ],
+  },
+  {
+    _type: "block",
+    _key: "eth-ai-p3",
+    style: "normal",
+    markDefs: [],
+    children: [
+      {
+        _type: "span",
+        _key: "eth-ai-p3s",
+        text: "Hosted by Rellia Health and StartUp Lab, this session is for builders, funders, and anyone shaping AI systems who wants to move beyond buzzwords toward responsibility with depth, courage, and humanity.",
+        marks: [],
+      },
+    ],
+  },
+  {
+    _type: "block",
+    _key: "eth-ai-p4",
+    style: "normal",
+    markDefs: [],
+    children: [
+      {
+        _type: "span",
+        _key: "eth-ai-p4s",
+        text: "We are official event hosts with Waterloo Tech Week 2025, a celebration of what's been built here, and what's still to come. We're building something great together. September 8-11, 2025. waterlootechweek.ca",
+        marks: [],
+      },
+    ],
+  },
+]
+
+const SECOND_OPINION_USER_RESEARCH_DETAIL_BODY: SanityPortableText = [
+  {
+    _type: "block",
+    _key: "so-p1",
+    style: "normal",
+    markDefs: [],
+    children: [
+      {
+        _type: "span",
+        _key: "so-p1s",
+        text: "You're building healthcare products that need to work for real patients and providers, but how do you know if you're on the right track?",
+        marks: [],
+      },
+    ],
+  },
+  {
+    _type: "block",
+    _key: "so-p2",
+    style: "normal",
+    markDefs: [],
+    children: [
+      {
+        _type: "span",
+        _key: "so-p2s",
+        text: "Join a seasoned UX researcher with 20 years of experience in health tech to see how user research actually works in practice.",
+        marks: [],
+      },
+    ],
+  },
+  {
+    _type: "block",
+    _key: "so-p3",
+    style: "normal",
+    markDefs: [],
+    children: [
+      {
+        _type: "span",
+        _key: "so-p3s",
+        text: "We'll start with a real case study from a healthcare startup that used research to dramatically improve their onboarding—and the impressive numbers that followed. Then we'll break down the decisions behind the research: how they chose the right methods, found the right participants, and turned insights into action.",
+        marks: [],
+      },
+    ],
+  },
+  {
+    _type: "block",
+    _key: "so-p4",
+    style: "normal",
+    markDefs: [],
+    children: [
+      {
+        _type: "span",
+        _key: "so-p4s",
+        text: "Walk away understanding when research makes sense for your startup and when it's time to bring in expert help.",
+        marks: [],
+      },
+    ],
+  },
+]
+
+/** Sample in-person Toronto event with inline images in the body (portable text). */
+const DIGITAL_HEALTH_SALON_TORONTO_DETAIL_BODY: SanityPortableText = [
+  {
+    _type: "block",
+    _key: "toronto-p1",
+    style: "normal",
+    markDefs: [],
+    children: [
+      {
+        _type: "span",
+        _key: "toronto-p1a",
+        text: "Join us for a small-group evening for digital health operators: product leads, clinical partners, and founders who are shipping in real care settings. We will walk through a candid roundtable on adoption signals, procurement reality, and what “ready for scale” actually looks like in Ontario’s health system.",
+        marks: [],
+      },
+    ],
+  },
+  {
+    _type: "block",
+    _key: "toronto-p2",
+    style: "normal",
+    markDefs: [],
+    children: [
+      {
+        _type: "span",
+        _key: "toronto-p2a",
+        text: "The session includes two short spotlights, open discussion, and time to connect after the formal program. Light refreshments are included. Capacity is limited to keep the conversation high-signal.",
+        marks: [],
+      },
+    ],
+  },
+  {
+    _type: "eventDetailInlineImage",
+    _key: "toronto-img-venue",
+    imageSrc:
+      "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1400&q=80",
+    alt: "Modern open office with people collaborating at a long table",
+    caption: "Host venue — MaRS collaboration space, College Street",
+  },
+  {
+    _type: "block",
+    _key: "toronto-p3",
+    style: "h2",
+    markDefs: [],
+    children: [
+      { _type: "span", _key: "toronto-h2a", text: "Who should attend", marks: [] },
+    ],
+  },
+  {
+    _type: "block",
+    _key: "toronto-p4",
+    style: "normal",
+    markDefs: [],
+    children: [
+      {
+        _type: "span",
+        _key: "toronto-p4a",
+        text: "Founders past seed, clinical champions sponsoring pilots, and operators responsible for workflow integration—not slide decks, live deployments.",
+        marks: [],
+      },
+    ],
+  },
+  {
+    _type: "portableImageCarousel",
+    _key: "toronto-carousel",
+    title: "Scenes from the venue",
+    slides: [
+      {
+        _type: "portableImageCarouselSlide",
+        _key: "toronto-car-1",
+        imageSrc:
+          "https://images.unsplash.com/photo-1486325212027-8081e485255e?auto=format&fit=crop&w=1400&q=80",
+        alt: "Modern glass building facade with walkway",
+        caption: "MaRS district — short walk from Queen’s Park station",
+      },
+      {
+        _type: "portableImageCarouselSlide",
+        _key: "toronto-car-2",
+        imageSrc:
+          "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1400&q=80",
+        alt: "Bright open workspace with long communal table",
+        caption: "Typical breakout layout for evening roundtables",
+      },
+      {
+        _type: "portableImageCarouselSlide",
+        _key: "toronto-car-3",
+        imageSrc:
+          "https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=1400&q=80",
+        alt: "Retail storefront and pedestrians on a city sidewalk",
+        caption: "College Street — arrive 15 minutes early for lobby check-in",
+      },
+    ],
+  },
+  {
+    _type: "block",
+    _key: "toronto-p5",
+    style: "normal",
+    markDefs: [],
+    children: [
+      {
+        _type: "span",
+        _key: "toronto-p5a",
+        text: "We will follow up with calendar logistics and accessibility notes one week before the date.",
+        marks: [],
+      },
+    ],
+  },
+]
 
 const isSubjectOption = (o: unknown): o is ContactSubjectOption =>
   typeof o === "object" &&
@@ -480,6 +1403,21 @@ export const DEFAULT_PROGRAMS_LANDING: ProgramsLandingContent = {
   ],
   upcomingEvents: [
     {
+      slug: "digital-health-salon-toronto",
+      title: "Digital Health Salon — Toronto (In Person)",
+      dateTime: "Tuesday, June 24, 2026 — 5:30 PM EDT",
+      person: "Priya Menon • Harbour Clinical Partners",
+      imageSrc:
+        "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=900&h=900&fit=crop&q=80",
+      location: "MaRS Discovery District, 101 College St · Toronto",
+      addToCalendarEnabled: true,
+      calendarStartsAt: "2026-06-24T21:30:00-04:00",
+      calendarEndsAt: "2026-06-24T23:00:00-04:00",
+      embedLumaOnDetailPage: false,
+      detailBodyHeading: "About this evening",
+      detailBody: DIGITAL_HEALTH_SALON_TORONTO_DETAIL_BODY,
+    },
+    {
       slug: "leadership-under-pressure",
       title: "Leadership Under Pressure",
       dateTime: "Wednesday, May 6 — 12:00 PM EST",
@@ -487,6 +1425,9 @@ export const DEFAULT_PROGRAMS_LANDING: ProgramsLandingContent = {
       imageSrc: DEFAULT_PROGRAMS_EVENT_IMAGE_SRC,
       href: "https://luma.com/bgvqn7ia",
       location: "Virtual",
+      embedLumaOnDetailPage: false,
+      detailBodyHeading: "About this session",
+      detailBody: LEADERSHIP_UNDER_PRESSURE_DETAIL_BODY,
     },
   ],
   pastEvents: [
@@ -509,6 +1450,8 @@ export const DEFAULT_PROGRAMS_LANDING: ProgramsLandingContent = {
       href: "https://luma.com/1vx5stu2",
       buttonText: "View Event",
       location: "Virtual",
+      detailBodyHeading: "About this session",
+      detailBody: WHY_HEALTHCARE_SAYS_NO_DETAIL_BODY,
     },
     {
       slug: "ask-a-qms-expert",
@@ -519,6 +1462,8 @@ export const DEFAULT_PROGRAMS_LANDING: ProgramsLandingContent = {
       href: "https://luma.com/w61qj0g5",
       buttonText: "View Event",
       location: "Virtual",
+      detailBodyHeading: "About this session",
+      detailBody: ASK_QMS_EXPERT_DETAIL_BODY,
     },
     {
       slug: "set-your-stage",
@@ -529,6 +1474,8 @@ export const DEFAULT_PROGRAMS_LANDING: ProgramsLandingContent = {
       href: "https://luma.com/5s736thc",
       buttonText: "View Event",
       location: "Virtual",
+      detailBodyHeading: "About this session",
+      detailBody: SET_YOUR_STAGE_DETAIL_BODY,
     },
     {
       slug: "clinician-connect-womens-health",
@@ -539,6 +1486,8 @@ export const DEFAULT_PROGRAMS_LANDING: ProgramsLandingContent = {
       href: "https://luma.com/k6fbogr8",
       buttonText: "View Event",
       location: "Virtual",
+      detailBodyHeading: "About this session",
+      detailBody: CLINICIAN_CONNECT_WOMENS_HEALTH_DETAIL_BODY,
     },
     {
       slug: "scaling-with-purpose-from-prototype-to-customer-in-health-startups",
@@ -548,6 +1497,8 @@ export const DEFAULT_PROGRAMS_LANDING: ProgramsLandingContent = {
       imageSrc: "/images/events-scalingPurpose.avif",
       buttonText: "View Event",
       location: "Virtual",
+      detailBodyHeading: "About this session",
+      detailBody: SCALING_WITH_PURPOSE_DETAIL_BODY,
     },
     {
       slug: "beyond-the-product-how-digital-health-brands-earn-trust-and-drive-growth",
@@ -557,6 +1508,8 @@ export const DEFAULT_PROGRAMS_LANDING: ProgramsLandingContent = {
       imageSrc: "/images/events-beyondProduct.avif",
       buttonText: "View Event",
       location: "Virtual",
+      detailBodyHeading: "About this session",
+      detailBody: BEYOND_THE_PRODUCT_DETAIL_BODY,
     },
     {
       slug: "rellia-pitch-event-forum-ventures",
@@ -566,6 +1519,8 @@ export const DEFAULT_PROGRAMS_LANDING: ProgramsLandingContent = {
       imageSrc: "/images/Relliapitchevent.avif",
       buttonText: "View Event",
       location: "Virtual",
+      detailBodyHeading: "About this session",
+      detailBody: RELLIA_PITCH_EVENT_FORUM_DETAIL_BODY,
     },
     {
       slug: "ethics-in-ai-less-about-tech-more-about-humans",
@@ -575,6 +1530,8 @@ export const DEFAULT_PROGRAMS_LANDING: ProgramsLandingContent = {
       imageSrc: "/images/events-ethicsinAi.avif",
       buttonText: "View Event",
       location: "Virtual",
+      detailBodyHeading: "About this session",
+      detailBody: ETHICS_IN_AI_DETAIL_BODY,
     },
     {
       slug: "second-opinion-when-healthcare-startups-need-user-research",
@@ -584,6 +1541,8 @@ export const DEFAULT_PROGRAMS_LANDING: ProgramsLandingContent = {
       imageSrc: "/images/events-secondOpinion.avif",
       buttonText: "View Event",
       location: "Virtual",
+      detailBodyHeading: "About this session",
+      detailBody: SECOND_OPINION_USER_RESEARCH_DETAIL_BODY,
     },
   ],
   ctaTitle: "Want the **full** experience?",

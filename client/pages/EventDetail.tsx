@@ -2,13 +2,14 @@ import { useState } from "react"
 import { Helmet } from "react-helmet-async"
 import { Link, useParams } from "react-router-dom"
 import { AnimatePresence, motion } from "framer-motion"
-import { CalendarOff, ChevronLeft, MapPin } from "lucide-react"
+import { Calendar, CalendarOff, ChevronLeft, History, MapPin, Ticket, Video } from "lucide-react"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
 import ScrollReveal from "@/components/ScrollReveal"
 import RelliaAction from "@/components/RelliaAction"
 import RelliaCta, { ctaActionFromHref } from "@/components/RelliaCta"
 import { useProgramsLandingPage } from "@/hooks/useCmsDocuments"
+import { downloadProgramsEventIcsFile } from "@/lib/eventCalendar"
 import { getLumaEmbedIframeSrc } from "@/lib/lumaEmbed"
 import { cn } from "@/lib/utils"
 import { getSiteUrl } from "@/config/seo"
@@ -18,7 +19,9 @@ import {
   formatProgramsEventDetailDateExtended,
   formatProgramsEventDetailTimeEst,
   getProgramsEventAttendanceMode,
+  getProgramsEventLocationDetailLines,
   getProgramsEventLocationLabel,
+  getProgramsEventMapsSearchUrl,
   getProgramsEventSpeakerAvatarSrc,
   parseProgramsEventSpeaker,
   shortenProgramsEventDateTime,
@@ -31,6 +34,9 @@ import {
   ShareIconX,
   shareToolbarButtonClassName,
 } from "@/components/share/sharePageIcons"
+import { EventDetailPortableText } from "@/components/EventDetailPortableText"
+import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet"
+import type { SanityPortableText } from "@shared/cms/types"
 
 const eventDetailBackToEventsLinkClassName =
   "inline-flex items-center gap-2 font-host-grotesk text-sm font-semibold text-rellia-teal hover:underline hover:underline-offset-4"
@@ -63,10 +69,24 @@ const eventDetailMetaSecondaryValueClassName =
 const eventDetailSpeakerAvatarClassName =
   "h-11 w-11 shrink-0 rounded-full border border-black/10 object-cover object-center ring-1 ring-black/[0.04] sm:h-12 sm:w-12"
 
+/** Same pills as `EventCard` (listing) — status + attendance */
+const eventDetailHeroTagIconClassName = "h-3 w-3 shrink-0 opacity-90 sm:h-3.5 sm:w-3.5"
+
+const eventDetailHeroAttendanceTagClassName =
+  "inline-flex w-fit items-center gap-1 rounded-full border border-black/10 bg-white px-2.5 py-1 font-host-grotesk text-[9px] font-semibold uppercase tracking-[0.12em] text-black/60 sm:gap-1.5 sm:text-[10px] sm:tracking-[0.14em]"
+
 const toAbsoluteImageUrl = (src: string, base: string): string => {
   if (/^https?:\/\//i.test(src)) return src
   if (!src.startsWith("/")) return `${base}/${src}`
   return `${base}${src}`
+}
+
+const splitEventDetailBody = (raw: string | undefined): string[] => {
+  if (!raw?.trim()) return []
+  return raw
+    .split(/\n\n+/)
+    .map((s) => s.trim())
+    .filter(Boolean)
 }
 
 export default function EventDetail() {
@@ -76,6 +96,7 @@ export default function EventDetail() {
   const resolvedSlug = slug?.trim() ? decodeURIComponent(slug) : ""
   const match = resolvedSlug ? findProgramsEventBySlug(resolvedSlug, pl) : null
   const [copyState, setCopyState] = useState<"idle" | "copied">("idle")
+  const [lumaModalOpen, setLumaModalOpen] = useState(false)
 
   const base = getSiteUrl()
 
@@ -104,9 +125,22 @@ export default function EventDetail() {
   const detailTimeEst = formatProgramsEventDetailTimeEst(event.dateTime ?? "")
   const detailDateLine = formatProgramsEventDetailDateExtended(event.dateTime ?? "")
   const locationLabel = getProgramsEventLocationLabel(event)
+  const locationDetailLines = getProgramsEventLocationDetailLines(event)
+  const mapsSearchUrl = getProgramsEventMapsSearchUrl(event)
   const attendanceMode = getProgramsEventAttendanceMode(event)
   const speakerAvatarSrc = getProgramsEventSpeakerAvatarSrc(event)
   const embedSrc = getLumaEmbedIframeSrc(event)
+  const detailPortable: SanityPortableText | null =
+    Array.isArray(event.detailBody) && event.detailBody.length > 0 ? event.detailBody : null
+  const detailPlainParagraphs =
+    typeof event.detailBody === "string" ? splitEventDetailBody(event.detailBody) : []
+  const hasDetailBodyContent =
+    Boolean(detailPortable?.length) || detailPlainParagraphs.length > 0
+  const showLumaIframe = !isPast && Boolean(embedSrc) && event.embedLumaOnDetailPage !== false
+  const addToCalendarEnabled = event.addToCalendarEnabled === true
+  const showHeroEventCta =
+    !isPast &&
+    (addToCalendarEnabled || Boolean(embedSrc) || Boolean(event.href?.trim()))
   const pageTitle = `${event.title} — Rellia Health`
   const eventSlugPath = getProgramsEventSlug(event)
   const canonical = `${base}/events/${eventSlugPath}`
@@ -123,11 +157,28 @@ export default function EventDetail() {
     }
   }
 
-  const tagLabel = isPast ? "Past event" : "Upcoming"
+  const handleHeroCtaClick = async () => {
+    if (!showHeroEventCta) return
+    if (addToCalendarEnabled) {
+      const ok = await downloadProgramsEventIcsFile(event, canonical)
+      if (!ok) {
+        window.alert(
+          "Calendar file could not be created. Add calendar start (and optional end) as ISO 8601 times in the CMS.",
+        )
+      }
+      return
+    }
+    setLumaModalOpen(true)
+  }
+
+  const registerHref = event.href?.trim() ?? ""
+
+  const tagLabel = isPast ? "Past" : "Upcoming"
 
   const speakerName = (speakerParts.speaker || event.person?.trim() || "").trim()
   const speakerCompany = speakerParts.company.trim()
   const hasSpeakerMeta = Boolean(speakerName)
+  const detailSectionHeading = event.detailBodyHeading?.trim() ?? ""
 
   return (
     <div className="flex min-h-screen flex-col bg-white font-host-grotesk overflow-x-hidden">
@@ -174,56 +225,74 @@ export default function EventDetail() {
             <div className="mx-auto w-full max-w-[1100px]">
               <ScrollReveal>
                 <div className="flex flex-col gap-8 lg:flex-row lg:items-start lg:gap-10">
-                  <div
-                    className={cn(
-                      "relative aspect-square w-full max-w-[240px] shrink-0 self-start overflow-hidden rounded-2xl bg-white/90 shadow-sm ring-1 ring-black/5 sm:max-w-[280px]",
-                      isPast && "opacity-95 saturate-[0.9]",
-                    )}
-                  >
-                    <img
-                      src={event.imageSrc}
-                      alt={event.title}
-                      className={cn(
-                        "h-full w-full object-contain object-left object-top",
-                        isPast && "grayscale-[0.2]",
-                      )}
-                    />
-                  </div>
-
-                  <div className="min-w-0 flex-1">
+                  <div className="w-full max-w-[248px] shrink-0 self-start sm:max-w-[288px] md:max-w-[340px] lg:max-w-[380px]">
                     <div
                       className={cn(
-                        "inline-flex items-center gap-2 rounded-full px-3 py-1.5",
-                        isPast
-                          ? "bg-white/85 ring-1 ring-black/10"
-                          : "bg-rellia-mint",
+                        "relative aspect-square w-full shrink-0 overflow-hidden rounded-2xl bg-white/90 shadow-sm ring-1 ring-black/5",
+                        isPast && "opacity-95 saturate-[0.9]",
                       )}
                     >
-                      <span
+                      <img
+                        src={event.imageSrc}
+                        alt={event.title}
                         className={cn(
-                          "h-1.5 w-1.5 shrink-0 rounded-full",
-                          isPast ? "bg-black/40" : "bg-rellia-teal",
+                          "h-full w-full object-contain object-left object-top",
+                          isPast && "grayscale-[0.2]",
                         )}
-                        aria-hidden
                       />
-                      <span
-                        className={cn(
-                          "font-host-grotesk text-[11px] font-semibold uppercase tracking-[0.14em]",
-                          isPast ? "text-black/60" : "text-rellia-teal",
-                        )}
-                      >
-                        {tagLabel}
-                      </span>
                     </div>
+                  </div>
 
-                    <h1 className="mt-5 font-host-grotesk text-3xl font-medium leading-tight tracking-tight text-rellia-teal sm:mt-6 md:text-4xl lg:text-5xl">
-                      {event.title}
-                    </h1>
+                  <div className="flex min-h-0 min-w-0 flex-1 flex-col items-stretch">
+                    <div className="flex w-full min-w-0 flex-col items-start">
+                      <div className="flex max-w-full flex-wrap items-center gap-2">
+                        <span
+                          className={cn(
+                            "inline-flex w-fit max-w-full shrink-0 items-center gap-1 rounded-full px-2.5 py-1 font-host-grotesk text-[9px] font-semibold uppercase tracking-[0.12em] ring-1 ring-black/5 sm:gap-1.5 sm:text-[10px] sm:tracking-[0.14em]",
+                            isPast ? "bg-black/[0.06] text-black/65" : "bg-rellia-mint text-rellia-teal",
+                          )}
+                        >
+                          {isPast ? (
+                            <History
+                              className={cn(eventDetailHeroTagIconClassName, "text-black/50")}
+                              aria-hidden
+                              strokeWidth={2.25}
+                            />
+                          ) : (
+                            <Calendar
+                              className={cn(eventDetailHeroTagIconClassName, "text-rellia-teal")}
+                              aria-hidden
+                              strokeWidth={2.25}
+                            />
+                          )}
+                          {tagLabel}
+                        </span>
+                        <span className={eventDetailHeroAttendanceTagClassName}>
+                          {attendanceMode === "virtual" ? (
+                            <Video
+                              className={cn(eventDetailHeroTagIconClassName, "text-black/45")}
+                              aria-hidden
+                              strokeWidth={2.25}
+                            />
+                          ) : (
+                            <MapPin
+                              className={cn(eventDetailHeroTagIconClassName, "text-black/50")}
+                              aria-hidden
+                              strokeWidth={2.25}
+                            />
+                          )}
+                          {attendanceMode === "virtual" ? "Virtual" : "In person"}
+                        </span>
+                      </div>
 
-                    <div className="mt-6 max-w-3xl sm:mt-7 md:mt-8">
-                      <div className="grid grid-cols-1 gap-8 md:grid-cols-3 md:gap-6 lg:gap-10">
+                      <h1 className="mt-5 w-full min-w-0 font-host-grotesk text-3xl font-medium leading-tight tracking-tight text-rellia-teal sm:mt-6 md:text-4xl lg:text-5xl">
+                        {event.title}
+                      </h1>
+
+                      <div className="mt-6 w-full max-w-3xl sm:mt-7 md:mt-8">
+                        <div className="grid grid-cols-1 gap-8 md:grid-cols-[minmax(0,1.45fr)_minmax(0,1fr)_minmax(0,1fr)] md:gap-6 lg:gap-10">
                         {hasSpeakerMeta ? (
-                          <div className="min-w-0">
+                          <div className="min-w-0 md:min-w-[min(100%,17.5rem)] lg:min-w-[21rem]">
                             <p className={eventDetailMetaLabelClassName}>Speaker</p>
                             <div className="mt-2.5 flex items-center gap-3 sm:gap-3.5">
                               <img
@@ -232,8 +301,8 @@ export default function EventDetail() {
                                 className={cn(eventDetailSpeakerAvatarClassName, isPast && "opacity-90 saturate-[0.9]")}
                                 aria-hidden
                               />
-                              <div className="min-w-0 flex flex-col gap-1">
-                                <p className={cn(eventDetailMetaPrimaryValueClassName, "truncate")}>{speakerName}</p>
+                              <div className="flex min-w-0 flex-1 flex-col gap-1">
+                                <p className={eventDetailMetaPrimaryValueClassName}>{speakerName}</p>
                                 {speakerCompany ? (
                                   <p className={eventDetailMetaSecondaryValueClassName}>{speakerCompany}</p>
                                 ) : null}
@@ -265,20 +334,62 @@ export default function EventDetail() {
                         <div className="min-w-0">
                           <p className={eventDetailMetaLabelClassName}>Location</p>
                           {attendanceMode === "inPerson" ? (
-                            <p className={cn("mt-2.5 flex items-start gap-2", eventDetailMetaPrimaryValueClassName)}>
-                              <MapPin
-                                className="mt-0.5 h-4 w-4 shrink-0 text-rellia-teal"
-                                strokeWidth={2}
-                                aria-hidden
-                              />
-                              <span className="min-w-0">{locationLabel}</span>
-                            </p>
+                            <div className="mt-2.5 space-y-1">
+                              {mapsSearchUrl ? (
+                                <>
+                                  <a
+                                    href={mapsSearchUrl}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className={cn(
+                                      eventDetailMetaPrimaryValueClassName,
+                                      "inline-block max-w-full rounded-sm underline decoration-rellia-teal/55 underline-offset-[0.18em] transition-colors hover:decoration-rellia-teal focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-teal focus-visible:ring-offset-2",
+                                    )}
+                                    aria-label={`Open location in Google Maps: ${locationLabel}`}
+                                  >
+                                    {locationDetailLines.line1}
+                                  </a>
+                                  {locationDetailLines.line2 ? (
+                                    <p className={eventDetailMetaSecondaryValueClassName}>
+                                      {locationDetailLines.line2}
+                                    </p>
+                                  ) : null}
+                                </>
+                              ) : (
+                                <>
+                                  <p className={eventDetailMetaPrimaryValueClassName}>{locationDetailLines.line1}</p>
+                                  {locationDetailLines.line2 ? (
+                                    <p className={eventDetailMetaSecondaryValueClassName}>{locationDetailLines.line2}</p>
+                                  ) : null}
+                                </>
+                              )}
+                            </div>
                           ) : (
-                            <p className={cn("mt-2.5", eventDetailMetaPrimaryValueClassName)}>{locationLabel}</p>
+                            <div className="mt-2.5 space-y-1">
+                              <p className={eventDetailMetaPrimaryValueClassName}>Zoom</p>
+                              <p className={eventDetailMetaSecondaryValueClassName}>Virtual</p>
+                            </div>
                           )}
                         </div>
                       </div>
                     </div>
+                    </div>
+
+                    {showHeroEventCta ? (
+                      <div className="mt-9 flex w-full justify-start sm:mt-10 md:mt-12">
+                        <RelliaAction
+                          type="button"
+                          variant="mintTealFill"
+                          size="compact"
+                          className="inline-flex w-full cursor-pointer px-6 py-3 text-sm sm:w-auto sm:px-8 sm:text-[15px]"
+                          onClick={handleHeroCtaClick}
+                          aria-haspopup={!addToCalendarEnabled ? "dialog" : undefined}
+                          aria-label={addToCalendarEnabled ? "Add to Calendar" : "Register now"}
+                        >
+                          {addToCalendarEnabled ? "Add to Calendar" : "Register now"}
+                        </RelliaAction>
+                      </div>
+                    ) : null}
                   </div>
                 </div>
 
@@ -359,6 +470,34 @@ export default function EventDetail() {
           {isPast ? (
             <div className="mx-auto flex w-full max-w-[1300px] flex-col gap-8 px-6 py-10 md:px-10 md:py-14 md:gap-10">
               <EventDetailBackToEventsLink variant="top" />
+              {hasDetailBodyContent ? (
+                <ScrollReveal>
+                  <div className="mx-auto w-full max-w-[900px]">
+                    {detailSectionHeading ? (
+                      <h2 className="mb-6 font-host-grotesk text-2xl font-semibold tracking-tight text-black md:mb-8 md:text-3xl">
+                        {detailSectionHeading}
+                      </h2>
+                    ) : null}
+                    {detailPortable && detailPortable.length > 0 ? (
+                      <EventDetailPortableText value={detailPortable} />
+                    ) : (
+                      <>
+                        {detailPlainParagraphs.map((paragraph, index) => (
+                          <p
+                            key={`past-detail-${index}`}
+                            className={cn(
+                              "font-urbanist text-base leading-relaxed text-black/85 md:text-[17px] md:leading-relaxed",
+                              index > 0 ? "mt-5 md:mt-6" : "",
+                            )}
+                          >
+                            {paragraph}
+                          </p>
+                        ))}
+                      </>
+                    )}
+                  </div>
+                </ScrollReveal>
+              ) : null}
               <ScrollReveal>
                 <div className="py-6 text-center md:py-10">
                   <div className="mb-6 flex justify-center md:mb-8" aria-hidden>
@@ -382,47 +521,145 @@ export default function EventDetail() {
                   </div>
                 </div>
               </ScrollReveal>
+              <EventDetailBackToEventsLink variant="footer" />
             </div>
-          ) : embedSrc ? (
+          ) : showLumaIframe ? (
             <div className="mx-auto flex w-full max-w-[1300px] flex-col gap-8 px-6 pb-10 pt-8 md:gap-10 md:px-10 md:pb-14 md:pt-10">
               <EventDetailBackToEventsLink variant="top" />
               <ScrollReveal className="w-full shrink-0">
                 <div className="overflow-hidden rounded-2xl">
                   <iframe
                     title={`${event.title} — Luma`}
-                    src={embedSrc}
+                    src={embedSrc!}
                     className="block min-h-[52rem] h-[max(60rem,82dvh)] w-full border-0 md:min-h-[56rem] md:h-[max(64rem,85dvh)]"
                     allow="payment; fullscreen"
                     loading="lazy"
                   />
                 </div>
               </ScrollReveal>
+              <EventDetailBackToEventsLink variant="footer" />
             </div>
           ) : (
-            <div className="mx-auto flex w-full max-w-[1300px] flex-col gap-8 px-6 py-10 md:px-10 md:py-14 md:gap-10">
-              <EventDetailBackToEventsLink variant="top" />
-              <ScrollReveal>
-                <div className="py-10 text-center">
-                  <p className="font-urbanist text-black/65">
-                    Registration details are not available here yet. Check back soon or contact us for more information.
-                  </p>
-                  {event.href ? (
-                    <div className="mt-6 flex justify-center">
-                      <RelliaAction asChild variant="mintTealFill" size="compact" className="cursor-pointer px-6">
-                        <a href={event.href} target="_blank" rel="noopener noreferrer" className="cursor-pointer">
-                          Open on Luma
-                        </a>
-                      </RelliaAction>
+            <div className="mx-auto w-full max-w-[1300px] px-6 py-10 md:px-10 md:py-14">
+              <div className="mx-auto flex w-full max-w-[900px] flex-col gap-8 md:gap-10">
+                <EventDetailBackToEventsLink variant="top" />
+                {hasDetailBodyContent ? (
+                  <ScrollReveal>
+                    <div className="w-full">
+                      {detailSectionHeading ? (
+                        <h2 className="mb-6 font-host-grotesk text-2xl font-semibold tracking-tight text-black md:mb-8 md:text-3xl">
+                          {detailSectionHeading}
+                        </h2>
+                      ) : null}
+                      {detailPortable && detailPortable.length > 0 ? (
+                        <EventDetailPortableText value={detailPortable} />
+                      ) : (
+                        <>
+                          {detailPlainParagraphs.map((paragraph, index) => (
+                            <p
+                              key={`detail-${index}`}
+                              className={cn(
+                                "font-urbanist text-base leading-relaxed text-black/85 md:text-[17px] md:leading-relaxed",
+                                index > 0 ? "mt-5 md:mt-6" : "",
+                              )}
+                            >
+                              {paragraph}
+                            </p>
+                          ))}
+                        </>
+                      )}
                     </div>
-                  ) : null}
-                </div>
-              </ScrollReveal>
+                  </ScrollReveal>
+                ) : null}
+                {!hasDetailBodyContent ? (
+                  <ScrollReveal>
+                    <div className="py-10 text-center">
+                      <p className="font-urbanist text-black/65">
+                        Registration details are not available here yet. Check back soon or contact us for more information.
+                      </p>
+                      {event.href ? (
+                        <div className="mt-6 flex justify-center">
+                          <RelliaAction asChild variant="mintTealFill" size="compact" className="cursor-pointer px-6">
+                            <a href={event.href} target="_blank" rel="noopener noreferrer" className="cursor-pointer">
+                              Open on Luma
+                            </a>
+                          </RelliaAction>
+                        </div>
+                      ) : null}
+                    </div>
+                  </ScrollReveal>
+                ) : null}
+                <EventDetailBackToEventsLink variant="footer" />
+              </div>
             </div>
           )}
         </section>
       </main>
 
       <Footer />
+
+      {!isPast && showHeroEventCta && !addToCalendarEnabled ? (
+        <Sheet open={lumaModalOpen} onOpenChange={setLumaModalOpen}>
+          <SheetContent
+            side="bottom"
+            className={cn(
+              "flex flex-col gap-0 overflow-hidden border border-black/10 bg-white p-0 shadow-2xl",
+              "!inset-x-auto !bottom-auto !left-1/2 !right-auto !top-[72px] !max-h-none -translate-x-1/2 rounded-2xl",
+              "!h-[min(560px,calc(100dvh-72px-32px))] !w-[min(calc(100vw-32px),36rem)] sm:!w-[min(calc(100vw-48px),36rem)] md:!top-[86px] md:!h-[min(600px,calc(100dvh-86px-40px))]",
+              "[&>button]:!right-5 [&>button]:!top-7 [&>button]:!-translate-y-1/2",
+            )}
+          >
+            <SheetTitle className="sr-only">Register for {event.title}</SheetTitle>
+            {embedSrc ? (
+              <div className="flex h-full min-h-0 flex-col">
+                <div className="relative flex h-14 shrink-0 items-center border-b border-black/10 px-6 pr-14 md:px-8 md:pr-16">
+                  <p className="font-host-grotesk text-lg font-semibold tracking-tight text-rellia-teal md:text-xl">
+                    Register below
+                  </p>
+                </div>
+                <iframe
+                  title={`${event.title} — Luma`}
+                  src={embedSrc}
+                  className="min-h-0 w-full flex-1 rounded-b-2xl border-0 bg-white"
+                  allow="payment; fullscreen"
+                />
+              </div>
+            ) : (
+              <div className="flex h-full min-h-0 flex-col">
+                <div className="relative flex h-14 shrink-0 items-center border-b border-black/10 px-6 pr-14 md:px-8 md:pr-16">
+                  <p className="font-host-grotesk text-lg font-semibold tracking-tight text-black md:text-xl">
+                    Missing registration embed
+                  </p>
+                </div>
+                <div className="flex min-h-0 flex-1 flex-col items-center justify-center gap-6 overflow-y-auto px-8 py-10 text-center md:px-10">
+                  <Ticket
+                    className="h-16 w-16 shrink-0 text-rellia-teal stroke-rellia-teal md:h-20 md:w-20"
+                    strokeWidth={1.15}
+                    aria-hidden
+                  />
+                  <div className="mx-auto max-w-[480px] space-y-5">
+                    <p className="font-host-grotesk text-3xl font-bold leading-tight text-black md:text-4xl md:leading-tight">
+                      Admin / CMS
+                    </p>
+                    <p className="font-urbanist text-base text-black/60 md:text-lg">
+                      No Luma event ID is set for this event. Add <span className="font-semibold text-black">lumaEventId</span>{" "}
+                      (<span className="font-mono text-[13px] text-black/60">evt-…</span>) in Sanity so the embed appears here.
+                      Until then, visitors only see this notice when they tap Register.
+                    </p>
+                  </div>
+                  {registerHref ? (
+                    <RelliaAction asChild variant="outlineOnWhite" size="compact" className="cursor-pointer px-6 py-3 text-sm">
+                      <a href={registerHref} target="_blank" rel="noopener noreferrer" className="cursor-pointer">
+                        Open registration link
+                      </a>
+                    </RelliaAction>
+                  ) : null}
+                </div>
+              </div>
+            )}
+          </SheetContent>
+        </Sheet>
+      ) : null}
     </div>
   )
 }

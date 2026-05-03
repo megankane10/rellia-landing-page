@@ -1,8 +1,7 @@
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
 import ScrollReveal from "@/components/ScrollReveal"
-import { PAGE_HEADER_DARK_SUBTITLE_CLASS, PAGE_HEADER_TITLE_SIZE_CLASS } from "@/components/PageHeader"
-import { cn } from "@/lib/utils"
+import PageHeader from "@/components/PageHeader"
 
 const EFFECTIVE_DATE = "March 18, 2026";
 
@@ -24,12 +23,9 @@ type Section = {
   /** Paragraph(s) after bullets */
   closing?: string;
   contactInfo?: {
-    intro: string;
-    email: string;
-    lines: string[];
-    websiteLabel: string;
-    websiteHref: string;
-  };
+    intro: string
+    email: string
+  }
 };
 
 const SECTIONS: Section[] = [
@@ -150,9 +146,6 @@ You may disable cookies through your browser settings. Doing so may affect parts
     contactInfo: {
       intro: "Questions, access requests, or privacy concerns can be directed to",
       email: "hello@relliahealth.com",
-      lines: ["Rellia Health", "Ontario, Canada"],
-      websiteLabel: "relliahealth.com",
-      websiteHref: "https://www.relliahealth.com",
     },
   },
 ];
@@ -204,34 +197,6 @@ function SectionBlock({ section }: { section: Section }) {
           </a>
           .
         </p>
-        <div
-          className="mt-12 flex w-full min-w-0 flex-row flex-nowrap items-center font-urbanist text-sm leading-snug text-black/80 sm:mt-16 sm:text-base md:text-lg"
-          role="group"
-          aria-label="Rellia Health contact details"
-        >
-          <div className="flex min-w-0 flex-1 items-center justify-start pr-2">
-            <span className="truncate font-host-grotesk font-semibold text-rellia-teal">{c.lines[0]}</span>
-          </div>
-          <span className="shrink-0 px-1 text-black/30 sm:px-2" aria-hidden>
-            |
-          </span>
-          <div className="flex min-w-0 flex-1 items-center justify-center px-1 text-center">
-            <span>{c.lines[1]}</span>
-          </div>
-          <span className="shrink-0 px-1 text-black/30 sm:px-2" aria-hidden>
-            |
-          </span>
-          <div className="flex min-w-0 flex-1 items-center justify-end pl-2 text-right">
-            <a
-              href={c.websiteHref}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="truncate font-medium text-rellia-teal underline decoration-rellia-teal/30 underline-offset-2 transition-colors hover:text-rellia-teal/80"
-            >
-              {c.websiteLabel}
-            </a>
-          </div>
-        </div>
       </div>
     );
   }
@@ -283,38 +248,18 @@ export default function PrivacyPolicy() {
       <Navbar />
 
       <main id="main-content">
-        <section className="relative flex h-[28rem] flex-shrink-0 flex-col overflow-hidden bg-rellia-teal pt-32 pb-12 md:h-[32rem] md:pt-40 md:pb-16">
-          <div className="absolute inset-0 opacity-10 pointer-events-none">
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-rellia-mint via-transparent to-transparent blur-3xl" />
-          </div>
+        <PageHeader
+          variant="dark"
+          effectiveDate={EFFECTIVE_DATE}
+          title={
+            <>
+              Privacy <span className="text-rellia-mint">Policy</span>
+            </>
+          }
+          subtitle="Rellia Health is committed to handling your personal information with care and transparency. This Privacy Policy describes how we collect, use, store, and share information in connection with our incubator programs, events, community, website, and communications."
+        />
 
-          <img
-            src="/images/hologram-logo.png"
-            alt=""
-            aria-hidden
-            className="pointer-events-none absolute right-0 top-1/2 -translate-y-1/2 h-[70%] md:h-[90%] w-auto object-contain opacity-[0.07] select-none"
-          />
-
-          <div className="relative z-10 mx-auto flex w-full max-w-[1300px] flex-1 flex-col justify-center px-6 md:px-10">
-            <ScrollReveal>
-              <p className="text-rellia-mint/80 text-sm md:text-base font-urbanist uppercase tracking-widest mb-4">
-                Effective {EFFECTIVE_DATE}
-              </p>
-              <h1
-                className={`mb-6 text-white font-bold leading-tight tracking-tight ${PAGE_HEADER_TITLE_SIZE_CLASS}`}
-              >
-                Privacy <span className="text-rellia-mint">Policy</span>
-              </h1>
-              <p className={cn(PAGE_HEADER_DARK_SUBTITLE_CLASS, "max-w-2xl")}>
-                Rellia Health is committed to handling your personal information with care and transparency. This
-                Privacy Policy describes how we collect, use, store, and share information in connection with our
-                incubator programs, events, community, website, and communications.
-              </p>
-            </ScrollReveal>
-          </div>
-        </section>
-
-        <section className="py-20 md:py-32 bg-white">
+        <section className="py-16 md:py-24 bg-white">
           <div className="max-w-[860px] mx-auto px-6 md:px-10">
             <ScrollReveal>
               <p className="mb-10 text-lg font-urbanist italic leading-relaxed text-black/65 md:mb-12 md:text-xl">

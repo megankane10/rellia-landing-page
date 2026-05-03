@@ -136,6 +136,28 @@ export type ProgramsEventCard = {
   location?: string
   /** Luma API-style id (`evt-…`) for the `/embed/event/evt-…/simple` iframe. */
   lumaEventId?: string
+  /**
+   * Body below the hero on `/events/:slug`. Prefer Sanity portable text (headings, lists, links,
+   * **CTA box**, **Section divider**). Same article column width as story pages (`max-w-[900px]`).
+   * Plain string still supported for fallbacks (`\\n\\n` = paragraphs).
+   */
+  detailBody?: string | SanityPortableText
+  /** Optional label above the detail body column (e.g. “About this session”). */
+  detailBodyHeading?: string
+  /**
+   * When `false`, the inline Luma iframe is omitted on the detail page body.
+   * Omit or `true` = show iframe when **`lumaEventId`** is set.
+   */
+  embedLumaOnDetailPage?: boolean
+  /**
+   * When `true`, the hero CTA downloads a calendar file (**Add to Calendar**) instead of opening registration.
+   * Toggle off to use the normal Register flow (`href` / Luma embed).
+   */
+  addToCalendarEnabled?: boolean
+  /** ISO 8601 start instant — use with `addToCalendarEnabled` for accurate `.ics` / calendar apps. */
+  calendarStartsAt?: string
+  /** ISO 8601 end instant — optional; defaults to 90 minutes after `calendarStartsAt` when omitted. */
+  calendarEndsAt?: string
 }
 
 export type ProgramsProgramCard = {

@@ -31,17 +31,43 @@ import {
   X,
 } from "lucide-react"
 import { Link } from "react-router-dom"
+import { NETWORK_PATH_ROLE_TAG } from "@/lib/networkPathRoles"
 import ScrollReveal from "@/components/ScrollReveal"
 import { CreamSection, LightSection, Reveal } from "./_shared"
 
 const HERO_FALLBACK = "/images/founders-header.jpg"
 
-const ELIGIBILITY_CATEGORIES = [
-  "Digital health & care delivery software",
-  "Software as a medical device (SaMD) and connected devices",
-  "Diagnostics, lab, and decision-support platforms",
-  "Medtech and DTx with a credible path to evidence and regulation",
-  "Founding teams from idea through Series A who can execute in healthcare complexity",
+const ELIGIBILITY_BENTO_ITEMS = [
+  {
+    text: "Digital health & care delivery software",
+    pexelsQuery: "doctor nurse tablet hospital electronic health record patient care",
+    fallbackUrl:
+      "https://images.pexels.com/photos/5327585/pexels-photo-5327585.jpeg?auto=compress&cs=tinysrgb&w=1200",
+  },
+  {
+    text: "Software as a medical device (SaMD) and connected devices",
+    pexelsQuery: "medical device engineer FDA software prototype healthcare technology",
+    fallbackUrl:
+      "https://images.pexels.com/photos/3825539/pexels-photo-3825539.jpeg?auto=compress&cs=tinysrgb&w=1200",
+  },
+  {
+    text: "Diagnostics, lab, and decision-support platforms",
+    pexelsQuery: "laboratory diagnostics blood test microscope pathology healthcare lab",
+    fallbackUrl:
+      "https://images.pexels.com/photos/2280549/pexels-photo-2280549.jpeg?auto=compress&cs=tinysrgb&w=1200",
+  },
+  {
+    text: "Medtech and DTx with a credible path to evidence and regulation",
+    pexelsQuery: "clinical research hospital evidence healthcare regulatory quality assurance",
+    fallbackUrl:
+      "https://images.pexels.com/photos/7088489/pexels-photo-7088489.jpeg?auto=compress&cs=tinysrgb&w=1200",
+  },
+  {
+    text: "Founding teams from idea through Series A who can execute in healthcare complexity",
+    pexelsQuery: "health tech startup founders meeting office collaboration pitch",
+    fallbackUrl:
+      "https://images.pexels.com/photos/3184292/pexels-photo-3184292.jpeg?auto=compress&cs=tinysrgb&w=1200",
+  },
 ] as const
 
 const MEMBERSHIP_VALUE_PROPS = [
@@ -309,9 +335,14 @@ function FoundersHero() {
           You&apos;re building something that can change healthcare. We bring the experts, programs, and connections to help
           you get there.
         </p>
-        <div className="mt-10 flex flex-wrap gap-3">
-          <RelliaAction asChild variant="mintOnTealStrip" size="comfortable" className="min-w-[220px] justify-center">
-            <Link to="/apply" className="inline-flex cursor-pointer items-center gap-2" aria-label="Apply to join Rellia">
+        <div className="mt-10 flex w-full flex-col gap-3 sm:flex-row sm:flex-wrap">
+          <RelliaAction
+            asChild
+            variant="mintOnTealStrip"
+            size="comfortable"
+            className="w-full min-w-0 justify-center sm:min-w-[220px] sm:w-auto"
+          >
+            <Link to="/apply" className="inline-flex w-full cursor-pointer items-center justify-center gap-2 sm:w-auto" aria-label="Apply to join Rellia">
               Apply to join
               <ArrowRight className="h-4 w-4" aria-hidden />
             </Link>
@@ -320,9 +351,9 @@ function FoundersHero() {
             asChild
             variant="heroGhostOnTeal"
             size="comfortable"
-            className="min-w-[220px] justify-center border-white/45 hover:border-white/70"
+            className="w-full min-w-0 justify-center border-white/45 hover:border-white/70 sm:min-w-[220px] sm:w-auto"
           >
-            <Link to="/founders/directory" className="inline-flex cursor-pointer items-center justify-center">
+            <Link to="/founders/directory" className="inline-flex w-full cursor-pointer items-center justify-center sm:w-auto">
               Browse startups
             </Link>
           </RelliaAction>
@@ -332,39 +363,86 @@ function FoundersHero() {
   )
 }
 
-function EligibilitySection() {
-  const sideSrc = usePexelsPhoto({
-    query: "medical technology innovation laboratory",
-    fallbackUrl: "https://images.pexels.com/photos/3825539/pexels-photo-3825539.jpeg?auto=compress&cs=tinysrgb&w=900",
-    orientation: "portrait",
+type EligibilityBentoItem = (typeof ELIGIBILITY_BENTO_ITEMS)[number]
+
+const EligibilityBentoCard = ({
+  item,
+  className,
+  featured,
+}: {
+  item: EligibilityBentoItem
+  className?: string
+  featured?: boolean
+}) => {
+  const src = usePexelsPhoto({
+    query: item.pexelsQuery,
+    fallbackUrl: item.fallbackUrl,
+    orientation: "landscape",
   })
 
   return (
+    <article
+      className={cn(
+        "group relative flex min-h-[220px] flex-col overflow-hidden rounded-[22px] border border-black/10 shadow-[0_24px_60px_-42px_rgba(13,53,64,0.5)] md:min-h-[240px] lg:h-full lg:min-h-0",
+        className,
+      )}
+    >
+      <img
+        src={src}
+        alt=""
+        className="absolute inset-0 h-full w-full object-cover transition duration-700 ease-out group-hover:scale-[1.04] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
+        loading="lazy"
+      />
+      <div aria-hidden className="absolute inset-0 bg-gradient-to-br from-black/85 via-black/5 to-transparent" />
+      <div aria-hidden className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/15 to-transparent" />
+      <div className="relative z-10 flex h-full min-h-0 w-full flex-1 flex-col justify-end p-5 text-left md:p-7">
+        <p
+          className={cn(
+            "self-start font-host-grotesk font-semibold leading-snug tracking-tight text-white [text-shadow:0_2px_28px_rgba(0,0,0,0.5)]",
+            featured
+              ? "max-w-[min(100%,18rem)] text-xl sm:max-w-[20rem] sm:text-2xl md:max-w-[22rem] md:text-[1.65rem] md:leading-snug lg:text-[1.85rem] lg:leading-[1.2]"
+              : "max-w-[min(100%,13rem)] text-lg sm:max-w-[15rem] sm:text-xl md:max-w-[17rem] md:text-[1.35rem] md:leading-snug lg:max-w-[18rem] lg:text-[1.45rem]",
+          )}
+        >
+          {item.text}
+        </p>
+      </div>
+    </article>
+  )
+}
+
+function EligibilitySection() {
+  return (
     <section className="w-full bg-rellia-cream/25 px-6 py-16 md:px-10 md:py-24">
-      <div className="mx-auto grid max-w-[1300px] gap-12 lg:grid-cols-[1fr_min(42%,480px)] lg:items-center lg:gap-16">
-        <div>
-          <NetworkEyebrow label="Who it's for" tone="onLight" />
-          <SectionHeading
-            animated={false}
-            title="Built for serious health tech teams"
-            description="Rellia works with companies where healthcare complexity is core to the product—evidence, regulation, workflow, and traction at once."
-            className="mt-5"
-          />
-          <ul className="mt-10 max-w-xl space-y-4" role="list">
-            {ELIGIBILITY_CATEGORIES.map((line) => (
-              <li key={line} className="flex gap-3 font-urbanist text-base leading-relaxed text-black/80 md:text-[17px]">
-                <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-rellia-teal" aria-hidden />
-                {line}
-              </li>
-            ))}
-          </ul>
-        </div>
-        <div className="relative overflow-hidden rounded-[28px] border border-black/10 shadow-[0_28px_80px_-48px_rgba(13,53,64,0.55)]">
-          <img src={sideSrc} alt="" className="aspect-[4/5] w-full object-cover md:aspect-auto md:min-h-[420px]" />
-          <div className="absolute inset-0 bg-gradient-to-t from-rellia-teal/50 to-transparent" aria-hidden />
-          <p className="absolute bottom-6 left-6 right-6 font-urbanist text-sm font-medium text-white drop-shadow-md md:text-base">
-            Operators, clinicians, and builders—focused on outcomes that survive procurement and regulation.
-          </p>
+      <div className="mx-auto max-w-[1300px]">
+        <NetworkEyebrow label="Who it's for" tone="onLight" />
+        <SectionHeading
+          animated={false}
+          title="Built for serious health tech teams"
+          description="Rellia works with companies where healthcare complexity is core to the product—evidence, regulation, workflow, and traction at once."
+          className="mt-5 max-w-3xl [&>p]:max-w-[min(100%,22rem)] [&>p]:text-left [&>p]:leading-relaxed"
+        />
+
+        <div
+          className={cn(
+            "mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5",
+            "lg:mt-14 lg:grid-cols-4 lg:grid-rows-3 lg:gap-5 lg:[grid-auto-rows:minmax(200px,1fr)]",
+          )}
+        >
+          {ELIGIBILITY_BENTO_ITEMS.map((item, idx) => (
+            <EligibilityBentoCard
+              key={item.text}
+              item={item}
+              featured={idx === 0}
+              className={cn(
+                idx === 0 && "lg:col-span-2 lg:row-span-2 lg:min-h-[380px]",
+                idx === 1 && "lg:col-span-2 lg:row-start-1 lg:col-start-3",
+                idx === 2 && "lg:col-span-2 lg:row-start-2 lg:col-start-3",
+                idx === 3 && "lg:col-span-2 lg:row-start-3 lg:col-start-1",
+                idx === 4 && "lg:col-span-2 lg:row-start-3 lg:col-start-3",
+              )}
+            />
+          ))}
         </div>
       </div>
     </section>
@@ -502,14 +580,17 @@ function JourneySplitSection() {
               {outsideSteps.map((m) => {
                 const Icon = journeyIconById[m.id]
                 return (
-                  <div key={m.id} className="w-full max-w-[280px] text-left">
-                    <span className="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-rellia-teal/5 text-rellia-teal">
+                  <div
+                    key={m.id}
+                    className="mx-auto grid w-max max-w-full grid-cols-[2.75rem_minmax(0,1fr)] items-start gap-x-1.5 text-left md:w-full md:max-w-[280px] md:grid-cols-1"
+                  >
+                    <span className="col-start-1 row-start-1 inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-rellia-teal/5 text-rellia-teal md:row-start-1">
                       <Icon className="h-5 w-5" aria-hidden />
                     </span>
-                    <p className="mt-3 font-host-grotesk text-lg font-semibold leading-snug text-black">
+                    <p className="col-start-2 row-start-1 self-start text-left font-host-grotesk text-lg font-semibold leading-snug text-black md:col-start-1 md:row-start-2 md:mt-3 md:text-left">
                       {m.label}
                     </p>
-                    <p className="mt-1.5 font-urbanist text-sm leading-relaxed text-black/65">
+                    <p className="col-span-2 row-start-2 mt-2 font-urbanist text-sm leading-relaxed text-black/65 md:col-span-1 md:row-start-3 md:mt-1.5">
                       {m.detail}
                     </p>
                   </div>
@@ -534,14 +615,17 @@ function JourneySplitSection() {
               {relliaSteps.map((m) => {
                 const Icon = journeyIconById[m.id]
                 return (
-                  <div key={m.id} className="w-full max-w-[280px] text-left">
-                    <span className="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-rellia-teal text-white">
+                  <div
+                    key={m.id}
+                    className="mx-auto grid w-max max-w-full grid-cols-[2.75rem_minmax(0,1fr)] items-start gap-x-1.5 text-left md:w-full md:max-w-[280px] md:grid-cols-1"
+                  >
+                    <span className="col-start-1 row-start-1 inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-rellia-teal text-white md:row-start-1">
                       <Icon className="h-5 w-5" aria-hidden />
                     </span>
-                    <p className="mt-3 font-host-grotesk text-lg font-semibold leading-snug text-rellia-teal">
+                    <p className="col-start-2 row-start-1 self-start text-left font-host-grotesk text-lg font-semibold leading-snug text-rellia-teal md:col-start-1 md:row-start-2 md:mt-3 md:text-left">
                       {m.label}
                     </p>
-                    <p className="mt-1.5 font-urbanist text-sm leading-relaxed text-rellia-teal/80">
+                    <p className="col-span-2 row-start-2 mt-2 font-urbanist text-sm leading-relaxed text-rellia-teal/80 md:col-span-1 md:row-start-3 md:mt-1.5">
                       {m.detail}
                     </p>
                   </div>
@@ -604,20 +688,23 @@ export default function Founders() {
             <div className="mt-14 grid grid-cols-1 gap-6 md:mt-16 md:grid-cols-2 md:gap-7">
               {[
                 {
-                  label: "Founders",
+                  roleId: "founder" as const,
                   title: "See what founders are building",
                   subtitle: "Search by category, stage, and collaboration notes.",
                   to: "/founders/directory",
                   imageSrc: "/images/founders-header.jpg",
                 },
                 {
-                  label: "Advisors",
+                  roleId: "advisor" as const,
                   title: "Find the operators you want",
                   subtitle: "Browse mentors by focus area, industry, and style.",
                   to: "/advisors/directory",
                   imageSrc: "/images/paths-advisor-pexels.jpg",
                 },
-              ].map((card, idx) => (
+              ].map((card, idx) => {
+                const tag = NETWORK_PATH_ROLE_TAG[card.roleId]
+                const TagIcon = tag.icon
+                return (
                 <Reveal key={card.to} delay={0.06 * idx}>
                   <article className="group relative overflow-hidden rounded-[28px] bg-white shadow-sm transition-[transform,box-shadow] duration-300 hover:-translate-y-[1px] hover:shadow-md motion-reduce:transition-none">
                     <div className="relative aspect-[5/4] w-full overflow-hidden md:aspect-[4/3]">
@@ -627,10 +714,14 @@ export default function Founders() {
                         className="h-full w-full object-cover transition duration-500 ease-out group-hover:scale-[1.03] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
                         loading="lazy"
                       />
-                      <div aria-hidden className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/70 via-black/25 to-transparent" />
+                      <div
+                        aria-hidden
+                        className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/65 via-black/25 to-transparent backdrop-blur-[2px]"
+                      />
 
-                      <div className="absolute left-5 top-5 inline-flex items-center rounded-full bg-black/45 px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-white/90 backdrop-blur md:left-6 md:top-6">
-                        {card.label}
+                      <div className="absolute right-3 top-3 inline-flex items-center gap-2 rounded-full bg-black/40 px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-white/95 ring-1 ring-white/15 backdrop-blur-md sm:right-4 sm:top-4">
+                        <TagIcon className="h-3.5 w-3.5 shrink-0" aria-hidden />
+                        {tag.label}
                       </div>
 
                       <div className="absolute inset-x-0 bottom-0 p-5 md:p-6">
@@ -647,15 +738,20 @@ export default function Founders() {
                           size="compact"
                           className="mt-5 w-fit px-5 py-3 text-sm shadow-sm"
                         >
-                          <Link to={card.to} className="inline-flex cursor-pointer items-center justify-center" aria-label={card.label}>
-                            Browse {card.label} directory
+                          <Link
+                            to={card.to}
+                            className="inline-flex cursor-pointer items-center justify-center"
+                            aria-label={`Browse ${tag.label} directory`}
+                          >
+                            Browse {tag.label} directory
                           </Link>
                         </RelliaAction>
                       </div>
                     </div>
                   </article>
                 </Reveal>
-              ))}
+                )
+              })}
             </div>
           </div>
         </LightSection>

@@ -1,24 +1,5 @@
 import {defineField, defineType} from 'sanity'
 
-const eventCardFields = [
-  {name: 'title', type: 'string' as const},
-  {name: 'slug', type: 'string' as const},
-  {name: 'dateTime', type: 'string' as const},
-  {name: 'person', type: 'string' as const},
-  {name: 'imageSrc', type: 'string' as const},
-  {name: 'href', type: 'string' as const},
-  {name: 'comingSoon', type: 'boolean' as const},
-  {name: 'buttonText', type: 'string' as const},
-  {name: 'location', type: 'string' as const},
-  {name: 'lumaEventId', type: 'string' as const},
-]
-
-const eventCardType = {
-  type: 'object' as const,
-  name: 'eventCard',
-  fields: eventCardFields,
-}
-
 export const programsLandingPage = defineType({
   name: 'programsLandingPage',
   title: 'Programs & events landing',
@@ -48,8 +29,8 @@ export const programsLandingPage = defineType({
         }),
       ],
     }),
-    defineField({name: 'upcomingEvents', type: 'array', of: [eventCardType]}),
-    defineField({name: 'pastEvents', type: 'array', of: [eventCardType]}),
+    defineField({name: 'upcomingEvents', type: 'array', of: [{type: 'eventCard'}]}),
+    defineField({name: 'pastEvents', type: 'array', of: [{type: 'eventCard'}]}),
     defineField({name: 'ctaTitle', type: 'string'}),
     defineField({name: 'ctaBody', type: 'text', rows: 2}),
     defineField({name: 'ctaButtonLabel', type: 'string'}),

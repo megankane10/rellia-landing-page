@@ -6,6 +6,11 @@ export type StoryBodyBlock =
   | { type: "h3"; text: string }
   | { type: "quote"; text: string; attribution?: string }
   | { type: "image"; src: string; alt: string; caption?: string }
+  | {
+      type: "imageCarousel"
+      title?: string
+      slides: { src: string; alt: string; caption?: string }[]
+    }
   | { type: "cta"; title: string; body: string; buttonLabel: string; buttonHref: string }
 
 export type Story = {
@@ -68,6 +73,22 @@ export const STORIES: Story[] = [
         type: "quote",
         text: "If you make the next stakeholder’s job easier, you’ll feel momentum. If you make it harder, you’ll feel “interest” without commitment.",
         attribution: "Rellia Health",
+      },
+      {
+        type: "imageCarousel",
+        title: "How proof shows up in practice",
+        slides: [
+          {
+            src: "https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=1400&q=80",
+            alt: "Team collaborating around a laptop in an office",
+            caption: "Weekly reviews work when they ship artifacts—not opinions.",
+          },
+          {
+            src: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=1400&q=80",
+            alt: "People discussing plans around a whiteboard",
+            caption: "Align clinical, IT, and ops on one proof timeline.",
+          },
+        ],
       },
       {
         type: "p",

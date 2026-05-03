@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils"
 import { getStoryBySlug } from "@/content/stories"
 import { getDefaultOgImageUrl, getSiteUrl } from "@/config/seo"
 import { ChevronLeft } from "lucide-react"
+import { RichTextImageCarousel } from "@/components/RichTextImageCarousel"
 import { AnimatePresence, motion } from "framer-motion"
 import {
   ShareIconCopy,
@@ -262,6 +263,22 @@ export default function StoryPost() {
                           <figcaption className="mt-3 font-urbanist text-sm text-black/55">{b.caption}</figcaption>
                         ) : null}
                       </figure>
+                    )
+                  }
+
+                  if (b.type === "imageCarousel") {
+                    const slides = b.slides.map((s) => ({
+                      imageSrc: s.src,
+                      alt: s.alt,
+                      caption: s.caption,
+                    }))
+                    return (
+                      <RichTextImageCarousel
+                        key={key}
+                        title={b.title}
+                        slides={slides}
+                        className="my-10"
+                      />
                     )
                   }
 

@@ -8,6 +8,9 @@ import {qmsProgramPage} from './documents/qmsProgramPage'
 import {notFoundPage} from './documents/notFoundPage'
 import {marketingPage} from './documents/marketingPage'
 import {paymentPage} from './documents/paymentPage'
+import {eventCard} from './objects/eventCard'
+import {bodyCtaBox} from './objects/bodyCtaBox'
+import {portableImageCarousel} from './objects/portableImageCarousel'
 
 export const schemaTypes = [
   globalSettings,
@@ -20,4 +23,7 @@ export const schemaTypes = [
   notFoundPage,
   marketingPage,
   paymentPage,
+  eventCard,
+  bodyCtaBox,
+  portableImageCarousel,
 ]

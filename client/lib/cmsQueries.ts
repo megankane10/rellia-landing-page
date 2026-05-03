@@ -86,8 +86,16 @@ export const programsLandingQuery = `*[_type == "programsLandingPage"][0]{
   programsSectionTitle,
   programsSectionSubtitle,
   programs[]{ title, description, imageSrc, href, buttonText },
-  upcomingEvents[]{ title, slug, dateTime, person, imageSrc, href, comingSoon, location, lumaEventId },
-  pastEvents[]{ title, slug, dateTime, person, imageSrc, href, buttonText, location, lumaEventId },
+  upcomingEvents[]{
+    title, slug, dateTime, person, imageSrc, href, comingSoon, location, lumaEventId,
+    detailBody, detailBodyHeading, embedLumaOnDetailPage,
+    addToCalendarEnabled, calendarStartsAt, calendarEndsAt
+  },
+  pastEvents[]{
+    title, slug, dateTime, person, imageSrc, href, buttonText, location, lumaEventId,
+    detailBody, detailBodyHeading, embedLumaOnDetailPage,
+    addToCalendarEnabled, calendarStartsAt, calendarEndsAt
+  },
   ctaTitle,
   ctaBody,
   ctaButtonLabel,

@@ -260,6 +260,9 @@ const RELLIA_HEALTH_SPEAKER_RE = /rellia\s*health/i
 const DR_SABINA_NAGPAL_SPEAKER_RE = /dr\.?\s*sabina|sabina.*nagpal/i
 const MAZHAR_TESTIMONIAL_PORTRAIT = "/images/testimonials-MazharS.jpeg"
 
+const BRENTON_HILL_SPEAKER_RE = /brenton\s*hill/i
+const BRENTON_HILL_EVENT_PORTRAIT = "/images/testimonials-nickS.jpeg"
+
 const hashProgramsEventKey = (key: string): number => {
   let h = 0
   for (let i = 0; i < key.length; i++) {
@@ -291,6 +294,13 @@ export const getProgramsEventSpeakerAvatarSrc = (event: ProgramsEventCard): stri
   if (isDrSabinaNagpalEvent) {
     return MAZHAR_TESTIMONIAL_PORTRAIT
   }
+  const isBrentonHillEvent =
+    event.slug === "why-healthcare-says-no-to-your-ai" ||
+    BRENTON_HILL_SPEAKER_RE.test(speaker) ||
+    BRENTON_HILL_SPEAKER_RE.test(personRaw)
+  if (isBrentonHillEvent) {
+    return BRENTON_HILL_EVENT_PORTRAIT
+  }
   const key = `${event.title}-${event.dateTime}-${event.person}`
   const pool = PROGRAMS_EVENT_SPEAKER_AVATAR_POOL
   const idx = Math.abs(hashProgramsEventKey(key)) % pool.length
@@ -316,6 +326,33 @@ export const getProgramsEventLocationLabel = (event: ProgramsEventCard) => {
   return v && v.length > 0 ? v : PROGRAMS_EVENT_LOCATION_FALLBACK
 }
 
+/**
+ * In-person detail layout: line 1 = venue / primary (before first comma when present);
+ * line 2 = street + locality (e.g. `101 College St, Toronto`) using secondary styling.
+ */
+export const getProgramsEventLocationDetailLines = (
+  event: ProgramsEventCard,
+): { line1: string; line2: string | null } => {
+  const raw = event.location?.trim() ?? ""
+  if (!raw.length) {
+    return { line1: PROGRAMS_EVENT_LOCATION_FALLBACK, line2: null }
+  }
+
+  const primaryComma = raw.indexOf(",")
+  if (primaryComma === -1) {
+    return { line1: raw, line2: null }
+  }
+
+  const line1 = raw.slice(0, primaryComma).trim()
+  const rest = raw.slice(primaryComma + 1).trim()
+  if (!line1.length) return { line1: rest.length ? rest : raw, line2: null }
+  if (!rest.length) return { line1, line2: null }
+
+  const line2 = rest.replace(/\s*·\s*/g, ", ").replace(/\s+/g, " ").trim()
+
+  return { line1: line1.length ? line1 : raw, line2: line2.length ? line2 : null }
+}
+
 /** Whether the event is marketed as remote vs on-site, from the CMS `location` string. */
 export const getProgramsEventAttendanceMode = (event: ProgramsEventCard): "virtual" | "inPerson" => {
   const v = event.location?.trim() ?? ""
@@ -333,6 +370,17 @@ export const getProgramsEventAttendanceMode = (event: ProgramsEventCard): "virtu
     return "virtual"
   }
   return "inPerson"
+}
+
+/**
+ * Google Maps search URL for an in-person venue (full `location` string).
+ * Returns `null` for virtual events or empty location.
+ */
+export const getProgramsEventMapsSearchUrl = (event: ProgramsEventCard): string | null => {
+  if (getProgramsEventAttendanceMode(event) !== "inPerson") return null
+  const raw = event.location?.trim() ?? ""
+  if (!raw.length) return null
+  return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(raw)}`
 }
 
 export { MIDDLE_DOT_SEP }

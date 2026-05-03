@@ -142,11 +142,11 @@ export default function About() {
                   const Icon = resolveValueIcon(v.iconKey);
 
                   return (
-                    <ScrollReveal key={v.title} delay={i * 0.08} className="h-full">
+                    <ScrollReveal key={v.title} delay={i * 0.08} className="flex h-full min-h-0">
                       <div
                         className={cn(
                           relliaTealGlassCardClass,
-                          "flex h-full min-h-[260px] flex-col px-6 py-7 md:min-h-[280px] md:px-7 md:py-8",
+                          "flex h-full min-h-0 w-full flex-col px-6 py-6 sm:px-6 sm:py-7 md:px-7 md:py-8",
                         )}
                       >
                         <Icon

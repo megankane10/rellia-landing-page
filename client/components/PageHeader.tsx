@@ -22,6 +22,11 @@ export type PageHeaderProps = {
   /** Override default display title scale (e.g. tighter About page) */
   titleClassName?: string
   subtitleClassName?: string
+  /**
+   * Renders a pill above the title, e.g. `March 18, 2026` → “Effective March 18, 2026”
+   * (legal / policy pages).
+   */
+  effectiveDate?: string
 }
 
 const DARK_BG = [
@@ -43,8 +48,10 @@ export default function PageHeader({
   className,
   titleClassName,
   subtitleClassName,
+  effectiveDate,
 }: PageHeaderProps) {
   const isDark = variant === "dark"
+  const effectiveDateTrimmed = effectiveDate?.trim() ?? ""
 
   return (
     <section className={cn(isDark ? DARK_BG : LIGHT_BG, className)}>
@@ -102,6 +109,18 @@ export default function PageHeader({
 
       <div className="relative z-10 max-w-[1300px] mx-auto px-6 md:px-10">
         <ScrollReveal>
+          {effectiveDateTrimmed ? (
+            <p
+              className={cn(
+                "mb-4 flex w-fit items-center rounded-full border px-4 py-1.5 font-host-grotesk text-[11px] font-semibold uppercase tracking-[0.14em] md:mb-5 md:text-xs",
+                isDark
+                  ? "border-white/25 bg-white/10 text-white/90"
+                  : "border-black/12 bg-white/80 text-black/70 shadow-sm",
+              )}
+            >
+              Effective {effectiveDateTrimmed}
+            </p>
+          ) : null}
           <div className="relative w-fit">
             <h1
               className={cn(

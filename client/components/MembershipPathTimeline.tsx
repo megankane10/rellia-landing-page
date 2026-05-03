@@ -74,6 +74,10 @@ export type MembershipPathTimelineProps = {
   timelineAriaLabel?: string
   /** Horizontal timeline from `md` (e.g. consulting’s 3 steps); default membership keeps vertical until `lg` when there are 4 steps */
   horizontalFromMd?: boolean
+  /** Rendered after the numbered steps, before “Learn more about your role” (e.g. secondary CTA). */
+  belowTimeline?: ReactNode
+  /** Rendered in the section header after the subheading (e.g. primary CTA left-aligned under intro copy). */
+  headingFooter?: ReactNode
 }
 
 const defaultHeadingTitle = (
@@ -95,6 +99,8 @@ const MembershipPathTimeline = ({
   steps,
   timelineAriaLabel = "Membership application steps",
   horizontalFromMd = false,
+  belowTimeline,
+  headingFooter,
 }: MembershipPathTimelineProps = {}) => {
   const stepsToRender = steps ?? MEMBERSHIP_PATH_STEPS
   const stepCount = stepsToRender.length
@@ -131,13 +137,18 @@ const MembershipPathTimeline = ({
     <section
       aria-labelledby={showHeading ? headingId : undefined}
       className={cn(
-        "w-full border-t border-black/8 bg-rellia-cream/25 px-6 py-20 md:px-10 md:py-28 lg:py-36",
+        "w-full border-t border-black/8 bg-rellia-cream/25 px-6 py-14 md:px-10 md:py-20 lg:py-24",
         className,
       )}
     >
       <div className="mx-auto w-full max-w-[1300px] text-left">
         {showHeading ? (
-          <header className="max-w-3xl pb-16 md:pb-24 lg:pb-32">
+          <header
+            className={cn(
+              "max-w-3xl",
+              headingFooter ? "pb-14 md:pb-16 lg:pb-20" : "pb-8 md:pb-10 lg:pb-12",
+            )}
+          >
             <h2
               id={headingId}
               className="font-host-grotesk text-3xl font-semibold leading-tight tracking-tight text-black md:text-4xl lg:text-[2.75rem]"
@@ -147,6 +158,9 @@ const MembershipPathTimeline = ({
             <p className="mt-4 font-urbanist text-base leading-relaxed text-black/70 md:text-lg md:leading-relaxed">
               {subheading}
             </p>
+            {headingFooter ? (
+              <div className="mt-6 flex w-full justify-start md:mt-8">{headingFooter}</div>
+            ) : null}
           </header>
         ) : null}
 
@@ -305,8 +319,20 @@ const MembershipPathTimeline = ({
           </div>
         </div>
 
+        {belowTimeline ? (
+          <div className="mt-20 flex w-full justify-center md:mt-28 lg:mt-36">{belowTimeline}</div>
+        ) : null}
+
         {showRoleLinks ? (
-          <div className="mt-20 md:mt-28 lg:mt-36">
+          <div
+            className={cn(
+              belowTimeline
+                ? "mt-12 md:mt-16 lg:mt-20"
+                : headingFooter
+                  ? "mt-10 md:mt-12 lg:mt-16"
+                  : "mt-20 md:mt-28 lg:mt-36",
+            )}
+          >
             <h3 className="font-host-grotesk text-lg font-semibold tracking-tight text-black md:text-xl">
               Learn more about your role
             </h3>

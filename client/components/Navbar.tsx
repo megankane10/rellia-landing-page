@@ -248,6 +248,7 @@ export default function Navbar({ ctaRadiusClassName = "rounded-full" }: NavbarPr
     pathname === "/" ||
     pathname === "/about" ||
     pathname === "/stories" ||
+    pathname === "/privacy" ||
     pathname === "/terms" ||
     pathname === "/network" ||
     pathname === "/founders" ||
@@ -543,8 +544,8 @@ export default function Navbar({ ctaRadiusClassName = "rounded-full" }: NavbarPr
                           key={item.to}
                           to={item.to}
                           className={cn(
-                            "flex min-h-11 cursor-pointer items-center rounded-xl px-3 py-2.5 font-urbanist text-[15px] font-semibold text-white/90 outline-none transition-colors hover:bg-white/10 hover:text-white focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-rellia-teal",
-                            item.active && "bg-white/10 ring-1 ring-white/15 text-rellia-mint",
+                            "flex min-h-11 cursor-pointer items-center rounded-xl px-3 py-2.5 font-urbanist text-[15px] font-semibold text-white outline-none transition-colors hover:bg-white/10 focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-rellia-teal",
+                            item.active && "bg-white/10 ring-1 ring-white/15",
                           )}
                           onClick={handleCloseMobile}
                           aria-current={item.active ? "page" : undefined}
@@ -618,8 +619,8 @@ export default function Navbar({ ctaRadiusClassName = "rounded-full" }: NavbarPr
                         key={item.to}
                         to={item.to}
                         className={cn(
-                          "flex min-h-11 cursor-pointer items-center justify-start gap-2 rounded-xl px-3 py-2.5 font-urbanist text-[15px] font-semibold text-white/90 outline-none transition-colors hover:bg-white/10 hover:text-white focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-rellia-teal",
-                          item.active && "bg-white/10 ring-1 ring-white/15 text-rellia-mint",
+                          "flex min-h-11 cursor-pointer items-center justify-start gap-2 rounded-xl px-3 py-2.5 font-urbanist text-[15px] font-semibold text-white outline-none transition-colors hover:bg-white/10 focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-rellia-teal",
+                          item.active && "bg-white/10 ring-1 ring-white/15",
                         )}
                         onClick={handleCloseMobile}
                         aria-current={item.active ? "page" : undefined}
