@@ -8,6 +8,7 @@ import {
   type NetworkPathRoleId,
 } from "@/lib/networkPathRoles"
 import RelliaAction from "@/components/RelliaAction"
+import ScrollReveal from "@/components/ScrollReveal"
 
 /** Layered soft mint blurs — kept in the upper band so hero copy stays clean */
 const MintBlurField = () => (
@@ -105,6 +106,8 @@ export default function PathsSection() {
     },
   }
 
+
+
   return (
     <section
       ref={(node) => {
@@ -114,7 +117,7 @@ export default function PathsSection() {
       className={cn(
         "relative w-full overflow-hidden px-6 md:px-10",
         "min-h-[72vh] md:min-h-[76vh] lg:min-h-[78vh]",
-        "bg-gradient-to-b from-rellia-greyTeal via-rellia-greyTeal to-[#b5cac7]",
+        "bg-rellia-greyTeal",
         "py-16 md:py-24 lg:py-28",
       )}
     >
@@ -129,6 +132,10 @@ export default function PathsSection() {
           }
           className="relative mx-auto flex w-full max-w-4xl flex-col items-center text-center"
         >
+          <div
+            aria-hidden
+            className="pointer-events-none absolute left-1/2 top-[39%] z-0 h-[min(34vw,170px)] w-[min(72vw,320px)] -translate-x-1/2 -translate-y-1/2 rounded-[58%] bg-rellia-mint/38 blur-[52px] md:top-[40%] md:h-[210px] md:w-[380px] md:blur-[62px]"
+          />
           <div
             aria-hidden
             className="pointer-events-none absolute left-1/2 top-[38%] z-0 h-[min(52vw,260px)] w-[min(92vw,400px)] -translate-x-1/2 -translate-y-1/2 rounded-[55%] bg-gradient-to-br from-rellia-mint/58 via-rellia-mint/38 to-rellia-mint/22 blur-[56px] md:top-[40%] md:h-[300px] md:w-[460px] md:blur-[76px]"
@@ -179,28 +186,23 @@ export default function PathsSection() {
           transition={reduceMotion ? { duration: 0 } : { duration: 0.62, delay: 0.08, ease: [0.16, 1, 0.3, 1] }}
           className="mt-16 w-full md:mt-20"
         >
-          <div className="mx-auto grid w-full max-w-[1240px] grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-4 lg:gap-4 xl:gap-5">
+          <div
+            className="mx-auto grid w-full max-w-[1240px] grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-4 lg:gap-4 xl:gap-5"
+          >
             {ROLE_IDS.map((id, idx) => {
               const card = ROLE_META[id]
               const tag = NETWORK_PATH_ROLE_TAG[id]
               const Icon = tag.icon
               const ctaText = CTA_PHRASE[id]
               return (
-                <motion.article
-                  key={id}
-                  initial={reduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 22 }}
-                  animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 22 }}
-                  transition={
-                    reduceMotion
-                      ? { duration: 0 }
-                      : { duration: 0.62, delay: 0.06 + idx * 0.08, ease: [0.16, 1, 0.3, 1] }
-                  }
-                  className={cn(
-                    "group relative overflow-hidden rounded-[26px] bg-white shadow-sm md:rounded-[28px]",
-                    "transition-[transform,box-shadow] duration-300 motion-reduce:transition-none",
-                    "hover:-translate-y-[1px] hover:shadow-md",
-                  )}
-                >
+                <ScrollReveal key={id} variant="ctaReveal" delay={idx * 0.15}>
+                  <article
+                    className={cn(
+                      "group relative overflow-hidden rounded-[26px] bg-white shadow-sm md:rounded-[28px]",
+                      "transition-[transform,box-shadow] duration-300 motion-reduce:transition-none",
+                      "hover:-translate-y-[1px] hover:shadow-md",
+                    )}
+                  >
                   <div className="relative aspect-[4/3] w-full overflow-hidden sm:aspect-[5/4] lg:aspect-[4/5]">
                     <img
                       src={card.imageSrc}
@@ -210,9 +212,9 @@ export default function PathsSection() {
                     />
                     <div
                       aria-hidden
-                      className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/65 via-black/25 to-transparent backdrop-blur-[2px]"
+                      className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/95 via-black/60 via-40% to-transparent"
                     />
-                    <div className="absolute right-3 top-3 inline-flex items-center gap-2 rounded-full bg-black/40 px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-white/95 ring-1 ring-white/15 backdrop-blur-md sm:right-4 sm:top-4">
+                    <div className="absolute right-3 top-3 inline-flex items-center gap-2 rounded-full bg-black/40 px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-white/95 ring-1 ring-white/15 sm:right-4 sm:top-4">
                       <Icon className="h-3.5 w-3.5 shrink-0" aria-hidden />
                       {tag.label}
                     </div>
@@ -241,7 +243,8 @@ export default function PathsSection() {
                       </RelliaAction>
                     </div>
                   </div>
-                </motion.article>
+                  </article>
+                </ScrollReveal>
               )
             })}
           </div>

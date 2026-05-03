@@ -225,7 +225,7 @@ export default function EventDetail() {
             <div className="mx-auto w-full max-w-[1100px]">
               <ScrollReveal>
                 <div className="flex flex-col gap-8 lg:flex-row lg:items-start lg:gap-10">
-                  <div className="w-full max-w-[248px] shrink-0 self-start sm:max-w-[288px] md:max-w-[340px] lg:max-w-[380px]">
+                  <div className="w-full max-w-[320px] shrink-0 self-start sm:max-w-[288px] md:max-w-[340px] lg:max-w-[380px]">
                     <div
                       className={cn(
                         "relative aspect-square w-full shrink-0 overflow-hidden rounded-2xl bg-white/90 shadow-sm ring-1 ring-black/5",
@@ -236,7 +236,7 @@ export default function EventDetail() {
                         src={event.imageSrc}
                         alt={event.title}
                         className={cn(
-                          "h-full w-full object-contain object-left object-top",
+                          "h-full w-full object-cover object-center sm:object-contain sm:object-left sm:object-top",
                           isPast && "grayscale-[0.2]",
                         )}
                       />

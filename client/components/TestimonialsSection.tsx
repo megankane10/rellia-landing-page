@@ -351,12 +351,12 @@ export default function TestimonialsSection({ titleLead, titleAccent, testimonia
                   <Link
                     to="/founders/directory"
                     className={cn(
-                      "inline-flex shrink-0 items-center justify-center rounded-full border border-rellia-teal bg-rellia-teal",
-                      "px-3.5 py-1.5 font-host-grotesk text-xs font-semibold text-white shadow-sm",
+                      "inline-flex h-11 shrink-0 items-center justify-center rounded-full border border-rellia-teal bg-rellia-teal",
+                      "px-4 font-host-grotesk text-sm font-semibold text-white shadow-sm",
                       "transition-[transform,background-color,color,border-color,box-shadow] duration-300 ease-out motion-reduce:transition-none",
                       "hover:-translate-y-0.5 hover:border-rellia-mint hover:bg-rellia-mint hover:text-rellia-teal hover:shadow-md",
                       "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-white",
-                      "md:px-4 md:py-2 md:text-sm",
+                      "md:px-4",
                     )}
                   >
                     Discover startups

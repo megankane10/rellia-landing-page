@@ -1,4 +1,5 @@
 import { usePexelsPhoto } from "@/hooks/usePexelsPhoto"
+import { useEffect, useMemo, useRef, useState } from "react"
 import { PAGE_HEADER_TITLE_SIZE_CLASS } from "@/components/PageHeader"
 import NetworkEyebrow from "@/components/network/NetworkEyebrow"
 import SectionHeading from "@/components/SectionHeading"
@@ -34,6 +35,7 @@ import { Link } from "react-router-dom"
 import { NETWORK_PATH_ROLE_TAG } from "@/lib/networkPathRoles"
 import ScrollReveal from "@/components/ScrollReveal"
 import { CreamSection, LightSection, Reveal } from "./_shared"
+import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion"
 
 const HERO_FALLBACK = "/images/founders-header.jpg"
 
@@ -226,6 +228,14 @@ const CONSULTING_FEATURES = [
 ] as const
 
 function DeeperHelpValuesSection() {
+  const sectionRef = useRef<HTMLElement | null>(null)
+  const reduceMotion = useReducedMotion()
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start 95%", "end 5%"],
+  })
+  const bgY = useTransform(scrollYProgress, [0, 1], ["-18%", "18%"])
+
   const bgSrc = usePexelsPhoto({
     query: "healthcare startup team meeting",
     fallbackUrl: "https://images.pexels.com/photos/3184325/pexels-photo-3184325.jpeg?auto=compress&cs=tinysrgb&w=1600",
@@ -233,14 +243,20 @@ function DeeperHelpValuesSection() {
   })
 
   return (
-    <section className="relative w-full overflow-hidden bg-white">
+    <section
+      ref={(node) => {
+        sectionRef.current = node
+      }}
+      className="relative w-full overflow-hidden bg-white"
+    >
       <div className="relative w-full overflow-hidden">
         <div className="relative min-h-[880px] w-full overflow-hidden sm:min-h-[920px] md:min-h-[900px] lg:min-h-[980px]">
           <div className="absolute inset-0 overflow-hidden" aria-hidden>
-            <img
+            <motion.img
               src={bgSrc}
               alt=""
               className="h-full w-full object-cover scale-[1.12] object-[55%_50%]"
+              style={reduceMotion ? undefined : { y: bgY }}
               loading="lazy"
             />
             <div className="absolute inset-0 bg-rellia-teal/35" />
@@ -278,7 +294,7 @@ function DeeperHelpValuesSection() {
                         <div
                           className={cn(
                             relliaTealGlassCardClass,
-                            "flex h-full min-h-[260px] flex-col px-6 py-7 md:min-h-[280px] md:px-7 md:py-8",
+                            "flex h-full min-h-[200px] flex-col px-5 py-5 sm:min-h-[220px] sm:px-6 sm:py-6 md:min-h-[250px] md:px-7 md:py-8",
                           )}
                         >
                           <Icon className="h-6 w-6 shrink-0 text-rellia-mint sm:h-7 sm:w-7" aria-hidden />
@@ -486,7 +502,7 @@ function EngageTealBand() {
                 <Link
                   key={item.title}
                   to={item.to}
-                  className="group flex min-h-[200px] flex-col rounded-2xl border border-white/15 bg-white/5 p-6 backdrop-blur-md transition duration-300 hover:border-rellia-mint/40 hover:bg-white/10 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-rellia-teal"
+                  className="group flex h-full min-h-[168px] flex-col rounded-2xl border border-white/15 bg-white/5 p-5 backdrop-blur-md transition duration-300 hover:border-rellia-mint/40 hover:bg-white/10 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-rellia-teal sm:min-h-[184px] sm:p-6"
                 >
                   <Icon className="h-7 w-7 text-rellia-mint transition-transform duration-300 group-hover:scale-105" aria-hidden />
                   <p className="mt-5 font-host-grotesk text-lg font-semibold leading-snug tracking-tight text-white">
@@ -518,15 +534,17 @@ function MembershipDifferentSection() {
           description="Operator-led support in a community where quality is defended by application review—not open signup churn."
           className="mt-5"
         />
-        <div className="mt-20 grid grid-cols-1 gap-12 sm:grid-cols-2 md:mt-24 md:gap-x-14 md:gap-y-12 lg:mt-28 lg:gap-x-16">
+        <div className="mt-16 grid grid-cols-1 items-start gap-10 sm:grid-cols-2 md:mt-20 md:gap-x-12 md:gap-y-14 lg:mt-24 lg:gap-x-16 lg:gap-y-16">
           {MEMBERSHIP_VALUE_PROPS.map((item, idx) => {
             const Icon = item.icon
             return (
               <Reveal key={item.title} delay={0.05 * idx}>
-                <div className="flex max-w-xl flex-col gap-3">
-                  <Icon className="h-8 w-8 shrink-0 text-rellia-teal" aria-hidden />
-                  <h3 className="font-host-grotesk text-lg font-semibold text-rellia-teal md:text-xl">{item.title}</h3>
-                  <p className="font-urbanist text-base leading-relaxed text-black/75">{item.body}</p>
+                <div className="flex w-full flex-col items-start text-left">
+                  <span className="inline-flex h-12 w-12 items-center justify-center rounded-xl bg-rellia-teal/5 text-rellia-teal">
+                    <Icon className="h-6 w-6 shrink-0" aria-hidden />
+                  </span>
+                  <h3 className="mt-5 font-host-grotesk text-xl font-semibold text-rellia-teal md:text-2xl">{item.title}</h3>
+                  <p className="mt-3 font-urbanist text-base leading-relaxed text-black/75 md:text-lg">{item.body}</p>
                 </div>
               </Reveal>
             )
@@ -582,12 +600,12 @@ function JourneySplitSection() {
                 return (
                   <div
                     key={m.id}
-                    className="mx-auto grid w-max max-w-full grid-cols-[2.75rem_minmax(0,1fr)] items-start gap-x-1.5 text-left md:w-full md:max-w-[280px] md:grid-cols-1"
+                    className="mx-auto grid w-max max-w-full grid-cols-[2.75rem_minmax(0,1fr)] items-center gap-x-1.5 text-left md:w-full md:max-w-[280px] md:grid-cols-1 md:items-start"
                   >
                     <span className="col-start-1 row-start-1 inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-rellia-teal/5 text-rellia-teal md:row-start-1">
                       <Icon className="h-5 w-5" aria-hidden />
                     </span>
-                    <p className="col-start-2 row-start-1 self-start text-left font-host-grotesk text-lg font-semibold leading-snug text-black md:col-start-1 md:row-start-2 md:mt-3 md:text-left">
+                    <p className="col-start-2 row-start-1 self-center text-left font-host-grotesk text-lg font-semibold leading-snug text-black md:col-start-1 md:row-start-2 md:mt-3 md:self-start md:text-left">
                       {m.label}
                     </p>
                     <p className="col-span-2 row-start-2 mt-2 font-urbanist text-sm leading-relaxed text-black/65 md:col-span-1 md:row-start-3 md:mt-1.5">
@@ -617,12 +635,12 @@ function JourneySplitSection() {
                 return (
                   <div
                     key={m.id}
-                    className="mx-auto grid w-max max-w-full grid-cols-[2.75rem_minmax(0,1fr)] items-start gap-x-1.5 text-left md:w-full md:max-w-[280px] md:grid-cols-1"
+                    className="mx-auto grid w-max max-w-full grid-cols-[2.75rem_minmax(0,1fr)] items-center gap-x-1.5 text-left md:w-full md:max-w-[280px] md:grid-cols-1 md:items-start"
                   >
                     <span className="col-start-1 row-start-1 inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-rellia-teal text-white md:row-start-1">
                       <Icon className="h-5 w-5" aria-hidden />
                     </span>
-                    <p className="col-start-2 row-start-1 self-start text-left font-host-grotesk text-lg font-semibold leading-snug text-rellia-teal md:col-start-1 md:row-start-2 md:mt-3 md:text-left">
+                    <p className="col-start-2 row-start-1 self-center text-left font-host-grotesk text-lg font-semibold leading-snug text-rellia-teal md:col-start-1 md:row-start-2 md:mt-3 md:self-start md:text-left">
                       {m.label}
                     </p>
                     <p className="col-span-2 row-start-2 mt-2 font-urbanist text-sm leading-relaxed text-rellia-teal/80 md:col-span-1 md:row-start-3 md:mt-1.5">
@@ -716,10 +734,10 @@ export default function Founders() {
                       />
                       <div
                         aria-hidden
-                        className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/65 via-black/25 to-transparent backdrop-blur-[2px]"
+                        className="pointer-events-none absolute inset-0 bg-gradient-to-t from-rellia-teal/92 via-rellia-teal/54 via-38% to-transparent"
                       />
 
-                      <div className="absolute right-3 top-3 inline-flex items-center gap-2 rounded-full bg-black/40 px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-white/95 ring-1 ring-white/15 backdrop-blur-md sm:right-4 sm:top-4">
+                      <div className="absolute right-3 top-3 inline-flex items-center gap-2 rounded-full bg-black/40 px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-white/95 ring-1 ring-white/15 sm:right-4 sm:top-4">
                         <TagIcon className="h-3.5 w-3.5 shrink-0" aria-hidden />
                         {tag.label}
                       </div>

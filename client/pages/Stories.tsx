@@ -35,11 +35,11 @@ const StoryGridCard = ({
   }, [story.title])
 
   return (
-    <article className="w-full">
+    <article className="h-full w-full">
       <Link
         to={`/stories/${story.slug}`}
         className={cn(
-          "group flex h-[390px] md:h-[410px] w-full flex-col overflow-hidden rounded-2xl",
+          "group flex h-[410px] w-full flex-col overflow-hidden rounded-2xl md:h-[430px]",
           "transition-transform duration-200 ease-out hover:-translate-y-0.5",
           "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-white",
         )}
@@ -63,22 +63,16 @@ const StoryGridCard = ({
           </div>
 
           <h3
-            className="mt-1 font-host-grotesk text-[16px] md:text-lg font-semibold leading-snug text-black group-hover:underline group-hover:underline-offset-4"
-            style={{
-              display: "-webkit-box",
-              WebkitLineClamp: 2,
-              WebkitBoxOrient: "vertical",
-              overflow: "hidden",
-            }}
+            className="mt-1 line-clamp-2 font-host-grotesk text-[16px] font-semibold leading-snug text-black group-hover:underline group-hover:underline-offset-4 md:text-lg"
           >
             {cleanTitle}
           </h3>
 
           <p
-            className="mt-1.5 min-h-0 flex-1 overflow-hidden font-urbanist text-black/70 text-sm md:text-base leading-relaxed break-words"
+            className="mt-1.5 max-h-[6rem] overflow-hidden break-words font-urbanist text-sm leading-relaxed text-black/70 md:max-h-[6.9rem] md:text-base"
             style={{
               display: "-webkit-box",
-              WebkitLineClamp: 3,
+              WebkitLineClamp: 4,
               WebkitBoxOrient: "vertical",
               overflow: "hidden",
             }}
@@ -218,13 +212,14 @@ export default function Stories() {
               <motion.div
                 layout
                 transition={{ layout: { duration: 0.32, ease: [0.16, 1, 0.3, 1] } }}
-                className="mt-6 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 md:gap-8 will-change-transform"
+                className="mt-6 grid grid-cols-1 gap-0 md:grid-cols-2 md:gap-8 xl:grid-cols-3 will-change-transform"
               >
                 <AnimatePresence mode="sync" initial={false}>
                   {pageStories.map((story, i) => (
                     <motion.div
                       key={story.slug}
                       layout="position"
+                      className="h-full"
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: 10 }}
@@ -234,7 +229,7 @@ export default function Stories() {
                         layout: { duration: 0.32, ease: [0.16, 1, 0.3, 1] },
                       }}
                     >
-                      <ScrollReveal delay={i * 0.05}>
+                      <ScrollReveal delay={i * 0.05} className="h-full">
                         <StoryGridCard story={story} />
                       </ScrollReveal>
                     </motion.div>
