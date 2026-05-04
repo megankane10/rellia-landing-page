@@ -24,9 +24,9 @@ export default function ProgramsEvents() {
 
   const { availablePrograms, waitlistPrograms } = useMemo(() => {
     const programs = pl.programs ?? []
-    const available = programs.filter((p) => Boolean(p.href && p.href.trim().length > 0))
+    const available = programs.filter((p) => Boolean(p.href && p.href.trim().length > 0) && !Boolean(p.waitlistHref && p.waitlistHref.trim().length > 0))
     const waitlist = programs.filter(
-      (p) => !Boolean(p.href && p.href.trim().length > 0) && Boolean(p.waitlistHref && p.waitlistHref.trim().length > 0),
+      (p) => Boolean(p.waitlistHref && p.waitlistHref.trim().length > 0),
     )
     return { availablePrograms: available, waitlistPrograms: waitlist }
   }, [pl.programs])

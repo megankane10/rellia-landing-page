@@ -129,7 +129,7 @@ export default function HowItWorks(props?: HowItWorksProps) {
         </div>
 
         <ScrollReveal delay={0.1}>
-          <div className="mb-12 md:mb-16">
+          <div className="mb-16 md:mb-20">
             {heading ?? (
               <h2 className="font-host-grotesk text-3xl font-semibold leading-tight tracking-tight text-white md:text-[40px]">
                 How we help you <span className="text-rellia-mint">move faster</span>
@@ -157,7 +157,7 @@ export default function HowItWorks(props?: HowItWorksProps) {
               return (
                 <div
                   key={step.title}
-                  className="flex h-[200px] w-full max-w-[360px] flex-col px-1 md:px-2"
+                  className="flex h-[200px] w-full max-w-[320px] flex-col px-1 md:px-2"
                 >
                   <Icon className="h-7 w-7 text-rellia-mint" aria-hidden />
                   <p className="mt-5 font-host-grotesk text-lg font-semibold leading-snug tracking-tight text-white line-clamp-2">

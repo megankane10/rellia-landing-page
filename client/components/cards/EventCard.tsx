@@ -123,9 +123,8 @@ export const EventCard = ({
         <div className="shrink-0 pt-5 sm:pt-6">
           <RelliaAction
             asChild
-            variant="outlineOnWhite"
-            size="compact"
-            className="w-full cursor-pointer px-4 py-2.5 text-xs sm:text-sm"
+            variant="mintCardTealFill"
+            className="w-full h-[48px] text-base"
           >
             <Link to={detailHref} className="cursor-pointer">
               View event

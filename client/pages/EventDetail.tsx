@@ -96,7 +96,7 @@ export default function EventDetail() {
   const resolvedSlug = slug?.trim() ? decodeURIComponent(slug) : ""
   const match = resolvedSlug ? findProgramsEventBySlug(resolvedSlug, pl) : null
   const [copyState, setCopyState] = useState<"idle" | "copied">("idle")
-  const [lumaModalOpen, setLumaModalOpen] = useState(false)
+  const [showForm, setShowForm] = useState(false)
 
   const base = getSiteUrl()
 
@@ -168,7 +168,10 @@ export default function EventDetail() {
       }
       return
     }
-    setLumaModalOpen(true)
+    setShowForm(true)
+    setTimeout(() => {
+      document.getElementById("event-content-area")?.scrollIntoView({ behavior: "smooth", block: "start" })
+    }, 50)
   }
 
   const registerHref = event.href?.trim() ?? ""
@@ -466,10 +469,13 @@ export default function EventDetail() {
           </div>
         </section>
 
-        <section className="border-t border-black/10 bg-white">
-          {isPast ? (
-            <div className="mx-auto flex w-full max-w-[1300px] flex-col gap-8 px-6 py-10 md:px-10 md:py-14 md:gap-10">
-              <EventDetailBackToEventsLink variant="top" />
+        <section id="event-content-area" className="border-t border-black/10 bg-white min-h-[500px]">
+          <AnimatePresence mode="wait">
+            {!showForm ? (
+              <motion.div key="content-view" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.3 }}>
+                {isPast ? (
+                  <div className="mx-auto flex w-full max-w-[1300px] flex-col gap-8 px-6 py-10 md:px-10 md:py-14 md:gap-10">
+                    <EventDetailBackToEventsLink variant="top" />
               {hasDetailBodyContent ? (
                 <ScrollReveal>
                   <div className="mx-auto w-full max-w-[900px]">
@@ -521,28 +527,12 @@ export default function EventDetail() {
                   </div>
                 </div>
               </ScrollReveal>
-              <EventDetailBackToEventsLink variant="footer" />
-            </div>
-          ) : showLumaIframe ? (
-            <div className="mx-auto flex w-full max-w-[1300px] flex-col gap-8 px-6 pb-10 pt-8 md:gap-10 md:px-10 md:pb-14 md:pt-10">
-              <EventDetailBackToEventsLink variant="top" />
-              <ScrollReveal className="w-full shrink-0">
-                <div className="overflow-hidden rounded-2xl">
-                  <iframe
-                    title={`${event.title} — Luma`}
-                    src={embedSrc!}
-                    className="block min-h-[52rem] h-[max(60rem,82dvh)] w-full border-0 md:min-h-[56rem] md:h-[max(64rem,85dvh)]"
-                    allow="payment; fullscreen"
-                    loading="lazy"
-                  />
-                </div>
-              </ScrollReveal>
-              <EventDetailBackToEventsLink variant="footer" />
-            </div>
-          ) : (
-            <div className="mx-auto w-full max-w-[1300px] px-6 py-10 md:px-10 md:py-14">
-              <div className="mx-auto flex w-full max-w-[900px] flex-col gap-8 md:gap-10">
-                <EventDetailBackToEventsLink variant="top" />
+                    <EventDetailBackToEventsLink variant="footer" />
+                  </div>
+                ) : (
+                  <div className="mx-auto w-full max-w-[1300px] px-6 py-10 md:px-10 md:py-14">
+                    <div className="mx-auto flex w-full max-w-[900px] flex-col gap-8 md:gap-10">
+                      <EventDetailBackToEventsLink variant="top" />
                 {hasDetailBodyContent ? (
                   <ScrollReveal>
                     <div className="w-full">
@@ -593,73 +583,47 @@ export default function EventDetail() {
               </div>
             </div>
           )}
+              </motion.div>
+            ) : (
+              <motion.div key="form-view" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }} className="w-full">
+                <div className="max-w-[1100px] mx-auto px-6 md:px-10 pt-10 pb-4">
+                  <button type="button" onClick={() => setShowForm(false)} className="inline-flex items-center gap-2 font-host-grotesk text-sm font-bold text-rellia-teal hover:underline hover:underline-offset-4">
+                    <ArrowLeft className="h-4 w-4" aria-hidden />Back to details
+                  </button>
+                </div>
+                <div className="w-full flex-1 border-t border-black/5 bg-rellia-cream/20">
+                  {embedSrc ? (
+                    <iframe src={embedSrc} title={`${event.title} — Registration`} className="w-full border-0" style={{ minHeight: "calc(100svh - 120px)" }} allow="payment; fullscreen" />
+                  ) : (
+                    <div className="flex min-h-[500px] flex-col items-center justify-center gap-6 py-20 px-6 text-center">
+                      <Ticket className="h-16 w-16 text-rellia-teal md:h-20 md:w-20" strokeWidth={1.15} aria-hidden />
+                      <div className="mx-auto max-w-[480px] space-y-5">
+                        <p className="font-host-grotesk text-3xl font-bold leading-tight text-black md:text-4xl md:leading-tight">
+                          Registration
+                        </p>
+                        <p className="font-urbanist text-base text-black/60 md:text-lg">
+                          Registration for this event is managed externally. Please click the button below to proceed to the registration page.
+                        </p>
+                      </div>
+                      {registerHref ? (
+                        <RelliaAction asChild variant="mintTealFill" size="compact" className="cursor-pointer px-8 py-3 text-sm mt-4">
+                          <a href={registerHref} target="_blank" rel="noopener noreferrer" className="cursor-pointer">
+                            Open registration link
+                          </a>
+                        </RelliaAction>
+                      ) : (
+                        <p className="font-urbanist text-sm text-black/40 italic">No registration link available.</p>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </section>
       </main>
 
       <Footer />
-
-      {!isPast && showHeroEventCta && !addToCalendarEnabled ? (
-        <Sheet open={lumaModalOpen} onOpenChange={setLumaModalOpen}>
-          <SheetContent
-            side="bottom"
-            className={cn(
-              "flex flex-col gap-0 overflow-hidden border border-black/10 bg-white p-0 shadow-2xl",
-              "!inset-x-auto !bottom-auto !left-1/2 !right-auto !top-[72px] !max-h-none -translate-x-1/2 rounded-2xl",
-              "!h-[min(560px,calc(100dvh-72px-32px))] !w-[min(calc(100vw-32px),36rem)] sm:!w-[min(calc(100vw-48px),36rem)] md:!top-[86px] md:!h-[min(600px,calc(100dvh-86px-40px))]",
-              "[&>button]:!right-5 [&>button]:!top-7 [&>button]:!-translate-y-1/2",
-            )}
-          >
-            <SheetTitle className="sr-only">Register for {event.title}</SheetTitle>
-            {embedSrc ? (
-              <div className="flex h-full min-h-0 flex-col">
-                <div className="relative flex h-14 shrink-0 items-center border-b border-black/10 px-6 pr-14 md:px-8 md:pr-16">
-                  <p className="font-host-grotesk text-lg font-semibold tracking-tight text-rellia-teal md:text-xl">
-                    Register below
-                  </p>
-                </div>
-                <iframe
-                  title={`${event.title} — Luma`}
-                  src={embedSrc}
-                  className="min-h-0 w-full flex-1 rounded-b-2xl border-0 bg-white"
-                  allow="payment; fullscreen"
-                />
-              </div>
-            ) : (
-              <div className="flex h-full min-h-0 flex-col">
-                <div className="relative flex h-14 shrink-0 items-center border-b border-black/10 px-6 pr-14 md:px-8 md:pr-16">
-                  <p className="font-host-grotesk text-lg font-semibold tracking-tight text-black md:text-xl">
-                    Missing registration embed
-                  </p>
-                </div>
-                <div className="flex min-h-0 flex-1 flex-col items-center justify-center gap-6 overflow-y-auto px-8 py-10 text-center md:px-10">
-                  <Ticket
-                    className="h-16 w-16 shrink-0 text-rellia-teal stroke-rellia-teal md:h-20 md:w-20"
-                    strokeWidth={1.15}
-                    aria-hidden
-                  />
-                  <div className="mx-auto max-w-[480px] space-y-5">
-                    <p className="font-host-grotesk text-3xl font-bold leading-tight text-black md:text-4xl md:leading-tight">
-                      Admin / CMS
-                    </p>
-                    <p className="font-urbanist text-base text-black/60 md:text-lg">
-                      No Luma event ID is set for this event. Add <span className="font-semibold text-black">lumaEventId</span>{" "}
-                      (<span className="font-mono text-[13px] text-black/60">evt-…</span>) in Sanity so the embed appears here.
-                      Until then, visitors only see this notice when they tap Register.
-                    </p>
-                  </div>
-                  {registerHref ? (
-                    <RelliaAction asChild variant="outlineOnWhite" size="compact" className="cursor-pointer px-6 py-3 text-sm">
-                      <a href={registerHref} target="_blank" rel="noopener noreferrer" className="cursor-pointer">
-                        Open registration link
-                      </a>
-                    </RelliaAction>
-                  ) : null}
-                </div>
-              </div>
-            )}
-          </SheetContent>
-        </Sheet>
-      ) : null}
     </div>
   )
 }

@@ -11,6 +11,14 @@ import FAQ from "./pages/FAQ"
 import Careers from "./pages/Careers"
 import ProgramsEvents from "./pages/ProgramsEvents"
 import ProgramsQms from "./pages/ProgramsQms"
+import ProgramsIgnitePitch from "./pages/programs/ProgramsIgnitePitch"
+import ProgramsAdvanceDataroom from "./pages/programs/ProgramsAdvanceDataroom"
+import ProgramsElevateCapital from "./pages/programs/ProgramsElevateCapital"
+import ProgramsFirst50Users from "./pages/programs/ProgramsFirst50Users"
+import ProgramsPrototypeLab from "./pages/programs/ProgramsPrototypeLab"
+import ProgramsAdvisoryBoard from "./pages/programs/ProgramsAdvisoryBoard"
+import ProgramsBrandStrategy from "./pages/programs/ProgramsBrandStrategy"
+import ProgramsRegulatoryRoadmap from "./pages/programs/ProgramsRegulatoryRoadmap"
 import Events from "./pages/Events"
 import EventDetail from "./pages/EventDetail"
 import NotFound from "./pages/NotFound"
@@ -84,6 +92,14 @@ export const AppRoutes = () => (
       <Route index element={<ProgramsEvents />} />
       <Route path="build-your-qms" element={<ProgramsQms />} />
       <Route path="qms" element={<Navigate to="/programs/build-your-qms" replace />} />
+      <Route path="ignite-pitch-foundations" element={<ProgramsIgnitePitch />} />
+      <Route path="advance-data-room" element={<ProgramsAdvanceDataroom />} />
+      <Route path="elevate-healthcare-capital" element={<ProgramsElevateCapital />} />
+      <Route path="first-50-users" element={<ProgramsFirst50Users />} />
+      <Route path="prototype-lab" element={<ProgramsPrototypeLab />} />
+      <Route path="advisory-board-match" element={<ProgramsAdvisoryBoard />} />
+      <Route path="design-your-brand" element={<ProgramsBrandStrategy />} />
+      <Route path="regulatory-roadmap" element={<ProgramsRegulatoryRoadmap />} />
     </Route>
 
     <Route path="/network" element={<Network />} />
