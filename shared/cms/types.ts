@@ -173,6 +173,8 @@ export type ProgramsProgramCard = {
   priceLabel?: string
   priceAmount?: string
   priceSuffix?: string
+  /** Optional; if omitted, UI may show a default or derived deadline. */
+  deadline?: string
 }
 
 export type ProgramsLandingContent = {

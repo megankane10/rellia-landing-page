@@ -17,6 +17,7 @@ export type ProgramCardProps = {
   priceLabel?: string
   priceAmount?: string
   priceSuffix?: string
+  deadline?: string
   className?: string
 }
 
@@ -31,6 +32,7 @@ export const ProgramCard = ({
   priceLabel: _priceLabel,
   priceAmount: _priceAmount,
   priceSuffix: _priceSuffix,
+  deadline,
   className,
 }: ProgramCardProps) => {
   const hasHref = Boolean(href && href.trim().length > 0)
@@ -112,12 +114,14 @@ export const ProgramCard = ({
             </div>
 
             {/* Deadline */}
-            <div className="mt-4 flex items-center gap-1.5 text-black">
-              <CalendarDays className="h-3.5 w-3.5 text-rellia-teal" />
-              <span className="font-host-grotesk text-[11px] font-bold uppercase tracking-widest">
-                Deadline: {getCurrentMonthDeadline()}
-              </span>
-            </div>
+            {!isWaitlistCard && (
+              <div className="mt-5 flex items-center gap-2 text-black">
+                <CalendarDays className="h-4.5 w-4.5 text-rellia-teal" strokeWidth={2.5} />
+                <span className="font-host-grotesk text-[11px] font-bold uppercase tracking-[0.18em]">
+                  Deadline: {deadline || getCurrentMonthDeadline()}
+                </span>
+              </div>
+            )}
 
             {/* Button */}
             <div className="mt-auto shrink-0 pt-5 sm:pt-6">

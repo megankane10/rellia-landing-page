@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { motion, AnimatePresence } from "framer-motion"
-import { Quote, CheckCircle2, Send, Building2, User, Mail, MessageSquare, ArrowRight } from "lucide-react"
+import { Quote, CheckCircle2, Building2, User, Mail, MessageSquare, ArrowRight } from "lucide-react"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
 import RelliaAction from "@/components/RelliaAction"
@@ -319,25 +319,22 @@ function ContactForm() {
 
       {/* Action Button */}
       <div className="pt-4">
-        <motion.button
-          whileHover={{ y: -4, shadow: "0 10px 25px -5px rgba(13, 53, 64, 0.2)" }}
-          whileTap={{ scale: 0.98 }}
+        <RelliaAction
+          type="submit"
+          variant="mintTealFill"
+          size="comfortable"
           disabled={isSubmitting}
-          className={cn(
-            "w-full h-14 rounded-[16px] bg-gradient-to-r from-rellia-teal to-rellia-teal/90 text-white font-host-grotesk font-bold text-lg flex items-center justify-center gap-3 transition-all duration-300 relative overflow-hidden",
-            isSubmitting ? "opacity-90 cursor-wait" : "hover:brightness-105"
-          )}
+          className="w-full"
         >
-          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full hover:animate-[shimmer_2s_infinite] pointer-events-none" />
           {isSubmitting ? (
-            <div className="h-6 w-6 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+            <div className="h-5 w-5 border-2 border-rellia-teal/30 border-t-rellia-teal rounded-full animate-spin" />
           ) : (
             <>
               Send Message
-              <Send className="h-5 w-5" />
+              <ArrowRight className="h-5 w-5" />
             </>
           )}
-        </motion.button>
+        </RelliaAction>
         
         <p className="text-center text-xs font-urbanist text-black/40 mt-5 font-medium">
           We’ll get back to you within <span className="text-rellia-teal/60 font-bold">24–48 hours</span>

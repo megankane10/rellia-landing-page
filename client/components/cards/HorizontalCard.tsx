@@ -1,4 +1,4 @@
-import { Calendar, History, MapPin, Video, ArrowRight, Bell } from "lucide-react"
+import { Calendar, History, MapPin, Video, ArrowRight, Bell, CalendarDays } from "lucide-react"
 import { Link } from "react-router-dom"
 import type { ProgramsEventCard, ProgramsProgramCard } from "@shared/cms/types"
 import {
@@ -13,6 +13,7 @@ import RelliaAction from "@/components/RelliaAction"
 import { cn } from "@/lib/utils"
 import { useState } from "react"
 import FilloutPopupDialog from "@/components/FilloutPopupDialog"
+import { getCurrentMonthDeadline } from "@/lib/dateUtils"
 
 const shortenMonth = (dateStr: string) => {
   const months: Record<string, string> = {
@@ -199,6 +200,15 @@ export function HorizontalCard(props: HorizontalCardProps) {
         <p className="font-urbanist text-sm md:text-base font-medium leading-relaxed text-black/60 line-clamp-3 pt-4">
           {program.description}
         </p>
+
+        {!isWaitlistCard && (
+          <div className="mt-auto pt-5 flex items-center gap-2 text-black">
+            <CalendarDays className="h-4.5 w-4.5 text-rellia-teal" strokeWidth={2.5} />
+            <span className="font-host-grotesk text-[11px] md:text-xs font-bold uppercase tracking-[0.18em]">
+              Deadline: {program.deadline || getCurrentMonthDeadline()}
+            </span>
+          </div>
+        )}
       </div>
 
       <div className="relative shrink-0 rounded-lg overflow-hidden bg-rellia-teal/5 ml-auto w-28 sm:w-40 md:w-56 aspect-square self-start sm:self-center">
