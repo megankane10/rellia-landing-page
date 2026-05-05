@@ -231,19 +231,9 @@ function GetProvenSplit() {
               rel="noopener noreferrer"
               className="inline-flex cursor-pointer items-center gap-2"
             >
-              Explore GetProven
+              Rellia partner directory
               <ExternalLink className="h-4 w-4" aria-hidden />
             </a>
-          </RelliaAction>
-          <RelliaAction asChild variant="outlineOnWhite" size="comfortable">
-            <Link
-              to="/industry-partners/directory"
-              className="inline-flex cursor-pointer items-center gap-2"
-              aria-label="Open Rellia industry partners directory"
-            >
-              Rellia partner directory
-              <ArrowRight className="h-4 w-4" aria-hidden />
-            </Link>
           </RelliaAction>
         </div>
       </div>

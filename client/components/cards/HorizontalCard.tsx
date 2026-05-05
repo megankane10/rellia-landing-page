@@ -167,7 +167,7 @@ export function HorizontalCard(props: HorizontalCardProps) {
         </Link>
       ) : null}
 
-      <div className="flex flex-1 flex-col min-w-0 py-1">
+      <div className="flex flex-[1.2] flex-col min-w-0 py-1">
         <h3 className={cn(
           "font-host-grotesk text-xl md:text-2xl font-bold leading-tight tracking-tight text-black mb-2",
           (hasHref || isWaitlistCard) && "group-hover:underline decoration-2 underline-offset-4"
@@ -196,12 +196,12 @@ export function HorizontalCard(props: HorizontalCardProps) {
           </span>
         </div>
         
-        <p className="font-urbanist text-sm md:text-base font-medium leading-relaxed text-black/60 line-clamp-3 mt-auto">
+        <p className="font-urbanist text-sm md:text-base font-medium leading-relaxed text-black/60 line-clamp-3 pt-4">
           {program.description}
         </p>
       </div>
 
-      <div className="relative shrink-0 rounded-lg overflow-hidden bg-rellia-teal/5 ml-auto w-24 sm:w-32 md:w-40 aspect-square self-start sm:self-center">
+      <div className="relative shrink-0 rounded-lg overflow-hidden bg-rellia-teal/5 ml-auto w-28 sm:w-40 md:w-56 aspect-square self-start sm:self-center">
         <img
           src={program.imageSrc}
           alt={program.title}

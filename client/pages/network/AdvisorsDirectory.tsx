@@ -161,7 +161,7 @@ export default function AdvisorsDirectory() {
       <Navbar />
 
       <main id="main-content">
-        <section className="border-b border-black/10 bg-rellia-cream/40 pt-28 pb-12 md:pt-36 md:pb-16">
+        <section className="border-b border-black/10 bg-rellia-greyTeal pt-28 pb-12 md:pt-36 md:pb-16">
           <div className="mx-auto max-w-[1300px] px-6 md:px-10">
             <div className="inline-flex items-center gap-2 rounded-full bg-rellia-teal px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-white/95 ring-1 ring-white/15 mb-4">
               <TagIcon className="h-3.5 w-3.5 shrink-0" aria-hidden />
@@ -286,7 +286,7 @@ export default function AdvisorsDirectory() {
           title="Looking for specialized advice?" 
           body="Access our full network of operators, clinicians, and subject matter experts."
           primary={{ label: "Apply for Membership", to: "/apply" }}
-          secondary={{ label: "Become an Advisor", to: "/apply-advisor" }}
+          secondary={{ label: "Learn about Advisors", to: "/advisors" }}
         />
       </main>
 
