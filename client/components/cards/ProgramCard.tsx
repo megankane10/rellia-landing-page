@@ -93,7 +93,7 @@ export const ProgramCard = ({
           <div className="flex flex-1 flex-col p-4 sm:p-5">
             {/* Title + description */}
             <div className="flex shrink-0 flex-col">
-              <h3 className="line-clamp-2 font-host-grotesk text-xl font-semibold leading-snug tracking-tight text-black sm:text-2xl sm:leading-snug">
+              <h3 className="line-clamp-2 font-host-grotesk text-xl font-medium leading-snug tracking-tight text-black sm:text-2xl sm:leading-snug">
                 {hasHref ? (
                   <Link
                     to={href as string}

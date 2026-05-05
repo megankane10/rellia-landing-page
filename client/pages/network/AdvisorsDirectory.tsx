@@ -161,8 +161,13 @@ export default function AdvisorsDirectory() {
       <Navbar />
 
       <main id="main-content">
-        <section className="border-b border-black/10 bg-rellia-greyTeal pt-28 pb-12 md:pt-36 md:pb-16">
-          <div className="mx-auto max-w-[1300px] px-6 md:px-10">
+        <section className="relative overflow-hidden border-b border-black/10 bg-rellia-greyTeal pt-28 pb-12 md:pt-36 md:pb-16">
+          <div className="absolute inset-0 bg-noise opacity-[0.03] mix-blend-overlay pointer-events-none" />
+          {/* Mobile-only mint blur blobs */}
+          <div className="md:hidden absolute -left-12 -top-12 h-32 w-32 rounded-full bg-rellia-mint/20 blur-2xl pointer-events-none" />
+          <div className="md:hidden absolute -right-8 top-1/4 h-24 w-24 rounded-full bg-rellia-mint/15 blur-2xl pointer-events-none" />
+          
+          <div className="relative z-10 mx-auto max-w-[1300px] px-6 md:px-10">
             <div className="inline-flex items-center gap-2 rounded-full bg-rellia-teal px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-white/95 ring-1 ring-white/15 mb-4">
               <TagIcon className="h-3.5 w-3.5 shrink-0" aria-hidden />
               {tag.label}

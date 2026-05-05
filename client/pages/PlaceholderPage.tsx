@@ -1,6 +1,7 @@
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
 import RelliaCta, { ctaActionFromHref } from "@/components/RelliaCta"
+import { Sparkles } from "lucide-react"
 
 const defaultSubtitle =
   "This page is currently under development. Stay tuned for the full Rellia Health experience!"
@@ -20,6 +21,7 @@ export default function PlaceholderPage({
 
       <main id="main-content" className="flex flex-1 flex-col">
         <RelliaCta
+          icon={<Sparkles className="h-20 w-20 text-rellia-teal" strokeWidth={1.25} />}
           title={emphasisTitle}
           body={subtitle ?? defaultSubtitle}
           primary={ctaActionFromHref("Back to home", "/")}

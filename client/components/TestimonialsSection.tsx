@@ -194,8 +194,8 @@ function TestimonialCard({
             </h4>
             <p className="mt-0.5 font-urbanist text-sm leading-snug text-black/75">
               <span className="font-medium text-black/80">{role},</span>{" "}
-              <span className="inline-flex items-center gap-1 text-black/55">
-                <span className="min-w-0 break-words">{t.company}</span>
+              <span className="inline-flex min-w-0 items-center gap-1 text-black/55">
+                <span className="truncate">{t.company}</span>
                 <CompanyInfoPopover t={t} />
               </span>
             </p>

@@ -600,15 +600,15 @@ function JourneySplitSection() {
                 return (
                   <div
                     key={m.id}
-                    className="mx-auto grid w-max max-w-full grid-cols-[2.75rem_minmax(0,1fr)] items-center gap-x-1.5 text-left md:w-full md:max-w-[280px] md:grid-cols-1 md:items-start"
+                    className="flex flex-col items-start text-left md:w-full md:max-w-[280px]"
                   >
-                    <span className="col-start-1 row-start-1 inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-rellia-teal/5 text-rellia-teal md:row-start-1">
+                    <span className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-rellia-teal/5 text-rellia-teal">
                       <Icon className="h-5 w-5" aria-hidden />
                     </span>
-                    <p className="col-start-2 row-start-1 self-center text-left font-host-grotesk text-lg font-semibold leading-snug text-black md:col-start-1 md:row-start-2 md:mt-3 md:self-start md:text-left">
+                    <p className="mt-3 font-host-grotesk text-lg font-semibold leading-snug text-black md:mt-3">
                       {m.label}
                     </p>
-                    <p className="col-span-2 row-start-2 mt-2 font-urbanist text-sm leading-relaxed text-black/65 md:col-span-1 md:row-start-3 md:mt-1.5">
+                    <p className="mt-1.5 font-urbanist text-sm leading-relaxed text-black/65">
                       {m.detail}
                     </p>
                   </div>
@@ -635,15 +635,15 @@ function JourneySplitSection() {
                 return (
                   <div
                     key={m.id}
-                    className="mx-auto grid w-max max-w-full grid-cols-[2.75rem_minmax(0,1fr)] items-center gap-x-1.5 text-left md:w-full md:max-w-[280px] md:grid-cols-1 md:items-start"
+                    className="flex flex-col items-start text-left md:w-full md:max-w-[280px]"
                   >
-                    <span className="col-start-1 row-start-1 inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-rellia-teal text-white md:row-start-1">
+                    <span className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-rellia-teal text-white">
                       <Icon className="h-5 w-5" aria-hidden />
                     </span>
-                    <p className="col-start-2 row-start-1 self-center text-left font-host-grotesk text-lg font-semibold leading-snug text-rellia-teal md:col-start-1 md:row-start-2 md:mt-3 md:self-start md:text-left">
+                    <p className="mt-3 font-host-grotesk text-lg font-semibold leading-snug text-rellia-teal md:mt-3">
                       {m.label}
                     </p>
-                    <p className="col-span-2 row-start-2 mt-2 font-urbanist text-sm leading-relaxed text-rellia-teal/80 md:col-span-1 md:row-start-3 md:mt-1.5">
+                    <p className="mt-1.5 font-urbanist text-sm leading-relaxed text-rellia-teal/80">
                       {m.detail}
                     </p>
                   </div>

@@ -5,6 +5,7 @@ import Footer from "@/components/Footer"
 import RelliaCta, { ctaActionFromHref } from "@/components/RelliaCta"
 import { useNotFoundPage } from "@/hooks/useCmsDocuments"
 import { DEFAULT_NOT_FOUND } from "@shared/cms/defaults"
+import { Search } from "lucide-react"
 
 const NotFound = () => {
   const location = useLocation()
@@ -20,6 +21,7 @@ const NotFound = () => {
       <Navbar />
       <main id="main-content" className="flex flex-1 flex-col">
         <RelliaCta
+          icon={<Search className="h-20 w-20 text-rellia-teal" strokeWidth={1.25} />}
           title="**404**"
           body={`${copy.title}. ${copy.message}`}
           primary={ctaActionFromHref(copy.ctaLabel, "/")}

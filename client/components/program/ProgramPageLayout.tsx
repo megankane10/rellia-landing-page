@@ -137,10 +137,10 @@ const ProgramPageLayout = ({
                   <h1 className="max-w-3xl text-3xl md:text-4xl lg:text-5xl font-bold leading-[1.1] tracking-tight text-black">{q.heroTitle}</h1>
                   <p className="mt-5 max-w-xl font-urbanist text-base leading-relaxed text-black/60 md:text-lg">{q.heroDescription}</p>
                   <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-                    <RelliaAction type="button" variant="mintTealFill" size="comfortable" onClick={() => scrollTo(paymentSectionId)} onKeyDown={onKey(() => scrollTo(paymentSectionId))} className="inline-flex w-fit">
+                    <RelliaAction type="button" variant="mintTealFill" size="comfortable" onClick={() => scrollTo(paymentSectionId)} onKeyDown={onKey(() => scrollTo(paymentSectionId))} className="flex w-full sm:w-fit justify-center">
                       {q.heroCtaLabel}<ArrowRight className="h-4 w-4 ml-2" aria-hidden />
                     </RelliaAction>
-                    <RelliaAction type="button" variant="outlineOnWhite" size="comfortable" onClick={() => scrollTo(outcomesSectionId)} onKeyDown={onKey(() => scrollTo(outcomesSectionId))} className="inline-flex w-fit">
+                    <RelliaAction type="button" variant="outlineOnWhite" size="comfortable" onClick={() => scrollTo(outcomesSectionId)} onKeyDown={onKey(() => scrollTo(outcomesSectionId))} className="flex w-full sm:w-fit justify-center">
                       Learn More
                     </RelliaAction>
                   </div>

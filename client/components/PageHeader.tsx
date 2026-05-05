@@ -105,6 +105,7 @@ export default function PageHeader({
               : "opacity-[0.18] mix-blend-multiply [background-image:radial-gradient(circle_at_20%_10%,rgba(13,53,64,0.10),transparent_55%),radial-gradient(circle_at_80%_35%,rgba(13,53,64,0.08),transparent_52%),radial-gradient(circle_at_40%_95%,rgba(13,53,64,0.09),transparent_55%)]",
           )}
         />
+        <div className="absolute inset-0 bg-noise opacity-[0.03] mix-blend-overlay pointer-events-none" />
       </div>
 
       <div className="relative z-10 max-w-[1300px] mx-auto px-6 md:px-10">

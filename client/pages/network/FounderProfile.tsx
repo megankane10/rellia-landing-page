@@ -1,4 +1,5 @@
 import { useParams, Link } from "react-router-dom"
+import { Helmet } from "react-helmet-async"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
 import RelliaAction from "@/components/RelliaAction"
@@ -36,6 +37,17 @@ export default function FounderProfile() {
           <article className="grid gap-10 lg:grid-cols-[minmax(280px,360px)_minmax(0,1fr)] lg:gap-x-14 xl:grid-cols-[400px_1fr]">
             {/* Left Sidebar - Sticky */}
             <div className="flex flex-col gap-6 lg:sticky lg:top-32 lg:self-start">
+              <Helmet>
+                <title>{active.logoName} — Rellia Health</title>
+                <meta name="description" content={active.tagline} />
+                <meta property="og:title" content={`${active.logoName} — Rellia Health`} />
+                <meta property="og:description" content={active.tagline} />
+                <meta property="og:image" content={active.imageSrc} />
+                <meta name="twitter:title" content={`${active.logoName} — Rellia Health`} />
+                <meta name="twitter:description" content={active.tagline} />
+                <meta name="twitter:image" content={active.imageSrc} />
+              </Helmet>
+
               <div className="flex min-h-[140px] items-center justify-start md:min-h-[180px]">
                 <img
                   src={active.logoSrc}

@@ -593,27 +593,45 @@ export default function EventDetail() {
                 </div>
                 <div className="w-full flex-1 border-t border-black/5 bg-rellia-cream/20">
                   {embedSrc ? (
-                    <iframe src={embedSrc} title={`${event.title} — Registration`} className="w-full border-0" style={{ minHeight: "calc(100svh - 120px)" }} allow="payment; fullscreen" />
+                    <div className="w-full">
+                      <iframe
+                        src={embedSrc}
+                        title={`${event.title} — Registration`}
+                        className="w-full border-0"
+                        style={{ height: "700px", minHeight: "700px" }}
+                        allow="payment; fullscreen"
+                        scrolling="no"
+                      />
+                    </div>
                   ) : (
                     <div className="flex min-h-[500px] flex-col items-center justify-center gap-6 py-20 px-6 text-center">
                       <Ticket className="h-16 w-16 text-rellia-teal md:h-20 md:w-20" strokeWidth={1.15} aria-hidden />
                       <div className="mx-auto max-w-[480px] space-y-5">
                         <p className="font-host-grotesk text-3xl font-bold leading-tight text-black md:text-4xl md:leading-tight">
-                          Registration
+                          Missing Luma Event ID
                         </p>
                         <p className="font-urbanist text-base text-black/60 md:text-lg">
-                          Registration for this event is managed externally. Please click the button below to proceed to the registration page.
+                          Please add the Luma Event ID (e.g., evt-...) in Sanity to enable the inline registration form.
                         </p>
                       </div>
-                      {registerHref ? (
-                        <RelliaAction asChild variant="mintTealFill" size="compact" className="cursor-pointer px-8 py-3 text-sm mt-4">
-                          <a href={registerHref} target="_blank" rel="noopener noreferrer" className="cursor-pointer">
-                            Open registration link
-                          </a>
+                      <div className="flex flex-col gap-4 sm:flex-row">
+                        {registerHref ? (
+                          <RelliaAction asChild variant="mintTealFill" size="compact" className="cursor-pointer px-8 py-3 text-sm">
+                            <a href={registerHref} target="_blank" rel="noopener noreferrer" className="cursor-pointer">
+                              Open registration link
+                            </a>
+                          </RelliaAction>
+                        ) : null}
+                        <RelliaAction
+                          type="button"
+                          variant="outlineOnWhite"
+                          size="compact"
+                          className="cursor-pointer px-8 py-3 text-sm"
+                          onClick={() => setShowForm(false)}
+                        >
+                          Back to details
                         </RelliaAction>
-                      ) : (
-                        <p className="font-urbanist text-sm text-black/40 italic">No registration link available.</p>
-                      )}
+                      </div>
                     </div>
                   )}
                 </div>

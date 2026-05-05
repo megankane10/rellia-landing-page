@@ -69,7 +69,7 @@ export const EventCard = ({
             {dateTimeLine ? (
               <p className="font-urbanist text-sm font-normal leading-snug text-black/50 sm:text-[15px]">{dateTimeLine}</p>
             ) : null}
-            <h3 className="line-clamp-3 font-host-grotesk text-xl font-semibold leading-snug tracking-tight text-black sm:text-2xl sm:leading-snug">
+            <h3 className="line-clamp-3 font-host-grotesk text-xl font-medium leading-snug tracking-tight text-black sm:text-2xl sm:leading-snug">
               {event.title}
             </h3>
           </div>

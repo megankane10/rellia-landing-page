@@ -57,6 +57,8 @@ export type RelliaCtaProps = {
   primaryStyle?: "button" | "text"
   /** Override the outer section className (spacing against page content above). */
   className?: string
+  /** Optional icon to display above the title */
+  icon?: ReactNode
 }
 
 function CtaActionButton({
@@ -141,6 +143,7 @@ export default function RelliaCta({
   size = "default",
   primaryStyle = "button",
   className,
+  icon,
 }: RelliaCtaProps) {
   useEffect(() => {
     const root = document.documentElement
@@ -174,6 +177,7 @@ export default function RelliaCta({
       <ScrollReveal variant="ctaReveal" className="relative z-10 w-full">
         <div className="relative mx-auto w-full max-w-[1300px]">
           <div className="relative mx-auto flex w-full flex-col items-center text-center">
+            {icon && <div className="mb-8">{icon}</div>}
             <h2
               className={cn(
                 "max-w-4xl font-host-grotesk font-medium tracking-tight leading-[1.12] text-black",
@@ -207,6 +211,7 @@ export default function RelliaCta({
           </div>
         </div>
       </ScrollReveal>
+      <div className="absolute inset-0 bg-noise opacity-[0.03] mix-blend-overlay pointer-events-none z-[1]" />
     </section>
   )
 }
