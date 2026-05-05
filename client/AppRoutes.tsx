@@ -40,7 +40,10 @@ import StoryPost from "./pages/StoryPost"
 import IndustryPartnersDirectory from "./pages/IndustryPartnersDirectory"
 import Consulting from "./pages/Consulting"
 import FoundersDirectory from "./pages/network/FoundersDirectory"
+import FounderProfile from "./pages/network/FounderProfile"
 import AdvisorsDirectory from "./pages/network/AdvisorsDirectory"
+import AdvisorProfile from "./pages/network/AdvisorProfile"
+import PlaceholderPage from "./pages/PlaceholderPage"
 
 const ThirdPartyPreloads = () => {
   useEffect(() => {
@@ -107,8 +110,10 @@ export const AppRoutes = () => (
     <Route path="/consulting" element={<Consulting />} />
     <Route path="/founders" element={<Founders />} />
     <Route path="/founders/directory" element={<FoundersDirectory />} />
+    <Route path="/founders/directory/:id" element={<FounderProfile />} />
     <Route path="/advisors" element={<Advisors />} />
     <Route path="/advisors/directory" element={<AdvisorsDirectory />} />
+    <Route path="/advisors/directory/:id" element={<AdvisorProfile />} />
     <Route path="/investors" element={<Investors />} />
     <Route path="/industry-partners" element={<Partners />} />
     <Route path="/partners" element={<Navigate to="/industry-partners" replace />} />
@@ -126,6 +131,7 @@ export const AppRoutes = () => (
 
     <Route path="/diagnostics" element={<DiagnosticLanding />} />
     <Route path="/diagnosticSurvey" element={<DiagnosticSurvey />} />
+    <Route path="/survey" element={<PlaceholderPage title="Diagnostic Survey" subtitle="Coming soon..." />} />
 
     <Route path="*" element={<NotFound />} />
   </Routes>

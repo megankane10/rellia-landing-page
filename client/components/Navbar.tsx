@@ -266,13 +266,19 @@ export default function Navbar({ ctaRadiusClassName = "rounded-full" }: NavbarPr
   /** Light backgrounds but nav should stay solid teal until scroll (not transparent over white). */
   const isNetworkDirectoryPage =
     pathname === "/founders/directory" ||
+    pathname.startsWith("/founders/directory/") ||
     pathname === "/advisors/directory" ||
+    pathname.startsWith("/advisors/directory/") ||
     pathname === "/industry-partners/directory"
 
-  /** Light cream/white heroes (story posts, event detail): transparent bar + light nav chrome until scroll */
-  const isLightHeroNav = /^\/stories\/.+/.test(pathname) || /^\/events\/.+/.test(pathname)
+  /** Light cream/white heroes (story posts, event detail, directories, programs): transparent bar + light nav chrome until scroll */
+  const isLightHeroNav =
+    /^\/stories\/.+/.test(pathname) ||
+    /^\/events\/.+/.test(pathname) ||
+    /^\/programs\/.+/.test(pathname) ||
+    isNetworkDirectoryPage
 
-  const hasTransparentTopBar = (hasTealHero || isLightHeroNav) && !isNetworkDirectoryPage
+  const hasTransparentTopBar = hasTealHero || isLightHeroNav
 
   const useLightNavChrome = isLightHeroNav && !scrolled && !mobileOpen
 

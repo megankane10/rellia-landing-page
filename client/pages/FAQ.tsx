@@ -44,6 +44,9 @@ export default function FAQ() {
             <div className="flex flex-col lg:flex-row lg:items-start gap-12 lg:gap-20">
               <div className="flex-1 min-w-0 order-1 lg:order-2">
                 <ScrollReveal>
+                  <h2 className="font-host-grotesk text-3xl md:text-4xl font-bold leading-tight tracking-tight text-black mb-6 md:mb-8 text-left">
+                    Frequently Asked Questions
+                  </h2>
                   <div className="rounded-3xl border border-black/10 bg-white px-7 py-0 shadow-sm">
                     <Accordion type="single" collapsible>
                       {faq.items.map((item, index) => (

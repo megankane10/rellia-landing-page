@@ -2,7 +2,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import ScrollReveal from "@/components/ScrollReveal";
 import RelliaCta, { ctaActionFromHref } from "@/components/RelliaCta";
-import { ProgramCard } from "@/components/cards";
+import { HorizontalCard } from "@/components/cards";
 import PageHeader from "@/components/PageHeader"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useProgramsLandingPage } from "@/hooks/useCmsDocuments";
@@ -173,7 +173,7 @@ export default function ProgramsEvents() {
                 <motion.div
                   layout
                   transition={{ layout: { duration: 0.32, ease: [0.16, 1, 0.3, 1] } }}
-                  className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 will-change-transform"
+                  className="flex flex-col gap-6 will-change-transform"
                 >
                   <AnimatePresence mode="sync" initial={false}>
                     {pagePrograms.map((p) => (
@@ -189,17 +189,7 @@ export default function ProgramsEvents() {
                           layout: { duration: 0.32, ease: [0.16, 1, 0.3, 1] },
                         }}
                       >
-                        <ProgramCard
-                          title={p.title}
-                          description={p.description}
-                          imageSrc={p.imageSrc}
-                          href={p.href}
-                          buttonText={p.buttonText}
-                          waitlistHref={p.waitlistHref}
-                          priceLabel={p.priceLabel}
-                          priceAmount={p.priceAmount}
-                          priceSuffix={p.priceSuffix}
-                        />
+                        <HorizontalCard type="program" item={p} />
                       </motion.div>
                     ))}
                   </AnimatePresence>

@@ -3,17 +3,18 @@ import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
 import NetworkDirectoryModal from "@/components/network/NetworkDirectoryModal"
 import { PORTFOLIO_LOGO_MARKS } from "@/components/LogoMarquee"
+import RelliaCta from "@/components/RelliaCta"
 import RelliaAction from "@/components/RelliaAction"
 import { cn } from "@/lib/utils"
 import { motion, AnimatePresence, useReducedMotion, type Variants } from "framer-motion"
-import { Building2, Search } from "lucide-react"
+import { Building2, Search, ChevronDown } from "lucide-react"
 import FilteredListEmptyState from "@/components/FilteredListEmptyState"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
+import { NETWORK_PATH_ROLE_TAG } from "@/lib/networkPathRoles"
 
 /** Gray-teal tone for directory heroes */
-const DIRECTORY_KICKER_CLASS = "font-urbanist text-sm font-semibold uppercase tracking-[0.16em] text-[#5A726F]"
 const DIRECTORY_TITLE_CLASS =
-  "font-host-grotesk text-4xl font-extrabold tracking-tight text-[#4F6562] md:text-5xl"
+  "font-host-grotesk text-4xl font-extrabold tracking-tight text-black md:text-5xl"
 
 type StageTag = "Idea" | "Pre-seed" | "Seed" | "Series A"
 
@@ -24,7 +25,7 @@ type FounderCategory =
   | "Care delivery"
   | "Analytics & employer"
 
-type FounderCompany = {
+export type FounderCompany = {
   id: string
   logoName: string
   logoSrc: string
@@ -51,12 +52,12 @@ const CATEGORY_CYCLE: FounderCategory[] = [
 
 const ALL_STAGES = ["Idea", "Pre-seed", "Seed", "Series A"] as const
 
-const slugFromName = (name: string) => {
+export const slugFromName = (name: string) => {
   const s = name.toLowerCase().replace(/[^a-z0-9]+/g, "").slice(0, 32)
   return s || "company"
 }
 
-const FOUNDER_DIRECTORY: FounderCompany[] = PORTFOLIO_LOGO_MARKS.slice(0, 12).map((logo, index) => {
+export const FOUNDER_DIRECTORY: FounderCompany[] = PORTFOLIO_LOGO_MARKS.slice(0, 12).map((logo, index) => {
   const summaries = [
     "Clinical workflow tooling with early hospital pilots and a focused UX research lane.",
     "Diagnostics-adjacent platform prioritizing interoperability and lab partnerships.",
@@ -74,7 +75,8 @@ const FOUNDER_DIRECTORY: FounderCompany[] = PORTFOLIO_LOGO_MARKS.slice(0, 12).ma
   const base = summaries[index % summaries.length]
   const slug = slugFromName(logo.name)
   return {
-    id: `fc-${index + 1}`,
+    id: slugFromName(logo.name),
+    slug: slugFromName(logo.name),
     logoName: logo.name,
     logoSrc: logo.src,
     tagline: base.split(" ").slice(0, 4).join(" ") + "…",
@@ -122,7 +124,7 @@ function FounderDirectoryCard({
             className="max-h-[120px] w-auto max-w-full object-contain object-center"
           />
         </div>
-        <h3 className="mt-5 font-host-grotesk text-lg font-semibold tracking-tight text-rellia-teal">
+        <h3 className="mt-5 font-host-grotesk text-lg font-bold tracking-tight text-black group-hover:underline decoration-2 underline-offset-4">
           {company.logoName}
         </h3>
         <div className="mt-2 flex flex-wrap gap-2">
@@ -139,9 +141,6 @@ function FounderDirectoryCard({
           ))}
         </div>
         <p className="mt-4 line-clamp-3 font-urbanist text-sm leading-relaxed text-black/70">{company.shortDescription}</p>
-        <span className="mt-auto pt-5 font-host-grotesk text-sm font-semibold text-rellia-teal underline-offset-4 group-hover:underline">
-          View details
-        </span>
       </div>
     </motion.article>
   )
@@ -157,7 +156,7 @@ export default function FoundersDirectory() {
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase()
     return FOUNDER_DIRECTORY.filter((c) => {
-      if (stageFilter !== "all" && !c.stages.includes(stageFilter)) return false
+      if (stageFilter !== "all" && !c.stages.includes(stageFilter as StageTag)) return false
       if (categoryFilter !== "all" && c.category !== categoryFilter) return false
       if (!q) return true
       const blob =
@@ -165,6 +164,17 @@ export default function FoundersDirectory() {
       return blob.includes(q)
     })
   }, [query, stageFilter, categoryFilter])
+
+  const [page, setPage] = useState(1)
+  const itemsPerPage = 12
+  const totalPages = Math.ceil(filtered.length / itemsPerPage)
+  
+  const paginated = useMemo(() => {
+    return filtered.slice((page - 1) * itemsPerPage, page * itemsPerPage)
+  }, [filtered, page])
+
+  // Reset page when filters change
+  useMemo(() => setPage(1), [query, stageFilter, categoryFilter])
 
   const active = useMemo(() => FOUNDER_DIRECTORY.find((c) => c.id === activeId) ?? null, [activeId])
 
@@ -184,6 +194,93 @@ export default function FoundersDirectory() {
     show: reduceMotion ? {} : { opacity: 1, y: 0, transition: { duration: 0.4, ease: EASE_OUT } },
   }
 
+  const navigate = useNavigate()
+  const tag = NETWORK_PATH_ROLE_TAG["founder"]
+  const TagIcon = tag.icon
+
+  const FilterContent = () => (
+    <div className="flex flex-col gap-8">
+      <div>
+        <p className="font-urbanist text-xs font-semibold uppercase tracking-wide text-black/45">Stage</p>
+        <div className="mt-3 flex flex-wrap gap-2">
+          <button
+            type="button"
+            onClick={() => setStageFilter("all")}
+            className={cn(
+              "cursor-pointer rounded-full border px-3 py-1.5 font-urbanist text-sm font-semibold transition-colors",
+              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-teal focus-visible:ring-offset-2",
+              stageFilter === "all"
+                ? "border-rellia-teal bg-rellia-teal text-white"
+                : "border-black/10 bg-white text-black/70 hover:border-rellia-teal/40 hover:text-rellia-teal",
+            )}
+            aria-pressed={stageFilter === "all"}
+          >
+            All stages
+          </button>
+          {ALL_STAGES.map((s) => {
+            const isActive = stageFilter === s
+            return (
+              <button
+                key={s}
+                type="button"
+                onClick={() => setStageFilter(s)}
+                className={cn(
+                  "cursor-pointer rounded-full border px-3 py-1.5 font-urbanist text-sm font-semibold transition-colors",
+                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-teal focus-visible:ring-offset-2",
+                  isActive
+                    ? "border-rellia-teal bg-rellia-teal text-white"
+                    : "border-black/10 bg-white text-black/70 hover:border-rellia-teal/40 hover:text-rellia-teal",
+                )}
+                aria-pressed={isActive}
+              >
+                {s}
+              </button>
+            )
+          })}
+        </div>
+      </div>
+      <div>
+        <p className="font-urbanist text-xs font-semibold uppercase tracking-wide text-black/45">Category</p>
+        <div className="mt-3 flex flex-wrap gap-2">
+          <button
+            type="button"
+            onClick={() => setCategoryFilter("all")}
+            className={cn(
+              "cursor-pointer rounded-full border px-3 py-1.5 font-urbanist text-sm font-semibold transition-colors",
+              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-teal focus-visible:ring-offset-2",
+              categoryFilter === "all"
+                ? "border-rellia-teal bg-rellia-teal text-white"
+                : "border-black/10 bg-white text-black/70 hover:border-rellia-teal/40 hover:text-rellia-teal",
+            )}
+            aria-pressed={categoryFilter === "all"}
+          >
+            All categories
+          </button>
+          {CATEGORY_CYCLE.map((cat) => {
+            const isActive = categoryFilter === cat
+            return (
+              <button
+                key={cat}
+                type="button"
+                onClick={() => setCategoryFilter(cat)}
+                className={cn(
+                  "cursor-pointer rounded-full border px-3 py-1.5 font-urbanist text-sm font-semibold transition-colors",
+                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-teal focus-visible:ring-offset-2",
+                  isActive
+                    ? "border-rellia-teal bg-rellia-teal text-white"
+                    : "border-black/10 bg-white text-black/70 hover:border-rellia-teal/40 hover:text-rellia-teal",
+                )}
+                aria-pressed={isActive}
+              >
+                {cat}
+              </button>
+            )
+          })}
+        </div>
+      </div>
+    </div>
+  )
+
   return (
     <div className="min-h-screen overflow-x-hidden bg-white font-host-grotesk">
       <Navbar />
@@ -191,127 +288,76 @@ export default function FoundersDirectory() {
       <main id="main-content">
         <section className="border-b border-black/10 bg-rellia-cream/40 pt-28 pb-12 md:pt-36 md:pb-16">
           <div className="mx-auto max-w-[1300px] px-6 md:px-10">
-            <p className={DIRECTORY_KICKER_CLASS}>Founders</p>
-            <h1 className={cn(DIRECTORY_TITLE_CLASS, "mt-4")}>Founder directory</h1>
+            <div className="inline-flex items-center gap-2 rounded-full bg-rellia-teal px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-white/95 ring-1 ring-white/15 mb-4">
+              <TagIcon className="h-3.5 w-3.5 shrink-0" aria-hidden />
+              {tag.label}
+            </div>
+            <h1 className={DIRECTORY_TITLE_CLASS}>Explore Founders</h1>
             <p className="mt-4 max-w-2xl font-urbanist text-lg leading-relaxed text-black/70">
               Representative companies from the Rellia portfolio network—stage tags and summaries help you see who is building
               alongside you.
             </p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <RelliaAction asChild variant="outlineOnWhite" size="comfortable">
-                <Link to="/founders" className="cursor-pointer">
-                  Back to Founders
-                </Link>
-              </RelliaAction>
-              <RelliaAction asChild variant="tealFilledLift" size="comfortable">
-                <Link to="/apply" className="cursor-pointer">
-                  Apply to join
-                </Link>
-              </RelliaAction>
-            </div>
           </div>
         </section>
 
         <section className="py-12 md:py-16">
           <div className="mx-auto max-w-[1300px] px-6 md:px-10">
-            <label className="relative block max-w-xl">
-              <span className="sr-only">Search companies</span>
-              <Search
-                className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-black/45"
-                aria-hidden
-              />
-              <input
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                type="search"
-                placeholder="Search by name, stage, category, or keyword…"
-                className={cn(
-                  "h-12 w-full rounded-2xl border border-black/10 bg-white pl-10 pr-4",
-                  "font-urbanist text-sm text-black placeholder:text-black/45",
-                  "outline-none focus-visible:ring-2 focus-visible:ring-rellia-teal focus-visible:ring-offset-2",
-                )}
-              />
-            </label>
+            {/* Top Filter Bar */}
+            <div className="mb-10 flex flex-col gap-4 md:flex-row md:items-center">
+              <label className="relative flex-1 block">
+                <span className="sr-only">Search companies</span>
+                <Search
+                  className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-black/45"
+                  aria-hidden
+                />
+                <input
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  type="search"
+                  placeholder="Search founders by name, keyword…"
+                  className={cn(
+                    "h-14 w-full rounded-2xl border border-black/10 bg-black/[0.02] pl-12 pr-4 transition-colors",
+                    "font-urbanist text-base text-black placeholder:text-black/45 hover:border-black/20",
+                    "outline-none focus-visible:ring-2 focus-visible:ring-rellia-teal focus-visible:bg-white",
+                  )}
+                />
+              </label>
+              
+              <div className="flex flex-col gap-3 shrink-0 sm:flex-row">
+                <div className="relative">
+                  <select
+                    value={stageFilter}
+                    onChange={(e) => setStageFilter(e.target.value as any)}
+                    className="h-14 w-full appearance-none rounded-2xl border border-black/10 bg-black/[0.02] pl-5 pr-14 min-w-[160px] font-urbanist text-base font-semibold text-black/80 outline-none hover:border-black/20 focus-visible:ring-2 focus-visible:ring-rellia-teal focus-visible:bg-white cursor-pointer"
+                  >
+                    <option value="all">All stages</option>
+                    {ALL_STAGES.map(s => (
+                      <option key={s} value={s}>{s}</option>
+                    ))}
+                  </select>
+                  <ChevronDown className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-black/45" aria-hidden />
+                </div>
 
-            <div className="mt-6 flex flex-col gap-4 lg:flex-row lg:flex-wrap lg:items-start lg:gap-8">
-              <div>
-                <p className="font-urbanist text-xs font-semibold uppercase tracking-wide text-black/45">Stage</p>
-                <div className="mt-2 flex flex-wrap gap-2">
-                  <button
-                    type="button"
-                    onClick={() => setStageFilter("all")}
-                    className={cn(
-                      "cursor-pointer rounded-full border px-3 py-1.5 font-urbanist text-sm font-semibold transition-colors",
-                      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-teal focus-visible:ring-offset-2",
-                      stageFilter === "all"
-                        ? "border-rellia-teal bg-rellia-teal text-white"
-                        : "border-black/10 bg-white text-black/70 hover:border-rellia-teal/40 hover:text-rellia-teal",
-                    )}
-                    aria-pressed={stageFilter === "all"}
+                <div className="relative">
+                  <select
+                    value={categoryFilter}
+                    onChange={(e) => setCategoryFilter(e.target.value as any)}
+                    className="h-14 w-full appearance-none rounded-2xl border border-black/10 bg-black/[0.02] pl-5 pr-14 min-w-[180px] font-urbanist text-base font-semibold text-black/80 outline-none hover:border-black/20 focus-visible:ring-2 focus-visible:ring-rellia-teal focus-visible:bg-white cursor-pointer"
                   >
-                    All stages
-                  </button>
-                  {ALL_STAGES.map((s) => {
-                    const isActive = stageFilter === s
-                    return (
-                      <button
-                        key={s}
-                        type="button"
-                        onClick={() => setStageFilter(s)}
-                        className={cn(
-                          "cursor-pointer rounded-full border px-3 py-1.5 font-urbanist text-sm font-semibold transition-colors",
-                          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-teal focus-visible:ring-offset-2",
-                          isActive
-                            ? "border-rellia-teal bg-rellia-teal text-white"
-                            : "border-black/10 bg-white text-black/70 hover:border-rellia-teal/40 hover:text-rellia-teal",
-                        )}
-                        aria-pressed={isActive}
-                      >
-                        {s}
-                      </button>
-                    )
-                  })}
+                    <option value="all">All categories</option>
+                    {CATEGORY_CYCLE.map(cat => (
+                      <option key={cat} value={cat}>{cat}</option>
+                    ))}
+                  </select>
+                  <ChevronDown className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-black/45" aria-hidden />
                 </div>
               </div>
-              <div>
-                <p className="font-urbanist text-xs font-semibold uppercase tracking-wide text-black/45">Category</p>
-                <div className="mt-2 flex flex-wrap gap-2">
-                  <button
-                    type="button"
-                    onClick={() => setCategoryFilter("all")}
-                    className={cn(
-                      "cursor-pointer rounded-full border px-3 py-1.5 font-urbanist text-sm font-semibold transition-colors",
-                      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-teal focus-visible:ring-offset-2",
-                      categoryFilter === "all"
-                        ? "border-rellia-teal bg-rellia-teal text-white"
-                        : "border-black/10 bg-white text-black/70 hover:border-rellia-teal/40 hover:text-rellia-teal",
-                    )}
-                    aria-pressed={categoryFilter === "all"}
-                  >
-                    All categories
-                  </button>
-                  {CATEGORY_CYCLE.map((cat) => {
-                    const isActive = categoryFilter === cat
-                    return (
-                      <button
-                        key={cat}
-                        type="button"
-                        onClick={() => setCategoryFilter(cat)}
-                        className={cn(
-                          "cursor-pointer rounded-full border px-3 py-1.5 font-urbanist text-sm font-semibold transition-colors",
-                          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-teal focus-visible:ring-offset-2",
-                          isActive
-                            ? "border-rellia-teal bg-rellia-teal text-white"
-                            : "border-black/10 bg-white text-black/70 hover:border-rellia-teal/40 hover:text-rellia-teal",
-                        )}
-                        aria-pressed={isActive}
-                      >
-                        {cat}
-                      </button>
-                    )
-                  })}
-                </div>
-              </div>
+            </div>
+
+            <div className="mb-6 flex items-center justify-between border-b border-black/10 pb-4">
+              <p className="font-urbanist text-sm font-semibold text-black/60">
+                Showing {paginated.length} of {filtered.length} results
+              </p>
             </div>
 
             {filtered.length === 0 ? (
@@ -322,88 +368,65 @@ export default function FoundersDirectory() {
                 description="Adjust your keywords, stage, or category filters to explore the founder directory."
               />
             ) : (
-              <motion.div
-                variants={container}
-                initial="hidden"
-                animate="show"
-                className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3"
-              >
-                <AnimatePresence mode="popLayout">
-                  {filtered.map((c) => (
-                    <motion.div key={c.id} variants={item} layout>
-                      <FounderDirectoryCard company={c} onOpen={() => setActiveId(c.id)} />
-                    </motion.div>
-                  ))}
-                </AnimatePresence>
-              </motion.div>
+              <div className="flex flex-col">
+                <motion.div
+                  variants={container}
+                  initial="hidden"
+                  animate="show"
+                  className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"
+                >
+                  <AnimatePresence mode="popLayout">
+                    {paginated.map((c) => (
+                      <motion.div key={c.id} variants={item} layout>
+                        <FounderDirectoryCard company={c} onOpen={() => navigate(`/founders/directory/${c.id}`)} />
+                      </motion.div>
+                    ))}
+                  </AnimatePresence>
+                </motion.div>
+
+                {totalPages > 1 && (
+                  <div className="mt-14 flex items-center justify-center gap-2">
+                    <button
+                      type="button"
+                      disabled={page === 1}
+                      onClick={() => setPage(p => Math.max(1, p - 1))}
+                      className="flex h-10 w-10 items-center justify-center rounded-full border border-black/10 font-urbanist text-sm font-semibold text-black disabled:opacity-40 disabled:cursor-not-allowed hover:bg-black/5 transition-colors"
+                    >
+                      &larr;
+                    </button>
+                    {Array.from({ length: totalPages }).map((_, i) => (
+                      <button
+                        key={i}
+                        type="button"
+                        onClick={() => setPage(i + 1)}
+                        className={cn(
+                          "flex h-10 w-10 items-center justify-center rounded-full font-urbanist text-sm font-semibold transition-colors",
+                          page === i + 1 ? "bg-black text-white" : "text-black/70 hover:bg-black/5"
+                        )}
+                      >
+                        {i + 1}
+                      </button>
+                    ))}
+                    <button
+                      type="button"
+                      disabled={page === totalPages}
+                      onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                      className="flex h-10 w-10 items-center justify-center rounded-full border border-black/10 font-urbanist text-sm font-semibold text-black disabled:opacity-40 disabled:cursor-not-allowed hover:bg-black/5 transition-colors"
+                    >
+                      &rarr;
+                    </button>
+                  </div>
+                )}
+              </div>
             )}
           </div>
         </section>
 
-        <NetworkDirectoryModal open={Boolean(active)} onOpenChange={(open) => (!open ? setActiveId(null) : undefined)}>
-          {active ? (
-            <article className="mx-auto max-w-4xl">
-              <div className="flex min-h-[140px] items-center justify-center border-b border-black/10 pb-8 md:min-h-[180px] md:pb-10">
-                <img
-                  src={active.logoSrc}
-                  alt=""
-                  className="max-h-[min(36vh,260px)] w-auto max-w-full object-contain object-center"
-                />
-              </div>
-              <header className="pt-8 md:pt-10">
-                <h2 className="font-host-grotesk text-2xl font-semibold tracking-tight text-rellia-teal md:text-3xl">
-                  {active.logoName}
-                </h2>
-                <p className="mt-2 font-urbanist text-sm text-black/55">{active.tagline}</p>
-                <div className="mt-4 flex flex-wrap gap-2">
-                  <span className="inline-flex rounded-full border border-black/10 bg-black/[0.03] px-3 py-1 font-urbanist text-xs font-semibold text-black/70">
-                    {active.category}
-                  </span>
-                  {active.stages.map((s) => (
-                    <span
-                      key={s}
-                      className="inline-flex rounded-full border border-rellia-teal/20 bg-rellia-mint/20 px-3 py-1 font-urbanist text-xs font-semibold text-rellia-teal"
-                    >
-                      {s}
-                    </span>
-                  ))}
-                </div>
-              </header>
-
-              <section className="mt-10 border-t border-black/10 pt-10">
-                <h3 className="font-host-grotesk text-lg font-semibold text-black">Overview</h3>
-                <p className="mt-3 font-urbanist text-base leading-relaxed text-black/80">{active.longDescription}</p>
-              </section>
-
-              <section className="mt-10">
-                <h3 className="font-host-grotesk text-lg font-semibold text-black">Traction & roadmap</h3>
-                <p className="mt-3 font-urbanist text-base leading-relaxed text-black/80">{active.traction}</p>
-              </section>
-
-              <section className="mt-10">
-                <h3 className="font-host-grotesk text-lg font-semibold text-black">Collaborating through Rellia</h3>
-                <p className="mt-3 font-urbanist text-base leading-relaxed text-black/80">{active.relliaCollaboration}</p>
-              </section>
-
-              <section className="mt-10 rounded-2xl border border-black/10 bg-rellia-cream/25 px-5 py-5 md:px-6 md:py-6">
-                <h3 className="font-host-grotesk text-sm font-semibold uppercase tracking-[0.12em] text-black/55">
-                  Company website
-                </h3>
-                <a
-                  href={active.websiteUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="mt-2 inline-flex max-w-full break-all font-urbanist text-base font-semibold text-rellia-teal underline decoration-rellia-teal/30 underline-offset-4 transition-colors hover:decoration-rellia-teal"
-                >
-                  {active.websiteUrl.replace(/^https?:\/\//, "")}
-                </a>
-                <p className="mt-2 font-urbanist text-xs leading-relaxed text-black/50">
-                  External link opens in a new tab. Domain shown is illustrative for this directory preview.
-                </p>
-              </section>
-            </article>
-          ) : null}
-        </NetworkDirectoryModal>
+        <RelliaCta 
+          title="Ready to build your network?" 
+          body="Apply for membership to access exclusive events, diagnostic tools, and directly connect with operators in our directory."
+          primary={{ label: "Apply for Membership", to: "/apply" }}
+        />
       </main>
 
       <Footer />

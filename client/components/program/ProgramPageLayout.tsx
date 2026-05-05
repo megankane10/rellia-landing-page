@@ -120,9 +120,12 @@ const ProgramPageLayout = ({
       <main id="main-content">
 
         {/* ─── Hero — text left, square image right ─── */}
-        <section className="bg-white pt-[72px] md:pt-[86px] lg:pt-[96px]">
+        <section className="bg-white pt-[100px] pb-10 md:pt-[130px] md:pb-16 lg:pt-[160px] lg:pb-24">
           <div className="mx-auto max-w-[1300px] px-6 md:px-10">
-            <div className="mt-8 md:mt-12 pb-10 md:pb-14 flex flex-col-reverse lg:flex-row lg:items-center lg:gap-14">
+            <div className="mb-8 md:mb-12">
+              <BackToPrograms />
+            </div>
+            <div className="flex flex-col-reverse lg:flex-row lg:items-center lg:gap-14">
               {/* Left — text */}
               <div className="flex-1 lg:max-w-[55%]">
                 <ScrollReveal>
@@ -140,9 +143,6 @@ const ProgramPageLayout = ({
                     <RelliaAction type="button" variant="outlineOnWhite" size="comfortable" onClick={() => scrollTo(outcomesSectionId)} onKeyDown={onKey(() => scrollTo(outcomesSectionId))} className="inline-flex w-fit">
                       Learn More
                     </RelliaAction>
-                  </div>
-                  <div className="mt-8">
-                    <BackToPrograms />
                   </div>
                 </ScrollReveal>
               </div>
@@ -260,7 +260,7 @@ const ProgramPageLayout = ({
                       <AccordionItem key={month.month} value={month.month} className={cn("border-l-2 pl-6 md:pl-8 relative py-5", timelineOpen === month.month ? "border-l-rellia-teal" : "border-l-black/10")}>
                         <div className={cn("absolute left-0 top-[26px] -translate-x-1/2 w-3.5 h-3.5 rounded-full border-2 transition-colors duration-300", timelineOpen === month.month ? "border-rellia-teal bg-rellia-mint" : "border-black/20 bg-white")} />
                         <span className={cn("font-host-grotesk text-[11px] font-semibold uppercase tracking-[0.16em] block", timelineOpen === month.month ? "text-rellia-teal" : "text-black/40")}>Step {idx + 1}</span>
-                        <AccordionTrigger className="font-host-grotesk font-semibold text-black text-lg md:text-xl py-2 hover:no-underline [&[data-state=open]]:text-rellia-teal transition-colors">{month.month}</AccordionTrigger>
+                        <AccordionTrigger className="font-host-grotesk font-semibold text-black text-lg md:text-xl py-2 hover:no-underline [&[data-state=open]]:text-rellia-teal transition-colors text-left">{month.month}</AccordionTrigger>
                         <AccordionContent className="pb-2">
                           <ul className="flex flex-col gap-2 pl-1">
                             {month.weeks.map((w) => (<li key={w} className="flex items-start gap-2"><CheckCircle2 className="w-4 h-4 text-rellia-mint shrink-0 mt-0.5" /><span className="font-urbanist text-black text-base leading-relaxed">{w}</span></li>))}

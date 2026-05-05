@@ -34,7 +34,7 @@ export type AdvisorDirectoryEntry = {
 
 export const ADVISOR_DIRECTORY_SEED: AdvisorDirectoryEntry[] = [
   {
-    id: "a1",
+    id: "elena-ruiz",
     name: "Dr. Elena Ruiz",
     organization: "Harbor Clinical Collective",
     role: "Former Chief Medical Officer, health system",
@@ -54,7 +54,7 @@ export const ADVISOR_DIRECTORY_SEED: AdvisorDirectoryEntry[] = [
     ],
   },
   {
-    id: "a2",
+    id: "jordan-blake",
     name: "Jordan Blake",
     organization: "Northline Regulatory Partners",
     role: "Regulatory & quality advisor",
@@ -74,7 +74,7 @@ export const ADVISOR_DIRECTORY_SEED: AdvisorDirectoryEntry[] = [
     ],
   },
   {
-    id: "a3",
+    id: "priya-nair",
     name: "Priya Nair",
     organization: "Relay GTM Advisory",
     role: "GTM & partnerships operator",
@@ -94,7 +94,7 @@ export const ADVISOR_DIRECTORY_SEED: AdvisorDirectoryEntry[] = [
     ],
   },
   {
-    id: "a4",
+    id: "henry-moss",
     name: "Dr. Henry Moss",
     organization: "Atlas Outcomes Institute",
     role: "Academic PI, outcomes research",
@@ -114,7 +114,7 @@ export const ADVISOR_DIRECTORY_SEED: AdvisorDirectoryEntry[] = [
     ],
   },
   {
-    id: "a5",
+    id: "alex-rivera",
     name: "Alex Rivera",
     organization: "Clearwave Interop Labs",
     role: "Product & interoperability lead",
@@ -134,7 +134,7 @@ export const ADVISOR_DIRECTORY_SEED: AdvisorDirectoryEntry[] = [
     ],
   },
   {
-    id: "a6",
+    id: "sam-okonkwo",
     name: "Sam Okonkwo",
     organization: "Meridian Venture Fellows",
     role: "Finance & venture advisor",
@@ -154,7 +154,7 @@ export const ADVISOR_DIRECTORY_SEED: AdvisorDirectoryEntry[] = [
     ],
   },
   {
-    id: "a7",
+    id: "mei-tan",
     name: "Dr. Mei Tan",
     organization: "Vantage Care Delivery",
     role: "VP Clinical Transformation",
@@ -174,7 +174,7 @@ export const ADVISOR_DIRECTORY_SEED: AdvisorDirectoryEntry[] = [
     ],
   },
   {
-    id: "a8",
+    id: "chris-dalton",
     name: "Chris Dalton",
     organization: "Ironwood Compliance",
     role: "Privacy & security counsel",

@@ -1,10 +1,11 @@
 import { useMemo, useState } from "react"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
+import RelliaCta from "@/components/RelliaCta"
 import RelliaAction from "@/components/RelliaAction"
 import { cn } from "@/lib/utils"
 import { motion, AnimatePresence, useReducedMotion, type Variants } from "framer-motion"
-import { Globe, Linkedin, Search, UserSearch } from "lucide-react"
+import { Globe, Linkedin, Search, UserSearch, ChevronDown } from "lucide-react"
 import FilteredListEmptyState from "@/components/FilteredListEmptyState"
 import {
   ADVISOR_DIRECTORY_SEED,
@@ -13,11 +14,11 @@ import {
   type AdvisorDirectoryFilter,
 } from "@/data/advisorDirectory"
 import NetworkDirectoryModal from "@/components/network/NetworkDirectoryModal"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
+import { NETWORK_PATH_ROLE_TAG } from "@/lib/networkPathRoles"
 
-const DIRECTORY_KICKER_CLASS = "font-urbanist text-sm font-semibold uppercase tracking-[0.16em] text-[#5A726F]"
 const DIRECTORY_TITLE_CLASS =
-  "font-host-grotesk text-4xl font-extrabold tracking-tight text-[#4F6562] md:text-5xl"
+  "font-host-grotesk text-4xl font-extrabold tracking-tight text-black md:text-5xl"
 
 function AdvisorCard({
   advisor,
@@ -58,7 +59,7 @@ function AdvisorCard({
         />
       </div>
       <div className="flex flex-1 flex-col p-6 md:p-7">
-        <h3 className="font-host-grotesk text-lg font-semibold tracking-tight text-rellia-teal">{advisor.name}</h3>
+        <h3 className="font-host-grotesk text-lg font-bold tracking-tight text-black group-hover:underline decoration-2 underline-offset-4">{advisor.name}</h3>
         <p className="mt-1 font-urbanist text-sm font-medium text-black/70">{advisor.organization}</p>
         <p className="mt-0.5 font-urbanist text-sm text-black/60">{advisor.role}</p>
         <div className="mt-4 flex flex-wrap gap-2">
@@ -75,9 +76,6 @@ function AdvisorCard({
           ))}
         </div>
         <p className="mt-4 line-clamp-3 flex-1 font-urbanist text-sm leading-relaxed text-black/75">{advisor.focus}</p>
-        <span className="mt-auto pt-5 font-host-grotesk text-sm font-semibold text-rellia-teal underline-offset-4 transition group-hover:underline">
-          View profile
-        </span>
       </div>
     </motion.article>
   )
@@ -100,6 +98,17 @@ export default function AdvisorsDirectory() {
     })
   }, [filter, query])
 
+  const [page, setPage] = useState(1)
+  const itemsPerPage = 12
+  const totalPages = Math.ceil(filtered.length / itemsPerPage)
+  
+  const paginated = useMemo(() => {
+    return filtered.slice((page - 1) * itemsPerPage, page * itemsPerPage)
+  }, [filtered, page])
+
+  // Reset page when filters change
+  useMemo(() => setPage(1), [query, filter])
+
   const active = useMemo(() => ADVISOR_DIRECTORY_SEED.find((a) => a.id === activeId) ?? null, [activeId])
 
   const EASE_OUT: [number, number, number, number] = [0.16, 1, 0.3, 1]
@@ -118,6 +127,35 @@ export default function AdvisorsDirectory() {
     show: reduceMotion ? {} : { opacity: 1, y: 0, transition: { duration: 0.4, ease: EASE_OUT } },
   }
 
+  const navigate = useNavigate()
+  const tag = NETWORK_PATH_ROLE_TAG["advisor"]
+  const TagIcon = tag.icon
+
+  const FilterContent = () => (
+    <div className="flex flex-wrap gap-2">
+      {ADVISOR_FILTER_OPTIONS.map((f) => {
+        const isActive = filter === f.id
+        return (
+          <button
+            key={f.id}
+            type="button"
+            onClick={() => setFilter(f.id)}
+            className={cn(
+              "cursor-pointer rounded-full border px-4 py-2 font-urbanist text-sm font-semibold transition-colors w-full text-left",
+              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-teal focus-visible:ring-offset-2",
+              isActive
+                ? "border-rellia-teal bg-rellia-teal text-white"
+                : "border-black/10 bg-white text-black/70 hover:border-rellia-teal/40 hover:text-rellia-teal",
+            )}
+            aria-pressed={isActive}
+          >
+            {f.label}
+          </button>
+        )
+      })}
+    </div>
+  )
+
   return (
     <div className="min-h-screen overflow-x-hidden bg-white font-host-grotesk">
       <Navbar />
@@ -125,70 +163,61 @@ export default function AdvisorsDirectory() {
       <main id="main-content">
         <section className="border-b border-black/10 bg-rellia-cream/40 pt-28 pb-12 md:pt-36 md:pb-16">
           <div className="mx-auto max-w-[1300px] px-6 md:px-10">
-            <p className={DIRECTORY_KICKER_CLASS}>Advisors</p>
-            <h1 className={cn(DIRECTORY_TITLE_CLASS, "mt-4")}>Advisor directory</h1>
+            <div className="inline-flex items-center gap-2 rounded-full bg-rellia-teal px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-white/95 ring-1 ring-white/15 mb-4">
+              <TagIcon className="h-3.5 w-3.5 shrink-0" aria-hidden />
+              {tag.label}
+            </div>
+            <h1 className={DIRECTORY_TITLE_CLASS}>Explore Advisors</h1>
             <p className="mt-4 max-w-2xl font-urbanist text-lg leading-relaxed text-black/70">
               Search and filter operators, clinicians, and specialists who opt into high-signal mentorship with serious
               founders.
             </p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <RelliaAction asChild variant="outlineOnWhite" size="comfortable">
-                <Link to="/advisors" className="cursor-pointer">
-                  Back to Advisors
-                </Link>
-              </RelliaAction>
-              <RelliaAction asChild variant="tealFilledLift" size="comfortable">
-                <Link to="/apply" className="cursor-pointer">
-                  Apply as advisor
-                </Link>
-              </RelliaAction>
-            </div>
           </div>
         </section>
 
         <section className="py-12 md:py-16">
           <div className="mx-auto max-w-[1300px] px-6 md:px-10">
-            <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-              <label className="relative block w-full max-w-xl flex-1">
+            {/* Top Filter Bar */}
+            <div className="mb-10 flex flex-col gap-4 md:flex-row md:items-center">
+              <label className="relative flex-1 block">
                 <span className="sr-only">Search advisors</span>
                 <Search
-                  className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-black/45"
+                  className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-black/45"
                   aria-hidden
                 />
                 <input
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   type="search"
-                  placeholder="Name, organization, expertise…"
+                  placeholder="Search advisors by name, keyword…"
                   className={cn(
-                    "h-12 w-full rounded-2xl border border-black/10 bg-white pl-10 pr-4",
-                    "font-urbanist text-sm text-black placeholder:text-black/45",
-                    "outline-none focus-visible:ring-2 focus-visible:ring-rellia-teal focus-visible:ring-offset-2",
+                    "h-14 w-full rounded-2xl border border-black/10 bg-black/[0.02] pl-12 pr-4 transition-colors",
+                    "font-urbanist text-base text-black placeholder:text-black/45 hover:border-black/20",
+                    "outline-none focus-visible:ring-2 focus-visible:ring-rellia-teal focus-visible:bg-white",
                   )}
                 />
               </label>
-              <div className="flex flex-wrap gap-2">
-                {ADVISOR_FILTER_OPTIONS.map((f) => {
-                  const isActive = filter === f.id
-                  return (
-                    <button
-                      key={f.id}
-                      type="button"
-                      onClick={() => setFilter(f.id)}
-                      className={cn(
-                        "cursor-pointer rounded-full border px-4 py-2 font-urbanist text-sm font-semibold transition-colors",
-                        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-teal focus-visible:ring-offset-2",
-                        isActive
-                          ? "border-rellia-teal bg-rellia-teal text-white"
-                          : "border-black/10 bg-white text-black/70 hover:border-rellia-teal/40 hover:text-rellia-teal",
-                      )}
-                      aria-pressed={isActive}
-                    >
-                      {f.label}
-                    </button>
-                  )
-                })}
+              
+              <div className="flex shrink-0">
+                <div className="relative">
+                  <select
+                    value={filter}
+                    onChange={(e) => setFilter(e.target.value as any)}
+                    className="h-14 w-full appearance-none rounded-2xl border border-black/10 bg-black/[0.02] pl-5 pr-14 min-w-[200px] font-urbanist text-base font-semibold text-black/80 outline-none hover:border-black/20 focus-visible:ring-2 focus-visible:ring-rellia-teal focus-visible:bg-white cursor-pointer"
+                  >
+                    {ADVISOR_FILTER_OPTIONS.map(f => (
+                      <option key={f.id} value={f.id}>{f.label}</option>
+                    ))}
+                  </select>
+                  <ChevronDown className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-black/45" aria-hidden />
+                </div>
               </div>
+            </div>
+
+            <div className="mb-6 flex items-center justify-between border-b border-black/10 pb-4">
+              <p className="font-urbanist text-sm font-semibold text-black/60">
+                Showing {paginated.length} of {filtered.length} results
+              </p>
             </div>
 
             {filtered.length === 0 ? (
@@ -199,132 +228,66 @@ export default function AdvisorsDirectory() {
                 description="Try another keyword or filter to find operators and specialists in the directory."
               />
             ) : (
-              <motion.div
-                variants={container}
-                initial="hidden"
-                animate="show"
-                className="mt-10 grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3"
-              >
-                <AnimatePresence mode="popLayout">
-                  {filtered.map((a) => (
-                    <motion.div key={a.id} variants={item} layout>
-                      <AdvisorCard advisor={a} onDetails={() => setActiveId(a.id)} />
-                    </motion.div>
-                  ))}
-                </AnimatePresence>
-              </motion.div>
+              <div className="flex flex-col">
+                <motion.div
+                  variants={container}
+                  initial="hidden"
+                  animate="show"
+                  className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"
+                >
+                  <AnimatePresence mode="popLayout">
+                    {paginated.map((a) => (
+                      <motion.div key={a.id} variants={item} layout>
+                        <AdvisorCard advisor={a} onDetails={() => navigate(`/advisors/directory/${a.id}`)} />
+                      </motion.div>
+                    ))}
+                  </AnimatePresence>
+                </motion.div>
+
+                {totalPages > 1 && (
+                  <div className="mt-14 flex items-center justify-center gap-2">
+                    <button
+                      type="button"
+                      disabled={page === 1}
+                      onClick={() => setPage(p => Math.max(1, p - 1))}
+                      className="flex h-10 w-10 items-center justify-center rounded-full border border-black/10 font-urbanist text-sm font-semibold text-black disabled:opacity-40 disabled:cursor-not-allowed hover:bg-black/5 transition-colors"
+                    >
+                      &larr;
+                    </button>
+                    {Array.from({ length: totalPages }).map((_, i) => (
+                      <button
+                        key={i}
+                        type="button"
+                        onClick={() => setPage(i + 1)}
+                        className={cn(
+                          "flex h-10 w-10 items-center justify-center rounded-full font-urbanist text-sm font-semibold transition-colors",
+                          page === i + 1 ? "bg-black text-white" : "text-black/70 hover:bg-black/5"
+                        )}
+                      >
+                        {i + 1}
+                      </button>
+                    ))}
+                    <button
+                      type="button"
+                      disabled={page === totalPages}
+                      onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                      className="flex h-10 w-10 items-center justify-center rounded-full border border-black/10 font-urbanist text-sm font-semibold text-black disabled:opacity-40 disabled:cursor-not-allowed hover:bg-black/5 transition-colors"
+                    >
+                      &rarr;
+                    </button>
+                  </div>
+                )}
+              </div>
             )}
           </div>
         </section>
 
-        <NetworkDirectoryModal open={Boolean(active)} onOpenChange={(open) => (!open ? setActiveId(null) : undefined)}>
-          {active ? (
-            <article className="mx-auto max-w-5xl">
-              <div className="grid gap-10 lg:grid-cols-[minmax(260px,380px)_minmax(0,1fr)] lg:gap-x-14 lg:gap-y-0 xl:grid-cols-[400px_1fr]">
-                <div className="flex flex-col gap-6 lg:sticky lg:top-6 lg:self-start">
-                  <div className="overflow-hidden rounded-2xl border border-black/10 bg-rellia-cream/20 shadow-sm">
-                    <div className="aspect-[4/5] w-full max-h-[min(56vh,560px)]">
-                      <img
-                        src={active.photoSrc}
-                        alt=""
-                        className="h-full w-full object-cover object-top"
-                      />
-                    </div>
-                  </div>
-                  <div className="rounded-2xl border border-black/10 bg-white px-4 py-4 md:px-5">
-                    <p className="font-host-grotesk text-xs font-semibold uppercase tracking-[0.14em] text-black/45">
-                      Connect
-                    </p>
-                    <ul className="mt-3 flex flex-col gap-3">
-                      <li>
-                        <a
-                          href={active.linkedInUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-2 font-urbanist text-sm font-semibold text-rellia-teal underline decoration-rellia-teal/25 underline-offset-4 transition hover:decoration-rellia-teal"
-                        >
-                          <Linkedin className="h-4 w-4 shrink-0" aria-hidden />
-                          LinkedIn profile
-                        </a>
-                      </li>
-                      {active.websiteUrl ? (
-                        <li>
-                          <a
-                            href={active.websiteUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center gap-2 font-urbanist text-sm font-semibold text-rellia-teal underline decoration-rellia-teal/25 underline-offset-4 transition hover:decoration-rellia-teal"
-                          >
-                            <Globe className="h-4 w-4 shrink-0" aria-hidden />
-                            Website
-                          </a>
-                        </li>
-                      ) : null}
-                    </ul>
-                  </div>
-                </div>
-
-                <div className="min-w-0 space-y-10 pb-2">
-                  <header className="border-b border-black/10 pb-8">
-                    <p className="font-urbanist text-xs font-semibold uppercase tracking-[0.14em] text-rellia-teal">
-                      {active.filter}
-                    </p>
-                    <h2 className="mt-3 font-host-grotesk text-3xl font-semibold tracking-tight text-black md:text-[2rem] md:leading-tight">
-                      {active.name}
-                    </h2>
-                    <p className="mt-2 font-urbanist text-lg font-medium text-black/75">{active.organization}</p>
-                    <p className="mt-1 font-urbanist text-base text-black/65">{active.role}</p>
-                    <div className="mt-5 flex flex-wrap gap-2">
-                      {active.industries.map((tag) => (
-                        <span
-                          key={tag}
-                          className="rounded-full border border-black/10 bg-black/[0.03] px-3 py-1 font-urbanist text-xs font-medium text-black/75"
-                        >
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
-                  </header>
-
-                  <section>
-                    <h3 className="font-host-grotesk text-xl font-semibold text-black">About</h3>
-                    <p className="mt-4 font-urbanist text-base leading-relaxed text-black/80 md:text-[17px] md:leading-relaxed">
-                      {active.bio}
-                    </p>
-                  </section>
-
-                  <section>
-                    <h3 className="font-host-grotesk text-xl font-semibold text-black">How they mentor</h3>
-                    <p className="mt-4 font-urbanist text-base leading-relaxed text-black/80 md:text-[17px] md:leading-relaxed">
-                      {active.mentoringStyle}
-                    </p>
-                  </section>
-
-                  <section>
-                    <h3 className="font-host-grotesk text-xl font-semibold text-black">Highlights</h3>
-                    <ul className="mt-4 list-none space-y-3 pl-0">
-                      {active.highlights.map((line) => (
-                        <li
-                          key={line.slice(0, 40)}
-                          className="relative pl-6 font-urbanist text-base leading-relaxed text-black/80 before:absolute before:left-0 before:top-[0.55em] before:h-1.5 before:w-1.5 before:rounded-full before:bg-rellia-teal md:text-[17px]"
-                        >
-                          {line}
-                        </li>
-                      ))}
-                    </ul>
-                  </section>
-
-                  <section className="rounded-2xl bg-rellia-cream/35 px-5 py-5 md:px-6">
-                    <h3 className="font-host-grotesk text-sm font-semibold uppercase tracking-[0.12em] text-black/55">
-                      Snapshot
-                    </h3>
-                    <p className="mt-3 font-urbanist text-base leading-relaxed text-black/75">{active.focus}</p>
-                  </section>
-                </div>
-              </div>
-            </article>
-          ) : null}
-        </NetworkDirectoryModal>
+        <RelliaCta 
+          title="Looking for specialized advice?" 
+          body="Access our full network of operators, clinicians, and subject matter experts."
+          primary={{ label: "Apply for Membership", to: "/apply" }}
+          secondary={{ label: "Become an Advisor", to: "/apply-advisor" }}
+        />
       </main>
 
       <Footer />

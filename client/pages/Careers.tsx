@@ -273,7 +273,7 @@ const CareersJoinTeamSection = ({
                 {primaryCta ? (
                   <a
                     href={primaryCta.href}
-                    className={cn(joinTeamCtaSharedClass, "bg-rellia-teal")}
+                    className={cn(joinTeamCtaSharedClass, "bg-rellia-teal hover:border-rellia-mint")}
                     aria-label={primaryCta.ariaLabel}
                   >
                     <span className="relative z-10 text-white transition-colors duration-300 group-hover:text-rellia-teal">
