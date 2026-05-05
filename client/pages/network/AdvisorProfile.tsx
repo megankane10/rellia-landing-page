@@ -7,6 +7,7 @@ import { ArrowLeft } from "lucide-react"
 import { GlobeFilled, LinkedInFilled, ShareFilled } from "@/components/icons/SocialIcons"
 import { ADVISOR_DIRECTORY_SEED } from "@/data/advisorDirectory"
 import NotFound from "../NotFound"
+import { getSiteUrl } from "@/config/seo"
 
 export default function AdvisorProfile() {
   const { id } = useParams<{ id: string }>()
@@ -41,10 +42,11 @@ export default function AdvisorProfile() {
                 <meta name="description" content={active.bio.substring(0, 160)} />
                 <meta property="og:title" content={`${active.name} — Rellia Health Advisor`} />
                 <meta property="og:description" content={active.bio.substring(0, 160)} />
-                <meta property="og:image" content={active.photoSrc} />
+                <meta property="og:image" content={active.photoSrc.startsWith("http") ? active.photoSrc : `${getSiteUrl()}${active.photoSrc}`} />
                 <meta name="twitter:title" content={`${active.name} — Rellia Health Advisor`} />
                 <meta name="twitter:description" content={active.bio.substring(0, 160)} />
-                <meta name="twitter:image" content={active.photoSrc} />
+                <meta name="twitter:image" content={active.photoSrc.startsWith("http") ? active.photoSrc : `${getSiteUrl()}${active.photoSrc}`} />
+                <meta name="twitter:card" content="summary_large_image" />
               </Helmet>
               <div className="overflow-hidden rounded-2xl aspect-[4/5] w-full max-h-[min(56vh,560px)]">
                 <img

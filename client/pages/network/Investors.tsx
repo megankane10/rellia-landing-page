@@ -22,7 +22,7 @@ import {
   ResponsiveContainer,
   Tooltip,
 } from "recharts"
-import { CreamSection, GlassCard, GlassCardLight, LightSection, Reveal } from "./_shared"
+import { CreamSection, GlassCard, GlassCardLight, LightSection, Reveal, RoleHero } from "./_shared"
 
 const COLORS = {
   blue: "#2563eb",
@@ -206,18 +206,17 @@ export default function Investors() {
       <Navbar />
 
       <main id="main-content">
-        <PageHeader
+        <RoleHero
+          roleId="investor"
+          imageSrc={PEXELS_OFFICE_COLLABORATION}
           title={
             <>
-              Stop sorting through cold pitch decks.
+              Stop sorting through <span className="text-rellia-mint">cold pitch decks.</span>
             </>
           }
-          subtitle={
-            <p className="font-urbanist">
-              Meet Rellia-backed teams with sharper milestones—clinical, regulatory, and commercial—before the usual diligence scramble.
-            </p>
-          }
-          variant="dark"
+          subtitle="Meet Rellia-backed teams with sharper milestones—clinical, regulatory, and commercial—before the usual diligence scramble."
+          primaryCta={{ label: "Apply to join", to: "/apply" }}
+          secondaryCta={{ label: "Request a session", to: "/contact" }}
         />
 
         <LightSection className="bg-rellia-cream/20 pt-10 md:pt-14">

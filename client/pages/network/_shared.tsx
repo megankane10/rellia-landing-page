@@ -2,6 +2,10 @@ import { useMemo, useState } from "react"
 import { motion, useReducedMotion } from "framer-motion"
 import { cn } from "@/lib/utils"
 import RelliaAction from "@/components/RelliaAction"
+import { NETWORK_PATH_ROLE_TAG } from "@/lib/networkPathRoles"
+import NetworkEyebrow from "@/components/network/NetworkEyebrow"
+import { ArrowRight } from "lucide-react"
+import { Link } from "react-router-dom"
 
 export function Reveal({
   children,
@@ -359,3 +363,77 @@ export function MultiStepSignupForm({
   )
 }
 
+export function RoleHero({
+  roleId,
+  title,
+  subtitle,
+  imageSrc,
+  primaryCta,
+  secondaryCta,
+}: {
+  roleId: "founder" | "advisor" | "investor" | "partner"
+  title: React.ReactNode
+  subtitle: React.ReactNode
+  imageSrc: string
+  primaryCta: { label: string; to: string }
+  secondaryCta?: { label: string; to: string }
+}) {
+  const tag = NETWORK_PATH_ROLE_TAG[roleId]
+  return (
+    <section className="relative overflow-hidden bg-rellia-teal pt-[72px] md:pt-[86px] lg:flex lg:flex-1 lg:flex-col lg:min-h-0 lg:pt-[96px]">
+      <img
+        src={imageSrc}
+        alt=""
+        className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-60"
+      />
+      <div className="absolute inset-0 bg-gradient-to-br from-rellia-teal/[0.88] via-rellia-teal/72 to-[#0a2830]/82" aria-hidden />
+      <div aria-hidden className="pointer-events-none absolute inset-0 opacity-35 [background-image:radial-gradient(circle_at_20%_20%,rgba(167,219,214,0.35),transparent_50%),radial-gradient(circle_at_85%_30%,rgba(255,255,255,0.14),transparent_45%)]" />
+      <img
+        src="/images/hologram-logo.png"
+        alt=""
+        aria-hidden
+        className="pointer-events-none absolute -right-16 bottom-0 w-[min(52vw,420px)] opacity-[0.07] md:right-0"
+      />
+
+      <div className="relative z-10 mx-auto max-w-[1300px] px-6 pb-20 pt-10 md:px-10 md:pb-28 md:pt-14 lg:flex lg:flex-1 lg:flex-col lg:justify-center lg:pb-20 lg:pt-0">
+        <NetworkEyebrow label={tag.label} tone="onDark" className="mb-6 md:mb-8" />
+        <h1
+          className={cn(
+            "max-w-4xl font-bold leading-[1.08] tracking-tight text-white drop-shadow-sm",
+            "text-[40px] sm:text-5xl md:text-6xl lg:text-7xl",
+          )}
+        >
+          {title}
+        </h1>
+        <div className="mt-6 max-w-2xl font-urbanist text-lg leading-relaxed text-white/80 md:text-xl">
+          {subtitle}
+        </div>
+        <div className="mt-10 flex w-full flex-col gap-3 sm:flex-row sm:flex-wrap">
+          <RelliaAction
+            asChild
+            variant="mintOnTealStrip"
+            size="comfortable"
+            className="w-full min-w-0 justify-center sm:min-w-[220px] sm:w-auto"
+          >
+            <Link to={primaryCta.to} className="inline-flex w-full cursor-pointer items-center justify-center gap-2 sm:w-auto">
+              {primaryCta.label}
+              <ArrowRight className="h-4 w-4" aria-hidden />
+            </Link>
+          </RelliaAction>
+          {secondaryCta && (
+            <RelliaAction
+              asChild
+              variant="heroGhostOnTeal"
+              size="comfortable"
+              className="w-full min-w-0 justify-center border-white/45 hover:border-white/70 sm:min-w-[220px] sm:w-auto"
+            >
+              <Link to={secondaryCta.to} className="inline-flex w-full cursor-pointer items-center justify-center sm:w-auto">
+                {secondaryCta.label}
+              </Link>
+            </RelliaAction>
+          )}
+        </div>
+      </div>
+    </section>
+  )
+}

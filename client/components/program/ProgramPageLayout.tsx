@@ -7,7 +7,8 @@ import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
 import ScrollReveal from "@/components/ScrollReveal"
 import RelliaCta, { ctaActionFromHref } from "@/components/RelliaCta"
-import { CheckCircle2, ArrowRight, ArrowLeft, ChevronLeft } from "lucide-react"
+import { CheckCircle2, ArrowRight, ArrowLeft, ChevronLeft, CalendarDays } from "lucide-react"
+import { getCurrentMonthDeadline } from "@/lib/dateUtils"
 import RelliaAction from "@/components/RelliaAction"
 import { cn } from "@/lib/utils"
 import type { QmsProgramContent } from "@shared/cms/types"
@@ -125,7 +126,7 @@ const ProgramPageLayout = ({
             <div className="mb-8 md:mb-12">
               <BackToPrograms />
             </div>
-            <div className="flex flex-col-reverse lg:flex-row lg:items-center lg:gap-14">
+            <div className="flex flex-col-reverse lg:flex-row lg:items-start lg:gap-14">
               {/* Left — text */}
               <div className="flex-1 lg:max-w-[55%]">
                 <ScrollReveal>
@@ -136,6 +137,14 @@ const ProgramPageLayout = ({
                   )}
                   <h1 className="max-w-3xl text-3xl md:text-4xl lg:text-5xl font-bold leading-[1.1] tracking-tight text-black">{q.heroTitle}</h1>
                   <p className="mt-5 max-w-xl font-urbanist text-base leading-relaxed text-black/60 md:text-lg">{q.heroDescription}</p>
+                  
+                  <div className="mt-7 flex items-center gap-2 text-black">
+                    <CalendarDays className="h-4.5 w-4.5 text-rellia-teal" />
+                    <span className="font-host-grotesk text-sm font-bold uppercase tracking-widest">
+                      Deadline: {getCurrentMonthDeadline()}
+                    </span>
+                  </div>
+
                   <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
                     <RelliaAction type="button" variant="mintTealFill" size="comfortable" onClick={() => scrollTo(paymentSectionId)} onKeyDown={onKey(() => scrollTo(paymentSectionId))} className="flex w-full sm:w-fit justify-center">
                       {q.heroCtaLabel}<ArrowRight className="h-4 w-4 ml-2" aria-hidden />

@@ -8,6 +8,7 @@ import { GlobeFilled, ShareFilled } from "@/components/icons/SocialIcons"
 import { FOUNDER_DIRECTORY } from "./FoundersDirectory"
 import NotFound from "../NotFound"
 import { cn } from "@/lib/utils"
+import { getSiteUrl } from "@/config/seo"
 
 export default function FounderProfile() {
   const { id } = useParams<{ id: string }>()
@@ -39,20 +40,29 @@ export default function FounderProfile() {
             <div className="flex flex-col gap-6 lg:sticky lg:top-32 lg:self-start">
               <Helmet>
                 <title>{active.logoName} — Rellia Health</title>
-                <meta name="description" content={active.tagline} />
+                <meta name="description" content={active.shortDescription} />
                 <meta property="og:title" content={`${active.logoName} — Rellia Health`} />
-                <meta property="og:description" content={active.tagline} />
-                <meta property="og:image" content={active.imageSrc} />
+                <meta property="og:description" content={active.shortDescription} />
+                <meta property="og:image" content={active.imageSrc.startsWith("http") ? active.imageSrc : `${getSiteUrl()}${active.imageSrc}`} />
                 <meta name="twitter:title" content={`${active.logoName} — Rellia Health`} />
-                <meta name="twitter:description" content={active.tagline} />
-                <meta name="twitter:image" content={active.imageSrc} />
+                <meta name="twitter:description" content={active.shortDescription} />
+                <meta name="twitter:image" content={active.imageSrc.startsWith("http") ? active.imageSrc : `${getSiteUrl()}${active.imageSrc}`} />
+                <meta name="twitter:card" content="summary_large_image" />
               </Helmet>
 
-              <div className="flex min-h-[140px] items-center justify-start md:min-h-[180px]">
+              <div className="overflow-hidden rounded-2xl aspect-[4/5] w-full max-h-[min(56vh,560px)] mb-8">
+                <img
+                  src={active.imageSrc}
+                  alt={`Founder at ${active.logoName}`}
+                  className="h-full w-full object-cover object-top"
+                />
+              </div>
+
+              <div className="flex min-h-[100px] items-center justify-start md:min-h-[120px]">
                 <img
                   src={active.logoSrc}
                   alt={active.logoName}
-                  className="max-h-[120px] w-auto max-w-full object-contain object-left"
+                  className="max-h-[80px] w-auto max-w-full object-contain object-left opacity-90"
                 />
               </div>
               <div className="pt-2">

@@ -88,7 +88,14 @@ export const FOUNDER_DIRECTORY: FounderCompany[] = PORTFOLIO_LOGO_MARKS.slice(0,
     websiteUrl: `https://www.${slug}.example`,
     traction: `Active pilots with health system and specialty partners; expanding integration surface area and outcome readouts in line with ${CATEGORY_CYCLE[index % CATEGORY_CYCLE.length].toLowerCase()} buyer expectations. Roadmap tied to evidence milestones, not vanity releases.`,
     relliaCollaboration: `Rellia membership is used for warm operator intros, advisor deep-dives on protocol and procurement, and program cadence that matches regulatory and study timelines—so the company isn’t building in a silo while the market moves.`,
-    imageSrc: `/images/founders/founder-${(index % 6) + 1}.jpg`,
+    imageSrc: [
+      "https://images.unsplash.com/photo-1556157382-9764a702e8b5?w=800&q=80&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1542744173-8e7e548d5d17?w=800&q=80&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1522071823991-b1ae5e6a30c8?w=800&q=80&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1552664730-d307ca884978?w=800&q=80&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=800&q=80&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=800&q=80&auto=format&fit=crop"
+    ][index % 6],
   }
 })
 

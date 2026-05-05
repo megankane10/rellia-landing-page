@@ -69,7 +69,7 @@ export function HorizontalCard(props: HorizontalCardProps) {
             {dateTimeLine ? (
               <p className="font-urbanist text-[13px] md:text-sm font-bold text-black/50 uppercase tracking-wide">{dateTimeLine}</p>
             ) : null}
-            <h3 className="line-clamp-2 font-host-grotesk text-xl md:text-2xl font-bold leading-tight tracking-tight text-black group-hover:underline decoration-2 underline-offset-4">
+            <h3 className="line-clamp-2 font-host-grotesk text-xl md:text-2xl font-semibold leading-tight tracking-tight text-black group-hover:underline decoration-2 underline-offset-4">
               {event.title}
             </h3>
           </div>
@@ -169,7 +169,7 @@ export function HorizontalCard(props: HorizontalCardProps) {
 
       <div className="flex flex-[1.2] flex-col min-w-0 py-1">
         <h3 className={cn(
-          "font-host-grotesk text-xl md:text-2xl font-bold leading-tight tracking-tight text-black mb-2",
+          "font-host-grotesk text-xl md:text-2xl font-semibold leading-tight tracking-tight text-black mb-2",
           (hasHref || isWaitlistCard) && "group-hover:underline decoration-2 underline-offset-4"
         )}>
           {program.title}

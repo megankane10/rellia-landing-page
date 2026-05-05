@@ -10,7 +10,7 @@ import ScrollReveal from "@/components/ScrollReveal"
 import { cn } from "@/lib/utils"
 import { ArrowRight, Award, BookOpen, Clock, Crosshair, Gauge, HeartHandshake, Network, Scale, ShieldCheck, Sparkles } from "lucide-react"
 import { Link } from "react-router-dom"
-import { CreamSection, GlassCardLight, LightSection, Reveal } from "./_shared"
+import { CreamSection, GlassCardLight, LightSection, Reveal, RoleHero } from "./_shared"
 
 const BENEFITS = [
   {
@@ -181,19 +181,17 @@ export default function Advisors() {
       <Navbar />
 
       <main id="main-content">
-        <PageHeader
+        <RoleHero
+          roleId="advisor"
+          imageSrc="/images/paths-advisor-pexels.jpg"
           title={
             <>
-              Some people are just wired to help others succeed.
+              Some people are just wired to help <span className="text-rellia-mint">others succeed.</span>
             </>
           }
-          subtitle={
-            <p className="font-urbanist">
-              Mentor serious health tech founders through structured, respectful engagements—stay sharp on innovation while
-              keeping flexibility for your career.
-            </p>
-          }
-          variant="dark"
+          subtitle="Mentor serious health tech founders through structured, respectful engagements—stay sharp on innovation while keeping flexibility for your career."
+          primaryCta={{ label: "Apply to join", to: "/apply" }}
+          secondaryCta={{ label: "Browse our Advisors", to: "/advisors/directory" }}
         />
 
         <ScheduleSplit />

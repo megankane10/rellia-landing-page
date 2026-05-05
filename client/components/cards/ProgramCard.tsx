@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom"
 import { useState } from "react"
-import { ArrowRight, Bell } from "lucide-react"
+import { ArrowRight, Bell, CalendarDays } from "lucide-react"
+import { getCurrentMonthDeadline } from "@/lib/dateUtils"
 import RelliaAction from "@/components/RelliaAction"
 import { cn } from "@/lib/utils"
 import FilloutPopupDialog from "@/components/FilloutPopupDialog"
@@ -93,7 +94,7 @@ export const ProgramCard = ({
           <div className="flex flex-1 flex-col p-4 sm:p-5">
             {/* Title + description */}
             <div className="flex shrink-0 flex-col">
-              <h3 className="line-clamp-2 font-host-grotesk text-xl font-medium leading-snug tracking-tight text-black sm:text-2xl sm:leading-snug">
+              <h3 className="line-clamp-2 font-host-grotesk text-xl font-normal leading-snug tracking-tight text-black sm:text-2xl sm:leading-snug">
                 {hasHref ? (
                   <Link
                     to={href as string}
@@ -108,6 +109,14 @@ export const ProgramCard = ({
               <p className="mt-2 font-urbanist text-sm leading-relaxed text-black/55 line-clamp-3 sm:text-[15px]">
                 {description}
               </p>
+            </div>
+
+            {/* Deadline */}
+            <div className="mt-4 flex items-center gap-1.5 text-black">
+              <CalendarDays className="h-3.5 w-3.5 text-rellia-teal" />
+              <span className="font-host-grotesk text-[11px] font-bold uppercase tracking-widest">
+                Deadline: {getCurrentMonthDeadline()}
+              </span>
             </div>
 
             {/* Button */}

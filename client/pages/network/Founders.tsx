@@ -540,11 +540,9 @@ function MembershipDifferentSection() {
             return (
               <Reveal key={item.title} delay={0.05 * idx}>
                 <div className="flex w-full flex-col items-start text-left">
-                  <span className="inline-flex h-12 w-12 items-center justify-center rounded-xl bg-rellia-teal/5 text-rellia-teal">
-                    <Icon className="h-6 w-6 shrink-0" aria-hidden />
-                  </span>
+                  <Icon className="h-9 w-9 shrink-0 text-rellia-teal" aria-hidden />
                   <h3 className="mt-5 font-host-grotesk text-xl font-semibold text-rellia-teal md:text-2xl">{item.title}</h3>
-                  <p className="mt-3 font-urbanist text-base leading-relaxed text-black/75 md:text-lg">{item.body}</p>
+                  <p className="mt-3 max-w-[320px] font-urbanist text-base leading-relaxed text-black/75 md:text-lg">{item.body}</p>
                 </div>
               </Reveal>
             )

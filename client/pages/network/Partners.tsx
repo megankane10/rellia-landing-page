@@ -11,7 +11,7 @@ import { GETPROVEN_VENDORS_GRID_URL } from "@/config/partnerLinks"
 import { ArrowRight, Check, ExternalLink, Handshake, LayoutGrid, Megaphone } from "lucide-react"
 import { Link } from "react-router-dom"
 import RelliaCta from "@/components/RelliaCta"
-import { CreamSection, GlassCardLight, LightSection, Reveal } from "./_shared"
+import { CreamSection, GlassCardLight, LightSection, Reveal, RoleHero } from "./_shared"
 
 const engagementCardClass =
   "group flex min-h-[240px] flex-col rounded-2xl border border-white/15 bg-white/5 p-8 backdrop-blur-md transition-colors duration-300 hover:border-rellia-mint/40 hover:bg-white/10 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-rellia-teal"
@@ -247,14 +247,17 @@ export default function Partners() {
       <Navbar />
 
       <main id="main-content">
-        <PageHeader
+        <RoleHero
+          roleId="partner"
+          imageSrc="/images/metrics-bg-pexels-2.jpg"
           title={
             <>
               Reach the health tech founders <span className="text-rellia-mint">who need you.</span>
             </>
           }
           subtitle="Pilot design, integration support, and enterprise credibility—so promising products don’t die in procurement limbo."
-          variant="dark"
+          primaryCta={{ label: "Apply to join", to: "/apply" }}
+          secondaryCta={{ label: "Explore Partners", to: "/industry-partners/directory" }}
         />
 
         <PartnerEngageTealBand />

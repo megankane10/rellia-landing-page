@@ -289,7 +289,7 @@ export function TeamMemberCard({
       <div>
         <h3 className="mb-1 text-lg font-semibold text-black md:text-xl">{name}</h3>
         {role ? (
-          <p className="text-sm font-semibold uppercase tracking-wider text-rellia-teal md:text-base">{role}</p>
+          <p className="text-sm font-semibold text-rellia-teal md:text-base">{role}</p>
         ) : null}
       </div>
     </div>
