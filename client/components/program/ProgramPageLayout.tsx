@@ -11,6 +11,12 @@ import { CheckCircle2, ArrowRight, ArrowLeft, ChevronLeft, CalendarDays } from "
 import { getCurrentMonthDeadline } from "@/lib/dateUtils"
 import RelliaAction from "@/components/RelliaAction"
 import { cn } from "@/lib/utils"
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+} from "@/components/ui/carousel"
 import type { QmsProgramContent } from "@shared/cms/types"
 import type { ProgramPageStaticBlocks } from "@shared/cms/programs/types"
 
@@ -191,6 +197,65 @@ const ProgramPageLayout = ({
           </div>
         </section>
 
+        {/* ─── Trusted Members Section ─── */}
+        <section className="relative w-full bg-white py-20 md:py-32 px-6 md:px-10 overflow-hidden border-b border-black/5">
+          <div className="relative z-10 max-w-[1300px] mx-auto text-center">
+            <ScrollReveal>
+              <h2 className="font-host-grotesk text-3xl font-semibold leading-tight tracking-tight text-black md:text-[40px] mb-12">Already Trusted by Rellia Members</h2>
+            </ScrollReveal>
+            
+            <ScrollReveal delay={0.2}>
+              <Carousel
+                opts={{
+                  align: "start",
+                  loop: true,
+                }}
+                className="w-full"
+              >
+                <CarouselContent className="-ml-4">
+                  {[
+                    {
+                      name: "Melissa West",
+                      role: "Founder",
+                      company: "Akesyn",
+                      image: "/images/testimonials-melissaW.jpg",
+                      quote: "Rellia Health has been instrumental in our regulatory strategy. The level of operator feedback we received was exactly what we needed to de-risk our roadmap before our next round.",
+                    },
+                    {
+                      name: "Mazhar Bashir",
+                      role: "CEO",
+                      company: "Miraei",
+                      image: "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=400",
+                      quote: "The connections I made through the Rellia network opened doors that would have taken months to navigate on my own. It's the only community that understands the reality of healthcare complexity.",
+                    },
+                    {
+                      name: "Sahil Saini",
+                      role: "Founder",
+                      company: "Neuromod",
+                      image: "https://images.pexels.com/photos/614810/pexels-photo-614810.jpeg?auto=compress&cs=tinysrgb&w=400",
+                      quote: "As a technical founder, Rellia helped me translate our product features into a clinical narrative that resonated with health system buyers and investors alike.",
+                    },
+                  ].map((t) => (
+                    <CarouselItem key={t.name} className="pl-4 basis-full md:basis-1/2 lg:basis-1/3">
+                      <div className="h-full flex flex-col items-center p-8 md:p-10 rounded-3xl border border-black/5 bg-rellia-cream/20 min-h-[420px] justify-between">
+                        <p className="font-urbanist text-lg md:text-xl leading-relaxed text-black/70 italic">&ldquo;{t.quote}&rdquo;</p>
+                        <div className="mt-8 flex flex-col items-center">
+                          <Avatar className="h-16 w-16 mb-4 border-2 border-rellia-teal/10">
+                            <AvatarImage src={t.image} className="object-cover" />
+                            <AvatarFallback className="bg-rellia-teal text-white">{t.name[0]}</AvatarFallback>
+                          </Avatar>
+                          <h4 className="font-host-grotesk font-bold text-black">{t.name}</h4>
+                          <p className="font-urbanist text-sm text-black/50">{t.role}, {t.company}</p>
+                        </div>
+                      </div>
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+              </Carousel>
+            </ScrollReveal>
+          </div>
+        </section>
+
         {/* ─── How It Works ─── */}
         <section className="py-16 md:py-24 bg-white">
           <div className="max-w-[1300px] mx-auto px-6 md:px-10">
@@ -270,8 +335,8 @@ const ProgramPageLayout = ({
                         <div className={cn("absolute left-0 top-[26px] -translate-x-1/2 w-3.5 h-3.5 rounded-full border-2 transition-colors duration-300", timelineOpen === month.month ? "border-rellia-teal bg-rellia-mint" : "border-black/20 bg-white")} />
                         <span className={cn("font-host-grotesk text-[11px] font-semibold uppercase tracking-[0.16em] block", timelineOpen === month.month ? "text-rellia-teal" : "text-black/40")}>Step {idx + 1}</span>
                         <AccordionTrigger className="font-host-grotesk font-semibold text-black text-lg md:text-xl py-2 hover:no-underline [&[data-state=open]]:text-rellia-teal transition-colors text-left">{month.month}</AccordionTrigger>
-                        <AccordionContent className="pb-2">
-                          <ul className="flex flex-col gap-2 pl-1">
+                        <AccordionContent className="pb-4">
+                          <ul className="flex flex-col gap-4 pl-1">
                             {month.weeks.map((w) => (<li key={w} className="flex items-start gap-2"><CheckCircle2 className="w-4 h-4 text-rellia-mint shrink-0 mt-0.5" /><span className="font-urbanist text-black text-base leading-relaxed">{w}</span></li>))}
                           </ul>
                         </AccordionContent>

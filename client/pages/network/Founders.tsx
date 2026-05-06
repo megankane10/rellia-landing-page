@@ -30,6 +30,7 @@ import {
   Users,
   Video,
   X,
+  Sparkles,
 } from "lucide-react"
 import { Link } from "react-router-dom"
 import { NETWORK_PATH_ROLE_TAG } from "@/lib/networkPathRoles"
@@ -65,10 +66,25 @@ const ELIGIBILITY_BENTO_ITEMS = [
       "https://images.pexels.com/photos/7088489/pexels-photo-7088489.jpeg?auto=compress&cs=tinysrgb&w=1200",
   },
   {
-    text: "Founding teams from idea through Series A who can execute in healthcare complexity",
+    text: "Founding teams from idea through Series A",
     pexelsQuery: "health tech startup founders meeting office collaboration pitch",
     fallbackUrl:
       "https://images.pexels.com/photos/3184292/pexels-photo-3184292.jpeg?auto=compress&cs=tinysrgb&w=1200",
+  },
+  {
+    text: "AI and machine learning in clinical workflows",
+    pexelsQuery: "artificial intelligence healthcare machine learning doctor surgery",
+    fallbackUrl: "https://images.pexels.com/photos/8376277/pexels-photo-8376277.jpeg?auto=compress&cs=tinysrgb&w=1200",
+  },
+  {
+    text: "Payer and value-based care infrastructure",
+    pexelsQuery: "business meeting healthcare insurance payer finance",
+    fallbackUrl: "https://images.pexels.com/photos/3184339/pexels-photo-3184339.jpeg?auto=compress&cs=tinysrgb&w=1200",
+  },
+  {
+    text: "Direct-to-consumer healthcare and wellness",
+    pexelsQuery: "telehealth patient smartphone home healthcare care",
+    fallbackUrl: "https://images.pexels.com/photos/4050824/pexels-photo-4050824.jpeg?auto=compress&cs=tinysrgb&w=1200",
   },
 ] as const
 
@@ -286,7 +302,7 @@ function DeeperHelpValuesSection() {
 
             <div className="mt-12 sm:mt-[4.8rem] md:mt-[7.2rem] lg:mt-[8.4rem] lg:flex lg:flex-1 lg:items-center">
               <div className="w-full">
-                <div className="grid grid-cols-1 items-stretch gap-4 sm:grid-cols-2 md:gap-5 lg:grid-cols-3 xl:grid-cols-4">
+                <div className="grid grid-cols-2 items-stretch gap-3 sm:gap-4 md:gap-5 lg:grid-cols-3 xl:grid-cols-4">
                   {CONSULTING_FEATURES.map((v, i) => {
                     const Icon = v.icon
                     return (
@@ -294,14 +310,14 @@ function DeeperHelpValuesSection() {
                         <div
                           className={cn(
                             relliaTealGlassCardClass,
-                            "flex h-full min-h-[200px] flex-col px-5 py-5 sm:min-h-[220px] sm:px-6 sm:py-6 md:min-h-[250px] md:px-7 md:py-8",
+                            "flex h-full min-h-[140px] flex-col px-4 py-4 sm:min-h-[220px] sm:px-6 sm:py-6 md:min-h-[250px] md:px-7 md:py-8",
                           )}
                         >
-                          <Icon className="h-6 w-6 shrink-0 text-rellia-mint sm:h-7 sm:w-7" aria-hidden />
-                          <p className="mt-3 font-host-grotesk text-base font-semibold leading-snug tracking-tight text-white sm:mt-4 sm:text-lg md:text-xl">
+                          <Icon className="h-5 w-5 shrink-0 text-rellia-mint sm:h-7 sm:w-7" aria-hidden />
+                          <p className="mt-2.5 font-host-grotesk text-sm font-semibold leading-snug tracking-tight text-white sm:mt-4 sm:text-lg md:text-xl">
                             {v.title}
                           </p>
-                          <p className="mt-2 flex-1 font-urbanist text-sm leading-normal text-white/80 sm:mt-3 sm:text-base md:text-lg">
+                          <p className="mt-1.5 flex-1 font-urbanist text-xs leading-normal text-white/80 sm:mt-3 sm:text-base md:text-lg">
                             {v.body}
                           </p>
                         </div>
@@ -399,7 +415,7 @@ const EligibilityBentoCard = ({
   return (
     <article
       className={cn(
-        "group relative flex min-h-[220px] flex-col overflow-hidden rounded-[22px] border border-black/10 shadow-[0_24px_60px_-42px_rgba(13,53,64,0.5)] md:min-h-[240px] lg:h-full lg:min-h-0",
+        "group relative flex h-[320px] md:h-[400px] flex-col overflow-hidden rounded-[22px] border border-black/10 shadow-[0_24px_60px_-42px_rgba(13,53,64,0.5)]",
         className,
       )}
     >
@@ -411,14 +427,10 @@ const EligibilityBentoCard = ({
       />
       <div aria-hidden className="absolute inset-0 bg-gradient-to-br from-black/85 via-black/5 to-transparent" />
       <div aria-hidden className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/15 to-transparent" />
-      <div className="relative z-10 flex h-full min-h-0 w-full flex-1 flex-col justify-end p-5 text-left md:p-7">
+      <div className="relative z-10 flex h-full min-h-0 w-full flex-1 flex-col justify-end p-6 text-left md:p-8">
+        <Sparkles className="mb-5 h-10 w-10 text-rellia-mint" />
         <p
-          className={cn(
-            "self-start font-host-grotesk font-semibold leading-snug tracking-tight text-white [text-shadow:0_2px_28px_rgba(0,0,0,0.5)]",
-            featured
-              ? "max-w-[min(100%,18rem)] text-xl sm:max-w-[20rem] sm:text-2xl md:max-w-[22rem] md:text-[1.65rem] md:leading-snug lg:text-[1.85rem] lg:leading-[1.2]"
-              : "max-w-[min(100%,13rem)] text-lg sm:max-w-[15rem] sm:text-xl md:max-w-[17rem] md:text-[1.35rem] md:leading-snug lg:max-w-[18rem] lg:text-[1.45rem]",
-          )}
+          className="self-start font-host-grotesk font-medium text-2xl md:text-[1.75rem] leading-[1.2] tracking-tight text-white [text-shadow:0_2px_28px_rgba(0,0,0,0.5)] max-w-[240px]"
         >
           {item.text}
         </p>
@@ -436,27 +448,16 @@ function EligibilitySection() {
           animated={false}
           title="Built for serious health tech teams"
           description="Rellia works with companies where healthcare complexity is core to the product—evidence, regulation, workflow, and traction at once."
-          className="mt-5 max-w-3xl [&>p]:max-w-[min(100%,22rem)] [&>p]:text-left [&>p]:leading-relaxed"
+          className="mt-5 max-w-full [&>p]:max-w-full [&>p]:text-left [&>p]:leading-relaxed"
         />
 
         <div
-          className={cn(
-            "mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5",
-            "lg:mt-14 lg:grid-cols-4 lg:grid-rows-3 lg:gap-5 lg:[grid-auto-rows:minmax(200px,1fr)]",
-          )}
+          className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:mt-14 lg:grid-cols-4"
         >
-          {ELIGIBILITY_BENTO_ITEMS.map((item, idx) => (
+          {ELIGIBILITY_BENTO_ITEMS.map((item) => (
             <EligibilityBentoCard
               key={item.text}
               item={item}
-              featured={idx === 0}
-              className={cn(
-                idx === 0 && "lg:col-span-2 lg:row-span-2 lg:min-h-[380px]",
-                idx === 1 && "lg:col-span-2 lg:row-start-1 lg:col-start-3",
-                idx === 2 && "lg:col-span-2 lg:row-start-2 lg:col-start-3",
-                idx === 3 && "lg:col-span-2 lg:row-start-3 lg:col-start-1",
-                idx === 4 && "lg:col-span-2 lg:row-start-3 lg:col-start-3",
-              )}
             />
           ))}
         </div>
@@ -542,7 +543,7 @@ function MembershipDifferentSection() {
                 <div className="flex w-full flex-col items-start text-left">
                   <Icon className="h-9 w-9 shrink-0 text-rellia-teal" aria-hidden />
                   <h3 className="mt-5 font-host-grotesk text-xl font-semibold text-rellia-teal md:text-2xl">{item.title}</h3>
-                  <p className="mt-3 max-w-[320px] font-urbanist text-base leading-relaxed text-black/75 md:text-lg">{item.body}</p>
+                  <p className="mt-3 max-w-xl font-urbanist text-base leading-relaxed text-black/75 md:text-lg">{item.body}</p>
                 </div>
               </Reveal>
             )
@@ -687,7 +688,7 @@ function DiagnosticSurveySection() {
                 A structured, deep-dive assessment of your company to identify the top areas for improvement. Founders receive a personalized gap analysis report and are matched with the most qualified advisors to help address those critical gaps directly.
               </p>
               <RelliaAction asChild variant="mintTealFill" size="comfortable" className="w-full sm:w-auto justify-center">
-                <Link to="/survey" className="inline-flex cursor-pointer items-center gap-2">
+                <Link to="/diagnostic-survey" className="inline-flex cursor-pointer items-center gap-2">
                   Take Diagnostic Survey
                   <ArrowRight className="h-5 w-5" aria-hidden />
                 </Link>

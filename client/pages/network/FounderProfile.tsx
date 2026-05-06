@@ -35,28 +35,27 @@ export default function FounderProfile() {
 
       <main id="main-content" className="pt-24 pb-16 md:pt-28">
         <div className="mx-auto max-w-[1300px] px-6 md:px-10">
+          <div className="mb-8">
+            <Link to="/founders/directory" className="inline-flex items-center gap-2 font-host-grotesk text-sm font-bold text-rellia-teal hover:underline hover:underline-offset-4">
+              <ArrowLeft className="h-4 w-4" /> Back to Founders Directory
+            </Link>
+          </div>
           <article className="grid gap-10 lg:grid-cols-[minmax(280px,360px)_minmax(0,1fr)] lg:gap-x-14 xl:grid-cols-[400px_1fr]">
             {/* Left Sidebar - Sticky */}
             <div className="flex flex-col gap-6 lg:sticky lg:top-32 lg:self-start">
               <Helmet>
                 <title>{active.logoName} — Rellia Health</title>
                 <meta name="description" content={active.shortDescription} />
-                <meta property="og:title" content={`${active.logoName} — Rellia Health`} />
+                <meta property="og:title" content={active.logoName} />
                 <meta property="og:description" content={active.shortDescription} />
-                <meta property="og:image" content={active.imageSrc.startsWith("http") ? active.imageSrc : `${getSiteUrl()}${active.imageSrc}`} />
-                <meta name="twitter:title" content={`${active.logoName} — Rellia Health`} />
+                <meta property="og:image" content={active.logoSrc.startsWith("http") ? active.logoSrc : `${getSiteUrl()}${active.logoSrc}`} />
+                <meta name="twitter:title" content={active.logoName} />
                 <meta name="twitter:description" content={active.shortDescription} />
-                <meta name="twitter:image" content={active.imageSrc.startsWith("http") ? active.imageSrc : `${getSiteUrl()}${active.imageSrc}`} />
+                <meta name="twitter:image" content={active.logoSrc.startsWith("http") ? active.logoSrc : `${getSiteUrl()}${active.logoSrc}`} />
                 <meta name="twitter:card" content="summary_large_image" />
               </Helmet>
 
-              <div className="overflow-hidden rounded-2xl aspect-[4/5] w-full max-h-[min(56vh,560px)] mb-8">
-                <img
-                  src={active.imageSrc}
-                  alt={`Founder at ${active.logoName}`}
-                  className="h-full w-full object-cover object-top"
-                />
-              </div>
+
 
               <div className="flex min-h-[100px] items-center justify-start md:min-h-[120px]">
                 <img
@@ -70,9 +69,6 @@ export default function FounderProfile() {
                   {active.logoName}
                 </h2>
                 <div className="flex flex-wrap gap-2 mb-6">
-                  <span className="inline-flex rounded-full border border-black/10 bg-black/[0.03] px-3 py-1 font-urbanist text-xs font-semibold text-black/70">
-                    {active.category}
-                  </span>
                   {active.stages.map((s) => (
                     <span
                       key={s}
@@ -81,6 +77,9 @@ export default function FounderProfile() {
                       {s}
                     </span>
                   ))}
+                  <span className="inline-flex rounded-full border border-black/10 bg-black/[0.03] px-3 py-1 font-urbanist text-xs font-semibold text-black/70">
+                    {active.category}
+                  </span>
                 </div>
                 
                 <div className="flex items-center gap-3">

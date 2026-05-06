@@ -107,9 +107,7 @@ function PartnerEngageTealBand() {
               const Icon = card.icon
               const inner = (
                 <>
-                  <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-rellia-mint/35 text-rellia-teal transition-transform duration-300 group-hover:scale-105">
-                    <Icon className="h-5 w-5" aria-hidden />
-                  </span>
+                  <Icon className="h-8 w-8 text-rellia-mint transition-transform duration-300 group-hover:scale-105" aria-hidden />
                   <h3 className="mt-5 font-host-grotesk text-xl font-semibold tracking-tight text-white">{card.title}</h3>
                   <p className="mt-4 flex-1 font-urbanist leading-relaxed text-white/85">{card.body}</p>
                   <span className="mt-6 inline-flex items-center gap-2 font-host-grotesk text-sm font-semibold text-rellia-mint">
@@ -264,31 +262,11 @@ export default function Partners() {
         <BenefitsWithImageSplit />
         <GetProvenSplit />
 
-        <LightSection>
-          <Reveal>
-            <GlassCardLight className="relative overflow-hidden px-8 py-10 md:px-12 md:py-14">
-              <div aria-hidden className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full bg-rellia-mint/25 blur-3xl" />
-              <div aria-hidden className="pointer-events-none absolute -bottom-24 left-10 h-72 w-72 rounded-full bg-rellia-teal/10 blur-3xl" />
-              <div className="relative max-w-2xl">
-                <NetworkEyebrow label="Next step" tone="onLight" />
-                <h2 className="mt-5 text-3xl font-bold tracking-tight text-rellia-teal md:text-4xl">Get in touch</h2>
-                <p className="mt-4 font-urbanist text-lg leading-relaxed text-black/70">
-                  Tell us about your organization, integration surface area, and the founder profiles you want to see more
-                  of. We&apos;ll route you to the right partner lead.
-                </p>
-                <RelliaAction asChild variant="tealFilledLift" size="comfortable" className="mt-8">
-                  <Link to="/contact" aria-label="Go to contact page">
-                    Contact Rellia
-                  </Link>
-                </RelliaAction>
-              </div>
-            </GlassCardLight>
-          </Reveal>
-        </LightSection>
+
 
         <RelliaCta
           title="**Partner** with Rellia"
-          body="Apply to collaborate or list your org in the directory—founders use both paths to find the right integration and procurement fit."
+          body="Tell us about your organization, integration surface area, and the founder profiles you want to see more of. We'll route you to the right partner lead."
           primary={{ label: "Apply", to: "/apply" }}
           secondary={{
             label: "Open directory",

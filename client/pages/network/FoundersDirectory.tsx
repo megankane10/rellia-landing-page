@@ -137,9 +137,6 @@ function FounderDirectoryCard({
           {company.logoName}
         </h3>
         <div className="mt-2 flex flex-wrap gap-2">
-          <span className="inline-flex rounded-full border border-black/10 bg-black/[0.03] px-2.5 py-0.5 font-urbanist text-xs font-semibold text-black/70">
-            {company.category}
-          </span>
           {company.stages.map((s) => (
             <span
               key={s}
@@ -148,6 +145,9 @@ function FounderDirectoryCard({
               {s}
             </span>
           ))}
+          <span className="inline-flex rounded-full border border-black/10 bg-black/[0.03] px-2.5 py-0.5 font-urbanist text-xs font-semibold text-black/70">
+            {company.category}
+          </span>
         </div>
         <p className="mt-4 line-clamp-3 font-urbanist text-sm leading-relaxed text-black/70">{company.shortDescription}</p>
       </div>

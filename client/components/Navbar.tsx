@@ -407,6 +407,16 @@ export default function Navbar({ ctaRadiusClassName = "rounded-full" }: NavbarPr
           </Link>
 
           <div className={desktopRailCls}>
+            {primaryLinks.map((l) => (
+              <DesktopNavLink
+                key={l.to}
+                to={l.to}
+                label={l.label}
+                active={l.active}
+                tone={desktopTone}
+              />
+            ))}
+
             <div ref={desktopNetworkRef}>
               <DesktopNavDropdown
                 label="NETWORK"
@@ -421,16 +431,6 @@ export default function Navbar({ ctaRadiusClassName = "rounded-full" }: NavbarPr
                 onClose={() => setDesktopNetworkOpen(false)}
               />
             </div>
-
-            {primaryLinks.map((l) => (
-              <DesktopNavLink
-                key={l.to}
-                to={l.to}
-                label={l.label}
-                active={l.active}
-                tone={desktopTone}
-              />
-            ))}
 
             <div ref={desktopAboutRef}>
               <DesktopNavDropdown
@@ -518,6 +518,35 @@ export default function Navbar({ ctaRadiusClassName = "rounded-full" }: NavbarPr
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex flex-1 flex-col min-h-0">
+              <Link
+                to="/programs"
+                className={cn(
+                  "flex min-h-12 cursor-pointer items-center gap-3 rounded-xl px-3 py-3 font-host-grotesk text-base font-medium text-white outline-none transition-colors hover:bg-white/10 focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-rellia-teal",
+                  (location.pathname === "/programs" || location.pathname.startsWith("/programs/")) &&
+                    "bg-white/10 ring-1 ring-white/15 text-rellia-mint",
+                )}
+                onClick={handleCloseMobile}
+                aria-current={
+                  location.pathname === "/programs" || location.pathname.startsWith("/programs/")
+                    ? "page"
+                    : undefined
+                }
+              >
+                PROGRAMS
+              </Link>
+
+              <Link
+                className={cn(
+                  "flex min-h-12 cursor-pointer items-center gap-3 rounded-xl px-3 py-3 font-host-grotesk text-base font-medium text-white outline-none transition-colors hover:bg-white/10 focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-rellia-teal",
+                  isActive("/events") && "bg-white/10 ring-1 ring-white/15 text-rellia-mint",
+                )}
+                to="/events"
+                onClick={handleCloseMobile}
+                aria-current={isActive("/events") ? "page" : undefined}
+              >
+                EVENTS
+              </Link>
+
               <button
                 type="button"
                 className={cn(
@@ -562,35 +591,6 @@ export default function Navbar({ ctaRadiusClassName = "rounded-full" }: NavbarPr
                     </div>
                   </div>
                 </div>
-
-              <Link
-                to="/programs"
-                className={cn(
-                  "flex min-h-12 cursor-pointer items-center gap-3 rounded-xl px-3 py-3 font-host-grotesk text-base font-medium text-white outline-none transition-colors hover:bg-white/10 focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-rellia-teal",
-                  (location.pathname === "/programs" || location.pathname.startsWith("/programs/")) &&
-                    "bg-white/10 ring-1 ring-white/15 text-rellia-mint",
-                )}
-                onClick={handleCloseMobile}
-                aria-current={
-                  location.pathname === "/programs" || location.pathname.startsWith("/programs/")
-                    ? "page"
-                    : undefined
-                }
-              >
-                PROGRAMS
-              </Link>
-
-              <Link
-                className={cn(
-                  "flex min-h-12 cursor-pointer items-center gap-3 rounded-xl px-3 py-3 font-host-grotesk text-base font-medium text-white outline-none transition-colors hover:bg-white/10 focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-rellia-teal",
-                  isActive("/events") && "bg-white/10 ring-1 ring-white/15 text-rellia-mint",
-                )}
-                to="/events"
-                onClick={handleCloseMobile}
-                aria-current={isActive("/events") ? "page" : undefined}
-              >
-                EVENTS
-              </Link>
 
               <button
                 type="button"

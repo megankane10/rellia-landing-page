@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react"
 import { Link } from "react-router-dom"
-import { CircleHelp, ChevronDown, ChevronLeft, ChevronRight, ChevronUp, Medal } from "lucide-react"
+import { CircleHelp, ChevronDown, ChevronLeft, ChevronRight, ChevronUp, Medal, ArrowRight } from "lucide-react"
 import ScrollReveal from "./ScrollReveal"
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
@@ -268,7 +268,8 @@ export default function TestimonialsSection({ titleLead, titleAccent, testimonia
       </div>
 
       <section className="w-full overflow-x-hidden bg-white px-6 pb-10 pt-16 md:pb-12 md:pt-24">
-      <div className="relative max-w-[1300px] mx-auto w-full min-w-0">
+      <div className="relative w-full overflow-hidden">
+        <div className="max-w-[1300px] mx-auto w-full min-w-0 px-6 md:px-10">
         <ScrollReveal className="mb-10 md:mb-14">
           <div className="relative isolate mx-auto flex w-full max-w-3xl flex-col items-center text-center">
             <div
@@ -307,8 +308,12 @@ export default function TestimonialsSection({ titleLead, titleAccent, testimonia
               containScroll: "trimSnaps",
             }}
             setApi={(api) => setCarouselApi(api as unknown)}
-            className="w-full max-w-full min-w-0"
+            className="relative w-full max-w-full min-w-0"
           >
+            {/* Peek Gradients - only visible when there's more to scroll */}
+            <div className="pointer-events-none absolute -inset-y-2 right-0 z-20 w-32 bg-gradient-to-l from-white via-white/80 to-transparent sm:w-48" />
+
+
             <div className="relative flex flex-col gap-4 md:gap-5">
               {/*
                 Viewport clips horizontally; each slide min-w-0 prevents flex overflow.
@@ -320,7 +325,7 @@ export default function TestimonialsSection({ titleLead, titleAccent, testimonia
                     key={t.name}
                     className={cn(
                       "flex min-h-0 min-w-0 pl-4 md:pl-6",
-                      "basis-[88%] sm:basis-[78%] md:basis-1/2 xl:basis-1/3",
+                      "basis-[85%] sm:basis-[75%] md:basis-[45%] lg:basis-[31%]",
                     )}
                   >
                     <TestimonialCard
@@ -350,16 +355,9 @@ export default function TestimonialsSection({ titleLead, titleAccent, testimonia
                 <div className="flex w-full flex-wrap items-center justify-between gap-3">
                   <Link
                     to="/founders/directory"
-                    className={cn(
-                      "inline-flex h-11 shrink-0 items-center justify-center rounded-full border border-rellia-teal bg-rellia-teal",
-                      "px-4 font-host-grotesk text-sm font-semibold text-white shadow-sm",
-                      "transition-[transform,background-color,color,border-color,box-shadow] duration-300 ease-out motion-reduce:transition-none",
-                      "hover:-translate-y-0.5 hover:border-rellia-mint hover:bg-rellia-mint hover:text-rellia-teal hover:shadow-md",
-                      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-white",
-                      "md:px-4",
-                    )}
+                    className="inline-flex items-center gap-1 font-host-grotesk text-sm font-bold text-rellia-teal transition-colors hover:text-black hover:underline underline-offset-4"
                   >
-                    Discover startups
+                    View Alumni <ArrowRight className="h-4 w-4" />
                   </Link>
 
                   <div className="flex shrink-0 items-center gap-2">
@@ -390,6 +388,7 @@ export default function TestimonialsSection({ titleLead, titleAccent, testimonia
 
         <div className="mt-6 md:mt-8">
           <LogoMarquee flush showHeading={false} sectionClassName="py-0" />
+        </div>
         </div>
       </div>
       </section>

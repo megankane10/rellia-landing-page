@@ -99,7 +99,7 @@ const JOIN_TEAM_MARQUEE_LOOP_SEC = 56
 /** Shared geometry + mint sweep hover so primary and outline CTAs match pixel-for-pixel */
 const joinTeamCtaSharedClass = cn(
   "group relative isolate inline-flex cursor-pointer items-center justify-center overflow-hidden rounded-full border-2 border-rellia-teal outline-none",
-  "px-7 py-3 font-host-grotesk text-sm font-semibold leading-none tracking-tight md:px-9 md:py-3.5 md:text-base",
+  "px-8 py-3.5 font-host-grotesk text-base font-semibold leading-none tracking-tight md:px-10 md:py-4 md:text-lg",
   "transition-[transform,box-shadow,border-color,background-color] duration-300 motion-reduce:transition-none",
   "before:pointer-events-none before:absolute before:inset-0 before:z-0 before:origin-left before:scale-x-0 before:rounded-full before:bg-rellia-mint before:transition-transform before:duration-300 before:ease-out",
   "hover:before:scale-x-100",

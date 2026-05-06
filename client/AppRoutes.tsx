@@ -130,8 +130,8 @@ export const AppRoutes = () => (
     <Route path="/privacy" element={<PrivacyPolicy />} />
 
     <Route path="/diagnostics" element={<DiagnosticLanding />} />
-    <Route path="/diagnosticSurvey" element={<DiagnosticSurvey />} />
-    <Route path="/survey" element={<PlaceholderPage title="Diagnostic Survey" subtitle="Coming soon..." />} />
+    <Route path="/diagnostic-survey" element={<DiagnosticSurvey />} />
+    <Route path="/survey" element={<Navigate to="/diagnostic-survey" replace />} />
 
     <Route path="*" element={<NotFound />} />
   </Routes>

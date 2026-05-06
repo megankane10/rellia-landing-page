@@ -124,11 +124,11 @@ function BenefitsTealBand() {
             return (
               <div
                 key={b.title}
-                className="rounded-2xl border border-white/15 bg-white/5 p-6 backdrop-blur-md transition duration-300 hover:border-rellia-mint/35 hover:bg-white/10"
+                className="flex flex-col items-start text-left"
               >
-                <Icon className="h-7 w-7 text-rellia-mint" aria-hidden />
-                <p className="mt-5 font-host-grotesk text-lg font-semibold leading-snug text-white">{b.title}</p>
-                <p className="mt-3 font-urbanist text-sm leading-relaxed text-white/80">{b.body}</p>
+                <Icon className="h-8 w-8 text-rellia-mint" aria-hidden />
+                <p className="mt-5 font-host-grotesk text-xl font-semibold leading-snug text-white">{b.title}</p>
+                <p className="mt-3 font-urbanist text-base leading-relaxed text-white/80">{b.body}</p>
               </div>
             )
           })}
@@ -146,27 +146,42 @@ function ScheduleSplit() {
   })
 
   return (
-    <section className="w-full bg-rellia-cream/25 px-6 py-16 md:px-10 md:py-24">
-      <div className="mx-auto grid max-w-[1300px] gap-10 lg:grid-cols-[min(44%,480px)_1fr] lg:items-center lg:gap-16">
-        <div className="relative overflow-hidden rounded-[28px] border border-black/10 shadow-lg lg:order-2">
-          <img src={img} alt="" className="aspect-[5/4] w-full object-cover md:aspect-[4/3]" />
-          <div className="absolute inset-0 bg-gradient-to-tr from-rellia-teal/40 to-transparent" aria-hidden />
+    <section className="w-full bg-rellia-cream/25 px-6 py-20 md:px-10 md:py-32">
+      <div className="mx-auto grid max-w-[1300px] gap-12 lg:grid-cols-[min(38%,420px)_1fr] lg:items-start lg:gap-20">
+        <div className="relative overflow-hidden rounded-[28px] border border-black/10 shadow-lg">
+          <img src={img} alt="" className="aspect-[3/4] w-full object-cover" />
+          <div className="absolute inset-0 bg-gradient-to-tr from-rellia-teal/30 to-transparent" aria-hidden />
         </div>
-        <div className="lg:order-1">
+        <div className="pt-2">
           <NetworkEyebrow label="Your time" tone="onLight" />
-          <h2 className="mt-5 font-host-grotesk text-3xl font-semibold tracking-tight text-black md:text-[40px]">
+          <h2 className="mt-5 font-host-grotesk text-3xl font-semibold tracking-tight text-black md:text-[48px] leading-[1.1]">
             Flexible for <span className="text-rellia-teal">senior</span> schedules
           </h2>
-          <div className="mt-8 flex gap-4 rounded-2xl border border-rellia-teal/15 bg-white p-6 shadow-sm">
-            <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-rellia-mint/30 text-rellia-teal">
-              <Clock className="h-6 w-6" aria-hidden />
-            </span>
-            <div>
-              <p className="font-host-grotesk text-lg font-semibold text-rellia-teal">1–3 hours, on your terms</p>
-              <p className="mt-2 font-urbanist leading-relaxed text-black/75">
-                Advisory roles are designed for short, high-leverage blocks—adjustable as your capacity changes. Depth when
-                you opt in, never a second job by default.
-              </p>
+          
+          <div className="mt-12 space-y-12">
+            <div className="flex gap-5">
+              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl text-rellia-teal">
+                <Clock className="h-7 w-7" aria-hidden />
+              </span>
+              <div>
+                <p className="font-host-grotesk text-xl font-bold text-black">1–3 hours, on your terms</p>
+                <p className="mt-2 font-urbanist text-lg leading-relaxed text-black/70">
+                  Advisory roles are designed for short, high-leverage blocks—adjustable as your capacity changes. Depth when
+                  you opt in, never a second job by default.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex gap-5">
+              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl text-rellia-teal">
+                <HeartHandshake className="h-7 w-7" aria-hidden />
+              </span>
+              <div>
+                <p className="font-host-grotesk text-xl font-bold text-black">Volunteer role</p>
+                <p className="mt-2 font-urbanist text-lg leading-relaxed text-black/70">
+                  Advisors serve on a volunteer basis, focused on impact and ecosystem development. We protect your boundaries while ensuring founders get high-signal feedback.
+                </p>
+              </div>
             </div>
           </div>
         </div>
@@ -206,49 +221,28 @@ export default function Advisors() {
               description="Community presence, formal advisory work, or program leadership—pick surfaces that fit your cadence."
               className="mt-5"
             />
-            <div className="mt-12 grid grid-cols-1 gap-6 md:grid-cols-3">
+            <div className="mt-16 grid grid-cols-1 gap-12 md:grid-cols-3">
               {SUPPORT_MODELS.map((row, idx) => (
                 <Reveal key={row.title} delay={0.06 * idx}>
-                  <GlassCardLight className="flex h-full flex-col p-8 transition duration-300 hover:-translate-y-0.5 hover:shadow-md cursor-default">
-                    <h3 className="font-host-grotesk text-xl font-semibold text-rellia-teal">{row.title}</h3>
-                    <p className="mt-3 flex-1 font-urbanist leading-relaxed text-black/75">{row.body}</p>
+                  <div className="flex flex-col items-start text-left">
+                    <Sparkles className="h-8 w-8 text-rellia-teal mb-6" aria-hidden />
+                    <h3 className="font-host-grotesk text-2xl font-bold text-rellia-teal">{row.title}</h3>
+                    <p className="mt-4 flex-1 font-urbanist text-lg leading-relaxed text-black/75">{row.body}</p>
                     {row.linkTo && row.linkLabel ? (
                       <Link
                         to={row.linkTo}
-                        className="mt-6 inline-flex cursor-pointer items-center gap-2 font-host-grotesk text-sm font-semibold text-rellia-teal underline-offset-4 hover:underline"
+                        className="mt-6 inline-flex cursor-pointer items-center gap-2 font-host-grotesk text-base font-semibold text-rellia-teal underline-offset-4 hover:underline"
                       >
                         {row.linkLabel}
                         <ArrowRight className="h-4 w-4" aria-hidden />
                       </Link>
                     ) : null}
-                  </GlassCardLight>
+                  </div>
                 </Reveal>
               ))}
             </div>
           </div>
         </LightSection>
-
-        <CreamSection>
-          <div className="mx-auto flex max-w-[1300px] flex-col gap-10 lg:flex-row lg:items-center lg:justify-between">
-            <Reveal className="max-w-xl">
-              <NetworkEyebrow label="Directory" tone="onLight" />
-              <h2 className="mt-5 font-host-grotesk text-3xl font-semibold tracking-tight text-black md:text-[40px]">
-                Meet the advisor bench
-              </h2>
-              <p className="mt-4 font-urbanist text-lg leading-relaxed text-black/70">
-                Filter by expertise, search by keyword, and open profiles—representative of how we route founders.
-              </p>
-            </Reveal>
-            <Reveal delay={0.06}>
-              <RelliaAction asChild variant="tealFilledLift" size="comfortable">
-                <Link to="/advisors/directory" className="inline-flex cursor-pointer items-center gap-2">
-                  Open advisor directory
-                  <ArrowRight className="h-4 w-4" aria-hidden />
-                </Link>
-              </RelliaAction>
-            </Reveal>
-          </div>
-        </CreamSection>
 
         <LightSection>
           <div className="mx-auto max-w-[1300px]">

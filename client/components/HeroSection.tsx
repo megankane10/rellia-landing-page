@@ -6,9 +6,10 @@ import RelliaAction from "@/components/RelliaAction"
 import { motion, useReducedMotion } from "framer-motion"
 
 /** Stagger timing must stay in sync with `headlineBelowFoldDelayMs` below */
-const HEADLINE_STAGGER_CHILDREN_S = 0.22
-const HEADLINE_DELAY_CHILDREN_S = 0.22
-const HEADLINE_WORD_DURATION_S = 1.12
+const HEADLINE_STAGGER_CHILDREN_S = 0.15
+const HEADLINE_DELAY_CHILDREN_S = 0.2
+const HEADLINE_WORD_DURATION_S = 0.5
+const HEADLINE_Y_OFFSET = 24
 
 /** Soft ease-out — slow start, gentle settle */
 const HEADLINE_WORD_EASE = [0.33, 1, 0.68, 1] as const
@@ -18,11 +19,11 @@ const BELOW_FOLD_EASE = [0.33, 1, 0.68, 1] as const
 const isFutureHeadlineWord = (token: string) =>
   token.replace(/[.,!?;:]+$/, "").toLowerCase() === "future"
 
-const headlineBelowFoldDelayMs = (wordCount: number) => {
-  const n = Math.max(wordCount, 1)
+const headlineBelowFoldDelayMs = (lineCount: number) => {
+  const n = Math.max(lineCount, 1)
   const totalS =
     HEADLINE_DELAY_CHILDREN_S + (n - 1) * HEADLINE_STAGGER_CHILDREN_S + HEADLINE_WORD_DURATION_S
-  /** Start below-fold earlier than the strict “last word finished” estimate (overlap is intentional). */
+  /** Start below-fold earlier than the strict “last line finished” estimate. */
   return Math.max(0, Math.round(totalS * 1000) - 320)
 }
 
@@ -43,18 +44,27 @@ export default function HeroSection({ content }: HeroSectionProps) {
   const reduceMotion = useReducedMotion()
   const [showBelowFold, setShowBelowFold] = useState(reduceMotion)
 
-  const headline = (content.headlinePrefix ?? "").trim() || "You are the future of health tech."
-  const headlineWords = useMemo(() => headline.split(/\s+/).filter(Boolean), [headline])
+  const headlineLines = useMemo(() => {
+    const words = (content.headlinePrefix ?? "You are the future of health tech.").trim().split(/\s+/).filter(Boolean)
+    const lines: string[][] = [[]]
+    words.forEach((w) => {
+      lines[lines.length - 1].push(w)
+      if (isFutureHeadlineWord(w)) {
+        lines.push([])
+      }
+    })
+    return lines.filter((l) => l.length > 0)
+  }, [content.headlinePrefix])
 
   useEffect(() => {
     if (reduceMotion) {
       setShowBelowFold(true)
       return
     }
-    const ms = headlineBelowFoldDelayMs(headlineWords.length)
+    const ms = headlineBelowFoldDelayMs(headlineLines.length)
     const t = window.setTimeout(() => setShowBelowFold(true), ms)
     return () => window.clearTimeout(t)
-  }, [reduceMotion, headlineWords.length])
+  }, [reduceMotion, headlineLines.length])
 
   const headlineContainerVariants = {
     hidden: {},
@@ -69,8 +79,8 @@ export default function HeroSection({ content }: HeroSectionProps) {
   const headlineWordVariants = {
     hidden: {
       opacity: reduceMotion ? 1 : 0,
-      y: reduceMotion ? 0 : 36,
-      filter: reduceMotion ? "blur(0px)" : "blur(11px)",
+      y: reduceMotion ? 0 : HEADLINE_Y_OFFSET,
+      filter: reduceMotion ? "blur(0px)" : "blur(8px)",
     },
     visible: {
       opacity: 1,
@@ -114,29 +124,20 @@ export default function HeroSection({ content }: HeroSectionProps) {
               variants={headlineContainerVariants}
               initial="hidden"
               animate="visible"
-              className="flex flex-wrap justify-start gap-x-[0.22em] gap-y-2 text-balance font-host-grotesk text-[46px] font-medium leading-[0.95] tracking-tight text-rellia-mint md:text-[68px] lg:text-[82px]"
+              className="font-host-grotesk text-[46px] font-medium leading-[0.95] tracking-tight text-rellia-mint md:text-[68px] lg:text-[82px] space-y-1"
             >
-              {headlineWords.flatMap((word, index) => {
-                const nodes = [
+              {headlineLines.map((line, idx) => (
+                <div key={`line-${idx}`} className="overflow-hidden flex flex-wrap gap-x-[0.22em]">
                   <motion.span
-                    key={`${index}-${word}`}
                     variants={headlineWordVariants}
-                    className="inline-block will-change-[transform,filter]"
+                    className="inline-flex flex-wrap gap-x-[0.22em] will-change-[transform,filter]"
                   >
-                    {word}
-                  </motion.span>,
-                ]
-                if (isFutureHeadlineWord(word)) {
-                  nodes.push(
-                    <span
-                      key={`${index}-${word}-line`}
-                      aria-hidden
-                      className="hidden h-0 w-full shrink-0 basis-full overflow-hidden md:block"
-                    />,
-                  )
-                }
-                return nodes
-              })}
+                    {line.map((word, wIdx) => (
+                      <span key={`word-${idx}-${wIdx}`}>{word}</span>
+                    ))}
+                  </motion.span>
+                </div>
+              ))}
             </motion.h1>
           </div>
 

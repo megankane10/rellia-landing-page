@@ -69,6 +69,28 @@ export default function Footer() {
             </div>
 
             <div className="grid min-w-0 flex-1 grid-cols-2 gap-x-8 gap-y-10 sm:gap-x-10 md:gap-x-12 md:pl-6 lg:grid-cols-4 lg:gap-x-8 lg:pl-10 xl:gap-x-12 xl:pl-14">
+              {/* Solutions */}
+              <div className="flex min-w-0 flex-col gap-4 md:gap-6">
+                <h4 className={footerSectionHeadingClass}>Solutions</h4>
+                <nav className="flex flex-col gap-2 md:gap-3" aria-label="Solutions links">
+                  <Link to="/apply" className={footerLinkClass}>
+                    Apply
+                  </Link>
+                  <Link to="/programs" className={footerLinkClass}>
+                    Programs
+                  </Link>
+                  <Link to="/events" className={footerLinkClass}>
+                    Events
+                  </Link>
+                  <Link to="/diagnostic-survey" className={footerLinkClass}>
+                    Startup Diagnostic
+                  </Link>
+                  <Link to="/consulting" className={footerLinkClass}>
+                    Consulting
+                  </Link>
+                </nav>
+              </div>
+
               {/* Network */}
               <div className="flex min-w-0 flex-col gap-4 md:gap-6">
                 <h4 className={footerSectionHeadingClass}>Network</h4>
@@ -88,29 +110,13 @@ export default function Footer() {
                 </nav>
               </div>
 
-              {/* Solutions */}
-              <div className="flex min-w-0 flex-col gap-4 md:gap-6">
-                <h4 className={footerSectionHeadingClass}>Solutions</h4>
-                <nav className="flex flex-col gap-2 md:gap-3" aria-label="Solutions links">
-                  <Link to="/apply" className={footerLinkClass}>
-                    Apply
-                  </Link>
-                  <Link to="/programs" className={footerLinkClass}>
-                    Programs
-                  </Link>
-                  <Link to="/events" className={footerLinkClass}>
-                    Events
-                  </Link>
-                  <Link to="/consulting" className={footerLinkClass}>
-                    Consulting
-                  </Link>
-                </nav>
-              </div>
-
               {/* Resources */}
               <div className="flex min-w-0 flex-col gap-4 md:gap-6">
                 <h4 className={footerSectionHeadingClass}>Resources</h4>
                 <nav className="flex flex-col gap-2 md:gap-3" aria-label="Resources links">
+                  <Link to="/stories" className={footerLinkClass}>
+                    Stories
+                  </Link>
                   <Link to="/founders/directory" className={footerLinkClass}>
                     Startups Directory
                   </Link>
@@ -125,9 +131,6 @@ export default function Footer() {
                   >
                     Industry Partners Directory
                   </a>
-                  <Link to="/stories" className={footerLinkClass}>
-                    Stories
-                  </Link>
                 </nav>
               </div>
 

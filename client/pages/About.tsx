@@ -137,7 +137,7 @@ export default function About() {
 
               <div className="mt-12 sm:mt-[4.8rem] md:mt-[7.2rem] lg:mt-[8.4rem] lg:flex lg:flex-1 lg:items-center">
                 <div className="w-full">
-                  <div className="grid grid-cols-1 items-stretch gap-4 sm:grid-cols-2 md:gap-5 lg:grid-cols-3 xl:grid-cols-4">
+                  <div className="grid grid-cols-2 items-stretch gap-3 sm:gap-4 md:gap-5 lg:grid-cols-3 xl:grid-cols-4">
                 {about.values.map((v, i) => {
                   const Icon = resolveValueIcon(v.iconKey);
 
@@ -146,17 +146,17 @@ export default function About() {
                       <div
                         className={cn(
                           relliaTealGlassCardClass,
-                          "flex h-full min-h-0 w-full flex-col px-6 py-6 sm:px-6 sm:py-7 md:px-7 md:py-8",
+                          "flex h-full min-h-0 w-full flex-col px-4 py-4 sm:px-6 sm:py-7 md:px-7 md:py-8",
                         )}
                       >
                         <Icon
-                          className="h-6 w-6 shrink-0 text-rellia-mint sm:h-7 sm:w-7"
+                          className="h-5 w-5 shrink-0 text-rellia-mint sm:h-7 sm:w-7"
                           aria-hidden
                         />
-                        <p className="mt-3 font-host-grotesk text-base font-semibold leading-snug tracking-tight text-white sm:mt-4 sm:text-lg md:text-xl">
+                        <p className="mt-2.5 font-host-grotesk text-sm font-semibold leading-snug tracking-tight text-white sm:mt-4 sm:text-lg md:text-xl">
                           {v.title}
                         </p>
-                        <p className="mt-2 flex-1 font-urbanist text-sm leading-normal text-white/80 sm:mt-3 sm:text-base md:text-lg">
+                        <p className="mt-1.5 flex-1 font-urbanist text-xs leading-normal text-white/80 sm:mt-3 sm:text-base md:text-lg">
                           {v.description}
                         </p>
                       </div>

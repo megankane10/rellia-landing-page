@@ -186,12 +186,12 @@ export function HorizontalCard(props: HorizontalCardProps) {
             {isWaitlistCard ? (
               <>
                 <Bell className="h-3.5 w-3.5 opacity-80" aria-hidden strokeWidth={2.25} />
-                Waitlist
+                Join the Waitlist
               </>
             ) : (
               <>
                 <Calendar className="h-3.5 w-3.5 opacity-80" aria-hidden strokeWidth={2.25} />
-                Available
+                Applications Open
               </>
             )}
           </span>
@@ -215,10 +215,7 @@ export function HorizontalCard(props: HorizontalCardProps) {
         <img
           src={program.imageSrc}
           alt={program.title}
-          className={cn(
-            "absolute inset-0 h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105",
-            isWaitlistCard && "opacity-[0.88] saturate-[0.65]"
-          )}
+          className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
           loading="lazy"
         />
       </div>

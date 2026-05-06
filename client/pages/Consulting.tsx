@@ -2,7 +2,6 @@ import { PEXELS_HEALTH_MEETING } from "@/config/pexelsFallbacks"
 import { usePexelsPhoto } from "@/hooks/usePexelsPhoto"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
-import PageHeader from "@/components/PageHeader"
 import NetworkEyebrow from "@/components/network/NetworkEyebrow"
 import SectionHeading from "@/components/SectionHeading"
 import MembershipPathTimeline from "@/components/MembershipPathTimeline"
@@ -11,7 +10,7 @@ import RelliaCta from "@/components/RelliaCta"
 import ScrollReveal from "@/components/ScrollReveal"
 import { CheckCircle2, ClipboardList, MessagesSquare, UsersRound } from "lucide-react"
 import { Link } from "react-router-dom"
-import { CreamSection, LightSection, Reveal } from "./network/_shared"
+import { CreamSection, LightSection, Reveal, RoleHero } from "./network/_shared"
 
 const WHEN_TO_USE = [
   "You need scoped deep dives—FDA strategy, clinical evidence design, enterprise sales narrative—in focused sessions",
@@ -102,19 +101,17 @@ export default function Consulting() {
       <Navbar />
 
       <main id="main-content">
-        <PageHeader
-          variant="dark"
+        <RoleHero
+          eyebrowLabel="Consulting"
+          imageSrc={PEXELS_HEALTH_MEETING}
           title={
             <>
               Founder consulting <span className="text-rellia-mint">built for healthcare reality</span>
             </>
           }
-          subtitle={
-            <p className="font-urbanist">
-              One-to-one and small-team working sessions when you need depth beyond community rhythm—regulatory, clinical,
-              commercial, and narrative—with specialists who have shipped in health tech.
-            </p>
-          }
+          subtitle="One-to-one and small-team working sessions when you need depth beyond community rhythm—regulatory, clinical, commercial, and narrative—with specialists who have shipped in health tech."
+          primaryCta={{ label: "Start a conversation", to: "/contact" }}
+          secondaryCta={{ label: "Apply for membership", to: "/apply" }}
         />
 
         <FitSectionSplit />
@@ -157,18 +154,7 @@ export default function Consulting() {
               )
             })}
           </div>
-          <div className="mt-12 flex flex-wrap gap-3">
-            <RelliaAction asChild variant="tealFilledLift" size="comfortable">
-              <Link to="/contact" className="cursor-pointer">
-                Start a consulting conversation
-              </Link>
-            </RelliaAction>
-            <RelliaAction asChild variant="outlineOnWhite" size="comfortable">
-              <Link to="/apply" className="cursor-pointer">
-                Apply for membership
-              </Link>
-            </RelliaAction>
-          </div>
+
         </CreamSection>
 
         <RelliaCta

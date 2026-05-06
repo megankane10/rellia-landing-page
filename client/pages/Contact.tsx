@@ -15,6 +15,21 @@ import { DEFAULT_CONTACT_PAGE } from "@shared/cms/defaults"
  * Aesthetics: Teal + Mint brand colors, soft shadows, rounded corners, modern inputs.
  */
 
+const SI_V = "9.0.0"
+const si = (slug: string) => `https://unpkg.com/simple-icons@${SI_V}/icons/${slug}.svg`
+
+const TRUSTED_LOGOS = [
+  { name: "Google", src: si("google") },
+  { name: "Microsoft", src: si("microsoft") },
+  { name: "Amazon", src: si("amazon") },
+  { name: "Apple", src: si("apple") },
+  { name: "Meta", src: si("meta") },
+  { name: "IBM", src: si("ibm") },
+  { name: "Oracle", src: si("oracle") },
+  { name: "Salesforce", src: si("salesforce") },
+]
+
+
 export default function Contact() {
   const { data } = useContactPage()
   const copy = data ?? DEFAULT_CONTACT_PAGE
@@ -41,6 +56,7 @@ function ContactSection({ copy }: { copy: typeof DEFAULT_CONTACT_PAGE }) {
         <div className="bg-white px-6 py-16 md:px-12 md:py-24 lg:px-20 lg:py-32 flex items-center justify-center relative overflow-hidden">
           {/* Subtle background glow */}
           <div className="absolute top-1/4 -right-20 w-80 h-80 bg-rellia-mint/5 rounded-full blur-[120px] pointer-events-none" />
+          <div className="absolute bottom-10 -right-20 w-80 h-80 bg-rellia-mint/10 rounded-full blur-[120px] pointer-events-none" />
           
           <div className="relative z-10 w-full max-w-xl">
             <ContactForm />
@@ -53,7 +69,7 @@ function ContactSection({ copy }: { copy: typeof DEFAULT_CONTACT_PAGE }) {
 
 function LeftPanel({ copy }: { copy: typeof DEFAULT_CONTACT_PAGE }) {
   return (
-    <div className="relative bg-rellia-teal min-h-[700px] lg:min-h-full flex flex-col px-6 py-20 md:px-12 lg:px-20 overflow-hidden">
+    <div className="relative bg-rellia-teal min-h-[700px] lg:min-h-full flex flex-col px-6 pt-32 pb-20 md:pt-40 md:pb-24 lg:pt-32 lg:px-20 overflow-hidden">
       {/* Background Image with optimized overlay */}
       <div className="absolute inset-0">
         <img
@@ -128,31 +144,25 @@ function LeftPanel({ copy }: { copy: typeof DEFAULT_CONTACT_PAGE }) {
           <p className="font-host-grotesk text-xs font-bold uppercase tracking-widest text-white/60 mb-6">
             Trusted by founders, clinicians, and investors
           </p>
-          <div className="flex flex-wrap gap-8 items-center text-white font-bold">
-             <div className="flex items-center gap-3 group">
-                <div className="h-8 w-8 rounded-lg bg-rellia-mint/10 flex items-center justify-center group-hover:bg-rellia-mint/20 transition-colors">
-                  <Building2 className="h-4 w-4 text-rellia-mint" />
+          
+          <div className="relative w-full overflow-hidden [mask-image:linear-gradient(90deg,transparent,black_10%,black_90%,transparent)]">
+            <motion.div
+              className="flex w-max min-w-max gap-4 sm:gap-6 will-change-transform"
+              animate={{ x: ["0%", "-50%"] }}
+              transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
+            >
+              {[...TRUSTED_LOGOS, ...TRUSTED_LOGOS].map((logo, i) => (
+                <div key={i} className="h-10 w-24 sm:h-12 sm:w-32 shrink-0 flex items-center justify-center">
+                  <img src={logo.src} alt={logo.name} className="h-full w-auto object-contain brightness-0 invert opacity-80" />
                 </div>
-                <span className="text-sm tracking-wide">HEALTH SYSTEMS</span>
-             </div>
-             <div className="flex items-center gap-3 group">
-                <div className="h-8 w-8 rounded-lg bg-rellia-mint/10 flex items-center justify-center group-hover:bg-rellia-mint/20 transition-colors">
-                  <User className="h-4 w-4 text-rellia-mint" />
-                </div>
-                <span className="text-sm tracking-wide">100+ FOUNDERS</span>
-             </div>
-             <div className="flex items-center gap-3 group">
-                <div className="h-8 w-8 rounded-lg bg-rellia-mint/10 flex items-center justify-center group-hover:bg-rellia-mint/20 transition-colors">
-                  <CheckCircle2 className="h-4 w-4 text-rellia-mint" />
-                </div>
-                <span className="text-sm tracking-wide">ISO CERTIFIED</span>
-             </div>
+              ))}
+            </motion.div>
           </div>
         </motion.div>
       </div>
 
       {/* Abstract mint glow at the bottom */}
-      <div className="absolute -bottom-24 -right-24 w-96 h-96 bg-rellia-mint/5 rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute -bottom-24 -right-24 w-96 h-96 bg-rellia-mint/15 rounded-full blur-[120px] pointer-events-none" />
     </div>
   )
 }
@@ -219,7 +229,7 @@ function ContactForm() {
       {/* Row 1: Names */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-7">
         <div className="space-y-2.5">
-          <label className="text-xs font-bold text-rellia-teal/60 font-host-grotesk uppercase tracking-wider ml-1">First Name</label>
+          <label className="text-xs font-bold text-rellia-teal font-host-grotesk uppercase tracking-wider ml-1">First Name</label>
           <div className="relative group">
             <User className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-black/25 group-focus-within:text-rellia-teal transition-colors" />
             <input
@@ -234,7 +244,7 @@ function ContactForm() {
           </div>
         </div>
         <div className="space-y-2.5">
-          <label className="text-xs font-bold text-rellia-teal/60 font-host-grotesk uppercase tracking-wider ml-1">Last Name</label>
+          <label className="text-xs font-bold text-rellia-teal font-host-grotesk uppercase tracking-wider ml-1">Last Name</label>
           <input
             {...register("lastName", { required: true })}
             placeholder="Doe"
@@ -249,7 +259,7 @@ function ContactForm() {
 
       {/* Row 2: Email */}
       <div className="space-y-2.5">
-        <label className="text-xs font-bold text-rellia-teal/60 font-host-grotesk uppercase tracking-wider ml-1">Work Email</label>
+        <label className="text-xs font-bold text-rellia-teal font-host-grotesk uppercase tracking-wider ml-1">Work Email</label>
         <div className="relative group">
           <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-black/25 group-focus-within:text-rellia-teal transition-colors" />
           <input
@@ -272,7 +282,7 @@ function ContactForm() {
       {/* Row 3: Company & Job Title */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-7">
         <div className="space-y-2.5">
-          <label className="text-xs font-bold text-rellia-teal/60 font-host-grotesk uppercase tracking-wider ml-1">Company</label>
+          <label className="text-xs font-bold text-rellia-teal font-host-grotesk uppercase tracking-wider ml-1">Company</label>
           <div className="relative group">
             <Building2 className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-black/25 group-focus-within:text-rellia-teal transition-colors" />
             <input
@@ -286,7 +296,7 @@ function ContactForm() {
           </div>
         </div>
         <div className="space-y-2.5">
-          <label className="text-xs font-bold text-rellia-teal/60 font-host-grotesk uppercase tracking-wider ml-1">Job Title</label>
+          <label className="text-xs font-bold text-rellia-teal font-host-grotesk uppercase tracking-wider ml-1">Job Title</label>
           <input
             {...register("jobTitle")}
             placeholder="Co-founder / Clinical Director"
@@ -300,7 +310,7 @@ function ContactForm() {
 
       {/* Row 4: Message */}
       <div className="space-y-2.5">
-        <label className="text-xs font-bold text-rellia-teal/60 font-host-grotesk uppercase tracking-wider ml-1">How can we help?</label>
+        <label className="text-xs font-bold text-rellia-teal font-host-grotesk uppercase tracking-wider ml-1">How can we help?</label>
         <div className="relative group">
           <MessageSquare className="absolute left-4 top-5 h-4 w-4 text-black/25 group-focus-within:text-rellia-teal transition-colors" />
           <textarea

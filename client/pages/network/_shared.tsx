@@ -365,20 +365,23 @@ export function MultiStepSignupForm({
 
 export function RoleHero({
   roleId,
+  eyebrowLabel,
   title,
   subtitle,
   imageSrc,
   primaryCta,
   secondaryCta,
 }: {
-  roleId: "founder" | "advisor" | "investor" | "partner"
+  roleId?: "founder" | "advisor" | "investor" | "partner"
+  eyebrowLabel?: string
   title: React.ReactNode
   subtitle: React.ReactNode
   imageSrc: string
   primaryCta: { label: string; to: string }
   secondaryCta?: { label: string; to: string }
 }) {
-  const tag = NETWORK_PATH_ROLE_TAG[roleId]
+  const tag = roleId ? NETWORK_PATH_ROLE_TAG[roleId] : undefined
+  const label = eyebrowLabel || (tag ? tag.label : "Network")
   return (
     <section className="relative overflow-hidden bg-rellia-teal pt-[72px] md:pt-[86px] lg:flex lg:flex-1 lg:flex-col lg:min-h-0 lg:pt-[96px]">
       <img
@@ -396,7 +399,7 @@ export function RoleHero({
       />
 
       <div className="relative z-10 mx-auto max-w-[1300px] px-6 pb-20 pt-10 md:px-10 md:pb-28 md:pt-14 lg:flex lg:flex-1 lg:flex-col lg:justify-center lg:pb-20 lg:pt-0">
-        <NetworkEyebrow label={tag.label} tone="onDark" className="mb-6 md:mb-8" />
+        <NetworkEyebrow label={label} tone="onDark" className="mb-6 md:mb-8" />
         <h1
           className={cn(
             "max-w-4xl font-bold leading-[1.08] tracking-tight text-white drop-shadow-sm",
