@@ -310,33 +310,27 @@ export default function TestimonialsSection({ titleLead, titleAccent, testimonia
             setApi={(api) => setCarouselApi(api as unknown)}
             className="relative w-full max-w-full min-w-0"
           >
-            {/* Peek Gradients - only visible when there's more to scroll */}
-            <div className="pointer-events-none absolute -inset-y-2 right-0 z-20 w-32 bg-gradient-to-l from-white via-white/80 to-transparent sm:w-48" />
-
-
             <div className="relative flex flex-col gap-4 md:gap-5">
-              {/*
-                Viewport clips horizontally; each slide min-w-0 prevents flex overflow.
-                1 / 2 / 3 cards visible — same proportional width as the old 3-col grid.
-              */}
-              <CarouselContent className="-ml-4 items-start md:-ml-6">
-                {orderedTestimonials.map((t, idx) => (
-                  <CarouselItem
-                    key={t.name}
-                    className={cn(
-                      "flex min-h-0 min-w-0 pl-4 md:pl-6",
-                      "basis-[85%] sm:basis-[75%] md:basis-[45%] lg:basis-[31%]",
-                    )}
-                  >
-                    <TestimonialCard
-                      t={t}
-                      isExpanded={expandedName === t.name}
-                      onRequestExpand={() => setExpandedName(t.name)}
-                      onRequestCollapse={() => setExpandedName(null)}
-                    />
-                  </CarouselItem>
-                ))}
-              </CarouselContent>
+              <div className="[mask-image:linear-gradient(to_right,black_85%,transparent_100%)]">
+                <CarouselContent className="-ml-4 items-start md:-ml-6">
+                  {orderedTestimonials.map((t, idx) => (
+                    <CarouselItem
+                      key={t.name}
+                      className={cn(
+                        "flex min-h-0 min-w-0 pl-4 md:pl-6",
+                        "basis-[85%] sm:basis-[75%] md:basis-[45%] lg:basis-[31%]",
+                      )}
+                    >
+                      <TestimonialCard
+                        t={t}
+                        isExpanded={expandedName === t.name}
+                        onRequestExpand={() => setExpandedName(t.name)}
+                        onRequestCollapse={() => setExpandedName(null)}
+                      />
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+              </div>
 
               {/* FeaturedStories-style control strip: loading bar + count + arrows */}
               <div className="flex w-full flex-col gap-2">

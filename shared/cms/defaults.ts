@@ -964,7 +964,7 @@ export const DEFAULT_HOME_PAGE: HomePageContent = {
   headlinePrefix: "You are the future of health tech.",
   headlineAccent: "",
   subheadline:
-    "Rellia connects founders with clinicians, advisors, and investors to validate and scale healthcare solutions.",
+    "Rellia helps founders achieve their milestones to launch their healthcare innovations.",
   primaryCtaLabel: "Apply to Join",
   primaryCtaPath: "/apply",
   secondaryCtaLabel: "See our Programs",

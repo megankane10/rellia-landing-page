@@ -1,5 +1,7 @@
 import { DEFAULT_PROGRAMS_LANDING } from "../../shared/cms/defaults"
 import { programsEventDetailPath } from "../../shared/cms/eventSlug"
+import { FOUNDER_DIRECTORY } from "../data/founderDirectory"
+import { ADVISOR_DIRECTORY_SEED } from "../data/advisorDirectory"
 
 /** Base URL for canonical links, Open Graph, and JSON-LD. Override via `VITE_SITE_URL` in env. */
 export const getSiteUrl = (): string => {
@@ -215,6 +217,8 @@ export const PRERENDER_PATHS: string[] = [
   "/",
   ...Object.keys(ROUTE_SEO).filter((p) => p !== "/"),
   ...PROGRAMS_EVENT_PRERENDER_PATHS,
+  ...FOUNDER_DIRECTORY.map((f) => `/founders/directory/${f.id}`),
+  ...ADVISOR_DIRECTORY_SEED.map((a) => `/advisors/directory/${a.id}`),
 ]
 
 export const getDefaultOgImageUrl = (): string => {

@@ -7,7 +7,7 @@ import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
 import ScrollReveal from "@/components/ScrollReveal"
 import RelliaCta, { ctaActionFromHref } from "@/components/RelliaCta"
-import { CheckCircle2, ArrowRight, ArrowLeft, ChevronLeft, CalendarDays } from "lucide-react"
+import { CheckCircle2, ArrowRight, ArrowLeft, ChevronLeft, ChevronRight, CalendarDays, Quote } from "lucide-react"
 import { getCurrentMonthDeadline } from "@/lib/dateUtils"
 import RelliaAction from "@/components/RelliaAction"
 import { Helmet } from "react-helmet-async"
@@ -109,6 +109,11 @@ const ProgramPageLayout = ({
   const [timelineOpen, setTimelineOpen] = useState<string | undefined>(undefined)
   const [showForm, setShowForm] = useState(false)
   const [cardImages, setCardImages] = useState<string[]>([])
+  const [carouselApi, setCarouselApi] = useState<any>(null)
+  const [carouselIndex, setCarouselIndex] = useState(0)
+  const [carouselCount, setCarouselCount] = useState(0)
+  const [canScrollPrev, setCanScrollPrev] = useState(false)
+  const [canScrollNext, setCanScrollNext] = useState(false)
   const location = useLocation()
   const filloutId = extractFilloutId(q.paymentUrl)
 
@@ -122,6 +127,19 @@ const ProgramPageLayout = ({
     return () => { cancelled = true }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  useEffect(() => {
+    if (!carouselApi) return
+    const onSelect = () => {
+      setCarouselIndex(carouselApi.selectedScrollSnap())
+      setCarouselCount(carouselApi.scrollSnapList().length)
+      setCanScrollPrev(carouselApi.canScrollPrev())
+      setCanScrollNext(carouselApi.canScrollNext())
+    }
+    onSelect()
+    carouselApi.on("select", onSelect)
+    carouselApi.on("reInit", onSelect)
+  }, [carouselApi])
 
   const scrollTo = (id: string) => document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" })
   const onKey = (fn: () => void) => (e: KeyboardEvent<HTMLButtonElement>) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); fn() } }
@@ -220,7 +238,7 @@ const ProgramPageLayout = ({
 
         {/* ─── Trusted Members Section ─── */}
         <section className="relative w-full bg-white py-20 md:py-32 px-6 md:px-10 overflow-hidden border-b border-black/5">
-          <div className="relative z-10 max-w-[1300px] mx-auto text-center">
+          <div className="relative z-10 max-w-[1300px] mx-auto">
             <ScrollReveal>
               <h2 className="font-host-grotesk text-3xl font-semibold leading-tight tracking-tight text-black md:text-[40px] mb-12">Already Trusted by Rellia Members</h2>
             </ScrollReveal>
@@ -231,6 +249,7 @@ const ProgramPageLayout = ({
                   align: "start",
                   loop: true,
                 }}
+                setApi={setCarouselApi}
                 className="w-full"
               >
                 <CarouselContent className="-ml-4">
@@ -257,21 +276,71 @@ const ProgramPageLayout = ({
                       quote: "As a technical founder, Rellia helped me translate our product features into a clinical narrative that resonated with health system buyers and investors alike.",
                     },
                   ].map((t) => (
-                    <CarouselItem key={t.name} className="pl-4 basis-full md:basis-1/2 lg:basis-1/3">
-                      <div className="h-full flex flex-col items-center p-8 md:p-10 rounded-3xl border border-black/5 bg-rellia-cream/20 min-h-[420px] justify-between">
-                        <p className="font-urbanist text-lg md:text-xl leading-relaxed text-black/70 italic">&ldquo;{t.quote}&rdquo;</p>
-                        <div className="mt-8 flex flex-col items-center">
-                          <Avatar className="h-16 w-16 mb-4 border-2 border-rellia-teal/10">
-                            <AvatarImage src={t.image} className="object-cover" />
-                            <AvatarFallback className="bg-rellia-teal text-white">{t.name[0]}</AvatarFallback>
-                          </Avatar>
-                          <h4 className="font-host-grotesk font-bold text-black">{t.name}</h4>
-                          <p className="font-urbanist text-sm text-black/50">{t.role}, {t.company}</p>
+                    <CarouselItem key={t.name} className="pl-4 basis-full">
+                      <div className="flex flex-col md:flex-row overflow-hidden rounded-3xl border border-black/5 bg-rellia-teal shadow-xl min-h-[460px]">
+                        {/* Left Side: Quote */}
+                        <div className="flex-1 p-8 md:p-14 md:pb-20 flex flex-col justify-start pt-12 md:pt-20">
+                          <Quote className="h-12 w-12 text-rellia-mint mb-8" strokeWidth={1.5} />
+                          <p className="font-host-grotesk text-2xl md:text-3xl lg:text-4xl font-normal leading-[1.15] tracking-tight text-white">
+                            &ldquo;{t.quote}&rdquo;
+                          </p>
+                        </div>
+                        
+                        {/* Right Side: Identity */}
+                        <div className="w-full md:w-[340px] lg:w-[400px] bg-white flex flex-col">
+                          <div className="h-[280px] md:h-[360px] w-full overflow-hidden">
+                            <img 
+                              src={t.image} 
+                              alt={t.name} 
+                              className="h-full w-full object-cover"
+                            />
+                          </div>
+                          <div className="flex-1 p-8 flex flex-col justify-center bg-rellia-mint">
+                            <h4 className="font-host-grotesk font-bold text-xl text-black">{t.name}</h4>
+                            <p className="font-urbanist text-[17px] font-semibold text-rellia-teal mt-1">
+                              {t.role} &bull; {t.company}
+                            </p>
+                          </div>
                         </div>
                       </div>
                     </CarouselItem>
                   ))}
                 </CarouselContent>
+
+                {/* Homepage-style control strip: loading bar + counter + arrows */}
+                <div className="mt-8 flex w-full flex-col gap-4">
+                  <div aria-hidden className="relative h-1 w-full overflow-hidden rounded-full bg-black/5">
+                    <div
+                      className="h-full bg-rellia-teal transition-[width] duration-500 ease-out"
+                      style={{
+                        width: carouselCount <= 1 ? "100%" : `${(carouselIndex / (carouselCount - 1)) * 100}%`
+                      }}
+                    />
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <div className="font-host-grotesk text-sm font-bold text-rellia-teal/60">
+                      {carouselIndex + 1} / {carouselCount}
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => carouselApi?.scrollPrev()}
+                        disabled={!canScrollPrev}
+                        className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-black/10 bg-white text-rellia-teal shadow-sm transition hover:bg-rellia-teal hover:text-white hover:border-rellia-teal disabled:opacity-40"
+                      >
+                        <ChevronLeft className="h-5 w-5" aria-hidden />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => carouselApi?.scrollNext()}
+                        disabled={!canScrollNext}
+                        className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-black/10 bg-white text-rellia-teal shadow-sm transition hover:bg-rellia-teal hover:text-white hover:border-rellia-teal disabled:opacity-40"
+                      >
+                        <ChevronRight className="h-5 w-5" aria-hidden />
+                      </button>
+                    </div>
+                  </div>
+                </div>
               </Carousel>
             </ScrollReveal>
           </div>
