@@ -45,6 +45,11 @@ export default function AdvisorProfile() {
               <Helmet>
                 <title>{active.name} — Rellia Health Advisor</title>
                 <meta name="description" content={active.bio.substring(0, 160)} />
+                <link rel="canonical" href={window.location.href} />
+                <meta property="og:type" content="profile" />
+                <meta property="og:locale" content="en_US" />
+                <meta property="og:site_name" content="Rellia Health" />
+                <meta property="og:url" content={window.location.href} />
                 <meta property="og:title" content={active.name} />
                 <meta property="og:description" content={active.bio.substring(0, 160)} />
                 <meta property="og:image" content={active.photoSrc.startsWith("http") ? active.photoSrc : `${getSiteUrl()}${active.photoSrc}`} />

@@ -46,6 +46,11 @@ export default function FounderProfile() {
               <Helmet>
                 <title>{active.logoName} — Rellia Health</title>
                 <meta name="description" content={active.shortDescription} />
+                <link rel="canonical" href={window.location.href} />
+                <meta property="og:type" content="profile" />
+                <meta property="og:locale" content="en_US" />
+                <meta property="og:site_name" content="Rellia Health" />
+                <meta property="og:url" content={window.location.href} />
                 <meta property="og:title" content={active.logoName} />
                 <meta property="og:description" content={active.shortDescription} />
                 <meta property="og:image" content={active.logoSrc.startsWith("http") ? active.logoSrc : `${getSiteUrl()}${active.logoSrc}`} />

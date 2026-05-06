@@ -10,6 +10,8 @@ import RelliaCta, { ctaActionFromHref } from "@/components/RelliaCta"
 import { CheckCircle2, ArrowRight, ArrowLeft, ChevronLeft, CalendarDays } from "lucide-react"
 import { getCurrentMonthDeadline } from "@/lib/dateUtils"
 import RelliaAction from "@/components/RelliaAction"
+import { Helmet } from "react-helmet-async"
+import { getSiteUrl } from "@/config/seo"
 import { cn } from "@/lib/utils"
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 import {
@@ -123,6 +125,22 @@ const ProgramPageLayout = ({
 
   return (
     <div className="min-h-screen bg-white font-host-grotesk overflow-x-hidden">
+      <Helmet>
+        <title>{q.heroTitle} — Rellia Health</title>
+        <meta name="description" content={q.heroDescription} />
+        <link rel="canonical" href={window.location.href} />
+        <meta property="og:type" content="website" />
+        <meta property="og:locale" content="en_US" />
+        <meta property="og:site_name" content="Rellia Health" />
+        <meta property="og:url" content={window.location.href} />
+        <meta property="og:title" content={q.heroTitle} />
+        <meta property="og:description" content={q.heroDescription} />
+        <meta property="og:image" content={heroImageSrc.startsWith("http") ? heroImageSrc : `${getSiteUrl()}${heroImageSrc}`} />
+        <meta name="twitter:title" content={q.heroTitle} />
+        <meta name="twitter:description" content={q.heroDescription} />
+        <meta name="twitter:image" content={heroImageSrc.startsWith("http") ? heroImageSrc : `${getSiteUrl()}${heroImageSrc}`} />
+        <meta name="twitter:card" content="summary_large_image" />
+      </Helmet>
       <Navbar />
       <main id="main-content">
 
