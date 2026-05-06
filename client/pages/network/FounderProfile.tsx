@@ -47,17 +47,17 @@ export default function FounderProfile() {
             {/* Left Sidebar - Sticky */}
             <div className="flex flex-col gap-6 lg:sticky lg:top-32 lg:self-start">
               <Helmet>
-                <title>{active.logoName} — Rellia Health</title>
+                <title>{active.logoName} — Rellia Health | Alumni</title>
                 <meta name="description" content={active.shortDescription} />
                 <link rel="canonical" href={canonicalUrl} />
                 <meta property="og:type" content="profile" />
                 <meta property="og:locale" content="en_US" />
                 <meta property="og:site_name" content="Rellia Health" />
                 <meta property="og:url" content={canonicalUrl} />
-                <meta property="og:title" content={active.logoName} />
+                <meta property="og:title" content={`${active.logoName} — Rellia Health | Alumni`} />
                 <meta property="og:description" content={active.shortDescription} />
                 <meta property="og:image" content={active.logoSrc.startsWith("http") ? active.logoSrc : `${getSiteUrl()}${active.logoSrc}`} />
-                <meta name="twitter:title" content={active.logoName} />
+                <meta name="twitter:title" content={`${active.logoName} — Rellia Health | Alumni`} />
                 <meta name="twitter:description" content={active.shortDescription} />
                 <meta name="twitter:image" content={active.logoSrc.startsWith("http") ? active.logoSrc : `${getSiteUrl()}${active.logoSrc}`} />
                 <meta name="twitter:card" content="summary_large_image" />

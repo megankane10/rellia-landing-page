@@ -38,26 +38,26 @@ export default function AdvisorProfile() {
       <main id="main-content" className="pt-24 pb-16 md:pt-28">
         <div className="mx-auto max-w-[1300px] px-6 md:px-10">
           <div className="mb-8">
-            <Link to="/advisors" className="inline-flex items-center gap-2 font-host-grotesk text-sm font-bold text-rellia-teal hover:underline hover:underline-offset-4">
-              <ArrowLeft className="h-4 w-4" /> Back to Advisor Network
+            <Link to="/advisors/directory" className="inline-flex items-center gap-2 font-host-grotesk text-sm font-bold text-rellia-teal hover:underline hover:underline-offset-4">
+              <ArrowLeft className="h-4 w-4" /> Back to Advisors Directory
             </Link>
           </div>
           <article className="grid gap-10 lg:grid-cols-[minmax(280px,360px)_minmax(0,1fr)] lg:gap-x-14 xl:grid-cols-[400px_1fr]">
             {/* Left Sidebar - Sticky */}
             <div className="flex flex-col gap-6 lg:sticky lg:top-32 lg:self-start">
               <Helmet>
-                <title>{active.name} — Rellia Health Advisor</title>
-                <meta name="description" content={active.bio.substring(0, 160)} />
+                <title>{active.name} — Rellia Health | Advisors</title>
+                <meta name="description" content={active.focus} />
                 <link rel="canonical" href={canonicalUrl} />
                 <meta property="og:type" content="profile" />
                 <meta property="og:locale" content="en_US" />
                 <meta property="og:site_name" content="Rellia Health" />
                 <meta property="og:url" content={canonicalUrl} />
-                <meta property="og:title" content={active.name} />
-                <meta property="og:description" content={active.bio.substring(0, 160)} />
+                <meta property="og:title" content={`${active.name} — Rellia Health | Advisors`} />
+                <meta property="og:description" content={active.focus} />
                 <meta property="og:image" content={active.photoSrc.startsWith("http") ? active.photoSrc : `${getSiteUrl()}${active.photoSrc}`} />
-                <meta name="twitter:title" content={active.name} />
-                <meta name="twitter:description" content={active.bio.substring(0, 160)} />
+                <meta name="twitter:title" content={`${active.name} — Rellia Health | Advisors`} />
+                <meta name="twitter:description" content={active.focus} />
                 <meta name="twitter:image" content={active.photoSrc.startsWith("http") ? active.photoSrc : `${getSiteUrl()}${active.photoSrc}`} />
                 <meta name="twitter:card" content="summary_large_image" />
               </Helmet>

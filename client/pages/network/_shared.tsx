@@ -399,43 +399,45 @@ export function RoleHero({
       />
 
       <div className="relative z-10 mx-auto max-w-[1300px] px-6 pb-20 pt-10 md:px-10 md:pb-28 md:pt-14 lg:flex lg:flex-1 lg:flex-col lg:justify-center lg:pb-20 lg:pt-0">
-        <NetworkEyebrow label={label} tone="onDark" className="mb-6 md:mb-8" />
-        <h1
-          className={cn(
-            "max-w-4xl font-bold leading-[1.08] tracking-tight text-white drop-shadow-sm",
-            "text-[40px] sm:text-5xl md:text-6xl lg:text-7xl",
-          )}
-        >
-          {title}
-        </h1>
-        <div className="mt-6 max-w-2xl font-urbanist text-lg leading-relaxed text-white/80 md:text-xl">
-          {subtitle}
-        </div>
-        <div className="mt-10 flex w-full flex-col gap-3 sm:flex-row sm:flex-wrap">
-          <RelliaAction
-            asChild
-            variant="mintOnTealStrip"
-            size="comfortable"
-            className="w-full min-w-0 justify-center sm:min-w-[220px] sm:w-auto"
+        <Reveal>
+          <NetworkEyebrow label={label} tone="onDark" className="mb-6 md:mb-8" />
+          <h1
+            className={cn(
+              "max-w-4xl font-bold leading-[1.08] tracking-tight text-white drop-shadow-sm",
+              "text-[40px] sm:text-5xl md:text-6xl lg:text-7xl",
+            )}
           >
-            <Link to={primaryCta.to} className="inline-flex w-full cursor-pointer items-center justify-center gap-2 sm:w-auto">
-              {primaryCta.label}
-              <ArrowRight className="h-4 w-4" aria-hidden />
-            </Link>
-          </RelliaAction>
-          {secondaryCta && (
+            {title}
+          </h1>
+          <div className="mt-6 max-w-2xl font-urbanist text-lg leading-relaxed text-white/80 md:text-xl">
+            {subtitle}
+          </div>
+          <div className="mt-10 flex w-full flex-col gap-3 sm:flex-row sm:flex-wrap">
             <RelliaAction
               asChild
-              variant="heroGhostOnTeal"
+              variant="mintOnTealStrip"
               size="comfortable"
-              className="w-full min-w-0 justify-center border-white/45 hover:border-white/70 sm:min-w-[220px] sm:w-auto"
+              className="w-full min-w-0 justify-center sm:min-w-[220px] sm:w-auto"
             >
-              <Link to={secondaryCta.to} className="inline-flex w-full cursor-pointer items-center justify-center sm:w-auto">
-                {secondaryCta.label}
+              <Link to={primaryCta.to} className="inline-flex w-full cursor-pointer items-center justify-center gap-2 sm:w-auto">
+                {primaryCta.label}
+                <ArrowRight className="h-4 w-4" aria-hidden />
               </Link>
             </RelliaAction>
-          )}
-        </div>
+            {secondaryCta && (
+              <RelliaAction
+                asChild
+                variant="heroGhostOnTeal"
+                size="comfortable"
+                className="w-full min-w-0 justify-center border-white/45 hover:border-white/70 sm:min-w-[220px] sm:w-auto"
+              >
+                <Link to={secondaryCta.to} className="inline-flex w-full cursor-pointer items-center justify-center sm:w-auto">
+                  {secondaryCta.label}
+                </Link>
+              </RelliaAction>
+            )}
+          </div>
+        </Reveal>
       </div>
     </section>
   )

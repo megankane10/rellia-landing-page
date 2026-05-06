@@ -354,42 +354,44 @@ function FoundersHero() {
       />
 
       <div className="relative z-10 mx-auto max-w-[1300px] px-6 pb-20 pt-10 md:px-10 md:pb-28 md:pt-14 lg:flex lg:flex-1 lg:flex-col lg:justify-center lg:pb-20 lg:pt-0">
-        <NetworkEyebrow label="Founders" tone="onDark" className="mb-6 md:mb-8" />
-        <h1
-          className={cn(
-            "max-w-4xl font-bold leading-[1.08] tracking-tight text-white drop-shadow-sm",
-            PAGE_HEADER_TITLE_SIZE_CLASS,
-          )}
-        >
-          Are you building in <span className="text-rellia-mint">health tech?</span>
-        </h1>
-        <p className="mt-6 max-w-2xl font-urbanist text-lg leading-relaxed text-white/80 md:text-xl">
-          You&apos;re building something that can change healthcare. We bring the experts, programs, and connections to help
-          you get there.
-        </p>
-        <div className="mt-10 flex w-full flex-col gap-3 sm:flex-row sm:flex-wrap">
-          <RelliaAction
-            asChild
-            variant="mintOnTealStrip"
-            size="comfortable"
-            className="w-full min-w-0 justify-center sm:min-w-[220px] sm:w-auto"
+        <Reveal>
+          <NetworkEyebrow label="Founders" tone="onDark" className="mb-6 md:mb-8" />
+          <h1
+            className={cn(
+              "max-w-4xl font-bold leading-[1.08] tracking-tight text-white drop-shadow-sm",
+              PAGE_HEADER_TITLE_SIZE_CLASS,
+            )}
           >
-            <Link to="/apply" className="inline-flex w-full cursor-pointer items-center justify-center gap-2 sm:w-auto" aria-label="Apply to join Rellia">
-              Apply to join
-              <ArrowRight className="h-4 w-4" aria-hidden />
-            </Link>
-          </RelliaAction>
-          <RelliaAction
-            asChild
-            variant="heroGhostOnTeal"
-            size="comfortable"
-            className="w-full min-w-0 justify-center border-white/45 hover:border-white/70 sm:min-w-[220px] sm:w-auto"
-          >
-            <Link to="/founders/directory" className="inline-flex w-full cursor-pointer items-center justify-center sm:w-auto">
-              Browse startups
-            </Link>
-          </RelliaAction>
-        </div>
+            Are you building in <span className="text-rellia-mint">health tech?</span>
+          </h1>
+          <p className="mt-6 max-w-2xl font-urbanist text-lg leading-relaxed text-white/80 md:text-xl">
+            You&apos;re building something that can change healthcare. We bring the experts, programs, and connections to help
+            you get there.
+          </p>
+          <div className="mt-10 flex w-full flex-col gap-3 sm:flex-row sm:flex-wrap">
+            <RelliaAction
+              asChild
+              variant="mintOnTealStrip"
+              size="comfortable"
+              className="w-full min-w-0 justify-center sm:min-w-[220px] sm:w-auto"
+            >
+              <Link to="/apply" className="inline-flex w-full cursor-pointer items-center justify-center gap-2 sm:w-auto" aria-label="Apply to join Rellia">
+                Apply to join
+                <ArrowRight className="h-4 w-4" aria-hidden />
+              </Link>
+            </RelliaAction>
+            <RelliaAction
+              asChild
+              variant="heroGhostOnTeal"
+              size="comfortable"
+              className="w-full min-w-0 justify-center border-white/45 hover:border-white/70 sm:min-w-[220px] sm:w-auto"
+            >
+              <Link to="/founders/directory" className="inline-flex w-full cursor-pointer items-center justify-center sm:w-auto">
+                Browse startups
+              </Link>
+            </RelliaAction>
+          </div>
+        </Reveal>
       </div>
     </section>
   )
