@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, type KeyboardEvent } from "react"
 import { motion, AnimatePresence, useInView, useReducedMotion } from "framer-motion"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { FilloutStandardEmbed } from "@fillout/react"
-import { Link } from "react-router-dom"
+import { useLocation, Link } from "react-router-dom"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
 import ScrollReveal from "@/components/ScrollReveal"
@@ -109,7 +109,10 @@ const ProgramPageLayout = ({
   const [timelineOpen, setTimelineOpen] = useState<string | undefined>(undefined)
   const [showForm, setShowForm] = useState(false)
   const [cardImages, setCardImages] = useState<string[]>([])
+  const location = useLocation()
   const filloutId = extractFilloutId(q.paymentUrl)
+
+  const canonicalUrl = `${getSiteUrl()}${location.pathname}`
 
   const pexelsQueries = ["medical device startup documents", "team collaboration healthcare", "mentorship meeting office"]
 
@@ -128,11 +131,11 @@ const ProgramPageLayout = ({
       <Helmet>
         <title>{q.heroTitle} — Rellia Health</title>
         <meta name="description" content={q.heroDescription} />
-        <link rel="canonical" href={window.location.href} />
+        <link rel="canonical" href={canonicalUrl} />
         <meta property="og:type" content="website" />
         <meta property="og:locale" content="en_US" />
         <meta property="og:site_name" content="Rellia Health" />
-        <meta property="og:url" content={window.location.href} />
+        <meta property="og:url" content={canonicalUrl} />
         <meta property="og:title" content={q.heroTitle} />
         <meta property="og:description" content={q.heroDescription} />
         <meta property="og:image" content={heroImageSrc.startsWith("http") ? heroImageSrc : `${getSiteUrl()}${heroImageSrc}`} />

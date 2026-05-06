@@ -1,4 +1,4 @@
-import { useParams, Link } from "react-router-dom"
+import { useParams, Link, useLocation } from "react-router-dom"
 import { Helmet } from "react-helmet-async"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
@@ -11,19 +11,22 @@ import { getSiteUrl } from "@/config/seo"
 
 export default function AdvisorProfile() {
   const { id } = useParams<{ id: string }>()
+  const location = useLocation()
   const active = ADVISOR_DIRECTORY_SEED.find((a) => a.id === id)
+
+  const canonicalUrl = `${getSiteUrl()}${location.pathname}`
 
   if (!active) return <NotFound />
 
   const handleShare = () => {
-    if (navigator.share) {
+    if (typeof window !== "undefined" && navigator.share) {
       navigator.share({
         title: active.name,
         text: active.bio.substring(0, 50) + "...",
-        url: window.location.href,
+        url: canonicalUrl,
       }).catch(console.error);
-    } else {
-      navigator.clipboard.writeText(window.location.href);
+    } else if (typeof window !== "undefined") {
+      navigator.clipboard.writeText(canonicalUrl);
       alert("Link copied to clipboard!");
     }
   };
@@ -35,8 +38,8 @@ export default function AdvisorProfile() {
       <main id="main-content" className="pt-24 pb-16 md:pt-28">
         <div className="mx-auto max-w-[1300px] px-6 md:px-10">
           <div className="mb-8">
-            <Link to="/advisors/directory" className="inline-flex items-center gap-2 font-host-grotesk text-sm font-bold text-rellia-teal hover:underline hover:underline-offset-4">
-              <ArrowLeft className="h-4 w-4" /> Back to Advisors Directory
+            <Link to="/advisors" className="inline-flex items-center gap-2 font-host-grotesk text-sm font-bold text-rellia-teal hover:underline hover:underline-offset-4">
+              <ArrowLeft className="h-4 w-4" /> Back to Advisor Network
             </Link>
           </div>
           <article className="grid gap-10 lg:grid-cols-[minmax(280px,360px)_minmax(0,1fr)] lg:gap-x-14 xl:grid-cols-[400px_1fr]">
@@ -45,11 +48,11 @@ export default function AdvisorProfile() {
               <Helmet>
                 <title>{active.name} — Rellia Health Advisor</title>
                 <meta name="description" content={active.bio.substring(0, 160)} />
-                <link rel="canonical" href={window.location.href} />
+                <link rel="canonical" href={canonicalUrl} />
                 <meta property="og:type" content="profile" />
                 <meta property="og:locale" content="en_US" />
                 <meta property="og:site_name" content="Rellia Health" />
-                <meta property="og:url" content={window.location.href} />
+                <meta property="og:url" content={canonicalUrl} />
                 <meta property="og:title" content={active.name} />
                 <meta property="og:description" content={active.bio.substring(0, 160)} />
                 <meta property="og:image" content={active.photoSrc.startsWith("http") ? active.photoSrc : `${getSiteUrl()}${active.photoSrc}`} />
@@ -80,7 +83,7 @@ export default function AdvisorProfile() {
                   {active.industries.map((tag) => (
                     <span
                       key={tag}
-                      className="inline-flex rounded-full border border-black/10 bg-black/[0.03] px-3 py-1 font-urbanist text-xs font-semibold text-black/75"
+                      className="inline-flex rounded-full border border-black/10 bg-black/[0.03] px-3 py-1 font-urbanist text-xs font-semibold text-black/70"
                     >
                       {tag}
                     </span>
@@ -131,7 +134,7 @@ export default function AdvisorProfile() {
               </section>
 
               <section className="rounded-2xl bg-rellia-cream/35 px-6 py-8 mt-12 border border-black/5 not-prose">
-                <h3 className="font-host-grotesk text-sm font-semibold uppercase tracking-[0.12em] text-black/55 mb-3">
+                <h3 className="font-host-grotesk text-sm font-semibold uppercase tracking-\[0.12em\] text-black/55 mb-3">
                   Snapshot
                 </h3>
                 <p className="font-urbanist text-lg leading-relaxed text-black/80">{active.focus}</p>

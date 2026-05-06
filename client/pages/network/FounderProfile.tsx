@@ -1,4 +1,4 @@
-import { useParams, Link } from "react-router-dom"
+import { useParams, Link, useLocation } from "react-router-dom"
 import { Helmet } from "react-helmet-async"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
@@ -12,19 +12,22 @@ import { getSiteUrl } from "@/config/seo"
 
 export default function FounderProfile() {
   const { id } = useParams<{ id: string }>()
+  const location = useLocation()
   const active = FOUNDER_DIRECTORY.find((c) => c.id === id)
+
+  const canonicalUrl = `${getSiteUrl()}${location.pathname}`
 
   if (!active) return <NotFound />
 
   const handleShare = () => {
-    if (navigator.share) {
+    if (typeof window !== "undefined" && navigator.share) {
       navigator.share({
         title: active.logoName,
         text: active.tagline,
-        url: window.location.href,
+        url: canonicalUrl,
       }).catch(console.error);
-    } else {
-      navigator.clipboard.writeText(window.location.href);
+    } else if (typeof window !== "undefined") {
+      navigator.clipboard.writeText(canonicalUrl);
       alert("Link copied to clipboard!");
     }
   };
@@ -46,11 +49,11 @@ export default function FounderProfile() {
               <Helmet>
                 <title>{active.logoName} — Rellia Health</title>
                 <meta name="description" content={active.shortDescription} />
-                <link rel="canonical" href={window.location.href} />
+                <link rel="canonical" href={canonicalUrl} />
                 <meta property="og:type" content="profile" />
                 <meta property="og:locale" content="en_US" />
                 <meta property="og:site_name" content="Rellia Health" />
-                <meta property="og:url" content={window.location.href} />
+                <meta property="og:url" content={canonicalUrl} />
                 <meta property="og:title" content={active.logoName} />
                 <meta property="og:description" content={active.shortDescription} />
                 <meta property="og:image" content={active.logoSrc.startsWith("http") ? active.logoSrc : `${getSiteUrl()}${active.logoSrc}`} />
