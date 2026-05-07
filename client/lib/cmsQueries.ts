@@ -120,7 +120,7 @@ export const aboutPageQuery = `*[_type == "aboutPage"][0]{
   ctaTeamLabel
 }`;
 
-export const faqPageQuery = `*[_type == "faqPage"][0]{
+export const faqPageQuery = `*[_type == "faqPage" && !(_id in path("drafts.**"))] | order(_updatedAt desc)[0]{
   badge,
   title,
   subtitle,
