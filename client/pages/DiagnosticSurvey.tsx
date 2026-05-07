@@ -1150,6 +1150,26 @@ export default function DiagnosticSurvey() {
       rawAnswers: answers,
     };
 
+    const safeCoerceDiagResult = (value: unknown): DiagResult | null => {
+      if (!value || typeof value !== "object") return null
+
+      const v = value as Partial<DiagResult>
+      if (typeof v.summary !== "string") return null
+
+      const strengths = Array.isArray(v.top3_strengths) ? v.top3_strengths : []
+      const weaknesses = Array.isArray(v.top3_weaknesses) ? v.top3_weaknesses : []
+      const recommendations = Array.isArray(v.recommendations) ? v.recommendations : []
+      const mentorAreas = Array.isArray(v.mentor_areas_needed) ? v.mentor_areas_needed : []
+
+      return {
+        summary: v.summary,
+        top3_strengths: strengths.filter(Boolean) as DiagResult["top3_strengths"],
+        top3_weaknesses: weaknesses.filter(Boolean) as DiagResult["top3_weaknesses"],
+        recommendations: recommendations.filter((x): x is string => typeof x === "string"),
+        mentor_areas_needed: mentorAreas.filter((x): x is string => typeof x === "string"),
+      }
+    }
+
     try {
       setProcStep(1);
       const res = await fetch("/api/diagnostic-report", {
@@ -1158,7 +1178,14 @@ export default function DiagnosticSurvey() {
         body: JSON.stringify(payload),
       });
 
-      const report = await res.json();
+      const report = await (async () => {
+        try {
+          return await res.json()
+        } catch {
+          const text = await res.text().catch(() => "")
+          return { error: "NON_JSON_RESPONSE", message: text }
+        }
+      })()
 
       if (!res.ok) {
         // Detailed error for admins
@@ -1167,14 +1194,18 @@ export default function DiagnosticSurvey() {
           report.error === "SANITY_ERROR"
         ) {
           throw new Error(
-            `ADMIN_CONFIG_ERROR: ${report.message || "Check SANITY_WRITE_TOKEN and ANTHROPIC_API_KEY"}`,
+            `ADMIN_CONFIG_ERROR: ${report.message || "Check SANITY_WRITE_TOKEN"}`,
           );
         }
         throw new Error(report.message || "API failed");
       }
 
       setProcStep(2);
-      setDiagResult(report);
+      const nextResult = safeCoerceDiagResult(report)
+      if (!nextResult) {
+        throw new Error("API returned unexpected report shape")
+      }
+      setDiagResult(nextResult);
 
       await new Promise((r) => setTimeout(r, 800));
       setView("report");
@@ -1185,8 +1216,8 @@ export default function DiagnosticSurvey() {
 
       setDiagResult({
         summary: isAdminError
-          ? `[ADMIN ERROR] ${err.message}. Please ensure SANITY_WRITE_TOKEN and ANTHROPIC_API_KEY are correctly set in your environment variables.`
-          : `We encountered an issue generating your detailed AI report, but here is your basic assessment. Based on your inputs, ${memberInfo.company} has specific opportunities for growth in several domains.`,
+          ? `[ADMIN ERROR] ${err.message}. Please ensure SANITY_WRITE_TOKEN is correctly set in your environment variables.`
+          : `We encountered an issue generating your report, but here is your basic assessment. Based on your inputs, ${memberInfo.company} has specific opportunities for growth in several domains.`,
         top3_strengths: [
           {
             category: "Assessment Complete",
@@ -2024,7 +2055,7 @@ export default function DiagnosticSurvey() {
                           Top Strengths
                         </h3>
                         <div className="space-y-3 flex-1">
-                          {diagResult.top3_strengths.map((s, i) => (
+                          {(diagResult.top3_strengths ?? []).map((s, i) => (
                             <div
                               key={i}
                               className="rounded-2xl border border-green-100 bg-green-50/50 p-5 h-[calc(33.33%-8px)] flex flex-col justify-center"
@@ -2046,7 +2077,7 @@ export default function DiagnosticSurvey() {
                           Priority Gaps
                         </h3>
                         <div className="space-y-3 flex-1">
-                          {diagResult.top3_weaknesses.map((w, i) => (
+                          {(diagResult.top3_weaknesses ?? []).map((w, i) => (
                             <div
                               key={i}
                               className="rounded-2xl border border-red-100 bg-red-50/50 p-5 h-[calc(33.33%-8px)] flex flex-col justify-center"

@@ -127,7 +127,6 @@ Values are documented in **`.env.example`**. Nothing secret is required for a ba
 
 | Variable | Purpose |
 |----------|---------|
-| `ANTHROPIC_API_KEY` | Used by `POST /api/diagnostic-report` on Vercel / Node; omit locally if you do not use that endpoint |
 | `PORT` | HTTP port for `pnpm start` (default `3000`) |
 | `VERCEL` | Set automatically on Vercel |
 | `NODE_ENV` | Set by tooling / platform |
@@ -137,6 +136,6 @@ Values are documented in **`.env.example`**. Nothing secret is required for a ba
 ## API (Express / Vercel)
 
 - **`GET /health`** — Health check  
-- **`POST /api/diagnostic-report`** — Startup diagnostic report (requires `ANTHROPIC_API_KEY`, body validated with Zod)
+- **`POST /api/diagnostic-report`** — Startup diagnostic report (body validated with Zod)
 
 Contact and membership flows use **HubSpot**, **Fillout**, and **Stripe Payment Links** in the client, not custom form POST routes.

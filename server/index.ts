@@ -501,60 +501,7 @@ export function createServer() {
     };
 
     try {
-      const apiKey = process.env.ANTHROPIC_API_KEY?.trim();
-      const report = apiKey
-        ? await (async () => {
-            const prompt = `You are a health tech startup advisor at Rellia Health.
-Analyze this startup diagnostic and return ONLY valid JSON (no markdown, no backticks).
-Company: ${company}
-Stage: ${stage}
-Product: ${desc}
-Section scores:
-${sectionScoresMarkdown}
-
-Return this shape exactly:
-{"summary":"2-3 sentences to founder in second person","top3_strengths":[{"category":"","score":0,"note":""}],"top3_weaknesses":[{"category":"","score":0,"note":"","priority":"Critical"}],"recommendations":[""],"mentor_areas_needed":[""]}`;
-
-            const anthropicRes = await fetch(
-              "https://api.anthropic.com/v1/messages",
-              {
-                method: "POST",
-                headers: {
-                  "content-type": "application/json",
-                  "x-api-key": apiKey,
-                  "anthropic-version": "2023-06-01",
-                },
-                body: JSON.stringify({
-                  model: "claude-sonnet-4-20250514",
-                  max_tokens: 1200,
-                  messages: [{ role: "user", content: prompt }],
-                }),
-              },
-            );
-
-            if (!anthropicRes.ok) {
-              const text = await anthropicRes.text().catch(() => "");
-              throw new Error(
-                `Anthropic request failed (${anthropicRes.status})${isDev && text ? `: ${text}` : ""}`,
-              );
-            }
-
-            const data = (await anthropicRes.json()) as {
-              content?: Array<{ type?: string; text?: string }>;
-            };
-            const text =
-              data.content
-                ?.map((b) => (typeof b.text === "string" ? b.text : ""))
-                .join("") ?? "";
-            const cleaned = text.replace(/```json|```/g, "").trim();
-            const modelJson = JSON.parse(cleaned) as unknown;
-            const checked = diagnosticReportResponseSchema.safeParse(modelJson);
-            if (!checked.success) {
-              throw new Error("Invalid model response");
-            }
-            return checked.data;
-          })()
-        : buildNonAiReport();
+      const report = buildNonAiReport();
 
       if (sanityWriteClient) {
         try {
