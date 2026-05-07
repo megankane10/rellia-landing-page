@@ -82,13 +82,13 @@ export default function Footer() {
     : FALLBACK_FOOTER_COLUMNS
 
   const footerColumns = footerColumnsRaw
-    .filter((i): i is NavItem => Boolean(i && typeof i.label === "string" && typeof i.href === "string"))
+    .filter((i): i is NavItem => Boolean(i && i.enabled !== false && typeof i.label === "string" && typeof i.href === "string"))
     .map((col) => ({
       label: col.label,
       href: normalizeInternalHref(col.href),
       children: Array.isArray(col.children)
         ? col.children
-            .filter((c): c is NavItem => Boolean(c && typeof c.label === "string" && typeof c.href === "string"))
+            .filter((c): c is NavItem => Boolean(c && c.enabled !== false && typeof c.label === "string" && typeof c.href === "string"))
             .map((c) => ({ label: c.label, href: normalizeInternalHref(c.href) }))
         : [],
     }))

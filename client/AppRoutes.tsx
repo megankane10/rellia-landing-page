@@ -8,7 +8,7 @@ import PageTransition from "@/components/PageTransition"
 import Index from "./pages/Index"
 import About from "./pages/About"
 import FAQ from "./pages/FAQ"
-import Careers from "./pages/Careers"
+import Careers from "./pages/CareersCms"
 import ProgramsEvents from "./pages/ProgramsEvents"
 import ProgramsQms from "./pages/ProgramsQms"
 import ProgramsIgnitePitch from "./pages/programs/ProgramsIgnitePitch"
@@ -31,8 +31,6 @@ import Partners from "./pages/network/Partners"
 import DiagnosticLanding from "./pages/DiagnosticLanding"
 import DiagnosticSurvey from "./pages/DiagnosticSurvey"
 import Payment from "./pages/Payment"
-import TermsofUse from "./pages/TermsofUse"
-import PrivacyPolicy from "./pages/PrivacyPolicy"
 import ProgramsLayout from "./pages/programs/ProgramsLayout"
 import Stories from "./pages/Stories"
 import StoryPost from "./pages/StoryPost"
@@ -125,9 +123,6 @@ export const AppRoutes = () => (
 
     {/* Dedicated role pages live at /founders, /advisors, /investors, /partners */}
     <Route path="/industry-partners/directory" element={<IndustryPartnersDirectory />} />
-
-    <Route path="/terms" element={<TermsofUse />} />
-    <Route path="/privacy" element={<PrivacyPolicy />} />
 
     <Route path="/diagnostics" element={<DiagnosticLanding />} />
     <Route path="/diagnostic-survey" element={<DiagnosticSurvey />} />

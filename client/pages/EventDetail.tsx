@@ -37,6 +37,7 @@ import {
 import { EventDetailPortableText } from "@/components/EventDetailPortableText"
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet"
 import type { SanityPortableText } from "@shared/cms/types"
+import { useEventBySlug } from "@/hooks/useCmsDocuments"
 
 const eventDetailBackToEventsLinkClassName =
   "inline-flex items-center gap-2 font-host-grotesk text-sm font-semibold text-rellia-teal hover:underline hover:underline-offset-4"
@@ -91,10 +92,12 @@ const splitEventDetailBody = (raw: string | undefined): string[] => {
 
 export default function EventDetail() {
   const { slug } = useParams()
-  const { data } = useProgramsLandingPage()
-  const pl = data ?? DEFAULT_PROGRAMS_LANDING
   const resolvedSlug = slug?.trim() ? decodeURIComponent(slug) : ""
-  const match = resolvedSlug ? findProgramsEventBySlug(resolvedSlug, pl) : null
+  const { data: cmsEvent } = useEventBySlug(resolvedSlug)
+  const fallbackMatch = resolvedSlug ? findProgramsEventBySlug(resolvedSlug, DEFAULT_PROGRAMS_LANDING) : null
+  const match = cmsEvent
+    ? { _variant: cmsEvent.status === "past" ? "past" : "upcoming", ...cmsEvent }
+    : fallbackMatch
   const [copyState, setCopyState] = useState<"idle" | "copied">("idle")
   const [showForm, setShowForm] = useState(false)
 

@@ -5,6 +5,12 @@ export const navItem = defineType({
   title: 'Navigation item',
   type: 'object',
   fields: [
+    defineField({
+      name: 'enabled',
+      type: 'boolean',
+      description: 'Toggle visibility in navbar/footer without deleting the item.',
+      initialValue: true,
+    }),
     defineField({name: 'label', type: 'string', validation: (Rule) => Rule.required()}),
     defineField({
       name: 'href',

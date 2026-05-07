@@ -5,6 +5,7 @@ export type SanityPortableText = Array<{
 }>
 
 export type NavItem = {
+  enabled?: boolean
   label: string
   href: string
   description?: string
@@ -15,6 +16,14 @@ export type NavItem = {
 export type NavigationContent = {
   primary: NavItem[]
   footer: NavItem[]
+}
+
+export type CareersPageContent = {
+  defaultTab?: "hiring" | "volunteer"
+  enableHiringTab?: boolean
+  enableVolunteerTab?: boolean
+  tabsLabelHiring?: string
+  tabsLabelVolunteer?: string
 }
 
 export type SeoContent = {

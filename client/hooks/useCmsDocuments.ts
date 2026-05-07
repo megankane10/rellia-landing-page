@@ -13,6 +13,9 @@ import {
   notFoundQuery,
   paymentPageQuery,
   programsLandingQuery,
+  programsQuery,
+  eventsQuery,
+  eventBySlugQuery,
   advisorsQuery,
   alumniCompaniesQuery,
 } from "@/lib/cmsQueries";
@@ -125,6 +128,39 @@ export const useProgramsLandingPage = () =>
     },
     staleTime: staleTimeMs,
   });
+
+export const usePrograms = () =>
+  useQuery({
+    queryKey: ["cms", "programs"],
+    queryFn: async () => {
+      const raw = await sanityFetch<any[]>(programsQuery)
+      return raw ?? []
+    },
+    staleTime: staleTimeMs,
+  })
+
+export const useEvents = () =>
+  useQuery({
+    queryKey: ["cms", "events"],
+    queryFn: async () => {
+      const raw = await sanityFetch<any[]>(eventsQuery)
+      return raw ?? []
+    },
+    staleTime: staleTimeMs,
+  })
+
+export const useEventBySlug = (slug: string) =>
+  useQuery({
+    queryKey: ["cms", "event", slug],
+    queryFn: async () => {
+      const trimmed = slug.trim()
+      if (!trimmed) return null
+      const raw = await sanityFetch<any>(eventBySlugQuery, { slug: trimmed })
+      return raw ?? null
+    },
+    enabled: Boolean(slug.trim()),
+    staleTime: staleTimeMs,
+  })
 
 type ProgramPageQueryResult = Partial<QmsProgramContent> & {
   sections?: CmsPageSection[]

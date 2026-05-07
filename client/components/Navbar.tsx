@@ -346,7 +346,7 @@ export default function Navbar({ ctaRadiusClassName = "rounded-full" }: NavbarPr
   }, [isExternalHref, location.pathname, normalizeInternalHref])
 
   const navPrimary = useMemo(
-    () => mergePrimaryNav(navigationData?.primary),
+    () => mergePrimaryNav(navigationData?.primary).filter((item) => item.enabled !== false),
     [navigationData?.primary],
   )
 
@@ -465,7 +465,7 @@ export default function Navbar({ ctaRadiusClassName = "rounded-full" }: NavbarPr
               }
 
               const childItems: NetworkItem[] = (item.raw.children ?? [])
-                .filter((c): c is NavItem => Boolean(c && typeof c.href === "string" && typeof c.label === "string"))
+                .filter((c): c is NavItem => Boolean(c && c.enabled !== false && typeof c.href === "string" && typeof c.label === "string"))
                 .map((c) => {
                   const href = normalizeInternalHref(c.href)
                   return { to: href, label: c.label, active: isHrefActive(href) }
@@ -584,7 +584,7 @@ export default function Navbar({ ctaRadiusClassName = "rounded-full" }: NavbarPr
 
                 const open = mobileOpenLabel === item.label
                 const childItems: Array<{ href: string; label: string; active: boolean }> = (item.raw.children ?? [])
-                  .filter((c): c is NavItem => Boolean(c && typeof c.href === "string" && typeof c.label === "string"))
+                  .filter((c): c is NavItem => Boolean(c && c.enabled !== false && typeof c.href === "string" && typeof c.label === "string"))
                   .map((c) => {
                     const href = normalizeInternalHref(c.href)
                     return { href, label: c.label, active: isHrefActive(href) }

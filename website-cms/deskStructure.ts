@@ -39,6 +39,7 @@ export const deskStructure = (S: StructureBuilder) =>
             .items([
               singleton(S, 'Home Page', 'homePage', HomeIcon),
               singleton(S, 'About Page', 'aboutPage', DocumentTextIcon),
+              singleton(S, 'Careers Page', 'careersPage', DocumentTextIcon),
               singleton(S, 'Programs Landing', 'programsLandingPage', DocumentTextIcon),
               singleton(S, 'FAQ Page', 'faqPage', DocumentTextIcon),
               singleton(S, 'Contact Page', 'contactPage', DocumentTextIcon),
@@ -50,7 +51,19 @@ export const deskStructure = (S: StructureBuilder) =>
       S.listItem()
         .title('Programs')
         .icon(ComposeIcon)
-        .child(S.documentTypeList('programPage').title('Program Pages')),
+        .child(
+          S.list()
+            .title('Programs')
+            .items([
+              S.documentTypeListItem('program').title('Programs').icon(ComposeIcon),
+              S.documentTypeListItem('programPage').title('Program Detail Pages').icon(DocumentTextIcon),
+            ]),
+        ),
+
+      S.listItem()
+        .title('Events')
+        .icon(ComposeIcon)
+        .child(S.documentTypeList('event').title('Events')),
 
       S.listItem()
         .title('Modular Pages')
@@ -88,11 +101,14 @@ export const deskStructure = (S: StructureBuilder) =>
             'siteSettings',
             'homePage',
             'aboutPage',
+            'careersPage',
             'programsLandingPage',
             'faqPage',
             'contactPage',
             'paymentPage',
             'notFoundPage',
+            'program',
+            'event',
             'programPage',
             'page',
             'marketingPage',

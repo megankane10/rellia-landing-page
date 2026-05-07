@@ -3,6 +3,7 @@ import {siteSettings} from './documents/siteSettings'
 import {navigation} from './documents/navigation'
 import {homePage} from './documents/homePage'
 import {aboutPage} from './documents/aboutPage'
+import {careersPage} from './documents/careersPage'
 import {faqPage} from './documents/faqPage'
 import {programsLandingPage} from './documents/programsLandingPage'
 import {contactPage} from './documents/contactPage'
@@ -14,6 +15,8 @@ import {page} from './documents/page'
 import {advisor} from './documents/advisor'
 import {alumniCompany} from './documents/alumniCompany'
 import {diagnosticSubmission} from './documents/diagnosticSubmission'
+import {program} from './documents/program'
+import {event} from './documents/event'
 import {eventCard} from './objects/eventCard'
 import {bodyCtaBox} from './objects/bodyCtaBox'
 import {portableImageCarousel} from './objects/portableImageCarousel'
@@ -30,6 +33,7 @@ export const schemaTypes = [
   navigation,
   homePage,
   aboutPage,
+  careersPage,
   faqPage,
   programsLandingPage,
   contactPage,
@@ -41,6 +45,8 @@ export const schemaTypes = [
   advisor,
   alumniCompany,
   diagnosticSubmission,
+  program,
+  event,
   eventCard,
   bodyCtaBox,
   portableImageCarousel,

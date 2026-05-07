@@ -141,22 +141,65 @@ export const programsLandingQuery = `*[_type == "programsLandingPage"][0]{
   heroSecondaryCtaLabel,
   programsSectionTitle,
   programsSectionSubtitle,
-  programs[]{ title, description, imageSrc, href, buttonText },
-  upcomingEvents[]{
-    title, slug, dateTime, person, imageSrc, href, comingSoon, location, lumaEventId,
-    detailBody, detailBodyHeading, embedLumaOnDetailPage,
-    addToCalendarEnabled, calendarStartsAt, calendarEndsAt
-  },
-  pastEvents[]{
-    title, slug, dateTime, person, imageSrc, href, buttonText, location, lumaEventId,
-    detailBody, detailBodyHeading, embedLumaOnDetailPage,
-    addToCalendarEnabled, calendarStartsAt, calendarEndsAt
-  },
   ctaTitle,
   ctaBody,
   ctaButtonLabel,
   ctaButtonHref
 }`;
+
+export const programsQuery = `*[_type == "program" && status != "hidden"] | order(sortOrder asc, title asc){
+  title,
+  "slug": slug.current,
+  description,
+  imageSrc,
+  href,
+  buttonText,
+  waitlistHref,
+  status,
+  sortOrder
+}`
+
+export const eventsQuery = `*[_type == "event" && status != "hidden"] | order(sortOrder asc, title asc){
+  title,
+  "slug": slug.current,
+  dateTime,
+  person,
+  imageSrc,
+  href,
+  comingSoon,
+  buttonText,
+  location,
+  lumaEventId,
+  detailBody,
+  detailBodyHeading,
+  embedLumaOnDetailPage,
+  addToCalendarEnabled,
+  calendarStartsAt,
+  calendarEndsAt,
+  status,
+  sortOrder
+}`
+
+export const eventBySlugQuery = `*[_type == "event" && slug.current == $slug][0]{
+  title,
+  "slug": slug.current,
+  dateTime,
+  person,
+  imageSrc,
+  href,
+  comingSoon,
+  buttonText,
+  location,
+  lumaEventId,
+  detailBody,
+  detailBodyHeading,
+  embedLumaOnDetailPage,
+  addToCalendarEnabled,
+  calendarStartsAt,
+  calendarEndsAt,
+  status,
+  sortOrder
+}`
 
 export const programPageBySlugQuery = `*[_type == "programPage" && slug.current == $slug][0]{
   paymentUrl,
@@ -260,6 +303,14 @@ export const paymentPageQuery = `*[_type == "paymentPage"][0]{
   questionsContactLabel,
   questionsContactPath
 }`;
+
+export const careersPageQuery = `*[_type == "careersPage"][0]{
+  defaultTab,
+  enableHiringTab,
+  enableVolunteerTab,
+  tabsLabelHiring,
+  tabsLabelVolunteer
+}`
 
 export const marketingPageBySlugQuery = `*[_type == "marketingPage" && slug.current == $slug][0]{
   title,

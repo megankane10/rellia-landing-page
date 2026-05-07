@@ -4,7 +4,7 @@ import ScrollReveal from "@/components/ScrollReveal"
 import RelliaCta, { ctaActionFromHref } from "@/components/RelliaCta"
 import { HorizontalCard } from "@/components/cards/HorizontalCard"
 import PageHeader from "@/components/PageHeader"
-import { useProgramsLandingPage } from "@/hooks/useCmsDocuments"
+import { useEvents } from "@/hooks/useCmsDocuments"
 import { DEFAULT_PROGRAMS_LANDING } from "@shared/cms/defaults"
 import { useMemo, useState, useEffect } from "react"
 import { CalendarDays, LayoutGrid, ChevronLeft, ChevronRight } from "lucide-react"
@@ -17,24 +17,20 @@ type EventFilter = "all" | "upcoming" | "past"
 const PAGE_SIZE = 12
 
 export default function Events() {
-  const { data } = useProgramsLandingPage()
-  const pl = data ?? DEFAULT_PROGRAMS_LANDING
+  const { data } = useEvents()
+  const allEvents = Array.isArray(data) && data.length > 0 ? data : [...DEFAULT_PROGRAMS_LANDING.upcomingEvents, ...DEFAULT_PROGRAMS_LANDING.pastEvents]
   const [eventFilter, setEventFilter] = useState<EventFilter>("all")
   const [page, setPage] = useState(1)
 
-  const eventKey = (e: any) => `${e.title}-${e.dateTime}`
-
   const { upcomingEvents, pastEvents } = useMemo(() => {
-    // Sort upcoming events (ascending date)
-    const upcoming = [...pl.upcomingEvents].sort(
-      (a, b) => new Date(a.dateTime).getTime() - new Date(b.dateTime).getTime()
-    )
-    // Sort past events (descending date)
-    const past = [...pl.pastEvents].sort(
-      (a, b) => new Date(b.dateTime).getTime() - new Date(a.dateTime).getTime()
-    )
+    const upcoming = allEvents
+      .filter((e: any) => e?.status === "upcoming")
+      .sort((a: any, b: any) => new Date(a.dateTime).getTime() - new Date(b.dateTime).getTime())
+    const past = allEvents
+      .filter((e: any) => e?.status === "past")
+      .sort((a: any, b: any) => new Date(b.dateTime).getTime() - new Date(a.dateTime).getTime())
     return { upcomingEvents: upcoming, pastEvents: past }
-  }, [pl.upcomingEvents, pl.pastEvents])
+  }, [allEvents])
 
   const visibleEvents = useMemo(() => {
     if (eventFilter === "all") {
@@ -143,10 +139,10 @@ export default function Events() {
                   >
                     <AnimatePresence mode="sync" initial={false}>
                       {pageEvents.map((event) => {
-                        const isPast = pastEvents.some(p => eventKey(p) === eventKey(event))
+                        const isPast = event?.status === "past"
                         return (
                           <motion.div
-                            key={eventKey(event)}
+                            key={event?.slug || `${event.title}-${event.dateTime}`}
                             layout="position"
                             initial={{ opacity: 0, y: 14 }}
                             animate={{ opacity: 1, y: 0 }}
