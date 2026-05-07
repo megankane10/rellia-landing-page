@@ -158,28 +158,7 @@ export const programsLandingQuery = `*[_type == "programsLandingPage"][0]{
   ctaButtonHref
 }`;
 
-export const contactPageQuery = `*[_type == "contactPage"][0]{
-  heroBadge,
-  pageTitle,
-  intro,
-  "sideImageSrc": coalesce(sideImage.asset->url, sideImageSrc),
-  sideImageAlt,
-  quoteText,
-  quoteAttributionName,
-  quoteAttributionRole,
-  successTitle,
-  successBody,
-  labels,
-  placeholders,
-  subjectPlaceholder,
-  companySizePlaceholder,
-  subjectOptions[]{ value, label },
-  companySizeOptions[]{ value, label },
-  submitLabel,
-  sendingLabel
-}`;
-
-export const qmsProgramQuery = `*[_type == "qmsProgramPage"][0]{
+export const programPageBySlugQuery = `*[_type == "programPage" && slug.current == $slug][0]{
   paymentUrl,
   heroTitle,
   heroDescription,
@@ -200,7 +179,39 @@ export const qmsProgramQuery = `*[_type == "qmsProgramPage"][0]{
   bottomCtaTitle,
   bottomCtaBody,
   bottomCtaButtonLabel,
-  bottomContactHref
+  bottomContactHref,
+  sections[]{
+    ...,
+    "imageUrl": image.asset->url,
+    primaryCta{ label, href, description, badge },
+    secondaryCta{ label, href, description, badge },
+    cards[]{
+      ...,
+      "imageUrl": image.asset->url,
+      cta{ label, href, description, badge }
+    }
+  }
+}`
+
+export const contactPageQuery = `*[_type == "contactPage"][0]{
+  heroBadge,
+  pageTitle,
+  intro,
+  "sideImageSrc": coalesce(sideImage.asset->url, sideImageSrc),
+  sideImageAlt,
+  quoteText,
+  quoteAttributionName,
+  quoteAttributionRole,
+  successTitle,
+  successBody,
+  labels,
+  placeholders,
+  subjectPlaceholder,
+  companySizePlaceholder,
+  subjectOptions[]{ value, label },
+  companySizeOptions[]{ value, label },
+  submitLabel,
+  sendingLabel
 }`;
 
 export const notFoundQuery = `*[_type == "notFoundPage"][0]{

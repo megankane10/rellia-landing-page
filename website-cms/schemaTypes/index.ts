@@ -6,7 +6,7 @@ import {aboutPage} from './documents/aboutPage'
 import {faqPage} from './documents/faqPage'
 import {programsLandingPage} from './documents/programsLandingPage'
 import {contactPage} from './documents/contactPage'
-import {qmsProgramPage} from './documents/qmsProgramPage'
+import {programPage} from './documents/programPage'
 import {notFoundPage} from './documents/notFoundPage'
 import {marketingPage} from './documents/marketingPage'
 import {paymentPage} from './documents/paymentPage'
@@ -33,7 +33,7 @@ export const schemaTypes = [
   faqPage,
   programsLandingPage,
   contactPage,
-  qmsProgramPage,
+  programPage,
   notFoundPage,
   marketingPage,
   paymentPage,

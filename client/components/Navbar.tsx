@@ -38,6 +38,41 @@ const FALLBACK_NAV_PRIMARY: NavItem[] = [
   { label: "Contact", href: "/contact" },
 ] as const
 
+const mergePrimaryNav = (primary: NavItem[] | undefined): NavItem[] => {
+  const incoming = Array.isArray(primary) ? primary : []
+  if (incoming.length === 0) return [...FALLBACK_NAV_PRIMARY]
+
+  const byHref = new Map<string, NavItem>()
+  for (const item of incoming) {
+    if (!item?.href || !item?.label) continue
+    const key = item.href.trim().toLowerCase()
+    if (!key) continue
+    byHref.set(key, item)
+  }
+
+  const merged: NavItem[] = []
+  for (const fallback of FALLBACK_NAV_PRIMARY) {
+    const match = byHref.get(fallback.href.toLowerCase())
+    if (!match) {
+      merged.push(fallback)
+      continue
+    }
+    if (Array.isArray(fallback.children) && fallback.children.length > 0) {
+      const childMap = new Map(
+        (Array.isArray(match.children) ? match.children : [])
+          .filter((c): c is NavItem => Boolean(c?.href && c?.label))
+          .map((c) => [c.href.trim().toLowerCase(), c]),
+      )
+      const mergedChildren = fallback.children.map((child) => childMap.get(child.href.toLowerCase()) ?? child)
+      merged.push({ ...match, children: mergedChildren })
+      continue
+    }
+    merged.push(match)
+  }
+
+  return merged
+}
+
 const navItemBase =
   "group relative flex cursor-pointer items-center rounded-full px-3.5 py-2 font-host-grotesk text-[13px] font-semibold uppercase tracking-[0.16em] outline-none transition-[color,background-color,transform] duration-200 motion-reduce:transition-none focus-visible:ring-2 focus-visible:ring-offset-2 motion-safe:hover:-translate-y-[1px]"
 
@@ -310,7 +345,10 @@ export default function Navbar({ ctaRadiusClassName = "rounded-full" }: NavbarPr
     return location.pathname === normalized || location.pathname.startsWith(`${normalized}/`)
   }, [isExternalHref, location.pathname, normalizeInternalHref])
 
-  const navPrimary = (navigationData?.primary?.length ? navigationData.primary : FALLBACK_NAV_PRIMARY) ?? FALLBACK_NAV_PRIMARY
+  const navPrimary = useMemo(
+    () => mergePrimaryNav(navigationData?.primary),
+    [navigationData?.primary],
+  )
 
   const primaryLinks = useMemo(() => {
     return navPrimary

@@ -8,11 +8,11 @@ import {
   homePageQuery,
   navigationQuery,
   pageBySlugQuery,
+  programPageBySlugQuery,
   marketingPageBySlugQuery,
   notFoundQuery,
   paymentPageQuery,
   programsLandingQuery,
-  qmsProgramQuery,
   advisorsQuery,
   alumniCompaniesQuery,
 } from "@/lib/cmsQueries";
@@ -32,6 +32,7 @@ import {
 import type {
   AboutPageContent,
   ContactPageContent,
+  CmsPageSection,
   FaqPageContent,
   NavigationContent,
   CmsPageContent,
@@ -125,6 +126,28 @@ export const useProgramsLandingPage = () =>
     staleTime: staleTimeMs,
   });
 
+type ProgramPageQueryResult = Partial<QmsProgramContent> & {
+  sections?: CmsPageSection[]
+}
+
+export const useProgramPageBySlug = (slug: string, fallback?: Partial<QmsProgramContent>) =>
+  useQuery({
+    queryKey: ["cms", "programPageBySlug", slug],
+    queryFn: async () => {
+      const raw = await sanityFetch<ProgramPageQueryResult>(programPageBySlugQuery, { slug })
+      const content = mergeQmsProgram({
+        ...(fallback ?? {}),
+        ...(raw ?? {}),
+      })
+      return {
+        content,
+        sections: Array.isArray(raw?.sections) ? raw.sections : [],
+      }
+    },
+    enabled: Boolean(slug.trim()),
+    staleTime: staleTimeMs,
+  })
+
 export const useContactPage = () =>
   useQuery({
     queryKey: ["cms", "contactPage"],
@@ -132,17 +155,6 @@ export const useContactPage = () =>
       const raw =
         await sanityFetch<Partial<ContactPageContent>>(contactPageQuery);
       return mergeContactPage(raw ?? undefined);
-    },
-    staleTime: staleTimeMs,
-  });
-
-export const useQmsProgramPage = () =>
-  useQuery({
-    queryKey: ["cms", "qmsProgramPage"],
-    queryFn: async () => {
-      const raw =
-        await sanityFetch<Partial<QmsProgramContent>>(qmsProgramQuery);
-      return mergeQmsProgram(raw ?? undefined);
     },
     staleTime: staleTimeMs,
   });

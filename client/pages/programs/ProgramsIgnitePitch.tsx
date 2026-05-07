@@ -33,5 +33,5 @@ const CMS: QmsProgramContent = {
 }
 
 export default function ProgramsIgnitePitch() {
-  return <ProgramPageLayout cms={CMS} heroImageSrc="/images/program-ignitePitch.png" heroImageAlt="Ignite: Pitch Foundations" outcomesSectionId="ignite-outcomes" staticBlocks={IGNITE_PITCH_STATIC_BLOCKS} isWaitlist />
+  return <ProgramPageLayout cms={CMS} cmsSlug="ignite-pitch-foundations" heroImageSrc="/images/program-ignitePitch.png" heroImageAlt="Ignite: Pitch Foundations" outcomesSectionId="ignite-outcomes" staticBlocks={IGNITE_PITCH_STATIC_BLOCKS} isWaitlist />
 }

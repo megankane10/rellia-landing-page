@@ -33,5 +33,5 @@ const CMS: QmsProgramContent = {
 }
 
 export default function ProgramsPrototypeLab() {
-  return <ProgramPageLayout cms={CMS} heroImageSrc="/images/program-prototype%20lab.png" heroImageAlt="Low-Fidelity Prototype Lab" outcomesSectionId="prototype-outcomes" staticBlocks={PROTOTYPE_LAB_STATIC_BLOCKS} isWaitlist />
+  return <ProgramPageLayout cms={CMS} cmsSlug="prototype-lab" heroImageSrc="/images/program-prototype%20lab.png" heroImageAlt="Low-Fidelity Prototype Lab" outcomesSectionId="prototype-outcomes" staticBlocks={PROTOTYPE_LAB_STATIC_BLOCKS} isWaitlist />
 }

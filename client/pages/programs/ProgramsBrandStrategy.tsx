@@ -33,5 +33,5 @@ const CMS: QmsProgramContent = {
 }
 
 export default function ProgramsBrandStrategy() {
-  return <ProgramPageLayout cms={CMS} heroImageSrc="/images/program-designYourBrand.png" heroImageAlt="Design Your Brand Strategy" outcomesSectionId="brand-outcomes" staticBlocks={BRAND_STRATEGY_STATIC_BLOCKS} isWaitlist />
+  return <ProgramPageLayout cms={CMS} cmsSlug="design-your-brand" heroImageSrc="/images/program-designYourBrand.png" heroImageAlt="Design Your Brand Strategy" outcomesSectionId="brand-outcomes" staticBlocks={BRAND_STRATEGY_STATIC_BLOCKS} isWaitlist />
 }

@@ -1,5 +1,6 @@
 /**
- * Static QMS program blocks (icons, timeline). CMS-driven strings live in `qmsProgramPage` + `useQmsProgramPage`.
+ * Static QMS program blocks (icons, timeline). CMS-driven strings are now loaded from
+ * the shared `programPage` document for slug `build-your-qms`.
  *
  * Adding another program: create e.g. `shared/cms/programs/investment.static.ts` with the same shape,
  * add a route in `App.tsx` that renders `<ProgramPageLayout cms={...} staticBlocks={INVESTMENT_STATIC} ... />`,

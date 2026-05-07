@@ -33,5 +33,5 @@ const CMS: QmsProgramContent = {
 }
 
 export default function ProgramsAdvisoryBoard() {
-  return <ProgramPageLayout cms={CMS} heroImageSrc="/images/program-advisoryboard.png" heroImageAlt="Advisory Board Match" outcomesSectionId="advisory-outcomes" staticBlocks={ADVISORY_BOARD_STATIC_BLOCKS} isWaitlist />
+  return <ProgramPageLayout cms={CMS} cmsSlug="advisory-board-match" heroImageSrc="/images/program-advisoryboard.png" heroImageAlt="Advisory Board Match" outcomesSectionId="advisory-outcomes" staticBlocks={ADVISORY_BOARD_STATIC_BLOCKS} isWaitlist />
 }

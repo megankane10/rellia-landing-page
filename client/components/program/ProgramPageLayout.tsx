@@ -33,7 +33,7 @@ import { getSiteUrl } from "@/config/seo";
 import { cn } from "@/lib/utils";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { SectionsRenderer } from "@/components/cms/PageRenderer"
-import { useCmsPageBySlug } from "@/hooks/useCmsDocuments"
+import { useProgramPageBySlug } from "@/hooks/useCmsDocuments"
 import {
   Carousel,
   CarouselContent,
@@ -44,6 +44,7 @@ import type { ProgramPageStaticBlocks } from "@shared/cms/programs/types";
 
 export type ProgramPageLayoutProps = {
   cms: QmsProgramContent;
+  cmsSlug?: string;
   heroImageSrc: string;
   heroImageAlt: string;
   outcomesSectionId: string;
@@ -170,7 +171,8 @@ const BackToPrograms = () => (
 );
 
 const ProgramPageLayout = ({
-  cms: q,
+  cms,
+  cmsSlug,
   heroImageSrc,
   heroImageAlt,
   outcomesSectionId,
@@ -190,19 +192,15 @@ const ProgramPageLayout = ({
   const [canScrollPrev, setCanScrollPrev] = useState(false);
   const [canScrollNext, setCanScrollNext] = useState(false);
   const location = useLocation();
+  const { data: programPageData } = useProgramPageBySlug(cmsSlug ?? '', cms)
+  const q = programPageData?.content ?? cms
   const filloutId = extractFilloutId(q.paymentUrl);
 
   const canonicalUrl = `${getSiteUrl()}${location.pathname}`;
 
-  const cmsExtraSectionsSlug = location.pathname
-    .replace(/^\/+|\/+$/g, "")
-    .split("/")
-    .filter(Boolean)
-    .join("-")
-
-  const { data: extraSectionsPage } = useCmsPageBySlug(cmsExtraSectionsSlug)
-  const extraSections =
-    extraSectionsPage?.sections?.filter((s) => s._type !== "sectionHero") ?? []
+  const extraSections = (programPageData?.sections ?? []).filter(
+    (s) => s._type !== "sectionHero",
+  )
 
   const pexelsQueries = [
     "medical device startup documents",

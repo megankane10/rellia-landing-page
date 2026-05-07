@@ -33,5 +33,5 @@ const CMS: QmsProgramContent = {
 }
 
 export default function ProgramsAdvanceDataroom() {
-  return <ProgramPageLayout cms={CMS} heroImageSrc="/images/program-DataRoomDeepDive.png" heroImageAlt="Advance: Data Room Deep Dive" outcomesSectionId="advance-outcomes" staticBlocks={ADVANCE_DATAROOM_STATIC_BLOCKS} isWaitlist />
+  return <ProgramPageLayout cms={CMS} cmsSlug="advance-data-room" heroImageSrc="/images/program-DataRoomDeepDive.png" heroImageAlt="Advance: Data Room Deep Dive" outcomesSectionId="advance-outcomes" staticBlocks={ADVANCE_DATAROOM_STATIC_BLOCKS} isWaitlist />
 }

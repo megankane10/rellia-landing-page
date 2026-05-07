@@ -33,5 +33,5 @@ const CMS: QmsProgramContent = {
 }
 
 export default function ProgramsFirst50Users() {
-  return <ProgramPageLayout cms={CMS} heroImageSrc="/images/program-first50users.png" heroImageAlt="First 50 Users" outcomesSectionId="first50-outcomes" staticBlocks={FIRST50_USERS_STATIC_BLOCKS} isWaitlist />
+  return <ProgramPageLayout cms={CMS} cmsSlug="first-50-users" heroImageSrc="/images/program-first50users.png" heroImageAlt="First 50 Users" outcomesSectionId="first50-outcomes" staticBlocks={FIRST50_USERS_STATIC_BLOCKS} isWaitlist />
 }

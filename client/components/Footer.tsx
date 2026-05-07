@@ -72,10 +72,14 @@ export default function Footer() {
   const { data: navigationData } = useNavigation()
   const g = globalSettingsData ?? DEFAULT_GLOBAL_SETTINGS
 
-  const footerColumnsRaw =
-    navigationData?.footer && navigationData.footer.length > 0
-      ? navigationData.footer
-      : FALLBACK_FOOTER_COLUMNS
+  const hasStructuredFooter =
+    Array.isArray(navigationData?.footer) &&
+    navigationData.footer.length > 0 &&
+    navigationData.footer.some((item) => Array.isArray(item?.children) && item.children.length > 0)
+
+  const footerColumnsRaw = hasStructuredFooter
+    ? (navigationData?.footer ?? FALLBACK_FOOTER_COLUMNS)
+    : FALLBACK_FOOTER_COLUMNS
 
   const footerColumns = footerColumnsRaw
     .filter((i): i is NavItem => Boolean(i && typeof i.label === "string" && typeof i.href === "string"))
