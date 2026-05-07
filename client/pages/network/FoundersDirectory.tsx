@@ -16,7 +16,7 @@ import { NETWORK_PATH_ROLE_TAG } from "@/lib/networkPathRoles"
 const DIRECTORY_TITLE_CLASS =
   "font-host-grotesk text-4xl font-extrabold tracking-tight text-black md:text-5xl"
 
-import { FOUNDER_DIRECTORY, type FounderCompany, type StageTag, type FounderCategory } from "@/data/founderDirectory"
+import { FOUNDER_DIRECTORY, ALL_SPECIALTIES, ALL_LEVELS, type FounderCompany, type Specialty, type FounderLevel } from "@/data/founderDirectory"
 
 function FounderDirectoryCard({
   company,
@@ -52,23 +52,23 @@ function FounderDirectoryCard({
             className="max-h-[120px] w-auto max-w-full object-contain object-center"
           />
         </div>
-        <h3 className="mt-5 font-host-grotesk text-lg font-bold tracking-tight text-black group-hover:underline decoration-2 underline-offset-4">
+        <h3 className="mt-5 font-host-grotesk text-base font-bold tracking-tight text-black md:text-lg group-hover:underline decoration-2 underline-offset-4">
           {company.logoName}
         </h3>
         <div className="mt-2 flex flex-wrap gap-2">
-          {company.stages.map((s) => (
+          <span className="rounded-full border border-rellia-teal/20 bg-rellia-mint/20 px-2.5 py-0.5 font-urbanist text-[11px] font-bold text-rellia-teal">
+            {company.level}
+          </span>
+          {company.specialties.map((s) => (
             <span
               key={s}
-              className="inline-flex rounded-full border border-rellia-teal/20 bg-rellia-mint/20 px-2.5 py-0.5 font-urbanist text-xs font-semibold text-rellia-teal"
+              className="rounded-full border border-black/10 bg-black/[0.03] px-2.5 py-0.5 font-urbanist text-[11px] font-bold text-black/60"
             >
               {s}
             </span>
           ))}
-          <span className="inline-flex rounded-full border border-black/10 bg-black/[0.03] px-2.5 py-0.5 font-urbanist text-xs font-semibold text-black/70">
-            {company.category}
-          </span>
         </div>
-        <p className="mt-4 line-clamp-3 font-urbanist text-sm leading-relaxed text-black/70">{company.shortDescription}</p>
+        <p className="mt-4 line-clamp-3 font-urbanist text-[13px] leading-relaxed text-black/70 sm:text-sm">{company.shortDescription}</p>
       </div>
     </motion.article>
   )
@@ -77,21 +77,27 @@ function FounderDirectoryCard({
 export default function FoundersDirectory() {
   const reduceMotion = useReducedMotion()
   const [query, setQuery] = useState("")
-  const [stageFilter, setStageFilter] = useState<"all" | StageTag>("all")
-  const [categoryFilter, setCategoryFilter] = useState<"all" | FounderCategory>("all")
+  const [specialtyFilter, setSpecialtyFilter] = useState<"all" | Specialty>("all")
+  const [levelFilter, setLevelFilter] = useState<FounderLevel | "all">("all")
   const [activeId, setActiveId] = useState<string | null>(null)
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase()
     return FOUNDER_DIRECTORY.filter((c) => {
-      if (stageFilter !== "all" && !c.stages.includes(stageFilter as StageTag)) return false
-      if (categoryFilter !== "all" && c.category !== categoryFilter) return false
+      const matchLevel = levelFilter === "all" || c.level === levelFilter
+      const matchSpecialty = specialtyFilter === "all" || c.specialties.includes(specialtyFilter as Specialty)
+      if (!matchLevel || !matchSpecialty) return false
       if (!q) return true
       const blob =
-        `${c.logoName} ${c.shortDescription} ${c.stages.join(" ")} ${c.category} ${c.traction}`.toLowerCase()
+        `${c.logoName} ${c.shortDescription} ${c.specialties.join(" ")} ${c.level} ${c.traction}`.toLowerCase()
       return blob.includes(q)
     })
-  }, [query, stageFilter, categoryFilter])
+  }, [query, specialtyFilter, levelFilter])
+
+  const levelFilters: Array<{ id: "all" | FounderLevel; label: string }> = [
+    { id: "all", label: "All Levels" },
+    ...ALL_LEVELS.map((l) => ({ id: l, label: l })),
+  ]
 
   const [page, setPage] = useState(1)
   const itemsPerPage = 12
@@ -102,7 +108,7 @@ export default function FoundersDirectory() {
   }, [filtered, page])
 
   // Reset page when filters change
-  useMemo(() => setPage(1), [query, stageFilter, categoryFilter])
+  useMemo(() => setPage(1), [query, specialtyFilter, levelFilter])
 
   const active = useMemo(() => FOUNDER_DIRECTORY.find((c) => c.id === activeId) ?? null, [activeId])
 
@@ -126,89 +132,6 @@ export default function FoundersDirectory() {
   const tag = NETWORK_PATH_ROLE_TAG["founder"]
   const TagIcon = tag.icon
 
-  const FilterContent = () => (
-    <div className="flex flex-col gap-8">
-      <div>
-        <p className="font-urbanist text-xs font-semibold uppercase tracking-wide text-black/45">Stage</p>
-        <div className="mt-3 flex flex-wrap gap-2">
-          <button
-            type="button"
-            onClick={() => setStageFilter("all")}
-            className={cn(
-              "cursor-pointer rounded-full border px-3 py-1.5 font-urbanist text-sm font-semibold transition-colors",
-              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-teal focus-visible:ring-offset-2",
-              stageFilter === "all"
-                ? "border-rellia-teal bg-rellia-teal text-white"
-                : "border-black/10 bg-white text-black/70 hover:border-rellia-teal/40 hover:text-rellia-teal",
-            )}
-            aria-pressed={stageFilter === "all"}
-          >
-            All stages
-          </button>
-          {ALL_STAGES.map((s) => {
-            const isActive = stageFilter === s
-            return (
-              <button
-                key={s}
-                type="button"
-                onClick={() => setStageFilter(s)}
-                className={cn(
-                  "cursor-pointer rounded-full border px-3 py-1.5 font-urbanist text-sm font-semibold transition-colors",
-                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-teal focus-visible:ring-offset-2",
-                  isActive
-                    ? "border-rellia-teal bg-rellia-teal text-white"
-                    : "border-black/10 bg-white text-black/70 hover:border-rellia-teal/40 hover:text-rellia-teal",
-                )}
-                aria-pressed={isActive}
-              >
-                {s}
-              </button>
-            )
-          })}
-        </div>
-      </div>
-      <div>
-        <p className="font-urbanist text-xs font-semibold uppercase tracking-wide text-black/45">Category</p>
-        <div className="mt-3 flex flex-wrap gap-2">
-          <button
-            type="button"
-            onClick={() => setCategoryFilter("all")}
-            className={cn(
-              "cursor-pointer rounded-full border px-3 py-1.5 font-urbanist text-sm font-semibold transition-colors",
-              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-teal focus-visible:ring-offset-2",
-              categoryFilter === "all"
-                ? "border-rellia-teal bg-rellia-teal text-white"
-                : "border-black/10 bg-white text-black/70 hover:border-rellia-teal/40 hover:text-rellia-teal",
-            )}
-            aria-pressed={categoryFilter === "all"}
-          >
-            All categories
-          </button>
-          {["Digital health", "Diagnostics & labs", "Med device", "Care delivery", "Analytics & employer"].map((cat) => {
-            const isActive = categoryFilter === cat
-            return (
-              <button
-                key={cat}
-                type="button"
-                onClick={() => setCategoryFilter(cat)}
-                className={cn(
-                  "cursor-pointer rounded-full border px-3 py-1.5 font-urbanist text-sm font-semibold transition-colors",
-                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-teal focus-visible:ring-offset-2",
-                  isActive
-                    ? "border-rellia-teal bg-rellia-teal text-white"
-                    : "border-black/10 bg-white text-black/70 hover:border-rellia-teal/40 hover:text-rellia-teal",
-                )}
-                aria-pressed={isActive}
-              >
-                {cat}
-              </button>
-            )
-          })}
-        </div>
-      </div>
-    </div>
-  )
-
   return (
     <div className="min-h-screen overflow-x-hidden bg-white font-host-grotesk">
       <Navbar />
@@ -223,11 +146,11 @@ export default function FoundersDirectory() {
           <div className="relative z-10 mx-auto max-w-[1300px] px-6 md:px-10">
             <div className="inline-flex items-center gap-2 rounded-full bg-rellia-teal px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-white/95 ring-1 ring-white/15 mb-4">
               <TagIcon className="h-3.5 w-3.5 shrink-0" aria-hidden />
-              {tag.label}
+              Founders
             </div>
-            <h1 className={DIRECTORY_TITLE_CLASS}>Explore Founders</h1>
+            <h1 className={DIRECTORY_TITLE_CLASS}>Explore Alumni</h1>
             <p className="mt-4 max-w-2xl font-urbanist text-lg leading-relaxed text-black/70">
-              Representative companies from the Rellia portfolio network—stage tags and summaries help you see who is building
+              Representative companies from the Rellia portfolio network—specialty tags and summaries help you see who is building
               alongside you.
             </p>
           </div>
@@ -247,7 +170,7 @@ export default function FoundersDirectory() {
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   type="search"
-                  placeholder="Search founders by name, keyword…"
+                  placeholder="Search alumni by name, keyword…"
                   className={cn(
                     "h-14 w-full rounded-2xl border border-black/10 bg-black/[0.02] pl-12 pr-4 transition-colors",
                     "font-urbanist text-base text-black placeholder:text-black/45 hover:border-black/20",
@@ -256,16 +179,16 @@ export default function FoundersDirectory() {
                 />
               </label>
               
-              <div className="flex flex-col gap-3 shrink-0 sm:flex-row">
+              <div className="flex flex-wrap items-center gap-3 md:gap-4">
+                {/* Level Filter */}
                 <div className="relative">
                   <select
-                    value={stageFilter}
-                    onChange={(e) => setStageFilter(e.target.value as any)}
+                    value={levelFilter}
+                    onChange={(e) => setLevelFilter(e.target.value as any)}
                     className="h-14 w-full appearance-none rounded-2xl border border-black/10 bg-black/[0.02] pl-5 pr-14 min-w-[160px] font-urbanist text-base font-semibold text-black/80 outline-none hover:border-black/20 focus-visible:ring-2 focus-visible:ring-rellia-teal focus-visible:bg-white cursor-pointer"
                   >
-                    <option value="all">All stages</option>
-                    {["Idea", "Pre-seed", "Seed", "Series A"].map(s => (
-                      <option key={s} value={s}>{s}</option>
+                    {levelFilters.map((f) => (
+                      <option key={f.id} value={f.id}>{f.label}</option>
                     ))}
                   </select>
                   <ChevronDown className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-black/45" aria-hidden />
@@ -273,13 +196,13 @@ export default function FoundersDirectory() {
 
                 <div className="relative">
                   <select
-                    value={categoryFilter}
-                    onChange={(e) => setCategoryFilter(e.target.value as any)}
-                    className="h-14 w-full appearance-none rounded-2xl border border-black/10 bg-black/[0.02] pl-5 pr-14 min-w-[180px] font-urbanist text-base font-semibold text-black/80 outline-none hover:border-black/20 focus-visible:ring-2 focus-visible:ring-rellia-teal focus-visible:bg-white cursor-pointer"
+                    value={specialtyFilter}
+                    onChange={(e) => setSpecialtyFilter(e.target.value as any)}
+                    className="h-14 w-full appearance-none rounded-2xl border border-black/10 bg-black/[0.02] pl-5 pr-14 min-w-[160px] font-urbanist text-base font-semibold text-black/80 outline-none hover:border-black/20 focus-visible:ring-2 focus-visible:ring-rellia-teal focus-visible:bg-white cursor-pointer"
                   >
-                    <option value="all">All categories</option>
-                    {["Digital health", "Diagnostics & labs", "Med device", "Care delivery", "Analytics & employer"].map(cat => (
-                      <option key={cat} value={cat}>{cat}</option>
+                    <option value="all">All specialties</option>
+                    {ALL_SPECIALTIES.map(s => (
+                      <option key={s} value={s}>{s}</option>
                     ))}
                   </select>
                   <ChevronDown className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-black/45" aria-hidden />
@@ -298,7 +221,7 @@ export default function FoundersDirectory() {
                 className="mt-10"
                 icon={Building2}
                 title="No companies match this search"
-                description="Adjust your keywords, stage, or category filters to explore the founder directory."
+                description="Adjust your keywords, specialty, or category filters to explore the alumni directory."
               />
             ) : (
               <div className="flex flex-col">
@@ -311,7 +234,7 @@ export default function FoundersDirectory() {
                   <AnimatePresence mode="popLayout">
                     {paginated.map((c) => (
                       <motion.div key={c.id} variants={item} layout>
-                        <FounderDirectoryCard company={c} onOpen={() => navigate(`/founders/directory/${c.id}`)} />
+                        <FounderDirectoryCard company={c} onOpen={() => navigate(`/founders/alumni/${c.id}`)} />
                       </motion.div>
                     ))}
                   </AnimatePresence>

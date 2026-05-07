@@ -1,14 +1,14 @@
 import { useParams, Link, useLocation } from "react-router-dom"
-import { Helmet } from "react-helmet-async"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
-import RelliaAction from "@/components/RelliaAction"
-import { ArrowLeft } from "lucide-react"
-import { GlobeFilled, ShareFilled } from "@/components/icons/SocialIcons"
+import { ArrowLeft, MapPin, Calendar } from "lucide-react"
+import { GlobeFilled, ShareFilled, LinkedInFilled } from "@/components/icons/SocialIcons"
 import { FOUNDER_DIRECTORY } from "@/data/founderDirectory"
 import NotFound from "../NotFound"
 import { cn } from "@/lib/utils"
+import RouteSeo from "@/components/RouteSeo"
 import { getSiteUrl } from "@/config/seo"
+import { TeamMemberCard } from "@/components/cards/TeamMemberCard"
 
 export default function FounderProfile() {
   const { id } = useParams<{ id: string }>()
@@ -39,37 +39,23 @@ export default function FounderProfile() {
       <main id="main-content" className="pt-24 pb-16 md:pt-28">
         <div className="mx-auto max-w-[1300px] px-6 md:px-10">
           <div className="mb-8">
-            <Link to="/founders/directory" className="inline-flex items-center gap-2 font-host-grotesk text-sm font-bold text-rellia-teal hover:underline hover:underline-offset-4">
-              <ArrowLeft className="h-4 w-4" /> Back to Founders Directory
+            <Link to="/founders/alumni" className="inline-flex items-center gap-2 font-host-grotesk text-sm font-bold text-rellia-teal hover:underline hover:underline-offset-4">
+              <ArrowLeft className="h-4 w-4" /> Back to Alumni List
             </Link>
           </div>
           <article className="grid gap-10 lg:grid-cols-[minmax(280px,360px)_minmax(0,1fr)] lg:gap-x-14 xl:grid-cols-[400px_1fr]">
             {/* Left Sidebar - Sticky */}
             <div className="flex flex-col gap-6 lg:sticky lg:top-32 lg:self-start">
-              <Helmet>
-                <title>{active.logoName} — Rellia Health | Alumni</title>
-                <meta name="description" content={active.shortDescription} />
-                <link rel="canonical" href={canonicalUrl} />
-                <meta property="og:type" content="profile" />
-                <meta property="og:locale" content="en_US" />
-                <meta property="og:site_name" content="Rellia Health" />
-                <meta property="og:url" content={canonicalUrl} />
-                <meta property="og:title" content={`${active.logoName} — Rellia Health | Alumni`} />
-                <meta property="og:description" content={active.shortDescription} />
-                <meta property="og:image" content={active.logoSrc.startsWith("http") ? active.logoSrc : `${getSiteUrl()}${active.logoSrc}`} />
-                <meta name="twitter:title" content={`${active.logoName} — Rellia Health | Alumni`} />
-                <meta name="twitter:description" content={active.shortDescription} />
-                <meta name="twitter:image" content={active.logoSrc.startsWith("http") ? active.logoSrc : `${getSiteUrl()}${active.logoSrc}`} />
-                <meta name="twitter:card" content="summary_large_image" />
-              </Helmet>
+              <RouteSeo 
+                title={`${active.logoName} — Rellia Health | Alumni`}
+                description={active.shortDescription}
+              />
 
-
-
-              <div className="flex min-h-[100px] items-center justify-start md:min-h-[120px]">
+              <div className="flex min-h-[120px] items-center justify-start md:min-h-[140px]">
                 <img
                   src={active.logoSrc}
                   alt={active.logoName}
-                  className="max-h-[80px] w-auto max-w-full object-contain object-left opacity-90"
+                  className="max-h-[120px] w-auto max-w-full object-contain object-left opacity-90"
                 />
               </div>
               <div className="pt-2">
@@ -77,23 +63,39 @@ export default function FounderProfile() {
                   {active.logoName}
                 </h2>
                 <div className="flex flex-wrap gap-2 mb-6">
-                  {active.stages.map((s) => (
+                  <span className="inline-flex rounded-full border border-rellia-teal/20 bg-rellia-mint/20 px-3 py-1 font-urbanist text-xs font-semibold text-rellia-teal">
+                    {active.level}
+                  </span>
+                  {active.specialties.map((s) => (
                     <span
                       key={s}
-                      className="inline-flex rounded-full border border-rellia-teal/20 bg-rellia-mint/20 px-3 py-1 font-urbanist text-xs font-semibold text-rellia-teal"
+                      className="inline-flex rounded-full border border-black/10 bg-black/[0.03] px-3 py-1 font-urbanist text-xs font-semibold text-black/70"
                     >
                       {s}
                     </span>
                   ))}
-                  <span className="inline-flex rounded-full border border-black/10 bg-black/[0.03] px-3 py-1 font-urbanist text-xs font-semibold text-black/70">
-                    {active.category}
-                  </span>
                 </div>
-                
-                <div className="flex items-center gap-3">
+
+                <div className="space-y-4">
+                  <div className="flex items-center gap-3 text-black/70">
+                    <MapPin className="h-5 w-5 text-rellia-teal" />
+                    <span className="font-urbanist text-base font-medium">{active.country}</span>
+                  </div>
+                  <div className="flex items-center gap-3 text-black/70">
+                    <Calendar className="h-5 w-5 text-rellia-teal" />
+                    <span className="font-urbanist text-base font-medium">Joined {active.yearJoined}</span>
+                  </div>
+                </div>
+
+                <div className="mt-8 pt-8 border-t border-black/10 flex items-center gap-3">
                   <a href={active.websiteUrl} target="_blank" rel="noopener noreferrer" className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-black/10 bg-white text-black hover:bg-black/5 transition-colors" aria-label="Visit Website">
                     <GlobeFilled className="h-5 w-5" />
                   </a>
+                  {active.linkedinUrl && (
+                    <a href={active.linkedinUrl} target="_blank" rel="noopener noreferrer" className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-black/10 bg-white text-black hover:bg-black/5 transition-colors" aria-label="LinkedIn Company Profile">
+                      <LinkedInFilled className="h-5 w-5" />
+                    </a>
+                  )}
                   <button onClick={handleShare} className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-black/10 bg-white text-black hover:bg-black/5 transition-colors" aria-label="Share">
                     <ShareFilled className="h-5 w-5" />
                   </button>
@@ -106,6 +108,44 @@ export default function FounderProfile() {
               <section>
                 <h3 className="text-2xl font-semibold mb-4">Overview</h3>
                 <p>{active.longDescription}</p>
+              </section>
+
+              <section className="not-prose">
+                <h3 className="text-2xl font-host-grotesk font-semibold text-black mb-6">Meet the founders</h3>
+                <div className={cn("grid grid-cols-1 gap-12", active.founders.length > 1 && "md:grid-cols-2")}>
+                  {active.founders.map((f, i) => (
+                    <div key={i} className="flex flex-col sm:flex-row gap-6 items-stretch">
+                      <div className="shrink-0 w-24 h-24 sm:w-32 sm:h-32 overflow-hidden rounded-2xl border border-black/5 shadow-sm">
+                        <img src={f.imageSrc} alt={f.name} className="w-full h-full object-cover" />
+                      </div>
+                      <div className="flex-1 flex flex-col justify-between py-1">
+                        <div>
+                          <h4 className="font-host-grotesk text-xl font-bold text-black">{f.name}</h4>
+                          <p className="font-host-grotesk text-sm font-semibold text-rellia-teal mt-1">{f.role}</p>
+                        </div>
+                        
+                        {f.linkedinUrl && (
+                          <div className="mt-4">
+                            <a href={f.linkedinUrl} target="_blank" rel="noopener noreferrer" className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-black/10 bg-white text-black/40 hover:text-rellia-teal transition-colors">
+                              <LinkedInFilled className="h-4 w-4" />
+                            </a>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </section>
+
+              <section>
+                <h3 className="text-2xl font-semibold mb-4">Participated Programs</h3>
+                <div className="flex flex-wrap gap-3 not-prose">
+                  {active.programs.map((p, i) => (
+                    <div key={i} className="rounded-xl border border-rellia-teal/10 bg-rellia-mint/5 px-4 py-3">
+                      <span className="font-host-grotesk font-bold text-rellia-teal">{p}</span>
+                    </div>
+                  ))}
+                </div>
               </section>
 
               <section>
@@ -121,8 +161,8 @@ export default function FounderProfile() {
           </article>
 
           <div className="mt-16 pt-8 border-t border-black/10">
-            <Link to="/founders/directory" className="inline-flex items-center gap-2 font-host-grotesk text-sm font-bold text-rellia-teal hover:underline hover:underline-offset-4">
-              <ArrowLeft className="h-4 w-4" /> Back to Founders Directory
+            <Link to="/founders/alumni" className="inline-flex items-center gap-2 font-host-grotesk text-sm font-bold text-rellia-teal hover:underline hover:underline-offset-4">
+              <ArrowLeft className="h-4 w-4" /> Back to Alumni List
             </Link>
           </div>
         </div>

@@ -49,81 +49,90 @@ export function HorizontalCard(props: HorizontalCardProps) {
     const personRaw = (event.person ?? "").trim()
     const speakerName = speakerParts.speaker || personRaw || ""
     const hasSpeakerBlock = Boolean(speakerName)
-    const locationLine1 = getProgramsEventLocationDetailLines(event).line1
     const avatarSrc = getProgramsEventSpeakerAvatarSrc(event)
 
-    const tagLabel = variant === "past" ? "Past" : "Upcoming"
     const tagIsMint = variant === "upcoming"
+
+    // Simple parser for "May 15" or similar from the date line
+    // e.g. "Monday, May 15, 6:00 PM"
+    const dateParts = dateTimeLine.split(",")
+    const dateMain = (dateParts[1] || dateParts[0] || "").trim() // "May 15"
+    const timeMain = (dateParts[2] || "").trim() // "6:00 PM"
 
     return (
       <article
         className={cn(
-          "group relative flex flex-row w-full rounded-xl border border-black/10 bg-white transition-all duration-300 hover:border-black/20 hover:shadow-md p-4 md:p-5 gap-4 md:gap-6 items-stretch min-h-[160px] sm:min-h-[180px] md:min-h-[200px]",
+          "group relative flex items-center w-full bg-white transition-all duration-300 py-6 md:py-10 border-b border-black/[0.06] hover:bg-black/[0.01]",
           className
         )}
       >
-        <Link to={detailHref} className="absolute inset-0 z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-teal rounded-xl">
+        <Link to={detailHref} className="absolute inset-0 z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-teal">
           <span className="sr-only">View {event.title}</span>
         </Link>
-        <div className="flex flex-1 flex-col min-w-0 py-1">
-          <div className="flex flex-col space-y-1 mb-2">
-            {dateTimeLine ? (
-              <p className="font-urbanist text-[13px] md:text-sm font-bold text-black/50 uppercase tracking-wide">{dateTimeLine}</p>
-            ) : null}
-            <h3 className="line-clamp-2 font-host-grotesk text-xl md:text-2xl font-semibold leading-tight tracking-tight text-black group-hover:underline decoration-2 underline-offset-4">
-              {event.title}
-            </h3>
-          </div>
 
-          <div className="flex flex-wrap items-center gap-2 mb-3">
+        {/* Date Block */}
+        <div className="flex flex-col items-start justify-center w-24 sm:w-28 md:w-40 shrink-0">
+          <span className="font-host-grotesk text-3xl md:text-5xl font-bold text-black leading-none">
+            {dateMain.split(" ")[1] || dateMain}
+          </span>
+          <span className="mt-2 font-urbanist text-[11px] md:text-sm font-bold text-black/40 uppercase tracking-[0.25em]">
+            {dateMain.split(" ")[0] || ""}
+          </span>
+        </div>
+
+        {/* Content */}
+        <div className="flex flex-1 flex-col min-w-0 pr-6">
+          <div className="flex flex-wrap items-center gap-4 mb-3">
             <span
               className={cn(
-                "inline-flex w-fit items-center gap-1.5 rounded-full px-2.5 py-1 font-host-grotesk text-[10px] font-bold uppercase tracking-[0.14em] ring-1 ring-black/5",
-                tagIsMint ? "bg-rellia-mint/80 text-rellia-teal" : "bg-black/[0.04] text-black/65"
+                "inline-flex items-center gap-2 font-host-grotesk text-xs md:text-sm font-bold uppercase tracking-[0.14em]",
+                tagIsMint ? "text-rellia-teal" : "text-black/40"
               )}
             >
               {variant === "past" ? (
-                <History className="h-3.5 w-3.5 opacity-80" aria-hidden strokeWidth={2.25} />
+                <History className="h-4 w-4" aria-hidden strokeWidth={2.5} />
               ) : (
-                <Calendar className="h-3.5 w-3.5 opacity-80" aria-hidden strokeWidth={2.25} />
+                <Calendar className="h-4 w-4" aria-hidden strokeWidth={2.5} />
               )}
-              {tagLabel}
+              {variant === "past" ? "Past" : "Upcoming"}
             </span>
-            <span className="inline-flex w-fit items-center gap-1.5 rounded-full border border-black/10 bg-white px-2.5 py-1 font-host-grotesk text-[10px] font-bold uppercase tracking-[0.14em] text-black/70">
-              {attendanceMode === "virtual" ? (
-                <Video className="h-3.5 w-3.5 opacity-80" aria-hidden strokeWidth={2.25} />
-              ) : (
-                <MapPin className="h-3.5 w-3.5 opacity-80" aria-hidden strokeWidth={2.25} />
-              )}
-              {attendanceMode === "virtual" ? "Virtual" : "In person"}
+            <span className="h-1 w-1 rounded-full bg-black/10" aria-hidden />
+            <span className="font-urbanist text-sm font-bold text-black/40 uppercase tracking-widest">
+              {timeMain || "TBD"}
             </span>
           </div>
 
-          {/* Location line removed per request */}
+          <h3 className="line-clamp-2 font-host-grotesk text-2xl md:text-3xl font-bold leading-tight tracking-tight text-black group-hover:text-rellia-teal transition-colors duration-300">
+            {event.title}
+          </h3>
 
-          {hasSpeakerBlock ? (
-            <div className="mt-auto pt-4 flex items-center gap-3">
-              <img
-                src={avatarSrc}
-                alt=""
-                className={cn(
-                  "h-10 w-10 md:h-12 md:w-12 shrink-0 rounded-full border border-black/10 object-cover object-center",
-                  variant === "past" && "opacity-90 saturate-[0.9]"
-                )}
-                aria-hidden
-              />
-              <div className="min-w-0 flex-1">
-                <p className="font-host-grotesk text-sm md:text-base font-bold text-black leading-snug truncate">{speakerName}</p>
-                {speakerParts.company ? (
-                  <p className="font-urbanist text-[13px] md:text-sm text-black/60 font-medium leading-snug truncate">{speakerParts.company}</p>
-                ) : null}
+          <div className="mt-4 flex flex-wrap items-center gap-y-3 gap-x-6">
+            {hasSpeakerBlock && (
+              <div className="flex items-center gap-3">
+                 <img src={avatarSrc} alt="" className="h-7 w-7 rounded-full border border-black/10 object-cover" />
+                 <div className="flex flex-col min-w-0">
+                   <span className="font-urbanist text-sm font-bold text-black/80 truncate max-w-[140px] leading-none">{speakerName}</span>
+                   {speakerParts.company && (
+                     <span className="font-urbanist text-[11px] font-medium text-black/40 truncate max-w-[120px] mt-0.5">{speakerParts.company}</span>
+                   )}
+                 </div>
               </div>
+            )}
+            {hasSpeakerBlock && <span className="hidden sm:block h-1 w-1 rounded-full bg-black/10" aria-hidden />}
+            <div className="flex items-center gap-2 font-urbanist text-sm font-bold text-black/50">
+              {attendanceMode === "virtual" ? (
+                <Video className="h-4 w-4 text-rellia-teal/70" aria-hidden strokeWidth={2.5} />
+              ) : (
+                <MapPin className="h-4 w-4 text-rellia-teal/70" aria-hidden strokeWidth={2.5} />
+              )}
+              {attendanceMode === "virtual" ? "Virtual" : "In person"}
             </div>
-          ) : null}
+          </div>
         </div>
 
-        {event.imageSrc ? (
-          <div className="relative shrink-0 rounded-lg overflow-hidden bg-black/5 ml-auto w-24 sm:w-32 md:w-40 aspect-square self-start sm:self-center">
+        {/* Image Thumbnail */}
+        {event.imageSrc && (
+          <div className="relative shrink-0 rounded-2xl overflow-hidden bg-black/5 w-16 h-16 sm:w-24 sm:h-24 md:w-36 md:h-36 ml-auto shadow-sm">
             <img
               src={event.imageSrc}
               alt={event.title}
@@ -134,7 +143,7 @@ export function HorizontalCard(props: HorizontalCardProps) {
               loading="lazy"
             />
           </div>
-        ) : null}
+        )}
       </article>
     )
   }
@@ -149,7 +158,7 @@ export function HorizontalCard(props: HorizontalCardProps) {
   return (
     <article
       className={cn(
-        "group relative flex flex-row w-full rounded-xl border border-black/10 bg-white transition-all duration-300 hover:border-black/20 hover:shadow-md p-4 md:p-5 gap-4 md:gap-6 items-stretch min-h-[160px] sm:min-h-[180px] md:min-h-[200px]",
+        "group relative flex flex-row w-full rounded-2xl border border-black/10 bg-white transition-all duration-500 hover:border-rellia-teal/30 hover:shadow-[0_20px_50px_-20px_rgba(13,148,136,0.12)] p-4 md:p-6 gap-5 md:gap-8 items-stretch",
         hasHref ? "cursor-pointer" : (isWaitlistCard ? "cursor-pointer" : ""),
         className
       )}
@@ -163,61 +172,74 @@ export function HorizontalCard(props: HorizontalCardProps) {
       tabIndex={!hasHref && isWaitlistCard ? 0 : undefined}
     >
       {hasHref ? (
-        <Link to={program.href as string} className="absolute inset-0 z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-teal rounded-xl">
+        <Link to={program.href as string} className="absolute inset-0 z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-teal rounded-2xl">
           <span className="sr-only">View {program.title}</span>
         </Link>
       ) : null}
 
-      <div className="flex flex-[1.2] flex-col min-w-0 py-1">
-        <h3 className={cn(
-          "font-host-grotesk text-xl md:text-2xl font-semibold leading-tight tracking-tight text-black mb-2",
-          (hasHref || isWaitlistCard) && "group-hover:underline decoration-2 underline-offset-4"
-        )}>
-          {program.title}
-        </h3>
+      <div className="relative shrink-0 rounded-xl overflow-hidden bg-rellia-teal/5 w-24 sm:w-32 md:w-[260px] lg:w-[320px] aspect-square">
+        <img
+          src={program.imageSrc}
+          alt={program.title}
+          className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+          loading="lazy"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+      </div>
 
-        <div className="flex flex-wrap items-center gap-2 mb-3">
+      <div className="flex flex-1 flex-col min-w-0 py-1">
+        <div className="mb-4 flex flex-wrap items-center gap-3">
           <span
             className={cn(
-              "inline-flex w-fit items-center gap-1.5 rounded-full px-2.5 py-1 font-host-grotesk text-[10px] font-bold uppercase tracking-[0.14em] ring-1 ring-black/5",
+              "inline-flex w-fit items-center gap-1.5 rounded-full px-3 py-1 font-host-grotesk text-[10px] font-bold uppercase tracking-[0.16em] ring-1 ring-black/5",
               !isWaitlistCard ? "bg-rellia-mint/80 text-rellia-teal" : "bg-black/[0.04] text-black/65"
             )}
           >
             {isWaitlistCard ? (
               <>
-                <Bell className="h-3.5 w-3.5 opacity-80" aria-hidden strokeWidth={2.25} />
+                <Bell className="h-3.5 w-3.5 opacity-80" aria-hidden strokeWidth={2.5} />
                 Join the Waitlist
               </>
             ) : (
               <>
-                <Calendar className="h-3.5 w-3.5 opacity-80" aria-hidden strokeWidth={2.25} />
+                <Calendar className="h-3.5 w-3.5 opacity-80" aria-hidden strokeWidth={2.5} />
                 Applications Open
               </>
             )}
           </span>
         </div>
+
+        <h3 className={cn(
+          "font-host-grotesk text-2xl md:text-3xl font-bold leading-[1.15] tracking-tight text-black mb-4",
+          (hasHref || isWaitlistCard) && "group-hover:text-rellia-teal transition-colors duration-300"
+        )}>
+          {program.title}
+        </h3>
         
-        <p className="font-urbanist text-sm md:text-base font-medium leading-relaxed text-black/60 line-clamp-3 pt-4">
+        <p className="font-urbanist text-[15px] md:text-base font-medium leading-relaxed text-black/60 line-clamp-3">
           {program.description}
         </p>
 
         {!isWaitlistCard && (
-          <div className="mt-auto pt-5 flex items-center gap-2 text-black">
-            <CalendarDays className="h-4.5 w-4.5 text-rellia-teal" strokeWidth={2.5} />
-            <span className="font-host-grotesk text-[11px] md:text-xs font-bold uppercase tracking-[0.18em]">
-              Deadline: {program.deadline || getCurrentMonthDeadline()}
-            </span>
+          <div className="mt-4 flex items-center gap-2.5 text-black/70">
+            <div className="flex h-7 w-7 items-center justify-center rounded-full bg-rellia-mint/20">
+              <CalendarDays className="h-4 w-4 text-rellia-teal" strokeWidth={2.5} />
+            </div>
+            <div className="flex flex-col">
+              <span className="font-host-grotesk text-[10px] font-bold uppercase tracking-[0.18em] text-black/40">Deadline</span>
+              <span className="font-urbanist text-sm font-bold text-black/80">
+                {program.deadline || getCurrentMonthDeadline()}
+              </span>
+            </div>
           </div>
         )}
-      </div>
 
-      <div className="relative shrink-0 rounded-lg overflow-hidden bg-rellia-teal/5 ml-auto w-28 sm:w-40 md:w-56 aspect-square self-start sm:self-center">
-        <img
-          src={program.imageSrc}
-          alt={program.title}
-          className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
-          loading="lazy"
-        />
+        <div className="mt-auto pt-6 flex items-center justify-between border-t border-black/5">
+          <span className="font-host-grotesk text-sm font-bold text-rellia-teal group-hover:underline underline-offset-4 decoration-2">
+            {isWaitlistCard ? "Notify me" : "View program details"}
+          </span>
+          <ArrowRight className="h-5 w-5 text-rellia-teal transition-transform duration-300 group-hover:translate-x-1" />
+        </div>
       </div>
 
       {hasWaitlistHref ? (

@@ -137,7 +137,7 @@ export default function About() {
 
               <div className="mt-12 sm:mt-[4.8rem] md:mt-[7.2rem] lg:mt-[8.4rem] lg:flex lg:flex-1 lg:items-center">
                 <div className="w-full">
-                  <div className="grid grid-cols-2 items-stretch gap-3 sm:gap-4 md:gap-5 lg:grid-cols-3 xl:grid-cols-4">
+                  <div className="grid grid-cols-1 items-stretch gap-3 sm:grid-cols-2 sm:gap-4 md:gap-5 lg:grid-cols-3 xl:grid-cols-4">
                 {about.values.map((v, i) => {
                   const Icon = resolveValueIcon(v.iconKey);
 

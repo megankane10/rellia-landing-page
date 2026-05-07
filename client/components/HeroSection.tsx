@@ -4,6 +4,7 @@ import type { HomePageContent } from "@shared/cms/types"
 import { ArrowRight } from "lucide-react"
 import RelliaAction from "@/components/RelliaAction"
 import { motion, useReducedMotion } from "framer-motion"
+import { cn } from "@/lib/utils"
 
 /** Stagger timing must stay in sync with `headlineBelowFoldDelayMs` below */
 const HEADLINE_STAGGER_CHILDREN_S = 0.15
@@ -127,7 +128,13 @@ export default function HeroSection({ content }: HeroSectionProps) {
               className="font-host-grotesk text-[46px] font-medium leading-[0.95] tracking-tight text-rellia-mint md:text-[68px] lg:text-[82px] space-y-1"
             >
               {headlineLines.map((line, idx) => (
-                <div key={`line-${idx}`} className="overflow-hidden flex flex-wrap gap-x-[0.22em]">
+                <div 
+                  key={`line-${idx}`} 
+                  className={cn(
+                    "overflow-hidden flex flex-wrap gap-x-[0.22em]",
+                    idx > 0 && "hidden md:flex" // Hide forced second line on mobile if it exists
+                  )}
+                >
                   <motion.span
                     variants={headlineWordVariants}
                     className="inline-flex flex-wrap gap-x-[0.22em] will-change-[transform,filter]"
@@ -135,6 +142,14 @@ export default function HeroSection({ content }: HeroSectionProps) {
                     {line.map((word, wIdx) => (
                       <span key={`word-${idx}-${wIdx}`}>{word}</span>
                     ))}
+                    {/* On mobile, if this is the first line and there's a second one, render the rest of the words here too but only show on mobile */}
+                    {idx === 0 && headlineLines.length > 1 && (
+                      <span className="flex md:hidden flex-wrap gap-x-[0.22em]">
+                        {headlineLines.slice(1).flat().map((word, wIdx) => (
+                          <span key={`mobile-word-${wIdx}`}>{word}</span>
+                        ))}
+                      </span>
+                    )}
                   </motion.span>
                 </div>
               ))}

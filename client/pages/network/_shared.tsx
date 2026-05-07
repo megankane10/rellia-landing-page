@@ -371,17 +371,41 @@ export function RoleHero({
   imageSrc,
   primaryCta,
   secondaryCta,
+  onPrimaryClick,
 }: {
   roleId?: "founder" | "advisor" | "investor" | "partner"
   eyebrowLabel?: string
   title: React.ReactNode
   subtitle: React.ReactNode
   imageSrc: string
-  primaryCta: { label: string; to: string }
+  primaryCta: { label: string; to?: string }
   secondaryCta?: { label: string; to: string }
+  onPrimaryClick?: () => void
 }) {
   const tag = roleId ? NETWORK_PATH_ROLE_TAG[roleId] : undefined
   const label = eyebrowLabel || (tag ? tag.label : "Network")
+  
+  const renderPrimary = () => {
+    if (onPrimaryClick) {
+      return (
+        <button 
+          type="button" 
+          onClick={onPrimaryClick} 
+          className="inline-flex w-full cursor-pointer items-center justify-center gap-2 sm:w-auto"
+        >
+          {primaryCta.label}
+          <ArrowRight className="h-4 w-4" aria-hidden />
+        </button>
+      )
+    }
+    return (
+      <Link to={primaryCta.to || "/"} className="inline-flex w-full cursor-pointer items-center justify-center gap-2 sm:w-auto">
+        {primaryCta.label}
+        <ArrowRight className="h-4 w-4" aria-hidden />
+      </Link>
+    )
+  }
+
   return (
     <section className="relative overflow-hidden bg-rellia-teal pt-[72px] md:pt-[86px] lg:flex lg:flex-1 lg:flex-col lg:min-h-0 lg:pt-[96px]">
       <img
@@ -419,10 +443,7 @@ export function RoleHero({
               size="comfortable"
               className="w-full min-w-0 justify-center sm:min-w-[220px] sm:w-auto"
             >
-              <Link to={primaryCta.to} className="inline-flex w-full cursor-pointer items-center justify-center gap-2 sm:w-auto">
-                {primaryCta.label}
-                <ArrowRight className="h-4 w-4" aria-hidden />
-              </Link>
+              {renderPrimary()}
             </RelliaAction>
             {secondaryCta && (
               <RelliaAction

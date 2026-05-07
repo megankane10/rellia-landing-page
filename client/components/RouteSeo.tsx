@@ -9,11 +9,20 @@ import {
   normalizePathname,
 } from "@/config/seo"
 
-const RouteSeo = () => {
+interface RouteSeoProps {
+  title?: string
+  description?: string
+}
+
+const RouteSeo = ({ title: titleOverride, description: descriptionOverride }: RouteSeoProps) => {
   const { pathname } = useLocation()
   const normalizedPathname = normalizePathname(pathname)
   const base = getSiteUrl()
-  const { title, description, indexable } = getSeoForPathname(normalizedPathname)
+  const { title: defaultTitle, description: defaultDescription, indexable } = getSeoForPathname(normalizedPathname)
+  
+  const title = titleOverride || defaultTitle
+  const description = descriptionOverride || defaultDescription
+  
   const canonicalUrl = indexable
     ? `${base}${normalizedPathname === "/" ? "" : normalizedPathname}`
     : undefined

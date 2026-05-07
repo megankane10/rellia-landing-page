@@ -117,11 +117,11 @@ export default function Footer() {
                   <Link to="/stories" className={footerLinkClass}>
                     Stories
                   </Link>
-                  <Link to="/founders/directory" className={footerLinkClass}>
-                    Startups Directory
+                  <Link to="/founders/alumni" className={footerLinkClass}>
+                    Explore Alumni
                   </Link>
                   <Link to="/advisors/directory" className={footerLinkClass}>
-                    Advisors Directory
+                    Explore Advisors
                   </Link>
                   <a
                     href={GETPROVEN_VENDORS_GRID_URL}

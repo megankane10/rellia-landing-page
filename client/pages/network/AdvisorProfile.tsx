@@ -1,5 +1,4 @@
 import { useParams, Link, useLocation } from "react-router-dom"
-import { Helmet } from "react-helmet-async"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
 import RelliaAction from "@/components/RelliaAction"
@@ -7,6 +6,7 @@ import { ArrowLeft } from "lucide-react"
 import { GlobeFilled, LinkedInFilled, ShareFilled } from "@/components/icons/SocialIcons"
 import { ADVISOR_DIRECTORY_SEED } from "@/data/advisorDirectory"
 import NotFound from "../NotFound"
+import RouteSeo from "@/components/RouteSeo"
 import { getSiteUrl } from "@/config/seo"
 
 export default function AdvisorProfile() {
@@ -45,22 +45,10 @@ export default function AdvisorProfile() {
           <article className="grid gap-10 lg:grid-cols-[minmax(280px,360px)_minmax(0,1fr)] lg:gap-x-14 xl:grid-cols-[400px_1fr]">
             {/* Left Sidebar - Sticky */}
             <div className="flex flex-col gap-6 lg:sticky lg:top-32 lg:self-start">
-              <Helmet>
-                <title>{active.name} — Rellia Health | Advisors</title>
-                <meta name="description" content={active.focus} />
-                <link rel="canonical" href={canonicalUrl} />
-                <meta property="og:type" content="profile" />
-                <meta property="og:locale" content="en_US" />
-                <meta property="og:site_name" content="Rellia Health" />
-                <meta property="og:url" content={canonicalUrl} />
-                <meta property="og:title" content={`${active.name} — Rellia Health | Advisors`} />
-                <meta property="og:description" content={active.focus} />
-                <meta property="og:image" content={active.photoSrc.startsWith("http") ? active.photoSrc : `${getSiteUrl()}${active.photoSrc}`} />
-                <meta name="twitter:title" content={`${active.name} — Rellia Health | Advisors`} />
-                <meta name="twitter:description" content={active.focus} />
-                <meta name="twitter:image" content={active.photoSrc.startsWith("http") ? active.photoSrc : `${getSiteUrl()}${active.photoSrc}`} />
-                <meta name="twitter:card" content="summary_large_image" />
-              </Helmet>
+              <RouteSeo 
+                title={`${active.name} — Rellia Health | Advisors`}
+                description={active.focus}
+              />
               <div className="overflow-hidden rounded-2xl aspect-[4/5] w-full max-h-[min(56vh,560px)]">
                 <img
                   src={active.photoSrc}
@@ -90,7 +78,9 @@ export default function AdvisorProfile() {
                   ))}
                 </div>
 
-                <div className="flex items-center gap-3 mb-6">
+                </div>
+
+                <div className="mt-6 pt-6 border-t border-black/10 flex items-center gap-3">
                   <a href={active.linkedInUrl} target="_blank" rel="noopener noreferrer" className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-black/10 bg-white text-black hover:bg-black/5 transition-colors" aria-label="LinkedIn Profile">
                     <LinkedInFilled className="h-5 w-5" />
                   </a>
@@ -103,20 +93,19 @@ export default function AdvisorProfile() {
                     <ShareFilled className="h-5 w-5" />
                   </button>
                 </div>
-
-                <RelliaAction asChild variant="mintTealFill" size="comfortable" className="w-full justify-center">
-                  <a href={active.linkedInUrl} target="_blank" rel="noopener noreferrer">
-                    Book a call
-                  </a>
-                </RelliaAction>
               </div>
-            </div>
 
-            {/* Right Content - Rich Text Area */}
+              {/* Right Content - Rich Text Area */}
             <div className="min-w-0 space-y-12 pb-8 prose prose-lg max-w-none prose-headings:font-host-grotesk prose-headings:text-black prose-p:font-urbanist prose-p:text-black/80 prose-p:leading-relaxed prose-li:font-urbanist prose-li:text-black/80">
               <section>
                 <h3 className="text-2xl font-semibold mb-4">About</h3>
                 <p>{active.bio}</p>
+                <div className="rounded-2xl bg-rellia-cream/35 px-5 py-6 mt-8 border border-black/5 not-prose">
+                  <h3 className="font-host-grotesk text-sm font-semibold uppercase tracking-[0.12em] text-black/55 mb-2">
+                    Snapshot
+                  </h3>
+                  <p className="font-urbanist text-base leading-relaxed text-black/80">{active.focus}</p>
+                </div>
               </section>
 
               <section>
@@ -131,13 +120,6 @@ export default function AdvisorProfile() {
                     <li key={line.slice(0, 40)}>{line}</li>
                   ))}
                 </ul>
-              </section>
-
-              <section className="rounded-2xl bg-rellia-cream/35 px-6 py-8 mt-12 border border-black/5 not-prose">
-                <h3 className="font-host-grotesk text-sm font-semibold uppercase tracking-\[0.12em\] text-black/55 mb-3">
-                  Snapshot
-                </h3>
-                <p className="font-urbanist text-lg leading-relaxed text-black/80">{active.focus}</p>
               </section>
             </div>
           </article>

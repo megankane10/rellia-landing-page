@@ -237,7 +237,7 @@ const ProgramPageLayout = ({
         </section>
 
         {/* ─── Trusted Members Section ─── */}
-        <section className="relative w-full bg-white py-20 md:py-32 px-6 md:px-10 overflow-hidden border-b border-black/5">
+        <section className="relative w-full bg-white py-12 md:py-20 px-6 md:px-10 overflow-hidden border-b border-black/5">
           <div className="relative z-10 max-w-[1300px] mx-auto">
             <ScrollReveal>
               <h2 className="font-host-grotesk text-3xl font-semibold leading-tight tracking-tight text-black md:text-[40px] mb-12">Already Trusted by Rellia Members</h2>
@@ -277,27 +277,27 @@ const ProgramPageLayout = ({
                     },
                   ].map((t) => (
                     <CarouselItem key={t.name} className="pl-4 basis-full">
-                      <div className="flex flex-col md:flex-row overflow-hidden rounded-3xl border border-black/5 bg-rellia-teal shadow-xl min-h-[460px]">
-                        {/* Left Side: Quote */}
-                        <div className="flex-1 p-8 md:p-14 md:pb-20 flex flex-col justify-start pt-12 md:pt-20">
-                          <Quote className="h-12 w-12 text-rellia-mint mb-8" strokeWidth={1.5} />
-                          <p className="font-host-grotesk text-2xl md:text-3xl lg:text-4xl font-normal leading-[1.15] tracking-tight text-white">
+                      <div className="relative flex flex-col overflow-hidden min-h-[340px] md:min-h-[400px]">
+                        {/* Quote Block - Full Width */}
+                        <div className="relative z-10 p-0 md:pb-6 flex flex-col justify-start pt-4 md:pt-8">
+                          <Quote className="h-8 w-8 text-rellia-teal/20 mb-6" strokeWidth={2} />
+                          <p className="font-host-grotesk text-xl md:text-2xl lg:text-3xl font-medium leading-[1.25] tracking-tight text-black max-w-5xl">
                             &ldquo;{t.quote}&rdquo;
                           </p>
                         </div>
                         
-                        {/* Right Side: Identity */}
-                        <div className="w-full md:w-[340px] lg:w-[400px] bg-white flex flex-col">
-                          <div className="h-[280px] md:h-[360px] w-full overflow-hidden">
+                        {/* Identity Block - Underneath */}
+                        <div className="relative z-10 mt-8 flex items-center gap-4 md:gap-5">
+                          <div className="h-14 w-14 md:h-16 md:w-16 shrink-0 overflow-hidden rounded-xl border border-black/5 bg-rellia-teal/5">
                             <img 
                               src={t.image} 
                               alt={t.name} 
                               className="h-full w-full object-cover"
                             />
                           </div>
-                          <div className="flex-1 p-8 flex flex-col justify-center bg-rellia-mint">
-                            <h4 className="font-host-grotesk font-bold text-xl text-black">{t.name}</h4>
-                            <p className="font-urbanist text-[17px] font-semibold text-rellia-teal mt-1">
+                          <div className="flex flex-col">
+                            <h4 className="font-host-grotesk font-bold text-lg md:text-xl text-rellia-teal leading-tight">{t.name}</h4>
+                            <p className="font-urbanist text-sm md:text-base font-medium text-black/60 mt-0.5">
                               {t.role} &bull; {t.company}
                             </p>
                           </div>

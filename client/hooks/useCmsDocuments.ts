@@ -11,7 +11,9 @@ import {
   paymentPageQuery,
   programsLandingQuery,
   qmsProgramQuery,
+  advisorsQuery,
 } from "@/lib/cmsQueries"
+
 import {
   mergeAboutPage,
   mergeContactPage,
@@ -141,3 +143,14 @@ export const useMarketingPage = (
     },
     staleTime: staleTimeMs,
   })
+
+export const useAdvisors = () =>
+  useQuery({
+    queryKey: ["cms", "advisors"],
+    queryFn: async () => {
+      const raw = await sanityFetch<any[]>(advisorsQuery)
+      return raw ?? []
+    },
+    staleTime: staleTimeMs,
+  })
+

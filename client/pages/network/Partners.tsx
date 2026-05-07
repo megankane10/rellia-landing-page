@@ -43,11 +43,11 @@ const GETPROVEN_BENEFITS = [
 
 const ENGAGEMENT: readonly EngagementItem[] = [
   {
-    title: "Join directory",
-    body: "List your organization so founders can discover the right integration, pilot, and procurement paths.",
+    title: "Partner directory",
+    body: "Centralize your offers and verified references inside our exclusive marketplace for health tech execution.",
     href: GETPROVEN_VENDORS_GRID_URL,
     external: true,
-    cta: "Open directory",
+    cta: "Explore directory",
     icon: LayoutGrid,
   },
   {
@@ -185,55 +185,56 @@ function BenefitsWithImageSplit() {
   )
 }
 
-function GetProvenSplit() {
+function ExclusiveDirectorySplit() {
+  const img = usePexelsPhoto({
+    query: "modern professional software directory interface",
+    fallbackUrl: "/images/metrics-bg-pexels-2.jpg",
+    orientation: "landscape",
+  })
+
   return (
     <LightSection className="bg-rellia-cream/15">
-      <div className="flex flex-col">
-        <Reveal>
-          <div className="max-w-3xl">
+      <div className="grid gap-12 lg:grid-cols-[1fr_1fr] lg:items-center lg:gap-20">
+        <Reveal className="order-2 lg:order-1" delay={0.1}>
+          <div className="overflow-hidden rounded-3xl border border-black/5 shadow-2xl">
             <img
-              src="/images/getproven-wordmark.png"
-              alt="GetProven"
-              width={420}
-              height={80}
-              className="h-auto w-full max-w-[min(100%,380px)] object-contain object-left md:max-w-[420px]"
+              src={img}
+              alt="Exclusive partner directory interface"
+              className="aspect-[4/3] h-full w-full object-cover"
               loading="lazy"
-              decoding="async"
             />
-            <h2 className="mt-6 font-host-grotesk text-3xl font-semibold leading-[1.15] tracking-tight text-black md:mt-8 md:text-[40px] md:leading-[1.12]">
-              <span className="text-rellia-teal">Prove the savings</span> your portfolio is leaving on the table
-            </h2>
-            <p className="mt-4 font-urbanist text-base font-medium leading-relaxed text-black/70 md:text-lg">
-              Centralize vendors, surface exclusive deals, and track redemptions—so VC and PE firms see savings instead of
-              scattered spreadsheets.
-            </p>
           </div>
         </Reveal>
-        <ul className="mt-10 max-w-3xl space-y-4" aria-label="GetProven benefits">
-          {GETPROVEN_BENEFITS.map((line, idx) => (
-            <Reveal key={line.slice(0, 40)} delay={0.04 * idx}>
-              <li className="flex gap-3 font-urbanist text-base leading-relaxed text-black/80 md:text-[17px]">
-                <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-rellia-mint/35">
-                  <Check className="h-3.5 w-3.5 text-rellia-teal" strokeWidth={3} aria-hidden />
-                </span>
-                {line}
-              </li>
-            </Reveal>
-          ))}
-        </ul>
-        <div className="mt-10 flex flex-wrap gap-3">
-          <RelliaAction asChild variant="tealFilledLift" size="comfortable">
-            <a
-              href={GETPROVEN_VENDORS_GRID_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex cursor-pointer items-center gap-2"
-            >
-              Rellia partner directory
-              <ExternalLink className="h-4 w-4" aria-hidden />
-            </a>
-          </RelliaAction>
-        </div>
+
+        <Reveal className="order-1 lg:order-2">
+          <div className="max-w-xl">
+            <NetworkEyebrow label="Resources" tone="onLight" />
+            <h2 className="mt-6 font-host-grotesk text-3xl font-semibold leading-[1.15] tracking-tight text-black md:mt-8 md:text-[40px] md:leading-[1.12]">
+              An exclusive <span className="text-rellia-teal">directory</span> for health tech execution
+            </h2>
+            <p className="mt-4 font-urbanist text-base font-medium leading-relaxed text-black/70 md:text-lg">
+              We maintain a curated directory of service providers and vendors with exclusive offers for Rellia members. Unlike generic marketplaces, our members trust these recommendations because they are grounded in peer usage and verified health tech experience.
+            </p>
+            
+            <ul className="mt-8 space-y-4" aria-label="Directory benefits">
+              {[
+                "Independent vendor marketplace focused on health tech needs",
+                "Exclusive deals with pre-negotiated terms for Rellia portcos",
+                "Pre-vetted service providers with verified healthcare references",
+                "Peer-to-peer insights on implementation and support quality"
+              ].map((line, idx) => (
+                <Reveal key={idx} delay={0.04 * idx}>
+                  <li className="flex gap-3 font-urbanist text-base leading-relaxed text-black/80 md:text-[17px]">
+                    <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-rellia-mint/35">
+                      <Check className="h-3.5 w-3.5 text-rellia-teal" strokeWidth={3} aria-hidden />
+                    </span>
+                    {line}
+                  </li>
+                </Reveal>
+              ))}
+            </ul>
+          </div>
+        </Reveal>
       </div>
     </LightSection>
   )
@@ -255,12 +256,11 @@ export default function Partners() {
           }
           subtitle="Pilot design, integration support, and enterprise credibility—so promising products don’t die in procurement limbo."
           primaryCta={{ label: "Apply to join", to: "/apply" }}
-          secondaryCta={{ label: "Explore Partners", to: "/industry-partners/directory" }}
         />
 
         <PartnerEngageTealBand />
         <BenefitsWithImageSplit />
-        <GetProvenSplit />
+        <ExclusiveDirectorySplit />
 
 
 
@@ -268,11 +268,6 @@ export default function Partners() {
           title="**Partner** with Rellia"
           body="Tell us about your organization, integration surface area, and the founder profiles you want to see more of. We'll route you to the right partner lead."
           primary={{ label: "Apply", to: "/apply" }}
-          secondary={{
-            label: "Open directory",
-            href: GETPROVEN_VENDORS_GRID_URL,
-            external: true,
-          }}
         />
       </main>
 

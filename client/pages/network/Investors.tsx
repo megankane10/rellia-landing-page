@@ -13,7 +13,7 @@ import InvestorNotifyDialog from "@/components/network/InvestorNotifyDialog"
 import RelliaAction from "@/components/RelliaAction"
 import RelliaCta from "@/components/RelliaCta"
 import ScrollReveal from "@/components/ScrollReveal"
-import { ArrowRight, BarChart3, ShieldCheck, Sparkles, Users } from "lucide-react"
+import { ArrowRight, BarChart3, ShieldCheck, Sparkles, Users, Check } from "lucide-react"
 import { Link } from "react-router-dom"
 import {
   Cell,
@@ -148,47 +148,63 @@ function PipelinePhotoSection({
 }
 
 function PortfolioSplit() {
-  const sideImage = usePexelsPhoto({
-    query: "team collaboration office healthcare meeting",
-    fallbackUrl: PEXELS_OFFICE_COLLABORATION,
+  const img = usePexelsPhoto({
+    query: "venture capital meeting handshake healthcare",
+    fallbackUrl: "/images/metrics-bg-pexels-2.jpg",
     orientation: "landscape",
   })
 
   return (
     <CreamSection>
-      <div className="mx-auto grid max-w-[1300px] gap-10 md:grid-cols-[1.05fr_0.95fr] md:items-start">
+      <div className="grid gap-12 md:grid-cols-[1fr_1.05fr] md:items-center md:gap-16">
         <Reveal>
-          <div className="flex flex-col gap-8">
-            <NetworkEyebrow label="Portfolio support" tone="onLight" />
-            <h2 className="mt-0 font-host-grotesk text-3xl font-semibold leading-tight tracking-tight text-black md:text-[40px]">
-              Offer Rellia to <span className="text-rellia-teal">your portfolio</span>
-            </h2>
-            <p className="font-urbanist text-lg leading-relaxed text-black/70">
-              If you already back exceptional teams, plug them into operators, advisors, and partner pathways that shorten cycles from pilot to procurement.
-            </p>
-            <div className="flex items-center gap-2 text-rellia-teal">
-              <Users className="h-5 w-5 shrink-0" aria-hidden />
-              <span className="font-urbanist text-sm font-medium">Operator touchpoints, not generic coaching</span>
-            </div>
-            <GlassCardLight className="p-8">
-              <p className="font-host-grotesk text-lg font-semibold text-rellia-teal">Partner concierge</p>
-              <p className="mt-3 font-urbanist leading-relaxed text-black/70">
-                Share a portfolio company and the milestone you want to unlock—we’ll suggest the lightest-weight Rellia touchpoints to match.
-              </p>
-              <RelliaAction asChild variant="outlineOnWhite" size="comfortable" className="mt-6 w-full sm:w-auto">
-                <Link to="/contact" className="inline-flex cursor-pointer items-center justify-center gap-2" aria-label="Contact about portfolio partnership">
-                  Connect with us
-                  <ArrowRight aria-hidden className="h-4 w-4" />
-                </Link>
-              </RelliaAction>
-            </GlassCardLight>
-          </div>
+          <NetworkEyebrow label="Portfolio support" tone="onLight" />
+          <h2 className="mt-5 font-host-grotesk text-3xl font-semibold leading-[1.15] tracking-tight text-black md:text-[40px] md:leading-[1.12]">
+            Offer Rellia to <span className="text-rellia-teal">your portfolio</span>
+          </h2>
+          <p className="mt-4 font-urbanist text-base font-medium leading-relaxed text-black/70 md:text-lg">
+            Plug your teams into operators, advisors, and partner pathways that shorten cycles from pilot to procurement.
+          </p>
+
+          <ul className="mt-10 max-w-xl space-y-4" aria-label="Portfolio benefits">
+            {[
+              {
+                title: "Pilot pathways",
+                body: "Teams get structured support to define scope, metrics, and technical requirements for system pilots."
+              },
+              {
+                title: "Integration support",
+                body: "Connect founders with technical leaders who understand the reality of deployments."
+              },
+              {
+                title: "Regulatory edge",
+                body: "Access advisors who have successfully navigated FDA submissions and modality shifts."
+              },
+              {
+                title: "Ecosystem access",
+                body: "Shorten the distance to procurement by aligning with shared clinical standards."
+              }
+            ].map((point, idx) => (
+              <Reveal key={idx} delay={0.04 * idx}>
+                <li className="flex gap-3 font-urbanist text-base leading-relaxed text-black/80 md:text-[17px]">
+                  <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-rellia-mint/35">
+                    <Check className="h-3.5 w-3.5 text-rellia-teal" strokeWidth={3} aria-hidden />
+                  </span>
+                  <div>
+                    <span className="font-bold text-black">{point.title}: </span>
+                    {point.body}
+                  </div>
+                </li>
+              </Reveal>
+            ))}
+          </ul>
         </Reveal>
-        <Reveal delay={0.08}>
-          <div className="overflow-hidden rounded-2xl border border-rellia-teal/10 shadow-lg">
+
+        <Reveal delay={0.06}>
+          <div className="overflow-hidden rounded-2xl border border-rellia-teal/15 shadow-[0_28px_80px_-48px_rgba(13,53,64,0.45)]">
             <img
-              src={sideImage}
-              alt="Team collaboration in a professional setting"
+              src={img}
+              alt="Investors and founders collaborating"
               className="aspect-[4/3] h-full w-full object-cover"
               loading="lazy"
             />
@@ -216,8 +232,8 @@ export default function Investors() {
             </>
           }
           subtitle="Meet Rellia-backed teams with sharper milestones—clinical, regulatory, and commercial—before the usual diligence scramble."
-          primaryCta={{ label: "Apply to join", to: "/apply" }}
-          secondaryCta={{ label: "Request a session", to: "/contact" }}
+          primaryCta={{ label: "Get notified" }}
+          onPrimaryClick={() => setIsPitchNotifyOpen(true)}
         />
 
         <LightSection className="bg-rellia-cream/20 pt-10 md:pt-14">
@@ -316,22 +332,6 @@ export default function Investors() {
                 </GlassCard>
               </Reveal>
             </div>
-            <div className="mt-10 flex flex-wrap gap-3">
-              <RelliaAction asChild variant="mintOnTealStrip" size="comfortable">
-                <Link to="/contact" className="cursor-pointer">
-                  Request a session
-                </Link>
-              </RelliaAction>
-              <RelliaAction
-                type="button"
-                variant="heroGhostOnTeal"
-                size="comfortable"
-                onClick={() => setIsPitchNotifyOpen(true)}
-                aria-haspopup="dialog"
-              >
-                Get Notified About Pitch Events
-              </RelliaAction>
-            </div>
           </div>
         </section>
 
@@ -357,10 +357,9 @@ export default function Investors() {
         <PortfolioSplit />
 
         <RelliaCta
-          title="Get **investor** access"
-          body="Apply once—we route serious investors to curated intros, showcases, and diligence-friendly updates."
-          primary={{ label: "Apply", to: "/apply" }}
-          secondary={{ label: "Contact", to: "/contact" }}
+          title="Partner concierge"
+          body="Share a portfolio company and the milestone you want to unlock—we’ll suggest the lightest-weight Rellia touchpoints to match."
+          primary={{ label: "Explore the Alumni Directory", to: "/founders/alumni" }}
         />
 
         <InvestorNotifyDialog open={isPitchNotifyOpen} onOpenChange={setIsPitchNotifyOpen} />

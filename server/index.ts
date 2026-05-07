@@ -3,6 +3,8 @@ import cors from "cors"
 import express, { type Request, type RequestHandler } from "express"
 import helmet from "helmet"
 import { z } from "zod"
+import { createClient } from "@sanity/client"
+
 
 const headerOne = (req: Request, name: string): string | undefined => {
   const v = req.headers[name]
@@ -113,11 +115,15 @@ export function createServer() {
   })
 
   const diagnosticReportPayloadSchema = z.object({
+    name: z.string().trim().min(1).max(200),
+    email: z.string().trim().email(),
     company: z.string().trim().min(1).max(200),
     stage: z.string().trim().min(1).max(120),
-    desc: z.string().trim().min(1).max(600),
-    sectionScoresMarkdown: z.string().trim().min(1).max(6000),
+    desc: z.string().trim().min(1).max(1200),
+    sectionScoresMarkdown: z.string().trim().min(1).max(8000),
+    rawAnswers: z.any().optional(),
   })
+
 
   const diagnosticReportResponseSchema = z.object({
     summary: z.string(),
@@ -139,6 +145,17 @@ export function createServer() {
     recommendations: z.array(z.string()),
     mentor_areas_needed: z.array(z.string()),
   })
+
+  const sanityWriteClient = process.env.SANITY_WRITE_TOKEN
+    ? createClient({
+        projectId: process.env.VITE_SANITY_PROJECT_ID || "3p3m3v6l", // Fallback to common ID if needed
+        dataset: process.env.VITE_SANITY_DATASET || "production",
+        token: process.env.SANITY_WRITE_TOKEN,
+        useCdn: false,
+        apiVersion: "2024-01-01",
+      })
+    : null
+
 
   type RateState = { windowStartMs: number; count: number }
   const perIpRate = new Map<string, RateState>()
@@ -258,7 +275,8 @@ export function createServer() {
       return
     }
 
-    const { company, stage, desc, sectionScoresMarkdown } = parsed.data
+    const { name, email, company, stage, desc, sectionScoresMarkdown, rawAnswers } = parsed.data
+
     const prompt = `You are a health tech startup advisor at Rellia Health.
 Analyze this startup diagnostic and return ONLY valid JSON (no markdown, no backticks).
 Company: ${company}
@@ -307,7 +325,36 @@ Return this shape exactly:
         return
       }
 
-      res.status(200).json(checked.data)
+      const report = checked.data
+
+      if (sanityWriteClient) {
+        try {
+          await sanityWriteClient.create({
+            _type: "diagnosticSubmission",
+            name,
+            email,
+            company,
+            stage,
+            description: desc,
+            scoresMarkdown: sectionScoresMarkdown,
+            answers: rawAnswers,
+            report: {
+              summary: report.summary,
+              strengths: report.top3_strengths,
+              weaknesses: report.top3_weaknesses,
+              recommendations: report.recommendations,
+              mentorAreas: report.mentor_areas_needed,
+            },
+            submittedAt: new Date().toISOString(),
+          })
+        } catch (sanityErr) {
+          console.error("Failed to save to Sanity:", sanityErr)
+          // Still return the report even if save fails
+        }
+      }
+
+      res.status(200).json(report)
+
     } catch (err) {
       res.status(500).json({
         error: "Unexpected error",

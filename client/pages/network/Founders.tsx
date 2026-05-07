@@ -302,7 +302,7 @@ function DeeperHelpValuesSection() {
 
             <div className="mt-12 sm:mt-[4.8rem] md:mt-[7.2rem] lg:mt-[8.4rem] lg:flex lg:flex-1 lg:items-center">
               <div className="w-full">
-                <div className="grid grid-cols-2 items-stretch gap-3 sm:gap-4 md:gap-5 lg:grid-cols-3 xl:grid-cols-4">
+                <div className="grid grid-cols-1 items-stretch gap-3 sm:grid-cols-2 sm:gap-4 md:gap-5 lg:grid-cols-3 xl:grid-cols-4">
                   {CONSULTING_FEATURES.map((v, i) => {
                     const Icon = v.icon
                     return (
@@ -386,8 +386,8 @@ function FoundersHero() {
               size="comfortable"
               className="w-full min-w-0 justify-center border-white/45 hover:border-white/70 sm:min-w-[220px] sm:w-auto"
             >
-              <Link to="/founders/directory" className="inline-flex w-full cursor-pointer items-center justify-center sm:w-auto">
-                Browse startups
+              <Link to="/founders/alumni" className="inline-flex w-full cursor-pointer items-center justify-center sm:w-auto">
+                Browse alumni
               </Link>
             </RelliaAction>
           </div>
@@ -430,7 +430,6 @@ const EligibilityBentoCard = ({
       <div aria-hidden className="absolute inset-0 bg-gradient-to-br from-black/85 via-black/5 to-transparent" />
       <div aria-hidden className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/15 to-transparent" />
       <div className="relative z-10 flex h-full min-h-0 w-full flex-1 flex-col justify-end p-6 text-left md:p-8">
-        <Sparkles className="mb-5 h-10 w-10 text-rellia-mint" />
         <p
           className="self-start font-host-grotesk font-medium text-2xl md:text-[1.75rem] leading-[1.2] tracking-tight text-white [text-shadow:0_2px_28px_rgba(0,0,0,0.5)] max-w-[240px]"
         >
@@ -752,10 +751,6 @@ export default function Founders() {
 
         <JourneySplitSection />
 
-        <DiagnosticSurveySection />
-
-        <DeeperHelpValuesSection />
-
         <LightSection>
           <div className="mx-auto max-w-[1300px]">
             <Reveal>
@@ -763,7 +758,7 @@ export default function Founders() {
               <SectionHeading
                 animated={false}
                 title="Explore the network"
-                description="Browse startups and advisors—then apply when you want curated intros and the right programming for your stage."
+                description="Browse alumni and advisors—then apply when you want curated intros and the right programming for your stage."
                 className="mt-5"
               />
             </Reveal>
@@ -772,9 +767,9 @@ export default function Founders() {
               {[
                 {
                   roleId: "founder" as const,
-                  title: "See what founders are building",
-                  subtitle: "Search by category, stage, and collaboration notes.",
-                  to: "/founders/directory",
+                  title: "See our alumni portfolio",
+                  subtitle: "Search by specialty, category, and collaboration notes.",
+                  to: "/founders/alumni",
                   imageSrc: "/images/founders-header.jpg",
                 },
                 {
@@ -799,34 +794,29 @@ export default function Founders() {
                       />
                       <div
                         aria-hidden
-                        className="pointer-events-none absolute inset-0 bg-gradient-to-t from-rellia-teal/92 via-rellia-teal/54 via-38% to-transparent"
+                        className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 via-40% to-transparent"
                       />
-
-                      <div className="absolute right-3 top-3 inline-flex items-center gap-2 rounded-full bg-black/40 px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-white/95 ring-1 ring-white/15 sm:right-4 sm:top-4">
+                      <div className="absolute right-4 top-4 inline-flex items-center gap-2 rounded-full bg-black/40 px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-white/95 ring-1 ring-white/15">
                         <TagIcon className="h-3.5 w-3.5 shrink-0" aria-hidden />
-                        {tag.label}
+                        {card.roleId === "founder" ? "Alumni" : tag.label}
                       </div>
 
-                      <div className="absolute inset-x-0 bottom-0 p-5 md:p-6">
-                        <p className="font-host-grotesk text-2xl font-semibold tracking-tight text-white md:text-3xl">
+                      <div className="absolute inset-x-0 bottom-0 p-6 md:p-8">
+                        <h3 className="font-host-grotesk text-2xl font-semibold tracking-tight text-white md:text-3xl">
                           {card.title}
-                        </p>
-                        <p className="mt-2 max-w-[44ch] font-urbanist text-sm leading-relaxed text-white/85 md:text-base">
+                        </h3>
+                        <p className="mt-3 max-w-[36ch] font-urbanist text-base leading-relaxed text-white/85 md:text-lg">
                           {card.subtitle}
                         </p>
 
                         <RelliaAction
                           asChild
                           variant="relliaCtaSecondary"
-                          size="compact"
-                          className="mt-5 w-fit px-5 py-3 text-sm shadow-sm"
+                          size="comfortable"
+                          className="mt-6 w-fit"
                         >
-                          <Link
-                            to={card.to}
-                            className="inline-flex cursor-pointer items-center justify-center"
-                            aria-label={`Browse ${tag.label} directory`}
-                          >
-                            Browse {tag.label} directory
+                          <Link to={card.to} className="inline-flex cursor-pointer items-center justify-center">
+                            Explore {card.roleId === "founder" ? "Alumni" : tag.label}
                           </Link>
                         </RelliaAction>
                       </div>
@@ -838,6 +828,11 @@ export default function Founders() {
             </div>
           </div>
         </LightSection>
+
+        <DiagnosticSurveySection />
+
+        <DeeperHelpValuesSection />
+
 
         <RelliaCta
           title="**Ready** to join?"

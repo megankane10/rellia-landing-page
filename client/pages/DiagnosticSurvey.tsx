@@ -1,11 +1,37 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { AlertTriangle, Menu, X, CheckCircle2, ArrowRight, Check } from 'lucide-react';
+import { 
+  AlertTriangle, 
+  Menu, 
+  X, 
+  CheckCircle2, 
+  ArrowRight, 
+  Check, 
+  ChevronRight, 
+  Calendar,
+  Building2,
+  Target,
+  Sparkles,
+  Search,
+  Users
+} from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import RelliaAction from '@/components/RelliaAction';
 import NetworkEyebrow from '@/components/network/NetworkEyebrow';
-import { motion, useInView } from 'framer-motion';
+import RouteSeo from '@/components/RouteSeo';
+import { motion, AnimatePresence, useInView } from 'framer-motion';
 import { useRef } from 'react';
+import { useAdvisors, useProgramsLandingPage } from '@/hooks/useCmsDocuments';
+import { ADVISOR_DIRECTORY_SEED } from '@/data/advisorDirectory';
+import { 
+  Drawer, 
+  DrawerContent, 
+  DrawerHeader, 
+  DrawerTitle, 
+  DrawerTrigger,
+  DrawerClose
+} from '@/components/ui/drawer';
+import { cn } from '@/lib/utils';
 
 // ─── TYPES ───────────────────────────────────────────────────────────────────
 
@@ -14,29 +40,33 @@ interface Question { text: string; type: 'confidence'|'progress'|'applicability'
 interface Section { id: string; icon: string; title: string; desc: string; questions: Question[]; }
 interface Answers { [secId: string]: { [qIdx: number]: number }; }
 interface MemberInfo { name: string; company: string; stage: string; email: string; desc: string; }
+
 interface DiagResult {
   summary: string;
-  strengths: { category: string; score: number; note: string }[];
-  gaps: { category: string; score: number; priority: string; note: string }[];
+  top3_strengths: { category: string; score: number; note: string }[];
+  top3_weaknesses: { category: string; score: number; priority: string; note: string }[];
   recommendations: string[];
+  mentor_areas_needed: string[];
 }
+
+type View = 'intro' | 'survey' | 'submit' | 'processing' | 'report';
 
 // ─── DATA MAP ────────────────────────────────────────────────────────────────
 
-const DATA_MAP: Record<string, { mentor: string; program: string }> = {
-  product_design:   { mentor: 'UX & Product Design Mentor',    program: 'Prototype Lab' },
-  product_dev:      { mentor: 'Engineering Lead Mentor',        program: 'Build Your QMS' },
-  clinical:         { mentor: 'Clinical Affairs Advisor',       program: 'Regulatory Roadmap' },
-  regulatory:       { mentor: 'Regulatory Specialist',          program: 'Regulatory Roadmap' },
-  legal:            { mentor: 'Legal & Privacy Advisor',        program: 'Regulatory Roadmap' },
-  ip:               { mentor: 'IP & Patent Counsel',            program: 'Advance Dataroom' },
-  reimbursement:    { mentor: 'Reimbursement Strategist',       program: 'Regulatory Roadmap' },
-  fundraising:      { mentor: 'Investor Relations Mentor',      program: 'Elevate Capital' },
-  marketing:        { mentor: 'Health Marketing Advisor',       program: 'Brand Strategy' },
-  gtm:              { mentor: 'Commercial Strategy Mentor',     program: 'First 50 Users' },
-  healthcare:       { mentor: 'Health System Navigator',        program: 'Advisory Board' },
-  customer_success: { mentor: 'Customer Success Lead',          program: 'First 50 Users' },
-  operations:       { mentor: 'Operations & Scale Mentor',      program: 'Ignite Pitch' },
+const DATA_MAP: Record<string, { mentor: string; program: string; programHref?: string }> = {
+  product_design:   { mentor: 'UX & Product Design',    program: 'Prototype Lab', programHref: '/programs/prototype-lab' },
+  product_dev:      { mentor: 'Engineering',            program: 'Build Your QMS', programHref: '/programs/qms' },
+  clinical:         { mentor: 'Clinical Affairs',       program: 'Regulatory Roadmap', programHref: '/programs/regulatory' },
+  regulatory:       { mentor: 'Regulatory',             program: 'Regulatory Roadmap', programHref: '/programs/regulatory' },
+  legal:            { mentor: 'Legal & Privacy',        program: 'Regulatory Roadmap', programHref: '/programs/regulatory' },
+  ip:               { mentor: 'Intellectual Property',  program: 'Advance Dataroom', programHref: '/programs/dataroom' },
+  reimbursement:    { mentor: 'Reimbursement',          program: 'Regulatory Roadmap', programHref: '/programs/regulatory' },
+  fundraising:      { mentor: 'Fundraising',            program: 'Elevate Capital', programHref: '/programs/elevate-capital' },
+  marketing:        { mentor: 'Marketing',              program: 'Brand Strategy', programHref: '/programs/brand' },
+  gtm:              { mentor: 'Commercial Strategy',    program: 'First 50 Users', programHref: '/programs/first-50' },
+  healthcare:       { mentor: 'Health Systems',         program: 'Advisory Board Match', programHref: '/programs/advisory-board-match' },
+  customer_success: { mentor: 'Customer Success',       program: 'First 50 Users', programHref: '/programs/first-50' },
+  operations:       { mentor: 'Operations',             program: 'Ignite Pitch', programHref: '/programs/ignite-pitch' },
 };
 
 // ─── QUESTION DATA ───────────────────────────────────────────────────────────
@@ -127,48 +157,11 @@ const TYPE_LABELS: Record<string, string> = {
   applicability: 'Applicability check', knowledge: 'Knowledge check',
 };
 
-// ─── HELPERS — TIMELINE ───────────────────────────────────────────────────────
-
-const HowItWorksTimeline = ({ items }: { items: { t: string; d: string }[] }) => {
-  const ref = useRef<HTMLDivElement>(null);
-  const isInView = useInView(ref, { once: true, margin: "-10% 0px -10% 0px" });
-
-  return (
-    <div ref={ref} className="relative">
-      <div className="absolute bottom-4 left-5 top-5 w-0.5 -translate-x-1/2 rounded-full bg-rellia-teal/5" />
-      <motion.div 
-        className="absolute bottom-4 left-5 top-5 w-0.5 -translate-x-1/2 origin-top rounded-full bg-rellia-teal" 
-        initial={{ scaleY: 0 }} 
-        animate={isInView ? { scaleY: 1 } : { scaleY: 0 }} 
-        transition={{ duration: 0.8, ease: "easeOut" }} 
-      />
-      <div className="space-y-8">
-        {items.map((item, i) => (
-          <motion.div 
-            key={i} 
-            className="relative z-10 flex gap-6"
-            initial={{ opacity: 0, x: -10 }}
-            animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -10 }}
-            transition={{ delay: i * 0.1, duration: 0.5 }}
-          >
-            <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-2 transition-colors duration-500 font-bold text-sm ${isInView ? 'bg-rellia-teal text-white border-rellia-teal' : 'bg-white text-rellia-teal border-rellia-teal/20'}`}>
-              {i + 1}
-            </div>
-            <div className="pt-1">
-              <div className="font-bold text-rellia-teal">{item.t}</div>
-              <div className="text-sm text-rellia-teal/60">{item.d}</div>
-            </div>
-          </motion.div>
-        ))}
-      </div>
-    </div>
-  );
-};
+const STAGES = ['Idea / Discovery', 'Prototype / MVP', 'Pilot / Seed', 'Early Growth (Series A+)', 'Scale-up'];
 
 // ─── STYLES ──────────────────────────────────────────────────────────────────
 
 const css = `
-@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&display=swap');
 @keyframes ds-spin { to { transform: rotate(360deg); } }
 .animate-ds-spin { animation: ds-spin 0.8s linear infinite; }
 @keyframes ds-fade-in-up { 
@@ -181,19 +174,29 @@ const css = `
 // ─── MAIN COMPONENT ───────────────────────────────────────────────────────────
 
 export default function DiagnosticSurvey() {
-  const PORTAL_ID = (import.meta.env.VITE_HUBSPOT_PORTAL_ID as string | undefined)?.trim();
-  const FORM_GUID  = (import.meta.env.VITE_HUBSPOT_FORM_GUID  as string | undefined)?.trim();
-  const missingHubSpot = !PORTAL_ID || !FORM_GUID;
-
   const [view, setView]                     = useState<View>('intro');
   const [currentSection, setCurrentSection] = useState<number>(0);
   const [currentQIdx, setCurrentQIdx]       = useState<number>(0);
   const [transitioning, setTransitioning]   = useState(false);
   const [answers, setAnswers]               = useState<Answers>({});
-  const [memberInfo, setMemberInfo]         = useState<MemberInfo>({ name:'', company:'', stage:'', email:'', desc:'' });
+  const [memberInfo, setMemberInfo]         = useState<MemberInfo>({ 
+    name: '', 
+    company: '', 
+    stage: STAGES[0], 
+    email: '', 
+    desc: '' 
+  });
+  const [errors, setErrors]                 = useState<Record<string, string>>({});
   const [diagResult, setDiagResult]         = useState<DiagResult | null>(null);
   const [procStep, setProcStep]             = useState(0);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  // CMS Hooks
+  const { data: cmsAdvisors } = useAdvisors();
+  const { data: cmsPrograms } = useProgramsLandingPage();
+
+  const advisors = useMemo(() => {
+    return (cmsAdvisors && cmsAdvisors.length > 0) ? cmsAdvisors : ADVISOR_DIRECTORY_SEED;
+  }, [cmsAdvisors]);
 
   const completedSections = SECTIONS.filter(s =>
     answers[s.id] && Object.keys(answers[s.id]).length === s.questions.length
@@ -211,11 +214,26 @@ export default function DiagnosticSurvey() {
     setCurrentSection(i); 
     setCurrentQIdx(0); 
     setView('survey'); 
-    setMobileMenuOpen(false);
   };
-  const goToIntro   = () => { setView('intro'); setMobileMenuOpen(false); };
-  const startSurvey = () => { setCurrentSection(0); setCurrentQIdx(0); setView('survey'); };
-  const goToSubmit  = () => { setView('submit'); setMobileMenuOpen(false); };
+  const goToIntro   = () => setView('intro');
+  const startSurvey = () => {
+    const newErrors: Record<string, string> = {};
+    if (!memberInfo.name.trim()) newErrors.name = "Name is required";
+    if (!memberInfo.email.trim()) newErrors.email = "Email is required";
+    if (!memberInfo.company.trim()) newErrors.company = "Company name is required";
+    if (!memberInfo.desc.trim()) newErrors.desc = "Description is required";
+    
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+    
+    setErrors({});
+    setCurrentSection(0); 
+    setCurrentQIdx(0); 
+    setView('survey'); 
+  };
+  const goToSubmit  = () => setView('submit');
 
   const selectAnswer = (optIdx: number) => {
     if (transitioning) return;
@@ -234,62 +252,105 @@ export default function DiagnosticSurvey() {
     }, 320);
   };
 
-  const generateReport = (): DiagResult => {
-    const scored = SECTIONS.map(s => ({ id: s.id, title: s.title, score: getSectionScore(s.id, answers) ?? 0 }))
-      .sort((a, b) => b.score - a.score);
-    const strengths = scored.filter(s => s.score >= 70).slice(0, 3)
-      .map(s => ({ category: s.title, score: s.score, note: `Strong foundation in ${s.title.toLowerCase()}.` }));
-    const gapsRaw = [...scored].sort((a, b) => a.score - b.score).filter(s => s.score < 60).slice(0, 3);
-    const gaps = gapsRaw.map(s => ({
-      category: s.title, score: s.score,
-      priority: s.score < 30 ? 'Critical' : s.score < 50 ? 'High' : 'Medium',
-      note: `${s.title} needs focused attention.${DATA_MAP[s.id]?.program ? ` Consider the ${DATA_MAP[s.id].program} program.` : ''}`
-    }));
-    const topStr  = strengths.length ? strengths.map(s => s.category).join(', ') : 'several areas';
-    const topGaps = gaps.length ? gaps.map(g => g.category).join(', ') : 'a few areas';
-    const summary = `Based on your results, ${memberInfo.company || 'your company'} is in the ${memberInfo.stage || 'early'} phase with notable strengths in ${topStr}. Priority gaps are in ${topGaps}.`;
-    const recommendations = gaps.map(g => {
-      const sid = SECTIONS.find(s => s.title === g.category)?.id ?? '';
-      return `Address ${g.category}: ${DATA_MAP[sid]?.program ? `explore the ${DATA_MAP[sid].program} program` : `connect with a ${DATA_MAP[sid]?.mentor ?? 'relevant'} mentor`}.`;
-    });
-    return { summary, strengths, gaps, recommendations };
-  };
-
   const submitSurvey = async () => {
     setView('processing');
     setProcStep(0);
-    const scores: Record<string, number> = {};
-    SECTIONS.forEach(s => { scores[s.id] = getSectionScore(s.id, answers) ?? 0; });
+    
+    // Prepare data for API
+    const scores: string[] = SECTIONS.map(s => {
+      const sc = getSectionScore(s.id, answers) ?? 0;
+      return `${s.title}: ${sc}%`;
+    });
 
-    if (PORTAL_ID && FORM_GUID) {
-      try {
-        await fetch(`https://api.hsforms.com/submissions/v3/integration/submit/${PORTAL_ID}/${FORM_GUID}`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            fields: [
-              { name: 'email',     value: memberInfo.email },
-              { name: 'firstname', value: memberInfo.name },
-              { name: 'company',   value: memberInfo.company },
-              ...SECTIONS.map(s => ({ name: `ds_score_${s.id}`, value: String(scores[s.id]) })),
-            ],
-            context: { pageUri: window.location.href, pageName: 'Startup Diagnostic' },
-          }),
-        });
-      } catch (e) { console.warn('HubSpot submit failed', e); }
+    const payload = {
+      name: memberInfo.name,
+      email: memberInfo.email,
+      company: memberInfo.company,
+      stage: memberInfo.stage,
+      desc: memberInfo.desc,
+      sectionScoresMarkdown: scores.join('\n'),
+      rawAnswers: answers
+    };
+
+    try {
+      setProcStep(1);
+      const res = await fetch('/api/diagnostic-report', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      
+      const report = await res.json();
+      
+      if (!res.ok) {
+        // Detailed error for admins
+        if (report.error === 'MISSING_ENV_VARS' || report.error === 'SANITY_ERROR') {
+          throw new Error(`ADMIN_CONFIG_ERROR: ${report.message || 'Check SANITY_WRITE_TOKEN and ANTHROPIC_API_KEY'}`);
+        }
+        throw new Error(report.message || "API failed");
+      }
+      
+      setProcStep(2);
+      setDiagResult(report);
+      
+      await new Promise(r => setTimeout(r, 800));
+      setView('report');
+    } catch (err: any) {
+      console.error("Report generation failed:", err);
+      
+      const isAdminError = err.message.includes('ADMIN_CONFIG_ERROR');
+      
+      setDiagResult({
+        summary: isAdminError 
+          ? `[ADMIN ERROR] ${err.message}. Please ensure SANITY_WRITE_TOKEN and ANTHROPIC_API_KEY are correctly set in your environment variables.`
+          : `We encountered an issue generating your detailed AI report, but here is your basic assessment. Based on your inputs, ${memberInfo.company} has specific opportunities for growth in several domains.`,
+        top3_strengths: [{ category: 'Assessment Complete', score: 100, note: 'You have successfully mapped your startup across 13 domains.' }],
+        top3_weaknesses: [{ category: 'Review Needed', score: 30, priority: 'High', note: 'Consider a 1:1 session with a Rellia advisor to dive deeper into your results.' }],
+        recommendations: ['Schedule a discovery call with Rellia', 'Review your lowest scoring sections'],
+        mentor_areas_needed: ['General Strategy']
+      });
+      setView('report');
     }
-
-    await new Promise(r => setTimeout(r, 600));  setProcStep(1);
-    await new Promise(r => setTimeout(r, 600));  setProcStep(2);
-    await new Promise(r => setTimeout(r, 500));
-    setDiagResult(generateReport());
-    setTimeout(() => setView('report'), 300);
   };
+
+  // Advisory Board Matching Logic
+  const recommendedAdvisors = useMemo(() => {
+    if (!diagResult) return [];
+    const weakAreas = diagResult.mentor_areas_needed || [];
+    
+    // Simple matching: check if advisor's focus or industries include the weak areas
+    const matches = advisors.filter(a => {
+      const combined = (a.focus || []).join(' ').toLowerCase() + ' ' + (a.industries || []).join(' ').toLowerCase();
+      return weakAreas.some(area => combined.includes(area.toLowerCase()));
+    }).slice(0, 3);
+
+    // If not enough matches, pick some prominent ones
+    if (matches.length < 3) {
+      const ids = new Set(matches.map(m => m.id));
+      const remaining = advisors.filter(a => !ids.has(a.id)).slice(0, 3 - matches.length);
+      return [...matches, ...remaining];
+    }
+    return matches;
+  }, [diagResult, advisors]);
+
+  const recommendedPrograms = useMemo(() => {
+    if (!diagResult) return [];
+    const weakSections = diagResult.top3_weaknesses.map(w => w.category);
+    
+    return weakSections.map(cat => {
+      const section = SECTIONS.find(s => s.title === cat);
+      return section ? DATA_MAP[section.id] : null;
+    }).filter(Boolean);
+  }, [diagResult]);
 
   return (
     <div className="min-h-screen bg-rellia-cream font-host-grotesk text-rellia-teal selection:bg-rellia-mint/30 selection:text-rellia-teal pt-[72px] md:pt-[86px]">
       <style>{css}</style>
       <Navbar />
+      <RouteSeo 
+        title="Startup Diagnostic | Rellia Health" 
+        description="Assess your health tech startup across 13 domains and get a personalized advisory board and program roadmap."
+      />
 
       <div className="relative flex min-h-[calc(100vh-72px)] md:min-h-[calc(100vh-86px)]">
         
@@ -357,65 +418,27 @@ export default function DiagnosticSurvey() {
                 </div>
                 <span className="font-medium">Review & Submit</span>
               </button>
+
+              <div className="my-4 h-px bg-rellia-teal/5" />
+
+              <button 
+                disabled={!diagResult}
+                onClick={() => setView('report')}
+                className={`flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm transition-all ${view === 'report' ? 'bg-rellia-teal text-white shadow-md' : diagResult ? 'text-rellia-teal/70 hover:bg-rellia-teal/5' : 'text-rellia-teal/20 pointer-events-none'}`}
+              >
+                <div className={`flex h-6 w-6 items-center justify-center rounded-full border ${view === 'report' ? 'border-white/30 bg-white/10' : 'border-rellia-teal/10'}`}>
+                  ★
+                </div>
+                <span className="font-medium">Personalized Roadmap</span>
+              </button>
             </nav>
           </div>
         </aside>
 
-        {/* ── MOBILE OVERLAY MENU ── */}
-        {mobileMenuOpen && (
-          <div className="fixed inset-0 z-50 flex flex-col bg-white lg:hidden">
-            <div className="flex items-center justify-between border-b border-rellia-teal/10 p-4">
-              <span className="font-host-grotesk font-bold">Assessment Navigation</span>
-              <button onClick={() => setMobileMenuOpen(false)} className="rounded-full p-2 hover:bg-rellia-teal/5">
-                <X className="h-6 w-6" />
-              </button>
-            </div>
-            <div className="flex-1 overflow-y-auto p-4">
-              {/* Similar nav as desktop sidebar but adjusted for mobile touch */}
-              <nav className="space-y-2">
-                <button 
-                  onClick={goToIntro}
-                  className={`flex w-full items-center gap-4 rounded-xl p-4 text-left transition-all ${view === 'intro' ? 'bg-rellia-teal text-white' : 'bg-rellia-teal/5'}`}
-                >
-                  <span className="font-semibold">Introduction</span>
-                </button>
-                
-                <div className="py-2 text-[10px] font-bold uppercase tracking-widest text-rellia-teal/40">Sections</div>
-                
-                <div className="grid grid-cols-1 gap-2">
-                  {SECTIONS.map((s, i) => {
-                    const done = answers[s.id] && Object.keys(answers[s.id]).length === s.questions.length;
-                    const active = view === 'survey' && i === currentSection;
-                    return (
-                      <button 
-                        key={s.id} 
-                        onClick={() => goToSection(i)}
-                        className={`flex items-center gap-4 rounded-xl p-4 text-left transition-all ${active ? 'bg-rellia-teal text-white shadow-lg' : 'bg-white border border-rellia-teal/10'}`}
-                      >
-                        <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-bold ${active ? 'bg-white/20' : done ? 'bg-green-100 text-green-700' : 'bg-rellia-teal/5'}`}>
-                          {done && !active ? '✓' : i + 1}
-                        </div>
-                        <span className="font-medium">{s.title}</span>
-                      </button>
-                    );
-                  })}
-                </div>
-
-                <button 
-                  onClick={goToSubmit}
-                  className={`mt-4 flex w-full items-center gap-4 rounded-xl p-4 text-left transition-all ${view === 'submit' ? 'bg-rellia-teal text-white' : 'bg-rellia-teal/5'}`}
-                >
-                  <span className="font-semibold">Review & Submit</span>
-                </button>
-              </nav>
-            </div>
-          </div>
-        )}
-
         {/* ── MAIN CONTENT AREA ── */}
         <main className="flex-1 overflow-hidden">
           
-          {/* MOBILE SUB-HEADER (Sticky Progress) */}
+          {/* MOBILE SUB-HEADER (Sticky Progress with Drawer) */}
           <div className="sticky top-0 z-20 flex items-center justify-between border-b border-rellia-teal/10 bg-rellia-cream/80 px-4 py-3 backdrop-blur-md lg:hidden">
             <div className="flex flex-1 flex-col gap-1.5">
               <div className="flex justify-between text-[9px] font-bold uppercase tracking-widest text-rellia-teal/60">
@@ -429,12 +452,71 @@ export default function DiagnosticSurvey() {
                 />
               </div>
             </div>
-            <button 
-              onClick={() => setMobileMenuOpen(true)}
-              className="ml-4 flex h-10 w-10 items-center justify-center rounded-full bg-rellia-teal text-white shadow-md active:scale-95"
-            >
-              <Menu className="h-5 w-5" />
-            </button>
+            
+            <Drawer>
+              <DrawerTrigger asChild>
+                <button className="ml-4 flex h-10 w-10 items-center justify-center rounded-full bg-rellia-teal text-white shadow-md active:scale-95">
+                  <Menu className="h-5 w-5" />
+                </button>
+              </DrawerTrigger>
+              <DrawerContent className="bg-rellia-cream border-t border-rellia-teal/10">
+                <DrawerHeader>
+                  <DrawerTitle className="font-host-grotesk font-bold text-rellia-teal">Assessment Navigation</DrawerTitle>
+                </DrawerHeader>
+                <div className="px-4 pb-12 overflow-y-auto max-h-[70vh]">
+                  <nav className="space-y-2">
+                    <DrawerClose asChild>
+                      <button 
+                        onClick={goToIntro}
+                        className={`flex w-full items-center gap-4 rounded-xl p-4 text-left transition-all ${view === 'intro' ? 'bg-rellia-teal text-white' : 'bg-rellia-teal/5'}`}
+                      >
+                        <span className="font-semibold">Introduction</span>
+                      </button>
+                    </DrawerClose>
+                    
+                    <div className="py-2 text-[10px] font-bold uppercase tracking-widest text-rellia-teal/40">Sections</div>
+                    
+                    <div className="grid grid-cols-1 gap-2">
+                      {SECTIONS.map((s, i) => {
+                        const done = answers[s.id] && Object.keys(answers[s.id]).length === s.questions.length;
+                        const active = view === 'survey' && i === currentSection;
+                        return (
+                          <DrawerClose key={s.id} asChild>
+                            <button 
+                              onClick={() => goToSection(i)}
+                              className={`flex items-center gap-4 rounded-xl p-4 text-left transition-all ${active ? 'bg-rellia-teal text-white shadow-lg' : 'bg-white border border-rellia-teal/10'}`}
+                            >
+                              <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-bold ${active ? 'bg-white/20' : done ? 'bg-green-100 text-green-700' : 'bg-rellia-teal/5'}`}>
+                                {done && !active ? '✓' : i + 1}
+                              </div>
+                              <span className="font-medium">{s.title}</span>
+                            </button>
+                          </DrawerClose>
+                        );
+                      })}
+                    </div>
+
+                    <DrawerClose asChild>
+                      <button 
+                        onClick={goToSubmit}
+                        className={`mt-4 flex w-full items-center gap-4 rounded-xl p-4 text-left transition-all ${view === 'submit' ? 'bg-rellia-teal text-white' : 'bg-rellia-teal/5'}`}
+                      >
+                        <span className="font-semibold">Review & Submit</span>
+                      </button>
+                    </DrawerClose>
+
+                    <DrawerClose asChild>
+                      <button 
+                        onClick={() => setView('report')}
+                        className={`mt-4 flex w-full items-center gap-4 rounded-xl p-4 text-left transition-all ${view === 'report' ? 'bg-rellia-teal text-white' : 'bg-rellia-teal/5'}`}
+                      >
+                        <span className="font-semibold">Personalized Roadmap</span>
+                      </button>
+                    </DrawerClose>
+                  </nav>
+                </div>
+              </DrawerContent>
+            </Drawer>
           </div>
 
           <div className="mx-auto flex h-full max-w-5xl flex-col px-4 py-8 md:px-8 md:py-12 lg:px-12 lg:py-16">
@@ -448,66 +530,114 @@ export default function DiagnosticSurvey() {
                     How ready is your startup, <span className="italic">really?</span>
                   </h1>
                   <p className="font-urbanist text-lg leading-relaxed text-rellia-teal/70 md:text-xl">
-                    Answer honestly across 13 domains—from regulatory and clinical to go-to-market and operations. Takes about 15 minutes. No right or wrong answers, just an accurate picture of where you are today.
+                    Our diagnostic tool assesses your health tech startup across 13 critical domains. Get an automated report, personalized advisory board matches, and a program roadmap tailored to your gaps.
                   </p>
                 </div>
 
-                <div className="grid gap-6 md:grid-cols-2">
-                  <div className="rounded-3xl border border-rellia-teal/10 bg-white p-8 shadow-sm">
-                    <h3 className="mb-10 text-xs font-bold uppercase tracking-widest text-rellia-teal">How it works</h3>
-                    <HowItWorksTimeline items={[
-                      { t:'Tell us about your startup', d:'So your results are in context' },
-                      { t:'Work through 13 sections', d:'At your own pace' },
-                      { t:'Submit to get your report', d:'Scores, gaps, and recommendations' },
-                      { t:'Members get mentor matching', d:'Based on your priority gaps' },
-                    ]} />
+                <div className="grid gap-6 lg:grid-cols-[1fr_400px]">
+                  <div className="space-y-6">
+                    <div className="rounded-3xl border border-rellia-teal/10 bg-white p-8 shadow-sm">
+                      <h3 className="mb-8 text-xs font-bold uppercase tracking-widest text-rellia-teal">Your Diagnostic Journey</h3>
+                      <div className="space-y-6">
+                        {[
+                          { icon: Building2, t: 'Capture Your Context', d: 'Tell us about your startup, stage, and mission.' },
+                          { icon: Target, t: '13-Domain Deep Dive', d: '15-minute assessment of your regulatory, clinical, and commercial readiness.' },
+                          { icon: Sparkles, t: 'Personalized Growth Roadmap', d: 'Immediate analysis of your top strengths and priority gaps.' },
+                          { icon: Users, t: 'Advisory Board Match', d: 'Personalized assignment of mentors based on your results.' }
+                        ].map((item, i) => (
+                          <div key={i} className="flex gap-4">
+                            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-rellia-teal/5 text-rellia-teal">
+                              <item.icon className="h-5 w-5" />
+                            </div>
+                            <div>
+                              <h4 className="font-bold text-sm">{item.t}</h4>
+                              <p className="text-xs text-rellia-teal/60">{item.d}</p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
                   </div>
 
-                  <div className="rounded-3xl border border-rellia-teal/10 bg-white p-8 shadow-sm flex flex-col">
-                    <h3 className="mb-6 text-xs font-bold uppercase tracking-widest text-rellia-teal">About your startup</h3>
-                    <div className="space-y-4">
-                      <div className="grid grid-cols-2 gap-3">
+                  <div className="rounded-3xl border border-rellia-teal/10 bg-white p-8 shadow-sm flex flex-col h-full">
+                    <h3 className="mb-6 text-xs font-bold uppercase tracking-widest text-rellia-teal">Tell us about your startup</h3>
+                    <div className="space-y-4 flex-1">
+                      <div className="space-y-1.5">
+                        <label className="text-[10px] font-bold uppercase tracking-wider text-rellia-teal/50">Your Name</label>
+                        <input 
+                          className={cn(
+                            "w-full rounded-xl border p-3 text-sm focus:bg-white focus:outline-none transition-all",
+                            errors.name ? "border-red-500 bg-red-50" : "border-rellia-teal/10 bg-rellia-cream/30 focus:border-rellia-teal"
+                          )}
+                          placeholder="First and last name" 
+                          value={memberInfo.name} 
+                          onChange={e => setMemberInfo(p => ({...p, name: e.target.value}))} 
+                        />
+                        {errors.name && <p className="text-[10px] text-red-500 font-bold">{errors.name}</p>}
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                         <div className="space-y-1.5">
-                          <label className="text-[10px] font-bold uppercase tracking-wider text-rellia-teal/50">Your Name</label>
+                          <label className="text-[10px] font-bold uppercase tracking-wider text-rellia-teal/50">Company Name</label>
                           <input 
-                            className="w-full rounded-xl border border-rellia-teal/10 bg-rellia-cream/30 p-3 text-sm focus:border-rellia-teal focus:bg-white focus:outline-none" 
-                            placeholder="First name" 
-                            value={memberInfo.name} 
-                            onChange={e => setMemberInfo(p => ({...p, name: e.target.value}))} 
-                          />
-                        </div>
-                        <div className="space-y-1.5">
-                          <label className="text-[10px] font-bold uppercase tracking-wider text-rellia-teal/50">Company</label>
-                          <input 
-                            className="w-full rounded-xl border border-rellia-teal/10 bg-rellia-cream/30 p-3 text-sm focus:border-rellia-teal focus:bg-white focus:outline-none" 
-                            placeholder="Company name" 
+                            className={cn(
+                              "w-full rounded-xl border p-3 text-sm focus:bg-white focus:outline-none transition-all",
+                              errors.company ? "border-red-500 bg-red-50" : "border-rellia-teal/10 bg-rellia-cream/30 focus:border-rellia-teal"
+                            )}
+                            placeholder="Startup name" 
                             value={memberInfo.company} 
                             onChange={e => setMemberInfo(p => ({...p, company: e.target.value}))} 
                           />
+                          {errors.company && <p className="text-[10px] text-red-500 font-bold">{errors.company}</p>}
+                        </div>
+                        <div className="space-y-1.5">
+                          <label className="text-[10px] font-bold uppercase tracking-wider text-rellia-teal/50">Current Stage</label>
+                          <select 
+                            className="w-full rounded-xl border border-rellia-teal/10 bg-rellia-cream/30 p-3 text-sm focus:border-rellia-teal focus:bg-white focus:outline-none appearance-none"
+                            value={memberInfo.stage}
+                            onChange={e => setMemberInfo(p => ({...p, stage: e.target.value}))}
+                          >
+                            {STAGES.map(s => <option key={s} value={s}>{s}</option>)}
+                          </select>
                         </div>
                       </div>
                       <div className="space-y-1.5">
-                        <label className="text-[10px] font-bold uppercase tracking-wider text-rellia-teal/50">Email</label>
+                        <label className="text-[10px] font-bold uppercase tracking-wider text-rellia-teal/50">Work Email</label>
                         <input 
-                          className="w-full rounded-xl border border-rellia-teal/10 bg-rellia-cream/30 p-3 text-sm focus:border-rellia-teal focus:bg-white focus:outline-none" 
+                          className={cn(
+                            "w-full rounded-xl border p-3 text-sm focus:bg-white focus:outline-none transition-all",
+                            errors.email ? "border-red-500 bg-red-50" : "border-rellia-teal/10 bg-rellia-cream/30 focus:border-rellia-teal"
+                          )}
                           type="email" 
                           placeholder="founder@company.com" 
                           value={memberInfo.email} 
                           onChange={e => setMemberInfo(p => ({...p, email: e.target.value}))} 
                         />
+                        {errors.email && <p className="text-[10px] text-red-500 font-bold">{errors.email}</p>}
+                      </div>
+                      <div className="space-y-1.5">
+                        <label className="text-[10px] font-bold uppercase tracking-wider text-rellia-teal/50">What are you building?</label>
+                        <textarea 
+                          className={cn(
+                            "w-full h-24 rounded-xl border p-3 text-sm focus:bg-white focus:outline-none resize-none transition-all",
+                            errors.desc ? "border-red-500 bg-red-50" : "border-rellia-teal/10 bg-rellia-cream/30 focus:border-rellia-teal"
+                          )}
+                          placeholder="Brief description of your product and mission..." 
+                          value={memberInfo.desc} 
+                          onChange={e => setMemberInfo(p => ({...p, desc: e.target.value}))} 
+                        />
+                        {errors.desc && <p className="text-[10px] text-red-500 font-bold">{errors.desc}</p>}
                       </div>
                     </div>
 
                     <RelliaAction 
-                      asChild
+                      type="button"
                       variant="mintTealFill" 
                       size="comfortable" 
-                      className="w-full justify-center shadow-lg transition-transform active:scale-[0.98] py-4 mt-auto"
+                      className="w-full justify-center shadow-lg transition-transform active:scale-[0.98] py-4 mt-8"
+                      onClick={startSurvey}
                     >
-                      <button onClick={startSurvey}>
-                        Begin Assessment
-                        <ArrowRight className="ml-2 h-4 w-4" />
-                      </button>
+                      Begin Assessment
+                      <ArrowRight className="ml-2 h-4 w-4" />
                     </RelliaAction>
                   </div>
                 </div>
@@ -518,6 +648,27 @@ export default function DiagnosticSurvey() {
             {view === 'survey' && sec && currentQ && (
               <div key={`${currentSection}-${currentQIdx}`} className="animate-ds-up flex flex-col gap-8 md:gap-12">
                 <div className="space-y-4">
+                  <div className="flex flex-wrap items-center gap-4 mb-8">
+                    {[
+                      { label: 'Introduction', step: 'intro', active: false, done: true },
+                      { label: 'Assessment', step: 'survey', active: true, done: false },
+                      { label: 'Results', step: 'report', active: false, done: false }
+                    ].map((s, i) => (
+                      <div key={s.label} className="flex items-center gap-2">
+                        <div className={cn(
+                          "flex h-6 w-6 items-center justify-center rounded-full text-[10px] font-bold",
+                          s.active ? "bg-rellia-teal text-white" : s.done ? "bg-green-100 text-green-700" : "bg-rellia-teal/5 text-rellia-teal/30"
+                        )}>
+                          {s.done ? '✓' : i + 1}
+                        </div>
+                        <span className={cn(
+                          "text-[10px] font-bold uppercase tracking-widest",
+                          s.active ? "text-rellia-teal" : "text-rellia-teal/30"
+                        )}>{s.label}</span>
+                        {i < 2 && <ChevronRight className="h-3 w-3 text-rellia-teal/10" />}
+                      </div>
+                    ))}
+                  </div>
                   <div className="flex items-center gap-3">
                     <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-rellia-teal text-white text-xl">
                       {sec.icon}
@@ -596,19 +747,19 @@ export default function DiagnosticSurvey() {
             {view === 'submit' && (
               <div className="animate-ds-up flex flex-col gap-10">
                 <div className="space-y-4">
-                  <div className="text-[10px] font-bold uppercase tracking-widest text-rellia-teal/40">Review your assessment</div>
-                  <h2 className="font-host-grotesk text-3xl font-bold text-rellia-teal md:text-5xl">Ready to see your report?</h2>
-                  <p className="max-w-xl text-rellia-teal/60">Your diagnostic is complete. Submit below to generate your personalized gap analysis and recommendations.</p>
+                  <div className="text-[10px] font-bold uppercase tracking-widest text-rellia-teal/40">Assessment Complete</div>
+                  <h2 className="font-host-grotesk text-3xl font-bold text-rellia-teal md:text-5xl">Generate your roadmap</h2>
+                  <p className="max-w-xl text-rellia-teal/60">We've captured your assessment across all 13 domains. Now, our AI will analyze your results to identify your priority gaps and match you with the right advisors.</p>
                 </div>
 
-                <div className="grid gap-6 md:grid-cols-2">
-                  <div className="rounded-[32px] border border-rellia-teal/10 bg-white p-8 shadow-sm">
-                    <h3 className="mb-6 text-xs font-bold uppercase tracking-widest text-rellia-teal/40">Current Scores</h3>
-                    <div className="space-y-2">
+                <div className="grid gap-6 md:grid-cols-2 items-stretch">
+                  <div className="rounded-[32px] border border-rellia-teal/10 bg-white p-8 shadow-sm flex flex-col h-full">
+                    <h3 className="mb-6 text-xs font-bold uppercase tracking-widest text-rellia-teal/40">Your Assessment Profile</h3>
+                    <div className="space-y-2 flex-1">
                       {SECTIONS.map(s => {
                         const sc = getSectionScore(s.id, answers);
                         return (
-                          <div key={s.id} className="flex items-center justify-between rounded-xl bg-rellia-cream/20 px-4 py-3 text-sm">
+                          <div key={s.id} className="flex items-center justify-between rounded-xl bg-rellia-cream/20 px-4 py-2 text-xs">
                             <span className="font-medium text-rellia-teal/80">{s.title}</span>
                             <span className={`font-bold ${sc === null ? 'text-rellia-teal/20' : scoreClass(sc)}`}>
                               {sc !== null ? `${sc}%` : '—'}
@@ -619,27 +770,28 @@ export default function DiagnosticSurvey() {
                     </div>
                   </div>
 
-                  <div className="flex flex-col gap-4">
-                    <div className="rounded-[32px] border border-rellia-teal/10 bg-rellia-mint/10 p-8">
-                      <h3 className="mb-4 font-host-grotesk text-xl font-bold">What's in the report?</h3>
-                      <ul className="space-y-3 text-sm text-rellia-teal/70">
-                        <li className="flex items-start gap-2">
-                          <Check className="h-4 w-4 shrink-0 text-rellia-teal" />
-                          <span>Detailed scores across all 13 sections</span>
-                        </li>
-                        <li className="flex items-start gap-2">
-                          <Check className="h-4 w-4 shrink-0 text-rellia-teal" />
-                          <span>Identification of your top 3 priority gaps</span>
-                        </li>
-                        <li className="flex items-start gap-2">
-                          <Check className="h-4 w-4 shrink-0 text-rellia-teal" />
-                          <span>5 specific recommendations to tackle first</span>
-                        </li>
-                        <li className="flex items-start gap-2">
-                          <Check className="h-4 w-4 shrink-0 text-rellia-teal" />
-                          <span>Mentor matching for Rellia members</span>
-                        </li>
-                      </ul>
+                  <div className="flex flex-col gap-4 h-full">
+                    <div className="rounded-[32px] border border-rellia-teal/10 bg-rellia-mint/10 p-8 flex-1 flex flex-col justify-center">
+                      <h3 className="mb-4 font-host-grotesk text-xl font-bold flex items-center gap-2">
+                        <Sparkles className="h-5 w-5 text-rellia-teal" />
+                        Generating Your Report
+                      </h3>
+                      <p className="text-sm text-rellia-teal/70 leading-relaxed mb-6">
+                        We're assessing your results in order to assign you your personalized advisory board and recommended Rellia programs.
+                      </p>
+                      <div className="space-y-3">
+                        {[
+                          'Top 3 Gaps & Strengths',
+                          'Customized Recommendation Roadmap',
+                          'Assigned Advisory Board Matches',
+                          'Meeting Links for Advisors'
+                        ].map(l => (
+                          <div key={l} className="flex items-center gap-2 text-xs font-medium text-rellia-teal/80">
+                            <div className="h-1.5 w-1.5 rounded-full bg-rellia-teal" />
+                            {l}
+                          </div>
+                        ))}
+                      </div>
                     </div>
                     <RelliaAction 
                       asChild
@@ -652,9 +804,6 @@ export default function DiagnosticSurvey() {
                         <ArrowRight className="ml-2 h-5 w-5" />
                       </button>
                     </RelliaAction>
-                    <p className="text-center text-[10px] text-rellia-teal/40">
-                      Your results are private. Members will be prompted to verify their membership to unlock mentor matching.
-                    </p>
                   </div>
                 </div>
               </div>
@@ -664,14 +813,20 @@ export default function DiagnosticSurvey() {
             {view === 'processing' && (
               <div className="flex flex-1 flex-col items-center justify-center text-center">
                 <div className="animate-ds-spin mb-10 h-16 w-16 rounded-full border-4 border-rellia-teal/10 border-t-rellia-teal" />
-                <h2 className="mb-4 font-host-grotesk text-3xl font-bold">Analysing your results</h2>
-                <p className="mb-12 max-w-md text-rellia-teal/60">Reviewing your diagnostic across all 13 sections and building your personalised report.</p>
+                <h2 className="mb-4 font-host-grotesk text-3xl font-bold">Personalizing your report</h2>
+                <p className="mb-12 max-w-md text-rellia-teal/60">
+                  We're assessing your results in order to assign you your personalized advisory board and program roadmap.
+                </p>
                 
                 <div className="w-full max-w-xs space-y-4">
-                  {['Analysing section scores', 'Identifying strengths and gaps', 'Generating recommendations'].map((label, i) => (
+                  {[
+                    { l: 'Analyzing section scores', s: procStep >= 0 },
+                    { l: 'Mapping gaps to advisors', s: procStep >= 1 },
+                    { l: 'Building your roadmap', s: procStep >= 2 }
+                  ].map((step, i) => (
                     <div key={i} className="flex items-center gap-4 text-left transition-all duration-500">
-                      <div className={`h-2.5 w-2.5 rounded-full ${i < procStep ? 'bg-green-500' : i === procStep ? 'bg-rellia-teal animate-pulse' : 'bg-rellia-teal/10'}`} />
-                      <span className={`text-sm font-medium ${i <= procStep ? 'text-rellia-teal' : 'text-rellia-teal/20'}`}>{label}</span>
+                      <div className={`h-2.5 w-2.5 rounded-full ${step.s ? 'bg-green-500' : 'bg-rellia-teal/10 animate-pulse'}`} />
+                      <span className={`text-sm font-medium ${step.s ? 'text-rellia-teal' : 'text-rellia-teal/20'}`}>{step.l}</span>
                     </div>
                   ))}
                 </div>
@@ -682,40 +837,73 @@ export default function DiagnosticSurvey() {
             {view === 'report' && diagResult && (
               <div className="animate-ds-up flex flex-col gap-12 pb-20">
                 
-                {missingHubSpot && (
-                  <div className="rounded-3xl border-2 border-dashed border-amber-500/30 bg-amber-50 p-8 text-center">
-                    <AlertTriangle className="mx-auto mb-4 h-12 w-12 text-amber-500" />
-                    <h3 className="mb-2 font-bold text-amber-800">Admin Mode: Unconfigured Forms</h3>
-                    <p className="text-sm text-amber-700/70">Set VITE_HUBSPOT_PORTAL_ID and VITE_HUBSPOT_FORM_GUID to enable data persistence. Your results are currently only stored in this session.</p>
-                  </div>
-                )}
-
                 <div className="space-y-6">
                   <div className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
                     <div>
                       <div className="text-[10px] font-bold uppercase tracking-widest text-rellia-teal/40">Diagnostic Report</div>
-                      <h1 className="font-host-grotesk text-4xl font-bold text-rellia-teal md:text-5xl">{memberInfo.company || 'Your Startup'}</h1>
+                      <h1 className="font-host-grotesk text-4xl font-bold text-rellia-teal md:text-5xl">{memberInfo.company}</h1>
                     </div>
                     <div className="text-sm font-medium text-rellia-teal/40">
                       {memberInfo.stage} · {new Date().toLocaleDateString('en-CA', { year:'numeric', month:'long', day:'numeric' })}
                     </div>
                   </div>
-                  <div className="rounded-[32px] border border-rellia-teal/5 bg-white p-8 shadow-sm md:p-10">
-                    <p className="font-urbanist text-xl leading-relaxed text-rellia-teal/80 md:text-2xl">
+                  <div className="rounded-[32px] border border-rellia-teal/5 bg-white p-8 shadow-sm md:p-10 relative overflow-hidden">
+                    <div className="absolute top-0 right-0 p-4 opacity-5">
+                      <Sparkles className="h-24 w-24 text-rellia-teal" />
+                    </div>
+                    <p className="font-urbanist text-xl leading-relaxed text-rellia-teal/80 md:text-2xl relative z-10">
                       {diagResult.summary}
                     </p>
                   </div>
                 </div>
 
-                <div className="grid gap-12 lg:grid-cols-[1fr_320px]">
-                  <div className="space-y-12">
+                <div className="grid gap-12 lg:grid-cols-[1fr_360px]">
+                  <div className="space-y-16">
+                    
+                    {/* Strengths & Gaps */}
+                    <div className="grid gap-8 md:grid-cols-2 items-stretch">
+                      <div className="space-y-6 flex flex-col h-full">
+                        <h3 className="text-xs font-bold uppercase tracking-widest text-green-600 flex items-center gap-2">
+                          <CheckCircle2 className="h-4 w-4" />
+                          Top Strengths
+                        </h3>
+                        <div className="space-y-3 flex-1">
+                          {diagResult.top3_strengths.map((s, i) => (
+                            <div key={i} className="rounded-2xl border border-green-100 bg-green-50/50 p-5 h-[calc(33.33%-8px)] flex flex-col justify-center">
+                              <h4 className="font-bold text-sm text-green-800">{s.category}</h4>
+                              <p className="text-xs text-green-700/70 mt-1 line-clamp-2">{s.note}</p>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      <div className="space-y-6 flex flex-col h-full">
+                        <h3 className="text-xs font-bold uppercase tracking-widest text-red-600 flex items-center gap-2">
+                          <AlertTriangle className="h-4 w-4" />
+                          Priority Gaps
+                        </h3>
+                        <div className="space-y-3 flex-1">
+                          {diagResult.top3_weaknesses.map((w, i) => (
+                            <div key={i} className="rounded-2xl border border-red-100 bg-red-50/50 p-5 h-[calc(33.33%-8px)] flex flex-col justify-center">
+                              <div className="flex justify-between items-start">
+                                <h4 className="font-bold text-sm text-red-800">{w.category}</h4>
+                                <span className="text-[9px] font-bold uppercase bg-red-100 px-1.5 py-0.5 rounded text-red-600">{w.priority}</span>
+                              </div>
+                              <p className="text-xs text-red-700/70 mt-1 line-clamp-2">{w.note}</p>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Section Analysis Chart-ish */}
                     <div className="space-y-6">
-                      <h3 className="text-xs font-bold uppercase tracking-widest text-rellia-teal/40">Section Analysis</h3>
+                      <h3 className="text-xs font-bold uppercase tracking-widest text-rellia-teal/40">Full Readiness Breakdown</h3>
                       <div className="grid gap-3 sm:grid-cols-2">
-                        {[...SECTIONS].sort((a,b) => (getSectionScore(b.id, answers) ?? 0) - (getSectionScore(a.id, answers) ?? 0)).map(s => {
+                        {SECTIONS.map(s => {
                           const sc = getSectionScore(s.id, answers) ?? 0;
                           return (
-                            <div key={s.id} className="group rounded-2xl border border-rellia-teal/5 bg-white p-5 shadow-sm transition-all hover:border-rellia-teal/10 hover:shadow-md">
+                            <div key={s.id} className="group rounded-2xl border border-rellia-teal/5 bg-white p-5 shadow-sm transition-all">
                               <div className="mb-3 flex items-center justify-between">
                                 <span className="text-xs font-bold text-rellia-teal/80">{s.title}</span>
                                 <span className={`text-sm font-black ${scoreClass(sc)}`}>{sc}%</span>
@@ -732,32 +920,51 @@ export default function DiagnosticSurvey() {
                       </div>
                     </div>
 
-                    <div className="space-y-6">
-                      <h3 className="text-xs font-bold uppercase tracking-widest text-rellia-teal/40">Priority Gaps</h3>
-                      <div className="space-y-4">
-                        {diagResult.gaps.map((g, i) => (
-                          <div key={i} className="relative overflow-hidden rounded-3xl border border-rellia-teal/5 bg-white p-8 shadow-sm">
-                            <div className="mb-4 flex items-center justify-between">
-                              <h4 className="font-bold text-rellia-teal">{g.category}</h4>
-                              <span className={`rounded-full px-3 py-1 text-[10px] font-black uppercase tracking-widest ${g.priority === 'Critical' ? 'bg-red-100 text-red-600' : 'bg-amber-100 text-amber-600'}`}>
-                                {g.priority}
-                              </span>
+                    {/* Assigned Advisory Board */}
+                    <div className="space-y-8">
+                      <div className="flex items-center justify-between">
+                        <h3 className="text-xs font-bold uppercase tracking-widest text-rellia-teal/40">Your Assigned Advisory Board</h3>
+                        <Link to="/advisors/directory" className="text-[10px] font-bold uppercase tracking-widest text-rellia-teal/60 hover:text-rellia-teal transition-colors">
+                          View All Advisors →
+                        </Link>
+                      </div>
+                      <div className="grid gap-6 md:grid-cols-3">
+                        {recommendedAdvisors.map((advisor, i) => (
+                          <div key={i} className="group relative rounded-3xl border border-rellia-teal/10 bg-white p-6 shadow-sm transition-all hover:shadow-xl hover:-translate-y-1">
+                            <div className="mb-4 relative h-32 w-full overflow-hidden rounded-2xl bg-rellia-cream">
+                              {advisor.photoSrc ? (
+                                <img src={advisor.photoSrc} alt={advisor.name} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                              ) : (
+                                <div className="flex h-full w-full items-center justify-center text-rellia-teal/20">
+                                  <Users className="h-12 w-12" />
+                                </div>
+                              )}
                             </div>
-                            <p className="text-sm leading-relaxed text-rellia-teal/70">{g.note}</p>
-                            {DATA_MAP[SECTIONS.find(s => s.title === g.category)?.id ?? '']?.mentor && (
-                              <div className="mt-6 flex items-center gap-2 border-t border-rellia-teal/5 pt-4 text-[10px] font-bold uppercase tracking-widest text-rellia-teal/40">
-                                Suggested Mentor: <span className="text-rellia-teal">{DATA_MAP[SECTIONS.find(s => s.title === g.category)!.id].mentor}</span>
-                              </div>
-                            )}
+                            <h4 className="font-bold text-rellia-teal leading-tight">{advisor.name}</h4>
+                            <p className="text-[10px] text-rellia-teal/50 font-bold uppercase tracking-wider mb-2">{advisor.role} @ {advisor.organization}</p>
+                            <p className="text-xs text-rellia-teal/70 line-clamp-2 mb-4 h-8">{advisor.focus?.join(' · ')}</p>
+                            
+                            <RelliaAction 
+                              asChild
+                              variant="mintTealFill" 
+                              size="sm" 
+                              className="w-full justify-center py-2 text-[10px] uppercase tracking-widest"
+                            >
+                              <a href={advisor.linkedInUrl || advisor.websiteUrl || '#'} target="_blank" rel="noopener noreferrer">
+                                <Calendar className="h-3 w-3 mr-2" />
+                                Schedule Meeting
+                              </a>
+                            </RelliaAction>
                           </div>
                         ))}
                       </div>
                     </div>
                   </div>
 
+                  {/* Sidebar Recommendations */}
                   <div className="space-y-12">
                     <div className="space-y-6">
-                      <h3 className="text-xs font-bold uppercase tracking-widest text-rellia-teal/40">Next Steps</h3>
+                      <h3 className="text-xs font-bold uppercase tracking-widest text-rellia-teal/40">Recommended Roadmap</h3>
                       <div className="space-y-4">
                         {diagResult.recommendations.map((r, i) => (
                           <div key={i} className="flex gap-4">
@@ -770,44 +977,54 @@ export default function DiagnosticSurvey() {
                       </div>
                     </div>
 
-                    <div className="rounded-[32px] bg-rellia-teal p-8 text-white shadow-2xl">
-                      <h3 className="mb-4 font-host-grotesk text-xl font-bold leading-tight">Unlock your mentor matches</h3>
-                      <p className="mb-8 text-sm leading-relaxed text-white/70">
-                        Based on your results, we've identified areas where a Rellia mentor can make the biggest difference.
+                    <div className="space-y-6">
+                      <h3 className="text-xs font-bold uppercase tracking-widest text-rellia-teal/40">Rellia Program Matches</h3>
+                      <div className="space-y-4">
+                        {recommendedPrograms.map((prog, i) => (
+                          <Link 
+                            key={i} 
+                            to={prog?.programHref || '/programs'}
+                            className="group flex items-center justify-between rounded-2xl border border-rellia-teal/10 bg-white p-4 transition-all hover:bg-rellia-teal hover:text-white"
+                          >
+                            <div className="flex items-center gap-3">
+                              <div className="h-2 w-2 rounded-full bg-rellia-mint group-hover:bg-white" />
+                              <span className="text-sm font-bold">{prog?.program}</span>
+                            </div>
+                            <ChevronRight className="h-4 w-4 opacity-30 group-hover:opacity-100" />
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="rounded-[32px] bg-rellia-teal p-8 text-white shadow-2xl relative overflow-hidden">
+                      <div className="absolute -bottom-4 -right-4 h-24 w-24 bg-rellia-mint/20 rounded-full blur-2xl" />
+                      <h3 className="mb-4 font-host-grotesk text-xl font-bold leading-tight relative z-10">Accelerate your journey</h3>
+                      <p className="mb-8 text-sm leading-relaxed text-white/70 relative z-10">
+                        Join Rellia Health to unlock full access to your assigned advisory board and all recommended programs.
                       </p>
                       <RelliaAction 
                         asChild
                         variant="mintTealFill" 
                         size="comfortable" 
-                        className="w-full justify-center transition-transform active:scale-95"
+                        className="w-full justify-center transition-transform active:scale-95 relative z-10"
                       >
                         <Link to="/apply">
-                          Join Rellia Health
+                          Apply for Membership
                           <ArrowRight className="ml-2 h-5 w-5" />
                         </Link>
                       </RelliaAction>
                     </div>
 
-                    <div className="text-center">
+                    <div className="text-center pt-4">
                       <button 
                         onClick={() => window.print()}
-                        className="text-[10px] font-bold uppercase tracking-widest text-rellia-teal/40 hover:text-rellia-teal"
+                        className="text-[10px] font-bold uppercase tracking-widest text-rellia-teal/40 hover:text-rellia-teal transition-colors flex items-center justify-center gap-2 mx-auto"
                       >
-                        Download as PDF
+                        <Search className="h-3 w-3" />
+                        Print Report Summary
                       </button>
                     </div>
                   </div>
-                </div>
-
-                <div className="mt-20 flex flex-col items-center justify-center gap-6 border-t border-rellia-teal/10 pt-20 text-center">
-                  <div className="text-sm text-rellia-teal/40">Questions about your report?</div>
-                  <a href="mailto:hello@relliahealth.com" className="font-bold text-rellia-teal hover:underline">hello@relliahealth.com</a>
-                  <button 
-                    onClick={() => { setView('intro'); setAnswers({}); setCurrentSection(0); setCurrentQIdx(0); setDiagResult(null); }}
-                    className="mt-4 rounded-full border border-rellia-teal/20 px-8 py-3 text-xs font-bold uppercase tracking-widest transition-all hover:bg-rellia-teal/5"
-                  >
-                    ← Start a new assessment
-                  </button>
                 </div>
               </div>
             )}
@@ -817,18 +1034,3 @@ export default function DiagnosticSurvey() {
     </div>
   );
 }
-
-// ─── VIEW TYPE ────────────────────────────────────────────────────────────────
-
-type View = 'intro' | 'survey' | 'submit' | 'processing' | 'report';
-
-// ─── LOGO ────────────────────────────────────────────────────────────────────
-
-const LogoMark: React.FC = () => (
-  <div className="flex h-8 w-8 items-center justify-center rounded-full border border-white/20 bg-white/10">
-    <svg width="17" height="17" viewBox="0 0 18 18" fill="none">
-      <path d="M9 1.5C9 1.5 5.5 4.5 5.5 8.5C5.5 10.5 7.1 12 9 12C10.9 12 12.5 10.5 12.5 8.5C12.5 4.5 9 1.5 9 1.5Z" fill="white" opacity="0.9"/>
-      <path d="M5.5 10.5C3.5 11.5 2.5 13.5 3.5 15C4.5 16.5 7 16.5 9 15.5C11 16.5 13.5 16.5 14.5 15C15.5 13.5 14.5 11.5 12.5 10.5" stroke="white" strokeWidth="1.1" fill="none" opacity="0.65"/>
-    </svg>
-  </div>
-);

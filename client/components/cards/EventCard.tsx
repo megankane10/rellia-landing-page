@@ -58,73 +58,90 @@ export const EventCard = ({
   return (
     <article
       className={cn(
-        "flex h-full min-h-0 flex-col overflow-hidden rounded-2xl border border-black/10 bg-white p-4 shadow-sm transition-shadow hover:shadow-md sm:p-5",
+        "group flex h-full min-h-0 flex-col overflow-hidden rounded-2xl border border-black/10 bg-white shadow-sm transition-shadow hover:shadow-md",
         className,
       )}
     >
-      <div className="flex min-h-0 flex-1 flex-col">
-        <div className="flex min-h-0 flex-1 flex-col gap-3 sm:gap-4">
-        <div className={cn("flex shrink-0 flex-col", EVENT_CARD_TITLE_DATE_SLOT_MIN_H)}>
-          <div className="shrink-0 space-y-1">
+      {event.imageSrc ? (
+        <div className="relative aspect-square w-full overflow-hidden bg-black/5 shrink-0">
+          <img
+            src={event.imageSrc}
+            alt={event.title}
+            className={cn(
+              "absolute inset-0 h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105",
+              variant === "past" && "opacity-90 saturate-[0.9]"
+            )}
+            loading="lazy"
+          />
+        </div>
+      ) : (
+        <div className="relative aspect-square w-full overflow-hidden bg-rellia-teal/5 shrink-0 flex items-center justify-center">
+          <Calendar className="h-12 w-12 text-rellia-teal/20" />
+        </div>
+      )}
+
+      <div className="flex flex-1 flex-col p-5 md:p-6">
+        <div className="flex-1 flex flex-col gap-4">
+          <div className="space-y-2">
+            <div className="flex flex-wrap items-center gap-2">
+              <span
+                className={cn(
+                  "inline-flex w-fit items-center gap-1.5 rounded-full px-2 py-0.5 font-host-grotesk text-[10px] font-bold uppercase tracking-[0.14em] ring-1 ring-black/5",
+                  tagIsMint ? "bg-rellia-mint/80 text-rellia-teal" : "bg-black/[0.04] text-black/65",
+                )}
+              >
+                {variant === "past" ? (
+                  <History className="h-3 w-3 opacity-80" aria-hidden strokeWidth={2.5} />
+                ) : (
+                  <Calendar className="h-3 w-3 opacity-80" aria-hidden strokeWidth={2.5} />
+                )}
+                {tagLabel}
+              </span>
+              <span className="inline-flex w-fit items-center gap-1.5 rounded-full border border-black/10 bg-white px-2 py-0.5 font-host-grotesk text-[10px] font-bold uppercase tracking-[0.14em] text-black/70">
+                {attendanceMode === "virtual" ? (
+                  <Video className="h-3 w-3 opacity-80" aria-hidden strokeWidth={2.5} />
+                ) : (
+                  <MapPin className="h-3 w-3 opacity-80" aria-hidden strokeWidth={2.5} />
+                )}
+                {attendanceMode === "virtual" ? "Virtual" : "In person"}
+              </span>
+            </div>
+
             {dateTimeLine ? (
-              <p className="font-urbanist text-sm font-normal leading-snug text-black/50 sm:text-[15px]">{dateTimeLine}</p>
+              <p className="font-urbanist text-sm font-bold text-black/50 uppercase tracking-wide">{dateTimeLine}</p>
             ) : null}
-            <h3 className="line-clamp-3 font-host-grotesk text-xl font-normal leading-snug tracking-tight text-black sm:text-2xl sm:leading-snug">
+            
+            <h3 className="line-clamp-2 font-host-grotesk text-xl font-semibold leading-tight tracking-tight text-black group-hover:underline decoration-2 underline-offset-4">
               {event.title}
             </h3>
           </div>
-          <div className="mt-2 flex shrink-0 flex-wrap items-center gap-2">
-            <span
-              className={cn(
-                "inline-flex w-fit items-center gap-1 rounded-full px-2.5 py-1 font-host-grotesk text-[9px] font-semibold uppercase tracking-[0.12em] ring-1 ring-black/5 sm:gap-1.5 sm:text-[10px] sm:tracking-[0.14em]",
-                tagIsMint ? "bg-rellia-mint text-rellia-teal" : "bg-black/[0.06] text-black/65",
-              )}
-            >
-              {variant === "past" ? (
-                <History className={cn(tagIconClassName, "text-black/50")} aria-hidden strokeWidth={2.25} />
-              ) : (
-                <Calendar className={cn(tagIconClassName, "text-rellia-teal")} aria-hidden strokeWidth={2.25} />
-              )}
-              {tagLabel}
-            </span>
-            <span className={attendanceTagClassName}>
-              {attendanceMode === "virtual" ? (
-                <Video className={cn(tagIconClassName, "text-black/45")} aria-hidden strokeWidth={2.25} />
-              ) : (
-                <MapPin className={cn(tagIconClassName, "text-black/50")} aria-hidden strokeWidth={2.25} />
-              )}
-              {attendanceMode === "virtual" ? "Virtual" : "In person"}
-            </span>
-          </div>
-          <div className="min-h-0 flex-1" aria-hidden />
-        </div>
 
-        {hasSpeakerBlock ? (
-          <div className="flex shrink-0 items-start gap-3 md:gap-3.5">
-            <img
-              src={avatarSrc}
-              alt=""
-              className={cn(
-                "h-12 w-12 shrink-0 rounded-lg border border-black/10 object-cover object-center",
-                variant === "past" && "opacity-90 saturate-[0.9]",
-              )}
-              aria-hidden
-            />
-            <div className="min-w-0 flex-1">
-              <p className="font-host-grotesk text-base font-medium leading-snug text-black">{speakerName}</p>
-              {speakerCompany ? (
-                <p className="mt-0.5 font-urbanist text-sm font-normal leading-snug text-black/55">{speakerCompany}</p>
-              ) : null}
+          {hasSpeakerBlock ? (
+            <div className="mt-auto pt-4 flex items-center gap-3 border-t border-black/5">
+              <img
+                src={avatarSrc}
+                alt=""
+                className={cn(
+                  "h-10 w-10 shrink-0 rounded-full border border-black/10 object-cover object-center",
+                  variant === "past" && "opacity-90 saturate-[0.9]",
+                )}
+                aria-hidden
+              />
+              <div className="min-w-0 flex-1">
+                <p className="font-host-grotesk text-sm font-bold leading-tight text-black truncate">{speakerName}</p>
+                {speakerCompany ? (
+                  <p className="mt-0.5 font-urbanist text-xs font-medium leading-tight text-black/55 truncate">{speakerCompany}</p>
+                ) : null}
+              </div>
             </div>
-          </div>
-        ) : null}
+          ) : null}
         </div>
 
-        <div className="shrink-0 pt-5 sm:pt-6">
+        <div className="shrink-0 pt-6">
           <RelliaAction
             asChild
             variant="mintCardTealFill"
-            className="w-full h-[48px] text-base"
+            className="w-full h-[46px] text-sm font-bold"
           >
             <Link to={detailHref} className="cursor-pointer">
               View event

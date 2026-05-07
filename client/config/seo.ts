@@ -165,16 +165,16 @@ const ROUTE_SEO: Record<string, RouteSeoConfig> = {
     indexable: true,
   },
   "/diagnostics": {
-    title: "Diagnostics — Rellia Health",
+    title: "Startup Diagnostic — Rellia Health",
     description:
-      "Diagnostics resources from Rellia Health. This experience is coming soon.",
-    indexable: false,
+      "Benchmark your health tech startup across 13 domains. Get a personalized gap analysis, AI-powered report, and advisory board matching.",
+    indexable: true,
   },
-  "/diagnosticSurvey": {
-    title: "Diagnostic survey — Rellia Health",
+  "/diagnostic-survey": {
+    title: "Startup Diagnostic Assessment — Rellia Health",
     description:
-      "Rellia Health diagnostic survey. This experience is coming soon.",
-    indexable: false,
+      "Complete the Rellia Health diagnostic survey to receive your readiness report and personalized advisory board matches.",
+    indexable: true,
   },
 }
 

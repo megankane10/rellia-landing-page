@@ -10,15 +10,13 @@ import {
 import RelliaAction from "@/components/RelliaAction"
 import ScrollReveal from "@/components/ScrollReveal"
 
-/** Layered soft mint blurs — kept in the upper band so hero copy stays clean */
-const MintBlurField = () => (
+/** Layered soft blurs using brand colors */
+const BrandBlurField = () => (
   <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
-    <div className="absolute -left-[22%] -top-[18%] h-[360px] w-[360px] rounded-full bg-rellia-mint/42 blur-[100px] md:h-[460px] md:w-[460px] md:blur-[118px]" />
-    <div className="absolute -left-[6%] -top-[8%] h-[300px] w-[300px] rounded-full bg-rellia-mint/36 blur-[88px] md:h-[400px] md:w-[400px]" />
-    <div className="absolute left-[14%] top-[-6%] h-[260px] w-[260px] rounded-full bg-rellia-mint/32 blur-[76px] md:h-[340px] md:w-[340px]" />
-    <div className="absolute right-[4%] -top-[12%] h-[280px] w-[280px] rounded-full bg-rellia-mint/28 blur-[72px] md:h-[360px] md:w-[360px]" />
-    <div className="absolute right-[-12%] top-[6%] h-[240px] w-[240px] rounded-full bg-rellia-mint/24 blur-[64px] md:h-[300px] md:w-[300px]" />
-    <div className="absolute left-1/3 top-[14%] h-[200px] w-[200px] -translate-x-1/2 rounded-full bg-rellia-mint/20 blur-[58px] md:h-[260px] md:w-[260px]" />
+    <div className="absolute -left-[10%] -top-[10%] h-[500px] w-[500px] rounded-full bg-rellia-mint/30 blur-[120px]" />
+    <div className="absolute right-[5%] top-[15%] h-[400px] w-[400px] rounded-full bg-rellia-teal/15 blur-[100px]" />
+    <div className="absolute left-[20%] bottom-[10%] h-[450px] w-[450px] rounded-full bg-rellia-mint/20 blur-[110px]" />
+    <div className="absolute right-[25%] -bottom-[5%] h-[350px] w-[350px] rounded-full bg-rellia-teal/10 blur-[90px]" />
   </div>
 )
 
@@ -117,11 +115,11 @@ export default function PathsSection() {
       className={cn(
         "relative w-full overflow-hidden px-6 md:px-10",
         "min-h-[72vh] md:min-h-[76vh] lg:min-h-[78vh]",
-        "bg-rellia-greyTeal",
+        "bg-white",
         "py-16 md:py-24 lg:py-28",
       )}
     >
-      <MintBlurField />
+      <BrandBlurField />
 
       <div className="relative z-10 mx-auto flex min-h-0 w-full max-w-[1300px] flex-col items-center">
         <motion.div
@@ -139,12 +137,6 @@ export default function PathsSection() {
           <div
             aria-hidden
             className="pointer-events-none absolute left-1/2 top-[38%] z-0 h-[min(52vw,260px)] w-[min(92vw,400px)] -translate-x-1/2 -translate-y-1/2 rounded-[55%] bg-gradient-to-br from-rellia-mint/58 via-rellia-mint/38 to-rellia-mint/22 blur-[56px] md:top-[40%] md:h-[300px] md:w-[460px] md:blur-[76px]"
-          />
-
-          <Users
-            className="relative z-10 mb-5 h-10 w-10 shrink-0 text-rellia-teal md:mb-6 md:h-12 md:w-12"
-            strokeWidth={1.35}
-            aria-hidden
           />
 
           <motion.h2

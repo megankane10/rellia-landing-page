@@ -115,9 +115,9 @@ function TestimonialCard({
   return (
     <div
       className={cn(
-        "flex w-full min-w-0 flex-col overflow-hidden rounded-2xl border border-black/10 bg-white p-4 md:p-5",
+        "flex h-full w-full min-w-0 flex-col overflow-hidden rounded-2xl border border-black/10 bg-white p-4 md:p-5",
         "transition-[max-height] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:transition-none",
-        isExpanded && "max-h-[min(92vh,2400px)] min-h-0",
+        isExpanded && "max-h-[min(92vh,2400px)] min-h-0"
       )}
     >
       <div className={cn("flex flex-col", isExpanded && "min-h-0 flex-1")}>
@@ -312,13 +312,13 @@ export default function TestimonialsSection({ titleLead, titleAccent, testimonia
           >
             <div className="relative flex flex-col gap-4 md:gap-5">
               <div className="[mask-image:linear-gradient(to_right,black_85%,transparent_100%)]">
-                <CarouselContent className="-ml-4 items-start md:-ml-6">
+                <CarouselContent className="-ml-2 items-stretch md:-ml-6">
                   {orderedTestimonials.map((t, idx) => (
                     <CarouselItem
                       key={t.name}
                       className={cn(
-                        "flex min-h-0 min-w-0 pl-4 md:pl-6",
-                        "basis-[85%] sm:basis-[75%] md:basis-[45%] lg:basis-[31%]",
+                        "flex min-h-0 min-w-0 pl-2 md:pl-6",
+                        "basis-full sm:basis-[75%] md:basis-[45%] lg:basis-[31%]",
                       )}
                     >
                       <TestimonialCard

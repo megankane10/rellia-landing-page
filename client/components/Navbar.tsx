@@ -265,8 +265,8 @@ export default function Navbar({ ctaRadiusClassName = "rounded-full" }: NavbarPr
 
   /** Light backgrounds but nav should stay solid teal until scroll (not transparent over white). */
   const isNetworkDirectoryPage =
-    pathname === "/founders/directory" ||
-    pathname.startsWith("/founders/directory/") ||
+    pathname === "/founders/alumni" ||
+    pathname.startsWith("/founders/alumni/") ||
     pathname === "/advisors/directory" ||
     pathname.startsWith("/advisors/directory/") ||
     pathname === "/industry-partners/directory"

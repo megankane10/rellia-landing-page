@@ -2,16 +2,27 @@ import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
 import ScrollReveal from "@/components/ScrollReveal"
 import RelliaCta, { ctaActionFromHref } from "@/components/RelliaCta"
-import { HorizontalCard, eventKey } from "@/components/cards"
+import { HorizontalCard } from "@/components/cards/HorizontalCard"
 import PageHeader from "@/components/PageHeader"
 import { useProgramsLandingPage } from "@/hooks/useCmsDocuments"
 import { DEFAULT_PROGRAMS_LANDING } from "@shared/cms/defaults"
-import { useMemo } from "react"
-import { CalendarDays } from "lucide-react"
+import { useMemo, useState, useEffect } from "react"
+import { CalendarDays, LayoutGrid, ChevronLeft, ChevronRight } from "lucide-react"
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { cn } from "@/lib/utils"
+import { motion, AnimatePresence } from "framer-motion"
+import FilteredListEmptyState from "@/components/FilteredListEmptyState"
+
+type EventFilter = "all" | "upcoming" | "past"
+const PAGE_SIZE = 12
 
 export default function Events() {
   const { data } = useProgramsLandingPage()
   const pl = data ?? DEFAULT_PROGRAMS_LANDING
+  const [eventFilter, setEventFilter] = useState<EventFilter>("all")
+  const [page, setPage] = useState(1)
+
+  const eventKey = (e: any) => `${e.title}-${e.dateTime}`
 
   const { upcomingEvents, pastEvents } = useMemo(() => {
     // Sort upcoming events (ascending date)
@@ -25,8 +36,32 @@ export default function Events() {
     return { upcomingEvents: upcoming, pastEvents: past }
   }, [pl.upcomingEvents, pl.pastEvents])
 
-  const recentPastEvents = pastEvents.slice(0, 3)
-  const remainingPastEvents = pastEvents.slice(3)
+  const visibleEvents = useMemo(() => {
+    if (eventFilter === "all") {
+      // Combined, sorted by date (upcoming first, then past)
+      return [...upcomingEvents, ...pastEvents]
+    }
+    return eventFilter === "upcoming" ? upcomingEvents : pastEvents
+  }, [eventFilter, upcomingEvents, pastEvents])
+
+  useEffect(() => {
+    setPage(1)
+  }, [eventFilter])
+
+  const totalPages = Math.max(1, Math.ceil(visibleEvents.length / PAGE_SIZE))
+  const pageEvents = useMemo(() => {
+    const start = (page - 1) * PAGE_SIZE
+    return visibleEvents.slice(start, start + PAGE_SIZE)
+  }, [page, visibleEvents])
+
+  const filters: Array<{ label: string; value: EventFilter }> = [
+    { label: "All", value: "all" },
+    { label: "Upcoming", value: "upcoming" },
+    { label: "Past", value: "past" },
+  ]
+
+  const handlePrevPage = () => setPage((p) => Math.max(1, p - 1))
+  const handleNextPage = () => setPage((p) => Math.min(totalPages, p + 1))
 
   return (
     <div className="min-h-screen bg-white font-host-grotesk overflow-x-hidden">
@@ -43,64 +78,139 @@ export default function Events() {
           subtitle="Discover what’s coming up, revisit past sessions, and join the conversations shaping the future of health."
         />
 
-        <section className="pt-10 pb-16 md:pt-12 md:pb-20 bg-white">
+        <section className="pt-8 pb-16 md:pt-12 md:pb-20 bg-white">
           <div className="max-w-[1300px] mx-auto px-6 md:px-10">
             <ScrollReveal>
-              <div className="mb-10">
-                <h2 className="font-host-grotesk text-2xl md:text-3xl font-semibold leading-tight tracking-tight text-black mb-6">
-                  Upcoming Events
+              <div className="mb-4">
+                <h2 className="font-host-grotesk text-2xl md:text-3xl font-semibold leading-tight tracking-tight text-black">
+                  Browse Events
                 </h2>
-                {upcomingEvents.length > 0 ? (
-                  <div className="flex flex-col gap-6">
-                    {upcomingEvents.map((event) => (
-                      <HorizontalCard key={eventKey(event)} type="event" item={event} variant="upcoming" />
-                    ))}
-                  </div>
-                ) : (
-                  <div className="flex flex-col items-center justify-center py-12 px-4 border border-black/10 rounded-2xl bg-white text-center">
-                    <CalendarDays className="h-10 w-10 text-black/20 mb-4" />
-                    <p className="font-host-grotesk text-lg font-medium text-black">No upcoming events right now</p>
-                    <p className="font-urbanist text-black/50 mt-1">Check back later for new dates.</p>
-                  </div>
-                )}
               </div>
-            </ScrollReveal>
+              <div className="mb-8 flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+                <div className="w-full md:w-auto">
+                  <Tabs value={eventFilter} onValueChange={(v) => setEventFilter(v as EventFilter)}>
+                    <TabsList
+                      className={cn(
+                        "relative h-auto w-fit gap-1 rounded-full bg-white p-1.5",
+                        "border border-black/10 shadow-[0_12px_32px_-22px_rgba(0,0,0,0.22)]",
+                      )}
+                    >
+                      {filters.map((f) => (
+                        <TabsTrigger
+                          key={f.value}
+                          value={f.value}
+                          className={cn(
+                            "relative rounded-full px-5 py-2.5",
+                            "font-host-grotesk text-[12px] font-semibold uppercase tracking-[0.14em]",
+                            "text-black/80 hover:text-rellia-teal",
+                            "bg-transparent data-[state=active]:bg-rellia-teal data-[state=active]:text-white data-[state=active]:shadow-none",
+                            "focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-white",
+                          )}
+                        >
+                          {eventFilter === f.value ? (
+                            <motion.span
+                              layoutId="events-filter-pill"
+                              className="absolute inset-0 z-0 rounded-full bg-rellia-teal shadow-sm"
+                              transition={{ type: "spring", stiffness: 520, damping: 42 }}
+                              aria-hidden
+                            />
+                          ) : null}
+                          <span className="relative z-[1]">{f.label}</span>
+                        </TabsTrigger>
+                      ))}
+                    </TabsList>
+                  </Tabs>
+                </div>
 
-            <ScrollReveal>
-              <div className="mt-16">
-                <h2 className="font-host-grotesk text-2xl md:text-3xl font-semibold leading-tight tracking-tight text-black mb-6">
-                  Past Events
-                </h2>
-                {pastEvents.length > 0 ? (
-                  <div className="flex flex-col gap-6">
-                    {recentPastEvents.map((event) => (
-                      <HorizontalCard key={eventKey(event)} type="event" item={event} variant="past" />
-                    ))}
-                    
-                    {remainingPastEvents.length > 0 && (
-                      <details className="group [&_summary::-webkit-details-marker]:hidden">
-                        <summary className="cursor-pointer list-none flex items-center justify-center w-full py-4 mt-2 border border-black/10 rounded-full font-host-grotesk font-semibold text-rellia-teal hover:bg-black/[0.02] transition-colors">
-                          <span className="group-open:hidden">View All Past Events</span>
-                          <span className="hidden group-open:block">Show Less</span>
-                        </summary>
-                        <div className="flex flex-col gap-6 mt-6 pb-2 animate-in slide-in-from-top-2 fade-in duration-300 ease-out">
-                          {remainingPastEvents.map((event) => (
-                            <HorizontalCard key={eventKey(event)} type="event" item={event} variant="past" />
-                          ))}
-                        </div>
-                      </details>
-                    )}
-                  </div>
-                ) : (
-                  <div className="flex flex-col items-center justify-center py-12 px-4 border border-black/10 rounded-2xl bg-white text-center">
-                    <CalendarDays className="h-10 w-10 text-black/20 mb-4" />
-                    <p className="font-host-grotesk text-lg font-medium text-black">No past events</p>
-                  </div>
-                )}
+                <p className="font-urbanist text-sm font-semibold text-black/55 md:text-right">
+                  Showing {pageEvents.length} of {visibleEvents.length} events
+                </p>
               </div>
+
+              {visibleEvents.length === 0 ? (
+                <FilteredListEmptyState
+                  className="mt-12"
+                  icon={CalendarDays}
+                  title="No events match this filter"
+                  description="Check back later for new upcoming dates and archived sessions."
+                />
+              ) : (
+                <div className="flex flex-col">
+                  <motion.div
+                    layout
+                    transition={{ layout: { duration: 0.32, ease: [0.16, 1, 0.3, 1] } }}
+                    className="flex flex-col gap-6 will-change-transform"
+                  >
+                    <AnimatePresence mode="sync" initial={false}>
+                      {pageEvents.map((event) => {
+                        const isPast = pastEvents.some(p => eventKey(p) === eventKey(event))
+                        return (
+                          <motion.div
+                            key={eventKey(event)}
+                            layout="position"
+                            initial={{ opacity: 0, y: 14 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: 10 }}
+                            transition={{
+                              duration: 0.26,
+                              ease: [0.16, 1, 0.3, 1],
+                              layout: { duration: 0.32, ease: [0.16, 1, 0.3, 1] },
+                            }}
+                          >
+                            <HorizontalCard 
+                              type="event"
+                              item={event} 
+                              variant={isPast ? "past" : "upcoming"} 
+                            />
+                          </motion.div>
+                        )
+                      })}
+                    </AnimatePresence>
+                  </motion.div>
+
+                  {totalPages > 1 && (
+                    <div className="mt-14 flex items-center justify-center gap-4">
+                      <button
+                        type="button"
+                        onClick={handlePrevPage}
+                        disabled={page <= 1}
+                        className={cn(
+                          "inline-flex h-12 w-12 items-center justify-center rounded-full border font-host-grotesk font-semibold transition-colors",
+                          page <= 1
+                            ? "cursor-not-allowed border-black/10 bg-white text-black/30"
+                            : "border-black/10 bg-white text-rellia-teal hover:border-rellia-teal hover:text-rellia-teal",
+                        )}
+                        aria-label="Previous page"
+                      >
+                        <ChevronLeft className="h-5 w-5" aria-hidden />
+                      </button>
+
+                      <p className="font-urbanist text-base font-semibold text-black/60">
+                        Page {page} of {totalPages}
+                      </p>
+
+                      <button
+                        type="button"
+                        onClick={handleNextPage}
+                        disabled={page >= totalPages}
+                        className={cn(
+                          "inline-flex h-12 w-12 items-center justify-center rounded-full border font-host-grotesk font-semibold transition-colors",
+                          page >= totalPages
+                            ? "cursor-not-allowed border-black/10 bg-white text-black/30"
+                            : "border-black/10 bg-white text-rellia-teal hover:border-rellia-teal hover:text-rellia-teal",
+                        )}
+                        aria-label="Next page"
+                      >
+                        <ChevronRight className="h-5 w-5" aria-hidden />
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
             </ScrollReveal>
           </div>
         </section>
+
         <RelliaCta
           title="Want to **speak** at a Rellia event?"
           body="If you have a practical playbook for founders building in health tech, we’d love to hear from you."

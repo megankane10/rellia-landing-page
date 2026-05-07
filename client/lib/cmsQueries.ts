@@ -199,3 +199,20 @@ export const marketingPageBySlugQuery = `*[_type == "marketingPage" && slug.curr
   subtitle,
   body
 }`
+
+export const advisorsQuery = `*[_type == "advisor"]{
+  "id": _id,
+  name,
+  organization,
+  role,
+  industries,
+  focus,
+  filter,
+  "photoSrc": coalesce(photo.asset->url, photoSrc),
+  linkedInUrl,
+  websiteUrl,
+  bio,
+  mentoringStyle,
+  highlights
+}`
+

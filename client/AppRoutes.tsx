@@ -109,8 +109,8 @@ export const AppRoutes = () => (
     <Route path="/apply" element={<Apply />} />
     <Route path="/consulting" element={<Consulting />} />
     <Route path="/founders" element={<Founders />} />
-    <Route path="/founders/directory" element={<FoundersDirectory />} />
-    <Route path="/founders/directory/:id" element={<FounderProfile />} />
+    <Route path="/founders/alumni" element={<FoundersDirectory />} />
+    <Route path="/founders/alumni/:id" element={<FounderProfile />} />
     <Route path="/advisors" element={<Advisors />} />
     <Route path="/advisors/directory" element={<AdvisorsDirectory />} />
     <Route path="/advisors/directory/:id" element={<AdvisorProfile />} />
