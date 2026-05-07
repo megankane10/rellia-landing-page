@@ -24,6 +24,8 @@ import {
   Tooltip,
 } from "recharts"
 import { CreamSection, GlassCard, GlassCardLight, LightSection, Reveal, RoleHero } from "./_shared"
+import { useNetworkInvestorsPage } from "@/hooks/useCmsDocuments"
+import NetworkCmsPage from "./NetworkCmsPage"
 
 const COLORS = {
   blue: "#2563eb",
@@ -216,6 +218,11 @@ function PortfolioSplit() {
 }
 
 export default function Investors() {
+  const { data: page, isLoading } = useNetworkInvestorsPage()
+  if (page?.sections?.length) {
+    return <NetworkCmsPage page={page} isLoading={isLoading} />
+  }
+
   const [isPitchNotifyOpen, setIsPitchNotifyOpen] = useState(false)
 
   return (

@@ -46,7 +46,12 @@ export const sanityFetch = async <T>(
     const isEmbeddedInFrame =
       typeof window !== "undefined" && window.self !== window.top;
 
-    if (isEmbeddedInFrame) {
+    const hasPreviewPerspectiveCookie =
+      typeof document !== "undefined" &&
+      typeof document.cookie === "string" &&
+      document.cookie.includes("sanity-preview-perspective=")
+
+    if (isEmbeddedInFrame || hasPreviewPerspectiveCookie) {
       const res = await fetch("/api/sanity/query", {
         method: "POST",
         headers: { "content-type": "application/json" },

@@ -503,6 +503,8 @@ export function createServer() {
     try {
       const report = buildNonAiReport();
 
+      let savedToSanity = false
+
       if (sanityWriteClient) {
         try {
           await sanityWriteClient.create({
@@ -523,16 +525,29 @@ export function createServer() {
             },
             submittedAt: new Date().toISOString(),
           });
+          savedToSanity = true
         } catch (sanityErr) {
           console.error("Failed to save to Sanity:", sanityErr);
-          // Still return the report even if save fails
         }
+      } else {
+        res.status(501).json({
+          error: "MISSING_ENV_VARS",
+          message:
+            "Diagnostics save is not configured. Set SANITY_API_WRITE_TOKEN, SANITY_API_PROJECT_ID, and SANITY_API_DATASET in the server environment.",
+        })
+        return
       }
 
-      res.status(200).json(report);
+      res.status(200).json({ ...report, savedToSanity })
     } catch (err) {
       const fallback = buildNonAiReport();
 
+      if (!sanityWriteClient) {
+        res.status(200).json({ ...fallback, savedToSanity: false })
+        return
+      }
+
+      let savedToSanity = false
       if (sanityWriteClient) {
         try {
           await sanityWriteClient.create({
@@ -553,12 +568,13 @@ export function createServer() {
             },
             submittedAt: new Date().toISOString(),
           });
+          savedToSanity = true
         } catch (sanityErr) {
           console.error("Failed to save fallback to Sanity:", sanityErr);
         }
       }
 
-      res.status(200).json(fallback);
+      res.status(200).json({ ...fallback, savedToSanity })
     }
   });
 

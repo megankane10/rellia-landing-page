@@ -151,10 +151,15 @@ export default function Events() {
           variant="dark"
           title={
             <>
-              Network. <span className="text-rellia-mint">Learn.</span> Scale.
+              {programsLanding?.heroTitleLine1 ?? "Network."}{" "}
+              <span className="text-rellia-mint">{programsLanding?.heroTitleMint ?? "Learn."}</span>{" "}
+              {programsLanding?.heroSecondaryCtaLabel ? "" : "Scale."}
             </>
           }
-          subtitle="Discover what’s coming up, revisit past sessions, and join the conversations shaping the future of health."
+          subtitle={
+            programsLanding?.heroSubtitle ??
+            "Discover what’s coming up, revisit past sessions, and join the conversations shaping the future of health."
+          }
         />
 
         <section className="pt-8 pb-16 md:pt-12 md:pb-20 bg-white">
@@ -162,7 +167,9 @@ export default function Events() {
             <ScrollReveal>
               <div className="mb-4">
                 <h2 className="font-host-grotesk text-2xl md:text-3xl font-semibold leading-tight tracking-tight text-black">
-                  Browse Events
+                  {programsLanding?.programsSectionTitle?.trim()
+                    ? programsLanding.programsSectionTitle.replace(/Programs/i, "Events")
+                    : "Browse Events"}
                 </h2>
               </div>
               <div className="mb-8 flex flex-col gap-6 md:flex-row md:items-center md:justify-between">

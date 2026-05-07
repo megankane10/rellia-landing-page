@@ -98,6 +98,12 @@ export type CmsPageContent = {
   sections?: CmsPageSection[]
 }
 
+export type CmsSingletonPageContent = {
+  title: string
+  seo?: SeoContent
+  sections?: CmsPageSection[]
+}
+
 export type SanityImageAsset = {
   _type?: string
   asset?: {

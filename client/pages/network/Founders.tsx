@@ -37,6 +37,8 @@ import { NETWORK_PATH_ROLE_TAG } from "@/lib/networkPathRoles"
 import ScrollReveal from "@/components/ScrollReveal"
 import { CreamSection, LightSection, Reveal } from "./_shared"
 import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion"
+import { useNetworkFoundersPage } from "@/hooks/useCmsDocuments"
+import NetworkCmsPage from "./NetworkCmsPage"
 
 const HERO_FALLBACK = "/images/founders-header.jpg"
 
@@ -720,6 +722,11 @@ function DiagnosticSurveySection() {
 }
 
 export default function Founders() {
+  const { data: page, isLoading } = useNetworkFoundersPage()
+  if (page?.sections?.length) {
+    return <NetworkCmsPage page={page} isLoading={isLoading} />
+  }
+
   return (
     <div className="min-h-screen overflow-x-hidden bg-white font-host-grotesk">
       <Navbar />

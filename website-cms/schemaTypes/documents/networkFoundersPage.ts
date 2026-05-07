@@ -1,4 +1,4 @@
-import {defineField, defineType} from 'sanity'
+import {defineArrayMember, defineField, defineType} from 'sanity'
 
 export const networkFoundersPage = defineType({
   name: 'networkFoundersPage',
@@ -7,6 +7,15 @@ export const networkFoundersPage = defineType({
   fields: [
     defineField({name: 'title', type: 'string', initialValue: 'Founders'}),
     defineField({name: 'seo', type: 'seo'}),
+    defineField({
+      name: 'sections',
+      type: 'array',
+      of: [
+        defineArrayMember({type: 'sectionHero'}),
+        defineArrayMember({type: 'sectionRichText'}),
+        defineArrayMember({type: 'sectionCardsGrid'}),
+      ],
+    }),
   ],
 })
 

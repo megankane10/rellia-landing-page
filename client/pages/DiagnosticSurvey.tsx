@@ -71,6 +71,7 @@ interface DiagResult {
   }[];
   recommendations: string[];
   mentor_areas_needed: string[];
+  savedToSanity?: boolean
 }
 
 type View = "intro" | "survey" | "submit" | "processing" | "report";
@@ -1172,11 +1173,15 @@ export default function DiagnosticSurvey() {
 
     try {
       setProcStep(1);
+      const controller = new AbortController()
+      const timeout = window.setTimeout(() => controller.abort(), 25_000)
+
       const res = await fetch("/api/diagnostic-report", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
-      });
+        signal: controller.signal,
+      }).finally(() => window.clearTimeout(timeout))
 
       const report = await (async () => {
         try {

@@ -11,6 +11,8 @@ import { cn } from "@/lib/utils"
 import { ArrowRight, Award, BookOpen, Clock, Crosshair, Gauge, HeartHandshake, Network, Scale, ShieldCheck, Sparkles } from "lucide-react"
 import { Link } from "react-router-dom"
 import { CreamSection, GlassCardLight, LightSection, Reveal, RoleHero } from "./_shared"
+import { useNetworkAdvisorsPage } from "@/hooks/useCmsDocuments"
+import NetworkCmsPage from "./NetworkCmsPage"
 
 const BENEFITS = [
   "Stay up to date on the latest innovations happening in your industry",
@@ -174,6 +176,11 @@ function ScheduleSplit() {
 }
 
 export default function Advisors() {
+  const { data: page, isLoading } = useNetworkAdvisorsPage()
+  if (page?.sections?.length) {
+    return <NetworkCmsPage page={page} isLoading={isLoading} />
+  }
+
   return (
     <div className="min-h-screen overflow-x-hidden bg-white font-host-grotesk">
       <Navbar />

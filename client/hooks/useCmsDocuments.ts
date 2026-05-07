@@ -25,6 +25,10 @@ import {
   advisorFiltersQuery,
   founderLevelsQuery,
   founderSpecialtiesQuery,
+  networkAdvisorsPageQuery,
+  networkFoundersPageQuery,
+  networkInvestorsPageQuery,
+  networkPartnersPageQuery,
 } from "@/lib/cmsQueries";
 
 import {
@@ -46,6 +50,7 @@ import type {
   FaqPageContent,
   NavigationContent,
   CmsPageContent,
+  CmsSingletonPageContent,
   GlobalSettingsContent,
   HomePageContent,
   MarketingPageContent,
@@ -364,6 +369,46 @@ export const useFounderSpecialties = () =>
     queryFn: async () => {
       const raw = await sanityFetch<DirectoryTaxonomyOption[]>(founderSpecialtiesQuery)
       return Array.isArray(raw) ? raw : []
+    },
+    staleTime: staleTimeMs,
+  })
+
+export const useNetworkFoundersPage = () =>
+  useQuery({
+    queryKey: ["cms", "network", "foundersPage"],
+    queryFn: async () => {
+      const raw = await sanityFetch<CmsSingletonPageContent>(networkFoundersPageQuery)
+      return raw ?? null
+    },
+    staleTime: staleTimeMs,
+  })
+
+export const useNetworkAdvisorsPage = () =>
+  useQuery({
+    queryKey: ["cms", "network", "advisorsPage"],
+    queryFn: async () => {
+      const raw = await sanityFetch<CmsSingletonPageContent>(networkAdvisorsPageQuery)
+      return raw ?? null
+    },
+    staleTime: staleTimeMs,
+  })
+
+export const useNetworkInvestorsPage = () =>
+  useQuery({
+    queryKey: ["cms", "network", "investorsPage"],
+    queryFn: async () => {
+      const raw = await sanityFetch<CmsSingletonPageContent>(networkInvestorsPageQuery)
+      return raw ?? null
+    },
+    staleTime: staleTimeMs,
+  })
+
+export const useNetworkPartnersPage = () =>
+  useQuery({
+    queryKey: ["cms", "network", "partnersPage"],
+    queryFn: async () => {
+      const raw = await sanityFetch<CmsSingletonPageContent>(networkPartnersPageQuery)
+      return raw ?? null
     },
     staleTime: staleTimeMs,
   })

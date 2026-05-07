@@ -124,6 +124,42 @@ export const pageBySlugQuery = `*[_type == "page" && slug.current == $slug][0]{
   }
 }`
 
+const pageSectionsFragment = `sections[]{
+  ...,
+  "imageUrl": image.asset->url,
+  primaryCta{ label, href, description, badge },
+  secondaryCta{ label, href, description, badge },
+  cards[]{
+    ...,
+    "imageUrl": image.asset->url,
+    cta{ label, href, description, badge }
+  }
+}`
+
+export const networkFoundersPageQuery = `*[_type == "networkFoundersPage"][0]{
+  title,
+  ${seoFragment},
+  ${pageSectionsFragment}
+}`
+
+export const networkAdvisorsPageQuery = `*[_type == "networkAdvisorsPage"][0]{
+  title,
+  ${seoFragment},
+  ${pageSectionsFragment}
+}`
+
+export const networkInvestorsPageQuery = `*[_type == "networkInvestorsPage"][0]{
+  title,
+  ${seoFragment},
+  ${pageSectionsFragment}
+}`
+
+export const networkPartnersPageQuery = `*[_type == "networkPartnersPage"][0]{
+  title,
+  ${seoFragment},
+  ${pageSectionsFragment}
+}`
+
 export const homePageQuery = `*[_type == "homePage"][0]{
   headlinePrefix,
   headlineAccent,
@@ -225,6 +261,42 @@ export const programsLandingQuery = `*[_type == "programsLandingPage"][0]{
     "imageSrc": coalesce(image.asset->url, imageSrc),
     href,
     buttonText
+  },
+  upcomingEvents[]{
+    title,
+    dateTime,
+    person,
+    "imageSrc": coalesce(image.asset->url, imageSrc),
+    href,
+    comingSoon,
+    buttonText,
+    slug,
+    location,
+    lumaEventId,
+    detailBody,
+    detailBodyHeading,
+    embedLumaOnDetailPage,
+    addToCalendarEnabled,
+    calendarStartsAt,
+    calendarEndsAt
+  },
+  pastEvents[]{
+    title,
+    dateTime,
+    person,
+    "imageSrc": coalesce(image.asset->url, imageSrc),
+    href,
+    comingSoon,
+    buttonText,
+    slug,
+    location,
+    lumaEventId,
+    detailBody,
+    detailBodyHeading,
+    embedLumaOnDetailPage,
+    addToCalendarEnabled,
+    calendarStartsAt,
+    calendarEndsAt
   },
   ctaTitle,
   ctaBody,
