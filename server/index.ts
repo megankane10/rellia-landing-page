@@ -408,15 +408,6 @@ export function createServer() {
   });
 
   app.post("/api/diagnostic-report", async (req, res) => {
-    const apiKey = process.env.ANTHROPIC_API_KEY?.trim();
-    if (!apiKey) {
-      res.status(501).json({
-        error:
-          "Anthropic is not configured. Set ANTHROPIC_API_KEY in the server environment.",
-      });
-      return;
-    }
-
     const ip = getClientIp(req);
     if (!applyRateLimit(perIpRate, ip, RATE_MAX)) {
       res
@@ -443,7 +434,77 @@ export function createServer() {
       rawAnswers,
     } = parsed.data;
 
-    const prompt = `You are a health tech startup advisor at Rellia Health.
+    const parseSectionScores = (
+      markdown: string,
+    ): Array<{ category: string; score: number }> => {
+      return markdown
+        .split("\n")
+        .map((line) => line.trim())
+        .filter(Boolean)
+        .map((line) => {
+          const match = line.match(/^(.+?)\s*:\s*(\d{1,3})%?$/);
+          if (!match) return null;
+          const category = match[1]?.trim() || "";
+          const score = Number(match[2]);
+          if (!category) return null;
+          if (!Number.isFinite(score)) return null;
+          return { category, score: Math.max(0, Math.min(100, score)) };
+        })
+        .filter((x): x is { category: string; score: number } => Boolean(x));
+    };
+
+    const buildNonAiReport = (): {
+      summary: string;
+      top3_strengths: Array<{ category: string; score: number; note: string }>;
+      top3_weaknesses: Array<{
+        category: string;
+        score: number;
+        note: string;
+        priority: string;
+      }>;
+      recommendations: string[];
+      mentor_areas_needed: string[];
+    } => {
+      const scores = parseSectionScores(sectionScoresMarkdown);
+      const sorted = [...scores].sort((a, b) => b.score - a.score);
+      const topStrengths = sorted.slice(0, 3);
+      const topWeaknesses = [...scores]
+        .sort((a, b) => a.score - b.score)
+        .slice(0, 3);
+
+      const toPriority = (score: number): string => {
+        if (score < 40) return "Critical";
+        if (score < 70) return "High";
+        return "Medium";
+      };
+
+      return {
+        summary: `Thanks — we’ve saved your diagnostic submission for ${company}. Your next step is to focus on the lowest-scoring domains first, then reinforce what’s already working so you can move faster with less risk.`,
+        top3_strengths: topStrengths.map((s) => ({
+          category: s.category,
+          score: s.score,
+          note: "Above-average readiness compared to your other domains.",
+        })),
+        top3_weaknesses: topWeaknesses.map((s) => ({
+          category: s.category,
+          score: s.score,
+          priority: toPriority(s.score),
+          note: "This is a likely bottleneck—tighten it before scaling execution or diligence.",
+        })),
+        recommendations: [
+          "Pick one domain to fix this week and define a concrete deliverable (document, process, or experiment).",
+          "Validate your assumptions with 2–3 targeted conversations (users, buyers, clinicians, or operators).",
+          "Turn the lowest-scoring domain into a short 30–60 day plan with owners and milestones.",
+        ],
+        mentor_areas_needed: topWeaknesses.map((w) => w.category),
+      };
+    };
+
+    try {
+      const apiKey = process.env.ANTHROPIC_API_KEY?.trim();
+      const report = apiKey
+        ? await (async () => {
+            const prompt = `You are a health tech startup advisor at Rellia Health.
 Analyze this startup diagnostic and return ONLY valid JSON (no markdown, no backticks).
 Company: ${company}
 Stage: ${stage}
@@ -454,50 +515,46 @@ ${sectionScoresMarkdown}
 Return this shape exactly:
 {"summary":"2-3 sentences to founder in second person","top3_strengths":[{"category":"","score":0,"note":""}],"top3_weaknesses":[{"category":"","score":0,"note":"","priority":"Critical"}],"recommendations":[""],"mentor_areas_needed":[""]}`;
 
-    try {
-      const anthropicRes = await fetch(
-        "https://api.anthropic.com/v1/messages",
-        {
-          method: "POST",
-          headers: {
-            "content-type": "application/json",
-            "x-api-key": apiKey,
-            "anthropic-version": "2023-06-01",
-          },
-          body: JSON.stringify({
-            model: "claude-sonnet-4-20250514",
-            max_tokens: 1200,
-            messages: [{ role: "user", content: prompt }],
-          }),
-        },
-      );
+            const anthropicRes = await fetch(
+              "https://api.anthropic.com/v1/messages",
+              {
+                method: "POST",
+                headers: {
+                  "content-type": "application/json",
+                  "x-api-key": apiKey,
+                  "anthropic-version": "2023-06-01",
+                },
+                body: JSON.stringify({
+                  model: "claude-sonnet-4-20250514",
+                  max_tokens: 1200,
+                  messages: [{ role: "user", content: prompt }],
+                }),
+              },
+            );
 
-      if (!anthropicRes.ok) {
-        const text = await anthropicRes.text().catch(() => "");
-        res.status(502).json({
-          error: "Anthropic request failed",
-          status: anthropicRes.status,
-          ...(isDev ? { text } : {}),
-        });
-        return;
-      }
+            if (!anthropicRes.ok) {
+              const text = await anthropicRes.text().catch(() => "");
+              throw new Error(
+                `Anthropic request failed (${anthropicRes.status})${isDev && text ? `: ${text}` : ""}`,
+              );
+            }
 
-      const data = (await anthropicRes.json()) as {
-        content?: Array<{ type?: string; text?: string }>;
-      };
-      const text =
-        data.content
-          ?.map((b) => (typeof b.text === "string" ? b.text : ""))
-          .join("") ?? "";
-      const cleaned = text.replace(/```json|```/g, "").trim();
-      const modelJson = JSON.parse(cleaned) as unknown;
-      const checked = diagnosticReportResponseSchema.safeParse(modelJson);
-      if (!checked.success) {
-        res.status(502).json({ error: "Invalid model response" });
-        return;
-      }
-
-      const report = checked.data;
+            const data = (await anthropicRes.json()) as {
+              content?: Array<{ type?: string; text?: string }>;
+            };
+            const text =
+              data.content
+                ?.map((b) => (typeof b.text === "string" ? b.text : ""))
+                .join("") ?? "";
+            const cleaned = text.replace(/```json|```/g, "").trim();
+            const modelJson = JSON.parse(cleaned) as unknown;
+            const checked = diagnosticReportResponseSchema.safeParse(modelJson);
+            if (!checked.success) {
+              throw new Error("Invalid model response");
+            }
+            return checked.data;
+          })()
+        : buildNonAiReport();
 
       if (sanityWriteClient) {
         try {
@@ -527,10 +584,34 @@ Return this shape exactly:
 
       res.status(200).json(report);
     } catch (err) {
-      res.status(500).json({
-        error: "Unexpected error",
-        message: err instanceof Error ? err.message : String(err),
-      });
+      const fallback = buildNonAiReport();
+
+      if (sanityWriteClient) {
+        try {
+          await sanityWriteClient.create({
+            _type: "diagnosticSubmission",
+            name,
+            email,
+            company,
+            stage,
+            description: desc,
+            scoresMarkdown: sectionScoresMarkdown,
+            answersJson: rawAnswers ? JSON.stringify(rawAnswers) : undefined,
+            report: {
+              summary: fallback.summary,
+              strengths: fallback.top3_strengths,
+              weaknesses: fallback.top3_weaknesses,
+              recommendations: fallback.recommendations,
+              mentorAreas: fallback.mentor_areas_needed,
+            },
+            submittedAt: new Date().toISOString(),
+          });
+        } catch (sanityErr) {
+          console.error("Failed to save fallback to Sanity:", sanityErr);
+        }
+      }
+
+      res.status(200).json(fallback);
     }
   });
 
