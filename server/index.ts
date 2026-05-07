@@ -70,6 +70,10 @@ const fixVercelRewrittenApiPath: RequestHandler = (req, _res, next) => {
 export function createServer() {
   const app = express();
 
+  // Vercel sits behind a proxy/CDN. Trusting the proxy ensures `req.protocol`
+  // and related helpers use `x-forwarded-*` headers.
+  app.set("trust proxy", 1);
+
   app.use(fixVercelRewrittenApiPath);
 
   const isDev = process.env.NODE_ENV !== "production";
@@ -136,7 +140,19 @@ export function createServer() {
     }
 
     try {
-      const url = `${req.protocol}://${req.get("host")}${req.originalUrl}`;
+      const forwardedProto = headerOne(req, "x-forwarded-proto")?.trim();
+      const forwardedHost = headerOne(req, "x-forwarded-host")?.trim();
+      const host =
+        forwardedHost ||
+        req.get("host") ||
+        process.env.VERCEL_URL ||
+        "localhost";
+
+      const protocol =
+        forwardedProto || (typeof req.protocol === "string" ? req.protocol : "");
+
+      const origin = `${protocol || "https"}://${host.replace(/^https?:\/\//, "")}`;
+      const requestUrl = new URL(req.originalUrl || req.url, origin).toString();
       const previewClient = createClient({
         projectId:
           process.env.SANITY_API_PROJECT_ID ||
@@ -152,15 +168,17 @@ export function createServer() {
       });
 
       const { isValid, redirectTo, studioPreviewPerspective } =
-        await validatePreviewUrl(previewClient, url);
+        await validatePreviewUrl(previewClient, requestUrl);
       if (!isValid) {
         res.status(401).send("Invalid preview secret");
         return;
       }
 
-      const cleanRedirect = redirectTo
-        ? withoutSecretSearchParams(new URL(redirectTo, url)).pathname
-        : "/";
+      const cleanRedirect = (() => {
+        if (!redirectTo) return "/";
+        const cleaned = withoutSecretSearchParams(new URL(redirectTo, requestUrl));
+        return `${cleaned.pathname}${cleaned.search}${cleaned.hash}`;
+      })();
 
       const perspective = studioPreviewPerspective || "drafts";
       res.setHeader(
