@@ -6,6 +6,7 @@ import { BrowserRouter } from "react-router-dom"
 import { HelmetProvider } from "react-helmet-async"
 import { AppRoutes, RouterShell } from "./AppRoutes"
 import { PageSeoProvider } from "@/context/PageSeoContext"
+import { VisualEditingOverlay } from "@/components/sanity/VisualEditingOverlay"
 
 const queryClient = new QueryClient()
 
@@ -15,6 +16,7 @@ const App = () => (
       <TooltipProvider>
         <Toaster />
         <Sonner />
+        <VisualEditingOverlay />
         <BrowserRouter>
           <PageSeoProvider>
             <RouterShell>
