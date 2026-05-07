@@ -44,5 +44,9 @@ export const portableRichText = defineType({
     }),
     defineArrayMember({type: 'bodyCtaBox'}),
     defineArrayMember({type: 'portableImageCarousel'}),
+    defineArrayMember({
+      type: 'image',
+      options: {hotspot: true},
+    }),
   ],
 })

@@ -17,6 +17,9 @@ import {alumniCompany} from './documents/alumniCompany'
 import {diagnosticSubmission} from './documents/diagnosticSubmission'
 import {program} from './documents/program'
 import {event} from './documents/event'
+import {story} from './documents/story'
+import {storyFilter} from './documents/storyFilter'
+import {storiesPage} from './documents/storiesPage'
 import {advisorFilter} from './documents/advisorFilter'
 import {founderLevel} from './documents/founderLevel'
 import {founderSpecialty} from './documents/founderSpecialty'
@@ -50,6 +53,9 @@ export const schemaTypes = [
   diagnosticSubmission,
   program,
   event,
+  story,
+  storyFilter,
+  storiesPage,
   advisorFilter,
   founderLevel,
   founderSpecialty,

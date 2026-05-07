@@ -77,9 +77,17 @@ export const deskStructure = (S: StructureBuilder) =>
         .title('Marketing Pages')
         .icon(DocumentTextIcon)
         .child(
-          S.documentTypeList('marketingPage').title(
-            'Marketing Pages — long-form copy (no route wired yet)',
-          ),
+          S.list()
+            .title('Marketing Pages')
+            .items([
+              singleton(S, 'Stories Page (/stories)', 'storiesPage', DocumentTextIcon),
+              S.documentTypeListItem('story').title('Stories').icon(ComposeIcon),
+              S.documentTypeListItem('storyFilter').title('Story filters').icon(TagIcon),
+              S.divider(),
+              S.documentTypeListItem('marketingPage')
+                .title('Marketing Pages — long-form copy (no route wired yet)')
+                .icon(DocumentTextIcon),
+            ]),
         ),
 
       S.listItem()
@@ -123,12 +131,15 @@ export const deskStructure = (S: StructureBuilder) =>
             'aboutPage',
             'careersPage',
             'programsLandingPage',
+            'storiesPage',
             'faqPage',
             'contactPage',
             'paymentPage',
             'notFoundPage',
             'program',
             'event',
+            'story',
+            'storyFilter',
             'programPage',
             'page',
             'marketingPage',
