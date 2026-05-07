@@ -221,13 +221,11 @@ export function HorizontalCard(props: HorizontalCardProps) {
         </p>
 
         {!isWaitlistCard && (
-          <div className="mt-4 flex items-center gap-2.5 text-black/70">
-            <div className="flex h-7 w-7 items-center justify-center rounded-full bg-rellia-mint/20">
-              <CalendarDays className="h-4 w-4 text-rellia-teal" strokeWidth={2.5} />
-            </div>
+          <div className="mt-7 flex items-center gap-3 text-black/70">
+            <CalendarDays className="h-5 w-5 text-rellia-teal" strokeWidth={2.5} />
             <div className="flex flex-col">
-              <span className="font-host-grotesk text-[10px] font-bold uppercase tracking-[0.18em] text-black/40">Deadline</span>
-              <span className="font-urbanist text-sm font-bold text-black/80">
+              <span className="font-host-grotesk text-[13px] font-bold uppercase tracking-[0.18em] text-black/40">Deadline</span>
+              <span className="font-urbanist text-[13px] font-bold text-black/80">
                 {program.deadline || getCurrentMonthDeadline()}
               </span>
             </div>

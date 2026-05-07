@@ -112,9 +112,9 @@ export const ProgramCard = ({
 
             {/* Deadline */}
             {!isWaitlistCard && (
-              <div className="mt-5 flex items-center gap-2 text-black">
-                <CalendarDays className="h-4.5 w-4.5 text-rellia-teal" strokeWidth={2.5} />
-                <span className="font-host-grotesk text-[11px] font-bold uppercase tracking-[0.18em]">
+              <div className="mt-7 flex items-center gap-3 text-black">
+                <CalendarDays className="h-5 w-5 text-rellia-teal" strokeWidth={2.5} />
+                <span className="font-host-grotesk text-[13px] font-bold uppercase tracking-[0.18em]">
                   Deadline: {deadline || getCurrentMonthDeadline()}
                 </span>
               </div>

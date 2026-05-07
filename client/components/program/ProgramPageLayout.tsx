@@ -280,8 +280,8 @@ const ProgramPageLayout = ({
                       <div className="relative flex flex-col overflow-hidden min-h-[340px] md:min-h-[400px]">
                         {/* Quote Block - Full Width */}
                         <div className="relative z-10 p-0 md:pb-6 flex flex-col justify-start pt-4 md:pt-8">
-                          <Quote className="h-8 w-8 text-rellia-teal/20 mb-6" strokeWidth={2} />
-                          <p className="font-host-grotesk text-xl md:text-2xl lg:text-3xl font-medium leading-[1.25] tracking-tight text-black max-w-5xl">
+                          <Quote className="h-8 w-8 text-rellia-teal mb-6" strokeWidth={2} />
+                          <p className="font-host-grotesk text-xl md:text-2xl lg:text-3xl font-medium leading-[1.25] tracking-tight text-rellia-teal max-w-5xl">
                             &ldquo;{t.quote}&rdquo;
                           </p>
                         </div>
@@ -296,7 +296,7 @@ const ProgramPageLayout = ({
                             />
                           </div>
                           <div className="flex flex-col">
-                            <h4 className="font-host-grotesk font-bold text-lg md:text-xl text-rellia-teal leading-tight">{t.name}</h4>
+                            <h4 className="font-host-grotesk font-medium text-lg md:text-xl text-black leading-tight">{t.name}</h4>
                             <p className="font-urbanist text-sm md:text-base font-medium text-black/60 mt-0.5">
                               {t.role} &bull; {t.company}
                             </p>
@@ -308,7 +308,7 @@ const ProgramPageLayout = ({
                 </CarouselContent>
 
                 {/* Homepage-style control strip: loading bar + counter + arrows */}
-                <div className="mt-8 flex w-full flex-col gap-4">
+                <div className="mt-0 flex w-full flex-col gap-4">
                   <div aria-hidden className="relative h-1 w-full overflow-hidden rounded-full bg-black/5">
                     <div
                       className="h-full bg-rellia-teal transition-[width] duration-500 ease-out"
