@@ -1,93 +1,161 @@
-import { useState, useEffect, useRef, type KeyboardEvent } from "react"
-import { motion, AnimatePresence, useInView, useReducedMotion } from "framer-motion"
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
-import { FilloutStandardEmbed } from "@fillout/react"
-import { useLocation, Link } from "react-router-dom"
-import Navbar from "@/components/Navbar"
-import Footer from "@/components/Footer"
-import ScrollReveal from "@/components/ScrollReveal"
-import RelliaCta, { ctaActionFromHref } from "@/components/RelliaCta"
-import { CheckCircle2, ArrowRight, ArrowLeft, ChevronLeft, ChevronRight, CalendarDays, Quote } from "lucide-react"
-import { getCurrentMonthDeadline } from "@/lib/dateUtils"
-import RelliaAction from "@/components/RelliaAction"
-import { Helmet } from "react-helmet-async"
-import { getSiteUrl } from "@/config/seo"
-import { cn } from "@/lib/utils"
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
+import { useState, useEffect, useRef, type KeyboardEvent } from "react";
+import {
+  motion,
+  AnimatePresence,
+  useInView,
+  useReducedMotion,
+} from "framer-motion";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import { FilloutStandardEmbed } from "@fillout/react";
+import { useLocation, Link } from "react-router-dom";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+import ScrollReveal from "@/components/ScrollReveal";
+import RelliaCta, { ctaActionFromHref } from "@/components/RelliaCta";
+import {
+  CheckCircle2,
+  ArrowRight,
+  ArrowLeft,
+  ChevronLeft,
+  ChevronRight,
+  CalendarDays,
+  Quote,
+} from "lucide-react";
+import { getCurrentMonthDeadline } from "@/lib/dateUtils";
+import RelliaAction from "@/components/RelliaAction";
+import { Helmet } from "react-helmet-async";
+import { getSiteUrl } from "@/config/seo";
+import { cn } from "@/lib/utils";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import {
   Carousel,
   CarouselContent,
   CarouselItem,
-} from "@/components/ui/carousel"
-import type { QmsProgramContent } from "@shared/cms/types"
-import type { ProgramPageStaticBlocks } from "@shared/cms/programs/types"
-
-const PEXELS_API_KEY = "z4b8gFNkNbw9INnt2zWOyccX5nda137k7HeW8QV4sFtnfdYnChcrmZ8T"
+} from "@/components/ui/carousel";
+import type { QmsProgramContent } from "@shared/cms/types";
+import type { ProgramPageStaticBlocks } from "@shared/cms/programs/types";
 
 export type ProgramPageLayoutProps = {
-  cms: QmsProgramContent
-  heroImageSrc: string
-  heroImageAlt: string
-  outcomesSectionId: string
-  paymentSectionId?: string
-  staticBlocks: ProgramPageStaticBlocks
+  cms: QmsProgramContent;
+  heroImageSrc: string;
+  heroImageAlt: string;
+  outcomesSectionId: string;
+  paymentSectionId?: string;
+  staticBlocks: ProgramPageStaticBlocks;
   /** When true, shows a "Waitlist" badge in the hero and changes the payment CTA to "Join Waitlist" */
-  isWaitlist?: boolean
+  isWaitlist?: boolean;
   /** Optional square hero image; when omitted heroImageSrc is cropped to square from top-left */
-  heroSquareImageSrc?: string
-}
+  heroSquareImageSrc?: string;
+};
 
 const fetchPexelsImage = async (query: string): Promise<string> => {
   try {
-    const res = await fetch(
-      `https://api.pexels.com/v1/search?query=${encodeURIComponent(query)}&per_page=1&orientation=landscape`,
-      { headers: { Authorization: PEXELS_API_KEY } },
-    )
-    const data = await res.json()
-    return data?.photos?.[0]?.src?.large2x ?? data?.photos?.[0]?.src?.large ?? ""
-  } catch { return "" }
-}
+    const params = new URLSearchParams({
+      query,
+      per_page: "1",
+      orientation: "landscape",
+    });
+    const res = await fetch(`/api/pexels/search?${params.toString()}`);
+    if (!res.ok) return "";
+    const data = (await res.json()) as { url?: string };
+    return data?.url ?? "";
+  } catch {
+    return "";
+  }
+};
 
-const RELLIA_TEAL = "#0D3540"
+const RELLIA_TEAL = "#0D3540";
 
 /** Vertical timeline outcome — MembershipPathTimeline style */
 const OutcomesTimeline = ({ items }: { items: string[] }) => {
-  const ref = useRef<HTMLDivElement>(null)
-  const isInView = useInView(ref, { once: true, margin: "-10% 0px -12% 0px" })
-  const reduceMotion = useReducedMotion()
-  const instant = Boolean(reduceMotion)
-  const lineT = { duration: instant ? 0 : 0.95, delay: instant ? 0 : 0.08, ease: [0.22, 1, 0.36, 1] as const }
-  const circleT = (i: number) => ({ duration: instant ? 0 : 0.38, delay: instant ? 0 : 0.14 + i * 0.18, ease: [0.33, 1, 0.68, 1] as const })
-  const stepT = (i: number) => ({ duration: instant ? 0 : 0.42, delay: instant ? 0 : 0.06 + i * 0.1, ease: [0.22, 1, 0.36, 1] as const })
+  const ref = useRef<HTMLDivElement>(null);
+  const isInView = useInView(ref, { once: true, margin: "-10% 0px -12% 0px" });
+  const reduceMotion = useReducedMotion();
+  const instant = Boolean(reduceMotion);
+  const lineT = {
+    duration: instant ? 0 : 0.95,
+    delay: instant ? 0 : 0.08,
+    ease: [0.22, 1, 0.36, 1] as const,
+  };
+  const circleT = (i: number) => ({
+    duration: instant ? 0 : 0.38,
+    delay: instant ? 0 : 0.14 + i * 0.18,
+    ease: [0.33, 1, 0.68, 1] as const,
+  });
+  const stepT = (i: number) => ({
+    duration: instant ? 0 : 0.42,
+    delay: instant ? 0 : 0.06 + i * 0.1,
+    ease: [0.22, 1, 0.36, 1] as const,
+  });
   const circleAnim = isInView
-    ? { backgroundColor: RELLIA_TEAL, color: "#ffffff", borderColor: RELLIA_TEAL }
-    : { backgroundColor: "#ffffff", color: RELLIA_TEAL, borderColor: RELLIA_TEAL }
+    ? {
+        backgroundColor: RELLIA_TEAL,
+        color: "#ffffff",
+        borderColor: RELLIA_TEAL,
+      }
+    : {
+        backgroundColor: "#ffffff",
+        color: RELLIA_TEAL,
+        borderColor: RELLIA_TEAL,
+      };
 
   return (
     <div ref={ref} className="relative">
-      <div aria-hidden className="pointer-events-none absolute bottom-4 left-[1.25rem] top-[1.25rem] w-0.5 -translate-x-1/2 rounded-full bg-black/10" />
-      <motion.div aria-hidden className="pointer-events-none absolute bottom-4 left-[1.25rem] top-[1.25rem] w-0.5 -translate-x-1/2 origin-top rounded-full bg-rellia-teal" initial={{ scaleY: 0 }} animate={isInView ? { scaleY: 1 } : { scaleY: 0 }} transition={lineT} />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute bottom-4 left-[1.25rem] top-[1.25rem] w-0.5 -translate-x-1/2 rounded-full bg-black/10"
+      />
+      <motion.div
+        aria-hidden
+        className="pointer-events-none absolute bottom-4 left-[1.25rem] top-[1.25rem] w-0.5 -translate-x-1/2 origin-top rounded-full bg-rellia-teal"
+        initial={{ scaleY: 0 }}
+        animate={isInView ? { scaleY: 1 } : { scaleY: 0 }}
+        transition={lineT}
+      />
       <ol className="relative z-[1] m-0 list-none space-y-8 p-0">
         {items.map((item, i) => (
-          <motion.li key={item} className="flex items-start gap-4" initial={{ opacity: 0, y: 22 }} animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 22 }} transition={stepT(i)}>
-            <motion.span className="relative z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-2 border-rellia-teal font-host-grotesk text-base font-semibold shadow-sm bg-white" initial={false} animate={circleAnim} transition={circleT(i)} aria-hidden>{i + 1}</motion.span>
+          <motion.li
+            key={item}
+            className="flex items-start gap-4"
+            initial={{ opacity: 0, y: 22 }}
+            animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 22 }}
+            transition={stepT(i)}
+          >
+            <motion.span
+              className="relative z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-2 border-rellia-teal font-host-grotesk text-base font-semibold shadow-sm bg-white"
+              initial={false}
+              animate={circleAnim}
+              transition={circleT(i)}
+              aria-hidden
+            >
+              {i + 1}
+            </motion.span>
             <div className="min-w-0 flex-1 pt-1.5">
-              <p className="font-urbanist text-[17px] md:text-lg leading-relaxed text-black/80">{item}</p>
+              <p className="font-urbanist text-[17px] md:text-lg leading-relaxed text-black/80">
+                {item}
+              </p>
             </div>
           </motion.li>
         ))}
       </ol>
     </div>
-  )
-}
+  );
+};
 
 /** Extract Fillout form ID from a fillout URL like https://forms.fillout.com/t/<id> */
 const extractFilloutId = (url: string): string | null => {
   try {
-    const match = url.match(/fillout\.com\/t\/([^?#/]+)/)
-    return match?.[1] ?? null
-  } catch { return null }
-}
+    const match = url.match(/fillout\.com\/t\/([^?#/]+)/);
+    return match?.[1] ?? null;
+  } catch {
+    return null;
+  }
+};
 
 const BackToPrograms = () => (
   <Link
@@ -97,52 +165,73 @@ const BackToPrograms = () => (
     <ChevronLeft className="h-4 w-4" aria-hidden />
     Back to Programs
   </Link>
-)
+);
 
 const ProgramPageLayout = ({
-  cms: q, heroImageSrc, heroImageAlt, outcomesSectionId,
+  cms: q,
+  heroImageSrc,
+  heroImageAlt,
+  outcomesSectionId,
   paymentSectionId = "program-payment",
   staticBlocks: { howItWorksCards, pillars, timeline },
   isWaitlist = false,
   heroSquareImageSrc,
 }: ProgramPageLayoutProps) => {
-  const [timelineOpen, setTimelineOpen] = useState<string | undefined>(undefined)
-  const [showForm, setShowForm] = useState(false)
-  const [cardImages, setCardImages] = useState<string[]>([])
-  const [carouselApi, setCarouselApi] = useState<any>(null)
-  const [carouselIndex, setCarouselIndex] = useState(0)
-  const [carouselCount, setCarouselCount] = useState(0)
-  const [canScrollPrev, setCanScrollPrev] = useState(false)
-  const [canScrollNext, setCanScrollNext] = useState(false)
-  const location = useLocation()
-  const filloutId = extractFilloutId(q.paymentUrl)
+  const [timelineOpen, setTimelineOpen] = useState<string | undefined>(
+    undefined,
+  );
+  const [showForm, setShowForm] = useState(false);
+  const [cardImages, setCardImages] = useState<string[]>([]);
+  const [carouselApi, setCarouselApi] = useState<any>(null);
+  const [carouselIndex, setCarouselIndex] = useState(0);
+  const [carouselCount, setCarouselCount] = useState(0);
+  const [canScrollPrev, setCanScrollPrev] = useState(false);
+  const [canScrollNext, setCanScrollNext] = useState(false);
+  const location = useLocation();
+  const filloutId = extractFilloutId(q.paymentUrl);
 
-  const canonicalUrl = `${getSiteUrl()}${location.pathname}`
+  const canonicalUrl = `${getSiteUrl()}${location.pathname}`;
 
-  const pexelsQueries = ["medical device startup documents", "team collaboration healthcare", "mentorship meeting office"]
+  const pexelsQueries = [
+    "medical device startup documents",
+    "team collaboration healthcare",
+    "mentorship meeting office",
+  ];
 
   useEffect(() => {
-    let cancelled = false
-    Promise.all(pexelsQueries.map(fetchPexelsImage)).then((imgs) => { if (!cancelled) setCardImages(imgs) })
-    return () => { cancelled = true }
+    let cancelled = false;
+    Promise.all(pexelsQueries.map(fetchPexelsImage)).then((imgs) => {
+      if (!cancelled) setCardImages(imgs);
+    });
+    return () => {
+      cancelled = true;
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, []);
 
   useEffect(() => {
-    if (!carouselApi) return
+    if (!carouselApi) return;
     const onSelect = () => {
-      setCarouselIndex(carouselApi.selectedScrollSnap())
-      setCarouselCount(carouselApi.scrollSnapList().length)
-      setCanScrollPrev(carouselApi.canScrollPrev())
-      setCanScrollNext(carouselApi.canScrollNext())
-    }
-    onSelect()
-    carouselApi.on("select", onSelect)
-    carouselApi.on("reInit", onSelect)
-  }, [carouselApi])
+      setCarouselIndex(carouselApi.selectedScrollSnap());
+      setCarouselCount(carouselApi.scrollSnapList().length);
+      setCanScrollPrev(carouselApi.canScrollPrev());
+      setCanScrollNext(carouselApi.canScrollNext());
+    };
+    onSelect();
+    carouselApi.on("select", onSelect);
+    carouselApi.on("reInit", onSelect);
+  }, [carouselApi]);
 
-  const scrollTo = (id: string) => document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" })
-  const onKey = (fn: () => void) => (e: KeyboardEvent<HTMLButtonElement>) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); fn() } }
+  const scrollTo = (id: string) =>
+    document
+      .getElementById(id)
+      ?.scrollIntoView({ behavior: "smooth", block: "start" });
+  const onKey = (fn: () => void) => (e: KeyboardEvent<HTMLButtonElement>) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      fn();
+    }
+  };
 
   return (
     <div className="min-h-screen bg-white font-host-grotesk overflow-x-hidden">
@@ -156,15 +245,28 @@ const ProgramPageLayout = ({
         <meta property="og:url" content={canonicalUrl} />
         <meta property="og:title" content={q.heroTitle} />
         <meta property="og:description" content={q.heroDescription} />
-        <meta property="og:image" content={heroImageSrc.startsWith("http") ? heroImageSrc : `${getSiteUrl()}${heroImageSrc}`} />
+        <meta
+          property="og:image"
+          content={
+            heroImageSrc.startsWith("http")
+              ? heroImageSrc
+              : `${getSiteUrl()}${heroImageSrc}`
+          }
+        />
         <meta name="twitter:title" content={q.heroTitle} />
         <meta name="twitter:description" content={q.heroDescription} />
-        <meta name="twitter:image" content={heroImageSrc.startsWith("http") ? heroImageSrc : `${getSiteUrl()}${heroImageSrc}`} />
+        <meta
+          name="twitter:image"
+          content={
+            heroImageSrc.startsWith("http")
+              ? heroImageSrc
+              : `${getSiteUrl()}${heroImageSrc}`
+          }
+        />
         <meta name="twitter:card" content="summary_large_image" />
       </Helmet>
       <Navbar />
       <main id="main-content">
-
         {/* ─── Hero — text left, square image right ─── */}
         <section className="bg-white pt-[100px] pb-10 md:pt-[130px] md:pb-16 lg:pt-[160px] lg:pb-24">
           <div className="mx-auto max-w-[1300px] px-6 md:px-10">
@@ -180,9 +282,13 @@ const ProgramPageLayout = ({
                       Waitlist
                     </span>
                   )}
-                  <h1 className="max-w-3xl text-3xl md:text-4xl lg:text-5xl font-bold leading-[1.1] tracking-tight text-black">{q.heroTitle}</h1>
-                  <p className="mt-5 max-w-xl font-urbanist text-base leading-relaxed text-black/60 md:text-lg">{q.heroDescription}</p>
-                  
+                  <h1 className="max-w-3xl text-3xl md:text-4xl lg:text-5xl font-bold leading-[1.1] tracking-tight text-black">
+                    {q.heroTitle}
+                  </h1>
+                  <p className="mt-5 max-w-xl font-urbanist text-base leading-relaxed text-black/60 md:text-lg">
+                    {q.heroDescription}
+                  </p>
+
                   <div className="mt-7 flex items-center gap-2 text-black">
                     <CalendarDays className="h-4.5 w-4.5 text-rellia-teal" />
                     <span className="font-host-grotesk text-sm font-bold uppercase tracking-widest">
@@ -191,10 +297,25 @@ const ProgramPageLayout = ({
                   </div>
 
                   <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-                    <RelliaAction type="button" variant="mintTealFill" size="comfortable" onClick={() => scrollTo(paymentSectionId)} onKeyDown={onKey(() => scrollTo(paymentSectionId))} className="flex w-full sm:w-fit justify-center">
-                      {q.heroCtaLabel}<ArrowRight className="h-4 w-4 ml-2" aria-hidden />
+                    <RelliaAction
+                      type="button"
+                      variant="mintTealFill"
+                      size="comfortable"
+                      onClick={() => scrollTo(paymentSectionId)}
+                      onKeyDown={onKey(() => scrollTo(paymentSectionId))}
+                      className="flex w-full sm:w-fit justify-center"
+                    >
+                      {q.heroCtaLabel}
+                      <ArrowRight className="h-4 w-4 ml-2" aria-hidden />
                     </RelliaAction>
-                    <RelliaAction type="button" variant="outlineOnWhite" size="comfortable" onClick={() => scrollTo(outcomesSectionId)} onKeyDown={onKey(() => scrollTo(outcomesSectionId))} className="flex w-full sm:w-fit justify-center">
+                    <RelliaAction
+                      type="button"
+                      variant="outlineOnWhite"
+                      size="comfortable"
+                      onClick={() => scrollTo(outcomesSectionId)}
+                      onKeyDown={onKey(() => scrollTo(outcomesSectionId))}
+                      className="flex w-full sm:w-fit justify-center"
+                    >
                       Learn More
                     </RelliaAction>
                   </div>
@@ -208,7 +329,9 @@ const ProgramPageLayout = ({
                     alt={heroImageAlt}
                     className={cn(
                       "h-full w-full rounded-2xl",
-                      heroSquareImageSrc ? "object-cover" : "object-cover object-[0%_0%]",
+                      heroSquareImageSrc
+                        ? "object-cover"
+                        : "object-cover object-[0%_0%]",
                     )}
                   />
                 </div>
@@ -218,7 +341,10 @@ const ProgramPageLayout = ({
         </section>
 
         {/* ─── Program Outcomes ─── */}
-        <section id={outcomesSectionId} className="scroll-mt-24 md:scroll-mt-[5.5rem] relative w-full bg-rellia-greyTeal py-16 md:py-24 px-6 md:px-10 overflow-hidden">
+        <section
+          id={outcomesSectionId}
+          className="scroll-mt-24 md:scroll-mt-[5.5rem] relative w-full bg-rellia-greyTeal py-16 md:py-24 px-6 md:px-10 overflow-hidden"
+        >
           <div aria-hidden className="pointer-events-none absolute inset-0">
             <div className="absolute -left-28 top-10 h-[520px] w-[520px] rounded-full bg-rellia-mint/12 blur-3xl" />
             <div className="absolute right-[-220px] bottom-[-240px] h-[680px] w-[680px] rounded-full bg-rellia-mint/10 blur-3xl" />
@@ -226,8 +352,12 @@ const ProgramPageLayout = ({
           <div className="relative z-10 max-w-[1300px] mx-auto">
             <ScrollReveal delay={0.1}>
               <div className="mb-10 md:mb-14">
-                <h2 className="font-host-grotesk text-3xl font-semibold leading-tight tracking-tight text-black md:text-[40px]">{q.outcomesTitle}</h2>
-                <p className="mt-4 font-urbanist text-base font-medium leading-relaxed tracking-tight text-black/65 md:text-lg">{q.outcomesIntro}</p>
+                <h2 className="font-host-grotesk text-3xl font-semibold leading-tight tracking-tight text-black md:text-[40px]">
+                  {q.outcomesTitle}
+                </h2>
+                <p className="mt-4 font-urbanist text-base font-medium leading-relaxed tracking-tight text-black/65 md:text-lg">
+                  {q.outcomesIntro}
+                </p>
               </div>
             </ScrollReveal>
             <div className="w-full">
@@ -240,9 +370,11 @@ const ProgramPageLayout = ({
         <section className="relative w-full bg-white py-12 md:py-20 px-6 md:px-10 overflow-hidden border-b border-black/5">
           <div className="relative z-10 max-w-[1300px] mx-auto">
             <ScrollReveal>
-              <h2 className="font-host-grotesk text-3xl font-semibold leading-tight tracking-tight text-black md:text-[40px] mb-12">Already Trusted by Rellia Members</h2>
+              <h2 className="font-host-grotesk text-3xl font-semibold leading-tight tracking-tight text-black md:text-[40px] mb-12">
+                Already Trusted by Rellia Members
+              </h2>
             </ScrollReveal>
-            
+
             <ScrollReveal delay={0.2}>
               <Carousel
                 opts={{
@@ -259,44 +391,54 @@ const ProgramPageLayout = ({
                       role: "Founder",
                       company: "Akesyn",
                       image: "/images/testimonials-melissaW.jpg",
-                      quote: "Rellia Health has been instrumental in our regulatory strategy. The level of operator feedback we received was exactly what we needed to de-risk our roadmap before our next round.",
+                      quote:
+                        "Rellia Health has been instrumental in our regulatory strategy. The level of operator feedback we received was exactly what we needed to de-risk our roadmap before our next round.",
                     },
                     {
                       name: "Mazhar Bashir",
                       role: "CEO",
                       company: "Miraei",
-                      image: "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=400",
-                      quote: "The connections I made through the Rellia network opened doors that would have taken months to navigate on my own. It's the only community that understands the reality of healthcare complexity.",
+                      image:
+                        "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=400",
+                      quote:
+                        "The connections I made through the Rellia network opened doors that would have taken months to navigate on my own. It's the only community that understands the reality of healthcare complexity.",
                     },
                     {
                       name: "Sahil Saini",
                       role: "Founder",
                       company: "Neuromod",
-                      image: "https://images.pexels.com/photos/614810/pexels-photo-614810.jpeg?auto=compress&cs=tinysrgb&w=400",
-                      quote: "As a technical founder, Rellia helped me translate our product features into a clinical narrative that resonated with health system buyers and investors alike.",
+                      image:
+                        "https://images.pexels.com/photos/614810/pexels-photo-614810.jpeg?auto=compress&cs=tinysrgb&w=400",
+                      quote:
+                        "As a technical founder, Rellia helped me translate our product features into a clinical narrative that resonated with health system buyers and investors alike.",
                     },
                   ].map((t) => (
                     <CarouselItem key={t.name} className="pl-4 basis-full">
                       <div className="relative flex flex-col overflow-hidden min-h-[340px] md:min-h-[400px]">
                         {/* Quote Block - Full Width */}
                         <div className="relative z-10 p-0 md:pb-6 flex flex-col justify-start pt-4 md:pt-8">
-                          <Quote className="h-8 w-8 text-rellia-teal mb-6" strokeWidth={2} />
+                          <Quote
+                            className="h-8 w-8 text-rellia-teal mb-6"
+                            strokeWidth={2}
+                          />
                           <p className="font-host-grotesk text-xl md:text-2xl lg:text-3xl font-medium leading-[1.25] tracking-tight text-rellia-teal max-w-5xl">
                             &ldquo;{t.quote}&rdquo;
                           </p>
                         </div>
-                        
+
                         {/* Identity Block - Underneath */}
                         <div className="relative z-10 mt-8 flex items-center gap-4 md:gap-5">
                           <div className="h-14 w-14 md:h-16 md:w-16 shrink-0 overflow-hidden rounded-xl border border-black/5 bg-rellia-teal/5">
-                            <img 
-                              src={t.image} 
-                              alt={t.name} 
+                            <img
+                              src={t.image}
+                              alt={t.name}
                               className="h-full w-full object-cover"
                             />
                           </div>
                           <div className="flex flex-col">
-                            <h4 className="font-host-grotesk font-medium text-lg md:text-xl text-black leading-tight">{t.name}</h4>
+                            <h4 className="font-host-grotesk font-medium text-lg md:text-xl text-black leading-tight">
+                              {t.name}
+                            </h4>
                             <p className="font-urbanist text-sm md:text-base font-medium text-black/60 mt-0.5">
                               {t.role} &bull; {t.company}
                             </p>
@@ -309,11 +451,17 @@ const ProgramPageLayout = ({
 
                 {/* Homepage-style control strip: loading bar + counter + arrows */}
                 <div className="mt-0 flex w-full flex-col gap-4">
-                  <div aria-hidden className="relative h-1 w-full overflow-hidden rounded-full bg-black/5">
+                  <div
+                    aria-hidden
+                    className="relative h-1 w-full overflow-hidden rounded-full bg-black/5"
+                  >
                     <div
                       className="h-full bg-rellia-teal transition-[width] duration-500 ease-out"
                       style={{
-                        width: carouselCount <= 1 ? "100%" : `${(carouselIndex / (carouselCount - 1)) * 100}%`
+                        width:
+                          carouselCount <= 1
+                            ? "100%"
+                            : `${(carouselIndex / (carouselCount - 1)) * 100}%`,
                       }}
                     />
                   </div>
@@ -351,26 +499,43 @@ const ProgramPageLayout = ({
           <div className="max-w-[1300px] mx-auto px-6 md:px-10">
             <ScrollReveal>
               <div className="mb-10 md:mb-14">
-                <h2 className="font-host-grotesk text-3xl font-semibold leading-tight tracking-tight text-black md:text-[40px]">{q.howItWorksTitle}</h2>
-                <p className="mt-4 font-urbanist text-base font-medium leading-relaxed text-black/60 md:text-lg">{q.howItWorksIntro}</p>
+                <h2 className="font-host-grotesk text-3xl font-semibold leading-tight tracking-tight text-black md:text-[40px]">
+                  {q.howItWorksTitle}
+                </h2>
+                <p className="mt-4 font-urbanist text-base font-medium leading-relaxed text-black/60 md:text-lg">
+                  {q.howItWorksIntro}
+                </p>
               </div>
             </ScrollReveal>
             <div className="mt-16 md:mt-20 grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-7">
               {howItWorksCards.map((card, i) => {
-                const bgImg = cardImages[i] || ""
+                const bgImg = cardImages[i] || "";
                 return (
                   <ScrollReveal key={card.title} delay={i * 0.12}>
                     <div className="group relative rounded-2xl overflow-hidden h-[300px] md:h-[360px] shadow-md hover:shadow-xl transition-shadow duration-500">
-                      {bgImg ? <img src={bgImg} alt="" aria-hidden className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" /> : <div className="absolute inset-0 bg-rellia-teal/10" />}
+                      {bgImg ? (
+                        <img
+                          src={bgImg}
+                          alt=""
+                          aria-hidden
+                          className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                        />
+                      ) : (
+                        <div className="absolute inset-0 bg-rellia-teal/10" />
+                      )}
                       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-black/30" />
                       <div className="absolute inset-0 bg-rellia-teal/0 group-hover:bg-rellia-teal/20 transition-colors duration-500" />
                       <div className="relative z-10 flex flex-col justify-end h-full p-6 md:p-8">
-                        <h4 className="font-host-grotesk font-semibold text-white text-xl md:text-2xl leading-snug mb-2">{card.title}</h4>
-                        <p className="font-urbanist text-white/80 text-sm md:text-base leading-relaxed line-clamp-3">{card.description}</p>
+                        <h4 className="font-host-grotesk font-semibold text-white text-xl md:text-2xl leading-snug mb-2">
+                          {card.title}
+                        </h4>
+                        <p className="font-urbanist text-white/80 text-sm md:text-base leading-relaxed line-clamp-3">
+                          {card.description}
+                        </p>
                       </div>
                     </div>
                   </ScrollReveal>
-                )
+                );
               })}
             </div>
           </div>
@@ -378,7 +543,12 @@ const ProgramPageLayout = ({
 
         {/* ─── Program Pillars ─── */}
         <section className="relative w-full bg-rellia-teal py-20 md:py-32 px-6 md:px-10 overflow-hidden">
-          <img src="/images/hologram-logo.png" alt="" aria-hidden="true" className="pointer-events-none absolute -right-20 top-8 w-[360px] max-w-[55vw] opacity-[0.05] md:right-0 md:top-0 md:w-[460px]" />
+          <img
+            src="/images/hologram-logo.png"
+            alt=""
+            aria-hidden="true"
+            className="pointer-events-none absolute -right-20 top-8 w-[360px] max-w-[55vw] opacity-[0.05] md:right-0 md:top-0 md:w-[460px]"
+          />
           <div aria-hidden className="pointer-events-none absolute inset-0">
             <div className="absolute -left-28 top-10 h-[520px] w-[520px] rounded-full bg-rellia-mint/22 blur-3xl" />
             <div className="absolute right-[-220px] bottom-[-240px] h-[680px] w-[680px] rounded-full bg-rellia-mint/18 blur-3xl" />
@@ -387,18 +557,35 @@ const ProgramPageLayout = ({
           </div>
           <div className="relative z-10 max-w-[1300px] mx-auto flex flex-col h-full">
             <ScrollReveal delay={0.1}>
-              <div className="mb-16 md:mb-24"><h2 className="font-host-grotesk text-3xl font-semibold leading-tight tracking-tight text-white md:text-[40px]">{q.pillarsTitle}</h2></div>
+              <div className="mb-16 md:mb-24">
+                <h2 className="font-host-grotesk text-3xl font-semibold leading-tight tracking-tight text-white md:text-[40px]">
+                  {q.pillarsTitle}
+                </h2>
+              </div>
             </ScrollReveal>
             <div className="mt-auto pt-8">
               <ScrollReveal delay={0.2}>
                 <div className="grid w-full grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-6">
-                  {pillars.map((p) => { const Icon = p.icon; return (
-                    <div key={p.title} className="flex w-full flex-col px-1 md:px-2">
-                      <Icon className="h-7 w-7 text-rellia-mint" aria-hidden />
-                      <p className="mt-5 font-host-grotesk text-lg font-semibold leading-snug tracking-tight text-white line-clamp-2">{p.title}</p>
-                      <p className="mt-3 font-urbanist text-sm leading-relaxed text-white/80 max-w-[260px]">{p.description}</p>
-                    </div>
-                  )})}
+                  {pillars.map((p) => {
+                    const Icon = p.icon;
+                    return (
+                      <div
+                        key={p.title}
+                        className="flex w-full flex-col px-1 md:px-2"
+                      >
+                        <Icon
+                          className="h-7 w-7 text-rellia-mint"
+                          aria-hidden
+                        />
+                        <p className="mt-5 font-host-grotesk text-lg font-semibold leading-snug tracking-tight text-white line-clamp-2">
+                          {p.title}
+                        </p>
+                        <p className="mt-3 font-urbanist text-sm leading-relaxed text-white/80 max-w-[260px]">
+                          {p.description}
+                        </p>
+                      </div>
+                    );
+                  })}
                 </div>
               </ScrollReveal>
             </div>
@@ -412,22 +599,73 @@ const ProgramPageLayout = ({
               <div className="lg:w-[44%] shrink-0 mb-10 lg:mb-0 lg:sticky lg:top-32 lg:self-start">
                 <ScrollReveal>
                   <h2 className="font-host-grotesk text-3xl font-semibold leading-tight tracking-tight text-black md:text-[40px]">
-                    {q.timelineTitle.includes("&") ? <>{q.timelineTitle.split("&")[0].trim()}<br />{"& "}{q.timelineTitle.split("&").slice(1).join("&").trim()}</> : q.timelineTitle}
+                    {q.timelineTitle.includes("&") ? (
+                      <>
+                        {q.timelineTitle.split("&")[0].trim()}
+                        <br />
+                        {"& "}
+                        {q.timelineTitle.split("&").slice(1).join("&").trim()}
+                      </>
+                    ) : (
+                      q.timelineTitle
+                    )}
                   </h2>
-                  <p className="font-urbanist text-black/60 text-base md:text-lg mt-4 max-w-sm">{q.timelineSubtitle}</p>
+                  <p className="font-urbanist text-black/60 text-base md:text-lg mt-4 max-w-sm">
+                    {q.timelineSubtitle}
+                  </p>
                 </ScrollReveal>
               </div>
               <div className="flex-1">
                 <ScrollReveal>
-                  <Accordion type="single" collapsible value={timelineOpen} onValueChange={setTimelineOpen} className="flex flex-col gap-0">
+                  <Accordion
+                    type="single"
+                    collapsible
+                    value={timelineOpen}
+                    onValueChange={setTimelineOpen}
+                    className="flex flex-col gap-0"
+                  >
                     {timeline.map((month, idx) => (
-                      <AccordionItem key={month.month} value={month.month} className={cn("border-l-2 pl-6 md:pl-8 relative py-5", timelineOpen === month.month ? "border-l-rellia-teal" : "border-l-black/10")}>
-                        <div className={cn("absolute left-0 top-[26px] -translate-x-1/2 w-3.5 h-3.5 rounded-full border-2 transition-colors duration-300", timelineOpen === month.month ? "border-rellia-teal bg-rellia-mint" : "border-black/20 bg-white")} />
-                        <span className={cn("font-host-grotesk text-[11px] font-semibold uppercase tracking-[0.16em] block", timelineOpen === month.month ? "text-rellia-teal" : "text-black/40")}>Step {idx + 1}</span>
-                        <AccordionTrigger className="font-host-grotesk font-semibold text-black text-lg md:text-xl py-2 hover:no-underline [&[data-state=open]]:text-rellia-teal transition-colors text-left">{month.month}</AccordionTrigger>
+                      <AccordionItem
+                        key={month.month}
+                        value={month.month}
+                        className={cn(
+                          "border-l-2 pl-6 md:pl-8 relative py-5",
+                          timelineOpen === month.month
+                            ? "border-l-rellia-teal"
+                            : "border-l-black/10",
+                        )}
+                      >
+                        <div
+                          className={cn(
+                            "absolute left-0 top-[26px] -translate-x-1/2 w-3.5 h-3.5 rounded-full border-2 transition-colors duration-300",
+                            timelineOpen === month.month
+                              ? "border-rellia-teal bg-rellia-mint"
+                              : "border-black/20 bg-white",
+                          )}
+                        />
+                        <span
+                          className={cn(
+                            "font-host-grotesk text-[11px] font-semibold uppercase tracking-[0.16em] block",
+                            timelineOpen === month.month
+                              ? "text-rellia-teal"
+                              : "text-black/40",
+                          )}
+                        >
+                          Step {idx + 1}
+                        </span>
+                        <AccordionTrigger className="font-host-grotesk font-semibold text-black text-lg md:text-xl py-2 hover:no-underline [&[data-state=open]]:text-rellia-teal transition-colors text-left">
+                          {month.month}
+                        </AccordionTrigger>
                         <AccordionContent className="pb-4">
                           <ul className="flex flex-col gap-4 pl-1">
-                            {month.weeks.map((w) => (<li key={w} className="flex items-start gap-2"><CheckCircle2 className="w-4 h-4 text-rellia-mint shrink-0 mt-0.5" /><span className="font-urbanist text-black text-base leading-relaxed">{w}</span></li>))}
+                            {month.weeks.map((w) => (
+                              <li key={w} className="flex items-start gap-2">
+                                <CheckCircle2 className="w-4 h-4 text-rellia-mint shrink-0 mt-0.5" />
+                                <span className="font-urbanist text-black text-base leading-relaxed">
+                                  {w}
+                                </span>
+                              </li>
+                            ))}
                           </ul>
                         </AccordionContent>
                       </AccordionItem>
@@ -440,50 +678,110 @@ const ProgramPageLayout = ({
         </section>
 
         {/* ─── Payment — taller section, full-height divider, inline embed ─── */}
-        <section id={paymentSectionId} className="w-full bg-rellia-cream/40 border-t border-black/5">
+        <section
+          id={paymentSectionId}
+          className="w-full bg-rellia-cream/40 border-t border-black/5"
+        >
           <AnimatePresence mode="wait">
             {!showForm ? (
-              <motion.div key="price-view" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.3 }}>
+              <motion.div
+                key="price-view"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.3 }}
+              >
                 <div className="relative max-w-[1100px] mx-auto px-6 md:px-10 flex flex-col md:flex-row py-40 md:py-56">
                   {/* Full-height divider */}
                   <div className="hidden md:block absolute left-1/2 top-0 bottom-0 w-px bg-black/10 -translate-x-1/2" />
 
                   {/* Left: badge, price, description, button — top + left aligned */}
                   <div className="flex-1 flex flex-col justify-start items-start md:pr-12 lg:pr-16">
-                    <h2 className="font-host-grotesk text-sm font-bold tracking-widest text-rellia-teal uppercase">{q.pricingBadge}</h2>
-                    <div className="mt-5"><span className="text-6xl md:text-7xl font-extrabold text-black tracking-tight">{q.pricingAmount}<span className="text-4xl md:text-5xl">{q.pricingSubAmount}</span></span></div>
-                    <p className="mt-5 mb-10 font-urbanist text-black/60 text-base md:text-lg leading-relaxed max-w-md">{q.pricingDescription}</p>
-                    <RelliaAction type="button" variant="mintTealFill" size="comfortable" onClick={() => setShowForm(true)} className="px-10 w-fit">
-                      {isWaitlist ? "Join Waitlist" : "Secure Your Spot"}<ArrowRight className="ml-2 h-4 w-4" aria-hidden />
+                    <h2 className="font-host-grotesk text-sm font-bold tracking-widest text-rellia-teal uppercase">
+                      {q.pricingBadge}
+                    </h2>
+                    <div className="mt-5">
+                      <span className="text-6xl md:text-7xl font-extrabold text-black tracking-tight">
+                        {q.pricingAmount}
+                        <span className="text-4xl md:text-5xl">
+                          {q.pricingSubAmount}
+                        </span>
+                      </span>
+                    </div>
+                    <p className="mt-5 mb-10 font-urbanist text-black/60 text-base md:text-lg leading-relaxed max-w-md">
+                      {q.pricingDescription}
+                    </p>
+                    <RelliaAction
+                      type="button"
+                      variant="mintTealFill"
+                      size="comfortable"
+                      onClick={() => setShowForm(true)}
+                      className="px-10 w-fit"
+                    >
+                      {isWaitlist ? "Join Waitlist" : "Secure Your Spot"}
+                      <ArrowRight className="ml-2 h-4 w-4" aria-hidden />
                     </RelliaAction>
                   </div>
 
                   {/* Right: heading + bullet points — top + left aligned */}
                   <div className="flex-1 flex flex-col justify-start items-start mt-10 md:mt-0 md:pl-12 lg:pl-16">
-                    <h3 className="font-host-grotesk text-xl font-semibold text-black mb-6">What's included</h3>
+                    <h3 className="font-host-grotesk text-xl font-semibold text-black mb-6">
+                      What's included
+                    </h3>
                     <ul className="flex flex-col gap-5 list-none">
-                      {q.pricingBullets.map((line) => (<li key={line} className="flex items-start gap-3"><CheckCircle2 className="w-5 h-5 text-rellia-teal shrink-0 mt-0.5" /><span className="font-urbanist text-black/70 text-base md:text-lg leading-relaxed">{line}</span></li>))}
+                      {q.pricingBullets.map((line) => (
+                        <li key={line} className="flex items-start gap-3">
+                          <CheckCircle2 className="w-5 h-5 text-rellia-teal shrink-0 mt-0.5" />
+                          <span className="font-urbanist text-black/70 text-base md:text-lg leading-relaxed">
+                            {line}
+                          </span>
+                        </li>
+                      ))}
                     </ul>
                   </div>
                 </div>
               </motion.div>
             ) : (
-              <motion.div key="form-view" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }} className="w-full">
+              <motion.div
+                key="form-view"
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                className="w-full"
+              >
                 <div className="max-w-[1100px] mx-auto px-6 md:px-10 pt-10 pb-4">
-                  <button type="button" onClick={() => setShowForm(false)} className="inline-flex items-center gap-2 font-host-grotesk text-sm font-bold text-rellia-teal hover:underline hover:underline-offset-4">
-                    <ArrowLeft className="h-4 w-4" aria-hidden />Back to details
+                  <button
+                    type="button"
+                    onClick={() => setShowForm(false)}
+                    className="inline-flex items-center gap-2 font-host-grotesk text-sm font-bold text-rellia-teal hover:underline hover:underline-offset-4"
+                  >
+                    <ArrowLeft className="h-4 w-4" aria-hidden />
+                    Back to details
                   </button>
                 </div>
                 {/* Full-width embed like /apply — extends beyond container margins */}
-                <div className={cn(
-                  "w-full flex-1",
-                  "[&_.fillout-standard-embed]:min-h-[calc(100svh-72px)] md:[&_.fillout-standard-embed]:min-h-[calc(100svh-86px)]",
-                  "[&_iframe]:!rounded-none",
-                )}>
+                <div
+                  className={cn(
+                    "w-full flex-1",
+                    "[&_.fillout-standard-embed]:min-h-[calc(100svh-72px)] md:[&_.fillout-standard-embed]:min-h-[calc(100svh-86px)]",
+                    "[&_iframe]:!rounded-none",
+                  )}
+                >
                   {filloutId ? (
-                    <FilloutStandardEmbed filloutId={filloutId} inheritParameters dynamicResize />
+                    <FilloutStandardEmbed
+                      filloutId={filloutId}
+                      inheritParameters
+                      dynamicResize
+                    />
                   ) : (
-                    <iframe src={q.paymentUrl} title={isWaitlist ? "Waitlist form" : "Enrollment form"} className="w-full border-0" style={{ minHeight: "calc(100svh - 120px)" }} allow="payment; fullscreen" />
+                    <iframe
+                      src={q.paymentUrl}
+                      title={isWaitlist ? "Waitlist form" : "Enrollment form"}
+                      className="w-full border-0"
+                      style={{ minHeight: "calc(100svh - 120px)" }}
+                      allow="payment; fullscreen"
+                    />
                   )}
                 </div>
               </motion.div>
@@ -496,11 +794,18 @@ const ProgramPageLayout = ({
           <BackToPrograms />
         </div>
 
-        <RelliaCta title={q.bottomCtaTitle} body={q.bottomCtaBody} primary={ctaActionFromHref(q.bottomCtaButtonLabel, q.bottomContactHref)} />
+        <RelliaCta
+          title={q.bottomCtaTitle}
+          body={q.bottomCtaBody}
+          primary={ctaActionFromHref(
+            q.bottomCtaButtonLabel,
+            q.bottomContactHref,
+          )}
+        />
       </main>
       <Footer />
     </div>
-  )
-}
+  );
+};
 
-export default ProgramPageLayout
+export default ProgramPageLayout;

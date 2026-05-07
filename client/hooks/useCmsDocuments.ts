@@ -1,5 +1,5 @@
-import { useQuery } from "@tanstack/react-query"
-import { sanityFetch } from "@/lib/sanity"
+import { useQuery } from "@tanstack/react-query";
+import { sanityFetch } from "@/lib/sanity";
 import {
   aboutPageQuery,
   contactPageQuery,
@@ -12,7 +12,8 @@ import {
   programsLandingQuery,
   qmsProgramQuery,
   advisorsQuery,
-} from "@/lib/cmsQueries"
+  alumniCompaniesQuery,
+} from "@/lib/cmsQueries";
 
 import {
   mergeAboutPage,
@@ -25,7 +26,7 @@ import {
   mergePaymentPage,
   mergeProgramsLanding,
   mergeQmsProgram,
-} from "@shared/cms/defaults"
+} from "@shared/cms/defaults";
 import type {
   AboutPageContent,
   ContactPageContent,
@@ -37,120 +38,145 @@ import type {
   PaymentPageContent,
   ProgramsLandingContent,
   QmsProgramContent,
-} from "@shared/cms/types"
+} from "@shared/cms/types";
 
-const staleTimeMs = 5 * 60 * 1000
+const staleTimeMs = 5 * 60 * 1000;
 
 export const useGlobalSettings = () =>
   useQuery({
     queryKey: ["cms", "globalSettings"],
     queryFn: async () => {
-      const raw = await sanityFetch<Partial<GlobalSettingsContent>>(globalSettingsQuery)
-      return mergeGlobalSettings(raw ?? undefined)
+      const raw =
+        await sanityFetch<Partial<GlobalSettingsContent>>(globalSettingsQuery);
+      return mergeGlobalSettings(raw ?? undefined);
     },
     staleTime: staleTimeMs,
-  })
+  });
 
 export const useHomePage = () =>
   useQuery({
     queryKey: ["cms", "homePage"],
     queryFn: async () => {
-      const raw = await sanityFetch<Partial<HomePageContent>>(homePageQuery)
-      return mergeHomePage(raw ?? undefined)
+      const raw = await sanityFetch<Partial<HomePageContent>>(homePageQuery);
+      return mergeHomePage(raw ?? undefined);
     },
     staleTime: staleTimeMs,
-  })
+  });
 
 export const useAboutPage = () =>
   useQuery({
     queryKey: ["cms", "aboutPage"],
     queryFn: async () => {
-      const raw = await sanityFetch<Partial<AboutPageContent>>(aboutPageQuery)
-      return mergeAboutPage(raw ?? undefined)
+      const raw = await sanityFetch<Partial<AboutPageContent>>(aboutPageQuery);
+      return mergeAboutPage(raw ?? undefined);
     },
     staleTime: staleTimeMs,
-  })
+  });
 
 export const useFaqPage = () =>
   useQuery({
     queryKey: ["cms", "faqPage"],
     queryFn: async () => {
-      const raw = await sanityFetch<Partial<FaqPageContent>>(faqPageQuery)
-      return mergeFaqPage(raw ?? undefined)
+      const raw = await sanityFetch<Partial<FaqPageContent>>(faqPageQuery);
+      return mergeFaqPage(raw ?? undefined);
     },
     staleTime: staleTimeMs,
-  })
+  });
 
 export const useProgramsLandingPage = () =>
   useQuery({
     queryKey: ["cms", "programsLandingPage"],
     queryFn: async () => {
-      const raw = await sanityFetch<Partial<ProgramsLandingContent>>(programsLandingQuery)
-      return mergeProgramsLanding(raw ?? undefined)
+      const raw =
+        await sanityFetch<Partial<ProgramsLandingContent>>(
+          programsLandingQuery,
+        );
+      return mergeProgramsLanding(raw ?? undefined);
     },
     staleTime: staleTimeMs,
-  })
+  });
 
 export const useContactPage = () =>
   useQuery({
     queryKey: ["cms", "contactPage"],
     queryFn: async () => {
-      const raw = await sanityFetch<Partial<ContactPageContent>>(contactPageQuery)
-      return mergeContactPage(raw ?? undefined)
+      const raw =
+        await sanityFetch<Partial<ContactPageContent>>(contactPageQuery);
+      return mergeContactPage(raw ?? undefined);
     },
     staleTime: staleTimeMs,
-  })
+  });
 
 export const useQmsProgramPage = () =>
   useQuery({
     queryKey: ["cms", "qmsProgramPage"],
     queryFn: async () => {
-      const raw = await sanityFetch<Partial<QmsProgramContent>>(qmsProgramQuery)
-      return mergeQmsProgram(raw ?? undefined)
+      const raw =
+        await sanityFetch<Partial<QmsProgramContent>>(qmsProgramQuery);
+      return mergeQmsProgram(raw ?? undefined);
     },
     staleTime: staleTimeMs,
-  })
+  });
 
 export const useNotFoundPage = () =>
   useQuery({
     queryKey: ["cms", "notFoundPage"],
     queryFn: async () => {
-      const raw = await sanityFetch<Partial<NotFoundContent>>(notFoundQuery)
-      return mergeNotFound(raw ?? undefined)
+      const raw = await sanityFetch<Partial<NotFoundContent>>(notFoundQuery);
+      return mergeNotFound(raw ?? undefined);
     },
     staleTime: staleTimeMs,
-  })
+  });
 
 export const usePaymentPage = () =>
   useQuery({
     queryKey: ["cms", "paymentPage"],
     queryFn: async () => {
-      const raw = await sanityFetch<Partial<PaymentPageContent>>(paymentPageQuery)
-      return mergePaymentPage(raw ?? undefined)
+      const raw =
+        await sanityFetch<Partial<PaymentPageContent>>(paymentPageQuery);
+      return mergePaymentPage(raw ?? undefined);
     },
     staleTime: staleTimeMs,
-  })
+  });
 
 export const useMarketingPage = (
   slug: string,
   fallback?: Partial<Pick<MarketingPageContent, "title" | "subtitle">>,
 ) =>
   useQuery({
-    queryKey: ["cms", "marketingPage", slug, fallback?.title, fallback?.subtitle],
+    queryKey: [
+      "cms",
+      "marketingPage",
+      slug,
+      fallback?.title,
+      fallback?.subtitle,
+    ],
     queryFn: async () => {
-      const raw = await sanityFetch<Partial<MarketingPageContent>>(marketingPageBySlugQuery, { slug })
-      return mergeMarketingPage(raw ?? undefined, fallback)
+      const raw = await sanityFetch<Partial<MarketingPageContent>>(
+        marketingPageBySlugQuery,
+        { slug },
+      );
+      return mergeMarketingPage(raw ?? undefined, fallback);
     },
     staleTime: staleTimeMs,
-  })
+  });
 
 export const useAdvisors = () =>
   useQuery({
     queryKey: ["cms", "advisors"],
     queryFn: async () => {
-      const raw = await sanityFetch<any[]>(advisorsQuery)
-      return raw ?? []
+      const raw = await sanityFetch<any[]>(advisorsQuery);
+      return raw ?? [];
     },
     staleTime: staleTimeMs,
-  })
+  });
 
+export const useAlumniCompanies = () =>
+  useQuery({
+    queryKey: ["cms", "alumniCompanies"],
+    queryFn: async () => {
+      const raw = await sanityFetch<any[]>(alumniCompaniesQuery);
+      return raw ?? [];
+    },
+    staleTime: staleTimeMs,
+  });

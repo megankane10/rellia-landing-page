@@ -17,6 +17,9 @@ export type AdvisorDirectoryEntry = {
   name: string
   organization: string
   role: string
+  location: string
+  country: string
+  yearJoined: string
   industries: string[]
   /** Short card summary */
   focus: string
@@ -38,6 +41,9 @@ export const ADVISOR_DIRECTORY_SEED: AdvisorDirectoryEntry[] = [
     name: "Dr. Elena Ruiz",
     organization: "Harbor Clinical Collective",
     role: "Former Chief Medical Officer, health system",
+    location: "Boston, MA",
+    country: "United States",
+    yearJoined: "2024",
     industries: ["Clinical ops", "Digital health"],
     focus: "Care pathway design, clinician adoption, and evidence planning for early deployments.",
     filter: "Clinical",
@@ -58,6 +64,9 @@ export const ADVISOR_DIRECTORY_SEED: AdvisorDirectoryEntry[] = [
     name: "Jordan Blake",
     organization: "Northline Regulatory Partners",
     role: "Regulatory & quality advisor",
+    location: "New York, NY",
+    country: "United States",
+    yearJoined: "2024",
     industries: ["MedTech", "SaMD"],
     focus: "FDA strategy, QMS readiness, and design controls without slowing product iteration.",
     filter: "Regulatory",
@@ -78,6 +87,9 @@ export const ADVISOR_DIRECTORY_SEED: AdvisorDirectoryEntry[] = [
     name: "Priya Nair",
     organization: "Relay GTM Advisory",
     role: "GTM & partnerships operator",
+    location: "San Francisco, CA",
+    country: "United States",
+    yearJoined: "2025",
     industries: ["B2B", "Payers"],
     focus: "Enterprise sales motion, pilot contracting, and procurement navigation.",
     filter: "GTM",
@@ -98,6 +110,9 @@ export const ADVISOR_DIRECTORY_SEED: AdvisorDirectoryEntry[] = [
     name: "Dr. Henry Moss",
     organization: "Atlas Outcomes Institute",
     role: "Academic PI, outcomes research",
+    location: "Chicago, IL",
+    country: "United States",
+    yearJoined: "2024",
     industries: ["Clinical evidence", "Diagnostics"],
     focus: "Study design, endpoints, and publication strategy aligned to buyer questions.",
     filter: "Clinical",
@@ -118,6 +133,9 @@ export const ADVISOR_DIRECTORY_SEED: AdvisorDirectoryEntry[] = [
     name: "Alex Rivera",
     organization: "Clearwave Interop Labs",
     role: "Product & interoperability lead",
+    location: "Austin, TX",
+    country: "United States",
+    yearJoined: "2024",
     industries: ["Digital health", "Infrastructure"],
     focus: "EHR integration patterns, security reviews, and scalable data contracts.",
     filter: "Technical",
@@ -138,6 +156,9 @@ export const ADVISOR_DIRECTORY_SEED: AdvisorDirectoryEntry[] = [
     name: "Sam Okonkwo",
     organization: "Meridian Venture Fellows",
     role: "Finance & venture advisor",
+    location: "Toronto, ON",
+    country: "Canada",
+    yearJoined: "2025",
     industries: ["Fundraising", "MedTech"],
     focus: "Modeling, diligence prep, and milestone planning for seed–Series A.",
     filter: "GTM",
@@ -158,6 +179,9 @@ export const ADVISOR_DIRECTORY_SEED: AdvisorDirectoryEntry[] = [
     name: "Dr. Mei Tan",
     organization: "Vantage Care Delivery",
     role: "VP Clinical Transformation",
+    location: "Seattle, WA",
+    country: "United States",
+    yearJoined: "2024",
     industries: ["Care delivery", "Operations"],
     focus: "Implementation science and adoption metrics for ward-level workflows.",
     filter: "Clinical",
@@ -178,6 +202,9 @@ export const ADVISOR_DIRECTORY_SEED: AdvisorDirectoryEntry[] = [
     name: "Chris Dalton",
     organization: "Ironwood Compliance",
     role: "Privacy & security counsel",
+    location: "London",
+    country: "United Kingdom",
+    yearJoined: "2025",
     industries: ["HIPAA", "SOC 2"],
     focus: "Threat modeling for PHI pipelines and vendor diligence questionnaires.",
     filter: "Technical",

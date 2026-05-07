@@ -12,14 +12,16 @@ export const paymentPage = defineType({
       type: 'text',
       rows: 2,
       title: 'Intro (legacy)',
-      description: 'Not shown on the live site. Payment uses Stripe Payment Links only; use “Intro (payment links)” below.',
+      description:
+        'Not shown on the live site. Payment uses Stripe Payment Links only; use “Intro (payment links)” below.',
     }),
     defineField({
       name: 'introFallback',
       type: 'text',
       rows: 2,
       title: 'Intro (payment links)',
-      description: 'Copy above the monthly/annual buttons. Explains that checkout opens in a new tab (Stripe Payment Link).',
+      description:
+        'Copy above the monthly/annual buttons. Explains that checkout opens in a new tab (Stripe Payment Link).',
     }),
     defineField({
       name: 'introFallbackError',
@@ -74,9 +76,21 @@ export const paymentPage = defineType({
     defineField({name: 'heroHeadlineSuffix', type: 'string', title: 'Hero — line after accent'}),
     defineField({name: 'heroSubheadline', type: 'text', rows: 2, title: 'Hero — subheadline'}),
     defineField({name: 'imageCardBadge', type: 'string', title: 'Image card — eyebrow'}),
-    defineField({name: 'imageCardHeadlinePrefix', type: 'string', title: 'Image card — headline before accent'}),
-    defineField({name: 'imageCardHeadlineAccent', type: 'string', title: 'Image card — accent phrase'}),
-    defineField({name: 'imageCardSrc', type: 'string', title: 'Image card — image path (e.g. /images/... )'}),
+    defineField({
+      name: 'imageCardHeadlinePrefix',
+      type: 'string',
+      title: 'Image card — headline before accent',
+    }),
+    defineField({
+      name: 'imageCardHeadlineAccent',
+      type: 'string',
+      title: 'Image card — accent phrase',
+    }),
+    defineField({
+      name: 'imageCardSrc',
+      type: 'string',
+      title: 'Image card — image path (e.g. /images/... )',
+    }),
     defineField({name: 'imageCardAlt', type: 'string', title: 'Image card — alt text'}),
     defineField({
       name: 'highlightBenefits',
@@ -86,16 +100,36 @@ export const paymentPage = defineType({
     }),
     defineField({name: 'pricingMonthlyBadge', type: 'string', title: 'Pricing — monthly badge'}),
     defineField({name: 'pricingAnnualBadge', type: 'string', title: 'Pricing — annual badge'}),
-    defineField({name: 'pricingMonthlyAmount', type: 'string', title: 'Pricing — monthly price (e.g. $30)'}),
-    defineField({name: 'pricingAnnualAmount', type: 'string', title: 'Pricing — annual price (e.g. $25)'}),
-    defineField({name: 'pricingPerSuffix', type: 'string', title: 'Pricing — suffix (e.g. /month)'}),
+    defineField({
+      name: 'pricingMonthlyAmount',
+      type: 'string',
+      title: 'Pricing — monthly price (e.g. $30)',
+    }),
+    defineField({
+      name: 'pricingAnnualAmount',
+      type: 'string',
+      title: 'Pricing — annual price (e.g. $25)',
+    }),
+    defineField({
+      name: 'pricingPerSuffix',
+      type: 'string',
+      title: 'Pricing — suffix (e.g. /month)',
+    }),
     defineField({name: 'popularLabel', type: 'string', title: 'Pricing — popular label'}),
     defineField({name: 'monthlyProceedLabel', type: 'string', title: 'Pricing — monthly CTA'}),
     defineField({name: 'annualProceedLabel', type: 'string', title: 'Pricing — annual CTA'}),
     defineField({name: 'questionsTitle', type: 'string', title: 'Questions strip — headline'}),
     defineField({name: 'questionsFaqLabel', type: 'string', title: 'Questions strip — FAQ button'}),
     defineField({name: 'questionsFaqPath', type: 'string', title: 'Questions strip — FAQ path'}),
-    defineField({name: 'questionsContactLabel', type: 'string', title: 'Questions strip — contact button'}),
-    defineField({name: 'questionsContactPath', type: 'string', title: 'Questions strip — contact path'}),
+    defineField({
+      name: 'questionsContactLabel',
+      type: 'string',
+      title: 'Questions strip — contact button',
+    }),
+    defineField({
+      name: 'questionsContactPath',
+      type: 'string',
+      title: 'Questions strip — contact path',
+    }),
   ],
 })

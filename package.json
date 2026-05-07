@@ -23,8 +23,9 @@
   "dependencies": {
     "@fillout/react": "^3.1.2",
     "@portabletext/react": "^6.0.3",
-    "@sanity/client": "^7.20.0",
+    "@sanity/client": "^7.22.0",
     "@sanity/image-url": "^2.1.0",
+    "@sanity/preview-url-secret": "^4.0.6",
     "@vercel/analytics": "^2.0.1",
     "@vercel/speed-insights": "^2.0.0",
     "cors": "^2.8.5",

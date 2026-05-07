@@ -68,7 +68,20 @@ export const eventCard = defineType({
           type: 'object',
           name: 'eventDetailDivider',
           title: 'Section divider',
-          fields: [],
+          fields: [
+            defineField({
+              name: 'tone',
+              title: 'Tone',
+              type: 'string',
+              options: {
+                list: [
+                  {title: 'Default', value: 'default'},
+                  {title: 'Subtle', value: 'subtle'},
+                ],
+              },
+              initialValue: 'default',
+            }),
+          ],
         }),
         defineArrayMember({
           type: 'object',
@@ -81,7 +94,12 @@ export const eventCard = defineType({
               type: 'string',
               description: 'Relative site path (e.g. /images/…) or absolute URL.',
             }),
-            defineField({name: 'alt', type: 'string', title: 'Alt text', validation: (Rule) => Rule.required()}),
+            defineField({
+              name: 'alt',
+              type: 'string',
+              title: 'Alt text',
+              validation: (Rule) => Rule.required(),
+            }),
             defineField({
               name: 'caption',
               type: 'string',
@@ -113,7 +131,8 @@ export const eventCard = defineType({
       name: 'calendarStartsAt',
       type: 'string',
       title: 'Calendar start (ISO 8601)',
-      description: 'e.g. 2026-06-24T21:30:00-04:00 — used for Add to Calendar. Optional if you only use the display date string.',
+      description:
+        'e.g. 2026-06-24T21:30:00-04:00 — used for Add to Calendar. Optional if you only use the display date string.',
     }),
     defineField({
       name: 'calendarEndsAt',

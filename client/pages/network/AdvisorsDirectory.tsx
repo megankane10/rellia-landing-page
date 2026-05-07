@@ -1,31 +1,34 @@
-import { useMemo, useState } from "react"
-import Navbar from "@/components/Navbar"
-import Footer from "@/components/Footer"
-import RelliaCta from "@/components/RelliaCta"
-import RelliaAction from "@/components/RelliaAction"
-import { cn } from "@/lib/utils"
-import { motion, AnimatePresence, useReducedMotion, type Variants } from "framer-motion"
-import { Globe, Linkedin, Search, UserSearch, ChevronDown } from "lucide-react"
-import FilteredListEmptyState from "@/components/FilteredListEmptyState"
+import { useEffect, useMemo, useState } from "react";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+import RelliaCta from "@/components/RelliaCta";
+import { cn } from "@/lib/utils";
+import {
+  motion,
+  AnimatePresence,
+  useReducedMotion,
+  type Variants,
+} from "framer-motion";
+import { Search, UserSearch, ChevronDown } from "lucide-react";
+import FilteredListEmptyState from "@/components/FilteredListEmptyState";
+import { useAdvisors } from "@/hooks/useCmsDocuments";
 import {
   ADVISOR_DIRECTORY_SEED,
   ADVISOR_FILTER_OPTIONS,
   type AdvisorDirectoryEntry,
-  type AdvisorDirectoryFilter,
-} from "@/data/advisorDirectory"
-import NetworkDirectoryModal from "@/components/network/NetworkDirectoryModal"
-import { Link, useNavigate } from "react-router-dom"
-import { NETWORK_PATH_ROLE_TAG } from "@/lib/networkPathRoles"
+} from "@/data/advisorDirectory";
+import { useNavigate } from "react-router-dom";
+import { NETWORK_PATH_ROLE_TAG } from "@/lib/networkPathRoles";
 
 const DIRECTORY_TITLE_CLASS =
-  "font-host-grotesk text-4xl font-extrabold tracking-tight text-black md:text-5xl"
+  "font-host-grotesk text-4xl font-extrabold tracking-tight text-black md:text-5xl";
 
 function AdvisorCard({
   advisor,
   onDetails,
 }: {
-  advisor: AdvisorDirectoryEntry
-  onDetails: () => void
+  advisor: AdvisorDirectoryEntry;
+  onDetails: () => void;
 }) {
   return (
     <motion.article
@@ -38,15 +41,15 @@ function AdvisorCard({
       onClick={onDetails}
       onKeyDown={(e) => {
         if (e.key === "Enter" || e.key === " ") {
-          e.preventDefault()
-          onDetails()
+          e.preventDefault();
+          onDetails();
         }
       }}
       role="button"
       tabIndex={0}
       aria-label={`Open profile for ${advisor.name}`}
     >
-      <div className="relative aspect-[4/3] w-full overflow-hidden bg-gradient-to-br from-rellia-cream to-rellia-cream/40">
+      <div className="relative aspect-[3/2] w-full overflow-hidden bg-gradient-to-br from-rellia-cream to-rellia-cream/40">
         <img
           src={advisor.photoSrc}
           alt=""
@@ -59,9 +62,15 @@ function AdvisorCard({
         />
       </div>
       <div className="flex flex-1 flex-col p-6 md:p-7">
-        <h3 className="font-host-grotesk text-lg font-bold tracking-tight text-black group-hover:underline decoration-2 underline-offset-4">{advisor.name}</h3>
-        <p className="mt-1 font-urbanist text-sm font-medium text-black/70">{advisor.organization}</p>
-        <p className="mt-0.5 font-urbanist text-sm text-black/60">{advisor.role}</p>
+        <h3 className="font-host-grotesk text-lg font-bold tracking-tight text-black group-hover:underline decoration-2 underline-offset-4">
+          {advisor.name}
+        </h3>
+        <p className="mt-1 font-urbanist text-sm font-medium text-black/70">
+          {advisor.organization}
+        </p>
+        <p className="mt-0.5 font-urbanist text-sm text-black/60">
+          {advisor.role}
+        </p>
         <div className="mt-4 flex flex-wrap gap-2">
           <span className="rounded-full border border-rellia-teal/20 bg-rellia-mint/15 px-3 py-1 font-urbanist text-xs font-semibold text-rellia-teal">
             {advisor.filter}
@@ -75,43 +84,53 @@ function AdvisorCard({
             </span>
           ))}
         </div>
-        <p className="mt-4 line-clamp-3 flex-1 font-urbanist text-sm leading-relaxed text-black/75">{advisor.focus}</p>
+        <p className="mt-4 line-clamp-3 flex-1 font-urbanist text-sm leading-relaxed text-black/75">
+          {advisor.focus}
+        </p>
       </div>
     </motion.article>
-  )
+  );
 }
 
 export default function AdvisorsDirectory() {
-  const reduceMotion = useReducedMotion()
-  const [query, setQuery] = useState("")
-  const [filter, setFilter] = useState<"all" | AdvisorDirectoryFilter>("all")
-  const [activeId, setActiveId] = useState<string | null>(null)
+  const reduceMotion = useReducedMotion();
+  const { data: cmsAdvisors } = useAdvisors();
+  const [query, setQuery] = useState("");
+  const [filter, setFilter] = useState<
+    "all" | (typeof ADVISOR_FILTER_OPTIONS)[number]["id"]
+  >("all");
+
+  const advisors = useMemo<AdvisorDirectoryEntry[]>(() => {
+    if (Array.isArray(cmsAdvisors) && cmsAdvisors.length > 0)
+      return cmsAdvisors as AdvisorDirectoryEntry[];
+    return ADVISOR_DIRECTORY_SEED;
+  }, [cmsAdvisors]);
 
   const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase()
-    return ADVISOR_DIRECTORY_SEED.filter((a) => {
-      if (filter !== "all" && a.filter !== filter) return false
-      if (!q) return true
+    const q = query.trim().toLowerCase();
+    return advisors.filter((a) => {
+      if (filter !== "all" && a.filter !== filter) return false;
+      if (!q) return true;
       const blob =
-        `${a.name} ${a.organization} ${a.role} ${a.industries.join(" ")} ${a.focus} ${a.bio}`.toLowerCase()
-      return blob.includes(q)
-    })
-  }, [filter, query])
+        `${a.name} ${a.organization} ${a.role} ${a.industries.join(" ")} ${a.focus} ${a.bio}`.toLowerCase();
+      return blob.includes(q);
+    });
+  }, [advisors, filter, query]);
 
-  const [page, setPage] = useState(1)
-  const itemsPerPage = 12
-  const totalPages = Math.ceil(filtered.length / itemsPerPage)
-  
+  const [page, setPage] = useState(1);
+  const itemsPerPage = 12;
+  const totalPages = Math.ceil(filtered.length / itemsPerPage);
+
   const paginated = useMemo(() => {
-    return filtered.slice((page - 1) * itemsPerPage, page * itemsPerPage)
-  }, [filtered, page])
+    return filtered.slice((page - 1) * itemsPerPage, page * itemsPerPage);
+  }, [filtered, page]);
 
   // Reset page when filters change
-  useMemo(() => setPage(1), [query, filter])
+  useEffect(() => {
+    setPage(1);
+  }, [query, filter]);
 
-  const active = useMemo(() => ADVISOR_DIRECTORY_SEED.find((a) => a.id === activeId) ?? null, [activeId])
-
-  const EASE_OUT: [number, number, number, number] = [0.16, 1, 0.3, 1]
+  const EASE_OUT: [number, number, number, number] = [0.16, 1, 0.3, 1];
   const container: Variants = {
     hidden: reduceMotion ? {} : { opacity: 0, y: 10 },
     show: {
@@ -119,42 +138,24 @@ export default function AdvisorsDirectory() {
       y: 0,
       transition: reduceMotion
         ? undefined
-        : { duration: 0.35, ease: EASE_OUT, when: "beforeChildren", staggerChildren: 0.06 },
+        : {
+            duration: 0.35,
+            ease: EASE_OUT,
+            when: "beforeChildren",
+            staggerChildren: 0.06,
+          },
     },
-  }
+  };
   const item: Variants = {
     hidden: reduceMotion ? {} : { opacity: 0, y: 14 },
-    show: reduceMotion ? {} : { opacity: 1, y: 0, transition: { duration: 0.4, ease: EASE_OUT } },
-  }
+    show: reduceMotion
+      ? {}
+      : { opacity: 1, y: 0, transition: { duration: 0.4, ease: EASE_OUT } },
+  };
 
-  const navigate = useNavigate()
-  const tag = NETWORK_PATH_ROLE_TAG["advisor"]
-  const TagIcon = tag.icon
-
-  const FilterContent = () => (
-    <div className="flex flex-wrap gap-2">
-      {ADVISOR_FILTER_OPTIONS.map((f) => {
-        const isActive = filter === f.id
-        return (
-          <button
-            key={f.id}
-            type="button"
-            onClick={() => setFilter(f.id)}
-            className={cn(
-              "cursor-pointer rounded-full border px-4 py-2 font-urbanist text-sm font-semibold transition-colors w-full text-left",
-              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-teal focus-visible:ring-offset-2",
-              isActive
-                ? "border-rellia-teal bg-rellia-teal text-white"
-                : "border-black/10 bg-white text-black/70 hover:border-rellia-teal/40 hover:text-rellia-teal",
-            )}
-            aria-pressed={isActive}
-          >
-            {f.label}
-          </button>
-        )
-      })}
-    </div>
-  )
+  const navigate = useNavigate();
+  const tag = NETWORK_PATH_ROLE_TAG["advisor"];
+  const TagIcon = tag.icon;
 
   return (
     <div className="min-h-screen overflow-x-hidden bg-white font-host-grotesk">
@@ -166,7 +167,7 @@ export default function AdvisorsDirectory() {
           {/* Mobile-only mint blur blobs */}
           <div className="md:hidden absolute -left-12 -top-12 h-32 w-32 rounded-full bg-rellia-mint/20 blur-2xl pointer-events-none" />
           <div className="md:hidden absolute -right-8 top-1/4 h-24 w-24 rounded-full bg-rellia-mint/15 blur-2xl pointer-events-none" />
-          
+
           <div className="relative z-10 mx-auto max-w-[1300px] px-6 md:px-10">
             <div className="inline-flex items-center gap-2 rounded-full bg-rellia-teal px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-white/95 ring-1 ring-white/15 mb-4">
               <TagIcon className="h-3.5 w-3.5 shrink-0" aria-hidden />
@@ -174,8 +175,8 @@ export default function AdvisorsDirectory() {
             </div>
             <h1 className={DIRECTORY_TITLE_CLASS}>Explore Advisors</h1>
             <p className="mt-4 max-w-2xl font-urbanist text-lg leading-relaxed text-black/70">
-              Search and filter operators, clinicians, and specialists who opt into high-signal mentorship with serious
-              founders.
+              Search and filter operators, clinicians, and specialists who opt
+              into high-signal mentorship with serious founders.
             </p>
           </div>
         </section>
@@ -202,7 +203,7 @@ export default function AdvisorsDirectory() {
                   )}
                 />
               </label>
-              
+
               <div className="flex shrink-0">
                 <div className="relative">
                   <select
@@ -210,11 +211,16 @@ export default function AdvisorsDirectory() {
                     onChange={(e) => setFilter(e.target.value as any)}
                     className="h-14 w-full appearance-none rounded-2xl border border-black/10 bg-black/[0.02] pl-5 pr-14 min-w-[200px] font-urbanist text-base font-semibold text-black/80 outline-none hover:border-black/20 focus-visible:ring-2 focus-visible:ring-rellia-teal focus-visible:bg-white cursor-pointer"
                   >
-                    {ADVISOR_FILTER_OPTIONS.map(f => (
-                      <option key={f.id} value={f.id}>{f.label}</option>
+                    {ADVISOR_FILTER_OPTIONS.map((f) => (
+                      <option key={f.id} value={f.id}>
+                        {f.label}
+                      </option>
                     ))}
                   </select>
-                  <ChevronDown className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-black/45" aria-hidden />
+                  <ChevronDown
+                    className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-black/45"
+                    aria-hidden
+                  />
                 </div>
               </div>
             </div>
@@ -243,7 +249,12 @@ export default function AdvisorsDirectory() {
                   <AnimatePresence mode="popLayout">
                     {paginated.map((a) => (
                       <motion.div key={a.id} variants={item} layout>
-                        <AdvisorCard advisor={a} onDetails={() => navigate(`/advisors/directory/${a.id}`)} />
+                        <AdvisorCard
+                          advisor={a}
+                          onDetails={() =>
+                            navigate(`/advisors/directory/${a.id}`)
+                          }
+                        />
                       </motion.div>
                     ))}
                   </AnimatePresence>
@@ -254,7 +265,7 @@ export default function AdvisorsDirectory() {
                     <button
                       type="button"
                       disabled={page === 1}
-                      onClick={() => setPage(p => Math.max(1, p - 1))}
+                      onClick={() => setPage((p) => Math.max(1, p - 1))}
                       className="flex h-10 w-10 items-center justify-center rounded-full border border-black/10 font-urbanist text-sm font-semibold text-black disabled:opacity-40 disabled:cursor-not-allowed hover:bg-black/5 transition-colors"
                     >
                       &larr;
@@ -266,7 +277,9 @@ export default function AdvisorsDirectory() {
                         onClick={() => setPage(i + 1)}
                         className={cn(
                           "flex h-10 w-10 items-center justify-center rounded-full font-urbanist text-sm font-semibold transition-colors",
-                          page === i + 1 ? "bg-black text-white" : "text-black/70 hover:bg-black/5"
+                          page === i + 1
+                            ? "bg-black text-white"
+                            : "text-black/70 hover:bg-black/5",
                         )}
                       >
                         {i + 1}
@@ -275,7 +288,9 @@ export default function AdvisorsDirectory() {
                     <button
                       type="button"
                       disabled={page === totalPages}
-                      onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                      onClick={() =>
+                        setPage((p) => Math.min(totalPages, p + 1))
+                      }
                       className="flex h-10 w-10 items-center justify-center rounded-full border border-black/10 font-urbanist text-sm font-semibold text-black disabled:opacity-40 disabled:cursor-not-allowed hover:bg-black/5 transition-colors"
                     >
                       &rarr;
@@ -287,8 +302,8 @@ export default function AdvisorsDirectory() {
           </div>
         </section>
 
-        <RelliaCta 
-          title="Looking for specialized advice?" 
+        <RelliaCta
+          title="Looking for specialized advice?"
           body="Access our full network of operators, clinicians, and subject matter experts."
           primary={{ label: "Apply for Membership", to: "/apply" }}
           secondary={{ label: "Learn about Advisors", to: "/advisors" }}
@@ -297,5 +312,5 @@ export default function AdvisorsDirectory() {
 
       <Footer />
     </div>
-  )
+  );
 }

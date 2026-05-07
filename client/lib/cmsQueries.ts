@@ -4,7 +4,7 @@ export const globalSettingsQuery = `*[_type == "globalSettings"][0]{
   linkedinUrl,
   instagramUrl,
   copyrightLine
-}`
+}`;
 
 export const homePageQuery = `*[_type == "homePage"][0]{
   headlinePrefix,
@@ -34,7 +34,7 @@ export const homePageQuery = `*[_type == "homePage"][0]{
     companyInfo,
     "imageSrc": coalesce(image.asset->url, imageSrc)
   }
-}`
+}`;
 
 export const aboutPageQuery = `*[_type == "aboutPage"][0]{
   heroLine1,
@@ -60,7 +60,7 @@ export const aboutPageQuery = `*[_type == "aboutPage"][0]{
   ctaBody,
   ctaFounderLabel,
   ctaTeamLabel
-}`
+}`;
 
 export const faqPageQuery = `*[_type == "faqPage"][0]{
   badge,
@@ -75,7 +75,7 @@ export const faqPageQuery = `*[_type == "faqPage"][0]{
   bottomBody,
   bottomCtaLabel,
   bottomCtaPath
-}`
+}`;
 
 export const programsLandingQuery = `*[_type == "programsLandingPage"][0]{
   heroTitleLine1,
@@ -100,7 +100,7 @@ export const programsLandingQuery = `*[_type == "programsLandingPage"][0]{
   ctaBody,
   ctaButtonLabel,
   ctaButtonHref
-}`
+}`;
 
 export const contactPageQuery = `*[_type == "contactPage"][0]{
   heroBadge,
@@ -121,7 +121,7 @@ export const contactPageQuery = `*[_type == "contactPage"][0]{
   companySizeOptions[]{ value, label },
   submitLabel,
   sendingLabel
-}`
+}`;
 
 export const qmsProgramQuery = `*[_type == "qmsProgramPage"][0]{
   paymentUrl,
@@ -145,13 +145,13 @@ export const qmsProgramQuery = `*[_type == "qmsProgramPage"][0]{
   bottomCtaBody,
   bottomCtaButtonLabel,
   bottomContactHref
-}`
+}`;
 
 export const notFoundQuery = `*[_type == "notFoundPage"][0]{
   title,
   message,
   ctaLabel
-}`
+}`;
 
 export const paymentPageQuery = `*[_type == "paymentPage"][0]{
   badge,
@@ -192,16 +192,16 @@ export const paymentPageQuery = `*[_type == "paymentPage"][0]{
   questionsFaqPath,
   questionsContactLabel,
   questionsContactPath
-}`
+}`;
 
 export const marketingPageBySlugQuery = `*[_type == "marketingPage" && slug.current == $slug][0]{
   title,
   subtitle,
   body
-}`
+}`;
 
 export const advisorsQuery = `*[_type == "advisor"]{
-  "id": _id,
+  "id": slug.current,
   name,
   organization,
   role,
@@ -214,5 +214,30 @@ export const advisorsQuery = `*[_type == "advisor"]{
   bio,
   mentoringStyle,
   highlights
-}`
+}`;
 
+export const alumniCompaniesQuery = `*[_type == "alumniCompany"]{
+  "id": slug.current,
+  name,
+  slug,
+  level,
+  tagline,
+  specialties,
+  shortDescription,
+  longDescription,
+  websiteUrl,
+  linkedinUrl,
+  traction,
+  relliaCollaboration,
+  country,
+  yearJoined,
+  programs,
+  "logoSrc": coalesce(logo.asset->url, logoSrc),
+  founders[]{
+    name,
+    role,
+    bio,
+    linkedinUrl,
+    "imageSrc": coalesce(image.asset->url, imageSrc)
+  }
+}`;
