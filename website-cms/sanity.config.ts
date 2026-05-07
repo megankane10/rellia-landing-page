@@ -8,8 +8,8 @@ export default defineConfig({
   name: 'default',
   title: 'Website CMS',
 
-  projectId: 'ggbt0o98',
-  dataset: 'production',
+  projectId: process.env.SANITY_STUDIO_PROJECT_ID || 'ggbt0o98',
+  dataset: process.env.SANITY_STUDIO_DATASET || 'production',
 
   plugins: [
     structureTool(),

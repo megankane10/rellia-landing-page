@@ -1,6 +1,6 @@
 import "./loadEnv";
 import cors from "cors";
-import express, { type Request, type RequestHandler } from "express";
+import express, { type RequestHandler } from "express";
 import helmet from "helmet";
 import { z } from "zod";
 import { createClient } from "@sanity/client";
@@ -8,13 +8,21 @@ import { validatePreviewUrl } from "@sanity/preview-url-secret";
 import { withoutSecretSearchParams } from "@sanity/preview-url-secret/without-secret-search-params";
 import { perspectiveCookieName } from "@sanity/preview-url-secret/constants";
 
-const headerOne = (req: Request, name: string): string | undefined => {
-  const v = req.headers[name];
+type RequestLike = {
+  headers?: Record<string, unknown>;
+  ip?: unknown;
+  protocol?: string;
+  originalUrl?: string;
+  get?: (name: string) => string | undefined;
+};
+
+const headerOne = (req: RequestLike, name: string): string | undefined => {
+  const v = req.headers?.[name];
   if (Array.isArray(v)) return v[0];
   return typeof v === "string" ? v : undefined;
 };
 
-const getClientIp = (req: Request): string => {
+const getClientIp = (req: RequestLike): string => {
   if (process.env.VERCEL) {
     const realIp = headerOne(req, "x-real-ip")?.trim();
     if (realIp) return realIp;
@@ -24,7 +32,7 @@ const getClientIp = (req: Request): string => {
     const first = forwarded.split(",")[0]?.trim();
     if (first) return first;
   }
-  if (req.ip) return req.ip;
+  if (typeof req.ip === "string" && req.ip) return req.ip;
   return "unknown";
 };
 
@@ -130,8 +138,14 @@ export function createServer() {
     try {
       const url = `${req.protocol}://${req.get("host")}${req.originalUrl}`;
       const previewClient = createClient({
-        projectId: process.env.VITE_SANITY_PROJECT_ID || "ggbt0o98",
-        dataset: process.env.VITE_SANITY_DATASET || "production",
+        projectId:
+          process.env.SANITY_API_PROJECT_ID ||
+          process.env.VITE_SANITY_PROJECT_ID ||
+          "ggbt0o98",
+        dataset:
+          process.env.SANITY_API_DATASET ||
+          process.env.VITE_SANITY_DATASET ||
+          "production",
         token,
         useCdn: false,
         apiVersion: "2024-01-01",
@@ -193,8 +207,14 @@ export function createServer() {
 
     try {
       const previewClient = createClient({
-        projectId: process.env.VITE_SANITY_PROJECT_ID || "ggbt0o98",
-        dataset: process.env.VITE_SANITY_DATASET || "production",
+        projectId:
+          process.env.SANITY_API_PROJECT_ID ||
+          process.env.VITE_SANITY_PROJECT_ID ||
+          "ggbt0o98",
+        dataset:
+          process.env.SANITY_API_DATASET ||
+          process.env.VITE_SANITY_DATASET ||
+          "production",
         token,
         useCdn: false,
         apiVersion: "2024-01-01",
@@ -246,11 +266,17 @@ export function createServer() {
     mentor_areas_needed: z.array(z.string()),
   });
 
-  const sanityWriteClient = process.env.SANITY_WRITE_TOKEN
+  const sanityWriteClient = process.env.SANITY_API_WRITE_TOKEN
     ? createClient({
-        projectId: process.env.VITE_SANITY_PROJECT_ID || "ggbt0o98",
-        dataset: process.env.VITE_SANITY_DATASET || "production",
-        token: process.env.SANITY_WRITE_TOKEN,
+        projectId:
+          process.env.SANITY_API_PROJECT_ID ||
+          process.env.VITE_SANITY_PROJECT_ID ||
+          "ggbt0o98",
+        dataset:
+          process.env.SANITY_API_DATASET ||
+          process.env.VITE_SANITY_DATASET ||
+          "production",
+        token: process.env.SANITY_API_WRITE_TOKEN,
         useCdn: false,
         apiVersion: "2024-01-01",
       })

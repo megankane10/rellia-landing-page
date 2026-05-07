@@ -4,6 +4,76 @@ export type SanityPortableText = Array<{
   [key: string]: unknown
 }>
 
+export type NavItem = {
+  label: string
+  href: string
+  description?: string
+  badge?: string
+  children?: NavItem[]
+}
+
+export type NavigationContent = {
+  primary: NavItem[]
+  footer: NavItem[]
+}
+
+export type SeoContent = {
+  title?: string
+  description?: string
+  ogImageUrl?: string
+  noIndex?: boolean
+}
+
+export type CmsSectionHero = {
+  _type: "sectionHero"
+  _key?: string
+  tag?: string
+  badge?: string
+  headline: string
+  subheadline?: string
+  primaryCta?: NavItem
+  secondaryCta?: NavItem
+  imageUrl?: string
+  imageAlt?: string
+}
+
+export type CmsSectionRichText = {
+  _type: "sectionRichText"
+  _key?: string
+  tag?: string
+  title?: string
+  body?: SanityPortableText | null
+}
+
+export type CmsSectionCardsGridCard = {
+  _key?: string
+  title: string
+  body?: string
+  badge?: string
+  imageUrl?: string
+  imageAlt?: string
+  cta?: NavItem
+  tags?: string[]
+}
+
+export type CmsSectionCardsGrid = {
+  _type: "sectionCardsGrid"
+  _key?: string
+  tag?: string
+  title?: string
+  subtitle?: string
+  cards?: CmsSectionCardsGridCard[]
+}
+
+export type CmsPageSection = CmsSectionHero | CmsSectionRichText | CmsSectionCardsGrid
+
+export type CmsPageContent = {
+  title: string
+  slug: string
+  seo?: SeoContent
+  sections?: CmsPageSection[]
+}
+
 export type SanityImageAsset = {
   _type?: string
   asset?: {

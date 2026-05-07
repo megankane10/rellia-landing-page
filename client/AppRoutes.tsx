@@ -21,7 +21,6 @@ import ProgramsBrandStrategy from "./pages/programs/ProgramsBrandStrategy"
 import ProgramsRegulatoryRoadmap from "./pages/programs/ProgramsRegulatoryRoadmap"
 import Events from "./pages/Events"
 import EventDetail from "./pages/EventDetail"
-import NotFound from "./pages/NotFound"
 import Contact from "./pages/Contact"
 import Apply from "./pages/Apply"
 import Network from "./pages/Network"
@@ -44,6 +43,7 @@ import FounderProfile from "./pages/network/FounderProfile"
 import AdvisorsDirectory from "./pages/network/AdvisorsDirectory"
 import AdvisorProfile from "./pages/network/AdvisorProfile"
 import PlaceholderPage from "./pages/PlaceholderPage"
+import CmsCatchAll from "./pages/CmsCatchAll"
 
 const ThirdPartyPreloads = () => {
   useEffect(() => {
@@ -133,6 +133,6 @@ export const AppRoutes = () => (
     <Route path="/diagnostic-survey" element={<DiagnosticSurvey />} />
     <Route path="/survey" element={<Navigate to="/diagnostic-survey" replace />} />
 
-    <Route path="*" element={<NotFound />} />
+    <Route path="*" element={<CmsCatchAll />} />
   </Routes>
 )

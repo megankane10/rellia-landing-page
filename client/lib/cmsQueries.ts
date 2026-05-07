@@ -6,6 +6,62 @@ export const globalSettingsQuery = `*[_type == "globalSettings"][0]{
   copyrightLine
 }`;
 
+export const navigationQuery = `*[_type == "navigation"][0]{
+  primary[]{
+    label,
+    href,
+    description,
+    badge,
+    children[]{
+      label,
+      href,
+      description,
+      badge,
+      children[]{
+        label,
+        href,
+        description,
+        badge
+      }
+    }
+  },
+  footer[]{
+    label,
+    href,
+    description,
+    badge,
+    children[]{
+      label,
+      href,
+      description,
+      badge,
+      children[]{
+        label,
+        href,
+        description,
+        badge
+      }
+    }
+  }
+}`
+
+export const pageBySlugQuery = `*[_type == "page" && slug.current == $slug][0]{
+  title,
+  "slug": slug.current,
+  seo,
+  sections[]{
+    ...,
+    "imageUrl": image.asset->url,
+    primaryCta{ label, href, description, badge },
+    secondaryCta{ label, href, description, badge },
+    cards[]{
+      ...,
+      "imageUrl": image.asset->url,
+      cta{ label, href, description, badge }
+    }
+  }
+}`
+
 export const homePageQuery = `*[_type == "homePage"][0]{
   headlinePrefix,
   headlineAccent,

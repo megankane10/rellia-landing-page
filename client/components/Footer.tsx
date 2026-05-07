@@ -1,10 +1,62 @@
 import { Link } from "react-router-dom"
 import { DEFAULT_GLOBAL_SETTINGS } from "@shared/cms/defaults"
-import { GETPROVEN_VENDORS_GRID_URL } from "@/config/partnerLinks"
 import { CareersHiringBadge } from "@/components/CareersHiringBadge"
 import { InstagramFilled, LinkedInFilled, MailFilled } from "@/components/icons/SocialIcons"
+import { useGlobalSettings, useNavigation } from "@/hooks/useCmsDocuments"
+import type { NavItem } from "@shared/cms/types"
 
-const g = DEFAULT_GLOBAL_SETTINGS
+const isExternalHref = (href: string) => /^(https?:\/\/|mailto:|tel:)/i.test(href)
+
+const normalizeInternalHref = (href: string) => {
+  const trimmed = href.trim()
+  if (!trimmed) return "/"
+  if (isExternalHref(trimmed)) return trimmed
+  return trimmed.startsWith("/") ? trimmed : `/${trimmed}`
+}
+
+const FALLBACK_FOOTER_COLUMNS: NavItem[] = [
+  {
+    label: "Solutions",
+    href: "/",
+    children: [
+      { label: "Apply", href: "/apply" },
+      { label: "Programs", href: "/programs" },
+      { label: "Events", href: "/events" },
+      { label: "Startup Diagnostic", href: "/diagnostic-survey" },
+      { label: "Consulting", href: "/consulting" },
+    ],
+  },
+  {
+    label: "Network",
+    href: "/network",
+    children: [
+      { label: "Founders", href: "/founders" },
+      { label: "Advisors", href: "/advisors" },
+      { label: "Investors", href: "/investors" },
+      { label: "Industry Partners", href: "/industry-partners" },
+    ],
+  },
+  {
+    label: "Resources",
+    href: "/stories",
+    children: [
+      { label: "Stories", href: "/stories" },
+      { label: "Explore Alumni", href: "/founders/alumni" },
+      { label: "Explore Advisors", href: "/advisors/directory" },
+      { label: "Industry Partners Directory", href: "/industry-partners/directory" },
+    ],
+  },
+  {
+    label: "Company",
+    href: "/about",
+    children: [
+      { label: "About Us", href: "/about" },
+      { label: "FAQ", href: "/faq" },
+      { label: "Careers", href: "/careers" },
+      { label: "Contact", href: "/contact" },
+    ],
+  },
+] as const
 
 const footerLinkClass =
   "font-urbanist text-[14px] leading-snug text-white transition-colors hover:text-rellia-mint md:text-[15px] md:leading-normal"
@@ -16,6 +68,27 @@ const legalLinkClass =
   "font-urbanist text-[13px] leading-snug text-white/70 transition-colors hover:text-rellia-mint md:text-sm"
 
 export default function Footer() {
+  const { data: globalSettingsData } = useGlobalSettings()
+  const { data: navigationData } = useNavigation()
+  const g = globalSettingsData ?? DEFAULT_GLOBAL_SETTINGS
+
+  const footerColumnsRaw =
+    navigationData?.footer && navigationData.footer.length > 0
+      ? navigationData.footer
+      : FALLBACK_FOOTER_COLUMNS
+
+  const footerColumns = footerColumnsRaw
+    .filter((i): i is NavItem => Boolean(i && typeof i.label === "string" && typeof i.href === "string"))
+    .map((col) => ({
+      label: col.label,
+      href: normalizeInternalHref(col.href),
+      children: Array.isArray(col.children)
+        ? col.children
+            .filter((c): c is NavItem => Boolean(c && typeof c.label === "string" && typeof c.href === "string"))
+            .map((c) => ({ label: c.label, href: normalizeInternalHref(c.href) }))
+        : [],
+    }))
+
   return (
     <footer
       className="p-2 sm:p-4 md:p-[30px]"
@@ -68,94 +141,56 @@ export default function Footer() {
               </div>
             </div>
 
-            <div className="grid min-w-0 flex-1 grid-cols-2 gap-x-8 gap-y-10 sm:gap-x-10 md:gap-x-12 md:pl-6 lg:grid-cols-4 lg:gap-x-8 lg:pl-10 xl:gap-x-12 xl:pl-14">
-              {/* Solutions */}
-              <div className="flex min-w-0 flex-col gap-4 md:gap-6">
-                <h4 className={footerSectionHeadingClass}>Solutions</h4>
-                <nav className="flex flex-col gap-2 md:gap-3" aria-label="Solutions links">
-                  <Link to="/apply" className={footerLinkClass}>
-                    Apply
-                  </Link>
-                  <Link to="/programs" className={footerLinkClass}>
-                    Programs
-                  </Link>
-                  <Link to="/events" className={footerLinkClass}>
-                    Events
-                  </Link>
-                  <Link to="/diagnostic-survey" className={footerLinkClass}>
-                    Startup Diagnostic
-                  </Link>
-                  <Link to="/consulting" className={footerLinkClass}>
-                    Consulting
-                  </Link>
-                </nav>
-              </div>
-
-              {/* Network */}
-              <div className="flex min-w-0 flex-col gap-4 md:gap-6">
-                <h4 className={footerSectionHeadingClass}>Network</h4>
-                <nav className="flex flex-col gap-2 md:gap-3" aria-label="Network links">
-                  <Link to="/founders" className={footerLinkClass}>
-                    Founders
-                  </Link>
-                  <Link to="/advisors" className={footerLinkClass}>
-                    Advisors
-                  </Link>
-                  <Link to="/investors" className={footerLinkClass}>
-                    Investors
-                  </Link>
-                  <Link to="/industry-partners" className={footerLinkClass}>
-                    Industry Partners
-                  </Link>
-                </nav>
-              </div>
-
-              {/* Resources */}
-              <div className="flex min-w-0 flex-col gap-4 md:gap-6">
-                <h4 className={footerSectionHeadingClass}>Resources</h4>
-                <nav className="flex flex-col gap-2 md:gap-3" aria-label="Resources links">
-                  <Link to="/stories" className={footerLinkClass}>
-                    Stories
-                  </Link>
-                  <Link to="/founders/alumni" className={footerLinkClass}>
-                    Explore Alumni
-                  </Link>
-                  <Link to="/advisors/directory" className={footerLinkClass}>
-                    Explore Advisors
-                  </Link>
-                  <a
-                    href={GETPROVEN_VENDORS_GRID_URL}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={footerLinkClass}
-                  >
-                    Industry Partners Directory
-                  </a>
-                </nav>
-              </div>
-
-              {/* Company */}
-              <div className="flex min-w-0 flex-col gap-4 md:gap-6">
-                <h4 className={footerSectionHeadingClass}>Company</h4>
-                <nav className="flex flex-col gap-2 md:gap-3" aria-label="Company links">
-                  <Link to="/about" className={footerLinkClass}>
-                    About Us
-                  </Link>
-                  <Link to="/faq" className={footerLinkClass}>
-                    FAQ
-                  </Link>
-                  <Link
-                    to="/careers"
-                    className={`inline-flex max-w-full flex-wrap items-center gap-2 ${footerLinkClass}`}
-                  >
-                    <span>Careers</span>
-                    <CareersHiringBadge />
-                  </Link>
-                  <Link to="/contact" className={footerLinkClass}>
-                    Contact
-                  </Link>
-                </nav>
-              </div>
+            <div
+              className="grid min-w-0 flex-1 grid-cols-2 gap-x-8 gap-y-10 sm:gap-x-10 md:gap-x-12 md:pl-6 lg:gap-x-8 lg:pl-10 xl:gap-x-12 xl:pl-14"
+              style={{
+                gridTemplateColumns:
+                  footerColumns.length >= 4
+                    ? "repeat(4, minmax(0, 1fr))"
+                    : footerColumns.length === 3
+                      ? "repeat(3, minmax(0, 1fr))"
+                      : "repeat(2, minmax(0, 1fr))",
+              }}
+            >
+              {footerColumns.map((col) => {
+                const links = col.children.length > 0 ? col.children : [{ label: col.label, href: col.href }]
+                return (
+                  <div key={col.label} className="flex min-w-0 flex-col gap-4 md:gap-6">
+                    <h4 className={footerSectionHeadingClass}>{col.label}</h4>
+                    <nav className="flex flex-col gap-2 md:gap-3" aria-label={`${col.label} links`}>
+                      {links.map((l) => {
+                        if (isExternalHref(l.href)) {
+                          return (
+                            <a
+                              key={l.href}
+                              href={l.href}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className={footerLinkClass}
+                            >
+                              {l.label}
+                            </a>
+                          )
+                        }
+                        return l.href === "/careers" ? (
+                          <Link
+                            key={l.href}
+                            to={l.href}
+                            className={`inline-flex max-w-full flex-wrap items-center gap-2 ${footerLinkClass}`}
+                          >
+                            <span>{l.label}</span>
+                            <CareersHiringBadge />
+                          </Link>
+                        ) : (
+                          <Link key={l.href} to={l.href} className={footerLinkClass}>
+                            {l.label}
+                          </Link>
+                        )
+                      })}
+                    </nav>
+                  </div>
+                )
+              })}
             </div>
           </div>
 

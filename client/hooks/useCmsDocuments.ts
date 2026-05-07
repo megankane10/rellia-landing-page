@@ -6,6 +6,8 @@ import {
   faqPageQuery,
   globalSettingsQuery,
   homePageQuery,
+  navigationQuery,
+  pageBySlugQuery,
   marketingPageBySlugQuery,
   notFoundQuery,
   paymentPageQuery,
@@ -31,6 +33,8 @@ import type {
   AboutPageContent,
   ContactPageContent,
   FaqPageContent,
+  NavigationContent,
+  CmsPageContent,
   GlobalSettingsContent,
   HomePageContent,
   MarketingPageContent,
@@ -53,6 +57,19 @@ export const useGlobalSettings = () =>
     staleTime: staleTimeMs,
   });
 
+export const useNavigation = () =>
+  useQuery({
+    queryKey: ["cms", "navigation"],
+    queryFn: async () => {
+      const raw = await sanityFetch<Partial<NavigationContent>>(navigationQuery)
+      return {
+        primary: Array.isArray(raw?.primary) ? (raw?.primary as NavigationContent["primary"]) : [],
+        footer: Array.isArray(raw?.footer) ? (raw?.footer as NavigationContent["footer"]) : [],
+      } satisfies NavigationContent
+    },
+    staleTime: staleTimeMs,
+  })
+
 export const useHomePage = () =>
   useQuery({
     queryKey: ["cms", "homePage"],
@@ -62,6 +79,18 @@ export const useHomePage = () =>
     },
     staleTime: staleTimeMs,
   });
+
+export const useCmsPageBySlug = (slug: string) =>
+  useQuery({
+    queryKey: ["cms", "page", slug],
+    queryFn: async () => {
+      const trimmed = slug.trim()
+      if (!trimmed) return null
+      const raw = await sanityFetch<CmsPageContent>(pageBySlugQuery, { slug: trimmed })
+      return raw ?? null
+    },
+    staleTime: staleTimeMs,
+  })
 
 export const useAboutPage = () =>
   useQuery({
