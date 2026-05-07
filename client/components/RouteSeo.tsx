@@ -9,6 +9,7 @@ import {
   normalizePathname,
 } from "@/config/seo"
 import { useOptionalPageSeo } from "@/context/PageSeoContext"
+import { useSiteSettings } from "@/hooks/useCmsDocuments"
 
 interface RouteSeoProps {
   title?: string
@@ -24,6 +25,7 @@ const RouteSeo = ({
   noIndex: noIndexOverride,
 }: RouteSeoProps = {}) => {
   const { pathname } = useLocation()
+  const { data: siteSettingsData } = useSiteSettings()
   const normalizedPathname = normalizePathname(pathname)
   const base = getSiteUrl()
   const {
@@ -43,8 +45,10 @@ const RouteSeo = ({
     ? undefined
     : `${base}${normalizedPathname === "/" ? "" : normalizedPathname}`
   const ogUrl = `${base}${normalizedPathname === "/" ? "" : normalizedPathname}`
+  const cmsDefaultOg = siteSettingsData?.defaultSeo?.ogImageUrl?.trim()
   const imageUrl =
     ogImage ||
+    cmsDefaultOg ||
     (normalizedPathname === "/stories" ? getStoriesOgImageUrl() : getDefaultOgImageUrl())
   const imageAlt = getDefaultOgImageAlt()
 

@@ -11,6 +11,7 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { AnimatePresence, motion } from "framer-motion"
 import { BookOpen, ChevronLeft, ChevronRight } from "lucide-react"
 import FilteredListEmptyState from "@/components/FilteredListEmptyState"
+import { useStories } from "@/hooks/useCmsDocuments"
 
 const tags: Array<StoryTag | "All"> = ["All", "Founder Story", "Industry Insight", "Program Update"]
 
@@ -86,13 +87,30 @@ const StoryGridCard = ({
 }
 
 export default function Stories() {
+  const { data: cmsStories } = useStories()
   const [activeTag, setActiveTag] = useState<(typeof tags)[number]>("All")
   const [page, setPage] = useState(1)
 
+  const stories = useMemo(() => {
+    const normalized = (cmsStories ?? [])
+      .map((s) => ({
+        slug: s.slug,
+        title: s.title,
+        excerpt: s.excerpt ?? "",
+        coverImageSrc: s.coverImageSrc ?? "",
+        coverImageAlt: (s.coverImageAlt ?? "Story cover").trim() || "Story cover",
+        tag: (s.tag ?? "Story").trim() || "Story",
+        publishedAt: typeof s.publishedAt === "string" ? s.publishedAt : "",
+      }))
+      .filter((s) => s.slug && s.title && s.coverImageSrc)
+
+    return normalized.length > 0 ? normalized : STORIES
+  }, [cmsStories])
+
   const filtered = useMemo(() => {
-    if (activeTag === "All") return STORIES
-    return STORIES.filter((s) => s.tag === activeTag)
-  }, [activeTag])
+    if (activeTag === "All") return stories
+    return stories.filter((s) => s.tag === activeTag)
+  }, [activeTag, stories])
 
   useEffect(() => {
     setPage(1)

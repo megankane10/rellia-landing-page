@@ -6,6 +6,13 @@ export const story = defineType({
   type: 'document',
   fields: [
     defineField({
+      name: 'featured',
+      title: 'Featured',
+      type: 'boolean',
+      initialValue: false,
+      description: 'When enabled, this story can appear in the Featured Stories carousel.',
+    }),
+    defineField({
       name: 'title',
       type: 'string',
       validation: (Rule) => Rule.required(),

@@ -10,6 +10,9 @@ import { getDefaultOgImageUrl, getSiteUrl } from "@/config/seo"
 import { ChevronLeft } from "lucide-react"
 import { RichTextImageCarousel } from "@/components/RichTextImageCarousel"
 import { AnimatePresence, motion } from "framer-motion"
+import { PortableRichText } from "@/components/PortableRichText"
+import { useStoryBySlug } from "@/hooks/useCmsDocuments"
+import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo"
 import {
   ShareIconCopy,
   ShareIconFacebook,
@@ -21,20 +24,44 @@ import {
 
 export default function StoryPost() {
   const { slug } = useParams()
+  const { data: cmsStory } = useStoryBySlug(slug ?? "")
   const story = slug ? getStoryBySlug(slug) : undefined
   const [copyState, setCopyState] = useState<"idle" | "copied">("idle")
 
   const base = getSiteUrl()
-  const canonical = story ? `${base}/stories/${story.slug}` : `${base}/stories`
-  const title = story?.seoTitle ?? (story ? `${story.title} — Rellia Health` : "Stories — Rellia Health")
-  const description = story?.seoDescription ?? story?.excerpt ?? "Stories and insights from Rellia Health."
+  const canonical = cmsStory?.slug
+    ? `${base}/stories/${cmsStory.slug}`
+    : story
+      ? `${base}/stories/${story.slug}`
+      : `${base}/stories`
+
+  const title =
+    cmsStory?.seo?.metaTitle?.trim() ||
+    cmsStory?.seo?.ogTitle?.trim() ||
+    (cmsStory?.title ? `${cmsStory.title} — Rellia Health` : undefined) ||
+    story?.seoTitle ||
+    (story ? `${story.title} — Rellia Health` : "Stories — Rellia Health")
+
+  const description =
+    cmsStory?.seo?.metaDescription?.trim() ||
+    cmsStory?.seo?.ogDescription?.trim() ||
+    cmsStory?.excerpt?.trim() ||
+    story?.seoDescription ||
+    story?.excerpt ||
+    "Stories and insights from Rellia Health."
+
+  useApplyCmsSeo(cmsStory?.seo)
   const toAbsoluteImageUrl = (src: string): string => {
     if (/^https?:\/\//i.test(src)) return src
     if (!src.startsWith("/")) return `${base}/${src}`
     return `${base}${src}`
   }
 
-  const imageUrl = story ? toAbsoluteImageUrl(story.coverImageSrc) : `${base}/stories-ogimage.png`
+  const imageUrl = cmsStory?.coverImageSrc
+    ? toAbsoluteImageUrl(cmsStory.coverImageSrc)
+    : story
+      ? toAbsoluteImageUrl(story.coverImageSrc)
+      : `${base}/stories-ogimage.png`
 
   const handleCopyLink = async () => {
     try {
@@ -46,7 +73,7 @@ export default function StoryPost() {
     }
   }
 
-  if (!story) {
+  if (!cmsStory && !story) {
     return (
       <div className="min-h-screen bg-white font-host-grotesk overflow-x-hidden">
         <Navbar />
@@ -67,6 +94,106 @@ export default function StoryPost() {
               </Link>
             </div>
           </div>
+        </main>
+        <Footer />
+      </div>
+    )
+  }
+
+  if (cmsStory) {
+    return (
+      <div className="min-h-screen bg-white font-host-grotesk overflow-x-hidden">
+        <Helmet htmlAttributes={{ lang: "en" }}>
+          <title>{title}</title>
+          <meta name="description" content={description} />
+          <link rel="canonical" href={canonical} />
+          <meta name="robots" content="index, follow" />
+
+          <meta property="og:type" content="article" />
+          <meta property="og:locale" content="en_US" />
+          <meta property="og:site_name" content="Rellia Health" />
+          <meta property="og:url" content={canonical} />
+          <meta property="og:title" content={title} />
+          <meta property="og:description" content={description} />
+          <meta property="og:image" content={imageUrl} />
+
+          <meta name="twitter:card" content="summary_large_image" />
+          <meta name="twitter:title" content={title} />
+          <meta name="twitter:description" content={description} />
+          <meta name="twitter:image" content={imageUrl} />
+        </Helmet>
+
+        <Navbar />
+
+        <main id="main-content">
+          <section className="relative pt-24 pb-12 md:pt-32 md:pb-16 bg-rellia-cream overflow-hidden">
+            <div aria-hidden className="absolute inset-0 pointer-events-none">
+              {cmsStory.coverImageSrc ? (
+                <img
+                  src={toAbsoluteImageUrl(cmsStory.coverImageSrc)}
+                  alt=""
+                  className="absolute inset-0 h-full w-full object-cover opacity-[0.62]"
+                />
+              ) : null}
+              <div className="absolute inset-0 bg-gradient-to-r from-rellia-cream/90 via-rellia-cream/55 to-transparent" />
+              <div className="absolute -left-28 -top-32 h-[520px] w-[520px] rounded-full bg-rellia-mint/20 blur-3xl" />
+              <div className="absolute -right-40 top-1/3 h-[560px] w-[560px] -translate-y-1/2 rounded-full bg-rellia-teal/10 blur-3xl" />
+              <div className="absolute left-1/3 bottom-[-220px] h-[620px] w-[620px] -translate-x-1/2 rounded-full bg-rellia-mint/15 blur-3xl" />
+              <div className="absolute inset-0 opacity-[0.18] mix-blend-multiply [background-image:radial-gradient(circle_at_20%_10%,rgba(13,53,64,0.10),transparent_55%),radial-gradient(circle_at_80%_35%,rgba(13,53,64,0.08),transparent_52%),radial-gradient(circle_at_40%_95%,rgba(13,53,64,0.09),transparent_55%)]" />
+            </div>
+
+            <div className="relative z-10 max-w-[1300px] mx-auto px-6 md:px-10">
+              <div className="mx-auto w-full max-w-[1100px]">
+                <div className="flex flex-col">
+                  <ScrollReveal>
+                    <div className="inline-flex items-center gap-2 rounded-full bg-rellia-mint px-3 py-1.5">
+                      <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-rellia-teal" aria-hidden />
+                      <span className="font-host-grotesk text-[11px] font-semibold uppercase tracking-[0.14em] text-rellia-teal">
+                        {(cmsStory.tag ?? "Story").trim() || "Story"}
+                      </span>
+                    </div>
+
+                    <h1 className="mt-6 text-rellia-teal text-3xl md:text-4xl lg:text-5xl font-medium leading-tight tracking-tight">
+                      {cmsStory.title}
+                    </h1>
+                    {cmsStory.excerpt ? (
+                      <p className="mt-4 text-black text-base md:text-lg max-w-3xl font-urbanist font-normal leading-relaxed">
+                        {cmsStory.excerpt}
+                      </p>
+                    ) : null}
+                  </ScrollReveal>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section className="px-6 md:px-10 py-10 md:py-14">
+            <div className="max-w-[900px] mx-auto">
+              <div className="mb-8">
+                <Link
+                  to="/stories"
+                  className="inline-flex items-center gap-2 font-host-grotesk text-sm font-semibold text-rellia-teal hover:underline hover:underline-offset-4"
+                  aria-label="Back to stories"
+                >
+                  <ChevronLeft className="h-4 w-4" aria-hidden />
+                  Back to stories
+                </Link>
+              </div>
+
+              <PortableRichText value={cmsStory.body} />
+
+              <div className="mt-12 border-t border-black/10 pt-8">
+                <Link
+                  to="/stories"
+                  className="inline-flex items-center gap-2 font-host-grotesk text-sm font-semibold text-rellia-teal hover:underline hover:underline-offset-4"
+                  aria-label="Back to stories"
+                >
+                  <ChevronLeft className="h-4 w-4" aria-hidden />
+                  Back to stories
+                </Link>
+              </div>
+            </div>
+          </section>
         </main>
         <Footer />
       </div>

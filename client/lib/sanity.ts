@@ -6,8 +6,15 @@ export const getSanityProjectId = (): string =>
 export const getSanityDataset = (): string =>
   import.meta.env.VITE_SANITY_DATASET || "";
 
+const isProductionHostname = (): boolean => {
+  if (typeof window === "undefined") return false
+  const host = window.location.hostname.toLowerCase()
+  return host === "relliahealth.com" || host === "www.relliahealth.com"
+}
+
 export const isSanityConfigured = (): boolean => {
   if (import.meta.env.VITE_DISABLE_CMS === "true") return false
+  if (isProductionHostname()) return false
   return Boolean(
     import.meta.env.VITE_SANITY_PROJECT_ID &&
       import.meta.env.VITE_SANITY_DATASET,

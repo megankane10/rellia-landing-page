@@ -426,34 +426,39 @@ const ProgramPageLayout = ({
                     },
                   ].map((t) => (
                     <CarouselItem key={t.name} className="pl-4 basis-full">
-                      <div className="relative flex flex-col overflow-hidden min-h-[340px] md:min-h-[400px]">
-                        {/* Quote Block - Full Width */}
-                        <div className="relative z-10 p-0 md:pb-6 flex flex-col justify-start pt-4 md:pt-8">
-                          <Quote
-                            className="h-8 w-8 text-rellia-teal mb-6"
-                            strokeWidth={2}
-                          />
-                          <p className="font-host-grotesk text-xl md:text-2xl lg:text-3xl font-medium leading-[1.25] tracking-tight text-rellia-teal max-w-5xl">
-                            &ldquo;{t.quote}&rdquo;
-                          </p>
-                        </div>
-
-                        {/* Identity Block - Underneath */}
-                        <div className="relative z-10 mt-8 flex items-center gap-4 md:gap-5">
-                          <div className="h-14 w-14 md:h-16 md:w-16 shrink-0 overflow-hidden rounded-xl border border-black/5 bg-rellia-teal/5">
-                            <img
-                              src={t.image}
-                              alt={t.name}
-                              className="h-full w-full object-cover"
+                      <div className="relative flex min-h-[340px] flex-col justify-center overflow-hidden md:min-h-[400px]">
+                        <div className="mx-auto flex w-full max-w-[980px] flex-col items-start">
+                          {/* Quote Block */}
+                          <div className="relative z-10 flex w-full flex-col items-start justify-center pt-4 md:pt-8">
+                            <Quote
+                              className="mb-6 h-8 w-8 text-rellia-teal"
+                              strokeWidth={2}
+                              aria-hidden
                             />
-                          </div>
-                          <div className="flex flex-col">
-                            <h4 className="font-host-grotesk font-medium text-lg md:text-xl text-black leading-tight">
-                              {t.name}
-                            </h4>
-                            <p className="font-urbanist text-sm md:text-base font-medium text-black/60 mt-0.5">
-                              {t.role} &bull; {t.company}
+                            <p className="w-full font-host-grotesk text-xl font-medium leading-[1.25] tracking-tight text-rellia-teal md:text-2xl lg:text-3xl">
+                              &ldquo;{t.quote}&rdquo;
                             </p>
+                          </div>
+
+                          {/* Identity Block */}
+                          <div className="relative z-10 mt-8 flex items-center gap-4 md:gap-5">
+                            <div className="h-14 w-14 shrink-0 overflow-hidden rounded-xl border border-black/5 bg-rellia-teal/5 md:h-16 md:w-16">
+                              <img
+                                src={t.image}
+                                alt={t.name}
+                                className="h-full w-full object-cover"
+                                loading="lazy"
+                                decoding="async"
+                              />
+                            </div>
+                            <div className="flex min-w-0 flex-col items-start">
+                              <h4 className="font-host-grotesk text-lg font-medium leading-tight text-black md:text-xl">
+                                {t.name}
+                              </h4>
+                              <p className="mt-0.5 font-urbanist text-sm font-medium text-black/60 md:text-base">
+                                {t.role} &bull; {t.company}
+                              </p>
+                            </div>
                           </div>
                         </div>
                       </div>

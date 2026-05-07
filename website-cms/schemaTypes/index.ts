@@ -23,6 +23,11 @@ import {storiesPage} from './documents/storiesPage'
 import {advisorFilter} from './documents/advisorFilter'
 import {founderLevel} from './documents/founderLevel'
 import {founderSpecialty} from './documents/founderSpecialty'
+import {networkFoundersPage} from './documents/networkFoundersPage'
+import {networkAdvisorsPage} from './documents/networkAdvisorsPage'
+import {networkInvestorsPage} from './documents/networkInvestorsPage'
+import {networkPartnersPage} from './documents/networkPartnersPage'
+import {consultingPage} from './documents/consultingPage'
 import {eventCard} from './objects/eventCard'
 import {bodyCtaBox} from './objects/bodyCtaBox'
 import {portableImageCarousel} from './objects/portableImageCarousel'
@@ -48,6 +53,11 @@ export const schemaTypes = [
   marketingPage,
   paymentPage,
   page,
+  networkFoundersPage,
+  networkAdvisorsPage,
+  networkInvestorsPage,
+  networkPartnersPage,
+  consultingPage,
   advisor,
   alumniCompany,
   diagnosticSubmission,

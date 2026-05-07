@@ -4,9 +4,11 @@ import {
   aboutPageQuery,
   contactPageQuery,
   faqPageQuery,
+  featuredStoriesQuery,
   globalSettingsQuery,
   homePageQuery,
   navigationQuery,
+  siteSettingsQuery,
   pageBySlugQuery,
   programPageBySlugQuery,
   marketingPageBySlugQuery,
@@ -14,6 +16,8 @@ import {
   paymentPageQuery,
   programsLandingQuery,
   programsQuery,
+  storiesQuery,
+  storyBySlugQuery,
   eventsQuery,
   eventBySlugQuery,
   advisorsQuery,
@@ -49,6 +53,9 @@ import type {
   PaymentPageContent,
   ProgramsLandingContent,
   QmsProgramContent,
+  SiteSettingsContent,
+  SanityPortableText,
+  SeoContent,
 } from "@shared/cms/types";
 
 // Keep Sanity-published changes feeling “instant” on Vercel.
@@ -78,6 +85,20 @@ export const useNavigation = () =>
     staleTime: staleTimeMs,
   })
 
+export const useSiteSettings = () =>
+  useQuery({
+    queryKey: ["cms", "siteSettings"],
+    queryFn: async () => {
+      const raw = await sanityFetch<Partial<SiteSettingsContent>>(siteSettingsQuery)
+      return {
+        siteName: typeof raw?.siteName === "string" ? raw.siteName : undefined,
+        logoUrl: typeof raw?.logoUrl === "string" ? raw.logoUrl : undefined,
+        defaultSeo: raw?.defaultSeo ?? undefined,
+      } satisfies SiteSettingsContent
+    },
+    staleTime: staleTimeMs,
+  })
+
 export const useHomePage = () =>
   useQuery({
     queryKey: ["cms", "homePage"],
@@ -87,6 +108,55 @@ export const useHomePage = () =>
     },
     staleTime: staleTimeMs,
   });
+
+export type CmsStoryListItem = {
+  slug: string
+  title: string
+  excerpt?: string
+  coverImageSrc?: string
+  coverImageAlt?: string
+  tag?: string
+  publishedAt?: string
+  featured?: boolean
+}
+
+export type CmsStory = CmsStoryListItem & {
+  body?: SanityPortableText | null
+  seo?: SeoContent
+}
+
+export const useFeaturedStories = () =>
+  useQuery({
+    queryKey: ["cms", "featuredStories"],
+    queryFn: async () => {
+      const raw = await sanityFetch<CmsStory[]>(featuredStoriesQuery)
+      return Array.isArray(raw) ? raw : []
+    },
+    staleTime: staleTimeMs,
+  })
+
+export const useStories = () =>
+  useQuery({
+    queryKey: ["cms", "stories"],
+    queryFn: async () => {
+      const raw = await sanityFetch<CmsStoryListItem[]>(storiesQuery)
+      return Array.isArray(raw) ? raw : []
+    },
+    staleTime: staleTimeMs,
+  })
+
+export const useStoryBySlug = (slug: string) =>
+  useQuery({
+    queryKey: ["cms", "story", slug],
+    queryFn: async () => {
+      const trimmed = slug.trim()
+      if (!trimmed) return null
+      const raw = await sanityFetch<CmsStory>(storyBySlugQuery, { slug: trimmed })
+      return raw ?? null
+    },
+    enabled: Boolean(slug.trim()),
+    staleTime: staleTimeMs,
+  })
 
 export const useCmsPageBySlug = (slug: string) =>
   useQuery({

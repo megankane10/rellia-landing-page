@@ -59,6 +59,8 @@ export type RelliaCtaProps = {
   className?: string
   /** Optional icon to display above the title */
   icon?: ReactNode
+  /** Override the outer section rounding (defaults to rounded top corners). */
+  roundedClassName?: string
 }
 
 function CtaActionButton({
@@ -144,6 +146,7 @@ export default function RelliaCta({
   primaryStyle = "button",
   className,
   icon,
+  roundedClassName = "rounded-t-[28px] md:rounded-t-[36px]",
 }: RelliaCtaProps) {
   useEffect(() => {
     const root = document.documentElement
@@ -156,7 +159,8 @@ export default function RelliaCta({
   return (
     <section
       className={cn(
-        "relative mt-6 flex w-full flex-col justify-center overflow-hidden rounded-t-[28px] md:rounded-t-[36px] bg-rellia-greyTeal px-[30px] pt-[7.5rem] pb-[9rem] md:mt-8 md:pt-[10.5rem] md:pb-48 lg:mt-10 lg:pt-[13.5rem] lg:pb-[15rem]",
+        "relative mt-6 flex w-full flex-col justify-center overflow-hidden bg-rellia-greyTeal px-[30px] pt-[7.5rem] pb-[9rem] md:mt-8 md:pt-[10.5rem] md:pb-48 lg:mt-10 lg:pt-[13.5rem] lg:pb-[15rem]",
+        roundedClassName,
         className,
       )}
     >

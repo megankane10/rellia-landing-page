@@ -8,6 +8,7 @@ import { AnimatePresence, motion } from "framer-motion"
 import { useEffect, useMemo, useState } from "react"
 import SectionHeading from "@/components/SectionHeading"
 import PillTag from "@/components/PillTag"
+import { useFeaturedStories } from "@/hooks/useCmsDocuments"
 
 /** Auto-advance interval (progress bar uses same duration) */
 const ROTATE_MS = 6500
@@ -34,7 +35,21 @@ export default function FeaturedStories({
   viewAllTo?: string
   sectionClassName?: string
 }) {
-  const featured = getFeaturedStories()
+  const { data: cmsFeatured } = useFeaturedStories()
+  const featured = useMemo(() => {
+    const normalized = (cmsFeatured ?? [])
+      .map((s) => ({
+        slug: s.slug,
+        title: s.title,
+        excerpt: s.excerpt ?? "",
+        tag: (s.tag ?? "Story").trim() || "Story",
+        coverImageSrc: s.coverImageSrc ?? "",
+        coverImageAlt: (s.coverImageAlt ?? "Featured story cover").trim() || "Featured story cover",
+      }))
+      .filter((s) => s.slug && s.title && s.coverImageSrc)
+
+    return normalized.length > 0 ? normalized : getFeaturedStories()
+  }, [cmsFeatured])
   const [activeIndex, setActiveIndex] = useState(0)
   const [cycleKey, setCycleKey] = useState(0)
 
@@ -53,11 +68,11 @@ export default function FeaturedStories({
   const handleNext = () => handleSetIndex(activeIndex + 1)
 
   useEffect(() => {
-    getFeaturedStories().forEach((story) => {
+    featured.forEach((story) => {
       const img = new Image()
       img.src = story.coverImageSrc
     })
-  }, [])
+  }, [featured])
 
   useEffect(() => {
     if (!canRotate) return

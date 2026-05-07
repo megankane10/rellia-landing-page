@@ -992,6 +992,27 @@ function scoreBarClass(s: number): string {
   return "bg-red-600";
 }
 
+const validateMemberInfo = (info: MemberInfo): Record<string, string> => {
+  const next: Record<string, string> = {}
+
+  if (!info.name.trim()) next.name = "Name is required"
+  if (!info.company.trim()) next.company = "Company name is required"
+
+  const email = info.email.trim()
+  if (!email) {
+    next.email = "Email is required"
+  } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    next.email = "Enter a valid email address"
+  }
+
+  if (!info.desc.trim()) next.desc = "Description is required"
+
+  return next
+}
+
+const isMemberInfoValid = (info: MemberInfo): boolean =>
+  Object.keys(validateMemberInfo(info)).length === 0
+
 const TYPE_LABELS: Record<string, string> = {
   confidence: "Confidence check",
   progress: "Progress check",
@@ -1065,22 +1086,21 @@ export default function DiagnosticSurvey() {
     secAnswers[currentQIdx] !== undefined ? secAnswers[currentQIdx] : -1;
 
   const goToSection = (i: number) => {
+    if (!isMemberInfoValid(memberInfo)) {
+      setErrors(validateMemberInfo(memberInfo))
+      setView("intro")
+      return
+    }
     setCurrentSection(i);
     setCurrentQIdx(0);
     setView("survey");
   };
   const goToIntro = () => setView("intro");
   const startSurvey = () => {
-    const newErrors: Record<string, string> = {};
-    if (!memberInfo.name.trim()) newErrors.name = "Name is required";
-    if (!memberInfo.email.trim()) newErrors.email = "Email is required";
-    if (!memberInfo.company.trim())
-      newErrors.company = "Company name is required";
-    if (!memberInfo.desc.trim()) newErrors.desc = "Description is required";
-
+    const newErrors = validateMemberInfo(memberInfo)
     if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
-      return;
+      setErrors(newErrors)
+      return
     }
 
     setErrors({});
@@ -1524,6 +1544,7 @@ export default function DiagnosticSurvey() {
                               name: e.target.value,
                             }))
                           }
+                        autoComplete="name"
                         />
                         {errors.name && (
                           <p className="text-[10px] text-red-500 font-bold">
@@ -1551,6 +1572,7 @@ export default function DiagnosticSurvey() {
                                 company: e.target.value,
                               }))
                             }
+                            autoComplete="organization"
                           />
                           {errors.company && (
                             <p className="text-[10px] text-red-500 font-bold">
@@ -1600,6 +1622,8 @@ export default function DiagnosticSurvey() {
                               email: e.target.value,
                             }))
                           }
+                          inputMode="email"
+                          autoComplete="email"
                         />
                         {errors.email && (
                           <p className="text-[10px] text-red-500 font-bold">
@@ -1626,6 +1650,7 @@ export default function DiagnosticSurvey() {
                               desc: e.target.value,
                             }))
                           }
+                          maxLength={1200}
                         />
                         {errors.desc && (
                           <p className="text-[10px] text-red-500 font-bold">
@@ -1809,15 +1834,13 @@ export default function DiagnosticSurvey() {
               <div className="animate-ds-up flex flex-col gap-10">
                 <div className="space-y-4">
                   <div className="text-[10px] font-bold uppercase tracking-widest text-rellia-teal/40">
-                    Assessment Complete
+                    Confirm submission
                   </div>
                   <h2 className="font-host-grotesk text-3xl font-bold text-rellia-teal md:text-5xl">
-                    Generate your roadmap
+                    Review, then generate your roadmap
                   </h2>
                   <p className="max-w-xl text-rellia-teal/60">
-                    We've captured your assessment across all 13 domains. Now,
-                    our AI will analyze your results to identify your priority
-                    gaps and match you with the right advisors.
+                    You’re about to submit your responses. After confirmation, we’ll generate your report and save your submission in the Rellia CMS.
                   </p>
                 </div>
 
@@ -1876,14 +1899,45 @@ export default function DiagnosticSurvey() {
                         ))}
                       </div>
                     </div>
+                    <div className="rounded-[24px] border border-rellia-teal/10 bg-white p-6">
+                      <h4 className="text-xs font-bold uppercase tracking-widest text-rellia-teal/40">
+                        Submission details
+                      </h4>
+                      <div className="mt-4 space-y-2 text-sm text-rellia-teal/70">
+                        <p>
+                          <span className="font-bold text-rellia-teal">Name:</span> {memberInfo.name}
+                        </p>
+                        <p>
+                          <span className="font-bold text-rellia-teal">Email:</span> {memberInfo.email}
+                        </p>
+                        <p>
+                          <span className="font-bold text-rellia-teal">Company:</span> {memberInfo.company}
+                        </p>
+                        <p>
+                          <span className="font-bold text-rellia-teal">Stage:</span> {memberInfo.stage}
+                        </p>
+                      </div>
+                    </div>
+
                     <RelliaAction
                       asChild
                       variant="mintTealFill"
                       size="comfortable"
                       className="w-full justify-center shadow-xl transition-all hover:scale-[1.02] active:scale-95 py-7 text-xl"
                     >
-                      <button onClick={submitSurvey}>
-                        Generate My Report
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const nextErrors = validateMemberInfo(memberInfo)
+                          if (Object.keys(nextErrors).length > 0) {
+                            setErrors(nextErrors)
+                            setView("intro")
+                            return
+                          }
+                          submitSurvey()
+                        }}
+                      >
+                        Confirm & Generate Report
                         <ArrowRight className="ml-2 h-5 w-5" />
                       </button>
                     </RelliaAction>

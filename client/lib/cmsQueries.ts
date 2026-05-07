@@ -55,6 +55,58 @@ export const navigationQuery = `*[_type == "navigation"][0]{
   }
 }`
 
+export const siteSettingsQuery = `*[_type == "siteSettings"][0]{
+  siteName,
+  "logoUrl": logo.asset->url,
+  defaultSeo{
+    metaTitle,
+    metaDescription,
+    ogTitle,
+    ogDescription,
+    "ogImageUrl": ogImage.asset->url,
+    noIndex,
+    noFollow
+  }
+}`
+
+export const featuredStoriesQuery = `*[_type == "story" && featured == true && !(_id in path("drafts.**"))]
+| order(publishedAt desc, _updatedAt desc)[0...6]{
+  title,
+  "slug": slug.current,
+  excerpt,
+  "coverImageSrc": headerImage.asset->url,
+  "coverImageAlt": headerImageAlt,
+  "tag": filters[0]->title,
+  publishedAt,
+  ${seoFragment},
+  body
+}`
+
+export const storiesQuery = `*[_type == "story" && !(_id in path("drafts.**"))]
+| order(publishedAt desc, _updatedAt desc){
+  title,
+  "slug": slug.current,
+  excerpt,
+  "coverImageSrc": headerImage.asset->url,
+  "coverImageAlt": headerImageAlt,
+  "tag": filters[0]->title,
+  publishedAt,
+  featured
+}`
+
+export const storyBySlugQuery = `*[_type == "story" && slug.current == $slug && !(_id in path("drafts.**"))][0]{
+  title,
+  "slug": slug.current,
+  excerpt,
+  "coverImageSrc": headerImage.asset->url,
+  "coverImageAlt": headerImageAlt,
+  "tag": filters[0]->title,
+  publishedAt,
+  featured,
+  body,
+  ${seoFragment}
+}`
+
 export const pageBySlugQuery = `*[_type == "page" && slug.current == $slug][0]{
   title,
   "slug": slug.current,

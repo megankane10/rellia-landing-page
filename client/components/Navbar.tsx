@@ -3,7 +3,7 @@ import { Link, useLocation } from "react-router-dom"
 import { cn } from "@/lib/utils"
 import { ChevronDown } from "lucide-react"
 import { DEFAULT_GLOBAL_SETTINGS, DEFAULT_HOME_PAGE } from "@shared/cms/defaults"
-import { useGlobalSettings, useHomePage, useNavigation } from "@/hooks/useCmsDocuments"
+import { useGlobalSettings, useHomePage, useNavigation, useSiteSettings } from "@/hooks/useCmsDocuments"
 import { CareersHiringBadge } from "@/components/CareersHiringBadge"
 import { InstagramFilled, LinkedInFilled, MailFilled } from "@/components/icons/SocialIcons"
 import type { NavItem } from "@shared/cms/types"
@@ -226,6 +226,7 @@ export default function Navbar({ ctaRadiusClassName = "rounded-full" }: NavbarPr
   const { data: navigationData } = useNavigation()
   const { data: globalSettingsData } = useGlobalSettings()
   const { data: homePageData } = useHomePage()
+  const { data: siteSettingsData } = useSiteSettings()
   const homePage = homePageData ?? DEFAULT_HOME_PAGE
   const globalSettings = globalSettingsData ?? DEFAULT_GLOBAL_SETTINGS
   const [scrolled, setScrolled] = useState(false)
@@ -327,7 +328,11 @@ export default function Navbar({ ctaRadiusClassName = "rounded-full" }: NavbarPr
 
   const desktopTone: "light" | "dark" = useLightNavChrome ? "light" : "dark"
 
-  const logoSrc = useLightNavChrome ? LOGO_FILLED : LOGO_DEFAULT
+  const cmsLogoUrl = typeof siteSettingsData?.logoUrl === "string" && siteSettingsData.logoUrl.trim()
+    ? siteSettingsData.logoUrl.trim()
+    : null
+
+  const logoSrc = useLightNavChrome ? LOGO_FILLED : cmsLogoUrl || LOGO_DEFAULT
 
   const isExternalHref = useCallback((href: string) => /^(https?:\/\/|mailto:|tel:)/i.test(href), [])
 
@@ -391,7 +396,7 @@ export default function Navbar({ ctaRadiusClassName = "rounded-full" }: NavbarPr
     <nav
       aria-label="Main navigation"
       className={cn(
-        "fixed inset-x-0 top-0 z-[9999] transition-[background-color,backdrop-filter,border-color,box-shadow] duration-500 ease-out motion-reduce:transition-none",
+        "fixed inset-x-0 top-0 z-[9999] transform-gpu transition-[background-color,backdrop-filter,border-color,box-shadow] duration-500 ease-out motion-reduce:transition-none",
         mobileOpen && "border-b border-white/10 bg-rellia-teal shadow-[0_10px_30px_-24px_rgba(0,0,0,0.35)] backdrop-blur-2xl",
         !mobileOpen && scrolled && "bg-rellia-teal shadow-[0_10px_30px_-24px_rgba(0,0,0,0.35)] backdrop-blur-2xl",
         !mobileOpen &&

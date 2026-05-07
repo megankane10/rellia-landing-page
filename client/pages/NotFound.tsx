@@ -21,14 +21,15 @@ const NotFound = () => {
   return (
     <div className="flex min-h-screen flex-col bg-white font-host-grotesk overflow-x-hidden">
       <Navbar />
-      <main id="main-content" className="flex flex-1 flex-col pt-20 md:pt-28">
+      <main id="main-content" className="flex flex-1 flex-col pt-[72px] md:pt-[86px]">
         <RelliaCta
           icon={<Search className="h-20 w-20 text-rellia-teal" strokeWidth={1.25} />}
           title="**404**"
           body={`${copy.title}. ${copy.message}`}
           primary={ctaActionFromHref(copy.ctaLabel, "/")}
           secondary={ctaActionFromHref("Browse events", "/events")}
-          className="flex-1"
+          className="flex-1 mt-0"
+          roundedClassName="rounded-none"
         />
       </main>
       <Footer />

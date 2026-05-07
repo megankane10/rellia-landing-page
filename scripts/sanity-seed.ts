@@ -555,6 +555,46 @@ async function main() {
   })
   mutations.push({
     createOrReplace: {
+      _id: "networkFoundersPage",
+      _type: "networkFoundersPage",
+      title: "Founders",
+      seo: seoForRoute("/founders"),
+    },
+  })
+  mutations.push({
+    createOrReplace: {
+      _id: "networkAdvisorsPage",
+      _type: "networkAdvisorsPage",
+      title: "Advisors",
+      seo: seoForRoute("/advisors"),
+    },
+  })
+  mutations.push({
+    createOrReplace: {
+      _id: "networkInvestorsPage",
+      _type: "networkInvestorsPage",
+      title: "Investors",
+      seo: seoForRoute("/investors"),
+    },
+  })
+  mutations.push({
+    createOrReplace: {
+      _id: "networkPartnersPage",
+      _type: "networkPartnersPage",
+      title: "Industry Partners",
+      seo: seoForRoute("/industry-partners"),
+    },
+  })
+  mutations.push({
+    createOrReplace: {
+      _id: "consultingPage",
+      _type: "consultingPage",
+      title: "Consulting",
+      seo: seoForRoute("/consulting"),
+    },
+  })
+  mutations.push({
+    createOrReplace: {
       _id: "homePage",
       _type: "homePage",
       ...DEFAULT_HOME_PAGE,

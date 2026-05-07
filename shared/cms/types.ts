@@ -162,6 +162,12 @@ export type GlobalSettingsContent = {
   copyrightLine: string
 }
 
+export type SiteSettingsContent = {
+  siteName?: string
+  logoUrl?: string
+  defaultSeo?: SeoContent
+}
+
 export type AboutValue = {
   iconKey: string
   title: string
