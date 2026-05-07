@@ -1,7 +1,6 @@
-import { useRef } from "react"
+import { useMemo, useRef } from "react"
 import { Link } from "react-router-dom"
 import { motion, useInView, useReducedMotion } from "framer-motion"
-import { Users } from "lucide-react"
 import { cn } from "@/lib/utils"
 import {
   NETWORK_PATH_ROLE_TAG,
@@ -9,6 +8,8 @@ import {
 } from "@/lib/networkPathRoles"
 import RelliaAction from "@/components/RelliaAction"
 import ScrollReveal from "@/components/ScrollReveal"
+import { useHomePage } from "@/hooks/useCmsDocuments"
+import type { HomePathsCard } from "@shared/cms/types"
 
 /** Layered soft blurs using brand colors */
 const BrandBlurField = () => (
@@ -27,6 +28,17 @@ const CTA_PHRASE: Record<NetworkPathRoleId, string> = {
   advisor: "I'm an advisor",
   investor: "I'm an investor",
   partner: "I'm a partner",
+}
+
+type ResolvedCard = {
+  roleId: NetworkPathRoleId
+  tagLabel: string
+  title: string
+  subtitle: string
+  imageSrc: string
+  imageAlt: string
+  ctaLabel: string
+  ctaTo: string
 }
 
 const ROLE_META: Record<
@@ -69,10 +81,38 @@ const ROLE_META: Record<
   },
 }
 
+const isValidRoleId = (id: unknown): id is NetworkPathRoleId =>
+  typeof id === "string" && (ROLE_IDS as string[]).includes(id)
+
+const resolveCard = (id: NetworkPathRoleId, cms?: HomePathsCard): ResolvedCard => {
+  const meta = ROLE_META[id]
+  const tag = NETWORK_PATH_ROLE_TAG[id]
+  return {
+    roleId: id,
+    tagLabel: cms?.tagLabel?.trim() || tag.label,
+    title: cms?.title?.trim() || meta.title,
+    subtitle: cms?.subtitle?.trim() || meta.subtitle,
+    imageSrc: cms?.imageSrc?.trim() || meta.imageSrc,
+    imageAlt: cms?.imageAlt?.trim() || meta.imageAlt,
+    ctaLabel: cms?.ctaLabel?.trim() || CTA_PHRASE[id],
+    ctaTo: cms?.ctaTo?.trim() || meta.ctaTo,
+  }
+}
+
 export default function PathsSection() {
   const sectionRef = useRef<HTMLElement | null>(null)
   const isInView = useInView(sectionRef, { once: true, margin: "-12% 0px -28% 0px" })
   const reduceMotion = useReducedMotion()
+  const { data: home } = useHomePage()
+  const cmsCards = home?.pathsCards
+  const resolvedCards = useMemo<ResolvedCard[]>(() => {
+    if (!Array.isArray(cmsCards) || cmsCards.length === 0) {
+      return ROLE_IDS.map((id) => resolveCard(id))
+    }
+    return cmsCards
+      .filter((c): c is HomePathsCard => Boolean(c) && isValidRoleId(c?.roleId))
+      .map((c) => resolveCard(c.roleId, c))
+  }, [cmsCards])
 
   const headerHidden = reduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 36 }
   const headerVisible = { opacity: 1, y: 0 }
@@ -145,30 +185,30 @@ export default function PathsSection() {
             animate={isInView ? "visible" : "hidden"}
             className="relative z-10 flex flex-wrap justify-center gap-x-[0.22em] gap-y-2 text-balance font-host-grotesk text-3xl font-semibold leading-tight tracking-tight text-black md:text-[44px] md:leading-[1.15]"
           >
-            {["Find", "your", "place", "in", "the", "community"].flatMap((word, idx) => {
-              const isAccent = word === "your" || word === "place"
-              const nodes = [
-                <motion.span
-                  key={`${idx}-${word}`}
-                  variants={headingWordVariants}
-                  className={cn("inline-block will-change-[transform,filter]", isAccent && "text-rellia-teal")}
-                >
-                  {word}
-                </motion.span>,
-              ]
-
-              if (word === "place") {
-                nodes.push(
-                  <span
-                    key={`${idx}-${word}-line`}
-                    aria-hidden
-                    className="h-0 w-full shrink-0 basis-full overflow-hidden"
-                  />,
-                )
-              }
-
-              return nodes
-            })}
+            {(home?.pathsTitle?.trim() || "Find your place in the community")
+              .split(" ")
+              .flatMap((word, idx, arr) => {
+                const isAccent = word.toLowerCase() === "your" || word.toLowerCase() === "place"
+                const nodes = [
+                  <motion.span
+                    key={`${idx}-${word}`}
+                    variants={headingWordVariants}
+                    className={cn("inline-block will-change-[transform,filter]", isAccent && "text-rellia-teal")}
+                  >
+                    {word}
+                  </motion.span>,
+                ]
+                if (word.toLowerCase() === "place" || (idx === Math.ceil(arr.length / 2) - 1 && arr.length > 4)) {
+                  nodes.push(
+                    <span
+                      key={`${idx}-${word}-line`}
+                      aria-hidden
+                      className="h-0 w-full shrink-0 basis-full overflow-hidden"
+                    />,
+                  )
+                }
+                return nodes
+              })}
           </motion.h2>
         </motion.div>
 
@@ -181,13 +221,10 @@ export default function PathsSection() {
           <div
             className="mx-auto grid w-full max-w-[1240px] grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-4 lg:gap-4 xl:gap-5"
           >
-            {ROLE_IDS.map((id, idx) => {
-              const card = ROLE_META[id]
-              const tag = NETWORK_PATH_ROLE_TAG[id]
-              const Icon = tag.icon
-              const ctaText = CTA_PHRASE[id]
+            {resolvedCards.map((card, idx) => {
+              const Icon = NETWORK_PATH_ROLE_TAG[card.roleId].icon
               return (
-                <ScrollReveal key={id} variant="ctaReveal" delay={idx * 0.15}>
+                <ScrollReveal key={card.roleId} variant="ctaReveal" delay={idx * 0.15}>
                   <article
                     className={cn(
                       "group relative overflow-hidden rounded-[26px] bg-white shadow-sm md:rounded-[28px]",
@@ -208,7 +245,7 @@ export default function PathsSection() {
                     />
                     <div className="absolute right-3 top-3 inline-flex items-center gap-2 rounded-full bg-black/40 px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-white/95 ring-1 ring-white/15 sm:right-4 sm:top-4">
                       <Icon className="h-3.5 w-3.5 shrink-0" aria-hidden />
-                      {tag.label}
+                      {card.tagLabel}
                     </div>
 
                     <div className="absolute inset-x-0 bottom-0 p-5 md:p-6">
@@ -228,9 +265,9 @@ export default function PathsSection() {
                         <Link
                           to={card.ctaTo}
                           className="inline-flex cursor-pointer items-center justify-center"
-                          aria-label={ctaText}
+                          aria-label={card.ctaLabel}
                         >
-                          {ctaText}
+                          {card.ctaLabel}
                         </Link>
                       </RelliaAction>
                     </div>

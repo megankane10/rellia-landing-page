@@ -38,6 +38,7 @@ import { EventDetailPortableText } from "@/components/EventDetailPortableText"
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet"
 import type { SanityPortableText } from "@shared/cms/types"
 import { useEventBySlug } from "@/hooks/useCmsDocuments"
+import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo"
 
 const eventDetailBackToEventsLinkClassName =
   "inline-flex items-center gap-2 font-host-grotesk text-sm font-semibold text-rellia-teal hover:underline hover:underline-offset-4"
@@ -124,6 +125,7 @@ export default function EventDetail() {
   const { slug } = useParams()
   const resolvedSlug = slug?.trim() ? decodeURIComponent(slug) : ""
   const { data: cmsEvent } = useEventBySlug(resolvedSlug)
+  useApplyCmsSeo((cmsEvent as { seo?: import("@shared/cms/types").SeoContent } | null | undefined)?.seo)
   const fallbackMatch = resolvedSlug ? findProgramsEventBySlug(resolvedSlug, DEFAULT_PROGRAMS_LANDING) : null
   const match = cmsEvent
     ? { _variant: getEventStatus(cmsEvent) === "past" ? "past" : "upcoming", ...cmsEvent }

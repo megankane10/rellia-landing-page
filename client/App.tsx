@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { BrowserRouter } from "react-router-dom"
 import { HelmetProvider } from "react-helmet-async"
 import { AppRoutes, RouterShell } from "./AppRoutes"
+import { PageSeoProvider } from "@/context/PageSeoContext"
 
 const queryClient = new QueryClient()
 
@@ -15,9 +16,11 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter>
-          <RouterShell>
-            <AppRoutes />
-          </RouterShell>
+          <PageSeoProvider>
+            <RouterShell>
+              <AppRoutes />
+            </RouterShell>
+          </PageSeoProvider>
         </BrowserRouter>
       </TooltipProvider>
     </QueryClientProvider>

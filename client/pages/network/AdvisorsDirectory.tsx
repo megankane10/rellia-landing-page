@@ -11,7 +11,7 @@ import {
 } from "framer-motion";
 import { Search, UserSearch, ChevronDown } from "lucide-react";
 import FilteredListEmptyState from "@/components/FilteredListEmptyState";
-import { useAdvisors } from "@/hooks/useCmsDocuments";
+import { useAdvisors, useAdvisorFilters } from "@/hooks/useCmsDocuments";
 import {
   ADVISOR_DIRECTORY_SEED,
   ADVISOR_FILTER_OPTIONS,
@@ -95,16 +95,22 @@ function AdvisorCard({
 export default function AdvisorsDirectory() {
   const reduceMotion = useReducedMotion();
   const { data: cmsAdvisors } = useAdvisors();
+  const { data: cmsFilters } = useAdvisorFilters();
   const [query, setQuery] = useState("");
-  const [filter, setFilter] = useState<
-    "all" | (typeof ADVISOR_FILTER_OPTIONS)[number]["id"]
-  >("all");
+  const [filter, setFilter] = useState<string>("all");
 
   const advisors = useMemo<AdvisorDirectoryEntry[]>(() => {
     if (Array.isArray(cmsAdvisors) && cmsAdvisors.length > 0)
       return cmsAdvisors as AdvisorDirectoryEntry[];
     return ADVISOR_DIRECTORY_SEED;
   }, [cmsAdvisors]);
+
+  const filterOptions = useMemo<Array<{ id: string; label: string }>>(() => {
+    if (Array.isArray(cmsFilters) && cmsFilters.length > 0) {
+      return [{ id: "all", label: "All" }, ...cmsFilters.map((f) => ({ id: f.label, label: f.label }))]
+    }
+    return ADVISOR_FILTER_OPTIONS as Array<{ id: string; label: string }>
+  }, [cmsFilters])
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -208,10 +214,10 @@ export default function AdvisorsDirectory() {
                 <div className="relative">
                   <select
                     value={filter}
-                    onChange={(e) => setFilter(e.target.value as any)}
+                    onChange={(e) => setFilter(e.target.value)}
                     className="h-14 w-full appearance-none rounded-2xl border border-black/10 bg-black/[0.02] pl-5 pr-14 min-w-[200px] font-urbanist text-base font-semibold text-black/80 outline-none hover:border-black/20 focus-visible:ring-2 focus-visible:ring-rellia-teal focus-visible:bg-white cursor-pointer"
                   >
-                    {ADVISOR_FILTER_OPTIONS.map((f) => (
+                    {filterOptions.map((f) => (
                       <option key={f.id} value={f.id}>
                         {f.label}
                       </option>

@@ -11,10 +11,12 @@ import RelliaCta from "@/components/RelliaCta";
 import Footer from "@/components/Footer";
 import { useHomePage } from "@/hooks/useCmsDocuments";
 import { DEFAULT_HOME_PAGE } from "@shared/cms/defaults";
+import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo";
 
 export default function Index() {
   const { data } = useHomePage();
   const home = data ?? DEFAULT_HOME_PAGE;
+  useApplyCmsSeo(home.seo);
 
   return (
     <div className="min-h-screen bg-white font-host-grotesk overflow-x-hidden">

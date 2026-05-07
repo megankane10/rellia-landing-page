@@ -267,7 +267,7 @@ export default function TestimonialsSection({ titleLead, titleAccent, testimonia
         </div>
       </div>
 
-      <section className="w-full overflow-x-hidden bg-white px-6 pb-10 pt-16 md:pb-12 md:pt-24">
+      <section className="w-full overflow-x-hidden bg-white pb-10 pt-16 md:pb-12 md:pt-24">
       <div className="relative w-full overflow-hidden">
         <div className="max-w-[1300px] mx-auto w-full min-w-0 px-6 md:px-10">
         <ScrollReveal className="mb-10 md:mb-14">
@@ -311,7 +311,7 @@ export default function TestimonialsSection({ titleLead, titleAccent, testimonia
             className="relative w-full max-w-full min-w-0"
           >
             <div className="relative flex flex-col gap-4 md:gap-5">
-              <div className="[mask-image:linear-gradient(to_right,black_85%,transparent_100%)]">
+              <div className="md:[mask-image:linear-gradient(to_right,black_85%,transparent_100%)]">
                 <CarouselContent className="-ml-2 items-stretch md:-ml-6">
                   {orderedTestimonials.map((t, idx) => (
                     <CarouselItem
@@ -348,7 +348,7 @@ export default function TestimonialsSection({ titleLead, titleAccent, testimonia
 
                 <div className="flex w-full flex-wrap items-center justify-between gap-3">
                   <Link
-                    to="/founders/directory"
+                    to="/founders/alumni"
                     className="inline-flex items-center gap-1 font-host-grotesk text-sm font-bold text-rellia-teal transition-colors hover:text-black hover:underline underline-offset-4"
                   >
                     View Alumni <ArrowRight className="h-4 w-4" />

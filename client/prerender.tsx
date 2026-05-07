@@ -7,6 +7,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import { normalizePathname, getSeoForPathname } from "@/config/seo"
 import { AppRoutes, RouterShell } from "./AppRoutes"
+import { PageSeoProvider } from "@/context/PageSeoContext"
 
 const prerenderQueryClient = new QueryClient({
   defaultOptions: {
@@ -28,9 +29,11 @@ export const prerender = async (data: { url: string }) => {
           <Toaster />
           <Sonner />
           <StaticRouter location={data.url}>
-            <RouterShell>
-              <AppRoutes />
-            </RouterShell>
+            <PageSeoProvider>
+              <RouterShell>
+                <AppRoutes />
+              </RouterShell>
+            </PageSeoProvider>
           </StaticRouter>
         </TooltipProvider>
       </QueryClientProvider>

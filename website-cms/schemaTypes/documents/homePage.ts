@@ -49,7 +49,19 @@ export const homePage = defineType({
     defineField({name: 'ctaTitle', type: 'string'}),
     defineField({name: 'ctaButtonLabel', type: 'string'}),
     defineField({name: 'ctaButtonPath', type: 'string'}),
-    defineField({name: 'ctaImageUrl', type: 'url'}),
+    defineField({
+      name: 'ctaImage',
+      title: 'CTA image',
+      type: 'image',
+      options: {hotspot: true},
+      description: 'Upload an image to enable cropping. Falls back to “CTA image URL” below.',
+    }),
+    defineField({
+      name: 'ctaImageUrl',
+      title: 'CTA image URL (legacy)',
+      type: 'url',
+      description: 'Optional fallback URL when no image is uploaded above.',
+    }),
     defineField({name: 'ctaImageAlt', type: 'string'}),
     defineField({
       name: 'testimonials',
@@ -70,5 +82,51 @@ export const homePage = defineType({
         }),
       ],
     }),
+    defineField({
+      name: 'pathsTitle',
+      type: 'string',
+      description: 'Headline for the "Find your place in the community" section.',
+    }),
+    defineField({
+      name: 'pathsCards',
+      title: 'Paths section cards',
+      type: 'array',
+      description:
+        'Cards shown in the network paths grid. Tag, title, image, and CTA are editable per card.',
+      of: [
+        defineField({
+          name: 'pathsCard',
+          type: 'object',
+          fields: [
+            defineField({
+              name: 'roleId',
+              type: 'string',
+              options: {
+                list: [
+                  {title: 'Founder', value: 'founder'},
+                  {title: 'Advisor', value: 'advisor'},
+                  {title: 'Investor', value: 'investor'},
+                  {title: 'Partner', value: 'partner'},
+                ],
+                layout: 'radio',
+              },
+              validation: (Rule) => Rule.required(),
+            }),
+            defineField({name: 'tagLabel', type: 'string', description: 'Tag pill (e.g. Founder)'}),
+            defineField({name: 'title', type: 'string'}),
+            defineField({name: 'subtitle', type: 'text', rows: 2}),
+            defineField({name: 'image', type: 'image', options: {hotspot: true}}),
+            defineField({name: 'imageSrc', type: 'string', description: 'Fallback image URL'}),
+            defineField({name: 'imageAlt', type: 'string'}),
+            defineField({name: 'ctaLabel', type: 'string'}),
+            defineField({name: 'ctaTo', type: 'string', description: 'Internal path, e.g. /founders'}),
+          ],
+          preview: {
+            select: {title: 'title', subtitle: 'roleId'},
+          },
+        }),
+      ],
+    }),
+    defineField({name: 'seo', type: 'seo'}),
   ],
 })

@@ -8,6 +8,7 @@ import { TeamMemberCard } from "@/components/cards/TeamMemberCard";
 import PageHeader, { PAGE_HEADER_TITLE_SIZE_CLASS } from "@/components/PageHeader"
 import PillTag from "@/components/PillTag"
 import { useAboutPage } from "@/hooks/useCmsDocuments";
+import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo";
 import { DEFAULT_ABOUT_PAGE } from "@shared/cms/defaults";
 import { relliaTealGlassCardClass } from "@/lib/relliaTealGlassCard";
 import { cn } from "@/lib/utils";
@@ -42,6 +43,7 @@ const accentLastWords = (text: string, wordCount = 3) => {
 export default function About() {
   const { data } = useAboutPage();
   const about = data ?? DEFAULT_ABOUT_PAGE;
+  useApplyCmsSeo(about.seo);
   const [openTeamBioName, setOpenTeamBioName] = useState<string | null>(null);
   const reduceMotion = useReducedMotion();
   const valuesSectionRef = useRef<HTMLElement | null>(null);

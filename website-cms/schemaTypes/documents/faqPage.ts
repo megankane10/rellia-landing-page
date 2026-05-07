@@ -31,5 +31,6 @@ export const faqPage = defineType({
     defineField({name: 'bottomBody', type: 'text', rows: 4}),
     defineField({name: 'bottomCtaLabel', type: 'string'}),
     defineField({name: 'bottomCtaPath', type: 'string'}),
+    defineField({name: 'seo', type: 'seo'}),
   ],
 })

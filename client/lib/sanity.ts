@@ -6,11 +6,13 @@ export const getSanityProjectId = (): string =>
 export const getSanityDataset = (): string =>
   import.meta.env.VITE_SANITY_DATASET || "";
 
-export const isSanityConfigured = (): boolean =>
-  Boolean(
+export const isSanityConfigured = (): boolean => {
+  if (import.meta.env.VITE_DISABLE_CMS === "true") return false
+  return Boolean(
     import.meta.env.VITE_SANITY_PROJECT_ID &&
       import.meta.env.VITE_SANITY_DATASET,
-  );
+  )
+}
 
 let client: SanityClient | null = null;
 

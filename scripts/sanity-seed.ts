@@ -13,8 +13,9 @@ import {
   DEFAULT_PAYMENT_PAGE,
   DEFAULT_PROGRAMS_LANDING,
 } from "../shared/cms/defaults"
-import { ADVISOR_DIRECTORY_SEED } from "../client/data/advisorDirectory"
-import { FOUNDER_DIRECTORY } from "../client/data/founderDirectory"
+import { ADVISOR_DIRECTORY_SEED, ADVISOR_FILTER_OPTIONS } from "../client/data/advisorDirectory"
+import { FOUNDER_DIRECTORY, ALL_LEVELS, ALL_SPECIALTIES } from "../client/data/founderDirectory"
+import { ROUTE_SEO } from "../client/config/seo"
 
 type PortableTextBlock = {
   _type: "block"
@@ -32,6 +33,26 @@ type PortableTextBlock = {
 }
 
 const stableKey = (prefix: string, index: number) => `${prefix}-${index}`
+
+const slugify = (input: string): string =>
+  input
+    .toLowerCase()
+    .normalize("NFKD")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "")
+    .slice(0, 80) || "tag"
+
+const seoForRoute = (pathname: string) => {
+  const cfg = ROUTE_SEO[pathname]
+  if (!cfg) return undefined
+  return {
+    metaTitle: cfg.title,
+    metaDescription: cfg.description,
+    ogTitle: cfg.title,
+    ogDescription: cfg.description,
+    noIndex: cfg.indexable === false,
+  }
+}
 
 const block = (
   key: string,
@@ -537,6 +558,7 @@ async function main() {
       _id: "homePage",
       _type: "homePage",
       ...DEFAULT_HOME_PAGE,
+      seo: seoForRoute("/"),
     },
   })
   mutations.push({
@@ -544,6 +566,7 @@ async function main() {
       _id: "aboutPage",
       _type: "aboutPage",
       ...DEFAULT_ABOUT_PAGE,
+      seo: seoForRoute("/about"),
     },
   })
   mutations.push({
@@ -555,6 +578,7 @@ async function main() {
       enableVolunteerTab: true,
       tabsLabelHiring: "Hiring",
       tabsLabelVolunteer: "Volunteer",
+      seo: seoForRoute("/careers"),
     },
   })
   mutations.push({
@@ -562,6 +586,7 @@ async function main() {
       _id: "faqPage",
       _type: "faqPage",
       ...DEFAULT_FAQ_PAGE,
+      seo: seoForRoute("/faq"),
     },
   })
   mutations.push({
@@ -569,6 +594,7 @@ async function main() {
       _id: "programsLandingPage",
       _type: "programsLandingPage",
       ...DEFAULT_PROGRAMS_LANDING,
+      seo: seoForRoute("/programs"),
     },
   })
 
@@ -668,6 +694,7 @@ async function main() {
       _id: "contactPage",
       _type: "contactPage",
       ...DEFAULT_CONTACT_PAGE,
+      seo: seoForRoute("/contact"),
     },
   })
   mutations.push({
@@ -675,10 +702,16 @@ async function main() {
       _id: "paymentPage",
       _type: "paymentPage",
       ...DEFAULT_PAYMENT_PAGE,
+      seo: { ...(seoForRoute("/membership") ?? {}), noIndex: true },
     },
   })
   mutations.push({
-    createOrReplace: { _id: "notFoundPage", _type: "notFoundPage", ...DEFAULT_NOT_FOUND },
+    createOrReplace: {
+      _id: "notFoundPage",
+      _type: "notFoundPage",
+      ...DEFAULT_NOT_FOUND,
+      seo: { metaTitle: DEFAULT_NOT_FOUND.title, metaDescription: DEFAULT_NOT_FOUND.message, noIndex: true },
+    },
   })
 
   // Navigation singleton (no shared defaults; app has component fallbacks)
@@ -749,8 +782,58 @@ async function main() {
     },
   })
 
+  // Directory taxonomy: seed editable filter/level/specialty docs first so advisors and
+  // alumni companies can reference them.
+  const advisorFilterIdByLabel = new Map<string, string>()
+  for (const [index, opt] of ADVISOR_FILTER_OPTIONS.entries()) {
+    if (opt.id === "all") continue
+    const label = opt.label
+    const docId = `advisorFilter-${slugify(label)}`
+    advisorFilterIdByLabel.set(label, docId)
+    mutations.push({
+      createOrReplace: {
+        _id: docId,
+        _type: "advisorFilter",
+        label,
+        slug: { _type: "slug", current: slugify(label) },
+        sortOrder: index,
+      },
+    })
+  }
+
+  const founderLevelIdByLabel = new Map<string, string>()
+  for (const [index, label] of ALL_LEVELS.entries()) {
+    const docId = `founderLevel-${slugify(label)}`
+    founderLevelIdByLabel.set(label, docId)
+    mutations.push({
+      createOrReplace: {
+        _id: docId,
+        _type: "founderLevel",
+        label,
+        slug: { _type: "slug", current: slugify(label) },
+        sortOrder: index,
+      },
+    })
+  }
+
+  const founderSpecialtyIdByLabel = new Map<string, string>()
+  for (const [index, label] of ALL_SPECIALTIES.entries()) {
+    const docId = `founderSpecialty-${slugify(label)}`
+    founderSpecialtyIdByLabel.set(label, docId)
+    mutations.push({
+      createOrReplace: {
+        _id: docId,
+        _type: "founderSpecialty",
+        label,
+        slug: { _type: "slug", current: slugify(label) },
+        sortOrder: index,
+      },
+    })
+  }
+
   // Directory data
   for (const advisor of ADVISOR_DIRECTORY_SEED) {
+    const filterRefId = advisor.filter ? advisorFilterIdByLabel.get(advisor.filter) : undefined
     mutations.push({
       createOrReplace: {
         _id: `advisor-${advisor.id}`,
@@ -764,7 +847,9 @@ async function main() {
         yearJoined: advisor.yearJoined,
         industries: advisor.industries,
         focus: advisor.focus,
-        filter: advisor.filter,
+        filter: filterRefId
+          ? { _type: "reference", _ref: filterRefId }
+          : undefined,
         photoSrc: advisor.photoSrc,
         linkedInUrl: advisor.linkedInUrl,
         websiteUrl: advisor.websiteUrl,
@@ -776,15 +861,23 @@ async function main() {
   }
 
   for (const company of FOUNDER_DIRECTORY) {
+    const levelRefId = company.level ? founderLevelIdByLabel.get(company.level) : undefined
+    const specialtyRefs = (company.specialties ?? [])
+      .map((label) => founderSpecialtyIdByLabel.get(label))
+      .filter((id): id is string => Boolean(id))
+      .map((id) => ({
+        _type: "reference",
+        _ref: id,
+      }))
     mutations.push({
       createOrReplace: {
         _id: `alumniCompany-${company.id}`,
         _type: "alumniCompany",
         slug: { _type: "slug", current: company.id },
         name: company.logoName,
-        level: company.level,
+        level: levelRefId ? { _type: "reference", _ref: levelRefId } : undefined,
         tagline: company.tagline,
-        specialties: company.specialties,
+        specialties: specialtyRefs,
         shortDescription: company.shortDescription,
         longDescription: company.longDescription,
         websiteUrl: company.websiteUrl,

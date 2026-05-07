@@ -8,6 +8,7 @@ import {
   SearchIcon,
   ComposeIcon,
   CogIcon,
+  TagIcon,
 } from '@sanity/icons'
 
 const singleton = (S: StructureBuilder, title: string, schemaType: string, icon?: ComponentType) =>
@@ -25,7 +26,7 @@ export const deskStructure = (S: StructureBuilder) =>
             .title('Start Here')
             .items([
               singleton(S, 'Global Settings', 'globalSettings', ControlsIcon),
-              singleton(S, 'Navigation', 'navigation', ControlsIcon),
+              singleton(S, 'Navigation (header + footer)', 'navigation', ControlsIcon),
               singleton(S, 'Site Settings', 'siteSettings', CogIcon),
             ]),
         ),
@@ -35,12 +36,12 @@ export const deskStructure = (S: StructureBuilder) =>
         .icon(DocumentTextIcon)
         .child(
           S.list()
-            .title('Core Pages')
+            .title('Core Pages — singletons for top-level routes')
             .items([
               singleton(S, 'Home Page', 'homePage', HomeIcon),
               singleton(S, 'About Page', 'aboutPage', DocumentTextIcon),
               singleton(S, 'Careers Page', 'careersPage', DocumentTextIcon),
-              singleton(S, 'Programs Landing', 'programsLandingPage', DocumentTextIcon),
+              singleton(S, 'Programs Landing (/programs index copy)', 'programsLandingPage', DocumentTextIcon),
               singleton(S, 'FAQ Page', 'faqPage', DocumentTextIcon),
               singleton(S, 'Contact Page', 'contactPage', DocumentTextIcon),
               singleton(S, 'Payment Page', 'paymentPage', DocumentTextIcon),
@@ -53,10 +54,10 @@ export const deskStructure = (S: StructureBuilder) =>
         .icon(ComposeIcon)
         .child(
           S.list()
-            .title('Programs')
+            .title('Programs — cards on /programs and per-program detail pages')
             .items([
-              S.documentTypeListItem('program').title('Programs').icon(ComposeIcon),
-              S.documentTypeListItem('programPage').title('Program Detail Pages').icon(DocumentTextIcon),
+              S.documentTypeListItem('program').title('Programs (cards on /programs)').icon(ComposeIcon),
+              S.documentTypeListItem('programPage').title('Program Detail Pages (/programs/<slug>)').icon(DocumentTextIcon),
             ]),
         ),
 
@@ -68,12 +69,18 @@ export const deskStructure = (S: StructureBuilder) =>
       S.listItem()
         .title('Modular Pages')
         .icon(DocumentTextIcon)
-        .child(S.documentTypeList('page').title('Modular Pages')),
+        .child(
+          S.documentTypeList('page').title('Modular Pages — composed sections (used by /terms, /privacy)'),
+        ),
 
       S.listItem()
         .title('Marketing Pages')
         .icon(DocumentTextIcon)
-        .child(S.documentTypeList('marketingPage').title('Marketing Pages')),
+        .child(
+          S.documentTypeList('marketingPage').title(
+            'Marketing Pages — long-form copy (no route wired yet)',
+          ),
+        ),
 
       S.listItem()
         .title('Network Directory')
@@ -84,6 +91,19 @@ export const deskStructure = (S: StructureBuilder) =>
             .items([
               S.documentTypeListItem('advisor').title('Advisors').icon(UsersIcon),
               S.documentTypeListItem('alumniCompany').title('Alumni Companies').icon(UsersIcon),
+            ]),
+        ),
+
+      S.listItem()
+        .title('Directory Taxonomy')
+        .icon(TagIcon)
+        .child(
+          S.list()
+            .title('Directory Taxonomy — editable filter tags')
+            .items([
+              S.documentTypeListItem('advisorFilter').title('Advisor filters').icon(TagIcon),
+              S.documentTypeListItem('founderLevel').title('Founder levels').icon(TagIcon),
+              S.documentTypeListItem('founderSpecialty').title('Founder specialties').icon(TagIcon),
             ]),
         ),
 
@@ -114,8 +134,10 @@ export const deskStructure = (S: StructureBuilder) =>
             'marketingPage',
             'advisor',
             'alumniCompany',
+            'advisorFilter',
+            'founderLevel',
+            'founderSpecialty',
             'diagnosticSubmission',
           ].includes(item.getId() || ''),
       ),
     ])
-

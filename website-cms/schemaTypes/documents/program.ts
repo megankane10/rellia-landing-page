@@ -60,6 +60,7 @@ export const program = defineType({
       initialValue: 'available',
     }),
     defineField({name: 'sortOrder', type: 'number', initialValue: 0}),
+    defineField({name: 'seo', type: 'seo'}),
   ],
   preview: {
     select: {title: 'title', subtitle: 'slug.current'},

@@ -24,13 +24,28 @@ export type CareersPageContent = {
   enableVolunteerTab?: boolean
   tabsLabelHiring?: string
   tabsLabelVolunteer?: string
+  seo?: SeoContent
 }
 
 export type SeoContent = {
-  title?: string
-  description?: string
+  metaTitle?: string
+  metaDescription?: string
+  ogTitle?: string
+  ogDescription?: string
   ogImageUrl?: string
   noIndex?: boolean
+  noFollow?: boolean
+}
+
+export type HomePathsCard = {
+  roleId: "founder" | "advisor" | "investor" | "partner"
+  tagLabel?: string
+  title?: string
+  subtitle?: string
+  imageSrc?: string
+  imageAlt?: string
+  ctaLabel?: string
+  ctaTo?: string
 }
 
 export type CmsSectionHero = {
@@ -134,6 +149,9 @@ export type HomePageContent = {
   testimonialsTitleLead: string
   testimonialsTitleAccent: string
   testimonials: HomeTestimonial[]
+  pathsTitle?: string
+  pathsCards?: HomePathsCard[]
+  seo?: SeoContent
 }
 
 export type GlobalSettingsContent = {
@@ -178,6 +196,7 @@ export type AboutPageContent = {
   ctaBody: string
   ctaFounderLabel: string
   ctaTeamLabel: string
+  seo?: SeoContent
 }
 
 export type FaqItem = {
@@ -199,6 +218,7 @@ export type FaqPageContent = {
   bottomBody: string
   bottomCtaLabel: string
   bottomCtaPath: string
+  seo?: SeoContent
 }
 
 export type ProgramsEventCard = {
@@ -271,6 +291,7 @@ export type ProgramsLandingContent = {
   ctaBody: string
   ctaButtonLabel: string
   ctaButtonHref: string
+  seo?: SeoContent
 }
 
 export type ContactSubjectOption = {
@@ -315,6 +336,7 @@ export type ContactPageContent = {
   companySizeOptions: ContactSubjectOption[]
   submitLabel: string
   sendingLabel: string
+  seo?: SeoContent
 }
 
 export type QmsProgramContent = {
@@ -339,18 +361,21 @@ export type QmsProgramContent = {
   bottomCtaBody: string
   bottomCtaButtonLabel: string
   bottomContactHref: string
+  seo?: SeoContent
 }
 
 export type MarketingPageContent = {
   title: string
   subtitle: string
   body?: SanityPortableText | null
+  seo?: SeoContent
 }
 
 export type NotFoundContent = {
   title: string
   message: string
   ctaLabel: string
+  seo?: SeoContent
 }
 
 export type PaymentPageContent = {
@@ -392,4 +417,5 @@ export type PaymentPageContent = {
   questionsFaqPath: string
   questionsContactLabel: string
   questionsContactPath: string
+  seo?: SeoContent
 }

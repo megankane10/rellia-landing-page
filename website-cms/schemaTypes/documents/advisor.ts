@@ -25,8 +25,11 @@ export const advisor = defineType({
     defineField({name: 'focus', type: 'string', description: 'Short card summary'}),
     defineField({
       name: 'filter',
-      type: 'string',
-      description: 'Directory filter label (e.g. Clinical, Regulatory)',
+      title: 'Directory filter',
+      type: 'reference',
+      to: [{type: 'advisorFilter'}],
+      description:
+        'Pick a filter tag (e.g. Clinical, Regulatory). Add new ones from "Directory taxonomy" in the desk.',
     }),
     defineField({name: 'photo', type: 'image', options: {hotspot: true}}),
     defineField({name: 'photoSrc', type: 'string', description: 'Fallback URL if no upload'}),

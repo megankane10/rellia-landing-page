@@ -8,5 +8,6 @@ export const notFoundPage = defineType({
     defineField({name: 'title', type: 'string'}),
     defineField({name: 'message', type: 'text', rows: 2}),
     defineField({name: 'ctaLabel', type: 'string'}),
+    defineField({name: 'seo', type: 'seo'}),
   ],
 })

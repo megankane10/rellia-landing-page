@@ -5,12 +5,14 @@ import Footer from "@/components/Footer"
 import RelliaCta, { ctaActionFromHref } from "@/components/RelliaCta"
 import { useNotFoundPage } from "@/hooks/useCmsDocuments"
 import { DEFAULT_NOT_FOUND } from "@shared/cms/defaults"
+import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo"
 import { Search } from "lucide-react"
 
 const NotFound = () => {
   const location = useLocation()
   const { data } = useNotFoundPage()
   const copy = data ?? DEFAULT_NOT_FOUND
+  useApplyCmsSeo(copy.seo)
 
   useEffect(() => {
     console.error("404 Error: User attempted to access non-existent route:", location.pathname)

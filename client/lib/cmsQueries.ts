@@ -1,3 +1,13 @@
+const seoFragment = `seo{
+  metaTitle,
+  metaDescription,
+  ogTitle,
+  ogDescription,
+  "ogImageUrl": ogImage.asset->url,
+  noIndex,
+  noFollow
+}`
+
 export const globalSettingsQuery = `*[_type == "globalSettings"][0]{
   footerTagline,
   supportEmail,
@@ -48,7 +58,7 @@ export const navigationQuery = `*[_type == "navigation"][0]{
 export const pageBySlugQuery = `*[_type == "page" && slug.current == $slug][0]{
   title,
   "slug": slug.current,
-  seo,
+  ${seoFragment},
   sections[]{
     ...,
     "imageUrl": image.asset->url,
@@ -80,7 +90,7 @@ export const homePageQuery = `*[_type == "homePage"][0]{
   ctaTitle,
   ctaButtonLabel,
   ctaButtonPath,
-  ctaImageUrl,
+  "ctaImageUrl": coalesce(ctaImage.asset->url, ctaImageUrl),
   ctaImageAlt,
   testimonials[]{
     name,
@@ -89,7 +99,19 @@ export const homePageQuery = `*[_type == "homePage"][0]{
     quote,
     companyInfo,
     "imageSrc": coalesce(image.asset->url, imageSrc)
-  }
+  },
+  pathsTitle,
+  pathsCards[]{
+    roleId,
+    tagLabel,
+    title,
+    subtitle,
+    "imageSrc": coalesce(image.asset->url, imageSrc),
+    imageAlt,
+    ctaLabel,
+    ctaTo
+  },
+  ${seoFragment}
 }`;
 
 export const aboutPageQuery = `*[_type == "aboutPage"][0]{
@@ -117,7 +139,8 @@ export const aboutPageQuery = `*[_type == "aboutPage"][0]{
   ctaTitle,
   ctaBody,
   ctaFounderLabel,
-  ctaTeamLabel
+  ctaTeamLabel,
+  ${seoFragment}
 }`;
 
 export const faqPageQuery = `*[_type == "faqPage" && !(_id in path("drafts.**"))] | order(_updatedAt desc)[0]{
@@ -132,7 +155,8 @@ export const faqPageQuery = `*[_type == "faqPage" && !(_id in path("drafts.**"))
   bottomTitle,
   bottomBody,
   bottomCtaLabel,
-  bottomCtaPath
+  bottomCtaPath,
+  ${seoFragment}
 }`;
 
 export const programsLandingQuery = `*[_type == "programsLandingPage"][0]{
@@ -143,10 +167,18 @@ export const programsLandingQuery = `*[_type == "programsLandingPage"][0]{
   heroSecondaryCtaLabel,
   programsSectionTitle,
   programsSectionSubtitle,
+  programs[]{
+    title,
+    description,
+    "imageSrc": coalesce(image.asset->url, imageSrc),
+    href,
+    buttonText
+  },
   ctaTitle,
   ctaBody,
   ctaButtonLabel,
-  ctaButtonHref
+  ctaButtonHref,
+  ${seoFragment}
 }`;
 
 export const programsQuery = `*[_type == "program" && status != "hidden"] | order(sortOrder asc, title asc){
@@ -158,7 +190,8 @@ export const programsQuery = `*[_type == "program" && status != "hidden"] | orde
   buttonText,
   waitlistHref,
   status,
-  sortOrder
+  sortOrder,
+  ${seoFragment}
 }`
 
 export const eventsQuery = `*[_type == "event" && status != "hidden"] | order(sortOrder asc, title asc){
@@ -204,7 +237,8 @@ export const eventBySlugQuery = `*[_type == "event" && slug.current == $slug][0]
   calendarStartsAt,
   calendarEndsAt,
   status,
-  sortOrder
+  sortOrder,
+  ${seoFragment}
 }`
 
 export const programPageBySlugQuery = `*[_type == "programPage" && slug.current == $slug][0]{
@@ -229,6 +263,7 @@ export const programPageBySlugQuery = `*[_type == "programPage" && slug.current 
   bottomCtaBody,
   bottomCtaButtonLabel,
   bottomContactHref,
+  ${seoFragment},
   sections[]{
     ...,
     "imageUrl": image.asset->url,
@@ -260,13 +295,15 @@ export const contactPageQuery = `*[_type == "contactPage"][0]{
   subjectOptions[]{ value, label },
   companySizeOptions[]{ value, label },
   submitLabel,
-  sendingLabel
+  sendingLabel,
+  ${seoFragment}
 }`;
 
 export const notFoundQuery = `*[_type == "notFoundPage"][0]{
   title,
   message,
-  ctaLabel
+  ctaLabel,
+  ${seoFragment}
 }`;
 
 export const paymentPageQuery = `*[_type == "paymentPage"][0]{
@@ -292,7 +329,7 @@ export const paymentPageQuery = `*[_type == "paymentPage"][0]{
   imageCardBadge,
   imageCardHeadlinePrefix,
   imageCardHeadlineAccent,
-  imageCardSrc,
+  "imageCardSrc": coalesce(imageCardImage.asset->url, imageCardSrc),
   imageCardAlt,
   highlightBenefits,
   pricingMonthlyBadge,
@@ -307,7 +344,8 @@ export const paymentPageQuery = `*[_type == "paymentPage"][0]{
   questionsFaqLabel,
   questionsFaqPath,
   questionsContactLabel,
-  questionsContactPath
+  questionsContactPath,
+  ${seoFragment}
 }`;
 
 export const careersPageQuery = `*[_type == "careersPage"][0]{
@@ -315,13 +353,15 @@ export const careersPageQuery = `*[_type == "careersPage"][0]{
   enableHiringTab,
   enableVolunteerTab,
   tabsLabelHiring,
-  tabsLabelVolunteer
+  tabsLabelVolunteer,
+  ${seoFragment}
 }`
 
 export const marketingPageBySlugQuery = `*[_type == "marketingPage" && slug.current == $slug][0]{
   title,
   subtitle,
-  body
+  body,
+  ${seoFragment}
 }`;
 
 export const advisorsQuery = `*[_type == "advisor"]{
@@ -334,7 +374,7 @@ export const advisorsQuery = `*[_type == "advisor"]{
   yearJoined,
   industries,
   focus,
-  filter,
+  "filter": filter->label,
   "photoSrc": coalesce(photo.asset->url, photoSrc),
   linkedInUrl,
   websiteUrl,
@@ -347,9 +387,9 @@ export const alumniCompaniesQuery = `*[_type == "alumniCompany"]{
   "id": slug.current,
   name,
   slug,
-  level,
+  "level": level->label,
   tagline,
-  specialties,
+  "specialties": specialties[]->label,
   shortDescription,
   longDescription,
   websiteUrl,
@@ -368,3 +408,21 @@ export const alumniCompaniesQuery = `*[_type == "alumniCompany"]{
     "imageSrc": coalesce(image.asset->url, imageSrc)
   }
 }`;
+
+export const advisorFiltersQuery = `*[_type == "advisorFilter"] | order(sortOrder asc, label asc){
+  "id": slug.current,
+  label,
+  sortOrder
+}`
+
+export const founderLevelsQuery = `*[_type == "founderLevel"] | order(sortOrder asc, label asc){
+  "id": slug.current,
+  label,
+  sortOrder
+}`
+
+export const founderSpecialtiesQuery = `*[_type == "founderSpecialty"] | order(sortOrder asc, label asc){
+  "id": slug.current,
+  label,
+  sortOrder
+}`

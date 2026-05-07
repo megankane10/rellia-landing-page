@@ -8,37 +8,54 @@ import {
   getSiteUrl,
   normalizePathname,
 } from "@/config/seo"
+import { useOptionalPageSeo } from "@/context/PageSeoContext"
 
 interface RouteSeoProps {
   title?: string
   description?: string
+  ogImage?: string
+  noIndex?: boolean
 }
 
-const RouteSeo = ({ title: titleOverride, description: descriptionOverride }: RouteSeoProps) => {
+const RouteSeo = ({
+  title: titleOverride,
+  description: descriptionOverride,
+  ogImage: ogImageOverride,
+  noIndex: noIndexOverride,
+}: RouteSeoProps = {}) => {
   const { pathname } = useLocation()
   const normalizedPathname = normalizePathname(pathname)
   const base = getSiteUrl()
-  const { title: defaultTitle, description: defaultDescription, indexable } = getSeoForPathname(normalizedPathname)
-  
-  const title = titleOverride || defaultTitle
-  const description = descriptionOverride || defaultDescription
-  
-  const canonicalUrl = indexable
-    ? `${base}${normalizedPathname === "/" ? "" : normalizedPathname}`
-    : undefined
+  const {
+    title: defaultTitle,
+    description: defaultDescription,
+    indexable,
+  } = getSeoForPathname(normalizedPathname)
+
+  const { overrides } = useOptionalPageSeo()
+
+  const title = titleOverride || overrides.title || defaultTitle
+  const description = descriptionOverride || overrides.description || defaultDescription
+  const ogImage = ogImageOverride || overrides.ogImage
+  const noIndex = noIndexOverride ?? overrides.noIndex ?? !indexable
+
+  const canonicalUrl = noIndex
+    ? undefined
+    : `${base}${normalizedPathname === "/" ? "" : normalizedPathname}`
   const ogUrl = `${base}${normalizedPathname === "/" ? "" : normalizedPathname}`
   const imageUrl =
-    normalizedPathname === "/stories" ? getStoriesOgImageUrl() : getDefaultOgImageUrl()
+    ogImage ||
+    (normalizedPathname === "/stories" ? getStoriesOgImageUrl() : getDefaultOgImageUrl())
   const imageAlt = getDefaultOgImageAlt()
 
   return (
     <Helmet htmlAttributes={{ lang: "en" }}>
       <title>{title}</title>
       <meta name="description" content={description} />
-      {indexable ? (
-        <meta name="robots" content="index, follow" />
-      ) : (
+      {noIndex ? (
         <meta name="robots" content="noindex, nofollow" />
+      ) : (
+        <meta name="robots" content="index, follow" />
       )}
       {canonicalUrl ? <link rel="canonical" href={canonicalUrl} /> : null}
 

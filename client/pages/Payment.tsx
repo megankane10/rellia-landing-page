@@ -19,6 +19,7 @@ import RelliaAction from "@/components/RelliaAction"
 import RelliaCta from "@/components/RelliaCta"
 import { usePaymentPage } from "@/hooks/useCmsDocuments"
 import { DEFAULT_PAYMENT_PAGE } from "@shared/cms/defaults"
+import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo"
 import { cn } from "@/lib/utils"
 
 const BENEFIT_ICONS = [Sparkles, ShieldCheck, Users, Target, Zap]
@@ -26,6 +27,7 @@ const BENEFIT_ICONS = [Sparkles, ShieldCheck, Users, Target, Zap]
 export default function Payment() {
   const { data: paymentCms } = usePaymentPage()
   const p = paymentCms ?? DEFAULT_PAYMENT_PAGE
+  useApplyCmsSeo(p.seo)
 
   const [codeCopied, setCodeCopied] = useState(false)
   const [selectedPlan, setSelectedPlan] = useState<"monthly" | "annual" | null>(null)

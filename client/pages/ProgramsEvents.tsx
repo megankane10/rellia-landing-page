@@ -6,6 +6,7 @@ import { HorizontalCard } from "@/components/cards";
 import PageHeader from "@/components/PageHeader"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { usePrograms, useProgramsLandingPage } from "@/hooks/useCmsDocuments";
+import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo";
 import { cn } from "@/lib/utils"
 import { DEFAULT_PROGRAMS_LANDING } from "@shared/cms/defaults";
 import { useEffect, useMemo, useState } from "react";
@@ -19,6 +20,7 @@ const PAGE_SIZE = 12
 export default function ProgramsEvents() {
   const { data } = useProgramsLandingPage();
   const pl = data ?? DEFAULT_PROGRAMS_LANDING;
+  useApplyCmsSeo(pl.seo)
   const { data: programsData } = usePrograms()
   const [programFilter, setProgramFilter] = useState<ProgramFilter>("all");
   const [page, setPage] = useState(1)

@@ -22,7 +22,18 @@ export const programsLandingPage = defineType({
           fields: [
             {name: 'title', type: 'string'},
             {name: 'description', type: 'text', rows: 3},
-            {name: 'imageSrc', type: 'string'},
+            {
+              name: 'image',
+              type: 'image',
+              options: {hotspot: true},
+              description: 'Upload an image (preferred). Falls back to "Image URL" below.',
+            },
+            {
+              name: 'imageSrc',
+              type: 'string',
+              title: 'Image URL (fallback)',
+              description: 'Optional fallback URL when no upload is provided.',
+            },
             {name: 'href', type: 'string'},
             {name: 'buttonText', type: 'string'},
           ],
@@ -35,5 +46,6 @@ export const programsLandingPage = defineType({
     defineField({name: 'ctaBody', type: 'text', rows: 2}),
     defineField({name: 'ctaButtonLabel', type: 'string'}),
     defineField({name: 'ctaButtonHref', type: 'string'}),
+    defineField({name: 'seo', type: 'seo'}),
   ],
 })

@@ -46,6 +46,7 @@ export const careersPage = defineType({
       type: 'string',
       initialValue: 'Volunteer',
     }),
+    defineField({name: 'seo', type: 'seo'}),
   ],
 })
 

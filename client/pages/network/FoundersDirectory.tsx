@@ -13,7 +13,7 @@ import { Building2, Search, ChevronDown } from "lucide-react";
 import FilteredListEmptyState from "@/components/FilteredListEmptyState";
 import { useNavigate } from "react-router-dom";
 import { NETWORK_PATH_ROLE_TAG } from "@/lib/networkPathRoles";
-import { useAlumniCompanies } from "@/hooks/useCmsDocuments";
+import { useAlumniCompanies, useFounderLevels, useFounderSpecialties } from "@/hooks/useCmsDocuments";
 import {
   FOUNDER_DIRECTORY,
   ALL_SPECIALTIES,
@@ -88,11 +88,11 @@ function FounderDirectoryCard({
 export default function FoundersDirectory() {
   const reduceMotion = useReducedMotion();
   const { data: cmsCompanies } = useAlumniCompanies();
+  const { data: cmsLevels } = useFounderLevels();
+  const { data: cmsSpecialties } = useFounderSpecialties();
   const [query, setQuery] = useState("");
-  const [specialtyFilter, setSpecialtyFilter] = useState<"all" | Specialty>(
-    "all",
-  );
-  const [levelFilter, setLevelFilter] = useState<FounderLevel | "all">("all");
+  const [specialtyFilter, setSpecialtyFilter] = useState<string>("all");
+  const [levelFilter, setLevelFilter] = useState<string>("all");
   const [activeId, setActiveId] = useState<string | null>(null);
 
   const companies = useMemo<FounderCompany[]>(() => {
@@ -140,10 +140,31 @@ export default function FoundersDirectory() {
     });
   }, [companies, query, specialtyFilter, levelFilter]);
 
-  const levelFilters: Array<{ id: "all" | FounderLevel; label: string }> = [
-    { id: "all", label: "All Levels" },
-    ...ALL_LEVELS.map((l) => ({ id: l, label: l })),
-  ];
+  const levelFilters = useMemo<Array<{ id: string; label: string }>>(() => {
+    if (Array.isArray(cmsLevels) && cmsLevels.length > 0) {
+      return [
+        { id: "all", label: "All Levels" },
+        ...cmsLevels.map((l) => ({ id: l.label, label: l.label })),
+      ];
+    }
+    return [
+      { id: "all", label: "All Levels" },
+      ...ALL_LEVELS.map((l) => ({ id: l, label: l })),
+    ];
+  }, [cmsLevels]);
+
+  const specialtyFilters = useMemo<Array<{ id: string; label: string }>>(() => {
+    if (Array.isArray(cmsSpecialties) && cmsSpecialties.length > 0) {
+      return [
+        { id: "all", label: "All specialties" },
+        ...cmsSpecialties.map((s) => ({ id: s.label, label: s.label })),
+      ];
+    }
+    return [
+      { id: "all", label: "All specialties" },
+      ...ALL_SPECIALTIES.map((s) => ({ id: s, label: s })),
+    ];
+  }, [cmsSpecialties]);
 
   const [page, setPage] = useState(1);
   const itemsPerPage = 12;
@@ -243,7 +264,7 @@ export default function FoundersDirectory() {
                 <div className="relative">
                   <select
                     value={levelFilter}
-                    onChange={(e) => setLevelFilter(e.target.value as any)}
+                    onChange={(e) => setLevelFilter(e.target.value)}
                     className="h-14 w-full appearance-none rounded-2xl border border-black/10 bg-black/[0.02] pl-5 pr-14 min-w-[160px] font-urbanist text-base font-semibold text-black/80 outline-none hover:border-black/20 focus-visible:ring-2 focus-visible:ring-rellia-teal focus-visible:bg-white cursor-pointer"
                   >
                     {levelFilters.map((f) => (
@@ -261,13 +282,12 @@ export default function FoundersDirectory() {
                 <div className="relative">
                   <select
                     value={specialtyFilter}
-                    onChange={(e) => setSpecialtyFilter(e.target.value as any)}
+                    onChange={(e) => setSpecialtyFilter(e.target.value)}
                     className="h-14 w-full appearance-none rounded-2xl border border-black/10 bg-black/[0.02] pl-5 pr-14 min-w-[160px] font-urbanist text-base font-semibold text-black/80 outline-none hover:border-black/20 focus-visible:ring-2 focus-visible:ring-rellia-teal focus-visible:bg-white cursor-pointer"
                   >
-                    <option value="all">All specialties</option>
-                    {ALL_SPECIALTIES.map((s) => (
-                      <option key={s} value={s}>
-                        {s}
+                    {specialtyFilters.map((s) => (
+                      <option key={s.id} value={s.id}>
+                        {s.label}
                       </option>
                     ))}
                   </select>

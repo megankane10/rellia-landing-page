@@ -8,6 +8,7 @@ import RelliaAction from "@/components/RelliaAction"
 import { cn } from "@/lib/utils"
 import { useContactPage } from "@/hooks/useCmsDocuments"
 import { DEFAULT_CONTACT_PAGE } from "@shared/cms/defaults"
+import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo"
 
 /**
  * Redesigned Contact Page for Rellia
@@ -33,6 +34,7 @@ const TRUSTED_LOGOS = [
 export default function Contact() {
   const { data } = useContactPage()
   const copy = data ?? DEFAULT_CONTACT_PAGE
+  useApplyCmsSeo(copy.seo)
 
   return (
     <div className="min-h-screen bg-white font-host-grotesk overflow-x-hidden">

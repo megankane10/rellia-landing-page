@@ -19,7 +19,7 @@ export type RouteSeoConfig = {
   indexable: boolean
 }
 
-const ROUTE_SEO: Record<string, RouteSeoConfig> = {
+export const ROUTE_SEO: Record<string, RouteSeoConfig> = {
   "/": {
     title: "Rellia Health — You are the future of health tech.",
     description:

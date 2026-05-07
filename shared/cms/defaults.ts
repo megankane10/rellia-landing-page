@@ -1771,6 +1771,8 @@ export function mergeHomePage(partial: Partial<HomePageContent> | null | undefin
   base.whyFeatures = whyFeatures.length > 0 ? whyFeatures : DEFAULT_HOME_PAGE.whyFeatures
   const testimonials = compactList(p.testimonials)
   base.testimonials = testimonials.length > 0 ? testimonials : DEFAULT_HOME_PAGE.testimonials
+  const pathsCards = compactList(p.pathsCards)
+  if (pathsCards.length > 0) base.pathsCards = pathsCards
   return base
 }
 

@@ -21,6 +21,7 @@ import { cn } from "@/lib/utils"
 import { useQuery } from "@tanstack/react-query"
 import { sanityFetch } from "@/lib/sanity"
 import { careersPageQuery } from "@/lib/cmsQueries"
+import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo"
 import { useMemo } from "react"
 
 const g = DEFAULT_GLOBAL_SETTINGS
@@ -267,6 +268,7 @@ export default function CareersCms() {
   })
 
   const careersCms = normalizeCms(careersCmsRaw)
+  useApplyCmsSeo(careersCms.seo)
 
   const volunteerAvailable = CAREERS_VOLUNTEER_ENABLED
 

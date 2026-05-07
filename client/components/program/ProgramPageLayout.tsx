@@ -34,6 +34,7 @@ import { cn } from "@/lib/utils";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { SectionsRenderer } from "@/components/cms/PageRenderer"
 import { useProgramPageBySlug } from "@/hooks/useCmsDocuments"
+import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo"
 import {
   Carousel,
   CarouselContent,
@@ -194,6 +195,7 @@ const ProgramPageLayout = ({
   const location = useLocation();
   const { data: programPageData } = useProgramPageBySlug(cmsSlug ?? '', cms)
   const q = programPageData?.content ?? cms
+  useApplyCmsSeo(q.seo)
   const filloutId = extractFilloutId(q.paymentUrl);
 
   const canonicalUrl = `${getSiteUrl()}${location.pathname}`;

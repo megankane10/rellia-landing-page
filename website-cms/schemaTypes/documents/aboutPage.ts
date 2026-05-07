@@ -56,5 +56,6 @@ export const aboutPage = defineType({
     defineField({name: 'ctaBody', type: 'text', rows: 3}),
     defineField({name: 'ctaFounderLabel', type: 'string'}),
     defineField({name: 'ctaTeamLabel', type: 'string'}),
+    defineField({name: 'seo', type: 'seo'}),
   ],
 })

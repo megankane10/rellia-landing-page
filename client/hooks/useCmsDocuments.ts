@@ -18,6 +18,9 @@ import {
   eventBySlugQuery,
   advisorsQuery,
   alumniCompaniesQuery,
+  advisorFiltersQuery,
+  founderLevelsQuery,
+  founderSpecialtiesQuery,
 } from "@/lib/cmsQueries";
 
 import {
@@ -258,3 +261,39 @@ export const useAlumniCompanies = () =>
     },
     staleTime: staleTimeMs,
   });
+
+export type DirectoryTaxonomyOption = {
+  id: string
+  label: string
+  sortOrder?: number
+}
+
+export const useAdvisorFilters = () =>
+  useQuery({
+    queryKey: ["cms", "advisorFilters"],
+    queryFn: async () => {
+      const raw = await sanityFetch<DirectoryTaxonomyOption[]>(advisorFiltersQuery)
+      return Array.isArray(raw) ? raw : []
+    },
+    staleTime: staleTimeMs,
+  })
+
+export const useFounderLevels = () =>
+  useQuery({
+    queryKey: ["cms", "founderLevels"],
+    queryFn: async () => {
+      const raw = await sanityFetch<DirectoryTaxonomyOption[]>(founderLevelsQuery)
+      return Array.isArray(raw) ? raw : []
+    },
+    staleTime: staleTimeMs,
+  })
+
+export const useFounderSpecialties = () =>
+  useQuery({
+    queryKey: ["cms", "founderSpecialties"],
+    queryFn: async () => {
+      const raw = await sanityFetch<DirectoryTaxonomyOption[]>(founderSpecialtiesQuery)
+      return Array.isArray(raw) ? raw : []
+    },
+    staleTime: staleTimeMs,
+  })

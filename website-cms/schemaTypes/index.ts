@@ -17,6 +17,9 @@ import {alumniCompany} from './documents/alumniCompany'
 import {diagnosticSubmission} from './documents/diagnosticSubmission'
 import {program} from './documents/program'
 import {event} from './documents/event'
+import {advisorFilter} from './documents/advisorFilter'
+import {founderLevel} from './documents/founderLevel'
+import {founderSpecialty} from './documents/founderSpecialty'
 import {eventCard} from './objects/eventCard'
 import {bodyCtaBox} from './objects/bodyCtaBox'
 import {portableImageCarousel} from './objects/portableImageCarousel'
@@ -47,6 +50,9 @@ export const schemaTypes = [
   diagnosticSubmission,
   program,
   event,
+  advisorFilter,
+  founderLevel,
+  founderSpecialty,
   eventCard,
   bodyCtaBox,
   portableImageCarousel,

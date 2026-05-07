@@ -5,6 +5,7 @@ import Footer from "@/components/Footer"
 import NotFound from "@/pages/NotFound"
 import { useCmsPageBySlug } from "@/hooks/useCmsDocuments"
 import { PageRenderer } from "@/components/cms/PageRenderer"
+import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo"
 
 const getSingleSegmentSlug = (pathname: string) => {
   const clean = pathname.trim().replace(/\/+$/, "")
@@ -20,6 +21,7 @@ export default function CmsCatchAll() {
 
   const slug = useMemo(() => getSingleSegmentSlug(location.pathname), [location.pathname])
   const { data: page, isLoading } = useCmsPageBySlug(slug)
+  useApplyCmsSeo(page?.seo)
 
   if (!slug) return <NotFound />
 

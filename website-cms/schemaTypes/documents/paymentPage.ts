@@ -87,9 +87,16 @@ export const paymentPage = defineType({
       title: 'Image card — accent phrase',
     }),
     defineField({
+      name: 'imageCardImage',
+      title: 'Image card — uploaded image',
+      type: 'image',
+      options: {hotspot: true},
+      description: 'Upload preferred. Falls back to "Image card — image path" below.',
+    }),
+    defineField({
       name: 'imageCardSrc',
       type: 'string',
-      title: 'Image card — image path (e.g. /images/... )',
+      title: 'Image card — image path (fallback, e.g. /images/... )',
     }),
     defineField({name: 'imageCardAlt', type: 'string', title: 'Image card — alt text'}),
     defineField({
@@ -131,5 +138,6 @@ export const paymentPage = defineType({
       type: 'string',
       title: 'Questions strip — contact path',
     }),
+    defineField({name: 'seo', type: 'seo'}),
   ],
 })

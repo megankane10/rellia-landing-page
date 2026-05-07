@@ -61,6 +61,7 @@ export const programPage = defineType({
         defineArrayMember({type: 'sectionCardsGrid'}),
       ],
     }),
+    defineField({name: 'seo', type: 'seo'}),
   ],
   preview: {
     select: {

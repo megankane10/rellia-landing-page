@@ -6,12 +6,14 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { Link } from "react-router-dom";
 import { useFaqPage } from "@/hooks/useCmsDocuments";
 import { DEFAULT_FAQ_PAGE } from "@shared/cms/defaults";
+import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo";
 import PageHeader from "@/components/PageHeader"
 import { ArrowRight } from "lucide-react"
 
 export default function FAQ() {
   const { data } = useFaqPage();
   const faq = data ?? DEFAULT_FAQ_PAGE;
+  useApplyCmsSeo(faq.seo);
   const highlightPhrase = "need to know"
   const titleLower = (faq.title ?? "").toLowerCase()
   const highlightIndex = titleLower.indexOf(highlightPhrase)

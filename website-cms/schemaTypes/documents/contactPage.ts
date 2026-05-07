@@ -86,5 +86,6 @@ export const contactPage = defineType({
     }),
     defineField({name: 'submitLabel', type: 'string'}),
     defineField({name: 'sendingLabel', type: 'string'}),
+    defineField({name: 'seo', type: 'seo'}),
   ],
 })

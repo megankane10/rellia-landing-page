@@ -17,10 +17,19 @@ export const alumniCompany = defineType({
     defineField({name: 'tagline', type: 'string'}),
     defineField({
       name: 'specialties',
+      title: 'Specialties',
       type: 'array',
-      of: [{type: 'string'}],
+      of: [{type: 'reference', to: [{type: 'founderSpecialty'}]}],
+      description:
+        'Pick one or more specialty tags. Manage the list under "Directory taxonomy".',
     }),
-    defineField({name: 'level', type: 'string'}),
+    defineField({
+      name: 'level',
+      title: 'Level / stage',
+      type: 'reference',
+      to: [{type: 'founderLevel'}],
+      description: 'Pick a stage. Manage the list under "Directory taxonomy".',
+    }),
     defineField({name: 'shortDescription', type: 'text', rows: 3}),
     defineField({name: 'longDescription', type: 'text', rows: 6}),
     defineField({name: 'websiteUrl', type: 'url'}),
