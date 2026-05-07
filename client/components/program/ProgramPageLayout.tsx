@@ -382,8 +382,8 @@ const ProgramPageLayout = ({
         <section className="relative w-full bg-white py-12 md:py-20 px-6 md:px-10 overflow-hidden border-b border-black/5">
           <div className="relative z-10 max-w-[1300px] mx-auto">
             <ScrollReveal>
-              <h2 className="font-host-grotesk text-3xl font-semibold leading-tight tracking-tight text-black md:text-[40px] mb-12">
-                Already Trusted by Rellia Members
+              <h2 className="text-center font-host-grotesk text-3xl font-semibold leading-tight tracking-tight text-black md:text-[40px] mb-12">
+                Already trusted by Rellia members
               </h2>
             </ScrollReveal>
 
@@ -430,9 +430,14 @@ const ProgramPageLayout = ({
                         <div className="mx-auto flex w-full max-w-[980px] flex-col items-start">
                           {/* Quote Block */}
                           <div className="relative z-10 flex w-full flex-col items-start justify-center pt-4 md:pt-8">
+                            <div
+                              aria-hidden
+                              className="pointer-events-none absolute -left-10 -top-6 h-40 w-40 rounded-full bg-rellia-mint/35 blur-3xl md:-left-14 md:-top-10 md:h-52 md:w-52"
+                            />
                             <Quote
-                              className="mb-6 h-8 w-8 text-rellia-teal"
-                              strokeWidth={2}
+                              className="mb-6 h-12 w-12 text-rellia-teal fill-current md:h-14 md:w-14"
+                              fill="currentColor"
+                              stroke="none"
                               aria-hidden
                             />
                             <p className="w-full font-host-grotesk text-xl font-medium leading-[1.25] tracking-tight text-rellia-teal md:text-2xl lg:text-3xl">
