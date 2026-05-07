@@ -205,8 +205,8 @@ export default function Stories() {
               <FilteredListEmptyState
                 className="mt-6"
                 icon={BookOpen}
-                title="No stories match this filter"
-                description="Try another category or choose All to browse every story."
+                title="No stories"
+                description="No stories match this filter. Try another category or choose All to browse every story."
               />
             ) : (
               <motion.div

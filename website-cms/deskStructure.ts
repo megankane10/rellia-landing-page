@@ -88,9 +88,9 @@ export const deskStructure = (S: StructureBuilder) =>
         ),
 
       S.listItem()
-        .title('Submissions')
+        .title('Diagnostic Survey Submissions')
         .icon(SearchIcon)
-        .child(S.documentTypeList('diagnosticSubmission').title('Diagnostic Submissions')),
+        .child(S.documentTypeList('diagnosticSubmission').title('Diagnostic Survey Submissions')),
 
       S.divider(),
       ...S.documentTypeListItems().filter(

@@ -1,4 +1,4 @@
-import { Calendar, History, MapPin, Video, ArrowRight, Bell, CalendarDays } from "lucide-react"
+import { Calendar, History, MapPin, Video, Bell, CalendarDays } from "lucide-react"
 import { Link } from "react-router-dom"
 import type { ProgramsEventCard, ProgramsProgramCard } from "@shared/cms/types"
 import {
@@ -9,11 +9,9 @@ import {
   getProgramsEventLocationDetailLines,
 } from "@shared/cms/programsEventDisplay"
 import { programsEventDetailPath } from "@shared/cms/eventSlug"
-import RelliaAction from "@/components/RelliaAction"
 import { cn } from "@/lib/utils"
-import { useState } from "react"
-import FilloutPopupDialog from "@/components/FilloutPopupDialog"
 import { getCurrentMonthDeadline } from "@/lib/dateUtils"
+import { placeholderImageFromSeed } from "@/lib/placeholderImages"
 
 const shortenMonth = (dateStr: string) => {
   const months: Record<string, string> = {
@@ -27,6 +25,41 @@ const shortenMonth = (dateStr: string) => {
   });
   return result;
 };
+
+const extractEventDateBits = (raw: string) => {
+  const yearMatch = raw.match(/\b(19|20)\d{2}\b/)
+  const year = yearMatch?.[0] ?? ""
+  const monthMatch = raw.match(/\b(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\b/i)
+  const month = monthMatch?.[0] ? monthMatch[0].toUpperCase() : ""
+  const dayMatch = raw.match(/\b([0-3]?\d)\b/)
+  const day = dayMatch?.[1] ?? ""
+  return { year, month, day }
+}
+
+const formatTimeFromStartsAt = (startsAt: unknown): string => {
+  if (typeof startsAt !== "string" || !startsAt.trim()) return ""
+  const t = Date.parse(startsAt)
+  if (!Number.isFinite(t)) return ""
+  const d = new Date(t)
+  const time = d.toLocaleTimeString("en-US", {
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+    timeZone: "America/New_York",
+  })
+  return `${time} EDT`
+}
+
+const cleanBadgeTime = (raw: string): string => {
+  const s = raw.trim()
+  if (!s) return ""
+  return s
+    // When we split by commas on strings like "Tue, Jun 24, 2026 — 5:30 PM EDT",
+    // the "time" chunk can start with "2026 —". Strip that entirely.
+    .replace(/^(?:19|20)\d{2}\s*[—-]\s*/g, "")
+    .replace(/^[—-]\s*/g, "")
+    .trim()
+}
 
 export type Event = ProgramsEventCard
 export type Program = ProgramsProgramCard
@@ -56,8 +89,12 @@ export function HorizontalCard(props: HorizontalCardProps) {
     // Simple parser for "May 15" or similar from the date line
     // e.g. "Monday, May 15, 6:00 PM"
     const dateParts = dateTimeLine.split(",")
-    const dateMain = (dateParts[1] || dateParts[0] || "").trim() // "May 15"
-    const timeMain = (dateParts[2] || "").trim() // "6:00 PM"
+    const dateMain = (dateParts[1] || dateParts[0] || "").trim()
+    const parsedTime = (dateParts[2] || "").trim()
+    const computedTime = parsedTime || formatTimeFromStartsAt((event as any).startsAt || (event as any).calendarStartsAt)
+    const timeMain = cleanBadgeTime(computedTime)
+    const dateBits = extractEventDateBits(dateTimeLine)
+    const eventThumbSrc = event.imageSrc?.trim() ? event.imageSrc : placeholderImageFromSeed(event.slug || event.title, 720, 720)
 
     return (
       <article
@@ -71,12 +108,15 @@ export function HorizontalCard(props: HorizontalCardProps) {
         </Link>
 
         {/* Date Block */}
-        <div className="flex flex-col items-start justify-center w-24 sm:w-28 md:w-40 shrink-0">
-          <span className="font-host-grotesk text-3xl md:text-5xl font-bold text-black leading-none">
-            {dateMain.split(" ")[1] || dateMain}
+        <div className="flex flex-col items-center justify-center w-24 sm:w-28 md:w-40 shrink-0 text-center">
+          <span className="font-urbanist text-[11px] md:text-sm font-bold text-black/40 uppercase tracking-[0.25em]">
+            {dateBits.year}
           </span>
-          <span className="mt-2 font-urbanist text-[11px] md:text-sm font-bold text-black/40 uppercase tracking-[0.25em]">
-            {dateMain.split(" ")[0] || ""}
+          <span className="mt-1 font-host-grotesk text-3xl md:text-5xl font-bold text-black leading-none">
+            {dateBits.day || dateMain.split(" ")[1] || dateMain}
+          </span>
+          <span className="mt-2 font-urbanist text-[11px] md:text-sm font-bold text-rellia-teal uppercase tracking-[0.25em]">
+            {dateBits.month || dateMain.split(" ")[0] || ""}
           </span>
         </div>
 
@@ -102,20 +142,22 @@ export function HorizontalCard(props: HorizontalCardProps) {
             </span>
           </div>
 
-          <h3 className="line-clamp-2 font-host-grotesk text-2xl md:text-3xl font-bold leading-tight tracking-tight text-black group-hover:text-rellia-teal transition-colors duration-300">
+          <h3 className="line-clamp-2 font-host-grotesk text-2xl md:text-3xl font-medium leading-tight tracking-tight text-black group-hover:text-rellia-teal transition-colors duration-300">
             {event.title}
           </h3>
 
-          <div className="mt-4 flex flex-wrap items-center gap-y-3 gap-x-6">
+          <div className="mt-6 flex flex-wrap items-center gap-y-3 gap-x-6">
             {hasSpeakerBlock && (
               <div className="flex items-center gap-3">
-                 <img src={avatarSrc} alt="" className="h-7 w-7 rounded-full border border-black/10 object-cover" />
-                 <div className="flex flex-col min-w-0">
-                   <span className="font-urbanist text-sm font-bold text-black/80 truncate max-w-[140px] leading-none">{speakerName}</span>
-                   {speakerParts.company && (
-                     <span className="font-urbanist text-[11px] font-medium text-black/40 truncate max-w-[120px] mt-0.5">{speakerParts.company}</span>
-                   )}
-                 </div>
+                <img
+                  src={avatarSrc}
+                  alt=""
+                  className="h-9 w-9 rounded-full border border-black/10 object-cover"
+                  aria-hidden
+                />
+                <span className="font-urbanist text-[15px] md:text-base font-semibold text-black/80 leading-none truncate">
+                  {speakerParts.company ? `${speakerName}, ${speakerParts.company}` : speakerName}
+                </span>
               </div>
             )}
             {hasSpeakerBlock && <span className="hidden sm:block h-1 w-1 rounded-full bg-black/10" aria-hidden />}
@@ -131,19 +173,17 @@ export function HorizontalCard(props: HorizontalCardProps) {
         </div>
 
         {/* Image Thumbnail */}
-        {event.imageSrc && (
-          <div className="relative shrink-0 rounded-2xl overflow-hidden bg-black/5 w-16 h-16 sm:w-24 sm:h-24 md:w-36 md:h-36 ml-auto shadow-sm">
-            <img
-              src={event.imageSrc}
-              alt={event.title}
-              className={cn(
-                "absolute inset-0 h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105",
-                variant === "past" && "opacity-90 saturate-[0.9]"
-              )}
-              loading="lazy"
-            />
-          </div>
-        )}
+        <div className="relative shrink-0 rounded-2xl overflow-hidden bg-black/5 w-16 h-16 sm:w-24 sm:h-24 md:w-36 md:h-36 ml-auto shadow-sm">
+          <img
+            src={eventThumbSrc}
+            alt={event.title}
+            className={cn(
+              "absolute inset-0 h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105",
+              variant === "past" && "opacity-90 saturate-[0.9]"
+            )}
+            loading="lazy"
+          />
+        </div>
       </article>
     )
   }
@@ -153,23 +193,18 @@ export function HorizontalCard(props: HorizontalCardProps) {
   const hasHref = Boolean(program.href && program.href.trim().length > 0)
   const hasWaitlistHref = Boolean(program.waitlistHref && program.waitlistHref.trim().length > 0)
   const isWaitlistCard = hasWaitlistHref
-  const [waitlistOpen, setWaitlistOpen] = useState(false)
+  const programImageSrc = program.imageSrc?.trim()
+    ? program.imageSrc
+    : placeholderImageFromSeed(program.slug || program.title, 1200, 900)
 
   return (
     <article
       className={cn(
-        "group relative flex flex-row w-full rounded-2xl border border-black/10 bg-white transition-all duration-500 hover:border-rellia-teal/30 hover:shadow-[0_20px_50px_-20px_rgba(13,148,136,0.12)] p-4 md:p-6 gap-5 md:gap-8 items-stretch",
-        hasHref ? "cursor-pointer" : (isWaitlistCard ? "cursor-pointer" : ""),
+        "group relative flex w-full rounded-2xl border border-black/10 bg-white transition-all duration-500 hover:border-rellia-teal/30 hover:shadow-[0_20px_50px_-20px_rgba(13,148,136,0.12)] p-4 md:p-4 gap-4 md:gap-5 items-stretch",
+        "flex-col md:flex-row",
+        hasHref ? "cursor-pointer" : "",
         className
       )}
-      onClick={!hasHref && isWaitlistCard ? () => setWaitlistOpen(true) : undefined}
-      onKeyDown={!hasHref && isWaitlistCard ? (e) => {
-        if (e.key === "Enter" || e.key === " ") {
-          e.preventDefault()
-          setWaitlistOpen(true)
-        }
-      } : undefined}
-      tabIndex={!hasHref && isWaitlistCard ? 0 : undefined}
     >
       {hasHref ? (
         <Link to={program.href as string} className="absolute inset-0 z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-teal rounded-2xl">
@@ -177,9 +212,9 @@ export function HorizontalCard(props: HorizontalCardProps) {
         </Link>
       ) : null}
 
-      <div className="relative shrink-0 rounded-xl overflow-hidden bg-rellia-teal/5 w-24 sm:w-32 md:w-[260px] lg:w-[320px] aspect-square">
+      <div className="relative shrink-0 rounded-xl overflow-hidden bg-rellia-teal/5 w-full md:w-[220px] lg:w-[260px] aspect-[16/9] md:aspect-square">
         <img
-          src={program.imageSrc}
+          src={programImageSrc}
           alt={program.title}
           className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
           loading="lazy"
@@ -188,7 +223,7 @@ export function HorizontalCard(props: HorizontalCardProps) {
       </div>
 
       <div className="flex flex-1 flex-col min-w-0 py-1">
-        <div className="mb-4 flex flex-wrap items-center gap-3">
+        <div className="mb-3 flex flex-wrap items-center gap-3">
           <span
             className={cn(
               "inline-flex w-fit items-center gap-1.5 rounded-full px-3 py-1 font-host-grotesk text-[10px] font-bold uppercase tracking-[0.16em] ring-1 ring-black/5",
@@ -210,45 +245,27 @@ export function HorizontalCard(props: HorizontalCardProps) {
         </div>
 
         <h3 className={cn(
-          "font-host-grotesk text-2xl md:text-3xl font-bold leading-[1.15] tracking-tight text-black mb-4",
+          "font-host-grotesk text-2xl md:text-[28px] font-medium leading-[1.15] tracking-tight text-black mb-2",
           (hasHref || isWaitlistCard) && "group-hover:text-rellia-teal transition-colors duration-300"
         )}>
           {program.title}
         </h3>
         
-        <p className="font-urbanist text-[15px] md:text-base font-medium leading-relaxed text-black/60 line-clamp-3">
+        <p className="font-urbanist text-[14px] md:text-[15px] font-medium leading-relaxed text-black/60 line-clamp-3">
           {program.description}
         </p>
 
-        {!isWaitlistCard && (
-          <div className="mt-7 flex items-center gap-3 text-black/70">
-            <CalendarDays className="h-5 w-5 text-rellia-teal" strokeWidth={2.5} />
-            <div className="flex flex-col">
-              <span className="font-host-grotesk text-[13px] font-bold uppercase tracking-[0.18em] text-black/40">Deadline</span>
-              <span className="font-urbanist text-[13px] font-bold text-black/80">
-                {program.deadline || getCurrentMonthDeadline()}
+        {!isWaitlistCard ? (
+          <div className="mt-auto pt-5 md:pt-6 pb-3">
+            <div className="flex items-end gap-3 text-black/70">
+              <CalendarDays className="h-7 w-7 text-rellia-teal" strokeWidth={2.25} aria-hidden />
+              <span className="font-host-grotesk text-[12px] font-bold uppercase tracking-[0.18em] text-black/80">
+                DEADLINE: {program.deadline || getCurrentMonthDeadline()}
               </span>
             </div>
           </div>
-        )}
-
-        <div className="mt-auto pt-6 flex items-center justify-between border-t border-black/5">
-          <span className="font-host-grotesk text-sm font-bold text-rellia-teal group-hover:underline underline-offset-4 decoration-2">
-            {isWaitlistCard ? "Notify me" : "View program details"}
-          </span>
-          <ArrowRight className="h-5 w-5 text-rellia-teal transition-transform duration-300 group-hover:translate-x-1" />
-        </div>
+        ) : null}
       </div>
-
-      {hasWaitlistHref ? (
-        <FilloutPopupDialog
-          open={waitlistOpen}
-          onOpenChange={setWaitlistOpen}
-          formUrl={program.waitlistHref as string}
-          title="Join the program waitlist"
-          description="Share a few details and we'll reach out when this program opens."
-        />
-      ) : null}
     </article>
   )
 }

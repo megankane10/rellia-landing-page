@@ -14,6 +14,9 @@ export const advisor = defineType({
     }),
     defineField({name: 'organization', type: 'string'}),
     defineField({name: 'role', type: 'string'}),
+    defineField({name: 'location', type: 'string'}),
+    defineField({name: 'country', type: 'string'}),
+    defineField({name: 'yearJoined', type: 'string', description: 'e.g. 2024'}),
     defineField({
       name: 'industries',
       type: 'array',

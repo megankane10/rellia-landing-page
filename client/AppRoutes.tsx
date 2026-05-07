@@ -40,6 +40,8 @@ import FoundersDirectory from "./pages/network/FoundersDirectory"
 import FounderProfile from "./pages/network/FounderProfile"
 import AdvisorsDirectory from "./pages/network/AdvisorsDirectory"
 import AdvisorProfile from "./pages/network/AdvisorProfile"
+import TermsofUse from "./pages/TermsofUse"
+import PrivacyPolicy from "./pages/PrivacyPolicy"
 import PlaceholderPage from "./pages/PlaceholderPage"
 import CmsCatchAll from "./pages/CmsCatchAll"
 
@@ -120,6 +122,10 @@ export const AppRoutes = () => (
     <Route path="/membership" element={<Payment />} />
     <Route path="/stories" element={<Stories />} />
     <Route path="/stories/:slug" element={<StoryPost />} />
+
+    <Route path="/terms" element={<TermsofUse />} />
+    <Route path="/privacy" element={<PrivacyPolicy />} />
+    <Route path="/policy" element={<Navigate to="/privacy" replace />} />
 
     {/* Dedicated role pages live at /founders, /advisors, /investors, /partners */}
     <Route path="/industry-partners/directory" element={<IndustryPartnersDirectory />} />

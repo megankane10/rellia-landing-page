@@ -18,10 +18,17 @@ export const program = defineType({
     }),
     defineField({name: 'description', type: 'text', rows: 3}),
     defineField({
+      name: 'image',
+      title: 'Program image',
+      type: 'image',
+      options: {hotspot: true},
+      description: 'Upload an image to enable cropping and focal-point positioning.',
+    }),
+    defineField({
       name: 'imageSrc',
-      title: 'Image URL',
+      title: 'Program image URL (legacy)',
       type: 'string',
-      description: 'Relative site path (e.g. /images/…) or absolute URL.',
+      description: 'Optional. Prefer “Program image” above so you can crop and reposition.',
     }),
     defineField({
       name: 'buttonText',

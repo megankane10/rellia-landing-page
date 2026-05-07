@@ -19,7 +19,7 @@ const NotFound = () => {
   return (
     <div className="flex min-h-screen flex-col bg-white font-host-grotesk overflow-x-hidden">
       <Navbar />
-      <main id="main-content" className="flex flex-1 flex-col">
+      <main id="main-content" className="flex flex-1 flex-col pt-20 md:pt-28">
         <RelliaCta
           icon={<Search className="h-20 w-20 text-rellia-teal" strokeWidth={1.25} />}
           title="**404**"

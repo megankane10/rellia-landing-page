@@ -1,5 +1,8 @@
 import { createClient } from "@sanity/client"
 import "./loadEnv"
+import path from "node:path"
+import fs from "node:fs"
+import { promises as fsp } from "node:fs"
 import {
   DEFAULT_ABOUT_PAGE,
   DEFAULT_CONTACT_PAGE,
@@ -446,6 +449,51 @@ const requireEnv = (key: string): string => {
   return v
 }
 
+const SANITY_UPLOADABLE_EXTENSIONS = new Set([".jpg", ".jpeg", ".png", ".webp", ".gif"])
+
+const isLocalPublicImagePath = (src: string): boolean => /^\/images\/[^/].+/i.test(src.trim())
+
+const localPublicImageFilePath = (src: string): string =>
+  path.join(process.cwd(), "public", src.replace(/^\//, ""))
+
+const resolveImageAssetId = async (
+  client: ReturnType<typeof createClient>,
+  imageSrc: string | undefined,
+): Promise<string | null> => {
+  const src = (imageSrc ?? "").trim()
+  if (!src) return null
+  if (!isLocalPublicImagePath(src)) return null
+
+  const filePath = localPublicImageFilePath(src)
+  const ext = path.extname(filePath).toLowerCase()
+  if (!SANITY_UPLOADABLE_EXTENSIONS.has(ext)) return null
+  try {
+    await fsp.stat(filePath)
+  } catch {
+    return null
+  }
+
+  const filename = path.basename(filePath)
+
+  const existing = await client.fetch<string | null>(
+    `*[_type == "sanity.imageAsset" && originalFilename == $filename][0]._id`,
+    { filename },
+  )
+  if (existing) return existing
+
+  const stream = fs.createReadStream(filePath)
+  const uploaded = await client.assets.upload("image", stream as any, { filename })
+  return uploaded?._id ?? null
+}
+
+const toSanityImageFieldValue = (assetId: string | null) =>
+  assetId
+    ? {
+        _type: "image",
+        asset: { _type: "reference", _ref: assetId },
+      }
+    : undefined
+
 async function main() {
   const projectId =
     process.env.SANITY_API_PROJECT_ID?.trim() ||
@@ -466,6 +514,19 @@ async function main() {
   })
 
   const mutations: any[] = []
+
+  // Clear existing directory docs so seed is the source of truth.
+  // These docs were originally created in Studio with random IDs, so deterministic seeding
+  // won't replace them unless we delete first.
+  const existingAdvisorIds = await client.fetch<string[]>(`*[_type == "advisor"]._id`)
+  for (const id of existingAdvisorIds) {
+    mutations.push({ delete: { id } })
+  }
+
+  const existingAlumniCompanyIds = await client.fetch<string[]>(`*[_type == "alumniCompany"]._id`)
+  for (const id of existingAlumniCompanyIds) {
+    mutations.push({ delete: { id } })
+  }
 
   // Singletons: IDs match deskStructure documentIds
   mutations.push({
@@ -516,6 +577,7 @@ async function main() {
     const title = program.title?.trim()
     if (!title) continue
     const slug = (program.href || "").split("/").filter(Boolean).pop() || title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "")
+    const programAssetId = await resolveImageAssetId(client, program.imageSrc)
     mutations.push({
       createOrReplace: {
         _id: `program.${slug}`,
@@ -523,6 +585,7 @@ async function main() {
         title,
         slug: { _type: "slug", current: slug },
         description: program.description,
+        image: toSanityImageFieldValue(programAssetId),
         imageSrc: program.imageSrc,
         href: program.href,
         buttonText: program.buttonText,
@@ -537,14 +600,18 @@ async function main() {
   for (const [index, e] of DEFAULT_PROGRAMS_LANDING.upcomingEvents.entries()) {
     const slug = (e.slug || "").trim()
     if (!slug) continue
+    const eventAssetId = await resolveImageAssetId(client, (e as any).imageSrc)
     mutations.push({
       createOrReplace: {
         _id: `event.${slug}`,
         _type: "event",
         title: e.title,
         slug: { _type: "slug", current: slug },
+        startsAt: (e as any).calendarStartsAt,
+        endsAt: (e as any).calendarEndsAt,
         dateTime: e.dateTime,
         person: e.person,
+        image: toSanityImageFieldValue(eventAssetId),
         imageSrc: e.imageSrc,
         href: e.href,
         comingSoon: (e as any).comingSoon,
@@ -566,14 +633,18 @@ async function main() {
   for (const [index, e] of DEFAULT_PROGRAMS_LANDING.pastEvents.entries()) {
     const slug = (e.slug || "").trim()
     if (!slug) continue
+    const eventAssetId = await resolveImageAssetId(client, (e as any).imageSrc)
     mutations.push({
       createOrReplace: {
         _id: `event.${slug}`,
         _type: "event",
         title: e.title,
         slug: { _type: "slug", current: slug },
+        startsAt: (e as any).calendarStartsAt,
+        endsAt: (e as any).calendarEndsAt,
         dateTime: e.dateTime,
         person: e.person,
+        image: toSanityImageFieldValue(eventAssetId),
         imageSrc: e.imageSrc,
         href: e.href,
         comingSoon: (e as any).comingSoon,
@@ -591,6 +662,7 @@ async function main() {
       },
     })
   }
+
   mutations.push({
     createOrReplace: {
       _id: "contactPage",
@@ -681,12 +753,15 @@ async function main() {
   for (const advisor of ADVISOR_DIRECTORY_SEED) {
     mutations.push({
       createOrReplace: {
-        _id: `advisor.${advisor.id}`,
+        _id: `advisor-${advisor.id}`,
         _type: "advisor",
         slug: { _type: "slug", current: advisor.id },
         name: advisor.name,
         organization: advisor.organization,
         role: advisor.role,
+        location: advisor.location,
+        country: advisor.country,
+        yearJoined: advisor.yearJoined,
         industries: advisor.industries,
         focus: advisor.focus,
         filter: advisor.filter,
@@ -703,7 +778,7 @@ async function main() {
   for (const company of FOUNDER_DIRECTORY) {
     mutations.push({
       createOrReplace: {
-        _id: `alumniCompany.${company.id}`,
+        _id: `alumniCompany-${company.id}`,
         _type: "alumniCompany",
         slug: { _type: "slug", current: company.id },
         name: company.logoName,

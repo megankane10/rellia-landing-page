@@ -96,8 +96,32 @@ export default function FoundersDirectory() {
   const [activeId, setActiveId] = useState<string | null>(null);
 
   const companies = useMemo<FounderCompany[]>(() => {
-    if (Array.isArray(cmsCompanies) && cmsCompanies.length > 0)
-      return cmsCompanies as FounderCompany[];
+    if (Array.isArray(cmsCompanies) && cmsCompanies.length > 0) {
+      return cmsCompanies
+        .filter((c: any) => c && typeof c.id === "string" && typeof c.name === "string")
+        .map((c: any): FounderCompany => {
+          return {
+            id: c.id,
+            slug: c.id,
+            logoName: c.name,
+            logoSrc: c.logoSrc,
+            tagline: c.tagline ?? "",
+            specialties: Array.isArray(c.specialties) ? c.specialties : [],
+            level: c.level,
+            shortDescription: c.shortDescription ?? "",
+            longDescription: c.longDescription ?? "",
+            websiteUrl: c.websiteUrl ?? "",
+            traction: c.traction ?? "",
+            relliaCollaboration: c.relliaCollaboration ?? "",
+            imageSrc: "",
+            country: c.country ?? "",
+            yearJoined: typeof c.yearJoined === "number" ? c.yearJoined : 0,
+            founders: Array.isArray(c.founders) ? c.founders : [],
+            programs: Array.isArray(c.programs) ? c.programs : [],
+            linkedinUrl: c.linkedinUrl,
+          }
+        })
+    }
     return FOUNDER_DIRECTORY;
   }, [cmsCompanies]);
 

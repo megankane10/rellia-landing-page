@@ -225,8 +225,11 @@ export const shortenProgramsEventDateTime = (raw: string): string => {
 }
 
 /** Event detail hero: full weekday + month + day + year (no abbreviations). */
-export const formatProgramsEventDetailDateExtended = (raw: string): string =>
-  parseProgramsEventDateTimeParts(raw).date
+export const formatProgramsEventDetailDateExtended = (raw: string): string => {
+  const date = parseProgramsEventDateTimeParts(raw).date
+  if (!date) return ""
+  return applyWeekdayMonthAbbreviations(date)
+}
 
 /**
  * Event detail hero: first line of the date block, e.g. `2:00 PM EST` (Eastern US label).

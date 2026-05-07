@@ -12,11 +12,22 @@ import NotFound from "../NotFound";
 import { cn } from "@/lib/utils";
 import RouteSeo from "@/components/RouteSeo";
 import { getSiteUrl } from "@/config/seo";
+import { useAlumniCompanies } from "@/hooks/useCmsDocuments"
 
 export default function FounderProfile() {
   const { id } = useParams<{ id: string }>();
   const location = useLocation();
-  const active = FOUNDER_DIRECTORY.find((c) => c.id === id);
+  const { data: cmsCompanies } = useAlumniCompanies()
+  const cmsActive = Array.isArray(cmsCompanies) ? cmsCompanies.find((c: any) => c?.id === id) : null
+  const active =
+    cmsActive
+      ? {
+          ...cmsActive,
+          id: cmsActive.id,
+          slug: cmsActive.id,
+          logoName: cmsActive.name,
+        }
+      : FOUNDER_DIRECTORY.find((c) => c.id === id)
 
   const canonicalUrl = `${getSiteUrl()}${location.pathname}`;
 

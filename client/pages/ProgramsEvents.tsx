@@ -167,8 +167,8 @@ export default function ProgramsEvents() {
                 <FilteredListEmptyState
                   className="mt-6"
                   icon={LayoutGrid}
-                  title="No programs match this filter"
-                  description="Try the All tab, or check back as we open new cohorts and waitlists."
+                  title="No programs"
+                  description="No programs match this filter. Try the All tab, or check back as we open new cohorts and waitlists."
                 />
               ) : (
                 <motion.div

@@ -44,6 +44,8 @@ export const aboutPage = defineType({
             {name: 'name', type: 'string'},
             {name: 'role', type: 'string'},
             {name: 'bio', type: 'text', rows: 3},
+            {name: 'linkedinUrl', type: 'url'},
+            {name: 'websiteUrl', type: 'url'},
             {name: 'image', type: 'image', options: {hotspot: true}},
             {name: 'imageSrc', type: 'string'},
           ],

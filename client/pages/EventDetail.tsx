@@ -90,13 +90,43 @@ const splitEventDetailBody = (raw: string | undefined): string[] => {
     .filter(Boolean)
 }
 
+const formatEventDateTimeFromStartsAt = (startsAt: string): string => {
+  const t = Date.parse(startsAt)
+  if (!Number.isFinite(t)) return ""
+
+  const d = new Date(t)
+  const weekday = d.toLocaleDateString("en-US", { weekday: "long", timeZone: "America/New_York" })
+  const month = d.toLocaleDateString("en-US", { month: "long", timeZone: "America/New_York" })
+  const day = d.toLocaleDateString("en-US", { day: "numeric", timeZone: "America/New_York" })
+  const year = d.toLocaleDateString("en-US", { year: "numeric", timeZone: "America/New_York" })
+  const time = d.toLocaleTimeString("en-US", {
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+    timeZone: "America/New_York",
+  })
+
+  return `${weekday}, ${month} ${day}, ${year} — ${time} EDT`
+}
+
+const getEventStatus = (event: any): "upcoming" | "past" => {
+  const explicit = event?.status
+  if (explicit === "upcoming" || explicit === "past") return explicit
+
+  const candidate = event?.startsAt || event?.calendarStartsAt
+  if (typeof candidate !== "string" || !candidate.trim()) return "upcoming"
+  const t = Date.parse(candidate)
+  if (!Number.isFinite(t)) return "upcoming"
+  return t < Date.now() ? "past" : "upcoming"
+}
+
 export default function EventDetail() {
   const { slug } = useParams()
   const resolvedSlug = slug?.trim() ? decodeURIComponent(slug) : ""
   const { data: cmsEvent } = useEventBySlug(resolvedSlug)
   const fallbackMatch = resolvedSlug ? findProgramsEventBySlug(resolvedSlug, DEFAULT_PROGRAMS_LANDING) : null
   const match = cmsEvent
-    ? { _variant: cmsEvent.status === "past" ? "past" : "upcoming", ...cmsEvent }
+    ? { _variant: getEventStatus(cmsEvent) === "past" ? "past" : "upcoming", ...cmsEvent }
     : fallbackMatch
   const [copyState, setCopyState] = useState<"idle" | "copied">("idle")
   const [showForm, setShowForm] = useState(false)
@@ -124,9 +154,15 @@ export default function EventDetail() {
   const { _variant, ...event } = match
   const isPast = _variant === "past"
   const speakerParts = parseProgramsEventSpeaker(event.person)
-  const shortDateTime = shortenProgramsEventDateTime(event.dateTime ?? "")
-  const detailTimeEst = formatProgramsEventDetailTimeEst(event.dateTime ?? "")
-  const detailDateLine = formatProgramsEventDetailDateExtended(event.dateTime ?? "")
+  const computedDateTime =
+    typeof event.dateTime === "string" && event.dateTime.trim()
+      ? event.dateTime
+      : typeof (event as any).startsAt === "string" && (event as any).startsAt.trim()
+        ? formatEventDateTimeFromStartsAt((event as any).startsAt)
+        : ""
+  const shortDateTime = shortenProgramsEventDateTime(computedDateTime)
+  const detailTimeEst = formatProgramsEventDetailTimeEst(computedDateTime)
+  const detailDateLine = formatProgramsEventDetailDateExtended(computedDateTime)
   const locationLabel = getProgramsEventLocationLabel(event)
   const locationDetailLines = getProgramsEventLocationDetailLines(event)
   const mapsSearchUrl = getProgramsEventMapsSearchUrl(event)

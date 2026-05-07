@@ -21,7 +21,9 @@ export const getSanityClient = (): SanityClient | null => {
       projectId: getSanityProjectId(),
       dataset: getSanityDataset(),
       apiVersion: "2024-01-01",
-      useCdn: true,
+      // Publishing in Studio should reflect quickly on Vercel previews.
+      // `useCdn: true` can lag; use the API for fresher reads.
+      useCdn: false,
     });
   }
   return client;

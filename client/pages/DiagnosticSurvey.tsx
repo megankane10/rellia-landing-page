@@ -14,6 +14,7 @@ import {
   Users,
 } from "lucide-react";
 import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer"
 import RelliaAction from "@/components/RelliaAction";
 import NetworkEyebrow from "@/components/network/NetworkEyebrow";
 import RouteSeo from "@/components/RouteSeo";
@@ -2198,6 +2199,8 @@ export default function DiagnosticSurvey() {
           </div>
         </main>
       </div>
+
+      <Footer />
     </div>
   );
 }

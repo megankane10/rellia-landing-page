@@ -5,6 +5,7 @@ import RelliaCta, { ctaActionFromHref } from "@/components/RelliaCta"
 import { HorizontalCard } from "@/components/cards/HorizontalCard"
 import PageHeader from "@/components/PageHeader"
 import { useEvents } from "@/hooks/useCmsDocuments"
+import { useProgramsLandingPage } from "@/hooks/useCmsDocuments"
 import { DEFAULT_PROGRAMS_LANDING } from "@shared/cms/defaults"
 import { useMemo, useState, useEffect } from "react"
 import { CalendarDays, LayoutGrid, ChevronLeft, ChevronRight } from "lucide-react"
@@ -16,19 +17,101 @@ import FilteredListEmptyState from "@/components/FilteredListEmptyState"
 type EventFilter = "all" | "upcoming" | "past"
 const PAGE_SIZE = 12
 
+const MONTH_TO_INDEX: Record<string, number> = {
+  january: 0,
+  february: 1,
+  march: 2,
+  april: 3,
+  may: 4,
+  june: 5,
+  july: 6,
+  august: 7,
+  september: 8,
+  october: 9,
+  november: 10,
+  december: 11,
+}
+
+const parseLooseDateTimeToTimestamp = (raw: string): number => {
+  const s = raw.trim()
+  if (!s) return Number.NaN
+
+  const direct = Date.parse(s)
+  if (Number.isFinite(direct)) return direct
+
+  // Handle strings like:
+  // "Thursday, February 19, 2025 — 12:00 PM EST"
+  const m = s.match(
+    /\b(January|February|March|April|May|June|July|August|September|October|November|December)\b\s+(\d{1,2})\b,\s*((?:19|20)\d{2})\b/i,
+  )
+  if (!m) return Number.NaN
+
+  const monthIndex = MONTH_TO_INDEX[(m[1] ?? "").toLowerCase()]
+  const day = Number(m[2] ?? "")
+  const year = Number(m[3] ?? "")
+  if (!Number.isFinite(monthIndex) || !Number.isFinite(day) || !Number.isFinite(year)) return Number.NaN
+
+  // Midday UTC is enough for past/upcoming classification.
+  return Date.UTC(year, monthIndex, day, 12, 0, 0)
+}
+
+const getEventTimestamp = (event: any): number => {
+  const candidate = event?.startsAt || event?.calendarStartsAt || event?.dateTime
+  if (typeof candidate !== "string" || !candidate.trim()) return Number.NaN
+  const parsed = parseLooseDateTimeToTimestamp(candidate)
+  return Number.isFinite(parsed) ? parsed : Number.NaN
+}
+
+const getEventStatus = (event: any): "upcoming" | "past" => {
+  const explicit = event?.status
+  if (explicit === "upcoming" || explicit === "past") return explicit
+
+  const t = getEventTimestamp(event)
+  if (!Number.isFinite(t)) return "upcoming"
+  return t < Date.now() ? "past" : "upcoming"
+}
+
 export default function Events() {
   const { data } = useEvents()
-  const allEvents = Array.isArray(data) && data.length > 0 ? data : [...DEFAULT_PROGRAMS_LANDING.upcomingEvents, ...DEFAULT_PROGRAMS_LANDING.pastEvents]
+  const { data: programsLanding } = useProgramsLandingPage()
+  const landingEvents =
+    programsLanding && (Array.isArray((programsLanding as any).upcomingEvents) || Array.isArray((programsLanding as any).pastEvents))
+      ? [
+          ...(((programsLanding as any).upcomingEvents as any[]) ?? []),
+          ...(((programsLanding as any).pastEvents as any[]) ?? []),
+        ]
+      : []
+
+  const allEvents =
+    Array.isArray(data) && data.length > 0
+      ? data
+      : landingEvents.length > 0
+        ? landingEvents
+        : [...DEFAULT_PROGRAMS_LANDING.upcomingEvents, ...DEFAULT_PROGRAMS_LANDING.pastEvents]
   const [eventFilter, setEventFilter] = useState<EventFilter>("all")
   const [page, setPage] = useState(1)
 
   const { upcomingEvents, pastEvents } = useMemo(() => {
     const upcoming = allEvents
-      .filter((e: any) => e?.status === "upcoming")
-      .sort((a: any, b: any) => new Date(a.dateTime).getTime() - new Date(b.dateTime).getTime())
+      .filter((e: any) => getEventStatus(e) === "upcoming")
+      .sort((a: any, b: any) => {
+        const at = getEventTimestamp(a)
+        const bt = getEventTimestamp(b)
+        if (!Number.isFinite(at) && !Number.isFinite(bt)) return 0
+        if (!Number.isFinite(at)) return 1
+        if (!Number.isFinite(bt)) return -1
+        return at - bt
+      })
     const past = allEvents
-      .filter((e: any) => e?.status === "past")
-      .sort((a: any, b: any) => new Date(b.dateTime).getTime() - new Date(a.dateTime).getTime())
+      .filter((e: any) => getEventStatus(e) === "past")
+      .sort((a: any, b: any) => {
+        const at = getEventTimestamp(a)
+        const bt = getEventTimestamp(b)
+        if (!Number.isFinite(at) && !Number.isFinite(bt)) return 0
+        if (!Number.isFinite(at)) return 1
+        if (!Number.isFinite(bt)) return -1
+        return bt - at
+      })
     return { upcomingEvents: upcoming, pastEvents: past }
   }, [allEvents])
 
@@ -118,7 +201,7 @@ export default function Events() {
                   </Tabs>
                 </div>
 
-                <p className="font-urbanist text-sm font-semibold text-black/55 md:text-right">
+                <p className="font-urbanist text-sm text-black/55 md:text-right">
                   Showing {pageEvents.length} of {visibleEvents.length} events
                 </p>
               </div>
@@ -127,8 +210,8 @@ export default function Events() {
                 <FilteredListEmptyState
                   className="mt-12"
                   icon={CalendarDays}
-                  title="No events match this filter"
-                  description="Check back later for new upcoming dates and archived sessions."
+                  title="No events"
+                  description="No events match this filter. Try another tab, or check back later for new upcoming dates and archived sessions."
                 />
               ) : (
                 <div className="flex flex-col">
@@ -139,7 +222,7 @@ export default function Events() {
                   >
                     <AnimatePresence mode="sync" initial={false}>
                       {pageEvents.map((event) => {
-                        const isPast = event?.status === "past"
+                        const isPast = getEventStatus(event) === "past"
                         return (
                           <motion.div
                             key={event?.slug || `${event.title}-${event.dateTime}`}

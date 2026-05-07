@@ -48,7 +48,8 @@ import type {
   QmsProgramContent,
 } from "@shared/cms/types";
 
-const staleTimeMs = 5 * 60 * 1000;
+// Keep Sanity-published changes feeling “instant” on Vercel.
+const staleTimeMs = 30 * 1000
 
 export const useGlobalSettings = () =>
   useQuery({

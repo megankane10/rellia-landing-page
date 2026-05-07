@@ -1411,24 +1411,54 @@ export const DEFAULT_PROGRAMS_LANDING: ProgramsLandingContent = {
   ],
   upcomingEvents: [
     {
-      slug: "digital-health-salon-toronto",
-      title: "Digital Health Salon — Toronto (In Person)",
-      dateTime: "Tuesday, June 24, 2026 — 5:30 PM EDT",
-      person: "Priya Menon • Harbour Clinical Partners",
-      imageSrc:
-        "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=900&h=900&fit=crop&q=80",
-      location: "MaRS Discovery District, 101 College St · Toronto",
+      slug: "clinician-connect-primary-care",
+      title: "Clinician Connect: Primary Care",
+      dateTime: "Thursday, July 9, 2026 — 2:00 PM EDT",
+      person: "Rellia Health • Company event",
+      imageSrc: "/images/events-clinicianConnectPrimaryCare.jpg",
+      location: "Virtual",
       addToCalendarEnabled: true,
-      calendarStartsAt: "2026-06-24T21:30:00-04:00",
-      calendarEndsAt: "2026-06-24T23:00:00-04:00",
+      calendarStartsAt: "2026-07-09T14:00:00-04:00",
+      calendarEndsAt: "2026-07-09T15:00:00-04:00",
       embedLumaOnDetailPage: false,
-      detailBodyHeading: "About this evening",
-      detailBody: DIGITAL_HEALTH_SALON_TORONTO_DETAIL_BODY,
+      detailBodyHeading: "About this session",
+      detailBody: [
+        {
+          _type: "block",
+          _key: "cc-primary-p1",
+          style: "normal",
+          markDefs: [],
+          children: [
+            {
+              _type: "span",
+              _key: "cc-primary-p1s",
+              text: "A practical session for clinicians and founders focused on primary care workflows, adoption signals, and what actually gets used.",
+              marks: [],
+            },
+          ],
+        },
+        {
+          _type: "block",
+          _key: "cc-primary-p2",
+          style: "normal",
+          markDefs: [],
+          children: [
+            {
+              _type: "span",
+              _key: "cc-primary-p2s",
+              text: "Bring your questions. We’ll cover common blockers, simple pilot design, and how to turn frontline feedback into product decisions.",
+              marks: [],
+            },
+          ],
+        },
+      ],
     },
+  ],
+  pastEvents: [
     {
       slug: "leadership-under-pressure",
       title: "Leadership Under Pressure",
-      dateTime: "Wednesday, May 6 — 12:00 PM EST",
+      dateTime: "Wednesday, May 6, 2025 — 12:00 PM EST",
       person: "Dr. Sabina Nagpal • Radiate Mind",
       imageSrc: DEFAULT_PROGRAMS_EVENT_IMAGE_SRC,
       href: "https://luma.com/bgvqn7ia",
@@ -1438,12 +1468,10 @@ export const DEFAULT_PROGRAMS_LANDING: ProgramsLandingContent = {
       detailBodyHeading: "About this session",
       detailBody: LEADERSHIP_UNDER_PRESSURE_DETAIL_BODY,
     },
-  ],
-  pastEvents: [
     {
       slug: "health-system-adoption-for-startups",
       title: "Health System Adoption for Startups",
-      dateTime: "Thursday, April 9 — 2:00 PM EDT",
+      dateTime: "Thursday, April 9, 2025 — 2:00 PM EDT",
       person: "Rellia Health • Company event",
       imageSrc: "/images/events-healthsystem.avif",
       href: "https://luma.com/ao1g8a7h",
@@ -1453,7 +1481,7 @@ export const DEFAULT_PROGRAMS_LANDING: ProgramsLandingContent = {
     {
       slug: "why-healthcare-says-no-to-your-ai",
       title: "Why Healthcare Keeps Saying No to Your AI (And How to Fix It)",
-      dateTime: "Thursday, March 12 — 1:00 PM EDT",
+      dateTime: "Thursday, March 12, 2025 — 1:00 PM EDT",
       person: "Brenton Hill • CHAI",
       imageSrc: "/images/events-whyHealthcareKeeps.avif",
       href: "https://luma.com/1vx5stu2",
@@ -1465,7 +1493,7 @@ export const DEFAULT_PROGRAMS_LANDING: ProgramsLandingContent = {
     {
       slug: "ask-a-qms-expert",
       title: "Ask a QMS Expert",
-      dateTime: "Thursday, February 19 — 12:00 PM EST",
+      dateTime: "Thursday, February 19, 2025 — 12:00 PM EST",
       person: "QMS Expert Panel • Company event",
       imageSrc: "/images/events-askQMS.avif",
       href: "https://luma.com/w61qj0g5",

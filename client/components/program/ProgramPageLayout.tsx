@@ -299,14 +299,14 @@ const ProgramPageLayout = ({
                     {q.heroDescription}
                   </p>
 
-                  <div className="mt-7 flex items-center gap-2 text-black">
-                    <CalendarDays className="h-4.5 w-4.5 text-rellia-teal" />
-                    <span className="font-host-grotesk text-sm font-bold uppercase tracking-widest">
-                      Deadline: {getCurrentMonthDeadline()}
+                  <div className="mt-10 flex items-end gap-3 text-black">
+                    <CalendarDays className="h-6 w-6 text-rellia-teal" aria-hidden strokeWidth={2.25} />
+                    <span className="font-host-grotesk text-[12px] font-bold uppercase tracking-[0.18em] text-black/80">
+                      DEADLINE: {getCurrentMonthDeadline()}
                     </span>
                   </div>
 
-                  <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+                  <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
                     <RelliaAction
                       type="button"
                       variant="mintTealFill"
