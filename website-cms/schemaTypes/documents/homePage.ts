@@ -10,23 +10,25 @@ export const homePage = defineType({
   ],
   fieldsets: [{name: 'seo', title: 'SEO & metadata'}],
   fields: [
-    defineField({name: 'headlinePrefix', type: 'string'}),
+    defineField({name: 'headlinePrefix', type: 'string', group: 'content'}),
     defineField({
       name: 'headlineAccent',
       title: 'Headline accent (highlighted phrase)',
       type: 'string',
       description: 'Optional highlighted phrase (e.g. “health tech.”)',
+      group: 'content',
     }),
-    defineField({name: 'subheadline', type: 'string'}),
-    defineField({name: 'primaryCtaLabel', type: 'string'}),
-    defineField({name: 'primaryCtaPath', type: 'string'}),
-    defineField({name: 'secondaryCtaLabel', type: 'string'}),
-    defineField({name: 'secondaryCtaPath', type: 'string'}),
-    defineField({name: 'metricsHeading', type: 'string'}),
-    defineField({name: 'metricsSubheading', type: 'text', rows: 3}),
+    defineField({name: 'subheadline', type: 'string', group: 'content'}),
+    defineField({name: 'primaryCtaLabel', type: 'string', group: 'content'}),
+    defineField({name: 'primaryCtaPath', type: 'string', group: 'content'}),
+    defineField({name: 'secondaryCtaLabel', type: 'string', group: 'content'}),
+    defineField({name: 'secondaryCtaPath', type: 'string', group: 'content'}),
+    defineField({name: 'metricsHeading', type: 'string', group: 'content'}),
+    defineField({name: 'metricsSubheading', type: 'text', rows: 3, group: 'content'}),
     defineField({
       name: 'metrics',
       type: 'array',
+      group: 'content',
       of: [
         defineField({
           name: 'metric',
@@ -39,12 +41,13 @@ export const homePage = defineType({
         }),
       ],
     }),
-    defineField({name: 'howItWorksSectionTitle', type: 'string'}),
-    defineField({name: 'testimonialsTitleLead', type: 'string'}),
-    defineField({name: 'testimonialsTitleAccent', type: 'string'}),
+    defineField({name: 'howItWorksSectionTitle', type: 'string', group: 'content'}),
+    defineField({name: 'testimonialsTitleLead', type: 'string', group: 'content'}),
+    defineField({name: 'testimonialsTitleAccent', type: 'string', group: 'content'}),
     defineField({
       name: 'whyFeatures',
       type: 'array',
+      group: 'content',
       of: [
         defineField({
           name: 'feature',
@@ -57,26 +60,29 @@ export const homePage = defineType({
         }),
       ],
     }),
-    defineField({name: 'ctaTitle', type: 'string'}),
-    defineField({name: 'ctaButtonLabel', type: 'string'}),
-    defineField({name: 'ctaButtonPath', type: 'string'}),
+    defineField({name: 'ctaTitle', type: 'string', group: 'content'}),
+    defineField({name: 'ctaButtonLabel', type: 'string', group: 'content'}),
+    defineField({name: 'ctaButtonPath', type: 'string', group: 'content'}),
     defineField({
       name: 'ctaImage',
       title: 'CTA image',
       type: 'image',
       options: {hotspot: true},
       description: 'Upload an image to enable cropping. Falls back to “CTA image URL” below.',
+      group: 'content',
     }),
     defineField({
       name: 'ctaImageUrl',
       title: 'CTA image URL (legacy)',
       type: 'url',
       description: 'Optional fallback URL when no image is uploaded above.',
+      group: 'content',
     }),
-    defineField({name: 'ctaImageAlt', type: 'string'}),
+    defineField({name: 'ctaImageAlt', type: 'string', group: 'content'}),
     defineField({
       name: 'testimonials',
       type: 'array',
+      group: 'content',
       of: [
         defineField({
           name: 'testimonial',
@@ -97,6 +103,7 @@ export const homePage = defineType({
       name: 'pathsTitle',
       type: 'string',
       description: 'Headline for the "Find your place in the community" section.',
+      group: 'content',
     }),
     defineField({
       name: 'pathsCards',
@@ -104,6 +111,7 @@ export const homePage = defineType({
       type: 'array',
       description:
         'Cards shown in the network paths grid. Tag, title, image, and CTA are editable per card.',
+      group: 'content',
       of: [
         defineField({
           name: 'pathsCard',

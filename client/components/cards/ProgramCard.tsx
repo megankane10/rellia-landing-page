@@ -37,9 +37,10 @@ export const ProgramCard = ({
 }: ProgramCardProps) => {
   const hasHref = Boolean(href && href.trim().length > 0)
   const hasWaitlistHref = Boolean(waitlistHref && waitlistHref.trim().length > 0)
-  const isWaitlistCard = hasWaitlistHref
-  const [waitlistOpen, setWaitlistOpen] = useState(false)
   const rawTag = tag?.trim() ?? ""
+  const isWaitlistStatus = rawTag.toLowerCase() === "waitlist"
+  const isWaitlistCard = hasWaitlistHref || isWaitlistStatus
+  const [waitlistOpen, setWaitlistOpen] = useState(false)
   const displayTag = (rawTag.toLowerCase() === "available" || rawTag.toLowerCase() === "registration open") 
     ? "Applications Open" 
     : rawTag
@@ -140,11 +141,16 @@ export const ProgramCard = ({
                 <RelliaAction
                   type="button"
                   variant="mintCardTealFill"
-                  className="w-full h-[48px] text-base"
-                  onClick={() => setWaitlistOpen(true)}
+                  className="w-full h-[48px] text-base disabled:opacity-60 disabled:cursor-not-allowed"
+                  disabled={!hasWaitlistHref}
+                  onClick={() => {
+                    if (!hasWaitlistHref) return
+                    setWaitlistOpen(true)
+                  }}
                   onKeyDown={(e) => {
                     if (e.key === "Enter" || e.key === " ") {
                       e.preventDefault()
+                      if (!hasWaitlistHref) return
                       setWaitlistOpen(true)
                     }
                   }}

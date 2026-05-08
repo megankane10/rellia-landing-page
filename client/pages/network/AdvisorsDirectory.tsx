@@ -210,12 +210,12 @@ export default function AdvisorsDirectory() {
                 />
               </label>
 
-              <div className="flex shrink-0">
-                <div className="relative">
+              <div className="flex w-full shrink-0 md:w-auto">
+                <div className="relative w-full md:w-auto">
                   <select
                     value={filter}
                     onChange={(e) => setFilter(e.target.value)}
-                    className="h-14 w-full appearance-none rounded-2xl border border-black/10 bg-black/[0.02] pl-5 pr-14 min-w-[200px] font-urbanist text-base font-semibold text-black/80 outline-none hover:border-black/20 focus-visible:ring-2 focus-visible:ring-rellia-teal focus-visible:bg-white cursor-pointer"
+                    className="h-14 w-full appearance-none rounded-2xl border border-black/10 bg-black/[0.02] pl-5 pr-14 md:min-w-[200px] font-urbanist text-base font-semibold text-black/80 outline-none hover:border-black/20 focus-visible:ring-2 focus-visible:ring-rellia-teal focus-visible:bg-white cursor-pointer"
                   >
                     {filterOptions.map((f) => (
                       <option key={f.id} value={f.id}>

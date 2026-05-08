@@ -259,13 +259,13 @@ export default function FoundersDirectory() {
                 />
               </label>
 
-              <div className="flex flex-wrap items-center gap-3 md:gap-4">
+              <div className="flex w-full flex-col gap-3 md:w-auto md:flex-row md:flex-wrap md:items-center md:gap-4">
                 {/* Level Filter */}
-                <div className="relative">
+                <div className="relative w-full md:w-auto">
                   <select
                     value={levelFilter}
                     onChange={(e) => setLevelFilter(e.target.value)}
-                    className="h-14 w-full appearance-none rounded-2xl border border-black/10 bg-black/[0.02] pl-5 pr-14 min-w-[160px] font-urbanist text-base font-semibold text-black/80 outline-none hover:border-black/20 focus-visible:ring-2 focus-visible:ring-rellia-teal focus-visible:bg-white cursor-pointer"
+                    className="h-14 w-full appearance-none rounded-2xl border border-black/10 bg-black/[0.02] pl-5 pr-14 md:min-w-[160px] font-urbanist text-base font-semibold text-black/80 outline-none hover:border-black/20 focus-visible:ring-2 focus-visible:ring-rellia-teal focus-visible:bg-white cursor-pointer"
                   >
                     {levelFilters.map((f) => (
                       <option key={f.id} value={f.id}>
@@ -279,11 +279,11 @@ export default function FoundersDirectory() {
                   />
                 </div>
 
-                <div className="relative">
+                <div className="relative w-full md:w-auto">
                   <select
                     value={specialtyFilter}
                     onChange={(e) => setSpecialtyFilter(e.target.value)}
-                    className="h-14 w-full appearance-none rounded-2xl border border-black/10 bg-black/[0.02] pl-5 pr-14 min-w-[160px] font-urbanist text-base font-semibold text-black/80 outline-none hover:border-black/20 focus-visible:ring-2 focus-visible:ring-rellia-teal focus-visible:bg-white cursor-pointer"
+                    className="h-14 w-full appearance-none rounded-2xl border border-black/10 bg-black/[0.02] pl-5 pr-14 md:min-w-[160px] font-urbanist text-base font-semibold text-black/80 outline-none hover:border-black/20 focus-visible:ring-2 focus-visible:ring-rellia-teal focus-visible:bg-white cursor-pointer"
                   >
                     {specialtyFilters.map((s) => (
                       <option key={s.id} value={s.id}>

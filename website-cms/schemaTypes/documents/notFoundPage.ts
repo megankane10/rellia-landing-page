@@ -10,9 +10,9 @@ export const notFoundPage = defineType({
   ],
   fieldsets: [{name: 'seo', title: 'SEO & metadata'}],
   fields: [
-    defineField({name: 'title', type: 'string'}),
-    defineField({name: 'message', type: 'text', rows: 2}),
-    defineField({name: 'ctaLabel', type: 'string'}),
+    defineField({name: 'title', type: 'string', group: 'content'}),
+    defineField({name: 'message', type: 'text', rows: 2, group: 'content'}),
+    defineField({name: 'ctaLabel', type: 'string', group: 'content'}),
     defineField({name: 'seo', type: 'seo', group: 'seo', fieldset: 'seo'}),
   ],
 })
