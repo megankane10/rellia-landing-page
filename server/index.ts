@@ -96,6 +96,40 @@ export function createServer() {
     .map((o) => o.trim())
     .filter(Boolean);
 
+  const safeOriginFromUrl = (input: string | undefined): string | null => {
+    const v = (input ?? "").trim()
+    if (!v) return null
+    try {
+      return new URL(v).origin
+    } catch {
+      return null
+    }
+  }
+
+  const studioOrigin = safeOriginFromUrl(process.env.SANITY_STUDIO_URL)
+  const siteOrigin = safeOriginFromUrl(process.env.VITE_SITE_URL) || "https://www.relliahealth.com"
+  const siteOrigins = new Set([siteOrigin, siteOrigin.replace("://www.", "://")])
+
+  const isAllowedBrowserOrigin = (
+    req: express.Request,
+    extraAllowedOrigins: Set<string>,
+  ): boolean => {
+    if (isDev) return true
+
+    const originHeader = (req.get("origin") || "").trim()
+    if (originHeader && (allowedOrigins.includes(originHeader) || extraAllowedOrigins.has(originHeader))) {
+      return true
+    }
+
+    const refererHeader = (req.get("referer") || "").trim()
+    const refererOrigin = safeOriginFromUrl(refererHeader)
+    if (refererOrigin && (allowedOrigins.includes(refererOrigin) || extraAllowedOrigins.has(refererOrigin))) {
+      return true
+    }
+
+    return false
+  }
+
   if (!isDev && allowedOrigins.length === 0) {
     console.warn(
       "ALLOWED_ORIGINS is not set. CORS will allow all browser origins. Set ALLOWED_ORIGINS to restrict cross-origin requests.",
@@ -153,6 +187,11 @@ export function createServer() {
   });
 
   app.get("/api/draft-mode/enable", async (req, res) => {
+    if (!isAllowedBrowserOrigin(req, new Set([studioOrigin].filter(Boolean) as string[]))) {
+      res.status(403).send("Forbidden")
+      return
+    }
+
     const token = process.env.SANITY_API_READ_TOKEN?.trim();
     if (!token) {
       res.status(501).send("Missing SANITY_API_READ_TOKEN");
@@ -214,6 +253,12 @@ export function createServer() {
   });
 
   app.get("/api/draft-mode/disable", (_req, res) => {
+    const reqAny = _req as unknown as express.Request
+    if (!isAllowedBrowserOrigin(reqAny, new Set([studioOrigin].filter(Boolean) as string[]))) {
+      res.status(403).send("Forbidden")
+      return
+    }
+
     res.setHeader(
       "Set-Cookie",
       `${perspectiveCookieName}=; Path=/; HttpOnly; Secure; SameSite=None; Max-Age=0`,
@@ -222,6 +267,11 @@ export function createServer() {
   });
 
   app.post("/api/sanity/query", async (req, res) => {
+    if (!isAllowedBrowserOrigin(req, new Set([studioOrigin].filter(Boolean) as string[]))) {
+      res.status(403).json({ error: "Forbidden" })
+      return
+    }
+
     const token = process.env.SANITY_API_READ_TOKEN?.trim();
     const cookie = req.headers.cookie || "";
     const isPreview = cookie.includes(`${perspectiveCookieName}=`);
@@ -428,6 +478,16 @@ export function createServer() {
   });
 
   app.post("/api/diagnostic-report", async (req, res) => {
+    if (!isAllowedBrowserOrigin(req, siteOrigins)) {
+      res.status(403).json({ error: "Forbidden" })
+      return
+    }
+
+    if (!sanityWriteClient) {
+      res.status(501).json({ error: "Missing SANITY_API_WRITE_TOKEN" })
+      return
+    }
+
     const ip = getClientIp(req);
     if (!applyRateLimit(perIpRate, ip, RATE_MAX)) {
       res
