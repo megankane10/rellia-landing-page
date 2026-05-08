@@ -101,7 +101,7 @@ export default function Footer() {
       <div className="w-full rounded-2xl border border-white/10 bg-rellia-teal text-white shadow-[0_28px_80px_-40px_rgba(13,53,64,0.55)] md:rounded-[28px]">
         <div className="px-4 py-10 md:px-10 md:py-16 lg:px-12">
           {/* Mobile header (logo + tagline first) */}
-          <div className="mb-10 flex flex-col gap-4 md:hidden">
+          <div className="mb-10 flex flex-col items-start gap-4 text-left md:hidden">
             <Link to="/" className="flex items-center justify-start">
               <img src="/images/hologram-logo.png" alt="Rellia" className="h-9 w-auto md:h-10" />
             </Link>
@@ -146,15 +146,11 @@ export default function Footer() {
             </div>
 
             <div
-              className="grid min-w-0 flex-1 grid-cols-2 gap-x-8 gap-y-10 sm:gap-x-10 md:gap-x-12 md:pl-6 lg:gap-x-8 lg:pl-10 xl:gap-x-12 xl:pl-14"
-              style={{
-                gridTemplateColumns:
-                  footerColumns.length >= 4
-                    ? "repeat(4, minmax(0, 1fr))"
-                    : footerColumns.length === 3
-                      ? "repeat(3, minmax(0, 1fr))"
-                      : "repeat(2, minmax(0, 1fr))",
-              }}
+              className={`grid min-w-0 flex-1 grid-cols-2 gap-x-8 gap-y-10 sm:gap-x-10 md:gap-x-12 md:pl-6 lg:gap-x-8 lg:pl-10 xl:gap-x-12 xl:pl-14 ${
+                footerColumns.length >= 4 ? "md:grid-cols-4" : 
+                footerColumns.length === 3 ? "md:grid-cols-3" : 
+                "md:grid-cols-2"
+              }`}
             >
               {footerColumns.map((col) => {
                 const links = col.children.length > 0 ? col.children : [{ label: col.label, href: col.href }]
@@ -227,12 +223,12 @@ export default function Footer() {
             </a>
           </div>
 
-          <div className="flex flex-col gap-4 border-t border-white/10 pt-6 sm:flex-row sm:items-center sm:justify-between sm:gap-6 md:pt-8">
-            <p className="text-left font-urbanist text-[13px] leading-snug text-white/55 md:text-sm sm:max-w-[min(100%,28rem)]">
-              &copy; {new Date().getFullYear()} {g.copyrightLine} · Ontario, Canada
+          <div className="flex flex-col gap-4 border-t border-white/10 pt-6 sm:flex-row sm:items-center sm:justify-between md:pt-8">
+            <p className="text-center font-urbanist text-[13px] leading-snug text-white/55 sm:text-left md:text-sm">
+              &copy; {new Date().getFullYear()} {g.copyrightLine} Ontario, Canada
             </p>
             <nav
-              className="flex flex-wrap items-center gap-x-5 gap-y-2 sm:ml-auto sm:shrink-0 sm:justify-end lg:gap-x-8 lg:pr-2"
+              className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 sm:justify-end lg:gap-x-8"
               aria-label="Legal"
             >
               <Link to="/terms" className={legalLinkClass}>

@@ -99,7 +99,7 @@ export function HorizontalCard(props: HorizontalCardProps) {
     return (
       <article
         className={cn(
-          "group relative flex items-center w-full bg-white transition-all duration-300 py-6 md:py-10 border-b border-black/[0.06] hover:bg-black/[0.01]",
+          "group relative flex flex-col md:flex-row items-start md:items-center w-full bg-white transition-all duration-300 py-6 md:py-10 border-b border-black/[0.06] hover:bg-black/[0.01] gap-6 md:gap-0",
           className
         )}
       >
@@ -107,22 +107,54 @@ export function HorizontalCard(props: HorizontalCardProps) {
           <span className="sr-only">View {event.title}</span>
         </Link>
 
-        {/* Date Block */}
-        <div className="flex flex-col items-center justify-center w-24 sm:w-28 md:w-40 shrink-0 text-center">
+        {/* Date Block (Desktop only) */}
+        <div className="hidden md:flex flex-col items-center justify-center w-40 shrink-0 text-center">
           <span className="font-urbanist text-[11px] md:text-sm font-bold text-black/40 uppercase tracking-[0.25em]">
             {dateBits.year}
           </span>
           <span className="mt-1 font-host-grotesk text-3xl md:text-5xl font-bold text-black leading-none">
-            {dateBits.day || dateMain.split(" ")[1] || dateMain}
+            {(dateBits.day || dateMain.split(" ")[1] || dateMain).padStart(2, "0")}
           </span>
-          <span className="mt-2 font-urbanist text-[11px] md:text-sm font-bold text-rellia-teal uppercase tracking-[0.25em]">
+          <span className="mt-2 font-urbanist text-[11px] md:text-sm font-extrabold text-rellia-teal uppercase tracking-[0.25em]">
             {dateBits.month || dateMain.split(" ")[0] || ""}
           </span>
         </div>
-
-        {/* Content */}
-        <div className="flex flex-1 flex-col min-w-0 pr-6">
-          <div className="flex flex-wrap items-center gap-4 mb-3">
+ 
+        {/* Content Section */}
+        <div className="flex flex-1 flex-col min-w-0 pr-6 w-full">
+          {/* Mobile Date + Tags Row */}
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-2 mb-4 md:hidden">
+            <div className="flex items-center gap-2 pr-1">
+              <span className="font-host-grotesk text-3xl font-bold text-black leading-none">
+                {(dateBits.day || dateMain.split(" ")[1] || dateMain).padStart(2, "0")}
+              </span>
+              <span className="font-urbanist text-[11px] font-extrabold text-rellia-teal uppercase tracking-[0.2em] mt-0.5">
+                {dateBits.month || dateMain.split(" ")[0] || ""}
+              </span>
+            </div>
+            <div className="h-4 w-px bg-black/10" />
+            <div className="flex items-center gap-3">
+              <span
+                className={cn(
+                  "inline-flex items-center gap-1.5 font-host-grotesk text-[10px] font-bold uppercase tracking-[0.14em]",
+                  tagIsMint ? "text-rellia-teal" : "text-black/40"
+                )}
+              >
+                {variant === "past" ? (
+                  <History className="h-3.5 w-3.5" aria-hidden strokeWidth={2.5} />
+                ) : (
+                  <Calendar className="h-3.5 w-3.5" aria-hidden strokeWidth={2.5} />
+                )}
+                {variant === "past" ? "Past" : "Upcoming"}
+              </span>
+              <span className="font-urbanist text-[11px] font-bold text-black/40 uppercase tracking-widest mt-0.5">
+                {timeMain || "TBD"}
+              </span>
+            </div>
+          </div>
+ 
+          {/* Desktop Tags Row */}
+          <div className="hidden md:flex flex-wrap items-center gap-4 mb-3">
             <span
               className={cn(
                 "inline-flex items-center gap-2 font-host-grotesk text-xs md:text-sm font-bold uppercase tracking-[0.14em]",
@@ -141,11 +173,26 @@ export function HorizontalCard(props: HorizontalCardProps) {
               {timeMain || "TBD"}
             </span>
           </div>
-
-          <h3 className="line-clamp-2 font-host-grotesk text-2xl md:text-3xl font-medium leading-tight tracking-tight text-black group-hover:text-rellia-teal transition-colors duration-300">
+ 
+          <h3 className="font-host-grotesk text-2xl md:text-3xl font-medium leading-tight tracking-tight text-black group-hover:text-rellia-teal transition-colors duration-300">
             {event.title}
           </h3>
-
+ 
+          {/* Mobile Image (Above Speaker) */}
+          <div className="mt-5 md:hidden">
+            <div className="relative shrink-0 rounded-2xl overflow-hidden bg-black/5 w-32 h-32 shadow-sm">
+              <img
+                src={eventThumbSrc}
+                alt={event.title}
+                className={cn(
+                  "absolute inset-0 h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105",
+                  variant === "past" && "opacity-90 saturate-[0.9]"
+                )}
+                loading="lazy"
+              />
+            </div>
+          </div>
+ 
           <div className="mt-6 flex flex-wrap items-center gap-y-3 gap-x-6">
             {hasSpeakerBlock && (
               <div className="flex items-center gap-3">
@@ -160,20 +207,11 @@ export function HorizontalCard(props: HorizontalCardProps) {
                 </span>
               </div>
             )}
-            {hasSpeakerBlock && <span className="hidden sm:block h-1 w-1 rounded-full bg-black/10" aria-hidden />}
-            <div className="flex items-center gap-2 font-urbanist text-sm font-bold text-black/50">
-              {attendanceMode === "virtual" ? (
-                <Video className="h-4 w-4 text-rellia-teal/70" aria-hidden strokeWidth={2.5} />
-              ) : (
-                <MapPin className="h-4 w-4 text-rellia-teal/70" aria-hidden strokeWidth={2.5} />
-              )}
-              {attendanceMode === "virtual" ? "Virtual" : "In person"}
-            </div>
           </div>
         </div>
-
-        {/* Image Thumbnail */}
-        <div className="relative shrink-0 rounded-2xl overflow-hidden bg-black/5 w-16 h-16 sm:w-24 sm:h-24 md:w-36 md:h-36 ml-auto shadow-sm">
+ 
+        {/* Desktop Image Thumbnail */}
+        <div className="hidden md:block relative shrink-0 rounded-2xl overflow-hidden bg-black/5 w-24 h-24 md:w-36 md:h-36 md:ml-auto shadow-sm">
           <img
             src={eventThumbSrc}
             alt={event.title}
@@ -200,8 +238,7 @@ export function HorizontalCard(props: HorizontalCardProps) {
   return (
     <article
       className={cn(
-        "group relative flex w-full rounded-2xl border border-black/10 bg-white transition-all duration-500 hover:border-rellia-teal/30 hover:shadow-[0_20px_50px_-20px_rgba(13,148,136,0.12)] p-4 md:p-4 gap-4 md:gap-5 items-stretch",
-        "flex-col md:flex-row",
+        "group relative flex w-full rounded-2xl border border-black/10 bg-white transition-all duration-500 hover:border-rellia-teal/30 hover:shadow-[0_20px_50px_-20px_rgba(13,148,136,0.12)] p-4 md:p-4 gap-4 md:gap-5 items-start flex-col md:flex-row",
         hasHref ? "cursor-pointer" : "",
         className
       )}
@@ -212,7 +249,8 @@ export function HorizontalCard(props: HorizontalCardProps) {
         </Link>
       ) : null}
 
-      <div className="relative shrink-0 rounded-xl overflow-hidden bg-rellia-teal/5 w-full md:w-[220px] lg:w-[260px] aspect-[16/9] md:aspect-square">
+      {/* Image */}
+      <div className="relative w-32 h-32 shrink-0 rounded-xl overflow-hidden bg-rellia-teal/5 md:w-[220px] md:h-[220px] lg:w-[260px] lg:h-[260px] aspect-square">
         <img
           src={programImageSrc}
           alt={program.title}

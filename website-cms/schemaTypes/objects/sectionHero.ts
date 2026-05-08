@@ -15,8 +15,8 @@ export const sectionHero = defineType({
       type: 'string',
       description: 'Optional pill/badge above the headline.',
     }),
-    defineField({name: 'headline', type: 'string', validation: (Rule) => Rule.required()}),
-    defineField({name: 'subheadline', type: 'text', rows: 3}),
+    defineField({name: 'headline', type: 'portableRichText', validation: (Rule) => Rule.required()}),
+    defineField({name: 'subheadline', type: 'portableRichText'}),
     defineField({
       name: 'primaryCta',
       type: 'navItem',

@@ -205,7 +205,7 @@ export const getProgramsEventCardImageDateBadge = (raw: string): { month: string
   const abbr = IMAGE_BADGE_MONTH_TO_ABBR[monthKey]
   if (!abbr) return null
 
-  return { month: abbr, day: match[2] ?? "" }
+  return { month: abbr, day: (match[2] ?? "").padStart(2, "0") }
 }
 
 /** Single-line summary for cards: `Wednesday, April 9, 2025 — 2:00 PM EDT`. */

@@ -120,11 +120,10 @@ function TestimonialCard({
         isExpanded && "max-h-[min(92vh,2400px)] min-h-0"
       )}
     >
-      <div className={cn("flex flex-col", isExpanded && "min-h-0 flex-1")}>
+      <div className={cn("flex flex-1 flex-col", isExpanded && "min-h-0")}>
         <div
           className={cn(
             "relative shrink-0 overflow-hidden",
-            !isExpanded && COLLAPSED_QUOTE_BLOCK_CLASS,
             isExpanded && "min-h-0",
           )}
         >
@@ -175,7 +174,7 @@ function TestimonialCard({
         ) : null}
       </div>
 
-      <div className={cn("shrink-0", isExpanded ? "mt-6" : "mt-4 md:mt-5")}>
+      <div className={cn("mt-auto shrink-0 pt-4 md:pt-5", isExpanded && "mt-6")}>
         <div className="flex items-start gap-3 md:gap-3.5">
           <Avatar className="h-12 w-12 shrink-0 rounded-lg border border-black/10">
             <AvatarImage
@@ -189,13 +188,13 @@ function TestimonialCard({
           </Avatar>
 
           <div className="min-w-0 flex-1">
-            <h4 className="font-host-grotesk text-base font-semibold leading-snug text-black">
+            <h4 className="truncate font-host-grotesk text-base font-semibold leading-snug text-black">
               {t.name}
             </h4>
             <p className="mt-0.5 font-urbanist text-sm leading-snug text-black/75">
               <span className="font-medium text-black/80">{role},</span>{" "}
               <span className="inline-flex min-w-0 items-center gap-1 text-black/55">
-                <span className="truncate">{t.company}</span>
+                <span className="min-w-0 truncate">{t.company}</span>
                 <CompanyInfoPopover t={t} />
               </span>
             </p>
@@ -268,7 +267,7 @@ export default function TestimonialsSection({ titleLead, titleAccent, testimonia
       </div>
 
       <section className="w-full overflow-x-hidden bg-white pb-10 pt-16 md:pb-12 md:pt-24">
-      <div className="relative w-full overflow-hidden">
+      <div className="relative w-full overflow-visible">
         <div className="max-w-[1300px] mx-auto w-full min-w-0 px-6 md:px-10">
         <ScrollReveal className="mb-10 md:mb-14">
           <div className="relative isolate mx-auto flex w-full max-w-3xl flex-col items-center text-center">

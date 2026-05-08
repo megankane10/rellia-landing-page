@@ -37,6 +37,11 @@ import {portableRichText} from './objects/portableRichText'
 import {sectionHero} from './objects/sectionHero'
 import {sectionRichText} from './objects/sectionRichText'
 import {sectionCardsGrid} from './objects/sectionCardsGrid'
+import {sectionEligibilityBento} from './objects/sectionEligibilityBento'
+import {sectionFeatureGrid} from './objects/sectionFeatureGrid'
+import {sectionEngageBand} from './objects/sectionEngageBand'
+import {sectionJourneyTimeline} from './objects/sectionJourneyTimeline'
+import {sectionDiagnosticSurvey} from './objects/sectionDiagnosticSurvey'
 
 export const schemaTypes = [
   globalSettings,
@@ -78,4 +83,9 @@ export const schemaTypes = [
   sectionHero,
   sectionRichText,
   sectionCardsGrid,
+  sectionEligibilityBento,
+  sectionFeatureGrid,
+  sectionEngageBand,
+  sectionJourneyTimeline,
+  sectionDiagnosticSurvey,
 ]

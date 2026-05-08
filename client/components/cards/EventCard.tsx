@@ -97,14 +97,6 @@ export const EventCard = ({
                 )}
                 {tagLabel}
               </span>
-              <span className="inline-flex w-fit items-center gap-1.5 rounded-full border border-black/10 bg-white px-2 py-0.5 font-host-grotesk text-[10px] font-bold uppercase tracking-[0.14em] text-black/70">
-                {attendanceMode === "virtual" ? (
-                  <Video className="h-3 w-3 opacity-80" aria-hidden strokeWidth={2.5} />
-                ) : (
-                  <MapPin className="h-3 w-3 opacity-80" aria-hidden strokeWidth={2.5} />
-                )}
-                {attendanceMode === "virtual" ? "Virtual" : "In person"}
-              </span>
             </div>
 
             {dateTimeLine ? (

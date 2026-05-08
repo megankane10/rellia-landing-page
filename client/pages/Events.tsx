@@ -151,15 +151,10 @@ export default function Events() {
           variant="dark"
           title={
             <>
-              {programsLanding?.heroTitleLine1 ?? "Network."}{" "}
-              <span className="text-rellia-mint">{programsLanding?.heroTitleMint ?? "Learn."}</span>{" "}
-              {programsLanding?.heroSecondaryCtaLabel ? "" : "Scale."}
+              Connect & <span className="text-rellia-mint">Learn</span>
             </>
           }
-          subtitle={
-            programsLanding?.heroSubtitle ??
-            "Discover what’s coming up, revisit past sessions, and join the conversations shaping the future of health."
-          }
+          subtitle="Join live sessions with operators, clinicians, and health tech leaders."
         />
 
         <section className="pt-8 pb-16 md:pt-12 md:pb-20 bg-white">
@@ -167,9 +162,7 @@ export default function Events() {
             <ScrollReveal>
               <div className="mb-4">
                 <h2 className="font-host-grotesk text-2xl md:text-3xl font-semibold leading-tight tracking-tight text-black">
-                  {programsLanding?.programsSectionTitle?.trim()
-                    ? programsLanding.programsSectionTitle.replace(/Programs/i, "Events")
-                    : "Browse Events"}
+                  Browse Events
                 </h2>
               </div>
               <div className="mb-8 flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
@@ -177,7 +170,7 @@ export default function Events() {
                   <Tabs value={eventFilter} onValueChange={(v) => setEventFilter(v as EventFilter)}>
                     <TabsList
                       className={cn(
-                        "relative h-auto w-fit gap-1 rounded-full bg-white p-1.5",
+                        "relative h-auto w-full md:w-fit gap-1 rounded-full bg-white p-1.5",
                         "border border-black/10 shadow-[0_12px_32px_-22px_rgba(0,0,0,0.22)]",
                       )}
                     >
@@ -186,7 +179,7 @@ export default function Events() {
                           key={f.value}
                           value={f.value}
                           className={cn(
-                            "relative rounded-full px-5 py-2.5",
+                            "relative flex-1 md:flex-initial rounded-full px-5 py-2.5",
                             "font-host-grotesk text-[12px] font-semibold uppercase tracking-[0.14em]",
                             "text-black/80 hover:text-rellia-teal",
                             "bg-transparent data-[state=active]:bg-rellia-teal data-[state=active]:text-white data-[state=active]:shadow-none",

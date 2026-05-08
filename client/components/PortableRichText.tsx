@@ -59,6 +59,7 @@ const components: PortableTextComponents = {
   marks: {
     strong: ({ children }) => <strong className="font-semibold text-inherit">{children}</strong>,
     em: ({ children }) => <em className="italic">{children}</em>,
+    mint: ({ children }) => <span className="text-rellia-mint">{children}</span>,
     link: ({ value, children }) => {
       const href = typeof value?.href === "string" ? value.href : "#"
       const isExternal = /^https?:\/\//.test(href)

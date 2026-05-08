@@ -89,7 +89,98 @@ export type CmsSectionCardsGrid = {
   cards?: CmsSectionCardsGridCard[]
 }
 
-export type CmsPageSection = CmsSectionHero | CmsSectionRichText | CmsSectionCardsGrid
+export type CmsSectionEligibilityBentoItem = {
+  _key?: string
+  text: string
+  pexelsQuery?: string
+  imageUrl?: string
+}
+
+export type CmsSectionEligibilityBento = {
+  _type: "sectionEligibilityBento"
+  _key?: string
+  badge?: string
+  title?: string
+  description?: string
+  items?: CmsSectionEligibilityBentoItem[]
+}
+
+export type CmsSectionFeatureGridItem = {
+  _key?: string
+  title: string
+  body?: string
+  icon?: string
+}
+
+export type CmsSectionFeatureGrid = {
+  _type: "sectionFeatureGrid"
+  _key?: string
+  badge?: string
+  title?: string | SanityPortableText
+  subtitle?: string | SanityPortableText
+  items?: CmsSectionFeatureGridItem[]
+}
+
+export type CmsSectionEngageBandItem = {
+  _key?: string
+  title: string
+  body?: string
+  icon?: string
+  href?: string
+}
+
+export type CmsSectionEngageBand = {
+  _type: "sectionEngageBand"
+  _key?: string
+  badge?: string
+  title?: string | SanityPortableText
+  subtitle?: string | SanityPortableText
+  items?: CmsSectionEngageBandItem[]
+}
+
+export type CmsSectionJourneyTimelineStep = {
+  _key?: string
+  id: string
+  label: string
+  detail: string
+  icon?: string
+}
+
+export type CmsSectionJourneyTimeline = {
+  _type: "sectionJourneyTimeline"
+  _key?: string
+  badge?: string
+  title?: string | SanityPortableText
+  description?: string | SanityPortableText
+  leftColumnTitle?: string
+  leftColumnBody?: string
+  leftColumnSteps?: CmsSectionJourneyTimelineStep[]
+  rightColumnTitle?: string
+  rightColumnBody?: string
+  rightColumnSteps?: CmsSectionJourneyTimelineStep[]
+}
+
+export type CmsSectionDiagnosticSurvey = {
+  _type: "sectionDiagnosticSurvey"
+  _key?: string
+  badge?: string
+  title?: string | SanityPortableText
+  subtitle?: string | SanityPortableText
+  ctaLabel?: string
+  ctaHref?: string
+  categoriesTitle?: string
+  categories?: string[]
+}
+
+export type CmsPageSection =
+  | CmsSectionHero
+  | CmsSectionRichText
+  | CmsSectionCardsGrid
+  | CmsSectionEligibilityBento
+  | CmsSectionFeatureGrid
+  | CmsSectionEngageBand
+  | CmsSectionJourneyTimeline
+  | CmsSectionDiagnosticSurvey
 
 export type CmsPageContent = {
   title: string

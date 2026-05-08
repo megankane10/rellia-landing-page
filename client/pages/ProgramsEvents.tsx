@@ -71,7 +71,7 @@ export default function ProgramsEvents() {
           variant="dark"
           title={
             <>
-              {pl.heroTitleLine1} <span className="text-rellia-mint">{pl.heroTitleMint}</span>
+              Programming that fit <span className="text-rellia-mint">your startup</span>
             </>
           }
           subtitle={pl.heroSubtitle}
@@ -82,7 +82,7 @@ export default function ProgramsEvents() {
             <ScrollReveal>
               <div className="mb-4">
                 <h2 className="font-host-grotesk text-2xl md:text-3xl font-semibold leading-tight tracking-tight text-black">
-                  {pl.programsSectionTitle}
+                  Browse Programs
                 </h2>
               </div>
               <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">

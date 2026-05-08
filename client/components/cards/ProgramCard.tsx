@@ -50,13 +50,13 @@ export const ProgramCard = ({
     <article
       aria-label={`Program: ${title}${isWaitlistCard ? ". Coming soon — join the waitlist." : ""}`}
       className={cn(
-        "flex h-full min-h-0 flex-col overflow-hidden rounded-2xl border border-black/10 bg-white shadow-sm transition-shadow hover:shadow-md",
+        "flex h-full min-h-0 flex-col items-start overflow-hidden rounded-2xl border border-black/10 bg-white shadow-sm transition-shadow hover:shadow-md",
         className,
       )}
     >
       <div className="flex min-h-0 flex-1 flex-col">
         {/* Image */}
-        <div className="relative w-full shrink-0 overflow-hidden aspect-video bg-rellia-teal/5">
+        <div className="relative w-32 h-32 shrink-0 overflow-hidden aspect-square rounded-xl bg-rellia-teal/5 ml-4 mt-4 sm:m-0 sm:w-full sm:h-auto sm:aspect-square sm:rounded-none">
             {/* Desktop badge overlay (keep out of the way of the image on mobile) */}
             {isWaitlistCard ? (
               <div className="absolute right-3 top-3 z-10 hidden sm:block">
@@ -110,7 +110,7 @@ export const ProgramCard = ({
 
             {/* Title + description */}
             <div className="flex shrink-0 flex-col">
-              <h3 className="line-clamp-2 font-host-grotesk text-xl font-normal leading-snug tracking-tight text-black sm:text-2xl sm:leading-snug">
+              <h3 className="font-host-grotesk text-xl font-normal leading-snug tracking-tight text-black sm:text-2xl sm:leading-snug">
                 {hasHref ? (
                   <Link
                     to={href as string}

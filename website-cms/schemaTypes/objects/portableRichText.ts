@@ -20,6 +20,7 @@ export const portableRichText = defineType({
         decorators: [
           {title: 'Strong', value: 'strong'},
           {title: 'Emphasis', value: 'em'},
+          {title: 'Mint Color', value: 'mint'},
         ],
         annotations: [
           {
