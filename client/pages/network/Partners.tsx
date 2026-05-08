@@ -1,5 +1,4 @@
 import type { LucideIcon } from "lucide-react"
-import { usePexelsPhoto } from "@/hooks/usePexelsPhoto"
 import PageHeader from "@/components/PageHeader"
 import NetworkEyebrow from "@/components/network/NetworkEyebrow"
 import SectionHeading from "@/components/SectionHeading"
@@ -143,12 +142,6 @@ function PartnerEngageTealBand() {
 }
 
 function BenefitsWithImageSplit() {
-  const img = usePexelsPhoto({
-    query: "business partnership handshake modern office",
-    fallbackUrl: "/images/metrics-bg-pexels-2.jpg",
-    orientation: "landscape",
-  })
-
   return (
     <CreamSection>
       <div className="grid gap-12 md:grid-cols-[1fr_1.05fr] md:items-center md:gap-16">
@@ -176,7 +169,7 @@ function BenefitsWithImageSplit() {
         <Reveal delay={0.06}>
           <div className="overflow-hidden rounded-2xl border border-rellia-teal/15 shadow-[0_28px_80px_-48px_rgba(13,53,64,0.45)]">
             <img
-              src={img}
+              src="/images/metrics-bg-pexels-2.jpg"
               alt="Partners collaborating in a professional setting"
               className="aspect-[4/3] h-full w-full object-cover"
               loading="lazy"
@@ -189,19 +182,13 @@ function BenefitsWithImageSplit() {
 }
 
 function ExclusiveDirectorySplit() {
-  const img = usePexelsPhoto({
-    query: "modern professional software directory interface",
-    fallbackUrl: "/images/metrics-bg-pexels-2.jpg",
-    orientation: "landscape",
-  })
-
   return (
     <LightSection className="bg-rellia-cream/15">
       <div className="grid gap-12 lg:grid-cols-[1fr_1fr] lg:items-center lg:gap-20">
         <Reveal className="order-2 lg:order-1" delay={0.1}>
           <div className="overflow-hidden rounded-3xl border border-black/5 shadow-2xl">
             <img
-              src={img}
+              src="/images/metrics-bg-pexels-2.jpg"
               alt="Exclusive partner directory interface"
               className="aspect-[4/3] h-full w-full object-cover"
               loading="lazy"

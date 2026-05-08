@@ -1,5 +1,5 @@
 /**
- * Direct Pexels CDN URLs for use when `/api/pexels/search` is unavailable or before it resolves.
+ * Direct Pexels CDN URLs (static) used in the client.
  * Prefer these over missing `/images/*` paths so img tags always load.
  */
 export const PEXELS_OFFICE_COLLABORATION =

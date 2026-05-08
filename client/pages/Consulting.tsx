@@ -1,5 +1,4 @@
 import { PEXELS_HEALTH_MEETING } from "@/config/pexelsFallbacks"
-import { usePexelsPhoto } from "@/hooks/usePexelsPhoto"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
 import NetworkEyebrow from "@/components/network/NetworkEyebrow"
@@ -52,12 +51,6 @@ const CONSULTING_PATH_STEPS = [
 ] as const
 
 function FitSectionSplit() {
-  const img = usePexelsPhoto({
-    query: "healthcare medical technology meeting discussion",
-    fallbackUrl: PEXELS_HEALTH_MEETING,
-    orientation: "landscape",
-  })
-
   return (
     <LightSection className="bg-rellia-cream/20 pt-12 md:pt-16">
       <div className="grid gap-12 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:gap-16">
@@ -83,7 +76,7 @@ function FitSectionSplit() {
         <Reveal delay={0.06}>
           <div className="overflow-hidden rounded-2xl border border-rellia-teal/15 shadow-[0_28px_80px_-48px_rgba(13,53,64,0.4)]">
             <img
-              src={img}
+              src={PEXELS_HEALTH_MEETING}
               alt="Clinical and commercial leaders in a focused working session"
               className="aspect-[4/3] h-full w-full object-cover"
               loading="lazy"

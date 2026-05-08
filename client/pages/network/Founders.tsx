@@ -1,4 +1,3 @@
-import { usePexelsPhoto } from "@/hooks/usePexelsPhoto"
 import { useEffect, useMemo, useRef, useState } from "react"
 import { PAGE_HEADER_TITLE_SIZE_CLASS } from "@/components/PageHeader"
 import NetworkEyebrow from "@/components/network/NetworkEyebrow"
@@ -46,47 +45,40 @@ const HERO_FALLBACK = "/images/founders-header.jpg"
 const ELIGIBILITY_BENTO_ITEMS = [
   {
     text: "Digital health & care delivery software",
-    pexelsQuery: "doctor nurse tablet hospital electronic health record patient care",
     fallbackUrl:
       "https://images.pexels.com/photos/5327585/pexels-photo-5327585.jpeg?auto=compress&cs=tinysrgb&w=1200",
   },
   {
     text: "Software as a medical device (SaMD) and connected devices",
-    pexelsQuery: "medical device engineer FDA software prototype healthcare technology",
     fallbackUrl:
       "https://images.pexels.com/photos/3825539/pexels-photo-3825539.jpeg?auto=compress&cs=tinysrgb&w=1200",
   },
   {
     text: "Diagnostics, lab, and decision-support platforms",
-    pexelsQuery: "laboratory diagnostics blood test microscope pathology healthcare lab",
     fallbackUrl:
       "https://images.pexels.com/photos/2280549/pexels-photo-2280549.jpeg?auto=compress&cs=tinysrgb&w=1200",
   },
   {
     text: "Medtech and DTx with a credible path to evidence and regulation",
-    pexelsQuery: "clinical research hospital evidence healthcare regulatory quality assurance",
     fallbackUrl:
       "https://images.pexels.com/photos/7088489/pexels-photo-7088489.jpeg?auto=compress&cs=tinysrgb&w=1200",
   },
   {
     text: "Founding teams from idea through Series A",
-    pexelsQuery: "health tech startup founders meeting office collaboration pitch",
     fallbackUrl:
       "https://images.pexels.com/photos/3184292/pexels-photo-3184292.jpeg?auto=compress&cs=tinysrgb&w=1200",
   },
   {
     text: "AI and machine learning in clinical workflows",
-    pexelsQuery: "artificial intelligence healthcare machine learning doctor surgery",
-    fallbackUrl: "https://images.pexels.com/photos/8376277/pexels-photo-8376277.jpeg?auto=compress&cs=tinysrgb&w=1200",
+    fallbackUrl:
+      "https://images.pexels.com/photos/8376277/pexels-photo-8376277.jpeg?auto=compress&cs=tinysrgb&w=1200",
   },
   {
     text: "Payer and value-based care infrastructure",
-    pexelsQuery: "business meeting healthcare insurance payer finance",
     fallbackUrl: "https://images.pexels.com/photos/3184339/pexels-photo-3184339.jpeg?auto=compress&cs=tinysrgb&w=1200",
   },
   {
     text: "Direct-to-consumer healthcare and wellness",
-    pexelsQuery: "telehealth patient smartphone home healthcare care",
     fallbackUrl: "https://images.pexels.com/photos/4050824/pexels-photo-4050824.jpeg?auto=compress&cs=tinysrgb&w=1200",
   },
 ] as const
@@ -255,11 +247,8 @@ function DeeperHelpValuesSection() {
   })
   const bgY = useTransform(scrollYProgress, [0, 1], ["-18%", "18%"])
 
-  const bgSrc = usePexelsPhoto({
-    query: "healthcare startup team meeting",
-    fallbackUrl: "https://images.pexels.com/photos/3184325/pexels-photo-3184325.jpeg?auto=compress&cs=tinysrgb&w=1600",
-    orientation: "landscape",
-  })
+  const bgSrc =
+    "https://images.pexels.com/photos/3184325/pexels-photo-3184325.jpeg?auto=compress&cs=tinysrgb&w=1600"
 
   return (
     <section
@@ -411,11 +400,7 @@ const EligibilityBentoCard = ({
   className?: string
   featured?: boolean
 }) => {
-  const src = usePexelsPhoto({
-    query: item.pexelsQuery,
-    fallbackUrl: item.fallbackUrl,
-    orientation: "landscape",
-  })
+  const src = item.fallbackUrl
 
   return (
     <article

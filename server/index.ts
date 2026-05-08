@@ -121,9 +121,19 @@ export function createServer() {
       return true
     }
 
+    // Sanity Presentation / Studio runs on sanity.studio / sanity.io domains and needs to call preview endpoints.
+    // Origin/Referer checks are best-effort; this is still not a replacement for a shared secret.
+    if (originHeader && (originHeader.endsWith(".sanity.studio") || originHeader.endsWith(".sanity.io"))) {
+      return true
+    }
+
     const refererHeader = (req.get("referer") || "").trim()
     const refererOrigin = safeOriginFromUrl(refererHeader)
     if (refererOrigin && (allowedOrigins.includes(refererOrigin) || extraAllowedOrigins.has(refererOrigin))) {
+      return true
+    }
+
+    if (refererOrigin && (refererOrigin.endsWith(".sanity.studio") || refererOrigin.endsWith(".sanity.io"))) {
       return true
     }
 
@@ -372,11 +382,9 @@ export function createServer() {
 
   type RateState = { windowStartMs: number; count: number };
   const perIpRate = new Map<string, RateState>();
-  const pexelsIpRate = new Map<string, RateState>();
   const RATE_WINDOW_MS = 60_000;
   const RATE_MAX = 10;
   const RATE_MAP_MAX = 5000;
-  const PEXELS_RATE_MAX = 40;
 
   const applyRateLimit = (
     map: Map<string, RateState>,
@@ -393,89 +401,6 @@ export function createServer() {
     current.count += 1;
     return current.count <= max;
   };
-
-  const pexelsSearchQuerySchema = z.object({
-    query: z.string().trim().min(1).max(120),
-    per_page: z.coerce.number().int().min(1).max(15).optional().default(1),
-    orientation: z.enum(["landscape", "portrait", "square"]).optional(),
-  });
-
-  app.get("/api/pexels/search", async (req, res) => {
-    const apiKey = process.env.PEXELS_API_KEY?.trim();
-    if (!apiKey) {
-      res.status(501).json({
-        error:
-          "Pexels is not configured. Set PEXELS_API_KEY in the server environment.",
-      });
-      return;
-    }
-
-    const ip = getClientIp(req);
-    if (!applyRateLimit(pexelsIpRate, ip, PEXELS_RATE_MAX)) {
-      res
-        .status(429)
-        .json({ error: "Too many requests. Please try again shortly." });
-      return;
-    }
-
-    const raw = {
-      query: typeof req.query.query === "string" ? req.query.query : "",
-      per_page: req.query.per_page,
-      orientation: req.query.orientation,
-    };
-    const parsed = pexelsSearchQuerySchema.safeParse(raw);
-    if (!parsed.success) {
-      res
-        .status(400)
-        .json({ error: "Invalid query", details: parsed.error.flatten() });
-      return;
-    }
-
-    const { query, per_page, orientation } = parsed.data;
-    const params = new URLSearchParams({
-      query,
-      per_page: String(per_page),
-    });
-    if (orientation) params.set("orientation", orientation);
-
-    try {
-      const pexelsRes = await fetch(
-        `https://api.pexels.com/v1/search?${params.toString()}`,
-        {
-          headers: { Authorization: apiKey },
-        },
-      );
-
-      if (!pexelsRes.ok) {
-        const text = await pexelsRes.text().catch(() => "");
-        res.status(502).json({
-          error: "Pexels request failed",
-          status: pexelsRes.status,
-          ...(isDev ? { text } : {}),
-        });
-        return;
-      }
-
-      const data = (await pexelsRes.json()) as {
-        photos?: Array<{
-          src?: { large?: string; large2x?: string; medium?: string };
-        }>;
-      };
-      const first = data.photos?.[0]?.src;
-      const url = first?.large2x ?? first?.large ?? first?.medium;
-      if (!url) {
-        res.status(502).json({ error: "No photos returned" });
-        return;
-      }
-
-      res.status(200).json({ url });
-    } catch (err) {
-      res.status(500).json({
-        error: "Unexpected error",
-        message: err instanceof Error ? err.message : String(err),
-      });
-    }
-  });
 
   app.post("/api/diagnostic-report", async (req, res) => {
     if (!isAllowedBrowserOrigin(req, siteOrigins)) {

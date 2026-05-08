@@ -1,4 +1,3 @@
-import { usePexelsPhoto } from "@/hooks/usePexelsPhoto"
 import PageHeader from "@/components/PageHeader"
 import NetworkEyebrow from "@/components/network/NetworkEyebrow"
 import SectionHeading from "@/components/SectionHeading"
@@ -125,17 +124,15 @@ function SupportModelsSection() {
 }
 
 function ScheduleSplit() {
-  const img = usePexelsPhoto({
-    query: "modern professional healthcare team collaboration office",
-    fallbackUrl: "https://images.pexels.com/photos/3184418/pexels-photo-3184418.jpeg?auto=compress&cs=tinysrgb&w=1000",
-    orientation: "landscape",
-  })
-
   return (
     <section className="w-full bg-rellia-cream/25 px-6 py-20 md:px-10 md:py-32">
       <div className="mx-auto grid max-w-[1300px] gap-12 lg:grid-cols-[min(38%,420px)_1fr] lg:items-start lg:gap-20">
         <div className="relative overflow-hidden rounded-[28px] border border-black/10 shadow-lg">
-          <img src={img} alt="" className="aspect-[3/4] w-full object-cover" />
+          <img
+            src="https://images.pexels.com/photos/3184418/pexels-photo-3184418.jpeg?auto=compress&cs=tinysrgb&w=1000"
+            alt=""
+            className="aspect-[3/4] w-full object-cover"
+          />
           <div className="absolute inset-0 bg-gradient-to-tr from-rellia-teal/30 to-transparent" aria-hidden />
         </div>
         <div className="pt-2">

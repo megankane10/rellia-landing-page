@@ -1,7 +1,6 @@
 import type { ReactNode } from "react"
 import { useState } from "react"
 import { PEXELS_OFFICE_COLLABORATION } from "@/config/pexelsFallbacks"
-import { usePexelsPhoto } from "@/hooks/usePexelsPhoto"
 import PageHeader from "@/components/PageHeader"
 import NetworkEyebrow from "@/components/network/NetworkEyebrow"
 import SectionHeading from "@/components/SectionHeading"
@@ -134,15 +133,13 @@ function PipelinePhotoSection({
 }: {
   children: ReactNode
 }) {
-  const bg = usePexelsPhoto({
-    query: "abstract technology network connections blue",
-    fallbackUrl: "/images/metrics-bg-pexels-2.jpg",
-    orientation: "landscape",
-  })
-
   return (
     <section className="relative overflow-hidden">
-      <img src={bg} alt="" className="pointer-events-none absolute inset-0 h-full w-full object-cover" />
+      <img
+        src="/images/metrics-bg-pexels-2.jpg"
+        alt=""
+        className="pointer-events-none absolute inset-0 h-full w-full object-cover"
+      />
       <div className="absolute inset-0 bg-gradient-to-br from-rellia-teal/90 via-rellia-teal/75 to-[#0a2830]/88" aria-hidden />
       <div aria-hidden className="absolute inset-0 opacity-40 [background-image:radial-gradient(circle_at_70%_20%,rgba(255,255,255,0.12),transparent_45%)]" />
       <div className="relative z-10 px-6 py-16 md:px-10 md:py-24">{children}</div>
@@ -151,12 +148,6 @@ function PipelinePhotoSection({
 }
 
 function PortfolioSplit() {
-  const img = usePexelsPhoto({
-    query: "venture capital meeting handshake healthcare",
-    fallbackUrl: "/images/metrics-bg-pexels-2.jpg",
-    orientation: "landscape",
-  })
-
   return (
     <CreamSection>
       <div className="grid gap-12 md:grid-cols-[1fr_1.05fr] md:items-center md:gap-16">
@@ -206,7 +197,7 @@ function PortfolioSplit() {
         <Reveal delay={0.06}>
           <div className="overflow-hidden rounded-2xl border border-rellia-teal/15 shadow-[0_28px_80px_-48px_rgba(13,53,64,0.45)]">
             <img
-              src={img}
+              src={PEXELS_OFFICE_COLLABORATION}
               alt="Investors and founders collaborating"
               className="aspect-[4/3] h-full w-full object-cover"
               loading="lazy"

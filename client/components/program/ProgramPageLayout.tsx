@@ -35,6 +35,7 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { SectionsRenderer } from "@/components/cms/PageRenderer"
 import { useProgramPageBySlug } from "@/hooks/useCmsDocuments"
 import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo"
+import { PEXELS_HEALTH_MEETING, PEXELS_OFFICE_COLLABORATION, LOCAL_METRICS_BG_JPEG } from "@/config/pexelsFallbacks"
 import {
   Carousel,
   CarouselContent,
@@ -55,22 +56,6 @@ export type ProgramPageLayoutProps = {
   isWaitlist?: boolean;
   /** Optional square hero image; when omitted heroImageSrc is cropped to square from top-left */
   heroSquareImageSrc?: string;
-};
-
-const fetchPexelsImage = async (query: string): Promise<string> => {
-  try {
-    const params = new URLSearchParams({
-      query,
-      per_page: "1",
-      orientation: "landscape",
-    });
-    const res = await fetch(`/api/pexels/search?${params.toString()}`);
-    if (!res.ok) return "";
-    const data = (await res.json()) as { url?: string };
-    return data?.url ?? "";
-  } catch {
-    return "";
-  }
 };
 
 const RELLIA_TEAL = "#0D3540";
@@ -204,22 +189,9 @@ const ProgramPageLayout = ({
     (s) => s._type !== "sectionHero",
   )
 
-  const pexelsQueries = [
-    "medical device startup documents",
-    "team collaboration healthcare",
-    "mentorship meeting office",
-  ];
-
   useEffect(() => {
-    let cancelled = false;
-    Promise.all(pexelsQueries.map(fetchPexelsImage)).then((imgs) => {
-      if (!cancelled) setCardImages(imgs);
-    });
-    return () => {
-      cancelled = true;
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    setCardImages([LOCAL_METRICS_BG_JPEG, PEXELS_OFFICE_COLLABORATION, PEXELS_HEALTH_MEETING])
+  }, [])
 
   useEffect(() => {
     if (!carouselApi) return;
