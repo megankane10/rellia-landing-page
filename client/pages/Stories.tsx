@@ -13,6 +13,8 @@ import { BookOpen, ChevronLeft, ChevronRight } from "lucide-react"
 import FilteredListEmptyState from "@/components/FilteredListEmptyState"
 import { useStories, useStoriesPage } from "@/hooks/useCmsDocuments"
 import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo"
+import { HeroHeadlinePortable } from "@/components/HeroHeadlinePortable"
+import { DEFAULT_STORIES_PAGE_HEADLINE_PORTABLE } from "@shared/cms/inlineHeroHeadline"
 
 const tags: Array<StoryTag | "All"> = ["All", "Founder Story", "Industry Insight", "Program Update"]
 
@@ -95,8 +97,6 @@ export default function Stories() {
   const { data: storiesLanding } = useStoriesPage()
   useApplyCmsSeo(storiesLanding?.seo)
 
-  const headlineLead = storiesLanding?.headline?.trim() || "Rellia"
-  const headlineAccentText = storiesLanding?.headlineAccent?.trim() || "Stories"
   const heroSubtitle = storiesLanding?.subheadline?.trim() || DEFAULT_STORIES_SUBTITLE
 
   const [activeTag, setActiveTag] = useState<(typeof tags)[number]>("All")
@@ -143,15 +143,9 @@ export default function Stories() {
         <PageHeader
           variant="dark"
           title={
-            <>
-              {headlineLead}
-              {headlineAccentText ? (
-                <>
-                  {" "}
-                  <span className="text-rellia-mint">{headlineAccentText}</span>
-                </>
-              ) : null}
-            </>
+            <HeroHeadlinePortable
+              value={storiesLanding?.headlinePortable ?? DEFAULT_STORIES_PAGE_HEADLINE_PORTABLE}
+            />
           }
           subtitle={heroSubtitle}
         />

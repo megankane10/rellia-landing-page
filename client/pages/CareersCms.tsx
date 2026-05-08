@@ -20,7 +20,6 @@ import { CAREERS_OPEN_ROLES } from "@shared/careersOpenRoles"
 import { cn } from "@/lib/utils"
 import { useQuery } from "@tanstack/react-query"
 import { sanityFetch } from "@/lib/sanity"
-import { careersPageQuery } from "@/lib/cmsQueries"
 import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo"
 import { useMemo } from "react"
 
@@ -261,7 +260,7 @@ export default function CareersCms() {
   const { data: careersCmsRaw } = useQuery({
     queryKey: ["cms", "careersPage"],
     queryFn: async () => {
-      const raw = await sanityFetch<Partial<CareersPageContent>>(careersPageQuery)
+      const raw = await sanityFetch<Partial<CareersPageContent>>("careersPage")
       return raw ?? null
     },
     staleTime: 5 * 60 * 1000,

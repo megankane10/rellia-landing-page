@@ -11,7 +11,14 @@ export const aboutPage = defineType({
   fieldsets: [{name: 'seo', title: 'SEO & metadata'}],
   fields: [
     defineField({name: 'heroLine1', type: 'string', group: 'content'}),
-    defineField({name: 'heroLine2Mint', type: 'string', group: 'content'}),
+    defineField({
+      name: 'heroLine2Portable',
+      title: 'Hero line 2',
+      type: 'inlineHeroHeadline',
+      description: 'Middle line (often all Mint).',
+      group: 'content',
+      validation: (Rule) => Rule.required().min(1),
+    }),
     defineField({name: 'heroLine3', type: 'string', group: 'content'}),
     defineField({name: 'heroIntro', type: 'text', rows: 3, group: 'content'}),
     defineField({name: 'missionTitle', type: 'string', group: 'content'}),

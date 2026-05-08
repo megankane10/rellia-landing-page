@@ -13,10 +13,25 @@ import {
   DEFAULT_PAYMENT_PAGE,
   DEFAULT_PROGRAMS_LANDING,
 } from "../shared/cms/defaults"
+import {
+  DEFAULT_EVENTS_LANDING_HERO_PORTABLE,
+  DEFAULT_STORIES_PAGE_HEADLINE_PORTABLE,
+} from "../shared/cms/inlineHeroHeadline"
 import { ADVISOR_DIRECTORY_SEED, ADVISOR_FILTER_OPTIONS } from "../client/data/advisorDirectory"
 import { FOUNDER_DIRECTORY, ALL_LEVELS, ALL_SPECIALTIES } from "../client/data/founderDirectory"
 import { ROUTE_SEO } from "../client/config/seo"
 import { STORIES } from "../client/content/stories"
+
+/**
+ * Seeds the Sanity dataset from env (`SANITY_API_DATASET` or `VITE_SANITY_DATASET`) with
+ * singleton documents, programs, events, stories, and directory data.
+ *
+ * Requires `SANITY_API_WRITE_TOKEN` (Editor) and `SANITY_API_PROJECT_ID` (or `VITE_SANITY_PROJECT_ID`).
+ * Run: `pnpm run sanity:seed`
+ *
+ * Optional: `SEED_PUBLIC_SITE_ORIGIN` — base URL for converting relative paths into absolute `url`
+ * fields (home page CTA image). Defaults to `https://relliahealth.com`.
+ */
 
 type PortableTextBlock = {
   _type: "block"
@@ -53,6 +68,21 @@ const seoForRoute = (pathname: string) => {
     ogDescription: cfg.description,
     noIndex: cfg.indexable === false,
   }
+}
+
+const seedPublicOrigin = (
+  process.env.SEED_PUBLIC_SITE_ORIGIN?.replace(/\/$/, "") ||
+  process.env.VITE_SITE_URL?.replace(/\/$/, "") ||
+  "https://relliahealth.com"
+)
+
+/** Sanity `url` fields reject relative paths; seed uses this for `ctaImageUrl` etc. */
+const toSanityAbsoluteUrl = (value: string | undefined): string | undefined => {
+  if (!value?.trim()) return value
+  const v = value.trim()
+  if (/^https?:\/\//i.test(v)) return v
+  const pathSegment = v.startsWith("/") ? v : `/${v}`
+  return `${seedPublicOrigin}${pathSegment}`
 }
 
 const block = (
@@ -659,8 +689,7 @@ async function main() {
     createOrReplace: {
       _id: "eventsLandingPage",
       _type: "eventsLandingPage",
-      heroTitle: "Connect &",
-      heroTitleAccent: "Learn",
+      heroTitlePortable: DEFAULT_EVENTS_LANDING_HERO_PORTABLE,
       heroSubtitle: "Join live sessions with operators, clinicians, and health tech leaders.",
       ctaTitle: "Want to **speak** at a Rellia event?",
       ctaBody: "If you have a practical playbook for founders building in health tech, we’d love to hear from you.",
@@ -675,8 +704,7 @@ async function main() {
     createOrReplace: {
       _id: "storiesPage",
       _type: "storiesPage",
-      headline: "Rellia",
-      headlineAccent: "Stories",
+      headlinePortable: DEFAULT_STORIES_PAGE_HEADLINE_PORTABLE,
       subheadline:
         "The latest founder spotlights, industry insights, & program updates. Stay current with the people and ideas shaping the future of health.",
       seo: seoForRoute("/stories"),
@@ -906,6 +934,7 @@ async function main() {
       _id: "homePage",
       _type: "homePage",
       ...DEFAULT_HOME_PAGE,
+      ctaImageUrl: toSanityAbsoluteUrl(DEFAULT_HOME_PAGE.ctaImageUrl),
       seo: seoForRoute("/"),
     },
   })

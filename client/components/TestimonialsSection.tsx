@@ -10,8 +10,9 @@ import {
   CarouselItem,
 } from "@/components/ui/carousel"
 import { cn } from "@/lib/utils"
-import type { HomeTestimonial } from "@shared/cms/types"
+import type { HomeTestimonial, SanityPortableText } from "@shared/cms/types"
 import LogoMarquee from "@/components/LogoMarquee"
+import { HeroHeadlinePortable } from "@/components/HeroHeadlinePortable"
 
 const carouselArrowClass =
   "inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-black/10 bg-white text-rellia-teal shadow-sm transition hover:bg-rellia-teal hover:text-white hover:border-rellia-teal disabled:pointer-events-none disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-white motion-reduce:transition-none"
@@ -206,12 +207,11 @@ function TestimonialCard({
 }
 
 type TestimonialsSectionProps = {
-  titleLead: string;
-  titleAccent: string;
-  testimonials: HomeTestimonial[];
-};
+  titlePortable: SanityPortableText
+  testimonials: HomeTestimonial[]
+}
 
-export default function TestimonialsSection({ titleLead, titleAccent, testimonials }: TestimonialsSectionProps) {
+export default function TestimonialsSection({ titlePortable, testimonials }: TestimonialsSectionProps) {
   const [expandedName, setExpandedName] = useState<string | null>(null)
   const [carouselApi, setCarouselApi] = useState<unknown>(null)
   const [carouselIndex, setCarouselIndex] = useState(0)
@@ -292,8 +292,7 @@ export default function TestimonialsSection({ titleLead, titleAccent, testimonia
                 aria-hidden
               />
               <h2 className="font-host-grotesk font-semibold text-black text-3xl md:text-[40px] leading-tight tracking-tight max-w-3xl text-balance">
-                {titleLead}{" "}
-                <span className="text-rellia-teal">{titleAccent}</span>
+                <HeroHeadlinePortable value={titlePortable} />
               </h2>
             </div>
           </div>

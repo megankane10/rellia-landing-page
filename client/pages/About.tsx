@@ -10,6 +10,7 @@ import PillTag from "@/components/PillTag"
 import { useAboutPage } from "@/hooks/useCmsDocuments";
 import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo";
 import { DEFAULT_ABOUT_PAGE } from "@shared/cms/defaults";
+import { HeroHeadlinePortable } from "@/components/HeroHeadlinePortable"
 import { relliaTealGlassCardClass } from "@/lib/relliaTealGlassCard";
 import { cn } from "@/lib/utils";
 import { useRef, useState } from "react";
@@ -67,7 +68,7 @@ export default function About() {
           title={
             <>
               {about.heroLine1} <br />
-              <span className="text-rellia-mint">{about.heroLine2Mint}</span> <br />
+              <HeroHeadlinePortable value={about.heroLine2Portable} /> <br />
               {about.heroLine3}
             </>
           }

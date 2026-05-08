@@ -36,6 +36,7 @@ import {portableImageCarousel} from './objects/portableImageCarousel'
 import {seo} from './objects/seo'
 import {navItem} from './objects/navItem'
 import {portableRichText} from './objects/portableRichText'
+import {inlineHeroHeadline} from './objects/inlineHeroHeadline'
 import {sectionHero} from './objects/sectionHero'
 import {sectionRichText} from './objects/sectionRichText'
 import {sectionCardsGrid} from './objects/sectionCardsGrid'
@@ -84,6 +85,7 @@ export const schemaTypes = [
   seo,
   navItem,
   portableRichText,
+  inlineHeroHeadline,
   sectionHero,
   sectionRichText,
   sectionCardsGrid,

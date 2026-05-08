@@ -28,6 +28,8 @@ const headlineBelowFoldDelayMs = (lineCount: number) => {
   return Math.max(0, Math.round(totalS * 1000) - 320)
 }
 
+const DEFAULT_HERO_VIDEO_SRC = "/videos/homehero.mp4"
+
 type HeroSectionProps = {
   content: Pick<
     HomePageContent,
@@ -37,6 +39,7 @@ type HeroSectionProps = {
     | "primaryCtaPath"
     | "secondaryCtaLabel"
     | "secondaryCtaPath"
+    | "heroBackgroundVideoUrl"
   >;
 }
 
@@ -44,6 +47,9 @@ export default function HeroSection({ content }: HeroSectionProps) {
   const navigate = useNavigate()
   const reduceMotion = useReducedMotion()
   const [showBelowFold, setShowBelowFold] = useState(reduceMotion)
+
+  const heroVideoSrc =
+    content.heroBackgroundVideoUrl?.trim() || DEFAULT_HERO_VIDEO_SRC
 
   const headlineLines = useMemo(() => {
     const words = (content.headlinePrefix ?? "You are the future of health tech.").trim().split(/\s+/).filter(Boolean)
@@ -97,16 +103,17 @@ export default function HeroSection({ content }: HeroSectionProps) {
   return (
     <section className="relative min-h-[100svh] md:min-h-screen flex items-center bg-rellia-teal overflow-hidden">
       <div aria-hidden className="absolute inset-0">
-        <video
-          className="absolute inset-0 h-full w-full object-cover"
-          autoPlay
-          muted
-          loop
-          playsInline
-          preload="auto"
-        >
-          <source src="/videos/homehero.mp4" type="video/mp4" />
-        </video>
+        {!reduceMotion ? (
+          <video
+            className="absolute inset-0 h-full w-full object-cover"
+            src={heroVideoSrc}
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="metadata"
+          />
+        ) : null}
       </div>
 
       {/* Softer teal wash so image stays visible */}

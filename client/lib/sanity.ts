@@ -1,10 +1,10 @@
-import { createClient, type SanityClient } from "@sanity/client";
+import type { SanityQueryId } from "@shared/cms/sanityQueryRegistry"
 
 export const getSanityProjectId = (): string =>
-  import.meta.env.VITE_SANITY_PROJECT_ID || "";
+  import.meta.env.VITE_SANITY_PROJECT_ID || ""
 
 export const getSanityDataset = (): string =>
-  import.meta.env.VITE_SANITY_DATASET || "";
+  import.meta.env.VITE_SANITY_DATASET || ""
 
 const isProductionHostname = (): boolean => {
   if (typeof window === "undefined") return false
@@ -22,51 +22,37 @@ export const isSanityConfigured = (): boolean => {
   )
 }
 
-let client: SanityClient | null = null;
+const allowSanityProxyFetch = (): boolean => {
+  if (typeof window === "undefined") return false
+  if (import.meta.env.VITE_DISABLE_CMS === "true") return false
+  if (isSanityConfigured()) return true
+  const embedded = window.self !== window.top
+  const previewCookie =
+    typeof document !== "undefined" &&
+    typeof document.cookie === "string" &&
+    document.cookie.includes("sanity-preview-perspective=")
+  return embedded || previewCookie
+}
 
-export const getSanityClient = (): SanityClient | null => {
-  if (!isSanityConfigured()) return null;
-  if (!client) {
-    client = createClient({
-      projectId: getSanityProjectId(),
-      dataset: getSanityDataset(),
-      apiVersion: "2024-01-01",
-      // Publishing in Studio should reflect quickly on Vercel previews.
-      // `useCdn: true` can lag; use the API for fresher reads.
-      useCdn: false,
-    });
-  }
-  return client;
-};
-
+/**
+ * All CMS reads go through `POST /api/sanity/query` with a whitelisted `queryId` (no raw GROQ from the browser).
+ */
 export const sanityFetch = async <T>(
-  query: string,
+  queryId: SanityQueryId,
   params?: Record<string, unknown>,
 ): Promise<T | null> => {
   try {
-    const isEmbeddedInFrame =
-      typeof window !== "undefined" && window.self !== window.top;
+    if (!allowSanityProxyFetch()) return null
 
-    const hasPreviewPerspectiveCookie =
-      typeof document !== "undefined" &&
-      typeof document.cookie === "string" &&
-      document.cookie.includes("sanity-preview-perspective=")
-
-    if (isEmbeddedInFrame || hasPreviewPerspectiveCookie) {
-      const res = await fetch("/api/sanity/query", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ query, params: params ?? {} }),
-      });
-      if (!res.ok) return null;
-      const json = (await res.json()) as { data?: T };
-      return json.data ?? null;
-    }
-
-    const c = getSanityClient();
-    if (!c) return null;
-    return await c.fetch<T>(query, params ?? {});
+    const res = await fetch("/api/sanity/query", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ queryId, params: params ?? {} }),
+    })
+    if (!res.ok) return null
+    const json = (await res.json()) as { data?: T }
+    return json.data ?? null
   } catch {
-    return null;
+    return null
   }
-};
+}

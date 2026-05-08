@@ -33,8 +33,7 @@ export default function Index() {
         <WhyRellia sectionTitle={home.howItWorksSectionTitle} features={home.whyFeatures} />
         <HowItWorks />
         <TestimonialsSection
-          titleLead={home.testimonialsTitleLead}
-          titleAccent={home.testimonialsTitleAccent}
+          titlePortable={home.testimonialsTitlePortable}
           testimonials={home.testimonials}
         />
         <FeaturedStories sectionClassName="pb-16 pt-10 md:pb-24 md:pt-12" />

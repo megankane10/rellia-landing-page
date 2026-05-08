@@ -7,6 +7,11 @@ import { createClient } from "@sanity/client";
 import { validatePreviewUrl } from "@sanity/preview-url-secret";
 import { withoutSecretSearchParams } from "@sanity/preview-url-secret/without-secret-search-params";
 import { perspectiveCookieName } from "@sanity/preview-url-secret/constants";
+import {
+  SANITY_QUERY_WHITELIST,
+  isSanityQueryId,
+} from "../shared/cms/sanityQueryRegistry";
+import { stripSanityMetadata } from "./sanityResponseSanitize";
 
 type RequestLike = {
   headers?: Record<string, unknown>;
@@ -276,63 +281,6 @@ export function createServer() {
     res.redirect(307, "/");
   });
 
-  app.post("/api/sanity/query", async (req, res) => {
-    if (!isAllowedBrowserOrigin(req, new Set([studioOrigin].filter(Boolean) as string[]))) {
-      res.status(403).json({ error: "Forbidden" })
-      return
-    }
-
-    const token = process.env.SANITY_API_READ_TOKEN?.trim();
-    const cookie = req.headers.cookie || "";
-    const isPreview = cookie.includes(`${perspectiveCookieName}=`);
-    if (!isPreview || !token) {
-      res.status(403).json({ error: "Preview mode not enabled" });
-      return;
-    }
-
-    const bodySchema = z.object({
-      query: z.string().trim().min(1).max(50_000),
-      params: z.record(z.any()).optional(),
-    });
-
-    const parsed = bodySchema.safeParse(req.body);
-    if (!parsed.success) {
-      res
-        .status(400)
-        .json({ error: "Invalid request", details: parsed.error.flatten() });
-      return;
-    }
-
-    try {
-      const previewClient = createClient({
-        projectId:
-          process.env.SANITY_API_PROJECT_ID ||
-          process.env.VITE_SANITY_PROJECT_ID ||
-          "ggbt0o98",
-        dataset:
-          process.env.SANITY_API_DATASET ||
-          process.env.VITE_SANITY_DATASET ||
-          "production",
-        token,
-        useCdn: false,
-        apiVersion: "2024-01-01",
-        perspective: "drafts",
-        stega: { enabled: true, studioUrl: process.env.SANITY_STUDIO_URL },
-      });
-
-      const data = await previewClient.fetch(
-        parsed.data.query,
-        parsed.data.params ?? {},
-      );
-      res.status(200).json({ data });
-    } catch (err) {
-      res.status(502).json({
-        error: "Sanity preview fetch failed",
-        message: err instanceof Error ? err.message : String(err),
-      });
-    }
-  });
-
   const diagnosticReportPayloadSchema = z.object({
     name: z.string().trim().min(1).max(200),
     email: z.string().trim().email(),
@@ -401,6 +349,124 @@ export function createServer() {
     current.count += 1;
     return current.count <= max;
   };
+
+  const sanityPreviewRate = new Map<string, RateState>();
+  const sanityPublishedRate = new Map<string, RateState>();
+  const SANITY_PREVIEW_MAX_PER_MIN = 120;
+  /** SPA can issue many parallel queries on one navigation; keep above typical burst. */
+  const SANITY_PUBLISHED_MAX_PER_MIN = 180;
+
+  const previewAndSiteOrigins = new Set(
+    [studioOrigin, ...siteOrigins].filter(Boolean) as string[],
+  );
+
+  app.post("/api/sanity/query", async (req, res) => {
+    if (!isAllowedBrowserOrigin(req, previewAndSiteOrigins)) {
+      res.status(403).json({ error: "Forbidden" });
+      return;
+    }
+
+    const cookie = req.headers.cookie || "";
+    const isPreviewSession = cookie.includes(`${perspectiveCookieName}=`);
+    const token = process.env.SANITY_API_READ_TOKEN?.trim();
+
+    if (!isDev) {
+      const hasProvenance =
+        Boolean((req.get("origin") || "").trim()) ||
+        Boolean((req.get("referer") || "").trim());
+      if (!hasProvenance) {
+        res.status(403).json({ error: "Forbidden" });
+        return;
+      }
+    }
+
+    const ip = getClientIp(req);
+    const rateMap = isPreviewSession ? sanityPreviewRate : sanityPublishedRate;
+    const rateMax = isPreviewSession
+      ? SANITY_PREVIEW_MAX_PER_MIN
+      : SANITY_PUBLISHED_MAX_PER_MIN;
+    if (!applyRateLimit(rateMap, ip, rateMax)) {
+      res
+        .status(429)
+        .json({ error: "Too many requests. Please try again shortly." });
+      return;
+    }
+
+    const bodySchema = z.object({
+      queryId: z.string().trim(),
+      params: z.record(z.unknown()).optional(),
+    });
+
+    const parsedBody = bodySchema.safeParse(req.body);
+    if (!parsedBody.success) {
+      res.status(400).json({
+        error: "Invalid request",
+        details: parsedBody.error.flatten(),
+      });
+      return;
+    }
+
+    if (!isSanityQueryId(parsedBody.data.queryId)) {
+      res.status(400).json({ error: "Unknown queryId" });
+      return;
+    }
+
+    const entry = SANITY_QUERY_WHITELIST[parsedBody.data.queryId];
+    const paramsParsed = entry.params.safeParse(parsedBody.data.params ?? {});
+    if (!paramsParsed.success) {
+      res.status(400).json({
+        error: "Invalid params",
+        details: paramsParsed.error.flatten(),
+      });
+      return;
+    }
+
+    const projectId =
+      process.env.SANITY_API_PROJECT_ID ||
+      process.env.VITE_SANITY_PROJECT_ID ||
+      "ggbt0o98";
+    const dataset =
+      process.env.SANITY_API_DATASET ||
+      process.env.VITE_SANITY_DATASET ||
+      "production";
+
+    const fetchParams = paramsParsed.data as Record<string, unknown>;
+
+    try {
+      if (isPreviewSession) {
+        if (!token) {
+          res.status(501).json({ error: "Missing SANITY_API_READ_TOKEN" });
+          return;
+        }
+        const previewClient = createClient({
+          projectId,
+          dataset,
+          token,
+          useCdn: false,
+          apiVersion: "2024-01-01",
+          perspective: "drafts",
+          stega: { enabled: true, studioUrl: process.env.SANITY_STUDIO_URL },
+        });
+        const data = await previewClient.fetch(entry.query, fetchParams);
+        res.status(200).json({ data: stripSanityMetadata(data) });
+        return;
+      }
+
+      const publicClient = createClient({
+        projectId,
+        dataset,
+        useCdn: false,
+        apiVersion: "2024-01-01",
+      });
+      const data = await publicClient.fetch(entry.query, fetchParams);
+      res.status(200).json({ data: stripSanityMetadata(data) });
+    } catch (err) {
+      res.status(502).json({
+        error: "Sanity fetch failed",
+        message: err instanceof Error ? err.message : String(err),
+      });
+    }
+  });
 
   app.post("/api/diagnostic-report", async (req, res) => {
     if (!isAllowedBrowserOrigin(req, siteOrigins)) {

@@ -21,6 +21,7 @@ import { usePaymentPage } from "@/hooks/useCmsDocuments"
 import { DEFAULT_PAYMENT_PAGE } from "@shared/cms/defaults"
 import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo"
 import { cn } from "@/lib/utils"
+import { HeroHeadlinePortable } from "@/components/HeroHeadlinePortable"
 
 const BENEFIT_ICONS = [Sparkles, ShieldCheck, Users, Target, Zap]
 
@@ -114,9 +115,8 @@ export default function Payment() {
                 {/* Left: Benefits */}
                 <div className="flex-1 flex flex-col justify-center items-start py-20 md:py-32 pr-6 md:pr-16 relative">
                   <div className="relative z-10 w-full max-w-[500px]">
-                    <h3 className="font-host-grotesk text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-14 md:mb-20 leading-[1.1]">
-                      <span className="text-rellia-mint block mb-2">Join the</span> 
-                      <span className="text-white">Rellia Network</span>
+                    <h3 className="font-host-grotesk text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-14 md:mb-20 leading-[1.1] text-white">
+                      <HeroHeadlinePortable value={p.heroHeadlinePortable} />
                     </h3>
 
                     <div className="flex flex-col gap-10">

@@ -12,19 +12,12 @@ export const eventsLandingPage = defineType({
   fieldsets: [{name: 'seo', title: 'SEO & metadata'}],
   fields: [
     defineField({
-      name: 'heroTitle',
-      title: 'Headline',
-      type: 'string',
-      description: 'Main headline for the Events page.',
+      name: 'heroTitlePortable',
+      title: 'Hero headline',
+      type: 'inlineHeroHeadline',
+      description: 'Main headline. Use Mint/Teal decorators for colored phrases.',
       group: 'hero',
-      validation: (Rule) => Rule.required(),
-    }),
-    defineField({
-      name: 'heroTitleAccent',
-      title: 'Accent word/phrase',
-      type: 'string',
-      description: 'Optional highlighted phrase shown in mint.',
-      group: 'hero',
+      validation: (Rule) => Rule.required().min(1),
     }),
     defineField({
       name: 'heroSubtitle',

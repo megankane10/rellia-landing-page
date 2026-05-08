@@ -9,6 +9,7 @@ import { usePrograms, useProgramsLandingPage } from "@/hooks/useCmsDocuments"
 import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo"
 import { cn } from "@/lib/utils"
 import { DEFAULT_PROGRAMS_LANDING } from "@shared/cms/defaults"
+import { HeroHeadlinePortable } from "@/components/HeroHeadlinePortable"
 import { useEffect, useMemo, useState } from "react"
 import { AnimatePresence, motion } from "framer-motion"
 import { ChevronLeft, ChevronRight, LayoutGrid } from "lucide-react"
@@ -70,11 +71,7 @@ export default function Programs() {
       <main id="main-content">
         <PageHeader
           variant="dark"
-          title={
-            <>
-              {pl.heroTitleLine1} <span className="text-rellia-mint">{pl.heroTitleMint}</span>
-            </>
-          }
+          title={<HeroHeadlinePortable value={pl.heroTitlePortable} />}
           subtitle={pl.heroSubtitle}
         />
 

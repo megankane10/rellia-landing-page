@@ -14,6 +14,8 @@ import { cn } from "@/lib/utils"
 import { motion, AnimatePresence } from "framer-motion"
 import FilteredListEmptyState from "@/components/FilteredListEmptyState"
 import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo"
+import { HeroHeadlinePortable } from "@/components/HeroHeadlinePortable"
+import { DEFAULT_EVENTS_LANDING_HERO_PORTABLE } from "@shared/cms/inlineHeroHeadline"
 
 type EventFilter = "all" | "upcoming" | "past"
 const PAGE_SIZE = 12
@@ -143,20 +145,9 @@ export default function Events() {
         <PageHeader
           variant="dark"
           title={
-            <>
-              {landing?.heroTitle ? (
-                <>
-                  {landing.heroTitle}{" "}
-                  {landing.heroTitleAccent ? (
-                    <span className="text-rellia-mint">{landing.heroTitleAccent}</span>
-                  ) : null}
-                </>
-              ) : (
-                <>
-                  Connect & <span className="text-rellia-mint">Learn</span>
-                </>
-              )}
-            </>
+            <HeroHeadlinePortable
+              value={landing?.heroTitlePortable ?? DEFAULT_EVENTS_LANDING_HERO_PORTABLE}
+            />
           }
           subtitle={
             landing?.heroSubtitle ||

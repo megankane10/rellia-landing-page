@@ -231,12 +231,13 @@ export type HomeTestimonial = {
 
 export type HomePageContent = {
   headlinePrefix: string
-  headlineAccent?: string
   subheadline: string
   primaryCtaLabel: string
   primaryCtaPath: string
   secondaryCtaLabel: string
   secondaryCtaPath: string
+  /** Resolved MP4/WebM URL: uploaded file in Studio, or fallback string, or site default in merge */
+  heroBackgroundVideoUrl?: string
   metricsHeading: string
   metricsSubheading: string
   metrics: HomeMetric[]
@@ -247,8 +248,7 @@ export type HomePageContent = {
   ctaImageUrl: string
   ctaImageAlt: string
   howItWorksSectionTitle: string
-  testimonialsTitleLead: string
-  testimonialsTitleAccent: string
+  testimonialsTitlePortable: SanityPortableText
   testimonials: HomeTestimonial[]
   pathsTitle?: string
   pathsCards?: HomePathsCard[]
@@ -286,7 +286,7 @@ export type AboutTeamMember = {
 
 export type AboutPageContent = {
   heroLine1: string
-  heroLine2Mint: string
+  heroLine2Portable: SanityPortableText
   heroLine3: string
   heroIntro: string
   missionTitle: string
@@ -384,8 +384,7 @@ export type ProgramsProgramCard = {
 }
 
 export type ProgramsLandingContent = {
-  heroTitleLine1: string
-  heroTitleMint: string
+  heroTitlePortable: SanityPortableText
   heroSubtitle: string
   heroPrimaryCtaLabel: string
   heroSecondaryCtaLabel: string
@@ -501,13 +500,10 @@ export type PaymentPageContent = {
   discountBannerSubtitle: string
   discountBannerApplyLabel: string
   discountBannerApplyHref: string
-  heroHeadlinePrefix: string
-  heroHeadlineAccent: string
-  heroHeadlineSuffix: string
+  heroHeadlinePortable: SanityPortableText
   heroSubheadline: string
   imageCardBadge: string
-  imageCardHeadlinePrefix: string
-  imageCardHeadlineAccent: string
+  imageCardHeadlinePortable: SanityPortableText
   imageCardSrc: string
   imageCardAlt: string
   highlightBenefits: string[]

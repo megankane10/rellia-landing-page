@@ -60,21 +60,16 @@ export const presentationLocations = {
     }),
   }),
   programsLandingPage: defineLocations({
-    select: {title: 'title'},
-    resolve: (doc) => ({
-      locations: [{title: doc?.title || 'Programs', href: '/programs'}],
+    select: {heroTitlePortable: 'heroTitlePortable'},
+    resolve: () => ({
+      locations: [{title: 'Programs', href: '/programs'}],
     }),
   }),
   eventsLandingPage: defineLocations({
-    select: {heroTitle: 'heroTitle', heroTitleAccent: 'heroTitleAccent'},
-    resolve: (doc) => {
-      const lead = typeof doc?.heroTitle === 'string' ? doc.heroTitle.trim() : ''
-      const accent = typeof doc?.heroTitleAccent === 'string' ? doc.heroTitleAccent.trim() : ''
-      const label = [lead, accent].filter(Boolean).join(' ') || 'Events'
-      return {
-        locations: [{title: label, href: '/events'}],
-      }
-    },
+    select: {heroTitlePortable: 'heroTitlePortable'},
+    resolve: () => ({
+      locations: [{title: 'Events', href: '/events'}],
+    }),
   }),
   contactPage: defineLocations({
     select: {title: 'title'},
@@ -101,15 +96,10 @@ export const presentationLocations = {
     }),
   }),
   storiesPage: defineLocations({
-    select: {headline: 'headline', headlineAccent: 'headlineAccent'},
-    resolve: (doc) => {
-      const lead = typeof doc?.headline === 'string' ? doc.headline.trim() : ''
-      const accent = typeof doc?.headlineAccent === 'string' ? doc.headlineAccent.trim() : ''
-      const label = [lead, accent].filter(Boolean).join(' ') || 'Stories'
-      return {
-        locations: [{title: label, href: '/stories'}],
-      }
-    },
+    select: {headlinePortable: 'headlinePortable'},
+    resolve: () => ({
+      locations: [{title: 'Stories', href: '/stories'}],
+    }),
   }),
   story: defineLocations({
     select: {title: 'title', slug: 'slug.current'},

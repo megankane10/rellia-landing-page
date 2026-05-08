@@ -15,18 +15,30 @@ export const homePage = defineType({
   fieldsets: [{name: 'seo', title: 'SEO & metadata'}],
   fields: [
     defineField({name: 'headlinePrefix', title: 'Headline (line 1)', type: 'string', group: 'hero'}),
-    defineField({
-      name: 'headlineAccent',
-      title: 'Headline accent (highlighted phrase)',
-      type: 'string',
-      description: 'Optional highlighted phrase (e.g. “health tech.”)',
-      group: 'hero',
-    }),
     defineField({name: 'subheadline', title: 'Hero subtitle', type: 'string', group: 'hero'}),
     defineField({name: 'primaryCtaLabel', title: 'Primary button label', type: 'string', group: 'hero'}),
     defineField({name: 'primaryCtaPath', title: 'Primary button link', type: 'string', group: 'hero'}),
     defineField({name: 'secondaryCtaLabel', title: 'Secondary button label', type: 'string', group: 'hero'}),
     defineField({name: 'secondaryCtaPath', title: 'Secondary button link', type: 'string', group: 'hero'}),
+    defineField({
+      name: 'heroBackgroundVideo',
+      title: 'Hero background video',
+      type: 'file',
+      group: 'hero',
+      description:
+        'Upload MP4 (H.264) or WebM. Plays muted, looping, behind the headline. Prefer short clips and compressed files for mobile.',
+      options: {
+        accept: 'video/*',
+      },
+    }),
+    defineField({
+      name: 'heroBackgroundVideoUrl',
+      title: 'Hero background video URL (fallback)',
+      type: 'string',
+      group: 'hero',
+      description:
+        'Used when no file is uploaded. Site path (e.g. /videos/homehero.mp4) or full https URL to a video file.',
+    }),
     defineField({name: 'metricsHeading', title: 'Metrics title', type: 'string', group: 'metrics'}),
     defineField({name: 'metricsSubheading', title: 'Metrics subtitle', type: 'text', rows: 3, group: 'metrics'}),
     defineField({
@@ -52,13 +64,13 @@ export const homePage = defineType({
       type: 'string',
       group: 'highlights',
     }),
-    defineField({name: 'testimonialsTitleLead', title: 'Testimonials title (lead)', type: 'string', group: 'testimonials'}),
     defineField({
-      name: 'testimonialsTitleAccent',
-      title: 'Testimonials title (accent)',
-      type: 'string',
-      description: 'Highlighted phrase shown in mint.',
+      name: 'testimonialsTitlePortable',
+      title: 'Testimonials section title',
+      type: 'inlineHeroHeadline',
+      description: 'Use the Teal decorator for the highlighted phrase (matches the live site).',
       group: 'testimonials',
+      validation: (Rule) => Rule.required().min(1),
     }),
     defineField({
       name: 'whyFeatures',

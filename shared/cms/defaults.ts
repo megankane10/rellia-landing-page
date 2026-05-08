@@ -1,3 +1,10 @@
+import {
+  DEFAULT_ABOUT_HERO_LINE2_PORTABLE,
+  DEFAULT_HOME_TESTIMONIALS_TITLE_PORTABLE,
+  DEFAULT_PAYMENT_HERO_PORTABLE,
+  DEFAULT_PAYMENT_IMAGE_CARD_HEADLINE_PORTABLE,
+  DEFAULT_PROGRAMS_LANDING_HERO_PORTABLE,
+} from "./inlineHeroHeadline"
 import type {
   AboutPageContent,
   ContactPageContent,
@@ -962,13 +969,13 @@ export const DEFAULT_GLOBAL_SETTINGS: GlobalSettingsContent = {
 
 export const DEFAULT_HOME_PAGE: HomePageContent = {
   headlinePrefix: "You are the future of health tech.",
-  headlineAccent: "",
   subheadline:
     "Rellia helps founders achieve their milestones to launch their healthcare innovations.",
   primaryCtaLabel: "Apply to Join",
   primaryCtaPath: "/apply",
   secondaryCtaLabel: "See our Programs",
   secondaryCtaPath: "/programs",
+  heroBackgroundVideoUrl: "/videos/homehero.mp4",
   metricsHeading: "The right people make all the difference.",
   metricsSubheading:
     "Here is a look at the Rellia network—where health tech founders are connected with people who understand exactly what you're up against.",
@@ -1021,8 +1028,7 @@ export const DEFAULT_HOME_PAGE: HomePageContent = {
   ctaButtonPath: "/apply",
   ctaImageUrl: "/images/cta-home-conference.webp",
   ctaImageAlt: "Man speaking at conference",
-  testimonialsTitleLead: "Trusted by the next generation of",
-  testimonialsTitleAccent: "healthcare leaders",
+  testimonialsTitlePortable: DEFAULT_HOME_TESTIMONIALS_TITLE_PORTABLE,
   testimonials: [
     {
       name: "Mazhar Shahen",
@@ -1138,7 +1144,7 @@ export const DEFAULT_HOME_PAGE: HomePageContent = {
 
 export const DEFAULT_ABOUT_PAGE: AboutPageContent = {
   heroLine1: "Empowering the",
-  heroLine2Mint: "next generation",
+  heroLine2Portable: DEFAULT_ABOUT_HERO_LINE2_PORTABLE,
   heroLine3: "of health tech.",
   heroIntro:
     "Rellia Health is a virtual incubator dedicated to accelerating the commercialization of digital health solutions that matter.",
@@ -1318,8 +1324,7 @@ export const DEFAULT_FAQ_PAGE: FaqPageContent = {
 const DEFAULT_PROGRAMS_EVENT_IMAGE_SRC = "/images/event-leadershipUnderPressure.avif"
 
 export const DEFAULT_PROGRAMS_LANDING: ProgramsLandingContent = {
-  heroTitleLine1: "Less theory.",
-  heroTitleMint: "More progress.",
+  heroTitlePortable: DEFAULT_PROGRAMS_LANDING_HERO_PORTABLE,
   heroSubtitle:
     "Targeted programs and live events designed to help you accomplish your next milestone, not just learn about it.",
   heroPrimaryCtaLabel: "View Programs",
@@ -1713,14 +1718,11 @@ export const DEFAULT_PAYMENT_PAGE: PaymentPageContent = {
   discountBannerSubtitle: "",
   discountBannerApplyLabel: "Apply code",
   discountBannerApplyHref: "",
-  heroHeadlinePrefix: "Join the ",
-  heroHeadlineAccent: "kindest place",
-  heroHeadlineSuffix: " in health tech",
+  heroHeadlinePortable: DEFAULT_PAYMENT_HERO_PORTABLE,
   heroSubheadline:
     "Where founders, mentors, investors, and clinicians build the future of healthcare — together.",
   imageCardBadge: "The benefits",
-  imageCardHeadlinePrefix: "Warm introductions can make ",
-  imageCardHeadlineAccent: "all the difference",
+  imageCardHeadlinePortable: DEFAULT_PAYMENT_IMAGE_CARD_HEADLINE_PORTABLE,
   imageCardSrc: "/images/cta-home-conference.webp",
   imageCardAlt: "Healthcare community event space",
   highlightBenefits: [
@@ -1773,6 +1775,9 @@ export function mergeHomePage(partial: Partial<HomePageContent> | null | undefin
   base.testimonials = testimonials.length > 0 ? testimonials : DEFAULT_HOME_PAGE.testimonials
   const pathsCards = compactList(p.pathsCards)
   if (pathsCards.length > 0) base.pathsCards = pathsCards
+  if (!Array.isArray(base.testimonialsTitlePortable) || base.testimonialsTitlePortable.length === 0) {
+    base.testimonialsTitlePortable = DEFAULT_HOME_PAGE.testimonialsTitlePortable
+  }
   return base
 }
 
@@ -1786,6 +1791,9 @@ export function mergeAboutPage(partial: Partial<AboutPageContent> | null | undef
   base.values = values.length > 0 ? values : DEFAULT_ABOUT_PAGE.values
   const team = compactList(p.team)
   base.team = team.length > 0 ? team : DEFAULT_ABOUT_PAGE.team
+  if (!Array.isArray(base.heroLine2Portable) || base.heroLine2Portable.length === 0) {
+    base.heroLine2Portable = DEFAULT_ABOUT_PAGE.heroLine2Portable
+  }
   return base
 }
 
@@ -1835,6 +1843,9 @@ export function mergeProgramsLanding(
     upcomingEvents.length > 0 ? upcomingEvents : DEFAULT_PROGRAMS_LANDING.upcomingEvents
   const pastEvents = compactList(p.pastEvents)
   base.pastEvents = pastEvents.length > 0 ? pastEvents : DEFAULT_PROGRAMS_LANDING.pastEvents
+  if (!Array.isArray(base.heroTitlePortable) || base.heroTitlePortable.length === 0) {
+    base.heroTitlePortable = DEFAULT_PROGRAMS_LANDING.heroTitlePortable
+  }
   return base
 }
 
@@ -1931,14 +1942,15 @@ export function mergePaymentPage(
   fill("discountBannerSubtitle", DEFAULT_PAYMENT_PAGE.discountBannerSubtitle)
   fill("discountBannerApplyLabel", DEFAULT_PAYMENT_PAGE.discountBannerApplyLabel)
   fill("discountBannerApplyHref", DEFAULT_PAYMENT_PAGE.discountBannerApplyHref)
-  fill("heroHeadlinePrefix", DEFAULT_PAYMENT_PAGE.heroHeadlinePrefix)
-  fill("heroHeadlineAccent", DEFAULT_PAYMENT_PAGE.heroHeadlineAccent)
-  fill("heroHeadlineSuffix", DEFAULT_PAYMENT_PAGE.heroHeadlineSuffix)
   fill("heroSubheadline", DEFAULT_PAYMENT_PAGE.heroSubheadline)
   fill("imageCardBadge", DEFAULT_PAYMENT_PAGE.imageCardBadge)
-  fill("imageCardHeadlinePrefix", DEFAULT_PAYMENT_PAGE.imageCardHeadlinePrefix)
-  fill("imageCardHeadlineAccent", DEFAULT_PAYMENT_PAGE.imageCardHeadlineAccent)
   fill("imageCardSrc", DEFAULT_PAYMENT_PAGE.imageCardSrc)
+  if (!Array.isArray(base.heroHeadlinePortable) || base.heroHeadlinePortable.length === 0) {
+    base.heroHeadlinePortable = DEFAULT_PAYMENT_PAGE.heroHeadlinePortable
+  }
+  if (!Array.isArray(base.imageCardHeadlinePortable) || base.imageCardHeadlinePortable.length === 0) {
+    base.imageCardHeadlinePortable = DEFAULT_PAYMENT_PAGE.imageCardHeadlinePortable
+  }
   fill("imageCardAlt", DEFAULT_PAYMENT_PAGE.imageCardAlt)
   fill("pricingMonthlyBadge", DEFAULT_PAYMENT_PAGE.pricingMonthlyBadge)
   fill("pricingAnnualBadge", DEFAULT_PAYMENT_PAGE.pricingAnnualBadge)
