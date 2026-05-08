@@ -623,7 +623,7 @@ async function main() {
   const dataset =
     process.env.SANITY_API_DATASET?.trim() ||
     process.env.VITE_SANITY_DATASET?.trim() ||
-    "production"
+    "preview"
   const token = requireEnv("SANITY_API_WRITE_TOKEN")
 
   const client = createClient({

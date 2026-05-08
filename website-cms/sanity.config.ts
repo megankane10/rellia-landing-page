@@ -27,7 +27,7 @@ export default defineConfig({
   title: 'Website CMS',
 
   projectId: process.env.SANITY_STUDIO_PROJECT_ID || 'ggbt0o98',
-  dataset: process.env.SANITY_STUDIO_DATASET || 'production',
+  dataset: process.env.SANITY_STUDIO_DATASET || 'preview',
 
   theme,
 
