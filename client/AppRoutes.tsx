@@ -44,6 +44,7 @@ import TermsofUse from "./pages/TermsofUse"
 import PrivacyPolicy from "./pages/PrivacyPolicy"
 import PlaceholderPage from "./pages/PlaceholderPage"
 import CmsCatchAll from "./pages/CmsCatchAll"
+import StudioRedirect from "./pages/StudioRedirect"
 
 const ThirdPartyPreloads = () => {
   useEffect(() => {
@@ -133,6 +134,8 @@ export const AppRoutes = () => (
     <Route path="/diagnostics" element={<DiagnosticLanding />} />
     <Route path="/diagnostic-survey" element={<DiagnosticSurvey />} />
     <Route path="/survey" element={<Navigate to="/diagnostic-survey" replace />} />
+
+    <Route path="/studio" element={<StudioRedirect />} />
 
     <Route path="*" element={<CmsCatchAll />} />
   </Routes>

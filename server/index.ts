@@ -132,6 +132,26 @@ export function createServer() {
     res.status(200).json({ ok: true });
   });
 
+  // Public convenience redirect to Sanity Studio. Studio itself authenticates.
+  app.get("/api/studio", (_req, res) => {
+    const studioUrl = process.env.SANITY_STUDIO_URL?.trim();
+    if (!studioUrl) {
+      res.status(501).send("Missing SANITY_STUDIO_URL");
+      return;
+    }
+
+    try {
+      const parsed = new URL(studioUrl);
+      if (parsed.protocol !== "https:" && parsed.protocol !== "http:") {
+        res.status(400).send("Invalid SANITY_STUDIO_URL protocol");
+        return;
+      }
+      res.redirect(307, parsed.toString());
+    } catch {
+      res.status(400).send("Invalid SANITY_STUDIO_URL");
+    }
+  });
+
   app.get("/api/draft-mode/enable", async (req, res) => {
     const token = process.env.SANITY_API_READ_TOKEN?.trim();
     if (!token) {
