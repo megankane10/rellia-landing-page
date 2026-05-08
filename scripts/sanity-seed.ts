@@ -103,6 +103,8 @@ type PortableStoryNode =
 
 const storyFilterIdForTag = (tag: string): string => `storyFilter-${slugify(tag)}`
 
+const directoryFilterGroupId = (slug: string): string => `directoryFilterGroup-${slug}`
+
 const portableStoryBody = (story: (typeof STORIES)[number]): PortableStoryNode[] => {
   const nodes: PortableStoryNode[] = []
 
@@ -655,6 +657,22 @@ async function main() {
   })
   mutations.push({
     createOrReplace: {
+      _id: "eventsLandingPage",
+      _type: "eventsLandingPage",
+      heroTitle: "Connect &",
+      heroTitleAccent: "Learn",
+      heroSubtitle: "Join live sessions with operators, clinicians, and health tech leaders.",
+      ctaTitle: "Want to **speak** at a Rellia event?",
+      ctaBody: "If you have a practical playbook for founders building in health tech, we’d love to hear from you.",
+      ctaPrimaryLabel: "Contact",
+      ctaPrimaryHref: "/contact",
+      ctaSecondaryLabel: "Apply to join",
+      ctaSecondaryHref: "/apply",
+      seo: seoForRoute("/events"),
+    },
+  })
+  mutations.push({
+    createOrReplace: {
       _id: "networkFoundersPage",
       _type: "networkFoundersPage",
       title: "Founders",
@@ -1168,6 +1186,50 @@ async function main() {
     })
   }
 
+  // New directory filter groups (power the dynamic directory filter UI)
+  const advisorsGroupSlug = slugify("Expertise")
+  const foundersLevelGroupSlug = slugify("Level")
+  const foundersSpecialtyGroupSlug = slugify("Specialty")
+
+  mutations.push({
+    createOrReplace: {
+      _id: directoryFilterGroupId(advisorsGroupSlug),
+      _type: "directoryFilterGroup",
+      title: "Expertise",
+      slug: { _type: "slug", current: advisorsGroupSlug },
+      appliesTo: "advisors",
+      sortOrder: 0,
+      options: ADVISOR_FILTER_OPTIONS.filter((o) => o.id !== "all").map((o) => ({
+        _type: "option",
+        label: o.label,
+      })),
+    },
+  })
+
+  mutations.push({
+    createOrReplace: {
+      _id: directoryFilterGroupId(foundersLevelGroupSlug),
+      _type: "directoryFilterGroup",
+      title: "Level",
+      slug: { _type: "slug", current: foundersLevelGroupSlug },
+      appliesTo: "founders",
+      sortOrder: 0,
+      options: ALL_LEVELS.map((label) => ({ _type: "option", label })),
+    },
+  })
+
+  mutations.push({
+    createOrReplace: {
+      _id: directoryFilterGroupId(foundersSpecialtyGroupSlug),
+      _type: "directoryFilterGroup",
+      title: "Specialty",
+      slug: { _type: "slug", current: foundersSpecialtyGroupSlug },
+      appliesTo: "founders",
+      sortOrder: 1,
+      options: ALL_SPECIALTIES.map((label) => ({ _type: "option", label })),
+    },
+  })
+
   const founderLevelIdByLabel = new Map<string, string>()
   for (const [index, label] of ALL_LEVELS.entries()) {
     const docId = `founderLevel-${slugify(label)}`
@@ -1217,6 +1279,15 @@ async function main() {
         filter: filterRefId
           ? { _type: "reference", _ref: filterRefId }
           : undefined,
+        directoryFilters: advisor.filter
+          ? [
+              {
+                _type: "directoryFilterAssignment",
+                group: { _type: "reference", _ref: directoryFilterGroupId(advisorsGroupSlug) },
+                values: [advisor.filter],
+              },
+            ]
+          : undefined,
         photoSrc: advisor.photoSrc,
         linkedInUrl: advisor.linkedInUrl,
         websiteUrl: advisor.websiteUrl,
@@ -1245,6 +1316,20 @@ async function main() {
         level: levelRefId ? { _type: "reference", _ref: levelRefId } : undefined,
         tagline: company.tagline,
         specialties: specialtyRefs,
+        directoryFilters: [
+          company.level
+            ? {
+                _type: "directoryFilterAssignment",
+                group: { _type: "reference", _ref: directoryFilterGroupId(foundersLevelGroupSlug) },
+                values: [company.level],
+              }
+            : null,
+          ...(company.specialties ?? []).map((s) => ({
+            _type: "directoryFilterAssignment",
+            group: { _type: "reference", _ref: directoryFilterGroupId(foundersSpecialtyGroupSlug) },
+            values: [s],
+          })),
+        ].filter(Boolean),
         shortDescription: company.shortDescription,
         longDescription: company.longDescription,
         websiteUrl: company.websiteUrl,

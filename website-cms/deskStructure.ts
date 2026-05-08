@@ -34,7 +34,33 @@ export const deskStructure = (S: StructureBuilder) =>
               singleton(S, 'Home page', 'homePage', HomeIcon),
               singleton(S, 'About page', 'aboutPage', DocumentTextIcon),
               singleton(S, 'Careers page', 'careersPage', DocumentTextIcon),
-              singleton(S, 'Programs landing page (/programs)', 'programsLandingPage', DocumentTextIcon),
+              S.listItem()
+                .title('Programs page (/programs)')
+                .icon(DocumentTextIcon)
+                .child(
+                  S.list()
+                    .title('Programs page')
+                    .items([
+                      singleton(S, 'Programs landing content', 'programsLandingPage', DocumentTextIcon),
+                      S.divider(),
+                      S.documentTypeListItem('program').title('Programs (cards)').icon(ComposeIcon),
+                      S.documentTypeListItem('programPage')
+                        .title('Program detail pages (/programs/<slug>)')
+                        .icon(DocumentTextIcon),
+                    ]),
+                ),
+              S.listItem()
+                .title('Events page (/events)')
+                .icon(DocumentTextIcon)
+                .child(
+                  S.list()
+                    .title('Events page')
+                    .items([
+                      singleton(S, 'Events landing content', 'eventsLandingPage', DocumentTextIcon),
+                      S.divider(),
+                      S.documentTypeListItem('event').title('Events').icon(ComposeIcon),
+                    ]),
+                ),
               singleton(S, 'Stories page (/stories)', 'storiesPage', DocumentTextIcon),
               singleton(S, 'FAQ page', 'faqPage', DocumentTextIcon),
               singleton(S, 'Contact page', 'contactPage', DocumentTextIcon),
@@ -80,6 +106,9 @@ export const deskStructure = (S: StructureBuilder) =>
                   S.list()
                     .title('Directory taxonomy — editable filter tags')
                     .items([
+                      S.documentTypeListItem('directoryFilterGroup')
+                        .title('Directory filter groups (new)')
+                        .icon(TagIcon),
                       S.documentTypeListItem('advisorFilter').title('Advisor filters').icon(TagIcon),
                       S.documentTypeListItem('founderLevel').title('Founder levels').icon(TagIcon),
                       S.documentTypeListItem('founderSpecialty').title('Founder specialties').icon(TagIcon),

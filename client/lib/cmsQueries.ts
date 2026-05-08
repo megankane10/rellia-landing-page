@@ -309,7 +309,33 @@ export const programsLandingQuery = `*[_type == "programsLandingPage"][0]{
   ${seoFragment}
 }`;
 
+export const eventsLandingQuery = `*[_type == "eventsLandingPage"][0]{
+  heroTitle,
+  heroTitleAccent,
+  heroSubtitle,
+  ctaTitle,
+  ctaBody,
+  ctaPrimaryLabel,
+  ctaPrimaryHref,
+  ctaSecondaryLabel,
+  ctaSecondaryHref,
+  ${seoFragment}
+}`
+
 export const programsQuery = `*[_type == "program" && status != "hidden"] | order(sortOrder asc, title asc){
+  title,
+  "slug": slug.current,
+  description,
+  "imageSrc": coalesce(image.asset->url, imageSrc),
+  href,
+  buttonText,
+  waitlistHref,
+  status,
+  sortOrder,
+  ${seoFragment}
+}`
+
+export const programBySlugQuery = `*[_type == "program" && slug.current == $slug][0]{
   title,
   "slug": slug.current,
   description,
@@ -503,6 +529,13 @@ export const advisorsQuery = `*[_type == "advisor"]{
   industries,
   focus,
   "filter": filter->label,
+  directoryFilters[]{
+    "groupId": group->slug.current,
+    "groupTitle": group->title,
+    "groupAppliesTo": group->appliesTo,
+    "groupSortOrder": group->sortOrder,
+    values
+  },
   "photoSrc": coalesce(photo.asset->url, photoSrc),
   linkedInUrl,
   websiteUrl,
@@ -518,6 +551,13 @@ export const alumniCompaniesQuery = `*[_type == "alumniCompany"]{
   "level": level->label,
   tagline,
   "specialties": specialties[]->label,
+  directoryFilters[]{
+    "groupId": group->slug.current,
+    "groupTitle": group->title,
+    "groupAppliesTo": group->appliesTo,
+    "groupSortOrder": group->sortOrder,
+    values
+  },
   shortDescription,
   longDescription,
   websiteUrl,
@@ -553,4 +593,12 @@ export const founderSpecialtiesQuery = `*[_type == "founderSpecialty"] | order(s
   "id": slug.current,
   label,
   sortOrder
+}`
+
+export const directoryFilterGroupsQuery = `*[_type == "directoryFilterGroup"] | order(sortOrder asc, title asc){
+  "id": slug.current,
+  title,
+  appliesTo,
+  sortOrder,
+  options[]{ label }
 }`

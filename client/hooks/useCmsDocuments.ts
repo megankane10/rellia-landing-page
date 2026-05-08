@@ -15,7 +15,9 @@ import {
   notFoundQuery,
   paymentPageQuery,
   programsLandingQuery,
+  eventsLandingQuery,
   programsQuery,
+  programBySlugQuery,
   storiesQuery,
   storyBySlugQuery,
   eventsQuery,
@@ -25,6 +27,7 @@ import {
   advisorFiltersQuery,
   founderLevelsQuery,
   founderSpecialtiesQuery,
+  directoryFilterGroupsQuery,
   networkAdvisorsPageQuery,
   networkFoundersPageQuery,
   networkInvestorsPageQuery,
@@ -208,6 +211,29 @@ export const useProgramsLandingPage = () =>
     staleTime: staleTimeMs,
   });
 
+export type EventsLandingContent = {
+  heroTitle?: string
+  heroTitleAccent?: string
+  heroSubtitle?: string
+  ctaTitle?: string
+  ctaBody?: string
+  ctaPrimaryLabel?: string
+  ctaPrimaryHref?: string
+  ctaSecondaryLabel?: string
+  ctaSecondaryHref?: string
+  seo?: SeoContent
+}
+
+export const useEventsLandingPage = () =>
+  useQuery({
+    queryKey: ["cms", "eventsLandingPage"],
+    queryFn: async () => {
+      const raw = await sanityFetch<EventsLandingContent>(eventsLandingQuery)
+      return raw ?? null
+    },
+    staleTime: staleTimeMs,
+  })
+
 export const usePrograms = () =>
   useQuery({
     queryKey: ["cms", "programs"],
@@ -215,6 +241,32 @@ export const usePrograms = () =>
       const raw = await sanityFetch<any[]>(programsQuery)
       return raw ?? []
     },
+    staleTime: staleTimeMs,
+  })
+
+export type CmsProgram = {
+  title: string
+  slug: string
+  description?: string
+  imageSrc?: string
+  href?: string
+  buttonText?: string
+  waitlistHref?: string
+  status?: "available" | "waitlist" | "hidden" | string
+  sortOrder?: number
+  seo?: SeoContent
+}
+
+export const useProgramBySlug = (slug: string) =>
+  useQuery({
+    queryKey: ["cms", "program", slug],
+    queryFn: async () => {
+      const trimmed = slug.trim()
+      if (!trimmed) return null
+      const raw = await sanityFetch<CmsProgram>(programBySlugQuery, { slug: trimmed })
+      return raw ?? null
+    },
+    enabled: Boolean(slug.trim()),
     staleTime: staleTimeMs,
   })
 
@@ -342,6 +394,24 @@ export type DirectoryTaxonomyOption = {
   label: string
   sortOrder?: number
 }
+
+export type DirectoryFilterGroup = {
+  id: string
+  title: string
+  appliesTo: "advisors" | "founders" | "both"
+  sortOrder?: number
+  options?: Array<{ label: string }>
+}
+
+export const useDirectoryFilterGroups = () =>
+  useQuery({
+    queryKey: ["cms", "directoryFilterGroups"],
+    queryFn: async () => {
+      const raw = await sanityFetch<DirectoryFilterGroup[]>(directoryFilterGroupsQuery)
+      return Array.isArray(raw) ? raw : []
+    },
+    staleTime: staleTimeMs,
+  })
 
 export const useAdvisorFilters = () =>
   useQuery({

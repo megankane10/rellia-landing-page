@@ -13,7 +13,12 @@ import { Building2, Search, ChevronDown } from "lucide-react";
 import FilteredListEmptyState from "@/components/FilteredListEmptyState";
 import { useNavigate } from "react-router-dom";
 import { NETWORK_PATH_ROLE_TAG } from "@/lib/networkPathRoles";
-import { useAlumniCompanies, useFounderLevels, useFounderSpecialties } from "@/hooks/useCmsDocuments";
+import {
+  useAlumniCompanies,
+  useFounderLevels,
+  useFounderSpecialties,
+  useDirectoryFilterGroups,
+} from "@/hooks/useCmsDocuments";
 import {
   FOUNDER_DIRECTORY,
   ALL_SPECIALTIES,
@@ -90,9 +95,11 @@ export default function FoundersDirectory() {
   const { data: cmsCompanies } = useAlumniCompanies();
   const { data: cmsLevels } = useFounderLevels();
   const { data: cmsSpecialties } = useFounderSpecialties();
+  const { data: cmsFilterGroups } = useDirectoryFilterGroups()
   const [query, setQuery] = useState("");
   const [specialtyFilter, setSpecialtyFilter] = useState<string>("all");
   const [levelFilter, setLevelFilter] = useState<string>("all");
+  const [groupFilters, setGroupFilters] = useState<Record<string, string>>({})
   const [activeId, setActiveId] = useState<string | null>(null);
 
   const companies = useMemo<FounderCompany[]>(() => {
@@ -128,17 +135,36 @@ export default function FoundersDirectory() {
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     return companies.filter((c) => {
-      const matchLevel = levelFilter === "all" || c.level === levelFilter;
-      const matchSpecialty =
-        specialtyFilter === "all" ||
-        c.specialties.includes(specialtyFilter as Specialty);
-      if (!matchLevel || !matchSpecialty) return false;
+      const dynamicGroups = Array.isArray(cmsFilterGroups)
+        ? cmsFilterGroups.filter((g) => g && (g.appliesTo === "founders" || g.appliesTo === "both"))
+        : []
+
+      if (dynamicGroups.length > 0) {
+        for (const group of dynamicGroups) {
+          const selected = (groupFilters[group.id] ?? "all").trim()
+          if (!selected || selected === "all") continue
+          const assignments = Array.isArray((c as any)?.directoryFilters) ? (c as any).directoryFilters : []
+          const match = assignments.some((as: any) => {
+            if ((as?.groupId ?? "").trim() !== group.id) return false
+            const values = Array.isArray(as?.values) ? as.values : []
+            return values.some((v: any) => typeof v === "string" && v.trim() === selected)
+          })
+          if (!match) return false
+        }
+      } else {
+        const matchLevel = levelFilter === "all" || c.level === levelFilter;
+        const matchSpecialty =
+          specialtyFilter === "all" ||
+          c.specialties.includes(specialtyFilter as Specialty);
+        if (!matchLevel || !matchSpecialty) return false;
+      }
+
       if (!q) return true;
       const blob =
         `${c.logoName} ${c.shortDescription} ${c.specialties.join(" ")} ${c.level} ${c.traction}`.toLowerCase();
       return blob.includes(q);
     });
-  }, [companies, query, specialtyFilter, levelFilter]);
+  }, [companies, cmsFilterGroups, groupFilters, query, specialtyFilter, levelFilter]);
 
   const levelFilters = useMemo<Array<{ id: string; label: string }>>(() => {
     if (Array.isArray(cmsLevels) && cmsLevels.length > 0) {
@@ -177,7 +203,50 @@ export default function FoundersDirectory() {
   // Reset page when filters change
   useEffect(() => {
     setPage(1);
-  }, [query, specialtyFilter, levelFilter]);
+  }, [query, specialtyFilter, levelFilter, groupFilters]);
+
+  const dynamicGroups = useMemo(() => {
+    const groups = Array.isArray(cmsFilterGroups) ? cmsFilterGroups : []
+    return groups
+      .filter((g) => g && (g.appliesTo === "founders" || g.appliesTo === "both"))
+      .sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0) || a.title.localeCompare(b.title))
+  }, [cmsFilterGroups])
+
+  const dynamicGroupOptions = useMemo(() => {
+    const optionsByGroupId = new Map<string, string[]>()
+
+    for (const group of dynamicGroups) {
+      const base = new Set<string>()
+      const suggested = Array.isArray(group.options) ? group.options : []
+      for (const opt of suggested) {
+        const label = (opt?.label ?? "").trim()
+        if (label) base.add(label)
+      }
+      optionsByGroupId.set(group.id, Array.from(base))
+    }
+
+    for (const c of companies as any[]) {
+      const assignments = Array.isArray(c?.directoryFilters) ? c.directoryFilters : []
+      for (const assignment of assignments) {
+        const groupId = (assignment?.groupId ?? "").trim()
+        if (!groupId) continue
+        if (!optionsByGroupId.has(groupId)) optionsByGroupId.set(groupId, [])
+        const current = new Set(optionsByGroupId.get(groupId) ?? [])
+        const values = Array.isArray(assignment?.values) ? assignment.values : []
+        for (const v of values) {
+          const label = typeof v === "string" ? v.trim() : ""
+          if (label) current.add(label)
+        }
+        optionsByGroupId.set(groupId, Array.from(current))
+      }
+    }
+
+    for (const [groupId, opts] of optionsByGroupId.entries()) {
+      optionsByGroupId.set(groupId, opts.sort((a, b) => a.localeCompare(b)))
+    }
+
+    return optionsByGroupId
+  }, [companies, dynamicGroups])
 
   const active = useMemo(
     () => companies.find((c) => c.id === activeId) ?? null,
@@ -259,44 +328,79 @@ export default function FoundersDirectory() {
                 />
               </label>
 
-              <div className="flex w-full flex-col gap-3 md:w-auto md:flex-row md:flex-wrap md:items-center md:gap-4">
-                {/* Level Filter */}
-                <div className="relative w-full md:w-auto">
-                  <select
-                    value={levelFilter}
-                    onChange={(e) => setLevelFilter(e.target.value)}
-                    className="h-14 w-full appearance-none rounded-2xl border border-black/10 bg-black/[0.02] pl-5 pr-14 md:min-w-[160px] font-urbanist text-base font-semibold text-black/80 outline-none hover:border-black/20 focus-visible:ring-2 focus-visible:ring-rellia-teal focus-visible:bg-white cursor-pointer"
-                  >
-                    {levelFilters.map((f) => (
-                      <option key={f.id} value={f.id}>
-                        {f.label}
-                      </option>
-                    ))}
-                  </select>
-                  <ChevronDown
-                    className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-black/45"
-                    aria-hidden
-                  />
+              {dynamicGroups.length > 0 ? (
+                <div className="flex w-full flex-col gap-3 md:w-auto md:flex-row md:flex-wrap md:items-center md:gap-4">
+                  {dynamicGroups.map((g) => {
+                    const options = dynamicGroupOptions.get(g.id) ?? []
+                    const value = groupFilters[g.id] ?? "all"
+                    return (
+                      <div key={g.id} className="relative w-full md:w-auto">
+                        <select
+                          value={value}
+                          onChange={(e) =>
+                            setGroupFilters((prev) => ({
+                              ...prev,
+                              [g.id]: e.target.value,
+                            }))
+                          }
+                          className="h-14 w-full appearance-none rounded-2xl border border-black/10 bg-black/[0.02] pl-5 pr-14 md:min-w-[160px] font-urbanist text-base font-semibold text-black/80 outline-none hover:border-black/20 focus-visible:ring-2 focus-visible:ring-rellia-teal focus-visible:bg-white cursor-pointer"
+                          aria-label={`Filter by ${g.title}`}
+                        >
+                          <option value="all">All {g.title}</option>
+                          {options.map((opt) => (
+                            <option key={opt} value={opt}>
+                              {opt}
+                            </option>
+                          ))}
+                        </select>
+                        <ChevronDown
+                          className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-black/45"
+                          aria-hidden
+                        />
+                      </div>
+                    )
+                  })}
                 </div>
+              ) : (
+                <div className="flex w-full flex-col gap-3 md:w-auto md:flex-row md:flex-wrap md:items-center md:gap-4">
+                  {/* Level Filter */}
+                  <div className="relative w-full md:w-auto">
+                    <select
+                      value={levelFilter}
+                      onChange={(e) => setLevelFilter(e.target.value)}
+                      className="h-14 w-full appearance-none rounded-2xl border border-black/10 bg-black/[0.02] pl-5 pr-14 md:min-w-[160px] font-urbanist text-base font-semibold text-black/80 outline-none hover:border-black/20 focus-visible:ring-2 focus-visible:ring-rellia-teal focus-visible:bg-white cursor-pointer"
+                    >
+                      {levelFilters.map((f) => (
+                        <option key={f.id} value={f.id}>
+                          {f.label}
+                        </option>
+                      ))}
+                    </select>
+                    <ChevronDown
+                      className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-black/45"
+                      aria-hidden
+                    />
+                  </div>
 
-                <div className="relative w-full md:w-auto">
-                  <select
-                    value={specialtyFilter}
-                    onChange={(e) => setSpecialtyFilter(e.target.value)}
-                    className="h-14 w-full appearance-none rounded-2xl border border-black/10 bg-black/[0.02] pl-5 pr-14 md:min-w-[160px] font-urbanist text-base font-semibold text-black/80 outline-none hover:border-black/20 focus-visible:ring-2 focus-visible:ring-rellia-teal focus-visible:bg-white cursor-pointer"
-                  >
-                    {specialtyFilters.map((s) => (
-                      <option key={s.id} value={s.id}>
-                        {s.label}
-                      </option>
-                    ))}
-                  </select>
-                  <ChevronDown
-                    className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-black/45"
-                    aria-hidden
-                  />
+                  <div className="relative w-full md:w-auto">
+                    <select
+                      value={specialtyFilter}
+                      onChange={(e) => setSpecialtyFilter(e.target.value)}
+                      className="h-14 w-full appearance-none rounded-2xl border border-black/10 bg-black/[0.02] pl-5 pr-14 md:min-w-[160px] font-urbanist text-base font-semibold text-black/80 outline-none hover:border-black/20 focus-visible:ring-2 focus-visible:ring-rellia-teal focus-visible:bg-white cursor-pointer"
+                    >
+                      {specialtyFilters.map((s) => (
+                        <option key={s.id} value={s.id}>
+                          {s.label}
+                        </option>
+                      ))}
+                    </select>
+                    <ChevronDown
+                      className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-black/45"
+                      aria-hidden
+                    />
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
 
             <div className="mb-6 flex items-center justify-between border-b border-black/10 pb-4">

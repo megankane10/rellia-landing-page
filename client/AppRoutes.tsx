@@ -9,7 +9,7 @@ import Index from "./pages/Index"
 import About from "./pages/About"
 import FAQ from "./pages/FAQ"
 import Careers from "./pages/CareersCms"
-import ProgramsEvents from "./pages/ProgramsEvents"
+import Programs from "./pages/Programs"
 import ProgramsQms from "./pages/ProgramsQms"
 import ProgramsIgnitePitch from "./pages/programs/ProgramsIgnitePitch"
 import ProgramsAdvanceDataroom from "./pages/programs/ProgramsAdvanceDataroom"
@@ -93,7 +93,7 @@ export const AppRoutes = () => (
     <Route path="/events" element={<Events />} />
     <Route path="/events/:slug" element={<EventDetail />} />
     <Route path="/programs" element={<ProgramsLayout />}>
-      <Route index element={<ProgramsEvents />} />
+      <Route index element={<Programs />} />
       <Route path="build-your-qms" element={<ProgramsQms />} />
       <Route path="qms" element={<Navigate to="/programs/build-your-qms" replace />} />
       <Route path="ignite-pitch-foundations" element={<ProgramsIgnitePitch />} />

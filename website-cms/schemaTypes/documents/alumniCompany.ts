@@ -4,17 +4,27 @@ export const alumniCompany = defineType({
   name: 'alumniCompany',
   title: 'Alumni company',
   type: 'document',
+  groups: [
+    {name: 'profile', title: 'Profile', default: true},
+    {name: 'directory', title: 'Directory filters'},
+    {name: 'founders', title: 'Founders'},
+    {name: 'links', title: 'Links'},
+    {name: 'seo', title: 'SEO & metadata'},
+  ],
+  fieldsets: [{name: 'seo', title: 'SEO & metadata'}],
   fields: [
-    defineField({name: 'name', type: 'string', validation: (Rule) => Rule.required()}),
+    defineField({name: 'name', title: 'Company name', type: 'string', validation: (Rule) => Rule.required(), group: 'profile'}),
     defineField({
       name: 'slug',
+      title: 'URL key',
       type: 'slug',
       options: {source: 'name', maxLength: 96},
       validation: (Rule) => Rule.required(),
+      group: 'profile',
     }),
-    defineField({name: 'logo', type: 'image', options: {hotspot: true}}),
-    defineField({name: 'logoSrc', type: 'string', description: 'Fallback URL if no upload'}),
-    defineField({name: 'tagline', type: 'string'}),
+    defineField({name: 'logo', title: 'Logo', type: 'image', options: {hotspot: true}, group: 'profile'}),
+    defineField({name: 'logoSrc', title: 'Logo URL (fallback)', type: 'string', description: 'Fallback URL if no upload', group: 'profile'}),
+    defineField({name: 'tagline', title: 'Tagline', type: 'string', group: 'profile'}),
     defineField({
       name: 'specialties',
       title: 'Specialties',
@@ -22,6 +32,7 @@ export const alumniCompany = defineType({
       of: [{type: 'reference', to: [{type: 'founderSpecialty'}]}],
       description:
         'Pick one or more specialty tags. Manage the list under "Directory taxonomy".',
+      group: 'directory',
     }),
     defineField({
       name: 'level',
@@ -29,18 +40,64 @@ export const alumniCompany = defineType({
       type: 'reference',
       to: [{type: 'founderLevel'}],
       description: 'Pick a stage. Manage the list under "Directory taxonomy".',
+      group: 'directory',
     }),
-    defineField({name: 'shortDescription', type: 'text', rows: 3}),
-    defineField({name: 'longDescription', type: 'text', rows: 6}),
-    defineField({name: 'websiteUrl', type: 'url'}),
-    defineField({name: 'linkedinUrl', type: 'url'}),
-    defineField({name: 'traction', type: 'text', rows: 4}),
-    defineField({name: 'relliaCollaboration', type: 'text', rows: 4}),
-    defineField({name: 'country', type: 'string'}),
-    defineField({name: 'yearJoined', type: 'number'}),
+    defineField({
+      name: 'directoryFilters',
+      title: 'Directory filters (new)',
+      description:
+        'Add this company to one or more filter groups. These groups power the dropdown filters on the directory pages.',
+      type: 'array',
+      group: 'directory',
+      of: [
+        defineField({
+          name: 'directoryFilterAssignment',
+          title: 'Filter group assignment',
+          type: 'object',
+          fields: [
+            defineField({
+              name: 'group',
+              title: 'Group',
+              type: 'reference',
+              to: [{type: 'directoryFilterGroup'}],
+              validation: (Rule) => Rule.required(),
+            }),
+            defineField({
+              name: 'values',
+              title: 'Selected values',
+              type: 'array',
+              of: [{type: 'string'}],
+              validation: (Rule) => Rule.min(1),
+            }),
+          ],
+          preview: {
+            select: {
+              groupTitle: 'group.title',
+              values: 'values',
+            },
+            prepare({groupTitle, values}) {
+              const v = Array.isArray(values) ? values.filter(Boolean) : []
+              return {
+                title: groupTitle || 'Filter group',
+                subtitle: v.length ? v.join(', ') : 'No values',
+              }
+            },
+          },
+        }),
+      ],
+    }),
+    defineField({name: 'shortDescription', title: 'Short description', type: 'text', rows: 3, group: 'profile'}),
+    defineField({name: 'longDescription', title: 'Full description', type: 'text', rows: 6, group: 'profile'}),
+    defineField({name: 'websiteUrl', title: 'Website', type: 'url', group: 'links'}),
+    defineField({name: 'linkedinUrl', title: 'LinkedIn', type: 'url', group: 'links'}),
+    defineField({name: 'traction', title: 'Traction', type: 'text', rows: 4, group: 'profile'}),
+    defineField({name: 'relliaCollaboration', title: 'How Rellia helped', type: 'text', rows: 4, group: 'profile'}),
+    defineField({name: 'country', title: 'Country', type: 'string', group: 'profile'}),
+    defineField({name: 'yearJoined', title: 'Year joined', type: 'number', group: 'profile'}),
     defineField({
       name: 'founders',
       type: 'array',
+      group: 'founders',
       of: [
         {
           type: 'object',
@@ -60,7 +117,8 @@ export const alumniCompany = defineType({
       name: 'programs',
       type: 'array',
       of: [{type: 'string'}],
+      group: 'profile',
     }),
-    defineField({name: 'seo', type: 'seo'}),
+    defineField({name: 'seo', type: 'seo', group: 'seo', fieldset: 'seo'}),
   ],
 })

@@ -33,7 +33,7 @@ import { getSiteUrl } from "@/config/seo";
 import { cn } from "@/lib/utils";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { SectionsRenderer } from "@/components/cms/PageRenderer"
-import { useProgramPageBySlug } from "@/hooks/useCmsDocuments"
+import { useProgramBySlug, useProgramPageBySlug } from "@/hooks/useCmsDocuments"
 import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo"
 import { PEXELS_HEALTH_MEETING, PEXELS_OFFICE_COLLABORATION, LOCAL_METRICS_BG_JPEG } from "@/config/pexelsFallbacks"
 import {
@@ -47,8 +47,8 @@ import type { ProgramPageStaticBlocks } from "@shared/cms/programs/types";
 export type ProgramPageLayoutProps = {
   cms: QmsProgramContent;
   cmsSlug?: string;
-  heroImageSrc: string;
-  heroImageAlt: string;
+  heroImageSrc?: string;
+  heroImageAlt?: string;
   outcomesSectionId: string;
   paymentSectionId?: string;
   staticBlocks: ProgramPageStaticBlocks;
@@ -179,9 +179,13 @@ const ProgramPageLayout = ({
   const [canScrollNext, setCanScrollNext] = useState(false);
   const location = useLocation();
   const { data: programPageData } = useProgramPageBySlug(cmsSlug ?? '', cms)
+  const { data: programDoc } = useProgramBySlug(cmsSlug ?? "")
   const q = programPageData?.content ?? cms
   useApplyCmsSeo(q.seo)
   const filloutId = extractFilloutId(q.paymentUrl);
+
+  const resolvedHeroImageSrc = (programDoc?.imageSrc || heroSquareImageSrc || heroImageSrc || "").trim()
+  const resolvedHeroImageAlt = (heroImageAlt || programDoc?.title || q.heroTitle || "Program image").trim()
 
   const canonicalUrl = `${getSiteUrl()}${location.pathname}`;
 
@@ -232,9 +236,9 @@ const ProgramPageLayout = ({
         <meta
           property="og:image"
           content={
-            heroImageSrc.startsWith("http")
-              ? heroImageSrc
-              : `${getSiteUrl()}${heroImageSrc}`
+            resolvedHeroImageSrc.startsWith("http")
+              ? resolvedHeroImageSrc
+              : `${getSiteUrl()}${resolvedHeroImageSrc}`
           }
         />
         <meta name="twitter:title" content={q.heroTitle} />
@@ -242,9 +246,9 @@ const ProgramPageLayout = ({
         <meta
           name="twitter:image"
           content={
-            heroImageSrc.startsWith("http")
-              ? heroImageSrc
-              : `${getSiteUrl()}${heroImageSrc}`
+            resolvedHeroImageSrc.startsWith("http")
+              ? resolvedHeroImageSrc
+              : `${getSiteUrl()}${resolvedHeroImageSrc}`
           }
         />
         <meta name="twitter:card" content="summary_large_image" />
@@ -309,11 +313,11 @@ const ProgramPageLayout = ({
               <div className="mb-8 lg:mb-0 flex-shrink-0 w-full lg:w-[340px] xl:w-[400px]">
                 <div className="aspect-square w-full overflow-hidden rounded-2xl bg-rellia-teal/5">
                   <img
-                    src={heroSquareImageSrc || heroImageSrc}
-                    alt={heroImageAlt}
+                    src={resolvedHeroImageSrc}
+                    alt={resolvedHeroImageAlt}
                     className={cn(
                       "h-full w-full rounded-2xl",
-                      heroSquareImageSrc
+                      Boolean(programDoc?.imageSrc || heroSquareImageSrc)
                         ? "object-cover"
                         : "object-cover object-[0%_0%]",
                     )}

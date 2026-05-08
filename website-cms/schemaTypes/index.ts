@@ -6,6 +6,7 @@ import {aboutPage} from './documents/aboutPage'
 import {careersPage} from './documents/careersPage'
 import {faqPage} from './documents/faqPage'
 import {programsLandingPage} from './documents/programsLandingPage'
+import {eventsLandingPage} from './documents/eventsLandingPage'
 import {contactPage} from './documents/contactPage'
 import {programPage} from './documents/programPage'
 import {notFoundPage} from './documents/notFoundPage'
@@ -23,6 +24,7 @@ import {storiesPage} from './documents/storiesPage'
 import {advisorFilter} from './documents/advisorFilter'
 import {founderLevel} from './documents/founderLevel'
 import {founderSpecialty} from './documents/founderSpecialty'
+import {directoryFilterGroup} from './documents/directoryFilterGroup'
 import {networkFoundersPage} from './documents/networkFoundersPage'
 import {networkAdvisorsPage} from './documents/networkAdvisorsPage'
 import {networkInvestorsPage} from './documents/networkInvestorsPage'
@@ -52,6 +54,7 @@ export const schemaTypes = [
   careersPage,
   faqPage,
   programsLandingPage,
+  eventsLandingPage,
   contactPage,
   programPage,
   notFoundPage,
@@ -74,6 +77,7 @@ export const schemaTypes = [
   advisorFilter,
   founderLevel,
   founderSpecialty,
+  directoryFilterGroup,
   eventCard,
   bodyCtaBox,
   portableImageCarousel,

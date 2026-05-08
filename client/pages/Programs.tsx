@@ -1,40 +1,41 @@
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
-import ScrollReveal from "@/components/ScrollReveal";
-import RelliaCta, { ctaActionFromHref } from "@/components/RelliaCta";
-import { HorizontalCard } from "@/components/cards";
+import Navbar from "@/components/Navbar"
+import Footer from "@/components/Footer"
+import ScrollReveal from "@/components/ScrollReveal"
+import RelliaCta, { ctaActionFromHref } from "@/components/RelliaCta"
+import { HorizontalCard } from "@/components/cards"
 import PageHeader from "@/components/PageHeader"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { usePrograms, useProgramsLandingPage } from "@/hooks/useCmsDocuments";
-import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo";
+import { usePrograms, useProgramsLandingPage } from "@/hooks/useCmsDocuments"
+import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo"
 import { cn } from "@/lib/utils"
-import { DEFAULT_PROGRAMS_LANDING } from "@shared/cms/defaults";
-import { useEffect, useMemo, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
-import { ChevronLeft, ChevronRight, LayoutGrid } from "lucide-react";
-import FilteredListEmptyState from "@/components/FilteredListEmptyState";
+import { DEFAULT_PROGRAMS_LANDING } from "@shared/cms/defaults"
+import { useEffect, useMemo, useState } from "react"
+import { AnimatePresence, motion } from "framer-motion"
+import { ChevronLeft, ChevronRight, LayoutGrid } from "lucide-react"
+import FilteredListEmptyState from "@/components/FilteredListEmptyState"
 
-type ProgramFilter = "all" | "available" | "waitlist";
+type ProgramFilter = "all" | "available" | "waitlist"
 const PAGE_SIZE = 12
 
-export default function ProgramsEvents() {
-  const { data } = useProgramsLandingPage();
-  const pl = data ?? DEFAULT_PROGRAMS_LANDING;
+export default function Programs() {
+  const { data } = useProgramsLandingPage()
+  const pl = data ?? DEFAULT_PROGRAMS_LANDING
   useApplyCmsSeo(pl.seo)
   const { data: programsData } = usePrograms()
-  const [programFilter, setProgramFilter] = useState<ProgramFilter>("all");
+  const [programFilter, setProgramFilter] = useState<ProgramFilter>("all")
   const [page, setPage] = useState(1)
 
-  const { availablePrograms, waitlistPrograms } = useMemo(() => {
-    const programs = pl.programs ?? []
-    const available = programs.filter((p) => Boolean(p.href && p.href.trim().length > 0) && !Boolean(p.waitlistHref && p.waitlistHref.trim().length > 0))
-    const waitlist = programs.filter(
-      (p) => Boolean(p.waitlistHref && p.waitlistHref.trim().length > 0),
-    )
-    return { availablePrograms: available, waitlistPrograms: waitlist }
-  }, [pl.programs])
-
   const programs = Array.isArray(programsData) && programsData.length > 0 ? programsData : (pl.programs ?? [])
+
+  const { availablePrograms, waitlistPrograms } = useMemo(() => {
+    const available = programs.filter(
+      (p: any) =>
+        Boolean(p.href && p.href.trim().length > 0) &&
+        (p.status ? p.status !== "waitlist" : !Boolean(p.waitlistHref && p.waitlistHref.trim().length > 0)),
+    )
+    const waitlist = programs.filter((p: any) => p.status === "waitlist" || Boolean(p.waitlistHref && p.waitlistHref.trim().length > 0))
+    return { availablePrograms: available, waitlistPrograms: waitlist }
+  }, [programs])
 
   const visiblePrograms =
     programFilter === "all"
@@ -71,7 +72,7 @@ export default function ProgramsEvents() {
           variant="dark"
           title={
             <>
-              Programming that fit <span className="text-rellia-mint">your startup</span>
+              {pl.heroTitleLine1} <span className="text-rellia-mint">{pl.heroTitleMint}</span>
             </>
           }
           subtitle={pl.heroSubtitle}
@@ -82,82 +83,49 @@ export default function ProgramsEvents() {
             <ScrollReveal>
               <div className="mb-4">
                 <h2 className="font-host-grotesk text-2xl md:text-3xl font-semibold leading-tight tracking-tight text-black">
-                  Browse Programs
+                  {pl.programsSectionTitle || "Browse Programs"}
                 </h2>
+                {pl.programsSectionSubtitle ? (
+                  <p className="mt-3 max-w-2xl font-urbanist text-base leading-relaxed text-black/60">
+                    {pl.programsSectionSubtitle}
+                  </p>
+                ) : null}
               </div>
+
               <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                 <div className="w-full md:w-auto">
-                  {/* Mobile: full-width segmented options */}
-                  <div className="md:hidden">
-                    <Tabs value={programFilter} onValueChange={(v) => setProgramFilter(v as ProgramFilter)}>
-                      <TabsList
-                        className={cn(
-                          "relative h-auto w-full gap-1 rounded-full bg-white p-1.5",
-                          "border border-black/10 shadow-[0_12px_32px_-22px_rgba(0,0,0,0.22)]",
-                        )}
-                      >
-                        {filters.map((f) => (
-                          <TabsTrigger
-                            key={f.value}
-                            value={f.value}
-                            className={cn(
-                              "relative flex-1 rounded-full px-3 py-2.5 text-center",
-                              "font-host-grotesk text-[12px] font-semibold uppercase tracking-[0.14em]",
-                              "text-black/80 hover:text-rellia-teal",
-                              "bg-transparent data-[state=active]:bg-rellia-teal data-[state=active]:text-white data-[state=active]:shadow-none",
-                              "focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-white",
-                            )}
-                          >
-                            {programFilter === f.value ? (
-                              <motion.span
-                                layoutId="programs-filter-pill"
-                                className="absolute inset-0 z-0 rounded-full bg-rellia-teal shadow-sm"
-                                transition={{ type: "spring", stiffness: 520, damping: 42 }}
-                                aria-hidden
-                              />
-                            ) : null}
-                            <span className="relative z-[1]">{f.label}</span>
-                          </TabsTrigger>
-                        ))}
-                      </TabsList>
-                    </Tabs>
-                  </div>
-
-                  {/* Desktop: segmented tabs */}
-                  <div className="hidden md:block">
-                    <Tabs value={programFilter} onValueChange={(v) => setProgramFilter(v as ProgramFilter)}>
-                      <TabsList
-                        className={cn(
-                          "relative h-auto w-fit gap-1 rounded-full bg-white p-1.5",
-                          "border border-black/10 shadow-[0_12px_32px_-22px_rgba(0,0,0,0.22)]",
-                        )}
-                      >
-                        {filters.map((f) => (
-                          <TabsTrigger
-                            key={f.value}
-                            value={f.value}
-                            className={cn(
-                              "relative rounded-full px-4 py-2.5",
-                              "font-host-grotesk text-[12px] font-semibold uppercase tracking-[0.14em]",
-                              "text-black/80 hover:text-rellia-teal",
-                              "bg-transparent data-[state=active]:bg-rellia-teal data-[state=active]:text-white data-[state=active]:shadow-none",
-                              "focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-white",
-                            )}
-                          >
-                            {programFilter === f.value ? (
-                              <motion.span
-                                layoutId="programs-filter-pill"
-                                className="absolute inset-0 z-0 rounded-full bg-rellia-teal shadow-sm"
-                                transition={{ type: "spring", stiffness: 520, damping: 42 }}
-                                aria-hidden
-                              />
-                            ) : null}
-                            <span className="relative z-[1]">{f.label}</span>
-                          </TabsTrigger>
-                        ))}
-                      </TabsList>
-                    </Tabs>
-                  </div>
+                  <Tabs value={programFilter} onValueChange={(v) => setProgramFilter(v as ProgramFilter)}>
+                    <TabsList
+                      className={cn(
+                        "relative h-auto w-full md:w-fit gap-1 rounded-full bg-white p-1.5",
+                        "border border-black/10 shadow-[0_12px_32px_-22px_rgba(0,0,0,0.22)]",
+                      )}
+                    >
+                      {filters.map((f) => (
+                        <TabsTrigger
+                          key={f.value}
+                          value={f.value}
+                          className={cn(
+                            "relative flex-1 md:flex-initial rounded-full px-5 py-2.5",
+                            "font-host-grotesk text-[12px] font-semibold uppercase tracking-[0.14em]",
+                            "text-black/80 hover:text-rellia-teal",
+                            "bg-transparent data-[state=active]:bg-rellia-teal data-[state=active]:text-white data-[state=active]:shadow-none",
+                            "focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-white",
+                          )}
+                        >
+                          {programFilter === f.value ? (
+                            <motion.span
+                              layoutId="programs-filter-pill"
+                              className="absolute inset-0 z-0 rounded-full bg-rellia-teal shadow-sm"
+                              transition={{ type: "spring", stiffness: 520, damping: 42 }}
+                              aria-hidden
+                            />
+                          ) : null}
+                          <span className="relative z-[1]">{f.label}</span>
+                        </TabsTrigger>
+                      ))}
+                    </TabsList>
+                  </Tabs>
                 </div>
 
                 <p className="font-urbanist text-sm text-black/55 md:text-right">
@@ -179,7 +147,7 @@ export default function ProgramsEvents() {
                   className="flex flex-col gap-6 will-change-transform"
                 >
                   <AnimatePresence mode="sync" initial={false}>
-                    {pagePrograms.map((p) => (
+                    {pagePrograms.map((p: any) => (
                       <motion.div
                         key={`${p.title}-${p.imageSrc}`}
                         layout="position"
@@ -249,5 +217,6 @@ export default function ProgramsEvents() {
 
       <Footer />
     </div>
-  );
+  )
 }
+

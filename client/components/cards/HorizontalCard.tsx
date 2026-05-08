@@ -230,7 +230,8 @@ export function HorizontalCard(props: HorizontalCardProps) {
   const program = item as Program
   const hasHref = Boolean(program.href && program.href.trim().length > 0)
   const hasWaitlistHref = Boolean(program.waitlistHref && program.waitlistHref.trim().length > 0)
-  const isWaitlistCard = hasWaitlistHref
+  const isWaitlistStatus = (program as any)?.status === "waitlist"
+  const isWaitlistCard = hasWaitlistHref || isWaitlistStatus
   const programImageSrc = program.imageSrc?.trim()
     ? program.imageSrc
     : placeholderImageFromSeed(program.title, 1200, 900)

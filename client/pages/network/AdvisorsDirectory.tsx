@@ -11,7 +11,7 @@ import {
 } from "framer-motion";
 import { Search, UserSearch, ChevronDown } from "lucide-react";
 import FilteredListEmptyState from "@/components/FilteredListEmptyState";
-import { useAdvisors, useAdvisorFilters } from "@/hooks/useCmsDocuments";
+import { useAdvisors, useAdvisorFilters, useDirectoryFilterGroups } from "@/hooks/useCmsDocuments";
 import {
   ADVISOR_DIRECTORY_SEED,
   ADVISOR_FILTER_OPTIONS,
@@ -96,14 +96,60 @@ export default function AdvisorsDirectory() {
   const reduceMotion = useReducedMotion();
   const { data: cmsAdvisors } = useAdvisors();
   const { data: cmsFilters } = useAdvisorFilters();
+  const { data: cmsFilterGroups } = useDirectoryFilterGroups()
   const [query, setQuery] = useState("");
-  const [filter, setFilter] = useState<string>("all");
+  const [legacyFilter, setLegacyFilter] = useState<string>("all")
+  const [groupFilters, setGroupFilters] = useState<Record<string, string>>({})
 
   const advisors = useMemo<AdvisorDirectoryEntry[]>(() => {
     if (Array.isArray(cmsAdvisors) && cmsAdvisors.length > 0)
       return cmsAdvisors as AdvisorDirectoryEntry[];
     return ADVISOR_DIRECTORY_SEED;
   }, [cmsAdvisors]);
+
+  const dynamicGroups = useMemo(() => {
+    const groups = Array.isArray(cmsFilterGroups) ? cmsFilterGroups : []
+    return groups
+      .filter((g) => g && (g.appliesTo === "advisors" || g.appliesTo === "both"))
+      .sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0) || a.title.localeCompare(b.title))
+  }, [cmsFilterGroups])
+
+  const dynamicGroupOptions = useMemo(() => {
+    const optionsByGroupId = new Map<string, string[]>()
+
+    for (const group of dynamicGroups) {
+      const base = new Set<string>()
+      const suggested = Array.isArray(group.options) ? group.options : []
+      for (const opt of suggested) {
+        const label = (opt?.label ?? "").trim()
+        if (label) base.add(label)
+      }
+      optionsByGroupId.set(group.id, Array.from(base))
+    }
+
+    // Pull any values that exist on advisors so new groups “just work”
+    for (const a of advisors as any[]) {
+      const assignments = Array.isArray(a?.directoryFilters) ? a.directoryFilters : []
+      for (const assignment of assignments) {
+        const groupId = (assignment?.groupId ?? "").trim()
+        if (!groupId) continue
+        if (!optionsByGroupId.has(groupId)) optionsByGroupId.set(groupId, [])
+        const current = new Set(optionsByGroupId.get(groupId) ?? [])
+        const values = Array.isArray(assignment?.values) ? assignment.values : []
+        for (const v of values) {
+          const label = typeof v === "string" ? v.trim() : ""
+          if (label) current.add(label)
+        }
+        optionsByGroupId.set(groupId, Array.from(current))
+      }
+    }
+
+    for (const [groupId, opts] of optionsByGroupId.entries()) {
+      optionsByGroupId.set(groupId, opts.sort((a, b) => a.localeCompare(b)))
+    }
+
+    return optionsByGroupId
+  }, [advisors, dynamicGroups])
 
   const filterOptions = useMemo<Array<{ id: string; label: string }>>(() => {
     if (Array.isArray(cmsFilters) && cmsFilters.length > 0) {
@@ -115,13 +161,27 @@ export default function AdvisorsDirectory() {
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     return advisors.filter((a) => {
-      if (filter !== "all" && a.filter !== filter) return false;
+      if (dynamicGroups.length > 0) {
+        for (const group of dynamicGroups) {
+          const selected = (groupFilters[group.id] ?? "all").trim()
+          if (!selected || selected === "all") continue
+          const assignments = Array.isArray((a as any)?.directoryFilters) ? (a as any).directoryFilters : []
+          const match = assignments.some((as: any) => {
+            if ((as?.groupId ?? "").trim() !== group.id) return false
+            const values = Array.isArray(as?.values) ? as.values : []
+            return values.some((v: any) => typeof v === "string" && v.trim() === selected)
+          })
+          if (!match) return false
+        }
+      } else {
+        if (legacyFilter !== "all" && a.filter !== legacyFilter) return false;
+      }
       if (!q) return true;
       const blob =
         `${a.name} ${a.organization} ${a.role} ${a.industries.join(" ")} ${a.focus} ${a.bio}`.toLowerCase();
       return blob.includes(q);
     });
-  }, [advisors, filter, query]);
+  }, [advisors, dynamicGroups, groupFilters, legacyFilter, query]);
 
   const [page, setPage] = useState(1);
   const itemsPerPage = 12;
@@ -134,7 +194,7 @@ export default function AdvisorsDirectory() {
   // Reset page when filters change
   useEffect(() => {
     setPage(1);
-  }, [query, filter]);
+  }, [query, legacyFilter, groupFilters]);
 
   const EASE_OUT: [number, number, number, number] = [0.16, 1, 0.3, 1];
   const container: Variants = {
@@ -210,25 +270,62 @@ export default function AdvisorsDirectory() {
                 />
               </label>
 
-              <div className="flex w-full shrink-0 md:w-auto">
-                <div className="relative w-full md:w-auto">
-                  <select
-                    value={filter}
-                    onChange={(e) => setFilter(e.target.value)}
-                    className="h-14 w-full appearance-none rounded-2xl border border-black/10 bg-black/[0.02] pl-5 pr-14 md:min-w-[200px] font-urbanist text-base font-semibold text-black/80 outline-none hover:border-black/20 focus-visible:ring-2 focus-visible:ring-rellia-teal focus-visible:bg-white cursor-pointer"
-                  >
-                    {filterOptions.map((f) => (
-                      <option key={f.id} value={f.id}>
-                        {f.label}
-                      </option>
-                    ))}
-                  </select>
-                  <ChevronDown
-                    className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-black/45"
-                    aria-hidden
-                  />
+              {dynamicGroups.length > 0 ? (
+                <div className="flex w-full flex-col gap-3 md:w-auto md:flex-row md:flex-wrap md:items-center">
+                  {dynamicGroups.map((g) => {
+                    const options = dynamicGroupOptions.get(g.id) ?? []
+                    const value = groupFilters[g.id] ?? "all"
+                    return (
+                      <div key={g.id} className="flex w-full md:w-auto">
+                        <div className="relative w-full md:w-auto">
+                          <select
+                            value={value}
+                            onChange={(e) =>
+                              setGroupFilters((prev) => ({
+                                ...prev,
+                                [g.id]: e.target.value,
+                              }))
+                            }
+                            className="h-14 w-full appearance-none rounded-2xl border border-black/10 bg-black/[0.02] pl-5 pr-14 md:min-w-[200px] font-urbanist text-base font-semibold text-black/80 outline-none hover:border-black/20 focus-visible:ring-2 focus-visible:ring-rellia-teal focus-visible:bg-white cursor-pointer"
+                            aria-label={`Filter by ${g.title}`}
+                          >
+                            <option value="all">All {g.title}</option>
+                            {options.map((opt) => (
+                              <option key={opt} value={opt}>
+                                {opt}
+                              </option>
+                            ))}
+                          </select>
+                          <ChevronDown
+                            className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-black/45"
+                            aria-hidden
+                          />
+                        </div>
+                      </div>
+                    )
+                  })}
                 </div>
-              </div>
+              ) : (
+                <div className="flex w-full shrink-0 md:w-auto">
+                  <div className="relative w-full md:w-auto">
+                    <select
+                      value={legacyFilter}
+                      onChange={(e) => setLegacyFilter(e.target.value)}
+                      className="h-14 w-full appearance-none rounded-2xl border border-black/10 bg-black/[0.02] pl-5 pr-14 md:min-w-[200px] font-urbanist text-base font-semibold text-black/80 outline-none hover:border-black/20 focus-visible:ring-2 focus-visible:ring-rellia-teal focus-visible:bg-white cursor-pointer"
+                    >
+                      {filterOptions.map((f) => (
+                        <option key={f.id} value={f.id}>
+                          {f.label}
+                        </option>
+                      ))}
+                    </select>
+                    <ChevronDown
+                      className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-black/45"
+                      aria-hidden
+                    />
+                  </div>
+                </div>
+              )}
             </div>
 
             <div className="mb-6 flex items-center justify-between border-b border-black/10 pb-4">

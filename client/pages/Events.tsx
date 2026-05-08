@@ -5,7 +5,7 @@ import RelliaCta, { ctaActionFromHref } from "@/components/RelliaCta"
 import { HorizontalCard } from "@/components/cards/HorizontalCard"
 import PageHeader from "@/components/PageHeader"
 import { useEvents } from "@/hooks/useCmsDocuments"
-import { useProgramsLandingPage } from "@/hooks/useCmsDocuments"
+import { useEventsLandingPage } from "@/hooks/useCmsDocuments"
 import { DEFAULT_PROGRAMS_LANDING } from "@shared/cms/defaults"
 import { useMemo, useState, useEffect } from "react"
 import { CalendarDays, LayoutGrid, ChevronLeft, ChevronRight } from "lucide-react"
@@ -13,6 +13,7 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { cn } from "@/lib/utils"
 import { motion, AnimatePresence } from "framer-motion"
 import FilteredListEmptyState from "@/components/FilteredListEmptyState"
+import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo"
 
 type EventFilter = "all" | "upcoming" | "past"
 const PAGE_SIZE = 12
@@ -73,21 +74,13 @@ const getEventStatus = (event: any): "upcoming" | "past" => {
 
 export default function Events() {
   const { data } = useEvents()
-  const { data: programsLanding } = useProgramsLandingPage()
-  const landingEvents =
-    programsLanding && (Array.isArray((programsLanding as any).upcomingEvents) || Array.isArray((programsLanding as any).pastEvents))
-      ? [
-          ...(((programsLanding as any).upcomingEvents as any[]) ?? []),
-          ...(((programsLanding as any).pastEvents as any[]) ?? []),
-        ]
-      : []
+  const { data: landing } = useEventsLandingPage()
+  useApplyCmsSeo(landing?.seo)
 
   const allEvents =
     Array.isArray(data) && data.length > 0
       ? data
-      : landingEvents.length > 0
-        ? landingEvents
-        : [...DEFAULT_PROGRAMS_LANDING.upcomingEvents, ...DEFAULT_PROGRAMS_LANDING.pastEvents]
+      : [...DEFAULT_PROGRAMS_LANDING.upcomingEvents, ...DEFAULT_PROGRAMS_LANDING.pastEvents]
   const [eventFilter, setEventFilter] = useState<EventFilter>("all")
   const [page, setPage] = useState(1)
 
@@ -151,10 +144,24 @@ export default function Events() {
           variant="dark"
           title={
             <>
-              Connect & <span className="text-rellia-mint">Learn</span>
+              {landing?.heroTitle ? (
+                <>
+                  {landing.heroTitle}{" "}
+                  {landing.heroTitleAccent ? (
+                    <span className="text-rellia-mint">{landing.heroTitleAccent}</span>
+                  ) : null}
+                </>
+              ) : (
+                <>
+                  Connect & <span className="text-rellia-mint">Learn</span>
+                </>
+              )}
             </>
           }
-          subtitle="Join live sessions with operators, clinicians, and health tech leaders."
+          subtitle={
+            landing?.heroSubtitle ||
+            "Join live sessions with operators, clinicians, and health tech leaders."
+          }
         />
 
         <section className="pt-8 pb-16 md:pt-12 md:pb-20 bg-white">
@@ -291,10 +298,17 @@ export default function Events() {
         </section>
 
         <RelliaCta
-          title="Want to **speak** at a Rellia event?"
-          body="If you have a practical playbook for founders building in health tech, we’d love to hear from you."
-          primary={ctaActionFromHref("Contact page", "/contact")}
-          secondary={ctaActionFromHref("Apply to join", "/apply")}
+          title={landing?.ctaTitle || "Want to **speak** at a Rellia event?"}
+          body={
+            landing?.ctaBody ||
+            "If you have a practical playbook for founders building in health tech, we’d love to hear from you."
+          }
+          primary={ctaActionFromHref(landing?.ctaPrimaryLabel || "Contact", landing?.ctaPrimaryHref || "/contact")}
+          secondary={
+            landing?.ctaSecondaryLabel && landing?.ctaSecondaryHref
+              ? ctaActionFromHref(landing.ctaSecondaryLabel, landing.ctaSecondaryHref)
+              : ctaActionFromHref("Apply to join", "/apply")
+          }
         />
       </main>
 
