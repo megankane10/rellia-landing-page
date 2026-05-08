@@ -11,7 +11,8 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { AnimatePresence, motion } from "framer-motion"
 import { BookOpen, ChevronLeft, ChevronRight } from "lucide-react"
 import FilteredListEmptyState from "@/components/FilteredListEmptyState"
-import { useStories } from "@/hooks/useCmsDocuments"
+import { useStories, useStoriesPage } from "@/hooks/useCmsDocuments"
+import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo"
 
 const tags: Array<StoryTag | "All"> = ["All", "Founder Story", "Industry Insight", "Program Update"]
 
@@ -86,8 +87,18 @@ const StoryGridCard = ({
   )
 }
 
+const DEFAULT_STORIES_SUBTITLE =
+  "The latest founder spotlights, industry insights, & program updates. Stay current with the people and ideas shaping the future of health."
+
 export default function Stories() {
   const { data: cmsStories } = useStories()
+  const { data: storiesLanding } = useStoriesPage()
+  useApplyCmsSeo(storiesLanding?.seo)
+
+  const headlineLead = storiesLanding?.headline?.trim() || "Rellia"
+  const headlineAccentText = storiesLanding?.headlineAccent?.trim() || "Stories"
+  const heroSubtitle = storiesLanding?.subheadline?.trim() || DEFAULT_STORIES_SUBTITLE
+
   const [activeTag, setActiveTag] = useState<(typeof tags)[number]>("All")
   const [page, setPage] = useState(1)
 
@@ -133,10 +144,16 @@ export default function Stories() {
           variant="dark"
           title={
             <>
-              Rellia <span className="text-rellia-mint">Stories</span>
+              {headlineLead}
+              {headlineAccentText ? (
+                <>
+                  {" "}
+                  <span className="text-rellia-mint">{headlineAccentText}</span>
+                </>
+              ) : null}
             </>
           }
-          subtitle="The latest founder spotlights, industry insights, & program updates. Stay current with the people and ideas shaping the future of health."
+          subtitle={heroSubtitle}
         />
 
         <FeaturedStories showViewAll viewAllTo="#all-stories" />

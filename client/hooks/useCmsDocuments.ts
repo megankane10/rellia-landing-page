@@ -19,6 +19,7 @@ import {
   programsQuery,
   programBySlugQuery,
   storiesQuery,
+  storiesPageQuery,
   storyBySlugQuery,
   eventsQuery,
   eventBySlugQuery,
@@ -149,6 +150,23 @@ export const useStories = () =>
     queryFn: async () => {
       const raw = await sanityFetch<CmsStoryListItem[]>(storiesQuery)
       return Array.isArray(raw) ? raw : []
+    },
+    staleTime: staleTimeMs,
+  })
+
+export type StoriesLandingContent = {
+  headline?: string | null
+  headlineAccent?: string | null
+  subheadline?: string | null
+  seo?: SeoContent
+}
+
+export const useStoriesPage = () =>
+  useQuery({
+    queryKey: ["cms", "storiesPage"],
+    queryFn: async () => {
+      const raw = await sanityFetch<StoriesLandingContent>(storiesPageQuery)
+      return raw ?? null
     },
     staleTime: staleTimeMs,
   })

@@ -7,6 +7,7 @@ export const presentationMainDocuments = defineDocuments([
   {route: '/faq', type: 'faqPage'},
   {route: '/careers', type: 'careersPage'},
   {route: '/programs', type: 'programsLandingPage'},
+  {route: '/events', type: 'eventsLandingPage'},
   {route: '/contact', type: 'contactPage'},
   {route: '/membership', type: 'paymentPage'},
   {route: '/consulting', type: 'consultingPage'},
@@ -64,6 +65,17 @@ export const presentationLocations = {
       locations: [{title: doc?.title || 'Programs', href: '/programs'}],
     }),
   }),
+  eventsLandingPage: defineLocations({
+    select: {heroTitle: 'heroTitle', heroTitleAccent: 'heroTitleAccent'},
+    resolve: (doc) => {
+      const lead = typeof doc?.heroTitle === 'string' ? doc.heroTitle.trim() : ''
+      const accent = typeof doc?.heroTitleAccent === 'string' ? doc.heroTitleAccent.trim() : ''
+      const label = [lead, accent].filter(Boolean).join(' ') || 'Events'
+      return {
+        locations: [{title: label, href: '/events'}],
+      }
+    },
+  }),
   contactPage: defineLocations({
     select: {title: 'title'},
     resolve: (doc) => ({
@@ -89,10 +101,15 @@ export const presentationLocations = {
     }),
   }),
   storiesPage: defineLocations({
-    select: {title: 'title'},
-    resolve: (doc) => ({
-      locations: [{title: doc?.title || 'Stories', href: '/stories'}],
-    }),
+    select: {headline: 'headline', headlineAccent: 'headlineAccent'},
+    resolve: (doc) => {
+      const lead = typeof doc?.headline === 'string' ? doc.headline.trim() : ''
+      const accent = typeof doc?.headlineAccent === 'string' ? doc.headlineAccent.trim() : ''
+      const label = [lead, accent].filter(Boolean).join(' ') || 'Stories'
+      return {
+        locations: [{title: label, href: '/stories'}],
+      }
+    },
   }),
   story: defineLocations({
     select: {title: 'title', slug: 'slug.current'},

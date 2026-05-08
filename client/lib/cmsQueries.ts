@@ -94,6 +94,13 @@ export const storiesQuery = `*[_type == "story" && !(_id in path("drafts.**"))]
   featured
 }`
 
+export const storiesPageQuery = `*[_type == "storiesPage"][0]{
+  headline,
+  headlineAccent,
+  subheadline,
+  ${seoFragment}
+}`
+
 export const storyBySlugQuery = `*[_type == "story" && slug.current == $slug && !(_id in path("drafts.**"))][0]{
   title,
   "slug": slug.current,

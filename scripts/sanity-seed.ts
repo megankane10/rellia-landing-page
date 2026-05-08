@@ -673,6 +673,17 @@ async function main() {
   })
   mutations.push({
     createOrReplace: {
+      _id: "storiesPage",
+      _type: "storiesPage",
+      headline: "Rellia",
+      headlineAccent: "Stories",
+      subheadline:
+        "The latest founder spotlights, industry insights, & program updates. Stay current with the people and ideas shaping the future of health.",
+      seo: seoForRoute("/stories"),
+    },
+  })
+  mutations.push({
+    createOrReplace: {
       _id: "networkFoundersPage",
       _type: "networkFoundersPage",
       title: "Founders",
