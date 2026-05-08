@@ -138,24 +138,28 @@ const pageSectionsFragment = `sections[]{
 
 export const networkFoundersPageQuery = `*[_type == "networkFoundersPage"][0]{
   title,
+  useModularPage,
   ${seoFragment},
   ${pageSectionsFragment}
 }`
 
 export const networkAdvisorsPageQuery = `*[_type == "networkAdvisorsPage"][0]{
   title,
+  useModularPage,
   ${seoFragment},
   ${pageSectionsFragment}
 }`
 
 export const networkInvestorsPageQuery = `*[_type == "networkInvestorsPage"][0]{
   title,
+  useModularPage,
   ${seoFragment},
   ${pageSectionsFragment}
 }`
 
 export const networkPartnersPageQuery = `*[_type == "networkPartnersPage"][0]{
   title,
+  useModularPage,
   ${seoFragment},
   ${pageSectionsFragment}
 }`

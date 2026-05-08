@@ -4,6 +4,11 @@ export const faqPage = defineType({
   name: 'faqPage',
   title: 'FAQ page',
   type: 'document',
+  groups: [
+    {name: 'content', title: 'Content', default: true},
+    {name: 'seo', title: 'SEO & metadata'},
+  ],
+  fieldsets: [{name: 'seo', title: 'SEO & metadata'}],
   fields: [
     defineField({name: 'badge', type: 'string'}),
     defineField({name: 'title', type: 'string'}),
@@ -31,6 +36,6 @@ export const faqPage = defineType({
     defineField({name: 'bottomBody', type: 'text', rows: 4}),
     defineField({name: 'bottomCtaLabel', type: 'string'}),
     defineField({name: 'bottomCtaPath', type: 'string'}),
-    defineField({name: 'seo', type: 'seo'}),
+    defineField({name: 'seo', type: 'seo', group: 'seo', fieldset: 'seo'}),
   ],
 })

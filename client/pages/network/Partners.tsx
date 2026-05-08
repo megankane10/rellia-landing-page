@@ -14,6 +14,7 @@ import RelliaCta from "@/components/RelliaCta"
 import { CreamSection, GlassCardLight, LightSection, Reveal, RoleHero } from "./_shared"
 import { useNetworkPartnersPage } from "@/hooks/useCmsDocuments"
 import NetworkCmsPage from "./NetworkCmsPage"
+import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo"
 
 const engagementCardClass =
   "group flex min-h-[240px] flex-col rounded-2xl border border-white/15 bg-white/5 p-8 backdrop-blur-md transition-colors duration-300 hover:border-rellia-mint/40 hover:bg-white/10 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-rellia-teal"
@@ -244,7 +245,12 @@ function ExclusiveDirectorySplit() {
 
 export default function Partners() {
   const { data: page, isLoading } = useNetworkPartnersPage()
-  if (page?.sections?.length) {
+  useApplyCmsSeo(page?.seo)
+
+  const useModularLayout =
+    Boolean(page?.useModularPage) && (page?.sections?.length ?? 0) > 0
+
+  if (useModularLayout) {
     return <NetworkCmsPage page={page} isLoading={isLoading} />
   }
 

@@ -21,6 +21,7 @@ import type {
   NavItem,
   SanityPortableText,
 } from "@shared/cms/types"
+import { normalizeToPortableText } from "@shared/cms/normalizePortableText"
 import { Link } from "react-router-dom"
 import * as LucideIcons from "lucide-react"
 import { ArrowRight, CalendarDays } from "lucide-react"
@@ -69,9 +70,14 @@ const CtaLink = ({
 }
 
 const SectionHero = ({ section }: { section: CmsSectionHero }) => {
-  const title = <PortableRichText value={section.headline as any} className="prose-h1:text-white prose-p:text-white/80" />
-  const subtitle = section.subheadline ? (
-    <PortableRichText value={section.subheadline as any} className="prose-p:text-white/80" />
+  const headlinePt = normalizeToPortableText(section.headline as unknown)
+  const subPt = normalizeToPortableText(section.subheadline as unknown)
+
+  const title = headlinePt ? (
+    <PortableRichText value={headlinePt} className="prose-h1:text-white prose-p:text-white/80" />
+  ) : null
+  const subtitle = subPt ? (
+    <PortableRichText value={subPt} className="prose-p:text-white/80" />
   ) : undefined
 
   return (
@@ -204,9 +210,17 @@ const SectionCardsGrid = ({ section }: { section: CmsSectionCardsGrid }) => {
                   ))}
                 </div>
 
-                <h3 className="mt-4 font-host-grotesk text-lg font-bold tracking-tight text-black">
-                  {card.title}
-                </h3>
+                <div className="mt-4 flex items-start gap-3">
+                  {card.iconKey?.trim() ? (
+                    <LucideIcon
+                      name={card.iconKey.trim()}
+                      className="mt-0.5 h-6 w-6 shrink-0 text-rellia-teal"
+                    />
+                  ) : null}
+                  <h3 className="font-host-grotesk text-lg font-bold tracking-tight text-black">
+                    {card.title}
+                  </h3>
+                </div>
                 {card.body?.trim() ? (
                   <p className="mt-3 flex-1 font-urbanist text-sm leading-relaxed text-black/70 md:text-[15px]">
                     {card.body.trim()}

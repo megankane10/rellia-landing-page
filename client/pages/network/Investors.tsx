@@ -26,6 +26,7 @@ import {
 import { CreamSection, GlassCard, GlassCardLight, LightSection, Reveal, RoleHero } from "./_shared"
 import { useNetworkInvestorsPage } from "@/hooks/useCmsDocuments"
 import NetworkCmsPage from "./NetworkCmsPage"
+import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo"
 
 const COLORS = {
   blue: "#2563eb",
@@ -219,7 +220,12 @@ function PortfolioSplit() {
 
 export default function Investors() {
   const { data: page, isLoading } = useNetworkInvestorsPage()
-  if (page?.sections?.length) {
+  useApplyCmsSeo(page?.seo)
+
+  const useModularLayout =
+    Boolean(page?.useModularPage) && (page?.sections?.length ?? 0) > 0
+
+  if (useModularLayout) {
     return <NetworkCmsPage page={page} isLoading={isLoading} />
   }
 

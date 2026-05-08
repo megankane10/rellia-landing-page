@@ -6,6 +6,11 @@ export const programPage = defineType({
   type: 'document',
   description:
     'Shared schema for all program detail pages. The frontend keeps the same default layout for every program and uses this document for editable copy and optional extra sections.',
+  groups: [
+    {name: 'content', title: 'Content', default: true},
+    {name: 'seo', title: 'SEO & metadata'},
+  ],
+  fieldsets: [{name: 'seo', title: 'SEO & metadata'}],
   fields: [
     defineField({
       name: 'title',
@@ -55,13 +60,14 @@ export const programPage = defineType({
       description:
         'Adds extra modular sections after the default program layout. Leave empty to use only the default layout.',
       type: 'array',
+      group: 'content',
       of: [
         defineArrayMember({type: 'sectionHero'}),
         defineArrayMember({type: 'sectionRichText'}),
         defineArrayMember({type: 'sectionCardsGrid'}),
       ],
     }),
-    defineField({name: 'seo', type: 'seo'}),
+    defineField({name: 'seo', type: 'seo', group: 'seo', fieldset: 'seo'}),
   ],
   preview: {
     select: {

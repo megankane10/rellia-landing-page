@@ -53,8 +53,8 @@ export type CmsSectionHero = {
   _key?: string
   tag?: string
   badge?: string
-  headline: string
-  subheadline?: string
+  headline: string | SanityPortableText
+  subheadline?: string | SanityPortableText
   primaryCta?: NavItem
   secondaryCta?: NavItem
   imageUrl?: string
@@ -74,6 +74,8 @@ export type CmsSectionCardsGridCard = {
   title: string
   body?: string
   badge?: string
+  /** Lucide icon component name, e.g. Sparkles, ShieldCheck */
+  iconKey?: string
   imageUrl?: string
   imageAlt?: string
   cta?: NavItem
@@ -191,6 +193,8 @@ export type CmsPageContent = {
 
 export type CmsSingletonPageContent = {
   title: string
+  /** When true and sections exist, `/founders` etc. render modular CMS sections instead of the full marketing page. */
+  useModularPage?: boolean
   seo?: SeoContent
   sections?: CmsPageSection[]
 }

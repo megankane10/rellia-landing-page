@@ -4,6 +4,11 @@ export const careersPage = defineType({
   name: 'careersPage',
   title: 'Careers page',
   type: 'document',
+  groups: [
+    {name: 'content', title: 'Content', default: true},
+    {name: 'seo', title: 'SEO & metadata'},
+  ],
+  fieldsets: [{name: 'seo', title: 'SEO & metadata'}],
   fields: [
     defineField({
       name: 'defaultTab',
@@ -17,6 +22,7 @@ export const careersPage = defineType({
         layout: 'radio',
       },
       initialValue: 'hiring',
+      group: 'content',
     }),
     defineField({
       name: 'enableHiringTab',
@@ -25,6 +31,7 @@ export const careersPage = defineType({
       description:
         'Shows the Hiring tab and section. Hiring content is still pre-coded; this only controls visibility.',
       initialValue: true,
+      group: 'content',
     }),
     defineField({
       name: 'enableVolunteerTab',
@@ -33,20 +40,23 @@ export const careersPage = defineType({
       description:
         'Shows the Volunteer tab and embedded form. Volunteer content is still pre-coded; this only controls visibility.',
       initialValue: true,
+      group: 'content',
     }),
     defineField({
       name: 'tabsLabelHiring',
       title: 'Hiring tab label',
       type: 'string',
       initialValue: 'Hiring',
+      group: 'content',
     }),
     defineField({
       name: 'tabsLabelVolunteer',
       title: 'Volunteer tab label',
       type: 'string',
       initialValue: 'Volunteer',
+      group: 'content',
     }),
-    defineField({name: 'seo', type: 'seo'}),
+    defineField({name: 'seo', type: 'seo', group: 'seo', fieldset: 'seo'}),
   ],
 })
 

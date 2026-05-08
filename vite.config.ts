@@ -30,8 +30,8 @@ const getOgImageVersion = (): string => {
 // https://vitejs.dev/config/
 export default defineConfig(() => ({
   server: {
-    host: "::",
-    port: 8080,
+    host: "127.0.0.1",
+    port: 5173,
     fs: {
       allow: ["./client", "./shared", path.resolve(__dirname, "./index.html")],
       deny: [".env", ".env.*", "*.{crt,pem}", "**/.git/**", "server/**"],

@@ -4,13 +4,13 @@ import {visionTool} from '@sanity/vision'
 import {presentationTool} from 'sanity/presentation'
 import {schemaTypes} from './schemaTypes'
 import {deskStructure} from './deskStructure'
+import {presentationLocations, presentationMainDocuments} from './presentationLocations'
 
 const theme = buildLegacyTheme({
   '--black': '#0B0F12',
   '--white': '#FFFFFF',
 
   '--brand-primary': '#0D3540', // rellia.teal
-  '--brand-secondary': '#9DD6D0', // rellia.mint
 
   '--main-navigation-color': '#0D3540',
   '--main-navigation-color--inverted': '#FFFFFF',
@@ -20,7 +20,7 @@ const theme = buildLegacyTheme({
   '--default-button-primary-color': '#0D3540',
   '--default-button-primary-color--hover': '#1A5C56', // rellia.mintDark
   '--default-button-primary-color--active': '#1A5C56',
-})
+} as Record<string, string>)
 
 export default defineConfig({
   name: 'default',
@@ -47,6 +47,10 @@ export default defineConfig({
         'https://relliahealth.com',
         'https://www.relliahealth.com',
       ],
+      resolve: {
+        mainDocuments: presentationMainDocuments,
+        locations: presentationLocations,
+      },
     }),
     visionTool(),
   ],

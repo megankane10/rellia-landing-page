@@ -39,6 +39,7 @@ import { CreamSection, LightSection, Reveal } from "./_shared"
 import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion"
 import { useNetworkFoundersPage } from "@/hooks/useCmsDocuments"
 import NetworkCmsPage from "./NetworkCmsPage"
+import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo"
 
 const HERO_FALLBACK = "/images/founders-header.jpg"
 
@@ -723,7 +724,12 @@ function DiagnosticSurveySection() {
 
 export default function Founders() {
   const { data: page, isLoading } = useNetworkFoundersPage()
-  if (page?.sections?.length) {
+  useApplyCmsSeo(page?.seo)
+
+  const useModularLayout =
+    Boolean(page?.useModularPage) && (page?.sections?.length ?? 0) > 0
+
+  if (useModularLayout) {
     return <NetworkCmsPage page={page} isLoading={isLoading} />
   }
 

@@ -4,6 +4,11 @@ export const paymentPage = defineType({
   name: 'paymentPage',
   title: 'Payment page',
   type: 'document',
+  groups: [
+    {name: 'content', title: 'Content', default: true},
+    {name: 'seo', title: 'SEO & metadata'},
+  ],
+  fieldsets: [{name: 'seo', title: 'SEO & metadata'}],
   fields: [
     defineField({name: 'badge', type: 'string', title: 'Eyebrow label'}),
     defineField({name: 'headline', type: 'string', title: 'Main headline'}),
@@ -138,6 +143,6 @@ export const paymentPage = defineType({
       type: 'string',
       title: 'Questions strip — contact path',
     }),
-    defineField({name: 'seo', type: 'seo'}),
+    defineField({name: 'seo', type: 'seo', group: 'seo', fieldset: 'seo'}),
   ],
 })

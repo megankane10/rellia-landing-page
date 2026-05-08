@@ -529,16 +529,18 @@ export function createServer() {
         } catch (sanityErr) {
           console.error("Failed to save to Sanity:", sanityErr);
         }
-      } else {
-        res.status(501).json({
-          error: "MISSING_ENV_VARS",
-          message:
-            "Diagnostics save is not configured. Set SANITY_API_WRITE_TOKEN, SANITY_API_PROJECT_ID, and SANITY_API_DATASET in the server environment.",
-        })
-        return
       }
 
-      res.status(200).json({ ...report, savedToSanity })
+      res.status(200).json({
+        ...report,
+        savedToSanity,
+        ...(sanityWriteClient
+          ? {}
+          : {
+              saveSkippedReason:
+                "SANITY_API_WRITE_TOKEN is not set on the server; report generated but not persisted.",
+            }),
+      })
     } catch (err) {
       const fallback = buildNonAiReport();
 

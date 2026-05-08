@@ -4,6 +4,11 @@ export const homePage = defineType({
   name: 'homePage',
   title: 'Home page',
   type: 'document',
+  groups: [
+    {name: 'content', title: 'Content', default: true},
+    {name: 'seo', title: 'SEO & metadata'},
+  ],
+  fieldsets: [{name: 'seo', title: 'SEO & metadata'}],
   fields: [
     defineField({name: 'headlinePrefix', type: 'string'}),
     defineField({
@@ -133,6 +138,6 @@ export const homePage = defineType({
         }),
       ],
     }),
-    defineField({name: 'seo', type: 'seo'}),
+    defineField({name: 'seo', type: 'seo', group: 'seo', fieldset: 'seo'}),
   ],
 })

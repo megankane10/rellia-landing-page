@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import {
   AlertTriangle,
@@ -6,17 +6,17 @@ import {
   CheckCircle2,
   ArrowRight,
   ChevronRight,
+  ChevronDown,
   Calendar,
   Building2,
   Target,
   Sparkles,
-  Search,
+  Printer,
   Users,
 } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer"
 import RelliaAction from "@/components/RelliaAction";
-import NetworkEyebrow from "@/components/network/NetworkEyebrow";
 import RouteSeo from "@/components/RouteSeo";
 import { useAdvisors } from "@/hooks/useCmsDocuments";
 import { ADVISOR_DIRECTORY_SEED } from "@/data/advisorDirectory";
@@ -29,6 +29,7 @@ import {
   DrawerClose,
 } from "@/components/ui/drawer";
 import { cn } from "@/lib/utils";
+import { PROGRAM_META_BY_HREF } from "@/config/programMeta";
 
 // ─── TYPES ───────────────────────────────────────────────────────────────────
 
@@ -993,11 +994,24 @@ function scoreBarClass(s: number): string {
   return "bg-red-600";
 }
 
+const coerceStringList = (value: unknown): string[] => {
+  if (Array.isArray(value)) return value.filter((v): v is string => typeof v === "string")
+  if (typeof value === "string") return [value]
+  return []
+}
+
 const validateMemberInfo = (info: MemberInfo): Record<string, string> => {
   const next: Record<string, string> = {}
 
   if (!info.name.trim()) next.name = "Name is required"
   if (!info.company.trim()) next.company = "Company name is required"
+
+  const stage = info.stage.trim()
+  if (!stage) {
+    next.stage = "Stage is required"
+  } else if (!STAGES.includes(stage)) {
+    next.stage = "Select a valid stage"
+  }
 
   const email = info.email.trim()
   if (!email) {
@@ -1029,6 +1043,8 @@ const STAGES = [
   "Scale-up",
 ];
 
+const LOCAL_STORAGE_KEY = "rellia:diagnosticSurvey:v1"
+
 // ─── STYLES ──────────────────────────────────────────────────────────────────
 
 const css = `
@@ -1039,6 +1055,19 @@ const css = `
   to { opacity: 1; transform: translateY(0); }
 }
 .animate-ds-up { animation: ds-fade-in-up 0.3s ease-out forwards; }
+
+@keyframes ds-timeline-fill {
+  from { transform: scaleY(0); }
+  to { transform: scaleY(1); }
+}
+.ds-timeline-fill {
+  transform-origin: bottom;
+  animation: ds-timeline-fill 420ms cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+.ds-delay-0 { animation-delay: 120ms; }
+.ds-delay-1 { animation-delay: 320ms; }
+.ds-delay-2 { animation-delay: 520ms; }
+.ds-delay-3 { animation-delay: 720ms; }
 `;
 
 // ─── MAIN COMPONENT ───────────────────────────────────────────────────────────
@@ -1059,6 +1088,47 @@ export default function DiagnosticSurvey() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [diagResult, setDiagResult] = useState<DiagResult | null>(null);
   const [procStep, setProcStep] = useState(0);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return
+    try {
+      const raw = window.localStorage.getItem(LOCAL_STORAGE_KEY)
+      if (!raw) return
+      const parsed = JSON.parse(raw) as {
+        memberInfo?: MemberInfo
+        answers?: Answers
+        diagResult?: DiagResult
+        savedAt?: string
+      }
+
+      if (parsed.memberInfo) setMemberInfo(parsed.memberInfo)
+      if (parsed.answers) setAnswers(parsed.answers)
+      if (parsed.diagResult) {
+        setDiagResult(parsed.diagResult)
+        setView("report")
+      }
+    } catch {
+      // ignore
+    }
+  }, [])
+
+  useEffect(() => {
+    if (typeof window === "undefined") return
+    if (!diagResult) return
+    try {
+      window.localStorage.setItem(
+        LOCAL_STORAGE_KEY,
+        JSON.stringify({
+          memberInfo,
+          answers,
+          diagResult,
+          savedAt: new Date().toISOString(),
+        }),
+      )
+    } catch {
+      // ignore
+    }
+  }, [answers, diagResult, memberInfo])
 
   // CMS Hooks
   const { data: cmsAdvisors } = useAdvisors();
@@ -1193,16 +1263,22 @@ export default function DiagnosticSurvey() {
       })()
 
       if (!res.ok) {
-        // Detailed error for admins
-        if (
-          report.error === "MISSING_ENV_VARS" ||
-          report.error === "SANITY_ERROR"
-        ) {
+        if (report.error === "SANITY_ERROR") {
           throw new Error(
             `ADMIN_CONFIG_ERROR: ${report.message || "Check SANITY_WRITE_TOKEN"}`,
           );
         }
-        throw new Error(report.message || "API failed");
+        const baseMessage =
+          report.message ||
+          report.error ||
+          `Request failed (${res.status}${res.statusText ? ` ${res.statusText}` : ""})`
+
+        const details =
+          import.meta.env.DEV && report.details
+            ? `\n\nDetails:\n${JSON.stringify(report.details, null, 2)}`
+            : ""
+
+        throw new Error(`${baseMessage}${details}`)
       }
 
       setProcStep(2);
@@ -1256,10 +1332,9 @@ export default function DiagnosticSurvey() {
     // Simple matching: check if advisor's focus or industries include the weak areas
     const matches = advisors
       .filter((a) => {
-        const combined =
-          (a.focus || []).join(" ").toLowerCase() +
-          " " +
-          (a.industries || []).join(" ").toLowerCase();
+        const focus = coerceStringList((a as any).focus)
+        const industries = coerceStringList((a as any).industries)
+        const combined = `${focus.join(" ")} ${industries.join(" ")}`.toLowerCase()
         return weakAreas.some((area) => combined.includes(area.toLowerCase()));
       })
       .slice(0, 3);
@@ -1397,7 +1472,7 @@ export default function DiagnosticSurvey() {
         {/* ── MAIN CONTENT AREA ── */}
         <main className="flex-1 overflow-hidden">
           {/* MOBILE SUB-HEADER (Sticky Progress with Drawer) */}
-          <div className="sticky top-0 z-20 flex items-center justify-between border-b border-rellia-teal/10 bg-rellia-cream/80 px-4 py-3 backdrop-blur-md lg:hidden">
+          <div className="sticky top-[72px] md:top-[86px] z-20 flex items-center justify-between border-b border-rellia-teal/10 bg-rellia-cream/80 px-4 py-3 backdrop-blur-md lg:hidden">
             <div className="flex flex-1 flex-col gap-1.5">
               <div className="flex justify-between text-[9px] font-bold uppercase tracking-widest text-rellia-teal/60">
                 <span>
@@ -1498,10 +1573,9 @@ export default function DiagnosticSurvey() {
             {view === "intro" && (
               <div className="animate-ds-up flex flex-col gap-10">
                 <div className="space-y-6">
-                  <NetworkEyebrow label="Startup Diagnostic" tone="onLight" />
-                  <h1 className="font-host-grotesk text-4xl font-bold leading-[1.1] tracking-tight text-rellia-teal md:text-6xl">
+                  <h1 className="font-host-grotesk text-4xl font-bold leading-[1.1] tracking-tight text-black md:text-6xl">
                     How ready is your startup,{" "}
-                    <span className="italic">really?</span>
+                    <span className="italic text-rellia-teal">really?</span>
                   </h1>
                   <p className="font-urbanist text-lg leading-relaxed text-rellia-teal/70 md:text-xl">
                     Our diagnostic tool assesses your health tech startup across
@@ -1517,7 +1591,7 @@ export default function DiagnosticSurvey() {
                       <h3 className="mb-8 text-xs font-bold uppercase tracking-widest text-rellia-teal">
                         Your Diagnostic Journey
                       </h3>
-                      <div className="space-y-6">
+                      <div className="space-y-8">
                         {[
                           {
                             icon: Building2,
@@ -1540,18 +1614,53 @@ export default function DiagnosticSurvey() {
                             d: "Personalized assignment of mentors based on your results.",
                           },
                         ].map((item, i) => (
-                          <div key={i} className="flex gap-4">
-                            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-rellia-teal/5 text-rellia-teal">
+                          <div key={i} className="relative flex gap-4">
+                            <div className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-rellia-mint/40 bg-rellia-mint/25 text-rellia-teal">
+                              <span
+                                className={cn(
+                                  "pointer-events-none absolute inset-0 -z-10 overflow-hidden rounded-full bg-rellia-mint/40",
+                                  "ds-timeline-fill",
+                                  i === 0 && "ds-delay-0",
+                                  i === 1 && "ds-delay-1",
+                                  i === 2 && "ds-delay-2",
+                                  i === 3 && "ds-delay-3",
+                                )}
+                              />
                               <item.icon className="h-5 w-5" />
                             </div>
-                            <div>
-                              <h4 className="font-bold text-sm">{item.t}</h4>
-                              <p className="text-xs text-rellia-teal/60">
+
+                            <div className="min-w-0 pt-0.5">
+                              <h4 className="font-bold text-sm text-rellia-teal">
+                                {item.t}
+                              </h4>
+                              <p className="text-xs text-rellia-teal/60 leading-relaxed">
                                 {item.d}
                               </p>
                             </div>
+
+                            {i < 3 && (
+                              <div className="pointer-events-none absolute left-[22px] top-12 h-[36px] w-px bg-gradient-to-b from-rellia-mint/60 to-rellia-teal/5" />
+                            )}
                           </div>
                         ))}
+                      </div>
+
+                      <div className="mt-10 rounded-2xl border border-rellia-teal/5 bg-rellia-cream/20 p-5">
+                        <div className="text-[10px] font-bold uppercase tracking-widest text-rellia-teal/50">
+                          What you’ll get
+                        </div>
+                        <div className="mt-3 space-y-2">
+                          {[
+                            "Top 3 strengths + gaps with priority level",
+                            "Concrete roadmap recommendations",
+                            "Advisor focus areas matched to your gaps",
+                          ].map((line) => (
+                            <div key={line} className="flex items-start gap-3 text-xs text-rellia-teal/70">
+                              <div className="mt-1.5 h-2 w-2 rounded-full bg-rellia-mint" />
+                              <span className="leading-relaxed">{line}</span>
+                            </div>
+                          ))}
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -1620,22 +1729,35 @@ export default function DiagnosticSurvey() {
                           <label className="text-[10px] font-bold uppercase tracking-wider text-rellia-teal/50">
                             Current Stage
                           </label>
-                          <select
-                            className="w-full rounded-xl border border-rellia-teal/10 bg-rellia-cream/30 p-3 text-sm focus:border-rellia-teal focus:bg-white focus:outline-none appearance-none"
-                            value={memberInfo.stage}
-                            onChange={(e) =>
-                              setMemberInfo((p) => ({
-                                ...p,
-                                stage: e.target.value,
-                              }))
-                            }
-                          >
-                            {STAGES.map((s) => (
-                              <option key={s} value={s}>
-                                {s}
-                              </option>
-                            ))}
-                          </select>
+                          <div className="relative">
+                            <select
+                              className={cn(
+                                "w-full rounded-xl border bg-rellia-cream/30 p-3 pr-10 text-sm focus:bg-white focus:outline-none appearance-none transition-all",
+                                errors.stage
+                                  ? "border-red-500 bg-red-50 focus:border-red-500"
+                                  : "border-rellia-teal/10 focus:border-rellia-teal",
+                              )}
+                              value={memberInfo.stage}
+                              onChange={(e) =>
+                                setMemberInfo((p) => ({
+                                  ...p,
+                                  stage: e.target.value,
+                                }))
+                              }
+                            >
+                              {STAGES.map((s) => (
+                                <option key={s} value={s}>
+                                  {s}
+                                </option>
+                              ))}
+                            </select>
+                            <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-rellia-teal/40" />
+                          </div>
+                          {errors.stage && (
+                            <p className="text-[10px] text-red-500 font-bold">
+                              {errors.stage}
+                            </p>
+                          )}
                         </div>
                       </div>
                       <div className="space-y-1.5">
@@ -1718,58 +1840,8 @@ export default function DiagnosticSurvey() {
                 className="animate-ds-up flex flex-col gap-8 md:gap-12"
               >
                 <div className="space-y-4">
-                  <div className="flex flex-wrap items-center gap-4 mb-8">
-                    {[
-                      {
-                        label: "Introduction",
-                        step: "intro",
-                        active: false,
-                        done: true,
-                      },
-                      {
-                        label: "Assessment",
-                        step: "survey",
-                        active: true,
-                        done: false,
-                      },
-                      {
-                        label: "Results",
-                        step: "report",
-                        active: false,
-                        done: false,
-                      },
-                    ].map((s, i) => (
-                      <div key={s.label} className="flex items-center gap-2">
-                        <div
-                          className={cn(
-                            "flex h-6 w-6 items-center justify-center rounded-full text-[10px] font-bold",
-                            s.active
-                              ? "bg-rellia-teal text-white"
-                              : s.done
-                                ? "bg-green-100 text-green-700"
-                                : "bg-rellia-teal/5 text-rellia-teal/30",
-                          )}
-                        >
-                          {s.done ? "✓" : i + 1}
-                        </div>
-                        <span
-                          className={cn(
-                            "text-[10px] font-bold uppercase tracking-widest",
-                            s.active
-                              ? "text-rellia-teal"
-                              : "text-rellia-teal/30",
-                          )}
-                        >
-                          {s.label}
-                        </span>
-                        {i < 2 && (
-                          <ChevronRight className="h-3 w-3 text-rellia-teal/10" />
-                        )}
-                      </div>
-                    ))}
-                  </div>
                   <div className="flex items-center gap-3">
-                    <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-rellia-teal text-white text-xl">
+                    <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-rellia-mint text-rellia-teal text-xl">
                       {sec.icon}
                     </span>
                     <div>
@@ -1869,13 +1941,10 @@ export default function DiagnosticSurvey() {
             {view === "submit" && (
               <div className="animate-ds-up flex flex-col gap-10">
                 <div className="space-y-4">
-                  <div className="text-[10px] font-bold uppercase tracking-widest text-rellia-teal/40">
-                    Confirm submission
-                  </div>
                   <h2 className="font-host-grotesk text-3xl font-bold text-rellia-teal md:text-5xl">
                     Review, then generate your roadmap
                   </h2>
-                  <p className="max-w-xl text-rellia-teal/60">
+                  <p className="w-full text-rellia-teal/60">
                     You’re about to submit your responses. After confirmation, we’ll generate your report and save your submission in the Rellia CMS.
                   </p>
                 </div>
@@ -1956,26 +2025,22 @@ export default function DiagnosticSurvey() {
                     </div>
 
                     <RelliaAction
-                      asChild
+                      type="button"
                       variant="mintTealFill"
                       size="comfortable"
-                      className="w-full justify-center shadow-xl transition-all hover:scale-[1.02] active:scale-95 py-7 text-xl"
+                      className="w-full justify-center shadow-xl transition-all hover:scale-[1.02] active:scale-95"
+                      onClick={() => {
+                        const nextErrors = validateMemberInfo(memberInfo)
+                        if (Object.keys(nextErrors).length > 0) {
+                          setErrors(nextErrors)
+                          setView("intro")
+                          return
+                        }
+                        submitSurvey()
+                      }}
                     >
-                      <button
-                        type="button"
-                        onClick={() => {
-                          const nextErrors = validateMemberInfo(memberInfo)
-                          if (Object.keys(nextErrors).length > 0) {
-                            setErrors(nextErrors)
-                            setView("intro")
-                            return
-                          }
-                          submitSurvey()
-                        }}
-                      >
-                        Confirm & Generate Report
-                        <ArrowRight className="ml-2 h-5 w-5" />
-                      </button>
+                      Confirm & Generate Report
+                      <ArrowRight className="ml-2 h-5 w-5" />
                     </RelliaAction>
                   </div>
                 </div>
@@ -2024,23 +2089,38 @@ export default function DiagnosticSurvey() {
                 <div className="space-y-6">
                   <div className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
                     <div>
-                      <div className="text-[10px] font-bold uppercase tracking-widest text-rellia-teal/40">
-                        Diagnostic Report
-                      </div>
                       <h1 className="font-host-grotesk text-4xl font-bold text-rellia-teal md:text-5xl">
                         {memberInfo.company}
                       </h1>
+                      <div className="mt-2 text-sm font-medium text-rellia-teal/45">
+                        {memberInfo.stage} ·{" "}
+                        {new Date().toLocaleDateString("en-CA", {
+                          year: "numeric",
+                          month: "long",
+                          day: "numeric",
+                        })}
+                      </div>
                     </div>
-                    <div className="text-sm font-medium text-rellia-teal/40">
-                      {memberInfo.stage} ·{" "}
-                      {new Date().toLocaleDateString("en-CA", {
-                        year: "numeric",
-                        month: "long",
-                        day: "numeric",
-                      })}
+                    <div className="flex items-center gap-3">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          try {
+                            window.localStorage.removeItem(LOCAL_STORAGE_KEY)
+                          } catch {
+                            // ignore
+                          }
+                          setDiagResult(null)
+                          setView("intro")
+                        }}
+                        className="text-[10px] font-bold uppercase tracking-widest text-rellia-teal/40 hover:text-rellia-teal transition-colors"
+                      >
+                        Start over
+                      </button>
                     </div>
                   </div>
-                  <div className="rounded-[32px] border border-rellia-teal/5 bg-white p-8 shadow-sm md:p-10 relative overflow-hidden">
+
+                  <div className="rounded-[32px] border border-rellia-teal/10 bg-white p-8 shadow-sm md:p-10 relative overflow-hidden">
                     <div className="absolute top-0 right-0 p-4 opacity-5">
                       <Sparkles className="h-24 w-24 text-rellia-teal" />
                     </div>
@@ -2050,177 +2130,76 @@ export default function DiagnosticSurvey() {
                   </div>
                 </div>
 
-                <div className="grid gap-12 lg:grid-cols-[1fr_360px]">
-                  <div className="space-y-16">
-                    {/* Strengths & Gaps */}
-                    <div className="grid gap-8 md:grid-cols-2 items-stretch">
-                      <div className="space-y-6 flex flex-col h-full">
-                        <h3 className="text-xs font-bold uppercase tracking-widest text-green-600 flex items-center gap-2">
-                          <CheckCircle2 className="h-4 w-4" />
-                          Top Strengths
-                        </h3>
-                        <div className="space-y-3 flex-1">
-                          {(diagResult.top3_strengths ?? []).map((s, i) => (
-                            <div
-                              key={i}
-                              className="rounded-2xl border border-green-100 bg-green-50/50 p-5 h-[calc(33.33%-8px)] flex flex-col justify-center"
-                            >
-                              <h4 className="font-bold text-sm text-green-800">
-                                {s.category}
-                              </h4>
-                              <p className="text-xs text-green-700/70 mt-1 line-clamp-2">
-                                {s.note}
-                              </p>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-
-                      <div className="space-y-6 flex flex-col h-full">
-                        <h3 className="text-xs font-bold uppercase tracking-widest text-red-600 flex items-center gap-2">
-                          <AlertTriangle className="h-4 w-4" />
-                          Priority Gaps
-                        </h3>
-                        <div className="space-y-3 flex-1">
-                          {(diagResult.top3_weaknesses ?? []).map((w, i) => (
-                            <div
-                              key={i}
-                              className="rounded-2xl border border-red-100 bg-red-50/50 p-5 h-[calc(33.33%-8px)] flex flex-col justify-center"
-                            >
-                              <div className="flex justify-between items-start">
-                                <h4 className="font-bold text-sm text-red-800">
-                                  {w.category}
-                                </h4>
-                                <span className="text-[9px] font-bold uppercase bg-red-100 px-1.5 py-0.5 rounded text-red-600">
-                                  {w.priority}
-                                </span>
-                              </div>
-                              <p className="text-xs text-red-700/70 mt-1 line-clamp-2">
-                                {w.note}
-                              </p>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Section Analysis Chart-ish */}
-                    <div className="space-y-6">
-                      <h3 className="text-xs font-bold uppercase tracking-widest text-rellia-teal/40">
-                        Full Readiness Breakdown
-                      </h3>
-                      <div className="grid gap-3 sm:grid-cols-2">
-                        {SECTIONS.map((s) => {
-                          const sc = getSectionScore(s.id, answers) ?? 0;
-                          return (
-                            <div
-                              key={s.id}
-                              className="group rounded-2xl border border-rellia-teal/5 bg-white p-5 shadow-sm transition-all"
-                            >
-                              <div className="mb-3 flex items-center justify-between">
-                                <span className="text-xs font-bold text-rellia-teal/80">
-                                  {s.title}
-                                </span>
-                                <span
-                                  className={`text-sm font-black ${scoreClass(sc)}`}
-                                >
-                                  {sc}%
-                                </span>
-                              </div>
-                              <div className="h-1.5 w-full overflow-hidden rounded-full bg-rellia-teal/5">
-                                <div
-                                  className={`h-full transition-all duration-1000 ${scoreBarClass(sc)}`}
-                                  style={{ width: `${sc}%` }}
-                                />
-                              </div>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </div>
-
-                    {/* Assigned Advisory Board */}
-                    <div className="space-y-8">
-                      <div className="flex items-center justify-between">
-                        <h3 className="text-xs font-bold uppercase tracking-widest text-rellia-teal/40">
-                          Your Assigned Advisory Board
-                        </h3>
-                        <Link
-                          to="/advisors/directory"
-                          className="text-[10px] font-bold uppercase tracking-widest text-rellia-teal/60 hover:text-rellia-teal transition-colors"
+                <div className="space-y-12">
+                  {/* Strengths */}
+                  <section className="space-y-4">
+                    <h2 className="text-xs font-bold uppercase tracking-widest text-green-700 flex items-center gap-2">
+                      <CheckCircle2 className="h-4 w-4" />
+                      Top Strengths
+                    </h2>
+                    <div className="grid gap-4 sm:grid-cols-3">
+                      {(diagResult.top3_strengths ?? []).map((s, i) => (
+                        <div
+                          key={i}
+                          className="rounded-3xl border border-green-100 bg-green-50/50 p-6 shadow-sm"
                         >
-                          View All Advisors →
-                        </Link>
-                      </div>
-                      <div className="grid gap-6 md:grid-cols-3">
-                        {recommendedAdvisors.map((advisor, i) => (
-                          <div
-                            key={i}
-                            className="group relative rounded-3xl border border-rellia-teal/10 bg-white p-6 shadow-sm transition-all hover:shadow-xl hover:-translate-y-1"
-                          >
-                            <div className="mb-4 relative h-32 w-full overflow-hidden rounded-2xl bg-rellia-cream">
-                              {advisor.photoSrc ? (
-                                <img
-                                  src={advisor.photoSrc}
-                                  alt={advisor.name}
-                                  className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
-                                />
-                              ) : (
-                                <div className="flex h-full w-full items-center justify-center text-rellia-teal/20">
-                                  <Users className="h-12 w-12" />
-                                </div>
-                              )}
+                          <div className="flex items-start justify-between gap-4">
+                            <h3 className="font-host-grotesk text-lg font-bold tracking-tight text-green-900">
+                              {s.category}
+                            </h3>
+                            <div className="shrink-0 rounded-full bg-green-100 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-green-700">
+                              {s.score}%
                             </div>
-                            <h4 className="font-bold text-rellia-teal leading-tight">
-                              {advisor.name}
-                            </h4>
-                            <p className="text-[10px] text-rellia-teal/50 font-bold uppercase tracking-wider mb-2">
-                              {advisor.role} @ {advisor.organization}
-                            </p>
-                            <p className="mb-4 line-clamp-2 h-8 text-xs text-rellia-teal/70">
-                              {typeof advisor.focus === "string"
-                                ? advisor.focus
-                                : (advisor.focus ?? []).join(" · ")}
-                            </p>
-
-                            <RelliaAction
-                              asChild
-                              variant="mintTealFill"
-                              size="compact"
-                              className="w-full justify-center py-2 text-[10px] uppercase tracking-widest"
-                            >
-                              <a
-                                href={
-                                  advisor.linkedInUrl ||
-                                  advisor.websiteUrl ||
-                                  "#"
-                                }
-                                target="_blank"
-                                rel="noopener noreferrer"
-                              >
-                                <Calendar className="h-3 w-3 mr-2" />
-                                Schedule Meeting
-                              </a>
-                            </RelliaAction>
                           </div>
-                        ))}
-                      </div>
+                          <p className="mt-3 font-urbanist text-sm leading-relaxed text-green-900/70">
+                            {s.note}
+                          </p>
+                        </div>
+                      ))}
                     </div>
-                  </div>
+                  </section>
 
-                  {/* Sidebar Recommendations */}
-                  <div className="space-y-12">
-                    <div className="space-y-6">
-                      <h3 className="text-xs font-bold uppercase tracking-widest text-rellia-teal/40">
+                  {/* Weaknesses */}
+                  <section className="space-y-4">
+                    <h2 className="text-xs font-bold uppercase tracking-widest text-red-700 flex items-center gap-2">
+                      <AlertTriangle className="h-4 w-4" />
+                      Priority Gaps
+                    </h2>
+                    <div className="grid gap-4 sm:grid-cols-3">
+                      {(diagResult.top3_weaknesses ?? []).map((w, i) => (
+                        <div
+                          key={i}
+                          className="rounded-3xl border border-red-100 bg-red-50/50 p-6 shadow-sm"
+                        >
+                          <div className="flex items-start justify-between gap-4">
+                            <h3 className="font-host-grotesk text-lg font-bold tracking-tight text-red-900">
+                              {w.category}
+                            </h3>
+                            <div className="shrink-0 rounded-full bg-red-100 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-red-700">
+                              {w.priority}
+                            </div>
+                          </div>
+                          <p className="mt-3 font-urbanist text-sm leading-relaxed text-red-900/70">
+                            {w.note}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  </section>
+
+                  {/* Roadmap + Accelerate */}
+                  <section className="grid gap-6 md:grid-cols-2 items-stretch">
+                    <div className="rounded-[32px] border border-rellia-teal/10 bg-white p-8 shadow-sm flex flex-col h-full">
+                      <h2 className="text-xs font-bold uppercase tracking-widest text-rellia-teal/45">
                         Recommended Roadmap
-                      </h3>
-                      <div className="space-y-4">
+                      </h2>
+                      <div className="mt-6 space-y-4 flex-1">
                         {diagResult.recommendations.map((r, i) => (
                           <div key={i} className="flex gap-4">
-                            <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-rellia-teal text-white text-[10px] font-bold">
+                            <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-rellia-mint text-rellia-teal text-[10px] font-black">
                               {i + 1}
                             </div>
-                            <p className="text-sm font-medium leading-snug text-rellia-teal/80">
+                            <p className="font-urbanist text-sm font-medium leading-relaxed text-rellia-teal/80">
                               {r}
                             </p>
                           </div>
@@ -2228,43 +2207,19 @@ export default function DiagnosticSurvey() {
                       </div>
                     </div>
 
-                    <div className="space-y-6">
-                      <h3 className="text-xs font-bold uppercase tracking-widest text-rellia-teal/40">
-                        Rellia Program Matches
-                      </h3>
-                      <div className="space-y-4">
-                        {recommendedPrograms.map((prog, i) => (
-                          <Link
-                            key={i}
-                            to={prog?.programHref || "/programs"}
-                            className="group flex items-center justify-between rounded-2xl border border-rellia-teal/10 bg-white p-4 transition-all hover:bg-rellia-teal hover:text-white"
-                          >
-                            <div className="flex items-center gap-3">
-                              <div className="h-2 w-2 rounded-full bg-rellia-mint group-hover:bg-white" />
-                              <span className="text-sm font-bold">
-                                {prog?.program}
-                              </span>
-                            </div>
-                            <ChevronRight className="h-4 w-4 opacity-30 group-hover:opacity-100" />
-                          </Link>
-                        ))}
-                      </div>
-                    </div>
-
-                    <div className="rounded-[32px] bg-rellia-teal p-8 text-white shadow-2xl relative overflow-hidden">
+                    <div className="rounded-[32px] bg-rellia-teal p-8 text-white shadow-2xl relative overflow-hidden flex flex-col h-full">
                       <div className="absolute -bottom-4 -right-4 h-24 w-24 bg-rellia-mint/20 rounded-full blur-2xl" />
-                      <h3 className="mb-4 font-host-grotesk text-xl font-bold leading-tight relative z-10">
+                      <h2 className="font-host-grotesk text-2xl font-bold leading-tight relative z-10">
                         Accelerate your journey
-                      </h3>
-                      <p className="mb-8 text-sm leading-relaxed text-white/70 relative z-10">
-                        Join Rellia Health to unlock full access to your
-                        assigned advisory board and all recommended programs.
+                      </h2>
+                      <p className="mt-4 text-sm leading-relaxed text-white/70 relative z-10 flex-1">
+                        Join Rellia Health to unlock full access to your assigned advisory board and all recommended programs.
                       </p>
                       <RelliaAction
                         asChild
                         variant="mintTealFill"
                         size="comfortable"
-                        className="w-full justify-center transition-transform active:scale-95 relative z-10"
+                        className="w-full justify-center transition-transform active:scale-95 relative z-10 mt-8"
                       >
                         <Link to="/apply">
                           Apply for Membership
@@ -2272,16 +2227,141 @@ export default function DiagnosticSurvey() {
                         </Link>
                       </RelliaAction>
                     </div>
+                  </section>
 
-                    <div className="text-center pt-4">
-                      <button
-                        onClick={() => window.print()}
-                        className="text-[10px] font-bold uppercase tracking-widest text-rellia-teal/40 hover:text-rellia-teal transition-colors flex items-center justify-center gap-2 mx-auto"
-                      >
-                        <Search className="h-3 w-3" />
-                        Print Report Summary
-                      </button>
+                  {/* Full readiness breakdown */}
+                  <section className="space-y-4">
+                    <h2 className="text-xs font-bold uppercase tracking-widest text-rellia-teal/45">
+                      Full Readiness Breakdown
+                    </h2>
+                    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                      {SECTIONS.map((s) => {
+                        const sc = getSectionScore(s.id, answers) ?? 0;
+                        return (
+                          <div
+                            key={s.id}
+                            className="rounded-3xl border border-rellia-teal/10 bg-white p-6 shadow-sm"
+                          >
+                            <div className="flex items-start justify-between gap-3">
+                              <div className="min-w-0">
+                                <div className="text-[10px] font-bold uppercase tracking-widest text-rellia-teal/40">
+                                  {s.id.replace(/_/g, " ")}
+                                </div>
+                                <div className="mt-1 font-host-grotesk text-base font-bold text-rellia-teal">
+                                  {s.title}
+                                </div>
+                              </div>
+                              <div className={cn("text-base font-black", scoreClass(sc))}>
+                                {sc}%
+                              </div>
+                            </div>
+                            <div className="mt-4 h-1.5 w-full overflow-hidden rounded-full bg-rellia-teal/5">
+                              <div
+                                className={cn("h-full transition-all duration-1000", scoreBarClass(sc))}
+                                style={{ width: `${sc}%` }}
+                              />
+                            </div>
+                          </div>
+                        );
+                      })}
                     </div>
+                  </section>
+
+                  {/* Advisory board + programs */}
+                  <section className="grid gap-6 md:grid-cols-2 items-stretch">
+                    <div className="rounded-[32px] border border-rellia-teal/10 bg-white p-8 shadow-sm flex flex-col h-full">
+                      <div className="flex items-center justify-between gap-4">
+                        <h2 className="text-xs font-bold uppercase tracking-widest text-rellia-teal/45">
+                          Your Assigned Advisory Board
+                        </h2>
+                        <Link
+                          to="/advisors/directory"
+                          className="text-[10px] font-bold uppercase tracking-widest text-rellia-teal/60 hover:text-rellia-teal transition-colors"
+                        >
+                          Browse advisors →
+                        </Link>
+                      </div>
+                      <div className="mt-6 grid gap-4 sm:grid-cols-2">
+                        {recommendedAdvisors.map((advisor, i) => (
+                          <Link
+                            key={i}
+                            to={`/advisors/directory/${advisor.id}`}
+                            className="group rounded-3xl border border-black/10 bg-white p-6 shadow-sm transition-[transform,box-shadow] hover:shadow-md hover:-translate-y-[1px]"
+                          >
+                            <div className="font-host-grotesk text-lg font-bold tracking-tight text-black group-hover:underline decoration-2 underline-offset-4">
+                              {advisor.name}
+                            </div>
+                            <div className="mt-1 font-urbanist text-sm font-medium text-black/70">
+                              {advisor.organization}
+                            </div>
+                            <div className="mt-0.5 font-urbanist text-sm text-black/60">
+                              {advisor.role}
+                            </div>
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="rounded-[32px] border border-rellia-teal/10 bg-white p-8 shadow-sm flex flex-col h-full">
+                      <div className="flex items-center justify-between gap-4">
+                        <h2 className="text-xs font-bold uppercase tracking-widest text-rellia-teal/45">
+                          Program Matches
+                        </h2>
+                        <Link
+                          to="/programs"
+                          className="text-[10px] font-bold uppercase tracking-widest text-rellia-teal/60 hover:text-rellia-teal transition-colors"
+                        >
+                          View all programs →
+                        </Link>
+                      </div>
+
+                      <div className="mt-6 grid gap-4">
+                        {recommendedPrograms.map((prog, i) => {
+                          const href = prog?.programHref || "/programs"
+                          const meta = PROGRAM_META_BY_HREF[href]
+                          return (
+                            <Link
+                              key={i}
+                              to={href}
+                              className="group flex items-center gap-4 rounded-3xl border border-black/10 bg-white p-4 shadow-sm transition-[transform,box-shadow] hover:shadow-md hover:-translate-y-[1px]"
+                            >
+                              <div className="relative h-16 w-20 shrink-0 overflow-hidden rounded-2xl bg-rellia-cream">
+                                {meta?.imageSrc ? (
+                                  <img
+                                    src={meta.imageSrc}
+                                    alt={meta.imageAlt || meta.title}
+                                    className="h-full w-full object-cover"
+                                    loading="lazy"
+                                  />
+                                ) : (
+                                  <div className="h-full w-full" />
+                                )}
+                              </div>
+                              <div className="min-w-0 flex-1">
+                                <div className="font-host-grotesk text-base font-bold tracking-tight text-black">
+                                  {meta?.title || prog?.program || "Program"}
+                                </div>
+                                <div className="mt-1 font-urbanist text-sm text-black/60">
+                                  View program details
+                                </div>
+                              </div>
+                              <ChevronRight className="h-5 w-5 text-black/30 group-hover:text-black/60 transition-colors" />
+                            </Link>
+                          )
+                        })}
+                      </div>
+                    </div>
+                  </section>
+
+                  <div className="pt-4 text-center">
+                    <button
+                      type="button"
+                      onClick={() => window.print()}
+                      className="text-[10px] font-bold uppercase tracking-widest text-rellia-teal/40 hover:text-rellia-teal transition-colors inline-flex items-center justify-center gap-2"
+                    >
+                      <Printer className="h-3.5 w-3.5" />
+                      Print / Save as PDF
+                    </button>
                   </div>
                 </div>
               </div>

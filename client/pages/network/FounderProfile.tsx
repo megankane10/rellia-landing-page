@@ -155,16 +155,16 @@ export default function FounderProfile() {
                 </h3>
                 <div
                   className={cn(
-                    "grid grid-cols-1 gap-12",
-                    active.founders.length > 1 && "md:grid-cols-2",
+                    "grid gap-8 sm:gap-10",
+                    active.founders.length > 1 ? "grid-cols-2" : "grid-cols-1",
                   )}
                 >
                   {active.founders.map((f, i) => (
                     <div
                       key={i}
-                      className="flex flex-col sm:flex-row gap-6 items-stretch"
+                      className="flex flex-col gap-4 sm:flex-row sm:gap-6 items-stretch"
                     >
-                      <div className="shrink-0 w-24 h-24 sm:w-32 sm:h-32 overflow-hidden rounded-2xl border border-black/5 shadow-sm">
+                      <div className="shrink-0 w-20 h-20 sm:w-32 sm:h-32 overflow-hidden rounded-2xl border border-black/5 shadow-sm">
                         <img
                           src={f.imageSrc}
                           alt={f.name}
@@ -187,7 +187,8 @@ export default function FounderProfile() {
                               href={f.linkedinUrl}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-black/10 bg-white text-black/40 hover:text-rellia-teal transition-colors"
+                              className="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-rellia-teal/15 bg-rellia-mint/20 text-rellia-teal shadow-sm transition-colors hover:bg-rellia-teal hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-teal focus-visible:ring-offset-2"
+                              aria-label={`Visit ${f.name} on LinkedIn (opens in new tab)`}
                             >
                               <LinkedInFilled className="h-4 w-4" />
                             </a>

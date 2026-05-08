@@ -141,7 +141,7 @@ const CareersJoinTeamSection = ({
 
   return (
     <section className="relative z-[2] w-full overflow-x-hidden bg-white">
-      <div className="relative flex h-[80svh] max-h-[80svh] min-h-0 shrink-0 flex-col overflow-hidden bg-rellia-greyTeal px-6 py-10 md:px-10 md:py-14">
+      <div className="relative flex min-h-0 shrink-0 flex-col overflow-x-hidden bg-rellia-greyTeal px-6 py-10 pb-16 md:h-[80svh] md:max-h-[80svh] md:pb-14 md:px-10 md:py-14">
         <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-br from-rellia-teal/15 via-rellia-greyTeal to-rellia-mint/15" />
           <div className="absolute inset-0 opacity-90 [background:radial-gradient(ellipse_120%_70%_at_0%_0%,rgba(157,214,208,0.35),transparent_55%),radial-gradient(ellipse_90%_60%_at_100%_15%,rgba(13,53,64,0.18),transparent_50%),radial-gradient(ellipse_80%_55%_at_50%_100%,rgba(157,214,208,0.22),transparent_52%),radial-gradient(ellipse_45%_40%_at_75%_55%,rgba(255,255,255,0.14),transparent_45%)]" />
@@ -224,7 +224,7 @@ const CareersJoinTeamSection = ({
             ) : null}
           </div>
 
-          <div className="mt-8 min-h-0 w-full flex-1 overflow-x-clip overflow-y-hidden md:mt-12 lg:mt-16">
+          <div className="mt-8 min-h-0 w-full flex-1 overflow-x-clip overflow-y-visible md:mt-12 md:overflow-y-hidden lg:mt-16">
             <div
               className="relative h-full min-h-0 w-full overflow-x-clip py-2 md:py-3 [mask-size:100%_100%] [mask-repeat:no-repeat]"
               style={marqueeMaskStyle}

@@ -1,5 +1,6 @@
 import { PortableText, type PortableTextComponents } from "@portabletext/react"
 import type { SanityPortableText } from "@shared/cms/types"
+import { normalizeToPortableText } from "@shared/cms/normalizePortableText"
 import { cn } from "@/lib/utils"
 import { BodyCtaBox } from "@/components/BodyCtaBox"
 import { RichTextImageCarousel, type RichTextCarouselSlide } from "@/components/RichTextImageCarousel"
@@ -88,15 +89,16 @@ const components: PortableTextComponents = {
 }
 
 type PortableRichTextProps = {
-  value: SanityPortableText | null | undefined
+  value: SanityPortableText | string | null | undefined
   className?: string
 }
 
 export const PortableRichText = ({ value, className }: PortableRichTextProps) => {
-  if (!value || value.length === 0) return null
+  const normalized = normalizeToPortableText(value)
+  if (!normalized) return null
   return (
     <div className={cn("prose prose-neutral max-w-none", className)}>
-      <PortableText value={value} components={components} />
+      <PortableText value={normalized} components={components} />
     </div>
   )
 }

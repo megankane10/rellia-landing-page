@@ -4,30 +4,38 @@ export const contactPage = defineType({
   name: 'contactPage',
   title: 'Contact page',
   type: 'document',
+  groups: [
+    {name: 'content', title: 'Content', default: true},
+    {name: 'seo', title: 'SEO & metadata'},
+  ],
+  fieldsets: [{name: 'seo', title: 'SEO & metadata'}],
   fields: [
-    defineField({name: 'heroBadge', type: 'string', title: 'Hero badge'}),
-    defineField({name: 'pageTitle', type: 'string'}),
-    defineField({name: 'intro', type: 'text', rows: 3}),
+    defineField({name: 'heroBadge', type: 'string', title: 'Hero badge', group: 'content'}),
+    defineField({name: 'pageTitle', type: 'string', group: 'content'}),
+    defineField({name: 'intro', type: 'text', rows: 3, group: 'content'}),
     defineField({
       name: 'sideImage',
       title: 'Side image',
       type: 'image',
       options: {hotspot: true},
+      group: 'content',
     }),
     defineField({
       name: 'sideImageSrc',
       title: 'Side image URL (fallback if no image upload)',
       type: 'string',
+      group: 'content',
     }),
-    defineField({name: 'sideImageAlt', type: 'string', title: 'Side image alt text'}),
-    defineField({name: 'quoteText', type: 'text', rows: 3, title: 'Quote on image'}),
-    defineField({name: 'quoteAttributionName', type: 'string', title: 'Quote — name'}),
-    defineField({name: 'quoteAttributionRole', type: 'string', title: 'Quote — role'}),
-    defineField({name: 'successTitle', type: 'string'}),
-    defineField({name: 'successBody', type: 'text', rows: 2}),
+    defineField({name: 'sideImageAlt', type: 'string', title: 'Side image alt text', group: 'content'}),
+    defineField({name: 'quoteText', type: 'text', rows: 3, title: 'Quote on image', group: 'content'}),
+    defineField({name: 'quoteAttributionName', type: 'string', title: 'Quote — name', group: 'content'}),
+    defineField({name: 'quoteAttributionRole', type: 'string', title: 'Quote — role', group: 'content'}),
+    defineField({name: 'successTitle', type: 'string', group: 'content'}),
+    defineField({name: 'successBody', type: 'text', rows: 2, group: 'content'}),
     defineField({
       name: 'labels',
       type: 'object',
+      group: 'content',
       fields: [
         {name: 'firstName', type: 'string'},
         {name: 'lastName', type: 'string'},
@@ -43,6 +51,7 @@ export const contactPage = defineType({
     defineField({
       name: 'placeholders',
       type: 'object',
+      group: 'content',
       fields: [
         {name: 'firstName', type: 'string'},
         {name: 'lastName', type: 'string'},
@@ -53,11 +62,12 @@ export const contactPage = defineType({
         {name: 'message', type: 'string'},
       ],
     }),
-    defineField({name: 'subjectPlaceholder', type: 'string'}),
-    defineField({name: 'companySizePlaceholder', type: 'string'}),
+    defineField({name: 'subjectPlaceholder', type: 'string', group: 'content'}),
+    defineField({name: 'companySizePlaceholder', type: 'string', group: 'content'}),
     defineField({
       name: 'subjectOptions',
       type: 'array',
+      group: 'content',
       of: [
         defineField({
           name: 'option',
@@ -73,6 +83,7 @@ export const contactPage = defineType({
       name: 'companySizeOptions',
       title: 'Company size options',
       type: 'array',
+      group: 'content',
       of: [
         defineField({
           name: 'option',
@@ -84,8 +95,8 @@ export const contactPage = defineType({
         }),
       ],
     }),
-    defineField({name: 'submitLabel', type: 'string'}),
-    defineField({name: 'sendingLabel', type: 'string'}),
-    defineField({name: 'seo', type: 'seo'}),
+    defineField({name: 'submitLabel', type: 'string', group: 'content'}),
+    defineField({name: 'sendingLabel', type: 'string', group: 'content'}),
+    defineField({name: 'seo', type: 'seo', group: 'seo', fieldset: 'seo'}),
   ],
 })

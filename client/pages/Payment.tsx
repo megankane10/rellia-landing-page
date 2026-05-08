@@ -1,16 +1,16 @@
 import { useEffect, useMemo, useState } from "react"
 import { Link } from "react-router-dom"
-import { 
-  CheckCircle2, 
-  ArrowRight, 
-  Zap, 
-  Copy, 
-  ArrowLeft, 
+import {
+  CheckCircle2,
+  ArrowRight,
+  Zap,
+  Copy,
+  ArrowLeft,
   AlertCircle,
-  Sparkles, 
-  ShieldCheck, 
-  Users, 
-  Target
+  Sparkles,
+  ShieldCheck,
+  Users,
+  Target,
 } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import Navbar from "@/components/Navbar"
@@ -32,6 +32,8 @@ export default function Payment() {
   const [codeCopied, setCodeCopied] = useState(false)
   const [selectedPlan, setSelectedPlan] = useState<"monthly" | "annual" | null>(null)
   const [showForm, setShowForm] = useState(false)
+  const [iframeLoaded, setIframeLoaded] = useState(false)
+  const [iframeTookTooLong, setIframeTookTooLong] = useState(false)
 
   const monthlyHref = (import.meta.env.VITE_STRIPE_MONTHLY_PLAN_LINK as string | undefined)?.trim()
   const annualHref = (import.meta.env.VITE_STRIPE_ANNUAL_PLAN_LINK as string | undefined)?.trim()
@@ -55,6 +57,21 @@ export default function Payment() {
       document.head.removeChild(meta)
     }
   }, [])
+
+  useEffect(() => {
+    if (!showForm) {
+      setIframeLoaded(false)
+      setIframeTookTooLong(false)
+      return
+    }
+    if (!currentHref) return
+
+    setIframeLoaded(false)
+    setIframeTookTooLong(false)
+
+    const timeout = window.setTimeout(() => setIframeTookTooLong(true), 6000)
+    return () => window.clearTimeout(timeout)
+  }, [showForm, currentHref])
 
   const [waitlistOpen, setWaitlistOpen] = useState(false) // Not used here but keeping state structure consistent if needed
 
@@ -97,7 +114,7 @@ export default function Payment() {
                 {/* Left: Benefits */}
                 <div className="flex-1 flex flex-col justify-center items-start py-20 md:py-32 pr-6 md:pr-16 relative">
                   <div className="relative z-10 w-full max-w-[500px]">
-                    <h3 className="font-host-grotesk text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-20 leading-[1.1]">
+                    <h3 className="font-host-grotesk text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-14 md:mb-20 leading-[1.1]">
                       <span className="text-rellia-mint block mb-2">Join the</span> 
                       <span className="text-white">Rellia Network</span>
                     </h3>
@@ -106,9 +123,13 @@ export default function Payment() {
                       {benefitsGrid.map((benefit, index) => {
                         const Icon = BENEFIT_ICONS[index % BENEFIT_ICONS.length]
                         return (
-                          <div key={index} className="flex items-center gap-8 group">
-                            <Icon className="h-9 w-9 text-rellia-mint transition-transform duration-300 group-hover:scale-110 flex-shrink-0" aria-hidden strokeWidth={2.5} />
-                            <p className="font-urbanist text-white text-xl font-medium leading-relaxed">
+                          <div key={index} className="flex items-start gap-5 md:gap-6 group">
+                            <Icon
+                              className="mt-1 h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 text-rellia-mint transition-transform duration-300 group-hover:scale-110 flex-shrink-0"
+                              aria-hidden
+                              strokeWidth={2.5}
+                            />
+                            <p className="font-urbanist text-white text-base sm:text-lg md:text-xl font-medium leading-relaxed">
                               {benefit}
                             </p>
                           </div>
@@ -233,13 +254,50 @@ export default function Payment() {
                   
                   <div className="w-full bg-white rounded-2xl overflow-hidden border border-black/5 shadow-sm">
                     {currentHref ? (
-                      <iframe 
-                        src={currentHref} 
-                        title="Membership Payment" 
-                        className="w-full h-full border-0" 
-                        style={{ minHeight: "800px" }}
-                        allow="payment; fullscreen" 
-                      />
+                      <div className="relative">
+                        <div className="flex flex-col gap-3 border-b border-black/5 bg-white px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
+                          <div className="flex items-center gap-2 text-sm font-medium text-black/60">
+                            <ShieldCheck className="h-4 w-4 text-rellia-teal/70" aria-hidden />
+                            <span>
+                              If the embedded checkout doesn’t load, open it in a new tab.
+                            </span>
+                          </div>
+                          <RelliaAction asChild variant="outlineOnWhite" size="compact" className="shrink-0">
+                            <a
+                              href={currentHref}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              aria-label="Open Stripe checkout in a new tab (opens in new tab)"
+                            >
+                              Open in new tab
+                              <ArrowRight className="ml-2 h-4 w-4" aria-hidden />
+                            </a>
+                          </RelliaAction>
+                        </div>
+
+                        {!iframeLoaded ? (
+                          <div className="absolute inset-x-0 top-[57px] z-10 flex min-h-[800px] flex-col items-center justify-center gap-3 bg-white/90 px-6 text-center backdrop-blur-sm">
+                            <div className="h-10 w-10 animate-spin rounded-full border-2 border-black/10 border-t-rellia-teal" aria-hidden />
+                            <p className="max-w-lg font-urbanist text-sm font-medium text-black/60">
+                              Loading secure checkout…
+                            </p>
+                            {iframeTookTooLong ? (
+                              <p className="max-w-lg font-urbanist text-sm font-medium text-black/60">
+                                Some browsers and privacy settings block embedded Stripe checkout. You can continue in a new tab.
+                              </p>
+                            ) : null}
+                          </div>
+                        ) : null}
+
+                        <iframe 
+                          src={currentHref} 
+                          title="Membership Payment" 
+                          className="w-full h-full border-0" 
+                          style={{ minHeight: "800px" }}
+                          allow="payment; fullscreen" 
+                          onLoad={() => setIframeLoaded(true)}
+                        />
+                      </div>
                     ) : (
                       <div className="flex flex-col items-center justify-center py-40 px-6 text-center">
                         <AlertCircle className="h-16 w-16 text-rellia-teal mb-8" />

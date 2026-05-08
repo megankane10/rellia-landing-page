@@ -4,6 +4,11 @@ export const programsLandingPage = defineType({
   name: 'programsLandingPage',
   title: 'Programs & events landing',
   type: 'document',
+  groups: [
+    {name: 'content', title: 'Content', default: true},
+    {name: 'seo', title: 'SEO & metadata'},
+  ],
+  fieldsets: [{name: 'seo', title: 'SEO & metadata'}],
   fields: [
     defineField({name: 'heroTitleLine1', type: 'string'}),
     defineField({name: 'heroTitleMint', type: 'string'}),
@@ -46,6 +51,6 @@ export const programsLandingPage = defineType({
     defineField({name: 'ctaBody', type: 'text', rows: 2}),
     defineField({name: 'ctaButtonLabel', type: 'string'}),
     defineField({name: 'ctaButtonHref', type: 'string'}),
-    defineField({name: 'seo', type: 'seo'}),
+    defineField({name: 'seo', type: 'seo', group: 'seo', fieldset: 'seo'}),
   ],
 })

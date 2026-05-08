@@ -14,7 +14,8 @@ const isProductionHostname = (): boolean => {
 
 export const isSanityConfigured = (): boolean => {
   if (import.meta.env.VITE_DISABLE_CMS === "true") return false
-  if (isProductionHostname()) return false
+  // Keep production frozen on hardcoded content unless explicitly enabled.
+  if (isProductionHostname() && import.meta.env.VITE_ENABLE_CMS_ON_PROD !== "true") return false
   return Boolean(
     import.meta.env.VITE_SANITY_PROJECT_ID &&
       import.meta.env.VITE_SANITY_DATASET,

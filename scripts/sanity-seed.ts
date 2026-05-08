@@ -16,6 +16,7 @@ import {
 import { ADVISOR_DIRECTORY_SEED, ADVISOR_FILTER_OPTIONS } from "../client/data/advisorDirectory"
 import { FOUNDER_DIRECTORY, ALL_LEVELS, ALL_SPECIALTIES } from "../client/data/founderDirectory"
 import { ROUTE_SEO } from "../client/config/seo"
+import { STORIES } from "../client/content/stories"
 
 type PortableTextBlock = {
   _type: "block"
@@ -82,6 +83,105 @@ const paragraphsToBlocks = (prefix: string, body: string): PortableTextBlock[] =
     .map((p) => p.trim())
     .filter(Boolean)
     .map((p, i) => block(stableKey(prefix, i), p))
+
+type PortableStoryNode =
+  | PortableTextBlock
+  | {
+      _type: "bodyCtaBox"
+      _key: string
+      title: string
+      body?: string
+      buttonLabel: string
+      buttonHref: string
+    }
+  | {
+      _type: "portableImageCarousel"
+      _key: string
+      title?: string
+      slides: Array<{ _type: "portableImageCarouselSlide"; _key: string; imageSrc?: string; alt: string; caption?: string }>
+    }
+
+const storyFilterIdForTag = (tag: string): string => `storyFilter-${slugify(tag)}`
+
+const portableStoryBody = (story: (typeof STORIES)[number]): PortableStoryNode[] => {
+  const nodes: PortableStoryNode[] = []
+
+  story.body.forEach((b, i) => {
+    const key = stableKey(`story-${story.slug}`, i)
+
+    if (b.type === "p") {
+      nodes.push(block(key, b.text, "normal"))
+      return
+    }
+    if (b.type === "h2") {
+      nodes.push(block(key, b.text, "h2"))
+      return
+    }
+    if (b.type === "h3") {
+      nodes.push(block(key, b.text, "h3"))
+      return
+    }
+
+    // Quotes/images in the local format don't map 1:1 to our portable schema.
+    // We convert them into supported portable types.
+    if (b.type === "quote") {
+      const attribution = (b.attribution ?? "").trim()
+      const text = attribution ? `“${b.text}” — ${attribution}` : `“${b.text}”`
+      nodes.push(block(key, text, "normal"))
+      return
+    }
+
+    if (b.type === "cta") {
+      nodes.push({
+        _type: "bodyCtaBox",
+        _key: key,
+        title: b.title,
+        body: b.body,
+        buttonLabel: b.buttonLabel,
+        buttonHref: b.buttonHref,
+      })
+      return
+    }
+
+    if (b.type === "imageCarousel") {
+      nodes.push({
+        _type: "portableImageCarousel",
+        _key: key,
+        title: b.title,
+        slides: b.slides.map((s, slideIndex) => ({
+          _type: "portableImageCarouselSlide",
+          _key: stableKey(`${key}-slide`, slideIndex),
+          imageSrc: s.src,
+          alt: s.alt,
+          caption: s.caption,
+        })),
+      })
+      return
+    }
+
+    if (b.type === "image") {
+      // The portable rich text schema's standalone `image` requires a Sanity asset ref.
+      // Our local stories use remote URLs, so we represent it as a 1-slide carousel,
+      // which supports a plain imageSrc string URL.
+      nodes.push({
+        _type: "portableImageCarousel",
+        _key: key,
+        slides: [
+          {
+            _type: "portableImageCarouselSlide",
+            _key: stableKey(`${key}-slide`, 0),
+            imageSrc: b.src,
+            alt: b.alt,
+            caption: b.caption,
+          },
+        ],
+      })
+      return
+    }
+  })
+
+  return nodes
+}
 
 const TERMS_EFFECTIVE_DATE = "March 18, 2026"
 const TERMS_SECTIONS: Array<{
@@ -558,7 +658,72 @@ async function main() {
       _id: "networkFoundersPage",
       _type: "networkFoundersPage",
       title: "Founders",
+      useModularPage: false,
       seo: seoForRoute("/founders"),
+      sections: [
+        {
+          _type: "sectionHero",
+          _key: "hero",
+          badge: "Founders",
+          headline: [block("nf-hero-hl", "Are you building in health tech?", "normal")],
+          subheadline: [
+            block(
+              "nf-hero-sub",
+              "Rellia is for founders who are serious about building in health tech — from idea through Series A.",
+              "normal",
+            ),
+          ],
+          primaryCta: { label: "Apply to join", href: "/apply" },
+          secondaryCta: { label: "View alumni directory", href: "/founders/alumni" },
+        },
+        {
+          _type: "sectionRichText",
+          _key: "intro",
+          title: "What you’ll get",
+          body: [
+            {
+              _type: "block",
+              _key: "p1",
+              style: "normal",
+              markDefs: [],
+              children: [
+                {
+                  _type: "span",
+                  _key: "p1s1",
+                  text: "Clear outcomes, direct access to domain experts, and a high-signal community built for founders navigating healthcare.",
+                  marks: [],
+                },
+              ],
+            },
+          ],
+        },
+        {
+          _type: "sectionCardsGrid",
+          _key: "cards",
+          title: "Why founders join",
+          subtitle: "Edit, add, remove, and reorder these cards in Sanity.",
+          cards: [
+            {
+              _type: "card",
+              _key: "c1",
+              title: "Regulatory & evidence clarity",
+              body: "Avoid costly missteps and build the right documentation and evidence at the right time.",
+            },
+            {
+              _type: "card",
+              _key: "c2",
+              title: "Advisors who’ve done it",
+              body: "Get practical guidance from operators, clinicians, and specialists with real experience.",
+            },
+            {
+              _type: "card",
+              _key: "c3",
+              title: "Community + accountability",
+              body: "Surround yourself with builders facing the same constraints and timelines.",
+            },
+          ],
+        },
+      ],
     },
   })
   mutations.push({
@@ -566,7 +731,36 @@ async function main() {
       _id: "networkAdvisorsPage",
       _type: "networkAdvisorsPage",
       title: "Advisors",
+      useModularPage: false,
       seo: seoForRoute("/advisors"),
+      sections: [
+        {
+          _type: "sectionHero",
+          _key: "hero",
+          badge: "Advisors",
+          headline: [block("na-hero-hl", "Some people are wired to help others succeed.", "normal")],
+          subheadline: [
+            block(
+              "na-hero-sub",
+              "Mentor serious health tech founders through structured, respectful engagements — stay close to innovation while keeping flexibility.",
+              "normal",
+            ),
+          ],
+          primaryCta: { label: "Apply to join", href: "/apply" },
+          secondaryCta: { label: "Browse our Advisors", href: "/advisors/directory" },
+        },
+        {
+          _type: "sectionCardsGrid",
+          _key: "models",
+          title: "Ways to support founders",
+          subtitle: "These are editable sections — you can reorder or rewrite anytime.",
+          cards: [
+            { _type: "card", _key: "m1", title: "Community & network", body: "Engage in curated intros and async support without rigid mandates." },
+            { _type: "card", _key: "m2", title: "Advisory roles", body: "Join milestone-scoped charters when there’s mutual fit." },
+            { _type: "card", _key: "m3", title: "Workshops", body: "Lead targeted sessions where founders need pattern-level clarity." },
+          ],
+        },
+      ],
     },
   })
   mutations.push({
@@ -574,7 +768,45 @@ async function main() {
       _id: "networkInvestorsPage",
       _type: "networkInvestorsPage",
       title: "Investors",
+      useModularPage: false,
       seo: seoForRoute("/investors"),
+      sections: [
+        {
+          _type: "sectionHero",
+          _key: "hero",
+          badge: "Investors",
+          headline: [block("ni-hero-hl", "Stop sorting through cold pitch decks.", "normal")],
+          subheadline: [
+            block(
+              "ni-hero-sub",
+              "Meet Rellia-backed teams with sharper clinical, regulatory, and commercial milestones — before diligence becomes a fire drill.",
+              "normal",
+            ),
+          ],
+          primaryCta: { label: "Get notified", href: "/contact" },
+        },
+        {
+          _type: "sectionRichText",
+          _key: "note",
+          title: "How it works",
+          body: [
+            {
+              _type: "block",
+              _key: "p1",
+              style: "normal",
+              markDefs: [],
+              children: [
+                {
+                  _type: "span",
+                  _key: "p1s1",
+                  text: "This page is now fully CMS-driven. Add sections for thesis alignment, dealflow, cohort updates, and more — and reorder them any time.",
+                  marks: [],
+                },
+              ],
+            },
+          ],
+        },
+      ],
     },
   })
   mutations.push({
@@ -582,7 +814,54 @@ async function main() {
       _id: "networkPartnersPage",
       _type: "networkPartnersPage",
       title: "Industry Partners",
+      useModularPage: false,
       seo: seoForRoute("/industry-partners"),
+      sections: [
+        {
+          _type: "sectionHero",
+          _key: "hero",
+          badge: "Industry partners",
+          headline: [block("np-hero-hl", "Reach the founders who need you.", "normal")],
+          subheadline: [
+            block(
+              "np-hero-sub",
+              "Pilot design, integration support, and enterprise credibility — so promising products don’t die in procurement limbo.",
+              "normal",
+            ),
+          ],
+          primaryCta: { label: "Apply to join", href: "/apply" },
+          secondaryCta: { label: "See vendor directory", href: "/industry-partners/directory" },
+        },
+        {
+          _type: "sectionCardsGrid",
+          _key: "engage",
+          title: "Partner engagement",
+          subtitle: "Swap these cards, change CTAs, or add new sections anytime.",
+          cards: [
+            {
+              _type: "card",
+              _key: "p1",
+              title: "Integrations",
+              body: "Support founders with integration guidance and distribution clarity.",
+              cta: { label: "Contact", href: "/contact" },
+            },
+            {
+              _type: "card",
+              _key: "p2",
+              title: "Pilot pathways",
+              body: "Create credible routes to pilot and evaluate products in real environments.",
+              cta: { label: "Contact", href: "/contact" },
+            },
+            {
+              _type: "card",
+              _key: "p3",
+              title: "Services & vendors",
+              body: "Offer vetted services that reduce time-to-evidence and time-to-market.",
+              cta: { label: "Contact", href: "/contact" },
+            },
+          ],
+        },
+      ],
     },
   })
   mutations.push({
@@ -771,6 +1050,54 @@ async function main() {
       _type: "siteSettings",
     },
   })
+
+  // Story filters (used by story documents)
+  const storyTagSet = new Set(STORIES.map((s) => s.tag).filter(Boolean))
+  Array.from(storyTagSet)
+    .sort((a, b) => a.localeCompare(b))
+    .forEach((tag, index) => {
+      const id = storyFilterIdForTag(tag)
+      mutations.push({
+        createOrReplace: {
+          _id: id,
+          _type: "storyFilter",
+          title: tag,
+          slug: { _type: "slug", current: slugify(tag) },
+          description: `Stories tagged as ${tag}.`,
+          order: index,
+        },
+      })
+    })
+
+  // Stories
+  for (const story of STORIES) {
+    const slug = (story.slug || "").trim()
+    if (!slug) continue
+
+    const storyFilterId = storyFilterIdForTag(story.tag)
+    mutations.push({
+      createOrReplace: {
+        _id: `story.${slug}`,
+        _type: "story",
+        featured: Boolean(story.featured),
+        title: story.title,
+        slug: { _type: "slug", current: slug },
+        filters: story.tag
+          ? [{ _type: "reference", _ref: storyFilterId }]
+          : undefined,
+        publishedAt: story.publishedAt ? new Date(story.publishedAt).toISOString() : undefined,
+        excerpt: story.excerpt,
+        headerImageAlt: story.coverImageAlt,
+        body: portableStoryBody(story),
+        seo: {
+          metaTitle: story.seoTitle,
+          metaDescription: story.seoDescription,
+          ogTitle: story.seoTitle,
+          ogDescription: story.seoDescription,
+        },
+      },
+    })
+  }
 
   // Legal pages as modular CMS pages (so /terms and /privacy resolve via CmsCatchAll)
   mutations.push({
