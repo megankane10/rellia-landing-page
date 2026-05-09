@@ -694,7 +694,7 @@ function DiagnosticSurveySection() {
                   return (
                     <div key={idx} className="flex items-start gap-4">
                       <Icon className="w-6 h-6 text-rellia-teal shrink-0 mt-0.5" strokeWidth={1.5} />
-                      <span className="font-host-grotesk font-semibold text-black/90 text-lg leading-snug">{cat.name}</span>
+                      <span className="font-host-grotesk font-normal text-black/80 text-lg leading-snug">{cat.name}</span>
                     </div>
                   );
                 })}
@@ -766,14 +766,12 @@ export default function Founders() {
                 {
                   roleId: "founder" as const,
                   title: "See our alumni portfolio",
-                  subtitle: "Search by specialty, category, and collaboration notes.",
                   to: "/founders/alumni",
                   imageSrc: "/images/founders-header.jpg",
                 },
                 {
                   roleId: "advisor" as const,
                   title: "Find the operators you want",
-                  subtitle: "Browse mentors by focus area, industry, and style.",
                   to: "/advisors/directory",
                   imageSrc: "/images/paths-advisor-pexels.jpg",
                 },
@@ -803,9 +801,6 @@ export default function Founders() {
                         <h3 className="font-host-grotesk text-2xl font-semibold tracking-tight text-white md:text-3xl">
                           {card.title}
                         </h3>
-                        <p className="mt-3 max-w-[36ch] font-urbanist text-base leading-relaxed text-white/85 md:text-lg">
-                          {card.subtitle}
-                        </p>
 
                         <RelliaAction
                           asChild
