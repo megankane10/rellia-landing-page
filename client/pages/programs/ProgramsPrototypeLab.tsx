@@ -4,7 +4,7 @@ import type { QmsProgramContent } from "@shared/cms/types"
 
 const CMS: QmsProgramContent = {
   paymentUrl: "https://forms.fillout.com/t/bLGtn6S2jtus",
-  heroTitle: "Low-Fidelity Prototype Lab",
+  heroTitle: "A Low-Fidelity Prototype Lab",
   heroDescription: "Transform your vision into a functional low-fidelity prototype and a vendor-ready requirements document. Connect with vetted development firms to build your proof of concept.",
   heroCtaLabel: "Join Waitlist",
   outcomesTitle: "Program Outcomes",
@@ -33,5 +33,5 @@ const CMS: QmsProgramContent = {
 }
 
 export default function ProgramsPrototypeLab() {
-  return <ProgramPageLayout cms={CMS} cmsSlug="prototype-lab" heroImageSrc="/images/program-prototype%20lab.png" heroImageAlt="Low-Fidelity Prototype Lab" outcomesSectionId="prototype-outcomes" staticBlocks={PROTOTYPE_LAB_STATIC_BLOCKS} isWaitlist />
+  return <ProgramPageLayout cms={CMS} cmsSlug="low-fidelity-prototype-lab" heroImageSrc="/images/programs-PrototypeLab.png" heroImageAlt="A Low-Fidelity Prototype Lab" outcomesSectionId="prototype-outcomes" staticBlocks={PROTOTYPE_LAB_STATIC_BLOCKS} isWaitlist />
 }

@@ -55,8 +55,6 @@ export type ProgramPageLayoutProps = {
   staticBlocks: ProgramPageStaticBlocks;
   /** When true, shows a "Waitlist" badge in the hero and changes the payment CTA to "Join Waitlist" */
   isWaitlist?: boolean;
-  /** Optional square hero image; when omitted heroImageSrc is cropped to square from top-left */
-  heroSquareImageSrc?: string;
 };
 
 const RELLIA_TEAL = "#0D3540";
@@ -166,7 +164,6 @@ const ProgramPageLayout = ({
   paymentSectionId = "program-payment",
   staticBlocks: { howItWorksCards, pillars, timeline },
   isWaitlist = false,
-  heroSquareImageSrc,
 }: ProgramPageLayoutProps) => {
   const [timelineOpen, setTimelineOpen] = useState<string | undefined>(
     undefined,
@@ -183,7 +180,7 @@ const ProgramPageLayout = ({
   const resolvedProgramTitle = (programDoc?.title || q.heroTitle || "").trim()
   const resolvedProgramDescription = (q.heroDescription || "").trim()
 
-  const resolvedHeroImageSrc = (programDoc?.imageSrc || heroSquareImageSrc || heroImageSrc || "").trim()
+  const resolvedHeroImageSrc = (programDoc?.imageSrc || heroImageSrc || "").trim()
   const resolvedHeroImageAlt = (heroImageAlt || resolvedProgramTitle || "Program image").trim()
 
   const canonicalUrl = `${getSiteUrl()}${location.pathname}`;
@@ -303,7 +300,7 @@ const ProgramPageLayout = ({
                     alt={resolvedHeroImageAlt}
                     className={cn(
                       "h-full w-full rounded-2xl",
-                      Boolean(programDoc?.imageSrc || heroSquareImageSrc)
+                      Boolean(programDoc?.imageSrc || heroImageSrc)
                         ? "object-cover"
                         : "object-cover object-[0%_0%]",
                     )}
@@ -506,14 +503,37 @@ const ProgramPageLayout = ({
                         </AccordionTrigger>
                         <AccordionContent className="pb-4">
                           <ul className="flex flex-col gap-4 pl-1">
-                            {month.weeks.map((w) => (
-                              <li key={w} className="flex items-start gap-2">
-                                <CheckCircle2 className="w-4 h-4 text-rellia-mint shrink-0 mt-0.5" />
-                                <span className="font-urbanist text-black text-base leading-relaxed">
-                                  {w}
-                                </span>
-                              </li>
-                            ))}
+                            {month.weeks.map((w, wIdx) => {
+                              if (typeof w === "string") {
+                                return (
+                                  <li key={wIdx} className="flex items-start gap-2">
+                                    <CheckCircle2 className="w-4 h-4 text-rellia-mint shrink-0 mt-0.5" />
+                                    <span className="font-urbanist text-black text-base leading-relaxed">
+                                      {w}
+                                    </span>
+                                  </li>
+                                )
+                              }
+                              return (
+                                <li key={wIdx} className="flex flex-col gap-2.5 mb-1 last:mb-0">
+                                  {w.heading && (
+                                    <span className="font-host-grotesk text-[10px] font-bold uppercase tracking-[0.18em] text-rellia-teal">
+                                      {w.heading}
+                                    </span>
+                                  )}
+                                  <div className="flex flex-col gap-4">
+                                    {w.points.map((pt, ptIdx) => (
+                                      <div key={ptIdx} className="flex items-start gap-2">
+                                        <CheckCircle2 className="w-4 h-4 text-rellia-mint shrink-0 mt-0.5" />
+                                        <span className="font-urbanist text-black text-base leading-relaxed">
+                                          {pt}
+                                        </span>
+                                      </div>
+                                    ))}
+                                  </div>
+                                </li>
+                              )
+                            })}
                           </ul>
                         </AccordionContent>
                       </AccordionItem>

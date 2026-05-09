@@ -68,29 +68,53 @@ export const QMS_PROGRAM_STATIC_BLOCKS: ProgramPageStaticBlocks = {
     {
       month: "Month 1 — Core Processes",
       weeks: [
-        "Week 1–2: QMS gap assessment and regulatory landscape, Document control system setup, Employee training and hiring practices, Work environment and security controls",
-        "Week 3–4: Design controls, Product development lifecycle (IEC 62304), Risk management framework (ISO 14971)",
+        {
+          heading: "Week 1–2",
+          points: ["QMS gap assessment and regulatory landscape", "Document control system setup", "Employee training and hiring practices", "Work environment and security controls"],
+        },
+        {
+          heading: "Week 3–4",
+          points: ["Design controls", "Product development lifecycle (IEC 62304)", "Risk management framework (ISO 14971)"],
+        },
       ],
     },
     {
       month: "Month 2 — Vendors and Manufacturing Partners",
       weeks: [
-        "Week 5–6: Validation of third-party tools and production processes, Configuration and change management, Supplier evaluation",
-        "Week 7–8: Purchasing processes, Inspection of purchased products and services, Production and operations controls",
+        {
+          heading: "Week 5–6",
+          points: ["Validation of third-party tools and production processes", "Configuration and change management", "Supplier evaluation"],
+        },
+        {
+          heading: "Week 7–8",
+          points: ["Purchasing processes", "Inspection of purchased products and services", "Production and operations controls"],
+        },
       ],
     },
     {
       month: "Month 3 — Market Launch",
       weeks: [
-        "Week 9–10: Labeling and distribution, Marketing and sales, Installation and customer support",
-        "Week 11–12: Post-market monitoring and customer complaint handling, Regulatory and legal compliance, Adverse events and recall management",
+        {
+          heading: "Week 9–10",
+          points: ["Labeling and distribution", "Marketing and sales", "Installation and customer support"],
+        },
+        {
+          heading: "Week 11–12",
+          points: ["Post-market monitoring and customer complaint handling", "Regulatory and legal compliance", "Adverse events and recall management"],
+        },
       ],
     },
     {
       month: "Month 4 — Continuous Improvements",
       weeks: [
-        "Week 13–14: Handling defects, Preventing future issues from occurring, Internal and external audit preparation",
-        "Week 15–16: Data analysis and improvements, Management responsibilities, Quality system summary and future objectives",
+        {
+          heading: "Week 13–14",
+          points: ["Handling defects", "Preventing future issues from occurring", "Internal and external audit preparation"],
+        },
+        {
+          heading: "Week 15–16",
+          points: ["Data analysis and improvements", "Management responsibilities", "Quality system summary and future objectives"],
+        },
       ],
     },
   ],

@@ -122,6 +122,13 @@ export default function Events() {
     setPage(1)
   }, [eventFilter])
 
+  useEffect(() => {
+    const el = document.getElementById("view-events")
+    if (el && page > 1) {
+      el.scrollIntoView({ behavior: "smooth" })
+    }
+  }, [page])
+
   const totalPages = Math.max(1, Math.ceil(visibleEvents.length / PAGE_SIZE))
   const pageEvents = useMemo(() => {
     const start = (page - 1) * PAGE_SIZE
@@ -155,7 +162,7 @@ export default function Events() {
           }
         />
 
-        <section className="pt-8 pb-16 md:pt-12 md:pb-20 bg-white">
+        <section id="view-events" className="pt-8 pb-16 md:pt-12 md:pb-20 bg-white">
           <div className="max-w-[1300px] mx-auto px-6 md:px-10">
             <ScrollReveal>
               <div className="mb-4">

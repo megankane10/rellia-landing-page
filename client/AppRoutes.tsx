@@ -98,15 +98,20 @@ export const AppRoutes = () => (
       <Route path="/events/:slug" element={<EventDetail />} />
       <Route path="/programs" element={<ProgramsLayout />}>
         <Route index element={<Programs />} />
-        <Route path="build-your-qms" element={<ProgramsQms />} />
-        <Route path="qms" element={<Navigate to="/programs/build-your-qms" replace />} />
+        <Route path="build-your-quality-management-system" element={<ProgramsQms />} />
+        <Route path="build-your-qms" element={<Navigate to="/programs/build-your-quality-management-system" replace />} />
+        <Route path="qms" element={<Navigate to="/programs/build-your-quality-management-system" replace />} />
         <Route path="ignite-pitch-foundations" element={<ProgramsIgnitePitch />} />
-        <Route path="advance-data-room" element={<ProgramsAdvanceDataroom />} />
+        <Route path="advance-data-room-deep-dive" element={<ProgramsAdvanceDataroom />} />
+        <Route path="advance-data-room" element={<Navigate to="/programs/advance-data-room-deep-dive" replace />} />
         <Route path="elevate-healthcare-capital" element={<ProgramsElevateCapital />} />
-        <Route path="first-50-users" element={<ProgramsFirst50Users />} />
-        <Route path="prototype-lab" element={<ProgramsPrototypeLab />} />
+        <Route path="first-50-users-clinical-feedback-intensive" element={<ProgramsFirst50Users />} />
+        <Route path="first-50-users" element={<Navigate to="/programs/first-50-users-clinical-feedback-intensive" replace />} />
+        <Route path="low-fidelity-prototype-lab" element={<ProgramsPrototypeLab />} />
+        <Route path="prototype-lab" element={<Navigate to="/programs/low-fidelity-prototype-lab" replace />} />
         <Route path="advisory-board-match" element={<ProgramsAdvisoryBoard />} />
-        <Route path="design-your-brand" element={<ProgramsBrandStrategy />} />
+        <Route path="design-your-brand-strategy" element={<ProgramsBrandStrategy />} />
+        <Route path="design-your-brand" element={<Navigate to="/programs/design-your-brand-strategy" replace />} />
         <Route path="regulatory-roadmap" element={<ProgramsRegulatoryRoadmap />} />
       </Route>
 

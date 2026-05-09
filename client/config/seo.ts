@@ -56,16 +56,68 @@ export const ROUTE_SEO: Record<string, RouteSeoConfig> = {
       "Explore Rellia Health programs and events designed to help healthcare builders learn, connect, and grow with the right stakeholders.",
     indexable: true,
   },
+  "/programs/build-your-quality-management-system": {
+    title: "Quality Management System (QMS) Program — Rellia Health",
+    description:
+      "Build a lean, scalable QMS for ISO 13485, MDSAP, and FDA compliance. Expert guidance for medtech and digital health founders.",
+    indexable: true,
+  },
+  "/programs/ignite-pitch-foundations": {
+    title: "Ignite: Pitch Foundations — Rellia Health",
+    description:
+      "Master fundraising essentials. Craft your first pitch deck and presentation with expert feedback to build investor confidence.",
+    indexable: true,
+  },
+  "/programs/advance-data-room-deep-dive": {
+    title: "Advance: Data Room Deep Dive — Rellia Health",
+    description:
+      "Navigate due diligence and data room management. Practical tools and tips for early-stage founders raising capital.",
+    indexable: true,
+  },
+  "/programs/elevate-healthcare-capital": {
+    title: "Elevate: Healthcare Capital — Rellia Health",
+    description:
+      "Refine your fundraising strategy for health tech. Upgrade your pitch to meet the technical and clinical expectations of healthcare investors.",
+    indexable: true,
+  },
+  "/programs/first-50-users-clinical-feedback-intensive": {
+    title: "First 50 Users: Clinical Feedback Intensive — Rellia Health",
+    description:
+      "Validate your product with Rellia's clinician network. Gain IRB guidance and professional feedback to bridge the gap from prototype to clinical use.",
+    indexable: true,
+  },
+  "/programs/low-fidelity-prototype-lab": {
+    title: "Low-Fidelity Prototype Lab — Rellia Health",
+    description:
+      "Transform your vision into a functional prototype. Connect with vetted development firms and testing experts to build your proof of concept.",
+    indexable: true,
+  },
+  "/programs/advisory-board-match": {
+    title: "Advisory Board Match — Rellia Health",
+    description:
+      "Recruit ideal experts for your startup. Rellia provides matchmaking, equity benchmarking, and legal frameworks for productive advisory relationships.",
+    indexable: true,
+  },
+  "/programs/design-your-brand-strategy": {
+    title: "Design Your Brand Strategy — Rellia Health",
+    description:
+      "Develop a professional brand identity that earns trust from clinicians and investors. Includes sprints for website, UI, and sales collateral.",
+    indexable: true,
+  },
+  "/programs/regulatory-roadmap": {
+    title: "Regulatory Roadmap — Rellia Health",
+    description:
+      "Map your regulatory path across FDA, Health Canada, and EU MDR. Leave with a documented strategy for investor due diligence.",
+    indexable: true,
+  },
   "/programs/build-your-qms": {
     title: "QMS Program — Rellia Health",
-    description:
-      "Quality Management System (QMS) support for medtech and digital health teams navigating design controls, documentation, and regulatory readiness.",
-    indexable: true,
+    description: "This page has moved to /programs/build-your-quality-management-system.",
+    indexable: false,
   },
   "/programs/qms": {
     title: "QMS Program — Rellia Health",
-    description:
-      "This page has moved to /programs/build-your-qms.",
+    description: "This page has moved to /programs/build-your-quality-management-system.",
     indexable: false,
   },
   "/network": {

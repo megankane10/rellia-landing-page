@@ -4,7 +4,7 @@ import type { QmsProgramContent } from "@shared/cms/types"
 
 const CMS: QmsProgramContent = {
   paymentUrl: "https://forms.fillout.com/t/bLGtn6S2jtus",
-  heroTitle: "First 50 Users",
+  heroTitle: "First 50 Users: A Clinical Feedback Intensive",
   heroDescription: "Validate your product through facilitated usability testing and assumption audits with Rellia's clinician network. Bridge the gap between prototype and clinical use.",
   heroCtaLabel: "Join Waitlist",
   outcomesTitle: "Program Outcomes",
@@ -33,5 +33,5 @@ const CMS: QmsProgramContent = {
 }
 
 export default function ProgramsFirst50Users() {
-  return <ProgramPageLayout cms={CMS} cmsSlug="first-50-users" heroImageSrc="/images/program-first50users.png" heroImageAlt="First 50 Users" outcomesSectionId="first50-outcomes" staticBlocks={FIRST50_USERS_STATIC_BLOCKS} isWaitlist />
+  return <ProgramPageLayout cms={CMS} cmsSlug="first-50-users-clinical-feedback-intensive" heroImageSrc="/images/programs-first50Users.png" heroImageAlt="First 50 Users: A Clinical Feedback Intensive" outcomesSectionId="first50-outcomes" staticBlocks={FIRST50_USERS_STATIC_BLOCKS} isWaitlist />
 }

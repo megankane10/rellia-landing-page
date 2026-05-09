@@ -33,5 +33,5 @@ const CMS: QmsProgramContent = {
 }
 
 export default function ProgramsRegulatoryRoadmap() {
-  return <ProgramPageLayout cms={CMS} cmsSlug="regulatory-roadmap" heroImageSrc="/images/program-regulatoryRoadmap.png" heroImageAlt="Regulatory Roadmap" outcomesSectionId="regulatory-outcomes" staticBlocks={REGULATORY_ROADMAP_STATIC_BLOCKS} isWaitlist />
+  return <ProgramPageLayout cms={CMS} cmsSlug="regulatory-roadmap" heroImageSrc="/images/programs-regulatoryRoadmap.png" heroImageAlt="Regulatory Roadmap" outcomesSectionId="regulatory-outcomes" staticBlocks={REGULATORY_ROADMAP_STATIC_BLOCKS} isWaitlist />
 }

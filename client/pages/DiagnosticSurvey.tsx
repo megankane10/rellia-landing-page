@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import {
   AlertTriangle,
   Menu,
+  X,
   CheckCircle2,
   ArrowRight,
   ChevronRight,
@@ -14,6 +15,7 @@ import {
   Printer,
   Users,
 } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer"
 import RelliaAction from "@/components/RelliaAction";
@@ -1089,6 +1091,7 @@ export default function DiagnosticSurvey() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [diagResult, setDiagResult] = useState<DiagResult | null>(null);
   const [procStep, setProcStep] = useState(0);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     if (typeof window === "undefined") return
@@ -1486,70 +1489,104 @@ export default function DiagnosticSurvey() {
 
         {/* ── MAIN CONTENT AREA ── */}
         <main className="flex-1">
-          {/* MOBILE SUB-HEADER (Fixed Progress with Drawer) */}
-          <div className="fixed inset-x-0 top-[72px] z-[60] flex items-center justify-between border-b border-rellia-teal/10 bg-rellia-cream/90 px-4 py-2 backdrop-blur-md md:top-[86px] lg:hidden">
-            <div className="flex flex-1 flex-col justify-center gap-1">
-              <div className="h-1 overflow-hidden rounded-full bg-rellia-teal/10">
-                <div
-                  className="h-full bg-rellia-teal transition-all duration-500"
-                  style={{ width: `${progress}%` }}
-                />
+          {/* MOBILE SUB-HEADER */}
+          <div className="fixed inset-x-0 top-[72px] z-[60] border-b border-rellia-teal/10 bg-rellia-cream/90 backdrop-blur-md md:top-[86px] lg:hidden">
+            <div className="flex items-center justify-between px-4 py-2">
+              <div className="flex flex-1 flex-col justify-center gap-1">
+                <div className="h-1 overflow-hidden rounded-full bg-rellia-teal/10">
+                  <div
+                    className="h-full bg-rellia-teal transition-all duration-500"
+                    style={{ width: `${progress}%` }}
+                  />
+                </div>
+                <div className="flex justify-between text-[9px] font-bold uppercase tracking-widest text-rellia-teal/60">
+                  <span>
+                    {view === "survey"
+                      ? sec?.title ?? "Assessment"
+                      : view === "intro"
+                        ? "Introduction"
+                        : view === "submit"
+                          ? "Review"
+                          : view === "processing"
+                            ? "Generating report"
+                            : "Roadmap"}
+                  </span>
+                  <span>{progress}%</span>
+                </div>
               </div>
-              <div className="flex justify-between text-[9px] font-bold uppercase tracking-widest text-rellia-teal/60">
-                <span>
-                  {view === "survey"
-                    ? sec?.title ?? "Assessment"
-                    : view === "intro"
-                      ? "Introduction"
-                      : view === "submit"
-                        ? "Review"
-                        : view === "processing"
-                          ? "Generating report"
-                          : "Roadmap"}
-                </span>
-                <span>{progress}%</span>
-              </div>
+
+              <button 
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                className="ml-4 flex h-10 w-10 items-center justify-center rounded-full bg-rellia-mint text-rellia-teal shadow-md active:scale-95 transition-all"
+                aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
+              >
+                <AnimatePresence mode="wait">
+                  {mobileMenuOpen ? (
+                    <motion.div
+                      key="close"
+                      initial={{ rotate: -90, opacity: 0 }}
+                      animate={{ rotate: 0, opacity: 1 }}
+                      exit={{ rotate: 90, opacity: 0 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <X className="h-5 w-5" />
+                    </motion.div>
+                  ) : (
+                    <motion.div
+                      key="menu"
+                      initial={{ rotate: 90, opacity: 0 }}
+                      animate={{ rotate: 0, opacity: 1 }}
+                      exit={{ rotate: -90, opacity: 0 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <Menu className="h-5 w-5" />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </button>
             </div>
 
-            <Drawer>
-              <DrawerTrigger asChild>
-                <button className="ml-4 flex h-10 w-10 items-center justify-center rounded-full bg-rellia-teal text-white shadow-md active:scale-95">
-                  <Menu className="h-5 w-5" />
-                </button>
-              </DrawerTrigger>
-              <DrawerContent className="bg-rellia-cream border-t border-rellia-teal/10">
-                <DrawerHeader>
-                  <DrawerTitle className="font-host-grotesk font-bold text-rellia-teal">
-                    Assessment Navigation
-                  </DrawerTitle>
-                </DrawerHeader>
-                <div className="px-4 pb-12 overflow-y-auto max-h-[70vh]">
-                  <nav className="space-y-2">
-                    <DrawerClose asChild>
+            {/* INLINE MOBILE MENU */}
+            <AnimatePresence>
+              {mobileMenuOpen && (
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: "auto", opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.3, ease: "easeInOut" }}
+                  className="overflow-hidden bg-rellia-cream border-t border-rellia-teal/5 shadow-xl"
+                >
+                  <div className="px-4 py-6 max-h-[70vh] overflow-y-auto">
+                    <nav className="space-y-2">
                       <button
-                        onClick={goToIntro}
+                        onClick={() => {
+                          goToIntro();
+                          setMobileMenuOpen(false);
+                        }}
                         className={`flex w-full items-center gap-4 rounded-xl p-4 text-left transition-all ${view === "intro" ? "bg-rellia-teal text-white" : "bg-rellia-teal/5"}`}
                       >
                         <span className="font-semibold">Introduction</span>
                       </button>
-                    </DrawerClose>
 
-                    <div className="py-2 text-[10px] font-bold uppercase tracking-widest text-rellia-teal/40">
-                      Sections
-                    </div>
+                      <div className="py-2 text-[10px] font-bold uppercase tracking-widest text-rellia-teal/40">
+                        Sections
+                      </div>
 
-                    <div className="grid grid-cols-1 gap-2">
-                      {SECTIONS.map((s, i) => {
-                        const done =
-                          answers[s.id] &&
-                          Object.keys(answers[s.id]).length ===
-                            s.questions.length;
-                        const active =
-                          view === "survey" && i === currentSection;
-                        return (
-                          <DrawerClose key={s.id} asChild>
+                      <div className="grid grid-cols-1 gap-2">
+                        {SECTIONS.map((s, i) => {
+                          const done =
+                            answers[s.id] &&
+                            Object.keys(answers[s.id]).length ===
+                              s.questions.length;
+                          const active =
+                            view === "survey" && i === currentSection;
+                          return (
                             <button
-                              onClick={() => goToSection(i)}
+                              key={s.id}
+                              onClick={() => {
+                                goToSection(i);
+                                setMobileMenuOpen(false);
+                              }}
                               className={`flex items-center gap-4 rounded-xl p-4 text-left transition-all ${active ? "bg-rellia-teal text-white shadow-lg" : "bg-white border border-rellia-teal/10"}`}
                             >
                               <div
@@ -1559,34 +1596,36 @@ export default function DiagnosticSurvey() {
                               </div>
                               <span className="font-medium">{s.title}</span>
                             </button>
-                          </DrawerClose>
-                        );
-                      })}
-                    </div>
+                          );
+                        })}
+                      </div>
 
-                    <DrawerClose asChild>
                       <button
-                        onClick={goToSubmit}
+                        onClick={() => {
+                          goToSubmit();
+                          setMobileMenuOpen(false);
+                        }}
                         className={`mt-4 flex w-full items-center gap-4 rounded-xl p-4 text-left transition-all ${view === "submit" ? "bg-rellia-teal text-white" : "bg-rellia-teal/5"}`}
                       >
                         <span className="font-semibold">Review & Submit</span>
                       </button>
-                    </DrawerClose>
 
-                    <DrawerClose asChild>
                       <button
-                        onClick={() => setView("report")}
+                        onClick={() => {
+                          setView("report");
+                          setMobileMenuOpen(false);
+                        }}
                         className={`mt-4 flex w-full items-center gap-4 rounded-xl p-4 text-left transition-all ${view === "report" ? "bg-rellia-teal text-white" : "bg-rellia-teal/5"}`}
                       >
                         <span className="font-semibold">
                           Personalized Roadmap
                         </span>
                       </button>
-                    </DrawerClose>
-                  </nav>
-                </div>
-              </DrawerContent>
-            </Drawer>
+                    </nav>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
 
           <div className="mx-auto flex h-full max-w-5xl flex-col px-4 pb-8 pt-24 md:px-8 md:pb-12 md:pt-28 lg:px-12 lg:py-16">

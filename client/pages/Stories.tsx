@@ -127,6 +127,13 @@ export default function Stories() {
     setPage(1)
   }, [activeTag])
 
+  useEffect(() => {
+    const el = document.getElementById("all-stories")
+    if (el && page > 1) {
+      el.scrollIntoView({ behavior: "smooth" })
+    }
+  }, [page])
+
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE))
   const pageStories = useMemo(() => {
     const start = (page - 1) * PAGE_SIZE

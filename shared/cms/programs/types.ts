@@ -7,9 +7,15 @@ export type ProgramPageIconCard = {
   description: string
 }
 
+export type ProgramTimelineStep = {
+  heading?: string
+  points: string[]
+}
+
 export type ProgramTimelineMonth = {
   month: string
-  weeks: string[]
+  /** Supports simple strings or structured objects with headings and sub-points. */
+  weeks: (string | ProgramTimelineStep)[]
 }
 
 /** Content not yet modeled in Sanity — keep per-program in `*.static.ts` files. */

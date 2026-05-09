@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react"
+import { cn } from "@/lib/utils"
 import { ChevronLeft, ChevronRight, Quote } from "lucide-react"
 import ScrollReveal from "@/components/ScrollReveal"
 import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel"
@@ -69,11 +70,19 @@ export default function ProgramTrustedMembersSection({
   }, [carouselApi])
 
   return (
-    <section className={["relative w-full bg-white py-12 md:py-20 px-6 md:px-10 overflow-hidden border-b border-black/5", className].filter(Boolean).join(" ")}>
+    <section className={cn("relative w-full bg-[#fdfdfd] py-16 md:py-24 px-6 md:px-10 overflow-hidden border-b border-black/[0.03]", className)}>
+      <div className="absolute inset-0 bg-gradient-to-r from-rellia-mint/10 via-transparent to-transparent pointer-events-none" />
       <div className="relative z-10 mx-auto max-w-[1300px]">
         <ScrollReveal>
-          <h2 className="mb-12 text-center font-host-grotesk text-3xl font-semibold leading-tight tracking-tight text-black md:text-[40px]">
-            {title}
+          <h2 className="mb-14 text-center font-host-grotesk text-2xl font-semibold leading-tight tracking-tight text-black md:text-3xl">
+            {title.includes("Already trusted") ? (
+              <>
+                <span className="text-rellia-teal">Already trusted</span>
+                {title.replace("Already trusted", "")}
+              </>
+            ) : (
+              title
+            )}
           </h2>
         </ScrollReveal>
 

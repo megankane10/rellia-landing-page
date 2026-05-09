@@ -33,5 +33,5 @@ const CMS: QmsProgramContent = {
 }
 
 export default function ProgramsElevateCapital() {
-  return <ProgramPageLayout cms={CMS} cmsSlug="elevate-healthcare-capital" heroImageSrc="/images/program-HealthcareCapital.png" heroImageAlt="Elevate: Healthcare Capital" outcomesSectionId="elevate-outcomes" staticBlocks={ELEVATE_CAPITAL_STATIC_BLOCKS} isWaitlist />
+  return <ProgramPageLayout cms={CMS} cmsSlug="elevate-healthcare-capital" heroImageSrc="/images/programs-HealthcareCapital.png" heroImageAlt="Elevate: Healthcare Capital" outcomesSectionId="elevate-outcomes" staticBlocks={ELEVATE_CAPITAL_STATIC_BLOCKS} isWaitlist />
 }

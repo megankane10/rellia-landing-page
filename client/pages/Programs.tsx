@@ -32,7 +32,35 @@ export default function Programs() {
       ? DEFAULT_PROGRAMS_LANDING.programsSectionTitle
       : pl.programsSectionTitle
 
-  const programs = Array.isArray(programsData) && programsData.length > 0 ? programsData : (pl.programs ?? [])
+  const programs = useMemo(() => {
+    // Favor the standalone program collection, fallback to the landing page array, finally the hardcoded defaults.
+    const rawList = (programsData && programsData.length > 0) ? programsData : (pl.programs ?? [])
+    
+    // Map of programs that MUST use specific local images to match their detail pages
+    const IMAGE_OVERRIDES: Record<string, string> = {
+      "buildyourqualitymanagementsystem": "/images/programs-buildYourQMS.png",
+      "advancedataroomdeepdive": "/images/programs-DataRoom.png",
+      "first50usersaclinicalfeedbackintensive": "/images/programs-first50Users.png",
+      "designyourbrandstrategy": "/images/programs-brandStrategy.png"
+    }
+
+    const seenTitles = new Set<string>()
+    return rawList.filter((p: any) => {
+      if (!p.title) return false
+      const normalizedTitle = p.title.toLowerCase().trim().replace(/[^a-z0-9]/g, "")
+      
+      // Deduplicate
+      if (seenTitles.has(normalizedTitle)) return false
+      seenTitles.add(normalizedTitle)
+      
+      // Enforce the correct image source if it's one of the priority programs
+      if (IMAGE_OVERRIDES[normalizedTitle]) {
+        p.imageSrc = IMAGE_OVERRIDES[normalizedTitle]
+      }
+      
+      return true
+    })
+  }, [programsData, pl.programs])
 
   const { availablePrograms, waitlistPrograms } = useMemo(() => {
     const available = programs.filter(
@@ -60,6 +88,13 @@ export default function Programs() {
   useEffect(() => {
     setPage(1)
   }, [programFilter])
+
+  useEffect(() => {
+    const el = document.getElementById("view-programs")
+    if (el && page > 1) {
+      el.scrollIntoView({ behavior: "smooth" })
+    }
+  }, [page])
 
   const totalPages = Math.max(1, Math.ceil(visiblePrograms.length / PAGE_SIZE))
   const pagePrograms = useMemo(() => {
@@ -145,7 +180,7 @@ export default function Programs() {
                   <AnimatePresence mode="sync" initial={false}>
                     {pagePrograms.map((p: any) => (
                       <motion.div
-                        key={`${p.title}-${p.imageSrc}`}
+                        key={p.title.toLowerCase().trim().replace(/[^a-z0-9]/g, "")}
                         layout="position"
                         initial={{ opacity: 0, y: 14 }}
                         animate={{ opacity: 1, y: 0 }}

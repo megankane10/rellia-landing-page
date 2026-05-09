@@ -6,8 +6,6 @@ import RelliaCta from "@/components/RelliaCta"
 import RelliaAction from "@/components/RelliaAction"
 import PillTag from "@/components/PillTag"
 import WhyRellia from "@/components/WhyRellia"
-import HowItWorks from "@/components/HowItWorks"
-import type { HowItWorksStep } from "@/components/HowItWorks"
 import { FilloutStandardEmbed } from "@fillout/react"
 import { FILLOUT_APPLY_FORM_ID, FILLOUT_EMBED_VIEWPORT_MIN_CLASS } from "@/lib/filloutApplyForm"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
@@ -69,27 +67,27 @@ const CAREERS_WHY_CARD_IMAGES: string[] = [
   "https://images.pexels.com/photos/3184369/pexels-photo-3184369.jpeg?auto=compress&cs=tinysrgb&w=1200",
 ]
 
-const CAREERS_PERKS: HowItWorksStep[] = [
+const CAREERS_PERKS: HomeWhyFeature[] = [
   {
-    icon: Users,
+    iconKey: "users",
     title: "In the room with the industry",
     description:
       "Clinicians, founders, and operators show up in our programs—you hear what actually moves care and procurement, not polished slide stories.",
   },
   {
-    icon: Building2,
+    iconKey: "building2",
     title: "Office when it helps",
     description:
       "Remote-first with intentional in-person weeks: cohort sessions, workshops, and shared space when you want to work beside the team.",
   },
   {
-    icon: Laptop,
+    iconKey: "laptop",
     title: "Small team, real ownership",
     description:
       "Startup reality: clear priorities, direct feedback, and permission to fix how we work—without layers of process for its own sake.",
   },
   {
-    icon: MapPin,
+    iconKey: "mapPin",
     title: "Out with the community",
     description:
       "Member events, partner conversations, and field context on how buying decisions get made—so you are not guessing from a distance.",
@@ -316,19 +314,10 @@ export default function CareersCms() {
           sectionClassName="bg-white pt-28 md:pt-32"
         />
 
-        <HowItWorks
-          heading={
-            <h2 className="font-host-grotesk text-3xl font-semibold leading-tight tracking-tight text-white md:text-[40px]">
-              How we <span className="text-rellia-mint">work</span>
-            </h2>
-          }
-          subheading={
-            <p className="mt-4 font-urbanist text-base font-medium leading-relaxed tracking-tight text-white/80 md:text-lg">
-              A lean health-tech team: industry proximity, intentional office time, and the pace of a startup—not a corporate perks sheet.
-            </p>
-          }
-          steps={CAREERS_PERKS}
-          columns={2}
+        <WhyRellia
+          sectionTitle="How we work"
+          sectionDescription="A lean health-tech team: industry proximity, intentional office time, and the pace of a startup—not a corporate perks sheet."
+          features={CAREERS_PERKS}
         />
 
         {enableHiring ? (

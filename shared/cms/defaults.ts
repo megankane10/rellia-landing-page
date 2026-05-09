@@ -996,7 +996,7 @@ export const DEFAULT_HOME_PAGE: HomePageContent = {
       iconKey: "userRound",
       title: "The Advisors",
       description:
-        "Access 1:1 guidance from experts with years of experience scaling health tech businesses (consulting that would cost >$300/hr anywhere else).",
+        "Access 1:1 guidance from experts with years of experience scaling health tech businesses.",
     },
     {
       iconKey: "bookOpen",
@@ -1009,18 +1009,6 @@ export const DEFAULT_HOME_PAGE: HomePageContent = {
       title: "The Community",
       description:
         "Beta test your ideas, find an accountability buddy, cheer each other on, share your deepest worries. Connect with fellow health tech founders who have been through it before.",
-    },
-    {
-      iconKey: "circleDollarSign",
-      title: "The Investors",
-      description:
-        "Strengthen your pitch and access health tech investors through a network that vouches for you.",
-    },
-    {
-      iconKey: "stethoscope",
-      title: "The Clinicians",
-      description:
-        "Design the right product from the start by developing alongside healthcare practitioners",
     },
   ],
   ctaTitle: "Are you the next **Rellia Health** success story?",
@@ -1348,15 +1336,15 @@ export const DEFAULT_PROGRAMS_LANDING: ProgramsLandingContent = {
       title: "Build Your Quality Management System",
       description:
         "Build a lean, scalable QMS to comply with ISO 13485, MDSAP, FDA, and MDR requirements, with personalized guidance from quality experts every step of the way",
-      imageSrc: "/images/programs-qms.png",
-      href: "/programs/build-your-qms",
+      imageSrc: "/images/programs-buildYourQMS.png",
+      href: "/programs/build-your-quality-management-system",
       buttonText: "Learn more",
     },
     {
       title: "Ignite: Pitch Foundations",
       description:
         "Master the essentials of fundraising by crafting your first pitch deck and presentation. Perfect for early-stage founders looking for a structured starting point to build investor confidence.",
-      imageSrc: "/images/program-ignitePitch.png",
+      imageSrc: "/images/programs-IgnitepItch.png",
       href: "/programs/ignite-pitch-foundations",
       buttonText: "Learn more",
       waitlistHref: "https://forms.fillout.com/t/bLGtn6S2jtus",
@@ -1365,8 +1353,8 @@ export const DEFAULT_PROGRAMS_LANDING: ProgramsLandingContent = {
       title: "Advance: Data Room Deep Dive",
       description:
         "Move beyond the basics into the mechanics of due diligence and data room management. Gain the practical tools and execution tips needed to navigate the complexities of the raising process.",
-      imageSrc: "/images/program-DataRoomDeepDive.png",
-      href: "/programs/advance-data-room",
+      imageSrc: "/images/programs-DataRoom.png",
+      href: "/programs/advance-data-room-deep-dive",
       buttonText: "Learn more",
       waitlistHref: "https://forms.fillout.com/t/bLGtn6S2jtus",
     },
@@ -1374,7 +1362,7 @@ export const DEFAULT_PROGRAMS_LANDING: ProgramsLandingContent = {
       title: "Elevate: Healthcare Capital",
       description:
         "Refine your existing fundraising strategy for the specialized world of health tech. Upgrade your pitch to meet the specific technical and clinical expectations of healthcare investors.",
-      imageSrc: "/images/program-HealthcareCapital.png",
+      imageSrc: "/images/programs-HealthcareCapital.png",
       href: "/programs/elevate-healthcare-capital",
       buttonText: "Learn more",
       waitlistHref: "https://forms.fillout.com/t/bLGtn6S2jtus",
@@ -1383,8 +1371,8 @@ export const DEFAULT_PROGRAMS_LANDING: ProgramsLandingContent = {
       title: "First 50 Users: A Clinical Feedback Intensive",
       description:
         'Validate your product through facilitated usability testing and "assumption audits" with Rellia\'s clinician network. Gain the IRB guidance and professional feedback needed to bridge the gap between prototype and clinical use.',
-      imageSrc: "/images/program-first50users.png",
-      href: "/programs/first-50-users",
+      imageSrc: "/images/programs-first50Users.png",
+      href: "/programs/first-50-users-clinical-feedback-intensive",
       buttonText: "Learn more",
       waitlistHref: "https://forms.fillout.com/t/bLGtn6S2jtus",
     },
@@ -1392,8 +1380,8 @@ export const DEFAULT_PROGRAMS_LANDING: ProgramsLandingContent = {
       title: "A Low-Fidelity Prototype Lab",
       description:
         "Transform your vision into a functional low-fidelity prototype and a vendor-ready requirements document. Finish the program by connecting with vetted development firms and testing experts to build your proof of concept.",
-      imageSrc: "/images/program-prototype%20lab.png",
-      href: "/programs/prototype-lab",
+      imageSrc: "/images/programs-PrototypeLab.png",
+      href: "/programs/low-fidelity-prototype-lab",
       buttonText: "Learn more",
       waitlistHref: "https://forms.fillout.com/t/bLGtn6S2jtus",
     },
@@ -1401,7 +1389,7 @@ export const DEFAULT_PROGRAMS_LANDING: ProgramsLandingContent = {
       title: "Advisory Board Match",
       description:
         "Identify and recruit the ideal experts for your startup using Rellia's vetted advisor network. We provide the matchmaking, equity benchmarking, and legal frameworks to ensure your advisory relationships are productive from day one.",
-      imageSrc: "/images/program-advisoryboard.png",
+      imageSrc: "/images/programs-AdvisoryBoard.png",
       href: "/programs/advisory-board-match",
       buttonText: "Learn more",
       waitlistHref: "https://forms.fillout.com/t/bLGtn6S2jtus",
@@ -1410,8 +1398,8 @@ export const DEFAULT_PROGRAMS_LANDING: ProgramsLandingContent = {
       title: "Design Your Brand Strategy",
       description:
         "Develop a professionally positioned brand identity that earns trust from both clinicians and investors. This intensive includes specialized sprints for your website copy, UI design, and sales collateral to ensure a cohesive market presence.",
-      imageSrc: "/images/program-designYourBrand.png",
-      href: "/programs/design-your-brand",
+      imageSrc: "/images/programs-brandStrategy.png",
+      href: "/programs/design-your-brand-strategy",
       buttonText: "Learn more",
       waitlistHref: "https://forms.fillout.com/t/bLGtn6S2jtus",
     },
@@ -1419,7 +1407,7 @@ export const DEFAULT_PROGRAMS_LANDING: ProgramsLandingContent = {
       title: "Regulatory Roadmap",
       description:
         "Navigate the complexities of medical device classification and global commercialization milestones. Leave with a documented regulatory strategy and intended use statements to support your investor due diligence.",
-      imageSrc: "/images/program-regulatoryRoadmap.png",
+      imageSrc: "/images/programs-regulatoryRoadmap.png",
       href: "/programs/regulatory-roadmap",
       buttonText: "Learn more",
       waitlistHref: "https://forms.fillout.com/t/bLGtn6S2jtus",
@@ -1665,7 +1653,7 @@ export const DEFAULT_STRIPE_PAYMENT_LINK_FALLBACK = "https://buy.stripe.com/14A4
 
 export const DEFAULT_QMS_PROGRAM: QmsProgramContent = {
   paymentUrl: "https://forms.fillout.com/t/1GPWpbBbWcus",
-  heroTitle: "Build Your QMS",
+  heroTitle: "Build Your Quality Management System",
   heroDescription:
     "A simplified, mentor-led program that helps medical device founders build an audit-ready Quality Management System - without needing a background in regulatory affairs",
   heroCtaLabel: "Get Started",

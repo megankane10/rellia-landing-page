@@ -218,6 +218,9 @@ export type HomeWhyFeature = {
   iconKey: string
   title: string
   description: string
+  imageSrc?: string
+  buttonLabel?: string
+  buttonPath?: string
 }
 
 export type HomeTestimonial = {

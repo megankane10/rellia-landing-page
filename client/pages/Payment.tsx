@@ -85,7 +85,7 @@ export default function Payment() {
       <Navbar />
 
       <main id="main-content">
-        <section className="relative w-full border-t border-black/5 pt-[80px]">
+        <section className="relative w-full border-t border-black/5 pt-24 md:pt-10">
           {/* Full Bleed Background Layers (Persistent) */}
           <div className="absolute inset-0 flex flex-col md:flex-row pointer-events-none">
             <div className="relative flex-1 bg-rellia-teal/90 overflow-hidden">
@@ -110,16 +110,16 @@ export default function Payment() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -12 }}
                 transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-                className="relative z-10 max-w-[1300px] mx-auto px-6 md:px-10 flex flex-col md:flex-row min-h-[850px]"
+                className="relative z-10 max-w-[1300px] mx-auto px-6 md:px-10 flex flex-col md:flex-row min-h-[820px]"
               >
                 {/* Left: Benefits */}
-                <div className="flex-1 flex flex-col justify-center items-start py-20 md:py-32 pr-6 md:pr-16 relative">
+                <div className="flex-1 flex flex-col justify-start items-start pt-16 pb-14 md:pt-28 md:pb-20 pr-6 md:pr-16 relative">
                   <div className="relative z-10 w-full max-w-[500px]">
-                    <h3 className="font-host-grotesk text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-14 md:mb-20 leading-[1.1] text-white">
-                      <HeroHeadlinePortable value={p.heroHeadlinePortable} />
+                    <h3 className="font-host-grotesk text-2xl sm:text-3xl md:text-3xl lg:text-4xl font-bold tracking-tight mb-10 leading-[1.1] text-white">
+                      Join the <span className="text-rellia-mint">Rellia Network</span> today
                     </h3>
 
-                    <div className="flex flex-col gap-10">
+                    <div className="flex flex-col gap-y-12 md:gap-y-16">
                       {benefitsGrid.map((benefit, index) => {
                         const Icon = BENEFIT_ICONS[index % BENEFIT_ICONS.length]
                         return (
@@ -140,8 +140,8 @@ export default function Payment() {
                 </div>
 
                 {/* Right: Plan Selection */}
-                <div className="flex-1 flex flex-col relative py-20 md:py-32 md:pl-16">
-                  <div className="w-full h-full flex flex-col justify-center">
+                <div className="flex-1 flex flex-col justify-start pt-16 pb-14 md:pt-28 md:pb-20 md:pl-16 relative">
+                  <div className="w-full h-full flex flex-col">
                     <h2 className="font-host-grotesk text-2xl md:text-3xl font-bold text-black mb-10">Choose your plan</h2>
                     
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full mb-6">
@@ -236,7 +236,7 @@ export default function Payment() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
                 transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                className="relative z-10 w-full min-h-[850px] bg-white flex flex-col"
+                className="relative z-10 w-full min-h-[820px] bg-white flex flex-col"
               >
                 <div className="max-w-[1300px] mx-auto w-full px-6 md:px-10 py-10">
                   <div className="flex items-center justify-between mb-10">
@@ -262,21 +262,20 @@ export default function Payment() {
                               If the embedded checkout doesn’t load, open it in a new tab.
                             </span>
                           </div>
-                          <RelliaAction asChild variant="outlineOnWhite" size="compact" className="shrink-0">
-                            <a
-                              href={currentHref}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              aria-label="Open Stripe checkout in a new tab (opens in new tab)"
-                            >
-                              Open in new tab
-                              <ArrowRight className="ml-2 h-4 w-4" aria-hidden />
-                            </a>
-                          </RelliaAction>
+                          <a
+                            href={currentHref}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-2 font-host-grotesk text-sm font-bold text-rellia-teal hover:underline hover:underline-offset-4"
+                            aria-label="Open Stripe checkout in a new tab (opens in new tab)"
+                          >
+                            Open in new tab
+                            <ArrowRight className="h-4 w-4" aria-hidden />
+                          </a>
                         </div>
 
                         {!iframeLoaded ? (
-                          <div className="absolute inset-x-0 top-[57px] z-10 flex min-h-[800px] flex-col items-center justify-center gap-3 bg-white/90 px-6 text-center backdrop-blur-sm">
+                          <div className="absolute inset-x-0 top-[57px] z-10 flex min-h-[600px] flex-col items-center justify-center gap-3 bg-white/90 px-6 text-center backdrop-blur-sm">
                             <div className="h-10 w-10 animate-spin rounded-full border-2 border-black/10 border-t-rellia-teal" aria-hidden />
                             <p className="max-w-lg font-urbanist text-sm font-medium text-black/60">
                               Loading secure checkout…
@@ -293,7 +292,7 @@ export default function Payment() {
                           src={currentHref} 
                           title="Membership Payment" 
                           className="w-full h-full border-0" 
-                          style={{ minHeight: "800px" }}
+                          style={{ minHeight: "600px" }}
                           allow="payment; fullscreen" 
                           onLoad={() => setIframeLoaded(true)}
                         />
@@ -325,6 +324,7 @@ export default function Payment() {
           body="Have questions about the membership, billing, or benefits? We're here to help you get the most out of the Rellia network."
           primary={{ label: p.questionsContactLabel, to: p.questionsContactPath }}
           secondary={{ label: p.questionsFaqLabel, to: p.questionsFaqPath }}
+          className="mt-20 md:mt-32"
         />
       </main>
 

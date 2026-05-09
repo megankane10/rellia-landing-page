@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
+import { Link } from "react-router-dom"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import ScrollReveal from "./ScrollReveal"
 import SectionHeading from "@/components/SectionHeading"
@@ -43,7 +44,7 @@ export default function WhyRellia({
   )
 
   const imageByIndex = useMemo(() => {
-    return cards.map((_, idx) => cardImages?.[idx] ?? defaultCardImages[idx] ?? "/images/whyrellia-network.jpg")
+    return cards.map((c, idx) => c.imageSrc ?? cardImages?.[idx] ?? defaultCardImages[idx] ?? "/images/whyrellia-network.jpg")
   }, [cardImages, cards, defaultCardImages])
 
   const handleScrollToIndex = useCallback((idx: number) => {
@@ -184,6 +185,15 @@ export default function WhyRellia({
                         <p className="max-w-[40ch] font-urbanist text-base leading-relaxed text-white/85">
                           {c.description}
                         </p>
+                        {c.buttonLabel && c.buttonPath && (
+                          <Link
+                            to={c.buttonPath}
+                            className="relative z-30 mt-4 inline-flex items-center text-sm font-bold text-rellia-mint hover:underline hover:underline-offset-4"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            {c.buttonLabel}
+                          </Link>
+                        )}
                       </div>
                     </div>
                   </article>
@@ -259,6 +269,14 @@ export default function WhyRellia({
                             <p className="font-urbanist text-base leading-relaxed text-white/85">
                               {c.description}
                             </p>
+                            {c.buttonLabel && c.buttonPath && (
+                              <Link
+                                to={c.buttonPath}
+                                className="mt-4 inline-flex items-center text-sm font-bold text-rellia-mint hover:underline hover:underline-offset-4"
+                              >
+                                {c.buttonLabel}
+                              </Link>
+                            )}
                           </div>
                         </div>
                       </article>

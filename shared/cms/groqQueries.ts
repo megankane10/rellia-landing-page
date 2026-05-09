@@ -183,7 +183,14 @@ export const homePageQuery = `*[_type == "homePage"][0]{
   metrics[]{ label, value, suffix },
   howItWorksSectionTitle,
   testimonialsTitlePortable,
-  whyFeatures[]{ iconKey, title, description },
+  whyFeatures[]{ 
+    iconKey, 
+    title, 
+    description, 
+    buttonLabel, 
+    buttonPath,
+    "imageSrc": coalesce(imageSrc, image.asset->url)
+  },
   ctaTitle,
   ctaButtonLabel,
   ctaButtonPath,
@@ -195,7 +202,7 @@ export const homePageQuery = `*[_type == "homePage"][0]{
     company,
     quote,
     companyInfo,
-    "imageSrc": coalesce(image.asset->url, imageSrc)
+    "imageSrc": coalesce(imageSrc, image.asset->url)
   },
   pathsTitle,
   pathsCards[]{
@@ -203,7 +210,7 @@ export const homePageQuery = `*[_type == "homePage"][0]{
     tagLabel,
     title,
     subtitle,
-    "imageSrc": coalesce(image.asset->url, imageSrc),
+    "imageSrc": coalesce(imageSrc, image.asset->url),
     imageAlt,
     ctaLabel,
     ctaTo
@@ -231,7 +238,7 @@ export const aboutPageQuery = `*[_type == "aboutPage"][0]{
     bio,
     linkedinUrl,
     websiteUrl,
-    "imageSrc": coalesce(image.asset->url, imageSrc)
+    "imageSrc": coalesce(imageSrc, image.asset->url)
   },
   ctaTitle,
   ctaBody,
@@ -266,7 +273,7 @@ export const programsLandingQuery = `*[_type == "programsLandingPage"][0]{
   programs[]{
     title,
     description,
-    "imageSrc": coalesce(image.asset->url, imageSrc),
+    "imageSrc": coalesce(imageSrc, image.asset->url),
     href,
     buttonText
   },
@@ -274,7 +281,7 @@ export const programsLandingQuery = `*[_type == "programsLandingPage"][0]{
     title,
     dateTime,
     person,
-    "imageSrc": coalesce(image.asset->url, imageSrc),
+    "imageSrc": coalesce(imageSrc, image.asset->url),
     href,
     comingSoon,
     buttonText,
@@ -292,7 +299,7 @@ export const programsLandingQuery = `*[_type == "programsLandingPage"][0]{
     title,
     dateTime,
     person,
-    "imageSrc": coalesce(image.asset->url, imageSrc),
+    "imageSrc": coalesce(imageSrc, image.asset->url),
     href,
     comingSoon,
     buttonText,
@@ -325,11 +332,11 @@ export const eventsLandingQuery = `*[_type == "eventsLandingPage"][0]{
   ${seoFragment}
 }`
 
-export const programsQuery = `*[_type == "program" && status != "hidden"] | order(sortOrder asc, title asc){
+export const programsQuery = `*[_type == "program" && status != "hidden" && !(_id in path("drafts.**"))] | order(sortOrder asc, title asc){
   title,
   "slug": slug.current,
   description,
-  "imageSrc": coalesce(image.asset->url, imageSrc),
+  "imageSrc": coalesce(imageSrc, image.asset->url),
   href,
   buttonText,
   waitlistHref,
@@ -338,11 +345,11 @@ export const programsQuery = `*[_type == "program" && status != "hidden"] | orde
   ${seoFragment}
 }`
 
-export const programBySlugQuery = `*[_type == "program" && slug.current == $slug][0]{
+export const programBySlugQuery = `*[_type == "program" && slug.current == $slug && !(_id in path("drafts.**"))][0]{
   title,
   "slug": slug.current,
   description,
-  "imageSrc": coalesce(image.asset->url, imageSrc),
+  "imageSrc": coalesce(imageSrc, image.asset->url),
   href,
   buttonText,
   waitlistHref,
@@ -351,14 +358,14 @@ export const programBySlugQuery = `*[_type == "program" && slug.current == $slug
   ${seoFragment}
 }`
 
-export const eventsQuery = `*[_type == "event" && status != "hidden"] | order(sortOrder asc, title asc){
+export const eventsQuery = `*[_type == "event" && status != "hidden" && !(_id in path("drafts.**"))] | order(sortOrder asc, title asc){
   title,
   "slug": slug.current,
   "startsAt": coalesce(startsAt, calendarStartsAt),
   "endsAt": coalesce(endsAt, calendarEndsAt),
   dateTime,
   person,
-  "imageSrc": coalesce(image.asset->url, imageSrc),
+  "imageSrc": coalesce(imageSrc, image.asset->url),
   href,
   comingSoon,
   buttonText,
@@ -374,14 +381,14 @@ export const eventsQuery = `*[_type == "event" && status != "hidden"] | order(so
   sortOrder
 }`
 
-export const eventBySlugQuery = `*[_type == "event" && slug.current == $slug][0]{
+export const eventBySlugQuery = `*[_type == "event" && slug.current == $slug && !(_id in path("drafts.**"))][0]{
   title,
   "slug": slug.current,
   "startsAt": coalesce(startsAt, calendarStartsAt),
   "endsAt": coalesce(endsAt, calendarEndsAt),
   dateTime,
   person,
-  "imageSrc": coalesce(image.asset->url, imageSrc),
+  "imageSrc": coalesce(imageSrc, image.asset->url),
   href,
   comingSoon,
   buttonText,
@@ -573,7 +580,7 @@ export const alumniCompaniesQuery = `*[_type == "alumniCompany"]{
     role,
     bio,
     linkedinUrl,
-    "imageSrc": coalesce(image.asset->url, imageSrc)
+    "imageSrc": coalesce(imageSrc, image.asset->url)
   }
 }`;
 
