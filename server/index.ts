@@ -12,6 +12,12 @@ import {
   isSanityQueryId,
 } from "../shared/cms/sanityQueryRegistry";
 import { stripSanityMetadata } from "./sanityResponseSanitize";
+import { resolveSanityApiConfig } from "./sanityEnv";
+import {
+  buildCsrfSetCookie,
+  issueCsrfToken,
+  requireApiCsrf,
+} from "./csrf";
 
 type RequestLike = {
   headers?: Record<string, unknown>;
@@ -197,6 +203,7 @@ export function createServer() {
     return current.count <= max;
   };
 
+  const csrfIssueRate = new Map<string, RateState>();
   const healthRate = new Map<string, RateState>();
   const studioRedirectRate = new Map<string, RateState>();
   const draftModeRate = new Map<string, RateState>();
@@ -213,6 +220,9 @@ export function createServer() {
   const DIAGNOSTIC_MAX_PER_MIN = 10;
   const SANITY_PREVIEW_MAX_PER_MIN = 120;
   const SANITY_PUBLISHED_MAX_PER_MIN = 180;
+  const CSRF_TOKEN_MAX_PER_MIN = 90;
+
+  const requireCsrf = requireApiCsrf(isDev);
 
   const rateLimitJson = (
     map: Map<string, RateState>,
@@ -252,6 +262,16 @@ export function createServer() {
     rateLimitJson(healthRate, HEALTH_MAX_PER_MIN),
     (_req, res) => {
       res.status(200).json({ ok: true });
+    },
+  );
+
+  app.get(
+    "/api/csrf-token",
+    rateLimitJson(csrfIssueRate, CSRF_TOKEN_MAX_PER_MIN),
+    (_req, res) => {
+      const token = issueCsrfToken();
+      res.setHeader("Set-Cookie", buildCsrfSetCookie(token, isDev));
+      res.status(200).json({ csrfToken: token });
     },
   );
 
@@ -308,15 +328,14 @@ export function createServer() {
 
       const origin = `${protocol || "https"}://${host.replace(/^https?:\/\//, "")}`;
       const requestUrl = new URL(req.originalUrl || req.url, origin).toString();
+      const apiCfg = resolveSanityApiConfig();
+      if (!apiCfg) {
+        res.status(503).send("Sanity is not configured (set SANITY_API_PROJECT_ID)");
+        return;
+      }
       const previewClient = createClient({
-        projectId:
-          process.env.SANITY_API_PROJECT_ID ||
-          process.env.VITE_SANITY_PROJECT_ID ||
-          "ggbt0o98",
-        dataset:
-          process.env.SANITY_API_DATASET ||
-          process.env.VITE_SANITY_DATASET ||
-          "production",
+        projectId: apiCfg.projectId,
+        dataset: apiCfg.dataset,
         token,
         useCdn: false,
         apiVersion: "2024-01-01",
@@ -397,27 +416,24 @@ export function createServer() {
     mentor_areas_needed: z.array(z.string()),
   });
 
-  const sanityWriteClient = process.env.SANITY_API_WRITE_TOKEN
-    ? createClient({
-        projectId:
-          process.env.SANITY_API_PROJECT_ID ||
-          process.env.VITE_SANITY_PROJECT_ID ||
-          "ggbt0o98",
-        dataset:
-          process.env.SANITY_API_DATASET ||
-          process.env.VITE_SANITY_DATASET ||
-          "production",
-        token: process.env.SANITY_API_WRITE_TOKEN,
-        useCdn: false,
-        apiVersion: "2024-01-01",
-      })
-    : null;
+  const sanityApiCfg = resolveSanityApiConfig();
+  const writeToken = process.env.SANITY_API_WRITE_TOKEN?.trim();
+  const sanityWriteClient =
+    sanityApiCfg && writeToken
+      ? createClient({
+          projectId: sanityApiCfg.projectId,
+          dataset: sanityApiCfg.dataset,
+          token: writeToken,
+          useCdn: false,
+          apiVersion: "2024-01-01",
+        })
+      : null;
 
   const previewAndSiteOrigins = new Set(
     [studioOrigin, ...siteOrigins].filter(Boolean) as string[],
   );
 
-  app.post("/api/sanity/query", async (req, res) => {
+  app.post("/api/sanity/query", requireCsrf, async (req, res) => {
     if (!isAllowedBrowserOrigin(req, previewAndSiteOrigins)) {
       res.status(403).json({ error: "Forbidden" });
       return;
@@ -478,14 +494,15 @@ export function createServer() {
       return;
     }
 
-    const projectId =
-      process.env.SANITY_API_PROJECT_ID ||
-      process.env.VITE_SANITY_PROJECT_ID ||
-      "ggbt0o98";
-    const dataset =
-      process.env.SANITY_API_DATASET ||
-      process.env.VITE_SANITY_DATASET ||
-      "production";
+    const apiCfg = resolveSanityApiConfig();
+    if (!apiCfg) {
+      res.status(503).json({
+        error:
+          "Sanity API is not configured. Set SANITY_API_PROJECT_ID (and dataset) in the server environment.",
+      });
+      return;
+    }
+    const { projectId, dataset } = apiCfg;
 
     const fetchParams = paramsParsed.data as Record<string, unknown>;
 
@@ -541,6 +558,7 @@ export function createServer() {
   app.post(
     "/api/contact-hubspot",
     rateLimitJson(contactHubspotRate, CONTACT_HUBSPOT_MAX_PER_MIN),
+    requireCsrf,
     async (req, res) => {
       if (!isAllowedBrowserOrigin(req, siteOrigins)) {
         res.status(403).json({ error: "Forbidden" });
@@ -638,7 +656,7 @@ export function createServer() {
     },
   );
 
-  app.post("/api/diagnostic-report", async (req, res) => {
+  app.post("/api/diagnostic-report", requireCsrf, async (req, res) => {
     if (!isAllowedBrowserOrigin(req, siteOrigins)) {
       res.status(403).json({ error: "Forbidden" })
       return

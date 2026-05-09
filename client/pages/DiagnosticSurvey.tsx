@@ -29,6 +29,7 @@ import {
   DrawerClose,
 } from "@/components/ui/drawer";
 import { cn } from "@/lib/utils";
+import { clearApiCsrfCache, getApiCsrfHeaders } from "@/lib/apiCsrf";
 import { PROGRAM_META_BY_HREF } from "@/config/programMeta";
 
 // ─── TYPES ───────────────────────────────────────────────────────────────────
@@ -1246,12 +1247,26 @@ export default function DiagnosticSurvey() {
       const controller = new AbortController()
       const timeout = window.setTimeout(() => controller.abort(), 25_000)
 
-      const res = await fetch("/api/diagnostic-report", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-        signal: controller.signal,
-      }).finally(() => window.clearTimeout(timeout))
+      const postDiag = async () => {
+        const csrf = await getApiCsrfHeaders()
+        return fetch("/api/diagnostic-report", {
+          method: "POST",
+          credentials: "same-origin",
+          headers: { "Content-Type": "application/json", ...csrf },
+          body: JSON.stringify(payload),
+          signal: controller.signal,
+        })
+      }
+      let res = await postDiag().finally(() => window.clearTimeout(timeout))
+      if (res.status === 403) {
+        const j = (await res.clone().json().catch(() => ({}))) as {
+          code?: string;
+        };
+        if (j.code === "CSRF") {
+          clearApiCsrfCache();
+          res = await postDiag();
+        }
+      }
 
       const report = await (async () => {
         try {

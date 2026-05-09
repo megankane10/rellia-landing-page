@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils"
 import { useContactPage } from "@/hooks/useCmsDocuments"
 import { DEFAULT_CONTACT_PAGE } from "@shared/cms/defaults"
 import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo"
+import { clearApiCsrfCache, getApiCsrfHeaders } from "@/lib/apiCsrf"
 
 /**
  * Redesigned Contact Page for Rellia
@@ -194,21 +195,40 @@ function ContactForm() {
     setIsSubmitting(true)
     setSubmitError(null)
     try {
-      const res = await fetch("/api/contact-hubspot", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({
-          firstName: data.firstName.trim(),
-          lastName: data.lastName.trim(),
-          email: data.email.trim(),
-          company: data.company.trim(),
-          jobTitle: data.jobTitle.trim(),
-          message: data.message.trim(),
-        }),
-      })
-      const json = (await res.json().catch(() => ({}))) as {
+      const postOnce = async () => {
+        const csrf = await getApiCsrfHeaders()
+        return fetch("/api/contact-hubspot", {
+          method: "POST",
+          credentials: "same-origin",
+          headers: { "content-type": "application/json", ...csrf },
+          body: JSON.stringify({
+            firstName: data.firstName.trim(),
+            lastName: data.lastName.trim(),
+            email: data.email.trim(),
+            company: data.company.trim(),
+            jobTitle: data.jobTitle.trim(),
+            message: data.message.trim(),
+          }),
+        })
+      }
+      let res = await postOnce()
+      let json = (await res.json().catch(() => ({}))) as {
         error?: string
         hint?: string
+        code?: string
+      }
+      if (
+        !res.ok &&
+        res.status === 403 &&
+        json.code === "CSRF"
+      ) {
+        clearApiCsrfCache()
+        res = await postOnce()
+        json = (await res.json().catch(() => ({}))) as {
+          error?: string
+          hint?: string
+          code?: string
+        }
       }
       if (!res.ok) {
         setSubmitError(

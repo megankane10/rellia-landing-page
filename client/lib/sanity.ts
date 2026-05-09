@@ -1,4 +1,5 @@
 import type { SanityQueryId } from "@shared/cms/sanityQueryRegistry"
+import { clearApiCsrfCache, getApiCsrfHeaders } from "@/lib/apiCsrf"
 
 export const getSanityProjectId = (): string =>
   import.meta.env.VITE_SANITY_PROJECT_ID || ""
@@ -44,11 +45,24 @@ export const sanityFetch = async <T>(
   try {
     if (!allowSanityProxyFetch()) return null
 
-    const res = await fetch("/api/sanity/query", {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({ queryId, params: params ?? {} }),
-    })
+    const run = async () => {
+      const csrf = await getApiCsrfHeaders()
+      return fetch("/api/sanity/query", {
+        method: "POST",
+        credentials: "same-origin",
+        headers: { "content-type": "application/json", ...csrf },
+        body: JSON.stringify({ queryId, params: params ?? {} }),
+      })
+    }
+
+    let res = await run()
+    if (res.status === 403) {
+      const errBody = (await res.json().catch(() => ({}))) as { code?: string }
+      if (errBody.code === "CSRF") {
+        clearApiCsrfCache()
+        res = await run()
+      }
+    }
     if (!res.ok) return null
     const json = (await res.json()) as { data?: T }
     return json.data ?? null
