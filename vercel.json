@@ -1,9 +1,10 @@
 {
-  "buildCommand": "pnpm run build:client",
+  "buildCommand": "pnpm run build:client && pnpm run build:api",
   "outputDirectory": "dist/spa",
   "functions": {
-    "api/index.ts": {
-      "includeFiles": "{server,shared}/**/*"
+    "api/index.js": {
+      "memory": 1024,
+      "maxDuration": 60
     }
   },
   "headers": [
