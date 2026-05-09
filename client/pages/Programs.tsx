@@ -71,23 +71,16 @@ export default function Programs() {
       <main id="main-content">
         <PageHeader
           variant="dark"
-          title={<HeroHeadlinePortable value={pl.heroTitlePortable} />}
-          subtitle={pl.heroSubtitle}
+          title={pl.programsSectionTitle}
+          subtitle={pl.programsSectionSubtitle}
         />
 
         <section id="view-programs" className="pt-8 pb-12 md:pt-10 md:pb-16 bg-white">
           <div className="max-w-[1300px] mx-auto px-6 md:px-10">
             <ScrollReveal>
-              <div className="mb-4">
-                <h2 className="font-host-grotesk text-2xl md:text-3xl font-semibold leading-tight tracking-tight text-black">
-                  {pl.programsSectionTitle || "Browse Programs"}
-                </h2>
-                {pl.programsSectionSubtitle ? (
-                  <p className="mt-3 max-w-2xl font-urbanist text-base leading-relaxed text-black/60">
-                    {pl.programsSectionSubtitle}
-                  </p>
-                ) : null}
-              </div>
+              <h2 className="mb-6 font-host-grotesk text-2xl md:text-3xl font-semibold leading-tight tracking-tight text-black">
+                Browse Programs
+              </h2>
 
               <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                 <div className="w-full md:w-auto">

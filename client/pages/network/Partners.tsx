@@ -1,6 +1,5 @@
 import type { LucideIcon } from "lucide-react"
 import PageHeader from "@/components/PageHeader"
-import NetworkEyebrow from "@/components/network/NetworkEyebrow"
 import SectionHeading from "@/components/SectionHeading"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
@@ -94,7 +93,6 @@ function PartnerEngageTealBand() {
 
       <div className="relative z-10 mx-auto max-w-[1300px]">
         <ScrollReveal>
-          <NetworkEyebrow label="Engage" tone="onDark" />
           <h2 className="mt-5 font-host-grotesk text-3xl font-semibold leading-tight tracking-tight text-white md:text-[40px]">
             Three ways to <span className="text-rellia-mint">work with Rellia</span>
           </h2>
@@ -146,7 +144,6 @@ function BenefitsWithImageSplit() {
     <CreamSection>
       <div className="grid gap-12 md:grid-cols-[1fr_1.05fr] md:items-center md:gap-16">
         <Reveal>
-          <NetworkEyebrow label="Benefits" tone="onLight" />
           <SectionHeading
             animated={false}
             title="Why partners stay"
@@ -198,7 +195,6 @@ function ExclusiveDirectorySplit() {
 
         <Reveal className="order-1 lg:order-2">
           <div className="max-w-xl">
-            <NetworkEyebrow label="Resources" tone="onLight" />
             <h2 className="mt-6 font-host-grotesk text-3xl font-semibold leading-[1.15] tracking-tight text-black md:mt-8 md:text-[40px] md:leading-[1.12]">
               An exclusive <span className="text-rellia-teal">directory</span> for health tech execution
             </h2>

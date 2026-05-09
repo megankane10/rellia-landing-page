@@ -275,7 +275,6 @@ function DeeperHelpValuesSection() {
             <div className="flex flex-col items-start text-left mt-8 md:mt-10 lg:mt-24">
               <ScrollReveal>
                 <div className="mb-7 md:mb-8">
-                  <NetworkEyebrow label="1:1 depth" tone="onDark" />
                 </div>
                 <h2 className={cn("max-w-4xl font-host-grotesk font-bold leading-tight tracking-tight text-white", PAGE_HEADER_TITLE_SIZE_CLASS)}>
                   Need deeper help?
@@ -432,7 +431,6 @@ function EligibilitySection() {
   return (
     <section className="w-full bg-rellia-cream/25 px-6 py-16 md:px-10 md:py-24">
       <div className="mx-auto max-w-[1300px]">
-        <NetworkEyebrow label="Who it's for" tone="onLight" />
         <SectionHeading
           animated={false}
           title="Built for serious health tech teams"
@@ -474,7 +472,6 @@ function EngageTealBand() {
       <div className="relative z-10 mx-auto max-w-[1300px]">
         <ScrollReveal>
           <div className="mb-8 md:mb-10">
-            <NetworkEyebrow label="Engage" tone="onDark" />
             <h2 className="mt-5 font-host-grotesk text-3xl font-semibold leading-tight tracking-tight text-white md:text-[40px]">
               How to <span className="text-rellia-mint">plug in</span> this week
             </h2>
@@ -517,7 +514,6 @@ function MembershipDifferentSection() {
   return (
     <section className="w-full bg-white px-6 py-16 md:px-10 md:py-24">
       <div className="mx-auto max-w-[1300px]">
-        <NetworkEyebrow label="Membership" tone="onLight" />
         <SectionHeading
           animated={false}
           title="What makes Rellia membership different"
@@ -563,7 +559,6 @@ function JourneySplitSection() {
   return (
     <LightSection className="bg-rellia-cream/20 py-14 md:py-20">
       <div className="mx-auto max-w-[1300px]">
-        <NetworkEyebrow label="Journey" tone="onLight" />
         <SectionHeading
           animated={false}
           title="Where Rellia meets your trajectory"
@@ -669,7 +664,6 @@ function DiagnosticSurveySection() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-start">
           <div className="flex flex-col items-start lg:sticky lg:top-32">
             <Reveal>
-              <NetworkEyebrow label="Assessment" tone="onLight" />
               <h2 className="font-host-grotesk text-3xl font-bold leading-tight tracking-tight text-black md:text-[44px] mt-4 mb-6">
                 Startup Diagnostic Survey
               </h2>
@@ -752,7 +746,6 @@ export default function Founders() {
         <LightSection>
           <div className="mx-auto max-w-[1300px]">
             <Reveal>
-              <NetworkEyebrow label="Directories" tone="onLight" />
               <SectionHeading
                 animated={false}
                 title="Explore the network"

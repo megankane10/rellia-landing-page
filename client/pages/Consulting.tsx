@@ -1,7 +1,6 @@
 import { PEXELS_HEALTH_MEETING } from "@/config/pexelsFallbacks"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
-import NetworkEyebrow from "@/components/network/NetworkEyebrow"
 import SectionHeading from "@/components/SectionHeading"
 import RelliaAction from "@/components/RelliaAction"
 import RelliaCta from "@/components/RelliaCta"
@@ -43,7 +42,6 @@ function FitSectionSplit() {
     <LightSection className="bg-rellia-cream/20 pt-12 md:pt-16">
       <div className="grid gap-12 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:gap-16">
         <div>
-          <NetworkEyebrow label="Fit" tone="onLight" />
           <SectionHeading
             animated={false}
             title="When consulting makes sense"
@@ -81,7 +79,6 @@ function ServicesGridSection() {
     <LightSection className="bg-white border-t border-black/10">
       <div className="mx-auto max-w-[1300px]">
         <ScrollReveal>
-          <NetworkEyebrow label="Focus areas" tone="onLight" />
           <SectionHeading
             animated={false}
             title="Common consulting sprints"
@@ -150,7 +147,6 @@ export default function Consulting() {
         <LightSection className="bg-rellia-cream/20">
           <div className="mx-auto max-w-[1300px]">
             <ScrollReveal>
-              <NetworkEyebrow label="Members" tone="onLight" />
               <SectionHeading
                 animated={false}
                 title="Membership makes consulting even more valuable"

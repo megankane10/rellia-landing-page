@@ -1,5 +1,4 @@
 import PageHeader from "@/components/PageHeader"
-import NetworkEyebrow from "@/components/network/NetworkEyebrow"
 import SectionHeading from "@/components/SectionHeading"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
@@ -84,7 +83,6 @@ function SupportModelsSection() {
   return (
     <LightSection>
       <div className="mx-auto max-w-[1300px]">
-        <NetworkEyebrow label="Support models" tone="onLight" />
         <SectionHeading
           animated={false}
           title="How advisors can engage"
@@ -132,7 +130,6 @@ function ScheduleSplit() {
           <div className="absolute inset-0 bg-gradient-to-tr from-rellia-teal/30 to-transparent" aria-hidden />
         </div>
         <div className="pt-2">
-          <NetworkEyebrow label="Your time" tone="onLight" />
           <h2 className="mt-5 font-host-grotesk text-3xl font-semibold tracking-tight text-black md:text-[48px] leading-[1.1]">
             Built for <span className="text-rellia-teal">busy</span> schedules
           </h2>
@@ -204,7 +201,6 @@ export default function Advisors() {
 
         <LightSection>
           <div className="mx-auto max-w-[1300px]">
-            <NetworkEyebrow label="Criteria" tone="onLight" />
             <SectionHeading
               animated={false}
               title="What we look for"
@@ -257,7 +253,6 @@ function BenefitsTealBand() {
       </div>
       <div className="relative z-10 mx-auto max-w-[1300px]">
         <ScrollReveal>
-          <NetworkEyebrow label="Benefits" tone="onDark" />
           <h2 className="mt-5 font-host-grotesk text-3xl font-semibold leading-tight tracking-tight text-white md:text-[40px]">
             Mentorship that <span className="text-rellia-mint">compounds</span>
           </h2>

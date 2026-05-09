@@ -2,7 +2,6 @@ import type { ReactNode } from "react"
 import { useState } from "react"
 import { PEXELS_OFFICE_COLLABORATION } from "@/config/pexelsFallbacks"
 import PageHeader from "@/components/PageHeader"
-import NetworkEyebrow from "@/components/network/NetworkEyebrow"
 import SectionHeading from "@/components/SectionHeading"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
@@ -152,7 +151,6 @@ function PortfolioSplit() {
     <CreamSection>
       <div className="grid gap-12 md:grid-cols-[1fr_1.05fr] md:items-center md:gap-16">
         <Reveal>
-          <NetworkEyebrow label="Portfolio support" tone="onLight" />
           <h2 className="mt-5 font-host-grotesk text-3xl font-semibold leading-[1.15] tracking-tight text-black md:text-[40px] md:leading-[1.12]">
             Offer Rellia to <span className="text-rellia-teal">your portfolio</span>
           </h2>
@@ -242,7 +240,6 @@ export default function Investors() {
 
         <LightSection className="bg-rellia-cream/20 pt-10 md:pt-14">
           <div className="mx-auto max-w-[1300px]">
-            <NetworkEyebrow label="Why Rellia-backed" tone="onLight" />
             <SectionHeading
               animated={false}
               title="Benefits of investing alongside Rellia"
@@ -269,7 +266,6 @@ export default function Investors() {
         <PipelinePhotoSection>
           <div className="mx-auto max-w-[1300px]">
             <ScrollReveal>
-              <NetworkEyebrow label="Pipeline" tone="onDark" />
               <h2 className="mt-5 font-host-grotesk text-3xl font-semibold leading-tight tracking-tight text-white md:text-[40px]">
                 How founders <span className="text-rellia-mint">cluster</span>
               </h2>
@@ -310,7 +306,6 @@ export default function Investors() {
           </div>
           <div className="relative mx-auto max-w-[1300px]">
             <ScrollReveal>
-              <NetworkEyebrow label="Pitch formats" tone="onDark" />
               <h2 className="mt-5 font-host-grotesk text-3xl font-semibold leading-tight tracking-tight md:text-[40px]">
                 Thesis sessions vs <span className="text-rellia-mint">group showcases</span>
               </h2>
@@ -341,7 +336,6 @@ export default function Investors() {
 
         <LightSection className="bg-white">
           <div className="mx-auto max-w-[1300px]">
-            <NetworkEyebrow label="Co-investors" tone="onLight" />
             <SectionHeading
               animated={false}
               title="VC funds and angel groups we work with"

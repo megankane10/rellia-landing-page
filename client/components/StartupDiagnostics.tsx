@@ -124,10 +124,10 @@ export default function StartupDiagnostics() {
 
         <div className="rounded-[24px] border border-black/10 bg-white p-6 md:p-8">
           <div className="flex items-center gap-3 mb-8">
-            <div className="w-12 h-12 rounded-xl bg-rellia-mint/25 flex items-center justify-center shrink-0">
-              <ClipboardCheck className="w-7 h-7 text-rellia-teal fill-rellia-teal" strokeWidth={1.5} />
+            <div className="w-12 h-12 rounded-xl bg-rellia-teal flex items-center justify-center shrink-0">
+              <ClipboardCheck className="w-7 h-7 text-rellia-mint fill-rellia-mint" strokeWidth={1.5} />
             </div>
-            <h4 className="font-host-grotesk font-semibold text-black text-xl md:text-2xl leading-tight tracking-tight">
+            <h4 className="font-host-grotesk font-semibold text-rellia-teal text-xl md:text-2xl leading-tight tracking-tight">
               Categories we assess
             </h4>
           </div>
