@@ -1485,23 +1485,29 @@ export default function DiagnosticSurvey() {
         </aside>
 
         {/* ── MAIN CONTENT AREA ── */}
-        <main className="flex-1 overflow-hidden">
-          {/* MOBILE SUB-HEADER (Sticky Progress with Drawer) */}
-          <div className="sticky top-[72px] md:top-[86px] z-20 flex items-center justify-between border-b border-rellia-teal/10 bg-rellia-cream/80 px-4 py-3 backdrop-blur-md lg:hidden">
-            <div className="flex flex-1 flex-col gap-1.5">
-              <div className="flex justify-between text-[9px] font-bold uppercase tracking-widest text-rellia-teal/60">
-                <span>
-                  {view === "survey"
-                    ? `Section ${currentSection + 1}`
-                    : view.toUpperCase()}
-                </span>
-                <span>{progress}%</span>
-              </div>
+        <main className="flex-1">
+          {/* MOBILE SUB-HEADER (Fixed Progress with Drawer) */}
+          <div className="fixed inset-x-0 top-[72px] z-[60] flex items-center justify-between border-b border-rellia-teal/10 bg-rellia-cream/90 px-4 py-2 backdrop-blur-md md:top-[86px] lg:hidden">
+            <div className="flex flex-1 flex-col justify-center gap-1">
               <div className="h-1 overflow-hidden rounded-full bg-rellia-teal/10">
                 <div
                   className="h-full bg-rellia-teal transition-all duration-500"
                   style={{ width: `${progress}%` }}
                 />
+              </div>
+              <div className="flex justify-between text-[9px] font-bold uppercase tracking-widest text-rellia-teal/60">
+                <span>
+                  {view === "survey"
+                    ? sec?.title ?? "Assessment"
+                    : view === "intro"
+                      ? "Introduction"
+                      : view === "submit"
+                        ? "Review"
+                        : view === "processing"
+                          ? "Generating report"
+                          : "Roadmap"}
+                </span>
+                <span>{progress}%</span>
               </div>
             </div>
 
@@ -1583,7 +1589,7 @@ export default function DiagnosticSurvey() {
             </Drawer>
           </div>
 
-          <div className="mx-auto flex h-full max-w-5xl flex-col px-4 py-8 md:px-8 md:py-12 lg:px-12 lg:py-16">
+          <div className="mx-auto flex h-full max-w-5xl flex-col px-4 pb-8 pt-24 md:px-8 md:pb-12 md:pt-28 lg:px-12 lg:py-16">
             {/* ── INTRO VIEW ── */}
             {view === "intro" && (
               <div className="animate-ds-up flex flex-col gap-10">
@@ -1600,7 +1606,7 @@ export default function DiagnosticSurvey() {
                   </p>
                 </div>
 
-                <div className="grid gap-6 lg:grid-cols-[1fr_400px]">
+                <div className="grid gap-6 lg:grid-cols-[1fr_400px] lg:items-stretch">
                   <div className="space-y-6">
                     <div className="rounded-3xl border border-rellia-teal/10 bg-white p-8 shadow-sm">
                       <h3 className="mb-8 text-xs font-bold uppercase tracking-widest text-rellia-teal">
@@ -1630,10 +1636,10 @@ export default function DiagnosticSurvey() {
                           },
                         ].map((item, i) => (
                           <div key={i} className="relative flex gap-4">
-                            <div className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-rellia-mint/40 bg-rellia-mint/25 text-rellia-teal">
+                            <div className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-rellia-teal/20 bg-rellia-teal text-rellia-mint">
                               <span
                                 className={cn(
-                                  "pointer-events-none absolute inset-0 -z-10 overflow-hidden rounded-full bg-rellia-mint/40",
+                                  "pointer-events-none absolute inset-0 -z-10 overflow-hidden rounded-full bg-rellia-mint/25",
                                   "ds-timeline-fill",
                                   i === 0 && "ds-delay-0",
                                   i === 1 && "ds-delay-1",
@@ -1654,7 +1660,7 @@ export default function DiagnosticSurvey() {
                             </div>
 
                             {i < 3 && (
-                              <div className="pointer-events-none absolute left-[22px] top-12 h-[36px] w-px bg-gradient-to-b from-rellia-mint/60 to-rellia-teal/5" />
+                              <div className="pointer-events-none absolute left-[22px] top-12 h-[36px] w-px bg-gradient-to-b from-rellia-teal/40 to-rellia-teal/10" />
                             )}
                           </div>
                         ))}
@@ -1837,7 +1843,7 @@ export default function DiagnosticSurvey() {
                       type="button"
                       variant="mintTealFill"
                       size="comfortable"
-                      className="w-full justify-center shadow-lg transition-transform active:scale-[0.98] py-4 mt-8"
+                      className="w-full justify-center shadow-lg transition-transform active:scale-[0.98] py-4 mt-6"
                       onClick={startSurvey}
                     >
                       Begin Assessment
@@ -1860,9 +1866,6 @@ export default function DiagnosticSurvey() {
                       {sec.icon}
                     </span>
                     <div>
-                      <div className="text-[10px] font-bold uppercase tracking-[0.2em] text-rellia-teal/40">
-                        Section {currentSection + 1}
-                      </div>
                       <h2 className="font-host-grotesk text-2xl font-bold text-rellia-teal md:text-3xl">
                         {sec.title}
                       </h2>

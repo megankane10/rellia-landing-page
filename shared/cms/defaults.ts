@@ -1329,7 +1329,18 @@ export const DEFAULT_PROGRAMS_LANDING: ProgramsLandingContent = {
     "Targeted programs and live events designed to help you accomplish your next milestone, not just learn about it.",
   heroPrimaryCtaLabel: "View Programs",
   heroSecondaryCtaLabel: "View Events",
-  programsSectionTitle: "Programs that fit your startup",
+  programsSectionTitle: [
+    {
+      _type: "block",
+      style: "normal",
+      _key: "programsSectionTitle",
+      markDefs: [],
+      children: [
+        { _type: "span", _key: "t1", text: "Programming that ", marks: [] },
+        { _type: "span", _key: "t2", text: "fit your startup", marks: ["mint"] },
+      ],
+    },
+  ],
   programsSectionSubtitle:
     "Every program is built around a single, focused outcome. Spend your time on exactly what you need right now, and leave the rest for later.",
   programs: [

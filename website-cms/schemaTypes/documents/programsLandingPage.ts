@@ -24,7 +24,14 @@ export const programsLandingPage = defineType({
     defineField({name: 'heroSubtitle', title: 'Hero subtitle', type: 'text', rows: 3, group: 'hero'}),
     defineField({name: 'heroPrimaryCtaLabel', title: 'Primary button label', type: 'string', group: 'hero'}),
     defineField({name: 'heroSecondaryCtaLabel', title: 'Secondary button label', type: 'string', group: 'hero'}),
-    defineField({name: 'programsSectionTitle', title: 'Programs section title', type: 'string', group: 'programs'}),
+    defineField({
+      name: 'programsSectionTitle',
+      title: 'Programs section title',
+      type: 'inlineHeroHeadline',
+      description: 'Use Mint/Teal decorators for highlighted phrases.',
+      group: 'programs',
+      validation: (Rule) => Rule.required().min(1),
+    }),
     defineField({
       name: 'programsSectionSubtitle',
       title: 'Programs section subtitle',

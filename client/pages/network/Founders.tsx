@@ -404,7 +404,7 @@ const EligibilityBentoCard = ({
   return (
     <article
       className={cn(
-        "group relative flex h-[280px] md:h-[360px] flex-col overflow-hidden rounded-[22px] border border-black/10 shadow-[0_24px_60px_-42px_rgba(13,53,64,0.5)]",
+        "group relative flex h-[220px] md:h-[300px] flex-col overflow-hidden rounded-[22px] border border-black/10 shadow-[0_24px_60px_-42px_rgba(13,53,64,0.5)]",
         className,
       )}
     >
@@ -418,7 +418,7 @@ const EligibilityBentoCard = ({
       <div aria-hidden className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/15 to-transparent" />
       <div className="relative z-10 flex h-full min-h-0 w-full flex-1 flex-col justify-end p-6 text-left md:p-8">
         <p
-          className="self-start font-host-grotesk font-medium text-2xl md:text-[1.75rem] leading-[1.2] tracking-tight text-white [text-shadow:0_2px_28px_rgba(0,0,0,0.5)] max-w-[240px]"
+          className="self-start font-host-grotesk font-medium text-xl md:text-2xl leading-[1.2] tracking-tight text-white [text-shadow:0_2px_28px_rgba(0,0,0,0.5)] max-w-[240px]"
         >
           {item.text}
         </p>
@@ -790,16 +790,16 @@ export default function Founders() {
                         {card.roleId === "founder" ? "Alumni" : tag.label}
                       </div>
 
-                      <div className="absolute inset-x-0 bottom-0 p-6 md:p-8">
-                        <h3 className="font-host-grotesk text-2xl font-semibold tracking-tight text-white md:text-3xl">
+                      <div className="absolute inset-x-0 bottom-0 p-5 sm:p-6 md:p-8">
+                        <h3 className="font-host-grotesk text-xl font-normal tracking-tight text-white sm:text-2xl md:text-3xl">
                           {card.title}
                         </h3>
 
                         <RelliaAction
                           asChild
                           variant="relliaCtaSecondary"
-                          size="comfortable"
-                          className="mt-6 w-fit"
+                          size="compact"
+                          className="mt-4 w-fit px-4 py-2.5 text-sm shadow-sm sm:mt-5 sm:px-5 sm:py-3 sm:text-[0.9375rem]"
                         >
                           <Link to={card.to} className="inline-flex cursor-pointer items-center justify-center">
                             Explore {card.roleId === "founder" ? "Alumni" : tag.label}

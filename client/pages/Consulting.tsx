@@ -6,9 +6,10 @@ import RelliaAction from "@/components/RelliaAction"
 import RelliaCta from "@/components/RelliaCta"
 import ScrollReveal from "@/components/ScrollReveal"
 import TestimonialsSection from "@/components/TestimonialsSection"
+import ProgramTrustedMembersSection from "@/components/program/ProgramTrustedMembersSection"
 import { useHomePage } from "@/hooks/useCmsDocuments"
 import { DEFAULT_HOME_PAGE } from "@shared/cms/defaults"
-import { CheckCircle2, Sparkles } from "lucide-react"
+import { CheckCircle2, Palette, ShieldCheck, Stethoscope, Megaphone } from "lucide-react"
 import { Link } from "react-router-dom"
 import { CreamSection, LightSection, Reveal, RoleHero } from "./network/_shared"
 
@@ -22,18 +23,22 @@ const CONSULTING_SERVICES = [
   {
     title: "Regulatory Consulting",
     imageSrc: "/images/program-regulatoryRoadmap.png",
+    icon: ShieldCheck,
   },
   {
     title: "Clinical Trials",
     imageSrc: "/images/program-first50users.png",
+    icon: Stethoscope,
   },
   {
     title: "Marketing Strategy",
     imageSrc: "/images/program-HealthcareCapital.png",
+    icon: Megaphone,
   },
   {
     title: "Branding",
     imageSrc: "/images/program-designYourBrand.png",
+    icon: Palette,
   },
 ] as const
 
@@ -87,11 +92,11 @@ function ServicesGridSection() {
           />
         </ScrollReveal>
 
-        <div className="mt-14 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-14 grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-4">
           {CONSULTING_SERVICES.map((s, idx) => (
             <Reveal key={s.title} delay={0.05 * idx}>
-              <article className="group relative overflow-hidden rounded-[26px] border border-black/10 bg-white shadow-sm transition-[transform,box-shadow] duration-300 hover:-translate-y-[1px] hover:shadow-md motion-reduce:transition-none">
-                <div className="relative aspect-[4/3] w-full overflow-hidden">
+              <article className="group relative overflow-hidden rounded-[24px] border border-black/10 bg-white shadow-sm transition-[transform,box-shadow] duration-300 hover:-translate-y-[1px] hover:shadow-md motion-reduce:transition-none">
+                <div className="relative aspect-[5/4] w-full overflow-hidden">
                   <img
                     src={s.imageSrc}
                     alt=""
@@ -100,12 +105,17 @@ function ServicesGridSection() {
                   />
                   <div
                     aria-hidden
-                    className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent"
+                    className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent"
                   />
-                </div>
-                <div className="flex flex-col items-start gap-3 p-6">
-                  <Sparkles className="h-7 w-7 text-rellia-mint" aria-hidden />
-                  <h3 className="font-host-grotesk text-xl font-semibold tracking-tight text-black">{s.title}</h3>
+
+                  <div className="absolute inset-x-0 bottom-0 p-5">
+                    <div className="inline-flex items-center gap-3 rounded-2xl bg-black/35 px-4 py-3 ring-1 ring-white/10 backdrop-blur-md">
+                      <s.icon className="h-6 w-6 text-rellia-mint" aria-hidden />
+                      <h3 className="font-host-grotesk text-xl font-semibold leading-tight tracking-tight text-white">
+                        {s.title}
+                      </h3>
+                    </div>
+                  </div>
                 </div>
               </article>
             </Reveal>
@@ -142,30 +152,67 @@ export default function Consulting() {
 
         <ServicesGridSection />
 
-        <TestimonialsSection titlePortable={home.testimonialsTitlePortable} testimonials={home.testimonials} />
+        <ProgramTrustedMembersSection />
 
         <LightSection className="bg-rellia-cream/20">
           <div className="mx-auto max-w-[1300px]">
-            <ScrollReveal>
-              <SectionHeading
-                animated={false}
-                title="Membership makes consulting even more valuable"
-                description="Rellia members get access to discounts and our full directory of vetted consultants—so you can move faster when a milestone becomes urgent."
-                className="mt-5"
-              />
-              <div className="mt-10 flex flex-col gap-4 sm:flex-row sm:items-center">
-                <RelliaAction asChild variant="tealFilledLift" size="comfortable">
-                  <Link to="/apply" className="inline-flex cursor-pointer items-center justify-center">
-                    Apply for membership
-                  </Link>
-                </RelliaAction>
-                <RelliaAction asChild variant="outlineOnWhite" size="comfortable">
-                  <Link to="/contact" className="inline-flex cursor-pointer items-center justify-center">
-                    Ask about consulting
-                  </Link>
-                </RelliaAction>
-              </div>
-            </ScrollReveal>
+      <div className="grid grid-cols-1 gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:items-start lg:gap-16">
+              <ScrollReveal>
+                <SectionHeading
+                  animated={false}
+                  title="Membership makes consulting even more valuable"
+                  description="Rellia members get access to discounts and our full directory of vetted consultants—so you can move faster when a milestone becomes urgent."
+                  className="mt-5"
+                />
+                <div className="mt-10 flex flex-col gap-4 sm:flex-row sm:items-center">
+                  <RelliaAction asChild variant="tealFilledLift" size="comfortable">
+                    <Link to="/apply" className="inline-flex cursor-pointer items-center justify-center">
+                      Apply for membership
+                    </Link>
+                  </RelliaAction>
+                  <RelliaAction asChild variant="outlineOnWhite" size="comfortable">
+                    <Link to="/contact" className="inline-flex cursor-pointer items-center justify-center">
+                      Ask about consulting
+                    </Link>
+                  </RelliaAction>
+                </div>
+              </ScrollReveal>
+
+              <Reveal delay={0.06}>
+                <div className="relative overflow-hidden rounded-3xl border border-rellia-teal/10 bg-white p-6 shadow-[0_28px_80px_-52px_rgba(13,53,64,0.35)] md:p-8">
+                  <div aria-hidden className="pointer-events-none absolute inset-0">
+                    <div className="absolute -left-24 -top-24 h-[340px] w-[340px] rounded-full bg-rellia-mint/22 blur-3xl" />
+                    <div className="absolute -right-28 bottom-0 h-[380px] w-[380px] rounded-full bg-rellia-teal/10 blur-3xl" />
+                    <div className="absolute inset-0 opacity-[0.18] [background-image:radial-gradient(circle_at_20%_10%,rgba(13,53,64,0.10),transparent_55%),radial-gradient(circle_at_80%_35%,rgba(167,219,214,0.18),transparent_52%),radial-gradient(circle_at_40%_95%,rgba(13,53,64,0.08),transparent_55%)]" />
+                  </div>
+
+                  <div className="relative z-10 grid gap-4">
+                    {[
+                      { label: "Member discount", value: "Up to 25% off" },
+                      { label: "Vetted consultants", value: "Regulatory · Clinical · GTM" },
+                      { label: "Fast matching", value: "Book within days" },
+                    ].map((row) => (
+                      <div
+                        key={row.label}
+                        className="flex items-center justify-between gap-4 rounded-2xl border border-black/10 bg-white/80 px-5 py-4 backdrop-blur-sm"
+                      >
+                        <p className="font-urbanist text-sm font-medium text-black/60">{row.label}</p>
+                        <p className="font-host-grotesk text-base font-semibold text-rellia-teal">{row.value}</p>
+                      </div>
+                    ))}
+
+                    <div className="mt-2 rounded-2xl bg-rellia-teal px-5 py-4 text-white shadow-sm">
+                      <p className="font-host-grotesk text-sm font-semibold uppercase tracking-[0.14em] text-rellia-mint">
+                        Example savings
+                      </p>
+                      <p className="mt-2 font-urbanist text-sm leading-relaxed text-white/85">
+                        A 6-hour sprint can save hundreds while keeping the same senior operator support.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </Reveal>
+            </div>
           </div>
         </LightSection>
 

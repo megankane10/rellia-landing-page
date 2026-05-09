@@ -209,9 +209,14 @@ function TestimonialCard({
 type TestimonialsSectionProps = {
   titlePortable: SanityPortableText
   testimonials: HomeTestimonial[]
+  showHeaderIcon?: boolean
 }
 
-export default function TestimonialsSection({ titlePortable, testimonials }: TestimonialsSectionProps) {
+export default function TestimonialsSection({
+  titlePortable,
+  testimonials,
+  showHeaderIcon = true,
+}: TestimonialsSectionProps) {
   const [expandedName, setExpandedName] = useState<string | null>(null)
   const [carouselApi, setCarouselApi] = useState<unknown>(null)
   const [carouselIndex, setCarouselIndex] = useState(0)
@@ -286,11 +291,13 @@ export default function TestimonialsSection({ titlePortable, testimonials }: Tes
             </div>
 
             <div className="relative z-[1] flex flex-col items-center">
-              <Medal
-                className="mb-5 h-9 w-9 shrink-0 text-rellia-teal md:mb-6 md:h-10 md:w-10"
-                strokeWidth={1.35}
-                aria-hidden
-              />
+              {showHeaderIcon ? (
+                <Medal
+                  className="mb-5 h-9 w-9 shrink-0 text-rellia-teal md:mb-6 md:h-10 md:w-10"
+                  strokeWidth={1.35}
+                  aria-hidden
+                />
+              ) : null}
               <h2 className="font-host-grotesk font-semibold text-black text-3xl md:text-[40px] leading-tight tracking-tight max-w-3xl text-balance">
                 <HeroHeadlinePortable value={titlePortable} />
               </h2>

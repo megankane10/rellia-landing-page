@@ -43,6 +43,7 @@ import {
 } from "@/components/ui/carousel";
 import type { QmsProgramContent } from "@shared/cms/types";
 import type { ProgramPageStaticBlocks } from "@shared/cms/programs/types";
+import ProgramTrustedMembersSection from "@/components/program/ProgramTrustedMembersSection"
 
 export type ProgramPageLayoutProps = {
   cms: QmsProgramContent;
@@ -172,11 +173,6 @@ const ProgramPageLayout = ({
   );
   const [showForm, setShowForm] = useState(false);
   const [cardImages, setCardImages] = useState<string[]>([]);
-  const [carouselApi, setCarouselApi] = useState<any>(null);
-  const [carouselIndex, setCarouselIndex] = useState(0);
-  const [carouselCount, setCarouselCount] = useState(0);
-  const [canScrollPrev, setCanScrollPrev] = useState(false);
-  const [canScrollNext, setCanScrollNext] = useState(false);
   const location = useLocation();
   const { data: programPageData } = useProgramPageBySlug(cmsSlug ?? '', cms)
   const { data: programDoc } = useProgramBySlug(cmsSlug ?? "")
@@ -184,8 +180,11 @@ const ProgramPageLayout = ({
   useApplyCmsSeo(q.seo)
   const filloutId = extractFilloutId(q.paymentUrl);
 
+  const resolvedProgramTitle = (programDoc?.title || q.heroTitle || "").trim()
+  const resolvedProgramDescription = (q.heroDescription || "").trim()
+
   const resolvedHeroImageSrc = (programDoc?.imageSrc || heroSquareImageSrc || heroImageSrc || "").trim()
-  const resolvedHeroImageAlt = (heroImageAlt || programDoc?.title || q.heroTitle || "Program image").trim()
+  const resolvedHeroImageAlt = (heroImageAlt || resolvedProgramTitle || "Program image").trim()
 
   const canonicalUrl = `${getSiteUrl()}${location.pathname}`;
 
@@ -196,19 +195,6 @@ const ProgramPageLayout = ({
   useEffect(() => {
     setCardImages([LOCAL_METRICS_BG_JPEG, PEXELS_OFFICE_COLLABORATION, PEXELS_HEALTH_MEETING])
   }, [])
-
-  useEffect(() => {
-    if (!carouselApi) return;
-    const onSelect = () => {
-      setCarouselIndex(carouselApi.selectedScrollSnap());
-      setCarouselCount(carouselApi.scrollSnapList().length);
-      setCanScrollPrev(carouselApi.canScrollPrev());
-      setCanScrollNext(carouselApi.canScrollNext());
-    };
-    onSelect();
-    carouselApi.on("select", onSelect);
-    carouselApi.on("reInit", onSelect);
-  }, [carouselApi]);
 
   const scrollTo = (id: string) =>
     document
@@ -224,15 +210,15 @@ const ProgramPageLayout = ({
   return (
     <div className="min-h-screen bg-white font-host-grotesk overflow-x-hidden">
       <Helmet>
-        <title>{q.heroTitle} — Rellia Health</title>
-        <meta name="description" content={q.heroDescription} />
+        <title>{resolvedProgramTitle} — Rellia Health</title>
+        <meta name="description" content={resolvedProgramDescription} />
         <link rel="canonical" href={canonicalUrl} />
         <meta property="og:type" content="website" />
         <meta property="og:locale" content="en_US" />
         <meta property="og:site_name" content="Rellia Health" />
         <meta property="og:url" content={canonicalUrl} />
-        <meta property="og:title" content={q.heroTitle} />
-        <meta property="og:description" content={q.heroDescription} />
+        <meta property="og:title" content={resolvedProgramTitle} />
+        <meta property="og:description" content={resolvedProgramDescription} />
         <meta
           property="og:image"
           content={
@@ -241,8 +227,8 @@ const ProgramPageLayout = ({
               : `${getSiteUrl()}${resolvedHeroImageSrc}`
           }
         />
-        <meta name="twitter:title" content={q.heroTitle} />
-        <meta name="twitter:description" content={q.heroDescription} />
+        <meta name="twitter:title" content={resolvedProgramTitle} />
+        <meta name="twitter:description" content={resolvedProgramDescription} />
         <meta
           name="twitter:image"
           content={
@@ -271,10 +257,10 @@ const ProgramPageLayout = ({
                     </span>
                   )}
                   <h1 className="max-w-3xl text-3xl md:text-4xl lg:text-5xl font-bold leading-[1.1] tracking-tight text-black">
-                    {q.heroTitle}
+                    {resolvedProgramTitle}
                   </h1>
                   <p className="mt-5 max-w-xl font-urbanist text-base leading-relaxed text-black/60 md:text-lg">
-                    {q.heroDescription}
+                    {resolvedProgramDescription}
                   </p>
 
                   <div className="mt-10 flex items-end gap-3 text-black">
@@ -354,143 +340,7 @@ const ProgramPageLayout = ({
           </div>
         </section>
 
-        {/* ─── Trusted Members Section ─── */}
-        <section className="relative w-full bg-white py-12 md:py-20 px-6 md:px-10 overflow-hidden border-b border-black/5">
-          <div className="relative z-10 max-w-[1300px] mx-auto">
-            <ScrollReveal>
-              <h2 className="text-center font-host-grotesk text-3xl font-semibold leading-tight tracking-tight text-black md:text-[40px] mb-12">
-                Already trusted by Rellia members
-              </h2>
-            </ScrollReveal>
-
-            <ScrollReveal delay={0.2}>
-              <Carousel
-                opts={{
-                  align: "start",
-                  loop: true,
-                }}
-                setApi={setCarouselApi}
-                className="w-full"
-              >
-                <CarouselContent className="-ml-4">
-                  {[
-                    {
-                      name: "Melissa West",
-                      role: "Founder",
-                      company: "Akesyn",
-                      image: "/images/testimonials-melissaW.jpg",
-                      quote:
-                        "Rellia Health has been instrumental in our regulatory strategy. The level of operator feedback we received was exactly what we needed to de-risk our roadmap before our next round.",
-                    },
-                    {
-                      name: "Mazhar Bashir",
-                      role: "CEO",
-                      company: "Miraei",
-                      image:
-                        "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=400",
-                      quote:
-                        "The connections I made through the Rellia network opened doors that would have taken months to navigate on my own. It's the only community that understands the reality of healthcare complexity.",
-                    },
-                    {
-                      name: "Sahil Saini",
-                      role: "Founder",
-                      company: "Neuromod",
-                      image:
-                        "https://images.pexels.com/photos/614810/pexels-photo-614810.jpeg?auto=compress&cs=tinysrgb&w=400",
-                      quote:
-                        "As a technical founder, Rellia helped me translate our product features into a clinical narrative that resonated with health system buyers and investors alike.",
-                    },
-                  ].map((t) => (
-                    <CarouselItem key={t.name} className="pl-4 basis-full">
-                      <div className="relative flex min-h-[340px] flex-col justify-center overflow-hidden md:min-h-[400px]">
-                        <div className="mx-auto flex w-full max-w-[980px] flex-col items-start">
-                          {/* Quote Block */}
-                          <div className="relative z-10 flex w-full flex-col items-start justify-center pt-4 md:pt-8">
-                            <div
-                              aria-hidden
-                              className="pointer-events-none absolute -left-10 -top-6 h-40 w-40 rounded-full bg-rellia-mint/35 blur-3xl md:-left-14 md:-top-10 md:h-52 md:w-52"
-                            />
-                            <Quote
-                              className="mb-6 h-12 w-12 text-rellia-teal fill-current md:h-14 md:w-14"
-                              fill="currentColor"
-                              stroke="none"
-                              aria-hidden
-                            />
-                            <p className="w-full font-host-grotesk text-xl font-medium leading-[1.25] tracking-tight text-rellia-teal md:text-2xl lg:text-3xl">
-                              &ldquo;{t.quote}&rdquo;
-                            </p>
-                          </div>
-
-                          {/* Identity Block */}
-                          <div className="relative z-10 mt-8 flex items-center gap-4 md:gap-5">
-                            <div className="h-14 w-14 shrink-0 overflow-hidden rounded-xl border border-black/5 bg-rellia-teal/5 md:h-16 md:w-16">
-                              <img
-                                src={t.image}
-                                alt={t.name}
-                                className="h-full w-full object-cover"
-                                loading="lazy"
-                                decoding="async"
-                              />
-                            </div>
-                            <div className="flex min-w-0 flex-col items-start">
-                              <h4 className="font-host-grotesk text-lg font-medium leading-tight text-black md:text-xl">
-                                {t.name}
-                              </h4>
-                              <p className="mt-0.5 font-urbanist text-sm font-medium text-black/60 md:text-base">
-                                {t.role} &bull; {t.company}
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </CarouselItem>
-                  ))}
-                </CarouselContent>
-
-                {/* Homepage-style control strip: loading bar + counter + arrows */}
-                <div className="mt-0 flex w-full flex-col gap-4">
-                  <div
-                    aria-hidden
-                    className="relative h-1 w-full overflow-hidden rounded-full bg-black/5"
-                  >
-                    <div
-                      className="h-full bg-rellia-teal transition-[width] duration-500 ease-out"
-                      style={{
-                        width:
-                          carouselCount <= 1
-                            ? "100%"
-                            : `${(carouselIndex / (carouselCount - 1)) * 100}%`,
-                      }}
-                    />
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <div className="font-host-grotesk text-sm font-bold text-rellia-teal/60">
-                      {carouselIndex + 1} / {carouselCount}
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <button
-                        type="button"
-                        onClick={() => carouselApi?.scrollPrev()}
-                        disabled={!canScrollPrev}
-                        className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-black/10 bg-white text-rellia-teal shadow-sm transition hover:bg-rellia-teal hover:text-white hover:border-rellia-teal disabled:opacity-40"
-                      >
-                        <ChevronLeft className="h-5 w-5" aria-hidden />
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => carouselApi?.scrollNext()}
-                        disabled={!canScrollNext}
-                        className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-black/10 bg-white text-rellia-teal shadow-sm transition hover:bg-rellia-teal hover:text-white hover:border-rellia-teal disabled:opacity-40"
-                      >
-                        <ChevronRight className="h-5 w-5" aria-hidden />
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </Carousel>
-            </ScrollReveal>
-          </div>
-        </section>
+        <ProgramTrustedMembersSection />
 
         {/* ─── How It Works ─── */}
         <section className="py-16 md:py-24 bg-white">

@@ -247,7 +247,7 @@ export default function PathsSection() {
                     </div>
 
                     <div className="absolute inset-x-0 bottom-0 p-5 md:p-6">
-                      <h3 className="font-host-grotesk text-xl font-medium tracking-tight text-white md:text-2xl">
+                      <h3 className="font-host-grotesk text-xl font-normal tracking-tight text-white md:text-2xl">
                         {card.title}
                       </h3>
 

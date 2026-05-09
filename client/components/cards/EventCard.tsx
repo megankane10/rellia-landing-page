@@ -47,7 +47,7 @@ export const EventCard = ({
 
   /** Matches Events page filters: Upcoming | Past */
   const tagLabel = variant === "past" ? "Past" : "Upcoming"
-  const tagIsMint = variant === "upcoming"
+  const isPast = variant === "past"
 
   const speakerName = speakerParts.speaker || personRaw || ""
   const speakerCompany = speakerParts.company
@@ -86,14 +86,14 @@ export const EventCard = ({
             <div className="flex flex-wrap items-center gap-2">
               <span
                 className={cn(
-                  "inline-flex w-fit items-center gap-1.5 rounded-full px-2 py-0.5 font-host-grotesk text-[10px] font-bold uppercase tracking-[0.14em] ring-1 ring-black/5",
-                  tagIsMint ? "bg-rellia-mint/80 text-rellia-teal" : "bg-black/[0.04] text-black/65",
+                  "inline-flex w-fit max-w-full shrink-0 items-center gap-1 rounded-full px-2.5 py-1 font-host-grotesk text-[9px] font-semibold uppercase tracking-[0.12em] ring-1 ring-black/5 sm:gap-1.5 sm:text-[10px] sm:tracking-[0.14em]",
+                  isPast ? "bg-black/[0.06] text-black/65" : "bg-rellia-mint text-rellia-teal",
                 )}
               >
-                {variant === "past" ? (
-                  <History className="h-3 w-3 opacity-80" aria-hidden strokeWidth={2.5} />
+                {isPast ? (
+                  <History className="h-3 w-3 opacity-80 text-black/50" aria-hidden strokeWidth={2.25} />
                 ) : (
-                  <Calendar className="h-3 w-3 opacity-80" aria-hidden strokeWidth={2.5} />
+                  <Calendar className="h-3 w-3 opacity-80 text-rellia-teal" aria-hidden strokeWidth={2.25} />
                 )}
                 {tagLabel}
               </span>
@@ -120,9 +120,11 @@ export const EventCard = ({
                 aria-hidden
               />
               <div className="min-w-0 flex-1">
-                <p className="font-host-grotesk text-sm font-bold leading-tight text-black truncate">{speakerName}</p>
+                <p className="font-host-grotesk text-sm font-medium leading-tight text-black truncate">{speakerName}</p>
                 {speakerCompany ? (
-                  <p className="mt-0.5 font-urbanist text-xs font-medium leading-tight text-black/55 truncate">{speakerCompany}</p>
+                  <p className="mt-0.5 font-urbanist text-xs font-normal leading-tight text-black/45 truncate">
+                    {speakerCompany}
+                  </p>
                 ) : null}
               </div>
             </div>

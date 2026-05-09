@@ -35,6 +35,7 @@ export default function Index() {
         <TestimonialsSection
           titlePortable={home.testimonialsTitlePortable}
           testimonials={home.testimonials}
+          showHeaderIcon={false}
         />
         <FeaturedStories sectionClassName="pb-16 pt-10 md:pb-24 md:pt-12" />
         <RelliaCta

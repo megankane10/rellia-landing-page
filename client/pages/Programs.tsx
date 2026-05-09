@@ -26,6 +26,12 @@ export default function Programs() {
   const [programFilter, setProgramFilter] = useState<ProgramFilter>("all")
   const [page, setPage] = useState(1)
 
+  const rawProgramsSectionTitle: unknown = pl.programsSectionTitle
+  const programsHeaderTitle =
+    typeof rawProgramsSectionTitle === "string" && rawProgramsSectionTitle.trim().toLowerCase() === "browse programs"
+      ? DEFAULT_PROGRAMS_LANDING.programsSectionTitle
+      : pl.programsSectionTitle
+
   const programs = Array.isArray(programsData) && programsData.length > 0 ? programsData : (pl.programs ?? [])
 
   const { availablePrograms, waitlistPrograms } = useMemo(() => {
@@ -71,7 +77,7 @@ export default function Programs() {
       <main id="main-content">
         <PageHeader
           variant="dark"
-          title={pl.programsSectionTitle}
+          title={<HeroHeadlinePortable value={programsHeaderTitle} />}
           subtitle={pl.programsSectionSubtitle}
         />
 

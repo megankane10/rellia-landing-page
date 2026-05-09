@@ -388,7 +388,7 @@ export type ProgramsLandingContent = {
   heroSubtitle: string
   heroPrimaryCtaLabel: string
   heroSecondaryCtaLabel: string
-  programsSectionTitle: string
+  programsSectionTitle: SanityPortableText
   programsSectionSubtitle: string
   programs: ProgramsProgramCard[]
   upcomingEvents: ProgramsEventCard[]
