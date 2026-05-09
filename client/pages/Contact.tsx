@@ -181,6 +181,7 @@ type ContactFormData = {
 function ContactForm() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSuccess, setIsSuccess] = useState(false)
+  const [submitError, setSubmitError] = useState<string | null>(null)
 
   const {
     register,
@@ -191,12 +192,40 @@ function ContactForm() {
 
   const onSubmit = async (data: ContactFormData) => {
     setIsSubmitting(true)
-    console.log("Form Data:", data)
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1500))
-    setIsSubmitting(false)
-    setIsSuccess(true)
-    reset()
+    setSubmitError(null)
+    try {
+      const res = await fetch("/api/contact-hubspot", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          firstName: data.firstName.trim(),
+          lastName: data.lastName.trim(),
+          email: data.email.trim(),
+          company: data.company.trim(),
+          jobTitle: data.jobTitle.trim(),
+          message: data.message.trim(),
+        }),
+      })
+      const json = (await res.json().catch(() => ({}))) as {
+        error?: string
+        hint?: string
+      }
+      if (!res.ok) {
+        setSubmitError(
+          json.error ||
+            "Something went wrong. Please try again or email us directly.",
+        )
+        return
+      }
+      setIsSuccess(true)
+      reset()
+    } catch {
+      setSubmitError(
+        "We could not reach the server. Check your connection and try again.",
+      )
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   if (isSuccess) {
@@ -331,6 +360,14 @@ function ContactForm() {
 
       {/* Action Button */}
       <div className="pt-4">
+        {submitError ? (
+          <p
+            role="alert"
+            className="mb-4 rounded-[14px] border border-red-200 bg-red-50/80 px-4 py-3 font-urbanist text-sm font-medium text-red-800"
+          >
+            {submitError}
+          </p>
+        ) : null}
         <RelliaAction
           type="submit"
           variant="mintTealFill"

@@ -177,12 +177,89 @@ export function createServer() {
   app.use(express.json({ limit: "32kb" }));
   app.use(express.urlencoded({ extended: true, limit: "32kb" }));
 
-  app.get("/health", (_req, res) => {
-    res.status(200).json({ ok: true });
-  });
+  type RateState = { windowStartMs: number; count: number };
+  const RATE_WINDOW_MS = 60_000;
+  const RATE_MAP_MAX = 5000;
+
+  const applyRateLimit = (
+    map: Map<string, RateState>,
+    ip: string,
+    max: number,
+  ): boolean => {
+    const now = Date.now();
+    if (map.size > RATE_MAP_MAX) map.clear();
+    const current = map.get(ip);
+    if (!current || now - current.windowStartMs > RATE_WINDOW_MS) {
+      map.set(ip, { windowStartMs: now, count: 1 });
+      return true;
+    }
+    current.count += 1;
+    return current.count <= max;
+  };
+
+  const healthRate = new Map<string, RateState>();
+  const studioRedirectRate = new Map<string, RateState>();
+  const draftModeRate = new Map<string, RateState>();
+  const contactHubspotRate = new Map<string, RateState>();
+  const diagnosticRate = new Map<string, RateState>();
+  const sanityPreviewRate = new Map<string, RateState>();
+  const sanityPublishedRate = new Map<string, RateState>();
+
+  /** Uptime monitors may poll frequently */
+  const HEALTH_MAX_PER_MIN = 240;
+  const STUDIO_REDIRECT_MAX_PER_MIN = 60;
+  const DRAFT_MODE_MAX_PER_MIN = 30;
+  const CONTACT_HUBSPOT_MAX_PER_MIN = 12;
+  const DIAGNOSTIC_MAX_PER_MIN = 10;
+  const SANITY_PREVIEW_MAX_PER_MIN = 120;
+  const SANITY_PUBLISHED_MAX_PER_MIN = 180;
+
+  const rateLimitJson = (
+    map: Map<string, RateState>,
+    maxPerWindow: number,
+  ): RequestHandler => {
+    return (req, res, next) => {
+      const ip = getClientIp(req);
+      if (!applyRateLimit(map, ip, maxPerWindow)) {
+        res
+          .status(429)
+          .json({ error: "Too many requests. Please try again shortly." });
+        return;
+      }
+      next();
+    };
+  };
+
+  const rateLimitText = (
+    map: Map<string, RateState>,
+    maxPerWindow: number,
+  ): RequestHandler => {
+    return (req, res, next) => {
+      const ip = getClientIp(req);
+      if (!applyRateLimit(map, ip, maxPerWindow)) {
+        res
+          .status(429)
+          .type("text/plain")
+          .send("Too many requests. Please try again shortly.");
+        return;
+      }
+      next();
+    };
+  };
+
+  app.get(
+    "/health",
+    rateLimitJson(healthRate, HEALTH_MAX_PER_MIN),
+    (_req, res) => {
+      res.status(200).json({ ok: true });
+    },
+  );
 
   // Public convenience redirect to Sanity Studio. Studio itself authenticates.
-  app.get("/api/studio", (_req, res) => {
+  app.get(
+    "/api/studio",
+    rateLimitText(studioRedirectRate, STUDIO_REDIRECT_MAX_PER_MIN),
+    (_req, res) => {
     const studioUrl = process.env.SANITY_STUDIO_URL?.trim();
     if (!studioUrl) {
       res.status(501).send("Missing SANITY_STUDIO_URL");
@@ -199,9 +276,13 @@ export function createServer() {
     } catch {
       res.status(400).send("Invalid SANITY_STUDIO_URL");
     }
-  });
+  },
+  );
 
-  app.get("/api/draft-mode/enable", async (req, res) => {
+  app.get(
+    "/api/draft-mode/enable",
+    rateLimitText(draftModeRate, DRAFT_MODE_MAX_PER_MIN),
+    async (req, res) => {
     if (!isAllowedBrowserOrigin(req, new Set([studioOrigin].filter(Boolean) as string[]))) {
       res.status(403).send("Forbidden")
       return
@@ -267,19 +348,23 @@ export function createServer() {
     }
   });
 
-  app.get("/api/draft-mode/disable", (_req, res) => {
-    const reqAny = _req as unknown as express.Request
-    if (!isAllowedBrowserOrigin(reqAny, new Set([studioOrigin].filter(Boolean) as string[]))) {
-      res.status(403).send("Forbidden")
-      return
-    }
+  app.get(
+    "/api/draft-mode/disable",
+    rateLimitText(draftModeRate, DRAFT_MODE_MAX_PER_MIN),
+    (_req, res) => {
+      const reqAny = _req as unknown as express.Request
+      if (!isAllowedBrowserOrigin(reqAny, new Set([studioOrigin].filter(Boolean) as string[]))) {
+        res.status(403).send("Forbidden")
+        return
+      }
 
-    res.setHeader(
-      "Set-Cookie",
-      `${perspectiveCookieName}=; Path=/; HttpOnly; Secure; SameSite=None; Max-Age=0`,
-    );
-    res.redirect(307, "/");
-  });
+      res.setHeader(
+        "Set-Cookie",
+        `${perspectiveCookieName}=; Path=/; HttpOnly; Secure; SameSite=None; Max-Age=0`,
+      );
+      res.redirect(307, "/");
+    },
+  );
 
   const diagnosticReportPayloadSchema = z.object({
     name: z.string().trim().min(1).max(200),
@@ -327,34 +412,6 @@ export function createServer() {
         apiVersion: "2024-01-01",
       })
     : null;
-
-  type RateState = { windowStartMs: number; count: number };
-  const perIpRate = new Map<string, RateState>();
-  const RATE_WINDOW_MS = 60_000;
-  const RATE_MAX = 10;
-  const RATE_MAP_MAX = 5000;
-
-  const applyRateLimit = (
-    map: Map<string, RateState>,
-    ip: string,
-    max: number,
-  ): boolean => {
-    const now = Date.now();
-    if (map.size > RATE_MAP_MAX) map.clear();
-    const current = map.get(ip);
-    if (!current || now - current.windowStartMs > RATE_WINDOW_MS) {
-      map.set(ip, { windowStartMs: now, count: 1 });
-      return true;
-    }
-    current.count += 1;
-    return current.count <= max;
-  };
-
-  const sanityPreviewRate = new Map<string, RateState>();
-  const sanityPublishedRate = new Map<string, RateState>();
-  const SANITY_PREVIEW_MAX_PER_MIN = 120;
-  /** SPA can issue many parallel queries on one navigation; keep above typical burst. */
-  const SANITY_PUBLISHED_MAX_PER_MIN = 180;
 
   const previewAndSiteOrigins = new Set(
     [studioOrigin, ...siteOrigins].filter(Boolean) as string[],
@@ -452,9 +509,13 @@ export function createServer() {
         return;
       }
 
+      // Public (incl. Free-plan) datasets: anyone can still call api.sanity.io with arbitrary GROQ — this app cannot
+      // change that. Private datasets (paid plans) require a read token; we attach SANITY_API_READ_TOKEN when set
+      // so published fetches keep working after you switch to Private.
       const publicClient = createClient({
         projectId,
         dataset,
+        ...(token ? { token } : {}),
         useCdn: false,
         apiVersion: "2024-01-01",
       });
@@ -468,6 +529,115 @@ export function createServer() {
     }
   });
 
+  const contactHubspotPayloadSchema = z.object({
+    firstName: z.string().trim().min(1).max(120),
+    lastName: z.string().trim().min(1).max(120),
+    email: z.string().trim().email().max(254),
+    company: z.string().trim().max(200).optional(),
+    jobTitle: z.string().trim().max(200).optional(),
+    message: z.string().trim().min(1).max(8000),
+  });
+
+  app.post(
+    "/api/contact-hubspot",
+    rateLimitJson(contactHubspotRate, CONTACT_HUBSPOT_MAX_PER_MIN),
+    async (req, res) => {
+      if (!isAllowedBrowserOrigin(req, siteOrigins)) {
+        res.status(403).json({ error: "Forbidden" });
+        return;
+      }
+
+      if (!isDev) {
+        const hasProvenance =
+          Boolean((req.get("origin") || "").trim()) ||
+          Boolean((req.get("referer") || "").trim());
+        if (!hasProvenance) {
+          res.status(403).json({ error: "Forbidden" });
+          return;
+        }
+      }
+
+      const parsed = contactHubspotPayloadSchema.safeParse(req.body);
+      if (!parsed.success) {
+        res.status(400).json({
+          error: "Invalid request",
+          details: parsed.error.flatten(),
+        });
+        return;
+      }
+
+      const portalId =
+        process.env.HUBSPOT_PORTAL_ID?.trim() || "342926478";
+      const formGuid = process.env.HUBSPOT_CONTACT_FORM_GUID?.trim();
+      if (!formGuid) {
+        res.status(501).json({
+          error: "Contact form is not configured on the server.",
+          hint: "Set HUBSPOT_CONTACT_FORM_GUID in the deployment environment (HubSpot form GUID).",
+        });
+        return;
+      }
+
+      const formsApiBase = (
+        process.env.HUBSPOT_FORMS_API_BASE?.trim() ||
+        "https://api.hsforms.com"
+      ).replace(/\/$/, "");
+
+      const { firstName, lastName, email, message } = parsed.data;
+      const company = parsed.data.company?.trim() ?? "";
+      const jobTitle = parsed.data.jobTitle?.trim() ?? "";
+
+      const pageUri =
+        req.get("referer")?.trim() || `${siteOrigin.replace(/\/$/, "")}/contact`;
+
+      const hubspotUrl = `${formsApiBase}/submissions/v3/integration/submit/${portalId}/${formGuid}`;
+
+      const fields: Array<{ name: string; value: string }> = [
+        { name: "firstname", value: firstName },
+        { name: "lastname", value: lastName },
+        { name: "email", value: email },
+      ];
+      if (company) fields.push({ name: "company", value: company });
+      if (jobTitle) fields.push({ name: "jobtitle", value: jobTitle });
+      fields.push({ name: "message", value: message });
+
+      try {
+        const hsRes = await fetch(hubspotUrl, {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({
+            fields,
+            context: {
+              pageUri,
+              pageName: "Contact",
+            },
+          }),
+        });
+
+        if (!hsRes.ok) {
+          const errText = await hsRes.text();
+          console.error(
+            "HubSpot contact submit failed",
+            hsRes.status,
+            errText.slice(0, 800),
+          );
+          res.status(502).json({
+            error:
+              "Could not send your message right now. Please try again or email us directly.",
+          });
+          return;
+        }
+
+        res.status(200).json({ ok: true });
+      } catch (err) {
+        console.error("HubSpot contact submit error", err);
+        res.status(502).json({
+          error:
+            "Could not send your message right now. Please try again or email us directly.",
+        });
+      }
+    },
+  );
+
   app.post("/api/diagnostic-report", async (req, res) => {
     if (!isAllowedBrowserOrigin(req, siteOrigins)) {
       res.status(403).json({ error: "Forbidden" })
@@ -480,7 +650,7 @@ export function createServer() {
     }
 
     const ip = getClientIp(req);
-    if (!applyRateLimit(perIpRate, ip, RATE_MAX)) {
+    if (!applyRateLimit(diagnosticRate, ip, DIAGNOSTIC_MAX_PER_MIN)) {
       res
         .status(429)
         .json({ error: "Too many requests. Please try again shortly." });
