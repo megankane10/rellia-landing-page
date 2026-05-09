@@ -3,11 +3,13 @@ import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
 import NetworkEyebrow from "@/components/network/NetworkEyebrow"
 import SectionHeading from "@/components/SectionHeading"
-import MembershipPathTimeline from "@/components/MembershipPathTimeline"
 import RelliaAction from "@/components/RelliaAction"
 import RelliaCta from "@/components/RelliaCta"
 import ScrollReveal from "@/components/ScrollReveal"
-import { CheckCircle2, ClipboardList, MessagesSquare, UsersRound } from "lucide-react"
+import TestimonialsSection from "@/components/TestimonialsSection"
+import { useHomePage } from "@/hooks/useCmsDocuments"
+import { DEFAULT_HOME_PAGE } from "@shared/cms/defaults"
+import { CheckCircle2, Sparkles } from "lucide-react"
 import { Link } from "react-router-dom"
 import { CreamSection, LightSection, Reveal, RoleHero } from "./network/_shared"
 
@@ -17,36 +19,22 @@ const WHEN_TO_USE = [
   "You are navigating a pivot that touches regulatory labeling, pilot contracts, or interoperability commitments",
 ] as const
 
-const WHAT_TO_EXPECT = [
+const CONSULTING_SERVICES = [
   {
-    icon: ClipboardList,
-    text: "Scoped engagements with clear deliverables and timelines—distinct from always-on community membership",
+    title: "Regulatory Consulting",
+    imageSrc: "/images/program-regulatoryRoadmap.png",
   },
   {
-    icon: UsersRound,
-    text: "Aligned with Rellia’s advisor bench; we match expertise to the milestone you are staring down",
+    title: "Clinical Trials",
+    imageSrc: "/images/program-first50users.png",
   },
   {
-    icon: MessagesSquare,
-    text: "Transparent scoping after we understand constraints—start with a conversation, not a vague retainer",
-  },
-] as const
-
-const CONSULTING_PATH_STEPS = [
-  {
-    title: "Discovery",
-    description:
-      "We align on the milestone, constraints, and artifacts you need—clinical, regulatory, commercial, or narrative.",
+    title: "Marketing Strategy",
+    imageSrc: "/images/program-HealthcareCapital.png",
   },
   {
-    title: "Scoped proposal",
-    description:
-      "You get deliverables, timeline, and the advisor match before work begins—no open-ended retainers by default.",
-  },
-  {
-    title: "Working sessions",
-    description:
-      "Deep working sessions with specialists who have shipped in healthcare; optional bridge back to membership rhythm.",
+    title: "Branding",
+    imageSrc: "/images/program-designYourBrand.png",
   },
 ] as const
 
@@ -88,7 +76,53 @@ function FitSectionSplit() {
   )
 }
 
+function ServicesGridSection() {
+  return (
+    <LightSection className="bg-white border-t border-black/10">
+      <div className="mx-auto max-w-[1300px]">
+        <ScrollReveal>
+          <NetworkEyebrow label="Focus areas" tone="onLight" />
+          <SectionHeading
+            animated={false}
+            title="Common consulting sprints"
+            description="Four areas founders most often need concentrated working time—scoped to outputs you can reuse in diligence and execution."
+            className="mt-5"
+          />
+        </ScrollReveal>
+
+        <div className="mt-14 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
+          {CONSULTING_SERVICES.map((s, idx) => (
+            <Reveal key={s.title} delay={0.05 * idx}>
+              <article className="group relative overflow-hidden rounded-[26px] border border-black/10 bg-white shadow-sm transition-[transform,box-shadow] duration-300 hover:-translate-y-[1px] hover:shadow-md motion-reduce:transition-none">
+                <div className="relative aspect-[4/3] w-full overflow-hidden">
+                  <img
+                    src={s.imageSrc}
+                    alt=""
+                    className="h-full w-full object-cover transition duration-500 ease-out group-hover:scale-[1.03] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
+                    loading="lazy"
+                  />
+                  <div
+                    aria-hidden
+                    className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent"
+                  />
+                </div>
+                <div className="flex flex-col items-start gap-3 p-6">
+                  <Sparkles className="h-7 w-7 text-rellia-mint" aria-hidden />
+                  <h3 className="font-host-grotesk text-xl font-semibold tracking-tight text-black">{s.title}</h3>
+                </div>
+              </article>
+            </Reveal>
+          ))}
+        </div>
+      </div>
+    </LightSection>
+  )
+}
+
 export default function Consulting() {
+  const { data: homePage } = useHomePage()
+  const home = homePage ?? DEFAULT_HOME_PAGE
+
   return (
     <div className="min-h-screen overflow-x-hidden bg-white font-host-grotesk">
       <Navbar />
@@ -109,46 +143,35 @@ export default function Consulting() {
 
         <FitSectionSplit />
 
-        <MembershipPathTimeline
-          headingId="consulting-engagement-path-heading"
-          headingTitle={
-            <>
-              How a <span className="text-rellia-teal">consulting engagement</span> runs
-            </>
-          }
-          subheading="Same timeline interaction as membership onboarding—scaled to three concrete phases before work begins."
-          steps={CONSULTING_PATH_STEPS}
-          timelineAriaLabel="Consulting engagement steps"
-          showRoleLinks={false}
-          horizontalFromMd
-          className="border-t-0 bg-white py-16 md:py-24 lg:py-28"
-        />
+        <ServicesGridSection />
 
-        <CreamSection>
-          <ScrollReveal>
-            <NetworkEyebrow label="Expectations" tone="onLight" />
-            <SectionHeading
-              animated={false}
-              title="What to expect"
-              description="Consulting stays outcome-oriented—documentation you can reuse in diligence and boards."
-              className="mt-5"
-            />
-          </ScrollReveal>
-          <div className="mt-14 grid grid-cols-1 gap-12 md:grid-cols-3 md:gap-x-10 md:gap-y-12 lg:gap-x-12">
-            {WHAT_TO_EXPECT.map((item, idx) => {
-              const Icon = item.icon
-              return (
-                <Reveal key={item.text.slice(0, 32)} delay={0.05 * idx}>
-                  <div className="flex max-w-xl flex-col gap-3">
-                    <Icon className="h-8 w-8 shrink-0 text-rellia-teal" aria-hidden />
-                    <p className="font-urbanist text-base leading-relaxed text-black/75">{item.text}</p>
-                  </div>
-                </Reveal>
-              )
-            })}
+        <TestimonialsSection titlePortable={home.testimonialsTitlePortable} testimonials={home.testimonials} />
+
+        <LightSection className="bg-rellia-cream/20">
+          <div className="mx-auto max-w-[1300px]">
+            <ScrollReveal>
+              <NetworkEyebrow label="Members" tone="onLight" />
+              <SectionHeading
+                animated={false}
+                title="Membership makes consulting even more valuable"
+                description="Rellia members get access to discounts and our full directory of vetted consultants—so you can move faster when a milestone becomes urgent."
+                className="mt-5"
+              />
+              <div className="mt-10 flex flex-col gap-4 sm:flex-row sm:items-center">
+                <RelliaAction asChild variant="tealFilledLift" size="comfortable">
+                  <Link to="/apply" className="inline-flex cursor-pointer items-center justify-center">
+                    Apply for membership
+                  </Link>
+                </RelliaAction>
+                <RelliaAction asChild variant="outlineOnWhite" size="comfortable">
+                  <Link to="/contact" className="inline-flex cursor-pointer items-center justify-center">
+                    Ask about consulting
+                  </Link>
+                </RelliaAction>
+              </div>
+            </ScrollReveal>
           </div>
-
-        </CreamSection>
+        </LightSection>
 
         <RelliaCta
           title="Not sure which **path** fits?"

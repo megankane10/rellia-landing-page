@@ -96,23 +96,19 @@ function SupportModelsSection() {
             const Icon = row.icon
             return (
               <Reveal key={row.title} delay={0.06 * idx}>
-                <div className="flex items-start gap-5 text-left">
-                  <div className="mt-1 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-rellia-mint/20">
-                    <Icon className="h-5 w-5 text-rellia-teal" aria-hidden />
-                  </div>
-                  <div>
-                    <h3 className="font-host-grotesk text-xl font-bold text-rellia-teal">{row.title}</h3>
-                    <p className="mt-3 font-urbanist text-[17px] leading-relaxed text-black/75">{row.body}</p>
-                    {row.linkTo && row.linkLabel ? (
-                      <Link
-                        to={row.linkTo}
-                        className="mt-4 inline-flex cursor-pointer items-center gap-2 font-host-grotesk text-sm font-bold text-rellia-teal underline-offset-4 hover:underline"
-                      >
-                        {row.linkLabel}
-                        <ArrowRight className="h-3.5 w-3.5" aria-hidden />
-                      </Link>
-                    ) : null}
-                  </div>
+                <div className="flex flex-col items-start text-left">
+                  <Icon className="h-10 w-10 shrink-0 text-rellia-teal" aria-hidden />
+                  <h3 className="mt-5 font-host-grotesk text-xl font-bold text-rellia-teal">{row.title}</h3>
+                  <p className="mt-3 font-urbanist text-[17px] leading-relaxed text-black/75">{row.body}</p>
+                  {row.linkTo && row.linkLabel ? (
+                    <Link
+                      to={row.linkTo}
+                      className="mt-4 inline-flex cursor-pointer items-center gap-2 font-host-grotesk text-sm font-bold text-rellia-teal underline-offset-4 hover:underline"
+                    >
+                      {row.linkLabel}
+                      <ArrowRight className="h-3.5 w-3.5" aria-hidden />
+                    </Link>
+                  ) : null}
                 </div>
               </Reveal>
             )
@@ -274,9 +270,7 @@ function BenefitsTealBand() {
             return (
               <Reveal key={idx} delay={0.05 * idx}>
                 <div className="flex items-start gap-4 text-left">
-                  <div className="mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-rellia-mint/20">
-                    <Sparkles className="h-3.5 w-3.5 text-rellia-mint" aria-hidden />
-                  </div>
+                  <Sparkles className="mt-1 h-6 w-6 shrink-0 text-rellia-mint" aria-hidden />
                   <p className="font-urbanist text-lg leading-relaxed text-white/90">{statement}</p>
                 </div>
               </Reveal>

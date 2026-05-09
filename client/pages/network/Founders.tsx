@@ -405,7 +405,7 @@ const EligibilityBentoCard = ({
   return (
     <article
       className={cn(
-        "group relative flex h-[320px] md:h-[400px] flex-col overflow-hidden rounded-[22px] border border-black/10 shadow-[0_24px_60px_-42px_rgba(13,53,64,0.5)]",
+        "group relative flex h-[280px] md:h-[360px] flex-col overflow-hidden rounded-[22px] border border-black/10 shadow-[0_24px_60px_-42px_rgba(13,53,64,0.5)]",
         className,
       )}
     >

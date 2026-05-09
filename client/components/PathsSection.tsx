@@ -34,7 +34,6 @@ type ResolvedCard = {
   roleId: NetworkPathRoleId
   tagLabel: string
   title: string
-  subtitle: string
   imageSrc: string
   imageAlt: string
   ctaLabel: string
@@ -91,7 +90,6 @@ const resolveCard = (id: NetworkPathRoleId, cms?: HomePathsCard): ResolvedCard =
     roleId: id,
     tagLabel: cms?.tagLabel?.trim() || tag.label,
     title: cms?.title?.trim() || meta.title,
-    subtitle: cms?.subtitle?.trim() || meta.subtitle,
     imageSrc: cms?.imageSrc?.trim() || meta.imageSrc,
     imageAlt: cms?.imageAlt?.trim() || meta.imageAlt,
     ctaLabel: cms?.ctaLabel?.trim() || CTA_PHRASE[id],
@@ -252,9 +250,6 @@ export default function PathsSection() {
                       <h3 className="font-host-grotesk text-xl font-medium tracking-tight text-white md:text-2xl">
                         {card.title}
                       </h3>
-                      <p className="mt-2 max-w-[36ch] font-urbanist text-sm leading-relaxed text-white/85 md:text-base">
-                        {card.subtitle}
-                      </p>
 
                       <RelliaAction
                         asChild
