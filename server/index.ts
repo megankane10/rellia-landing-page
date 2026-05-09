@@ -328,14 +328,22 @@ export function createServer() {
 
       const origin = `${protocol || "https"}://${host.replace(/^https?:\/\//, "")}`;
       const requestUrl = new URL(req.originalUrl || req.url, origin).toString();
-      const apiCfg = resolveSanityApiConfig();
-      if (!apiCfg) {
+      const apiResolved = resolveSanityApiConfig();
+      if (apiResolved.status === "dataset_not_allowed") {
+        res
+          .status(503)
+          .send(
+            `Sanity dataset "${apiResolved.attemptedDataset}" is not allowed. Check SANITY_ALLOWED_DATASETS and SANITY_ENFORCE_VERCEL_DATASET.`,
+          );
+        return;
+      }
+      if (apiResolved.status === "missing_project") {
         res.status(503).send("Sanity is not configured (set SANITY_API_PROJECT_ID)");
         return;
       }
       const previewClient = createClient({
-        projectId: apiCfg.projectId,
-        dataset: apiCfg.dataset,
+        projectId: apiResolved.projectId,
+        dataset: apiResolved.dataset,
         token,
         useCdn: false,
         apiVersion: "2024-01-01",
@@ -416,7 +424,9 @@ export function createServer() {
     mentor_areas_needed: z.array(z.string()),
   });
 
-  const sanityApiCfg = resolveSanityApiConfig();
+  const sanityResolved = resolveSanityApiConfig();
+  const sanityApiCfg =
+    sanityResolved.status === "ok" ? sanityResolved : null;
   const writeToken = process.env.SANITY_API_WRITE_TOKEN?.trim();
   const sanityWriteClient =
     sanityApiCfg && writeToken
@@ -494,15 +504,21 @@ export function createServer() {
       return;
     }
 
-    const apiCfg = resolveSanityApiConfig();
-    if (!apiCfg) {
+    const apiResolved = resolveSanityApiConfig();
+    if (apiResolved.status === "dataset_not_allowed") {
+      res.status(503).json({
+        error: `Sanity dataset "${apiResolved.attemptedDataset}" is not allowed for this deployment. Set SANITY_ALLOWED_DATASETS or adjust SANITY_API_DATASET / SANITY_ENFORCE_VERCEL_DATASET.`,
+      });
+      return;
+    }
+    if (apiResolved.status === "missing_project") {
       res.status(503).json({
         error:
           "Sanity API is not configured. Set SANITY_API_PROJECT_ID (and dataset) in the server environment.",
       });
       return;
     }
-    const { projectId, dataset } = apiCfg;
+    const { projectId, dataset } = apiResolved;
 
     const fetchParams = paramsParsed.data as Record<string, unknown>;
 
