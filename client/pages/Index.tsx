@@ -31,6 +31,17 @@ export default function Index() {
           metrics={home.metrics}
         />
 
+        <WhyRellia
+          sectionTitle="Why Rellia?"
+          features={home.whyFeatures}
+          cardImages={[
+            "/images/whyrellia-outcomes-2.jpg",
+            "/images/whyrellia-founders-2.jpg",
+            "/images/whyrellia-programs-2.jpg",
+            "/images/whyrellia-network-2.jpg",
+          ]}
+        />
+
         <HowItWorks />
         <TestimonialsSection
           titlePortable={home.testimonialsTitlePortable}

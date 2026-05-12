@@ -1049,26 +1049,6 @@ export const DEFAULT_HOME_PAGE: HomePageContent = {
       imageSrc: "/images/testimonials-sahilkhan.jpeg",
     },
     {
-      name: "Mazhar Shahen",
-      role: "CEO",
-      company: "NewGen Health",
-      quote:
-        "Rellia has been an invaluable partner in our journey. Their regulatory expertise gave us the clarity and confidence to better understand Health Canada and FDA pathways as a health-tech startup. The team genuinely cares about helping early-stage companies succeed, not just with advice, but with hands-on support when it matters most.",
-      companyInfo:
-        "NewGen Health is a health-tech startup focused on building patient-centered solutions and navigating regulatory pathways across Health Canada and the FDA.",
-      imageSrc: "/images/nopicture-male.jpg",
-    },
-    {
-      name: "Zarrah Uy",
-      role: "CEO",
-      company: "Syncara",
-      quote:
-        "As an early-stage healthtech startup, Rellia gave us access to resources and people that would have otherwise been incredibly difficult to reach on our own, that access alone accelerated our work in such valuable ways.",
-      companyInfo:
-        "Syncara is an early-stage healthtech company building healthcare solutions with support from specialized mentors, resources, and connections.",
-      imageSrc: "/images/nopicture-female.jpg",
-    },
-    {
       name: "Dhandre Weekes",
       role: "CEO",
       company: "CareLog",
