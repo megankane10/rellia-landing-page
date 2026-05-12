@@ -105,7 +105,7 @@ export const ROUTE_SEO: Record<string, RouteSeoConfig> = {
     indexable: true,
   },
   "/programs/regulatory-roadmap": {
-    title: "Regulatory Roadmap — Rellia Health",
+    title: "Regulatory Strategy Sprint — Rellia Health",
     description:
       "Map your regulatory path across FDA, Health Canada, and EU MDR. Leave with a documented strategy for investor due diligence.",
     indexable: true,
@@ -117,7 +117,8 @@ export const ROUTE_SEO: Record<string, RouteSeoConfig> = {
   },
   "/programs/qms": {
     title: "QMS Program — Rellia Health",
-    description: "This page has moved to /programs/build-your-quality-management-system.",
+    description:
+      "This page has moved to /programs/build-your-qms.",
     indexable: false,
   },
   "/network": {

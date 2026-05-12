@@ -6,6 +6,7 @@ import { NETWORK_PATH_ROLE_TAG } from "@/lib/networkPathRoles"
 import NetworkEyebrow from "@/components/network/NetworkEyebrow"
 import { ArrowRight } from "lucide-react"
 import { Link } from "react-router-dom"
+import { PAGE_HEADER_TITLE_SIZE_CLASS } from "@/components/PageHeader"
 
 export function Reveal({
   children,
@@ -428,7 +429,7 @@ export function RoleHero({
           <h1
             className={cn(
               "max-w-4xl font-bold leading-[1.08] tracking-tight text-white drop-shadow-sm",
-              "text-[40px] sm:text-5xl md:text-6xl lg:text-7xl",
+              PAGE_HEADER_TITLE_SIZE_CLASS,
             )}
           >
             {title}

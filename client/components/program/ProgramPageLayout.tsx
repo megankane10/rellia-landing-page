@@ -260,12 +260,14 @@ const ProgramPageLayout = ({
                     {resolvedProgramDescription}
                   </p>
 
-                  <div className="mt-10 flex items-end gap-3 text-black">
-                    <CalendarDays className="h-6 w-6 text-rellia-teal" aria-hidden strokeWidth={2.25} />
-                    <span className="font-host-grotesk text-[12px] font-bold uppercase tracking-[0.18em] text-black/80">
-                      DEADLINE: {getCurrentMonthDeadline()}
-                    </span>
-                  </div>
+                  {!isWaitlist && (
+                    <div className="mt-10 flex items-end gap-3 text-black">
+                      <CalendarDays className="h-6 w-6 text-rellia-teal" aria-hidden strokeWidth={2.25} />
+                      <span className="font-host-grotesk text-[12px] font-bold uppercase tracking-[0.18em] text-black/80">
+                        DEADLINE: {getCurrentMonthDeadline()}
+                      </span>
+                    </div>
+                  )}
 
                   <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
                     <RelliaAction
@@ -354,7 +356,7 @@ const ProgramPageLayout = ({
             </ScrollReveal>
             <div className="mt-16 md:mt-20 grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-7">
               {howItWorksCards.map((card, i) => {
-                const bgImg = cardImages[i] || "";
+                const bgImg = card.imageSrc || cardImages[i] || "";
                 return (
                   <ScrollReveal key={card.title} delay={i * 0.12}>
                     <div className="group relative rounded-2xl overflow-hidden h-[300px] md:h-[360px] shadow-md hover:shadow-xl transition-shadow duration-500">
@@ -387,7 +389,7 @@ const ProgramPageLayout = ({
         </section>
 
         {/* ─── Program Pillars ─── */}
-        <section className="relative w-full bg-rellia-teal py-20 md:py-32 px-6 md:px-10 overflow-hidden">
+        <section className="relative w-full bg-rellia-teal py-32 md:py-48 px-6 md:px-10 overflow-hidden min-h-[85vh] flex flex-col justify-center">
           <img
             src="/images/hologram-logo.png"
             alt=""
@@ -400,7 +402,7 @@ const ProgramPageLayout = ({
             <div className="absolute left-[35%] top-[55%] h-[520px] w-[520px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-rellia-mint/10 blur-3xl" />
             <div className="absolute inset-0 opacity-[0.22] [background-image:radial-gradient(circle_at_20%_10%,rgba(255,255,255,0.16),transparent_52%),radial-gradient(circle_at_80%_30%,rgba(157,214,208,0.14),transparent_55%),radial-gradient(circle_at_35%_95%,rgba(255,255,255,0.10),transparent_55%)]" />
           </div>
-          <div className="relative z-10 max-w-[1300px] mx-auto flex flex-col h-full">
+          <div className="relative z-10 w-full max-w-[1300px] mx-auto flex flex-col h-full">
             <ScrollReveal delay={0.1}>
               <div className="mb-16 md:mb-24">
                 <h2 className="font-host-grotesk text-3xl font-semibold leading-tight tracking-tight text-white md:text-[40px]">
@@ -408,7 +410,7 @@ const ProgramPageLayout = ({
                 </h2>
               </div>
             </ScrollReveal>
-            <div className="mt-auto pt-8">
+            <div className="mt-auto pt-24 md:pt-40">
               <ScrollReveal delay={0.2}>
                 <div className="grid w-full grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-6">
                   {pillars.map((p) => {

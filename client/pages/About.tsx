@@ -67,8 +67,8 @@ export default function About() {
           variant="dark"
           title={
             <>
-              {about.heroLine1} <br />
-              <HeroHeadlinePortable value={about.heroLine2Portable} /> <br />
+              {about.heroLine1}{" "}
+              <HeroHeadlinePortable value={about.heroLine2Portable} />{" "}
               {about.heroLine3}
             </>
           }

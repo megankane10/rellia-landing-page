@@ -4,7 +4,7 @@ import type { QmsProgramContent } from "@shared/cms/types"
 
 const CMS: QmsProgramContent = {
   paymentUrl: "https://forms.fillout.com/t/bLGtn6S2jtus",
-  heroTitle: "Regulatory Roadmap",
+  heroTitle: "Regulatory Strategy Sprint",
   heroDescription: "Navigate the complexities of medical device classification and global commercialization milestones. Leave with a documented regulatory strategy that supports investor due diligence.",
   heroCtaLabel: "Join Waitlist",
   outcomesTitle: "Program Outcomes",
@@ -24,7 +24,7 @@ const CMS: QmsProgramContent = {
   pricingBadge: "Waitlist",
   pricingAmount: "$2,000",
   pricingSubAmount: ".00",
-  pricingDescription: "Join the waitlist to be notified when Regulatory Roadmap opens for the next cohort.",
+  pricingDescription: "Join the waitlist to be notified when Regulatory Strategy Sprint opens for the next cohort.",
   pricingBullets: ["Multi-jurisdiction classification", "Pathway selection guidance", "Intended use statement drafting", "Regulatory milestone timeline"],
   bottomCtaTitle: "**Ready** to map your regulatory path?",
   bottomCtaBody: "Join the waitlist and we'll let you know when the next cohort starts.",
@@ -33,5 +33,5 @@ const CMS: QmsProgramContent = {
 }
 
 export default function ProgramsRegulatoryRoadmap() {
-  return <ProgramPageLayout cms={CMS} cmsSlug="regulatory-roadmap" heroImageSrc="/images/programs-regulatoryRoadmap.png" heroImageAlt="Regulatory Roadmap" outcomesSectionId="regulatory-outcomes" staticBlocks={REGULATORY_ROADMAP_STATIC_BLOCKS} isWaitlist />
+  return <ProgramPageLayout cms={CMS} cmsSlug="regulatory-roadmap" heroImageSrc="/images/programs-regulatoryRoadmap.png" heroImageAlt="Regulatory Strategy Sprint" outcomesSectionId="regulatory-outcomes" staticBlocks={REGULATORY_ROADMAP_STATIC_BLOCKS} isWaitlist />
 }

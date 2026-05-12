@@ -4,6 +4,7 @@ import HeroSection from "@/components/HeroSection";
 import PathsSection from "@/components/PathsSection";
 import NetworkMetricsSection from "@/components/NetworkMetricsSection";
 import WhyRellia from "@/components/WhyRellia";
+import HowItWorks from "@/components/HowItWorks";
 import TestimonialsSection from "@/components/TestimonialsSection";
 import FeaturedStories from "@/components/FeaturedStories";
 import RelliaCta from "@/components/RelliaCta";
@@ -29,7 +30,8 @@ export default function Index() {
           subheading={home.metricsSubheading}
           metrics={home.metrics}
         />
-        <WhyRellia sectionTitle={home.howItWorksSectionTitle} features={home.whyFeatures} />
+
+        <HowItWorks />
         <TestimonialsSection
           titlePortable={home.testimonialsTitlePortable}
           testimonials={home.testimonials}

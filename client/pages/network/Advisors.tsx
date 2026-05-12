@@ -182,9 +182,10 @@ export default function Advisors() {
       <Navbar />
 
       <main id="main-content">
-        <RoleHero
-          roleId="advisor"
-          imageSrc="/images/paths-advisor-pexels.jpg"
+        <div className="lg:flex lg:min-h-screen lg:flex-col">
+          <RoleHero
+            roleId="advisor"
+            imageSrc="/images/advisors.jpg"
           title={
             <>
               Some people are just wired to help <span className="text-rellia-mint">others succeed.</span>
@@ -194,6 +195,7 @@ export default function Advisors() {
           primaryCta={{ label: "Apply to join", to: "/apply" }}
           secondaryCta={{ label: "Browse our Advisors", to: "/advisors/directory" }}
         />
+        </div>
 
         <SupportModelsSection />
         <ScheduleSplit />

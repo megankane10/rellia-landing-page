@@ -40,7 +40,7 @@ import { useNetworkFoundersPage } from "@/hooks/useCmsDocuments"
 import NetworkCmsPage from "./NetworkCmsPage"
 import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo"
 
-const HERO_FALLBACK = "/images/founders-header.jpg"
+const HERO_FALLBACK = "/images/founders.jpg"
 
 const ELIGIBILITY_BENTO_ITEMS = [
   {

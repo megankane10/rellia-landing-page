@@ -100,6 +100,7 @@ export function HorizontalCard(props: HorizontalCardProps) {
       <article
         className={cn(
           "group relative flex flex-col md:flex-row items-start md:items-center w-full bg-white transition-all duration-300 py-6 md:py-10 border-b border-black/[0.06] hover:bg-black/[0.01] gap-6 md:gap-0",
+          "hover:rounded-2xl hover:border-black/10 hover:shadow-[0_24px_60px_-20px_rgba(0,0,0,0.12)] hover:z-20 outline outline-2 outline-offset-[3px] outline-transparent hover:outline-rellia-teal",
           className
         )}
       >
@@ -123,37 +124,33 @@ export function HorizontalCard(props: HorizontalCardProps) {
         {/* Content Section */}
         <div className="flex flex-1 flex-col min-w-0 pr-6 w-full">
           {/* Mobile Date + Tags Row */}
-          <div className="flex flex-col gap-3 mb-5 md:hidden">
-            <div className="flex items-center gap-3">
-              <div className="flex items-center gap-2 pr-1">
-                <span className="font-host-grotesk text-3xl font-bold text-black leading-none">
-                  {(dateBits.day || dateMain.split(" ")[1] || dateMain).padStart(2, "0")}
-                </span>
-                <span className="font-urbanist text-[15px] font-black text-rellia-teal uppercase tracking-[0.2em] mt-0.5">
-                  {dateBits.month || dateMain.split(" ")[0] || ""}
-                </span>
-              </div>
-              <div className="h-4 w-px bg-black/10" />
-              <span
-                className={cn(
-                  "inline-flex w-fit items-center gap-1 rounded-full px-2.5 py-1 font-host-grotesk text-[9px] font-semibold uppercase tracking-[0.12em] ring-1 ring-black/5 sm:gap-1.5 sm:text-[10px] sm:tracking-[0.14em]",
-                  variant === "past" ? "bg-black/[0.06] text-black/65" : "bg-rellia-mint text-rellia-teal"
-                )}
-              >
-                {variant === "past" ? (
-                  <History className="h-3 w-3 opacity-90 text-black/50" aria-hidden strokeWidth={2.25} />
-                ) : (
-                  <Calendar className="h-3 w-3 opacity-90 text-rellia-teal" aria-hidden strokeWidth={2.25} />
-                )}
-                {variant === "past" ? "Past" : "Upcoming"}
+          <div className="flex flex-wrap items-center gap-y-2 gap-x-3 mb-5 md:hidden">
+            <div className="flex items-center gap-2 pr-1">
+              <span className="font-host-grotesk text-3xl font-bold text-black leading-none">
+                {(dateBits.day || dateMain.split(" ")[1] || dateMain).padStart(2, "0")}
+              </span>
+              <span className="font-urbanist text-[15px] font-black text-rellia-teal uppercase tracking-[0.2em] mt-0.5">
+                {dateBits.month || dateMain.split(" ")[0] || ""}
               </span>
             </div>
-            <div className="flex items-center gap-2.5">
-              <span className="h-1 w-1 rounded-full bg-rellia-teal" aria-hidden />
-              <span className="font-urbanist text-[11px] font-bold text-black/40 uppercase tracking-widest">
-                {timeMain || "TBD"}
-              </span>
-            </div>
+            <div className="h-4 w-px bg-black/10" />
+            <span
+              className={cn(
+                "inline-flex w-fit items-center gap-1 rounded-full px-2.5 py-1 font-host-grotesk text-[9px] font-semibold uppercase tracking-[0.12em] ring-1 ring-black/5 sm:gap-1.5 sm:text-[10px] sm:tracking-[0.14em]",
+                variant === "past" ? "bg-black/[0.06] text-black/65" : "bg-rellia-mint text-rellia-teal"
+              )}
+            >
+              {variant === "past" ? (
+                <History className="h-3 w-3 opacity-90 text-black/50" aria-hidden strokeWidth={2.25} />
+              ) : (
+                <Calendar className="h-3 w-3 opacity-90 text-rellia-teal" aria-hidden strokeWidth={2.25} />
+              )}
+              {variant === "past" ? "Past" : "Upcoming"}
+            </span>
+            <span className="h-1 w-1 rounded-full bg-rellia-teal" aria-hidden />
+            <span className="font-urbanist text-[11px] font-bold text-black/40 uppercase tracking-widest">
+              {timeMain || "TBD"}
+            </span>
           </div>
  
           {/* Desktop Tags Row */}
@@ -177,7 +174,7 @@ export function HorizontalCard(props: HorizontalCardProps) {
             </span>
           </div>
  
-          <h3 className="font-host-grotesk text-2xl md:text-3xl font-medium leading-tight tracking-tight text-black group-hover:text-rellia-teal transition-colors duration-300">
+          <h3 className="font-host-grotesk text-2xl md:text-3xl font-medium leading-tight tracking-tight text-black group-hover:text-rellia-teal transition-colors duration-300 group-hover:underline decoration-2 underline-offset-4">
             {event.title}
           </h3>
  
@@ -247,7 +244,7 @@ export function HorizontalCard(props: HorizontalCardProps) {
       className={cn(
         "group relative flex w-full transition-all duration-500 py-6 md:py-10 gap-6 md:gap-10 items-start flex-col md:flex-row",
         "border-b border-black/[0.06]",
-        "hover:rounded-2xl hover:border-black/10 hover:shadow-[0_24px_60px_-20px_rgba(0,0,0,0.12)] hover:bg-black/[0.01] hover:z-20",
+        "hover:rounded-2xl hover:border-black/10 hover:shadow-[0_24px_60px_-20px_rgba(0,0,0,0.12)] hover:bg-black/[0.01] hover:z-20 outline outline-2 outline-offset-[3px] outline-transparent hover:outline-rellia-teal",
         hasHref ? "cursor-pointer" : "",
         className
       )}
@@ -293,7 +290,7 @@ export function HorizontalCard(props: HorizontalCardProps) {
 
         <h3 className={cn(
           "font-host-grotesk text-2xl md:text-[28px] font-medium leading-[1.15] tracking-tight text-black mb-2",
-          (hasHref || isWaitlistCard) && "group-hover:text-rellia-teal transition-colors duration-300"
+          (hasHref || isWaitlistCard) && "group-hover:text-rellia-teal transition-colors duration-300 group-hover:underline decoration-2 underline-offset-4"
         )}>
           {program.title}
         </h3>

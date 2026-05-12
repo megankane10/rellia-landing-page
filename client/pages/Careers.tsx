@@ -134,7 +134,7 @@ const CareersJoinTeamSection = ({
 
   return (
     <section className="relative z-[2] w-full overflow-x-hidden bg-white">
-      <div className="relative flex h-[80svh] max-h-[80svh] min-h-0 shrink-0 flex-col overflow-hidden bg-rellia-greyTeal px-6 py-10 md:px-10 md:py-14">
+      <div className="relative flex h-[80svh] max-h-[80svh] min-h-0 shrink-0 flex-col overflow-hidden bg-rellia-greyTeal py-10 md:py-14">
         <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
           {/* Base wash */}
           <div className="absolute inset-0 bg-gradient-to-br from-rellia-teal/15 via-rellia-greyTeal to-rellia-mint/15" />
@@ -238,29 +238,7 @@ const CareersJoinTeamSection = ({
         </div>
 
         <div className="relative z-10 flex h-full min-h-0 w-full flex-1 flex-col">
-          <div className="mx-auto w-full max-w-[1300px] shrink-0 px-6 md:px-10">
-            <div className="mb-6 md:mb-7">
-              <PillTag
-                label="Join our team"
-                className="border-black/10 bg-white/55 shadow-sm backdrop-blur-md"
-                labelClassName="text-rellia-teal"
-                dot={
-                  <motion.span
-                    aria-hidden
-                    className="relative inline-flex h-2 w-2 rounded-full bg-rellia-mint"
-                    initial={false}
-                    animate={
-                      reduceMotion
-                        ? undefined
-                        : { opacity: [1, 1, 1], transform: ["scale(1)", "scale(1.35)", "scale(1)"] }
-                    }
-                    transition={
-                      reduceMotion ? undefined : { duration: 1.6, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" }
-                    }
-                  />
-                }
-              />
-            </div>
+          <div className="mx-auto w-full max-w-[1300px] shrink-0 px-6 md:px-10 text-left">
 
             <h2 className="max-w-3xl font-host-grotesk text-3xl font-bold leading-[1.12] tracking-tight text-black sm:text-[2rem] md:text-4xl lg:max-w-4xl lg:text-[2.65rem]">
               Help us <span className="text-rellia-teal">empower the founders</span> who are changing the world.
@@ -284,12 +262,11 @@ const CareersJoinTeamSection = ({
                     href={secondaryCta.href}
                     className={cn(
                       joinTeamCtaSharedClass,
-                      "bg-white",
-                      "hover:!border-rellia-mint focus-visible:!border-rellia-mint focus-visible:!ring-rellia-mint",
+                      "bg-transparent border-white/45 hover:border-white/70",
                     )}
                     aria-label={secondaryCta.ariaLabel}
                   >
-                    <span className="relative z-10 text-rellia-teal transition-colors duration-300 group-hover:text-rellia-teal">
+                    <span className="relative z-10 text-white transition-colors duration-300">
                       {secondaryCta.label}
                     </span>
                   </a>

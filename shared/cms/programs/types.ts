@@ -5,6 +5,7 @@ export type ProgramPageIconCard = {
   icon: LucideIcon
   title: string
   description: string
+  imageSrc?: string
 }
 
 export type ProgramTimelineStep = {

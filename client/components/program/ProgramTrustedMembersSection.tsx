@@ -9,33 +9,37 @@ type TrustedMemberTestimonial = {
   role: string
   company: string
   image: string
+  logo?: string
   quote: string
 }
 
 const DEFAULT_TESTIMONIALS: TrustedMemberTestimonial[] = [
   {
-    name: "Melissa West",
-    role: "Founder",
-    company: "Akesyn",
-    image: "/images/testimonials-melissaW.jpg",
+    name: "Dr Stevie Foglia",
+    role: "Founder & CEO",
+    company: "Neuro-Mod",
+    image: "/images/drstrevie.png",
+    logo: "/images/portfolio-neuromod.png",
     quote:
-      "Rellia Health has been instrumental in our regulatory strategy. The level of operator feedback we received was exactly what we needed to de-risk our roadmap before our next round.",
+      "Rellia has been excellent to work with and has played an integral role in building our QMS system and regulatory plans. Their team has ensured that the system fits seamlessly within our workflows and is directly personalized to our company and product. They are highly attentive, the one-on-one meetings have been extremely valuable, and they respond to questions very quickly. I would highly recommend them to anyone looking to develop a QMS and navigate regulatory submissions for a medical-related product. They are true experts in their field.",
   },
   {
-    name: "Mazhar Bashir",
-    role: "CEO",
-    company: "Miraei",
-    image: "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=400",
+    name: "Ibukun Elebute",
+    role: "Founder & COO",
+    company: "Cellect",
+    image: "/images/ibukun.jpg",
+    logo: "/images/cellect-logo.png",
     quote:
-      "The connections I made through the Rellia network opened doors that would have taken months to navigate on my own. It's the only community that understands the reality of healthcare complexity.",
+      "Working with the Rellia QMS program has been incredibly valuable for us at CELLECT. As an early-stage medtech company navigating regulatory readiness, having a structured system with clear guidance made a huge difference. The templates were practical and startup-friendly, the process was easy to follow, and the support helped us understand not just what needed to be done, but how to do it properly. What stood out most was how accessible and cost-conscious the program felt for founders. Building a QMS can seem overwhelming and expensive early on, but Rellia helped simplify the process without compromising on quality or regulatory thinking. It gave us a much stronger foundation as we prepare for future regulatory and commercialization milestones.",
   },
   {
-    name: "Sahil Saini",
-    role: "Founder",
-    company: "Neuromod",
-    image: "https://images.pexels.com/photos/614810/pexels-photo-614810.jpeg?auto=compress&cs=tinysrgb&w=400",
+    name: "Rooaa Shanshal",
+    role: "Co-Founder",
+    company: "Power of Play",
+    image: "/images/testimonials-rooaaS.jpeg",
+    logo: "/images/portfolio-pop.png",
     quote:
-      "As a technical founder, Rellia helped me translate our product features into a clinical narrative that resonated with health system buyers and investors alike.",
+      "Being part of Rellia has been so incredibly valuable. Since joining, we've made real progress on building our QMS which is something that previously felt overwhelming.",
   },
 ]
 
@@ -113,18 +117,26 @@ export default function ProgramTrustedMembersSection({
                         </p>
                       </div>
 
-                      <div className="relative z-10 mt-8 flex items-center gap-4 md:gap-5">
-                        <div className="h-14 w-14 shrink-0 overflow-hidden rounded-xl border border-black/5 bg-rellia-teal/5 md:h-16 md:w-16">
-                          <img src={t.image} alt={t.name} className="h-full w-full object-cover" loading="lazy" decoding="async" />
+                      <div className="relative z-10 mt-8 flex w-full items-center justify-between">
+                        <div className="flex items-center gap-4 md:gap-5">
+                          <div className="h-14 w-14 shrink-0 overflow-hidden rounded-xl border border-black/5 bg-rellia-teal/5 md:h-16 md:w-16">
+                            <img src={t.image} alt={t.name} className="h-full w-full object-cover" loading="lazy" decoding="async" />
+                          </div>
+                          <div className="flex min-w-0 flex-col items-start">
+                            <h4 className="font-host-grotesk text-lg font-medium leading-tight text-black md:text-xl">
+                              {t.name}
+                            </h4>
+                            <p className="mt-0.5 font-urbanist text-sm font-medium text-black/60 md:text-base">
+                              {t.role} &bull; {t.company}
+                            </p>
+                          </div>
                         </div>
-                        <div className="flex min-w-0 flex-col items-start">
-                          <h4 className="font-host-grotesk text-lg font-medium leading-tight text-black md:text-xl">
-                            {t.name}
-                          </h4>
-                          <p className="mt-0.5 font-urbanist text-sm font-medium text-black/60 md:text-base">
-                            {t.role} &bull; {t.company}
-                          </p>
-                        </div>
+
+                        {t.logo && (
+                          <div className="hidden sm:block ml-auto h-12 w-auto max-w-[120px] transition-all duration-300">
+                            <img src={t.logo} alt={`${t.company} logo`} className="h-full w-full object-contain" />
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>

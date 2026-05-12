@@ -58,7 +58,7 @@ export const EventCard = ({
   return (
     <article
       className={cn(
-        "group flex h-full min-h-0 flex-col overflow-hidden rounded-2xl border border-black/10 bg-white shadow-sm transition-shadow hover:shadow-md",
+        "group flex h-full min-h-0 flex-col overflow-hidden rounded-2xl border border-black/10 bg-white shadow-sm transition-all duration-500 ease-in hover:shadow-md outline outline-1 outline-offset-[6px] outline-transparent hover:outline-rellia-teal/20",
         className,
       )}
     >
@@ -97,11 +97,15 @@ export const EventCard = ({
                 )}
                 {tagLabel}
               </span>
+              {dateTimeLine ? (
+                <>
+                  <span className="h-1 w-1 rounded-full bg-rellia-teal" aria-hidden />
+                  <span className="font-urbanist text-[11px] font-bold text-black/40 uppercase tracking-widest">
+                    {dateTimeLine}
+                  </span>
+                </>
+              ) : null}
             </div>
-
-            {dateTimeLine ? (
-              <p className="font-urbanist text-sm font-bold text-black/50 uppercase tracking-wide">{dateTimeLine}</p>
-            ) : null}
             
             <h3 className="line-clamp-2 font-host-grotesk text-xl font-semibold leading-tight tracking-tight text-black group-hover:underline decoration-2 underline-offset-4">
               {event.title}

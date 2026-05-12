@@ -242,9 +242,10 @@ export default function Partners() {
       <Navbar />
 
       <main id="main-content">
-        <RoleHero
-          roleId="partner"
-          imageSrc="/images/metrics-bg-pexels-2.jpg"
+        <div className="lg:flex lg:min-h-screen lg:flex-col">
+          <RoleHero
+            roleId="partner"
+            imageSrc="/images/industrypartners.jpg"
           title={
             <>
               Reach the health tech founders <span className="text-rellia-mint">who need you.</span>
@@ -253,6 +254,7 @@ export default function Partners() {
           subtitle="Pilot design, integration support, and enterprise credibility—so promising products don’t die in procurement limbo."
           primaryCta={{ label: "Apply to join", to: "/apply" }}
         />
+        </div>
 
         <PartnerEngageTealBand />
         <BenefitsWithImageSplit />

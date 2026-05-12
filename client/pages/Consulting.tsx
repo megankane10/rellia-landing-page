@@ -92,11 +92,11 @@ function ServicesGridSection() {
           />
         </ScrollReveal>
 
-        <div className="mt-14 grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-20 md:mt-32 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
           {CONSULTING_SERVICES.map((s, idx) => (
             <Reveal key={s.title} delay={0.05 * idx}>
               <article className="group relative overflow-hidden rounded-[24px] border border-black/10 bg-white shadow-sm transition-[transform,box-shadow] duration-300 hover:-translate-y-[1px] hover:shadow-md motion-reduce:transition-none">
-                <div className="relative aspect-[5/4] w-full overflow-hidden">
+                <div className="relative aspect-[5/6] w-full overflow-hidden">
                   <img
                     src={s.imageSrc}
                     alt=""
@@ -105,16 +105,16 @@ function ServicesGridSection() {
                   />
                   <div
                     aria-hidden
-                    className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent"
+                    className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-transparent"
                   />
 
-                  <div className="absolute inset-x-0 bottom-0 p-5">
-                    <div className="inline-flex items-center gap-3 rounded-2xl bg-black/35 px-4 py-3 ring-1 ring-white/10 backdrop-blur-md">
-                      <s.icon className="h-6 w-6 text-rellia-mint" aria-hidden />
-                      <h3 className="font-host-grotesk text-xl font-semibold leading-tight tracking-tight text-white">
-                        {s.title}
-                      </h3>
-                    </div>
+                  <div className="absolute inset-x-0 bottom-0 p-6 flex flex-col items-start gap-4">
+                    <h3 className="font-host-grotesk text-2xl font-bold leading-tight tracking-tight text-white drop-shadow-sm">
+                      {s.title}
+                    </h3>
+                    <RelliaAction variant="outlineOnWhite" size="compact" asChild className="opacity-90 group-hover:opacity-100 transition-opacity">
+                      <Link to="/contact">Learn More</Link>
+                    </RelliaAction>
                   </div>
                 </div>
               </article>

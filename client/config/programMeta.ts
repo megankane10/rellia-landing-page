@@ -13,10 +13,10 @@ export const PROGRAM_META_BY_HREF: Record<string, ProgramMeta> = {
     imageAlt: "Low-Fidelity Prototype Lab",
   },
   "/programs/regulatory": {
-    title: "Regulatory Roadmap",
+    title: "Regulatory Strategy Sprint",
     href: "/programs/regulatory",
     imageSrc: "/images/program-regulatoryRoadmap.png",
-    imageAlt: "Regulatory Roadmap",
+    imageAlt: "Regulatory Strategy Sprint",
   },
   "/programs/brand": {
     title: "Design Your Brand Strategy",

@@ -225,9 +225,10 @@ export default function Investors() {
       <Navbar />
 
       <main id="main-content">
-        <RoleHero
-          roleId="investor"
-          imageSrc={PEXELS_OFFICE_COLLABORATION}
+        <div className="lg:flex lg:min-h-screen lg:flex-col">
+          <RoleHero
+            roleId="investor"
+            imageSrc="/images/investors.jpg"
           title={
             <>
               Stop sorting through <span className="text-rellia-mint">cold pitch decks.</span>
@@ -237,8 +238,9 @@ export default function Investors() {
           primaryCta={{ label: "Get notified" }}
           onPrimaryClick={() => setIsPitchNotifyOpen(true)}
         />
+        </div>
 
-        <LightSection className="bg-rellia-cream/20 pt-10 md:pt-14">
+        <LightSection className="bg-rellia-cream/20 pt-10 md:pt-14 pb-20 md:pb-32">
           <div className="mx-auto max-w-[1300px]">
             <SectionHeading
               animated={false}
@@ -247,7 +249,7 @@ export default function Investors() {
               className="mt-5"
             />
           </div>
-          <div className="mx-auto mt-14 grid max-w-[1300px] grid-cols-1 gap-12 sm:grid-cols-2 sm:gap-x-12 sm:gap-y-14 lg:grid-cols-4 lg:gap-x-10">
+          <div className="mx-auto mt-24 md:mt-32 grid max-w-[1300px] grid-cols-1 gap-12 sm:grid-cols-2 sm:gap-x-12 sm:gap-y-14 lg:grid-cols-4 lg:gap-x-10">
             {INVESTOR_BENEFITS.map((b, idx) => {
               const Icon = b.icon
               return (
@@ -299,7 +301,7 @@ export default function Investors() {
           </div>
         </PipelinePhotoSection>
 
-        <section className="relative overflow-hidden bg-[#071018] px-6 py-16 text-white md:px-10 md:py-24">
+        <section className="relative overflow-hidden bg-[#071018] px-6 py-24 text-white md:px-10 md:py-32">
           <div aria-hidden className="pointer-events-none absolute inset-0">
             <div className="absolute -left-32 top-0 h-96 w-96 rounded-full bg-teal-500/10 blur-3xl" />
             <div className="absolute -right-24 bottom-0 h-80 w-80 rounded-full bg-blue-500/10 blur-3xl" />
@@ -307,28 +309,46 @@ export default function Investors() {
           <div className="relative mx-auto max-w-[1300px]">
             <ScrollReveal>
               <h2 className="mt-5 font-host-grotesk text-3xl font-semibold leading-tight tracking-tight md:text-[40px]">
-                Thesis sessions vs <span className="text-rellia-mint">group showcases</span>
+                Exclusive connections and <span className="text-rellia-mint">pitch events</span>
               </h2>
-              <p className="mt-4 max-w-2xl font-urbanist text-lg leading-relaxed text-white/80">
+              <p className="mt-6 max-w-2xl font-urbanist text-lg leading-relaxed text-white/80">
                 Host a focused virtual session aligned to your mandate—or join a larger showcase to compare teams alongside fellow investors.
               </p>
             </ScrollReveal>
-            <div className="mt-10 grid grid-cols-1 gap-6 md:grid-cols-2">
+            <div className="mt-20 md:mt-28 grid grid-cols-1 gap-8 md:grid-cols-2">
               <Reveal delay={0.06}>
-                <GlassCard className="h-full border-white/15 bg-white/5 p-8 backdrop-blur-md">
-                  <h3 className="font-host-grotesk text-xl font-semibold text-rellia-mint">Individual pitch session</h3>
-                  <p className="mt-4 font-urbanist leading-relaxed text-white/80">
-                    A virtual session scoped to your thesis—dig into workflow, reimbursement, or regulatory edge cases without competing noise.
-                  </p>
-                </GlassCard>
+                <div className="group relative overflow-hidden rounded-[24px] border border-white/10 shadow-sm transition-[transform,box-shadow] duration-300 hover:-translate-y-[1px] hover:shadow-md h-[400px] md:h-[480px]">
+                  <img
+                    src="/images/whyrellia-founders.jpg"
+                    alt="Individual pitch session"
+                    className="absolute inset-0 h-full w-full object-cover transition duration-500 ease-out group-hover:scale-[1.03]"
+                    loading="lazy"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent pointer-events-none" />
+                  <div className="absolute inset-0 p-8 flex flex-col justify-end">
+                    <h3 className="font-host-grotesk text-2xl font-semibold text-white drop-shadow-sm">Individual pitch session</h3>
+                    <p className="mt-4 font-urbanist leading-relaxed text-white/90 text-lg">
+                      A virtual session scoped to your thesis—dig into workflow, reimbursement, or regulatory edge cases without competing noise.
+                    </p>
+                  </div>
+                </div>
               </Reveal>
               <Reveal delay={0.1}>
-                <GlassCard className="h-full border-white/15 bg-white/5 p-8 backdrop-blur-md">
-                  <h3 className="font-host-grotesk text-xl font-semibold text-rellia-mint">Group pitch event</h3>
-                  <p className="mt-4 font-urbanist leading-relaxed text-white/80">
-                    See multiple teams with standardized milestones—ideal for pattern recognition and efficient filtering before deeper diligence.
-                  </p>
-                </GlassCard>
+                <div className="group relative overflow-hidden rounded-[24px] border border-white/10 shadow-sm transition-[transform,box-shadow] duration-300 hover:-translate-y-[1px] hover:shadow-md h-[400px] md:h-[480px]">
+                  <img
+                    src="/images/whyrellia-network-2.jpg"
+                    alt="Group pitch event"
+                    className="absolute inset-0 h-full w-full object-cover transition duration-500 ease-out group-hover:scale-[1.03]"
+                    loading="lazy"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent pointer-events-none" />
+                  <div className="absolute inset-0 p-8 flex flex-col justify-end">
+                    <h3 className="font-host-grotesk text-2xl font-semibold text-white drop-shadow-sm">Group pitch event</h3>
+                    <p className="mt-4 font-urbanist leading-relaxed text-white/90 text-lg">
+                      See multiple teams with standardized milestones—ideal for pattern recognition and efficient filtering before deeper diligence.
+                    </p>
+                  </div>
+                </div>
               </Reveal>
             </div>
           </div>

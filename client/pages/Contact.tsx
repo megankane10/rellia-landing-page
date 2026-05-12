@@ -17,20 +17,6 @@ import { clearApiCsrfCache, getApiCsrfHeaders } from "@/lib/apiCsrf"
  * Aesthetics: Teal + Mint brand colors, soft shadows, rounded corners, modern inputs.
  */
 
-const SI_V = "9.0.0"
-const si = (slug: string) => `https://unpkg.com/simple-icons@${SI_V}/icons/${slug}.svg`
-
-const TRUSTED_LOGOS = [
-  { name: "Google", src: si("google") },
-  { name: "Microsoft", src: si("microsoft") },
-  { name: "Amazon", src: si("amazon") },
-  { name: "Apple", src: si("apple") },
-  { name: "Meta", src: si("meta") },
-  { name: "IBM", src: si("ibm") },
-  { name: "Oracle", src: si("oracle") },
-  { name: "Salesforce", src: si("salesforce") },
-]
-
 
 export default function Contact() {
   const { data } = useContactPage()
@@ -137,30 +123,16 @@ function LeftPanel({ copy }: { copy: typeof DEFAULT_CONTACT_PAGE }) {
           </div>
         </motion.div>
 
-        {/* Trust Signals - Moved higher up */}
+        {/* Email Address */}
         <motion.div 
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.3, duration: 0.8 }}
           className="pt-10 border-t border-white/10"
         >
-          <p className="font-host-grotesk text-xs font-bold uppercase tracking-widest text-white/60 mb-6">
-            Trusted by founders, clinicians, and investors
+          <p className="font-host-grotesk text-sm font-medium text-white/60">
+            <a href="mailto:hello@relliahealth.com" className="hover:underline underline-offset-4">hello@relliahealth.com</a>
           </p>
-          
-          <div className="relative w-full overflow-hidden [mask-image:linear-gradient(90deg,transparent,black_10%,black_90%,transparent)]">
-            <motion.div
-              className="flex w-max min-w-max gap-4 sm:gap-6 will-change-transform"
-              animate={{ x: ["0%", "-50%"] }}
-              transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
-            >
-              {[...TRUSTED_LOGOS, ...TRUSTED_LOGOS].map((logo, i) => (
-                <div key={i} className="h-10 w-24 sm:h-12 sm:w-32 shrink-0 flex items-center justify-center">
-                  <img src={logo.src} alt={logo.name} className="h-full w-auto object-contain brightness-0 invert opacity-80" />
-                </div>
-              ))}
-            </motion.div>
-          </div>
         </motion.div>
       </div>
 

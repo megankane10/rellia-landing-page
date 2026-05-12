@@ -1049,6 +1049,26 @@ export const DEFAULT_HOME_PAGE: HomePageContent = {
       imageSrc: "/images/testimonials-sahilkhan.jpeg",
     },
     {
+      name: "Mazhar Shahen",
+      role: "CEO",
+      company: "NewGen Health",
+      quote:
+        "Rellia has been an invaluable partner in our journey. Their regulatory expertise gave us the clarity and confidence to better understand Health Canada and FDA pathways as a health-tech startup. The team genuinely cares about helping early-stage companies succeed, not just with advice, but with hands-on support when it matters most.",
+      companyInfo:
+        "NewGen Health is a health-tech startup focused on building patient-centered solutions and navigating regulatory pathways across Health Canada and the FDA.",
+      imageSrc: "/images/nopicture-male.jpg",
+    },
+    {
+      name: "Zarrah Uy",
+      role: "CEO",
+      company: "Syncara",
+      quote:
+        "As an early-stage healthtech startup, Rellia gave us access to resources and people that would have otherwise been incredibly difficult to reach on our own, that access alone accelerated our work in such valuable ways.",
+      companyInfo:
+        "Syncara is an early-stage healthtech company building healthcare solutions with support from specialized mentors, resources, and connections.",
+      imageSrc: "/images/nopicture-female.jpg",
+    },
+    {
       name: "Dhandre Weekes",
       role: "CEO",
       company: "CareLog",
@@ -1296,9 +1316,9 @@ export const DEFAULT_FAQ_PAGE: FaqPageContent = {
         "You can apply through our website by completing the short interest form. Our team will follow up with next steps.",
     },
   ],
-  sidebarTitle: "Still have questions?",
+  sidebarTitle: "Ready to scale?",
   sidebarBody:
-    "Learn more about how Rellia works and explore the different pathways available for founders, advisors, investors, and industry partners.",
+    "We’re looking for the next wave of digital health innovators. If you’re clear on your vision but need the right network to execute, don't wait for the FAQ.",
   sidebarCtaLabel: "Apply to join",
   sidebarCtaPath: "/apply",
   bottomTitle: "Every startup is **different**",
@@ -1404,7 +1424,7 @@ export const DEFAULT_PROGRAMS_LANDING: ProgramsLandingContent = {
       waitlistHref: "https://forms.fillout.com/t/bLGtn6S2jtus",
     },
     {
-      title: "Regulatory Roadmap",
+      title: "Regulatory Strategy Sprint",
       description:
         "Navigate the complexities of medical device classification and global commercialization milestones. Leave with a documented regulatory strategy and intended use statements to support your investor due diligence.",
       imageSrc: "/images/programs-regulatoryRoadmap.png",

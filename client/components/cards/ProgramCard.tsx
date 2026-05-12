@@ -51,7 +51,7 @@ export const ProgramCard = ({
     <article
       aria-label={`Program: ${title}${isWaitlistCard ? ". Coming soon — join the waitlist." : ""}`}
       className={cn(
-        "flex h-full min-h-0 flex-col items-start overflow-hidden rounded-2xl border border-black/10 bg-white shadow-sm transition-shadow hover:shadow-md",
+        "group flex h-full min-h-0 flex-col items-start overflow-hidden rounded-2xl border border-black/10 bg-white shadow-sm transition-all duration-500 ease-in hover:shadow-md outline outline-1 outline-offset-[6px] outline-transparent hover:outline-rellia-teal/20",
         className,
       )}
     >
@@ -111,7 +111,7 @@ export const ProgramCard = ({
 
             {/* Title + description */}
             <div className="flex shrink-0 flex-col">
-              <h3 className="font-host-grotesk text-xl font-normal leading-snug tracking-tight text-black sm:text-2xl sm:leading-snug">
+              <h3 className="font-host-grotesk text-xl font-normal leading-snug tracking-tight text-black sm:text-2xl sm:leading-snug group-hover:underline decoration-2 underline-offset-4">
                 {hasHref ? (
                   <Link
                     to={href as string}
