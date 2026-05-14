@@ -225,10 +225,11 @@ export default function Investors() {
       <Navbar />
 
       <main id="main-content">
-        <div className="lg:flex lg:min-h-screen lg:flex-col">
+        <div className="lg:flex lg:h-[82vh] lg:flex-col">
           <RoleHero
             roleId="investor"
             imageSrc="/images/investors.jpg"
+            className="lg:flex-1"
           title={
             <>
               Stop sorting through <span className="text-rellia-mint">cold pitch decks.</span>
@@ -363,13 +364,14 @@ export default function Investors() {
               className="mt-5"
             />
           </div>
-          <LogoMarquee
-            marks={INVESTOR_BRAND_SVG_MARKS}
-            showHeading={false}
-            flush
-            speed="slow"
-            sectionClassName="bg-white py-10 md:py-14"
-          />
+          <div className="mt-12 md:mt-16">
+            <LogoMarquee
+              marks={INVESTOR_BRAND_SVG_MARKS}
+              showHeading={false}
+              density="comfortable"
+              sectionClassName="bg-white py-4"
+            />
+          </div>
         </LightSection>
 
         <PortfolioSplit />

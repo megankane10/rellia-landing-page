@@ -99,8 +99,8 @@ export function HorizontalCard(props: HorizontalCardProps) {
     return (
       <article
         className={cn(
-          "group relative flex flex-col md:flex-row items-start md:items-center w-full bg-white transition-all duration-300 py-6 md:py-10 border-b border-black/[0.06] hover:bg-black/[0.01] gap-6 md:gap-0",
-          "hover:rounded-2xl hover:border-black/10 hover:shadow-[0_24px_60px_-20px_rgba(0,0,0,0.12)] hover:z-20 outline outline-2 outline-offset-[3px] outline-transparent hover:outline-rellia-teal",
+          "group relative flex flex-col md:flex-row items-start md:items-center w-full bg-white transition-all duration-300 py-6 md:py-10 px-4 md:px-8 border-b border-black/[0.06] hover:bg-black/[0.03] gap-6 md:gap-0",
+          "hover:rounded-2xl hover:border-black/10 hover:shadow-[0_24px_60px_-20px_rgba(0,0,0,0.12)] hover:z-20 outline outline-2 outline-offset-[8px] outline-transparent hover:outline-rellia-teal",
           className
         )}
       >
@@ -147,7 +147,7 @@ export function HorizontalCard(props: HorizontalCardProps) {
               )}
               {variant === "past" ? "Past" : "Upcoming"}
             </span>
-            <span className="h-1 w-1 rounded-full bg-rellia-teal" aria-hidden />
+
             <span className="font-urbanist text-[11px] font-bold text-black/40 uppercase tracking-widest">
               {timeMain || "TBD"}
             </span>
@@ -168,7 +168,7 @@ export function HorizontalCard(props: HorizontalCardProps) {
               )}
               {variant === "past" ? "Past" : "Upcoming"}
             </span>
-            <span className="h-1 w-1 rounded-full bg-rellia-teal" aria-hidden />
+
             <span className="font-urbanist text-sm font-bold text-black/40 uppercase tracking-widest">
               {timeMain || "TBD"}
             </span>
@@ -234,7 +234,8 @@ export function HorizontalCard(props: HorizontalCardProps) {
   const hasHref = Boolean(program.href && program.href.trim().length > 0)
   const hasWaitlistHref = Boolean(program.waitlistHref && program.waitlistHref.trim().length > 0)
   const isWaitlistStatus = (program as any)?.status === "waitlist"
-  const isWaitlistCard = hasWaitlistHref || isWaitlistStatus
+  const isUpcomingStatus = (program as any)?.status === "upcoming"
+  const isWaitlistCard = (hasWaitlistHref || isWaitlistStatus) && !isUpcomingStatus
   const programImageSrc = program.imageSrc?.trim()
     ? program.imageSrc
     : placeholderImageFromSeed(program.title, 1200, 900)
@@ -242,9 +243,9 @@ export function HorizontalCard(props: HorizontalCardProps) {
   return (
     <article
       className={cn(
-        "group relative flex w-full transition-all duration-500 py-6 md:py-10 gap-6 md:gap-10 items-start flex-col md:flex-row",
+        "group relative flex w-full transition-all duration-500 py-6 md:py-10 px-4 md:px-8 gap-6 md:gap-10 items-start flex-col md:flex-row",
         "border-b border-black/[0.06]",
-        "hover:rounded-2xl hover:border-black/10 hover:shadow-[0_24px_60px_-20px_rgba(0,0,0,0.12)] hover:bg-black/[0.01] hover:z-20 outline outline-2 outline-offset-[3px] outline-transparent hover:outline-rellia-teal",
+        "hover:rounded-2xl hover:border-black/10 hover:shadow-[0_24px_60px_-20px_rgba(0,0,0,0.12)] hover:bg-black/[0.03] hover:z-20 outline outline-2 outline-offset-[8px] outline-transparent hover:outline-rellia-teal",
         hasHref ? "cursor-pointer" : "",
         className
       )}
@@ -274,7 +275,12 @@ export function HorizontalCard(props: HorizontalCardProps) {
               !isWaitlistCard ? "bg-rellia-mint/80 text-rellia-teal" : "bg-black/[0.04] text-black/65"
             )}
           >
-            {isWaitlistCard ? (
+            {isUpcomingStatus ? (
+              <>
+                <CalendarDays className="h-3.5 w-3.5 opacity-90" aria-hidden strokeWidth={2.5} />
+                Upcoming
+              </>
+            ) : isWaitlistCard ? (
               <>
                 <Bell className="h-3.5 w-3.5 opacity-80" aria-hidden strokeWidth={2.5} />
                 Join the Waitlist

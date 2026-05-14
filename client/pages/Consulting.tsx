@@ -1,6 +1,7 @@
 import { PEXELS_HEALTH_MEETING } from "@/config/pexelsFallbacks"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
+import LogoMarquee from "@/components/LogoMarquee"
 import SectionHeading from "@/components/SectionHeading"
 import RelliaAction from "@/components/RelliaAction"
 import RelliaCta from "@/components/RelliaCta"
@@ -22,22 +23,22 @@ const WHEN_TO_USE = [
 const CONSULTING_SERVICES = [
   {
     title: "Regulatory Consulting",
-    imageSrc: "/images/program-regulatoryRoadmap.png",
+    imageSrc: "https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=800",
     icon: ShieldCheck,
   },
   {
     title: "Clinical Trials",
-    imageSrc: "/images/program-first50users.png",
+    imageSrc: "https://images.pexels.com/photos/3184339/pexels-photo-3184339.jpeg?auto=compress&cs=tinysrgb&w=800",
     icon: Stethoscope,
   },
   {
     title: "Marketing Strategy",
-    imageSrc: "/images/program-HealthcareCapital.png",
+    imageSrc: "https://images.pexels.com/photos/3184360/pexels-photo-3184360.jpeg?auto=compress&cs=tinysrgb&w=800",
     icon: Megaphone,
   },
   {
     title: "Branding",
-    imageSrc: "/images/program-designYourBrand.png",
+    imageSrc: "https://images.pexels.com/photos/3184296/pexels-photo-3184296.jpeg?auto=compress&cs=tinysrgb&w=800",
     icon: Palette,
   },
 ] as const
@@ -92,7 +93,7 @@ function ServicesGridSection() {
           />
         </ScrollReveal>
 
-        <div className="mt-20 md:mt-32 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-12 md:mt-16 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
           {CONSULTING_SERVICES.map((s, idx) => (
             <Reveal key={s.title} delay={0.05 * idx}>
               <article className="group relative overflow-hidden rounded-[24px] border border-black/10 bg-white shadow-sm transition-[transform,box-shadow] duration-300 hover:-translate-y-[1px] hover:shadow-md motion-reduce:transition-none">
@@ -112,9 +113,10 @@ function ServicesGridSection() {
                     <h3 className="font-host-grotesk text-2xl font-bold leading-tight tracking-tight text-white drop-shadow-sm">
                       {s.title}
                     </h3>
-                    <RelliaAction variant="outlineOnWhite" size="compact" asChild className="opacity-90 group-hover:opacity-100 transition-opacity">
-                      <Link to="/contact">Learn More</Link>
-                    </RelliaAction>
+                    <Link to="/contact" className="inline-flex items-center gap-2 font-host-grotesk text-sm font-semibold text-rellia-mint transition-colors hover:text-white">
+                      Learn More
+                      <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" aria-hidden />
+                    </Link>
                   </div>
                 </div>
               </article>
@@ -135,18 +137,21 @@ export default function Consulting() {
       <Navbar />
 
       <main id="main-content">
-        <RoleHero
-          eyebrowLabel="Consulting"
-          imageSrc={PEXELS_HEALTH_MEETING}
-          title={
-            <>
-              Founder consulting <span className="text-rellia-mint">built for healthcare reality</span>
-            </>
-          }
-          subtitle="One-to-one and small-team working sessions when you need depth beyond community rhythm—regulatory, clinical, commercial, and narrative—with specialists who have shipped in health tech."
-          primaryCta={{ label: "Start a conversation", to: "/contact" }}
-          secondaryCta={{ label: "Apply for membership", to: "/apply" }}
-        />
+        <div className="lg:flex lg:h-[82vh] lg:flex-col">
+          <RoleHero
+            eyebrowLabel="Consulting"
+            imageSrc={PEXELS_HEALTH_MEETING}
+            className="lg:flex-1"
+            title={
+              <>
+                Founder consulting <span className="text-rellia-mint">built for healthcare reality</span>
+              </>
+            }
+            subtitle="One-to-one and small-team working sessions when you need depth beyond community rhythm—regulatory, clinical, commercial, and narrative—with specialists who have shipped in health tech."
+            primaryCta={{ label: "Start a conversation", to: "/contact" }}
+            secondaryCta={{ label: "Apply for membership", to: "/apply" }}
+          />
+        </div>
 
         <FitSectionSplit />
 

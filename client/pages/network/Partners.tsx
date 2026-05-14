@@ -8,6 +8,7 @@ import ScrollReveal from "@/components/ScrollReveal"
 import { GETPROVEN_VENDORS_GRID_URL } from "@/config/partnerLinks"
 import { ArrowRight, Check, ExternalLink, Handshake, LayoutGrid, Megaphone } from "lucide-react"
 import { Link } from "react-router-dom"
+import LogoMarquee from "@/components/LogoMarquee"
 import RelliaCta from "@/components/RelliaCta"
 import { CreamSection, GlassCardLight, LightSection, Reveal, RoleHero } from "./_shared"
 import { useNetworkPartnersPage } from "@/hooks/useCmsDocuments"
@@ -178,6 +179,7 @@ function BenefitsWithImageSplit() {
   )
 }
 
+
 function ExclusiveDirectorySplit() {
   return (
     <LightSection className="bg-rellia-cream/15">
@@ -185,7 +187,7 @@ function ExclusiveDirectorySplit() {
         <Reveal className="order-2 lg:order-1" delay={0.1}>
           <div className="overflow-hidden rounded-3xl border border-black/5 shadow-2xl">
             <img
-              src="/images/metrics-bg-pexels-2.jpg"
+              src="/images/partnersdirectory.png"
               alt="Exclusive partner directory interface"
               className="aspect-[4/3] h-full w-full object-cover"
               loading="lazy"
@@ -242,10 +244,11 @@ export default function Partners() {
       <Navbar />
 
       <main id="main-content">
-        <div className="lg:flex lg:min-h-screen lg:flex-col">
+        <div className="lg:flex lg:h-[82vh] lg:flex-col">
           <RoleHero
             roleId="partner"
             imageSrc="/images/industrypartners.jpg"
+            className="lg:flex-1"
           title={
             <>
               Reach the health tech founders <span className="text-rellia-mint">who need you.</span>

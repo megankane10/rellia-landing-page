@@ -373,6 +373,7 @@ export function RoleHero({
   primaryCta,
   secondaryCta,
   onPrimaryClick,
+  className,
 }: {
   roleId?: "founder" | "advisor" | "investor" | "partner"
   eyebrowLabel?: string
@@ -382,6 +383,7 @@ export function RoleHero({
   primaryCta: { label: string; to?: string }
   secondaryCta?: { label: string; to: string }
   onPrimaryClick?: () => void
+  className?: string
 }) {
   const tag = roleId ? NETWORK_PATH_ROLE_TAG[roleId] : undefined
   const label = eyebrowLabel || (tag ? tag.label : "Network")
@@ -408,7 +410,7 @@ export function RoleHero({
   }
 
   return (
-    <section className="relative overflow-hidden bg-rellia-teal pt-[72px] md:pt-[86px] lg:flex lg:flex-1 lg:flex-col lg:min-h-0 lg:pt-[96px]">
+    <section className={cn("relative overflow-hidden bg-rellia-teal pt-[72px] md:pt-[86px] lg:flex lg:flex-col lg:min-h-0 lg:pt-[96px]", className)}>
       <img
         src={imageSrc}
         alt=""

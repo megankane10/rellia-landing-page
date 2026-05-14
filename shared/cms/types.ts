@@ -1,3 +1,12 @@
+export type TrustedMemberTestimonial = {
+  name: string
+  role: string
+  company: string
+  image: string
+  logo?: string
+  quote: string
+}
+
 export type SanityPortableText = Array<{
   _type: string
   _key?: string
@@ -470,6 +479,7 @@ export type QmsProgramContent = {
   bottomCtaBody: string
   bottomCtaButtonLabel: string
   bottomContactHref: string
+  testimonials?: TrustedMemberTestimonial[]
   seo?: SeoContent
 }
 

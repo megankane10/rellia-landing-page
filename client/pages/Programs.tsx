@@ -2,6 +2,7 @@ import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
 import ScrollReveal from "@/components/ScrollReveal"
 import RelliaCta, { ctaActionFromHref } from "@/components/RelliaCta"
+import { DiagnosticSurveySection } from "@/components/DiagnosticSurveySection"
 import { HorizontalCard } from "@/components/cards"
 import PageHeader from "@/components/PageHeader"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -44,8 +45,12 @@ export default function Programs() {
       "designyourbrandstrategy": "/images/programs-brandStrategy.png"
     }
 
+    const STATUS_OVERRIDES: Record<string, string> = {
+      "regulatorystrategysprint": "upcoming"
+    }
+
     const seenTitles = new Set<string>()
-    return rawList.filter((p: any) => {
+    const processed = rawList.filter((p: any) => {
       if (!p.title) return false
       const normalizedTitle = p.title.toLowerCase().trim().replace(/[^a-z0-9]/g, "")
       
@@ -53,12 +58,42 @@ export default function Programs() {
       if (seenTitles.has(normalizedTitle)) return false
       seenTitles.add(normalizedTitle)
       
-      // Enforce the correct image source if it's one of the priority programs
+      // Enforce overrides
       if (IMAGE_OVERRIDES[normalizedTitle]) {
         p.imageSrc = IMAGE_OVERRIDES[normalizedTitle]
       }
+      if (STATUS_OVERRIDES[normalizedTitle]) {
+        p.status = STATUS_OVERRIDES[normalizedTitle]
+        // Ensure waitlist doesn't override upcoming status in the card UI
+        p.waitlistHref = ""
+      }
       
       return true
+    })
+
+    // Custom sort:
+    // 1. QMS first
+    // 2. Upcoming second
+    // 3. Others (available then waitlist)
+    return [...processed].sort((a: any, b: any) => {
+      const titleA = a.title.toLowerCase().trim().replace(/[^a-z0-9]/g, "")
+      const titleB = b.title.toLowerCase().trim().replace(/[^a-z0-9]/g, "")
+      const isQmsA = titleA === "buildyourqualitymanagementsystem"
+      const isQmsB = titleB === "buildyourqualitymanagementsystem"
+      if (isQmsA && !isQmsB) return -1
+      if (!isQmsA && isQmsB) return 1
+
+      const isUpcomingA = a.status === "upcoming"
+      const isUpcomingB = b.status === "upcoming"
+      if (isUpcomingA && !isUpcomingB) return -1
+      if (!isUpcomingA && isUpcomingB) return 1
+
+      const isWaitlistA = a.status === "waitlist" || Boolean(a.waitlistHref)
+      const isWaitlistB = b.status === "waitlist" || Boolean(b.waitlistHref)
+      if (!isWaitlistA && isWaitlistB) return -1
+      if (isWaitlistA && !isWaitlistB) return 1
+
+      return 0
     })
   }, [programsData, pl.programs])
 
@@ -66,7 +101,7 @@ export default function Programs() {
     const available = programs.filter(
       (p: any) =>
         Boolean(p.href && p.href.trim().length > 0) &&
-        (p.status ? p.status !== "waitlist" : !Boolean(p.waitlistHref && p.waitlistHref.trim().length > 0)),
+        p.status !== "waitlist" && !Boolean(p.waitlistHref && p.waitlistHref.trim().length > 0),
     )
     const waitlist = programs.filter((p: any) => p.status === "waitlist" || Boolean(p.waitlistHref && p.waitlistHref.trim().length > 0))
     return { availablePrograms: available, waitlistPrograms: waitlist }
@@ -112,8 +147,12 @@ export default function Programs() {
       <main id="main-content">
         <PageHeader
           variant="dark"
-          title={<HeroHeadlinePortable value={programsHeaderTitle} />}
-          subtitle={pl.programsSectionSubtitle}
+          title={
+            <>
+              Less theory. <span className="text-rellia-mint">More progress.</span>
+            </>
+          }
+          subtitle="Every program is designed to help you accomplish your next milestone, not just learn about it."
         />
 
         <section id="view-programs" className="pt-8 pb-12 md:pt-10 md:pb-16 bg-white">
@@ -238,6 +277,8 @@ export default function Programs() {
             </ScrollReveal>
           </div>
         </section>
+        
+        <DiagnosticSurveySection />
 
         <RelliaCta
           title={pl.ctaTitle}

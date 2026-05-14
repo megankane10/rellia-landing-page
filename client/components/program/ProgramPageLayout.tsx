@@ -248,11 +248,15 @@ const ProgramPageLayout = ({
               {/* Left — text */}
               <div className="flex-1 lg:max-w-[55%]">
                 <ScrollReveal>
-                  {isWaitlist && (
+                  {isWaitlist ? (
                     <span className="inline-block mb-4 px-4 py-1.5 rounded-full bg-rellia-teal/10 text-rellia-teal font-host-grotesk text-xs font-bold uppercase tracking-widest border border-rellia-teal/20">
                       Waitlist
                     </span>
-                  )}
+                  ) : q.status === "upcoming" ? (
+                    <span className="inline-block mb-4 px-4 py-1.5 rounded-full bg-rellia-mint text-rellia-teal font-host-grotesk text-xs font-bold uppercase tracking-widest border border-black/5">
+                      Upcoming
+                    </span>
+                  ) : null}
                   <h1 className="max-w-3xl text-3xl md:text-4xl lg:text-5xl font-bold leading-[1.1] tracking-tight text-black">
                     {resolvedProgramTitle}
                   </h1>
@@ -339,7 +343,11 @@ const ProgramPageLayout = ({
           </div>
         </section>
 
-        <ProgramTrustedMembersSection />
+        {q.testimonials && q.testimonials.length > 0 ? (
+          <ProgramTrustedMembersSection testimonials={q.testimonials} />
+        ) : cmsSlug === "qms" ? (
+          <ProgramTrustedMembersSection />
+        ) : null}
 
         {/* ─── How It Works ─── */}
         <section className="py-16 md:py-24 bg-white">
@@ -389,7 +397,7 @@ const ProgramPageLayout = ({
         </section>
 
         {/* ─── Program Pillars ─── */}
-        <section className="relative w-full bg-rellia-teal py-32 md:py-48 px-6 md:px-10 overflow-hidden min-h-[85vh] flex flex-col justify-center">
+        <section className="relative w-full bg-rellia-teal py-20 md:py-28 px-6 md:px-10 overflow-hidden flex flex-col">
           <img
             src="/images/hologram-logo.png"
             alt=""
@@ -404,13 +412,13 @@ const ProgramPageLayout = ({
           </div>
           <div className="relative z-10 w-full max-w-[1300px] mx-auto flex flex-col h-full">
             <ScrollReveal delay={0.1}>
-              <div className="mb-16 md:mb-24">
+              <div className="mb-12 md:mb-16">
                 <h2 className="font-host-grotesk text-3xl font-semibold leading-tight tracking-tight text-white md:text-[40px]">
                   {q.pillarsTitle}
                 </h2>
               </div>
             </ScrollReveal>
-            <div className="mt-auto pt-24 md:pt-40">
+            <div className="pt-2">
               <ScrollReveal delay={0.2}>
                 <div className="grid w-full grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-6">
                   {pillars.map((p) => {

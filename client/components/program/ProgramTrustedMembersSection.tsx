@@ -4,14 +4,7 @@ import { ChevronLeft, ChevronRight, Quote } from "lucide-react"
 import ScrollReveal from "@/components/ScrollReveal"
 import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel"
 
-type TrustedMemberTestimonial = {
-  name: string
-  role: string
-  company: string
-  image: string
-  logo?: string
-  quote: string
-}
+import { type TrustedMemberTestimonial } from "@shared/cms/types"
 
 const DEFAULT_TESTIMONIALS: TrustedMemberTestimonial[] = [
   {
@@ -21,7 +14,7 @@ const DEFAULT_TESTIMONIALS: TrustedMemberTestimonial[] = [
     image: "/images/drstrevie.png",
     logo: "/images/portfolio-neuromod.png",
     quote:
-      "Rellia has been excellent to work with and has played an integral role in building our QMS system and regulatory plans. Their team has ensured that the system fits seamlessly within our workflows and is directly personalized to our company and product. They are highly attentive, the one-on-one meetings have been extremely valuable, and they respond to questions very quickly. I would highly recommend them to anyone looking to develop a QMS and navigate regulatory submissions for a medical-related product. They are true experts in their field.",
+      "The QMS fits seamlessly within our workflows and is directly personalized to our company and product. Rellia has been excellent to work with - they are true experts in their field.",
   },
   {
     name: "Ibukun Elebute",
@@ -30,7 +23,7 @@ const DEFAULT_TESTIMONIALS: TrustedMemberTestimonial[] = [
     image: "/images/ibukun.jpg",
     logo: "/images/cellect-logo.png",
     quote:
-      "Working with the Rellia QMS program has been incredibly valuable for us at CELLECT. As an early-stage medtech company navigating regulatory readiness, having a structured system with clear guidance made a huge difference. The templates were practical and startup-friendly, the process was easy to follow, and the support helped us understand not just what needed to be done, but how to do it properly. What stood out most was how accessible and cost-conscious the program felt for founders. Building a QMS can seem overwhelming and expensive early on, but Rellia helped simplify the process without compromising on quality or regulatory thinking. It gave us a much stronger foundation as we prepare for future regulatory and commercialization milestones.",
+      "The Rellia QMS program was practical and startup-friendly, the process was easy to follow, and the support helped us understand not just what needed to be done, but how to do it properly.",
   },
   {
     name: "Rooaa Shanshal",
@@ -132,11 +125,7 @@ export default function ProgramTrustedMembersSection({
                           </div>
                         </div>
 
-                        {t.logo && (
-                          <div className="hidden sm:block ml-auto h-12 w-auto max-w-[120px] transition-all duration-300">
-                            <img src={t.logo} alt={`${t.company} logo`} className="h-full w-full object-contain" />
-                          </div>
-                        )}
+
                       </div>
                     </div>
                   </div>

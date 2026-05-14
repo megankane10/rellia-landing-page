@@ -65,6 +65,7 @@ export default function About() {
       <main id="main-content">
         <PageHeader
           variant="dark"
+          titleClassName={cn(PAGE_HEADER_TITLE_SIZE_CLASS, "max-w-3xl")}
           title={
             <>
               {about.heroLine1}{" "}

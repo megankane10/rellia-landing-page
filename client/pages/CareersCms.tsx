@@ -19,7 +19,7 @@ import { cn } from "@/lib/utils"
 import { useQuery } from "@tanstack/react-query"
 import { sanityFetch } from "@/lib/sanity"
 import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo"
-import { useMemo } from "react"
+import { useMemo, useState } from "react"
 
 const g = DEFAULT_GLOBAL_SETTINGS
 
@@ -110,7 +110,8 @@ const joinTeamCtaSharedClass = cn(
 )
 
 type CareersJoinTeamCta = {
-  href: string
+  href?: string
+  onClick?: () => void
   label: string
   ariaLabel: string
 }
@@ -119,9 +120,11 @@ type CareersJoinTeamCta = {
 const CareersJoinTeamSection = ({
   primaryCta,
   secondaryCta,
+  showVolunteerForm,
 }: {
   primaryCta: CareersJoinTeamCta | null
   secondaryCta: CareersJoinTeamCta | null
+  showVolunteerForm: boolean
 }) => {
   const reduceMotion = useReducedMotion()
 
@@ -138,7 +141,7 @@ const CareersJoinTeamSection = ({
 
   return (
     <section className="relative z-[2] w-full overflow-x-hidden bg-white">
-      <div className="relative flex min-h-0 shrink-0 flex-col overflow-x-hidden bg-rellia-greyTeal px-6 py-10 pb-16 md:h-[80svh] md:max-h-[80svh] md:pb-14 md:px-10 md:py-14">
+      <div className="relative flex min-h-0 shrink-0 flex-col overflow-x-hidden bg-rellia-greyTeal py-10 pb-16 md:h-[80svh] md:max-h-[80svh] md:pb-14 md:py-14">
         <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-br from-rellia-teal/15 via-rellia-greyTeal to-rellia-mint/15" />
           <div className="absolute inset-0 opacity-90 [background:radial-gradient(ellipse_120%_70%_at_0%_0%,rgba(157,214,208,0.35),transparent_55%),radial-gradient(ellipse_90%_60%_at_100%_15%,rgba(13,53,64,0.18),transparent_50%),radial-gradient(ellipse_80%_55%_at_50%_100%,rgba(157,214,208,0.22),transparent_52%),radial-gradient(ellipse_45%_40%_at_75%_55%,rgba(255,255,255,0.14),transparent_45%)]" />
@@ -162,29 +165,6 @@ const CareersJoinTeamSection = ({
 
         <div className="relative z-10 flex h-full min-h-0 w-full flex-1 flex-col">
           <div className="mx-auto w-full max-w-[1300px] shrink-0 px-6 md:px-10">
-            <div className="mb-6 md:mb-7">
-              <PillTag
-                label="Join our team"
-                className="border-black/10 bg-white/55 shadow-sm backdrop-blur-md"
-                labelClassName="text-rellia-teal"
-                dot={
-                  <motion.span
-                    aria-hidden
-                    className="relative inline-flex h-2 w-2 rounded-full bg-rellia-mint"
-                    initial={false}
-                    animate={
-                      reduceMotion
-                        ? undefined
-                        : { opacity: [1, 1, 1], transform: ["scale(1)", "scale(1.35)", "scale(1)"] }
-                    }
-                    transition={
-                      reduceMotion ? undefined : { duration: 1.6, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" }
-                    }
-                  />
-                }
-              />
-            </div>
-
             <h2 className="max-w-3xl font-host-grotesk text-3xl font-bold leading-[1.12] tracking-tight text-black sm:text-[2rem] md:text-4xl lg:max-w-4xl lg:text-[2.65rem]">
               Help us <span className="text-rellia-teal">empower the founders</span> who are changing the world.
             </h2>
@@ -192,33 +172,71 @@ const CareersJoinTeamSection = ({
             {primaryCta || secondaryCta ? (
               <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center md:mt-10">
                 {primaryCta ? (
-                  <a
-                    href={primaryCta.href}
-                    className={cn(joinTeamCtaSharedClass, "bg-rellia-teal hover:border-rellia-mint")}
-                    aria-label={primaryCta.ariaLabel}
-                  >
-                    <span className="relative z-10 text-white transition-colors duration-300 group-hover:text-rellia-teal">
-                      {primaryCta.label}
-                    </span>
-                  </a>
+                  primaryCta.href ? (
+                    <a
+                      href={primaryCta.href}
+                      className={cn(joinTeamCtaSharedClass, "bg-rellia-teal hover:border-rellia-mint")}
+                      aria-label={primaryCta.ariaLabel}
+                    >
+                      <span className="relative z-10 text-white transition-colors duration-300 group-hover:text-rellia-teal">
+                        {primaryCta.label}
+                      </span>
+                    </a>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={primaryCta.onClick}
+                      className={cn(joinTeamCtaSharedClass, "bg-rellia-teal hover:border-rellia-mint")}
+                      aria-label={primaryCta.ariaLabel}
+                    >
+                      <span className="relative z-10 text-white transition-colors duration-300 group-hover:text-rellia-teal">
+                        {primaryCta.label}
+                      </span>
+                    </button>
+                  )
                 ) : null}
                 {secondaryCta ? (
-                  <a
-                    href={secondaryCta.href}
-                    className={cn(
-                      joinTeamCtaSharedClass,
-                      "bg-white",
-                      "hover:!border-rellia-mint focus-visible:!border-rellia-mint focus-visible:!ring-rellia-mint",
-                    )}
-                    aria-label={secondaryCta.ariaLabel}
-                  >
-                    <span className="relative z-10 text-rellia-teal transition-colors duration-300 group-hover:text-rellia-teal">
-                      {secondaryCta.label}
-                    </span>
-                  </a>
+                  secondaryCta.href ? (
+                    <a
+                      href={secondaryCta.href}
+                      className={cn(
+                        joinTeamCtaSharedClass,
+                        "bg-transparent border-white/45 hover:border-rellia-mint",
+                      )}
+                      aria-label={secondaryCta.ariaLabel}
+                    >
+                      <span className="relative z-10 text-white transition-colors duration-300">
+                        {secondaryCta.label}
+                      </span>
+                    </a>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={secondaryCta.onClick}
+                      className={cn(
+                        joinTeamCtaSharedClass,
+                        "bg-transparent border-white/45 hover:border-rellia-mint",
+                      )}
+                      aria-label={secondaryCta.ariaLabel}
+                    >
+                      <span className="relative z-10 text-white transition-colors duration-300">
+                        {secondaryCta.label}
+                      </span>
+                    </button>
+                  )
                 ) : null}
               </div>
             ) : null}
+
+            {showVolunteerForm && (
+              <div className="mt-12 w-full max-w-4xl rounded-3xl border border-black/10 bg-white p-2 shadow-2xl md:mt-16">
+                <FilloutStandardEmbed
+                  filloutId={FILLOUT_APPLY_FORM_ID}
+                  inheritParameters
+                  dynamicResize
+                />
+              </div>
+            )}
           </div>
 
           <div className="mt-8 min-h-0 w-full flex-1 overflow-x-clip overflow-y-visible md:mt-12 md:overflow-y-hidden lg:mt-16">
@@ -255,6 +273,7 @@ const normalizeCms = (raw: unknown): CareersPageContent => {
 }
 
 export default function CareersCms() {
+  const [showVolunteerForm, setShowVolunteerForm] = useState(false)
   const { data: careersCmsRaw } = useQuery({
     queryKey: ["cms", "careersPage"],
     queryFn: async () => {
@@ -283,9 +302,9 @@ export default function CareersCms() {
 
   const joinTeamSecondaryCta: CareersJoinTeamCta | null = enableVolunteer
     ? {
-        href: "#careers-volunteer",
+        onClick: () => setShowVolunteerForm(true),
         label: "Volunteer with us",
-        ariaLabel: "Volunteer with us — jump to form",
+        ariaLabel: "Volunteer with us — show form",
       }
     : null
 
@@ -304,7 +323,11 @@ export default function CareersCms() {
           subtitle="We connect founders, clinicians, and capital so the right ideas reach patients. If you thrive in fast-moving, mission-driven environments, we would love to meet you."
         />
 
-        <CareersJoinTeamSection primaryCta={joinTeamPrimaryCta} secondaryCta={joinTeamSecondaryCta} />
+        <CareersJoinTeamSection 
+          primaryCta={joinTeamPrimaryCta} 
+          secondaryCta={joinTeamSecondaryCta} 
+          showVolunteerForm={showVolunteerForm}
+        />
 
         <WhyRellia
           sectionTitle="Building What Matters Most"
@@ -429,18 +452,7 @@ export default function CareersCms() {
           </section>
         ) : null}
 
-        {enableVolunteer ? (
-          <section
-            id="careers-volunteer"
-            className={cn("scroll-mt-28 w-full bg-white", FILLOUT_EMBED_VIEWPORT_MIN_CLASS)}
-          >
-            <FilloutStandardEmbed
-              filloutId={FILLOUT_APPLY_FORM_ID}
-              inheritParameters
-              dynamicResize
-            />
-          </section>
-        ) : null}
+
 
         <RelliaCta
           title="Questions before you **apply**?"

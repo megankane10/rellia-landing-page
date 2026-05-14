@@ -58,12 +58,12 @@ export const EventCard = ({
   return (
     <article
       className={cn(
-        "group flex h-full min-h-0 flex-col overflow-hidden rounded-2xl border border-black/10 bg-white shadow-sm transition-all duration-500 ease-in hover:shadow-md outline outline-1 outline-offset-[6px] outline-transparent hover:outline-rellia-teal/20",
+        "group flex h-full min-h-0 flex-col overflow-hidden rounded-[20px] p-2 border border-black/10 bg-white shadow-sm transition-all duration-500 ease-in hover:bg-black/[0.03] hover:shadow-md outline outline-1 outline-offset-[10px] outline-transparent hover:outline-rellia-teal/20",
         className,
       )}
     >
       {event.imageSrc ? (
-        <div className="relative aspect-square w-full overflow-hidden bg-black/5 shrink-0">
+        <div className="relative aspect-square w-full overflow-hidden rounded-xl bg-black/5 shrink-0">
           <img
             src={event.imageSrc}
             alt={event.title}
@@ -75,7 +75,7 @@ export const EventCard = ({
           />
         </div>
       ) : (
-        <div className="relative aspect-square w-full overflow-hidden bg-rellia-teal/5 shrink-0 flex items-center justify-center">
+        <div className="relative aspect-square w-full overflow-hidden rounded-xl bg-rellia-teal/5 shrink-0 flex items-center justify-center">
           <Calendar className="h-12 w-12 text-rellia-teal/20" />
         </div>
       )}
@@ -99,7 +99,7 @@ export const EventCard = ({
               </span>
               {dateTimeLine ? (
                 <>
-                  <span className="h-1 w-1 rounded-full bg-rellia-teal" aria-hidden />
+
                   <span className="font-urbanist text-[11px] font-bold text-black/40 uppercase tracking-widest">
                     {dateTimeLine}
                   </span>

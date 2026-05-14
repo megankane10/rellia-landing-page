@@ -51,13 +51,13 @@ export const ProgramCard = ({
     <article
       aria-label={`Program: ${title}${isWaitlistCard ? ". Coming soon — join the waitlist." : ""}`}
       className={cn(
-        "group flex h-full min-h-0 flex-col items-start overflow-hidden rounded-2xl border border-black/10 bg-white shadow-sm transition-all duration-500 ease-in hover:shadow-md outline outline-1 outline-offset-[6px] outline-transparent hover:outline-rellia-teal/20",
+        "group flex h-full min-h-0 flex-col items-start overflow-hidden rounded-[20px] p-2 border border-black/10 bg-white shadow-sm transition-all duration-500 ease-in hover:bg-black/[0.03] hover:shadow-md outline outline-1 outline-offset-[10px] outline-transparent hover:outline-rellia-teal/20",
         className,
       )}
     >
       <div className="flex min-h-0 flex-1 flex-col">
         {/* Image */}
-        <div className="relative w-32 h-32 shrink-0 overflow-hidden aspect-square rounded-xl bg-rellia-teal/5 ml-4 mt-4 sm:m-0 sm:w-full sm:h-auto sm:aspect-square sm:rounded-none">
+        <div className="relative w-32 h-32 shrink-0 overflow-hidden aspect-square rounded-xl bg-rellia-teal/5 ml-2 mt-2 sm:m-0 sm:w-full sm:h-auto sm:aspect-square sm:rounded-xl">
             {/* Desktop badge overlay (keep out of the way of the image on mobile) */}
             {isWaitlistCard ? (
               <div className="absolute right-3 top-3 z-10 hidden sm:block">

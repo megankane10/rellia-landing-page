@@ -6,8 +6,9 @@ import RelliaAction from "@/components/RelliaAction"
 import RelliaCta from "@/components/RelliaCta"
 import ScrollReveal from "@/components/ScrollReveal"
 import { cn } from "@/lib/utils"
-import { ArrowRight, Award, BookOpen, Clock, Crosshair, Gauge, HeartHandshake, Network, Scale, ShieldCheck, Sparkles } from "lucide-react"
+import { ArrowRight, Award, BookOpen, Clock, Crosshair, Gauge, HeartHandshake, Network, Scale, ShieldCheck, Sparkles, Check } from "lucide-react"
 import { Link } from "react-router-dom"
+import LogoMarquee from "@/components/LogoMarquee"
 import { CreamSection, GlassCardLight, LightSection, Reveal, RoleHero } from "./_shared"
 import { useNetworkAdvisorsPage } from "@/hooks/useCmsDocuments"
 import NetworkCmsPage from "./NetworkCmsPage"
@@ -182,24 +183,25 @@ export default function Advisors() {
       <Navbar />
 
       <main id="main-content">
-        <div className="lg:flex lg:min-h-screen lg:flex-col">
+        <div className="lg:flex lg:h-[82vh] lg:flex-col">
           <RoleHero
             roleId="advisor"
             imageSrc="/images/advisors.jpg"
-          title={
-            <>
-              Some people are just wired to help <span className="text-rellia-mint">others succeed.</span>
-            </>
-          }
-          subtitle="Mentor serious health tech founders through structured, respectful engagements—stay sharp on innovation while keeping flexibility for your career."
-          primaryCta={{ label: "Apply to join", to: "/apply" }}
-          secondaryCta={{ label: "Browse our Advisors", to: "/advisors/directory" }}
-        />
+            className="lg:flex-1"
+            title={
+              <>
+                Some people are just wired to help <span className="text-rellia-mint">others succeed.</span>
+              </>
+            }
+            subtitle="Mentor serious health tech founders through structured, respectful engagements—stay sharp on innovation while keeping flexibility for your career."
+            primaryCta={{ label: "Apply to join", to: "/apply" }}
+            secondaryCta={{ label: "Browse our Advisors", to: "/advisors/directory" }}
+          />
         </div>
 
         <SupportModelsSection />
         <ScheduleSplit />
-        <BenefitsTealBand />
+        <BenefitsSplitSection />
 
         <LightSection>
           <div className="mx-auto max-w-[1300px]">
@@ -240,41 +242,41 @@ export default function Advisors() {
   )
 }
 
-function BenefitsTealBand() {
+function BenefitsSplitSection() {
   return (
-    <section className="relative w-full overflow-hidden bg-rellia-teal px-6 py-16 md:px-10 md:py-24">
-      <img
-        src="/images/hologram-logo.png"
-        alt=""
-        aria-hidden
-        className="pointer-events-none absolute -right-12 bottom-0 w-[340px] max-w-[55vw] opacity-[0.06]"
-      />
-      <div aria-hidden className="pointer-events-none absolute inset-0">
-        <div className="absolute left-[-20%] top-1/4 h-[420px] w-[420px] rounded-full bg-rellia-mint/18 blur-3xl" />
-        <div className="absolute bottom-[-10%] right-[-10%] h-[380px] w-[380px] rounded-full bg-white/5 blur-3xl" />
-      </div>
-      <div className="relative z-10 mx-auto max-w-[1300px]">
-        <ScrollReveal>
-          <h2 className="mt-5 font-host-grotesk text-3xl font-semibold leading-tight tracking-tight text-white md:text-[40px]">
-            Mentorship that <span className="text-rellia-mint">compounds</span>
-          </h2>
-          <p className="mt-4 max-w-2xl font-urbanist text-base leading-relaxed text-white/80 md:text-lg">
-            Stay close to innovation without ambient noise—sharp conversations with founders who execute.
-          </p>
-        </ScrollReveal>
-        <div className="mt-12 grid grid-cols-1 gap-y-16 sm:grid-cols-2 sm:gap-x-12 lg:grid-cols-3">
-          {BENEFITS.map((statement, idx) => {
-            return (
-              <Reveal key={idx} delay={0.05 * idx}>
-                <div className="flex items-start gap-4 text-left">
-                  <Sparkles className="mt-1 h-6 w-6 shrink-0 text-rellia-mint" aria-hidden />
-                  <p className="font-urbanist text-lg leading-relaxed text-white/90">{statement}</p>
-                </div>
+    <CreamSection>
+      <div className="grid gap-12 lg:grid-cols-[1fr_1.05fr] lg:items-center lg:gap-16">
+        <Reveal>
+          <SectionHeading
+            animated={false}
+            title="Mentorship that compounds"
+            description="Stay close to innovation without ambient noise—sharp conversations with founders who execute."
+            className="mt-5"
+          />
+          <ul className="mt-10 max-w-xl space-y-4" aria-label="Advisor benefits">
+            {BENEFITS.map((line, idx) => (
+              <Reveal key={line} delay={0.04 * idx}>
+                <li className="flex gap-3 font-urbanist text-base leading-relaxed text-black/80 md:text-[17px]">
+                  <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-rellia-mint/35">
+                    <Check className="h-3.5 w-3.5 text-rellia-teal" strokeWidth={3} aria-hidden />
+                  </span>
+                  {line}
+                </li>
               </Reveal>
-            )
-          })}
-        </div>
+            ))}
+          </ul>
+        </Reveal>
+        <Reveal delay={0.06}>
+          <div className="overflow-hidden rounded-2xl border border-rellia-teal/15 shadow-[0_28px_80px_-48px_rgba(13,53,64,0.45)]">
+            <img
+              src="/images/metrics-bg-pexels-2.jpg"
+              alt="Advisors collaborating with founders"
+              className="aspect-[4/3] h-full w-full object-cover"
+              loading="lazy"
+            />
+          </div>
+        </Reveal>
       </div>
-    </section>
+    </CreamSection>
   )
 }

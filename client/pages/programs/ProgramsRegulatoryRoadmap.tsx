@@ -3,10 +3,11 @@ import { REGULATORY_ROADMAP_STATIC_BLOCKS } from "@shared/cms/programs/regulator
 import type { QmsProgramContent } from "@shared/cms/types"
 
 const CMS: QmsProgramContent = {
-  paymentUrl: "https://forms.fillout.com/t/bLGtn6S2jtus",
+  paymentUrl: "https://forms.fillout.com/t/qnMWtHtTkyus",
   heroTitle: "Regulatory Strategy Sprint",
   heroDescription: "Navigate the complexities of medical device classification and global commercialization milestones. Leave with a documented regulatory strategy that supports investor due diligence.",
-  heroCtaLabel: "Join Waitlist",
+  heroCtaLabel: "Secure Your Spot",
+  status: "upcoming",
   outcomesTitle: "Program Outcomes",
   outcomesIntro: "By the end of this program, you will have a clear regulatory strategy and timeline you can execute against and share with stakeholders.",
   outcomes: [
@@ -21,17 +22,17 @@ const CMS: QmsProgramContent = {
   pillarsTitle: "Program Pillars",
   timelineTitle: "Program Timeline & Details",
   timelineSubtitle: "8 weeks to build your regulatory roadmap from classification to market",
-  pricingBadge: "Waitlist",
+  pricingBadge: "Upcoming",
   pricingAmount: "$2,000",
   pricingSubAmount: ".00",
-  pricingDescription: "Join the waitlist to be notified when Regulatory Strategy Sprint opens for the next cohort.",
+  pricingDescription: "The next cohort of the Regulatory Strategy Sprint is opening soon. Secure your spot now to ensure your participation.",
   pricingBullets: ["Multi-jurisdiction classification", "Pathway selection guidance", "Intended use statement drafting", "Regulatory milestone timeline"],
   bottomCtaTitle: "**Ready** to map your regulatory path?",
-  bottomCtaBody: "Join the waitlist and we'll let you know when the next cohort starts.",
+  bottomCtaBody: "Apply today to secure your spot in the next cohort starting soon.",
   bottomCtaButtonLabel: "Contact",
   bottomContactHref: "/contact",
 }
 
 export default function ProgramsRegulatoryRoadmap() {
-  return <ProgramPageLayout cms={CMS} cmsSlug="regulatory-roadmap" heroImageSrc="/images/programs-regulatoryRoadmap.png" heroImageAlt="Regulatory Strategy Sprint" outcomesSectionId="regulatory-outcomes" staticBlocks={REGULATORY_ROADMAP_STATIC_BLOCKS} isWaitlist />
+  return <ProgramPageLayout cms={CMS} cmsSlug="regulatory-roadmap" heroImageSrc="/images/programs-regulatoryRoadmap.png" heroImageAlt="Regulatory Strategy Sprint" outcomesSectionId="regulatory-outcomes" staticBlocks={REGULATORY_ROADMAP_STATIC_BLOCKS} />
 }

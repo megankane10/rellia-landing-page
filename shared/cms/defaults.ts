@@ -1904,6 +1904,8 @@ export function mergeQmsProgram(
   const pricingBullets = compactList(p.pricingBullets)
   base.pricingBullets =
     pricingBullets.length > 0 ? pricingBullets : DEFAULT_QMS_PROGRAM.pricingBullets
+  const testimonials = compactList(p.testimonials)
+  if (testimonials.length > 0) base.testimonials = testimonials
   if (typeof base.paymentUrl !== "string" || !base.paymentUrl.trim()) {
     base.paymentUrl = DEFAULT_QMS_PROGRAM.paymentUrl
   }
