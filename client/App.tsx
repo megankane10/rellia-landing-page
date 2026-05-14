@@ -120,6 +120,7 @@ const App = () => (
             {/* Misc */}
             <Route path="/contact" element={<Contact />} />
             <Route path="/membership" element={<Payment />} />
+            <Route path="/placeholder" element={<PlaceholderPage title="Placeholder" subtitle="This page is coming soon." />} />
             <Route path="/diagnostics" element={<PlaceholderPage title="Diagnostics" />} />
             <Route
               path="/diagnosticSurvey"

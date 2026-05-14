@@ -352,7 +352,12 @@ export default function TestimonialsSection({
                 </div>
 
                 <div className="flex w-full flex-wrap items-center justify-between gap-3">
-                  <div />
+                  <Link
+                    to="/placeholder"
+                    className="inline-flex items-center gap-1 font-host-grotesk text-sm font-bold text-rellia-teal transition-colors hover:text-black hover:underline underline-offset-4"
+                  >
+                    View Alumni <ArrowRight className="h-4 w-4" />
+                  </Link>
 
                   <div className="flex shrink-0 items-center gap-2">
                     <button

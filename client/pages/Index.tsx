@@ -1,6 +1,7 @@
 import HomeOrganizationJsonLd from "@/components/HomeOrganizationJsonLd";
 import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/HeroSection";
+import PathsSection from "@/components/PathsSection";
 
 import NetworkMetricsSection from "@/components/NetworkMetricsSection";
 import WhyRellia from "@/components/WhyRellia";
@@ -24,6 +25,7 @@ export default function Index() {
       <Navbar />
       <main id="main-content">
         <HeroSection content={home} />
+        <PathsSection />
 
         <NetworkMetricsSection
           heading={home.metricsHeading}
