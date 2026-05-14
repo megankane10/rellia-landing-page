@@ -1,3 +1,5 @@
+import type { ReactNode } from "react"
+import { useEffect } from "react"
 import { Link } from "react-router-dom"
 import { ArrowRight } from "lucide-react"
 import { cn } from "@/lib/utils"
@@ -24,17 +26,41 @@ export const ctaActionFromHref = (label: string, href: string): RelliaCtaAction 
   return { label, href }
 }
 
+/** Wrap phrases in `**double asterisks**` for teal emphasis on black headlines. */
+const parseTitleEmphasis = (title: string): ReactNode[] => {
+  const segments = title.split(/(\*\*[^*]+\*\*)/g)
+  return segments.map((segment, index) => {
+    if (segment.startsWith("**") && segment.endsWith("**") && segment.length >= 4) {
+      const inner = segment.slice(2, -2)
+      return (
+        <span key={`e-${index}`} className="font-semibold text-rellia-teal">
+          {inner}
+        </span>
+      )
+    }
+    return <span key={`t-${index}`}>{segment}</span>
+  })
+}
+
 export type RelliaCtaProps = {
-  /** Main headline inside the card. */
+  /** Main headline — black; use `**phrase**` for teal highlight */
   title: string
   /** Optional supporting paragraph beneath the title. */
   body?: string
-  /** Required primary action — rendered as the prominent mint button. */
+  /** Required primary action — teal pill; white fill sweep on hover (`relliaCtaPrimary`). */
   primary: RelliaCtaAction
-  /** Optional secondary action — rendered as a ghost-on-teal button. */
+  /** Optional secondary action — white pill, teal border/text. */
   secondary?: RelliaCtaAction
-  /** Override the outer section className (advanced — defaults handle spacing/footer gap). */
+  /** Smaller typography for shorter CTAs (FAQ, etc.) */
+  size?: "default" | "compact"
+  /** Render the primary action as a button or a text link. */
+  primaryStyle?: "button" | "text"
+  /** Override the outer section className (spacing against page content above). */
   className?: string
+  /** Optional icon to display above the title */
+  icon?: ReactNode
+  /** Override the outer section rounding (defaults to rounded top corners). */
+  roundedClassName?: string
 }
 
 function CtaActionButton({
@@ -42,7 +68,7 @@ function CtaActionButton({
   variant,
 }: {
   action: RelliaCtaAction
-  variant: "mintOnTealStrip" | "heroGhostOnTeal"
+  variant: "primary" | "secondary"
 }) {
   const content = (
     <>
@@ -52,18 +78,20 @@ function CtaActionButton({
   )
 
   const responsiveCtaClass =
-    "w-full min-w-0 max-w-full justify-center px-4 py-3.5 text-sm leading-snug sm:w-auto sm:px-8 sm:py-4 sm:text-base sm:leading-normal whitespace-normal sm:whitespace-nowrap"
+    "w-full min-w-0 max-w-full justify-center px-4 py-3.5 text-sm leading-snug sm:w-auto sm:px-8 sm:py-4 sm:text-base sm:leading-normal whitespace-normal sm:whitespace-nowrap focus-visible:ring-offset-rellia-greyTeal"
+
+  const relliaVariant = variant === "primary" ? "relliaCtaPrimary" : "relliaCtaSecondary"
 
   if (action.to) {
     return (
-      <RelliaAction asChild variant={variant} size="comfortable" className={responsiveCtaClass}>
+      <RelliaAction asChild variant={relliaVariant} size="comfortable" className={responsiveCtaClass}>
         <Link to={action.to}>{content}</Link>
       </RelliaAction>
     )
   }
 
   return (
-    <RelliaAction asChild variant={variant} size="comfortable" className={responsiveCtaClass}>
+    <RelliaAction asChild variant={relliaVariant} size="comfortable" className={responsiveCtaClass}>
       <a
         href={action.href}
         {...(action.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
@@ -74,69 +102,120 @@ function CtaActionButton({
   )
 }
 
+function CtaActionTextLink({ action }: { action: RelliaCtaAction }) {
+  const content = (
+    <>
+      {action.label}
+      <ArrowRight className="h-4 w-4" aria-hidden />
+    </>
+  )
+
+  const linkClassName =
+    "inline-flex items-center justify-center gap-2 font-host-grotesk text-sm font-semibold text-rellia-teal hover:text-[#0D3540] hover:underline hover:underline-offset-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-teal focus-visible:ring-offset-2 focus-visible:ring-offset-rellia-greyTeal"
+
+  if (action.to) {
+    return (
+      <Link to={action.to} className={linkClassName} aria-label={action.label}>
+        {content}
+      </Link>
+    )
+  }
+
+  return (
+    <a
+      href={action.href}
+      className={linkClassName}
+      aria-label={action.label}
+      {...(action.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+    >
+      {content}
+    </a>
+  )
+}
+
 /**
- * Modular bottom-of-page call to action.
- *
- * Renders a contained, rounded teal card centered in a max-width container, with built-in
- * vertical spacing so it stays visually separated from both the section above and the footer
- * below. Used as the closing CTA on every public page.
+ * Bottom-of-page CTA on the grey-teal band. Radial blob behind copy; black headline with teal `**accents**`;
+ * black subcopy; primary teal button with white hover fill sweep; optional outline secondary.
  */
 export default function RelliaCta({
   title,
   body,
   primary,
   secondary,
+  size = "default",
+  primaryStyle = "button",
   className,
+  icon,
+  roundedClassName = "rounded-t-[28px] md:rounded-t-[36px]",
 }: RelliaCtaProps) {
+  useEffect(() => {
+    const root = document.documentElement
+    root.style.setProperty("--footer-backdrop", "#C5D8D5")
+    return () => {
+      root.style.removeProperty("--footer-backdrop")
+    }
+  }, [])
+
   return (
     <section
       className={cn(
-        "w-full bg-white px-6 md:px-10 pt-12 md:pt-16 pb-20 md:pb-28 overflow-hidden",
+        "relative mt-6 flex w-full flex-col justify-center overflow-hidden bg-rellia-greyTeal px-[30px] pt-[7.5rem] pb-[9rem] md:mt-8 md:pt-[10.5rem] md:pb-48 lg:mt-10 lg:pt-[13.5rem] lg:pb-[15rem]",
+        roundedClassName,
         className,
       )}
     >
-      <div className="max-w-[1300px] mx-auto">
-        <ScrollReveal>
-          <div className="relative overflow-hidden rounded-[32px] md:rounded-[40px] bg-rellia-teal text-white px-4 py-12 sm:px-8 sm:py-14 md:px-16 md:py-20 text-center shadow-2xl">
-            {/* Decorative grid lines — same modernist cue as the Network hero */}
-            <div
-              aria-hidden
-              className="absolute inset-0 opacity-[0.06] pointer-events-none"
-              style={{
-                backgroundImage:
-                  "linear-gradient(to right, white 1px, transparent 1px), linear-gradient(to bottom, white 1px, transparent 1px)",
-                backgroundSize: "80px 80px",
-              }}
-            />
-            {/* Mint glow */}
-            <div
-              aria-hidden
-              className="absolute inset-0 opacity-25 pointer-events-none"
+      <ScrollReveal
+        variant="ctaReveal"
+        aria-hidden
+        className="pointer-events-none absolute inset-0 z-0 flex items-center justify-center overflow-hidden"
+      >
+        <div
+          className="absolute left-1/2 top-[18%] h-[min(92vw,520px)] w-[min(92vw,520px)] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-100 blur-[20px] sm:top-[22%] sm:h-[min(82vw,600px)] sm:w-[min(82vw,600px)] md:top-[26%] md:h-[min(60vw,720px)] md:w-[min(60vw,720px)] lg:top-[28%] lg:h-[min(52vw,760px)] lg:w-[min(52vw,760px)]"
+          style={{
+            background:
+              "linear-gradient(180deg, #C5D8D5 0%, #9DD6D0 52%, #EEF2F2 100%)",
+          }}
+        />
+      </ScrollReveal>
+
+      <ScrollReveal variant="ctaReveal" className="relative z-10 w-full">
+        <div className="relative mx-auto w-full max-w-[1300px]">
+          <div className="relative mx-auto flex w-full flex-col items-center text-center">
+            {icon && <div className="mb-8">{icon}</div>}
+            <h2
+              className={cn(
+                "max-w-4xl font-host-grotesk font-medium tracking-tight leading-[1.12] text-black",
+                size === "compact" ? "text-3xl md:text-4xl lg:text-[2.75rem]" : "text-4xl md:text-5xl lg:text-6xl",
+              )}
             >
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_60%,_var(--tw-gradient-stops))] from-rellia-mint via-transparent to-transparent blur-3xl" />
-            </div>
+              {parseTitleEmphasis(title)}
+            </h2>
 
-            <div className="relative z-10 mx-auto flex w-full max-w-3xl flex-col items-center px-1 sm:px-0">
-              <h2 className="text-white text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight leading-[1.1]">
-                {title}
-              </h2>
+            {body ? (
+              <p
+                className={cn(
+                  "mt-5 max-w-2xl font-urbanist leading-relaxed text-black",
+                  size === "compact" ? "text-base md:text-lg" : "text-lg md:text-xl lg:text-2xl",
+                )}
+              >
+                {body}
+              </p>
+            ) : null}
 
-              {body ? (
-                <p className="mt-5 font-urbanist text-white/75 text-lg md:text-xl leading-relaxed max-w-2xl">
-                  {body}
-                </p>
-              ) : null}
-
-              <div className="mt-10 flex w-full max-w-full flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-center sm:px-0">
-                <CtaActionButton action={primary} variant="mintOnTealStrip" />
-                {secondary ? (
-                  <CtaActionButton action={secondary} variant="heroGhostOnTeal" />
-                ) : null}
+            {primaryStyle === "text" ? (
+              <div className="mt-6">
+                <CtaActionTextLink action={primary} />
               </div>
-            </div>
+            ) : (
+              <div className="mt-12 flex w-full max-w-full flex-col items-stretch justify-center gap-4 sm:mt-14 sm:flex-row sm:items-center">
+                <CtaActionButton action={primary} variant="primary" />
+                {secondary ? <CtaActionButton action={secondary} variant="secondary" /> : null}
+              </div>
+            )}
           </div>
-        </ScrollReveal>
-      </div>
+        </div>
+      </ScrollReveal>
+      <div className="absolute inset-0 bg-noise opacity-[0.03] mix-blend-overlay pointer-events-none z-[1]" />
     </section>
   )
 }

@@ -45,17 +45,76 @@ const ROUTE_SEO: Record<string, RouteSeoConfig> = {
       "Explore Rellia Health programs and events designed to help healthcare builders learn, connect, and grow with the right stakeholders.",
     indexable: true,
   },
-  "/programs/build-your-qms": {
+  "/programs/build-your-quality-management-system": {
     title: "QMS Program — Rellia Health",
     description:
       "Quality Management System (QMS) support for medtech and digital health teams navigating design controls, documentation, and regulatory readiness.",
     indexable: true,
   },
+  "/programs/build-your-qms": {
+    title: "QMS Program — Rellia Health",
+    description:
+      "This page has moved to /programs/build-your-quality-management-system.",
+    indexable: false,
+  },
   "/programs/qms": {
     title: "QMS Program — Rellia Health",
     description:
-      "This page has moved to /programs/build-your-qms.",
+      "This page has moved to /programs/build-your-quality-management-system.",
     indexable: false,
+  },
+  "/programs/ignite-pitch-foundations": {
+    title: "Ignite Pitch Foundations — Rellia Health",
+    description:
+      "Build a compelling investor pitch with expert coaching and real-time feedback from healthcare operators and investors.",
+    indexable: true,
+  },
+  "/programs/advance-data-room-deep-dive": {
+    title: "Advance Data Room Deep Dive — Rellia Health",
+    description:
+      "Prepare your data room for due diligence with structured guidance on financial models, IP strategy, and investor-ready documentation.",
+    indexable: true,
+  },
+  "/programs/elevate-healthcare-capital": {
+    title: "Elevate Healthcare Capital — Rellia Health",
+    description:
+      "Navigate healthcare fundraising with expert guidance on term sheets, investor relations, and capital strategy.",
+    indexable: true,
+  },
+  "/programs/first-50-users-clinical-feedback-intensive": {
+    title: "First 50 Users — Rellia Health",
+    description:
+      "Recruit your first clinical users and gather structured feedback to validate your health tech product with real-world evidence.",
+    indexable: true,
+  },
+  "/programs/low-fidelity-prototype-lab": {
+    title: "Prototype Lab — Rellia Health",
+    description:
+      "Build and test low-fidelity prototypes with clinical end-users to validate your health tech concept before full development.",
+    indexable: true,
+  },
+  "/programs/advisory-board-match": {
+    title: "Advisory Board Match — Rellia Health",
+    description:
+      "Get matched with vetted clinical and industry advisors who can accelerate your health tech company's growth.",
+    indexable: true,
+  },
+  "/programs/design-your-brand-strategy": {
+    title: "Brand Strategy — Rellia Health",
+    description:
+      "Design a brand strategy that resonates with healthcare buyers, clinicians, and patients through expert-led workshops.",
+    indexable: true,
+  },
+  "/programs/regulatory-roadmap": {
+    title: "Regulatory Strategy Sprint — Rellia Health",
+    description:
+      "Map your regulatory pathway with expert guidance on FDA submissions, CE marking, and compliance strategy.",
+    indexable: true,
+  },
+  "/events/:slug": {
+    title: "Event Details — Rellia Health",
+    description: "Learn more about this Rellia Health event and register to join the session.",
+    indexable: true,
   },
   "/network": {
     title: "Network — Rellia Health",

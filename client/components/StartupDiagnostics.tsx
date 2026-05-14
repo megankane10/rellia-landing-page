@@ -1,6 +1,6 @@
 import {
   ClipboardCheck,
-  Palette,
+  Paintbrush,
   Cpu,
   ShieldCheck,
   Activity,
@@ -29,7 +29,7 @@ const diagnosticItems: DiagnosticItem[] = [
     name: "Product design & UI/UX",
     description:
       "Clarity, accessibility, and trust in the product experience—especially workflows clinicians and patients will actually use.",
-    icon: Palette,
+    icon: Paintbrush,
   },
   {
     name: "Technology and architecture",
@@ -124,10 +124,10 @@ export default function StartupDiagnostics() {
 
         <div className="rounded-[24px] border border-black/10 bg-white p-6 md:p-8">
           <div className="flex items-center gap-3 mb-8">
-            <div className="w-12 h-12 rounded-xl bg-rellia-mint/25 flex items-center justify-center shrink-0">
-              <ClipboardCheck className="w-6 h-6 text-rellia-teal" strokeWidth={1.75} />
+            <div className="w-12 h-12 rounded-xl bg-rellia-teal flex items-center justify-center shrink-0">
+              <ClipboardCheck className="w-7 h-7 text-rellia-mint fill-rellia-mint" strokeWidth={1.5} />
             </div>
-            <h4 className="font-host-grotesk font-semibold text-black text-xl md:text-2xl leading-tight tracking-tight">
+            <h4 className="font-host-grotesk font-semibold text-rellia-teal text-xl md:text-2xl leading-tight tracking-tight">
               Categories we assess
             </h4>
           </div>
@@ -147,8 +147,8 @@ export default function StartupDiagnostics() {
                   )}
                 >
                   <div className="flex items-start gap-3">
-                    <span className="w-9 h-9 rounded-xl bg-rellia-mint/25 group-hover:bg-white/15 group-focus-within:bg-white/15 flex items-center justify-center shrink-0 transition-colors duration-200">
-                      <Icon className="w-5 h-5 text-rellia-teal group-hover:text-rellia-mint group-focus-within:text-rellia-mint transition-colors duration-200" strokeWidth={1.75} />
+                    <span className="w-11 h-11 rounded-2xl bg-rellia-mint/25 group-hover:bg-white/15 group-focus-within:bg-white/15 flex items-center justify-center shrink-0 transition-colors duration-200">
+                      <Icon className="w-7 h-7 text-rellia-teal fill-rellia-teal group-hover:text-rellia-mint group-hover:fill-rellia-mint group-focus-within:text-rellia-mint group-focus-within:fill-rellia-mint transition-colors duration-200" strokeWidth={1.5} />
                     </span>
                     <div className="min-w-0">
                       <p className="font-urbanist font-semibold text-black/80 group-hover:text-white group-focus-within:text-white text-sm md:text-base leading-snug transition-colors duration-200">

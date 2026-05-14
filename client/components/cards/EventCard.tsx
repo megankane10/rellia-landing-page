@@ -1,6 +1,14 @@
-import { ExternalLink, User } from "lucide-react"
-import RelliaAction from "@/components/RelliaAction"
+import { Calendar, History, MapPin, Video } from "lucide-react"
+import { Link } from "react-router-dom"
 import type { ProgramsEventCard } from "@shared/cms/types"
+import {
+  formatProgramsEventCardDateTime,
+  getProgramsEventAttendanceMode,
+  getProgramsEventSpeakerAvatarSrc,
+  parseProgramsEventSpeaker,
+} from "@shared/cms/programsEventDisplay"
+import { programsEventDetailPath } from "@shared/cms/eventSlug"
+import RelliaAction from "@/components/RelliaAction"
 import { cn } from "@/lib/utils"
 
 export type EventCardProps = {
@@ -14,136 +22,131 @@ const eventKey = (event: ProgramsEventCard) =>
 
 export { eventKey }
 
+/**
+ * Date + title + tags: min height keeps speaker rows aligned across cards in a grid.
+ * Title area reserves three lines (line-clamp-3) at xl / 2xl body sizes.
+ */
+const EVENT_CARD_TITLE_DATE_SLOT_MIN_H =
+  "min-h-[calc((0.875rem*1.375)+0.25rem+(1.25rem*1.375*3)+0.5rem+1.625rem)] sm:min-h-[calc((15px*1.375)+0.25rem+(1.5rem*1.375*3)+0.5rem+1.625rem)]"
+
+const attendanceTagClassName =
+  "inline-flex w-fit items-center gap-1 rounded-full border border-black/10 bg-white px-2.5 py-1 font-host-grotesk text-[9px] font-semibold uppercase tracking-[0.12em] text-black/60 sm:gap-1.5 sm:text-[10px] sm:tracking-[0.14em]"
+
+const tagIconClassName = "h-3 w-3 shrink-0 opacity-90 sm:h-3.5 sm:w-3.5"
+
 export const EventCard = ({
   event,
   variant,
   className,
 }: EventCardProps) => {
-  const isWaitlistEvent =
-    variant === "upcoming" &&
-    (Boolean(event.comingSoon) || !Boolean(event.href && event.href.trim().length > 0))
-  const primaryLabel = isWaitlistEvent ? "Join waitlist" : variant === "upcoming" ? "Register on Luma" : "View on Luma"
-  const buttonDisabled = !event.href || event.href.trim().length === 0
-  const speakerParts = (() => {
-    const raw = (event.person ?? "").trim()
-    if (!raw) return { speaker: "", company: "" }
+  const speakerParts = parseProgramsEventSpeaker(event.person)
+  const attendanceMode = getProgramsEventAttendanceMode(event)
+  const detailHref = programsEventDetailPath(event)
+  const dateTimeLine = formatProgramsEventCardDateTime(event.dateTime ?? "")
+  const personRaw = (event.person ?? "").trim()
 
-    const separators = [" • ", " · ", " | ", " — ", " - ", ", "]
-    const matched = separators.find((sep) => raw.includes(sep))
-    if (!matched) return { speaker: raw, company: "" }
+  /** Matches Events page filters: Upcoming | Past */
+  const tagLabel = variant === "past" ? "Past" : "Upcoming"
+  const isPast = variant === "past"
 
-    const [speakerRaw, ...rest] = raw.split(matched)
-    const speaker = (speakerRaw ?? "").trim()
-    const company = rest.join(matched).trim()
-    return { speaker, company }
-  })()
-  const dateParts = (() => {
-    const raw = (event.dateTime ?? "").trim()
-    const monthMatch = raw.match(
-      /\b(Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:t(?:ember)?)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\b/i,
-    )
-    const monthToken = (monthMatch?.[1] ?? "").trim()
-    const monthLabel = monthToken ? monthToken.slice(0, 3).toUpperCase() : ""
+  const speakerName = speakerParts.speaker || personRaw || ""
+  const speakerCompany = speakerParts.company
+  const hasSpeakerBlock = Boolean(speakerName)
 
-    const afterMonth = monthMatch
-      ? raw.slice((monthMatch.index ?? 0) + monthMatch[0].length)
-      : raw
-    const dayMatch = afterMonth.match(/\b(\d{1,2})(?:st|nd|rd|th)?\b/i) ?? raw.match(/\b(\d{1,2})(?:st|nd|rd|th)?\b/i)
-    const day = (dayMatch?.[1] ?? "").trim()
-    const dayLabel = day ? day.padStart(2, "0") : ""
-
-    return { monthLabel, dayLabel, fallback: raw }
-  })()
+  const avatarSrc = getProgramsEventSpeakerAvatarSrc(event)
 
   return (
-    <div
+    <article
       className={cn(
-        "flex h-full min-h-[420px] flex-col overflow-hidden rounded-2xl border border-black/5 bg-white shadow-sm transition-all hover:shadow-md",
+        "group flex h-full min-h-0 flex-col overflow-hidden rounded-[20px] p-2 border border-black/10 bg-white shadow-sm transition-all duration-500 ease-in hover:bg-black/[0.03] hover:shadow-md outline outline-1 outline-offset-[10px] outline-transparent hover:outline-rellia-teal/20",
         className,
       )}
     >
-      <div className="relative aspect-video w-full shrink-0 overflow-hidden bg-rellia-teal/5">
-        <img
-          src={event.imageSrc}
-          alt={variant === "past" ? event.person : event.title}
-          className={cn(
-            "h-full w-full object-cover",
-            (variant === "past" || isWaitlistEvent) && "grayscale-[0.25] saturate-[0.85] opacity-[0.92]",
-          )}
-        />
-
-        {isWaitlistEvent ? (
-          <div className="absolute left-3 top-3 z-10">
-            <span className="inline-flex items-center rounded-full border border-white/25 bg-black/35 px-3 py-1.5 font-host-grotesk text-[11px] font-bold uppercase tracking-[0.18em] text-white shadow-sm backdrop-blur-md">
-              Waitlist
-            </span>
-          </div>
-        ) : null}
-
-        <div className="absolute right-3 top-3 z-10">
-          <div
-            className="flex h-14 w-14 flex-col items-center justify-center rounded-2xl border border-white/25 bg-black/20 text-white backdrop-blur-md"
-            aria-label={dateParts.fallback}
-          >
-            {dateParts.monthLabel && dateParts.dayLabel ? (
-              <>
-                <span className="font-host-grotesk text-[11px] font-extrabold tracking-[0.16em] opacity-90">
-                  {dateParts.monthLabel}
-                </span>
-                <span className="-mt-0.5 font-host-grotesk text-lg font-bold leading-none">
-                  {dateParts.dayLabel}
-                </span>
-              </>
-            ) : (
-              <span className="px-2 text-center font-urbanist text-[11px] font-semibold leading-tight">
-                {dateParts.fallback}
-              </span>
+      {event.imageSrc ? (
+        <div className="relative aspect-square w-full overflow-hidden rounded-xl bg-black/5 shrink-0">
+          <img
+            src={event.imageSrc}
+            alt={event.title}
+            className={cn(
+              "absolute inset-0 h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105",
+              variant === "past" && "opacity-90 saturate-[0.9]"
             )}
-          </div>
+            loading="lazy"
+          />
         </div>
-      </div>
+      ) : (
+        <div className="relative aspect-square w-full overflow-hidden rounded-xl bg-rellia-teal/5 shrink-0 flex items-center justify-center">
+          <Calendar className="h-12 w-12 text-rellia-teal/20" />
+        </div>
+      )}
 
-      <div className="flex flex-1 flex-col p-6">
-        <div className="mb-4 flex flex-col gap-2 font-urbanist text-sm text-black/60">
-          <p className="flex items-center gap-2">
-            <User className="h-4 w-4 shrink-0 text-rellia-mint" />
-            <span className="line-clamp-1 text-black/70">
-              {speakerParts.speaker || event.person}
-              {speakerParts.company ? (
-                <span className="text-black/45">
-                  {" "}
-                  | {speakerParts.company}
-                </span>
+      <div className="flex flex-1 flex-col p-5 md:p-6">
+        <div className="flex-1 flex flex-col gap-4">
+          <div className="space-y-2">
+            <div className="flex flex-wrap items-center gap-2">
+              <span
+                className={cn(
+                  "inline-flex w-fit max-w-full shrink-0 items-center gap-1 rounded-full px-2.5 py-1 font-host-grotesk text-[9px] font-semibold uppercase tracking-[0.12em] ring-1 ring-black/5 sm:gap-1.5 sm:text-[10px] sm:tracking-[0.14em]",
+                  isPast ? "bg-black/[0.06] text-black/65" : "bg-rellia-mint text-rellia-teal",
+                )}
+              >
+                {isPast ? (
+                  <History className="h-3 w-3 opacity-80 text-black/50" aria-hidden strokeWidth={2.25} />
+                ) : (
+                  <Calendar className="h-3 w-3 opacity-80 text-rellia-teal" aria-hidden strokeWidth={2.25} />
+                )}
+                {tagLabel}
+              </span>
+              {dateTimeLine ? (
+                <>
+
+                  <span className="font-urbanist text-[11px] font-bold text-black/40 uppercase tracking-widest">
+                    {dateTimeLine}
+                  </span>
+                </>
               ) : null}
-            </span>
-          </p>
+            </div>
+            
+            <h3 className="line-clamp-2 font-host-grotesk text-xl font-semibold leading-tight tracking-tight text-black group-hover:underline decoration-2 underline-offset-4">
+              {event.title}
+            </h3>
+          </div>
+
+          {hasSpeakerBlock ? (
+            <div className="mt-auto pt-4 flex items-center gap-3 border-t border-black/5">
+              <img
+                src={avatarSrc}
+                alt=""
+                className={cn(
+                  "h-10 w-10 shrink-0 rounded-full border border-black/10 object-cover object-center",
+                  variant === "past" && "opacity-90 saturate-[0.9]",
+                )}
+                aria-hidden
+              />
+              <div className="min-w-0 flex-1">
+                <p className="font-host-grotesk text-sm font-medium leading-tight text-black truncate">{speakerName}</p>
+                {speakerCompany ? (
+                  <p className="mt-0.5 font-urbanist text-xs font-normal leading-tight text-black/45 truncate">
+                    {speakerCompany}
+                  </p>
+                ) : null}
+              </div>
+            </div>
+          ) : null}
         </div>
 
-        <h4 className="mb-5 h-[3.05rem] font-host-grotesk text-lg font-bold leading-snug text-black line-clamp-2">
-          {event.title}
-        </h4>
-
-        <div className="mt-auto">
-          {buttonDisabled ? (
-            <button
-              type="button"
-              disabled
-              aria-disabled
-              className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-full bg-black/5 px-4 text-sm font-semibold text-black/30"
-            >
-              {primaryLabel}
-            </button>
-          ) : (
-            <RelliaAction asChild variant="mintCardTealFill" size="compact">
-              <a href={event.href} target="_blank" rel="noopener noreferrer">
-                <span className="inline-flex items-center justify-center gap-2">
-                  {primaryLabel} <ExternalLink className="h-4 w-4" />
-                </span>
-              </a>
-            </RelliaAction>
-          )}
+        <div className="shrink-0 pt-6">
+          <RelliaAction
+            asChild
+            variant="mintCardTealFill"
+            className="w-full h-[46px] text-sm font-bold"
+          >
+            <Link to={detailHref} className="cursor-pointer">
+              View event
+            </Link>
+          </RelliaAction>
         </div>
       </div>
-    </div>
+    </article>
   )
 }

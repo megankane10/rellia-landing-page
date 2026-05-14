@@ -1,120 +1,219 @@
-import { useCallback, useRef, useState } from "react";
-import { Pause, Play } from "lucide-react";
-import { cn } from "@/lib/utils";
-import RelliaButton from "@/components/RelliaButton";
-import { useNavigate } from "react-router-dom";
-import type { HomePageContent } from "@shared/cms/types";
+import { useEffect, useMemo, useState } from "react"
+import { useNavigate } from "react-router-dom"
+import type { HomePageContent } from "@shared/cms/types"
+import { ArrowRight } from "lucide-react"
+import RelliaAction from "@/components/RelliaAction"
+import { motion, useReducedMotion } from "framer-motion"
+import { cn } from "@/lib/utils"
 
-const HERO_VIDEO_POSTER = "/images/heroPoster-home.png";
+/** Stagger timing must stay in sync with `headlineBelowFoldDelayMs` below */
+const HEADLINE_STAGGER_CHILDREN_S = 0.15
+const HEADLINE_DELAY_CHILDREN_S = 0.2
+const HEADLINE_WORD_DURATION_S = 0.5
+const HEADLINE_Y_OFFSET = 24
+
+/** Soft ease-out — slow start, gentle settle */
+const HEADLINE_WORD_EASE = [0.33, 1, 0.68, 1] as const
+const BELOW_FOLD_EASE = [0.33, 1, 0.68, 1] as const
+
+/** Insert flex line-break after this token on desktop so “of …” stays on line 2 without isolating “future”. */
+const isFutureHeadlineWord = (token: string) =>
+  token.replace(/[.,!?;:]+$/, "").toLowerCase() === "future"
+
+const headlineBelowFoldDelayMs = (lineCount: number) => {
+  const n = Math.max(lineCount, 1)
+  const totalS =
+    HEADLINE_DELAY_CHILDREN_S + (n - 1) * HEADLINE_STAGGER_CHILDREN_S + HEADLINE_WORD_DURATION_S
+  /** Start below-fold earlier than the strict “last line finished” estimate. */
+  return Math.max(0, Math.round(totalS * 1000) - 320)
+}
+
+const DEFAULT_HERO_VIDEO_SRC = "/videos/homehero.mp4"
 
 type HeroSectionProps = {
   content: Pick<
     HomePageContent,
     | "headlinePrefix"
-    | "headlineAccent"
     | "subheadline"
     | "primaryCtaLabel"
     | "primaryCtaPath"
     | "secondaryCtaLabel"
     | "secondaryCtaPath"
+    | "heroBackgroundVideoUrl"
   >;
-};
+}
 
 export default function HeroSection({ content }: HeroSectionProps) {
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const [isPaused, setIsPaused] = useState(false);
-  const navigate = useNavigate();
+  const navigate = useNavigate()
+  const reduceMotion = useReducedMotion()
+  const [showBelowFold, setShowBelowFold] = useState(reduceMotion)
 
-  const togglePlayback = useCallback(() => {
-    const el = videoRef.current;
-    if (!el) return;
-    if (el.paused) {
-      void el.play();
-    } else {
-      el.pause();
+  const heroVideoSrc =
+    content.heroBackgroundVideoUrl?.trim() || DEFAULT_HERO_VIDEO_SRC
+
+  const headlineLines = useMemo(() => {
+    const words = (content.headlinePrefix ?? "You are the future of health tech.").trim().split(/\s+/).filter(Boolean)
+    const lines: string[][] = [[]]
+    words.forEach((w) => {
+      lines[lines.length - 1].push(w)
+      if (isFutureHeadlineWord(w)) {
+        lines.push([])
+      }
+    })
+    return lines.filter((l) => l.length > 0)
+  }, [content.headlinePrefix])
+
+  useEffect(() => {
+    if (reduceMotion) {
+      setShowBelowFold(true)
+      return
     }
-  }, []);
+    const ms = headlineBelowFoldDelayMs(headlineLines.length)
+    const t = window.setTimeout(() => setShowBelowFold(true), ms)
+    return () => window.clearTimeout(t)
+  }, [reduceMotion, headlineLines.length])
+
+  const headlineContainerVariants = {
+    hidden: {},
+    visible: {
+      transition: {
+        staggerChildren: reduceMotion ? 0 : HEADLINE_STAGGER_CHILDREN_S,
+        delayChildren: reduceMotion ? 0 : HEADLINE_DELAY_CHILDREN_S,
+      },
+    },
+  }
+
+  const headlineWordVariants = {
+    hidden: {
+      opacity: reduceMotion ? 1 : 0,
+      y: reduceMotion ? 0 : HEADLINE_Y_OFFSET,
+      filter: reduceMotion ? "blur(0px)" : "blur(8px)",
+    },
+    visible: {
+      opacity: 1,
+      y: 0,
+      filter: "blur(0px)",
+      transition: {
+        duration: reduceMotion ? 0 : HEADLINE_WORD_DURATION_S,
+        ease: HEADLINE_WORD_EASE,
+      },
+    },
+  }
 
   return (
-    <section className="relative w-full min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Video background — ref lets us pause/play from the control button */}
-      <video
-        ref={videoRef}
-        poster={HERO_VIDEO_POSTER}
-        autoPlay
-        muted
-        loop
-        playsInline
-        className="absolute inset-0 w-full h-full object-cover"
-        onPlay={() => setIsPaused(false)}
-        onPause={() => setIsPaused(true)}
-      >
-        <source src="/videos/homehero.mp4" type="video/mp4" />
-      </video>
-
-      {/* Overlay */}
-      <div className="absolute inset-0 bg-rellia-teal/65" />
-
-      {/* Pause / play — sits above overlay so it stays visible & clickable */}
-      <div className="absolute bottom-6 right-6 z-20 md:bottom-10 md:right-10">
-        <button
-          type="button"
-          onClick={togglePlayback}
-          className={cn(
-            "flex h-12 w-12 items-center justify-center rounded-full",
-            "border border-white/40 bg-white/15 text-white backdrop-blur-sm",
-            "transition hover:bg-white/25 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white",
-          )}
-          aria-label={isPaused ? "Play background video" : "Pause background video"}
-        >
-          {isPaused ? <Play className="h-5 w-5" fill="currentColor" /> : <Pause className="h-5 w-5" />}
-        </button>
+    <section className="relative min-h-[100svh] md:min-h-screen flex items-center bg-rellia-teal overflow-hidden">
+      <div aria-hidden className="absolute inset-0">
+        {!reduceMotion ? (
+          <video
+            className="absolute inset-0 h-full w-full object-cover"
+            src={heroVideoSrc}
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="metadata"
+          />
+        ) : null}
       </div>
 
-      {/* Content — padded for fixed navbar */}
-      <div className="relative z-10 flex flex-col items-center text-center px-6 pt-24 pb-16 md:pt-28 md:pb-24 max-w-5xl mx-auto w-full">
+      {/* Softer teal wash so image stays visible */}
+      <div aria-hidden className="absolute inset-0 bg-rellia-teal/45" />
 
-        {/* Headline — rises on load */}
-        <h1
-          className="font-host-grotesk font-extrabold text-white text-4xl sm:text-5xl md:text-6xl lg:text-[80px] leading-tight animate-fade-up"
-          style={{ animationDelay: "0s" }}
-        >
-          {content.headlinePrefix}{" "}
-          <span className="relative inline-block align-bottom">
-            {/* White underlay is decorative; mint span is the single semantic copy for SR/SEO */}
-            <span className="text-white font-extrabold" aria-hidden>
-              {content.headlineAccent}
-            </span>
-            <span className="absolute left-0 top-0 whitespace-nowrap font-extrabold text-rellia-mint motion-safe:animate-healthcare-fill motion-reduce:clip-path-none">
-              {content.headlineAccent}
-            </span>
-          </span>
-        </h1>
+      {/* Left-to-right gradient — extra contrast under the headline */}
+      <div
+        aria-hidden
+        className="absolute inset-0 bg-gradient-to-r from-rellia-teal/85 via-rellia-teal/55 to-rellia-teal/35"
+      />
 
-        <p
-          className="font-urbanist font-semibold text-white text-lg md:text-2xl mt-10 mb-10 animate-fade-up"
-          style={{ animationDelay: "0.2s" }}
-        >
-          {content.subheadline}
-        </p>
+      <div className="relative z-10 max-w-[1300px] mx-auto w-full px-6 md:px-10 pt-24 pb-12 md:pt-28 md:pb-24">
+        <div className="flex w-full max-w-5xl flex-col items-start text-left">
+          <div className="-mt-2 md:-mt-1 w-full">
+            <motion.h1
+              variants={headlineContainerVariants}
+              initial="hidden"
+              animate="visible"
+              className="font-host-grotesk text-[46px] font-medium leading-[0.95] tracking-tight text-rellia-mint md:text-[68px] lg:text-[82px] space-y-1"
+            >
+              {headlineLines.map((line, idx) => (
+                <div 
+                  key={`line-${idx}`} 
+                  className={cn(
+                    "overflow-hidden flex flex-wrap gap-x-[0.22em]",
+                    idx > 0 && "hidden md:flex" // Hide forced second line on mobile if it exists
+                  )}
+                >
+                  <motion.span
+                    variants={headlineWordVariants}
+                    className="inline-flex flex-wrap gap-x-[0.22em] will-change-[transform,filter]"
+                  >
+                    {line.map((word, wIdx) => (
+                      <span key={`word-${idx}-${wIdx}`}>{word}</span>
+                    ))}
+                    {/* On mobile, if this is the first line and there's a second one, render the rest of the words here too but only show on mobile */}
+                    {idx === 0 && headlineLines.length > 1 && (
+                      <span className="flex md:hidden flex-wrap gap-x-[0.22em]">
+                        {headlineLines.slice(1).flat().map((word, wIdx) => (
+                          <span key={`mobile-word-${wIdx}`}>{word}</span>
+                        ))}
+                      </span>
+                    )}
+                  </motion.span>
+                </div>
+              ))}
+            </motion.h1>
+          </div>
 
-        {/* CTA Buttons */}
-        <div
-          className="flex flex-col sm:flex-row gap-4 items-center animate-fade-up"
-          style={{ animationDelay: "0.4s" }}
-        >
-          <RelliaButton
-            className="bg-rellia-mint text-rellia-teal border-rellia-mint hover:bg-white hover:text-rellia-teal hover:border-white hover:shadow-xl"
-            onClick={() => navigate(content.primaryCtaPath)}
+          <motion.div
+            initial={reduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 18 }}
+            animate={showBelowFold ? { opacity: 1, y: 0 } : { opacity: 0, y: 18 }}
+            transition={
+              reduceMotion
+                ? undefined
+                : { duration: 0.42, ease: BELOW_FOLD_EASE, delay: 0 }
+            }
+            className="mt-8 md:mt-9"
           >
-            {content.primaryCtaLabel}
-          </RelliaButton>
+            <p className="max-w-3xl text-pretty font-urbanist text-xl leading-relaxed text-white md:text-2xl">
+              {content.subheadline}
+            </p>
+          </motion.div>
 
-          <RelliaButton variant="secondary" onClick={() => navigate(content.secondaryCtaPath)}>
-            {content.secondaryCtaLabel}
-          </RelliaButton>
+          <motion.div
+            initial={reduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 18 }}
+            animate={showBelowFold ? { opacity: 1, y: 0 } : { opacity: 0, y: 18 }}
+            transition={
+              reduceMotion
+                ? undefined
+                : { duration: 0.45, ease: BELOW_FOLD_EASE, delay: 0 }
+            }
+            className="mt-12 flex w-full max-w-3xl flex-col gap-4 sm:mt-14 sm:flex-row sm:items-stretch"
+          >
+            <RelliaAction
+              type="button"
+              variant="heroSolidOnTeal"
+              size="comfortable"
+              onClick={() => navigate(content.primaryCtaPath)}
+              aria-label={content.primaryCtaLabel || "Apply to Join"}
+              className="w-full justify-center sm:flex-1 sm:min-w-0"
+            >
+              {content.primaryCtaLabel || "Apply to Join"}
+              <ArrowRight aria-hidden />
+            </RelliaAction>
+
+            <RelliaAction
+              type="button"
+              variant="heroGhostOnTeal"
+              size="comfortable"
+              onClick={() => navigate(content.secondaryCtaPath)}
+              aria-label={content.secondaryCtaLabel || "Explore Programs"}
+              className="w-full justify-center border-white/45 text-white hover:border-white/80 sm:flex-1 sm:min-w-0"
+            >
+              {content.secondaryCtaLabel || "Explore Programs"}
+              <ArrowRight aria-hidden />
+            </RelliaAction>
+          </motion.div>
         </div>
       </div>
     </section>
-  );
+  )
 }

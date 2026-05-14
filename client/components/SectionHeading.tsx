@@ -1,33 +1,50 @@
-import { cn } from "@/lib/utils";
-import ScrollReveal from "@/components/ScrollReveal";
+import { cn } from "@/lib/utils"
+import ScrollReveal from "@/components/ScrollReveal"
+import WordRevealHeading from "@/components/WordRevealHeading"
 
 export default function SectionHeading({
   title,
   description,
   align = "left",
   tone = "dark",
+  animated = true,
   className,
+  titleClassName,
 }: {
   title: string;
   description?: string;
   align?: "left" | "center";
   tone?: "dark" | "light";
+  animated?: boolean;
   className?: string;
+  titleClassName?: string;
 }) {
   const isCenter = align === "center";
   const isLight = tone === "light";
 
   return (
     <ScrollReveal className={cn(isCenter && "text-center", className)}>
-      <h2
-        className={cn(
-          "font-host-grotesk font-semibold leading-tight tracking-tight",
-          isLight ? "text-white" : "text-black",
-          "text-3xl md:text-[40px]",
-        )}
-      >
-        {title}
-      </h2>
+      {animated ? (
+        <WordRevealHeading
+          text={title}
+          as="h2"
+          className={cn(
+            "font-host-grotesk font-semibold leading-tight tracking-tight",
+            isLight ? "text-white" : "text-black",
+            titleClassName ?? "text-3xl md:text-[40px]",
+          )}
+        />
+      ) : (
+        <h2
+          className={cn(
+            "font-host-grotesk font-semibold leading-tight tracking-tight",
+            isLight ? "text-white" : "text-black",
+            titleClassName ?? "text-3xl md:text-[40px]",
+          )}
+        >
+          {title}
+        </h2>
+      )}
       {description ? (
         <p
           className={cn(
@@ -41,6 +58,6 @@ export default function SectionHeading({
         </p>
       ) : null}
     </ScrollReveal>
-  );
+  )
 }
 

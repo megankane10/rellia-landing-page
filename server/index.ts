@@ -62,8 +62,11 @@ export function createServer() {
 
   const isDev = process.env.NODE_ENV !== "production"
 
-  app.use(helmet())
-
+  app.use(
+    helmet({
+      contentSecurityPolicy: isDev ? false : undefined,
+    })
+  )
   const allowedOrigins = (process.env.ALLOWED_ORIGINS || "")
     .split(",")
     .map((o) => o.trim())
