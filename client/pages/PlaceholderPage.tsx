@@ -16,10 +16,15 @@ export default function PlaceholderPage({
 
       <main className="flex-1 flex items-center justify-center p-6 pt-[72px] md:pt-[86px] text-center">
         <div className="max-w-2xl bg-white/50 backdrop-blur-sm p-12 md:p-20 rounded-3xl border border-black/5 shadow-xl w-full">
-          <h1 className="text-4xl md:text-6xl font-bold text-rellia-teal mb-6">{title}</h1>
-          <p className="text-lg md:text-xl text-black/70 mb-8 leading-relaxed">
+          <div className="inline-flex items-center justify-center px-4 py-1.5 mb-6 rounded-full bg-rellia-mint/30 text-rellia-teal text-sm font-semibold uppercase tracking-wider">
+            Coming Soon
+          </div>
+          <h1 className="text-4xl md:text-6xl font-bold text-black mb-6 tracking-tight">
+            {title}
+          </h1>
+          <p className="text-lg md:text-xl text-black/70 mb-10 leading-relaxed font-urbanist">
             {subtitle ||
-              "This page is currently under development. Stay tuned for the full Rellia Health experience!"}
+              `The ${title} experience is currently under development. We're building something special—stay tuned.`}
           </p>
           <div>
             <Link
