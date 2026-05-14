@@ -32,9 +32,9 @@ export const REGULATORY_ROADMAP_STATIC_BLOCKS: ProgramPageStaticBlocks = {
     { icon: ClipboardCheck, title: "Actionable Roadmap", description: "Leave with a documented regulatory strategy and timeline you can execute against and share with stakeholders." },
   ],
   timeline: [
-    { month: "Week 1–2 — Classification", weeks: ["Product classification analysis across FDA, HC, and MDR", "Predicate device and substantial equivalence research"] },
-    { month: "Week 3–4 — Strategy", weeks: ["Regulatory pathway selection and rationale", "Intended use and indications for use drafting"] },
-    { month: "Week 5–6 — Global Planning", weeks: ["Multi-market commercialization phasing", "Evidence requirements mapping per jurisdiction"] },
-    { month: "Week 7–8 — Documentation", weeks: ["Regulatory strategy document finalization", "Investor-ready regulatory milestone timeline"] },
+    { month: "Week 1 — Intended Use & Classification", weeks: ["Device vs. non-device determination", "Intended use statement drafting and product classification"] },
+    { month: "Week 2 — Submission Pathway & Market Strategy", weeks: ["Regulatory submission outline and timeline estimate", "Target market prioritization and implications"] },
+    { month: "Week 3 — Evidence and Testing Strategy", weeks: ["Validation, usability, clinical evaluation, and cybersecurity requirements", "Phased testing roadmap to know what can be deferred to after submission"] },
+    { month: "Week 4 — Investor Narrative and Regulatory Positioning", weeks: ["Investor-ready regulatory strategy with risk framing", "Pitch deck language review and recommended next steps"] },
   ],
 }
