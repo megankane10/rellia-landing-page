@@ -243,7 +243,6 @@ export default function DiagnosticLanding() {
           </section>
         </>
       )}
->
 
       <Footer />
     </div>
