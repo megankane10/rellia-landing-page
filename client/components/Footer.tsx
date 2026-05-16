@@ -4,6 +4,7 @@ import { CareersHiringBadge } from "@/components/CareersHiringBadge"
 import { InstagramFilled, LinkedInFilled, MailFilled } from "@/components/icons/SocialIcons"
 import { useGlobalSettings, useNavigation } from "@/hooks/useCmsDocuments"
 import type { NavItem } from "@shared/cms/types"
+import { GETPROVEN_VENDORS_GRID_URL } from "@/config/partnerLinks"
 
 const isExternalHref = (href: string) => /^(https?:\/\/|mailto:|tel:)/i.test(href)
 
@@ -43,7 +44,7 @@ const FALLBACK_FOOTER_COLUMNS: NavItem[] = [
       { label: "Stories", href: "/stories" },
       { label: "Explore Alumni", href: "/founders/alumni" },
       { label: "Explore Advisors", href: "/advisors/directory" },
-      { label: "Industry Partners Directory", href: "https://proven.cc/rellia-health" },
+      { label: "Industry Partners Directory", href: GETPROVEN_VENDORS_GRID_URL },
     ],
   },
   {
