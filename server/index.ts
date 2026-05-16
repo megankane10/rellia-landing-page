@@ -602,34 +602,93 @@ export function createServer() {
         return;
       }
 
-      const supabaseUrl = (
-        process.env.SUPABASE_URL ||
-        process.env.VITE_SUPABASE_URL ||
-        ""
-      ).trim();
-      const supabaseKey = (
-        process.env.SUPABASE_SERVICE_ROLE_KEY ||
-        process.env.SUPABASE_SECRET_KEY ||
-        process.env.VITE_SUPABASE_PUBLISHABLE_KEY ||
-        ""
-      ).trim();
-
-      if (!supabaseUrl || !supabaseKey) {
-        res.status(501).json({
-          error: "Contact form is not configured on the server.",
-          hint: "Set SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY (or VITE_SUPABASE_* for local dev).",
-        });
-        return;
-      }
-
-      const { createClient } = await import("@supabase/supabase-js");
-      const supabase = createClient(supabaseUrl, supabaseKey);
-
       const { firstName, lastName, email, message } = parsed.data;
       const company = parsed.data.company?.trim() ?? "";
       const jobTitle = parsed.data.jobTitle?.trim() ?? "";
 
-      try {
+      const hubspotFormGuid = process.env.HUBSPOT_CONTACT_FORM_GUID?.trim();
+      const hubspotPortalId =
+        process.env.HUBSPOT_PORTAL_ID?.trim() || "342926478";
+      const hubspotFormsApiBase = (
+        process.env.HUBSPOT_FORMS_API_BASE?.trim() ||
+        "https://api.hsforms.com"
+      ).replace(/\/$/, "");
+
+      const submitToHubspot = async (): Promise<{ ok: true } | { error: string }> => {
+        if (!hubspotFormGuid) {
+          return { error: "HubSpot contact form is not configured." };
+        }
+
+        const pageUri =
+          req.get("referer")?.trim() ||
+          `${siteOrigin.replace(/\/$/, "")}/contact`;
+        const hubspotUrl = `${hubspotFormsApiBase}/submissions/v3/integration/submit/${hubspotPortalId}/${hubspotFormGuid}`;
+
+        const fields: Array<{ name: string; value: string }> = [
+          { name: "firstname", value: firstName },
+          { name: "lastname", value: lastName },
+          { name: "email", value: email },
+        ];
+        if (company) fields.push({ name: "company", value: company });
+        if (jobTitle) fields.push({ name: "jobtitle", value: jobTitle });
+        fields.push({ name: "message", value: message });
+
+        const hsRes = await fetch(hubspotUrl, {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({
+            fields,
+            context: {
+              pageUri,
+              pageName: "Contact",
+            },
+          }),
+        });
+
+        if (!hsRes.ok) {
+          const errText = await hsRes.text();
+          console.error(
+            "HubSpot contact submit failed",
+            hsRes.status,
+            errText.slice(0, 800),
+          );
+          return {
+            error:
+              "Could not send your message right now. Please try again or email us directly.",
+          };
+        }
+
+        return { ok: true };
+      };
+
+      const submitToSupabase = async (): Promise<{ ok: true } | { error: string }> => {
+        const supabaseUrl = (
+          process.env.SUPABASE_URL ||
+          process.env.VITE_SUPABASE_URL ||
+          ""
+        ).trim();
+        const serviceRoleKey = (
+          process.env.SUPABASE_SERVICE_ROLE_KEY ||
+          process.env.SUPABASE_SECRET_KEY ||
+          ""
+        ).trim();
+        const anonKey = (
+          process.env.SUPABASE_ANON_KEY ||
+          process.env.VITE_SUPABASE_ANON_KEY ||
+          process.env.VITE_SUPABASE_PUBLISHABLE_KEY ||
+          ""
+        ).trim();
+        const supabaseKey = serviceRoleKey || anonKey;
+
+        if (!supabaseUrl || !supabaseKey) {
+          return { error: "Supabase contact storage is not configured." };
+        }
+
+        const { createClient } = await import("@supabase/supabase-js");
+        const supabase = createClient(supabaseUrl, supabaseKey, {
+          auth: { persistSession: false, autoRefreshToken: false },
+        });
+
         const { error } = await supabase.from("contact_responses").insert({
           first_name: firstName,
           last_name: lastName,
@@ -641,16 +700,53 @@ export function createServer() {
 
         if (error) {
           console.error("Supabase contact insert failed", error);
-          res.status(502).json({
-            error:
-              "Could not send your message right now. Please try again or email us directly.",
-          });
+          const rateLimited =
+            typeof error.message === "string" &&
+            error.message.toLowerCase().includes("too many submissions");
+          return {
+            error: rateLimited
+              ? "Too many messages from this email. Please try again in an hour."
+              : "Could not send your message right now. Please try again or email us directly.",
+          };
+        }
+
+        return { ok: true };
+      };
+
+      try {
+        let hubspotError: string | null = null;
+
+        if (hubspotFormGuid) {
+          const hubspotResult = await submitToHubspot();
+          if ("ok" in hubspotResult) {
+            res.status(200).json({ ok: true });
+            return;
+          }
+          hubspotError = hubspotResult.error;
+        }
+
+        const supabaseResult = await submitToSupabase();
+        if ("ok" in supabaseResult) {
+          res.status(200).json({ ok: true });
           return;
         }
 
-        res.status(200).json({ ok: true });
+        const supabaseConfigured =
+          supabaseResult.error !== "Supabase contact storage is not configured.";
+        const failureMessage = hubspotError || (supabaseConfigured ? supabaseResult.error : null);
+
+        if (failureMessage) {
+          res.status(502).json({ error: failureMessage });
+          return;
+        }
+
+        res.status(501).json({
+          error: "Contact form is not configured on the server.",
+          hint:
+            "Set HUBSPOT_CONTACT_FORM_GUID, or SUPABASE_URL with SUPABASE_SERVICE_ROLE_KEY (run scripts/supabase_setup.sql once).",
+        });
       } catch (err) {
-        console.error("Supabase contact submit error", err);
+        console.error("Contact submit error", err);
         res.status(502).json({
           error:
             "Could not send your message right now. Please try again or email us directly.",

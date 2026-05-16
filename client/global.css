@@ -193,4 +193,17 @@
     text-transform: uppercase !important;
     letter-spacing: 0.14em !important;
   }
+
+  .stripe-embedded-checkout-shell,
+  #stripe-embedded-checkout {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .stripe-embedded-checkout-shell iframe,
+  #stripe-embedded-checkout iframe {
+    width: 100% !important;
+    min-width: 100% !important;
+    max-width: 100% !important;
+  }
 }

@@ -205,10 +205,10 @@ const CareersJoinTeamSection = ({
                       <button
                         type="button"
                         onClick={handleSecondaryClick}
-                        className={cn(joinTeamCtaSharedClass, "bg-transparent text-rellia-teal hover:border-rellia-mint")}
+                        className={cn(joinTeamCtaSharedClass, "bg-rellia-teal hover:border-rellia-mint")}
                         aria-label={secondaryCta.ariaLabel}
                       >
-                        <span className="relative z-10 text-rellia-teal transition-colors duration-300 group-hover:text-rellia-teal">
+                        <span className="relative z-10 text-white transition-colors duration-300 group-hover:text-rellia-teal">
                           {secondaryCta.label}
                         </span>
                       </button>
@@ -247,9 +247,9 @@ const CareersJoinTeamSection = ({
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, ease: "easeOut" }}
-            className={cn("w-full bg-white pt-12 pb-10", FILLOUT_EMBED_VIEWPORT_MIN_CLASS)}
+            className={cn("w-full bg-white pt-12 pb-4", FILLOUT_EMBED_VIEWPORT_MIN_CLASS)}
           >
-            <div className="mx-auto w-full max-w-[1300px] px-6 md:px-10">
+            <div className="mx-auto max-w-[1100px] px-6 md:px-10">
               <button
                 type="button"
                 onClick={() => setShowApplyForm(false)}
@@ -257,13 +257,13 @@ const CareersJoinTeamSection = ({
               >
                 ← Back to details
               </button>
-              <div className="w-full min-h-[700px] md:min-h-[1000px]">
-                <FilloutStandardEmbed
-                  filloutId={FILLOUT_APPLY_FORM_ID}
-                  inheritParameters
-                  dynamicResize
-                />
-              </div>
+            </div>
+            <div className="w-full min-h-[700px] md:min-h-[1000px]">
+              <FilloutStandardEmbed
+                filloutId={FILLOUT_APPLY_FORM_ID}
+                inheritParameters
+                dynamicResize
+              />
             </div>
           </motion.div>
         )}

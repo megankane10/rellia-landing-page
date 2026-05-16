@@ -184,7 +184,7 @@ export default function StripeEmbeddedCheckout({
   }
 
   return (
-    <div className="relative w-full min-h-[600px]">
+    <div className="relative w-full min-h-[min(900px,calc(100svh-120px))]">
       {loading ? (
         <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-3 bg-white/90">
           <div
@@ -194,7 +194,7 @@ export default function StripeEmbeddedCheckout({
           <p className="font-urbanist text-sm font-medium text-black/60">Loading secure checkout…</p>
         </div>
       ) : null}
-      <div ref={mountRef} id="stripe-embedded-checkout" className="w-full min-h-[600px]" />
+      <div ref={mountRef} id="stripe-embedded-checkout" className="w-full min-h-[min(900px,calc(100svh-120px))]" />
     </div>
   )
 }
