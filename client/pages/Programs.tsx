@@ -2,6 +2,7 @@ import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
 import ScrollReveal from "@/components/ScrollReveal"
 import RelliaCta, { ctaActionFromHref } from "@/components/RelliaCta"
+import { DiagnosticSurveySection } from "@/components/DiagnosticSurveySection"
 import { HorizontalCard } from "@/components/cards"
 import PageHeader from "@/components/PageHeader"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -277,6 +278,7 @@ export default function Programs() {
           </div>
         </section>
         
+        <DiagnosticSurveySection />
 
         <RelliaCta
           title={pl.ctaTitle}

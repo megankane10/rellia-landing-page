@@ -126,8 +126,6 @@ Starts the Node server that serves the built SPA and API (default port from `POR
 | Server / Sanity API | `SANITY_API_PROJECT_ID`, `SANITY_API_DATASET`, `SANITY_ENFORCE_VERCEL_DATASET`, `SANITY_ALLOWED_DATASETS`, `SANITY_API_READ_TOKEN`, `SANITY_API_WRITE_TOKEN`, `SANITY_STUDIO_URL`, `SANITY_STUDIO_PREVIEW_URL` (Studio) |
 | HubSpot (contact proxy) | `HUBSPOT_CONTACT_FORM_GUID`, `HUBSPOT_PORTAL_ID`, `HUBSPOT_FORMS_API_BASE` |
 | API hardening | `ALLOWED_ORIGINS`, `REQUIRE_API_CSRF` |
-| Diagnostics (server) | `ANTHROPIC_API_KEY` — used by `POST /api/diagnostic-report` when AI report generation runs; omit locally if unused (see `server/index.ts`) |
-| Server runtime | `PORT` (default `3000` for `pnpm start`), `VERCEL`, `NODE_ENV` (platform / tooling) |
 
 Full commentary and environment presets: **`.env.example`**.
 
@@ -143,7 +141,7 @@ All **`/api/*`** routes are served by the same serverless entry (`api/index.js`)
 | `GET` | `/api/csrf-token` | Issues CSRF cookie + token | `client/lib/apiCsrf.ts` |
 | `POST` | `/api/sanity/query` | Whitelisted Sanity reads | `client/lib/sanity.ts` |
 | `POST` | `/api/contact-hubspot` | Proxies contact form to HubSpot Forms API | `client/pages/Contact.tsx` |
-| `POST` | `/api/diagnostic-report` | Diagnostic survey report (body validated with Zod); AI path uses `ANTHROPIC_API_KEY`; optional Sanity write with `SANITY_API_WRITE_TOKEN` | `client/pages/DiagnosticSurvey.tsx` |
+| `POST` | `/api/diagnostic-report` | Diagnostic survey report + optional Sanity write | `client/pages/DiagnosticSurvey.tsx` |
 | `GET` | `/api/studio` | Redirects to `SANITY_STUDIO_URL` | **Not linked from the React app** — bookmark or docs only |
 | `GET` | `/api/draft-mode/enable` | Sanity Presentation / draft preview cookie | Sanity Studio Presentation (iframe), not direct user navigation |
 | `GET` | `/api/draft-mode/disable` | Clears draft preview cookie | Same |

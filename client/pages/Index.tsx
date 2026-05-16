@@ -2,12 +2,11 @@ import HomeOrganizationJsonLd from "@/components/HomeOrganizationJsonLd";
 import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/HeroSection";
 import PathsSection from "@/components/PathsSection";
-
 import NetworkMetricsSection from "@/components/NetworkMetricsSection";
 import WhyRellia from "@/components/WhyRellia";
 import HowItWorks from "@/components/HowItWorks";
 import TestimonialsSection from "@/components/TestimonialsSection";
-
+import FeaturedStories from "@/components/FeaturedStories";
 import RelliaCta from "@/components/RelliaCta";
 import Footer from "@/components/Footer";
 import { useHomePage } from "@/hooks/useCmsDocuments";
@@ -26,7 +25,6 @@ export default function Index() {
       <main id="main-content">
         <HeroSection content={home} />
         <PathsSection />
-
         <NetworkMetricsSection
           heading={home.metricsHeading}
           subheading={home.metricsSubheading}
@@ -50,7 +48,7 @@ export default function Index() {
           testimonials={home.testimonials}
           showHeaderIcon={false}
         />
-
+        <FeaturedStories sectionClassName="pb-16 pt-10 md:pb-24 md:pt-12" />
         <RelliaCta
           title={home.ctaTitle}
           primary={{ label: home.ctaButtonLabel, to: home.ctaButtonPath }}

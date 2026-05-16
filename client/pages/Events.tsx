@@ -305,7 +305,7 @@ export default function Events() {
           secondary={
             landing?.ctaSecondaryLabel && landing?.ctaSecondaryHref
               ? ctaActionFromHref(landing.ctaSecondaryLabel, landing.ctaSecondaryHref)
-              : ctaActionFromHref("Apply to join", "/network")
+              : ctaActionFromHref("Apply to join", "/apply")
           }
         />
       </main>

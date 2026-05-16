@@ -111,7 +111,7 @@ export const STORIES: Story[] = [
         title: "Want help shaping your decision packet?",
         body: "If you’re preparing for a pilot, security review, or rollout, we can help you identify the next gate and build the smallest credible proof set to get to yes.",
         buttonLabel: "Get involved",
-        buttonHref: "/network",
+        buttonHref: "/apply",
       },
     ],
   },

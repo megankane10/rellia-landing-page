@@ -1,155 +1,24 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-
-const styles = `
-  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap');
-
-  .dl-root *, .dl-root *::before, .dl-root *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  .dl-root {
-    --teal: #0c3d49; --teal-mid: #1a5f72; --teal-light: #a7dbd6;
-    --cream: #f8f1e8; --cream-dark: #ede6da; --ink: #262624; --muted: #5a6a6e;
-    font-family: 'DM Sans', sans-serif;
-    background: var(--cream);
-    color: var(--ink);
-    overflow-x: hidden;
-  }
-  .dl-nav {
-    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-    padding: 1.25rem 2.5rem;
-    display: flex; align-items: center; justify-content: space-between;
-    background: rgba(248,241,232,0.92);
-    backdrop-filter: blur(12px);
-    border-bottom: 1px solid rgba(12,61,73,0.08);
-  }
-  .dl-nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
-  .dl-nav-logo-mark {
-    width: 32px; height: 32px; border-radius: 50%; background: var(--teal);
-    display: flex; align-items: center; justify-content: center;
-  }
-  .dl-nav-logo-text { font-family: 'DM Serif Display', serif; font-size: 20px; color: var(--teal); }
-  .dl-nav-cta {
-    display: inline-flex; align-items: center; gap: 8px;
-    padding: 9px 22px; border-radius: 24px; background: var(--teal); color: white;
-    font-size: 13px; font-weight: 500; text-decoration: none; letter-spacing: 0.02em;
-    transition: background 0.15s, transform 0.15s;
-  }
-  .dl-nav-cta:hover { background: var(--teal-mid); transform: translateY(-1px); }
-  .dl-hero {
-    min-height: 100vh; display: flex; flex-direction: column;
-    align-items: center; justify-content: center; text-align: center;
-    padding: 8rem 2rem 6rem; position: relative; overflow: hidden;
-  }
-  .dl-hero-circle {
-    position: absolute; border-radius: 50%; background: rgba(12,61,73,0.045); pointer-events: none;
-  }
-  .dl-hero-circle.c1 { width: 500px; height: 500px; top: -100px; right: -150px; }
-  .dl-hero-circle.c2 { width: 300px; height: 300px; bottom: 60px; left: -80px; background: rgba(167,219,214,0.18); }
-  .dl-eyebrow {
-    display: inline-flex; align-items: center; gap: 8px;
-    padding: 5px 14px; border-radius: 20px;
-    background: rgba(167,219,214,0.3); border: 1px solid rgba(12,61,73,0.12);
-    font-size: 12px; text-transform: uppercase; letter-spacing: 0.12em;
-    color: var(--teal); margin-bottom: 1.5rem;
-  }
-  .dl-eyebrow-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--teal); }
-  .dl-h1 {
-    font-family: 'DM Serif Display', serif;
-    font-size: clamp(2.8rem, 6vw, 5rem);
-    line-height: 1.1; color: var(--teal);
-    max-width: 800px; margin: 0 auto 1.5rem;
-  }
-  .dl-h1 em { font-style: italic; color: var(--teal-mid); }
-  .dl-sub {
-    font-size: clamp(1rem, 2vw, 1.2rem); color: var(--muted);
-    line-height: 1.7; max-width: 560px; margin: 0 auto 2.5rem;
-  }
-  .dl-cta-row { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; justify-content: center; }
-  .dl-btn-primary {
-    display: inline-flex; align-items: center; gap: 10px;
-    padding: 15px 36px; border-radius: 32px; background: var(--teal); color: white;
-    font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 500;
-    text-decoration: none; letter-spacing: 0.02em;
-    transition: background 0.15s, transform 0.15s, box-shadow 0.15s;
-    box-shadow: 0 4px 20px rgba(12,61,73,0.18);
-  }
-  .dl-btn-primary:hover { background: var(--teal-mid); transform: translateY(-2px); box-shadow: 0 8px 28px rgba(12,61,73,0.22); }
-  .dl-btn-secondary {
-    font-size: 14px; color: var(--teal); text-decoration: none;
-    border-bottom: 1px solid rgba(12,61,73,0.3); padding-bottom: 1px;
-    transition: color 0.15s;
-  }
-  .dl-btn-secondary:hover { color: var(--teal-mid); }
-  .dl-hero-note { margin-top: 1.25rem; font-size: 12px; color: #8a9ea2; }
-  .dl-what { padding: 6rem 2rem; max-width: 1100px; margin: 0 auto; }
-  .dl-section-label { text-align: center; font-size: 11px; text-transform: uppercase; letter-spacing: 0.14em; color: var(--teal); margin-bottom: 0.75rem; }
-  .dl-h2 { font-family: 'DM Serif Display', serif; font-size: clamp(1.8rem, 3.5vw, 2.8rem); text-align: center; color: var(--teal); line-height: 1.2; margin-bottom: 1rem; }
-  .dl-lead { text-align: center; font-size: 16px; color: var(--muted); line-height: 1.7; max-width: 600px; margin: 0 auto 4rem; }
-  .dl-three-col { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; }
-  .dl-feature-card {
-    background: white; border-radius: 20px; border: 1px solid rgba(12,61,73,0.08);
-    padding: 2rem 1.75rem; transition: transform 0.2s, box-shadow 0.2s;
-  }
-  .dl-feature-card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(12,61,73,0.08); }
-  .dl-feature-icon {
-    width: 44px; height: 44px; border-radius: 12px;
-    background: rgba(167,219,214,0.3);
-    display: flex; align-items: center; justify-content: center;
-    margin-bottom: 1.25rem; font-size: 20px;
-  }
-  .dl-feature-title { font-size: 16px; font-weight: 500; color: var(--teal); margin-bottom: 0.5rem; }
-  .dl-feature-desc { font-size: 14px; color: var(--muted); line-height: 1.65; }
-  .dl-how { background: var(--teal); padding: 6rem 2rem; position: relative; overflow: hidden; }
-  .dl-how::before { content: ''; position: absolute; top: -80px; right: -80px; width: 320px; height: 320px; border-radius: 50%; background: rgba(167,219,214,0.08); }
-  .dl-how .dl-section-label { color: var(--teal-light); }
-  .dl-how .dl-h2 { color: white; margin-bottom: 3.5rem; }
-  .dl-steps-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 0; max-width: 1000px; margin: 0 auto; position: relative; }
-  .dl-steps-row::before { content: ''; position: absolute; top: 22px; left: 12.5%; right: 12.5%; height: 1px; background: rgba(167,219,214,0.25); }
-  .dl-step { text-align: center; padding: 0 1rem; }
-  .dl-step-num {
-    width: 44px; height: 44px; border-radius: 50%;
-    background: rgba(167,219,214,0.2); border: 1px solid rgba(167,219,214,0.4);
-    display: flex; align-items: center; justify-content: center;
-    margin: 0 auto 1.25rem; font-size: 14px; font-weight: 500; color: var(--teal-light);
-  }
-  .dl-step-title { font-size: 14px; font-weight: 500; color: white; margin-bottom: 0.5rem; }
-  .dl-step-desc { font-size: 13px; color: rgba(255,255,255,0.6); line-height: 1.6; }
-  .dl-topics { padding: 6rem 2rem; max-width: 900px; margin: 0 auto; }
-  .dl-topics-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(190px,1fr)); gap: 10px; }
-  .dl-topic-pill {
-    display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-radius: 12px;
-    background: white; border: 1px solid rgba(12,61,73,0.08); font-size: 13px; color: var(--ink);
-    transition: border-color 0.15s, background 0.15s;
-  }
-  .dl-topic-pill:hover { border-color: rgba(12,61,73,0.2); background: rgba(167,219,214,0.1); }
-  .dl-topic-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--teal-light); flex-shrink: 0; }
-  .dl-cta-section { padding: 6rem 2rem; text-align: center; }
-  .dl-cta-box {
-    max-width: 680px; margin: 0 auto; background: white; border-radius: 28px;
-    border: 1px solid rgba(12,61,73,0.1); padding: 4rem 3rem;
-    box-shadow: 0 8px 48px rgba(12,61,73,0.07);
-  }
-  .dl-cta-box .dl-eyebrow-text { font-size: 11px; text-transform: uppercase; letter-spacing: 0.14em; color: var(--teal); margin-bottom: 1rem; }
-  .dl-cta-box .dl-h2 { margin-bottom: 1rem; }
-  .dl-cta-box p { font-size: 15px; color: var(--muted); line-height: 1.7; margin-bottom: 2rem; }
-  .dl-member-note { margin-top: 1rem; font-size: 12px; color: #9aabaf; }
-  .dl-member-note a { color: var(--teal); }
-  .dl-footer {
-    padding: 2.5rem; border-top: 1px solid rgba(12,61,73,0.1);
-    display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;
-  }
-  .dl-footer-logo { display: flex; align-items: center; gap: 8px; }
-  .dl-footer-logo-text { font-family: 'DM Serif Display', serif; font-size: 16px; color: var(--teal); }
-  .dl-footer p { font-size: 12px; color: #9aabaf; }
-`;
-
-const LogoMark: React.FC<{ size?: number }> = ({ size = 32 }) => (
-  <div style={{ width: size, height: size, borderRadius: '50%', background: '#0c3d49', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-    <svg width={size * 0.55} height={size * 0.55} viewBox="0 0 18 18" fill="none">
-      <path d="M9 1.5C9 1.5 5.5 4.5 5.5 8.5C5.5 10.5 7.1 12 9 12C10.9 12 12.5 10.5 12.5 8.5C12.5 4.5 9 1.5 9 1.5Z" fill="white" opacity="0.9"/>
-      <path d="M5.5 10.5C3.5 11.5 2.5 13.5 3.5 15C4.5 16.5 7 16.5 9 15.5C11 16.5 13.5 16.5 14.5 15C15.5 13.5 14.5 11.5 12.5 10.5" stroke="white" strokeWidth="1.1" fill="none" opacity="0.65"/>
-    </svg>
-  </div>
-);
+import { 
+  CheckCircle2, 
+  ArrowRight, 
+  Target, 
+  Sparkles, 
+  Users, 
+  Search, 
+  ChevronRight,
+  ShieldCheck,
+  Zap,
+  Building2,
+  AlertTriangle
+} from 'lucide-react';
+import Navbar from '@/components/Navbar';
+import Footer from '@/components/Footer';
+import RelliaAction from '@/components/RelliaAction';
+import NetworkEyebrow from '@/components/network/NetworkEyebrow';
+import RouteSeo from '@/components/RouteSeo';
+import { motion } from 'framer-motion';
 
 const topics = [
   'Product Design & UI/UX', 'Product Development', 'Clinical Trials',
@@ -160,108 +29,203 @@ const topics = [
 
 export default function DiagnosticLanding() {
   return (
-    <div className="dl-root">
-      <style>{styles}</style>
+    <div className="min-h-screen bg-rellia-cream font-host-grotesk text-rellia-teal selection:bg-rellia-mint/30 selection:text-rellia-teal pt-[72px] md:pt-[86px]">
+      <Navbar />
+      <RouteSeo 
+        title="Startup Diagnostic | Rellia Health" 
+        description="Benchmark your health tech startup across 13 domains. Get a personalized gap analysis and roadmap."
+      />
 
-      {/* NAV */}
-      <nav className="dl-nav">
-        <Link className="dl-nav-logo" to="/">
-          <LogoMark size={32} />
-          <span className="dl-nav-logo-text">Rellia</span>
-        </Link>
-        <Link className="dl-nav-cta" to="/diagnosticSurvey">Begin Assessment →</Link>
-      </nav>
-
-      {/* HERO */}
-      <section className="dl-hero">
-        <div className="dl-hero-circle c1" />
-        <div className="dl-hero-circle c2" />
-        <div className="dl-eyebrow"><div className="dl-eyebrow-dot" /> Free for all health tech founders</div>
-        <h1 className="dl-h1">How ready is your<br /><em>startup, really?</em></h1>
-        <p className="dl-sub">A structured assessment across 13 domains — from regulatory and clinical to go-to-market and operations. Honest answers give you an accurate picture of where you stand today.</p>
-        <div className="dl-cta-row">
-          <Link className="dl-btn-primary" to="/diagnosticSurvey">Take the Diagnostic →</Link>
-          <a className="dl-btn-secondary" href="#how-it-works">See how it works</a>
+      {/* HERO SECTION */}
+      <section className="relative overflow-hidden px-4 pt-20 pb-32 md:pt-32 md:pb-48">
+        <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-[-10%] right-[-5%] h-[600px] w-[600px] rounded-full bg-rellia-mint/10 blur-3xl opacity-50" />
+          <div className="absolute bottom-[-10%] left-[-5%] h-[500px] w-[500px] rounded-full bg-rellia-teal/5 blur-3xl opacity-30" />
         </div>
-        <p className="dl-hero-note">Free · No account required · Takes ~15 minutes</p>
+
+        <div className="container relative z-10 mx-auto max-w-6xl text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+          >
+            <NetworkEyebrow label="Startup Diagnostic" tone="onLight" className="mb-8" />
+            <h1 className="mb-8 font-host-grotesk text-5xl font-bold leading-[1.1] tracking-tight text-rellia-teal md:text-8xl">
+              How ready is your<br /><span className="italic font-normal">startup, really?</span>
+            </h1>
+            <p className="mx-auto mb-12 max-w-2xl font-urbanist text-lg leading-relaxed text-rellia-teal/70 md:text-xl">
+              Benchmark your startup across 13 critical domains — from regulatory and clinical to go-to-market and operations. Get an instant, AI-powered report and prioritized roadmap.
+            </p>
+            
+            <div className="flex flex-col items-center justify-center gap-6 sm:flex-row">
+              <RelliaAction 
+                asChild
+                variant="mintTealFill" 
+                size="comfortable" 
+                className="w-full sm:w-auto shadow-xl transition-all hover:scale-[1.02] active:scale-95"
+              >
+                <Link to="/diagnostic-survey">
+                  Begin Free Assessment
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Link>
+              </RelliaAction>
+              <a href="#how-it-works" className="group flex items-center gap-2 text-sm font-bold uppercase tracking-widest text-rellia-teal/60 hover:text-rellia-teal transition-colors">
+                How it works
+                <ChevronRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+              </a>
+            </div>
+            
+            <div className="mt-12 flex items-center justify-center gap-8 text-[10px] font-bold uppercase tracking-[0.2em] text-rellia-teal/30">
+              <div className="flex items-center gap-2"><ShieldCheck className="h-4 w-4" /> 100% Private</div>
+              <div className="flex items-center gap-2"><Zap className="h-4 w-4" /> ~15 Minutes</div>
+              <div className="flex items-center gap-2"><Users className="h-4 w-4" /> Advisor Matching</div>
+            </div>
+          </motion.div>
+        </div>
       </section>
 
-      {/* WHAT YOU GET */}
-      <section className="dl-what">
-        <p className="dl-section-label">What you get</p>
-        <h2 className="dl-h2">A real picture of where you are,<br />not where you think you are</h2>
-        <p className="dl-lead">Most health tech founders have a few areas they know well and several they haven't touched yet. This diagnostic shows you the full picture — scored, prioritized, and actionable.</p>
-        <div className="dl-three-col">
-          <div className="dl-feature-card">
-            <div className="dl-feature-icon">◈</div>
-            <div className="dl-feature-title">Scored across 13 domains</div>
-            <div className="dl-feature-desc">From product design and clinical evidence to fundraising and go-to-market. Every section gets a score based on your honest answers.</div>
+      {/* VALUE PROP GRID */}
+      <section className="bg-white py-32 px-4 border-y border-rellia-teal/5">
+        <div className="container mx-auto max-w-6xl">
+          <div className="mb-20 text-center">
+            <h2 className="mb-6 font-host-grotesk text-3xl font-bold text-rellia-teal md:text-5xl">A complete readiness map</h2>
+            <p className="mx-auto max-w-2xl text-rellia-teal/60">Most founders have a few strong domains and several hidden gaps. This diagnostic exposes the full picture so you can build with confidence.</p>
           </div>
-          <div className="dl-feature-card">
-            <div className="dl-feature-icon">⬡</div>
-            <div className="dl-feature-title">AI-powered analysis</div>
-            <div className="dl-feature-desc">Your results are analyzed to surface your top strengths, your biggest gaps, and five specific recommendations for what to tackle first.</div>
+
+          <div className="grid gap-8 md:grid-cols-3">
+            {[
+              { 
+                icon: Target, 
+                title: '13 Scored Domains', 
+                desc: 'Every critical health tech domain is assessed, from clinical evidence to unit economics.' 
+              },
+              { 
+                icon: Sparkles, 
+                title: 'AI-Powered Analysis', 
+                desc: 'Get an instant report surfacing your top 3 gaps, strengths, and specific next steps.' 
+              },
+              { 
+                icon: Users, 
+                title: 'Advisor Matching', 
+                desc: 'Members are automatically assigned a personalized advisory board based on their gap profile.' 
+              }
+            ].map((feature, i) => (
+              <div key={i} className="group rounded-[32px] border border-rellia-teal/5 bg-rellia-cream/10 p-10 transition-all hover:border-rellia-teal/10 hover:bg-white hover:shadow-2xl">
+                <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-rellia-teal text-white shadow-lg transition-transform group-hover:scale-110">
+                  <feature.icon className="h-7 w-7" />
+                </div>
+                <h3 className="mb-4 font-host-grotesk text-xl font-bold">{feature.title}</h3>
+                <p className="text-sm leading-relaxed text-rellia-teal/60">{feature.desc}</p>
+              </div>
+            ))}
           </div>
-          <div className="dl-feature-card">
-            <div className="dl-feature-icon">●</div>
-            <div className="dl-feature-title">Mentor matching for members</div>
-            <div className="dl-feature-desc">Rellia Health members are automatically matched with a mentor whose expertise directly addresses their top gaps.</div>
+        </div>
+      </section>
+
+      {/* TOPICS COVERED */}
+      <section className="py-32 px-4 overflow-hidden">
+        <div className="container mx-auto max-w-6xl">
+          <div className="flex flex-col gap-12 lg:flex-row lg:items-center">
+            <div className="flex-1">
+              <h2 className="mb-6 font-host-grotesk text-3xl font-bold text-rellia-teal md:text-5xl">No stone left unturned</h2>
+              <p className="mb-10 text-rellia-teal/60">We\'ve distilled years of health tech experience into a comprehensive framework that covers the entire startup lifecycle.</p>
+              <div className="flex flex-wrap gap-3">
+                {topics.map(t => (
+                  <div key={t} className="flex items-center gap-2 rounded-full border border-rellia-teal/10 bg-white px-4 py-2 text-xs font-medium text-rellia-teal/80 transition-colors hover:border-rellia-teal/30">
+                    <div className="h-1.5 w-1.5 rounded-full bg-rellia-mint" />
+                    {t}
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="flex-1 lg:pl-12">
+              <div className="relative">
+                <div className="absolute -inset-4 rounded-[40px] bg-rellia-teal/5 blur-2xl" />
+                <div className="relative rounded-[40px] border border-rellia-teal/10 bg-white p-8 shadow-sm">
+                  <h4 className="mb-6 text-xs font-bold uppercase tracking-widest text-rellia-teal/40">Sample Report Insight</h4>
+                  <div className="space-y-4">
+                    <div className="rounded-2xl bg-rellia-cream/30 p-4 border border-rellia-teal/5">
+                      <div className="mb-2 flex justify-between">
+                        <span className="text-[10px] font-bold uppercase text-rellia-teal/60">Regulatory Strategy</span>
+                        <span className="text-xs font-black text-red-600">32%</span>
+                      </div>
+                      <div className="h-1.5 w-full rounded-full bg-rellia-teal/5 overflow-hidden">
+                        <div className="h-full w-[32%] bg-red-600" />
+                      </div>
+                    </div>
+                    <div className="rounded-2xl bg-rellia-mint/5 p-5 border border-rellia-mint/10">
+                      <h5 className="mb-2 text-sm font-bold text-rellia-teal flex items-center gap-2">
+                        <AlertTriangle className="h-4 w-4 text-amber-500" />
+                        Priority Gap: Traceability
+                      </h5>
+                      <p className="text-xs text-rellia-teal/60 leading-relaxed">Your development process lacks formal traceability between requirements and test results. This is a critical blocker for FDA/CE Mark submission.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
       {/* HOW IT WORKS */}
-      <section className="dl-how" id="how-it-works">
-        <p className="dl-section-label">The process</p>
-        <h2 className="dl-h2">From survey to insight in four steps</h2>
-        <div className="dl-steps-row">
-          {[
-            { n:'01', title:'Tell us about your startup', desc:'Name, stage, and what you build — so your results are in context.' },
-            { n:'02', title:'Complete the survey', desc:'Rate your startup across 13 sections. Honest answers give you the most useful results.' },
-            { n:'03', title:'Get your report', desc:'A personalized diagnostic report with scores, gaps, strengths, and next steps.' },
-            { n:'04', title:'Get matched (members)', desc:'Rellia members are automatically connected with a mentor based on their top gaps.' },
-          ].map(s => (
-            <div className="dl-step" key={s.n}>
-              <div className="dl-step-num">{s.n}</div>
-              <div className="dl-step-title">{s.title}</div>
-              <div className="dl-step-desc">{s.desc}</div>
-            </div>
-          ))}
+      <section id="how-it-works" className="bg-rellia-teal py-32 px-4 text-white overflow-hidden relative">
+        <div className="absolute top-0 right-0 p-20 opacity-10">
+          <Building2 className="h-96 w-96" />
+        </div>
+        
+        <div className="container mx-auto max-w-6xl relative z-10">
+          <div className="mb-20 text-center">
+            <h2 className="mb-6 font-host-grotesk text-3xl font-bold md:text-5xl">Survey to insight in 15 minutes</h2>
+          </div>
+
+          <div className="grid gap-12 md:grid-cols-4">
+            {[
+              { n: '01', t: 'Startup Context', d: 'Provide basic details about your startup, stage, and product.' },
+              { n: '02', t: 'The Assessment', d: 'Work through 13 sections at your own pace with honest reflections.' },
+              { n: '03', t: 'AI Generation', d: 'Our AI analyzes your scores to build a customized report and roadmap.' },
+              { n: '04', t: 'Advisor Match', d: 'Unlock personalized mentor matches to help you tackle your gaps.' }
+            ].map((step, i) => (
+              <div key={i} className="flex flex-col items-center text-center">
+                <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-full border border-white/20 bg-white/5 font-host-grotesk text-2xl font-bold text-rellia-mint">
+                  {step.n}
+                </div>
+                <h4 className="mb-3 font-bold">{step.t}</h4>
+                <p className="text-sm text-white/60 leading-relaxed">{step.d}</p>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
-      {/* TOPICS */}
-      <section className="dl-topics">
-        <p className="dl-section-label">What's covered</p>
-        <h2 className="dl-h2">13 domains, one clear picture</h2>
-        <div className="dl-topics-grid">
-          {topics.map(t => (
-            <div className="dl-topic-pill" key={t}>
-              <div className="dl-topic-dot" />{t}
-            </div>
-          ))}
+      {/* FINAL CTA */}
+      <section className="py-32 px-4 text-center">
+        <div className="container mx-auto max-w-3xl">
+          <div className="rounded-[48px] border border-rellia-teal/10 bg-white p-12 shadow-2xl md:p-20">
+            <Sparkles className="mx-auto mb-8 h-12 w-12 text-rellia-teal opacity-20" />
+            <h2 className="mb-6 font-host-grotesk text-3xl font-bold text-rellia-teal md:text-5xl">Benchmark your startup today</h2>
+            <p className="mb-12 text-lg text-rellia-teal/60">Join hundreds of health tech founders who have used the Rellia diagnostic to prioritize their build and accelerate their path to market.</p>
+            
+            <RelliaAction 
+              asChild
+              variant="mintTealFill" 
+              size="comfortable" 
+              className="w-full sm:w-auto px-12 py-8 text-xl"
+            >
+              <Link to="/diagnostic-survey">
+                Take the Diagnostic
+                <ArrowRight className="ml-2 h-6 w-6" />
+              </Link>
+            </RelliaAction>
+            
+            <p className="mt-8 text-sm text-rellia-teal/40">
+              Rellia Health member? Log in after the survey to unlock your matches.
+            </p>
+          </div>
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="dl-cta-section">
-        <div className="dl-cta-box">
-          <p className="dl-eyebrow-text">Ready to begin?</p>
-          <h2 className="dl-h2">Get your diagnostic report today</h2>
-          <p>15 minutes of honest reflection. A clear picture of where you're strong, where you're exposed, and exactly what to do next.</p>
-          <Link className="dl-btn-primary" to="/diagnosticSurvey" style={{ display: 'inline-flex' }}>Take the Diagnostic →</Link>
-          <p className="dl-member-note">Rellia Health member? Your report includes mentor matching. <Link to="/network">Join here →</Link></p>
-        </div>
-      </section>
-
-      {/* FOOTER */}
-      <footer className="dl-footer">
-        <div className="dl-footer-logo">
-          <LogoMark size={26} />
-          <span className="dl-footer-logo-text">Rellia Health</span>
-        </div>
-        <p>© 2026 Rellia Health</p>
-      </footer>
+      <Footer />
     </div>
   );
 }

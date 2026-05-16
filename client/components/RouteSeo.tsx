@@ -4,26 +4,62 @@ import {
   getDefaultOgImageUrl,
   getDefaultOgImageAlt,
   getSeoForPathname,
+  getStoriesOgImageUrl,
   getSiteUrl,
+  normalizePathname,
 } from "@/config/seo"
+import { useOptionalPageSeo } from "@/context/PageSeoContext"
+import { useSiteSettings } from "@/hooks/useCmsDocuments"
 
-const RouteSeo = () => {
+interface RouteSeoProps {
+  title?: string
+  description?: string
+  ogImage?: string
+  noIndex?: boolean
+}
+
+const RouteSeo = ({
+  title: titleOverride,
+  description: descriptionOverride,
+  ogImage: ogImageOverride,
+  noIndex: noIndexOverride,
+}: RouteSeoProps = {}) => {
   const { pathname } = useLocation()
+  const { data: siteSettingsData } = useSiteSettings()
+  const normalizedPathname = normalizePathname(pathname)
   const base = getSiteUrl()
-  const { title, description, indexable } = getSeoForPathname(pathname)
-  const canonicalUrl = indexable ? `${base}${pathname === "/" ? "" : pathname}` : undefined
-  const ogUrl = `${base}${pathname === "/" ? "" : pathname}`
-  const imageUrl = getDefaultOgImageUrl()
+  const {
+    title: defaultTitle,
+    description: defaultDescription,
+    indexable,
+  } = getSeoForPathname(normalizedPathname)
+
+  const { overrides } = useOptionalPageSeo()
+
+  const title = titleOverride || overrides.title || defaultTitle
+  const description = descriptionOverride || overrides.description || defaultDescription
+  const ogImage = ogImageOverride || overrides.ogImage
+  const noIndex = noIndexOverride ?? overrides.noIndex ?? !indexable
+
+  const canonicalUrl = noIndex
+    ? undefined
+    : `${base}${normalizedPathname === "/" ? "" : normalizedPathname}`
+  const ogUrl = `${base}${normalizedPathname === "/" ? "" : normalizedPathname}`
+  const cmsDefaultOg = siteSettingsData?.defaultSeo?.ogImageUrl?.trim()
+  const imageUrl =
+    ogImage ||
+    cmsDefaultOg ||
+    (normalizedPathname === "/stories" ? getStoriesOgImageUrl() : getDefaultOgImageUrl())
   const imageAlt = getDefaultOgImageAlt()
 
   return (
     <Helmet htmlAttributes={{ lang: "en" }}>
       <title>{title}</title>
       <meta name="description" content={description} />
-      {indexable ? (
-        <meta name="robots" content="index, follow" />
-      ) : (
+      {noIndex ? (
         <meta name="robots" content="noindex, nofollow" />
+      ) : (
+        <meta name="robots" content="index, follow" />
       )}
       {canonicalUrl ? <link rel="canonical" href={canonicalUrl} /> : null}
 

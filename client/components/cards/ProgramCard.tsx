@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom"
 import { useState } from "react"
-import { ArrowRight, Bell } from "lucide-react"
+import { Bell, CalendarDays } from "lucide-react"
+import { getCurrentMonthDeadline } from "@/lib/dateUtils"
 import RelliaAction from "@/components/RelliaAction"
 import { cn } from "@/lib/utils"
 import FilloutPopupDialog from "@/components/FilloutPopupDialog"
@@ -16,6 +17,7 @@ export type ProgramCardProps = {
   priceLabel?: string
   priceAmount?: string
   priceSuffix?: string
+  deadline?: string
   className?: string
 }
 
@@ -30,121 +32,137 @@ export const ProgramCard = ({
   priceLabel: _priceLabel,
   priceAmount: _priceAmount,
   priceSuffix: _priceSuffix,
+  deadline,
   className,
 }: ProgramCardProps) => {
   const hasHref = Boolean(href && href.trim().length > 0)
   const hasWaitlistHref = Boolean(waitlistHref && waitlistHref.trim().length > 0)
-  const isWaitlistCard = !hasHref && hasWaitlistHref
+  const rawTag = tag?.trim() ?? ""
+  const isWaitlistStatus = rawTag.toLowerCase() === "waitlist"
+  const isWaitlistCard = hasWaitlistHref || isWaitlistStatus
   const [waitlistOpen, setWaitlistOpen] = useState(false)
-  const displayTag = tag?.trim() ?? ""
+  const displayTag = (rawTag.toLowerCase() === "available" || rawTag.toLowerCase() === "registration open") 
+    ? "Applications Open" 
+    : rawTag
   const showCornerBadge = Boolean(displayTag) && !isWaitlistCard
-  const showWaitlistBadge = isWaitlistCard
+  const showMobileBadge = (isWaitlistCard || showCornerBadge) && Boolean(displayTag || isWaitlistCard)
 
   return (
-    <div
+    <article
       aria-label={`Program: ${title}${isWaitlistCard ? ". Coming soon — join the waitlist." : ""}`}
       className={cn(
-        "group h-full w-full max-w-[420px] mx-auto overflow-hidden rounded-2xl border border-black/5 bg-white shadow-sm",
-        "transition-[transform,box-shadow] duration-200 ease-out",
-        "hover:-translate-y-0.5 hover:shadow-md hover:shadow-lg hover:ring-1 hover:ring-black/[0.06]",
-        "focus-within:outline-none focus-within:ring-2 focus-within:ring-rellia-teal focus-within:ring-offset-2",
+        "group flex h-full min-h-0 flex-col items-start overflow-hidden rounded-[20px] p-2 border border-black/10 bg-white shadow-sm transition-all duration-500 ease-in hover:bg-black/[0.03] hover:shadow-md outline outline-1 outline-offset-[10px] outline-transparent hover:outline-rellia-teal/20",
         className,
       )}
     >
-      <div className="flex h-full flex-col">
-        <div className="relative aspect-video w-full shrink-0 overflow-hidden bg-rellia-teal/5">
-          {showWaitlistBadge ? (
-            <div className="absolute right-3 top-3 z-10">
-              <span className="inline-flex items-center rounded-full border border-white/25 bg-black/35 px-3 py-1.5 font-host-grotesk text-[11px] font-bold uppercase tracking-[0.18em] text-white shadow-sm backdrop-blur-md">
-                Waitlist
-              </span>
-            </div>
-          ) : null}
-
-          {showCornerBadge ? (
-            <div className="absolute right-3 top-3 z-10">
-              <span className="inline-flex items-center rounded-full bg-rellia-mint/90 px-3 py-1 font-host-grotesk text-[11px] font-extrabold uppercase tracking-[0.16em] text-rellia-teal shadow-lg ring-1 ring-white/50">
-                {displayTag}
-              </span>
-            </div>
-          ) : null}
-
-          {hasHref ? (
-            <Link to={href as string} aria-label={`Learn more about ${title}`} className="block h-full w-full">
+      <div className="flex min-h-0 flex-1 flex-col">
+        {/* Image */}
+        <div className="relative w-32 h-32 shrink-0 overflow-hidden aspect-square rounded-xl bg-rellia-teal/5 ml-2 mt-2 sm:m-0 sm:w-full sm:h-auto sm:aspect-square sm:rounded-xl">
+            {/* Desktop badge overlay (keep out of the way of the image on mobile) */}
+            {isWaitlistCard ? (
+              <div className="absolute right-3 top-3 z-10 hidden sm:block">
+                <span className="inline-flex items-center rounded-full border border-white/25 bg-black/35 px-3 py-1.5 font-host-grotesk text-[11px] font-bold uppercase tracking-[0.18em] text-white shadow-sm backdrop-blur-md">
+                  Join the Waitlist
+                </span>
+              </div>
+            ) : null}
+            {showCornerBadge ? (
+              <div className="absolute right-3 top-3 z-10 hidden sm:block">
+                <span className="inline-flex items-center rounded-full bg-rellia-mint/90 px-3 py-1 font-host-grotesk text-[11px] font-extrabold uppercase tracking-[0.16em] text-rellia-teal shadow-lg ring-1 ring-white/50">
+                  {displayTag}
+                </span>
+              </div>
+            ) : null}
+            {hasHref ? (
+              <Link to={href as string} aria-label={`Learn more about ${title}`} className="block h-full w-full">
+                <img
+                  src={imageSrc}
+                  alt={title}
+                  className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
+                  loading="lazy"
+                />
+              </Link>
+            ) : (
               <img
                 src={imageSrc}
                 alt={title}
-                className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
+                className="h-full w-full object-cover transition-transform duration-500 ease-out"
                 loading="lazy"
               />
-            </Link>
-          ) : (
-            <img
-              src={imageSrc}
-              alt={title}
-              className={cn(
-                "h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105",
-                isWaitlistCard && "opacity-[0.88] saturate-[0.65]",
-              )}
-              loading="lazy"
-            />
-          )}
-
-          {isWaitlistCard ? null : null}
-        </div>
-
-        <div className="flex flex-1 flex-col p-6">
-          <h3 className="font-host-grotesk text-[16px] font-medium leading-snug text-black">
-            {hasHref ? (
-              <Link
-                to={href as string}
-                className="transition-colors hover:text-rellia-teal focus-visible:outline-none"
-              >
-                {title}
-              </Link>
-            ) : (
-              title
             )}
-          </h3>
+          </div>
 
-          <p className="mt-2 flex-1 font-urbanist text-[14px] leading-[1.55] text-black/60">
-            {description}
-          </p>
-        </div>
+          {/* Text and Button Container */}
+          <div className="flex flex-1 flex-col p-4 sm:p-5">
+            {/* Mobile badge (below image, above title) */}
+            {showMobileBadge ? (
+              <div className="mb-3 sm:hidden">
+                {isWaitlistCard ? (
+                  <span className="inline-flex items-center rounded-full border border-black/10 bg-black/[0.04] px-3 py-1 font-host-grotesk text-[11px] font-bold uppercase tracking-[0.18em] text-black/70">
+                    Join the Waitlist
+                  </span>
+                ) : (
+                  <span className="inline-flex items-center rounded-full bg-rellia-mint/90 px-3 py-1 font-host-grotesk text-[11px] font-extrabold uppercase tracking-[0.16em] text-rellia-teal ring-1 ring-black/5">
+                    {displayTag}
+                  </span>
+                )}
+              </div>
+            ) : null}
 
-        <div className="mt-auto p-4">
-          <RelliaAction
-            asChild
-            variant="mintCardTealFill"
-            className="w-full h-[48px] text-base"
-          >
-            {hasHref ? (
-              <Link to={href as string}>
-                Get Started <ArrowRight />
-              </Link>
-            ) : hasWaitlistHref ? (
-              <button
-                type="button"
-                onClick={() => setWaitlistOpen(true)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === " ") {
-                    e.preventDefault()
+            {/* Title + description */}
+            <div className="flex shrink-0 flex-col">
+              <h3 className="font-host-grotesk text-xl font-normal leading-snug tracking-tight text-black sm:text-2xl sm:leading-snug group-hover:underline decoration-2 underline-offset-4">
+                {hasHref ? (
+                  <Link
+                    to={href as string}
+                    className="transition-colors hover:text-rellia-teal focus-visible:outline-none"
+                  >
+                    {title}
+                  </Link>
+                ) : (
+                  title
+                )}
+              </h3>
+              <p className="mt-2 font-urbanist text-sm leading-relaxed text-black/55 line-clamp-3 sm:text-[15px]">
+                {description}
+              </p>
+            </div>
+
+            {/* Bottom row: deadline (or waitlist CTA) */}
+            <div className="mt-auto shrink-0 pt-5">
+              {!isWaitlistCard ? (
+                <div className="flex items-end gap-3">
+                  <CalendarDays className="h-6 w-6 text-rellia-teal" strokeWidth={2.25} aria-hidden />
+                  <span className="font-host-grotesk text-[12px] font-bold uppercase tracking-[0.18em] text-black/80">
+                    DEADLINE: {deadline || getCurrentMonthDeadline()}
+                  </span>
+                </div>
+              ) : (
+                <RelliaAction
+                  type="button"
+                  variant="mintCardTealFill"
+                  className="w-full h-[48px] text-base disabled:opacity-60 disabled:cursor-not-allowed"
+                  disabled={!hasWaitlistHref}
+                  onClick={() => {
+                    if (!hasWaitlistHref) return
                     setWaitlistOpen(true)
-                  }
-                }}
-                aria-label={`Join waitlist for ${title}`}
-              >
-                <span className="inline-flex items-center justify-center gap-2">
-                  <Bell className="h-4 w-4 shrink-0" strokeWidth={2.25} />
-                  {buttonText || "Join Waitlist"}
-                </span>
-              </button>
-            ) : (
-              <button type="button" disabled aria-disabled className="opacity-60 cursor-not-allowed">
-                {buttonText || "Join Waitlist"}
-              </button>
-            )}
-          </RelliaAction>
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault()
+                      if (!hasWaitlistHref) return
+                      setWaitlistOpen(true)
+                    }
+                  }}
+                  aria-label={`Join waitlist for ${title}`}
+                >
+                  <span className="inline-flex items-center justify-center gap-2">
+                    <Bell className="h-4 w-4 shrink-0" strokeWidth={2.25} />
+                    {buttonText || "Join Waitlist"}
+                  </span>
+                </RelliaAction>
+              )}
+            </div>
         </div>
       </div>
 
@@ -154,9 +172,9 @@ export const ProgramCard = ({
           onOpenChange={setWaitlistOpen}
           formUrl={waitlistHref as string}
           title="Join the program waitlist"
-          description="Share a few details and we’ll reach out when this program opens."
+          description="Share a few details and we'll reach out when this program opens."
         />
       ) : null}
-    </div>
+    </article>
   )
 }

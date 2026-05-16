@@ -1,36 +1,51 @@
 import {defineField, defineType} from 'sanity'
 
-const eventCardFields = [
-  {name: 'title', type: 'string' as const},
-  {name: 'dateTime', type: 'string' as const},
-  {name: 'person', type: 'string' as const},
-  {name: 'imageSrc', type: 'string' as const},
-  {name: 'href', type: 'string' as const},
-  {name: 'comingSoon', type: 'boolean' as const},
-  {name: 'buttonText', type: 'string' as const},
-]
-
-const eventCardType = {
-  type: 'object' as const,
-  name: 'eventCard',
-  fields: eventCardFields,
-}
-
 export const programsLandingPage = defineType({
   name: 'programsLandingPage',
   title: 'Programs & events landing',
   type: 'document',
+  groups: [
+    {name: 'hero', title: 'Hero', default: true},
+    {name: 'programs', title: 'Programs'},
+    {name: 'events', title: 'Events'},
+    {name: 'cta', title: 'CTA'},
+    {name: 'seo', title: 'SEO & metadata'},
+  ],
+  fieldsets: [{name: 'seo', title: 'SEO & metadata'}],
   fields: [
-    defineField({name: 'heroTitleLine1', type: 'string'}),
-    defineField({name: 'heroTitleMint', type: 'string'}),
-    defineField({name: 'heroSubtitle', type: 'text', rows: 3}),
-    defineField({name: 'heroPrimaryCtaLabel', type: 'string'}),
-    defineField({name: 'heroSecondaryCtaLabel', type: 'string'}),
-    defineField({name: 'programsSectionTitle', type: 'string'}),
-    defineField({name: 'programsSectionSubtitle', type: 'text', rows: 3}),
+    defineField({
+      name: 'heroTitlePortable',
+      title: 'Hero headline',
+      type: 'inlineHeroHeadline',
+      description: 'Use Mint/Teal decorators for highlighted phrases.',
+      group: 'hero',
+      validation: (Rule) => Rule.required().min(1),
+    }),
+    defineField({name: 'heroSubtitle', title: 'Hero subtitle', type: 'text', rows: 3, group: 'hero'}),
+    defineField({name: 'heroPrimaryCtaLabel', title: 'Primary button label', type: 'string', group: 'hero'}),
+    defineField({name: 'heroSecondaryCtaLabel', title: 'Secondary button label', type: 'string', group: 'hero'}),
+    defineField({
+      name: 'programsSectionTitle',
+      title: 'Programs section title',
+      type: 'inlineHeroHeadline',
+      description: 'Use Mint/Teal decorators for highlighted phrases.',
+      group: 'programs',
+      validation: (Rule) => Rule.required().min(1),
+    }),
+    defineField({
+      name: 'programsSectionSubtitle',
+      title: 'Programs section subtitle',
+      type: 'text',
+      rows: 3,
+      group: 'programs',
+    }),
     defineField({
       name: 'programs',
+      title: 'Programs (legacy)',
+      description:
+        'This list is not used for the /programs grid when “Programs” documents exist. Prefer editing “Programs” in Collections.',
       type: 'array',
+      group: 'programs',
       of: [
         defineField({
           name: 'program',
@@ -38,18 +53,44 @@ export const programsLandingPage = defineType({
           fields: [
             {name: 'title', type: 'string'},
             {name: 'description', type: 'text', rows: 3},
-            {name: 'imageSrc', type: 'string'},
+            {
+              name: 'image',
+              type: 'image',
+              options: {hotspot: true},
+              description: 'Upload an image (preferred). Falls back to "Image URL" below.',
+            },
+            {
+              name: 'imageSrc',
+              type: 'string',
+              title: 'Image URL (fallback)',
+              description: 'Optional fallback URL when no upload is provided.',
+            },
             {name: 'href', type: 'string'},
             {name: 'buttonText', type: 'string'},
           ],
         }),
       ],
     }),
-    defineField({name: 'upcomingEvents', type: 'array', of: [eventCardType]}),
-    defineField({name: 'pastEvents', type: 'array', of: [eventCardType]}),
-    defineField({name: 'ctaTitle', type: 'string'}),
-    defineField({name: 'ctaBody', type: 'text', rows: 2}),
-    defineField({name: 'ctaButtonLabel', type: 'string'}),
-    defineField({name: 'ctaButtonHref', type: 'string'}),
+    defineField({
+      name: 'upcomingEvents',
+      title: 'Upcoming events (legacy)',
+      description: 'Prefer editing Events in Collections.',
+      type: 'array',
+      of: [{type: 'eventCard'}],
+      group: 'events',
+    }),
+    defineField({
+      name: 'pastEvents',
+      title: 'Past events (legacy)',
+      description: 'Prefer editing Events in Collections.',
+      type: 'array',
+      of: [{type: 'eventCard'}],
+      group: 'events',
+    }),
+    defineField({name: 'ctaTitle', title: 'CTA title', type: 'string', group: 'cta'}),
+    defineField({name: 'ctaBody', title: 'CTA body', type: 'text', rows: 2, group: 'cta'}),
+    defineField({name: 'ctaButtonLabel', title: 'CTA button label', type: 'string', group: 'cta'}),
+    defineField({name: 'ctaButtonHref', title: 'CTA button link', type: 'string', group: 'cta'}),
+    defineField({name: 'seo', type: 'seo', group: 'seo', fieldset: 'seo'}),
   ],
 })

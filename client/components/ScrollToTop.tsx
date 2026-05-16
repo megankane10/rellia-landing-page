@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 
 /**
- * Scrolls to top on route change. If the new location has a hash (e.g. /network#founders),
+ * Scrolls to top on route change. If the new location has a hash (e.g. /founders#signup),
  * scrolls to that element instead — waits a frame so the destination has a chance to mount.
  */
 export default function ScrollToTop() {

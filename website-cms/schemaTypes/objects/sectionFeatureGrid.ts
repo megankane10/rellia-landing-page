@@ -1,0 +1,27 @@
+import {defineArrayMember, defineField, defineType} from 'sanity'
+
+export const sectionFeatureGrid = defineType({
+  name: 'sectionFeatureGrid',
+  title: 'Network: Feature Grid',
+  type: 'object',
+  fields: [
+    defineField({name: 'badge', type: 'string'}),
+    defineField({name: 'title', type: 'portableRichText'}),
+    defineField({name: 'subtitle', type: 'portableRichText'}),
+    defineField({
+      name: 'items',
+      type: 'array',
+      of: [
+        defineArrayMember({
+          type: 'object',
+          name: 'item',
+          fields: [
+            defineField({name: 'icon', type: 'string', description: 'Lucide icon name (e.g. Users, Rocket, ShieldCheck)'}),
+            defineField({name: 'title', type: 'string', validation: (Rule) => Rule.required()}),
+            defineField({name: 'body', type: 'text', rows: 3}),
+          ],
+        }),
+      ],
+    }),
+  ],
+})

@@ -1,18 +1,33 @@
 {
-  "buildCommand": "npm run build:client",
+  "buildCommand": "pnpm run build:client && pnpm run build:api",
   "outputDirectory": "dist/spa",
-  "functions": {
-    "api/index.ts": {
-      "includeFiles": "server/**"
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "Content-Security-Policy",
+          "value": "frame-ancestors 'self' https://*.sanity.studio https://*.sanity.io"
+        }
+      ]
+    },
+    {
+      "source": "/ogimage.png",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, must-revalidate"
+        }
+      ]
     }
-  },
+  ],
   "rewrites": [
     {
       "source": "/api/(.*)",
       "destination": "/api"
     },
     {
-      "source": "/((?!api/)(?!_vercel/)(?!assets/)(?!images/)(?!videos/)(?!favicon\\.ico$)(?!robots\\.txt$)(?!sitemap\\.xml$)(?!placeholder\\.svg$).*)",
+      "source": "/((?!api/)(?!_vercel/)(?!assets/)(?!images/)(?!videos/)(?!ogimage\\.png$)(?!favicon\\.ico$)(?!robots\\.txt$)(?!sitemap\\.xml$)(?!placeholder\\.svg$).*)",
       "destination": "/index.html"
     }
   ]

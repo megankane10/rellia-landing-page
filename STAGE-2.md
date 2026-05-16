@@ -52,7 +52,7 @@ Public route where visitors explore Rellia’s partner network: **searchable and
 
 - [ ] Register routes in **`client/App.tsx`**; match **`client/config/seo.ts`** (finalize slugs, e.g. `/diagnostics`, `/diagnosticSurvey`).
 - [ ] Replace **`alert()`** with inline error UI and retry.
-- [ ] Verify **`POST /api/diagnostic-report`** on Vercel with **`ANTHROPIC_API_KEY`**; confirm rate limits and response shape.
+- [ ] Verify **`POST /api/diagnostic-report`** on Vercel; confirm rate limits and response shape.
 - [ ] Branded **loading / processing** states; test **mobile** layout and **keyboard** order.
 
 ---
@@ -68,7 +68,6 @@ Public route where visitors explore Rellia’s partner network: **searchable and
 **Security**
 
 - [ ] **CORS** limited to known origins on the Express API.
-- [ ] Do not return raw upstream error bodies from Anthropic to the browser; **validate LLM JSON** (e.g. Zod) before responding.
 - [ ] **CSP** in phases, accounting for HubSpot, Fillout, and Vercel.
 
 **SEO and performance**
@@ -112,7 +111,7 @@ Public route where visitors explore Rellia’s partner network: **searchable and
 | Where | Variables |
 |-------|-----------|
 | Client (`VITE_*`) | `VITE_SITE_URL`, `VITE_SANITY_PROJECT_ID`, `VITE_SANITY_DATASET`, `VITE_STRIPE_MONTHLY_PLAN_LINK`, `VITE_STRIPE_ANNUAL_PLAN_LINK`, `VITE_QMS_PAYMENT_LINK` (and similar overrides if you add them) |
-| Server / Vercel | `ANTHROPIC_API_KEY` (diagnostics API only; never expose as `VITE_*`), plus platform vars such as `VERCEL`, `NODE_ENV`, `PORT` locally |
+| Server / Vercel | Sanity server-only vars such as `SANITY_API_WRITE_TOKEN` (never expose as `VITE_*`), plus platform vars such as `VERCEL`, `NODE_ENV`, `PORT` locally |
 
 Details: [README.md](./README.md) and `.env.example`.
 

@@ -972,7 +972,7 @@ export const DEFAULT_HOME_PAGE: HomePageContent = {
   subheadline:
     "Rellia helps founders achieve their milestones to launch their healthcare innovations.",
   primaryCtaLabel: "Apply to Join",
-  primaryCtaPath: "/network",
+  primaryCtaPath: "/apply",
   secondaryCtaLabel: "See our Programs",
   secondaryCtaPath: "/programs",
   heroBackgroundVideoUrl: "/videos/homehero.mp4",
@@ -1013,7 +1013,7 @@ export const DEFAULT_HOME_PAGE: HomePageContent = {
   ],
   ctaTitle: "Are you the next **Rellia Health** success story?",
   ctaButtonLabel: "Apply to Join Now",
-  ctaButtonPath: "/network",
+  ctaButtonPath: "/apply",
   ctaImageUrl: "/images/cta-home-conference.webp",
   ctaImageAlt: "Man speaking at conference",
   testimonialsTitlePortable: DEFAULT_HOME_TESTIMONIALS_TITLE_PORTABLE,
@@ -1300,7 +1300,7 @@ export const DEFAULT_FAQ_PAGE: FaqPageContent = {
   sidebarBody:
     "We’re looking for the next wave of digital health innovators. If you’re clear on your vision but need the right network to execute, don't wait for the FAQ.",
   sidebarCtaLabel: "Apply to join",
-  sidebarCtaPath: "/network",
+  sidebarCtaPath: "/apply",
   bottomTitle: "Every startup is **different**",
   bottomBody:
     "Tell us more about where you are today and where you want to be in the next 12–18 months. We'll share how Rellia can help accelerate that path, or recommend a better fit if we're not it.",
@@ -1590,7 +1590,7 @@ export const DEFAULT_PROGRAMS_LANDING: ProgramsLandingContent = {
   ctaBody:
     "Rellia members get access to all event recordings, program discounts, and individual mentorship.",
   ctaButtonLabel: "Apply to join",
-  ctaButtonHref: "/network",
+  ctaButtonHref: "/apply",
 }
 
 export const DEFAULT_CONTACT_PAGE: ContactPageContent = {
@@ -1689,6 +1689,24 @@ export const DEFAULT_QMS_PROGRAM: QmsProgramContent = {
     "Still have questions or want to learn more about the program? Reach out at any time to speak with us directly.",
   bottomCtaButtonLabel: "Contact",
   bottomContactHref: "/contact",
+  testimonials: [
+    {
+      name: "Mazhar Shahen",
+      role: "CEO",
+      company: "NewGen Health",
+      quote:
+        "Rellia has been an invaluable partner in our journey. Their regulatory expertise gave us the clarity and confidence to better understand Health Canada and FDA pathways as a health-tech startup. The team genuinely cares about helping early-stage companies succeed, not just with advice, but with hands-on support when it matters most.",
+      image: "/images/testimonials-MazharS.jpeg",
+    },
+    {
+      name: "Zarrah Uy",
+      role: "CEO",
+      company: "Theia AI",
+      quote:
+        "Building a foundation for a health-tech company is complex, but Rellia made it manageable. From their focused programming to their deep network of mentors, they provided the strategic resources we needed to move from concept to execution. They don't just provide a platform; they provide a community that understands the unique challenges founders face.",
+      image: "/images/testimonials-ZarrahU.jpeg",
+    },
+  ],
 }
 
 export const DEFAULT_PAYMENT_PAGE: PaymentPageContent = {

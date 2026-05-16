@@ -1,27 +1,17 @@
-import { useEffect, useId, useMemo, useState } from "react"
+import { useState } from "react"
 import { Link } from "react-router-dom"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
 import LogoMarquee from "@/components/LogoMarquee"
 import ScrollReveal from "@/components/ScrollReveal"
+import NetworkJumpNav from "@/components/NetworkJumpNav"
 import RelliaAction from "@/components/RelliaAction"
 import RelliaCta from "@/components/RelliaCta"
-import SectionPillBadge from "@/components/SectionPillBadge"
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import NetworkEyebrow from "@/components/network/NetworkEyebrow"
+import InvestorNotifyDialog from "@/components/network/InvestorNotifyDialog"
 import { cn } from "@/lib/utils"
-import {
-  ArrowRight,
-  Check,
-  Rocket,
-  TrendingUp,
-  GraduationCap,
-  Building2,
-  type LucideIcon,
-} from "lucide-react"
-import { loadHubspotV2Script } from "@/lib/hubspotForms"
-import { DEFAULT_GLOBAL_SETTINGS } from "@shared/cms/defaults"
-
-const SUPPORT_EMAIL = DEFAULT_GLOBAL_SETTINGS.supportEmail
+import { ArrowRight, Check } from "lucide-react"
+import { PAGE_HEADER_DARK_SUBTITLE_CLASS, PAGE_HEADER_TITLE_SIZE_CLASS } from "@/components/PageHeader"
 
 const CTA = {
   founder: "/contact",
@@ -30,15 +20,6 @@ const CTA = {
   advisor: "/contact",
   partner: "/contact",
 } as const
-
-type SectionId = "founders" | "investors" | "advisors" | "partners"
-
-const JUMP_LINKS: Array<{ id: SectionId; numeral: string; label: string; icon: LucideIcon }> = [
-  { id: "founders", numeral: "01", label: "Founders", icon: Rocket },
-  { id: "advisors", numeral: "02", label: "Advisors", icon: GraduationCap },
-  { id: "investors", numeral: "03", label: "Investors", icon: TrendingUp },
-  { id: "partners", numeral: "04", label: "Industry Partners", icon: Building2 },
-]
 
 /** Oversized section numeral — absolutely positioned so it doesn't push the body copy down. */
 function SectionNumeral({ value }: { value: string }) {
@@ -52,9 +33,9 @@ function SectionNumeral({ value }: { value: string }) {
   )
 }
 
-/** Section tag pill — shared style used across pages. */
-function SectionTag({ children }: { children: React.ReactNode }) {
-  return <SectionPillBadge>{children}</SectionPillBadge>
+/** Section tag — Network impact pill (not SectionPillBadge). */
+function SectionTag({ children }: { children: string }) {
+  return <NetworkEyebrow label={children} tone="onLight" />
 }
 
 /** Bullet item used inside the section feature lists. */
@@ -71,184 +52,14 @@ function CheckItem({ children }: { children: React.ReactNode }) {
   )
 }
 
-/** Smooth-scroll to a section, accounting for the fixed navbar height (~92px). */
-const handleScrollToId = (id: string) => {
-  const el = document.getElementById(id)
-  if (!el) return
-  const y = el.getBoundingClientRect().top + window.scrollY - 92
-  window.scrollTo({ top: y, behavior: "smooth" })
-}
-
-type HubspotEmbedConfig = {
-  region: string
-  portalId: string
-  formId: string
-}
-
-const HUBSPOT_FORM: HubspotEmbedConfig = {
-  region: "na3",
-  portalId: "342926478",
-  formId: "fa4bb92b-2e44-4a3c-9601-773b36e3e3d8",
-}
-
-function InvestorNotifyDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (next: boolean) => void }) {
-  const targetIdRaw = useId()
-  const targetId = useMemo(() => `hubspot-form-${targetIdRaw.replace(/[^a-zA-Z0-9_-]/g, "")}`, [targetIdRaw])
-  const [status, setStatus] = useState<"idle" | "loading" | "ready" | "error">("idle")
-
-  useEffect(() => {
-    if (!open) return
-
-    let cancelled = false
-
-    const mountForm = async () => {
-      setStatus("loading")
-      try {
-        await loadHubspotV2Script()
-        if (cancelled) return
-
-        const target = document.getElementById(targetId)
-        if (!target) {
-          setStatus("error")
-          return
-        }
-
-        target.innerHTML = ""
-
-        const create = window.hbspt?.forms?.create
-        if (typeof create !== "function") {
-          setStatus("error")
-          return
-        }
-
-        create({
-          region: HUBSPOT_FORM.region,
-          portalId: HUBSPOT_FORM.portalId,
-          formId: HUBSPOT_FORM.formId,
-          target: `#${targetId}`,
-        })
-
-        setStatus("ready")
-      } catch {
-        if (cancelled) return
-        setStatus("error")
-      }
-    }
-
-    mountForm()
-    return () => {
-      cancelled = true
-    }
-  }, [open, targetId])
-
-  return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent
-        aria-label="Pitch event notifications form"
-        className={cn(
-          "w-[min(92vw,720px)] max-w-none",
-          "max-h-[min(86vh,780px)] overflow-hidden",
-          "rounded-2xl md:rounded-3xl border border-black/10 bg-white p-0 shadow-2xl",
-        )}
-      >
-        <div className="max-h-[min(86vh,780px)] overflow-y-auto p-4 sm:p-5 md:p-8">
-          {status === "error" ? (
-            <div className="space-y-2">
-              <p className="font-urbanist text-black/70">
-                We couldn’t load the form right now. Please try again in a moment.
-              </p>
-              <p className="font-urbanist text-black/60">
-                Or email{" "}
-                <a className="underline decoration-black/25 hover:decoration-black/60" href={`mailto:${SUPPORT_EMAIL}`}>
-                  {SUPPORT_EMAIL}
-                </a>
-                .
-              </p>
-            </div>
-          ) : (
-            <div className="relative min-h-[160px]">
-              {/* Mount node must stay in the DOM while status is loading — otherwise getElementById fails after the script loads */}
-              <div id={targetId} />
-              {status === "loading" ? (
-                <div
-                  className="absolute inset-0 flex items-center justify-center rounded-xl bg-white/80"
-                  aria-busy="true"
-                  aria-live="polite"
-                >
-                  <p className="font-urbanist text-black/60">Loading form…</p>
-                </div>
-              ) : null}
-            </div>
-          )}
-        </div>
-      </DialogContent>
-    </Dialog>
-  )
-}
-
-function FilloutInterestDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (next: boolean) => void }) {
-  useEffect(() => {
-    if (!open) return
-
-    const src = "https://server.fillout.com/embed/v1/"
-    // Fillout's embed script often only hydrates embeds present at load time.
-    // Since this dialog mounts dynamically, re-inject the script on open to ensure hydration.
-    const existing = document.querySelector<HTMLScriptElement>(`script[src="${src}"]`)
-    if (existing) {
-      existing.remove()
-    }
-
-    const script = document.createElement("script")
-    script.src = src
-    script.async = true
-    document.body.appendChild(script)
-  }, [open])
-
-  return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent
-        aria-label="Rellia interest form"
-        className={cn(
-          "w-[min(92vw,880px)] max-w-none",
-          "max-h-[min(86vh,820px)] overflow-hidden",
-          "rounded-2xl md:rounded-3xl border border-black/10 bg-white p-0 shadow-2xl",
-        )}
-      >
-        <div className="flex items-center justify-between gap-3 border-b border-black/10 px-4 py-3 sm:px-5 sm:py-4">
-          <div className="min-w-0">
-            <DialogTitle className="font-host-grotesk text-base font-semibold text-black">
-              Get involved with Rellia
-            </DialogTitle>
-            <DialogDescription className="font-urbanist text-sm text-black/55">
-              Fill out this short form and we’ll follow up.
-            </DialogDescription>
-          </div>
-        </div>
-
-        <div className="max-h-[calc(min(86vh,820px)-72px)] overflow-y-auto p-3 sm:p-4">
-          <div
-            data-fillout-id="r5hdDmQodfus"
-            data-fillout-embed-type="standard"
-            style={{ width: "100%", height: "70vh" }}
-            data-fillout-inherit-parameters
-          />
-        </div>
-      </DialogContent>
-    </Dialog>
-  )
-}
-
 export default function Network() {
   const [isInvestorNotifyOpen, setIsInvestorNotifyOpen] = useState(false)
-  const [isFilloutOpen, setIsFilloutOpen] = useState(false)
 
   return (
     <div className="min-h-screen bg-white font-host-grotesk overflow-x-hidden">
       <Navbar />
 
-      <main>
-        <FilloutInterestDialog open={isFilloutOpen} onOpenChange={setIsFilloutOpen} />
-
+      <main id="main-content">
         {/* ───────────────────────────── HERO ───────────────────────────── */}
         <section className="relative pt-32 pb-20 md:pt-48 md:pb-28 bg-rellia-teal overflow-hidden">
           {/* Background image */}
@@ -281,7 +92,12 @@ export default function Network() {
 
           <div className="relative z-10 max-w-[1300px] mx-auto px-6 md:px-10">
             <ScrollReveal>
-              <h1 className="text-white text-5xl md:text-7xl lg:text-[88px] font-extrabold leading-[0.95] tracking-tight">
+              <h1
+                className={cn(
+                  "text-white font-bold leading-tight tracking-tight",
+                  PAGE_HEADER_TITLE_SIZE_CLASS,
+                )}
+              >
                 The Rellia <br />
                 <span className="relative inline-block align-bottom">
                   <span className="text-white" aria-hidden>
@@ -293,43 +109,16 @@ export default function Network() {
                 </span>
               </h1>
 
-              <p className="mt-8 text-white/85 text-xl md:text-2xl font-urbanist leading-snug max-w-2xl">
+              <p className={cn(PAGE_HEADER_DARK_SUBTITLE_CLASS, "mt-8 max-w-2xl")}>
                 Built for the people building the future of health.
               </p>
             </ScrollReveal>
 
-            {/* Anchor jump nav — four doors */}
             <ScrollReveal delay={0.15}>
-              <nav
-                aria-label="Jump to section"
-                className="mt-[calc(theme(spacing.12)+15px)] md:mt-[calc(theme(spacing.16)+15px)] grid grid-cols-2 md:grid-cols-4 gap-px bg-white/15 border border-white/15 rounded-2xl overflow-hidden"
-              >
-                {JUMP_LINKS.map(({ id, numeral, label, icon: Icon }) => (
-                  <a
-                    key={id}
-                    href={`#${id}`}
-                    onClick={(e) => {
-                      e.preventDefault()
-                      handleScrollToId(id)
-                    }}
-                    className="group flex flex-col gap-3 md:gap-4 lg:gap-5 bg-rellia-teal p-5 md:p-7 lg:p-9 transition-colors hover:bg-rellia-teal/70"
-                  >
-                    <div className="flex items-center justify-between">
-                      <span className="font-host-grotesk text-xs lg:text-sm font-semibold tracking-[0.18em] text-rellia-mint">
-                        {numeral}
-                      </span>
-                      <Icon className="h-4 w-4 lg:h-5 lg:w-5 text-rellia-mint/80" strokeWidth={1.75} />
-                    </div>
-                    <span className="font-host-grotesk text-base md:text-xl lg:text-2xl font-semibold text-white leading-tight">
-                      {label}
-                    </span>
-                    <span className="mt-auto inline-flex items-center gap-1 font-urbanist text-[13px] lg:text-sm text-white/70 group-hover:text-rellia-mint transition-colors">
-                      Jump to section
-                      <ArrowRight className="h-3.5 w-3.5 lg:h-4 lg:w-4 transition-transform group-hover:translate-x-0.5" />
-                    </span>
-                  </a>
-                ))}
-              </nav>
+              <NetworkJumpNav
+                mode="samePage"
+                className="mt-[calc(theme(spacing.12)+15px)] md:mt-[calc(theme(spacing.16)+15px)]"
+              />
             </ScrollReveal>
           </div>
         </section>
@@ -394,10 +183,10 @@ export default function Network() {
                   Applications are required. <span className="text-rellia-teal font-semibold">Membership is selective.</span>
                 </p>
                 <RelliaAction asChild variant="tealFilledLift" size="comfortable">
-                  <button type="button" onClick={() => setIsFilloutOpen(true)} aria-label="Apply to join as a founder">
-                    Apply to Join as a Founder
+                  <Link to="/apply" aria-label="Apply to join the Rellia Network">
+                    Apply to Join
                     <ArrowRight />
-                  </button>
+                  </Link>
                 </RelliaAction>
               </div>
             </ScrollReveal>
@@ -486,15 +275,11 @@ export default function Network() {
                 <p className="font-urbanist text-base md:text-lg text-black/60 max-w-xl">
                   The founders in our community are the kind of people worth showing up for. Let's find your match.
                 </p>
-                <RelliaAction
-                  type="button"
-                  variant="tealFilledLift"
-                  size="comfortable"
-                  onClick={() => setIsFilloutOpen(true)}
-                  aria-label="Express interest in mentoring"
-                >
-                  Express Interest in Mentoring
-                  <ArrowRight />
+                <RelliaAction asChild variant="tealFilledLift" size="comfortable">
+                  <Link to="/apply" aria-label="Apply to join the Rellia Network">
+                    Apply to Join
+                    <ArrowRight />
+                  </Link>
                 </RelliaAction>
               </div>
             </ScrollReveal>
@@ -663,27 +448,25 @@ export default function Network() {
                   Put your brand in front of founders at the exact moment they're making decisions about who to work
                   with.
                 </p>
-                <RelliaAction
-                  type="button"
-                  variant="tealFilledLift"
-                  size="comfortable"
-                  onClick={() => setIsFilloutOpen(true)}
-                  aria-label="Get in touch about partnering"
-                >
-                  Get in Touch About Partnering
-                  <ArrowRight />
+                <RelliaAction asChild variant="tealFilledLift" size="comfortable">
+                  <Link to="/apply" aria-label="Apply to join the Rellia Network">
+                    Apply to Join
+                    <ArrowRight />
+                  </Link>
                 </RelliaAction>
               </div>
             </ScrollReveal>
           </div>
         </section>
 
-        <RelliaCta
-          title="One network. Four doors in."
-          body="Founders, advisors, investors, and industry partners all showing up for the same reason - to move health innovation forward. That's what this community here for."
-          primary={{ label: "Learn About Rellia", to: "/about" }}
-          secondary={{ label: "Not sure where you fit? Contact us!", to: "/contact" }}
-        />
+        <div id="how-they-work-together" className="scroll-mt-24 md:scroll-mt-28">
+          <RelliaCta
+            title="One **network**. Four **doors** in."
+            body="Founders, advisors, investors, and industry partners all showing up for the same reason - to move health innovation forward. That's what this community here for."
+            primary={{ label: "Learn About Rellia", to: "/about" }}
+            secondary={{ label: "Not sure where you fit? Contact us!", to: "/contact" }}
+          />
+        </div>
       </main>
 
       <Footer />

@@ -55,28 +55,28 @@ const ROLE_META: Record<
     subtitle: "Programs, mentors, and warm intros aligned to healthcare reality.",
     imageSrc: "/images/paths-founder-pexels.jpg",
     imageAlt: "Team of founders collaborating around a table",
-    ctaTo: "/network#founders",
+    ctaTo: "/founders",
   },
   advisor: {
     title: "Mentor decisively",
     subtitle: "Join a bench built for outcomes—not open-ended overhead.",
     imageSrc: "/images/paths-advisor-pexels.jpg",
     imageAlt: "Professional advisor working with a colleague",
-    ctaTo: "/network#advisors",
+    ctaTo: "/advisors",
   },
   investor: {
     title: "See founder quality",
     subtitle: "Curated pitch events and diligence-friendly updates.",
     imageSrc: "/images/paths-investor-pexels.jpg",
     imageAlt: "Investor in conversation during a business meeting",
-    ctaTo: "/network#investors",
+    ctaTo: "/investors",
   },
   partner: {
     title: "Drive adoption",
     subtitle: "Partner pathways designed for pilots, integration, and trust.",
     imageSrc: "/images/paths-partner-pexels.jpg",
     imageAlt: "Two partners shaking hands after an agreement",
-    ctaTo: "/network#partners",
+    ctaTo: "/industry-partners",
   },
 }
 

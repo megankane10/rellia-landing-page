@@ -1,3 +1,8 @@
+import { DEFAULT_PROGRAMS_LANDING } from "../../shared/cms/defaults"
+import { programsEventDetailPath } from "../../shared/cms/eventSlug"
+import { FOUNDER_DIRECTORY } from "../data/founderDirectory"
+import { ADVISOR_DIRECTORY_SEED } from "../data/advisorDirectory"
+
 /** Base URL for canonical links, Open Graph, and JSON-LD. Override via `VITE_SITE_URL` in env. */
 export const getSiteUrl = (): string => {
   const raw = import.meta.env.VITE_SITE_URL as string | undefined
@@ -14,7 +19,7 @@ export type RouteSeoConfig = {
   indexable: boolean
 }
 
-const ROUTE_SEO: Record<string, RouteSeoConfig> = {
+export const ROUTE_SEO: Record<string, RouteSeoConfig> = {
   "/": {
     title: "Rellia Health — You are the future of health tech.",
     description:
@@ -33,6 +38,12 @@ const ROUTE_SEO: Record<string, RouteSeoConfig> = {
       "Answers to common questions about Rellia Health programs, membership, events, and how we work with founders and partners.",
     indexable: true,
   },
+  "/careers": {
+    title: "Careers — Rellia Health",
+    description:
+      "Explore open roles at Rellia Health. Join a mission-driven team connecting health tech founders with clinicians, advisors, and investors.",
+    indexable: true,
+  },
   "/events": {
     title: "Events — Rellia Health",
     description:
@@ -46,75 +57,69 @@ const ROUTE_SEO: Record<string, RouteSeoConfig> = {
     indexable: true,
   },
   "/programs/build-your-quality-management-system": {
-    title: "QMS Program — Rellia Health",
+    title: "Quality Management System (QMS) Program — Rellia Health",
     description:
-      "Quality Management System (QMS) support for medtech and digital health teams navigating design controls, documentation, and regulatory readiness.",
+      "Build a lean, scalable QMS for ISO 13485, MDSAP, and FDA compliance. Expert guidance for medtech and digital health founders.",
     indexable: true,
   },
-  "/programs/build-your-qms": {
-    title: "QMS Program — Rellia Health",
-    description:
-      "This page has moved to /programs/build-your-quality-management-system.",
-    indexable: false,
-  },
-  "/programs/qms": {
-    title: "QMS Program — Rellia Health",
-    description:
-      "This page has moved to /programs/build-your-quality-management-system.",
-    indexable: false,
-  },
   "/programs/ignite-pitch-foundations": {
-    title: "Ignite Pitch Foundations — Rellia Health",
+    title: "Ignite: Pitch Foundations — Rellia Health",
     description:
-      "Build a compelling investor pitch with expert coaching and real-time feedback from healthcare operators and investors.",
+      "Master fundraising essentials. Craft your first pitch deck and presentation with expert feedback to build investor confidence.",
     indexable: true,
   },
   "/programs/advance-data-room-deep-dive": {
-    title: "Advance Data Room Deep Dive — Rellia Health",
+    title: "Advance: Data Room Deep Dive — Rellia Health",
     description:
-      "Prepare your data room for due diligence with structured guidance on financial models, IP strategy, and investor-ready documentation.",
+      "Navigate due diligence and data room management. Practical tools and tips for early-stage founders raising capital.",
     indexable: true,
   },
   "/programs/elevate-healthcare-capital": {
-    title: "Elevate Healthcare Capital — Rellia Health",
+    title: "Elevate: Healthcare Capital — Rellia Health",
     description:
-      "Navigate healthcare fundraising with expert guidance on term sheets, investor relations, and capital strategy.",
+      "Refine your fundraising strategy for health tech. Upgrade your pitch to meet the technical and clinical expectations of healthcare investors.",
     indexable: true,
   },
   "/programs/first-50-users-clinical-feedback-intensive": {
-    title: "First 50 Users — Rellia Health",
+    title: "First 50 Users: Clinical Feedback Intensive — Rellia Health",
     description:
-      "Recruit your first clinical users and gather structured feedback to validate your health tech product with real-world evidence.",
+      "Validate your product with Rellia's clinician network. Gain IRB guidance and professional feedback to bridge the gap from prototype to clinical use.",
     indexable: true,
   },
   "/programs/low-fidelity-prototype-lab": {
-    title: "Prototype Lab — Rellia Health",
+    title: "Low-Fidelity Prototype Lab — Rellia Health",
     description:
-      "Build and test low-fidelity prototypes with clinical end-users to validate your health tech concept before full development.",
+      "Transform your vision into a functional prototype. Connect with vetted development firms and testing experts to build your proof of concept.",
     indexable: true,
   },
   "/programs/advisory-board-match": {
     title: "Advisory Board Match — Rellia Health",
     description:
-      "Get matched with vetted clinical and industry advisors who can accelerate your health tech company's growth.",
+      "Recruit ideal experts for your startup. Rellia provides matchmaking, equity benchmarking, and legal frameworks for productive advisory relationships.",
     indexable: true,
   },
   "/programs/design-your-brand-strategy": {
-    title: "Brand Strategy — Rellia Health",
+    title: "Design Your Brand Strategy — Rellia Health",
     description:
-      "Design a brand strategy that resonates with healthcare buyers, clinicians, and patients through expert-led workshops.",
+      "Develop a professional brand identity that earns trust from clinicians and investors. Includes sprints for website, UI, and sales collateral.",
     indexable: true,
   },
   "/programs/regulatory-roadmap": {
     title: "Regulatory Strategy Sprint — Rellia Health",
     description:
-      "Map your regulatory pathway with expert guidance on FDA submissions, CE marking, and compliance strategy.",
+      "Map your regulatory path across FDA, Health Canada, and EU MDR. Leave with a documented strategy for investor due diligence.",
     indexable: true,
   },
-  "/events/:slug": {
-    title: "Event Details — Rellia Health",
-    description: "Learn more about this Rellia Health event and register to join the session.",
-    indexable: true,
+  "/programs/build-your-qms": {
+    title: "QMS Program — Rellia Health",
+    description: "This page has moved to /programs/build-your-quality-management-system.",
+    indexable: false,
+  },
+  "/programs/qms": {
+    title: "QMS Program — Rellia Health",
+    description:
+      "This page has moved to /programs/build-your-qms.",
+    indexable: false,
   },
   "/network": {
     title: "Network — Rellia Health",
@@ -122,34 +127,58 @@ const ROUTE_SEO: Record<string, RouteSeoConfig> = {
       "Join the Rellia Health network of founders, investors, advisors, and partners building the next generation of healthcare companies.",
     indexable: true,
   },
+  "/apply": {
+    title: "Apply — Rellia Health",
+    description:
+      "Apply to join the Rellia Network. Built for founders, advisors, investors, and industry partners shaping the future of health.",
+    indexable: true,
+  },
   "/founders": {
     title: "Founders — Rellia Health Network",
     description:
-      "For health tech founders: launch sooner, scale smarter, and get support from operators, clinicians, and investors.",
+      "The home for health tech founders: membership pathway, programs, advisor access, and directories—built for operators scaling in healthcare.",
+    indexable: true,
+  },
+  "/founders/directory": {
+    title: "Founder directory — Rellia Health",
+    description:
+      "Browse representative health tech companies in the Rellia portfolio network—stage tags and profiles for founder discovery.",
+    indexable: true,
+  },
+  "/consulting": {
+    title: "Founder consulting — Rellia Health",
+    description:
+      "One-to-one and scoped consulting for health tech founders—regulatory, clinical, commercial, and narrative depth beyond community rhythm.",
     indexable: true,
   },
   "/advisors": {
     title: "Advisors — Rellia Health Network",
     description:
-      "For advisors and mentors: support serious health tech founders through structured, high-impact engagements.",
+      "Mentor health tech founders with flexible 1–3 hour engagements—benefits, criteria, and how to join Rellia as an advisor.",
+    indexable: true,
+  },
+  "/advisors/directory": {
+    title: "Advisor directory — Rellia Health",
+    description:
+      "Search and filter Rellia advisors by expertise—operators, clinicians, and specialists who mentor serious health tech founders.",
     indexable: true,
   },
   "/investors": {
     title: "Investors — Rellia Health Network",
     description:
-      "For investors: meet vetted, operator-coached health tech founders and get early access to teams worth your time.",
+      "Benefits of Rellia-backed startups, thesis-aware pitch formats, and partner pathways for funds and angel groups.",
     indexable: true,
   },
   "/industry-partners": {
     title: "Industry Partners — Rellia Health Network",
     description:
-      "For partners: reach health tech founders with programs, resources, and trusted community-driven introductions.",
+      "Sponsor programs, join directories, and partner with Rellia—including GetProven vendor marketplace benefits for portfolios.",
     indexable: true,
   },
   "/industry-partners/directory": {
     title: "Industry Partners Directory — Rellia Health",
     description:
-      "Browse a curated directory of vetted industry partners and resources recommended by Rellia.",
+      "Opens the Rellia Health Resources vendor directory on GetProven (external). Bookmark-friendly redirect from rellia.health.",
     indexable: false,
   },
   "/partners": {
@@ -162,6 +191,12 @@ const ROUTE_SEO: Record<string, RouteSeoConfig> = {
     title: "Contact — Rellia Health",
     description:
       "Get in touch with Rellia Health about partnerships, programs, or press. We respond to serious inquiries from builders and collaborators.",
+    indexable: true,
+  },
+  "/stories": {
+    title: "News & Updates — Rellia Health",
+    description:
+      "The latest founder spotlights, industry insights, & program updates. Stay current with the people and ideas shaping the future of health.",
     indexable: true,
   },
   "/membership": {
@@ -183,16 +218,16 @@ const ROUTE_SEO: Record<string, RouteSeoConfig> = {
     indexable: true,
   },
   "/diagnostics": {
-    title: "Diagnostics — Rellia Health",
+    title: "Startup Diagnostic — Rellia Health",
     description:
-      "Diagnostics resources from Rellia Health. This experience is coming soon.",
-    indexable: false,
+      "Benchmark your health tech startup across 13 domains. Get a personalized gap analysis, AI-powered report, and advisory board matching.",
+    indexable: true,
   },
-  "/diagnosticSurvey": {
-    title: "Diagnostic survey — Rellia Health",
+  "/diagnostic-survey": {
+    title: "Startup Diagnostic Assessment — Rellia Health",
     description:
-      "Rellia Health diagnostic survey. This experience is coming soon.",
-    indexable: false,
+      "Complete the Rellia Health diagnostic survey to receive your readiness report and personalized advisory board matches.",
+    indexable: true,
   },
 }
 
@@ -210,21 +245,47 @@ export const normalizePathname = (pathname: string): string => {
   return pathname || "/"
 }
 
+const EVENT_DETAIL_SEO: RouteSeoConfig = {
+  title: "Event — Rellia Health",
+  description:
+    "Event details, location, and registration for Rellia Health sessions. Explore upcoming and past programs.",
+  indexable: true,
+}
+
 export const getSeoForPathname = (pathname: string): RouteSeoConfig => {
   const key = normalizePathname(pathname)
+  if (key.startsWith("/events/") && key !== "/events") {
+    return EVENT_DETAIL_SEO
+  }
   return ROUTE_SEO[key] ?? NOT_FOUND_SEO
 }
+
+const PROGRAMS_EVENT_PRERENDER_PATHS = [
+  ...DEFAULT_PROGRAMS_LANDING.upcomingEvents.map(programsEventDetailPath),
+  ...DEFAULT_PROGRAMS_LANDING.pastEvents.map(programsEventDetailPath),
+]
 
 /** Paths emitted as static HTML at build time (see `client/prerender.tsx`). */
 export const PRERENDER_PATHS: string[] = [
   "/",
   ...Object.keys(ROUTE_SEO).filter((p) => p !== "/"),
+  ...PROGRAMS_EVENT_PRERENDER_PATHS,
+  ...FOUNDER_DIRECTORY.map((f) => `/founders/directory/${f.id}`),
+  ...ADVISOR_DIRECTORY_SEED.map((a) => `/advisors/directory/${a.id}`),
 ]
 
 export const getDefaultOgImageUrl = (): string => {
   const ogImageVersion = ((import.meta as unknown as { env?: Record<string, unknown> })?.env
     ?.VITE_OG_IMAGE_VERSION as string | undefined)?.trim()
   const base = `${getSiteUrl()}/ogimage.png`
+  if (!ogImageVersion) return base
+  return `${base}?v=${encodeURIComponent(ogImageVersion)}`
+}
+
+export const getStoriesOgImageUrl = (): string => {
+  const ogImageVersion = ((import.meta as unknown as { env?: Record<string, unknown> })?.env
+    ?.VITE_OG_IMAGE_VERSION as string | undefined)?.trim()
+  const base = `${getSiteUrl()}/stories-ogimage.png`
   if (!ogImageVersion) return base
   return `${base}?v=${encodeURIComponent(ogImageVersion)}`
 }

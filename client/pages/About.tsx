@@ -206,7 +206,7 @@ export default function About() {
         <RelliaCta
           title={about.ctaTitle}
           body={about.ctaBody}
-          primary={{ label: about.ctaFounderLabel, to: "/network" }}
+          primary={{ label: about.ctaFounderLabel, to: "/apply" }}
           secondary={{ label: about.ctaTeamLabel, to: "/careers" }}
         />
       </main>
