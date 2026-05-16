@@ -8,8 +8,6 @@ import PillTag from "@/components/PillTag"
 import WhyRellia from "@/components/WhyRellia"
 import { FilloutStandardEmbed } from "@fillout/react"
 import { FILLOUT_APPLY_FORM_ID, FILLOUT_EMBED_VIEWPORT_MIN_CLASS } from "@/lib/filloutApplyForm"
-
-const FILLOUT_CAREERS_VOLUNTEER_FORM_ID = "v3Vf793M89us"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { motion, useReducedMotion, AnimatePresence } from "framer-motion"
 import { BriefcaseBusiness, Building2, ExternalLink, Laptop, MapPin, Users } from "lucide-react"
@@ -113,8 +111,8 @@ const joinTeamCtaSharedClass = cn(
 )
 
 type CareersJoinTeamCta = {
-  href?: string
-  onClick?: () => void
+  action: "scroll" | "form"
+  scrollTargetId?: string
   label: string
   ariaLabel: string
 }
@@ -128,6 +126,17 @@ const CareersJoinTeamSection = ({
 }) => {
   const reduceMotion = useReducedMotion()
   const [showApplyForm, setShowApplyForm] = useState(false)
+
+  const handlePrimaryClick = () => {
+    if (primaryCta?.action !== "scroll" || !primaryCta.scrollTargetId) return
+    const target = document.getElementById(primaryCta.scrollTargetId)
+    target?.scrollIntoView({ behavior: "smooth", block: "start" })
+  }
+
+  const handleSecondaryClick = () => {
+    if (secondaryCta?.action !== "form") return
+    setShowApplyForm(true)
+  }
 
   /** Narrow fade only at viewport edges; full-opacity center so the strip clearly overflows */
   const marqueeMaskStyle = {
@@ -183,7 +192,7 @@ const CareersJoinTeamSection = ({
                     {primaryCta ? (
                       <button
                         type="button"
-                        onClick={() => setShowApplyForm(true)}
+                        onClick={handlePrimaryClick}
                         className={cn(joinTeamCtaSharedClass, "bg-rellia-teal hover:border-rellia-mint")}
                         aria-label={primaryCta.ariaLabel}
                       >
@@ -195,7 +204,7 @@ const CareersJoinTeamSection = ({
                     {secondaryCta ? (
                       <button
                         type="button"
-                        onClick={() => setShowApplyForm(true)}
+                        onClick={handleSecondaryClick}
                         className={cn(joinTeamCtaSharedClass, "bg-transparent text-rellia-teal hover:border-rellia-mint")}
                         aria-label={secondaryCta.ariaLabel}
                       >
@@ -250,7 +259,7 @@ const CareersJoinTeamSection = ({
               </button>
               <div className="w-full min-h-[700px] md:min-h-[1000px]">
                 <FilloutStandardEmbed
-                  filloutId={FILLOUT_CAREERS_VOLUNTEER_FORM_ID}
+                  filloutId={FILLOUT_APPLY_FORM_ID}
                   inheritParameters
                   dynamicResize
                 />
@@ -289,17 +298,18 @@ export default function CareersCms() {
 
   const joinTeamPrimaryCta: CareersJoinTeamCta | null = enableHiring
     ? {
-        href: "#open-roles",
-        label: "Work with us",
-        ariaLabel: "Work with us — jump to open roles",
+        action: "scroll",
+        scrollTargetId: "open-roles",
+        label: "See open roles",
+        ariaLabel: "See open roles — jump to open roles",
       }
     : null
 
   const joinTeamSecondaryCta: CareersJoinTeamCta | null = enableVolunteer
     ? {
-        onClick: () => setShowVolunteerForm(true),
+        action: "form",
         label: "Volunteer with us",
-        ariaLabel: "Volunteer with us — show form",
+        ariaLabel: "Volunteer with us — show application form",
       }
     : null
 

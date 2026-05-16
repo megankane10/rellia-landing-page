@@ -703,7 +703,7 @@ export function createServer() {
 
       if (!secretKey || !priceId) {
         if (fallbackUrl) {
-          res.status(200).json({ fallbackUrl });
+          res.status(200).json({ paymentLinkUrl: fallbackUrl, fallbackUrl });
           return;
         }
         res.status(501).json({
@@ -734,7 +734,7 @@ export function createServer() {
       } catch (err) {
         console.error("Stripe checkout session error", err);
         if (fallbackUrl) {
-          res.status(200).json({ fallbackUrl });
+          res.status(200).json({ paymentLinkUrl: fallbackUrl, fallbackUrl });
           return;
         }
         res.status(502).json({ error: "Could not start checkout." });
