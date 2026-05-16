@@ -10,7 +10,9 @@ interface ImportMetaEnv {
   readonly VITE_STRIPE_ANNUAL_PLAN_LINK?: string
   readonly VITE_SUPABASE_URL?: string
   readonly VITE_SUPABASE_PUBLISHABLE_KEY?: string
-  /** Optional override for QMS program CTAs (takes precedence over Sanity paymentUrl) */
+  /** QMS enrollment Fillout URL only (not Stripe) — optional override */
+  readonly VITE_QMS_FILLOUT_FORM_URL?: string
+  /** @deprecated Use VITE_QMS_FILLOUT_FORM_URL; ignored unless URL is a Fillout form */
   readonly VITE_QMS_PAYMENT_LINK?: string
   /** Sanity read client (public). Optional; see `.env.example` */
   readonly VITE_SANITY_PROJECT_ID?: string

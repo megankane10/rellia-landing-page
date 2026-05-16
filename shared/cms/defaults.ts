@@ -1648,7 +1648,7 @@ export const DEFAULT_CONTACT_PAGE: ContactPageContent = {
   sendingLabel: "Sending…",
 }
 
-/** Stripe Payment Link used as fallback for `/payment` and QMS CTAs when env/CMS do not override */
+/** Stripe Payment Link fallback for `/membership` when checkout session env is not configured */
 export const DEFAULT_STRIPE_PAYMENT_LINK_FALLBACK = "https://buy.stripe.com/14A4gs2jF6Lla0HgCC6wE03"
 
 export const DEFAULT_QMS_PROGRAM: QmsProgramContent = {

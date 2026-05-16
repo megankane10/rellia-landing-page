@@ -7,14 +7,20 @@
 import { DEFAULT_QMS_PROGRAM } from "@shared/cms/defaults"
 import { QMS_PROGRAM_STATIC_BLOCKS } from "@shared/cms/programs/qms.static"
 import ProgramPageLayout from "@/components/program/ProgramPageLayout"
+import { isFilloutFormUrl } from "@/lib/filloutApplyForm"
 
 const QMS_OUTCOMES_SECTION_ID = "qms-program-outcomes"
 
 export default function ProgramsQms() {
-  const paymentUrlFromEnv = (import.meta.env.VITE_QMS_PAYMENT_LINK as string | undefined)?.trim()
-  const q = paymentUrlFromEnv
-    ? { ...DEFAULT_QMS_PROGRAM, paymentUrl: paymentUrlFromEnv }
-    : DEFAULT_QMS_PROGRAM
+  const filloutFromEnv = (
+    (import.meta.env.VITE_QMS_FILLOUT_FORM_URL as string | undefined) ||
+    (import.meta.env.VITE_QMS_PAYMENT_LINK as string | undefined)
+  )?.trim()
+
+  const q =
+    filloutFromEnv && isFilloutFormUrl(filloutFromEnv)
+      ? { ...DEFAULT_QMS_PROGRAM, paymentUrl: filloutFromEnv }
+      : DEFAULT_QMS_PROGRAM
 
   return (
     <ProgramPageLayout

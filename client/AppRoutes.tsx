@@ -48,6 +48,7 @@ const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"))
 const CmsCatchAll = lazy(() => import("./pages/CmsCatchAll"))
 const StudioRedirect = lazy(() => import("./pages/StudioRedirect"))
 const PlaceholderPage = lazy(() => import("./pages/PlaceholderPage"))
+const IndustryPartnersDirectory = lazy(() => import("./pages/IndustryPartnersDirectory"))
 import { isProductionHostname } from "@/lib/sanity"
 
 /** 
@@ -145,7 +146,7 @@ export const AppRoutes = () => (
       <Route path="/privacy" element={<PrivacyPolicy />} />
       <Route path="/policy" element={<Navigate to="/privacy" replace />} />
 
-      <Route path="/industry-partners/directory" element={<Navigate to="/industry-partners" replace />} />
+      <Route path="/industry-partners/directory" element={<IndustryPartnersDirectory />} />
 
       <Route path="/diagnostics" element={showPlaceholder ? <PlaceholderPage title="Startup Diagnostic" /> : <DiagnosticLanding />} />
       <Route path="/diagnostic-survey" element={showPlaceholder ? <PlaceholderPage title="Startup Diagnostic" /> : <DiagnosticSurvey />} />

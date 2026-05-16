@@ -11,7 +11,11 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { FilloutStandardEmbed } from "@fillout/react";
+import { FilloutStandardEmbed } from "@fillout/react"
+import {
+  extractFilloutId,
+  PROGRAM_FILLOUT_EMBED_MIN_CLASS,
+} from "@/lib/filloutApplyForm"
 import { useLocation, Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -133,16 +137,6 @@ const OutcomesTimeline = ({ items }: { items: string[] }) => {
       </ol>
     </div>
   );
-};
-
-/** Extract Fillout form ID from a fillout URL like https://forms.fillout.com/t/<id> */
-const extractFilloutId = (url: string): string | null => {
-  try {
-    const match = url.match(/fillout\.com\/t\/([^?#/]+)/);
-    return match?.[1] ?? null;
-  } catch {
-    return null;
-  }
 };
 
 const BackToPrograms = () => (
@@ -651,11 +645,7 @@ const ProgramPageLayout = ({
                 </div>
                 {/* Full-width embed like /apply — extends beyond container margins */}
                 <div
-                  className={cn(
-                    "w-full",
-                    "min-h-[700px] md:min-h-[1000px]",
-                    "[&_iframe]:!rounded-none",
-                  )}
+                  className={cn("w-full", PROGRAM_FILLOUT_EMBED_MIN_CLASS)}
                 >
                   {filloutId ? (
                     <FilloutStandardEmbed
@@ -668,8 +658,8 @@ const ProgramPageLayout = ({
                       src={q.paymentUrl}
                       title={isWaitlist ? "Waitlist form" : "Enrollment form"}
                       className="w-full border-0"
-                      style={{ minHeight: "calc(100svh - 120px)" }}
-                      allow="payment; fullscreen"
+                      style={{ minHeight: "min(1600px, calc(100svh - 96px))" }}
+                      allow="fullscreen"
                     />
                   )}
                 </div>
