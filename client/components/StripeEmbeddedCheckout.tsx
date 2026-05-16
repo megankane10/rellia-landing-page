@@ -18,7 +18,6 @@ export default function StripeEmbeddedCheckout({
   const mountRef = useRef<HTMLDivElement>(null)
   const checkoutRef = useRef<StripeEmbeddedCheckout | null>(null)
   const [error, setError] = useState<string | null>(null)
-  const [redirectUrl, setRedirectUrl] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
 
   const publishableKey = (
@@ -28,22 +27,14 @@ export default function StripeEmbeddedCheckout({
   useEffect(() => {
     let cancelled = false
 
-    const usePaymentLink = (url: string) => {
-      setRedirectUrl(url)
-      setLoading(false)
-    }
-
     const run = async () => {
       setLoading(true)
       setError(null)
-      setRedirectUrl(null)
 
       if (!publishableKey) {
-        if (fallbackHref?.trim()) {
-          usePaymentLink(fallbackHref.trim())
-          return
-        }
-        setError("Stripe publishable key is not configured.")
+        setError(
+          "Stripe publishable key is not configured. Add VITE_STRIPE_PUBLISHABLE_KEY for in-page checkout.",
+        )
         setLoading(false)
         return
       }
@@ -73,49 +64,30 @@ export default function StripeEmbeddedCheckout({
 
         const json = (await res.json().catch(() => ({}))) as {
           clientSecret?: string
-          fallbackUrl?: string
-          paymentLinkUrl?: string
           error?: string
           hint?: string
         }
 
         if (cancelled) return
 
-        const linkUrl = (json.paymentLinkUrl || json.fallbackUrl || fallbackHref)?.trim()
-
         if (!res.ok) {
-          if (linkUrl) {
-            usePaymentLink(linkUrl)
-            return
-          }
           const hint = json.hint ? ` ${json.hint}` : ""
           setError((json.error || "Could not start checkout.") + hint)
           setLoading(false)
           return
         }
 
-        if (linkUrl && !json.clientSecret?.trim()) {
-          usePaymentLink(linkUrl)
-          return
-        }
-
         const clientSecret = json.clientSecret?.trim()
         if (!clientSecret) {
-          if (linkUrl) {
-            usePaymentLink(linkUrl)
-            return
-          }
-          setError("Checkout session could not be created.")
+          setError(
+            "In-page checkout needs STRIPE_MONTHLY_PRICE_ID and STRIPE_ANNUAL_PRICE_ID on Vercel (price_… from Stripe → Products), plus your domain registered under Stripe → Settings → Payment method domains. Payment links alone open Stripe in a new tab.",
+          )
           setLoading(false)
           return
         }
 
         const stripe = await loadStripe(publishableKey)
         if (!stripe || cancelled) {
-          if (linkUrl) {
-            usePaymentLink(linkUrl)
-            return
-          }
           setError("Stripe could not be initialized.")
           setLoading(false)
           return
@@ -133,13 +105,8 @@ export default function StripeEmbeddedCheckout({
         setLoading(false)
       } catch {
         if (!cancelled) {
-          const linkUrl = fallbackHref?.trim()
-          if (linkUrl) {
-            usePaymentLink(linkUrl)
-            return
-          }
           setError(
-            "Could not load embedded checkout. Set STRIPE_MONTHLY_PRICE_ID and STRIPE_ANNUAL_PRICE_ID on Vercel (price_… from Stripe → Products), ensure live/test keys match, and register your domain under Stripe → Settings → Payment method domains. Payment links alone use STRIPE_MONTHLY_PLAN_LINK / STRIPE_ANNUAL_PLAN_LINK (server) or VITE_* variants.",
+            "Could not load embedded checkout. Confirm price IDs, matching live/test keys, and Stripe payment method domains for this site.",
           )
           setLoading(false)
         }
@@ -153,22 +120,13 @@ export default function StripeEmbeddedCheckout({
       checkoutRef.current?.destroy()
       checkoutRef.current = null
     }
-  }, [plan, publishableKey, fallbackHref])
-
-  useEffect(() => {
-    if (!redirectUrl) return
-    window.location.assign(redirectUrl)
-  }, [redirectUrl])
-
-  if (redirectUrl) {
-    return <CheckoutRedirect paymentLinkUrl={redirectUrl} onBack={onBack} />
-  }
+  }, [plan, publishableKey])
 
   if (error) {
     return (
-      <div className="flex flex-col items-center justify-center py-24 px-6 text-center">
-        <AlertCircle className="h-14 w-14 text-rellia-teal mb-6" aria-hidden />
-        <p className="max-w-lg font-urbanist text-base text-black/70 mb-8">{error}</p>
+      <div className="flex flex-col items-center justify-center px-6 py-24 text-center">
+        <AlertCircle className="mb-6 h-14 w-14 text-rellia-teal" aria-hidden />
+        <p className="mb-8 max-w-lg font-urbanist text-base text-black/70">{error}</p>
         {fallbackHref ? (
           <RelliaAction asChild variant="mintTealFill" size="comfortable" className="mb-4">
             <a href={fallbackHref} target="_blank" rel="noopener noreferrer">
@@ -194,33 +152,11 @@ export default function StripeEmbeddedCheckout({
           <p className="font-urbanist text-sm font-medium text-black/60">Loading secure checkout…</p>
         </div>
       ) : null}
-      <div ref={mountRef} id="stripe-embedded-checkout" className="w-full min-h-[min(900px,calc(100svh-120px))]" />
-    </div>
-  )
-}
-
-function CheckoutRedirect({
-  paymentLinkUrl,
-  onBack,
-}: {
-  paymentLinkUrl: string
-  onBack: () => void
-}) {
-  return (
-    <div className="flex flex-col items-center justify-center py-24 px-6 text-center">
       <div
-        className="h-10 w-10 animate-spin rounded-full border-2 border-black/10 border-t-rellia-teal mb-6"
-        aria-hidden
+        ref={mountRef}
+        id="stripe-embedded-checkout"
+        className="w-full min-h-[min(900px,calc(100svh-120px))]"
       />
-      <p className="max-w-md font-urbanist text-base text-black/70 mb-8">
-        Redirecting to secure Stripe checkout…
-      </p>
-      <RelliaAction asChild variant="mintTealFill" size="comfortable" className="mb-4">
-        <a href={paymentLinkUrl}>Continue to checkout</a>
-      </RelliaAction>
-      <RelliaAction type="button" variant="outlineOnWhite" size="comfortable" onClick={onBack}>
-        Go back
-      </RelliaAction>
     </div>
   )
 }

@@ -21,7 +21,7 @@ drop policy if exists "Allow public insert" on public.contact_responses;
 create policy "Allow public insert"
 on public.contact_responses
 for insert
-to anon
+to anon, authenticated
 with check (true);
 
 -- 4. Restrict SELECT/UPDATE/DELETE to authenticated users only (internal team)

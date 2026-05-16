@@ -104,6 +104,8 @@ export default function FoundersDirectory() {
   const [activeId, setActiveId] = useState<string | null>(null);
 
   const companies = useMemo<FounderCompany[]>(() => {
+    if (isProductionHostname()) return []
+
     if (Array.isArray(cmsCompanies) && cmsCompanies.length > 0) {
       return cmsCompanies
         .filter((c: any) => c && typeof c.id === "string" && typeof c.name === "string")
@@ -280,8 +282,6 @@ export default function FoundersDirectory() {
   const navigate = useNavigate();
   const tag = NETWORK_PATH_ROLE_TAG["founder"];
   const TagIcon = tag.icon;
-  const isProd = isProductionHostname();
-
   return (
     <div className="min-h-screen overflow-x-hidden bg-white font-host-grotesk">
       <Navbar forceSolid />
@@ -407,16 +407,23 @@ export default function FoundersDirectory() {
 
             <div className="mb-6 flex items-center justify-between border-b border-black/10 pb-4">
               <p className="font-urbanist text-sm font-semibold text-black/60">
-                Showing {isProd ? 0 : paginated.length} of {isProd ? 0 : filtered.length} results
+                Showing {paginated.length} of {filtered.length} results
               </p>
             </div>
 
-            {isProd || filtered.length === 0 ? (
+            {companies.length === 0 ? (
               <FilteredListEmptyState
                 className="mt-10"
                 icon={Building2}
-                title="Alumni directory coming soon"
-                description="We're currently curating our alumni network to bring you the most relevant founder connections. Check back shortly for the full directory."
+                title="No alumni found"
+                description="There are no alumni listings in the directory yet. Check back as we add more founder companies to the network."
+              />
+            ) : filtered.length === 0 ? (
+              <FilteredListEmptyState
+                className="mt-10"
+                icon={Search}
+                title="No results match your filters"
+                description="Try clearing search or filters to see more alumni companies."
               />
             ) : (
               <div className="flex flex-col">

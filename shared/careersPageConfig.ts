@@ -9,7 +9,7 @@ import { CAREERS_OPEN_ROLES } from "./careersOpenRoles"
 export const CAREERS_VOLUNTEER_ENABLED = true
 
 /** When true and CAREERS_OPEN_ROLES is non-empty, show Open Roles section + HIRING badge. */
-export const CAREERS_OPEN_ROLES_PUBLISHED = false
+export const CAREERS_OPEN_ROLES_PUBLISHED = true
 
 export const careersHasPublishedOpenRoles = (): boolean =>
   CAREERS_OPEN_ROLES_PUBLISHED && CAREERS_OPEN_ROLES.length > 0
