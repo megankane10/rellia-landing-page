@@ -41,6 +41,7 @@ import { useNetworkFoundersPage } from "@/hooks/useCmsDocuments"
 import NetworkCmsPage from "./NetworkCmsPage"
 import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo"
 import WhyRellia from "@/components/WhyRellia"
+import { DEFAULT_HOME_PAGE } from "@shared/cms/defaults"
 
 
 const HERO_FALLBACK = "/images/founders.jpg"
@@ -376,12 +377,16 @@ function FoundersHero() {
             </RelliaAction>
             <RelliaAction
               asChild
-              variant="outlineOnTeal"
+              variant="heroGhostOnTeal"
               size="comfortable"
-              className="w-full min-w-0 justify-center sm:min-w-[220px] sm:w-auto"
+              className="w-full min-w-0 justify-center border-white/45 hover:border-white/70 sm:min-w-[220px] sm:w-auto"
             >
-              <Link to="/founders/alumni" className="inline-flex w-full cursor-pointer items-center justify-center gap-2 sm:w-auto" aria-label="Explore alumni directory">
-                Explore Alumni
+              <Link
+                to={DEFAULT_HOME_PAGE.secondaryCtaPath}
+                className="inline-flex w-full cursor-pointer items-center justify-center gap-2 sm:w-auto"
+                aria-label={DEFAULT_HOME_PAGE.secondaryCtaLabel}
+              >
+                {DEFAULT_HOME_PAGE.secondaryCtaLabel}
                 <ArrowRight className="h-4 w-4" aria-hidden />
               </Link>
             </RelliaAction>

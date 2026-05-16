@@ -26,6 +26,9 @@ importers:
       '@sanity/visual-editing':
         specifier: ^4.0.3
         version: 4.0.3(@emotion/is-prop-valid@1.4.0)(@sanity/client@7.22.0)(@sanity/types@5.24.0(@types/react@18.3.23))(react-dom@18.3.1(react@18.3.1))(react-is@19.2.6)(react-router@6.30.1(react@18.3.1))(react@18.3.1)(styled-components@6.4.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.9.2)
+      '@stripe/stripe-js':
+        specifier: ^9.5.0
+        version: 9.5.0
       '@supabase/supabase-js':
         specifier: ^2.105.4
         version: 2.105.4
@@ -50,6 +53,9 @@ importers:
       react-helmet-async:
         specifier: ^3.0.0
         version: 3.0.0(react@18.3.1)
+      stripe:
+        specifier: ^22.1.1
+        version: 22.1.1(@types/node@24.2.1)
       zod:
         specifier: ^3.25.76
         version: 3.25.76
@@ -1496,6 +1502,10 @@ packages:
 
   '@standard-schema/utils@0.3.0':
     resolution: {integrity: sha512-e7Mew686owMaPJVNNLs55PUvgz371nKgwsc4vxE49zsODpJEnxgxRo2y/OKrqueavXgZNMDVj3DdHFlaSAeU8g==}
+
+  '@stripe/stripe-js@9.5.0':
+    resolution: {integrity: sha512-dTQWkJRw5lhcQipPuw6qZRBK2zY5eWWZ1Srw9mSjhIXSLdsNYO3uaIV+YRMkI0/tB/D7yQdHYStrcZrbeHI5Jg==}
+    engines: {node: '>=12.16'}
 
   '@supabase/auth-js@2.105.4':
     resolution: {integrity: sha512-Ejfa37M5xoIwoxVebxRahnwubPo8g22qkXQ4p50+N9MIvU9UZoN+A8dwVPtczzGf8oV/YXN80ZPxK4aWXuSN/A==}
@@ -3148,6 +3158,15 @@ packages:
   strip-literal@3.0.0:
     resolution: {integrity: sha512-TcccoMhJOM3OebGhSBEmp3UZ2SfDMZUEBdRA/9ynfLi8yYajyWX3JiXArcJt4Umh4vISpspkQIY8ZZoCqjbviA==}
 
+  stripe@22.1.1:
+    resolution: {integrity: sha512-cmodIYP27tBkJ8G7DuGgWw0PFuemlFZbuF3Wwr1TrjFjUa3T7NIgCe6TVwX8BO2ynu+xtTuDGfHafNDCPt9lXA==}
+    engines: {node: '>=18'}
+    peerDependencies:
+      '@types/node': '>=18'
+    peerDependenciesMeta:
+      '@types/node':
+        optional: true
+
   styled-components@6.4.1:
     resolution: {integrity: sha512-ADu2dF53esUzzM4I0ewxhxFtsDd6v4V6dNkg3vG0iFKhnt06sJneTZnRvujAosZwW0XD58IKgGMQoqri4wHRqg==}
     engines: {node: '>= 16'}
@@ -4730,6 +4749,8 @@ snapshots:
       - typescript
 
   '@standard-schema/utils@0.3.0': {}
+
+  '@stripe/stripe-js@9.5.0': {}
 
   '@supabase/auth-js@2.105.4':
     dependencies:
@@ -6324,6 +6345,10 @@ snapshots:
   strip-literal@3.0.0:
     dependencies:
       js-tokens: 9.0.1
+
+  stripe@22.1.1(@types/node@24.2.1):
+    optionalDependencies:
+      '@types/node': 24.2.1
 
   styled-components@6.4.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:

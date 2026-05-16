@@ -57,13 +57,6 @@ import { isProductionHostname } from "@/lib/sanity"
  */
 const showPlaceholder = isProductionHostname()
 
-/**
- * Stories gating:
- * - additions: Show placeholder for stories.
- * - main: Show real stories (or whatever is in CMS).
- */
-const showStoriesPlaceholder = !isProductionHostname()
-
 const ThirdPartyPreloads = () => {
   useEffect(() => {
     const ensurePreconnect = (href: string) => {
@@ -75,8 +68,7 @@ const ThirdPartyPreloads = () => {
       document.head.appendChild(link)
     }
 
-    ensurePreconnect("https://js-na3.hsforms.net")
-    ensurePreconnect("https://js.hsforms.net")
+    ensurePreconnect("https://js.stripe.com")
     ensurePreconnect("https://embed.fillout.com")
   }, [])
 
@@ -146,8 +138,8 @@ export const AppRoutes = () => (
 
       <Route path="/contact" element={<Contact />} />
       <Route path="/membership" element={<Payment />} />
-      <Route path="/stories" element={showStoriesPlaceholder ? <PlaceholderPage title="Stories" /> : <Stories />} />
-      <Route path="/stories/:slug" element={showStoriesPlaceholder ? <PlaceholderPage title="Stories" /> : <StoryPost />} />
+      <Route path="/stories" element={<Stories />} />
+      <Route path="/stories/:slug" element={<StoryPost />} />
 
       <Route path="/terms" element={<TermsofUse />} />
       <Route path="/privacy" element={<PrivacyPolicy />} />
