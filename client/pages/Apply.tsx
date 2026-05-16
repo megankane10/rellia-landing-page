@@ -52,7 +52,7 @@ export default function Apply() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.1 }}
-              className={cn("w-full bg-rellia-cream/40 py-12 md:py-16", FILLOUT_EMBED_VIEWPORT_MIN_CLASS)}
+              className={cn("w-full bg-rellia-cream/40 pt-12 pb-4", FILLOUT_EMBED_VIEWPORT_MIN_CLASS)}
             >
               <div className="mx-auto max-w-[1100px] px-6 md:px-10">
                 <button
@@ -62,13 +62,13 @@ export default function Apply() {
                 >
                   ← Back to membership paths
                 </button>
-                <div className="overflow-hidden rounded-3xl border border-black/10 bg-white p-2 shadow-2xl">
-                  <FilloutStandardEmbed
-                    filloutId={FILLOUT_APPLY_FORM_ID}
-                    inheritParameters
-                    dynamicResize
-                  />
-                </div>
+              </div>
+              <div className="w-full">
+                <FilloutStandardEmbed
+                  filloutId={FILLOUT_APPLY_FORM_ID}
+                  inheritParameters
+                  dynamicResize
+                />
               </div>
             </motion.div>
           )}

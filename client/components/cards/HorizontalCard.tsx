@@ -275,20 +275,15 @@ export function HorizontalCard(props: HorizontalCardProps) {
               !isWaitlistCard ? "bg-rellia-mint/80 text-rellia-teal" : "bg-black/[0.04] text-black/65"
             )}
           >
-            {isUpcomingStatus ? (
-              <>
-                <CalendarDays className="h-3.5 w-3.5 opacity-90" aria-hidden strokeWidth={2.5} />
-                Upcoming
-              </>
-            ) : isWaitlistCard ? (
+            {isWaitlistCard ? (
               <>
                 <Bell className="h-3.5 w-3.5 opacity-80" aria-hidden strokeWidth={2.5} />
-                Join the Waitlist
+                Join the waitlist
               </>
             ) : (
               <>
                 <Calendar className="h-3.5 w-3.5 opacity-80" aria-hidden strokeWidth={2.5} />
-                Applications Open
+                Applications open
               </>
             )}
           </span>

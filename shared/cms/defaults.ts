@@ -1689,6 +1689,24 @@ export const DEFAULT_QMS_PROGRAM: QmsProgramContent = {
     "Still have questions or want to learn more about the program? Reach out at any time to speak with us directly.",
   bottomCtaButtonLabel: "Contact",
   bottomContactHref: "/contact",
+  testimonials: [
+    {
+      name: "Mazhar Shahen",
+      role: "CEO",
+      company: "NewGen Health",
+      quote:
+        "Rellia has been an invaluable partner in our journey. Their regulatory expertise gave us the clarity and confidence to better understand Health Canada and FDA pathways as a health-tech startup. The team genuinely cares about helping early-stage companies succeed, not just with advice, but with hands-on support when it matters most.",
+      image: "/images/testimonials-MazharS.jpeg",
+    },
+    {
+      name: "Zarrah Uy",
+      role: "CEO",
+      company: "Theia AI",
+      quote:
+        "Building a foundation for a health-tech company is complex, but Rellia made it manageable. From their focused programming to their deep network of mentors, they provided the strategic resources we needed to move from concept to execution. They don't just provide a platform; they provide a community that understands the unique challenges founders face.",
+      image: "/images/testimonials-ZarrahU.jpeg",
+    },
+  ],
 }
 
 export const DEFAULT_PAYMENT_PAGE: PaymentPageContent = {

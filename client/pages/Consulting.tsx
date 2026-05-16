@@ -10,7 +10,7 @@ import TestimonialsSection from "@/components/TestimonialsSection"
 import ProgramTrustedMembersSection from "@/components/program/ProgramTrustedMembersSection"
 import { useHomePage } from "@/hooks/useCmsDocuments"
 import { DEFAULT_HOME_PAGE } from "@shared/cms/defaults"
-import { CheckCircle2, Palette, ShieldCheck, Stethoscope, Megaphone } from "lucide-react"
+import { CheckCircle2, Palette, ShieldCheck, Stethoscope, Megaphone, ArrowRight } from "lucide-react"
 import { Link } from "react-router-dom"
 import { CreamSection, LightSection, Reveal, RoleHero } from "./network/_shared"
 

@@ -252,11 +252,11 @@ const ProgramPageLayout = ({
                     <span className="inline-block mb-4 px-4 py-1.5 rounded-full bg-rellia-teal/10 text-rellia-teal font-host-grotesk text-xs font-bold uppercase tracking-widest border border-rellia-teal/20">
                       Waitlist
                     </span>
-                  ) : q.status === "upcoming" ? (
+                  ) : (
                     <span className="inline-block mb-4 px-4 py-1.5 rounded-full bg-rellia-mint text-rellia-teal font-host-grotesk text-xs font-bold uppercase tracking-widest border border-black/5">
-                      Upcoming
+                      Applications open
                     </span>
-                  ) : null}
+                  )}
                   <h1 className="max-w-3xl text-3xl md:text-4xl lg:text-5xl font-bold leading-[1.1] tracking-tight text-black">
                     {resolvedProgramTitle}
                   </h1>
@@ -641,8 +641,7 @@ const ProgramPageLayout = ({
                 {/* Full-width embed like /apply — extends beyond container margins */}
                 <div
                   className={cn(
-                    "w-full flex-1",
-                    "[&_.fillout-standard-embed]:min-h-[calc(100svh-72px)] md:[&_.fillout-standard-embed]:min-h-[calc(100svh-86px)]",
+                    "w-full",
                     "[&_iframe]:!rounded-none",
                   )}
                 >
