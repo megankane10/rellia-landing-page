@@ -39,7 +39,6 @@ const ProgramsLayout = lazy(() => import("./pages/programs/ProgramsLayout"))
 const Stories = lazy(() => import("./pages/Stories"))
 const StoryPost = lazy(() => import("./pages/StoryPost"))
 const IndustryPartnersDirectory = lazy(() => import("./pages/IndustryPartnersDirectory"))
-const Consulting = lazy(() => import("./pages/Consulting"))
 const FoundersDirectory = lazy(() => import("./pages/network/FoundersDirectory"))
 const FounderProfile = lazy(() => import("./pages/network/FounderProfile"))
 const AdvisorsDirectory = lazy(() => import("./pages/network/AdvisorsDirectory"))
@@ -117,7 +116,6 @@ export const AppRoutes = () => (
 
       <Route path="/network" element={<Network />} />
       <Route path="/apply" element={<Apply />} />
-      <Route path="/consulting" element={<Consulting />} />
       <Route path="/founders" element={<Founders />} />
       <Route path="/founders/alumni" element={<FoundersDirectory />} />
       <Route path="/founders/alumni/:id" element={<FounderProfile />} />
