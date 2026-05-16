@@ -176,6 +176,7 @@ const ProgramPageLayout = ({
   const q = programPageData?.content ?? cms
   useApplyCmsSeo(q.seo)
   const filloutId = extractFilloutId(q.paymentUrl);
+  const hasEnrollmentForm = Boolean(filloutId) && !isWaitlist;
 
   const resolvedProgramTitle = (programDoc?.title || q.heroTitle || "").trim()
   const resolvedProgramDescription = (q.heroDescription || "").trim()
@@ -197,6 +198,12 @@ const ProgramPageLayout = ({
     document
       .getElementById(id)
       ?.scrollIntoView({ behavior: "smooth", block: "start" });
+
+  const openEnrollmentForm = () => {
+    setShowForm(true)
+    window.setTimeout(() => scrollTo(paymentSectionId), 80)
+  }
+
   const onKey = (fn: () => void) => (e: KeyboardEvent<HTMLButtonElement>) => {
     if (e.key === "Enter" || e.key === " ") {
       e.preventDefault();
@@ -278,11 +285,15 @@ const ProgramPageLayout = ({
                       type="button"
                       variant="mintTealFill"
                       size="comfortable"
-                      onClick={() => scrollTo(paymentSectionId)}
-                      onKeyDown={onKey(() => scrollTo(paymentSectionId))}
+                      onClick={() =>
+                        hasEnrollmentForm ? openEnrollmentForm() : scrollTo(paymentSectionId)
+                      }
+                      onKeyDown={onKey(() =>
+                        hasEnrollmentForm ? openEnrollmentForm() : scrollTo(paymentSectionId),
+                      )}
                       className="flex w-full sm:w-fit justify-center"
                     >
-                      {q.heroCtaLabel}
+                      {hasEnrollmentForm ? "Get started" : q.heroCtaLabel}
                       <ArrowRight className="h-4 w-4 ml-2" aria-hidden />
                     </RelliaAction>
                     <RelliaAction
@@ -593,7 +604,7 @@ const ProgramPageLayout = ({
                       type="button"
                       variant="mintTealFill"
                       size="comfortable"
-                      onClick={() => setShowForm(true)}
+                      onClick={openEnrollmentForm}
                       className="px-10 w-fit"
                     >
                       {isWaitlist ? "Join Waitlist" : "Secure Your Spot"}

@@ -207,7 +207,8 @@ export function createServer() {
   const healthRate = new Map<string, RateState>();
   const studioRedirectRate = new Map<string, RateState>();
   const draftModeRate = new Map<string, RateState>();
-  const contactHubspotRate = new Map<string, RateState>();
+  const contactRate = new Map<string, RateState>();
+  const stripeCheckoutRate = new Map<string, RateState>();
   const diagnosticRate = new Map<string, RateState>();
   const sanityPreviewRate = new Map<string, RateState>();
   const sanityPublishedRate = new Map<string, RateState>();
@@ -216,7 +217,8 @@ export function createServer() {
   const HEALTH_MAX_PER_MIN = 240;
   const STUDIO_REDIRECT_MAX_PER_MIN = 60;
   const DRAFT_MODE_MAX_PER_MIN = 30;
-  const CONTACT_HUBSPOT_MAX_PER_MIN = 12;
+  const CONTACT_MAX_PER_MIN = 12;
+  const STRIPE_CHECKOUT_MAX_PER_MIN = 20;
   const DIAGNOSTIC_MAX_PER_MIN = 10;
   const SANITY_PREVIEW_MAX_PER_MIN = 120;
   const SANITY_PUBLISHED_MAX_PER_MIN = 180;
@@ -562,7 +564,7 @@ export function createServer() {
     }
   });
 
-  const contactHubspotPayloadSchema = z.object({
+  const contactPayloadSchema = z.object({
     firstName: z.string().trim().min(1).max(120),
     lastName: z.string().trim().min(1).max(120),
     email: z.string().trim().email().max(254),
@@ -572,8 +574,8 @@ export function createServer() {
   });
 
   app.post(
-    "/api/contact-hubspot",
-    rateLimitJson(contactHubspotRate, CONTACT_HUBSPOT_MAX_PER_MIN),
+    "/api/contact",
+    rateLimitJson(contactRate, CONTACT_MAX_PER_MIN),
     requireCsrf,
     async (req, res) => {
       if (!isAllowedBrowserOrigin(req, siteOrigins)) {
@@ -591,7 +593,7 @@ export function createServer() {
         }
       }
 
-      const parsed = contactHubspotPayloadSchema.safeParse(req.body);
+      const parsed = contactPayloadSchema.safeParse(req.body);
       if (!parsed.success) {
         res.status(400).json({
           error: "Invalid request",
@@ -600,60 +602,45 @@ export function createServer() {
         return;
       }
 
-      const portalId =
-        process.env.HUBSPOT_PORTAL_ID?.trim() || "342926478";
-      const formGuid = process.env.HUBSPOT_CONTACT_FORM_GUID?.trim();
-      if (!formGuid) {
+      const supabaseUrl = (
+        process.env.SUPABASE_URL ||
+        process.env.VITE_SUPABASE_URL ||
+        ""
+      ).trim();
+      const supabaseKey = (
+        process.env.SUPABASE_SERVICE_ROLE_KEY ||
+        process.env.SUPABASE_SECRET_KEY ||
+        process.env.VITE_SUPABASE_PUBLISHABLE_KEY ||
+        ""
+      ).trim();
+
+      if (!supabaseUrl || !supabaseKey) {
         res.status(501).json({
           error: "Contact form is not configured on the server.",
-          hint: "Set HUBSPOT_CONTACT_FORM_GUID in the deployment environment (HubSpot form GUID).",
+          hint: "Set SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY (or VITE_SUPABASE_* for local dev).",
         });
         return;
       }
 
-      const formsApiBase = (
-        process.env.HUBSPOT_FORMS_API_BASE?.trim() ||
-        "https://api.hsforms.com"
-      ).replace(/\/$/, "");
+      const { createClient } = await import("@supabase/supabase-js");
+      const supabase = createClient(supabaseUrl, supabaseKey);
 
       const { firstName, lastName, email, message } = parsed.data;
       const company = parsed.data.company?.trim() ?? "";
       const jobTitle = parsed.data.jobTitle?.trim() ?? "";
 
-      const pageUri =
-        req.get("referer")?.trim() || `${siteOrigin.replace(/\/$/, "")}/contact`;
-
-      const hubspotUrl = `${formsApiBase}/submissions/v3/integration/submit/${portalId}/${formGuid}`;
-
-      const fields: Array<{ name: string; value: string }> = [
-        { name: "firstname", value: firstName },
-        { name: "lastname", value: lastName },
-        { name: "email", value: email },
-      ];
-      if (company) fields.push({ name: "company", value: company });
-      if (jobTitle) fields.push({ name: "jobtitle", value: jobTitle });
-      fields.push({ name: "message", value: message });
-
       try {
-        const hsRes = await fetch(hubspotUrl, {
-          method: "POST",
-          headers: { "content-type": "application/json" },
-          body: JSON.stringify({
-            fields,
-            context: {
-              pageUri,
-              pageName: "Contact",
-            },
-          }),
+        const { error } = await supabase.from("contact_responses").insert({
+          first_name: firstName,
+          last_name: lastName,
+          email,
+          company: company || null,
+          job_title: jobTitle || null,
+          message,
         });
 
-        if (!hsRes.ok) {
-          const errText = await hsRes.text();
-          console.error(
-            "HubSpot contact submit failed",
-            hsRes.status,
-            errText.slice(0, 800),
-          );
+        if (error) {
+          console.error("Supabase contact insert failed", error);
           res.status(502).json({
             error:
               "Could not send your message right now. Please try again or email us directly.",
@@ -663,11 +650,94 @@ export function createServer() {
 
         res.status(200).json({ ok: true });
       } catch (err) {
-        console.error("HubSpot contact submit error", err);
+        console.error("Supabase contact submit error", err);
         res.status(502).json({
           error:
             "Could not send your message right now. Please try again or email us directly.",
         });
+      }
+    },
+  );
+
+  const stripeCheckoutPayloadSchema = z.object({
+    plan: z.enum(["monthly", "annual"]),
+  });
+
+  app.post(
+    "/api/stripe/checkout-session",
+    rateLimitJson(stripeCheckoutRate, STRIPE_CHECKOUT_MAX_PER_MIN),
+    requireCsrf,
+    async (req, res) => {
+      if (!isAllowedBrowserOrigin(req, siteOrigins)) {
+        res.status(403).json({ error: "Forbidden" });
+        return;
+      }
+
+      const parsed = stripeCheckoutPayloadSchema.safeParse(req.body);
+      if (!parsed.success) {
+        res.status(400).json({
+          error: "Invalid request",
+          details: parsed.error.flatten(),
+        });
+        return;
+      }
+
+      const secretKey = process.env.STRIPE_SECRET_KEY?.trim();
+      const monthlyPriceId = process.env.STRIPE_MONTHLY_PRICE_ID?.trim();
+      const annualPriceId = process.env.STRIPE_ANNUAL_PRICE_ID?.trim();
+      const monthlyLink = (
+        process.env.STRIPE_MONTHLY_PLAN_LINK ||
+        process.env.VITE_STRIPE_MONTHLY_PLAN_LINK ||
+        ""
+      ).trim();
+      const annualLink = (
+        process.env.STRIPE_ANNUAL_PLAN_LINK ||
+        process.env.VITE_STRIPE_ANNUAL_PLAN_LINK ||
+        ""
+      ).trim();
+
+      const priceId =
+        parsed.data.plan === "annual" ? annualPriceId : monthlyPriceId;
+      const fallbackUrl =
+        parsed.data.plan === "annual" ? annualLink : monthlyLink;
+
+      if (!secretKey || !priceId) {
+        if (fallbackUrl) {
+          res.status(200).json({ fallbackUrl });
+          return;
+        }
+        res.status(501).json({
+          error: "Stripe checkout is not configured.",
+          hint: "Set STRIPE_SECRET_KEY and STRIPE_MONTHLY_PRICE_ID / STRIPE_ANNUAL_PRICE_ID, or payment link URLs.",
+        });
+        return;
+      }
+
+      try {
+        const { default: Stripe } = await import("stripe");
+        const stripe = new Stripe(secretKey);
+        const returnUrl = `${siteOrigin.replace(/\/$/, "")}/membership?session_id={CHECKOUT_SESSION_ID}`;
+
+        const session = await stripe.checkout.sessions.create({
+          ui_mode: "embedded",
+          mode: "subscription",
+          line_items: [{ price: priceId, quantity: 1 }],
+          return_url: returnUrl,
+        });
+
+        if (!session.client_secret) {
+          res.status(502).json({ error: "Could not create checkout session." });
+          return;
+        }
+
+        res.status(200).json({ clientSecret: session.client_secret });
+      } catch (err) {
+        console.error("Stripe checkout session error", err);
+        if (fallbackUrl) {
+          res.status(200).json({ fallbackUrl });
+          return;
+        }
+        res.status(502).json({ error: "Could not start checkout." });
       }
     },
   );

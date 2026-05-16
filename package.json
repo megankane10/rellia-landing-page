@@ -29,6 +29,7 @@
     "@sanity/image-url": "^2.1.0",
     "@sanity/preview-url-secret": "^4.0.6",
     "@sanity/visual-editing": "^4.0.3",
+    "@stripe/stripe-js": "^9.5.0",
     "@supabase/supabase-js": "^2.105.4",
     "@vercel/analytics": "^2.0.1",
     "@vercel/speed-insights": "^2.0.0",
@@ -37,6 +38,7 @@
     "express": "^5.1.0",
     "helmet": "^8.1.0",
     "react-helmet-async": "^3.0.0",
+    "stripe": "^22.1.1",
     "zod": "^3.25.76"
   },
   "devDependencies": {

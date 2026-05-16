@@ -1656,7 +1656,7 @@ export const DEFAULT_QMS_PROGRAM: QmsProgramContent = {
   heroTitle: "Build Your Quality Management System",
   heroDescription:
     "A simplified, mentor-led program that helps medical device founders build an audit-ready Quality Management System - without needing a background in regulatory affairs",
-  heroCtaLabel: "Get Started",
+  heroCtaLabel: "Get started",
   outcomesTitle: "Program Outcomes",
   outcomesIntro:
     "By the end of this program, you will have a complete quality management system. A well-designed QMS enables your company to:",
@@ -1691,20 +1691,22 @@ export const DEFAULT_QMS_PROGRAM: QmsProgramContent = {
   bottomContactHref: "/contact",
   testimonials: [
     {
-      name: "Mazhar Shahen",
-      role: "CEO",
-      company: "NewGen Health",
+      name: "Dr Stevie Foglia",
+      role: "Founder & CEO",
+      company: "Neuro-Mod",
+      image: "/images/drstrevie.png",
+      logo: "/images/portfolio-neuromod.png",
       quote:
-        "Rellia has been an invaluable partner in our journey. Their regulatory expertise gave us the clarity and confidence to better understand Health Canada and FDA pathways as a health-tech startup. The team genuinely cares about helping early-stage companies succeed, not just with advice, but with hands-on support when it matters most.",
-      image: "/images/testimonials-MazharS.jpeg",
+        "The QMS fits seamlessly within our workflows and is directly personalized to our company and product. Rellia has been excellent to work with - they are true experts in their field.",
     },
     {
-      name: "Zarrah Uy",
-      role: "CEO",
-      company: "Theia AI",
+      name: "Ibukun Elebute",
+      role: "Founder & COO",
+      company: "Cellect",
+      image: "/images/ibukun.jpg",
+      logo: "/images/cellect-logo.png",
       quote:
-        "Building a foundation for a health-tech company is complex, but Rellia made it manageable. From their focused programming to their deep network of mentors, they provided the strategic resources we needed to move from concept to execution. They don't just provide a platform; they provide a community that understands the unique challenges founders face.",
-      image: "/images/testimonials-ZarrahU.jpeg",
+        "The Rellia QMS program was practical and startup-friendly, the process was easy to follow, and the support helped us understand not just what needed to be done, but how to do it properly.",
     },
   ],
 }

@@ -26,8 +26,7 @@ const ThirdPartyPreloads = () => {
       document.head.appendChild(link)
     }
 
-    ensurePreconnect("https://js-na3.hsforms.net")
-    ensurePreconnect("https://js.hsforms.net")
+    ensurePreconnect("https://js.stripe.com")
     ensurePreconnect("https://server.fillout.com")
 
     const ensureScript = (src: string) => {
@@ -39,8 +38,7 @@ const ThirdPartyPreloads = () => {
       document.body.appendChild(script)
     }
 
-    // Contact + Network load HubSpot Forms v2 via `hbspt.forms.create` when needed (SPA-safe).
-    // Fillout embed script used on Network modals
+    // Fillout embed script used on program and careers flows
     ensureScript("https://server.fillout.com/embed/v1/")
   }, [])
 

@@ -10,7 +10,6 @@ import { useContactPage } from "@/hooks/useCmsDocuments"
 import { DEFAULT_CONTACT_PAGE } from "@shared/cms/defaults"
 import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo"
 import { clearApiCsrfCache, getApiCsrfHeaders } from "@/lib/apiCsrf"
-import { supabase } from "@/lib/supabase"
 
 
 /**
@@ -171,7 +170,7 @@ function ContactForm() {
     try {
       const postOnce = async () => {
         const csrf = await getApiCsrfHeaders()
-        return fetch("/api/contact-hubspot", {
+        return fetch("/api/contact", {
           method: "POST",
           credentials: "same-origin",
           headers: { "content-type": "application/json", ...csrf },
@@ -184,24 +183,6 @@ function ContactForm() {
             message: data.message.trim(),
           }),
         })
-      }
-      
-      // Save to Supabase
-      const { error: supabaseError } = await supabase
-        .from('contact_responses')
-        .insert([
-          {
-            first_name: data.firstName.trim(),
-            last_name: data.lastName.trim(),
-            email: data.email.trim(),
-            company: data.company.trim(),
-            job_title: data.jobTitle.trim(),
-            message: data.message.trim(),
-          },
-        ])
-
-      if (supabaseError) {
-        console.error('Supabase save failed:', supabaseError)
       }
 
       let res = await postOnce()

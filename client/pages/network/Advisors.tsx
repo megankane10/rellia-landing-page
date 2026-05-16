@@ -10,6 +10,7 @@ import { ArrowRight, Award, BookOpen, Clock, Crosshair, Gauge, HeartHandshake, N
 import { Link } from "react-router-dom"
 import LogoMarquee from "@/components/LogoMarquee"
 import { CreamSection, GlassCardLight, LightSection, Reveal, RoleHero } from "./_shared"
+import { DEFAULT_HOME_PAGE } from "@shared/cms/defaults"
 import { useNetworkAdvisorsPage } from "@/hooks/useCmsDocuments"
 import NetworkCmsPage from "./NetworkCmsPage"
 import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo"
@@ -195,7 +196,10 @@ export default function Advisors() {
             }
             subtitle="Mentor serious health tech founders through structured, respectful engagements—stay sharp on innovation while keeping flexibility for your career."
             primaryCta={{ label: "Apply to join", to: "/apply" }}
-            secondaryCta={{ label: "Explore Advisors", to: "/advisors/directory" }}
+            secondaryCta={{
+              label: DEFAULT_HOME_PAGE.secondaryCtaLabel,
+              to: DEFAULT_HOME_PAGE.secondaryCtaPath,
+            }}
           />
         </div>
 

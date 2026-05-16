@@ -22,6 +22,7 @@ import { DEFAULT_PAYMENT_PAGE } from "@shared/cms/defaults"
 import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo"
 import { cn } from "@/lib/utils"
 import { HeroHeadlinePortable } from "@/components/HeroHeadlinePortable"
+import StripeEmbeddedCheckout from "@/components/StripeEmbeddedCheckout"
 
 const BENEFIT_ICONS = [Sparkles, ShieldCheck, Users, Target, Zap]
 
@@ -33,8 +34,9 @@ export default function Payment() {
   const [codeCopied, setCodeCopied] = useState(false)
   const [selectedPlan, setSelectedPlan] = useState<"monthly" | "annual" | null>(null)
   const [showForm, setShowForm] = useState(false)
-  const [iframeLoaded, setIframeLoaded] = useState(false)
-  const [iframeTookTooLong, setIframeTookTooLong] = useState(false)
+  const useStripeEmbed = Boolean(
+    (import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY as string | undefined)?.trim(),
+  )
 
   const monthlyHref = (import.meta.env.VITE_STRIPE_MONTHLY_PLAN_LINK as string | undefined)?.trim()
   const annualHref = (import.meta.env.VITE_STRIPE_ANNUAL_PLAN_LINK as string | undefined)?.trim()
@@ -59,20 +61,6 @@ export default function Payment() {
     }
   }, [])
 
-  useEffect(() => {
-    if (!showForm) {
-      setIframeLoaded(false)
-      setIframeTookTooLong(false)
-      return
-    }
-    if (!currentHref) return
-
-    setIframeLoaded(false)
-    setIframeTookTooLong(false)
-
-    const timeout = window.setTimeout(() => setIframeTookTooLong(true), 6000)
-    return () => window.clearTimeout(timeout)
-  }, [showForm, currentHref])
 
   const [waitlistOpen, setWaitlistOpen] = useState(false) // Not used here but keeping state structure consistent if needed
 
@@ -253,50 +241,22 @@ export default function Payment() {
                   </div>
                   
                   <div className="w-full bg-white rounded-2xl overflow-hidden border border-black/5 shadow-sm">
-                    {currentHref ? (
-                      <div className="relative">
-                        <div className="flex flex-col gap-3 border-b border-black/5 bg-white px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
-                          <div className="flex items-center gap-2 text-sm font-medium text-black/60">
-                            <ShieldCheck className="h-4 w-4 text-rellia-teal/70" aria-hidden />
-                            <span>
-                              If the embedded checkout doesn’t load, open it in a new tab.
-                            </span>
-                          </div>
-                          <a
-                            href={currentHref}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center gap-2 font-host-grotesk text-sm font-bold text-rellia-teal hover:underline hover:underline-offset-4"
-                            aria-label="Open Stripe checkout in a new tab (opens in new tab)"
-                          >
-                            Open in new tab
-                            <ArrowRight className="h-4 w-4" aria-hidden />
-                          </a>
-                        </div>
-
-                        {!iframeLoaded ? (
-                          <div className="absolute inset-x-0 top-[57px] z-10 flex min-h-[600px] flex-col items-center justify-center gap-3 bg-white/90 px-6 text-center backdrop-blur-sm">
-                            <div className="h-10 w-10 animate-spin rounded-full border-2 border-black/10 border-t-rellia-teal" aria-hidden />
-                            <p className="max-w-lg font-urbanist text-sm font-medium text-black/60">
-                              Loading secure checkout…
-                            </p>
-                            {iframeTookTooLong ? (
-                              <p className="max-w-lg font-urbanist text-sm font-medium text-black/60">
-                                Some browsers and privacy settings block embedded Stripe checkout. You can continue in a new tab.
-                              </p>
-                            ) : null}
-                          </div>
-                        ) : null}
-
-                        <iframe 
-                          src={currentHref} 
-                          title="Membership Payment" 
-                          className="w-full h-full border-0" 
-                          style={{ minHeight: "600px" }}
-                          allow="payment; fullscreen" 
-                          onLoad={() => setIframeLoaded(true)}
+                    {selectedPlan && (useStripeEmbed || currentHref) ? (
+                      useStripeEmbed ? (
+                        <StripeEmbeddedCheckout
+                          plan={selectedPlan}
+                          fallbackHref={currentHref}
+                          onBack={() => setShowForm(false)}
                         />
-                      </div>
+                      ) : (
+                        <iframe
+                          src={currentHref}
+                          title="Membership Payment"
+                          className="w-full h-full border-0"
+                          style={{ minHeight: "600px" }}
+                          allow="payment; fullscreen"
+                        />
+                      )
                     ) : (
                       <div className="flex flex-col items-center justify-center py-40 px-6 text-center">
                         <AlertCircle className="h-16 w-16 text-rellia-teal mb-8" />
