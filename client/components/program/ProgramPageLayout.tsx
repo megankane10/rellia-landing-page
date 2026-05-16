@@ -642,6 +642,7 @@ const ProgramPageLayout = ({
                 <div
                   className={cn(
                     "w-full",
+                    "min-h-[700px] md:min-h-[1000px]",
                     "[&_iframe]:!rounded-none",
                   )}
                 >

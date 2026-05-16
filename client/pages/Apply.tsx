@@ -63,7 +63,7 @@ export default function Apply() {
                   ← Back to membership paths
                 </button>
               </div>
-              <div className="w-full">
+              <div className="w-full min-h-[700px] md:min-h-[1000px]">
                 <FilloutStandardEmbed
                   filloutId={FILLOUT_APPLY_FORM_ID}
                   inheritParameters
