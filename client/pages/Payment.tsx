@@ -224,10 +224,9 @@ export default function Payment() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
                 transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                className="relative z-10 w-full min-h-[820px] bg-white flex flex-col"
+                className="relative z-10 flex w-full min-h-[820px] flex-col bg-white"
               >
-                <div className="max-w-[1300px] mx-auto w-full px-6 md:px-10 py-10">
-                  <div className="flex items-center justify-between mb-10">
+                <div className="mx-auto flex w-full max-w-[1300px] items-center justify-between px-6 py-8 md:px-10 md:py-10">
                     <button 
                       type="button" 
                       onClick={() => setShowForm(false)} 
@@ -236,11 +235,12 @@ export default function Payment() {
                       <ArrowLeft className="h-4 w-4" aria-hidden />Back to details
                     </button>
                     <div className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-rellia-teal/10 text-rellia-teal font-host-grotesk text-[11px] font-bold uppercase tracking-widest border border-rellia-teal/10">
-                      <ShieldCheck className="h-4 w-4" /> Secure Checkout
+                      <ShieldCheck className="h-4 w-4" aria-hidden />
+                      Secure Checkout
                     </div>
-                  </div>
-                  
-                  <div className="w-full bg-white rounded-2xl overflow-hidden border border-black/5 shadow-sm">
+                </div>
+
+                <div className="stripe-embedded-checkout-shell w-full flex-1">
                     {selectedPlan && (useStripeEmbed || currentHref) ? (
                       useStripeEmbed ? (
                         <StripeEmbeddedCheckout
@@ -252,8 +252,7 @@ export default function Payment() {
                         <iframe
                           src={currentHref}
                           title="Membership Payment"
-                          className="w-full h-full border-0"
-                          style={{ minHeight: "600px" }}
+                          className="h-full min-h-[min(900px,calc(100svh-120px))] w-full border-0"
                           allow="payment; fullscreen"
                         />
                       )
@@ -272,7 +271,6 @@ export default function Payment() {
                         </RelliaAction>
                       </div>
                     )}
-                  </div>
                 </div>
               </motion.div>
             )}
