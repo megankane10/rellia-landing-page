@@ -312,23 +312,15 @@ export default function Navbar({
     pathname === "/faq" ||
     pathname === "/careers"
 
-  /** Light backgrounds but nav should stay solid teal until scroll (not transparent over white). */
-  const isNetworkDirectoryPage =
-    pathname === "/founders/alumni" ||
-    pathname.startsWith("/founders/alumni/") ||
-    pathname === "/advisors/directory" ||
-    pathname.startsWith("/advisors/directory/")
-
-  /** Light cream/white heroes (story posts, event detail, directories, programs): transparent bar + light nav chrome until scroll */
+  /** Light cream/white heroes (story posts, event detail, programs): transparent bar + light nav chrome until scroll */
   const isLightHeroNav =
     /^\/stories\/.+/.test(pathname) ||
     /^\/events\/.+/.test(pathname) ||
-    /^\/programs\/.+/.test(pathname) ||
-    isNetworkDirectoryPage
+    /^\/programs\/.+/.test(pathname)
 
   const hasTransparentTopBar = !forceSolid && (hasTealHero || isLightHeroNav)
 
-  const useLightNavChrome = isLightHeroNav && !scrolled && !mobileOpen
+  const useLightNavChrome = !forceSolid && isLightHeroNav && !scrolled && !mobileOpen
 
   const desktopTone: "light" | "dark" = useLightNavChrome ? "light" : "dark"
 

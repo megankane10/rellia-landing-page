@@ -284,7 +284,7 @@ export default function FoundersDirectory() {
 
   return (
     <div className="min-h-screen overflow-x-hidden bg-white font-host-grotesk">
-      <Navbar />
+      <Navbar forceSolid />
 
       <main id="main-content">
         <section className="relative overflow-hidden border-b border-black/10 bg-rellia-greyTeal pt-28 pb-12 md:pt-36 md:pb-16">

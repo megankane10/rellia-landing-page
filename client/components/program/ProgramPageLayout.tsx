@@ -279,12 +279,8 @@ const ProgramPageLayout = ({
                       type="button"
                       variant="mintTealFill"
                       size="comfortable"
-                      onClick={() =>
-                        hasEnrollmentForm ? openEnrollmentForm() : scrollTo(paymentSectionId)
-                      }
-                      onKeyDown={onKey(() =>
-                        hasEnrollmentForm ? openEnrollmentForm() : scrollTo(paymentSectionId),
-                      )}
+                      onClick={() => scrollTo(paymentSectionId)}
+                      onKeyDown={onKey(() => scrollTo(paymentSectionId))}
                       className="flex w-full sm:w-fit justify-center"
                     >
                       {hasEnrollmentForm ? "Get started" : q.heroCtaLabel}
