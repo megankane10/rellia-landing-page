@@ -28,6 +28,7 @@ import {
   ChevronLeft,
   ChevronRight,
   CalendarDays,
+  Bell,
   Quote,
 } from "lucide-react";
 import { getCurrentMonthDeadline } from "@/lib/dateUtils";
@@ -250,11 +251,13 @@ const ProgramPageLayout = ({
               <div className="flex-1 lg:max-w-[55%]">
                 <ScrollReveal>
                   {isWaitlist ? (
-                    <span className="inline-block mb-4 px-4 py-1.5 rounded-full bg-rellia-teal/10 text-rellia-teal font-host-grotesk text-xs font-bold uppercase tracking-widest border border-rellia-teal/20">
-                      Waitlist
+                    <span className="mb-4 inline-flex w-fit items-center gap-1.5 rounded-full bg-black/[0.04] px-3 py-1 font-host-grotesk text-[11px] font-bold uppercase tracking-[0.16em] text-black/70 ring-1 ring-black/5">
+                      <Bell className="h-3.5 w-3.5 shrink-0 opacity-80" aria-hidden strokeWidth={2.5} />
+                      Join the waitlist
                     </span>
                   ) : (
-                    <span className="inline-block mb-4 px-4 py-1.5 rounded-full bg-rellia-mint text-rellia-teal font-host-grotesk text-xs font-bold uppercase tracking-widest border border-black/5">
+                    <span className="mb-4 inline-flex w-fit items-center gap-1.5 rounded-full bg-rellia-mint/80 px-3 py-1 font-host-grotesk text-[11px] font-bold uppercase tracking-[0.16em] text-rellia-teal ring-1 ring-black/5">
+                      <CalendarDays className="h-3.5 w-3.5 shrink-0 opacity-80" aria-hidden strokeWidth={2.5} />
                       Applications open
                     </span>
                   )}

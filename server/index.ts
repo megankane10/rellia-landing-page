@@ -765,9 +765,12 @@ export function createServer() {
 
         res.status(200).json({ clientSecret: session.client_secret });
       } catch (err) {
+        const stripeMessage =
+          err instanceof Error ? err.message : String(err);
         console.error("Stripe checkout session error", err);
         res.status(502).json({
           error: "Could not start checkout.",
+          stripeMessage,
           ...(fallbackUrl ? { paymentLinkUrl: fallbackUrl } : {}),
         });
       }

@@ -66,13 +66,15 @@ export default function StripeEmbeddedCheckout({
           clientSecret?: string
           error?: string
           hint?: string
+          stripeMessage?: string
         }
 
         if (cancelled) return
 
         if (!res.ok) {
           const hint = json.hint ? ` ${json.hint}` : ""
-          setError((json.error || "Could not start checkout.") + hint)
+          const stripeDetail = json.stripeMessage ? ` (${json.stripeMessage})` : ""
+          setError((json.error || "Could not start checkout.") + stripeDetail + hint)
           setLoading(false)
           return
         }
@@ -80,7 +82,7 @@ export default function StripeEmbeddedCheckout({
         const clientSecret = json.clientSecret?.trim()
         if (!clientSecret) {
           setError(
-            "In-page checkout needs STRIPE_MONTHLY_PRICE_ID and STRIPE_ANNUAL_PRICE_ID on Vercel (price_… from Stripe → Products), plus your domain registered under Stripe → Settings → Payment method domains. Payment links alone open Stripe in a new tab.",
+            "In-page checkout needs STRIPE_MONTHLY_PRICE_ID and STRIPE_ANNUAL_PRICE_ID on Vercel (price_… from Stripe → Products), plus your domain registered under Stripe → Settings → Payment method domains.",
           )
           setLoading(false)
           return
@@ -97,16 +99,21 @@ export default function StripeEmbeddedCheckout({
         const checkout = await stripe.initEmbeddedCheckout({ clientSecret })
         checkoutRef.current = checkout
 
+        await new Promise<void>((resolve) => {
+          requestAnimationFrame(() => resolve())
+        })
+
         if (mountRef.current && !cancelled) {
           mountRef.current.innerHTML = ""
           checkout.mount(mountRef.current)
         }
 
         setLoading(false)
-      } catch {
+      } catch (err) {
         if (!cancelled) {
+          const detail = err instanceof Error ? ` ${err.message}` : ""
           setError(
-            "Could not load embedded checkout. Confirm price IDs, matching live/test keys, and Stripe payment method domains for this site.",
+            `Could not load embedded checkout.${detail} Confirm price IDs, matching live/test keys, and Stripe payment method domains for this site.`,
           )
           setLoading(false)
         }
@@ -124,20 +131,7 @@ export default function StripeEmbeddedCheckout({
 
   if (error) {
     return (
-      <div className="flex flex-col items-center justify-center px-6 py-24 text-center">
-        <AlertCircle className="mb-6 h-14 w-14 text-rellia-teal" aria-hidden />
-        <p className="mb-8 max-w-lg font-urbanist text-base text-black/70">{error}</p>
-        {fallbackHref ? (
-          <RelliaAction asChild variant="mintTealFill" size="comfortable" className="mb-4">
-            <a href={fallbackHref} target="_blank" rel="noopener noreferrer">
-              Open checkout in a new tab
-            </a>
-          </RelliaAction>
-        ) : null}
-        <RelliaAction type="button" variant="outlineOnWhite" size="comfortable" onClick={onBack}>
-          Go back
-        </RelliaAction>
-      </div>
+      <motionlessCheckoutError error={error} fallbackHref={fallbackHref} onBack={onBack} />
     )
   }
 
@@ -157,6 +151,33 @@ export default function StripeEmbeddedCheckout({
         id="stripe-embedded-checkout"
         className="w-full min-h-[min(900px,calc(100svh-120px))]"
       />
+    </div>
+  )
+}
+
+function motionlessCheckoutError({
+  error,
+  fallbackHref,
+  onBack,
+}: {
+  error: string
+  fallbackHref?: string
+  onBack: () => void
+}) {
+  return (
+    <div className="flex flex-col items-center justify-center px-6 py-24 text-center">
+      <AlertCircle className="mb-6 h-14 w-14 text-rellia-teal" aria-hidden />
+      <p className="mb-8 max-w-lg font-urbanist text-base text-black/70">{error}</p>
+      {fallbackHref ? (
+        <RelliaAction asChild variant="mintTealFill" size="comfortable" className="mb-4">
+          <a href={fallbackHref} target="_blank" rel="noopener noreferrer">
+            Open checkout in a new tab
+          </a>
+        </RelliaAction>
+      ) : null}
+      <RelliaAction type="button" variant="outlineOnWhite" size="comfortable" onClick={onBack}>
+        Go back
+      </RelliaAction>
     </div>
   )
 }

@@ -196,11 +196,11 @@ const CareersJoinTeamSection = ({
                         onClick={handlePrimaryClick}
                         className={cn(
                           joinTeamCtaSharedClass,
-                          "border-rellia-teal bg-transparent hover:border-rellia-mint",
+                          "border-rellia-teal bg-rellia-teal hover:border-rellia-mint",
                         )}
                         aria-label={primaryCta.ariaLabel}
                       >
-                        <span className="relative z-10 text-rellia-teal transition-colors duration-300 group-hover:text-rellia-teal">
+                        <span className="relative z-10 text-white transition-colors duration-300 group-hover:text-rellia-teal">
                           {primaryCta.label}
                         </span>
                       </button>
@@ -209,10 +209,13 @@ const CareersJoinTeamSection = ({
                       <button
                         type="button"
                         onClick={handleSecondaryClick}
-                        className={cn(joinTeamCtaSharedClass, "bg-rellia-teal hover:border-rellia-mint")}
+                        className={cn(
+                          joinTeamCtaSharedClass,
+                          "border-rellia-teal bg-transparent hover:border-rellia-mint",
+                        )}
                         aria-label={secondaryCta.ariaLabel}
                       >
-                        <span className="relative z-10 text-white transition-colors duration-300 group-hover:text-rellia-teal">
+                        <span className="relative z-10 text-rellia-teal transition-colors duration-300 group-hover:text-rellia-teal">
                           {secondaryCta.label}
                         </span>
                       </button>
