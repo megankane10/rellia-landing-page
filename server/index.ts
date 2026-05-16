@@ -606,144 +606,83 @@ export function createServer() {
       const company = parsed.data.company?.trim() ?? "";
       const jobTitle = parsed.data.jobTitle?.trim() ?? "";
 
-      const hubspotFormGuid = process.env.HUBSPOT_CONTACT_FORM_GUID?.trim();
-      const hubspotPortalId =
-        process.env.HUBSPOT_PORTAL_ID?.trim() || "342926478";
-      const hubspotFormsApiBase = (
-        process.env.HUBSPOT_FORMS_API_BASE?.trim() ||
-        "https://api.hsforms.com"
-      ).replace(/\/$/, "");
+      const supabaseUrl = (
+        process.env.SUPABASE_URL ||
+        process.env.VITE_SUPABASE_URL ||
+        ""
+      )
+        .trim()
+        .replace(/\/$/, "");
+      const serviceRoleKey = (
+        process.env.SUPABASE_SERVICE_ROLE_KEY ||
+        process.env.SUPABASE_SECRET_KEY ||
+        process.env.SUPABASE_SERVICE_KEY ||
+        ""
+      ).trim();
+      const anonKey = (
+        process.env.SUPABASE_ANON_KEY ||
+        process.env.VITE_SUPABASE_ANON_KEY ||
+        process.env.VITE_SUPABASE_PUBLISHABLE_KEY ||
+        ""
+      ).trim();
+      const supabaseKey = serviceRoleKey || anonKey;
 
-      const submitToHubspot = async (): Promise<{ ok: true } | { error: string }> => {
-        if (!hubspotFormGuid) {
-          return { error: "HubSpot contact form is not configured." };
-        }
-
-        const pageUri =
-          req.get("referer")?.trim() ||
-          `${siteOrigin.replace(/\/$/, "")}/contact`;
-        const hubspotUrl = `${hubspotFormsApiBase}/submissions/v3/integration/submit/${hubspotPortalId}/${hubspotFormGuid}`;
-
-        const fields: Array<{ name: string; value: string }> = [
-          { name: "firstname", value: firstName },
-          { name: "lastname", value: lastName },
-          { name: "email", value: email },
-        ];
-        if (company) fields.push({ name: "company", value: company });
-        if (jobTitle) fields.push({ name: "jobtitle", value: jobTitle });
-        fields.push({ name: "message", value: message });
-
-        const hsRes = await fetch(hubspotUrl, {
-          method: "POST",
-          headers: { "content-type": "application/json" },
-          body: JSON.stringify({
-            fields,
-            context: {
-              pageUri,
-              pageName: "Contact",
-            },
-          }),
+      if (!supabaseUrl || !supabaseKey) {
+        res.status(501).json({
+          error: "Contact form is not configured on the server.",
+          hint:
+            "Set SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY on Vercel (server-only). Run scripts/supabase_setup.sql once in Supabase.",
         });
+        return;
+      }
 
-        if (!hsRes.ok) {
-          const errText = await hsRes.text();
-          console.error(
-            "HubSpot contact submit failed",
-            hsRes.status,
-            errText.slice(0, 800),
-          );
-          return {
-            error:
-              "Could not send your message right now. Please try again or email us directly.",
-          };
-        }
-
-        return { ok: true };
-      };
-
-      const submitToSupabase = async (): Promise<{ ok: true } | { error: string }> => {
-        const supabaseUrl = (
-          process.env.SUPABASE_URL ||
-          process.env.VITE_SUPABASE_URL ||
-          ""
-        ).trim();
-        const serviceRoleKey = (
-          process.env.SUPABASE_SERVICE_ROLE_KEY ||
-          process.env.SUPABASE_SECRET_KEY ||
-          ""
-        ).trim();
-        const anonKey = (
-          process.env.SUPABASE_ANON_KEY ||
-          process.env.VITE_SUPABASE_ANON_KEY ||
-          process.env.VITE_SUPABASE_PUBLISHABLE_KEY ||
-          ""
-        ).trim();
-        const supabaseKey = serviceRoleKey || anonKey;
-
-        if (!supabaseUrl || !supabaseKey) {
-          return { error: "Supabase contact storage is not configured." };
-        }
-
-        const { createClient } = await import("@supabase/supabase-js");
-        const supabase = createClient(supabaseUrl, supabaseKey, {
-          auth: { persistSession: false, autoRefreshToken: false },
-        });
-
-        const { error } = await supabase.from("contact_responses").insert({
-          first_name: firstName,
-          last_name: lastName,
-          email,
-          company: company || null,
-          job_title: jobTitle || null,
-          message,
-        });
-
-        if (error) {
-          console.error("Supabase contact insert failed", error);
-          const rateLimited =
-            typeof error.message === "string" &&
-            error.message.toLowerCase().includes("too many submissions");
-          return {
-            error: rateLimited
-              ? "Too many messages from this email. Please try again in an hour."
-              : "Could not send your message right now. Please try again or email us directly.",
-          };
-        }
-
-        return { ok: true };
+      const row = {
+        first_name: firstName,
+        last_name: lastName,
+        email,
+        company: company || null,
+        job_title: jobTitle || null,
+        message,
       };
 
       try {
-        let hubspotError: string | null = null;
+        const insertRes = await fetch(
+          `${supabaseUrl}/rest/v1/contact_responses`,
+          {
+            method: "POST",
+            headers: {
+              apikey: supabaseKey,
+              Authorization: `Bearer ${supabaseKey}`,
+              "content-type": "application/json",
+              Prefer: "return=minimal",
+            },
+            body: JSON.stringify(row),
+          },
+        );
 
-        if (hubspotFormGuid) {
-          const hubspotResult = await submitToHubspot();
-          if ("ok" in hubspotResult) {
-            res.status(200).json({ ok: true });
-            return;
-          }
-          hubspotError = hubspotResult.error;
-        }
-
-        const supabaseResult = await submitToSupabase();
-        if ("ok" in supabaseResult) {
+        if (insertRes.ok) {
           res.status(200).json({ ok: true });
           return;
         }
 
-        const supabaseConfigured =
-          supabaseResult.error !== "Supabase contact storage is not configured.";
-        const failureMessage = hubspotError || (supabaseConfigured ? supabaseResult.error : null);
+        const errText = await insertRes.text();
+        console.error(
+          "Supabase contact insert failed",
+          insertRes.status,
+          errText.slice(0, 800),
+        );
 
-        if (failureMessage) {
-          res.status(502).json({ error: failureMessage });
-          return;
-        }
+        const rateLimited =
+          insertRes.status === 429 ||
+          errText.toLowerCase().includes("too many submissions");
 
-        res.status(501).json({
-          error: "Contact form is not configured on the server.",
-          hint:
-            "Set HUBSPOT_CONTACT_FORM_GUID, or SUPABASE_URL with SUPABASE_SERVICE_ROLE_KEY (run scripts/supabase_setup.sql once).",
+        res.status(502).json({
+          error: rateLimited
+            ? "Too many messages from this email. Please try again in an hour."
+            : "Could not send your message right now. Please try again or email us directly.",
+          ...(isDev
+            ? { detail: errText.slice(0, 300), status: insertRes.status }
+            : {}),
         });
       } catch (err) {
         console.error("Contact submit error", err);
@@ -798,13 +737,11 @@ export function createServer() {
         parsed.data.plan === "annual" ? annualLink : monthlyLink;
 
       if (!secretKey || !priceId) {
-        if (fallbackUrl) {
-          res.status(200).json({ paymentLinkUrl: fallbackUrl, fallbackUrl });
-          return;
-        }
         res.status(501).json({
-          error: "Stripe checkout is not configured.",
-          hint: "Set STRIPE_SECRET_KEY and STRIPE_MONTHLY_PRICE_ID / STRIPE_ANNUAL_PRICE_ID, or payment link URLs.",
+          error: "Embedded checkout is not configured.",
+          hint:
+            "Set STRIPE_SECRET_KEY, STRIPE_MONTHLY_PRICE_ID, and STRIPE_ANNUAL_PRICE_ID (price_… from Stripe → Products). Payment links cannot embed in-page.",
+          ...(fallbackUrl ? { paymentLinkUrl: fallbackUrl } : {}),
         });
         return;
       }
@@ -829,11 +766,10 @@ export function createServer() {
         res.status(200).json({ clientSecret: session.client_secret });
       } catch (err) {
         console.error("Stripe checkout session error", err);
-        if (fallbackUrl) {
-          res.status(200).json({ paymentLinkUrl: fallbackUrl, fallbackUrl });
-          return;
-        }
-        res.status(502).json({ error: "Could not start checkout." });
+        res.status(502).json({
+          error: "Could not start checkout.",
+          ...(fallbackUrl ? { paymentLinkUrl: fallbackUrl } : {}),
+        });
       }
     },
   );

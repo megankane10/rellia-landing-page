@@ -103,6 +103,8 @@ export default function AdvisorsDirectory() {
   const [groupFilters, setGroupFilters] = useState<Record<string, string>>({})
 
   const advisors = useMemo<AdvisorDirectoryEntry[]>(() => {
+    if (isProductionHostname()) return []
+
     if (Array.isArray(cmsAdvisors) && cmsAdvisors.length > 0)
       return cmsAdvisors as AdvisorDirectoryEntry[];
     return ADVISOR_DIRECTORY_SEED;
@@ -223,8 +225,6 @@ export default function AdvisorsDirectory() {
   const navigate = useNavigate();
   const tag = NETWORK_PATH_ROLE_TAG["advisor"];
   const TagIcon = tag.icon;
-  const isProd = isProductionHostname();
-
   return (
     <div className="min-h-screen overflow-x-hidden bg-white font-host-grotesk">
       <Navbar forceSolid />
@@ -332,16 +332,23 @@ export default function AdvisorsDirectory() {
 
             <div className="mb-6 flex items-center justify-between border-b border-black/10 pb-4">
               <p className="font-urbanist text-sm font-semibold text-black/60">
-                Showing {isProd ? 0 : paginated.length} of {isProd ? 0 : filtered.length} results
+                Showing {paginated.length} of {filtered.length} results
               </p>
             </div>
 
-            {isProd || filtered.length === 0 ? (
+            {advisors.length === 0 ? (
               <FilteredListEmptyState
                 className="mt-10"
                 icon={UserSearch}
-                title="Advisor directory coming soon"
-                description="We're currently curating our advisor network to bring you the most relevant clinical and commercial connections. Check back shortly for the full directory."
+                title="No advisors found"
+                description="There are no advisor listings in the directory yet. Check back as we add more mentors to the network."
+              />
+            ) : filtered.length === 0 ? (
+              <FilteredListEmptyState
+                className="mt-10"
+                icon={Search}
+                title="No results match your filters"
+                description="Try clearing search or filters to see more advisors."
               />
             ) : (
               <div className="flex flex-col">

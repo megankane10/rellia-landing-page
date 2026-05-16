@@ -20,6 +20,7 @@ import { useQuery } from "@tanstack/react-query"
 import { sanityFetch } from "@/lib/sanity"
 import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo"
 import FilteredListEmptyState from "@/components/FilteredListEmptyState"
+import { isProductionHostname } from "@/lib/sanity"
 import { useMemo, useState } from "react"
 
 const g = DEFAULT_GLOBAL_SETTINGS
@@ -193,10 +194,13 @@ const CareersJoinTeamSection = ({
                       <button
                         type="button"
                         onClick={handlePrimaryClick}
-                        className={cn(joinTeamCtaSharedClass, "bg-rellia-teal hover:border-rellia-mint")}
+                        className={cn(
+                          joinTeamCtaSharedClass,
+                          "border-rellia-teal bg-transparent hover:border-rellia-mint",
+                        )}
                         aria-label={primaryCta.ariaLabel}
                       >
-                        <span className="relative z-10 text-white transition-colors duration-300 group-hover:text-rellia-teal">
+                        <span className="relative z-10 text-rellia-teal transition-colors duration-300 group-hover:text-rellia-teal">
                           {primaryCta.label}
                         </span>
                       </button>
@@ -313,6 +317,11 @@ export default function CareersCms() {
       }
     : null
 
+  const openRoles = useMemo(
+    () => (isProductionHostname() ? [] : CAREERS_OPEN_ROLES),
+    [],
+  )
+
   return (
     <div className="min-h-screen overflow-x-hidden bg-white font-host-grotesk">
       <Navbar />
@@ -359,15 +368,15 @@ export default function CareersCms() {
                 </h2>
 
                 <div className="mt-10 w-full shrink-0">
-                  {CAREERS_OPEN_ROLES.length > 0 ? (
+                  {openRoles.length > 0 ? (
                     <div className="overflow-hidden rounded-3xl border border-black/10 bg-white px-0 shadow-sm md:px-2">
                       <Accordion type="single" collapsible className="w-full">
-                        {CAREERS_OPEN_ROLES.map((role, index) => (
+                        {openRoles.map((role, index) => (
                           <AccordionItem
                             key={role.id}
                             value={role.id}
                             className={
-                              index === CAREERS_OPEN_ROLES.length - 1
+                              index === openRoles.length - 1
                                 ? "border-b-0 px-6 md:px-8"
                                 : "border-b border-black/10 px-6 md:px-8"
                             }
