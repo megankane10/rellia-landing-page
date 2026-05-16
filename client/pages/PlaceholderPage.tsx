@@ -17,7 +17,7 @@ export default function PlaceholderPage({
 
   return (
     <div className="flex min-h-screen flex-col bg-white font-host-grotesk overflow-x-hidden">
-      <Navbar />
+      <Navbar forceSolid={true} />
 
       <main id="main-content" className="flex flex-1 flex-col">
         <RelliaCta

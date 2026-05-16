@@ -31,8 +31,26 @@ const CMS: QmsProgramContent = {
   bottomCtaBody: "Many health tech products require regulatory clearance — but not all do. Reach out and we'll help you figure out where you stand.",
   bottomCtaButtonLabel: "Contact Us",
   bottomContactHref: "/contact",
+  testimonials: [
+    {
+      name: "Ibukun Elebute",
+      role: "Founder & COO",
+      company: "Cellect",
+      image: "/images/ibukun.jpg",
+      logo: "/images/cellect-logo.png",
+      quote: "As an early-stage medtech company navigating regulatory readiness, having a structured system with clear guidance made a huge difference. The templates were practical and startup-friendly, the process was easy to follow, and the support helped us understand not just what needed to be done, but how to do it properly.",
+    },
+    {
+      name: "Dr Stevie Foglia",
+      role: "Founder & CEO",
+      company: "Neuro-Mod",
+      image: "/images/drstrevie.png",
+      logo: "/images/portfolio-neuromod.png",
+      quote: "Rellia has been excellent to work with and has played an integral role in building our regulatory plans. I would highly recommend them to anyone looking to navigate regulatory submissions for a medical-related product. They are true experts in their field.",
+    },
+  ],
 }
 
 export default function ProgramsRegulatoryRoadmap() {
-  return <ProgramPageLayout cms={CMS} cmsSlug="regulatory-roadmap" heroImageSrc="/images/programs-regulatoryRoadmap.png" heroImageAlt="Regulatory Strategy Sprint" outcomesSectionId="regulatory-outcomes" staticBlocks={REGULATORY_ROADMAP_STATIC_BLOCKS} />
+  return <ProgramPageLayout cms={CMS} cmsSlug="regulatory-strategy-sprint" heroImageSrc="/images/programs-regulatoryRoadmap.png" heroImageAlt="Regulatory Strategy Sprint" outcomesSectionId="regulatory-outcomes" staticBlocks={REGULATORY_ROADMAP_STATIC_BLOCKS} />
 }

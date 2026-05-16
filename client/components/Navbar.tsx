@@ -20,9 +20,9 @@ const FALLBACK_NAV_PRIMARY: NavItem[] = [
     href: "/network",
     children: [
       { label: "Founders", href: "/founders" },
-      { label: "Advisors", href: "/advisors" },
       { label: "Investors", href: "/investors" },
       { label: "Industry partners", href: "/industry-partners" },
+      { label: "Advisors", href: "/advisors" },
     ],
   },
   {
@@ -220,9 +220,14 @@ const DesktopNavDropdown = ({ label, items, active, tone, open, onToggle, onClos
 export type NavbarProps = {
   /** Navbar CTA link shape; default pill. */
   ctaRadiusClassName?: string
+  /** Force solid teal background regardless of path. */
+  forceSolid?: boolean
 }
 
-export default function Navbar({ ctaRadiusClassName = "rounded-full" }: NavbarProps) {
+export default function Navbar({ 
+  ctaRadiusClassName = "rounded-full",
+  forceSolid = false
+}: NavbarProps) {
   const { data: navigationData } = useNavigation()
   const { data: globalSettingsData } = useGlobalSettings()
   const { data: homePageData } = useHomePage()
@@ -312,8 +317,7 @@ export default function Navbar({ ctaRadiusClassName = "rounded-full" }: NavbarPr
     pathname === "/founders/alumni" ||
     pathname.startsWith("/founders/alumni/") ||
     pathname === "/advisors/directory" ||
-    pathname.startsWith("/advisors/directory/") ||
-    pathname === "/industry-partners/directory"
+    pathname.startsWith("/advisors/directory/")
 
   /** Light cream/white heroes (story posts, event detail, directories, programs): transparent bar + light nav chrome until scroll */
   const isLightHeroNav =
@@ -322,7 +326,7 @@ export default function Navbar({ ctaRadiusClassName = "rounded-full" }: NavbarPr
     /^\/programs\/.+/.test(pathname) ||
     isNetworkDirectoryPage
 
-  const hasTransparentTopBar = hasTealHero || isLightHeroNav
+  const hasTransparentTopBar = !forceSolid && (hasTealHero || isLightHeroNav)
 
   const useLightNavChrome = isLightHeroNav && !scrolled && !mobileOpen
 

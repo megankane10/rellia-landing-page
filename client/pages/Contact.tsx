@@ -10,6 +10,8 @@ import { useContactPage } from "@/hooks/useCmsDocuments"
 import { DEFAULT_CONTACT_PAGE } from "@shared/cms/defaults"
 import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo"
 import { clearApiCsrfCache, getApiCsrfHeaders } from "@/lib/apiCsrf"
+import { supabase } from "@/lib/supabase"
+
 
 /**
  * Redesigned Contact Page for Rellia
@@ -183,7 +185,27 @@ function ContactForm() {
           }),
         })
       }
+      
+      // Save to Supabase
+      const { error: supabaseError } = await supabase
+        .from('contact_responses')
+        .insert([
+          {
+            first_name: data.firstName.trim(),
+            last_name: data.lastName.trim(),
+            email: data.email.trim(),
+            company: data.company.trim(),
+            job_title: data.jobTitle.trim(),
+            message: data.message.trim(),
+          },
+        ])
+
+      if (supabaseError) {
+        console.error('Supabase save failed:', supabaseError)
+      }
+
       let res = await postOnce()
+
       let json = (await res.json().catch(() => ({}))) as {
         error?: string
         hint?: string

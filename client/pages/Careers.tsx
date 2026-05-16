@@ -16,6 +16,7 @@ import { DEFAULT_GLOBAL_SETTINGS } from "@shared/cms/defaults"
 import { CAREERS_VOLUNTEER_ENABLED, careersHasPublishedOpenRoles } from "@shared/careersPageConfig"
 import { CAREERS_OPEN_ROLES } from "@shared/careersOpenRoles"
 import { cn } from "@/lib/utils"
+import FilteredListEmptyState from "@/components/FilteredListEmptyState"
 
 const g = DEFAULT_GLOBAL_SETTINGS
 
@@ -144,13 +145,13 @@ const CareersJoinTeamSection = ({
       isPrimary 
         ? "bg-rellia-teal border-rellia-teal hover:border-rellia-mint" 
         : isVolunteer
-          ? "bg-transparent border-rellia-teal text-rellia-teal hover:bg-rellia-teal/5"
+          ? "bg-transparent border-rellia-teal text-white hover:bg-rellia-teal/10"
           : "bg-transparent border-white/45 text-white hover:border-white/70"
     )
 
     const textClasses = cn(
       "relative z-10 transition-colors duration-300",
-      isPrimary ? "text-white group-hover:text-rellia-teal" : isVolunteer ? "text-rellia-teal" : "text-white"
+      isPrimary ? "text-white group-hover:text-rellia-teal" : "text-white"
     )
 
     if (isVolunteer) {
@@ -407,7 +408,6 @@ export default function Careers() {
           features={CAREERS_PERKS}
         />
 
-        {careersHasPublishedOpenRoles() ? (
         <section
           id="open-roles"
           className="scroll-mt-28 flex min-h-[max(46rem,92svh)] flex-col bg-rellia-cream/60"
@@ -486,16 +486,12 @@ export default function Careers() {
                   </Accordion>
                 </div>
                 ) : (
-                  <div className="flex flex-col items-center justify-center rounded-3xl border border-black/10 bg-white px-6 py-16 text-center shadow-sm md:py-24">
-                    <BriefcaseBusiness
-                      className="h-20 w-20 text-rellia-teal/35 md:h-28 md:w-28 md:text-rellia-teal/30"
-                      strokeWidth={1.25}
-                      aria-hidden
-                    />
-                    <p className="mt-8 max-w-lg font-urbanist text-lg font-medium leading-relaxed text-black/70 md:mt-10 md:text-xl">
-                      No vacant roles are available at the moment
-                    </p>
-                  </div>
+                  <FilteredListEmptyState
+                    className="mt-12"
+                    icon={BriefcaseBusiness}
+                    title="No open roles"
+                    description="No vacant roles are available at the moment. Check back later or follow us on LinkedIn for updates."
+                  />
                 )}
               </div>
             </ScrollReveal>
@@ -514,7 +510,6 @@ export default function Careers() {
             </p>
           </div>
         </section>
-        ) : null}
 
 
 

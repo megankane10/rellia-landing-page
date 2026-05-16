@@ -60,7 +60,7 @@ export default function Apply() {
                   onClick={() => setShowForm(false)}
                   className="mb-8 font-host-grotesk text-sm font-semibold text-rellia-teal underline-offset-4 hover:underline"
                 >
-                  ← Back to membership paths
+                  ← Back to details
                 </button>
               </div>
               <div className="w-full min-h-[700px] md:min-h-[1000px]">

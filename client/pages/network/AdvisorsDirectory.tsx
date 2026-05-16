@@ -19,6 +19,7 @@ import {
 } from "@/data/advisorDirectory";
 import { useNavigate } from "react-router-dom";
 import { NETWORK_PATH_ROLE_TAG } from "@/lib/networkPathRoles";
+import { isProductionHostname } from "@/lib/sanity";
 
 const DIRECTORY_TITLE_CLASS =
   "font-host-grotesk text-4xl font-extrabold tracking-tight text-black md:text-5xl";
@@ -222,6 +223,7 @@ export default function AdvisorsDirectory() {
   const navigate = useNavigate();
   const tag = NETWORK_PATH_ROLE_TAG["advisor"];
   const TagIcon = tag.icon;
+  const isProd = isProductionHostname();
 
   return (
     <div className="min-h-screen overflow-x-hidden bg-white font-host-grotesk">
@@ -330,16 +332,16 @@ export default function AdvisorsDirectory() {
 
             <div className="mb-6 flex items-center justify-between border-b border-black/10 pb-4">
               <p className="font-urbanist text-sm font-semibold text-black/60">
-                Showing {paginated.length} of {filtered.length} results
+                Showing {isProd ? 0 : paginated.length} of {isProd ? 0 : filtered.length} results
               </p>
             </div>
 
-            {filtered.length === 0 ? (
+            {isProd || filtered.length === 0 ? (
               <FilteredListEmptyState
                 className="mt-10"
                 icon={UserSearch}
-                title="No advisors match this search"
-                description="Try another keyword or filter to find operators and specialists in the directory."
+                title="Advisor directory coming soon"
+                description="We're currently curating our advisor network to bring you the most relevant clinical and commercial connections. Check back shortly for the full directory."
               />
             ) : (
               <div className="flex flex-col">

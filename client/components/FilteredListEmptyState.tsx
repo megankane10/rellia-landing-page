@@ -12,10 +12,10 @@ type FilteredListEmptyStateProps = {
 const FilteredListEmptyState = ({ icon: Icon, title, description, className }: FilteredListEmptyStateProps) => (
   <div className={cn("py-6 text-center md:py-10", className)} role="status" aria-live="polite">
     <div className="mb-6 flex justify-center md:mb-8" aria-hidden>
-      <Icon className="h-16 w-16 text-rellia-teal md:h-24 md:w-24" strokeWidth={1.15} />
+      <Icon className="h-20 w-20 text-rellia-teal md:h-28 md:w-28" strokeWidth={1.2} />
     </div>
-    <p className="font-host-grotesk text-3xl font-bold leading-tight text-black md:text-4xl md:leading-tight">{title}</p>
-    <p className="mx-auto mt-5 max-w-[480px] font-urbanist text-base text-black/60 md:text-lg">{description}</p>
+    <p className="font-host-grotesk text-3xl font-bold leading-tight text-rellia-teal md:text-4xl md:leading-tight">{title}</p>
+    <p className="mx-auto mt-4 max-w-[520px] font-urbanist text-base font-medium text-black/70 md:text-lg">{description}</p>
   </div>
 )
 

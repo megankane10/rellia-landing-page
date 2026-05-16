@@ -27,6 +27,7 @@ import {
   type Specialty,
   type FounderLevel,
 } from "@/data/founderDirectory";
+import { isProductionHostname } from "@/lib/sanity";
 
 /** Gray-teal tone for directory heroes */
 const DIRECTORY_TITLE_CLASS =
@@ -279,6 +280,7 @@ export default function FoundersDirectory() {
   const navigate = useNavigate();
   const tag = NETWORK_PATH_ROLE_TAG["founder"];
   const TagIcon = tag.icon;
+  const isProd = isProductionHostname();
 
   return (
     <div className="min-h-screen overflow-x-hidden bg-white font-host-grotesk">
@@ -405,16 +407,16 @@ export default function FoundersDirectory() {
 
             <div className="mb-6 flex items-center justify-between border-b border-black/10 pb-4">
               <p className="font-urbanist text-sm font-semibold text-black/60">
-                Showing {paginated.length} of {filtered.length} results
+                Showing {isProd ? 0 : paginated.length} of {isProd ? 0 : filtered.length} results
               </p>
             </div>
 
-            {filtered.length === 0 ? (
+            {isProd || filtered.length === 0 ? (
               <FilteredListEmptyState
                 className="mt-10"
                 icon={Building2}
-                title="No companies match this search"
-                description="Adjust your keywords, specialty, or category filters to explore the alumni directory."
+                title="Alumni directory coming soon"
+                description="We're currently curating our alumni network to bring you the most relevant founder connections. Check back shortly for the full directory."
               />
             ) : (
               <div className="flex flex-col">
