@@ -343,11 +343,11 @@ const ProgramPageLayout = ({
           </div>
         </section>
 
-        {q.testimonials && q.testimonials.length > 0 ? (
+        {!isWaitlist && (q.testimonials && q.testimonials.length > 0 ? (
           <ProgramTrustedMembersSection testimonials={q.testimonials} />
         ) : cmsSlug === "qms" ? (
           <ProgramTrustedMembersSection />
-        ) : null}
+        ) : null)}
 
         {/* ─── How It Works ─── */}
         <section className="py-16 md:py-24 bg-white">

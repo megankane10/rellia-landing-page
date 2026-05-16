@@ -38,7 +38,7 @@ const Payment = lazy(() => import("./pages/Payment"))
 const ProgramsLayout = lazy(() => import("./pages/programs/ProgramsLayout"))
 const Stories = lazy(() => import("./pages/Stories"))
 const StoryPost = lazy(() => import("./pages/StoryPost"))
-const IndustryPartnersDirectory = lazy(() => import("./pages/IndustryPartnersDirectory"))
+const Consulting = lazy(() => import("./pages/Consulting"))
 const FoundersDirectory = lazy(() => import("./pages/network/FoundersDirectory"))
 const FounderProfile = lazy(() => import("./pages/network/FounderProfile"))
 const AdvisorsDirectory = lazy(() => import("./pages/network/AdvisorsDirectory"))
@@ -47,6 +47,22 @@ const TermsofUse = lazy(() => import("./pages/TermsofUse"))
 const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"))
 const CmsCatchAll = lazy(() => import("./pages/CmsCatchAll"))
 const StudioRedirect = lazy(() => import("./pages/StudioRedirect"))
+const PlaceholderPage = lazy(() => import("./pages/PlaceholderPage"))
+import { isProductionHostname } from "@/lib/sanity"
+
+/** 
+ * Gating logic:
+ * - main (production): Show placeholder pages (Coming Soon).
+ * - additions (dev/preview): Show all pages like originally.
+ */
+const showPlaceholder = isProductionHostname()
+
+/**
+ * Stories gating:
+ * - additions: Show placeholder for stories.
+ * - main: Show real stories (or whatever is in CMS).
+ */
+const showStoriesPlaceholder = !isProductionHostname()
 
 const ThirdPartyPreloads = () => {
   useEffect(() => {
@@ -111,16 +127,18 @@ export const AppRoutes = () => (
         <Route path="advisory-board-match" element={<ProgramsAdvisoryBoard />} />
         <Route path="design-your-brand-strategy" element={<ProgramsBrandStrategy />} />
         <Route path="design-your-brand" element={<Navigate to="/programs/design-your-brand-strategy" replace />} />
-        <Route path="regulatory-roadmap" element={<ProgramsRegulatoryRoadmap />} />
+        <Route path="regulatory-strategy-sprint" element={<ProgramsRegulatoryRoadmap />} />
+        <Route path="regulatory-roadmap" element={<Navigate to="/programs/regulatory-strategy-sprint" replace />} />
       </Route>
 
       <Route path="/network" element={<Network />} />
       <Route path="/apply" element={<Apply />} />
+      <Route path="/consulting" element={showPlaceholder ? <PlaceholderPage title="Consulting" /> : <Consulting />} />
       <Route path="/founders" element={<Founders />} />
-      <Route path="/founders/alumni" element={<FoundersDirectory />} />
-      <Route path="/founders/alumni/:id" element={<FounderProfile />} />
+      <Route path="/founders/alumni" element={showPlaceholder ? <PlaceholderPage title="Explore Alumni" /> : <FoundersDirectory />} />
+      <Route path="/founders/alumni/:id" element={showPlaceholder ? <PlaceholderPage title="Founder Profile" /> : <FounderProfile />} />
       <Route path="/advisors" element={<Advisors />} />
-      <Route path="/advisors/directory" element={<AdvisorsDirectory />} />
+      <Route path="/advisors/directory" element={showPlaceholder ? <PlaceholderPage title="Advisors Directory" /> : <AdvisorsDirectory />} />
       <Route path="/advisors/directory/:id" element={<AdvisorProfile />} />
       <Route path="/investors" element={<Investors />} />
       <Route path="/industry-partners" element={<Partners />} />
@@ -128,17 +146,17 @@ export const AppRoutes = () => (
 
       <Route path="/contact" element={<Contact />} />
       <Route path="/membership" element={<Payment />} />
-      <Route path="/stories" element={<Stories />} />
-      <Route path="/stories/:slug" element={<StoryPost />} />
+      <Route path="/stories" element={showStoriesPlaceholder ? <PlaceholderPage title="Stories" /> : <Stories />} />
+      <Route path="/stories/:slug" element={showStoriesPlaceholder ? <PlaceholderPage title="Stories" /> : <StoryPost />} />
 
       <Route path="/terms" element={<TermsofUse />} />
       <Route path="/privacy" element={<PrivacyPolicy />} />
       <Route path="/policy" element={<Navigate to="/privacy" replace />} />
 
-      <Route path="/industry-partners/directory" element={<IndustryPartnersDirectory />} />
+      <Route path="/industry-partners/directory" element={<Navigate to="/industry-partners" replace />} />
 
-      <Route path="/diagnostics" element={<DiagnosticLanding />} />
-      <Route path="/diagnostic-survey" element={<DiagnosticSurvey />} />
+      <Route path="/diagnostics" element={showPlaceholder ? <PlaceholderPage title="Startup Diagnostic" /> : <DiagnosticLanding />} />
+      <Route path="/diagnostic-survey" element={showPlaceholder ? <PlaceholderPage title="Startup Diagnostic" /> : <DiagnosticSurvey />} />
       <Route path="/survey" element={<Navigate to="/diagnostic-survey" replace />} />
 
       <Route path="/studio" element={<StudioRedirect />} />

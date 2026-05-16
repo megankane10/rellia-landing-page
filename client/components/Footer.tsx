@@ -43,7 +43,7 @@ const FALLBACK_FOOTER_COLUMNS: NavItem[] = [
       { label: "Stories", href: "/stories" },
       { label: "Explore Alumni", href: "/founders/alumni" },
       { label: "Explore Advisors", href: "/advisors/directory" },
-      { label: "Industry Partners Directory", href: "/industry-partners/directory" },
+      { label: "Industry Partners Directory", href: "https://proven.cc/rellia-health" },
     ],
   },
   {

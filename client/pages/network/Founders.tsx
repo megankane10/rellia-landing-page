@@ -376,12 +376,13 @@ function FoundersHero() {
             </RelliaAction>
             <RelliaAction
               asChild
-              variant="heroGhostOnTeal"
+              variant="outlineOnTeal"
               size="comfortable"
-              className="w-full min-w-0 justify-center border-white/45 hover:border-white/70 sm:min-w-[220px] sm:w-auto"
+              className="w-full min-w-0 justify-center sm:min-w-[220px] sm:w-auto"
             >
-              <Link to="/founders/alumni" className="inline-flex w-full cursor-pointer items-center justify-center sm:w-auto">
-                Browse alumni
+              <Link to="/founders/alumni" className="inline-flex w-full cursor-pointer items-center justify-center gap-2 sm:w-auto" aria-label="Explore alumni directory">
+                Explore Alumni
+                <ArrowRight className="h-4 w-4" aria-hidden />
               </Link>
             </RelliaAction>
           </div>
@@ -674,77 +675,6 @@ export default function Founders() {
 
         <JourneySplitSection />
 
-        <LightSection>
-          <div className="mx-auto max-w-[1300px]">
-            <Reveal>
-              <SectionHeading
-                animated={false}
-                title="Explore the network"
-                description="Browse alumni and advisors—then apply when you want curated intros and the right programming for your stage."
-                className="mt-5"
-              />
-            </Reveal>
-
-            <div className="mt-14 grid grid-cols-1 gap-6 md:mt-16 md:grid-cols-2 md:gap-7">
-              {[
-                {
-                  roleId: "founder" as const,
-                  title: "See our alumni portfolio",
-                  to: "/founders/alumni",
-                  imageSrc: "/images/founders-header.jpg",
-                },
-                {
-                  roleId: "advisor" as const,
-                  title: "Find the operators you want",
-                  to: "/advisors/directory",
-                  imageSrc: "/images/paths-advisor-pexels.jpg",
-                },
-              ].map((card, idx) => {
-                const tag = NETWORK_PATH_ROLE_TAG[card.roleId]
-                const TagIcon = tag.icon
-                return (
-                <Reveal key={card.to} delay={0.06 * idx}>
-                  <article className="group relative overflow-hidden rounded-[28px] bg-white shadow-sm transition-[transform,box-shadow] duration-300 hover:-translate-y-[1px] hover:shadow-md motion-reduce:transition-none">
-                    <div className="relative aspect-[5/4] w-full overflow-hidden md:aspect-[4/3]">
-                      <img
-                        src={card.imageSrc}
-                        alt=""
-                        className="h-full w-full object-cover transition duration-500 ease-out group-hover:scale-[1.03] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
-                        loading="lazy"
-                      />
-                      <div
-                        aria-hidden
-                        className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 via-40% to-transparent"
-                      />
-                      <div className="absolute right-4 top-4 inline-flex items-center gap-2 rounded-full bg-black/40 px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-white/95 ring-1 ring-white/15">
-                        <TagIcon className="h-3.5 w-3.5 shrink-0" aria-hidden />
-                        {card.roleId === "founder" ? "Alumni" : tag.label}
-                      </div>
-
-                      <div className="absolute inset-x-0 bottom-0 p-5 sm:p-6 md:p-8">
-                        <h3 className="font-host-grotesk text-xl font-normal tracking-tight text-white sm:text-2xl md:text-3xl">
-                          {card.title}
-                        </h3>
-
-                        <RelliaAction
-                          asChild
-                          variant="relliaCtaSecondary"
-                          size="compact"
-                          className="mt-4 w-fit px-4 py-2.5 text-sm shadow-sm sm:mt-5 sm:px-5 sm:py-3 sm:text-[0.9375rem]"
-                        >
-                          <Link to={card.to} className="inline-flex cursor-pointer items-center justify-center">
-                            Explore {card.roleId === "founder" ? "Alumni" : tag.label}
-                          </Link>
-                        </RelliaAction>
-                      </div>
-                    </div>
-                  </article>
-                </Reveal>
-                )
-              })}
-            </div>
-          </div>
-        </LightSection>
 
 
 

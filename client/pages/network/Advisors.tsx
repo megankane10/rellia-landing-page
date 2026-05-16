@@ -195,7 +195,7 @@ export default function Advisors() {
             }
             subtitle="Mentor serious health tech founders through structured, respectful engagements—stay sharp on innovation while keeping flexibility for your career."
             primaryCta={{ label: "Apply to join", to: "/apply" }}
-            secondaryCta={{ label: "Browse our Advisors", to: "/advisors/directory" }}
+            secondaryCta={{ label: "Explore Advisors", to: "/advisors/directory" }}
           />
         </div>
 

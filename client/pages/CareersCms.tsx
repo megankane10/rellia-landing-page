@@ -8,8 +8,10 @@ import PillTag from "@/components/PillTag"
 import WhyRellia from "@/components/WhyRellia"
 import { FilloutStandardEmbed } from "@fillout/react"
 import { FILLOUT_APPLY_FORM_ID, FILLOUT_EMBED_VIEWPORT_MIN_CLASS } from "@/lib/filloutApplyForm"
+
+const FILLOUT_CAREERS_VOLUNTEER_FORM_ID = "v3Vf793M89us"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
-import { motion, useReducedMotion } from "framer-motion"
+import { motion, useReducedMotion, AnimatePresence } from "framer-motion"
 import { BriefcaseBusiness, Building2, ExternalLink, Laptop, MapPin, Users } from "lucide-react"
 import type { CareersPageContent, HomeWhyFeature } from "@shared/cms/types"
 import { DEFAULT_GLOBAL_SETTINGS } from "@shared/cms/defaults"
@@ -19,6 +21,7 @@ import { cn } from "@/lib/utils"
 import { useQuery } from "@tanstack/react-query"
 import { sanityFetch } from "@/lib/sanity"
 import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo"
+import FilteredListEmptyState from "@/components/FilteredListEmptyState"
 import { useMemo, useState } from "react"
 
 const g = DEFAULT_GLOBAL_SETTINGS
@@ -116,17 +119,15 @@ type CareersJoinTeamCta = {
   ariaLabel: string
 }
 
-/** Grey-teal band: fixed viewport height; marquee overflows horizontally with soft edge mask */
 const CareersJoinTeamSection = ({
   primaryCta,
   secondaryCta,
-  showVolunteerForm,
 }: {
   primaryCta: CareersJoinTeamCta | null
   secondaryCta: CareersJoinTeamCta | null
-  showVolunteerForm: boolean
 }) => {
   const reduceMotion = useReducedMotion()
+  const [showApplyForm, setShowApplyForm] = useState(false)
 
   /** Narrow fade only at viewport edges; full-opacity center so the strip clearly overflows */
   const marqueeMaskStyle = {
@@ -140,129 +141,124 @@ const CareersJoinTeamSection = ({
     "relative h-40 w-[12rem] shrink-0 overflow-hidden rounded-2xl sm:h-[13.5rem] sm:w-[13.5rem] md:h-[15rem] md:w-[16.5rem] lg:h-[16.5rem] lg:w-[19rem]"
 
   return (
-    <section className="relative z-[2] w-full overflow-x-hidden bg-white">
-      <div className="relative flex min-h-0 shrink-0 flex-col overflow-x-hidden bg-rellia-greyTeal py-10 pb-16 md:h-[80svh] md:max-h-[80svh] md:pb-14 md:py-14">
-        <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-rellia-teal/15 via-rellia-greyTeal to-rellia-mint/15" />
-          <div className="absolute inset-0 opacity-90 [background:radial-gradient(ellipse_120%_70%_at_0%_0%,rgba(157,214,208,0.35),transparent_55%),radial-gradient(ellipse_90%_60%_at_100%_15%,rgba(13,53,64,0.18),transparent_50%),radial-gradient(ellipse_80%_55%_at_50%_100%,rgba(157,214,208,0.22),transparent_52%),radial-gradient(ellipse_45%_40%_at_75%_55%,rgba(255,255,255,0.14),transparent_45%)]" />
-          <div className="absolute inset-0 opacity-[0.65] mix-blend-soft-light [background-image:radial-gradient(ellipse_85%_45%_at_12%_-8%,rgba(255,255,255,0.2),transparent_55%),radial-gradient(ellipse_70%_50%_at_92%_22%,rgba(157,214,208,0.2),transparent_50%),radial-gradient(ellipse_60%_42%_at_48%_92%,rgba(13,53,64,0.1),transparent_52%)]" />
-          <div className="absolute -right-[10%] top-[-8%] h-[min(68vw,26rem)] w-[min(68vw,26rem)] rounded-full bg-gradient-to-bl from-rellia-mint/40 via-rellia-mint/15 to-transparent blur-[76px] md:top-0 md:h-[30rem] md:w-[30rem] md:blur-[92px]" />
-          <div className="absolute -left-[16%] top-[22%] h-[min(78vw,24rem)] w-[min(78vw,24rem)] rounded-[55%] bg-gradient-to-tr from-rellia-teal/28 via-rellia-teal/8 to-transparent blur-[84px]" />
-          <div className="absolute left-[55%] top-[35%] h-[min(70vw,22rem)] w-[min(85vw,28rem)] -translate-x-1/2 rounded-[48%] bg-gradient-to-b from-rellia-mint/25 via-rellia-teal/10 to-transparent blur-[88px] md:left-1/2" />
-          <div className="absolute -right-[4%] bottom-[0%] h-[min(55vw,18rem)] w-[min(55vw,20rem)] rounded-full bg-gradient-to-t from-white/30 via-rellia-mint/12 to-transparent blur-[70px]" />
-          <div className="absolute left-[-8%] bottom-[8%] h-[min(50vw,16rem)] w-[min(60vw,20rem)] rounded-[45%] bg-gradient-to-br from-rellia-mint/20 to-transparent blur-[64px]" />
-          <div className="absolute right-[20%] top-[12%] h-[min(40vw,12rem)] w-[min(48vw,14rem)] rounded-full bg-gradient-to-br from-white/22 to-rellia-mint/10 blur-[56px] md:right-[18%]" />
-          <div className="absolute left-0 top-0 h-[280px] w-[200px] -translate-x-[72px] md:h-[340px] md:w-[240px] md:-translate-x-[88px]">
-            <div className="absolute left-8 top-8 h-[220px] w-[2px] bg-gradient-to-b from-rellia-mint/45 via-rellia-mint/15 to-transparent md:h-[280px]" />
-            <div className="absolute left-12 top-12 h-[200px] w-px bg-gradient-to-b from-rellia-mint/35 via-white/12 to-transparent md:h-[260px]" />
-            <div className="absolute left-16 top-4 h-[240px] w-[2px] bg-gradient-to-b from-rellia-mint/38 via-rellia-mint/12 to-transparent md:h-[300px]" />
-            <div className="absolute left-[4.5rem] top-10 h-[210px] w-px bg-gradient-to-b from-white/20 via-rellia-mint/10 to-transparent md:h-[270px]" />
-            <div className="absolute left-[5.5rem] top-14 h-[190px] w-[2px] bg-gradient-to-b from-rellia-mint/32 via-white/8 to-transparent md:h-[250px]" />
-            <div className="absolute left-[6.75rem] top-6 h-[230px] w-px bg-gradient-to-b from-rellia-mint/28 via-rellia-mint/8 to-transparent md:h-[290px]" />
-            <div className="absolute left-[8rem] top-16 h-[180px] w-[2px] bg-gradient-to-b from-white/14 via-rellia-mint/12 to-transparent md:h-[240px]" />
-          </div>
-        </div>
+    <section className="relative z-[2] w-full overflow-hidden bg-white">
+      <AnimatePresence mode="wait">
+        {!showApplyForm ? (
+          <motion.div
+            key="content"
+            initial={{ opacity: 1 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.4 }}
+            className="relative flex min-h-0 shrink-0 flex-col overflow-x-hidden bg-rellia-greyTeal py-10 pb-16 md:h-[80svh] md:max-h-[80svh] md:pb-14 md:py-14"
+          >
+            <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-br from-rellia-teal/15 via-rellia-greyTeal to-rellia-mint/15" />
+              <div className="absolute inset-0 opacity-90 [background:radial-gradient(ellipse_120%_70%_at_0%_0%,rgba(157,214,208,0.35),transparent_55%),radial-gradient(ellipse_90%_60%_at_100%_15%,rgba(13,53,64,0.18),transparent_50%),radial-gradient(ellipse_80%_55%_at_50%_100%,rgba(157,214,208,0.22),transparent_52%),radial-gradient(ellipse_45%_40%_at_75%_55%,rgba(255,255,255,0.14),transparent_45%)]" />
+              <div className="absolute inset-0 opacity-[0.65] mix-blend-soft-light [background-image:radial-gradient(ellipse_85%_45%_at_12%_-8%,rgba(255,255,255,0.2),transparent_55%),radial-gradient(ellipse_70%_50%_at_92%_22%,rgba(157,214,208,0.2),transparent_50%),radial-gradient(ellipse_60%_42%_at_48%_92%,rgba(13,53,64,0.1),transparent_52%)]" />
+              <div className="absolute -right-[10%] top-[-8%] h-[min(68vw,26rem)] w-[min(68vw,26rem)] rounded-full bg-gradient-to-bl from-rellia-mint/40 via-rellia-mint/15 to-transparent blur-[76px] md:top-0 md:h-[30rem] md:w-[30rem] md:blur-[92px]" />
+              <div className="absolute -left-[16%] top-[22%] h-[min(78vw,24rem)] w-[min(78vw,24rem)] rounded-[55%] bg-gradient-to-tr from-rellia-teal/28 via-rellia-teal/8 to-transparent blur-[84px]" />
+              <div className="absolute left-[55%] top-[35%] h-[min(70vw,22rem)] w-[min(85vw,28rem)] -translate-x-1/2 rounded-[48%] bg-gradient-to-b from-rellia-mint/25 via-rellia-teal/10 to-transparent blur-[88px] md:left-1/2" />
+              <div className="absolute -right-[4%] bottom-[0%] h-[min(55vw,18rem)] w-[min(55vw,20rem)] rounded-full bg-gradient-to-t from-white/30 via-rellia-mint/12 to-transparent blur-[70px]" />
+              <div className="absolute left-[-8%] bottom-[8%] h-[min(50vw,16rem)] w-[min(60vw,20rem)] rounded-[45%] bg-gradient-to-br from-rellia-mint/20 to-transparent blur-[64px]" />
+              <div className="absolute right-[20%] top-[12%] h-[min(40vw,12rem)] w-[min(48vw,14rem)] rounded-full bg-gradient-to-br from-white/22 to-rellia-mint/10 blur-[56px] md:right-[18%]" />
+              <div className="absolute left-0 top-0 h-[280px] w-[200px] -translate-x-[72px] md:h-[340px] md:w-[240px] md:-translate-x-[88px]">
+                <div className="absolute left-8 top-8 h-[220px] w-[2px] bg-gradient-to-b from-rellia-mint/45 via-rellia-mint/15 to-transparent md:h-[280px]" />
+                <div className="absolute left-12 top-12 h-[200px] w-px bg-gradient-to-b from-rellia-mint/35 via-white/12 to-transparent md:h-[260px]" />
+                <div className="absolute left-16 top-4 h-[240px] w-[2px] bg-gradient-to-b from-rellia-mint/38 via-rellia-mint/12 to-transparent md:h-[300px]" />
+                <div className="absolute left-[4.5rem] top-10 h-[210px] w-px bg-gradient-to-b from-white/20 via-rellia-mint/10 to-transparent md:h-[270px]" />
+                <div className="absolute left-[5.5rem] top-14 h-[190px] w-[2px] bg-gradient-to-b from-rellia-mint/32 via-white/8 to-transparent md:h-[250px]" />
+                <div className="absolute left-[6.75rem] top-6 h-[230px] w-px bg-gradient-to-b from-rellia-mint/28 via-rellia-mint/8 to-transparent md:h-[290px]" />
+                <div className="absolute left-[8rem] top-16 h-[180px] w-[2px] bg-gradient-to-b from-white/14 via-rellia-mint/12 to-transparent md:h-[240px]" />
+              </div>
+            </div>
 
-        <div className="relative z-10 flex h-full min-h-0 w-full flex-1 flex-col">
-          <div className="mx-auto w-full max-w-[1300px] shrink-0 px-6 md:px-10">
-            <h2 className="max-w-3xl font-host-grotesk text-3xl font-bold leading-[1.12] tracking-tight text-black sm:text-[2rem] md:text-4xl lg:max-w-4xl lg:text-[2.65rem]">
-              Help us <span className="text-rellia-teal">empower the founders</span> who are changing the world.
-            </h2>
+            <div className="relative z-10 flex h-full min-h-0 w-full flex-1 flex-col">
+              <div className="mx-auto w-full max-w-[1300px] shrink-0 px-6 md:px-10">
+                <h2 className="max-w-3xl font-host-grotesk text-3xl font-bold leading-[1.12] tracking-tight text-black sm:text-[2rem] md:text-4xl lg:max-w-4xl lg:text-[2.65rem]">
+                  Help us <span className="text-rellia-teal">empower the founders</span> who are changing the world.
+                </h2>
 
-            {primaryCta || secondaryCta ? (
-              <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center md:mt-10">
-                {primaryCta ? (
-                  primaryCta.href ? (
-                    <a
-                      href={primaryCta.href}
-                      className={cn(joinTeamCtaSharedClass, "bg-rellia-teal hover:border-rellia-mint")}
-                      aria-label={primaryCta.ariaLabel}
-                    >
-                      <span className="relative z-10 text-white transition-colors duration-300 group-hover:text-rellia-teal">
-                        {primaryCta.label}
-                      </span>
-                    </a>
-                  ) : (
-                    <button
-                      type="button"
-                      onClick={primaryCta.onClick}
-                      className={cn(joinTeamCtaSharedClass, "bg-rellia-teal hover:border-rellia-mint")}
-                      aria-label={primaryCta.ariaLabel}
-                    >
-                      <span className="relative z-10 text-white transition-colors duration-300 group-hover:text-rellia-teal">
-                        {primaryCta.label}
-                      </span>
-                    </button>
-                  )
-                ) : null}
-                {secondaryCta ? (
-                  secondaryCta.href ? (
-                    <a
-                      href={secondaryCta.href}
-                      className={cn(
-                        joinTeamCtaSharedClass,
-                        "bg-transparent border-white/45 hover:border-rellia-mint",
-                      )}
-                      aria-label={secondaryCta.ariaLabel}
-                    >
-                      <span className="relative z-10 text-white transition-colors duration-300">
-                        {secondaryCta.label}
-                      </span>
-                    </a>
-                  ) : (
-                    <button
-                      type="button"
-                      onClick={secondaryCta.onClick}
-                      className={cn(
-                        joinTeamCtaSharedClass,
-                        "bg-transparent border-white/45 hover:border-rellia-mint",
-                      )}
-                      aria-label={secondaryCta.ariaLabel}
-                    >
-                      <span className="relative z-10 text-white transition-colors duration-300">
-                        {secondaryCta.label}
-                      </span>
-                    </button>
-                  )
+                {primaryCta || secondaryCta ? (
+                  <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center md:mt-10">
+                    {primaryCta ? (
+                      <button
+                        type="button"
+                        onClick={() => setShowApplyForm(true)}
+                        className={cn(joinTeamCtaSharedClass, "bg-rellia-teal hover:border-rellia-mint")}
+                        aria-label={primaryCta.ariaLabel}
+                      >
+                        <span className="relative z-10 text-white transition-colors duration-300 group-hover:text-rellia-teal">
+                          {primaryCta.label}
+                        </span>
+                      </button>
+                    ) : null}
+                    {secondaryCta ? (
+                      <button
+                        type="button"
+                        onClick={() => setShowApplyForm(true)}
+                        className={cn(joinTeamCtaSharedClass, "bg-transparent text-rellia-teal hover:border-rellia-mint")}
+                        aria-label={secondaryCta.ariaLabel}
+                      >
+                        <span className="relative z-10 text-rellia-teal transition-colors duration-300 group-hover:text-rellia-teal">
+                          {secondaryCta.label}
+                        </span>
+                      </button>
+                    ) : null}
+                  </div>
                 ) : null}
               </div>
-            ) : null}
 
-            {showVolunteerForm && (
-              <div className="mt-12 w-full max-w-4xl rounded-3xl border border-black/10 bg-white p-2 shadow-2xl md:mt-16">
+              <div className="mt-8 min-h-0 w-full flex-1 overflow-x-clip overflow-y-visible md:mt-12 md:overflow-y-hidden lg:mt-16">
+                <div
+                  className="relative h-full min-h-0 w-full overflow-x-clip py-2 md:py-3 [mask-size:100%_100%] [mask-repeat:no-repeat]"
+                  style={marqueeMaskStyle}
+                >
+                  <motion.div
+                    className="flex w-max min-w-max gap-3 will-change-transform md:gap-5"
+                    animate={reduceMotion ? { x: 0 } : { x: ["0%", "-50%"] }}
+                    transition={
+                      reduceMotion
+                        ? { duration: 0 }
+                        : { duration: JOIN_TEAM_MARQUEE_LOOP_SEC, repeat: Number.POSITIVE_INFINITY, ease: "linear" }
+                    }
+                  >
+                    {joinTeamMarqueeImages.map((src, index) => (
+                      <div key={`${src}-${index}`} className={joinTeamImageTileClass}>
+                        <img src={src} alt="" className="h-full w-full object-cover" loading="lazy" decoding="async" />
+                      </div>
+                    ))}
+                  </motion.div>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        ) : (
+          <motion.div
+            key="form"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, ease: "easeOut" }}
+            className={cn("w-full bg-white pt-12 pb-10", FILLOUT_EMBED_VIEWPORT_MIN_CLASS)}
+          >
+            <div className="mx-auto w-full max-w-[1300px] px-6 md:px-10">
+              <button
+                type="button"
+                onClick={() => setShowApplyForm(false)}
+                className="mb-8 font-host-grotesk text-sm font-semibold text-rellia-teal underline-offset-4 hover:underline"
+              >
+                ← Back to details
+              </button>
+              <div className="w-full min-h-[700px] md:min-h-[1000px]">
                 <FilloutStandardEmbed
-                  filloutId={FILLOUT_APPLY_FORM_ID}
+                  filloutId={FILLOUT_CAREERS_VOLUNTEER_FORM_ID}
                   inheritParameters
                   dynamicResize
                 />
               </div>
-            )}
-          </div>
-
-          <div className="mt-8 min-h-0 w-full flex-1 overflow-x-clip overflow-y-visible md:mt-12 md:overflow-y-hidden lg:mt-16">
-            <div
-              className="relative h-full min-h-0 w-full overflow-x-clip py-2 md:py-3 [mask-size:100%_100%] [mask-repeat:no-repeat]"
-              style={marqueeMaskStyle}
-            >
-              <motion.div
-                className="flex w-max min-w-max gap-3 will-change-transform md:gap-5"
-                animate={reduceMotion ? { x: 0 } : { x: ["0%", "-50%"] }}
-                transition={
-                  reduceMotion
-                    ? { duration: 0 }
-                    : { duration: JOIN_TEAM_MARQUEE_LOOP_SEC, repeat: Number.POSITIVE_INFINITY, ease: "linear" }
-                }
-              >
-                {joinTeamMarqueeImages.map((src, index) => (
-                  <div key={`${src}-${index}`} className={joinTeamImageTileClass}>
-                    <img src={src} alt="" className="h-full w-full object-cover" loading="lazy" decoding="async" />
-                  </div>
-                ))}
-              </motion.div>
             </div>
-          </div>
-        </div>
-      </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   )
 }
@@ -273,7 +269,6 @@ const normalizeCms = (raw: unknown): CareersPageContent => {
 }
 
 export default function CareersCms() {
-  const [showVolunteerForm, setShowVolunteerForm] = useState(false)
   const { data: careersCmsRaw } = useQuery({
     queryKey: ["cms", "careersPage"],
     queryFn: async () => {
@@ -326,7 +321,6 @@ export default function CareersCms() {
         <CareersJoinTeamSection 
           primaryCta={joinTeamPrimaryCta} 
           secondaryCta={joinTeamSecondaryCta} 
-          showVolunteerForm={showVolunteerForm}
         />
 
         <WhyRellia
@@ -422,16 +416,12 @@ export default function CareersCms() {
                       </Accordion>
                     </div>
                   ) : (
-                    <div className="flex flex-col items-center justify-center rounded-3xl border border-black/10 bg-white px-6 py-16 text-center shadow-sm md:py-24">
-                      <BriefcaseBusiness
-                        className="h-20 w-20 text-rellia-teal/35 md:h-28 md:w-28 md:text-rellia-teal/30"
-                        strokeWidth={1.25}
-                        aria-hidden
-                      />
-                      <p className="mt-8 max-w-lg font-urbanist text-lg font-medium leading-relaxed text-black/70 md:mt-10 md:text-xl">
-                        No vacant roles are available at the moment
-                      </p>
-                    </div>
+                    <FilteredListEmptyState
+                      className="mt-12"
+                      icon={BriefcaseBusiness}
+                      title="No open roles"
+                      description="No vacant roles are available at the moment. Check back later or follow us on LinkedIn for updates."
+                    />
                   )}
                 </div>
               </ScrollReveal>

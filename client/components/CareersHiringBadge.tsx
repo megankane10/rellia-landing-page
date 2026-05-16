@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils"
+import { isProductionHostname } from "@/lib/sanity"
 import { CAREERS_VOLUNTEER_ENABLED, careersHasPublishedOpenRoles } from "@shared/careersPageConfig"
 
 type CareersHiringBadgeProps = {
@@ -10,23 +11,5 @@ const badgeClassName =
 
 /** Mint pills next to Careers — hiring and/or volunteer when each mode is enabled */
 export const CareersHiringBadge = ({ className }: CareersHiringBadgeProps) => {
-  const showHiring = careersHasPublishedOpenRoles()
-  const showVolunteer = CAREERS_VOLUNTEER_ENABLED
-
-  if (!showHiring && !showVolunteer) return null
-
-  return (
-    <span className={cn("inline-flex flex-wrap items-center gap-1", className)}>
-      {showHiring ? (
-        <span className={cn(badgeClassName, "text-[10px]")} aria-hidden>
-          HIRING
-        </span>
-      ) : null}
-      {showVolunteer ? (
-        <span className={cn(badgeClassName, "text-[10px]")} aria-hidden>
-          VOLUNTEER
-        </span>
-      ) : null}
-    </span>
-  )
+  return null
 }

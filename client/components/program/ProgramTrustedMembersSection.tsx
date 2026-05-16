@@ -3,6 +3,7 @@ import { cn } from "@/lib/utils"
 import { ChevronLeft, ChevronRight, Quote } from "lucide-react"
 import ScrollReveal from "@/components/ScrollReveal"
 import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel"
+import { motion } from "framer-motion"
 
 import { type TrustedMemberTestimonial } from "@shared/cms/types"
 
@@ -40,18 +41,24 @@ type ProgramTrustedMembersSectionProps = {
   title?: string
   testimonials?: TrustedMemberTestimonial[]
   className?: string
+  /** Whether to auto-rotate the testimonials (default true) */
+  autoRotate?: boolean
 }
+
+const ROTATE_MS = 6000
 
 export default function ProgramTrustedMembersSection({
   title = "Already trusted by Rellia members",
   testimonials = DEFAULT_TESTIMONIALS,
   className,
+  autoRotate = true,
 }: ProgramTrustedMembersSectionProps) {
   const [carouselApi, setCarouselApi] = useState<any>(null)
   const [carouselIndex, setCarouselIndex] = useState(0)
   const [carouselCount, setCarouselCount] = useState(0)
   const [canScrollPrev, setCanScrollPrev] = useState(false)
   const [canScrollNext, setCanScrollNext] = useState(false)
+  const [cycleKey, setCycleKey] = useState(0)
 
   useEffect(() => {
     if (!carouselApi) return
@@ -60,11 +67,21 @@ export default function ProgramTrustedMembersSection({
       setCarouselCount(carouselApi.scrollSnapList?.().length ?? 0)
       setCanScrollPrev(Boolean(carouselApi.canScrollPrev?.()))
       setCanScrollNext(Boolean(carouselApi.canScrollNext?.()))
+      setCycleKey((k) => k + 1) // Reset timer on manual scroll
     }
     onSelect()
     carouselApi.on?.("select", onSelect)
     carouselApi.on?.("reInit", onSelect)
   }, [carouselApi])
+
+  useEffect(() => {
+    if (!autoRotate || !carouselApi || testimonials.length <= 1) return
+    const t = window.setTimeout(() => {
+      carouselApi.scrollNext()
+      setCycleKey((k) => k + 1)
+    }, ROTATE_MS)
+    return () => window.clearTimeout(t)
+  }, [carouselApi, autoRotate, carouselIndex, testimonials.length, cycleKey])
 
   return (
     <section className={cn("relative w-full bg-[#fdfdfd] py-16 md:py-24 px-6 md:px-10 overflow-hidden border-b border-black/[0.03]", className)}>
@@ -135,15 +152,25 @@ export default function ProgramTrustedMembersSection({
 
             <div className="mt-0 flex w-full flex-col gap-4">
               <div aria-hidden className="relative h-1 w-full overflow-hidden rounded-full bg-black/5">
-                <div
-                  className="h-full bg-rellia-teal transition-[width] duration-500 ease-out"
-                  style={{
-                    width:
-                      carouselCount <= 1
-                        ? "100%"
-                        : `${(carouselIndex / Math.max(1, carouselCount - 1)) * 100}%`,
-                  }}
-                />
+                {autoRotate && testimonials.length > 1 ? (
+                  <motion.div
+                    key={cycleKey}
+                    initial={{ width: 0 }}
+                    animate={{ width: "100%" }}
+                    transition={{ duration: ROTATE_MS / 1000, ease: "linear" }}
+                    className="h-full bg-rellia-teal"
+                  />
+                ) : (
+                  <div
+                    className="h-full bg-rellia-teal transition-[width] duration-500 ease-out"
+                    style={{
+                      width:
+                        carouselCount <= 1
+                          ? "100%"
+                          : `${(carouselIndex / Math.max(1, carouselCount - 1)) * 100}%`,
+                    }}
+                  />
+                )}
               </div>
 
               <div className="flex items-center justify-between">
@@ -153,7 +180,10 @@ export default function ProgramTrustedMembersSection({
                 <div className="flex items-center gap-2">
                   <button
                     type="button"
-                    onClick={() => carouselApi?.scrollPrev?.()}
+                    onClick={() => {
+                      carouselApi?.scrollPrev?.()
+                      setCycleKey((k) => k + 1)
+                    }}
                     disabled={!canScrollPrev}
                     className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-black/10 bg-white text-rellia-teal shadow-sm transition hover:bg-rellia-teal hover:border-rellia-teal hover:text-white disabled:opacity-40"
                     aria-label="Previous testimonial"
@@ -162,7 +192,10 @@ export default function ProgramTrustedMembersSection({
                   </button>
                   <button
                     type="button"
-                    onClick={() => carouselApi?.scrollNext?.()}
+                    onClick={() => {
+                      carouselApi?.scrollNext?.()
+                      setCycleKey((k) => k + 1)
+                    }}
                     disabled={!canScrollNext}
                     className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-black/10 bg-white text-rellia-teal shadow-sm transition hover:bg-rellia-teal hover:border-rellia-teal hover:text-white disabled:opacity-40"
                     aria-label="Next testimonial"

@@ -48,7 +48,6 @@ export default function Index() {
           testimonials={home.testimonials}
           showHeaderIcon={false}
         />
-        <FeaturedStories sectionClassName="pb-16 pt-10 md:pb-24 md:pt-12" />
         <RelliaCta
           title={home.ctaTitle}
           primary={{ label: home.ctaButtonLabel, to: home.ctaButtonPath }}
