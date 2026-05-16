@@ -9,6 +9,7 @@ interface ImportMetaEnv {
   readonly VITE_STRIPE_MONTHLY_PLAN_LINK?: string
   readonly VITE_STRIPE_ANNUAL_PLAN_LINK?: string
   readonly VITE_SUPABASE_URL?: string
+  readonly VITE_SUPABASE_ANON_KEY?: string
   readonly VITE_SUPABASE_PUBLISHABLE_KEY?: string
   /** QMS enrollment Fillout URL only (not Stripe) — optional override */
   readonly VITE_QMS_FILLOUT_FORM_URL?: string

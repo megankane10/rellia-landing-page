@@ -224,7 +224,7 @@ export default function Payment() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
                 transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                className="relative z-10 flex w-full min-h-[820px] flex-col bg-white"
+                className="relative z-10 flex w-full min-h-[820px] flex-col bg-white pt-28 md:pt-32"
               >
                 <div className="mx-auto flex w-full max-w-[1300px] items-center justify-between px-6 py-8 md:px-10 md:py-10">
                     <button 
