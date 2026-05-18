@@ -7,7 +7,7 @@ import ScrollReveal from "@/components/ScrollReveal"
 import { cn } from "@/lib/utils"
 import { getStoryBySlug } from "@/content/stories"
 import { getDefaultOgImageUrl, getSiteUrl } from "@/config/seo"
-import { ChevronLeft } from "lucide-react"
+import { ChevronLeft, Check } from "lucide-react"
 import { RichTextImageCarousel } from "@/components/RichTextImageCarousel"
 import { AnimatePresence, motion } from "framer-motion"
 import { PortableRichText } from "@/components/PortableRichText"
@@ -303,10 +303,17 @@ export default function StoryPost() {
                       <button
                         type="button"
                         onClick={handleCopyLink}
-                        className={shareToolbarButtonClassName}
+                        className={cn(
+                          shareToolbarButtonClassName,
+                          copyState === "copied" && "bg-rellia-mint text-rellia-teal border-rellia-teal shadow-md"
+                        )}
                         aria-label={copyState === "copied" ? "Link copied" : "Copy story link"}
                       >
-                        <ShareIconCopy />
+                        {copyState === "copied" ? (
+                          <Check className="h-5 w-5 shrink-0 animate-scale-in" />
+                        ) : (
+                          <ShareIconCopy />
+                        )}
                       </button>
 
                       <AnimatePresence mode="wait" initial={false}>

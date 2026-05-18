@@ -2,7 +2,7 @@ import { useState } from "react"
 import { Helmet } from "react-helmet-async"
 import { Link, useParams } from "react-router-dom"
 import { AnimatePresence, motion } from "framer-motion"
-import { Calendar, CalendarOff, ChevronLeft, ArrowLeft, History, MapPin, Ticket, Video } from "lucide-react"
+import { Calendar, CalendarOff, ChevronLeft, ArrowLeft, History, MapPin, Ticket, Video, Check } from "lucide-react"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
 import ScrollReveal from "@/components/ScrollReveal"
@@ -483,10 +483,17 @@ export default function EventDetail() {
                     <button
                       type="button"
                       onClick={handleCopyLink}
-                      className={shareToolbarButtonClassName}
+                      className={cn(
+                        shareToolbarButtonClassName,
+                        copyState === "copied" && "bg-rellia-mint text-rellia-teal border-rellia-teal shadow-md"
+                      )}
                       aria-label={copyState === "copied" ? "Link copied" : "Copy event link"}
                     >
-                      <ShareIconCopy />
+                      {copyState === "copied" ? (
+                        <Check className="h-5 w-5 shrink-0 animate-scale-in" />
+                      ) : (
+                        <ShareIconCopy />
+                      )}
                     </button>
 
                     <AnimatePresence mode="wait" initial={false}>

@@ -3,6 +3,7 @@ import { useState } from "react"
 import { PEXELS_OFFICE_COLLABORATION } from "@/config/pexelsFallbacks"
 import PageHeader from "@/components/PageHeader"
 import SectionHeading from "@/components/SectionHeading"
+import WhyRellia from "@/components/WhyRellia"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
 import LogoMarquee from "@/components/LogoMarquee"
@@ -135,7 +136,7 @@ function PipelinePhotoSection({
   return (
     <section className="relative overflow-hidden">
       <img
-        src="/images/metrics-bg-pexels-2.jpg"
+        src="https://images.pexels.com/photos/7578803/pexels-photo-7578803.jpeg?auto=compress&cs=tinysrgb&w=1600"
         alt=""
         className="pointer-events-none absolute inset-0 h-full w-full object-cover"
       />
@@ -241,30 +242,16 @@ export default function Investors() {
         />
         </div>
 
-        <LightSection className="bg-rellia-cream/20 pt-10 md:pt-14 pb-20 md:pb-32">
-          <div className="mx-auto max-w-[1300px]">
-            <SectionHeading
-              animated={false}
-              title="Benefits of investing alongside Rellia"
-              description="We shorten the distance between credible narrative and reality checks from people who have scaled in healthcare."
-              className="mt-5"
-            />
-          </div>
-          <div className="mx-auto mt-24 md:mt-32 grid max-w-[1300px] grid-cols-1 gap-12 sm:grid-cols-2 sm:gap-x-12 sm:gap-y-14 lg:grid-cols-4 lg:gap-x-10">
-            {INVESTOR_BENEFITS.map((b, idx) => {
-              const Icon = b.icon
-              return (
-                <Reveal key={b.title} delay={0.05 * idx}>
-                  <div className="flex max-w-sm flex-col gap-3">
-                    <Icon className="h-8 w-8 shrink-0 text-rellia-teal" aria-hidden />
-                    <h3 className="font-host-grotesk text-lg font-semibold tracking-tight text-rellia-teal">{b.title}</h3>
-                    <p className="font-urbanist text-base leading-relaxed text-black/70">{b.body}</p>
-                  </div>
-                </Reveal>
-              )
-            })}
-          </div>
-        </LightSection>
+        <WhyRellia
+          sectionTitle="Benefits of investing alongside Rellia"
+          sectionDescription="We shorten the distance between credible narrative and reality checks from people who have scaled in healthcare."
+          features={INVESTOR_BENEFITS.map((b) => ({
+            title: b.title,
+            description: b.body,
+            iconKey: "",
+          }))}
+          sectionClassName="bg-rellia-cream/20"
+        />
 
         <PipelinePhotoSection>
           <div className="mx-auto max-w-[1300px]">
@@ -368,7 +355,7 @@ export default function Investors() {
             <LogoMarquee
               marks={INVESTOR_BRAND_SVG_MARKS}
               showHeading={false}
-              density="comfortable"
+              density="default"
               sectionClassName="bg-white py-4"
             />
           </div>

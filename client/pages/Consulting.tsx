@@ -25,22 +25,22 @@ const WHEN_TO_USE = [
 const CONSULTING_SERVICES = [
   {
     title: "Regulatory Consulting",
-    imageSrc: "https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=800",
+    imageSrc: "https://images.pexels.com/photos/3825539/pexels-photo-3825539.jpeg?auto=compress&cs=tinysrgb&w=800",
     icon: ShieldCheck,
   },
   {
     title: "Clinical Trials",
-    imageSrc: "https://images.pexels.com/photos/3184339/pexels-photo-3184339.jpeg?auto=compress&cs=tinysrgb&w=800",
+    imageSrc: "https://images.pexels.com/photos/2280549/pexels-photo-2280549.jpeg?auto=compress&cs=tinysrgb&w=800",
     icon: Stethoscope,
   },
   {
     title: "Marketing Strategy",
-    imageSrc: "https://images.pexels.com/photos/3184360/pexels-photo-3184360.jpeg?auto=compress&cs=tinysrgb&w=800",
+    imageSrc: "https://images.pexels.com/photos/8376155/pexels-photo-8376155.jpeg?auto=compress&cs=tinysrgb&w=800",
     icon: Megaphone,
   },
   {
     title: "Branding",
-    imageSrc: "https://images.pexels.com/photos/3184296/pexels-photo-3184296.jpeg?auto=compress&cs=tinysrgb&w=800",
+    imageSrc: "https://images.pexels.com/photos/4050824/pexels-photo-4050824.jpeg?auto=compress&cs=tinysrgb&w=800",
     icon: Palette,
   },
 ] as const
@@ -70,7 +70,7 @@ function FitSectionSplit() {
         <Reveal delay={0.06}>
           <div className="overflow-hidden rounded-2xl border border-rellia-teal/15 shadow-[0_28px_80px_-48px_rgba(13,53,64,0.4)]">
             <img
-              src={PEXELS_HEALTH_MEETING}
+              src="https://images.pexels.com/photos/3760067/pexels-photo-3760067.jpeg?auto=compress&cs=tinysrgb&w=1200"
               alt="Clinical and commercial leaders in a focused working session"
               className="aspect-[4/3] h-full w-full object-cover"
               loading="lazy"
@@ -115,7 +115,7 @@ function ServicesGridSection() {
                     <h3 className="font-host-grotesk text-2xl font-bold leading-tight tracking-tight text-white drop-shadow-sm">
                       {s.title}
                     </h3>
-                    <Link to="/contact" className="inline-flex items-center gap-2 font-host-grotesk text-sm font-semibold text-rellia-mint transition-colors hover:text-white">
+                    <Link to="/contact" className="inline-flex items-center gap-2 font-host-grotesk text-sm font-semibold text-rellia-mint hover:underline hover:underline-offset-4">
                       Learn More
                       <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" aria-hidden />
                     </Link>
@@ -144,7 +144,7 @@ export default function Consulting() {
         <div className="lg:flex lg:h-[82vh] lg:flex-col">
           <RoleHero
             eyebrowLabel="Consulting"
-            imageSrc={PEXELS_HEALTH_MEETING}
+            imageSrc="https://images.pexels.com/photos/7088483/pexels-photo-7088483.jpeg?auto=compress&cs=tinysrgb&w=1200"
             className="lg:flex-1"
             title={
               <>

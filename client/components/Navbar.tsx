@@ -13,8 +13,6 @@ const LOGO_DEFAULT = "/images/logo-rellia-footer.webp"
 const LOGO_FILLED = "/images/logo-rellia-filled.webp"
 
 const FALLBACK_NAV_PRIMARY: NavItem[] = [
-  { label: "Programs", href: "/programs" },
-  { label: "Events", href: "/events" },
   {
     label: "Network",
     href: "/network",
@@ -25,6 +23,8 @@ const FALLBACK_NAV_PRIMARY: NavItem[] = [
       { label: "Advisors", href: "/advisors" },
     ],
   },
+  { label: "Programs", href: "/programs" },
+  { label: "Events", href: "/events" },
   {
     label: "About",
     href: "/about",

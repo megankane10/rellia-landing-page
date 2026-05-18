@@ -17,7 +17,7 @@ import {
   ADVISOR_FILTER_OPTIONS,
   type AdvisorDirectoryEntry,
 } from "@/data/advisorDirectory";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { NETWORK_PATH_ROLE_TAG } from "@/lib/networkPathRoles";
 import { isProductionHostname } from "@/lib/sanity";
 
@@ -101,7 +101,16 @@ export default function AdvisorsDirectory() {
   const [query, setQuery] = useState("");
   const [legacyFilter, setLegacyFilter] = useState<string>("all")
   const [groupFilters, setGroupFilters] = useState<Record<string, string>>({})
+  const location = useLocation();
+  const [countryFilter, setCountryFilter] = useState<string>("all");
 
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const country = params.get("country");
+    if (country) {
+      setCountryFilter(country);
+    }
+  }, [location.search]);
   const advisors = useMemo<AdvisorDirectoryEntry[]>(() => {
     if (isProductionHostname()) return []
 
@@ -154,16 +163,45 @@ export default function AdvisorsDirectory() {
     return optionsByGroupId
   }, [advisors, dynamicGroups])
 
+  const countryFilters = useMemo<Array<{ id: string; label: string }>>(() => {
+    const list = new Set<string>();
+    advisors.forEach((a: any) => {
+      if (Array.isArray(a.country)) {
+        a.country.forEach((ct: string) => {
+          if (ct?.trim()) list.add(ct.trim());
+        });
+      } else if (typeof a.country === "string" && a.country.trim()) {
+        list.add(a.country.trim());
+      }
+    });
+    return [
+      { id: "all", label: "All Countries" },
+      ...Array.from(list)
+        .sort((a, b) => a.localeCompare(b))
+        .map((ct) => ({ id: ct, label: ct })),
+    ];
+  }, [advisors]);
+
   const filterOptions = useMemo<Array<{ id: string; label: string }>>(() => {
     if (Array.isArray(cmsFilters) && cmsFilters.length > 0) {
-      return [{ id: "all", label: "All" }, ...cmsFilters.map((f) => ({ id: f.label, label: f.label }))]
+      return [{ id: "all", label: "All Specialties" }, ...cmsFilters.map((f) => ({ id: f.label, label: f.label }))]
     }
-    return ADVISOR_FILTER_OPTIONS as Array<{ id: string; label: string }>
+    return [
+      { id: "all", label: "All Specialties" },
+      ...(ADVISOR_FILTER_OPTIONS as Array<{ id: string; label: string }>).filter((f) => f.id !== "all")
+    ]
   }, [cmsFilters])
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     return advisors.filter((a) => {
+      // Filter by Country
+      if (countryFilter !== "all") {
+        const countries = Array.isArray(a.country) ? a.country : (a.country ? [a.country] : []);
+        const hasMatch = countries.some((ct: string) => ct.trim().toLowerCase() === countryFilter.toLowerCase());
+        if (!hasMatch) return false;
+      }
+
       if (dynamicGroups.length > 0) {
         for (const group of dynamicGroups) {
           const selected = (groupFilters[group.id] ?? "all").trim()
@@ -184,7 +222,7 @@ export default function AdvisorsDirectory() {
         `${a.name} ${a.organization} ${a.role} ${a.industries.join(" ")} ${a.focus} ${a.bio}`.toLowerCase();
       return blob.includes(q);
     });
-  }, [advisors, dynamicGroups, groupFilters, legacyFilter, query]);
+  }, [advisors, dynamicGroups, groupFilters, legacyFilter, query, countryFilter]);
 
   const [page, setPage] = useState(1);
   const itemsPerPage = 12;
@@ -197,7 +235,7 @@ export default function AdvisorsDirectory() {
   // Reset page when filters change
   useEffect(() => {
     setPage(1);
-  }, [query, legacyFilter, groupFilters]);
+  }, [query, legacyFilter, groupFilters, countryFilter]);
 
   const EASE_OUT: [number, number, number, number] = [0.16, 1, 0.3, 1];
   const container: Variants = {
@@ -272,62 +310,96 @@ export default function AdvisorsDirectory() {
                 />
               </label>
 
-              {dynamicGroups.length > 0 ? (
-                <div className="flex w-full flex-col gap-3 md:w-auto md:flex-row md:flex-wrap md:items-center">
-                  {dynamicGroups.map((g) => {
-                    const options = dynamicGroupOptions.get(g.id) ?? []
-                    const value = groupFilters[g.id] ?? "all"
-                    return (
-                      <div key={g.id} className="flex w-full md:w-auto">
-                        <div className="relative w-full md:w-auto">
-                          <select
-                            value={value}
-                            onChange={(e) =>
-                              setGroupFilters((prev) => ({
-                                ...prev,
-                                [g.id]: e.target.value,
-                              }))
-                            }
-                            className="h-14 w-full appearance-none rounded-2xl border border-black/10 bg-black/[0.02] pl-5 pr-14 md:min-w-[200px] font-urbanist text-base font-semibold text-black/80 outline-none hover:border-black/20 focus-visible:ring-2 focus-visible:ring-rellia-teal focus-visible:bg-white cursor-pointer"
-                            aria-label={`Filter by ${g.title}`}
-                          >
-                            <option value="all">All {g.title}</option>
-                            {options.map((opt) => (
-                              <option key={opt} value={opt}>
-                                {opt}
-                              </option>
-                            ))}
-                          </select>
-                          <ChevronDown
-                            className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-black/45"
-                            aria-hidden
-                          />
+              <div className="flex w-full flex-col gap-3 md:w-auto md:flex-row md:flex-wrap md:items-center">
+                {/* Country Filter Select */}
+                <div className="relative w-full md:w-auto">
+                  <select
+                    value={countryFilter}
+                    onChange={(e) => setCountryFilter(e.target.value)}
+                    className="h-14 w-full appearance-none rounded-2xl border border-black/10 bg-black/[0.02] pl-5 pr-14 md:min-w-[200px] font-urbanist text-base font-semibold text-black/80 outline-none hover:border-black/20 focus-visible:ring-2 focus-visible:ring-rellia-teal focus-visible:bg-white cursor-pointer"
+                    aria-label="Filter by Country"
+                  >
+                    {countryFilters.map((f) => (
+                      <option key={f.id} value={f.id}>
+                        {f.label}
+                      </option>
+                    ))}
+                  </select>
+                  <ChevronDown
+                    className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-black/45"
+                    aria-hidden
+                  />
+                </div>
+
+                {dynamicGroups.length > 0 ? (
+                  <>
+                    {dynamicGroups.map((g) => {
+                      const options = dynamicGroupOptions.get(g.id) ?? []
+                      const value = groupFilters[g.id] ?? "all"
+                      let displayTitle = g.title;
+                      if (displayTitle.toLowerCase() === "specialty") {
+                        displayTitle = "Specialties";
+                      } else if (displayTitle.toLowerCase() === "industry") {
+                        displayTitle = "Industries";
+                      } else if (displayTitle.toLowerCase() === "country") {
+                        displayTitle = "Countries";
+                      } else if (displayTitle.toLowerCase() === "business model") {
+                        displayTitle = "Business Models";
+                      } else if (!displayTitle.endsWith("s")) {
+                        displayTitle = displayTitle + "s";
+                      }
+                      return (
+                        <div key={g.id} className="flex w-full md:w-auto">
+                          <div className="relative w-full md:w-auto">
+                            <select
+                              value={value}
+                              onChange={(e) =>
+                                setGroupFilters((prev) => ({
+                                  ...prev,
+                                  [g.id]: e.target.value,
+                                }))
+                              }
+                              className="h-14 w-full appearance-none rounded-2xl border border-black/10 bg-black/[0.02] pl-5 pr-14 md:min-w-[200px] font-urbanist text-base font-semibold text-black/80 outline-none hover:border-black/20 focus-visible:ring-2 focus-visible:ring-rellia-teal focus-visible:bg-white cursor-pointer"
+                              aria-label={`Filter by ${g.title}`}
+                            >
+                              <option value="all">All {displayTitle}</option>
+                              {options.map((opt) => (
+                                <option key={opt} value={opt}>
+                                  {opt}
+                                </option>
+                              ))}
+                            </select>
+                            <ChevronDown
+                              className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-black/45"
+                              aria-hidden
+                            />
+                          </div>
                         </div>
-                      </div>
-                    )
-                  })}
-                </div>
-              ) : (
-                <div className="flex w-full shrink-0 md:w-auto">
-                  <div className="relative w-full md:w-auto">
-                    <select
-                      value={legacyFilter}
-                      onChange={(e) => setLegacyFilter(e.target.value)}
-                      className="h-14 w-full appearance-none rounded-2xl border border-black/10 bg-black/[0.02] pl-5 pr-14 md:min-w-[200px] font-urbanist text-base font-semibold text-black/80 outline-none hover:border-black/20 focus-visible:ring-2 focus-visible:ring-rellia-teal focus-visible:bg-white cursor-pointer"
-                    >
-                      {filterOptions.map((f) => (
-                        <option key={f.id} value={f.id}>
-                          {f.label}
-                        </option>
-                      ))}
-                    </select>
-                    <ChevronDown
-                      className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-black/45"
-                      aria-hidden
-                    />
+                      )
+                    })}
+                  </>
+                ) : (
+                  <div className="flex w-full shrink-0 md:w-auto">
+                    <div className="relative w-full md:w-auto">
+                      <select
+                        value={legacyFilter}
+                        onChange={(e) => setLegacyFilter(e.target.value)}
+                        className="h-14 w-full appearance-none rounded-2xl border border-black/10 bg-black/[0.02] pl-5 pr-14 md:min-w-[200px] font-urbanist text-base font-semibold text-black/80 outline-none hover:border-black/20 focus-visible:ring-2 focus-visible:ring-rellia-teal focus-visible:bg-white cursor-pointer"
+                      >
+                        {filterOptions.map((f) => (
+                          <option key={f.id} value={f.id}>
+                            {f.label}
+                          </option>
+                        ))}
+                      </select>
+                      <ChevronDown
+                        className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-black/45"
+                        aria-hidden
+                      />
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
+              </div>
             </div>
 
             <div className="mb-6 flex items-center justify-between border-b border-black/10 pb-4">

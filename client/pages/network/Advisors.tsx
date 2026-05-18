@@ -1,5 +1,6 @@
 import PageHeader from "@/components/PageHeader"
 import SectionHeading from "@/components/SectionHeading"
+import WhyRellia from "@/components/WhyRellia"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
 import RelliaAction from "@/components/RelliaAction"
@@ -203,31 +204,16 @@ export default function Advisors() {
         <ScheduleSplit />
         <BenefitsSplitSection />
 
-        <LightSection>
-          <div className="mx-auto max-w-[1300px]">
-            <SectionHeading
-              animated={false}
-              title="What we look for"
-              description="Effective advisors combine depth, specificity, and respect for founder momentum."
-              className="mt-5"
-            />
-            <div className="mt-14 grid grid-cols-1 gap-12 md:grid-cols-2 md:gap-x-14 md:gap-y-12 lg:gap-x-16">
-              {CRITERIA_ITEMS.map((c) => {
-                const Icon = c.icon
-                return (
-                  <Reveal key={c.title}>
-                    <div className="flex max-w-xl flex-col gap-3">
-                      <Icon className="h-8 w-8 shrink-0 text-rellia-teal" aria-hidden />
-                      <h3 className="font-host-grotesk text-lg font-semibold text-rellia-teal md:text-xl">{c.title}</h3>
-                      <p className="font-urbanist text-base font-medium leading-relaxed text-black/65">{c.summary}</p>
-                      <p className="font-urbanist text-base leading-relaxed text-black/70">{c.detail}</p>
-                    </div>
-                  </Reveal>
-                )
-              })}
-            </div>
-          </div>
-        </LightSection>
+        <WhyRellia
+          sectionTitle="What we look for"
+          sectionDescription="Effective advisors combine depth, specificity, and respect for founder momentum."
+          features={CRITERIA_ITEMS.map((c) => ({
+            title: c.title,
+            description: `${c.summary} ${c.detail}`,
+            iconKey: "",
+          }))}
+          sectionClassName="bg-white"
+        />
 
         <RelliaCta
           title="**Apply** as an advisor"

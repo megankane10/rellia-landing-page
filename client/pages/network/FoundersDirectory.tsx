@@ -11,21 +11,18 @@ import {
 } from "framer-motion";
 import { Building2, Search, ChevronDown } from "lucide-react";
 import FilteredListEmptyState from "@/components/FilteredListEmptyState";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { NETWORK_PATH_ROLE_TAG } from "@/lib/networkPathRoles";
 import {
   useAlumniCompanies,
-  useFounderLevels,
   useFounderSpecialties,
   useDirectoryFilterGroups,
 } from "@/hooks/useCmsDocuments";
 import {
   FOUNDER_DIRECTORY,
   ALL_SPECIALTIES,
-  ALL_LEVELS,
   type FounderCompany,
   type Specialty,
-  type FounderLevel,
 } from "@/data/founderDirectory";
 import { isProductionHostname } from "@/lib/sanity";
 
@@ -71,17 +68,23 @@ function FounderDirectoryCard({
           {company.logoName}
         </h3>
         <div className="mt-2 flex flex-wrap gap-2">
-          <span className="rounded-full border border-rellia-teal/20 bg-rellia-mint/20 px-2.5 py-0.5 font-urbanist text-[11px] font-bold text-rellia-teal">
-            {company.level}
-          </span>
           {company.specialties.map((s) => (
             <span
               key={s}
-              className="rounded-full border border-black/10 bg-black/[0.03] px-2.5 py-0.5 font-urbanist text-[11px] font-bold text-black/60"
+              className="rounded-full border border-rellia-teal/20 bg-rellia-mint/20 px-2.5 py-0.5 font-urbanist text-[11px] font-bold text-rellia-teal"
             >
               {s}
             </span>
           ))}
+          {Array.isArray((company as any).businessModel) &&
+            (company as any).businessModel.map((bm: string) => (
+              <span
+                key={bm}
+                className="rounded-full border border-black/10 bg-black/[0.03] px-2.5 py-0.5 font-urbanist text-[11px] font-bold text-black/60"
+              >
+                {bm}
+              </span>
+            ))}
         </div>
         <p className="mt-4 line-clamp-3 font-urbanist text-[13px] leading-relaxed text-black/70 sm:text-sm">
           {company.shortDescription}
@@ -93,15 +96,36 @@ function FounderDirectoryCard({
 
 export default function FoundersDirectory() {
   const reduceMotion = useReducedMotion();
+  const location = useLocation();
   const { data: cmsCompanies } = useAlumniCompanies();
-  const { data: cmsLevels } = useFounderLevels();
   const { data: cmsSpecialties } = useFounderSpecialties();
-  const { data: cmsFilterGroups } = useDirectoryFilterGroups()
+  const { data: cmsFilterGroups } = useDirectoryFilterGroups();
   const [query, setQuery] = useState("");
   const [specialtyFilter, setSpecialtyFilter] = useState<string>("all");
-  const [levelFilter, setLevelFilter] = useState<string>("all");
-  const [groupFilters, setGroupFilters] = useState<Record<string, string>>({})
+  const [countryFilter, setCountryFilter] = useState<string>("all");
+  const [businessModelFilter, setBusinessModelFilter] = useState<string>("all");
+  const [groupFilters, setGroupFilters] = useState<Record<string, string>>({});
   const [activeId, setActiveId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const country = params.get("country");
+    const specialty = params.get("specialty");
+    const businessModel = params.get("businessModel");
+
+    if (country) {
+      setCountryFilter(country);
+      setGroupFilters((prev) => ({ ...prev, country: country }));
+    }
+    if (specialty) {
+      setSpecialtyFilter(specialty);
+      setGroupFilters((prev) => ({ ...prev, specialty: specialty }));
+    }
+    if (businessModel) {
+      setBusinessModelFilter(businessModel);
+      setGroupFilters((prev) => ({ ...prev, "business-model": businessModel }));
+    }
+  }, [location.search]);
 
   const companies = useMemo<FounderCompany[]>(() => {
     if (isProductionHostname()) return []
@@ -118,13 +142,14 @@ export default function FoundersDirectory() {
             tagline: c.tagline ?? "",
             specialties: Array.isArray(c.specialties) ? c.specialties : [],
             level: c.level,
+            businessModel: Array.isArray(c.businessModel) ? c.businessModel : [],
             shortDescription: c.shortDescription ?? "",
             longDescription: c.longDescription ?? "",
             websiteUrl: c.websiteUrl ?? "",
             traction: c.traction ?? "",
             relliaCollaboration: c.relliaCollaboration ?? "",
             imageSrc: "",
-            country: c.country ?? "",
+            country: Array.isArray(c.country) ? c.country : (c.country ? [c.country] : []),
             yearJoined: typeof c.yearJoined === "number" ? c.yearJoined : 0,
             founders: Array.isArray(c.founders) ? c.founders : [],
             programs: Array.isArray(c.programs) ? c.programs : [],
@@ -146,6 +171,13 @@ export default function FoundersDirectory() {
         for (const group of dynamicGroups) {
           const selected = (groupFilters[group.id] ?? "all").trim()
           if (!selected || selected === "all") continue
+
+          if (group.id === "country" || group.id.toLowerCase().includes("country")) {
+            const hasMatch = c.country.some((ct: string) => ct.trim().toLowerCase() === selected.toLowerCase());
+            if (!hasMatch) return false;
+            continue;
+          }
+
           const assignments = Array.isArray((c as any)?.directoryFilters) ? (c as any).directoryFilters : []
           const match = assignments.some((as: any) => {
             if ((as?.groupId ?? "").trim() !== group.id) return false
@@ -155,42 +187,68 @@ export default function FoundersDirectory() {
           if (!match) return false
         }
       } else {
-        const matchLevel = levelFilter === "all" || c.level === levelFilter;
+        const matchCountry =
+          countryFilter === "all" ||
+          c.country.includes(countryFilter);
         const matchSpecialty =
           specialtyFilter === "all" ||
           c.specialties.includes(specialtyFilter as Specialty);
-        if (!matchLevel || !matchSpecialty) return false;
+        const matchBusinessModel =
+          businessModelFilter === "all" ||
+          (c.businessModel && c.businessModel.includes(businessModelFilter));
+        if (!matchCountry || !matchSpecialty || !matchBusinessModel) return false;
       }
 
       if (!q) return true;
+      const specialtiesStr = c.specialties.join(" ");
+      const countriesStr = c.country.join(" ");
+      const businessModelsStr = c.businessModel ? c.businessModel.join(" ") : "";
       const blob =
-        `${c.logoName} ${c.shortDescription} ${c.specialties.join(" ")} ${c.level} ${c.traction}`.toLowerCase();
+        `${c.logoName} ${c.shortDescription} ${specialtiesStr} ${countriesStr} ${businessModelsStr} ${c.traction}`.toLowerCase();
       return blob.includes(q);
     });
-  }, [companies, cmsFilterGroups, groupFilters, query, specialtyFilter, levelFilter]);
+  }, [companies, cmsFilterGroups, groupFilters, query, specialtyFilter, countryFilter, businessModelFilter]);
 
-  const levelFilters = useMemo<Array<{ id: string; label: string }>>(() => {
-    if (Array.isArray(cmsLevels) && cmsLevels.length > 0) {
-      return [
-        { id: "all", label: "All Levels" },
-        ...cmsLevels.map((l) => ({ id: l.label, label: l.label })),
-      ];
+  const countryFilters = useMemo<Array<{ id: string; label: string }>>(() => {
+    const countries = new Set<string>();
+    for (const c of companies) {
+      if (Array.isArray(c.country)) {
+        c.country.forEach((ct) => {
+          if (ct) countries.add(ct);
+        });
+      }
     }
     return [
-      { id: "all", label: "All Levels" },
-      ...ALL_LEVELS.map((l) => ({ id: l, label: l })),
+      { id: "all", label: "All Countries" },
+      ...Array.from(countries).sort().map((c) => ({ id: c, label: c })),
     ];
-  }, [cmsLevels]);
+  }, [companies]);
+
+  const businessModelFilters = useMemo<Array<{ id: string; label: string }>>(() => {
+    const models = new Set<string>();
+    for (const c of companies) {
+      const bm = c.businessModel;
+      if (Array.isArray(bm)) {
+        bm.forEach((m) => {
+          if (m) models.add(m);
+        });
+      }
+    }
+    return [
+      { id: "all", label: "All Business Models" },
+      ...Array.from(models).sort().map((m) => ({ id: m, label: m })),
+    ];
+  }, [companies]);
 
   const specialtyFilters = useMemo<Array<{ id: string; label: string }>>(() => {
     if (Array.isArray(cmsSpecialties) && cmsSpecialties.length > 0) {
       return [
-        { id: "all", label: "All specialties" },
+        { id: "all", label: "All Specialties" },
         ...cmsSpecialties.map((s) => ({ id: s.label, label: s.label })),
       ];
     }
     return [
-      { id: "all", label: "All specialties" },
+      { id: "all", label: "All Specialties" },
       ...ALL_SPECIALTIES.map((s) => ({ id: s, label: s })),
     ];
   }, [cmsSpecialties]);
@@ -206,7 +264,7 @@ export default function FoundersDirectory() {
   // Reset page when filters change
   useEffect(() => {
     setPage(1);
-  }, [query, specialtyFilter, levelFilter, groupFilters]);
+  }, [query, specialtyFilter, countryFilter, businessModelFilter, groupFilters]);
 
   const dynamicGroups = useMemo(() => {
     const groups = Array.isArray(cmsFilterGroups) ? cmsFilterGroups : []
@@ -225,6 +283,17 @@ export default function FoundersDirectory() {
         const label = (opt?.label ?? "").trim()
         if (label) base.add(label)
       }
+
+      if (group.id === "country" || group.id.toLowerCase().includes("country")) {
+        for (const c of companies) {
+          if (Array.isArray(c.country)) {
+            c.country.forEach((ct) => {
+              if (ct) base.add(ct.trim());
+            });
+          }
+        }
+      }
+
       optionsByGroupId.set(group.id, Array.from(base))
     }
 
@@ -348,7 +417,18 @@ export default function FoundersDirectory() {
                           className="h-14 w-full appearance-none rounded-2xl border border-black/10 bg-black/[0.02] pl-5 pr-14 md:min-w-[160px] font-urbanist text-base font-semibold text-black/80 outline-none hover:border-black/20 focus-visible:ring-2 focus-visible:ring-rellia-teal focus-visible:bg-white cursor-pointer"
                           aria-label={`Filter by ${g.title}`}
                         >
-                          <option value="all">All {g.title}</option>
+                          <option value="all">
+                            All{" "}
+                            {g.title.toLowerCase() === "country"
+                              ? "Countries"
+                              : g.title.toLowerCase() === "specialty"
+                              ? "Specialties"
+                              : g.title.toLowerCase() === "business model"
+                              ? "Business Models"
+                              : g.title.endsWith("s")
+                              ? g.title
+                              : g.title + "s"}
+                          </option>
                           {options.map((opt) => (
                             <option key={opt} value={opt}>
                               {opt}
@@ -365,14 +445,14 @@ export default function FoundersDirectory() {
                 </div>
               ) : (
                 <div className="flex w-full flex-col gap-3 md:w-auto md:flex-row md:flex-wrap md:items-center md:gap-4">
-                  {/* Level Filter */}
+                  {/* Country Filter */}
                   <div className="relative w-full md:w-auto">
                     <select
-                      value={levelFilter}
-                      onChange={(e) => setLevelFilter(e.target.value)}
+                      value={countryFilter}
+                      onChange={(e) => setCountryFilter(e.target.value)}
                       className="h-14 w-full appearance-none rounded-2xl border border-black/10 bg-black/[0.02] pl-5 pr-14 md:min-w-[160px] font-urbanist text-base font-semibold text-black/80 outline-none hover:border-black/20 focus-visible:ring-2 focus-visible:ring-rellia-teal focus-visible:bg-white cursor-pointer"
                     >
-                      {levelFilters.map((f) => (
+                      {countryFilters.map((f) => (
                         <option key={f.id} value={f.id}>
                           {f.label}
                         </option>
@@ -393,6 +473,25 @@ export default function FoundersDirectory() {
                       {specialtyFilters.map((s) => (
                         <option key={s.id} value={s.id}>
                           {s.label}
+                        </option>
+                      ))}
+                    </select>
+                    <ChevronDown
+                      className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-black/45"
+                      aria-hidden
+                    />
+                  </div>
+
+                  {/* Business Model Filter */}
+                  <div className="relative w-full md:w-auto">
+                    <select
+                      value={businessModelFilter}
+                      onChange={(e) => setBusinessModelFilter(e.target.value)}
+                      className="h-14 w-full appearance-none rounded-2xl border border-black/10 bg-black/[0.02] pl-5 pr-14 md:min-w-[160px] font-urbanist text-base font-semibold text-black/80 outline-none hover:border-black/20 focus-visible:ring-2 focus-visible:ring-rellia-teal focus-visible:bg-white cursor-pointer"
+                    >
+                      {businessModelFilters.map((bm) => (
+                        <option key={bm.id} value={bm.id}>
+                          {bm.label}
                         </option>
                       ))}
                     </select>

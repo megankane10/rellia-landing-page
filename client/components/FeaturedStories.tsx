@@ -37,6 +37,7 @@ export default function FeaturedStories({
   sectionClassName?: string
 }) {
   const { data: cmsFeatured } = useFeaturedStories()
+
   const featured = useMemo(() => {
     if (isProductionHostname()) return []
 

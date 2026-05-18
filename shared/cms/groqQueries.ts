@@ -555,9 +555,9 @@ export const alumniCompaniesQuery = `*[_type == "alumniCompany"]{
   "id": slug.current,
   name,
   slug,
-  "level": level->label,
   tagline,
   "specialties": specialties[]->label,
+  businessModel,
   directoryFilters[]{
     "groupId": group->slug.current,
     "groupTitle": group->title,

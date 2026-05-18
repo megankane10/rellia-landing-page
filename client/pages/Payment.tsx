@@ -73,9 +73,9 @@ export default function Payment() {
       <Navbar />
 
       <main id="main-content">
-        <section className="relative w-full border-t border-black/5 pt-24 md:pt-10">
-          {/* Full Bleed Background Layers (Persistent) */}
-          <div className="absolute inset-0 flex flex-col md:flex-row pointer-events-none">
+        <section className="relative w-full border-t border-black/5 pt-20 md:pt-10">
+          {/* Full Bleed Background Layers (Desktop) */}
+          <div className="absolute inset-0 hidden md:flex md:flex-row pointer-events-none">
             <div className="relative flex-1 bg-rellia-teal/90 overflow-hidden">
               <img 
                 src="/images/benefits-payment.jpg" 
@@ -98,26 +98,37 @@ export default function Payment() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -12 }}
                 transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-                className="relative z-10 max-w-[1300px] mx-auto px-6 md:px-10 flex flex-col md:flex-row min-h-[820px]"
+                className="relative z-10 max-w-[1300px] mx-auto px-6 md:px-10 flex flex-col md:flex-row min-h-0 md:min-h-[820px] gap-y-16 md:gap-y-0"
               >
                 {/* Left: Benefits */}
-                <div className="flex-1 flex flex-col justify-start items-start pt-16 pb-14 md:pt-28 md:pb-20 pr-6 md:pr-16 relative">
+                <div className="flex-1 flex flex-col justify-start items-start pt-16 pb-14 md:pt-28 md:pb-20 pr-6 md:pr-16 relative w-auto md:w-full bg-rellia-teal/90 md:bg-transparent px-6 -mx-6 sm:px-10 sm:-mx-10 md:px-0 md:mx-0 overflow-hidden md:overflow-visible">
+                  {/* Full Bleed Background Layers (Mobile) */}
+                  <div className="absolute inset-0 md:hidden pointer-events-none">
+                    <img 
+                      src="/images/benefits-payment.jpg" 
+                      alt="Rellia Benefits" 
+                      className="h-full w-full object-cover opacity-[0.45] mix-blend-overlay scale-105"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-rellia-teal/40 to-transparent" />
+                    <div className="absolute inset-0 bg-rellia-teal/20" />
+                    <div className="absolute -left-20 -top-20 w-[500px] h-[500px] bg-rellia-mint/10 blur-[120px] rounded-full" />
+                  </div>
                   <div className="relative z-10 w-full max-w-[500px]">
-                    <h3 className="font-host-grotesk text-2xl sm:text-3xl md:text-3xl lg:text-4xl font-bold tracking-tight mb-10 leading-[1.1] text-white">
+                    <h3 className="font-host-grotesk text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight mb-12 md:mb-16 leading-[1.1] text-white">
                       Join the <span className="text-rellia-mint">Rellia Network</span> today
                     </h3>
 
-                    <div className="flex flex-col gap-y-12 md:gap-y-16">
+                    <div className="flex flex-col gap-y-6 md:gap-y-8">
                       {benefitsGrid.map((benefit, index) => {
                         const Icon = BENEFIT_ICONS[index % BENEFIT_ICONS.length]
                         return (
                           <div key={index} className="flex items-start gap-5 md:gap-6 group">
                             <Icon
-                              className="mt-1 h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 text-rellia-mint transition-transform duration-300 group-hover:scale-110 flex-shrink-0"
+                              className="mt-0.5 h-6 w-6 text-rellia-mint transition-transform duration-300 group-hover:scale-110 flex-shrink-0"
                               aria-hidden
                               strokeWidth={2.5}
                             />
-                            <p className="font-urbanist text-white text-base sm:text-lg md:text-xl font-medium leading-relaxed">
+                            <p className="font-urbanist text-white text-lg font-medium leading-relaxed">
                               {benefit}
                             </p>
                           </div>
@@ -128,9 +139,9 @@ export default function Payment() {
                 </div>
 
                 {/* Right: Plan Selection */}
-                <div className="flex-1 flex flex-col justify-start pt-16 pb-14 md:pt-28 md:pb-20 md:pl-16 relative">
+                <div className="flex-1 flex flex-col justify-start pt-0 pb-14 md:pt-28 md:pb-20 md:pl-16 relative">
                   <div className="w-full h-full flex flex-col">
-                    <h2 className="font-host-grotesk text-2xl md:text-3xl font-bold text-black mb-10">Choose your plan</h2>
+                    <h2 className="font-host-grotesk text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-black mb-10 leading-[1.1]">Choose your plan</h2>
                     
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full mb-6">
                       <button
@@ -224,9 +235,9 @@ export default function Payment() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
                 transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                className="relative z-10 flex w-full min-h-[820px] flex-col bg-white pt-28 md:pt-32"
+                className="relative z-10 flex w-full min-h-0 md:min-h-[820px] flex-col bg-white pt-0"
               >
-                <div className="mx-auto flex w-full max-w-[1300px] items-center justify-between px-6 py-8 md:px-10 md:py-10">
+                <div className="mx-auto flex w-full max-w-[1300px] items-center justify-between px-6 pt-2 pb-4 md:px-10 md:pt-4 md:pb-6">
                     <button 
                       type="button" 
                       onClick={() => setShowForm(false)} 
@@ -240,7 +251,7 @@ export default function Payment() {
                     </div>
                 </div>
 
-                <div className="stripe-embedded-checkout-shell w-full flex-1">
+                <div className="stripe-embedded-checkout-shell w-full flex-1 mt-0">
                     {selectedPlan && (useStripeEmbed || currentHref) ? (
                       useStripeEmbed ? (
                         <StripeEmbeddedCheckout

@@ -1209,7 +1209,7 @@ export const DEFAULT_ABOUT_PAGE: AboutPageContent = {
       role: "Social Media Manager",
       bio: "A digital health founder herself, Kelly plans and executes content creation to boost engagement and showcase Rellia's growing network.",
       imageSrc: "/images/team-KellyH.jpeg",
-      linkedinUrl: "https://forms.fillout.com/t/1GPWpbBbWcus",
+      linkedinUrl: "https://www.linkedin.com/in/kellyjiayihu/",
     },
   ],
   ctaTitle: "You're in the **right** place.",
@@ -1406,7 +1406,7 @@ export const DEFAULT_PROGRAMS_LANDING: ProgramsLandingContent = {
     {
       title: "Regulatory Strategy Sprint",
       description:
-        "Navigate the complexities of medical device classification and global commercialization milestones. Leave with a documented regulatory strategy and intended use statements to support your investor due diligence.",
+        "Confirm your medical device classification and global market entry pathway. Leave with a documented regulatory strategy and intended use statements to support your investor due diligence.",
       imageSrc: "/images/programs-regulatoryRoadmap.png",
       href: "/programs/regulatory-roadmap",
       buttonText: "Learn more",

@@ -35,11 +35,22 @@ export const alumniCompany = defineType({
       group: 'directory',
     }),
     defineField({
-      name: 'level',
-      title: 'Level / stage',
-      type: 'reference',
-      to: [{type: 'founderLevel'}],
-      description: 'Pick a stage. Manage the list under "Directory taxonomy".',
+      name: 'businessModel',
+      title: 'Business model',
+      type: 'array',
+      of: [{type: 'string'}],
+      options: {
+        list: [
+          {title: 'B2B', value: 'B2B'},
+          {title: 'B2C', value: 'B2C'},
+          {title: 'B2B2C', value: 'B2B2C'},
+          {title: 'SaaS', value: 'SaaS'},
+          {title: 'Marketplace', value: 'Marketplace'},
+          {title: 'Hardware', value: 'Hardware'},
+          {title: 'Services', value: 'Services'},
+          {title: 'Subscription', value: 'Subscription'},
+        ]
+      },
       group: 'directory',
     }),
     defineField({
@@ -92,7 +103,23 @@ export const alumniCompany = defineType({
     defineField({name: 'linkedinUrl', title: 'LinkedIn', type: 'url', group: 'links'}),
     defineField({name: 'traction', title: 'Traction', type: 'text', rows: 4, group: 'profile'}),
     defineField({name: 'relliaCollaboration', title: 'How Rellia helped', type: 'text', rows: 4, group: 'profile'}),
-    defineField({name: 'country', title: 'Country', type: 'string', group: 'profile'}),
+    defineField({
+      name: 'country',
+      title: 'Country',
+      type: 'array',
+      of: [{type: 'string'}],
+      options: {
+        list: [
+          {title: 'United States', value: 'United States'},
+          {title: 'Canada', value: 'Canada'},
+          {title: 'United Kingdom', value: 'United Kingdom'},
+          {title: 'Germany', value: 'Germany'},
+          {title: 'France', value: 'France'},
+          {title: 'Australia', value: 'Australia'},
+        ]
+      },
+      group: 'profile',
+    }),
     defineField({name: 'yearJoined', title: 'Year joined', type: 'number', group: 'profile'}),
     defineField({
       name: 'founders',

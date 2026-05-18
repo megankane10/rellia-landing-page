@@ -144,7 +144,6 @@ export const deskStructure = (S: StructureBuilder) =>
               S.documentTypeListItem('alumniCompany').title('Alumni companies (directory)').icon(UsersIcon),
               S.divider(),
               founderDirectoryFilterGroups(S),
-              S.documentTypeListItem('founderLevel').title('Levels (taxonomy)').icon(TagIcon),
               S.documentTypeListItem('founderSpecialty').title('Specialties (taxonomy)').icon(TagIcon),
             ]),
         ),

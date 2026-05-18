@@ -24,7 +24,23 @@ export const advisor = defineType({
     defineField({name: 'organization', title: 'Organization', type: 'string', group: 'profile'}),
     defineField({name: 'role', title: 'Role/title', type: 'string', group: 'profile'}),
     defineField({name: 'location', title: 'Location', type: 'string', group: 'profile'}),
-    defineField({name: 'country', title: 'Country', type: 'string', group: 'profile'}),
+    defineField({
+      name: 'country',
+      title: 'Country',
+      type: 'array',
+      of: [{type: 'string'}],
+      options: {
+        list: [
+          {title: 'United States', value: 'United States'},
+          {title: 'Canada', value: 'Canada'},
+          {title: 'United Kingdom', value: 'United Kingdom'},
+          {title: 'Germany', value: 'Germany'},
+          {title: 'France', value: 'France'},
+          {title: 'Australia', value: 'Australia'},
+        ]
+      },
+      group: 'profile',
+    }),
     defineField({name: 'yearJoined', title: 'Year joined', type: 'string', description: 'e.g. 2024', group: 'profile'}),
     defineField({
       name: 'industries',

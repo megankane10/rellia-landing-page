@@ -96,7 +96,7 @@ export default function StripeEmbeddedCheckout({
         }
 
         checkoutRef.current?.destroy()
-        const checkout = await stripe.initEmbeddedCheckout({ clientSecret })
+        const checkout = await (stripe as any).initEmbeddedCheckout({ clientSecret })
         checkoutRef.current = checkout
 
         await new Promise<void>((resolve) => {
@@ -131,7 +131,7 @@ export default function StripeEmbeddedCheckout({
 
   if (error) {
     return (
-      <motionlessCheckoutError error={error} fallbackHref={fallbackHref} onBack={onBack} />
+      <MotionlessCheckoutError error={error} fallbackHref={fallbackHref} onBack={onBack} />
     )
   }
 
@@ -155,7 +155,7 @@ export default function StripeEmbeddedCheckout({
   )
 }
 
-function motionlessCheckoutError({
+function MotionlessCheckoutError({
   error,
   fallbackHref,
   onBack,

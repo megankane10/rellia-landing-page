@@ -1,15 +1,17 @@
+import { useState } from "react";
 import { useParams, Link, useLocation } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import RelliaAction from "@/components/RelliaAction";
-import { ArrowLeft, MapPin, Calendar } from "lucide-react";
+import { ArrowLeft, MapPin, Calendar, Copy, Check } from "lucide-react";
 import {
   GlobeFilled,
   LinkedInFilled,
-  ShareFilled,
 } from "@/components/icons/SocialIcons";
+import { ShareIconCopy } from "@/components/share/sharePageIcons";
 import { ADVISOR_DIRECTORY_SEED } from "@/data/advisorDirectory";
 import NotFound from "../NotFound";
+import { cn } from "@/lib/utils";
 import RouteSeo from "@/components/RouteSeo";
 import { getSiteUrl } from "@/config/seo";
 import { useAdvisors } from "@/hooks/useCmsDocuments";
@@ -26,27 +28,19 @@ export default function AdvisorProfile() {
   const active = advisors.find((a) => a.id === id);
 
   const canonicalUrl = `${getSiteUrl()}${location.pathname}`;
+  const [copied, setCopied] = useState(false);
 
   if (!active) return <NotFound />;
 
-  const handleShare = () => {
-    if (typeof window !== "undefined" && navigator.share) {
-      navigator
-        .share({
-          title: active.name,
-          text: active.bio.substring(0, 50) + "...",
-          url: canonicalUrl,
-        })
-        .catch(console.error);
-    } else if (typeof window !== "undefined") {
-      navigator.clipboard.writeText(canonicalUrl);
-      alert("Link copied to clipboard!");
-    }
+  const handleCopyLink = () => {
+    navigator.clipboard.writeText(canonicalUrl);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
   };
 
   return (
     <div className="min-h-screen overflow-x-hidden bg-white font-host-grotesk">
-      <Navbar />
+      <Navbar forceSolid />
 
       <main id="main-content" className="pt-24 pb-16 md:pt-28">
         <div className="mx-auto max-w-[1300px] px-6 md:px-10">
@@ -98,12 +92,23 @@ export default function AdvisorProfile() {
                   ))}
                 </div>
 
-                <div className="space-y-3">
-                  <div className="flex items-center gap-3 text-black/70">
-                    <MapPin className="h-5 w-5 text-rellia-teal" />
-                    <span className="font-urbanist text-base font-medium">
-                      {active.location}, {active.country}
-                    </span>
+                <div className="space-y-4">
+                  <div className="flex items-start gap-3 text-black/70">
+                    <MapPin className="h-5.5 w-5.5 text-rellia-teal mt-0.5 shrink-0" />
+                    <div className="flex flex-col">
+                      {active.location && (
+                        <span className="font-urbanist text-base font-semibold text-black/85">
+                          {active.location}
+                        </span>
+                      )}
+                      {active.country && (
+                        <span className="font-urbanist text-[15px] text-black/60">
+                          {Array.isArray(active.country)
+                            ? active.country.join(", ")
+                            : active.country}
+                        </span>
+                      )}
+                    </div>
                   </div>
                   <div className="flex items-center gap-3 text-black/70">
                     <Calendar className="h-5 w-5 text-rellia-teal" />
@@ -135,11 +140,26 @@ export default function AdvisorProfile() {
                     </a>
                   )}
                   <button
-                    onClick={handleShare}
-                    className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-black/10 bg-white text-black hover:bg-black/5 transition-colors"
-                    aria-label="Share Profile"
+                    onClick={handleCopyLink}
+                    className={cn(
+                      "relative inline-flex h-10 w-10 items-center justify-center rounded-full border transition-all duration-300",
+                      copied
+                        ? "border-rellia-teal bg-rellia-mint/20 text-rellia-teal"
+                        : "border-black/10 bg-white text-black hover:bg-black/5"
+                    )}
+                    title={copied ? "Copied!" : "Copy profile link"}
+                    aria-label={copied ? "Copied!" : "Copy profile link"}
                   >
-                    <ShareFilled className="h-5 w-5" />
+                    {copied ? (
+                      <Check className="h-4 w-4 animate-scale-in" />
+                    ) : (
+                      <ShareIconCopy className="h-4 w-4" />
+                    )}
+                    {copied && (
+                      <span className="absolute -top-10 left-1/2 -translate-x-1/2 rounded bg-black px-2 py-1 text-xs font-bold text-white shadow-md whitespace-nowrap transition-all duration-200">
+                        Copied!
+                      </span>
+                    )}
                   </button>
                 </div>
               </div>

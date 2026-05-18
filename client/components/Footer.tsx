@@ -23,7 +23,7 @@ const FALLBACK_FOOTER_COLUMNS: NavItem[] = [
       { label: "Apply", href: "/apply" },
       { label: "Programs", href: "/programs" },
       { label: "Events", href: "/events" },
-      { label: "Startup Diagnostic", href: "/diagnostic-survey" },
+      { label: "Startup Diagnostic", href: "/diagnostics" },
       { label: "Consulting", href: "/consulting" },
     ],
   },

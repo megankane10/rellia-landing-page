@@ -2081,6 +2081,18 @@ export default function DiagnosticSurvey() {
                       </div>
                     </div>
 
+                    <div className="rounded-2xl bg-amber-50 border border-amber-200 p-4 text-left">
+                      <div className="flex gap-3">
+                        <AlertTriangle className="h-5 w-5 text-amber-600 shrink-0 mt-0.5" />
+                        <div>
+                          <span className="font-host-grotesk text-xs font-bold text-amber-900 uppercase tracking-wider block">Access Notice</span>
+                          <p className="mt-1 font-urbanist text-xs leading-relaxed text-amber-800">
+                            The Startup Diagnostic assessment is free for everyone to complete. However, please note that <strong>only active Rellia members</strong> can access the detailed gap analysis report, personalized roadmap output, and advisor matches.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
                     <RelliaAction
                       type="button"
                       variant="mintTealFill"
@@ -2184,6 +2196,25 @@ export default function DiagnosticSurvey() {
                     <p className="font-urbanist text-xl leading-relaxed text-rellia-teal/80 md:text-2xl relative z-10">
                       {diagResult.summary}
                     </p>
+                  </div>
+
+                  {/* Warning banner indicating locked details */}
+                  <div className="rounded-[32px] border border-amber-200 bg-amber-50/50 p-8 shadow-sm flex flex-col md:flex-row items-start md:items-center gap-6">
+                    <div className="shrink-0 flex h-12 w-12 items-center justify-center rounded-2xl bg-amber-600 text-white shadow-sm">
+                      <AlertTriangle className="h-6 w-6 text-white" />
+                    </div>
+                    <div className="flex-1">
+                      <h4 className="font-host-grotesk text-lg font-bold text-amber-900 leading-tight">Detailed Report Access Restricted</h4>
+                      <p className="mt-1 font-urbanist text-sm leading-relaxed text-amber-800">
+                        This summary view is a preliminary preview. Access to your full detailed gap analysis report, personalized priority actions, and assigned advisor dashboard is restricted. Apply for a <strong>Rellia Health membership</strong> to instantly unlock full access.
+                      </p>
+                    </div>
+                    <RelliaAction asChild variant="mintTealFill" size="comfortable" className="w-full md:w-auto shrink-0 justify-center">
+                      <Link to="/apply">
+                        Unlock Full Report
+                        <ArrowRight className="ml-2 h-4 w-4" />
+                      </Link>
+                    </RelliaAction>
                   </div>
                 </div>
 

@@ -48,7 +48,7 @@ export function DiagnosticSurveySection() {
                 A structured, deep-dive assessment of your company to identify the top areas for improvement. Founders receive a personalized gap analysis report and are matched with the most qualified advisors to help address those critical gaps directly.
               </p>
               <RelliaAction asChild variant="mintTealFill" size="comfortable" className="w-full sm:w-auto justify-center">
-                <Link to="/diagnostic-survey" className="inline-flex cursor-pointer items-center gap-2">
+                <Link to="/diagnostics" className="inline-flex cursor-pointer items-center gap-2">
                   Take Diagnostic Survey
                   <ArrowRight className="h-5 w-5" aria-hidden />
                 </Link>
