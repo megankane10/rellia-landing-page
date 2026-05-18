@@ -5,9 +5,8 @@ import type { QmsProgramContent } from "@shared/cms/types"
 const CMS: QmsProgramContent = {
   paymentUrl: "https://forms.fillout.com/t/qnMWtHtTkyus",
   heroTitle: "Regulatory Strategy Sprint",
-  heroDescription: "Navigate the complexities of medical device classification and global commercialization milestones. Leave with a documented regulatory strategy that supports investor due diligence.",
+  heroDescription: "Confirm your medical device classification and global market entry pathway. Leave with a documented regulatory strategy that supports investor due diligence.",
   heroCtaLabel: "Get started",
-  status: "upcoming",
   outcomesTitle: "Program Outcomes",
   outcomesIntro: "By the end of this program, you will have a clear regulatory strategy and timeline you can execute against and share with stakeholders.",
   outcomes: [

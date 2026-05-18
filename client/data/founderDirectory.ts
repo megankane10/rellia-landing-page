@@ -21,14 +21,15 @@ export type FounderCompany = {
   logoSrc: string
   tagline: string
   specialties: Specialty[]
-  level: FounderLevel
+  level?: FounderLevel
+  businessModel: string[]
   shortDescription: string
   longDescription: string
   websiteUrl: string
   traction: string
   relliaCollaboration: string
   imageSrc: string
-  country: string
+  country: string[]
   yearJoined: number
   founders: FounderPerson[]
   programs: string[]
@@ -74,6 +75,7 @@ export const FOUNDER_DIRECTORY: FounderCompany[] = PORTFOLIO_LOGO_MARKS.slice(0,
     tagline: base.split(" ").slice(0, 4).join(" ") + "…",
     specialties: [SPECIALTY_CYCLE[index % SPECIALTY_CYCLE.length]],
     level: LEVEL_CYCLE[index % LEVEL_CYCLE.length],
+    businessModel: [["B2B", "SaaS"], ["B2C"], ["B2B2C", "SaaS"], ["Enterprise", "SaaS"]][index % 4],
     shortDescription: base,
     longDescription: `${base} The team structures pilots with clear clinical owners, success criteria, and a defensible data plan for the next financing conversation.`,
     websiteUrl: `https://www.${slug}.example`,
@@ -87,7 +89,7 @@ export const FOUNDER_DIRECTORY: FounderCompany[] = PORTFOLIO_LOGO_MARKS.slice(0,
       "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=800&q=80&auto=format&fit=crop",
       "https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=800&q=80&auto=format&fit=crop"
     ][index % 6],
-    country: ["United Kingdom", "United States", "Canada", "Germany", "France", "Australia"][index % 6],
+    country: [["United Kingdom"], ["United States"], ["Canada"], ["Germany"], ["France"], ["Australia"]][index % 6],
     yearJoined: 2021 + (index % 5),
     founders: index === 0 ? [
       {

@@ -223,18 +223,20 @@ export default function Terms() {
       <main id="main-content">
         <PageHeader
           variant="dark"
-          effectiveDate={EFFECTIVE_DATE}
+          subtitle={`Effective ${EFFECTIVE_DATE}`}
           title={
             <>
               Terms of <span className="text-rellia-mint">Use</span>
             </>
           }
-          subtitle="Please read these Terms of Use carefully before participating in Rellia Health's programs, accessing our platforms, or engaging with our content. By using our services, you agree to be bound by these terms."
         />
 
         <section className="py-16 md:py-24 bg-white">
           <div className="max-w-[860px] mx-auto px-6 md:px-10">
             <ScrollReveal>
+              <p className="text-rellia-teal font-urbanist text-lg font-medium leading-relaxed mb-10">
+                Please read these Terms of Use carefully before participating in Rellia Health&apos;s programs, accessing our platforms, or engaging with our content. By using our services, you agree to be bound by these terms.
+              </p>
               <div className="space-y-12">
                 {SECTIONS.map((section) => (
                   <SectionBlock key={section.title} section={section} />

@@ -18,7 +18,7 @@ export type AdvisorDirectoryEntry = {
   organization: string
   role: string
   location: string
-  country: string
+  country: string | string[]
   yearJoined: string
   industries: string[]
   /** Short card summary */

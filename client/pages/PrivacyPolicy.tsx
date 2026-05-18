@@ -250,18 +250,20 @@ export default function PrivacyPolicy() {
       <main id="main-content">
         <PageHeader
           variant="dark"
-          effectiveDate={EFFECTIVE_DATE}
+          subtitle={`Effective ${EFFECTIVE_DATE}`}
           title={
             <>
               Privacy <span className="text-rellia-mint">Policy</span>
             </>
           }
-          subtitle="Rellia Health is committed to handling your personal information with care and transparency. This Privacy Policy describes how we collect, use, store, and share information in connection with our incubator programs, events, community, website, and communications."
         />
 
         <section className="py-16 md:py-24 bg-white">
           <div className="max-w-[860px] mx-auto px-6 md:px-10">
             <ScrollReveal>
+              <p className="text-rellia-teal font-urbanist text-lg font-medium leading-relaxed mb-6">
+                Rellia Health is committed to handling your personal information with care and transparency. This Privacy Policy describes how we collect, use, store, and share information in connection with our incubator programs, events, community, website, and communications.
+              </p>
               <p className="mb-10 text-lg font-urbanist italic leading-relaxed text-black/65 md:mb-12 md:text-xl">
                 Rellia Health operates in accordance with the Personal Information Protection and Electronic Documents
                 Act (PIPEDA) and applicable provincial privacy legislation in Canada.

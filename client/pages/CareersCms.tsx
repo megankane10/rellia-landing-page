@@ -10,7 +10,7 @@ import { FilloutStandardEmbed } from "@fillout/react"
 import { FILLOUT_APPLY_FORM_ID, FILLOUT_EMBED_VIEWPORT_MIN_CLASS } from "@/lib/filloutApplyForm"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { motion, useReducedMotion, AnimatePresence } from "framer-motion"
-import { BriefcaseBusiness, Building2, ExternalLink, Laptop, MapPin, Users } from "lucide-react"
+import { BriefcaseBusiness, Building2, ExternalLink, Laptop, MapPin, Users, UserRound, type LucideIcon } from "lucide-react"
 import type { CareersPageContent, HomeWhyFeature } from "@shared/cms/types"
 import { DEFAULT_GLOBAL_SETTINGS } from "@shared/cms/defaults"
 import { CAREERS_VOLUNTEER_ENABLED, careersHasPublishedOpenRoles } from "@shared/careersPageConfig"
@@ -96,17 +96,31 @@ const CAREERS_PERKS: HomeWhyFeature[] = [
   },
 ]
 
+const getPerkIcon = (key: string): LucideIcon => {
+  switch (key) {
+    case "users":
+      return Users
+    case "building2":
+      return Building2
+    case "laptop":
+      return Laptop
+    case "mapPin":
+      return MapPin
+    case "userRound":
+      return UserRound
+    default:
+      return Users
+  }
+}
+
 const joinTeamMarqueeImages = [...TEAM_MARQUEE_IMAGES, ...TEAM_MARQUEE_IMAGES]
 
 const JOIN_TEAM_MARQUEE_LOOP_SEC = 56
 
 /** Shared geometry + mint sweep hover so primary and outline CTAs match pixel-for-pixel */
 const joinTeamCtaSharedClass = cn(
-  "group relative isolate inline-flex cursor-pointer items-center justify-center overflow-hidden rounded-full border-2 border-rellia-teal outline-none",
+  "group rellia-sweep-btn inline-flex cursor-pointer items-center justify-center rounded-full border-2 border-rellia-teal outline-none",
   "px-8 py-3.5 font-host-grotesk text-base font-semibold leading-none tracking-tight md:px-10 md:py-4 md:text-lg",
-  "transition-[transform,box-shadow,border-color,background-color] duration-300 motion-reduce:transition-none",
-  "before:pointer-events-none before:absolute before:inset-0 before:z-0 before:origin-left before:scale-x-0 before:rounded-full before:bg-rellia-mint before:transition-transform before:duration-300 before:ease-out",
-  "hover:before:scale-x-100",
   "focus-visible:ring-2 focus-visible:ring-rellia-teal focus-visible:ring-offset-2 focus-visible:ring-offset-rellia-greyTeal",
   "motion-safe:hover:-translate-y-0.5 motion-safe:hover:shadow-lg",
 )
@@ -191,9 +205,12 @@ const CareersJoinTeamSection = ({
                 {primaryCta || secondaryCta ? (
                   <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center md:mt-10">
                     {primaryCta ? (
-                      <button
-                        type="button"
-                        onClick={handlePrimaryClick}
+                      <a
+                        href="#"
+                        onClick={(e) => {
+                          e.preventDefault()
+                          handlePrimaryClick()
+                        }}
                         className={cn(
                           joinTeamCtaSharedClass,
                           "border-rellia-teal bg-rellia-teal hover:border-rellia-mint",
@@ -203,12 +220,15 @@ const CareersJoinTeamSection = ({
                         <span className="relative z-10 text-white transition-colors duration-300 group-hover:text-rellia-teal">
                           {primaryCta.label}
                         </span>
-                      </button>
+                      </a>
                     ) : null}
                     {secondaryCta ? (
-                      <button
-                        type="button"
-                        onClick={handleSecondaryClick}
+                      <a
+                        href="#"
+                        onClick={(e) => {
+                          e.preventDefault()
+                          handleSecondaryClick()
+                        }}
                         className={cn(
                           joinTeamCtaSharedClass,
                           "border-rellia-teal bg-transparent hover:border-rellia-mint",
@@ -218,15 +238,15 @@ const CareersJoinTeamSection = ({
                         <span className="relative z-10 text-rellia-teal transition-colors duration-300 group-hover:text-rellia-teal">
                           {secondaryCta.label}
                         </span>
-                      </button>
+                      </a>
                     ) : null}
                   </div>
                 ) : null}
               </div>
 
-              <div className="mt-8 min-h-0 w-full flex-1 overflow-x-clip overflow-y-visible md:mt-12 md:overflow-y-hidden lg:mt-16">
+              <div className="mt-8 min-h-0 w-full flex-1 flex items-end overflow-x-clip overflow-y-visible md:mt-12 md:overflow-y-hidden lg:mt-16">
                 <div
-                  className="relative h-full min-h-0 w-full overflow-x-clip py-2 md:py-3 [mask-size:100%_100%] [mask-repeat:no-repeat]"
+                  className="relative h-auto min-h-0 w-full overflow-x-clip pb-0 [mask-size:100%_100%] [mask-repeat:no-repeat]"
                   style={marqueeMaskStyle}
                 >
                   <motion.div
@@ -353,11 +373,39 @@ export default function CareersCms() {
           sectionClassName="bg-white pt-28 md:pt-32"
         />
 
-        <WhyRellia
-          sectionTitle="How we work"
-          sectionDescription="A lean health-tech team: industry proximity, intentional office time, and the pace of a startup—not a corporate perks sheet."
-          features={CAREERS_PERKS}
-        />
+        <section className="bg-white py-24 md:py-32 border-t border-black/10">
+          <div className="mx-auto max-w-[1300px] px-6 md:px-10">
+            <ScrollReveal className="max-w-3xl mb-16">
+              <h2 className="font-host-grotesk text-3xl font-bold tracking-tight text-black md:text-4xl lg:text-5xl">
+                How we work
+              </h2>
+              <p className="mt-4 font-urbanist text-lg md:text-xl text-black/60 leading-relaxed">
+                A lean health-tech team: industry proximity, intentional office time, and the pace of a startup—not a corporate perks sheet.
+              </p>
+            </ScrollReveal>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10 lg:gap-x-16 lg:gap-y-12">
+              {CAREERS_PERKS.map((perk) => {
+                const IconComponent = getPerkIcon(perk.iconKey)
+                return (
+                  <ScrollReveal key={perk.title} className="flex gap-5 items-start">
+                    <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-rellia-mint/20 text-rellia-teal">
+                      <IconComponent className="h-7 w-7" aria-hidden />
+                    </div>
+                    <div>
+                      <h3 className="font-host-grotesk text-xl font-bold tracking-tight text-black mb-2">
+                        {perk.title}
+                      </h3>
+                      <p className="font-urbanist text-base leading-relaxed text-black/70">
+                        {perk.description}
+                      </p>
+                    </div>
+                  </ScrollReveal>
+                )
+              })}
+            </div>
+          </div>
+        </section>
 
         {enableHiring ? (
           <section

@@ -1228,8 +1228,9 @@ async function main() {
 
   // New directory filter groups (power the dynamic directory filter UI)
   const advisorsGroupSlug = slugify("Expertise")
-  const foundersLevelGroupSlug = slugify("Level")
+  const foundersCountryGroupSlug = slugify("Country")
   const foundersSpecialtyGroupSlug = slugify("Specialty")
+  const foundersBusinessModelGroupSlug = slugify("Business Model")
 
   mutations.push({
     createOrReplace: {
@@ -1246,15 +1247,24 @@ async function main() {
     },
   })
 
+  mutations.push({ delete: { id: "directoryFilterGroup-level" } })
+
   mutations.push({
     createOrReplace: {
-      _id: directoryFilterGroupId(foundersLevelGroupSlug),
+      _id: directoryFilterGroupId(foundersCountryGroupSlug),
       _type: "directoryFilterGroup",
-      title: "Level",
-      slug: { _type: "slug", current: foundersLevelGroupSlug },
+      title: "Country",
+      slug: { _type: "slug", current: foundersCountryGroupSlug },
       appliesTo: "founders",
       sortOrder: 0,
-      options: ALL_LEVELS.map((label) => ({ _type: "option", label })),
+      options: [
+        { _type: "option", label: "United States" },
+        { _type: "option", label: "Canada" },
+        { _type: "option", label: "United Kingdom" },
+        { _type: "option", label: "Germany" },
+        { _type: "option", label: "France" },
+        { _type: "option", label: "Australia" },
+      ],
     },
   })
 
@@ -1270,20 +1280,28 @@ async function main() {
     },
   })
 
-  const founderLevelIdByLabel = new Map<string, string>()
-  for (const [index, label] of ALL_LEVELS.entries()) {
-    const docId = `founderLevel-${slugify(label)}`
-    founderLevelIdByLabel.set(label, docId)
-    mutations.push({
-      createOrReplace: {
-        _id: docId,
-        _type: "founderLevel",
-        label,
-        slug: { _type: "slug", current: slugify(label) },
-        sortOrder: index,
-      },
-    })
-  }
+  mutations.push({
+    createOrReplace: {
+      _id: directoryFilterGroupId(foundersBusinessModelGroupSlug),
+      _type: "directoryFilterGroup",
+      title: "Business Model",
+      slug: { _type: "slug", current: foundersBusinessModelGroupSlug },
+      appliesTo: "founders",
+      sortOrder: 2,
+      options: [
+        { _type: "option", label: "B2B" },
+        { _type: "option", label: "B2C" },
+        { _type: "option", label: "B2B2C" },
+        { _type: "option", label: "SaaS" },
+        { _type: "option", label: "Marketplace" },
+        { _type: "option", label: "Hardware" },
+        { _type: "option", label: "Services" },
+        { _type: "option", label: "Subscription" },
+      ],
+    },
+  })
+
+  // Removed Level taxonomy document seeding
 
   const founderSpecialtyIdByLabel = new Map<string, string>()
   for (const [index, label] of ALL_SPECIALTIES.entries()) {
@@ -1339,7 +1357,6 @@ async function main() {
   }
 
   for (const company of FOUNDER_DIRECTORY) {
-    const levelRefId = company.level ? founderLevelIdByLabel.get(company.level) : undefined
     const specialtyRefs = (company.specialties ?? [])
       .map((label) => founderSpecialtyIdByLabel.get(label))
       .filter((id): id is string => Boolean(id))
@@ -1353,21 +1370,23 @@ async function main() {
         _type: "alumniCompany",
         slug: { _type: "slug", current: company.id },
         name: company.logoName,
-        level: levelRefId ? { _type: "reference", _ref: levelRefId } : undefined,
         tagline: company.tagline,
         specialties: specialtyRefs,
         directoryFilters: [
-          company.level
-            ? {
-                _type: "directoryFilterAssignment",
-                group: { _type: "reference", _ref: directoryFilterGroupId(foundersLevelGroupSlug) },
-                values: [company.level],
-              }
-            : null,
+          ...(company.country ?? []).map((c) => ({
+            _type: "directoryFilterAssignment",
+            group: { _type: "reference", _ref: directoryFilterGroupId(foundersCountryGroupSlug) },
+            values: [c],
+          })),
           ...(company.specialties ?? []).map((s) => ({
             _type: "directoryFilterAssignment",
             group: { _type: "reference", _ref: directoryFilterGroupId(foundersSpecialtyGroupSlug) },
             values: [s],
+          })),
+          ...(company.businessModel ?? []).map((bm) => ({
+            _type: "directoryFilterAssignment",
+            group: { _type: "reference", _ref: directoryFilterGroupId(foundersBusinessModelGroupSlug) },
+            values: [bm],
           })),
         ].filter(Boolean),
         shortDescription: company.shortDescription,
@@ -1378,6 +1397,7 @@ async function main() {
         relliaCollaboration: company.relliaCollaboration,
         imageSrc: company.imageSrc,
         country: company.country,
+        businessModel: company.businessModel,
         yearJoined: company.yearJoined,
         programs: company.programs,
         logoSrc: company.logoSrc,

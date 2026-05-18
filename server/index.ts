@@ -752,7 +752,7 @@ export function createServer() {
         const returnUrl = `${siteOrigin.replace(/\/$/, "")}/membership?session_id={CHECKOUT_SESSION_ID}`;
 
         const session = await stripe.checkout.sessions.create({
-          ui_mode: "embedded",
+          ui_mode: "embedded" as any,
           mode: "subscription",
           line_items: [{ price: priceId, quantity: 1 }],
           return_url: returnUrl,

@@ -8,8 +8,8 @@ import { AnimatePresence, motion } from "framer-motion"
 import { useEffect, useMemo, useState } from "react"
 import SectionHeading from "@/components/SectionHeading"
 import PillTag from "@/components/PillTag"
-import { useFeaturedStories } from "@/hooks/useCmsDocuments"
-import { isProductionHostname } from "@/lib/sanity"
+import { useFeaturedStories, useStories } from "@/hooks/useCmsDocuments"
+import { isProductionHostname, isSanityConfigured } from "@/lib/sanity"
 
 /** Auto-advance interval (progress bar uses same duration) */
 const ROTATE_MS = 6500
@@ -37,10 +37,10 @@ export default function FeaturedStories({
   sectionClassName?: string
 }) {
   const { data: cmsFeatured } = useFeaturedStories()
-  const featured = useMemo(() => {
-    if (isProductionHostname()) return []
+  const { data: cmsStories } = useStories()
 
-    const normalized = (cmsFeatured ?? [])
+  const featured = useMemo(() => {
+    const normalizedFeatured = (cmsFeatured ?? [])
       .map((s) => ({
         slug: s.slug,
         title: s.title,
@@ -51,8 +51,26 @@ export default function FeaturedStories({
       }))
       .filter((s) => s.slug && s.title && s.coverImageSrc)
 
-    return normalized.length > 0 ? normalized : getFeaturedStories()
-  }, [cmsFeatured])
+    if (normalizedFeatured.length > 0) return normalizedFeatured
+
+    if (isSanityConfigured()) {
+      if (cmsStories && cmsStories.length > 0) {
+        return cmsStories
+          .map((s) => ({
+            slug: s.slug,
+            title: s.title,
+            excerpt: s.excerpt ?? "",
+            tag: (s.tag ?? "Story").trim() || "Story",
+            coverImageSrc: s.coverImageSrc ?? "",
+            coverImageAlt: (s.coverImageAlt ?? "Featured story cover").trim() || "Featured story cover",
+          }))
+          .filter((s) => s.slug && s.title && s.coverImageSrc)
+      }
+      return []
+    }
+
+    return getFeaturedStories()
+  }, [cmsFeatured, cmsStories])
   const [activeIndex, setActiveIndex] = useState(0)
   const [cycleKey, setCycleKey] = useState(0)
 

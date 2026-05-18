@@ -1,6 +1,7 @@
 import type { LucideIcon } from "lucide-react"
 import PageHeader from "@/components/PageHeader"
 import SectionHeading from "@/components/SectionHeading"
+import WhyRellia from "@/components/WhyRellia"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
 import RelliaAction from "@/components/RelliaAction"
@@ -263,7 +264,33 @@ export default function Partners() {
         <BenefitsWithImageSplit />
         <ExclusiveDirectorySplit />
 
-
+        <WhyRellia
+          sectionTitle="Why industry leaders partner with Rellia"
+          sectionDescription="We align commercial innovators, healthcare systems, and clinical networks around active pilots and structured technology adoption."
+          features={[
+            {
+              title: "Vetted healthcare scale",
+              description: "Skip cold emails and pre-screened meetings—connect directly with startups whose product, funding, and clinical roadmap are validated.",
+              iconKey: "",
+            },
+            {
+              title: "Active pilot sequencing",
+              description: "Work with founders who know exactly what success metrics and integration boundaries they need to hit in system deployments.",
+              iconKey: "",
+            },
+            {
+              title: "Secure compliance",
+              description: "Ensure technical standards and compliance logic align with hospital requirements right from first touch.",
+              iconKey: "",
+            },
+            {
+              title: "Direct GTM engagement",
+              description: "Co-design channels, APIs, and commercial handoffs within a community structured around real healthcare adoption.",
+              iconKey: "",
+            },
+          ]}
+          sectionClassName="bg-rellia-cream/20"
+        />
 
         <RelliaCta
           title="**Partner** with Rellia"

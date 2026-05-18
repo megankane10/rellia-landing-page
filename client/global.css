@@ -206,4 +206,27 @@
     min-width: 100% !important;
     max-width: 100% !important;
   }
+
+  /* Custom high-performance left-to-right sliding fill hover animation */
+  .rellia-sweep-btn {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    transition: transform 300ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 300ms cubic-bezier(0.16, 1, 0.3, 1), border-color 300ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .rellia-sweep-btn::before {
+    content: "" !important;
+    position: absolute !important;
+    inset: 0 !important;
+    z-index: 1 !important;
+    border-radius: 9999px !important;
+    background-color: #9dd6d0 !important; /* relli-mint */
+    transform: scaleX(0) !important;
+    transform-origin: left !important;
+    transition: transform 300ms cubic-bezier(0.16, 1, 0.3, 1) !important;
+    pointer-events: none !important;
+  }
+  .rellia-sweep-btn:hover::before {
+    transform: scaleX(1) !important;
+  }
 }
