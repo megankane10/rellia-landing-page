@@ -97,6 +97,23 @@ const CAREERS_PERKS: HomeWhyFeature[] = [
   },
 ]
 
+const getPerkIcon = (key: string): LucideIcon => {
+  switch (key) {
+    case "users":
+      return Users
+    case "building2":
+      return Building2
+    case "laptop":
+      return Laptop
+    case "mapPin":
+      return MapPin
+    case "userRound":
+      return UserRound
+    default:
+      return Users
+  }
+}
+
 const joinTeamMarqueeImages = [...TEAM_MARQUEE_IMAGES, ...TEAM_MARQUEE_IMAGES]
 
 const JOIN_TEAM_MARQUEE_LOOP_SEC = 56

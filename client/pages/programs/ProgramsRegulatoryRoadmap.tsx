@@ -7,7 +7,6 @@ const CMS: QmsProgramContent = {
   heroTitle: "Regulatory Strategy Sprint",
   heroDescription: "Navigate the complexities of medical device classification and global commercialization milestones. Leave with a documented regulatory strategy that supports investor due diligence.",
   heroCtaLabel: "Get started",
-  status: "upcoming",
   outcomesTitle: "Program Outcomes",
   outcomesIntro: "By the end of this program, you will have a clear regulatory strategy and timeline you can execute against and share with stakeholders.",
   outcomes: [
