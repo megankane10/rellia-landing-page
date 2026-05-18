@@ -99,23 +99,11 @@ export default function FeaturedStories({
     <section
       className={cn(
         "w-full overflow-x-hidden bg-white",
-        compact ? "py-10 md:py-14" : sectionClassName ? sectionClassName : "py-16 md:py-24",
+        compact ? "py-8 md:py-10" : sectionClassName ? sectionClassName : "py-10 md:py-14",
       )}
     >
       <div className="mx-auto w-full max-w-[1300px] px-6 md:px-10">
-        {showHeading ? (
-          <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
-            <SectionHeading
-              align="left"
-              title={title}
-              description={description}
-              className="max-w-2xl"
-              titleClassName="text-2xl md:text-3xl"
-            />
-          </div>
-        ) : null}
-
-        <div className={cn(showHeading ? "mt-10 md:mt-12" : "")}>
+        <div>
           <ScrollReveal>
             <div className="relative w-full overflow-hidden rounded-2xl bg-rellia-teal shadow-[0_22px_56px_-18px_rgba(12,61,73,0.42),0_8px_24px_-12px_rgba(0,0,0,0.14)] md:rounded-3xl">
               <div

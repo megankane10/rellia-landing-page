@@ -412,7 +412,7 @@ const EligibilityBentoCard = ({
   return (
     <article
       className={cn(
-        "group relative flex h-[320px] md:h-[400px] flex-col overflow-hidden rounded-[22px] border border-black/10 shadow-[0_24px_60px_-42px_rgba(13,53,64,0.5)]",
+        "group relative flex h-[200px] md:h-[240px] flex-col overflow-hidden rounded-[18px] border border-black/10 shadow-[0_16px_36px_-24px_rgba(13,53,64,0.3)]",
         className,
       )}
     >
@@ -422,11 +422,11 @@ const EligibilityBentoCard = ({
         className="absolute inset-0 h-full w-full object-cover transition duration-700 ease-out group-hover:scale-[1.04] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
         loading="lazy"
       />
-      <div aria-hidden className="absolute inset-0 bg-gradient-to-br from-black/85 via-black/5 to-transparent" />
-      <div aria-hidden className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/15 to-transparent" />
-      <div className="relative z-10 flex h-full min-h-0 w-full flex-1 flex-col justify-end p-6 text-left md:p-8">
+      <div aria-hidden className="absolute inset-0 bg-gradient-to-br from-black/80 via-black/10 to-transparent" />
+      <div aria-hidden className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/15 to-transparent" />
+      <div className="relative z-10 flex h-full min-h-0 w-full flex-1 flex-col justify-start p-5 text-left md:p-6">
         <p
-          className="self-start font-host-grotesk font-medium text-2xl md:text-[1.75rem] leading-[1.2] tracking-tight text-white [text-shadow:0_2px_28px_rgba(0,0,0,0.5)] max-w-[240px]"
+          className="self-start font-host-grotesk font-light text-lg md:text-xl leading-[1.3] tracking-tight text-white [text-shadow:0_1px_16px_rgba(0,0,0,0.4)]"
         >
           {item.text}
         </p>
@@ -472,9 +472,10 @@ function EngageTealBand() {
         className="pointer-events-none absolute -right-16 top-6 w-[320px] max-w-[55vw] opacity-[0.06] md:right-0 md:top-4 md:w-[420px]"
       />
       <div aria-hidden className="pointer-events-none absolute inset-0">
-        <div className="absolute -left-28 top-10 h-[420px] w-[420px] rounded-full bg-rellia-mint/22 blur-3xl" />
-        <div className="absolute -right-32 bottom-0 h-[480px] w-[480px] rounded-full bg-rellia-mint/16 blur-3xl" />
-        <div className="absolute inset-0 opacity-[0.2] [background-image:radial-gradient(circle_at_30%_15%,rgba(255,255,255,0.14),transparent_52%),radial-gradient(circle_at_75%_40%,rgba(157,214,208,0.12),transparent_55%)]" />
+        <div className="absolute -left-28 -top-12 h-[450px] w-[450px] rounded-full bg-rellia-mint/25 blur-[120px]" />
+        <div className="absolute -right-32 -bottom-16 h-[500px] w-[500px] rounded-full bg-rellia-mint/20 blur-[130px]" />
+        <div className="absolute left-1/3 top-1/4 h-[350px] w-[350px] rounded-full bg-rellia-mint/15 blur-[110px]" />
+        <div className="absolute inset-0 opacity-[0.25] [background-image:radial-gradient(circle_at_30%_15%,rgba(255,255,255,0.15),transparent_52%),radial-gradient(circle_at_75%_40%,rgba(157,214,208,0.15),transparent_55%)]" />
       </div>
 
       <div className="relative z-10 mx-auto max-w-[1300px]">

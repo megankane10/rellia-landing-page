@@ -100,17 +100,17 @@ export default function FounderProfile() {
                 </div>
 
                 <div className="space-y-4">
-                  <div className="flex items-start gap-3 text-black/70">
-                    <MapPin className="h-5.5 w-5.5 text-rellia-teal mt-0.5 shrink-0" />
-                    <span className="font-urbanist text-base font-semibold text-black/85">
-                      {Array.isArray(active.country)
-                        ? active.country.join(", ")
-                        : active.country}
+                  <div className="flex items-center gap-3 text-black/70">
+                    <MapPin className="h-5 w-5 text-rellia-teal shrink-0" />
+                    <span className="font-urbanist text-base font-medium text-black/75">
+                      {(active as any).location && active.country 
+                        ? `${(active as any).location}, ${Array.isArray(active.country) ? active.country.join(", ") : active.country}` 
+                        : ((active as any).location || (Array.isArray(active.country) ? active.country.join(", ") : active.country))}
                     </span>
                   </div>
                   <div className="flex items-center gap-3 text-black/70">
-                    <Calendar className="h-5 w-5 text-rellia-teal" />
-                    <span className="font-urbanist text-base font-medium">
+                    <Calendar className="h-5 w-5 text-rellia-teal shrink-0" />
+                    <span className="font-urbanist text-base font-medium text-black/75">
                       Joined {active.yearJoined}
                     </span>
                   </div>

@@ -10,7 +10,7 @@ import { FilloutStandardEmbed } from "@fillout/react"
 import { FILLOUT_APPLY_FORM_ID, FILLOUT_EMBED_VIEWPORT_MIN_CLASS } from "@/lib/filloutApplyForm"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { motion, useReducedMotion, AnimatePresence } from "framer-motion"
-import { BriefcaseBusiness, Building2, ExternalLink, Laptop, MapPin, Users } from "lucide-react"
+import { BriefcaseBusiness, Building2, ExternalLink, Laptop, MapPin, Users, UserRound, Check, type LucideIcon } from "lucide-react"
 import type { CareersPageContent, HomeWhyFeature } from "@shared/cms/types"
 import { DEFAULT_GLOBAL_SETTINGS } from "@shared/cms/defaults"
 import { CAREERS_VOLUNTEER_ENABLED, careersHasPublishedOpenRoles } from "@shared/careersPageConfig"
@@ -22,6 +22,7 @@ import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo"
 import FilteredListEmptyState from "@/components/FilteredListEmptyState"
 import { isProductionHostname } from "@/lib/sanity"
 import { useMemo, useState } from "react"
+import { ShareIconCopy } from "@/components/share/sharePageIcons"
 
 const g = DEFAULT_GLOBAL_SETTINGS
 
@@ -224,7 +225,7 @@ const CareersJoinTeamSection = ({
                 ) : null}
               </div>
 
-              <div className="mt-8 min-h-0 w-full flex-1 overflow-x-clip overflow-y-visible md:mt-12 md:overflow-y-hidden lg:mt-16">
+              <div className="mt-4 min-h-0 w-full flex-1 flex items-end overflow-x-clip overflow-y-visible md:mt-5 md:overflow-y-hidden lg:mt-6">
                 <div
                   className="relative h-full min-h-0 w-full overflow-x-clip py-2 md:py-3 [mask-size:100%_100%] [mask-repeat:no-repeat]"
                   style={marqueeMaskStyle}
@@ -285,6 +286,14 @@ const normalizeCms = (raw: unknown): CareersPageContent => {
 }
 
 export default function CareersCms() {
+  const [copiedRoleId, setCopiedRoleId] = useState<string | null>(null)
+  const handleCopyRoleLink = (roleId: string) => {
+    const roleUrl = `${window.location.origin}/careers#${roleId}`
+    navigator.clipboard.writeText(roleUrl)
+    setCopiedRoleId(roleId)
+    setTimeout(() => setCopiedRoleId(null), 2000)
+  }
+
   const { data: careersCmsRaw } = useQuery({
     queryKey: ["cms", "careersPage"],
     queryFn: async () => {
@@ -353,11 +362,37 @@ export default function CareersCms() {
           sectionClassName="bg-white pt-28 md:pt-32"
         />
 
-        <WhyRellia
-          sectionTitle="How we work"
-          sectionDescription="A lean health-tech team: industry proximity, intentional office time, and the pace of a startup—not a corporate perks sheet."
-          features={CAREERS_PERKS}
-        />
+        <section className="bg-white py-24 md:py-32 border-t border-black/10">
+          <div className="mx-auto max-w-[1300px] px-6 md:px-10">
+            <ScrollReveal className="max-w-3xl mb-16">
+              <h2 className="font-host-grotesk text-3xl font-bold tracking-tight text-black md:text-4xl lg:text-5xl">
+                How we work
+              </h2>
+              <p className="mt-4 font-urbanist text-lg md:text-xl text-black/60 leading-relaxed">
+                A lean health-tech team: industry proximity, intentional office time, and the pace of a startup—not a corporate perks sheet.
+              </p>
+            </ScrollReveal>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10 lg:gap-x-16 lg:gap-y-12">
+              {CAREERS_PERKS.map((perk) => {
+                const IconComponent = getPerkIcon(perk.iconKey)
+                return (
+                  <ScrollReveal key={perk.title} className="flex flex-col items-start text-left">
+                    <IconComponent className="h-8 w-8 text-rellia-teal mb-4" aria-hidden />
+                    <div>
+                      <h3 className="font-host-grotesk text-xl font-bold tracking-tight text-black mb-2">
+                        {perk.title}
+                      </h3>
+                      <p className="font-urbanist text-base leading-relaxed text-black/70">
+                        {perk.description}
+                      </p>
+                    </div>
+                  </ScrollReveal>
+                )
+              })}
+            </div>
+          </div>
+        </section>
 
         {enableHiring ? (
           <section
@@ -419,18 +454,40 @@ export default function CareersCms() {
                                 </ul>
                               </div>
 
-                              <div className="mt-8">
-                                <RelliaAction asChild variant="outlineOnWhite" size="comfortable" className="gap-2">
-                                  <a
-                                    href={role.linkedInApplyUrl}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    aria-label={`Apply for ${role.title} on LinkedIn (opens in new tab)`}
-                                  >
-                                    Apply on LinkedIn
-                                    <ExternalLink className="h-4 w-4" aria-hidden />
-                                  </a>
-                                </RelliaAction>
+                              <div className="mt-8 flex items-center gap-3">
+                                <a
+                                  href={role.linkedInApplyUrl}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="group inline-flex h-12 cursor-pointer items-center justify-center rounded-full bg-rellia-teal border-2 border-rellia-teal px-8 font-host-grotesk text-base font-bold text-white shadow-sm outline-none transition-all duration-300 hover:bg-[#07242a] hover:border-[#07242a]"
+                                  aria-label={`Apply for ${role.title} on LinkedIn (opens in new tab)`}
+                                >
+                                  <span className="relative z-10 inline-flex items-center gap-2">
+                                    Apply
+                                    <ExternalLink className="h-4.5 w-4.5" aria-hidden />
+                                  </span>
+                                </a>
+                                
+                                <button
+                                  type="button"
+                                  onClick={() => handleCopyRoleLink(role.id)}
+                                  className="group relative inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-full border-2 border-black/15 bg-white text-black/60 shadow-sm outline-none transition-all duration-300 hover:border-black/30 hover:text-black/80 hover:bg-black/5"
+                                  title={copiedRoleId === role.id ? "Copied!" : "Copy link to role"}
+                                  aria-label={copiedRoleId === role.id ? "Copied!" : "Copy link to role"}
+                                >
+                                  <span className="relative z-10 flex items-center justify-center">
+                                    {copiedRoleId === role.id ? (
+                                      <Check className="h-5 w-5 animate-scale-in text-rellia-teal" />
+                                    ) : (
+                                      <ShareIconCopy className="h-5 w-5" />
+                                    )}
+                                  </span>
+                                  {copiedRoleId === role.id && (
+                                    <span className="absolute -top-11 left-1/2 -translate-x-1/2 rounded-full bg-rellia-teal px-3 py-1 text-xs font-bold text-white shadow-md whitespace-nowrap transition-all duration-200 z-50 animate-bounce">
+                                      Copied!
+                                    </span>
+                                  )}
+                                </button>
                               </div>
                             </AccordionContent>
                           </AccordionItem>

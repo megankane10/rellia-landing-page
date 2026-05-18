@@ -14,6 +14,19 @@ import {
   Sparkles,
   Printer,
   Users,
+  Palette,
+  Code2,
+  Activity,
+  ShieldCheck,
+  Scale,
+  FileText,
+  DollarSign,
+  TrendingUp,
+  Megaphone,
+  Compass,
+  Heart,
+  Briefcase,
+  Clock,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import Navbar from "@/components/Navbar";
@@ -33,6 +46,24 @@ import {
 import { cn } from "@/lib/utils";
 import { clearApiCsrfCache, getApiCsrfHeaders } from "@/lib/apiCsrf";
 import { PROGRAM_META_BY_HREF } from "@/config/programMeta";
+import { isProductionHostname } from "@/lib/sanity";
+import FilteredListEmptyState from "@/components/FilteredListEmptyState";
+
+const SECTION_ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
+  product_design: Palette,
+  product_dev: Code2,
+  clinical: Activity,
+  regulatory: ShieldCheck,
+  legal: Scale,
+  ip: FileText,
+  reimbursement: DollarSign,
+  fundraising: TrendingUp,
+  marketing: Megaphone,
+  gtm: Compass,
+  healthcare: Users,
+  customer_success: Heart,
+  operations: Briefcase,
+};
 
 // ─── TYPES ───────────────────────────────────────────────────────────────────
 
@@ -1076,6 +1107,26 @@ const css = `
 // ─── MAIN COMPONENT ───────────────────────────────────────────────────────────
 
 export default function DiagnosticSurvey() {
+  const isProd = isProductionHostname();
+
+  if (isProd) {
+    return (
+      <div className="min-h-screen bg-white font-host-grotesk flex flex-col justify-between">
+        <Navbar forceSolid />
+        <main className="flex-1 flex items-center justify-center py-24 md:py-40">
+          <div className="max-w-md w-full px-6">
+            <FilteredListEmptyState
+              icon={Clock}
+              title="Diagnostic coming soon"
+              description="We're currently refining our AI-powered diagnostic tool to provide the most accurate readiness benchmarking for your health tech startup. Check back shortly."
+            />
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
   const [view, setView] = useState<View>("intro");
   const [currentSection, setCurrentSection] = useState<number>(0);
   const [currentQIdx, setCurrentQIdx] = useState<number>(0);
@@ -1901,8 +1952,11 @@ export default function DiagnosticSurvey() {
               >
                 <div className="space-y-4">
                   <div className="flex items-center gap-3">
-                    <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-rellia-mint text-rellia-teal text-xl">
-                      {sec.icon}
+                    <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-rellia-mint text-rellia-teal">
+                      {(() => {
+                        const IconComponent = SECTION_ICONS[sec.id];
+                        return IconComponent ? <IconComponent className="h-5 w-5" /> : sec.icon;
+                      })()}
                     </span>
                     <div>
                       <h2 className="font-host-grotesk text-2xl font-bold text-rellia-teal md:text-3xl">
@@ -1913,11 +1967,8 @@ export default function DiagnosticSurvey() {
                   <p className="text-rellia-teal/60">{sec.desc}</p>
                 </div>
 
-                <div className="rounded-[32px] border border-rellia-teal/5 bg-white p-8 shadow-xl md:p-12">
-                  <div className="mb-6 inline-flex rounded-lg bg-rellia-teal/5 px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest text-rellia-teal/60">
-                    {TYPE_LABELS[currentQ.type]}
-                  </div>
-                  <h3 className="mb-10 font-host-grotesk text-xl font-semibold leading-relaxed text-rellia-teal md:text-2xl">
+                <div className="rounded-[28px] border border-rellia-teal/5 bg-white p-6 px-8 shadow-xl md:py-8 md:px-14">
+                  <h3 className="mb-6 font-host-grotesk text-xl font-semibold leading-relaxed text-rellia-teal md:text-2xl">
                     {currentQ.text}
                   </h3>
 

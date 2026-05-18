@@ -25,22 +25,26 @@ const WHEN_TO_USE = [
 const CONSULTING_SERVICES = [
   {
     title: "Regulatory Consulting",
-    imageSrc: "https://images.pexels.com/photos/3825539/pexels-photo-3825539.jpeg?auto=compress&cs=tinysrgb&w=800",
+    body: "Secure ISO 13485 QMS compliance and structure your FDA 510(k) or Health Canada classification label.",
+    cta: "Explore regulatory",
     icon: ShieldCheck,
   },
   {
     title: "Clinical Trials",
-    imageSrc: "https://images.pexels.com/photos/2280549/pexels-photo-2280549.jpeg?auto=compress&cs=tinysrgb&w=800",
+    body: "Design pre-market feasibility studies, validate investigator protocols, and organize real-world evidence.",
+    cta: "Explore clinical",
     icon: Stethoscope,
   },
   {
     title: "Marketing Strategy",
-    imageSrc: "https://images.pexels.com/photos/8376155/pexels-photo-8376155.jpeg?auto=compress&cs=tinysrgb&w=800",
+    body: "Refine B2B health system positioning, sharpen value proposition models, and build pilot trust.",
+    cta: "Explore strategy",
     icon: Megaphone,
   },
   {
     title: "Branding",
-    imageSrc: "https://images.pexels.com/photos/4050824/pexels-photo-4050824.jpeg?auto=compress&cs=tinysrgb&w=800",
+    body: "Craft a premium clinical brand identity, consistent design systems, and highly-polished GTM materials.",
+    cta: "Explore branding",
     icon: Palette,
   },
 ] as const
@@ -84,49 +88,53 @@ function FitSectionSplit() {
 
 function ServicesGridSection() {
   return (
-    <LightSection className="bg-white border-t border-black/10">
-      <div className="mx-auto max-w-[1300px]">
+    <section className="relative w-full overflow-hidden bg-rellia-teal px-6 py-16 md:px-10 md:py-24">
+      <img
+        src="/images/hologram-logo.png"
+        alt=""
+        aria-hidden
+        className="pointer-events-none absolute -right-16 top-6 w-[320px] max-w-[55vw] opacity-[0.06] md:right-0 md:top-4 md:w-[420px]"
+      />
+      <div aria-hidden className="pointer-events-none absolute inset-0">
+        <div className="absolute -left-28 top-10 h-[420px] w-[420px] rounded-full bg-rellia-mint/22 blur-3xl" />
+        <div className="absolute -right-32 bottom-0 h-[480px] w-[480px] rounded-full bg-rellia-mint/16 blur-3xl" />
+        <div className="absolute inset-0 opacity-[0.2] [background-image:radial-gradient(circle_at_30%_15%,rgba(255,255,255,0.14),transparent_52%),radial-gradient(circle_at_75%_40%,rgba(157,214,208,0.12),transparent_55%)]" />
+      </div>
+
+      <div className="relative z-10 mx-auto max-w-[1300px]">
         <ScrollReveal>
-          <SectionHeading
-            animated={false}
-            title="Common consulting sprints"
-            description="Four areas founders most often need concentrated working time—scoped to outputs you can reuse in diligence and execution."
-            className="mt-5"
-          />
+          <h2 className="mt-5 font-host-grotesk text-3xl font-semibold leading-tight tracking-tight text-white md:text-[40px]">
+            Common consulting <span className="text-rellia-mint">sprints</span>
+          </h2>
+          <p className="mt-4 max-w-2xl font-urbanist text-base font-medium leading-relaxed text-white/80 md:text-lg">
+            Four areas founders most often need concentrated working time—scoped to outputs you can reuse in diligence and execution.
+          </p>
         </ScrollReveal>
 
-        <div className="mt-12 md:mt-16 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
-          {CONSULTING_SERVICES.map((s, idx) => (
-            <Reveal key={s.title} delay={0.05 * idx}>
-              <article className="group relative overflow-hidden rounded-[24px] border border-black/10 bg-white shadow-sm transition-[transform,box-shadow] duration-300 hover:-translate-y-[1px] hover:shadow-md motion-reduce:transition-none">
-                <div className="relative aspect-[5/6] w-full overflow-hidden">
-                  <img
-                    src={s.imageSrc}
-                    alt=""
-                    className="h-full w-full object-cover transition duration-500 ease-out group-hover:scale-[1.03] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
-                    loading="lazy"
-                  />
-                  <div
-                    aria-hidden
-                    className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-transparent"
-                  />
-
-                  <div className="absolute inset-x-0 bottom-0 p-6 flex flex-col items-start gap-4">
-                    <h3 className="font-host-grotesk text-2xl font-bold leading-tight tracking-tight text-white drop-shadow-sm">
-                      {s.title}
-                    </h3>
-                    <Link to="/contact" className="inline-flex items-center gap-2 font-host-grotesk text-sm font-semibold text-rellia-mint hover:underline hover:underline-offset-4">
-                      Learn More
-                      <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" aria-hidden />
-                    </Link>
-                  </div>
-                </div>
-              </article>
-            </Reveal>
-          ))}
-        </div>
+        <ScrollReveal delay={0.12}>
+          <div className="mt-12 grid grid-cols-1 gap-7 md:grid-cols-2 lg:grid-cols-4 lg:gap-6">
+            {CONSULTING_SERVICES.map((card) => {
+              const Icon = card.icon
+              return (
+                <Link 
+                  key={card.title} 
+                  to="/contact" 
+                  className="group flex min-h-[240px] flex-col rounded-2xl border border-white/15 bg-white/5 p-8 backdrop-blur-md transition-colors duration-300 hover:border-rellia-mint/40 hover:bg-white/10 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-rellia-teal"
+                >
+                  <Icon className="h-8 w-8 text-rellia-mint transition-transform duration-300 group-hover:scale-105" aria-hidden />
+                  <h3 className="mt-5 font-host-grotesk text-xl font-semibold tracking-tight text-white">{card.title}</h3>
+                  <p className="mt-4 flex-1 font-urbanist leading-relaxed text-white/85 text-sm">{card.body}</p>
+                  <span className="mt-6 inline-flex items-center gap-2 font-host-grotesk text-sm font-semibold text-rellia-mint">
+                    {card.cta}
+                    <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" aria-hidden />
+                  </span>
+                </Link>
+              )
+            })}
+          </div>
+        </ScrollReveal>
       </div>
-    </LightSection>
+    </section>
   )
 }
 

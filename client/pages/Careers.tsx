@@ -11,13 +11,14 @@ import { FilloutStandardEmbed } from "@fillout/react"
 import { FILLOUT_APPLY_FORM_ID, FILLOUT_EMBED_VIEWPORT_MIN_CLASS } from "@/lib/filloutApplyForm"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { motion, useReducedMotion } from "framer-motion"
-import { BriefcaseBusiness, Building2, ExternalLink, Laptop, MapPin, Users, UserRound, type LucideIcon } from "lucide-react"
+import { BriefcaseBusiness, Building2, ExternalLink, Laptop, MapPin, Users, UserRound, Check, type LucideIcon } from "lucide-react"
 import type { HomeWhyFeature } from "@shared/cms/types"
 import { DEFAULT_GLOBAL_SETTINGS } from "@shared/cms/defaults"
 import { CAREERS_VOLUNTEER_ENABLED, careersHasPublishedOpenRoles } from "@shared/careersPageConfig"
 import { CAREERS_OPEN_ROLES } from "@shared/careersOpenRoles"
 import { cn } from "@/lib/utils"
 import FilteredListEmptyState from "@/components/FilteredListEmptyState"
+import { ShareIconCopy } from "@/components/share/sharePageIcons"
 
 const g = DEFAULT_GLOBAL_SETTINGS
 
@@ -328,7 +329,7 @@ const CareersJoinTeamSection = ({
               </div>
 
               {/* Full-bleed marquee: sitting outside max-w-[1300px] */}
-              <div className="mt-8 min-h-0 w-full overflow-x-clip overflow-y-hidden md:mt-10 lg:mt-12">
+              <div className="mt-4 min-h-0 w-full overflow-x-clip overflow-y-hidden md:mt-5 lg:mt-6">
                 <div
                   className="relative h-auto min-h-0 w-full overflow-x-clip pb-0 [mask-size:100%_100%] [mask-repeat:no-repeat]"
                   style={marqueeMaskStyle}
@@ -375,6 +376,14 @@ const CareersJoinTeamSection = ({
 export default function Careers() {
   const hiring = careersHasPublishedOpenRoles()
   const volunteer = CAREERS_VOLUNTEER_ENABLED
+
+  const [copiedRoleId, setCopiedRoleId] = useState<string | null>(null)
+  const handleCopyRoleLink = (roleId: string) => {
+    const roleUrl = `${window.location.origin}/careers#${roleId}`
+    navigator.clipboard.writeText(roleUrl)
+    setCopiedRoleId(roleId)
+    setTimeout(() => setCopiedRoleId(null), 2000)
+  }
 
   const joinTeamPrimaryCta: CareersJoinTeamCta | null = hiring
     ? {
@@ -439,10 +448,8 @@ export default function Careers() {
               {CAREERS_PERKS.map((perk) => {
                 const IconComponent = getPerkIcon(perk.iconKey)
                 return (
-                  <ScrollReveal key={perk.title} className="flex gap-5 items-start">
-                    <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-rellia-mint/20 text-rellia-teal">
-                      <IconComponent className="h-7 w-7" aria-hidden />
-                    </div>
+                  <ScrollReveal key={perk.title} className="flex flex-col items-start text-left">
+                    <IconComponent className="h-8 w-8 text-rellia-teal mb-4" aria-hidden />
                     <div>
                       <h3 className="font-host-grotesk text-xl font-bold tracking-tight text-black mb-2">
                         {perk.title}
@@ -517,18 +524,40 @@ export default function Careers() {
                             </ul>
                           </div>
 
-                          <div className="mt-8">
-                            <RelliaAction asChild variant="outlineOnWhite" size="comfortable" className="gap-2">
-                              <a
-                                href={role.linkedInApplyUrl}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                aria-label={`Apply for ${role.title} on LinkedIn (opens in new tab)`}
-                              >
-                                Apply on LinkedIn
-                                <ExternalLink className="h-4 w-4" aria-hidden />
-                              </a>
-                            </RelliaAction>
+                          <div className="mt-8 flex items-center gap-3">
+                            <a
+                              href={role.linkedInApplyUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="group inline-flex h-12 cursor-pointer items-center justify-center rounded-full bg-rellia-teal border-2 border-rellia-teal px-8 font-host-grotesk text-base font-bold text-white shadow-sm outline-none transition-all duration-300 hover:bg-[#07242a] hover:border-[#07242a]"
+                              aria-label={`Apply for ${role.title} on LinkedIn (opens in new tab)`}
+                            >
+                              <span className="relative z-10 inline-flex items-center gap-2">
+                                Apply
+                                <ExternalLink className="h-4.5 w-4.5" aria-hidden />
+                              </span>
+                            </a>
+                            
+                            <button
+                              type="button"
+                              onClick={() => handleCopyRoleLink(role.id)}
+                              className="group relative inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-full border-2 border-black/15 bg-white text-black/60 shadow-sm outline-none transition-all duration-300 hover:border-black/30 hover:text-black/80 hover:bg-black/5"
+                              title={copiedRoleId === role.id ? "Copied!" : "Copy link to role"}
+                              aria-label={copiedRoleId === role.id ? "Copied!" : "Copy link to role"}
+                            >
+                              <span className="relative z-10 flex items-center justify-center">
+                                {copiedRoleId === role.id ? (
+                                  <Check className="h-5 w-5 animate-scale-in text-rellia-teal" />
+                                ) : (
+                                  <ShareIconCopy className="h-5 w-5" />
+                                )}
+                              </span>
+                              {copiedRoleId === role.id && (
+                                <span className="absolute -top-11 left-1/2 -translate-x-1/2 rounded-full bg-rellia-teal px-3 py-1 text-xs font-bold text-white shadow-md whitespace-nowrap transition-all duration-200 z-50 animate-bounce">
+                                  Copied!
+                                </span>
+                              )}
+                            </button>
                           </div>
                         </AccordionContent>
                       </AccordionItem>
