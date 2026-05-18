@@ -557,7 +557,7 @@ const FALLBACK_FOOTER_COLUMNS = [
       { enabled: true, label: "Apply", href: "/apply" },
       { enabled: true, label: "Programs", href: "/programs" },
       { enabled: true, label: "Events", href: "/events" },
-      { enabled: true, label: "Startup Diagnostic", href: "/diagnostic-survey" },
+      { enabled: true, label: "Startup Diagnostic", href: "/diagnostics" },
       { enabled: true, label: "Consulting", href: "/consulting" },
     ],
   },
