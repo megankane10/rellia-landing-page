@@ -30,7 +30,6 @@ import {
   ShareIconCopy,
   ShareIconFacebook,
   ShareIconLinkedIn,
-  ShareIconMail,
   ShareIconX,
   shareToolbarButtonClassName,
 } from "@/components/share/sharePageIcons"
@@ -473,13 +472,7 @@ export default function EventDetail() {
                     >
                       <ShareIconFacebook />
                     </a>
-                    <a
-                      href={`mailto:?subject=${encodeURIComponent(shareTitle)}&body=${encodeURIComponent(`${shareTitle}\n${canonical}`)}`}
-                      className={shareToolbarButtonClassName}
-                      aria-label="Share via email"
-                    >
-                      <ShareIconMail />
-                    </a>
+
                     <button
                       type="button"
                       onClick={handleCopyLink}

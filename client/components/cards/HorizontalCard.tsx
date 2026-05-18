@@ -122,7 +122,7 @@ export function HorizontalCard(props: HorizontalCardProps) {
         </div>
  
         {/* Content Section */}
-        <div className="flex flex-1 flex-col min-w-0 pr-6 w-full">
+        <div className="flex flex-1 flex-col min-w-0 pr-6 md:pr-10 w-full">
           {/* Mobile Date + Tags Row */}
           <div className="flex flex-wrap items-center gap-y-2 gap-x-3 mb-5 md:hidden">
             <div className="flex items-center gap-2 pr-1">
@@ -180,7 +180,7 @@ export function HorizontalCard(props: HorizontalCardProps) {
  
           {/* Mobile Image (Above Speaker) */}
           <div className="mt-5 md:hidden">
-            <div className="relative shrink-0 rounded-2xl overflow-hidden bg-black/5 w-32 h-32 shadow-sm">
+            <div className="relative shrink-0 rounded-xl overflow-hidden bg-black/5 w-28 h-28 shadow-sm">
               <img
                 src={eventThumbSrc}
                 alt={event.title}
@@ -214,7 +214,7 @@ export function HorizontalCard(props: HorizontalCardProps) {
         </div>
  
         {/* Desktop Image Thumbnail */}
-        <div className="hidden md:block relative shrink-0 rounded-2xl overflow-hidden bg-black/5 w-24 h-24 md:w-36 md:h-36 md:ml-auto shadow-sm">
+        <div className="hidden md:block relative shrink-0 rounded-2xl overflow-hidden bg-black/5 md:w-[150px] md:h-[150px] lg:w-[170px] lg:h-[170px] md:ml-auto shadow-sm">
           <img
             src={eventThumbSrc}
             alt={event.title}

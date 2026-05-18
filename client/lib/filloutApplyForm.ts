@@ -11,6 +11,8 @@ export const FILLOUT_EMBED_VIEWPORT_MIN_CLASS =
     "[&_.fillout-standard-embed]:min-h-[calc(100svh-72px)] md:[&_.fillout-standard-embed]:min-h-[calc(100svh-86px)]",
     /** @fillout/react sets iframe style borderRadius:10; square corners for Apply + Careers */
     "[&_iframe]:!rounded-none",
+    "[&_.fillout-standard-embed]:!w-full [&_.fillout-standard-embed]:!max-w-none [&_.fillout-standard-embed]:!overflow-hidden",
+    "[&_iframe]:!w-full [&_iframe]:!max-w-none [&_iframe]:!overflow-hidden [&_iframe]:!scrollbar-none",
   ].join(" ")
 
 /** Program enrollment / waitlist full-width embeds — tall default, grows with dynamicResize */
@@ -22,6 +24,8 @@ export const PROGRAM_FILLOUT_EMBED_MIN_CLASS =
     "[&_iframe]:!min-h-[min(1400px,calc(100svh-96px))]",
     "md:[&_iframe]:!min-h-[min(1600px,calc(100svh-100px))]",
     "[&_iframe]:!rounded-none",
+    "[&_.fillout-standard-embed]:!w-full [&_.fillout-standard-embed]:!max-w-none [&_.fillout-standard-embed]:!overflow-hidden",
+    "[&_iframe]:!w-full [&_iframe]:!max-w-none [&_iframe]:!overflow-hidden [&_iframe]:!scrollbar-none",
   ].join(" ")
 
 export const isFilloutFormUrl = (url: string): boolean =>

@@ -29,6 +29,7 @@ export type FounderCompany = {
   traction: string
   relliaCollaboration: string
   imageSrc: string
+  location?: string
   country: string[]
   yearJoined: number
   founders: FounderPerson[]
@@ -89,6 +90,7 @@ export const FOUNDER_DIRECTORY: FounderCompany[] = PORTFOLIO_LOGO_MARKS.slice(0,
       "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=800&q=80&auto=format&fit=crop",
       "https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=800&q=80&auto=format&fit=crop"
     ][index % 6],
+    location: ["London", "Boston", "Toronto", "Berlin", "Paris", "Sydney"][index % 6],
     country: [["United Kingdom"], ["United States"], ["Canada"], ["Germany"], ["France"], ["Australia"]][index % 6],
     yearJoined: 2021 + (index % 5),
     founders: index === 0 ? [

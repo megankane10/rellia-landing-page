@@ -749,21 +749,20 @@ export function createServer() {
       try {
         const { default: Stripe } = await import("stripe");
         const stripe = new Stripe(secretKey);
-        const returnUrl = `${siteOrigin.replace(/\/$/, "")}/membership?session_id={CHECKOUT_SESSION_ID}`;
 
         const session = await stripe.checkout.sessions.create({
-          ui_mode: "embedded" as any,
           mode: "subscription",
           line_items: [{ price: priceId, quantity: 1 }],
-          return_url: returnUrl,
+          success_url: `${siteOrigin.replace(/\/$/, "")}/membership?success=true&session_id={CHECKOUT_SESSION_ID}`,
+          cancel_url: `${siteOrigin.replace(/\/$/, "")}/membership?cancel=true`,
         });
 
-        if (!session.client_secret) {
+        if (!session.url) {
           res.status(502).json({ error: "Could not create checkout session." });
           return;
         }
 
-        res.status(200).json({ clientSecret: session.client_secret });
+        res.status(200).json({ url: session.url });
       } catch (err) {
         const stripeMessage =
           err instanceof Error ? err.message : String(err);

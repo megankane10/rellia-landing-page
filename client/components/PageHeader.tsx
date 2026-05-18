@@ -65,35 +65,42 @@ export default function PageHeader({
         <div
           className={cn(
             "absolute -left-24 -top-28 h-[420px] w-[420px] md:h-[520px] md:w-[520px] rounded-full blur-3xl",
-            isDark ? "bg-rellia-mint/16 md:bg-rellia-mint/25" : "bg-rellia-mint/20",
+            isDark ? "bg-rellia-mint/35 md:bg-rellia-mint/40" : "bg-rellia-mint/25",
           )}
         />
         <div
           className={cn(
             "absolute -right-16 sm:-right-28 md:-right-40 top-1/3 h-[520px] w-[520px] md:h-[560px] md:w-[560px] -translate-y-1/2 rounded-full blur-3xl",
-            isDark ? "bg-white/7 md:bg-white/10" : "bg-rellia-teal/10",
+            isDark ? "bg-rellia-mint/20 md:bg-white/12" : "bg-rellia-teal/12",
           )}
         />
         <div
           className={cn(
             "absolute left-1/3 bottom-[-220px] h-[520px] w-[520px] md:h-[620px] md:w-[620px] -translate-x-1/2 rounded-full blur-3xl",
-            "bg-rellia-mint/10 md:bg-rellia-mint/15",
+            isDark ? "bg-rellia-mint/25 md:bg-rellia-mint/30" : "bg-rellia-mint/18",
           )}
         />
-        {/* Extra small mint blobs on mobile (adds depth without overpowering teal) */}
+        {/* Progressive mint-to-teal gradient overlay specifically visible on mobile, giving rich premium aesthetics */}
+        {isDark && (
+          <div
+            aria-hidden
+            className="absolute inset-0 bg-gradient-to-tr from-rellia-mint/22 via-transparent to-rellia-mint/12 opacity-80 md:hidden pointer-events-none"
+          />
+        )}
+        {/* Extra progressive mint blobs on mobile (adds rich depth and clear branding contrast) */}
         {isDark ? (
           <>
             <div
               aria-hidden
-              className="md:hidden absolute right-10 top-16 h-24 w-24 rounded-full bg-rellia-mint/18 blur-2xl"
+              className="md:hidden absolute right-6 top-12 h-36 w-36 rounded-full bg-rellia-mint/25 blur-3xl"
             />
             <div
               aria-hidden
-              className="md:hidden absolute left-10 bottom-20 h-20 w-20 rounded-full bg-rellia-mint/14 blur-2xl"
+              className="md:hidden absolute left-4 bottom-16 h-32 w-32 rounded-full bg-rellia-mint/22 blur-3xl"
             />
             <div
               aria-hidden
-              className="md:hidden absolute right-20 bottom-10 h-16 w-16 rounded-full bg-rellia-mint/12 blur-2xl"
+              className="md:hidden absolute right-16 bottom-4 h-28 w-28 rounded-full bg-rellia-mint/18 blur-3xl"
             />
           </>
         ) : null}

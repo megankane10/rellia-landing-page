@@ -12,7 +12,11 @@ const normalizeInternalHref = (href: string) => {
   const trimmed = href.trim()
   if (!trimmed) return "/"
   if (isExternalHref(trimmed)) return trimmed
-  return trimmed.startsWith("/") ? trimmed : `/${trimmed}`
+  const normalized = trimmed.startsWith("/") ? trimmed : `/${trimmed}`
+  if (normalized === "/diagnostic-survey" || normalized === "/survey") {
+    return "/diagnostics"
+  }
+  return normalized
 }
 
 const FALLBACK_FOOTER_COLUMNS: NavItem[] = [
