@@ -756,7 +756,7 @@ export function createServer() {
           success_url: `${siteOrigin.replace(/\/$/, "")}/membership?success=true&session_id={CHECKOUT_SESSION_ID}`,
           cancel_url: `${siteOrigin.replace(/\/$/, "")}/membership?cancel=true`,
         });
-
+        
         if (!session.url) {
           res.status(502).json({ error: "Could not create checkout session." });
           return;
@@ -775,6 +775,49 @@ export function createServer() {
       }
     },
   );
+
+  app.post(
+    "/api/stripe/create-checkout-session",
+    rateLimitJson(stripeCheckoutRate, STRIPE_CHECKOUT_MAX_PER_MIN),
+    async (req, res) => {
+      const secretKey = process.env.STRIPE_SECRET_KEY?.trim()
+      if (!secretKey) {
+        res.status(501).json({ error: "Stripe is not configured on the server." })
+        return
+      }
+
+      const parsed = z.object({ priceId: z.string().min(1) }).safeParse(req.body)
+      if (!parsed.success) {
+        res.status(400).json({ error: "Invalid request" })
+        return
+      }
+
+      try {
+        const { default: Stripe } = await import("stripe")
+        const stripe = new Stripe(secretKey)
+        const origin = headerOne(req, "origin") ?? siteOrigin
+        const session = await stripe.checkout.sessions.create({
+          ui_mode: "embedded",
+          mode: "subscription",
+          line_items: [{ price: parsed.data.priceId, quantity: 1 }],
+          allow_promotion_codes: true,
+          billing_address_collection: "auto",
+          automatic_tax: { enabled: true },
+          return_url: `${origin}/membership?session_id={CHECKOUT_SESSION_ID}`,
+        })
+        if (!session.client_secret) {
+          res.status(500).json({ error: "Stripe did not return a client_secret." })
+          return
+        }
+        res.json({ clientSecret: session.client_secret })
+      } catch (err) {
+        res.status(500).json({
+          error: "Failed to create checkout session",
+          message: err instanceof Error ? err.message : String(err),
+        })
+      }
+    },
+  )
 
   app.post("/api/diagnostic-report", requireCsrf, async (req, res) => {
     if (!isAllowedBrowserOrigin(req, siteOrigins)) {

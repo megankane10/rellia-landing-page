@@ -5,6 +5,9 @@ interface ImportMetaEnv {
   readonly VITE_SITE_URL?: string
   /** Stripe publishable key for embedded checkout on /membership */
   readonly VITE_STRIPE_PUBLISHABLE_KEY?: string
+  /** Stripe Price IDs for embedded checkout (price_… from Stripe → Products) */
+  readonly VITE_STRIPE_MONTHLY_PRICE_ID?: string
+  readonly VITE_STRIPE_ANNUAL_PRICE_ID?: string
   /** Stripe Payment Link URLs for /payment fallback (optional; see `.env.example`) */
   readonly VITE_STRIPE_MONTHLY_PLAN_LINK?: string
   readonly VITE_STRIPE_ANNUAL_PLAN_LINK?: string
