@@ -797,7 +797,7 @@ export function createServer() {
         const stripe = new Stripe(secretKey)
         const origin = headerOne(req, "origin") ?? siteOrigin
         const session = await stripe.checkout.sessions.create({
-          ui_mode: "embedded",
+          ui_mode: "embedded" as any,
           mode: "subscription",
           line_items: [{ price: parsed.data.priceId, quantity: 1 }],
           allow_promotion_codes: true,

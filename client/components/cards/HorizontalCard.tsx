@@ -124,7 +124,7 @@ export function HorizontalCard(props: HorizontalCardProps) {
         {/* Content Section */}
         <div className="flex flex-1 flex-col min-w-0 pr-6 md:pr-10 w-full">
           {/* Mobile Date + Tags Row */}
-          <div className="flex flex-wrap items-center gap-y-2 gap-x-3 mb-5 md:hidden">
+          <div className="flex flex-wrap items-center gap-y-1.5 gap-x-2.5 mb-3 md:hidden">
             <div className="flex items-center gap-2 pr-1">
               <span className="font-host-grotesk text-3xl font-bold text-black leading-none">
                 {(dateBits.day || dateMain.split(" ")[1] || dateMain).padStart(2, "0")}
@@ -133,7 +133,6 @@ export function HorizontalCard(props: HorizontalCardProps) {
                 {dateBits.month || dateMain.split(" ")[0] || ""}
               </span>
             </div>
-            <div className="h-4 w-px bg-black/10" />
             <span
               className={cn(
                 "inline-flex w-fit items-center gap-1 rounded-full px-2.5 py-1 font-host-grotesk text-[9px] font-semibold uppercase tracking-[0.12em] ring-1 ring-black/5 sm:gap-1.5 sm:text-[10px] sm:tracking-[0.14em]",

@@ -175,7 +175,7 @@ export default function FounderProfile() {
                   {active.founders.map((f, i) => (
                     <div
                       key={i}
-                      className="group flex flex-col sm:flex-row gap-5 p-5 rounded-2xl border border-black/5 bg-black/[0.01] hover:bg-black/[0.02] hover:border-rellia-teal/20 transition-all duration-300 shadow-sm"
+                      className="group flex flex-row gap-5 p-5 rounded-2xl border border-black/5 bg-black/[0.01] hover:bg-black/[0.02] hover:border-rellia-teal/20 transition-all duration-300 shadow-sm"
                     >
                       <div className="relative shrink-0 w-24 h-24 sm:w-28 sm:h-28 overflow-hidden rounded-2xl border border-black/5 shadow-inner">
                         <img
@@ -212,26 +212,6 @@ export default function FounderProfile() {
                 </div>
               </section>
 
-              {/* 2. Participated Programs */}
-              {Array.isArray(active.programs) && active.programs.length > 0 && (
-                <section className="scroll-mt-28">
-                  <h3 className="mb-4 text-2xl font-host-grotesk font-semibold text-black">
-                    Participated Programs
-                  </h3>
-                  <div className="flex flex-wrap gap-3 not-prose">
-                    {active.programs.map((p, i) => (
-                      <div
-                        key={i}
-                        className="rounded-xl border border-rellia-teal/10 bg-rellia-mint/5 px-4 py-3"
-                      >
-                        <span className="font-host-grotesk font-bold text-rellia-teal">
-                          {p}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                </section>
-              )}
 
               {/* 3. Text Box for Remaining Fields - Redesigned to be Seamless */}
               {active.longDescription && (

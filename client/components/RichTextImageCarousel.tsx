@@ -56,7 +56,7 @@ export const RichTextImageCarousel = ({ title, slides, className }: RichTextImag
         </h2>
       ) : null}
 
-      <div className="relative overflow-hidden rounded-2xl border border-black/10 bg-black/[0.03] shadow-sm">
+      <div className="relative overflow-hidden rounded-2xl border border-black/10 bg-white shadow-sm">
         <div ref={emblaRef} className="overflow-hidden">
           <div className="flex">
             {validSlides.map((slide, index) => (

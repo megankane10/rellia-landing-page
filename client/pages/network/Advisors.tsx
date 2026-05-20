@@ -81,41 +81,78 @@ const CRITERIA_ITEMS = [
   },
 ] as const
 
+const engagementCardClass =
+  "group flex min-h-[240px] flex-col rounded-2xl border border-white/15 bg-white/5 p-8 backdrop-blur-md transition-colors duration-300 hover:border-rellia-mint/40 hover:bg-white/10 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-rellia-teal"
+
+const ADVISOR_ENGAGEMENT = [
+  {
+    title: "Community & network",
+    body: "Engage on your terms inside Slack and curated introductions—meet founders and fellow advisors without rigid mandates.",
+    to: "/founders/alumni",
+    cta: "Explore Alumni Directory",
+    icon: Network,
+  },
+  {
+    title: "Advisory board roles",
+    body: "Serve as a formal advisor when there is mutual fit—typically lightweight charters scoped to milestone cadence.",
+    to: "/advisors/directory",
+    cta: "Meet Our Advisors",
+    icon: Award,
+  },
+  {
+    title: "Program advisor",
+    body: "Shape cohort sessions and office hours inside Rellia programs—see our curriculum on the programs page.",
+    to: "/programs",
+    cta: "Browse Programs",
+    icon: BookOpen,
+  },
+]
+
 function SupportModelsSection() {
   return (
-    <LightSection>
-      <div className="mx-auto max-w-[1300px]">
-        <SectionHeading
-          animated={false}
-          title="How advisors can engage"
-          description="Community presence, formal advisory work, or program leadership—pick surfaces that fit your cadence."
-          className="mt-5"
-        />
-        <div className="mt-16 grid grid-cols-1 gap-12 md:grid-cols-3">
-          {SUPPORT_MODELS.map((row, idx) => {
-            const Icon = row.icon
-            return (
-              <Reveal key={row.title} delay={0.06 * idx}>
-                <div className="flex flex-col items-start text-left">
-                  <Icon className="h-10 w-10 shrink-0 text-rellia-teal" aria-hidden />
-                  <h3 className="mt-5 font-host-grotesk text-xl font-bold text-rellia-teal">{row.title}</h3>
-                  <p className="mt-3 font-urbanist text-[17px] leading-relaxed text-black/75">{row.body}</p>
-                  {row.linkTo && row.linkLabel ? (
-                    <Link
-                      to={row.linkTo}
-                      className="mt-4 inline-flex cursor-pointer items-center gap-2 font-host-grotesk text-sm font-bold text-rellia-teal underline-offset-4 hover:underline"
-                    >
-                      {row.linkLabel}
-                      <ArrowRight className="h-3.5 w-3.5" aria-hidden />
-                    </Link>
-                  ) : null}
-                </div>
-              </Reveal>
-            )
-          })}
-        </div>
+    <section className="relative w-full overflow-hidden bg-rellia-teal px-6 py-16 md:px-10 md:py-24">
+      <img
+        src="/images/hologram-logo.png"
+        alt=""
+        aria-hidden
+        className="pointer-events-none absolute -right-16 top-6 w-[320px] max-w-[55vw] opacity-[0.06] md:right-0 md:top-4 md:w-[420px]"
+      />
+      <div aria-hidden className="pointer-events-none absolute inset-0">
+        <div className="absolute -left-28 top-10 h-[420px] w-[420px] rounded-full bg-rellia-mint/22 blur-3xl" />
+        <div className="absolute -right-32 bottom-0 h-[480px] w-[480px] rounded-full bg-rellia-mint/16 blur-3xl" />
+        <div className="absolute inset-0 opacity-[0.2] [background-image:radial-gradient(circle_at_30%_15%,rgba(255,255,255,0.14),transparent_52%),radial-gradient(circle_at_75%_40%,rgba(157,214,208,0.12),transparent_55%)]" />
       </div>
-    </LightSection>
+
+      <div className="relative z-10 mx-auto max-w-[1300px]">
+        <ScrollReveal>
+          <h2 className="mt-5 font-host-grotesk text-3xl font-semibold leading-tight tracking-tight text-white md:text-[40px]">
+            Three ways to <span className="text-rellia-mint">work with Rellia</span>
+          </h2>
+          <p className="mt-4 max-w-2xl font-urbanist text-base font-medium leading-relaxed text-white/80 md:text-lg">
+            Community presence, formal advisory work, or program leadership—pick surfaces that fit your cadence.
+          </p>
+        </ScrollReveal>
+
+        <ScrollReveal delay={0.12}>
+          <div className="mt-12 grid grid-cols-1 gap-7 lg:grid-cols-3 lg:gap-6">
+            {ADVISOR_ENGAGEMENT.map((card) => {
+              const Icon = card.icon
+              return (
+                <Link key={card.title} to={card.to} className={engagementCardClass}>
+                  <Icon className="h-8 w-8 text-rellia-mint transition-transform duration-300 group-hover:scale-105" aria-hidden />
+                  <h3 className="mt-5 font-host-grotesk text-xl font-semibold tracking-tight text-white">{card.title}</h3>
+                  <p className="mt-4 flex-1 font-urbanist leading-relaxed text-white/85">{card.body}</p>
+                  <span className="mt-6 inline-flex items-center gap-2 font-host-grotesk text-sm font-semibold text-rellia-mint">
+                    {card.cta}
+                    <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" aria-hidden />
+                  </span>
+                </Link>
+              )
+            })}
+          </div>
+        </ScrollReveal>
+      </div>
+    </section>
   )
 }
 
