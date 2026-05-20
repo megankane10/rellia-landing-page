@@ -126,12 +126,12 @@ export const AppRoutes = () => (
 
       <Route path="/network" element={<Network />} />
       <Route path="/apply" element={<Apply />} />
-      <Route path="/consulting" element={showPlaceholder ? <PlaceholderPage title="Consulting" /> : <Consulting />} />
+      <Route path="/consulting" element={<Consulting />} />
       <Route path="/founders" element={<Founders />} />
-      <Route path="/founders/alumni" element={showPlaceholder ? <PlaceholderPage title="Explore Alumni" /> : <FoundersDirectory />} />
-      <Route path="/founders/alumni/:id" element={showPlaceholder ? <PlaceholderPage title="Founder Profile" /> : <FounderProfile />} />
+      <Route path="/founders/alumni" element={<FoundersDirectory />} />
+      <Route path="/founders/alumni/:id" element={<FounderProfile />} />
       <Route path="/advisors" element={<Advisors />} />
-      <Route path="/advisors/directory" element={showPlaceholder ? <PlaceholderPage title="Advisors Directory" /> : <AdvisorsDirectory />} />
+      <Route path="/advisors/directory" element={<AdvisorsDirectory />} />
       <Route path="/advisors/directory/:id" element={<AdvisorProfile />} />
       <Route path="/investors" element={<Investors />} />
       <Route path="/industry-partners" element={<Partners />} />
@@ -148,8 +148,8 @@ export const AppRoutes = () => (
 
       <Route path="/industry-partners/directory" element={<IndustryPartnersDirectory />} />
 
-      <Route path="/diagnostics" element={showPlaceholder ? <PlaceholderPage title="Startup Diagnostic" /> : <DiagnosticLanding />} />
-      <Route path="/diagnostic-survey" element={showPlaceholder ? <PlaceholderPage title="Startup Diagnostic" /> : <DiagnosticSurvey />} />
+      <Route path="/diagnostics" element={<DiagnosticLanding />} />
+      <Route path="/diagnostic-survey" element={showPlaceholder ? <PlaceholderPage title="Diagnostic Survey" subtitle="Coming Soon" /> : <DiagnosticSurvey />} />
       <Route path="/survey" element={<Navigate to="/diagnostic-survey" replace />} />
 
       <Route path="/studio" element={<StudioRedirect />} />

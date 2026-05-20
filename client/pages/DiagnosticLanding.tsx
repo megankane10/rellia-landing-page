@@ -1,10 +1,13 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { 
   ArrowRight, 
   ShieldCheck,
   Zap,
   Users,
+  Lock,
+  ChevronLeft,
+  ChevronRight,
 } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
@@ -12,10 +15,11 @@ import RelliaAction from '@/components/RelliaAction';
 import RouteSeo from '@/components/RouteSeo';
 import { motion } from 'framer-motion';
 import { isProductionHostname } from "@/lib/sanity";
+import { cn } from '@/lib/utils';
+import { PAGE_HEADER_TITLE_SIZE_CLASS } from '@/components/PageHeader';
 import type { HomeWhyFeature } from "@shared/cms/types";
 
 import WhyRellia from '@/components/WhyRellia';
-import HowItWorks from '@/components/HowItWorks';
 import MembershipPathTimeline from '@/components/MembershipPathTimeline';
 import RelliaCta from '@/components/RelliaCta';
 
@@ -139,6 +143,25 @@ const timelineSteps = [
 
 export default function DiagnosticLanding() {
   const isProd = isProductionHostname()
+  const [currentIndex, setCurrentIndex] = useState(0)
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % howItWorksSteps.length)
+    }, 4500)
+    return () => clearInterval(timer)
+  }, [])
+
+  const handlePrev = () => {
+    setCurrentIndex((prev) => (prev - 1 + howItWorksSteps.length) % howItWorksSteps.length)
+  }
+
+  const handleNext = () => {
+    setCurrentIndex((prev) => (prev + 1) % howItWorksSteps.length)
+  }
+
+  const currentItem = howItWorksSteps[currentIndex]
+  const CurrentIcon = currentItem.icon
 
   return (
     <div className="min-h-screen bg-white font-host-grotesk text-black selection:bg-rellia-mint/30 overflow-x-hidden">
@@ -173,11 +196,11 @@ export default function DiagnosticLanding() {
           >
             {/* Top Badge: Glass/Pill notice */}
             <div className="mb-8 flex w-fit items-center gap-2.5 rounded-full bg-white/10 backdrop-blur-md px-5 py-2 text-sm font-semibold text-white border border-white/20">
-              <ShieldCheck className="h-3.5 w-3.5 text-rellia-mint" />
+              <Lock className="h-3.5 w-3.5 text-rellia-mint" />
               <span>Detailed analysis is only available to Rellia members</span>
             </div>
 
-            <h1 className="max-w-4xl font-bold leading-[1.08] tracking-tight text-white drop-shadow-sm text-4xl md:text-5xl lg:text-6xl">
+            <h1 className={cn("max-w-4xl font-bold leading-[1.08] tracking-tight text-white drop-shadow-sm", PAGE_HEADER_TITLE_SIZE_CLASS)}>
               How ready is your<br />
               <span className="text-rellia-mint font-normal">startup, really?</span>
             </h1>
@@ -201,10 +224,10 @@ export default function DiagnosticLanding() {
             </div>
             
             {/* Bottom Checklist Alignment */}
-            <div className="mt-14 flex flex-wrap items-center gap-6 md:gap-10 text-xs sm:text-sm font-bold uppercase tracking-[0.2em] text-white">
-              <div className="flex items-center gap-2.5"><ShieldCheck className="h-5 w-5 text-white" /> 100% Private</div>
-              <div className="flex items-center gap-2.5"><Zap className="h-5 w-5 text-white" /> ~15 Minutes</div>
-              <div className="flex items-center gap-2.5"><Users className="h-5 w-5 text-white" /> Advisor Matching</div>
+            <div className="mt-14 flex flex-wrap items-center gap-6 md:gap-10 text-[10px] sm:text-xs font-bold uppercase tracking-[0.2em] text-white/70">
+              <div className="flex items-center gap-2"><ShieldCheck className="h-4 w-4" /> 100% Private</div>
+              <div className="flex items-center gap-2"><Zap className="h-4 w-4" /> ~15 Minutes</div>
+              <div className="flex items-center gap-2"><Users className="h-4 w-4" /> Advisor Matching</div>
             </div>
           </motion.div>
         </div>
@@ -226,6 +249,45 @@ export default function DiagnosticLanding() {
               <p className="font-urbanist text-lg text-black/60 leading-relaxed max-w-xl">
                 We've distilled years of digital health experience into a comprehensive assessment framework that covers the entire startup lifecycle. Rellia's custom platform maps every critical domain, ensuring regulatory alignment, clinical proof, and bulletproof operational scaling.
               </p>
+
+              {/* Scroller for the 13 domains */}
+              <div className="mt-10 max-w-xl">
+                <div className="relative overflow-hidden rounded-3xl border border-black/10 bg-white p-6 shadow-md min-h-[175px] flex flex-col justify-between">
+                  <div className="flex items-start gap-4">
+                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-rellia-mint/20 text-rellia-teal">
+                      <CurrentIcon className="h-5.5 w-5.5" />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <h4 className="font-host-grotesk text-base font-bold text-black">{currentItem.title}</h4>
+                      <p className="mt-1.5 font-urbanist text-sm leading-relaxed text-black/70">
+                        {currentItem.description}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="mt-5 flex items-center justify-between border-t border-black/5 pt-3.5">
+                    <span className="font-host-grotesk text-xs font-bold text-black/45 tracking-wider">
+                      {String(currentIndex + 1).padStart(2, '0')} / {String(howItWorksSteps.length).padStart(2, '0')}
+                    </span>
+                    <div className="flex items-center gap-1.5">
+                      <button
+                        onClick={handlePrev}
+                        className="flex h-8 w-8 items-center justify-center rounded-full border border-black/10 bg-white text-black/70 transition-colors hover:bg-black/5 hover:text-black active:scale-95"
+                        aria-label="Previous domain"
+                      >
+                        <ChevronLeft className="h-4.5 w-4.5" />
+                      </button>
+                      <button
+                        onClick={handleNext}
+                        className="flex h-8 w-8 items-center justify-center rounded-full border border-black/10 bg-white text-black/70 transition-colors hover:bg-black/5 hover:text-black active:scale-95"
+                        aria-label="Next domain"
+                      >
+                        <ChevronRight className="h-4.5 w-4.5" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
             <div className="flex-1 lg:pl-12">
               <div className="relative">
@@ -264,21 +326,6 @@ export default function DiagnosticLanding() {
         </div>
       </section>
 
-      {/* HOW IT WORKS SECTION displaying custom steps cards */}
-      <HowItWorks 
-        heading={
-          <h2 className="font-host-grotesk text-3xl font-semibold leading-tight tracking-tight text-white md:text-[40px]">
-            Comprehensive Domain Mapping
-          </h2>
-        }
-        subheading={
-          <p className="mt-4 font-urbanist text-base font-medium leading-relaxed tracking-tight text-white/80 md:text-lg max-w-3xl">
-            Generic startup advice won't help you navigate the highly regulated healthcare ecosystem. We evaluate your business across these 13 specialized domains.
-          </p>
-        }
-        steps={howItWorksSteps}
-        columns={3}
-      />
 
       {/* SURVEY TO INSIGHTS TIMELINE SECTION */}
       <MembershipPathTimeline 

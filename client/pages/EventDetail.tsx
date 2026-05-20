@@ -287,48 +287,7 @@ export default function EventDetail() {
                   </div>
 
                   <div className="flex min-h-0 min-w-0 flex-1 flex-col items-stretch">
-                    <div className="flex w-full min-w-0 flex-col items-start">
-                      <div className="flex max-w-full flex-wrap items-center gap-2">
-                        <span
-                          className={cn(
-                            "inline-flex w-fit max-w-full shrink-0 items-center gap-1 rounded-full px-2.5 py-1 font-host-grotesk text-[9px] font-semibold uppercase tracking-[0.12em] ring-1 ring-black/5 sm:gap-1.5 sm:text-[10px] sm:tracking-[0.14em]",
-                            isPast ? "bg-black/[0.06] text-black/65" : "bg-rellia-mint text-rellia-teal",
-                          )}
-                        >
-                          {isPast ? (
-                            <History
-                              className={cn(eventDetailHeroTagIconClassName, "text-black/50")}
-                              aria-hidden
-                              strokeWidth={2.25}
-                            />
-                          ) : (
-                            <Calendar
-                              className={cn(eventDetailHeroTagIconClassName, "text-rellia-teal")}
-                              aria-hidden
-                              strokeWidth={2.25}
-                            />
-                          )}
-                          {tagLabel}
-                        </span>
-                        <span className={eventDetailHeroAttendanceTagClassName}>
-                          {attendanceMode === "virtual" ? (
-                            <Video
-                              className={cn(eventDetailHeroTagIconClassName, "text-black/45")}
-                              aria-hidden
-                              strokeWidth={2.25}
-                            />
-                          ) : (
-                            <MapPin
-                              className={cn(eventDetailHeroTagIconClassName, "text-black/50")}
-                              aria-hidden
-                              strokeWidth={2.25}
-                            />
-                          )}
-                          {attendanceMode === "virtual" ? "Virtual" : "In person"}
-                        </span>
-                      </div>
-
-                      <h1 className="mt-5 w-full min-w-0 font-host-grotesk text-3xl font-medium leading-tight tracking-tight text-rellia-teal sm:mt-6 md:text-4xl lg:text-5xl">
+                      <h1 className="w-full min-w-0 font-host-grotesk text-3xl font-medium leading-tight tracking-tight text-rellia-teal md:text-4xl lg:text-5xl">
                         {event.title}
                       </h1>
 
@@ -415,7 +374,6 @@ export default function EventDetail() {
                           )}
                         </div>
                       </div>
-                    </div>
                     </div>
 
                     {showHeroEventCta ? (
