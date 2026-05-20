@@ -1,7 +1,7 @@
-import { useMemo, useState, useEffect, useCallback, useRef, type KeyboardEvent } from "react"
+import { useMemo, useState, useEffect, useCallback, useRef, useLayoutEffect, type KeyboardEvent } from "react"
 import { Link, useLocation } from "react-router-dom"
 import { cn } from "@/lib/utils"
-import { ChevronDown } from "lucide-react"
+import { ChevronDown, X } from "lucide-react"
 import { DEFAULT_GLOBAL_SETTINGS, DEFAULT_HOME_PAGE } from "@shared/cms/defaults"
 import { useGlobalSettings, useHomePage, useNavigation, useSiteSettings } from "@/hooks/useCmsDocuments"
 import { CareersHiringBadge } from "@/components/CareersHiringBadge"
@@ -238,6 +238,9 @@ export default function Navbar({
   const [mobileOpen, setMobileOpen] = useState(false)
   const [mobileOpenLabel, setMobileOpenLabel] = useState<string | null>(null)
   const [desktopOpenLabel, setDesktopOpenLabel] = useState<string | null>(null)
+  const [announcementDismissed, setAnnouncementDismissed] = useState(false)
+  const [bannerHeight, setBannerHeight] = useState(0)
+  const bannerRef = useRef<HTMLDivElement | null>(null)
   const location = useLocation()
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 12)
@@ -388,23 +391,92 @@ export default function Navbar({
       "text-white focus-visible:ring-white/80 focus-visible:ring-offset-transparent hover:text-white/90",
   )
 
+  const showBanner =
+    !announcementDismissed &&
+    globalSettings.announcementEnabled === true &&
+    Boolean(globalSettings.announcementText?.trim())
+
+  // Dynamically measure banner height and expose as CSS custom property
+  useLayoutEffect(() => {
+    const el = bannerRef.current
+    if (!el) {
+      setBannerHeight(0)
+      document.documentElement.style.removeProperty("--banner-h")
+      return
+    }
+    const update = () => {
+      const h = el.getBoundingClientRect().height
+      setBannerHeight(h)
+      document.documentElement.style.setProperty("--banner-h", `${h}px`)
+    }
+    update()
+    const ro = new ResizeObserver(update)
+    ro.observe(el)
+    return () => {
+      ro.disconnect()
+      document.documentElement.style.removeProperty("--banner-h")
+    }
+  }, [showBanner])
+
   return (
-    <nav
-      aria-label="Main navigation"
-      className={cn(
-        "fixed inset-x-0 top-0 z-[9999] transform-gpu transition-[background-color,backdrop-filter,border-color,box-shadow] duration-500 ease-out motion-reduce:transition-none",
-        mobileOpen && "border-b border-white/10 bg-rellia-teal shadow-[0_10px_30px_-24px_rgba(0,0,0,0.35)] backdrop-blur-2xl",
-        !mobileOpen && scrolled && "bg-rellia-teal shadow-[0_10px_30px_-24px_rgba(0,0,0,0.35)] backdrop-blur-2xl",
-        !mobileOpen &&
-          !scrolled &&
-          hasTransparentTopBar &&
-          "border-b border-transparent bg-transparent",
-        !mobileOpen &&
-          !scrolled &&
-          !hasTransparentTopBar &&
-          "bg-rellia-teal shadow-[0_10px_30px_-24px_rgba(0,0,0,0.35)] backdrop-blur-2xl",
+    <>
+      {/* ── Announcement banner ─────────────────────────────────────── */}
+      {showBanner && (
+        <div
+          ref={bannerRef}
+          id="announcement-banner"
+          role="banner"
+          className="fixed inset-x-0 top-0 z-[10000] flex items-center justify-between gap-3 bg-gradient-to-r from-rellia-mint via-rellia-greyTeal to-rellia-mint px-4 py-2.5 shadow-[0_2px_12px_-4px_rgba(0,0,0,0.12)] md:px-10 animate-in slide-in-from-top duration-400"
+        >
+          {/* Spacer so text centres on desktop */}
+          <div className="hidden w-9 shrink-0 md:block" aria-hidden />
+
+          <p className="flex-1 text-center text-[13px] font-medium leading-snug text-rellia-teal md:text-sm">
+            <span className="mr-1.5 inline-block animate-pulse text-rellia-teal/70">✦</span>
+            {globalSettings.announcementText}
+            {globalSettings.announcementButtonLabel?.trim() && globalSettings.announcementButtonLink?.trim() && (
+              <>
+                {" "}
+                <Link
+                  to={globalSettings.announcementButtonLink.trim()}
+                  className="ml-2 inline-flex items-center gap-1 rounded-full border border-rellia-teal/30 bg-rellia-teal/10 px-3.5 py-0.5 text-[12px] font-semibold text-rellia-teal transition-all duration-200 hover:bg-rellia-teal/20 hover:border-rellia-teal/50 md:text-[13px]"
+                  onClick={() => setAnnouncementDismissed(true)}
+                >
+                  {globalSettings.announcementButtonLabel.trim()}
+                  <span aria-hidden className="text-[10px]">→</span>
+                </Link>
+              </>
+            )}
+          </p>
+
+          <button
+            id="announcement-banner-dismiss"
+            aria-label="Dismiss announcement"
+            onClick={() => setAnnouncementDismissed(true)}
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-rellia-teal/50 transition-colors duration-200 hover:bg-rellia-teal/10 hover:text-rellia-teal focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-teal/40"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        </div>
       )}
-    >
+
+      <nav
+        aria-label="Main navigation"
+        style={showBanner && bannerHeight > 0 ? { top: `${bannerHeight}px` } : undefined}
+        className={cn(
+          "fixed inset-x-0 top-0 z-[9999] transform-gpu transition-[background-color,backdrop-filter,border-color,box-shadow,top] duration-500 ease-out motion-reduce:transition-none",
+          mobileOpen && "border-b border-white/10 bg-rellia-teal shadow-[0_10px_30px_-24px_rgba(0,0,0,0.35)] backdrop-blur-2xl",
+          !mobileOpen && scrolled && "bg-rellia-teal shadow-[0_10px_30px_-24px_rgba(0,0,0,0.35)] backdrop-blur-2xl",
+          !mobileOpen &&
+            !scrolled &&
+            hasTransparentTopBar &&
+            "border-b border-transparent bg-transparent",
+          !mobileOpen &&
+            !scrolled &&
+            !hasTransparentTopBar &&
+            "bg-rellia-teal shadow-[0_10px_30px_-24px_rgba(0,0,0,0.35)] backdrop-blur-2xl",
+        )}
+      >
       <a
         href="#main-content"
         className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[200] focus:rounded-xl focus:bg-rellia-teal focus:px-4 focus:py-2.5 focus:text-sm focus:font-semibold focus:text-white focus:shadow-lg motion-reduce:transition-none"
@@ -533,8 +605,12 @@ export default function Navbar({
         {/* Full-screen teal overlay slides in under the navbar */}
         <div
           id="mobile-nav-panel"
+          style={{
+            top: `${72 + (showBanner ? bannerHeight : 0)}px`,
+            height: `calc(100dvh - ${72 + (showBanner ? bannerHeight : 0)}px)`,
+          }}
           className={cn(
-            "fixed inset-x-0 top-[72px] z-[56] h-[calc(100dvh-72px)] w-full md:hidden transform-gpu",
+            `fixed inset-x-0 z-[56] w-full md:hidden transform-gpu`,
             "bg-rellia-teal backdrop-blur-[56px] backdrop-saturate-150 shadow-2xl border-l border-white/10",
             "will-change-transform transition-transform duration-500 ease-[cubic-bezier(0.42,0,0.58,1)] motion-reduce:transition-none",
             mobileOpen ? "translate-x-0" : "pointer-events-none translate-x-full",
@@ -693,5 +769,6 @@ export default function Navbar({
         </div>
       </>
     </nav>
+  </>
   )
 }

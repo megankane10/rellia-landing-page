@@ -13,7 +13,11 @@ export const globalSettingsQuery = `*[_type == "globalSettings"][0]{
   supportEmail,
   linkedinUrl,
   instagramUrl,
-  copyrightLine
+  copyrightLine,
+  announcementEnabled,
+  announcementText,
+  announcementButtonLabel,
+  announcementButtonLink
 }`;
 
 export const navigationQuery = `*[_type == "navigation"][0]{

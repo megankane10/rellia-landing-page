@@ -273,6 +273,10 @@ export type GlobalSettingsContent = {
   linkedinUrl: string
   instagramUrl: string
   copyrightLine: string
+  announcementEnabled?: boolean
+  announcementText?: string
+  announcementButtonLabel?: string
+  announcementButtonLink?: string
 }
 
 export type SiteSettingsContent = {

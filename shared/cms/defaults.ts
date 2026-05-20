@@ -965,6 +965,10 @@ export const DEFAULT_GLOBAL_SETTINGS: GlobalSettingsContent = {
   linkedinUrl: "https://www.linkedin.com/company/relliahealth",
   instagramUrl: "https://www.instagram.com/relliahealth/",
   copyrightLine: "Rellia Health. All rights reserved.",
+  announcementEnabled: true,
+  announcementText: "New Program: The Regulatory Strategy Sprint is now accepting applications.",
+  announcementButtonLabel: "Learn More",
+  announcementButtonLink: "/programs/regulatory-strategy-sprint",
 }
 
 export const DEFAULT_HOME_PAGE: HomePageContent = {
