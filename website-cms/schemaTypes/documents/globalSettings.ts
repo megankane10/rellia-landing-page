@@ -8,6 +8,7 @@ export const globalSettings = defineType({
     {name: 'footer', title: 'Footer', default: true},
     {name: 'social', title: 'Social links'},
     {name: 'legal', title: 'Legal'},
+    {name: 'announcement', title: 'Announcement banner'},
   ],
   fields: [
     defineField({
@@ -43,6 +44,34 @@ export const globalSettings = defineType({
       type: 'string',
       description: 'Example: © 2026 Rellia Health. All rights reserved.',
       group: 'legal',
+    }),
+    defineField({
+      name: 'announcementEnabled',
+      title: 'Announcement enabled',
+      type: 'boolean',
+      description: 'Show or hide the announcement banner at the top of the page.',
+      group: 'announcement',
+    }),
+    defineField({
+      name: 'announcementText',
+      title: 'Announcement text',
+      type: 'string',
+      description: 'The text message shown in the banner.',
+      group: 'announcement',
+    }),
+    defineField({
+      name: 'announcementButtonLabel',
+      title: 'Announcement button label',
+      type: 'string',
+      description: 'Label for the CTA button in the banner.',
+      group: 'announcement',
+    }),
+    defineField({
+      name: 'announcementButtonLink',
+      title: 'Announcement button link',
+      type: 'string',
+      description: 'URL target path for the CTA button in the banner.',
+      group: 'announcement',
     }),
   ],
 })
