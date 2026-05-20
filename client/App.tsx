@@ -10,6 +10,7 @@ import { SpeedInsights } from "@vercel/speed-insights/react"
 import ScrollToTop from "@/components/ScrollToTop"
 import RouteSeo from "@/components/RouteSeo"
 import { AppRoutes, RouterShell } from "./AppRoutes"
+import { AuthProvider } from "@/context/AuthContext"
 
 
 
@@ -60,9 +61,11 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-          <RouterShell>
-            <AppRoutes />
-          </RouterShell>
+          <AuthProvider>
+            <RouterShell>
+              <AppRoutes />
+            </RouterShell>
+          </AuthProvider>
         </BrowserRouter>
       </TooltipProvider>
     </QueryClientProvider>

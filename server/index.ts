@@ -1027,5 +1027,94 @@ export function createServer() {
     }
   });
 
+  // ─── Admin routes ──────────────────────────────────────────────────────────
+
+  const adminSignupStatusRate = new Map<string, RateState>();
+  const ADMIN_SIGNUP_STATUS_MAX_PER_MIN = 30;
+  const adminSignupRate = new Map<string, RateState>();
+  const ADMIN_SIGNUP_MAX_PER_MIN = 5;
+
+  app.get(
+    "/api/admin/signup-status",
+    rateLimitJson(adminSignupStatusRate, ADMIN_SIGNUP_STATUS_MAX_PER_MIN),
+    (req, res) => {
+      if (!isAllowedBrowserOrigin(req, siteOrigins)) {
+        res.status(403).json({ error: "Forbidden" });
+        return;
+      }
+      res.json({ enabled: process.env.ADMIN_SIGNUP_ENABLED === "true" });
+    },
+  );
+
+  app.post(
+    "/api/admin/signup",
+    rateLimitJson(adminSignupRate, ADMIN_SIGNUP_MAX_PER_MIN),
+    requireCsrf,
+    async (req, res) => {
+      if (!isAllowedBrowserOrigin(req, siteOrigins)) {
+        res.status(403).json({ error: "Forbidden" });
+        return;
+      }
+
+      if (process.env.ADMIN_SIGNUP_ENABLED !== "true") {
+        res.status(403).json({ error: "Signup is currently disabled." });
+        return;
+      }
+
+      const parsed = z
+        .object({
+          email: z.string().trim().email().max(254),
+          password: z.string().min(8).max(72),
+        })
+        .safeParse(req.body);
+
+      if (!parsed.success) {
+        res.status(400).json({ error: "Invalid request", details: parsed.error.flatten() });
+        return;
+      }
+
+      const supabaseUrl = (process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || "").trim().replace(/\/$/, "");
+      const serviceRoleKey = (
+        process.env.SUPABASE_SERVICE_ROLE_KEY ||
+        process.env.SUPABASE_SECRET_KEY ||
+        process.env.SUPABASE_SERVICE_KEY ||
+        ""
+      ).trim();
+
+      if (!supabaseUrl || !serviceRoleKey) {
+        res.status(501).json({ error: "Supabase admin credentials are not configured on the server." });
+        return;
+      }
+
+      try {
+        const { createClient } = await import("@supabase/supabase-js");
+        const adminClient = createClient(supabaseUrl, serviceRoleKey, {
+          auth: { autoRefreshToken: false, persistSession: false },
+        });
+
+        const { error } = await adminClient.auth.admin.createUser({
+          email: parsed.data.email,
+          password: parsed.data.password,
+          email_confirm: true,
+        });
+
+        if (error) {
+          if (error.message.toLowerCase().includes("already")) {
+            res.status(409).json({ error: "An account with this email already exists." });
+          } else {
+            console.error("Supabase admin createUser error:", error.message);
+            res.status(500).json({ error: "Failed to create account. Please try again." });
+          }
+          return;
+        }
+
+        res.status(200).json({ ok: true });
+      } catch (err) {
+        console.error("Admin signup error:", err);
+        res.status(500).json({ error: "Unexpected server error." });
+      }
+    },
+  );
+
   return app;
 }
