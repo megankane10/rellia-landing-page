@@ -6,15 +6,18 @@ import { createServer } from "./server";
 import { PRERENDER_PATHS } from "./client/config/seo";
 import { fetchStorySlugsForPrerender } from "./shared/cms/prerenderSanity";
 
-const getVercelSiteUrl = (): string | undefined => {
-  const raw = process.env.VITE_SITE_URL?.trim();
-  if (raw) return raw.replace(/\/$/, "");
+const getBuildSiteUrl = (): string => {
+  const explicit = process.env.VITE_SITE_URL?.trim();
+  if (explicit) return explicit.replace(/\/$/, "");
+
+  if (process.env.VERCEL_ENV === "production") {
+    return "https://www.relliahealth.com";
+  }
 
   const vercelUrl = process.env.VERCEL_URL?.trim();
-  if (!vercelUrl) return undefined;
+  if (!vercelUrl) return "https://www.relliahealth.com";
 
   const normalized = vercelUrl.replace(/^https?:\/\//, "").replace(/\/$/, "");
-  if (!normalized) return undefined;
   return `https://${normalized}`;
 };
 
@@ -55,15 +58,15 @@ export default defineConfig(async () => {
   define: {
     // Ensure prerender + index.html use the current Vercel deployment URL (preview/prod),
     // while still allowing explicit override via VITE_SITE_URL.
-    "import.meta.env.VITE_SITE_URL": JSON.stringify(
-      getVercelSiteUrl() ?? "https://www.relliahealth.com",
-    ),
+    "import.meta.env.VITE_SITE_URL": JSON.stringify(getBuildSiteUrl()),
     // Used for OG image cache-busting (social crawlers cache by URL).
     "import.meta.env.VITE_OG_IMAGE_VERSION":
       JSON.stringify(getOgImageVersion()),
   },
   build: {
     outDir: "dist/spa",
+    // Avoid preloading the prerender-only chunk in the browser (stale preload → white screen).
+    modulePreload: false,
     // Vercel logs warn when large chunks exceed 500kb. This is a marketing SPA with heavy
     // libraries; we still rely on route-level prerendering + CDN caching.
     chunkSizeWarningLimit: 2000,
@@ -74,13 +77,17 @@ export default defineConfig(async () => {
     {
       name: "html-og-env",
       transformIndexHtml(html) {
-        const siteUrl = getVercelSiteUrl() ?? "https://www.relliahealth.com";
+        const siteUrl = getBuildSiteUrl();
         const version = getOgImageVersion();
         return html
           .split("%VITE_SITE_URL%")
           .join(siteUrl)
           .split("%VITE_OG_IMAGE_VERSION%")
-          .join(version);
+          .join(version)
+          .replace(
+            /<link rel="modulepreload"[^>]*href="\/assets\/prerender-[^"]+"[^>]*>\s*/g,
+            "",
+          );
       },
     },
     ...vitePrerenderPlugin({

@@ -31,7 +31,13 @@ const PageSocialHelmet = ({
       <meta property="og:url" content={canonical} />
       <meta property="og:title" content={title} />
       <meta property="og:description" content={description} />
-      {includeImage ? <meta property="og:image" content={ogImage} /> : null}
+      {includeImage ? (
+        <>
+          <meta property="og:image" content={ogImage} />
+          <meta property="og:image:width" content="1200" />
+          <meta property="og:image:height" content="1200" />
+        </>
+      ) : null}
 
       <meta
         name="twitter:card"

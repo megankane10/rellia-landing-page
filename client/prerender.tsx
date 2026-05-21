@@ -208,6 +208,8 @@ const appendSocialMeta = (
   )
   if (seo.ogImage) {
     headElements.add(`<meta property="og:image" content="${escapeMetaAttr(seo.ogImage)}" />`)
+    headElements.add(`<meta property="og:image:width" content="1200" />`)
+    headElements.add(`<meta property="og:image:height" content="1200" />`)
     headElements.add(`<meta name="twitter:card" content="summary_large_image" />`)
     headElements.add(`<meta name="twitter:image" content="${escapeMetaAttr(seo.ogImage)}" />`)
   } else {
