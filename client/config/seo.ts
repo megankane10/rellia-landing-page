@@ -327,14 +327,25 @@ const SOCIAL_OG_IMAGE_FALLBACKS: Record<string, string> = {
   "/images/complianceevent-desc.jpeg": "/images/aiHealthcareCompliance.jpg",
 }
 
-const withSanityJpegFormat = (url: string): string => {
+export type SocialOgImageOptions = {
+  /** Crop Sanity (and similar) assets to a square for event/program card previews. */
+  square?: boolean
+}
+
+const withSanitySocialImage = (url: string, square: boolean): string => {
   if (!url.includes("cdn.sanity.io")) return url
   try {
     const parsed = new URL(url)
     if (!parsed.searchParams.has("fm")) {
       parsed.searchParams.set("fm", "jpg")
     }
-    if (!parsed.searchParams.has("w")) {
+    parsed.searchParams.set("auto", "format")
+    if (square) {
+      parsed.searchParams.set("w", "1200")
+      parsed.searchParams.set("h", "1200")
+      parsed.searchParams.set("fit", "crop")
+      parsed.searchParams.set("crop", "center")
+    } else if (!parsed.searchParams.has("w")) {
       parsed.searchParams.set("w", "1200")
     }
     return parsed.toString()
@@ -346,6 +357,7 @@ const withSanityJpegFormat = (url: string): string => {
 export const resolveSocialOgImageUrl = (
   src: string | undefined,
   origin = getShareOrigin(),
+  options: SocialOgImageOptions = {},
 ): string | undefined => {
   const trimmed = src?.trim()
   if (!trimmed) return undefined
@@ -367,12 +379,14 @@ export const resolveSocialOgImageUrl = (
     resolved = SOCIAL_OG_IMAGE_FALLBACKS[jpgPath] ?? jpgPath
   }
 
+  const square = Boolean(options.square)
+
   if (/^https?:\/\//i.test(resolved)) {
-    return withSanityJpegFormat(resolved)
+    return withSanitySocialImage(resolved, square)
   }
 
   const absolute = toAbsoluteOgImageUrl(resolved, origin)
-  return absolute ? withSanityJpegFormat(absolute) : undefined
+  return absolute ? withSanitySocialImage(absolute, square) : undefined
 }
 
 const EVENT_DETAIL_SEO: RouteSeoConfig = {

@@ -53,6 +53,7 @@ import {
 import type { QmsProgramContent } from "@shared/cms/types";
 import type { ProgramPageStaticBlocks } from "@shared/cms/programs/types";
 import ProgramTrustedMembersSection from "@/components/program/ProgramTrustedMembersSection"
+import { resolveProgramCardImageSrc } from "@shared/cms/itemCardImage"
 
 export type ProgramPageLayoutProps = {
   cms: QmsProgramContent;
@@ -183,7 +184,9 @@ const ProgramPageLayout = ({
     ""
   ).trim()
 
-  const resolvedHeroImageSrc = (programDoc?.imageSrc || heroImageSrc || "").trim()
+  const programSlug = (cmsSlug ?? "").trim()
+  const resolvedHeroImageSrc =
+    resolveProgramCardImageSrc(programSlug, programDoc?.imageSrc, heroImageSrc)?.trim() ?? ""
   const resolvedHeroImageAlt = (heroImageAlt || resolvedProgramTitle || "Program image").trim()
 
   const canonicalUrl = buildPageUrl(location.pathname);
@@ -191,7 +194,7 @@ const ProgramPageLayout = ({
     resolvedProgramTitle ? `${resolvedProgramTitle} — Rellia Health` : "Programs — Rellia Health",
   )
   const programOgImage = resolvedHeroImageSrc
-    ? resolveSocialOgImageUrl(resolvedHeroImageSrc)
+    ? resolveSocialOgImageUrl(resolvedHeroImageSrc, undefined, { square: true })
     : undefined
 
   const programMetaDescription = clampMetaDescription(
