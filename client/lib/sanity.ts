@@ -25,12 +25,9 @@ const allowSanityProxyFetch = (): boolean => {
   if (typeof window === "undefined") return false
   if (import.meta.env.VITE_DISABLE_CMS === "true") return false
   if (isSanityConfigured()) return true
-  const embedded = window.self !== window.top
-  const previewCookie =
-    typeof document !== "undefined" &&
-    typeof document.cookie === "string" &&
-    document.cookie.includes("sanity-preview-perspective=")
-  return embedded || previewCookie
+  // Presentation iframe: draft cookie is HttpOnly (not visible to document.cookie)
+  if (window.self !== window.top) return true
+  return false
 }
 
 /**
