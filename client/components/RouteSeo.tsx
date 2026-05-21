@@ -1,6 +1,8 @@
 import { Helmet } from "react-helmet-async"
 import { useLocation } from "react-router-dom"
 import {
+  clampMetaDescription,
+  clampMetaTitle,
   getDefaultOgImageUrl,
   getDefaultOgImageAlt,
   getSeoForPathname,
@@ -36,8 +38,10 @@ const RouteSeo = ({
 
   const { overrides } = useOptionalPageSeo()
 
-  const title = titleOverride || overrides.title || defaultTitle
-  const description = descriptionOverride || overrides.description || defaultDescription
+  const title = clampMetaTitle(titleOverride || overrides.title || defaultTitle)
+  const description = clampMetaDescription(
+    descriptionOverride || overrides.description || defaultDescription,
+  )
   const ogImage = ogImageOverride || overrides.ogImage
   const noIndex = noIndexOverride ?? overrides.noIndex ?? !indexable
 

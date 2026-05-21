@@ -429,18 +429,6 @@ export function createServer() {
   const sanityResolved = resolveSanityApiConfig();
   const sanityApiCfg =
     sanityResolved.status === "ok" ? sanityResolved : null;
-  const writeToken = process.env.SANITY_API_WRITE_TOKEN?.trim();
-  const sanityWriteClient =
-    sanityApiCfg && writeToken
-      ? createClient({
-          projectId: sanityApiCfg.projectId,
-          dataset: sanityApiCfg.dataset,
-          token: writeToken,
-          useCdn: false,
-          apiVersion: "2024-01-01",
-        })
-      : null;
-
   const previewAndSiteOrigins = new Set(
     [studioOrigin, ...siteOrigins].filter(Boolean) as string[],
   );

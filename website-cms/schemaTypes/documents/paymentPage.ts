@@ -1,14 +1,13 @@
 import {defineField, defineType} from 'sanity'
+import {documentGroups, FIELDSET_SEO} from '../shared/fieldGroups'
+import {singletonLayoutFields} from '../shared/singletonLayoutFields'
 
 export const paymentPage = defineType({
   name: 'paymentPage',
-  title: 'Payment page',
+  title: 'Payment page (/membership)',
   type: 'document',
-  groups: [
-    {name: 'content', title: 'Content', default: true},
-    {name: 'seo', title: 'SEO & metadata'},
-  ],
-  fieldsets: [{name: 'seo', title: 'SEO & metadata'}],
+  groups: documentGroups,
+  fieldsets: [FIELDSET_SEO],
   fields: [
     defineField({name: 'badge', type: 'string', title: 'Eyebrow label', group: 'content'}),
     defineField({name: 'headline', type: 'string', title: 'Main headline', group: 'content'}),
@@ -163,6 +162,7 @@ export const paymentPage = defineType({
       title: 'Questions strip — contact path',
       group: 'content',
     }),
+    ...singletonLayoutFields,
     defineField({name: 'seo', type: 'seo', group: 'seo', fieldset: 'seo'}),
   ],
 })

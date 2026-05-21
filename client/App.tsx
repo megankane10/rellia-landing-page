@@ -11,6 +11,7 @@ import ScrollToTop from "@/components/ScrollToTop"
 import RouteSeo from "@/components/RouteSeo"
 import { AppRoutes, RouterShell } from "./AppRoutes"
 import { AuthProvider } from "@/context/AuthContext"
+import { VisualEditingOverlay } from "@/components/sanity/VisualEditingOverlay"
 
 
 
@@ -64,6 +65,7 @@ const App = () => (
           <AuthProvider>
             <RouterShell>
               <AppRoutes />
+              <VisualEditingOverlay />
             </RouterShell>
           </AuthProvider>
         </BrowserRouter>

@@ -842,6 +842,29 @@ const SECOND_OPINION_USER_RESEARCH_DETAIL_BODY: SanityPortableText = [
   },
 ]
 
+const AI_HEALTHCARE_COMPLIANCE_DETAIL_BODY: SanityPortableText = [
+  {
+    _type: "block",
+    _key: "ahc-p1",
+    style: "normal",
+    markDefs: [],
+    children: [
+      {
+        _type: "span",
+        _key: "ahc-p1s",
+        text: "The Human Layer: the missing layer above the tech stack - trust, coordination, and shared understanding - so humanity and technology can advance in harmony.",
+        marks: [],
+      },
+    ],
+  },
+  {
+    _type: "eventDetailInlineImage",
+    _key: "ahc-img-desc",
+    imageSrc: "/images/complianceevent-desc.jpeg",
+    alt: "The Human Layer — trust, coordination, and shared understanding in healthcare AI",
+  },
+]
+
 /** Sample in-person Toronto event with inline images in the body (portable text). */
 const DIGITAL_HEALTH_SALON_TORONTO_DETAIL_BODY: SanityPortableText = [
   {
@@ -1418,6 +1441,18 @@ export const DEFAULT_PROGRAMS_LANDING: ProgramsLandingContent = {
     },
   ],
   upcomingEvents: [
+    {
+      slug: "ai-healthcare-compliance",
+      title: "AI Healthcare Compliance (w/ The AI Collective)",
+      dateTime: "Upcoming — see event page for schedule",
+      person: "The AI Collective • Toronto Tech Week",
+      imageSrc: "/images/aiHealthcareCompliance.avif",
+      location: "RetiSpec, 170 Bedford Rd, Toronto",
+      lumaEventId: "evt-0wKks8RxsxxgmFh",
+      embedLumaOnDetailPage: true,
+      detailBodyHeading: "About this event",
+      detailBody: AI_HEALTHCARE_COMPLIANCE_DETAIL_BODY,
+    },
     {
       slug: "clinician-connect-primary-care",
       title: "Clinician Connect: Primary Care",

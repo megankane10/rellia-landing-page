@@ -193,7 +193,7 @@ export default function Consulting() {
                     className="mt-5"
                   />
                   <div className="mt-10 flex flex-col gap-4 sm:flex-row sm:items-center">
-                    <RelliaAction asChild variant="tealFilledLift" size="comfortable">
+                    <RelliaAction asChild variant="relliaCtaPrimary" size="comfortable">
                       <Link to="/apply" className="inline-flex cursor-pointer items-center justify-center">
                         Apply for membership
                       </Link>

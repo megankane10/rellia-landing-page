@@ -6,6 +6,7 @@ import { DEFAULT_GLOBAL_SETTINGS, DEFAULT_HOME_PAGE } from "@shared/cms/defaults
 import { useGlobalSettings, useHomePage, useNavigation, useSiteSettings } from "@/hooks/useCmsDocuments"
 import AnnouncementModal from "@/components/AnnouncementModal"
 import { CareersHiringBadge } from "@/components/CareersHiringBadge"
+import RelliaAction from "@/components/RelliaAction"
 import { InstagramFilled, LinkedInFilled, MailFilled } from "@/components/icons/SocialIcons"
 import type { NavItem } from "@shared/cms/types"
 
@@ -88,17 +89,6 @@ const getNavItemClass = (active: boolean, tone: "light" | "dark") =>
       tone === "dark"
         ? "text-white/90 hover:text-rellia-mint focus-visible:ring-white/70 focus-visible:ring-offset-transparent"
         : "text-black/75 hover:text-rellia-mint focus-visible:ring-rellia-mint focus-visible:ring-offset-white",
-  )
-
-const getCtaClassName = (radiusClassName: string, lightNavHover: boolean) =>
-  cn(
-    "group relative isolate inline-flex cursor-pointer items-center gap-2 overflow-hidden border-2 font-host-grotesk font-semibold outline-none transition-[transform,box-shadow,colors,background-color,border-color] duration-300 motion-reduce:transition-none focus-visible:ring-2 focus-visible:ring-offset-2 motion-safe:hover:-translate-y-0.5 motion-safe:hover:shadow-lg",
-    "before:pointer-events-none before:absolute before:inset-0 before:-z-10 before:origin-left before:scale-x-0 before:transition-transform before:duration-300 before:ease-out hover:before:scale-x-100",
-    "px-6 py-3 text-[14px] lg:text-[15px]",
-    radiusClassName,
-    lightNavHover
-      ? "border-rellia-teal bg-rellia-teal text-white focus-visible:ring-rellia-teal focus-visible:ring-offset-white before:bg-rellia-mint hover:border-rellia-mint hover:text-rellia-teal"
-      : "border-rellia-mint bg-rellia-mint text-rellia-teal focus-visible:ring-rellia-mint focus-visible:ring-offset-transparent before:bg-white hover:border-white hover:text-rellia-teal",
   )
 
 type DesktopNavLinkProps = {
@@ -384,7 +374,7 @@ export default function Navbar({
 
   const desktopRailCls = cn("hidden items-center md:flex gap-1")
 
-  const ctaCls = getCtaClassName(ctaRadiusClassName, useLightNavChrome)
+  const navCtaVariant = useLightNavChrome ? "relliaCtaPrimary" : ("heroSolidOnTeal" as const)
 
   const menuIconBtnCls = cn(
     "inline-flex min-h-11 min-w-11 cursor-pointer items-center justify-center transition-[color] duration-200 motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 md:hidden",
@@ -426,6 +416,7 @@ export default function Navbar({
         buttonLink={globalSettings.announcementButtonLink}
       />
 
+      <header>
       <nav
         aria-label="Main navigation"
         className={cn(
@@ -527,9 +518,14 @@ export default function Navbar({
           </div>
 
             <div className="hidden shrink-0 justify-self-end md:flex">
-            <Link to={homePage.primaryCtaPath} className={ctaCls}>
-              {homePage.primaryCtaLabel}
-            </Link>
+            <RelliaAction
+              asChild
+              variant={navCtaVariant}
+              size="compact"
+              className={cn("px-6 py-3 text-[14px] lg:text-[15px]", ctaRadiusClassName)}
+            >
+              <Link to={homePage.primaryCtaPath}>{homePage.primaryCtaLabel}</Link>
+            </RelliaAction>
           </div>
 
           <button
@@ -688,16 +684,16 @@ export default function Navbar({
               })}
 
               <div className="mt-6 border-t border-white/15 pt-6">
-                <Link
-                  to={homePage.primaryCtaPath}
-                  className={cn(
-                    "flex min-h-12 w-full cursor-pointer items-center justify-center gap-2 border-2 border-rellia-mint bg-rellia-mint px-6 py-3.5 font-host-grotesk text-base font-semibold text-rellia-teal outline-none transition-colors hover:bg-white hover:border-white hover:text-rellia-teal focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-rellia-teal",
-                    ctaRadiusClassName,
-                  )}
-                  onClick={handleCloseMobile}
+                <RelliaAction
+                  asChild
+                  variant="heroSolidOnTeal"
+                  size="comfortable"
+                  className={cn("min-h-12 w-full", ctaRadiusClassName)}
                 >
-                  {homePage.primaryCtaLabel}
-                </Link>
+                  <Link to={homePage.primaryCtaPath} onClick={handleCloseMobile}>
+                    {homePage.primaryCtaLabel}
+                  </Link>
+                </RelliaAction>
               </div>
 
               <div className="mt-auto pt-14">
@@ -734,6 +730,7 @@ export default function Navbar({
         </div>
       </>
     </nav>
-  </>
+      </header>
+    </>
   )
 }

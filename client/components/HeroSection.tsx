@@ -111,7 +111,10 @@ export default function HeroSection({ content }: HeroSectionProps) {
             muted
             loop
             playsInline
-            preload="metadata"
+            preload="auto"
+            width={1920}
+            height={1080}
+            aria-hidden
           />
         ) : null}
       </div>

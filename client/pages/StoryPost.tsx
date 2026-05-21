@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Helmet } from "react-helmet-async"
 import { Link, useParams } from "react-router-dom"
 import Navbar from "@/components/Navbar"
@@ -6,13 +6,15 @@ import Footer from "@/components/Footer"
 import ScrollReveal from "@/components/ScrollReveal"
 import { cn } from "@/lib/utils"
 import { getStoryBySlug } from "@/content/stories"
-import { getDefaultOgImageUrl, getSiteUrl } from "@/config/seo"
+import { clampMetaDescription, clampMetaTitle, getDefaultOgImageUrl, getSiteUrl } from "@/config/seo"
+import StoryArticleJsonLd from "@/components/seo/StoryArticleJsonLd"
 import { ChevronLeft, Check } from "lucide-react"
 import { RichTextImageCarousel } from "@/components/RichTextImageCarousel"
 import { AnimatePresence, motion } from "framer-motion"
 import { PortableRichText } from "@/components/PortableRichText"
 import { useStoryBySlug } from "@/hooks/useCmsDocuments"
 import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo"
+import { useOptionalPageSeo } from "@/context/PageSeoContext"
 import {
   ShareIconCopy,
   ShareIconFacebook,
@@ -49,7 +51,12 @@ export default function StoryPost() {
     story?.excerpt ||
     "Stories and insights from Rellia Health."
 
+  const { setPageSeo } = useOptionalPageSeo()
   useApplyCmsSeo(cmsStory?.seo)
+
+  const resolvedTitle = clampMetaTitle(title)
+  const resolvedDescription = clampMetaDescription(description)
+
   const toAbsoluteImageUrl = (src: string): string => {
     if (/^https?:\/\//i.test(src)) return src
     if (!src.startsWith("/")) return `${base}/${src}`
@@ -61,6 +68,16 @@ export default function StoryPost() {
     : story
       ? toAbsoluteImageUrl(story.coverImageSrc)
       : `${base}/stories-ogimage.png`
+
+  useEffect(() => {
+    if (cmsStory?.seo?.metaTitle?.trim() || cmsStory?.seo?.ogTitle?.trim()) return
+    setPageSeo({
+      title: resolvedTitle,
+      description: resolvedDescription,
+      ogImage: imageUrl,
+    })
+    return () => setPageSeo(null)
+  }, [cmsStory?.seo, resolvedTitle, resolvedDescription, imageUrl, setPageSeo])
 
   const handleCopyLink = async () => {
     try {
@@ -201,25 +218,15 @@ export default function StoryPost() {
 
   return (
     <div className="min-h-screen bg-white font-host-grotesk overflow-x-hidden">
-      <Helmet htmlAttributes={{ lang: "en" }}>
-        <title>{title}</title>
-        <meta name="description" content={description} />
-        <link rel="canonical" href={canonical} />
-        <meta name="robots" content="index, follow" />
-
+      <Helmet>
         <meta property="og:type" content="article" />
-        <meta property="og:locale" content="en_US" />
-        <meta property="og:site_name" content="Rellia Health" />
-        <meta property="og:url" content={canonical} />
-        <meta property="og:title" content={title} />
-        <meta property="og:description" content={description} />
-        <meta property="og:image" content={imageUrl} />
-
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={title} />
-        <meta name="twitter:description" content={description} />
-        <meta name="twitter:image" content={imageUrl} />
       </Helmet>
+      <StoryArticleJsonLd
+        headline={cmsStory?.title ?? story?.title ?? "Rellia Health story"}
+        description={resolvedDescription}
+        url={canonical}
+        imageUrl={imageUrl}
+      />
 
       <Navbar />
 

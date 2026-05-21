@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils"
+import { HEADING_SECTION } from "@/lib/typography"
 import ScrollReveal from "@/components/ScrollReveal"
 import WordRevealHeading from "@/components/WordRevealHeading"
 
@@ -31,7 +32,7 @@ export default function SectionHeading({
           className={cn(
             "font-host-grotesk font-semibold leading-tight tracking-tight",
             isLight ? "text-white" : "text-black",
-            titleClassName ?? "text-3xl md:text-[40px]",
+            titleClassName ?? HEADING_SECTION,
           )}
         />
       ) : (
@@ -39,7 +40,7 @@ export default function SectionHeading({
           className={cn(
             "font-host-grotesk font-semibold leading-tight tracking-tight",
             isLight ? "text-white" : "text-black",
-            titleClassName ?? "text-3xl md:text-[40px]",
+            titleClassName ?? HEADING_SECTION,
           )}
         >
           {title}

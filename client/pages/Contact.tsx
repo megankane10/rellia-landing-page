@@ -62,7 +62,12 @@ function LeftPanel({ copy }: { copy: typeof DEFAULT_CONTACT_PAGE }) {
       <div className="absolute inset-0">
         <img
           src="/health_tech_collaboration_1778023064936.png"
-          alt="Modern health tech collaboration"
+          alt=""
+          aria-hidden
+          width={1920}
+          height={1080}
+          loading="eager"
+          decoding="async"
           className="h-full w-full object-cover opacity-35 mix-blend-luminosity"
         />
         <div className="absolute inset-0 bg-gradient-to-br from-rellia-teal via-rellia-teal/95 to-rellia-teal/80" />
@@ -83,6 +88,7 @@ function LeftPanel({ copy }: { copy: typeof DEFAULT_CONTACT_PAGE }) {
       </div>
 
       <div className="relative z-10 max-w-xl flex-1 flex flex-col justify-center">
+        <h1 className="sr-only">{copy.pageTitle ?? "Contact Rellia Health"}</h1>
         {/* Testimonial / Quote */}
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
@@ -92,9 +98,14 @@ function LeftPanel({ copy }: { copy: typeof DEFAULT_CONTACT_PAGE }) {
         >
           {/* Hologram Logo at top of quote */}
           <div className="mb-8">
-            <img 
-              src="/images/hologram-logo.png" 
-              alt="Rellia Hologram" 
+            <img
+              src="/images/hologram-logo.png"
+              alt=""
+              aria-hidden
+              width={64}
+              height={64}
+              loading="lazy"
+              decoding="async"
               className="h-16 w-16 opacity-90 drop-shadow-[0_0_15px_rgba(152,255,232,0.3)]"
             />
           </div>
@@ -107,7 +118,11 @@ function LeftPanel({ copy }: { copy: typeof DEFAULT_CONTACT_PAGE }) {
             <div className="h-14 w-14 shrink-0 overflow-hidden rounded-2xl border-2 border-white/20 shadow-xl">
               <img
                 src="/images/team-megankane.jpg"
-                alt={copy.quoteAttributionName}
+                alt={`${copy.quoteAttributionName}, ${copy.quoteAttributionRole}`}
+                width={56}
+                height={56}
+                loading="lazy"
+                decoding="async"
                 className="h-full w-full object-cover"
               />
             </div>

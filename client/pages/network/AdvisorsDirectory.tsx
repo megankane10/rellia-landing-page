@@ -19,7 +19,7 @@ import {
 } from "@/data/advisorDirectory";
 import { useNavigate, useLocation } from "react-router-dom";
 import { NETWORK_PATH_ROLE_TAG } from "@/lib/networkPathRoles";
-import { isProductionHostname } from "@/lib/sanity";
+import { isSanityConfigured } from "@/lib/sanity";
 
 const DIRECTORY_TITLE_CLASS =
   "font-host-grotesk text-4xl font-extrabold tracking-tight text-black md:text-5xl";
@@ -112,7 +112,7 @@ export default function AdvisorsDirectory() {
     }
   }, [location.search]);
   const advisors = useMemo<AdvisorDirectoryEntry[]>(() => {
-    if (isProductionHostname()) return []
+    if (!isSanityConfigured()) return []
 
     if (Array.isArray(cmsAdvisors) && cmsAdvisors.length > 0)
       return cmsAdvisors as AdvisorDirectoryEntry[];

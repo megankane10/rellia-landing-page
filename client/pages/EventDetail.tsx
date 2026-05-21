@@ -1,5 +1,4 @@
-import { useState } from "react"
-import { Helmet } from "react-helmet-async"
+import { useEffect, useState } from "react"
 import { Link, useParams } from "react-router-dom"
 import { AnimatePresence, motion } from "framer-motion"
 import { Calendar, CalendarOff, ChevronLeft, ArrowLeft, History, MapPin, Ticket, Video, Check } from "lucide-react"
@@ -12,7 +11,9 @@ import { useProgramsLandingPage } from "@/hooks/useCmsDocuments"
 import { downloadProgramsEventIcsFile } from "@/lib/eventCalendar"
 import { getLumaEmbedIframeSrc } from "@/lib/lumaEmbed"
 import { cn } from "@/lib/utils"
-import { getSiteUrl } from "@/config/seo"
+import { clampMetaDescription, clampMetaTitle, getSiteUrl } from "@/config/seo"
+import EventJsonLd from "@/components/seo/EventJsonLd"
+import { useOptionalPageSeo } from "@/context/PageSeoContext"
 import { DEFAULT_PROGRAMS_LANDING } from "@shared/cms/defaults"
 import { findProgramsEventBySlug, getProgramsEventSlug } from "@shared/cms/eventSlug"
 import {
@@ -124,7 +125,9 @@ export default function EventDetail() {
   const { slug } = useParams()
   const resolvedSlug = slug?.trim() ? decodeURIComponent(slug) : ""
   const { data: cmsEvent } = useEventBySlug(resolvedSlug)
-  useApplyCmsSeo((cmsEvent as { seo?: import("@shared/cms/types").SeoContent } | null | undefined)?.seo)
+  const cmsSeo = (cmsEvent as { seo?: import("@shared/cms/types").SeoContent } | null | undefined)?.seo
+  useApplyCmsSeo(cmsSeo)
+  const { setPageSeo } = useOptionalPageSeo()
   const fallbackMatch = resolvedSlug ? findProgramsEventBySlug(resolvedSlug, DEFAULT_PROGRAMS_LANDING) : null
   const match = cmsEvent
     ? { _variant: getEventStatus(cmsEvent) === "past" ? "past" : "upcoming", ...cmsEvent }
@@ -181,11 +184,24 @@ export default function EventDetail() {
   const showHeroEventCta =
     !isPast &&
     (addToCalendarEnabled || Boolean(embedSrc) || Boolean(event.href?.trim()))
-  const pageTitle = `${event.title} — Rellia Health`
+  const pageTitle = clampMetaTitle(`${event.title} — Rellia Health`)
+  const eventDescription = clampMetaDescription(
+    `${event.title}. ${shortDateTime || computedDateTime}. ${locationLabel}.`,
+  )
   const eventSlugPath = getProgramsEventSlug(event)
   const canonical = `${base}/events/${eventSlugPath}`
   const shareTitle = pageTitle
   const ogImage = toAbsoluteImageUrl(event.imageSrc, base)
+
+  useEffect(() => {
+    if (cmsSeo?.metaTitle?.trim() || cmsSeo?.ogTitle?.trim()) return
+    setPageSeo({
+      title: pageTitle,
+      description: eventDescription,
+      ogImage,
+    })
+    return () => setPageSeo(null)
+  }, [cmsSeo, pageTitle, eventDescription, ogImage, setPageSeo])
 
   const handleCopyLink = async () => {
     try {
@@ -225,32 +241,21 @@ export default function EventDetail() {
 
   return (
     <div className="flex min-h-screen flex-col bg-white font-host-grotesk overflow-x-hidden">
-      <Helmet htmlAttributes={{ lang: "en" }}>
-        <title>{pageTitle}</title>
-        <meta
-          name="description"
-          content={`${event.title}. ${shortDateTime || event.dateTime}. ${locationLabel}.`}
-        />
-        <link rel="canonical" href={canonical} />
-        <meta name="robots" content="index, follow" />
-        <meta property="og:type" content="website" />
-        <meta property="og:locale" content="en_US" />
-        <meta property="og:site_name" content="Rellia Health" />
-        <meta property="og:url" content={canonical} />
-        <meta property="og:title" content={pageTitle} />
-        <meta
-          property="og:description"
-          content={`${event.title}. ${shortDateTime || event.dateTime}. ${locationLabel}.`}
-        />
-        <meta property="og:image" content={ogImage} />
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={pageTitle} />
-        <meta
-          name="twitter:description"
-          content={`${event.title}. ${shortDateTime || event.dateTime}. ${locationLabel}.`}
-        />
-        <meta name="twitter:image" content={ogImage} />
-      </Helmet>
+      <EventJsonLd
+        name={event.title}
+        description={eventDescription}
+        url={canonical}
+        imageUrl={ogImage}
+        locationName={locationLabel}
+        startDate={
+          typeof (event as { startsAt?: string }).startsAt === "string"
+            ? (event as { startsAt: string }).startsAt
+            : undefined
+        }
+        eventAttendanceMode={
+          attendanceMode === "virtual" ? "OnlineEventAttendanceMode" : "OfflineEventAttendanceMode"
+        }
+      />
 
       <Navbar />
 
@@ -295,7 +300,7 @@ export default function EventDetail() {
                         <div className="grid grid-cols-1 gap-8 md:grid-cols-[minmax(0,1.45fr)_minmax(0,1fr)_minmax(0,1fr)] md:gap-6 lg:gap-10">
                         {hasSpeakerMeta ? (
                           <div className="min-w-0 md:min-w-[min(100%,17.5rem)] lg:min-w-[21rem]">
-                            <p className={eventDetailMetaLabelClassName}>Speaker</p>
+                            <p className={eventDetailMetaLabelClassName}>Host</p>
                             <div className="mt-2.5 flex items-center gap-3 sm:gap-3.5">
                               <img
                                 src={speakerAvatarSrc}

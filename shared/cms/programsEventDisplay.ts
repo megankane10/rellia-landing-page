@@ -266,6 +266,9 @@ const MAZHAR_TESTIMONIAL_PORTRAIT = "/images/testimonials-MazharS.jpeg"
 const BRENTON_HILL_SPEAKER_RE = /brenton\s*hill/i
 const BRENTON_HILL_EVENT_PORTRAIT = "/images/testimonials-nickS.jpeg"
 
+const AI_COLLECTIVE_HOST_RE = /ai\s*collective/i
+const AI_COLLECTIVE_HOST_LOGO = "/images/logo-aicollective.jpg"
+
 const hashProgramsEventKey = (key: string): number => {
   let h = 0
   for (let i = 0; i < key.length; i++) {
@@ -303,6 +306,14 @@ export const getProgramsEventSpeakerAvatarSrc = (event: ProgramsEventCard): stri
     BRENTON_HILL_SPEAKER_RE.test(personRaw)
   if (isBrentonHillEvent) {
     return BRENTON_HILL_EVENT_PORTRAIT
+  }
+  const isAiCollectiveHost =
+    event.slug === "ai-healthcare-compliance" ||
+    AI_COLLECTIVE_HOST_RE.test(speaker) ||
+    AI_COLLECTIVE_HOST_RE.test(company) ||
+    AI_COLLECTIVE_HOST_RE.test(personRaw)
+  if (isAiCollectiveHost) {
+    return AI_COLLECTIVE_HOST_LOGO
   }
   const key = `${event.title}-${event.dateTime}-${event.person}`
   const pool = PROGRAMS_EVENT_SPEAKER_AVATAR_POOL

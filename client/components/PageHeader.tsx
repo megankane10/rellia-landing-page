@@ -1,12 +1,13 @@
 import type { ReactNode } from "react"
 import ScrollReveal from "@/components/ScrollReveal"
 import { cn } from "@/lib/utils"
+import { HEADING_PAGE, HEADING_PAGE_SUBTITLE } from "@/lib/typography"
 
 /** Default page title size — matches Stories and standard `PageHeader` pages. Use with `font-bold leading-tight tracking-tight` plus text color. */
-export const PAGE_HEADER_TITLE_SIZE_CLASS = "text-4xl md:text-5xl lg:text-6xl"
+export const PAGE_HEADER_TITLE_SIZE_CLASS = HEADING_PAGE
 
 /** Default subtitle size under the page title. */
-export const PAGE_HEADER_SUBTITLE_SIZE_CLASS = "text-base md:text-lg"
+export const PAGE_HEADER_SUBTITLE_SIZE_CLASS = HEADING_PAGE_SUBTITLE
 
 /** Dark hero subtitle — same rhythm as default `PageHeader` subtitle (Urbanist, relaxed, white/80). */
 export const PAGE_HEADER_DARK_SUBTITLE_CLASS =

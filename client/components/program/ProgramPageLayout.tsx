@@ -33,8 +33,8 @@ import {
 } from "lucide-react";
 import { getCurrentMonthDeadline } from "@/lib/dateUtils";
 import RelliaAction from "@/components/RelliaAction";
-import { Helmet } from "react-helmet-async";
-import { getSiteUrl } from "@/config/seo";
+import { clampMetaDescription, clampMetaTitle, getSiteUrl } from "@/config/seo";
+import { useOptionalPageSeo } from "@/context/PageSeoContext";
 import { cn } from "@/lib/utils";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { SectionsRenderer } from "@/components/cms/PageRenderer"
@@ -170,6 +170,7 @@ const ProgramPageLayout = ({
   const { data: programDoc } = useProgramBySlug(cmsSlug ?? "")
   const q = programPageData?.content ?? cms
   useApplyCmsSeo(q.seo)
+  const { setPageSeo } = useOptionalPageSeo()
   const filloutId = extractFilloutId(q.paymentUrl);
   const hasEnrollmentForm = Boolean(filloutId) && !isWaitlist;
 
@@ -180,6 +181,22 @@ const ProgramPageLayout = ({
   const resolvedHeroImageAlt = (heroImageAlt || resolvedProgramTitle || "Program image").trim()
 
   const canonicalUrl = `${getSiteUrl()}${location.pathname}`;
+  const programPageTitle = clampMetaTitle(
+    resolvedProgramTitle ? `${resolvedProgramTitle} — Rellia Health` : "Programs — Rellia Health",
+  )
+  const programOgImage = resolvedHeroImageSrc.startsWith("http")
+    ? resolvedHeroImageSrc
+    : `${getSiteUrl()}${resolvedHeroImageSrc}`
+
+  useEffect(() => {
+    if (q.seo?.metaTitle?.trim() || q.seo?.ogTitle?.trim()) return
+    setPageSeo({
+      title: programPageTitle,
+      description: clampMetaDescription(resolvedProgramDescription || "Rellia Health program"),
+      ogImage: programOgImage,
+    })
+    return () => setPageSeo(null)
+  }, [q.seo, programPageTitle, resolvedProgramDescription, programOgImage, setPageSeo])
 
   const extraSections = (programPageData?.sections ?? []).filter(
     (s) => s._type !== "sectionHero",
@@ -208,36 +225,6 @@ const ProgramPageLayout = ({
 
   return (
     <div className="min-h-screen bg-white font-host-grotesk overflow-x-hidden">
-      <Helmet>
-        <title>{resolvedProgramTitle} — Rellia Health</title>
-        <meta name="description" content={resolvedProgramDescription} />
-        <link rel="canonical" href={canonicalUrl} />
-        <meta property="og:type" content="website" />
-        <meta property="og:locale" content="en_US" />
-        <meta property="og:site_name" content="Rellia Health" />
-        <meta property="og:url" content={canonicalUrl} />
-        <meta property="og:title" content={resolvedProgramTitle} />
-        <meta property="og:description" content={resolvedProgramDescription} />
-        <meta
-          property="og:image"
-          content={
-            resolvedHeroImageSrc.startsWith("http")
-              ? resolvedHeroImageSrc
-              : `${getSiteUrl()}${resolvedHeroImageSrc}`
-          }
-        />
-        <meta name="twitter:title" content={resolvedProgramTitle} />
-        <meta name="twitter:description" content={resolvedProgramDescription} />
-        <meta
-          name="twitter:image"
-          content={
-            resolvedHeroImageSrc.startsWith("http")
-              ? resolvedHeroImageSrc
-              : `${getSiteUrl()}${resolvedHeroImageSrc}`
-          }
-        />
-        <meta name="twitter:card" content="summary_large_image" />
-      </Helmet>
       <Navbar />
       <main id="main-content">
         {/* ─── Hero — text left, square image right ─── */}

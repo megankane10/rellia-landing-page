@@ -5,7 +5,6 @@ import {
   DocumentTextIcon,
   ControlsIcon,
   UsersIcon,
-  SearchIcon,
   ComposeIcon,
   CogIcon,
   TagIcon,
@@ -68,12 +67,14 @@ const HIDDEN_FROM_CATCH_ALL = new Set([
   'page',
   'marketingPage',
   'advisor',
+  'founder',
+  'investor',
+  'industryPartner',
   'alumniCompany',
   'advisorFilter',
   'founderLevel',
   'founderSpecialty',
   'directoryFilterGroup',
-  'diagnosticSubmission',
 ])
 
 export const deskStructure = (S: StructureBuilder) =>
@@ -141,7 +142,8 @@ export const deskStructure = (S: StructureBuilder) =>
             .items([
               singleton(S, 'Landing page', 'networkFoundersPage', DocumentTextIcon),
               S.divider(),
-              S.documentTypeListItem('alumniCompany').title('Alumni companies (directory)').icon(UsersIcon),
+              S.documentTypeListItem('alumniCompany').title('Founder companies (directory)').icon(UsersIcon),
+              S.documentTypeListItem('founder').title('Founder profiles').icon(UsersIcon),
               S.divider(),
               founderDirectoryFilterGroups(S),
               S.documentTypeListItem('founderSpecialty').title('Specialties (taxonomy)').icon(TagIcon),
@@ -162,8 +164,30 @@ export const deskStructure = (S: StructureBuilder) =>
               S.documentTypeListItem('advisorFilter').title('Advisor filter tags').icon(TagIcon),
             ]),
         ),
-      singleton(S, 'Investors (/investors)', 'networkInvestorsPage', DocumentTextIcon),
-      singleton(S, 'Industry partners (/industry-partners)', 'networkPartnersPage', DocumentTextIcon),
+      S.listItem()
+        .title('Investors (/investors)')
+        .icon(UsersIcon)
+        .child(
+          S.list()
+            .title('Investors')
+            .items([
+              singleton(S, 'Landing page', 'networkInvestorsPage', DocumentTextIcon),
+              S.divider(),
+              S.documentTypeListItem('investor').title('Investor profiles').icon(UsersIcon),
+            ]),
+        ),
+      S.listItem()
+        .title('Industry partners (/industry-partners)')
+        .icon(UsersIcon)
+        .child(
+          S.list()
+            .title('Industry partners')
+            .items([
+              singleton(S, 'Landing page', 'networkPartnersPage', DocumentTextIcon),
+              S.divider(),
+              S.documentTypeListItem('industryPartner').title('Partner organizations').icon(UsersIcon),
+            ]),
+        ),
       S.divider(),
       S.listItem()
         .title('Collections')
@@ -174,8 +198,6 @@ export const deskStructure = (S: StructureBuilder) =>
             .items([
               S.documentTypeListItem('page').title('Modular pages (/terms, /privacy, …)').icon(DocumentTextIcon),
               S.documentTypeListItem('marketingPage').title('Marketing pages').icon(DocumentTextIcon),
-              S.divider(),
-              S.documentTypeListItem('diagnosticSubmission').title('Diagnostic survey submissions').icon(SearchIcon),
             ]),
         ),
       S.divider(),
