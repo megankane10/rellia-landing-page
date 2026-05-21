@@ -49,40 +49,40 @@ const ELIGIBILITY_BENTO_ITEMS = [
   {
     text: "Digital health & care delivery software",
     fallbackUrl:
-      "https://images.pexels.com/photos/5327585/pexels-photo-5327585.jpeg?auto=compress&cs=tinysrgb&w=1200",
+      "https://images.pexels.com/photos/7089020/pexels-photo-7089020.jpeg?auto=compress&cs=tinysrgb&w=1200",
   },
   {
     text: "Software as a medical device (SaMD) and connected devices",
     fallbackUrl:
-      "https://images.pexels.com/photos/3825539/pexels-photo-3825539.jpeg?auto=compress&cs=tinysrgb&w=1200",
+      "https://images.pexels.com/photos/8460155/pexels-photo-8460155.jpeg?auto=compress&cs=tinysrgb&w=1200",
   },
   {
     text: "Diagnostics, lab, and decision-support platforms",
     fallbackUrl:
-      "https://images.pexels.com/photos/2280549/pexels-photo-2280549.jpeg?auto=compress&cs=tinysrgb&w=1200",
+      "https://images.pexels.com/photos/3735747/pexels-photo-3735747.jpeg?auto=compress&cs=tinysrgb&w=1200",
   },
   {
     text: "Medtech and DTx with a credible path to evidence and regulation",
     fallbackUrl:
-      "https://images.pexels.com/photos/7088489/pexels-photo-7088489.jpeg?auto=compress&cs=tinysrgb&w=1200",
+      "https://images.pexels.com/photos/7089017/pexels-photo-7089017.jpeg?auto=compress&cs=tinysrgb&w=1200",
   },
   {
     text: "Founding teams from idea through Series A",
     fallbackUrl:
-      "https://images.pexels.com/photos/3184292/pexels-photo-3184292.jpeg?auto=compress&cs=tinysrgb&w=1200",
+      "https://images.pexels.com/photos/3182812/pexels-photo-3182812.jpeg?auto=compress&cs=tinysrgb&w=1200",
   },
   {
     text: "AI and machine learning in clinical workflows",
     fallbackUrl:
-      "https://images.pexels.com/photos/8376277/pexels-photo-8376277.jpeg?auto=compress&cs=tinysrgb&w=1200",
+      "https://images.pexels.com/photos/6153354/pexels-photo-6153354.jpeg?auto=compress&cs=tinysrgb&w=1200",
   },
   {
     text: "Payer and value-based care infrastructure",
-    fallbackUrl: "https://images.pexels.com/photos/3184339/pexels-photo-3184339.jpeg?auto=compress&cs=tinysrgb&w=1200",
+    fallbackUrl: "https://images.pexels.com/photos/7089012/pexels-photo-7089012.jpeg?auto=compress&cs=tinysrgb&w=1200",
   },
   {
     text: "Direct-to-consumer healthcare and wellness",
-    fallbackUrl: "https://images.pexels.com/photos/4050824/pexels-photo-4050824.jpeg?auto=compress&cs=tinysrgb&w=1200",
+    fallbackUrl: "https://images.pexels.com/photos/4386464/pexels-photo-4386464.jpeg?auto=compress&cs=tinysrgb&w=1200",
   },
 ] as const
 
@@ -348,7 +348,7 @@ function FoundersHero() {
       />
 
       <div className="relative z-10 mx-auto max-w-[1300px] px-6 pb-20 pt-10 md:px-10 md:pb-28 md:pt-14 lg:flex lg:flex-1 lg:flex-col lg:justify-center lg:pb-20 lg:pt-0">
-        <Reveal>
+        <Reveal className="flex flex-col items-start text-left">
           <NetworkEyebrow label="Founders" tone="onDark" className="mb-6 md:mb-8" />
           <h1
             className={cn(
@@ -422,7 +422,7 @@ const EligibilityBentoCard = ({
         className="absolute inset-0 h-full w-full object-cover transition duration-700 ease-out group-hover:scale-[1.04] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
         loading="lazy"
       />
-      <div aria-hidden className="absolute inset-0 bg-gradient-to-br from-black/80 via-black/10 to-transparent" />
+      <div aria-hidden className="absolute inset-0 bg-gradient-to-br from-black/95 via-black/45 to-transparent" />
       <div aria-hidden className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/15 to-transparent" />
       <div className="relative z-10 flex h-full min-h-0 w-full flex-1 flex-col justify-start p-5 text-left md:p-6">
         <p

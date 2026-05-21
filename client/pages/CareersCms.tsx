@@ -21,7 +21,8 @@ import { sanityFetch } from "@/lib/sanity"
 import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo"
 import FilteredListEmptyState from "@/components/FilteredListEmptyState"
 import { isProductionHostname } from "@/lib/sanity"
-import { useMemo, useState } from "react"
+import { useMemo, useState, useEffect } from "react"
+import { useLocation } from "react-router-dom"
 import { ShareIconCopy } from "@/components/share/sharePageIcons"
 
 const g = DEFAULT_GLOBAL_SETTINGS
@@ -244,7 +245,7 @@ const CareersJoinTeamSection = ({
 
               <div className="mt-4 min-h-0 w-full flex-1 flex items-end overflow-x-clip overflow-y-visible md:mt-5 md:overflow-y-hidden lg:mt-6">
                 <div
-                  className="relative h-full min-h-0 w-full overflow-x-clip py-2 md:py-3 [mask-size:100%_100%] [mask-repeat:no-repeat]"
+                  className="relative h-full min-h-0 w-full overflow-x-clip py-2 md:py-3 translate-y-[20%] [mask-size:100%_100%] [mask-repeat:no-repeat]"
                   style={marqueeMaskStyle}
                 >
                   <motion.div
@@ -304,12 +305,37 @@ const normalizeCms = (raw: unknown): CareersPageContent => {
 
 export default function CareersCms() {
   const [copiedRoleId, setCopiedRoleId] = useState<string | null>(null)
+  const [activeRole, setActiveRole] = useState<string | undefined>(undefined)
+  const location = useLocation()
+
+  const openRoles = useMemo(
+    () => (isProductionHostname() ? [] : CAREERS_OPEN_ROLES),
+    [],
+  )
+
   const handleCopyRoleLink = (roleId: string) => {
     const roleUrl = `${window.location.origin}/careers#${roleId}`
     navigator.clipboard.writeText(roleUrl)
     setCopiedRoleId(roleId)
     setTimeout(() => setCopiedRoleId(null), 2000)
   }
+
+  useEffect(() => {
+    const hash = location.hash
+    if (hash) {
+      const roleId = hash.replace("#", "")
+      const roleExists = openRoles.some(r => r.id === roleId)
+      if (roleExists) {
+        setActiveRole(roleId)
+        setTimeout(() => {
+          const el = document.getElementById(roleId)
+          if (el) {
+            el.scrollIntoView({ behavior: "smooth", block: "center" })
+          }
+        }, 150)
+      }
+    }
+  }, [location.hash, openRoles])
 
   const { data: careersCmsRaw } = useQuery({
     queryKey: ["cms", "careersPage"],
@@ -345,11 +371,6 @@ export default function CareersCms() {
         ariaLabel: "Volunteer with us — show application form",
       }
     : null
-
-  const openRoles = useMemo(
-    () => (isProductionHostname() ? [] : CAREERS_OPEN_ROLES),
-    [],
-  )
 
   return (
     <div className="min-h-screen overflow-x-hidden bg-white font-host-grotesk">
@@ -425,10 +446,17 @@ export default function CareersCms() {
                 <div className="mt-10 w-full shrink-0">
                   {openRoles.length > 0 ? (
                     <div className="overflow-hidden rounded-3xl border border-black/10 bg-white px-0 shadow-sm md:px-2">
-                      <Accordion type="single" collapsible className="w-full">
+                      <Accordion
+                        type="single"
+                        collapsible
+                        className="w-full"
+                        value={activeRole}
+                        onValueChange={setActiveRole}
+                      >
                         {openRoles.map((role, index) => (
                           <AccordionItem
                             key={role.id}
+                            id={role.id}
                             value={role.id}
                             className={
                               index === openRoles.length - 1
@@ -476,25 +504,24 @@ export default function CareersCms() {
                                   href={role.linkedInApplyUrl}
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  className="group inline-flex h-12 cursor-pointer items-center justify-center rounded-full bg-rellia-teal border-2 border-rellia-teal px-8 font-host-grotesk text-base font-bold text-white shadow-sm outline-none transition-all duration-300 hover:bg-[#07242a] hover:border-[#07242a]"
+                                  className="group relative isolate inline-flex h-12 cursor-pointer items-center justify-center overflow-hidden rounded-full border-2 border-rellia-mint bg-rellia-mint px-8 font-host-grotesk text-base font-bold text-rellia-teal shadow-sm outline-none transition-[colors,border-color] duration-300 before:pointer-events-none before:absolute before:inset-0 before:-z-10 before:origin-left before:scale-x-0 before:bg-rellia-teal before:transition-transform before:duration-300 before:ease-out hover:before:scale-x-100 hover:border-rellia-teal hover:text-white"
                                   aria-label={`Apply for ${role.title} on LinkedIn (opens in new tab)`}
                                 >
-                                  <span className="relative z-10 inline-flex items-center gap-2">
+                                  <span className="relative z-10">
                                     Apply
-                                    <ExternalLink className="h-4.5 w-4.5" aria-hidden />
                                   </span>
                                 </a>
                                 
                                 <button
                                   type="button"
                                   onClick={() => handleCopyRoleLink(role.id)}
-                                  className="group relative inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-full border-2 border-black/15 bg-white text-black/60 shadow-sm outline-none transition-all duration-300 hover:border-black/30 hover:text-black/80 hover:bg-black/5"
+                                  className="group relative isolate inline-flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-full border-2 border-black/15 bg-white text-black shadow-sm outline-none transition-[colors,border-color] duration-300 before:pointer-events-none before:absolute before:inset-0 before:-z-10 before:origin-left before:scale-x-0 before:bg-rellia-teal before:transition-transform before:duration-300 before:ease-out hover:before:scale-x-100 hover:border-rellia-teal hover:text-white"
                                   title={copiedRoleId === role.id ? "Copied!" : "Copy link to role"}
                                   aria-label={copiedRoleId === role.id ? "Copied!" : "Copy link to role"}
                                 >
                                   <span className="relative z-10 flex items-center justify-center">
                                     {copiedRoleId === role.id ? (
-                                      <Check className="h-5 w-5 animate-scale-in text-rellia-teal" />
+                                      <Check className="h-5 w-5 animate-scale-in" />
                                     ) : (
                                       <ShareIconCopy className="h-5 w-5" />
                                     )}

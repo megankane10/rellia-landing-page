@@ -426,7 +426,7 @@ export function RoleHero({
       />
 
       <div className="relative z-10 mx-auto max-w-[1300px] px-6 pb-20 pt-10 md:px-10 md:pb-28 md:pt-14 lg:flex lg:flex-1 lg:flex-col lg:justify-center lg:pb-20 lg:pt-0">
-        <Reveal>
+        <Reveal className="flex flex-col items-start text-left">
           <NetworkEyebrow label={label} tone="onDark" className="mb-6 md:mb-8" />
           <h1
             className={cn(
