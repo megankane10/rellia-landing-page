@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams, Link, useLocation } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -12,8 +12,8 @@ import { ShareIconCopy } from "@/components/share/sharePageIcons";
 import { ADVISOR_DIRECTORY_SEED } from "@/data/advisorDirectory";
 import NotFound from "../NotFound";
 import { cn } from "@/lib/utils";
-import RouteSeo from "@/components/RouteSeo";
-import { getSiteUrl } from "@/config/seo";
+import { clampMetaDescription, clampMetaTitle, getSiteUrl, toAbsoluteOgImageUrl } from "@/config/seo";
+import { useOptionalPageSeo } from "@/context/PageSeoContext";
 import { useAdvisors } from "@/hooks/useCmsDocuments";
 
 export default function AdvisorProfile() {
@@ -29,6 +29,17 @@ export default function AdvisorProfile() {
 
   const canonicalUrl = `${getSiteUrl()}${location.pathname}`;
   const [copied, setCopied] = useState(false);
+  const { setPageSeo } = useOptionalPageSeo();
+
+  useEffect(() => {
+    if (!active) return;
+    setPageSeo({
+      title: clampMetaTitle(`${active.name} — Rellia Health | Advisors`),
+      description: clampMetaDescription(active.focus),
+      ogImage: toAbsoluteOgImageUrl(active.photoSrc),
+    });
+    return () => setPageSeo(null);
+  }, [active, setPageSeo]);
 
   if (!active) return <NotFound />;
 
@@ -55,10 +66,6 @@ export default function AdvisorProfile() {
           <article className="grid gap-10 lg:grid-cols-[minmax(280px,360px)_minmax(0,1fr)] lg:gap-x-14 xl:grid-cols-[400px_1fr]">
             {/* Left Sidebar - Sticky */}
             <div className="flex flex-col gap-6 lg:sticky lg:top-32 lg:self-start">
-              <RouteSeo
-                title={`${active.name} — Rellia Health | Advisors`}
-                description={active.focus}
-              />
               <div className="overflow-hidden rounded-2xl aspect-[4/5] w-full max-h-[min(42vh,440px)]">
                 <img
                   src={active.photoSrc}

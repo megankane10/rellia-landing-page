@@ -275,6 +275,27 @@ export const normalizePathname = (pathname: string): string => {
   return pathname || "/"
 }
 
+/** Item detail routes (event, program, advisor, alumni) that should use per-item OG images. */
+export const isDirectoryItemPath = (pathname: string): boolean => {
+  const key = normalizePathname(pathname)
+  if (key.startsWith("/events/") && key !== "/events") return true
+  if (key.startsWith("/programs/") && key !== "/programs") return true
+  if (key.startsWith("/advisors/directory/") && key !== "/advisors/directory") return true
+  if (key.startsWith("/founders/alumni/") && key !== "/founders/alumni") return true
+  return false
+}
+
+export const shouldUseDefaultOgImage = (pathname: string): boolean =>
+  normalizePathname(pathname) === "/"
+
+export const toAbsoluteOgImageUrl = (src: string, base = getSiteUrl()): string => {
+  const trimmed = src.trim()
+  if (!trimmed) return ""
+  if (/^https?:\/\//i.test(trimmed)) return trimmed
+  if (!trimmed.startsWith("/")) return `${base}/${trimmed}`
+  return `${base}${trimmed}`
+}
+
 const EVENT_DETAIL_SEO: RouteSeoConfig = {
   title: "Event — Rellia Health",
   description:

@@ -6,9 +6,9 @@ import {
   getDefaultOgImageUrl,
   getDefaultOgImageAlt,
   getSeoForPathname,
-  getStoriesOgImageUrl,
   getSiteUrl,
   normalizePathname,
+  shouldUseDefaultOgImage,
 } from "@/config/seo"
 import { useOptionalPageSeo } from "@/context/PageSeoContext"
 import { useSiteSettings } from "@/hooks/useCmsDocuments"
@@ -50,11 +50,13 @@ const RouteSeo = ({
     : `${base}${normalizedPathname === "/" ? "" : normalizedPathname}`
   const ogUrl = `${base}${normalizedPathname === "/" ? "" : normalizedPathname}`
   const cmsDefaultOg = siteSettingsData?.defaultSeo?.ogImageUrl?.trim()
+  const explicitOgImage = ogImage?.trim()
+  const useHomeDefaultOg = shouldUseDefaultOgImage(normalizedPathname)
   const imageUrl =
-    ogImage ||
-    cmsDefaultOg ||
-    (normalizedPathname === "/stories" ? getStoriesOgImageUrl() : getDefaultOgImageUrl())
+    explicitOgImage ||
+    (useHomeDefaultOg ? cmsDefaultOg || getDefaultOgImageUrl() : undefined)
   const imageAlt = getDefaultOgImageAlt()
+  const includeOgImage = Boolean(imageUrl)
 
   return (
     <Helmet htmlAttributes={{ lang: "en" }}>
@@ -73,15 +75,22 @@ const RouteSeo = ({
       <meta property="og:url" content={ogUrl} />
       <meta property="og:title" content={title} />
       <meta property="og:description" content={description} />
-      <meta property="og:image" content={imageUrl} />
-      <meta property="og:image:width" content="1200" />
-      <meta property="og:image:height" content="630" />
-      <meta property="og:image:alt" content={imageAlt} />
+      {includeOgImage ? (
+        <>
+          <meta property="og:image" content={imageUrl} />
+          <meta property="og:image:width" content="1200" />
+          <meta property="og:image:height" content="630" />
+          <meta property="og:image:alt" content={imageAlt} />
+        </>
+      ) : null}
 
-      <meta name="twitter:card" content="summary_large_image" />
+      <meta
+        name="twitter:card"
+        content={includeOgImage ? "summary_large_image" : "summary"}
+      />
       <meta name="twitter:title" content={title} />
       <meta name="twitter:description" content={description} />
-      <meta name="twitter:image" content={imageUrl} />
+      {includeOgImage ? <meta name="twitter:image" content={imageUrl} /> : null}
     </Helmet>
   )
 }

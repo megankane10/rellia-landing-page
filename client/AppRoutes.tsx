@@ -4,6 +4,7 @@ import { Analytics } from "@vercel/analytics/react"
 import { SpeedInsights } from "@vercel/speed-insights/react"
 import ScrollToTop from "@/components/ScrollToTop"
 import RouteSeo from "@/components/RouteSeo"
+import { PageSeoProvider } from "@/context/PageSeoContext"
 import PageTransition from "@/components/PageTransition"
 import RouteSuspenseFallback from "@/components/RouteSuspenseFallback"
 
@@ -84,14 +85,14 @@ const VercelObservability = () => (
 )
 
 export const RouterShell = ({ children }: { children: ReactNode }) => (
-  <>
+  <PageSeoProvider>
     <PageTransition />
     <RouteSeo />
     <VercelObservability />
     <ThirdPartyPreloads />
     <ScrollToTop />
     {children}
-  </>
+  </PageSeoProvider>
 )
 
 export const AppRoutes = () => (

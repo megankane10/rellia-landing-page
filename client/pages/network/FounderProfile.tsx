@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams, Link, useLocation } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -11,8 +11,8 @@ import { ShareIconCopy } from "@/components/share/sharePageIcons";
 import { FOUNDER_DIRECTORY } from "@/data/founderDirectory";
 import NotFound from "../NotFound";
 import { cn } from "@/lib/utils";
-import RouteSeo from "@/components/RouteSeo";
-import { getSiteUrl } from "@/config/seo";
+import { clampMetaDescription, clampMetaTitle, getSiteUrl, toAbsoluteOgImageUrl } from "@/config/seo";
+import { useOptionalPageSeo } from "@/context/PageSeoContext";
 import { useAlumniCompanies } from "@/hooks/useCmsDocuments";
 
 export default function FounderProfile() {
@@ -32,6 +32,17 @@ export default function FounderProfile() {
 
   const canonicalUrl = `${getSiteUrl()}${location.pathname}`;
   const [copied, setCopied] = useState(false);
+  const { setPageSeo } = useOptionalPageSeo();
+
+  useEffect(() => {
+    if (!active) return;
+    setPageSeo({
+      title: clampMetaTitle(`${active.logoName} — Rellia Health | Alumni`),
+      description: clampMetaDescription(active.shortDescription),
+      ogImage: toAbsoluteOgImageUrl(active.logoSrc),
+    });
+    return () => setPageSeo(null);
+  }, [active, setPageSeo]);
 
   if (!active) return <NotFound />;
 
@@ -58,11 +69,6 @@ export default function FounderProfile() {
           <article className="grid gap-10 lg:grid-cols-[minmax(280px,360px)_minmax(0,1fr)] lg:gap-x-14 xl:grid-cols-[400px_1fr]">
             {/* Left Sidebar - Sticky */}
             <div className="flex flex-col gap-6 lg:sticky lg:top-32 lg:self-start">
-              <RouteSeo
-                title={`${active.logoName} — Rellia Health | Alumni`}
-                description={active.shortDescription}
-              />
-
               <div className="flex min-h-[120px] items-center justify-start md:min-h-[140px]">
                 <img
                   src={active.logoSrc}
