@@ -386,7 +386,22 @@ export const resolveSocialOgImageUrl = (
   }
 
   const absolute = toAbsoluteOgImageUrl(resolved, origin)
-  return absolute ? withSanitySocialImage(absolute, square) : undefined
+  if (!absolute) return undefined
+
+  const withVersion = (() => {
+    if (/^https?:\/\//i.test(absolute) && absolute.includes("cdn.sanity.io")) {
+      return absolute
+    }
+    const version = (
+      (import.meta as unknown as { env?: Record<string, unknown> })?.env
+        ?.VITE_OG_IMAGE_VERSION as string | undefined
+    )?.trim()
+    if (!version) return absolute
+    const joiner = absolute.includes("?") ? "&" : "?"
+    return `${absolute}${joiner}v=${encodeURIComponent(version)}`
+  })()
+
+  return withSanitySocialImage(withVersion, square)
 }
 
 const EVENT_DETAIL_SEO: RouteSeoConfig = {
