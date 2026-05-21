@@ -1435,7 +1435,7 @@ export const DEFAULT_PROGRAMS_LANDING: ProgramsLandingContent = {
       description:
         "Confirm your medical device classification and global market entry pathway. Leave with a documented regulatory strategy and intended use statements to support your investor due diligence.",
       imageSrc: "/images/programs-regulatoryRoadmap.png",
-      href: "/programs/regulatory-roadmap",
+      href: "/programs/regulatory-strategy-sprint",
       buttonText: "Learn more",
       waitlistHref: "https://forms.fillout.com/t/bLGtn6S2jtus",
     },

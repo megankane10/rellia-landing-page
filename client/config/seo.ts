@@ -124,11 +124,16 @@ export const ROUTE_SEO: Record<string, RouteSeoConfig> = {
       "Develop a professional brand identity that earns trust from clinicians and investors. Includes sprints for website, UI, and sales collateral.",
     indexable: true,
   },
-  "/programs/regulatory-roadmap": {
+  "/programs/regulatory-strategy-sprint": {
     title: "Regulatory Strategy Sprint — Rellia Health",
     description:
       "Map your regulatory path across FDA, Health Canada, and EU MDR. Leave with a documented strategy for investor due diligence.",
     indexable: true,
+  },
+  "/programs/regulatory-roadmap": {
+    title: "Regulatory Strategy Sprint — Rellia Health",
+    description: "This page has moved to /programs/regulatory-strategy-sprint.",
+    indexable: false,
   },
   "/programs/build-your-qms": {
     title: "QMS Program — Rellia Health",

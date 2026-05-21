@@ -1059,6 +1059,11 @@ async function main() {
     mutations.push({ delete: { id: `drafts.${id}` } })
   }
 
+  // Retired program slug (canonical: regulatory-strategy-sprint)
+  for (const retiredProgramId of ["program.regulatory-roadmap", "drafts.program.regulatory-roadmap"]) {
+    mutations.push({ delete: { id: retiredProgramId } })
+  }
+
   // Programs: one document per program (card + detail page content)
   for (const [index, program] of DEFAULT_PROGRAMS_LANDING.programs.entries()) {
     const title = program.title?.trim()
