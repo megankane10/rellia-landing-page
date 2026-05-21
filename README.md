@@ -135,7 +135,17 @@ Starts the Node server that serves the built SPA and API (default port from `POR
 4. Seed preview content: `pnpm sanity:seed` (requires `SANITY_API_WRITE_TOKEN` and matching project/dataset env).
 5. After schema changes: `pnpm sanity:cleanup` on the **`preview`** dataset (removes `diagnosticSubmission` orphans and duplicate docs).
 
-**Deploy Studio schema:** `cd website-cms && pnpm install && pnpm exec sanity schema deploy && pnpm exec sanity deploy` (hosted Studio must be redeployed after desk/schema changes).
+**Deploy Studio schema:** from `website-cms/`:
+
+```bash
+rm -rf node_modules && pnpm install
+pnpm exec sanity schema deploy
+pnpm exec sanity deploy
+```
+
+If deploy fails with `Cannot find module ... studioWorkerLoader.worker.js`, your `node_modules` is stale (often after upgrading `sanity` without a clean install). Remove `node_modules` and reinstall.
+
+Hosted Studio: https://relliahealth.sanity.studio/
 
 ### Visual Editing checklist (Presentation)
 
