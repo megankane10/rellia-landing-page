@@ -34,7 +34,7 @@ export default function AnnouncementModal({
           "z-[10001] pointer-events-auto",
           "left-5 bottom-5 top-auto md:left-8 md:bottom-8",
           "translate-x-0 translate-y-0",
-          "w-[min(94vw,460px)] max-w-none gap-0 rounded-2xl border-0 p-5 md:p-6",
+          "w-[min(94vw,460px)] max-w-none gap-0 rounded-3xl border-0 p-5 md:p-6",
           "shadow-[0_8px_32px_-8px_rgba(0,0,0,0.18)]",
           "bg-gradient-to-r from-rellia-mint via-rellia-greyTeal to-rellia-mint",
           "data-[state=closed]:slide-out-to-bottom-4 data-[state=open]:slide-in-from-bottom-4",

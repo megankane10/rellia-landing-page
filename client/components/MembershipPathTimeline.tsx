@@ -320,7 +320,7 @@ const MembershipPathTimeline = ({
         </div>
 
         {belowTimeline ? (
-          <div className="mt-20 flex w-full justify-center md:mt-28 lg:mt-36">{belowTimeline}</div>
+          <div className="mt-12 flex w-full justify-center md:mt-16 lg:mt-20">{belowTimeline}</div>
         ) : null}
 
         {showRoleLinks ? (

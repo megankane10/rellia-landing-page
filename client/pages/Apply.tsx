@@ -31,8 +31,8 @@ export default function Apply() {
               transition={{ duration: 0.3 }}
             >
               <MembershipPathTimeline
-                className="border-t border-black/10"
-                headingFooter={
+                className="border-t border-black/10 pt-12 md:pt-16 lg:pt-20"
+                belowTimeline={
                   <RelliaAction
                     type="button"
                     variant="tealFilled"
