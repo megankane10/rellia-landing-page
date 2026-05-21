@@ -24,6 +24,7 @@ import {
   getProgramsEventLocationLabel,
   shortenProgramsEventDateTime,
 } from "@shared/cms/programsEventDisplay"
+import { resolveEventHeaderImageSrc } from "@shared/cms/eventHeaderImage"
 import {
   fetchEventBySlugForPrerender,
   fetchProgramBySlugForPrerender,
@@ -54,12 +55,17 @@ export type ItemPrerenderSeo = {
   ogImage?: string
 }
 
-const buildEventSeo = (event: Record<string, unknown>, siteOrigin: string): ItemPrerenderSeo => {
+const buildEventSeo = (
+  event: Record<string, unknown>,
+  slug: string,
+  siteOrigin: string,
+): ItemPrerenderSeo => {
   const title = typeof event.title === "string" ? event.title : "Event"
   const computedDateTime = getProgramsEventDisplayDateTime(event as never)
   const shortDateTime = shortenProgramsEventDateTime(computedDateTime)
   const locationLabel = getProgramsEventLocationLabel(event as never)
-  const imageSrc = typeof event.imageSrc === "string" ? event.imageSrc : undefined
+  const cmsImageSrc = typeof event.imageSrc === "string" ? event.imageSrc : undefined
+  const imageSrc = resolveEventHeaderImageSrc(slug, cmsImageSrc) ?? cmsImageSrc
 
   return {
     title: clampMetaTitle(`${title} — Rellia Health`),
@@ -125,7 +131,7 @@ const resolveItemPrerenderSeo = async (
         return rest as Record<string, unknown>
       })()
     if (!event) return null
-    return buildEventSeo(event, siteOrigin)
+    return buildEventSeo(event, slug, siteOrigin)
   }
 
   if (pathname.startsWith("/programs/") && pathname !== "/programs") {

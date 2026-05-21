@@ -44,6 +44,7 @@ import { EventDetailPortableText } from "@/components/EventDetailPortableText"
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet"
 import type { SanityPortableText } from "@shared/cms/types"
 import { useEventBySlug } from "@/hooks/useCmsDocuments"
+import { resolveEventHeaderImageSrc } from "@shared/cms/eventHeaderImage"
 
 const eventDetailBackToEventsLinkClassName =
   "inline-flex items-center gap-2 font-host-grotesk text-sm font-semibold text-rellia-teal hover:underline hover:underline-offset-4"
@@ -107,9 +108,21 @@ export default function EventDetail() {
   const resolvedSlug = slug?.trim() ? decodeURIComponent(slug) : ""
   const { data: cmsEvent } = useEventBySlug(resolvedSlug)
   const fallbackMatch = resolvedSlug ? findProgramsEventBySlug(resolvedSlug, DEFAULT_PROGRAMS_LANDING) : null
-  const match = cmsEvent
-    ? { _variant: getEventStatus(cmsEvent) === "past" ? "past" : "upcoming", ...cmsEvent }
-    : fallbackMatch
+  const match = (() => {
+    if (!cmsEvent && !fallbackMatch) return null
+    const headerImageSrc = resolveEventHeaderImageSrc(
+      resolvedSlug,
+      cmsEvent?.imageSrc ?? fallbackMatch?.imageSrc,
+    )
+    if (cmsEvent) {
+      return {
+        _variant: getEventStatus(cmsEvent) === "past" ? "past" : "upcoming",
+        ...cmsEvent,
+        imageSrc: headerImageSrc ?? cmsEvent.imageSrc,
+      }
+    }
+    return fallbackMatch
+  })()
   const [copyState, setCopyState] = useState<"idle" | "copied">("idle")
   const [showForm, setShowForm] = useState(false)
 

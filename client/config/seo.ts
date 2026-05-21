@@ -324,6 +324,7 @@ export const buildPageUrl = (pathname: string): string => {
 /** Social crawlers (LinkedIn, Slack, etc.) do not reliably support AVIF for og:image. */
 const SOCIAL_OG_IMAGE_FALLBACKS: Record<string, string> = {
   "/images/aiHealthcareCompliance.avif": "/images/aiHealthcareCompliance.jpg",
+  "/images/complianceevent-desc.jpeg": "/images/aiHealthcareCompliance.jpg",
 }
 
 const withSanityJpegFormat = (url: string): string => {
