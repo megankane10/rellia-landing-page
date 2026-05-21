@@ -13,18 +13,20 @@ React SPA for **Rellia Health**, connecting founders, clinicians, and health sys
 | Branch | Role |
 |--------|------|
 | **`main`** | Production; deploys to the live site. |
-| **`Additions`** | Integration branch for new work before merge to `main`. |
+| **`Additions`** | Integration branch for new work before merge to `main`. Deploys to the Vercel preview site (e.g. `relliahealth.vercel.app`). |
 
 Do day-to-day work on **`Additions`**. After review, merge into **`main`** for production.
+
+**Preview CMS workflow:** Git branch **`Additions`** maps to the Vercel **preview** deployment, not a separate Sanity “branch”. Use Sanity dataset **`preview`** on preview hosts (`SANITY_ENFORCE_VERCEL_DATASET=true` on Vercel). Point Studio Presentation at the preview site via **`SANITY_STUDIO_PREVIEW_URL`** (see `.env.example`). Diagnostic survey routes (`/diagnostics`, `/diagnostic-survey`) are intentionally excluded from this frontend/CMS pass.
 
 ---
 
 ## Tech stack
 
 - **UI:** React 18, TypeScript, Vite, Tailwind CSS, Radix-based components
-- **Routing:** React Router
+- **Routing:** React Router (`client/AppRoutes.tsx`; `client/App.tsx` wraps providers only)
 - **Content:** Sanity — reads go through **`POST /api/sanity/query`** (whitelisted `queryId`; no raw GROQ from the browser). Editors use **Sanity Studio** in `website-cms/`.
-- **CMS gating:** On `relliahealth.com` / `www.relliahealth.com`, the client treats CMS as off unless **`VITE_ENABLE_CMS_ON_PROD`** is set; **`VITE_DISABLE_CMS=true`** forces defaults everywhere. See `client/lib/sanity.ts`.
+- **CMS gating:** CMS is on when **`VITE_SANITY_PROJECT_ID`** and **`VITE_SANITY_DATASET`** are set. Set **`VITE_DISABLE_CMS=true`** only to force hardcoded defaults everywhere. See `client/lib/sanity.ts`.
 - **Data loading:** TanStack Query for CMS-backed pages
 - **Server:** Express app — mounted under Vercel as a single serverless function (`api/index.js`) for **`/api/*`** and **`/health`**; optional local full-stack via **`pnpm build`** + **`pnpm start`** (Node serves built SPA + API from `dist/server`).
 - **Prerender:** `vite-prerender-plugin` + `client/prerender.tsx` for static HTML on listed routes (`client/config/seo.ts`).
@@ -106,11 +108,49 @@ Starts the Node server that serves the built SPA and API (default port from `POR
 | `pnpm build` | Build SPA, Node server bundle, and `api/index.js` |
 | `pnpm start` | Run production Node server locally (`dist/server/node-build.mjs`) |
 | `pnpm sanity:seed` | Seed Sanity (`scripts/sanity-seed.ts`) |
+| `pnpm sanity:cleanup` | Remove obsolete docs + duplicate singletons/slugs (`scripts/sanity-cleanup.ts`) |
 | `pnpm test` | Vitest |
 | `pnpm typecheck` | TypeScript (`tsc`) |
 | `pnpm format.fix` | Prettier write |
 
 `npm run <script>` works as well if you use npm.
+
+---
+
+## Design system (frontend)
+
+| Concern | Location |
+|---------|----------|
+| Typography scale | `client/lib/typography.ts` (`HEADING_PAGE`, `HEADING_SECTION`, `HEADING_CTA_BAND_*`) |
+| Buttons / CTA hovers | `client/components/RelliaAction.tsx` — use `relliaCtaPrimary` / `relliaCtaSecondary` on cream and grey-teal bands; `heroSolidOnTeal` / `heroGhostOnTeal` on teal heroes and mobile nav |
+| Page heroes | `client/components/PageHeader.tsx`, `client/components/SectionHeading.tsx` |
+
+---
+
+## Sanity Visual Editing
+
+1. Mount **`VisualEditingOverlay`** in `client/App.tsx` (enabled when the site runs inside Studio Presentation with a draft cookie).
+2. Studio **`presentationTool`** uses `previewMode.enable` / `disable` → `/api/draft-mode/*` (see `website-cms/sanity.config.ts`).
+3. Set **`SANITY_STUDIO_PREVIEW_URL`** to your preview deployment.
+4. Seed preview content: `pnpm sanity:seed` (requires `SANITY_API_WRITE_TOKEN` and matching project/dataset env).
+5. After schema changes: `pnpm sanity:cleanup` on the **`preview`** dataset (removes `diagnosticSubmission` orphans and duplicate docs).
+
+**Deploy Studio schema:** `cd website-cms && pnpm install && pnpm exec sanity schema deploy` (or deploy Studio from [sanity.io/manage](https://sanity.io/manage)).
+
+---
+
+## Verification checklist
+
+```bash
+pnpm install
+cd website-cms && pnpm install && cd ..
+pnpm typecheck
+pnpm test
+pnpm build
+pnpm dev   # smoke-test key routes and button hovers
+```
+
+In Sanity Studio: open **Presentation** → confirm iframe loads the preview URL → edit a field → confirm click-to-edit overlay on the preview site.
 
 ---
 
@@ -121,7 +161,7 @@ Starts the Node server that serves the built SPA and API (default port from `POR
 | Area | Examples |
 |------|----------|
 | Site / SEO | `VITE_SITE_URL` (no trailing slash); build may also use `VERCEL_URL` / `VERCEL_GIT_COMMIT_SHA` for OG cache-bust — see `vite.config.ts` |
-| CMS (client) | `VITE_SANITY_PROJECT_ID`, `VITE_SANITY_DATASET`, `VITE_DISABLE_CMS`, `VITE_ENABLE_CMS_ON_PROD` |
+| CMS (client) | `VITE_SANITY_PROJECT_ID`, `VITE_SANITY_DATASET`, `VITE_DISABLE_CMS` |
 | Checkout | `VITE_STRIPE_MONTHLY_PLAN_LINK`, `VITE_STRIPE_ANNUAL_PLAN_LINK`, `VITE_QMS_PAYMENT_LINK` |
 | Server / Sanity API | `SANITY_API_PROJECT_ID`, `SANITY_API_DATASET`, `SANITY_ENFORCE_VERCEL_DATASET`, `SANITY_ALLOWED_DATASETS`, `SANITY_API_READ_TOKEN`, `SANITY_API_WRITE_TOKEN`, `SANITY_STUDIO_URL`, `SANITY_STUDIO_PREVIEW_URL` (Studio) |
 | HubSpot (contact proxy) | `HUBSPOT_CONTACT_FORM_GUID`, `HUBSPOT_PORTAL_ID`, `HUBSPOT_FORMS_API_BASE` |
@@ -141,7 +181,7 @@ All **`/api/*`** routes are served by the same serverless entry (`api/index.js`)
 | `GET` | `/api/csrf-token` | Issues CSRF cookie + token | `client/lib/apiCsrf.ts` |
 | `POST` | `/api/sanity/query` | Whitelisted Sanity reads | `client/lib/sanity.ts` |
 | `POST` | `/api/contact-hubspot` | Proxies contact form to HubSpot Forms API | `client/pages/Contact.tsx` |
-| `POST` | `/api/diagnostic-report` | Diagnostic survey report + optional Sanity write | `client/pages/DiagnosticSurvey.tsx` |
+| `POST` | `/api/diagnostic-report` | Diagnostic survey report (Supabase) | `client/pages/DiagnosticSurvey.tsx` |
 | `GET` | `/api/studio` | Redirects to `SANITY_STUDIO_URL` | **Not linked from the React app** — bookmark or docs only |
 | `GET` | `/api/draft-mode/enable` | Sanity Presentation / draft preview cookie | Sanity Studio Presentation (iframe), not direct user navigation |
 | `GET` | `/api/draft-mode/disable` | Clears draft preview cookie | Same |
@@ -156,8 +196,7 @@ These are **not wired into the running UI** or **not referenced by `package.json
 
 | Item | Notes |
 |------|--------|
-| `client/components/sanity/VisualEditingOverlay.tsx` | Exports `VisualEditingOverlay`; **never imported** in `App.tsx` or elsewhere. `@sanity/visual-editing` is only pulled in here. |
-| `client/lib/sanityImage.ts` | Exports `urlForImage`; **no imports** anywhere in the repo. |
+| `client/lib/sanityImage.ts` | Exports `urlForImage`; **no imports** in app routes yet (optional helper for CMS images). |
 | `client/components/ui/beams.tsx` | Exports `BackgroundBeams`; **no imports** anywhere. |
 | `three`, `@react-three/fiber`, `@react-three/drei` | Listed in `package.json` **devDependencies** but **no TS/TSX imports** found; likely removable if you confirm no dynamic/runtime use (see also [STAGE-2.md](./STAGE-2.md)). |
 | `scripts/fix-homepage-data.ts`, `scripts/thorough-cleanup.ts`, `scripts/debug-sanity.ts`, `scripts/cleanup-programs.ts`, `scripts/sanity-fix-homepage-draft.ts` | **No `pnpm` scripts** point at these; ad-hoc maintenance only. |

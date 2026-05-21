@@ -20,7 +20,7 @@ import { useQuery } from "@tanstack/react-query"
 import { sanityFetch } from "@/lib/sanity"
 import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo"
 import FilteredListEmptyState from "@/components/FilteredListEmptyState"
-import { isProductionHostname } from "@/lib/sanity"
+import { isSanityConfigured } from "@/lib/sanity"
 import { useMemo, useState, useEffect } from "react"
 import { useLocation } from "react-router-dom"
 import { ShareIconCopy } from "@/components/share/sharePageIcons"
@@ -309,7 +309,7 @@ export default function CareersCms() {
   const location = useLocation()
 
   const openRoles = useMemo(
-    () => (isProductionHostname() ? [] : CAREERS_OPEN_ROLES),
+    () => (!isSanityConfigured() ? [] : CAREERS_OPEN_ROLES),
     [],
   )
 

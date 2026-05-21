@@ -15,7 +15,7 @@ import { useStories, useStoriesPage } from "@/hooks/useCmsDocuments"
 import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo"
 import { HeroHeadlinePortable } from "@/components/HeroHeadlinePortable"
 import { DEFAULT_STORIES_PAGE_HEADLINE_PORTABLE } from "@shared/cms/inlineHeroHeadline"
-import { isProductionHostname } from "@/lib/sanity"
+import { isSanityConfigured } from "@/lib/sanity"
 
 const tags: Array<StoryTag | "All"> = ["All", "Founder Story", "Industry Insight", "Program Update"]
 
@@ -104,7 +104,7 @@ export default function Stories() {
   const [page, setPage] = useState(1)
 
   const stories = useMemo(() => {
-    if (isProductionHostname()) return []
+    if (!isSanityConfigured()) return []
 
     const normalized = (cmsStories ?? [])
       .map((s) => ({

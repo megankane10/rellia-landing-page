@@ -4,30 +4,29 @@ export const navigation = defineType({
   name: 'navigation',
   title: 'Site navigation',
   type: 'document',
-  description:
-    'Edit the links shown in the top navbar and the footer. Each entry has a label, a link, and an optional submenu.',
+  description: 'Header navigation and footer column links.',
   groups: [
-    {name: 'header', title: 'Header (top navbar)'},
-    {name: 'footer', title: 'Footer'},
+    {name: 'header', title: 'Header', default: true},
+    {name: 'footer', title: 'Footer columns'},
   ],
   fields: [
     defineField({
       name: 'primary',
       title: 'Header links',
-      description:
-        'Top-level entries shown in the navbar. Add submenu items with the “Submenu items” array on each entry.',
+      description: 'Top-level navbar entries. Add submenu links under each item’s “Submenu items” array.',
       type: 'array',
       of: [{type: 'navItem'}],
       group: 'header',
+      options: {layout: 'grid'},
     }),
     defineField({
       name: 'footer',
       title: 'Footer columns',
-      description:
-        'Each top-level entry becomes a column heading in the footer. Add the column links under “Submenu items”.',
+      description: 'Each entry becomes a column heading. Add links under “Submenu items”.',
       type: 'array',
       of: [{type: 'navItem'}],
       group: 'footer',
+      options: {layout: 'grid'},
     }),
   ],
   preview: {
@@ -40,7 +39,7 @@ export const navigation = defineType({
       const footerLabel = `${footerCount ?? 0} footer column${footerCount === 1 ? '' : 's'}`
       return {
         title: 'Site navigation',
-        subtitle: `${headerLabel}  ·  ${footerLabel}`,
+        subtitle: `${headerLabel} · ${footerLabel}`,
       }
     },
   },

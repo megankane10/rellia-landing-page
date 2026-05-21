@@ -133,7 +133,7 @@ export default function Network() {
 
             <ScrollReveal>
               <SectionTag>Founders</SectionTag>
-              <h2 className="mt-5 text-black text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight leading-[1.05] max-w-3xl">
+              <h2 className="mt-5 text-black text-3xl md:text-[40px] font-bold tracking-tight leading-[1.05] max-w-3xl">
                 Are you building in <span className="text-rellia-teal">health tech?</span>
               </h2>
             </ScrollReveal>
@@ -182,7 +182,7 @@ export default function Network() {
                 <p className="font-urbanist text-base md:text-lg text-black/60 max-w-xl">
                   Applications are required. <span className="text-rellia-teal font-semibold">Membership is selective.</span>
                 </p>
-                <RelliaAction asChild variant="tealFilledLift" size="comfortable">
+                <RelliaAction asChild variant="relliaCtaPrimary" size="comfortable">
                   <Link to="/apply" aria-label="Apply to join the Rellia Network">
                     Apply to Join
                     <ArrowRight />
@@ -214,7 +214,7 @@ export default function Network() {
 
             <ScrollReveal>
               <SectionTag>Advisors</SectionTag>
-              <h2 className="mt-5 text-black text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight leading-[1.05] max-w-3xl">
+              <h2 className="mt-5 text-black text-3xl md:text-[40px] font-bold tracking-tight leading-[1.05] max-w-3xl">
                 Some people are just wired to help others succeed.
               </h2>
             </ScrollReveal>
@@ -275,7 +275,7 @@ export default function Network() {
                 <p className="font-urbanist text-base md:text-lg text-black/60 max-w-xl">
                   The founders in our community are the kind of people worth showing up for. Let's find your match.
                 </p>
-                <RelliaAction asChild variant="tealFilledLift" size="comfortable">
+                <RelliaAction asChild variant="relliaCtaPrimary" size="comfortable">
                   <Link to="/apply" aria-label="Apply to join the Rellia Network">
                     Apply to Join
                     <ArrowRight />
@@ -296,7 +296,7 @@ export default function Network() {
 
             <ScrollReveal>
               <SectionTag>Investors</SectionTag>
-              <h2 className="mt-5 text-black text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight leading-[1.05] max-w-3xl">
+              <h2 className="mt-5 text-black text-3xl md:text-[40px] font-bold tracking-tight leading-[1.05] max-w-3xl">
                 Stop sorting through cold pitch decks.
               </h2>
             </ScrollReveal>
@@ -352,7 +352,7 @@ export default function Network() {
                   Get early access to founders we're backing before they're on anyone else's radar.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-3">
-                  <RelliaAction asChild variant="tealFilledLift" size="comfortable">
+                  <RelliaAction asChild variant="relliaCtaPrimary" size="comfortable">
                     <button
                       type="button"
                       aria-label="Get notified about pitch events"
@@ -363,7 +363,7 @@ export default function Network() {
                       <ArrowRight />
                     </button>
                   </RelliaAction>
-                  <RelliaAction asChild variant="outlineOnWhite" size="comfortable">
+                  <RelliaAction asChild variant="relliaCtaSecondary" size="comfortable">
                     <Link to={CTA.investorContact}>
                       Contact Us Directly
                     </Link>
@@ -384,7 +384,7 @@ export default function Network() {
 
             <ScrollReveal>
               <SectionTag>Industry Partners</SectionTag>
-              <h2 className="mt-5 text-black text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight leading-[1.05] max-w-3xl">
+              <h2 className="mt-5 text-black text-3xl md:text-[40px] font-bold tracking-tight leading-[1.05] max-w-3xl">
                 Reach the health tech founders <span className="text-rellia-teal">who need you.</span>
               </h2>
             </ScrollReveal>
@@ -448,7 +448,7 @@ export default function Network() {
                   Put your brand in front of founders at the exact moment they're making decisions about who to work
                   with.
                 </p>
-                <RelliaAction asChild variant="tealFilledLift" size="comfortable">
+                <RelliaAction asChild variant="relliaCtaPrimary" size="comfortable">
                   <Link to="/apply" aria-label="Apply to join the Rellia Network">
                     Apply to Join
                     <ArrowRight />

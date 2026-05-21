@@ -31,6 +31,11 @@ export const presentationMainDocuments = defineDocuments([
     filter: (ctx) =>
       `_type == "programPage" && slug.current == "${ctx.params.slug ?? ''}"`,
   },
+  {
+    route: '/:slug',
+    filter: (ctx) =>
+      `_type == "marketingPage" && slug.current == "${ctx.params.slug ?? ''}"`,
+  },
 ])
 
 /** Studio → “Open preview” targets for each document type (click-to-preview + edit overlay). */
@@ -138,6 +143,16 @@ export const presentationLocations = {
       if (!slug) return {message: 'Add a slug for this modular page.', tone: 'caution'}
       return {
         locations: [{title: doc?.title || 'Page', href: `/${slug}`}],
+      }
+    },
+  }),
+  marketingPage: defineLocations({
+    select: {title: 'title', slug: 'slug.current'},
+    resolve: (doc) => {
+      const slug = typeof doc?.slug === 'string' ? doc.slug.trim() : ''
+      if (!slug) return {message: 'Add a slug for this marketing page.', tone: 'caution'}
+      return {
+        locations: [{title: doc?.title || 'Marketing page', href: `/${slug}`}],
       }
     },
   }),

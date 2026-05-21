@@ -88,9 +88,9 @@ export default function Payment() {
                 {/* Left: Benefits */}
                 <div className="flex-1 flex flex-col justify-start items-start pt-16 pb-14 md:pt-28 md:pb-20 pr-6 md:pr-16 relative">
                   <div className="relative z-10 w-full max-w-[500px]">
-                    <h3 className="font-host-grotesk text-2xl sm:text-3xl md:text-3xl lg:text-4xl font-bold tracking-tight mb-10 leading-[1.1] text-white">
+                    <h1 className="font-host-grotesk text-2xl sm:text-3xl md:text-3xl lg:text-4xl font-bold tracking-tight mb-10 leading-[1.1] text-white">
                       Join the <span className="text-rellia-mint">Rellia Network</span> today
-                    </h3>
+                    </h1>
 
                     <div className="flex flex-col gap-y-12 md:gap-y-16">
                       {benefitsGrid.map((benefit, index) => {

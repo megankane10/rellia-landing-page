@@ -35,7 +35,7 @@ export default function Apply() {
                 belowTimeline={
                   <RelliaAction
                     type="button"
-                    variant="tealFilled"
+                    variant="relliaCtaPrimary"
                     size="comfortable"
                     className="cursor-pointer px-10"
                     onClick={() => setShowForm(true)}

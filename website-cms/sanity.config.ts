@@ -1,4 +1,5 @@
 import {defineConfig, buildLegacyTheme} from 'sanity'
+import {RelliaStudioIcon} from './studioIcon'
 import {structureTool} from 'sanity/structure'
 import {visionTool} from '@sanity/vision'
 import {presentationTool} from 'sanity/presentation'
@@ -24,7 +25,8 @@ const theme = buildLegacyTheme({
 
 export default defineConfig({
   name: 'default',
-  title: 'Website CMS',
+  title: 'Rellia Website CMS',
+  icon: RelliaStudioIcon,
 
   projectId: process.env.SANITY_STUDIO_PROJECT_ID || 'ggbt0o98',
   dataset: process.env.SANITY_STUDIO_DATASET || 'preview',
@@ -40,6 +42,10 @@ export default defineConfig({
         // If Studio is deployed (https) and previewUrl is http://localhost, the iframe will be blocked as mixed content.
         // For local Studio dev, set SANITY_STUDIO_PREVIEW_URL=http://localhost:5173
         initial: process.env.SANITY_STUDIO_PREVIEW_URL || 'https://relliahealth.vercel.app',
+        previewMode: {
+          enable: '/api/draft-mode/enable',
+          disable: '/api/draft-mode/disable',
+        },
       },
       allowOrigins: [
         'http://localhost:*',

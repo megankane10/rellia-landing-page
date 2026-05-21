@@ -1,4 +1,5 @@
 import { defineField, defineType } from 'sanity'
+import { singletonLayoutFields } from '../shared/singletonLayoutFields'
 
 export const homePage = defineType({
   name: 'homePage',
@@ -10,6 +11,7 @@ export const homePage = defineType({
     { name: 'highlights', title: 'Highlights' },
     { name: 'testimonials', title: 'Testimonials' },
     { name: 'paths', title: 'Paths section' },
+    { name: 'layout', title: 'Layout builder' },
     { name: 'seo', title: 'SEO & metadata' },
   ],
   fieldsets: [{ name: 'seo', title: 'SEO & metadata' }],
@@ -181,6 +183,7 @@ export const homePage = defineType({
         }),
       ],
     }),
+    ...singletonLayoutFields,
     defineField({ name: 'seo', type: 'seo', group: 'seo', fieldset: 'seo' }),
   ],
 })

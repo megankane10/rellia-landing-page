@@ -1,14 +1,13 @@
 import {defineField, defineType} from 'sanity'
+import {documentGroups, FIELDSET_SEO} from '../shared/fieldGroups'
+import {singletonLayoutFields} from '../shared/singletonLayoutFields'
 
 export const careersPage = defineType({
   name: 'careersPage',
   title: 'Careers page',
   type: 'document',
-  groups: [
-    {name: 'content', title: 'Content', default: true},
-    {name: 'seo', title: 'SEO & metadata'},
-  ],
-  fieldsets: [{name: 'seo', title: 'SEO & metadata'}],
+  groups: documentGroups,
+  fieldsets: [FIELDSET_SEO],
   fields: [
     defineField({
       name: 'defaultTab',
@@ -56,6 +55,7 @@ export const careersPage = defineType({
       initialValue: 'Volunteer',
       group: 'content',
     }),
+    ...singletonLayoutFields,
     defineField({name: 'seo', type: 'seo', group: 'seo', fieldset: 'seo'}),
   ],
 })

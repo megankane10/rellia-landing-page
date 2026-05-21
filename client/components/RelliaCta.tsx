@@ -3,6 +3,7 @@ import { useEffect } from "react"
 import { Link } from "react-router-dom"
 import { ArrowRight } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { HEADING_CTA_BAND_COMPACT, HEADING_CTA_BAND_DEFAULT } from "@/lib/typography"
 import ScrollReveal from "@/components/ScrollReveal"
 import RelliaAction from "@/components/RelliaAction"
 
@@ -47,7 +48,7 @@ export type RelliaCtaProps = {
   title: string
   /** Optional supporting paragraph beneath the title. */
   body?: string
-  /** Required primary action — teal pill; white fill sweep on hover (`relliaCtaPrimary`). */
+  /** Required primary action — teal pill; mint fill + lift on hover (`relliaCtaPrimary`). */
   primary: RelliaCtaAction
   /** Optional secondary action — white pill, teal border/text. */
   secondary?: RelliaCtaAction
@@ -111,7 +112,7 @@ function CtaActionTextLink({ action }: { action: RelliaCtaAction }) {
   )
 
   const linkClassName =
-    "inline-flex items-center justify-center gap-2 font-host-grotesk text-sm font-semibold text-rellia-teal hover:text-[#0D3540] hover:underline hover:underline-offset-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-teal focus-visible:ring-offset-2 focus-visible:ring-offset-rellia-greyTeal"
+    "inline-flex items-center justify-center gap-2 font-host-grotesk text-sm font-semibold text-rellia-teal hover:text-rellia-teal hover:underline hover:underline-offset-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-teal focus-visible:ring-offset-2 focus-visible:ring-offset-rellia-greyTeal"
 
   if (action.to) {
     return (
@@ -185,7 +186,7 @@ export default function RelliaCta({
             <h2
               className={cn(
                 "max-w-4xl font-host-grotesk font-medium tracking-tight leading-[1.12] text-black",
-                size === "compact" ? "text-3xl md:text-4xl lg:text-[2.75rem]" : "text-4xl md:text-5xl lg:text-6xl",
+                size === "compact" ? HEADING_CTA_BAND_COMPACT : HEADING_CTA_BAND_DEFAULT,
               )}
             >
               {parseTitleEmphasis(title)}

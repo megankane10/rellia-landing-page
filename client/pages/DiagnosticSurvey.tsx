@@ -34,7 +34,7 @@ import Footer from "@/components/Footer"
 import RelliaAction from "@/components/RelliaAction";
 import RouteSeo from "@/components/RouteSeo";
 import { useAdvisors } from "@/hooks/useCmsDocuments";
-import { ADVISOR_DIRECTORY_SEED } from "@/data/advisorDirectory";
+import { ADVISOR_DIRECTORY_SEED, type AdvisorDirectoryFilter } from "@/data/advisorDirectory";
 import {
   Drawer,
   DrawerContent,
@@ -106,7 +106,7 @@ interface DiagResult {
   }[];
   recommendations: string[];
   mentor_areas_needed: string[];
-  savedToSanity?: boolean
+  savedToSupabase?: boolean
 }
 
 type View = "intro" | "survey" | "submit" | "processing" | "report";
@@ -115,72 +115,85 @@ type View = "intro" | "survey" | "submit" | "processing" | "report";
 
 const DATA_MAP: Record<
   string,
-  { mentor: string; program: string; programHref?: string }
+  { mentor: string; program: string; programHref?: string; advisorSpecialty?: AdvisorDirectoryFilter }
 > = {
   product_design: {
     mentor: "UX & Product Design",
     program: "Prototype Lab",
     programHref: "/programs/prototype-lab",
+    advisorSpecialty: "Technical",
   },
   product_dev: {
     mentor: "Engineering",
     program: "Build Your QMS",
     programHref: "/programs/qms",
+    advisorSpecialty: "Technical",
   },
   clinical: {
     mentor: "Clinical Affairs",
     program: "Regulatory Roadmap",
     programHref: "/programs/regulatory",
+    advisorSpecialty: "Clinical",
   },
   regulatory: {
     mentor: "Regulatory",
     program: "Regulatory Roadmap",
     programHref: "/programs/regulatory",
+    advisorSpecialty: "Regulatory",
   },
   legal: {
     mentor: "Legal & Privacy",
     program: "Regulatory Roadmap",
     programHref: "/programs/regulatory",
+    advisorSpecialty: "Regulatory",
   },
   ip: {
     mentor: "Intellectual Property",
     program: "Advance Dataroom",
     programHref: "/programs/dataroom",
+    advisorSpecialty: "Regulatory",
   },
   reimbursement: {
     mentor: "Reimbursement",
     program: "Regulatory Roadmap",
     programHref: "/programs/regulatory",
+    advisorSpecialty: "Clinical",
   },
   fundraising: {
     mentor: "Fundraising",
     program: "Elevate Capital",
     programHref: "/programs/elevate-capital",
+    advisorSpecialty: "GTM",
   },
   marketing: {
     mentor: "Marketing",
     program: "Brand Strategy",
     programHref: "/programs/brand",
+    advisorSpecialty: "GTM",
   },
   gtm: {
     mentor: "Commercial Strategy",
     program: "First 50 Users",
     programHref: "/programs/first-50",
+    advisorSpecialty: "GTM",
   },
   healthcare: {
     mentor: "Health Systems",
     program: "Advisory Board Match",
     programHref: "/programs/advisory-board-match",
+    advisorSpecialty: "Clinical",
   },
   customer_success: {
     mentor: "Customer Success",
     program: "First 50 Users",
     programHref: "/programs/first-50",
+    advisorSpecialty: "GTM",
   },
   operations: {
     mentor: "Operations",
     program: "Ignite Pitch",
     programHref: "/programs/ignite-pitch",
+    advisorSpecialty: "GTM",
   },
 };
 
@@ -2245,11 +2258,11 @@ export default function DiagnosticSurvey() {
                       <Sparkles className="h-24 w-24 text-rellia-teal" />
                     </div>
                     <p className="font-urbanist text-xl leading-relaxed text-rellia-teal/80 md:text-2xl relative z-10">
-                      {diagResult.summary}
+                      Thanks - we've saved your diagnostic submission for {memberInfo.company}. Your next step is to focus on the lowest-scoring domains first, then reinforce what's already working so you can move faster with less risk.
                     </p>
                   </div>
 
-                  {/* Warning banner indicating locked details */}
+                  {/* Warning banner indicating locked details
                   <div className="rounded-[32px] border border-amber-200 bg-amber-50/50 p-8 shadow-sm flex flex-col md:flex-row items-start md:items-center gap-6">
                     <div className="shrink-0 flex h-12 w-12 items-center justify-center rounded-2xl bg-amber-600 text-white shadow-sm">
                       <AlertTriangle className="h-6 w-6 text-white" />
@@ -2266,8 +2279,8 @@ export default function DiagnosticSurvey() {
                         <ArrowRight className="ml-2 h-4 w-4" />
                       </Link>
                     </RelliaAction>
-                  </div>
-                </div>
+                  </div> */}
+                </div> 
 
                 <div className="space-y-12">
                   {/* Strengths */}
@@ -2349,10 +2362,10 @@ export default function DiagnosticSurvey() {
                     <div className="rounded-[32px] bg-rellia-teal p-8 text-white shadow-2xl relative overflow-hidden flex flex-col h-full">
                       <div className="absolute -bottom-4 -right-4 h-24 w-24 bg-rellia-mint/20 rounded-full blur-2xl" />
                       <h2 className="font-host-grotesk text-2xl font-bold leading-tight relative z-10">
-                        Accelerate your journey
+                      Detailed report access is restricted
                       </h2>
                       <p className="mt-4 text-sm leading-relaxed text-white/70 relative z-10 flex-1">
-                        Join Rellia Health to unlock full access to your assigned advisory board and all recommended programs.
+                      Join Rellia Health to unlock your full gap analysis, personalized actions, and advisory board - and accelerate your journey.
                       </p>
                       <RelliaAction
                         asChild

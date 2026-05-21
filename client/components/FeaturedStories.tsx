@@ -9,7 +9,7 @@ import { useEffect, useMemo, useState } from "react"
 import SectionHeading from "@/components/SectionHeading"
 import PillTag from "@/components/PillTag"
 import { useFeaturedStories } from "@/hooks/useCmsDocuments"
-import { isProductionHostname } from "@/lib/sanity"
+import { isSanityConfigured } from "@/lib/sanity"
 
 /** Auto-advance interval (progress bar uses same duration) */
 const ROTATE_MS = 6500
@@ -39,7 +39,7 @@ export default function FeaturedStories({
   const { data: cmsFeatured } = useFeaturedStories()
 
   const featured = useMemo(() => {
-    if (isProductionHostname()) return []
+    if (!isSanityConfigured()) return []
 
     const normalized = (cmsFeatured ?? [])
       .map((s) => ({

@@ -1,14 +1,13 @@
 import {defineField, defineType} from 'sanity'
+import {documentGroups, FIELDSET_SEO} from '../shared/fieldGroups'
+import {singletonLayoutFields} from '../shared/singletonLayoutFields'
 
 export const aboutPage = defineType({
   name: 'aboutPage',
   title: 'About page',
   type: 'document',
-  groups: [
-    {name: 'content', title: 'Content', default: true},
-    {name: 'seo', title: 'SEO & metadata'},
-  ],
-  fieldsets: [{name: 'seo', title: 'SEO & metadata'}],
+  groups: documentGroups,
+  fieldsets: [FIELDSET_SEO],
   fields: [
     defineField({name: 'heroLine1', type: 'string', group: 'content'}),
     defineField({
@@ -70,6 +69,7 @@ export const aboutPage = defineType({
     defineField({name: 'ctaBody', type: 'text', rows: 3, group: 'content'}),
     defineField({name: 'ctaFounderLabel', type: 'string', group: 'content'}),
     defineField({name: 'ctaTeamLabel', type: 'string', group: 'content'}),
+    ...singletonLayoutFields,
     defineField({name: 'seo', type: 'seo', group: 'seo', fieldset: 'seo'}),
   ],
 })

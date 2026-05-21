@@ -6,7 +6,7 @@ const RouteSuspenseFallback = () => (
     role="status"
     aria-live="polite"
     aria-label="Loading page"
-    className="min-h-[40vh] w-full flex items-center justify-center bg-white"
+    className="min-h-[calc(100vh-86px)] w-full flex items-center justify-center bg-white"
   >
     <div className="h-8 w-8 animate-spin rounded-full border-2 border-rellia-teal/20 border-t-rellia-teal" />
   </div>

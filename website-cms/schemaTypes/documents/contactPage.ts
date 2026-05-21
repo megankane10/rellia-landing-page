@@ -1,14 +1,13 @@
 import {defineField, defineType} from 'sanity'
+import {documentGroups, FIELDSET_SEO} from '../shared/fieldGroups'
+import {singletonLayoutFields} from '../shared/singletonLayoutFields'
 
 export const contactPage = defineType({
   name: 'contactPage',
   title: 'Contact page',
   type: 'document',
-  groups: [
-    {name: 'content', title: 'Content', default: true},
-    {name: 'seo', title: 'SEO & metadata'},
-  ],
-  fieldsets: [{name: 'seo', title: 'SEO & metadata'}],
+  groups: documentGroups,
+  fieldsets: [FIELDSET_SEO],
   fields: [
     defineField({name: 'heroBadge', type: 'string', title: 'Hero badge', group: 'content'}),
     defineField({name: 'pageTitle', type: 'string', group: 'content'}),
@@ -97,6 +96,7 @@ export const contactPage = defineType({
     }),
     defineField({name: 'submitLabel', type: 'string', group: 'content'}),
     defineField({name: 'sendingLabel', type: 'string', group: 'content'}),
+    ...singletonLayoutFields,
     defineField({name: 'seo', type: 'seo', group: 'seo', fieldset: 'seo'}),
   ],
 })

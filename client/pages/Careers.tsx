@@ -114,14 +114,6 @@ const joinTeamMarqueeImages = [...TEAM_MARQUEE_IMAGES, ...TEAM_MARQUEE_IMAGES]
 
 const JOIN_TEAM_MARQUEE_LOOP_SEC = 56
 
-/** Shared geometry + mint sweep hover so primary and outline CTAs match pixel-for-pixel */
-const joinTeamCtaSharedClass = cn(
-  "group rellia-sweep-btn inline-flex cursor-pointer items-center justify-center rounded-full border-2 border-rellia-teal outline-none",
-  "px-8 py-3.5 font-host-grotesk text-base font-semibold leading-none tracking-tight md:px-10 md:py-4 md:text-lg",
-  "focus-visible:ring-2 focus-visible:ring-rellia-teal focus-visible:ring-offset-2 focus-visible:ring-offset-rellia-greyTeal",
-  "motion-safe:hover:-translate-y-0.5 motion-safe:hover:shadow-lg",
-)
-
 type CareersJoinTeamCta = {
   href: string
   label: string
@@ -154,52 +146,35 @@ const CareersJoinTeamSection = ({
 
   const renderCta = (cta: CareersJoinTeamCta, isPrimary: boolean) => {
     const isVolunteer = cta.label.toLowerCase().includes("volunteer")
-    
-    // Base classes for the button
-    const buttonClasses = cn(
-      joinTeamCtaSharedClass,
-      isPrimary 
-        ? "bg-rellia-teal border-rellia-teal hover:border-rellia-mint" 
-        : isVolunteer
-          ? "bg-transparent border-rellia-teal hover:border-rellia-mint"
-          : "bg-transparent border-white/45 text-white hover:border-white/70"
-    )
-
-    const textClasses = cn(
-      "relative z-10 transition-colors duration-300",
-      isPrimary
-        ? "text-white group-hover:text-rellia-teal"
-        : isVolunteer
-          ? "text-rellia-teal group-hover:text-rellia-teal"
-          : "text-white"
-    )
+    const variant = isPrimary ? "relliaCtaPrimary" : "relliaCtaSecondary"
 
     if (isVolunteer) {
       return (
-        <a
+        <RelliaAction
           key={cta.label}
-          href="#"
-          onClick={(e) => {
-            e.preventDefault()
-            setShowForm(true)
-          }}
-          className={buttonClasses}
+          type="button"
+          variant={variant}
+          size="comfortable"
+          className="cursor-pointer px-8 md:px-10"
           aria-label={cta.ariaLabel}
+          onClick={() => setShowForm(true)}
         >
-          <span className={textClasses}>{cta.label}</span>
-        </a>
+          {cta.label}
+        </RelliaAction>
       )
     }
 
     return (
-      <a
+      <RelliaAction
         key={cta.label}
-        href={cta.href}
-        className={buttonClasses}
+        asChild
+        variant={variant}
+        size="comfortable"
+        className="px-8 md:px-10"
         aria-label={cta.ariaLabel}
       >
-        <span className={textClasses}>{cta.label}</span>
-      </a>
+        <a href={cta.href}>{cta.label}</a>
+      </RelliaAction>
     )
   }
 

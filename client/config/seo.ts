@@ -4,6 +4,26 @@ import { FOUNDER_DIRECTORY } from "../data/founderDirectory"
 import { ADVISOR_DIRECTORY_SEED } from "../data/advisorDirectory"
 
 /** Base URL for canonical links, Open Graph, and JSON-LD. Override via `VITE_SITE_URL` in env. */
+/** Trim for `<title>` — target ≤60 characters for SERP display. */
+export const clampMetaTitle = (value: string, max = 60): string => {
+  const trimmed = value.trim()
+  if (trimmed.length <= max) return trimmed
+  const slice = trimmed.slice(0, max)
+  const lastSpace = slice.lastIndexOf(" ")
+  if (lastSpace > max * 0.6) return `${slice.slice(0, lastSpace).trim()}…`
+  return `${slice.trim()}…`
+}
+
+/** Trim for meta description — target ≤160 characters. */
+export const clampMetaDescription = (value: string, max = 160): string => {
+  const trimmed = value.trim()
+  if (trimmed.length <= max) return trimmed
+  const slice = trimmed.slice(0, max)
+  const lastSpace = slice.lastIndexOf(" ")
+  if (lastSpace > max * 0.65) return `${slice.slice(0, lastSpace).trim()}…`
+  return `${slice.trim()}…`
+}
+
 export const getSiteUrl = (): string => {
   const raw = import.meta.env.VITE_SITE_URL as string | undefined
   if (raw && raw.trim().length > 0) {
@@ -23,7 +43,7 @@ export const ROUTE_SEO: Record<string, RouteSeoConfig> = {
   "/": {
     title: "Rellia Health — You are the future of health tech.",
     description:
-      "Rellia Health connects founders, clinicians, and health systems to build the future of care. Join our network, explore programs, and move healthcare forward together.",
+      "Rellia Health connects founders, clinicians, and health systems to build the future of care. Join our network and explore programs.",
     indexable: true,
   },
   "/about": {
@@ -139,11 +159,16 @@ export const ROUTE_SEO: Record<string, RouteSeoConfig> = {
       "The home for health tech founders: membership pathway, programs, advisor access, and directories—built for operators scaling in healthcare.",
     indexable: true,
   },
+  "/founders/alumni": {
+    title: "Alumni directory — Rellia Health",
+    description:
+      "Browse health tech companies in the Rellia alumni network—stage tags and profiles for founder discovery.",
+    indexable: true,
+  },
   "/founders/directory": {
     title: "Founder directory — Rellia Health",
-    description:
-      "Browse representative health tech companies in the Rellia portfolio network—stage tags and profiles for founder discovery.",
-    indexable: true,
+    description: "This page has moved to /founders/alumni.",
+    indexable: false,
   },
   "/consulting": {
     title: "Founder consulting — Rellia Health",
@@ -270,7 +295,7 @@ export const PRERENDER_PATHS: string[] = [
   "/",
   ...Object.keys(ROUTE_SEO).filter((p) => p !== "/"),
   ...PROGRAMS_EVENT_PRERENDER_PATHS,
-  ...FOUNDER_DIRECTORY.map((f) => `/founders/directory/${f.id}`),
+  ...FOUNDER_DIRECTORY.map((f) => `/founders/alumni/${f.id}`),
   ...ADVISOR_DIRECTORY_SEED.map((a) => `/advisors/directory/${a.id}`),
 ]
 

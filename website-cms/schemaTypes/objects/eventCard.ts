@@ -8,7 +8,12 @@ export const eventCard = defineType({
     defineField({name: 'title', type: 'string'}),
     defineField({name: 'slug', type: 'string'}),
     defineField({name: 'dateTime', type: 'string'}),
-    defineField({name: 'person', type: 'string'}),
+    defineField({
+      name: 'person',
+      title: 'Host',
+      type: 'string',
+      description: 'Host name and organization (e.g. The AI Collective • Toronto Tech Week).',
+    }),
     defineField({name: 'imageSrc', type: 'string'}),
     defineField({name: 'href', type: 'string'}),
     defineField({name: 'comingSoon', type: 'boolean'}),

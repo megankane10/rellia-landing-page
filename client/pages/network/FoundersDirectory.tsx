@@ -24,7 +24,7 @@ import {
   type FounderCompany,
   type Specialty,
 } from "@/data/founderDirectory";
-import { isProductionHostname } from "@/lib/sanity";
+import { isSanityConfigured } from "@/lib/sanity";
 
 /** Gray-teal tone for directory heroes */
 const DIRECTORY_TITLE_CLASS =
@@ -128,7 +128,7 @@ export default function FoundersDirectory() {
   }, [location.search]);
 
   const companies = useMemo<FounderCompany[]>(() => {
-    if (isProductionHostname()) return []
+    if (!isSanityConfigured()) return []
 
     if (Array.isArray(cmsCompanies) && cmsCompanies.length > 0) {
       return cmsCompanies

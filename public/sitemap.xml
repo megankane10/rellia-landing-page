@@ -21,12 +21,22 @@
     <priority>0.75</priority>
   </url>
   <url>
+    <loc>https://www.relliahealth.com/events</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://www.relliahealth.com/stories</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://www.relliahealth.com/programs</loc>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://www.relliahealth.com/programs/qms</loc>
+    <loc>https://www.relliahealth.com/programs/build-your-quality-management-system</loc>
     <changefreq>monthly</changefreq>
     <priority>0.85</priority>
   </url>
@@ -39,6 +49,41 @@
     <loc>https://www.relliahealth.com/network</loc>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://www.relliahealth.com/founders</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.relliahealth.com/founders/alumni</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.75</priority>
+  </url>
+  <url>
+    <loc>https://www.relliahealth.com/advisors</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.relliahealth.com/advisors/directory</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.75</priority>
+  </url>
+  <url>
+    <loc>https://www.relliahealth.com/investors</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.relliahealth.com/industry-partners</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.relliahealth.com/consulting</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://www.relliahealth.com/contact</loc>

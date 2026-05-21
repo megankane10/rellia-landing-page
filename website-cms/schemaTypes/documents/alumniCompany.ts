@@ -2,7 +2,7 @@ import {defineField, defineType} from 'sanity'
 
 export const alumniCompany = defineType({
   name: 'alumniCompany',
-  title: 'Alumni company',
+  title: 'Founder company (alumni directory)',
   type: 'document',
   groups: [
     {name: 'profile', title: 'Profile', default: true},

@@ -62,15 +62,19 @@ export default function AdvisorProfile() {
               <div className="overflow-hidden rounded-2xl aspect-[4/5] w-full max-h-[min(42vh,440px)]">
                 <img
                   src={active.photoSrc}
-                  alt={active.name}
+                  alt={`Portrait of ${active.name}`}
+                  width={400}
+                  height={500}
+                  loading="lazy"
+                  decoding="async"
                   className="h-full w-full object-cover object-top"
                 />
               </div>
 
               <div className="pt-2">
-                <h2 className="font-host-grotesk text-3xl font-bold tracking-tight text-black mb-1">
+                <h1 className="font-host-grotesk text-3xl font-bold tracking-tight text-black mb-1">
                   {active.name}
-                </h2>
+                </h1>
                 <p className="font-urbanist text-base font-medium text-black/75">
                   {active.organization}
                 </p>

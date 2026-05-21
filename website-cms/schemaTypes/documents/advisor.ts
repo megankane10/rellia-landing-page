@@ -1,4 +1,4 @@
-import {defineField, defineType} from 'sanity'
+import {defineArrayMember, defineField, defineType} from 'sanity'
 
 export const advisor = defineType({
   name: 'advisor',
@@ -22,7 +22,14 @@ export const advisor = defineType({
       group: 'profile',
     }),
     defineField({name: 'organization', title: 'Organization', type: 'string', group: 'profile'}),
-    defineField({name: 'role', title: 'Role/title', type: 'string', group: 'profile'}),
+    defineField({name: 'role', title: 'Role / title', type: 'string', group: 'profile'}),
+    defineField({
+      name: 'roleTitle',
+      title: 'Role / title (alias)',
+      type: 'string',
+      hidden: true,
+      group: 'profile',
+    }),
     defineField({name: 'location', title: 'Location', type: 'string', group: 'profile'}),
     defineField({
       name: 'country',
@@ -110,11 +117,31 @@ export const advisor = defineType({
         }),
       ],
     }),
-    defineField({name: 'photo', type: 'image', options: {hotspot: true}}),
+    defineField({name: 'photo', title: 'Avatar', type: 'image', options: {hotspot: true}, group: 'profile'}),
+    defineField({
+      name: 'avatar',
+      title: 'Avatar (alias)',
+      type: 'image',
+      hidden: true,
+      group: 'profile',
+    }),
     defineField({name: 'photoSrc', title: 'Photo URL (fallback)', type: 'string', description: 'Fallback URL if no upload', group: 'profile'}),
     defineField({name: 'linkedInUrl', title: 'LinkedIn', type: 'url', group: 'links'}),
     defineField({name: 'websiteUrl', title: 'Website', type: 'url', group: 'links'}),
-    defineField({name: 'bio', title: 'Bio', type: 'text', rows: 6, group: 'profile'}),
+    defineField({name: 'bio', title: 'Bio (short)', type: 'text', rows: 6, group: 'profile'}),
+    defineField({
+      name: 'bioRich',
+      title: 'Bio (rich text)',
+      type: 'portableText',
+      group: 'profile',
+    }),
+    defineField({
+      name: 'socialLinks',
+      title: 'Social & professional links',
+      type: 'array',
+      of: [defineArrayMember({type: 'socialLink'})],
+      group: 'links',
+    }),
     defineField({name: 'mentoringStyle', title: 'Mentoring style', type: 'text', rows: 4, group: 'profile'}),
     defineField({
       name: 'highlights',

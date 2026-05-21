@@ -66,14 +66,18 @@ export default function FounderProfile() {
               <div className="flex min-h-[120px] items-center justify-start md:min-h-[140px]">
                 <img
                   src={active.logoSrc}
-                  alt={active.logoName}
+                  alt={`${active.logoName} logo`}
+                  width={280}
+                  height={120}
+                  loading="lazy"
+                  decoding="async"
                   className="max-h-[120px] w-auto max-w-full object-contain object-left opacity-90"
                 />
               </div>
               <div className="pt-2">
-                <h2 className="font-host-grotesk text-3xl font-bold tracking-tight text-black mb-6">
+                <h1 className="font-host-grotesk text-3xl font-bold tracking-tight text-black mb-6">
                   {active.logoName}
-                </h2>
+                </h1>
                 <div className="flex flex-wrap gap-2 mb-6">
                   {active.level && (
                     <span className="inline-flex rounded-full border border-rellia-teal/20 bg-rellia-mint/20 px-3 py-1 font-urbanist text-xs font-semibold text-rellia-teal">

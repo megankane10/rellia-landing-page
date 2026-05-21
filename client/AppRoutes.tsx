@@ -47,16 +47,14 @@ const TermsofUse = lazy(() => import("./pages/TermsofUse"))
 const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"))
 const CmsCatchAll = lazy(() => import("./pages/CmsCatchAll"))
 const StudioRedirect = lazy(() => import("./pages/StudioRedirect"))
-const PlaceholderPage = lazy(() => import("./pages/PlaceholderPage"))
 const IndustryPartnersDirectory = lazy(() => import("./pages/IndustryPartnersDirectory"))
-import { isProductionHostname } from "@/lib/sanity"
+import { ProtectedRoute } from "@/components/admin/ProtectedRoute"
 
-/** 
- * Gating logic:
- * - main (production): Show placeholder pages (Coming Soon).
- * - additions (dev/preview): Show all pages like originally.
- */
-const showPlaceholder = isProductionHostname()
+const AdminLogin = lazy(() => import("./pages/admin/AdminLogin"))
+const AdminSignup = lazy(() => import("./pages/admin/AdminSignup"))
+const AdminLayout = lazy(() => import("./pages/admin/AdminLayout"))
+const AdminDashboard = lazy(() => import("./pages/admin/AdminDashboard"))
+const AdminCompany = lazy(() => import("./pages/admin/AdminCompany"))
 
 const ThirdPartyPreloads = () => {
   useEffect(() => {
@@ -71,6 +69,8 @@ const ThirdPartyPreloads = () => {
 
     ensurePreconnect("https://js.stripe.com")
     ensurePreconnect("https://embed.fillout.com")
+    ensurePreconnect("https://fonts.googleapis.com")
+    ensurePreconnect("https://fonts.gstatic.com")
   }, [])
 
   return null
@@ -128,6 +128,8 @@ export const AppRoutes = () => (
       <Route path="/apply" element={<Apply />} />
       <Route path="/consulting" element={<Consulting />} />
       <Route path="/founders" element={<Founders />} />
+      <Route path="/founders/directory" element={<Navigate to="/founders/alumni" replace />} />
+      <Route path="/founders/directory/:id" element={<Navigate to="/founders/alumni" replace />} />
       <Route path="/founders/alumni" element={<FoundersDirectory />} />
       <Route path="/founders/alumni/:id" element={<FounderProfile />} />
       <Route path="/advisors" element={<Advisors />} />
@@ -149,10 +151,21 @@ export const AppRoutes = () => (
       <Route path="/industry-partners/directory" element={<IndustryPartnersDirectory />} />
 
       <Route path="/diagnostics" element={<DiagnosticLanding />} />
-      <Route path="/diagnostic-survey" element={showPlaceholder ? <PlaceholderPage title="Diagnostic Survey" subtitle="Coming Soon" /> : <DiagnosticSurvey />} />
+      <Route path="/diagnostic-survey" element={<DiagnosticSurvey />} />
       <Route path="/survey" element={<Navigate to="/diagnostic-survey" replace />} />
 
       <Route path="/studio" element={<StudioRedirect />} />
+
+      {/* Admin auth — public, no protection */}
+      <Route path="/admin/login" element={<AdminLogin />} />
+      <Route path="/admin/signup" element={<AdminSignup />} />
+
+      {/* Admin portal — protected */}
+      <Route path="/admin" element={<ProtectedRoute><AdminLayout /></ProtectedRoute>}>
+        <Route index element={<Navigate to="/admin/dashboard" replace />} />
+        <Route path="dashboard" element={<AdminDashboard />} />
+        <Route path="companies/:id" element={<AdminCompany />} />
+      </Route>
 
       <Route path="*" element={<CmsCatchAll />} />
     </Routes>

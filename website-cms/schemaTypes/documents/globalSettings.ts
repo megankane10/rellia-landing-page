@@ -5,12 +5,19 @@ export const globalSettings = defineType({
   title: 'Global settings',
   type: 'document',
   groups: [
-    {name: 'footer', title: 'Footer', default: true},
-    {name: 'social', title: 'Social links'},
-    {name: 'legal', title: 'Legal'},
+    {name: 'theme', title: 'Design tokens', default: true},
+    {name: 'footer', title: 'Footer'},
     {name: 'announcement', title: 'Announcement banner'},
+    {name: 'legal', title: 'Legal'},
   ],
   fields: [
+    defineField({
+      name: 'themeColors',
+      title: 'Theme colors',
+      type: 'themeColors',
+      description: 'Hex values injected as CSS variables on the marketing site.',
+      group: 'theme',
+    }),
     defineField({
       name: 'footerTagline',
       title: 'Footer tagline',
@@ -23,20 +30,22 @@ export const globalSettings = defineType({
       name: 'supportEmail',
       title: 'Support email',
       type: 'string',
-      description: 'Shown in the footer and used for “Contact” type links.',
+      description: 'Shown in the footer and used for contact links.',
       group: 'footer',
     }),
     defineField({
       name: 'linkedinUrl',
-      title: 'LinkedIn URL',
+      title: 'LinkedIn URL (legacy)',
       type: 'url',
-      group: 'social',
+      hidden: true,
+      group: 'footer',
     }),
     defineField({
       name: 'instagramUrl',
-      title: 'Instagram URL',
+      title: 'Instagram URL (legacy)',
       type: 'url',
-      group: 'social',
+      hidden: true,
+      group: 'footer',
     }),
     defineField({
       name: 'copyrightLine',
@@ -56,22 +65,25 @@ export const globalSettings = defineType({
       name: 'announcementText',
       title: 'Announcement text',
       type: 'string',
-      description: 'The text message shown in the banner.',
       group: 'announcement',
     }),
     defineField({
       name: 'announcementButtonLabel',
       title: 'Announcement button label',
       type: 'string',
-      description: 'Label for the CTA button in the banner.',
       group: 'announcement',
     }),
     defineField({
       name: 'announcementButtonLink',
       title: 'Announcement button link',
       type: 'string',
-      description: 'URL target path for the CTA button in the banner.',
+      description: 'Internal path or URL for the banner CTA.',
       group: 'announcement',
     }),
   ],
+  preview: {
+    prepare() {
+      return {title: 'Global settings'}
+    },
+  },
 })

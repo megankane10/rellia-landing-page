@@ -14,8 +14,10 @@ import {marketingPage} from './documents/marketingPage'
 import {paymentPage} from './documents/paymentPage'
 import {page} from './documents/page'
 import {advisor} from './documents/advisor'
+import {founder} from './documents/founder'
+import {investor} from './documents/investor'
+import {industryPartner} from './documents/industryPartner'
 import {alumniCompany} from './documents/alumniCompany'
-import {diagnosticSubmission} from './documents/diagnosticSubmission'
 import {program} from './documents/program'
 import {event} from './documents/event'
 import {story} from './documents/story'
@@ -36,7 +38,20 @@ import {portableImageCarousel} from './objects/portableImageCarousel'
 import {seo} from './objects/seo'
 import {navItem} from './objects/navItem'
 import {portableRichText} from './objects/portableRichText'
+import {portableText} from './objects/portableText'
+import {linkAnnotation} from './objects/linkAnnotation'
+import {socialLink} from './objects/socialLink'
+import {themeColors} from './objects/themeColors'
+import {ctaButton} from './objects/ctaButton'
 import {inlineHeroHeadline} from './objects/inlineHeroHeadline'
+import {
+  pageBuilder,
+  heroSection,
+  featuresSection,
+  contentSection,
+  carouselSection,
+  testimonialSection,
+} from './objects/pageBuilder'
 import {sectionHero} from './objects/sectionHero'
 import {sectionRichText} from './objects/sectionRichText'
 import {sectionCardsGrid} from './objects/sectionCardsGrid'
@@ -47,6 +62,7 @@ import {sectionJourneyTimeline} from './objects/sectionJourneyTimeline'
 import {sectionDiagnosticSurvey} from './objects/sectionDiagnosticSurvey'
 
 export const schemaTypes = [
+  // Singletons & globals
   globalSettings,
   siteSettings,
   navigation,
@@ -67,9 +83,12 @@ export const schemaTypes = [
   networkInvestorsPage,
   networkPartnersPage,
   consultingPage,
+  // Collections
   advisor,
+  founder,
+  investor,
+  industryPartner,
   alumniCompany,
-  diagnosticSubmission,
   program,
   event,
   story,
@@ -79,13 +98,25 @@ export const schemaTypes = [
   founderLevel,
   founderSpecialty,
   directoryFilterGroup,
+  // Objects & sections
   eventCard,
   bodyCtaBox,
   portableImageCarousel,
   seo,
   navItem,
+  linkAnnotation,
+  socialLink,
+  themeColors,
+  ctaButton,
+  portableText,
   portableRichText,
   inlineHeroHeadline,
+  heroSection,
+  featuresSection,
+  contentSection,
+  carouselSection,
+  testimonialSection,
+  pageBuilder,
   sectionHero,
   sectionRichText,
   sectionCardsGrid,

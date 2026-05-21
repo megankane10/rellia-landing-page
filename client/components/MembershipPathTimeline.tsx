@@ -149,12 +149,12 @@ const MembershipPathTimeline = ({
               headingFooter ? "pb-14 md:pb-16 lg:pb-20" : "pb-8 md:pb-10 lg:pb-12",
             )}
           >
-            <h2
+            <h1
               id={headingId}
               className="font-host-grotesk text-3xl font-semibold leading-tight tracking-tight text-black md:text-4xl lg:text-[2.75rem]"
             >
               {headingTitle}
-            </h2>
+            </h1>
             <p className="mt-4 font-urbanist text-base leading-relaxed text-black/70 md:text-lg md:leading-relaxed">
               {subheading}
             </p>
