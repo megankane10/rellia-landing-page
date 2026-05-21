@@ -23,6 +23,10 @@ const theme = buildLegacyTheme({
   '--default-button-primary-color--active': '#1A5C56',
 } as Record<string, string>)
 
+const previewOrigin = (
+  process.env.SANITY_STUDIO_PREVIEW_URL || 'https://relliahealth.vercel.app'
+).replace(/\/$/, '')
+
 export default defineConfig({
   name: 'default',
   title: 'Rellia Website CMS',
@@ -41,10 +45,10 @@ export default defineConfig({
       previewUrl: {
         // If Studio is deployed (https) and previewUrl is http://localhost, the iframe will be blocked as mixed content.
         // For local Studio dev, set SANITY_STUDIO_PREVIEW_URL=http://localhost:5173
-        initial: process.env.SANITY_STUDIO_PREVIEW_URL || 'https://relliahealth.vercel.app',
+        initial: previewOrigin,
         previewMode: {
-          enable: '/api/draft-mode/enable',
-          disable: '/api/draft-mode/disable',
+          enable: `${previewOrigin}/api/draft-mode/enable`,
+          disable: `${previewOrigin}/api/draft-mode/disable`,
         },
       },
       allowOrigins: [

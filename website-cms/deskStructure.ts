@@ -13,6 +13,35 @@ import {
 const singleton = (S: StructureBuilder, title: string, schemaType: string, icon?: ComponentType) =>
   S.listItem().title(title).icon(icon).child(S.document().schemaType(schemaType).documentId(schemaType))
 
+/** All marketing page singletons — primary site routes */
+const pagesGroup = (S: StructureBuilder) =>
+  S.listItem()
+    .title('Pages')
+    .icon(DocumentTextIcon)
+    .child(
+      S.list()
+        .title('Pages')
+        .items([
+          singleton(S, 'Home', 'homePage', HomeIcon),
+          singleton(S, 'About', 'aboutPage', DocumentTextIcon),
+          singleton(S, 'Careers', 'careersPage', DocumentTextIcon),
+          singleton(S, 'FAQ', 'faqPage', DocumentTextIcon),
+          singleton(S, 'Contact', 'contactPage', DocumentTextIcon),
+          singleton(S, 'Payment (/membership)', 'paymentPage', DocumentTextIcon),
+          singleton(S, 'Consulting (/consulting)', 'consultingPage', DocumentTextIcon),
+          singleton(S, '404', 'notFoundPage', DocumentTextIcon),
+          S.divider(),
+          singleton(S, 'Programs landing (/programs)', 'programsLandingPage', DocumentTextIcon),
+          singleton(S, 'Events landing (/events)', 'eventsLandingPage', DocumentTextIcon),
+          singleton(S, 'Stories landing (/stories)', 'storiesPage', DocumentTextIcon),
+          S.divider(),
+          singleton(S, 'Founders landing (/founders)', 'networkFoundersPage', DocumentTextIcon),
+          singleton(S, 'Advisors landing (/advisors)', 'networkAdvisorsPage', DocumentTextIcon),
+          singleton(S, 'Investors landing (/investors)', 'networkInvestorsPage', DocumentTextIcon),
+          singleton(S, 'Industry partners landing', 'networkPartnersPage', DocumentTextIcon),
+        ]),
+    )
+
 /** Filter groups that power the founders / alumni directory dropdowns */
 const founderDirectoryFilterGroups = (S: StructureBuilder) =>
   S.listItem()
@@ -85,14 +114,7 @@ export const deskStructure = (S: StructureBuilder) =>
       singleton(S, 'Global Settings', 'globalSettings', ControlsIcon),
       singleton(S, 'Navigation (header + footer)', 'navigation', ControlsIcon),
       S.divider(),
-      singleton(S, 'Home page', 'homePage', HomeIcon),
-      singleton(S, 'About page', 'aboutPage', DocumentTextIcon),
-      singleton(S, 'Careers page', 'careersPage', DocumentTextIcon),
-      singleton(S, 'FAQ page', 'faqPage', DocumentTextIcon),
-      singleton(S, 'Contact page', 'contactPage', DocumentTextIcon),
-      singleton(S, 'Payment page (/membership)', 'paymentPage', DocumentTextIcon),
-      singleton(S, 'Consulting page (/consulting)', 'consultingPage', DocumentTextIcon),
-      singleton(S, 'Not found page (404)', 'notFoundPage', DocumentTextIcon),
+      pagesGroup(S),
       S.divider(),
       S.listItem()
         .title('Programs (/programs)')
@@ -101,8 +123,6 @@ export const deskStructure = (S: StructureBuilder) =>
           S.list()
             .title('Programs')
             .items([
-              singleton(S, 'Landing page', 'programsLandingPage', DocumentTextIcon),
-              S.divider(),
               S.documentTypeListItem('program').title('Program cards').icon(ComposeIcon),
               S.documentTypeListItem('programPage').title('Program detail pages').icon(DocumentTextIcon),
             ]),
@@ -113,11 +133,7 @@ export const deskStructure = (S: StructureBuilder) =>
         .child(
           S.list()
             .title('Events')
-            .items([
-              singleton(S, 'Landing page', 'eventsLandingPage', DocumentTextIcon),
-              S.divider(),
-              S.documentTypeListItem('event').title('All events').icon(ComposeIcon),
-            ]),
+            .items([S.documentTypeListItem('event').title('All events').icon(ComposeIcon)]),
         ),
       S.listItem()
         .title('Stories (/stories)')
@@ -126,8 +142,6 @@ export const deskStructure = (S: StructureBuilder) =>
           S.list()
             .title('Stories')
             .items([
-              singleton(S, 'Landing page', 'storiesPage', DocumentTextIcon),
-              S.divider(),
               S.documentTypeListItem('storyFilter').title('Story categories (filters)').icon(TagIcon),
               S.documentTypeListItem('story').title('All stories').icon(ComposeIcon),
             ]),
@@ -140,8 +154,6 @@ export const deskStructure = (S: StructureBuilder) =>
           S.list()
             .title('Founders')
             .items([
-              singleton(S, 'Landing page', 'networkFoundersPage', DocumentTextIcon),
-              S.divider(),
               S.documentTypeListItem('alumniCompany').title('Founder companies (directory)').icon(UsersIcon),
               S.documentTypeListItem('founder').title('Founder profiles').icon(UsersIcon),
               S.divider(),
@@ -156,8 +168,6 @@ export const deskStructure = (S: StructureBuilder) =>
           S.list()
             .title('Advisors')
             .items([
-              singleton(S, 'Landing page', 'networkAdvisorsPage', DocumentTextIcon),
-              S.divider(),
               S.documentTypeListItem('advisor').title('Advisors (directory)').icon(UsersIcon),
               S.divider(),
               advisorDirectoryFilterGroups(S),
@@ -170,11 +180,7 @@ export const deskStructure = (S: StructureBuilder) =>
         .child(
           S.list()
             .title('Investors')
-            .items([
-              singleton(S, 'Landing page', 'networkInvestorsPage', DocumentTextIcon),
-              S.divider(),
-              S.documentTypeListItem('investor').title('Investor profiles').icon(UsersIcon),
-            ]),
+            .items([S.documentTypeListItem('investor').title('Investor profiles').icon(UsersIcon)]),
         ),
       S.listItem()
         .title('Industry partners (/industry-partners)')
@@ -183,8 +189,6 @@ export const deskStructure = (S: StructureBuilder) =>
           S.list()
             .title('Industry partners')
             .items([
-              singleton(S, 'Landing page', 'networkPartnersPage', DocumentTextIcon),
-              S.divider(),
               S.documentTypeListItem('industryPartner').title('Partner organizations').icon(UsersIcon),
             ]),
         ),

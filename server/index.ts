@@ -301,11 +301,34 @@ export function createServer() {
   },
   );
 
+  const hasSanityPreviewSecret = (req: express.Request): boolean => {
+    try {
+      const host =
+        headerOne(req, "x-forwarded-host")?.trim() ||
+        req.get("host") ||
+        process.env.VERCEL_URL ||
+        "localhost"
+      const protocol = headerOne(req, "x-forwarded-proto")?.trim() || req.protocol || "https"
+      const origin = `${protocol}://${host.replace(/^https?:\/\//, "")}`
+      const requestUrl = new URL(req.originalUrl || req.url, origin)
+      return (
+        requestUrl.searchParams.has("sanity-preview-secret") ||
+        requestUrl.searchParams.has("sanity-preview-perspective-secret")
+      )
+    } catch {
+      return false
+    }
+  }
+
   app.get(
     "/api/draft-mode/enable",
     rateLimitText(draftModeRate, DRAFT_MODE_MAX_PER_MIN),
     async (req, res) => {
-    if (!isAllowedBrowserOrigin(req, new Set([studioOrigin].filter(Boolean) as string[]))) {
+    const allowedOrigins = new Set([studioOrigin].filter(Boolean) as string[])
+    if (
+      !isAllowedBrowserOrigin(req, allowedOrigins) &&
+      !hasSanityPreviewSecret(req)
+    ) {
       res.status(403).send("Forbidden")
       return
     }
@@ -365,10 +388,11 @@ export function createServer() {
       })();
 
       const perspective = studioPreviewPerspective || "drafts";
-      res.setHeader(
-        "Set-Cookie",
-        `${perspectiveCookieName}=${perspective}; Path=/; HttpOnly; Secure; SameSite=None; Max-Age=3600`,
-      );
+      const isLocalPreview = host.includes("localhost")
+      const cookieFlags = isLocalPreview
+        ? "Path=/; SameSite=Lax; Max-Age=3600"
+        : "Path=/; HttpOnly; Secure; SameSite=None; Max-Age=3600"
+      res.setHeader("Set-Cookie", `${perspectiveCookieName}=${perspective}; ${cookieFlags}`);
       res.redirect(307, cleanRedirect);
     } catch (err) {
       res

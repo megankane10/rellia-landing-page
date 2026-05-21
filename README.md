@@ -135,7 +135,22 @@ Starts the Node server that serves the built SPA and API (default port from `POR
 4. Seed preview content: `pnpm sanity:seed` (requires `SANITY_API_WRITE_TOKEN` and matching project/dataset env).
 5. After schema changes: `pnpm sanity:cleanup` on the **`preview`** dataset (removes `diagnosticSubmission` orphans and duplicate docs).
 
-**Deploy Studio schema:** `cd website-cms && pnpm install && pnpm exec sanity schema deploy` (or deploy Studio from [sanity.io/manage](https://sanity.io/manage)).
+**Deploy Studio schema:** `cd website-cms && pnpm install && pnpm exec sanity schema deploy && pnpm exec sanity deploy` (hosted Studio must be redeployed after desk/schema changes).
+
+### Visual Editing checklist (Presentation)
+
+| Where | Variable | Purpose |
+|-------|----------|---------|
+| **Vercel Preview** | `SANITY_API_READ_TOKEN` | **Required** — draft-mode + preview GROQ with stega |
+| **Vercel Preview** | `SANITY_STUDIO_URL` | Your hosted Studio URL (e.g. `https://<project>.sanity.studio`) — stega + draft API |
+| **Vercel Preview** | `VITE_SANITY_PROJECT_ID` / `VITE_SANITY_DATASET=preview` | Client CMS reads |
+| **Vercel Preview** | `SANITY_API_PROJECT_ID` / `SANITY_API_DATASET=preview` | Server `/api/sanity/query` |
+| **Sanity Studio env** (sanity.io → Project → Studio) | `SANITY_STUDIO_PREVIEW_URL` | Exact preview site origin (e.g. `https://relliahealth.vercel.app`) |
+| **Sanity Studio env** | `SANITY_STUDIO_DATASET=preview` | Match Additions / preview deploy |
+
+Create the read token in [sanity.io/manage](https://sanity.io/manage) → API → Tokens → **Viewer** (or read-only with draft access). Redeploy Vercel Preview after adding tokens.
+
+**Studio sidebar:** Page singletons live under **Pages** (not scattered at the top level).
 
 ---
 
