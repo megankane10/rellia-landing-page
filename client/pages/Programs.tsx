@@ -8,6 +8,7 @@ import PageHeader from "@/components/PageHeader"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { usePrograms, useProgramsLandingPage } from "@/hooks/useCmsDocuments"
 import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo"
+import { clampMetaDescription, clampMetaTitle, getSeoForPathname } from "@/config/seo"
 import { cn } from "@/lib/utils"
 import { DEFAULT_PROGRAMS_LANDING } from "@shared/cms/defaults"
 import { HeroHeadlinePortable } from "@/components/HeroHeadlinePortable"
@@ -22,7 +23,14 @@ const PAGE_SIZE = 12
 export default function Programs() {
   const { data } = useProgramsLandingPage()
   const pl = data ?? DEFAULT_PROGRAMS_LANDING
-  useApplyCmsSeo(pl.seo)
+  const programsRouteSeo = getSeoForPathname("/programs")
+  const cmsSeoWithoutLegacyTitle = pl.seo
+    ? { ...pl.seo, metaTitle: undefined, ogTitle: undefined }
+    : pl.seo
+  useApplyCmsSeo(cmsSeoWithoutLegacyTitle, {
+    title: clampMetaTitle(programsRouteSeo.title),
+    description: clampMetaDescription(programsRouteSeo.description),
+  })
   const { data: programsData } = usePrograms()
   const [programFilter, setProgramFilter] = useState<ProgramFilter>("all")
   const [page, setPage] = useState(1)

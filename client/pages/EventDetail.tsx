@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useMemo, useState } from "react"
 import { Link, useParams } from "react-router-dom"
 import { AnimatePresence, motion } from "framer-motion"
 import { Calendar, CalendarOff, ChevronLeft, ArrowLeft, History, MapPin, Ticket, Video, Check } from "lucide-react"
@@ -11,9 +11,8 @@ import { useProgramsLandingPage } from "@/hooks/useCmsDocuments"
 import { downloadProgramsEventIcsFile } from "@/lib/eventCalendar"
 import { getLumaEmbedIframeSrc } from "@/lib/lumaEmbed"
 import { cn } from "@/lib/utils"
-import { clampMetaDescription, clampMetaTitle, getSiteUrl } from "@/config/seo"
+import { clampMetaDescription, clampMetaTitle, getSiteUrl, toAbsoluteOgImageUrl } from "@/config/seo"
 import EventJsonLd from "@/components/seo/EventJsonLd"
-import { useOptionalPageSeo } from "@/context/PageSeoContext"
 import { DEFAULT_PROGRAMS_LANDING } from "@shared/cms/defaults"
 import { findProgramsEventBySlug, getProgramsEventSlug } from "@shared/cms/eventSlug"
 import {
@@ -78,12 +77,6 @@ const eventDetailHeroTagIconClassName = "h-3 w-3 shrink-0 opacity-90 sm:h-3.5 sm
 const eventDetailHeroAttendanceTagClassName =
   "inline-flex w-fit items-center gap-1 rounded-full border border-black/10 bg-white px-2.5 py-1 font-host-grotesk text-[9px] font-semibold uppercase tracking-[0.12em] text-black/60 sm:gap-1.5 sm:text-[10px] sm:tracking-[0.14em]"
 
-const toAbsoluteImageUrl = (src: string, base: string): string => {
-  if (/^https?:\/\//i.test(src)) return src
-  if (!src.startsWith("/")) return `${base}/${src}`
-  return `${base}${src}`
-}
-
 const splitEventDetailBody = (raw: string | undefined): string[] => {
   if (!raw?.trim()) return []
   return raw
@@ -108,8 +101,6 @@ export default function EventDetail() {
   const resolvedSlug = slug?.trim() ? decodeURIComponent(slug) : ""
   const { data: cmsEvent } = useEventBySlug(resolvedSlug)
   const cmsSeo = (cmsEvent as { seo?: import("@shared/cms/types").SeoContent } | null | undefined)?.seo
-  useApplyCmsSeo(cmsSeo)
-  const { setPageSeo } = useOptionalPageSeo()
   const fallbackMatch = resolvedSlug ? findProgramsEventBySlug(resolvedSlug, DEFAULT_PROGRAMS_LANDING) : null
   const match = cmsEvent
     ? { _variant: getEventStatus(cmsEvent) === "past" ? "past" : "upcoming", ...cmsEvent }
@@ -118,6 +109,37 @@ export default function EventDetail() {
   const [showForm, setShowForm] = useState(false)
 
   const base = getSiteUrl()
+
+  const eventMeta = useMemo(() => {
+    if (!match) return null
+    const { _variant: _variantIgnored, ...event } = match
+    const computedDateTime = getProgramsEventDisplayDateTime(event)
+    const shortDateTime = shortenProgramsEventDateTime(computedDateTime)
+    const locationLabel = getProgramsEventLocationLabel(event)
+    const pageTitle = clampMetaTitle(`${event.title} — Rellia Health`)
+    const eventDescription = clampMetaDescription(
+      `${event.title}. ${shortDateTime || computedDateTime}. ${locationLabel}.`,
+    )
+    const eventSlugPath = getProgramsEventSlug(event)
+    return {
+      pageTitle,
+      eventDescription,
+      shareTitle: pageTitle,
+      ogImage: event.imageSrc ? toAbsoluteOgImageUrl(event.imageSrc, base) : undefined,
+      canonical: `${base}/events/${eventSlugPath}`,
+    }
+  }, [match, base])
+
+  useApplyCmsSeo(
+    cmsSeo,
+    eventMeta
+      ? {
+          title: eventMeta.pageTitle,
+          description: eventMeta.eventDescription,
+          ogImage: eventMeta.ogImage,
+        }
+      : undefined,
+  )
 
   if (!match) {
     return (
@@ -166,24 +188,11 @@ export default function EventDetail() {
   const showHeroEventCta =
     !isPast &&
     (addToCalendarEnabled || Boolean(embedSrc) || Boolean(event.href?.trim()))
-  const pageTitle = clampMetaTitle(`${event.title} — Rellia Health`)
-  const eventDescription = clampMetaDescription(
-    `${event.title}. ${shortDateTime || computedDateTime}. ${locationLabel}.`,
-  )
-  const eventSlugPath = getProgramsEventSlug(event)
-  const canonical = `${base}/events/${eventSlugPath}`
-  const shareTitle = pageTitle
-  const ogImage = toAbsoluteImageUrl(event.imageSrc, base)
-
-  useEffect(() => {
-    if (cmsSeo?.metaTitle?.trim() || cmsSeo?.ogTitle?.trim()) return
-    setPageSeo({
-      title: pageTitle,
-      description: eventDescription,
-      ogImage,
-    })
-    return () => setPageSeo(null)
-  }, [cmsSeo, pageTitle, eventDescription, ogImage, setPageSeo])
+  const pageTitle = eventMeta!.pageTitle
+  const eventDescription = eventMeta!.eventDescription
+  const canonical = eventMeta!.canonical
+  const shareTitle = eventMeta!.shareTitle
+  const ogImage = eventMeta!.ogImage
 
   const handleCopyLink = async () => {
     try {

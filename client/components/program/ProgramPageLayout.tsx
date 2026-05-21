@@ -34,7 +34,6 @@ import {
 import { getCurrentMonthDeadline } from "@/lib/dateUtils";
 import RelliaAction from "@/components/RelliaAction";
 import { clampMetaDescription, clampMetaTitle, getSiteUrl } from "@/config/seo";
-import { useOptionalPageSeo } from "@/context/PageSeoContext";
 import { cn } from "@/lib/utils";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { SectionsRenderer } from "@/components/cms/PageRenderer"
@@ -169,8 +168,6 @@ const ProgramPageLayout = ({
   const { data: programPageData } = useProgramPageBySlug(cmsSlug ?? '', cms)
   const { data: programDoc } = useProgramBySlug(cmsSlug ?? "")
   const q = programPageData?.content ?? cms
-  useApplyCmsSeo(q.seo)
-  const { setPageSeo } = useOptionalPageSeo()
   const filloutId = extractFilloutId(q.paymentUrl);
   const hasEnrollmentForm = Boolean(filloutId) && !isWaitlist;
 
@@ -184,19 +181,17 @@ const ProgramPageLayout = ({
   const programPageTitle = clampMetaTitle(
     resolvedProgramTitle ? `${resolvedProgramTitle} — Rellia Health` : "Programs — Rellia Health",
   )
-  const programOgImage = resolvedHeroImageSrc.startsWith("http")
-    ? resolvedHeroImageSrc
-    : `${getSiteUrl()}${resolvedHeroImageSrc}`
+  const programOgImage = resolvedHeroImageSrc
+    ? resolvedHeroImageSrc.startsWith("http")
+      ? resolvedHeroImageSrc
+      : `${getSiteUrl()}${resolvedHeroImageSrc}`
+    : undefined
 
-  useEffect(() => {
-    if (q.seo?.metaTitle?.trim() || q.seo?.ogTitle?.trim()) return
-    setPageSeo({
-      title: programPageTitle,
-      description: clampMetaDescription(resolvedProgramDescription || "Rellia Health program"),
-      ogImage: programOgImage,
-    })
-    return () => setPageSeo(null)
-  }, [q.seo, programPageTitle, resolvedProgramDescription, programOgImage, setPageSeo])
+  useApplyCmsSeo(q.seo, {
+    title: programPageTitle,
+    description: clampMetaDescription(resolvedProgramDescription || "Rellia Health program"),
+    ogImage: programOgImage,
+  })
 
   const extraSections = (programPageData?.sections ?? []).filter(
     (s) => s._type !== "sectionHero",

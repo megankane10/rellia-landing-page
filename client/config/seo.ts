@@ -71,9 +71,9 @@ export const ROUTE_SEO: Record<string, RouteSeoConfig> = {
     indexable: true,
   },
   "/programs": {
-    title: "Programs & Events — Rellia Health",
+    title: "Programs — Rellia Health",
     description:
-      "Explore Rellia Health programs and events designed to help healthcare builders learn, connect, and grow with the right stakeholders.",
+      "Explore Rellia Health programs designed to help healthcare builders learn, connect, and grow with the right stakeholders.",
     indexable: true,
   },
   "/programs/build-your-quality-management-system": {
