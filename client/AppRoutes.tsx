@@ -50,6 +50,13 @@ const StudioRedirect = lazy(() => import("./pages/StudioRedirect"))
 const PlaceholderPage = lazy(() => import("./pages/PlaceholderPage"))
 const IndustryPartnersDirectory = lazy(() => import("./pages/IndustryPartnersDirectory"))
 import { isProductionHostname } from "@/lib/sanity"
+import { ProtectedRoute } from "@/components/admin/ProtectedRoute"
+
+const AdminLogin = lazy(() => import("./pages/admin/AdminLogin"))
+const AdminSignup = lazy(() => import("./pages/admin/AdminSignup"))
+const AdminLayout = lazy(() => import("./pages/admin/AdminLayout"))
+const AdminDashboard = lazy(() => import("./pages/admin/AdminDashboard"))
+const AdminCompany = lazy(() => import("./pages/admin/AdminCompany"))
 
 /** 
  * Gating logic:
@@ -153,6 +160,17 @@ export const AppRoutes = () => (
       <Route path="/survey" element={<Navigate to="/diagnostic-survey" replace />} />
 
       <Route path="/studio" element={<StudioRedirect />} />
+
+      {/* Admin auth — public, no protection */}
+      <Route path="/admin/login" element={<AdminLogin />} />
+      <Route path="/admin/signup" element={<AdminSignup />} />
+
+      {/* Admin portal — protected */}
+      <Route path="/admin" element={<ProtectedRoute><AdminLayout /></ProtectedRoute>}>
+        <Route index element={<Navigate to="/admin/dashboard" replace />} />
+        <Route path="dashboard" element={<AdminDashboard />} />
+        <Route path="companies/:id" element={<AdminCompany />} />
+      </Route>
 
       <Route path="*" element={<CmsCatchAll />} />
     </Routes>
