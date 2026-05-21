@@ -1,5 +1,10 @@
 import { createClient, type SanityClient } from "@sanity/client"
-import { eventBySlugQuery, programBySlugQuery, storyBySlugQuery } from "./groqQueries"
+import {
+  eventBySlugQuery,
+  programBySlugQuery,
+  storyBySlugQuery,
+  storiesQuery,
+} from "./groqQueries"
 
 const getPrerenderSanityConfig = (): { projectId: string; dataset: string } | null => {
   const projectId =
@@ -53,3 +58,16 @@ export const fetchProgramBySlugForPrerender = (slug: string) =>
 
 export const fetchStoryBySlugForPrerender = (slug: string) =>
   fetchBySlug(storyBySlugQuery, slug)
+
+export const fetchStorySlugsForPrerender = async (): Promise<string[]> => {
+  const client = getPrerenderSanityClient()
+  if (!client) return []
+  try {
+    const rows = await client.fetch<{ slug?: string }[]>(storiesQuery)
+    return rows
+      .map((row) => row.slug?.trim())
+      .filter((slug): slug is string => Boolean(slug))
+  } catch {
+    return []
+  }
+}

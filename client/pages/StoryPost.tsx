@@ -9,7 +9,6 @@ import {
   buildPageUrl,
   clampMetaDescription,
   clampMetaTitle,
-  getDefaultOgImageUrl,
   getShareOrigin,
   resolveSocialOgImageUrl,
 } from "@/config/seo"
@@ -40,19 +39,17 @@ export default function StoryPost() {
       ? buildPageUrl(`/stories/${story.slug}`)
       : buildPageUrl("/stories")
 
-  const title =
-    cmsStory?.seo?.metaTitle?.trim() ||
-    cmsStory?.seo?.ogTitle?.trim() ||
-    (cmsStory?.title ? `${cmsStory.title} — Rellia Health` : undefined) ||
-    story?.seoTitle ||
-    (story ? `${story.title} — Rellia Health` : "Stories — Rellia Health")
+  const title = cmsStory?.title
+    ? `${cmsStory.title} — Rellia Health`
+    : story?.seoTitle ||
+      (story ? `${story.title} — Rellia Health` : "Stories — Rellia Health")
 
   const description =
-    cmsStory?.seo?.metaDescription?.trim() ||
-    cmsStory?.seo?.ogDescription?.trim() ||
     cmsStory?.excerpt?.trim() ||
     story?.seoDescription ||
     story?.excerpt ||
+    cmsStory?.seo?.metaDescription?.trim() ||
+    cmsStory?.seo?.ogDescription?.trim() ||
     "Stories and insights from Rellia Health."
 
   const resolvedTitle = clampMetaTitle(title)
@@ -65,11 +62,10 @@ export default function StoryPost() {
     return `${origin}${src}`
   }
 
-  const imageUrl = cmsStory?.coverImageSrc
-    ? resolveSocialOgImageUrl(cmsStory.coverImageSrc) ?? toAbsoluteImageUrl(cmsStory.coverImageSrc)
-    : story
-      ? resolveSocialOgImageUrl(story.coverImageSrc) ?? toAbsoluteImageUrl(story.coverImageSrc)
-      : getDefaultOgImageUrl()
+  const headerCoverSrc = cmsStory?.coverImageSrc?.trim() || story?.coverImageSrc?.trim()
+  const imageUrl = headerCoverSrc
+    ? resolveSocialOgImageUrl(headerCoverSrc) ?? toAbsoluteImageUrl(headerCoverSrc)
+    : undefined
 
   const handleCopyLink = async () => {
     try {

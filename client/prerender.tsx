@@ -96,8 +96,12 @@ const buildStorySeo = (
   siteOrigin: string,
 ): ItemPrerenderSeo => ({
   title: clampMetaTitle(`${story.title} — Rellia Health`),
-  description: clampMetaDescription(story.excerpt || "Stories and insights from Rellia Health."),
-  ogImage: resolveSocialOgImageUrl(story.coverImageSrc, siteOrigin),
+  description: clampMetaDescription(
+    story.excerpt?.trim() || "Stories and insights from Rellia Health.",
+  ),
+  ogImage: story.coverImageSrc?.trim()
+    ? resolveSocialOgImageUrl(story.coverImageSrc, siteOrigin)
+    : undefined,
 })
 
 const resolveItemPrerenderSeo = async (

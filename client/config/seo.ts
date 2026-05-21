@@ -1,5 +1,6 @@
 import { DEFAULT_PROGRAMS_LANDING } from "../../shared/cms/defaults"
 import { programsEventDetailPath } from "../../shared/cms/eventSlug"
+import { STORIES } from "../content/stories"
 import { FOUNDER_DIRECTORY } from "../data/founderDirectory"
 import { ADVISOR_DIRECTORY_SEED } from "../data/advisorDirectory"
 
@@ -322,7 +323,7 @@ export const buildPageUrl = (pathname: string): string => {
 
 /** Social crawlers (LinkedIn, Slack, etc.) do not reliably support AVIF for og:image. */
 const SOCIAL_OG_IMAGE_FALLBACKS: Record<string, string> = {
-  "/images/aiHealthcareCompliance.avif": "/images/complianceevent-desc.jpeg",
+  "/images/aiHealthcareCompliance.avif": "/images/aiHealthcareCompliance.jpg",
 }
 
 const withSanityJpegFormat = (url: string): string => {
@@ -361,8 +362,8 @@ export const resolveSocialOgImageUrl = (
   let resolved = SOCIAL_OG_IMAGE_FALLBACKS[pathOnly] ?? trimmed
 
   if (/\.avif($|\?)/i.test(resolved) && !SOCIAL_OG_IMAGE_FALLBACKS[pathOnly]) {
-    const jpegPath = pathOnly.replace(/\.avif$/i, ".jpeg")
-    resolved = SOCIAL_OG_IMAGE_FALLBACKS[jpegPath] ?? jpegPath
+    const jpgPath = pathOnly.replace(/\.avif$/i, ".jpg")
+    resolved = SOCIAL_OG_IMAGE_FALLBACKS[jpgPath] ?? jpgPath
   }
 
   if (/^https?:\/\//i.test(resolved)) {
@@ -393,11 +394,14 @@ const PROGRAMS_EVENT_PRERENDER_PATHS = [
   ...DEFAULT_PROGRAMS_LANDING.pastEvents.map(programsEventDetailPath),
 ]
 
+export const STORY_PRERENDER_PATHS: string[] = STORIES.map((story) => `/stories/${story.slug}`)
+
 /** Paths emitted as static HTML at build time (see `client/prerender.tsx`). */
 export const PRERENDER_PATHS: string[] = [
   "/",
   ...Object.keys(ROUTE_SEO).filter((p) => p !== "/"),
   ...PROGRAMS_EVENT_PRERENDER_PATHS,
+  ...STORY_PRERENDER_PATHS,
   ...FOUNDER_DIRECTORY.map((f) => `/founders/alumni/${f.id}`),
   ...ADVISOR_DIRECTORY_SEED.map((a) => `/advisors/directory/${a.id}`),
 ]
