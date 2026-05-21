@@ -1,4 +1,16 @@
-export type AdvisorDirectoryFilter = "Clinical" | "Regulatory" | "GTM" | "Technical"
+export type AdvisorDirectoryFilter =
+  | "Product Design & UI/UX"
+  | "Product Development"
+  | "Clinical Evidence"
+  | "Regulatory Strategy"
+  | "Legal & Privacy"
+  | "IP Strategy"
+  | "Reimbursement"
+  | "Fundraising"
+  | "Marketing & Branding"
+  | "Go-To-Market"
+  | "Health System Navigation"
+  | "Operations & Scaling"
 
 /** Professional headshots (Unsplash) — illustrative directory placeholders */
 const P = {
@@ -46,7 +58,7 @@ export const ADVISOR_DIRECTORY_SEED: AdvisorDirectoryEntry[] = [
     yearJoined: "2024",
     industries: ["Clinical ops", "Digital health"],
     focus: "Care pathway design, clinician adoption, and evidence planning for early deployments.",
-    filter: "Clinical",
+    filter: "Health System Navigation",
     photoSrc: P.p1,
     linkedInUrl: "https://www.linkedin.com/in/example-elena-ruiz",
     websiteUrl: "https://www.harborclinical.example",
@@ -69,7 +81,7 @@ export const ADVISOR_DIRECTORY_SEED: AdvisorDirectoryEntry[] = [
     yearJoined: "2024",
     industries: ["MedTech", "SaMD"],
     focus: "FDA strategy, QMS readiness, and design controls without slowing product iteration.",
-    filter: "Regulatory",
+    filter: "Regulatory Strategy",
     photoSrc: P.p2,
     linkedInUrl: "https://www.linkedin.com/in/example-jordan-blake",
     websiteUrl: "https://www.northlinereg.example",
@@ -92,7 +104,7 @@ export const ADVISOR_DIRECTORY_SEED: AdvisorDirectoryEntry[] = [
     yearJoined: "2025",
     industries: ["B2B", "Payers"],
     focus: "Enterprise sales motion, pilot contracting, and procurement navigation.",
-    filter: "GTM",
+    filter: "Go-To-Market",
     photoSrc: P.p3,
     linkedInUrl: "https://www.linkedin.com/in/example-priya-nair",
     websiteUrl: "https://www.relaygtm.example",
@@ -115,7 +127,7 @@ export const ADVISOR_DIRECTORY_SEED: AdvisorDirectoryEntry[] = [
     yearJoined: "2024",
     industries: ["Clinical evidence", "Diagnostics"],
     focus: "Study design, endpoints, and publication strategy aligned to buyer questions.",
-    filter: "Clinical",
+    filter: "Clinical Evidence",
     photoSrc: P.p4,
     linkedInUrl: "https://www.linkedin.com/in/example-henry-moss",
     websiteUrl: "https://www.atlasoutcomes.example",
@@ -138,7 +150,7 @@ export const ADVISOR_DIRECTORY_SEED: AdvisorDirectoryEntry[] = [
     yearJoined: "2024",
     industries: ["Digital health", "Infrastructure"],
     focus: "EHR integration patterns, security reviews, and scalable data contracts.",
-    filter: "Technical",
+    filter: "Product Development",
     photoSrc: P.p5,
     linkedInUrl: "https://www.linkedin.com/in/example-alex-rivera",
     websiteUrl: "https://www.clearwaveinterop.example",
@@ -161,7 +173,7 @@ export const ADVISOR_DIRECTORY_SEED: AdvisorDirectoryEntry[] = [
     yearJoined: "2025",
     industries: ["Fundraising", "MedTech"],
     focus: "Modeling, diligence prep, and milestone planning for seed–Series A.",
-    filter: "GTM",
+    filter: "Fundraising",
     photoSrc: P.p6,
     linkedInUrl: "https://www.linkedin.com/in/example-sam-okonkwo",
     websiteUrl: "https://www.meridianvf.example",
@@ -184,7 +196,7 @@ export const ADVISOR_DIRECTORY_SEED: AdvisorDirectoryEntry[] = [
     yearJoined: "2024",
     industries: ["Care delivery", "Operations"],
     focus: "Implementation science and adoption metrics for ward-level workflows.",
-    filter: "Clinical",
+    filter: "Health System Navigation",
     photoSrc: P.p7,
     linkedInUrl: "https://www.linkedin.com/in/example-mei-tan",
     websiteUrl: "https://www.vantagecare.example",
@@ -207,7 +219,7 @@ export const ADVISOR_DIRECTORY_SEED: AdvisorDirectoryEntry[] = [
     yearJoined: "2025",
     industries: ["HIPAA", "SOC 2"],
     focus: "Threat modeling for PHI pipelines and vendor diligence questionnaires.",
-    filter: "Technical",
+    filter: "Legal & Privacy",
     photoSrc: P.p8,
     linkedInUrl: "https://www.linkedin.com/in/example-chris-dalton",
     websiteUrl: "https://www.ironwoodcompliance.example",
@@ -224,8 +236,16 @@ export const ADVISOR_DIRECTORY_SEED: AdvisorDirectoryEntry[] = [
 
 export const ADVISOR_FILTER_OPTIONS: Array<{ id: "all" | AdvisorDirectoryFilter; label: string }> = [
   { id: "all", label: "All" },
-  { id: "Clinical", label: "Clinical" },
-  { id: "Regulatory", label: "Regulatory" },
-  { id: "GTM", label: "GTM" },
-  { id: "Technical", label: "Technical" },
+  { id: "Product Design & UI/UX", label: "Product Design & UI/UX" },
+  { id: "Product Development", label: "Product Development" },
+  { id: "Clinical Evidence", label: "Clinical Evidence" },
+  { id: "Regulatory Strategy", label: "Regulatory Strategy" },
+  { id: "Legal & Privacy", label: "Legal & Privacy" },
+  { id: "IP Strategy", label: "IP Strategy" },
+  { id: "Reimbursement", label: "Reimbursement" },
+  { id: "Fundraising", label: "Fundraising" },
+  { id: "Marketing & Branding", label: "Marketing & Branding" },
+  { id: "Go-To-Market", label: "Go-To-Market" },
+  { id: "Health System Navigation", label: "Health System Navigation" },
+  { id: "Operations & Scaling", label: "Operations & Scaling" },
 ]
