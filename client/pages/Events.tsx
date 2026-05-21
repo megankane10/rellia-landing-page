@@ -7,6 +7,8 @@ import PageHeader from "@/components/PageHeader"
 import { useEvents } from "@/hooks/useCmsDocuments"
 import { useEventsLandingPage } from "@/hooks/useCmsDocuments"
 import { DEFAULT_PROGRAMS_LANDING } from "@shared/cms/defaults"
+import { getProgramsEventSlug } from "@shared/cms/eventSlug"
+import { resolveEventCardImageSrc } from "@shared/cms/itemCardImage"
 import { useMemo, useState, useEffect } from "react"
 import { CalendarDays, LayoutGrid, ChevronLeft, ChevronRight } from "lucide-react"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -79,10 +81,17 @@ export default function Events() {
   const { data: landing } = useEventsLandingPage()
   useApplyCmsSeo(landing?.seo)
 
-  const allEvents =
-    Array.isArray(data) && data.length > 0
-      ? data
-      : [...DEFAULT_PROGRAMS_LANDING.upcomingEvents, ...DEFAULT_PROGRAMS_LANDING.pastEvents]
+  const allEvents = useMemo(() => {
+    const raw =
+      Array.isArray(data) && data.length > 0
+        ? data
+        : [...DEFAULT_PROGRAMS_LANDING.upcomingEvents, ...DEFAULT_PROGRAMS_LANDING.pastEvents]
+    return raw.map((event: { slug?: string; imageSrc?: string; title?: string; dateTime?: string }) => {
+      const slug = (event.slug ?? getProgramsEventSlug(event as never)).trim()
+      const cardImageSrc = resolveEventCardImageSrc(slug, event.imageSrc)
+      return cardImageSrc ? { ...event, imageSrc: cardImageSrc } : event
+    })
+  }, [data])
   const [eventFilter, setEventFilter] = useState<EventFilter>("all")
   const [page, setPage] = useState(1)
 

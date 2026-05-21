@@ -24,7 +24,11 @@ import {
   getProgramsEventLocationLabel,
   shortenProgramsEventDateTime,
 } from "@shared/cms/programsEventDisplay"
-import { resolveEventHeaderImageSrc } from "@shared/cms/eventHeaderImage"
+import {
+  defaultProgramRecordForSlug,
+  resolveEventCardImageSrc,
+  resolveProgramCardImageSrc,
+} from "@shared/cms/itemCardImage"
 import {
   fetchEventBySlugForPrerender,
   fetchProgramBySlugForPrerender,
@@ -65,19 +69,22 @@ const buildEventSeo = (
   const shortDateTime = shortenProgramsEventDateTime(computedDateTime)
   const locationLabel = getProgramsEventLocationLabel(event as never)
   const cmsImageSrc = typeof event.imageSrc === "string" ? event.imageSrc : undefined
-  const imageSrc = resolveEventHeaderImageSrc(slug, cmsImageSrc) ?? cmsImageSrc
+  const imageSrc = resolveEventCardImageSrc(slug, cmsImageSrc)
 
   return {
     title: clampMetaTitle(`${title} — Rellia Health`),
     description: clampMetaDescription(
       `${title}. ${shortDateTime || computedDateTime}. ${locationLabel}.`,
     ),
-    ogImage: resolveSocialOgImageUrl(imageSrc, siteOrigin),
+    ogImage: imageSrc
+      ? resolveSocialOgImageUrl(imageSrc, siteOrigin, { square: true })
+      : undefined,
   }
 }
 
 const buildProgramSeo = (
   program: Record<string, unknown>,
+  slug: string,
   pathname: string,
   siteOrigin: string,
 ): ItemPrerenderSeo => {
@@ -88,12 +95,15 @@ const buildProgramSeo = (
     (typeof program.heroDescription === "string" ? program.heroDescription : "") ||
     (typeof program.description === "string" ? program.description : "") ||
     getSeoForPathname(pathname).description
-  const imageSrc = typeof program.imageSrc === "string" ? program.imageSrc : undefined
+  const cmsImageSrc = typeof program.imageSrc === "string" ? program.imageSrc : undefined
+  const imageSrc = resolveProgramCardImageSrc(slug, cmsImageSrc)
 
   return {
     title: clampMetaTitle(`${title} — Rellia Health`),
     description: clampMetaDescription(description),
-    ogImage: resolveSocialOgImageUrl(imageSrc, siteOrigin),
+    ogImage: imageSrc
+      ? resolveSocialOgImageUrl(imageSrc, siteOrigin, { square: true })
+      : undefined,
   }
 }
 
@@ -136,8 +146,9 @@ const resolveItemPrerenderSeo = async (
 
   if (pathname.startsWith("/programs/") && pathname !== "/programs") {
     const slug = pathname.slice("/programs/".length)
-    const program = prefetched.program
-    if (program) return buildProgramSeo(program, pathname, siteOrigin)
+    const program =
+      prefetched.program ?? defaultProgramRecordForSlug(slug)
+    if (program) return buildProgramSeo(program, slug, pathname, siteOrigin)
     const routeSeo = getSeoForPathname(pathname)
     if (routeSeo.title !== "Page not found — Rellia Health") {
       return {
