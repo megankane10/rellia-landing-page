@@ -106,7 +106,7 @@ interface DiagResult {
   }[];
   recommendations: string[];
   mentor_areas_needed: string[];
-  savedToSanity?: boolean
+  savedToSupabase?: boolean
 }
 
 type View = "intro" | "survey" | "submit" | "processing" | "report";

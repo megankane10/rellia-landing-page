@@ -779,6 +779,7 @@ export function createServer() {
   app.post(
     "/api/stripe/create-checkout-session",
     rateLimitJson(stripeCheckoutRate, STRIPE_CHECKOUT_MAX_PER_MIN),
+    requireCsrf,
     async (req, res) => {
       const secretKey = process.env.STRIPE_SECRET_KEY?.trim()
       if (!secretKey) {
@@ -825,9 +826,28 @@ export function createServer() {
       return
     }
 
-    if (!sanityWriteClient) {
-      res.status(501).json({ error: "Missing SANITY_API_WRITE_TOKEN" })
-      return
+    const supabaseUrl = (
+      process.env.SUPABASE_URL ||
+      process.env.VITE_SUPABASE_URL ||
+      ""
+    )
+      .trim()
+      .replace(/\/$/, "");
+    const supabaseKey = (
+      process.env.SUPABASE_SERVICE_ROLE_KEY ||
+      process.env.SUPABASE_SECRET_KEY ||
+      process.env.SUPABASE_SERVICE_KEY ||
+      process.env.SUPABASE_ANON_KEY ||
+      process.env.VITE_SUPABASE_ANON_KEY ||
+      ""
+    ).trim();
+
+    if (!supabaseUrl || !supabaseKey) {
+      res.status(501).json({
+        error: "Diagnostic survey is not configured on the server.",
+        hint: "Set SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY, then run scripts/supabase_diagnostic_setup.sql in Supabase.",
+      });
+      return;
     }
 
     const ip = getClientIp(req);
@@ -922,83 +942,88 @@ export function createServer() {
       };
     };
 
+    const saveToSupabase = async (report: ReturnType<typeof buildNonAiReport>): Promise<boolean> => {
+      try {
+        // Step 1: insert company profile, get back the new row's id
+        const profileRes = await fetch(
+          `${supabaseUrl}/rest/v1/company_profiles`,
+          {
+            method: "POST",
+            headers: {
+              apikey: supabaseKey,
+              Authorization: `Bearer ${supabaseKey}`,
+              "content-type": "application/json",
+              Prefer: "return=representation",
+            },
+            body: JSON.stringify({
+              name,
+              work_email: email,
+              company_name: company,
+              stage: stage || null,
+              description: desc || null,
+            }),
+          },
+        );
+
+        if (!profileRes.ok) {
+          const errText = await profileRes.text();
+          console.error("Supabase company_profiles insert failed", profileRes.status, errText.slice(0, 800));
+          return false;
+        }
+
+        const [profileRow] = await profileRes.json() as Array<{ id: string }>;
+        const companyProfileId = profileRow?.id;
+        if (!companyProfileId) {
+          console.error("Supabase company_profiles insert returned no id");
+          return false;
+        }
+
+        // Step 2: insert diagnostic response linked to the profile
+        const responseRes = await fetch(
+          `${supabaseUrl}/rest/v1/diagnostic_responses`,
+          {
+            method: "POST",
+            headers: {
+              apikey: supabaseKey,
+              Authorization: `Bearer ${supabaseKey}`,
+              "content-type": "application/json",
+              Prefer: "return=minimal",
+            },
+            body: JSON.stringify({
+              company_profile_id: companyProfileId,
+              section_scores: parseSectionScores(sectionScoresMarkdown),
+              raw_answers: rawAnswers ?? null,
+              summary: report.summary,
+              top3_strengths: report.top3_strengths,
+              top3_weaknesses: report.top3_weaknesses,
+              recommendations: report.recommendations,
+              mentor_areas_needed: report.mentor_areas_needed,
+            }),
+          },
+        );
+
+        if (!responseRes.ok) {
+          const errText = await responseRes.text();
+          console.error("Supabase diagnostic_responses insert failed", responseRes.status, errText.slice(0, 800));
+          return false;
+        }
+
+        return true;
+      } catch (saveErr) {
+        console.error("Failed to save diagnostic to Supabase:", saveErr);
+        return false;
+      }
+    };
+
     try {
       const report = buildNonAiReport();
+      const savedToSupabase = await saveToSupabase(report);
 
-      let savedToSanity = false
-
-      if (sanityWriteClient) {
-        try {
-          await sanityWriteClient.create({
-            _type: "diagnosticSubmission",
-            name,
-            email,
-            company,
-            stage,
-            description: desc,
-            scoresMarkdown: sectionScoresMarkdown,
-            answersJson: rawAnswers ? JSON.stringify(rawAnswers) : undefined,
-            report: {
-              summary: report.summary,
-              strengths: report.top3_strengths,
-              weaknesses: report.top3_weaknesses,
-              recommendations: report.recommendations,
-              mentorAreas: report.mentor_areas_needed,
-            },
-            submittedAt: new Date().toISOString(),
-          });
-          savedToSanity = true
-        } catch (sanityErr) {
-          console.error("Failed to save to Sanity:", sanityErr);
-        }
-      }
-
-      res.status(200).json({
-        ...report,
-        savedToSanity,
-        ...(sanityWriteClient
-          ? {}
-          : {
-              saveSkippedReason:
-                "SANITY_API_WRITE_TOKEN is not set on the server; report generated but not persisted.",
-            }),
-      })
+      res.status(200).json({ ...report, savedToSupabase });
     } catch (err) {
       const fallback = buildNonAiReport();
-
-      if (!sanityWriteClient) {
-        res.status(200).json({ ...fallback, savedToSanity: false })
-        return
-      }
-
-      let savedToSanity = false
-      if (sanityWriteClient) {
-        try {
-          await sanityWriteClient.create({
-            _type: "diagnosticSubmission",
-            name,
-            email,
-            company,
-            stage,
-            description: desc,
-            scoresMarkdown: sectionScoresMarkdown,
-            answersJson: rawAnswers ? JSON.stringify(rawAnswers) : undefined,
-            report: {
-              summary: fallback.summary,
-              strengths: fallback.top3_strengths,
-              weaknesses: fallback.top3_weaknesses,
-              recommendations: fallback.recommendations,
-              mentorAreas: fallback.mentor_areas_needed,
-            },
-            submittedAt: new Date().toISOString(),
-          });
-          savedToSanity = true
-        } catch (sanityErr) {
-          console.error("Failed to save fallback to Sanity:", sanityErr);
-        }
-      }
-
-      res.status(200).json({ ...fallback, savedToSanity })
+      const savedToSupabase = await saveToSupabase(fallback);
+      res.status(200).json({ ...fallback, savedToSupabase });
     }
   });
 
