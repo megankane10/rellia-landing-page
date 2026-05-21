@@ -966,7 +966,7 @@ export const DEFAULT_GLOBAL_SETTINGS: GlobalSettingsContent = {
   instagramUrl: "https://www.instagram.com/relliahealth/",
   copyrightLine: "Rellia Health. All rights reserved.",
   announcementEnabled: true,
-  announcementText: "New Program: The Regulatory Strategy Sprint is now accepting applications.",
+  announcementText: "The Regulatory Strategy Sprint is now accepting applications.",
   announcementButtonLabel: "Learn More",
   announcementButtonLink: "/programs/regulatory-strategy-sprint",
 }
