@@ -12,6 +12,7 @@ import {
   DEFAULT_NOT_FOUND,
   DEFAULT_PAYMENT_PAGE,
   DEFAULT_PROGRAMS_LANDING,
+  DEFAULT_QMS_PROGRAM,
 } from "../shared/cms/defaults"
 import {
   DEFAULT_EVENTS_LANDING_HERO_PORTABLE,
@@ -1051,12 +1052,20 @@ async function main() {
     },
   })
 
-  // Programs as separate documents (source of truth for /programs list)
+  const legacyProgramPages = await client.fetch<string[]>('*[_type == "programPage"]._id')
+  for (const id of legacyProgramPages) {
+    mutations.push({ delete: { id } })
+    if (id.startsWith("drafts.")) continue
+    mutations.push({ delete: { id: `drafts.${id}` } })
+  }
+
+  // Programs: one document per program (card + detail page content)
   for (const [index, program] of DEFAULT_PROGRAMS_LANDING.programs.entries()) {
     const title = program.title?.trim()
     if (!title) continue
     const slug = (program.href || "").split("/").filter(Boolean).pop() || title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "")
     const programAssetId = await resolveImageAssetId(client, program.imageSrc)
+    const isQms = slug === "build-your-quality-management-system"
     mutations.push({
       createOrReplace: {
         _id: `program.${slug}`,
@@ -1070,6 +1079,31 @@ async function main() {
         waitlistHref: (program as any).waitlistHref,
         status: (program as any).waitlistHref ? "waitlist" : "available",
         sortOrder: index,
+        ...(isQms
+          ? {
+              paymentUrl: DEFAULT_QMS_PROGRAM.paymentUrl,
+              heroTitle: DEFAULT_QMS_PROGRAM.heroTitle,
+              heroDescription: DEFAULT_QMS_PROGRAM.heroDescription,
+              heroCtaLabel: DEFAULT_QMS_PROGRAM.heroCtaLabel,
+              outcomesTitle: DEFAULT_QMS_PROGRAM.outcomesTitle,
+              outcomesIntro: DEFAULT_QMS_PROGRAM.outcomesIntro,
+              outcomes: DEFAULT_QMS_PROGRAM.outcomes,
+              howItWorksTitle: DEFAULT_QMS_PROGRAM.howItWorksTitle,
+              howItWorksIntro: DEFAULT_QMS_PROGRAM.howItWorksIntro,
+              pillarsTitle: DEFAULT_QMS_PROGRAM.pillarsTitle,
+              timelineTitle: DEFAULT_QMS_PROGRAM.timelineTitle,
+              timelineSubtitle: DEFAULT_QMS_PROGRAM.timelineSubtitle,
+              pricingBadge: DEFAULT_QMS_PROGRAM.pricingBadge,
+              pricingAmount: DEFAULT_QMS_PROGRAM.pricingAmount,
+              pricingSubAmount: DEFAULT_QMS_PROGRAM.pricingSubAmount,
+              pricingDescription: DEFAULT_QMS_PROGRAM.pricingDescription,
+              pricingBullets: DEFAULT_QMS_PROGRAM.pricingBullets,
+              bottomCtaTitle: DEFAULT_QMS_PROGRAM.bottomCtaTitle,
+              bottomCtaBody: DEFAULT_QMS_PROGRAM.bottomCtaBody,
+              bottomCtaButtonLabel: DEFAULT_QMS_PROGRAM.bottomCtaButtonLabel,
+              bottomContactHref: DEFAULT_QMS_PROGRAM.bottomContactHref,
+            }
+          : {}),
       },
     })
   }

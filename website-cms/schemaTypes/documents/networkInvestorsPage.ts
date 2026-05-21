@@ -17,6 +17,33 @@ export const networkInvestorsPage = defineType({
       group: 'content',
     }),
     defineField({
+      name: 'logoMarquee',
+      title: 'Logo scroll',
+      type: 'array',
+      description: 'Logos shown in the investor page marquee. Falls back to built-in placeholders when empty.',
+      group: 'content',
+      of: [
+        defineArrayMember({
+          type: 'object',
+          name: 'investorLogo',
+          fields: [
+            defineField({name: 'name', title: 'Name', type: 'string', validation: (Rule) => Rule.required()}),
+            defineField({
+              name: 'logo',
+              title: 'Logo',
+              type: 'image',
+              options: {hotspot: true},
+              validation: (Rule) => Rule.required(),
+            }),
+            defineField({name: 'href', title: 'Link (optional)', type: 'url'}),
+          ],
+          preview: {
+            select: {title: 'name', media: 'logo'},
+          },
+        }),
+      ],
+    }),
+    defineField({
       name: 'useModularPage',
       title: 'Use modular CMS layout',
       type: 'boolean',

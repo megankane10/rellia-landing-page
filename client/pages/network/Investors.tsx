@@ -1,5 +1,5 @@
 import type { ReactNode } from "react"
-import { useState } from "react"
+import { useMemo, useState } from "react"
 import { PEXELS_OFFICE_COLLABORATION } from "@/config/pexelsFallbacks"
 import PageHeader from "@/components/PageHeader"
 import SectionHeading from "@/components/SectionHeading"
@@ -221,6 +221,17 @@ export default function Investors() {
 
   const [isPitchNotifyOpen, setIsPitchNotifyOpen] = useState(false)
 
+  const logoMarks = useMemo(() => {
+    const fromCms = (page?.logoMarquee ?? [])
+      .map((entry) => ({
+        name: typeof entry?.name === "string" ? entry.name.trim() : "",
+        src: typeof entry?.src === "string" ? entry.src.trim() : "",
+      }))
+      .filter((entry) => entry.name && entry.src)
+    if (fromCms.length > 0) return fromCms
+    return [...INVESTOR_BRAND_SVG_MARKS]
+  }, [page?.logoMarquee])
+
   return (
     <div className="min-h-screen overflow-x-hidden bg-white font-host-grotesk">
       <Navbar />
@@ -353,7 +364,7 @@ export default function Investors() {
           </div>
           <div className="mt-12 md:mt-16">
             <LogoMarquee
-              marks={INVESTOR_BRAND_SVG_MARKS}
+              marks={logoMarks}
               showHeading={false}
               density="default"
               sectionClassName="bg-white py-4"

@@ -29,12 +29,12 @@ export const presentationMainDocuments = defineDocuments([
   {
     route: '/programs/:slug',
     filter: (ctx) =>
-      `_type == "programPage" && slug.current == "${ctx.params.slug ?? ''}"`,
+      `_type == "program" && slug.current == "${ctx.params.slug ?? ''}"`,
   },
   {
     route: '/:slug',
     filter: (ctx) =>
-      `_type == "marketingPage" && slug.current == "${ctx.params.slug ?? ''}"`,
+      `_type == "page" && slug.current == "${ctx.params.slug ?? ''}"`,
   },
 ])
 
@@ -126,11 +126,11 @@ export const presentationLocations = {
       }
     },
   }),
-  programPage: defineLocations({
+  program: defineLocations({
     select: {title: 'title', slug: 'slug.current'},
     resolve: (doc) => {
       const slug = typeof doc?.slug === 'string' ? doc.slug.trim() : ''
-      if (!slug) return {message: 'Add a slug to preview this program page.', tone: 'caution'}
+      if (!slug) return {message: 'Add a slug to preview this program.', tone: 'caution'}
       return {
         locations: [{title: doc?.title || 'Program', href: `/programs/${slug}`}],
       }
@@ -143,16 +143,6 @@ export const presentationLocations = {
       if (!slug) return {message: 'Add a slug for this modular page.', tone: 'caution'}
       return {
         locations: [{title: doc?.title || 'Page', href: `/${slug}`}],
-      }
-    },
-  }),
-  marketingPage: defineLocations({
-    select: {title: 'title', slug: 'slug.current'},
-    resolve: (doc) => {
-      const slug = typeof doc?.slug === 'string' ? doc.slug.trim() : ''
-      if (!slug) return {message: 'Add a slug for this marketing page.', tone: 'caution'}
-      return {
-        locations: [{title: doc?.title || 'Marketing page', href: `/${slug}`}],
       }
     },
   }),

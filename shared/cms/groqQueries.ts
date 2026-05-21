@@ -164,6 +164,11 @@ export const networkAdvisorsPageQuery = `*[_type == "networkAdvisorsPage"][0]{
 export const networkInvestorsPageQuery = `*[_type == "networkInvestorsPage"][0]{
   title,
   useModularPage,
+  logoMarquee[]{
+    name,
+    "src": logo.asset->url,
+    href
+  },
   ${seoFragment},
   ${pageSectionsFragment}
 }`
@@ -294,10 +299,46 @@ export const eventsLandingQuery = `*[_type == "eventsLandingPage"][0]{
   ${seoFragment}
 }`
 
+const programDetailFields = `
+  paymentUrl,
+  heroTitle,
+  heroDescription,
+  heroCtaLabel,
+  outcomesTitle,
+  outcomesIntro,
+  outcomes,
+  howItWorksTitle,
+  howItWorksIntro,
+  pillarsTitle,
+  timelineTitle,
+  timelineSubtitle,
+  pricingBadge,
+  pricingAmount,
+  pricingSubAmount,
+  pricingDescription,
+  pricingBullets,
+  bottomCtaTitle,
+  bottomCtaBody,
+  bottomCtaButtonLabel,
+  bottomContactHref,
+  sections[]{
+    ...,
+    "imageUrl": image.asset->url,
+    primaryCta{ label, href, description, badge },
+    secondaryCta{ label, href, description, badge },
+    cards[]{
+      ...,
+      "imageUrl": image.asset->url,
+      cta{ label, href, description, badge }
+    }
+  }
+`
+
 export const programsQuery = `*[_type == "program" && status != "hidden" && !(_id in path("drafts.**"))] | order(sortOrder asc, title asc){
   title,
   "slug": slug.current,
   description,
+  deadline,
   "imageSrc": image.asset->url,
   href,
   buttonText,
@@ -311,12 +352,14 @@ export const programBySlugQuery = `*[_type == "program" && slug.current == $slug
   title,
   "slug": slug.current,
   description,
+  deadline,
   "imageSrc": image.asset->url,
   href,
   buttonText,
   waitlistHref,
   status,
   sortOrder,
+  ${programDetailFields},
   ${seoFragment}
 }`
 
@@ -361,42 +404,6 @@ export const eventBySlugQuery = `*[_type == "event" && slug.current == $slug && 
   status,
   sortOrder,
   ${seoFragment}
-}`
-
-export const programPageBySlugQuery = `*[_type == "programPage" && slug.current == $slug][0]{
-  paymentUrl,
-  heroTitle,
-  heroDescription,
-  heroCtaLabel,
-  outcomesTitle,
-  outcomesIntro,
-  outcomes,
-  howItWorksTitle,
-  howItWorksIntro,
-  pillarsTitle,
-  timelineTitle,
-  timelineSubtitle,
-  pricingBadge,
-  pricingAmount,
-  pricingSubAmount,
-  pricingDescription,
-  pricingBullets,
-  bottomCtaTitle,
-  bottomCtaBody,
-  bottomCtaButtonLabel,
-  bottomContactHref,
-  ${seoFragment},
-  sections[]{
-    ...,
-    "imageUrl": image.asset->url,
-    primaryCta{ label, href, description, badge },
-    secondaryCta{ label, href, description, badge },
-    cards[]{
-      ...,
-      "imageUrl": image.asset->url,
-      cta{ label, href, description, badge }
-    }
-  }
 }`
 
 export const contactPageQuery = `*[_type == "contactPage"][0]{
@@ -475,13 +482,6 @@ export const careersPageQuery = `*[_type == "careersPage"][0]{
   tabsLabelVolunteer,
   ${seoFragment}
 }`
-
-export const marketingPageBySlugQuery = `*[_type == "marketingPage" && slug.current == $slug][0]{
-  title,
-  subtitle,
-  body,
-  ${seoFragment}
-}`;
 
 export const advisorsQuery = `*[_type == "advisor"]{
   "id": slug.current,

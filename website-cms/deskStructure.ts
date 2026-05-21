@@ -8,12 +8,37 @@ import {
   ComposeIcon,
   CogIcon,
   TagIcon,
+  CalendarIcon,
+  BookIcon,
 } from '@sanity/icons'
 
 const singleton = (S: StructureBuilder, title: string, schemaType: string, icon?: ComponentType) =>
   S.listItem().title(title).icon(icon).child(S.document().schemaType(schemaType).documentId(schemaType))
 
-/** All marketing page singletons — primary site routes */
+const founderDirectoryFilterGroups = (S: StructureBuilder) =>
+  S.listItem()
+    .title('Filter groups')
+    .icon(TagIcon)
+    .child(
+      S.documentList()
+        .id('directoryFilterGroupsFounders')
+        .title('Filter groups — founders')
+        .filter('_type == "directoryFilterGroup" && appliesTo in ["founders", "both"]')
+        .defaultOrdering([{field: 'sortOrder', direction: 'asc'}]),
+    )
+
+const advisorDirectoryFilterGroups = (S: StructureBuilder) =>
+  S.listItem()
+    .title('Filter groups')
+    .icon(TagIcon)
+    .child(
+      S.documentList()
+        .id('directoryFilterGroupsAdvisors')
+        .title('Filter groups — advisors')
+        .filter('_type == "directoryFilterGroup" && appliesTo in ["advisors", "both"]')
+        .defaultOrdering([{field: 'sortOrder', direction: 'asc'}]),
+    )
+
 const pagesGroup = (S: StructureBuilder) =>
   S.listItem()
     .title('Pages')
@@ -42,33 +67,84 @@ const pagesGroup = (S: StructureBuilder) =>
         ]),
     )
 
-/** Filter groups that power the founders / alumni directory dropdowns */
-const founderDirectoryFilterGroups = (S: StructureBuilder) =>
+const collectionsGroup = (S: StructureBuilder) =>
   S.listItem()
-    .title('Filter groups (founders directory)')
-    .icon(TagIcon)
+    .title('Collections')
+    .icon(ComposeIcon)
     .child(
-      S.documentList()
-        .id('directoryFilterGroupsFounders')
-        .title('Filter groups — founders')
-        .filter('_type == "directoryFilterGroup" && appliesTo in ["founders", "both"]')
-        .defaultOrdering([{field: 'sortOrder', direction: 'asc'}]),
+      S.list()
+        .title('Collections')
+        .items([
+          S.listItem()
+            .title('Programs')
+            .icon(DocumentTextIcon)
+            .child(
+              S.documentTypeList('program')
+                .title('Programs')
+                .defaultOrdering([{field: 'sortOrder', direction: 'asc'}]),
+            ),
+          S.listItem()
+            .title('Events')
+            .icon(CalendarIcon)
+            .child(
+              S.documentTypeList('event')
+                .title('Events')
+                .defaultOrdering([{field: 'sortOrder', direction: 'asc'}]),
+            ),
+          S.listItem()
+            .title('Stories')
+            .icon(BookIcon)
+            .child(
+              S.list()
+                .title('Stories')
+                .items([
+                  S.documentTypeListItem('storyFilter')
+                    .title('Categories')
+                    .icon(TagIcon),
+                  S.documentTypeListItem('story').title('All stories').icon(ComposeIcon),
+                ]),
+            ),
+          S.listItem()
+            .title('Founders directory')
+            .icon(UsersIcon)
+            .child(
+              S.list()
+                .title('Founders directory')
+                .items([
+                  S.documentTypeListItem('alumniCompany')
+                    .title('Companies')
+                    .icon(UsersIcon),
+                  S.divider(),
+                  founderDirectoryFilterGroups(S),
+                  S.documentTypeListItem('founderSpecialty')
+                    .title('Specialties')
+                    .icon(TagIcon),
+                ]),
+            ),
+          S.listItem()
+            .title('Advisors directory')
+            .icon(UsersIcon)
+            .child(
+              S.list()
+                .title('Advisors directory')
+                .items([
+                  S.documentTypeListItem('advisor').title('Advisors').icon(UsersIcon),
+                  S.divider(),
+                  advisorDirectoryFilterGroups(S),
+                  S.documentTypeListItem('advisorFilter').title('Filter tags').icon(TagIcon),
+                ]),
+            ),
+          S.listItem()
+            .title('Modular pages')
+            .icon(DocumentTextIcon)
+            .child(
+              S.documentTypeList('page')
+                .title('Modular pages (/terms, /privacy, …)')
+                .defaultOrdering([{field: 'title', direction: 'asc'}]),
+            ),
+        ]),
     )
 
-/** Filter groups that power the advisors directory dropdowns */
-const advisorDirectoryFilterGroups = (S: StructureBuilder) =>
-  S.listItem()
-    .title('Filter groups (advisors directory)')
-    .icon(TagIcon)
-    .child(
-      S.documentList()
-        .id('directoryFilterGroupsAdvisors')
-        .title('Filter groups — advisors')
-        .filter('_type == "directoryFilterGroup" && appliesTo in ["advisors", "both"]')
-        .defaultOrdering([{field: 'sortOrder', direction: 'asc'}]),
-    )
-
-/** Every document type we surface elsewhere — hide from the catch-all list to avoid duplicates */
 const HIDDEN_FROM_CATCH_ALL = new Set([
   'globalSettings',
   'navigation',
@@ -92,18 +168,18 @@ const HIDDEN_FROM_CATCH_ALL = new Set([
   'event',
   'story',
   'storyFilter',
-  'programPage',
   'page',
-  'marketingPage',
   'advisor',
+  'alumniCompany',
+  'advisorFilter',
+  'founderSpecialty',
+  'directoryFilterGroup',
+  'programPage',
+  'marketingPage',
   'founder',
   'investor',
   'industryPartner',
-  'alumniCompany',
-  'advisorFilter',
   'founderLevel',
-  'founderSpecialty',
-  'directoryFilterGroup',
 ])
 
 export const deskStructure = (S: StructureBuilder) =>
@@ -115,95 +191,7 @@ export const deskStructure = (S: StructureBuilder) =>
       singleton(S, 'Navigation (header + footer)', 'navigation', ControlsIcon),
       S.divider(),
       pagesGroup(S),
-      S.divider(),
-      S.listItem()
-        .title('Programs (/programs)')
-        .icon(DocumentTextIcon)
-        .child(
-          S.list()
-            .title('Programs')
-            .items([
-              S.documentTypeListItem('program').title('Program cards').icon(ComposeIcon),
-              S.documentTypeListItem('programPage').title('Program detail pages').icon(DocumentTextIcon),
-            ]),
-        ),
-      S.listItem()
-        .title('Events (/events)')
-        .icon(DocumentTextIcon)
-        .child(
-          S.list()
-            .title('Events')
-            .items([S.documentTypeListItem('event').title('All events').icon(ComposeIcon)]),
-        ),
-      S.listItem()
-        .title('Stories (/stories)')
-        .icon(DocumentTextIcon)
-        .child(
-          S.list()
-            .title('Stories')
-            .items([
-              S.documentTypeListItem('storyFilter').title('Story categories (filters)').icon(TagIcon),
-              S.documentTypeListItem('story').title('All stories').icon(ComposeIcon),
-            ]),
-        ),
-      S.divider(),
-      S.listItem()
-        .title('Founders (/founders)')
-        .icon(UsersIcon)
-        .child(
-          S.list()
-            .title('Founders')
-            .items([
-              S.documentTypeListItem('alumniCompany').title('Founder companies (directory)').icon(UsersIcon),
-              S.documentTypeListItem('founder').title('Founder profiles').icon(UsersIcon),
-              S.divider(),
-              founderDirectoryFilterGroups(S),
-              S.documentTypeListItem('founderSpecialty').title('Specialties (taxonomy)').icon(TagIcon),
-            ]),
-        ),
-      S.listItem()
-        .title('Advisors (/advisors)')
-        .icon(UsersIcon)
-        .child(
-          S.list()
-            .title('Advisors')
-            .items([
-              S.documentTypeListItem('advisor').title('Advisors (directory)').icon(UsersIcon),
-              S.divider(),
-              advisorDirectoryFilterGroups(S),
-              S.documentTypeListItem('advisorFilter').title('Advisor filter tags').icon(TagIcon),
-            ]),
-        ),
-      S.listItem()
-        .title('Investors (/investors)')
-        .icon(UsersIcon)
-        .child(
-          S.list()
-            .title('Investors')
-            .items([S.documentTypeListItem('investor').title('Investor profiles').icon(UsersIcon)]),
-        ),
-      S.listItem()
-        .title('Industry partners (/industry-partners)')
-        .icon(UsersIcon)
-        .child(
-          S.list()
-            .title('Industry partners')
-            .items([
-              S.documentTypeListItem('industryPartner').title('Partner organizations').icon(UsersIcon),
-            ]),
-        ),
-      S.divider(),
-      S.listItem()
-        .title('Collections')
-        .icon(ComposeIcon)
-        .child(
-          S.list()
-            .title('Collections')
-            .items([
-              S.documentTypeListItem('page').title('Modular pages (/terms, /privacy, …)').icon(DocumentTextIcon),
-              S.documentTypeListItem('marketingPage').title('Marketing pages').icon(DocumentTextIcon),
-            ]),
-        ),
+      collectionsGroup(S),
       S.divider(),
       ...S.documentTypeListItems().filter((item) => !HIDDEN_FROM_CATCH_ALL.has(item.getId() || '')),
     ])

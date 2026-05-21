@@ -31,10 +31,9 @@ const SINGLETON_TYPES = [
   'networkAdvisorsPage',
   'networkInvestorsPage',
   'networkPartnersPage',
-  'programPage',
 ] as const
 
-const SLUGGED_TYPES = ['program', 'event', 'story', 'advisor', 'alumniCompany', 'founder', 'investor', 'industryPartner', 'page', 'marketingPage'] as const
+const SLUGGED_TYPES = ['program', 'event', 'story', 'advisor', 'alumniCompany', 'page'] as const
 
 const requireEnv = (key: string): string => {
   const v = process.env[key]?.trim()

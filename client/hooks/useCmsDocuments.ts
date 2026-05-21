@@ -7,7 +7,6 @@ import {
   mergeFaqPage,
   mergeGlobalSettings,
   mergeHomePage,
-  mergeMarketingPage,
   mergeNotFound,
   mergePaymentPage,
   mergeProgramsLanding,
@@ -23,7 +22,6 @@ import type {
   CmsSingletonPageContent,
   GlobalSettingsContent,
   HomePageContent,
-  MarketingPageContent,
   NotFoundContent,
   PaymentPageContent,
   ProgramsLandingContent,
@@ -228,6 +226,7 @@ export type CmsProgram = {
   title: string
   slug: string
   description?: string
+  deadline?: string
   imageSrc?: string
   href?: string
   buttonText?: string
@@ -279,9 +278,9 @@ type ProgramPageQueryResult = Partial<QmsProgramContent> & {
 
 export const useProgramPageBySlug = (slug: string, fallback?: Partial<QmsProgramContent>) =>
   useQuery({
-    queryKey: ["cms", "programPageBySlug", slug],
+    queryKey: ["cms", "programBySlug", slug],
     queryFn: async () => {
-      const raw = await sanityFetch<ProgramPageQueryResult>("programPageBySlug", { slug })
+      const raw = await sanityFetch<ProgramPageQueryResult>("programBySlug", { slug })
       const content = mergeQmsProgram({
         ...(fallback ?? {}),
         ...(raw ?? {}),
@@ -323,28 +322,6 @@ export const usePaymentPage = () =>
       const raw =
         await sanityFetch<Partial<PaymentPageContent>>("paymentPage");
       return mergePaymentPage(raw ?? undefined);
-    },
-    staleTime: staleTimeMs,
-  });
-
-export const useMarketingPage = (
-  slug: string,
-  fallback?: Partial<Pick<MarketingPageContent, "title" | "subtitle">>,
-) =>
-  useQuery({
-    queryKey: [
-      "cms",
-      "marketingPage",
-      slug,
-      fallback?.title,
-      fallback?.subtitle,
-    ],
-    queryFn: async () => {
-      const raw = await sanityFetch<Partial<MarketingPageContent>>(
-        "marketingPageBySlug",
-        { slug },
-      );
-      return mergeMarketingPage(raw ?? undefined, fallback);
     },
     staleTime: staleTimeMs,
   });

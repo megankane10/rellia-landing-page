@@ -8,15 +8,10 @@ import {faqPage} from './documents/faqPage'
 import {programsLandingPage} from './documents/programsLandingPage'
 import {eventsLandingPage} from './documents/eventsLandingPage'
 import {contactPage} from './documents/contactPage'
-import {programPage} from './documents/programPage'
 import {notFoundPage} from './documents/notFoundPage'
-import {marketingPage} from './documents/marketingPage'
 import {paymentPage} from './documents/paymentPage'
 import {page} from './documents/page'
 import {advisor} from './documents/advisor'
-import {founder} from './documents/founder'
-import {investor} from './documents/investor'
-import {industryPartner} from './documents/industryPartner'
 import {alumniCompany} from './documents/alumniCompany'
 import {program} from './documents/program'
 import {event} from './documents/event'
@@ -72,9 +67,7 @@ export const schemaTypes = [
   programsLandingPage,
   eventsLandingPage,
   contactPage,
-  programPage,
   notFoundPage,
-  marketingPage,
   paymentPage,
   page,
   networkFoundersPage,
@@ -84,9 +77,6 @@ export const schemaTypes = [
   consultingPage,
   // Collections
   advisor,
-  founder,
-  investor,
-  industryPartner,
   alumniCompany,
   program,
   event,

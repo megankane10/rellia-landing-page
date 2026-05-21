@@ -13,9 +13,7 @@ const si = (slug: string) => `https://unpkg.com/simple-icons@${SI_V}/icons/${slu
 
 import { INVESTOR_BRAND_SVG_MARKS, PORTFOLIO_LOGO_MARKS } from "@/data/portfolioLogos"
 
-type LogoMark =
-  | (typeof PORTFOLIO_LOGO_MARKS)[number]
-  | (typeof INVESTOR_BRAND_SVG_MARKS)[number]
+export type LogoMark = { name: string; src: string }
 
 const SPEED_MAP = {
   slow: "60s",

@@ -204,6 +204,7 @@ export type CmsSingletonPageContent = {
   title: string
   /** When true and sections exist, `/founders` etc. render modular CMS sections instead of the full marketing page. */
   useModularPage?: boolean
+  logoMarquee?: Array<{ name: string; src: string; href?: string }>
   seo?: SeoContent
   sections?: CmsPageSection[]
 }
