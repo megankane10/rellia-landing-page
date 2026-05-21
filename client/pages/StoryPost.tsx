@@ -6,7 +6,14 @@ import Footer from "@/components/Footer"
 import ScrollReveal from "@/components/ScrollReveal"
 import { cn } from "@/lib/utils"
 import { getStoryBySlug } from "@/content/stories"
-import { clampMetaDescription, clampMetaTitle, getDefaultOgImageUrl, getSiteUrl } from "@/config/seo"
+import {
+  buildPageUrl,
+  clampMetaDescription,
+  clampMetaTitle,
+  getDefaultOgImageUrl,
+  getShareOrigin,
+  resolveSocialOgImageUrl,
+} from "@/config/seo"
 import StoryArticleJsonLd from "@/components/seo/StoryArticleJsonLd"
 import { ChevronLeft, Check } from "lucide-react"
 import { RichTextImageCarousel } from "@/components/RichTextImageCarousel"
@@ -29,12 +36,11 @@ export default function StoryPost() {
   const story = slug ? getStoryBySlug(slug) : undefined
   const [copyState, setCopyState] = useState<"idle" | "copied">("idle")
 
-  const base = getSiteUrl()
   const canonical = cmsStory?.slug
-    ? `${base}/stories/${cmsStory.slug}`
+    ? buildPageUrl(`/stories/${cmsStory.slug}`)
     : story
-      ? `${base}/stories/${story.slug}`
-      : `${base}/stories`
+      ? buildPageUrl(`/stories/${story.slug}`)
+      : buildPageUrl("/stories")
 
   const title =
     cmsStory?.seo?.metaTitle?.trim() ||
@@ -58,16 +64,17 @@ export default function StoryPost() {
   const resolvedDescription = clampMetaDescription(description)
 
   const toAbsoluteImageUrl = (src: string): string => {
+    const origin = getShareOrigin()
     if (/^https?:\/\//i.test(src)) return src
-    if (!src.startsWith("/")) return `${base}/${src}`
-    return `${base}${src}`
+    if (!src.startsWith("/")) return `${origin}/${src}`
+    return `${origin}${src}`
   }
 
   const imageUrl = cmsStory?.coverImageSrc
-    ? toAbsoluteImageUrl(cmsStory.coverImageSrc)
+    ? resolveSocialOgImageUrl(cmsStory.coverImageSrc) ?? toAbsoluteImageUrl(cmsStory.coverImageSrc)
     : story
-      ? toAbsoluteImageUrl(story.coverImageSrc)
-      : `${base}/stories-ogimage.png`
+      ? resolveSocialOgImageUrl(story.coverImageSrc) ?? toAbsoluteImageUrl(story.coverImageSrc)
+      : getDefaultOgImageUrl()
 
   useEffect(() => {
     if (cmsStory?.seo?.metaTitle?.trim() || cmsStory?.seo?.ogTitle?.trim()) return

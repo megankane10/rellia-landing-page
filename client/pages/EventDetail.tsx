@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react"
 import { Helmet } from "react-helmet-async"
-import { Link, useParams } from "react-router-dom"
+import { Link, useLocation, useParams } from "react-router-dom"
 import { AnimatePresence, motion } from "framer-motion"
 import { Calendar, CalendarOff, ChevronLeft, ArrowLeft, History, MapPin, Ticket, Video, Check } from "lucide-react"
 import Navbar from "@/components/Navbar"
@@ -13,10 +13,10 @@ import { downloadProgramsEventIcsFile } from "@/lib/eventCalendar"
 import { getLumaEmbedIframeSrc } from "@/lib/lumaEmbed"
 import { cn } from "@/lib/utils"
 import {
+  buildPageUrl,
   clampMetaDescription,
   clampMetaTitle,
-  getSiteUrl,
-  toAbsoluteOgImageUrl,
+  resolveSocialOgImageUrl,
 } from "@/config/seo"
 import EventJsonLd from "@/components/seo/EventJsonLd"
 import { DEFAULT_PROGRAMS_LANDING } from "@shared/cms/defaults"
@@ -44,7 +44,6 @@ import { EventDetailPortableText } from "@/components/EventDetailPortableText"
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet"
 import type { SanityPortableText } from "@shared/cms/types"
 import { useEventBySlug } from "@/hooks/useCmsDocuments"
-import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo"
 
 const eventDetailBackToEventsLinkClassName =
   "inline-flex items-center gap-2 font-host-grotesk text-sm font-semibold text-rellia-teal hover:underline hover:underline-offset-4"
@@ -104,17 +103,15 @@ const getEventStatus = (event: any): "upcoming" | "past" => {
 
 export default function EventDetail() {
   const { slug } = useParams()
+  const location = useLocation()
   const resolvedSlug = slug?.trim() ? decodeURIComponent(slug) : ""
   const { data: cmsEvent } = useEventBySlug(resolvedSlug)
-  const cmsSeo = (cmsEvent as { seo?: import("@shared/cms/types").SeoContent } | null | undefined)?.seo
   const fallbackMatch = resolvedSlug ? findProgramsEventBySlug(resolvedSlug, DEFAULT_PROGRAMS_LANDING) : null
   const match = cmsEvent
     ? { _variant: getEventStatus(cmsEvent) === "past" ? "past" : "upcoming", ...cmsEvent }
     : fallbackMatch
   const [copyState, setCopyState] = useState<"idle" | "copied">("idle")
   const [showForm, setShowForm] = useState(false)
-
-  const base = getSiteUrl()
 
   const eventMeta = useMemo(() => {
     if (!match) return null
@@ -127,25 +124,16 @@ export default function EventDetail() {
       `${event.title}. ${shortDateTime || computedDateTime}. ${locationLabel}.`,
     )
     const eventSlugPath = getProgramsEventSlug(event)
+    const pagePath = `/events/${eventSlugPath}`
     return {
       pageTitle,
       eventDescription,
       shareTitle: pageTitle,
-      ogImage: event.imageSrc ? toAbsoluteOgImageUrl(event.imageSrc, base) : undefined,
-      canonical: `${base}/events/${eventSlugPath}`,
+      ogImage: resolveSocialOgImageUrl(event.imageSrc),
+      canonical: buildPageUrl(pagePath),
+      pagePath,
     }
-  }, [match, base])
-
-  useApplyCmsSeo(
-    cmsSeo,
-    eventMeta
-      ? {
-          title: eventMeta.pageTitle,
-          description: eventMeta.eventDescription,
-          ogImage: eventMeta.ogImage,
-        }
-      : undefined,
-  )
+  }, [match, location.pathname])
 
   if (!match) {
     return (

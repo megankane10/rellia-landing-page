@@ -33,7 +33,12 @@ import {
 } from "lucide-react";
 import { getCurrentMonthDeadline } from "@/lib/dateUtils";
 import RelliaAction from "@/components/RelliaAction";
-import { clampMetaDescription, clampMetaTitle, getSiteUrl } from "@/config/seo";
+import {
+  buildPageUrl,
+  clampMetaDescription,
+  clampMetaTitle,
+  resolveSocialOgImageUrl,
+} from "@/config/seo";
 import { cn } from "@/lib/utils";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { SectionsRenderer } from "@/components/cms/PageRenderer"
@@ -177,14 +182,12 @@ const ProgramPageLayout = ({
   const resolvedHeroImageSrc = (programDoc?.imageSrc || heroImageSrc || "").trim()
   const resolvedHeroImageAlt = (heroImageAlt || resolvedProgramTitle || "Program image").trim()
 
-  const canonicalUrl = `${getSiteUrl()}${location.pathname}`;
+  const canonicalUrl = buildPageUrl(location.pathname);
   const programPageTitle = clampMetaTitle(
     resolvedProgramTitle ? `${resolvedProgramTitle} — Rellia Health` : "Programs — Rellia Health",
   )
   const programOgImage = resolvedHeroImageSrc
-    ? resolvedHeroImageSrc.startsWith("http")
-      ? resolvedHeroImageSrc
-      : `${getSiteUrl()}${resolvedHeroImageSrc}`
+    ? resolveSocialOgImageUrl(resolvedHeroImageSrc)
     : undefined
 
   useApplyCmsSeo(q.seo, {

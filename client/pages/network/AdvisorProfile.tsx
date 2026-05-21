@@ -12,7 +12,12 @@ import { ShareIconCopy } from "@/components/share/sharePageIcons";
 import { ADVISOR_DIRECTORY_SEED } from "@/data/advisorDirectory";
 import NotFound from "../NotFound";
 import { cn } from "@/lib/utils";
-import { clampMetaDescription, clampMetaTitle, getSiteUrl, toAbsoluteOgImageUrl } from "@/config/seo";
+import {
+  buildPageUrl,
+  clampMetaDescription,
+  clampMetaTitle,
+  resolveSocialOgImageUrl,
+} from "@/config/seo";
 import { useOptionalPageSeo } from "@/context/PageSeoContext";
 import { useAdvisors } from "@/hooks/useCmsDocuments";
 
@@ -27,7 +32,7 @@ export default function AdvisorProfile() {
   ) as any[];
   const active = advisors.find((a) => a.id === id);
 
-  const canonicalUrl = `${getSiteUrl()}${location.pathname}`;
+  const canonicalUrl = buildPageUrl(location.pathname);
   const [copied, setCopied] = useState(false);
   const { setPageSeo } = useOptionalPageSeo();
 
@@ -36,7 +41,7 @@ export default function AdvisorProfile() {
     setPageSeo({
       title: clampMetaTitle(`${active.name} — Rellia Health | Advisors`),
       description: clampMetaDescription(active.focus),
-      ogImage: toAbsoluteOgImageUrl(active.photoSrc),
+      ogImage: resolveSocialOgImageUrl(active.photoSrc),
     });
     return () => setPageSeo(null);
   }, [active, setPageSeo]);

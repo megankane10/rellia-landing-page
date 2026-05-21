@@ -31,8 +31,6 @@ export const mergePageSeo = (
  * Pulls a Sanity `seo` block into RouteSeo via PageSeoContext.
  * Pass `defaults` on directory/item pages so event/program title and image
  * stay correct while CMS data loads.
- *
- * Applies during render (for prerender/SSR) and in useLayoutEffect (for client).
  */
 export const useApplyCmsSeo = (
   seo: SeoContent | null | undefined,
@@ -56,10 +54,6 @@ export const useApplyCmsSeo = (
     defaults?.ogImage,
     defaults?.noIndex,
   ])
-
-  if (merged) {
-    setPageSeo(merged)
-  }
 
   useLayoutEffect(() => {
     if (merged) {

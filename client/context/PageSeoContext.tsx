@@ -15,6 +15,10 @@ type PageSeoContextValue = {
 
 const PageSeoContext = createContext<PageSeoContextValue | null>(null)
 
+const EMPTY_OVERRIDES: PageSeoOverrides = {}
+
+const noopSetPageSeo = () => {}
+
 export const PageSeoProvider = ({ children }: { children: ReactNode }) => {
   const [overrides, setOverridesState] = useState<PageSeoOverrides>({})
 
@@ -38,9 +42,8 @@ export const usePageSeo = (): PageSeoContextValue => {
 /** Safe variant when provider might be absent (tests); returns no-op setter */
 export const useOptionalPageSeo = (): PageSeoContextValue => {
   const ctx = useContext(PageSeoContext)
-  const noop = useCallback(() => {}, [])
   if (!ctx) {
-    return { overrides: {}, setPageSeo: noop }
+    return { overrides: EMPTY_OVERRIDES, setPageSeo: noopSetPageSeo }
   }
   return ctx
 }

@@ -17,6 +17,7 @@ import { DEFAULT_GLOBAL_SETTINGS } from "@shared/cms/defaults"
 import { CAREERS_VOLUNTEER_ENABLED, careersHasPublishedOpenRoles } from "@shared/careersPageConfig"
 import { CAREERS_OPEN_ROLES } from "@shared/careersOpenRoles"
 import { cn } from "@/lib/utils"
+import { buildPageUrl } from "@/config/seo"
 import FilteredListEmptyState from "@/components/FilteredListEmptyState"
 import { ShareIconCopy } from "@/components/share/sharePageIcons"
 
@@ -354,7 +355,7 @@ export default function Careers() {
 
   const [copiedRoleId, setCopiedRoleId] = useState<string | null>(null)
   const handleCopyRoleLink = (roleId: string) => {
-    const roleUrl = `${window.location.origin}/careers#${roleId}`
+    const roleUrl = `${buildPageUrl("/careers")}#${roleId}`
     navigator.clipboard.writeText(roleUrl)
     setCopiedRoleId(roleId)
     setTimeout(() => setCopiedRoleId(null), 2000)

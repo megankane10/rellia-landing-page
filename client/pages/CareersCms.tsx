@@ -19,6 +19,7 @@ import { cn } from "@/lib/utils"
 import { useQuery } from "@tanstack/react-query"
 import { sanityFetch } from "@/lib/sanity"
 import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo"
+import { buildPageUrl } from "@/config/seo"
 import FilteredListEmptyState from "@/components/FilteredListEmptyState"
 import { isSanityConfigured } from "@/lib/sanity"
 import { useMemo, useState, useEffect } from "react"
@@ -314,7 +315,7 @@ export default function CareersCms() {
   )
 
   const handleCopyRoleLink = (roleId: string) => {
-    const roleUrl = `${window.location.origin}/careers#${roleId}`
+    const roleUrl = `${buildPageUrl("/careers")}#${roleId}`
     navigator.clipboard.writeText(roleUrl)
     setCopiedRoleId(roleId)
     setTimeout(() => setCopiedRoleId(null), 2000)

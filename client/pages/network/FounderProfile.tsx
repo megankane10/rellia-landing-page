@@ -11,7 +11,12 @@ import { ShareIconCopy } from "@/components/share/sharePageIcons";
 import { FOUNDER_DIRECTORY } from "@/data/founderDirectory";
 import NotFound from "../NotFound";
 import { cn } from "@/lib/utils";
-import { clampMetaDescription, clampMetaTitle, getSiteUrl, toAbsoluteOgImageUrl } from "@/config/seo";
+import {
+  buildPageUrl,
+  clampMetaDescription,
+  clampMetaTitle,
+  resolveSocialOgImageUrl,
+} from "@/config/seo";
 import { useOptionalPageSeo } from "@/context/PageSeoContext";
 import { useAlumniCompanies } from "@/hooks/useCmsDocuments";
 
@@ -30,7 +35,7 @@ export default function FounderProfile() {
         }
       : FOUNDER_DIRECTORY.find((c) => c.id === id);
 
-  const canonicalUrl = `${getSiteUrl()}${location.pathname}`;
+  const canonicalUrl = buildPageUrl(location.pathname);
   const [copied, setCopied] = useState(false);
   const { setPageSeo } = useOptionalPageSeo();
 
@@ -39,7 +44,7 @@ export default function FounderProfile() {
     setPageSeo({
       title: clampMetaTitle(`${active.logoName} — Rellia Health | Alumni`),
       description: clampMetaDescription(active.shortDescription),
-      ogImage: toAbsoluteOgImageUrl(active.logoSrc),
+      ogImage: resolveSocialOgImageUrl(active.logoSrc),
     });
     return () => setPageSeo(null);
   }, [active, setPageSeo]);

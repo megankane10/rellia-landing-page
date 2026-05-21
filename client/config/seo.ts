@@ -32,6 +32,15 @@ export const getSiteUrl = (): string => {
   return "https://www.relliahealth.com"
 }
 
+/** Origin for share/copy URLs: current browser host in the client, configured site URL on the server. */
+export const getShareOrigin = (): string => {
+  if (typeof window !== "undefined") {
+    const origin = window.location.origin?.trim()
+    if (origin) return origin.replace(/\/$/, "")
+  }
+  return getSiteUrl()
+}
+
 export type RouteSeoConfig = {
   title: string
   description: string
@@ -294,6 +303,36 @@ export const toAbsoluteOgImageUrl = (src: string, base = getSiteUrl()): string =
   if (/^https?:\/\//i.test(trimmed)) return trimmed
   if (!trimmed.startsWith("/")) return `${base}/${trimmed}`
   return `${base}${trimmed}`
+}
+
+export const buildPageUrl = (pathname: string): string => {
+  const path = normalizePathname(pathname)
+  const origin = getShareOrigin()
+  return `${origin}${path === "/" ? "" : path}`
+}
+
+/** Social crawlers (LinkedIn, Slack, etc.) do not reliably support AVIF for og:image. */
+const SOCIAL_OG_IMAGE_FALLBACKS: Record<string, string> = {
+  "/images/aiHealthcareCompliance.avif": "/images/complianceevent-desc.jpeg",
+}
+
+export const resolveSocialOgImageUrl = (
+  src: string | undefined,
+  origin = getShareOrigin(),
+): string | undefined => {
+  const trimmed = src?.trim()
+  if (!trimmed) return undefined
+  const pathOnly = trimmed.startsWith("http")
+    ? (() => {
+        try {
+          return new URL(trimmed).pathname
+        } catch {
+          return trimmed
+        }
+      })()
+    : trimmed
+  const mapped = SOCIAL_OG_IMAGE_FALLBACKS[pathOnly] ?? trimmed
+  return toAbsoluteOgImageUrl(mapped, origin)
 }
 
 const EVENT_DETAIL_SEO: RouteSeoConfig = {

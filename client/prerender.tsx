@@ -9,8 +9,9 @@ import {
   clampMetaDescription,
   clampMetaTitle,
   getSeoForPathname,
+  getSiteUrl,
   normalizePathname,
-  toAbsoluteOgImageUrl,
+  resolveSocialOgImageUrl,
 } from "@/config/seo"
 import { AppRoutes, RouterShell } from "./AppRoutes"
 import { PageSeoProvider } from "@/context/PageSeoContext"
@@ -21,6 +22,7 @@ import {
   getProgramsEventLocationLabel,
   shortenProgramsEventDateTime,
 } from "@shared/cms/programsEventDisplay"
+import { fetchEventBySlugForPrerender } from "@shared/cms/prerenderSanity"
 
 const prerenderQueryClient = new QueryClient({
   defaultOptions: {
@@ -34,26 +36,74 @@ const helmetTitleText = (helmet: HelmetServerState | undefined): string | undefi
   return raw.replace(/<\/?title>/gi, "").trim() || undefined
 }
 
-const seoForPrerenderPath = (pathname: string) => {
+const escapeMetaAttr = (value: string): string =>
+  value
+    .replace(/&/g, "&amp;")
+    .replace(/"/g, "&quot;")
+    .replace(/</g, "&lt;")
+
+type PrerenderEventSeo = {
+  title: string
+  description: string
+  ogImage?: string
+}
+
+const buildEventSeoFromRecord = (event: Record<string, unknown>): PrerenderEventSeo => {
+  const title = typeof event.title === "string" ? event.title : "Event"
+  const computedDateTime = getProgramsEventDisplayDateTime(event as never)
+  const shortDateTime = shortenProgramsEventDateTime(computedDateTime)
+  const locationLabel = getProgramsEventLocationLabel(event as never)
+  const imageSrc = typeof event.imageSrc === "string" ? event.imageSrc : undefined
+  const siteOrigin = getSiteUrl()
+
+  return {
+    title: clampMetaTitle(`${title} — Rellia Health`),
+    description: clampMetaDescription(
+      `${title}. ${shortDateTime || computedDateTime}. ${locationLabel}.`,
+    ),
+    ogImage: resolveSocialOgImageUrl(imageSrc, siteOrigin),
+  }
+}
+
+const seoForPrerenderPath = (
+  pathname: string,
+  cmsEvent?: Record<string, unknown> | null,
+): PrerenderEventSeo | ReturnType<typeof getSeoForPathname> => {
   const base = getSeoForPathname(pathname)
   if (!pathname.startsWith("/events/") || pathname === "/events") return base
 
   const slug = pathname.slice("/events/".length)
-  const match = findProgramsEventBySlug(slug, DEFAULT_PROGRAMS_LANDING)
-  if (!match) return base
+  const event =
+    cmsEvent ??
+    (() => {
+      const match = findProgramsEventBySlug(slug, DEFAULT_PROGRAMS_LANDING)
+      if (!match) return null
+      const { _variant: _ignored, ...rest } = match
+      return rest as Record<string, unknown>
+    })()
 
-  const { _variant: _ignored, ...event } = match
-  const computedDateTime = getProgramsEventDisplayDateTime(event)
-  const shortDateTime = shortenProgramsEventDateTime(computedDateTime)
-  const locationLabel = getProgramsEventLocationLabel(event)
+  if (!event) return base
+  return buildEventSeoFromRecord(event)
+}
 
-  return {
-    ...base,
-    title: clampMetaTitle(`${event.title} — Rellia Health`),
-    description: clampMetaDescription(
-      `${event.title}. ${shortDateTime || computedDateTime}. ${locationLabel}.`,
-    ),
-    ogImage: event.imageSrc ? toAbsoluteOgImageUrl(event.imageSrc) : undefined,
+const appendSocialMeta = (
+  headElements: Set<string>,
+  seo: { title: string; description: string; ogImage?: string },
+  pageUrl: string,
+) => {
+  headElements.add(`<meta property="og:title" content="${escapeMetaAttr(seo.title)}" />`)
+  headElements.add(
+    `<meta property="og:description" content="${escapeMetaAttr(seo.description)}" />`,
+  )
+  headElements.add(`<meta property="og:url" content="${escapeMetaAttr(pageUrl)}" />`)
+  headElements.add(`<meta name="twitter:title" content="${escapeMetaAttr(seo.title)}" />`)
+  headElements.add(
+    `<meta name="twitter:description" content="${escapeMetaAttr(seo.description)}" />`,
+  )
+  if (seo.ogImage) {
+    headElements.add(`<meta property="og:image" content="${escapeMetaAttr(seo.ogImage)}" />`)
+    headElements.add(`<meta name="twitter:card" content="summary_large_image" />`)
+    headElements.add(`<meta name="twitter:image" content="${escapeMetaAttr(seo.ogImage)}" />`)
   }
 }
 
@@ -62,7 +112,22 @@ export const prerender = async (data: { url: string }) => {
   const helmetContext: { helmet?: HelmetServerState | null } = {}
 
   const pathname = normalizePathname(new URL(data.url, "http://localhost").pathname)
-  const seo = seoForPrerenderPath(pathname)
+  const siteOrigin = getSiteUrl()
+  const pageUrl = `${siteOrigin}${pathname === "/" ? "" : pathname}`
+
+  let cmsEvent: Record<string, unknown> | null = null
+  if (pathname.startsWith("/events/") && pathname !== "/events") {
+    const slug = pathname.slice("/events/".length)
+    cmsEvent = await fetchEventBySlugForPrerender(slug)
+    if (cmsEvent) {
+      await prerenderQueryClient.prefetchQuery({
+        queryKey: ["cms", "event", slug],
+        queryFn: async () => cmsEvent,
+      })
+    }
+  }
+
+  const seo = seoForPrerenderPath(pathname, cmsEvent)
 
   const app = (
     <HelmetProvider context={helmetContext}>
@@ -96,12 +161,26 @@ export const prerender = async (data: { url: string }) => {
     }
   }
 
+  const documentTitle =
+    ("title" in seo ? seo.title : undefined) ||
+    helmetTitleText(helmet ?? undefined) ||
+    getSeoForPathname(pathname).title
+
+  const helmetMeta = helmet?.meta?.toString() ?? ""
+  if (pathname.startsWith("/events/") && pathname !== "/events" && "title" in seo) {
+    const needsOgImage = Boolean(seo.ogImage) && !helmetMeta.includes('property="og:image"')
+    const needsOgTitle = !helmetMeta.includes('property="og:title"')
+    if (needsOgImage || needsOgTitle) {
+      appendSocialMeta(headElements, seo, pageUrl)
+    }
+  }
+
   return {
     html,
     links: new Set(links),
     head: {
       lang: "en",
-      title: seo.title || helmetTitleText(helmet ?? undefined),
+      title: documentTitle,
       elements: headElements,
     },
   }
