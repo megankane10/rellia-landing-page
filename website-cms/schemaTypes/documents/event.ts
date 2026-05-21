@@ -1,4 +1,4 @@
-import {defineArrayMember, defineField, defineType} from 'sanity'
+import {defineField, defineType} from 'sanity'
 import {documentGroups, FIELDSET_SEO} from '../shared/fieldGroups'
 import {seoField} from '../shared/seoField'
 import {pageBuilderField} from '../shared/pageBuilderField'
@@ -28,7 +28,7 @@ export const event = defineType({
       title: 'Start date & time',
       type: 'datetime',
       options: {timeStep: 15},
-      description: 'Used to determine upcoming vs past events automatically.',
+      description: 'Used for cards, upcoming vs past, and Add to Calendar.',
       group: 'content',
     }),
     defineField({
@@ -36,13 +36,6 @@ export const event = defineType({
       title: 'End date & time',
       type: 'datetime',
       options: {timeStep: 15},
-      group: 'content',
-    }),
-    defineField({
-      name: 'dateTime',
-      title: 'Display date/time (legacy)',
-      type: 'string',
-      description: 'Optional override for cards. If empty, formatted from start date.',
       group: 'content',
     }),
     defineField({
@@ -72,13 +65,6 @@ export const event = defineType({
       options: {hotspot: true},
       group: 'content',
     }),
-    defineField({
-      name: 'imageSrc',
-      title: 'Event image URL (legacy)',
-      type: 'string',
-      hidden: true,
-      group: 'content',
-    }),
     defineField({name: 'href', type: 'string', group: 'content'}),
     defineField({name: 'comingSoon', type: 'boolean', group: 'content'}),
     defineField({name: 'buttonText', title: 'CTA label', type: 'string', group: 'ticketing'}),
@@ -93,40 +79,18 @@ export const event = defineType({
       name: 'eventDescription',
       title: 'Event description',
       type: 'portableText',
-      description: 'Primary rich description for the event detail page.',
+      description: 'Rich description for the event detail page.',
       group: 'content',
     }),
     defineField({
       name: 'detailBodyHeading',
+      title: 'Description section heading',
       type: 'string',
+      initialValue: 'About this event',
       group: 'content',
-    }),
-    defineField({
-      name: 'detailBody',
-      title: 'Detail body (legacy)',
-      type: 'array',
-      description: 'Legacy portable text — prefer Event description above.',
-      group: 'content',
-      of: [
-        {type: 'block'},
-        defineArrayMember({
-          type: 'object',
-          name: 'eventDetailInlineImage',
-          title: 'Image',
-          fields: [
-            defineField({name: 'imageSrc', title: 'Image URL', type: 'string'}),
-            defineField({name: 'alt', type: 'string', validation: (Rule) => Rule.required()}),
-            defineField({name: 'caption', type: 'string'}),
-          ],
-        }),
-        {type: 'bodyCtaBox'},
-        {type: 'portableImageCarousel'},
-      ],
     }),
     defineField({name: 'embedLumaOnDetailPage', type: 'boolean', group: 'ticketing'}),
     defineField({name: 'addToCalendarEnabled', type: 'boolean', group: 'ticketing'}),
-    defineField({name: 'calendarStartsAt', type: 'string', group: 'ticketing'}),
-    defineField({name: 'calendarEndsAt', type: 'string', group: 'ticketing'}),
     defineField({
       name: 'status',
       type: 'string',

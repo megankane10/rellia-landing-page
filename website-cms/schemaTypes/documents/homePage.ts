@@ -108,7 +108,7 @@ export const homePage = defineType({
     }),
     defineField({
       name: 'ctaImageUrl',
-      title: 'CTA image URL (legacy)',
+      title: 'CTA image URL (fallback)',
       type: 'url',
       description: 'Optional fallback URL when no image is uploaded above.',
       group: 'highlights',

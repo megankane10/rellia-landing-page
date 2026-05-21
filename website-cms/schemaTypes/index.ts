@@ -32,7 +32,6 @@ import {networkAdvisorsPage} from './documents/networkAdvisorsPage'
 import {networkInvestorsPage} from './documents/networkInvestorsPage'
 import {networkPartnersPage} from './documents/networkPartnersPage'
 import {consultingPage} from './documents/consultingPage'
-import {eventCard} from './objects/eventCard'
 import {bodyCtaBox} from './objects/bodyCtaBox'
 import {portableImageCarousel} from './objects/portableImageCarousel'
 import {seo} from './objects/seo'
@@ -99,7 +98,6 @@ export const schemaTypes = [
   founderSpecialty,
   directoryFilterGroup,
   // Objects & sections
-  eventCard,
   bodyCtaBox,
   portableImageCarousel,
   seo,

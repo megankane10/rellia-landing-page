@@ -208,6 +208,52 @@ export const getProgramsEventCardImageDateBadge = (raw: string): { month: string
   return { month: abbr, day: (match[2] ?? "").padStart(2, "0") }
 }
 
+const formatEasternTimeFromIso = (iso: string): string => {
+  const t = Date.parse(iso)
+  if (!Number.isFinite(t)) return ""
+  const d = new Date(t)
+  return d.toLocaleTimeString("en-US", {
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+    timeZone: "America/New_York",
+  })
+}
+
+/** Build display line from ISO instants, e.g. `Wednesday, May 27, 2026 — 6:00 PM - 8:30 PM EDT`. */
+export const formatProgramsEventDateTimeFromInstants = (
+  startsAt?: string,
+  endsAt?: string,
+): string => {
+  const startRaw = startsAt?.trim()
+  if (!startRaw) return ""
+
+  const startMs = Date.parse(startRaw)
+  if (!Number.isFinite(startMs)) return ""
+
+  const d = new Date(startMs)
+  const weekday = d.toLocaleDateString("en-US", { weekday: "long", timeZone: "America/New_York" })
+  const month = d.toLocaleDateString("en-US", { month: "long", timeZone: "America/New_York" })
+  const day = d.toLocaleDateString("en-US", { day: "numeric", timeZone: "America/New_York" })
+  const year = d.toLocaleDateString("en-US", { year: "numeric", timeZone: "America/New_York" })
+  const startTime = formatEasternTimeFromIso(startRaw)
+  const endRaw = endsAt?.trim()
+  const endTime = endRaw ? formatEasternTimeFromIso(endRaw) : ""
+  const timeSegment =
+    endTime && endTime !== startTime ? `${startTime} - ${endTime} EDT` : `${startTime} EDT`
+
+  return `${weekday}, ${month} ${day}, ${year} — ${timeSegment}`
+}
+
+/** Prefer explicit display string, then ISO instants. */
+export const getProgramsEventDisplayDateTime = (event: ProgramsEventCard): string => {
+  const explicit = event.dateTime?.trim()
+  if (explicit && !/^upcoming\s*[—–-]/i.test(explicit)) return explicit
+  const fromInstants = formatProgramsEventDateTimeFromInstants(event.startsAt, event.endsAt)
+  if (fromInstants) return fromInstants
+  return explicit ?? ""
+}
+
 /** Single-line summary for cards: `Wednesday, April 9, 2025 — 2:00 PM EDT`. */
 export const formatProgramsEventCardDateTime = (raw: string): string => {
   const { date, time } = parseProgramsEventDateTimeParts(raw)
@@ -315,7 +361,7 @@ export const getProgramsEventSpeakerAvatarSrc = (event: ProgramsEventCard): stri
   if (isAiCollectiveHost) {
     return AI_COLLECTIVE_HOST_LOGO
   }
-  const key = `${event.title}-${event.dateTime}-${event.person}`
+  const key = `${event.title}-${getProgramsEventDisplayDateTime(event)}-${event.person}`
   const pool = PROGRAMS_EVENT_SPEAKER_AVATAR_POOL
   const idx = Math.abs(hashProgramsEventKey(key)) % pool.length
   return pool[idx] ?? pool[0]

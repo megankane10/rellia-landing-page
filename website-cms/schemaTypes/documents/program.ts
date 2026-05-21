@@ -53,13 +53,6 @@ export const program = defineType({
       group: 'content',
     }),
     defineField({
-      name: 'imageSrc',
-      title: 'Program image URL (legacy)',
-      type: 'string',
-      hidden: true,
-      group: 'content',
-    }),
-    defineField({
       name: 'buttonText',
       type: 'string',
       initialValue: 'Learn more',

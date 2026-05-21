@@ -1444,10 +1444,12 @@ export const DEFAULT_PROGRAMS_LANDING: ProgramsLandingContent = {
     {
       slug: "ai-healthcare-compliance",
       title: "AI Healthcare Compliance (w/ The AI Collective)",
-      dateTime: "Upcoming — see event page for schedule",
+      dateTime: "Wednesday, May 27, 2026 — 6:00 PM - 8:30 PM EDT",
       person: "The AI Collective • Toronto Tech Week",
       imageSrc: "/images/aiHealthcareCompliance.avif",
       location: "RetiSpec, 170 Bedford Rd, Toronto",
+      startsAt: "2026-05-27T18:00:00-04:00",
+      endsAt: "2026-05-27T20:30:00-04:00",
       lumaEventId: "evt-0wKks8RxsxxgmFh",
       embedLumaOnDetailPage: true,
       detailBodyHeading: "About this event",
@@ -1461,8 +1463,8 @@ export const DEFAULT_PROGRAMS_LANDING: ProgramsLandingContent = {
       imageSrc: "/images/events-clinicianConnectPrimaryCare.jpg",
       location: "Virtual",
       addToCalendarEnabled: true,
-      calendarStartsAt: "2026-07-09T14:00:00-04:00",
-      calendarEndsAt: "2026-07-09T15:00:00-04:00",
+      startsAt: "2026-07-09T14:00:00-04:00",
+      endsAt: "2026-07-09T15:00:00-04:00",
       embedLumaOnDetailPage: false,
       detailBodyHeading: "About this session",
       detailBody: [
@@ -1896,11 +1898,8 @@ export function mergeProgramsLanding(
   }
 
   base.programs = sourcePrograms.map(enrichProgramPricing)
-  const upcomingEvents = compactList(p.upcomingEvents)
-  base.upcomingEvents =
-    upcomingEvents.length > 0 ? upcomingEvents : DEFAULT_PROGRAMS_LANDING.upcomingEvents
-  const pastEvents = compactList(p.pastEvents)
-  base.pastEvents = pastEvents.length > 0 ? pastEvents : DEFAULT_PROGRAMS_LANDING.pastEvents
+  base.upcomingEvents = DEFAULT_PROGRAMS_LANDING.upcomingEvents
+  base.pastEvents = DEFAULT_PROGRAMS_LANDING.pastEvents
   if (!Array.isArray(base.heroTitlePortable) || base.heroTitlePortable.length === 0) {
     base.heroTitlePortable = DEFAULT_PROGRAMS_LANDING.heroTitlePortable
   }

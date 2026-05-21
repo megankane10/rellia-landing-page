@@ -12,29 +12,12 @@ export const paymentPage = defineType({
     defineField({name: 'badge', type: 'string', title: 'Eyebrow label', group: 'content'}),
     defineField({name: 'headline', type: 'string', title: 'Main headline', group: 'content'}),
     defineField({
-      name: 'introCheckout',
-      type: 'text',
-      rows: 2,
-      title: 'Intro (legacy)',
-      description:
-        'Not shown on the live site. Payment uses Stripe Payment Links only; use “Intro (payment links)” below.',
-      group: 'content',
-    }),
-    defineField({
       name: 'introFallback',
       type: 'text',
       rows: 2,
       title: 'Intro (payment links)',
       description:
         'Copy above the monthly/annual buttons. Explains that checkout opens in a new tab (Stripe Payment Link).',
-      group: 'content',
-    }),
-    defineField({
-      name: 'introFallbackError',
-      type: 'text',
-      rows: 2,
-      title: 'Intro (legacy — error)',
-      description: 'Not used; reserved if embedded checkout returns.',
       group: 'content',
     }),
     defineField({name: 'benefitsTitle', type: 'string', title: 'Benefits section title', group: 'content'}),

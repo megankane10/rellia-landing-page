@@ -7,7 +7,6 @@ export const programsLandingPage = defineType({
   groups: [
     {name: 'hero', title: 'Hero', default: true},
     {name: 'programs', title: 'Programs'},
-    {name: 'events', title: 'Events'},
     {name: 'cta', title: 'CTA'},
     {name: 'seo', title: 'SEO & metadata'},
   ],
@@ -38,54 +37,6 @@ export const programsLandingPage = defineType({
       type: 'text',
       rows: 3,
       group: 'programs',
-    }),
-    defineField({
-      name: 'programs',
-      title: 'Programs (legacy)',
-      description:
-        'This list is not used for the /programs grid when “Programs” documents exist. Prefer editing “Programs” in Collections.',
-      type: 'array',
-      group: 'programs',
-      of: [
-        defineField({
-          name: 'program',
-          type: 'object',
-          fields: [
-            {name: 'title', type: 'string'},
-            {name: 'description', type: 'text', rows: 3},
-            {
-              name: 'image',
-              type: 'image',
-              options: {hotspot: true},
-              description: 'Upload an image (preferred). Falls back to "Image URL" below.',
-            },
-            {
-              name: 'imageSrc',
-              type: 'string',
-              title: 'Image URL (fallback)',
-              description: 'Optional fallback URL when no upload is provided.',
-            },
-            {name: 'href', type: 'string'},
-            {name: 'buttonText', type: 'string'},
-          ],
-        }),
-      ],
-    }),
-    defineField({
-      name: 'upcomingEvents',
-      title: 'Upcoming events (legacy)',
-      description: 'Prefer editing Events in Collections.',
-      type: 'array',
-      of: [{type: 'eventCard'}],
-      group: 'events',
-    }),
-    defineField({
-      name: 'pastEvents',
-      title: 'Past events (legacy)',
-      description: 'Prefer editing Events in Collections.',
-      type: 'array',
-      of: [{type: 'eventCard'}],
-      group: 'events',
     }),
     defineField({name: 'ctaTitle', title: 'CTA title', type: 'string', group: 'cta'}),
     defineField({name: 'ctaBody', title: 'CTA body', type: 'text', rows: 2, group: 'cta'}),

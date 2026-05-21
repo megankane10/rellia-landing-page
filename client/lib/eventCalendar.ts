@@ -14,8 +14,8 @@ const toIcsUtc = (d: Date): string => {
 export const getProgramsEventCalendarInterval = (
   event: ProgramsEventCard,
 ): { start: Date; end: Date } | null => {
-  const startRaw = event.calendarStartsAt?.trim()
-  const endRaw = event.calendarEndsAt?.trim()
+  const startRaw = event.startsAt?.trim()
+  const endRaw = event.endsAt?.trim()
   if (startRaw && endRaw) {
     const start = parseISO(startRaw)
     const end = parseISO(endRaw)
@@ -84,7 +84,7 @@ export const downloadProgramsEventIcsFile = async (
     "event"
   const fileName = `${slug || "rellia-event"}.ics`
   const uid = `${slug}-${interval.start.getTime()}@relliahealth.com`
-  const description = `${event.title}. ${event.dateTime ?? ""}`.trim()
+  const description = `${event.title}. ${event.dateTime?.trim() ?? event.startsAt ?? ""}`.trim()
   const location = event.location?.trim() ?? ""
 
   const ics = buildIcsDocument({

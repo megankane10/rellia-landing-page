@@ -3,6 +3,7 @@ import { Link } from "react-router-dom"
 import type { ProgramsEventCard } from "@shared/cms/types"
 import {
   formatProgramsEventCardDateTime,
+  getProgramsEventDisplayDateTime,
   getProgramsEventAttendanceMode,
   getProgramsEventSpeakerAvatarSrc,
   parseProgramsEventSpeaker,
@@ -42,7 +43,7 @@ export const EventCard = ({
   const speakerParts = parseProgramsEventSpeaker(event.person)
   const attendanceMode = getProgramsEventAttendanceMode(event)
   const detailHref = programsEventDetailPath(event)
-  const dateTimeLine = formatProgramsEventCardDateTime(event.dateTime ?? "")
+  const dateTimeLine = formatProgramsEventCardDateTime(getProgramsEventDisplayDateTime(event))
   const personRaw = (event.person ?? "").trim()
 
   /** Matches Events page filters: Upcoming | Past */

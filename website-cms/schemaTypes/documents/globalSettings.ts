@@ -35,16 +35,14 @@ export const globalSettings = defineType({
     }),
     defineField({
       name: 'linkedinUrl',
-      title: 'LinkedIn URL (legacy)',
+      title: 'LinkedIn URL',
       type: 'url',
-      hidden: true,
       group: 'footer',
     }),
     defineField({
       name: 'instagramUrl',
-      title: 'Instagram URL (legacy)',
+      title: 'Instagram URL',
       type: 'url',
-      hidden: true,
       group: 'footer',
     }),
     defineField({

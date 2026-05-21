@@ -3,6 +3,7 @@ import { Link } from "react-router-dom"
 import type { ProgramsEventCard, ProgramsProgramCard } from "@shared/cms/types"
 import {
   formatProgramsEventCardDateTime,
+  getProgramsEventDisplayDateTime,
   getProgramsEventAttendanceMode,
   getProgramsEventSpeakerAvatarSrc,
   parseProgramsEventSpeaker,
@@ -77,7 +78,7 @@ export function HorizontalCard(props: HorizontalCardProps) {
     const speakerParts = parseProgramsEventSpeaker(event.person)
     const attendanceMode = getProgramsEventAttendanceMode(event)
     const detailHref = programsEventDetailPath(event)
-    const rawDateTime = formatProgramsEventCardDateTime(event.dateTime ?? "")
+    const rawDateTime = formatProgramsEventCardDateTime(getProgramsEventDisplayDateTime(event))
     const dateTimeLine = shortenMonth(rawDateTime)
     const personRaw = (event.person ?? "").trim()
     const speakerName = speakerParts.speaker || personRaw || ""
@@ -91,7 +92,7 @@ export function HorizontalCard(props: HorizontalCardProps) {
     const dateParts = dateTimeLine.split(",")
     const dateMain = (dateParts[1] || dateParts[0] || "").trim()
     const parsedTime = (dateParts[2] || "").trim()
-    const computedTime = parsedTime || formatTimeFromStartsAt((event as any).startsAt || (event as any).calendarStartsAt)
+    const computedTime = parsedTime || formatTimeFromStartsAt(event.startsAt)
     const timeMain = cleanBadgeTime(computedTime)
     const dateBits = extractEventDateBits(dateTimeLine)
     const eventThumbSrc = event.imageSrc?.trim() ? event.imageSrc : placeholderImageFromSeed(event.slug || event.title, 720, 720)

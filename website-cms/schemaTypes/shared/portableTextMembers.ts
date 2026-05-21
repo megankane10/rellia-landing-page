@@ -1,4 +1,4 @@
-import {defineArrayMember} from 'sanity'
+import {defineArrayMember, defineField} from 'sanity'
 
 export const portableTextBlockMember = defineArrayMember({
   type: 'block',
@@ -44,9 +44,31 @@ export const portableTextInlineImageMember = defineArrayMember({
   ],
 })
 
+export const portableTextInlineUrlImageMember = defineArrayMember({
+  type: 'object',
+  name: 'eventDetailInlineImage',
+  title: 'Image (URL)',
+  fields: [
+    defineField({
+      name: 'imageSrc',
+      title: 'Image URL',
+      type: 'string',
+      description: 'Relative site path (e.g. /images/…) or absolute URL.',
+    }),
+    defineField({
+      name: 'alt',
+      type: 'string',
+      title: 'Alt text',
+      validation: (Rule) => Rule.required(),
+    }),
+    defineField({name: 'caption', type: 'string', title: 'Caption'}),
+  ],
+})
+
 export const portableTextArrayMembers = [
   portableTextBlockMember,
   portableTextInlineImageMember,
+  portableTextInlineUrlImageMember,
   defineArrayMember({type: 'bodyCtaBox'}),
   defineArrayMember({type: 'portableImageCarousel'}),
 ]

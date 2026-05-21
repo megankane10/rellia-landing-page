@@ -376,10 +376,12 @@ export type ProgramsEventCard = {
    * Toggle off to use the normal Register flow (`href` / Luma embed).
    */
   addToCalendarEnabled?: boolean
-  /** ISO 8601 start instant — use with `addToCalendarEnabled` for accurate `.ics` / calendar apps. */
-  calendarStartsAt?: string
-  /** ISO 8601 end instant — optional; defaults to 90 minutes after `calendarStartsAt` when omitted. */
-  calendarEndsAt?: string
+  /** ISO 8601 start instant — used for cards, sorting, and Add to Calendar. */
+  startsAt?: string
+  /** ISO 8601 end instant — optional; defaults to 90 minutes after `startsAt` when omitted. */
+  endsAt?: string
+  /** Rich description from Sanity `eventDescription` (portable text). */
+  eventDescription?: SanityPortableText
 }
 
 export type ProgramsProgramCard = {

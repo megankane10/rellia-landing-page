@@ -59,7 +59,7 @@ const parseLooseDateTimeToTimestamp = (raw: string): number => {
 }
 
 const getEventTimestamp = (event: any): number => {
-  const candidate = event?.startsAt || event?.calendarStartsAt || event?.dateTime
+  const candidate = event?.startsAt || event?.dateTime
   if (typeof candidate !== "string" || !candidate.trim()) return Number.NaN
   const parsed = parseLooseDateTimeToTimestamp(candidate)
   return Number.isFinite(parsed) ? parsed : Number.NaN

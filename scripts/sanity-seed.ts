@@ -22,6 +22,76 @@ import { FOUNDER_DIRECTORY, ALL_LEVELS, ALL_SPECIALTIES } from "../client/data/f
 import { ROUTE_SEO } from "../client/config/seo"
 import { STORIES } from "../client/content/stories"
 
+const MONTH_TO_INDEX: Record<string, number> = {
+  january: 0,
+  february: 1,
+  march: 2,
+  april: 3,
+  may: 4,
+  june: 5,
+  july: 6,
+  august: 7,
+  september: 8,
+  october: 9,
+  november: 10,
+  december: 11,
+}
+
+/** Best-effort ISO instant for seeding events that only have a display `dateTime` string. */
+const resolveSeedEventStartsAt = (e: {
+  startsAt?: string
+  calendarStartsAt?: string
+  dateTime?: string
+}): string | undefined => {
+  const explicit = e.startsAt?.trim() || e.calendarStartsAt?.trim()
+  if (explicit) return explicit
+
+  const raw = e.dateTime?.trim()
+  if (!raw) return undefined
+
+  const direct = Date.parse(raw)
+  if (Number.isFinite(direct)) return new Date(direct).toISOString()
+
+  const m = raw.match(
+    /\b(January|February|March|April|May|June|July|August|September|October|November|December)\b\s+(\d{1,2}),?\s*((?:19|20)\d{2})\s*[—–-]\s*(\d{1,2})(?::(\d{2}))?\s*([AP]M)/i,
+  )
+  if (!m) return undefined
+
+  const monthIndex = MONTH_TO_INDEX[(m[1] ?? "").toLowerCase()]
+  const day = Number(m[2] ?? "")
+  const year = Number(m[3] ?? "")
+  let hour = Number(m[4] ?? "")
+  const minute = Number(m[5] ?? "0")
+  const meridiem = (m[6] ?? "").toUpperCase()
+  if (!Number.isFinite(monthIndex) || !Number.isFinite(day) || !Number.isFinite(year)) return undefined
+
+  if (meridiem === "PM" && hour < 12) hour += 12
+  if (meridiem === "AM" && hour === 12) hour = 0
+
+  const offset = /\bEDT\b/i.test(raw) ? "-04:00" : "-05:00"
+  const mm = String(monthIndex + 1).padStart(2, "0")
+  const dd = String(day).padStart(2, "0")
+  const hh = String(hour).padStart(2, "0")
+  const min = String(minute).padStart(2, "0")
+
+  return `${year}-${mm}-${dd}T${hh}:${min}:00${offset}`
+}
+
+const resolveSeedEventEndsAt = (e: {
+  endsAt?: string
+  calendarEndsAt?: string
+  startsAt?: string
+  calendarStartsAt?: string
+}): string | undefined => {
+  const explicit = e.endsAt?.trim() || e.calendarEndsAt?.trim()
+  if (explicit) return explicit
+  const start = resolveSeedEventStartsAt(e)
+  if (!start) return undefined
+  const startMs = Date.parse(start)
+  if (!Number.isFinite(startMs)) return undefined
+  return new Date(startMs + 90 * 60 * 1000).toISOString()
+}
+
 /**
  * Seeds the Sanity dataset from env (`SANITY_API_DATASET` or `VITE_SANITY_DATASET`) with
  * singleton documents, programs, events, stories, and directory data.
@@ -966,11 +1036,17 @@ async function main() {
       seo: seoForRoute("/faq"),
     },
   })
+  const {
+    programs: _legacyPrograms,
+    upcomingEvents: _legacyUpcoming,
+    pastEvents: _legacyPast,
+    ...programsLandingFields
+  } = DEFAULT_PROGRAMS_LANDING
   mutations.push({
     createOrReplace: {
       _id: "programsLandingPage",
       _type: "programsLandingPage",
-      ...DEFAULT_PROGRAMS_LANDING,
+      ...programsLandingFields,
       seo: seoForRoute("/programs"),
     },
   })
@@ -989,7 +1065,6 @@ async function main() {
         slug: { _type: "slug", current: slug },
         description: program.description,
         image: toSanityImageFieldValue(programAssetId),
-        imageSrc: program.imageSrc,
         href: program.href,
         buttonText: program.buttonText,
         waitlistHref: (program as any).waitlistHref,
@@ -1010,23 +1085,19 @@ async function main() {
         _type: "event",
         title: e.title,
         slug: { _type: "slug", current: slug },
-        startsAt: (e as any).calendarStartsAt,
-        endsAt: (e as any).calendarEndsAt,
-        dateTime: e.dateTime,
+        startsAt: resolveSeedEventStartsAt(e as any),
+        endsAt: resolveSeedEventEndsAt(e as any),
         person: e.person,
         image: toSanityImageFieldValue(eventAssetId),
-        imageSrc: e.imageSrc,
         href: e.href,
         comingSoon: (e as any).comingSoon,
         buttonText: (e as any).buttonText,
         location: (e as any).location,
         lumaEventId: (e as any).lumaEventId,
-        detailBody: (e as any).detailBody,
+        eventDescription: (e as any).detailBody,
         detailBodyHeading: (e as any).detailBodyHeading,
         embedLumaOnDetailPage: (e as any).embedLumaOnDetailPage,
         addToCalendarEnabled: (e as any).addToCalendarEnabled,
-        calendarStartsAt: (e as any).calendarStartsAt,
-        calendarEndsAt: (e as any).calendarEndsAt,
         status: "upcoming",
         sortOrder: index,
       },
@@ -1043,23 +1114,19 @@ async function main() {
         _type: "event",
         title: e.title,
         slug: { _type: "slug", current: slug },
-        startsAt: (e as any).calendarStartsAt,
-        endsAt: (e as any).calendarEndsAt,
-        dateTime: e.dateTime,
+        startsAt: resolveSeedEventStartsAt(e as any),
+        endsAt: resolveSeedEventEndsAt(e as any),
         person: e.person,
         image: toSanityImageFieldValue(eventAssetId),
-        imageSrc: e.imageSrc,
         href: e.href,
         comingSoon: (e as any).comingSoon,
         buttonText: (e as any).buttonText,
         location: (e as any).location,
         lumaEventId: (e as any).lumaEventId,
-        detailBody: (e as any).detailBody,
+        eventDescription: (e as any).detailBody,
         detailBodyHeading: (e as any).detailBodyHeading,
         embedLumaOnDetailPage: (e as any).embedLumaOnDetailPage,
         addToCalendarEnabled: (e as any).addToCalendarEnabled,
-        calendarStartsAt: (e as any).calendarStartsAt,
-        calendarEndsAt: (e as any).calendarEndsAt,
         status: "past",
         sortOrder: index,
       },
@@ -1106,6 +1173,8 @@ async function main() {
     createOrReplace: {
       _id: "siteSettings",
       _type: "siteSettings",
+      brandName: "Rellia Health",
+      faviconPath: "/favicon.ico",
     },
   })
 
