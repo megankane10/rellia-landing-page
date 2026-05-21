@@ -5,9 +5,22 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { Toaster } from "@/components/ui/toaster"
 import { Toaster as Sonner } from "@/components/ui/sonner"
 import { TooltipProvider } from "@/components/ui/tooltip"
-import { normalizePathname, getSeoForPathname } from "@/config/seo"
+import {
+  clampMetaDescription,
+  clampMetaTitle,
+  getSeoForPathname,
+  normalizePathname,
+  toAbsoluteOgImageUrl,
+} from "@/config/seo"
 import { AppRoutes, RouterShell } from "./AppRoutes"
 import { PageSeoProvider } from "@/context/PageSeoContext"
+import { DEFAULT_PROGRAMS_LANDING } from "@shared/cms/defaults"
+import { findProgramsEventBySlug } from "@shared/cms/eventSlug"
+import {
+  getProgramsEventDisplayDateTime,
+  getProgramsEventLocationLabel,
+  shortenProgramsEventDateTime,
+} from "@shared/cms/programsEventDisplay"
 
 const prerenderQueryClient = new QueryClient({
   defaultOptions: {
@@ -15,12 +28,41 @@ const prerenderQueryClient = new QueryClient({
   },
 })
 
+const helmetTitleText = (helmet: HelmetServerState | undefined): string | undefined => {
+  const raw = helmet?.title?.toString()?.trim()
+  if (!raw) return undefined
+  return raw.replace(/<\/?title>/gi, "").trim() || undefined
+}
+
+const seoForPrerenderPath = (pathname: string) => {
+  const base = getSeoForPathname(pathname)
+  if (!pathname.startsWith("/events/") || pathname === "/events") return base
+
+  const slug = pathname.slice("/events/".length)
+  const match = findProgramsEventBySlug(slug, DEFAULT_PROGRAMS_LANDING)
+  if (!match) return base
+
+  const { _variant: _ignored, ...event } = match
+  const computedDateTime = getProgramsEventDisplayDateTime(event)
+  const shortDateTime = shortenProgramsEventDateTime(computedDateTime)
+  const locationLabel = getProgramsEventLocationLabel(event)
+
+  return {
+    ...base,
+    title: clampMetaTitle(`${event.title} — Rellia Health`),
+    description: clampMetaDescription(
+      `${event.title}. ${shortDateTime || computedDateTime}. ${locationLabel}.`,
+    ),
+    ogImage: event.imageSrc ? toAbsoluteOgImageUrl(event.imageSrc) : undefined,
+  }
+}
+
 export const prerender = async (data: { url: string }) => {
   const { parseLinks } = await import("vite-prerender-plugin/parse")
   const helmetContext: { helmet?: HelmetServerState | null } = {}
 
   const pathname = normalizePathname(new URL(data.url, "http://localhost").pathname)
-  const seo = getSeoForPathname(pathname)
+  const seo = seoForPrerenderPath(pathname)
 
   const app = (
     <HelmetProvider context={helmetContext}>
@@ -59,7 +101,7 @@ export const prerender = async (data: { url: string }) => {
     links: new Set(links),
     head: {
       lang: "en",
-      title: seo.title,
+      title: seo.title || helmetTitleText(helmet ?? undefined),
       elements: headElements,
     },
   }

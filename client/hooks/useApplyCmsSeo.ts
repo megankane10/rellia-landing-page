@@ -1,4 +1,4 @@
-import { useEffect } from "react"
+import { useLayoutEffect, useMemo } from "react"
 import { useOptionalPageSeo, type PageSeoOverrides } from "@/context/PageSeoContext"
 import type { SeoContent } from "@shared/cms/types"
 
@@ -30,7 +30,9 @@ export const mergePageSeo = (
 /**
  * Pulls a Sanity `seo` block into RouteSeo via PageSeoContext.
  * Pass `defaults` on directory/item pages so event/program title and image
- * stay correct while CMS data loads (avoids clearing overrides on fetch).
+ * stay correct while CMS data loads.
+ *
+ * Applies during render (for prerender/SSR) and in useLayoutEffect (for client).
  */
 export const useApplyCmsSeo = (
   seo: SeoContent | null | undefined,
@@ -38,12 +40,10 @@ export const useApplyCmsSeo = (
 ): void => {
   const { setPageSeo } = useOptionalPageSeo()
 
-  useEffect(() => {
-    if (!defaults && !seo) return
-    const merged = mergePageSeo(seo, defaults ?? {})
-    if (Object.keys(merged).length > 0) {
-      setPageSeo(merged)
-    }
+  const merged = useMemo(() => {
+    if (!defaults && !seo) return null
+    const next = mergePageSeo(seo, defaults ?? {})
+    return Object.keys(next).length > 0 ? next : null
   }, [
     seo?.metaTitle,
     seo?.metaDescription,
@@ -55,6 +55,15 @@ export const useApplyCmsSeo = (
     defaults?.description,
     defaults?.ogImage,
     defaults?.noIndex,
-    setPageSeo,
   ])
+
+  if (merged) {
+    setPageSeo(merged)
+  }
+
+  useLayoutEffect(() => {
+    if (merged) {
+      setPageSeo(merged)
+    }
+  }, [merged, setPageSeo])
 }

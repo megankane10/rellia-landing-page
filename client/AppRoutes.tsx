@@ -87,11 +87,11 @@ const VercelObservability = () => (
 export const RouterShell = ({ children }: { children: ReactNode }) => (
   <PageSeoProvider>
     <PageTransition />
-    <RouteSeo />
     <VercelObservability />
     <ThirdPartyPreloads />
     <ScrollToTop />
     {children}
+    <RouteSeo />
   </PageSeoProvider>
 )
 

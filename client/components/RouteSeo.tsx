@@ -29,7 +29,12 @@ const RouteSeo = ({
   const { pathname } = useLocation()
   const { data: siteSettingsData } = useSiteSettings()
   const normalizedPathname = normalizePathname(pathname)
+  const isEventDetailPage =
+    normalizedPathname.startsWith("/events/") && normalizedPathname !== "/events"
   const base = getSiteUrl()
+
+  // Event detail sets Helmet in-page; RouteSeo after children would overwrite it.
+  if (isEventDetailPage) return null
   const {
     title: defaultTitle,
     description: defaultDescription,
