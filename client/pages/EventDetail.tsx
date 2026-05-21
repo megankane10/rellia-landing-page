@@ -1,5 +1,4 @@
 import { useMemo, useState } from "react"
-import { Helmet } from "react-helmet-async"
 import { Link, useLocation, useParams } from "react-router-dom"
 import { AnimatePresence, motion } from "framer-motion"
 import { Calendar, CalendarOff, ChevronLeft, ArrowLeft, History, MapPin, Ticket, Video, Check } from "lucide-react"
@@ -19,6 +18,7 @@ import {
   resolveSocialOgImageUrl,
 } from "@/config/seo"
 import EventJsonLd from "@/components/seo/EventJsonLd"
+import PageSocialHelmet from "@/components/seo/PageSocialHelmet"
 import { DEFAULT_PROGRAMS_LANDING } from "@shared/cms/defaults"
 import { findProgramsEventBySlug, getProgramsEventSlug } from "@shared/cms/eventSlug"
 import {
@@ -226,28 +226,12 @@ export default function EventDetail() {
 
   return (
     <div className="flex min-h-screen flex-col bg-white font-host-grotesk overflow-x-hidden">
-      <Helmet htmlAttributes={{ lang: "en" }}>
-        <title>{pageTitle}</title>
-        <meta name="description" content={eventDescription} />
-        <link rel="canonical" href={canonical} />
-        <meta name="robots" content="index, follow" />
-
-        <meta property="og:type" content="website" />
-        <meta property="og:locale" content="en_US" />
-        <meta property="og:site_name" content="Rellia Health" />
-        <meta property="og:url" content={canonical} />
-        <meta property="og:title" content={pageTitle} />
-        <meta property="og:description" content={eventDescription} />
-        {ogImage ? <meta property="og:image" content={ogImage} /> : null}
-
-        <meta
-          name="twitter:card"
-          content={ogImage ? "summary_large_image" : "summary"}
-        />
-        <meta name="twitter:title" content={pageTitle} />
-        <meta name="twitter:description" content={eventDescription} />
-        {ogImage ? <meta name="twitter:image" content={ogImage} /> : null}
-      </Helmet>
+      <PageSocialHelmet
+        title={pageTitle}
+        description={eventDescription}
+        canonical={canonical}
+        ogImage={ogImage}
+      />
 
       <EventJsonLd
         name={event.title}

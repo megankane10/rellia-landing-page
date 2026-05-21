@@ -7,6 +7,7 @@ import {
   getDefaultOgImageAlt,
   getSeoForPathname,
   getSiteUrl,
+  isItemDetailPath,
   normalizePathname,
   shouldUseDefaultOgImage,
 } from "@/config/seo"
@@ -29,12 +30,10 @@ const RouteSeo = ({
   const { pathname } = useLocation()
   const { data: siteSettingsData } = useSiteSettings()
   const normalizedPathname = normalizePathname(pathname)
-  const isEventDetailPage =
-    normalizedPathname.startsWith("/events/") && normalizedPathname !== "/events"
   const base = getSiteUrl()
 
-  // Event detail sets Helmet in-page; RouteSeo after children would overwrite it.
-  if (isEventDetailPage) return null
+  // Item detail pages set Helmet in-page; RouteSeo after children would overwrite them.
+  if (isItemDetailPath(normalizedPathname)) return null
   const {
     title: defaultTitle,
     description: defaultDescription,

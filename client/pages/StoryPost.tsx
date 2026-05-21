@@ -1,5 +1,4 @@
-import { useEffect, useState } from "react"
-import { Helmet } from "react-helmet-async"
+import { useState } from "react"
 import { Link, useParams } from "react-router-dom"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
@@ -15,13 +14,12 @@ import {
   resolveSocialOgImageUrl,
 } from "@/config/seo"
 import StoryArticleJsonLd from "@/components/seo/StoryArticleJsonLd"
+import PageSocialHelmet from "@/components/seo/PageSocialHelmet"
 import { ChevronLeft, Check } from "lucide-react"
 import { RichTextImageCarousel } from "@/components/RichTextImageCarousel"
 import { AnimatePresence, motion } from "framer-motion"
 import { PortableRichText } from "@/components/PortableRichText"
 import { useStoryBySlug } from "@/hooks/useCmsDocuments"
-import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo"
-import { useOptionalPageSeo } from "@/context/PageSeoContext"
 import {
   ShareIconCopy,
   ShareIconFacebook,
@@ -57,9 +55,6 @@ export default function StoryPost() {
     story?.excerpt ||
     "Stories and insights from Rellia Health."
 
-  const { setPageSeo } = useOptionalPageSeo()
-  useApplyCmsSeo(cmsStory?.seo)
-
   const resolvedTitle = clampMetaTitle(title)
   const resolvedDescription = clampMetaDescription(description)
 
@@ -75,16 +70,6 @@ export default function StoryPost() {
     : story
       ? resolveSocialOgImageUrl(story.coverImageSrc) ?? toAbsoluteImageUrl(story.coverImageSrc)
       : getDefaultOgImageUrl()
-
-  useEffect(() => {
-    if (cmsStory?.seo?.metaTitle?.trim() || cmsStory?.seo?.ogTitle?.trim()) return
-    setPageSeo({
-      title: resolvedTitle,
-      description: resolvedDescription,
-      ogImage: imageUrl,
-    })
-    return () => setPageSeo(null)
-  }, [cmsStory?.seo, resolvedTitle, resolvedDescription, imageUrl, setPageSeo])
 
   const handleCopyLink = async () => {
     try {
@@ -126,25 +111,13 @@ export default function StoryPost() {
   if (cmsStory) {
     return (
       <div className="min-h-screen bg-white font-host-grotesk overflow-x-hidden">
-        <Helmet htmlAttributes={{ lang: "en" }}>
-          <title>{title}</title>
-          <meta name="description" content={description} />
-          <link rel="canonical" href={canonical} />
-          <meta name="robots" content="index, follow" />
-
-          <meta property="og:type" content="article" />
-          <meta property="og:locale" content="en_US" />
-          <meta property="og:site_name" content="Rellia Health" />
-          <meta property="og:url" content={canonical} />
-          <meta property="og:title" content={title} />
-          <meta property="og:description" content={description} />
-          <meta property="og:image" content={imageUrl} />
-
-          <meta name="twitter:card" content="summary_large_image" />
-          <meta name="twitter:title" content={title} />
-          <meta name="twitter:description" content={description} />
-          <meta name="twitter:image" content={imageUrl} />
-        </Helmet>
+        <PageSocialHelmet
+          title={resolvedTitle}
+          description={resolvedDescription}
+          canonical={canonical}
+          ogImage={imageUrl}
+          ogType="article"
+        />
 
         <Navbar />
 
@@ -225,9 +198,13 @@ export default function StoryPost() {
 
   return (
     <div className="min-h-screen bg-white font-host-grotesk overflow-x-hidden">
-      <Helmet>
-        <meta property="og:type" content="article" />
-      </Helmet>
+      <PageSocialHelmet
+        title={resolvedTitle}
+        description={resolvedDescription}
+        canonical={canonical}
+        ogImage={imageUrl}
+        ogType="article"
+      />
       <StoryArticleJsonLd
         headline={cmsStory?.title ?? story?.title ?? "Rellia Health story"}
         description={resolvedDescription}

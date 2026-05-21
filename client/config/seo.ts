@@ -294,6 +294,15 @@ export const isDirectoryItemPath = (pathname: string): boolean => {
   return false
 }
 
+/** Routes where the page sets its own Helmet (events, programs, stories detail). */
+export const isItemDetailPath = (pathname: string): boolean => {
+  const key = normalizePathname(pathname)
+  if (key.startsWith("/events/") && key !== "/events") return true
+  if (key.startsWith("/programs/") && key !== "/programs") return true
+  if (key.startsWith("/stories/") && key !== "/stories") return true
+  return false
+}
+
 export const shouldUseDefaultOgImage = (pathname: string): boolean =>
   normalizePathname(pathname) === "/"
 
@@ -316,12 +325,29 @@ const SOCIAL_OG_IMAGE_FALLBACKS: Record<string, string> = {
   "/images/aiHealthcareCompliance.avif": "/images/complianceevent-desc.jpeg",
 }
 
+const withSanityJpegFormat = (url: string): string => {
+  if (!url.includes("cdn.sanity.io")) return url
+  try {
+    const parsed = new URL(url)
+    if (!parsed.searchParams.has("fm")) {
+      parsed.searchParams.set("fm", "jpg")
+    }
+    if (!parsed.searchParams.has("w")) {
+      parsed.searchParams.set("w", "1200")
+    }
+    return parsed.toString()
+  } catch {
+    return url
+  }
+}
+
 export const resolveSocialOgImageUrl = (
   src: string | undefined,
   origin = getShareOrigin(),
 ): string | undefined => {
   const trimmed = src?.trim()
   if (!trimmed) return undefined
+
   const pathOnly = trimmed.startsWith("http")
     ? (() => {
         try {
@@ -331,8 +357,20 @@ export const resolveSocialOgImageUrl = (
         }
       })()
     : trimmed
-  const mapped = SOCIAL_OG_IMAGE_FALLBACKS[pathOnly] ?? trimmed
-  return toAbsoluteOgImageUrl(mapped, origin)
+
+  let resolved = SOCIAL_OG_IMAGE_FALLBACKS[pathOnly] ?? trimmed
+
+  if (/\.avif($|\?)/i.test(resolved) && !SOCIAL_OG_IMAGE_FALLBACKS[pathOnly]) {
+    const jpegPath = pathOnly.replace(/\.avif$/i, ".jpeg")
+    resolved = SOCIAL_OG_IMAGE_FALLBACKS[jpegPath] ?? jpegPath
+  }
+
+  if (/^https?:\/\//i.test(resolved)) {
+    return withSanityJpegFormat(resolved)
+  }
+
+  const absolute = toAbsoluteOgImageUrl(resolved, origin)
+  return absolute ? withSanityJpegFormat(absolute) : undefined
 }
 
 const EVENT_DETAIL_SEO: RouteSeoConfig = {

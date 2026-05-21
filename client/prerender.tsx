@@ -5,11 +5,13 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { Toaster } from "@/components/ui/toaster"
 import { Toaster as Sonner } from "@/components/ui/sonner"
 import { TooltipProvider } from "@/components/ui/tooltip"
+import { getStoryBySlug } from "@/content/stories"
 import {
   clampMetaDescription,
   clampMetaTitle,
   getSeoForPathname,
   getSiteUrl,
+  isItemDetailPath,
   normalizePathname,
   resolveSocialOgImageUrl,
 } from "@/config/seo"
@@ -22,7 +24,11 @@ import {
   getProgramsEventLocationLabel,
   shortenProgramsEventDateTime,
 } from "@shared/cms/programsEventDisplay"
-import { fetchEventBySlugForPrerender } from "@shared/cms/prerenderSanity"
+import {
+  fetchEventBySlugForPrerender,
+  fetchProgramBySlugForPrerender,
+  fetchStoryBySlugForPrerender,
+} from "@shared/cms/prerenderSanity"
 
 const prerenderQueryClient = new QueryClient({
   defaultOptions: {
@@ -42,19 +48,18 @@ const escapeMetaAttr = (value: string): string =>
     .replace(/"/g, "&quot;")
     .replace(/</g, "&lt;")
 
-type PrerenderEventSeo = {
+export type ItemPrerenderSeo = {
   title: string
   description: string
   ogImage?: string
 }
 
-const buildEventSeoFromRecord = (event: Record<string, unknown>): PrerenderEventSeo => {
+const buildEventSeo = (event: Record<string, unknown>, siteOrigin: string): ItemPrerenderSeo => {
   const title = typeof event.title === "string" ? event.title : "Event"
   const computedDateTime = getProgramsEventDisplayDateTime(event as never)
   const shortDateTime = shortenProgramsEventDateTime(computedDateTime)
   const locationLabel = getProgramsEventLocationLabel(event as never)
   const imageSrc = typeof event.imageSrc === "string" ? event.imageSrc : undefined
-  const siteOrigin = getSiteUrl()
 
   return {
     title: clampMetaTitle(`${title} — Rellia Health`),
@@ -65,37 +70,117 @@ const buildEventSeoFromRecord = (event: Record<string, unknown>): PrerenderEvent
   }
 }
 
-const seoForPrerenderPath = (
+const buildProgramSeo = (
+  program: Record<string, unknown>,
   pathname: string,
-  cmsEvent?: Record<string, unknown> | null,
-): PrerenderEventSeo | ReturnType<typeof getSeoForPathname> => {
-  const base = getSeoForPathname(pathname)
-  if (!pathname.startsWith("/events/") || pathname === "/events") return base
+  siteOrigin: string,
+): ItemPrerenderSeo => {
+  const title =
+    (typeof program.title === "string" ? program.title : "") ||
+    getSeoForPathname(pathname).title.replace(/ — Rellia Health$/, "")
+  const description =
+    (typeof program.heroDescription === "string" ? program.heroDescription : "") ||
+    (typeof program.description === "string" ? program.description : "") ||
+    getSeoForPathname(pathname).description
+  const imageSrc = typeof program.imageSrc === "string" ? program.imageSrc : undefined
 
-  const slug = pathname.slice("/events/".length)
-  const event =
-    cmsEvent ??
-    (() => {
-      const match = findProgramsEventBySlug(slug, DEFAULT_PROGRAMS_LANDING)
-      if (!match) return null
-      const { _variant: _ignored, ...rest } = match
-      return rest as Record<string, unknown>
-    })()
+  return {
+    title: clampMetaTitle(`${title} — Rellia Health`),
+    description: clampMetaDescription(description),
+    ogImage: resolveSocialOgImageUrl(imageSrc, siteOrigin),
+  }
+}
 
-  if (!event) return base
-  return buildEventSeoFromRecord(event)
+const buildStorySeo = (
+  story: { title: string; excerpt?: string; coverImageSrc?: string },
+  siteOrigin: string,
+): ItemPrerenderSeo => ({
+  title: clampMetaTitle(`${story.title} — Rellia Health`),
+  description: clampMetaDescription(story.excerpt || "Stories and insights from Rellia Health."),
+  ogImage: resolveSocialOgImageUrl(story.coverImageSrc, siteOrigin),
+})
+
+const resolveItemPrerenderSeo = async (
+  pathname: string,
+  prefetched: {
+    event?: Record<string, unknown> | null
+    program?: Record<string, unknown> | null
+    story?: Record<string, unknown> | null
+  },
+): Promise<ItemPrerenderSeo | null> => {
+  const siteOrigin = getSiteUrl()
+
+  if (pathname.startsWith("/events/") && pathname !== "/events") {
+    const slug = pathname.slice("/events/".length)
+    const event =
+      prefetched.event ??
+      (() => {
+        const match = findProgramsEventBySlug(slug, DEFAULT_PROGRAMS_LANDING)
+        if (!match) return null
+        const { _variant: _ignored, ...rest } = match
+        return rest as Record<string, unknown>
+      })()
+    if (!event) return null
+    return buildEventSeo(event, siteOrigin)
+  }
+
+  if (pathname.startsWith("/programs/") && pathname !== "/programs") {
+    const slug = pathname.slice("/programs/".length)
+    const program = prefetched.program
+    if (program) return buildProgramSeo(program, pathname, siteOrigin)
+    const routeSeo = getSeoForPathname(pathname)
+    if (routeSeo.title !== "Page not found — Rellia Health") {
+      return {
+        title: routeSeo.title,
+        description: routeSeo.description,
+        ogImage: undefined,
+      }
+    }
+    return null
+  }
+
+  if (pathname.startsWith("/stories/") && pathname !== "/stories") {
+    const slug = pathname.slice("/stories/".length)
+    const cms = prefetched.story
+    if (cms && typeof cms.title === "string") {
+      return buildStorySeo(
+        {
+          title: cms.title,
+          excerpt: typeof cms.excerpt === "string" ? cms.excerpt : undefined,
+          coverImageSrc: typeof cms.coverImageSrc === "string" ? cms.coverImageSrc : undefined,
+        },
+        siteOrigin,
+      )
+    }
+    const local = getStoryBySlug(slug)
+    if (local) {
+      return buildStorySeo(
+        {
+          title: local.title,
+          excerpt: local.excerpt,
+          coverImageSrc: local.coverImageSrc,
+        },
+        siteOrigin,
+      )
+    }
+    return null
+  }
+
+  return null
 }
 
 const appendSocialMeta = (
   headElements: Set<string>,
-  seo: { title: string; description: string; ogImage?: string },
+  seo: ItemPrerenderSeo,
   pageUrl: string,
 ) => {
+  headElements.add(`<meta property="og:type" content="website" />`)
   headElements.add(`<meta property="og:title" content="${escapeMetaAttr(seo.title)}" />`)
   headElements.add(
     `<meta property="og:description" content="${escapeMetaAttr(seo.description)}" />`,
   )
   headElements.add(`<meta property="og:url" content="${escapeMetaAttr(pageUrl)}" />`)
+  headElements.add(`<meta name="description" content="${escapeMetaAttr(seo.description)}" />`)
   headElements.add(`<meta name="twitter:title" content="${escapeMetaAttr(seo.title)}" />`)
   headElements.add(
     `<meta name="twitter:description" content="${escapeMetaAttr(seo.description)}" />`,
@@ -104,6 +189,8 @@ const appendSocialMeta = (
     headElements.add(`<meta property="og:image" content="${escapeMetaAttr(seo.ogImage)}" />`)
     headElements.add(`<meta name="twitter:card" content="summary_large_image" />`)
     headElements.add(`<meta name="twitter:image" content="${escapeMetaAttr(seo.ogImage)}" />`)
+  } else {
+    headElements.add(`<meta name="twitter:card" content="summary" />`)
   }
 }
 
@@ -115,19 +202,49 @@ export const prerender = async (data: { url: string }) => {
   const siteOrigin = getSiteUrl()
   const pageUrl = `${siteOrigin}${pathname === "/" ? "" : pathname}`
 
-  let cmsEvent: Record<string, unknown> | null = null
+  const prefetched: {
+    event?: Record<string, unknown> | null
+    program?: Record<string, unknown> | null
+    story?: Record<string, unknown> | null
+  } = {}
+
   if (pathname.startsWith("/events/") && pathname !== "/events") {
     const slug = pathname.slice("/events/".length)
-    cmsEvent = await fetchEventBySlugForPrerender(slug)
-    if (cmsEvent) {
+    prefetched.event = await fetchEventBySlugForPrerender(slug)
+    if (prefetched.event) {
       await prerenderQueryClient.prefetchQuery({
         queryKey: ["cms", "event", slug],
-        queryFn: async () => cmsEvent,
+        queryFn: async () => prefetched.event,
       })
     }
   }
 
-  const seo = seoForPrerenderPath(pathname, cmsEvent)
+  if (pathname.startsWith("/programs/") && pathname !== "/programs") {
+    const slug = pathname.slice("/programs/".length)
+    prefetched.program = await fetchProgramBySlugForPrerender(slug)
+    if (prefetched.program) {
+      await prerenderQueryClient.prefetchQuery({
+        queryKey: ["cms", "program", slug],
+        queryFn: async () => prefetched.program,
+      })
+    }
+  }
+
+  if (pathname.startsWith("/stories/") && pathname !== "/stories") {
+    const slug = pathname.slice("/stories/".length)
+    prefetched.story = await fetchStoryBySlugForPrerender(slug)
+    if (prefetched.story) {
+      await prerenderQueryClient.prefetchQuery({
+        queryKey: ["cms", "story", slug],
+        queryFn: async () => prefetched.story,
+      })
+    }
+  }
+
+  const itemSeo = isItemDetailPath(pathname)
+    ? await resolveItemPrerenderSeo(pathname, prefetched)
+    : null
+  const routeSeo = getSeoForPathname(pathname)
 
   const app = (
     <HelmetProvider context={helmetContext}>
@@ -162,17 +279,10 @@ export const prerender = async (data: { url: string }) => {
   }
 
   const documentTitle =
-    ("title" in seo ? seo.title : undefined) ||
-    helmetTitleText(helmet ?? undefined) ||
-    getSeoForPathname(pathname).title
+    itemSeo?.title || helmetTitleText(helmet ?? undefined) || routeSeo.title
 
-  const helmetMeta = helmet?.meta?.toString() ?? ""
-  if (pathname.startsWith("/events/") && pathname !== "/events" && "title" in seo) {
-    const needsOgImage = Boolean(seo.ogImage) && !helmetMeta.includes('property="og:image"')
-    const needsOgTitle = !helmetMeta.includes('property="og:title"')
-    if (needsOgImage || needsOgTitle) {
-      appendSocialMeta(headElements, seo, pageUrl)
-    }
+  if (itemSeo) {
+    appendSocialMeta(headElements, itemSeo, pageUrl)
   }
 
   return {

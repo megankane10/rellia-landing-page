@@ -43,7 +43,7 @@ import { cn } from "@/lib/utils";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { SectionsRenderer } from "@/components/cms/PageRenderer"
 import { useProgramBySlug, useProgramPageBySlug } from "@/hooks/useCmsDocuments"
-import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo"
+import PageSocialHelmet from "@/components/seo/PageSocialHelmet"
 import { PEXELS_HEALTH_MEETING, PEXELS_OFFICE_COLLABORATION, LOCAL_METRICS_BG_JPEG } from "@/config/pexelsFallbacks"
 import {
   Carousel,
@@ -177,7 +177,11 @@ const ProgramPageLayout = ({
   const hasEnrollmentForm = Boolean(filloutId) && !isWaitlist;
 
   const resolvedProgramTitle = (programDoc?.title || q.heroTitle || "").trim()
-  const resolvedProgramDescription = (q.heroDescription || "").trim()
+  const resolvedProgramDescription = (
+    (programDoc as { description?: string } | null | undefined)?.description ||
+    q.heroDescription ||
+    ""
+  ).trim()
 
   const resolvedHeroImageSrc = (programDoc?.imageSrc || heroImageSrc || "").trim()
   const resolvedHeroImageAlt = (heroImageAlt || resolvedProgramTitle || "Program image").trim()
@@ -190,11 +194,9 @@ const ProgramPageLayout = ({
     ? resolveSocialOgImageUrl(resolvedHeroImageSrc)
     : undefined
 
-  useApplyCmsSeo(q.seo, {
-    title: programPageTitle,
-    description: clampMetaDescription(resolvedProgramDescription || "Rellia Health program"),
-    ogImage: programOgImage,
-  })
+  const programMetaDescription = clampMetaDescription(
+    resolvedProgramDescription || "Rellia Health program",
+  )
 
   const extraSections = (programPageData?.sections ?? []).filter(
     (s) => s._type !== "sectionHero",
@@ -223,6 +225,12 @@ const ProgramPageLayout = ({
 
   return (
     <div className="min-h-screen bg-white font-host-grotesk overflow-x-hidden">
+      <PageSocialHelmet
+        title={programPageTitle}
+        description={programMetaDescription}
+        canonical={canonicalUrl}
+        ogImage={programOgImage}
+      />
       <Navbar />
       <main id="main-content">
         {/* ─── Hero — text left, square image right ─── */}
