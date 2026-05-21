@@ -107,8 +107,11 @@ export default function AdvisorsDirectory() {
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const country = params.get("country");
-    if (country) {
-      setCountryFilter(country);
+    if (country) setCountryFilter(country);
+    const specialty = params.get("specialty");
+    if (specialty) {
+      setLegacyFilter(specialty);
+      setGroupFilters((prev) => ({ ...prev, "directoryFilterGroup-expertise": specialty }));
     }
   }, [location.search]);
   const advisors = useMemo<AdvisorDirectoryEntry[]>(() => {

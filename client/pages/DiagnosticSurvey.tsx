@@ -121,79 +121,73 @@ const DATA_MAP: Record<
     mentor: "UX & Product Design",
     program: "Prototype Lab",
     programHref: "/programs/prototype-lab",
-    advisorSpecialty: "Technical",
+    advisorSpecialty: "Product Design & UI/UX",
   },
   product_dev: {
     mentor: "Engineering",
     program: "Build Your QMS",
     programHref: "/programs/qms",
-    advisorSpecialty: "Technical",
+    advisorSpecialty: "Product Development",
   },
   clinical: {
     mentor: "Clinical Affairs",
     program: "Regulatory Roadmap",
-    programHref: "/programs/regulatory",
-    advisorSpecialty: "Clinical",
+    programHref: "/programs/regulatory-strategy-sprint",
+    advisorSpecialty: "Clinical Evidence",
   },
   regulatory: {
     mentor: "Regulatory",
     program: "Regulatory Roadmap",
-    programHref: "/programs/regulatory",
-    advisorSpecialty: "Regulatory",
+    programHref: "/programs/regulatory-strategy-sprint",
+    advisorSpecialty: "Regulatory Strategy",
   },
   legal: {
     mentor: "Legal & Privacy",
     program: "Regulatory Roadmap",
-    programHref: "/programs/regulatory",
-    advisorSpecialty: "Regulatory",
+    programHref: "/programs/regulatory-strategy-sprint",
+    advisorSpecialty: "Legal & Privacy",
   },
   ip: {
     mentor: "Intellectual Property",
     program: "Advance Dataroom",
     programHref: "/programs/dataroom",
-    advisorSpecialty: "Regulatory",
+    advisorSpecialty: "IP Strategy",
   },
   reimbursement: {
     mentor: "Reimbursement",
     program: "Regulatory Roadmap",
-    programHref: "/programs/regulatory",
-    advisorSpecialty: "Clinical",
+    programHref: "/programs/regulatory-strategy-sprint",
+    advisorSpecialty: "Reimbursement",
   },
   fundraising: {
     mentor: "Fundraising",
     program: "Elevate Capital",
     programHref: "/programs/elevate-capital",
-    advisorSpecialty: "GTM",
+    advisorSpecialty: "Fundraising",
   },
   marketing: {
     mentor: "Marketing",
     program: "Brand Strategy",
     programHref: "/programs/brand",
-    advisorSpecialty: "GTM",
+    advisorSpecialty: "Marketing & Branding",
   },
   gtm: {
     mentor: "Commercial Strategy",
     program: "First 50 Users",
     programHref: "/programs/first-50",
-    advisorSpecialty: "GTM",
+    advisorSpecialty: "Go-To-Market",
   },
   healthcare: {
     mentor: "Health Systems",
     program: "Advisory Board Match",
     programHref: "/programs/advisory-board-match",
-    advisorSpecialty: "Clinical",
-  },
-  customer_success: {
-    mentor: "Customer Success",
-    program: "First 50 Users",
-    programHref: "/programs/first-50",
-    advisorSpecialty: "GTM",
+    advisorSpecialty: "Health System Navigation",
   },
   operations: {
-    mentor: "Operations",
+    mentor: "Operations & Scaling",
     program: "Ignite Pitch",
     programHref: "/programs/ignite-pitch",
-    advisorSpecialty: "GTM",
+    advisorSpecialty: "Operations & Scaling",
   },
 };
 
@@ -884,10 +878,10 @@ const SECTIONS: Section[] = [
     ],
   },
   {
-    id: "customer_success",
-    icon: "♡",
-    title: "Customer Success",
-    desc: "How do you ensure users stay and grow with you?",
+    id: "operations",
+    icon: "▣",
+    title: "Operations & Scaling",
+    desc: "Whether your business can actually grow without breaking.",
     questions: [
       {
         text: "What metrics are you using to measure product success for your users?",
@@ -915,14 +909,6 @@ const SECTIONS: Section[] = [
           },
         ],
       },
-    ],
-  },
-  {
-    id: "operations",
-    icon: "▣",
-    title: "Operations & Scaling",
-    desc: "Whether your business can actually grow without breaking.",
-    questions: [
       {
         text: "How aware are you of the manual processes in your business that won't scale?",
         type: "confidence",
@@ -1375,32 +1361,49 @@ export default function DiagnosticSurvey() {
     } catch (err: any) {
       console.error("Report generation failed:", err);
 
-      const isAdminError = err.message.includes("ADMIN_CONFIG_ERROR");
+      const parsedScores = scores
+        .map((line) => {
+          const match = line.match(/^(.+?)\s*:\s*(\d{1,3})%?$/);
+          if (!match) return null;
+          const category = match[1]?.trim() || "";
+          const score = Number(match[2]);
+          if (!category || !Number.isFinite(score)) return null;
+          return { category, score: Math.max(0, Math.min(100, score)) };
+        })
+        .filter((x): x is { category: string; score: number } => Boolean(x));
+
+      const toPriority = (score: number) => {
+        if (score < 40) return "Critical";
+        if (score < 70) return "High";
+        return "Medium";
+      };
+
+      const topStrengths = [...parsedScores]
+        .sort((a, b) => b.score - a.score)
+        .slice(0, 3);
+      const topWeaknesses = [...parsedScores]
+        .sort((a, b) => a.score - b.score)
+        .slice(0, 3);
 
       setDiagResult({
-        summary: isAdminError
-          ? `[ADMIN ERROR] ${err.message}. Please ensure SANITY_WRITE_TOKEN is correctly set in your environment variables.`
-          : `We encountered an issue generating your report, but here is your basic assessment. Based on your inputs, ${memberInfo.company} has specific opportunities for growth in several domains.`,
-        top3_strengths: [
-          {
-            category: "Assessment Complete",
-            score: 100,
-            note: "You have successfully mapped your startup across 13 domains.",
-          },
-        ],
-        top3_weaknesses: [
-          {
-            category: "Review Needed",
-            score: 30,
-            priority: "High",
-            note: "Consider a 1:1 session with a Rellia advisor to dive deeper into your results.",
-          },
-        ],
+        summary: `We encountered a brief issue connecting to our servers, but here is your assessment for ${memberInfo.company}. Focus on your lowest-scoring domains first, then reinforce what's already working.`,
+        top3_strengths: topStrengths.map((s) => ({
+          category: s.category,
+          score: s.score,
+          note: "Above-average readiness compared to your other domains.",
+        })),
+        top3_weaknesses: topWeaknesses.map((s) => ({
+          category: s.category,
+          score: s.score,
+          priority: toPriority(s.score),
+          note: "This is a likely bottleneck—tighten it before scaling execution or diligence.",
+        })),
         recommendations: [
-          "Schedule a discovery call with Rellia",
-          "Review your lowest scoring sections",
+          "Pick one domain to fix this week and define a concrete deliverable.",
+          "Validate your assumptions with 2–3 targeted conversations.",
+          "Turn the lowest-scoring domain into a short 30–60 day plan with owners and milestones.",
         ],
-        mentor_areas_needed: ["General Strategy"],
+        mentor_areas_needed: topWeaknesses.map((w) => w.category),
       });
       setView("report");
     }
@@ -2422,33 +2425,25 @@ export default function DiagnosticSurvey() {
                   {/* Advisory board + programs */}
                   <section className="grid gap-6 md:grid-cols-2 items-stretch">
                     <div className="rounded-[32px] border border-rellia-teal/10 bg-white p-8 shadow-sm flex flex-col h-full">
-                      <div className="flex items-center justify-between gap-4">
-                        <h2 className="text-xs font-bold uppercase tracking-widest text-rellia-teal/45">
-                          Your Assigned Advisory Board
-                        </h2>
-                        <Link
-                          to="/advisors/directory"
-                          className="text-[10px] font-bold uppercase tracking-widest text-rellia-teal/60 hover:text-rellia-teal transition-colors"
-                        >
-                          Browse advisors →
-                        </Link>
-                      </div>
-                      <div className="mt-6 grid gap-4 sm:grid-cols-2">
-                        {recommendedAdvisors.map((advisor, i) => (
+                      <h2 className="text-xs font-bold uppercase tracking-widest text-rellia-teal/45">
+                        Find Advisors for Your Gaps
+                      </h2>
+                      <div className="mt-6 flex flex-col gap-4 flex-1">
+                        {diagResult.top3_weaknesses.map((w, i) => (
                           <Link
                             key={i}
-                            to={`/advisors/directory/${advisor.id}`}
-                            className="group rounded-3xl border border-black/10 bg-white p-6 shadow-sm transition-[transform,box-shadow] hover:shadow-md hover:-translate-y-[1px]"
+                            to={`/advisors/directory?specialty=${encodeURIComponent(w.category)}`}
+                            className="group flex flex-1 items-center justify-between gap-4 rounded-3xl border border-rellia-teal/15 bg-rellia-cream px-6 py-5 transition-[background-color,box-shadow,transform] hover:bg-rellia-mint/20 hover:shadow-md hover:-translate-y-[1px]"
                           >
-                            <div className="font-host-grotesk text-lg font-bold tracking-tight text-black group-hover:underline decoration-2 underline-offset-4">
-                              {advisor.name}
+                            <div className="min-w-0">
+                              <div className="font-urbanist text-[10px] font-bold uppercase tracking-widest text-rellia-teal/50">
+                                Priority {i + 1} Gap
+                              </div>
+                              <div className="mt-1 font-host-grotesk text-base font-bold tracking-tight text-rellia-teal">
+                                See advisors for {w.category}
+                              </div>
                             </div>
-                            <div className="mt-1 font-urbanist text-sm font-medium text-black/70">
-                              {advisor.organization}
-                            </div>
-                            <div className="mt-0.5 font-urbanist text-sm text-black/60">
-                              {advisor.role}
-                            </div>
+                            <ChevronRight className="h-5 w-5 shrink-0 text-rellia-teal/40 transition-colors group-hover:text-rellia-teal" />
                           </Link>
                         ))}
                       </div>
@@ -2477,7 +2472,7 @@ export default function DiagnosticSurvey() {
                               to={href}
                               className="group flex items-center gap-4 rounded-3xl border border-black/10 bg-white p-4 shadow-sm transition-[transform,box-shadow] hover:shadow-md hover:-translate-y-[1px]"
                             >
-                              <div className="relative h-16 w-20 shrink-0 overflow-hidden rounded-2xl bg-rellia-cream">
+                              <div className="relative h-16 w-20 shrink-0 overflow-hidden rounded-lg bg-rellia-cream">
                                 {meta?.imageSrc ? (
                                   <img
                                     src={meta.imageSrc}

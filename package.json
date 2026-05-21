@@ -19,6 +19,7 @@
     "start": "node dist/server/node-build.mjs",
     "sanity:seed": "tsx scripts/sanity-seed.ts",
     "sanity:cleanup": "tsx scripts/sanity-cleanup.ts",
+    "seed:advisors": "tsx scripts/seed-advisors.ts",
     "test": "vitest --run",
     "format.fix": "prettier --write .",
     "typecheck": "tsc"

@@ -42,7 +42,8 @@ export default function Programs() {
       "buildyourqualitymanagementsystem": "/images/programs-buildYourQMS.png",
       "advancedataroomdeepdive": "/images/programs-DataRoom.png",
       "first50usersaclinicalfeedbackintensive": "/images/programs-first50Users.png",
-      "designyourbrandstrategy": "/images/programs-brandStrategy.png"
+      "designyourbrandstrategy": "/images/programs-brandStrategy.png",
+      "regulatorystrategysprint": "/images/programs-regulatoryRoadmap.png",
     }
 
     const STATUS_OVERRIDES: Record<string, string> = {
