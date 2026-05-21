@@ -4,6 +4,7 @@ import path from "path";
 import { vitePrerenderPlugin } from "vite-prerender-plugin";
 import { createServer } from "./server";
 import { PRERENDER_PATHS } from "./client/config/seo";
+import { fetchStorySlugsForPrerender } from "./shared/cms/prerenderSanity";
 
 const getVercelSiteUrl = (): string | undefined => {
   const raw = process.env.VITE_SITE_URL?.trim();
@@ -27,8 +28,18 @@ const getOgImageVersion = (): string => {
   return new Date().toISOString().slice(0, 10);
 };
 
+const buildPrerenderRoutes = async (): Promise<string[]> => {
+  const cmsStoryPaths = (await fetchStorySlugsForPrerender()).map(
+    (slug) => `/stories/${slug}`,
+  );
+  return [...new Set([...PRERENDER_PATHS, ...cmsStoryPaths])];
+};
+
 // https://vitejs.dev/config/
-export default defineConfig(() => ({
+export default defineConfig(async () => {
+  const additionalPrerenderRoutes = await buildPrerenderRoutes();
+
+  return {
   server: {
     host: "127.0.0.1",
     port: 5173,
@@ -75,7 +86,7 @@ export default defineConfig(() => ({
     ...vitePrerenderPlugin({
       renderTarget: "#root",
       prerenderScript: path.resolve(__dirname, "./client/prerender.tsx"),
-      additionalPrerenderRoutes: PRERENDER_PATHS,
+      additionalPrerenderRoutes,
     }),
   ],
   resolve: {
@@ -85,7 +96,8 @@ export default defineConfig(() => ({
     },
     dedupe: ["react", "react-dom"],
   },
-}));
+};
+});
 
 function expressPlugin(): Plugin {
   return {
