@@ -19,6 +19,7 @@ import {
   requireApiCsrf,
 } from "./csrf";
 import { isAdminSignupEnabled } from "./adminSignupEnv";
+import { buildSiteOrigins, isAllowedBrowserOrigin } from "./siteOrigins";
 
 type RequestLike = {
   headers?: Record<string, unknown>;
@@ -137,37 +138,20 @@ export function createServer() {
   }
 
   const studioOrigin = safeOriginFromUrl(process.env.SANITY_STUDIO_URL)
-  const siteOrigin = safeOriginFromUrl(process.env.VITE_SITE_URL) || "https://www.relliahealth.com"
-  const siteOrigins = new Set([siteOrigin, siteOrigin.replace("://www.", "://")])
+  const siteOrigins = buildSiteOrigins()
 
-  const isAllowedBrowserOrigin = (
+  const allowBrowserOrigin = (
     req: express.Request,
-    extraAllowedOrigins: Set<string>,
+    extraAllowedOrigins?: Set<string>,
   ): boolean => {
-    if (isDev) return true
-
-    const originHeader = (req.get("origin") || "").trim()
-    if (originHeader && (allowedOrigins.includes(originHeader) || extraAllowedOrigins.has(originHeader))) {
-      return true
+    const merged = new Set(siteOrigins)
+    if (extraAllowedOrigins) {
+      for (const origin of extraAllowedOrigins) merged.add(origin)
     }
-
-    // Sanity Presentation / Studio runs on sanity.studio / sanity.io domains and needs to call preview endpoints.
-    // Origin/Referer checks are best-effort; this is still not a replacement for a shared secret.
-    if (originHeader && (originHeader.endsWith(".sanity.studio") || originHeader.endsWith(".sanity.io"))) {
-      return true
+    for (const origin of allowedOrigins) {
+      if (origin) merged.add(origin)
     }
-
-    const refererHeader = (req.get("referer") || "").trim()
-    const refererOrigin = safeOriginFromUrl(refererHeader)
-    if (refererOrigin && (allowedOrigins.includes(refererOrigin) || extraAllowedOrigins.has(refererOrigin))) {
-      return true
-    }
-
-    if (refererOrigin && (refererOrigin.endsWith(".sanity.studio") || refererOrigin.endsWith(".sanity.io"))) {
-      return true
-    }
-
-    return false
+    return isAllowedBrowserOrigin(req, merged, isDev)
   }
 
   if (!isDev && allowedOrigins.length === 0) {
@@ -343,9 +327,9 @@ export function createServer() {
     "/api/draft-mode/enable",
     rateLimitText(draftModeRate, DRAFT_MODE_MAX_PER_MIN),
     async (req, res) => {
-    const allowedOrigins = new Set([studioOrigin].filter(Boolean) as string[])
+    const studioOnlyOrigins = new Set([studioOrigin].filter(Boolean) as string[])
     if (
-      !isAllowedBrowserOrigin(req, allowedOrigins) &&
+      !allowBrowserOrigin(req, studioOnlyOrigins) &&
       !hasSanityPreviewSecret(req)
     ) {
       res.status(403).send("Forbidden")
@@ -425,7 +409,7 @@ export function createServer() {
     rateLimitText(draftModeRate, DRAFT_MODE_MAX_PER_MIN),
     (_req, res) => {
       const reqAny = _req as unknown as express.Request
-      if (!isAllowedBrowserOrigin(reqAny, new Set([studioOrigin].filter(Boolean) as string[]))) {
+      if (!allowBrowserOrigin(reqAny, new Set([studioOrigin].filter(Boolean) as string[]))) {
         res.status(403).send("Forbidden")
         return
       }
@@ -472,12 +456,11 @@ export function createServer() {
   const sanityResolved = resolveSanityApiConfig();
   const sanityApiCfg =
     sanityResolved.status === "ok" ? sanityResolved : null;
-  const previewAndSiteOrigins = new Set(
-    [studioOrigin, ...siteOrigins].filter(Boolean) as string[],
-  );
+  const previewAndSiteOrigins = new Set<string>(siteOrigins)
+  if (studioOrigin) previewAndSiteOrigins.add(studioOrigin)
 
   app.post("/api/sanity/query", requireCsrf, async (req, res) => {
-    if (!isAllowedBrowserOrigin(req, previewAndSiteOrigins)) {
+    if (!allowBrowserOrigin(req, previewAndSiteOrigins)) {
       res.status(403).json({ error: "Forbidden" });
       return;
     }
@@ -609,7 +592,7 @@ export function createServer() {
     rateLimitJson(contactRate, CONTACT_MAX_PER_MIN),
     requireCsrf,
     async (req, res) => {
-      if (!isAllowedBrowserOrigin(req, siteOrigins)) {
+      if (!allowBrowserOrigin(req)) {
         res.status(403).json({ error: "Forbidden" });
         return;
       }
@@ -734,7 +717,7 @@ export function createServer() {
     rateLimitJson(stripeCheckoutRate, STRIPE_CHECKOUT_MAX_PER_MIN),
     requireCsrf,
     async (req, res) => {
-      if (!isAllowedBrowserOrigin(req, siteOrigins)) {
+      if (!allowBrowserOrigin(req)) {
         res.status(403).json({ error: "Forbidden" });
         return;
       }
@@ -852,7 +835,7 @@ export function createServer() {
   )
 
   app.post("/api/diagnostic-report", requireCsrf, async (req, res) => {
-    if (!isAllowedBrowserOrigin(req, siteOrigins)) {
+    if (!allowBrowserOrigin(req)) {
       res.status(403).json({ error: "Forbidden" })
       return
     }
@@ -1069,11 +1052,12 @@ export function createServer() {
     "/api/admin/signup-status",
     rateLimitJson(adminSignupStatusRate, ADMIN_SIGNUP_STATUS_MAX_PER_MIN),
     (req, res) => {
-      if (!isAllowedBrowserOrigin(req, siteOrigins)) {
+      if (!allowBrowserOrigin(req)) {
         res.status(403).json({ error: "Forbidden" });
         return;
       }
-      res.json({ enabled: isAdminSignupEnabled() });
+      res.setHeader("content-type", "application/json")
+      res.json({ enabled: isAdminSignupEnabled() })
     },
   );
 
@@ -1082,7 +1066,7 @@ export function createServer() {
     rateLimitJson(adminSignupRate, ADMIN_SIGNUP_MAX_PER_MIN),
     requireCsrf,
     async (req, res) => {
-      if (!isAllowedBrowserOrigin(req, siteOrigins)) {
+      if (!allowBrowserOrigin(req)) {
         res.status(403).json({ error: "Forbidden" });
         return;
       }

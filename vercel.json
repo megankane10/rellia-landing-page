@@ -2,6 +2,11 @@
   "installCommand": "pnpm install",
   "buildCommand": "pnpm run build:client && pnpm run build:api",
   "outputDirectory": "dist/spa",
+  "functions": {
+    "api/index.js": {
+      "maxDuration": 30
+    }
+  },
   "headers": [
     {
       "source": "/(.*)",

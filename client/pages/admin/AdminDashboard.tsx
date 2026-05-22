@@ -1,4 +1,5 @@
 import { useMemo } from "react"
+import { Link } from "react-router-dom"
 import { useQuery } from "@tanstack/react-query"
 import { supabase } from "@/lib/supabase"
 import AdminSanityDrafts from "@/components/admin/AdminSanityDrafts"
@@ -9,8 +10,18 @@ import {
   isActiveSubmissionStatus,
   type SubmissionStatus,
 } from "@/lib/adminSubmissionStatus"
-import { CalendarClock, Inbox, Mail, Stethoscope } from "lucide-react"
-import { cn } from "@/lib/utils"
+import {
+  BookOpen,
+  Briefcase,
+  CalendarClock,
+  CalendarDays,
+  ExternalLink,
+  FileText,
+  Inbox,
+  Mail,
+  Stethoscope,
+  Users,
+} from "lucide-react"
 
 type CompanyProfileRow = {
   id: string
@@ -54,6 +65,17 @@ const MetricTile = ({ icon: Icon, value, label }: MetricTileProps) => (
     <p className="mt-2 font-urbanist text-sm text-black/65">{label}</p>
   </div>
 )
+
+const QUICK_LINKS = [
+  { label: "Programs", to: "/programs", icon: Briefcase },
+  { label: "Events", to: "/events", icon: CalendarDays },
+  { label: "Stories", to: "/stories", icon: BookOpen },
+  { label: "Careers", to: "/careers", icon: Users },
+  { label: "Apply", to: "/apply", icon: FileText },
+  { label: "Public diagnostic", to: "/diagnostics", icon: Stethoscope },
+] as const
+
+const STUDIO_URL = "https://relliahealth.sanity.studio"
 
 const AdminDashboard = () => {
   const { data, isLoading, error } = useQuery({
@@ -139,6 +161,41 @@ const AdminDashboard = () => {
             icon={Stethoscope}
           />
         </div>
+      </section>
+
+      <section className="space-y-3">
+        <h2 className="font-host-grotesk text-lg font-semibold text-black">Website quick links</h2>
+        <p className="font-urbanist text-sm text-black/60">
+          Jump to live pages you already manage in Sanity — useful for checking published content after edits.
+        </p>
+        <ul className="flex flex-wrap gap-2">
+          {QUICK_LINKS.map((item) => (
+            <li key={item.to}>
+              <Link
+                to={item.to}
+                className="inline-flex items-center gap-2 rounded-full border border-black/10 bg-white px-3.5 py-1.5 font-urbanist text-sm text-black/70 transition-colors hover:border-rellia-teal/25 hover:text-rellia-teal"
+              >
+                <item.icon className="h-4 w-4 text-rellia-teal" aria-hidden />
+                {item.label}
+              </Link>
+            </li>
+          ))}
+          <li>
+            <a
+              href={STUDIO_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 rounded-full border border-black/10 bg-white px-3.5 py-1.5 font-urbanist text-sm text-black/70 transition-colors hover:border-rellia-teal/25 hover:text-rellia-teal"
+            >
+              Sanity Studio
+              <ExternalLink className="h-3.5 w-3.5" aria-hidden />
+            </a>
+          </li>
+        </ul>
+        <p className="font-urbanist text-xs text-black/45">
+          Possible future tiles: membership checkout stats, FAQ edits queue, founder/advisor directory moderation, or
+          event RSVP exports if those flows gain admin APIs.
+        </p>
       </section>
 
       <AdminSanityDrafts />

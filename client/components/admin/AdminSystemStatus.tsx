@@ -9,6 +9,7 @@ type ServiceStatus = {
   label: string
   detail?: string
   state: ServiceState
+  title?: string
 }
 
 const stateLabel = (state: ServiceState): string => {
@@ -27,7 +28,7 @@ const StatusPill = ({ service }: { service: ServiceStatus }) => (
       service.state === "offline" && "border-red-200/80 bg-red-50/90 text-red-800",
       service.state === "unconfigured" && "border-amber-200/80 bg-amber-50/90 text-amber-900",
     )}
-    title={service.detail}
+    title={service.title}
   >
     <span
       className={cn(
@@ -62,6 +63,7 @@ const pingSupabase = async (): Promise<boolean> => {
   }
 }
 
+/** CMS health: configured client env + successful globalSettings read via /api/sanity/query */
 const pingSanity = async (): Promise<"online" | "offline" | "unconfigured"> => {
   if (!isSanityConfigured()) return "unconfigured"
   const data = await sanityFetch<Record<string, unknown>>("globalSettings")
@@ -82,11 +84,19 @@ const AdminSystemStatus = () => {
       const [dbOk, cmsState] = await Promise.all([pingSupabase(), pingSanity()])
       if (cancelled) return
       setServices([
-        { label: "Database", state: dbOk ? "online" : "offline" },
+        {
+          label: "Database",
+          state: dbOk ? "online" : "offline",
+          title: "Supabase reachable with your signed-in session",
+        },
         {
           label: "CMS",
           state: cmsState,
           detail: cmsState === "unconfigured" ? undefined : `dataset: ${dataset}`,
+          title:
+            cmsState === "online"
+              ? "Sanity proxy returned globalSettings for this dataset"
+              : "Sanity proxy failed — check VITE_SANITY_* client env, SANITY_API_READ_TOKEN server env, and dataset match (preview vs production)",
         },
       ])
     }

@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query"
 import { ExternalLink, FileEdit } from "lucide-react"
 import { getSanityDataset, isSanityConfigured, sanityFetch } from "@/lib/sanity"
-import FilteredListEmptyState from "@/components/FilteredListEmptyState"
+import AdminCompactEmptyState from "@/components/admin/AdminCompactEmptyState"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Button } from "@/components/ui/button"
 
@@ -75,9 +75,7 @@ const AdminSanityDrafts = () => {
       {!cmsConfigured && (
         <p className="rounded-2xl border border-amber-200/70 bg-amber-50/80 px-4 py-3 font-urbanist text-sm text-amber-950">
           CMS is not configured here. Set <code className="text-xs">VITE_SANITY_PROJECT_ID</code> and{" "}
-          <code className="text-xs">VITE_SANITY_DATASET</code> to match where you edit content (often{" "}
-          <code className="text-xs">preview</code> on Vercel preview, <code className="text-xs">production</code> on
-          the live site).
+          <code className="text-xs">VITE_SANITY_DATASET</code> to match where you edit content.
         </p>
       )}
 
@@ -97,11 +95,10 @@ const AdminSanityDrafts = () => {
       )}
 
       {cmsConfigured && !isLoading && !error && draftCount === 0 && (
-        <FilteredListEmptyState
+        <AdminCompactEmptyState
           icon={FileEdit}
           title="No drafts in queue"
-          description={`Nothing unpublished in the ${dataset} dataset. Drafts edited on another dataset (for example preview vs production) will not appear here until env vars match.`}
-          className="rounded-2xl border border-dashed border-black/10 bg-white/70"
+          description={`Nothing unpublished in the ${dataset} dataset.`}
         />
       )}
 

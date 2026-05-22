@@ -11,6 +11,12 @@ import AdminDeleteSubmissionButton from "@/components/admin/AdminDeleteSubmissio
 import AdminMailtoButton from "@/components/admin/AdminMailtoButton"
 import AdminDiagnosticAnswers from "@/components/admin/AdminDiagnosticAnswers"
 import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion"
+import {
   formatAdminDateLong,
   statusBadgeClass,
   type SubmissionStatus,
@@ -206,18 +212,6 @@ const AdminCompany = () => {
 
       {response && (
         <>
-          {/* Summary */}
-          {response.summary && (
-            <Card className="rounded-[20px] border border-black/10 bg-white shadow-sm">
-              <CardHeader>
-                <CardTitle className="font-host-grotesk text-base font-semibold text-black">Summary</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="font-urbanist text-sm leading-relaxed text-black/70">{response.summary}</p>
-              </CardContent>
-            </Card>
-          )}
-
           {/* Section scores */}
           {response.section_scores && response.section_scores.length > 0 && (
             <Card className="rounded-[20px] border border-black/10 bg-white shadow-sm">
@@ -355,16 +349,16 @@ const AdminCompany = () => {
           )}
 
           {response.raw_answers && (
-            <Card className="rounded-2xl border border-black/[0.07] bg-white/90 shadow-sm">
-              <CardHeader>
-                <CardTitle className="font-host-grotesk text-base font-semibold text-black">
+            <Accordion type="single" collapsible className="rounded-2xl border border-black/[0.07] bg-white/90 px-4 shadow-sm md:px-6">
+              <AccordionItem value="survey-responses" className="border-none">
+                <AccordionTrigger className="py-4 font-host-grotesk text-base font-semibold text-black hover:no-underline">
                   Survey responses
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <AdminDiagnosticAnswers rawAnswers={response.raw_answers} />
-              </CardContent>
-            </Card>
+                </AccordionTrigger>
+                <AccordionContent className="pb-4">
+                  <AdminDiagnosticAnswers rawAnswers={response.raw_answers} />
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
           )}
 
           <div className="rounded-2xl border border-black/[0.07] bg-white/90 px-5 py-5 shadow-sm md:px-6">

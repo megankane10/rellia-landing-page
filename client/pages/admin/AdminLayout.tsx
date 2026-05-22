@@ -57,7 +57,13 @@ const AdminLayout = () => {
 
       <main id="main-content" className="mx-auto max-w-6xl px-6 py-8 md:py-10">
         <Outlet />
-        <footer className="mt-12 border-t border-black/[0.06] pt-6">
+        <footer className="mt-12 flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-black/[0.06] pt-6">
+          <a
+            href="/"
+            className="font-urbanist text-sm text-black/50 transition-colors hover:text-rellia-teal focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint rounded"
+          >
+            Website
+          </a>
           <a
             href="https://docs.google.com/document/d/17lMkt2Jqa4fswCd_DpjHpvwMQH-5QBMDvzcw5MGLDVo/edit?usp=sharing"
             target="_blank"

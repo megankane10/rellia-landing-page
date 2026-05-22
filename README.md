@@ -41,8 +41,8 @@ Do day-to-day work on **`Additions`**. After review, merge into **`main`** for p
 |------|---------|
 | `client/` | React app: pages, components, hooks, styles |
 | `server/` | Express application (`createServer()` in `server/index.ts`) |
-| `scripts/vercel-api-entry.ts` | Bundled to **`api/index.js`** (gitignored) for Vercel; do not edit the bundle by hand |
-| `api/` | Build output target only — **`api/index.js`** is produced by **`pnpm run build:api`** during deploy and ignored by git (see `.gitignore`) |
+| `scripts/vercel-api-entry.ts` | Source for the Vercel serverless API bundle |
+| `api/index.js` | Committed Vercel **`/api/*`** handler (rebuild with **`pnpm run build:api`** after server changes) |
 | `shared/` | Shared CMS types, GROQ helpers, query whitelist (`shared/cms/sanityQueryRegistry.ts`), merge helpers, default fallbacks |
 | `public/` | Static files (`robots.txt`, `sitemap.xml`, images, `favicon.ico`, `ogimage.png`) |
 | `website-cms/` | Sanity Studio (separate `package.json`; run its own install for Studio dev) |
@@ -114,6 +114,37 @@ Starts the Node server that serves the built SPA and API (default port from `POR
 | `pnpm format.fix` | Prettier write |
 
 `npm run <script>` works as well if you use npm.
+
+---
+
+## Admin portal (`/admin`)
+
+Internal dashboard for **contact** and **startup diagnostic** submissions (Supabase), plus **Sanity draft** visibility.
+
+| Route | Purpose |
+|-------|---------|
+| `/admin/login` | Supabase Auth sign-in |
+| `/admin/signup` | Self-serve admin account when enabled |
+| `/admin/dashboard` | Metrics, submission hubs, CMS drafts |
+| `/admin/contacts` | Contact inbox with status filters |
+| `/admin/diagnostics` | Diagnostic list with status filters |
+
+**Supabase setup:** run `scripts/supabase_setup.sql`, `scripts/supabase_diagnostic_setup.sql`, and `scripts/supabase_admin_policies.sql` in the SQL editor.
+
+**Admin signup env (server-side only — not `VITE_`):**
+
+```bash
+ADMIN_SIGNUP_ENABLED=true
+SUPABASE_SERVICE_ROLE_KEY=...   # required for POST /api/admin/signup
+```
+
+Set the same variables on **Vercel → Settings → Environment Variables** for **Production** and **Preview**, then redeploy. The build must run **`pnpm run build:api`** (included in `vercel.json` `buildCommand`).
+
+**If signup shows “API unavailable”:** open `/api/health` on the same host. You should see `{"ok":true}` with JSON — not the SPA HTML. If you get HTML, the serverless API is not running (check deploy logs for `build:api`, and that `api/index.js` exists). Local dev loads `.env` and `.env.local` via `server/loadEnv.ts`.
+
+**CMS status on the dashboard:** **Database** pings Supabase; **CMS** calls `POST /api/sanity/query` with `globalSettings` using the dataset in **`VITE_SANITY_DATASET`**. **Offline** usually means missing **`SANITY_API_READ_TOKEN`** on the server, wrong dataset (`preview` vs `production`), or no `globalSettings` document. Drafts use the same dataset — preview edits do not appear when the admin app queries `production`.
+
+**Seed content on preview only:** `client/lib/deploymentEnv.ts` allows static seed fallbacks (stories, careers, alumni/advisor directories) on the **Additions** preview host and in dev — **not** on production `main` (`www.relliahealth.com`).
 
 ---
 

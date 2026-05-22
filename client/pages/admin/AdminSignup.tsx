@@ -66,9 +66,15 @@ const AdminSignup = () => {
     }
   }
 
+  const authLeftHeading = "Hello! Ready to see what's new with Rellia Health today?"
+  const authLeftDescription =
+    "Log in to review the latest form submissions, coordinate inquiries, and easily track your website content drafts."
+
   if (signupEnabled === null) {
     return (
       <AdminAuthLayout
+        leftHeading={authLeftHeading}
+        leftDescription={authLeftDescription}
         title="Create Admin Account"
         description="Rellia internal access only."
       >
@@ -85,6 +91,8 @@ const AdminSignup = () => {
 
   return (
     <AdminAuthLayout
+      leftHeading={authLeftHeading}
+      leftDescription={authLeftDescription}
       title="Create Admin Account"
       description="Rellia internal access only."
     >
@@ -92,10 +100,14 @@ const AdminSignup = () => {
         <div className="rounded-xl border border-amber-200/80 bg-amber-50 p-4 text-center">
           <p className="font-urbanist text-sm text-amber-950">{statusError}</p>
           <p className="mt-2 font-urbanist text-sm text-black/65">
-            Local dev: set <code className="text-xs">ADMIN_SIGNUP_ENABLED=true</code> in{" "}
-            <code className="text-xs">.env</code> or <code className="text-xs">.env.local</code> and restart{" "}
-            <code className="text-xs">pnpm dev</code>. On Vercel, add the same variable to the deployment
-            environment and redeploy.
+            The admin API route is not responding with JSON. Check{" "}
+            <a href="/api/health" className="font-medium text-rellia-teal underline underline-offset-2">
+              /api/health
+            </a>{" "}
+            in this browser tab — it should show <code className="text-xs">{`{"ok":true}`}</code>. Set{" "}
+            <code className="text-xs">ADMIN_SIGNUP_ENABLED=true</code> (server env, not{" "}
+            <code className="text-xs">VITE_</code>) in Vercel for Production and Preview, then redeploy after{" "}
+            <code className="text-xs">pnpm run build:api</code> runs in the build log.
           </p>
         </div>
       ) : !signupEnabled ? (

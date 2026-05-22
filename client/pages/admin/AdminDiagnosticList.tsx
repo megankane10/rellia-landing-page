@@ -15,7 +15,8 @@ import {
   type StatusFilterValue,
   type SubmissionStatus,
 } from "@/lib/adminSubmissionStatus"
-import { ArrowLeft } from "lucide-react"
+import { ArrowLeft, Stethoscope } from "lucide-react"
+import AdminCompactEmptyState from "@/components/admin/AdminCompactEmptyState"
 
 type CompanyProfile = {
   id: string
@@ -134,9 +135,15 @@ const AdminDiagnosticList = () => {
       )}
 
       {!isLoading && !error && filteredRows.length === 0 && (
-        <p className="rounded-2xl border border-dashed border-black/10 bg-white/70 px-4 py-10 text-center font-urbanist text-base text-black/60">
-          No submissions match this filter.
-        </p>
+        <AdminCompactEmptyState
+          icon={Stethoscope}
+          title="No submissions match this filter"
+          description={
+            statusFilter === "all"
+              ? "Startup diagnostic submissions will appear here."
+              : `No diagnostics with status “${statusFilter}”.`
+          }
+        />
       )}
 
       <ul className="space-y-3">

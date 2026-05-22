@@ -15,7 +15,8 @@ import {
   type StatusFilterValue,
   type SubmissionStatus,
 } from "@/lib/adminSubmissionStatus"
-import { ArrowLeft } from "lucide-react"
+import { ArrowLeft, Inbox } from "lucide-react"
+import AdminCompactEmptyState from "@/components/admin/AdminCompactEmptyState"
 
 export type ContactSubmission = {
   id: string
@@ -133,9 +134,15 @@ const AdminContactList = () => {
       )}
 
       {!isLoading && !error && filteredRows.length === 0 && (
-        <p className="rounded-2xl border border-dashed border-black/10 bg-white/70 px-4 py-10 text-center font-urbanist text-base text-black/60">
-          No submissions match this filter.
-        </p>
+        <AdminCompactEmptyState
+          icon={Inbox}
+          title="No submissions match this filter"
+          description={
+            statusFilter === "all"
+              ? "Contact form messages will appear here."
+              : `No contact messages with status “${statusFilter}”.`
+          }
+        />
       )}
 
       <ul className="space-y-3">
