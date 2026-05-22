@@ -17,24 +17,15 @@ const isContentRow = (row: {
   !row._type.startsWith("sanity.") &&
   row._type !== "system.schema"
 
+/** Unpublished Sanity drafts only — published docs stay in Studio, not this queue. */
 export const fetchCmsContentQueue = async (): Promise<SanityContentRow[]> => {
-  const [draftRows, recentRows] = await Promise.all([
-    sanityFetch<{ _id: string; _type: string; title?: string; _updatedAt?: string }[]>("sanityDrafts"),
-    sanityFetch<{ _id: string; _type: string; title?: string; _updatedAt?: string }[]>("sanityRecentEdits"),
-  ])
+  const draftRows = await sanityFetch<{ _id: string; _type: string; title?: string; _updatedAt?: string }[]>(
+    "sanityDrafts",
+  )
 
-  const drafts = (Array.isArray(draftRows) ? draftRows : [])
+  return (Array.isArray(draftRows) ? draftRows : [])
     .filter(isContentRow)
     .map((row) => ({ ...row, status: "unpublished" as const }))
-
-  const draftBaseIds = new Set(drafts.map((d) => d._id.replace(/^drafts\./, "")))
-
-  const published = (Array.isArray(recentRows) ? recentRows : [])
-    .filter(isContentRow)
-    .filter((row) => !draftBaseIds.has(row._id))
-    .map((row) => ({ ...row, status: "published" as const }))
-
-  return [...drafts, ...published]
 }
 
 export const cmsContentQueryKey = () => ["admin-sanity-content-queue", getSanityDataset() || "none"] as const

@@ -21,11 +21,16 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { NETWORK_PATH_ROLE_TAG } from "@/lib/networkPathRoles";
 import { isSanityConfigured } from "@/lib/sanity";
 import { allowCmsSeedFallbacks } from "@/lib/deploymentEnv";
-import { isAnyCmsQueryLoading, isCmsListAwaitingData } from "@/lib/cmsQueryState";
+import { isCmsQueryLoading } from "@/lib/cmsQueryState";
 import {
   DirectoryFilterSelectSkeleton,
   DirectoryGridSkeleton,
 } from "@/components/cms/CmsPageLoadingShell";
+import {
+  directoryGroupHasCountry,
+  getCountryFilterOptions,
+  getDirectoryGroupOptionLabels,
+} from "@/lib/directoryFilterOptions";
 
 const DIRECTORY_TITLE_CLASS =
   "font-host-grotesk text-4xl font-extrabold tracking-tight text-black md:text-5xl";
@@ -104,11 +109,10 @@ export default function AdvisorsDirectory() {
   const { data: cmsFilters } = advisorFiltersQuery;
   const filterGroupsQuery = useDirectoryFilterGroups();
   const { data: cmsFilterGroups } = filterGroupsQuery;
-  const directoryFiltersLoading =
+  const filterUiLoading =
     isSanityConfigured() &&
-    (isAnyCmsQueryLoading(advisorsQuery, advisorFiltersQuery, filterGroupsQuery) ||
-      isCmsListAwaitingData(advisorsQuery) ||
-      isCmsListAwaitingData(filterGroupsQuery));
+    (isCmsQueryLoading(filterGroupsQuery) || isCmsQueryLoading(advisorFiltersQuery))
+  const advisorsListLoading = isSanityConfigured() && isCmsQueryLoading(advisorsQuery)
   const [query, setQuery] = useState("");
   const [legacyFilter, setLegacyFilter] = useState<string>("all")
   const [groupFilters, setGroupFilters] = useState<Record<string, string>>({})
@@ -140,61 +144,17 @@ export default function AdvisorsDirectory() {
       .sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0) || a.title.localeCompare(b.title))
   }, [cmsFilterGroups])
 
-  const dynamicGroupOptions = useMemo(() => {
-    const optionsByGroupId = new Map<string, string[]>()
+  const dynamicGroupOptions = useMemo(
+    () => getDirectoryGroupOptionLabels(dynamicGroups, advisors as never[]),
+    [advisors, dynamicGroups],
+  )
 
-    for (const group of dynamicGroups) {
-      const base = new Set<string>()
-      const suggested = Array.isArray(group.options) ? group.options : []
-      for (const opt of suggested) {
-        const label = (opt?.label ?? "").trim()
-        if (label) base.add(label)
-      }
-      optionsByGroupId.set(group.id, Array.from(base))
-    }
+  const showStandaloneCountryFilter = dynamicGroups.length === 0 || !directoryGroupHasCountry(dynamicGroups)
 
-    // Pull any values that exist on advisors so new groups “just work”
-    for (const a of advisors as any[]) {
-      const assignments = Array.isArray(a?.directoryFilters) ? a.directoryFilters : []
-      for (const assignment of assignments) {
-        const groupId = (assignment?.groupId ?? "").trim()
-        if (!groupId) continue
-        if (!optionsByGroupId.has(groupId)) optionsByGroupId.set(groupId, [])
-        const current = new Set(optionsByGroupId.get(groupId) ?? [])
-        const values = Array.isArray(assignment?.values) ? assignment.values : []
-        for (const v of values) {
-          const label = typeof v === "string" ? v.trim() : ""
-          if (label) current.add(label)
-        }
-        optionsByGroupId.set(groupId, Array.from(current))
-      }
-    }
-
-    for (const [groupId, opts] of optionsByGroupId.entries()) {
-      optionsByGroupId.set(groupId, opts.sort((a, b) => a.localeCompare(b)))
-    }
-
-    return optionsByGroupId
-  }, [advisors, dynamicGroups])
-
-  const countryFilters = useMemo<Array<{ id: string; label: string }>>(() => {
-    const list = new Set<string>();
-    advisors.forEach((a: any) => {
-      if (Array.isArray(a.country)) {
-        a.country.forEach((ct: string) => {
-          if (ct?.trim()) list.add(ct.trim());
-        });
-      } else if (typeof a.country === "string" && a.country.trim()) {
-        list.add(a.country.trim());
-      }
-    });
-    return [
-      { id: "all", label: "All Countries" },
-      ...Array.from(list)
-        .sort((a, b) => a.localeCompare(b))
-        .map((ct) => ({ id: ct, label: ct })),
-    ];
-  }, [advisors]);
+  const countryFilters = useMemo<Array<{ id: string; label: string }>>(
+    () => getCountryFilterOptions(dynamicGroups, advisors as never[]),
+    [advisors, dynamicGroups],
+  )
 
   const filterOptions = useMemo<Array<{ id: string; label: string }>>(() => {
     if (Array.isArray(cmsFilters) && cmsFilters.length > 0) {
@@ -325,27 +285,28 @@ export default function AdvisorsDirectory() {
               </label>
 
               <div className="flex w-full flex-col gap-3 md:w-auto md:flex-row md:flex-wrap md:items-center">
-                {/* Country Filter Select */}
-                <div className="relative w-full md:w-auto">
-                  <select
-                    value={countryFilter}
-                    onChange={(e) => setCountryFilter(e.target.value)}
-                    className="h-14 w-full appearance-none rounded-2xl border border-black/10 bg-black/[0.02] pl-5 pr-14 md:min-w-[200px] font-urbanist text-base font-semibold text-black/80 outline-none hover:border-black/20 focus-visible:ring-2 focus-visible:ring-rellia-teal focus-visible:bg-white cursor-pointer"
-                    aria-label="Filter by Country"
-                  >
-                    {countryFilters.map((f) => (
-                      <option key={f.id} value={f.id}>
-                        {f.label}
-                      </option>
-                    ))}
-                  </select>
-                  <ChevronDown
-                    className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-black/45"
-                    aria-hidden
-                  />
-                </div>
+                {showStandaloneCountryFilter ? (
+                  <div className="relative w-full md:w-auto">
+                    <select
+                      value={countryFilter}
+                      onChange={(e) => setCountryFilter(e.target.value)}
+                      className="h-14 w-full appearance-none rounded-2xl border border-black/10 bg-black/[0.02] pl-5 pr-14 md:min-w-[200px] font-urbanist text-base font-semibold text-black/80 outline-none hover:border-black/20 focus-visible:ring-2 focus-visible:ring-rellia-teal focus-visible:bg-white cursor-pointer"
+                      aria-label="Filter by Country"
+                    >
+                      {countryFilters.map((f) => (
+                        <option key={f.id} value={f.id}>
+                          {f.label}
+                        </option>
+                      ))}
+                    </select>
+                    <ChevronDown
+                      className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-black/45"
+                      aria-hidden
+                    />
+                  </div>
+                ) : null}
 
-                {directoryFiltersLoading ? (
+                {filterUiLoading ? (
                   <>
                     <DirectoryFilterSelectSkeleton />
                     <DirectoryFilterSelectSkeleton />
@@ -427,7 +388,7 @@ export default function AdvisorsDirectory() {
               </p>
             </div>
 
-            {directoryFiltersLoading ? (
+            {advisorsListLoading ? (
               <DirectoryGridSkeleton />
             ) : advisors.length === 0 ? (
               <FilteredListEmptyState

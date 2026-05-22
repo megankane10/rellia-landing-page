@@ -103,8 +103,7 @@ const AdminDashboard = () => {
   const recentDiagnosticCount = useMemo(() => countRecentSubmissions(profiles), [profiles])
   const newThisWeek = recentContactCount + recentDiagnosticCount
 
-  const contentCount = cmsRows?.length ?? 0
-  const unpublishedCount = cmsRows?.filter((r) => r.status === "unpublished").length ?? 0
+  const draftCount = cmsRows?.length ?? 0
 
   const contactRecentHint =
     recentContactCount > 0
@@ -118,11 +117,9 @@ const AdminDashboard = () => {
 
   const contentRecentHint = cmsLoading
     ? "Loading…"
-    : contentCount === 0
-      ? "Nothing in queue"
-      : unpublishedCount > 0
-        ? `${unpublishedCount} unpublished · ${contentCount} total`
-        : `${contentCount} item${contentCount === 1 ? "" : "s"} in queue`
+    : draftCount === 0
+      ? "No unpublished drafts"
+      : `${draftCount} unpublished draft${draftCount === 1 ? "" : "s"}`
 
   return (
     <div className="space-y-10">

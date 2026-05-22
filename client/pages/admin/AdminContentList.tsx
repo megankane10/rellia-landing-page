@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react"
+import { useMemo } from "react"
 import { Link } from "react-router-dom"
 import { useQuery } from "@tanstack/react-query"
 import { ArrowLeft, ExternalLink } from "lucide-react"
@@ -10,16 +10,12 @@ import {
   isCmsContentEnabled,
 } from "@/lib/adminSanityContent"
 import { getSanityDataset } from "@/lib/sanity"
-import { cn } from "@/lib/utils"
-
-type ContentFilter = "all" | "unpublished" | "published"
 
 const STUDIO_HOME = "https://relliahealth.sanity.studio"
 
 const AdminContentList = () => {
   const dataset = getSanityDataset() || "not configured"
   const cmsConfigured = isCmsContentEnabled()
-  const [filter, setFilter] = useState<ContentFilter>("all")
 
   const { data, isLoading, error } = useQuery({
     queryKey: cmsContentQueryKey(),
@@ -28,28 +24,14 @@ const AdminContentList = () => {
     enabled: cmsConfigured,
   })
 
-  const allRows = data ?? []
-
-  const filtered = useMemo(() => {
-    if (filter === "unpublished") return allRows.filter((r) => r.status === "unpublished")
-    if (filter === "published") return allRows.filter((r) => r.status === "published")
-    return allRows
-  }, [allRows, filter])
+  const draftRows = data ?? []
 
   const counts = useMemo(
     () => ({
-      all: allRows.length,
-      unpublished: allRows.filter((r) => r.status === "unpublished").length,
-      published: allRows.filter((r) => r.status === "published").length,
+      drafts: draftRows.length,
     }),
-    [allRows],
+    [draftRows],
   )
-
-  const filterOptions: { id: ContentFilter; label: string }[] = [
-    { id: "all", label: `All (${counts.all})` },
-    { id: "unpublished", label: `Unpublished (${counts.unpublished})` },
-    { id: "published", label: `Recently edited (${counts.published})` },
-  ]
 
   return (
     <div className="space-y-8">
@@ -68,6 +50,12 @@ const AdminContentList = () => {
           </h1>
           <p className="mt-2 font-urbanist text-sm text-black/60">
             Dataset: <span className="font-medium text-rellia-teal">{dataset}</span>
+            {counts.drafts > 0 ? (
+              <>
+                {" "}
+                · <span className="font-medium text-black/70">{counts.drafts} unpublished</span>
+              </>
+            ) : null}
           </p>
         </div>
         <Button
@@ -97,58 +85,28 @@ const AdminContentList = () => {
             <p className="font-host-grotesk font-semibold text-rellia-teal">How this list works</p>
             <ul className="mt-2 list-disc space-y-1.5 pl-5">
               <li>
-                <strong>Draft</strong> — document exists only as an unpublished draft in Sanity (
-                <code className="text-xs">drafts.*</code> id). Not on the public site until you publish
-                in Studio.
+                Only <strong>unpublished drafts</strong> appear here (
+                <code className="text-xs">drafts.*</code> ids in Sanity). They are not on the public
+                site until you publish in Studio.
               </li>
               <li>
-                <strong>Published</strong> — document is published in this dataset and was edited
-                recently; there is no open draft for it right now.
+                <strong>Published</strong> documents are not listed — they stay in Sanity after
+                publish and do not accumulate in this queue.
               </li>
               <li>
-                <strong>Categories</strong> — grouped by Sanity document type (
-                <code className="text-xs">_type</code>), e.g. <em>Advisor</em> vs{" "}
-                <em>Advisor filter tag</em> are different schemas, not duplicates.
+                <strong>Categories</strong> — grouped by document type (
+                <code className="text-xs">_type</code>), e.g. <em>Directory filter group</em> vs{" "}
+                <em>Advisor</em>.
               </li>
             </ul>
           </div>
 
-          <div
-            className="flex flex-wrap gap-2"
-            role="tablist"
-            aria-label="Filter content by status"
-          >
-            {filterOptions.map((opt) => (
-              <button
-                key={opt.id}
-                type="button"
-                role="tab"
-                aria-selected={filter === opt.id}
-                onClick={() => setFilter(opt.id)}
-                className={cn(
-                  "rounded-full border px-4 py-1.5 font-urbanist text-sm transition-colors",
-                  filter === opt.id
-                    ? "border-rellia-teal/30 bg-rellia-teal text-white"
-                    : "border-black/10 bg-white text-black/65 hover:border-rellia-teal/20 hover:text-rellia-teal",
-                )}
-              >
-                {opt.label}
-              </button>
-            ))}
-          </div>
-
           <AdminContentQueueList
-            rows={filtered}
+            rows={draftRows}
             isLoading={isLoading}
             error={error}
             dataset={dataset}
-            emptyTitle={
-              filter === "unpublished"
-                ? "No unpublished drafts"
-                : filter === "published"
-                  ? "No recently edited documents"
-                  : "No content in queue"
-            }
+            emptyTitle="No unpublished drafts"
             groupByType
           />
         </>

@@ -14,19 +14,29 @@ const AdminMailtoButton = ({
   body = "",
   label = "Email sender",
 }: AdminMailtoButtonProps) => {
-  const href = `mailto:${encodeURIComponent(email)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`
+  const trimmedEmail = email.trim()
+
+  const handleOpenMail = () => {
+    if (!trimmedEmail) return
+    const params = new URLSearchParams()
+    if (subject.trim()) params.set("subject", subject)
+    if (body.trim()) params.set("body", body)
+    const query = params.toString()
+    const href = query ? `mailto:${trimmedEmail}?${query}` : `mailto:${trimmedEmail}`
+    window.location.assign(href)
+  }
 
   return (
     <Button
       type="button"
       variant="outline"
-      asChild
+      disabled={!trimmedEmail}
+      onClick={handleOpenMail}
       className="rounded-full border-rellia-teal/25 text-rellia-teal hover:bg-rellia-mint/20"
+      aria-label={trimmedEmail ? `${label}: ${trimmedEmail}` : label}
     >
-      <a href={href} aria-label={`${label}: ${email}`}>
-        <Mail className="mr-2 h-4 w-4" aria-hidden />
-        {label}
-      </a>
+      <Mail className="mr-2 h-4 w-4" aria-hidden />
+      {label}
     </Button>
   )
 }

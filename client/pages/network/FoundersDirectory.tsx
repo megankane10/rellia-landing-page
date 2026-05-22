@@ -26,11 +26,16 @@ import {
 } from "@/data/founderDirectory";
 import { isSanityConfigured } from "@/lib/sanity";
 import { allowCmsSeedFallbacks } from "@/lib/deploymentEnv";
-import { isAnyCmsQueryLoading, isCmsListAwaitingData } from "@/lib/cmsQueryState";
+import { isCmsQueryLoading } from "@/lib/cmsQueryState";
 import {
   DirectoryFilterSelectSkeleton,
   DirectoryGridSkeleton,
 } from "@/components/cms/CmsPageLoadingShell";
+import {
+  directoryGroupHasCountry,
+  getCountryFilterOptions,
+  getDirectoryGroupOptionLabels,
+} from "@/lib/directoryFilterOptions";
 
 /** Gray-teal tone for directory heroes */
 const DIRECTORY_TITLE_CLASS =
@@ -109,11 +114,10 @@ export default function FoundersDirectory() {
   const { data: cmsSpecialties } = specialtiesQuery;
   const filterGroupsQuery = useDirectoryFilterGroups();
   const { data: cmsFilterGroups } = filterGroupsQuery;
-  const directoryFiltersLoading =
+  const filterUiLoading =
     isSanityConfigured() &&
-    (isAnyCmsQueryLoading(companiesQuery, specialtiesQuery, filterGroupsQuery) ||
-      isCmsListAwaitingData(companiesQuery) ||
-      isCmsListAwaitingData(filterGroupsQuery));
+    (isCmsQueryLoading(filterGroupsQuery) || isCmsQueryLoading(specialtiesQuery))
+  const companiesListLoading = isSanityConfigured() && isCmsQueryLoading(companiesQuery)
   const [query, setQuery] = useState("");
   const [specialtyFilter, setSpecialtyFilter] = useState<string>("all");
   const [countryFilter, setCountryFilter] = useState<string>("all");
@@ -223,20 +227,25 @@ export default function FoundersDirectory() {
     });
   }, [companies, cmsFilterGroups, groupFilters, query, specialtyFilter, countryFilter, businessModelFilter]);
 
-  const countryFilters = useMemo<Array<{ id: string; label: string }>>(() => {
-    const countries = new Set<string>();
-    for (const c of companies) {
-      if (Array.isArray(c.country)) {
-        c.country.forEach((ct) => {
-          if (ct) countries.add(ct);
-        });
-      }
-    }
-    return [
-      { id: "all", label: "All Countries" },
-      ...Array.from(countries).sort().map((c) => ({ id: c, label: c })),
-    ];
-  }, [companies]);
+  const dynamicGroups = useMemo(() => {
+    const groups = Array.isArray(cmsFilterGroups) ? cmsFilterGroups : []
+    return groups
+      .filter((g) => g && (g.appliesTo === "founders" || g.appliesTo === "both"))
+      .sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0) || a.title.localeCompare(b.title))
+  }, [cmsFilterGroups])
+
+  const dynamicGroupOptions = useMemo(
+    () => getDirectoryGroupOptionLabels(dynamicGroups, companies as never[]),
+    [companies, dynamicGroups],
+  )
+
+  const showStandaloneCountryFilter =
+    dynamicGroups.length === 0 || !directoryGroupHasCountry(dynamicGroups)
+
+  const countryFilters = useMemo<Array<{ id: string; label: string }>>(
+    () => getCountryFilterOptions(dynamicGroups, companies as never[]),
+    [companies, dynamicGroups],
+  )
 
   const businessModelFilters = useMemo<Array<{ id: string; label: string }>>(() => {
     const models = new Set<string>();
@@ -279,60 +288,6 @@ export default function FoundersDirectory() {
   useEffect(() => {
     setPage(1);
   }, [query, specialtyFilter, countryFilter, businessModelFilter, groupFilters]);
-
-  const dynamicGroups = useMemo(() => {
-    const groups = Array.isArray(cmsFilterGroups) ? cmsFilterGroups : []
-    return groups
-      .filter((g) => g && (g.appliesTo === "founders" || g.appliesTo === "both"))
-      .sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0) || a.title.localeCompare(b.title))
-  }, [cmsFilterGroups])
-
-  const dynamicGroupOptions = useMemo(() => {
-    const optionsByGroupId = new Map<string, string[]>()
-
-    for (const group of dynamicGroups) {
-      const base = new Set<string>()
-      const suggested = Array.isArray(group.options) ? group.options : []
-      for (const opt of suggested) {
-        const label = (opt?.label ?? "").trim()
-        if (label) base.add(label)
-      }
-
-      if (group.id === "country" || group.id.toLowerCase().includes("country")) {
-        for (const c of companies) {
-          if (Array.isArray(c.country)) {
-            c.country.forEach((ct) => {
-              if (ct) base.add(ct.trim());
-            });
-          }
-        }
-      }
-
-      optionsByGroupId.set(group.id, Array.from(base))
-    }
-
-    for (const c of companies as any[]) {
-      const assignments = Array.isArray(c?.directoryFilters) ? c.directoryFilters : []
-      for (const assignment of assignments) {
-        const groupId = (assignment?.groupId ?? "").trim()
-        if (!groupId) continue
-        if (!optionsByGroupId.has(groupId)) optionsByGroupId.set(groupId, [])
-        const current = new Set(optionsByGroupId.get(groupId) ?? [])
-        const values = Array.isArray(assignment?.values) ? assignment.values : []
-        for (const v of values) {
-          const label = typeof v === "string" ? v.trim() : ""
-          if (label) current.add(label)
-        }
-        optionsByGroupId.set(groupId, Array.from(current))
-      }
-    }
-
-    for (const [groupId, opts] of optionsByGroupId.entries()) {
-      optionsByGroupId.set(groupId, opts.sort((a, b) => a.localeCompare(b)))
-    }
-
-    return optionsByGroupId
-  }, [companies, dynamicGroups])
 
   const active = useMemo(
     () => companies.find((c) => c.id === activeId) ?? null,
@@ -413,7 +368,7 @@ export default function FoundersDirectory() {
                 />
               </label>
 
-              {directoryFiltersLoading ? (
+              {filterUiLoading ? (
                 <div className="flex w-full flex-col gap-3 md:w-auto md:flex-row md:flex-wrap md:items-center md:gap-4">
                   <DirectoryFilterSelectSkeleton />
                   <DirectoryFilterSelectSkeleton />
@@ -465,24 +420,25 @@ export default function FoundersDirectory() {
                 </div>
               ) : (
                 <div className="flex w-full flex-col gap-3 md:w-auto md:flex-row md:flex-wrap md:items-center md:gap-4">
-                  {/* Country Filter */}
-                  <div className="relative w-full md:w-auto">
-                    <select
-                      value={countryFilter}
-                      onChange={(e) => setCountryFilter(e.target.value)}
-                      className="h-14 w-full appearance-none rounded-2xl border border-black/10 bg-black/[0.02] pl-5 pr-14 md:min-w-[160px] font-urbanist text-base font-semibold text-black/80 outline-none hover:border-black/20 focus-visible:ring-2 focus-visible:ring-rellia-teal focus-visible:bg-white cursor-pointer"
-                    >
-                      {countryFilters.map((f) => (
-                        <option key={f.id} value={f.id}>
-                          {f.label}
-                        </option>
-                      ))}
-                    </select>
-                    <ChevronDown
-                      className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-black/45"
-                      aria-hidden
-                    />
-                  </div>
+                  {showStandaloneCountryFilter ? (
+                    <div className="relative w-full md:w-auto">
+                      <select
+                        value={countryFilter}
+                        onChange={(e) => setCountryFilter(e.target.value)}
+                        className="h-14 w-full appearance-none rounded-2xl border border-black/10 bg-black/[0.02] pl-5 pr-14 md:min-w-[160px] font-urbanist text-base font-semibold text-black/80 outline-none hover:border-black/20 focus-visible:ring-2 focus-visible:ring-rellia-teal focus-visible:bg-white cursor-pointer"
+                      >
+                        {countryFilters.map((f) => (
+                          <option key={f.id} value={f.id}>
+                            {f.label}
+                          </option>
+                        ))}
+                      </select>
+                      <ChevronDown
+                        className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-black/45"
+                        aria-hidden
+                      />
+                    </div>
+                  ) : null}
 
                   <div className="relative w-full md:w-auto">
                     <select
@@ -530,7 +486,7 @@ export default function FoundersDirectory() {
               </p>
             </div>
 
-            {directoryFiltersLoading ? (
+            {companiesListLoading ? (
               <DirectoryGridSkeleton />
             ) : companies.length === 0 ? (
               <FilteredListEmptyState
