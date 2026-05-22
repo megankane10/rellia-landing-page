@@ -22,6 +22,7 @@ import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo"
 import { buildPageUrl } from "@/config/seo"
 import FilteredListEmptyState from "@/components/FilteredListEmptyState"
 import { isSanityConfigured } from "@/lib/sanity"
+import { allowCmsSeedFallbacks } from "@/lib/deploymentEnv"
 import { useMemo, useState, useEffect } from "react"
 import { useLocation } from "react-router-dom"
 import { ShareIconCopy } from "@/components/share/sharePageIcons"
@@ -308,10 +309,10 @@ export default function CareersCms() {
   const [activeRole, setActiveRole] = useState<string | undefined>(undefined)
   const location = useLocation()
 
-  const openRoles = useMemo(
-    () => (!isSanityConfigured() ? [] : CAREERS_OPEN_ROLES),
-    [],
-  )
+  const openRoles = useMemo(() => {
+    if (!isSanityConfigured() || !allowCmsSeedFallbacks()) return []
+    return CAREERS_OPEN_ROLES
+  }, [])
 
   const handleCopyRoleLink = (roleId: string) => {
     const roleUrl = `${buildPageUrl("/careers")}#${roleId}`

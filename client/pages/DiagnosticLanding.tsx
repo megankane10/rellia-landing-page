@@ -14,7 +14,6 @@ import Footer from '@/components/Footer';
 import RelliaAction from '@/components/RelliaAction';
 import RouteSeo from '@/components/RouteSeo';
 import { motion } from 'framer-motion';
-import { isProductionHostname } from "@/lib/sanity";
 import { cn } from '@/lib/utils';
 import { PAGE_HEADER_TITLE_SIZE_CLASS } from '@/components/PageHeader';
 import type { HomeWhyFeature } from "@shared/cms/types";
@@ -142,7 +141,6 @@ const timelineSteps = [
 ];
 
 export default function DiagnosticLanding() {
-  const isProd = isProductionHostname()
   const [currentIndex, setCurrentIndex] = useState(0)
 
   useEffect(() => {
@@ -216,8 +214,8 @@ export default function DiagnosticLanding() {
                 size="comfortable" 
                 className="w-full min-w-0 justify-center sm:min-w-[220px] sm:w-auto"
               >
-                <Link to={isProd ? "/contact" : "/diagnostic-survey"}>
-                  {isProd ? "Ask about the diagnostic" : "Begin Free Assessment"}
+                <Link to="/diagnostic-survey">
+                  Begin Free Assessment
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </RelliaAction>

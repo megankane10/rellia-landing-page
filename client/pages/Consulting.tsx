@@ -10,11 +10,9 @@ import TestimonialsSection from "@/components/TestimonialsSection"
 import ProgramTrustedMembersSection from "@/components/program/ProgramTrustedMembersSection"
 import { useHomePage } from "@/hooks/useCmsDocuments"
 import { DEFAULT_HOME_PAGE } from "@shared/cms/defaults"
-import { CheckCircle2, Palette, ShieldCheck, Stethoscope, Megaphone, ArrowRight, Clock } from "lucide-react"
+import { CheckCircle2, Palette, ShieldCheck, Stethoscope, Megaphone, ArrowRight } from "lucide-react"
 import { Link } from "react-router-dom"
 import { CreamSection, LightSection, Reveal, RoleHero } from "./network/_shared"
-import { isProductionHostname } from "@/lib/sanity"
-import FilteredListEmptyState from "@/components/FilteredListEmptyState"
 
 const WHEN_TO_USE = [
   "You need scoped deep dives—FDA strategy, clinical evidence design, enterprise sales narrative—in focused sessions",
@@ -142,8 +140,6 @@ export default function Consulting() {
   const { data: homePage } = useHomePage()
   const home = homePage ?? DEFAULT_HOME_PAGE
 
-  const isProd = isProductionHostname()
-
   return (
     <div className="min-h-screen overflow-x-hidden bg-white font-host-grotesk">
       <Navbar />
@@ -165,24 +161,11 @@ export default function Consulting() {
           />
         </div>
 
-        {isProd ? (
-          <div className="py-24 md:py-40">
-            <FilteredListEmptyState
-              icon={Clock}
-              title="Consulting coming soon"
-              description="We're currently finalizing our consulting model to ensure high-impact delivery for every milestone. Check back shortly or contact us for immediate inquiries."
-            />
-          </div>
-        ) : (
-          <>
-            <FitSectionSplit />
-            <ServicesGridSection />
-            <ProgramTrustedMembersSection />
-          </>
-        )}
+        <FitSectionSplit />
+        <ServicesGridSection />
+        <ProgramTrustedMembersSection />
 
-        {!isProd && (
-          <LightSection className="bg-rellia-cream/20">
+        <LightSection className="bg-rellia-cream/20">
             <div className="mx-auto max-w-[1300px]">
         <div className="grid grid-cols-1 gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:items-start lg:gap-16">
                 <ScrollReveal>
@@ -243,7 +226,6 @@ export default function Consulting() {
               </div>
             </div>
           </LightSection>
-        )}
 
         <RelliaCta
           title="Not sure which **path** fits?"

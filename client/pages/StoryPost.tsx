@@ -5,6 +5,7 @@ import Footer from "@/components/Footer"
 import ScrollReveal from "@/components/ScrollReveal"
 import { cn } from "@/lib/utils"
 import { getStoryBySlug } from "@/content/stories"
+import { allowCmsSeedFallbacks } from "@/lib/deploymentEnv"
 import {
   buildPageUrl,
   clampMetaDescription,
@@ -30,7 +31,7 @@ import {
 export default function StoryPost() {
   const { slug } = useParams()
   const { data: cmsStory } = useStoryBySlug(slug ?? "")
-  const story = slug ? getStoryBySlug(slug) : undefined
+  const story = slug && allowCmsSeedFallbacks() ? getStoryBySlug(slug) : undefined
   const [copyState, setCopyState] = useState<"idle" | "copied">("idle")
 
   const canonical = cmsStory?.slug

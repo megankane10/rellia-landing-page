@@ -25,6 +25,7 @@ import {
   type Specialty,
 } from "@/data/founderDirectory";
 import { isSanityConfigured } from "@/lib/sanity";
+import { allowCmsSeedFallbacks } from "@/lib/deploymentEnv";
 
 /** Gray-teal tone for directory heroes */
 const DIRECTORY_TITLE_CLASS =
@@ -157,7 +158,7 @@ export default function FoundersDirectory() {
           }
         })
     }
-    return FOUNDER_DIRECTORY;
+    return allowCmsSeedFallbacks() ? FOUNDER_DIRECTORY : [];
   }, [cmsCompanies]);
 
   const filtered = useMemo(() => {

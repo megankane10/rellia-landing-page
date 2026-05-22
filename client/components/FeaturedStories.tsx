@@ -9,6 +9,7 @@ import { useEffect, useMemo, useState } from "react"
 import SectionHeading from "@/components/SectionHeading"
 import PillTag from "@/components/PillTag"
 import { useFeaturedStories } from "@/hooks/useCmsDocuments"
+import { allowCmsSeedFallbacks } from "@/lib/deploymentEnv"
 import { isSanityConfigured } from "@/lib/sanity"
 
 /** Auto-advance interval (progress bar uses same duration) */
@@ -52,7 +53,8 @@ export default function FeaturedStories({
       }))
       .filter((s) => s.slug && s.title && s.coverImageSrc)
 
-    return normalized.length > 0 ? normalized : getFeaturedStories()
+    if (normalized.length > 0) return normalized
+    return allowCmsSeedFallbacks() ? getFeaturedStories() : []
   }, [cmsFeatured])
   const [activeIndex, setActiveIndex] = useState(0)
   const [cycleKey, setCycleKey] = useState(0)

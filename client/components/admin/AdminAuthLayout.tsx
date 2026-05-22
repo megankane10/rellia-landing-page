@@ -3,6 +3,7 @@ import { Link } from "react-router-dom"
 import { motion } from "framer-motion"
 
 const SANITY_STUDIO_URL = "https://relliahealth.sanity.studio"
+const LOGO_SRC = "/images/logo-rellia-footer.webp"
 
 type AdminAuthLayoutProps = {
   title: string
@@ -59,7 +60,7 @@ const AdminAuthLayout = ({ title, description, children }: AdminAuthLayoutProps)
 
 const AdminAuthLeftPanel = () => {
   return (
-    <div className="relative flex min-h-[420px] lg:min-h-full flex-col overflow-hidden bg-rellia-teal px-6 py-16 lg:px-16">
+    <div className="relative flex min-h-[420px] lg:min-h-full flex-col overflow-hidden bg-rellia-teal px-6 py-10 lg:px-12 lg:py-12">
       <div className="absolute inset-0">
         <img
           src="/health_tech_collaboration_1778023064936.png"
@@ -76,10 +77,20 @@ const AdminAuthLeftPanel = () => {
         <div className="absolute bottom-[-5%] right-[-5%] h-[40%] w-[40%] rounded-full bg-rellia-mint/10 blur-[100px]" />
       </div>
 
-      <div className="relative z-10 flex flex-1 flex-col items-center justify-center px-4 text-center">
-        <p className="max-w-md font-urbanist text-2xl font-medium leading-snug text-white md:text-3xl lg:text-4xl">
-          The work you do here helps founders move faster—with clarity, care, and confidence.
-        </p>
+      <div className="relative z-10 flex flex-1 flex-col">
+        <Link
+          to="/"
+          className="inline-flex w-fit rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint"
+          aria-label="Rellia Health home"
+        >
+          <img src={LOGO_SRC} alt="Rellia Health" className="h-9 w-auto md:h-10" />
+        </Link>
+
+        <div className="flex flex-1 flex-col justify-center py-12 lg:py-16">
+          <p className="max-w-md text-left font-urbanist text-2xl font-medium leading-snug text-white md:text-3xl lg:text-4xl">
+            The work you do here helps founders move faster—with clarity, care, and confidence.
+          </p>
+        </div>
       </div>
 
       <div className="pointer-events-none absolute -bottom-24 -right-24 h-96 w-96 rounded-full bg-rellia-mint/15 blur-[120px]" />

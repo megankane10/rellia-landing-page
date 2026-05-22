@@ -9,6 +9,7 @@ import {
 } from "@/components/icons/SocialIcons";
 import { ShareIconCopy } from "@/components/share/sharePageIcons";
 import { FOUNDER_DIRECTORY } from "@/data/founderDirectory";
+import { allowCmsSeedFallbacks } from "@/lib/deploymentEnv";
 import NotFound from "../NotFound";
 import { cn } from "@/lib/utils";
 import {
@@ -33,7 +34,9 @@ export default function FounderProfile() {
           slug: cmsActive.id,
           logoName: cmsActive.name,
         }
-      : FOUNDER_DIRECTORY.find((c) => c.id === id);
+      : allowCmsSeedFallbacks()
+        ? FOUNDER_DIRECTORY.find((c) => c.id === id)
+        : undefined;
 
   const canonicalUrl = buildPageUrl(location.pathname);
   const [copied, setCopied] = useState(false);

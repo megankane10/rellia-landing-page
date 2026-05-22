@@ -16,6 +16,7 @@ import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo"
 import { HeroHeadlinePortable } from "@/components/HeroHeadlinePortable"
 import { DEFAULT_STORIES_PAGE_HEADLINE_PORTABLE } from "@shared/cms/inlineHeroHeadline"
 import { isSanityConfigured } from "@/lib/sanity"
+import { allowCmsSeedFallbacks } from "@/lib/deploymentEnv"
 
 const tags: Array<StoryTag | "All"> = ["All", "Founder Story", "Industry Insight", "Program Update"]
 
@@ -118,7 +119,8 @@ export default function Stories() {
       }))
       .filter((s) => s.slug && s.title && s.coverImageSrc)
 
-    return normalized.length > 0 ? normalized : STORIES
+    if (normalized.length > 0) return normalized
+    return allowCmsSeedFallbacks() ? STORIES : []
   }, [cmsStories])
 
   const filtered = useMemo(() => {
