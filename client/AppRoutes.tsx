@@ -54,6 +54,7 @@ import AdminCompany from "./pages/admin/AdminCompany"
 import AdminContactList from "./pages/admin/AdminContactList"
 import AdminContactDetail from "./pages/admin/AdminContactDetail"
 import AdminDiagnosticList from "./pages/admin/AdminDiagnosticList"
+import AdminContentList from "./pages/admin/AdminContentList"
 
 const RedirectFoundersDirectoryId = () => {
   const { id } = useParams<{ id: string }>()
@@ -169,6 +170,7 @@ export const AppRoutes = () => (
       <Route path="contacts" element={<AdminContactList />} />
       <Route path="contacts/:id" element={<AdminContactDetail />} />
       <Route path="diagnostics" element={<AdminDiagnosticList />} />
+      <Route path="content" element={<AdminContentList />} />
       <Route path="companies/:id" element={<AdminCompany />} />
     </Route>
 

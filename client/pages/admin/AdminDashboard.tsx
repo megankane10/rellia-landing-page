@@ -1,7 +1,6 @@
 import { useMemo } from "react"
 import { useQuery } from "@tanstack/react-query"
 import { supabase } from "@/lib/supabase"
-import AdminSanityDrafts from "@/components/admin/AdminSanityDrafts"
 import AdminSystemStatus from "@/components/admin/AdminSystemStatus"
 import AdminSubmissionHubCard from "@/components/admin/AdminSubmissionHubCard"
 import {
@@ -9,7 +8,12 @@ import {
   isActiveSubmissionStatus,
   type SubmissionStatus,
 } from "@/lib/adminSubmissionStatus"
-import { CalendarClock, Inbox, Mail, Stethoscope } from "lucide-react"
+import {
+  cmsContentQueryKey,
+  fetchCmsContentQueue,
+  isCmsContentEnabled,
+} from "@/lib/adminSanityContent"
+import { CalendarClock, FileEdit, Inbox, Mail, Stethoscope } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 type CompanyProfileRow = {
@@ -43,24 +47,32 @@ type OverviewStatProps = {
   icon: typeof Inbox
   value: string | number
   label: string
+  accentClass: string
 }
 
-const OverviewStat = ({ icon: Icon, value, label }: OverviewStatProps) => (
+const OverviewStat = ({ icon: Icon, value, label, accentClass }: OverviewStatProps) => (
   <div
     className={cn(
-      "rounded-2xl border border-black/[0.06] border-l-4 border-l-rellia-mint bg-rellia-greyTeal px-5 py-5 shadow-sm",
+      "relative overflow-hidden rounded-2xl border border-black/[0.06] bg-white p-5 shadow-[0_12px_40px_-24px_rgba(13,53,64,0.35)]",
+      accentClass,
     )}
   >
-    <div className="flex items-start justify-between gap-3">
+    <div
+      className="pointer-events-none absolute -right-6 -top-6 h-24 w-24 rounded-full bg-rellia-mint/20 blur-2xl"
+      aria-hidden
+    />
+    <div className="relative flex items-start justify-between gap-3">
       <div>
-        <p className="font-urbanist text-xs font-medium uppercase tracking-[0.1em] text-black/50">
+        <p className="font-urbanist text-xs font-medium uppercase tracking-[0.1em] text-black/45">
           {label}
         </p>
         <p className="mt-2 font-host-grotesk text-3xl font-bold tracking-tight text-rellia-teal">
           {value}
         </p>
       </div>
-      <Icon className="h-6 w-6 shrink-0 text-rellia-teal/50" aria-hidden strokeWidth={1.5} />
+      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-rellia-mint/25 text-rellia-teal">
+        <Icon className="h-5 w-5" aria-hidden strokeWidth={1.5} />
+      </span>
     </div>
   </div>
 )
@@ -69,6 +81,14 @@ const AdminDashboard = () => {
   const { data, isLoading, error } = useQuery({
     queryKey: ["admin-dashboard-overview"],
     queryFn: fetchDashboardData,
+  })
+
+  const cmsEnabled = isCmsContentEnabled()
+  const { data: cmsRows, isLoading: cmsLoading } = useQuery({
+    queryKey: cmsContentQueryKey(),
+    queryFn: fetchCmsContentQueue,
+    staleTime: 60_000,
+    enabled: cmsEnabled,
   })
 
   const profiles = data?.profiles ?? []
@@ -83,6 +103,9 @@ const AdminDashboard = () => {
   const recentDiagnosticCount = useMemo(() => countRecentSubmissions(profiles), [profiles])
   const newThisWeek = recentContactCount + recentDiagnosticCount
 
+  const contentCount = cmsRows?.length ?? 0
+  const unpublishedCount = cmsRows?.filter((r) => r.status === "unpublished").length ?? 0
+
   const contactRecentHint =
     recentContactCount > 0
       ? `${recentContactCount} new this week`
@@ -93,35 +116,41 @@ const AdminDashboard = () => {
       ? `${recentDiagnosticCount} new this week`
       : "No new submissions this week"
 
+  const contentRecentHint = cmsLoading
+    ? "Loading…"
+    : contentCount === 0
+      ? "Nothing in queue"
+      : unpublishedCount > 0
+        ? `${unpublishedCount} unpublished · ${contentCount} total`
+        : `${contentCount} item${contentCount === 1 ? "" : "s"} in queue`
+
   return (
     <div className="space-y-10">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <h1 className="font-host-grotesk text-2xl font-bold tracking-tight text-black md:text-3xl">
-            Overview
-          </h1>
-          <p className="mt-2 max-w-xl font-urbanist text-base text-black/65">
-            Form submissions, Sanity drafts, and connection health for this environment.
-          </p>
-        </div>
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <h1 className="font-host-grotesk text-2xl font-bold tracking-tight text-black md:text-3xl">
+          Overview
+        </h1>
         <AdminSystemStatus />
       </div>
 
-      <div className="grid gap-3 sm:grid-cols-3">
+      <div className="grid gap-4 sm:grid-cols-3">
         <OverviewStat
           icon={Inbox}
           value={isLoading ? "—" : activeInquiries}
           label="Active inquiries"
+          accentClass="ring-1 ring-rellia-teal/10"
         />
         <OverviewStat
           icon={Stethoscope}
           value={isLoading ? "—" : profiles.length}
           label="Diagnostic submissions"
+          accentClass="ring-1 ring-rellia-mint/30"
         />
         <OverviewStat
           icon={CalendarClock}
           value={isLoading ? "—" : newThisWeek}
           label="New this week"
+          accentClass="ring-1 ring-black/5"
         />
       </div>
 
@@ -133,7 +162,7 @@ const AdminDashboard = () => {
 
       <section className="space-y-4">
         <h2 className="font-host-grotesk text-lg font-semibold text-black">View submissions</h2>
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           <AdminSubmissionHubCard
             title="Contact Form"
             to="/admin/contacts"
@@ -146,10 +175,14 @@ const AdminDashboard = () => {
             recentHint={diagnosticRecentHint}
             icon={Stethoscope}
           />
+          <AdminSubmissionHubCard
+            title="Content drafts"
+            to="/admin/content"
+            recentHint={contentRecentHint}
+            icon={FileEdit}
+          />
         </div>
       </section>
-
-      <AdminSanityDrafts />
     </div>
   )
 }

@@ -24,19 +24,21 @@ const AdminSubmissionHubCard = ({
     )}
     aria-label={`${title}, ${recentHint}`}
   >
-    <div className="flex items-start justify-between gap-3">
-      <div className="min-w-0">
-        <Icon className="h-8 w-8 shrink-0 text-rellia-teal md:h-9 md:w-9" aria-hidden strokeWidth={1.5} />
-        <p className="mt-3 font-host-grotesk text-xl font-semibold leading-tight text-black md:text-2xl">
-          {title}
-        </p>
-      </div>
+    <div className="flex justify-end">
       <ArrowUpRight
         className="h-4 w-4 shrink-0 text-black/25 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-rellia-teal"
         aria-hidden
       />
     </div>
-    <p className="mt-6 text-right font-urbanist text-sm text-black/60">{recentHint}</p>
+    <div className="flex items-end justify-between gap-4">
+      <div className="min-w-0">
+        <Icon className="h-8 w-8 shrink-0 text-rellia-teal" aria-hidden strokeWidth={1.5} />
+        <p className="mt-3 font-host-grotesk text-base font-semibold leading-tight text-black">
+          {title}
+        </p>
+      </div>
+      <p className="shrink-0 pb-0.5 text-right font-urbanist text-sm text-black/60">{recentHint}</p>
+    </div>
   </Link>
 )
 
