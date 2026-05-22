@@ -35,8 +35,27 @@ export const DirectoryFilterSelectSkeleton = () => (
   />
 )
 
-export const DirectoryGridSkeleton = () => (
-  <div className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3" aria-hidden>
+/** Full advisors directory toolbar placeholder — avoids skeletons stacking beside real controls. */
+export const AdvisorsDirectoryToolbarSkeleton = () => (
+  <div
+    className="mb-10 flex flex-col gap-4 md:flex-row md:items-center"
+    aria-busy="true"
+    aria-label="Loading directory filters"
+  >
+    <div className="h-14 w-full flex-1 animate-pulse rounded-2xl border border-black/10 bg-black/[0.04]" />
+    <div className="flex w-full flex-col gap-3 md:w-auto md:flex-row md:flex-wrap md:items-center">
+      <DirectoryFilterSelectSkeleton />
+      <DirectoryFilterSelectSkeleton />
+      <DirectoryFilterSelectSkeleton />
+    </div>
+  </div>
+)
+
+export const DirectoryGridSkeleton = ({ className }: { className?: string }) => (
+  <div
+    className={cn("mt-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3", className)}
+    aria-hidden
+  >
     {Array.from({ length: 6 }).map((_, index) => (
       <div
         key={index}

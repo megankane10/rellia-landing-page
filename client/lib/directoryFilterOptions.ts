@@ -90,3 +90,42 @@ export const getCountryFilterOptions = (
 
 export const directoryGroupHasCountry = (groups: DirectoryFilterGroup[]): boolean =>
   groups.some(isCountryGroup)
+
+export const isExpertiseGroup = (group: DirectoryFilterGroup): boolean => {
+  const id = (group.id ?? "").toLowerCase()
+  const title = (group.title ?? "").toLowerCase()
+  return (
+    id === "expertise" ||
+    id.includes("expertise") ||
+    title === "expertise" ||
+    title.includes("expertise") ||
+    title === "specialty" ||
+    title.includes("specialty")
+  )
+}
+
+export const findExpertiseGroup = (
+  groups: DirectoryFilterGroup[],
+): DirectoryFilterGroup | undefined => groups.find(isExpertiseGroup)
+
+/** Union CMS options, advisorFilter docs, and canonical labels (full expertise list). */
+export const mergeExpertiseOptionLabels = (
+  current: string[],
+  advisorFilterLabels: string[],
+  canonicalLabels: string[],
+): string[] => {
+  const merged = new Set<string>()
+  for (const label of canonicalLabels) {
+    const trimmed = label.trim()
+    if (trimmed) merged.add(trimmed)
+  }
+  for (const label of advisorFilterLabels) {
+    const trimmed = label.trim()
+    if (trimmed) merged.add(trimmed)
+  }
+  for (const label of current) {
+    const trimmed = label.trim()
+    if (trimmed) merged.add(trimmed)
+  }
+  return Array.from(merged).sort((a, b) => a.localeCompare(b))
+}

@@ -22,14 +22,13 @@ import { NETWORK_PATH_ROLE_TAG } from "@/lib/networkPathRoles";
 import { isSanityConfigured } from "@/lib/sanity";
 import { allowCmsSeedFallbacks } from "@/lib/deploymentEnv";
 import { isCmsQueryLoading } from "@/lib/cmsQueryState";
-import {
-  DirectoryFilterSelectSkeleton,
-  DirectoryGridSkeleton,
-} from "@/components/cms/CmsPageLoadingShell";
+import { AdvisorsDirectoryToolbarSkeleton, DirectoryGridSkeleton } from "@/components/cms/CmsPageLoadingShell";
 import {
   directoryGroupHasCountry,
+  findExpertiseGroup,
   getCountryFilterOptions,
   getDirectoryGroupOptionLabels,
+  mergeExpertiseOptionLabels,
 } from "@/lib/directoryFilterOptions";
 
 const DIRECTORY_TITLE_CLASS =
@@ -119,16 +118,6 @@ export default function AdvisorsDirectory() {
   const location = useLocation();
   const [countryFilter, setCountryFilter] = useState<string>("all");
 
-  useEffect(() => {
-    const params = new URLSearchParams(location.search);
-    const country = params.get("country");
-    if (country) setCountryFilter(country);
-    const specialty = params.get("specialty");
-    if (specialty) {
-      setLegacyFilter(specialty);
-      setGroupFilters((prev) => ({ ...prev, "directoryFilterGroup-expertise": specialty }));
-    }
-  }, [location.search]);
   const advisors = useMemo<AdvisorDirectoryEntry[]>(() => {
     if (!isSanityConfigured()) return []
 
@@ -144,10 +133,45 @@ export default function AdvisorsDirectory() {
       .sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0) || a.title.localeCompare(b.title))
   }, [cmsFilterGroups])
 
-  const dynamicGroupOptions = useMemo(
-    () => getDirectoryGroupOptionLabels(dynamicGroups, advisors as never[]),
-    [advisors, dynamicGroups],
+  const expertiseGroup = useMemo(
+    () => findExpertiseGroup(dynamicGroups),
+    [dynamicGroups],
   )
+
+  const canonicalExpertiseLabels = useMemo(
+    () =>
+      ADVISOR_FILTER_OPTIONS.filter((f) => f.id !== "all").map((f) => f.label),
+    [],
+  )
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const country = params.get("country");
+    if (country) setCountryFilter(country);
+    const specialty = params.get("specialty");
+    if (specialty) {
+      setLegacyFilter(specialty);
+      if (expertiseGroup?.id) {
+        setGroupFilters((prev) => ({ ...prev, [expertiseGroup.id]: specialty }));
+      }
+    }
+  }, [location.search, expertiseGroup?.id])
+
+  const dynamicGroupOptions = useMemo(() => {
+    const map = getDirectoryGroupOptionLabels(dynamicGroups, advisors as never[])
+    const expertise = findExpertiseGroup(dynamicGroups)
+    if (!expertise) return map
+
+    const cmsFilterLabels = Array.isArray(cmsFilters)
+      ? cmsFilters.map((f) => f.label).filter(Boolean)
+      : []
+    const current = map.get(expertise.id) ?? []
+    map.set(
+      expertise.id,
+      mergeExpertiseOptionLabels(current, cmsFilterLabels, canonicalExpertiseLabels),
+    )
+    return map
+  }, [advisors, canonicalExpertiseLabels, cmsFilters, dynamicGroups])
 
   const showStandaloneCountryFilter = dynamicGroups.length === 0 || !directoryGroupHasCountry(dynamicGroups)
 
@@ -157,14 +181,12 @@ export default function AdvisorsDirectory() {
   )
 
   const filterOptions = useMemo<Array<{ id: string; label: string }>>(() => {
-    if (Array.isArray(cmsFilters) && cmsFilters.length > 0) {
-      return [{ id: "all", label: "All Specialties" }, ...cmsFilters.map((f) => ({ id: f.label, label: f.label }))]
-    }
-    return [
-      { id: "all", label: "All Specialties" },
-      ...(ADVISOR_FILTER_OPTIONS as Array<{ id: string; label: string }>).filter((f) => f.id !== "all")
-    ]
-  }, [cmsFilters])
+    const cmsFilterLabels = Array.isArray(cmsFilters)
+      ? cmsFilters.map((f) => f.label).filter(Boolean)
+      : []
+    const labels = mergeExpertiseOptionLabels([], cmsFilterLabels, canonicalExpertiseLabels)
+    return [{ id: "all", label: "All Specialties" }, ...labels.map((label) => ({ id: label, label }))]
+  }, [canonicalExpertiseLabels, cmsFilters])
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -263,7 +285,9 @@ export default function AdvisorsDirectory() {
 
         <section className="py-12 md:py-16">
           <div className="mx-auto max-w-[1300px] px-6 md:px-10">
-            {/* Top Filter Bar */}
+            {filterUiLoading ? (
+              <AdvisorsDirectoryToolbarSkeleton />
+            ) : (
             <div className="mb-10 flex flex-col gap-4 md:flex-row md:items-center">
               <label className="relative flex-1 block">
                 <span className="sr-only">Search advisors</span>
@@ -306,12 +330,7 @@ export default function AdvisorsDirectory() {
                   </div>
                 ) : null}
 
-                {filterUiLoading ? (
-                  <>
-                    <DirectoryFilterSelectSkeleton />
-                    <DirectoryFilterSelectSkeleton />
-                  </>
-                ) : dynamicGroups.length > 0 ? (
+                {dynamicGroups.length > 0 ? (
                   <>
                     {dynamicGroups.map((g) => {
                       const options = dynamicGroupOptions.get(g.id) ?? []
@@ -381,15 +400,18 @@ export default function AdvisorsDirectory() {
                 )}
               </div>
             </div>
+            )}
 
+            {!advisorsListLoading ? (
             <div className="mb-6 flex items-center justify-between border-b border-black/10 pb-4">
               <p className="font-urbanist text-sm font-semibold text-black/60">
                 Showing {paginated.length} of {filtered.length} results
               </p>
             </div>
+            ) : null}
 
             {advisorsListLoading ? (
-              <DirectoryGridSkeleton />
+              <DirectoryGridSkeleton className="mt-0" />
             ) : advisors.length === 0 ? (
               <FilteredListEmptyState
                 className="mt-10"
