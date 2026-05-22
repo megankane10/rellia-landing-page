@@ -5,5 +5,6 @@ dist/
 .pnpm-store/
 .cursor/
 .agent-tools/
-data/
+# Root-only: do not use `data/` — that also excludes client/data/ (founder/advisor seeds)
+/data/
 *.local
