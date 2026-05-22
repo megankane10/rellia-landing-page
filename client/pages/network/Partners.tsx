@@ -230,14 +230,15 @@ function ExclusiveDirectorySplit() {
 }
 
 export default function Partners() {
-  const { data: page, isLoading } = useNetworkPartnersPage()
+  const partnersPageQuery = useNetworkPartnersPage()
+  const { data: page } = partnersPageQuery
   useApplyCmsSeo(page?.seo)
 
   const useModularLayout =
     Boolean(page?.useModularPage) && (page?.sections?.length ?? 0) > 0
 
   if (useModularLayout) {
-    return <NetworkCmsPage page={page} isLoading={isLoading} />
+    return <NetworkCmsPage page={page} query={partnersPageQuery} />
   }
 
   return (

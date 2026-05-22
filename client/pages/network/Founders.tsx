@@ -716,14 +716,15 @@ function ExploreNetworkSection() {
 }
 
 export default function Founders() {
-  const { data: page, isLoading } = useNetworkFoundersPage()
+  const foundersPageQuery = useNetworkFoundersPage()
+  const { data: page } = foundersPageQuery
   useApplyCmsSeo(page?.seo)
 
   const useModularLayout =
     Boolean(page?.useModularPage) && (page?.sections?.length ?? 0) > 0
 
   if (useModularLayout) {
-    return <NetworkCmsPage page={page} isLoading={isLoading} />
+    return <NetworkCmsPage page={page} query={foundersPageQuery} />
   }
 
   return (

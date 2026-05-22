@@ -30,10 +30,50 @@ import {
   resolveProgramCardImageSrc,
 } from "@shared/cms/itemCardImage"
 import {
+  fetchAdvisorsForPrerender,
+  fetchAlumniCompaniesForPrerender,
+  fetchDirectoryFilterGroupsForPrerender,
   fetchEventBySlugForPrerender,
+  fetchEventsForPrerender,
+  fetchPageBySlugForPrerender,
   fetchProgramBySlugForPrerender,
   fetchStoryBySlugForPrerender,
 } from "@shared/cms/prerenderSanity"
+
+const RESERVED_FIRST_SEGMENTS = new Set([
+  "about",
+  "faq",
+  "careers",
+  "events",
+  "programs",
+  "network",
+  "apply",
+  "consulting",
+  "founders",
+  "advisors",
+  "investors",
+  "industry-partners",
+  "partners",
+  "contact",
+  "membership",
+  "stories",
+  "terms",
+  "privacy",
+  "policy",
+  "diagnostics",
+  "diagnostic-survey",
+  "survey",
+  "studio",
+  "admin",
+])
+
+const getSingleSegmentSlug = (pathname: string): string => {
+  const clean = pathname.trim().replace(/\/+$/, "")
+  if (!clean || clean === "/") return ""
+  const raw = clean.startsWith("/") ? clean.slice(1) : clean
+  if (!raw || raw.includes("/")) return ""
+  return raw
+}
 
 const prerenderQueryClient = new QueryClient({
   defaultOptions: {
@@ -262,6 +302,53 @@ export const prerender = async (data: { url: string }) => {
         queryFn: async () => prefetched.story,
       })
     }
+  }
+
+  if (pathname === "/events") {
+    const events = await fetchEventsForPrerender()
+    await prerenderQueryClient.prefetchQuery({
+      queryKey: ["cms", "events"],
+      queryFn: async () => events,
+    })
+  }
+
+  if (pathname === "/advisors/directory") {
+    const [advisors, filterGroups] = await Promise.all([
+      fetchAdvisorsForPrerender(),
+      fetchDirectoryFilterGroupsForPrerender(),
+    ])
+    await prerenderQueryClient.prefetchQuery({
+      queryKey: ["cms", "advisors"],
+      queryFn: async () => advisors,
+    })
+    await prerenderQueryClient.prefetchQuery({
+      queryKey: ["cms", "directoryFilterGroups"],
+      queryFn: async () => filterGroups,
+    })
+  }
+
+  if (pathname === "/founders/alumni") {
+    const [companies, filterGroups] = await Promise.all([
+      fetchAlumniCompaniesForPrerender(),
+      fetchDirectoryFilterGroupsForPrerender(),
+    ])
+    await prerenderQueryClient.prefetchQuery({
+      queryKey: ["cms", "alumniCompanies"],
+      queryFn: async () => companies,
+    })
+    await prerenderQueryClient.prefetchQuery({
+      queryKey: ["cms", "directoryFilterGroups"],
+      queryFn: async () => filterGroups,
+    })
+  }
+
+  const cmsPageSlug = getSingleSegmentSlug(pathname)
+  if (cmsPageSlug && !RESERVED_FIRST_SEGMENTS.has(cmsPageSlug.toLowerCase())) {
+    const page = await fetchPageBySlugForPrerender(cmsPageSlug)
+    await prerenderQueryClient.prefetchQuery({
+      queryKey: ["cms", "page", cmsPageSlug],
+      queryFn: async () => page,
+    })
   }
 
   const itemSeo = isItemDetailPath(pathname)

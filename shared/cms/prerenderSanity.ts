@@ -1,6 +1,11 @@
 import { createClient, type SanityClient } from "@sanity/client"
 import {
+  advisorsQuery,
+  alumniCompaniesQuery,
+  directoryFilterGroupsQuery,
   eventBySlugQuery,
+  eventsQuery,
+  pageBySlugQuery,
   programBySlugQuery,
   storyBySlugQuery,
   storiesQuery,
@@ -58,6 +63,57 @@ export const fetchProgramBySlugForPrerender = (slug: string) =>
 
 export const fetchStoryBySlugForPrerender = (slug: string) =>
   fetchBySlug(storyBySlugQuery, slug)
+
+export const fetchEventsForPrerender = async (): Promise<Record<string, unknown>[]> => {
+  const client = getPrerenderSanityClient()
+  if (!client) return []
+  try {
+    const rows = await client.fetch<Record<string, unknown>[]>(eventsQuery)
+    return Array.isArray(rows) ? rows : []
+  } catch {
+    return []
+  }
+}
+
+export const fetchPageBySlugForPrerender = (slug: string) =>
+  fetchBySlug(pageBySlugQuery, slug)
+
+export const fetchAdvisorsForPrerender = async (): Promise<Record<string, unknown>[]> => {
+  const client = getPrerenderSanityClient()
+  if (!client) return []
+  try {
+    const rows = await client.fetch<Record<string, unknown>[]>(advisorsQuery)
+    return Array.isArray(rows) ? rows : []
+  } catch {
+    return []
+  }
+}
+
+export const fetchAlumniCompaniesForPrerender = async (): Promise<
+  Record<string, unknown>[]
+> => {
+  const client = getPrerenderSanityClient()
+  if (!client) return []
+  try {
+    const rows = await client.fetch<Record<string, unknown>[]>(alumniCompaniesQuery)
+    return Array.isArray(rows) ? rows : []
+  } catch {
+    return []
+  }
+}
+
+export const fetchDirectoryFilterGroupsForPrerender = async (): Promise<
+  Record<string, unknown>[]
+> => {
+  const client = getPrerenderSanityClient()
+  if (!client) return []
+  try {
+    const rows = await client.fetch<Record<string, unknown>[]>(directoryFilterGroupsQuery)
+    return Array.isArray(rows) ? rows : []
+  } catch {
+    return []
+  }
+}
 
 export const fetchStorySlugsForPrerender = async (): Promise<string[]> => {
   const client = getPrerenderSanityClient()

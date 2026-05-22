@@ -46,6 +46,9 @@ import type { SanityPortableText } from "@shared/cms/types"
 import { useEventBySlug } from "@/hooks/useCmsDocuments"
 import { resolveEventCardImageSrc } from "@shared/cms/itemCardImage"
 import { allowCmsSeedFallbacks } from "@/lib/deploymentEnv"
+import { isCmsQueryLoading, shouldShowCmsEmptyState } from "@/lib/cmsQueryState"
+import CmsPageLoadingShell from "@/components/cms/CmsPageLoadingShell"
+import { isSanityConfigured } from "@/lib/sanity"
 
 const eventDetailBackToEventsLinkClassName =
   "inline-flex items-center gap-2 font-host-grotesk text-sm font-semibold text-rellia-teal hover:underline hover:underline-offset-4"
@@ -107,7 +110,8 @@ export default function EventDetail() {
   const { slug } = useParams()
   const location = useLocation()
   const resolvedSlug = slug?.trim() ? decodeURIComponent(slug) : ""
-  const { data: cmsEvent } = useEventBySlug(resolvedSlug)
+  const eventQuery = useEventBySlug(resolvedSlug)
+  const { data: cmsEvent } = eventQuery
   const fallbackMatch =
     allowCmsSeedFallbacks() && resolvedSlug
       ? findProgramsEventBySlug(resolvedSlug, DEFAULT_PROGRAMS_LANDING)
@@ -152,6 +156,28 @@ export default function EventDetail() {
       pagePath,
     }
   }, [match, location.pathname])
+
+  if (!resolvedSlug) {
+    return (
+      <div className="flex min-h-screen flex-col bg-white font-host-grotesk overflow-x-hidden">
+        <Navbar />
+        <main id="main-content" className="flex flex-1 flex-col">
+          <RelliaCta
+            title="**Event not found**"
+            body="This event may have moved. Browse all events to see what is coming up."
+            primary={ctaActionFromHref("All events", "/events")}
+            secondary={ctaActionFromHref("Back to home", "/")}
+            className="flex-1"
+          />
+        </main>
+        <Footer />
+      </div>
+    )
+  }
+
+  if (isSanityConfigured() && isCmsQueryLoading(eventQuery)) {
+    return <CmsPageLoadingShell />
+  }
 
   if (!match) {
     return (

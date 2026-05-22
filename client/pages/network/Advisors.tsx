@@ -206,14 +206,15 @@ function ScheduleSplit() {
 }
 
 export default function Advisors() {
-  const { data: page, isLoading } = useNetworkAdvisorsPage()
+  const advisorsPageQuery = useNetworkAdvisorsPage()
+  const { data: page } = advisorsPageQuery
   useApplyCmsSeo(page?.seo)
 
   const useModularLayout =
     Boolean(page?.useModularPage) && (page?.sections?.length ?? 0) > 0
 
   if (useModularLayout) {
-    return <NetworkCmsPage page={page} isLoading={isLoading} />
+    return <NetworkCmsPage page={page} query={advisorsPageQuery} />
   }
 
   return (

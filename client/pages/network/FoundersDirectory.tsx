@@ -26,6 +26,11 @@ import {
 } from "@/data/founderDirectory";
 import { isSanityConfigured } from "@/lib/sanity";
 import { allowCmsSeedFallbacks } from "@/lib/deploymentEnv";
+import { isAnyCmsQueryLoading, isCmsListAwaitingData } from "@/lib/cmsQueryState";
+import {
+  DirectoryFilterSelectSkeleton,
+  DirectoryGridSkeleton,
+} from "@/components/cms/CmsPageLoadingShell";
 
 /** Gray-teal tone for directory heroes */
 const DIRECTORY_TITLE_CLASS =
@@ -98,9 +103,17 @@ function FounderDirectoryCard({
 export default function FoundersDirectory() {
   const reduceMotion = useReducedMotion();
   const location = useLocation();
-  const { data: cmsCompanies } = useAlumniCompanies();
-  const { data: cmsSpecialties } = useFounderSpecialties();
-  const { data: cmsFilterGroups } = useDirectoryFilterGroups();
+  const companiesQuery = useAlumniCompanies();
+  const { data: cmsCompanies } = companiesQuery;
+  const specialtiesQuery = useFounderSpecialties();
+  const { data: cmsSpecialties } = specialtiesQuery;
+  const filterGroupsQuery = useDirectoryFilterGroups();
+  const { data: cmsFilterGroups } = filterGroupsQuery;
+  const directoryFiltersLoading =
+    isSanityConfigured() &&
+    (isAnyCmsQueryLoading(companiesQuery, specialtiesQuery, filterGroupsQuery) ||
+      isCmsListAwaitingData(companiesQuery) ||
+      isCmsListAwaitingData(filterGroupsQuery));
   const [query, setQuery] = useState("");
   const [specialtyFilter, setSpecialtyFilter] = useState<string>("all");
   const [countryFilter, setCountryFilter] = useState<string>("all");
@@ -400,7 +413,13 @@ export default function FoundersDirectory() {
                 />
               </label>
 
-              {dynamicGroups.length > 0 ? (
+              {directoryFiltersLoading ? (
+                <div className="flex w-full flex-col gap-3 md:w-auto md:flex-row md:flex-wrap md:items-center md:gap-4">
+                  <DirectoryFilterSelectSkeleton />
+                  <DirectoryFilterSelectSkeleton />
+                  <DirectoryFilterSelectSkeleton />
+                </div>
+              ) : dynamicGroups.length > 0 ? (
                 <div className="flex w-full flex-col gap-3 md:w-auto md:flex-row md:flex-wrap md:items-center md:gap-4">
                   {dynamicGroups.map((g) => {
                     const options = dynamicGroupOptions.get(g.id) ?? []
@@ -511,7 +530,9 @@ export default function FoundersDirectory() {
               </p>
             </div>
 
-            {companies.length === 0 ? (
+            {directoryFiltersLoading ? (
+              <DirectoryGridSkeleton />
+            ) : companies.length === 0 ? (
               <FilteredListEmptyState
                 className="mt-10"
                 icon={Building2}

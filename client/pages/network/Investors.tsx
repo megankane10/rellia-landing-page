@@ -209,14 +209,15 @@ function PortfolioSplit() {
 }
 
 export default function Investors() {
-  const { data: page, isLoading } = useNetworkInvestorsPage()
+  const investorsPageQuery = useNetworkInvestorsPage()
+  const { data: page } = investorsPageQuery
   useApplyCmsSeo(page?.seo)
 
   const useModularLayout =
     Boolean(page?.useModularPage) && (page?.sections?.length ?? 0) > 0
 
   if (useModularLayout) {
-    return <NetworkCmsPage page={page} isLoading={isLoading} />
+    return <NetworkCmsPage page={page} query={investorsPageQuery} />
   }
 
   const [isPitchNotifyOpen, setIsPitchNotifyOpen] = useState(false)

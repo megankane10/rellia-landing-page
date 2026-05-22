@@ -21,11 +21,15 @@ import {
 } from "@/config/seo";
 import { useOptionalPageSeo } from "@/context/PageSeoContext";
 import { useAdvisors } from "@/hooks/useCmsDocuments";
+import { isCmsQueryLoading } from "@/lib/cmsQueryState";
+import CmsPageLoadingShell from "@/components/cms/CmsPageLoadingShell";
+import { isSanityConfigured } from "@/lib/sanity";
 
 export default function AdvisorProfile() {
   const { id } = useParams<{ id: string }>();
   const location = useLocation();
-  const { data: cmsAdvisors } = useAdvisors();
+  const advisorsQuery = useAdvisors();
+  const { data: cmsAdvisors } = advisorsQuery;
   const advisors = (
     Array.isArray(cmsAdvisors) && cmsAdvisors.length > 0
       ? cmsAdvisors
@@ -48,6 +52,10 @@ export default function AdvisorProfile() {
     });
     return () => setPageSeo(null);
   }, [active, setPageSeo]);
+
+  if (isSanityConfigured() && isCmsQueryLoading(advisorsQuery)) {
+    return <CmsPageLoadingShell />;
+  }
 
   if (!active) return <NotFound />;
 

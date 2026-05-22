@@ -20,6 +20,9 @@ import { HeroHeadlinePortable } from "@/components/HeroHeadlinePortable"
 import { DEFAULT_EVENTS_LANDING_HERO_PORTABLE } from "@shared/cms/inlineHeroHeadline"
 import { allowCmsSeedFallbacks } from "@/lib/deploymentEnv"
 import { normalizeCmsEventForCard } from "@/lib/cmsEventList"
+import { isCmsListAwaitingData, isCmsQueryLoading } from "@/lib/cmsQueryState"
+import { DirectoryGridSkeleton } from "@/components/cms/CmsPageLoadingShell"
+import { isSanityConfigured } from "@/lib/sanity"
 
 type EventFilter = "all" | "upcoming" | "past"
 const PAGE_SIZE = 12
@@ -79,8 +82,12 @@ const getEventStatus = (event: any): "upcoming" | "past" => {
 }
 
 export default function Events() {
-  const { data } = useEvents()
+  const eventsQuery = useEvents()
+  const { data } = eventsQuery
   const { data: landing } = useEventsLandingPage()
+  const eventsLoading =
+    isSanityConfigured() &&
+    (isCmsQueryLoading(eventsQuery) || isCmsListAwaitingData(eventsQuery))
   useApplyCmsSeo(landing?.seo)
 
   const allEvents = useMemo(() => {
@@ -226,7 +233,9 @@ export default function Events() {
                 </p>
               </div>
 
-              {visibleEvents.length === 0 ? (
+              {eventsLoading ? (
+                <DirectoryGridSkeleton />
+              ) : visibleEvents.length === 0 ? (
                 <FilteredListEmptyState
                   className="mt-12"
                   icon={CalendarDays}

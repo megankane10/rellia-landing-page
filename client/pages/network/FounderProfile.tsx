@@ -20,11 +20,15 @@ import {
 } from "@/config/seo";
 import { useOptionalPageSeo } from "@/context/PageSeoContext";
 import { useAlumniCompanies } from "@/hooks/useCmsDocuments";
+import { isCmsQueryLoading } from "@/lib/cmsQueryState";
+import CmsPageLoadingShell from "@/components/cms/CmsPageLoadingShell";
+import { isSanityConfigured } from "@/lib/sanity";
 
 export default function FounderProfile() {
   const { id } = useParams<{ id: string }>();
   const location = useLocation();
-  const { data: cmsCompanies } = useAlumniCompanies();
+  const companiesQuery = useAlumniCompanies();
+  const { data: cmsCompanies } = companiesQuery;
   const cmsActive = Array.isArray(cmsCompanies) ? cmsCompanies.find((c: any) => c?.id === id) : null;
   const active =
     cmsActive
@@ -51,6 +55,10 @@ export default function FounderProfile() {
     });
     return () => setPageSeo(null);
   }, [active, setPageSeo]);
+
+  if (isSanityConfigured() && isCmsQueryLoading(companiesQuery)) {
+    return <CmsPageLoadingShell />;
+  }
 
   if (!active) return <NotFound />;
 

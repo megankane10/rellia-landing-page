@@ -21,6 +21,11 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { NETWORK_PATH_ROLE_TAG } from "@/lib/networkPathRoles";
 import { isSanityConfigured } from "@/lib/sanity";
 import { allowCmsSeedFallbacks } from "@/lib/deploymentEnv";
+import { isAnyCmsQueryLoading, isCmsListAwaitingData } from "@/lib/cmsQueryState";
+import {
+  DirectoryFilterSelectSkeleton,
+  DirectoryGridSkeleton,
+} from "@/components/cms/CmsPageLoadingShell";
 
 const DIRECTORY_TITLE_CLASS =
   "font-host-grotesk text-4xl font-extrabold tracking-tight text-black md:text-5xl";
@@ -93,9 +98,17 @@ function AdvisorCard({
 
 export default function AdvisorsDirectory() {
   const reduceMotion = useReducedMotion();
-  const { data: cmsAdvisors } = useAdvisors();
-  const { data: cmsFilters } = useAdvisorFilters();
-  const { data: cmsFilterGroups } = useDirectoryFilterGroups()
+  const advisorsQuery = useAdvisors();
+  const { data: cmsAdvisors } = advisorsQuery;
+  const advisorFiltersQuery = useAdvisorFilters();
+  const { data: cmsFilters } = advisorFiltersQuery;
+  const filterGroupsQuery = useDirectoryFilterGroups();
+  const { data: cmsFilterGroups } = filterGroupsQuery;
+  const directoryFiltersLoading =
+    isSanityConfigured() &&
+    (isAnyCmsQueryLoading(advisorsQuery, advisorFiltersQuery, filterGroupsQuery) ||
+      isCmsListAwaitingData(advisorsQuery) ||
+      isCmsListAwaitingData(filterGroupsQuery));
   const [query, setQuery] = useState("");
   const [legacyFilter, setLegacyFilter] = useState<string>("all")
   const [groupFilters, setGroupFilters] = useState<Record<string, string>>({})
@@ -332,7 +345,12 @@ export default function AdvisorsDirectory() {
                   />
                 </div>
 
-                {dynamicGroups.length > 0 ? (
+                {directoryFiltersLoading ? (
+                  <>
+                    <DirectoryFilterSelectSkeleton />
+                    <DirectoryFilterSelectSkeleton />
+                  </>
+                ) : dynamicGroups.length > 0 ? (
                   <>
                     {dynamicGroups.map((g) => {
                       const options = dynamicGroupOptions.get(g.id) ?? []
@@ -409,7 +427,9 @@ export default function AdvisorsDirectory() {
               </p>
             </div>
 
-            {advisors.length === 0 ? (
+            {directoryFiltersLoading ? (
+              <DirectoryGridSkeleton />
+            ) : advisors.length === 0 ? (
               <FilteredListEmptyState
                 className="mt-10"
                 icon={UserSearch}

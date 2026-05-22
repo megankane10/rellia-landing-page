@@ -20,6 +20,9 @@ import { RichTextImageCarousel } from "@/components/RichTextImageCarousel"
 import { AnimatePresence, motion } from "framer-motion"
 import { PortableRichText } from "@/components/PortableRichText"
 import { useStoryBySlug } from "@/hooks/useCmsDocuments"
+import { isCmsQueryLoading, shouldShowCmsEmptyState } from "@/lib/cmsQueryState"
+import CmsPageLoadingShell from "@/components/cms/CmsPageLoadingShell"
+import { isSanityConfigured } from "@/lib/sanity"
 import {
   ShareIconCopy,
   ShareIconFacebook,
@@ -30,7 +33,9 @@ import {
 
 export default function StoryPost() {
   const { slug } = useParams()
-  const { data: cmsStory } = useStoryBySlug(slug ?? "")
+  const resolvedSlug = slug?.trim() ?? ""
+  const storyQuery = useStoryBySlug(resolvedSlug)
+  const { data: cmsStory } = storyQuery
   const story = slug && allowCmsSeedFallbacks() ? getStoryBySlug(slug) : undefined
   const [copyState, setCopyState] = useState<"idle" | "copied">("idle")
 
@@ -78,7 +83,11 @@ export default function StoryPost() {
     }
   }
 
-  if (!cmsStory && !story) {
+  if (resolvedSlug && isSanityConfigured() && isCmsQueryLoading(storyQuery)) {
+    return <CmsPageLoadingShell />
+  }
+
+  if (!cmsStory && !story && (!resolvedSlug || shouldShowCmsEmptyState(storyQuery))) {
     return (
       <div className="min-h-screen bg-white font-host-grotesk overflow-x-hidden">
         <Navbar />
