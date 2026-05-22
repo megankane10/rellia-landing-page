@@ -1,11 +1,12 @@
 import { useQuery } from "@tanstack/react-query"
-import { ExternalLink } from "lucide-react"
+import { ExternalLink, FileEdit } from "lucide-react"
 import { sanityFetch } from "@/lib/sanity"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Button } from "@/components/ui/button"
+import { isSanityConfigured } from "@/lib/sanity"
 
 const STUDIO_BASE = "https://relliahealth.sanity.studio/desk"
+const STUDIO_HOME = "https://relliahealth.sanity.studio"
 
 type SanityDraft = {
   _id: string
@@ -31,6 +32,8 @@ const studioUrl = (draft: SanityDraft) => {
 }
 
 const AdminSanityDrafts = () => {
+  const cmsConfigured = isSanityConfigured()
+
   const { data, isLoading, error } = useQuery({
     queryKey: ["admin-sanity-drafts"],
     queryFn: async () => {
@@ -38,47 +41,97 @@ const AdminSanityDrafts = () => {
       return rows ?? []
     },
     staleTime: 60_000,
+    enabled: cmsConfigured,
   })
 
+  const draftCount = data?.length ?? 0
+
   return (
-    <Card className="rounded-[20px] border border-black/10 bg-white shadow-sm">
-      <CardHeader>
-        <CardTitle className="font-host-grotesk text-lg text-rellia-teal">
-          Content drafts pending review
-        </CardTitle>
-        <CardDescription className="font-urbanist text-sm text-black/55">
-          Unpublished Sanity documents — open in Studio to edit or publish.
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        {isLoading && (
+    <section
+      className="overflow-hidden rounded-2xl border border-black/[0.07] bg-white/90 shadow-sm"
+      aria-labelledby="sanity-drafts-heading"
+    >
+      <div className="border-b border-black/[0.06] bg-gradient-to-r from-rellia-mint/15 via-white to-white px-5 py-5 md:px-6">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+          <div className="flex gap-3">
+            <FileEdit className="mt-0.5 h-5 w-5 shrink-0 text-rellia-teal" aria-hidden />
+            <div>
+              <h2
+                id="sanity-drafts-heading"
+                className="font-host-grotesk text-lg font-semibold text-rellia-teal"
+              >
+                Sanity content drafts
+              </h2>
+              <p className="mt-1 max-w-2xl font-urbanist text-sm text-black/55">
+                Unpublished documents saved in Sanity with a{" "}
+                <code className="rounded bg-black/5 px-1 py-0.5 text-[11px]">drafts.</code> ID prefix.
+                Editors work in Studio; publishing removes the draft and makes content live on the site.
+              </p>
+            </div>
+          </div>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            asChild
+            className="shrink-0 rounded-full border-rellia-teal/20 text-rellia-teal hover:bg-rellia-mint/15"
+          >
+            <a href={STUDIO_HOME} target="_blank" rel="noopener noreferrer">
+              Open Studio
+              <ExternalLink className="ml-1.5 h-3.5 w-3.5" aria-hidden />
+            </a>
+          </Button>
+        </div>
+        <p className="mt-3 font-urbanist text-xs text-black/45">
+          {cmsConfigured
+            ? `${isLoading ? "Loading" : draftCount} draft${draftCount === 1 ? "" : "s"} awaiting review`
+            : "CMS env vars are not configured in this environment"}
+        </p>
+      </div>
+
+      <div className="px-5 py-4 md:px-6">
+        {!cmsConfigured && (
+          <p className="font-urbanist text-sm text-black/55">
+            Set <code className="text-xs">VITE_SANITY_PROJECT_ID</code> and{" "}
+            <code className="text-xs">VITE_SANITY_DATASET</code> to load drafts here. The CMS status pill
+            will show &quot;Not set up&quot; until then.
+          </p>
+        )}
+
+        {cmsConfigured && isLoading && (
           <div className="space-y-3">
-            {Array.from({ length: 3 }).map((_, i) => (
-              <Skeleton key={i} className="h-12 w-full rounded-xl" />
+            {Array.from({ length: 4 }).map((_, i) => (
+              <Skeleton key={i} className="h-14 w-full rounded-xl" />
             ))}
           </div>
         )}
-        {error && (
-          <p className="font-urbanist text-sm text-black/60">
-            Could not load drafts. Check CMS configuration.
+
+        {cmsConfigured && error && (
+          <p className="font-urbanist text-sm text-red-700">
+            Could not load drafts. If CMS shows Offline, check Sanity credentials and the{" "}
+            <code className="text-xs">/api/sanity/query</code> proxy.
           </p>
         )}
-        {data && data.length === 0 && (
-          <p className="font-urbanist text-sm text-black/55">No drafts in queue.</p>
+
+        {cmsConfigured && data && data.length === 0 && (
+          <p className="rounded-xl border border-dashed border-black/10 bg-rellia-cream/40 px-4 py-8 text-center font-urbanist text-sm text-black/55">
+            No drafts in queue — published content is up to date.
+          </p>
         )}
-        {data && data.length > 0 && (
-          <ul className="divide-y divide-black/8">
+
+        {cmsConfigured && data && data.length > 0 && (
+          <ul className="divide-y divide-black/[0.06]">
             {data.map((draft) => (
               <li
                 key={draft._id}
-                className="flex flex-col gap-2 py-3 first:pt-0 last:pb-0 sm:flex-row sm:items-center sm:justify-between"
+                className="flex flex-col gap-3 py-4 first:pt-2 last:pb-2 sm:flex-row sm:items-center sm:justify-between"
               >
                 <div className="min-w-0">
                   <p className="truncate font-host-grotesk text-sm font-semibold text-black">
                     {draft.title || draft._id}
                   </p>
                   <p className="font-urbanist text-xs text-black/50">
-                    {draft._type} · {formatRelative(draft._updatedAt)}
+                    {draft._type} · updated {formatRelative(draft._updatedAt)}
                   </p>
                 </div>
                 <Button
@@ -94,7 +147,7 @@ const AdminSanityDrafts = () => {
                     rel="noopener noreferrer"
                     aria-label={`Open ${draft.title ?? draft._type} in Sanity Studio`}
                   >
-                    Open in Studio
+                    Review in Studio
                     <ExternalLink className="ml-1.5 h-3.5 w-3.5" aria-hidden />
                   </a>
                 </Button>
@@ -102,8 +155,8 @@ const AdminSanityDrafts = () => {
             ))}
           </ul>
         )}
-      </CardContent>
-    </Card>
+      </div>
+    </section>
   )
 }
 

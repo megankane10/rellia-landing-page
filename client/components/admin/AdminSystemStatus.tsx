@@ -1,71 +1,80 @@
 import { useEffect, useState } from "react"
-import { getApiCsrfHeaders } from "@/lib/apiCsrf"
+import { isSanityConfigured, sanityFetch } from "@/lib/sanity"
 import { supabase } from "@/lib/supabase"
-import { isSanityConfigured } from "@/lib/sanity"
 import { cn } from "@/lib/utils"
 
-type ServiceState = "checking" | "online" | "offline"
+type ServiceState = "checking" | "online" | "offline" | "unconfigured"
 
 type ServiceStatus = {
   label: string
   state: ServiceState
 }
 
-const StatusDot = ({ state }: { state: ServiceState }) => (
-  <span
+const stateLabel = (state: ServiceState): string => {
+  if (state === "checking") return "Checking"
+  if (state === "online") return "Online"
+  if (state === "unconfigured") return "Not set up"
+  return "Offline"
+}
+
+const StatusPill = ({ service }: { service: ServiceStatus }) => (
+  <li
     className={cn(
-      "inline-block h-2 w-2 shrink-0 rounded-full",
-      state === "checking" && "animate-pulse bg-black/30",
-      state === "online" && "animate-pulse bg-emerald-500",
-      state === "offline" && "bg-red-500",
+      "inline-flex items-center gap-2 rounded-full border px-3 py-1.5 font-urbanist text-xs",
+      service.state === "online" && "border-emerald-200/80 bg-emerald-50/90 text-emerald-900",
+      service.state === "checking" && "border-black/10 bg-white/90 text-black/55",
+      service.state === "offline" && "border-red-200/80 bg-red-50/90 text-red-800",
+      service.state === "unconfigured" && "border-amber-200/80 bg-amber-50/90 text-amber-900",
     )}
-    aria-hidden
-  />
+  >
+    <span
+      className={cn(
+        "h-1.5 w-1.5 shrink-0 rounded-full",
+        service.state === "checking" && "animate-pulse bg-black/30",
+        service.state === "online" && "bg-emerald-500",
+        service.state === "offline" && "bg-red-500",
+        service.state === "unconfigured" && "bg-amber-500",
+      )}
+      aria-hidden
+    />
+    <span className="font-medium">{service.label}</span>
+    <span className="text-black/45">·</span>
+    <span>{stateLabel(service.state)}</span>
+  </li>
 )
 
 const pingSupabase = async (): Promise<boolean> => {
   try {
-    const { error } = await supabase.from("company_profiles").select("id", { count: "exact", head: true })
+    const { error } = await supabase
+      .from("company_profiles")
+      .select("id", { count: "exact", head: true })
     return !error
   } catch {
     return false
   }
 }
 
-const pingSanity = async (): Promise<boolean> => {
-  if (!isSanityConfigured()) return false
-  try {
-    const csrf = await getApiCsrfHeaders()
-    const res = await fetch("/api/sanity/query", {
-      method: "POST",
-      credentials: "same-origin",
-      headers: { "content-type": "application/json", ...csrf },
-      body: JSON.stringify({ queryId: "globalSettings" }),
-    })
-    return res.ok
-  } catch {
-    return false
-  }
+const pingSanity = async (): Promise<"online" | "offline" | "unconfigured"> => {
+  if (!isSanityConfigured()) return "unconfigured"
+  const data = await sanityFetch<Record<string, unknown>>("globalSettings")
+  return data ? "online" : "offline"
 }
 
 const AdminSystemStatus = () => {
   const [services, setServices] = useState<ServiceStatus[]>([
     { label: "Database", state: "checking" },
-    { label: "CMS API", state: "checking" },
+    { label: "CMS", state: "checking" },
   ])
 
   useEffect(() => {
     let cancelled = false
 
     const run = async () => {
-      const [dbOk, cmsOk] = await Promise.all([pingSupabase(), pingSanity()])
+      const [dbOk, cmsState] = await Promise.all([pingSupabase(), pingSanity()])
       if (cancelled) return
       setServices([
         { label: "Database", state: dbOk ? "online" : "offline" },
-        {
-          label: cmsOk ? "CMS API" : "CMS API",
-          state: isSanityConfigured() ? (cmsOk ? "online" : "offline") : "offline",
-        },
+        { label: "CMS", state: cmsState },
       ])
     }
 
@@ -76,26 +85,13 @@ const AdminSystemStatus = () => {
   }, [])
 
   return (
-    <div
-      className="rounded-2xl border border-black/8 bg-white/80 px-4 py-3"
-      aria-label="System status"
-    >
-      <p className="font-host-grotesk text-xs font-semibold uppercase tracking-[0.14em] text-black/45">
-        System status
-      </p>
-      <ul className="mt-2 space-y-1.5">
-        {services.map((s) => (
-          <li key={s.label} className="flex items-center gap-2 font-urbanist text-xs text-black/65">
-            <StatusDot state={s.state} />
-            <span>
-              {s.label}:{" "}
-              {s.state === "checking"
-                ? "Checking…"
-                : s.state === "online"
-                  ? "Online"
-                  : "Disrupted"}
-            </span>
-          </li>
+    <div className="flex flex-wrap items-center gap-2" aria-label="System status">
+      <span className="font-urbanist text-[11px] font-medium uppercase tracking-[0.14em] text-black/40">
+        Status
+      </span>
+      <ul className="flex flex-wrap items-center gap-2">
+        {services.map((service) => (
+          <StatusPill key={service.label} service={service} />
         ))}
       </ul>
     </div>

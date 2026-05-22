@@ -1,11 +1,20 @@
-import { useQuery } from "@tanstack/react-query"
-import { useParams, Link } from "react-router-dom"
+import { useState } from "react"
+import { useQuery, useQueryClient } from "@tanstack/react-query"
+import { useParams, Link, useNavigate } from "react-router-dom"
 import { supabase } from "@/lib/supabase"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
+import AdminSubmissionStatusSelect from "@/components/admin/AdminSubmissionStatusSelect"
+import AdminDeleteSubmissionButton from "@/components/admin/AdminDeleteSubmissionButton"
+import {
+  formatAdminDateLong,
+  statusBadgeClass,
+  type SubmissionStatus,
+} from "@/lib/adminSubmissionStatus"
+import { ArrowLeft } from "lucide-react"
 
 type CompanyProfile = {
   id: string
@@ -15,6 +24,7 @@ type CompanyProfile = {
   company_name: string
   stage: string | null
   description: string | null
+  status?: SubmissionStatus | null
 }
 
 type SectionScore = { category: string; score: number }
@@ -64,16 +74,46 @@ const priorityLabel = (priority: string) => {
   return "bg-rellia-mint/20 text-rellia-teal"
 }
 
-const formatDate = (iso: string) =>
-  new Date(iso).toLocaleDateString("en-CA", { year: "numeric", month: "long", day: "numeric" })
-
 const AdminCompany = () => {
   const { id } = useParams<{ id: string }>()
+  const navigate = useNavigate()
+  const queryClient = useQueryClient()
+  const [updatingStatus, setUpdatingStatus] = useState(false)
+  const [statusWritesEnabled, setStatusWritesEnabled] = useState(true)
+
   const { data, isLoading, error } = useQuery({
     queryKey: ["admin-company", id],
     queryFn: () => fetchCompanyData(id!),
     enabled: !!id,
   })
+
+  const handleStatusChange = async (newStatus: SubmissionStatus) => {
+    if (!id || !statusWritesEnabled) return
+    setUpdatingStatus(true)
+    const { error: updateError } = await supabase
+      .from("company_profiles")
+      .update({ status: newStatus })
+      .eq("id", id)
+    setUpdatingStatus(false)
+    if (updateError) {
+      if (updateError.message.includes("status") || updateError.message.includes("policy")) {
+        setStatusWritesEnabled(false)
+      }
+      return
+    }
+    void queryClient.invalidateQueries({ queryKey: ["admin-company", id] })
+    void queryClient.invalidateQueries({ queryKey: ["admin-company-profiles"] })
+    void queryClient.invalidateQueries({ queryKey: ["admin-dashboard-overview"] })
+  }
+
+  const handleDelete = async () => {
+    if (!id) return
+    const { error: deleteError } = await supabase.from("company_profiles").delete().eq("id", id)
+    if (deleteError) return
+    void queryClient.invalidateQueries({ queryKey: ["admin-company-profiles"] })
+    void queryClient.invalidateQueries({ queryKey: ["admin-dashboard-overview"] })
+    navigate("/admin/diagnostics", { replace: true })
+  }
 
   if (isLoading) {
     return (
@@ -94,21 +134,22 @@ const AdminCompany = () => {
   }
 
   const { profile, response } = data
+  const status = (profile.status ?? "New") as SubmissionStatus
+  const hasStatusField = "status" in profile
 
   return (
     <div className="space-y-6">
-      {/* Back link */}
       <Link
-        to="/admin/dashboard"
-        className="font-urbanist text-sm text-rellia-teal/70 hover:text-rellia-teal transition-colors"
+        to="/admin/diagnostics"
+        className="inline-flex items-center gap-1.5 font-urbanist text-sm text-rellia-teal/70 transition-colors hover:text-rellia-teal"
       >
-        ← All submissions
+        <ArrowLeft className="h-4 w-4" aria-hidden />
+        All diagnostic submissions
       </Link>
 
-      {/* Company header */}
-      <Card className="rounded-[20px] border border-black/10 bg-white shadow-sm">
+      <Card className="rounded-2xl border border-black/[0.07] bg-white/90 shadow-sm">
         <CardHeader>
-          <div className="flex flex-wrap items-start justify-between gap-2">
+          <div className="flex flex-wrap items-start justify-between gap-3">
             <div>
               <CardTitle className="font-host-grotesk text-xl font-bold text-rellia-teal">
                 {profile.company_name}
@@ -116,13 +157,37 @@ const AdminCompany = () => {
               <p className="mt-1 font-urbanist text-sm text-black/60">
                 Submitted by {profile.name} · {profile.work_email}
               </p>
-              <p className="font-urbanist text-xs text-black/40">{formatDate(profile.created_at)}</p>
+              <p className="font-urbanist text-xs text-black/40">
+                {formatAdminDateLong(profile.created_at)}
+              </p>
             </div>
-            {profile.stage && (
-              <Badge className="rounded-full bg-rellia-mint/90 font-urbanist text-rellia-teal hover:bg-rellia-mint">
-                {profile.stage}
-              </Badge>
-            )}
+            <div className="flex flex-wrap items-center gap-2">
+              {profile.stage && (
+                <Badge className="rounded-full bg-rellia-mint/90 font-urbanist text-rellia-teal hover:bg-rellia-mint">
+                  {profile.stage}
+                </Badge>
+              )}
+              {hasStatusField && statusWritesEnabled ? (
+                <AdminSubmissionStatusSelect
+                  value={status}
+                  disabled={updatingStatus}
+                  ariaLabel={`Status for ${profile.company_name}`}
+                  onValueChange={(value) => void handleStatusChange(value)}
+                />
+              ) : (
+                <Badge
+                  variant="outline"
+                  className={`rounded-full font-urbanist text-xs ${statusBadgeClass(status)}`}
+                >
+                  {status}
+                </Badge>
+              )}
+              <AdminDeleteSubmissionButton
+                label="Delete diagnostic submission?"
+                description="This removes the company profile and linked diagnostic response."
+                onConfirm={handleDelete}
+              />
+            </div>
           </div>
         </CardHeader>
         {profile.description && (

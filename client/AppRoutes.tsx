@@ -51,6 +51,9 @@ import AdminSignup from "./pages/admin/AdminSignup"
 import AdminLayout from "./pages/admin/AdminLayout"
 import AdminDashboard from "./pages/admin/AdminDashboard"
 import AdminCompany from "./pages/admin/AdminCompany"
+import AdminContactList from "./pages/admin/AdminContactList"
+import AdminContactDetail from "./pages/admin/AdminContactDetail"
+import AdminDiagnosticList from "./pages/admin/AdminDiagnosticList"
 
 const RedirectFoundersDirectoryId = () => {
   const { id } = useParams<{ id: string }>()
@@ -163,6 +166,9 @@ export const AppRoutes = () => (
     <Route path="/admin" element={<ProtectedRoute><AdminLayout /></ProtectedRoute>}>
       <Route index element={<Navigate to="/admin/dashboard" replace />} />
       <Route path="dashboard" element={<AdminDashboard />} />
+      <Route path="contacts" element={<AdminContactList />} />
+      <Route path="contacts/:id" element={<AdminContactDetail />} />
+      <Route path="diagnostics" element={<AdminDiagnosticList />} />
       <Route path="companies/:id" element={<AdminCompany />} />
     </Route>
 
