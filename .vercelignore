@@ -5,6 +5,6 @@ dist/
 .pnpm-store/
 .cursor/
 .agent-tools/
-# Root-only: do not use `data/` — that also excludes client/data/ (founder/advisor seeds)
-/data/
+# Root-only contact log (do not use `data/` — Vercel also ignores client/data/)
+data/contact-submissions.jsonl
 *.local
