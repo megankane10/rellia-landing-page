@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { Link, useNavigate } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 import { useAuth } from "@/context/AuthContext"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -31,17 +31,6 @@ const AdminLogin = () => {
     <AdminAuthLayout
       title="Rellia Admin"
       description="Sign in to view diagnostic submissions."
-      footer={
-        <p className="font-urbanist text-center text-sm text-black/55">
-          Need an account?{" "}
-          <Link
-            to="/admin/signup"
-            className="font-medium text-rellia-teal underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint rounded"
-          >
-            Create one
-          </Link>
-        </p>
-      }
     >
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="space-y-1">

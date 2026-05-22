@@ -87,17 +87,6 @@ const AdminSignup = () => {
     <AdminAuthLayout
       title="Create Admin Account"
       description="Rellia internal access only."
-      footer={
-        <p className="font-urbanist text-center text-sm text-black/55">
-          Already have an account?{" "}
-          <Link
-            to="/admin/login"
-            className="font-medium text-rellia-teal underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint rounded"
-          >
-            Sign in
-          </Link>
-        </p>
-      }
     >
       {!signupEnabled ? (
         <div className="rounded-xl border border-rellia-mint/40 bg-rellia-cream p-4 text-center">
@@ -154,6 +143,15 @@ const AdminSignup = () => {
           >
             {loading ? "Creating account…" : "Create account"}
           </Button>
+          <p className="pt-2 text-center font-urbanist text-sm text-black/55">
+            Already have an account?{" "}
+            <Link
+              to="/admin/login"
+              className="font-medium text-rellia-teal underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint rounded"
+            >
+              Sign in
+            </Link>
+          </p>
         </form>
       )}
     </AdminAuthLayout>
