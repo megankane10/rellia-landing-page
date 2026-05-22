@@ -213,11 +213,23 @@ export type NavbarProps = {
   ctaRadiusClassName?: string
   /** Force solid teal background regardless of path. */
   forceSolid?: boolean
+  /** Override default home CTA label (e.g. admin: Manage website). */
+  ctaLabel?: string
+  /** Override default home CTA destination. */
+  ctaTo?: string
+  /** Open CTA in a new tab (recommended for /api/studio → Sanity). */
+  ctaOpenInNewTab?: boolean
+  /** Hide the announcement modal on focused flows (e.g. admin). */
+  hideAnnouncement?: boolean
 }
 
-export default function Navbar({ 
+export default function Navbar({
   ctaRadiusClassName = "rounded-full",
-  forceSolid = false
+  forceSolid = false,
+  ctaLabel: ctaLabelOverride,
+  ctaTo: ctaToOverride,
+  ctaOpenInNewTab = false,
+  hideAnnouncement = false,
 }: NavbarProps) {
   const { data: navigationData } = useNavigation()
   const { data: globalSettingsData } = useGlobalSettings()
@@ -388,7 +400,13 @@ export default function Navbar({
       "text-white focus-visible:ring-white/80 focus-visible:ring-offset-transparent hover:text-white/90",
   )
 
+  const resolvedCtaLabel = ctaLabelOverride ?? homePage.primaryCtaLabel
+  const resolvedCtaTo = ctaToOverride ?? homePage.primaryCtaPath
+  const ctaUsesAnchor =
+    ctaOpenInNewTab || isExternalHref(resolvedCtaTo) || resolvedCtaTo.startsWith("/api/")
+
   const showAnnouncement =
+    !hideAnnouncement &&
     !announcementDismissed &&
     globalSettings.announcementEnabled === true &&
     Boolean(globalSettings.announcementText?.trim())
@@ -524,7 +542,21 @@ export default function Navbar({
               size="compact"
               className={cn("px-6 py-3 text-[14px] lg:text-[15px]", ctaRadiusClassName)}
             >
-              <Link to={homePage.primaryCtaPath}>{homePage.primaryCtaLabel}</Link>
+              {ctaUsesAnchor ? (
+                <a
+                  href={resolvedCtaTo}
+                  {...(ctaOpenInNewTab
+                    ? { target: "_blank", rel: "noopener noreferrer" }
+                    : {})}
+                  aria-label={resolvedCtaLabel}
+                >
+                  {resolvedCtaLabel}
+                </a>
+              ) : (
+                <Link to={resolvedCtaTo} aria-label={resolvedCtaLabel}>
+                  {resolvedCtaLabel}
+                </Link>
+              )}
             </RelliaAction>
           </div>
 
@@ -690,9 +722,22 @@ export default function Navbar({
                   size="comfortable"
                   className={cn("min-h-12 w-full", ctaRadiusClassName)}
                 >
-                  <Link to={homePage.primaryCtaPath} onClick={handleCloseMobile}>
-                    {homePage.primaryCtaLabel}
-                  </Link>
+                  {ctaUsesAnchor ? (
+                    <a
+                      href={resolvedCtaTo}
+                      onClick={handleCloseMobile}
+                      {...(ctaOpenInNewTab
+                        ? { target: "_blank", rel: "noopener noreferrer" }
+                        : {})}
+                      aria-label={resolvedCtaLabel}
+                    >
+                      {resolvedCtaLabel}
+                    </a>
+                  ) : (
+                    <Link to={resolvedCtaTo} onClick={handleCloseMobile} aria-label={resolvedCtaLabel}>
+                      {resolvedCtaLabel}
+                    </Link>
+                  )}
                 </RelliaAction>
               </div>
 

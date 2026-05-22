@@ -1,6 +1,7 @@
 import type { ReactNode } from "react"
 import { motion } from "framer-motion"
-import { Link } from "react-router-dom"
+import Navbar from "@/components/Navbar"
+import { ADMIN_NAVBAR_OFFSET_CLASS, ADMIN_NAVBAR_PROPS } from "@/lib/adminNav"
 
 type AdminAuthLayoutProps = {
   title: string
@@ -12,8 +13,9 @@ type AdminAuthLayoutProps = {
 const AdminAuthLayout = ({ title, description, children, footer }: AdminAuthLayoutProps) => {
   return (
     <div className="min-h-screen bg-white font-host-grotesk overflow-x-hidden">
-      <section className="relative w-full min-h-screen">
-        <div className="grid grid-cols-1 lg:grid-cols-[45%_55%] xl:grid-cols-[40%_60%] min-h-screen">
+      <Navbar {...ADMIN_NAVBAR_PROPS} />
+      <section className={ADMIN_NAVBAR_OFFSET_CLASS}>
+        <div className="grid grid-cols-1 lg:grid-cols-[45%_55%] xl:grid-cols-[40%_60%] min-h-[calc(100vh-72px)] md:min-h-[calc(100vh-86px)]">
           <AdminAuthLeftPanel />
           <div className="bg-white px-6 py-16 md:px-12 md:py-24 lg:px-20 lg:py-32 flex items-center justify-center relative overflow-hidden">
             <div className="absolute top-1/4 -right-20 w-80 h-80 bg-rellia-mint/5 rounded-full blur-[120px] pointer-events-none" />
@@ -39,7 +41,7 @@ const AdminAuthLayout = ({ title, description, children, footer }: AdminAuthLayo
 
 const AdminAuthLeftPanel = () => {
   return (
-    <div className="relative bg-rellia-teal min-h-[420px] lg:min-h-full flex flex-col px-6 pt-24 pb-16 md:pt-32 md:pb-20 lg:px-20 overflow-hidden">
+    <div className="relative bg-rellia-teal min-h-[420px] lg:min-h-full flex flex-col px-6 py-16 md:py-20 lg:px-20 overflow-hidden">
       <div className="absolute inset-0">
         <img
           src="/health_tech_collaboration_1778023064936.png"
@@ -57,23 +59,7 @@ const AdminAuthLeftPanel = () => {
       </div>
 
       <div className="relative z-10 flex flex-1 flex-col justify-center">
-        <Link
-          to="/"
-          className="inline-flex w-fit items-center rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-rellia-teal"
-          aria-label="Rellia Health home"
-        >
-          <img
-            src="/images/hologram-logo.png"
-            alt=""
-            aria-hidden
-            width={72}
-            height={72}
-            loading="eager"
-            decoding="async"
-            className="h-[72px] w-[72px] opacity-90 drop-shadow-[0_0_15px_rgba(152,255,232,0.3)]"
-          />
-        </Link>
-        <p className="mt-10 max-w-md font-urbanist text-lg leading-relaxed text-white/90">
+        <p className="max-w-md font-urbanist text-lg leading-relaxed text-white/90">
           Internal tools for diagnostic submissions and content operations.
         </p>
       </div>
