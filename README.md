@@ -35,6 +35,19 @@ The admin dashboard **Content drafts** panel shows:
 
 It does **not** mean “everything on preview that is missing from main.” Stories, alumni, and advisor profiles on the preview site are usually **published documents in the `preview` dataset**, not draft queue items.
 
+### Promote preview → production (events)
+
+When preview has correct `startsAt` / `endsAt` but production does not:
+
+```bash
+pnpm sanity:promote:dry
+pnpm sanity:promote -- --apply-production
+```
+
+To remove an event entirely: `pnpm sanity:delete-event -- digital-health-salon-toronto --datasets=production,preview`
+
+To remove advisor/alumni from www only (keep on preview), unpublish those types in Studio on the **production** dataset.
+
 ### Static seed fallbacks (code defaults)
 
 `client/lib/deploymentEnv.ts` controls hardcoded fallbacks in `shared/cms/defaults.ts` (sample events, stories, alumni/advisor seed directories, etc.):

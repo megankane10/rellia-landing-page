@@ -127,7 +127,7 @@ const AdminDashboard = () => {
   return (
     <div className="space-y-10">
       <div className="flex flex-wrap items-center justify-between gap-4">
-        <h1 className="font-host-grotesk text-2xl font-bold tracking-tight text-black md:text-3xl">
+        <h1 className="font-host-grotesk text-3xl font-bold tracking-tight text-black md:text-4xl">
           Overview
         </h1>
         <AdminSystemStatus />

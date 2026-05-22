@@ -21,9 +21,9 @@ const AdminAuthLayout = ({
 }: AdminAuthLayoutProps) => (
   <div className="min-h-screen overflow-x-hidden bg-white font-host-grotesk">
     <section className="relative min-h-screen w-full">
-      <div className="grid min-h-screen grid-cols-1 lg:grid-cols-[45%_55%] xl:grid-cols-[40%_60%] lg:items-center">
+      <div className="grid min-h-screen grid-cols-1 lg:grid-cols-[45%_55%] xl:grid-cols-[40%_60%] lg:items-stretch">
         <AdminAuthLeftPanel heading={leftHeading} description={leftDescription} />
-        <div className="relative flex min-h-[480px] flex-col justify-center bg-white px-6 py-14 md:px-12 md:py-16 lg:min-h-0 lg:px-16">
+        <div className="relative flex min-h-[480px] flex-col justify-center bg-white px-6 py-14 md:px-12 md:py-16 lg:min-h-screen lg:px-16">
           <div className="pointer-events-none absolute top-1/4 -right-20 h-80 w-80 rounded-full bg-rellia-mint/5 blur-[120px]" />
           <div className="pointer-events-none absolute bottom-10 -right-20 h-80 w-80 rounded-full bg-rellia-mint/10 blur-[120px]" />
           <motion.div
@@ -58,7 +58,7 @@ type AdminAuthLeftPanelProps = {
 }
 
 const AdminAuthLeftPanel = ({ heading, description }: AdminAuthLeftPanelProps) => (
-  <div className="relative flex min-h-[420px] flex-col justify-center overflow-hidden bg-rellia-teal px-6 py-14 md:px-12 md:py-16 lg:min-h-0 lg:px-12 xl:px-16">
+  <div className="relative flex min-h-[420px] flex-1 flex-col justify-center overflow-hidden bg-rellia-teal px-6 py-14 md:px-12 md:py-16 lg:min-h-screen lg:px-12 xl:px-16">
     <div className="absolute inset-0">
       <img
         src="/health_tech_collaboration_1778023064936.png"

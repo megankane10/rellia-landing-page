@@ -93,6 +93,26 @@ const AdminContentList = () => {
 
       {cmsConfigured && (
         <>
+          <div className="rounded-2xl border border-rellia-teal/15 bg-rellia-mint/10 px-5 py-4 font-urbanist text-sm leading-relaxed text-black/75">
+            <p className="font-host-grotesk font-semibold text-rellia-teal">How this list works</p>
+            <ul className="mt-2 list-disc space-y-1.5 pl-5">
+              <li>
+                <strong>Draft</strong> — document exists only as an unpublished draft in Sanity (
+                <code className="text-xs">drafts.*</code> id). Not on the public site until you publish
+                in Studio.
+              </li>
+              <li>
+                <strong>Published</strong> — document is published in this dataset and was edited
+                recently; there is no open draft for it right now.
+              </li>
+              <li>
+                <strong>Categories</strong> — grouped by Sanity document type (
+                <code className="text-xs">_type</code>), e.g. <em>Advisor</em> vs{" "}
+                <em>Advisor filter tag</em> are different schemas, not duplicates.
+              </li>
+            </ul>
+          </div>
+
           <div
             className="flex flex-wrap gap-2"
             role="tablist"

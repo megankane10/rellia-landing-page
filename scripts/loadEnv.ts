@@ -3,5 +3,7 @@ import { fileURLToPath } from "node:url"
 import dotenv from "dotenv"
 
 const scriptsDir = path.dirname(fileURLToPath(import.meta.url))
-dotenv.config({ path: path.resolve(scriptsDir, "..", ".env") })
+const root = path.resolve(scriptsDir, "..")
+dotenv.config({ path: path.join(root, ".env") })
+dotenv.config({ path: path.join(root, ".env.local") })
 

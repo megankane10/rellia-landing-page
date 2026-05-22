@@ -60,3 +60,32 @@ export const studioUrlForRow = (row: SanityContentRow) => {
 }
 
 export const isCmsContentEnabled = () => isSanityConfigured()
+
+/** Human-readable Sanity `_type` labels for admin content queue sections. */
+export const CMS_DOCUMENT_TYPE_LABELS: Record<string, string> = {
+  advisor: "Advisor",
+  advisorFilter: "Advisor filter tag",
+  alumniCompany: "Alumni company",
+  directoryFilterGroup: "Directory filter group",
+  event: "Event",
+  founder: "Founder",
+  founderLevel: "Founder level",
+  founderSpecialty: "Founder specialty",
+  globalSettings: "Global settings",
+  homePage: "Home page",
+  investor: "Investor",
+  navigation: "Navigation",
+  page: "Modular page",
+  program: "Program",
+  siteSettings: "Site settings",
+  story: "Story",
+  storyFilter: "Story category",
+}
+
+export const formatCmsDocumentTypeLabel = (type: string): string => {
+  if (CMS_DOCUMENT_TYPE_LABELS[type]) return CMS_DOCUMENT_TYPE_LABELS[type]
+  return type
+    .replace(/([A-Z])/g, " $1")
+    .replace(/^./, (c) => c.toUpperCase())
+    .trim()
+}
