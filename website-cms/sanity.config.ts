@@ -56,6 +56,8 @@ export default defineConfig({
         'https://*.vercel.app',
         'https://relliahealth.com',
         'https://www.relliahealth.com',
+        'https://relliahealth.sanity.studio',
+        'https://*.sanity.studio',
       ],
       resolve: {
         mainDocuments: presentationMainDocuments,

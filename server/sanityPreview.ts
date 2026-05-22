@@ -1,0 +1,28 @@
+import type express from "express"
+import { perspectiveCookieName } from "@sanity/preview-url-secret/constants"
+
+export const SANITY_STUDIO_FALLBACK_URL = "https://relliahealth.sanity.studio"
+
+export const resolveSanityStudioUrl = (): string =>
+  process.env.SANITY_STUDIO_URL?.trim() || SANITY_STUDIO_FALLBACK_URL
+
+export const isSanityStudioReferer = (req: express.Request): boolean => {
+  const referer = (req.get("referer") || "").toLowerCase()
+  return referer.includes(".sanity.studio") || referer.includes(".sanity.io")
+}
+
+export const hasSanityPreviewPerspectiveCookie = (cookieHeader: string): boolean =>
+  cookieHeader.includes(`${perspectiveCookieName}=`)
+
+/** Set by the marketing site when running inside Presentation’s preview iframe. */
+export const SANITY_PRESENTATION_HEADER = "x-sanity-presentation"
+
+export const isPresentationPreviewRequest = (
+  req: express.Request,
+  cookieHeader: string,
+  siteOriginsAllowed: boolean,
+): boolean => {
+  if (hasSanityPreviewPerspectiveCookie(cookieHeader)) return true
+  if (!siteOriginsAllowed) return false
+  return (req.get(SANITY_PRESENTATION_HEADER) || "").trim() === "1"
+}

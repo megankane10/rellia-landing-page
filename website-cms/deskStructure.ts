@@ -21,6 +21,7 @@ const founderDirectoryFilterGroups = (S: StructureBuilder) =>
     .icon(TagIcon)
     .child(
       S.documentList()
+        .apiVersion('2024-01-01')
         .id('directoryFilterGroupsFounders')
         .title('Filter groups — founders')
         .filter('_type == "directoryFilterGroup" && appliesTo in ["founders", "both"]')
@@ -33,6 +34,7 @@ const advisorDirectoryFilterGroups = (S: StructureBuilder) =>
     .icon(TagIcon)
     .child(
       S.documentList()
+        .apiVersion('2024-01-01')
         .id('directoryFilterGroupsAdvisors')
         .title('Filter groups — advisors')
         .filter('_type == "directoryFilterGroup" && appliesTo in ["advisors", "both"]')

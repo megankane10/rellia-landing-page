@@ -12,6 +12,11 @@ import {
   isSanityQueryId,
 } from "../shared/cms/sanityQueryRegistry";
 import { stripSanityMetadata } from "./sanityResponseSanitize";
+import {
+  isPresentationPreviewRequest,
+  isSanityStudioReferer,
+  resolveSanityStudioUrl,
+} from "./sanityPreview";
 import { resolveSanityApiConfig } from "./sanityEnv";
 import {
   buildCsrfSetCookie,
@@ -139,6 +144,12 @@ export function createServer() {
 
   const studioOrigin = safeOriginFromUrl(process.env.SANITY_STUDIO_URL)
   const siteOrigins = buildSiteOrigins()
+  const siteOrigin =
+    process.env.VITE_SITE_URL?.trim() ||
+    process.env.SITE_URL?.trim() ||
+    (process.env.VERCEL_URL
+      ? `https://${process.env.VERCEL_URL.replace(/^https?:\/\//, "")}`
+      : "https://www.relliahealth.com")
 
   const allowBrowserOrigin = (
     req: express.Request,
@@ -329,7 +340,8 @@ export function createServer() {
     const studioOnlyOrigins = new Set([studioOrigin].filter(Boolean) as string[])
     if (
       !allowBrowserOrigin(req, studioOnlyOrigins) &&
-      !hasSanityPreviewSecret(req)
+      !hasSanityPreviewSecret(req) &&
+      !isSanityStudioReferer(req)
     ) {
       res.status(403).send("Forbidden")
       return
@@ -408,7 +420,10 @@ export function createServer() {
     rateLimitText(draftModeRate, DRAFT_MODE_MAX_PER_MIN),
     (_req, res) => {
       const reqAny = _req as unknown as express.Request
-      if (!allowBrowserOrigin(reqAny, new Set([studioOrigin].filter(Boolean) as string[]))) {
+      if (
+        !allowBrowserOrigin(reqAny, new Set([studioOrigin].filter(Boolean) as string[])) &&
+        !isSanityStudioReferer(reqAny)
+      ) {
         res.status(403).send("Forbidden")
         return
       }
@@ -465,7 +480,11 @@ export function createServer() {
     }
 
     const cookie = req.headers.cookie || "";
-    const isPreviewSession = cookie.includes(`${perspectiveCookieName}=`);
+    const isPreviewSession = isPresentationPreviewRequest(
+      req,
+      cookie,
+      allowBrowserOrigin(req, previewAndSiteOrigins),
+    );
     const token = process.env.SANITY_API_READ_TOKEN?.trim();
 
     if (!isDev) {
@@ -550,7 +569,7 @@ export function createServer() {
           useCdn: false,
           apiVersion: "2024-01-01",
           perspective: "drafts",
-          stega: { enabled: true, studioUrl: process.env.SANITY_STUDIO_URL },
+          stega: { enabled: true, studioUrl: resolveSanityStudioUrl() },
         });
         const data = await previewClient.fetch(entry.query, fetchParams);
         res.status(200).json({

@@ -19,7 +19,7 @@ import { z as z2 } from "zod";
 import { createClient } from "@sanity/client";
 import { validatePreviewUrl } from "@sanity/preview-url-secret";
 import { withoutSecretSearchParams } from "@sanity/preview-url-secret/without-secret-search-params";
-import { perspectiveCookieName } from "@sanity/preview-url-secret/constants";
+import { perspectiveCookieName as perspectiveCookieName2 } from "@sanity/preview-url-secret/constants";
 
 // shared/cms/sanityQueryRegistry.ts
 import { z } from "zod";
@@ -645,6 +645,22 @@ var stripSanityMetadata = (value, queryId) => {
   return value;
 };
 
+// server/sanityPreview.ts
+import { perspectiveCookieName } from "@sanity/preview-url-secret/constants";
+var SANITY_STUDIO_FALLBACK_URL = "https://relliahealth.sanity.studio";
+var resolveSanityStudioUrl = () => process.env.SANITY_STUDIO_URL?.trim() || SANITY_STUDIO_FALLBACK_URL;
+var isSanityStudioReferer = (req) => {
+  const referer = (req.get("referer") || "").toLowerCase();
+  return referer.includes(".sanity.studio") || referer.includes(".sanity.io");
+};
+var hasSanityPreviewPerspectiveCookie = (cookieHeader) => cookieHeader.includes(`${perspectiveCookieName}=`);
+var SANITY_PRESENTATION_HEADER = "x-sanity-presentation";
+var isPresentationPreviewRequest = (req, cookieHeader, siteOriginsAllowed) => {
+  if (hasSanityPreviewPerspectiveCookie(cookieHeader)) return true;
+  if (!siteOriginsAllowed) return false;
+  return (req.get(SANITY_PRESENTATION_HEADER) || "").trim() === "1";
+};
+
 // server/sanityEnv.ts
 var parseList = (raw) => (raw ?? "").split(",").map((s) => s.trim()).filter(Boolean);
 var resolveSanityApiConfig = () => {
@@ -867,6 +883,7 @@ function createServer() {
   };
   const studioOrigin = safeOriginFromUrl2(process.env.SANITY_STUDIO_URL);
   const siteOrigins = buildSiteOrigins();
+  const siteOrigin = process.env.VITE_SITE_URL?.trim() || process.env.SITE_URL?.trim() || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL.replace(/^https?:\/\//, "")}` : "https://www.relliahealth.com");
   const allowBrowserOrigin = (req, extraAllowedOrigins) => {
     const merged = new Set(siteOrigins);
     if (extraAllowedOrigins) {
@@ -1006,7 +1023,7 @@ function createServer() {
     rateLimitText(draftModeRate, DRAFT_MODE_MAX_PER_MIN),
     async (req, res) => {
       const studioOnlyOrigins = new Set([studioOrigin].filter(Boolean));
-      if (!allowBrowserOrigin(req, studioOnlyOrigins) && !hasSanityPreviewSecret(req)) {
+      if (!allowBrowserOrigin(req, studioOnlyOrigins) && !hasSanityPreviewSecret(req) && !isSanityStudioReferer(req)) {
         res.status(403).send("Forbidden");
         return;
       }
@@ -1053,7 +1070,7 @@ function createServer() {
         const perspective = studioPreviewPerspective || "drafts";
         const isLocalPreview = host.includes("localhost");
         const cookieFlags = isLocalPreview ? "Path=/; SameSite=Lax; Max-Age=3600" : "Path=/; HttpOnly; Secure; SameSite=None; Max-Age=3600";
-        res.setHeader("Set-Cookie", `${perspectiveCookieName}=${perspective}; ${cookieFlags}`);
+        res.setHeader("Set-Cookie", `${perspectiveCookieName2}=${perspective}; ${cookieFlags}`);
         res.redirect(307, cleanRedirect);
       } catch (err) {
         res.status(500).send(err instanceof Error ? err.message : "Unexpected error");
@@ -1065,13 +1082,13 @@ function createServer() {
     rateLimitText(draftModeRate, DRAFT_MODE_MAX_PER_MIN),
     (_req, res) => {
       const reqAny = _req;
-      if (!allowBrowserOrigin(reqAny, new Set([studioOrigin].filter(Boolean)))) {
+      if (!allowBrowserOrigin(reqAny, new Set([studioOrigin].filter(Boolean))) && !isSanityStudioReferer(reqAny)) {
         res.status(403).send("Forbidden");
         return;
       }
       res.setHeader(
         "Set-Cookie",
-        `${perspectiveCookieName}=; Path=/; HttpOnly; Secure; SameSite=None; Max-Age=0`
+        `${perspectiveCookieName2}=; Path=/; HttpOnly; Secure; SameSite=None; Max-Age=0`
       );
       res.redirect(307, "/");
     }
@@ -1115,7 +1132,11 @@ function createServer() {
       return;
     }
     const cookie = req.headers.cookie || "";
-    const isPreviewSession = cookie.includes(`${perspectiveCookieName}=`);
+    const isPreviewSession = isPresentationPreviewRequest(
+      req,
+      cookie,
+      allowBrowserOrigin(req, previewAndSiteOrigins)
+    );
     const token = process.env.SANITY_API_READ_TOKEN?.trim();
     if (!isDev) {
       const hasProvenance = Boolean((req.get("origin") || "").trim()) || Boolean((req.get("referer") || "").trim());
@@ -1184,7 +1205,7 @@ function createServer() {
           useCdn: false,
           apiVersion: "2024-01-01",
           perspective: "drafts",
-          stega: { enabled: true, studioUrl: process.env.SANITY_STUDIO_URL }
+          stega: { enabled: true, studioUrl: resolveSanityStudioUrl() }
         });
         const data2 = await previewClient.fetch(entry.query, fetchParams);
         res.status(200).json({

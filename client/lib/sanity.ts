@@ -1,5 +1,6 @@
 import type { SanityQueryId } from "@shared/cms/sanityQueryRegistry"
 import { clearApiCsrfCache, getApiCsrfHeaders } from "@/lib/apiCsrf"
+import { isSanityPresentationIframe } from "@/lib/sanityPresentation"
 
 export const getSanityProjectId = (): string =>
   import.meta.env.VITE_SANITY_PROJECT_ID || ""
@@ -25,8 +26,7 @@ const allowSanityProxyFetch = (): boolean => {
   if (typeof window === "undefined") return false
   if (import.meta.env.VITE_DISABLE_CMS === "true") return false
   if (isSanityConfigured()) return true
-  // Presentation iframe: draft cookie is HttpOnly (not visible to document.cookie)
-  if (window.self !== window.top) return true
+  if (isSanityPresentationIframe()) return true
   return false
 }
 
@@ -42,10 +42,19 @@ export const sanityFetch = async <T>(
 
     const run = async () => {
       const csrf = await getApiCsrfHeaders()
+      const presentationHeaders: Record<string, string> = {}
+      if (isSanityPresentationIframe()) {
+        presentationHeaders["x-sanity-presentation"] = "1"
+      }
+
       return fetch("/api/sanity/query", {
         method: "POST",
         credentials: "same-origin",
-        headers: { "content-type": "application/json", ...csrf },
+        headers: {
+          "content-type": "application/json",
+          ...presentationHeaders,
+          ...csrf,
+        },
         body: JSON.stringify({ queryId, params: params ?? {} }),
       })
     }

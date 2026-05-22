@@ -201,9 +201,10 @@ Set the same variables on **Vercel → Settings → Environment Variables** for 
 
 ## Sanity Visual Editing
 
-1. Mount **`VisualEditingOverlay`** in `client/App.tsx` (enabled when the site runs inside Studio Presentation with a draft cookie).
+1. Mount **`VisualEditingOverlay`** in `client/App.tsx` (enables `@sanity/visual-editing` comlink + overlays inside the Presentation iframe).
 2. Studio **`presentationTool`** uses `previewMode.enable` / `disable` → `/api/draft-mode/*` (see `website-cms/sanity.config.ts`).
-3. Set **`SANITY_STUDIO_PREVIEW_URL`** to your preview deployment.
+3. Preview deploy must set **`SANITY_STUDIO_URL`** (stega) and **`SANITY_API_READ_TOKEN`** (draft GROQ). The iframe also sends `x-sanity-presentation: 1` so `/api/sanity/query` returns stega even before the HttpOnly cookie is visible to JS.
+4. Set **`SANITY_STUDIO_PREVIEW_URL`** on the hosted Studio to your preview deployment origin.
 4. Seed preview content: `pnpm sanity:seed` (requires `SANITY_API_WRITE_TOKEN` and matching project/dataset env).
 5. After schema changes: `pnpm sanity:cleanup` on the **`preview`** dataset (removes `diagnosticSubmission` orphans and duplicate docs).
 
