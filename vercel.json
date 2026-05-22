@@ -42,7 +42,7 @@
   "rewrites": [
     {
       "source": "/api/(.*)",
-      "destination": "/api"
+      "destination": "/api?__path=$1"
     },
     {
       "source": "/((?!api/)(?!_vercel/)(?!assets/)(?!images/)(?!videos/)(?!ogimage\\.png$)(?!favicon\\.ico$)(?!robots\\.txt$)(?!sitemap\\.xml$)(?!placeholder\\.svg$).*)",

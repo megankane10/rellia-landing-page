@@ -14,7 +14,7 @@
     "dev": "vite",
     "build": "pnpm run build:client && pnpm run build:server && pnpm run build:api",
     "build:client": "vite build",
-    "build:api": "esbuild scripts/vercel-api-entry.ts --bundle --platform=node --target=node22 --format=esm --packages=bundle --outfile=api/index.js",
+    "build:api": "esbuild scripts/vercel-api-entry.ts --bundle --platform=node --target=node22 --format=esm --packages=external --external:dotenv --outfile=api/index.js",
     "build:server": "vite build --config vite.config.server.ts",
     "start": "node dist/server/node-build.mjs",
     "sanity:seed": "tsx scripts/sanity-seed.ts",

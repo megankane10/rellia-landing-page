@@ -47,7 +47,7 @@ const getClientIp = (req: RequestLike): string => {
   return "unknown";
 };
 
-/** vercel.json rewrites /api/* → /api; restore the real path so Express routes match */
+/** vercel.json rewrites /api/* → /api?__path=…; restore the real path so Express routes match */
 const fixVercelRewrittenApiPath: RequestHandler = (req, _res, next) => {
   if (!process.env.VERCEL) {
     next();
@@ -60,24 +60,40 @@ const fixVercelRewrittenApiPath: RequestHandler = (req, _res, next) => {
       next();
       return;
     }
+
+    const pathParam = u.searchParams.get("__path")?.trim();
+    if (pathParam) {
+      const subPath = pathParam.replace(/^\/+/, "");
+      req.url = `/api/${subPath}${stripInternalQuery(u.search)}`;
+      next();
+      return;
+    }
+
     const candidate =
       headerOne(req, "x-vercel-original-path") ||
       headerOne(req, "x-invoke-path") ||
-      headerOne(req, "x-matched-path");
-    if (!candidate?.startsWith("/api/")) {
-      next();
-      return;
+      headerOne(req, "x-matched-path") ||
+      headerOne(req, "x-forwarded-uri");
+    if (candidate?.startsWith("/api/")) {
+      const pathOnly = candidate.split("?")[0] ?? "";
+      if (pathOnly && pathOnly !== "/api" && pathOnly !== "/api/") {
+        req.url = pathOnly + (candidate.includes("?") ? candidate.slice(candidate.indexOf("?")) : "");
+        next();
+        return;
+      }
     }
-    const pathOnly = candidate.split("?")[0] ?? "";
-    if (!pathOnly || pathOnly === "/api" || pathOnly === "/api/") {
-      next();
-      return;
-    }
-    req.url = pathOnly + (u.search || "");
   } catch {
     // leave req.url
   }
   next();
+};
+
+const stripInternalQuery = (search: string): string => {
+  if (!search || search === "?") return "";
+  const params = new URLSearchParams(search.startsWith("?") ? search.slice(1) : search);
+  params.delete("__path");
+  const rest = params.toString();
+  return rest ? `?${rest}` : "";
 };
 
 export function createServer() {
@@ -1129,6 +1145,13 @@ export function createServer() {
       }
     },
   );
+
+  app.use((err: unknown, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
+    console.error("Express error:", err);
+    if (!res.headersSent) {
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
 
   return app;
 }

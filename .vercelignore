@@ -1,0 +1,9 @@
+# Shrink CLI uploads and avoid unrelated monorepo folders
+website-cms/
+node_modules/
+dist/
+.pnpm-store/
+.cursor/
+.agent-tools/
+data/
+*.local
