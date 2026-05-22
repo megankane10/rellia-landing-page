@@ -120,13 +120,12 @@ const joinTeamMarqueeImages = [...TEAM_MARQUEE_IMAGES, ...TEAM_MARQUEE_IMAGES]
 
 const JOIN_TEAM_MARQUEE_LOOP_SEC = 56
 
-/** Shared geometry + mint sweep hover so primary and outline CTAs match pixel-for-pixel */
+/** Shared geometry + RelliaCta-style hover (lift + fill, no sweep) */
 const joinTeamCtaSharedClass = cn(
   "group relative isolate inline-flex cursor-pointer items-center justify-center overflow-hidden rounded-full border-2 border-rellia-teal outline-none",
   "px-8 py-3.5 font-host-grotesk text-base font-semibold leading-none tracking-tight md:px-10 md:py-4 md:text-lg",
-  "transition-[transform,box-shadow,border-color,background-color] duration-300 motion-reduce:transition-none",
-  "before:pointer-events-none before:absolute before:inset-0 before:z-0 before:origin-left before:scale-x-0 before:rounded-full before:bg-rellia-mint before:transition-transform before:duration-300 before:ease-out",
-  "hover:before:scale-x-100",
+  "transition-[transform,box-shadow,border-color,background-color,color] duration-300 motion-reduce:transition-none",
+  "before:hidden",
   "focus-visible:ring-2 focus-visible:ring-rellia-teal focus-visible:ring-offset-2 focus-visible:ring-offset-rellia-greyTeal",
   "motion-safe:hover:-translate-y-0.5 motion-safe:hover:shadow-lg",
 )
@@ -216,7 +215,7 @@ const CareersJoinTeamSection = ({
                         onClick={handlePrimaryClick}
                         className={cn(
                           joinTeamCtaSharedClass,
-                          "border-rellia-teal bg-rellia-teal hover:border-rellia-mint",
+                          "border-rellia-teal bg-rellia-teal hover:border-rellia-mint hover:bg-rellia-mint",
                         )}
                         aria-label={primaryCta.ariaLabel}
                       >
@@ -231,7 +230,7 @@ const CareersJoinTeamSection = ({
                         onClick={handleSecondaryClick}
                         className={cn(
                           joinTeamCtaSharedClass,
-                          "border-rellia-teal bg-transparent hover:border-rellia-mint",
+                          "border-rellia-teal bg-transparent hover:border-rellia-mint hover:bg-rellia-mint",
                         )}
                         aria-label={secondaryCta.ariaLabel}
                       >
@@ -505,7 +504,7 @@ export default function CareersCms() {
                                   href={role.linkedInApplyUrl}
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  className="group relative isolate inline-flex h-12 cursor-pointer items-center justify-center overflow-hidden rounded-full border-2 border-rellia-mint bg-rellia-mint px-8 font-host-grotesk text-base font-bold text-rellia-teal shadow-sm outline-none transition-[colors,border-color] duration-300 before:pointer-events-none before:absolute before:inset-0 before:-z-10 before:origin-left before:scale-x-0 before:bg-rellia-teal before:transition-transform before:duration-300 before:ease-out hover:before:scale-x-100 hover:border-rellia-teal hover:text-white"
+                                  className="group relative isolate inline-flex h-12 cursor-pointer items-center justify-center overflow-hidden rounded-full border-2 border-rellia-mint bg-rellia-mint px-8 font-host-grotesk text-base font-bold text-rellia-teal shadow-sm outline-none transition-[transform,background-color,color,border-color,box-shadow] duration-300 before:hidden motion-safe:hover:-translate-y-0.5 hover:border-rellia-teal hover:bg-rellia-teal hover:text-white"
                                   aria-label={`Apply for ${role.title} on LinkedIn (opens in new tab)`}
                                 >
                                   <span className="relative z-10">
@@ -516,7 +515,7 @@ export default function CareersCms() {
                                 <button
                                   type="button"
                                   onClick={() => handleCopyRoleLink(role.id)}
-                                  className="group relative isolate inline-flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-full border-2 border-black/15 bg-white text-black shadow-sm outline-none transition-[colors,border-color] duration-300 before:pointer-events-none before:absolute before:inset-0 before:-z-10 before:origin-left before:scale-x-0 before:bg-rellia-teal before:transition-transform before:duration-300 before:ease-out hover:before:scale-x-100 hover:border-rellia-teal hover:text-white"
+                                  className="group relative isolate inline-flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-full border-2 border-black/15 bg-white text-black shadow-sm outline-none transition-[transform,background-color,color,border-color,box-shadow] duration-300 before:hidden motion-safe:hover:-translate-y-0.5 hover:border-rellia-teal hover:bg-rellia-teal hover:text-white"
                                   title={copiedRoleId === role.id ? "Copied!" : "Copy link to role"}
                                   aria-label={copiedRoleId === role.id ? "Copied!" : "Copy link to role"}
                                 >

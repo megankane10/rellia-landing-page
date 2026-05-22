@@ -30,6 +30,9 @@ import { isSanityConfigured } from "@/lib/sanity";
 const DIRECTORY_TITLE_CLASS =
   "font-host-grotesk text-4xl font-extrabold tracking-tight text-black md:text-5xl";
 
+const directoryCardTagClass =
+  "rounded-full border border-white/35 bg-white/72 px-2.5 py-0.5 font-urbanist text-[11px] font-semibold text-rellia-teal backdrop-blur-md"
+
 function FounderDirectoryCard({
   company,
   onOpen,
@@ -37,6 +40,10 @@ function FounderDirectoryCard({
   company: FounderCompany;
   onOpen: () => void;
 }) {
+  const businessModels = Array.isArray((company as { businessModel?: string[] }).businessModel)
+    ? (company as { businessModel: string[] }).businessModel
+    : []
+
   return (
     <motion.article
       layout
@@ -56,39 +63,34 @@ function FounderDirectoryCard({
       tabIndex={0}
       aria-label={`Open details for ${company.logoName}`}
     >
-      <div className="flex flex-1 flex-col p-6 md:p-7">
-        <div className="flex min-h-[132px] w-full items-center justify-center py-1">
+      <div className="relative aspect-[3/2] w-full overflow-hidden bg-gradient-to-br from-rellia-cream via-white to-rellia-cream/60">
+        <div className="flex h-full w-full items-center justify-center px-8 py-6">
           <img
             src={company.logoSrc}
             alt=""
-            className="max-h-[120px] w-auto max-w-full object-contain object-center"
+            className="max-h-[88px] w-auto max-w-full object-contain object-center transition duration-500 ease-out group-hover:scale-[1.03] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
           />
         </div>
-        <h3 className="mt-5 font-host-grotesk text-base font-bold tracking-tight text-black md:text-lg group-hover:underline decoration-2 underline-offset-4">
-          {company.logoName}
-        </h3>
-        <div className="mt-2 flex flex-wrap gap-2">
+        <div className="absolute left-3 top-3 z-10 flex max-w-[calc(100%-1.5rem)] flex-wrap gap-1.5">
           {company.specialties.map((s) => (
-            <span
-              key={s}
-              className="rounded-full border border-rellia-teal/20 bg-rellia-mint/20 px-2.5 py-0.5 font-urbanist text-[11px] font-bold text-rellia-teal"
-            >
+            <span key={s} className={directoryCardTagClass}>
               {s}
             </span>
           ))}
-          {Array.isArray((company as any).businessModel) &&
-            (company as any).businessModel.map((bm: string) => (
-              <span
-                key={bm}
-                className="rounded-full border border-black/10 bg-black/[0.03] px-2.5 py-0.5 font-urbanist text-[11px] font-bold text-black/60"
-              >
-                {bm}
-              </span>
-            ))}
+          {businessModels.map((bm) => (
+            <span
+              key={bm}
+              className={cn(directoryCardTagClass, "font-medium text-black/80")}
+            >
+              {bm}
+            </span>
+          ))}
         </div>
-        <p className="mt-4 line-clamp-3 font-urbanist text-[13px] leading-relaxed text-black/70 sm:text-sm">
-          {company.shortDescription}
-        </p>
+      </div>
+      <div className="flex flex-1 flex-col p-6 md:p-7">
+        <h3 className="font-host-grotesk text-base font-bold tracking-tight text-black md:text-lg group-hover:underline decoration-2 underline-offset-4">
+          {company.logoName}
+        </h3>
       </div>
     </motion.article>
   );

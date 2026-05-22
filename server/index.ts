@@ -61,7 +61,9 @@ const fixVercelRewrittenApiPath: RequestHandler = (req, _res, next) => {
       return;
     }
     const candidate =
-      headerOne(req, "x-invoke-path") || headerOne(req, "x-matched-path");
+      headerOne(req, "x-vercel-original-path") ||
+      headerOne(req, "x-invoke-path") ||
+      headerOne(req, "x-matched-path");
     if (!candidate?.startsWith("/api/")) {
       next();
       return;

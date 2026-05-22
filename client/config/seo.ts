@@ -269,6 +269,24 @@ export const ROUTE_SEO: Record<string, RouteSeoConfig> = {
       "Complete the Rellia Health diagnostic survey to receive your readiness report and personalized advisory board matches.",
     indexable: true,
   },
+  "/admin/login": {
+    title: "Admin sign in — Rellia Health",
+    description:
+      "Sign in to the Rellia Health admin portal to review diagnostic survey submissions and internal reports.",
+    indexable: false,
+  },
+  "/admin/signup": {
+    title: "Create admin account — Rellia Health",
+    description:
+      "Create a Rellia Health admin account when signup is enabled. Internal access for diagnostic submission review.",
+    indexable: false,
+  },
+  "/admin/dashboard": {
+    title: "Admin dashboard — Rellia Health",
+    description:
+      "Rellia Health admin dashboard for diagnostic submissions, company profiles, and operational review.",
+    indexable: false,
+  },
 }
 
 const NOT_FOUND_SEO: RouteSeoConfig = {
@@ -411,10 +429,20 @@ const EVENT_DETAIL_SEO: RouteSeoConfig = {
   indexable: true,
 }
 
+const ADMIN_AREA_SEO: RouteSeoConfig = {
+  title: "Admin — Rellia Health",
+  description:
+    "Rellia Health internal admin area for diagnostic and operational review. Not indexed for search.",
+  indexable: false,
+}
+
 export const getSeoForPathname = (pathname: string): RouteSeoConfig => {
   const key = normalizePathname(pathname)
   if (key.startsWith("/events/") && key !== "/events") {
     return EVENT_DETAIL_SEO
+  }
+  if (key.startsWith("/admin")) {
+    return ROUTE_SEO[key] ?? ADMIN_AREA_SEO
   }
   return ROUTE_SEO[key] ?? NOT_FOUND_SEO
 }
