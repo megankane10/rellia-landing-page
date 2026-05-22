@@ -4,15 +4,18 @@ import { getSanityDataset, isSanityConfigured, sanityFetch } from "@/lib/sanity"
 import AdminCompactEmptyState from "@/components/admin/AdminCompactEmptyState"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
+import { cn } from "@/lib/utils"
 
 const STUDIO_BASE = "https://relliahealth.sanity.studio/desk"
 const STUDIO_HOME = "https://relliahealth.sanity.studio"
 
-type SanityDraft = {
+type SanityContentRow = {
   _id: string
   _type: string
   title?: string
   _updatedAt?: string
+  status: "unpublished" | "published"
 }
 
 const formatRelative = (iso?: string) => {
@@ -26,11 +29,48 @@ const formatRelative = (iso?: string) => {
   return `${days}d ago`
 }
 
-const studioUrl = (draft: SanityDraft) => {
-  const rawId = typeof draft._id === "string" ? draft._id : ""
+const studioUrl = (row: SanityContentRow) => {
+  const rawId = typeof row._id === "string" ? row._id : ""
   const docId = rawId.replace(/^drafts\./, "")
-  if (!docId || !draft._type) return STUDIO_HOME
-  return `${STUDIO_BASE}/${draft._type};${docId}`
+  if (!docId || !row._type) return STUDIO_HOME
+  return `${STUDIO_BASE}/${row._type};${docId}`
+}
+
+const isContentRow = (row: {
+  _id?: string
+  _type?: string
+}): row is { _id: string; _type: string; title?: string; _updatedAt?: string } =>
+  typeof row?._id === "string" &&
+  typeof row?._type === "string" &&
+  !row._type.startsWith("sanity.") &&
+  row._type !== "system.schema"
+
+const fetchCmsQueue = async (): Promise<SanityContentRow[]> => {
+  const [draftRows, recentRows] = await Promise.all([
+    sanityFetch<{ _id: string; _type: string; title?: string; _updatedAt?: string }[]>("sanityDrafts"),
+    sanityFetch<{ _id: string; _type: string; title?: string; _updatedAt?: string }[]>("sanityRecentEdits"),
+  ])
+
+  const drafts = (Array.isArray(draftRows) ? draftRows : [])
+    .filter(isContentRow)
+    .map((row) => ({
+      ...row,
+      status: "unpublished" as const,
+    }))
+
+  const draftBaseIds = new Set(
+    drafts.map((d) => d._id.replace(/^drafts\./, "")),
+  )
+
+  const published = (Array.isArray(recentRows) ? recentRows : [])
+    .filter(isContentRow)
+    .filter((row) => !draftBaseIds.has(row._id))
+    .map((row) => ({
+      ...row,
+      status: "published" as const,
+    }))
+
+  return [...drafts, ...published]
 }
 
 const AdminSanityDrafts = () => {
@@ -38,23 +78,13 @@ const AdminSanityDrafts = () => {
   const dataset = getSanityDataset() || "not configured"
 
   const { data, isLoading, error } = useQuery({
-    queryKey: ["admin-sanity-drafts"],
-    queryFn: async () => {
-      const rows = await sanityFetch<SanityDraft[]>("sanityDrafts")
-      if (!Array.isArray(rows)) return []
-      return rows.filter(
-        (row): row is SanityDraft =>
-          typeof row?._id === "string" &&
-          typeof row?._type === "string" &&
-          !row._type.startsWith("sanity.") &&
-          row._type !== "system.schema",
-      )
-    },
+    queryKey: ["admin-sanity-content-queue", dataset],
+    queryFn: fetchCmsQueue,
     staleTime: 60_000,
     enabled: cmsConfigured,
   })
 
-  const draftCount = data?.length ?? 0
+  const rows = data ?? []
 
   return (
     <section aria-labelledby="sanity-drafts-heading" className="space-y-4">
@@ -63,8 +93,13 @@ const AdminSanityDrafts = () => {
           <h2 id="sanity-drafts-heading" className="font-host-grotesk text-lg font-semibold text-black">
             Content drafts
           </h2>
-          <p className="mt-1 font-host-grotesk text-3xl font-bold text-rellia-teal">
-            {cmsConfigured ? (isLoading ? "—" : draftCount) : "—"}
+          <p className="mt-1 max-w-2xl font-urbanist text-sm text-black/55">
+            Unpublished drafts plus recently edited published pages in the{" "}
+            <span className="font-medium text-black/70">{dataset}</span> dataset. Preview-only pages
+            appear here after you publish in Studio — not as “missing from main.”
+          </p>
+          <p className="mt-2 font-host-grotesk text-3xl font-bold text-rellia-teal">
+            {cmsConfigured ? (isLoading ? "—" : rows.length) : "—"}
           </p>
         </div>
         <Button
@@ -98,32 +133,44 @@ const AdminSanityDrafts = () => {
 
       {cmsConfigured && error && (
         <p className="font-urbanist text-sm text-red-700">
-          Could not load drafts. Check CMS credentials and that the admin app queries the same dataset as Studio (
-          currently <span className="font-medium">{dataset}</span>).
+          Could not load content queue. Check CMS credentials and that the admin app queries the same
+          dataset as Studio (currently <span className="font-medium">{dataset}</span>).
         </p>
       )}
 
-      {cmsConfigured && !isLoading && !error && draftCount === 0 && (
+      {cmsConfigured && !isLoading && !error && rows.length === 0 && (
         <AdminCompactEmptyState
           icon={FileEdit}
-          title="No drafts in queue"
-          description={`Nothing unpublished in the ${dataset} dataset.`}
+          title="No content in queue"
+          description={`Nothing to review in the ${dataset} dataset yet.`}
         />
       )}
 
-      {cmsConfigured && data && data.length > 0 && (
+      {cmsConfigured && !isLoading && !error && rows.length > 0 && (
         <ul className="grid gap-3 sm:grid-cols-2">
-          {data.map((draft) => (
+          {rows.map((row) => (
             <li
-              key={draft._id}
+              key={`${row.status}-${row._id}`}
               className="flex flex-col justify-between gap-4 rounded-2xl border border-black/[0.07] bg-white p-4 shadow-sm"
             >
               <div className="min-w-0">
-                <p className="truncate font-host-grotesk text-base font-semibold text-black">
-                  {draft.title || draft._id}
-                </p>
+                <div className="flex flex-wrap items-center gap-2">
+                  <p className="truncate font-host-grotesk text-base font-semibold text-black">
+                    {row.title || row._id}
+                  </p>
+                  <Badge
+                    className={cn(
+                      "shrink-0 rounded-full font-urbanist text-[11px] font-medium",
+                      row.status === "unpublished"
+                        ? "bg-amber-100 text-amber-900 hover:bg-amber-100"
+                        : "bg-rellia-mint/40 text-rellia-teal hover:bg-rellia-mint/40",
+                    )}
+                  >
+                    {row.status === "unpublished" ? "Unpublished draft" : "Published in dataset"}
+                  </Badge>
+                </div>
                 <p className="mt-1 font-urbanist text-sm text-black/60">
-                  {draft._type} · {formatRelative(draft._updatedAt)}
+                  {row._type} · {formatRelative(row._updatedAt)}
                 </p>
               </div>
               <Button
@@ -134,10 +181,10 @@ const AdminSanityDrafts = () => {
                 className="w-fit rounded-full border-rellia-teal/20 text-rellia-teal hover:bg-rellia-mint/15"
               >
                 <a
-                  href={studioUrl(draft)}
+                  href={studioUrl(row)}
                   target="_blank"
                   rel="noopener noreferrer"
-                  aria-label={`Open ${draft.title ?? draft._type} in Sanity Studio`}
+                  aria-label={`Open ${row.title ?? row._type} in Sanity Studio`}
                 >
                   Review in Studio
                   <ExternalLink className="ml-1.5 h-3.5 w-3.5" aria-hidden />

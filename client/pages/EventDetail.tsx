@@ -45,6 +45,7 @@ import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet"
 import type { SanityPortableText } from "@shared/cms/types"
 import { useEventBySlug } from "@/hooks/useCmsDocuments"
 import { resolveEventCardImageSrc } from "@shared/cms/itemCardImage"
+import { allowCmsSeedFallbacks } from "@/lib/deploymentEnv"
 
 const eventDetailBackToEventsLinkClassName =
   "inline-flex items-center gap-2 font-host-grotesk text-sm font-semibold text-rellia-teal hover:underline hover:underline-offset-4"
@@ -107,7 +108,10 @@ export default function EventDetail() {
   const location = useLocation()
   const resolvedSlug = slug?.trim() ? decodeURIComponent(slug) : ""
   const { data: cmsEvent } = useEventBySlug(resolvedSlug)
-  const fallbackMatch = resolvedSlug ? findProgramsEventBySlug(resolvedSlug, DEFAULT_PROGRAMS_LANDING) : null
+  const fallbackMatch =
+    allowCmsSeedFallbacks() && resolvedSlug
+      ? findProgramsEventBySlug(resolvedSlug, DEFAULT_PROGRAMS_LANDING)
+      : null
   const match = (() => {
     if (!cmsEvent && !fallbackMatch) return null
     const cardImageSrc = resolveEventCardImageSrc(

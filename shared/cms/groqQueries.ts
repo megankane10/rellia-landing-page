@@ -483,7 +483,7 @@ export const careersPageQuery = `*[_type == "careersPage"][0]{
   ${seoFragment}
 }`
 
-export const advisorsQuery = `*[_type == "advisor"]{
+export const advisorsQuery = `*[_type == "advisor" && !(_id in path("drafts.**"))]{
   "id": slug.current,
   name,
   organization,
@@ -509,7 +509,7 @@ export const advisorsQuery = `*[_type == "advisor"]{
   highlights
 }`;
 
-export const alumniCompaniesQuery = `*[_type == "alumniCompany"]{
+export const alumniCompaniesQuery = `*[_type == "alumniCompany" && !(_id in path("drafts.**"))]{
   "id": slug.current,
   name,
   slug,
@@ -578,3 +578,15 @@ export const sanityDraftsQuery = `*[
   "title": coalesce(title, name, headline, slug.current, _type),
   _updatedAt
 }[0...24]`
+
+/** Published documents recently edited in this dataset (preview-only pages show here after publish). */
+export const sanityRecentEditsQuery = `*[
+  !(_id in path("drafts.**"))
+  && !(_type match "sanity.*")
+  && _type != "system.schema"
+] | order(_updatedAt desc) {
+  _id,
+  _type,
+  "title": coalesce(title, name, headline, slug.current, _type),
+  _updatedAt
+}[0...16]`

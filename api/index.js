@@ -482,7 +482,7 @@ var careersPageQuery = `*[_type == "careersPage"][0]{
   tabsLabelVolunteer,
   ${seoFragment}
 }`;
-var advisorsQuery = `*[_type == "advisor"]{
+var advisorsQuery = `*[_type == "advisor" && !(_id in path("drafts.**"))]{
   "id": slug.current,
   name,
   organization,
@@ -507,7 +507,7 @@ var advisorsQuery = `*[_type == "advisor"]{
   mentoringStyle,
   highlights
 }`;
-var alumniCompaniesQuery = `*[_type == "alumniCompany"]{
+var alumniCompaniesQuery = `*[_type == "alumniCompany" && !(_id in path("drafts.**"))]{
   "id": slug.current,
   name,
   slug,
@@ -571,6 +571,16 @@ var sanityDraftsQuery = `*[
   "title": coalesce(title, name, headline, slug.current, _type),
   _updatedAt
 }[0...24]`;
+var sanityRecentEditsQuery = `*[
+  !(_id in path("drafts.**"))
+  && !(_type match "sanity.*")
+  && _type != "system.schema"
+] | order(_updatedAt desc) {
+  _id,
+  _type,
+  "title": coalesce(title, name, headline, slug.current, _type),
+  _updatedAt
+}[0...16]`;
 
 // shared/cms/sanityQueryRegistry.ts
 var empty = z.object({}).strict();
@@ -609,13 +619,14 @@ var SANITY_QUERY_WHITELIST = {
   founderLevels: { query: founderLevelsQuery, params: empty },
   founderSpecialties: { query: founderSpecialtiesQuery, params: empty },
   directoryFilterGroups: { query: directoryFilterGroupsQuery, params: empty },
-  sanityDrafts: { query: sanityDraftsQuery, params: empty }
+  sanityDrafts: { query: sanityDraftsQuery, params: empty },
+  sanityRecentEdits: { query: sanityRecentEditsQuery, params: empty }
 };
 var isSanityQueryId = (value) => Object.prototype.hasOwnProperty.call(SANITY_QUERY_WHITELIST, value);
 
 // server/sanityResponseSanitize.ts
 var STRIP_KEYS = /* @__PURE__ */ new Set(["_id", "_rev", "_ref", "allReferences"]);
-var PRESERVE_ID_QUERIES = /* @__PURE__ */ new Set(["sanityDrafts"]);
+var PRESERVE_ID_QUERIES = /* @__PURE__ */ new Set(["sanityDrafts", "sanityRecentEdits"]);
 var stripSanityMetadata = (value, queryId) => {
   const stripKeys = queryId && PRESERVE_ID_QUERIES.has(queryId) ? /* @__PURE__ */ new Set(["_rev", "_ref", "allReferences"]) : STRIP_KEYS;
   if (value == null) return value;

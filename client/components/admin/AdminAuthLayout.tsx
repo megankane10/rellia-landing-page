@@ -2,7 +2,7 @@ import type { ReactNode } from "react"
 import { Link } from "react-router-dom"
 import { motion } from "framer-motion"
 
-const FAVICON_SRC = "/favicon.ico"
+const HOLOGRAM_LOGO_SRC = "/images/hologram-logo.png"
 
 type AdminAuthLayoutProps = {
   title: string
@@ -23,7 +23,7 @@ const AdminAuthLayout = ({
     <section className="relative min-h-screen w-full">
       <div className="grid min-h-screen grid-cols-1 lg:grid-cols-[45%_55%] xl:grid-cols-[40%_60%]">
         <AdminAuthLeftPanel heading={leftHeading} description={leftDescription} />
-        <div className="relative flex min-h-[480px] flex-col items-center justify-center bg-white px-6 py-14 md:px-12 md:py-20 lg:min-h-screen lg:px-16">
+        <div className="relative flex min-h-[480px] flex-col items-center justify-start bg-white px-6 py-14 md:px-12 md:py-20 lg:min-h-screen lg:px-16">
           <div className="pointer-events-none absolute top-1/4 -right-20 h-80 w-80 rounded-full bg-rellia-mint/5 blur-[120px]" />
           <div className="pointer-events-none absolute bottom-10 -right-20 h-80 w-80 rounded-full bg-rellia-mint/10 blur-[120px]" />
           <motion.div
@@ -58,7 +58,7 @@ type AdminAuthLeftPanelProps = {
 }
 
 const AdminAuthLeftPanel = ({ heading, description }: AdminAuthLeftPanelProps) => (
-  <div className="relative flex min-h-[420px] flex-col overflow-hidden bg-rellia-teal px-6 py-10 lg:min-h-full lg:px-12 lg:py-12">
+  <div className="relative flex min-h-[420px] flex-col overflow-hidden bg-rellia-teal px-6 py-14 md:px-12 md:py-20 lg:min-h-full lg:px-12">
     <div className="absolute inset-0">
       <img
         src="/health_tech_collaboration_1778023064936.png"
@@ -75,25 +75,27 @@ const AdminAuthLeftPanel = ({ heading, description }: AdminAuthLeftPanelProps) =
       <div className="absolute bottom-[-5%] right-[-5%] h-[40%] w-[40%] rounded-full bg-rellia-mint/10 blur-[100px]" />
     </div>
 
-    <div className="relative z-10 flex flex-1 flex-col">
-      <div className="pt-36 md:pt-44 lg:pt-52">
-        <Link
-          to="/"
-          className="inline-flex w-fit rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint"
-          aria-label="Rellia Health home"
-        >
-          <img src={FAVICON_SRC} alt="" className="h-10 w-10 rounded-lg ring-1 ring-white/25 md:h-11 md:w-11" />
-        </Link>
-      </div>
+    <div className="relative z-10 flex w-full max-w-xl flex-col">
+      <Link
+        to="/"
+        className="inline-flex w-fit rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint"
+        aria-label="Rellia Health home"
+      >
+        <img
+          src={HOLOGRAM_LOGO_SRC}
+          alt=""
+          width={80}
+          height={80}
+          className="h-16 w-16 opacity-90 drop-shadow-[0_0_15px_rgba(152,255,232,0.3)] md:h-20 md:w-20"
+        />
+      </Link>
 
-      <div className="flex flex-1 flex-col justify-center py-8 lg:py-10">
-        <h2 className="max-w-md text-left font-host-grotesk text-xl font-semibold leading-snug text-white md:text-2xl">
-          {heading}
-        </h2>
-        <p className="mt-3 max-w-md text-left font-urbanist text-sm leading-relaxed text-white/80 md:text-base">
-          {description}
-        </p>
-      </div>
+      <h2 className="mt-8 max-w-md text-left font-urbanist text-2xl font-medium leading-snug text-white md:text-3xl lg:text-4xl">
+        {heading}
+      </h2>
+      <p className="mt-4 max-w-md text-left font-urbanist text-sm leading-relaxed text-white/80 md:text-base">
+        {description}
+      </p>
     </div>
 
     <div className="pointer-events-none absolute -bottom-24 -right-24 h-96 w-96 rounded-full bg-rellia-mint/15 blur-[120px]" />

@@ -18,6 +18,8 @@ import FilteredListEmptyState from "@/components/FilteredListEmptyState"
 import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo"
 import { HeroHeadlinePortable } from "@/components/HeroHeadlinePortable"
 import { DEFAULT_EVENTS_LANDING_HERO_PORTABLE } from "@shared/cms/inlineHeroHeadline"
+import { allowCmsSeedFallbacks } from "@/lib/deploymentEnv"
+import { normalizeCmsEventForCard } from "@/lib/cmsEventList"
 
 type EventFilter = "all" | "upcoming" | "past"
 const PAGE_SIZE = 12
@@ -82,14 +84,18 @@ export default function Events() {
   useApplyCmsSeo(landing?.seo)
 
   const allEvents = useMemo(() => {
+    const cmsEvents = Array.isArray(data) ? data : []
     const raw =
-      Array.isArray(data) && data.length > 0
-        ? data
-        : [...DEFAULT_PROGRAMS_LANDING.upcomingEvents, ...DEFAULT_PROGRAMS_LANDING.pastEvents]
+      cmsEvents.length > 0
+        ? cmsEvents
+        : allowCmsSeedFallbacks()
+          ? [...DEFAULT_PROGRAMS_LANDING.upcomingEvents, ...DEFAULT_PROGRAMS_LANDING.pastEvents]
+          : []
     return raw.map((event: { slug?: string; imageSrc?: string; title?: string; dateTime?: string }) => {
       const slug = (event.slug ?? getProgramsEventSlug(event as never)).trim()
       const cardImageSrc = resolveEventCardImageSrc(slug, event.imageSrc)
-      return cardImageSrc ? { ...event, imageSrc: cardImageSrc } : event
+      const withImage = cardImageSrc ? { ...event, imageSrc: cardImageSrc } : event
+      return normalizeCmsEventForCard(withImage as never)
     })
   }, [data])
   const [eventFilter, setEventFilter] = useState<EventFilter>("all")

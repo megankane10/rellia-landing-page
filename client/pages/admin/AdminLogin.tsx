@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { useAuth } from "@/context/AuthContext"
-import { Button } from "@/components/ui/button"
+import RelliaAction from "@/components/RelliaAction"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import AdminAuthLayout from "@/components/admin/AdminAuthLayout"
@@ -64,13 +64,15 @@ const AdminLogin = () => {
           />
         </div>
         {error && <p className="font-urbanist text-sm text-destructive">{error}</p>}
-        <Button
+        <RelliaAction
           type="submit"
           disabled={loading}
-          className="w-full rounded-full bg-rellia-teal text-white hover:bg-rellia-teal/90"
+          variant="tealFilled"
+          size="comfortable"
+          className="w-full"
         >
           {loading ? "Signing in…" : "Sign in"}
-        </Button>
+        </RelliaAction>
       </form>
     </AdminAuthLayout>
   )

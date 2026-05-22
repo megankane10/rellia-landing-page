@@ -241,16 +241,25 @@ export default function Navbar({
   const [mobileOpen, setMobileOpen] = useState(false)
   const [mobileOpenLabel, setMobileOpenLabel] = useState<string | null>(null)
   const [desktopOpenLabel, setDesktopOpenLabel] = useState<string | null>(null)
-  const ANNOUNCEMENT_DISMISSED_KEY = "rellia-announcement-dismissed"
+  const ANNOUNCEMENT_DISMISSED_SESSION_KEY = "rellia-announcement-dismissed-session"
+  const ANNOUNCEMENT_DELAY_MS = 10_000
   const [announcementDismissed, setAnnouncementDismissed] = useState(() => {
     if (typeof window === "undefined") return false
     try {
-      return window.localStorage.getItem(ANNOUNCEMENT_DISMISSED_KEY) === "1"
+      return window.sessionStorage.getItem(ANNOUNCEMENT_DISMISSED_SESSION_KEY) === "1"
     } catch {
       return false
     }
   })
+  const [announcementDelayElapsed, setAnnouncementDelayElapsed] = useState(false)
   const location = useLocation()
+
+  useEffect(() => {
+    if (hideAnnouncement || announcementDismissed) return
+    const timer = window.setTimeout(() => setAnnouncementDelayElapsed(true), ANNOUNCEMENT_DELAY_MS)
+    return () => window.clearTimeout(timer)
+  }, [hideAnnouncement, announcementDismissed])
+
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 12)
     window.addEventListener("scroll", handleScroll, { passive: true })
@@ -405,16 +414,19 @@ export default function Navbar({
   const ctaUsesAnchor =
     ctaOpenInNewTab || isExternalHref(resolvedCtaTo) || resolvedCtaTo.startsWith("/api/")
 
-  const showAnnouncement =
+  const announcementEligible =
     !hideAnnouncement &&
     !announcementDismissed &&
     globalSettings.announcementEnabled === true &&
     Boolean(globalSettings.announcementText?.trim())
 
+  const showAnnouncement = announcementEligible && announcementDelayElapsed
+
   const handleAnnouncementDismiss = () => {
     setAnnouncementDismissed(true)
+    setAnnouncementDelayElapsed(false)
     try {
-      window.localStorage.setItem(ANNOUNCEMENT_DISMISSED_KEY, "1")
+      window.sessionStorage.setItem(ANNOUNCEMENT_DISMISSED_SESSION_KEY, "1")
     } catch {
       /* storage unavailable */
     }

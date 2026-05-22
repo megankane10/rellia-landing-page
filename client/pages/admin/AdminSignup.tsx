@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
-import { Button } from "@/components/ui/button"
+import RelliaAction from "@/components/RelliaAction"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { getApiCsrfHeaders } from "@/lib/apiCsrf"
@@ -155,13 +155,15 @@ const AdminSignup = () => {
             <p className="font-urbanist text-xs text-black/50">Minimum 8 characters</p>
           </div>
           {error && <p className="font-urbanist text-sm text-destructive">{error}</p>}
-          <Button
+          <RelliaAction
             type="submit"
             disabled={loading}
-            className="w-full rounded-full bg-rellia-teal text-white hover:bg-rellia-teal/90"
+            variant="tealFilled"
+            size="comfortable"
+            className="w-full"
           >
             {loading ? "Creating account…" : "Create account"}
-          </Button>
+          </RelliaAction>
           <p className="pt-2 text-center font-urbanist text-sm text-black/55">
             Already have an account?{" "}
             <Link

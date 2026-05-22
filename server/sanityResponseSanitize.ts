@@ -1,7 +1,7 @@
 const STRIP_KEYS = new Set(["_id", "_rev", "_ref", "allReferences"])
 
 /** Admin draft list needs document ids for Studio deep links. */
-const PRESERVE_ID_QUERIES = new Set(["sanityDrafts"])
+const PRESERVE_ID_QUERIES = new Set(["sanityDrafts", "sanityRecentEdits"])
 
 /**
  * Recursively remove fields that aid bulk schema mapping / document inventory.

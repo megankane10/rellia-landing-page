@@ -70,7 +70,7 @@ const AdminLayout = () => {
             rel="noopener noreferrer"
             className="font-urbanist text-sm text-black/50 transition-colors hover:text-rellia-teal focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint rounded"
           >
-            Admin Instructions
+            Admin Instructions Doc
           </a>
         </footer>
       </main>

@@ -10,14 +10,55 @@ React SPA for **Rellia Health**, connecting founders, clinicians, and health sys
 
 ## Branches and workflow
 
-| Branch | Role |
-|--------|------|
-| **`main`** | Production; deploys to the live site. |
-| **`Additions`** | Integration branch for new work before merge to `main`. Deploys to the Vercel preview site (e.g. `relliahealth.vercel.app`). |
+| Branch | Git role | Typical Vercel deploy | Sanity dataset (`VITE_SANITY_DATASET`) |
+|--------|----------|----------------------|----------------------------------------|
+| **`main`** | Production code | `www.relliahealth.com` | **`production`** |
+| **`Additions`** | Integration / review before `main` | `relliahealth.vercel.app` (preview) | **`preview`** |
 
 Do day-to-day work on **`Additions`**. After review, merge into **`main`** for production.
 
-**Preview CMS workflow:** Git branch **`Additions`** maps to the Vercel **preview** deployment, not a separate Sanity “branch”. Use Sanity dataset **`preview`** on preview hosts (`SANITY_ENFORCE_VERCEL_DATASET=true` on Vercel). Point Studio Presentation at the preview site via **`SANITY_STUDIO_PREVIEW_URL`** (see `.env.example`). Diagnostic survey routes (`/diagnostics`, `/diagnostic-survey`) are intentionally excluded from this frontend/CMS pass.
+### Sanity: two datasets (not the same as “drafts”)
+
+Sanity stores **two separate content databases** in one project:
+
+| Dataset | What it is | Who sees it |
+|---------|------------|-------------|
+| **`preview`** | Staging copy for experiments, seed scripts, and pre-launch pages | Preview site (`relliahealth.vercel.app`) when env uses `preview` |
+| **`production`** | Live copy for the public marketing site | `www.relliahealth.com` when env uses `production` |
+
+**Important:** Content you **publish** in Studio on the `preview` dataset is **published on preview**, not hidden drafts. It does **not** automatically appear on `www` until the same content exists in the **`production`** dataset (copy, re-publish, or migrate).
+
+The admin dashboard **Content drafts** panel shows:
+
+- **Unpublished draft** documents (`drafts.*` IDs) in the dataset the admin app is configured to read
+- **Recently edited published** documents in that same dataset
+
+It does **not** mean “everything on preview that is missing from main.” Stories, alumni, and advisor profiles on the preview site are usually **published documents in the `preview` dataset**, not draft queue items.
+
+### Static seed fallbacks (code defaults)
+
+`client/lib/deploymentEnv.ts` controls hardcoded fallbacks in `shared/cms/defaults.ts` (sample events, stories, alumni/advisor seed directories, etc.):
+
+- **Allowed** when `VITE_SANITY_DATASET` is **`preview`** (preview deploy + local dev with preview env)
+- **Never** when `VITE_SANITY_DATASET` is **`production`** — the live site must use Sanity production only, or show empty sections if CMS is down (no silent revert to old baked-in events)
+
+If production showed removed events (e.g. an old salon) or missing dates, typical causes were: CMS fetch failing/empty and the events page falling back to defaults, or outdated documents still **published** in the **production** dataset. Fix content in Studio on the **production** dataset, or unpublish/delete there.
+
+### What still needs finalizing (project checklist)
+
+| Area | Status / action |
+|------|------------------|
+| **Vercel env** | Production: `VITE_SANITY_DATASET=production`, `SANITY_API_DATASET=production`, `SANITY_API_READ_TOKEN`, `SANITY_ENFORCE_VERCEL_DATASET=true`. Preview: same keys with `preview`. |
+| **Studio env** | `SANITY_STUDIO_DATASET=preview` for daily editing; `SANITY_STUDIO_PREVIEW_URL` = preview site URL. |
+| **Production CMS content** | Audit **production** dataset: events (`startsAt` / `endsAt` filled), remove retired events, confirm alumni/advisor docs should be live on www before publishing there. |
+| **Supabase admin** | Run `scripts/supabase_admin_policies.sql` if status/delete on submissions is needed. |
+| **Admin signup** | `ADMIN_SIGNUP_ENABLED` + `SUPABASE_SERVICE_ROLE_KEY` on server env; disable signup after invites. |
+| **Stripe** | Membership checkout env on server (see `.env.example`); not surfaced in admin dashboard. |
+| **HubSpot / investor form** | Still external; not in admin. Could move to Supabase later (same pattern as contact form). |
+| **Email alerts** | Not built — optional Supabase webhook → email on new contact/diagnostic rows. |
+| **Sanity private datasets** | Free tier = treat as public API; mitigations documented in `.env.example`. |
+
+Diagnostic survey routes (`/diagnostics`, `/diagnostic-survey`) use Supabase, not Sanity page content.
 
 ---
 
@@ -144,7 +185,7 @@ Set the same variables on **Vercel → Settings → Environment Variables** for 
 
 **CMS status on the dashboard:** **Database** pings Supabase; **CMS** runs the same **`sanityDrafts`** query as the drafts panel (dataset from **`VITE_SANITY_DATASET`**). **Offline** usually means missing **`SANITY_API_READ_TOKEN`** on the server or a dataset mismatch (`preview` vs `production`). Preview edits do not appear when the admin app queries `production`.
 
-**Seed content on preview only:** `client/lib/deploymentEnv.ts` allows static seed fallbacks (stories, careers, alumni/advisor directories) on the **Additions** preview host and in dev — **not** on production `main` (`www.relliahealth.com`).
+**Seed / defaults:** See **Static seed fallbacks** under [Branches and workflow](#branches-and-workflow). Production dataset never uses code defaults; preview dataset may when CMS is empty.
 
 ---
 

@@ -43,20 +43,12 @@ type OverviewStatProps = {
   icon: typeof Inbox
   value: string | number
   label: string
-  accent?: "teal" | "mint" | "slate"
 }
 
-const accentStyles = {
-  teal: "border-l-rellia-teal bg-rellia-teal/[0.06]",
-  mint: "border-l-rellia-mint bg-rellia-mint/15",
-  slate: "border-l-black/20 bg-black/[0.03]",
-} as const
-
-const OverviewStat = ({ icon: Icon, value, label, accent = "teal" }: OverviewStatProps) => (
+const OverviewStat = ({ icon: Icon, value, label }: OverviewStatProps) => (
   <div
     className={cn(
-      "rounded-2xl border border-black/[0.06] border-l-4 px-5 py-5 shadow-sm",
-      accentStyles[accent],
+      "rounded-2xl border border-black/[0.06] border-l-4 border-l-rellia-mint bg-rellia-greyTeal px-5 py-5 shadow-sm",
     )}
   >
     <div className="flex items-start justify-between gap-3">
@@ -120,19 +112,16 @@ const AdminDashboard = () => {
           icon={Inbox}
           value={isLoading ? "—" : activeInquiries}
           label="Active inquiries"
-          accent="teal"
         />
         <OverviewStat
           icon={Stethoscope}
           value={isLoading ? "—" : profiles.length}
           label="Diagnostic submissions"
-          accent="mint"
         />
         <OverviewStat
           icon={CalendarClock}
           value={isLoading ? "—" : newThisWeek}
           label="New this week"
-          accent="slate"
         />
       </div>
 
