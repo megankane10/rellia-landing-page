@@ -27,7 +27,9 @@ const formatRelative = (iso?: string) => {
 }
 
 const studioUrl = (draft: SanityDraft) => {
-  const docId = draft._id.replace(/^drafts\./, "")
+  const rawId = typeof draft._id === "string" ? draft._id : ""
+  const docId = rawId.replace(/^drafts\./, "")
+  if (!docId || !draft._type) return STUDIO_HOME
   return `${STUDIO_BASE}/${draft._type};${docId}`
 }
 
@@ -39,7 +41,11 @@ const AdminSanityDrafts = () => {
     queryKey: ["admin-sanity-drafts"],
     queryFn: async () => {
       const rows = await sanityFetch<SanityDraft[]>("sanityDrafts")
-      return rows ?? []
+      if (!Array.isArray(rows)) return []
+      return rows.filter(
+        (row): row is SanityDraft =>
+          typeof row?._id === "string" && typeof row?._type === "string",
+      )
     },
     staleTime: 60_000,
     enabled: cmsConfigured,

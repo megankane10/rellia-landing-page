@@ -47,6 +47,10 @@
   ],
   "rewrites": [
     {
+      "source": "/health",
+      "destination": "/api?__path=health"
+    },
+    {
       "source": "/api/(.*)",
       "destination": "/api?__path=$1"
     },

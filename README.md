@@ -140,9 +140,9 @@ SUPABASE_SERVICE_ROLE_KEY=...   # required for POST /api/admin/signup
 
 Set the same variables on **Vercel → Settings → Environment Variables** for **Production** and **Preview**, then redeploy. The build must run **`pnpm run build:api`** (included in `vercel.json` `buildCommand`).
 
-**If signup shows “API unavailable”:** open `/api/health` on the same host. You should see `{"ok":true}` with JSON — not the SPA HTML. If you get HTML, the serverless API is not running (check deploy logs for `build:api`, and that `api/index.js` exists). Local dev loads `.env` and `.env.local` via `server/loadEnv.ts`.
+**If signup shows “API unavailable”:** open **`/api/health`** on the same host (or **`/health`**, which Vercel rewrites to the API). You should see `{"ok":true}` as JSON — not the SPA HTML. If you get HTML or “Cannot GET”, the serverless API is not running (check deploy logs for `build:api`, and that `api/index.js` exists). Local `pnpm start` also serves **`/health`** directly. Dev loads `.env` and `.env.local` via `server/loadEnv.ts`.
 
-**CMS status on the dashboard:** **Database** pings Supabase; **CMS** calls `POST /api/sanity/query` with `globalSettings` using the dataset in **`VITE_SANITY_DATASET`**. **Offline** usually means missing **`SANITY_API_READ_TOKEN`** on the server, wrong dataset (`preview` vs `production`), or no `globalSettings` document. Drafts use the same dataset — preview edits do not appear when the admin app queries `production`.
+**CMS status on the dashboard:** **Database** pings Supabase; **CMS** runs the same **`sanityDrafts`** query as the drafts panel (dataset from **`VITE_SANITY_DATASET`**). **Offline** usually means missing **`SANITY_API_READ_TOKEN`** on the server or a dataset mismatch (`preview` vs `production`). Preview edits do not appear when the admin app queries `production`.
 
 **Seed content on preview only:** `client/lib/deploymentEnv.ts` allows static seed fallbacks (stories, careers, alumni/advisor directories) on the **Additions** preview host and in dev — **not** on production `main` (`www.relliahealth.com`).
 
@@ -233,7 +233,7 @@ All **`/api/*`** routes are served by the serverless entry **`api/index.js`** (b
 
 | Method | Path | Purpose | Called from (app code) |
 |--------|------|---------|-------------------------|
-| `GET` | `/health` | Health check | External monitors / ops |
+| `GET` | `/api/health`, `/health` | Health check (`/health` rewrites to API on Vercel) | Signup troubleshooting / monitors |
 | `GET` | `/api/csrf-token` | Issues CSRF cookie + token | `client/lib/apiCsrf.ts` |
 | `POST` | `/api/sanity/query` | Whitelisted Sanity reads | `client/lib/sanity.ts` |
 | `POST` | `/api/contact-hubspot` | Proxies contact form to HubSpot Forms API | `client/pages/Contact.tsx` |

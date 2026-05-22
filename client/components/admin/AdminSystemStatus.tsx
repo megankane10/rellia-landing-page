@@ -12,6 +12,10 @@ type ServiceStatus = {
   title?: string
 }
 
+type SanityDraftPing = {
+  _id?: string
+}
+
 const stateLabel = (state: ServiceState): string => {
   if (state === "checking") return "Checking"
   if (state === "online") return "Online"
@@ -63,11 +67,17 @@ const pingSupabase = async (): Promise<boolean> => {
   }
 }
 
-/** CMS health: configured client env + successful globalSettings read via /api/sanity/query */
-const pingSanity = async (): Promise<"online" | "offline" | "unconfigured"> => {
-  if (!isSanityConfigured()) return "unconfigured"
-  const data = await sanityFetch<Record<string, unknown>>("globalSettings")
-  return data ? "online" : "offline"
+/** CMS health: same sanityDrafts query as the drafts panel (not globalSettings). */
+const pingSanityDrafts = async (): Promise<
+  { state: "online"; draftCount: number } | { state: "offline" | "unconfigured" }
+> => {
+  if (!isSanityConfigured()) return { state: "unconfigured" }
+  const rows = await sanityFetch<SanityDraftPing[]>("sanityDrafts")
+  if (rows === null) return { state: "offline" }
+  const draftCount = Array.isArray(rows)
+    ? rows.filter((row) => typeof row?._id === "string").length
+    : 0
+  return { state: "online", draftCount }
 }
 
 const AdminSystemStatus = () => {
@@ -81,7 +91,7 @@ const AdminSystemStatus = () => {
     const dataset = getSanityDataset() || "—"
 
     const run = async () => {
-      const [dbOk, cmsState] = await Promise.all([pingSupabase(), pingSanity()])
+      const [dbOk, cmsPing] = await Promise.all([pingSupabase(), pingSanityDrafts()])
       if (cancelled) return
       setServices([
         {
@@ -91,12 +101,17 @@ const AdminSystemStatus = () => {
         },
         {
           label: "CMS",
-          state: cmsState,
-          detail: cmsState === "unconfigured" ? undefined : `dataset: ${dataset}`,
+          state: cmsPing.state,
+          detail:
+            cmsPing.state === "unconfigured"
+              ? undefined
+              : cmsPing.state === "online"
+                ? `dataset: ${dataset} · ${cmsPing.draftCount} draft${cmsPing.draftCount === 1 ? "" : "s"}`
+                : `dataset: ${dataset}`,
           title:
-            cmsState === "online"
-              ? "Sanity proxy returned globalSettings for this dataset"
-              : "Sanity proxy failed — check VITE_SANITY_* client env, SANITY_API_READ_TOKEN server env, and dataset match (preview vs production)",
+            cmsPing.state === "online"
+              ? "Sanity proxy returned the drafts queue for this dataset"
+              : "Sanity drafts query failed — check VITE_SANITY_* and SANITY_API_READ_TOKEN on the server",
         },
       ])
     }

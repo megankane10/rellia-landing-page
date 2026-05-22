@@ -611,15 +611,19 @@ var isSanityQueryId = (value) => Object.prototype.hasOwnProperty.call(SANITY_QUE
 
 // server/sanityResponseSanitize.ts
 var STRIP_KEYS = /* @__PURE__ */ new Set(["_id", "_rev", "_ref", "allReferences"]);
-var stripSanityMetadata = (value) => {
+var PRESERVE_ID_QUERIES = /* @__PURE__ */ new Set(["sanityDrafts"]);
+var stripSanityMetadata = (value, queryId) => {
+  const stripKeys = queryId && PRESERVE_ID_QUERIES.has(queryId) ? /* @__PURE__ */ new Set(["_rev", "_ref", "allReferences"]) : STRIP_KEYS;
   if (value == null) return value;
-  if (Array.isArray(value)) return value.map(stripSanityMetadata);
+  if (Array.isArray(value)) {
+    return value.map((item) => stripSanityMetadata(item, queryId));
+  }
   if (typeof value === "object") {
     const o = value;
     const out = {};
     for (const [k, v] of Object.entries(o)) {
-      if (STRIP_KEYS.has(k)) continue;
-      out[k] = stripSanityMetadata(v);
+      if (stripKeys.has(k)) continue;
+      out[k] = stripSanityMetadata(v, queryId);
     }
     return out;
   }
@@ -936,13 +940,11 @@ function createServer() {
       next();
     };
   };
-  app2.get(
-    "/health",
-    rateLimitJson(healthRate, HEALTH_MAX_PER_MIN),
-    (_req, res) => {
-      res.status(200).json({ ok: true });
-    }
-  );
+  const healthHandler = (_req, res) => {
+    res.status(200).json({ ok: true });
+  };
+  app2.get("/health", rateLimitJson(healthRate, HEALTH_MAX_PER_MIN), healthHandler);
+  app2.get("/api/health", rateLimitJson(healthRate, HEALTH_MAX_PER_MIN), healthHandler);
   app2.get(
     "/api/csrf-token",
     rateLimitJson(csrfIssueRate, CSRF_TOKEN_MAX_PER_MIN),
@@ -1170,7 +1172,9 @@ function createServer() {
           stega: { enabled: true, studioUrl: process.env.SANITY_STUDIO_URL }
         });
         const data2 = await previewClient.fetch(entry.query, fetchParams);
-        res.status(200).json({ data: stripSanityMetadata(data2) });
+        res.status(200).json({
+          data: stripSanityMetadata(data2, parsedBody.data.queryId)
+        });
         return;
       }
       const publicClient = createClient({
@@ -1181,7 +1185,9 @@ function createServer() {
         apiVersion: "2024-01-01"
       });
       const data = await publicClient.fetch(entry.query, fetchParams);
-      res.status(200).json({ data: stripSanityMetadata(data) });
+      res.status(200).json({
+        data: stripSanityMetadata(data, parsedBody.data.queryId)
+      });
     } catch (err) {
       res.status(502).json({
         error: "Sanity fetch failed",

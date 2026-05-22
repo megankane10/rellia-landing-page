@@ -193,8 +193,8 @@ const AdminDashboard = () => {
           </li>
         </ul>
         <p className="font-urbanist text-xs text-black/45">
-          Possible future tiles: membership checkout stats, FAQ edits queue, founder/advisor directory moderation, or
-          event RSVP exports if those flows gain admin APIs.
+          Possible future tiles: FAQ edits queue, founder/advisor directory moderation, or event RSVP exports if those
+          flows gain admin APIs.
         </p>
       </section>
 

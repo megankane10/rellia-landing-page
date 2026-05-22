@@ -262,13 +262,12 @@ export function createServer() {
     };
   };
 
-  app.get(
-    "/health",
-    rateLimitJson(healthRate, HEALTH_MAX_PER_MIN),
-    (_req, res) => {
-      res.status(200).json({ ok: true });
-    },
-  );
+  const healthHandler: RequestHandler = (_req, res) => {
+    res.status(200).json({ ok: true });
+  };
+
+  app.get("/health", rateLimitJson(healthRate, HEALTH_MAX_PER_MIN), healthHandler);
+  app.get("/api/health", rateLimitJson(healthRate, HEALTH_MAX_PER_MIN), healthHandler);
 
   app.get(
     "/api/csrf-token",
@@ -554,7 +553,9 @@ export function createServer() {
           stega: { enabled: true, studioUrl: process.env.SANITY_STUDIO_URL },
         });
         const data = await previewClient.fetch(entry.query, fetchParams);
-        res.status(200).json({ data: stripSanityMetadata(data) });
+        res.status(200).json({
+          data: stripSanityMetadata(data, parsedBody.data.queryId),
+        });
         return;
       }
 
@@ -569,7 +570,9 @@ export function createServer() {
         apiVersion: "2024-01-01",
       });
       const data = await publicClient.fetch(entry.query, fetchParams);
-      res.status(200).json({ data: stripSanityMetadata(data) });
+      res.status(200).json({
+        data: stripSanityMetadata(data, parsedBody.data.queryId),
+      });
     } catch (err) {
       res.status(502).json({
         error: "Sanity fetch failed",
