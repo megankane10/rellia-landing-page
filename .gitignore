@@ -32,6 +32,7 @@ dist-ssr
 
 # esbuild output for Vercel serverless (`pnpm run build:api`)
 api/index.js
+api/[...path].js
 
 # Local contact form storage (append-only pretty JSON per submission). Folder stays visible; only the file is ignored.
 data/contact-submissions.jsonl
