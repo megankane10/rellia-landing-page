@@ -454,10 +454,14 @@ const PROGRAMS_EVENT_PRERENDER_PATHS = [
 
 export const STORY_PRERENDER_PATHS: string[] = STORIES.map((story) => `/stories/${story.slug}`)
 
+/** Admin routes use AuthProvider client-side only — do not prerender (useAuth throws in Node). */
+export const isAdminPrerenderPath = (pathname: string): boolean =>
+  normalizePathname(pathname).startsWith("/admin")
+
 /** Paths emitted as static HTML at build time (see `client/prerender.tsx`). */
 export const PRERENDER_PATHS: string[] = [
   "/",
-  ...Object.keys(ROUTE_SEO).filter((p) => p !== "/"),
+  ...Object.keys(ROUTE_SEO).filter((p) => p !== "/" && !p.startsWith("/admin")),
   ...PROGRAMS_EVENT_PRERENDER_PATHS,
   ...STORY_PRERENDER_PATHS,
   ...FOUNDER_DIRECTORY.map((f) => `/founders/alumni/${f.id}`),
