@@ -1,206 +1,147 @@
 import { useMemo } from "react"
 import { useQuery } from "@tanstack/react-query"
-import { Link } from "react-router-dom"
 import { supabase } from "@/lib/supabase"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Skeleton } from "@/components/ui/skeleton"
 import AdminSanityDrafts from "@/components/admin/AdminSanityDrafts"
-import AdminContactSubmissions, {
-  type ContactSubmission,
-} from "@/components/admin/AdminContactSubmissions"
 import AdminSystemStatus from "@/components/admin/AdminSystemStatus"
-import { BarChart3, Inbox, LineChart, Stethoscope } from "lucide-react"
+import AdminSubmissionHubCard from "@/components/admin/AdminSubmissionHubCard"
+import {
+  countRecentSubmissions,
+  isActiveSubmissionStatus,
+  type SubmissionStatus,
+} from "@/lib/adminSubmissionStatus"
+import { CalendarClock, Inbox, Mail, Stethoscope } from "lucide-react"
+import { cn } from "@/lib/utils"
 
-type CompanyProfile = {
+type CompanyProfileRow = {
   id: string
   created_at: string
-  name: string
-  work_email: string
-  company_name: string
-  stage: string | null
-  description: string | null
+  status?: SubmissionStatus | null
 }
 
-const fetchProfiles = async (): Promise<CompanyProfile[]> => {
-  const { data, error } = await supabase
-    .from("company_profiles")
-    .select("*")
-    .order("created_at", { ascending: false })
-
-  if (error) throw new Error(error.message)
-  return data ?? []
+type ContactRow = {
+  id: string
+  created_at: string
+  status?: SubmissionStatus | null
 }
 
-const fetchContactCount = async (): Promise<number> => {
-  const { data, error } = await supabase.from("contact_responses").select("id, status")
-  if (error) return 0
-  const rows = (data ?? []) as Pick<ContactSubmission, "id" | "status">[]
-  return rows.filter((r) => {
-    const s = r.status ?? "New"
-    return s === "New" || s === "In Progress"
-  }).length
+const fetchDashboardData = async () => {
+  const [profilesRes, contactsRes] = await Promise.all([
+    supabase.from("company_profiles").select("id, created_at, status").order("created_at", { ascending: false }),
+    supabase.from("contact_responses").select("id, created_at, status").order("created_at", { ascending: false }),
+  ])
+
+  if (profilesRes.error) throw new Error(profilesRes.error.message)
+  if (contactsRes.error) throw new Error(contactsRes.error.message)
+
+  const profiles = (profilesRes.data ?? []) as CompanyProfileRow[]
+  const contacts = (contactsRes.data ?? []) as ContactRow[]
+
+  return { profiles, contacts }
 }
 
-const formatDate = (iso: string) =>
-  new Date(iso).toLocaleDateString("en-CA", { year: "numeric", month: "short", day: "numeric" })
-
-const MetricCard = ({
-  label,
-  value,
-  hint,
-  icon: Icon,
-}: {
-  label: string
+type MetricTileProps = {
+  icon: typeof Stethoscope
   value: string | number
-  hint: string
-  icon: typeof BarChart3
-}) => (
-  <Card className="rounded-[20px] border border-black/10 bg-white shadow-sm">
-    <CardContent className="flex gap-4 p-6">
-      <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-rellia-mint/25 text-rellia-teal">
-        <Icon className="h-5 w-5" aria-hidden />
-      </div>
-      <div>
-        <p className="font-urbanist text-xs font-medium uppercase tracking-[0.12em] text-black/45">
-          {label}
-        </p>
-        <p className="mt-1 font-host-grotesk text-2xl font-bold text-rellia-teal">{value}</p>
-        <p className="mt-1 font-urbanist text-xs text-black/50">{hint}</p>
-      </div>
-    </CardContent>
-  </Card>
+  label: string
+}
+
+const MetricTile = ({ icon: Icon, value, label }: MetricTileProps) => (
+  <div className="rounded-2xl border border-black/[0.07] bg-white/90 px-5 py-4 shadow-sm">
+    <div className="flex items-center gap-2.5">
+      <Icon className="h-5 w-5 shrink-0 text-rellia-teal" aria-hidden />
+      <p className="font-host-grotesk text-2xl font-bold tracking-tight text-rellia-teal">{value}</p>
+    </div>
+    <p className="mt-2 font-urbanist text-sm text-black/65">{label}</p>
+  </div>
 )
 
 const AdminDashboard = () => {
-  const { data: profiles, isLoading, error } = useQuery({
-    queryKey: ["admin-company-profiles"],
-    queryFn: fetchProfiles,
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["admin-dashboard-overview"],
+    queryFn: fetchDashboardData,
   })
 
-  const { data: activeInquiries = 0, isLoading: contactsLoading } = useQuery({
-    queryKey: ["admin-dashboard-metrics"],
-    queryFn: fetchContactCount,
-  })
+  const profiles = data?.profiles ?? []
+  const contacts = data?.contacts ?? []
 
-  const submissionCount = profiles?.length ?? 0
+  const activeInquiries = useMemo(
+    () => contacts.filter((row) => isActiveSubmissionStatus(row.status)).length,
+    [contacts],
+  )
 
-  const recentProfiles = useMemo(() => (profiles ?? []).slice(0, 6), [profiles])
+  const recentContactCount = useMemo(() => countRecentSubmissions(contacts), [contacts])
+  const recentDiagnosticCount = useMemo(() => countRecentSubmissions(profiles), [profiles])
+  const newThisWeek = recentContactCount + recentDiagnosticCount
+
+  const contactRecentHint =
+    recentContactCount > 0
+      ? `${recentContactCount} new this week`
+      : "No new submissions this week"
+
+  const diagnosticRecentHint =
+    recentDiagnosticCount > 0
+      ? `${recentDiagnosticCount} new this week`
+      : "No new submissions this week"
 
   return (
     <div className="space-y-10">
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h1 className="font-host-grotesk text-3xl font-bold tracking-tight text-rellia-teal">
-            Operations dashboard
+          <h1 className="font-host-grotesk text-2xl font-bold tracking-tight text-black md:text-3xl">
+            Overview
           </h1>
-          <p className="mt-1 font-urbanist text-sm text-black/60">
-            Diagnostics, inquiries, and content workflow in one place.
+          <p className="mt-2 max-w-xl font-urbanist text-base text-rellia-teal">
+            Submissions, content drafts, and service health at a glance.
           </p>
         </div>
         <AdminSystemStatus />
       </div>
 
-      <div className="grid gap-4 md:grid-cols-3">
-        <MetricCard
-          label="Total diagnostic submissions"
-          value={isLoading ? "—" : submissionCount}
-          hint="Company profiles from the startup diagnostic"
+      <div className="grid gap-3 sm:grid-cols-3">
+        <MetricTile
           icon={Stethoscope}
+          value={isLoading ? "—" : profiles.length}
+          label="Diagnostic submissions"
         />
-        <MetricCard
-          label="Active inquiries"
-          value={contactsLoading ? "—" : activeInquiries}
-          hint="Contact form leads marked New or In Progress"
+        <MetricTile
           icon={Inbox}
+          value={isLoading ? "—" : activeInquiries}
+          label="Active inquiries"
         />
-        <Card className="rounded-[20px] border border-dashed border-slate-300 bg-slate-50/80 shadow-sm">
-          <CardHeader className="pb-2">
-            <div className="flex items-center gap-2 text-slate-600">
-              <LineChart className="h-5 w-5" aria-hidden />
-              <CardTitle className="font-host-grotesk text-base text-slate-800">
-                Traffic overview
-              </CardTitle>
-            </div>
-            <CardDescription className="font-urbanist text-xs text-slate-500">
-              Google Looker Studio embed — coming soon
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="flex aspect-[16/10] min-h-[140px] items-center justify-center rounded-xl border border-dashed border-slate-300 bg-white/60 px-4 text-center">
-              <p className="font-urbanist text-xs text-slate-500">
-                Analytics iframe placeholder
-              </p>
-            </div>
-          </CardContent>
-        </Card>
+        <MetricTile
+          icon={CalendarClock}
+          value={isLoading ? "—" : newThisWeek}
+          label="New this week"
+        />
       </div>
 
-      <div className="grid gap-8 xl:grid-cols-[1.1fr_0.9fr]">
-        <section className="space-y-6">
-          <div>
-            <h2 className="font-host-grotesk text-xl font-semibold text-rellia-teal">
-              Diagnostic submissions
-            </h2>
-            <p className="mt-1 font-urbanist text-sm text-black/55">
-              {submissionCount} total submission{submissionCount !== 1 ? "s" : ""}
-            </p>
-          </div>
-
-          {isLoading && (
-            <div className="grid gap-4 sm:grid-cols-2">
-              {Array.from({ length: 4 }).map((_, i) => (
-                <Skeleton key={i} className="h-36 rounded-[20px]" />
-              ))}
-            </div>
-          )}
-
-          {error && (
-            <div className="rounded-[20px] border border-red-200 bg-red-50 p-4 font-urbanist text-sm text-red-700">
-              Failed to load submissions: {error instanceof Error ? error.message : "Unknown error"}
-            </div>
-          )}
-
-          {profiles && profiles.length === 0 && (
-            <p className="font-urbanist text-black/60">No diagnostic submissions yet.</p>
-          )}
-
-          {recentProfiles.length > 0 && (
-            <div className="grid gap-4 sm:grid-cols-2">
-              {recentProfiles.map((p) => (
-                <Link key={p.id} to={`/admin/companies/${p.id}`} className="group">
-                  <Card className="h-full rounded-[20px] border border-black/10 bg-white shadow-sm transition-shadow group-hover:shadow-md">
-                    <CardHeader className="pb-2">
-                      <CardTitle className="font-host-grotesk text-base font-semibold text-rellia-teal">
-                        {p.company_name}
-                      </CardTitle>
-                      <CardDescription className="font-urbanist text-xs text-black/60">
-                        {p.name} · {p.work_email}
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent className="flex flex-wrap items-center gap-2">
-                      {p.stage && (
-                        <Badge className="rounded-full bg-rellia-mint/90 font-urbanist text-rellia-teal hover:bg-rellia-mint">
-                          {p.stage}
-                        </Badge>
-                      )}
-                      <span className="ml-auto font-urbanist text-xs text-black/50">
-                        {formatDate(p.created_at)}
-                      </span>
-                    </CardContent>
-                  </Card>
-                </Link>
-              ))}
-            </div>
-          )}
-        </section>
-
-        <div className="space-y-6">
-          <AdminSanityDrafts />
+      {error ? (
+        <div className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 font-urbanist text-sm text-red-700">
+          Could not load dashboard metrics: {error instanceof Error ? error.message : "Unknown error"}
         </div>
-      </div>
+      ) : null}
 
-      <AdminContactSubmissions />
+      <section className="space-y-4">
+        <h2 className="font-host-grotesk text-lg font-semibold text-black">View submissions</h2>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <AdminSubmissionHubCard
+            title="Contact"
+            to="/admin/contacts"
+            total={isLoading ? "—" : contacts.length}
+            recentHint={contactRecentHint}
+            icon={Mail}
+          />
+          <AdminSubmissionHubCard
+            title="Startup Diagnostic"
+            to="/admin/diagnostics"
+            total={isLoading ? "—" : profiles.length}
+            recentHint={diagnosticRecentHint}
+            icon={Stethoscope}
+          />
+        </div>
+      </section>
+
+      <AdminSanityDrafts />
     </div>
   )
 }

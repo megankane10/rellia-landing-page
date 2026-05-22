@@ -1,11 +1,12 @@
 import { useQuery } from "@tanstack/react-query"
-import { ExternalLink } from "lucide-react"
-import { sanityFetch } from "@/lib/sanity"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { ExternalLink, FileEdit } from "lucide-react"
+import { getSanityDataset, isSanityConfigured, sanityFetch } from "@/lib/sanity"
+import FilteredListEmptyState from "@/components/FilteredListEmptyState"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Button } from "@/components/ui/button"
 
 const STUDIO_BASE = "https://relliahealth.sanity.studio/desk"
+const STUDIO_HOME = "https://relliahealth.sanity.studio"
 
 type SanityDraft = {
   _id: string
@@ -31,6 +32,9 @@ const studioUrl = (draft: SanityDraft) => {
 }
 
 const AdminSanityDrafts = () => {
+  const cmsConfigured = isSanityConfigured()
+  const dataset = getSanityDataset() || "not configured"
+
   const { data, isLoading, error } = useQuery({
     queryKey: ["admin-sanity-drafts"],
     queryFn: async () => {
@@ -38,72 +42,106 @@ const AdminSanityDrafts = () => {
       return rows ?? []
     },
     staleTime: 60_000,
+    enabled: cmsConfigured,
   })
 
+  const draftCount = data?.length ?? 0
+
   return (
-    <Card className="rounded-[20px] border border-black/10 bg-white shadow-sm">
-      <CardHeader>
-        <CardTitle className="font-host-grotesk text-lg text-rellia-teal">
-          Content drafts pending review
-        </CardTitle>
-        <CardDescription className="font-urbanist text-sm text-black/55">
-          Unpublished Sanity documents — open in Studio to edit or publish.
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        {isLoading && (
-          <div className="space-y-3">
-            {Array.from({ length: 3 }).map((_, i) => (
-              <Skeleton key={i} className="h-12 w-full rounded-xl" />
-            ))}
-          </div>
-        )}
-        {error && (
-          <p className="font-urbanist text-sm text-black/60">
-            Could not load drafts. Check CMS configuration.
+    <section aria-labelledby="sanity-drafts-heading" className="space-y-4">
+      <div className="flex flex-wrap items-end justify-between gap-3">
+        <div>
+          <h2 id="sanity-drafts-heading" className="font-host-grotesk text-lg font-semibold text-black">
+            Content drafts
+          </h2>
+          <p className="mt-1 font-host-grotesk text-3xl font-bold text-rellia-teal">
+            {cmsConfigured ? (isLoading ? "—" : draftCount) : "—"}
           </p>
-        )}
-        {data && data.length === 0 && (
-          <p className="font-urbanist text-sm text-black/55">No drafts in queue.</p>
-        )}
-        {data && data.length > 0 && (
-          <ul className="divide-y divide-black/8">
-            {data.map((draft) => (
-              <li
-                key={draft._id}
-                className="flex flex-col gap-2 py-3 first:pt-0 last:pb-0 sm:flex-row sm:items-center sm:justify-between"
+        </div>
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          asChild
+          className="rounded-full border-rellia-teal/20 text-rellia-teal hover:bg-rellia-mint/15"
+        >
+          <a href={STUDIO_HOME} target="_blank" rel="noopener noreferrer">
+            Open Studio
+            <ExternalLink className="ml-1.5 h-3.5 w-3.5" aria-hidden />
+          </a>
+        </Button>
+      </div>
+
+      {!cmsConfigured && (
+        <p className="rounded-2xl border border-amber-200/70 bg-amber-50/80 px-4 py-3 font-urbanist text-sm text-amber-950">
+          CMS is not configured here. Set <code className="text-xs">VITE_SANITY_PROJECT_ID</code> and{" "}
+          <code className="text-xs">VITE_SANITY_DATASET</code> to match where you edit content (often{" "}
+          <code className="text-xs">preview</code> on Vercel preview, <code className="text-xs">production</code> on
+          the live site).
+        </p>
+      )}
+
+      {cmsConfigured && isLoading && (
+        <div className="space-y-3">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <Skeleton key={i} className="h-16 rounded-xl" />
+          ))}
+        </div>
+      )}
+
+      {cmsConfigured && error && (
+        <p className="font-urbanist text-sm text-red-700">
+          Could not load drafts. Check CMS credentials and that the admin app queries the same dataset as Studio (
+          currently <span className="font-medium">{dataset}</span>).
+        </p>
+      )}
+
+      {cmsConfigured && !isLoading && !error && draftCount === 0 && (
+        <FilteredListEmptyState
+          icon={FileEdit}
+          title="No drafts in queue"
+          description={`Nothing unpublished in the ${dataset} dataset. Drafts edited on another dataset (for example preview vs production) will not appear here until env vars match.`}
+          className="rounded-2xl border border-dashed border-black/10 bg-white/70"
+        />
+      )}
+
+      {cmsConfigured && data && data.length > 0 && (
+        <ul className="grid gap-3 sm:grid-cols-2">
+          {data.map((draft) => (
+            <li
+              key={draft._id}
+              className="flex flex-col justify-between gap-4 rounded-2xl border border-black/[0.07] bg-white p-4 shadow-sm"
+            >
+              <div className="min-w-0">
+                <p className="truncate font-host-grotesk text-base font-semibold text-black">
+                  {draft.title || draft._id}
+                </p>
+                <p className="mt-1 font-urbanist text-sm text-black/60">
+                  {draft._type} · {formatRelative(draft._updatedAt)}
+                </p>
+              </div>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                asChild
+                className="w-fit rounded-full border-rellia-teal/20 text-rellia-teal hover:bg-rellia-mint/15"
               >
-                <div className="min-w-0">
-                  <p className="truncate font-host-grotesk text-sm font-semibold text-black">
-                    {draft.title || draft._id}
-                  </p>
-                  <p className="font-urbanist text-xs text-black/50">
-                    {draft._type} · {formatRelative(draft._updatedAt)}
-                  </p>
-                </div>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  asChild
-                  className="shrink-0 rounded-full border-rellia-teal/20 text-rellia-teal hover:bg-rellia-mint/15"
+                <a
+                  href={studioUrl(draft)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={`Open ${draft.title ?? draft._type} in Sanity Studio`}
                 >
-                  <a
-                    href={studioUrl(draft)}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label={`Open ${draft.title ?? draft._type} in Sanity Studio`}
-                  >
-                    Open in Studio
-                    <ExternalLink className="ml-1.5 h-3.5 w-3.5" aria-hidden />
-                  </a>
-                </Button>
-              </li>
-            ))}
-          </ul>
-        )}
-      </CardContent>
-    </Card>
+                  Review in Studio
+                  <ExternalLink className="ml-1.5 h-3.5 w-3.5" aria-hidden />
+                </a>
+              </Button>
+            </li>
+          ))}
+        </ul>
+      )}
+    </section>
   )
 }
 

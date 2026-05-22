@@ -88,14 +88,21 @@ const AdminSignup = () => {
       title="Create Admin Account"
       description="Rellia internal access only."
     >
-      {!signupEnabled ? (
+      {statusError ? (
+        <div className="rounded-xl border border-amber-200/80 bg-amber-50 p-4 text-center">
+          <p className="font-urbanist text-sm text-amber-950">{statusError}</p>
+          <p className="mt-2 font-urbanist text-sm text-black/65">
+            Local dev: set <code className="text-xs">ADMIN_SIGNUP_ENABLED=true</code> in{" "}
+            <code className="text-xs">.env</code> or <code className="text-xs">.env.local</code> and restart{" "}
+            <code className="text-xs">pnpm dev</code>. On Vercel, add the same variable to the deployment
+            environment and redeploy.
+          </p>
+        </div>
+      ) : !signupEnabled ? (
         <div className="rounded-xl border border-rellia-mint/40 bg-rellia-cream p-4 text-center">
           <p className="font-urbanist text-sm text-rellia-teal">
             Signup is currently disabled. Contact the site administrator to request access.
           </p>
-          {statusError ? (
-            <p className="mt-3 font-urbanist text-xs text-black/50">{statusError}</p>
-          ) : null}
         </div>
       ) : success ? (
         <div className="rounded-xl border border-rellia-mint bg-rellia-mint/20 p-4 text-center">
