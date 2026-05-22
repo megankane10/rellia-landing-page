@@ -45,6 +45,7 @@ export const SANITY_QUERY_WHITELIST = {
   founderLevels: { query: G.founderLevelsQuery, params: empty },
   founderSpecialties: { query: G.founderSpecialtiesQuery, params: empty },
   directoryFilterGroups: { query: G.directoryFilterGroupsQuery, params: empty },
+  sanityDrafts: { query: G.sanityDraftsQuery, params: empty },
 } as const
 
 export type SanityQueryId = keyof typeof SANITY_QUERY_WHITELIST

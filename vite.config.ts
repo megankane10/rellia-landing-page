@@ -62,6 +62,9 @@ export default defineConfig(async () => {
     // Used for OG image cache-busting (social crawlers cache by URL).
     "import.meta.env.VITE_OG_IMAGE_VERSION":
       JSON.stringify(getOgImageVersion()),
+    "import.meta.env.VITE_VERCEL_GIT_COMMIT_REF": JSON.stringify(
+      process.env.VERCEL_GIT_COMMIT_REF ?? "",
+    ),
   },
   build: {
     outDir: "dist/spa",

@@ -21,6 +21,7 @@ interface ImportMetaEnv {
   /** Sanity read client (public). Optional; see `.env.example` */
   readonly VITE_SANITY_PROJECT_ID?: string
   readonly VITE_SANITY_DATASET?: string
+  readonly VITE_VERCEL_GIT_COMMIT_REF?: string
 }
 
 interface ImportMeta {

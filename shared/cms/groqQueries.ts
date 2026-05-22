@@ -567,3 +567,10 @@ export const directoryFilterGroupsQuery = `*[_type == "directoryFilterGroup"] | 
   sortOrder,
   options[]{ label }
 }`
+
+export const sanityDraftsQuery = `*[_id in path("drafts.**")] | order(_updatedAt desc) {
+  _id,
+  _type,
+  "title": coalesce(title, name, headline, slug.current, _type),
+  _updatedAt
+}[0...24]`

@@ -452,7 +452,19 @@ const PROGRAMS_EVENT_PRERENDER_PATHS = [
   ...DEFAULT_PROGRAMS_LANDING.pastEvents.map(programsEventDetailPath),
 ]
 
-export const STORY_PRERENDER_PATHS: string[] = STORIES.map((story) => `/stories/${story.slug}`)
+const isMainBranchBuild = (): boolean =>
+  (process.env.VERCEL_GIT_COMMIT_REF ?? "").trim().toLowerCase() === "main"
+
+export const STORY_PRERENDER_PATHS: string[] = isMainBranchBuild()
+  ? []
+  : STORIES.map((story) => `/stories/${story.slug}`)
+
+const SEED_DIRECTORY_PRERENDER_PATHS: string[] = isMainBranchBuild()
+  ? []
+  : [
+      ...FOUNDER_DIRECTORY.map((f) => `/founders/alumni/${f.id}`),
+      ...ADVISOR_DIRECTORY_SEED.map((a) => `/advisors/directory/${a.id}`),
+    ]
 
 /** Admin routes use AuthProvider client-side only — do not prerender (useAuth throws in Node). */
 export const isAdminPrerenderPath = (pathname: string): boolean =>
@@ -464,8 +476,7 @@ export const PRERENDER_PATHS: string[] = [
   ...Object.keys(ROUTE_SEO).filter((p) => p !== "/" && !p.startsWith("/admin")),
   ...PROGRAMS_EVENT_PRERENDER_PATHS,
   ...STORY_PRERENDER_PATHS,
-  ...FOUNDER_DIRECTORY.map((f) => `/founders/alumni/${f.id}`),
-  ...ADVISOR_DIRECTORY_SEED.map((a) => `/advisors/directory/${a.id}`),
+  ...SEED_DIRECTORY_PRERENDER_PATHS,
 ]
 
 export const getDefaultOgImageUrl = (): string => {

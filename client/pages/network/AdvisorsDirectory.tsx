@@ -20,6 +20,7 @@ import {
 import { useNavigate, useLocation } from "react-router-dom";
 import { NETWORK_PATH_ROLE_TAG } from "@/lib/networkPathRoles";
 import { isSanityConfigured } from "@/lib/sanity";
+import { allowCmsSeedFallbacks } from "@/lib/deploymentEnv";
 
 const DIRECTORY_TITLE_CLASS =
   "font-host-grotesk text-4xl font-extrabold tracking-tight text-black md:text-5xl";
@@ -116,7 +117,7 @@ export default function AdvisorsDirectory() {
 
     if (Array.isArray(cmsAdvisors) && cmsAdvisors.length > 0)
       return cmsAdvisors as AdvisorDirectoryEntry[];
-    return ADVISOR_DIRECTORY_SEED;
+    return allowCmsSeedFallbacks() ? ADVISOR_DIRECTORY_SEED : [];
   }, [cmsAdvisors]);
 
   const dynamicGroups = useMemo(() => {

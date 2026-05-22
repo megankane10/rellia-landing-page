@@ -35,6 +35,7 @@ import RelliaAction from "@/components/RelliaAction";
 import RouteSeo from "@/components/RouteSeo";
 import { useAdvisors } from "@/hooks/useCmsDocuments";
 import { ADVISOR_DIRECTORY_SEED, type AdvisorDirectoryFilter } from "@/data/advisorDirectory";
+import { allowCmsSeedFallbacks } from "@/lib/deploymentEnv";
 import {
   Drawer,
   DrawerContent,
@@ -46,7 +47,6 @@ import {
 import { cn } from "@/lib/utils";
 import { clearApiCsrfCache, getApiCsrfHeaders } from "@/lib/apiCsrf";
 import { PROGRAM_META_BY_HREF } from "@/config/programMeta";
-import { isProductionHostname } from "@/lib/sanity";
 import FilteredListEmptyState from "@/components/FilteredListEmptyState";
 
 const SECTION_ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
@@ -1106,26 +1106,6 @@ const css = `
 // ─── MAIN COMPONENT ───────────────────────────────────────────────────────────
 
 export default function DiagnosticSurvey() {
-  const isProd = isProductionHostname();
-
-  if (isProd) {
-    return (
-      <div className="min-h-screen bg-white font-host-grotesk flex flex-col justify-between">
-        <Navbar forceSolid />
-        <main className="flex-1 flex items-center justify-center py-24 md:py-40">
-          <div className="max-w-md w-full px-6">
-            <FilteredListEmptyState
-              icon={Clock}
-              title="Diagnostic coming soon"
-              description="We're currently refining our AI-powered diagnostic tool to provide the most accurate readiness benchmarking for your health tech startup. Check back shortly."
-            />
-          </div>
-        </main>
-        <Footer />
-      </div>
-    );
-  }
-
   const [view, setView] = useState<View>("intro");
   const [currentSection, setCurrentSection] = useState<number>(0);
   const [currentQIdx, setCurrentQIdx] = useState<number>(0);
@@ -1188,9 +1168,8 @@ export default function DiagnosticSurvey() {
   const { data: cmsAdvisors } = useAdvisors();
 
   const advisors = useMemo(() => {
-    return cmsAdvisors && cmsAdvisors.length > 0
-      ? cmsAdvisors
-      : ADVISOR_DIRECTORY_SEED;
+    if (cmsAdvisors && cmsAdvisors.length > 0) return cmsAdvisors
+    return allowCmsSeedFallbacks() ? ADVISOR_DIRECTORY_SEED : []
   }, [cmsAdvisors]);
 
   const completedSections = SECTIONS.filter(
