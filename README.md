@@ -41,8 +41,8 @@ Do day-to-day work on **`Additions`**. After review, merge into **`main`** for p
 |------|---------|
 | `client/` | React app: pages, components, hooks, styles |
 | `server/` | Express application (`createServer()` in `server/index.ts`) |
-| `scripts/vercel-api-entry.ts` | Bundled to **`api/[...path].js`** (gitignored) for Vercel; do not edit the bundle by hand |
-| `api/` | Build output target only — **`api/[...path].js`** is produced by **`pnpm run build:api`** and ignored by git (see `.gitignore`) |
+| `scripts/vercel-api-entry.ts` | Bundled to **`api/index.js`** (gitignored) for Vercel; do not edit the bundle by hand |
+| `api/` | Build output target only — **`api/index.js`** is produced by **`pnpm run build:api`** during deploy and ignored by git (see `.gitignore`) |
 | `shared/` | Shared CMS types, GROQ helpers, query whitelist (`shared/cms/sanityQueryRegistry.ts`), merge helpers, default fallbacks |
 | `public/` | Static files (`robots.txt`, `sitemap.xml`, images, `favicon.ico`, `ogimage.png`) |
 | `website-cms/` | Sanity Studio (separate `package.json`; run its own install for Studio dev) |
@@ -198,7 +198,7 @@ Full commentary and environment presets: **`.env.example`**.
 
 ## HTTP API (Express / Vercel)
 
-All **`/api/*`** routes are served by the Vercel catch-all serverless entry **`api/[...path].js`** (built from `scripts/vercel-api-entry.ts`). Express may still restore paths via `fixVercelRewrittenApiPath` in `server/index.ts` when the platform rewrites to `/api`.
+All **`/api/*`** routes are served by the serverless entry **`api/index.js`** (built from `scripts/vercel-api-entry.ts`). **`vercel.json`** rewrites `/api/(.*)` → `/api`; Express restores the real path via `fixVercelRewrittenApiPath` in `server/index.ts`.
 
 | Method | Path | Purpose | Called from (app code) |
 |--------|------|---------|-------------------------|
