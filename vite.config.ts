@@ -1,6 +1,5 @@
 import { defineConfig, Plugin } from "vite";
 import react from "@vitejs/plugin-react-swc";
-import fs from "node:fs";
 import path from "path";
 import { vitePrerenderPlugin } from "vite-prerender-plugin";
 import { createServer } from "./server";
@@ -41,29 +40,6 @@ const buildPrerenderRoutes = async (): Promise<string[]> => {
 
 // https://vitejs.dev/config/
 export default defineConfig(async () => {
-  // #region agent log
-  const founderDataPath = path.join(__dirname, "client/data/founderDirectory.ts");
-  const advisorDataPath = path.join(__dirname, "client/data/advisorDirectory.ts");
-  fetch("http://127.0.0.1:7504/ingest/4a929bb7-f8be-48ff-899b-7eff0ba95379", {
-    method: "POST",
-    headers: { "Content-Type": "application/json", "X-Debug-Session-Id": "493154" },
-    body: JSON.stringify({
-      sessionId: "493154",
-      runId: "pre-build",
-      hypothesisId: "A",
-      location: "vite.config.ts:defineConfig",
-      message: "client/data module files present at build start",
-      data: {
-        founderExists: fs.existsSync(founderDataPath),
-        advisorExists: fs.existsSync(advisorDataPath),
-        vercelGitRef: process.env.VERCEL_GIT_COMMIT_REF ?? "",
-        cwd: process.cwd(),
-      },
-      timestamp: Date.now(),
-    }),
-  }).catch(() => {});
-  // #endregion
-
   const additionalPrerenderRoutes = await buildPrerenderRoutes();
 
   return {

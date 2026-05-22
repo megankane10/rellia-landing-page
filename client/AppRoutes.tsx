@@ -1,5 +1,5 @@
 import { useEffect, type ReactNode } from "react"
-import { Routes, Route, Navigate } from "react-router-dom"
+import { Routes, Route, Navigate, useParams } from "react-router-dom"
 import { Analytics } from "@vercel/analytics/react"
 import { SpeedInsights } from "@vercel/speed-insights/react"
 import ScrollToTop from "@/components/ScrollToTop"
@@ -51,6 +51,12 @@ import AdminSignup from "./pages/admin/AdminSignup"
 import AdminLayout from "./pages/admin/AdminLayout"
 import AdminDashboard from "./pages/admin/AdminDashboard"
 import AdminCompany from "./pages/admin/AdminCompany"
+
+const RedirectFoundersDirectoryId = () => {
+  const { id } = useParams<{ id: string }>()
+  if (!id?.trim()) return <Navigate to="/founders/alumni" replace />
+  return <Navigate to={`/founders/alumni/${encodeURIComponent(id)}`} replace />
+}
 
 const ThirdPartyPreloads = () => {
   useEffect(() => {
@@ -124,7 +130,7 @@ export const AppRoutes = () => (
     <Route path="/consulting" element={<Consulting />} />
     <Route path="/founders" element={<Founders />} />
     <Route path="/founders/directory" element={<Navigate to="/founders/alumni" replace />} />
-    <Route path="/founders/directory/:id" element={<Navigate to="/founders/alumni" replace />} />
+    <Route path="/founders/directory/:id" element={<RedirectFoundersDirectoryId />} />
     <Route path="/founders/alumni" element={<FoundersDirectory />} />
     <Route path="/founders/alumni/:id" element={<FounderProfile />} />
     <Route path="/advisors" element={<Advisors />} />
