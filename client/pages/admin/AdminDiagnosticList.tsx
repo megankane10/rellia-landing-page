@@ -100,7 +100,7 @@ const AdminDiagnosticList = () => {
 
       <div>
         <h1 className="font-host-grotesk text-2xl font-bold text-black md:text-3xl">
-          Startup diagnostic submissions
+          Startup Diagnostic
         </h1>
         <p className="mt-2 font-urbanist text-base text-black/65">
           {rows.length} submission{rows.length === 1 ? "" : "s"}

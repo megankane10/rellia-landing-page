@@ -44,7 +44,10 @@ const AdminSanityDrafts = () => {
       if (!Array.isArray(rows)) return []
       return rows.filter(
         (row): row is SanityDraft =>
-          typeof row?._id === "string" && typeof row?._type === "string",
+          typeof row?._id === "string" &&
+          typeof row?._type === "string" &&
+          !row._type.startsWith("sanity.") &&
+          row._type !== "system.schema",
       )
     },
     staleTime: 60_000,

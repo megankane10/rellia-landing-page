@@ -68,16 +68,11 @@ const pingSupabase = async (): Promise<boolean> => {
 }
 
 /** CMS health: same sanityDrafts query as the drafts panel (not globalSettings). */
-const pingSanityDrafts = async (): Promise<
-  { state: "online"; draftCount: number } | { state: "offline" | "unconfigured" }
-> => {
-  if (!isSanityConfigured()) return { state: "unconfigured" }
+const pingSanityDrafts = async (): Promise<"online" | "offline" | "unconfigured"> => {
+  if (!isSanityConfigured()) return "unconfigured"
   const rows = await sanityFetch<SanityDraftPing[]>("sanityDrafts")
-  if (rows === null) return { state: "offline" }
-  const draftCount = Array.isArray(rows)
-    ? rows.filter((row) => typeof row?._id === "string").length
-    : 0
-  return { state: "online", draftCount }
+  if (rows === null) return "offline"
+  return "online"
 }
 
 const AdminSystemStatus = () => {
@@ -101,16 +96,11 @@ const AdminSystemStatus = () => {
         },
         {
           label: "CMS",
-          state: cmsPing.state,
-          detail:
-            cmsPing.state === "unconfigured"
-              ? undefined
-              : cmsPing.state === "online"
-                ? `dataset: ${dataset} · ${cmsPing.draftCount} draft${cmsPing.draftCount === 1 ? "" : "s"}`
-                : `dataset: ${dataset}`,
+          state: cmsPing,
+          detail: cmsPing === "unconfigured" ? undefined : `dataset: ${dataset}`,
           title:
-            cmsPing.state === "online"
-              ? "Sanity proxy returned the drafts queue for this dataset"
+            cmsPing === "online"
+              ? "Sanity content dataset this admin app reads (preview = staging, production = live site)"
               : "Sanity drafts query failed — check VITE_SANITY_* and SANITY_API_READ_TOKEN on the server",
         },
       ])

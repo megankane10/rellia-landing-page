@@ -1,5 +1,4 @@
 import { useMemo } from "react"
-import { Link } from "react-router-dom"
 import { useQuery } from "@tanstack/react-query"
 import { supabase } from "@/lib/supabase"
 import AdminSanityDrafts from "@/components/admin/AdminSanityDrafts"
@@ -10,18 +9,8 @@ import {
   isActiveSubmissionStatus,
   type SubmissionStatus,
 } from "@/lib/adminSubmissionStatus"
-import {
-  BookOpen,
-  Briefcase,
-  CalendarClock,
-  CalendarDays,
-  ExternalLink,
-  FileText,
-  Inbox,
-  Mail,
-  Stethoscope,
-  Users,
-} from "lucide-react"
+import { CalendarClock, Inbox, Mail, Stethoscope } from "lucide-react"
+import { cn } from "@/lib/utils"
 
 type CompanyProfileRow = {
   id: string
@@ -50,32 +39,39 @@ const fetchDashboardData = async () => {
   return { profiles, contacts }
 }
 
-type MetricTileProps = {
-  icon: typeof Stethoscope
+type OverviewStatProps = {
+  icon: typeof Inbox
   value: string | number
   label: string
+  accent?: "teal" | "mint" | "slate"
 }
 
-const MetricTile = ({ icon: Icon, value, label }: MetricTileProps) => (
-  <div className="rounded-2xl border border-black/[0.07] bg-white/90 px-5 py-4 shadow-sm">
-    <div className="flex items-center gap-2.5">
-      <Icon className="h-5 w-5 shrink-0 text-rellia-teal" aria-hidden />
-      <p className="font-host-grotesk text-2xl font-bold tracking-tight text-rellia-teal">{value}</p>
+const accentStyles = {
+  teal: "border-l-rellia-teal bg-rellia-teal/[0.06]",
+  mint: "border-l-rellia-mint bg-rellia-mint/15",
+  slate: "border-l-black/20 bg-black/[0.03]",
+} as const
+
+const OverviewStat = ({ icon: Icon, value, label, accent = "teal" }: OverviewStatProps) => (
+  <div
+    className={cn(
+      "rounded-2xl border border-black/[0.06] border-l-4 px-5 py-5 shadow-sm",
+      accentStyles[accent],
+    )}
+  >
+    <div className="flex items-start justify-between gap-3">
+      <div>
+        <p className="font-urbanist text-xs font-medium uppercase tracking-[0.1em] text-black/50">
+          {label}
+        </p>
+        <p className="mt-2 font-host-grotesk text-3xl font-bold tracking-tight text-rellia-teal">
+          {value}
+        </p>
+      </div>
+      <Icon className="h-6 w-6 shrink-0 text-rellia-teal/50" aria-hidden strokeWidth={1.5} />
     </div>
-    <p className="mt-2 font-urbanist text-sm text-black/65">{label}</p>
   </div>
 )
-
-const QUICK_LINKS = [
-  { label: "Programs", to: "/programs", icon: Briefcase },
-  { label: "Events", to: "/events", icon: CalendarDays },
-  { label: "Stories", to: "/stories", icon: BookOpen },
-  { label: "Careers", to: "/careers", icon: Users },
-  { label: "Apply", to: "/apply", icon: FileText },
-  { label: "Public diagnostic", to: "/diagnostics", icon: Stethoscope },
-] as const
-
-const STUDIO_URL = "https://relliahealth.sanity.studio"
 
 const AdminDashboard = () => {
   const { data, isLoading, error } = useQuery({
@@ -112,28 +108,31 @@ const AdminDashboard = () => {
           <h1 className="font-host-grotesk text-2xl font-bold tracking-tight text-black md:text-3xl">
             Overview
           </h1>
-          <p className="mt-2 max-w-xl font-urbanist text-base text-rellia-teal">
-            Submissions, content drafts, and service health at a glance.
+          <p className="mt-2 max-w-xl font-urbanist text-base text-black/65">
+            Form submissions, Sanity drafts, and connection health for this environment.
           </p>
         </div>
         <AdminSystemStatus />
       </div>
 
       <div className="grid gap-3 sm:grid-cols-3">
-        <MetricTile
-          icon={Stethoscope}
-          value={isLoading ? "—" : profiles.length}
-          label="Diagnostic submissions"
-        />
-        <MetricTile
+        <OverviewStat
           icon={Inbox}
           value={isLoading ? "—" : activeInquiries}
           label="Active inquiries"
+          accent="teal"
         />
-        <MetricTile
+        <OverviewStat
+          icon={Stethoscope}
+          value={isLoading ? "—" : profiles.length}
+          label="Diagnostic submissions"
+          accent="mint"
+        />
+        <OverviewStat
           icon={CalendarClock}
           value={isLoading ? "—" : newThisWeek}
           label="New this week"
+          accent="slate"
         />
       </div>
 
@@ -147,55 +146,18 @@ const AdminDashboard = () => {
         <h2 className="font-host-grotesk text-lg font-semibold text-black">View submissions</h2>
         <div className="grid gap-4 sm:grid-cols-2">
           <AdminSubmissionHubCard
-            title="Contact"
+            title="Contact Form"
             to="/admin/contacts"
-            total={isLoading ? "—" : contacts.length}
             recentHint={contactRecentHint}
             icon={Mail}
           />
           <AdminSubmissionHubCard
             title="Startup Diagnostic"
             to="/admin/diagnostics"
-            total={isLoading ? "—" : profiles.length}
             recentHint={diagnosticRecentHint}
             icon={Stethoscope}
           />
         </div>
-      </section>
-
-      <section className="space-y-3">
-        <h2 className="font-host-grotesk text-lg font-semibold text-black">Website quick links</h2>
-        <p className="font-urbanist text-sm text-black/60">
-          Jump to live pages you already manage in Sanity — useful for checking published content after edits.
-        </p>
-        <ul className="flex flex-wrap gap-2">
-          {QUICK_LINKS.map((item) => (
-            <li key={item.to}>
-              <Link
-                to={item.to}
-                className="inline-flex items-center gap-2 rounded-full border border-black/10 bg-white px-3.5 py-1.5 font-urbanist text-sm text-black/70 transition-colors hover:border-rellia-teal/25 hover:text-rellia-teal"
-              >
-                <item.icon className="h-4 w-4 text-rellia-teal" aria-hidden />
-                {item.label}
-              </Link>
-            </li>
-          ))}
-          <li>
-            <a
-              href={STUDIO_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 rounded-full border border-black/10 bg-white px-3.5 py-1.5 font-urbanist text-sm text-black/70 transition-colors hover:border-rellia-teal/25 hover:text-rellia-teal"
-            >
-              Sanity Studio
-              <ExternalLink className="h-3.5 w-3.5" aria-hidden />
-            </a>
-          </li>
-        </ul>
-        <p className="font-urbanist text-xs text-black/45">
-          Possible future tiles: FAQ edits queue, founder/advisor directory moderation, or event RSVP exports if those
-          flows gain admin APIs.
-        </p>
       </section>
 
       <AdminSanityDrafts />

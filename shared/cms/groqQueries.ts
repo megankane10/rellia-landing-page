@@ -568,7 +568,11 @@ export const directoryFilterGroupsQuery = `*[_type == "directoryFilterGroup"] | 
   options[]{ label }
 }`
 
-export const sanityDraftsQuery = `*[_id in path("drafts.**")] | order(_updatedAt desc) {
+export const sanityDraftsQuery = `*[
+  _id in path("drafts.**")
+  && !(_type match "sanity.*")
+  && _type != "system.schema"
+] | order(_updatedAt desc) {
   _id,
   _type,
   "title": coalesce(title, name, headline, slug.current, _type),

@@ -561,7 +561,11 @@ var directoryFilterGroupsQuery = `*[_type == "directoryFilterGroup"] | order(sor
   sortOrder,
   options[]{ label }
 }`;
-var sanityDraftsQuery = `*[_id in path("drafts.**")] | order(_updatedAt desc) {
+var sanityDraftsQuery = `*[
+  _id in path("drafts.**")
+  && !(_type match "sanity.*")
+  && _type != "system.schema"
+] | order(_updatedAt desc) {
   _id,
   _type,
   "title": coalesce(title, name, headline, slug.current, _type),

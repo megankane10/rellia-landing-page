@@ -100,7 +100,7 @@ const AdminContactList = () => {
       </Link>
 
       <div>
-        <h1 className="font-host-grotesk text-2xl font-bold text-black md:text-3xl">Contact submissions</h1>
+        <h1 className="font-host-grotesk text-2xl font-bold text-black md:text-3xl">Contact Form</h1>
         <p className="mt-2 font-urbanist text-base text-black/65">
           {rows.length} message{rows.length === 1 ? "" : "s"}
         </p>
