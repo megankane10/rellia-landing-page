@@ -29,12 +29,12 @@ const AdminLogin = () => {
 
   return (
     <AdminAuthLayout
-      title="Rellia Admin"
-      description="Sign in to view diagnostic submissions."
+      title="Welcome Back"
+      description="Sign in to access admin dashboard"
     >
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="space-y-1">
-          <Label htmlFor="admin-login-email" className="font-urbanist text-sm font-medium">
+          <Label htmlFor="admin-login-email" className="font-urbanist text-sm font-medium text-black/80">
             Email
           </Label>
           <Input
@@ -48,7 +48,7 @@ const AdminLogin = () => {
           />
         </div>
         <div className="space-y-1">
-          <Label htmlFor="admin-login-password" className="font-urbanist text-sm font-medium">
+          <Label htmlFor="admin-login-password" className="font-urbanist text-sm font-medium text-black/80">
             Password
           </Label>
           <Input

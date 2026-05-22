@@ -43,28 +43,15 @@ type MetricTileProps = {
   icon: typeof Stethoscope
   value: string | number
   label: string
-  muted?: boolean
 }
 
-const MetricTile = ({ icon: Icon, value, label, muted }: MetricTileProps) => (
-  <div
-    className={cn(
-      "rounded-2xl border border-black/[0.07] bg-white/90 px-5 py-4 shadow-sm",
-      muted && "border-dashed border-black/12 bg-white/60",
-    )}
-  >
+const MetricTile = ({ icon: Icon, value, label }: MetricTileProps) => (
+  <div className="rounded-2xl border border-black/[0.07] bg-white/90 px-5 py-4 shadow-sm">
     <div className="flex items-center gap-2.5">
-      <Icon className={cn("h-5 w-5 shrink-0", muted ? "text-black/35" : "text-rellia-teal")} aria-hidden />
-      <p
-        className={cn(
-          "font-host-grotesk text-2xl font-bold tracking-tight",
-          muted ? "text-black/40" : "text-rellia-teal",
-        )}
-      >
-        {value}
-      </p>
+      <Icon className="h-5 w-5 shrink-0 text-rellia-teal" aria-hidden />
+      <p className="font-host-grotesk text-2xl font-bold tracking-tight text-rellia-teal">{value}</p>
     </div>
-    <p className="mt-2 font-urbanist text-xs text-black/50">{label}</p>
+    <p className="mt-2 font-urbanist text-sm text-black/65">{label}</p>
   </div>
 )
 
@@ -88,22 +75,22 @@ const AdminDashboard = () => {
 
   const contactRecentHint =
     recentContactCount > 0
-      ? `${recentContactCount} new in the last 7 days`
+      ? `${recentContactCount} new this week`
       : "No new submissions this week"
 
   const diagnosticRecentHint =
     recentDiagnosticCount > 0
-      ? `${recentDiagnosticCount} new in the last 7 days`
+      ? `${recentDiagnosticCount} new this week`
       : "No new submissions this week"
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-10">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h1 className="font-host-grotesk text-2xl font-bold tracking-tight text-rellia-teal md:text-3xl">
+          <h1 className="font-host-grotesk text-2xl font-bold tracking-tight text-black md:text-3xl">
             Overview
           </h1>
-          <p className="mt-1 max-w-xl font-urbanist text-sm text-black/55">
+          <p className="mt-2 max-w-xl font-urbanist text-base text-rellia-teal">
             Submissions, content drafts, and service health at a glance.
           </p>
         </div>
@@ -134,21 +121,18 @@ const AdminDashboard = () => {
         </div>
       ) : null}
 
-      <section className="space-y-3">
-        <h2 className="font-host-grotesk text-lg font-semibold text-rellia-teal">Submissions</h2>
+      <section className="space-y-4">
+        <h2 className="font-host-grotesk text-lg font-semibold text-black">View submissions</h2>
         <div className="grid gap-4 sm:grid-cols-2">
           <AdminSubmissionHubCard
             title="Contact"
-            description="Messages from the public contact form"
             to="/admin/contacts"
             total={isLoading ? "—" : contacts.length}
             recentHint={contactRecentHint}
             icon={Mail}
-            accent="mint"
           />
           <AdminSubmissionHubCard
             title="Startup Diagnostic"
-            description="Company profiles from the diagnostic survey"
             to="/admin/diagnostics"
             total={isLoading ? "—" : profiles.length}
             recentHint={diagnosticRecentHint}

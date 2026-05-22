@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge"
 import { Skeleton } from "@/components/ui/skeleton"
 import AdminSubmissionStatusSelect from "@/components/admin/AdminSubmissionStatusSelect"
 import AdminDeleteSubmissionButton from "@/components/admin/AdminDeleteSubmissionButton"
+import AdminMailtoButton from "@/components/admin/AdminMailtoButton"
 import {
   formatAdminDateLong,
   statusBadgeClass,
@@ -75,7 +76,7 @@ const AdminContactDetail = () => {
       <div className="space-y-4">
         <Link
           to="/admin/contacts"
-          className="inline-flex items-center gap-1.5 font-urbanist text-sm text-rellia-teal/70 hover:text-rellia-teal"
+          className="inline-flex items-center gap-1.5 font-urbanist text-sm text-rellia-teal/80 hover:text-rellia-teal"
         >
           <ArrowLeft className="h-4 w-4" aria-hidden />
           All contact submissions
@@ -89,12 +90,14 @@ const AdminContactDetail = () => {
 
   const status = (data.status ?? "New") as SubmissionStatus
   const hasStatusField = "status" in data
+  const mailSubject = `Re: Your message to Rellia Health`
+  const mailBody = `Hi ${data.first_name},\n\n`
 
   return (
     <div className="space-y-6">
       <Link
         to="/admin/contacts"
-        className="inline-flex items-center gap-1.5 font-urbanist text-sm text-rellia-teal/70 transition-colors hover:text-rellia-teal"
+        className="inline-flex items-center gap-1.5 font-urbanist text-sm text-rellia-teal/80 transition-colors hover:text-rellia-teal"
       >
         <ArrowLeft className="h-4 w-4" aria-hidden />
         All contact submissions
@@ -104,11 +107,11 @@ const AdminContactDetail = () => {
         <div className="border-b border-black/[0.06] bg-gradient-to-r from-rellia-mint/12 to-white px-5 py-5 md:px-6">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
             <div>
-              <h1 className="font-host-grotesk text-xl font-bold text-rellia-teal md:text-2xl">
+              <h1 className="font-host-grotesk text-xl font-bold text-black md:text-2xl">
                 {data.first_name} {data.last_name}
               </h1>
-              <p className="mt-1 font-urbanist text-sm text-black/55">{data.email}</p>
-              <p className="font-urbanist text-xs text-black/40">{formatAdminDateLong(data.created_at)}</p>
+              <p className="mt-1 font-urbanist text-sm text-black/65">{data.email}</p>
+              <p className="font-urbanist text-sm text-black/50">{formatAdminDateLong(data.created_at)}</p>
             </div>
             <div className="flex flex-wrap items-center gap-2">
               {hasStatusField && statusWritesEnabled ? (
@@ -121,7 +124,7 @@ const AdminContactDetail = () => {
               ) : (
                 <Badge
                   variant="outline"
-                  className={`rounded-full font-urbanist text-xs ${statusBadgeClass(status)}`}
+                  className={`rounded-full font-urbanist text-sm ${statusBadgeClass(status)}`}
                 >
                   {status}
                 </Badge>
@@ -135,24 +138,32 @@ const AdminContactDetail = () => {
           </div>
         </div>
 
-        <div className="space-y-4 px-5 py-5 font-urbanist text-sm md:px-6">
+        <div className="space-y-5 px-5 py-5 md:px-6">
           {data.company ? (
-            <p>
-              <span className="text-black/45">Company</span>
-              <br />
-              <span className="text-black/75">{data.company}</span>
-            </p>
+            <div>
+              <p className="font-urbanist text-sm font-medium text-black/50">Company</p>
+              <p className="mt-1 font-urbanist text-base text-black/80">{data.company}</p>
+            </div>
           ) : null}
           {data.job_title ? (
-            <p>
-              <span className="text-black/45">Role</span>
-              <br />
-              <span className="text-black/75">{data.job_title}</span>
-            </p>
+            <div>
+              <p className="font-urbanist text-sm font-medium text-black/50">Role</p>
+              <p className="mt-1 font-urbanist text-base text-black/80">{data.job_title}</p>
+            </div>
           ) : null}
           <div>
-            <p className="text-black/45">Message</p>
-            <p className="mt-2 whitespace-pre-wrap leading-relaxed text-black/75">{data.message}</p>
+            <p className="font-urbanist text-sm font-medium text-black/50">Message</p>
+            <p className="mt-2 whitespace-pre-wrap font-urbanist text-base leading-relaxed text-black/80">
+              {data.message}
+            </p>
+          </div>
+          <div className="border-t border-black/[0.06] pt-5">
+            <AdminMailtoButton
+              email={data.email}
+              subject={mailSubject}
+              body={mailBody}
+              label="Email sender"
+            />
           </div>
         </div>
       </article>

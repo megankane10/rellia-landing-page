@@ -25,7 +25,7 @@ const AdminSubmissionStatusSelect = ({
 }: AdminSubmissionStatusSelectProps) => (
   <Select value={value} disabled={disabled} onValueChange={(v) => onValueChange(v as SubmissionStatus)}>
     <SelectTrigger
-      className="h-9 w-[150px] rounded-full border border-black/10 bg-white font-urbanist text-xs"
+      className="h-9 w-[160px] rounded-full border border-black/10 bg-white font-urbanist text-sm"
       aria-label={ariaLabel}
     >
       <SelectValue />

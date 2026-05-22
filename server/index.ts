@@ -18,6 +18,7 @@ import {
   issueCsrfToken,
   requireApiCsrf,
 } from "./csrf";
+import { isAdminSignupEnabled } from "./adminSignupEnv";
 
 type RequestLike = {
   headers?: Record<string, unknown>;
@@ -1072,7 +1073,7 @@ export function createServer() {
         res.status(403).json({ error: "Forbidden" });
         return;
       }
-      res.json({ enabled: process.env.ADMIN_SIGNUP_ENABLED === "true" });
+      res.json({ enabled: isAdminSignupEnabled() });
     },
   );
 
@@ -1086,7 +1087,7 @@ export function createServer() {
         return;
       }
 
-      if (process.env.ADMIN_SIGNUP_ENABLED !== "true") {
+      if (!isAdminSignupEnabled()) {
         res.status(403).json({ error: "Signup is currently disabled." });
         return;
       }

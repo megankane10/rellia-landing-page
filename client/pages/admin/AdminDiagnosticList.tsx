@@ -5,10 +5,14 @@ import { supabase } from "@/lib/supabase"
 import { Badge } from "@/components/ui/badge"
 import { Skeleton } from "@/components/ui/skeleton"
 import AdminSubmissionStatusSelect from "@/components/admin/AdminSubmissionStatusSelect"
+import AdminSubmissionStatusFilter from "@/components/admin/AdminSubmissionStatusFilter"
 import AdminDeleteSubmissionButton from "@/components/admin/AdminDeleteSubmissionButton"
 import {
+  countByStatusFilter,
   formatAdminDate,
+  matchesStatusFilter,
   statusBadgeClass,
+  type StatusFilterValue,
   type SubmissionStatus,
 } from "@/lib/adminSubmissionStatus"
 import { ArrowLeft } from "lucide-react"
@@ -36,6 +40,7 @@ const fetchProfiles = async (): Promise<CompanyProfile[]> => {
 
 const AdminDiagnosticList = () => {
   const queryClient = useQueryClient()
+  const [statusFilter, setStatusFilter] = useState<StatusFilterValue>("all")
   const [updatingId, setUpdatingId] = useState<string | null>(null)
   const [statusWritesEnabled, setStatusWritesEnabled] = useState(true)
 
@@ -43,6 +48,13 @@ const AdminDiagnosticList = () => {
     queryKey: ["admin-company-profiles"],
     queryFn: fetchProfiles,
   })
+
+  const statusCounts = useMemo(() => countByStatusFilter(rows), [rows])
+
+  const filteredRows = useMemo(
+    () => rows.filter((row) => matchesStatusFilter(row, statusFilter)),
+    [rows, statusFilter],
+  )
 
   const statusSupported = useMemo(
     () => rows.length === 0 || rows.some((row) => "status" in row),
@@ -79,18 +91,26 @@ const AdminDiagnosticList = () => {
     <div className="space-y-6">
       <Link
         to="/admin/dashboard"
-        className="inline-flex items-center gap-1.5 font-urbanist text-sm text-rellia-teal/70 transition-colors hover:text-rellia-teal"
+        className="inline-flex items-center gap-1.5 font-urbanist text-sm text-rellia-teal/80 transition-colors hover:text-rellia-teal"
       >
         <ArrowLeft className="h-4 w-4" aria-hidden />
         Dashboard
       </Link>
 
       <div>
-        <h1 className="font-host-grotesk text-2xl font-bold text-rellia-teal">Startup diagnostic submissions</h1>
-        <p className="mt-1 font-urbanist text-sm text-black/55">
-          {rows.length} submission{rows.length === 1 ? "" : "s"} — open for full report and scores.
+        <h1 className="font-host-grotesk text-2xl font-bold text-black md:text-3xl">
+          Startup diagnostic submissions
+        </h1>
+        <p className="mt-2 font-urbanist text-base text-black/65">
+          {rows.length} submission{rows.length === 1 ? "" : "s"}
         </p>
       </div>
+
+      <AdminSubmissionStatusFilter
+        value={statusFilter}
+        onChange={setStatusFilter}
+        counts={statusCounts}
+      />
 
       {!statusWritesEnabled && (
         <p className="rounded-xl border border-amber-200/80 bg-amber-50 px-4 py-3 font-urbanist text-sm text-amber-900">
@@ -113,14 +133,14 @@ const AdminDiagnosticList = () => {
         </p>
       )}
 
-      {!isLoading && !error && rows.length === 0 && (
-        <p className="rounded-2xl border border-dashed border-black/10 bg-white/70 px-4 py-10 text-center font-urbanist text-sm text-black/55">
-          No diagnostic submissions yet.
+      {!isLoading && !error && filteredRows.length === 0 && (
+        <p className="rounded-2xl border border-dashed border-black/10 bg-white/70 px-4 py-10 text-center font-urbanist text-base text-black/60">
+          No submissions match this filter.
         </p>
       )}
 
       <ul className="space-y-3">
-        {rows.map((row) => {
+        {filteredRows.map((row) => {
           const status = (row.status ?? "New") as SubmissionStatus
           return (
             <li
@@ -129,14 +149,14 @@ const AdminDiagnosticList = () => {
             >
               <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
                 <Link to={`/admin/companies/${row.id}`} className="min-w-0 flex-1 group">
-                  <p className="font-host-grotesk text-base font-semibold text-rellia-teal group-hover:underline">
+                  <p className="font-host-grotesk text-base font-semibold text-black group-hover:text-rellia-teal">
                     {row.company_name}
                   </p>
-                  <p className="font-urbanist text-xs text-black/50">
+                  <p className="mt-1 font-urbanist text-sm text-black/60">
                     {row.name} · {row.work_email} · {formatAdminDate(row.created_at)}
                   </p>
                   {row.stage ? (
-                    <Badge className="mt-2 rounded-full bg-rellia-mint/90 font-urbanist text-xs text-rellia-teal hover:bg-rellia-mint">
+                    <Badge className="mt-2 rounded-full bg-rellia-mint/90 font-urbanist text-sm text-rellia-teal hover:bg-rellia-mint">
                       {row.stage}
                     </Badge>
                   ) : null}
@@ -153,7 +173,7 @@ const AdminDiagnosticList = () => {
                   ) : (
                     <Badge
                       variant="outline"
-                      className={`rounded-full font-urbanist text-xs ${statusBadgeClass(status)}`}
+                      className={`rounded-full font-urbanist text-sm ${statusBadgeClass(status)}`}
                     >
                       {status}
                     </Badge>

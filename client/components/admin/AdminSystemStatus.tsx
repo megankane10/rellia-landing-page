@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { isSanityConfigured, sanityFetch } from "@/lib/sanity"
+import { getSanityDataset, isSanityConfigured, sanityFetch } from "@/lib/sanity"
 import { supabase } from "@/lib/supabase"
 import { cn } from "@/lib/utils"
 
@@ -7,6 +7,7 @@ type ServiceState = "checking" | "online" | "offline" | "unconfigured"
 
 type ServiceStatus = {
   label: string
+  detail?: string
   state: ServiceState
 }
 
@@ -20,12 +21,13 @@ const stateLabel = (state: ServiceState): string => {
 const StatusPill = ({ service }: { service: ServiceStatus }) => (
   <li
     className={cn(
-      "inline-flex items-center gap-2 rounded-full border px-3 py-1.5 font-urbanist text-xs",
+      "inline-flex items-center gap-2 rounded-full border px-3 py-1.5 font-urbanist text-sm",
       service.state === "online" && "border-emerald-200/80 bg-emerald-50/90 text-emerald-900",
-      service.state === "checking" && "border-black/10 bg-white/90 text-black/55",
+      service.state === "checking" && "border-black/10 bg-white/90 text-black/60",
       service.state === "offline" && "border-red-200/80 bg-red-50/90 text-red-800",
       service.state === "unconfigured" && "border-amber-200/80 bg-amber-50/90 text-amber-900",
     )}
+    title={service.detail}
   >
     <span
       className={cn(
@@ -38,8 +40,14 @@ const StatusPill = ({ service }: { service: ServiceStatus }) => (
       aria-hidden
     />
     <span className="font-medium">{service.label}</span>
-    <span className="text-black/45">·</span>
+    <span className="text-black/40">·</span>
     <span>{stateLabel(service.state)}</span>
+    {service.detail ? (
+      <>
+        <span className="text-black/40">·</span>
+        <span className="text-black/55">{service.detail}</span>
+      </>
+    ) : null}
   </li>
 )
 
@@ -68,13 +76,18 @@ const AdminSystemStatus = () => {
 
   useEffect(() => {
     let cancelled = false
+    const dataset = getSanityDataset() || "—"
 
     const run = async () => {
       const [dbOk, cmsState] = await Promise.all([pingSupabase(), pingSanity()])
       if (cancelled) return
       setServices([
         { label: "Database", state: dbOk ? "online" : "offline" },
-        { label: "CMS", state: cmsState },
+        {
+          label: "CMS",
+          state: cmsState,
+          detail: cmsState === "unconfigured" ? undefined : `dataset: ${dataset}`,
+        },
       ])
     }
 
@@ -86,7 +99,7 @@ const AdminSystemStatus = () => {
 
   return (
     <div className="flex flex-wrap items-center gap-2" aria-label="System status">
-      <span className="font-urbanist text-[11px] font-medium uppercase tracking-[0.14em] text-black/40">
+      <span className="font-urbanist text-xs font-medium uppercase tracking-[0.12em] text-black/50">
         Status
       </span>
       <ul className="flex flex-wrap items-center gap-2">

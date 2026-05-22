@@ -6,9 +6,10 @@ import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import AdminSubmissionStatusSelect from "@/components/admin/AdminSubmissionStatusSelect"
 import AdminDeleteSubmissionButton from "@/components/admin/AdminDeleteSubmissionButton"
+import AdminMailtoButton from "@/components/admin/AdminMailtoButton"
+import AdminDiagnosticAnswers from "@/components/admin/AdminDiagnosticAnswers"
 import {
   formatAdminDateLong,
   statusBadgeClass,
@@ -151,10 +152,10 @@ const AdminCompany = () => {
         <CardHeader>
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div>
-              <CardTitle className="font-host-grotesk text-xl font-bold text-rellia-teal">
+              <CardTitle className="font-host-grotesk text-xl font-bold text-black">
                 {profile.company_name}
               </CardTitle>
-              <p className="mt-1 font-urbanist text-sm text-black/60">
+              <p className="mt-1 font-urbanist text-sm text-black/65">
                 Submitted by {profile.name} · {profile.work_email}
               </p>
               <p className="font-urbanist text-xs text-black/40">
@@ -209,7 +210,7 @@ const AdminCompany = () => {
           {response.summary && (
             <Card className="rounded-[20px] border border-black/10 bg-white shadow-sm">
               <CardHeader>
-                <CardTitle className="font-host-grotesk text-base font-semibold">Summary</CardTitle>
+                <CardTitle className="font-host-grotesk text-base font-semibold text-black">Summary</CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="font-urbanist text-sm leading-relaxed text-black/70">{response.summary}</p>
@@ -221,7 +222,7 @@ const AdminCompany = () => {
           {response.section_scores && response.section_scores.length > 0 && (
             <Card className="rounded-[20px] border border-black/10 bg-white shadow-sm">
               <CardHeader>
-                <CardTitle className="font-host-grotesk text-base font-semibold">Section Scores</CardTitle>
+                <CardTitle className="font-host-grotesk text-base font-semibold text-black">Section Scores</CardTitle>
               </CardHeader>
               <CardContent className="p-0">
                 <Table>
@@ -253,7 +254,7 @@ const AdminCompany = () => {
             {response.top3_strengths && response.top3_strengths.length > 0 && (
               <Card className="rounded-[20px] border border-black/10 bg-white shadow-sm">
                 <CardHeader>
-                  <CardTitle className="font-host-grotesk text-base font-semibold text-rellia-teal">
+                  <CardTitle className="font-host-grotesk text-base font-semibold text-black">
                     Top Strengths
                   </CardTitle>
                 </CardHeader>
@@ -281,7 +282,7 @@ const AdminCompany = () => {
             {response.top3_weaknesses && response.top3_weaknesses.length > 0 && (
               <Card className="rounded-[20px] border border-black/10 bg-white shadow-sm">
                 <CardHeader>
-                  <CardTitle className="font-host-grotesk text-base font-semibold text-red-700">
+                  <CardTitle className="font-host-grotesk text-base font-semibold text-black">
                     Top Weaknesses
                   </CardTitle>
                 </CardHeader>
@@ -315,7 +316,7 @@ const AdminCompany = () => {
           {response.recommendations && response.recommendations.length > 0 && (
             <Card className="rounded-[20px] border border-black/10 bg-white shadow-sm">
               <CardHeader>
-                <CardTitle className="font-host-grotesk text-base font-semibold">
+                <CardTitle className="font-host-grotesk text-base font-semibold text-black">
                   Recommendations
                 </CardTitle>
               </CardHeader>
@@ -336,7 +337,7 @@ const AdminCompany = () => {
           {response.mentor_areas_needed && response.mentor_areas_needed.length > 0 && (
             <Card className="rounded-[20px] border border-black/10 bg-white shadow-sm">
               <CardHeader>
-                <CardTitle className="font-host-grotesk text-base font-semibold">
+                <CardTitle className="font-host-grotesk text-base font-semibold text-black">
                   Mentor Areas Needed
                 </CardTitle>
               </CardHeader>
@@ -353,21 +354,27 @@ const AdminCompany = () => {
             </Card>
           )}
 
-          {/* Raw answers (collapsible) */}
           {response.raw_answers && (
-            <Accordion type="single" collapsible>
-              <AccordionItem value="raw" className="rounded-[20px] border border-black/10 bg-white px-6 shadow-sm">
-                <AccordionTrigger className="font-urbanist text-sm text-black/50 hover:text-black/70 hover:no-underline">
-                  View raw question answers
-                </AccordionTrigger>
-                <AccordionContent>
-                  <pre className="overflow-x-auto rounded-xl bg-rellia-cream p-4 font-urbanist text-xs text-black/70">
-                    {JSON.stringify(response.raw_answers, null, 2)}
-                  </pre>
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion>
+            <Card className="rounded-2xl border border-black/[0.07] bg-white/90 shadow-sm">
+              <CardHeader>
+                <CardTitle className="font-host-grotesk text-base font-semibold text-black">
+                  Survey responses
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <AdminDiagnosticAnswers rawAnswers={response.raw_answers} />
+              </CardContent>
+            </Card>
           )}
+
+          <div className="rounded-2xl border border-black/[0.07] bg-white/90 px-5 py-5 shadow-sm md:px-6">
+            <AdminMailtoButton
+              email={profile.work_email}
+              subject={`Re: ${profile.company_name} diagnostic submission`}
+              body={`Hi ${profile.name},\n\n`}
+              label="Email sender"
+            />
+          </div>
         </>
       )}
     </div>

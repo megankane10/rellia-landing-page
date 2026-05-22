@@ -7,5 +7,7 @@ if (process.env.VERCEL !== "1") {
   const require = createRequire(import.meta.url)
   const dotenv = require("dotenv") as typeof import("dotenv")
   const serverDir = path.dirname(fileURLToPath(import.meta.url))
-  dotenv.config({ path: path.resolve(serverDir, "..", ".env") })
+  const root = path.resolve(serverDir, "..")
+  dotenv.config({ path: path.join(root, ".env") })
+  dotenv.config({ path: path.join(root, ".env.local"), override: true })
 }

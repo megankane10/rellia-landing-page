@@ -38,3 +38,31 @@ export const countRecentSubmissions = <T extends { created_at: string }>(
   const cutoff = Date.now() - withinDays * 24 * 60 * 60 * 1000
   return rows.filter((row) => new Date(row.created_at).getTime() >= cutoff).length
 }
+
+export type StatusFilterValue = SubmissionStatus | "all"
+
+export const countByStatusFilter = <T extends { status?: SubmissionStatus | null }>(
+  rows: T[],
+): Record<StatusFilterValue, number> => {
+  const counts: Record<StatusFilterValue, number> = {
+    all: rows.length,
+    New: 0,
+    "In Progress": 0,
+    Resolved: 0,
+  }
+
+  for (const row of rows) {
+    const status = (row.status ?? "New") as SubmissionStatus
+    counts[status] += 1
+  }
+
+  return counts
+}
+
+export const matchesStatusFilter = <T extends { status?: SubmissionStatus | null }>(
+  row: T,
+  filter: StatusFilterValue,
+): boolean => {
+  if (filter === "all") return true
+  return (row.status ?? "New") === filter
+}
