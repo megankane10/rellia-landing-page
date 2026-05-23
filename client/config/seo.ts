@@ -514,14 +514,19 @@ const SEED_DIRECTORY_PRERENDER_PATHS: string[] = isMainBranchBuild()
       ...ADVISOR_DIRECTORY_SEED.map((a) => `/advisors/directory/${a.id}`),
     ]
 
-/** Admin routes use AuthProvider client-side only — do not prerender (useAuth throws in Node). */
-export const isAdminPrerenderPath = (pathname: string): boolean =>
-  normalizePathname(pathname).startsWith("/admin")
+/** Auth/admin routes use AuthProvider client-side only — SEO via RouteSeo, not prerender. */
+export const isClientOnlyAuthPath = (pathname: string): boolean => {
+  const key = normalizePathname(pathname)
+  return key.startsWith("/admin") || key === "/accept-invite"
+}
+
+/** @deprecated Use isClientOnlyAuthPath */
+export const isAdminPrerenderPath = isClientOnlyAuthPath
 
 /** Paths emitted as static HTML at build time (see `client/prerender.tsx`). */
 export const PRERENDER_PATHS: string[] = [
   "/",
-  ...Object.keys(ROUTE_SEO).filter((p) => p !== "/" && !p.startsWith("/admin")),
+  ...Object.keys(ROUTE_SEO).filter((p) => p !== "/" && !isClientOnlyAuthPath(p)),
   ...PROGRAMS_EVENT_PRERENDER_PATHS,
   ...STORY_PRERENDER_PATHS,
   ...SEED_DIRECTORY_PRERENDER_PATHS,

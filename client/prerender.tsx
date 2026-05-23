@@ -11,6 +11,7 @@ import {
   clampMetaTitle,
   getSeoForPathname,
   getSiteUrl,
+  isClientOnlyAuthPath,
   isItemDetailPath,
   normalizePathname,
   resolveSocialOgImageUrl,
@@ -257,11 +258,42 @@ const appendSocialMeta = (
   }
 }
 
+const filterDiscoveredLinks = (links: Set<string> | string[]): Set<string> => {
+  const filtered = new Set<string>()
+  for (const link of links) {
+    try {
+      const path = normalizePathname(new URL(link, "http://localhost").pathname)
+      if (isClientOnlyAuthPath(path)) continue
+      filtered.add(link)
+    } catch {
+      filtered.add(link)
+    }
+  }
+  return filtered
+}
+
 export const prerender = async (data: { url: string }) => {
   const { parseLinks } = await import("vite-prerender-plugin/parse")
   const helmetContext: { helmet?: HelmetServerState | null } = {}
 
   const pathname = normalizePathname(new URL(data.url, "http://localhost").pathname)
+
+  if (isClientOnlyAuthPath(pathname)) {
+    const routeSeo = getSeoForPathname(pathname)
+    return {
+      html: "",
+      links: new Set<string>(),
+      head: {
+        lang: "en",
+        title: routeSeo.title,
+        elements: new Set([
+          `<meta name="description" content="${escapeMetaAttr(routeSeo.description)}" />`,
+          `<meta name="robots" content="noindex, nofollow" />`,
+        ]),
+      },
+    }
+  }
+
   const siteOrigin = getSiteUrl()
   const pageUrl = `${siteOrigin}${pathname === "/" ? "" : pathname}`
 
@@ -375,7 +407,7 @@ export const prerender = async (data: { url: string }) => {
   )
 
   const html = renderToString(app)
-  const links = parseLinks(html)
+  const links = filterDiscoveredLinks(parseLinks(html))
 
   const headElements = new Set<string>()
   const helmet = helmetContext.helmet
