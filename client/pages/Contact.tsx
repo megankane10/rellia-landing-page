@@ -57,7 +57,8 @@ function ContactSection({ copy }: { copy: typeof DEFAULT_CONTACT_PAGE }) {
 
 function LeftPanel({ copy }: { copy: typeof DEFAULT_CONTACT_PAGE }) {
   return (
-    <div className="relative bg-rellia-teal min-h-[700px] lg:min-h-full flex flex-col px-6 pt-32 pb-20 md:pt-40 md:pb-24 lg:pt-32 lg:px-20 overflow-hidden">
+    <div className="flex flex-col justify-center p-4 md:p-6 lg:min-h-screen lg:p-8">
+      <div className="relative flex min-h-[560px] flex-1 flex-col justify-center overflow-hidden rounded-[1.75rem] bg-rellia-teal px-6 pt-28 pb-16 md:px-10 md:pt-32 md:pb-20 lg:min-h-[min(720px,calc(100vh-4rem))]">
       {/* Background Image with optimized overlay */}
       <div className="absolute inset-0">
         <img
@@ -70,7 +71,7 @@ function LeftPanel({ copy }: { copy: typeof DEFAULT_CONTACT_PAGE }) {
           decoding="async"
           className="h-full w-full object-cover opacity-35 mix-blend-luminosity"
         />
-        <div className="absolute inset-0 bg-gradient-to-br from-rellia-teal via-rellia-teal/95 to-rellia-teal/80" />
+        <div className="absolute inset-0 bg-gradient-to-br from-rellia-teal via-[#0f5c5c] to-rellia-teal/85" />
         
         {/* Mint Gradient Accents */}
         <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-rellia-mint/20 rounded-full blur-[120px]" />
@@ -152,6 +153,7 @@ function LeftPanel({ copy }: { copy: typeof DEFAULT_CONTACT_PAGE }) {
 
       {/* Abstract mint glow at the bottom */}
       <div className="absolute -bottom-24 -right-24 w-96 h-96 bg-rellia-mint/15 rounded-full blur-[120px] pointer-events-none" />
+      </div>
     </div>
   )
 }

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { getSanityDataset, isSanityConfigured, sanityFetch } from "@/lib/sanity"
+import { isSanityConfigured, sanityFetch } from "@/lib/sanity"
 import { supabase } from "@/lib/supabase"
 import { cn } from "@/lib/utils"
 
@@ -44,7 +44,7 @@ const StatusPill = ({ service }: { service: ServiceStatus }) => (
       )}
       aria-hidden
     />
-    <span className="font-medium">{service.label}</span>
+    <span>{service.label}</span>
     <span className="text-black/40">·</span>
     <span>{stateLabel(service.state)}</span>
     {service.detail ? (
@@ -83,8 +83,6 @@ const AdminSystemStatus = () => {
 
   useEffect(() => {
     let cancelled = false
-    const dataset = getSanityDataset() || "—"
-
     const run = async () => {
       const [dbOk, cmsPing] = await Promise.all([pingSupabase(), pingSanityDrafts()])
       if (cancelled) return
@@ -97,10 +95,9 @@ const AdminSystemStatus = () => {
         {
           label: "CMS",
           state: cmsPing,
-          detail: cmsPing === "unconfigured" ? undefined : `dataset: ${dataset}`,
           title:
             cmsPing === "online"
-              ? "Sanity content dataset this admin app reads (preview = staging, production = live site)"
+              ? "Sanity CMS reachable for draft content"
               : "Sanity drafts query failed — check VITE_SANITY_* and SANITY_API_READ_TOKEN on the server",
         },
       ])
@@ -114,7 +111,7 @@ const AdminSystemStatus = () => {
 
   return (
     <div className="flex flex-wrap items-center gap-2" aria-label="System status">
-      <span className="font-urbanist text-xs font-medium uppercase tracking-[0.12em] text-black/50">
+      <span className="font-urbanist text-[10px] uppercase tracking-[0.12em] text-black/45">
         Status
       </span>
       <ul className="flex flex-wrap items-center gap-2">

@@ -59,7 +59,7 @@ const AdminContactDetail = () => {
     if (deleteError) return
     void queryClient.invalidateQueries({ queryKey: ["admin-contact-submissions"] })
     void queryClient.invalidateQueries({ queryKey: ["admin-dashboard-overview"] })
-    navigate("/admin/contacts", { replace: true })
+    navigate("/admin/submissions?tab=contact", { replace: true })
   }
 
   if (isLoading) {
@@ -75,7 +75,7 @@ const AdminContactDetail = () => {
     return (
       <div className="space-y-4">
         <Link
-          to="/admin/contacts"
+          to="/admin/submissions?tab=contact"
           className="inline-flex items-center gap-1.5 font-urbanist text-sm text-rellia-teal/80 hover:text-rellia-teal"
         >
           <ArrowLeft className="h-4 w-4" aria-hidden />

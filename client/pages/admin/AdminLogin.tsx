@@ -24,12 +24,12 @@ const AdminLogin = () => {
       setError(authError)
       return
     }
-    navigate("/admin/dashboard", { replace: true })
+    navigate("/admin/overview", { replace: true })
   }
 
   return (
     <AdminAuthLayout
-      leftHeading="Hello! Ready to see what's new with Rellia Health today?"
+      leftHeading="Hello! Ready to see what's new today?"
       leftDescription="Log in to review the latest form submissions, coordinate inquiries, and easily track your website content drafts."
       title="Welcome Back"
       description="Sign in to access admin dashboard"

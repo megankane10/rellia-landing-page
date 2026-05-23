@@ -55,10 +55,10 @@ const statusBadge = (status: SanityContentRow["status"]) => {
 const ContentCard = ({ row }: { row: SanityContentRow }) => {
   const badge = statusBadge(row.status)
   return (
-    <li className="flex flex-col justify-between gap-4 rounded-2xl border border-black/[0.07] bg-white p-4 shadow-sm transition-shadow hover:shadow-md">
+    <li className="flex flex-col justify-between gap-4 rounded-3xl border border-black/[0.06] bg-white p-4 transition-shadow hover:shadow-[0_8px_30px_-20px_rgba(13,53,64,0.25)]">
       <div className="min-w-0">
         <div className="flex flex-wrap items-start gap-2">
-          <p className="min-w-0 flex-1 font-host-grotesk text-base font-semibold text-black">
+          <p className="min-w-0 flex-1 font-host-grotesk text-base text-black/90">
             {row.title || row._id}
           </p>
           <Badge
@@ -104,20 +104,20 @@ const ContentTypeSection = ({ type, items, defaultOpen = false }: ContentTypeSec
   const label = formatCmsDocumentTypeLabel(type)
 
   return (
-    <Collapsible open={open} onOpenChange={setOpen} className="rounded-2xl border border-black/[0.08] bg-rellia-greyTeal/30">
+    <Collapsible open={open} onOpenChange={setOpen} className="rounded-3xl border border-black/[0.06] bg-rellia-greyTeal/30">
       <CollapsibleTrigger
         type="button"
         className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left transition-colors hover:bg-white/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 rounded-2xl"
         aria-expanded={open}
       >
         <div className="min-w-0">
-          <p className="font-host-grotesk text-lg font-semibold text-rellia-teal md:text-xl">{label}</p>
+          <p className="font-host-grotesk text-lg text-rellia-teal md:text-xl">{label}</p>
           <p className="mt-0.5 font-urbanist text-xs text-black/50">
             Sanity schema: <span className="font-mono text-black/60">{type}</span>
           </p>
         </div>
         <div className="flex shrink-0 items-center gap-3">
-          <span className="flex h-9 min-w-9 items-center justify-center rounded-full bg-rellia-teal px-2.5 font-host-grotesk text-sm font-bold text-white">
+          <span className="flex h-9 min-w-9 items-center justify-center rounded-full bg-rellia-teal px-2.5 font-host-grotesk text-sm text-white">
             {items.length}
           </span>
           <ChevronDown
