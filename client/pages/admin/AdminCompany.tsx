@@ -158,10 +158,9 @@ const AdminCompany = () => {
         <div className="border-b border-black/[0.06] bg-gradient-to-r from-rellia-mint/12 to-white px-5 py-5 md:px-6">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
             <div>
-              <h1 className="font-host-grotesk text-xl font-semibold text-black md:text-2xl">
-                {profile.company_name}
-              </h1>
-              <p className="mt-1 font-urbanist text-sm text-black/65">{formatAdminDateLong(profile.created_at)}</p>
+              <h1 className="font-host-grotesk text-xl font-bold text-black md:text-2xl">{profile.name}</h1>
+              <p className="mt-1 font-urbanist text-sm text-black/65">{profile.work_email}</p>
+              <p className="font-urbanist text-sm text-black/50">{formatAdminDateLong(profile.created_at)}</p>
             </div>
             <div className="flex flex-wrap items-center gap-2">
               {hasStatusField && statusWritesEnabled ? (
@@ -189,16 +188,7 @@ const AdminCompany = () => {
         </div>
 
         <div className="space-y-5 px-5 py-5 md:px-6">
-          <p className="font-host-grotesk text-sm font-medium text-rellia-teal">Tell us about your startup</p>
           <div className="grid gap-4 sm:grid-cols-2">
-            <div>
-              <p className="font-urbanist text-sm font-medium text-black/50">Your name</p>
-              <p className="mt-1 font-urbanist text-base text-black/80">{profile.name}</p>
-            </div>
-            <div>
-              <p className="font-urbanist text-sm font-medium text-black/50">Work email</p>
-              <p className="mt-1 font-urbanist text-base text-black/80">{profile.work_email}</p>
-            </div>
             <div>
               <p className="font-urbanist text-sm font-medium text-black/50">Company name</p>
               <p className="mt-1 font-urbanist text-base text-black/80">{profile.company_name}</p>
@@ -264,6 +254,23 @@ const AdminCompany = () => {
                 </Table>
               </CardContent>
             </Card>
+          )}
+
+          {response.raw_answers && (
+            <Accordion
+              type="single"
+              collapsible
+              className="rounded-2xl border border-black/[0.07] bg-white/90 px-4 shadow-sm md:px-6"
+            >
+              <AccordionItem value="survey-responses" className="border-none">
+                <AccordionTrigger className="py-4 font-host-grotesk text-base font-semibold text-black hover:no-underline">
+                  Survey responses
+                </AccordionTrigger>
+                <AccordionContent className="pb-4">
+                  <AdminDiagnosticAnswers rawAnswers={response.raw_answers} />
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
           )}
 
           {/* Strengths & Weaknesses */}
@@ -369,19 +376,6 @@ const AdminCompany = () => {
                 ))}
               </CardContent>
             </Card>
-          )}
-
-          {response.raw_answers && (
-            <Accordion type="single" collapsible className="rounded-2xl border border-black/[0.07] bg-white/90 px-4 shadow-sm md:px-6">
-              <AccordionItem value="survey-responses" className="border-none">
-                <AccordionTrigger className="py-4 font-host-grotesk text-base font-semibold text-black hover:no-underline">
-                  Survey responses
-                </AccordionTrigger>
-                <AccordionContent className="pb-4">
-                  <AdminDiagnosticAnswers rawAnswers={response.raw_answers} />
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion>
           )}
 
         </>

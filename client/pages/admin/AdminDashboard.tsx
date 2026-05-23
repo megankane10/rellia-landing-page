@@ -393,12 +393,13 @@ const DiagnosticSubmissionCard = ({
         <Link to={`/admin/companies/${row.id}`} className="min-w-0 flex-1 group">
           <div className="flex flex-wrap items-center gap-2">
             <p className="font-host-grotesk text-sm text-black/90 group-hover:text-rellia-teal">
-              {row.company_name}
+              {row.name}
             </p>
             <StatusTag status={status} />
           </div>
-          <p className="mt-1 font-urbanist text-xs text-black/50">
-            {row.name}
+          <p className="mt-1 font-urbanist text-xs text-black/50">{row.work_email}</p>
+          <p className="mt-0.5 font-urbanist text-xs text-black/45">
+            {row.company_name}
             {row.stage ? ` · ${row.stage}` : ""} · {formatAdminDate(row.created_at)}
           </p>
         </Link>

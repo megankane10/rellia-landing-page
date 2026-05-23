@@ -364,12 +364,19 @@ export default function StoryPost() {
 
                   if (b.type === "quote") {
                     return (
-                      <figure key={key} className="my-10 rounded-2xl bg-rellia-teal/5 px-6 py-6">
-                        <blockquote className="font-urbanist text-black/80 text-base md:text-lg leading-relaxed italic">
-                          “{b.text}”
+                      <figure
+                        key={key}
+                        className="relative my-10 overflow-hidden rounded-[1.75rem] bg-rellia-teal px-6 py-8 md:px-8 md:py-10"
+                      >
+                        <div
+                          className="pointer-events-none absolute top-[-20%] right-[-10%] h-40 w-40 rounded-full bg-rellia-mint/20 blur-[80px]"
+                          aria-hidden
+                        />
+                        <blockquote className="relative font-urbanist text-xl font-medium leading-snug text-rellia-mint md:text-2xl">
+                          &ldquo;{b.text}&rdquo;
                         </blockquote>
                         {b.attribution ? (
-                          <figcaption className="mt-4 font-host-grotesk text-sm font-semibold tracking-wide text-black/60">
+                          <figcaption className="relative mt-6 font-host-grotesk text-sm font-semibold tracking-wide text-rellia-mint/85">
                             — {b.attribution}
                           </figcaption>
                         ) : null}

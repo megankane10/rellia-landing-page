@@ -1,7 +1,6 @@
 import { useMemo, useState } from "react"
 import { Link, useSearchParams } from "react-router-dom"
-import Navbar from "@/components/Navbar"
-import Footer from "@/components/Footer"
+import AdminAuthLayout from "@/components/admin/AdminAuthLayout"
 import RelliaAction from "@/components/RelliaAction"
 
 const isValidConfirmationUrl = (value: string | null): value is string => {
@@ -30,53 +29,53 @@ const AcceptInvite = () => {
   }
 
   return (
-    <div className="min-h-screen bg-white font-host-grotesk overflow-x-hidden">
-      <Navbar />
-      <main
-        id="main-content"
-        className="flex min-h-[calc(100vh-80px)] flex-col items-center justify-center px-6 py-20"
+    <AdminAuthLayout
+      leftHeading="You're invited to the admin dashboard"
+      leftDescription="Email scanners can open invite links too early. Continue only when you are ready to finish setting up your account."
+      title="Accept invitation"
+      description="Click continue to verify your invite and set your password."
+      leftTextTone="mint"
+    >
+      {!validUrl ? (
+        <p className="font-urbanist text-sm text-red-700" role="alert">
+          This invitation link is missing or invalid. Open the link from your invite email again, or ask for a new
+          invitation.
+        </p>
+      ) : null}
+
+      {error ? (
+        <p className="font-urbanist text-sm text-red-700" role="alert">
+          {error}
+        </p>
+      ) : null}
+
+      <RelliaAction
+        type="button"
+        variant="tealFilled"
+        size="comfortable"
+        className="mt-4 w-full"
+        disabled={!validUrl}
+        onClick={handleContinue}
       >
-        <div className="w-full max-w-md rounded-3xl border border-black/[0.06] bg-rellia-cream/30 px-8 py-10 text-center">
-          <h1 className="font-host-grotesk text-2xl text-rellia-teal">Accept invitation</h1>
-          <p className="mt-3 font-urbanist text-sm leading-relaxed text-black/65">
-            Email scanners can expire invite links before you open them. Click continue when you are ready to
-            finish setting up your account.
-          </p>
+        Continue
+      </RelliaAction>
 
-          {!validUrl ? (
-            <p className="mt-6 font-urbanist text-sm text-red-700" role="alert">
-              This invitation link is missing or invalid. Open the link from your invite email again, or ask
-              for a new invitation.
-            </p>
-          ) : null}
-
-          {error ? (
-            <p className="mt-4 font-urbanist text-sm text-red-700" role="alert">
-              {error}
-            </p>
-          ) : null}
-
-          <RelliaAction
-            type="button"
-            variant="tealFilled"
-            size="comfortable"
-            className="mt-8 w-full"
-            disabled={!validUrl}
-            onClick={handleContinue}
-          >
-            Continue
-          </RelliaAction>
-
-          <Link
-            to="/"
-            className="mt-8 inline-block font-urbanist text-sm text-black/50 transition-colors hover:text-rellia-teal focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint rounded"
-          >
-            ← Back to website
-          </Link>
-        </div>
-      </main>
-      <Footer />
-    </div>
+      <p className="mt-6 text-center font-urbanist text-sm text-black/55">
+        <Link
+          to="/admin/login"
+          className="font-medium text-rellia-teal underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint rounded"
+        >
+          Sign in
+        </Link>
+        {" · "}
+        <Link
+          to="/"
+          className="text-black/50 transition-colors hover:text-rellia-teal focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint rounded"
+        >
+          Back to website
+        </Link>
+      </p>
+    </AdminAuthLayout>
   )
 }
 

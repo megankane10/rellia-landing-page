@@ -53,6 +53,13 @@ const components: PortableTextComponents = {
     h3: ({ children }) => (
       <h3 className="font-host-grotesk text-xl font-semibold text-rellia-teal mt-6 mb-3">{children}</h3>
     ),
+    blockquote: ({ children }) => (
+      <figure className="my-8 rounded-2xl bg-rellia-teal/5 px-6 py-6 md:my-10">
+        <blockquote className="font-urbanist text-base italic leading-relaxed text-black/80 md:text-lg">
+          {children}
+        </blockquote>
+      </figure>
+    ),
     normal: ({ children }) => (
       <p className="font-urbanist text-black/70 text-base md:text-lg leading-relaxed mb-4">{children}</p>
     ),

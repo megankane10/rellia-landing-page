@@ -49,6 +49,8 @@ import { ProtectedRoute } from "@/components/admin/ProtectedRoute"
 import AdminLogin from "./pages/admin/AdminLogin"
 import AdminSignup from "./pages/admin/AdminSignup"
 import AcceptInvite from "./pages/AcceptInvite"
+import AdminAuthCallback from "./pages/admin/AdminAuthCallback"
+import AdminSetPassword from "./pages/admin/AdminSetPassword"
 import AdminShell from "./pages/admin/AdminShell"
 import AdminDashboard from "./pages/admin/AdminDashboard"
 import AdminCompany from "./pages/admin/AdminCompany"
@@ -160,6 +162,8 @@ export const AppRoutes = () => (
     <Route path="/studio" element={<StudioRedirect />} />
 
     <Route path="/accept-invite" element={<AcceptInvite />} />
+    <Route path="/admin/auth/callback" element={<AdminAuthCallback />} />
+    <Route path="/admin/set-password" element={<AdminSetPassword />} />
 
     <Route path="/admin/login" element={<AdminLogin />} />
     <Route path="/admin/signup" element={<AdminSignup />} />
