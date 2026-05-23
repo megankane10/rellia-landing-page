@@ -9,6 +9,8 @@ type AdminAuthLayoutProps = {
   leftHeading: string
   leftDescription: string
   children: ReactNode
+  /** Mint accent on the left brand panel (admin auth flows). */
+  leftTextTone?: "white" | "mint"
 }
 
 const AdminAuthLayout = ({
@@ -17,11 +19,12 @@ const AdminAuthLayout = ({
   leftHeading,
   leftDescription,
   children,
+  leftTextTone = "mint",
 }: AdminAuthLayoutProps) => (
   <div className="min-h-screen overflow-x-hidden bg-white font-host-grotesk">
     <section className="relative min-h-screen w-full">
       <div className="grid min-h-screen grid-cols-1 lg:grid-cols-[45%_55%] xl:grid-cols-[40%_60%] lg:items-stretch">
-        <AdminBrandPanel heading={leftHeading} description={leftDescription} />
+        <AdminBrandPanel heading={leftHeading} description={leftDescription} textTone={leftTextTone} />
         <div className="flex min-h-[480px] flex-col justify-center px-6 py-14 md:px-12 md:py-16 lg:min-h-screen lg:px-16">
           <motion.div
             initial={{ opacity: 0, y: 12 }}

@@ -1,15 +1,14 @@
+import { useState } from "react"
 import { NavLink, useLocation, useNavigate } from "react-router-dom"
 import {
-  Database,
-  Github,
-  ExternalLink,
+  ArrowRight,
+  ChevronDown,
   FileEdit,
   FileText,
+  Globe,
   LayoutDashboard,
   LogOut,
   Mail,
-  Server,
-  Stethoscope,
   Users,
   X,
 } from "lucide-react"
@@ -17,11 +16,12 @@ import { useAuth } from "@/context/AuthContext"
 import { cn } from "@/lib/utils"
 
 const FAVICON_SRC = "/favicon.ico"
+const SIMPLE_ICONS_CDN = "https://unpkg.com/simple-icons@v14/icons"
 
 const ADMIN_DOC_URL =
   "https://docs.google.com/document/d/17lMkt2Jqa4fswCd_DpjHpvwMQH-5QBMDvzcw5MGLDVo/edit?usp=sharing"
 const SANITY_STUDIO_URL = "https://relliahealth.sanity.studio"
-const SUPABASE_ORG_URL = "https://supabase.com/dashboard/org/upargbhxqypivsqdsehp"
+const SUPABASE_PROJECT_URL = "https://supabase.com/dashboard/project/agsvypnmlrvpbgrsxtqy"
 const VERCEL_PROJECT_URL = "https://vercel.com/relliahealth"
 const GITHUB_REPO_URL = "https://github.com/Agrolax/rellia-landing-page"
 const WEBSITE_URL = "https://relliahealth.com"
@@ -49,22 +49,52 @@ const MAIN_MENU: NavItem[] = [
   { to: "/admin/content", label: "Content Drafts", icon: FileEdit },
 ]
 
-type ExternalTool = {
+type AdminTool = {
   href: string
   label: string
-  icon: typeof FileText
+  description: string
+  iconSlug?: string
 }
 
-const ADMIN_TOOLS: ExternalTool[] = [
-  { href: ADMIN_DOC_URL, label: "Documentation", icon: FileText },
-  { href: SANITY_STUDIO_URL, label: "Sanity Studio", icon: FileEdit },
-  { href: SUPABASE_ORG_URL, label: "Supabase", icon: Database },
-  { href: VERCEL_PROJECT_URL, label: "Vercel", icon: Server },
-  { href: GITHUB_REPO_URL, label: "GitHub", icon: Github },
-  { href: WEBSITE_URL, label: "Website", icon: ExternalLink },
+const ADMIN_TOOLS: AdminTool[] = [
+  {
+    href: ADMIN_DOC_URL,
+    label: "Documentation",
+    description: "Instructions for using this dashboard",
+  },
+  {
+    href: SANITY_STUDIO_URL,
+    label: "Sanity Studio",
+    description: "Edit marketing pages, stories, and drafts",
+    iconSlug: "sanity",
+  },
+  {
+    href: SUPABASE_PROJECT_URL,
+    label: "Supabase",
+    description: "Manage auth users, database, and invites",
+    iconSlug: "supabase",
+  },
+  {
+    href: VERCEL_PROJECT_URL,
+    label: "Vercel",
+    description: "Deployments, domains, and environment variables",
+    iconSlug: "vercel",
+  },
+  {
+    href: GITHUB_REPO_URL,
+    label: "GitHub",
+    description: "Source code, pull requests, and issues",
+    iconSlug: "github",
+  },
+  {
+    href: WEBSITE_URL,
+    label: "Website",
+    description: "Open the public marketing site",
+  },
 ]
 
-const SECTION_HEADING = "px-3 pb-2 font-urbanist text-[10px] font-normal uppercase tracking-[0.14em] text-rellia-teal"
+const SECTION_HEADING =
+  "px-3 pb-2 text-left font-urbanist text-[10px] font-normal uppercase tracking-[0.14em] text-rellia-teal"
 
 const navLinkClass = (isActive: boolean) =>
   cn(
@@ -78,6 +108,18 @@ const navLinkClass = (isActive: boolean) =>
 const navIconClass = (isActive: boolean) =>
   cn("h-[18px] w-[18px] shrink-0", isActive ? "text-rellia-teal" : "text-black/40")
 
+const BrandIcon = ({ slug }: { slug: string }) => (
+  <img
+    src={`${SIMPLE_ICONS_CDN}/${slug}.svg`}
+    alt=""
+    width={18}
+    height={18}
+    className="h-[18px] w-[18px] shrink-0 opacity-50"
+    style={{ filter: "brightness(0) saturate(100%) invert(24%) sepia(18%) saturate(900%) hue-rotate(128deg)" }}
+    aria-hidden
+  />
+)
+
 type AdminSidebarProps = {
   mobileOpen: boolean
   onMobileClose: () => void
@@ -87,6 +129,7 @@ const AdminSidebar = ({ mobileOpen, onMobileClose }: AdminSidebarProps) => {
   const { user, signOut } = useAuth()
   const navigate = useNavigate()
   const { pathname } = useLocation()
+  const [toolsOpen, setToolsOpen] = useState(true)
 
   const handleSignOut = async () => {
     await signOut()
@@ -96,7 +139,7 @@ const AdminSidebar = ({ mobileOpen, onMobileClose }: AdminSidebarProps) => {
   const emailInitial = user?.email?.trim().charAt(0).toUpperCase() ?? "?"
 
   const panel = (
-    <aside className="flex h-full min-h-0 w-[260px] shrink-0 flex-col border-r border-black/[0.06] bg-white/95 px-4 py-6 backdrop-blur-sm">
+    <aside className="flex h-full min-h-0 w-full shrink-0 flex-col border-r border-black/[0.06] bg-white/95 px-4 py-6 backdrop-blur-sm lg:w-[260px]">
       <div className="flex items-center justify-between gap-2 px-2">
         <div className="flex min-w-0 items-center gap-3">
           <img
@@ -145,25 +188,53 @@ const AdminSidebar = ({ mobileOpen, onMobileClose }: AdminSidebarProps) => {
 
         <div className="my-6 border-t border-black/[0.06]" role="separator" />
 
-        <div className="flex items-center gap-1.5 px-3 pb-2">
-          <p className={SECTION_HEADING}>Admin Tools</p>
-          <ExternalLink className="h-3 w-3 text-rellia-teal/50" aria-hidden />
-        </div>
-        <ul className="space-y-1">
-          {ADMIN_TOOLS.map((tool) => (
-            <li key={tool.href + tool.label}>
-              <a
-                href={tool.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex w-full items-center gap-3 rounded-full px-3 py-2.5 font-urbanist text-sm text-black/45 transition-colors hover:bg-black/[0.06] hover:text-black/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint"
-              >
-                <tool.icon className="h-[18px] w-[18px] shrink-0 text-black/40" aria-hidden strokeWidth={1.5} />
-                <span>{tool.label}</span>
-              </a>
-            </li>
-          ))}
-        </ul>
+        <button
+          type="button"
+          onClick={() => setToolsOpen((open) => !open)}
+          className="flex w-full items-center justify-between gap-2 rounded-lg px-3 py-1 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint"
+          aria-expanded={toolsOpen}
+        >
+          <span className={SECTION_HEADING.replace("pb-2", "pb-0")}>Admin Tools</span>
+          <ChevronDown
+            className={cn(
+              "h-4 w-4 shrink-0 text-rellia-teal/70 transition-transform",
+              toolsOpen ? "rotate-0" : "-rotate-90",
+            )}
+            aria-hidden
+          />
+        </button>
+
+        {toolsOpen ? (
+          <ul className="mt-2 space-y-1">
+            {ADMIN_TOOLS.map((tool) => (
+              <li key={tool.href + tool.label}>
+                <a
+                  href={tool.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex w-full items-start gap-3 rounded-2xl px-3 py-2.5 text-left transition-colors hover:bg-black/[0.06] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint"
+                >
+                  <span className="mt-0.5 flex h-[18px] w-[18px] shrink-0 items-center justify-center">
+                    {tool.iconSlug ? (
+                      <BrandIcon slug={tool.iconSlug} />
+                    ) : tool.label === "Website" ? (
+                      <Globe className="h-[18px] w-[18px] text-black/40" aria-hidden strokeWidth={1.5} />
+                    ) : (
+                      <FileText className="h-[18px] w-[18px] text-black/40" aria-hidden strokeWidth={1.5} />
+                    )}
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span className="block font-urbanist text-sm text-black/75">{tool.label}</span>
+                    <span className="mt-0.5 block font-urbanist text-xs leading-snug text-black/45">
+                      {tool.description}
+                    </span>
+                  </span>
+                  <ArrowRight className="mt-1 h-4 w-4 shrink-0 text-black/30" aria-hidden />
+                </a>
+              </li>
+            ))}
+          </ul>
+        ) : null}
       </nav>
 
       <div className="mt-auto shrink-0 border-t border-black/[0.06] pt-4">
@@ -202,8 +273,8 @@ const AdminSidebar = ({ mobileOpen, onMobileClose }: AdminSidebarProps) => {
       />
       <div
         className={cn(
-          "fixed inset-y-0 left-0 z-50 flex h-screen transition-transform duration-200 lg:static lg:z-auto lg:translate-x-0",
-          mobileOpen ? "translate-x-0" : "-translate-x-full",
+          "fixed inset-0 z-50 flex h-[100dvh] w-full transition-transform duration-200 lg:static lg:z-auto lg:h-screen lg:w-[260px] lg:translate-x-0",
+          mobileOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0",
         )}
       >
         {panel}

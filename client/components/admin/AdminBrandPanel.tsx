@@ -7,10 +7,22 @@ type AdminBrandPanelProps = {
   heading: string
   description: string
   children?: ReactNode
+  /** Mint accent copy for admin auth screens; default keeps white text (e.g. contact page). */
+  textTone?: "white" | "mint"
 }
 
 /** Rounded teal brand panel with gradient — shared by admin login and contact page. */
-const AdminBrandPanel = ({ heading, description, children }: AdminBrandPanelProps) => (
+const AdminBrandPanel = ({ heading, description, children, textTone = "white" }: AdminBrandPanelProps) => {
+  const headingClass =
+    textTone === "mint"
+      ? "text-rellia-mint"
+      : "text-white"
+  const descriptionClass =
+    textTone === "mint"
+      ? "text-rellia-mint/85"
+      : "text-white/80"
+
+  return (
   <div className="flex flex-col justify-center p-4 md:p-6 lg:min-h-screen lg:p-8">
     <div className="relative flex min-h-[420px] flex-1 flex-col justify-center overflow-hidden rounded-[1.75rem] bg-rellia-teal px-6 py-14 md:px-10 md:py-16 lg:min-h-[min(720px,calc(100vh-4rem))]">
       <div className="absolute inset-0">
@@ -46,10 +58,12 @@ const AdminBrandPanel = ({ heading, description, children }: AdminBrandPanelProp
           </Link>
         </div>
 
-        <h2 className="max-w-md text-left font-urbanist text-2xl font-normal leading-snug text-white md:text-3xl lg:text-[2rem]">
+        <h2
+          className={`max-w-md text-left font-urbanist text-2xl font-normal leading-snug md:text-3xl lg:text-[2rem] ${headingClass}`}
+        >
           {heading}
         </h2>
-        <p className="mt-6 max-w-md text-left font-urbanist text-sm leading-relaxed text-white/80 md:text-base">
+        <p className={`mt-6 max-w-md text-left font-urbanist text-sm leading-relaxed md:text-base ${descriptionClass}`}>
           {description}
         </p>
         {children}
@@ -58,6 +72,7 @@ const AdminBrandPanel = ({ heading, description, children }: AdminBrandPanelProp
       <div className="pointer-events-none absolute -bottom-24 -right-24 h-96 w-96 rounded-full bg-rellia-mint/15 blur-[120px]" />
     </div>
   </div>
-)
+  )
+}
 
 export default AdminBrandPanel
