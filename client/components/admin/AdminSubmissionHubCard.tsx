@@ -25,7 +25,7 @@ const AdminSubmissionHubCard = ({
     aria-label={`${title}, ${recentHint}`}
   >
     <div className="flex items-start justify-between gap-3">
-      <Icon className="h-5 w-5 shrink-0 text-rellia-teal/80" aria-hidden strokeWidth={1.35} />
+      <Icon className="h-7 w-7 shrink-0 text-rellia-teal/85" aria-hidden strokeWidth={1.35} />
       <ArrowUpRight
         className="mt-0.5 h-4 w-4 shrink-0 text-black/25 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-rellia-teal"
         aria-hidden
