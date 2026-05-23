@@ -1,24 +1,94 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://www.relliahealth.com/</loc>
+    <loc>https://www.relliahealth.com</loc>
     <changefreq>weekly</changefreq>
-    <priority>1</priority>
+    <priority>1.00</priority>
   </url>
   <url>
     <loc>https://www.relliahealth.com/about</loc>
     <changefreq>monthly</changefreq>
-    <priority>0.9</priority>
+    <priority>0.90</priority>
   </url>
   <url>
-    <loc>https://www.relliahealth.com/faq</loc>
+    <loc>https://www.relliahealth.com/advisors</loc>
     <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://www.relliahealth.com/advisors/directory</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://www.relliahealth.com/advisors/directory/alex-rivera</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.65</priority>
+  </url>
+  <url>
+    <loc>https://www.relliahealth.com/advisors/directory/chris-dalton</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.65</priority>
+  </url>
+  <url>
+    <loc>https://www.relliahealth.com/advisors/directory/elena-ruiz</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.65</priority>
+  </url>
+  <url>
+    <loc>https://www.relliahealth.com/advisors/directory/henry-moss</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.65</priority>
+  </url>
+  <url>
+    <loc>https://www.relliahealth.com/advisors/directory/jordan-blake</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.65</priority>
+  </url>
+  <url>
+    <loc>https://www.relliahealth.com/advisors/directory/mei-tan</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.65</priority>
+  </url>
+  <url>
+    <loc>https://www.relliahealth.com/advisors/directory/priya-nair</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.65</priority>
+  </url>
+  <url>
+    <loc>https://www.relliahealth.com/advisors/directory/sam-okonkwo</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.65</priority>
+  </url>
+  <url>
+    <loc>https://www.relliahealth.com/apply</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.90</priority>
   </url>
   <url>
     <loc>https://www.relliahealth.com/careers</loc>
     <changefreq>monthly</changefreq>
-    <priority>0.75</priority>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://www.relliahealth.com/consulting</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://www.relliahealth.com/contact</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://www.relliahealth.com/diagnostic-survey</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://www.relliahealth.com/diagnostics</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
   </url>
   <url>
     <loc>https://www.relliahealth.com/events</loc>
@@ -26,14 +96,179 @@
     <priority>0.85</priority>
   </url>
   <url>
-    <loc>https://www.relliahealth.com/stories</loc>
+    <loc>https://www.relliahealth.com/events/ai-healthcare-compliance</loc>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://www.relliahealth.com/events/ask-a-qms-expert</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://www.relliahealth.com/events/beyond-the-product-how-digital-health-brands-earn-trust-and-drive-growth</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://www.relliahealth.com/events/clinician-connect-primary-care</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://www.relliahealth.com/events/clinician-connect-womens-health</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://www.relliahealth.com/events/ethics-in-ai-less-about-tech-more-about-humans</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://www.relliahealth.com/events/health-system-adoption-for-startups</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://www.relliahealth.com/events/leadership-under-pressure</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://www.relliahealth.com/events/rellia-pitch-event-forum-ventures</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://www.relliahealth.com/events/scaling-with-purpose-from-prototype-to-customer-in-health-startups</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://www.relliahealth.com/events/second-opinion-when-healthcare-startups-need-user-research</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://www.relliahealth.com/events/set-your-stage</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://www.relliahealth.com/events/why-healthcare-says-no-to-your-ai</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://www.relliahealth.com/faq</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://www.relliahealth.com/founders</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://www.relliahealth.com/founders/alumni</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://www.relliahealth.com/founders/alumni/akesyn</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.65</priority>
+  </url>
+  <url>
+    <loc>https://www.relliahealth.com/founders/alumni/carepathstudio</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.65</priority>
+  </url>
+  <url>
+    <loc>https://www.relliahealth.com/founders/alumni/dott</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.65</priority>
+  </url>
+  <url>
+    <loc>https://www.relliahealth.com/founders/alumni/geoclaim</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.65</priority>
+  </url>
+  <url>
+    <loc>https://www.relliahealth.com/founders/alumni/glowlytics</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.65</priority>
+  </url>
+  <url>
+    <loc>https://www.relliahealth.com/founders/alumni/healcycle</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.65</priority>
+  </url>
+  <url>
+    <loc>https://www.relliahealth.com/founders/alumni/mea</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.65</priority>
+  </url>
+  <url>
+    <loc>https://www.relliahealth.com/founders/alumni/miraei</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.65</priority>
+  </url>
+  <url>
+    <loc>https://www.relliahealth.com/founders/alumni/myligo</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.65</priority>
+  </url>
+  <url>
+    <loc>https://www.relliahealth.com/founders/alumni/neuromod</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.65</priority>
+  </url>
+  <url>
+    <loc>https://www.relliahealth.com/founders/alumni/newgen</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.65</priority>
+  </url>
+  <url>
+    <loc>https://www.relliahealth.com/founders/alumni/patientcompanion</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.65</priority>
+  </url>
+  <url>
+    <loc>https://www.relliahealth.com/industry-partners</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://www.relliahealth.com/investors</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://www.relliahealth.com/network</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.90</priority>
+  </url>
+  <url>
+    <loc>https://www.relliahealth.com/privacy</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.40</priority>
   </url>
   <url>
     <loc>https://www.relliahealth.com/programs</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
+    <changefreq>monthly</changefreq>
+    <priority>0.90</priority>
+  </url>
+  <url>
+    <loc>https://www.relliahealth.com/programs/advance-data-room-deep-dive</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://www.relliahealth.com/programs/advisory-board-match</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
   </url>
   <url>
     <loc>https://www.relliahealth.com/programs/build-your-quality-management-system</loc>
@@ -41,63 +276,98 @@
     <priority>0.85</priority>
   </url>
   <url>
-    <loc>https://www.relliahealth.com/apply</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://www.relliahealth.com/network</loc>
-    <changefreq>weekly</changefreq>
+    <loc>https://www.relliahealth.com/programs/design-your-brand-strategy</loc>
+    <changefreq>monthly</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
-    <loc>https://www.relliahealth.com/founders</loc>
+    <loc>https://www.relliahealth.com/programs/elevate-healthcare-capital</loc>
     <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.85</priority>
   </url>
   <url>
-    <loc>https://www.relliahealth.com/founders/alumni</loc>
+    <loc>https://www.relliahealth.com/programs/first-50-users-clinical-feedback-intensive</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://www.relliahealth.com/programs/ignite-pitch-foundations</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://www.relliahealth.com/programs/low-fidelity-prototype-lab</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://www.relliahealth.com/programs/regulatory-strategy-sprint</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://www.relliahealth.com/stories</loc>
     <changefreq>weekly</changefreq>
     <priority>0.75</priority>
   </url>
   <url>
-    <loc>https://www.relliahealth.com/advisors</loc>
+    <loc>https://www.relliahealth.com/stories/founder-spotlight-the-first-clinical-champion</loc>
     <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://www.relliahealth.com/advisors/directory</loc>
-    <changefreq>weekly</changefreq>
     <priority>0.75</priority>
   </url>
   <url>
-    <loc>https://www.relliahealth.com/investors</loc>
+    <loc>https://www.relliahealth.com/stories/founder-spotlight-the-pilot-that-became-procurement</loc>
     <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.75</priority>
   </url>
   <url>
-    <loc>https://www.relliahealth.com/industry-partners</loc>
+    <loc>https://www.relliahealth.com/stories/founder-spotlight-what-we-stopped-building</loc>
     <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.75</priority>
   </url>
   <url>
-    <loc>https://www.relliahealth.com/consulting</loc>
+    <loc>https://www.relliahealth.com/stories/industry-insight-commercialization-milestones-that-reduce-risk</loc>
     <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.75</priority>
   </url>
   <url>
-    <loc>https://www.relliahealth.com/contact</loc>
+    <loc>https://www.relliahealth.com/stories/industry-insight-evidence-that-compounds</loc>
     <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.75</priority>
+  </url>
+  <url>
+    <loc>https://www.relliahealth.com/stories/industry-insight-implementation-is-a-product</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.75</priority>
+  </url>
+  <url>
+    <loc>https://www.relliahealth.com/stories/industry-insight-security-reviews-without-stalling</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.75</priority>
+  </url>
+  <url>
+    <loc>https://www.relliahealth.com/stories/program-update-how-we-run-founder-salons</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.75</priority>
+  </url>
+  <url>
+    <loc>https://www.relliahealth.com/stories/program-update-office-hours-to-decisions</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.75</priority>
+  </url>
+  <url>
+    <loc>https://www.relliahealth.com/stories/program-update-the-qms-sprint-playbook</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.75</priority>
+  </url>
+  <url>
+    <loc>https://www.relliahealth.com/stories/the-one-decision-healthcare-buyers-need</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.75</priority>
   </url>
   <url>
     <loc>https://www.relliahealth.com/terms</loc>
     <changefreq>yearly</changefreq>
-    <priority>0.4</priority>
-  </url>
-  <url>
-    <loc>https://www.relliahealth.com/privacy</loc>
-    <changefreq>yearly</changefreq>
-    <priority>0.4</priority>
+    <priority>0.40</priority>
   </url>
 </urlset>

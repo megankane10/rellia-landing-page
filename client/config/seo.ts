@@ -477,6 +477,13 @@ const ADMIN_AREA_SEO: RouteSeoConfig = {
   indexable: false,
 }
 
+/** Static app routes that should appear in sitemap.xml (indexable only). */
+export const getIndexableStaticPaths = (): string[] =>
+  Object.entries(ROUTE_SEO)
+    .filter(([, config]) => config.indexable)
+    .map(([path]) => normalizePathname(path))
+    .sort((a, b) => a.localeCompare(b))
+
 export const getSeoForPathname = (pathname: string): RouteSeoConfig => {
   const key = normalizePathname(pathname)
   if (key.startsWith("/events/") && key !== "/events") {

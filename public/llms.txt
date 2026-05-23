@@ -1,0 +1,113 @@
+# Rellia Health
+> Rellia Health connects health tech founders, clinicians, advisors, and investors through programs, events, and a curated network. This file lists indexable public pages for AI assistants and answer engines.
+Rellia offers founder programs (QMS, fundraising, regulatory, clinical validation), an alumni and advisor directory, investor pitch events, and a startup diagnostic. Primary calls to action: apply to the network (`/apply`), contact (`/contact`), and program enrollment pages.
+
+## Core pages
+
+- [Home](https://www.relliahealth.com): Rellia Health connects founders, clinicians, and health systems to build the future of care. Join our network and explore programs.
+- [/about](https://www.relliahealth.com/about): Learn how Rellia Health brings together operators, investors, and clinical leaders to scale solutions that matter for patients and health systems.
+- [/network](https://www.relliahealth.com/network): Join the Rellia Health network of founders, investors, advisors, and partners building the next generation of healthcare companies.
+- [/programs](https://www.relliahealth.com/programs): Explore Rellia Health programs designed to help healthcare builders learn, connect, and grow with the right stakeholders.
+- [/apply](https://www.relliahealth.com/apply): Apply to join the Rellia Network. Built for founders, advisors, investors, and industry partners shaping the future of health.
+- [/events](https://www.relliahealth.com/events): Register for upcoming Rellia Health events on Luma and explore past event pages. Practical sessions for builders in health tech.
+- [/contact](https://www.relliahealth.com/contact): Get in touch with Rellia Health about partnerships, programs, or press. We respond to serious inquiries from builders and collaborators.
+
+
+## Network
+
+- [/founders](https://www.relliahealth.com/founders): The home for health tech founders: membership pathway, programs, advisor access, and directories—built for operators scaling in healthcare.
+- [/founders/alumni](https://www.relliahealth.com/founders/alumni): Browse health tech companies in the Rellia alumni network—stage tags and profiles for founder discovery.
+- [/advisors](https://www.relliahealth.com/advisors): Mentor health tech founders with flexible 1–3 hour engagements—benefits, criteria, and how to join Rellia as an advisor.
+- [/advisors/directory](https://www.relliahealth.com/advisors/directory): Search and filter Rellia advisors by expertise—operators, clinicians, and specialists who mentor serious health tech founders.
+- [/investors](https://www.relliahealth.com/investors): Benefits of Rellia-backed startups, thesis-aware pitch formats, and partner pathways for funds and angel groups.
+- [/industry-partners](https://www.relliahealth.com/industry-partners): Sponsor programs, join directories, and partner with Rellia—including GetProven vendor marketplace benefits for portfolios.
+- [/consulting](https://www.relliahealth.com/consulting): One-to-one and scoped consulting for health tech founders—regulatory, clinical, commercial, and narrative depth beyond community rhythm.
+
+
+## Programs
+
+- [/programs/advance-data-room-deep-dive](https://www.relliahealth.com/programs/advance-data-room-deep-dive): Navigate due diligence and data room management. Practical tools and tips for early-stage founders raising capital.
+- [/programs/advisory-board-match](https://www.relliahealth.com/programs/advisory-board-match): Recruit ideal experts for your startup. Rellia provides matchmaking, equity benchmarking, and legal frameworks for productive advisory relationships.
+- [/programs/build-your-quality-management-system](https://www.relliahealth.com/programs/build-your-quality-management-system): Build a lean, scalable QMS for ISO 13485, MDSAP, and FDA compliance. Expert guidance for medtech and digital health founders.
+- [/programs/design-your-brand-strategy](https://www.relliahealth.com/programs/design-your-brand-strategy): Develop a professional brand identity that earns trust from clinicians and investors. Includes sprints for website, UI, and sales collateral.
+- [/programs/elevate-healthcare-capital](https://www.relliahealth.com/programs/elevate-healthcare-capital): Refine your fundraising strategy for health tech. Upgrade your pitch to meet the technical and clinical expectations of healthcare investors.
+- [/programs/first-50-users-clinical-feedback-intensive](https://www.relliahealth.com/programs/first-50-users-clinical-feedback-intensive): Validate your product with Rellia's clinician network. Gain IRB guidance and professional feedback to bridge the gap from prototype to clinical use.
+- [/programs/ignite-pitch-foundations](https://www.relliahealth.com/programs/ignite-pitch-foundations): Master fundraising essentials. Craft your first pitch deck and presentation with expert feedback to build investor confidence.
+- [/programs/low-fidelity-prototype-lab](https://www.relliahealth.com/programs/low-fidelity-prototype-lab): Transform your vision into a functional prototype. Connect with vetted development firms and testing experts to build your proof of concept.
+- [/programs/regulatory-strategy-sprint](https://www.relliahealth.com/programs/regulatory-strategy-sprint): Map your regulatory path across FDA, Health Canada, and EU MDR. Leave with a documented strategy for investor due diligence.
+
+
+## Events
+
+- [/events](https://www.relliahealth.com/events): Register for upcoming Rellia Health events on Luma and explore past event pages. Practical sessions for builders in health tech.
+- [/events/ai-healthcare-compliance](https://www.relliahealth.com/events/ai-healthcare-compliance): Event details, location, and registration for Rellia Health sessions. Explore upcoming and past programs.
+- [/events/ask-a-qms-expert](https://www.relliahealth.com/events/ask-a-qms-expert): Event details, location, and registration for Rellia Health sessions. Explore upcoming and past programs.
+- [/events/beyond-the-product-how-digital-health-brands-earn-trust-and-drive-growth](https://www.relliahealth.com/events/beyond-the-product-how-digital-health-brands-earn-trust-and-drive-growth): Event details, location, and registration for Rellia Health sessions. Explore upcoming and past programs.
+- [/events/clinician-connect-primary-care](https://www.relliahealth.com/events/clinician-connect-primary-care): Event details, location, and registration for Rellia Health sessions. Explore upcoming and past programs.
+- [/events/clinician-connect-womens-health](https://www.relliahealth.com/events/clinician-connect-womens-health): Event details, location, and registration for Rellia Health sessions. Explore upcoming and past programs.
+- [/events/ethics-in-ai-less-about-tech-more-about-humans](https://www.relliahealth.com/events/ethics-in-ai-less-about-tech-more-about-humans): Event details, location, and registration for Rellia Health sessions. Explore upcoming and past programs.
+- [/events/health-system-adoption-for-startups](https://www.relliahealth.com/events/health-system-adoption-for-startups): Event details, location, and registration for Rellia Health sessions. Explore upcoming and past programs.
+- [/events/leadership-under-pressure](https://www.relliahealth.com/events/leadership-under-pressure): Event details, location, and registration for Rellia Health sessions. Explore upcoming and past programs.
+- [/events/rellia-pitch-event-forum-ventures](https://www.relliahealth.com/events/rellia-pitch-event-forum-ventures): Event details, location, and registration for Rellia Health sessions. Explore upcoming and past programs.
+- [/events/scaling-with-purpose-from-prototype-to-customer-in-health-startups](https://www.relliahealth.com/events/scaling-with-purpose-from-prototype-to-customer-in-health-startups): Event details, location, and registration for Rellia Health sessions. Explore upcoming and past programs.
+- [/events/second-opinion-when-healthcare-startups-need-user-research](https://www.relliahealth.com/events/second-opinion-when-healthcare-startups-need-user-research): Event details, location, and registration for Rellia Health sessions. Explore upcoming and past programs.
+- [/events/set-your-stage](https://www.relliahealth.com/events/set-your-stage): Event details, location, and registration for Rellia Health sessions. Explore upcoming and past programs.
+- [/events/why-healthcare-says-no-to-your-ai](https://www.relliahealth.com/events/why-healthcare-says-no-to-your-ai): Event details, location, and registration for Rellia Health sessions. Explore upcoming and past programs.
+
+
+## Stories & news
+
+- [/stories](https://www.relliahealth.com/stories): The latest founder spotlights, industry insights, & program updates. Stay current with the people and ideas shaping the future of health.
+- [/stories/founder-spotlight-the-first-clinical-champion](https://www.relliahealth.com/stories/founder-spotlight-the-first-clinical-champion): Your first champion is not your biggest fan—they’re your first risk partner. Here’s what worked, what didn’t, and the script that finally got a real yes.
+- [/stories/founder-spotlight-the-pilot-that-became-procurement](https://www.relliahealth.com/stories/founder-spotlight-the-pilot-that-became-procurement): A founder shares the three changes that turned a promising pilot into a signed rollout—without adding months of bureaucracy or burning out the clinical team.
+- [/stories/founder-spotlight-what-we-stopped-building](https://www.relliahealth.com/stories/founder-spotlight-what-we-stopped-building): A founder explains how they cut scope without sacrificing outcomes—and why “less product” was the reason implementation finally worked.
+- [/stories/industry-insight-commercialization-milestones-that-reduce-risk](https://www.relliahealth.com/stories/industry-insight-commercialization-milestones-that-reduce-risk): Not all milestones change what’s true for the buyer. Here’s a checklist for choosing milestones that reduce clinical, operational, security, and financial risk.
+- [/stories/industry-insight-evidence-that-compounds](https://www.relliahealth.com/stories/industry-insight-evidence-that-compounds): Trust is cumulative—but only if you collect evidence in a way that fits the product lifecycle. Here’s a lightweight approach that strengthens credibility every month.
+- [/stories/industry-insight-implementation-is-a-product](https://www.relliahealth.com/stories/industry-insight-implementation-is-a-product): Implementation isn’t what happens after the sale. It’s part of what the buyer is buying. Here’s how to design onboarding that earns trust fast.
+- [/stories/industry-insight-security-reviews-without-stalling](https://www.relliahealth.com/stories/industry-insight-security-reviews-without-stalling): Security reviews can either become a momentum-killer or a trust accelerant. Here’s how to show your work, reduce uncertainty, and keep the timeline moving.
+- [/stories/program-update-how-we-run-founder-salons](https://www.relliahealth.com/stories/program-update-how-we-run-founder-salons): Founder salons can become performative. We designed ours to produce clarity: one constraint, one decision, and one next move per founder.
+- [/stories/program-update-office-hours-to-decisions](https://www.relliahealth.com/stories/program-update-office-hours-to-decisions): We rebuilt office hours so founders leave with one thing: a decision they can ship this week. Here’s the format and why it works.
+- [/stories/program-update-the-qms-sprint-playbook](https://www.relliahealth.com/stories/program-update-the-qms-sprint-playbook): A behind-the-scenes look at how we run quality sprints so teams leave with real artifacts: scope, risk decisions, document skeletons, and a plan they can execute next week.
+- [/stories/the-one-decision-healthcare-buyers-need](https://www.relliahealth.com/stories/the-one-decision-healthcare-buyers-need): Most deals don’t fail because the product is weak. They fail because the next stakeholder can’t safely approve it. Here’s a practical way to structure proof so every meeting reduces risk.
+
+
+## Startup diagnostic
+
+- [/diagnostic-survey](https://www.relliahealth.com/diagnostic-survey): Complete the Rellia Health diagnostic survey to receive your readiness report and personalized advisory board matches.
+- [/diagnostics](https://www.relliahealth.com/diagnostics): Benchmark your health tech startup across 13 domains. Get a personalized gap analysis, AI-powered report, and advisory board matching.
+
+
+## Directory profiles
+
+- [/advisors/directory/alex-rivera](https://www.relliahealth.com/advisors/directory/alex-rivera): Advisor profile in the Rellia Health mentor directory.
+- [/advisors/directory/chris-dalton](https://www.relliahealth.com/advisors/directory/chris-dalton): Advisor profile in the Rellia Health mentor directory.
+- [/advisors/directory/elena-ruiz](https://www.relliahealth.com/advisors/directory/elena-ruiz): Advisor profile in the Rellia Health mentor directory.
+- [/advisors/directory/henry-moss](https://www.relliahealth.com/advisors/directory/henry-moss): Advisor profile in the Rellia Health mentor directory.
+- [/advisors/directory/jordan-blake](https://www.relliahealth.com/advisors/directory/jordan-blake): Advisor profile in the Rellia Health mentor directory.
+- [/advisors/directory/mei-tan](https://www.relliahealth.com/advisors/directory/mei-tan): Advisor profile in the Rellia Health mentor directory.
+- [/advisors/directory/priya-nair](https://www.relliahealth.com/advisors/directory/priya-nair): Advisor profile in the Rellia Health mentor directory.
+- [/advisors/directory/sam-okonkwo](https://www.relliahealth.com/advisors/directory/sam-okonkwo): Advisor profile in the Rellia Health mentor directory.
+- [/founders/alumni/akesyn](https://www.relliahealth.com/founders/alumni/akesyn): Alumni company profile in the Rellia Health founder network.
+- [/founders/alumni/carepathstudio](https://www.relliahealth.com/founders/alumni/carepathstudio): Alumni company profile in the Rellia Health founder network.
+- [/founders/alumni/dott](https://www.relliahealth.com/founders/alumni/dott): Alumni company profile in the Rellia Health founder network.
+- [/founders/alumni/geoclaim](https://www.relliahealth.com/founders/alumni/geoclaim): Alumni company profile in the Rellia Health founder network.
+- [/founders/alumni/glowlytics](https://www.relliahealth.com/founders/alumni/glowlytics): Alumni company profile in the Rellia Health founder network.
+- [/founders/alumni/healcycle](https://www.relliahealth.com/founders/alumni/healcycle): Alumni company profile in the Rellia Health founder network.
+- [/founders/alumni/mea](https://www.relliahealth.com/founders/alumni/mea): Alumni company profile in the Rellia Health founder network.
+- [/founders/alumni/miraei](https://www.relliahealth.com/founders/alumni/miraei): Alumni company profile in the Rellia Health founder network.
+- [/founders/alumni/myligo](https://www.relliahealth.com/founders/alumni/myligo): Alumni company profile in the Rellia Health founder network.
+- [/founders/alumni/neuromod](https://www.relliahealth.com/founders/alumni/neuromod): Alumni company profile in the Rellia Health founder network.
+- [/founders/alumni/newgen](https://www.relliahealth.com/founders/alumni/newgen): Alumni company profile in the Rellia Health founder network.
+- [/founders/alumni/patientcompanion](https://www.relliahealth.com/founders/alumni/patientcompanion): Alumni company profile in the Rellia Health founder network.
+
+
+## Legal
+
+- [/privacy](https://www.relliahealth.com/privacy): How Rellia Health collects, uses, and protects personal information when you use our website and services.
+- [/terms](https://www.relliahealth.com/terms): Terms of use for the Rellia Health website and services. Please read before using our site or programs.
+
+
+## Optional
+
+- [/careers](https://www.relliahealth.com/careers): Explore open roles at Rellia Health. Join a mission-driven team connecting health tech founders with clinicians, advisors, and investors.
+- [/faq](https://www.relliahealth.com/faq): Answers to common questions about Rellia Health programs, membership, events, and how we work with founders and partners.

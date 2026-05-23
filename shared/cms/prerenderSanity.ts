@@ -127,3 +127,25 @@ export const fetchStorySlugsForPrerender = async (): Promise<string[]> => {
     return []
   }
 }
+
+export const fetchEventSlugsForPrerender = async (): Promise<string[]> => {
+  const rows = await fetchEventsForPrerender()
+  return rows
+    .map((row) => (typeof row.slug === "string" ? row.slug.trim() : ""))
+    .filter(Boolean)
+}
+
+export const fetchCmsPageSlugsForPrerender = async (): Promise<string[]> => {
+  const client = getPrerenderSanityClient()
+  if (!client) return []
+  try {
+    const rows = await client.fetch<{ slug?: string }[]>(
+      `*[_type == "page" && defined(slug.current) && !(_id in path("drafts.**"))]{ "slug": slug.current }`,
+    )
+    return rows
+      .map((row) => row.slug?.trim())
+      .filter((slug): slug is string => Boolean(slug))
+  } catch {
+    return []
+  }
+}
