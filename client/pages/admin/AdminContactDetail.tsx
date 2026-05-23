@@ -96,7 +96,7 @@ const AdminContactDetail = () => {
   return (
     <div className="space-y-6">
       <Link
-        to="/admin/contacts"
+        to="/admin/submissions?tab=contact"
         className="inline-flex items-center gap-1.5 font-urbanist text-sm text-rellia-teal/80 transition-colors hover:text-rellia-teal"
       >
         <ArrowLeft className="h-4 w-4" aria-hidden />

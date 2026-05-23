@@ -154,26 +154,16 @@ const AdminCompany = () => {
         All diagnostic submissions
       </Link>
 
-      <Card className="rounded-2xl border border-black/[0.07] bg-white/90 shadow-sm">
-        <CardHeader>
-          <div className="flex flex-wrap items-start justify-between gap-3">
+      <article className="overflow-hidden rounded-2xl border border-black/[0.07] bg-white/90 shadow-sm">
+        <div className="border-b border-black/[0.06] bg-gradient-to-r from-rellia-mint/12 to-white px-5 py-5 md:px-6">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
             <div>
-              <CardTitle className="font-host-grotesk text-xl font-bold text-black">
+              <h1 className="font-host-grotesk text-xl font-semibold text-black md:text-2xl">
                 {profile.company_name}
-              </CardTitle>
-              <p className="mt-1 font-urbanist text-sm text-black/65">
-                Submitted by {profile.name} · {profile.work_email}
-              </p>
-              <p className="font-urbanist text-xs text-black/40">
-                {formatAdminDateLong(profile.created_at)}
-              </p>
+              </h1>
+              <p className="mt-1 font-urbanist text-sm text-black/65">{formatAdminDateLong(profile.created_at)}</p>
             </div>
             <div className="flex flex-wrap items-center gap-2">
-              {profile.stage && (
-                <Badge className="rounded-full bg-rellia-mint/90 font-urbanist text-rellia-teal hover:bg-rellia-mint">
-                  {profile.stage}
-                </Badge>
-              )}
               {hasStatusField && statusWritesEnabled ? (
                 <AdminSubmissionStatusSelect
                   value={status}
@@ -184,7 +174,7 @@ const AdminCompany = () => {
               ) : (
                 <Badge
                   variant="outline"
-                  className={`rounded-full font-urbanist text-xs ${statusBadgeClass(status)}`}
+                  className={`rounded-full font-urbanist text-sm ${statusBadgeClass(status)}`}
                 >
                   {status}
                 </Badge>
@@ -196,15 +186,48 @@ const AdminCompany = () => {
               />
             </div>
           </div>
-        </CardHeader>
-        {profile.description && (
-          <CardContent>
-            <p className="font-urbanist text-sm leading-relaxed text-black/60">
-              {profile.description}
-            </p>
-          </CardContent>
-        )}
-      </Card>
+        </div>
+
+        <div className="space-y-5 px-5 py-5 md:px-6">
+          <p className="font-host-grotesk text-sm font-medium text-rellia-teal">Tell us about your startup</p>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div>
+              <p className="font-urbanist text-sm font-medium text-black/50">Your name</p>
+              <p className="mt-1 font-urbanist text-base text-black/80">{profile.name}</p>
+            </div>
+            <div>
+              <p className="font-urbanist text-sm font-medium text-black/50">Work email</p>
+              <p className="mt-1 font-urbanist text-base text-black/80">{profile.work_email}</p>
+            </div>
+            <div>
+              <p className="font-urbanist text-sm font-medium text-black/50">Company name</p>
+              <p className="mt-1 font-urbanist text-base text-black/80">{profile.company_name}</p>
+            </div>
+            {profile.stage ? (
+              <div>
+                <p className="font-urbanist text-sm font-medium text-black/50">Current stage</p>
+                <p className="mt-1 font-urbanist text-base text-black/80">{profile.stage}</p>
+              </div>
+            ) : null}
+          </div>
+          {profile.description ? (
+            <div>
+              <p className="font-urbanist text-sm font-medium text-black/50">Mission / description</p>
+              <p className="mt-2 whitespace-pre-wrap font-urbanist text-base leading-relaxed text-black/80">
+                {profile.description}
+              </p>
+            </div>
+          ) : null}
+          <div className="border-t border-black/[0.06] pt-5">
+            <AdminMailtoButton
+              email={profile.work_email}
+              subject={`Re: ${profile.company_name} diagnostic submission`}
+              body={`Hi ${profile.name},\n\n`}
+              label="Email sender"
+            />
+          </div>
+        </div>
+      </article>
 
       {!response && (
         <p className="font-urbanist text-black/60">No diagnostic response found for this company.</p>
@@ -361,14 +384,6 @@ const AdminCompany = () => {
             </Accordion>
           )}
 
-          <div className="rounded-2xl border border-black/[0.07] bg-white/90 px-5 py-5 shadow-sm md:px-6">
-            <AdminMailtoButton
-              email={profile.work_email}
-              subject={`Re: ${profile.company_name} diagnostic submission`}
-              body={`Hi ${profile.name},\n\n`}
-              label="Email sender"
-            />
-          </div>
         </>
       )}
     </div>

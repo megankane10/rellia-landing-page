@@ -55,21 +55,21 @@ const statusBadge = (status: SanityContentRow["status"]) => {
 const ContentCard = ({ row }: { row: SanityContentRow }) => {
   const badge = statusBadge(row.status)
   return (
-    <li className="flex flex-col justify-between gap-4 rounded-3xl border border-black/[0.06] bg-white p-4 transition-shadow hover:shadow-[0_8px_30px_-20px_rgba(13,53,64,0.25)]">
+    <li className="flex flex-col gap-3 rounded-2xl border border-black/[0.07] bg-white p-3.5 transition-shadow hover:shadow-[0_6px_24px_-18px_rgba(13,53,64,0.22)]">
       <div className="min-w-0">
-        <div className="flex flex-wrap items-start gap-2">
-          <p className="min-w-0 flex-1 font-host-grotesk text-base text-black/90">
+        <div className="flex flex-wrap items-start justify-between gap-2">
+          <p className="min-w-0 flex-1 font-host-grotesk text-sm text-black/90">
             {row.title || row._id}
           </p>
           <Badge
             title={badge.title}
-            className={cn("shrink-0 rounded-full font-urbanist text-[11px] font-medium", badge.className)}
+            className={cn("shrink-0 rounded-full font-urbanist text-[10px] font-medium", badge.className)}
           >
             {badge.label}
           </Badge>
         </div>
-        <p className="mt-1 font-urbanist text-sm text-black/60">
-          {formatCmsContentRelative(row._updatedAt)}
+        <p className="mt-1 font-urbanist text-xs text-black/50">
+          {formatCmsDocumentTypeLabel(row._type)} · {formatCmsContentRelative(row._updatedAt)}
         </p>
       </div>
       <Button
@@ -77,7 +77,7 @@ const ContentCard = ({ row }: { row: SanityContentRow }) => {
         variant="outline"
         size="sm"
         asChild
-        className="w-fit rounded-full border-rellia-teal/20 text-rellia-teal hover:bg-rellia-mint/15"
+        className="h-8 w-fit rounded-full border-rellia-teal/20 px-3 text-xs text-rellia-teal hover:bg-rellia-mint/15"
       >
         <a
           href={studioUrlForRow(row)}
