@@ -48,13 +48,11 @@ import IndustryPartnersDirectory from "./pages/IndustryPartnersDirectory"
 import { ProtectedRoute } from "@/components/admin/ProtectedRoute"
 import AdminLogin from "./pages/admin/AdminLogin"
 import AdminSignup from "./pages/admin/AdminSignup"
-import AdminLayout from "./pages/admin/AdminLayout"
+import AcceptInvite from "./pages/AcceptInvite"
+import AdminShell from "./pages/admin/AdminShell"
 import AdminDashboard from "./pages/admin/AdminDashboard"
 import AdminCompany from "./pages/admin/AdminCompany"
-import AdminContactList from "./pages/admin/AdminContactList"
 import AdminContactDetail from "./pages/admin/AdminContactDetail"
-import AdminDiagnosticList from "./pages/admin/AdminDiagnosticList"
-import AdminContentList from "./pages/admin/AdminContentList"
 
 const RedirectFoundersDirectoryId = () => {
   const { id } = useParams<{ id: string }>()
@@ -161,17 +159,20 @@ export const AppRoutes = () => (
 
     <Route path="/studio" element={<StudioRedirect />} />
 
+    <Route path="/accept-invite" element={<AcceptInvite />} />
+
     <Route path="/admin/login" element={<AdminLogin />} />
     <Route path="/admin/signup" element={<AdminSignup />} />
 
-    <Route path="/admin" element={<ProtectedRoute><AdminLayout /></ProtectedRoute>}>
-      <Route index element={<Navigate to="/admin/dashboard" replace />} />
-      <Route path="dashboard" element={<AdminDashboard />} />
-      <Route path="contacts" element={<AdminContactList />} />
+    <Route path="/admin/dashboard" element={<Navigate to="/admin/overview" replace />} />
+    <Route path="/admin/contacts" element={<Navigate to="/admin/submissions?tab=contact" replace />} />
+    <Route path="/admin/diagnostics" element={<Navigate to="/admin/submissions?tab=diagnostic" replace />} />
+
+    <Route path="/admin" element={<ProtectedRoute><AdminShell /></ProtectedRoute>}>
+      <Route index element={<Navigate to="/admin/overview" replace />} />
       <Route path="contacts/:id" element={<AdminContactDetail />} />
-      <Route path="diagnostics" element={<AdminDiagnosticList />} />
-      <Route path="content" element={<AdminContentList />} />
       <Route path="companies/:id" element={<AdminCompany />} />
+      <Route path="*" element={<AdminDashboard />} />
     </Route>
 
     <Route path="*" element={<CmsCatchAll />} />

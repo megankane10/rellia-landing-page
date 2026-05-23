@@ -1083,6 +1083,90 @@ export function createServer() {
     },
   );
 
+  const adminTeamRate = new Map<string, RateState>();
+  const ADMIN_TEAM_MAX_PER_MIN = 30;
+
+  app.get(
+    "/api/admin/team",
+    rateLimitJson(adminTeamRate, ADMIN_TEAM_MAX_PER_MIN),
+    async (req, res) => {
+      if (!allowBrowserOrigin(req)) {
+        res.status(403).json({ error: "Forbidden" });
+        return;
+      }
+
+      const authHeader = typeof req.headers.authorization === "string" ? req.headers.authorization : "";
+      const token = authHeader.startsWith("Bearer ") ? authHeader.slice(7).trim() : "";
+      if (!token) {
+        res.status(401).json({ error: "Sign in required." });
+        return;
+      }
+
+      const supabaseUrl = (process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || "").trim().replace(/\/$/, "");
+      const serviceRoleKey = (
+        process.env.SUPABASE_SERVICE_ROLE_KEY ||
+        process.env.SUPABASE_SECRET_KEY ||
+        process.env.SUPABASE_SERVICE_KEY ||
+        ""
+      ).trim();
+      const anonKey = (
+        process.env.SUPABASE_ANON_KEY ||
+        process.env.VITE_SUPABASE_ANON_KEY ||
+        process.env.VITE_SUPABASE_PUBLISHABLE_KEY ||
+        ""
+      ).trim();
+
+      if (!supabaseUrl || !serviceRoleKey || !anonKey) {
+        res.status(501).json({ error: "Supabase admin credentials are not configured on the server." });
+        return;
+      }
+
+      try {
+        const { createClient } = await import("@supabase/supabase-js");
+        const sessionClient = createClient(supabaseUrl, anonKey, {
+          auth: { autoRefreshToken: false, persistSession: false },
+        });
+        const { data: userData, error: userError } = await sessionClient.auth.getUser(token);
+        if (userError || !userData.user) {
+          res.status(401).json({ error: "Invalid or expired session." });
+          return;
+        }
+
+        const adminClient = createClient(supabaseUrl, serviceRoleKey, {
+          auth: { autoRefreshToken: false, persistSession: false },
+        });
+
+        const { data: listData, error: listError } = await adminClient.auth.admin.listUsers({
+          page: 1,
+          perPage: 200,
+        });
+
+        if (listError) {
+          console.error("Supabase listUsers error:", listError.message);
+          res.status(500).json({ error: "Could not load team members." });
+          return;
+        }
+
+        const users = (listData.users ?? [])
+          .map((u) => ({
+            id: u.id,
+            email: u.email ?? "",
+            createdAt: u.created_at,
+            lastSignInAt: u.last_sign_in_at ?? null,
+            confirmedAt: u.email_confirmed_at ?? null,
+          }))
+          .filter((u) => u.email)
+          .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+
+        res.setHeader("content-type", "application/json");
+        res.json({ users });
+      } catch (err) {
+        console.error("Admin team error:", err);
+        res.status(500).json({ error: "Unexpected server error." });
+      }
+    },
+  );
+
   app.post(
     "/api/admin/signup",
     rateLimitJson(adminSignupRate, ADMIN_SIGNUP_MAX_PER_MIN),

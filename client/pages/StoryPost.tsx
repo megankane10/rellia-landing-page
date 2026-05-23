@@ -83,6 +83,78 @@ export default function StoryPost() {
     }
   }
 
+  const storyHeroBackgroundSrc = headerCoverSrc ? toAbsoluteImageUrl(headerCoverSrc) : null
+
+  const storyShareToolbar = (
+    <div className="mt-8 flex flex-col items-start gap-4">
+      <p className="font-host-grotesk text-[12px] font-semibold uppercase tracking-[0.14em] text-black/55">
+        Share this story
+      </p>
+      <div className="h-px w-full bg-black/10" aria-hidden />
+
+      <div className="flex flex-wrap items-center gap-3">
+        <a
+          href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(canonical)}&text=${encodeURIComponent(title)}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={shareToolbarButtonClassName}
+          aria-label="Share on X"
+        >
+          <ShareIconX />
+        </a>
+        <a
+          href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(canonical)}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={shareToolbarButtonClassName}
+          aria-label="Share on LinkedIn"
+        >
+          <ShareIconLinkedIn />
+        </a>
+        <a
+          href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(canonical)}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={shareToolbarButtonClassName}
+          aria-label="Share on Facebook"
+        >
+          <ShareIconFacebook />
+        </a>
+
+        <button
+          type="button"
+          onClick={handleCopyLink}
+          className={cn(
+            shareToolbarButtonClassName,
+            copyState === "copied" && "bg-rellia-mint text-rellia-teal border-rellia-teal shadow-md",
+          )}
+          aria-label={copyState === "copied" ? "Link copied" : "Copy story link"}
+        >
+          {copyState === "copied" ? (
+            <Check className="h-5 w-5 shrink-0 animate-scale-in" />
+          ) : (
+            <ShareIconCopy />
+          )}
+        </button>
+
+        <AnimatePresence mode="wait" initial={false}>
+          {copyState === "copied" ? (
+            <motion.span
+              key="copied-feedback"
+              className="font-host-grotesk text-sm font-semibold text-rellia-teal"
+              initial={{ opacity: 0, y: 4, scale: 0.98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -4, scale: 0.98 }}
+              transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+            >
+              Copied!
+            </motion.span>
+          ) : null}
+        </AnimatePresence>
+      </div>
+    </div>
+  )
+
   if (resolvedSlug && isSanityConfigured() && isCmsQueryLoading(storyQuery)) {
     return <CmsPageLoadingShell />
   }
@@ -124,15 +196,21 @@ export default function StoryPost() {
           ogImage={imageUrl}
           ogType="article"
         />
+        <StoryArticleJsonLd
+          headline={cmsStory.title}
+          description={resolvedDescription}
+          url={canonical}
+          imageUrl={imageUrl}
+        />
 
         <Navbar />
 
         <main id="main-content">
-          <section className="relative pt-24 pb-12 md:pt-32 md:pb-16 bg-rellia-cream overflow-hidden">
-            <div aria-hidden className="absolute inset-0 pointer-events-none">
-              {cmsStory.coverImageSrc ? (
+          <section className="relative min-h-[min(520px,72vh)] overflow-hidden bg-rellia-cream pb-12 pt-24 md:min-h-[min(580px,78vh)] md:pb-16 md:pt-32">
+            <div aria-hidden className="pointer-events-none absolute inset-0">
+              {storyHeroBackgroundSrc ? (
                 <img
-                  src={toAbsoluteImageUrl(cmsStory.coverImageSrc)}
+                  src={storyHeroBackgroundSrc}
                   alt=""
                   className="absolute inset-0 h-full w-full object-cover opacity-[0.62]"
                 />
@@ -140,31 +218,32 @@ export default function StoryPost() {
               <div className="absolute inset-0 bg-gradient-to-r from-rellia-cream/90 via-rellia-cream/55 to-transparent" />
               <div className="absolute -left-28 -top-32 h-[520px] w-[520px] rounded-full bg-rellia-mint/20 blur-3xl" />
               <div className="absolute -right-40 top-1/3 h-[560px] w-[560px] -translate-y-1/2 rounded-full bg-rellia-teal/10 blur-3xl" />
-              <div className="absolute left-1/3 bottom-[-220px] h-[620px] w-[620px] -translate-x-1/2 rounded-full bg-rellia-mint/15 blur-3xl" />
+              <div className="absolute bottom-[-220px] left-1/3 h-[620px] w-[620px] -translate-x-1/2 rounded-full bg-rellia-mint/15 blur-3xl" />
               <div className="absolute inset-0 opacity-[0.18] mix-blend-multiply [background-image:radial-gradient(circle_at_20%_10%,rgba(13,53,64,0.10),transparent_55%),radial-gradient(circle_at_80%_35%,rgba(13,53,64,0.08),transparent_52%),radial-gradient(circle_at_40%_95%,rgba(13,53,64,0.09),transparent_55%)]" />
             </div>
 
-            <div className="relative z-10 max-w-[1300px] mx-auto px-6 md:px-10">
+            <div className="relative z-10 mx-auto max-w-[1300px] px-6 md:px-10">
               <div className="mx-auto w-full max-w-[1100px]">
-                <div className="flex flex-col">
-                  <ScrollReveal>
-                    <div className="inline-flex items-center gap-2 rounded-full bg-rellia-mint px-3 py-1.5">
-                      <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-rellia-teal" aria-hidden />
-                      <span className="font-host-grotesk text-[11px] font-semibold uppercase tracking-[0.14em] text-rellia-teal">
-                        {(cmsStory.tag ?? "Story").trim() || "Story"}
-                      </span>
-                    </div>
+                <ScrollReveal>
+                  <div className="inline-flex items-center gap-2 rounded-full bg-rellia-mint px-3 py-1.5">
+                    <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-rellia-teal" aria-hidden />
+                    <span className="font-host-grotesk text-[11px] font-semibold uppercase tracking-[0.14em] text-rellia-teal">
+                      {(cmsStory.tag ?? "Story").trim() || "Story"}
+                    </span>
+                  </div>
 
-                    <h1 className="mt-6 text-rellia-teal text-3xl md:text-4xl lg:text-5xl font-medium leading-tight tracking-tight">
-                      {cmsStory.title}
-                    </h1>
-                    {cmsStory.excerpt ? (
-                      <p className="mt-4 text-black text-base md:text-lg max-w-3xl font-urbanist font-normal leading-relaxed">
-                        {cmsStory.excerpt}
-                      </p>
-                    ) : null}
-                  </ScrollReveal>
-                </div>
+                  <h1 className="mt-6 font-host-grotesk text-3xl font-medium leading-tight tracking-tight text-rellia-teal md:text-4xl lg:text-5xl">
+                    {cmsStory.title}
+                  </h1>
+                  {cmsStory.excerpt ? (
+                    <p className="mt-4 max-w-3xl font-urbanist text-base font-normal leading-relaxed text-black md:text-lg">
+                      {cmsStory.excerpt}
+                    </p>
+                  ) : null}
+
+                  <div className="h-8 md:h-10" aria-hidden />
+                  {storyShareToolbar}
+                </ScrollReveal>
               </div>
             </div>
           </section>
@@ -221,8 +300,8 @@ export default function StoryPost() {
       <Navbar />
 
       <main id="main-content">
-        <section className="relative pt-24 pb-12 md:pt-32 md:pb-16 bg-rellia-cream overflow-hidden">
-          <div aria-hidden className="absolute inset-0 pointer-events-none">
+        <section className="relative min-h-[min(520px,72vh)] overflow-hidden bg-rellia-cream pb-12 pt-24 md:min-h-[min(580px,78vh)] md:pb-16 md:pt-32">
+          <div aria-hidden className="pointer-events-none absolute inset-0">
             <img
               src={toAbsoluteImageUrl(story.coverImageSrc)}
               alt=""
@@ -254,74 +333,7 @@ export default function StoryPost() {
                   </p>
 
                   <div className="h-8 md:h-10" aria-hidden />
-
-                  <div className="mt-8 flex flex-col items-start gap-4">
-                    <p className="font-host-grotesk text-[12px] font-semibold uppercase tracking-[0.14em] text-black/55">
-                      Share this story
-                    </p>
-                    <div className="h-px w-full bg-black/10" aria-hidden />
-
-                    <div className="flex flex-wrap items-center gap-3">
-                      <a
-                        href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(canonical)}&text=${encodeURIComponent(title)}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className={shareToolbarButtonClassName}
-                        aria-label="Share on X"
-                      >
-                        <ShareIconX />
-                      </a>
-                      <a
-                        href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(canonical)}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className={shareToolbarButtonClassName}
-                        aria-label="Share on LinkedIn"
-                      >
-                        <ShareIconLinkedIn />
-                      </a>
-                      <a
-                        href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(canonical)}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className={shareToolbarButtonClassName}
-                        aria-label="Share on Facebook"
-                      >
-                        <ShareIconFacebook />
-                      </a>
-
-                      <button
-                        type="button"
-                        onClick={handleCopyLink}
-                        className={cn(
-                          shareToolbarButtonClassName,
-                          copyState === "copied" && "bg-rellia-mint text-rellia-teal border-rellia-teal shadow-md"
-                        )}
-                        aria-label={copyState === "copied" ? "Link copied" : "Copy story link"}
-                      >
-                        {copyState === "copied" ? (
-                          <Check className="h-5 w-5 shrink-0 animate-scale-in" />
-                        ) : (
-                          <ShareIconCopy />
-                        )}
-                      </button>
-
-                      <AnimatePresence mode="wait" initial={false}>
-                        {copyState === "copied" ? (
-                          <motion.span
-                            key="copied-feedback"
-                            className="font-host-grotesk text-sm font-semibold text-rellia-teal"
-                            initial={{ opacity: 0, y: 4, scale: 0.98 }}
-                            animate={{ opacity: 1, y: 0, scale: 1 }}
-                            exit={{ opacity: 0, y: -4, scale: 0.98 }}
-                            transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
-                          >
-                            Copied!
-                          </motion.span>
-                        ) : null}
-                      </AnimatePresence>
-                    </div>
-                  </div>
+                  {storyShareToolbar}
                 </ScrollReveal>
               </div>
             </div>
