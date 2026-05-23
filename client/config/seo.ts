@@ -281,6 +281,47 @@ export const ROUTE_SEO: Record<string, RouteSeoConfig> = {
       "Create a Rellia Health admin account when signup is enabled. Internal access for diagnostic submission review.",
     indexable: false,
   },
+  "/accept-invite": {
+    title: "Accept admin invitation — Rellia Health",
+    description:
+      "Accept your Rellia Health admin invitation and set a password to access the internal dashboard.",
+    indexable: false,
+  },
+  "/admin/auth/callback": {
+    title: "Admin sign-in — Rellia Health",
+    description: "Completing admin authentication for the Rellia Health dashboard.",
+    indexable: false,
+  },
+  "/admin/set-password": {
+    title: "Set admin password — Rellia Health",
+    description: "Choose a password to finish setting up your Rellia Health admin account.",
+    indexable: false,
+  },
+  "/admin/overview": {
+    title: "Admin overview — Rellia Health",
+    description: "Dashboard overview for Rellia Health submissions, diagnostics, and CMS drafts.",
+    indexable: false,
+  },
+  "/admin/submissions": {
+    title: "Admin submissions — Rellia Health",
+    description: "Review contact form, investor, and diagnostic submissions in the Rellia Health admin dashboard.",
+    indexable: false,
+  },
+  "/admin/team": {
+    title: "Admin team — Rellia Health",
+    description: "Manage admin users with access to the Rellia Health internal dashboard.",
+    indexable: false,
+  },
+  "/admin/content": {
+    title: "Content drafts — Rellia Health",
+    description: "Unpublished Sanity CMS drafts awaiting review in the Rellia Health admin dashboard.",
+    indexable: false,
+  },
+  "/admin/resources": {
+    title: "Admin resources — Rellia Health",
+    description: "Tools, documentation, and environment guidance for Rellia Health dashboard administrators.",
+    indexable: false,
+  },
   "/admin/dashboard": {
     title: "Admin dashboard — Rellia Health",
     description:
@@ -441,7 +482,7 @@ export const getSeoForPathname = (pathname: string): RouteSeoConfig => {
   if (key.startsWith("/events/") && key !== "/events") {
     return EVENT_DETAIL_SEO
   }
-  if (key.startsWith("/admin")) {
+  if (key.startsWith("/admin") || key === "/accept-invite") {
     return ROUTE_SEO[key] ?? ADMIN_AREA_SEO
   }
   return ROUTE_SEO[key] ?? NOT_FOUND_SEO

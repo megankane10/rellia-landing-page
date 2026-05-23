@@ -12,6 +12,13 @@ const readAuthType = (searchParams: URLSearchParams): string | null => {
   return new URLSearchParams(hash).get("type")
 }
 
+const readHashError = (): string | null => {
+  const hash = window.location.hash.replace(/^#/, "")
+  if (!hash) return null
+  const params = new URLSearchParams(hash)
+  return params.get("error_description") || params.get("error")
+}
+
 const AdminAuthCallback = () => {
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
@@ -21,7 +28,32 @@ const AdminAuthCallback = () => {
     let cancelled = false
 
     const finish = async () => {
+      const hashError = readHashError()
+      if (hashError) {
+        if (!cancelled) {
+          setMessage("This link is invalid or has expired. Request a new invitation.")
+          window.setTimeout(() => navigate("/admin/login", { replace: true }), 2400)
+        }
+        return
+      }
+
       const authType = readAuthType(searchParams)
+      const tokenHash = searchParams.get("token_hash")
+
+      if (tokenHash) {
+        const otpType = authType === "recovery" ? "recovery" : "invite"
+        const { error: verifyError } = await supabase.auth.verifyOtp({
+          token_hash: tokenHash,
+          type: otpType,
+        })
+        if (verifyError) {
+          if (!cancelled) {
+            setMessage("This link is invalid or has expired. Request a new invitation.")
+            window.setTimeout(() => navigate("/admin/login", { replace: true }), 2400)
+          }
+          return
+        }
+      }
 
       const code = searchParams.get("code")
       if (code) {
@@ -44,7 +76,13 @@ const AdminAuthCallback = () => {
         return
       }
 
-      if (authType === "invite" || authType === "recovery") {
+      const invitedAt = data.session.user.invited_at
+      const needsPassword =
+        authType === "invite" ||
+        authType === "recovery" ||
+        Boolean(invitedAt)
+
+      if (needsPassword) {
         navigate("/admin/set-password", { replace: true })
         return
       }

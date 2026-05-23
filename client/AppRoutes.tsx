@@ -55,6 +55,7 @@ import AdminShell from "./pages/admin/AdminShell"
 import AdminDashboard from "./pages/admin/AdminDashboard"
 import AdminCompany from "./pages/admin/AdminCompany"
 import AdminContactDetail from "./pages/admin/AdminContactDetail"
+import AdminResources from "./pages/admin/AdminResources"
 
 const RedirectFoundersDirectoryId = () => {
   const { id } = useParams<{ id: string }>()
@@ -176,6 +177,7 @@ export const AppRoutes = () => (
       <Route index element={<Navigate to="/admin/overview" replace />} />
       <Route path="contacts/:id" element={<AdminContactDetail />} />
       <Route path="companies/:id" element={<AdminCompany />} />
+      <Route path="resources" element={<AdminResources />} />
       <Route path="*" element={<AdminDashboard />} />
     </Route>
 

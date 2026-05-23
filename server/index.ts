@@ -679,6 +679,7 @@ export function createServer() {
         company: company || null,
         job_title: jobTitle || null,
         message,
+        submission_type: "contact",
       };
 
       try {
@@ -725,6 +726,131 @@ export function createServer() {
         res.status(502).json({
           error:
             "Could not send your message right now. Please try again or email us directly.",
+        });
+      }
+    },
+  );
+
+  const investorNotifyPayloadSchema = z.object({
+    name: z.string().trim().min(1).max(160),
+    email: z.string().trim().email().max(254),
+    investmentCriteria: z.string().trim().min(1).max(8000),
+  });
+
+  app.post(
+    "/api/investor-notify",
+    rateLimitJson(contactRate, CONTACT_MAX_PER_MIN),
+    requireCsrf,
+    async (req, res) => {
+      if (!allowBrowserOrigin(req)) {
+        res.status(403).json({ error: "Forbidden" });
+        return;
+      }
+
+      if (!isDev) {
+        const hasProvenance =
+          Boolean((req.get("origin") || "").trim()) ||
+          Boolean((req.get("referer") || "").trim());
+        if (!hasProvenance) {
+          res.status(403).json({ error: "Forbidden" });
+          return;
+        }
+      }
+
+      const parsed = investorNotifyPayloadSchema.safeParse(req.body);
+      if (!parsed.success) {
+        res.status(400).json({
+          error: "Invalid request",
+          details: parsed.error.flatten(),
+        });
+        return;
+      }
+
+      const trimmedName = parsed.data.name;
+      const spaceIndex = trimmedName.indexOf(" ");
+      const firstName =
+        spaceIndex > 0 ? trimmedName.slice(0, spaceIndex) : trimmedName;
+      const lastName =
+        spaceIndex > 0 ? trimmedName.slice(spaceIndex + 1).trim() : ".";
+
+      const supabaseUrl = (
+        process.env.SUPABASE_URL ||
+        process.env.VITE_SUPABASE_URL ||
+        ""
+      )
+        .trim()
+        .replace(/\/$/, "");
+      const serviceRoleKey = (
+        process.env.SUPABASE_SERVICE_ROLE_KEY ||
+        process.env.SUPABASE_SECRET_KEY ||
+        process.env.SUPABASE_SERVICE_KEY ||
+        ""
+      ).trim();
+      const anonKey = (
+        process.env.VITE_SUPABASE_ANON_KEY ||
+        process.env.VITE_SUPABASE_PUBLISHABLE_KEY ||
+        process.env.SUPABASE_ANON_KEY ||
+        ""
+      ).trim();
+      const supabaseKey = serviceRoleKey || anonKey;
+
+      if (!supabaseUrl || !supabaseKey) {
+        res.status(501).json({
+          error: "Investor form is not configured on the server.",
+        });
+        return;
+      }
+
+      const row = {
+        first_name: firstName,
+        last_name: lastName,
+        email: parsed.data.email,
+        company: null,
+        job_title: null,
+        message: parsed.data.investmentCriteria,
+        submission_type: "investor",
+      };
+
+      try {
+        const insertRes = await fetch(
+          `${supabaseUrl}/rest/v1/contact_responses`,
+          {
+            method: "POST",
+            headers: {
+              apikey: supabaseKey,
+              Authorization: `Bearer ${supabaseKey}`,
+              "content-type": "application/json",
+              Prefer: "return=minimal",
+            },
+            body: JSON.stringify(row),
+          },
+        );
+
+        if (insertRes.ok) {
+          res.status(200).json({ ok: true });
+          return;
+        }
+
+        const errText = await insertRes.text();
+        console.error(
+          "Supabase investor notify insert failed",
+          insertRes.status,
+          errText.slice(0, 800),
+        );
+
+        const rateLimited =
+          insertRes.status === 429 ||
+          errText.toLowerCase().includes("too many submissions");
+
+        res.status(502).json({
+          error: rateLimited
+            ? "Too many submissions from this email. Please try again in an hour."
+            : "Could not submit your request right now. Please try again.",
+        });
+      } catch (err) {
+        console.error("Investor notify submit error", err);
+        res.status(502).json({
+          error: "Could not submit your request right now. Please try again.",
         });
       }
     },

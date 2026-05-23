@@ -7,10 +7,11 @@ const AdminShell = () => {
   const [mobileOpen, setMobileOpen] = useState(false)
 
   return (
-    <div className="flex h-screen min-h-screen overflow-hidden bg-[linear-gradient(165deg,hsl(var(--rellia-cream))_0%,#f4f8f9_45%,#eef6f4_100%)] font-host-grotesk">
+    <div className="flex h-[100dvh] min-h-[100dvh] overflow-hidden bg-[linear-gradient(165deg,hsl(var(--rellia-cream))_0%,#f4f8f9_45%,#eef6f4_100%)] font-host-grotesk">
       <AdminSidebar mobileOpen={mobileOpen} onMobileClose={() => setMobileOpen(false)} />
-      <div className="flex min-h-0 min-w-0 flex-1 flex-col">
-        <header className="flex shrink-0 items-center gap-3 border-b border-black/[0.06] bg-white/80 px-4 py-3 backdrop-blur-sm lg:hidden">
+      <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
+        <header className="flex shrink-0 items-center justify-between gap-3 border-b border-black/[0.06] bg-white/80 px-4 py-3 backdrop-blur-sm lg:hidden">
+          <p className="font-host-grotesk text-sm text-black/80">Admin Dashboard</p>
           <button
             type="button"
             onClick={() => setMobileOpen(true)}
@@ -19,9 +20,11 @@ const AdminShell = () => {
           >
             <Menu className="h-5 w-5" aria-hidden />
           </button>
-          <p className="font-host-grotesk text-sm text-black/80">Admin Dashboard</p>
         </header>
-        <main id="main-content" className="min-h-0 flex-1 overflow-y-auto px-4 py-6 md:px-8 md:py-8 lg:px-10 lg:py-10">
+        <main
+          id="main-content"
+          className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-y-contain px-4 py-6 md:px-8 md:py-8 lg:px-10 lg:py-10"
+        >
           <Outlet />
         </main>
       </div>

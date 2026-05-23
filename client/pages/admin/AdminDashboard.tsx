@@ -11,6 +11,8 @@ import AdminSubmissionStatusFilter from "@/components/admin/AdminSubmissionStatu
 import AdminSubmissionStatusSelect from "@/components/admin/AdminSubmissionStatusSelect"
 import AdminDeleteIconButton from "@/components/admin/AdminDeleteIconButton"
 import AdminCompactEmptyState from "@/components/admin/AdminCompactEmptyState"
+import AdminSectionCard, { ADMIN_CARD } from "@/components/admin/AdminSectionCard"
+import AdminDataTable, { type AdminTableColumn } from "@/components/admin/AdminDataTable"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -31,11 +33,8 @@ import {
   isCmsContentEnabled,
 } from "@/lib/adminSanityContent"
 import { cn } from "@/lib/utils"
-import { ExternalLink, FileEdit, Inbox, Mail, Stethoscope, Users } from "lucide-react"
+import { ExternalLink, FileEdit, Inbox, Stethoscope, Users } from "lucide-react"
 
-const ADMIN_CARD = "rounded-3xl border border-black/[0.06] bg-white"
-const COMPACT_CARD =
-  "rounded-2xl border border-black/[0.07] bg-white p-3.5 transition-shadow hover:shadow-[0_6px_24px_-18px_rgba(13,53,64,0.22)]"
 const SUPABASE_AUTH_USERS_URL =
   "https://supabase.com/dashboard/project/agsvypnmlrvpbgrsxtqy/auth/users"
 
@@ -95,6 +94,7 @@ type ContactRow = {
   job_title: string | null
   message: string
   status?: SubmissionStatus | null
+  submission_type?: string | null
 }
 
 type SubmissionTab = "contact" | "diagnostic"
@@ -124,14 +124,7 @@ const fetchProfiles = async (): Promise<CompanyProfileRow[]> => {
   return (data ?? []) as CompanyProfileRow[]
 }
 
-const PageHeading = ({ title, subtitle }: { title: string; subtitle?: string }) => (
-  <div>
-    <h1 className="font-host-grotesk text-2xl font-semibold tracking-tight text-black md:text-[1.75rem]">
-      {title}
-    </h1>
-    {subtitle ? <p className="mt-2 font-urbanist text-sm text-black/55">{subtitle}</p> : null}
-  </div>
-)
+const UNRESOLVED_COUNT_KEY = ["admin-unresolved-submissions-count"] as const
 
 const OverviewStat = ({
   value,
@@ -210,90 +203,97 @@ const OverviewPage = () => {
       : `${draftCount} unpublished draft${draftCount === 1 ? "" : "s"}`
 
   return (
-    <div className="space-y-10">
-      <div className="flex flex-wrap items-start justify-between gap-4">
-        <PageHeading
+    <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(260px,300px)]">
+      <div className="space-y-6">
+        <AdminSectionCard
           title="Overview"
           subtitle="At-a-glance view of open inquiries, diagnostic submissions, and unpublished CMS drafts."
-        />
-        <AdminSystemStatus />
-      </div>
-
-      <div className="grid gap-4 sm:grid-cols-3">
-        <OverviewStat
-          value={isLoading ? "—" : activeInquiries}
-          label="Active inquiries"
-          weekDelta={isLoading ? undefined : contactWeekDelta}
-        />
-        <OverviewStat
-          value={isLoading ? "—" : unresolvedDiagnostics}
-          label="Diagnostic submissions"
-          weekDelta={isLoading ? undefined : diagnosticWeekDelta}
-        />
-        <OverviewStat
-          value={cmsLoading ? "—" : draftCount}
-          label="Unpublished drafts"
-        />
-      </div>
-
-      {error ? (
-        <div className={cn(ADMIN_CARD, "border-red-200 bg-red-50 px-4 py-3 font-urbanist text-sm text-red-700")}>
-          Could not load dashboard metrics: {error instanceof Error ? error.message : "Unknown error"}
-        </div>
-      ) : null}
-
-      <section className="space-y-4">
-        <h2 className="font-host-grotesk text-lg font-medium text-black/90">Quick actions</h2>
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          <AdminSubmissionHubCard
-            title="Contact Form"
-            to="/admin/submissions?tab=contact"
-            recentHint={contactRecentHint}
-            icon={Mail}
-          />
-          <AdminSubmissionHubCard
-            title="Startup Diagnostic"
-            to="/admin/submissions?tab=diagnostic"
-            recentHint={diagnosticRecentHint}
-            icon={Stethoscope}
-          />
-          <AdminSubmissionHubCard
-            title="Content drafts"
-            to="/admin/content"
-            recentHint={contentRecentHint}
-            icon={FileEdit}
-          />
-        </div>
-      </section>
-
-      {cmsEnabled && draftTypeSummary.length > 0 ? (
-        <section className="space-y-4">
-          <div className="flex flex-wrap items-end justify-between gap-3">
-            <div>
-              <h2 className="font-host-grotesk text-lg font-medium text-black/90">CMS draft queue</h2>
-              <p className="mt-1 font-urbanist text-sm text-black/55">
-                Unpublished Sanity documents by type — open Studio to review and publish.
-              </p>
-            </div>
-            <Link
-              to="/admin/content"
-              className="font-urbanist text-sm text-rellia-teal hover:underline"
-            >
-              View all drafts
-            </Link>
+          headerActions={<AdminSystemStatus />}
+        >
+          <div className="grid gap-4 sm:grid-cols-2">
+            <OverviewStat
+              value={isLoading ? "—" : activeInquiries}
+              label="Active inquiries"
+              weekDelta={isLoading ? undefined : contactWeekDelta}
+            />
+            <OverviewStat
+              value={isLoading ? "—" : unresolvedDiagnostics}
+              label="Diagnostic submissions"
+              weekDelta={isLoading ? undefined : diagnosticWeekDelta}
+            />
           </div>
-          <ul className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
-            {draftTypeSummary.map(([type, count]) => (
-              <li key={type} className={COMPACT_CARD}>
-                <p className="font-host-grotesk text-sm text-black/90">{formatCmsDocumentTypeLabel(type)}</p>
-                <p className="mt-0.5 font-urbanist text-xs text-black/50">
-                  {count} draft{count === 1 ? "" : "s"} · <span className="font-mono text-[10px]">{type}</span>
-                </p>
-              </li>
-            ))}
-          </ul>
-        </section>
-      ) : null}
+
+          {error ? (
+            <p className="mt-4 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 font-urbanist text-sm text-red-700">
+              Could not load dashboard metrics: {error instanceof Error ? error.message : "Unknown error"}
+            </p>
+          ) : null}
+
+          {cmsEnabled ? (
+            <div className="mt-4">
+              <OverviewStat value={cmsLoading ? "—" : draftCount} label="Unpublished drafts" />
+            </div>
+          ) : null}
+        </AdminSectionCard>
+
+        {cmsEnabled && draftTypeSummary.length > 0 ? (
+          <AdminSectionCard
+            title="CMS draft queue"
+            subtitle="Unpublished Sanity documents by type — open Studio to review and publish."
+            headerActions={
+              <Link to="/admin/content" className="font-urbanist text-sm text-rellia-teal hover:underline">
+                View all
+              </Link>
+            }
+          >
+            <AdminDataTable
+              columns={[
+                {
+                  key: "type",
+                  header: "Document type",
+                  cell: ([type, count]) => (
+                    <div>
+                      <p className="font-host-grotesk text-sm text-black/90">{formatCmsDocumentTypeLabel(type)}</p>
+                      <p className="font-mono text-[10px] text-black/40">{type}</p>
+                      <p className="font-urbanist text-xs text-black/50">
+                        {count} draft{count === 1 ? "" : "s"}
+                      </p>
+                    </div>
+                  ),
+                },
+              ]}
+              rows={draftTypeSummary}
+              getRowKey={([type]) => type}
+              emptyMessage="No drafts"
+            />
+          </AdminSectionCard>
+        ) : null}
+      </div>
+
+      <aside className="space-y-4 lg:sticky lg:top-6 lg:self-start">
+        <AdminSectionCard title="Quick actions" subtitle="Jump to common admin tasks.">
+          <div className="space-y-3">
+            <AdminSubmissionHubCard
+              title="Submissions inbox"
+              to="/admin/submissions?tab=contact"
+              recentHint={contactRecentHint}
+              icon={Inbox}
+            />
+            <AdminSubmissionHubCard
+              title="Startup Diagnostic"
+              to="/admin/submissions?tab=diagnostic"
+              recentHint={diagnosticRecentHint}
+              icon={Stethoscope}
+            />
+            <AdminSubmissionHubCard
+              title="Content drafts"
+              to="/admin/content"
+              recentHint={contentRecentHint}
+              icon={FileEdit}
+            />
+          </div>
+        </AdminSectionCard>
+      </aside>
     </div>
   )
 }
@@ -327,98 +327,9 @@ const StatusTag = ({ status }: { status: SubmissionStatus }) => (
   </Badge>
 )
 
-const ContactSubmissionCard = ({
-  row,
-  onStatusChange,
-  onDelete,
-  statusWritesEnabled,
-  updating,
-}: {
-  row: ContactRow
-  onStatusChange: (status: SubmissionStatus) => void
-  onDelete: () => void
-  statusWritesEnabled: boolean
-  updating: boolean
-}) => {
-  const status = (row.status ?? "New") as SubmissionStatus
-  return (
-    <li className={COMPACT_CARD}>
-      <div className="flex items-center gap-3">
-        <Link to={`/admin/contacts/${row.id}`} className="min-w-0 flex-1 group">
-          <div className="flex flex-wrap items-center gap-2">
-            <p className="font-host-grotesk text-sm text-black/90 group-hover:text-rellia-teal">
-              {row.first_name} {row.last_name}
-            </p>
-            <StatusTag status={status} />
-          </div>
-          <p className="mt-1 font-urbanist text-xs text-black/50">
-            {[row.company, formatAdminDate(row.created_at)].filter(Boolean).join(" · ")}
-          </p>
-        </Link>
-        {statusWritesEnabled ? (
-          <AdminSubmissionStatusSelect
-            value={status}
-            disabled={updating}
-            ariaLabel={`Status for ${row.first_name} ${row.last_name}`}
-            onValueChange={onStatusChange}
-          />
-        ) : null}
-        <AdminDeleteIconButton
-          label="Delete contact submission?"
-          description="This permanently removes the message from your inbox."
-          onConfirm={onDelete}
-        />
-      </div>
-    </li>
-  )
-}
-
-const DiagnosticSubmissionCard = ({
-  row,
-  onStatusChange,
-  onDelete,
-  statusWritesEnabled,
-  updating,
-}: {
-  row: CompanyProfileRow
-  onStatusChange: (status: SubmissionStatus) => void
-  onDelete: () => void
-  statusWritesEnabled: boolean
-  updating: boolean
-}) => {
-  const status = (row.status ?? "New") as SubmissionStatus
-  return (
-    <li className={COMPACT_CARD}>
-      <div className="flex items-center gap-3">
-        <Link to={`/admin/companies/${row.id}`} className="min-w-0 flex-1 group">
-          <div className="flex flex-wrap items-center gap-2">
-            <p className="font-host-grotesk text-sm text-black/90 group-hover:text-rellia-teal">
-              {row.name}
-            </p>
-            <StatusTag status={status} />
-          </div>
-          <p className="mt-1 font-urbanist text-xs text-black/50">{row.work_email}</p>
-          <p className="mt-0.5 font-urbanist text-xs text-black/45">
-            {row.company_name}
-            {row.stage ? ` · ${row.stage}` : ""} · {formatAdminDate(row.created_at)}
-          </p>
-        </Link>
-        {statusWritesEnabled ? (
-          <AdminSubmissionStatusSelect
-            value={status}
-            disabled={updating}
-            ariaLabel={`Status for ${row.company_name}`}
-            onValueChange={onStatusChange}
-          />
-        ) : null}
-        <AdminDeleteIconButton
-          label="Delete diagnostic submission?"
-          description="This removes the company profile and linked diagnostic response."
-          onConfirm={onDelete}
-        />
-      </div>
-    </li>
-  )
+const contactTypeLabel = (row: ContactRow) => {
+  if (row.submission_type === "investor") return "Investor notify"
+  return "Contact"
 }
 
 const SubmissionsPage = () => {
@@ -438,15 +349,36 @@ const SubmissionsPage = () => {
   const contactsQuery = useQuery({ queryKey: ["admin-contact-submissions"], queryFn: fetchContacts })
   const diagnosticsQuery = useQuery({ queryKey: ["admin-company-profiles"], queryFn: fetchProfiles })
 
-  const rows = tab === "contact" ? (contactsQuery.data ?? []) : (diagnosticsQuery.data ?? [])
+  const contactRows = contactsQuery.data ?? []
+  const diagnosticRows = diagnosticsQuery.data ?? []
   const isLoading = tab === "contact" ? contactsQuery.isLoading : diagnosticsQuery.isLoading
   const error = tab === "contact" ? contactsQuery.error : diagnosticsQuery.error
 
-  const statusCounts = useMemo(() => countByStatusFilter(rows), [rows])
-  const filteredRows = useMemo(
-    () => rows.filter((row) => matchesStatusFilter(row, statusFilter)),
-    [rows, statusFilter],
+  const statusCounts = useMemo(
+    () => (tab === "contact" ? countByStatusFilter(contactRows) : countByStatusFilter(diagnosticRows)),
+    [tab, contactRows, diagnosticRows],
   )
+
+  const filteredContactRows = useMemo(
+    () =>
+      [...contactRows]
+        .filter((row) => matchesStatusFilter(row, statusFilter))
+        .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()),
+    [contactRows, statusFilter],
+  )
+
+  const filteredDiagnosticRows = useMemo(
+    () =>
+      [...diagnosticRows]
+        .filter((row) => matchesStatusFilter(row, statusFilter))
+        .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()),
+    [diagnosticRows, statusFilter],
+  )
+
+  const invalidateSubmissionQueries = (queryClient: ReturnType<typeof useQueryClient>) => {
+    void queryClient.invalidateQueries({ queryKey: UNRESOLVED_COUNT_KEY })
+    void queryClient.invalidateQueries({ queryKey: ["admin-dashboard-overview"] })
+  }
 
   const handleContactStatus = async (contactId: string, newStatus: SubmissionStatus) => {
     if (!statusWritesEnabled) return
@@ -463,7 +395,7 @@ const SubmissionsPage = () => {
       return
     }
     void queryClient.invalidateQueries({ queryKey: ["admin-contact-submissions"] })
-    void queryClient.invalidateQueries({ queryKey: ["admin-dashboard-overview"] })
+    invalidateSubmissionQueries(queryClient)
   }
 
   const handleDiagnosticStatus = async (profileId: string, newStatus: SubmissionStatus) => {
@@ -481,99 +413,231 @@ const SubmissionsPage = () => {
       return
     }
     void queryClient.invalidateQueries({ queryKey: ["admin-company-profiles"] })
-    void queryClient.invalidateQueries({ queryKey: ["admin-dashboard-overview"] })
+    invalidateSubmissionQueries(queryClient)
   }
 
   const handleContactDelete = async (contactId: string) => {
     const { error: deleteError } = await supabase.from("contact_responses").delete().eq("id", contactId)
     if (deleteError) return
     void queryClient.invalidateQueries({ queryKey: ["admin-contact-submissions"] })
-    void queryClient.invalidateQueries({ queryKey: ["admin-dashboard-overview"] })
+    invalidateSubmissionQueries(queryClient)
   }
 
   const handleDiagnosticDelete = async (profileId: string) => {
     const { error: deleteError } = await supabase.from("company_profiles").delete().eq("id", profileId)
     if (deleteError) return
     void queryClient.invalidateQueries({ queryKey: ["admin-company-profiles"] })
-    void queryClient.invalidateQueries({ queryKey: ["admin-dashboard-overview"] })
+    invalidateSubmissionQueries(queryClient)
   }
 
-  return (
-    <div className="space-y-6">
-      <PageHeading
-        title="Submissions"
-        subtitle="View user submissions from the contact form and startup diagnostic."
-      />
-
-      <div className="flex flex-wrap gap-2" role="tablist" aria-label="Submission type">
-        <SubmissionTabButton active={tab === "contact"} onClick={() => setTab("contact")}>
-          Contact Form
-        </SubmissionTabButton>
-        <SubmissionTabButton active={tab === "diagnostic"} onClick={() => setTab("diagnostic")}>
-          Startup Diagnostic
-        </SubmissionTabButton>
-      </div>
-
-      {!statusWritesEnabled ? (
-        <p className={cn(ADMIN_CARD, "border-amber-200/80 bg-amber-50 px-4 py-3 font-urbanist text-sm text-amber-900")}>
-          Status updates need Supabase policies. Run{" "}
-          <code className="text-xs">scripts/supabase_admin_policies.sql</code> in the SQL editor.
-        </p>
-      ) : null}
-
-      <AdminSubmissionStatusFilter value={statusFilter} onChange={setStatusFilter} counts={statusCounts} />
-
-      {isLoading ? (
-        <div className="space-y-3">
-          {Array.from({ length: 5 }).map((_, i) => (
-            <Skeleton key={i} className="h-16 rounded-3xl" />
-          ))}
-        </div>
-      ) : null}
-
-      {error ? (
-        <p className="font-urbanist text-sm text-red-700">
-          Failed to load submissions: {error instanceof Error ? error.message : "Unknown error"}
-        </p>
-      ) : null}
-
-      {!isLoading && !error && filteredRows.length === 0 ? (
-        <AdminCompactEmptyState
-          icon={tab === "contact" ? Inbox : Stethoscope}
-          title="No submissions match this filter"
-          description={
-            statusFilter === "all"
-              ? tab === "contact"
-                ? "Contact form messages will appear here."
-                : "Startup diagnostic submissions will appear here."
-              : `No items with status “${statusFilter}”.`
-          }
+  const contactColumns: AdminTableColumn<ContactRow>[] = [
+    {
+      key: "name",
+      header: "Name",
+      cell: (row) => (
+        <Link to={`/admin/contacts/${row.id}`} className="font-host-grotesk text-sm text-rellia-teal hover:underline">
+          {row.first_name} {row.last_name === "." ? "" : row.last_name}
+        </Link>
+      ),
+    },
+    {
+      key: "type",
+      header: "Type",
+      cell: (row) => (
+        <span className="text-black/60">{contactTypeLabel(row)}</span>
+      ),
+    },
+    {
+      key: "email",
+      header: "Email",
+      cell: (row) => <span className="text-black/70">{row.email}</span>,
+    },
+    {
+      key: "company",
+      header: "Company",
+      cell: (row) => <span className="text-black/60">{row.company || "—"}</span>,
+    },
+    {
+      key: "date",
+      header: "Received",
+      cell: (row) => <span className="text-black/50">{formatAdminDate(row.created_at)}</span>,
+    },
+    {
+      key: "status",
+      header: "Status",
+      cell: (row) => {
+        const status = (row.status ?? "New") as SubmissionStatus
+        return statusWritesEnabled ? (
+          <AdminSubmissionStatusSelect
+            value={status}
+            disabled={updatingId === row.id}
+            ariaLabel={`Status for ${row.first_name}`}
+            onValueChange={(value) => void handleContactStatus(row.id, value)}
+          />
+        ) : (
+          <StatusTag status={status} />
+        )
+      },
+    },
+    {
+      key: "actions",
+      header: "",
+      className: "w-12",
+      cell: (row) => (
+        <AdminDeleteIconButton
+          label="Delete contact submission?"
+          description="This permanently removes the message from your inbox."
+          onConfirm={() => void handleContactDelete(row.id)}
         />
-      ) : null}
+      ),
+    },
+  ]
 
-      <ul className="grid gap-2 sm:grid-cols-2">
-        {tab === "contact"
-          ? (filteredRows as ContactRow[]).map((row) => (
-              <ContactSubmissionCard
-                key={row.id}
-                row={row}
-                onStatusChange={(value) => void handleContactStatus(row.id, value)}
-                onDelete={() => handleContactDelete(row.id)}
-                statusWritesEnabled={statusWritesEnabled}
-                updating={updatingId === row.id}
-              />
-            ))
-          : (filteredRows as CompanyProfileRow[]).map((row) => (
-              <DiagnosticSubmissionCard
-                key={row.id}
-                row={row}
-                onStatusChange={(value) => void handleDiagnosticStatus(row.id, value)}
-                onDelete={() => handleDiagnosticDelete(row.id)}
-                statusWritesEnabled={statusWritesEnabled}
-                updating={updatingId === row.id}
-              />
+  const diagnosticColumns: AdminTableColumn<CompanyProfileRow>[] = [
+    {
+      key: "name",
+      header: "Founder",
+      cell: (row) => (
+        <Link to={`/admin/companies/${row.id}`} className="font-host-grotesk text-sm text-rellia-teal hover:underline">
+          {row.name}
+        </Link>
+      ),
+    },
+    {
+      key: "company",
+      header: "Company",
+      cell: (row) => <span className="text-black/70">{row.company_name}</span>,
+    },
+    {
+      key: "email",
+      header: "Email",
+      cell: (row) => <span className="text-black/60">{row.work_email}</span>,
+    },
+    {
+      key: "stage",
+      header: "Stage",
+      cell: (row) => <span className="text-black/50">{row.stage || "—"}</span>,
+    },
+    {
+      key: "date",
+      header: "Received",
+      cell: (row) => <span className="text-black/50">{formatAdminDate(row.created_at)}</span>,
+    },
+    {
+      key: "status",
+      header: "Status",
+      cell: (row) => {
+        const status = (row.status ?? "New") as SubmissionStatus
+        return statusWritesEnabled ? (
+          <AdminSubmissionStatusSelect
+            value={status}
+            disabled={updatingId === row.id}
+            ariaLabel={`Status for ${row.company_name}`}
+            onValueChange={(value) => void handleDiagnosticStatus(row.id, value)}
+          />
+        ) : (
+          <StatusTag status={status} />
+        )
+      },
+    },
+    {
+      key: "actions",
+      header: "",
+      className: "w-12",
+      cell: (row) => (
+        <AdminDeleteIconButton
+          label="Delete diagnostic submission?"
+          description="This removes the company profile and linked diagnostic response."
+          onConfirm={() => void handleDiagnosticDelete(row.id)}
+        />
+      ),
+    },
+  ]
+
+  return (
+    <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(240px,280px)]">
+      <AdminSectionCard
+        title="Submissions"
+        subtitle="Contact form, investor notifications, and startup diagnostic results — newest first."
+      >
+        <div className="mb-4 flex flex-wrap gap-2" role="tablist" aria-label="Submission type">
+          <SubmissionTabButton active={tab === "contact"} onClick={() => setTab("contact")}>
+            Inbox
+          </SubmissionTabButton>
+          <SubmissionTabButton active={tab === "diagnostic"} onClick={() => setTab("diagnostic")}>
+            Startup Diagnostic
+          </SubmissionTabButton>
+        </div>
+
+        {!statusWritesEnabled ? (
+          <p className="mb-4 rounded-2xl border border-amber-200/80 bg-amber-50 px-4 py-3 font-urbanist text-sm text-amber-900">
+            Status updates need Supabase policies. Run{" "}
+            <code className="text-xs">scripts/supabase_admin_policies.sql</code> in the SQL editor.
+          </p>
+        ) : null}
+
+        <AdminSubmissionStatusFilter value={statusFilter} onChange={setStatusFilter} counts={statusCounts} />
+
+        {isLoading ? (
+          <div className="mt-4 space-y-3">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <Skeleton key={i} className="h-12 rounded-xl" />
             ))}
-      </ul>
+          </div>
+        ) : null}
+
+        {error ? (
+          <p className="mt-4 font-urbanist text-sm text-red-700">
+            Failed to load submissions: {error instanceof Error ? error.message : "Unknown error"}
+          </p>
+        ) : null}
+
+        {!isLoading &&
+        !error &&
+        (tab === "contact" ? filteredContactRows.length === 0 : filteredDiagnosticRows.length === 0) ? (
+          <AdminCompactEmptyState
+            icon={tab === "contact" ? Inbox : Stethoscope}
+            title="No submissions match this filter"
+            description={
+              statusFilter === "all"
+                ? tab === "contact"
+                  ? "Contact and investor messages will appear here."
+                  : "Startup diagnostic submissions will appear here."
+                : `No items with status “${statusFilter}”.`
+            }
+          />
+        ) : null}
+
+        {!isLoading && !error ? (
+          <div className="mt-4">
+            {tab === "contact" && filteredContactRows.length > 0 ? (
+              <AdminDataTable
+                columns={contactColumns}
+                rows={filteredContactRows}
+                getRowKey={(row) => row.id}
+              />
+            ) : null}
+            {tab === "diagnostic" && filteredDiagnosticRows.length > 0 ? (
+              <AdminDataTable
+                columns={diagnosticColumns}
+                rows={filteredDiagnosticRows}
+                getRowKey={(row) => row.id}
+              />
+            ) : null}
+          </div>
+        ) : null}
+      </AdminSectionCard>
+
+      <aside className="lg:sticky lg:top-6 lg:self-start">
+        <AdminSectionCard title="Quick actions" subtitle="Common submission tasks.">
+          <div className="space-y-3 font-urbanist text-sm text-black/65">
+            <p>Update status as you work through each inquiry. Resolved items leave the unresolved counter.</p>
+            <Link to="/admin/resources" className="inline-block font-medium text-rellia-teal hover:underline">
+              Admin resources →
+            </Link>
+          </div>
+        </AdminSectionCard>
+      </aside>
     </div>
   )
 }
@@ -591,99 +655,121 @@ const TeamPage = () => {
     staleTime: 60_000,
   })
 
+  const recentActivity = useMemo(
+    () =>
+      [...users]
+        .filter((u) => u.lastSignInAt)
+        .sort((a, b) => new Date(b.lastSignInAt!).getTime() - new Date(a.lastSignInAt!).getTime())
+        .slice(0, 8),
+    [users],
+  )
+
   return (
-    <div className="space-y-8">
-      <PageHeading title="Team" subtitle="Admin accounts with access to this dashboard." />
-
-      {isLoading ? (
-        <div className="space-y-3">
-          {Array.from({ length: 4 }).map((_, i) => (
-            <Skeleton key={i} className="h-14 rounded-3xl" />
-          ))}
-        </div>
-      ) : null}
-
-      {error ? (
-        <p className={cn(ADMIN_CARD, "px-4 py-3 font-urbanist text-sm text-red-700")}>
-          {error instanceof Error ? error.message : "Could not load team members."}
-        </p>
-      ) : null}
-
-      {!isLoading && !error && users.length > 0 ? (
-        <ul className="grid gap-2 sm:grid-cols-2">
-          {users.map((member) => (
-            <li key={member.id} className={COMPACT_CARD}>
-              <div className="flex flex-wrap items-center justify-between gap-2">
-                <div className="min-w-0">
-                  <p className="font-urbanist text-sm text-black/85">{member.email}</p>
-                  <p className="mt-0.5 font-urbanist text-xs text-black/45">
-                    Joined {formatAdminDate(member.createdAt)}
-                  </p>
-                </div>
-                {member.confirmedAt ? (
-                  <span className="rounded-full bg-rellia-mint/25 px-2.5 py-0.5 font-urbanist text-xs text-rellia-teal">
-                    Active
-                  </span>
-                ) : (
-                  <span className="rounded-full bg-amber-50 px-2.5 py-0.5 font-urbanist text-xs text-amber-900">
-                    Invite pending
-                  </span>
-                )}
-              </div>
-            </li>
-          ))}
-        </ul>
-      ) : null}
-
-      {!isLoading && !error && users.some((u) => u.lastSignInAt) ? (
-        <section className="space-y-3">
-          <h2 className="font-host-grotesk text-base font-medium text-black/90">Recent activity</h2>
-          <ul className="grid gap-2 sm:grid-cols-2">
-            {[...users]
-              .filter((u) => u.lastSignInAt)
-              .sort(
-                (a, b) =>
-                  new Date(b.lastSignInAt!).getTime() - new Date(a.lastSignInAt!).getTime(),
-              )
-              .slice(0, 8)
-              .map((member) => (
-                <li key={`activity-${member.id}`} className={COMPACT_CARD}>
-                  <p className="font-urbanist text-sm text-black/80">{member.email}</p>
-                  <p className="mt-0.5 font-urbanist text-xs text-black/45">
-                    Last sign-in {formatAdminDate(member.lastSignInAt!)}
-                  </p>
-                </li>
+    <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(240px,280px)]">
+      <div className="space-y-6">
+        <AdminSectionCard title="Team" subtitle="Admin accounts with access to this dashboard.">
+          {isLoading ? (
+            <div className="space-y-3">
+              {Array.from({ length: 4 }).map((_, i) => (
+                <Skeleton key={i} className="h-12 rounded-xl" />
               ))}
-          </ul>
-        </section>
-      ) : null}
+            </div>
+          ) : null}
 
-      {!isLoading && !error && users.length === 0 ? (
-        <AdminCompactEmptyState
-          icon={Users}
-          title="No team members found"
-          description="Invite colleagues from Supabase Auth to grant dashboard access."
-        />
-      ) : null}
+          {error ? (
+            <p className="font-urbanist text-sm text-red-700">
+              {error instanceof Error ? error.message : "Could not load team members."}
+            </p>
+          ) : null}
 
-      <div className={cn(ADMIN_CARD, "bg-rellia-mint/10 px-5 py-4")}>
-        <p className="font-urbanist text-sm leading-relaxed text-black/70">
-          To invite new admins, add users in Supabase Auth. They will receive an email invitation to set a
-          password.
-        </p>
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          asChild
-          className="mt-4 rounded-full border-rellia-teal/20 text-rellia-teal hover:bg-rellia-mint/15"
-        >
-          <a href={SUPABASE_AUTH_USERS_URL} target="_blank" rel="noopener noreferrer">
-            Open Supabase Auth
-            <ExternalLink className="ml-1.5 h-3.5 w-3.5" aria-hidden />
-          </a>
-        </Button>
+          {!isLoading && !error && users.length === 0 ? (
+            <AdminCompactEmptyState
+              icon={Users}
+              title="No team members found"
+              description="Invite colleagues from Supabase Auth to grant dashboard access."
+            />
+          ) : null}
+
+          {!isLoading && !error && users.length > 0 ? (
+            <AdminDataTable
+              columns={[
+                {
+                  key: "email",
+                  header: "Email",
+                  cell: (member) => <span className="text-black/80">{member.email}</span>,
+                },
+                {
+                  key: "joined",
+                  header: "Joined",
+                  cell: (member) => (
+                    <span className="text-black/50">{formatAdminDate(member.createdAt)}</span>
+                  ),
+                },
+                {
+                  key: "status",
+                  header: "Status",
+                  cell: (member) =>
+                    member.confirmedAt ? (
+                      <span className="rounded-full bg-rellia-mint/25 px-2.5 py-0.5 text-xs text-rellia-teal">
+                        Active
+                      </span>
+                    ) : (
+                      <span className="rounded-full bg-amber-50 px-2.5 py-0.5 text-xs text-amber-900">
+                        Invite pending
+                      </span>
+                    ),
+                },
+              ]}
+              rows={users}
+              getRowKey={(member) => member.id}
+            />
+          ) : null}
+        </AdminSectionCard>
+
+        {recentActivity.length > 0 ? (
+          <AdminSectionCard title="Recent activity" subtitle="Latest admin sign-ins.">
+            <AdminDataTable
+              columns={[
+                {
+                  key: "email",
+                  header: "Email",
+                  cell: (member) => <span className="text-black/80">{member.email}</span>,
+                },
+                {
+                  key: "last",
+                  header: "Last sign-in",
+                  cell: (member) => (
+                    <span className="text-black/50">{formatAdminDate(member.lastSignInAt!)}</span>
+                  ),
+                },
+              ]}
+              rows={recentActivity}
+              getRowKey={(member) => `activity-${member.id}`}
+            />
+          </AdminSectionCard>
+        ) : null}
       </div>
+
+      <aside className="lg:sticky lg:top-6 lg:self-start">
+        <AdminSectionCard title="Invite admins" subtitle="New users set a password via email invite.">
+          <p className="font-urbanist text-sm leading-relaxed text-black/70">
+            Add users in Supabase Auth. Set the invite redirect to your site&apos;s{" "}
+            <code className="text-xs">/accept-invite</code> flow so links are not consumed by email scanners.
+          </p>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            asChild
+            className="mt-4 rounded-full border-rellia-teal/20 text-rellia-teal hover:bg-rellia-mint/15"
+          >
+            <a href={SUPABASE_AUTH_USERS_URL} target="_blank" rel="noopener noreferrer">
+              Open Supabase Auth
+              <ExternalLink className="ml-1.5 h-3.5 w-3.5" aria-hidden />
+            </a>
+          </Button>
+        </AdminSectionCard>
+      </aside>
     </div>
   )
 }
@@ -714,62 +800,76 @@ const ContentDraftsPage = () => {
   }, [draftRows, typeFilter])
 
   return (
-    <div className="space-y-6">
-      <PageHeading
+    <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(240px,280px)]">
+      <AdminSectionCard
         title="Content drafts"
         subtitle="Unpublished Sanity drafts — publish in Studio when ready."
-      />
+      >
+        {!cmsConfigured ? (
+          <p className="rounded-2xl border border-amber-200/70 bg-amber-50/80 px-4 py-3 font-urbanist text-sm text-amber-950">
+            CMS is not configured. Set <code className="text-xs">VITE_SANITY_PROJECT_ID</code> and{" "}
+            <code className="text-xs">VITE_SANITY_DATASET</code> on this deployment.
+          </p>
+        ) : (
+          <>
+            <div className="mb-4 flex flex-wrap gap-2">
+              <button
+                type="button"
+                onClick={() => setTypeFilter("all")}
+                className={cn(
+                  "rounded-full px-3 py-1.5 font-urbanist text-xs transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint",
+                  typeFilter === "all"
+                    ? "bg-rellia-mint/35 text-rellia-teal"
+                    : "text-black/45 hover:bg-black/[0.06]",
+                )}
+              >
+                All ({draftRows.length})
+              </button>
+              {typeOptions.map((type) => {
+                const count = draftRows.filter((row) => row._type === type).length
+                return (
+                  <button
+                    key={type}
+                    type="button"
+                    onClick={() => setTypeFilter(type)}
+                    className={cn(
+                      "rounded-full px-3 py-1.5 font-urbanist text-xs transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint",
+                      typeFilter === type
+                        ? "bg-rellia-mint/35 text-rellia-teal"
+                        : "text-black/45 hover:bg-black/[0.06]",
+                    )}
+                  >
+                    {formatCmsDocumentTypeLabel(type)} ({count})
+                  </button>
+                )
+              })}
+            </div>
 
-      {!cmsConfigured ? (
-        <p className={cn(ADMIN_CARD, "border-amber-200/70 bg-amber-50/80 px-4 py-3 font-urbanist text-sm text-amber-950")}>
-          CMS is not configured. Set <code className="text-xs">VITE_SANITY_PROJECT_ID</code> and{" "}
-          <code className="text-xs">VITE_SANITY_DATASET</code> on this deployment.
-        </p>
-      ) : (
-        <>
-          <div className="flex flex-wrap gap-2">
-            <button
-              type="button"
-              onClick={() => setTypeFilter("all")}
-              className={cn(
-                "rounded-full px-3 py-1.5 font-urbanist text-xs transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint",
-                typeFilter === "all"
-                  ? "bg-rellia-mint/35 text-rellia-teal"
-                  : "text-black/45 hover:bg-black/[0.06]",
-              )}
-            >
-              All ({draftRows.length})
-            </button>
-            {typeOptions.map((type) => {
-              const count = draftRows.filter((row) => row._type === type).length
-              return (
-                <button
-                  key={type}
-                  type="button"
-                  onClick={() => setTypeFilter(type)}
-                  className={cn(
-                    "rounded-full px-3 py-1.5 font-urbanist text-xs transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint",
-                    typeFilter === type
-                      ? "bg-rellia-mint/35 text-rellia-teal"
-                      : "text-black/45 hover:bg-black/[0.06]",
-                  )}
-                >
-                  {formatCmsDocumentTypeLabel(type)} ({count})
-                </button>
-              )
-            })}
-          </div>
+            <AdminContentQueueList
+              rows={filteredRows}
+              isLoading={isLoading}
+              error={error}
+              dataset=""
+              emptyTitle="No drafts in this category"
+              groupByType={false}
+            />
+          </>
+        )}
+      </AdminSectionCard>
 
-          <AdminContentQueueList
-            rows={filteredRows}
-            isLoading={isLoading}
-            error={error}
-            dataset=""
-            emptyTitle="No drafts in this category"
-            groupByType={false}
-          />
-        </>
-      )}
+      <aside className="lg:sticky lg:top-6 lg:self-start">
+        <AdminSectionCard title="Quick actions" subtitle="Open Sanity Studio to publish.">
+          <a
+            href="https://relliahealth.sanity.studio"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 font-urbanist text-sm font-medium text-rellia-teal hover:underline"
+          >
+            Open Sanity Studio
+            <ExternalLink className="h-3.5 w-3.5" aria-hidden />
+          </a>
+        </AdminSectionCard>
+      </aside>
     </div>
   )
 }

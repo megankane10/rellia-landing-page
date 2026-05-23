@@ -37,9 +37,12 @@ import {
   ShareIconCopy,
   ShareIconFacebook,
   ShareIconLinkedIn,
+  ShareIconMail,
   ShareIconX,
   shareToolbarButtonClassName,
 } from "@/components/share/sharePageIcons"
+import { buildMailtoHref } from "@/lib/mailto"
+import { DEFAULT_GLOBAL_SETTINGS } from "@shared/cms/defaults"
 import { EventDetailPortableText } from "@/components/EventDetailPortableText"
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet"
 import type { SanityPortableText } from "@shared/cms/types"
@@ -470,6 +473,16 @@ export default function EventDetail() {
                       aria-label="Share on Facebook"
                     >
                       <ShareIconFacebook />
+                    </a>
+                    <a
+                      href={buildMailtoHref(DEFAULT_GLOBAL_SETTINGS.supportEmail, {
+                        subject: shareTitle,
+                        body: `${shareTitle}\n\n${canonical}`,
+                      })}
+                      className={shareToolbarButtonClassName}
+                      aria-label="Share by email"
+                    >
+                      <ShareIconMail />
                     </a>
 
                     <button

@@ -1,19 +1,14 @@
 import { createClient } from "@supabase/supabase-js"
 import { clearApiCsrfCache, getApiCsrfHeaders } from "@/lib/apiCsrf"
 
-export type ContactFormPayload = {
-  firstName: string
-  lastName: string
+export type InvestorNotifyPayload = {
+  name: string
   email: string
-  company: string
-  jobTitle: string
-  message: string
+  investmentCriteria: string
 }
 
 const getSupabaseConfig = () => {
-  const url = (
-    import.meta.env.VITE_SUPABASE_URL as string | undefined
-  )?.trim()
+  const url = (import.meta.env.VITE_SUPABASE_URL as string | undefined)?.trim()
   const anonKey = (
     import.meta.env.VITE_SUPABASE_ANON_KEY ||
     import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY ||
@@ -26,40 +21,45 @@ const getSupabaseConfig = () => {
   return { url: url.replace(/\/$/, ""), anonKey }
 }
 
-const submitViaSupabaseClient = async (data: ContactFormPayload): Promise<void> => {
+const submitViaSupabaseClient = async (data: InvestorNotifyPayload): Promise<void> => {
   const config = getSupabaseConfig()
   if (!config) {
-    throw new Error("Supabase is not configured for the contact form.")
+    throw new Error("Supabase is not configured for this form.")
   }
 
   const supabase = createClient(config.url, config.anonKey, {
     auth: { persistSession: false, autoRefreshToken: false },
   })
 
+  const trimmedName = data.name.trim()
+  const spaceIndex = trimmedName.indexOf(" ")
+  const firstName = spaceIndex > 0 ? trimmedName.slice(0, spaceIndex) : trimmedName
+  const lastName = spaceIndex > 0 ? trimmedName.slice(spaceIndex + 1).trim() : "."
+
   const { error } = await supabase.from("contact_responses").insert({
-    first_name: data.firstName,
-    last_name: data.lastName,
-    email: data.email,
-    company: data.company || null,
-    job_title: data.jobTitle || null,
-    message: data.message,
-    submission_type: "contact",
+    first_name: firstName || trimmedName,
+    last_name: lastName,
+    email: data.email.trim(),
+    company: null,
+    job_title: null,
+    message: data.investmentCriteria.trim(),
+    submission_type: "investor",
   })
 
   if (error) {
     const rateLimited = error.message.toLowerCase().includes("too many submissions")
     throw new Error(
       rateLimited
-        ? "Too many messages from this email. Please try again in an hour."
-        : error.message || "Could not send your message. Please try again.",
+        ? "Too many submissions from this email. Please try again in an hour."
+        : error.message || "Could not submit your request. Please try again.",
     )
   }
 }
 
-const submitViaApi = async (data: ContactFormPayload): Promise<void> => {
+const submitViaApi = async (data: InvestorNotifyPayload): Promise<void> => {
   const postOnce = async () => {
     const csrf = await getApiCsrfHeaders()
-    return fetch("/api/contact", {
+    return fetch("/api/investor-notify", {
       method: "POST",
       credentials: "same-origin",
       headers: { "content-type": "application/json", ...csrf },
@@ -68,32 +68,24 @@ const submitViaApi = async (data: ContactFormPayload): Promise<void> => {
   }
 
   let res = await postOnce()
-  let json = (await res.json().catch(() => ({}))) as {
-    error?: string
-    code?: string
-  }
+  let json = (await res.json().catch(() => ({}))) as { error?: string; code?: string }
 
   if (!res.ok && res.status === 403 && json.code === "CSRF") {
     clearApiCsrfCache()
     res = await postOnce()
-    json = (await res.json().catch(() => ({}))) as { error?: string; code?: string }
+    json = (await res.json().catch(() => ({}))) as { error?: string }
   }
 
   if (!res.ok) {
-    throw new Error(
-      json.error || "Something went wrong. Please try again or email us directly.",
-    )
+    throw new Error(json.error || "Something went wrong. Please try again.")
   }
 }
 
-/** Prefer direct Supabase insert (anon RLS); fall back to server API when client env is missing. */
-export const submitContactForm = async (data: ContactFormPayload): Promise<void> => {
+export const submitInvestorNotifyForm = async (data: InvestorNotifyPayload): Promise<void> => {
   const config = getSupabaseConfig()
-
   if (config) {
     await submitViaSupabaseClient(data)
     return
   }
-
   await submitViaApi(data)
 }

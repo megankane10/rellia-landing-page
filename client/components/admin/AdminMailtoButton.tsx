@@ -1,5 +1,6 @@
 import { Mail } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { buildMailtoHref } from "@/lib/mailto"
 
 type AdminMailtoButtonProps = {
   email: string
@@ -17,12 +18,8 @@ const AdminMailtoButton = ({
   const trimmedEmail = email.trim()
 
   const handleOpenMail = () => {
-    if (!trimmedEmail) return
-    const params = new URLSearchParams()
-    if (subject.trim()) params.set("subject", subject)
-    if (body.trim()) params.set("body", body)
-    const query = params.toString()
-    const href = query ? `mailto:${trimmedEmail}?${query}` : `mailto:${trimmedEmail}`
+    const href = buildMailtoHref(trimmedEmail, { subject, body })
+    if (!href) return
     window.location.assign(href)
   }
 

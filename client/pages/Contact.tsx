@@ -35,13 +35,11 @@ export default function Contact() {
 
 function ContactSection({ copy }: { copy: typeof DEFAULT_CONTACT_PAGE }) {
   return (
-    <section className="relative min-h-[calc(100vh-80px)] w-full">
-      <div className="grid grid-cols-1 lg:grid-cols-[45%_55%] xl:grid-cols-[40%_60%] min-h-screen">
-        {/* Left Side: Content & Branding */}
+    <section className="relative w-full pt-24 md:pt-28">
+      <div className="grid min-h-[calc(100vh-6rem)] grid-cols-1 lg:grid-cols-2">
         <LeftPanel copy={copy} />
 
-        {/* Right Side: Contact Form (No card, no heading) */}
-        <div className="bg-white px-6 py-16 md:px-12 md:py-24 lg:px-20 lg:py-32 flex items-center justify-center relative overflow-hidden">
+        <div className="relative flex items-center justify-center overflow-hidden bg-white px-6 py-12 md:px-12 md:py-16 lg:px-16 lg:py-20">
           {/* Subtle background glow */}
           <div className="absolute top-1/4 -right-20 w-80 h-80 bg-rellia-mint/5 rounded-full blur-[120px] pointer-events-none" />
           <div className="absolute bottom-10 -right-20 w-80 h-80 bg-rellia-mint/10 rounded-full blur-[120px] pointer-events-none" />
@@ -57,102 +55,83 @@ function ContactSection({ copy }: { copy: typeof DEFAULT_CONTACT_PAGE }) {
 
 function LeftPanel({ copy }: { copy: typeof DEFAULT_CONTACT_PAGE }) {
   return (
-    <div className="flex flex-col justify-center p-4 md:p-6 lg:min-h-screen lg:p-8">
-      <div className="relative flex min-h-[560px] flex-1 flex-col justify-center overflow-hidden rounded-[1.75rem] bg-rellia-teal px-6 pt-28 pb-16 md:px-10 md:pt-32 md:pb-20 lg:min-h-[min(720px,calc(100vh-4rem))]">
-      {/* Background Image with optimized overlay */}
-      <div className="absolute inset-0">
-        <img
-          src="/health_tech_collaboration_1778023064936.png"
-          alt=""
-          aria-hidden
-          width={1920}
-          height={1080}
-          loading="eager"
-          decoding="async"
-          className="h-full w-full object-cover opacity-35 mix-blend-luminosity"
-        />
-        <div className="absolute inset-0 bg-gradient-to-br from-rellia-teal via-[#0f5c5c] to-rellia-teal/85" />
-        
-        {/* Mint Gradient Accents */}
-        <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-rellia-mint/20 rounded-full blur-[120px]" />
-        <div className="absolute bottom-[-5%] right-[-5%] w-[40%] h-[40%] bg-rellia-mint/10 rounded-full blur-[100px]" />
-
-        {/* Enhanced Noise Texture */}
-        <div className="absolute inset-0 opacity-[0.08] pointer-events-none mix-blend-overlay">
-          <svg className="h-full w-full" xmlns="http://www.w3.org/2000/svg">
-            <filter id="noiseFilter">
-              <feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch" />
-            </filter>
-            <rect width="100%" height="100%" filter="url(#noiseFilter)" />
-          </svg>
+    <div className="flex flex-col p-4 pb-8 md:p-6 md:pb-10 lg:p-8">
+      <h1 className="sr-only">{copy.pageTitle ?? "Contact Rellia Health"}</h1>
+      <div className="relative flex min-h-[min(480px,calc(100vh-10rem))] flex-1 flex-col overflow-hidden rounded-[1.75rem] bg-rellia-teal">
+        <div className="absolute inset-0">
+          <img
+            src="/health_tech_collaboration_1778023064936.png"
+            alt=""
+            aria-hidden
+            width={1920}
+            height={1080}
+            loading="eager"
+            decoding="async"
+            className="h-full w-full object-cover opacity-35 mix-blend-luminosity"
+          />
+          <div className="absolute inset-0 bg-gradient-to-br from-rellia-teal via-[#0f5c5c] to-rellia-teal/85" />
+          <div className="absolute top-[-10%] left-[-10%] h-[60%] w-[60%] rounded-full bg-rellia-mint/20 blur-[120px]" />
+          <div className="absolute bottom-[-5%] right-[-5%] h-[40%] w-[40%] rounded-full bg-rellia-mint/10 blur-[100px]" />
         </div>
-      </div>
 
-      <div className="relative z-10 max-w-xl flex-1 flex flex-col justify-center">
-        <h1 className="sr-only">{copy.pageTitle ?? "Contact Rellia Health"}</h1>
-        {/* Testimonial / Quote */}
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          className="mb-12"
-        >
-          {/* Hologram Logo at top of quote */}
-          <div className="mb-8">
-            <img
-              src="/images/hologram-logo.png"
-              alt=""
-              aria-hidden
-              width={64}
-              height={64}
-              loading="lazy"
-              decoding="async"
-              className="h-16 w-16 opacity-90 drop-shadow-[0_0_15px_rgba(152,255,232,0.3)]"
-            />
-          </div>
-          
-          <p className="font-urbanist text-2xl md:text-3xl lg:text-4xl leading-snug text-white font-medium">
-            "{copy.quoteText}"
-          </p>
-          
-          <div className="mt-8 flex items-center gap-5">
-            <div className="h-14 w-14 shrink-0 overflow-hidden rounded-2xl border-2 border-white/20 shadow-xl">
-              <img
-                src="/images/team-megankane.jpg"
-                alt={`${copy.quoteAttributionName}, ${copy.quoteAttributionRole}`}
-                width={56}
-                height={56}
-                loading="lazy"
-                decoding="async"
-                className="h-full w-full object-cover"
-              />
+        <div className="relative z-10 flex min-h-[min(480px,calc(100vh-10rem))] flex-1 flex-col p-6 md:p-10">
+          <img
+            src="/images/hologram-logo.png"
+            alt=""
+            aria-hidden
+            width={64}
+            height={64}
+            loading="lazy"
+            decoding="async"
+            className="h-14 w-14 opacity-90 drop-shadow-[0_0_15px_rgba(152,255,232,0.3)] md:h-16 md:w-16"
+          />
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            className="flex flex-1 flex-col justify-center py-8"
+          >
+            <p className="max-w-md font-urbanist text-2xl font-semibold leading-snug text-white md:text-3xl lg:text-4xl">
+              &ldquo;{copy.quoteText}&rdquo;
+            </p>
+
+            <div className="mt-8 flex items-center gap-5">
+              <div className="h-14 w-14 shrink-0 overflow-hidden rounded-2xl border-2 border-white/20 shadow-xl">
+                <img
+                  src="/images/team-megankane.jpg"
+                  alt={`${copy.quoteAttributionName}, ${copy.quoteAttributionRole}`}
+                  width={56}
+                  height={56}
+                  loading="lazy"
+                  decoding="async"
+                  className="h-full w-full object-cover"
+                />
+              </div>
+              <div>
+                <p className="font-host-grotesk text-base font-bold tracking-wide text-white">
+                  {copy.quoteAttributionName}
+                </p>
+                <p className="font-urbanist text-sm font-medium text-rellia-mint/90">{copy.quoteAttributionRole}</p>
+              </div>
             </div>
-            <div>
-              <p className="font-host-grotesk text-base font-bold text-white tracking-wide">
-                {copy.quoteAttributionName}
-              </p>
-              <p className="font-urbanist text-rellia-mint/90 font-medium text-sm">
-                {copy.quoteAttributionRole}
-              </p>
-            </div>
-          </div>
-        </motion.div>
 
-        {/* Email Address */}
-        <motion.div 
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.3, duration: 0.8 }}
-          className="pt-10 border-t border-white/10"
-        >
-          <p className="font-host-grotesk text-sm font-medium text-white/60">
-            <a href="mailto:hello@relliahealth.com" className="hover:underline underline-offset-4">hello@relliahealth.com</a>
-          </p>
-        </motion.div>
-      </div>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.3, duration: 0.8 }}
+              className="mt-10 border-t border-white/10 pt-8"
+            >
+              <p className="font-host-grotesk text-sm font-medium text-white/60">
+                <a href="mailto:hello@relliahealth.com" className="hover:underline underline-offset-4">
+                  hello@relliahealth.com
+                </a>
+              </p>
+            </motion.div>
+          </motion.div>
+        </div>
 
-      {/* Abstract mint glow at the bottom */}
-      <div className="absolute -bottom-24 -right-24 w-96 h-96 bg-rellia-mint/15 rounded-full blur-[120px] pointer-events-none" />
+        <div className="pointer-events-none absolute -bottom-24 -right-24 h-96 w-96 rounded-full bg-rellia-mint/15 blur-[120px]" />
       </div>
     </div>
   )

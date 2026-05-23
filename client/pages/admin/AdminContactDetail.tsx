@@ -90,7 +90,10 @@ const AdminContactDetail = () => {
 
   const status = (data.status ?? "New") as SubmissionStatus
   const hasStatusField = "status" in data
-  const mailSubject = `Re: Your message to Rellia Health`
+  const isInvestor = (data as ContactSubmission & { submission_type?: string }).submission_type === "investor"
+  const mailSubject = isInvestor
+    ? "Re: Rellia Health pitch events"
+    : `Re: Your message to Rellia Health`
   const mailBody = `Hi ${data.first_name},\n\n`
 
   return (
@@ -108,7 +111,12 @@ const AdminContactDetail = () => {
           <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
             <div>
               <h1 className="font-host-grotesk text-xl font-bold text-black md:text-2xl">
-                {data.first_name} {data.last_name}
+                {data.first_name} {data.last_name === "." ? "" : data.last_name}
+                {isInvestor ? (
+                  <span className="ml-2 inline-flex rounded-full bg-rellia-mint/30 px-2 py-0.5 align-middle font-urbanist text-xs font-medium text-rellia-teal">
+                    Investor
+                  </span>
+                ) : null}
               </h1>
               <p className="mt-1 font-urbanist text-sm text-black/65">{data.email}</p>
               <p className="font-urbanist text-sm text-black/50">{formatAdminDateLong(data.created_at)}</p>

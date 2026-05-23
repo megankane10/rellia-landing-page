@@ -27,9 +27,12 @@ import {
   ShareIconCopy,
   ShareIconFacebook,
   ShareIconLinkedIn,
+  ShareIconMail,
   ShareIconX,
   shareToolbarButtonClassName,
 } from "@/components/share/sharePageIcons"
+import { buildMailtoHref } from "@/lib/mailto"
+import { DEFAULT_GLOBAL_SETTINGS } from "@shared/cms/defaults"
 
 export default function StoryPost() {
   const { slug } = useParams()
@@ -288,6 +291,16 @@ export default function StoryPost() {
                         aria-label="Share on Facebook"
                       >
                         <ShareIconFacebook />
+                      </a>
+                      <a
+                        href={buildMailtoHref(DEFAULT_GLOBAL_SETTINGS.supportEmail, {
+                          subject: title,
+                          body: `${title}\n\n${canonical}`,
+                        })}
+                        className={shareToolbarButtonClassName}
+                        aria-label="Share by email"
+                      >
+                        <ShareIconMail />
                       </a>
 
                       <button
