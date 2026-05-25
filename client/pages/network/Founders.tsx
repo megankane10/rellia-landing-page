@@ -581,7 +581,7 @@ function JourneySplitSection() {
           </div>
         </ScrollReveal>
 
-        <div className="mt-6 grid w-full grid-cols-1 gap-6 md:grid-cols-3">
+        <div className="mt-6 grid w-full grid-cols-1 items-stretch gap-6 md:grid-cols-3">
           {outsideSteps.map((m, idx) => {
             const Icon = journeyIconById[m.id]
             return (
@@ -589,13 +589,14 @@ function JourneySplitSection() {
                 key={m.id}
                 variant="ctaReveal"
                 delay={outsideCardBaseDelay + idx * outsideCardStagger}
+                className="h-full"
               >
-                <article className="flex flex-col items-start rounded-2xl border border-rellia-cream/60 bg-rellia-cream/35 p-6 text-left transition duration-300 hover:border-rellia-teal/20 hover:shadow-sm">
+                <article className="flex h-full min-h-[220px] flex-col items-start rounded-2xl border border-rellia-cream/60 bg-rellia-cream/35 p-6 text-left transition duration-300 hover:border-rellia-teal/20 hover:shadow-sm md:min-h-[260px]">
                   <span className="mb-4 inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-rellia-teal/5 text-rellia-teal">
                     <Icon className="h-5 w-5" aria-hidden />
                   </span>
                   <h3 className="font-host-grotesk text-lg font-semibold leading-snug text-black">{m.label}</h3>
-                  <p className="mt-2 font-urbanist text-sm leading-relaxed text-black/65">{m.detail}</p>
+                  <p className="mt-2 flex-1 font-urbanist text-sm leading-relaxed text-black/65">{m.detail}</p>
                 </article>
               </ScrollReveal>
             )
@@ -627,7 +628,7 @@ function JourneySplitSection() {
           </div>
         </ScrollReveal>
 
-        <div className="mt-6 grid w-full grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-4">
+        <div className="mt-6 grid w-full grid-cols-1 items-stretch gap-4 sm:grid-cols-2 md:grid-cols-4">
           {relliaSteps.map((m, idx) => {
             const Icon = journeyIconById[m.id]
             const isLast = idx === relliaSteps.length - 1
@@ -636,18 +637,18 @@ function JourneySplitSection() {
                 key={m.id}
                 variant="ctaReveal"
                 delay={relliaCardBaseDelay + idx * relliaCardStagger}
-                className={cn(isLast && "sm:col-span-2 md:col-span-2")}
+                className={cn("h-full", isLast && "sm:col-span-2 md:col-span-2")}
               >
                 <article
                   className={cn(
-                    "flex flex-col items-start rounded-2xl border border-rellia-teal/80 bg-rellia-teal p-6 text-left transition duration-300 hover:border-rellia-mint/55 hover:shadow-md",
+                    "flex h-full min-h-[220px] flex-col items-start rounded-2xl border border-rellia-teal/80 bg-rellia-teal p-6 text-left transition duration-300 hover:border-rellia-mint/55 hover:shadow-md md:min-h-[260px]",
                   )}
                 >
                   <span className="mb-4 inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-rellia-mint text-rellia-teal shadow-sm">
                     <Icon className="h-5 w-5" aria-hidden />
                   </span>
                   <h4 className="font-host-grotesk text-base font-semibold leading-snug text-white">{m.label}</h4>
-                  <p className="mt-2 font-urbanist text-sm leading-relaxed text-white/80">{m.detail}</p>
+                  <p className="mt-2 flex-1 font-urbanist text-sm leading-relaxed text-white/80">{m.detail}</p>
                 </article>
               </ScrollReveal>
             )

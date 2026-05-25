@@ -29,11 +29,13 @@ export default function AnnouncementModal({
         id="announcement-modal"
         hideClose
         aria-label="Announcement"
+        onOpenAutoFocus={(event) => event.preventDefault()}
         overlayClassName="z-[10001] bg-transparent pointer-events-none"
         className={cn(
           "z-[10001] pointer-events-auto",
-          "left-1/2 bottom-5 -translate-x-1/2 sm:left-5 sm:bottom-5 sm:translate-x-0 md:left-8 md:bottom-8 top-auto",
-          "w-[calc(100%-2rem)] sm:w-[min(94vw,460px)] max-w-none gap-0 rounded-[2rem] border-0 p-5 md:p-6",
+          "left-4 right-4 bottom-4 top-auto w-auto max-w-none translate-x-0 translate-y-0",
+          "sm:left-5 sm:right-auto sm:bottom-5 sm:w-[min(94vw,460px)] md:left-8 md:bottom-8",
+          "gap-0 rounded-[1.75rem] border-0 p-5 md:rounded-[2.75rem] md:p-6",
           "shadow-[0_8px_32px_-8px_rgba(0,0,0,0.18)]",
           "bg-gradient-to-r from-rellia-mint via-rellia-greyTeal to-rellia-mint",
           "data-[state=closed]:slide-out-to-bottom-4 data-[state=open]:slide-in-from-bottom-4",
@@ -74,7 +76,7 @@ export default function AnnouncementModal({
                 "inline-flex h-10 min-w-0 flex-1 items-center justify-center rounded-full px-3",
                 "border border-rellia-teal/25 bg-white/30 font-host-grotesk text-sm font-semibold text-rellia-teal",
                 "transition-colors duration-200 hover:bg-white/50",
-                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-teal/35 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent",
+                "outline-none focus:outline-none focus:bg-white/30 focus-visible:bg-white/50 focus-visible:ring-2 focus-visible:ring-rellia-teal/35 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent",
                 !showButton && "flex-[2]",
               )}
             >
