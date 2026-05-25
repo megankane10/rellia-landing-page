@@ -2057,6 +2057,15 @@ export const DEFAULT_QMS_PROGRAM: QmsProgramContent = {
       quote:
         "The Rellia QMS program was practical and startup-friendly, the process was easy to follow, and the support helped us understand not just what needed to be done, but how to do it properly.",
     },
+    {
+      name: "Rooaa Shanshal",
+      role: "Co-Founder",
+      company: "Power of Play",
+      image: "/images/testimonials-rooaaS.jpeg",
+      logo: "/images/portfolio-pop.png",
+      quote:
+        "Since joining, we've made real progress on building our QMS which is something that previously felt overwhelming.",
+    },
   ],
 }
 

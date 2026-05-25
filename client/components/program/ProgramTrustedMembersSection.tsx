@@ -102,14 +102,10 @@ export default function ProgramTrustedMembersSection({
             <CarouselContent className="-ml-4">
               {testimonials.map((t) => (
                 <CarouselItem key={t.name} className="basis-full pl-4 py-4">
-                  <div className="relative mx-auto flex h-[350px] sm:h-[300px] md:h-[280px] w-full max-w-[980px] flex-col justify-between overflow-hidden rounded-[24px] bg-gradient-to-br from-[#144853] via-rellia-teal to-rellia-teal p-6 md:p-8 shadow-md">
-                    <div
-                      aria-hidden
-                      className="pointer-events-none absolute -left-10 -top-6 h-32 w-32 rounded-full bg-rellia-mint/15 blur-2xl"
-                    />
+                  <div className="relative mx-auto flex h-[450px] sm:h-[360px] md:h-[320px] w-full max-w-[980px] flex-col justify-between overflow-hidden rounded-[24px] bg-gradient-to-br from-[#144853] via-rellia-teal to-rellia-teal p-6 md:p-8 shadow-md">
                     <div className="relative z-10 flex flex-col items-start justify-start">
                       <Quote
-                        className="mb-4 h-8 w-8 fill-current text-rellia-mint/35"
+                        className="mb-4 h-8 w-8 fill-current text-white"
                         fill="currentColor"
                         stroke="none"
                         aria-hidden
