@@ -8,6 +8,7 @@ export type AnnouncementModalProps = {
   text: string
   buttonLabel?: string
   buttonLink?: string
+  pillText?: string
 }
 
 export default function AnnouncementModal({
@@ -16,6 +17,7 @@ export default function AnnouncementModal({
   text,
   buttonLabel,
   buttonLink,
+  pillText,
 }: AnnouncementModalProps) {
   const trimmedLabel = buttonLabel?.trim()
   const trimmedLink = buttonLink?.trim()
@@ -49,16 +51,16 @@ export default function AnnouncementModal({
         </DialogDescription>
         <div className="flex w-full flex-col items-stretch text-left">
           <div className="mb-3 flex items-center">
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-rellia-teal px-2.5 py-1 text-[11px] font-bold uppercase tracking-[0.14em] text-white">
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-rellia-teal/25 bg-transparent px-2.5 py-1 text-[11px] font-bold uppercase tracking-[0.14em] text-rellia-teal">
               <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rellia-mint opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-rellia-mint"></span>
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rellia-teal opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-rellia-teal"></span>
               </span>
-              LIVE
+              {pillText?.trim() || "LIVE"}
             </span>
           </div>
 
-          <p className="font-urbanist text-[17px] font-semibold leading-relaxed text-black md:text-[19px] md:leading-relaxed">
+          <p className="font-urbanist text-[19px] font-semibold leading-relaxed text-black md:text-[22px] md:leading-relaxed">
             {text}
           </p>
  
@@ -69,9 +71,9 @@ export default function AnnouncementModal({
                 onClick={handleDismiss}
                 className={cn(
                   "inline-flex h-11 min-w-0 flex-1 items-center justify-center rounded-full px-4",
-                  "bg-rellia-teal font-host-grotesk text-sm font-semibold text-white",
-                  "transition-colors duration-200 hover:bg-rellia-teal/90",
-                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-teal/40 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent",
+                  "bg-rellia-mint font-host-grotesk text-sm font-semibold text-rellia-teal",
+                  "transition-colors duration-200 hover:bg-rellia-mint/90",
+                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint/40 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent",
                 )}
               >
                 {trimmedLabel}

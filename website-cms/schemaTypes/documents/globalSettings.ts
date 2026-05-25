@@ -78,6 +78,14 @@ export const globalSettings = defineType({
       description: 'Internal path or URL for the banner CTA.',
       group: 'announcement',
     }),
+    defineField({
+      name: 'announcementPillText',
+      title: 'Announcement pill text',
+      type: 'string',
+      description: 'Text shown in the pill, e.g. LIVE, NEW, UPDATE. Defaults to "LIVE".',
+      initialValue: 'LIVE',
+      group: 'announcement',
+    }),
   ],
   preview: {
     prepare() {

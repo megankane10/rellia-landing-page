@@ -98,6 +98,22 @@ const splitEventDetailBody = (raw: string | undefined): string[] => {
     .filter(Boolean)
 }
 
+function portableTextToPlainText(blocks: any): string {
+  if (!blocks) return ""
+  if (typeof blocks === "string") return blocks
+  if (!Array.isArray(blocks)) return ""
+  return blocks
+    .map((block) => {
+      if (!block || typeof block !== "object") return ""
+      if (block.children && Array.isArray(block.children)) {
+        return block.children.map((child: any) => (child && typeof child === "object" ? child.text || "" : "")).join("")
+      }
+      return ""
+    })
+    .filter(Boolean)
+    .join(" ")
+}
+
 const getEventStatus = (event: any): "upcoming" | "past" => {
   const explicit = event?.status
   if (explicit === "upcoming" || explicit === "past") return explicit
@@ -143,11 +159,32 @@ export default function EventDetail() {
     const { _variant: _variantIgnored, ...event } = match
     const computedDateTime = getProgramsEventDisplayDateTime(event)
     const shortDateTime = shortenProgramsEventDateTime(computedDateTime)
-    const locationLabel = getProgramsEventLocationLabel(event)
-    const pageTitle = clampMetaTitle(`${event.title} — Rellia Health`)
-    const eventDescription = clampMetaDescription(
-      `${event.title}. ${shortDateTime || computedDateTime}. ${locationLabel}.`,
-    )
+    const pageTitle = clampMetaTitle(event.title)
+
+    const descText = (() => {
+      if (event.eventDescription) {
+        if (typeof event.eventDescription === "string") return event.eventDescription
+        if (Array.isArray(event.eventDescription)) {
+          const text = portableTextToPlainText(event.eventDescription)
+          if (text.trim()) return text.trim()
+        }
+      }
+      if (event.detailBody) {
+        if (typeof event.detailBody === "string") return event.detailBody
+        if (Array.isArray(event.detailBody)) {
+          const text = portableTextToPlainText(event.detailBody)
+          if (text.trim()) return text.trim()
+        }
+      }
+      return ""
+    })()
+
+    const eventDate = shortDateTime || computedDateTime
+    const finalDesc = descText
+      ? `${eventDate} · ${descText}`
+      : eventDate
+
+    const eventDescription = clampMetaDescription(finalDesc)
     const eventSlugPath = getProgramsEventSlug(event)
     const pagePath = `/events/${eventSlugPath}`
     return {

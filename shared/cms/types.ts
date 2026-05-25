@@ -278,6 +278,7 @@ export type GlobalSettingsContent = {
   announcementText?: string
   announcementButtonLabel?: string
   announcementButtonLink?: string
+  announcementPillText?: string
 }
 
 export type SiteSettingsContent = {

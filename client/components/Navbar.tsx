@@ -444,6 +444,7 @@ export default function Navbar({
         text={globalSettings.announcementText?.trim() ?? ""}
         buttonLabel={globalSettings.announcementButtonLabel}
         buttonLink={globalSettings.announcementButtonLink}
+        pillText={globalSettings.announcementPillText}
       />
 
       <header>

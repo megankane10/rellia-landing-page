@@ -74,6 +74,7 @@ export default function StoryPost() {
   }
 
   const headerCoverSrc = cmsStory?.coverImageSrc?.trim() || story?.coverImageSrc?.trim()
+  const headerCoverAlt = cmsStory?.coverImageAlt?.trim() || story?.coverImageAlt?.trim() || cmsStory?.title || story?.title || ""
   const imageUrl = headerCoverSrc
     ? resolveSocialOgImageUrl(headerCoverSrc) ?? toAbsoluteImageUrl(headerCoverSrc)
     : undefined
@@ -217,8 +218,8 @@ export default function StoryPost() {
             tag={(cmsStory.tag ?? "Story").trim() || "Story"}
             title={cmsStory.title}
             excerpt={cmsStory.excerpt}
-            coverImageSrc={cmsStory.coverImageSrc}
-            coverImageAlt={cmsStory.coverImageAlt}
+            coverImageSrc={headerCoverSrc}
+            coverImageAlt={headerCoverAlt}
             toAbsoluteImageUrl={toAbsoluteImageUrl}
             shareBlock={shareBlock}
           />
@@ -279,8 +280,8 @@ export default function StoryPost() {
           tag={story.tag}
           title={story.title}
           excerpt={story.excerpt}
-          coverImageSrc={story.coverImageSrc}
-          coverImageAlt={story.coverImageAlt}
+          coverImageSrc={headerCoverSrc}
+          coverImageAlt={headerCoverAlt}
           toAbsoluteImageUrl={toAbsoluteImageUrl}
           shareBlock={shareBlock}
         />

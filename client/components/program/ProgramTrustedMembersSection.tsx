@@ -37,6 +37,17 @@ const DEFAULT_TESTIMONIALS: TrustedMemberTestimonial[] = [
   },
 ]
 
+function getQuoteFontSizeClass(quote: string) {
+  const len = quote.trim().length
+  if (len < 120) {
+    return "text-lg sm:text-xl md:text-2xl"
+  } else if (len < 200) {
+    return "text-[16px] sm:text-[18px] md:text-xl"
+  } else {
+    return "text-[14px] sm:text-[15px] md:text-[17px]"
+  }
+}
+
 type ProgramTrustedMembersSectionProps = {
   title?: string
   testimonials?: TrustedMemberTestimonial[]
@@ -102,7 +113,7 @@ export default function ProgramTrustedMembersSection({
             <CarouselContent className="-ml-4">
               {testimonials.map((t) => (
                 <CarouselItem key={t.name} className="basis-full pl-4 py-4">
-                  <div className="relative mx-auto flex h-[450px] sm:h-[360px] md:h-[320px] w-full max-w-[980px] flex-col justify-between overflow-hidden rounded-[24px] bg-gradient-to-br from-[#144853] via-rellia-teal to-rellia-teal p-6 md:p-8 shadow-md">
+                  <div className="relative mx-auto flex h-[290px] sm:h-[260px] md:h-[240px] w-full max-w-[980px] flex-col justify-between overflow-hidden rounded-[24px] bg-gradient-to-br from-[#144853] via-rellia-teal to-rellia-teal p-6 md:p-8 shadow-md">
                     <div className="relative z-10 flex flex-col items-start justify-start">
                       <Quote
                         className="mb-4 h-8 w-8 fill-current text-white"
@@ -110,7 +121,10 @@ export default function ProgramTrustedMembersSection({
                         stroke="none"
                         aria-hidden
                       />
-                      <p className="w-full font-host-grotesk text-lg font-medium leading-[1.3] tracking-tight text-rellia-mint md:text-xl lg:text-2xl line-clamp-4">
+                      <p className={cn(
+                        "w-full font-host-grotesk font-medium leading-[1.3] tracking-tight text-rellia-mint",
+                        getQuoteFontSizeClass(t.quote)
+                      )}>
                         &ldquo;{t.quote}&rdquo;
                       </p>
                     </div>

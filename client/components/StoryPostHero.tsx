@@ -31,10 +31,10 @@ export const StoryPostHero = ({
           <img
             src={toAbsoluteImageUrl(coverSrc)}
             alt=""
-            className="absolute inset-0 h-full w-full object-cover opacity-[0.34]"
+            className="absolute inset-0 h-full w-full object-cover opacity-[0.5]"
           />
         ) : null}
-        <div className="absolute inset-0 bg-gradient-to-r from-rellia-cream/92 via-rellia-cream/72 to-rellia-cream/45" />
+        <div className="absolute inset-0 bg-gradient-to-r from-rellia-cream/92 via-rellia-cream/72 to-transparent" />
         <div className="absolute -left-28 -top-32 h-[520px] w-[520px] rounded-full bg-rellia-mint/20 blur-3xl" />
         <div className="absolute -right-40 top-1/3 h-[560px] w-[560px] -translate-y-1/2 rounded-full bg-rellia-teal/10 blur-3xl" />
         <div className="absolute bottom-[-220px] left-1/3 h-[620px] w-[620px] -translate-x-1/2 rounded-full bg-rellia-mint/15 blur-3xl" />

@@ -320,7 +320,7 @@ const ProgramPageLayout = ({
         {/* ─── Program Outcomes ─── */}
         <section
           id={outcomesSectionId}
-          className="scroll-mt-24 md:scroll-mt-[5.5rem] relative w-full bg-rellia-greyTeal py-16 md:py-24 px-6 md:px-10 overflow-hidden"
+          className="scroll-mt-24 md:scroll-mt-[5.5rem] relative w-full bg-rellia-greyTeal pt-10 pb-16 md:pt-14 md:pb-24 px-6 md:px-10 overflow-hidden"
         >
           <div aria-hidden className="pointer-events-none absolute inset-0">
             <div className="absolute -left-28 top-10 h-[520px] w-[520px] rounded-full bg-rellia-mint/12 blur-3xl" />
@@ -328,7 +328,7 @@ const ProgramPageLayout = ({
           </div>
           <div className="relative z-10 max-w-[1300px] mx-auto">
             <ScrollReveal delay={0.1}>
-              <div className="mb-10 md:mb-14">
+              <div className="mb-6 md:mb-8">
                 <h2 className="font-host-grotesk text-3xl font-semibold leading-tight tracking-tight text-black md:text-[40px]">
                   {q.outcomesTitle}
                 </h2>

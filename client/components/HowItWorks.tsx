@@ -93,7 +93,7 @@ export default function HowItWorks(props?: HowItWorksProps) {
   const columns = columnsProp ?? (stepsProp != null ? 2 : 3)
 
   return (
-    <section className="relative max-w-[1300px] mx-auto w-[calc(100%-2rem)] md:w-[calc(100%-4rem)] bg-rellia-teal py-16 md:py-24 px-6 md:px-10 overflow-hidden rounded-[2.5rem] md:rounded-[3.5rem]">
+    <section className="relative max-w-[1300px] mx-auto w-[calc(100%-2rem)] md:w-[calc(100%-4rem)] bg-rellia-teal pt-10 pb-16 md:pt-14 md:pb-24 px-6 md:px-10 overflow-hidden rounded-[2.5rem] md:rounded-[3.5rem]">
       <img
         src="/images/hologram-logo.png"
         alt=""

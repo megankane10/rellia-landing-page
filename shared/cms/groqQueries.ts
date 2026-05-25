@@ -17,7 +17,8 @@ export const globalSettingsQuery = `*[_type == "globalSettings"][0]{
   announcementEnabled,
   announcementText,
   announcementButtonLabel,
-  announcementButtonLink
+  announcementButtonLink,
+  announcementPillText
 }`;
 
 export const navigationQuery = `*[_type == "navigation"][0]{

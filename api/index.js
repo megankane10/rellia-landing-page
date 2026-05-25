@@ -43,7 +43,8 @@ var globalSettingsQuery = `*[_type == "globalSettings"][0]{
   announcementEnabled,
   announcementText,
   announcementButtonLabel,
-  announcementButtonLink
+  announcementButtonLink,
+  announcementPillText
 }`;
 var navigationQuery = `*[_type == "navigation"][0]{
   primary[]{

@@ -1300,6 +1300,7 @@ export const DEFAULT_GLOBAL_SETTINGS: GlobalSettingsContent = {
   announcementText: "The Regulatory Strategy Sprint is now accepting applications.",
   announcementButtonLabel: "Learn More",
   announcementButtonLink: "/programs/regulatory-strategy-sprint",
+  announcementPillText: "LIVE",
 }
 
 export const DEFAULT_HOME_PAGE: HomePageContent = {

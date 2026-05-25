@@ -233,7 +233,6 @@ export default function Consulting() {
             title="Not sure which **path** fits?"
             body="Tell us your milestone—we'll recommend membership, consulting, or a blended rhythm."
             primary={{ label: "Talk to us", to: "/contact" }}
-            secondary={{ label: "Apply for membership", to: "/apply" }}
           />
         </div>
       </main>

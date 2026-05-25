@@ -52,7 +52,7 @@ const AdminBrandPanel = ({ heading, description, children, textTone = "white" }:
 
           <div className="flex flex-1 flex-col justify-center py-10 md:py-12">
             <h2
-              className="text-left font-urbanist text-2xl font-semibold leading-snug text-rellia-mint md:text-3xl lg:text-4xl w-full px-2"
+              className="text-left font-urbanist text-2xl font-medium leading-snug text-white md:text-4xl lg:text-5xl w-full px-2"
             >
               {heading}
             </h2>
