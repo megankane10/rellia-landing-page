@@ -126,26 +126,26 @@ export default function Footer() {
                   href={g.linkedinUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="rounded-full bg-white/5 p-2 transition-colors hover:bg-white/10"
+                  className="group rounded-full bg-white/5 p-2 transition-all duration-300 hover:bg-rellia-mint"
                   aria-label="Rellia Health on LinkedIn"
                 >
-                  <LinkedInFilled className="h-5 w-5 text-white/85" />
+                  <LinkedInFilled className="h-5 w-5 text-white/85 transition-colors duration-300 group-hover:text-rellia-teal" />
                 </a>
                 <a
                   href={g.instagramUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="rounded-full bg-white/5 p-2 transition-colors hover:bg-white/10"
+                  className="group rounded-full bg-white/5 p-2 transition-all duration-300 hover:bg-rellia-mint"
                   aria-label="Rellia Health on Instagram"
                 >
-                  <InstagramFilled className="h-5 w-5 text-white/85" />
+                  <InstagramFilled className="h-5 w-5 text-white/85 transition-colors duration-300 group-hover:text-rellia-teal" />
                 </a>
                 <a
                   href={`mailto:${g.supportEmail}`}
-                  className="rounded-full bg-white/5 p-2 transition-colors hover:bg-white/10"
+                  className="group rounded-full bg-white/5 p-2 transition-all duration-300 hover:bg-rellia-mint"
                   aria-label={`Email ${g.supportEmail}`}
                 >
-                  <MailFilled className="h-5 w-5 text-white/85" />
+                  <MailFilled className="h-5 w-5 text-white/85 transition-colors duration-300 group-hover:text-rellia-teal" />
                 </a>
               </div>
             </div>
@@ -205,26 +205,26 @@ export default function Footer() {
               href={g.linkedinUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="rounded-full bg-white/5 p-2 transition-colors hover:bg-white/10"
+              className="group rounded-full bg-white/5 p-2 transition-all duration-300 hover:bg-rellia-mint"
               aria-label="Rellia Health on LinkedIn"
             >
-              <LinkedInFilled className="h-5 w-5 text-white/85" />
+              <LinkedInFilled className="h-5 w-5 text-white/85 transition-colors duration-300 group-hover:text-rellia-teal" />
             </a>
             <a
               href={g.instagramUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="rounded-full bg-white/5 p-2 transition-colors hover:bg-white/10"
+              className="group rounded-full bg-white/5 p-2 transition-all duration-300 hover:bg-rellia-mint"
               aria-label="Rellia Health on Instagram"
             >
-              <InstagramFilled className="h-5 w-5 text-white/85" />
+              <InstagramFilled className="h-5 w-5 text-white/85 transition-colors duration-300 group-hover:text-rellia-teal" />
             </a>
             <a
               href={`mailto:${g.supportEmail}`}
-              className="rounded-full bg-white/5 p-2 transition-colors hover:bg-white/10"
+              className="group rounded-full bg-white/5 p-2 transition-all duration-300 hover:bg-rellia-mint"
               aria-label={`Email ${g.supportEmail}`}
             >
-              <MailFilled className="h-5 w-5 text-white/85" />
+              <MailFilled className="h-5 w-5 text-white/85 transition-colors duration-300 group-hover:text-rellia-teal" />
             </a>
           </div>
 

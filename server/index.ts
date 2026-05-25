@@ -25,6 +25,10 @@ import {
 } from "./csrf";
 import { isAdminSignupEnabled } from "./adminSignupEnv";
 import { buildSiteOrigins, isAllowedBrowserOrigin } from "./siteOrigins";
+import {
+  extractSanityDraftDocs,
+  notifySanityDraftToSlack,
+} from "./slackNotify";
 
 type RequestLike = {
   headers?: Record<string, unknown>;
@@ -279,6 +283,45 @@ export function createServer() {
 
   app.get("/health", rateLimitJson(healthRate, HEALTH_MAX_PER_MIN), healthHandler);
   app.get("/api/health", rateLimitJson(healthRate, HEALTH_MAX_PER_MIN), healthHandler);
+
+  const sanitySlackWebhookRate = new Map<string, RateState>();
+  const SANITY_SLACK_WEBHOOK_MAX_PER_MIN = 60;
+
+  app.post(
+    "/api/webhooks/sanity-slack",
+    rateLimitJson(sanitySlackWebhookRate, SANITY_SLACK_WEBHOOK_MAX_PER_MIN),
+    async (req, res) => {
+      const expectedSecret = process.env.SANITY_SLACK_WEBHOOK_SECRET?.trim();
+      if (!expectedSecret) {
+        res.status(501).json({ error: "SANITY_SLACK_WEBHOOK_SECRET is not configured" });
+        return;
+      }
+
+      const providedSecret =
+        (typeof req.query.secret === "string" ? req.query.secret : "") ||
+        headerOne(req, "x-webhook-secret")?.trim() ||
+        "";
+
+      if (!providedSecret || providedSecret !== expectedSecret) {
+        res.status(401).json({ error: "Unauthorized" });
+        return;
+      }
+
+      const drafts = extractSanityDraftDocs(req.body);
+      if (drafts.length === 0) {
+        res.status(200).json({ ok: true, notified: 0 });
+        return;
+      }
+
+      let notified = 0;
+      for (const doc of drafts) {
+        const sent = await notifySanityDraftToSlack(doc);
+        if (sent) notified += 1;
+      }
+
+      res.status(200).json({ ok: true, notified });
+    },
+  );
 
   app.get(
     "/api/csrf-token",

@@ -55,11 +55,9 @@ const InvestorNotifyForm = ({ className, onSuccess }: InvestorNotifyFormProps) =
   if (isSuccess) {
     return (
       <div className={cn("text-center", className)}>
-        <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-rellia-mint/20">
-          <CheckCircle2 className="h-8 w-8 text-rellia-teal" aria-hidden />
-        </div>
-        <h3 className="font-host-grotesk text-xl font-semibold text-rellia-teal">You&apos;re on the list</h3>
-        <p className="mt-3 font-urbanist text-base leading-relaxed text-black/65">
+        <CheckCircle2 className="mx-auto mb-8 h-16 w-16 text-rellia-teal" aria-hidden />
+        <h3 className="font-host-grotesk text-3xl font-bold text-rellia-teal md:text-4xl">You&apos;re on the list</h3>
+        <p className="mt-4 font-urbanist text-base leading-relaxed text-black/65">
           We&apos;ll notify you about upcoming pitch events and curated founder intros.
         </p>
         <RelliaAction
@@ -87,46 +85,48 @@ const InvestorNotifyForm = ({ className, onSuccess }: InvestorNotifyFormProps) =
       </header>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-        <div className="space-y-2">
-          <label htmlFor="investor-notify-name" className="font-host-grotesk text-xs font-bold uppercase tracking-wider text-rellia-teal">
-            Name
-          </label>
-          <input
-            id="investor-notify-name"
-            {...register("name", { required: "Name is required" })}
-            autoComplete="name"
-            className={cn(
-              "w-full rounded-[14px] border-2 border-black/[0.06] bg-black/[0.03] px-4 py-3.5 font-urbanist text-black outline-none transition-all",
-              "focus:border-rellia-teal/20 focus:bg-white focus:ring-4 focus:ring-rellia-teal/5",
-              errors.name && "border-red-200 bg-red-50/30",
-            )}
-          />
-          {errors.name ? (
-            <p className="font-urbanist text-xs font-medium text-red-600">{errors.name.message}</p>
-          ) : null}
-        </div>
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+          <div className="space-y-2">
+            <label htmlFor="investor-notify-name" className="font-host-grotesk text-xs font-bold uppercase tracking-wider text-rellia-teal">
+              Name
+            </label>
+            <input
+              id="investor-notify-name"
+              {...register("name", { required: "Name is required" })}
+              autoComplete="name"
+              className={cn(
+                "w-full rounded-[14px] border-2 border-black/[0.06] bg-black/[0.03] px-4 py-3.5 font-urbanist text-black outline-none transition-all",
+                "focus:border-rellia-teal/20 focus:bg-white focus:ring-4 focus:ring-rellia-teal/5",
+                errors.name && "border-red-200 bg-red-50/30",
+              )}
+            />
+            {errors.name ? (
+              <p className="font-urbanist text-xs font-medium text-red-600">{errors.name.message}</p>
+            ) : null}
+          </div>
 
-        <div className="space-y-2">
-          <label htmlFor="investor-notify-email" className="font-host-grotesk text-xs font-bold uppercase tracking-wider text-rellia-teal">
-            Email
-          </label>
-          <input
-            id="investor-notify-email"
-            type="email"
-            {...register("email", {
-              required: "Email is required",
-              pattern: { value: /^\S+@\S+$/i, message: "Enter a valid email" },
-            })}
-            autoComplete="email"
-            className={cn(
-              "w-full rounded-[14px] border-2 border-black/[0.06] bg-black/[0.03] px-4 py-3.5 font-urbanist text-black outline-none transition-all",
-              "focus:border-rellia-teal/20 focus:bg-white focus:ring-4 focus:ring-rellia-teal/5",
-              errors.email && "border-red-200 bg-red-50/30",
-            )}
-          />
-          {errors.email ? (
-            <p className="font-urbanist text-xs font-medium text-red-600">{errors.email.message}</p>
-          ) : null}
+          <div className="space-y-2">
+            <label htmlFor="investor-notify-email" className="font-host-grotesk text-xs font-bold uppercase tracking-wider text-rellia-teal">
+              Email
+            </label>
+            <input
+              id="investor-notify-email"
+              type="email"
+              {...register("email", {
+                required: "Email is required",
+                pattern: { value: /^\S+@\S+$/i, message: "Enter a valid email" },
+              })}
+              autoComplete="email"
+              className={cn(
+                "w-full rounded-[14px] border-2 border-black/[0.06] bg-black/[0.03] px-4 py-3.5 font-urbanist text-black outline-none transition-all",
+                "focus:border-rellia-teal/20 focus:bg-white focus:ring-4 focus:ring-rellia-teal/5",
+                errors.email && "border-red-200 bg-red-50/30",
+              )}
+            />
+            {errors.email ? (
+              <p className="font-urbanist text-xs font-medium text-red-600">{errors.email.message}</p>
+            ) : null}
+          </div>
         </div>
 
         <div className="space-y-2">

@@ -7,7 +7,7 @@ export type ProgramMeta = {
 
 export const PROGRAM_META_BY_HREF: Record<string, ProgramMeta> = {
   "/programs/prototype-lab": {
-    title: "Low-Fidelity Prototype Lab",
+    title: "A Low-Fidelity Prototype Lab",
     href: "/programs/prototype-lab",
     imageSrc: "/images/programs-PrototypeLab.png",
     imageAlt: "Low-Fidelity Prototype Lab",
@@ -25,7 +25,7 @@ export const PROGRAM_META_BY_HREF: Record<string, ProgramMeta> = {
     imageAlt: "Design Your Brand Strategy",
   },
   "/programs/first-50": {
-    title: "First 50 Users",
+    title: "First 50 Users: A Clinical Feedback Intensive",
     href: "/programs/first-50",
     imageSrc: "/images/programs-first50Users.png",
     imageAlt: "First 50 Users",

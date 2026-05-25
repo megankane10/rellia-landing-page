@@ -185,6 +185,8 @@ Internal dashboard for **contact** and **startup diagnostic** submissions (Supab
 
 **Supabase setup:** run `scripts/supabase_setup.sql`, `scripts/supabase_diagnostic_setup.sql`, and `scripts/supabase_admin_policies.sql` in the SQL editor.
 
+**Supabase Auth URLs (required for invites):** In Supabase → Authentication → URL configuration, set **Site URL** to `https://www.relliahealth.com` and add **Redirect URLs** for `/admin/auth/callback` and `/accept-invite` on both `www` and apex hosts (see `.env.example`). Invite emails should redirect to `/accept-invite?confirmation_url={{ .ConfirmationURL }}` so scanners do not consume the token before the user clicks **Continue**.
+
 **Admin signup env (server-side only — not `VITE_`):**
 
 ```bash

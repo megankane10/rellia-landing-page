@@ -45,6 +45,7 @@ import PrivacyPolicy from "./pages/PrivacyPolicy"
 import CmsCatchAll from "./pages/CmsCatchAll"
 import StudioRedirect from "./pages/StudioRedirect"
 import IndustryPartnersDirectory from "./pages/IndustryPartnersDirectory"
+import AdminAuthHashRedirect from "@/components/admin/AdminAuthHashRedirect"
 import { ProtectedRoute } from "@/components/admin/ProtectedRoute"
 import AdminLogin from "./pages/admin/AdminLogin"
 import AdminSignup from "./pages/admin/AdminSignup"
@@ -95,6 +96,7 @@ export const RouterShell = ({ children }: { children: ReactNode }) => (
     <PageTransition />
     <VercelObservability />
     <ThirdPartyPreloads />
+    <AdminAuthHashRedirect />
     <ScrollToTop />
     {children}
     <RouteSeo />

@@ -10,6 +10,7 @@ import RelliaAction from "@/components/RelliaAction"
 import ScrollReveal from "@/components/ScrollReveal"
 import { useHomePage } from "@/hooks/useCmsDocuments"
 import type { HomePathsCard } from "@shared/cms/types"
+import NetworkMetricsSection from "@/components/NetworkMetricsSection"
 
 /** Layered soft blurs using brand colors */
 const BrandBlurField = () => (
@@ -145,19 +146,25 @@ export default function PathsSection() {
 
 
   return (
-    <section
-      ref={(node) => {
-        sectionRef.current = node
-      }}
-      id="paths-section"
-      className={cn(
-        "relative w-full overflow-hidden px-6 md:px-10",
-        "min-h-[72vh] md:min-h-[76vh] lg:min-h-[78vh]",
-        "bg-white",
-        "py-16 md:py-24 lg:py-28",
-      )}
-    >
-      <BrandBlurField />
+    <>
+      <NetworkMetricsSection
+        heading={home?.metricsHeading || ""}
+        subheading={home?.metricsSubheading || ""}
+        metrics={home?.metrics || []}
+      />
+      <section
+        ref={(node) => {
+          sectionRef.current = node
+        }}
+        id="paths-section"
+        className={cn(
+          "relative w-full overflow-hidden px-6 md:px-10",
+          "min-h-[72vh] md:min-h-[76vh] lg:min-h-[78vh]",
+          "bg-white",
+          "py-16 md:py-24 lg:py-28",
+        )}
+      >
+        <BrandBlurField />
 
       <div className="relative z-10 mx-auto flex min-h-0 w-full max-w-[1300px] flex-col items-center">
         <motion.div
@@ -275,5 +282,6 @@ export default function PathsSection() {
         </motion.div>
       </div>
     </section>
+    </>
   )
 }

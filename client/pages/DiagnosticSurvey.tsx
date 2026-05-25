@@ -618,7 +618,7 @@ export default function DiagnosticSurvey() {
       <Navbar />
       <RouteSeo
         title="Startup Diagnostic | Rellia Health"
-        description="Assess your health tech startup across 13 domains and get a personalized advisory board and program roadmap."
+        description="Assess your health tech startup across 12 domains and get a personalized advisory board and program roadmap."
       />
 
       <div className="relative flex min-h-[calc(100vh-72px)] md:min-h-[calc(100vh-86px)]">
@@ -871,7 +871,7 @@ export default function DiagnosticSurvey() {
                   </h1>
                   <p className="font-urbanist text-lg leading-relaxed text-rellia-teal/70 md:text-xl">
                     Our diagnostic tool assesses your health tech startup across
-                    13 critical domains. Get an automated report, personalized
+                    12 critical domains. Get an automated report, personalized
                     advisory board matches, and a program roadmap tailored to
                     your gaps.
                   </p>
@@ -892,7 +892,7 @@ export default function DiagnosticSurvey() {
                           },
                           {
                             icon: Target,
-                            t: "13-Domain Deep Dive",
+                            t: "12-Domain Deep Dive",
                             d: "15-minute assessment of your regulatory, clinical, and commercial readiness.",
                           },
                           {

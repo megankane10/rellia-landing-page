@@ -1,39 +1,108 @@
+import { useState, useEffect } from "react"
 import { Link } from "react-router-dom"
 import {
   ArrowRight,
-  Target,
-  CheckCircle2,
-  MessagesSquare,
-  Rocket,
-  GraduationCap,
-  Lightbulb,
-  Hammer,
+  Palette,
+  Code2,
+  Activity,
   ShieldCheck,
-  Stethoscope,
-  BookOpen,
-  Percent,
-  Users
+  Scale,
+  FileText,
+  DollarSign,
+  TrendingUp,
+  Megaphone,
+  Compass,
+  Building2,
+  Briefcase,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react"
 import RelliaAction from "@/components/RelliaAction"
 import { Reveal } from "@/pages/network/_shared"
 
+const howItWorksSteps = [
+  {
+    icon: Palette,
+    title: 'Product Design & UI/UX',
+    description: 'Establish design credibility with intuitive healthcare interfaces and smooth user workflows.'
+  },
+  {
+    icon: Code2,
+    title: 'Product Development',
+    description: 'Build secure, scalable products integrating healthcare standards and engineering best practices.'
+  },
+  {
+    icon: Activity,
+    title: 'Clinical Evidence',
+    description: 'Design clinical validation protocols, gather evidence, and build study credibility.'
+  },
+  {
+    icon: ShieldCheck,
+    title: 'Regulatory Strategy',
+    description: 'Set up ISO 13485 QMS and prepare compliant filings for FDA and Health Canada.'
+  },
+  {
+    icon: Scale,
+    title: 'Legal & Privacy',
+    description: 'Ensure absolute compliance with HIPAA, PIPEDA, and robust system security.'
+  },
+  {
+    icon: FileText,
+    title: 'IP Strategy',
+    description: 'Protect your unique IP, patent designs, and establish freedom to operate.'
+  },
+  {
+    icon: DollarSign,
+    title: 'Reimbursement',
+    description: 'Formulate insurance coverage pathways and navigate public/private billing codes.'
+  },
+  {
+    icon: TrendingUp,
+    title: 'Fundraising',
+    description: 'Craft high-signal pitch decks, financial models, and diligence-proof datarooms.'
+  },
+  {
+    icon: Megaphone,
+    title: 'Marketing & Branding',
+    description: 'Build healthcare brand awareness, trust, and clear scientific positioning.'
+  },
+  {
+    icon: Compass,
+    title: 'Go-To-Market',
+    description: 'Define your buyer, pricing structures, pilot pipelines, and enterprise deals.'
+  },
+  {
+    icon: Building2,
+    title: 'Health System Navigation',
+    description: 'Overcome procurement delays, build clinical champion networks, and close sales.'
+  },
+  {
+    icon: Briefcase,
+    title: 'Operations & Scaling',
+    description: 'Formulate operational rhythms, scalable hiring patterns, and strong governance.'
+  }
+];
+
 export function DiagnosticSurveySection() {
-  const categories = [
-    { name: "Product design & UI/UX", icon: Lightbulb },
-    { name: "Technology and architecture", icon: Hammer },
-    { name: "Regulatory compliance", icon: ShieldCheck },
-    { name: "Clinical evidence", icon: Stethoscope },
-    { name: "Legal, privacy, cybersecurity", icon: BookOpen },
-    { name: "IP strategy", icon: Target },
-    { name: "Reimbursement strategy", icon: Percent },
-    { name: "Fundraising and investment readiness", icon: Rocket },
-    { name: "Marketing and branding", icon: Users },
-    { name: "Go-to-market strategy", icon: Target },
-    { name: "Navigating health system procurement and adoption", icon: CheckCircle2 },
-    { name: "Customer success", icon: MessagesSquare },
-    { name: "Operations and scaling", icon: Rocket },
-    { name: "Leadership mindset and resilience", icon: GraduationCap }
-  ];
+  const [currentIndex, setCurrentIndex] = useState(0)
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % howItWorksSteps.length)
+    }, 4500)
+    return () => clearInterval(timer)
+  }, [])
+
+  const handlePrev = () => {
+    setCurrentIndex((prev) => (prev - 1 + howItWorksSteps.length) % howItWorksSteps.length)
+  }
+
+  const handleNext = () => {
+    setCurrentIndex((prev) => (prev + 1) % howItWorksSteps.length)
+  }
+
+  const currentItem = howItWorksSteps[currentIndex]
+  const CurrentIcon = currentItem.icon
 
   return (
     <section className="w-full bg-rellia-cream/20 px-6 py-28 md:px-10 md:py-40 border-t border-black/10 flex items-center">
@@ -56,19 +125,46 @@ export function DiagnosticSurveySection() {
             </Reveal>
           </div>
           
-          <div className="pt-2 lg:pt-4">
-            <Reveal delay={0.1}>
-              <h3 className="font-host-grotesk text-2xl font-bold text-black mb-8 border-b border-black/10 pb-4">Categories we assess</h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-10">
-                {categories.map((cat, idx) => {
-                  const Icon = cat.icon;
-                  return (
-                    <div key={idx} className="flex items-start gap-4">
-                      <Icon className="w-6 h-6 text-rellia-teal shrink-0 mt-0.5" strokeWidth={1.5} />
-                      <span className="font-host-grotesk font-normal text-black/80 text-lg leading-snug">{cat.name}</span>
-                    </div>
-                  );
-                })}
+          <div className="pt-2 lg:pt-4 w-full">
+            <Reveal delay={0.1} className="w-full">
+              <h3 className="font-host-grotesk text-2xl font-bold text-black mb-8 border-b border-black/10 pb-4">
+                Categories we assess
+              </h3>
+              
+              <div className="relative overflow-hidden rounded-3xl border border-black/10 bg-transparent p-6 shadow-none min-h-[175px] flex flex-col justify-between">
+                <div className="flex items-start gap-4">
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-rellia-mint/20 text-rellia-teal">
+                    <CurrentIcon className="h-5.5 w-5.5" />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <h4 className="font-host-grotesk text-base font-bold text-black">{currentItem.title}</h4>
+                    <p className="mt-1.5 font-urbanist text-sm leading-relaxed text-black/70 h-12 overflow-hidden">
+                      {currentItem.description}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="mt-5 flex items-center justify-between border-t border-black/5 pt-3.5">
+                  <span className="font-host-grotesk text-xs font-bold text-black/45 tracking-wider">
+                    {String(currentIndex + 1).padStart(2, '0')} / {String(howItWorksSteps.length).padStart(2, '0')}
+                  </span>
+                  <div className="flex items-center gap-1.5">
+                    <button
+                      onClick={handlePrev}
+                      className="flex h-8 w-8 items-center justify-center rounded-full border border-black/10 bg-white text-black/70 transition-colors hover:bg-black/5 hover:text-black active:scale-95"
+                      aria-label="Previous domain"
+                    >
+                      <ChevronLeft className="h-4.5 w-4.5" />
+                    </button>
+                    <button
+                      onClick={handleNext}
+                      className="flex h-8 w-8 items-center justify-center rounded-full border border-black/10 bg-white text-black/70 transition-colors hover:bg-black/5 hover:text-black active:scale-95"
+                      aria-label="Next domain"
+                    >
+                      <ChevronRight className="h-4.5 w-4.5" />
+                    </button>
+                  </div>
+                </div>
               </div>
             </Reveal>
           </div>

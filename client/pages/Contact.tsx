@@ -23,9 +23,9 @@ export default function Contact() {
   useApplyCmsSeo(copy.seo)
 
   return (
-    <div className="min-h-screen bg-white font-host-grotesk overflow-x-hidden">
+    <div className="min-h-screen bg-white font-host-grotesk overflow-x-hidden flex flex-col">
       <Navbar />
-      <main id="main-content">
+      <main id="main-content" className="flex-1 flex flex-col">
         <ContactSection copy={copy} />
       </main>
       <Footer />
@@ -35,8 +35,8 @@ export default function Contact() {
 
 function ContactSection({ copy }: { copy: typeof DEFAULT_CONTACT_PAGE }) {
   return (
-    <section className="relative w-full pt-24 md:pt-28">
-      <div className="grid min-h-[calc(100vh-6rem)] grid-cols-1 lg:grid-cols-2">
+    <section className="relative w-full pt-16 md:pt-20 lg:pt-24 pb-16 md:pb-20 lg:pb-24">
+      <div className="grid grid-cols-1 lg:grid-cols-2">
         <LeftPanel copy={copy} />
 
         <div className="relative flex items-center justify-center overflow-hidden bg-white px-6 py-12 md:px-12 md:py-16 lg:px-16 lg:py-20">
@@ -55,7 +55,7 @@ function ContactSection({ copy }: { copy: typeof DEFAULT_CONTACT_PAGE }) {
 
 function LeftPanel({ copy }: { copy: typeof DEFAULT_CONTACT_PAGE }) {
   return (
-    <div className="flex flex-col p-4 pb-8 md:p-6 md:pb-10 lg:p-8">
+    <div className="flex flex-col p-4 pb-8 md:p-6 md:pb-10 lg:p-8 pt-0 md:pt-0 lg:pt-0">
       <h1 className="sr-only">{copy.pageTitle ?? "Contact Rellia Health"}</h1>
       <div className="relative flex min-h-[min(480px,calc(100vh-10rem))] flex-1 flex-col overflow-hidden rounded-[1.75rem] bg-rellia-teal">
         <div className="absolute inset-0">
@@ -90,29 +90,31 @@ function LeftPanel({ copy }: { copy: typeof DEFAULT_CONTACT_PAGE }) {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            className="flex flex-1 flex-col justify-center py-8"
+            className="flex flex-1 flex-col justify-between py-8"
           >
-            <p className="max-w-md font-urbanist text-2xl font-semibold leading-snug text-white md:text-3xl lg:text-4xl">
-              &ldquo;{copy.quoteText}&rdquo;
-            </p>
+            <div className="flex flex-1 flex-col justify-center py-6">
+              <p className="w-full font-urbanist text-2xl font-semibold leading-snug text-rellia-mint md:text-3xl lg:text-4xl px-2">
+                &ldquo;{copy.quoteText}&rdquo;
+              </p>
 
-            <div className="mt-8 flex items-center gap-5">
-              <div className="h-14 w-14 shrink-0 overflow-hidden rounded-2xl border-2 border-white/20 shadow-xl">
-                <img
-                  src="/images/team-megankane.jpg"
-                  alt={`${copy.quoteAttributionName}, ${copy.quoteAttributionRole}`}
-                  width={56}
-                  height={56}
-                  loading="lazy"
-                  decoding="async"
-                  className="h-full w-full object-cover"
-                />
-              </div>
-              <div>
-                <p className="font-host-grotesk text-base font-bold tracking-wide text-white">
-                  {copy.quoteAttributionName}
-                </p>
-                <p className="font-urbanist text-sm font-medium text-rellia-mint/90">{copy.quoteAttributionRole}</p>
+              <div className="mt-8 flex items-center gap-5">
+                <div className="h-[67px] w-[67px] shrink-0 overflow-hidden rounded-2xl border-2 border-white/20 shadow-xl">
+                  <img
+                    src="/images/team-megankane.jpg"
+                    alt={`${copy.quoteAttributionName}, ${copy.quoteAttributionRole}`}
+                    width={67}
+                    height={67}
+                    loading="lazy"
+                    decoding="async"
+                    className="h-full w-full object-cover"
+                  />
+                </div>
+                <div>
+                  <p className="font-host-grotesk text-[19px] font-medium tracking-wide text-white">
+                    {copy.quoteAttributionName}
+                  </p>
+                  <p className="font-urbanist text-[17px] font-medium text-white/60">{copy.quoteAttributionRole}</p>
+                </div>
               </div>
             </div>
 
@@ -120,9 +122,9 @@ function LeftPanel({ copy }: { copy: typeof DEFAULT_CONTACT_PAGE }) {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.3, duration: 0.8 }}
-              className="mt-10 border-t border-white/10 pt-8"
+              className="mt-auto border-t border-white/10 pt-8"
             >
-              <p className="font-host-grotesk text-sm font-medium text-white/60">
+              <p className="font-host-grotesk text-sm font-medium text-white">
                 <a href="mailto:hello@relliahealth.com" className="hover:underline underline-offset-4">
                   hello@relliahealth.com
                 </a>
@@ -189,12 +191,10 @@ function ContactForm() {
       <motion.div 
         initial={{ opacity: 0, scale: 0.98 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="bg-rellia-cream/20 rounded-[24px] p-10 md:p-14 border border-black/5 text-center flex flex-col items-center"
+        className="text-center flex flex-col items-center py-6"
       >
-        <div className="h-20 w-20 rounded-full bg-rellia-mint/10 flex items-center justify-center mb-8">
-          <CheckCircle2 className="h-10 w-10 text-rellia-teal" />
-        </div>
-        <h2 className="text-3xl font-bold text-rellia-teal mb-4 font-host-grotesk">Message Sent!</h2>
+        <CheckCircle2 className="h-14 w-14 text-rellia-teal mb-8" />
+        <h2 className="text-3xl font-bold text-rellia-teal mb-4 font-host-grotesk md:text-4xl md:leading-tight">Message Sent!</h2>
         <p className="text-black/60 font-urbanist text-lg max-w-sm mb-10 leading-relaxed">
           Thank you for reaching out. A Rellia team member will get back to you within 24–48 hours.
         </p>
@@ -340,10 +340,6 @@ function ContactForm() {
             </>
           )}
         </RelliaAction>
-        
-        <p className="text-center text-xs font-urbanist text-black/40 mt-5 font-medium">
-          We’ll get back to you within <span className="text-rellia-teal/60 font-bold">24–48 hours</span>
-        </p>
       </div>
     </form>
   )

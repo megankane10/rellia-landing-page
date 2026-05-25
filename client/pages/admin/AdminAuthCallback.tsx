@@ -1,23 +1,13 @@
 import { useEffect, useState } from "react"
 import { useNavigate, useSearchParams } from "react-router-dom"
 import { supabase } from "@/lib/supabase"
+import {
+  readAuthTypeFromUrl,
+  readHashAuthError,
+  readOtpTokenHash,
+} from "@/lib/adminAuthFromUrl"
+import { waitForSupabaseSession } from "@/lib/waitForSupabaseSession"
 import AdminAuthLayout from "@/components/admin/AdminAuthLayout"
-
-const readAuthType = (searchParams: URLSearchParams): string | null => {
-  const fromQuery = searchParams.get("type")
-  if (fromQuery) return fromQuery
-
-  const hash = window.location.hash.replace(/^#/, "")
-  if (!hash) return null
-  return new URLSearchParams(hash).get("type")
-}
-
-const readHashError = (): string | null => {
-  const hash = window.location.hash.replace(/^#/, "")
-  if (!hash) return null
-  const params = new URLSearchParams(hash)
-  return params.get("error_description") || params.get("error")
-}
 
 const AdminAuthCallback = () => {
   const navigate = useNavigate()
@@ -28,7 +18,7 @@ const AdminAuthCallback = () => {
     let cancelled = false
 
     const finish = async () => {
-      const hashError = readHashError()
+      const hashError = readHashAuthError()
       if (hashError) {
         if (!cancelled) {
           setMessage("This link is invalid or has expired. Request a new invitation.")
@@ -37,8 +27,8 @@ const AdminAuthCallback = () => {
         return
       }
 
-      const authType = readAuthType(searchParams)
-      const tokenHash = searchParams.get("token_hash")
+      const authType = readAuthTypeFromUrl(searchParams)
+      const tokenHash = readOtpTokenHash(searchParams)
 
       if (tokenHash) {
         const otpType = authType === "recovery" ? "recovery" : "invite"
@@ -67,16 +57,16 @@ const AdminAuthCallback = () => {
         }
       }
 
-      const { data, error } = await supabase.auth.getSession()
+      const session = await waitForSupabaseSession()
       if (cancelled) return
 
-      if (error || !data.session) {
+      if (!session) {
         setMessage("Could not verify your session. Try signing in again.")
         window.setTimeout(() => navigate("/admin/login", { replace: true }), 2400)
         return
       }
 
-      const invitedAt = data.session.user.invited_at
+      const invitedAt = session.user.invited_at
       const needsPassword =
         authType === "invite" ||
         authType === "recovery" ||

@@ -52,11 +52,11 @@ const AdminBrandPanel = ({ heading, description, children, textTone = "white" }:
 
           <div className="flex flex-1 flex-col justify-center py-10 md:py-12">
             <h2
-              className={`max-w-md text-left font-urbanist text-2xl font-semibold leading-snug md:text-3xl lg:text-[2rem] ${headingClass}`}
+              className="text-left font-urbanist text-2xl font-semibold leading-snug text-rellia-mint md:text-3xl lg:text-4xl w-full px-2"
             >
               {heading}
             </h2>
-            <p className={`mt-5 max-w-md text-left font-urbanist text-sm leading-relaxed md:text-base ${descriptionClass}`}>
+            <p className="mt-5 text-left font-urbanist text-base md:text-lg leading-relaxed text-white w-full px-2">
               {description}
             </p>
             {children}

@@ -173,6 +173,7 @@ export default function Events() {
       <main id="main-content">
         <PageHeader
           variant="dark"
+          titleClassName="text-4xl md:text-5xl lg:text-6xl"
           title={
             <HeroHeadlinePortable
               value={landing?.heroTitlePortable ?? DEFAULT_EVENTS_LANDING_HERO_PORTABLE}

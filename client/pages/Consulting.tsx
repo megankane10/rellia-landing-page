@@ -86,25 +86,26 @@ function FitSectionSplit() {
 
 function ServicesGridSection() {
   return (
-    <section className="relative w-full overflow-hidden bg-rellia-teal px-6 py-16 md:px-10 md:py-24">
+    <section className="relative w-full overflow-hidden bg-white px-6 py-16 md:px-10 md:py-24">
       <img
         src="/images/hologram-logo.png"
         alt=""
         aria-hidden
-        className="pointer-events-none absolute -right-16 top-6 w-[320px] max-w-[55vw] opacity-[0.06] md:right-0 md:top-4 md:w-[420px]"
+        className="pointer-events-none absolute -right-16 top-6 w-[320px] max-w-[55vw] opacity-[0.15] md:right-0 md:top-4 md:w-[420px]"
       />
       <div aria-hidden className="pointer-events-none absolute inset-0">
-        <div className="absolute -left-28 top-10 h-[420px] w-[420px] rounded-full bg-rellia-mint/22 blur-3xl" />
-        <div className="absolute -right-32 bottom-0 h-[480px] w-[480px] rounded-full bg-rellia-mint/16 blur-3xl" />
-        <div className="absolute inset-0 opacity-[0.2] [background-image:radial-gradient(circle_at_30%_15%,rgba(255,255,255,0.14),transparent_52%),radial-gradient(circle_at_75%_40%,rgba(157,214,208,0.12),transparent_55%)]" />
+        <div className="absolute -left-28 -top-12 h-[450px] w-[450px] rounded-full bg-rellia-mint/10 blur-[120px]" />
+        <div className="absolute -right-32 -bottom-16 h-[500px] w-[500px] rounded-full bg-rellia-mint/8 blur-[130px]" />
+        <div className="absolute left-1/3 top-1/4 h-[350px] w-[350px] rounded-full bg-rellia-mint/5 blur-[110px]" />
+        <div className="absolute inset-0 opacity-[0.25] [background-image:radial-gradient(circle_at_30%_15%,rgba(13,53,64,0.02),transparent_52%),radial-gradient(circle_at_75%_40%,rgba(157,214,208,0.06),transparent_55%)]" />
       </div>
 
       <div className="relative z-10 mx-auto max-w-[1300px]">
         <ScrollReveal>
-          <h2 className="mt-5 font-host-grotesk text-3xl font-semibold leading-tight tracking-tight text-white md:text-[40px]">
-            Common consulting <span className="text-rellia-mint">sprints</span>
+          <h2 className="mt-5 font-host-grotesk text-3xl font-semibold leading-tight tracking-tight text-rellia-teal md:text-[40px]">
+            Common consulting sprints
           </h2>
-          <p className="mt-4 max-w-2xl font-urbanist text-base font-medium leading-relaxed text-white/80 md:text-lg">
+          <p className="mt-4 max-w-2xl font-urbanist text-base font-medium leading-relaxed text-black/80 md:text-lg">
             Four areas founders most often need concentrated working time—scoped to outputs you can reuse in diligence and execution.
           </p>
         </ScrollReveal>
@@ -117,11 +118,11 @@ function ServicesGridSection() {
                 <Link 
                   key={card.title} 
                   to="/contact" 
-                  className="group flex min-h-[240px] flex-col rounded-2xl border border-white/15 bg-white/5 p-8 backdrop-blur-md transition-colors duration-300 hover:border-rellia-mint/40 hover:bg-white/10 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-rellia-teal"
+                  className="group flex min-h-[240px] flex-col rounded-2xl border border-black/10 bg-gradient-to-br from-rellia-teal to-[#144853] p-8 transition duration-300 hover:from-[#113f4a] hover:to-[#0f3842] hover:shadow-md cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-teal focus-visible:ring-offset-2 focus-visible:ring-offset-white"
                 >
                   <Icon className="h-8 w-8 text-rellia-mint transition-transform duration-300 group-hover:scale-105" aria-hidden />
                   <h3 className="mt-5 font-host-grotesk text-xl font-semibold tracking-tight text-white">{card.title}</h3>
-                  <p className="mt-4 flex-1 font-urbanist leading-relaxed text-white/85 text-sm">{card.body}</p>
+                  <p className="mt-4 flex-1 font-urbanist leading-relaxed text-white/80 text-sm">{card.body}</p>
                   <span className="mt-6 inline-flex items-center gap-2 font-host-grotesk text-sm font-semibold text-rellia-mint">
                     {card.cta}
                     <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" aria-hidden />
@@ -181,7 +182,7 @@ export default function Consulting() {
                         Apply for membership
                       </Link>
                     </RelliaAction>
-                    <RelliaAction asChild variant="outlineOnWhite" size="comfortable">
+                    <RelliaAction asChild variant="outlineOnWhite" size="comfortable" className="hover:!bg-rellia-mint hover:!text-rellia-teal hover:!border-rellia-mint">
                       <Link to="/contact" className="inline-flex cursor-pointer items-center justify-center">
                         Ask about consulting
                       </Link>
@@ -227,12 +228,14 @@ export default function Consulting() {
             </div>
           </LightSection>
 
-        <RelliaCta
-          title="Not sure which **path** fits?"
-          body="Tell us your milestone—we'll recommend membership, consulting, or a blended rhythm."
-          primary={{ label: "Talk to us", to: "/contact" }}
-          secondary={{ label: "Apply for membership", to: "/apply" }}
-        />
+        <div className="bg-rellia-cream/20">
+          <RelliaCta
+            title="Not sure which **path** fits?"
+            body="Tell us your milestone—we'll recommend membership, consulting, or a blended rhythm."
+            primary={{ label: "Talk to us", to: "/contact" }}
+            secondary={{ label: "Apply for membership", to: "/apply" }}
+          />
+        </div>
       </main>
 
       <Footer />

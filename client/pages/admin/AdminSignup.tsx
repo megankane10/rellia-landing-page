@@ -66,7 +66,7 @@ const AdminSignup = () => {
     }
   }
 
-  const authLeftHeading = "Hello! Ready to see what's new with Rellia Health today?"
+  const authLeftHeading = "Hello! Ready to see what's new today?"
   const authLeftDescription =
     "Log in to review the latest form submissions, coordinate inquiries, and easily track your website content drafts."
 

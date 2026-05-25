@@ -41,7 +41,7 @@ import {
 const whyFeatures: HomeWhyFeature[] = [
   {
     iconKey: "",
-    title: "13 Scored Domains",
+    title: "12 Scored Domains",
     description: "Every critical health tech domain is assessed, from clinical evidence to quality management and unit economics.",
     imageSrc: "/images/whyrellia-network-2.jpg"
   },
@@ -78,22 +78,22 @@ const howItWorksSteps = [
   },
   {
     icon: Activity,
-    title: 'Clinical Trials',
+    title: 'Clinical Evidence',
     description: 'Design clinical validation protocols, gather evidence, and build study credibility.'
   },
   {
     icon: ShieldIcon,
-    title: 'Regulatory & Quality',
+    title: 'Regulatory Strategy',
     description: 'Set up ISO 13485 QMS and prepare compliant filings for FDA and Health Canada.'
   },
   {
     icon: Scale,
-    title: 'Legal, Privacy & Cybersecurity',
+    title: 'Legal & Privacy',
     description: 'Ensure absolute compliance with HIPAA, PIPEDA, and robust system security.'
   },
   {
     icon: FileText,
-    title: 'IP & Patents',
+    title: 'IP Strategy',
     description: 'Protect your unique IP, patent designs, and establish freedom to operate.'
   },
   {
@@ -108,23 +108,18 @@ const howItWorksSteps = [
   },
   {
     icon: Megaphone,
-    title: 'Marketing',
+    title: 'Marketing & Branding',
     description: 'Build healthcare brand awareness, trust, and clear scientific positioning.'
   },
   {
     icon: Compass,
-    title: 'Go-To-Market Strategy',
+    title: 'Go-To-Market',
     description: 'Define your buyer, pricing structures, pilot pipelines, and enterprise deals.'
   },
   {
     icon: Building2,
-    title: 'Navigating Healthcare Systems',
+    title: 'Health System Navigation',
     description: 'Overcome procurement delays, build clinical champion networks, and close sales.'
-  },
-  {
-    icon: Heart,
-    title: 'Customer Success',
-    description: 'Drive high product adoption, seamless onboarding, and long-term user retention.'
   },
   {
     icon: Briefcase,
@@ -135,7 +130,7 @@ const howItWorksSteps = [
 
 const timelineSteps = [
   { title: 'Startup Context', description: 'Provide high-level details about your product mission, stage, and targets.' },
-  { title: 'Deep Assessment', description: 'Evaluate your status across 13 sections with zero-BS honest reflections.' },
+  { title: 'Deep Assessment', description: 'Evaluate your status across 12 sections with zero-BS honest reflections.' },
   { title: 'Score Generation', description: 'Our AI processes scores to evaluate strengths, priority gaps, and blockers.' },
   { title: 'Report Access', description: 'Rellia members immediately unlock their custom diagnostic report and advisor matching.' }
 ];
@@ -166,7 +161,7 @@ export default function DiagnosticLanding() {
       <Navbar />
       <RouteSeo 
         title="Startup Diagnostic | Rellia Health" 
-        description="Benchmark your health tech startup across 13 domains. Get a personalized gap analysis and roadmap."
+        description="Benchmark your health tech startup across 12 domains. Get a personalized gap analysis and roadmap."
       />
 
       {/* HERO SECTION - Replicating RoleHero styling */}
@@ -204,7 +199,7 @@ export default function DiagnosticLanding() {
             </h1>
             
             <p className="mt-6 max-w-2xl font-urbanist text-lg leading-relaxed text-white/80 md:text-xl">
-              Benchmark your startup across 13 critical domains — from regulatory and clinical to go-to-market and operations. Get an instant readiness score and identify hidden blockers.
+              Benchmark your startup across 12 critical domains — from regulatory and clinical to go-to-market and operations. Get an instant readiness score and identify hidden blockers.
             </p>
             
             <div className="mt-10 flex w-full flex-col gap-3 sm:flex-row sm:flex-wrap">
@@ -248,16 +243,16 @@ export default function DiagnosticLanding() {
                 We've distilled years of digital health experience into a comprehensive assessment framework that covers the entire startup lifecycle. Rellia's custom platform maps every critical domain, ensuring regulatory alignment, clinical proof, and bulletproof operational scaling.
               </p>
 
-              {/* Scroller for the 13 domains */}
+              {/* Scroller for the 12 domains */}
               <div className="mt-10 max-w-xl">
-                <div className="relative overflow-hidden rounded-3xl border border-black/10 bg-white p-6 shadow-md min-h-[175px] flex flex-col justify-between">
+                <div className="relative overflow-hidden rounded-3xl border border-black/10 bg-transparent p-6 shadow-none min-h-[175px] flex flex-col justify-between">
                   <div className="flex items-start gap-4">
                     <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-rellia-mint/20 text-rellia-teal">
                       <CurrentIcon className="h-5.5 w-5.5" />
                     </div>
                     <div className="min-w-0 flex-1">
                       <h4 className="font-host-grotesk text-base font-bold text-black">{currentItem.title}</h4>
-                      <p className="mt-1.5 font-urbanist text-sm leading-relaxed text-black/70">
+                      <p className="mt-1.5 font-urbanist text-sm leading-relaxed text-black/70 h-12 overflow-hidden">
                         {currentItem.description}
                       </p>
                     </div>
@@ -335,13 +330,14 @@ export default function DiagnosticLanding() {
       />
 
       {/* FINAL CTA SECTION using RelliaCta */}
-      <RelliaCta 
-        title="Benchmark your **startup** today"
-        body="Identify your blind spots, secure regulatory clarity, and discover what gets health systems to say yes."
-        primary={{ label: "Take the Diagnostic", to: "/diagnostic-survey" }}
-        secondary={{ label: "Join as Member", to: "/apply" }}
-        className="mt-20 md:mt-32"
-      />
+      <div className="bg-rellia-cream/15">
+        <RelliaCta 
+          title="Benchmark your **startup** today"
+          body="Identify your blind spots, secure regulatory clarity, and discover what gets health systems to say yes."
+          primary={{ label: "Take the Diagnostic", to: "/diagnostic-survey" }}
+          secondary={{ label: "Join as Member", to: "/apply" }}
+        />
+      </div>
 
       <Footer />
     </div>

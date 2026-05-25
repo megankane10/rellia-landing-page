@@ -49,8 +49,8 @@ const AdminSetPassword = () => {
   if (loading) {
     return (
       <AdminAuthLayout
-        leftHeading="Create your password"
-        leftDescription="Finish setting up secure access to the Rellia Health admin dashboard."
+        leftHeading="Hello! Ready to see what's new today?"
+        leftDescription="Log in to review the latest form submissions, coordinate inquiries, and easily track your website content drafts."
         title="Loading"
         description="Preparing your account…"
         leftTextTone="mint"
@@ -64,8 +64,8 @@ const AdminSetPassword = () => {
 
   return (
     <AdminAuthLayout
-      leftHeading="Create your password"
-      leftDescription="Finish setting up secure access to the Rellia Health admin dashboard."
+      leftHeading="Hello! Ready to see what's new today?"
+      leftDescription="Log in to review the latest form submissions, coordinate inquiries, and easily track your website content drafts."
       title="Set your password"
       description="Choose a password for your admin account."
       leftTextTone="mint"

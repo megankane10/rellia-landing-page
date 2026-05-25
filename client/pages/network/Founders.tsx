@@ -12,6 +12,7 @@ import { relliaTealGlassCardClass } from "@/lib/relliaTealGlassCard"
 import { cn } from "@/lib/utils"
 import {
   ArrowRight,
+  ArrowDown,
   BookOpen,
   Check,
   CheckCircle2,
@@ -36,7 +37,7 @@ import { NETWORK_PATH_ROLE_TAG } from "@/lib/networkPathRoles"
 import ScrollReveal from "@/components/ScrollReveal"
 import { DiagnosticSurveySection } from "@/components/DiagnosticSurveySection"
 import { CreamSection, LightSection, Reveal } from "./_shared"
-import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion"
+import { motion, useReducedMotion, useScroll, useTransform, useInView } from "framer-motion"
 import { useNetworkFoundersPage } from "@/hooks/useCmsDocuments"
 import NetworkCmsPage from "./NetworkCmsPage"
 import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo"
@@ -352,13 +353,13 @@ function FoundersHero() {
           <NetworkEyebrow label="Founders" tone="onDark" className="mb-6 md:mb-8" />
           <h1
             className={cn(
-              "max-w-4xl font-bold leading-[1.08] tracking-tight text-white drop-shadow-sm",
+              "max-w-4xl font-bold leading-[1.08] tracking-tight text-rellia-mint drop-shadow-sm [&_span]:!text-rellia-mint [&_strong]:!text-rellia-mint [&_em]:!text-rellia-mint",
               PAGE_HEADER_TITLE_SIZE_CLASS,
             )}
           >
             Are you building in <span className="text-rellia-mint">health tech?</span>
           </h1>
-          <p className="mt-6 max-w-2xl font-urbanist text-lg leading-relaxed text-white/80 md:text-xl">
+          <p className="mt-6 max-w-2xl font-urbanist text-lg leading-relaxed text-white md:text-xl [&_span]:!text-white [&_strong]:!text-white">
             You&apos;re building something that can change healthcare. We bring the experts, programs, and connections to help
             you get there.
           </p>
@@ -437,7 +438,7 @@ const EligibilityBentoCard = ({
 
 function EligibilitySection() {
   return (
-    <section className="w-full bg-rellia-cream/25 px-6 py-16 md:px-10 md:py-24">
+    <section className="w-full bg-white px-6 py-16 md:px-10 md:py-24">
       <div className="mx-auto max-w-[1300px]">
         <SectionHeading
           animated={false}
@@ -461,30 +462,30 @@ function EligibilitySection() {
   )
 }
 
-/** Visual shell aligned with homepage {@link HowItWorks} — teal band, ambient blobs, hologram watermark */
+/** Visual shell aligned with homepage {@link HowItWorks} — white background, elegant light cards */
 function EngageTealBand() {
   return (
-    <section className="relative w-full overflow-hidden bg-rellia-teal px-6 py-16 md:px-10 md:py-24">
+    <section className="relative w-full overflow-hidden bg-white px-6 py-16 md:px-10 md:py-24">
       <img
         src="/images/hologram-logo.png"
         alt=""
         aria-hidden
-        className="pointer-events-none absolute -right-16 top-6 w-[320px] max-w-[55vw] opacity-[0.06] md:right-0 md:top-4 md:w-[420px]"
+        className="pointer-events-none absolute -right-16 top-6 w-[320px] max-w-[55vw] opacity-[0.15] md:right-0 md:top-4 md:w-[420px]"
       />
       <div aria-hidden className="pointer-events-none absolute inset-0">
-        <div className="absolute -left-28 -top-12 h-[450px] w-[450px] rounded-full bg-rellia-mint/25 blur-[120px]" />
-        <div className="absolute -right-32 -bottom-16 h-[500px] w-[500px] rounded-full bg-rellia-mint/20 blur-[130px]" />
-        <div className="absolute left-1/3 top-1/4 h-[350px] w-[350px] rounded-full bg-rellia-mint/15 blur-[110px]" />
-        <div className="absolute inset-0 opacity-[0.25] [background-image:radial-gradient(circle_at_30%_15%,rgba(255,255,255,0.15),transparent_52%),radial-gradient(circle_at_75%_40%,rgba(157,214,208,0.15),transparent_55%)]" />
+        <div className="absolute -left-28 -top-12 h-[450px] w-[450px] rounded-full bg-rellia-mint/10 blur-[120px]" />
+        <div className="absolute -right-32 -bottom-16 h-[500px] w-[500px] rounded-full bg-rellia-mint/8 blur-[130px]" />
+        <div className="absolute left-1/3 top-1/4 h-[350px] w-[350px] rounded-full bg-rellia-mint/5 blur-[110px]" />
+        <div className="absolute inset-0 opacity-[0.25] [background-image:radial-gradient(circle_at_30%_15%,rgba(13,53,64,0.02),transparent_52%),radial-gradient(circle_at_75%_40%,rgba(157,214,208,0.06),transparent_55%)]" />
       </div>
 
       <div className="relative z-10 mx-auto max-w-[1300px]">
         <ScrollReveal>
           <div className="mb-8 md:mb-10">
-            <h2 className="mt-5 font-host-grotesk text-3xl font-semibold leading-tight tracking-tight text-white md:text-[40px]">
-              How to <span className="text-rellia-mint">plug in</span> this week
+            <h2 className="mt-5 font-host-grotesk text-3xl font-semibold leading-tight tracking-tight text-rellia-teal md:text-[40px]">
+              How to plug in this week
             </h2>
-            <p className="mt-4 max-w-2xl font-urbanist text-base font-medium leading-relaxed text-white/80 md:text-lg">
+            <p className="mt-4 max-w-2xl font-urbanist text-base font-medium leading-relaxed text-black/80 md:text-lg">
               Every path reconnects to the same high-trust network—pick what fits your sprint.
             </p>
           </div>
@@ -498,7 +499,7 @@ function EngageTealBand() {
                 <Link
                   key={item.title}
                   to={item.to}
-                  className="group flex h-full min-h-[168px] flex-col rounded-2xl border border-white/15 bg-white/5 p-5 backdrop-blur-md transition duration-300 hover:border-rellia-mint/40 hover:bg-white/10 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-rellia-teal sm:min-h-[184px] sm:p-6"
+                  className="group flex h-full min-h-[168px] flex-col rounded-2xl border border-black/10 bg-gradient-to-br from-rellia-teal to-[#144853] p-5 transition duration-300 hover:from-[#113f4a] hover:to-[#0f3842] hover:shadow-md cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-teal focus-visible:ring-offset-2 focus-visible:ring-offset-white sm:min-h-[184px] sm:p-6 items-start"
                 >
                   <Icon className="h-7 w-7 text-rellia-mint transition-transform duration-300 group-hover:scale-105" aria-hidden />
                   <p className="mt-5 font-host-grotesk text-lg font-semibold leading-snug tracking-tight text-white">
@@ -553,77 +554,165 @@ function JourneySplitSection() {
     launch: Rocket,
   } satisfies Record<JourneyStep["id"], typeof Lightbulb>
 
+  const sectionRef = useRef<HTMLDivElement | null>(null)
+  const isInView = useInView(sectionRef, { once: true, margin: "-12% 0px" })
+  const reduceMotion = useReducedMotion()
+
+  const parentVariants = {
+    hidden: {},
+    visible: {
+      transition: {
+        staggerChildren: reduceMotion ? 0 : 0.12,
+      }
+    }
+  }
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 16 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] as const }
+    }
+  }
+
+  const dividerVariants = {
+    hidden: { opacity: 0, scaleX: 0 },
+    visible: {
+      opacity: 1,
+      scaleX: 1,
+      transition: { duration: 0.6, delay: reduceMotion ? 0 : 0.5, ease: [0.16, 1, 0.3, 1] as const }
+    }
+  }
+
+  const arrowCircleVariants = {
+    hidden: { opacity: 0, scale: 0 },
+    visible: {
+      opacity: 1,
+      scale: 1,
+      transition: { type: "spring" as const, stiffness: 260, damping: 20, delay: reduceMotion ? 0 : 0.65 }
+    }
+  }
+
+  const bottomSectionVariants = {
+    hidden: { opacity: 0, y: 24 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.6, delay: reduceMotion ? 0 : 0.75, ease: [0.16, 1, 0.3, 1] as const }
+    }
+  }
+
   return (
-    <LightSection className="bg-rellia-cream/20 py-14 md:py-20">
+    <section
+      ref={sectionRef}
+      className="w-full bg-white py-16 md:py-24 px-6 md:px-10 overflow-hidden border-t border-black/[0.06]"
+    >
       <div className="mx-auto max-w-[1300px]">
-        <SectionHeading
-          animated={false}
-          title="Where Rellia meets your trajectory"
-          description="We help you execute in healthcare complexity once you have direction—without replacing early discovery."
-          className="mt-5 max-w-3xl"
-        />
+        {/* Top Portion: Title & Subtitle + You Own (Full Width) */}
+        <div className="flex flex-col gap-8">
+          {/* Title and Subtitle */}
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 w-full pb-2">
+            <h2 className="font-host-grotesk text-3xl font-semibold leading-tight tracking-tight text-rellia-teal md:text-[40px] max-w-xl">
+              Where Rellia meets your trajectory
+            </h2>
+            <p className="font-urbanist text-base leading-relaxed tracking-tight text-rellia-teal md:text-lg md:text-right max-w-xl font-normal">
+              We help you execute in healthcare complexity once you have direction—without replacing early discovery.
+            </p>
+          </div>
 
-        <div className="mt-16 space-y-12 md:mt-20 md:space-y-16">
-          <div className="grid grid-cols-1 gap-7 lg:grid-cols-[200px_1fr] lg:gap-12">
-            <div>
-              <p className="font-host-grotesk text-base font-semibold uppercase tracking-[0.14em] text-black/55">
-                You own
-              </p>
-              <p className="mt-3 font-urbanist text-base leading-relaxed text-black/70">
-                We won&apos;t replace early thinking—problem selection, learning, and narrative formation stays yours.
-              </p>
-            </div>
+          {/* You Own Section: Full Width on its own line */}
+          <div className="flex flex-col items-start w-full">
+            <span className="inline-flex items-center rounded-full bg-rellia-cream px-3 py-1.5 text-xs font-semibold text-rellia-teal uppercase tracking-[0.14em] mb-4">
+              You own
+            </span>
 
-            <div className="grid grid-cols-1 justify-items-start gap-10 sm:grid-cols-2 sm:justify-items-end sm:gap-6 xl:grid-cols-3">
+            <motion.div
+              variants={parentVariants}
+              initial="hidden"
+              animate={isInView ? "visible" : "hidden"}
+              className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full"
+            >
               {outsideSteps.map((m) => {
                 const Icon = journeyIconById[m.id]
                 return (
-                  <div
+                  <motion.div
                     key={m.id}
-                    className="flex flex-col items-start text-left md:w-full md:max-w-[280px]"
+                    variants={itemVariants}
+                    className="flex flex-col items-start text-left bg-rellia-cream/35 border border-rellia-cream/60 rounded-2xl p-6 transition duration-300 hover:border-rellia-teal/20 hover:shadow-sm"
                   >
-                    <span className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-rellia-teal/5 text-rellia-teal">
+                    <span className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-rellia-teal/5 text-rellia-teal mb-4">
                       <Icon className="h-5 w-5" aria-hidden />
                     </span>
-                    <p className="mt-3 font-host-grotesk text-lg font-semibold leading-snug text-black md:mt-3">
+                    <h3 className="font-host-grotesk text-lg font-semibold leading-snug text-black">
                       {m.label}
-                    </p>
-                    <p className="mt-1.5 font-urbanist text-sm leading-relaxed text-black/65">
+                    </h3>
+                    <p className="mt-2 font-urbanist text-sm leading-relaxed text-black/65">
                       {m.detail}
                     </p>
-                  </div>
+                  </motion.div>
                 )
               })}
-            </div>
+            </motion.div>
+          </div>
+        </div>
+
+        {/* Middle Portion: Full-width divider line with arrow */}
+        <div className="relative w-full py-12 flex items-center justify-center">
+          <motion.div
+            variants={dividerVariants}
+            initial="hidden"
+            animate={isInView ? "visible" : "hidden"}
+            className="absolute inset-x-0 h-px bg-black/10"
+          />
+          <motion.div
+            variants={arrowCircleVariants}
+            initial="hidden"
+            animate={isInView ? "visible" : "hidden"}
+            className="relative z-10 flex h-10 w-10 items-center justify-center rounded-full bg-rellia-teal text-white shadow-sm"
+          >
+            <ArrowDown className="h-5 w-5" aria-hidden />
+          </motion.div>
+        </div>
+
+        {/* Bottom Portion: We Help With (Full Width Grid) */}
+        <motion.div
+          variants={bottomSectionVariants}
+          initial="hidden"
+          animate={isInView ? "visible" : "hidden"}
+          className="flex flex-col items-start w-full gap-8"
+        >
+          {/* Tag & Subheading */}
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 w-full pb-2">
+            <span className="inline-flex items-center rounded-full bg-rellia-mint px-3.5 py-1.5 text-xs font-semibold text-rellia-teal uppercase tracking-[0.14em] shrink-0">
+              We help with
+            </span>
+            <h3 className="font-urbanist text-base leading-relaxed tracking-tight text-rellia-teal md:text-lg md:text-right max-w-2xl font-normal">
+              Programs, operators, and warm intros aligned to milestones that survive clinical, regulatory, and buyer scrutiny.
+            </h3>
           </div>
 
-          <div className="h-px w-full bg-black/10" aria-hidden />
-
-          <div className="grid grid-cols-1 gap-7 lg:grid-cols-[200px_1fr] lg:gap-12">
-            <div>
-              <p className="font-host-grotesk text-base font-semibold uppercase tracking-[0.14em] text-rellia-teal/80">
-                We help with
-              </p>
-              <p className="mt-3 font-urbanist text-base leading-relaxed text-black/70">
-                Programs, operators, and warm intros aligned to milestones that survive clinical, regulatory, and buyer scrutiny.
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 justify-items-start gap-10 sm:grid-cols-2 sm:justify-items-end sm:gap-6 xl:grid-cols-3">
-              {relliaSteps.map((m) => {
+          {/* Bento Grid: 2 rows x 4 columns */}
+          <div className="w-full">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 w-full">
+              {relliaSteps.map((m, idx) => {
                 const Icon = journeyIconById[m.id]
+                const isLast = idx === relliaSteps.length - 1
                 return (
                   <div
                     key={m.id}
-                    className="flex flex-col items-start text-left md:w-full md:max-w-[280px]"
+                    className={cn(
+                      "flex flex-col items-start text-left bg-rellia-teal border border-rellia-teal/80 rounded-2xl p-6 transition duration-300 hover:border-rellia-mint/55 hover:shadow-md",
+                      isLast && "sm:col-span-2 md:col-span-2"
+                    )}
                   >
-                    <span className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-rellia-teal text-white">
+                    <span className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-rellia-mint text-rellia-teal shadow-sm mb-4">
                       <Icon className="h-5 w-5" aria-hidden />
                     </span>
-                    <p className="mt-3 font-host-grotesk text-lg font-semibold leading-snug text-rellia-teal md:mt-3">
+                    <h4 className="font-host-grotesk text-base font-semibold leading-snug text-white">
                       {m.label}
-                    </p>
-                    <p className="mt-1.5 font-urbanist text-sm leading-relaxed text-rellia-teal/80">
+                    </h4>
+                    <p className="mt-2 font-urbanist text-sm leading-relaxed text-white/80">
                       {m.detail}
                     </p>
                   </div>
@@ -631,13 +720,11 @@ function JourneySplitSection() {
               })}
             </div>
           </div>
-        </div>
+        </motion.div>
       </div>
-    </LightSection>
+    </section>
   )
 }
-
-
 
 function ExploreNetworkSection() {
   return (
@@ -747,11 +834,7 @@ export default function Founders() {
         <MembershipPathTimeline
           showRoleLinks={false}
           headingId="founders-membership-path-heading"
-          headingTitle={
-            <>
-              From <span className="text-rellia-teal">application</span> to your first warm intro
-            </>
-          }
+          headingTitle="From application to your first warm intro"
           subheading="Apply, get approved, choose your membership, join Slack, then reach out when you want introductions matched to your roadmap."
           className="border-t border-black/10"
         />

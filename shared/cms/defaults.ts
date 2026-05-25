@@ -863,6 +863,328 @@ const AI_HEALTHCARE_COMPLIANCE_DETAIL_BODY: SanityPortableText = [
     imageSrc: "/images/complianceevent-desc.jpeg",
     alt: "The Human Layer — trust, coordination, and shared understanding in healthcare AI",
   },
+  {
+    _type: "block",
+    _key: "ahc-p2",
+    style: "h2",
+    markDefs: [],
+    children: [
+      {
+        _type: "span",
+        _key: "ahc-p2s",
+        text: "About the event",
+        marks: [],
+      },
+    ],
+  },
+  {
+    _type: "block",
+    _key: "ahc-p3",
+    style: "normal",
+    markDefs: [],
+    children: [
+      {
+        _type: "span",
+        _key: "ahc-p3s",
+        text: "As AI becomes embedded in healthcare products, the compliance stakes have never been higher. This event brings together compliance leaders, startup operators, and senior executives on one stage to cut through the noise — offering honest, experience-backed perspectives on what it actually takes to build in this regulated space.",
+        marks: [],
+      },
+    ],
+  },
+  {
+    _type: "block",
+    _key: "ahc-p4",
+    style: "normal",
+    markDefs: [],
+    children: [
+      {
+        _type: "span",
+        _key: "ahc-p4s",
+        text: "Expect candid panel discussions, real-world examples, and a strong emphasis on AI governance and data security — the areas where healthtech teams most often underestimate their exposure.",
+        marks: [],
+      },
+    ],
+  },
+  {
+    _type: "block",
+    _key: "ahc-p5",
+    style: "h3",
+    markDefs: [],
+    children: [
+      {
+        _type: "span",
+        _key: "ahc-p5s",
+        text: "What you'll gain",
+        marks: [],
+      },
+    ],
+  },
+  {
+    _type: "block",
+    _key: "ahc-p6",
+    style: "normal",
+    markDefs: [],
+    children: [
+      {
+        _type: "span",
+        _key: "ahc-p6s",
+        text: "Live panel discussions: Real conversations on compliance strategy, AI risk, and security obligations in healthtech",
+        marks: [],
+      },
+    ],
+  },
+  {
+    _type: "block",
+    _key: "ahc-p7",
+    style: "normal",
+    markDefs: [],
+    children: [
+      {
+        _type: "span",
+        _key: "ahc-p7s",
+        text: "Practical guidelines & tips: Actionable frameworks you can apply immediately — not theory, but ground-level advice",
+        marks: [],
+      },
+    ],
+  },
+  {
+    _type: "block",
+    _key: "ahc-p8",
+    style: "normal",
+    markDefs: [],
+    children: [
+      {
+        _type: "span",
+        _key: "ahc-p8s",
+        text: "Exclusive Google Drive resource pack: Curated compliance guidelines and templates shared post-event — a lasting reference for your team",
+        marks: [],
+      },
+    ],
+  },
+  {
+    _type: "block",
+    _key: "ahc-p9",
+    style: "normal",
+    markDefs: [],
+    children: [
+      {
+        _type: "span",
+        _key: "ahc-p9s",
+        text: "Deep dive: AI & security: A dedicated focus on AI-specific compliance risks and how to build secure, trustworthy health products",
+        marks: [],
+      },
+    ],
+  },
+  {
+    _type: "block",
+    _key: "ahc-p10",
+    style: "normal",
+    markDefs: [],
+    children: [
+      {
+        _type: "span",
+        _key: "ahc-p10s",
+        text: "----",
+        marks: [],
+      },
+    ],
+  },
+  {
+    _type: "block",
+    _key: "ahc-p11",
+    style: "h3",
+    markDefs: [],
+    children: [
+      {
+        _type: "span",
+        _key: "ahc-p11s",
+        text: "Our Expert Panelists:",
+        marks: [],
+      },
+    ],
+  },
+  {
+    _type: "block",
+    _key: "ahc-p12",
+    style: "normal",
+    markDefs: [],
+    children: [
+      {
+        _type: "span",
+        _key: "ahc-p12s",
+        text: "Our discussion features leaders who are actively shaping the future of healthtech security:",
+        marks: [],
+      },
+    ],
+  },
+  {
+    _type: "block",
+    _key: "ahc-p13",
+    style: "normal",
+    markDefs: [],
+    children: [
+      {
+        _type: "span",
+        _key: "ahc-p13s",
+        text: "Panelists:",
+        marks: ["strong"],
+      },
+    ],
+  },
+  {
+    _type: "block",
+    _key: "ahc-p14",
+    style: "normal",
+    markDefs: [],
+    children: [
+      {
+        _type: "span",
+        _key: "ahc-p14s",
+        text: "Megan Kane – Executive Director of Rellia, specializing in AI-enabled SaMD, diagnostics, and global regulatory strategy for FDA, Health Canada, EU MDR, and APAC compliance.",
+        marks: [],
+      },
+    ],
+  },
+  {
+    _type: "block",
+    _key: "ahc-p15",
+    style: "normal",
+    markDefs: [],
+    children: [
+      {
+        _type: "span",
+        _key: "ahc-p15s",
+        text: "Andre Padure – Head of Regulatory Affairs and Quality Assurance at RetiSpec, leading global regulatory strategy and quality systems for the company’s AI-powered retinal imaging platform for early Alzheimer’s disease detection.",
+        marks: [],
+      },
+    ],
+  },
+  {
+    _type: "block",
+    _key: "ahc-p16",
+    style: "normal",
+    markDefs: [],
+    children: [
+      {
+        _type: "span",
+        _key: "ahc-p16s",
+        text: "Roy Kirshon – COO & Co-Founder of RetiSpec, leading company strategy, financing, and operations to support the development and commercialization of healthcare technologies.",
+        marks: [],
+      },
+    ],
+  },
+  {
+    _type: "block",
+    _key: "ahc-p17",
+    style: "normal",
+    markDefs: [],
+    children: [
+      {
+        _type: "span",
+        _key: "ahc-p17s",
+        text: "Moderator:",
+        marks: ["strong"],
+      },
+    ],
+  },
+  {
+    _type: "block",
+    _key: "ahc-p18",
+    style: "normal",
+    markDefs: [],
+    children: [
+      {
+        _type: "span",
+        _key: "ahc-p18s",
+        text: "Katie Duyen Nguyen - Regional Director of BD @ CyStack",
+        marks: [],
+      },
+    ],
+  },
+  {
+    _type: "block",
+    _key: "ahc-p19",
+    style: "normal",
+    markDefs: [],
+    children: [
+      {
+        _type: "span",
+        _key: "ahc-p19s",
+        text: "Brought to you by:",
+        marks: ["strong"],
+      },
+    ],
+  },
+  {
+    _type: "block",
+    _key: "ahc-p20",
+    style: "normal",
+    markDefs: [],
+    children: [
+      {
+        _type: "span",
+        _key: "ahc-p20s",
+        text: "RetiSpec - A Toronto-based medical AI company using advanced imaging technology to detect signs of neurodegenerative disease - including Alzheimer's - through a simple, non-invasive retinal scan. RetiSpec's clinically validated AI analyzes retinal images captured by standard eye clinic cameras to identify disease biomarkers before symptoms appear, putting powerful early detection tools directly at the point of care.",
+        marks: [],
+      },
+    ],
+  },
+  {
+    _type: "block",
+    _key: "ahc-p21",
+    style: "normal",
+    markDefs: [],
+    children: [
+      {
+        _type: "span",
+        _key: "ahc-p21s",
+        text: "Rellia A community that connects promising digital health founders with industry experts, healthcare practitioners, and engaged investors. Rellia is a network of people who deeply understand the healthcare industry and will go out of their way to help you succeed. We connect early-stage digital health, medical device, wellness, and diagnostic companies with the personalized solutions that match their unique needs.",
+        marks: [],
+      },
+    ],
+  },
+  {
+    _type: "block",
+    _key: "ahc-p22",
+    style: "normal",
+    markDefs: [],
+    children: [
+      {
+        _type: "span",
+        _key: "ahc-p22s",
+        text: "CyStack CyStack blends deep offensive security knowledge with proprietary tooling to help organizations protect their products, data, and operations. Their suite covers penetration testing, automated vulnerability scanning (VulnScan), crowdsourced bug bounty (WhiteHub), secrets management (Locker), and 24/7 security monitoring — giving healthtech startups everything they need to build secure from day one.",
+        marks: [],
+      },
+    ],
+  },
+  {
+    _type: "block",
+    _key: "ahc-p23",
+    style: "normal",
+    markDefs: [],
+    children: [
+      {
+        _type: "span",
+        _key: "ahc-p23s",
+        text: "“Toronto Tech Week is a citywide celebration of the people building what’s next. From May 26–29, 2026, founders, investors, and builders come together for hundreds of community-led events across Toronto, connecting tens of thousands of people around Canadian tech. Torontotechweek.com”",
+        marks: [],
+      },
+    ],
+  },
+  {
+    _type: "block",
+    _key: "ahc-p24",
+    style: "normal",
+    markDefs: [],
+    children: [
+      {
+        _type: "span",
+        _key: "ahc-p24s",
+        text: "Please be advised: Unfortunately, space is very limited at these community events and we can not always accept everyone we would like to. If you are not accepted to this event, please keep applying! We appreciate your application tremendously and we are looking forward to seeing you at a future event very soon!",
+        marks: [],
+      },
+    ],
+  },
 ]
 
 /** Sample in-person Toronto event with inline images in the body (portable text). */

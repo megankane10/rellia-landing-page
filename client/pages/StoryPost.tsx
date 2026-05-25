@@ -379,17 +379,17 @@ export default function StoryPost() {
                     return (
                       <figure
                         key={key}
-                        className="relative my-10 overflow-hidden rounded-[1.75rem] bg-rellia-teal px-6 py-8 md:px-8 md:py-10"
+                        className="relative my-10 overflow-hidden rounded-[1.75rem] bg-gradient-to-br from-rellia-teal to-[#144853] px-6 py-8 md:px-8 md:py-10"
                       >
                         <div
                           className="pointer-events-none absolute top-[-20%] right-[-10%] h-40 w-40 rounded-full bg-rellia-mint/20 blur-[80px]"
                           aria-hidden
                         />
-                        <blockquote className="relative font-urbanist text-xl font-medium leading-snug text-rellia-mint md:text-2xl">
+                        <blockquote className="relative font-urbanist text-2xl md:text-3xl font-semibold leading-snug text-rellia-mint">
                           &ldquo;{b.text}&rdquo;
                         </blockquote>
                         {b.attribution ? (
-                          <figcaption className="relative mt-6 font-host-grotesk text-sm font-semibold tracking-wide text-rellia-mint/85">
+                          <figcaption className="relative mt-6 font-host-grotesk text-base font-semibold tracking-wide text-white">
                             — {b.attribution}
                           </figcaption>
                         ) : null}

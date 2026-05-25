@@ -160,7 +160,7 @@ export default function RelliaCta({
   return (
     <section
       className={cn(
-        "relative mt-6 flex w-full flex-col justify-center overflow-hidden bg-rellia-greyTeal px-[30px] pt-[7.5rem] pb-[9rem] md:mt-8 md:pt-[10.5rem] md:pb-48 lg:mt-10 lg:pt-[13.5rem] lg:pb-[15rem]",
+        "relative mt-6 flex w-full flex-col justify-center overflow-hidden bg-rellia-greyTeal px-[30px] pt-16 pb-[9rem] md:mt-8 md:pt-20 md:pb-48 lg:mt-10 lg:pt-24 lg:pb-[15rem]",
         roundedClassName,
         className,
       )}
@@ -185,7 +185,7 @@ export default function RelliaCta({
             {icon && <div className="mb-8">{icon}</div>}
             <h2
               className={cn(
-                "max-w-4xl font-host-grotesk font-medium tracking-tight leading-[1.12] text-black",
+                "max-w-4xl font-host-grotesk font-medium tracking-tight leading-[1.12] text-rellia-teal [&_span]:text-rellia-teal [&_span]:!text-rellia-teal",
                 size === "compact" ? HEADING_CTA_BAND_COMPACT : HEADING_CTA_BAND_DEFAULT,
               )}
             >

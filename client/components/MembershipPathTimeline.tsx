@@ -80,11 +80,7 @@ export type MembershipPathTimelineProps = {
   headingFooter?: ReactNode
 }
 
-const defaultHeadingTitle = (
-  <>
-    Path to <span className="text-rellia-teal">Membership</span>
-  </>
-)
+const defaultHeadingTitle = "Path to Membership"
 
 const defaultSubheading =
   "What happens after you apply—from submission to joining—and tailored links below if you want more detail for your role before you hear back."
@@ -151,7 +147,7 @@ const MembershipPathTimeline = ({
           >
             <h1
               id={headingId}
-              className="font-host-grotesk text-3xl font-semibold leading-tight tracking-tight text-black md:text-4xl lg:text-[2.75rem]"
+              className="font-host-grotesk text-3xl font-semibold leading-tight tracking-tight text-rellia-teal md:text-4xl lg:text-[2.75rem]"
             >
               {headingTitle}
             </h1>

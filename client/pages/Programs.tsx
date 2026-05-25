@@ -156,11 +156,7 @@ export default function Programs() {
       <main id="main-content">
         <PageHeader
           variant="dark"
-          title={
-            <>
-              Less theory. <span className="text-rellia-mint">More progress.</span>
-            </>
-          }
+          title="Less theory. More progress."
           subtitle="Every program is designed to help you accomplish your next milestone, not just learn about it."
         />
 

@@ -147,10 +147,6 @@ export function HorizontalCard(props: HorizontalCardProps) {
               )}
               {variant === "past" ? "Past" : "Upcoming"}
             </span>
-
-            <span className="font-urbanist text-[11px] font-bold text-black/40 uppercase tracking-widest">
-              {timeMain || "TBD"}
-            </span>
           </div>
  
           {/* Desktop Tags Row */}
@@ -167,10 +163,6 @@ export function HorizontalCard(props: HorizontalCardProps) {
                 <Calendar className="h-3.5 w-3.5 opacity-90 text-rellia-teal" aria-hidden strokeWidth={2.25} />
               )}
               {variant === "past" ? "Past" : "Upcoming"}
-            </span>
-
-            <span className="font-urbanist text-sm font-bold text-black/40 uppercase tracking-widest">
-              {timeMain || "TBD"}
             </span>
           </div>
  

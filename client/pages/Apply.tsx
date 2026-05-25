@@ -74,15 +74,17 @@ export default function Apply() {
           )}
         </AnimatePresence>
 
-        <RelliaCta
-          title="Explore the **Rellia network**"
-          body="See how members connect across programs, partners, and resources—or get in touch with questions about membership."
-          primary={{
-            label: DEFAULT_HOME_PAGE.secondaryCtaLabel,
-            to: DEFAULT_HOME_PAGE.secondaryCtaPath,
-          }}
-          secondary={{ label: "Contact us", to: "/contact" }}
-        />
+        <div className={cn("bg-rellia-cream/25", showForm && "bg-rellia-cream/40")}>
+          <RelliaCta
+            title="Explore the **Rellia network**"
+            body="See how members connect across programs, partners, and resources—or get in touch with questions about membership."
+            primary={{
+              label: DEFAULT_HOME_PAGE.secondaryCtaLabel,
+              to: DEFAULT_HOME_PAGE.secondaryCtaPath,
+            }}
+            secondary={{ label: "Contact us", to: "/contact" }}
+          />
+        </div>
       </main>
 
       <Footer />

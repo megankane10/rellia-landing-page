@@ -500,8 +500,14 @@ const PROGRAMS_EVENT_PRERENDER_PATHS = [
   ...DEFAULT_PROGRAMS_LANDING.pastEvents.map(programsEventDetailPath),
 ]
 
-const isMainBranchBuild = (): boolean =>
-  (process.env.VERCEL_GIT_COMMIT_REF ?? "").trim().toLowerCase() === "main"
+const isMainBranchBuild = (): boolean => {
+  const ref = (
+    typeof process !== "undefined"
+      ? process.env?.VERCEL_GIT_COMMIT_REF
+      : (import.meta as unknown as { env?: Record<string, unknown> })?.env?.VITE_VERCEL_GIT_COMMIT_REF as string | undefined
+  ) ?? ""
+  return ref.trim().toLowerCase() === "main"
+}
 
 export const STORY_PRERENDER_PATHS: string[] = isMainBranchBuild()
   ? []

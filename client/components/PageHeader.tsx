@@ -134,7 +134,9 @@ export default function PageHeader({
             <h1
               className={cn(
                 "relative font-bold leading-tight tracking-tight",
-                isDark ? "text-white" : "text-black",
+                isDark
+                  ? "text-rellia-mint [&_span]:!text-rellia-mint [&_strong]:!text-rellia-mint [&_em]:!text-rellia-mint"
+                  : "text-rellia-teal [&_span]:!text-rellia-teal [&_strong]:!text-rellia-teal [&_em]:!text-rellia-teal",
                 titleClassName ?? PAGE_HEADER_TITLE_SIZE_CLASS,
                 "mb-5",
               )}
@@ -147,7 +149,9 @@ export default function PageHeader({
             <div
               className={cn(
                 "max-w-3xl font-urbanist leading-relaxed",
-                isDark ? "text-white/80" : "text-black/65",
+                isDark
+                  ? "text-white [&_span]:!text-white [&_strong]:!text-white"
+                  : "text-black/85 [&_span]:!text-black/85 [&_strong]:!text-black/85",
                 subtitleClassName ?? PAGE_HEADER_SUBTITLE_SIZE_CLASS,
               )}
             >

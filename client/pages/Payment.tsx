@@ -62,60 +62,68 @@ export default function Payment() {
       <Navbar />
 
       <main id="main-content">
-        <section className="relative w-full border-t border-black/5 pt-24 md:pt-10">
-          {/* Full Bleed Background Layers (Persistent) */}
-          <div className="absolute inset-0 flex flex-col md:flex-row pointer-events-none">
-            <div className="relative flex-1 bg-rellia-teal/90 overflow-hidden">
-              <img 
-                src="/images/benefits-payment.jpg" 
-                alt="Rellia Benefits" 
-                className="h-full w-full object-cover opacity-[0.45] mix-blend-overlay scale-105"
-              />
-              {/* Gradient Overlay: Darker on the left edge */}
-              <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-rellia-teal/40 to-transparent" />
-              <div className="absolute inset-0 bg-rellia-teal/20" />
-              <div className="absolute -left-20 -top-20 w-[500px] h-[500px] bg-rellia-mint/10 blur-[120px] rounded-full" />
-            </div>
-            <div className="flex-1 bg-white" />
-          </div>
-
+        <section className="relative w-full border-t border-black/5 pt-16 md:pt-20 lg:pt-24 pb-16 md:pb-20 lg:pb-24 bg-white">
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-            className="relative z-10 max-w-[1300px] mx-auto px-6 md:px-10 flex flex-col md:flex-row min-h-[820px]"
+            className="relative z-10 max-w-[1300px] mx-auto px-6 md:px-10 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16"
           >
-                {/* Left: Benefits */}
-                <div className="flex-1 flex flex-col justify-start items-start pt-16 pb-14 md:pt-28 md:pb-20 pr-6 md:pr-16 relative">
-                  <div className="relative z-10 w-full max-w-[500px]">
-                    <h1 className="font-host-grotesk text-2xl sm:text-3xl md:text-3xl lg:text-4xl font-bold tracking-tight mb-10 leading-[1.1] text-white">
-                      Join the <span className="text-rellia-mint">Rellia Network</span> today
-                    </h1>
-
-                    <div className="flex flex-col gap-y-12 md:gap-y-16">
-                      {benefitsGrid.map((benefit, index) => {
-                        const Icon = BENEFIT_ICONS[index % BENEFIT_ICONS.length]
-                        return (
-                          <div key={index} className="flex items-start gap-5 md:gap-6 group">
-                            <Icon
-                              className="mt-1 h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 text-rellia-mint transition-transform duration-300 group-hover:scale-110 flex-shrink-0"
-                              aria-hidden
-                              strokeWidth={2.5}
-                            />
-                            <p className="font-urbanist text-white text-base sm:text-lg md:text-xl font-medium leading-relaxed">
-                              {benefit}
-                            </p>
-                          </div>
-                        )
-                      })}
-                    </div>
-                  </div>
+            {/* Left: Benefits Card */}
+            <div className="flex flex-col p-4 pb-8 md:p-6 md:pb-10 lg:p-8 pt-0 md:pt-0 lg:pt-0 w-full">
+              <div className="relative flex flex-col overflow-hidden rounded-[1.75rem] bg-rellia-teal p-8 md:p-10 lg:p-12 w-full h-full min-h-[500px]">
+                {/* Background image & gradient overlay contained within card */}
+                <div className="absolute inset-0 pointer-events-none">
+                  <img 
+                    src="/images/benefits-payment.jpg" 
+                    alt="" 
+                    aria-hidden
+                    className="h-full w-full object-cover opacity-[0.35] mix-blend-overlay scale-105"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-br from-rellia-teal via-[#0f5c5c] to-rellia-teal/85" />
+                  <div className="absolute -left-20 -top-20 w-[400px] h-[400px] bg-rellia-mint/10 blur-[100px] rounded-full" />
                 </div>
 
-                {/* Right: Plan Selection */}
-                <div className="flex-1 flex flex-col justify-start pt-16 pb-14 md:pt-28 md:pb-20 md:pl-16 relative">
-                  <div className="w-full h-full flex flex-col">
-                    <h2 className="font-host-grotesk text-2xl md:text-3xl font-bold text-black mb-10">Choose your plan</h2>
+                <div className="relative z-10 flex flex-col h-full">
+                  <img
+                    src="/images/hologram-logo.png"
+                    alt=""
+                    aria-hidden
+                    width={64}
+                    height={64}
+                    loading="lazy"
+                    decoding="async"
+                    className="h-14 w-14 opacity-90 drop-shadow-[0_0_15px_rgba(152,255,232,0.3)] md:h-16 md:w-16 mb-8 md:mb-12"
+                  />
+                  <h1 className="font-host-grotesk text-2xl sm:text-3xl md:text-3xl lg:text-4xl font-bold tracking-tight mb-8 leading-[1.1] text-rellia-mint">
+                    Join the Rellia Network today
+                  </h1>
+
+                  <div className="flex flex-col gap-y-5 md:gap-y-6">
+                    {benefitsGrid.map((benefit, index) => {
+                      const Icon = BENEFIT_ICONS[index % BENEFIT_ICONS.length]
+                      return (
+                        <div key={index} className="flex items-start gap-4 group">
+                          <Icon
+                            className="mt-1 h-5 w-5 sm:h-6 sm:w-6 text-rellia-mint transition-transform duration-300 group-hover:scale-110 flex-shrink-0"
+                            aria-hidden
+                            strokeWidth={2.5}
+                          />
+                          <p className="font-urbanist text-white text-base sm:text-lg font-medium leading-relaxed">
+                            {benefit}
+                          </p>
+                        </div>
+                      )
+                    })}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Right: Plan Selection */}
+            <div className="flex flex-col justify-start pt-4 pb-14 md:pb-20 px-4 md:px-8">
+              <div className="w-full h-full flex flex-col justify-center">
+                <h2 className="font-host-grotesk text-2xl md:text-3xl font-bold text-black mb-10">Choose your plan</h2>
                     
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full mb-6">
                       <button

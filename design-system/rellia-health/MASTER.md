@@ -16,26 +16,26 @@
 
 ### Color Palette
 
-| Role | Hex | CSS Variable |
-|------|-----|--------------|
-| Primary | `#0EA5E9` | `--color-primary` |
-| Secondary | `#38BDF8` | `--color-secondary` |
-| CTA/Accent | `#F97316` | `--color-cta` |
-| Background | `#F0F9FF` | `--color-background` |
-| Text | `#0C4A6E` | `--color-text` |
+| Role | Hex | CSS Variable / Tailwind |
+|------|-----|-------------------------|
+| Primary Teal | `#0D3540` | `rellia-teal` |
+| Secondary Mint | `#9DD6D0` | `rellia-mint` |
+| MintDark | `#1A5C56` | `rellia-mintDark` |
+| Cream (Wash) | `#EEF2F2` | `rellia-cream` |
+| GreyTeal (CTA Band) | `#C5D8D5` | `rellia-greyTeal` |
 
-**Color Notes:** Sky blue trust + warm CTA
+**Color Notes:** Deep teal trust + mint accent + soft cream backdrops
 
 ### Typography
 
-- **Heading Font:** Outfit
-- **Body Font:** Work Sans
-- **Mood:** geometric, modern, clean, balanced, contemporary, versatile
-- **Google Fonts:** [Outfit + Work Sans](https://fonts.google.com/share?selection.family=Outfit:wght@300;400;500;600;700|Work+Sans:wght@300;400;500;600;700)
+- **Heading Font:** Host Grotesk
+- **Body Font:** Urbanist
+- **Mood:** geometric, modern, clean, premium, high contrast
+- **Google Fonts:** [Host Grotesk + Urbanist](https://fonts.google.com/share?selection.family=Host+Grotesk:wght@300;400;500;600;700|Urbanist:wght@300;400;500;600;700)
 
 **CSS Import:**
 ```css
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Work+Sans:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Host+Grotesk:wght@300;400;500;600;700&family=Urbanist:wght@300;400;500;600;700&display=swap');
 ```
 
 ### Spacing Variables
@@ -66,50 +66,56 @@
 ### Buttons
 
 ```css
-/* Primary Button */
+/* Rellia CTA Primary Button */
 .btn-primary {
-  background: #F97316;
+  background: #0D3540; /* relli-teal */
   color: white;
-  padding: 12px 24px;
-  border-radius: 8px;
+  padding: 14px 32px;
+  border-radius: 9999px; /* Pill */
   font-weight: 600;
-  transition: all 200ms ease;
+  transition: all 300ms cubic-bezier(0.16, 1, 0.3, 1);
   cursor: pointer;
 }
 
 .btn-primary:hover {
-  opacity: 0.9;
-  transform: translateY(-1px);
+  background: #9DD6D0; /* relli-mint */
+  color: #0D3540;
+  transform: translateY(-2px);
 }
 
-/* Secondary Button */
+/* Rellia CTA Secondary Button */
 .btn-secondary {
   background: transparent;
-  color: #0EA5E9;
-  border: 2px solid #0EA5E9;
-  padding: 12px 24px;
-  border-radius: 8px;
+  color: #0D3540;
+  border: 1.5px solid #0D3540;
+  padding: 14px 32px;
+  border-radius: 9999px;
   font-weight: 600;
-  transition: all 200ms ease;
+  transition: all 300ms cubic-bezier(0.16, 1, 0.3, 1);
   cursor: pointer;
+}
+
+.btn-secondary:hover {
+  background: #0D3540;
+  color: white;
 }
 ```
 
 ### Cards
 
 ```css
+/* Glassmorphism/Bento Cards */
 .card {
-  background: #F0F9FF;
-  border-radius: 12px;
+  background: rgba(238, 242, 242, 0.3); /* relli-cream with opacity */
+  border: 1px solid rgba(238, 242, 242, 0.5);
+  border-radius: 16px;
   padding: 24px;
-  box-shadow: var(--shadow-md);
-  transition: all 200ms ease;
-  cursor: pointer;
+  transition: all 300ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .card:hover {
-  box-shadow: var(--shadow-lg);
-  transform: translateY(-2px);
+  border-color: rgba(157, 214, 208, 0.4); /* relli-mint border */
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
 }
 ```
 

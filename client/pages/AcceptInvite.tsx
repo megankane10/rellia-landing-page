@@ -2,6 +2,7 @@ import { useMemo, useState } from "react"
 import { Link, useNavigate, useSearchParams } from "react-router-dom"
 import AdminAuthLayout from "@/components/admin/AdminAuthLayout"
 import RelliaAction from "@/components/RelliaAction"
+import { readOtpTokenHash } from "@/lib/adminAuthFromUrl"
 import { supabase } from "@/lib/supabase"
 
 const isValidConfirmationUrl = (value: string | null): value is string => {
@@ -34,7 +35,7 @@ const AcceptInvite = () => {
 
     try {
       const target = new URL(confirmationUrl)
-      const tokenHash = target.searchParams.get("token_hash")
+      const tokenHash = readOtpTokenHash(target.searchParams)
       const typeParam = target.searchParams.get("type")
       const otpType = typeParam === "recovery" ? "recovery" : "invite"
 
@@ -44,7 +45,9 @@ const AcceptInvite = () => {
           type: otpType,
         })
         if (verifyError) {
-          setError(verifyError.message)
+          setError(
+            `${verifyError.message} If this invite was already opened (e.g. by an email scanner), ask for a new invite.`,
+          )
           return
         }
         navigate("/admin/set-password", { replace: true })
@@ -52,7 +55,7 @@ const AcceptInvite = () => {
       }
 
       const callbackBase = `${window.location.origin}/admin/auth/callback`
-      const redirectTo = `${callbackBase}?type=${otpType}`
+      const redirectTo = `${callbackBase}?type=${encodeURIComponent(otpType)}`
       target.searchParams.set("redirect_to", redirectTo)
       window.location.href = target.toString()
     } catch {

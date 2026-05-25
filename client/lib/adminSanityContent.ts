@@ -1,3 +1,4 @@
+import { studioDeskUrl } from "@shared/admin/notifyLinks"
 import { getSanityDataset, isSanityConfigured, sanityFetch } from "@/lib/sanity"
 
 export type SanityContentRow = {
@@ -41,14 +42,7 @@ export const formatCmsContentRelative = (iso?: string) => {
   return `${days}d ago`
 }
 
-export const studioUrlForRow = (row: SanityContentRow) => {
-  const STUDIO_BASE = "https://relliahealth.sanity.studio/desk"
-  const STUDIO_HOME = "https://relliahealth.sanity.studio"
-  const rawId = typeof row._id === "string" ? row._id : ""
-  const docId = rawId.replace(/^drafts\./, "")
-  if (!docId || !row._type) return STUDIO_HOME
-  return `${STUDIO_BASE}/${row._type};${docId}`
-}
+export const studioUrlForRow = (row: SanityContentRow) => studioDeskUrl(row._type, row._id)
 
 export const isCmsContentEnabled = () => isSanityConfigured()
 

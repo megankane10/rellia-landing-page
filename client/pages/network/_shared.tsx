@@ -430,13 +430,13 @@ export function RoleHero({
           <NetworkEyebrow label={label} tone="onDark" className="mb-6 md:mb-8" />
           <h1
             className={cn(
-              "max-w-4xl font-bold leading-[1.08] tracking-tight text-white drop-shadow-sm",
+              "max-w-4xl font-bold leading-[1.08] tracking-tight text-rellia-mint drop-shadow-sm [&_span]:!text-rellia-mint [&_strong]:!text-rellia-mint [&_em]:!text-rellia-mint",
               PAGE_HEADER_TITLE_SIZE_CLASS,
             )}
           >
             {title}
           </h1>
-          <div className="mt-6 max-w-2xl font-urbanist text-lg leading-relaxed text-white/80 md:text-xl">
+          <div className="mt-6 max-w-2xl font-urbanist text-lg leading-relaxed text-white md:text-xl [&_span]:!text-white [&_strong]:!text-white">
             {subtitle}
           </div>
           <div className="mt-10 flex w-full flex-col gap-3 sm:flex-row sm:flex-wrap">

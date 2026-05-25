@@ -54,8 +54,12 @@ const components: PortableTextComponents = {
       <h3 className="font-host-grotesk text-xl font-semibold text-rellia-teal mt-6 mb-3">{children}</h3>
     ),
     blockquote: ({ children }) => (
-      <figure className="my-8 rounded-2xl bg-rellia-teal/5 px-6 py-6 md:my-10">
-        <blockquote className="font-urbanist text-base italic leading-relaxed text-black/80 md:text-lg">
+      <figure className="relative my-10 overflow-hidden rounded-[1.75rem] bg-gradient-to-br from-rellia-teal to-[#144853] px-6 py-8 md:px-8 md:py-10">
+        <div
+          className="pointer-events-none absolute top-[-20%] right-[-10%] h-40 w-40 rounded-full bg-rellia-mint/20 blur-[80px]"
+          aria-hidden
+        />
+        <blockquote className="relative font-urbanist text-2xl md:text-3xl font-semibold leading-snug text-rellia-mint">
           {children}
         </blockquote>
       </figure>

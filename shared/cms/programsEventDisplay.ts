@@ -256,9 +256,8 @@ export const getProgramsEventDisplayDateTime = (event: ProgramsEventCard): strin
 
 /** Single-line summary for cards: `Wednesday, April 9, 2025 — 2:00 PM EDT`. */
 export const formatProgramsEventCardDateTime = (raw: string): string => {
-  const { date, time } = parseProgramsEventDateTimeParts(raw)
-  if (!time) return date
-  return `${date} — ${time}`
+  const { date } = parseProgramsEventDateTimeParts(raw)
+  return date
 }
 
 /** Compact one-line for meta / subtitles (same canonical formatting as cards). */

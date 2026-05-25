@@ -216,9 +216,9 @@ export default function NetworkMetricsSection({ heading, subheading, metrics }: 
                 />
               </div>
               <h2
-                className={`font-host-grotesk max-w-3xl font-bold leading-tight tracking-tight text-white ${PAGE_HEADER_TITLE_SIZE_CLASS}`}
+                className={`font-host-grotesk max-w-3xl font-bold leading-tight tracking-tight text-rellia-mint ${PAGE_HEADER_TITLE_SIZE_CLASS}`}
               >
-                <AccentHeading text={heading} />
+                {heading}
               </h2>
             </motion.div>
           </div>

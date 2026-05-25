@@ -568,11 +568,13 @@ export default function CareersCms() {
 
 
 
-        <RelliaCta
-          title="Questions before you **apply**?"
-          body="Tell us what you are looking for—we are happy to point you to the right conversation."
-          primary={{ label: "Contact Rellia", to: "/contact" }}
-        />
+        <div className="bg-rellia-cream/60">
+          <RelliaCta
+            title="Questions before you **apply**?"
+            body="Tell us what you are looking for—we are happy to point you to the right conversation."
+            primary={{ label: "Contact Rellia", to: "/contact" }}
+          />
+        </div>
       </main>
 
       <Footer />
