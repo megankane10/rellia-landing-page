@@ -82,10 +82,13 @@ $$;
 -- ─── Slack Block Kit payload ─────────────────────────────────────────────────
 
 create or replace function public.slack_blocks_message(
-  heading text,
-  body_lines text[],
+  badge_text text,
+  doc_type text,
+  details text[],
   button_text text,
   button_url text,
+  uuid text,
+  color text default '#3498DB',
   button_action_id text default 'open_admin_link'
 )
 returns jsonb
@@ -93,23 +96,55 @@ language sql
 immutable
 as $$
   select jsonb_build_object(
-    'blocks',
+    'attachments',
     jsonb_build_array(
       jsonb_build_object(
-        'type', 'section',
-        'text', jsonb_build_object(
-          'type', 'mrkdwn',
-          'text', heading || E'\n' || coalesce(array_to_string(body_lines, E'\n'), '')
-        )
-      ),
-      jsonb_build_object(
-        'type', 'actions',
-        'elements', jsonb_build_array(
+        'color', color,
+        'blocks', jsonb_build_array(
           jsonb_build_object(
-            'type', 'button',
-            'text', jsonb_build_object('type', 'plain_text', 'text', button_text, 'emoji', true),
-            'url', button_url,
-            'action_id', button_action_id
+            'type', 'section',
+            'text', jsonb_build_object(
+              'type', 'mrkdwn',
+              'text', case badge_text
+                when 'FORM SUBMISSION' then ':inbox_tray:  *[FORM SUBMISSION]*'
+                when 'DIAGNOSTIC REPORT' then ':chart_with_upwards_trend:  *[DIAGNOSTIC REPORT]*'
+                when 'STATUS CHANGED' then ':arrows_counterclockwise:  *[STATUS CHANGED]*'
+                when 'SUBMISSION DELETED' then ':wastebasket:  *[SUBMISSION DELETED]*'
+                when 'LEAD DELETED' then ':wastebasket:  *[LEAD DELETED]*'
+                else '*[' || badge_text || ']*'
+              end
+            )
+          ),
+          jsonb_build_object(
+            'type', 'divider'
+          ),
+          jsonb_build_object(
+            'type', 'section',
+            'text', jsonb_build_object(
+              'type', 'mrkdwn',
+              'text', '*Type of Doc:* ' || doc_type || E'\n' || coalesce(array_to_string(details, E'\n'), '')
+            )
+          ),
+          jsonb_build_object(
+            'type', 'actions',
+            'elements', jsonb_build_array(
+              jsonb_build_object(
+                'type', 'button',
+                'text', jsonb_build_object('type', 'plain_text', 'text', button_text, 'emoji', true),
+                'url', button_url,
+                'style', 'primary',
+                'action_id', button_action_id
+              )
+            )
+          ),
+          jsonb_build_object(
+            'type', 'context',
+            'elements', jsonb_build_array(
+              jsonb_build_object(
+                'type', 'mrkdwn',
+                'text', 'ID: `' || uuid || '`'
+              )
+            )
           )
         )
       )
@@ -161,31 +196,33 @@ declare
 begin
   submission_label := coalesce(
     case NEW.submission_type
-      when 'investor' then 'Investor pitch notification'
-      else 'Contact form'
+      when 'investor' then 'Investor Pitch'
+      else 'Contact Form'
     end,
     case OLD.submission_type
-      when 'investor' then 'Investor pitch notification'
-      else 'Contact form'
+      when 'investor' then 'Investor Pitch'
+      else 'Contact Form'
     end,
-    'Contact form'
+    'Contact Form'
   );
   tab := 'contact';
   inbox_url := public.slack_admin_inbox_url(tab);
 
   if TG_OP = 'INSERT' then
     body_lines := array[
-      '• Name: ' || NEW.first_name || ' ' || NEW.last_name,
-      '• Email: ' || NEW.email,
-      '• Company: ' || coalesce(NEW.company, '—'),
-      '• Status: ' || coalesce(NEW.status, 'New'),
-      '• ID: `' || NEW.id::text || '`'
+      '• *Name:* ' || NEW.first_name || ' ' || NEW.last_name,
+      '• *Email:* ' || NEW.email,
+      '• *Company:* ' || coalesce(NEW.company, '—'),
+      '• *Status:* ' || coalesce(NEW.status, 'New')
     ];
     payload := public.slack_blocks_message(
-      ':inbox_tray: *New ' || submission_label || ' submission*',
+      'FORM SUBMISSION',
+      submission_label,
       body_lines,
-      'View in dashboard',
+      'View on dashboard',
       inbox_url,
+      NEW.id::text,
+      '#2ECC71',
       'view_in_dashboard'
     );
   elsif TG_OP = 'UPDATE' then
@@ -193,28 +230,34 @@ begin
       return NEW;
     end if;
     body_lines := array[
-      '• ' || NEW.first_name || ' ' || NEW.last_name || ' (' || NEW.email || ')',
-      '• Status: ' || OLD.status || ' → ' || NEW.status,
-      '• ID: `' || NEW.id::text || '`'
+      '• *Name:* ' || NEW.first_name || ' ' || NEW.last_name,
+      '• *Email:* ' || NEW.email,
+      '• *Status:* ' || OLD.status || ' → ' || NEW.status
     ];
     payload := public.slack_blocks_message(
-      ':arrows_counterclockwise: *' || submission_label || ' status updated*',
+      'STATUS CHANGED',
+      submission_label,
       body_lines,
-      'View in dashboard',
+      'View on dashboard',
       inbox_url,
+      NEW.id::text,
+      '#F39C12',
       'view_in_dashboard'
     );
   elsif TG_OP = 'DELETE' then
     body_lines := array[
-      '• ' || OLD.first_name || ' ' || OLD.last_name || ' (' || OLD.email || ')',
-      '• Last status: ' || coalesce(OLD.status, '—'),
-      '• ID: `' || OLD.id::text || '`'
+      '• *Name:* ' || OLD.first_name || ' ' || OLD.last_name,
+      '• *Email:* ' || OLD.email,
+      '• *Last Status:* ' || coalesce(OLD.status, '—')
     ];
     payload := public.slack_blocks_message(
-      ':wastebasket: *' || submission_label || ' deleted*',
+      'SUBMISSION DELETED',
+      submission_label,
       body_lines,
-      'View in dashboard',
+      'View on dashboard',
       inbox_url,
+      OLD.id::text,
+      '#E74C3C',
       'view_in_dashboard'
     );
   end if;
@@ -254,18 +297,20 @@ begin
 
   inbox_url := public.slack_admin_inbox_url('diagnostic');
   body_lines := array[
-    '• Company: ' || coalesce(profile.company_name, '—'),
-    '• Contact: ' || coalesce(profile.name, '—') || ' (' || coalesce(profile.work_email, '—') || ')',
-    '• Stage: ' || coalesce(profile.stage, '—'),
-    '• Status: ' || coalesce(profile.status, 'New'),
-    '• Profile ID: `' || profile.id::text || '`'
+    '• *Company:* ' || coalesce(profile.company_name, '—'),
+    '• *Contact:* ' || coalesce(profile.name, '—') || ' (' || coalesce(profile.work_email, '—') || ')',
+    '• *Stage:* ' || coalesce(profile.stage, '—'),
+    '• *Status:* ' || coalesce(profile.status, 'New')
   ];
 
   payload := public.slack_blocks_message(
-    ':chart_with_upwards_trend: *New diagnostic submission*',
+    'DIAGNOSTIC REPORT',
+    'Diagnostic Report',
     body_lines,
-    'View in dashboard',
+    'View on dashboard',
     inbox_url,
+    profile.id::text,
+    '#2ECC71',
     'view_in_dashboard'
   );
 
@@ -300,28 +345,34 @@ begin
       return NEW;
     end if;
     body_lines := array[
-      '• ' || coalesce(NEW.name, '—') || ' @ ' || coalesce(NEW.company_name, '—') || ' (' || coalesce(NEW.work_email, '—') || ')',
-      '• Status: ' || OLD.status || ' → ' || NEW.status,
-      '• Profile ID: `' || NEW.id::text || '`'
+      '• *Contact:* ' || coalesce(NEW.name, '—') || ' (' || coalesce(NEW.work_email, '—') || ')',
+      '• *Company:* ' || coalesce(NEW.company_name, '—'),
+      '• *Status:* ' || OLD.status || ' → ' || NEW.status
     ];
     payload := public.slack_blocks_message(
-      ':arrows_counterclockwise: *Diagnostic lead status updated*',
+      'STATUS CHANGED',
+      'Diagnostic Lead',
       body_lines,
-      'View in dashboard',
+      'View on dashboard',
       inbox_url,
+      NEW.id::text,
+      '#F39C12',
       'view_in_dashboard'
     );
   elsif TG_OP = 'DELETE' then
     body_lines := array[
-      '• ' || coalesce(OLD.name, '—') || ' @ ' || coalesce(OLD.company_name, '—') || ' (' || coalesce(OLD.work_email, '—') || ')',
-      '• Last status: ' || coalesce(OLD.status, '—'),
-      '• Profile ID: `' || OLD.id::text || '`'
+      '• *Contact:* ' || coalesce(OLD.name, '—') || ' (' || coalesce(OLD.work_email, '—') || ')',
+      '• *Company:* ' || coalesce(OLD.company_name, '—'),
+      '• *Last Status:* ' || coalesce(OLD.status, '—')
     ];
     payload := public.slack_blocks_message(
-      ':wastebasket: *Diagnostic lead deleted*',
+      'LEAD DELETED',
+      'Diagnostic Lead',
       body_lines,
-      'View in dashboard',
+      'View on dashboard',
       inbox_url,
+      OLD.id::text,
+      '#E74C3C',
       'view_in_dashboard'
     );
   else
@@ -345,8 +396,9 @@ execute function public.slack_notify_company_profiles();
 
 -- ─── Tests ───────────────────────────────────────────────────────────────────
 -- select public.notify_slack(public.slack_blocks_message(
---   '*Slack test*', array['• hello'], 'View in dashboard',
---   public.slack_admin_inbox_url('contact'), 'view_in_dashboard'
+--   'FORM SUBMISSION', 'Test Doc', array['• *Test:* Hello World'],
+--   'View on dashboard', public.slack_admin_inbox_url('contact'),
+--   '00000000-0000-0000-0000-000000000000', '#2ECC71', 'view_in_dashboard'
 -- ));
 --
 -- select id, status_code, error_msg from net._http_response order by created desc limit 5;

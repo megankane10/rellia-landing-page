@@ -56,7 +56,7 @@ const AdminBrandPanel = ({ heading, description, children, textTone = "white" }:
             >
               {heading}
             </h2>
-            <p className="mt-5 text-left font-urbanist text-base md:text-lg leading-relaxed text-white w-full px-2">
+            <p className="mt-5 text-left font-urbanist text-lg md:text-xl leading-relaxed text-white/60 w-full px-2">
               {description}
             </p>
             {children}

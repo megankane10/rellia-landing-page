@@ -98,22 +98,22 @@ function LeftPanel({ copy }: { copy: typeof DEFAULT_CONTACT_PAGE }) {
               </p>
 
               <div className="mt-8 flex items-center gap-4 md:gap-5">
-                <div className="h-[54px] w-[54px] md:h-[67px] md:w-[67px] shrink-0 overflow-hidden rounded-2xl border-2 border-white/20 shadow-xl">
+                <div className="h-[62px] w-[62px] md:h-[78px] md:w-[78px] shrink-0 overflow-hidden rounded-2xl border-2 border-white/20 shadow-xl">
                   <img
                     src="/images/megan-headshot.jpeg"
                     alt={`${copy.quoteAttributionName}, ${copy.quoteAttributionRole}`}
-                    width={67}
-                    height={67}
+                    width={78}
+                    height={78}
                     loading="lazy"
                     decoding="async"
-                    className="h-full w-full object-cover"
+                    className="h-full w-full object-cover object-top"
                   />
                 </div>
                 <div>
-                  <p className="font-host-grotesk text-[16px] md:text-[19px] font-medium tracking-wide text-rellia-mint">
+                  <p className="font-host-grotesk text-[18px] md:text-[21px] font-medium tracking-wide text-rellia-mint">
                     {copy.quoteAttributionName}
                   </p>
-                  <p className="font-urbanist text-[14px] md:text-[17px] font-medium text-white/60">{copy.quoteAttributionRole}</p>
+                  <p className="font-urbanist text-[15px] md:text-[18px] font-medium text-white/60">{copy.quoteAttributionRole}</p>
                 </div>
               </div>
             </div>
