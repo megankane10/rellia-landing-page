@@ -4,6 +4,7 @@ import { normalizeToPortableText } from "@shared/cms/normalizePortableText"
 import { cn } from "@/lib/utils"
 import { BodyCtaBox } from "@/components/BodyCtaBox"
 import { RichTextImageCarousel, type RichTextCarouselSlide } from "@/components/RichTextImageCarousel"
+import { parseBlockquoteAttribution, RichTextQuoteFigure } from "@/components/RichTextQuoteFigure"
 
 const components: PortableTextComponents = {
   types: {
@@ -54,67 +55,8 @@ const components: PortableTextComponents = {
       <h3 className="font-host-grotesk text-xl font-semibold text-rellia-teal mt-6 mb-3">{children}</h3>
     ),
     blockquote: ({ children }) => {
-      let quoteText: React.ReactNode = children
-      let attributionText: string | null = null
-
-      const getRawText = (node: React.ReactNode): string => {
-        if (!node) return ""
-        if (typeof node === "string") return node
-        if (typeof node === "number") return String(node)
-        if (Array.isArray(node)) return node.map(getRawText).join("")
-        if (typeof node === "object" && node && "props" in node && (node as any).props?.children) {
-          return getRawText((node as any).props.children)
-        }
-        return ""
-      }
-
-      const fullText = getRawText(children)
-      
-      let separator = ""
-      if (fullText.includes("\n")) {
-        separator = "\n"
-      } else if (fullText.includes(" — ")) {
-        separator = " — "
-      } else if (fullText.includes(" —")) {
-        separator = " —"
-      } else if (fullText.includes("— ")) {
-        separator = "— "
-      } else if (fullText.includes("—")) {
-        separator = "—"
-      } else if (fullText.toLowerCase().includes("torontotechweek.com")) {
-        const idx = fullText.toLowerCase().indexOf("torontotechweek.com")
-        quoteText = fullText.slice(0, idx).trim()
-        attributionText = fullText.slice(idx).trim()
-      }
-
-      if (separator) {
-        const parts = fullText.split(separator)
-        quoteText = parts[0].trim()
-        attributionText = parts.slice(1).join(separator).trim()
-      }
-
-      return (
-        <figure className="relative my-10 overflow-hidden rounded-[1.75rem] bg-gradient-to-br from-rellia-teal to-[#144853] px-6 py-8 md:px-8 md:py-10">
-          <div
-            className="pointer-events-none absolute top-[-20%] right-[-10%] h-40 w-40 rounded-full bg-rellia-mint/20 blur-[80px]"
-            aria-hidden
-          />
-          <blockquote className="relative font-urbanist text-2xl md:text-3xl font-semibold leading-snug text-rellia-mint">
-            {quoteText}
-          </blockquote>
-          {attributionText ? (
-            <figcaption className="relative mt-4 font-host-grotesk text-sm font-medium tracking-wide text-white/80">
-              {attributionText.toLowerCase().includes("torontotechweek") ? (
-                <a href="https://torontotechweek.com" target="_blank" rel="noopener noreferrer" className="hover:underline text-white">
-                  {attributionText}
-                </a>
-              ) : (
-                <>— {attributionText}</>
-              )}
-            </figcaption>
-          ) : null}
-        </figure>
-      )
+      const { quote, attribution } = parseBlockquoteAttribution(children)
+      return <RichTextQuoteFigure quote={quote} attribution={attribution} />
     },
     normal: ({ children }) => (
       <p className="font-urbanist text-black/70 text-base md:text-lg leading-relaxed mb-4">{children}</p>
