@@ -865,20 +865,6 @@ const AI_HEALTHCARE_COMPLIANCE_DETAIL_BODY: SanityPortableText = [
   },
   {
     _type: "block",
-    _key: "ahc-p2",
-    style: "h2",
-    markDefs: [],
-    children: [
-      {
-        _type: "span",
-        _key: "ahc-p2s",
-        text: "About the event",
-        marks: [],
-      },
-    ],
-  },
-  {
-    _type: "block",
     _key: "ahc-p3",
     style: "normal",
     markDefs: [],
@@ -1104,14 +1090,14 @@ const AI_HEALTHCARE_COMPLIANCE_DETAIL_BODY: SanityPortableText = [
   {
     _type: "block",
     _key: "ahc-p19",
-    style: "normal",
+    style: "h3",
     markDefs: [],
     children: [
       {
         _type: "span",
         _key: "ahc-p19s",
         text: "Brought to you by:",
-        marks: ["strong"],
+        marks: [],
       },
     ],
   },
@@ -1138,7 +1124,7 @@ const AI_HEALTHCARE_COMPLIANCE_DETAIL_BODY: SanityPortableText = [
       {
         _type: "span",
         _key: "ahc-p21s",
-        text: "Rellia A community that connects promising digital health founders with industry experts, healthcare practitioners, and engaged investors. Rellia is a network of people who deeply understand the healthcare industry and will go out of their way to help you succeed. We connect early-stage digital health, medical device, wellness, and diagnostic companies with the personalized solutions that match their unique needs.",
+        text: "Rellia Health - A community that connects promising digital health founders with industry experts, healthcare practitioners, and engaged investors. Rellia is a network of people who deeply understand the healthcare industry and will go out of their way to help you succeed. We connect early-stage digital health, medical device, wellness, and diagnostic companies with the personalized solutions that match their unique needs.",
         marks: [],
       },
     ],
@@ -1152,7 +1138,7 @@ const AI_HEALTHCARE_COMPLIANCE_DETAIL_BODY: SanityPortableText = [
       {
         _type: "span",
         _key: "ahc-p22s",
-        text: "CyStack CyStack blends deep offensive security knowledge with proprietary tooling to help organizations protect their products, data, and operations. Their suite covers penetration testing, automated vulnerability scanning (VulnScan), crowdsourced bug bounty (WhiteHub), secrets management (Locker), and 24/7 security monitoring — giving healthtech startups everything they need to build secure from day one.",
+        text: "CyStack - Blends deep offensive security knowledge with proprietary tooling to help organizations protect their products, data, and operations. Their suite covers penetration testing, automated vulnerability scanning (VulnScan), crowdsourced bug bounty (WhiteHub), secrets management (Locker), and 24/7 security monitoring — giving healthtech startups everything they need to build secure from day one.",
         marks: [],
       },
     ],
@@ -1160,13 +1146,13 @@ const AI_HEALTHCARE_COMPLIANCE_DETAIL_BODY: SanityPortableText = [
   {
     _type: "block",
     _key: "ahc-p23",
-    style: "normal",
+    style: "blockquote",
     markDefs: [],
     children: [
       {
         _type: "span",
         _key: "ahc-p23s",
-        text: "“Toronto Tech Week is a citywide celebration of the people building what’s next. From May 26–29, 2026, founders, investors, and builders come together for hundreds of community-led events across Toronto, connecting tens of thousands of people around Canadian tech. Torontotechweek.com”",
+        text: "“Toronto Tech Week is a citywide celebration of the people building what’s next. From May 26–29, 2026, founders, investors, and builders come together for hundreds of community-led events across Toronto, connecting tens of thousands of people around Canadian tech.”\nTorontotechweek.com",
         marks: [],
       },
     ],

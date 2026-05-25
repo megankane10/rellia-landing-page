@@ -160,7 +160,7 @@ export default function RelliaCta({
   return (
     <section
       className={cn(
-        "relative mt-6 flex w-full flex-col justify-center overflow-hidden bg-rellia-greyTeal px-[30px] pt-16 pb-[9rem] md:mt-8 md:pt-20 md:pb-48 lg:mt-10 lg:pt-24 lg:pb-[15rem]",
+        "relative mt-0 flex w-full flex-col justify-center overflow-hidden bg-rellia-greyTeal px-[30px] pt-[7.5rem] pb-[9rem] md:mt-0 md:pt-[10.5rem] md:pb-48 lg:mt-0 lg:pt-[13.5rem] lg:pb-[15rem]",
         roundedClassName,
         className,
       )}

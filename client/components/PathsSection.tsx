@@ -188,17 +188,16 @@ export default function PathsSection() {
             variants={headingContainerVariants}
             initial="hidden"
             animate={isInView ? "visible" : "hidden"}
-            className="relative z-10 flex flex-wrap justify-center gap-x-[0.22em] gap-y-2 text-balance font-host-grotesk text-3xl font-semibold leading-tight tracking-tight text-black md:text-[44px] md:leading-[1.15]"
+            className="relative z-10 flex flex-wrap justify-center gap-x-[0.22em] gap-y-2 text-balance font-host-grotesk text-3xl font-semibold leading-tight tracking-tight text-rellia-teal md:text-[44px] md:leading-[1.15]"
           >
             {(home?.pathsTitle?.trim() || "Find your place in the community")
               .split(" ")
               .flatMap((word, idx, arr) => {
-                const isAccent = word.toLowerCase() === "your" || word.toLowerCase() === "place"
                 const nodes = [
                   <motion.span
                     key={`${idx}-${word}`}
                     variants={headingWordVariants}
-                    className={cn("inline-block will-change-[transform,filter]", isAccent && "text-rellia-teal")}
+                    className={cn("inline-block will-change-[transform,filter]")}
                   >
                     {word}
                   </motion.span>,

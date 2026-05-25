@@ -35,8 +35,8 @@ export default function Contact() {
 
 function ContactSection({ copy }: { copy: typeof DEFAULT_CONTACT_PAGE }) {
   return (
-    <section className="relative w-full pt-16 md:pt-20 lg:pt-24 pb-16 md:pb-20 lg:pb-24">
-      <div className="grid grid-cols-1 lg:grid-cols-2">
+    <section className="relative w-full pt-24 md:pt-28 pb-6 md:pb-8 lg:pb-10">
+      <div className="grid min-h-[calc(100vh-8rem)] grid-cols-1 lg:grid-cols-2">
         <LeftPanel copy={copy} />
 
         <div className="relative flex items-center justify-center overflow-hidden bg-white px-6 py-12 md:px-12 md:py-16 lg:px-16 lg:py-20">
@@ -55,7 +55,7 @@ function ContactSection({ copy }: { copy: typeof DEFAULT_CONTACT_PAGE }) {
 
 function LeftPanel({ copy }: { copy: typeof DEFAULT_CONTACT_PAGE }) {
   return (
-    <div className="flex flex-col p-4 pb-8 md:p-6 md:pb-10 lg:p-8 pt-0 md:pt-0 lg:pt-0">
+    <div className="flex flex-col p-4 pb-8 md:p-6 md:pb-10 lg:p-8">
       <h1 className="sr-only">{copy.pageTitle ?? "Contact Rellia Health"}</h1>
       <div className="relative flex min-h-[min(480px,calc(100vh-10rem))] flex-1 flex-col overflow-hidden rounded-[1.75rem] bg-rellia-teal">
         <div className="absolute inset-0">

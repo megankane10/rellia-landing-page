@@ -325,7 +325,7 @@ export default function Investors() {
                       Host a focused virtual session aligned to your mandate—or join a larger showcase to compare teams alongside fellow investors.
                     </p>
                   </ScrollReveal>
-                  <div className="mt-20 md:mt-28 grid grid-cols-1 gap-8 md:grid-cols-2">
+                  <div className="mt-8 md:mt-12 grid grid-cols-1 gap-8 md:grid-cols-2">
                     <Reveal delay={0.06}>
                       <div className="group relative overflow-hidden rounded-[24px] border border-white/10 shadow-sm transition-[transform,box-shadow] duration-300 hover:-translate-y-[1px] hover:shadow-md h-[400px] md:h-[480px]">
                         <img

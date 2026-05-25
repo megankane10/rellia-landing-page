@@ -158,7 +158,7 @@ export default function StoryPost() {
                       </span>
                     </div>
 
-                    <h1 className="mt-6 text-rellia-teal text-3xl md:text-4xl lg:text-5xl font-medium leading-tight tracking-tight">
+                     <h1 className="mt-6 text-rellia-teal text-3xl md:text-4xl lg:text-5xl font-medium leading-tight tracking-tight">
                       {cmsStory.title}
                     </h1>
                     {cmsStory.excerpt ? (
@@ -166,6 +166,86 @@ export default function StoryPost() {
                         {cmsStory.excerpt}
                       </p>
                     ) : null}
+
+                    <div className="h-8 md:h-10" aria-hidden />
+
+                    <div className="mt-8 flex flex-col items-start gap-4">
+                      <p className="font-host-grotesk text-[12px] font-semibold uppercase tracking-[0.14em] text-black/55">
+                        Share this story
+                      </p>
+                      <div className="h-px w-full bg-black/10" aria-hidden />
+
+                      <div className="flex flex-wrap items-center gap-3">
+                        <a
+                          href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(canonical)}&text=${encodeURIComponent(title)}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={shareToolbarButtonClassName}
+                          aria-label="Share on X"
+                        >
+                          <ShareIconX />
+                        </a>
+                        <a
+                          href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(canonical)}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={shareToolbarButtonClassName}
+                          aria-label="Share on LinkedIn"
+                        >
+                          <ShareIconLinkedIn />
+                        </a>
+                        <a
+                          href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(canonical)}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={shareToolbarButtonClassName}
+                          aria-label="Share on Facebook"
+                        >
+                          <ShareIconFacebook />
+                        </a>
+                        <a
+                          href={buildMailtoHref(DEFAULT_GLOBAL_SETTINGS.supportEmail, {
+                            subject: title,
+                            body: `${title}\n\n${canonical}`,
+                          })}
+                          className={shareToolbarButtonClassName}
+                          aria-label="Share by email"
+                        >
+                          <ShareIconMail />
+                        </a>
+
+                        <button
+                          type="button"
+                          onClick={handleCopyLink}
+                          className={cn(
+                            shareToolbarButtonClassName,
+                            copyState === "copied" && "bg-rellia-mint text-rellia-teal border-rellia-teal shadow-md"
+                          )}
+                          aria-label={copyState === "copied" ? "Link copied" : "Copy story link"}
+                        >
+                          {copyState === "copied" ? (
+                            <Check className="h-5 w-5 shrink-0 animate-scale-in" />
+                          ) : (
+                            <ShareIconCopy />
+                          )}
+                        </button>
+
+                        <AnimatePresence mode="wait" initial={false}>
+                          {copyState === "copied" ? (
+                            <motion.span
+                              key="copied-feedback"
+                              className="font-host-grotesk text-sm font-semibold text-rellia-teal"
+                              initial={{ opacity: 0, y: 4, scale: 0.98 }}
+                              animate={{ opacity: 1, y: 0, scale: 1 }}
+                              exit={{ opacity: 0, y: -4, scale: 0.98 }}
+                              transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+                            >
+                              Copied!
+                            </motion.span>
+                          ) : null}
+                        </AnimatePresence>
+                      </div>
+                    </div>
                   </ScrollReveal>
                 </div>
               </div>

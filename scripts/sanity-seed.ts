@@ -229,8 +229,14 @@ const portableStoryBody = (story: (typeof STORIES)[number]): PortableStoryNode[]
     // We convert them into supported portable types.
     if (b.type === "quote") {
       const attribution = (b.attribution ?? "").trim()
-      const text = attribution ? `“${b.text}” — ${attribution}` : `“${b.text}”`
-      nodes.push(block(key, text, "normal"))
+      const text = attribution ? `${b.text}\n— ${attribution}` : b.text
+      nodes.push({
+        _type: "block",
+        _key: key,
+        style: "blockquote",
+        markDefs: [],
+        children: [{ _type: "span", _key: `${key}-span`, text, marks: [] }],
+      })
       return
     }
 
@@ -1241,6 +1247,7 @@ async function main() {
     if (!slug) continue
 
     const storyFilterId = storyFilterIdForTag(story.tag)
+    const storyImageAssetId = await resolveImageAssetId(client, story.coverImageSrc)
     mutations.push({
       createOrReplace: {
         _id: `story.${slug}`,
@@ -1253,6 +1260,7 @@ async function main() {
           : undefined,
         publishedAt: story.publishedAt ? new Date(story.publishedAt).toISOString() : undefined,
         excerpt: story.excerpt,
+        headerImage: toSanityImageFieldValue(storyImageAssetId),
         headerImageAlt: story.coverImageAlt,
         body: portableStoryBody(story),
         seo: {
