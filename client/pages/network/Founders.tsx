@@ -37,7 +37,7 @@ import { NETWORK_PATH_ROLE_TAG } from "@/lib/networkPathRoles"
 import ScrollReveal from "@/components/ScrollReveal"
 import { DiagnosticSurveySection } from "@/components/DiagnosticSurveySection"
 import { CreamSection, LightSection, Reveal } from "./_shared"
-import { motion, useReducedMotion, useScroll, useTransform, useInView } from "framer-motion"
+import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion"
 import { useNetworkFoundersPage } from "@/hooks/useCmsDocuments"
 import NetworkCmsPage from "./NetworkCmsPage"
 import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo"
@@ -554,173 +554,105 @@ function JourneySplitSection() {
     launch: Rocket,
   } satisfies Record<JourneyStep["id"], typeof Lightbulb>
 
-  const sectionRef = useRef<HTMLDivElement | null>(null)
-  const isInView = useInView(sectionRef, { once: true, margin: "-12% 0px" })
-  const reduceMotion = useReducedMotion()
-
-  const parentVariants = {
-    hidden: {},
-    visible: {
-      transition: {
-        staggerChildren: reduceMotion ? 0 : 0.12,
-      }
-    }
-  }
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 16 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] as const }
-    }
-  }
-
-  const dividerVariants = {
-    hidden: { opacity: 0, scaleX: 0 },
-    visible: {
-      opacity: 1,
-      scaleX: 1,
-      transition: { duration: 0.6, delay: reduceMotion ? 0 : 0.5, ease: [0.16, 1, 0.3, 1] as const }
-    }
-  }
-
-  const arrowCircleVariants = {
-    hidden: { opacity: 0, scale: 0 },
-    visible: {
-      opacity: 1,
-      scale: 1,
-      transition: { type: "spring" as const, stiffness: 260, damping: 20, delay: reduceMotion ? 0 : 0.65 }
-    }
-  }
-
-  const bottomSectionVariants = {
-    hidden: { opacity: 0, y: 24 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.6, delay: reduceMotion ? 0 : 0.75, ease: [0.16, 1, 0.3, 1] as const }
-    }
-  }
+  const outsideCardBaseDelay = 0.28
+  const outsideCardStagger = 0.14
+  const dividerDelay = outsideCardBaseDelay + outsideSteps.length * outsideCardStagger + 0.08
+  const bottomHeaderDelay = dividerDelay + 0.22
+  const relliaCardBaseDelay = bottomHeaderDelay + 0.14
+  const relliaCardStagger = 0.12
 
   return (
-    <section
-      ref={sectionRef}
-      className="w-full bg-white py-16 md:py-24 px-6 md:px-10 overflow-hidden border-t border-black/[0.06]"
-    >
+    <section className="w-full overflow-hidden border-t border-black/[0.06] bg-white px-6 py-16 md:px-10 md:py-24">
       <div className="mx-auto max-w-[1300px]">
-        {/* Top Portion: Title & Subtitle + You Own (Full Width) */}
-        <div className="flex flex-col gap-8">
-          {/* Title and Subtitle */}
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 w-full pb-2">
-            <h2 className="font-host-grotesk text-3xl font-semibold leading-tight tracking-tight text-rellia-teal md:text-[40px] max-w-xl">
-              Where Rellia meets your trajectory
-            </h2>
-            <p className="font-urbanist text-base leading-relaxed tracking-tight text-rellia-teal md:text-lg md:text-right max-w-xl font-normal">
+        <ScrollReveal variant="ctaReveal">
+          <h2 className="w-full font-host-grotesk text-3xl font-semibold leading-tight tracking-tight text-rellia-teal md:text-[40px]">
+            Where Rellia meets your trajectory
+          </h2>
+        </ScrollReveal>
+
+        <ScrollReveal variant="ctaReveal" delay={0.1} className="mt-8 md:mt-10">
+          <div className="flex w-full flex-col gap-4 md:flex-row md:items-start md:justify-between md:gap-8">
+            <span className="inline-flex shrink-0 items-center rounded-full bg-rellia-cream px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.14em] text-rellia-teal">
+              You own
+            </span>
+            <p className="max-w-2xl font-urbanist text-base font-normal leading-relaxed tracking-tight text-rellia-teal md:text-lg md:text-right">
               We help you execute in healthcare complexity once you have direction—without replacing early discovery.
             </p>
           </div>
+        </ScrollReveal>
 
-          {/* You Own Section: Full Width on its own line */}
-          <div className="flex flex-col items-start w-full">
-            <span className="inline-flex items-center rounded-full bg-rellia-cream px-3 py-1.5 text-xs font-semibold text-rellia-teal uppercase tracking-[0.14em] mb-4">
-              You own
-            </span>
+        <div className="mt-6 grid w-full grid-cols-1 gap-6 md:grid-cols-3">
+          {outsideSteps.map((m, idx) => {
+            const Icon = journeyIconById[m.id]
+            return (
+              <ScrollReveal
+                key={m.id}
+                variant="ctaReveal"
+                delay={outsideCardBaseDelay + idx * outsideCardStagger}
+              >
+                <article className="flex flex-col items-start rounded-2xl border border-rellia-cream/60 bg-rellia-cream/35 p-6 text-left transition duration-300 hover:border-rellia-teal/20 hover:shadow-sm">
+                  <span className="mb-4 inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-rellia-teal/5 text-rellia-teal">
+                    <Icon className="h-5 w-5" aria-hidden />
+                  </span>
+                  <h3 className="font-host-grotesk text-lg font-semibold leading-snug text-black">{m.label}</h3>
+                  <p className="mt-2 font-urbanist text-sm leading-relaxed text-black/65">{m.detail}</p>
+                </article>
+              </ScrollReveal>
+            )
+          })}
+        </div>
 
-            <motion.div
-              variants={parentVariants}
-              initial="hidden"
-              animate={isInView ? "visible" : "hidden"}
-              className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full"
+        <div className="relative flex w-full items-center justify-center py-12">
+          <ScrollReveal variant="lineReveal" delay={dividerDelay} className="absolute inset-x-0 top-1/2 h-px -translate-y-1/2">
+            <div className="h-full w-full bg-black/10" aria-hidden />
+          </ScrollReveal>
+          <ScrollReveal variant="ctaReveal" delay={dividerDelay + 0.12} className="relative z-10">
+            <div
+              className="flex h-10 w-10 items-center justify-center rounded-full bg-rellia-teal text-white shadow-sm"
+              aria-hidden
             >
-              {outsideSteps.map((m) => {
-                const Icon = journeyIconById[m.id]
-                return (
-                  <motion.div
-                    key={m.id}
-                    variants={itemVariants}
-                    className="flex flex-col items-start text-left bg-rellia-cream/35 border border-rellia-cream/60 rounded-2xl p-6 transition duration-300 hover:border-rellia-teal/20 hover:shadow-sm"
-                  >
-                    <span className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-rellia-teal/5 text-rellia-teal mb-4">
-                      <Icon className="h-5 w-5" aria-hidden />
-                    </span>
-                    <h3 className="font-host-grotesk text-lg font-semibold leading-snug text-black">
-                      {m.label}
-                    </h3>
-                    <p className="mt-2 font-urbanist text-sm leading-relaxed text-black/65">
-                      {m.detail}
-                    </p>
-                  </motion.div>
-                )
-              })}
-            </motion.div>
-          </div>
+              <ArrowDown className="h-5 w-5" />
+            </div>
+          </ScrollReveal>
         </div>
 
-        {/* Middle Portion: Full-width divider line with arrow */}
-        <div className="relative w-full py-12 flex items-center justify-center">
-          <motion.div
-            variants={dividerVariants}
-            initial="hidden"
-            animate={isInView ? "visible" : "hidden"}
-            className="absolute inset-x-0 h-px bg-black/10"
-          />
-          <motion.div
-            variants={arrowCircleVariants}
-            initial="hidden"
-            animate={isInView ? "visible" : "hidden"}
-            className="relative z-10 flex h-10 w-10 items-center justify-center rounded-full bg-rellia-teal text-white shadow-sm"
-          >
-            <ArrowDown className="h-5 w-5" aria-hidden />
-          </motion.div>
-        </div>
-
-        {/* Bottom Portion: We Help With (Full Width Grid) */}
-        <motion.div
-          variants={bottomSectionVariants}
-          initial="hidden"
-          animate={isInView ? "visible" : "hidden"}
-          className="flex flex-col items-start w-full gap-8"
-        >
-          {/* Tag & Subheading */}
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 w-full pb-2">
-            <span className="inline-flex items-center rounded-full bg-rellia-mint px-3.5 py-1.5 text-xs font-semibold text-rellia-teal uppercase tracking-[0.14em] shrink-0">
+        <ScrollReveal variant="ctaReveal" delay={bottomHeaderDelay} className="w-full">
+          <div className="flex w-full flex-col gap-4 md:flex-row md:items-start md:justify-between md:gap-8">
+            <span className="inline-flex shrink-0 items-center rounded-full bg-rellia-mint px-3.5 py-1.5 text-xs font-semibold uppercase tracking-[0.14em] text-rellia-teal">
               We help with
             </span>
-            <h3 className="font-urbanist text-base leading-relaxed tracking-tight text-rellia-teal md:text-lg md:text-right max-w-2xl font-normal">
+            <h3 className="max-w-2xl font-urbanist text-base font-normal leading-relaxed tracking-tight text-rellia-teal md:text-lg md:text-right">
               Programs, operators, and warm intros aligned to milestones that survive clinical, regulatory, and buyer scrutiny.
             </h3>
           </div>
+        </ScrollReveal>
 
-          {/* Bento Grid: 2 rows x 4 columns */}
-          <div className="w-full">
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 w-full">
-              {relliaSteps.map((m, idx) => {
-                const Icon = journeyIconById[m.id]
-                const isLast = idx === relliaSteps.length - 1
-                return (
-                  <div
-                    key={m.id}
-                    className={cn(
-                      "flex flex-col items-start text-left bg-rellia-teal border border-rellia-teal/80 rounded-2xl p-6 transition duration-300 hover:border-rellia-mint/55 hover:shadow-md",
-                      isLast && "sm:col-span-2 md:col-span-2"
-                    )}
-                  >
-                    <span className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-rellia-mint text-rellia-teal shadow-sm mb-4">
-                      <Icon className="h-5 w-5" aria-hidden />
-                    </span>
-                    <h4 className="font-host-grotesk text-base font-semibold leading-snug text-white">
-                      {m.label}
-                    </h4>
-                    <p className="mt-2 font-urbanist text-sm leading-relaxed text-white/80">
-                      {m.detail}
-                    </p>
-                  </div>
-                )
-              })}
-            </div>
-          </div>
-        </motion.div>
+        <div className="mt-6 grid w-full grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-4">
+          {relliaSteps.map((m, idx) => {
+            const Icon = journeyIconById[m.id]
+            const isLast = idx === relliaSteps.length - 1
+            return (
+              <ScrollReveal
+                key={m.id}
+                variant="ctaReveal"
+                delay={relliaCardBaseDelay + idx * relliaCardStagger}
+                className={cn(isLast && "sm:col-span-2 md:col-span-2")}
+              >
+                <article
+                  className={cn(
+                    "flex flex-col items-start rounded-2xl border border-rellia-teal/80 bg-rellia-teal p-6 text-left transition duration-300 hover:border-rellia-mint/55 hover:shadow-md",
+                  )}
+                >
+                  <span className="mb-4 inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-rellia-mint text-rellia-teal shadow-sm">
+                    <Icon className="h-5 w-5" aria-hidden />
+                  </span>
+                  <h4 className="font-host-grotesk text-base font-semibold leading-snug text-white">{m.label}</h4>
+                  <p className="mt-2 font-urbanist text-sm leading-relaxed text-white/80">{m.detail}</p>
+                </article>
+              </ScrollReveal>
+            )
+          })}
+        </div>
       </div>
     </section>
   )
@@ -849,6 +781,7 @@ export default function Founders() {
 
 
         <RelliaCta
+          aboveSectionTone="white"
           title="**Ready** to join?"
           body="Apply once—we'll follow up with fit, onboarding, and the fastest path into programs and intros."
           primary={{ label: "Apply to join", to: "/apply" }}

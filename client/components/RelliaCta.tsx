@@ -58,6 +58,8 @@ export type RelliaCtaProps = {
   primaryStyle?: "button" | "text"
   /** Override the outer section className (spacing against page content above). */
   className?: string
+  /** Small gap above the band; matches the background of the section directly above. */
+  aboveSectionTone?: "white" | "grey"
   /** Optional icon to display above the title */
   icon?: ReactNode
   /** Override the outer section rounding (defaults to rounded top corners). */
@@ -147,6 +149,7 @@ export default function RelliaCta({
   primaryStyle = "button",
   className,
   icon,
+  aboveSectionTone,
   roundedClassName = "rounded-t-[28px] md:rounded-t-[36px]",
 }: RelliaCtaProps) {
   useEffect(() => {
@@ -157,14 +160,25 @@ export default function RelliaCta({
     }
   }, [])
 
+  const aboveGapClass =
+    aboveSectionTone === "white"
+      ? "bg-white"
+      : aboveSectionTone === "grey"
+        ? "bg-rellia-greyTeal"
+        : null
+
   return (
-    <section
-      className={cn(
-        "relative mt-0 flex w-full flex-col justify-center overflow-hidden bg-rellia-greyTeal px-[30px] pt-[7.5rem] pb-[9rem] md:mt-0 md:pt-[10.5rem] md:pb-48 lg:mt-0 lg:pt-[13.5rem] lg:pb-[15rem]",
-        roundedClassName,
-        className,
-      )}
-    >
+    <>
+      {aboveGapClass ? (
+        <div aria-hidden className={cn("w-full", aboveGapClass, "h-5 md:h-7 lg:h-8")} />
+      ) : null}
+      <section
+        className={cn(
+          "relative mt-0 flex w-full flex-col justify-center overflow-hidden bg-rellia-greyTeal px-[30px] pt-[7.5rem] pb-[9rem] md:mt-0 md:pt-[10.5rem] md:pb-48 lg:mt-0 lg:pt-[13.5rem] lg:pb-[15rem]",
+          roundedClassName,
+          className,
+        )}
+      >
       <ScrollReveal
         variant="ctaReveal"
         aria-hidden
@@ -217,6 +231,7 @@ export default function RelliaCta({
         </div>
       </ScrollReveal>
       <div className="absolute inset-0 bg-noise opacity-[0.03] mix-blend-overlay pointer-events-none z-[1]" />
-    </section>
+      </section>
+    </>
   )
 }

@@ -6,7 +6,8 @@ type ScrollRevealProps = {
   delay?: number
   className?: string
   /** `ctaReveal`: slide up + unblur (e.g. bottom CTA band) */
-  variant?: "default" | "ctaReveal"
+  /** `lineReveal`: vertical grow top→bottom + unblur (e.g. trajectory divider) */
+  variant?: "default" | "ctaReveal" | "lineReveal"
 } & Pick<HTMLAttributes<HTMLDivElement>, "aria-hidden">
 
 export default function ScrollReveal({
@@ -31,13 +32,21 @@ export default function ScrollReveal({
       if (reduceMotion) {
         if (variant === "ctaReveal") {
           el.classList.remove("opacity-0", "translate-y-8", "blur-[14px]")
+        } else if (variant === "lineReveal") {
+          el.classList.remove("opacity-0", "scale-y-0", "origin-top", "blur-[10px]")
         } else {
           el.classList.remove("opacity-0")
         }
         el.classList.add("opacity-100")
         return
       }
-      el.classList.add(variant === "ctaReveal" ? "animate-cta-reveal" : "animate-fade-up");
+      el.classList.add(
+        variant === "ctaReveal"
+          ? "animate-cta-reveal"
+          : variant === "lineReveal"
+            ? "animate-line-reveal"
+            : "animate-fade-up",
+      )
     };
 
     const observer = new IntersectionObserver(
@@ -69,7 +78,11 @@ export default function ScrollReveal({
   }, [delay, reduceMotion, variant]);
 
   const initialCls =
-    variant === "ctaReveal" ? "opacity-0 translate-y-8 blur-[14px]" : "opacity-0"
+    variant === "ctaReveal"
+      ? "opacity-0 translate-y-8 blur-[14px]"
+      : variant === "lineReveal"
+        ? "opacity-0 scale-y-0 origin-top blur-[10px]"
+        : "opacity-0"
 
   return (
     <div ref={ref} className={`${initialCls} ${className}`} aria-hidden={ariaHidden}>
