@@ -1,7 +1,7 @@
 import type { ReactNode } from "react"
 import { useReducedMotion } from "framer-motion"
 import { motion } from "framer-motion"
-import { Dialog, DialogContent } from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog"
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet"
 import { useIsMobile } from "@/hooks/use-mobile"
 import { cn } from "@/lib/utils"
@@ -59,6 +59,10 @@ export default function NetworkDirectoryModal({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="flex max-h-[min(96vh,1080px)] w-[min(98vw,1440px)] max-w-none flex-col gap-0 overflow-hidden rounded-2xl border border-black/10 bg-white p-0 sm:max-w-none lg:rounded-3xl">
+        <DialogTitle className="sr-only">Profile Directory Detail</DialogTitle>
+        <DialogDescription className="sr-only">
+          Detailed profile view for this member of the Rellia Health network.
+        </DialogDescription>
         <div className="min-h-0 flex-1 overflow-y-auto px-6 py-10 md:px-12 md:py-12 lg:px-16 lg:py-14">
           {children}
         </div>

@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom"
-import { Dialog, DialogContent } from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog"
 import { cn } from "@/lib/utils"
 
 export type AnnouncementModalProps = {
@@ -32,9 +32,8 @@ export default function AnnouncementModal({
         overlayClassName="z-[10001] bg-transparent pointer-events-none"
         className={cn(
           "z-[10001] pointer-events-auto",
-          "left-5 bottom-5 top-auto md:left-8 md:bottom-8",
-          "translate-x-0 translate-y-0",
-          "w-[min(94vw,460px)] max-w-none gap-0 rounded-3xl border-0 p-5 md:p-6",
+          "left-1/2 bottom-5 -translate-x-1/2 sm:left-5 sm:bottom-5 sm:translate-x-0 md:left-8 md:bottom-8 top-auto",
+          "w-[calc(100%-2rem)] sm:w-[min(94vw,460px)] max-w-none gap-0 rounded-[2rem] border-0 p-5 md:p-6",
           "shadow-[0_8px_32px_-8px_rgba(0,0,0,0.18)]",
           "bg-gradient-to-r from-rellia-mint via-rellia-greyTeal to-rellia-mint",
           "data-[state=closed]:slide-out-to-bottom-4 data-[state=open]:slide-in-from-bottom-4",
@@ -42,8 +41,12 @@ export default function AnnouncementModal({
           "data-[state=closed]:zoom-out-100 data-[state=open]:zoom-in-100",
         )}
       >
+        <DialogTitle className="sr-only">Site Announcement</DialogTitle>
+        <DialogDescription className="sr-only">
+          Important updates and announcements for Rellia Health members and visitors.
+        </DialogDescription>
         <div className="flex w-full flex-col items-stretch text-left">
-          <p className="font-urbanist text-sm font-semibold leading-snug text-black md:text-[15px]">
+          <p className="font-urbanist text-base font-semibold leading-snug text-black md:text-[17px] md:leading-normal">
             {text}
           </p>
 
