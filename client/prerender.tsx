@@ -100,6 +100,22 @@ export type ItemPrerenderSeo = {
   ogImage?: string
 }
 
+function portableTextToPlainText(blocks: any): string {
+  if (!blocks) return ""
+  if (typeof blocks === "string") return blocks
+  if (!Array.isArray(blocks)) return ""
+  return blocks
+    .map((block) => {
+      if (!block || typeof block !== "object") return ""
+      if (block.children && Array.isArray(block.children)) {
+        return block.children.map((child: any) => (child && typeof child === "object" ? child.text || "" : "")).join("")
+      }
+      return ""
+    })
+    .filter(Boolean)
+    .join(" ")
+}
+
 const buildEventSeo = (
   event: Record<string, unknown>,
   slug: string,
@@ -108,15 +124,35 @@ const buildEventSeo = (
   const title = typeof event.title === "string" ? event.title : "Event"
   const computedDateTime = getProgramsEventDisplayDateTime(event as never)
   const shortDateTime = shortenProgramsEventDateTime(computedDateTime)
-  const locationLabel = getProgramsEventLocationLabel(event as never)
   const cmsImageSrc = typeof event.imageSrc === "string" ? event.imageSrc : undefined
   const imageSrc = resolveEventCardImageSrc(slug, cmsImageSrc)
 
+  const descText = (() => {
+    if (event.eventDescription) {
+      if (typeof event.eventDescription === "string") return event.eventDescription
+      if (Array.isArray(event.eventDescription)) {
+        const text = portableTextToPlainText(event.eventDescription)
+        if (text.trim()) return text.trim()
+      }
+    }
+    if (event.detailBody) {
+      if (typeof event.detailBody === "string") return event.detailBody
+      if (Array.isArray(event.detailBody)) {
+        const text = portableTextToPlainText(event.detailBody)
+        if (text.trim()) return text.trim()
+      }
+    }
+    return ""
+  })()
+
+  const eventDate = shortDateTime || computedDateTime
+  const finalDesc = descText
+    ? `${eventDate} · ${descText}`
+    : eventDate
+
   return {
-    title: clampMetaTitle(`${title} — Rellia Health`),
-    description: clampMetaDescription(
-      `${title}. ${shortDateTime || computedDateTime}. ${locationLabel}.`,
-    ),
+    title: clampMetaTitle(title),
+    description: clampMetaDescription(finalDesc),
     ogImage: imageSrc
       ? resolveSocialOgImageUrl(imageSrc, siteOrigin, { square: true })
       : undefined,
