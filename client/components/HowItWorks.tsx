@@ -93,58 +93,58 @@ export default function HowItWorks(props?: HowItWorksProps) {
   const columns = columnsProp ?? (stepsProp != null ? 2 : 3)
 
   return (
-    <section className="relative w-full bg-white py-16 md:py-24 px-6 md:px-10 overflow-hidden">
+    <section className="relative max-w-[1300px] mx-auto w-[calc(100%-2rem)] md:w-[calc(100%-4rem)] bg-rellia-teal py-16 md:py-24 px-6 md:px-10 overflow-hidden rounded-[2.5rem] md:rounded-[3.5rem]">
       <img
         src="/images/hologram-logo.png"
         alt=""
         aria-hidden="true"
-        className="pointer-events-none absolute -right-20 top-8 w-[360px] max-w-[55vw] opacity-[0.03] md:right-0 md:top-0 md:w-[460px]"
+        className="pointer-events-none absolute -right-20 top-8 w-[360px] max-w-[55vw] opacity-[0.06] md:right-0 md:top-0 md:w-[460px]"
       />
       <div aria-hidden className="pointer-events-none absolute inset-0">
-        <div className="absolute -left-28 top-10 h-[520px] w-[520px] rounded-full bg-rellia-mint/12 blur-3xl" />
-        <div className="absolute right-[-220px] bottom-[-240px] h-[680px] w-[680px] rounded-full bg-rellia-mint/10 blur-3xl" />
-        <div className="absolute left-[35%] top-[55%] h-[520px] w-[520px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-rellia-mint/6 blur-3xl" />
-        <div className="absolute inset-0 opacity-[0.22] [background-image:radial-gradient(circle_at_20%_10%,rgba(13,53,64,0.03),transparent_52%),radial-gradient(circle_at_80%_30%,rgba(157,214,208,0.08),transparent_55%),radial-gradient(circle_at_35%_95%,rgba(13,53,64,0.02),transparent_55%)]" />
+        <div className="absolute -left-28 top-10 h-[520px] w-[520px] rounded-full bg-rellia-mint/22 blur-3xl" />
+        <div className="absolute right-[-220px] bottom-[-240px] h-[680px] w-[680px] rounded-full bg-rellia-mint/18 blur-3xl" />
+        <div className="absolute left-[35%] top-[55%] h-[520px] w-[520px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-rellia-mint/10 blur-3xl" />
+        <div className="absolute inset-0 opacity-[0.22] [background-image:radial-gradient(circle_at_20%_10%,rgba(255,255,255,0.16),transparent_52%),radial-gradient(circle_at_80%_30%,rgba(157,214,208,0.14),transparent_55%),radial-gradient(circle_at_35%_95%,rgba(255,255,255,0.10),transparent_55%)]" />
       </div>
-      <div className="relative z-10 max-w-[1300px] mx-auto">
+      <div className="relative z-10 w-full">
         {/* Abstract linework behind heading */}
         <div aria-hidden className="pointer-events-none absolute left-0 top-0 h-[320px] w-[520px] -translate-x-[260px]">
           {/* Dense vertical line stack, anchored to far-left with overflow */}
           <div className="absolute left-0 top-0 h-full w-full">
-            <div className="absolute left-6 top-6 h-[260px] w-[2px] bg-gradient-to-b from-rellia-mint/35 via-rellia-teal/5 to-transparent" />
-            <div className="absolute left-10 top-10 h-[240px] w-px bg-gradient-to-b from-rellia-teal/12 via-rellia-teal/4 to-transparent" />
-            <div className="absolute left-14 top-4 h-[280px] w-[2px] bg-gradient-to-b from-rellia-mint/22 via-rellia-mint/8 to-transparent" />
-            <div className="absolute left-20 top-8 h-[250px] w-px bg-gradient-to-b from-rellia-teal/10 via-rellia-teal/3 to-transparent" />
-            <div className="absolute left-26 top-14 h-[220px] w-[2px] bg-gradient-to-b from-rellia-mint/18 via-rellia-teal/5 to-transparent" />
-            <div className="absolute left-32 top-2 h-[292px] w-px bg-gradient-to-b from-rellia-teal/8 via-rellia-teal/3 to-transparent" />
-            <div className="absolute left-38 top-18 h-[210px] w-[2px] bg-gradient-to-b from-rellia-mint/14 via-rellia-mint/6 to-transparent" />
-            <div className="absolute left-44 top-8 h-[250px] w-px bg-gradient-to-b from-rellia-teal/6 via-rellia-teal/2 to-transparent" />
-            <div className="absolute left-52 top-22 h-[200px] w-[2px] bg-gradient-to-b from-rellia-mint/12 via-rellia-teal/4 to-transparent" />
-            <div className="absolute left-60 top-6 h-[260px] w-px bg-gradient-to-b from-rellia-teal/5 via-rellia-teal/2 to-transparent" />
-            <div className="absolute left-66 top-16 h-[220px] w-[2px] bg-gradient-to-b from-rellia-mint/10 via-rellia-mint/5 to-transparent" />
-            <div className="absolute left-72 top-10 h-[240px] w-px bg-gradient-to-b from-rellia-teal/5 via-rellia-teal/2 to-transparent" />
-            <div className="absolute left-80 top-24 h-[190px] w-[2px] bg-gradient-to-b from-rellia-mint/9 via-rellia-teal/3 to-transparent" />
-            <div className="absolute left-88 top-14 h-[220px] w-px bg-gradient-to-b from-rellia-teal/4 via-rellia-teal/2 to-transparent" />
+            <div className="absolute left-6 top-6 h-[260px] w-[2px] bg-gradient-to-b from-rellia-mint/35 via-white/10 to-transparent" />
+            <div className="absolute left-10 top-10 h-[240px] w-px bg-gradient-to-b from-white/18 via-white/8 to-transparent" />
+            <div className="absolute left-14 top-4 h-[280px] w-[2px] bg-gradient-to-b from-rellia-mint/22 via-rellia-mint/10 to-transparent" />
+            <div className="absolute left-20 top-8 h-[250px] w-px bg-gradient-to-b from-white/14 via-white/6 to-transparent" />
+            <div className="absolute left-26 top-14 h-[220px] w-[2px] bg-gradient-to-b from-rellia-mint/18 via-white/8 to-transparent" />
+            <div className="absolute left-32 top-2 h-[292px] w-px bg-gradient-to-b from-white/12 via-white/5 to-transparent" />
+            <div className="absolute left-38 top-18 h-[210px] w-[2px] bg-gradient-to-b from-rellia-mint/14 via-rellia-mint/7 to-transparent" />
+            <div className="absolute left-44 top-8 h-[250px] w-px bg-gradient-to-b from-white/10 via-white/4 to-transparent" />
+            <div className="absolute left-52 top-22 h-[200px] w-[2px] bg-gradient-to-b from-rellia-mint/12 via-white/6 to-transparent" />
+            <div className="absolute left-60 top-6 h-[260px] w-px bg-gradient-to-b from-white/9 via-white/3 to-transparent" />
+            <div className="absolute left-66 top-16 h-[220px] w-[2px] bg-gradient-to-b from-rellia-mint/10 via-rellia-mint/6 to-transparent" />
+            <div className="absolute left-72 top-10 h-[240px] w-px bg-gradient-to-b from-white/8 via-white/3 to-transparent" />
+            <div className="absolute left-80 top-24 h-[190px] w-[2px] bg-gradient-to-b from-rellia-mint/9 via-white/5 to-transparent" />
+            <div className="absolute left-88 top-14 h-[220px] w-px bg-gradient-to-b from-white/7 via-white/2 to-transparent" />
           </div>
         </div>
 
         <ScrollReveal delay={0.1}>
           <div className="mb-16 md:mb-20">
             {heading ? (
-              <div className="font-host-grotesk text-3xl font-semibold leading-tight tracking-tight text-rellia-teal md:text-[40px]">
+              <div className="font-host-grotesk text-3xl font-semibold leading-tight tracking-tight text-white md:text-[40px]">
                 {heading}
               </div>
             ) : (
-              <h2 className="font-host-grotesk text-3xl font-semibold leading-tight tracking-tight text-rellia-teal md:text-[40px]">
+              <h2 className="font-host-grotesk text-3xl font-semibold leading-tight tracking-tight text-white md:text-[40px]">
                 Where we focus
               </h2>
             )}
             {subheading ? (
-              <div className="mt-4 font-urbanist text-base font-medium leading-relaxed tracking-tight text-black md:text-lg max-w-3xl">
+              <div className="mt-4 font-urbanist text-base font-medium leading-relaxed tracking-tight text-white/80 md:text-lg max-w-3xl">
                 {subheading}
               </div>
             ) : (
-              <p className="mt-4 font-urbanist text-base font-medium leading-relaxed tracking-tight text-black md:text-lg max-w-3xl">
+              <p className="mt-4 font-urbanist text-base font-medium leading-relaxed tracking-tight text-white/80 md:text-lg max-w-3xl">
                 Health tech commercialization is complex, and generic start-up advice won't help you. These are the areas where Rellia can help.
               </p>
             )}
@@ -166,11 +166,11 @@ export default function HowItWorks(props?: HowItWorksProps) {
                   key={step.title}
                   className="flex h-[200px] w-full max-w-[320px] flex-col px-1 md:px-2 items-start"
                 >
-                  <Icon className="h-7 w-7 text-rellia-teal" aria-hidden />
-                  <p className="mt-5 font-host-grotesk text-lg font-semibold leading-snug tracking-tight text-rellia-teal line-clamp-2">
+                  <Icon className="h-7 w-7 text-rellia-mint" aria-hidden />
+                  <p className="mt-5 font-host-grotesk text-lg font-semibold leading-snug tracking-tight text-white line-clamp-2">
                     {step.title}
                   </p>
-                  <p className="mt-3 font-urbanist text-sm leading-relaxed text-black/75 line-clamp-3">
+                  <p className="mt-3 font-urbanist text-sm leading-relaxed text-white/80 line-clamp-3">
                     {step.description}
                   </p>
                 </div>

@@ -2262,18 +2262,19 @@ export function mergeContactPage(
 
 export function mergeQmsProgram(
   partial: Partial<QmsProgramContent> | null | undefined,
+  defaultFallback: QmsProgramContent = DEFAULT_QMS_PROGRAM,
 ): QmsProgramContent {
   const p = omitNullish((partial ?? {}) as Record<string, unknown>) as Partial<QmsProgramContent>
-  const base = { ...DEFAULT_QMS_PROGRAM, ...p }
+  const base = { ...defaultFallback, ...p }
   const outcomes = compactList(p.outcomes)
-  base.outcomes = outcomes.length > 0 ? outcomes : DEFAULT_QMS_PROGRAM.outcomes
+  base.outcomes = outcomes.length > 0 ? outcomes : defaultFallback.outcomes
   const pricingBullets = compactList(p.pricingBullets)
   base.pricingBullets =
-    pricingBullets.length > 0 ? pricingBullets : DEFAULT_QMS_PROGRAM.pricingBullets
+    pricingBullets.length > 0 ? pricingBullets : defaultFallback.pricingBullets
   const testimonials = compactList(p.testimonials)
   if (testimonials.length > 0) base.testimonials = testimonials
   if (typeof base.paymentUrl !== "string" || !base.paymentUrl.trim()) {
-    base.paymentUrl = DEFAULT_QMS_PROGRAM.paymentUrl
+    base.paymentUrl = defaultFallback.paymentUrl
   }
   return base
 }

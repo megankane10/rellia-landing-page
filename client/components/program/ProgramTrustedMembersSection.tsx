@@ -101,41 +101,37 @@ export default function ProgramTrustedMembersSection({
           >
             <CarouselContent className="-ml-4">
               {testimonials.map((t) => (
-                <CarouselItem key={t.name} className="basis-full pl-4">
-                  <div className="relative flex min-h-[340px] flex-col justify-center overflow-hidden md:min-h-[400px]">
-                    <div className="mx-auto flex w-full max-w-[980px] flex-col items-start">
-                      <div className="relative z-10 flex w-full flex-col items-start justify-center pt-4 md:pt-8">
-                        <div
-                          aria-hidden
-                          className="pointer-events-none absolute -left-10 -top-6 h-40 w-40 rounded-full bg-rellia-mint/35 blur-3xl md:-left-14 md:-top-10 md:h-52 md:w-52"
-                        />
-                        <Quote
-                          className="mb-6 h-12 w-12 fill-current text-rellia-teal md:h-14 md:w-14"
-                          fill="currentColor"
-                          stroke="none"
-                          aria-hidden
-                        />
-                        <p className="w-full font-host-grotesk text-xl font-medium leading-[1.25] tracking-tight text-rellia-teal md:text-2xl lg:text-3xl">
-                          &ldquo;{t.quote}&rdquo;
-                        </p>
-                      </div>
+                <CarouselItem key={t.name} className="basis-full pl-4 py-4">
+                  <div className="relative mx-auto flex h-[350px] sm:h-[300px] md:h-[280px] w-full max-w-[980px] flex-col justify-between overflow-hidden rounded-[24px] bg-gradient-to-br from-[#144853] via-rellia-teal to-rellia-teal p-6 md:p-8 shadow-md">
+                    <div
+                      aria-hidden
+                      className="pointer-events-none absolute -left-10 -top-6 h-32 w-32 rounded-full bg-rellia-mint/15 blur-2xl"
+                    />
+                    <div className="relative z-10 flex flex-col items-start justify-start">
+                      <Quote
+                        className="mb-4 h-8 w-8 fill-current text-rellia-mint/35"
+                        fill="currentColor"
+                        stroke="none"
+                        aria-hidden
+                      />
+                      <p className="w-full font-host-grotesk text-lg font-medium leading-[1.3] tracking-tight text-rellia-mint md:text-xl lg:text-2xl line-clamp-4">
+                        &ldquo;{t.quote}&rdquo;
+                      </p>
+                    </div>
 
-                      <div className="relative z-10 mt-8 flex w-full items-center justify-between">
-                        <div className="flex items-center gap-4 md:gap-5">
-                          <div className="h-14 w-14 shrink-0 overflow-hidden rounded-xl border border-black/5 bg-rellia-teal/5 md:h-16 md:w-16">
-                            <img src={t.image} alt={t.name} className="h-full w-full object-cover" loading="lazy" decoding="async" />
-                          </div>
-                          <div className="flex min-w-0 flex-col items-start">
-                            <h4 className="font-host-grotesk text-lg font-medium leading-tight text-black md:text-xl">
-                              {t.name}
-                            </h4>
-                            <p className="mt-0.5 font-urbanist text-sm font-medium text-black/60 md:text-base">
-                              {t.role} &bull; {t.company}
-                            </p>
-                          </div>
+                    <div className="relative z-10 mt-4 flex w-full items-center justify-between">
+                      <div className="flex items-center gap-4">
+                        <div className="h-12 w-12 shrink-0 overflow-hidden rounded-xl border border-white/10 bg-white/5">
+                          <img src={t.image} alt={t.name} className="h-full w-full object-cover" loading="lazy" decoding="async" />
                         </div>
-
-
+                        <div className="flex min-w-0 flex-col items-start">
+                          <h4 className="font-host-grotesk text-base font-normal leading-tight text-white md:text-lg">
+                            {t.name}
+                          </h4>
+                          <p className="mt-0.5 font-urbanist text-xs font-normal text-white/70 md:text-sm">
+                            {t.role} &bull; {t.company}
+                          </p>
+                        </div>
                       </div>
                     </div>
                   </div>

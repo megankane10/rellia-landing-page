@@ -35,7 +35,7 @@ export default function AnnouncementModal({
           "z-[10001] pointer-events-auto",
           "left-4 right-4 bottom-4 top-auto w-auto max-w-none translate-x-0 translate-y-0",
           "sm:left-5 sm:right-auto sm:bottom-5 sm:w-[min(94vw,460px)] md:left-8 md:bottom-8",
-          "gap-0 rounded-[1.75rem] border-0 p-5 md:rounded-[2.75rem] md:p-6",
+          "gap-0 rounded-[1.75rem] border-0 py-7 px-6 md:rounded-[2.75rem] md:py-9 md:px-8",
           "shadow-[0_8px_32px_-8px_rgba(0,0,0,0.18)]",
           "bg-gradient-to-r from-rellia-mint via-rellia-greyTeal to-rellia-mint",
           "data-[state=closed]:slide-out-to-bottom-4 data-[state=open]:slide-in-from-bottom-4",
@@ -48,17 +48,27 @@ export default function AnnouncementModal({
           Important updates and announcements for Rellia Health members and visitors.
         </DialogDescription>
         <div className="flex w-full flex-col items-stretch text-left">
-          <p className="font-urbanist text-base font-semibold leading-snug text-black md:text-[17px] md:leading-normal">
+          <div className="mb-3 flex items-center">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-rellia-teal px-2.5 py-1 text-[11px] font-bold uppercase tracking-[0.14em] text-white">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rellia-mint opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-rellia-mint"></span>
+              </span>
+              LIVE
+            </span>
+          </div>
+
+          <p className="font-urbanist text-[17px] font-semibold leading-relaxed text-black md:text-[19px] md:leading-relaxed">
             {text}
           </p>
-
-          <div className="mt-4 flex gap-2.5">
+ 
+          <div className="mt-5 flex gap-2.5">
             {showButton && (
               <Link
                 to={trimmedLink!}
                 onClick={handleDismiss}
                 className={cn(
-                  "inline-flex h-10 min-w-0 flex-1 items-center justify-center rounded-full px-3",
+                  "inline-flex h-11 min-w-0 flex-1 items-center justify-center rounded-full px-4",
                   "bg-rellia-teal font-host-grotesk text-sm font-semibold text-white",
                   "transition-colors duration-200 hover:bg-rellia-teal/90",
                   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-teal/40 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent",
@@ -67,13 +77,13 @@ export default function AnnouncementModal({
                 {trimmedLabel}
               </Link>
             )}
-
+ 
             <button
               type="button"
               id="announcement-modal-dismiss"
               onClick={handleDismiss}
               className={cn(
-                "inline-flex h-10 min-w-0 flex-1 items-center justify-center rounded-full px-3",
+                "inline-flex h-11 min-w-0 flex-1 items-center justify-center rounded-full px-4",
                 "border border-rellia-teal/25 bg-white/30 font-host-grotesk text-sm font-semibold text-rellia-teal",
                 "transition-colors duration-200 hover:bg-white/50",
                 "outline-none focus:outline-none focus:bg-white/30 focus-visible:bg-white/50 focus-visible:ring-2 focus-visible:ring-rellia-teal/35 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent",

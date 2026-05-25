@@ -394,17 +394,14 @@ const SectionJourneyTimeline = ({ section }: { section: CmsSectionJourneyTimelin
               </p>
             </div>
 
-            <div className="grid grid-cols-1 justify-items-start gap-10 sm:grid-cols-2 sm:justify-items-end sm:gap-6 xl:grid-cols-3">
+            <div className="grid grid-cols-1 justify-items-start gap-4 sm:grid-cols-2 sm:justify-items-end sm:gap-4 xl:grid-cols-3 md:w-full">
               {(section.leftColumnSteps ?? []).map((m) => (
-                <div key={m.id} className="flex flex-col items-start text-left md:w-full md:max-w-[280px]">
-                  <span className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-rellia-teal/5 text-rellia-teal">
-                    <LucideIcon name={m.icon} className="h-5 w-5" />
+                <div key={m.id} className="flex items-center gap-3 rounded-full border border-rellia-cream/80 bg-rellia-cream/35 p-2 pr-5 text-left transition duration-300 hover:border-rellia-teal/20 hover:shadow-sm md:w-full">
+                  <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-rellia-teal/5 text-rellia-teal">
+                    <LucideIcon name={m.icon} className="h-4.5 w-4.5" />
                   </span>
-                  <p className="mt-3 font-host-grotesk text-lg font-semibold leading-snug text-black md:mt-3">
+                  <p className="font-host-grotesk text-base font-semibold leading-none text-black">
                     {m.label}
-                  </p>
-                  <p className="mt-1.5 font-urbanist text-sm leading-relaxed text-black/65">
-                    {m.detail}
                   </p>
                 </div>
               ))}

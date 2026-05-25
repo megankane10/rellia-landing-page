@@ -245,6 +245,15 @@ const CONSULTING_FEATURES = [
 function DeeperHelpValuesSection() {
   const sectionRef = useRef<HTMLElement | null>(null)
   const reduceMotion = useReducedMotion()
+  const [isMobile, setIsMobile] = useState(true)
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768)
+    checkMobile()
+    window.addEventListener("resize", checkMobile)
+    return () => window.removeEventListener("resize", checkMobile)
+  }, [])
+
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ["start 95%", "end 5%"],
@@ -259,23 +268,23 @@ function DeeperHelpValuesSection() {
       ref={(node) => {
         sectionRef.current = node
       }}
-      className="relative w-full overflow-hidden bg-white"
+      className="relative w-full overflow-hidden bg-white py-4 md:py-6"
     >
-      <div className="relative w-full overflow-hidden">
+      <div className="relative w-[calc(100%-2rem)] md:w-[calc(100%-4rem)] max-w-[1300px] mx-auto overflow-hidden rounded-[2.5rem] md:rounded-[3.5rem] shadow-lg">
         <div className="relative min-h-[880px] w-full overflow-hidden sm:min-h-[920px] md:min-h-[900px] lg:min-h-[980px]">
           <div className="absolute inset-0 overflow-hidden" aria-hidden>
             <motion.img
               src={bgSrc}
               alt=""
               className="h-full w-full object-cover scale-[1.12] object-[55%_50%]"
-              style={reduceMotion ? undefined : { y: bgY }}
+              style={reduceMotion || isMobile ? undefined : { y: bgY }}
               loading="lazy"
             />
             <div className="absolute inset-0 bg-rellia-teal/35" />
             <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/30 to-black/60" />
           </div>
 
-          <div className="relative z-10 mx-auto flex w-full max-w-[1300px] flex-col px-6 pb-16 pt-12 md:px-10 md:pb-18 md:pt-14">
+          <div className="relative z-10 mx-auto flex w-full max-w-[1300px] flex-1 flex-col px-6 pb-16 pt-12 md:px-10 md:pb-18 md:pt-14">
             <div className="flex flex-col items-start text-left mt-8 md:mt-10 lg:mt-24">
               <ScrollReveal>
                 <div className="mb-7 md:mb-8">
@@ -581,7 +590,7 @@ function JourneySplitSection() {
           </div>
         </ScrollReveal>
 
-        <div className="mt-6 grid w-full grid-cols-1 items-stretch gap-6 md:grid-cols-3">
+        <div className="mt-6 grid w-full grid-cols-1 items-center gap-4 md:grid-cols-3">
           {outsideSteps.map((m, idx) => {
             const Icon = journeyIconById[m.id]
             return (
@@ -589,14 +598,12 @@ function JourneySplitSection() {
                 key={m.id}
                 variant="ctaReveal"
                 delay={outsideCardBaseDelay + idx * outsideCardStagger}
-                className="h-full"
               >
-                <article className="flex h-full min-h-[220px] flex-col items-start rounded-2xl border border-rellia-cream/60 bg-rellia-cream/35 p-6 text-left transition duration-300 hover:border-rellia-teal/20 hover:shadow-sm md:min-h-[260px]">
-                  <span className="mb-4 inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-rellia-teal/5 text-rellia-teal">
-                    <Icon className="h-5 w-5" aria-hidden />
+                <article className="flex items-center gap-3 rounded-full border border-rellia-cream/80 bg-rellia-cream/35 p-2 pr-5 text-left transition duration-300 hover:border-rellia-teal/20 hover:shadow-sm">
+                  <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-rellia-teal/5 text-rellia-teal">
+                    <Icon className="h-4.5 w-4.5" aria-hidden />
                   </span>
-                  <h3 className="font-host-grotesk text-lg font-semibold leading-snug text-black">{m.label}</h3>
-                  <p className="mt-2 flex-1 font-urbanist text-sm leading-relaxed text-black/65">{m.detail}</p>
+                  <h3 className="font-host-grotesk text-base font-semibold leading-none text-black">{m.label}</h3>
                 </article>
               </ScrollReveal>
             )

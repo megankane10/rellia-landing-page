@@ -74,7 +74,7 @@ export const RichTextQuoteFigure = ({ quote, attribution, className }: RichTextQ
         {quote}
       </blockquote>
       {attributionTrimmed ? (
-        <figcaption className="relative mt-5 font-host-grotesk text-base font-semibold uppercase tracking-[0.14em] text-rellia-mint md:text-lg">
+        <figcaption className="relative mt-5 font-host-grotesk text-xs font-semibold uppercase tracking-[0.15em] text-rellia-mint md:text-sm">
           {attributionTrimmed.toLowerCase().includes("torontotechweek") ? (
             <a
               href="https://torontotechweek.com"

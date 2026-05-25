@@ -801,6 +801,118 @@ var isAllowedBrowserOrigin = (req, baseOrigins, isDev) => {
   return false;
 };
 
+// shared/admin/notifyLinks.ts
+var trimTrailingSlash = (url) => url.replace(/\/$/, "");
+var resolveSiteOrigin = () => {
+  const fromVite = typeof import.meta !== "undefined" && import.meta.env && typeof import.meta.env.VITE_SITE_URL === "string" ? import.meta.env.VITE_SITE_URL.trim() : "";
+  const fromNode = typeof process !== "undefined" ? process.env.VITE_SITE_URL?.trim() || process.env.SITE_URL?.trim() || "" : "";
+  return trimTrailingSlash(fromVite || fromNode || "https://www.relliahealth.com");
+};
+var adminContentUrl = () => `${resolveSiteOrigin()}/admin/content`;
+var resolveSanityStudioOrigin = () => {
+  const fromNode = typeof process !== "undefined" ? process.env.SANITY_STUDIO_URL?.trim() || "" : "";
+  return trimTrailingSlash(fromNode || "https://relliahealth.sanity.studio");
+};
+var studioDeskUrl = (documentType, documentId) => {
+  const studioBase = resolveSanityStudioOrigin();
+  const rawId = typeof documentId === "string" ? documentId : "";
+  const docId = rawId.replace(/^drafts\./, "");
+  if (!docId || !documentType) return studioBase;
+  return `${studioBase}/desk/${documentType};${docId}`;
+};
+
+// server/slackNotify.ts
+var slackWebhookUrl = () => process.env.SLACK_WEBHOOK_URL?.trim() || "";
+var buildSlackBlocks = (heading, bodyLines, buttons) => {
+  const blocks = [
+    {
+      type: "section",
+      text: {
+        type: "mrkdwn",
+        text: [heading, ...bodyLines].filter(Boolean).join("\n")
+      }
+    }
+  ];
+  if (buttons.length > 0) {
+    blocks.push({
+      type: "actions",
+      elements: buttons.map((button) => ({
+        type: "button",
+        text: { type: "plain_text", text: button.text, emoji: true },
+        url: button.url,
+        action_id: button.actionId
+      }))
+    });
+  }
+  return { blocks };
+};
+var postSlackBlocks = async (payload) => {
+  const url = slackWebhookUrl();
+  if (!url) {
+    console.warn("postSlackBlocks: SLACK_WEBHOOK_URL is not set");
+    return false;
+  }
+  const response = await fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload)
+  });
+  if (!response.ok) {
+    const errText = await response.text().catch(() => "");
+    console.error("Slack webhook failed", response.status, errText.slice(0, 400));
+    return false;
+  }
+  return true;
+};
+var isDraftId = (id) => id.startsWith("drafts.");
+var isSkippableSanityType = (type) => type.startsWith("sanity.") || type === "system.schema";
+var notifySanityDraftToSlack = async (doc) => {
+  if (!isDraftId(doc._id) || isSkippableSanityType(doc._type)) return false;
+  const title = doc.title?.trim() || doc._type;
+  const studioUrl = studioDeskUrl(doc._type, doc._id);
+  const dashboardUrl = adminContentUrl();
+  const payload = buildSlackBlocks(
+    ":pencil2: *New Sanity draft*",
+    [
+      `\u2022 Type: ${doc._type}`,
+      `\u2022 Title: ${title}`,
+      `\u2022 Document: \`${doc._id}\``
+    ],
+    [
+      { text: "View in Studio", url: studioUrl, actionId: "open_studio" },
+      { text: "View in dashboard", url: dashboardUrl, actionId: "open_content_queue" }
+    ]
+  );
+  return postSlackBlocks(payload);
+};
+var extractSanityDraftDocs = (body) => {
+  if (!body || typeof body !== "object") return [];
+  const record = body;
+  const results = [];
+  const pushIfDraft = (candidate) => {
+    if (!candidate || typeof candidate !== "object") return;
+    const row = candidate;
+    const id = typeof row._id === "string" ? row._id : "";
+    const type = typeof row._type === "string" ? row._type : "";
+    if (!id || !type || !isDraftId(id) || isSkippableSanityType(type)) return;
+    const title = typeof row.title === "string" ? row.title : typeof row.name === "string" ? row.name : typeof row.headline === "string" ? row.headline : void 0;
+    results.push({ _id: id, _type: type, title });
+  };
+  pushIfDraft(body);
+  if (Array.isArray(record.documents)) {
+    for (const doc of record.documents) pushIfDraft(doc);
+  }
+  if (Array.isArray(record.results)) {
+    for (const doc of record.results) pushIfDraft(doc);
+  }
+  const seen = /* @__PURE__ */ new Set();
+  return results.filter((row) => {
+    if (seen.has(row._id)) return false;
+    seen.add(row._id);
+    return true;
+  });
+};
+
 // server/index.ts
 var headerOne = (req, name) => {
   const v = req.headers?.[name];
@@ -979,6 +1091,35 @@ function createServer() {
   };
   app2.get("/health", rateLimitJson(healthRate, HEALTH_MAX_PER_MIN), healthHandler);
   app2.get("/api/health", rateLimitJson(healthRate, HEALTH_MAX_PER_MIN), healthHandler);
+  const sanitySlackWebhookRate = /* @__PURE__ */ new Map();
+  const SANITY_SLACK_WEBHOOK_MAX_PER_MIN = 60;
+  app2.post(
+    "/api/webhooks/sanity-slack",
+    rateLimitJson(sanitySlackWebhookRate, SANITY_SLACK_WEBHOOK_MAX_PER_MIN),
+    async (req, res) => {
+      const expectedSecret = process.env.SANITY_SLACK_WEBHOOK_SECRET?.trim();
+      if (!expectedSecret) {
+        res.status(501).json({ error: "SANITY_SLACK_WEBHOOK_SECRET is not configured" });
+        return;
+      }
+      const providedSecret = (typeof req.query.secret === "string" ? req.query.secret : "") || headerOne(req, "x-webhook-secret")?.trim() || "";
+      if (!providedSecret || providedSecret !== expectedSecret) {
+        res.status(401).json({ error: "Unauthorized" });
+        return;
+      }
+      const drafts = extractSanityDraftDocs(req.body);
+      if (drafts.length === 0) {
+        res.status(200).json({ ok: true, notified: 0 });
+        return;
+      }
+      let notified = 0;
+      for (const doc of drafts) {
+        const sent = await notifySanityDraftToSlack(doc);
+        if (sent) notified += 1;
+      }
+      res.status(200).json({ ok: true, notified });
+    }
+  );
   app2.get(
     "/api/csrf-token",
     rateLimitJson(csrfIssueRate, CSRF_TOKEN_MAX_PER_MIN),
@@ -1285,7 +1426,8 @@ function createServer() {
         email,
         company: company || null,
         job_title: jobTitle || null,
-        message
+        message,
+        submission_type: "contact"
       };
       try {
         const insertRes = await fetch(
@@ -1320,6 +1462,94 @@ function createServer() {
         console.error("Contact submit error", err);
         res.status(502).json({
           error: "Could not send your message right now. Please try again or email us directly."
+        });
+      }
+    }
+  );
+  const investorNotifyPayloadSchema = z2.object({
+    name: z2.string().trim().min(1).max(160),
+    email: z2.string().trim().email().max(254),
+    investmentCriteria: z2.string().trim().min(1).max(8e3)
+  });
+  app2.post(
+    "/api/investor-notify",
+    rateLimitJson(contactRate, CONTACT_MAX_PER_MIN),
+    requireCsrf,
+    async (req, res) => {
+      if (!allowBrowserOrigin(req)) {
+        res.status(403).json({ error: "Forbidden" });
+        return;
+      }
+      if (!isDev) {
+        const hasProvenance = Boolean((req.get("origin") || "").trim()) || Boolean((req.get("referer") || "").trim());
+        if (!hasProvenance) {
+          res.status(403).json({ error: "Forbidden" });
+          return;
+        }
+      }
+      const parsed = investorNotifyPayloadSchema.safeParse(req.body);
+      if (!parsed.success) {
+        res.status(400).json({
+          error: "Invalid request",
+          details: parsed.error.flatten()
+        });
+        return;
+      }
+      const trimmedName = parsed.data.name;
+      const spaceIndex = trimmedName.indexOf(" ");
+      const firstName = spaceIndex > 0 ? trimmedName.slice(0, spaceIndex) : trimmedName;
+      const lastName = spaceIndex > 0 ? trimmedName.slice(spaceIndex + 1).trim() : ".";
+      const supabaseUrl = (process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || "").trim().replace(/\/$/, "");
+      const serviceRoleKey = (process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_KEY || "").trim();
+      const anonKey = (process.env.VITE_SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_PUBLISHABLE_KEY || process.env.SUPABASE_ANON_KEY || "").trim();
+      const supabaseKey = serviceRoleKey || anonKey;
+      if (!supabaseUrl || !supabaseKey) {
+        res.status(501).json({
+          error: "Investor form is not configured on the server."
+        });
+        return;
+      }
+      const row = {
+        first_name: firstName,
+        last_name: lastName,
+        email: parsed.data.email,
+        company: null,
+        job_title: null,
+        message: parsed.data.investmentCriteria,
+        submission_type: "investor"
+      };
+      try {
+        const insertRes = await fetch(
+          `${supabaseUrl}/rest/v1/contact_responses`,
+          {
+            method: "POST",
+            headers: {
+              apikey: supabaseKey,
+              Authorization: `Bearer ${supabaseKey}`,
+              "content-type": "application/json",
+              Prefer: "return=minimal"
+            },
+            body: JSON.stringify(row)
+          }
+        );
+        if (insertRes.ok) {
+          res.status(200).json({ ok: true });
+          return;
+        }
+        const errText = await insertRes.text();
+        console.error(
+          "Supabase investor notify insert failed",
+          insertRes.status,
+          errText.slice(0, 800)
+        );
+        const rateLimited = insertRes.status === 429 || errText.toLowerCase().includes("too many submissions");
+        res.status(502).json({
+          error: rateLimited ? "Too many submissions from this email. Please try again in an hour." : "Could not submit your request right now. Please try again."
+        });
+      } catch (err) {
+        console.error("Investor notify submit error", err);
+        res.status(502).json({
+          error: "Could not submit your request right now. Please try again."
         });
       }
     }

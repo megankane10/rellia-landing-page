@@ -13,7 +13,7 @@ import { DEFAULT_ABOUT_PAGE } from "@shared/cms/defaults";
 import { HeroHeadlinePortable } from "@/components/HeroHeadlinePortable"
 import { relliaTealGlassCardClass } from "@/lib/relliaTealGlassCard";
 import { cn } from "@/lib/utils";
-import { useRef, useState, useMemo } from "react";
+import { useRef, useState, useMemo, useEffect } from "react";
 import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
 
 const VALUE_ICONS: Record<string, LucideIcon> = {
@@ -47,6 +47,15 @@ export default function About() {
   useApplyCmsSeo(about.seo);
   const [openTeamBioName, setOpenTeamBioName] = useState<string | null>(null);
   const reduceMotion = useReducedMotion();
+  const [isMobile, setIsMobile] = useState(true);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
   const valuesSectionRef = useRef<HTMLElement | null>(null);
   const { scrollYProgress: valuesScrollYProgress } = useScroll({
     target: valuesSectionRef,
@@ -122,22 +131,22 @@ export default function About() {
           ref={(node) => {
             valuesSectionRef.current = node;
           }}
-          className="relative w-full overflow-hidden bg-white"
+          className="relative w-full overflow-hidden bg-white py-4 md:py-6"
         >
-          <div className="relative w-full overflow-hidden">
+          <div className="relative w-[calc(100%-2rem)] md:w-[calc(100%-4rem)] max-w-[1300px] mx-auto overflow-hidden rounded-[2.5rem] md:rounded-[3.5rem] shadow-lg">
             <div className="relative min-h-[880px] w-full overflow-hidden sm:min-h-[920px] md:min-h-[900px] lg:min-h-[980px]">
             <div className="absolute inset-0 overflow-hidden" aria-hidden>
               <motion.img
                 src={valuesBgImage}
                 alt=""
                 className="h-full w-full object-cover scale-[1.12] object-[55%_50%]"
-                style={reduceMotion ? undefined : { y: valuesBgY }}
+                style={reduceMotion || isMobile ? undefined : { y: valuesBgY }}
               />
               <div className="absolute inset-0 bg-rellia-teal/35" />
               <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/30 to-black/60" />
             </div>
 
-            <div className="relative z-10 mx-auto flex w-full max-w-[1300px] flex-col px-6 md:px-10 pt-12 md:pt-14 pb-16 md:pb-18">
+            <div className="relative z-10 mx-auto flex w-full max-w-[1300px] flex-1 flex-col px-6 md:px-10 pt-12 md:pt-14 pb-16 md:pb-18">
               <div className="flex flex-col items-start text-left mt-8 md:mt-10 lg:mt-24">
                 <ScrollReveal>
                   <div className="mb-7 md:mb-8">

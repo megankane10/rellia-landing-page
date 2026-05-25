@@ -147,11 +147,6 @@ export default function PathsSection() {
 
   return (
     <>
-      <NetworkMetricsSection
-        heading={home?.metricsHeading || ""}
-        subheading={home?.metricsSubheading || ""}
-        metrics={home?.metrics || []}
-      />
       <section
         ref={(node) => {
           sectionRef.current = node
@@ -242,6 +237,7 @@ export default function PathsSection() {
                       alt={card.imageAlt}
                       className="h-full w-full object-cover transition duration-500 ease-out group-hover:scale-[1.03] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
                       loading="lazy"
+                      decoding="async"
                     />
                     <div
                       aria-hidden
@@ -281,6 +277,12 @@ export default function PathsSection() {
         </motion.div>
       </div>
     </section>
+
+    <NetworkMetricsSection
+      heading={home?.metricsHeading || ""}
+      subheading={home?.metricsSubheading || ""}
+      metrics={home?.metrics || []}
+    />
     </>
   )
 }

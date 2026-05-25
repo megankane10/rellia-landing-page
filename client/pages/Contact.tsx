@@ -93,12 +93,12 @@ function LeftPanel({ copy }: { copy: typeof DEFAULT_CONTACT_PAGE }) {
             className="flex flex-1 flex-col justify-between py-8"
           >
             <div className="flex flex-1 flex-col justify-center py-6">
-              <p className="w-full font-urbanist text-2xl font-semibold leading-snug text-rellia-mint md:text-3xl lg:text-4xl px-2">
+              <p className="w-full font-urbanist text-xl font-semibold leading-snug text-rellia-mint md:text-3xl lg:text-4xl px-2">
                 &ldquo;{copy.quoteText}&rdquo;
               </p>
 
-              <div className="mt-8 flex items-center gap-5">
-                <div className="h-[67px] w-[67px] shrink-0 overflow-hidden rounded-2xl border-2 border-white/20 shadow-xl">
+              <div className="mt-8 flex items-center gap-4 md:gap-5">
+                <div className="h-[54px] w-[54px] md:h-[67px] md:w-[67px] shrink-0 overflow-hidden rounded-2xl border-2 border-white/20 shadow-xl">
                   <img
                     src="/images/team-megankane.jpg"
                     alt={`${copy.quoteAttributionName}, ${copy.quoteAttributionRole}`}
@@ -110,10 +110,10 @@ function LeftPanel({ copy }: { copy: typeof DEFAULT_CONTACT_PAGE }) {
                   />
                 </div>
                 <div>
-                  <p className="font-host-grotesk text-[19px] font-medium tracking-wide text-white">
+                  <p className="font-host-grotesk text-[16px] md:text-[19px] font-medium tracking-wide text-white">
                     {copy.quoteAttributionName}
                   </p>
-                  <p className="font-urbanist text-[17px] font-medium text-white/60">{copy.quoteAttributionRole}</p>
+                  <p className="font-urbanist text-[14px] md:text-[17px] font-medium text-white/60">{copy.quoteAttributionRole}</p>
                 </div>
               </div>
             </div>

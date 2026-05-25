@@ -11,6 +11,7 @@ import {
   mergePaymentPage,
   mergeProgramsLanding,
   mergeQmsProgram,
+  DEFAULT_QMS_PROGRAM,
 } from "@shared/cms/defaults";
 import type {
   AboutPageContent,
@@ -281,9 +282,9 @@ export const useProgramPageBySlug = (slug: string, fallback?: Partial<QmsProgram
     queryKey: ["cms", "programBySlug", slug],
     queryFn: async () => {
       const raw = await sanityFetch<ProgramPageQueryResult>("programBySlug", { slug })
-      const content = mergeQmsProgram({
+      const content = mergeQmsProgram(raw ?? undefined, {
+        ...DEFAULT_QMS_PROGRAM,
         ...(fallback ?? {}),
-        ...(raw ?? {}),
       })
       return {
         content,

@@ -122,6 +122,14 @@ export default function NetworkMetricsSection({ heading, subheading, metrics }: 
   const [entered, setEntered] = useState(false);
   const [countReady, setCountReady] = useState(false)
   const reduceMotion = useReducedMotion()
+  const [isMobile, setIsMobile] = useState(true)
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768)
+    checkMobile()
+    window.addEventListener("resize", checkMobile)
+    return () => window.removeEventListener("resize", checkMobile)
+  }, [])
 
   const metricList = useMemo(() => metrics, [metrics]);
   const labels = useMemo(() => ["Members", "Startups", "Countries"], [])
@@ -167,20 +175,20 @@ export default function NetworkMetricsSection({ heading, subheading, metrics }: 
 
   return (
     <section
-      className="relative z-[2] w-full bg-white overflow-x-hidden"
+      className="relative z-[2] w-full bg-white py-4 md:py-6 overflow-hidden"
     >
       <div
         ref={(node) => {
           sectionRef.current = node
         }}
-        className="relative flex h-auto min-h-[1060px] w-full flex-col overflow-hidden sm:min-h-0 sm:h-[820px] md:h-[840px] lg:h-[780px] xl:h-[800px]"
+        className="relative flex h-auto min-h-[1060px] w-[calc(100%-2rem)] md:w-[calc(100%-4rem)] max-w-[1300px] mx-auto flex-col overflow-hidden rounded-[2.5rem] md:rounded-[3.5rem] sm:min-h-0 sm:h-[820px] md:h-[840px] lg:h-[780px] xl:h-[800px] shadow-lg"
       >
         <div className="absolute inset-0 overflow-hidden" aria-hidden>
           <motion.img
             src="/images/metrics-bg-pexels-2.jpg"
             alt=""
             className="h-full w-full object-cover scale-[1.12] object-[62%_50%]"
-            style={reduceMotion ? undefined : { y: bgY }}
+            style={reduceMotion || isMobile ? undefined : { y: bgY }}
           />
           <div className="absolute inset-0 bg-rellia-teal/35" />
           <div className="absolute inset-0 bg-gradient-to-b from-black/55 via-black/25 to-black/55" />
