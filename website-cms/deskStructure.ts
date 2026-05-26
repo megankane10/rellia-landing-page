@@ -75,11 +75,6 @@ const pagesGroup = (S: StructureBuilder) =>
           singleton(S, 'Programs landing', 'programsLandingPage', DocumentTextIcon),
           singleton(S, 'Events landing', 'eventsLandingPage', DocumentTextIcon),
           singleton(S, 'Stories landing', 'storiesPage', DocumentTextIcon),
-          S.divider(),
-          singleton(S, 'Founders landing', 'networkFoundersPage', DocumentTextIcon),
-          singleton(S, 'Advisors landing', 'networkAdvisorsPage', DocumentTextIcon),
-          singleton(S, 'Investors landing', 'networkInvestorsPage', DocumentTextIcon),
-          singleton(S, 'Industry partners landing', 'networkPartnersPage', DocumentTextIcon),
         ]),
     )
 
@@ -198,7 +193,15 @@ const peopleGroup = (S: StructureBuilder) =>
     .child(
       S.list()
         .title('People')
-        .items([advisorsPeopleGroup(S), foundersPeopleGroup(S)]),
+        .items([
+          singleton(S, 'Founders page', 'networkFoundersPage', DocumentTextIcon),
+          singleton(S, 'Advisors page', 'networkAdvisorsPage', DocumentTextIcon),
+          singleton(S, 'Investors page', 'networkInvestorsPage', DocumentTextIcon),
+          singleton(S, 'Industry partners page', 'networkPartnersPage', DocumentTextIcon),
+          S.divider(),
+          advisorsPeopleGroup(S),
+          foundersPeopleGroup(S),
+        ]),
     )
 
 const supportGroup = (S: StructureBuilder) =>

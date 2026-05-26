@@ -1,10 +1,12 @@
 import {defineArrayMember, defineField, defineType} from 'sanity'
+import {internalLabelField, sectionListPreview} from '../shared/sectionPreview'
 
 export const sectionEligibilityBento = defineType({
   name: 'sectionEligibilityBento',
   title: 'Network: Eligibility Bento',
   type: 'object',
   fields: [
+    defineField(internalLabelField),
     defineField({name: 'badge', type: 'string'}),
     defineField({name: 'title', type: 'string', initialValue: 'Built for serious health tech teams'}),
     defineField({name: 'description', type: 'text', rows: 3}),
@@ -24,4 +26,5 @@ export const sectionEligibilityBento = defineType({
       ],
     }),
   ],
+  preview: sectionListPreview({typeLabel: 'Eligibility bento', fallback: 'Eligibility'}),
 })

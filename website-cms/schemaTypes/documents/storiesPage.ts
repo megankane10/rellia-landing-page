@@ -19,7 +19,7 @@ export const storiesPage = defineType({
       validation: (Rule) => Rule.required().min(1),
     }),
     defineField({name: 'subheadline', title: 'Subtitle', type: 'text', rows: 2, group: 'content'}),
-    defineField({name: 'seo', type: 'seo', group: 'seo', fieldset: 'seo'}),
+    defineField({name: 'seo', type: 'seoFields', group: 'seo', fieldset: 'seo'}),
   ],
 })
 

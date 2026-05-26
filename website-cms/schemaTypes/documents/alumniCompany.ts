@@ -146,7 +146,7 @@ export const alumniCompany = defineType({
       of: [{type: 'string'}],
       group: 'profile',
     }),
-    defineField({name: 'seo', type: 'seo', group: 'seo', fieldset: 'seo'}),
+    defineField({name: 'seo', type: 'seoFields', group: 'seo', fieldset: 'seo'}),
   ],
   preview: {
     select: {

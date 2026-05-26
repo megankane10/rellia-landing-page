@@ -97,6 +97,6 @@ export const contactPage = defineType({
     defineField({name: 'submitLabel', type: 'string', group: 'content'}),
     defineField({name: 'sendingLabel', type: 'string', group: 'content'}),
     ...singletonLayoutFields,
-    defineField({name: 'seo', type: 'seo', group: 'seo', fieldset: 'seo'}),
+    defineField({name: 'seo', type: 'seoFields', group: 'seo', fieldset: 'seo'}),
   ],
 })

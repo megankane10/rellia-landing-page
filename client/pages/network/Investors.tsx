@@ -27,6 +27,7 @@ import { CreamSection, GlassCard, GlassCardLight, LightSection, Reveal, RoleHero
 import { useNetworkInvestorsPage } from "@/hooks/useCmsDocuments"
 import NetworkCmsPage from "./NetworkCmsPage"
 import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo"
+import CmsPageVisibilityGate from "@/components/cms/CmsPageVisibilityGate"
 
 const COLORS = {
   blue: "#2563eb",
@@ -217,11 +218,15 @@ export default function Investors() {
   const useModularLayout =
     Boolean(page?.useModularPage) && (page?.sections?.length ?? 0) > 0
 
-  if (useModularLayout) {
-    return <NetworkCmsPage page={page} query={investorsPageQuery} />
-  }
-
   const [showNotifyForm, setShowNotifyForm] = useState(false)
+
+  if (useModularLayout) {
+    return (
+      <CmsPageVisibilityGate page={page}>
+        <NetworkCmsPage page={page} query={investorsPageQuery} />
+      </CmsPageVisibilityGate>
+    )
+  }
 
   const logoMarks = useMemo(() => {
     const fromCms = (page?.logoMarquee ?? [])
@@ -235,6 +240,7 @@ export default function Investors() {
   }, [page?.logoMarquee])
 
   return (
+    <CmsPageVisibilityGate page={page}>
     <div className="min-h-screen overflow-x-hidden bg-white font-host-grotesk flex flex-col">
       <Navbar forceSolid={showNotifyForm} />
 
@@ -421,5 +427,6 @@ export default function Investors() {
 
       <Footer />
     </div>
+    </CmsPageVisibilityGate>
   )
 }

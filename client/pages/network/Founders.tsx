@@ -40,6 +40,8 @@ import { CreamSection, LightSection, Reveal } from "./_shared"
 import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion"
 import { useNetworkFoundersPage } from "@/hooks/useCmsDocuments"
 import NetworkCmsPage from "./NetworkCmsPage"
+import CmsPageVisibilityGate from "@/components/cms/CmsPageVisibilityGate"
+import { PORTFOLIO_LOGO_MARKS } from "@/data/portfolioLogos"
 import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo"
 import WhyRellia from "@/components/WhyRellia"
 
@@ -750,11 +752,27 @@ export default function Founders() {
   const useModularLayout =
     Boolean(page?.useModularPage) && (page?.sections?.length ?? 0) > 0
 
+  const logoMarks = useMemo(() => {
+    const fromCms = (page?.logoMarquee ?? [])
+      .map((entry) => ({
+        name: typeof entry?.name === "string" ? entry.name.trim() : "",
+        src: typeof entry?.src === "string" ? entry.src.trim() : "",
+      }))
+      .filter((entry) => entry.name && entry.src)
+    if (fromCms.length > 0) return fromCms
+    return [...PORTFOLIO_LOGO_MARKS]
+  }, [page?.logoMarquee])
+
   if (useModularLayout) {
-    return <NetworkCmsPage page={page} query={foundersPageQuery} />
+    return (
+      <CmsPageVisibilityGate page={page}>
+        <NetworkCmsPage page={page} query={foundersPageQuery} />
+      </CmsPageVisibilityGate>
+    )
   }
 
   return (
+    <CmsPageVisibilityGate page={page}>
     <div className="min-h-screen overflow-x-hidden bg-white font-host-grotesk">
       <Navbar />
 
@@ -764,6 +782,7 @@ export default function Founders() {
           <LogoMarquee
             showHeading={false}
             density="compact"
+            marks={logoMarks}
             sectionClassName="border-b border-black/[0.06] bg-white py-6 md:py-8 lg:flex lg:h-[18vh] lg:min-h-[140px] lg:items-center lg:py-0"
           />
         </div>
@@ -799,5 +818,6 @@ export default function Founders() {
 
       <Footer />
     </div>
+    </CmsPageVisibilityGate>
   )
 }

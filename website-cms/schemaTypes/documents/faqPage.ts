@@ -37,6 +37,6 @@ export const faqPage = defineType({
     defineField({name: 'bottomCtaLabel', type: 'string', group: 'content'}),
     defineField({name: 'bottomCtaPath', type: 'string', group: 'content'}),
     ...singletonLayoutFields,
-    defineField({name: 'seo', type: 'seo', group: 'seo', fieldset: 'seo'}),
+    defineField({name: 'seo', type: 'seoFields', group: 'seo', fieldset: 'seo'}),
   ],
 })

@@ -29,7 +29,7 @@ import {networkPartnersPage} from './documents/networkPartnersPage'
 import {consultingPage} from './documents/consultingPage'
 import {bodyCtaBox} from './objects/bodyCtaBox'
 import {portableImageCarousel} from './objects/portableImageCarousel'
-import {seo} from './objects/seo'
+import {logoMarqueeItem} from './objects/logoMarqueeItem'
 import {navItem} from './objects/navItem'
 import {portableRichText} from './objects/portableRichText'
 import {portableText} from './objects/portableText'
@@ -90,7 +90,7 @@ export const schemaTypes = [
   // Objects & sections
   bodyCtaBox,
   portableImageCarousel,
-  seo,
+  logoMarqueeItem,
   navItem,
   linkAnnotation,
   socialLink,

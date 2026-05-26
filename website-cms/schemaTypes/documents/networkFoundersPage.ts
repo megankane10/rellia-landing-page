@@ -1,4 +1,7 @@
 import {defineArrayMember, defineField, defineType} from 'sanity'
+import {logoMarqueeField} from '../objects/logoMarqueeItem'
+import {seoField} from '../shared/seoField'
+import {publishingGroup, pageVisibilityFields} from '../shared/pageVisibilityFields'
 
 export const networkFoundersPage = defineType({
   name: 'networkFoundersPage',
@@ -6,6 +9,7 @@ export const networkFoundersPage = defineType({
   type: 'document',
   groups: [
     {name: 'content', title: 'Page content', default: true},
+    publishingGroup,
     {name: 'seo', title: 'SEO & metadata'},
   ],
   fields: [
@@ -15,6 +19,7 @@ export const networkFoundersPage = defineType({
       initialValue: 'Founders',
       group: 'content',
     }),
+    {...logoMarqueeField, group: 'content'},
     defineField({
       name: 'useModularPage',
       title: 'Use modular CMS layout',
@@ -42,6 +47,7 @@ export const networkFoundersPage = defineType({
         defineArrayMember({type: 'sectionDiagnosticSurvey'}),
       ],
     }),
-    defineField({name: 'seo', type: 'seo', group: 'seo'}),
+    ...pageVisibilityFields,
+    seoField,
   ],
 })

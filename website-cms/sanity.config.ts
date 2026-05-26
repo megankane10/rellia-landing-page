@@ -3,6 +3,7 @@ import {RelliaStudioIcon} from './studioIcon'
 import {structureTool} from 'sanity/structure'
 import {visionTool} from '@sanity/vision'
 import {presentationTool} from 'sanity/presentation'
+import seofields from 'sanity-plugin-seofields'
 import {schemaTypes} from './schemaTypes'
 import {deskStructure} from './deskStructure'
 import {presentationLocations, presentationMainDocuments} from './presentationLocations'
@@ -38,6 +39,9 @@ export default defineConfig({
   theme,
 
   plugins: [
+    seofields({
+      seoPreview: true,
+    }),
     structureTool({
       structure: deskStructure,
     }),

@@ -13,6 +13,6 @@ export const notFoundPage = defineType({
     defineField({name: 'message', type: 'text', rows: 2, group: 'content'}),
     defineField({name: 'ctaLabel', type: 'string', group: 'content'}),
     ...singletonLayoutFields,
-    defineField({name: 'seo', type: 'seo', group: 'seo', fieldset: 'seo'}),
+    defineField({name: 'seo', type: 'seoFields', group: 'seo', fieldset: 'seo'}),
   ],
 })

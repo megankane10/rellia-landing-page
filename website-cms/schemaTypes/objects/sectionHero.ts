@@ -1,10 +1,12 @@
 import {defineField, defineType} from 'sanity'
+import {internalLabelField, sectionListPreview} from '../shared/sectionPreview'
 
 export const sectionHero = defineType({
   name: 'sectionHero',
   title: 'Section: Hero',
   type: 'object',
   fields: [
+    defineField(internalLabelField),
     defineField({
       name: 'tag',
       type: 'string',
@@ -30,4 +32,5 @@ export const sectionHero = defineType({
     defineField({name: 'image', type: 'image', options: {hotspot: true}}),
     defineField({name: 'imageAlt', type: 'string'}),
   ],
+  preview: sectionListPreview({typeLabel: 'Hero', fallback: 'Hero'}),
 })

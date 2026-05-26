@@ -42,6 +42,6 @@ export const programsLandingPage = defineType({
     defineField({name: 'ctaBody', title: 'CTA body', type: 'text', rows: 2, group: 'cta'}),
     defineField({name: 'ctaButtonLabel', title: 'CTA button label', type: 'string', group: 'cta'}),
     defineField({name: 'ctaButtonHref', title: 'CTA button link', type: 'string', group: 'cta'}),
-    defineField({name: 'seo', type: 'seo', group: 'seo', fieldset: 'seo'}),
+    defineField({name: 'seo', type: 'seoFields', group: 'seo', fieldset: 'seo'}),
   ],
 })

@@ -46,6 +46,16 @@ export type SeoContent = {
   noFollow?: boolean
 }
 
+export type PageVisibility = "live" | "hidden" | "placeholder"
+
+export type CmsPageVisibility = {
+  pageVisibility?: PageVisibility
+  placeholderTitle?: string
+  placeholderMessage?: string
+  placeholderCtaLabel?: string
+  placeholderCtaHref?: string
+}
+
 export type HomePathsCard = {
   roleId: "founder" | "advisor" | "investor" | "partner"
   tagLabel?: string
@@ -200,7 +210,7 @@ export type CmsPageContent = {
   sections?: CmsPageSection[]
 }
 
-export type CmsSingletonPageContent = {
+export type CmsSingletonPageContent = CmsPageVisibility & {
   title: string
   /** When true and sections exist, `/founders` etc. render modular CMS sections instead of the full marketing page. */
   useModularPage?: boolean

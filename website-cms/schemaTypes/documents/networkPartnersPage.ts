@@ -1,4 +1,6 @@
 import {defineArrayMember, defineField, defineType} from 'sanity'
+import {seoField} from '../shared/seoField'
+import {publishingGroup, pageVisibilityFields} from '../shared/pageVisibilityFields'
 
 export const networkPartnersPage = defineType({
   name: 'networkPartnersPage',
@@ -6,6 +8,7 @@ export const networkPartnersPage = defineType({
   type: 'document',
   groups: [
     {name: 'content', title: 'Content', default: true},
+    publishingGroup,
     {name: 'seo', title: 'SEO & metadata'},
   ],
   fieldsets: [{name: 'seo', title: 'SEO & metadata'}],
@@ -43,11 +46,7 @@ export const networkPartnersPage = defineType({
         defineArrayMember({type: 'sectionDiagnosticSurvey'}),
       ],
     }),
-    defineField({
-      name: 'seo',
-      type: 'seo',
-      group: 'seo',
-      fieldset: 'seo',
-    }),
+    ...pageVisibilityFields,
+    {...seoField, fieldset: 'seo'},
   ],
 })

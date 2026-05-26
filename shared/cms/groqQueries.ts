@@ -1,11 +1,31 @@
+/** Maps legacy \`seo\` object and sanity-plugin-seofields \`seoFields\` to frontend SeoContent. */
 const seoFragment = `seo{
-  metaTitle,
-  metaDescription,
-  ogTitle,
-  ogDescription,
-  "ogImageUrl": ogImage.asset->url,
-  noIndex,
-  noFollow
+  "metaTitle": coalesce(metaTitle, title, openGraph.title),
+  "metaDescription": coalesce(metaDescription, description, openGraph.description),
+  "ogTitle": coalesce(ogTitle, openGraph.title, twitter.title),
+  "ogDescription": coalesce(ogDescription, openGraph.description, twitter.description),
+  "ogImageUrl": coalesce(
+    ogImage.asset->url,
+    metaImage.asset->url,
+    openGraph.image.asset->url,
+    openGraph.imageUrl,
+    twitter.image.asset->url,
+    twitter.imageUrl
+  ),
+  "noIndex": coalesce(noIndex, robots.noIndex),
+  "noFollow": coalesce(noFollow, robots.noFollow)
+}`
+
+const pageVisibilityFragment = `pageVisibility,
+  placeholderTitle,
+  placeholderMessage,
+  placeholderCtaLabel,
+  placeholderCtaHref`
+
+const logoMarqueeFragment = `logoMarquee[]{
+  name,
+  "src": logo.asset->url,
+  href
 }`
 
 export const globalSettingsQuery = `*[_type == "globalSettings"][0]{
@@ -65,13 +85,20 @@ export const siteSettingsQuery = `*[_type == "siteSettings"][0]{
   "logoUrl": coalesce(logoLight.asset->url, logo.asset->url),
   faviconPath,
   defaultSeo{
-    metaTitle,
-    metaDescription,
-    ogTitle,
-    ogDescription,
-    "ogImageUrl": ogImage.asset->url,
-    noIndex,
-    noFollow
+    "metaTitle": coalesce(metaTitle, title, openGraph.title),
+    "metaDescription": coalesce(metaDescription, description, openGraph.description),
+    "ogTitle": coalesce(ogTitle, openGraph.title, twitter.title),
+    "ogDescription": coalesce(ogDescription, openGraph.description, twitter.description),
+    "ogImageUrl": coalesce(
+      ogImage.asset->url,
+      metaImage.asset->url,
+      openGraph.image.asset->url,
+      openGraph.imageUrl,
+      twitter.image.asset->url,
+      twitter.imageUrl
+    ),
+    "noIndex": coalesce(noIndex, robots.noIndex),
+    "noFollow": coalesce(noFollow, robots.noFollow)
   }
 }`
 
@@ -151,6 +178,8 @@ const pageSectionsFragment = `sections[]{
 export const networkFoundersPageQuery = `*[_type == "networkFoundersPage"][0]{
   title,
   useModularPage,
+  ${pageVisibilityFragment},
+  ${logoMarqueeFragment},
   ${seoFragment},
   ${pageSectionsFragment}
 }`
@@ -158,6 +187,7 @@ export const networkFoundersPageQuery = `*[_type == "networkFoundersPage"][0]{
 export const networkAdvisorsPageQuery = `*[_type == "networkAdvisorsPage"][0]{
   title,
   useModularPage,
+  ${pageVisibilityFragment},
   ${seoFragment},
   ${pageSectionsFragment}
 }`
@@ -165,11 +195,8 @@ export const networkAdvisorsPageQuery = `*[_type == "networkAdvisorsPage"][0]{
 export const networkInvestorsPageQuery = `*[_type == "networkInvestorsPage"][0]{
   title,
   useModularPage,
-  logoMarquee[]{
-    name,
-    "src": logo.asset->url,
-    href
-  },
+  ${pageVisibilityFragment},
+  ${logoMarqueeFragment},
   ${seoFragment},
   ${pageSectionsFragment}
 }`
@@ -177,6 +204,7 @@ export const networkInvestorsPageQuery = `*[_type == "networkInvestorsPage"][0]{
 export const networkPartnersPageQuery = `*[_type == "networkPartnersPage"][0]{
   title,
   useModularPage,
+  ${pageVisibilityFragment},
   ${seoFragment},
   ${pageSectionsFragment}
 }`

@@ -1,10 +1,12 @@
 import {defineArrayMember, defineField, defineType} from 'sanity'
+import {internalLabelField, sectionListPreview} from '../shared/sectionPreview'
 
 export const sectionFeatureGrid = defineType({
   name: 'sectionFeatureGrid',
   title: 'Network: Feature Grid',
   type: 'object',
   fields: [
+    defineField(internalLabelField),
     defineField({name: 'badge', type: 'string'}),
     defineField({name: 'title', type: 'portableRichText'}),
     defineField({name: 'subtitle', type: 'portableRichText'}),
@@ -24,4 +26,5 @@ export const sectionFeatureGrid = defineType({
       ],
     }),
   ],
+  preview: sectionListPreview({typeLabel: 'Feature grid', fallback: 'Features'}),
 })

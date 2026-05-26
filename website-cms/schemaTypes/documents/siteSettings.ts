@@ -58,7 +58,7 @@ export const siteSettings = defineType({
     defineField({
       name: 'defaultSeo',
       title: 'Default SEO fallback',
-      type: 'seo',
+      type: 'seoFields',
       fieldset: 'seoDefaults',
       group: 'seo',
       description: 'Used when a page does not define its own SEO fields.',

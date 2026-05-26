@@ -146,6 +146,6 @@ export const paymentPage = defineType({
       group: 'content',
     }),
     ...singletonLayoutFields,
-    defineField({name: 'seo', type: 'seo', group: 'seo', fieldset: 'seo'}),
+    defineField({name: 'seo', type: 'seoFields', group: 'seo', fieldset: 'seo'}),
   ],
 })
