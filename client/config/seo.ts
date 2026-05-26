@@ -51,7 +51,7 @@ export type RouteSeoConfig = {
 
 export const ROUTE_SEO: Record<string, RouteSeoConfig> = {
   "/": {
-    title: "Rellia Health — You are the future of health tech.",
+    title: "You are the future of health tech.",
     description:
       "Rellia Health connects founders, clinicians, and health systems to build the future of care. Join our network and explore programs.",
     indexable: true,
@@ -257,10 +257,10 @@ export const ROUTE_SEO: Record<string, RouteSeoConfig> = {
       "How Rellia Health collects, uses, and protects personal information when you use our website and services.",
     indexable: true,
   },
-  "/diagnostics": {
+  "/startup-diagnostic": {
     title: "Startup Diagnostic — Rellia Health",
     description:
-      "Benchmark your health tech startup across 13 domains. Get a personalized gap analysis, AI-powered report, and advisory board matching.",
+      "Benchmark your health tech startup across 12 critical domains. Get an instant readiness score, personalized gap analysis, and advisory board matching.",
     indexable: true,
   },
   "/diagnostic-survey": {

@@ -74,7 +74,6 @@ Rellia offers founder programs (QMS, fundraising, regulatory, clinical validatio
 ## Startup diagnostic
 
 - [/diagnostic-survey](https://www.relliahealth.com/diagnostic-survey): Complete the Rellia Health diagnostic survey to receive your readiness report and personalized advisory board matches.
-- [/diagnostics](https://www.relliahealth.com/diagnostics): Benchmark your health tech startup across 13 domains. Get a personalized gap analysis, AI-powered report, and advisory board matching.
 
 
 ## Directory profiles
@@ -111,3 +110,4 @@ Rellia offers founder programs (QMS, fundraising, regulatory, clinical validatio
 
 - [/careers](https://www.relliahealth.com/careers): Explore open roles at Rellia Health. Join a mission-driven team connecting health tech founders with clinicians, advisors, and investors.
 - [/faq](https://www.relliahealth.com/faq): Answers to common questions about Rellia Health programs, membership, events, and how we work with founders and partners.
+- [/startup-diagnostic](https://www.relliahealth.com/startup-diagnostic): Benchmark your health tech startup across 12 critical domains. Get an instant readiness score, personalized gap analysis, and advisory board matching.

@@ -13,8 +13,8 @@ const normalizeInternalHref = (href: string) => {
   if (!trimmed) return "/"
   if (isExternalHref(trimmed)) return trimmed
   const normalized = trimmed.startsWith("/") ? trimmed : `/${trimmed}`
-  if (normalized === "/diagnostic-survey" || normalized === "/survey") {
-    return "/diagnostics"
+  if (normalized === "/diagnostic-survey" || normalized === "/survey" || normalized === "/diagnostics") {
+    return "/startup-diagnostic"
   }
   return normalized
 }
@@ -27,7 +27,7 @@ const FALLBACK_FOOTER_COLUMNS: NavItem[] = [
       { label: "Apply", href: "/apply" },
       { label: "Programs", href: "/programs" },
       { label: "Events", href: "/events" },
-      { label: "Startup Diagnostic", href: "/diagnostics" },
+      { label: "Startup Diagnostic", href: "/startup-diagnostic" },
       { label: "Consulting", href: "/consulting" },
     ],
   },

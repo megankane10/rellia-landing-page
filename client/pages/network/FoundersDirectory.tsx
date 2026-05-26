@@ -78,7 +78,7 @@ function FounderDirectoryCard({
             alt=""
             className="max-h-[100px] w-auto max-w-[80%] object-contain object-center transition duration-500 ease-out group-hover:scale-[1.02]"
           />
-          <div className="absolute bottom-2 left-2 z-10 flex flex-wrap gap-1.5 max-w-[calc(100%-1rem)]">
+          <div className="absolute top-2 left-2 z-10 flex flex-wrap gap-1.5 max-w-[calc(100%-1rem)]">
             {company.specialties.map((s) => (
               <span
                 key={s}

@@ -108,13 +108,13 @@ const DATA_MAP: Record<
   product_design: {
     mentor: "UX & Product Design",
     program: "Prototype Lab",
-    programHref: "/programs/prototype-lab",
+    programHref: "/programs/low-fidelity-prototype-lab",
     advisorSpecialty: "Product Design & UI/UX",
   },
   product_dev: {
     mentor: "Engineering",
     program: "Build Your QMS",
-    programHref: "/programs/qms",
+    programHref: "/programs/build-your-quality-management-system",
     advisorSpecialty: "Product Development",
   },
   clinical: {
@@ -138,7 +138,7 @@ const DATA_MAP: Record<
   ip: {
     mentor: "Intellectual Property",
     program: "Advance Dataroom",
-    programHref: "/programs/dataroom",
+    programHref: "/programs/advance-data-room-deep-dive",
     advisorSpecialty: "IP Strategy",
   },
   reimbursement: {
@@ -150,19 +150,19 @@ const DATA_MAP: Record<
   fundraising: {
     mentor: "Fundraising",
     program: "Elevate Capital",
-    programHref: "/programs/elevate-capital",
+    programHref: "/programs/elevate-healthcare-capital",
     advisorSpecialty: "Fundraising",
   },
   marketing: {
     mentor: "Marketing",
     program: "Brand Strategy",
-    programHref: "/programs/brand",
+    programHref: "/programs/design-your-brand-strategy",
     advisorSpecialty: "Marketing & Branding",
   },
   gtm: {
     mentor: "Commercial Strategy",
     program: "First 50 Users",
-    programHref: "/programs/first-50",
+    programHref: "/programs/first-50-users-clinical-feedback-intensive",
     advisorSpecialty: "Go-To-Market",
   },
   healthcare: {
@@ -174,7 +174,7 @@ const DATA_MAP: Record<
   operations: {
     mentor: "Operations & Scaling",
     program: "Ignite Pitch",
-    programHref: "/programs/ignite-pitch",
+    programHref: "/programs/ignite-pitch-foundations",
     advisorSpecialty: "Operations & Scaling",
   },
 };
@@ -623,7 +623,7 @@ export default function DiagnosticSurvey() {
 
       <div className="relative flex min-h-[calc(100vh-72px)] md:min-h-[calc(100vh-86px)]">
         {/* ── DESKTOP SIDEBAR ── */}
-        <aside className="sticky top-[86px] hidden h-[calc(100vh-86px)] w-72 flex-col border-r border-rellia-teal/10 bg-white/50 backdrop-blur-md lg:flex">
+        <aside className="sticky top-[86px] hidden h-[calc(100vh-86px)] w-72 flex-col border-r border-rellia-teal/10 bg-white/50 backdrop-blur-md lg:flex rounded-b-3xl">
           <div className="flex flex-col gap-6 p-6">
             <div className="space-y-2">
               <div className="flex justify-between text-[10px] font-bold uppercase tracking-widest text-rellia-teal/50">
@@ -931,7 +931,7 @@ export default function DiagnosticSurvey() {
                             </div>
 
                             {i < 3 && (
-                              <div className="pointer-events-none absolute left-[22px] top-12 h-[36px] w-px bg-gradient-to-b from-rellia-teal/40 to-rellia-teal/10" />
+                              <div className="pointer-events-none absolute left-[22px] top-12 h-[36px] w-px bg-rellia-teal" />
                             )}
                           </div>
                         ))}
@@ -947,7 +947,7 @@ export default function DiagnosticSurvey() {
                             "Concrete roadmap recommendations",
                             "Advisor focus areas matched to your gaps",
                           ].map((line) => (
-                            <div key={line} className="flex items-start gap-3 text-xs text-rellia-teal/70">
+                            <div key={line} className="flex items-start gap-3 text-xs text-black">
                               <div className="mt-1.5 h-2 w-2 rounded-full bg-rellia-mint" />
                               <span className="leading-relaxed">{line}</span>
                             </div>
@@ -1240,7 +1240,7 @@ export default function DiagnosticSurvey() {
 
                 <div className="grid gap-6 md:grid-cols-2 items-stretch">
                   <div className="rounded-[32px] border border-rellia-teal/10 bg-white p-8 shadow-sm flex flex-col h-full">
-                    <h3 className="mb-6 text-xs font-bold uppercase tracking-widest text-rellia-teal/40">
+                    <h3 className="mb-6 text-xs font-bold uppercase tracking-widest text-rellia-teal">
                       Your Assessment Profile
                     </h3>
                     <div className="space-y-2 flex-1">
@@ -1294,7 +1294,7 @@ export default function DiagnosticSurvey() {
                       </div>
                     </div>
                     <div className="rounded-[24px] border border-rellia-teal/10 bg-white p-6">
-                      <h4 className="text-xs font-bold uppercase tracking-widest text-rellia-teal/40">
+                      <h4 className="text-xs font-bold uppercase tracking-widest text-rellia-teal">
                         Submission details
                       </h4>
                       <div className="mt-4 space-y-2 text-sm text-rellia-teal/70">
@@ -1310,18 +1310,6 @@ export default function DiagnosticSurvey() {
                         <p>
                           <span className="font-bold text-rellia-teal">Stage:</span> {memberInfo.stage}
                         </p>
-                      </div>
-                    </div>
-
-                    <div className="rounded-2xl bg-amber-50 border border-amber-200 p-4 text-left">
-                      <div className="flex gap-3">
-                        <AlertTriangle className="h-5 w-5 text-amber-600 shrink-0 mt-0.5" />
-                        <div>
-                          <span className="font-host-grotesk text-xs font-bold text-amber-900 uppercase tracking-wider block">Access Notice</span>
-                          <p className="mt-1 font-urbanist text-xs leading-relaxed text-amber-800">
-                            The Startup Diagnostic assessment is free for everyone to complete. However, please note that <strong>only active Rellia members</strong> can access the detailed gap analysis report, personalized roadmap output, and advisor matches.
-                          </p>
-                        </div>
                       </div>
                     </div>
 
@@ -1414,9 +1402,10 @@ export default function DiagnosticSurvey() {
                           setDiagResult(null)
                           setView("intro")
                         }}
-                        className="text-[10px] font-bold uppercase tracking-widest text-rellia-teal/40 hover:text-rellia-teal transition-colors"
+                        className="group inline-flex items-center gap-1.5 text-sm font-bold text-rellia-teal"
                       >
-                        Start over
+                        <span className="group-hover:underline">Start over</span>
+                        <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
                       </button>
                     </div>
                   </div>
@@ -1510,7 +1499,7 @@ export default function DiagnosticSurvey() {
                   {/* Roadmap + Accelerate */}
                   <section className="grid gap-6 md:grid-cols-2 items-stretch">
                     <div className="rounded-[32px] border border-rellia-teal/10 bg-white p-8 shadow-sm flex flex-col h-full">
-                      <h2 className="text-xs font-bold uppercase tracking-widest text-rellia-teal/45">
+                      <h2 className="text-xs font-bold uppercase tracking-widest text-rellia-teal">
                         Recommended Roadmap
                       </h2>
                       <div className="mt-6 space-y-4 flex-1">
@@ -1537,7 +1526,7 @@ export default function DiagnosticSurvey() {
                       </p>
                       <RelliaAction
                         asChild
-                        variant="mintTealFill"
+                        variant="heroSolidOnTeal"
                         size="comfortable"
                         className="w-full justify-center transition-transform active:scale-95 relative z-10 mt-8"
                       >
@@ -1551,7 +1540,7 @@ export default function DiagnosticSurvey() {
 
                   {/* Full readiness breakdown */}
                   <section className="space-y-4">
-                    <h2 className="text-xs font-bold uppercase tracking-widest text-rellia-teal/45">
+                    <h2 className="text-xs font-bold uppercase tracking-widest text-rellia-teal">
                       Full Readiness Breakdown
                     </h2>
                     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -1590,7 +1579,7 @@ export default function DiagnosticSurvey() {
                   {/* Advisory board + programs */}
                   <section className="grid gap-6 md:grid-cols-2 items-stretch">
                     <div className="rounded-[32px] border border-rellia-teal/10 bg-white p-8 shadow-sm flex flex-col h-full">
-                      <h2 className="text-xs font-bold uppercase tracking-widest text-rellia-teal/45">
+                      <h2 className="text-xs font-bold uppercase tracking-widest text-rellia-teal">
                         Find Advisors for Your Gaps
                       </h2>
                       <div className="mt-6 flex flex-col gap-4 flex-1">
@@ -1604,7 +1593,7 @@ export default function DiagnosticSurvey() {
                               <div className="font-urbanist text-[10px] font-bold uppercase tracking-widest text-rellia-teal/50">
                                 Priority {i + 1} Gap
                               </div>
-                              <div className="mt-1 font-host-grotesk text-base font-bold tracking-tight text-rellia-teal">
+                              <div className="mt-1 font-host-grotesk text-base font-bold tracking-tight text-black">
                                 See advisors for {w.category}
                               </div>
                             </div>
@@ -1616,7 +1605,7 @@ export default function DiagnosticSurvey() {
 
                     <div className="rounded-[32px] border border-rellia-teal/10 bg-white p-8 shadow-sm flex flex-col h-full">
                       <div className="flex items-center justify-between gap-4">
-                        <h2 className="text-xs font-bold uppercase tracking-widest text-rellia-teal/45">
+                        <h2 className="text-xs font-bold uppercase tracking-widest text-rellia-teal">
                           Program Matches
                         </h2>
                         <Link
@@ -1637,7 +1626,7 @@ export default function DiagnosticSurvey() {
                               to={href}
                               className="group flex items-center gap-4 rounded-3xl border border-black/10 bg-white p-4 shadow-sm transition-[transform,box-shadow] hover:shadow-md hover:-translate-y-[1px]"
                             >
-                              <div className="relative h-16 w-20 shrink-0 overflow-hidden rounded-lg bg-rellia-cream">
+                              <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-lg bg-rellia-cream">
                                 {meta?.imageSrc ? (
                                   <img
                                     src={meta.imageSrc}
@@ -1652,9 +1641,6 @@ export default function DiagnosticSurvey() {
                               <div className="min-w-0 flex-1">
                                 <div className="font-host-grotesk text-base font-bold tracking-tight text-black">
                                   {meta?.title || prog?.program || "Program"}
-                                </div>
-                                <div className="mt-1 font-urbanist text-sm text-black/60">
-                                  View program details
                                 </div>
                               </div>
                               <ChevronRight className="h-5 w-5 text-black/30 group-hover:text-black/60 transition-colors" />

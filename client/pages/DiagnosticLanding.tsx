@@ -160,19 +160,19 @@ export default function DiagnosticLanding() {
     <div className="min-h-screen bg-white font-host-grotesk text-black selection:bg-rellia-mint/30 overflow-x-hidden">
       <Navbar />
       <RouteSeo 
-        title="Startup Diagnostic | Rellia Health" 
-        description="Benchmark your health tech startup across 12 domains. Get a personalized gap analysis and roadmap."
+        title="Startup Diagnostic — Rellia Health" 
+        description="Benchmark your health tech startup across 12 critical domains. Get an instant readiness score, personalized gap analysis, and advisory board matching."
       />
 
       {/* HERO SECTION - Replicating RoleHero styling */}
-      <section className="relative overflow-hidden bg-rellia-teal pt-[100px] md:pt-[116px] lg:flex lg:flex-col lg:min-h-0 lg:pt-[130px]">
+      <section className="relative overflow-hidden bg-rellia-teal pt-[72px] md:pt-[86px] lg:flex lg:flex-col lg:min-h-0 lg:pt-[96px]">
         <img
           src="/images/diagnostics-hero.jpg"
           alt=""
           className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-60"
         />
         <div className="absolute inset-0 bg-gradient-to-br from-rellia-teal/[0.88] via-rellia-teal/72 to-[#0a2830]/82" aria-hidden />
-        <div aria-hidden className="pointer-events-none absolute inset-0 opacity-35 [background-image:radial-gradient(circle_at_20%_20%,rgba(167,219,214,0.35),transparent_50%),radial-gradient(circle_at_85%_30%,rgba(255,255,255,0.14),transparent_45%)]" />
+        <div aria-hidden className="pointer-events-none absolute inset-0 opacity-35 [background-image:radial-gradient(circle_at_20%_20%,rgba(167,219,214,0.35),transparent_50%),radial-gradient(circle_at_85%_30%,rgba(255,255,255,0.14),transparent_45%)]" aria-label="" />
         <img
           src="/images/hologram-logo.png"
           alt=""
@@ -180,7 +180,7 @@ export default function DiagnosticLanding() {
           className="pointer-events-none absolute -right-16 bottom-0 w-[min(52vw,420px)] opacity-[0.07] md:right-0"
         />
 
-        <div className="relative z-10 mx-auto max-w-[1300px] px-6 pb-20 pt-10 md:px-10 md:pb-28 md:pt-14 lg:flex lg:flex-1 lg:flex-col lg:justify-center">
+        <div className="relative z-10 mx-auto max-w-[1300px] px-6 pb-20 pt-10 md:px-10 md:pb-28 md:pt-14 lg:flex lg:flex-1 lg:flex-col lg:justify-center lg:pb-20 lg:pt-0">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -188,18 +188,18 @@ export default function DiagnosticLanding() {
             className="flex flex-col items-start text-left"
           >
             {/* Top Badge: Glass/Pill notice */}
-            <div className="mb-8 flex w-fit items-center gap-2.5 rounded-full bg-white/10 backdrop-blur-md px-5 py-2 text-sm font-semibold text-white border border-white/20">
+            <div className="mb-8 flex w-fit items-center gap-2.5 rounded-full bg-white/10 backdrop-blur-md px-5 py-2 text-sm font-normal text-white border border-white/20">
               <Lock className="h-3.5 w-3.5 text-rellia-mint" />
               <span>Detailed analysis is only available to Rellia members</span>
             </div>
 
             <h1 className={cn("max-w-4xl font-bold leading-[1.08] tracking-tight text-white drop-shadow-sm", PAGE_HEADER_TITLE_SIZE_CLASS)}>
               How ready is your<br />
-              <span className="text-rellia-mint font-normal">startup, really?</span>
+              <span className="text-rellia-mint">startup, really?</span>
             </h1>
             
             <p className="mt-6 max-w-2xl font-urbanist text-lg leading-relaxed text-white/80 md:text-xl">
-              Benchmark your startup across 12 critical domains — from regulatory and clinical to go-to-market and operations. Get an instant readiness score and identify hidden blockers.
+              Benchmark your startup across 12 critical domains. Get an instant readiness score and identify hidden blockers.
             </p>
             
             <div className="mt-10 flex w-full flex-col gap-3 sm:flex-row sm:flex-wrap">
@@ -244,7 +244,7 @@ export default function DiagnosticLanding() {
               </p>
 
               {/* Scroller for the 12 domains */}
-              <div className="mt-10 max-w-xl">
+              <div className="mt-6 max-w-xl">
                 <div className="relative overflow-hidden rounded-3xl border border-black/10 bg-transparent p-7 shadow-none min-h-[250px] flex flex-col justify-between">
                   <div className="flex flex-col items-start gap-4">
                     <CurrentIcon className="h-8 w-8 text-rellia-teal shrink-0" />

@@ -86,11 +86,6 @@
     <priority>0.85</priority>
   </url>
   <url>
-    <loc>https://www.relliahealth.com/diagnostics</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
     <loc>https://www.relliahealth.com/events</loc>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
@@ -304,6 +299,11 @@
     <loc>https://www.relliahealth.com/programs/regulatory-strategy-sprint</loc>
     <changefreq>monthly</changefreq>
     <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://www.relliahealth.com/startup-diagnostic</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.80</priority>
   </url>
   <url>
     <loc>https://www.relliahealth.com/stories</loc>

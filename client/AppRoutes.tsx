@@ -158,7 +158,8 @@ export const AppRoutes = () => (
 
     <Route path="/industry-partners/directory" element={<IndustryPartnersDirectory />} />
 
-    <Route path="/diagnostics" element={<DiagnosticLanding />} />
+    <Route path="/startup-diagnostic" element={<DiagnosticLanding />} />
+    <Route path="/diagnostics" element={<Navigate to="/startup-diagnostic" replace />} />
     <Route path="/diagnostic-survey" element={<DiagnosticSurvey />} />
     <Route path="/survey" element={<Navigate to="/diagnostic-survey" replace />} />
 
