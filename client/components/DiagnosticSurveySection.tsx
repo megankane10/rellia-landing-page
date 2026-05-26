@@ -111,7 +111,7 @@ export function DiagnosticSurveySection() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-start">
           <div className="flex flex-col items-start lg:sticky lg:top-32">
             <Reveal>
-              <h2 className="font-host-grotesk text-3xl font-bold leading-tight tracking-tight text-black md:text-[44px] mt-4 mb-6">
+              <h2 className="font-host-grotesk text-2xl font-semibold leading-tight tracking-tight text-black md:text-[32px] mt-4 mb-6">
                 Startup Diagnostic Survey
               </h2>
               <p className="font-urbanist text-lg md:text-xl leading-relaxed text-black/70 mb-10 max-w-xl">

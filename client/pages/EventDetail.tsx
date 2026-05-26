@@ -570,7 +570,7 @@ export default function EventDetail() {
                 <ScrollReveal>
                   <div className="mx-auto w-full max-w-[900px]">
                     {detailSectionHeading ? (
-                      <h2 className="mb-6 font-host-grotesk text-2xl font-semibold tracking-tight text-black md:mb-8 md:text-3xl">
+                      <h2 className="mb-6 font-host-grotesk text-2xl font-semibold tracking-tight text-black md:mb-8 md:text-[32px]">
                         {detailSectionHeading}
                       </h2>
                     ) : null}
@@ -627,7 +627,7 @@ export default function EventDetail() {
                   <ScrollReveal>
                     <div className="w-full">
                       {detailSectionHeading ? (
-                        <h2 className="mb-6 font-host-grotesk text-2xl font-semibold tracking-tight text-black md:mb-8 md:text-3xl">
+                        <h2 className="mb-6 font-host-grotesk text-2xl font-semibold tracking-tight text-black md:mb-8 md:text-[32px]">
                           {detailSectionHeading}
                         </h2>
                       ) : null}

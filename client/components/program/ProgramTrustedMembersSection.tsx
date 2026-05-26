@@ -99,7 +99,7 @@ export default function ProgramTrustedMembersSection({
       <div className="absolute inset-0 bg-gradient-to-r from-rellia-mint/10 via-transparent to-transparent pointer-events-none" />
       <div className="relative z-10 mx-auto max-w-[1300px]">
         <ScrollReveal>
-          <h2 className="mb-14 text-center font-host-grotesk text-2xl font-semibold leading-tight tracking-tight text-rellia-teal md:text-3xl">
+          <h2 className="mb-14 text-center font-host-grotesk text-2xl font-semibold leading-tight tracking-tight text-rellia-teal md:text-[32px]">
             {title}
           </h2>
         </ScrollReveal>

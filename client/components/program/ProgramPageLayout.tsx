@@ -329,7 +329,7 @@ const ProgramPageLayout = ({
           <div className="relative z-10 max-w-[1300px] mx-auto">
             <ScrollReveal delay={0.1}>
               <div className="mb-6 md:mb-8">
-                <h2 className="font-host-grotesk text-3xl font-semibold leading-tight tracking-tight text-black md:text-[40px]">
+                <h2 className="font-host-grotesk text-2xl font-semibold leading-tight tracking-tight text-black md:text-[32px]">
                   {q.outcomesTitle}
                 </h2>
                 <p className="mt-4 font-urbanist text-base font-medium leading-relaxed tracking-tight text-black/65 md:text-lg">
@@ -354,7 +354,7 @@ const ProgramPageLayout = ({
           <div className="max-w-[1300px] mx-auto px-6 md:px-10">
             <ScrollReveal>
               <div className="mb-10 md:mb-14">
-                <h2 className="font-host-grotesk text-3xl font-semibold leading-tight tracking-tight text-black md:text-[40px]">
+                <h2 className="font-host-grotesk text-2xl font-semibold leading-tight tracking-tight text-black md:text-[32px]">
                   {q.howItWorksTitle}
                 </h2>
                 <p className="mt-4 font-urbanist text-base font-medium leading-relaxed text-black/60 md:text-lg">
@@ -415,7 +415,7 @@ const ProgramPageLayout = ({
               <div className="relative z-10 w-full flex flex-col h-full">
                 <ScrollReveal delay={0.1}>
                   <div className="mb-12 md:mb-16">
-                    <h2 className="font-host-grotesk text-3xl font-semibold leading-tight tracking-tight text-white md:text-[40px]">
+                    <h2 className="font-host-grotesk text-2xl font-semibold leading-tight tracking-tight text-white md:text-[32px]">
                       {q.pillarsTitle}
                     </h2>
                   </div>
@@ -457,7 +457,7 @@ const ProgramPageLayout = ({
             <div className="flex flex-col lg:flex-row lg:gap-20">
               <div className="lg:w-[44%] shrink-0 mb-10 lg:mb-0 lg:sticky lg:top-32 lg:self-start">
                 <ScrollReveal>
-                  <h2 className="font-host-grotesk text-3xl font-semibold leading-tight tracking-tight text-black md:text-[40px]">
+                  <h2 className="font-host-grotesk text-2xl font-semibold leading-tight tracking-tight text-black md:text-[32px]">
                     {q.timelineTitle.includes("&") ? (
                       <>
                         {q.timelineTitle.split("&")[0].trim()}

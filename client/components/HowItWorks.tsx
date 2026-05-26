@@ -131,11 +131,11 @@ export default function HowItWorks(props?: HowItWorksProps) {
         <ScrollReveal delay={0.1}>
           <div className="mb-16 md:mb-20">
             {heading ? (
-              <div className="font-host-grotesk text-3xl font-semibold leading-tight tracking-tight text-white md:text-[40px]">
+              <div className="font-host-grotesk text-2xl font-semibold leading-tight tracking-tight text-white md:text-[32px]">
                 {heading}
               </div>
             ) : (
-              <h2 className="font-host-grotesk text-3xl font-semibold leading-tight tracking-tight text-white md:text-[40px]">
+              <h2 className="font-host-grotesk text-2xl font-semibold leading-tight tracking-tight text-white md:text-[32px]">
                 Where we focus
               </h2>
             )}

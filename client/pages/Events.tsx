@@ -189,7 +189,7 @@ export default function Events() {
           <div className="max-w-[1300px] mx-auto px-6 md:px-10">
             <ScrollReveal>
               <div className="mb-4">
-                <h2 className="font-host-grotesk text-2xl md:text-3xl font-semibold leading-tight tracking-tight text-black">
+                <h2 className="font-host-grotesk text-2xl md:text-[32px] font-semibold leading-tight tracking-tight text-black">
                   Browse Events
                 </h2>
               </div>

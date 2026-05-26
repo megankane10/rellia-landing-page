@@ -133,7 +133,7 @@ export default function Network() {
 
             <ScrollReveal>
               <SectionTag>Founders</SectionTag>
-              <h2 className="mt-5 text-black text-3xl md:text-[40px] font-bold tracking-tight leading-[1.05] max-w-3xl">
+              <h2 className="mt-5 text-black text-2xl md:text-[32px] font-semibold tracking-tight leading-tight max-w-3xl">
                 Are you building in <span className="text-rellia-teal">health tech?</span>
               </h2>
             </ScrollReveal>
@@ -214,7 +214,7 @@ export default function Network() {
 
             <ScrollReveal>
               <SectionTag>Advisors</SectionTag>
-              <h2 className="mt-5 text-black text-3xl md:text-[40px] font-bold tracking-tight leading-[1.05] max-w-3xl">
+              <h2 className="mt-5 text-black text-2xl md:text-[32px] font-semibold tracking-tight leading-tight max-w-3xl">
                 Some people are just wired to help others succeed.
               </h2>
             </ScrollReveal>
@@ -296,7 +296,7 @@ export default function Network() {
 
             <ScrollReveal>
               <SectionTag>Investors</SectionTag>
-              <h2 className="mt-5 text-black text-3xl md:text-[40px] font-bold tracking-tight leading-[1.05] max-w-3xl">
+              <h2 className="mt-5 text-black text-2xl md:text-[32px] font-semibold tracking-tight leading-tight max-w-3xl">
                 Stop sorting through cold pitch decks.
               </h2>
             </ScrollReveal>
@@ -384,7 +384,7 @@ export default function Network() {
 
             <ScrollReveal>
               <SectionTag>Industry Partners</SectionTag>
-              <h2 className="mt-5 text-black text-3xl md:text-[40px] font-bold tracking-tight leading-[1.05] max-w-3xl">
+              <h2 className="mt-5 text-black text-2xl md:text-[32px] font-semibold tracking-tight leading-tight max-w-3xl">
                 Reach the health tech founders <span className="text-rellia-teal">who need you.</span>
               </h2>
             </ScrollReveal>

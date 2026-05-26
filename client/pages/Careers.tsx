@@ -412,7 +412,7 @@ export default function Careers() {
         <section className="bg-white py-24 md:py-32 border-t border-black/10">
           <div className="mx-auto max-w-[1300px] px-6 md:px-10">
             <ScrollReveal className="max-w-3xl mb-16">
-              <h2 className="font-host-grotesk text-3xl font-bold tracking-tight text-black md:text-4xl lg:text-5xl">
+              <h2 className="font-host-grotesk text-2xl font-semibold tracking-tight text-black md:text-[32px]">
                 How we work
               </h2>
               <p className="mt-4 font-urbanist text-lg md:text-xl text-black/60 leading-relaxed">
@@ -447,7 +447,7 @@ export default function Careers() {
         >
           <div className="mx-auto flex w-full max-w-[1300px] flex-col px-6 py-16 md:px-10 md:py-20">
             <ScrollReveal className="flex min-w-0 flex-col">
-              <h2 className="font-host-grotesk text-3xl font-semibold tracking-tight text-black md:text-4xl">
+              <h2 className="font-host-grotesk text-2xl font-semibold tracking-tight text-black md:text-[32px]">
                 Open Roles
               </h2>
 
