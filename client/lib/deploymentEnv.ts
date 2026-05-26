@@ -21,11 +21,14 @@ const isProductionDataset = (): boolean =>
  */
 export const allowCmsSeedFallbacks = (): boolean => {
   if (isProductionDataset()) return false
+  if (isMainBranchBuild()) return false
 
   if (typeof window !== "undefined") {
     if (isStrictProductionSite()) return false
     if (isAdditionsPreviewSite()) return true
     if (import.meta.env.DEV) return true
+    const ref = String(import.meta.env.VITE_VERCEL_GIT_COMMIT_REF ?? "").trim().toLowerCase()
+    if (ref === "main") return false
     return !isStrictProductionSite()
   }
   return !isMainBranchBuild()

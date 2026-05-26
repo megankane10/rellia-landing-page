@@ -17,7 +17,7 @@ export const navigation = defineType({
       type: 'array',
       of: [{type: 'navItem'}],
       group: 'header',
-      options: {layout: 'grid'},
+      options: {sortable: true},
     }),
     defineField({
       name: 'footer',
@@ -26,7 +26,7 @@ export const navigation = defineType({
       type: 'array',
       of: [{type: 'navItem'}],
       group: 'footer',
-      options: {layout: 'grid'},
+      options: {sortable: true},
     }),
   ],
   preview: {

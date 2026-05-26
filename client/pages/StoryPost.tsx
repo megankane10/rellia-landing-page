@@ -35,6 +35,7 @@ import { buildMailtoHref } from "@/lib/mailto"
 import { DEFAULT_GLOBAL_SETTINGS } from "@shared/cms/defaults"
 import { StoryPostHero } from "@/components/StoryPostHero"
 import { RichTextQuoteFigure } from "@/components/RichTextQuoteFigure"
+import ImageExpandModal from "@/components/ImageExpandModal"
 
 export default function StoryPost() {
   const { slug } = useParams()
@@ -43,6 +44,7 @@ export default function StoryPost() {
   const { data: cmsStory } = storyQuery
   const story = slug && allowCmsSeedFallbacks() ? getStoryBySlug(slug) : undefined
   const [copyState, setCopyState] = useState<"idle" | "copied">("idle")
+  const [activeImage, setActiveImage] = useState<{ src: string; alt: string } | null>(null)
 
   const canonical = cmsStory?.slug
     ? buildPageUrl(`/stories/${cmsStory.slug}`)
@@ -253,6 +255,12 @@ export default function StoryPost() {
           </section>
         </main>
         <Footer />
+        <ImageExpandModal
+          src={activeImage?.src ?? null}
+          alt={activeImage?.alt ?? ""}
+          open={Boolean(activeImage)}
+          onOpenChange={(open) => !open && setActiveImage(null)}
+        />
       </div>
     )
   }
@@ -333,8 +341,8 @@ export default function StoryPost() {
                   if (b.type === "image") {
                     return (
                       <figure key={key} className="my-10">
-                        <div className="overflow-hidden rounded-2xl bg-black/5 aspect-video">
-                          <img src={b.src} alt={b.alt} className="h-full w-full object-cover" loading="lazy" />
+                        <div className="overflow-hidden rounded-2xl bg-black/5 aspect-video cursor-pointer" onClick={() => setActiveImage({ src: b.src, alt: b.alt })}>
+                          <img src={b.src} alt={b.alt} className="h-full w-full object-cover hover:opacity-95 transition-opacity duration-200" loading="lazy" />
                         </div>
                         {b.caption ? (
                           <figcaption className="mt-3 font-urbanist text-sm text-black/55">{b.caption}</figcaption>
@@ -407,6 +415,12 @@ export default function StoryPost() {
         </section>
       </main>
       <Footer />
+      <ImageExpandModal
+        src={activeImage?.src ?? null}
+        alt={activeImage?.alt ?? ""}
+        open={Boolean(activeImage)}
+        onOpenChange={(open) => !open && setActiveImage(null)}
+      />
     </div>
   )
 }

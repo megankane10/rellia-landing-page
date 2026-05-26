@@ -110,11 +110,28 @@ export const event = defineType({
     seoField,
   ],
   preview: {
-    select: {title: 'title', subtitle: 'slug.current', media: 'image'},
-    prepare(value) {
-      const title = value.title || 'Untitled event'
-      const subtitle = value.subtitle ? `/events/${value.subtitle}` : 'Missing slug'
-      return {title, subtitle, media: value.media}
+    select: {
+      title: 'title',
+      status: 'status',
+      startsAt: 'startsAt',
+      location: 'location',
+      media: 'image',
+    },
+    prepare({title, status, startsAt, location, media}) {
+      const displayTitle = title?.trim() || 'Untitled event'
+      const statusLabel =
+        status === 'past' ? 'Past' : status === 'hidden' ? 'Hidden' : 'Upcoming'
+      const dateLabel = startsAt
+        ? new Date(startsAt).toLocaleDateString(undefined, {
+            month: 'short',
+            day: 'numeric',
+            year: 'numeric',
+          })
+        : undefined
+      const subtitle = [statusLabel, dateLabel, location?.trim()]
+        .filter(Boolean)
+        .join(' · ')
+      return {title: displayTitle, subtitle: subtitle || undefined, media}
     },
   },
 })

@@ -135,7 +135,7 @@ function PipelinePhotoSection({
   children: ReactNode
 }) {
   return (
-    <section className="relative overflow-hidden">
+    <section className="relative overflow-hidden rounded-[2.5rem] md:rounded-[3.5rem] w-full">
       <img
         src="https://images.pexels.com/photos/7578803/pexels-photo-7578803.jpeg?auto=compress&cs=tinysrgb&w=1600"
         alt=""
@@ -143,7 +143,7 @@ function PipelinePhotoSection({
       />
       <div className="absolute inset-0 bg-gradient-to-br from-rellia-teal/90 via-rellia-teal/75 to-[#0a2830]/88" aria-hidden />
       <div aria-hidden className="absolute inset-0 opacity-40 [background-image:radial-gradient(circle_at_70%_20%,rgba(255,255,255,0.12),transparent_45%)]" />
-      <div className="relative z-10 px-6 py-16 md:px-10 md:py-24">{children}</div>
+      <div className="relative z-10 max-w-[1300px] mx-auto px-6 md:px-10 py-16 md:py-24">{children}</div>
     </section>
   )
 }
@@ -276,38 +276,36 @@ export default function Investors() {
               />
 
               <PipelinePhotoSection>
-                <div className="mx-auto max-w-[1300px]">
-                  <ScrollReveal>
-                    <h2 className="mt-5 font-host-grotesk text-3xl font-semibold leading-tight tracking-tight text-white md:text-[40px]">
-                      How founders cluster
-                    </h2>
-                    <p className="mt-4 max-w-2xl font-urbanist text-lg leading-relaxed text-white/85">
-                      Illustrative distributions based on active introductions—useful for thesis alignment.
-                    </p>
-                  </ScrollReveal>
-                  <div className="mt-12 grid grid-cols-1 gap-6 lg:grid-cols-3">
-                    <Reveal delay={0.05}>
-                      <IllustrativePie
-                        title="B2B vs B2C"
-                        data={B2B_DATA}
-                        ariaLabel="Pie chart of B2B versus B2C versus hybrid share"
-                      />
-                    </Reveal>
-                    <Reveal delay={0.08}>
-                      <IllustrativePie
-                        title="Stages"
-                        data={STAGE_DATA}
-                        ariaLabel="Pie chart of company stages from idea through Series A"
-                      />
-                    </Reveal>
-                    <Reveal delay={0.11}>
-                      <IllustrativePie
-                        title="Device & delivery"
-                        data={DEVICE_DATA}
-                        ariaLabel="Pie chart of device types and delivery models"
-                      />
-                    </Reveal>
-                  </div>
+                <ScrollReveal>
+                  <h2 className="mt-5 font-host-grotesk text-3xl font-semibold leading-tight tracking-tight text-white md:text-[40px]">
+                    How founders cluster
+                  </h2>
+                  <p className="mt-4 max-w-2xl font-urbanist text-lg leading-relaxed text-white/85">
+                    Illustrative distributions based on active introductions—useful for thesis alignment.
+                  </p>
+                </ScrollReveal>
+                <div className="mt-12 grid grid-cols-1 gap-6 lg:grid-cols-3">
+                  <Reveal delay={0.05}>
+                    <IllustrativePie
+                      title="B2B vs B2C"
+                      data={B2B_DATA}
+                      ariaLabel="Pie chart of B2B versus B2C versus hybrid share"
+                    />
+                  </Reveal>
+                  <Reveal delay={0.08}>
+                    <IllustrativePie
+                      title="Stages"
+                      data={STAGE_DATA}
+                      ariaLabel="Pie chart of company stages from idea through Series A"
+                    />
+                  </Reveal>
+                  <Reveal delay={0.11}>
+                    <IllustrativePie
+                      title="Device & delivery"
+                      data={DEVICE_DATA}
+                      ariaLabel="Pie chart of device types and delivery models"
+                    />
+                  </Reveal>
                 </div>
               </PipelinePhotoSection>
 

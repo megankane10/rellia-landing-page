@@ -1159,14 +1159,28 @@ const AI_HEALTHCARE_COMPLIANCE_DETAIL_BODY: SanityPortableText = [
   },
   {
     _type: "block",
-    _key: "ahc-p24",
+    _key: "ahc-p24-title",
+    style: "h3",
+    markDefs: [],
+    children: [
+      {
+        _type: "span",
+        _key: "ahc-p24s-title",
+        text: "Please be advised",
+        marks: [],
+      },
+    ],
+  },
+  {
+    _type: "block",
+    _key: "ahc-p24-body",
     style: "normal",
     markDefs: [],
     children: [
       {
         _type: "span",
-        _key: "ahc-p24s",
-        text: "Please be advised: Unfortunately, space is very limited at these community events and we can not always accept everyone we would like to. If you are not accepted to this event, please keep applying! We appreciate your application tremendously and we are looking forward to seeing you at a future event very soon!",
+        _key: "ahc-p24s-body",
+        text: "Unfortunately, space is very limited at these community events and we can not always accept everyone we would like to. If you are not accepted to this event, please keep applying! We appreciate your application tremendously and we are looking forward to seeing you at a future event very soon!",
         marks: [],
       },
     ],

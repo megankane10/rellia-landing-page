@@ -71,33 +71,33 @@ function FounderDirectoryCard({
       tabIndex={0}
       aria-label={`Open details for ${company.logoName}`}
     >
-      <div className="flex flex-1 flex-col p-6 md:p-7">
-        <div className="relative flex min-h-[148px] w-full items-center justify-center rounded-xl bg-white py-2 border border-black/[0.04]">
-          <img
-            src={company.logoSrc}
-            alt=""
-            className="max-h-[100px] w-auto max-w-[80%] object-contain object-center transition duration-500 ease-out group-hover:scale-[1.02]"
-          />
-          <div className="absolute top-2 left-2 z-10 flex flex-wrap gap-1.5 max-w-[calc(100%-1rem)]">
-            {company.specialties.map((s) => (
-              <span
-                key={s}
-                className="rounded-full border border-rellia-teal/20 bg-rellia-mint/80 px-2 py-0.5 font-urbanist text-[10px] font-bold text-rellia-teal backdrop-blur-sm shadow-sm"
-              >
-                {s}
-              </span>
-            ))}
-            {businessModels.map((bm) => (
-              <span
-                key={bm}
-                className="rounded-full border border-black/10 bg-black/45 px-2 py-0.5 font-urbanist text-[10px] font-bold text-white backdrop-blur-sm shadow-sm"
-              >
-                {bm}
-              </span>
-            ))}
-          </div>
+      <div className="relative flex h-[160px] w-full items-center justify-center bg-white border-b border-black/[0.05] shrink-0">
+        <img
+          src={company.logoSrc}
+          alt=""
+          className="max-h-[100px] w-auto max-w-[80%] object-contain object-center transition duration-500 ease-out group-hover:scale-[1.02]"
+        />
+        <div className="absolute top-3 left-3 z-10 flex flex-wrap gap-1.5 max-w-[calc(100%-1.5rem)]">
+          {company.specialties.map((s) => (
+            <span
+              key={s}
+              className="rounded-full border border-rellia-teal/15 bg-rellia-mint/60 px-2 py-0.5 font-urbanist text-[10px] font-bold text-rellia-teal/90 backdrop-blur-sm shadow-sm"
+            >
+              {s}
+            </span>
+          ))}
+          {businessModels.map((bm) => (
+            <span
+              key={bm}
+              className="rounded-full border border-black/10 bg-black/40 px-2 py-0.5 font-urbanist text-[10px] font-bold text-white/90 backdrop-blur-sm shadow-sm"
+            >
+              {bm}
+            </span>
+          ))}
         </div>
-        <h3 className="mt-5 font-host-grotesk text-base font-bold tracking-tight text-black md:text-lg group-hover:underline decoration-2 underline-offset-4">
+      </div>
+      <div className="flex flex-1 flex-col p-6 md:p-7">
+        <h3 className="font-host-grotesk text-base font-bold tracking-tight text-black md:text-lg group-hover:underline decoration-2 underline-offset-4">
           {company.logoName}
         </h3>
         {company.tagline && (

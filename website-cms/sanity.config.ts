@@ -29,7 +29,7 @@ const previewOrigin = (
 
 export default defineConfig({
   name: 'default',
-  title: 'Rellia Website CMS',
+  title: 'Rellia Web Studio',
   icon: RelliaStudioIcon,
 
   projectId: process.env.SANITY_STUDIO_PROJECT_ID || 'ggbt0o98',

@@ -72,13 +72,13 @@ function AdvisorCard({
           className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-90"
         />
         <div className="absolute top-3 left-3 z-10 flex flex-wrap gap-1.5 max-w-[calc(100%-1.5rem)]">
-          <span className="rounded-full border border-rellia-mint/30 bg-rellia-teal/70 px-2.5 py-0.5 font-urbanist text-[11px] font-semibold text-rellia-mint backdrop-blur-sm shadow-sm">
+          <span className="rounded-full border border-rellia-mint/20 bg-rellia-teal/60 px-2.5 py-0.5 font-urbanist text-[11px] font-semibold text-rellia-mint/90 backdrop-blur-sm shadow-sm">
             {advisor.filter}
           </span>
           {advisor.industries.map((tag) => (
             <span
               key={tag}
-              className="rounded-full border border-white/10 bg-black/50 px-2.5 py-0.5 font-urbanist text-[11px] font-medium text-white backdrop-blur-sm shadow-sm"
+              className="rounded-full border border-white/15 bg-black/40 px-2.5 py-0.5 font-urbanist text-[11px] font-medium text-white/90 backdrop-blur-sm shadow-sm"
             >
               {tag}
             </span>

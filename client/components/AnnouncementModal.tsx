@@ -70,7 +70,7 @@ export default function AnnouncementModal({
                 to={trimmedLink!}
                 onClick={handleDismiss}
                 className={cn(
-                  "inline-flex h-12 min-w-0 w-full sm:w-auto sm:flex-1 items-center justify-center rounded-full px-4",
+                  "inline-flex h-14 min-w-0 w-full sm:w-auto sm:flex-1 items-center justify-center rounded-full px-4",
                   "bg-rellia-teal font-host-grotesk text-sm font-semibold text-white",
                   "transition-colors duration-200 hover:bg-rellia-teal/90",
                   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-teal/40 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent",
@@ -85,10 +85,10 @@ export default function AnnouncementModal({
               id="announcement-modal-dismiss"
               onClick={handleDismiss}
               className={cn(
-                "inline-flex h-12 min-w-0 w-full sm:w-auto sm:flex-1 items-center justify-center rounded-full px-4",
-                "border border-rellia-teal/25 bg-white/30 font-host-grotesk text-sm font-semibold text-rellia-teal",
-                "transition-colors duration-200 hover:bg-white/50",
-                "outline-none focus:outline-none focus:bg-white/30 focus-visible:bg-white/50 focus-visible:ring-2 focus-visible:ring-rellia-teal/35 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent",
+                "inline-flex h-14 min-w-0 w-full sm:w-auto sm:flex-1 items-center justify-center rounded-full px-4",
+                "bg-transparent font-host-grotesk text-sm font-semibold text-rellia-teal",
+                "transition-colors duration-200 hover:bg-black/[0.06]",
+                "outline-none focus:outline-none focus:bg-black/[0.04] focus-visible:bg-black/[0.06] focus-visible:ring-2 focus-visible:ring-rellia-teal/35 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent",
                 !showButton && "sm:flex-[2]",
               )}
             >

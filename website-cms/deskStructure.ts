@@ -10,35 +10,49 @@ import {
   TagIcon,
   CalendarIcon,
   BookIcon,
+  HelpCircleIcon,
+  ChartUpwardIcon,
 } from '@sanity/icons'
+import {LookerStudioPanel} from './studio/LookerStudioPanel'
+import {StudioSupportPanel} from './studio/StudioSupportPanel'
 
-const singleton = (S: StructureBuilder, title: string, schemaType: string, icon?: ComponentType) =>
-  S.listItem().title(title).icon(icon).child(S.document().schemaType(schemaType).documentId(schemaType))
+const API_VERSION = '2024-01-01'
 
-const founderDirectoryFilterGroups = (S: StructureBuilder) =>
+const singleton = (
+  S: StructureBuilder,
+  title: string,
+  schemaType: string,
+  icon?: ComponentType,
+) =>
   S.listItem()
-    .title('Filter groups')
-    .icon(TagIcon)
-    .child(
-      S.documentList()
-        .apiVersion('2024-01-01')
-        .id('directoryFilterGroupsFounders')
-        .title('Filter groups — founders')
-        .filter('_type == "directoryFilterGroup" && appliesTo in ["founders", "both"]')
-        .defaultOrdering([{field: 'sortOrder', direction: 'asc'}]),
-    )
+    .title(title)
+    .icon(icon)
+    .child(S.document().schemaType(schemaType).documentId(schemaType))
 
-const advisorDirectoryFilterGroups = (S: StructureBuilder) =>
+const filteredList = (
+  S: StructureBuilder,
+  id: string,
+  title: string,
+  filter: string,
+  ordering?: {field: string; direction: 'asc' | 'desc'}[],
+) => {
+  let list = S.documentList().apiVersion(API_VERSION).id(id).title(title).filter(filter)
+  if (ordering) list = list.defaultOrdering(ordering)
+  return list
+}
+
+const siteGroup = (S: StructureBuilder) =>
   S.listItem()
-    .title('Filter groups')
-    .icon(TagIcon)
+    .title('Site')
+    .icon(CogIcon)
     .child(
-      S.documentList()
-        .apiVersion('2024-01-01')
-        .id('directoryFilterGroupsAdvisors')
-        .title('Filter groups — advisors')
-        .filter('_type == "directoryFilterGroup" && appliesTo in ["advisors", "both"]')
-        .defaultOrdering([{field: 'sortOrder', direction: 'asc'}]),
+      S.list()
+        .title('Site')
+        .items([
+          singleton(S, 'Site settings', 'siteSettings', CogIcon),
+          singleton(S, 'Global settings', 'globalSettings', ControlsIcon),
+          singleton(S, 'Navigation', 'navigation', ControlsIcon),
+        ]),
     )
 
 const pagesGroup = (S: StructureBuilder) =>
@@ -54,17 +68,17 @@ const pagesGroup = (S: StructureBuilder) =>
           singleton(S, 'Careers', 'careersPage', DocumentTextIcon),
           singleton(S, 'FAQ', 'faqPage', DocumentTextIcon),
           singleton(S, 'Contact', 'contactPage', DocumentTextIcon),
-          singleton(S, 'Payment (/membership)', 'paymentPage', DocumentTextIcon),
-          singleton(S, 'Consulting (/consulting)', 'consultingPage', DocumentTextIcon),
-          singleton(S, '404', 'notFoundPage', DocumentTextIcon),
+          singleton(S, 'Membership', 'paymentPage', DocumentTextIcon),
+          singleton(S, 'Consulting', 'consultingPage', DocumentTextIcon),
+          singleton(S, 'Not found', 'notFoundPage', DocumentTextIcon),
           S.divider(),
-          singleton(S, 'Programs landing (/programs)', 'programsLandingPage', DocumentTextIcon),
-          singleton(S, 'Events landing (/events)', 'eventsLandingPage', DocumentTextIcon),
-          singleton(S, 'Stories landing (/stories)', 'storiesPage', DocumentTextIcon),
+          singleton(S, 'Programs landing', 'programsLandingPage', DocumentTextIcon),
+          singleton(S, 'Events landing', 'eventsLandingPage', DocumentTextIcon),
+          singleton(S, 'Stories landing', 'storiesPage', DocumentTextIcon),
           S.divider(),
-          singleton(S, 'Founders landing (/founders)', 'networkFoundersPage', DocumentTextIcon),
-          singleton(S, 'Advisors landing (/advisors)', 'networkAdvisorsPage', DocumentTextIcon),
-          singleton(S, 'Investors landing (/investors)', 'networkInvestorsPage', DocumentTextIcon),
+          singleton(S, 'Founders landing', 'networkFoundersPage', DocumentTextIcon),
+          singleton(S, 'Advisors landing', 'networkAdvisorsPage', DocumentTextIcon),
+          singleton(S, 'Investors landing', 'networkInvestorsPage', DocumentTextIcon),
           singleton(S, 'Industry partners landing', 'networkPartnersPage', DocumentTextIcon),
         ]),
     )
@@ -82,6 +96,7 @@ const collectionsGroup = (S: StructureBuilder) =>
             .icon(DocumentTextIcon)
             .child(
               S.documentTypeList('program')
+                .apiVersion(API_VERSION)
                 .title('Programs')
                 .defaultOrdering([{field: 'sortOrder', direction: 'asc'}]),
             ),
@@ -90,6 +105,7 @@ const collectionsGroup = (S: StructureBuilder) =>
             .icon(CalendarIcon)
             .child(
               S.documentTypeList('event')
+                .apiVersion(API_VERSION)
                 .title('Events')
                 .defaultOrdering([{field: 'sortOrder', direction: 'asc'}]),
             ),
@@ -103,46 +119,120 @@ const collectionsGroup = (S: StructureBuilder) =>
                   S.documentTypeListItem('storyFilter')
                     .title('Categories')
                     .icon(TagIcon),
-                  S.documentTypeListItem('story').title('All stories').icon(ComposeIcon),
+                  S.documentTypeListItem('story')
+                    .title('All stories')
+                    .icon(ComposeIcon),
                 ]),
             ),
-          S.listItem()
-            .title('Founders directory')
-            .icon(UsersIcon)
-            .child(
-              S.list()
-                .title('Founders directory')
-                .items([
-                  S.documentTypeListItem('alumniCompany')
-                    .title('Companies')
-                    .icon(UsersIcon),
-                  S.divider(),
-                  founderDirectoryFilterGroups(S),
-                  S.documentTypeListItem('founderSpecialty')
-                    .title('Specialties')
-                    .icon(TagIcon),
-                ]),
-            ),
-          S.listItem()
-            .title('Advisors directory')
-            .icon(UsersIcon)
-            .child(
-              S.list()
-                .title('Advisors directory')
-                .items([
-                  S.documentTypeListItem('advisor').title('Advisors').icon(UsersIcon),
-                  S.divider(),
-                  advisorDirectoryFilterGroups(S),
-                  S.documentTypeListItem('advisorFilter').title('Filter tags').icon(TagIcon),
-                ]),
-            ),
+          S.divider(),
           S.listItem()
             .title('Modular pages')
             .icon(DocumentTextIcon)
             .child(
               S.documentTypeList('page')
-                .title('Modular pages (/terms, /privacy, …)')
+                .apiVersion(API_VERSION)
+                .title('Modular pages')
                 .defaultOrdering([{field: 'title', direction: 'asc'}]),
+            ),
+        ]),
+    )
+
+const advisorsPeopleGroup = (S: StructureBuilder) =>
+  S.listItem()
+    .title('Advisors')
+    .icon(UsersIcon)
+    .child(
+      S.list()
+        .title('Advisors')
+        .items([
+          S.documentTypeListItem('advisor').title('All advisors').icon(UsersIcon),
+          S.divider(),
+          S.documentTypeListItem('advisorFilter').title('Filter tags').icon(TagIcon),
+          S.listItem()
+            .title('Filter groups')
+            .icon(TagIcon)
+            .child(
+              filteredList(
+                S,
+                'directoryFilterGroupsAdvisors',
+                'Filter groups',
+                '_type == "directoryFilterGroup" && appliesTo in ["advisors", "both"]',
+                [{field: 'sortOrder', direction: 'asc'}],
+              ),
+            ),
+        ]),
+    )
+
+const foundersPeopleGroup = (S: StructureBuilder) =>
+  S.listItem()
+    .title('Founders')
+    .icon(UsersIcon)
+    .child(
+      S.list()
+        .title('Founders')
+        .items([
+          S.documentTypeListItem('alumniCompany')
+            .title('Companies')
+            .icon(UsersIcon),
+          S.divider(),
+          S.documentTypeListItem('founderSpecialty').title('Specialties').icon(TagIcon),
+          S.listItem()
+            .title('Filter groups')
+            .icon(TagIcon)
+            .child(
+              filteredList(
+                S,
+                'directoryFilterGroupsFounders',
+                'Filter groups',
+                '_type == "directoryFilterGroup" && appliesTo in ["founders", "both"]',
+                [{field: 'sortOrder', direction: 'asc'}],
+              ),
+            ),
+        ]),
+    )
+
+const peopleGroup = (S: StructureBuilder) =>
+  S.listItem()
+    .title('People')
+    .icon(UsersIcon)
+    .child(
+      S.list()
+        .title('People')
+        .items([advisorsPeopleGroup(S), foundersPeopleGroup(S)]),
+    )
+
+const supportGroup = (S: StructureBuilder) =>
+  S.listItem()
+    .title('Support')
+    .icon(HelpCircleIcon)
+    .child(
+      S.list()
+        .title('Support')
+        .items([
+          S.listItem()
+            .title('How to use this CMS')
+            .child(
+              S.component()
+                .component(StudioSupportPanel)
+                .title('How to use this CMS'),
+            ),
+        ]),
+    )
+
+const analyticsGroup = (S: StructureBuilder) =>
+  S.listItem()
+    .title('Analytics')
+    .icon(ChartUpwardIcon)
+    .child(
+      S.list()
+        .title('Analytics')
+        .items([
+          S.listItem()
+            .title('Performance dashboard')
+            .child(
+              S.component()
+                .component(LookerStudioPanel)
+                .title('Performance dashboard'),
             ),
         ]),
     )
@@ -176,24 +266,29 @@ const HIDDEN_FROM_CATCH_ALL = new Set([
   'advisorFilter',
   'founderSpecialty',
   'directoryFilterGroup',
+  'founderLevel',
   'programPage',
   'marketingPage',
   'founder',
   'investor',
   'industryPartner',
-  'founderLevel',
 ])
 
 export const deskStructure = (S: StructureBuilder) =>
   S.list()
-    .title('Rellia CMS')
+    .title('Website Editor')
     .items([
-      singleton(S, 'Site Settings', 'siteSettings', CogIcon),
-      singleton(S, 'Global Settings', 'globalSettings', ControlsIcon),
-      singleton(S, 'Navigation (header + footer)', 'navigation', ControlsIcon),
+      siteGroup(S),
       S.divider(),
       pagesGroup(S),
+      S.divider(),
       collectionsGroup(S),
+      S.divider(),
+      peopleGroup(S),
+      S.divider(),
+      supportGroup(S),
+      S.divider(),
+      analyticsGroup(S),
       S.divider(),
       ...S.documentTypeListItems().filter((item) => !HIDDEN_FROM_CATCH_ALL.has(item.getId() || '')),
     ])

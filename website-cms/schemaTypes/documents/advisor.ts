@@ -152,4 +152,23 @@ export const advisor = defineType({
     }),
     defineField({name: 'seo', type: 'seo', group: 'seo', fieldset: 'seo'}),
   ],
+  preview: {
+    select: {
+      name: 'name',
+      role: 'role',
+      organization: 'organization',
+      media: 'photo',
+    },
+    prepare({name, role, organization, media}) {
+      const title = name?.trim() || 'Untitled advisor'
+      const subtitleParts = [role, organization].filter(
+        (part): part is string => typeof part === 'string' && Boolean(part.trim()),
+      )
+      return {
+        title,
+        subtitle: subtitleParts.length ? subtitleParts.join(' · ') : undefined,
+        media,
+      }
+    },
+  },
 })

@@ -102,12 +102,26 @@ export const story = defineType({
   preview: {
     select: {
       title: 'title',
+      excerpt: 'excerpt',
       media: 'headerImage',
       publishedAt: 'publishedAt',
+      featured: 'featured',
     },
-    prepare({title, media, publishedAt}) {
-      const date = publishedAt ? new Date(publishedAt).toLocaleDateString() : 'Unpublished'
-      return {title, subtitle: date, media}
+    prepare({title, excerpt, media, publishedAt, featured}) {
+      const displayTitle = title?.trim() || 'Untitled story'
+      const date = publishedAt
+        ? new Date(publishedAt).toLocaleDateString(undefined, {
+            month: 'short',
+            day: 'numeric',
+            year: 'numeric',
+          })
+        : 'Draft'
+      const blurb =
+        typeof excerpt === 'string' && excerpt.trim()
+          ? excerpt.trim().slice(0, 60) + (excerpt.length > 60 ? '…' : '')
+          : undefined
+      const subtitle = [featured ? 'Featured' : null, date, blurb].filter(Boolean).join(' · ')
+      return {title: displayTitle, subtitle, media}
     },
   },
 })

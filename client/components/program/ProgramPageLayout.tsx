@@ -562,7 +562,7 @@ const ProgramPageLayout = ({
         {/* ─── Payment — taller section, full-height divider, inline embed ─── */}
         <section
           id={paymentSectionId}
-          className="w-full bg-rellia-teal border-t border-white/10"
+          className="w-full bg-rellia-teal border-t border-white/10 rounded-[2.5rem] md:rounded-[3.5rem] overflow-hidden"
         >
           <AnimatePresence mode="wait">
             {!showForm ? (
@@ -573,7 +573,7 @@ const ProgramPageLayout = ({
                 exit={{ opacity: 0, y: -10 }}
                 transition={{ duration: 0.3 }}
               >
-                <div className="relative max-w-[1100px] mx-auto px-6 md:px-10 flex flex-col md:flex-row py-40 md:py-56">
+                <div className="relative max-w-[1300px] mx-auto px-6 md:px-10 flex flex-col md:flex-row py-40 md:py-56">
                   {/* Full-height divider */}
                   <div className="hidden md:block absolute left-1/2 top-0 bottom-0 w-px bg-white/10 -translate-x-1/2" />
 

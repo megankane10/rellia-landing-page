@@ -23,6 +23,7 @@ import { useAlumniCompanies } from "@/hooks/useCmsDocuments";
 import { isCmsQueryLoading } from "@/lib/cmsQueryState";
 import CmsPageLoadingShell from "@/components/cms/CmsPageLoadingShell";
 import { isSanityConfigured } from "@/lib/sanity";
+import ImageExpandModal from "@/components/ImageExpandModal";
 
 export default function FounderProfile() {
   const { id } = useParams<{ id: string }>();
@@ -45,6 +46,7 @@ export default function FounderProfile() {
   const canonicalUrl = buildPageUrl(location.pathname);
   const [copied, setCopied] = useState(false);
   const { setPageSeo } = useOptionalPageSeo();
+  const [activeImage, setActiveImage] = useState<{ src: string; alt: string } | null>(null);
 
   useEffect(() => {
     if (!active) return;
@@ -93,7 +95,8 @@ export default function FounderProfile() {
                   height={120}
                   loading="lazy"
                   decoding="async"
-                  className="max-h-[120px] w-auto max-w-full object-contain object-left opacity-90"
+                  onClick={() => setActiveImage({ src: active.logoSrc, alt: `${active.logoName} logo` })}
+                  className="max-h-[120px] w-auto max-w-full object-contain object-left opacity-90 cursor-pointer hover:opacity-95 transition-opacity duration-200"
                 />
               </div>
               <div className="pt-2">
@@ -214,7 +217,10 @@ export default function FounderProfile() {
                       key={i}
                       className="group flex flex-row gap-5 p-5 rounded-2xl border border-black/5 bg-black/[0.01] hover:bg-black/[0.02] hover:border-rellia-teal/20 transition-all duration-300 shadow-sm"
                     >
-                      <div className="relative shrink-0 w-24 h-24 sm:w-28 sm:h-28 overflow-hidden rounded-2xl border border-black/5 shadow-inner">
+                      <div
+                        onClick={() => setActiveImage({ src: f.imageSrc, alt: f.name })}
+                        className="relative shrink-0 w-24 h-24 sm:w-28 sm:h-28 overflow-hidden rounded-2xl border border-black/5 shadow-inner cursor-pointer"
+                      >
                         <img
                           src={f.imageSrc}
                           alt={f.name}
@@ -299,6 +305,12 @@ export default function FounderProfile() {
       </main>
 
       <Footer />
+      <ImageExpandModal
+        src={activeImage?.src ?? null}
+        alt={activeImage?.alt ?? ""}
+        open={Boolean(activeImage)}
+        onOpenChange={(open) => !open && setActiveImage(null)}
+      />
     </div>
   );
 }

@@ -24,6 +24,7 @@ import { useAdvisors } from "@/hooks/useCmsDocuments";
 import { isCmsQueryLoading } from "@/lib/cmsQueryState";
 import CmsPageLoadingShell from "@/components/cms/CmsPageLoadingShell";
 import { isSanityConfigured } from "@/lib/sanity";
+import ImageExpandModal from "@/components/ImageExpandModal";
 
 export default function AdvisorProfile() {
   const { id } = useParams<{ id: string }>();
@@ -42,6 +43,7 @@ export default function AdvisorProfile() {
   const canonicalUrl = buildPageUrl(location.pathname);
   const [copied, setCopied] = useState(false);
   const { setPageSeo } = useOptionalPageSeo();
+  const [activeImage, setActiveImage] = useState<{ src: string; alt: string } | null>(null);
 
   useEffect(() => {
     if (!active) return;
@@ -82,7 +84,10 @@ export default function AdvisorProfile() {
           <article className="grid gap-10 lg:grid-cols-[minmax(280px,360px)_minmax(0,1fr)] lg:gap-x-14 xl:grid-cols-[400px_1fr]">
             {/* Left Sidebar - Sticky */}
             <div className="flex flex-col gap-6 lg:sticky lg:top-32 lg:self-start">
-              <div className="overflow-hidden rounded-2xl aspect-[4/5] w-full max-h-[min(42vh,440px)]">
+              <div 
+                onClick={() => setActiveImage({ src: active.photoSrc, alt: `Portrait of ${active.name}` })}
+                className="overflow-hidden rounded-2xl aspect-[4/5] w-full max-h-[min(42vh,440px)] cursor-pointer"
+              >
                 <img
                   src={active.photoSrc}
                   alt={`Portrait of ${active.name}`}
@@ -90,7 +95,7 @@ export default function AdvisorProfile() {
                   height={500}
                   loading="lazy"
                   decoding="async"
-                  className="h-full w-full object-cover object-top"
+                  className="h-full w-full object-cover object-top hover:opacity-95 transition-opacity duration-200"
                 />
               </div>
 
@@ -226,6 +231,12 @@ export default function AdvisorProfile() {
       </main>
 
       <Footer />
+      <ImageExpandModal
+        src={activeImage?.src ?? null}
+        alt={activeImage?.alt ?? ""}
+        open={Boolean(activeImage)}
+        onOpenChange={(open) => !open && setActiveImage(null)}
+      />
     </div>
   );
 }

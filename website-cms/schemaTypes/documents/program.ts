@@ -125,11 +125,22 @@ export const program = defineType({
     seoField,
   ],
   preview: {
-    select: {title: 'title', subtitle: 'slug.current', media: 'image'},
-    prepare(value) {
-      const title = value.title || 'Untitled program'
-      const subtitle = value.subtitle ? `/programs/${value.subtitle}` : 'Missing slug'
-      return {title, subtitle, media: value.media}
+    select: {
+      title: 'title',
+      status: 'status',
+      description: 'description',
+      media: 'image',
+    },
+    prepare({title, status, description, media}) {
+      const displayTitle = title?.trim() || 'Untitled program'
+      const statusLabel =
+        status === 'waitlist' ? 'Waitlist' : status === 'hidden' ? 'Hidden' : 'Available'
+      const blurb =
+        typeof description === 'string' && description.trim()
+          ? description.trim().slice(0, 72) + (description.length > 72 ? '…' : '')
+          : undefined
+      const subtitle = [statusLabel, blurb].filter(Boolean).join(' · ')
+      return {title: displayTitle, subtitle: subtitle || undefined, media}
     },
   },
 })

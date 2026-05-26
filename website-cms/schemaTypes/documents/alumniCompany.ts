@@ -148,4 +148,16 @@ export const alumniCompany = defineType({
     }),
     defineField({name: 'seo', type: 'seo', group: 'seo', fieldset: 'seo'}),
   ],
+  preview: {
+    select: {
+      name: 'name',
+      tagline: 'tagline',
+      media: 'logo',
+    },
+    prepare({name, tagline, media}) {
+      const title = name?.trim() || 'Untitled company'
+      const subtitle = typeof tagline === 'string' && tagline.trim() ? tagline.trim() : undefined
+      return {title, subtitle, media}
+    },
+  },
 })

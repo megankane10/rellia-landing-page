@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from "react"
 import useEmblaCarousel from "embla-carousel-react"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import { cn } from "@/lib/utils"
+import ImageExpandModal from "@/components/ImageExpandModal"
 
 export type RichTextCarouselSlide = {
   imageSrc: string
@@ -19,6 +20,7 @@ export const RichTextImageCarousel = ({ title, slides, className }: RichTextImag
   const validSlides = slides.filter((s) => s.imageSrc?.trim() && s.alt?.trim())
   const [emblaRef, emblaApi] = useEmblaCarousel({ align: "start", loop: validSlides.length > 1 })
   const [selected, setSelected] = useState(0)
+  const [activeImage, setActiveImage] = useState<{ src: string; alt: string } | null>(null)
 
   const onSelect = useCallback(() => {
     if (!emblaApi) return
@@ -66,9 +68,10 @@ export const RichTextImageCarousel = ({ title, slides, className }: RichTextImag
                     src={slide.imageSrc.trim()}
                     alt={slide.alt.trim()}
                     className={cn(
-                      "h-full w-full object-cover",
+                      "h-full w-full object-cover cursor-pointer hover:opacity-95 transition-opacity duration-200",
                       index === 0 && "object-top",
                     )}
+                    onClick={() => setActiveImage({ src: slide.imageSrc.trim(), alt: slide.alt.trim() })}
                     loading={index === 0 ? "eager" : "lazy"}
                     decoding="async"
                   />
@@ -133,6 +136,13 @@ export const RichTextImageCarousel = ({ title, slides, className }: RichTextImag
           ))}
         </div>
       ) : null}
+
+      <ImageExpandModal
+        src={activeImage?.src ?? null}
+        alt={activeImage?.alt ?? ""}
+        open={Boolean(activeImage)}
+        onOpenChange={(open) => !open && setActiveImage(null)}
+      />
     </div>
   )
 }

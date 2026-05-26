@@ -75,25 +75,27 @@ function LeftPanel({ copy }: { copy: typeof DEFAULT_CONTACT_PAGE }) {
         </div>
 
         <div className="relative z-10 flex min-h-[min(480px,calc(100vh-10rem))] flex-1 flex-col p-6 md:p-10">
-          <img
-            src="/images/hologram-logo.png"
-            alt=""
-            aria-hidden
-            width={64}
-            height={64}
-            loading="lazy"
-            decoding="async"
-            className="absolute bottom-8 left-8 md:bottom-12 md:left-12 h-12 w-12 md:h-16 md:w-16 opacity-90 drop-shadow-[0_0_15px_rgba(152,255,232,0.3)] z-20"
-          />
-
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
             className="flex flex-1 flex-col justify-between py-8"
           >
-            <div className="flex flex-1 flex-col justify-center py-6 pt-8 md:pt-12">
-              <p className="max-w-sm font-urbanist text-2xl font-medium leading-snug text-white md:text-4xl lg:text-5xl px-2">
+            <div className="mb-6 pl-2">
+              <img
+                src="/images/hologram-logo.png"
+                alt=""
+                aria-hidden
+                width={64}
+                height={64}
+                loading="lazy"
+                decoding="async"
+                className="h-12 w-12 md:h-16 md:w-16 opacity-90 drop-shadow-[0_0_15px_rgba(152,255,232,0.3)]"
+              />
+            </div>
+
+            <div className="flex flex-1 flex-col justify-center py-6 pt-4 md:pt-6">
+              <p className="w-full font-urbanist text-2xl font-medium leading-snug text-white md:text-4xl lg:text-5xl px-2">
                 &ldquo;{copy.quoteText}&rdquo;
               </p>
 
@@ -122,9 +124,9 @@ function LeftPanel({ copy }: { copy: typeof DEFAULT_CONTACT_PAGE }) {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.3, duration: 0.8 }}
-              className="mt-auto border-t border-white/10 pt-8 flex justify-end"
+              className="mt-auto border-t border-white/10 pt-8 flex justify-start"
             >
-              <p className="font-host-grotesk text-sm font-medium text-white">
+              <p className="font-host-grotesk text-sm font-medium text-white pl-2">
                 <a href="mailto:hello@relliahealth.com" className="hover:underline underline-offset-4">
                   hello@relliahealth.com
                 </a>

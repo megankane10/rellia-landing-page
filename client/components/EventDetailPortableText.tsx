@@ -1,9 +1,43 @@
+import { useState } from "react"
 import { PortableText, type PortableTextComponents } from "@portabletext/react"
 import type { SanityPortableText } from "@shared/cms/types"
 import { cn } from "@/lib/utils"
 import { BodyCtaBox } from "@/components/BodyCtaBox"
 import { RichTextImageCarousel, type RichTextCarouselSlide } from "@/components/RichTextImageCarousel"
 import { parseBlockquoteAttribution, RichTextQuoteFigure } from "@/components/RichTextQuoteFigure"
+import ImageExpandModal from "@/components/ImageExpandModal"
+
+const EventDetailInlineImageComponent = ({
+  src,
+  alt,
+  caption,
+}: {
+  src: string
+  alt: string
+  caption?: string
+}) => {
+  const [open, setOpen] = useState(false)
+  return (
+    <>
+      <figure className="mt-8 md:mt-10 [&:first-child]:mt-0">
+        <img
+          src={src}
+          alt={alt}
+          onClick={() => setOpen(true)}
+          className="h-auto w-full max-w-full rounded-2xl border border-black/10 object-cover shadow-sm cursor-pointer hover:opacity-95 transition-opacity duration-200"
+          loading="lazy"
+          decoding="async"
+        />
+        {caption ? (
+          <figcaption className="mt-3 font-urbanist text-sm leading-snug text-black/55 md:text-[15px]">
+            {caption}
+          </figcaption>
+        ) : null}
+      </figure>
+      <ImageExpandModal src={src} alt={alt} open={open} onOpenChange={setOpen} />
+    </>
+  )
+}
 
 const components: PortableTextComponents = {
   types: {
@@ -34,22 +68,7 @@ const components: PortableTextComponents = {
       const alt = typeof v?.alt === "string" ? v.alt.trim() : ""
       const caption = typeof v?.caption === "string" ? v.caption.trim() : ""
       if (!src || !alt) return null
-      return (
-        <figure className="mt-8 md:mt-10 [&:first-child]:mt-0">
-          <img
-            src={src}
-            alt={alt}
-            className="h-auto w-full max-w-full rounded-2xl border border-black/10 object-cover shadow-sm"
-            loading="lazy"
-            decoding="async"
-          />
-          {caption ? (
-            <figcaption className="mt-3 font-urbanist text-sm leading-snug text-black/55 md:text-[15px]">
-              {caption}
-            </figcaption>
-          ) : null}
-        </figure>
-      )
+      return <EventDetailInlineImageComponent src={src} alt={alt} caption={caption} />
     },
     eventDetailDivider: () => (
       <hr className="mt-8 border-0 border-t border-black/15 md:mt-10" />

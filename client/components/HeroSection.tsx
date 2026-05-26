@@ -131,19 +131,34 @@ export default function HeroSection({ content }: HeroSectionProps) {
       <div className="relative z-10 max-w-[1300px] mx-auto w-full px-6 md:px-10 pt-24 pb-12 md:pt-28 md:pb-24">
         <div className="flex w-full max-w-5xl flex-col items-start text-left">
           <div className="-mt-2 md:-mt-1 w-full">
+            {/* Mobile-only unconstrained headline */}
             <motion.h1
               variants={headlineContainerVariants}
               initial="hidden"
               animate="visible"
-              className="font-host-grotesk text-[46px] font-medium leading-[0.95] tracking-tight text-rellia-mint md:text-[68px] lg:text-[82px] space-y-1"
+              className="md:hidden font-host-grotesk text-[42px] sm:text-[46px] font-medium leading-[1.1] tracking-tight text-rellia-mint"
+            >
+              <motion.span
+                variants={headlineWordVariants}
+                className="inline-flex flex-wrap gap-x-[0.22em] will-change-[transform,filter]"
+              >
+                {headlineLines.flat().map((word, wIdx) => (
+                  <span key={`mobile-word-${wIdx}`}>{word}</span>
+                ))}
+              </motion.span>
+            </motion.h1>
+
+            {/* Desktop-only split-line headline with animations */}
+            <motion.h1
+              variants={headlineContainerVariants}
+              initial="hidden"
+              animate="visible"
+              className="hidden md:block font-host-grotesk font-medium leading-[0.95] tracking-tight text-rellia-mint md:text-[68px] lg:text-[82px] space-y-1"
             >
               {headlineLines.map((line, idx) => (
                 <div 
                   key={`line-${idx}`} 
-                  className={cn(
-                    "overflow-hidden flex flex-wrap gap-x-[0.22em]",
-                    idx > 0 && "hidden md:flex" // Hide forced second line on mobile if it exists
-                  )}
+                  className="overflow-hidden flex flex-wrap gap-x-[0.22em]"
                 >
                   <motion.span
                     variants={headlineWordVariants}
@@ -152,14 +167,6 @@ export default function HeroSection({ content }: HeroSectionProps) {
                     {line.map((word, wIdx) => (
                       <span key={`word-${idx}-${wIdx}`}>{word}</span>
                     ))}
-                    {/* On mobile, if this is the first line and there's a second one, render the rest of the words here too but only show on mobile */}
-                    {idx === 0 && headlineLines.length > 1 && (
-                      <span className="flex md:hidden flex-wrap gap-x-[0.22em]">
-                        {headlineLines.slice(1).flat().map((word, wIdx) => (
-                          <span key={`mobile-word-${wIdx}`}>{word}</span>
-                        ))}
-                      </span>
-                    )}
                   </motion.span>
                 </div>
               ))}

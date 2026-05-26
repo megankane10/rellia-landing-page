@@ -93,7 +93,7 @@ export default function HowItWorks(props?: HowItWorksProps) {
   const columns = columnsProp ?? (stepsProp != null ? 2 : 3)
 
   return (
-    <section className="relative max-w-[1300px] mx-auto w-[calc(100%-2rem)] md:w-[calc(100%-4rem)] bg-rellia-teal pt-10 pb-16 md:pt-14 md:pb-24 px-6 md:px-10 overflow-hidden rounded-[2.5rem] md:rounded-[3.5rem]">
+    <section className="relative w-full bg-rellia-teal pt-10 pb-16 md:pt-14 md:pb-24 overflow-hidden rounded-[2.5rem] md:rounded-[3.5rem]">
       <img
         src="/images/hologram-logo.png"
         alt=""
@@ -106,7 +106,7 @@ export default function HowItWorks(props?: HowItWorksProps) {
         <div className="absolute left-[35%] top-[55%] h-[520px] w-[520px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-rellia-mint/10 blur-3xl" />
         <div className="absolute inset-0 opacity-[0.22] [background-image:radial-gradient(circle_at_20%_10%,rgba(255,255,255,0.16),transparent_52%),radial-gradient(circle_at_80%_30%,rgba(157,214,208,0.14),transparent_55%),radial-gradient(circle_at_35%_95%,rgba(255,255,255,0.10),transparent_55%)]" />
       </div>
-      <div className="relative z-10 w-full">
+      <div className="relative z-10 w-full max-w-[1300px] mx-auto px-6 md:px-10">
         {/* Abstract linework behind heading */}
         <div aria-hidden className="pointer-events-none absolute left-0 top-0 h-[320px] w-[520px] -translate-x-[260px]">
           {/* Dense vertical line stack, anchored to far-left with overflow */}

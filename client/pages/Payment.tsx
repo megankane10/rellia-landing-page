@@ -90,7 +90,7 @@ export default function Payment() {
                       Join the network today
                     </h1>
 
-                    <div className="flex flex-col gap-y-5 md:gap-y-6">
+                    <div className="flex flex-col gap-y-5 md:gap-y-6 pb-20">
                       {benefitsGrid.map((benefit, index) => {
                         const Icon = BENEFIT_ICONS[index % BENEFIT_ICONS.length]
                         return (
@@ -100,13 +100,25 @@ export default function Payment() {
                               aria-hidden
                               strokeWidth={2.5}
                             />
-                            <p className="font-urbanist text-white/70 text-base sm:text-lg font-medium leading-relaxed">
+                            <p className="font-urbanist text-rellia-mint text-base sm:text-lg font-medium leading-relaxed">
                               {benefit}
                             </p>
                           </div>
                         )
                       })}
                     </div>
+                  </div>
+
+                  <div className="absolute bottom-0 left-0">
+                    <img 
+                      src="/images/hologram-logo.png" 
+                      alt="" 
+                      aria-hidden
+                      width={48}
+                      height={48}
+                      loading="lazy"
+                      className="h-12 w-12 opacity-90 drop-shadow-[0_0_15px_rgba(152,255,232,0.35)]"
+                    />
                   </div>
                 </div>
               </div>

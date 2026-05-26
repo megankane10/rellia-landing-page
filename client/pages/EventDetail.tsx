@@ -461,7 +461,7 @@ export default function EventDetail() {
                       <div className="mt-9 flex w-full justify-start sm:mt-10 md:mt-12">
                         <RelliaAction
                           type="button"
-                          variant="mintTealFill"
+                          variant="relliaCtaPrimary"
                           size="compact"
                           className="inline-flex w-full cursor-pointer px-6 py-3 text-sm sm:w-auto sm:px-8 sm:text-[15px]"
                           onClick={handleHeroCtaClick}

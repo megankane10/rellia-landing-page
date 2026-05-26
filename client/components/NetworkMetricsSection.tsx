@@ -181,7 +181,7 @@ export default function NetworkMetricsSection({ heading, subheading, metrics }: 
         ref={(node) => {
           sectionRef.current = node
         }}
-        className="relative flex h-auto min-h-[1060px] w-[calc(100%-2rem)] md:w-[calc(100%-4rem)] max-w-[1300px] mx-auto flex-col overflow-hidden rounded-[2.5rem] md:rounded-[3.5rem] sm:min-h-0 sm:h-[820px] md:h-[840px] lg:h-[780px] xl:h-[800px] shadow-lg"
+        className="relative flex h-auto min-h-[1060px] w-full flex-col overflow-hidden rounded-[2.5rem] md:rounded-[3.5rem] sm:min-h-0 sm:h-[820px] md:h-[840px] lg:h-[780px] xl:h-[800px] shadow-lg"
       >
         <div className="absolute inset-0 overflow-hidden" aria-hidden>
           <motion.img
