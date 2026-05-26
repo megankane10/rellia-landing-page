@@ -12,6 +12,9 @@ import {notFoundPage} from './documents/notFoundPage'
 import {paymentPage} from './documents/paymentPage'
 import {page} from './documents/page'
 import {advisor} from './documents/advisor'
+import {founder} from './documents/founder'
+import {investor} from './documents/investor'
+import {industryPartner} from './documents/industryPartner'
 import {alumniCompany} from './documents/alumniCompany'
 import {program} from './documents/program'
 import {event} from './documents/event'
@@ -77,6 +80,9 @@ export const schemaTypes = [
   consultingPage,
   // Collections
   advisor,
+  founder,
+  investor,
+  industryPartner,
   alumniCompany,
   program,
   event,

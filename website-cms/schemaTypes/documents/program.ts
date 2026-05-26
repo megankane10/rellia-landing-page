@@ -10,6 +10,7 @@ export const program = defineType({
     {name: 'card', title: 'Program card', default: true},
     {name: 'detail', title: 'Detail page'},
     {name: 'publishing', title: 'Publishing'},
+    {name: 'seo', title: 'SEO & metadata'},
   ],
   fieldsets: [FIELDSET_SEO],
   fields: [

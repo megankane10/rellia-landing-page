@@ -12,6 +12,7 @@ export const networkFoundersPage = defineType({
     publishingGroup,
     {name: 'seo', title: 'SEO & metadata'},
   ],
+  fieldsets: [{name: 'seo', title: 'SEO & metadata'}],
   fields: [
     defineField({
       name: 'title',
