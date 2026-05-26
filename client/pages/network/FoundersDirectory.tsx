@@ -72,34 +72,44 @@ function FounderDirectoryCard({
       aria-label={`Open details for ${company.logoName}`}
     >
       <div className="flex flex-1 flex-col p-6 md:p-7">
-        <div className="flex min-h-[132px] w-full items-center justify-center rounded-xl bg-white py-1">
+        <div className="relative flex min-h-[148px] w-full items-center justify-center rounded-xl bg-white py-2 border border-black/[0.04]">
           <img
             src={company.logoSrc}
             alt=""
-            className="max-h-[120px] w-auto max-w-full object-contain object-center"
+            className="max-h-[100px] w-auto max-w-[80%] object-contain object-center transition duration-500 ease-out group-hover:scale-[1.02]"
           />
+          <div className="absolute bottom-2 left-2 z-10 flex flex-wrap gap-1.5 max-w-[calc(100%-1rem)]">
+            {company.specialties.map((s) => (
+              <span
+                key={s}
+                className="rounded-full border border-rellia-teal/20 bg-rellia-mint/80 px-2 py-0.5 font-urbanist text-[10px] font-bold text-rellia-teal backdrop-blur-sm shadow-sm"
+              >
+                {s}
+              </span>
+            ))}
+            {businessModels.map((bm) => (
+              <span
+                key={bm}
+                className="rounded-full border border-black/10 bg-black/45 px-2 py-0.5 font-urbanist text-[10px] font-bold text-white backdrop-blur-sm shadow-sm"
+              >
+                {bm}
+              </span>
+            ))}
+          </div>
         </div>
         <h3 className="mt-5 font-host-grotesk text-base font-bold tracking-tight text-black md:text-lg group-hover:underline decoration-2 underline-offset-4">
           {company.logoName}
         </h3>
-        <div className="mt-2 flex flex-wrap gap-2">
-          {company.specialties.map((s) => (
-            <span
-              key={s}
-              className="rounded-full border border-rellia-teal/20 bg-rellia-mint/20 px-2.5 py-0.5 font-urbanist text-[11px] font-bold text-rellia-teal"
-            >
-              {s}
-            </span>
-          ))}
-          {businessModels.map((bm) => (
-            <span
-              key={bm}
-              className="rounded-full border border-black/10 bg-black/[0.03] px-2.5 py-0.5 font-urbanist text-[11px] font-bold text-black/60"
-            >
-              {bm}
-            </span>
-          ))}
-        </div>
+        {company.tagline && (
+          <p className="mt-1 font-urbanist text-sm font-medium text-black/70 line-clamp-2">
+            {company.tagline}
+          </p>
+        )}
+        {Array.isArray(company.country) && company.country.length > 0 && (
+          <p className="mt-0.5 font-urbanist text-sm text-black/60">
+            {company.country.join(", ")}
+          </p>
+        )}
       </div>
     </motion.article>
   );

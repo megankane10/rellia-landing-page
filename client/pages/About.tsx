@@ -103,7 +103,7 @@ export default function About() {
               <div className="grid grid-cols-1 gap-12 md:gap-16 lg:grid-cols-2 lg:items-stretch lg:gap-10 xl:gap-12">
                 <div className="relative min-h-0 w-full min-w-0 lg:pr-2 xl:pr-4">
                   <div className="absolute -top-4 -left-4 h-24 w-24 rounded-full bg-rellia-mint/20 blur-2xl pointer-events-none" />
-                  <h2 className="relative text-black text-3xl md:text-4xl font-bold tracking-tight mb-6">
+                  <h2 className="relative text-black text-2xl md:text-[32px] font-semibold tracking-tight mb-6">
                     {about.missionTitle}
                   </h2>
                   <div className="relative space-y-5 text-black/70 text-base md:text-lg font-urbanist leading-relaxed">
@@ -140,7 +140,7 @@ export default function About() {
                 src={valuesBgImage}
                 alt=""
                 className="h-full w-full object-cover scale-[1.12] object-[55%_50%]"
-                style={reduceMotion || isMobile ? undefined : { y: valuesBgY }}
+                style={reduceMotion ? undefined : { y: valuesBgY }}
               />
               <div className="absolute inset-0 bg-rellia-teal/35" />
               <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/30 to-black/60" />
@@ -199,7 +199,7 @@ export default function About() {
         <section className="py-20 md:py-32 bg-white">
           <div className="max-w-[1300px] mx-auto px-6 md:px-10">
             <ScrollReveal className="text-center mb-12 md:mb-14">
-              <h2 className="text-black text-3xl md:text-4xl font-bold tracking-tight mb-4">{about.teamTitle}</h2>
+              <h2 className="text-black text-2xl md:text-[32px] font-semibold tracking-tight mb-4">{about.teamTitle}</h2>
               <p className="text-black/60 text-base md:text-lg font-urbanist max-w-2xl mx-auto leading-relaxed">
                 {about.teamSubtitle}
               </p>

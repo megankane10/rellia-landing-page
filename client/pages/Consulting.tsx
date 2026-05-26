@@ -102,7 +102,7 @@ function ServicesGridSection() {
 
       <div className="relative z-10 mx-auto max-w-[1300px]">
         <ScrollReveal>
-          <h2 className="mt-5 font-host-grotesk text-3xl font-semibold leading-tight tracking-tight text-rellia-teal md:text-[40px]">
+          <h2 className="mt-5 font-host-grotesk text-2xl font-semibold leading-tight tracking-tight text-rellia-teal md:text-[32px]">
             Common consulting sprints
           </h2>
           <p className="mt-4 max-w-2xl font-urbanist text-base font-medium leading-relaxed text-black/80 md:text-lg">

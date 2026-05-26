@@ -277,7 +277,7 @@ function DeeperHelpValuesSection() {
               src={bgSrc}
               alt=""
               className="h-full w-full object-cover scale-[1.12] object-[55%_50%]"
-              style={reduceMotion || isMobile ? undefined : { y: bgY }}
+              style={reduceMotion ? undefined : { y: bgY }}
               loading="lazy"
             />
             <div className="absolute inset-0 bg-rellia-teal/35" />
@@ -491,7 +491,7 @@ function EngageTealBand() {
       <div className="relative z-10 mx-auto max-w-[1300px]">
         <ScrollReveal>
           <div className="mb-8 md:mb-10">
-            <h2 className="mt-5 font-host-grotesk text-3xl font-semibold leading-tight tracking-tight text-rellia-teal md:text-[40px]">
+            <h2 className="mt-5 font-host-grotesk text-2xl font-semibold leading-tight tracking-tight text-rellia-teal md:text-[32px]">
               How to plug in this week
             </h2>
             <p className="mt-4 max-w-2xl font-urbanist text-base font-medium leading-relaxed text-black/80 md:text-lg">
@@ -574,13 +574,13 @@ function JourneySplitSection() {
     <section className="w-full overflow-hidden border-t border-black/[0.06] bg-white px-6 py-16 md:px-10 md:py-24">
       <div className="mx-auto max-w-[1300px]">
         <ScrollReveal variant="ctaReveal">
-          <h2 className="w-full font-host-grotesk text-3xl font-semibold leading-tight tracking-tight text-rellia-teal md:text-[40px]">
+          <h2 className="w-full font-host-grotesk text-2xl font-semibold leading-tight tracking-tight text-rellia-teal md:text-[32px]">
             Where Rellia meets your trajectory
           </h2>
         </ScrollReveal>
 
         <ScrollReveal variant="ctaReveal" delay={0.1} className="mt-8 md:mt-10">
-          <div className="flex w-full flex-col gap-4 md:flex-row md:items-start md:justify-between md:gap-8">
+          <div className="flex w-full flex-col items-start gap-4 md:flex-row md:items-start md:justify-between md:gap-8">
             <span className="inline-flex shrink-0 items-center rounded-full bg-rellia-cream px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.14em] text-rellia-teal">
               You own
             </span>
@@ -625,7 +625,7 @@ function JourneySplitSection() {
         </div>
 
         <ScrollReveal variant="ctaReveal" delay={bottomHeaderDelay} className="w-full">
-          <div className="flex w-full flex-col gap-4 md:flex-row md:items-start md:justify-between md:gap-8">
+          <div className="flex w-full flex-col items-start gap-4 md:flex-row md:items-start md:justify-between md:gap-8">
             <span className="inline-flex shrink-0 items-center rounded-full bg-rellia-mint px-3.5 py-1.5 text-xs font-semibold uppercase tracking-[0.14em] text-rellia-teal">
               We help with
             </span>

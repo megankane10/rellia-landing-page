@@ -140,11 +140,11 @@ export default function HowItWorks(props?: HowItWorksProps) {
               </h2>
             )}
             {subheading ? (
-              <div className="mt-4 font-urbanist text-base font-medium leading-relaxed tracking-tight text-white/80 md:text-lg max-w-3xl">
+              <div className="mt-4 font-urbanist text-base font-medium leading-relaxed tracking-tight text-white/80 md:text-lg w-full">
                 {subheading}
               </div>
             ) : (
-              <p className="mt-4 font-urbanist text-base font-medium leading-relaxed tracking-tight text-white/80 md:text-lg max-w-3xl">
+              <p className="mt-4 font-urbanist text-base font-medium leading-relaxed tracking-tight text-white/80 md:text-lg w-full">
                 Health tech commercialization is complex, and generic start-up advice won't help you. These are the areas where Rellia can help.
               </p>
             )}

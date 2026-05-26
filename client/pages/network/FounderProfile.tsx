@@ -49,7 +49,7 @@ export default function FounderProfile() {
   useEffect(() => {
     if (!active) return;
     setPageSeo({
-      title: clampMetaTitle(`${active.logoName} — Rellia Health | Alumni`),
+      title: clampMetaTitle(`${active.logoName} - Alumni`),
       description: clampMetaDescription(active.shortDescription),
       ogImage: resolveSocialOgImageUrl(active.logoSrc),
     });
@@ -192,6 +192,17 @@ export default function FounderProfile() {
             {/* Right Content - Structured Layout */}
             <div className="min-w-0 space-y-10 pb-8 prose prose-lg max-w-none prose-headings:font-host-grotesk prose-headings:text-black prose-p:font-urbanist prose-p:text-black/80 prose-p:leading-relaxed">
               
+              {active.tagline && (
+                <div className="rounded-2xl bg-rellia-cream/35 px-5 py-6 border border-black/5 not-prose">
+                  <h3 className="font-host-grotesk text-sm font-semibold uppercase tracking-[0.12em] text-black/55 mb-2">
+                    Snapshot
+                  </h3>
+                  <p className="font-urbanist text-base leading-relaxed text-black/80">
+                    {active.tagline}
+                  </p>
+                </div>
+              )}
+
               {/* 1. Meet the Founders */}
               <section className="not-prose scroll-mt-28">
                 <h3 className="mb-5 text-2xl font-host-grotesk font-semibold text-black flex items-center gap-2">

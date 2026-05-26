@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react"
 import { Link } from "react-router-dom"
+import { motion } from "framer-motion"
 import {
   ArrowRight,
   Palette,
@@ -91,7 +92,7 @@ export function DiagnosticSurveySection() {
       setCurrentIndex((prev) => (prev + 1) % howItWorksSteps.length)
     }, 4500)
     return () => clearInterval(timer)
-  }, [])
+  }, [currentIndex])
 
   const handlePrev = () => {
     setCurrentIndex((prev) => (prev - 1 + howItWorksSteps.length) % howItWorksSteps.length)
@@ -127,18 +128,16 @@ export function DiagnosticSurveySection() {
           
           <div className="pt-2 lg:pt-4 w-full">
             <Reveal delay={0.1} className="w-full">
-              <h3 className="font-host-grotesk text-2xl font-bold text-black mb-8 border-b border-black/10 pb-4">
+              <h3 className="font-host-grotesk text-xs font-bold uppercase tracking-[0.2em] text-rellia-teal mb-5">
                 Categories we assess
               </h3>
               
-              <div className="relative overflow-hidden rounded-3xl border border-black/10 bg-transparent p-6 shadow-none min-h-[175px] flex flex-col justify-between">
-                <div className="flex items-start gap-4">
-                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-rellia-mint/20 text-rellia-teal">
-                    <CurrentIcon className="h-5.5 w-5.5" />
-                  </div>
+              <div className="relative overflow-hidden rounded-3xl border border-black/10 bg-transparent p-7 shadow-none min-h-[250px] flex flex-col justify-between">
+                <div className="flex flex-col items-start gap-4">
+                  <CurrentIcon className="h-8 w-8 text-rellia-teal shrink-0" />
                   <div className="min-w-0 flex-1">
-                    <h4 className="font-host-grotesk text-base font-bold text-black">{currentItem.title}</h4>
-                    <p className="mt-1.5 font-urbanist text-sm leading-relaxed text-black/70 h-12 overflow-hidden">
+                    <h4 className="font-host-grotesk text-lg md:text-xl font-bold text-black">{currentItem.title}</h4>
+                    <p className="mt-2 font-urbanist text-base leading-relaxed text-black/70 h-20 overflow-hidden">
                       {currentItem.description}
                     </p>
                   </div>
@@ -165,6 +164,13 @@ export function DiagnosticSurveySection() {
                     </button>
                   </div>
                 </div>
+                <motion.div
+                  key={currentIndex}
+                  initial={{ width: 0 }}
+                  animate={{ width: "100%" }}
+                  transition={{ duration: 4.5, ease: "linear" }}
+                  className="absolute bottom-0 left-0 h-1 bg-rellia-teal"
+                />
               </div>
             </Reveal>
           </div>

@@ -143,7 +143,7 @@ export default function DiagnosticLanding() {
       setCurrentIndex((prev) => (prev + 1) % howItWorksSteps.length)
     }, 4500)
     return () => clearInterval(timer)
-  }, [])
+  }, [currentIndex])
 
   const handlePrev = () => {
     setCurrentIndex((prev) => (prev - 1 + howItWorksSteps.length) % howItWorksSteps.length)
@@ -238,21 +238,19 @@ export default function DiagnosticLanding() {
         <div className="mx-auto w-full max-w-[1200px]">
           <div className="flex flex-col gap-12 lg:flex-row lg:items-start">
             <div className="flex-1">
-              <h2 className="mb-6 font-host-grotesk text-3xl font-bold text-black md:text-5xl leading-tight">No stone left unturned</h2>
+              <h2 className="mb-6 font-host-grotesk text-2xl font-semibold text-black md:text-[32px] leading-tight">No stone left unturned</h2>
               <p className="font-urbanist text-lg text-black/60 leading-relaxed max-w-xl">
                 We've distilled years of digital health experience into a comprehensive assessment framework that covers the entire startup lifecycle. Rellia's custom platform maps every critical domain, ensuring regulatory alignment, clinical proof, and bulletproof operational scaling.
               </p>
 
               {/* Scroller for the 12 domains */}
               <div className="mt-10 max-w-xl">
-                <div className="relative overflow-hidden rounded-3xl border border-black/10 bg-transparent p-6 shadow-none min-h-[175px] flex flex-col justify-between">
-                  <div className="flex items-start gap-4">
-                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-rellia-mint/20 text-rellia-teal">
-                      <CurrentIcon className="h-5.5 w-5.5" />
-                    </div>
+                <div className="relative overflow-hidden rounded-3xl border border-black/10 bg-transparent p-7 shadow-none min-h-[250px] flex flex-col justify-between">
+                  <div className="flex flex-col items-start gap-4">
+                    <CurrentIcon className="h-8 w-8 text-rellia-teal shrink-0" />
                     <div className="min-w-0 flex-1">
-                      <h4 className="font-host-grotesk text-base font-bold text-black">{currentItem.title}</h4>
-                      <p className="mt-1.5 font-urbanist text-sm leading-relaxed text-black/70 h-12 overflow-hidden">
+                      <h4 className="font-host-grotesk text-lg md:text-xl font-bold text-black">{currentItem.title}</h4>
+                      <p className="mt-2 font-urbanist text-base leading-relaxed text-black/70 h-20 overflow-hidden">
                         {currentItem.description}
                       </p>
                     </div>
@@ -279,6 +277,13 @@ export default function DiagnosticLanding() {
                       </button>
                     </div>
                   </div>
+                  <motion.div
+                    key={currentIndex}
+                    initial={{ width: 0 }}
+                    animate={{ width: "100%" }}
+                    transition={{ duration: 4.5, ease: "linear" }}
+                    className="absolute bottom-0 left-0 h-1 bg-rellia-teal"
+                  />
                 </div>
               </div>
             </div>

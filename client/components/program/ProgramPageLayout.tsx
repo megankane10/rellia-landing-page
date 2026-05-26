@@ -562,7 +562,7 @@ const ProgramPageLayout = ({
         {/* ─── Payment — taller section, full-height divider, inline embed ─── */}
         <section
           id={paymentSectionId}
-          className="w-full bg-rellia-cream/40 border-t border-black/5"
+          className="w-full bg-rellia-teal border-t border-white/10"
         >
           <AnimatePresence mode="wait">
             {!showForm ? (
@@ -575,22 +575,22 @@ const ProgramPageLayout = ({
               >
                 <div className="relative max-w-[1100px] mx-auto px-6 md:px-10 flex flex-col md:flex-row py-40 md:py-56">
                   {/* Full-height divider */}
-                  <div className="hidden md:block absolute left-1/2 top-0 bottom-0 w-px bg-black/10 -translate-x-1/2" />
+                  <div className="hidden md:block absolute left-1/2 top-0 bottom-0 w-px bg-white/10 -translate-x-1/2" />
 
                   {/* Left: badge, price, description, button — top + left aligned */}
                   <div className="flex-1 flex flex-col justify-start items-start md:pr-12 lg:pr-16">
-                    <h2 className="font-host-grotesk text-sm font-bold tracking-widest text-rellia-teal uppercase">
+                    <h2 className="font-host-grotesk text-sm font-bold tracking-widest text-rellia-mint uppercase">
                       {q.pricingBadge}
                     </h2>
                     <div className="mt-5">
-                      <span className="text-6xl md:text-7xl font-extrabold text-black tracking-tight">
+                      <span className="text-6xl md:text-7xl font-extrabold text-white tracking-tight">
                         {q.pricingAmount}
                         <span className="text-4xl md:text-5xl">
                           {q.pricingSubAmount}
                         </span>
                       </span>
                     </div>
-                    <p className="mt-5 mb-10 font-urbanist text-black/60 text-base md:text-lg leading-relaxed max-w-md">
+                    <p className="mt-5 mb-10 font-urbanist text-white/80 text-base md:text-lg leading-relaxed max-w-md">
                       {q.pricingDescription}
                     </p>
                     <RelliaAction
@@ -607,14 +607,14 @@ const ProgramPageLayout = ({
 
                   {/* Right: heading + bullet points — top + left aligned */}
                   <div className="flex-1 flex flex-col justify-start items-start mt-10 md:mt-0 md:pl-12 lg:pl-16">
-                    <h3 className="font-host-grotesk text-xl font-semibold text-black mb-6">
+                    <h3 className="font-host-grotesk text-xl font-semibold text-white mb-6">
                       What's included
                     </h3>
                     <ul className="flex flex-col gap-5 list-none">
                       {q.pricingBullets.map((line) => (
                         <li key={line} className="flex items-start gap-3">
-                          <CheckCircle2 className="w-5 h-5 text-rellia-teal shrink-0 mt-0.5" />
-                          <span className="font-urbanist text-black/70 text-base md:text-lg leading-relaxed">
+                          <CheckCircle2 className="w-5 h-5 text-rellia-mint shrink-0 mt-0.5" />
+                          <span className="font-urbanist text-white/80 text-base md:text-lg leading-relaxed">
                             {line}
                           </span>
                         </li>
@@ -636,7 +636,7 @@ const ProgramPageLayout = ({
                   <button
                     type="button"
                     onClick={() => setShowForm(false)}
-                    className="inline-flex items-center gap-2 font-host-grotesk text-sm font-bold text-rellia-teal hover:underline hover:underline-offset-4"
+                    className="inline-flex items-center gap-2 font-host-grotesk text-sm font-bold text-rellia-mint hover:underline hover:underline-offset-4"
                   >
                     <ArrowLeft className="h-4 w-4" aria-hidden />
                     Back to details

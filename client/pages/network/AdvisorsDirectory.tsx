@@ -69,8 +69,21 @@ function AdvisorCard({
         />
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/25 via-transparent to-transparent opacity-80"
+          className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-90"
         />
+        <div className="absolute bottom-3 left-3 z-10 flex flex-wrap gap-1.5 max-w-[calc(100%-1.5rem)]">
+          <span className="rounded-full border border-rellia-mint/30 bg-rellia-teal/70 px-2.5 py-0.5 font-urbanist text-[11px] font-semibold text-rellia-mint backdrop-blur-sm shadow-sm">
+            {advisor.filter}
+          </span>
+          {advisor.industries.map((tag) => (
+            <span
+              key={tag}
+              className="rounded-full border border-white/10 bg-black/50 px-2.5 py-0.5 font-urbanist text-[11px] font-medium text-white backdrop-blur-sm shadow-sm"
+            >
+              {tag}
+            </span>
+          ))}
+        </div>
       </div>
       <div className="flex flex-1 flex-col p-6 md:p-7">
         <h3 className="font-host-grotesk text-lg font-bold tracking-tight text-black group-hover:underline decoration-2 underline-offset-4">
@@ -82,19 +95,6 @@ function AdvisorCard({
         <p className="mt-0.5 font-urbanist text-sm text-black/60">
           {advisor.role}
         </p>
-        <div className="mt-4 flex flex-wrap gap-2">
-          <span className="rounded-full border border-rellia-teal/20 bg-rellia-mint/15 px-3 py-1 font-urbanist text-xs font-semibold text-rellia-teal">
-            {advisor.filter}
-          </span>
-          {advisor.industries.map((tag) => (
-            <span
-              key={tag}
-              className="rounded-full border border-black/10 bg-black/[0.02] px-3 py-1 font-urbanist text-xs font-medium text-black/70"
-            >
-              {tag}
-            </span>
-          ))}
-        </div>
       </div>
     </motion.article>
   );

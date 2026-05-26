@@ -125,7 +125,7 @@ function SupportModelsSection() {
 
       <div className="relative z-10 mx-auto max-w-[1300px]">
         <ScrollReveal>
-          <h2 className="mt-5 font-host-grotesk text-3xl font-semibold leading-tight tracking-tight text-white md:text-[40px]">
+          <h2 className="mt-5 font-host-grotesk text-2xl font-semibold leading-tight tracking-tight text-white md:text-[32px]">
             Three ways to <span className="text-rellia-mint">work with Rellia</span>
           </h2>
           <p className="mt-4 max-w-2xl font-urbanist text-base font-medium leading-relaxed text-white/80 md:text-lg">
@@ -169,7 +169,7 @@ function ScheduleSplit() {
           <div className="absolute inset-0 bg-gradient-to-tr from-rellia-teal/30 to-transparent" aria-hidden />
         </div>
         <div className="pt-2">
-          <h2 className="mt-5 font-host-grotesk text-3xl font-semibold tracking-tight text-black md:text-[48px] leading-[1.1]">
+          <h2 className="mt-5 font-host-grotesk text-2xl font-semibold tracking-tight text-black md:text-[32px] leading-tight">
             Built for <span className="text-rellia-teal">busy</span> schedules
           </h2>
           

@@ -82,9 +82,9 @@ $$;
 -- ─── Slack Block Kit payload ─────────────────────────────────────────────────
 
 create or replace function public.slack_blocks_message(
-  badge_text text,
-  doc_type text,
-  details text[],
+  title_text text,
+  subtitle_text text,
+  body_text text,
   button_text text,
   button_url text,
   uuid text,
@@ -105,14 +105,7 @@ as $$
             'type', 'section',
             'text', jsonb_build_object(
               'type', 'mrkdwn',
-              'text', case badge_text
-                when 'FORM SUBMISSION' then ':inbox_tray:  *[FORM SUBMISSION]*'
-                when 'DIAGNOSTIC REPORT' then ':chart_with_upwards_trend:  *[DIAGNOSTIC REPORT]*'
-                when 'STATUS CHANGED' then ':arrows_counterclockwise:  *[STATUS CHANGED]*'
-                when 'SUBMISSION DELETED' then ':wastebasket:  *[SUBMISSION DELETED]*'
-                when 'LEAD DELETED' then ':wastebasket:  *[LEAD DELETED]*'
-                else '*[' || badge_text || ']*'
-              end
+              'text', '*' || title_text || '*' || E'\n' || '_' || subtitle_text || '_'
             )
           ),
           jsonb_build_object(
@@ -122,7 +115,7 @@ as $$
             'type', 'section',
             'text', jsonb_build_object(
               'type', 'mrkdwn',
-              'text', '*Type of Doc:* ' || doc_type || E'\n' || coalesce(array_to_string(details, E'\n'), '')
+              'text', body_text
             )
           ),
           jsonb_build_object(
@@ -136,13 +129,17 @@ as $$
                 'action_id', button_action_id
               )
             )
-          ),
+          )
+        )
+      ),
+      jsonb_build_object(
+        'blocks', jsonb_build_array(
           jsonb_build_object(
             'type', 'context',
             'elements', jsonb_build_array(
               jsonb_build_object(
                 'type', 'mrkdwn',
-                'text', 'ID: `' || uuid || '`'
+                'text', 'ID: ' || uuid
               )
             )
           )
@@ -191,7 +188,9 @@ declare
   submission_label text;
   tab text;
   inbox_url text;
-  body_lines text[];
+  title_text text;
+  subtitle_text text;
+  body_text text;
   payload jsonb;
 begin
   submission_label := coalesce(
@@ -209,16 +208,16 @@ begin
   inbox_url := public.slack_admin_inbox_url(tab);
 
   if TG_OP = 'INSERT' then
-    body_lines := array[
-      '• *Name:* ' || NEW.first_name || ' ' || NEW.last_name,
-      '• *Email:* ' || NEW.email,
-      '• *Company:* ' || coalesce(NEW.company, '—'),
-      '• *Status:* ' || coalesce(NEW.status, 'New')
-    ];
+    title_text := NEW.first_name || ' ' || NEW.last_name;
+    subtitle_text := ':inbox_tray: Form Submission · ' || submission_label;
+    body_text := '*Email:* ' || NEW.email || E'\n' ||
+                 '*Company:* ' || coalesce(NEW.company, '—') || E'\n' ||
+                 '*Status:* ' || coalesce(NEW.status, 'New');
+
     payload := public.slack_blocks_message(
-      'FORM SUBMISSION',
-      submission_label,
-      body_lines,
+      title_text,
+      subtitle_text,
+      body_text,
       'View on dashboard',
       inbox_url,
       NEW.id::text,
@@ -229,15 +228,15 @@ begin
     if OLD.status is not distinct from NEW.status then
       return NEW;
     end if;
-    body_lines := array[
-      '• *Name:* ' || NEW.first_name || ' ' || NEW.last_name,
-      '• *Email:* ' || NEW.email,
-      '• *Status:* ' || OLD.status || ' → ' || NEW.status
-    ];
+    title_text := NEW.first_name || ' ' || NEW.last_name;
+    subtitle_text := ':arrows_counterclockwise: Status Changed · ' || submission_label;
+    body_text := '*Email:* ' || NEW.email || E'\n' ||
+                 '*Status:* ' || OLD.status || ' → ' || NEW.status;
+
     payload := public.slack_blocks_message(
-      'STATUS CHANGED',
-      submission_label,
-      body_lines,
+      title_text,
+      subtitle_text,
+      body_text,
       'View on dashboard',
       inbox_url,
       NEW.id::text,
@@ -245,15 +244,15 @@ begin
       'view_in_dashboard'
     );
   elsif TG_OP = 'DELETE' then
-    body_lines := array[
-      '• *Name:* ' || OLD.first_name || ' ' || OLD.last_name,
-      '• *Email:* ' || OLD.email,
-      '• *Last Status:* ' || coalesce(OLD.status, '—')
-    ];
+    title_text := OLD.first_name || ' ' || OLD.last_name;
+    subtitle_text := ':wastebasket: Submission Deleted · ' || submission_label;
+    body_text := '*Email:* ' || OLD.email || E'\n' ||
+                 '*Last Status:* ' || coalesce(OLD.status, '—');
+
     payload := public.slack_blocks_message(
-      'SUBMISSION DELETED',
-      submission_label,
-      body_lines,
+      title_text,
+      subtitle_text,
+      body_text,
       'View on dashboard',
       inbox_url,
       OLD.id::text,
@@ -288,7 +287,9 @@ as $$
 declare
   profile public.company_profiles%rowtype;
   inbox_url text;
-  body_lines text[];
+  title_text text;
+  subtitle_text text;
+  body_text text;
   payload jsonb;
 begin
   select * into profile
@@ -296,17 +297,18 @@ begin
   where id = NEW.company_profile_id;
 
   inbox_url := public.slack_admin_inbox_url('diagnostic');
-  body_lines := array[
-    '• *Company:* ' || coalesce(profile.company_name, '—'),
-    '• *Contact:* ' || coalesce(profile.name, '—') || ' (' || coalesce(profile.work_email, '—') || ')',
-    '• *Stage:* ' || coalesce(profile.stage, '—'),
-    '• *Status:* ' || coalesce(profile.status, 'New')
-  ];
+  
+  title_text := coalesce(profile.name, '—');
+  subtitle_text := ':chart_with_upwards_trend: Diagnostic Report';
+  body_text := '*Company:* ' || coalesce(profile.company_name, '—') || E'\n' ||
+               '*Email:* ' || coalesce(profile.work_email, '—') || E'\n' ||
+               '*Stage:* ' || coalesce(profile.stage, '—') || E'\n' ||
+               '*Status:* ' || coalesce(profile.status, 'New');
 
   payload := public.slack_blocks_message(
-    'DIAGNOSTIC REPORT',
-    'Diagnostic Report',
-    body_lines,
+    title_text,
+    subtitle_text,
+    body_text,
     'View on dashboard',
     inbox_url,
     profile.id::text,
@@ -335,7 +337,9 @@ set search_path = public, extensions
 as $$
 declare
   inbox_url text;
-  body_lines text[];
+  title_text text;
+  subtitle_text text;
+  body_text text;
   payload jsonb;
 begin
   inbox_url := public.slack_admin_inbox_url('diagnostic');
@@ -344,15 +348,16 @@ begin
     if OLD.status is not distinct from NEW.status then
       return NEW;
     end if;
-    body_lines := array[
-      '• *Contact:* ' || coalesce(NEW.name, '—') || ' (' || coalesce(NEW.work_email, '—') || ')',
-      '• *Company:* ' || coalesce(NEW.company_name, '—'),
-      '• *Status:* ' || OLD.status || ' → ' || NEW.status
-    ];
+    title_text := coalesce(NEW.name, '—');
+    subtitle_text := ':arrows_counterclockwise: Status Changed · Diagnostic Lead';
+    body_text := '*Company:* ' || coalesce(NEW.company_name, '—') || E'\n' ||
+                 '*Email:* ' || coalesce(NEW.work_email, '—') || E'\n' ||
+                 '*Status:* ' || OLD.status || ' → ' || NEW.status;
+
     payload := public.slack_blocks_message(
-      'STATUS CHANGED',
-      'Diagnostic Lead',
-      body_lines,
+      title_text,
+      subtitle_text,
+      body_text,
       'View on dashboard',
       inbox_url,
       NEW.id::text,
@@ -360,15 +365,16 @@ begin
       'view_in_dashboard'
     );
   elsif TG_OP = 'DELETE' then
-    body_lines := array[
-      '• *Contact:* ' || coalesce(OLD.name, '—') || ' (' || coalesce(OLD.work_email, '—') || ')',
-      '• *Company:* ' || coalesce(OLD.company_name, '—'),
-      '• *Last Status:* ' || coalesce(OLD.status, '—')
-    ];
+    title_text := coalesce(OLD.name, '—');
+    subtitle_text := ':wastebasket: Lead Deleted · Diagnostic Lead';
+    body_text := '*Company:* ' || coalesce(OLD.company_name, '—') || E'\n' ||
+                 '*Email:* ' || coalesce(OLD.work_email, '—') || E'\n' ||
+                 '*Last Status:* ' || coalesce(OLD.status, '—');
+
     payload := public.slack_blocks_message(
-      'LEAD DELETED',
-      'Diagnostic Lead',
-      body_lines,
+      title_text,
+      subtitle_text,
+      body_text,
       'View on dashboard',
       inbox_url,
       OLD.id::text,
@@ -396,7 +402,7 @@ execute function public.slack_notify_company_profiles();
 
 -- ─── Tests ───────────────────────────────────────────────────────────────────
 -- select public.notify_slack(public.slack_blocks_message(
---   'FORM SUBMISSION', 'Test Doc', array['• *Test:* Hello World'],
+--   'John Doe', 'Form Submission · Contact Form', '*Email:* john@example.com',
 --   'View on dashboard', public.slack_admin_inbox_url('contact'),
 --   '00000000-0000-0000-0000-000000000000', '#2ECC71', 'view_in_dashboard'
 -- ));

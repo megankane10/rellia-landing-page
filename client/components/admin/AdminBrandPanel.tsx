@@ -38,15 +38,15 @@ const AdminBrandPanel = ({ heading, description, children, textTone = "white" }:
         <div className="relative z-10 flex min-h-[420px] flex-1 flex-col p-6 md:p-10 lg:min-h-[min(720px,calc(100vh-4rem))]">
           <Link
             to="/"
-            className="inline-flex w-fit rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint"
+            className="absolute bottom-6 left-6 md:bottom-10 md:left-10 z-20 inline-flex w-fit rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint"
             aria-label="Rellia Health home"
           >
             <img
               src={HOLOGRAM_LOGO_SRC}
               alt=""
-              width={64}
-              height={64}
-              className="h-14 w-14 opacity-90 drop-shadow-[0_0_15px_rgba(152,255,232,0.3)] md:h-16 md:w-16"
+              width={48}
+              height={48}
+              className="h-10 w-10 md:h-12 md:w-12 opacity-95 drop-shadow-[0_0_15px_rgba(152,255,232,0.3)]"
             />
           </Link>
 

@@ -159,7 +159,7 @@ export default function EventDetail() {
     const { _variant: _variantIgnored, ...event } = match
     const computedDateTime = getProgramsEventDisplayDateTime(event)
     const shortDateTime = shortenProgramsEventDateTime(computedDateTime)
-    const pageTitle = clampMetaTitle(event.title)
+    const pageTitle = clampMetaTitle(`${event.title} - Events`)
 
     const descText = (() => {
       if (event.eventDescription) {

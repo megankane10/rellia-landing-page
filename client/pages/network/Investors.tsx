@@ -153,7 +153,7 @@ function PortfolioSplit() {
     <CreamSection>
       <div className="grid gap-12 md:grid-cols-[1fr_1.05fr] md:items-center md:gap-16">
         <Reveal>
-          <h2 className="mt-5 font-host-grotesk text-3xl font-semibold leading-[1.15] tracking-tight text-rellia-teal md:text-[40px] md:leading-[1.12]">
+          <h2 className="mt-5 font-host-grotesk text-2xl font-semibold leading-tight tracking-tight text-rellia-teal md:text-[32px]">
             Offer Rellia to your portfolio
           </h2>
           <p className="mt-4 font-urbanist text-base font-medium leading-relaxed text-black/70 md:text-lg">
@@ -318,7 +318,7 @@ export default function Investors() {
                 </div>
                 <div className="relative mx-auto max-w-[1300px]">
                   <ScrollReveal>
-                    <h2 className="mt-5 font-host-grotesk text-3xl font-semibold leading-tight tracking-tight text-rellia-mint md:text-[40px]">
+                    <h2 className="mt-5 font-host-grotesk text-2xl font-semibold leading-tight tracking-tight text-rellia-mint md:text-[32px]">
                       Exclusive connections and pitch events
                     </h2>
                     <p className="mt-6 max-w-2xl font-urbanist text-lg leading-relaxed text-white/80">

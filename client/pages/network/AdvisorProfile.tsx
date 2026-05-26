@@ -46,7 +46,7 @@ export default function AdvisorProfile() {
   useEffect(() => {
     if (!active) return;
     setPageSeo({
-      title: clampMetaTitle(`${active.name} — Rellia Health | Advisors`),
+      title: clampMetaTitle(`${active.name} - Advisors`),
       description: clampMetaDescription(active.focus),
       ogImage: resolveSocialOgImageUrl(active.photoSrc),
     });

@@ -188,7 +188,7 @@ export default function NetworkMetricsSection({ heading, subheading, metrics }: 
             src="/images/metrics-bg-pexels-2.jpg"
             alt=""
             className="h-full w-full object-cover scale-[1.12] object-[62%_50%]"
-            style={reduceMotion || isMobile ? undefined : { y: bgY }}
+            style={reduceMotion ? undefined : { y: bgY }}
           />
           <div className="absolute inset-0 bg-rellia-teal/35" />
           <div className="absolute inset-0 bg-gradient-to-b from-black/55 via-black/25 to-black/55" />
@@ -224,9 +224,9 @@ export default function NetworkMetricsSection({ heading, subheading, metrics }: 
                 />
               </div>
               <h2
-                className={`font-host-grotesk max-w-3xl font-bold leading-tight tracking-tight text-rellia-mint ${PAGE_HEADER_TITLE_SIZE_CLASS}`}
+                className={`font-host-grotesk max-w-3xl font-bold leading-tight tracking-tight text-white ${PAGE_HEADER_TITLE_SIZE_CLASS}`}
               >
-                {heading}
+                <AccentHeading text={heading} />
               </h2>
             </motion.div>
           </div>
