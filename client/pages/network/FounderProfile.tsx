@@ -60,6 +60,12 @@ export default function FounderProfile() {
     return () => setPageSeo(null);
   }, [active, setPageSeo]);
 
+  useEffect(() => {
+    if (id) {
+      window.scrollTo({ top: 0, behavior: "instant" });
+    }
+  }, [id]);
+
   if (isSanityConfigured() && isCmsQueryLoading(companiesQuery)) {
     return <CmsPageLoadingShell />;
   }

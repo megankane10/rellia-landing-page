@@ -89,19 +89,19 @@ function FounderDirectoryCard({
           {businessModels.map((bm) => (
             <span
               key={bm}
-              className="rounded-full border border-black/10 bg-black/40 px-2 py-0.5 font-urbanist text-[10px] font-bold text-white/90 backdrop-blur-sm shadow-sm"
+              className="rounded-full border border-black/10 bg-black/[0.04] px-2 py-0.5 font-urbanist text-[10px] font-bold text-black/60 backdrop-blur-sm shadow-sm"
             >
               {bm}
             </span>
           ))}
         </div>
       </div>
-      <div className="flex flex-1 flex-col p-4 md:p-5">
-        <h3 className="font-host-grotesk text-sm font-bold tracking-tight text-black md:text-base group-hover:underline decoration-2 underline-offset-4">
+      <div className="flex flex-1 flex-col p-6 md:p-7">
+        <h3 className="font-host-grotesk text-lg font-bold tracking-tight text-black group-hover:underline decoration-2 underline-offset-4">
           {company.logoName}
         </h3>
         {company.tagline && (
-          <p className="mt-1 font-urbanist text-xs font-medium text-black/70 line-clamp-2 leading-relaxed">
+          <p className="mt-1 font-urbanist text-sm font-medium text-black/77 line-clamp-2 leading-relaxed">
             {company.tagline}
           </p>
         )}

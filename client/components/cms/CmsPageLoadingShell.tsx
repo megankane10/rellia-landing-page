@@ -43,11 +43,6 @@ export const AdvisorsDirectoryToolbarSkeleton = () => (
     aria-label="Loading directory filters"
   >
     <div className="h-14 w-full flex-1 animate-pulse rounded-2xl border border-black/10 bg-black/[0.04]" />
-    <div className="flex w-full flex-col gap-3 md:w-auto md:flex-row md:flex-wrap md:items-center">
-      <DirectoryFilterSelectSkeleton />
-      <DirectoryFilterSelectSkeleton />
-      <DirectoryFilterSelectSkeleton />
-    </div>
   </div>
 )
 

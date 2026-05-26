@@ -49,7 +49,7 @@ export const StoryPostHero = ({
           <div 
             className="absolute inset-0" 
             style={{
-              background: "linear-gradient(to right, rgba(13,53,64,0.97) 0%, rgba(13,53,64,0.85) 45%, rgba(13,53,64,0.4) 75%, rgba(13,53,64,0.15) 100%)"
+              background: "linear-gradient(to right, rgba(197,216,213,0.97) 0%, rgba(197,216,213,0.85) 45%, rgba(197,216,213,0.4) 75%, rgba(197,216,213,0.15) 100%)"
             }}
           />
         </div>
