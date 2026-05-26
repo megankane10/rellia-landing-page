@@ -23,7 +23,9 @@ export const PageSeoProvider = ({ children }: { children: ReactNode }) => {
   const [overrides, setOverridesState] = useState<PageSeoOverrides>({})
 
   const setPageSeo = useCallback((next: PageSeoOverrides | null | undefined) => {
-    setOverridesState(next && typeof next === "object" ? next : {})
+    setTimeout(() => {
+      setOverridesState(next && typeof next === "object" ? next : {})
+    }, 0)
   }, [])
 
   const value = useMemo(() => ({ overrides, setPageSeo }), [overrides, setPageSeo])

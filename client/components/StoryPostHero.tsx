@@ -11,6 +11,7 @@ export type StoryPostHeroProps = {
   coverImageAlt?: string | null
   toAbsoluteImageUrl: (src: string) => string
   shareBlock: ReactNode
+  layoutMode?: "background" | "block"
 }
 
 export const StoryPostHero = ({
@@ -21,10 +22,10 @@ export const StoryPostHero = ({
   coverImageAlt,
   toAbsoluteImageUrl,
   shareBlock,
+  layoutMode = "background",
 }: StoryPostHeroProps) => {
   const coverSrc = coverImageSrc?.trim() || null
   const coverAlt = (coverImageAlt?.trim() || title).trim()
-  const [layoutMode, setLayoutMode] = useState<"background" | "block">("background")
 
   const isBgMode = layoutMode === "background" && coverSrc
 
@@ -33,7 +34,7 @@ export const StoryPostHero = ({
       className={cn(
         "relative overflow-hidden transition-all duration-500",
         isBgMode 
-          ? "bg-rellia-teal text-white pt-24 pb-16 md:pt-32 md:pb-24 lg:pt-[120px] lg:pb-[100px] group layout-background" 
+          ? "bg-rellia-teal text-black pt-24 pb-16 md:pt-32 md:pb-24 lg:pt-[120px] lg:pb-[100px] group layout-background" 
           : "bg-rellia-cream text-black pt-24 pb-12 md:pt-32 md:pb-16"
       )}
     >
@@ -79,51 +80,13 @@ export const StoryPostHero = ({
                       {tag}
                     </span>
                   </div>
-
-                  {coverSrc && (
-                    <div className={cn(
-                      "inline-flex items-center gap-0.5 rounded-full p-0.5 transition-colors duration-300",
-                      isBgMode ? "bg-white/10" : "bg-black/[0.06]"
-                    )}>
-                      <button
-                        type="button"
-                        onClick={() => setLayoutMode("background")}
-                        className={cn(
-                          "rounded-full px-2.5 py-1 font-host-grotesk text-[9px] font-bold uppercase tracking-wider transition-all duration-200 cursor-pointer",
-                          isBgMode
-                            ? "bg-white text-rellia-teal shadow-sm"
-                            : "text-black/60 hover:text-black"
-                        )}
-                      >
-                        Background
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setLayoutMode("block")}
-                        className={cn(
-                          "rounded-full px-2.5 py-1 font-host-grotesk text-[9px] font-bold uppercase tracking-wider transition-all duration-200 cursor-pointer",
-                          !isBgMode
-                            ? "bg-rellia-teal text-white shadow-sm"
-                            : "text-white/60 hover:text-white"
-                        )}
-                      >
-                        Block
-                      </button>
-                    </div>
-                  )}
                 </div>
 
-                <h1 className={cn(
-                  "mt-6 font-host-grotesk text-3xl font-medium leading-tight tracking-tight md:text-4xl lg:text-5xl",
-                  isBgMode ? "text-white" : "text-rellia-teal"
-                )}>
+                <h1 className="mt-6 font-host-grotesk text-3xl font-medium leading-tight tracking-tight text-rellia-teal md:text-4xl lg:text-5xl">
                   {title}
                 </h1>
                 {excerpt ? (
-                  <p className={cn(
-                    "mt-4 max-w-3xl font-urbanist text-base font-normal leading-relaxed md:text-lg",
-                    isBgMode ? "text-white/90" : "text-black"
-                  )}>
+                  <p className="mt-4 max-w-3xl font-urbanist text-base font-normal leading-relaxed text-black md:text-lg">
                     {excerpt}
                   </p>
                 ) : null}

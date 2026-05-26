@@ -101,12 +101,12 @@ function FounderDirectoryCard({
           {company.logoName}
         </h3>
         {company.tagline && (
-          <p className="mt-1 font-urbanist text-sm font-medium text-black/77 line-clamp-2 leading-relaxed">
+          <p className="mt-1 font-urbanist text-sm font-medium text-black/77 leading-relaxed">
             {company.tagline}
           </p>
         )}
         {Array.isArray(company.country) && company.country.length > 0 && (
-          <p className="mt-1 font-urbanist text-[11px] text-black/55 leading-none">
+          <p className="mt-1 font-urbanist text-sm text-black/60 leading-none">
             {company.country.join(", ")}
           </p>
         )}

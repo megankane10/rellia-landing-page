@@ -93,7 +93,7 @@ export default function StoryPost() {
 
   const shareBlock = (
     <div className="flex flex-col items-start gap-4 text-current">
-      <p className="font-host-grotesk text-[12px] font-semibold uppercase tracking-[0.14em] opacity-60">
+      <p className="font-host-grotesk text-[12px] font-semibold uppercase tracking-[0.14em] text-black/45">
         Share this story
       </p>
       <div className="h-px w-full bg-current opacity-15" aria-hidden />
