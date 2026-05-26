@@ -9,7 +9,7 @@ import {
 } from "@/components/icons/SocialIcons";
 import { ShareIconCopy } from "@/components/share/sharePageIcons";
 import { FOUNDER_DIRECTORY } from "@/data/founderDirectory";
-import { allowCmsSeedFallbacks } from "@/lib/deploymentEnv";
+import { allowCmsSeedFallbacks, isMainBranchBuild } from "@/lib/deploymentEnv";
 import NotFound from "../NotFound";
 import { cn } from "@/lib/utils";
 import {
@@ -32,16 +32,18 @@ export default function FounderProfile() {
   const { data: cmsCompanies } = companiesQuery;
   const cmsActive = Array.isArray(cmsCompanies) ? cmsCompanies.find((c: any) => c?.id === id) : null;
   const active =
-    cmsActive
-      ? {
-          ...cmsActive,
-          id: cmsActive.id,
-          slug: cmsActive.id,
-          logoName: cmsActive.name,
-        }
-      : allowCmsSeedFallbacks()
-        ? FOUNDER_DIRECTORY.find((c) => c.id === id)
-        : undefined;
+    isMainBranchBuild()
+      ? undefined
+      : cmsActive
+        ? {
+            ...cmsActive,
+            id: cmsActive.id,
+            slug: cmsActive.id,
+            logoName: cmsActive.name,
+          }
+        : allowCmsSeedFallbacks()
+          ? FOUNDER_DIRECTORY.find((c) => c.id === id)
+          : undefined;
 
   const canonicalUrl = buildPageUrl(location.pathname);
   const [copied, setCopied] = useState(false);
@@ -100,9 +102,14 @@ export default function FounderProfile() {
                 />
               </div>
               <div className="pt-2">
-                <h1 className="font-host-grotesk text-3xl font-bold tracking-tight text-black mb-6">
+                <h1 className="font-host-grotesk text-3xl font-bold tracking-tight text-black mb-2">
                   {active.logoName}
                 </h1>
+                {active.tagline && (
+                  <p className="font-urbanist text-base text-black/60 mb-6 leading-relaxed">
+                    {active.tagline}
+                  </p>
+                )}
                 <div className="flex flex-wrap gap-2 mb-6">
                   {active.level && (
                     <span className="inline-flex rounded-full border border-rellia-teal/20 bg-rellia-mint/20 px-3 py-1 font-urbanist text-xs font-semibold text-rellia-teal">
@@ -195,16 +202,7 @@ export default function FounderProfile() {
             {/* Right Content - Structured Layout */}
             <div className="min-w-0 space-y-10 pb-8 prose prose-lg max-w-none prose-headings:font-host-grotesk prose-headings:text-black prose-p:font-urbanist prose-p:text-black/80 prose-p:leading-relaxed">
               
-              {active.tagline && (
-                <div className="rounded-2xl bg-rellia-cream/35 px-5 py-6 border border-black/5 not-prose">
-                  <h3 className="font-host-grotesk text-sm font-semibold uppercase tracking-[0.12em] text-black/55 mb-2">
-                    Snapshot
-                  </h3>
-                  <p className="font-urbanist text-base leading-relaxed text-black/80">
-                    {active.tagline}
-                  </p>
-                </div>
-              )}
+
 
               {/* 1. Meet the Founders */}
               <section className="not-prose scroll-mt-28">

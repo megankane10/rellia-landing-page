@@ -10,7 +10,7 @@ import {
 } from "@/components/icons/SocialIcons";
 import { ShareIconCopy } from "@/components/share/sharePageIcons";
 import { ADVISOR_DIRECTORY_SEED } from "@/data/advisorDirectory";
-import { allowCmsSeedFallbacks } from "@/lib/deploymentEnv";
+import { allowCmsSeedFallbacks, isMainBranchBuild } from "@/lib/deploymentEnv";
 import NotFound from "../NotFound";
 import { cn } from "@/lib/utils";
 import {
@@ -32,11 +32,13 @@ export default function AdvisorProfile() {
   const advisorsQuery = useAdvisors();
   const { data: cmsAdvisors } = advisorsQuery;
   const advisors = (
-    Array.isArray(cmsAdvisors) && cmsAdvisors.length > 0
-      ? cmsAdvisors
-      : allowCmsSeedFallbacks()
-        ? ADVISOR_DIRECTORY_SEED
-        : []
+    isMainBranchBuild()
+      ? []
+      : Array.isArray(cmsAdvisors) && cmsAdvisors.length > 0
+        ? cmsAdvisors
+        : allowCmsSeedFallbacks()
+          ? ADVISOR_DIRECTORY_SEED
+          : []
   ) as any[];
   const active = advisors.find((a) => a.id === id);
 

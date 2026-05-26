@@ -25,7 +25,7 @@ import {
   type Specialty,
 } from "@/data/founderDirectory";
 import { isSanityConfigured } from "@/lib/sanity";
-import { allowCmsSeedFallbacks } from "@/lib/deploymentEnv";
+import { allowCmsSeedFallbacks, isMainBranchBuild } from "@/lib/deploymentEnv";
 import { isCmsQueryLoading } from "@/lib/cmsQueryState";
 import {
   DirectoryFilterSelectSkeleton,
@@ -71,13 +71,13 @@ function FounderDirectoryCard({
       tabIndex={0}
       aria-label={`Open details for ${company.logoName}`}
     >
-      <div className="relative flex h-[160px] w-full items-center justify-center bg-white border-b border-black/[0.05] shrink-0">
+      <div className="relative flex aspect-video w-full items-center justify-center bg-white border-b border-black/[0.05] shrink-0">
         <img
           src={company.logoSrc}
           alt=""
-          className="max-h-[100px] w-auto max-w-[80%] object-contain object-center transition duration-500 ease-out group-hover:scale-[1.02]"
+          className="max-h-[72%] w-auto max-w-[72%] object-contain object-center transition duration-500 ease-out group-hover:scale-[1.02]"
         />
-        <div className="absolute top-3 left-3 z-10 flex flex-wrap gap-1.5 max-w-[calc(100%-1.5rem)]">
+        <div className="absolute bottom-3 left-3 z-10 flex flex-wrap gap-1.5 max-w-[calc(100%-1.5rem)]">
           {company.specialties.map((s) => (
             <span
               key={s}
@@ -96,17 +96,17 @@ function FounderDirectoryCard({
           ))}
         </div>
       </div>
-      <div className="flex flex-1 flex-col p-6 md:p-7">
-        <h3 className="font-host-grotesk text-base font-bold tracking-tight text-black md:text-lg group-hover:underline decoration-2 underline-offset-4">
+      <div className="flex flex-1 flex-col p-4 md:p-5">
+        <h3 className="font-host-grotesk text-sm font-bold tracking-tight text-black md:text-base group-hover:underline decoration-2 underline-offset-4">
           {company.logoName}
         </h3>
         {company.tagline && (
-          <p className="mt-1 font-urbanist text-sm font-medium text-black/70 line-clamp-2">
+          <p className="mt-1 font-urbanist text-xs font-medium text-black/70 line-clamp-2 leading-relaxed">
             {company.tagline}
           </p>
         )}
         {Array.isArray(company.country) && company.country.length > 0 && (
-          <p className="mt-0.5 font-urbanist text-sm text-black/60">
+          <p className="mt-1 font-urbanist text-[11px] text-black/55 leading-none">
             {company.country.join(", ")}
           </p>
         )}
@@ -156,6 +156,7 @@ export default function FoundersDirectory() {
   }, [location.search]);
 
   const companies = useMemo<FounderCompany[]>(() => {
+    if (isMainBranchBuild()) return [];
     if (!isSanityConfigured()) return []
 
     if (Array.isArray(cmsCompanies) && cmsCompanies.length > 0) {

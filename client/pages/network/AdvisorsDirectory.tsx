@@ -20,7 +20,7 @@ import {
 import { useNavigate, useLocation } from "react-router-dom";
 import { NETWORK_PATH_ROLE_TAG } from "@/lib/networkPathRoles";
 import { isSanityConfigured } from "@/lib/sanity";
-import { allowCmsSeedFallbacks } from "@/lib/deploymentEnv";
+import { allowCmsSeedFallbacks, isMainBranchBuild } from "@/lib/deploymentEnv";
 import { isCmsQueryLoading } from "@/lib/cmsQueryState";
 import { AdvisorsDirectoryToolbarSkeleton, DirectoryGridSkeleton } from "@/components/cms/CmsPageLoadingShell";
 import {
@@ -45,9 +45,9 @@ function AdvisorCard({
     <motion.article
       layout
       className={cn(
-        "group flex h-full cursor-pointer flex-col overflow-hidden rounded-2xl border border-black/10 bg-white",
+        "group flex h-full flex-col overflow-hidden rounded-2xl border border-black/10 bg-white",
         "shadow-sm transition-[box-shadow,transform] duration-300 motion-reduce:transition-none",
-        "hover:shadow-md hover:-translate-y-[1px]",
+        "cursor-pointer hover:shadow-md hover:-translate-y-[1px]",
       )}
       onClick={onDetails}
       onKeyDown={(e) => {
@@ -60,7 +60,7 @@ function AdvisorCard({
       tabIndex={0}
       aria-label={`Open profile for ${advisor.name}`}
     >
-      <div className="relative aspect-[3/2] w-full overflow-hidden bg-gradient-to-br from-rellia-cream to-rellia-cream/40">
+      <div className="relative aspect-video w-full overflow-hidden bg-gradient-to-br from-rellia-cream to-rellia-cream/40 shrink-0">
         <img
           src={advisor.photoSrc}
           alt=""
@@ -69,9 +69,9 @@ function AdvisorCard({
         />
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-90"
+          className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-90"
         />
-        <div className="absolute top-3 left-3 z-10 flex flex-wrap gap-1.5 max-w-[calc(100%-1.5rem)]">
+        <div className="absolute bottom-3 left-3 z-10 flex flex-wrap gap-1.5 max-w-[calc(100%-1.5rem)]">
           <span className="rounded-full border border-rellia-mint/20 bg-rellia-teal/60 px-2.5 py-0.5 font-urbanist text-[11px] font-semibold text-rellia-mint/90 backdrop-blur-sm shadow-sm">
             {advisor.filter}
           </span>
@@ -89,7 +89,7 @@ function AdvisorCard({
         <h3 className="font-host-grotesk text-lg font-bold tracking-tight text-black group-hover:underline decoration-2 underline-offset-4">
           {advisor.name}
         </h3>
-        <p className="mt-1 font-urbanist text-sm font-medium text-black/70">
+        <p className="mt-1 font-urbanist text-sm font-medium text-black/77">
           {advisor.organization}
         </p>
         <p className="mt-0.5 font-urbanist text-sm text-black/60">
@@ -119,6 +119,7 @@ export default function AdvisorsDirectory() {
   const [countryFilter, setCountryFilter] = useState<string>("all");
 
   const advisors = useMemo<AdvisorDirectoryEntry[]>(() => {
+    if (isMainBranchBuild()) return [];
     if (!isSanityConfigured()) return []
 
     if (Array.isArray(cmsAdvisors) && cmsAdvisors.length > 0)

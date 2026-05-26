@@ -21,7 +21,8 @@ export default function ImageExpandModal({
       <DialogContent
         hideClose
         aria-label={`Expanded image: ${alt}`}
-        className="fixed inset-0 z-[10005] flex max-w-none items-center justify-center border-0 bg-black/90 p-4 md:p-6 outline-none backdrop-blur-md transition-all duration-300"
+        onClick={() => onOpenChange(false)}
+        className="fixed inset-0 left-0 top-0 translate-x-0 translate-y-0 z-[10005] flex h-screen w-screen max-w-none items-center justify-center border-0 bg-black/90 p-4 md:p-6 outline-none backdrop-blur-md transition-all duration-300 cursor-zoom-out"
       >
         <DialogTitle className="sr-only">Expanded View of Image</DialogTitle>
         <DialogDescription className="sr-only">
@@ -30,14 +31,20 @@ export default function ImageExpandModal({
 
         <button
           type="button"
-          onClick={() => onOpenChange(false)}
+          onClick={(e) => {
+            e.stopPropagation()
+            onOpenChange(false)
+          }}
           className="absolute right-4 top-4 z-[10006] inline-flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20 transition focus:outline-none focus:ring-2 focus:ring-rellia-mint focus:ring-offset-2 focus:ring-offset-black"
           aria-label="Close expanded view"
         >
           <X className="h-5 w-5" />
         </button>
 
-        <div className="relative flex max-h-[85vh] max-w-[90vw] items-center justify-center overflow-hidden rounded-2xl">
+        <div 
+          onClick={(e) => e.stopPropagation()}
+          className="relative flex max-h-[85vh] max-w-[90vw] items-center justify-center overflow-hidden rounded-2xl cursor-default"
+        >
           <img
             src={src}
             alt={alt}

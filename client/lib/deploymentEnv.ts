@@ -34,7 +34,7 @@ export const allowCmsSeedFallbacks = (): boolean => {
   return !isMainBranchBuild()
 }
 
-const isMainBranchBuild = (): boolean => {
+export const isMainBranchBuild = (): boolean => {
   const ref = String(import.meta.env.VITE_VERCEL_GIT_COMMIT_REF ?? "")
     .trim()
     .toLowerCase()

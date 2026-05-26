@@ -220,52 +220,54 @@ export function TeamMemberCard({
                   {name}
                 </h4>
 
-                <p className="font-urbanist text-sm leading-relaxed text-white/90 md:text-[15px] flex-1 overflow-y-auto pr-1">
-                  {descriptionText}
-                </p>
+                <div className="flex-1 overflow-y-auto pr-1">
+                  <p className="font-urbanist text-sm leading-relaxed text-white/90 md:text-[15px]">
+                    {descriptionText}
+                  </p>
 
-                {hasSocialLinks ? (
-                  <>
-                    <div className="h-px w-full bg-white/20 my-4" aria-hidden />
-                    <div className="flex h-9 items-center gap-3">
-                      {linkedinUrl ? (
-                        <a
-                          href={linkedinUrl}
-                          target="_blank"
-                          rel="noreferrer"
-                          className={cn(
-                            "inline-flex h-9 w-9 items-center justify-center text-white visited:text-white",
-                            "rounded-xl border border-white/25 bg-white/10 backdrop-blur-sm will-change-[backdrop-filter]",
-                            "transition-[color,background-color,border-color] duration-200 ease-in-out delay-75",
-                            "hover:text-rellia-mint visited:hover:text-rellia-mint hover:border-white/40 hover:bg-white/15",
-                            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-rellia-teal",
-                          )}
-                          aria-label={`Open LinkedIn profile for ${name}`}
-                        >
-                          <LinkedInIcon className="h-5 w-5" />
-                        </a>
-                      ) : null}
+                  {hasSocialLinks ? (
+                    <>
+                      <div className="h-px w-full bg-white/20 my-4" aria-hidden />
+                      <div className="flex h-9 items-center gap-3">
+                        {linkedinUrl ? (
+                          <a
+                            href={linkedinUrl}
+                            target="_blank"
+                            rel="noreferrer"
+                            className={cn(
+                              "inline-flex h-9 w-9 items-center justify-center text-white visited:text-white",
+                              "rounded-xl border border-white/25 bg-white/10 backdrop-blur-sm will-change-[backdrop-filter]",
+                              "transition-[color,background-color,border-color] duration-200 ease-in-out delay-75",
+                              "hover:text-rellia-mint visited:hover:text-rellia-mint hover:border-white/40 hover:bg-white/15",
+                              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-rellia-teal",
+                            )}
+                            aria-label={`Open LinkedIn profile for ${name}`}
+                          >
+                            <LinkedInIcon className="h-5 w-5" />
+                          </a>
+                        ) : null}
 
-                      {websiteUrl ? (
-                        <a
-                          href={websiteUrl}
-                          target="_blank"
-                          rel="noreferrer"
-                          className={cn(
-                            "inline-flex h-9 w-9 items-center justify-center text-white visited:text-white",
-                            "rounded-xl border border-white/25 bg-white/10 backdrop-blur-sm will-change-[backdrop-filter]",
-                            "transition-[color,background-color,border-color] duration-200 ease-in-out delay-75",
-                            "hover:text-rellia-mint visited:hover:text-rellia-mint hover:border-white/40 hover:bg-white/15",
-                            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-rellia-teal",
-                          )}
-                          aria-label={`Open website for ${name}`}
-                        >
-                          <WebsiteIcon className="h-5 w-5" />
-                        </a>
-                      ) : null}
-                    </div>
-                  </>
-                ) : null}
+                        {websiteUrl ? (
+                          <a
+                            href={websiteUrl}
+                            target="_blank"
+                            rel="noreferrer"
+                            className={cn(
+                              "inline-flex h-9 w-9 items-center justify-center text-white visited:text-white",
+                              "rounded-xl border border-white/25 bg-white/10 backdrop-blur-sm will-change-[backdrop-filter]",
+                              "transition-[color,background-color,border-color] duration-200 ease-in-out delay-75",
+                              "hover:text-rellia-mint visited:hover:text-rellia-mint hover:border-white/40 hover:bg-white/15",
+                              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-rellia-teal",
+                            )}
+                            aria-label={`Open website for ${name}`}
+                          >
+                            <WebsiteIcon className="h-5 w-5" />
+                          </a>
+                        ) : null}
+                      </div>
+                    </>
+                  ) : null}
+                </div>
               </div>
             </motion.div>
           ) : null}
