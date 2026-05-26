@@ -374,6 +374,8 @@ export function RoleHero({
   secondaryCta,
   onPrimaryClick,
   className,
+  titleClassName,
+  subtitleClassName,
 }: {
   roleId?: "founder" | "advisor" | "investor" | "partner"
   eyebrowLabel?: string
@@ -384,6 +386,8 @@ export function RoleHero({
   secondaryCta?: { label: string; to: string }
   onPrimaryClick?: () => void
   className?: string
+  titleClassName?: string
+  subtitleClassName?: string
 }) {
   const tag = roleId ? NETWORK_PATH_ROLE_TAG[roleId] : undefined
   const label = eyebrowLabel || (tag ? tag.label : "Network")
@@ -430,13 +434,14 @@ export function RoleHero({
           <NetworkEyebrow label={label} tone="onDark" className="mb-6 md:mb-8" />
           <h1
             className={cn(
-              "max-w-4xl font-bold leading-[1.08] tracking-tight text-rellia-mint drop-shadow-sm [&_span]:!text-rellia-mint [&_strong]:!text-rellia-mint [&_em]:!text-rellia-mint",
+              "font-bold leading-[1.08] tracking-tight text-white drop-shadow-sm [&_span]:!text-rellia-mint [&_strong]:!text-rellia-mint [&_em]:!text-rellia-mint",
               PAGE_HEADER_TITLE_SIZE_CLASS,
+              titleClassName ?? "max-w-4xl",
             )}
           >
             {title}
           </h1>
-          <div className="mt-6 max-w-2xl font-urbanist text-lg leading-relaxed text-white md:text-xl [&_span]:!text-white [&_strong]:!text-white">
+          <div className={cn("mt-6 font-urbanist text-lg leading-relaxed text-white md:text-xl [&_span]:!text-white [&_strong]:!text-white", subtitleClassName ?? "max-w-2xl")}>
             {subtitle}
           </div>
           <div className="mt-10 flex w-full flex-col gap-3 sm:flex-row sm:flex-wrap">

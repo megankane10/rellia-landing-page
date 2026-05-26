@@ -113,7 +113,7 @@ export default function ProgramTrustedMembersSection({
             <CarouselContent className="-ml-4">
               {testimonials.map((t) => (
                 <CarouselItem key={t.name} className="basis-full pl-4 py-4">
-                  <div className="relative mx-auto flex h-auto min-h-[350px] sm:min-h-[300px] md:min-h-[250px] pb-8 w-full max-w-[980px] flex-col justify-between overflow-hidden rounded-[24px] bg-gradient-to-br from-[#144853] via-rellia-teal to-rellia-teal p-6 md:p-8 shadow-md">
+                  <div className="relative mx-auto flex h-auto min-h-[350px] sm:min-h-[300px] md:min-h-[250px] pb-8 w-full max-w-[980px] flex-col justify-between overflow-hidden rounded-[24px] bg-gradient-to-br from-[#0d3540] via-[#104856] to-[#196b7f] border border-white/10 p-6 md:p-8 shadow-md">
                     <div className="relative z-10 flex flex-col items-start justify-start">
                       <p className={cn(
                         "w-full font-host-grotesk font-medium leading-[1.3] tracking-tight text-white",
@@ -129,10 +129,10 @@ export default function ProgramTrustedMembersSection({
                           <img src={t.image} alt={t.name} className="h-full w-full object-cover" loading="lazy" decoding="async" />
                         </div>
                         <div className="flex min-w-0 flex-col items-start">
-                          <h4 className="font-host-grotesk text-base font-normal leading-tight text-white md:text-lg">
+                          <h4 className="font-host-grotesk text-base font-semibold leading-tight text-rellia-mint md:text-lg">
                             {t.name}
                           </h4>
-                          <p className="mt-0.5 font-urbanist text-xs font-normal text-white/70 md:text-sm">
+                          <p className="mt-0.5 font-urbanist text-xs font-normal text-white md:text-sm">
                             {t.role} &bull; {t.company}
                           </p>
                         </div>

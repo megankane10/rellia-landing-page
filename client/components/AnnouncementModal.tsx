@@ -53,7 +53,7 @@ export default function AnnouncementModal({
           <div className="mb-3 flex items-center">
             <span className="inline-flex items-center gap-1.5 rounded-full border border-rellia-teal/25 bg-transparent px-2.5 py-1 text-[11px] font-bold uppercase tracking-[0.14em] text-rellia-teal">
               <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rellia-mint opacity-75"></span>
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rellia-teal opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-rellia-teal"></span>
               </span>
               {pillText?.trim() || "LIVE"}

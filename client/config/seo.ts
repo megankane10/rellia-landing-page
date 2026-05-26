@@ -270,60 +270,60 @@ export const ROUTE_SEO: Record<string, RouteSeoConfig> = {
     indexable: true,
   },
   "/admin/login": {
-    title: "Admin sign in — Rellia Health",
+    title: "Sign In - Admin",
     description:
       "Sign in to the Rellia Health admin portal to review diagnostic survey submissions and internal reports.",
     indexable: false,
   },
   "/admin/signup": {
-    title: "Create admin account — Rellia Health",
+    title: "Create account - admin",
     description:
       "Create a Rellia Health admin account when signup is enabled. Internal access for diagnostic submission review.",
     indexable: false,
   },
   "/accept-invite": {
-    title: "Accept admin invitation — Rellia Health",
+    title: "Accept Invitation - Admin",
     description:
       "Accept your Rellia Health admin invitation and set a password to access the internal dashboard.",
     indexable: false,
   },
   "/admin/auth/callback": {
-    title: "Admin sign-in — Rellia Health",
+    title: "Authentication - Admin",
     description: "Completing admin authentication for the Rellia Health dashboard.",
     indexable: false,
   },
   "/admin/set-password": {
-    title: "Set admin password — Rellia Health",
+    title: "Set Password - Admin",
     description: "Choose a password to finish setting up your Rellia Health admin account.",
     indexable: false,
   },
   "/admin/overview": {
-    title: "Admin overview — Rellia Health",
+    title: "Overview - Admin",
     description: "Dashboard overview for Rellia Health submissions, diagnostics, and CMS drafts.",
     indexable: false,
   },
   "/admin/submissions": {
-    title: "Admin submissions — Rellia Health",
+    title: "Submissions - Admin",
     description: "Review contact form, investor, and diagnostic submissions in the Rellia Health admin dashboard.",
     indexable: false,
   },
   "/admin/team": {
-    title: "Admin team — Rellia Health",
+    title: "Team - Admin",
     description: "Manage admin users with access to the Rellia Health internal dashboard.",
     indexable: false,
   },
   "/admin/content": {
-    title: "Content drafts — Rellia Health",
+    title: "Content drafts - Admin",
     description: "Unpublished Sanity CMS drafts awaiting review in the Rellia Health admin dashboard.",
     indexable: false,
   },
   "/admin/resources": {
-    title: "Admin resources — Rellia Health",
+    title: "Resources - Admin",
     description: "Tools, documentation, and environment guidance for Rellia Health dashboard administrators.",
     indexable: false,
   },
   "/admin/dashboard": {
-    title: "Admin dashboard — Rellia Health",
+    title: "Dashboard - Admin",
     description:
       "Rellia Health admin dashboard for diagnostic submissions, company profiles, and operational review.",
     indexable: false,

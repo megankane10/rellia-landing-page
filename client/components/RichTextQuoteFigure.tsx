@@ -58,7 +58,7 @@ export const RichTextQuoteFigure = ({ quote, attribution, className }: RichTextQ
   return (
     <figure
       className={cn(
-        "relative my-10 overflow-hidden rounded-[1.75rem] bg-gradient-to-br from-[#144853] via-rellia-teal to-rellia-teal px-6 py-8 md:px-8 md:py-10",
+        "relative my-10 overflow-hidden rounded-[1.75rem] bg-gradient-to-br from-[#0d3540] via-[#104856] to-[#196b7f] border border-white/10 px-6 py-8 md:px-8 md:py-10",
         className,
       )}
     >

@@ -83,7 +83,7 @@ function LeftPanel({ copy }: { copy: typeof DEFAULT_CONTACT_PAGE }) {
             height={64}
             loading="lazy"
             decoding="async"
-            className="h-14 w-14 opacity-90 drop-shadow-[0_0_15px_rgba(152,255,232,0.3)] md:h-16 md:w-16"
+            className="absolute bottom-8 left-8 md:bottom-12 md:left-12 h-12 w-12 md:h-16 md:w-16 opacity-90 drop-shadow-[0_0_15px_rgba(152,255,232,0.3)] z-20"
           />
 
           <motion.div
@@ -92,8 +92,8 @@ function LeftPanel({ copy }: { copy: typeof DEFAULT_CONTACT_PAGE }) {
             transition={{ duration: 0.8 }}
             className="flex flex-1 flex-col justify-between py-8"
           >
-            <div className="flex flex-1 flex-col justify-center py-6">
-              <p className="w-full font-urbanist text-2xl font-medium leading-snug text-white md:text-4xl lg:text-5xl px-2">
+            <div className="flex flex-1 flex-col justify-center py-6 pt-8 md:pt-12">
+              <p className="max-w-sm font-urbanist text-2xl font-medium leading-snug text-white md:text-4xl lg:text-5xl px-2">
                 &ldquo;{copy.quoteText}&rdquo;
               </p>
 
@@ -122,7 +122,7 @@ function LeftPanel({ copy }: { copy: typeof DEFAULT_CONTACT_PAGE }) {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.3, duration: 0.8 }}
-              className="mt-auto border-t border-white/10 pt-8"
+              className="mt-auto border-t border-white/10 pt-8 flex justify-end"
             >
               <p className="font-host-grotesk text-sm font-medium text-white">
                 <a href="mailto:hello@relliahealth.com" className="hover:underline underline-offset-4">

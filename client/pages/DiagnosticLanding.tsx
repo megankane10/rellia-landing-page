@@ -13,7 +13,9 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import RelliaAction from '@/components/RelliaAction';
 import RouteSeo from '@/components/RouteSeo';
-import { motion } from 'framer-motion';
+import { RoleHero } from "./network/_shared";
+import PillTag from "@/components/PillTag";
+import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { PAGE_HEADER_TITLE_SIZE_CLASS } from '@/components/PageHeader';
 import type { HomeWhyFeature } from "@shared/cms/types";
@@ -164,67 +166,45 @@ export default function DiagnosticLanding() {
         description="Benchmark your health tech startup across 12 critical domains. Get an instant readiness score, personalized gap analysis, and advisory board matching."
       />
 
-      {/* HERO SECTION - Replicating RoleHero styling */}
-      <section className="relative overflow-hidden bg-rellia-teal pt-[72px] md:pt-[86px] lg:flex lg:flex-col lg:min-h-0 lg:pt-[96px]">
-        <img
-          src="/images/diagnostics-hero.jpg"
-          alt=""
-          className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-60"
+      <div className="lg:flex lg:h-[82vh] lg:flex-col">
+        <RoleHero
+          eyebrowLabel="Startup Diagnostic"
+          imageSrc="/images/diagnostics-hero.jpg"
+          className="lg:flex-1"
+          titleClassName="max-w-5xl"
+          subtitleClassName="max-w-3xl"
+          title={
+            <>
+              How ready is your <span className="text-rellia-mint">startup, really?</span>
+            </>
+          }
+          subtitle={
+            <div className="flex flex-col items-start">
+              <p className="font-urbanist text-lg leading-relaxed text-white/85 md:text-xl">
+                Benchmark your startup across 12 critical domains. Get an instant readiness score and identify hidden blockers.
+              </p>
+              <div className="mt-8 flex flex-wrap items-center gap-3">
+                {[
+                  { label: "100% Private", icon: ShieldCheck },
+                  { label: "~15 Minutes", icon: Zap },
+                  { label: "Advisor Matching", icon: Users },
+                ].map((item) => (
+                  <PillTag
+                    key={item.label}
+                    label={item.label}
+                    dot={<item.icon className="h-3.5 w-3.5 text-rellia-mint shrink-0" />}
+                    className="border-white/20 bg-white/10"
+                  />
+                ))}
+              </div>
+            </div>
+          }
+          primaryCta={{
+            label: "Begin Free Assessment",
+            to: "/diagnostic-survey"
+          }}
         />
-        <div className="absolute inset-0 bg-gradient-to-br from-rellia-teal/[0.88] via-rellia-teal/72 to-[#0a2830]/82" aria-hidden />
-        <div aria-hidden className="pointer-events-none absolute inset-0 opacity-35 [background-image:radial-gradient(circle_at_20%_20%,rgba(167,219,214,0.35),transparent_50%),radial-gradient(circle_at_85%_30%,rgba(255,255,255,0.14),transparent_45%)]" aria-label="" />
-        <img
-          src="/images/hologram-logo.png"
-          alt=""
-          aria-hidden
-          className="pointer-events-none absolute -right-16 bottom-0 w-[min(52vw,420px)] opacity-[0.07] md:right-0"
-        />
-
-        <div className="relative z-10 mx-auto max-w-[1300px] px-6 pb-20 pt-10 md:px-10 md:pb-28 md:pt-14 lg:flex lg:flex-1 lg:flex-col lg:justify-center lg:pb-20 lg:pt-0">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="flex flex-col items-start text-left"
-          >
-            {/* Top Badge: Glass/Pill notice */}
-            <div className="mb-8 flex w-fit items-center gap-2.5 rounded-full bg-white/10 backdrop-blur-md px-5 py-2 text-sm font-normal text-white border border-white/20">
-              <Lock className="h-3.5 w-3.5 text-rellia-mint" />
-              <span>Detailed analysis is only available to Rellia members</span>
-            </div>
-
-            <h1 className={cn("max-w-4xl font-bold leading-[1.08] tracking-tight text-white drop-shadow-sm", PAGE_HEADER_TITLE_SIZE_CLASS)}>
-              How ready is your<br />
-              <span className="text-rellia-mint">startup, really?</span>
-            </h1>
-            
-            <p className="mt-6 max-w-2xl font-urbanist text-lg leading-relaxed text-white/80 md:text-xl">
-              Benchmark your startup across 12 critical domains. Get an instant readiness score and identify hidden blockers.
-            </p>
-            
-            <div className="mt-10 flex w-full flex-col gap-3 sm:flex-row sm:flex-wrap">
-              <RelliaAction 
-                asChild
-                variant="heroSolidOnTeal" 
-                size="comfortable" 
-                className="w-full min-w-0 justify-center sm:min-w-[220px] sm:w-auto"
-              >
-                <Link to="/diagnostic-survey">
-                  Begin Free Assessment
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Link>
-              </RelliaAction>
-            </div>
-            
-            {/* Bottom Checklist Alignment */}
-            <div className="mt-14 flex flex-wrap items-center gap-6 md:gap-10 text-[10px] sm:text-xs font-bold uppercase tracking-[0.2em] text-white/70">
-              <div className="flex items-center gap-2"><ShieldCheck className="h-4 w-4" /> 100% Private</div>
-              <div className="flex items-center gap-2"><Zap className="h-4 w-4" /> ~15 Minutes</div>
-              <div className="flex items-center gap-2"><Users className="h-4 w-4" /> Advisor Matching</div>
-            </div>
-          </motion.div>
-        </div>
-      </section>
+      </div>
 
       {/* READINESS MAP SECTION using WhyRellia */}
       <WhyRellia 
@@ -246,14 +226,25 @@ export default function DiagnosticLanding() {
               {/* Scroller for the 12 domains */}
               <div className="mt-6 max-w-xl">
                 <div className="relative overflow-hidden rounded-3xl border border-black/10 bg-transparent p-7 shadow-none min-h-[250px] flex flex-col justify-between">
-                  <div className="flex flex-col items-start gap-4">
-                    <CurrentIcon className="h-8 w-8 text-rellia-teal shrink-0" />
-                    <div className="min-w-0 flex-1">
-                      <h4 className="font-host-grotesk text-lg md:text-xl font-bold text-black">{currentItem.title}</h4>
-                      <p className="mt-2 font-urbanist text-base leading-relaxed text-black/70 h-20 overflow-hidden">
-                        {currentItem.description}
-                      </p>
-                    </div>
+                  <div className="relative overflow-hidden flex-1 flex flex-col justify-center min-h-[140px] w-full">
+                    <AnimatePresence mode="wait" initial={false}>
+                      <motion.div
+                        key={currentIndex}
+                        initial={{ opacity: 0, x: 30 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: -30 }}
+                        transition={{ duration: 0.25, ease: "easeInOut" }}
+                        className="flex flex-col items-start gap-4 w-full"
+                      >
+                        <CurrentIcon className="h-8 w-8 text-rellia-teal shrink-0" />
+                        <div className="min-w-0 flex-1">
+                          <h4 className="font-host-grotesk text-lg md:text-xl font-bold text-black">{currentItem.title}</h4>
+                          <p className="mt-2 font-urbanist text-base leading-relaxed text-black/70">
+                            {currentItem.description}
+                          </p>
+                        </div>
+                      </motion.div>
+                    </AnimatePresence>
                   </div>
 
                   <div className="mt-5 flex items-center justify-between border-t border-black/5 pt-3.5">

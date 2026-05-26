@@ -71,7 +71,7 @@ export default function Payment() {
           >
             {/* Left: Benefits Card */}
             <div className="flex flex-col w-full">
-              <div className="relative flex flex-col overflow-hidden rounded-[1.75rem] bg-rellia-teal p-8 md:p-10 lg:p-12 w-full h-full min-h-[500px]">
+              <div className="relative flex flex-col overflow-hidden rounded-[1.75rem] bg-rellia-teal p-8 md:p-10 lg:p-12 w-full h-full min-h-[600px]">
                 {/* Background image & gradient overlay contained within card */}
                 <div className="absolute inset-0 pointer-events-none">
                   <img 
@@ -84,39 +84,30 @@ export default function Payment() {
                   <div className="absolute -left-20 -top-20 w-[400px] h-[400px] bg-rellia-mint/10 blur-[100px] rounded-full" />
                 </div>
 
-                <div className="relative z-10 flex flex-col h-full pb-16">
-                  <h1 className="font-host-grotesk text-2xl md:text-[32px] font-semibold tracking-tight text-white mb-10 leading-tight">
-                    Join the network today
-                  </h1>
+                <div className="relative z-10 flex flex-col h-full justify-between">
+                  <div>
+                    <h1 className="font-host-grotesk text-2xl md:text-[32px] font-semibold tracking-tight text-white mb-10 leading-tight">
+                      Join the network today
+                    </h1>
 
-                  <div className="flex flex-col gap-y-5 md:gap-y-6">
-                    {benefitsGrid.map((benefit, index) => {
-                      const Icon = BENEFIT_ICONS[index % BENEFIT_ICONS.length]
-                      return (
-                        <div key={index} className="flex items-start gap-4 group">
-                          <Icon
-                            className="mt-1 h-5 w-5 sm:h-6 sm:w-6 text-rellia-mint transition-transform duration-300 group-hover:scale-110 flex-shrink-0"
-                            aria-hidden
-                            strokeWidth={2.5}
-                          />
-                          <p className="font-urbanist text-white/70 text-base sm:text-lg font-medium leading-relaxed">
-                            {benefit}
-                          </p>
-                        </div>
-                      )
-                    })}
+                    <div className="flex flex-col gap-y-5 md:gap-y-6">
+                      {benefitsGrid.map((benefit, index) => {
+                        const Icon = BENEFIT_ICONS[index % BENEFIT_ICONS.length]
+                        return (
+                          <div key={index} className="flex items-start gap-4 group">
+                            <Icon
+                              className="mt-1 h-5 w-5 sm:h-6 sm:w-6 text-rellia-mint transition-transform duration-300 group-hover:scale-110 flex-shrink-0"
+                              aria-hidden
+                              strokeWidth={2.5}
+                            />
+                            <p className="font-urbanist text-white/70 text-base sm:text-lg font-medium leading-relaxed">
+                              {benefit}
+                            </p>
+                          </div>
+                        )
+                      })}
+                    </div>
                   </div>
-
-                  <img
-                    src="/images/hologram-logo.png"
-                    alt=""
-                    aria-hidden
-                    width={48}
-                    height={48}
-                    loading="lazy"
-                    decoding="async"
-                    className="absolute bottom-0 left-0 h-10 w-10 md:h-12 md:w-12 opacity-95 drop-shadow-[0_0_15px_rgba(152,255,232,0.3)]"
-                  />
                 </div>
               </div>
             </div>
@@ -190,7 +181,7 @@ export default function Payment() {
                     <div className="w-full flex flex-col items-start gap-4">
                       <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-rellia-mint/20 text-rellia-teal text-xs font-bold uppercase tracking-wider">
                         <span className="relative flex h-2 w-2">
-                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rellia-mint opacity-75"></span>
+                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rellia-teal opacity-75"></span>
                           <span className="relative inline-flex rounded-full h-2 w-2 bg-rellia-teal"></span>
                         </span>
                         Limited time

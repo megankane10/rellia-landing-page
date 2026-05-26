@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react"
 import { Link } from "react-router-dom"
-import { motion } from "framer-motion"
+import { motion, AnimatePresence } from "framer-motion"
 import {
   ArrowRight,
   Palette,
@@ -133,14 +133,25 @@ export function DiagnosticSurveySection() {
               </h3>
               
               <div className="relative overflow-hidden rounded-3xl border border-black/10 bg-transparent p-7 shadow-none min-h-[250px] flex flex-col justify-between">
-                <div className="flex flex-col items-start gap-4">
-                  <CurrentIcon className="h-8 w-8 text-rellia-teal shrink-0" />
-                  <div className="min-w-0 flex-1">
-                    <h4 className="font-host-grotesk text-lg md:text-xl font-bold text-black">{currentItem.title}</h4>
-                    <p className="mt-2 font-urbanist text-base leading-relaxed text-black/70 h-20 overflow-hidden">
-                      {currentItem.description}
-                    </p>
-                  </div>
+                <div className="relative overflow-hidden flex-1 flex flex-col justify-center min-h-[140px] w-full">
+                  <AnimatePresence mode="wait" initial={false}>
+                    <motion.div
+                      key={currentIndex}
+                      initial={{ opacity: 0, x: 30 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: -30 }}
+                      transition={{ duration: 0.25, ease: "easeInOut" }}
+                      className="flex flex-col items-start gap-4 w-full"
+                    >
+                      <CurrentIcon className="h-8 w-8 text-rellia-teal shrink-0" />
+                      <div className="min-w-0 flex-1">
+                        <h4 className="font-host-grotesk text-lg md:text-xl font-bold text-black">{currentItem.title}</h4>
+                        <p className="mt-2 font-urbanist text-base leading-relaxed text-black/70">
+                          {currentItem.description}
+                        </p>
+                      </div>
+                    </motion.div>
+                  </AnimatePresence>
                 </div>
 
                 <div className="mt-5 flex items-center justify-between border-t border-black/5 pt-3.5">

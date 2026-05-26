@@ -331,7 +331,8 @@ export default function Navbar({
     pathname === "/events" ||
     pathname === "/programs" ||
     pathname === "/faq" ||
-    pathname === "/careers"
+    pathname === "/careers" ||
+    pathname === "/startup-diagnostic"
 
   /** Light cream/white heroes (story posts, event detail, programs): transparent bar + light nav chrome until scroll */
   const isLightHeroNav =
