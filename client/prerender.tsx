@@ -85,7 +85,7 @@ const prerenderQueryClient = new QueryClient({
 const helmetTitleText = (helmet: HelmetServerState | undefined): string | undefined => {
   const raw = helmet?.title?.toString()?.trim()
   if (!raw) return undefined
-  return raw.replace(/<\/?title>/gi, "").trim() || undefined
+  return raw.replace(/<title[^>]*>|<\/title>/gi, "").trim() || undefined
 }
 
 const escapeMetaAttr = (value: string): string =>
