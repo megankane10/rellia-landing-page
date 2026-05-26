@@ -397,55 +397,53 @@ const ProgramPageLayout = ({
         </section>
 
         {/* ─── Program Pillars ─── */}
-        <section className="w-full bg-white py-10 md:py-14">
-          <div className="mx-auto w-full max-w-[1300px] px-6 md:px-10">
-            <div className="relative w-full bg-rellia-teal py-20 md:py-28 px-8 md:px-16 overflow-hidden rounded-[24px] md:rounded-[32px] flex flex-col shadow-md">
-              <img
-                src="/images/hologram-logo.png"
-                alt=""
-                aria-hidden="true"
-                className="pointer-events-none absolute -right-20 top-8 w-[360px] max-w-[55vw] opacity-[0.05] md:right-0 md:top-0 md:w-[460px]"
-              />
-              <div aria-hidden className="pointer-events-none absolute inset-0">
-                <div className="absolute -left-28 top-10 h-[520px] w-[520px] rounded-full bg-rellia-mint/22 blur-3xl" />
-                <div className="absolute right-[-220px] bottom-[-240px] h-[680px] w-[680px] rounded-full bg-rellia-mint/18 blur-3xl" />
-                <div className="absolute left-[35%] top-[55%] h-[520px] w-[520px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-rellia-mint/10 blur-3xl" />
-                <div className="absolute inset-0 opacity-[0.22] [background-image:radial-gradient(circle_at_20%_10%,rgba(255,255,255,0.16),transparent_52%),radial-gradient(circle_at_80%_30%,rgba(157,214,208,0.14),transparent_55%),radial-gradient(circle_at_35%_95%,rgba(255,255,255,0.10),transparent_55%)]" />
-              </div>
-              <div className="relative z-10 w-full flex flex-col h-full">
-                <ScrollReveal delay={0.1}>
-                  <div className="mb-12 md:mb-16">
-                    <h2 className="font-host-grotesk text-2xl font-semibold leading-tight tracking-tight text-white md:text-[32px]">
-                      {q.pillarsTitle}
-                    </h2>
+        <section className="relative w-full bg-rellia-teal rounded-[2.5rem] md:rounded-[3.5rem] py-20 md:py-28 px-6 md:px-10 overflow-hidden shadow-md">
+          <img
+            src="/images/hologram-logo.png"
+            alt=""
+            aria-hidden="true"
+            className="pointer-events-none absolute -right-20 top-8 w-[360px] max-w-[55vw] opacity-[0.05] md:right-0 md:top-0 md:w-[460px]"
+          />
+          <div aria-hidden className="pointer-events-none absolute inset-0">
+            <div className="absolute -left-28 top-10 h-[520px] w-[520px] rounded-full bg-rellia-mint/22 blur-3xl" />
+            <div className="absolute right-[-220px] bottom-[-240px] h-[680px] w-[680px] rounded-full bg-rellia-mint/18 blur-3xl" />
+            <div className="absolute left-[35%] top-[55%] h-[520px] w-[520px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-rellia-mint/10 blur-3xl" />
+            <div className="absolute inset-0 opacity-[0.22] [background-image:radial-gradient(circle_at_20%_10%,rgba(255,255,255,0.16),transparent_52%),radial-gradient(circle_at_80%_30%,rgba(157,214,208,0.14),transparent_55%),radial-gradient(circle_at_35%_95%,rgba(255,255,255,0.10),transparent_55%)]" />
+          </div>
+          <div className="relative z-10 mx-auto w-full max-w-[1300px]">
+            <div className="relative z-10 w-full flex flex-col h-full">
+              <ScrollReveal delay={0.1}>
+                <div className="mb-12 md:mb-16">
+                  <h2 className="font-host-grotesk text-2xl font-semibold leading-tight tracking-tight text-white md:text-[32px]">
+                    {q.pillarsTitle}
+                  </h2>
+                </div>
+              </ScrollReveal>
+              <div className="pt-2">
+                <ScrollReveal delay={0.2}>
+                  <div className="grid w-full grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12 sm:gap-8 lg:gap-6">
+                    {pillars.map((p) => {
+                      const Icon = p.icon;
+                      return (
+                        <div
+                          key={p.title}
+                          className="flex w-full flex-col px-1 md:px-2"
+                        >
+                          <Icon
+                            className="h-7 w-7 text-rellia-mint"
+                            aria-hidden
+                          />
+                          <p className="mt-5 font-host-grotesk text-lg font-semibold leading-snug tracking-tight text-white line-clamp-2">
+                            {p.title}
+                          </p>
+                          <p className="mt-3 font-urbanist text-sm leading-relaxed text-white/80 max-w-none sm:max-w-[260px]">
+                            {p.description}
+                          </p>
+                        </div>
+                      );
+                    })}
                   </div>
                 </ScrollReveal>
-                <div className="pt-2">
-                  <ScrollReveal delay={0.2}>
-                    <div className="grid w-full grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12 sm:gap-8 lg:gap-6">
-                      {pillars.map((p) => {
-                        const Icon = p.icon;
-                        return (
-                          <div
-                            key={p.title}
-                            className="flex w-full flex-col px-1 md:px-2"
-                          >
-                            <Icon
-                              className="h-7 w-7 text-rellia-mint"
-                              aria-hidden
-                            />
-                            <p className="mt-5 font-host-grotesk text-lg font-semibold leading-snug tracking-tight text-white line-clamp-2">
-                              {p.title}
-                            </p>
-                            <p className="mt-3 font-urbanist text-sm leading-relaxed text-white/80 max-w-none sm:max-w-[260px]">
-                              {p.description}
-                            </p>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </ScrollReveal>
-                </div>
               </div>
             </div>
           </div>
@@ -454,8 +452,8 @@ const ProgramPageLayout = ({
         {/* ─── Timeline ─── */}
         <section className="py-28 md:py-44 bg-white">
           <div className="max-w-[1300px] mx-auto px-6 md:px-10">
-            <div className="flex flex-col lg:flex-row lg:gap-20">
-              <div className="lg:w-[44%] shrink-0 mb-10 lg:mb-0 lg:sticky lg:top-32 lg:self-start">
+            <div className="flex flex-col lg:flex-row lg:gap-12">
+              <div className="lg:w-[50%] shrink-0 mb-10 lg:mb-0 lg:sticky lg:top-32 lg:self-start">
                 <ScrollReveal>
                   <h2 className="font-host-grotesk text-2xl font-semibold leading-tight tracking-tight text-black md:text-[32px]">
                     {q.timelineTitle.includes("&") ? (

@@ -275,39 +275,41 @@ export default function Investors() {
                 sectionClassName="bg-rellia-cream/20"
               />
 
-              <PipelinePhotoSection>
-                <ScrollReveal>
-                  <h2 className="mt-5 font-host-grotesk text-3xl font-semibold leading-tight tracking-tight text-white md:text-[40px]">
-                    How founders cluster
-                  </h2>
-                  <p className="mt-4 max-w-2xl font-urbanist text-lg leading-relaxed text-white/85">
-                    Illustrative distributions based on active introductions—useful for thesis alignment.
-                  </p>
-                </ScrollReveal>
-                <div className="mt-12 grid grid-cols-1 gap-6 lg:grid-cols-3">
-                  <Reveal delay={0.05}>
-                    <IllustrativePie
-                      title="B2B vs B2C"
-                      data={B2B_DATA}
-                      ariaLabel="Pie chart of B2B versus B2C versus hybrid share"
-                    />
-                  </Reveal>
-                  <Reveal delay={0.08}>
-                    <IllustrativePie
-                      title="Stages"
-                      data={STAGE_DATA}
-                      ariaLabel="Pie chart of company stages from idea through Series A"
-                    />
-                  </Reveal>
-                  <Reveal delay={0.11}>
-                    <IllustrativePie
-                      title="Device & delivery"
-                      data={DEVICE_DATA}
-                      ariaLabel="Pie chart of device types and delivery models"
-                    />
-                  </Reveal>
-                </div>
-              </PipelinePhotoSection>
+              <div className="py-10 md:py-16 bg-white">
+                <PipelinePhotoSection>
+                  <ScrollReveal>
+                    <h2 className="mt-5 font-host-grotesk text-3xl font-semibold leading-tight tracking-tight text-white md:text-[40px]">
+                      How founders cluster
+                    </h2>
+                    <p className="mt-4 max-w-2xl font-urbanist text-lg leading-relaxed text-white/85">
+                      Illustrative distributions based on active introductions—useful for thesis alignment.
+                    </p>
+                  </ScrollReveal>
+                  <div className="mt-12 grid grid-cols-1 gap-6 lg:grid-cols-3">
+                    <Reveal delay={0.05}>
+                      <IllustrativePie
+                        title="B2B vs B2C"
+                        data={B2B_DATA}
+                        ariaLabel="Pie chart of B2B versus B2C versus hybrid share"
+                      />
+                    </Reveal>
+                    <Reveal delay={0.08}>
+                      <IllustrativePie
+                        title="Stages"
+                        data={STAGE_DATA}
+                        ariaLabel="Pie chart of company stages from idea through Series A"
+                      />
+                    </Reveal>
+                    <Reveal delay={0.11}>
+                      <IllustrativePie
+                        title="Device & delivery"
+                        data={DEVICE_DATA}
+                        ariaLabel="Pie chart of device types and delivery models"
+                      />
+                    </Reveal>
+                  </div>
+                </PipelinePhotoSection>
+              </div>
 
               <section className="relative overflow-hidden bg-[#071018] px-6 py-16 text-white md:px-10 md:py-24">
                 <div aria-hidden className="pointer-events-none absolute inset-0">

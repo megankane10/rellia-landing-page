@@ -86,21 +86,19 @@ export default function Payment() {
 
                 <div className="relative z-10 flex flex-col h-full justify-between">
                   <div>
-                    <h1 className="font-host-grotesk text-2xl md:text-[32px] font-semibold tracking-tight text-white mb-10 leading-tight">
+                    <h1 className="font-host-grotesk text-2xl md:text-[32px] font-semibold tracking-tight text-rellia-mint mb-10 leading-tight">
                       Join the network today
                     </h1>
 
                     <div className="flex flex-col gap-y-5 md:gap-y-6 pb-20">
                       {benefitsGrid.map((benefit, index) => {
-                        const Icon = BENEFIT_ICONS[index % BENEFIT_ICONS.length]
                         return (
                           <div key={index} className="flex items-start gap-4 group">
-                            <Icon
-                              className="mt-1 h-5 w-5 sm:h-6 sm:w-6 text-rellia-mint transition-transform duration-300 group-hover:scale-110 flex-shrink-0"
+                            <span
+                              className="mt-2 h-2.5 w-2.5 shrink-0 rounded-full bg-rellia-mint transition-transform duration-300 group-hover:scale-110"
                               aria-hidden
-                              strokeWidth={2.5}
                             />
-                            <p className="font-urbanist text-rellia-mint text-base sm:text-lg font-medium leading-relaxed">
+                            <p className="font-urbanist text-white text-base sm:text-lg font-medium leading-relaxed">
                               {benefit}
                             </p>
                           </div>
@@ -109,7 +107,7 @@ export default function Payment() {
                     </div>
                   </div>
 
-                  <div className="absolute bottom-0 left-0">
+                  <div className="absolute bottom-8 left-8 md:bottom-10 md:left-10 lg:bottom-12 lg:left-12">
                     <img 
                       src="/images/hologram-logo.png" 
                       alt="" 

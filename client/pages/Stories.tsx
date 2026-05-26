@@ -46,7 +46,8 @@ const StoryGridCard = ({
         to={`/stories/${story.slug}`}
         className={cn(
           "group flex h-[410px] w-full flex-col overflow-hidden rounded-2xl md:h-[430px]",
-          "transition-transform duration-200 ease-out hover:-translate-y-0.5",
+          "transition-all duration-500 ease-in hover:-translate-y-0.5",
+          "outline outline-1 outline-offset-[10px] outline-transparent hover:outline-rellia-teal/20",
           "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-white",
         )}
         aria-label={`Read ${story.title}`}

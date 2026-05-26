@@ -7,7 +7,7 @@ import Footer from "@/components/Footer"
 import RelliaAction from "@/components/RelliaAction"
 import ScrollReveal from "@/components/ScrollReveal"
 import { GETPROVEN_VENDORS_GRID_URL } from "@/config/partnerLinks"
-import { ArrowRight, Check, ExternalLink, Handshake, LayoutGrid, Megaphone } from "lucide-react"
+import { ArrowRight, ArrowUpRight, Check, ExternalLink, Handshake, LayoutGrid, Megaphone } from "lucide-react"
 import { Link } from "react-router-dom"
 import LogoMarquee from "@/components/LogoMarquee"
 import RelliaCta from "@/components/RelliaCta"
@@ -115,7 +115,11 @@ function PartnerEngageTealBand() {
                   <p className="mt-3 flex-1 font-urbanist text-xs leading-relaxed text-white/80 md:text-sm md:leading-relaxed">{card.body}</p>
                   <span className="mt-5 inline-flex items-center gap-1.5 font-host-grotesk text-xs font-semibold text-rellia-mint md:text-sm">
                     {card.cta}
-                    <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" aria-hidden />
+                    {"external" in card && card.external ? (
+                      <ArrowUpRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" aria-hidden />
+                    ) : (
+                      <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" aria-hidden />
+                    )}
                   </span>
                 </>
               )

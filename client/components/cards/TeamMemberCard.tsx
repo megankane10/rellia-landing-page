@@ -216,8 +216,8 @@ export function TeamMemberCard({
               />
 
               <div className="relative flex h-full w-full flex-col px-6 pb-6 pt-10 text-left">
-                <h4 className="font-host-grotesk text-lg font-bold uppercase tracking-wider text-rellia-mint leading-tight mb-2">
-                  {name}
+                <h4 className="font-host-grotesk text-lg font-bold text-rellia-mint leading-tight mb-2">
+                  Meet {name}
                 </h4>
 
                 <div className="flex-1 overflow-y-auto pr-1">

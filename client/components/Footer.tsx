@@ -38,7 +38,7 @@ const FALLBACK_FOOTER_COLUMNS: NavItem[] = [
       { label: "Founders", href: "/founders" },
       { label: "Advisors", href: "/advisors" },
       { label: "Investors", href: "/investors" },
-      { label: "Industry Partners", href: "/industry-partners" },
+      { label: "Industry Partners", href: GETPROVEN_VENDORS_GRID_URL },
     ],
   },
   {

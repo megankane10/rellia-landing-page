@@ -150,7 +150,7 @@ export default function RelliaCta({
   className,
   icon,
   aboveSectionTone,
-  roundedClassName = "rounded-t-[28px] md:rounded-t-[36px]",
+  roundedClassName = "rounded-t-[48px] md:rounded-t-[80px]",
 }: RelliaCtaProps) {
   useEffect(() => {
     const root = document.documentElement

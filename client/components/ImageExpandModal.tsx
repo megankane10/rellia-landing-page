@@ -20,9 +20,10 @@ export default function ImageExpandModal({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
         hideClose
+        disableSlide
         aria-label={`Expanded image: ${alt}`}
         onClick={() => onOpenChange(false)}
-        className="fixed inset-0 left-0 top-0 translate-x-0 translate-y-0 z-[10005] flex h-screen w-screen max-w-none items-center justify-center border-0 bg-black/90 p-4 md:p-6 outline-none backdrop-blur-md transition-all duration-300 cursor-zoom-out"
+        className="fixed inset-0 left-0 top-0 translate-x-0 translate-y-0 z-[10005] flex h-screen w-screen max-w-none items-center justify-center border-0 bg-black/90 p-4 md:p-6 outline-none backdrop-blur-md cursor-zoom-out duration-300 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=open]:fade-in-0 data-[state=closed]:fade-out-0 data-[state=open]:zoom-in-95 data-[state=closed]:zoom-out-95"
       >
         <DialogTitle className="sr-only">Expanded View of Image</DialogTitle>
         <DialogDescription className="sr-only">

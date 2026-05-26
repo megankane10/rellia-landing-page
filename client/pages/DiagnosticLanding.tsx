@@ -6,8 +6,6 @@ import {
   Zap,
   Users,
   Lock,
-  ChevronLeft,
-  ChevronRight,
 } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
@@ -15,7 +13,6 @@ import RelliaAction from '@/components/RelliaAction';
 import RouteSeo from '@/components/RouteSeo';
 import { RoleHero } from "./network/_shared";
 import PillTag from "@/components/PillTag";
-import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { PAGE_HEADER_TITLE_SIZE_CLASS } from '@/components/PageHeader';
 import type { HomeWhyFeature } from "@shared/cms/types";
@@ -24,21 +21,7 @@ import WhyRellia from '@/components/WhyRellia';
 import MembershipPathTimeline from '@/components/MembershipPathTimeline';
 import RelliaCta from '@/components/RelliaCta';
 
-import {
-  Palette,
-  Code2,
-  Activity,
-  ShieldCheck as ShieldIcon,
-  Scale,
-  FileText,
-  DollarSign,
-  TrendingUp,
-  Megaphone,
-  Compass,
-  Building2,
-  Heart,
-  Briefcase
-} from 'lucide-react';
+import { ShieldCheck as ShieldIcon } from 'lucide-react';
 
 const whyFeatures: HomeWhyFeature[] = [
   {
@@ -67,69 +50,6 @@ const whyFeatures: HomeWhyFeature[] = [
   }
 ];
 
-const howItWorksSteps = [
-  {
-    icon: Palette,
-    title: 'Product Design & UI/UX',
-    description: 'Establish design credibility with intuitive healthcare interfaces and smooth user workflows.'
-  },
-  {
-    icon: Code2,
-    title: 'Product Development',
-    description: 'Build secure, scalable products integrating healthcare standards and engineering best practices.'
-  },
-  {
-    icon: Activity,
-    title: 'Clinical Evidence',
-    description: 'Design clinical validation protocols, gather evidence, and build study credibility.'
-  },
-  {
-    icon: ShieldIcon,
-    title: 'Regulatory Strategy',
-    description: 'Set up ISO 13485 QMS and prepare compliant filings for FDA and Health Canada.'
-  },
-  {
-    icon: Scale,
-    title: 'Legal & Privacy',
-    description: 'Ensure absolute compliance with HIPAA, PIPEDA, and robust system security.'
-  },
-  {
-    icon: FileText,
-    title: 'IP Strategy',
-    description: 'Protect your unique IP, patent designs, and establish freedom to operate.'
-  },
-  {
-    icon: DollarSign,
-    title: 'Reimbursement',
-    description: 'Formulate insurance coverage pathways and navigate public/private billing codes.'
-  },
-  {
-    icon: TrendingUp,
-    title: 'Fundraising',
-    description: 'Craft high-signal pitch decks, financial models, and diligence-proof datarooms.'
-  },
-  {
-    icon: Megaphone,
-    title: 'Marketing & Branding',
-    description: 'Build healthcare brand awareness, trust, and clear scientific positioning.'
-  },
-  {
-    icon: Compass,
-    title: 'Go-To-Market',
-    description: 'Define your buyer, pricing structures, pilot pipelines, and enterprise deals.'
-  },
-  {
-    icon: Building2,
-    title: 'Health System Navigation',
-    description: 'Overcome procurement delays, build clinical champion networks, and close sales.'
-  },
-  {
-    icon: Briefcase,
-    title: 'Operations & Scaling',
-    description: 'Formulate operational rhythms, scalable hiring patterns, and strong governance.'
-  }
-];
-
 const timelineSteps = [
   { title: 'Startup Context', description: 'Provide high-level details about your product mission, stage, and targets.' },
   { title: 'Deep Assessment', description: 'Evaluate your status across 12 sections with zero-BS honest reflections.' },
@@ -138,25 +58,6 @@ const timelineSteps = [
 ];
 
 export default function DiagnosticLanding() {
-  const [currentIndex, setCurrentIndex] = useState(0)
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % howItWorksSteps.length)
-    }, 4500)
-    return () => clearInterval(timer)
-  }, [currentIndex])
-
-  const handlePrev = () => {
-    setCurrentIndex((prev) => (prev - 1 + howItWorksSteps.length) % howItWorksSteps.length)
-  }
-
-  const handleNext = () => {
-    setCurrentIndex((prev) => (prev + 1) % howItWorksSteps.length)
-  }
-
-  const currentItem = howItWorksSteps[currentIndex]
-  const CurrentIcon = currentItem.icon
 
   return (
     <div className="min-h-screen bg-white font-host-grotesk text-black selection:bg-rellia-mint/30 overflow-x-hidden">
@@ -223,60 +124,7 @@ export default function DiagnosticLanding() {
                 We've distilled years of digital health experience into a comprehensive assessment framework that covers the entire startup lifecycle. Rellia's custom platform maps every critical domain, ensuring regulatory alignment, clinical proof, and bulletproof operational scaling.
               </p>
 
-              {/* Scroller for the 12 domains */}
-              <div className="mt-6 max-w-xl">
-                <div className="relative overflow-hidden rounded-3xl border border-black/10 bg-transparent p-7 shadow-none min-h-[250px] flex flex-col justify-between">
-                  <div className="relative overflow-hidden flex-1 flex flex-col justify-center min-h-[140px] w-full">
-                    <AnimatePresence mode="wait" initial={false}>
-                      <motion.div
-                        key={currentIndex}
-                        initial={{ opacity: 0, x: 30 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        exit={{ opacity: 0, x: -30 }}
-                        transition={{ duration: 0.25, ease: "easeInOut" }}
-                        className="flex flex-col items-start gap-4 w-full"
-                      >
-                        <CurrentIcon className="h-8 w-8 text-rellia-teal shrink-0" />
-                        <div className="min-w-0 flex-1">
-                          <h4 className="font-host-grotesk text-lg md:text-xl font-bold text-black">{currentItem.title}</h4>
-                          <p className="mt-2 font-urbanist text-base leading-relaxed text-black/70">
-                            {currentItem.description}
-                          </p>
-                        </div>
-                      </motion.div>
-                    </AnimatePresence>
-                  </div>
 
-                  <div className="mt-5 flex items-center justify-between border-t border-black/5 pt-3.5">
-                    <span className="font-host-grotesk text-xs font-bold text-black/45 tracking-wider">
-                      {String(currentIndex + 1).padStart(2, '0')} / {String(howItWorksSteps.length).padStart(2, '0')}
-                    </span>
-                    <div className="flex items-center gap-1.5">
-                      <button
-                        onClick={handlePrev}
-                        className="flex h-8 w-8 items-center justify-center rounded-full border border-black/10 bg-white text-black/70 transition-colors hover:bg-black/5 hover:text-black active:scale-95"
-                        aria-label="Previous domain"
-                      >
-                        <ChevronLeft className="h-4.5 w-4.5" />
-                      </button>
-                      <button
-                        onClick={handleNext}
-                        className="flex h-8 w-8 items-center justify-center rounded-full border border-black/10 bg-white text-black/70 transition-colors hover:bg-black/5 hover:text-black active:scale-95"
-                        aria-label="Next domain"
-                      >
-                        <ChevronRight className="h-4.5 w-4.5" />
-                      </button>
-                    </div>
-                  </div>
-                  <motion.div
-                    key={currentIndex}
-                    initial={{ width: 0 }}
-                    animate={{ width: "100%" }}
-                    transition={{ duration: 4.5, ease: "linear" }}
-                    className="absolute bottom-0 left-0 h-1 bg-rellia-teal"
-                  />
-                </div>
-              </div>
             </div>
             <div className="flex-1 lg:pl-12">
               <div className="relative">

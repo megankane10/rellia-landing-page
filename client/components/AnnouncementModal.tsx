@@ -36,12 +36,12 @@ export default function AnnouncementModal({
         className={cn(
           "z-[10001] pointer-events-auto",
           "left-4 right-4 bottom-4 top-auto w-auto max-w-none translate-x-0 translate-y-0",
-          "sm:left-5 sm:right-auto sm:bottom-5 sm:w-[min(94vw,460px)] md:left-8 md:bottom-8",
+          "sm:right-5 sm:left-auto sm:bottom-5 sm:w-[min(94vw,460px)] md:right-8 md:bottom-8",
           "gap-0 rounded-[1.75rem] border-0 py-7 px-6 md:rounded-[2.75rem] md:py-9 md:px-8",
           "shadow-[0_20px_50px_rgba(13,53,64,0.3)]",
           "bg-gradient-to-r from-rellia-mint via-rellia-greyTeal to-rellia-mint",
           "data-[state=closed]:slide-out-to-bottom-4 data-[state=open]:slide-in-from-bottom-4",
-          "data-[state=closed]:slide-out-to-left-0 data-[state=open]:slide-in-from-left-0",
+          "data-[state=closed]:slide-out-to-right-0 data-[state=open]:slide-in-from-right-0",
           "data-[state=closed]:zoom-out-100 data-[state=open]:zoom-in-100",
         )}
       >
