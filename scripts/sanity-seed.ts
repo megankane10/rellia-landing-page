@@ -129,17 +129,27 @@ const slugify = (input: string): string =>
     .replace(/(^-|-$)/g, "")
     .slice(0, 80) || "tag"
 
+/** SEO payload compatible with legacy `seo` object and `sanity-plugin-seofields` (`seoFields`). */
 const seoForRoute = (pathname: string) => {
   const cfg = ROUTE_SEO[pathname]
   if (!cfg) return undefined
+  const title = cfg.title
+  const description = cfg.description
+  const noIndex = cfg.indexable === false
   return {
-    metaTitle: cfg.title,
-    metaDescription: cfg.description,
-    ogTitle: cfg.title,
-    ogDescription: cfg.description,
-    noIndex: cfg.indexable === false,
+    metaTitle: title,
+    metaDescription: description,
+    ogTitle: title,
+    ogDescription: description,
+    noIndex,
+    title,
+    description,
+    openGraph: { title, description },
+    robots: { noIndex, noFollow: false },
   }
 }
+
+const pagePublishingLive = { pageVisibility: "live" as const }
 
 const seedPublicOrigin = (
   process.env.SEED_PUBLIC_SITE_ORIGIN?.replace(/\/$/, "") ||
@@ -793,6 +803,7 @@ async function main() {
       _type: "networkFoundersPage",
       title: "Founders",
       useModularPage: false,
+      ...pagePublishingLive,
       seo: seoForRoute("/founders"),
       sections: [
         {
@@ -866,6 +877,7 @@ async function main() {
       _type: "networkAdvisorsPage",
       title: "Advisors",
       useModularPage: false,
+      ...pagePublishingLive,
       seo: seoForRoute("/advisors"),
       sections: [
         {
@@ -903,6 +915,7 @@ async function main() {
       _type: "networkInvestorsPage",
       title: "Investors",
       useModularPage: false,
+      ...pagePublishingLive,
       seo: seoForRoute("/investors"),
       sections: [
         {
@@ -949,6 +962,7 @@ async function main() {
       _type: "networkPartnersPage",
       title: "Industry Partners",
       useModularPage: false,
+      ...pagePublishingLive,
       seo: seoForRoute("/industry-partners"),
       sections: [
         {
