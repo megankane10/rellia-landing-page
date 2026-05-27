@@ -344,11 +344,11 @@ const ProgramPageLayout = ({
         {/* ─── Program Outcomes ─── */}
         <section
           id={outcomesSectionId}
-          className="scroll-mt-24 md:scroll-mt-[5.5rem] relative w-full bg-rellia-greyTeal pt-10 pb-16 md:pt-14 md:pb-24 px-6 md:px-10 overflow-hidden"
+          className="scroll-mt-24 md:scroll-mt-[5.5rem] relative w-full bg-white pt-10 pb-16 md:pt-14 md:pb-24 px-6 md:px-10 overflow-hidden"
         >
           <div aria-hidden className="pointer-events-none absolute inset-0">
-            <div className="absolute -left-28 top-10 h-[520px] w-[520px] rounded-full bg-rellia-mint/12 blur-3xl" />
-            <div className="absolute right-[-220px] bottom-[-240px] h-[680px] w-[680px] rounded-full bg-rellia-mint/10 blur-3xl" />
+            <div className="absolute -left-28 top-10 h-[520px] w-[520px] rounded-full bg-rellia-mint/10 blur-3xl" />
+            <div className="absolute right-[-220px] bottom-[-240px] h-[680px] w-[680px] rounded-full bg-rellia-mint/8 blur-3xl" />
           </div>
           <div className="relative z-10 max-w-[1300px] mx-auto">
             <ScrollReveal delay={0.1}>

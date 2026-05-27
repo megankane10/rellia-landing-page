@@ -380,6 +380,22 @@ export const isItemDetailPath = (pathname: string): boolean => {
 export const shouldUseDefaultOgImage = (pathname: string): boolean =>
   normalizePathname(pathname) === "/"
 
+const STATIC_OG_IMAGE_BY_ROUTE: Record<string, string> = {
+  "/": "/ogimage.png",
+  "/apply": "/ogimage.png",
+  "/founders": "/founders-ogimage.png",
+  "/investors": "/investors-ogimage.png",
+  "/advisors": "/advisors-ogimage.png",
+  "/industry-partners": "/industrypartners-ogimage.png",
+}
+
+export const getStaticOgImageForPathname = (pathname: string): string | undefined => {
+  const key = normalizePathname(pathname)
+  const src = STATIC_OG_IMAGE_BY_ROUTE[key]
+  if (!src) return undefined
+  return resolveSocialOgImageUrl(src, getSiteUrl())
+}
+
 export const toAbsoluteOgImageUrl = (src: string, base = getSiteUrl()): string => {
   const trimmed = src.trim()
   if (!trimmed) return ""
