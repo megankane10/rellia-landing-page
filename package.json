@@ -19,6 +19,7 @@
     "build:server": "vite build --config vite.config.server.ts",
     "start": "node dist/server/node-build.mjs",
     "sanity:seed": "tsx scripts/sanity-seed.ts",
+    "sanity:seed:starters": "tsx scripts/sanity-seed-starters.ts",
     "sanity:cleanup": "tsx scripts/sanity-cleanup.ts",
     "sanity:promote:dry": "tsx scripts/promote-preview-to-production.ts",
     "sanity:promote": "tsx scripts/promote-preview-to-production.ts",
