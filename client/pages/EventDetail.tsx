@@ -46,7 +46,7 @@ import { buildMailtoHref } from "@/lib/mailto"
 import { DEFAULT_GLOBAL_SETTINGS } from "@shared/cms/defaults"
 import { EventDetailPortableText } from "@/components/EventDetailPortableText"
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet"
-import type { SanityPortableText } from "@shared/cms/types"
+import type { SanityPortableText, SeoContent } from "@shared/cms/types"
 import { useEventBySlug } from "@/hooks/useCmsDocuments"
 import { resolveEventCardImageSrc } from "@shared/cms/itemCardImage"
 import { allowCmsSeedFallbacks } from "@/lib/deploymentEnv"
@@ -158,9 +158,16 @@ export default function EventDetail() {
   const eventMeta = useMemo(() => {
     if (!match) return null
     const { _variant: _variantIgnored, ...event } = match
+
+    const cmsSeo = (match as unknown as { seo?: SeoContent | null }).seo ?? null
+    const seoMetaTitle = cmsSeo?.metaTitle?.trim()
+    const seoOgTitle = cmsSeo?.ogTitle?.trim()
+    const seoMetaDescription = cmsSeo?.metaDescription?.trim()
+    const seoOgDescription = cmsSeo?.ogDescription?.trim()
+    const seoOgImageUrl = cmsSeo?.ogImageUrl?.trim()
+
     const computedDateTime = getProgramsEventDisplayDateTime(event)
     const shortDateTime = shortenProgramsEventDateTime(computedDateTime)
-    const pageTitle = clampMetaTitle(`${event.title} - Events`)
 
     const descText = (() => {
       if (event.eventDescription) {
@@ -185,14 +192,15 @@ export default function EventDetail() {
       ? `${eventDate} · ${descText}`
       : eventDate
 
-    const eventDescription = clampMetaDescription(finalDesc)
+    const pageTitle = clampMetaTitle(seoMetaTitle || seoOgTitle || `${event.title} - Events`)
+    const eventDescription = clampMetaDescription(seoMetaDescription || seoOgDescription || finalDesc)
     const eventSlugPath = getProgramsEventSlug(event)
     const pagePath = `/events/${eventSlugPath}`
     return {
       pageTitle,
       eventDescription,
       shareTitle: pageTitle,
-      ogImage: resolveSocialOgImageUrl(event.imageSrc, undefined, { square: true }),
+      ogImage: seoOgImageUrl || resolveSocialOgImageUrl(event.imageSrc, undefined, { square: true }),
       canonical: buildPageUrl(pagePath),
       pagePath,
     }

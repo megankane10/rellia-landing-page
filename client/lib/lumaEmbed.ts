@@ -8,5 +8,6 @@ export const getLumaEmbedIframeSrc = (event: ProgramsEventCard): string | null =
   const evtId = event.lumaEventId?.trim()
   if (!evtId) return null
   const id = evtId.startsWith("evt-") ? evtId : `evt-${evtId}`
-  return `https://lu.ma/embed/event/${id}/simple`
+  // Keep src aligned with editors' Luma embed snippets.
+  return `https://luma.com/embed/event/${id}/simple`
 }
