@@ -10,6 +10,8 @@ import {eventsLandingPage} from './documents/eventsLandingPage'
 import {contactPage} from './documents/contactPage'
 import {notFoundPage} from './documents/notFoundPage'
 import {paymentPage} from './documents/paymentPage'
+import {applyPage} from './documents/applyPage'
+import {diagnosticSurveyContent} from './documents/diagnosticSurveyContent'
 import {page} from './documents/page'
 import {advisor} from './documents/advisor'
 import {founder} from './documents/founder'
@@ -77,6 +79,8 @@ export const schemaTypes = [
   contactPage,
   notFoundPage,
   paymentPage,
+  applyPage,
+  diagnosticSurveyContent,
   page,
   networkFoundersPage,
   networkAdvisorsPage,

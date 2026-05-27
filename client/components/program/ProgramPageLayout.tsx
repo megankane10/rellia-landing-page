@@ -580,7 +580,13 @@ const ProgramPageLayout = ({
                     <h2 className="font-host-grotesk text-sm font-bold tracking-widest text-rellia-mint uppercase">
                       {q.pricingBadge}
                     </h2>
-                    <div className="mt-5">
+                    <div className="mt-5 flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                      {q.pricingDiscountEnabled &&
+                      q.pricingCompareAmount?.trim() ? (
+                        <span className="text-4xl md:text-5xl font-bold text-white/45 line-through">
+                          {q.pricingCompareAmount.trim()}
+                        </span>
+                      ) : null}
                       <span className="text-6xl md:text-7xl font-extrabold text-white tracking-tight">
                         {q.pricingAmount}
                         <span className="text-4xl md:text-5xl">

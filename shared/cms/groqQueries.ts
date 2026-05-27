@@ -357,6 +357,8 @@ const programDetailFields = `
   timelineSubtitle,
   pricingBadge,
   pricingAmount,
+  pricingDiscountEnabled,
+  pricingCompareAmount,
   pricingSubAmount,
   pricingDescription,
   pricingBullets,
@@ -480,6 +482,35 @@ export const notFoundQuery = `*[_type == "notFoundPage"][0]{
   ${seoFragment}
 }`;
 
+export const applyPageQuery = `*[_type == "applyPage"][0]{
+  headingTitle,
+  subheading,
+  steps[]{ title, description },
+  showRoleLinks,
+  applyButtonLabel,
+  bottomCtaTitle,
+  bottomCtaBody,
+  bottomCtaPrimaryLabel,
+  bottomCtaPrimaryHref,
+  bottomCtaSecondaryLabel,
+  bottomCtaSecondaryHref,
+  ${seoFragment}
+}`
+
+export const diagnosticSurveyContentQuery = `*[_type == "diagnosticSurveyContent"][0]{
+  sections[]{
+    id,
+    icon,
+    title,
+    desc,
+    questions[]{
+      text,
+      type,
+      options[]{ label, desc, score }
+    }
+  }
+}`
+
 export const paymentPageQuery = `*[_type == "paymentPage"][0]{
   badge,
   headline,
@@ -507,6 +538,14 @@ export const paymentPageQuery = `*[_type == "paymentPage"][0]{
   pricingAnnualBadge,
   pricingMonthlyAmount,
   pricingAnnualAmount,
+  pricingMonthlyDiscountEnabled,
+  pricingMonthlyCompareAmount,
+  pricingAnnualDiscountEnabled,
+  pricingAnnualCompareAmount,
+  benefitsPanelHeadline,
+  choosePlanHeadline,
+  promoPillEnabled,
+  promoMessage,
   pricingPerSuffix,
   popularLabel,
   monthlyProceedLabel,

@@ -7,6 +7,7 @@ import {
 } from "./inlineHeroHeadline"
 import type {
   AboutPageContent,
+  ApplyPageContent,
   ContactPageContent,
   ContactSubjectOption,
   FaqPageContent,
@@ -2104,7 +2105,7 @@ export const DEFAULT_PAYMENT_PAGE: PaymentPageContent = {
   successTitle: "Payment received",
   successBody:
     "Thank you — your enrollment payment went through. We'll be in touch with next steps.",
-  discountBannerEnabled: false,
+  discountBannerEnabled: true,
   discountBannerBadge: "LIMITED OFFER",
   discountBannerTitle:
     "Founding members get 50% off your first purchase — use code RELLIA50",
@@ -2128,6 +2129,15 @@ export const DEFAULT_PAYMENT_PAGE: PaymentPageContent = {
   pricingAnnualBadge: "Annual membership",
   pricingMonthlyAmount: "$30",
   pricingAnnualAmount: "$25",
+  pricingMonthlyDiscountEnabled: false,
+  pricingMonthlyCompareAmount: "",
+  pricingAnnualDiscountEnabled: false,
+  pricingAnnualCompareAmount: "",
+  benefitsPanelHeadline: "Join the network today",
+  choosePlanHeadline: "Choose your plan",
+  promoPillEnabled: true,
+  promoMessage:
+    "Founding members get 50% off first purchase using code {code}",
   pricingPerSuffix: "/month",
   popularLabel: "POPULAR",
   monthlyProceedLabel: "Proceed to payment",
@@ -2137,6 +2147,42 @@ export const DEFAULT_PAYMENT_PAGE: PaymentPageContent = {
   questionsFaqPath: "/faq",
   questionsContactLabel: "Get in Touch",
   questionsContactPath: "/contact",
+}
+
+export const DEFAULT_APPLY_PAGE: ApplyPageContent = {
+  headingTitle: "Path to Membership",
+  subheading:
+    "What happens after you apply—from submission to joining—and tailored links below if you want more detail for your role before you hear back.",
+  steps: [
+    {
+      title: "Submit Application",
+      description:
+        "Complete the application. Our team reviews every submission to keep the network valuable for every member.",
+    },
+    {
+      title: "Review & Approval",
+      description:
+        "We'll review your background and goals. You'll hear from us by email within a few business days.",
+    },
+    {
+      title: "Secure Your Spot",
+      description:
+        "Once approved, you'll get a link to choose your membership and complete payment.",
+    },
+    {
+      title: "Join the Network",
+      description: "Get immediate access to the community, resources, and network benefits.",
+    },
+  ],
+  showRoleLinks: true,
+  applyButtonLabel: "Apply now",
+  bottomCtaTitle: "Explore the **Rellia network**",
+  bottomCtaBody:
+    "See how members connect across programs, partners, and resources—or get in touch with questions about membership.",
+  bottomCtaPrimaryLabel: "Explore programs",
+  bottomCtaPrimaryHref: "/programs",
+  bottomCtaSecondaryLabel: "Contact us",
+  bottomCtaSecondaryHref: "/contact",
 }
 
 export const DEFAULT_NOT_FOUND: NotFoundContent = {
@@ -2361,6 +2407,49 @@ export function mergePaymentPage(
   if (typeof base.discountBannerEnabled !== "boolean") {
     base.discountBannerEnabled = DEFAULT_PAYMENT_PAGE.discountBannerEnabled
   }
+  if (typeof base.pricingMonthlyDiscountEnabled !== "boolean") {
+    base.pricingMonthlyDiscountEnabled = DEFAULT_PAYMENT_PAGE.pricingMonthlyDiscountEnabled
+  }
+  if (typeof base.pricingAnnualDiscountEnabled !== "boolean") {
+    base.pricingAnnualDiscountEnabled = DEFAULT_PAYMENT_PAGE.pricingAnnualDiscountEnabled
+  }
+  if (typeof base.promoPillEnabled !== "boolean") {
+    base.promoPillEnabled = DEFAULT_PAYMENT_PAGE.promoPillEnabled
+  }
+  fill("benefitsPanelHeadline", DEFAULT_PAYMENT_PAGE.benefitsPanelHeadline ?? "")
+  fill("choosePlanHeadline", DEFAULT_PAYMENT_PAGE.choosePlanHeadline ?? "")
+  fill("promoMessage", DEFAULT_PAYMENT_PAGE.promoMessage ?? "")
+  return base
+}
+
+export function mergeApplyPage(
+  partial: Partial<ApplyPageContent> | null | undefined,
+): ApplyPageContent {
+  const p = omitNullish((partial ?? {}) as Record<string, unknown>) as Partial<ApplyPageContent>
+  const base = { ...DEFAULT_APPLY_PAGE, ...p }
+  const steps = compactList(p.steps).filter(
+    (s): s is ApplyPageContent["steps"][number] =>
+      Boolean(s?.title?.trim() && s?.description?.trim()),
+  )
+  base.steps = steps.length > 0 ? steps : DEFAULT_APPLY_PAGE.steps
+  if (typeof base.showRoleLinks !== "boolean") {
+    base.showRoleLinks = DEFAULT_APPLY_PAGE.showRoleLinks
+  }
+  const fill = (key: keyof ApplyPageContent, fallback: string) => {
+    const v = base[key]
+    if (typeof v === "string" && !v.trim()) {
+      ;(base as Record<string, unknown>)[key as string] = fallback
+    }
+  }
+  fill("headingTitle", DEFAULT_APPLY_PAGE.headingTitle)
+  fill("subheading", DEFAULT_APPLY_PAGE.subheading)
+  fill("applyButtonLabel", DEFAULT_APPLY_PAGE.applyButtonLabel)
+  fill("bottomCtaTitle", DEFAULT_APPLY_PAGE.bottomCtaTitle)
+  fill("bottomCtaBody", DEFAULT_APPLY_PAGE.bottomCtaBody)
+  fill("bottomCtaPrimaryLabel", DEFAULT_APPLY_PAGE.bottomCtaPrimaryLabel)
+  fill("bottomCtaPrimaryHref", DEFAULT_APPLY_PAGE.bottomCtaPrimaryHref)
+  fill("bottomCtaSecondaryLabel", DEFAULT_APPLY_PAGE.bottomCtaSecondaryLabel)
+  fill("bottomCtaSecondaryHref", DEFAULT_APPLY_PAGE.bottomCtaSecondaryHref)
   return base
 }
 

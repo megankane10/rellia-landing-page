@@ -9,6 +9,7 @@ export const presentationMainDocuments = defineDocuments([
   {route: '/programs', type: 'programsLandingPage'},
   {route: '/events', type: 'eventsLandingPage'},
   {route: '/contact', type: 'contactPage'},
+  {route: '/apply', type: 'applyPage'},
   {route: '/membership', type: 'paymentPage'},
   {route: '/consulting', type: 'consultingPage'},
   {route: '/startup-diagnostic', type: 'diagnosticLandingPage'},
@@ -83,10 +84,22 @@ export const presentationLocations = {
       locations: [{title: doc?.title || 'Contact', href: '/contact'}],
     }),
   }),
+  applyPage: defineLocations({
+    select: {headingTitle: 'headingTitle'},
+    resolve: (doc) => ({
+      locations: [{title: doc?.headingTitle || 'Apply', href: '/apply'}],
+    }),
+  }),
   paymentPage: defineLocations({
     select: {headline: 'headline'},
     resolve: (doc) => ({
       locations: [{title: doc?.headline || 'Membership', href: '/membership'}],
+    }),
+  }),
+  diagnosticSurveyContent: defineLocations({
+    select: {},
+    resolve: () => ({
+      locations: [{title: 'Diagnostic survey', href: '/diagnostic-survey'}],
     }),
   }),
   consultingPage: defineLocations({

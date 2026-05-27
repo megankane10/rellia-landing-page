@@ -5,12 +5,17 @@ import RelliaAction from "@/components/RelliaAction"
 import RelliaCta from "@/components/RelliaCta"
 import { FilloutStandardEmbed } from "@fillout/react"
 import { FILLOUT_APPLY_FORM_ID, FILLOUT_EMBED_VIEWPORT_MIN_CLASS } from "@/lib/filloutApplyForm"
-import { DEFAULT_HOME_PAGE } from "@shared/cms/defaults"
+import { DEFAULT_APPLY_PAGE } from "@shared/cms/defaults"
+import { useApplyPage } from "@/hooks/useCmsDocuments"
+import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo"
 import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { cn } from "@/lib/utils"
 
 export default function Apply() {
+  const { data: applyCms } = useApplyPage()
+  const apply = applyCms ?? DEFAULT_APPLY_PAGE
+  useApplyCmsSeo(apply.seo)
   const [showForm, setShowForm] = useState(false)
 
   return (
@@ -32,6 +37,10 @@ export default function Apply() {
             >
               <MembershipPathTimeline
                 className="border-t border-black/10 pt-12 md:pt-16 lg:pt-20"
+                headingTitle={apply.headingTitle}
+                subheading={apply.subheading}
+                steps={apply.steps}
+                showRoleLinks={apply.showRoleLinks}
                 belowTimeline={
                   <RelliaAction
                     type="button"
@@ -41,7 +50,7 @@ export default function Apply() {
                     onClick={() => setShowForm(true)}
                     aria-label="Show application form"
                   >
-                    Apply now
+                    {apply.applyButtonLabel}
                   </RelliaAction>
                 }
               />
@@ -76,13 +85,16 @@ export default function Apply() {
 
         <div className={cn("bg-rellia-cream/25", showForm && "bg-rellia-cream/40")}>
           <RelliaCta
-            title="Explore the **Rellia network**"
-            body="See how members connect across programs, partners, and resources—or get in touch with questions about membership."
+            title={apply.bottomCtaTitle}
+            body={apply.bottomCtaBody}
             primary={{
-              label: DEFAULT_HOME_PAGE.secondaryCtaLabel,
-              to: DEFAULT_HOME_PAGE.secondaryCtaPath,
+              label: apply.bottomCtaPrimaryLabel,
+              to: apply.bottomCtaPrimaryHref,
             }}
-            secondary={{ label: "Contact us", to: "/contact" }}
+            secondary={{
+              label: apply.bottomCtaSecondaryLabel,
+              to: apply.bottomCtaSecondaryHref,
+            }}
           />
         </div>
       </main>

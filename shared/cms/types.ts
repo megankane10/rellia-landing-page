@@ -507,6 +507,8 @@ export type QmsProgramContent = {
   timelineSubtitle: string
   pricingBadge: string
   pricingAmount: string
+  pricingDiscountEnabled?: boolean
+  pricingCompareAmount?: string
   pricingSubAmount: string
   pricingDescription: string
   pricingBullets: string[]
@@ -516,6 +518,42 @@ export type QmsProgramContent = {
   bottomContactHref: string
   testimonials?: TrustedMemberTestimonial[]
   seo?: SeoContent
+}
+
+export type ApplyPageStep = {
+  title: string
+  description: string
+}
+
+export type ApplyPageContent = {
+  headingTitle: string
+  subheading: string
+  steps: ApplyPageStep[]
+  showRoleLinks: boolean
+  applyButtonLabel: string
+  bottomCtaTitle: string
+  bottomCtaBody: string
+  bottomCtaPrimaryLabel: string
+  bottomCtaPrimaryHref: string
+  bottomCtaSecondaryLabel: string
+  bottomCtaSecondaryHref: string
+  seo?: SeoContent
+}
+
+export type DiagnosticSurveyCmsSection = {
+  id: string
+  icon?: string
+  title?: string
+  desc?: string
+  questions?: {
+    text?: string
+    type?: string
+    options?: { label?: string; desc?: string; score?: number }[]
+  }[]
+}
+
+export type DiagnosticSurveyContent = {
+  sections?: DiagnosticSurveyCmsSection[]
 }
 
 export type MarketingPageContent = {
@@ -559,6 +597,14 @@ export type PaymentPageContent = {
   pricingAnnualBadge: string
   pricingMonthlyAmount: string
   pricingAnnualAmount: string
+  pricingMonthlyDiscountEnabled?: boolean
+  pricingMonthlyCompareAmount?: string
+  pricingAnnualDiscountEnabled?: boolean
+  pricingAnnualCompareAmount?: string
+  benefitsPanelHeadline?: string
+  choosePlanHeadline?: string
+  promoPillEnabled?: boolean
+  promoMessage?: string
   pricingPerSuffix: string
   popularLabel: string
   monthlyProceedLabel: string

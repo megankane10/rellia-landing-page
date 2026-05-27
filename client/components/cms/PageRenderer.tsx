@@ -514,6 +514,8 @@ export const PageRenderer = ({ page }: { page: CmsPageContent }) => {
   return <SectionsRenderer sections={sections} />
 }
 
+export default PageRenderer
+
 export const SectionsRenderer = ({ sections }: { sections: CmsPageSection[] }) => {
   return <>{sections.map((s, idx) => <div key={s._key ?? `${s._type}-${idx}`}>{renderSection(s)}</div>)}</>
 }

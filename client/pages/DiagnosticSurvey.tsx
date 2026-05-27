@@ -33,7 +33,8 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer"
 import RelliaAction from "@/components/RelliaAction";
 import RouteSeo from "@/components/RouteSeo";
-import { useAdvisors } from "@/hooks/useCmsDocuments";
+import { useAdvisors, useDiagnosticSurveyContent } from "@/hooks/useCmsDocuments";
+import { mergeDiagnosticSurveySections } from "@/lib/mergeDiagnosticSurvey";
 import { ADVISOR_DIRECTORY_SEED, type AdvisorDirectoryFilter } from "@/data/advisorDirectory";
 import { allowCmsSeedFallbacks } from "@/lib/deploymentEnv";
 import {
@@ -48,10 +49,7 @@ import { cn } from "@/lib/utils";
 import { clearApiCsrfCache, getApiCsrfHeaders } from "@/lib/apiCsrf";
 import { PROGRAM_META_BY_HREF } from "@/config/programMeta";
 import FilteredListEmptyState from "@/components/FilteredListEmptyState";
-import {
-  DIAGNOSTIC_SURVEY_SECTIONS,
-  type DiagnosticSurveySection,
-} from "@/data/diagnosticSurveySections";
+import type { DiagnosticSurveySection } from "@/data/diagnosticSurveySections";
 
 const SECTION_ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
   product_design: Palette,
@@ -179,14 +177,14 @@ const DATA_MAP: Record<
   },
 };
 
-// ─── QUESTION DATA ───────────────────────────────────────────────────────────
-
-const SECTIONS: Section[] = DIAGNOSTIC_SURVEY_SECTIONS;
-
 // ─── HELPERS ─────────────────────────────────────────────────────────────────
 
-function getSectionScore(secId: string, answers: Answers): number | null {
-  const sec = SECTIONS.find((s) => s.id === secId);
+function getSectionScore(
+  secId: string,
+  answers: Answers,
+  sections: Section[],
+): number | null {
+  const sec = sections.find((s) => s.id === secId);
   if (!sec || !answers[secId] || !Object.keys(answers[secId]).length)
     return null;
   let sum = 0,
@@ -358,18 +356,24 @@ export default function DiagnosticSurvey() {
     return allowCmsSeedFallbacks() ? ADVISOR_DIRECTORY_SEED : []
   }, [cmsAdvisors]);
 
-  const completedSections = SECTIONS.filter(
+  const { data: surveyCms } = useDiagnosticSurveyContent()
+  const sections = useMemo(
+    () => mergeDiagnosticSurveySections(surveyCms ?? undefined),
+    [surveyCms],
+  )
+
+  const completedSections = sections.filter(
     (s) =>
       answers[s.id] && Object.keys(answers[s.id]).length === s.questions.length,
   ).length;
-  const progress = Math.round((completedSections / SECTIONS.length) * 100);
-  const totalQs = SECTIONS.reduce((a, s) => a + s.questions.length, 0);
-  const answeredGlobal = SECTIONS.reduce(
+  const progress = Math.round((completedSections / sections.length) * 100);
+  const totalQs = sections.reduce((a, s) => a + s.questions.length, 0);
+  const answeredGlobal = sections.reduce(
     (a, s) => a + Object.keys(answers[s.id] ?? {}).length,
     0,
   );
 
-  const sec = SECTIONS[currentSection];
+  const sec = sections[currentSection];
   const secAnswers = answers[sec?.id ?? ""] ?? {};
   const currentQ = sec?.questions[currentQIdx];
   const selectedOpt =
@@ -410,7 +414,7 @@ export default function DiagnosticSurvey() {
     setTimeout(() => {
       if (currentQIdx < sec.questions.length - 1) {
         setCurrentQIdx((i) => i + 1);
-      } else if (currentSection < SECTIONS.length - 1) {
+      } else if (currentSection < sections.length - 1) {
         setCurrentSection((i) => i + 1);
         setCurrentQIdx(0);
       } else {
@@ -425,8 +429,8 @@ export default function DiagnosticSurvey() {
     setProcStep(0);
 
     // Prepare data for API
-    const scores: string[] = SECTIONS.map((s) => {
-      const sc = getSectionScore(s.id, answers) ?? 0;
+    const scores: string[] = sections.map((s) => {
+      const sc = getSectionScore(s.id, answers, sections) ?? 0;
       return `${s.title}: ${sc}%`;
     });
 
@@ -606,7 +610,7 @@ export default function DiagnosticSurvey() {
 
     return weakSections
       .map((cat) => {
-        const section = SECTIONS.find((s) => s.title === cat);
+        const section = sections.find((s) => s.title === cat);
         return section ? DATA_MAP[section.id] : null;
       })
       .filter(Boolean);
@@ -629,7 +633,7 @@ export default function DiagnosticSurvey() {
               <div className="flex justify-between text-[10px] font-bold uppercase tracking-widest text-rellia-teal/50">
                 <span>Progress</span>
                 <span>
-                  {completedSections} / {SECTIONS.length}
+                  {completedSections} / {sections.length}
                 </span>
               </div>
               <div className="h-1.5 overflow-hidden rounded-full bg-rellia-teal/5">
@@ -660,7 +664,7 @@ export default function DiagnosticSurvey() {
               </div>
 
               <div className="space-y-1">
-                {SECTIONS.map((s, i) => {
+                {sections.map((s, i) => {
                   const done =
                     answers[s.id] &&
                     Object.keys(answers[s.id]).length === s.questions.length;
@@ -805,7 +809,7 @@ export default function DiagnosticSurvey() {
                       </div>
 
                       <div className="grid grid-cols-1 gap-2">
-                        {SECTIONS.map((s, i) => {
+                        {sections.map((s, i) => {
                           const done =
                             answers[s.id] &&
                             Object.keys(answers[s.id]).length ===
@@ -1196,7 +1200,7 @@ export default function DiagnosticSurvey() {
                       else if (currentSection > 0) {
                         setCurrentSection((i) => i - 1);
                         setCurrentQIdx(
-                          SECTIONS[currentSection - 1].questions.length - 1,
+                          sections[currentSection - 1].questions.length - 1,
                         );
                       } else goToIntro();
                     }}
@@ -1211,13 +1215,13 @@ export default function DiagnosticSurvey() {
                     onClick={() => {
                       if (currentQIdx < sec.questions.length - 1)
                         setCurrentQIdx((i) => i + 1);
-                      else if (currentSection < SECTIONS.length - 1)
+                      else if (currentSection < sections.length - 1)
                         goToSection(currentSection + 1);
                       else goToSubmit();
                     }}
                     className="flex h-12 items-center gap-2 rounded-full bg-rellia-teal px-8 font-bold text-white shadow-lg transition-transform hover:scale-105 active:scale-95"
                   >
-                    {currentSection === SECTIONS.length - 1 &&
+                    {currentSection === sections.length - 1 &&
                     currentQIdx === sec.questions.length - 1
                       ? "Finish →"
                       : "Skip →"}
@@ -1244,8 +1248,8 @@ export default function DiagnosticSurvey() {
                       Your Assessment Profile
                     </h3>
                     <div className="space-y-2 flex-1">
-                      {SECTIONS.map((s) => {
-                        const sc = getSectionScore(s.id, answers);
+                      {sections.map((s) => {
+                        const sc = getSectionScore(s.id, answers, sections);
                         return (
                           <div
                             key={s.id}
@@ -1544,8 +1548,8 @@ export default function DiagnosticSurvey() {
                       Full Readiness Breakdown
                     </h2>
                     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                      {SECTIONS.map((s) => {
-                        const sc = getSectionScore(s.id, answers) ?? 0;
+                      {sections.map((s) => {
+                        const sc = getSectionScore(s.id, answers, sections) ?? 0;
                         return (
                           <div
                             key={s.id}

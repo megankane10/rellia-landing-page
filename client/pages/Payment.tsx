@@ -18,6 +18,8 @@ import { usePaymentPage } from "@/hooks/useCmsDocuments"
 import { DEFAULT_PAYMENT_PAGE } from "@shared/cms/defaults"
 import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo"
 import { cn } from "@/lib/utils"
+import { PriceDisplay } from "@/components/cms/PriceDisplay"
+import { formatPromoMessage } from "@/lib/mergeDiagnosticSurvey"
 
 const BENEFIT_ICONS = [Sparkles, ShieldCheck, Users, Target, Zap]
 
@@ -87,7 +89,7 @@ export default function Payment() {
                 <div className="relative z-10 flex flex-col h-full justify-between">
                   <div>
                     <h1 className="font-host-grotesk text-2xl md:text-[32px] font-semibold tracking-tight text-rellia-mint mb-10 leading-tight">
-                      Join the network today
+                      {p.benefitsPanelHeadline?.trim() || p.benefitsTitle}
                     </h1>
 
                     <div className="flex flex-col gap-y-5 md:gap-y-6 pb-20">
@@ -125,7 +127,9 @@ export default function Payment() {
             {/* Right: Plan Selection */}
             <div className="flex flex-col w-full px-4 md:px-8">
               <div className="w-full h-full flex flex-col justify-center">
-                <h2 className="font-host-grotesk text-2xl md:text-[32px] font-semibold text-black mb-10 tracking-tight">Choose your plan</h2>
+                <h2 className="font-host-grotesk text-2xl md:text-[32px] font-semibold text-black mb-10 tracking-tight">
+                  {p.choosePlanHeadline?.trim() || "Choose your plan"}
+                </h2>
                     
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full mb-6">
                       <button
@@ -142,10 +146,13 @@ export default function Payment() {
                           <CheckCircle2 className="absolute top-4 right-4 h-5 w-5 text-rellia-teal" />
                         )}
                         <span className="font-host-grotesk text-xs font-bold uppercase tracking-widest text-rellia-teal mb-4">Annual</span>
-                        <div className="flex items-baseline gap-1">
-                          <span className="text-3xl md:text-4xl font-bold text-black tracking-tight">{p.pricingAnnualAmount}</span>
-                          <span className="text-black/40 font-medium text-base">/yr</span>
-                        </div>
+                        <PriceDisplay
+                          amount={p.pricingAnnualAmount}
+                          compareAmount={p.pricingAnnualCompareAmount}
+                          discountEnabled={p.pricingAnnualDiscountEnabled}
+                          suffix="/yr"
+                          suffixClassName="text-black/40 font-medium text-base"
+                        />
                       </button>
 
                       <button
@@ -162,10 +169,13 @@ export default function Payment() {
                           <CheckCircle2 className="absolute top-4 right-4 h-5 w-5 text-rellia-teal" />
                         )}
                         <span className="font-host-grotesk text-xs font-bold uppercase tracking-widest text-rellia-teal mb-4">Monthly</span>
-                        <div className="flex items-baseline gap-1">
-                          <span className="text-3xl md:text-4xl font-bold text-black tracking-tight">{p.pricingMonthlyAmount}</span>
-                          <span className="text-black/40 font-medium text-base">/mo</span>
-                        </div>
+                        <PriceDisplay
+                          amount={p.pricingMonthlyAmount}
+                          compareAmount={p.pricingMonthlyCompareAmount}
+                          discountEnabled={p.pricingMonthlyDiscountEnabled}
+                          suffix="/mo"
+                          suffixClassName="text-black/40 font-medium text-base"
+                        />
                       </button>
                     </div>
 
@@ -188,31 +198,41 @@ export default function Payment() {
                       <ArrowRight className="ml-2 h-5 w-5" aria-hidden />
                     </RelliaAction>
 
-                    <div className="w-full flex flex-col items-start gap-4">
-                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-rellia-mint/20 text-rellia-teal text-xs font-bold uppercase tracking-wider">
-                        <span className="relative flex h-2 w-2">
-                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rellia-teal opacity-75"></span>
-                          <span className="relative inline-flex rounded-full h-2 w-2 bg-rellia-teal"></span>
-                        </span>
-                        Limited time
-                      </span>
-                      <div className="space-y-4">
-                        <p className="font-urbanist text-lg text-black/70">
-                          Founding members get <span className="font-bold text-rellia-teal">50% off</span> first purchase using code <span className="font-bold text-black">{p.discountBannerSubtitle.trim() || "RELLIA50"}</span>
-                        </p>
-                        <button 
-                          onClick={handleCopyCode}
-                          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-black/5 hover:bg-black/10 transition-colors font-host-grotesk text-sm font-bold text-black"
-                        >
-                          {codeCopied ? (
-                            <CheckCircle2 className="h-4 w-4 text-rellia-teal" />
-                          ) : (
-                            <Copy className="h-4 w-4" />
-                          )}
-                          {codeCopied ? "Code copied!" : "Copy code"}
-                        </button>
+                    {p.discountBannerEnabled ? (
+                      <div className="w-full flex flex-col items-start gap-4">
+                        {p.promoPillEnabled !== false ? (
+                          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-rellia-mint/20 text-rellia-teal text-xs font-bold uppercase tracking-wider">
+                            <span className="relative flex h-2 w-2">
+                              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rellia-teal opacity-75"></span>
+                              <span className="relative inline-flex rounded-full h-2 w-2 bg-rellia-teal"></span>
+                            </span>
+                            {p.discountBannerBadge.trim() || "Limited time"}
+                          </span>
+                        ) : null}
+                        <div className="space-y-4">
+                          <p className="font-urbanist text-lg text-black/70">
+                            {formatPromoMessage(
+                              p.promoMessage?.trim() ||
+                                p.discountBannerTitle?.trim() ||
+                                "Founding members get 50% off first purchase using code {code}",
+                              p.discountBannerSubtitle.trim() || "RELLIA50",
+                            )}
+                          </p>
+                          <button
+                            type="button"
+                            onClick={handleCopyCode}
+                            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-black/5 hover:bg-black/10 transition-colors font-host-grotesk text-sm font-bold text-black"
+                          >
+                            {codeCopied ? (
+                              <CheckCircle2 className="h-4 w-4 text-rellia-teal" />
+                            ) : (
+                              <Copy className="h-4 w-4" />
+                            )}
+                            {codeCopied ? "Code copied!" : "Copy code"}
+                          </button>
+                        </div>
                       </div>
-                    </div>
+                    ) : null}
                   </div>
                 </div>
           </motion.div>

@@ -277,7 +277,6 @@ In Sanity Studio: open **Presentation** → confirm iframe loads the preview URL
 | CMS (client) | `VITE_SANITY_PROJECT_ID`, `VITE_SANITY_DATASET`, `VITE_DISABLE_CMS` |
 | Checkout | `VITE_STRIPE_MONTHLY_PLAN_LINK`, `VITE_STRIPE_ANNUAL_PLAN_LINK`, `VITE_QMS_PAYMENT_LINK` |
 | Server / Sanity API | `SANITY_API_PROJECT_ID`, `SANITY_API_DATASET`, `SANITY_ENFORCE_VERCEL_DATASET`, `SANITY_ALLOWED_DATASETS`, `SANITY_API_READ_TOKEN`, `SANITY_API_WRITE_TOKEN`, `SANITY_STUDIO_URL`, `SANITY_STUDIO_PREVIEW_URL` (Studio) |
-| HubSpot (contact proxy) | `HUBSPOT_CONTACT_FORM_GUID`, `HUBSPOT_PORTAL_ID`, `HUBSPOT_FORMS_API_BASE` |
 | API hardening | `ALLOWED_ORIGINS`, `REQUIRE_API_CSRF` |
 
 Full commentary and environment presets: **`.env.example`**.
@@ -293,13 +292,13 @@ All **`/api/*`** routes are served by the serverless entry **`api/index.js`** (b
 | `GET` | `/api/health`, `/health` | Health check (`/health` rewrites to API on Vercel) | Signup troubleshooting / monitors |
 | `GET` | `/api/csrf-token` | Issues CSRF cookie + token | `client/lib/apiCsrf.ts` |
 | `POST` | `/api/sanity/query` | Whitelisted Sanity reads | `client/lib/sanity.ts` |
-| `POST` | `/api/contact-hubspot` | Proxies contact form to HubSpot Forms API | `client/pages/Contact.tsx` |
+| `POST` | `/api/contact` | Contact form submissions (Supabase) | `client/pages/Contact.tsx` |
 | `POST` | `/api/diagnostic-report` | Diagnostic survey report (Supabase) | `client/pages/DiagnosticSurvey.tsx` |
 | `GET` | `/api/studio` | Redirects to `SANITY_STUDIO_URL` | **Not linked from the React app** — bookmark or docs only |
 | `GET` | `/api/draft-mode/enable` | Sanity Presentation / draft preview cookie | Sanity Studio Presentation (iframe), not direct user navigation |
 | `GET` | `/api/draft-mode/disable` | Clears draft preview cookie | Same |
 
-**Membership / apply flows:** Stripe uses **Payment Links** (client env). **Fillout** embeds run in the browser (e.g. apply/careers). **HubSpot** is used both via the v2 script (`client/lib/hubspotForms.ts`) and via **`/api/contact-hubspot`** for the contact page server proxy.
+**Membership / apply flows:** Stripe uses **Payment Links** (client env). **Fillout** embeds run in the browser (e.g. apply/careers). Contact submissions go to **Supabase** via `/api/contact`.
 
 ---
 
@@ -322,12 +321,11 @@ These are **not wired into the running UI** or **not referenced by `package.json
 This is a **codebase review checklist**, not a penetration test. Address in order of risk for your threat model.
 
 1. **CORS defaults** — If **`ALLOWED_ORIGINS`** is empty in production, `server/index.ts` allows **any** browser `Origin` for the `cors()` middleware (with a console warning). **Fix:** set explicit comma-separated origins for every deployed hostname (preview + prod).
-2. **HubSpot portal fallback** — `HUBSPOT_PORTAL_ID` falls back to a **hardcoded** default in `server/index.ts` if unset. **Fix:** require the env var in production so submissions cannot be misrouted to the wrong portal.
-3. **CSRF escape hatch** — **`REQUIRE_API_CSRF=false`** disables CSRF on POST APIs. **Fix:** never set in production except a documented break-glass; rotate tokens if it was ever used on a shared environment.
-4. **Sanity dataset exposure** — Public datasets are readable without your app; the app mitigates with a **query whitelist** and server proxy, but **secrets and embargoed copy do not belong** in public datasets. **Fix:** align with `.env.example` (private datasets + read tokens where the plan allows).
-5. **Preview / draft endpoints** — Draft-mode routes trust **Origin/Referer** heuristics and Sanity domains (`server/index.ts`). **Fix:** keep **`SANITY_API_READ_TOKEN`** scoped and rotated; restrict **`ALLOWED_ORIGINS`**; monitor abuse of `/api/draft-mode/*`.
-6. **Dependency surface** — Unused heavy deps (e.g. Three.js stack if confirmed unused) increase supply-chain risk and bundle audit noise. **Fix:** remove or justify per [STAGE-2.md](./STAGE-2.md).
-7. **CSP** — Global CSP in `vercel.json` only sets **`frame-ancestors`** (for Sanity framing). **Fix:** if you tighten `Content-Security-Policy` further, regression-test HubSpot, Fillout, Luma embeds, and Stripe checkout flows ([STAGE-2.md](./STAGE-2.md) calls this out).
+2. **CSRF escape hatch** — **`REQUIRE_API_CSRF=false`** disables CSRF on POST APIs. **Fix:** never set in production except a documented break-glass; rotate tokens if it was ever used on a shared environment.
+3. **Sanity dataset exposure** — Public datasets are readable without your app; the app mitigates with a **query whitelist** and server proxy, but **secrets and embargoed copy do not belong** in public datasets. **Fix:** align with `.env.example` (private datasets + read tokens where the plan allows).
+4. **Preview / draft endpoints** — Draft-mode routes trust **Origin/Referer** heuristics and Sanity domains (`server/index.ts`). **Fix:** keep **`SANITY_API_READ_TOKEN`** scoped and rotated; restrict **`ALLOWED_ORIGINS`**; monitor abuse of `/api/draft-mode/*`.
+5. **Dependency surface** — Unused heavy deps (e.g. Three.js stack if confirmed unused) increase supply-chain risk and bundle audit noise. **Fix:** remove or justify per [STAGE-2.md](./STAGE-2.md).
+6. **CSP** — Global CSP in `vercel.json` only sets **`frame-ancestors`** (for Sanity framing). **Fix:** if you tighten `Content-Security-Policy` further, regression-test HubSpot, Fillout, Luma embeds, and Stripe checkout flows ([STAGE-2.md](./STAGE-2.md) calls this out).
 
 ---
 

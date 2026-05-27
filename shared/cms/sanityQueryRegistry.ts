@@ -39,6 +39,8 @@ export const SANITY_QUERY_WHITELIST = {
   contactPage: { query: G.contactPageQuery, params: empty },
   notFound: { query: G.notFoundQuery, params: empty },
   paymentPage: { query: G.paymentPageQuery, params: empty },
+  applyPage: { query: G.applyPageQuery, params: empty },
+  diagnosticSurveyContent: { query: G.diagnosticSurveyContentQuery, params: empty },
   careersPage: { query: G.careersPageQuery, params: empty },
   advisors: { query: G.advisorsQuery, params: empty },
   alumniCompanies: { query: G.alumniCompaniesQuery, params: empty },

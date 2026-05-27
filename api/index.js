@@ -361,6 +361,8 @@ var programDetailFields = `
   timelineSubtitle,
   pricingBadge,
   pricingAmount,
+  pricingDiscountEnabled,
+  pricingCompareAmount,
   pricingSubAmount,
   pricingDescription,
   pricingBullets,
@@ -477,6 +479,33 @@ var notFoundQuery = `*[_type == "notFoundPage"][0]{
   ctaLabel,
   ${seoFragment}
 }`;
+var applyPageQuery = `*[_type == "applyPage"][0]{
+  headingTitle,
+  subheading,
+  steps[]{ title, description },
+  showRoleLinks,
+  applyButtonLabel,
+  bottomCtaTitle,
+  bottomCtaBody,
+  bottomCtaPrimaryLabel,
+  bottomCtaPrimaryHref,
+  bottomCtaSecondaryLabel,
+  bottomCtaSecondaryHref,
+  ${seoFragment}
+}`;
+var diagnosticSurveyContentQuery = `*[_type == "diagnosticSurveyContent"][0]{
+  sections[]{
+    id,
+    icon,
+    title,
+    desc,
+    questions[]{
+      text,
+      type,
+      options[]{ label, desc, score }
+    }
+  }
+}`;
 var paymentPageQuery = `*[_type == "paymentPage"][0]{
   badge,
   headline,
@@ -504,6 +533,14 @@ var paymentPageQuery = `*[_type == "paymentPage"][0]{
   pricingAnnualBadge,
   pricingMonthlyAmount,
   pricingAnnualAmount,
+  pricingMonthlyDiscountEnabled,
+  pricingMonthlyCompareAmount,
+  pricingAnnualDiscountEnabled,
+  pricingAnnualCompareAmount,
+  benefitsPanelHeadline,
+  choosePlanHeadline,
+  promoPillEnabled,
+  promoMessage,
   pricingPerSuffix,
   popularLabel,
   monthlyProceedLabel,
@@ -663,6 +700,8 @@ var SANITY_QUERY_WHITELIST = {
   contactPage: { query: contactPageQuery, params: empty },
   notFound: { query: notFoundQuery, params: empty },
   paymentPage: { query: paymentPageQuery, params: empty },
+  applyPage: { query: applyPageQuery, params: empty },
+  diagnosticSurveyContent: { query: diagnosticSurveyContentQuery, params: empty },
   careersPage: { query: careersPageQuery, params: empty },
   advisors: { query: advisorsQuery, params: empty },
   alumniCompanies: { query: alumniCompaniesQuery, params: empty },
@@ -857,7 +896,7 @@ var resolveSiteOrigin = () => {
   const fromNode = typeof process !== "undefined" ? process.env.VITE_SITE_URL?.trim() || process.env.SITE_URL?.trim() || "" : "";
   return trimTrailingSlash(fromVite || fromNode || "https://www.relliahealth.com");
 };
-var adminContentUrl = () => `${resolveSiteOrigin()}/admin/content`;
+var adminContentUrl = () => `${resolveSiteOrigin()}/admin/drafts`;
 var resolveSanityStudioOrigin = () => {
   const fromNode = typeof process !== "undefined" ? process.env.SANITY_STUDIO_URL?.trim() || "" : "";
   return trimTrailingSlash(fromNode || "https://relliahealth.sanity.studio");
@@ -1919,13 +1958,18 @@ function createServer() {
           res.status(500).json({ error: "Could not load team members." });
           return;
         }
-        const users = (listData.users ?? []).map((u) => ({
-          id: u.id,
-          email: u.email ?? "",
-          createdAt: u.created_at,
-          lastSignInAt: u.last_sign_in_at ?? null,
-          confirmedAt: u.email_confirmed_at ?? null
-        })).filter((u) => u.email).sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+        const users = (listData.users ?? []).map((u) => {
+          const meta = u.user_metadata ?? {};
+          const fullNameRaw = typeof meta.full_name === "string" ? meta.full_name : typeof meta.name === "string" ? meta.name : "";
+          return {
+            id: u.id,
+            email: u.email ?? "",
+            fullName: fullNameRaw.trim() || null,
+            createdAt: u.created_at,
+            lastSignInAt: u.last_sign_in_at ?? null,
+            confirmedAt: u.email_confirmed_at ?? null
+          };
+        }).filter((u) => u.email).sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
         res.setHeader("content-type", "application/json");
         res.json({ users });
       } catch (err) {
@@ -1949,7 +1993,8 @@ function createServer() {
       }
       const parsed = z2.object({
         email: z2.string().trim().email().max(254),
-        password: z2.string().min(8).max(72)
+        password: z2.string().min(8).max(72),
+        fullName: z2.string().trim().min(1).max(120)
       }).safeParse(req.body);
       if (!parsed.success) {
         res.status(400).json({ error: "Invalid request", details: parsed.error.flatten() });
@@ -1969,7 +2014,8 @@ function createServer() {
         const { error } = await adminClient.auth.admin.createUser({
           email: parsed.data.email,
           password: parsed.data.password,
-          email_confirm: true
+          email_confirm: true,
+          user_metadata: { full_name: parsed.data.fullName }
         });
         if (error) {
           if (error.message.toLowerCase().includes("already")) {

@@ -10,10 +10,12 @@ import {
   DEFAULT_GLOBAL_SETTINGS,
   DEFAULT_HOME_PAGE,
   DEFAULT_NOT_FOUND,
+  DEFAULT_APPLY_PAGE,
   DEFAULT_PAYMENT_PAGE,
   DEFAULT_PROGRAMS_LANDING,
   DEFAULT_QMS_PROGRAM,
 } from "../shared/cms/defaults"
+import { DIAGNOSTIC_SURVEY_SECTIONS } from "../client/data/diagnosticSurveySections"
 import {
   DEFAULT_EVENTS_LANDING_HERO_PORTABLE,
   DEFAULT_STORIES_PAGE_HEADLINE_PORTABLE,
@@ -1236,10 +1238,25 @@ async function main() {
   })
   mutations.push({
     createOrReplace: {
+      _id: "applyPage",
+      _type: "applyPage",
+      ...DEFAULT_APPLY_PAGE,
+      seo: seoForRoute("/apply"),
+    },
+  })
+  mutations.push({
+    createOrReplace: {
       _id: "paymentPage",
       _type: "paymentPage",
       ...DEFAULT_PAYMENT_PAGE,
       seo: { ...(seoForRoute("/membership") ?? {}), noIndex: true },
+    },
+  })
+  mutations.push({
+    createOrReplace: {
+      _id: "diagnosticSurveyContent",
+      _type: "diagnosticSurveyContent",
+      sections: DIAGNOSTIC_SURVEY_SECTIONS,
     },
   })
   mutations.push({

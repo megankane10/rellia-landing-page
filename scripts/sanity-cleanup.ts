@@ -22,6 +22,8 @@ const SINGLETON_TYPES = [
   'faqPage',
   'contactPage',
   'paymentPage',
+  'applyPage',
+  'diagnosticSurveyContent',
   'consultingPage',
   'notFoundPage',
   'programsLandingPage',

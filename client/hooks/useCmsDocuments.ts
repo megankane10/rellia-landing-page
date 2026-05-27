@@ -9,6 +9,7 @@ import {
   mergeHomePage,
   mergeNotFound,
   mergePaymentPage,
+  mergeApplyPage,
   mergeProgramsLanding,
   mergeQmsProgram,
   DEFAULT_QMS_PROGRAM,
@@ -24,6 +25,8 @@ import type {
   GlobalSettingsContent,
   HomePageContent,
   NotFoundContent,
+  ApplyPageContent,
+  DiagnosticSurveyContent,
   PaymentPageContent,
   ProgramsLandingContent,
   QmsProgramContent,
@@ -323,6 +326,27 @@ export const usePaymentPage = () =>
       const raw =
         await sanityFetch<Partial<PaymentPageContent>>("paymentPage");
       return mergePaymentPage(raw ?? undefined);
+    },
+    staleTime: staleTimeMs,
+  });
+
+export const useApplyPage = () =>
+  useQuery({
+    queryKey: ["cms", "applyPage"],
+    queryFn: async () => {
+      const raw = await sanityFetch<Partial<ApplyPageContent>>("applyPage");
+      return mergeApplyPage(raw ?? undefined);
+    },
+    staleTime: staleTimeMs,
+  });
+
+export const useDiagnosticSurveyContent = () =>
+  useQuery({
+    queryKey: ["cms", "diagnosticSurveyContent"],
+    queryFn: async () => {
+      const raw =
+        await sanityFetch<DiagnosticSurveyContent>("diagnosticSurveyContent");
+      return raw ?? null;
     },
     staleTime: staleTimeMs,
   });

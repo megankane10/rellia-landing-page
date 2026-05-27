@@ -14,7 +14,7 @@ import RouteSeo from '@/components/RouteSeo';
 import CmsPageVisibilityGate from '@/components/cms/CmsPageVisibilityGate';
 import { useDiagnosticLandingPage } from '@/hooks/useCmsDocuments';
 import { useApplyCmsSeo } from '@/hooks/useApplyCmsSeo';
-import PageRenderer from '@/components/cms/PageRenderer';
+import { PageRenderer } from '@/components/cms/PageRenderer';
 import { RoleHero } from "./network/_shared";
 import PillTag from "@/components/PillTag";
 import { cn } from '@/lib/utils';
