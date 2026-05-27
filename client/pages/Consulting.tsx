@@ -8,7 +8,9 @@ import RelliaCta from "@/components/RelliaCta"
 import ScrollReveal from "@/components/ScrollReveal"
 import TestimonialsSection from "@/components/TestimonialsSection"
 import ProgramTrustedMembersSection from "@/components/program/ProgramTrustedMembersSection"
-import { useHomePage } from "@/hooks/useCmsDocuments"
+import { useConsultingPage, useHomePage } from "@/hooks/useCmsDocuments"
+import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo"
+import { CmsModularSingletonPage } from "@/components/cms/CmsModularSingletonPage"
 import { DEFAULT_HOME_PAGE } from "@shared/cms/defaults"
 import { CheckCircle2, Palette, ShieldCheck, Stethoscope, Megaphone, ArrowRight } from "lucide-react"
 import { Link } from "react-router-dom"
@@ -138,10 +140,21 @@ function ServicesGridSection() {
 }
 
 export default function Consulting() {
+  const { data: cmsPage } = useConsultingPage()
   const { data: homePage } = useHomePage()
   const home = homePage ?? DEFAULT_HOME_PAGE
 
+  useApplyCmsSeo(cmsPage?.seo, {
+    title: "Founder consulting — Rellia Health",
+    description:
+      "One-to-one and scoped consulting for health tech founders—regulatory, clinical, commercial, and narrative depth beyond community rhythm.",
+  })
+
   return (
+    <CmsModularSingletonPage
+      page={cmsPage}
+      slug="consulting"
+      fallback={
     <div className="min-h-screen overflow-x-hidden bg-white font-host-grotesk">
       <Navbar />
 
@@ -239,5 +252,7 @@ export default function Consulting() {
 
       <Footer />
     </div>
+      }
+    />
   )
 }

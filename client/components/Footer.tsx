@@ -33,7 +33,7 @@ const FALLBACK_FOOTER_COLUMNS: NavItem[] = [
   },
   {
     label: "Network",
-    href: "/network",
+    href: "/founders",
     children: [
       { label: "Founders", href: "/founders" },
       { label: "Advisors", href: "/advisors" },

@@ -158,9 +158,8 @@ export const ROUTE_SEO: Record<string, RouteSeoConfig> = {
   },
   "/network": {
     title: "Network — Rellia Health",
-    description:
-      "Join the Rellia Health network of founders, investors, advisors, and partners building the next generation of healthcare companies.",
-    indexable: true,
+    description: "This page has moved to /founders.",
+    indexable: false,
   },
   "/apply": {
     title: "Apply — Rellia Health",

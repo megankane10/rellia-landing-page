@@ -1,8 +1,6 @@
-import { useEffect, useState } from "react"
-import { useNavigate, useSearchParams } from "react-router-dom"
+import { useState } from "react"
+import { useNavigate } from "react-router-dom"
 import { useAuth } from "@/context/AuthContext"
-import { supabase } from "@/lib/supabase"
-import { isAdminUser } from "@shared/admin/isAdminUser"
 import RelliaAction from "@/components/RelliaAction"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -11,38 +9,21 @@ import AdminAuthLayout from "@/components/admin/AdminAuthLayout"
 const AdminLogin = () => {
   const { signIn } = useAuth()
   const navigate = useNavigate()
-  const [searchParams] = useSearchParams()
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
-
-  useEffect(() => {
-    if (searchParams.get("error") === "admin_required") {
-      setError("This account does not have admin access.")
-    }
-  }, [searchParams])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
     setLoading(true)
     const { error: authError } = await signIn(email.trim(), password)
+    setLoading(false)
     if (authError) {
-      setLoading(false)
       setError(authError)
       return
     }
-
-    const { data: userData, error: userError } = await supabase.auth.getUser()
-    if (userError || !isAdminUser(userData.user)) {
-      await supabase.auth.signOut()
-      setLoading(false)
-      setError("This account does not have admin access.")
-      return
-    }
-
-    setLoading(false)
     navigate("/admin/inbox", { replace: true })
   }
 

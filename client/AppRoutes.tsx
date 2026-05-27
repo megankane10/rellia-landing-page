@@ -24,7 +24,6 @@ import Events from "./pages/Events"
 import EventDetail from "./pages/EventDetail"
 import Contact from "./pages/Contact"
 import Apply from "./pages/Apply"
-import Network from "./pages/Network"
 import Founders from "./pages/network/Founders"
 import Advisors from "./pages/network/Advisors"
 import Investors from "./pages/network/Investors"
@@ -131,7 +130,7 @@ export const AppRoutes = () => (
       <Route path="regulatory-roadmap" element={<Navigate to="/programs/regulatory-strategy-sprint" replace />} />
     </Route>
 
-    <Route path="/network" element={<Network />} />
+    <Route path="/network" element={<Navigate to="/founders" replace />} />
     <Route path="/apply" element={<Apply />} />
     <Route path="/consulting" element={<Consulting />} />
     <Route path="/founders" element={<Founders />} />

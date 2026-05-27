@@ -30,6 +30,7 @@ import type {
   PaymentPageContent,
   ProgramsLandingContent,
   QmsProgramContent,
+  LegalPageContent,
   SiteSettingsContent,
   SanityPortableText,
   SeoContent,
@@ -430,6 +431,36 @@ export const useDiagnosticLandingPage = () =>
     queryKey: ["cms", "diagnosticLandingPage"],
     queryFn: async () => {
       const raw = await sanityFetch<CmsSingletonPageContent>("diagnosticLandingPage")
+      return raw ?? null
+    },
+    staleTime: staleTimeMs,
+  })
+
+export const useConsultingPage = () =>
+  useQuery({
+    queryKey: ["cms", "consultingPage"],
+    queryFn: async () => {
+      const raw = await sanityFetch<CmsSingletonPageContent>("consultingPage")
+      return raw ?? null
+    },
+    staleTime: staleTimeMs,
+  })
+
+export const useTermsPage = () =>
+  useQuery({
+    queryKey: ["cms", "termsPage"],
+    queryFn: async () => {
+      const raw = await sanityFetch<LegalPageContent>("termsPage")
+      return raw ?? null
+    },
+    staleTime: staleTimeMs,
+  })
+
+export const usePrivacyPage = () =>
+  useQuery({
+    queryKey: ["cms", "privacyPage"],
+    queryFn: async () => {
+      const raw = await sanityFetch<LegalPageContent>("privacyPage")
       return raw ?? null
     },
     staleTime: staleTimeMs,

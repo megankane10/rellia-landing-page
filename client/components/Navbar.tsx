@@ -18,7 +18,7 @@ const LOGO_FILLED = "/images/logo-rellia-filled.webp"
 const FALLBACK_NAV_PRIMARY: NavItem[] = [
   {
     label: "Network",
-    href: "/network",
+    href: "/founders",
     children: [
       { label: "Founders", href: "/founders" },
       { label: "Investors", href: "/investors" },

@@ -57,6 +57,15 @@ export type SeoContent = {
   noFollow?: boolean
 }
 
+export type LegalPageContent = {
+  title?: string
+  intro?: string
+  effectiveDate?: string
+  legalNotice?: string
+  body?: SanityPortableText
+  seo?: SeoContent
+}
+
 export type PageVisibility = "live" | "hidden" | "placeholder"
 
 export type CmsPageVisibility = {

@@ -11,10 +11,9 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import RelliaAction from '@/components/RelliaAction';
 import RouteSeo from '@/components/RouteSeo';
-import CmsPageVisibilityGate from '@/components/cms/CmsPageVisibilityGate';
+import { CmsModularSingletonPage } from '@/components/cms/CmsModularSingletonPage';
 import { useDiagnosticLandingPage } from '@/hooks/useCmsDocuments';
 import { useApplyCmsSeo } from '@/hooks/useApplyCmsSeo';
-import { PageRenderer } from '@/components/cms/PageRenderer';
 import { RoleHero } from "./network/_shared";
 import PillTag from "@/components/PillTag";
 import { cn } from '@/lib/utils';
@@ -69,29 +68,11 @@ export default function DiagnosticLanding() {
       "Benchmark your health tech startup across 12 critical domains. Get an instant readiness score, personalized gap analysis, and advisory board matching.",
   })
 
-  if (cmsPage?.useModularPage && Array.isArray(cmsPage.sections) && cmsPage.sections.length > 0) {
-    return (
-      <CmsPageVisibilityGate page={cmsPage}>
-        <div className="min-h-screen bg-white font-host-grotesk text-black">
-          <Navbar />
-          <main id="main-content">
-            <PageRenderer
-              page={{
-                title: cmsPage.title,
-                slug: "startup-diagnostic",
-                seo: cmsPage.seo,
-                sections: cmsPage.sections,
-              }}
-            />
-          </main>
-          <Footer />
-        </div>
-      </CmsPageVisibilityGate>
-    )
-  }
-
   return (
-    <CmsPageVisibilityGate page={cmsPage}>
+    <CmsModularSingletonPage
+      page={cmsPage}
+      slug="startup-diagnostic"
+      fallback={
     <div className="min-h-screen bg-white font-host-grotesk text-black selection:bg-rellia-mint/30 overflow-x-hidden">
       <Navbar />
       <RouteSeo 
@@ -217,6 +198,7 @@ export default function DiagnosticLanding() {
 
       <Footer />
     </div>
-    </CmsPageVisibilityGate>
-  );
+      }
+    />
+  )
 }

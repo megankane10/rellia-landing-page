@@ -42,7 +42,10 @@ import {
 import { cn } from "@/lib/utils";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { SectionsRenderer } from "@/components/cms/PageRenderer"
+import { CmsHeroTextSkeleton } from "@/components/cms/CmsTextSkeleton"
 import { useProgramBySlug, useProgramPageBySlug } from "@/hooks/useCmsDocuments"
+import { isAnyCmsQueryLoading } from "@/lib/cmsQueryState"
+import { isSanityConfigured } from "@/lib/sanity"
 import PageSocialHelmet from "@/components/seo/PageSocialHelmet"
 import { PEXELS_HEALTH_MEETING, PEXELS_OFFICE_COLLABORATION, LOCAL_METRICS_BG_JPEG } from "@/config/pexelsFallbacks"
 import {
@@ -50,13 +53,15 @@ import {
   CarouselContent,
   CarouselItem,
 } from "@/components/ui/carousel";
+import { DEFAULT_QMS_PROGRAM, mergeQmsProgram } from "@shared/cms/defaults"
 import type { QmsProgramContent } from "@shared/cms/types";
 import type { ProgramPageStaticBlocks } from "@shared/cms/programs/types";
 import ProgramTrustedMembersSection from "@/components/program/ProgramTrustedMembersSection"
 import { resolveProgramCardImageSrc } from "@shared/cms/itemCardImage"
 
 export type ProgramPageLayoutProps = {
-  cms: QmsProgramContent;
+  /** Optional overrides merged after CMS fetch (e.g. env payment URL). */
+  cms?: Partial<QmsProgramContent>;
   cmsSlug?: string;
   heroImageSrc?: string;
   heroImageAlt?: string;
@@ -156,7 +161,7 @@ const BackToPrograms = () => (
 );
 
 const ProgramPageLayout = ({
-  cms,
+  cms = {},
   cmsSlug,
   heroImageSrc,
   heroImageAlt,
@@ -171,18 +176,29 @@ const ProgramPageLayout = ({
   const [showForm, setShowForm] = useState(false);
   const [cardImages, setCardImages] = useState<string[]>([]);
   const location = useLocation();
-  const { data: programPageData } = useProgramPageBySlug(cmsSlug ?? '', cms)
-  const { data: programDoc } = useProgramBySlug(cmsSlug ?? "")
-  const q = programPageData?.content ?? cms
+  const programPageQuery = useProgramPageBySlug(cmsSlug ?? "", cms ?? {})
+  const programDocQuery = useProgramBySlug(cmsSlug ?? "")
+  const { data: programPageData } = programPageQuery
+  const { data: programDoc } = programDocQuery
+
+  const cmsConfigured = isSanityConfigured() && Boolean(cmsSlug?.trim())
+  const cmsHeroLoading =
+    cmsConfigured && isAnyCmsQueryLoading(programPageQuery, programDocQuery)
+
+  const q = programPageData?.content ?? mergeQmsProgram(undefined, { ...DEFAULT_QMS_PROGRAM, ...(cms ?? {}) })
   const filloutId = extractFilloutId(q.paymentUrl);
   const hasEnrollmentForm = Boolean(filloutId) && !isWaitlist;
 
-  const resolvedProgramTitle = (programDoc?.title || q.heroTitle || "").trim()
-  const resolvedProgramDescription = (
-    (programDoc as { description?: string } | null | undefined)?.description ||
-    q.heroDescription ||
-    ""
-  ).trim()
+  const resolvedProgramTitle = cmsHeroLoading
+    ? ""
+    : (programDoc?.title || q.heroTitle || "").trim()
+  const resolvedProgramDescription = cmsHeroLoading
+    ? ""
+    : (
+        (programDoc as { description?: string } | null | undefined)?.description ||
+        q.heroDescription ||
+        ""
+      ).trim()
 
   const programSlug = (cmsSlug ?? "").trim()
   const resolvedHeroImageSrc =
@@ -257,14 +273,20 @@ const ProgramPageLayout = ({
                       Applications open
                     </span>
                   )}
+                  {cmsHeroLoading ? (
+                    <CmsHeroTextSkeleton />
+                  ) : (
+                    <>
                   <h1 className="max-w-3xl text-3xl md:text-4xl lg:text-5xl font-bold leading-[1.1] tracking-tight text-black">
                     {resolvedProgramTitle}
                   </h1>
                   <p className="mt-5 max-w-xl font-urbanist text-base leading-relaxed text-black/60 md:text-lg">
                     {resolvedProgramDescription}
                   </p>
+                    </>
+                  )}
 
-                  {!isWaitlist && (
+                  {!cmsHeroLoading && !isWaitlist && (
                     <div className="mt-10 flex items-end gap-3 text-black">
                       <CalendarDays className="h-6 w-6 text-rellia-teal" aria-hidden strokeWidth={2.25} />
                       <span className="font-host-grotesk text-[12px] font-bold uppercase tracking-[0.18em] text-black/80">
@@ -273,6 +295,7 @@ const ProgramPageLayout = ({
                     </div>
                   )}
 
+                  {!cmsHeroLoading ? (
                   <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
                     <RelliaAction
                       type="button"
@@ -296,6 +319,7 @@ const ProgramPageLayout = ({
                       Learn More
                     </RelliaAction>
                   </div>
+                  ) : null}
                 </ScrollReveal>
               </div>
               {/* Right — square image */}

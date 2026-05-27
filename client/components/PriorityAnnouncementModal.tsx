@@ -39,11 +39,17 @@ export const PriorityAnnouncementModal = ({
 
   const handleClose = () => onOpenChange(false)
 
+  const handleOpenChange = (next: boolean) => {
+    if (next) onOpenChange(true)
+  }
+
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent
         id="priority-announcement-modal"
         hideClose
+        onInteractOutside={(event) => event.preventDefault()}
+        onEscapeKeyDown={(event) => event.preventDefault()}
         className={cn(
           "gap-0 overflow-hidden border-black/10 p-0 sm:max-w-[min(92vw,520px)]",
           "rounded-[1.75rem] shadow-[0_24px_60px_rgba(13,53,64,0.35)]",
@@ -57,6 +63,7 @@ export const PriorityAnnouncementModal = ({
             "transition-opacity hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-teal/40 focus-visible:ring-offset-2",
           )}
           aria-label="Close announcement"
+          onClick={handleClose}
         >
           <X className="h-4 w-4" aria-hidden />
         </DialogClose>

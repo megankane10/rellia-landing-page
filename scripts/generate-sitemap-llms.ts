@@ -43,7 +43,6 @@ const priorityForPath = (path: string): number => {
   if (
     path === "/programs" ||
     path === "/apply" ||
-    path === "/network" ||
     path === "/about"
   ) {
     return 0.9
@@ -169,7 +168,6 @@ const buildLlmsTxt = (paths: string[]): string => {
   const core = [
     "/",
     "/about",
-    "/network",
     "/programs",
     "/apply",
     "/events",

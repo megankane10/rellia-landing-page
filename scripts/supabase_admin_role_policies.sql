@@ -1,5 +1,6 @@
--- Restrict admin tables to users with JWT app_metadata.role = 'admin'.
+-- OPTIONAL: Restrict admin tables to users with JWT app_metadata.role = 'admin'.
 -- Run in Supabase SQL Editor after supabase_setup.sql, supabase_diagnostic_setup.sql, and supabase_admin_policies.sql.
+-- To undo, run scripts/supabase_revert_admin_role_policies.sql
 --
 -- Existing admin users: set role in Dashboard → Authentication → Users → user → App metadata:
 --   { "role": "admin" }

@@ -26,6 +26,18 @@ import { ROUTE_SEO } from "../client/config/seo"
 import { STORIES } from "../client/content/stories"
 import { CAREERS_OPEN_ROLES } from "../shared/careersOpenRoles"
 import { threePartHeroHeadline } from "../shared/cms/inlineHeroHeadline"
+import { legalSectionsToPortableText } from "../shared/cms/legal/sectionsToPortableText"
+import {
+  TERMS_EFFECTIVE_DATE,
+  TERMS_PAGE_INTRO,
+  TERMS_SECTIONS,
+} from "../shared/cms/legal/termsSections"
+import {
+  PRIVACY_EFFECTIVE_DATE,
+  PRIVACY_LEGAL_NOTICE,
+  PRIVACY_PAGE_INTRO,
+  PRIVACY_SECTIONS,
+} from "../shared/cms/legal/privacySections"
 
 const MONTH_TO_INDEX: Record<string, number> = {
   january: 0,
@@ -617,7 +629,7 @@ const FALLBACK_NAV_PRIMARY = [
   {
     enabled: true,
     label: "Network",
-    href: "/network",
+    href: "/founders",
     children: [
       { enabled: true, label: "Founders", href: "/founders" },
       { enabled: true, label: "Advisors", href: "/advisors" },
@@ -655,7 +667,7 @@ const FALLBACK_FOOTER_COLUMNS = [
   {
     enabled: true,
     label: "Network",
-    href: "/network",
+    href: "/founders",
     children: [
       { enabled: true, label: "Founders", href: "/founders" },
       { enabled: true, label: "Advisors", href: "/advisors" },
@@ -1023,6 +1035,7 @@ async function main() {
       _id: "consultingPage",
       _type: "consultingPage",
       title: "Consulting",
+      useModularPage: false,
       ...pagePublishingLive,
       seo: seoForRoute("/consulting"),
     },
@@ -1035,6 +1048,29 @@ async function main() {
       useModularPage: false,
       ...pagePublishingLive,
       seo: seoForRoute("/startup-diagnostic"),
+    },
+  })
+  mutations.push({
+    createOrReplace: {
+      _id: "termsPage",
+      _type: "termsPage",
+      title: "Terms of Use",
+      intro: TERMS_PAGE_INTRO,
+      effectiveDate: TERMS_EFFECTIVE_DATE,
+      body: legalSectionsToPortableText(TERMS_SECTIONS),
+      seo: seoForRoute("/terms"),
+    },
+  })
+  mutations.push({
+    createOrReplace: {
+      _id: "privacyPage",
+      _type: "privacyPage",
+      title: "Privacy Policy",
+      intro: PRIVACY_PAGE_INTRO,
+      effectiveDate: PRIVACY_EFFECTIVE_DATE,
+      legalNotice: PRIVACY_LEGAL_NOTICE,
+      body: legalSectionsToPortableText(PRIVACY_SECTIONS),
+      seo: seoForRoute("/privacy"),
     },
   })
   mutations.push({

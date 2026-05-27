@@ -217,6 +217,31 @@ export const diagnosticLandingPageQuery = `*[_id == "diagnosticLandingPage"][0]{
   ${pageSectionsFragment}
 }`
 
+export const consultingPageQuery = `*[_id == "consultingPage"][0]{
+  title,
+  useModularPage,
+  ${pageVisibilityFragment},
+  ${seoFragment},
+  ${pageSectionsFragment}
+}`
+
+export const termsPageQuery = `*[_id == "termsPage"][0]{
+  title,
+  intro,
+  effectiveDate,
+  body,
+  ${seoFragment}
+}`
+
+export const privacyPageQuery = `*[_id == "privacyPage"][0]{
+  title,
+  intro,
+  effectiveDate,
+  legalNotice,
+  body,
+  ${seoFragment}
+}`
+
 export const networkPartnersPageQuery = `*[_type == "networkPartnersPage"][0]{
   title,
   useModularPage,

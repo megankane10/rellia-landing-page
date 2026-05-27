@@ -1,9 +1,8 @@
 import { Navigate } from "react-router-dom"
 import { useAuth } from "@/context/AuthContext"
-import { isAdminUser } from "@shared/admin/isAdminUser"
 
 export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
-  const { session, user, loading } = useAuth()
+  const { session, loading } = useAuth()
 
   if (loading) {
     return (
@@ -15,10 +14,6 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 
   if (!session) {
     return <Navigate to="/admin/login" replace />
-  }
-
-  if (!isAdminUser(user)) {
-    return <Navigate to="/admin/login?error=admin_required" replace />
   }
 
   return <>{children}</>
