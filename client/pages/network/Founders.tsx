@@ -565,12 +565,12 @@ function JourneySplitSection() {
     launch: Rocket,
   } satisfies Record<JourneyStep["id"], typeof Lightbulb>
 
-  const outsideCardBaseDelay = 0.28
-  const outsideCardStagger = 0.14
-  const dividerDelay = outsideCardBaseDelay + outsideSteps.length * outsideCardStagger + 0.08
-  const bottomHeaderDelay = dividerDelay + 0.22
-  const relliaCardBaseDelay = bottomHeaderDelay + 0.14
-  const relliaCardStagger = 0.12
+  const outsideCardBaseDelay = 0.06
+  const outsideCardStagger = 0.07
+  const dividerDelay = 0.16
+  const bottomHeaderDelay = 0.2
+  const relliaCardBaseDelay = 0.24
+  const relliaCardStagger = 0.07
 
   return (
     <section className="w-full overflow-hidden border-t border-black/[0.06] bg-white px-6 py-16 md:px-10 md:py-24">

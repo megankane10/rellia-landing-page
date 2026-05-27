@@ -5,6 +5,7 @@ import {
   clampMetaTitle,
   getDefaultOgImageUrl,
   getDefaultOgImageAlt,
+  getStaticOgImageForPathname,
   getSeoForPathname,
   getSiteUrl,
   isItemDetailPath,
@@ -55,9 +56,11 @@ const RouteSeo = ({
   const ogUrl = `${base}${normalizedPathname === "/" ? "" : normalizedPathname}`
   const cmsDefaultOg = siteSettingsData?.defaultSeo?.ogImageUrl?.trim()
   const explicitOgImage = ogImage?.trim()
+  const staticOg = getStaticOgImageForPathname(normalizedPathname)
   const useHomeDefaultOg = shouldUseDefaultOgImage(normalizedPathname)
   const imageUrl =
     explicitOgImage ||
+    staticOg ||
     (useHomeDefaultOg ? cmsDefaultOg || getDefaultOgImageUrl() : undefined)
   const imageAlt = getDefaultOgImageAlt()
   const includeOgImage = Boolean(imageUrl)

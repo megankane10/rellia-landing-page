@@ -56,18 +56,6 @@ export const PriorityAnnouncementModal = ({
         )}
         aria-label={heading}
       >
-        <DialogClose
-          className={cn(
-            "absolute right-4 top-4 z-20 inline-flex h-10 w-10 items-center justify-center rounded-full",
-            "border border-black/10 bg-white/95 text-black shadow-sm",
-            "transition-opacity hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-teal/40 focus-visible:ring-offset-2",
-          )}
-          aria-label="Close announcement"
-          onClick={handleClose}
-        >
-          <X className="h-4 w-4" aria-hidden />
-        </DialogClose>
-
         {imageSrc?.trim() ? (
           <div className="relative aspect-[16/9] w-full overflow-hidden bg-rellia-mint/30">
             <img
@@ -82,11 +70,28 @@ export const PriorityAnnouncementModal = ({
           <DialogTitle className="sr-only">{heading}</DialogTitle>
           <DialogDescription className="sr-only">{body || heading}</DialogDescription>
 
-          {showPill ? (
-            <span className="mb-4 inline-flex items-center rounded-full border border-rellia-teal/25 bg-rellia-mint/30 px-3 py-1 font-urbanist text-[11px] font-bold uppercase tracking-[0.14em] text-rellia-teal">
-              {pillText}
-            </span>
-          ) : null}
+          <div className="mb-4 flex w-full items-start justify-between gap-4">
+            {showPill ? (
+              <span className="inline-flex items-center rounded-full border border-rellia-teal/25 bg-rellia-mint/30 px-3 py-1 font-urbanist text-[11px] font-bold uppercase tracking-[0.14em] text-rellia-teal">
+                {pillText}
+              </span>
+            ) : (
+              <span aria-hidden />
+            )}
+
+            <DialogClose
+              className={cn(
+                "inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full",
+                "border border-black/10 bg-white/95 text-black shadow-sm",
+                "transition-opacity hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-teal/40 focus-visible:ring-offset-2",
+                "-mr-1",
+              )}
+              aria-label="Close announcement"
+              onClick={handleClose}
+            >
+              <X className="h-5 w-5" aria-hidden />
+            </DialogClose>
+          </div>
 
           <h2 className="font-host-grotesk text-2xl font-bold tracking-tight text-black md:text-[1.65rem]">
             {heading}
