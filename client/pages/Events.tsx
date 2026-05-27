@@ -117,7 +117,8 @@ export default function Events() {
         if (!Number.isFinite(at) && !Number.isFinite(bt)) return 0
         if (!Number.isFinite(at)) return 1
         if (!Number.isFinite(bt)) return -1
-        return at - bt
+        // Latest first (newest dates on top).
+        return bt - at
       })
     const past = allEvents
       .filter((e: any) => getEventStatus(e) === "past")
@@ -134,8 +135,15 @@ export default function Events() {
 
   const visibleEvents = useMemo(() => {
     if (eventFilter === "all") {
-      // Combined, sorted by date (upcoming first, then past)
-      return [...upcomingEvents, ...pastEvents]
+      // Strict newest -> oldest across both upcoming + past.
+      return [...upcomingEvents, ...pastEvents].sort((a: any, b: any) => {
+        const at = getEventTimestamp(a)
+        const bt = getEventTimestamp(b)
+        if (!Number.isFinite(at) && !Number.isFinite(bt)) return 0
+        if (!Number.isFinite(at)) return 1
+        if (!Number.isFinite(bt)) return -1
+        return bt - at
+      })
     }
     return eventFilter === "upcoming" ? upcomingEvents : pastEvents
   }, [eventFilter, upcomingEvents, pastEvents])

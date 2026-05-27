@@ -1660,6 +1660,143 @@ export const DEFAULT_FAQ_PAGE: FaqPageContent = {
   bottomCtaPath: "/contact",
 }
 
+const INVESTOR_READINESS_DETAIL_BODY: SanityPortableText = [
+  {
+    _type: "block",
+    _key: "ir-p1",
+    style: "normal",
+    markDefs: [],
+    children: [
+      {
+        _type: "span",
+        _key: "ir-p1s",
+        text: "Eric Haywood has been on both sides of the investment table. As a four-time founder and investor at InterSystems Ventures, he has built companies, raised capital, and evaluated startups for investment. In this session, he will share what makes a company fundable and how to show up more prepared.",
+        marks: [],
+      },
+    ],
+  },
+  {
+    _type: "block",
+    _key: "ir-h3",
+    style: "h3",
+    markDefs: [],
+    children: [
+      {
+        _type: "span",
+        _key: "ir-h3s",
+        text: "What you will walk away with:",
+        marks: [],
+      },
+    ],
+  },
+  {
+    _type: "block",
+    _key: "ir-b1",
+    style: "normal",
+    listItem: "bullet",
+    level: 1,
+    markDefs: [],
+    children: [
+      {
+        _type: "span",
+        _key: "ir-b1s",
+        text: "What VCs look for in early-stage health tech companies",
+        marks: [],
+      },
+    ],
+  },
+  {
+    _type: "block",
+    _key: "ir-b2",
+    style: "normal",
+    listItem: "bullet",
+    level: 1,
+    markDefs: [],
+    children: [
+      {
+        _type: "span",
+        _key: "ir-b2s",
+        text: "What signals separate successful companies from the rest",
+        marks: [],
+      },
+    ],
+  },
+  {
+    _type: "block",
+    _key: "ir-b3",
+    style: "normal",
+    listItem: "bullet",
+    level: 1,
+    markDefs: [],
+    children: [
+      {
+        _type: "span",
+        _key: "ir-b3s",
+        text: "How to tell your story in a way that resonates with investors",
+        marks: [],
+      },
+    ],
+  },
+  {
+    _type: "block",
+    _key: "ir-b4",
+    style: "normal",
+    listItem: "bullet",
+    level: 1,
+    markDefs: [],
+    children: [
+      {
+        _type: "span",
+        _key: "ir-b4s",
+        text: "Common mistakes founders make in the fundraising process and how to avoid them",
+        marks: [],
+      },
+    ],
+  },
+  {
+    _type: "block",
+    _key: "ir-p2",
+    style: "normal",
+    markDefs: [],
+    children: [
+      {
+        _type: "span",
+        _key: "ir-p2s",
+        text: "This is a practical, no-fluff session for founders who are serious about fundraising and want an honest look at how the process works.",
+        marks: [],
+      },
+    ],
+  },
+  {
+    _type: "block",
+    _key: "ir-h3b",
+    style: "h3",
+    markDefs: [],
+    children: [
+      {
+        _type: "span",
+        _key: "ir-h3bs",
+        text: "About Us:",
+        marks: [],
+      },
+    ],
+  },
+  {
+    _type: "block",
+    _key: "ir-p3",
+    style: "normal",
+    markDefs: [],
+    children: [
+      {
+        _type: "span",
+        _key: "ir-p3s",
+        text: "Rellia is a virtual incubator connecting digital health founders with investors, clinicians, and advisors to launch healthcare solutions. https://www.relliahealth.com/",
+        marks: [],
+      },
+    ],
+  },
+]
+
 /** Default event card image (square AVIF). Use for all placeholder events until CMS provides per-event art. */
 const DEFAULT_PROGRAMS_EVENT_IMAGE_SRC = "/images/event-leadershipUnderPressure.avif"
 
@@ -1822,6 +1959,20 @@ export const DEFAULT_PROGRAMS_LANDING: ProgramsLandingContent = {
           ],
         },
       ],
+    },
+    {
+      slug: "investor-readiness-how-vcs-evaluate-startups",
+      title: "Investor Readiness: How VCs Evaluate Startups",
+      dateTime: "Wednesday, June 17, 2026 — 12:00 PM - 1:00 PM EDT",
+      person: "Eric Haywood • InterSystems Ventures",
+      imageSrc: "/images/event-investorReadiness.jpg",
+      location: "Virtual",
+      startsAt: "2026-06-17T12:00:00-04:00",
+      endsAt: "2026-06-17T13:00:00-04:00",
+      lumaEventId: "evt-5ONXRkPwM81lwuM",
+      embedLumaOnDetailPage: true,
+      detailBodyHeading: "About this session",
+      detailBody: INVESTOR_READINESS_DETAIL_BODY,
     },
   ],
   pastEvents: [

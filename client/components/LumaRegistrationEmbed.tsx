@@ -23,8 +23,11 @@ export const LumaRegistrationEmbed = ({ src, title, className }: LumaRegistratio
       <iframe
         src={src}
         title={title}
+        aria-hidden={false}
+        tabIndex={0}
+        frameBorder={0}
         className={cn(
-          "block w-full border-0",
+          "block w-full border border-[#bfcbda88] rounded-[4px]",
           "min-h-[calc(100dvh-5.5rem)] h-[min(1400px,calc(100dvh-5.5rem))]",
           "md:min-h-[700px] md:h-[700px] md:max-h-none",
         )}

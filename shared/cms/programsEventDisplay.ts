@@ -314,6 +314,10 @@ const BRENTON_HILL_EVENT_PORTRAIT = "/images/testimonials-nickS.jpeg"
 const AI_COLLECTIVE_HOST_RE = /ai\s*collective/i
 const AI_COLLECTIVE_HOST_LOGO = "/images/logo-aicollective.jpg"
 
+const ERIC_HAYWOOD_SPEAKER_RE = /eric\s*haywood/i
+const INTERSYSTEMS_VENTURES_RE = /intersystems\s*ventures/i
+const ERIC_HAYWOOD_HOST_PORTRAIT = "/images/host-erik.png"
+
 const hashProgramsEventKey = (key: string): number => {
   let h = 0
   for (let i = 0; i < key.length; i++) {
@@ -360,6 +364,16 @@ export const getProgramsEventSpeakerAvatarSrc = (event: ProgramsEventCard): stri
   if (isAiCollectiveHost) {
     return AI_COLLECTIVE_HOST_LOGO
   }
+
+  if (
+    ERIC_HAYWOOD_SPEAKER_RE.test(speaker) ||
+    ERIC_HAYWOOD_SPEAKER_RE.test(personRaw) ||
+    INTERSYSTEMS_VENTURES_RE.test(company) ||
+    INTERSYSTEMS_VENTURES_RE.test(personRaw)
+  ) {
+    return ERIC_HAYWOOD_HOST_PORTRAIT
+  }
+
   const key = `${event.title}-${getProgramsEventDisplayDateTime(event)}-${event.person}`
   const pool = PROGRAMS_EVENT_SPEAKER_AVATAR_POOL
   const idx = Math.abs(hashProgramsEventKey(key)) % pool.length
