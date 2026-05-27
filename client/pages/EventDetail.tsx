@@ -9,6 +9,7 @@ import RelliaAction from "@/components/RelliaAction"
 import RelliaCta, { ctaActionFromHref } from "@/components/RelliaCta"
 import { useProgramsLandingPage } from "@/hooks/useCmsDocuments"
 import { downloadProgramsEventIcsFile } from "@/lib/eventCalendar"
+import { LumaRegistrationEmbed } from "@/components/LumaRegistrationEmbed"
 import { getLumaEmbedIframeSrc } from "@/lib/lumaEmbed"
 import { cn } from "@/lib/utils"
 import {
@@ -309,7 +310,12 @@ export default function EventDetail() {
   const detailSectionHeading = event.detailBodyHeading?.trim() ?? ""
 
   return (
-    <div className="flex min-h-screen flex-col bg-white font-host-grotesk overflow-x-hidden">
+    <div
+      className={cn(
+        "flex min-h-screen flex-col bg-white font-host-grotesk",
+        !showForm && "overflow-x-hidden",
+      )}
+    >
       <PageSocialHelmet
         title={pageTitle}
         description={eventDescription}
@@ -698,16 +704,10 @@ export default function EventDetail() {
                 </div>
                 <div className="w-full flex-1 border-t border-black/5 bg-rellia-cream/20">
                   {embedSrc ? (
-                    <div className="w-full">
-                      <iframe
-                        src={embedSrc}
-                        title={`${event.title} — Registration`}
-                        className="w-full border-0"
-                        style={{ height: "700px", minHeight: "700px" }}
-                        allow="payment; fullscreen"
-                        scrolling="no"
-                      />
-                    </div>
+                    <LumaRegistrationEmbed
+                      src={embedSrc}
+                      title={`${event.title} — Registration`}
+                    />
                   ) : (
                     <div className="flex min-h-[500px] flex-col items-center justify-center gap-6 py-20 px-6 text-center">
                       <Ticket className="h-16 w-16 text-rellia-teal md:h-20 md:w-20" strokeWidth={1.15} aria-hidden />

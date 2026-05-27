@@ -1,9 +1,11 @@
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
   DialogTitle,
 } from "@/components/ui/dialog"
+import { X } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { CmsCtaLink, cmsCtaButtonClass } from "@/components/CmsCtaLink"
 
@@ -41,12 +43,24 @@ export const PriorityAnnouncementModal = ({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
         id="priority-announcement-modal"
+        hideClose
         className={cn(
           "gap-0 overflow-hidden border-black/10 p-0 sm:max-w-[min(92vw,520px)]",
           "rounded-[1.75rem] shadow-[0_24px_60px_rgba(13,53,64,0.35)]",
         )}
         aria-label={heading}
       >
+        <DialogClose
+          className={cn(
+            "absolute right-4 top-4 z-20 inline-flex h-10 w-10 items-center justify-center rounded-full",
+            "border border-black/10 bg-white/95 text-black shadow-sm",
+            "transition-opacity hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-teal/40 focus-visible:ring-offset-2",
+          )}
+          aria-label="Close announcement"
+        >
+          <X className="h-4 w-4" aria-hidden />
+        </DialogClose>
+
         {imageSrc?.trim() ? (
           <div className="relative aspect-[16/9] w-full overflow-hidden bg-rellia-mint/30">
             <img

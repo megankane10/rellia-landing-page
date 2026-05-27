@@ -147,9 +147,9 @@ export default function DiagnosticLanding() {
       />
 
       {/* NO STONE LEFT UNTURNED SECTION (removed bottom tag cloud of topics) */}
-      <section className="py-24 md:py-32 px-6 bg-[#fbfcf8] border-b border-black/5">
-        <div className="mx-auto w-full max-w-[1200px]">
-          <div className="flex flex-col gap-12 lg:flex-row lg:items-start">
+      <section className="border-b border-black/5 px-4 py-16 md:px-6 md:py-24">
+        <div className="mx-auto w-full max-w-[1400px] overflow-hidden rounded-[2rem] border border-black/5 bg-[#fbfcf8] px-6 py-14 md:rounded-[2.5rem] md:px-10 md:py-20 lg:px-14">
+          <div className="mx-auto flex w-full max-w-[1200px] flex-col gap-12 lg:flex-row lg:items-start">
             <div className="flex-1">
               <h2 className="mb-6 font-host-grotesk text-2xl font-semibold text-black md:text-[32px] leading-tight">No stone left unturned</h2>
               <p className="font-urbanist text-lg text-black/60 leading-relaxed max-w-xl">

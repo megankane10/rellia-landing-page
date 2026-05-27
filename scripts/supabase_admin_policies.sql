@@ -1,5 +1,6 @@
 -- Admin workflow: status updates and deletes for contact + diagnostic submissions
 -- Run in Supabase SQL Editor after supabase_setup.sql and supabase_diagnostic_setup.sql
+-- Then run supabase_admin_role_policies.sql so only JWT app_metadata.role = 'admin' can read/update/delete.
 
 -- Contact status (if not already applied)
 alter table public.contact_responses

@@ -24,6 +24,7 @@ import {
   requireApiCsrf,
 } from "./csrf";
 import { isAdminSignupEnabled } from "./adminSignupEnv";
+import { isAdminUser } from "../shared/admin/isAdminUser";
 import { buildSiteOrigins, isAllowedBrowserOrigin } from "./siteOrigins";
 import {
   extractSanityDraftDocs,
@@ -1306,6 +1307,11 @@ export function createServer() {
           return;
         }
 
+        if (!isAdminUser(userData.user)) {
+          res.status(403).json({ error: "Admin access required." });
+          return;
+        }
+
         const adminClient = createClient(supabaseUrl, serviceRoleKey, {
           auth: { autoRefreshToken: false, persistSession: false },
         });
@@ -1403,6 +1409,7 @@ export function createServer() {
           password: parsed.data.password,
           email_confirm: true,
           user_metadata: { full_name: parsed.data.fullName },
+          app_metadata: { role: "admin" },
         });
 
         if (error) {
