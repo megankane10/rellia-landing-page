@@ -1,4 +1,4 @@
-import {defineField, defineType} from 'sanity'
+import {defineArrayMember, defineField, defineType} from 'sanity'
 import {documentGroups, FIELDSET_SEO} from '../shared/fieldGroups'
 import {singletonLayoutFields} from '../shared/singletonLayoutFields'
 
@@ -54,6 +54,52 @@ export const careersPage = defineType({
       type: 'string',
       initialValue: 'Volunteer',
       group: 'content',
+    }),
+    defineField({
+      name: 'openRoles',
+      title: 'Open roles',
+      type: 'array',
+      description: 'Job listings on /careers#open-roles. Drag to reorder.',
+      group: 'content',
+      of: [
+        defineArrayMember({
+          type: 'object',
+          name: 'openRole',
+          fields: [
+            defineField({
+              name: 'roleId',
+              title: 'URL anchor ID',
+              type: 'string',
+              description: 'Used in /careers#role-id — lowercase letters, numbers, hyphens only.',
+              validation: (Rule) =>
+                Rule.required().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, {
+                  name: 'slug',
+                  invert: false,
+                }),
+            }),
+            defineField({name: 'title', title: 'Job title', type: 'string', validation: (Rule) => Rule.required()}),
+            defineField({name: 'location', type: 'string', validation: (Rule) => Rule.required()}),
+            defineField({name: 'employmentType', title: 'Employment type', type: 'string', validation: (Rule) => Rule.required()}),
+            defineField({name: 'description', type: 'text', rows: 4, validation: (Rule) => Rule.required()}),
+            defineField({
+              name: 'responsibilities',
+              type: 'array',
+              of: [{type: 'string'}],
+              validation: (Rule) => Rule.min(1),
+            }),
+            defineField({
+              name: 'linkedInApplyUrl',
+              title: 'Apply URL (LinkedIn or other)',
+              type: 'url',
+              validation: (Rule) => Rule.required().uri({scheme: ['http', 'https']}),
+            }),
+          ],
+          preview: {
+            select: {title: 'title', subtitle: 'location'},
+          },
+        }),
+      ],
+      options: {sortable: true},
     }),
     ...singletonLayoutFields,
     defineField({name: 'seo', type: 'seoFields', group: 'seo', fieldset: 'seo'}),

@@ -258,9 +258,7 @@ export const homePageQuery = `*[_type == "homePage"][0]{
 }`;
 
 export const aboutPageQuery = `*[_type == "aboutPage"][0]{
-  heroLine1,
-  heroLine2Portable,
-  heroLine3,
+  heroHeadlinePortable,
   heroIntro,
   missionTitle,
   missionParagraphs,
@@ -511,6 +509,15 @@ export const careersPageQuery = `*[_type == "careersPage"][0]{
   enableVolunteerTab,
   tabsLabelHiring,
   tabsLabelVolunteer,
+  openRoles[]{
+    "id": roleId,
+    title,
+    location,
+    employmentType,
+    description,
+    responsibilities,
+    linkedInApplyUrl
+  },
   ${seoFragment}
 }`
 

@@ -27,12 +27,23 @@ export type NavigationContent = {
   footer: NavItem[]
 }
 
+export type CareersOpenRole = {
+  roleId: string
+  title: string
+  location: string
+  employmentType: string
+  description: string
+  responsibilities: string[]
+  linkedInApplyUrl: string
+}
+
 export type CareersPageContent = {
   defaultTab?: "hiring" | "volunteer"
   enableHiringTab?: boolean
   enableVolunteerTab?: boolean
   tabsLabelHiring?: string
   tabsLabelVolunteer?: string
+  openRoles?: CareersOpenRole[]
   seo?: SeoContent
 }
 
@@ -313,9 +324,7 @@ export type AboutTeamMember = {
 }
 
 export type AboutPageContent = {
-  heroLine1: string
-  heroLine2Portable: SanityPortableText
-  heroLine3: string
+  heroHeadlinePortable: SanityPortableText
   heroIntro: string
   missionTitle: string
   missionParagraphs: string[]

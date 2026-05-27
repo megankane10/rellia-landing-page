@@ -1,5 +1,5 @@
 import {
-  DEFAULT_ABOUT_HERO_LINE2_PORTABLE,
+  threePartHeroHeadline,
   DEFAULT_HOME_TESTIMONIALS_TITLE_PORTABLE,
   DEFAULT_PAYMENT_HERO_PORTABLE,
   DEFAULT_PAYMENT_IMAGE_CARD_HEADLINE_PORTABLE,
@@ -1481,9 +1481,7 @@ export const DEFAULT_HOME_PAGE: HomePageContent = {
 }
 
 export const DEFAULT_ABOUT_PAGE: AboutPageContent = {
-  heroLine1: "Empowering the",
-  heroLine2Portable: DEFAULT_ABOUT_HERO_LINE2_PORTABLE,
-  heroLine3: "of health tech.",
+  heroHeadlinePortable: threePartHeroHeadline("Empowering the", "next generation", " of health tech."),
   heroIntro:
     "Rellia Health is a virtual incubator dedicated to accelerating the commercialization of digital health solutions that matter.",
   missionTitle: "Our Mission",
@@ -2183,8 +2181,8 @@ export function mergeAboutPage(partial: Partial<AboutPageContent> | null | undef
   base.values = values.length > 0 ? values : DEFAULT_ABOUT_PAGE.values
   const team = compactList(p.team)
   base.team = team.length > 0 ? team : DEFAULT_ABOUT_PAGE.team
-  if (!Array.isArray(base.heroLine2Portable) || base.heroLine2Portable.length === 0) {
-    base.heroLine2Portable = DEFAULT_ABOUT_PAGE.heroLine2Portable
+  if (!Array.isArray(base.heroHeadlinePortable) || base.heroHeadlinePortable.length === 0) {
+    base.heroHeadlinePortable = DEFAULT_ABOUT_PAGE.heroHeadlinePortable
   }
   return base
 }

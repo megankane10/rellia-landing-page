@@ -9,16 +9,15 @@ export const aboutPage = defineType({
   groups: documentGroups,
   fieldsets: [FIELDSET_SEO],
   fields: [
-    defineField({name: 'heroLine1', type: 'string', group: 'content'}),
     defineField({
-      name: 'heroLine2Portable',
-      title: 'Hero line 2',
+      name: 'heroHeadlinePortable',
+      title: 'Hero headline',
       type: 'inlineHeroHeadline',
-      description: 'Middle line (often all Mint).',
+      description:
+        'One headline field. Select text and use Mint or Teal for accent colour, Strong for weight.',
       group: 'content',
       validation: (Rule) => Rule.required().min(1),
     }),
-    defineField({name: 'heroLine3', type: 'string', group: 'content'}),
     defineField({name: 'heroIntro', type: 'text', rows: 3, group: 'content'}),
     defineField({name: 'missionTitle', type: 'string', group: 'content'}),
     defineField({name: 'missionParagraphs', type: 'array', of: [{type: 'text', rows: 4}], group: 'content'}),

@@ -12,6 +12,7 @@ import {
   BookIcon,
   HelpCircleIcon,
   ChartUpwardIcon,
+  CaseIcon,
 } from '@sanity/icons'
 import {LookerStudioPanel} from './studio/LookerStudioPanel'
 import {StudioSupportPanel} from './studio/StudioSupportPanel'
@@ -55,6 +56,7 @@ const siteGroup = (S: StructureBuilder) =>
         ]),
     )
 
+/** All marketing routes editable in CMS (excludes /admin dashboard). */
 const pagesGroup = (S: StructureBuilder) =>
   S.listItem()
     .title('Pages')
@@ -75,6 +77,21 @@ const pagesGroup = (S: StructureBuilder) =>
           singleton(S, 'Programs landing', 'programsLandingPage', DocumentTextIcon),
           singleton(S, 'Events landing', 'eventsLandingPage', DocumentTextIcon),
           singleton(S, 'Stories landing', 'storiesPage', DocumentTextIcon),
+          S.divider(),
+          singleton(S, 'Founders page', 'networkFoundersPage', DocumentTextIcon),
+          singleton(S, 'Advisors page', 'networkAdvisorsPage', DocumentTextIcon),
+          singleton(S, 'Investors page', 'networkInvestorsPage', DocumentTextIcon),
+          singleton(S, 'Industry partners page', 'networkPartnersPage', DocumentTextIcon),
+          S.divider(),
+          S.listItem()
+            .title('Modular pages (custom URL)')
+            .icon(DocumentTextIcon)
+            .child(
+              S.documentTypeList('page')
+                .apiVersion(API_VERSION)
+                .title('Modular pages')
+                .defaultOrdering([{field: 'title', direction: 'asc'}]),
+            ),
         ]),
     )
 
@@ -121,13 +138,13 @@ const collectionsGroup = (S: StructureBuilder) =>
             ),
           S.divider(),
           S.listItem()
-            .title('Modular pages')
-            .icon(DocumentTextIcon)
+            .title('Careers open roles')
+            .icon(CaseIcon)
             .child(
-              S.documentTypeList('page')
-                .apiVersion(API_VERSION)
-                .title('Modular pages')
-                .defaultOrdering([{field: 'title', direction: 'asc'}]),
+              S.document()
+                .schemaType('careersPage')
+                .documentId('careersPage')
+                .title('Careers open roles'),
             ),
         ]),
     )
@@ -193,15 +210,7 @@ const peopleGroup = (S: StructureBuilder) =>
     .child(
       S.list()
         .title('People')
-        .items([
-          singleton(S, 'Founders page', 'networkFoundersPage', DocumentTextIcon),
-          singleton(S, 'Advisors page', 'networkAdvisorsPage', DocumentTextIcon),
-          singleton(S, 'Investors page', 'networkInvestorsPage', DocumentTextIcon),
-          singleton(S, 'Industry partners page', 'networkPartnersPage', DocumentTextIcon),
-          S.divider(),
-          advisorsPeopleGroup(S),
-          foundersPeopleGroup(S),
-        ]),
+        .items([advisorsPeopleGroup(S), foundersPeopleGroup(S)]),
     )
 
 const supportGroup = (S: StructureBuilder) =>
@@ -282,16 +291,11 @@ export const deskStructure = (S: StructureBuilder) =>
     .title('Website Editor')
     .items([
       siteGroup(S),
-      S.divider(),
       pagesGroup(S),
-      S.divider(),
       collectionsGroup(S),
-      S.divider(),
       peopleGroup(S),
       S.divider(),
       supportGroup(S),
-      S.divider(),
       analyticsGroup(S),
-      S.divider(),
       ...S.documentTypeListItems().filter((item) => !HIDDEN_FROM_CATCH_ALL.has(item.getId() || '')),
     ])

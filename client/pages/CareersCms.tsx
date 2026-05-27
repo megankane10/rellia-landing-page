@@ -11,7 +11,7 @@ import { FILLOUT_APPLY_FORM_ID, FILLOUT_EMBED_VIEWPORT_MIN_CLASS } from "@/lib/f
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { motion, useReducedMotion, AnimatePresence } from "framer-motion"
 import { BriefcaseBusiness, Building2, ExternalLink, Laptop, MapPin, Users, UserRound, Check, type LucideIcon } from "lucide-react"
-import type { CareersPageContent, HomeWhyFeature } from "@shared/cms/types"
+import type { CareersOpenRole, CareersPageContent, HomeWhyFeature } from "@shared/cms/types"
 import { DEFAULT_GLOBAL_SETTINGS } from "@shared/cms/defaults"
 import { CAREERS_VOLUNTEER_ENABLED, careersHasPublishedOpenRoles } from "@shared/careersPageConfig"
 import { CAREERS_OPEN_ROLES } from "@shared/careersOpenRoles"
@@ -309,10 +309,46 @@ export default function CareersCms() {
   const [activeRole, setActiveRole] = useState<string | undefined>(undefined)
   const location = useLocation()
 
-  const openRoles = useMemo(() => {
-    if (!isSanityConfigured() || !allowCmsSeedFallbacks()) return []
-    return CAREERS_OPEN_ROLES
-  }, [])
+  const { data: careersCmsRaw } = useQuery({
+    queryKey: ["cms", "careersPage"],
+    queryFn: async () => {
+      const raw = await sanityFetch<Partial<CareersPageContent>>("careersPage")
+      return raw ?? null
+    },
+    staleTime: 5 * 60 * 1000,
+  })
+
+  const careersCms = normalizeCms(careersCmsRaw)
+  useApplyCmsSeo(careersCms.seo)
+
+  const openRoles = useMemo((): CareersOpenRole[] => {
+    const fromCms = (careersCms.openRoles ?? [])
+      .map((role) => ({
+        id: typeof role?.id === "string" ? role.id.trim() : "",
+        title: typeof role?.title === "string" ? role.title.trim() : "",
+        location: typeof role?.location === "string" ? role.location.trim() : "",
+        employmentType: typeof role?.employmentType === "string" ? role.employmentType.trim() : "",
+        description: typeof role?.description === "string" ? role.description.trim() : "",
+        responsibilities: Array.isArray(role?.responsibilities)
+          ? role.responsibilities.filter((r): r is string => typeof r === "string" && r.trim() !== "")
+          : [],
+        linkedInApplyUrl:
+          typeof role?.linkedInApplyUrl === "string" ? role.linkedInApplyUrl.trim() : "",
+      }))
+      .filter(
+        (role) =>
+          role.id &&
+          role.title &&
+          role.location &&
+          role.employmentType &&
+          role.description &&
+          role.responsibilities.length > 0 &&
+          role.linkedInApplyUrl,
+      )
+    if (fromCms.length > 0) return fromCms
+    if (isSanityConfigured() && !allowCmsSeedFallbacks()) return []
+    return [...CAREERS_OPEN_ROLES]
+  }, [careersCms.openRoles])
 
   const handleCopyRoleLink = (roleId: string) => {
     const roleUrl = `${buildPageUrl("/careers")}#${roleId}`
@@ -337,18 +373,6 @@ export default function CareersCms() {
       }
     }
   }, [location.hash, openRoles])
-
-  const { data: careersCmsRaw } = useQuery({
-    queryKey: ["cms", "careersPage"],
-    queryFn: async () => {
-      const raw = await sanityFetch<Partial<CareersPageContent>>("careersPage")
-      return raw ?? null
-    },
-    staleTime: 5 * 60 * 1000,
-  })
-
-  const careersCms = normalizeCms(careersCmsRaw)
-  useApplyCmsSeo(careersCms.seo)
 
   const volunteerAvailable = CAREERS_VOLUNTEER_ENABLED
 

@@ -22,6 +22,8 @@ import { ADVISOR_DIRECTORY_SEED, ADVISOR_FILTER_OPTIONS } from "../client/data/a
 import { FOUNDER_DIRECTORY, ALL_LEVELS, ALL_SPECIALTIES } from "../client/data/founderDirectory"
 import { ROUTE_SEO } from "../client/config/seo"
 import { STORIES } from "../client/content/stories"
+import { CAREERS_OPEN_ROLES } from "../shared/careersOpenRoles"
+import { threePartHeroHeadline } from "../shared/cms/inlineHeroHeadline"
 
 const MONTH_TO_INDEX: Record<string, number> = {
   january: 0,
@@ -1029,11 +1031,13 @@ async function main() {
       seo: seoForRoute("/"),
     },
   })
+  const { heroHeadlinePortable: _aboutHeroDefault, ...aboutFields } = DEFAULT_ABOUT_PAGE
   mutations.push({
     createOrReplace: {
       _id: "aboutPage",
       _type: "aboutPage",
-      ...DEFAULT_ABOUT_PAGE,
+      ...aboutFields,
+      heroHeadlinePortable: threePartHeroHeadline("Empowering the", "next generation", " of health tech."),
       seo: seoForRoute("/about"),
     },
   })
@@ -1046,6 +1050,17 @@ async function main() {
       enableVolunteerTab: true,
       tabsLabelHiring: "Hiring",
       tabsLabelVolunteer: "Volunteer",
+      openRoles: CAREERS_OPEN_ROLES.map((role) => ({
+        _type: "openRole",
+        _key: role.id,
+        roleId: role.id,
+        title: role.title,
+        location: role.location,
+        employmentType: role.employmentType,
+        description: role.description,
+        responsibilities: role.responsibilities,
+        linkedInApplyUrl: role.linkedInApplyUrl,
+      })),
       seo: seoForRoute("/careers"),
     },
   })

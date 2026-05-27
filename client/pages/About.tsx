@@ -87,13 +87,7 @@ export default function About() {
         <PageHeader
           variant="dark"
           titleClassName={cn(PAGE_HEADER_TITLE_SIZE_CLASS, "max-w-3xl")}
-          title={
-            <>
-              {about.heroLine1}{" "}
-              <HeroHeadlinePortable value={about.heroLine2Portable} />{" "}
-              {about.heroLine3}
-            </>
-          }
+          title={<HeroHeadlinePortable value={about.heroHeadlinePortable} />}
           subtitle={about.heroIntro}
         />
 

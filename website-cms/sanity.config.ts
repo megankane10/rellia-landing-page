@@ -41,6 +41,8 @@ export default defineConfig({
   plugins: [
     seofields({
       seoPreview: true,
+      // SEO Health Dashboard is a paid plugin feature (license key). SERP preview + per-page SEO fields are free.
+      healthDashboard: false,
     }),
     structureTool({
       structure: deskStructure,
