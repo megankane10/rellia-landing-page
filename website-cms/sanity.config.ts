@@ -4,6 +4,7 @@ import {structureTool} from 'sanity/structure'
 import {visionTool} from '@sanity/vision'
 import {presentationTool} from 'sanity/presentation'
 import seofields from 'sanity-plugin-seofields'
+import {seoPluginConfig} from './shared/seoPluginConfig'
 import {schemaTypes} from './schemaTypes'
 import {deskStructure} from './deskStructure'
 import {presentationLocations, presentationMainDocuments} from './presentationLocations'
@@ -39,11 +40,7 @@ export default defineConfig({
   theme,
 
   plugins: [
-    seofields({
-      seoPreview: true,
-      // SEO Health Dashboard is a paid plugin feature (license key). SERP preview + per-page SEO fields are free.
-      healthDashboard: false,
-    }),
+    seofields(seoPluginConfig),
     structureTool({
       structure: deskStructure,
     }),

@@ -9,10 +9,6 @@ export const siteSettings = defineType({
     {name: 'social', title: 'Social links'},
     {name: 'seo', title: 'Default SEO'},
   ],
-  fieldsets: [
-    {name: 'logos', title: 'Logos', options: {columns: 3}},
-    {name: 'seoDefaults', title: 'Global SEO fallback', options: {columns: 1}},
-  ],
   fields: [
     defineField({
       name: 'brandName',
@@ -27,7 +23,7 @@ export const siteSettings = defineType({
       title: 'Main logo (light backgrounds)',
       type: 'image',
       options: {hotspot: true},
-      fieldset: 'logos',
+      description: 'Used on white and cream sections. Upload a wide logo with transparent background.',
       group: 'brand',
     }),
     defineField({
@@ -35,7 +31,7 @@ export const siteSettings = defineType({
       title: 'Main logo (dark / teal backgrounds)',
       type: 'image',
       options: {hotspot: true},
-      fieldset: 'logos',
+      description: 'Used on teal heroes and dark bands. Often a light-colored variant.',
       group: 'brand',
     }),
     defineField({
@@ -43,8 +39,7 @@ export const siteSettings = defineType({
       title: 'Favicon path',
       type: 'string',
       initialValue: '/favicon.ico',
-      description: 'Static path served from public/ (default: /favicon.ico).',
-      fieldset: 'logos',
+      description: 'Static path on the marketing site (from public/). Default: /favicon.ico',
       group: 'brand',
       validation: (Rule) => Rule.required(),
     }),
@@ -53,13 +48,13 @@ export const siteSettings = defineType({
       title: 'Social links',
       type: 'array',
       of: [defineArrayMember({type: 'socialLink'})],
+      options: {layout: 'list'},
       group: 'social',
     }),
     defineField({
       name: 'defaultSeo',
       title: 'Default SEO fallback',
-      type: 'seoFields',
-      fieldset: 'seoDefaults',
+      type: 'siteDefaultSeo',
       group: 'seo',
       description: 'Used when a page does not define its own SEO fields.',
     }),

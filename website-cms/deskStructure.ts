@@ -15,7 +15,6 @@ import {
   CaseIcon,
 } from '@sanity/icons'
 import {LookerStudioPanel} from './studio/LookerStudioPanel'
-import {StudioSupportPanel} from './studio/StudioSupportPanel'
 
 const API_VERSION = '2024-01-01'
 
@@ -213,41 +212,24 @@ const peopleGroup = (S: StructureBuilder) =>
         .items([advisorsPeopleGroup(S), foundersPeopleGroup(S)]),
     )
 
-const supportGroup = (S: StructureBuilder) =>
+/** Full-page CMS guide (edit copy in document fields). */
+const supportPanel = (S: StructureBuilder) =>
   S.listItem()
     .title('Support')
     .icon(HelpCircleIcon)
     .child(
-      S.list()
-        .title('Support')
-        .items([
-          S.listItem()
-            .title('How to use this CMS')
-            .child(
-              S.component()
-                .component(StudioSupportPanel)
-                .title('How to use this CMS'),
-            ),
-        ]),
+      S.document()
+        .schemaType('studioGuide')
+        .documentId('studioGuide')
+        .title('How to use this CMS'),
     )
 
-const analyticsGroup = (S: StructureBuilder) =>
+/** Full-page Looker Studio iframe (no nested list). */
+const analyticsPanel = (S: StructureBuilder) =>
   S.listItem()
     .title('Analytics')
     .icon(ChartUpwardIcon)
-    .child(
-      S.list()
-        .title('Analytics')
-        .items([
-          S.listItem()
-            .title('Performance dashboard')
-            .child(
-              S.component()
-                .component(LookerStudioPanel)
-                .title('Performance dashboard'),
-            ),
-        ]),
-    )
+    .child(S.component().component(LookerStudioPanel).title('Analytics'))
 
 const HIDDEN_FROM_CATCH_ALL = new Set([
   'globalSettings',
@@ -284,6 +266,7 @@ const HIDDEN_FROM_CATCH_ALL = new Set([
   'founder',
   'investor',
   'industryPartner',
+  'studioGuide',
 ])
 
 export const deskStructure = (S: StructureBuilder) =>
@@ -295,7 +278,7 @@ export const deskStructure = (S: StructureBuilder) =>
       collectionsGroup(S),
       peopleGroup(S),
       S.divider(),
-      supportGroup(S),
-      analyticsGroup(S),
+      supportPanel(S),
+      analyticsPanel(S),
       ...S.documentTypeListItems().filter((item) => !HIDDEN_FROM_CATCH_ALL.has(item.getId() || '')),
     ])

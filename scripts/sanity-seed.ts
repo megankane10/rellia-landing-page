@@ -1243,12 +1243,60 @@ async function main() {
   })
 
   // Site settings singleton exists in desk; seed minimal safe defaults
+  const siteDefaultSeo = seoForRoute("/")
   mutations.push({
     createOrReplace: {
       _id: "siteSettings",
       _type: "siteSettings",
       brandName: "Rellia Health",
       faviconPath: "/favicon.ico",
+      defaultSeo: siteDefaultSeo
+        ? {
+            title: siteDefaultSeo.title ?? siteDefaultSeo.metaTitle,
+            description: siteDefaultSeo.description ?? siteDefaultSeo.metaDescription,
+            noIndex: siteDefaultSeo.noIndex ?? false,
+          }
+        : undefined,
+    },
+  })
+
+  mutations.push({
+    createOrReplace: {
+      _id: "studioGuide",
+      _type: "studioGuide",
+      title: "How to use this CMS",
+      intro:
+        "Quick reference for editors using Rellia Web Studio. Update this page anytime — it is not shown on the public website.",
+      sections: [
+        {
+          _type: "guideSection",
+          _key: "seo",
+          heading: "SEO in Studio",
+          body:
+            "Each page has an SEO tab with a live Google preview (free). Ignore SEO Health Dashboard — it requires a paid license. Use the per-page SEO fields instead. Site-wide defaults live under Site → Site settings → Default SEO.",
+        },
+        {
+          _type: "guideSection",
+          _key: "analytics",
+          heading: "Looker Studio analytics",
+          body:
+            "Open Analytics in the left sidebar for the performance dashboard. Set SANITY_STUDIO_LOOKER_EMBED_URL in Studio environment variables to your Looker embed URL (Share → Embed report → copy iframe src).",
+        },
+        {
+          _type: "guideSection",
+          _key: "publish",
+          heading: "Publishing content",
+          body:
+            "Edit in the preview dataset first. When content is approved, publish documents in Studio, then promote to production (pnpm sanity:promote from the repo).",
+        },
+        {
+          _type: "guideSection",
+          _key: "presentation",
+          heading: "Visual editing (Presentation)",
+          body:
+            "Presentation needs the preview site with draft mode and SANITY_API_READ_TOKEN on the preview deployment. Set SANITY_STUDIO_PREVIEW_URL to your preview origin. WebSocket console warnings are often harmless; if visual editing fails, open the preview site in a new tab once, then reload Presentation.",
+        },
+      ],
     },
   })
 

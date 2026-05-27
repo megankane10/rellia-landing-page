@@ -87,8 +87,8 @@ export const siteSettingsQuery = `*[_type == "siteSettings"][0]{
   defaultSeo{
     "metaTitle": coalesce(metaTitle, title, openGraph.title),
     "metaDescription": coalesce(metaDescription, description, openGraph.description),
-    "ogTitle": coalesce(ogTitle, openGraph.title, twitter.title),
-    "ogDescription": coalesce(ogDescription, openGraph.description, twitter.description),
+    "ogTitle": coalesce(ogTitle, openGraph.title, twitter.title, title),
+    "ogDescription": coalesce(ogDescription, openGraph.description, twitter.description, description),
     "ogImageUrl": coalesce(
       ogImage.asset->url,
       metaImage.asset->url,

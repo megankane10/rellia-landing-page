@@ -33,6 +33,8 @@ import {consultingPage} from './documents/consultingPage'
 import {bodyCtaBox} from './objects/bodyCtaBox'
 import {portableImageCarousel} from './objects/portableImageCarousel'
 import {logoMarqueeItem} from './objects/logoMarqueeItem'
+import {siteDefaultSeo} from './objects/siteDefaultSeo'
+import {studioGuide} from './documents/studioGuide'
 import {navItem} from './objects/navItem'
 import {portableRichText} from './objects/portableRichText'
 import {portableText} from './objects/portableText'
@@ -78,6 +80,7 @@ export const schemaTypes = [
   networkInvestorsPage,
   networkPartnersPage,
   consultingPage,
+  studioGuide,
   // Collections
   advisor,
   founder,
@@ -97,6 +100,7 @@ export const schemaTypes = [
   bodyCtaBox,
   portableImageCarousel,
   logoMarqueeItem,
+  siteDefaultSeo,
   navItem,
   linkAnnotation,
   socialLink,

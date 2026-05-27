@@ -34,7 +34,8 @@ export const logoMarqueeField = defineField({
   name: 'logoMarquee',
   title: 'Logo scroll',
   type: 'array',
-  description: 'Logos in the page marquee. Drag to reorder. Empty list uses site defaults.',
+  description:
+    'One logo per row — upload image, then name. Drag to reorder. Empty list uses site defaults.',
   of: [defineArrayMember({type: 'logoMarqueeItem'})],
-  options: {sortable: true},
+  options: {sortable: true, layout: 'list'},
 })
