@@ -223,10 +223,18 @@ Set the same variables on **Vercel → Settings → Environment Variables** for 
 4. Seed preview content: `pnpm sanity:seed` (requires `SANITY_API_WRITE_TOKEN` and matching project/dataset env).
 5. After schema changes: `pnpm sanity:cleanup` on the **`preview`** dataset (removes `diagnosticSubmission` orphans and duplicate docs).
 
-**Deploy Studio schema:** from `website-cms/`:
+**Deploy Studio** (Sanity CLI is installed under `website-cms/`, not globally — do not run bare `sanity deploy`):
+
+From repo root:
 
 ```bash
-rm -rf node_modules && pnpm install
+pnpm sanity:studio:deploy
+```
+
+Or from `website-cms/`:
+
+```bash
+cd website-cms && pnpm install
 pnpm exec sanity schema deploy
 pnpm exec sanity deploy
 ```

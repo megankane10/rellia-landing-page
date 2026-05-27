@@ -1,5 +1,5 @@
-import { useState } from "react"
-import { useNavigate } from "react-router-dom"
+import { useEffect, useState } from "react"
+import { useNavigate, useSearchParams } from "react-router-dom"
 import { useAuth } from "@/context/AuthContext"
 import RelliaAction from "@/components/RelliaAction"
 import { Input } from "@/components/ui/input"
@@ -9,10 +9,18 @@ import AdminAuthLayout from "@/components/admin/AdminAuthLayout"
 const AdminLogin = () => {
   const { signIn } = useAuth()
   const navigate = useNavigate()
+  const [searchParams, setSearchParams] = useSearchParams()
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    if (searchParams.get("error") !== "admin_required") return
+    const next = new URLSearchParams(searchParams)
+    next.delete("error")
+    setSearchParams(next, { replace: true })
+  }, [searchParams, setSearchParams])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()

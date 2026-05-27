@@ -11,10 +11,8 @@ import {
   CalendarIcon,
   BookIcon,
   HelpCircleIcon,
-  ChartUpwardIcon,
   CaseIcon,
 } from '@sanity/icons'
-import {LookerStudioPanel} from './studio/LookerStudioPanel'
 import {StudioGuideReadPanel} from './studio/StudioGuideReadPanel'
 
 const API_VERSION = '2024-01-01'
@@ -256,13 +254,6 @@ const buildPagesGroup = (S: StructureBuilder) =>
         .defaultOrdering([{field: 'title', direction: 'asc'}]),
     )
 
-/** Full-page Looker Studio iframe (no nested list). */
-const analyticsPanel = (S: StructureBuilder) =>
-  S.listItem()
-    .title('Analytics')
-    .icon(ChartUpwardIcon)
-    .child(S.component().component(LookerStudioPanel).title('Analytics'))
-
 const HIDDEN_FROM_CATCH_ALL = new Set([
   'globalSettings',
   'navigation',
@@ -316,7 +307,6 @@ export const deskStructure = (S: StructureBuilder) =>
       peopleGroup(S),
       S.divider(),
       supportPanel(S),
-      analyticsPanel(S),
       S.divider(),
       buildPagesGroup(S),
       ...S.documentTypeListItems().filter((item) => !HIDDEN_FROM_CATCH_ALL.has(item.getId() || '')),

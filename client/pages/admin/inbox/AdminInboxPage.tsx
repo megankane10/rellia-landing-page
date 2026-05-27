@@ -415,7 +415,10 @@ const AdminInboxPage = () => {
       {!statusWritesEnabled ? (
         <p className="mb-4 rounded-lg border border-amber-200/80 bg-amber-50 px-4 py-3 font-urbanist text-sm text-amber-900">
           Status updates need Supabase policies. Run{" "}
-          <code className="text-xs">scripts/supabase_admin_policies.sql</code> in the SQL editor.
+          <code className="text-xs">scripts/supabase_admin_policies.sql</code> in the SQL editor. If the inbox is
+          empty after login, run{" "}
+          <code className="text-xs">scripts/supabase_revert_admin_role_policies.sql</code> when admin-role RLS was
+          enabled.
         </p>
       ) : null}
 

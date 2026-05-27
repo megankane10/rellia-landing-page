@@ -59,7 +59,7 @@ export const siteSettings = defineType({
       type: 'url',
       group: 'analytics',
       description:
-        'Powers the Analytics panel in this Studio. In Looker Studio: Share → Embed report → copy the iframe src URL. You can also set SANITY_STUDIO_LOOKER_EMBED_URL in website-cms/.env for local dev.',
+        'Powers the Analytics tool in the Studio top bar. In Looker Studio: Share → Embed report → copy the iframe src URL. You can also set SANITY_STUDIO_LOOKER_EMBED_URL in website-cms/.env for local dev.',
     }),
     defineField({
       name: 'defaultSeo',

@@ -8,6 +8,7 @@ import {seoPluginConfig} from './shared/seoPluginConfig'
 import {schemaTypes} from './schemaTypes'
 import {deskStructure} from './deskStructure'
 import {presentationLocations, presentationMainDocuments} from './presentationLocations'
+import {relliaAnalyticsTool} from './studio/relliaAnalyticsTool'
 
 const theme = buildLegacyTheme({
   '--black': '#0B0F12',
@@ -38,6 +39,8 @@ export default defineConfig({
   dataset: process.env.SANITY_STUDIO_DATASET || 'preview',
 
   theme,
+
+  tools: (prev) => [...prev, relliaAnalyticsTool()],
 
   plugins: [
     seofields(seoPluginConfig),

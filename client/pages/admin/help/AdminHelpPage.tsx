@@ -83,6 +83,31 @@ const AdminHelpPage = () => (
 
     <Card>
       <CardHeader>
+        <CardTitle className="font-host-grotesk text-lg">Sign-in problems</CardTitle>
+        <CardDescription className="font-urbanist">
+          If login says this account does not have admin access, or the inbox stays empty after sign-in.
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-3 font-urbanist text-sm leading-relaxed text-muted-foreground">
+        <p>
+          <strong className="text-foreground">Stale site build:</strong> Hard-refresh the login page or open it in a
+          private window. The live site must include the latest deploy (admin role checks were removed).
+        </p>
+        <p>
+          <strong className="text-foreground">Database policies:</strong> If you ran{" "}
+          <code className="rounded bg-muted px-1 text-xs">scripts/supabase_admin_role_policies.sql</code>, run the full
+          revert file{" "}
+          <code className="rounded bg-muted px-1 text-xs">scripts/supabase_revert_admin_role_policies.sql</code> in the
+          Supabase SQL editor so any signed-in user can read submissions again.
+        </p>
+        <p>
+          Any valid Supabase Auth user can sign in — no <code className="text-xs">app_metadata.role</code> is required.
+        </p>
+      </CardContent>
+    </Card>
+
+    <Card>
+      <CardHeader>
         <CardTitle className="font-host-grotesk text-lg">Signup access</CardTitle>
         <CardDescription className="font-urbanist">
           Control whether the public <code className="text-xs">/admin/signup</code> page can create accounts.

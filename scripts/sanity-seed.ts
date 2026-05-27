@@ -1352,9 +1352,9 @@ async function main() {
         {
           _type: "guideSection",
           _key: "analytics",
-          heading: "Looker Studio analytics",
+          heading: "Analytics",
           body:
-            "Open Analytics in the left sidebar. Set the embed URL under Site → Site settings → Analytics (Studio). Optional: SANITY_STUDIO_LOOKER_EMBED_URL in website-cms/.env for local Studio only. In Looker: Share → Embed report → copy iframe src.",
+            "Use the Analytics tool in the Studio top bar (full-screen Looker embed). Set the URL under Site → Site settings → Analytics (Studio). In Looker: Share → Embed report → copy iframe src. Public site traffic also uses Vercel Analytics; add GA4 or Plausible in Vercel if you need marketing funnels beyond Looker.",
         },
         {
           _type: "guideSection",
