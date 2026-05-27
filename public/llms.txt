@@ -6,7 +6,6 @@ Rellia offers founder programs (QMS, fundraising, regulatory, clinical validatio
 
 - [Home](https://www.relliahealth.com): Rellia Health connects founders, clinicians, and health systems to build the future of care. Join our network and explore programs.
 - [/about](https://www.relliahealth.com/about): Learn how Rellia Health brings together operators, investors, and clinical leaders to scale solutions that matter for patients and health systems.
-- [/network](https://www.relliahealth.com/network): Join the Rellia Health network of founders, investors, advisors, and partners building the next generation of healthcare companies.
 - [/programs](https://www.relliahealth.com/programs): Explore Rellia Health programs designed to help healthcare builders learn, connect, and grow with the right stakeholders.
 - [/apply](https://www.relliahealth.com/apply): Apply to join the Rellia Network. Built for founders, advisors, investors, and industry partners shaping the future of health.
 - [/events](https://www.relliahealth.com/events): Register for upcoming Rellia Health events on Luma and explore past event pages. Practical sessions for builders in health tech.
@@ -47,6 +46,7 @@ Rellia offers founder programs (QMS, fundraising, regulatory, clinical validatio
 - [/events/clinician-connect-womens-health](https://www.relliahealth.com/events/clinician-connect-womens-health): Event details, location, and registration for Rellia Health sessions. Explore upcoming and past programs.
 - [/events/ethics-in-ai-less-about-tech-more-about-humans](https://www.relliahealth.com/events/ethics-in-ai-less-about-tech-more-about-humans): Event details, location, and registration for Rellia Health sessions. Explore upcoming and past programs.
 - [/events/health-system-adoption-for-startups](https://www.relliahealth.com/events/health-system-adoption-for-startups): Event details, location, and registration for Rellia Health sessions. Explore upcoming and past programs.
+- [/events/investor-readiness-how-vcs-evaluate-startups](https://www.relliahealth.com/events/investor-readiness-how-vcs-evaluate-startups): Event details, location, and registration for Rellia Health sessions. Explore upcoming and past programs.
 - [/events/leadership-under-pressure](https://www.relliahealth.com/events/leadership-under-pressure): Event details, location, and registration for Rellia Health sessions. Explore upcoming and past programs.
 - [/events/rellia-pitch-event-forum-ventures](https://www.relliahealth.com/events/rellia-pitch-event-forum-ventures): Event details, location, and registration for Rellia Health sessions. Explore upcoming and past programs.
 - [/events/scaling-with-purpose-from-prototype-to-customer-in-health-startups](https://www.relliahealth.com/events/scaling-with-purpose-from-prototype-to-customer-in-health-startups): Event details, location, and registration for Rellia Health sessions. Explore upcoming and past programs.

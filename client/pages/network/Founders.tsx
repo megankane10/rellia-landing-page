@@ -1,15 +1,15 @@
-import { useEffect, useMemo, useRef, useState } from "react"
-import { PAGE_HEADER_TITLE_SIZE_CLASS } from "@/components/PageHeader"
-import NetworkEyebrow from "@/components/network/NetworkEyebrow"
-import SectionHeading from "@/components/SectionHeading"
-import MembershipPathTimeline from "@/components/MembershipPathTimeline"
-import Navbar from "@/components/Navbar"
-import Footer from "@/components/Footer"
-import LogoMarquee from "@/components/LogoMarquee"
-import RelliaAction from "@/components/RelliaAction"
-import RelliaCta from "@/components/RelliaCta"
-import { relliaTealGlassCardClass } from "@/lib/relliaTealGlassCard"
-import { cn } from "@/lib/utils"
+import { useEffect, useMemo, useRef, useState } from "react";
+import { PAGE_HEADER_TITLE_SIZE_CLASS } from "@/components/PageHeader";
+import NetworkEyebrow from "@/components/network/NetworkEyebrow";
+import SectionHeading from "@/components/SectionHeading";
+import MembershipPathTimeline from "@/components/MembershipPathTimeline";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+import LogoMarquee from "@/components/LogoMarquee";
+import RelliaAction from "@/components/RelliaAction";
+import RelliaCta from "@/components/RelliaCta";
+import { relliaTealGlassCardClass } from "@/lib/relliaTealGlassCard";
+import { cn } from "@/lib/utils";
 import {
   ArrowRight,
   ArrowDown,
@@ -31,22 +31,26 @@ import {
   Video,
   X,
   Sparkles,
-} from "lucide-react"
-import { Link } from "react-router-dom"
-import { NETWORK_PATH_ROLE_TAG } from "@/lib/networkPathRoles"
-import ScrollReveal from "@/components/ScrollReveal"
-import { DiagnosticSurveySection } from "@/components/DiagnosticSurveySection"
-import { CreamSection, LightSection, Reveal } from "./_shared"
-import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion"
-import { useNetworkFoundersPage } from "@/hooks/useCmsDocuments"
-import NetworkCmsPage from "./NetworkCmsPage"
-import CmsPageVisibilityGate from "@/components/cms/CmsPageVisibilityGate"
-import { PORTFOLIO_LOGO_MARKS } from "@/data/portfolioLogos"
-import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo"
-import WhyRellia from "@/components/WhyRellia"
+} from "lucide-react";
+import { Link } from "react-router-dom";
+import { NETWORK_PATH_ROLE_TAG } from "@/lib/networkPathRoles";
+import ScrollReveal from "@/components/ScrollReveal";
+import { DiagnosticSurveySection } from "@/components/DiagnosticSurveySection";
+import { CreamSection, LightSection, Reveal } from "./_shared";
+import {
+  motion,
+  useReducedMotion,
+  useScroll,
+  useTransform,
+} from "framer-motion";
+import { useNetworkFoundersPage } from "@/hooks/useCmsDocuments";
+import NetworkCmsPage from "./NetworkCmsPage";
+import CmsPageVisibilityGate from "@/components/cms/CmsPageVisibilityGate";
+import { PORTFOLIO_LOGO_MARKS } from "@/data/portfolioLogos";
+import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo";
+import WhyRellia from "@/components/WhyRellia";
 
-
-const HERO_FALLBACK = "/images/founders.jpg"
+const HERO_FALLBACK = "/images/founders.jpg";
 
 const ELIGIBILITY_BENTO_ITEMS = [
   {
@@ -56,8 +60,7 @@ const ELIGIBILITY_BENTO_ITEMS = [
   },
   {
     text: "Software as a medical device (SaMD) and connected devices",
-    fallbackUrl:
-      "https://images.pexels.com/photos/8460155/pexels-photo-8460155.jpeg?auto=compress&cs=tinysrgb&w=1200",
+    fallbackUrl: "/images/samd.jpg",
   },
   {
     text: "Diagnostics, lab, and decision-support platforms",
@@ -81,13 +84,15 @@ const ELIGIBILITY_BENTO_ITEMS = [
   },
   {
     text: "Payer and value-based care infrastructure",
-    fallbackUrl: "https://images.pexels.com/photos/7089012/pexels-photo-7089012.jpeg?auto=compress&cs=tinysrgb&w=1200",
+    fallbackUrl:
+      "https://images.pexels.com/photos/7089012/pexels-photo-7089012.jpeg?auto=compress&cs=tinysrgb&w=1200",
   },
   {
     text: "Direct-to-consumer healthcare and wellness",
-    fallbackUrl: "https://images.pexels.com/photos/4386464/pexels-photo-4386464.jpeg?auto=compress&cs=tinysrgb&w=1200",
+    fallbackUrl:
+      "https://images.pexels.com/photos/4386464/pexels-photo-4386464.jpeg?auto=compress&cs=tinysrgb&w=1200",
   },
-] as const
+] as const;
 
 const MEMBERSHIP_VALUE_PROPS = [
   {
@@ -110,16 +115,16 @@ const MEMBERSHIP_VALUE_PROPS = [
     body: "Depth from experienced advisors and operators without giving up ownership to join.",
     icon: Percent,
   },
-] as const
+] as const;
 
-type JourneyZone = "outside" | "rellia"
+type JourneyZone = "outside" | "rellia";
 
 type JourneyStep = {
-  id: string
-  label: string
-  zone: JourneyZone
-  detail: string
-}
+  id: string;
+  label: string;
+  zone: JourneyZone;
+  detail: string;
+};
 
 const JOURNEY_TIMELINE: JourneyStep[] = [
   {
@@ -192,7 +197,7 @@ const JOURNEY_TIMELINE: JourneyStep[] = [
     detail:
       "Grow into health systems and markets with the intros, playbooks, and peer network to sustain momentum after first revenue.",
   },
-]
+];
 
 const ENGAGEMENT = [
   {
@@ -219,7 +224,7 @@ const ENGAGEMENT = [
     to: "/contact",
     icon: Mail,
   },
-] as const
+] as const;
 
 const CONSULTING_FEATURES = [
   {
@@ -242,33 +247,33 @@ const CONSULTING_FEATURES = [
     body: "Introductions matched to your roadmap so you talk to the right operators, partners, and investors.",
     icon: UserPlus,
   },
-] as const
+] as const;
 
 function DeeperHelpValuesSection() {
-  const sectionRef = useRef<HTMLElement | null>(null)
-  const reduceMotion = useReducedMotion()
-  const [isMobile, setIsMobile] = useState(true)
+  const sectionRef = useRef<HTMLElement | null>(null);
+  const reduceMotion = useReducedMotion();
+  const [isMobile, setIsMobile] = useState(true);
 
   useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth < 768)
-    checkMobile()
-    window.addEventListener("resize", checkMobile)
-    return () => window.removeEventListener("resize", checkMobile)
-  }, [])
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
 
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ["start 95%", "end 5%"],
-  })
-  const bgY = useTransform(scrollYProgress, [0, 1], ["-18%", "18%"])
+  });
+  const bgY = useTransform(scrollYProgress, [0, 1], ["-18%", "18%"]);
 
   const bgSrc =
-    "https://images.pexels.com/photos/3184325/pexels-photo-3184325.jpeg?auto=compress&cs=tinysrgb&w=1600"
+    "https://images.pexels.com/photos/3184325/pexels-photo-3184325.jpeg?auto=compress&cs=tinysrgb&w=1600";
 
   return (
     <section
       ref={(node) => {
-        sectionRef.current = node
+        sectionRef.current = node;
       }}
       className="relative w-full overflow-hidden bg-white py-4 md:py-6"
     >
@@ -289,16 +294,30 @@ function DeeperHelpValuesSection() {
           <div className="relative z-10 mx-auto flex w-full max-w-[1300px] flex-1 flex-col px-6 pb-16 pt-12 md:px-10 md:pb-18 md:pt-14">
             <div className="flex flex-col items-start text-left mt-8 md:mt-10 lg:mt-24">
               <ScrollReveal>
-                <div className="mb-7 md:mb-8">
-                </div>
-                <h2 className={cn("max-w-4xl font-host-grotesk font-bold leading-tight tracking-tight text-white", PAGE_HEADER_TITLE_SIZE_CLASS)}>
+                <div className="mb-7 md:mb-8"></div>
+                <h2
+                  className={cn(
+                    "max-w-4xl font-host-grotesk font-bold leading-tight tracking-tight text-white",
+                    PAGE_HEADER_TITLE_SIZE_CLASS,
+                  )}
+                >
                   Need deeper help?
                 </h2>
                 <p className="mt-5 max-w-2xl font-urbanist text-lg leading-relaxed text-white/80 md:text-xl">
-                  Scoped working sessions beyond community rhythm—clear deliverables for the milestone you&apos;re staring down.
+                  Scoped working sessions beyond community rhythm—clear
+                  deliverables for the milestone you&apos;re staring down.
                 </p>
-                <RelliaAction asChild variant="mintOnTealStrip" size="comfortable" className="mt-8">
-                  <Link to="/consulting" className="inline-flex cursor-pointer items-center gap-2" aria-label="Explore consulting">
+                <RelliaAction
+                  asChild
+                  variant="mintOnTealStrip"
+                  size="comfortable"
+                  className="mt-8"
+                >
+                  <Link
+                    to="/consulting"
+                    className="inline-flex cursor-pointer items-center gap-2"
+                    aria-label="Explore consulting"
+                  >
                     Explore consulting
                     <ArrowRight className="h-4 w-4" aria-hidden />
                   </Link>
@@ -310,16 +329,23 @@ function DeeperHelpValuesSection() {
               <div className="w-full">
                 <div className="grid grid-cols-1 items-stretch gap-3 sm:grid-cols-2 sm:gap-4 md:gap-5 lg:grid-cols-3 xl:grid-cols-4">
                   {CONSULTING_FEATURES.map((v, i) => {
-                    const Icon = v.icon
+                    const Icon = v.icon;
                     return (
-                      <ScrollReveal key={v.title} delay={i * 0.08} className="h-full">
+                      <ScrollReveal
+                        key={v.title}
+                        delay={i * 0.08}
+                        className="h-full"
+                      >
                         <div
                           className={cn(
                             relliaTealGlassCardClass,
                             "flex h-full min-h-[140px] flex-col px-4 py-4 sm:min-h-[220px] sm:px-6 sm:py-6 md:min-h-[250px] md:px-7 md:py-8",
                           )}
                         >
-                          <Icon className="h-5 w-5 shrink-0 text-rellia-mint sm:h-7 sm:w-7" aria-hidden />
+                          <Icon
+                            className="h-5 w-5 shrink-0 text-rellia-mint sm:h-7 sm:w-7"
+                            aria-hidden
+                          />
                           <p className="mt-2.5 font-host-grotesk text-sm font-semibold leading-snug tracking-tight text-white sm:mt-4 sm:text-lg md:text-xl">
                             {v.title}
                           </p>
@@ -328,7 +354,7 @@ function DeeperHelpValuesSection() {
                           </p>
                         </div>
                       </ScrollReveal>
-                    )
+                    );
                   })}
                 </div>
               </div>
@@ -337,11 +363,11 @@ function DeeperHelpValuesSection() {
         </div>
       </div>
     </section>
-  )
+  );
 }
 
 function FoundersHero() {
-  const heroSrc = HERO_FALLBACK
+  const heroSrc = HERO_FALLBACK;
 
   return (
     <section className="relative overflow-hidden bg-rellia-teal pt-[72px] md:pt-[86px] lg:flex lg:flex-1 lg:flex-col lg:min-h-0 lg:pt-[96px]">
@@ -350,8 +376,14 @@ function FoundersHero() {
         alt=""
         className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-60"
       />
-      <div className="absolute inset-0 bg-gradient-to-br from-rellia-teal/[0.88] via-rellia-teal/72 to-[#0a2830]/82" aria-hidden />
-      <div aria-hidden className="pointer-events-none absolute inset-0 opacity-35 [background-image:radial-gradient(circle_at_20%_20%,rgba(167,219,214,0.35),transparent_50%),radial-gradient(circle_at_85%_30%,rgba(255,255,255,0.14),transparent_45%)]" />
+      <div
+        className="absolute inset-0 bg-gradient-to-br from-rellia-teal/[0.88] via-rellia-teal/72 to-[#0a2830]/82"
+        aria-hidden
+      />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 opacity-35 [background-image:radial-gradient(circle_at_20%_20%,rgba(167,219,214,0.35),transparent_50%),radial-gradient(circle_at_85%_30%,rgba(255,255,255,0.14),transparent_45%)]"
+      />
       <img
         src="/images/hologram-logo.png"
         alt=""
@@ -361,18 +393,23 @@ function FoundersHero() {
 
       <div className="relative z-10 mx-auto max-w-[1300px] px-6 pb-20 pt-10 md:px-10 md:pb-28 md:pt-14 lg:flex lg:flex-1 lg:flex-col lg:justify-center lg:pb-20 lg:pt-0">
         <Reveal className="flex flex-col items-start text-left">
-          <NetworkEyebrow label="Founders" tone="onDark" className="mb-6 md:mb-8" />
+          <NetworkEyebrow
+            label="Founders"
+            tone="onDark"
+            className="mb-6 md:mb-8"
+          />
           <h1
             className={cn(
               "max-w-4xl font-bold leading-[1.08] tracking-tight text-rellia-mint drop-shadow-sm [&_span]:!text-rellia-mint [&_strong]:!text-rellia-mint [&_em]:!text-rellia-mint",
               PAGE_HEADER_TITLE_SIZE_CLASS,
             )}
           >
-            Are you building in <span className="text-rellia-mint">health tech?</span>
+            Are you building in{" "}
+            <span className="text-rellia-mint">health tech?</span>
           </h1>
           <p className="mt-6 max-w-2xl font-urbanist text-lg leading-relaxed text-white md:text-xl [&_span]:!text-white [&_strong]:!text-white">
-            You&apos;re building something that can change healthcare. We bring the experts, programs, and connections to help
-            you get there.
+            You&apos;re building something that can change healthcare. We bring
+            the experts, programs, and connections to help you get there.
           </p>
           <div className="mt-10 flex w-full flex-col gap-3 sm:flex-row sm:flex-wrap">
             <RelliaAction
@@ -381,7 +418,11 @@ function FoundersHero() {
               size="comfortable"
               className="w-full min-w-0 justify-center sm:min-w-[220px] sm:w-auto"
             >
-              <Link to="/apply" className="inline-flex w-full cursor-pointer items-center justify-center gap-2 sm:w-auto" aria-label="Apply to join Rellia">
+              <Link
+                to="/apply"
+                className="inline-flex w-full cursor-pointer items-center justify-center gap-2 sm:w-auto"
+                aria-label="Apply to join Rellia"
+              >
                 Apply to join
                 <ArrowRight className="h-4 w-4" aria-hidden />
               </Link>
@@ -405,21 +446,21 @@ function FoundersHero() {
         </Reveal>
       </div>
     </section>
-  )
+  );
 }
 
-type EligibilityBentoItem = (typeof ELIGIBILITY_BENTO_ITEMS)[number]
+type EligibilityBentoItem = (typeof ELIGIBILITY_BENTO_ITEMS)[number];
 
 const EligibilityBentoCard = ({
   item,
   className,
   featured,
 }: {
-  item: EligibilityBentoItem
-  className?: string
-  featured?: boolean
+  item: EligibilityBentoItem;
+  className?: string;
+  featured?: boolean;
 }) => {
-  const src = item.fallbackUrl
+  const src = item.fallbackUrl;
 
   return (
     <article
@@ -434,18 +475,22 @@ const EligibilityBentoCard = ({
         className="absolute inset-0 h-full w-full object-cover transition duration-700 ease-out group-hover:scale-[1.04] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
         loading="lazy"
       />
-      <div aria-hidden className="absolute inset-0 bg-gradient-to-br from-black/95 via-black/45 to-transparent" />
-      <div aria-hidden className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/15 to-transparent" />
+      <div
+        aria-hidden
+        className="absolute inset-0 bg-gradient-to-br from-black/95 via-black/45 to-transparent"
+      />
+      <div
+        aria-hidden
+        className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/15 to-transparent"
+      />
       <div className="relative z-10 flex h-full min-h-0 w-full flex-1 flex-col justify-start p-5 text-left md:p-6">
-        <p
-          className="self-start font-host-grotesk font-light text-lg md:text-xl leading-[1.3] tracking-tight text-white [text-shadow:0_1px_16px_rgba(0,0,0,0.4)]"
-        >
+        <p className="self-start font-host-grotesk font-light text-lg md:text-xl leading-[1.3] tracking-tight text-white [text-shadow:0_1px_16px_rgba(0,0,0,0.4)]">
           {item.text}
         </p>
       </div>
     </article>
-  )
-}
+  );
+};
 
 function EligibilitySection() {
   return (
@@ -458,19 +503,14 @@ function EligibilitySection() {
           className="mt-5 max-w-full [&>p]:max-w-full [&>p]:text-left [&>p]:leading-relaxed"
         />
 
-        <div
-          className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:mt-14 lg:grid-cols-4"
-        >
+        <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:mt-14 lg:grid-cols-4">
           {ELIGIBILITY_BENTO_ITEMS.map((item) => (
-            <EligibilityBentoCard
-              key={item.text}
-              item={item}
-            />
+            <EligibilityBentoCard key={item.text} item={item} />
           ))}
         </div>
       </div>
     </section>
-  )
+  );
 }
 
 /** Visual shell aligned with homepage {@link HowItWorks} — white background, elegant light cards */
@@ -497,7 +537,8 @@ function EngageTealBand() {
               How to plug in this week
             </h2>
             <p className="mt-4 max-w-2xl font-urbanist text-base font-medium leading-relaxed text-black/80 md:text-lg">
-              Every path reconnects to the same high-trust network—pick what fits your sprint.
+              Every path reconnects to the same high-trust network—pick what
+              fits your sprint.
             </p>
           </div>
         </ScrollReveal>
@@ -505,30 +546,38 @@ function EngageTealBand() {
         <ScrollReveal delay={0.12}>
           <div className="mt-16 grid grid-cols-1 gap-7 md:mt-20 md:grid-cols-2 lg:mt-24 lg:grid-cols-4 lg:gap-6">
             {ENGAGEMENT.map((item) => {
-              const Icon = item.icon
+              const Icon = item.icon;
               return (
                 <Link
                   key={item.title}
                   to={item.to}
                   className="group flex h-full min-h-[168px] flex-col rounded-2xl border border-black/10 bg-gradient-to-br from-rellia-teal to-[#144853] p-5 transition duration-300 hover:from-[#113f4a] hover:to-[#0f3842] hover:shadow-md cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-teal focus-visible:ring-offset-2 focus-visible:ring-offset-white sm:min-h-[184px] sm:p-6 items-start"
                 >
-                  <Icon className="h-7 w-7 text-rellia-mint transition-transform duration-300 group-hover:scale-105" aria-hidden />
+                  <Icon
+                    className="h-7 w-7 text-rellia-mint transition-transform duration-300 group-hover:scale-105"
+                    aria-hidden
+                  />
                   <p className="mt-5 font-host-grotesk text-lg font-semibold leading-snug tracking-tight text-white">
                     {item.title}
                   </p>
-                  <p className="mt-3 flex-1 font-urbanist text-sm leading-relaxed text-white/80">{item.body}</p>
+                  <p className="mt-3 flex-1 font-urbanist text-sm leading-relaxed text-white/80">
+                    {item.body}
+                  </p>
                   <span className="mt-4 inline-flex items-center gap-1 font-urbanist text-sm font-semibold text-rellia-mint">
                     Continue
-                    <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" aria-hidden />
+                    <ArrowRight
+                      className="h-4 w-4 transition-transform group-hover:translate-x-0.5"
+                      aria-hidden
+                    />
                   </span>
                 </Link>
-              )
+              );
             })}
           </div>
         </ScrollReveal>
       </div>
     </section>
-  )
+  );
 }
 
 function MembershipDifferentSection() {
@@ -536,7 +585,7 @@ function MembershipDifferentSection() {
     title: prop.title,
     description: prop.body,
     iconKey: "",
-  }))
+  }));
 
   return (
     <WhyRellia
@@ -545,12 +594,12 @@ function MembershipDifferentSection() {
       features={whyFeatures}
       sectionClassName="bg-white"
     />
-  )
+  );
 }
 
 function JourneySplitSection() {
-  const relliaSteps = JOURNEY_TIMELINE.filter((s) => s.zone === "rellia")
-  const outsideSteps = JOURNEY_TIMELINE.filter((s) => s.zone === "outside")
+  const relliaSteps = JOURNEY_TIMELINE.filter((s) => s.zone === "rellia");
+  const outsideSteps = JOURNEY_TIMELINE.filter((s) => s.zone === "outside");
 
   const journeyIconById = {
     idea: Lightbulb,
@@ -563,14 +612,14 @@ function JourneySplitSection() {
     clinical: Stethoscope,
     commercial: Target,
     launch: Rocket,
-  } satisfies Record<JourneyStep["id"], typeof Lightbulb>
+  } satisfies Record<JourneyStep["id"], typeof Lightbulb>;
 
-  const outsideCardBaseDelay = 0.06
-  const outsideCardStagger = 0.07
-  const dividerDelay = 0.16
-  const bottomHeaderDelay = 0.2
-  const relliaCardBaseDelay = 0.24
-  const relliaCardStagger = 0.07
+  const outsideCardBaseDelay = 0.06;
+  const outsideCardStagger = 0.07;
+  const dividerDelay = 0.16;
+  const bottomHeaderDelay = 0.2;
+  const relliaCardBaseDelay = 0.24;
+  const relliaCardStagger = 0.07;
 
   return (
     <section className="w-full overflow-hidden border-t border-black/[0.06] bg-white px-6 py-16 md:px-10 md:py-24">
@@ -587,14 +636,15 @@ function JourneySplitSection() {
               You own
             </span>
             <p className="max-w-2xl font-urbanist text-base font-normal leading-relaxed tracking-tight text-rellia-teal md:text-lg md:text-right">
-              We help you execute in healthcare complexity once you have direction—without replacing early discovery.
+              We help you execute in healthcare complexity once you have
+              direction—without replacing early discovery.
             </p>
           </div>
         </ScrollReveal>
 
         <div className="mt-6 grid w-full grid-cols-1 items-center gap-4 md:grid-cols-3">
           {outsideSteps.map((m, idx) => {
-            const Icon = journeyIconById[m.id]
+            const Icon = journeyIconById[m.id];
             return (
               <ScrollReveal
                 key={m.id}
@@ -605,18 +655,28 @@ function JourneySplitSection() {
                   <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-rellia-teal/5 text-rellia-teal">
                     <Icon className="h-4.5 w-4.5" aria-hidden />
                   </span>
-                  <h3 className="font-host-grotesk text-base font-semibold leading-none text-black">{m.label}</h3>
+                  <h3 className="font-host-grotesk text-base font-semibold leading-none text-black">
+                    {m.label}
+                  </h3>
                 </article>
               </ScrollReveal>
-            )
+            );
           })}
         </div>
 
         <div className="relative flex w-full items-center justify-center py-12">
-          <ScrollReveal variant="lineReveal" delay={dividerDelay} className="absolute inset-x-0 top-1/2 h-px -translate-y-1/2">
+          <ScrollReveal
+            variant="lineReveal"
+            delay={dividerDelay}
+            className="absolute inset-x-0 top-1/2 h-px -translate-y-1/2"
+          >
             <div className="h-full w-full bg-black/10" aria-hidden />
           </ScrollReveal>
-          <ScrollReveal variant="ctaReveal" delay={dividerDelay + 0.12} className="relative z-10">
+          <ScrollReveal
+            variant="ctaReveal"
+            delay={dividerDelay + 0.12}
+            className="relative z-10"
+          >
             <div
               className="flex h-10 w-10 items-center justify-center rounded-full bg-rellia-teal text-white shadow-sm"
               aria-hidden
@@ -626,27 +686,35 @@ function JourneySplitSection() {
           </ScrollReveal>
         </div>
 
-        <ScrollReveal variant="ctaReveal" delay={bottomHeaderDelay} className="w-full">
+        <ScrollReveal
+          variant="ctaReveal"
+          delay={bottomHeaderDelay}
+          className="w-full"
+        >
           <div className="flex w-full flex-col items-start gap-4 md:flex-row md:items-start md:justify-between md:gap-8">
             <span className="inline-flex shrink-0 items-center rounded-full bg-rellia-mint px-3.5 py-1.5 text-xs font-semibold uppercase tracking-[0.14em] text-rellia-teal">
               We help with
             </span>
             <h3 className="max-w-2xl font-urbanist text-base font-normal leading-relaxed tracking-tight text-rellia-teal md:text-lg md:text-right">
-              Programs, operators, and warm intros aligned to milestones that survive clinical, regulatory, and buyer scrutiny.
+              Programs, operators, and warm intros aligned to milestones that
+              survive clinical, regulatory, and buyer scrutiny.
             </h3>
           </div>
         </ScrollReveal>
 
         <div className="mt-6 grid w-full grid-cols-1 items-stretch gap-4 sm:grid-cols-2 md:grid-cols-4">
           {relliaSteps.map((m, idx) => {
-            const Icon = journeyIconById[m.id]
-            const isLast = idx === relliaSteps.length - 1
+            const Icon = journeyIconById[m.id];
+            const isLast = idx === relliaSteps.length - 1;
             return (
               <ScrollReveal
                 key={m.id}
                 variant="ctaReveal"
                 delay={relliaCardBaseDelay + idx * relliaCardStagger}
-                className={cn("h-full", isLast && "sm:col-span-2 md:col-span-2")}
+                className={cn(
+                  "h-full",
+                  isLast && "sm:col-span-2 md:col-span-2",
+                )}
               >
                 <article
                   className={cn(
@@ -656,16 +724,20 @@ function JourneySplitSection() {
                   <span className="mb-4 inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-rellia-mint text-rellia-teal shadow-sm">
                     <Icon className="h-5 w-5" aria-hidden />
                   </span>
-                  <h4 className="font-host-grotesk text-base font-semibold leading-snug text-white">{m.label}</h4>
-                  <p className="mt-2 flex-1 font-urbanist text-sm leading-relaxed text-white/80">{m.detail}</p>
+                  <h4 className="font-host-grotesk text-base font-semibold leading-snug text-white">
+                    {m.label}
+                  </h4>
+                  <p className="mt-2 flex-1 font-urbanist text-sm leading-relaxed text-white/80">
+                    {m.detail}
+                  </p>
                 </article>
               </ScrollReveal>
-            )
+            );
           })}
         </div>
       </div>
     </section>
-  )
+  );
 }
 
 function ExploreNetworkSection() {
@@ -696,8 +768,8 @@ function ExploreNetworkSection() {
               imageSrc: "/images/paths-advisor-pexels.jpg",
             },
           ].map((card, idx) => {
-            const tag = NETWORK_PATH_ROLE_TAG[card.roleId]
-            const TagIcon = tag.icon
+            const tag = NETWORK_PATH_ROLE_TAG[card.roleId];
+            const TagIcon = tag.icon;
             return (
               <ScrollReveal key={card.to} delay={0.06 * idx}>
                 <article className="group relative overflow-hidden rounded-[28px] bg-white shadow-sm transition-[transform,box-shadow] duration-300 hover:-translate-y-[1px] hover:shadow-md motion-reduce:transition-none">
@@ -728,29 +800,33 @@ function ExploreNetworkSection() {
                         size="compact"
                         className="mt-4 w-fit px-4 py-2.5 text-sm shadow-sm sm:mt-5 sm:px-5 sm:py-3 sm:text-[0.9375rem]"
                       >
-                        <Link to={card.to} className="inline-flex cursor-pointer items-center justify-center">
-                          Explore {card.roleId === "founder" ? "Alumni" : tag.label}
+                        <Link
+                          to={card.to}
+                          className="inline-flex cursor-pointer items-center justify-center"
+                        >
+                          Explore{" "}
+                          {card.roleId === "founder" ? "Alumni" : tag.label}
                         </Link>
                       </RelliaAction>
                     </div>
                   </div>
                 </article>
               </ScrollReveal>
-            )
+            );
           })}
         </div>
       </div>
     </section>
-  )
+  );
 }
 
 export default function Founders() {
-  const foundersPageQuery = useNetworkFoundersPage()
-  const { data: page } = foundersPageQuery
-  useApplyCmsSeo(page?.seo)
+  const foundersPageQuery = useNetworkFoundersPage();
+  const { data: page } = foundersPageQuery;
+  useApplyCmsSeo(page?.seo);
 
   const useModularLayout =
-    Boolean(page?.useModularPage) && (page?.sections?.length ?? 0) > 0
+    Boolean(page?.useModularPage) && (page?.sections?.length ?? 0) > 0;
 
   const logoMarks = useMemo(() => {
     const fromCms = (page?.logoMarquee ?? [])
@@ -758,66 +834,62 @@ export default function Founders() {
         name: typeof entry?.name === "string" ? entry.name.trim() : "",
         src: typeof entry?.src === "string" ? entry.src.trim() : "",
       }))
-      .filter((entry) => entry.name && entry.src)
-    if (fromCms.length > 0) return fromCms
-    return [...PORTFOLIO_LOGO_MARKS]
-  }, [page?.logoMarquee])
+      .filter((entry) => entry.name && entry.src);
+    if (fromCms.length > 0) return fromCms;
+    return [...PORTFOLIO_LOGO_MARKS];
+  }, [page?.logoMarquee]);
 
   if (useModularLayout) {
     return (
       <CmsPageVisibilityGate page={page}>
         <NetworkCmsPage page={page} query={foundersPageQuery} />
       </CmsPageVisibilityGate>
-    )
+    );
   }
 
   return (
     <CmsPageVisibilityGate page={page}>
-    <div className="min-h-screen overflow-x-hidden bg-white font-host-grotesk">
-      <Navbar />
+      <div className="min-h-screen overflow-x-hidden bg-white font-host-grotesk">
+        <Navbar />
 
-      <main id="main-content">
-        <div className="lg:flex lg:min-h-screen lg:flex-col">
-          <FoundersHero />
-          <LogoMarquee
-            showHeading={false}
-            density="compact"
-            marks={logoMarks}
-            sectionClassName="border-b border-black/[0.06] bg-white py-6 md:py-8 lg:flex lg:h-[18vh] lg:min-h-[140px] lg:items-center lg:py-0"
+        <main id="main-content">
+          <div className="lg:flex lg:min-h-screen lg:flex-col">
+            <FoundersHero />
+            <LogoMarquee
+              showHeading={false}
+              density="compact"
+              marks={logoMarks}
+              sectionClassName="border-b border-black/[0.06] bg-white py-6 md:py-8 lg:flex lg:h-[18vh] lg:min-h-[140px] lg:items-center lg:py-0"
+            />
+          </div>
+          <EligibilitySection />
+          <EngageTealBand />
+          <MembershipDifferentSection />
+
+          <MembershipPathTimeline
+            showRoleLinks={false}
+            headingId="founders-membership-path-heading"
+            headingTitle="From application to your first warm intro"
+            subheading="Apply, get approved, choose your membership, join Slack, then reach out when you want introductions matched to your roadmap."
+            className="border-t border-black/10"
           />
-        </div>
-        <EligibilitySection />
-        <EngageTealBand />
-        <MembershipDifferentSection />
 
-        <MembershipPathTimeline
-          showRoleLinks={false}
-          headingId="founders-membership-path-heading"
-          headingTitle="From application to your first warm intro"
-          subheading="Apply, get approved, choose your membership, join Slack, then reach out when you want introductions matched to your roadmap."
-          className="border-t border-black/10"
-        />
+          <JourneySplitSection />
 
-        <JourneySplitSection />
+          <ExploreNetworkSection />
+          <DeeperHelpValuesSection />
 
+          <RelliaCta
+            aboveSectionTone="white"
+            title="**Ready** to join?"
+            body="Apply once—we'll follow up with fit, onboarding, and the fastest path into programs and intros."
+            primary={{ label: "Apply to join", to: "/apply" }}
+            secondary={{ label: "View programs", to: "/programs" }}
+          />
+        </main>
 
-
-
-        <ExploreNetworkSection />
-        <DeeperHelpValuesSection />
-
-
-        <RelliaCta
-          aboveSectionTone="white"
-          title="**Ready** to join?"
-          body="Apply once—we'll follow up with fit, onboarding, and the fastest path into programs and intros."
-          primary={{ label: "Apply to join", to: "/apply" }}
-          secondary={{ label: "View programs", to: "/programs" }}
-        />
-      </main>
-
-      <Footer />
-    </div>
+        <Footer />
+      </div>
     </CmsPageVisibilityGate>
-  )
+  );
 }
