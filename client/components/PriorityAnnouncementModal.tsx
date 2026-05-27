@@ -70,7 +70,7 @@ export const PriorityAnnouncementModal = ({
           <DialogTitle className="sr-only">{heading}</DialogTitle>
           <DialogDescription className="sr-only">{body || heading}</DialogDescription>
 
-          <div className="mb-4 flex w-full items-start justify-between gap-4">
+          <div className="mb-4 flex w-full items-center justify-between gap-4">
             {showPill ? (
               <span className="inline-flex items-center rounded-full border border-rellia-teal/25 bg-rellia-mint/30 px-3 py-1 font-urbanist text-[11px] font-bold uppercase tracking-[0.14em] text-rellia-teal">
                 {pillText}
@@ -84,7 +84,7 @@ export const PriorityAnnouncementModal = ({
                 "inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full",
                 "border border-black/10 bg-white/95 text-black shadow-sm",
                 "transition-opacity hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-teal/40 focus-visible:ring-offset-2",
-                "-mr-1",
+                "-mr-2 md:-mr-4",
               )}
               aria-label="Close announcement"
               onClick={handleClose}
