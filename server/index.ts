@@ -1322,13 +1322,23 @@ export function createServer() {
         }
 
         const users = (listData.users ?? [])
-          .map((u) => ({
-            id: u.id,
-            email: u.email ?? "",
-            createdAt: u.created_at,
-            lastSignInAt: u.last_sign_in_at ?? null,
-            confirmedAt: u.email_confirmed_at ?? null,
-          }))
+          .map((u) => {
+            const meta = u.user_metadata ?? {};
+            const fullNameRaw =
+              typeof meta.full_name === "string"
+                ? meta.full_name
+                : typeof meta.name === "string"
+                  ? meta.name
+                  : "";
+            return {
+              id: u.id,
+              email: u.email ?? "",
+              fullName: fullNameRaw.trim() || null,
+              createdAt: u.created_at,
+              lastSignInAt: u.last_sign_in_at ?? null,
+              confirmedAt: u.email_confirmed_at ?? null,
+            };
+          })
           .filter((u) => u.email)
           .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 
@@ -1360,6 +1370,7 @@ export function createServer() {
         .object({
           email: z.string().trim().email().max(254),
           password: z.string().min(8).max(72),
+          fullName: z.string().trim().min(1).max(120),
         })
         .safeParse(req.body);
 
@@ -1391,6 +1402,7 @@ export function createServer() {
           email: parsed.data.email,
           password: parsed.data.password,
           email_confirm: true,
+          user_metadata: { full_name: parsed.data.fullName },
         });
 
         if (error) {

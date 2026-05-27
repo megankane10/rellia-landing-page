@@ -297,13 +297,18 @@ export const ROUTE_SEO: Record<string, RouteSeoConfig> = {
     description: "Choose a password to finish setting up your Rellia Health admin account.",
     indexable: false,
   },
+  "/admin/inbox": {
+    title: "Inbox - Admin",
+    description: "Review contact form, investor, and diagnostic submissions in the Rellia Health admin dashboard.",
+    indexable: false,
+  },
   "/admin/overview": {
-    title: "Overview - Admin",
-    description: "Dashboard overview for Rellia Health submissions, diagnostics, and CMS drafts.",
+    title: "Inbox - Admin",
+    description: "Review contact form, investor, and diagnostic submissions in the Rellia Health admin dashboard.",
     indexable: false,
   },
   "/admin/submissions": {
-    title: "Submissions - Admin",
+    title: "Inbox - Admin",
     description: "Review contact form, investor, and diagnostic submissions in the Rellia Health admin dashboard.",
     indexable: false,
   },
@@ -312,13 +317,23 @@ export const ROUTE_SEO: Record<string, RouteSeoConfig> = {
     description: "Manage admin users with access to the Rellia Health internal dashboard.",
     indexable: false,
   },
-  "/admin/content": {
-    title: "Content drafts - Admin",
+  "/admin/drafts": {
+    title: "Sanity drafts - Admin",
     description: "Unpublished Sanity CMS drafts awaiting review in the Rellia Health admin dashboard.",
     indexable: false,
   },
+  "/admin/content": {
+    title: "Sanity drafts - Admin",
+    description: "Unpublished Sanity CMS drafts awaiting review in the Rellia Health admin dashboard.",
+    indexable: false,
+  },
+  "/admin/help": {
+    title: "Help - Admin",
+    description: "Tools, documentation, and environment guidance for Rellia Health dashboard administrators.",
+    indexable: false,
+  },
   "/admin/resources": {
-    title: "Resources - Admin",
+    title: "Help - Admin",
     description: "Tools, documentation, and environment guidance for Rellia Health dashboard administrators.",
     indexable: false,
   },

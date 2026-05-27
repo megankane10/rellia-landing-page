@@ -119,7 +119,7 @@ const AdminCompany = () => {
     if (deleteError) return
     void queryClient.invalidateQueries({ queryKey: ["admin-company-profiles"] })
     void queryClient.invalidateQueries({ queryKey: ["admin-dashboard-overview"] })
-    navigate("/admin/submissions?tab=diagnostic", { replace: true })
+    navigate("/admin/inbox?tab=diagnostic", { replace: true })
   }
 
   if (isLoading) {
@@ -147,7 +147,7 @@ const AdminCompany = () => {
   return (
     <div className="space-y-6">
       <Link
-        to="/admin/submissions?tab=diagnostic"
+        to="/admin/inbox?tab=diagnostic"
         className="inline-flex items-center gap-1.5 font-urbanist text-sm text-rellia-teal/70 transition-colors hover:text-rellia-teal"
       >
         <ArrowLeft className="h-4 w-4" aria-hidden />

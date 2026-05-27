@@ -6,14 +6,27 @@ import AdminAuthLayout from "@/components/admin/AdminAuthLayout"
 import RelliaAction from "@/components/RelliaAction"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import {
+  adminUserNeedsDisplayName,
+  buildAdminUserMetadata,
+  getAdminDisplayName,
+} from "@/lib/adminUserProfile"
 
 const AdminSetPassword = () => {
-  const { session, loading } = useAuth()
+  const { session, loading, user } = useAuth()
   const navigate = useNavigate()
+  const [fullName, setFullName] = useState("")
   const [password, setPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
   const [error, setError] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
+
+  const needsName = adminUserNeedsDisplayName(user)
+
+  useEffect(() => {
+    const existing = getAdminDisplayName(user)
+    if (existing) setFullName(existing)
+  }, [user])
 
   useEffect(() => {
     if (!loading && !session) {
@@ -25,6 +38,10 @@ const AdminSetPassword = () => {
     e.preventDefault()
     setError(null)
 
+    if (needsName && !fullName.trim()) {
+      setError("Please enter your full name.")
+      return
+    }
     if (password.length < 8) {
       setError("Password must be at least 8 characters.")
       return
@@ -35,7 +52,10 @@ const AdminSetPassword = () => {
     }
 
     setSubmitting(true)
-    const { error: updateError } = await supabase.auth.updateUser({ password })
+    const { error: updateError } = await supabase.auth.updateUser({
+      password,
+      ...(needsName ? { data: buildAdminUserMetadata(fullName) } : {}),
+    })
     setSubmitting(false)
 
     if (updateError) {
@@ -43,7 +63,7 @@ const AdminSetPassword = () => {
       return
     }
 
-    navigate("/admin/overview", { replace: true })
+    navigate("/admin/inbox", { replace: true })
   }
 
   if (loading) {
@@ -66,11 +86,31 @@ const AdminSetPassword = () => {
     <AdminAuthLayout
       leftHeading="Hello! Ready to see what's new today?"
       leftDescription="Log in to review the latest form submissions, coordinate inquiries, and easily track your website content drafts."
-      title="Set your password"
-      description="Choose a password for your admin account."
+      title={needsName ? "Complete your profile" : "Set your password"}
+      description={
+        needsName
+          ? "Enter your name and choose a password for your admin account."
+          : "Choose a password for your admin account."
+      }
       leftTextTone="mint"
     >
       <form onSubmit={handleSubmit} className="space-y-4">
+        {needsName ? (
+          <div className="space-y-1">
+            <Label htmlFor="admin-set-full-name" className="font-urbanist text-sm font-medium text-black/80">
+              Full name
+            </Label>
+            <Input
+              id="admin-set-full-name"
+              type="text"
+              autoComplete="name"
+              required
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
+              className="rounded-xl focus-visible:ring-rellia-mint"
+            />
+          </div>
+        ) : null}
         <div className="space-y-1">
           <Label htmlFor="admin-set-password" className="font-urbanist text-sm font-medium text-black/80">
             Password

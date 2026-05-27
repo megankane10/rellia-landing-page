@@ -1,5 +1,5 @@
 /** Default admin inbox route; change to `/admin/inbox` when you rename the page. */
-export const DEFAULT_ADMIN_INBOX_PATH = "/admin/submissions"
+export const DEFAULT_ADMIN_INBOX_PATH = "/admin/inbox"
 
 const trimTrailingSlash = (url: string) => url.replace(/\/$/, "")
 
@@ -41,7 +41,7 @@ export const adminInboxUrl = (tab: "contact" | "diagnostic" = "contact"): string
   return `${base}${path}?tab=${tab}`
 }
 
-export const adminContentUrl = (): string => `${resolveSiteOrigin()}/admin/content`
+export const adminContentUrl = (): string => `${resolveSiteOrigin()}/admin/drafts`
 
 export const resolveSanityStudioOrigin = (): string => {
   const fromNode =

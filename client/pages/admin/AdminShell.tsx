@@ -1,35 +1,24 @@
-import { useState } from "react"
 import { Outlet } from "react-router-dom"
-import { Menu } from "lucide-react"
-import AdminSidebar from "@/components/admin/AdminSidebar"
+import AdminAppSidebar from "@/components/admin/AdminAppSidebar"
+import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
+import { Separator } from "@/components/ui/separator"
 
-const AdminShell = () => {
-  const [mobileOpen, setMobileOpen] = useState(false)
-
-  return (
-    <div className="flex h-[100dvh] min-h-[100dvh] overflow-hidden bg-[linear-gradient(165deg,hsl(var(--rellia-cream))_0%,#f4f8f9_45%,#eef6f4_100%)] font-host-grotesk">
-      <AdminSidebar mobileOpen={mobileOpen} onMobileClose={() => setMobileOpen(false)} />
-      <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
-        <header className="flex shrink-0 items-center justify-between gap-3 border-b border-black/[0.06] bg-white/80 px-4 py-3 backdrop-blur-sm lg:hidden">
-          <p className="font-host-grotesk text-sm text-black/80">Admin Dashboard</p>
-          <button
-            type="button"
-            onClick={() => setMobileOpen(true)}
-            className="flex h-10 w-10 items-center justify-center rounded-full text-rellia-teal hover:bg-rellia-mint/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint"
-            aria-label="Open admin menu"
-          >
-            <Menu className="h-5 w-5" aria-hidden />
-          </button>
+const AdminShell = () => (
+  <SidebarProvider defaultOpen>
+    <div className="flex min-h-[100dvh] w-full bg-background font-host-grotesk">
+      <AdminAppSidebar />
+      <SidebarInset className="min-w-0">
+        <header className="flex h-14 shrink-0 items-center gap-2 border-b border-border/80 bg-background/95 px-4 backdrop-blur supports-[backdrop-filter]:bg-background/80">
+          <SidebarTrigger className="-ml-1 text-rellia-teal" aria-label="Toggle navigation menu" />
+          <Separator orientation="vertical" className="mr-2 h-4" />
+          <p className="font-urbanist text-sm text-muted-foreground">Rellia Health admin</p>
         </header>
-        <main
-          id="main-content"
-          className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-y-contain px-4 py-6 md:px-8 md:py-8 lg:px-10 lg:py-10"
-        >
+        <main id="main-content" className="flex-1 overflow-x-hidden overflow-y-auto p-4 md:p-6 lg:p-8">
           <Outlet />
         </main>
-      </div>
+      </SidebarInset>
     </div>
-  )
-}
+  </SidebarProvider>
+)
 
 export default AdminShell

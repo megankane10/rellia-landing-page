@@ -51,6 +51,16 @@
     --rellia-teal: 196 67% 16%;
     --rellia-mint: 175 42% 73%;
     --rellia-cream: 186 12% 95%;
+
+    /* shadcn sidebar (admin dashboard) */
+    --sidebar-background: 186 12% 97%;
+    --sidebar-foreground: 196 67% 16%;
+    --sidebar-primary: 196 67% 16%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 175 42% 90%;
+    --sidebar-accent-foreground: 196 67% 16%;
+    --sidebar-border: 186 12% 90%;
+    --sidebar-ring: 175 42% 73%;
   }
 }
 

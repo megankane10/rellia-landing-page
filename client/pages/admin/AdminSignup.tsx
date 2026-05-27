@@ -11,6 +11,7 @@ const AdminSignup = () => {
   const navigate = useNavigate()
   const [signupEnabled, setSignupEnabled] = useState<boolean | null>(null)
   const [statusError, setStatusError] = useState<string | null>(null)
+  const [fullName, setFullName] = useState("")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [error, setError] = useState<string | null>(null)
@@ -49,7 +50,7 @@ const AdminSignup = () => {
           "content-type": "application/json",
           ...csrfHeaders,
         },
-        body: JSON.stringify({ email: email.trim(), password }),
+        body: JSON.stringify({ email: email.trim(), password, fullName: fullName.trim() }),
       })
 
       const parsed = await parseApiJson<{ ok?: boolean; error?: string }>(res)
@@ -124,6 +125,20 @@ const AdminSignup = () => {
         </div>
       ) : (
         <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="space-y-1">
+            <Label htmlFor="admin-signup-full-name" className="font-urbanist text-sm font-medium">
+              Full name
+            </Label>
+            <Input
+              id="admin-signup-full-name"
+              type="text"
+              autoComplete="name"
+              required
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
+              className="rounded-xl focus-visible:ring-rellia-mint"
+            />
+          </div>
           <div className="space-y-1">
             <Label htmlFor="admin-signup-email" className="font-urbanist text-sm font-medium">
               Email

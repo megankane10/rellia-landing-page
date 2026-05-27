@@ -56,7 +56,6 @@ import AdminShell from "./pages/admin/AdminShell"
 import AdminDashboard from "./pages/admin/AdminDashboard"
 import AdminCompany from "./pages/admin/AdminCompany"
 import AdminContactDetail from "./pages/admin/AdminContactDetail"
-import AdminResources from "./pages/admin/AdminResources"
 
 const RedirectFoundersDirectoryId = () => {
   const { id } = useParams<{ id: string }>()
@@ -172,15 +171,18 @@ export const AppRoutes = () => (
     <Route path="/admin/login" element={<AdminLogin />} />
     <Route path="/admin/signup" element={<AdminSignup />} />
 
-    <Route path="/admin/dashboard" element={<Navigate to="/admin/overview" replace />} />
-    <Route path="/admin/contacts" element={<Navigate to="/admin/submissions?tab=contact" replace />} />
-    <Route path="/admin/diagnostics" element={<Navigate to="/admin/submissions?tab=diagnostic" replace />} />
+    <Route path="/admin/dashboard" element={<Navigate to="/admin/inbox" replace />} />
+    <Route path="/admin/overview" element={<Navigate to="/admin/inbox" replace />} />
+    <Route path="/admin/submissions" element={<Navigate to="/admin/inbox" replace />} />
+    <Route path="/admin/contacts" element={<Navigate to="/admin/inbox?tab=contact" replace />} />
+    <Route path="/admin/diagnostics" element={<Navigate to="/admin/inbox?tab=diagnostic" replace />} />
+    <Route path="/admin/content" element={<Navigate to="/admin/drafts" replace />} />
+    <Route path="/admin/resources" element={<Navigate to="/admin/help" replace />} />
 
     <Route path="/admin" element={<ProtectedRoute><AdminShell /></ProtectedRoute>}>
-      <Route index element={<Navigate to="/admin/overview" replace />} />
+      <Route index element={<Navigate to="/admin/inbox" replace />} />
       <Route path="contacts/:id" element={<AdminContactDetail />} />
       <Route path="companies/:id" element={<AdminCompany />} />
-      <Route path="resources" element={<AdminResources />} />
       <Route path="*" element={<AdminDashboard />} />
     </Route>
 

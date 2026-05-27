@@ -24,7 +24,7 @@ const AdminLogin = () => {
       setError(authError)
       return
     }
-    navigate("/admin/overview", { replace: true })
+    navigate("/admin/inbox", { replace: true })
   }
 
   return (

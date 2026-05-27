@@ -1,6 +1,7 @@
 export type AdminTeamUser = {
   id: string
   email: string
+  fullName: string | null
   createdAt: string
   lastSignInAt: string | null
   confirmedAt: string | null

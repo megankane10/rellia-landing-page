@@ -77,7 +77,7 @@ const AdminAuthCallback = () => {
         return
       }
 
-      navigate("/admin/overview", { replace: true })
+      navigate("/admin/inbox", { replace: true })
     }
 
     void finish()
