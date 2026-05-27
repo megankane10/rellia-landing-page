@@ -63,7 +63,7 @@ const AdminSetPassword = () => {
       return
     }
 
-    navigate("/admin/inbox", { replace: true })
+    navigate("/admin/overview", { replace: true })
   }
 
   if (loading) {

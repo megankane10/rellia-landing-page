@@ -8,6 +8,7 @@ type AdminSubmissionStatusFilterProps = {
   value: StatusFilterValue
   onChange: (value: StatusFilterValue) => void
   counts: Record<StatusFilterValue, number>
+  className?: string
 }
 
 const FILTER_OPTIONS: { value: StatusFilterValue; label: string }[] = [
@@ -19,9 +20,10 @@ const AdminSubmissionStatusFilter = ({
   value,
   onChange,
   counts,
+  className,
 }: AdminSubmissionStatusFilterProps) => (
   <div
-    className="flex flex-wrap gap-2"
+    className={cn("flex flex-wrap gap-2", className)}
     role="group"
     aria-label="Filter submissions by status"
   >

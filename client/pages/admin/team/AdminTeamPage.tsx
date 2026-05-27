@@ -76,7 +76,7 @@ const AdminTeamPage = () => {
     <div className="space-y-6">
       <AdminPageHeader
         title="Team"
-        description="People with access to this admin dashboard. Invite colleagues from Supabase Auth — they will enter their name when accepting the invite."
+        description="Dashboard accounts and invite status."
         actions={
           <Button type="button" variant="outline" size="sm" asChild className="rounded-full">
             <a href={SUPABASE_AUTH_USERS_URL} target="_blank" rel="noopener noreferrer">
@@ -90,7 +90,7 @@ const AdminTeamPage = () => {
       <Card>
         <CardHeader className="pb-3">
           <CardTitle className="font-host-grotesk text-lg">Members</CardTitle>
-          <CardDescription className="font-urbanist">All admin accounts, newest first.</CardDescription>
+          <CardDescription className="font-urbanist">Newest members first.</CardDescription>
         </CardHeader>
         <CardContent>
           {isLoading ? (

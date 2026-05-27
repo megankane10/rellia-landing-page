@@ -57,19 +57,47 @@ To remove advisor/alumni from www only (keep on preview), unpublish those types 
 
 If production showed removed events (e.g. an old salon) or missing dates, typical causes were: CMS fetch failing/empty and the events page falling back to defaults, or outdated documents still **published** in the **production** dataset. Fix content in Studio on the **production** dataset, or unpublish/delete there.
 
-### What still needs finalizing (project checklist)
+### Client handoff checklist
 
-| Area | Status / action |
-|------|------------------|
-| **Vercel env** | Production: `VITE_SANITY_DATASET=production`, `SANITY_API_DATASET=production`, `SANITY_API_READ_TOKEN`, `SANITY_ENFORCE_VERCEL_DATASET=true`. Preview: same keys with `preview`. |
-| **Studio env** | `SANITY_STUDIO_DATASET=preview` for daily editing; `SANITY_STUDIO_PREVIEW_URL` = preview site URL. |
-| **Production CMS content** | Audit **production** dataset: events (`startsAt` / `endsAt` filled), remove retired events, confirm alumni/advisor docs should be live on www before publishing there. |
-| **Supabase admin** | Run `scripts/supabase_admin_policies.sql` if status/delete on submissions is needed. |
-| **Admin signup** | `ADMIN_SIGNUP_ENABLED` + `SUPABASE_SERVICE_ROLE_KEY` on server env; disable signup after invites. |
-| **Stripe** | Membership checkout env on server (see `.env.example`); not surfaced in admin dashboard. |
-| **HubSpot / investor form** | Still external; not in admin. Could move to Supabase later (same pattern as contact form). |
-| **Email alerts** | Not built — optional Supabase webhook → email on new contact/diagnostic rows. |
-| **Sanity private datasets** | Free tier = treat as public API; mitigations documented in `.env.example`. |
+Use this when transferring the site to the Rellia team. Items marked **editor** are safe for non-developers; **dev** need engineering access.
+
+#### Before handoff (developer)
+
+| # | Task | Why it matters |
+|---|------|----------------|
+| 1 | **Vercel production env** — `VITE_SANITY_DATASET=production`, `SANITY_API_DATASET=production`, `SANITY_API_READ_TOKEN`, `SANITY_ENFORCE_VERCEL_DATASET=true`, Supabase + Stripe keys from `.env.example` | Live site reads the correct CMS dataset and APIs work |
+| 2 | **Vercel preview env** — same keys with `preview` dataset; `SANITY_STUDIO_PREVIEW_URL` = preview deploy URL | Staging matches Studio default dataset |
+| 3 | **Sanity Studio** — deployed (`pnpm sanity:studio:deploy`); Looker embed URL in **Site settings → Analytics** | Editors use https://relliahealth.sanity.studio |
+| 4 | **Seed starter content** — `pnpm sanity:seed:starters` on **preview** and **production** (terms, privacy, guide) | Empty legal singletons in Studio confuse editors |
+| 5 | **Production CMS audit** — events have `startsAt`/`endsAt`; retire old events; publish only what should be on www | Prevents wrong dates or ghost events on live site |
+| 6 | **Promote when ready** — `pnpm sanity:promote:dry` then `pnpm sanity:promote -- --apply-production` | Copies approved preview changes to production |
+| 7 | **Supabase** — run `scripts/supabase_admin_policies.sql` for inbox status updates; run `scripts/supabase_revert_admin_role_policies.sql` if strict admin-role RLS was ever applied | Any invited user can sign in and read submissions |
+| 8 | **Admin access** — invite users in Supabase Auth; set `ADMIN_SIGNUP_ENABLED=false` on Vercel after onboarding | No public self-signup on `/admin/signup` |
+| 9 | **Smoke test** — www + preview: home, contact submit, diagnostic submit, admin login → Overview + Inbox | Confirms end-to-end paths |
+| 10 | **Dependabot** — review or dismiss GitHub security alerts on the repo | Hygiene, not blocking launch |
+
+#### Editor onboarding (30–60 min)
+
+| Topic | Where |
+|-------|--------|
+| Edit marketing pages | Sanity Studio → Site / Pages groups |
+| SEO per page | Each document → **SEO** tab (ignore paid SEO Health Dashboard) |
+| Legal copy | Studio → **Terms of use**, **Privacy policy** |
+| Form leads | Admin → **Inbox** (Web forms + Startup diagnostic) |
+| Unpublished CMS work | Admin → **Sanity drafts** + Studio |
+| Analytics | Studio top bar → **Analytics** (Looker) |
+| Help & links | Admin → **Help** |
+
+#### What is still not in scope (post-handoff / optional)
+
+| Area | Notes |
+|------|--------|
+| **Full modular CMS on every page** | Many routes still use designed React layouts until **Use modular CMS layout** + sections are built in Studio (e.g. consulting, some program pages). |
+| **Stripe in admin** | Membership checkout works on the site; admin does not show payment history. |
+| **HubSpot / legacy investor flows** | External tools may still exist outside the Supabase inbox. |
+| **Email alerts on new submissions** | Not built; optional Supabase webhook → email later. |
+| **Automatic preview→production** | Editors must ask a developer to run `sanity:promote` (or train one technical owner). |
+| **Diagnostic survey copy** | `/diagnostics` survey content is largely code + Supabase, not Sanity page documents. |
 
 Diagnostic survey routes (`/diagnostics`, `/diagnostic-survey`) use Supabase, not Sanity page content.
 
@@ -180,9 +208,11 @@ Internal dashboard for **contact** and **startup diagnostic** submissions (Supab
 |-------|---------|
 | `/admin/login` | Supabase Auth sign-in |
 | `/admin/signup` | Self-serve admin account when enabled |
-| `/admin/dashboard` | Metrics, submission hubs, CMS drafts |
-| `/admin/contacts` | Contact inbox with status filters |
-| `/admin/diagnostics` | Diagnostic list with status filters |
+| `/admin/overview` | Personalized home — KPIs, charts, recent submissions |
+| `/admin/inbox` | Web forms + startup diagnostic (status filters) |
+| `/admin/team` | Dashboard members |
+| `/admin/drafts` | Unpublished Sanity documents |
+| `/admin/help` | Editor guides and tool links |
 
 **Supabase setup:** run `scripts/supabase_setup.sql`, `scripts/supabase_diagnostic_setup.sql`, and `scripts/supabase_admin_policies.sql` in the SQL editor.
 

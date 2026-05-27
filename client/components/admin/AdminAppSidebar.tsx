@@ -1,10 +1,10 @@
 import { NavLink, useLocation, useNavigate } from "react-router-dom"
 import { useQuery } from "@tanstack/react-query"
-import { CircleHelp, FileEdit, Inbox, LogOut, Users } from "lucide-react"
+import { CircleHelp, FileEdit, Inbox, LayoutDashboard, Users } from "lucide-react"
 import { useAuth } from "@/context/AuthContext"
 import { supabase } from "@/lib/supabase"
 import { isActiveSubmissionStatus } from "@/lib/adminSubmissionStatus"
-import { getAdminDisplayName, getAdminInitials } from "@/lib/adminUserProfile"
+import AdminAccountMenu from "@/components/admin/AdminAccountMenu"
 import {
   Sidebar,
   SidebarContent,
@@ -14,13 +14,10 @@ import {
   SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
-  SidebarMenuBadge,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarSeparator,
 } from "@/components/ui/sidebar"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import { Button } from "@/components/ui/button"
+import { cn } from "@/lib/utils"
 
 const FAVICON_SRC = "/favicon.ico"
 
@@ -52,6 +49,7 @@ const fetchUnresolvedCount = async (): Promise<number> => {
 }
 
 const MAIN_NAV: NavItem[] = [
+  { to: "/admin/overview", label: "Overview", icon: LayoutDashboard, end: true },
   {
     to: "/admin/inbox",
     label: "Inbox",
@@ -73,8 +71,7 @@ const MAIN_NAV: NavItem[] = [
 ]
 
 const AdminAppSidebar = () => {
-  const { user, signOut, session } = useAuth()
-  const navigate = useNavigate()
+  const { session } = useAuth()
   const { pathname } = useLocation()
 
   const { data: unresolvedCount = 0 } = useQuery({
@@ -83,14 +80,6 @@ const AdminAppSidebar = () => {
     enabled: Boolean(session),
     staleTime: 30_000,
   })
-
-  const handleSignOut = async () => {
-    await signOut()
-    navigate("/admin/login", { replace: true })
-  }
-
-  const displayName = getAdminDisplayName(user) || user?.email || "Admin"
-  const initials = getAdminInitials(user)
 
   return (
     <Sidebar collapsible="offcanvas" className="border-sidebar-border">
@@ -117,16 +106,25 @@ const AdminAppSidebar = () => {
                 return (
                   <SidebarMenuItem key={item.to}>
                     <SidebarMenuButton asChild isActive={active} tooltip={item.label}>
-                      <NavLink to={item.to} end={item.end}>
+                      <NavLink to={item.to} end={item.end} className="flex w-full items-center">
                         <item.icon aria-hidden />
-                        <span>{item.label}</span>
+                        <span className="flex min-w-0 flex-1 items-center gap-2">
+                          <span>{item.label}</span>
+                          {badge !== undefined && badge > 0 ? (
+                            <span
+                              className={cn(
+                                "inline-flex h-5 min-w-5 shrink-0 items-center justify-center rounded-full px-1.5",
+                                "bg-rellia-teal text-[10px] font-semibold text-white tabular-nums",
+                                "group-data-[collapsible=icon]:hidden",
+                              )}
+                              aria-label={`${badge} need attention`}
+                            >
+                              {badge > 99 ? "99+" : badge}
+                            </span>
+                          ) : null}
+                        </span>
                       </NavLink>
                     </SidebarMenuButton>
-                    {badge !== undefined ? (
-                      <SidebarMenuBadge className="bg-rellia-teal text-white">
-                        {badge > 99 ? "99+" : badge}
-                      </SidebarMenuBadge>
-                    ) : null}
                   </SidebarMenuItem>
                 )
               })}
@@ -136,30 +134,7 @@ const AdminAppSidebar = () => {
       </SidebarContent>
 
       <SidebarFooter className="border-t border-sidebar-border p-3">
-        <div className="flex items-center gap-3 rounded-lg px-2 py-2">
-          <Avatar className="h-9 w-9 border border-sidebar-border">
-            <AvatarFallback className="bg-rellia-mint/40 font-urbanist text-xs text-rellia-teal">
-              {initials}
-            </AvatarFallback>
-          </Avatar>
-          <div className="min-w-0 flex-1">
-            <p className="truncate font-urbanist text-sm font-medium text-sidebar-foreground">{displayName}</p>
-            {getAdminDisplayName(user) ? (
-              <p className="truncate font-urbanist text-xs text-sidebar-foreground/55">{user?.email}</p>
-            ) : null}
-          </div>
-        </div>
-        <SidebarSeparator className="my-2" />
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          className="w-full justify-start gap-2 font-urbanist text-sidebar-foreground hover:bg-sidebar-accent"
-          onClick={() => void handleSignOut()}
-        >
-          <LogOut className="h-4 w-4" aria-hidden />
-          Sign out
-        </Button>
+        <AdminAccountMenu />
       </SidebarFooter>
     </Sidebar>
   )

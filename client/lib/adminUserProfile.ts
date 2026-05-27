@@ -1,6 +1,7 @@
 import type { User } from "@supabase/supabase-js"
 
 const FULL_NAME_KEY = "full_name"
+const AVATAR_URL_KEY = "avatar_url"
 
 export const getAdminDisplayName = (user: User | null | undefined): string => {
   if (!user) return ""
@@ -8,6 +9,15 @@ export const getAdminDisplayName = (user: User | null | undefined): string => {
   const raw =
     (typeof meta[FULL_NAME_KEY] === "string" && meta[FULL_NAME_KEY]) ||
     (typeof meta.name === "string" && meta.name) ||
+    ""
+  return raw.trim()
+}
+
+export const getAdminAvatarUrl = (user: User | null | undefined): string => {
+  const meta = user?.user_metadata ?? {}
+  const raw =
+    (typeof meta[AVATAR_URL_KEY] === "string" && meta[AVATAR_URL_KEY]) ||
+    (typeof meta.picture === "string" && meta.picture) ||
     ""
   return raw.trim()
 }

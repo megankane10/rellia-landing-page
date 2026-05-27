@@ -170,8 +170,7 @@ export const AppRoutes = () => (
     <Route path="/admin/login" element={<AdminLogin />} />
     <Route path="/admin/signup" element={<AdminSignup />} />
 
-    <Route path="/admin/dashboard" element={<Navigate to="/admin/inbox" replace />} />
-    <Route path="/admin/overview" element={<Navigate to="/admin/inbox" replace />} />
+    <Route path="/admin/dashboard" element={<Navigate to="/admin/overview" replace />} />
     <Route path="/admin/submissions" element={<Navigate to="/admin/inbox" replace />} />
     <Route path="/admin/contacts" element={<Navigate to="/admin/inbox?tab=contact" replace />} />
     <Route path="/admin/diagnostics" element={<Navigate to="/admin/inbox?tab=diagnostic" replace />} />
@@ -179,7 +178,7 @@ export const AppRoutes = () => (
     <Route path="/admin/resources" element={<Navigate to="/admin/help" replace />} />
 
     <Route path="/admin" element={<ProtectedRoute><AdminShell /></ProtectedRoute>}>
-      <Route index element={<Navigate to="/admin/inbox" replace />} />
+      <Route index element={<Navigate to="/admin/overview" replace />} />
       <Route path="contacts/:id" element={<AdminContactDetail />} />
       <Route path="companies/:id" element={<AdminCompany />} />
       <Route path="*" element={<AdminDashboard />} />

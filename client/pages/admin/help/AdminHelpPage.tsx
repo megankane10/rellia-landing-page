@@ -9,8 +9,6 @@ const GOOGLE_DOC_EDIT_URL =
   "https://docs.google.com/document/d/17lMkt2Jqa4fswCd_DpjHpvwMQH-5QBMDvzcw5MGLDVo/edit?usp=sharing"
 const GOOGLE_DOC_EMBED_URL =
   "https://docs.google.com/document/d/e/2PACX-1vSmTtp1CbT0nL2DjluTFCgV6E8ezDIbRPL_iSRvTtLZnmYQNXjHiwnoUuArw0GEg5hUSzw8wAkGroUE/pub?embedded=true"
-const SUPABASE_AUTH_USERS_URL =
-  "https://supabase.com/dashboard/project/agsvypnmlrvpbgrsxtqy/auth/users"
 
 const WEBSITE_TOOLS = [
   {
@@ -49,59 +47,119 @@ const AdminHelpPage = () => (
   <div className="space-y-6">
     <AdminPageHeader
       title="Help"
-      description="Guides, tool links, and account setup notes for the Rellia admin dashboard."
+      description="Plain-language guides for editors plus links to external tools."
     />
 
-    <Card>
-      <CardHeader>
-        <CardTitle className="font-host-grotesk text-lg">Admin names</CardTitle>
-        <CardDescription className="font-urbanist">
-          New signups and invite acceptances collect a display name stored in Supabase user metadata (
-          <code className="text-xs">full_name</code>).
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-3 font-urbanist text-sm leading-relaxed text-muted-foreground">
-        <p>
-          <strong className="text-foreground">Existing users without a name:</strong> In Supabase → Authentication →
-          Users, open the user → User Metadata → add{" "}
-          <code className="rounded bg-muted px-1 text-xs">{`"full_name": "First Last"`}</code> → Save.
-        </p>
-        <p>
-          Or run in the SQL editor (replace id and name):{" "}
-          <code className="block mt-2 overflow-x-auto rounded bg-muted p-2 text-xs">
-            {`update auth.users set raw_user_meta_data = coalesce(raw_user_meta_data, '{}'::jsonb) || '{"full_name":"Jane Doe"}'::jsonb where id = 'USER_UUID';`}
-          </code>
-        </p>
-        <Button type="button" variant="outline" size="sm" asChild className="rounded-full">
-          <a href={SUPABASE_AUTH_USERS_URL} target="_blank" rel="noopener noreferrer">
-            Open Supabase Auth
-            <ExternalLink className="ml-1.5 h-3.5 w-3.5" aria-hidden />
-          </a>
-        </Button>
-      </CardContent>
-    </Card>
+    <div className="grid gap-4 md:grid-cols-2">
+      <Card>
+        <CardHeader>
+          <CardTitle className="font-host-grotesk text-lg">What this dashboard is for</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-2 font-urbanist text-sm leading-relaxed text-muted-foreground">
+          <p>
+            This is the <strong className="text-foreground">internal operations dashboard</strong> for Rellia Health —
+            not the public website. Use it to read form submissions, track diagnostic leads, and see which CMS pages
+            still need publishing.
+          </p>
+          <p>
+            Marketing copy, images, events, and program pages are edited in{" "}
+            <strong className="text-foreground">Sanity Studio</strong> (separate app). You do not need to touch code for
+            day-to-day content updates.
+          </p>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="font-host-grotesk text-lg">Two places to edit content</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-2 font-urbanist text-sm leading-relaxed text-muted-foreground">
+          <p>
+            <strong className="text-foreground">Sanity Studio</strong> — page text, heroes, SEO, events, stories,
+            founders directory, legal pages (terms/privacy), and visibility (Live vs coming soon).
+          </p>
+          <p>
+            <strong className="text-foreground">Admin dashboard (here)</strong> — contact forms, investor
+            notifications, startup diagnostic results, team accounts, and a list of unpublished Sanity drafts.
+          </p>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="font-host-grotesk text-lg">Preview site vs live website</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-2 font-urbanist text-sm leading-relaxed text-muted-foreground">
+          <p>
+            Changes published in Studio on the <strong className="text-foreground">preview</strong> dataset appear on the
+            Vercel preview URL (staging). They do <strong className="text-foreground">not</strong> automatically appear
+            on <code className="text-xs">www.relliahealth.com</code> until the same content is in the{" "}
+            <strong className="text-foreground">production</strong> dataset.
+          </p>
+          <p>
+            Your developer runs <code className="text-xs">pnpm sanity:promote</code> when preview is approved for launch.
+          </p>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="font-host-grotesk text-lg">Where website forms go</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-2 font-urbanist text-sm leading-relaxed text-muted-foreground">
+          <p>
+            Contact, investor notify, and similar forms save to the <strong className="text-foreground">Inbox → Web
+            forms</strong> tab. Startup diagnostic completions save under{" "}
+            <strong className="text-foreground">Startup diagnostic</strong>. Update status as you work each lead.
+          </p>
+          <p>Membership checkout and payment flows use Stripe — they are not listed in this inbox.</p>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="font-host-grotesk text-lg">When to contact a developer</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-2 font-urbanist text-sm leading-relaxed text-muted-foreground">
+          <ul className="list-disc space-y-1 pl-5">
+            <li>New page types, forms, or checkout flows</li>
+            <li>Site down, login broken, or inbox empty after sign-in</li>
+            <li>Promoting preview content to production</li>
+            <li>Domain, DNS, or environment variable changes on Vercel</li>
+            <li>Adding or removing admin users (invite via Supabase Auth)</li>
+          </ul>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="font-host-grotesk text-lg">Your account</CardTitle>
+        </CardHeader>
+        <CardContent className="font-urbanist text-sm leading-relaxed text-muted-foreground">
+          <p>
+            Click your name at the bottom of the sidebar to update your display name, optional profile photo URL, or sign
+            out. New invites set their name when accepting the invitation.
+          </p>
+        </CardContent>
+      </Card>
+    </div>
 
     <Card>
       <CardHeader>
         <CardTitle className="font-host-grotesk text-lg">Sign-in problems</CardTitle>
         <CardDescription className="font-urbanist">
-          If login says this account does not have admin access, or the inbox stays empty after sign-in.
+          If login fails or the inbox stays empty after sign-in.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-3 font-urbanist text-sm leading-relaxed text-muted-foreground">
         <p>
-          <strong className="text-foreground">Stale site build:</strong> Hard-refresh the login page or open it in a
-          private window. The live site must include the latest deploy (admin role checks were removed).
+          <strong className="text-foreground">Hard refresh</strong> the login page or use a private window if you see an
+          outdated “admin access” message.
         </p>
         <p>
-          <strong className="text-foreground">Database policies:</strong> If you ran{" "}
-          <code className="rounded bg-muted px-1 text-xs">scripts/supabase_admin_role_policies.sql</code>, run the full
-          revert file{" "}
-          <code className="rounded bg-muted px-1 text-xs">scripts/supabase_revert_admin_role_policies.sql</code> in the
-          Supabase SQL editor so any signed-in user can read submissions again.
-        </p>
-        <p>
-          Any valid Supabase Auth user can sign in — no <code className="text-xs">app_metadata.role</code> is required.
+          <strong className="text-foreground">Database policies:</strong> If a developer enabled strict admin-role RLS,
+          run <code className="text-xs">scripts/supabase_revert_admin_role_policies.sql</code> in Supabase so any signed-in
+          user can read submissions.
         </p>
       </CardContent>
     </Card>

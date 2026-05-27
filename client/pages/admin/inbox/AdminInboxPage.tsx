@@ -425,15 +425,15 @@ const AdminInboxPage = () => {
       <Tabs value={tab} onValueChange={(value) => setTab(value as SubmissionTab)} className="space-y-4">
         <TabsList className="grid h-auto w-full max-w-md grid-cols-2">
           <TabsTrigger value="contact" className="font-urbanist">
-            Contact & investor
+            Web forms
           </TabsTrigger>
           <TabsTrigger value="diagnostic" className="font-urbanist">
             Startup diagnostic
           </TabsTrigger>
         </TabsList>
 
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <div className="relative max-w-md flex-1">
+        <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+          <div className="relative w-full max-w-md flex-1">
             <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" aria-hidden />
             <Input
               type="search"
@@ -444,9 +444,13 @@ const AdminInboxPage = () => {
               aria-label="Search submissions"
             />
           </div>
+          <AdminSubmissionStatusFilter
+            value={statusFilter}
+            onChange={setStatusFilter}
+            counts={statusCounts}
+            className="lg:justify-end"
+          />
         </div>
-
-        <AdminSubmissionStatusFilter value={statusFilter} onChange={setStatusFilter} counts={statusCounts} />
 
         <TabsContent value="contact" className="mt-0">
           {renderList()}
