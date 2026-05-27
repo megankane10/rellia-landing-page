@@ -15,6 +15,7 @@ import {
   CaseIcon,
 } from '@sanity/icons'
 import {LookerStudioPanel} from './studio/LookerStudioPanel'
+import {StudioGuideReadPanel} from './studio/StudioGuideReadPanel'
 
 const API_VERSION = '2024-01-01'
 
@@ -71,7 +72,11 @@ const pagesGroup = (S: StructureBuilder) =>
           singleton(S, 'Contact', 'contactPage', DocumentTextIcon),
           singleton(S, 'Membership', 'paymentPage', DocumentTextIcon),
           singleton(S, 'Consulting', 'consultingPage', DocumentTextIcon),
+          singleton(S, 'Startup diagnostic', 'diagnosticLandingPage', DocumentTextIcon),
           singleton(S, 'Not found', 'notFoundPage', DocumentTextIcon),
+          S.divider(),
+          singleton(S, 'Terms of use', 'termsPage', DocumentTextIcon),
+          singleton(S, 'Privacy policy', 'privacyPage', DocumentTextIcon),
           S.divider(),
           singleton(S, 'Programs landing', 'programsLandingPage', DocumentTextIcon),
           singleton(S, 'Events landing', 'eventsLandingPage', DocumentTextIcon),
@@ -143,7 +148,8 @@ const collectionsGroup = (S: StructureBuilder) =>
               S.document()
                 .schemaType('careersPage')
                 .documentId('careersPage')
-                .title('Careers open roles'),
+                .title('Open roles')
+                .views([S.view.form().title('Open roles').id('open-roles')]),
             ),
         ]),
     )
@@ -218,10 +224,34 @@ const supportPanel = (S: StructureBuilder) =>
     .title('Support')
     .icon(HelpCircleIcon)
     .child(
-      S.document()
-        .schemaType('studioGuide')
-        .documentId('studioGuide')
-        .title('How to use this CMS'),
+      S.list()
+        .title('Support')
+        .items([
+          S.listItem()
+            .title('How to use this CMS')
+            .icon(HelpCircleIcon)
+            .child(S.component().component(StudioGuideReadPanel).title('How to use this CMS')),
+          S.listItem()
+            .title('Edit guide content')
+            .icon(ComposeIcon)
+            .child(
+              S.document()
+                .schemaType('studioGuide')
+                .documentId('studioGuide')
+                .title('Edit CMS guide'),
+            ),
+        ]),
+    )
+
+const buildPagesGroup = (S: StructureBuilder) =>
+  S.listItem()
+    .title('Build a page')
+    .icon(ComposeIcon)
+    .child(
+      S.documentTypeList('page')
+        .apiVersion(API_VERSION)
+        .title('Custom pages')
+        .defaultOrdering([{field: 'title', direction: 'asc'}]),
     )
 
 /** Full-page Looker Studio iframe (no nested list). */
@@ -245,6 +275,7 @@ const HIDDEN_FROM_CATCH_ALL = new Set([
   'contactPage',
   'paymentPage',
   'consultingPage',
+  'diagnosticLandingPage',
   'notFoundPage',
   'networkFoundersPage',
   'networkAdvisorsPage',
@@ -267,6 +298,8 @@ const HIDDEN_FROM_CATCH_ALL = new Set([
   'investor',
   'industryPartner',
   'studioGuide',
+  'termsPage',
+  'privacyPage',
 ])
 
 export const deskStructure = (S: StructureBuilder) =>
@@ -280,5 +313,7 @@ export const deskStructure = (S: StructureBuilder) =>
       S.divider(),
       supportPanel(S),
       analyticsPanel(S),
+      S.divider(),
+      buildPagesGroup(S),
       ...S.documentTypeListItems().filter((item) => !HIDDEN_FROM_CATCH_ALL.has(item.getId() || '')),
     ])

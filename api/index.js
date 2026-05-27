@@ -26,13 +26,30 @@ import { z } from "zod";
 
 // shared/cms/groqQueries.ts
 var seoFragment = `seo{
-  metaTitle,
-  metaDescription,
-  ogTitle,
-  ogDescription,
-  "ogImageUrl": ogImage.asset->url,
-  noIndex,
-  noFollow
+  "metaTitle": coalesce(metaTitle, title, openGraph.title),
+  "metaDescription": coalesce(metaDescription, description, openGraph.description),
+  "ogTitle": coalesce(ogTitle, openGraph.title, twitter.title),
+  "ogDescription": coalesce(ogDescription, openGraph.description, twitter.description),
+  "ogImageUrl": coalesce(
+    ogImage.asset->url,
+    metaImage.asset->url,
+    openGraph.image.asset->url,
+    openGraph.imageUrl,
+    twitter.image.asset->url,
+    twitter.imageUrl
+  ),
+  "noIndex": coalesce(noIndex, robots.noIndex),
+  "noFollow": coalesce(noFollow, robots.noFollow)
+}`;
+var pageVisibilityFragment = `pageVisibility,
+  placeholderTitle,
+  placeholderMessage,
+  placeholderCtaLabel,
+  placeholderCtaHref`;
+var logoMarqueeFragment = `logoMarquee[]{
+  name,
+  "src": logo.asset->url,
+  href
 }`;
 var globalSettingsQuery = `*[_type == "globalSettings"][0]{
   footerTagline,
@@ -44,7 +61,15 @@ var globalSettingsQuery = `*[_type == "globalSettings"][0]{
   announcementText,
   announcementButtonLabel,
   announcementButtonLink,
-  announcementPillText
+  announcementPillText,
+  priorityModalEnabled,
+  priorityModalHeading,
+  priorityModalBody,
+  priorityModalPillText,
+  priorityModalButtonLabel,
+  priorityModalButtonLink,
+  "priorityModalImageUrl": priorityModalImage.asset->url,
+  "priorityModalImageAlt": priorityModalImage.alt
 }`;
 var navigationQuery = `*[_type == "navigation"][0]{
   primary[]{
@@ -89,13 +114,20 @@ var siteSettingsQuery = `*[_type == "siteSettings"][0]{
   "logoUrl": coalesce(logoLight.asset->url, logo.asset->url),
   faviconPath,
   defaultSeo{
-    metaTitle,
-    metaDescription,
-    ogTitle,
-    ogDescription,
-    "ogImageUrl": ogImage.asset->url,
-    noIndex,
-    noFollow
+    "metaTitle": coalesce(metaTitle, title, openGraph.title),
+    "metaDescription": coalesce(metaDescription, description, openGraph.description),
+    "ogTitle": coalesce(ogTitle, openGraph.title, twitter.title, title),
+    "ogDescription": coalesce(ogDescription, openGraph.description, twitter.description, description),
+    "ogImageUrl": coalesce(
+      ogImage.asset->url,
+      metaImage.asset->url,
+      openGraph.image.asset->url,
+      openGraph.imageUrl,
+      twitter.image.asset->url,
+      twitter.imageUrl
+    ),
+    "noIndex": coalesce(noIndex, robots.noIndex),
+    "noFollow": coalesce(noFollow, robots.noFollow)
   }
 }`;
 var featuredStoriesQuery = `*[_type == "story" && featured == true && !(_id in path("drafts.**"))]
@@ -168,29 +200,37 @@ var pageSectionsFragment = `sections[]{
 var networkFoundersPageQuery = `*[_type == "networkFoundersPage"][0]{
   title,
   useModularPage,
+  ${pageVisibilityFragment},
+  ${logoMarqueeFragment},
   ${seoFragment},
   ${pageSectionsFragment}
 }`;
 var networkAdvisorsPageQuery = `*[_type == "networkAdvisorsPage"][0]{
   title,
   useModularPage,
+  ${pageVisibilityFragment},
   ${seoFragment},
   ${pageSectionsFragment}
 }`;
 var networkInvestorsPageQuery = `*[_type == "networkInvestorsPage"][0]{
   title,
   useModularPage,
-  logoMarquee[]{
-    name,
-    "src": logo.asset->url,
-    href
-  },
+  ${pageVisibilityFragment},
+  ${logoMarqueeFragment},
+  ${seoFragment},
+  ${pageSectionsFragment}
+}`;
+var diagnosticLandingPageQuery = `*[_id == "diagnosticLandingPage"][0]{
+  title,
+  useModularPage,
+  ${pageVisibilityFragment},
   ${seoFragment},
   ${pageSectionsFragment}
 }`;
 var networkPartnersPageQuery = `*[_type == "networkPartnersPage"][0]{
   title,
   useModularPage,
+  ${pageVisibilityFragment},
   ${seoFragment},
   ${pageSectionsFragment}
 }`;
@@ -242,9 +282,7 @@ var homePageQuery = `*[_type == "homePage"][0]{
   ${seoFragment}
 }`;
 var aboutPageQuery = `*[_type == "aboutPage"][0]{
-  heroLine1,
-  heroLine2Portable,
-  heroLine3,
+  heroHeadlinePortable,
   heroIntro,
   missionTitle,
   missionParagraphs,
@@ -483,6 +521,15 @@ var careersPageQuery = `*[_type == "careersPage"][0]{
   enableVolunteerTab,
   tabsLabelHiring,
   tabsLabelVolunteer,
+  openRoles[]{
+    "id": roleId,
+    title,
+    location,
+    employmentType,
+    description,
+    responsibilities,
+    linkedInApplyUrl
+  },
   ${seoFragment}
 }`;
 var advisorsQuery = `*[_type == "advisor" && !(_id in path("drafts.**"))]{
@@ -526,20 +573,20 @@ var alumniCompaniesQuery = `*[_type == "alumniCompany" && !(_id in path("drafts.
   },
   shortDescription,
   longDescription,
+  profileBody,
   websiteUrl,
   linkedinUrl,
   traction,
   relliaCollaboration,
   country,
   yearJoined,
-  programs,
   "logoSrc": coalesce(logo.asset->url, logoSrc),
   founders[]{
     name,
     role,
     bio,
     linkedinUrl,
-    "imageSrc": coalesce(imageSrc, image.asset->url)
+    "imageSrc": image.asset->url
   }
 }`;
 var advisorFiltersQuery = `*[_type == "advisorFilter"] | order(sortOrder asc, label asc){
@@ -603,6 +650,7 @@ var SANITY_QUERY_WHITELIST = {
   networkAdvisorsPage: { query: networkAdvisorsPageQuery, params: empty },
   networkInvestorsPage: { query: networkInvestorsPageQuery, params: empty },
   networkPartnersPage: { query: networkPartnersPageQuery, params: empty },
+  diagnosticLandingPage: { query: diagnosticLandingPageQuery, params: empty },
   homePage: { query: homePageQuery, params: empty },
   aboutPage: { query: aboutPageQuery, params: empty },
   faqPage: { query: faqPageQuery, params: empty },
@@ -1167,7 +1215,9 @@ function createServer() {
     rateLimitText(draftModeRate, DRAFT_MODE_MAX_PER_MIN),
     async (req, res) => {
       const studioOnlyOrigins = new Set([studioOrigin].filter(Boolean));
-      if (!allowBrowserOrigin(req, studioOnlyOrigins) && !hasSanityPreviewSecret(req) && !isSanityStudioReferer(req)) {
+      const previewSiteOrigins = new Set(siteOrigins);
+      if (studioOrigin) previewSiteOrigins.add(studioOrigin);
+      if (!allowBrowserOrigin(req, studioOnlyOrigins) && !allowBrowserOrigin(req, previewSiteOrigins) && !hasSanityPreviewSecret(req) && !isSanityStudioReferer(req)) {
         res.status(403).send("Forbidden");
         return;
       }
@@ -1351,7 +1401,9 @@ function createServer() {
           perspective: "drafts",
           stega: { enabled: true, studioUrl: resolveSanityStudioUrl() }
         });
-        const data2 = await previewClient.fetch(entry.query, fetchParams);
+        const data2 = await previewClient.fetch(entry.query, fetchParams, {
+          filterResponse: false
+        });
         res.status(200).json({
           data: stripSanityMetadata(data2, parsedBody.data.queryId)
         });

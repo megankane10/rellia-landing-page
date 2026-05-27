@@ -1,6 +1,7 @@
-import {defineArrayMember, defineField, defineType} from 'sanity'
+import {defineField, defineType} from 'sanity'
 import {documentGroups, FIELDSET_SEO} from '../shared/fieldGroups'
 import {seoField} from '../shared/seoField'
+import {pageSectionMembers} from '../shared/pageSectionMembers'
 
 export const program = defineType({
   name: 'program',
@@ -113,15 +114,11 @@ export const program = defineType({
     defineField({name: 'bottomContactHref', type: 'string', group: 'detail'}),
     defineField({
       name: 'sections',
-      title: 'Optional extra sections',
-      description: 'Modular blocks appended after the default program layout.',
+      title: 'Extra sections',
+      description: 'Modular blocks appended after the default program layout (hero, FAQ-style grids, CTAs, timelines, etc.).',
       type: 'array',
       group: 'detail',
-      of: [
-        defineArrayMember({type: 'sectionHero'}),
-        defineArrayMember({type: 'sectionRichText'}),
-        defineArrayMember({type: 'sectionCardsGrid'}),
-      ],
+      of: pageSectionMembers,
     }),
     seoField,
   ],

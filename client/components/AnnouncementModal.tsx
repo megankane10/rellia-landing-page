@@ -1,6 +1,6 @@
-import { Link } from "react-router-dom"
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog"
 import { cn } from "@/lib/utils"
+import { CmsCtaLink, cmsCtaButtonClass } from "@/components/CmsCtaLink"
 
 export type AnnouncementModalProps = {
   open: boolean
@@ -29,7 +29,6 @@ export default function AnnouncementModal({
     <Dialog open={open} onOpenChange={onOpenChange} modal={false}>
       <DialogContent
         id="announcement-modal"
-        hideClose
         aria-label="Announcement"
         onOpenAutoFocus={(event) => event.preventDefault()}
         overlayClassName="z-[10001] bg-transparent pointer-events-none"
@@ -64,37 +63,17 @@ export default function AnnouncementModal({
             {text}
           </p>
  
-          <div className="mt-5 flex flex-col sm:flex-row gap-2.5">
-            {showButton && (
-              <Link
-                to={trimmedLink!}
+          {showButton && (
+            <div className="mt-5">
+              <CmsCtaLink
+                href={trimmedLink!}
                 onClick={handleDismiss}
-                className={cn(
-                  "inline-flex h-14 min-w-0 w-full sm:w-auto sm:flex-1 items-center justify-center rounded-full px-4",
-                  "bg-rellia-teal font-host-grotesk text-sm font-semibold text-white",
-                  "transition-colors duration-200 hover:bg-rellia-teal/90",
-                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-teal/40 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent",
-                )}
+                className={cn(cmsCtaButtonClass, "focus-visible:ring-offset-transparent")}
               >
                 {trimmedLabel}
-              </Link>
-            )}
- 
-            <button
-              type="button"
-              id="announcement-modal-dismiss"
-              onClick={handleDismiss}
-              className={cn(
-                "inline-flex h-14 min-w-0 w-full sm:w-auto sm:flex-1 items-center justify-center rounded-full px-4",
-                "bg-transparent font-host-grotesk text-sm font-semibold text-rellia-teal",
-                "transition-colors duration-200 hover:bg-black/[0.06]",
-                "outline-none focus:outline-none focus:bg-black/[0.04] focus-visible:bg-black/[0.06] focus-visible:ring-2 focus-visible:ring-rellia-teal/35 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent",
-                !showButton && "sm:flex-[2]",
-              )}
-            >
-              Dismiss
-            </button>
-          </div>
+              </CmsCtaLink>
+            </div>
+          )}
         </div>
       </DialogContent>
     </Dialog>

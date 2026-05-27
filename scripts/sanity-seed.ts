@@ -778,6 +778,7 @@ async function main() {
     createOrReplace: {
       _id: "eventsLandingPage",
       _type: "eventsLandingPage",
+      ...pagePublishingLive,
       heroTitlePortable: DEFAULT_EVENTS_LANDING_HERO_PORTABLE,
       heroSubtitle: "Join live sessions with operators, clinicians, and health tech leaders.",
       ctaTitle: "Want to **speak** at a Rellia event?",
@@ -793,6 +794,7 @@ async function main() {
     createOrReplace: {
       _id: "storiesPage",
       _type: "storiesPage",
+      ...pagePublishingLive,
       headlinePortable: DEFAULT_STORIES_PAGE_HEADLINE_PORTABLE,
       subheadline:
         "The latest founder spotlights, industry insights, & program updates. Stay current with the people and ideas shaping the future of health.",
@@ -1019,13 +1021,25 @@ async function main() {
       _id: "consultingPage",
       _type: "consultingPage",
       title: "Consulting",
+      ...pagePublishingLive,
       seo: seoForRoute("/consulting"),
+    },
+  })
+  mutations.push({
+    createOrReplace: {
+      _id: "diagnosticLandingPage",
+      _type: "diagnosticLandingPage",
+      title: "Startup Diagnostic",
+      useModularPage: false,
+      ...pagePublishingLive,
+      seo: seoForRoute("/startup-diagnostic"),
     },
   })
   mutations.push({
     createOrReplace: {
       _id: "homePage",
       _type: "homePage",
+      ...pagePublishingLive,
       ...DEFAULT_HOME_PAGE,
       ctaImageUrl: toSanityAbsoluteUrl(DEFAULT_HOME_PAGE.ctaImageUrl),
       seo: seoForRoute("/"),
@@ -1036,6 +1050,7 @@ async function main() {
     createOrReplace: {
       _id: "aboutPage",
       _type: "aboutPage",
+      ...pagePublishingLive,
       ...aboutFields,
       heroHeadlinePortable: threePartHeroHeadline("Empowering the", "next generation", " of health tech."),
       seo: seoForRoute("/about"),
@@ -1045,6 +1060,7 @@ async function main() {
     createOrReplace: {
       _id: "careersPage",
       _type: "careersPage",
+      ...pagePublishingLive,
       defaultTab: "hiring",
       enableHiringTab: true,
       enableVolunteerTab: true,
@@ -1068,6 +1084,7 @@ async function main() {
     createOrReplace: {
       _id: "faqPage",
       _type: "faqPage",
+      ...pagePublishingLive,
       ...DEFAULT_FAQ_PAGE,
       seo: seoForRoute("/faq"),
     },
@@ -1082,6 +1099,7 @@ async function main() {
     createOrReplace: {
       _id: "programsLandingPage",
       _type: "programsLandingPage",
+      ...pagePublishingLive,
       ...programsLandingFields,
       seo: seoForRoute("/programs"),
     },
@@ -1211,6 +1229,7 @@ async function main() {
     createOrReplace: {
       _id: "contactPage",
       _type: "contactPage",
+      ...pagePublishingLive,
       ...DEFAULT_CONTACT_PAGE,
       seo: seoForRoute("/contact"),
     },
@@ -1250,6 +1269,8 @@ async function main() {
       _type: "siteSettings",
       brandName: "Rellia Health",
       faviconPath: "/favicon.ico",
+      lookerStudioEmbedUrl:
+        "https://datastudio.google.com/embed/reporting/694548a7-7a81-4328-8519-b655996dc800/page/FvRzF",
       defaultSeo: siteDefaultSeo
         ? {
             title: siteDefaultSeo.title ?? siteDefaultSeo.metaTitle,
@@ -1280,21 +1301,21 @@ async function main() {
           _key: "analytics",
           heading: "Looker Studio analytics",
           body:
-            "Open Analytics in the left sidebar for the performance dashboard. Set SANITY_STUDIO_LOOKER_EMBED_URL in Studio environment variables to your Looker embed URL (Share → Embed report → copy iframe src).",
+            "Open Analytics in the left sidebar. Set the embed URL under Site → Site settings → Analytics (Studio). Optional: SANITY_STUDIO_LOOKER_EMBED_URL in website-cms/.env for local Studio only. In Looker: Share → Embed report → copy iframe src.",
         },
         {
           _type: "guideSection",
           _key: "publish",
-          heading: "Publishing content",
+          heading: "Drafts vs published vs the live site",
           body:
-            "Edit in the preview dataset first. When content is approved, publish documents in Studio, then promote to production (pnpm sanity:promote from the repo).",
+            "Two different ideas: (1) Studio “Published” = saved to the dataset. (2) Page visibility (Live / Hidden / Placeholder) = whether the marketing site shows the real page or a coming-soon message. A page can be Published in Studio but still show Placeholder on the site if visibility is set to Placeholder — change it under Publishing → Page visibility → Live. Preview Vercel deploys use the preview dataset; www uses production after pnpm sanity:promote.",
         },
         {
           _type: "guideSection",
           _key: "presentation",
           heading: "Visual editing (Presentation)",
           body:
-            "Presentation needs the preview site with draft mode and SANITY_API_READ_TOKEN on the preview deployment. Set SANITY_STUDIO_PREVIEW_URL to your preview origin. WebSocket console warnings are often harmless; if visual editing fails, open the preview site in a new tab once, then reload Presentation.",
+            "On Vercel Preview (not www): set SANITY_API_READ_TOKEN, SANITY_STUDIO_URL=https://relliahealth.sanity.studio, and SANITY_STUDIO_PREVIEW_URL to your exact preview URL (no trailing slash). In website-cms/.env for hosted Studio, set the same SANITY_STUDIO_PREVIEW_URL. Open Presentation, wait for the iframe to load, then click content to edit. WebSocket warnings in the Studio console are usually harmless.",
         },
       ],
     },
@@ -1588,11 +1609,9 @@ async function main() {
         linkedinUrl: company.linkedinUrl,
         traction: company.traction,
         relliaCollaboration: company.relliaCollaboration,
-        imageSrc: company.imageSrc,
         country: company.country,
         businessModel: company.businessModel,
         yearJoined: company.yearJoined,
-        programs: company.programs,
         logoSrc: company.logoSrc,
         founders: company.founders,
       },

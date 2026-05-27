@@ -1,4 +1,5 @@
 import {defineField, defineType} from 'sanity'
+import {studioListMedia} from '../shared/studioListMedia'
 
 export const navigation = defineType({
   name: 'navigation',
@@ -40,6 +41,7 @@ export const navigation = defineType({
       return {
         title: 'Site navigation',
         subtitle: `${headerLabel} · ${footerLabel}`,
+        media: studioListMedia.navigation,
       }
     },
   },

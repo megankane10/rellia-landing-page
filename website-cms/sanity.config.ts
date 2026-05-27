@@ -48,6 +48,8 @@ export default defineConfig({
       previewUrl: {
         // If Studio is deployed (https) and previewUrl is http://localhost, the iframe will be blocked as mixed content.
         // For local Studio dev, set SANITY_STUDIO_PREVIEW_URL=http://localhost:5173
+        // Must match the Vercel preview deployment that has SANITY_API_READ_TOKEN configured.
+        origin: previewOrigin,
         initial: previewOrigin,
         previewMode: {
           enable: `${previewOrigin}/api/draft-mode/enable`,

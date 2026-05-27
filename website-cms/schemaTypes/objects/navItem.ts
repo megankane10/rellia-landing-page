@@ -1,4 +1,5 @@
 import {defineField, defineType} from 'sanity'
+import {studioListMedia} from '../shared/studioListMedia'
 
 export const navItem = defineType({
   name: 'navItem',
@@ -64,6 +65,7 @@ export const navItem = defineType({
       return {
         title: enabled === false ? `${title}  (hidden)` : title,
         subtitle: subtitleParts.join('  ·  ') || undefined,
+        media: studioListMedia.link,
       }
     },
   },

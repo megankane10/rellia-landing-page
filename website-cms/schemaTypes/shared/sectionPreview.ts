@@ -1,4 +1,5 @@
 import type {PreviewConfig} from 'sanity'
+import {studioListMedia} from './studioListMedia'
 
 type SectionPreviewArgs = {
   typeLabel: string
@@ -30,6 +31,7 @@ export const sectionListPreview = ({
       typeLabel
     return {
       title: `${typeLabel}: ${label}`,
+      media: studioListMedia.section,
     }
   },
 })

@@ -5,6 +5,7 @@ import { ChevronDown, X } from "lucide-react"
 import { DEFAULT_GLOBAL_SETTINGS, DEFAULT_HOME_PAGE } from "@shared/cms/defaults"
 import { useGlobalSettings, useHomePage, useNavigation, useSiteSettings } from "@/hooks/useCmsDocuments"
 import AnnouncementModal from "@/components/AnnouncementModal"
+import { PriorityAnnouncementModal } from "@/components/PriorityAnnouncementModal"
 import { CareersHiringBadge } from "@/components/CareersHiringBadge"
 import RelliaAction from "@/components/RelliaAction"
 import { InstagramFilled, LinkedInFilled, MailFilled } from "@/components/icons/SocialIcons"
@@ -242,6 +243,8 @@ export default function Navbar({
   const [mobileOpenLabel, setMobileOpenLabel] = useState<string | null>(null)
   const [desktopOpenLabel, setDesktopOpenLabel] = useState<string | null>(null)
   const ANNOUNCEMENT_DISMISSED_SESSION_KEY = "rellia-announcement-dismissed-session"
+  const PRIORITY_MODAL_DISMISSED_SESSION_KEY = "rellia-priority-modal-dismissed-session"
+  const PRIORITY_MODAL_DELAY_MS = 3_000
   const ANNOUNCEMENT_DELAY_MS = 10_000
   const [announcementDismissed, setAnnouncementDismissed] = useState(() => {
     if (typeof window === "undefined") return false
@@ -251,14 +254,41 @@ export default function Navbar({
       return false
     }
   })
+  const [priorityModalDismissed, setPriorityModalDismissed] = useState(() => {
+    if (typeof window === "undefined") return false
+    try {
+      return window.sessionStorage.getItem(PRIORITY_MODAL_DISMISSED_SESSION_KEY) === "1"
+    } catch {
+      return false
+    }
+  })
   const [announcementDelayElapsed, setAnnouncementDelayElapsed] = useState(false)
+  const [priorityModalDelayElapsed, setPriorityModalDelayElapsed] = useState(false)
   const location = useLocation()
+
+  const priorityModalEligible =
+    !hideAnnouncement &&
+    !priorityModalDismissed &&
+    globalSettings.priorityModalEnabled === true &&
+    Boolean(globalSettings.priorityModalHeading?.trim())
+
+  useEffect(() => {
+    if (hideAnnouncement || priorityModalDismissed || !priorityModalEligible) return
+    const timer = window.setTimeout(() => setPriorityModalDelayElapsed(true), PRIORITY_MODAL_DELAY_MS)
+    return () => window.clearTimeout(timer)
+  }, [hideAnnouncement, priorityModalDismissed, priorityModalEligible])
 
   useEffect(() => {
     if (hideAnnouncement || announcementDismissed) return
+    if (priorityModalEligible && !priorityModalDismissed) return
     const timer = window.setTimeout(() => setAnnouncementDelayElapsed(true), ANNOUNCEMENT_DELAY_MS)
     return () => window.clearTimeout(timer)
-  }, [hideAnnouncement, announcementDismissed])
+  }, [
+    hideAnnouncement,
+    announcementDismissed,
+    priorityModalEligible,
+    priorityModalDismissed,
+  ])
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 12)
@@ -421,7 +451,12 @@ export default function Navbar({
     globalSettings.announcementEnabled === true &&
     Boolean(globalSettings.announcementText?.trim())
 
-  const showAnnouncement = announcementEligible && announcementDelayElapsed
+  const showPriorityModal = priorityModalEligible && priorityModalDelayElapsed
+  const showAnnouncement =
+    announcementEligible &&
+    announcementDelayElapsed &&
+    (!priorityModalEligible || priorityModalDismissed) &&
+    !showPriorityModal
 
   const handleAnnouncementDismiss = () => {
     setAnnouncementDismissed(true)
@@ -433,12 +468,38 @@ export default function Navbar({
     }
   }
 
+  const handlePriorityModalDismiss = () => {
+    setPriorityModalDismissed(true)
+    setPriorityModalDelayElapsed(false)
+    try {
+      window.sessionStorage.setItem(PRIORITY_MODAL_DISMISSED_SESSION_KEY, "1")
+    } catch {
+      /* storage unavailable */
+    }
+  }
+
   const handleAnnouncementOpenChange = (next: boolean) => {
     if (!next) handleAnnouncementDismiss()
   }
 
+  const handlePriorityModalOpenChange = (next: boolean) => {
+    if (!next) handlePriorityModalDismiss()
+  }
+
   return (
     <>
+      <PriorityAnnouncementModal
+        open={showPriorityModal}
+        onOpenChange={handlePriorityModalOpenChange}
+        heading={globalSettings.priorityModalHeading?.trim() ?? ""}
+        body={globalSettings.priorityModalBody}
+        imageSrc={globalSettings.priorityModalImageUrl}
+        imageAlt={globalSettings.priorityModalImageAlt}
+        pillText={globalSettings.priorityModalPillText}
+        buttonLabel={globalSettings.priorityModalButtonLabel}
+        buttonLink={globalSettings.priorityModalButtonLink}
+      />
+
       <AnnouncementModal
         open={showAnnouncement}
         onOpenChange={handleAnnouncementOpenChange}

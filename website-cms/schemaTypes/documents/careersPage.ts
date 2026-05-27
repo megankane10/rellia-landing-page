@@ -2,11 +2,13 @@ import {defineArrayMember, defineField, defineType} from 'sanity'
 import {documentGroups, FIELDSET_SEO} from '../shared/fieldGroups'
 import {singletonLayoutFields} from '../shared/singletonLayoutFields'
 
+const GROUP_OPEN_ROLES = {name: 'openRoles' as const, title: 'Open roles'}
+
 export const careersPage = defineType({
   name: 'careersPage',
   title: 'Careers page',
   type: 'document',
-  groups: documentGroups,
+  groups: [GROUP_OPEN_ROLES, ...documentGroups],
   fieldsets: [FIELDSET_SEO],
   fields: [
     defineField({
@@ -60,7 +62,7 @@ export const careersPage = defineType({
       title: 'Open roles',
       type: 'array',
       description: 'Job listings on /careers#open-roles. Drag to reorder.',
-      group: 'content',
+      group: 'openRoles',
       of: [
         defineArrayMember({
           type: 'object',

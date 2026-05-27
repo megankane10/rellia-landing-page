@@ -1,4 +1,5 @@
-const embedUrl = (process.env.SANITY_STUDIO_LOOKER_EMBED_URL || '').trim()
+import {useEffect, useState} from 'react'
+import {useClient} from 'sanity'
 
 const fullPageRoot: Record<string, string | number> = {
   boxSizing: 'border-box',
@@ -21,7 +22,41 @@ const iframeWrapStyle: Record<string, string | number> = {
   minHeight: 'calc(100vh - 3.5rem)',
 }
 
+const LOOKER_QUERY = `*[_id == "siteSettings"][0].lookerStudioEmbedUrl`
+
 export const LookerStudioPanel = () => {
+  const client = useClient({apiVersion: '2024-01-01'})
+  const [cmsUrl, setCmsUrl] = useState<string | null>(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    let cancelled = false
+    client
+      .fetch<string | null>(LOOKER_QUERY)
+      .then((url) => {
+        if (!cancelled) setCmsUrl(typeof url === 'string' ? url : null)
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false)
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [client])
+
+  const envUrl = (process.env.SANITY_STUDIO_LOOKER_EMBED_URL || '').trim()
+  const embedUrl = (cmsUrl || envUrl).trim()
+
+  if (loading) {
+    return (
+      <div style={fullPageRoot}>
+        <div style={emptyState}>
+          <p style={{margin: 0, opacity: 0.7}}>Loading analytics…</p>
+        </div>
+      </div>
+    )
+  }
+
   if (!embedUrl) {
     return (
       <div style={fullPageRoot}>
@@ -29,11 +64,14 @@ export const LookerStudioPanel = () => {
           <p style={{fontWeight: 600, fontSize: '1.125rem', margin: '0 0 0.75rem'}}>
             Looker Studio embed URL is not set
           </p>
-          <p style={{margin: 0, opacity: 0.8}}>
-            Add <code style={{fontSize: '0.9em'}}>SANITY_STUDIO_LOOKER_EMBED_URL</code> in your
-            Studio environment (sanity.io → Project → Settings → Environment variables, or{' '}
-            <code>website-cms/.env</code> locally). In Looker Studio: Share → Embed report → copy
-            the iframe <code>src</code> URL.
+          <p style={{margin: '0 0 1rem', opacity: 0.85}}>
+            Open <strong>Site → Site settings → Analytics (Studio)</strong> and paste the embed URL
+            from Looker Studio (Share → Embed report → copy iframe <code>src</code>).
+          </p>
+          <p style={{margin: 0, opacity: 0.75, fontSize: '0.9rem'}}>
+            For local Studio only, you can also set{' '}
+            <code style={{fontSize: '0.9em'}}>SANITY_STUDIO_LOOKER_EMBED_URL</code> in{' '}
+            <code>website-cms/.env</code>.
           </p>
         </div>
       </div>

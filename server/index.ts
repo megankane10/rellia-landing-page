@@ -381,8 +381,11 @@ export function createServer() {
     rateLimitText(draftModeRate, DRAFT_MODE_MAX_PER_MIN),
     async (req, res) => {
     const studioOnlyOrigins = new Set([studioOrigin].filter(Boolean) as string[])
+    const previewSiteOrigins = new Set<string>(siteOrigins)
+    if (studioOrigin) previewSiteOrigins.add(studioOrigin)
     if (
       !allowBrowserOrigin(req, studioOnlyOrigins) &&
+      !allowBrowserOrigin(req, previewSiteOrigins) &&
       !hasSanityPreviewSecret(req) &&
       !isSanityStudioReferer(req)
     ) {
@@ -614,7 +617,9 @@ export function createServer() {
           perspective: "drafts",
           stega: { enabled: true, studioUrl: resolveSanityStudioUrl() },
         });
-        const data = await previewClient.fetch(entry.query, fetchParams);
+        const data = await previewClient.fetch(entry.query, fetchParams, {
+          filterResponse: false,
+        });
         res.status(200).json({
           data: stripSanityMetadata(data, parsedBody.data.queryId),
         });

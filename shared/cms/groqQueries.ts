@@ -38,7 +38,15 @@ export const globalSettingsQuery = `*[_type == "globalSettings"][0]{
   announcementText,
   announcementButtonLabel,
   announcementButtonLink,
-  announcementPillText
+  announcementPillText,
+  priorityModalEnabled,
+  priorityModalHeading,
+  priorityModalBody,
+  priorityModalPillText,
+  priorityModalButtonLabel,
+  priorityModalButtonLink,
+  "priorityModalImageUrl": priorityModalImage.asset->url,
+  "priorityModalImageAlt": priorityModalImage.alt
 }`;
 
 export const navigationQuery = `*[_type == "navigation"][0]{
@@ -197,6 +205,14 @@ export const networkInvestorsPageQuery = `*[_type == "networkInvestorsPage"][0]{
   useModularPage,
   ${pageVisibilityFragment},
   ${logoMarqueeFragment},
+  ${seoFragment},
+  ${pageSectionsFragment}
+}`
+
+export const diagnosticLandingPageQuery = `*[_id == "diagnosticLandingPage"][0]{
+  title,
+  useModularPage,
+  ${pageVisibilityFragment},
   ${seoFragment},
   ${pageSectionsFragment}
 }`
@@ -563,20 +579,20 @@ export const alumniCompaniesQuery = `*[_type == "alumniCompany" && !(_id in path
   },
   shortDescription,
   longDescription,
+  profileBody,
   websiteUrl,
   linkedinUrl,
   traction,
   relliaCollaboration,
   country,
   yearJoined,
-  programs,
   "logoSrc": coalesce(logo.asset->url, logoSrc),
   founders[]{
     name,
     role,
     bio,
     linkedinUrl,
-    "imageSrc": coalesce(imageSrc, image.asset->url)
+    "imageSrc": image.asset->url
   }
 }`;
 

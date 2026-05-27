@@ -1,4 +1,5 @@
 import {defineField, defineType} from 'sanity'
+import {studioListMedia} from '../shared/studioListMedia'
 
 export const founderSpecialty = defineType({
   name: 'founderSpecialty',
@@ -38,5 +39,12 @@ export const founderSpecialty = defineType({
   ],
   preview: {
     select: {title: 'label', subtitle: 'slug.current'},
+    prepare({title, subtitle}) {
+      return {
+        title: title || 'Founder specialty',
+        subtitle,
+        media: studioListMedia.tag,
+      }
+    },
   },
 })

@@ -30,6 +30,9 @@ import {networkAdvisorsPage} from './documents/networkAdvisorsPage'
 import {networkInvestorsPage} from './documents/networkInvestorsPage'
 import {networkPartnersPage} from './documents/networkPartnersPage'
 import {consultingPage} from './documents/consultingPage'
+import {diagnosticLandingPage} from './documents/diagnosticLandingPage'
+import {termsPage} from './documents/termsPage'
+import {privacyPage} from './documents/privacyPage'
 import {bodyCtaBox} from './objects/bodyCtaBox'
 import {portableImageCarousel} from './objects/portableImageCarousel'
 import {logoMarqueeItem} from './objects/logoMarqueeItem'
@@ -80,6 +83,9 @@ export const schemaTypes = [
   networkInvestorsPage,
   networkPartnersPage,
   consultingPage,
+  diagnosticLandingPage,
+  termsPage,
+  privacyPage,
   studioGuide,
   // Collections
   advisor,

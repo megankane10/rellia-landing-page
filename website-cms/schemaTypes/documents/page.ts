@@ -1,4 +1,5 @@
-import {defineArrayMember, defineField, defineType} from 'sanity'
+import {defineField, defineType} from 'sanity'
+import {pageSectionMembers} from '../shared/pageSectionMembers'
 
 export const page = defineType({
   name: 'page',
@@ -25,12 +26,9 @@ export const page = defineType({
     }),
     defineField({
       name: 'sections',
+      title: 'Page sections',
       type: 'array',
-      of: [
-        defineArrayMember({type: 'sectionHero'}),
-        defineArrayMember({type: 'sectionRichText'}),
-        defineArrayMember({type: 'sectionCardsGrid'}),
-      ],
+      of: pageSectionMembers,
       group: 'content',
     }),
     defineField({

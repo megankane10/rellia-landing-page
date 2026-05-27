@@ -24,6 +24,7 @@ import { isCmsQueryLoading } from "@/lib/cmsQueryState";
 import CmsPageLoadingShell from "@/components/cms/CmsPageLoadingShell";
 import { isSanityConfigured } from "@/lib/sanity";
 import ImageExpandModal from "@/components/ImageExpandModal";
+import { PortableRichText } from "@/components/PortableRichText";
 
 export default function FounderProfile() {
   const { id } = useParams<{ id: string }>();
@@ -111,9 +112,14 @@ export default function FounderProfile() {
                 <h1 className="font-host-grotesk text-3xl font-bold tracking-tight text-black mb-2">
                   {active.logoName}
                 </h1>
-                {active.tagline && (
-                  <p className="font-urbanist text-base text-black/60 mb-6 leading-relaxed">
-                    {active.tagline}
+                {Array.isArray(active.country) && active.country.length > 0 && (
+                  <p className="font-urbanist text-base font-medium text-black/70 mb-2">
+                    {active.country.join(", ")}
+                  </p>
+                )}
+                {(active.shortDescription?.trim() || active.tagline?.trim()) && (
+                  <p className="font-urbanist text-sm text-black/55 mb-6 leading-relaxed">
+                    {active.shortDescription?.trim() || active.tagline}
                   </p>
                 )}
                 <div className="flex flex-wrap gap-2 mb-6">
@@ -260,8 +266,11 @@ export default function FounderProfile() {
               </section>
 
 
-              {/* 3. Text Box for Remaining Fields - Redesigned to be Seamless */}
-              {active.longDescription && (
+              {(active as { profileBody?: unknown }).profileBody ? (
+                <section className="scroll-mt-28">
+                  <PortableRichText value={(active as { profileBody: unknown }).profileBody} />
+                </section>
+              ) : active.longDescription ? (
                 <section className="scroll-mt-28">
                   <h3 className="mb-4 text-2xl font-host-grotesk font-semibold text-black">
                     Overview
@@ -270,7 +279,7 @@ export default function FounderProfile() {
                     {active.longDescription}
                   </p>
                 </section>
-              )}
+              ) : null}
 
               {active.traction && (
                 <section className="scroll-mt-28">

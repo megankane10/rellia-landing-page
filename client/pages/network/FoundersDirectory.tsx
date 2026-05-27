@@ -100,14 +100,14 @@ function FounderDirectoryCard({
         <h3 className="font-host-grotesk text-lg font-bold tracking-tight text-black group-hover:underline decoration-2 underline-offset-4">
           {company.logoName}
         </h3>
-        {company.tagline && (
-          <p className="mt-1 font-urbanist text-sm font-medium text-black/77 leading-relaxed">
-            {company.tagline}
+        {Array.isArray(company.country) && company.country.length > 0 && (
+          <p className="mt-1 font-urbanist text-sm font-medium text-black/70 leading-snug">
+            {company.country.join(", ")}
           </p>
         )}
-        {Array.isArray(company.country) && company.country.length > 0 && (
-          <p className="mt-1 font-urbanist text-sm text-black/60 leading-none">
-            {company.country.join(", ")}
+        {(company.shortDescription?.trim() || company.tagline?.trim()) && (
+          <p className="mt-2 font-urbanist text-sm text-black/55 leading-relaxed line-clamp-3">
+            {company.shortDescription?.trim() || company.tagline}
           </p>
         )}
       </div>
@@ -181,7 +181,7 @@ export default function FoundersDirectory() {
             country: Array.isArray(c.country) ? c.country : (c.country ? [c.country] : []),
             yearJoined: typeof c.yearJoined === "number" ? c.yearJoined : 0,
             founders: Array.isArray(c.founders) ? c.founders : [],
-            programs: Array.isArray(c.programs) ? c.programs : [],
+            profileBody: c.profileBody,
             linkedinUrl: c.linkedinUrl,
           }
         })

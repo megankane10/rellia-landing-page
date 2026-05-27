@@ -11,6 +11,7 @@ export const presentationMainDocuments = defineDocuments([
   {route: '/contact', type: 'contactPage'},
   {route: '/membership', type: 'paymentPage'},
   {route: '/consulting', type: 'consultingPage'},
+  {route: '/startup-diagnostic', type: 'diagnosticLandingPage'},
   {route: '/stories', type: 'storiesPage'},
   {route: '/founders', type: 'networkFoundersPage'},
   {route: '/advisors', type: 'networkAdvisorsPage'},
@@ -168,6 +169,12 @@ export const presentationLocations = {
     select: {title: 'title'},
     resolve: (doc) => ({
       locations: [{title: doc?.title || 'Partners', href: '/industry-partners'}],
+    }),
+  }),
+  diagnosticLandingPage: defineLocations({
+    select: {title: 'title'},
+    resolve: (doc) => ({
+      locations: [{title: doc?.title || 'Startup diagnostic', href: '/startup-diagnostic'}],
     }),
   }),
 }

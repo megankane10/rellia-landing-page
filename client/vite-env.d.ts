@@ -21,6 +21,8 @@ interface ImportMetaEnv {
   /** Sanity read client (public). Optional; see `.env.example` */
   readonly VITE_SANITY_PROJECT_ID?: string
   readonly VITE_SANITY_DATASET?: string
+  /** Hosted Studio URL for visual editing comlink (default: https://relliahealth.sanity.studio) */
+  readonly VITE_SANITY_STUDIO_URL?: string
   readonly VITE_VERCEL_GIT_COMMIT_REF?: string
 }
 

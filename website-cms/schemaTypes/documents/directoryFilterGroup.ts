@@ -30,8 +30,9 @@ export const directoryFilterGroup = defineType({
     }),
     defineField({
       name: 'appliesTo',
-      title: 'Show on',
+      title: 'Directory scope',
       type: 'string',
+      description: 'Controls which desk list shows this group. Both = advisors and founders.',
       options: {
         list: [
           {title: 'Advisors directory', value: 'advisors'},
@@ -43,6 +44,7 @@ export const directoryFilterGroup = defineType({
       initialValue: 'both',
       validation: (Rule) => Rule.required(),
       group: 'setup',
+      hidden: true,
     }),
     defineField({
       name: 'sortOrder',

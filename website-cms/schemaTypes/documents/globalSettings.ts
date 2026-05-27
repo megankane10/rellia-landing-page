@@ -1,4 +1,5 @@
 import {defineField, defineType} from 'sanity'
+import {studioListMedia} from '../shared/studioListMedia'
 
 export const globalSettings = defineType({
   name: 'globalSettings',
@@ -7,7 +8,8 @@ export const globalSettings = defineType({
   groups: [
     {name: 'theme', title: 'Design tokens', default: true},
     {name: 'footer', title: 'Footer'},
-    {name: 'announcement', title: 'Announcement banner'},
+    {name: 'announcement', title: 'Bottom popup'},
+    {name: 'priorityModal', title: 'Priority modal'},
     {name: 'legal', title: 'Legal'},
   ],
   fields: [
@@ -54,42 +56,102 @@ export const globalSettings = defineType({
     }),
     defineField({
       name: 'announcementEnabled',
-      title: 'Announcement enabled',
+      title: 'Enable bottom popup',
       type: 'boolean',
-      description: 'Show or hide the announcement banner at the top of the page.',
+      description:
+        'Shows a small announcement card at the bottom-right after visitors have been on the site ~10 seconds.',
+      initialValue: false,
       group: 'announcement',
     }),
     defineField({
       name: 'announcementText',
-      title: 'Announcement text',
-      type: 'string',
-      group: 'announcement',
-    }),
-    defineField({
-      name: 'announcementButtonLabel',
-      title: 'Announcement button label',
-      type: 'string',
-      group: 'announcement',
-    }),
-    defineField({
-      name: 'announcementButtonLink',
-      title: 'Announcement button link',
-      type: 'string',
-      description: 'Internal path or URL for the banner CTA.',
+      title: 'Popup message',
+      type: 'text',
+      rows: 3,
+      description: 'Main message text for the bottom popup.',
       group: 'announcement',
     }),
     defineField({
       name: 'announcementPillText',
-      title: 'Announcement pill text',
+      title: 'Status pill',
       type: 'string',
-      description: 'Text shown in the pill, e.g. LIVE, NEW, UPDATE. Defaults to "LIVE".',
+      description: 'Short label above the message (e.g. LIVE, NEW). Defaults to LIVE.',
       initialValue: 'LIVE',
       group: 'announcement',
+    }),
+    defineField({
+      name: 'announcementButtonLabel',
+      title: 'Button label',
+      type: 'string',
+      description: 'Leave empty to hide the button.',
+      group: 'announcement',
+    }),
+    defineField({
+      name: 'announcementButtonLink',
+      title: 'Button link',
+      type: 'string',
+      description: 'Internal path (e.g. /programs/…) or full https URL.',
+      group: 'announcement',
+    }),
+    defineField({
+      name: 'priorityModalEnabled',
+      title: 'Enable priority modal',
+      type: 'boolean',
+      description:
+        'Shows a centered modal for high-importance messages. Takes precedence over the bottom popup until dismissed.',
+      initialValue: false,
+      group: 'priorityModal',
+    }),
+    defineField({
+      name: 'priorityModalHeading',
+      title: 'Heading',
+      type: 'string',
+      group: 'priorityModal',
+    }),
+    defineField({
+      name: 'priorityModalBody',
+      title: 'Body text',
+      type: 'text',
+      rows: 5,
+      group: 'priorityModal',
+    }),
+    defineField({
+      name: 'priorityModalImage',
+      title: 'Image',
+      type: 'image',
+      options: {hotspot: true},
+      description: 'Optional hero image at the top of the modal.',
+      group: 'priorityModal',
+    }),
+    defineField({
+      name: 'priorityModalPillText',
+      title: 'Status pill (optional)',
+      type: 'string',
+      description: 'e.g. IMPORTANT, NEW — leave empty to hide the pill.',
+      group: 'priorityModal',
+    }),
+    defineField({
+      name: 'priorityModalButtonLabel',
+      title: 'Button label',
+      type: 'string',
+      description: 'Leave empty to hide the primary button.',
+      group: 'priorityModal',
+    }),
+    defineField({
+      name: 'priorityModalButtonLink',
+      title: 'Button link',
+      type: 'string',
+      description: 'Internal path or full https URL.',
+      group: 'priorityModal',
     }),
   ],
   preview: {
     prepare() {
-      return {title: 'Global settings'}
+      return {
+        title: 'Global settings',
+        subtitle: 'Footer, popups & theme',
+        media: studioListMedia.settings,
+      }
     },
   },
 })

@@ -401,6 +401,16 @@ export const useFounderSpecialties = () =>
     staleTime: staleTimeMs,
   })
 
+export const useDiagnosticLandingPage = () =>
+  useQuery({
+    queryKey: ["cms", "diagnosticLandingPage"],
+    queryFn: async () => {
+      const raw = await sanityFetch<CmsSingletonPageContent>("diagnosticLandingPage")
+      return raw ?? null
+    },
+    staleTime: staleTimeMs,
+  })
+
 export const useNetworkFoundersPage = () =>
   useQuery({
     queryKey: ["cms", "network", "foundersPage"],

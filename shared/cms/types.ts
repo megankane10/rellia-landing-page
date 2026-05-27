@@ -300,6 +300,14 @@ export type GlobalSettingsContent = {
   announcementButtonLabel?: string
   announcementButtonLink?: string
   announcementPillText?: string
+  priorityModalEnabled?: boolean
+  priorityModalHeading?: string
+  priorityModalBody?: string
+  priorityModalPillText?: string
+  priorityModalButtonLabel?: string
+  priorityModalButtonLink?: string
+  priorityModalImageUrl?: string
+  priorityModalImageAlt?: string
 }
 
 export type SiteSettingsContent = {

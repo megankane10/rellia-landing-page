@@ -3,7 +3,10 @@ import { useLocation, useNavigate } from "react-router-dom"
 import { useQueryClient } from "@tanstack/react-query"
 import { enableVisualEditing } from "@sanity/visual-editing"
 import type { HistoryUpdate } from "@sanity/visual-editing"
-import { isSanityPresentationIframe } from "@/lib/sanityPresentation"
+import {
+  getSanityStudioUrl,
+  isSanityPresentationPreview,
+} from "@/lib/sanityPresentation"
 
 /**
  * Connects the marketing site to Sanity Presentation (click-to-edit overlays + comlink).
@@ -14,12 +17,17 @@ export const VisualEditingOverlay = () => {
   const location = useLocation()
   const queryClient = useQueryClient()
   const routeNavigateRef = useRef<((update: HistoryUpdate) => void) | null>(null)
+  const connectAttemptRef = useRef(0)
 
   useEffect(() => {
-    if (!isSanityPresentationIframe()) return
+    if (!isSanityPresentationPreview()) return
+
+    const studioUrl = getSanityStudioUrl()
+    connectAttemptRef.current += 1
 
     const disable = enableVisualEditing({
       zIndex: 100_000,
+      studioUrl,
       history: {
         subscribe: (onNavigate) => {
           routeNavigateRef.current = onNavigate
@@ -46,6 +54,11 @@ export const VisualEditingOverlay = () => {
       },
     })
 
+    if (import.meta.env.DEV) {
+      // eslint-disable-next-line no-console
+      console.info("[sanity] Visual editing enabled", { studioUrl, attempt: connectAttemptRef.current })
+    }
+
     return () => {
       routeNavigateRef.current = null
       disable()
@@ -53,7 +66,7 @@ export const VisualEditingOverlay = () => {
   }, [navigate, queryClient])
 
   useEffect(() => {
-    if (!isSanityPresentationIframe()) return
+    if (!isSanityPresentationPreview()) return
     routeNavigateRef.current?.({
       type: "push",
       url: `${location.pathname}${location.search}${location.hash}`,

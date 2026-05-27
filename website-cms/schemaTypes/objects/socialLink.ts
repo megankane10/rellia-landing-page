@@ -1,4 +1,5 @@
 import {defineField, defineType} from 'sanity'
+import {studioListMedia} from '../shared/studioListMedia'
 
 export const socialLink = defineType({
   name: 'socialLink',
@@ -38,7 +39,7 @@ export const socialLink = defineType({
   preview: {
     select: {platform: 'platform', url: 'url'},
     prepare({platform, url}) {
-      return {title: platform || 'Social link', subtitle: url}
+      return {title: platform || 'Social link', subtitle: url, media: studioListMedia.social}
     },
   },
 })

@@ -1,4 +1,5 @@
 import {defineField, defineType} from 'sanity'
+import {studioListMedia} from '../shared/studioListMedia'
 
 export const advisorFilter = defineType({
   name: 'advisorFilter',
@@ -38,5 +39,12 @@ export const advisorFilter = defineType({
   ],
   preview: {
     select: {title: 'label', subtitle: 'slug.current'},
+    prepare({title, subtitle}) {
+      return {
+        title: title || 'Advisor filter',
+        subtitle,
+        media: studioListMedia.tag,
+      }
+    },
   },
 })
