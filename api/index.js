@@ -580,6 +580,9 @@ var careersPageQuery = `*[_type == "careersPage"][0]{
   enableVolunteerTab,
   tabsLabelHiring,
   tabsLabelVolunteer,
+  publishOpenRolesOnProduction,
+  showHiringNavBadge,
+  showVolunteerNavBadge,
   openRoles[]{
     "id": roleId,
     title,

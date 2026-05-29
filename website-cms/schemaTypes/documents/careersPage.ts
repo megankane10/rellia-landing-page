@@ -58,6 +58,31 @@ export const careersPage = defineType({
       group: 'content',
     }),
     defineField({
+      name: 'publishOpenRolesOnProduction',
+      title: 'Show open roles on production (www)',
+      type: 'boolean',
+      description:
+        'When off, /careers on relliahealth.com hides job listings (preview/Vercel still shows roles for editing). Turn on when real roles are ready for the public site.',
+      initialValue: false,
+      group: 'openRoles',
+    }),
+    defineField({
+      name: 'showHiringNavBadge',
+      title: 'Show HIRING badge in navigation',
+      type: 'boolean',
+      description: 'Mint “HIRING” pill beside Careers in the header and footer. Off by default.',
+      initialValue: false,
+      group: 'content',
+    }),
+    defineField({
+      name: 'showVolunteerNavBadge',
+      title: 'Show VOLUNTEER badge in navigation',
+      type: 'boolean',
+      description: 'Mint “VOLUNTEER” pill beside Careers in the header and footer. Off by default.',
+      initialValue: false,
+      group: 'content',
+    }),
+    defineField({
       name: 'openRoles',
       title: 'Open roles',
       type: 'array',

@@ -59,7 +59,7 @@ export const globalSettings = defineType({
       title: 'Enable bottom popup',
       type: 'boolean',
       description:
-        'Shows a small announcement card at the bottom-right after visitors have been on the site ~10 seconds.',
+        'Turn on, add popup message text below, then publish Global settings. The card appears bottom-right ~10s after load (hidden if the priority modal is active). Visitors who dismiss it will not see it again until they clear site data / use a new browser session.',
       initialValue: false,
       group: 'announcement',
     }),

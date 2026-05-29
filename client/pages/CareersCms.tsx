@@ -13,8 +13,8 @@ import { motion, useReducedMotion, AnimatePresence } from "framer-motion"
 import { BriefcaseBusiness, Building2, ExternalLink, Laptop, MapPin, Users, UserRound, Check, type LucideIcon } from "lucide-react"
 import type { CareersOpenRole, CareersPageContent, HomeWhyFeature } from "@shared/cms/types"
 import { DEFAULT_GLOBAL_SETTINGS } from "@shared/cms/defaults"
-import { CAREERS_VOLUNTEER_ENABLED, careersHasPublishedOpenRoles } from "@shared/careersPageConfig"
-import { CAREERS_OPEN_ROLES } from "@shared/careersOpenRoles"
+import { CAREERS_VOLUNTEER_ENABLED } from "@shared/careersPageConfig"
+import { resolveCareersOpenRoles } from "@shared/careersOpenRolesVisibility"
 import { cn } from "@/lib/utils"
 import { useQuery } from "@tanstack/react-query"
 import { sanityFetch } from "@/lib/sanity"
@@ -321,36 +321,15 @@ export default function CareersCms() {
   const careersCms = normalizeCms(careersCmsRaw)
   useApplyCmsSeo(careersCms.seo)
 
-  const openRoles = useMemo((): CareersOpenRole[] => {
-    const fromCms = (careersCms.openRoles ?? [])
-      .map((role) => ({
-        id: typeof role?.id === "string" ? role.id.trim() : "",
-        title: typeof role?.title === "string" ? role.title.trim() : "",
-        location: typeof role?.location === "string" ? role.location.trim() : "",
-        employmentType: typeof role?.employmentType === "string" ? role.employmentType.trim() : "",
-        description: typeof role?.description === "string" ? role.description.trim() : "",
-        responsibilities: Array.isArray(role?.responsibilities)
-          ? role.responsibilities.filter((r): r is string => typeof r === "string" && r.trim() !== "")
-          : [],
-        linkedInApplyUrl:
-          typeof role?.linkedInApplyUrl === "string" ? role.linkedInApplyUrl.trim() : "",
-      }))
-      .filter(
-        (role) =>
-          role.id &&
-          role.title &&
-          role.location &&
-          role.employmentType &&
-          role.description &&
-          role.responsibilities.length > 0 &&
-          role.linkedInApplyUrl,
-      )
-    if (fromCms.length > 0) return fromCms
-    if (isStrictProductionSite()) return []
-    if (isSanityConfigured() && !allowCmsSeedFallbacks()) return []
-    if (!allowCmsSeedFallbacks()) return []
-    return [...CAREERS_OPEN_ROLES]
-  }, [careersCms.openRoles])
+  const openRoles = useMemo(
+    (): CareersOpenRole[] =>
+      resolveCareersOpenRoles(careersCms, {
+        isProductionSite: isStrictProductionSite(),
+        allowSeedFallbacks: allowCmsSeedFallbacks(),
+        isSanityConfigured: isSanityConfigured(),
+      }),
+    [careersCms],
+  )
 
   const handleCopyRoleLink = (roleId: string) => {
     const roleUrl = `${buildPageUrl("/careers")}#${roleId}`
@@ -382,14 +361,15 @@ export default function CareersCms() {
   const enableHiring = careersCms.enableHiringTab !== false
   const enableVolunteer = careersCms.enableVolunteerTab !== false && volunteerAvailable
 
-  const joinTeamPrimaryCta: CareersJoinTeamCta | null = enableHiring
-    ? {
-        action: "scroll",
-        scrollTargetId: "open-roles",
-        label: "See open roles",
-        ariaLabel: "See open roles — jump to open roles",
-      }
-    : null
+  const joinTeamPrimaryCta: CareersJoinTeamCta | null =
+    enableHiring && openRoles.length > 0
+      ? {
+          action: "scroll",
+          scrollTargetId: "open-roles",
+          label: "See open roles",
+          ariaLabel: "See open roles — jump to open roles",
+        }
+      : null
 
   const joinTeamSecondaryCta: CareersJoinTeamCta | null = enableVolunteer
     ? {

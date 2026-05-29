@@ -26,6 +26,7 @@ import type {
   HomePageContent,
   NotFoundContent,
   ApplyPageContent,
+  CareersPageContent,
   DiagnosticSurveyContent,
   PaymentPageContent,
   ProgramsLandingContent,
@@ -337,6 +338,16 @@ export const useApplyPage = () =>
     queryFn: async () => {
       const raw = await sanityFetch<Partial<ApplyPageContent>>("applyPage");
       return mergeApplyPage(raw ?? undefined);
+    },
+    staleTime: staleTimeMs,
+  });
+
+export const useCareersPage = () =>
+  useQuery({
+    queryKey: ["cms", "careersPage"],
+    queryFn: async () => {
+      const raw = await sanityFetch<Partial<CareersPageContent>>("careersPage");
+      return raw ?? null;
     },
     staleTime: staleTimeMs,
   });

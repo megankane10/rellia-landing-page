@@ -28,7 +28,8 @@ export type NavigationContent = {
 }
 
 export type CareersOpenRole = {
-  roleId: string
+  id: string
+  roleId?: string
   title: string
   location: string
   employmentType: string
@@ -43,6 +44,12 @@ export type CareersPageContent = {
   enableVolunteerTab?: boolean
   tabsLabelHiring?: string
   tabsLabelVolunteer?: string
+  /** When true, open roles list on www.relliahealth.com (production). Preview/Vercel always shows roles from CMS. */
+  publishOpenRolesOnProduction?: boolean
+  /** Show HIRING pill next to Careers in nav/footer. Default off in Studio until you enable it. */
+  showHiringNavBadge?: boolean
+  /** Show VOLUNTEER pill next to Careers in nav/footer. Default off in Studio until you enable it. */
+  showVolunteerNavBadge?: boolean
   openRoles?: CareersOpenRole[]
   seo?: SeoContent
 }
