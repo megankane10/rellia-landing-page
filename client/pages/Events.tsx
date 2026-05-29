@@ -23,63 +23,13 @@ import { normalizeCmsEventForCard } from "@/lib/cmsEventList"
 import { isCmsListAwaitingData, isCmsQueryLoading } from "@/lib/cmsQueryState"
 import { DirectoryGridSkeleton } from "@/components/cms/CmsPageLoadingShell"
 import { isSanityConfigured } from "@/lib/sanity"
+import { getEventStartTimestamp, getEventTemporalStatus } from "@shared/cms/eventTemporalStatus"
 
 type EventFilter = "all" | "upcoming" | "past"
 const PAGE_SIZE = 12
 
-const MONTH_TO_INDEX: Record<string, number> = {
-  january: 0,
-  february: 1,
-  march: 2,
-  april: 3,
-  may: 4,
-  june: 5,
-  july: 6,
-  august: 7,
-  september: 8,
-  october: 9,
-  november: 10,
-  december: 11,
-}
-
-const parseLooseDateTimeToTimestamp = (raw: string): number => {
-  const s = raw.trim()
-  if (!s) return Number.NaN
-
-  const direct = Date.parse(s)
-  if (Number.isFinite(direct)) return direct
-
-  // Handle strings like:
-  // "Thursday, February 19, 2025 — 12:00 PM EST"
-  const m = s.match(
-    /\b(January|February|March|April|May|June|July|August|September|October|November|December)\b\s+(\d{1,2})\b,\s*((?:19|20)\d{2})\b/i,
-  )
-  if (!m) return Number.NaN
-
-  const monthIndex = MONTH_TO_INDEX[(m[1] ?? "").toLowerCase()]
-  const day = Number(m[2] ?? "")
-  const year = Number(m[3] ?? "")
-  if (!Number.isFinite(monthIndex) || !Number.isFinite(day) || !Number.isFinite(year)) return Number.NaN
-
-  // Midday UTC is enough for past/upcoming classification.
-  return Date.UTC(year, monthIndex, day, 12, 0, 0)
-}
-
-const getEventTimestamp = (event: any): number => {
-  const candidate = event?.startsAt || event?.dateTime
-  if (typeof candidate !== "string" || !candidate.trim()) return Number.NaN
-  const parsed = parseLooseDateTimeToTimestamp(candidate)
-  return Number.isFinite(parsed) ? parsed : Number.NaN
-}
-
-const getEventStatus = (event: any): "upcoming" | "past" => {
-  const explicit = event?.status
-  if (explicit === "upcoming" || explicit === "past") return explicit
-
-  const t = getEventTimestamp(event)
-  if (!Number.isFinite(t)) return "upcoming"
-  return t < Date.now() ? "past" : "upcoming"
-}
+const getEventStatus = (event: Parameters<typeof getEventTemporalStatus>[0]): "upcoming" | "past" =>
+  getEventTemporalStatus(event)
 
 export default function Events() {
   const eventsQuery = useEvents()
@@ -112,8 +62,8 @@ export default function Events() {
     const upcoming = allEvents
       .filter((e: any) => getEventStatus(e) === "upcoming")
       .sort((a: any, b: any) => {
-        const at = getEventTimestamp(a)
-        const bt = getEventTimestamp(b)
+        const at = getEventStartTimestamp(a)
+        const bt = getEventStartTimestamp(b)
         if (!Number.isFinite(at) && !Number.isFinite(bt)) return 0
         if (!Number.isFinite(at)) return 1
         if (!Number.isFinite(bt)) return -1
@@ -123,8 +73,8 @@ export default function Events() {
     const past = allEvents
       .filter((e: any) => getEventStatus(e) === "past")
       .sort((a: any, b: any) => {
-        const at = getEventTimestamp(a)
-        const bt = getEventTimestamp(b)
+        const at = getEventStartTimestamp(a)
+        const bt = getEventStartTimestamp(b)
         if (!Number.isFinite(at) && !Number.isFinite(bt)) return 0
         if (!Number.isFinite(at)) return 1
         if (!Number.isFinite(bt)) return -1
@@ -137,8 +87,8 @@ export default function Events() {
     if (eventFilter === "all") {
       // Strict newest -> oldest across both upcoming + past.
       return [...upcomingEvents, ...pastEvents].sort((a: any, b: any) => {
-        const at = getEventTimestamp(a)
-        const bt = getEventTimestamp(b)
+        const at = getEventStartTimestamp(a)
+        const bt = getEventStartTimestamp(b)
         if (!Number.isFinite(at) && !Number.isFinite(bt)) return 0
         if (!Number.isFinite(at)) return 1
         if (!Number.isFinite(bt)) return -1

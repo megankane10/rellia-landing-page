@@ -519,7 +519,22 @@ export function createServer() {
   const previewAndSiteOrigins = new Set<string>(siteOrigins)
   if (studioOrigin) previewAndSiteOrigins.add(studioOrigin)
 
-  app.post("/api/sanity/query", requireCsrf, async (req, res) => {
+  const requireCsrfUnlessPresentation: RequestHandler = (req, res, next) => {
+    const cookie = req.headers.cookie || "";
+    if (
+      isPresentationPreviewRequest(
+        req,
+        cookie,
+        allowBrowserOrigin(req, previewAndSiteOrigins),
+      )
+    ) {
+      next();
+      return;
+    }
+    requireCsrf(req, res, next);
+  };
+
+  app.post("/api/sanity/query", requireCsrfUnlessPresentation, async (req, res) => {
     if (!allowBrowserOrigin(req, previewAndSiteOrigins)) {
       res.status(403).json({ error: "Forbidden" });
       return;
@@ -533,7 +548,7 @@ export function createServer() {
     );
     const token = process.env.SANITY_API_READ_TOKEN?.trim();
 
-    if (!isDev) {
+    if (!isDev && !isPreviewSession) {
       const hasProvenance =
         Boolean((req.get("origin") || "").trim()) ||
         Boolean((req.get("referer") || "").trim());

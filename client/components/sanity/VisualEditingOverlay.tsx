@@ -26,7 +26,7 @@ export const VisualEditingOverlay = () => {
     connectAttemptRef.current += 1
 
     const disable = enableVisualEditing({
-      zIndex: 100_000,
+      zIndex: 100_001,
       studioUrl,
       history: {
         subscribe: (onNavigate) => {

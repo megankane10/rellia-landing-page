@@ -22,7 +22,7 @@ import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo"
 import { buildPageUrl } from "@/config/seo"
 import FilteredListEmptyState from "@/components/FilteredListEmptyState"
 import { isSanityConfigured } from "@/lib/sanity"
-import { allowCmsSeedFallbacks } from "@/lib/deploymentEnv"
+import { allowCmsSeedFallbacks, isStrictProductionSite } from "@/lib/deploymentEnv"
 import { useMemo, useState, useEffect } from "react"
 import { useLocation } from "react-router-dom"
 import { ShareIconCopy } from "@/components/share/sharePageIcons"
@@ -346,7 +346,9 @@ export default function CareersCms() {
           role.linkedInApplyUrl,
       )
     if (fromCms.length > 0) return fromCms
+    if (isStrictProductionSite()) return []
     if (isSanityConfigured() && !allowCmsSeedFallbacks()) return []
+    if (!allowCmsSeedFallbacks()) return []
     return [...CAREERS_OPEN_ROLES]
   }, [careersCms.openRoles])
 

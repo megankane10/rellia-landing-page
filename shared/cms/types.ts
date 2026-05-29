@@ -420,6 +420,8 @@ export type ProgramsEventCard = {
   endsAt?: string
   /** Rich description from Sanity `eventDescription` (portable text). */
   eventDescription?: SanityPortableText
+  /** Manual label in Studio; listing/detail prefer `startsAt` / `endsAt` when set. */
+  status?: "upcoming" | "past" | "hidden"
 }
 
 export type ProgramsProgramCard = {

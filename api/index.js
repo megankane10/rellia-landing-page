@@ -227,6 +227,28 @@ var diagnosticLandingPageQuery = `*[_id == "diagnosticLandingPage"][0]{
   ${seoFragment},
   ${pageSectionsFragment}
 }`;
+var consultingPageQuery = `*[_id == "consultingPage"][0]{
+  title,
+  useModularPage,
+  ${pageVisibilityFragment},
+  ${seoFragment},
+  ${pageSectionsFragment}
+}`;
+var termsPageQuery = `*[_id == "termsPage"][0]{
+  title,
+  intro,
+  effectiveDate,
+  body,
+  ${seoFragment}
+}`;
+var privacyPageQuery = `*[_id == "privacyPage"][0]{
+  title,
+  intro,
+  effectiveDate,
+  legalNotice,
+  body,
+  ${seoFragment}
+}`;
 var networkPartnersPageQuery = `*[_type == "networkPartnersPage"][0]{
   title,
   useModularPage,
@@ -688,6 +710,9 @@ var SANITY_QUERY_WHITELIST = {
   networkInvestorsPage: { query: networkInvestorsPageQuery, params: empty },
   networkPartnersPage: { query: networkPartnersPageQuery, params: empty },
   diagnosticLandingPage: { query: diagnosticLandingPageQuery, params: empty },
+  consultingPage: { query: consultingPageQuery, params: empty },
+  termsPage: { query: termsPageQuery, params: empty },
+  privacyPage: { query: privacyPageQuery, params: empty },
   homePage: { query: homePageQuery, params: empty },
   aboutPage: { query: aboutPageQuery, params: empty },
   faqPage: { query: faqPageQuery, params: empty },
@@ -800,7 +825,8 @@ var buildCsrfSetCookie = (token, isDev) => {
     `${CSRF_COOKIE_NAME}=${encodeURIComponent(token)}`,
     "Path=/",
     `Max-Age=${CSRF_MAX_AGE_S}`,
-    "SameSite=Lax"
+    // Presentation embeds the preview site in a cross-site iframe; Lax cookies are not sent on POST.
+    isDev ? "SameSite=Lax" : "SameSite=None"
   ];
   if (!isDev) parts.push("Secure");
   return parts.join("; ");
@@ -1359,7 +1385,19 @@ function createServer() {
   const sanityApiCfg = sanityResolved.status === "ok" ? sanityResolved : null;
   const previewAndSiteOrigins = new Set(siteOrigins);
   if (studioOrigin) previewAndSiteOrigins.add(studioOrigin);
-  app2.post("/api/sanity/query", requireCsrf, async (req, res) => {
+  const requireCsrfUnlessPresentation = (req, res, next) => {
+    const cookie = req.headers.cookie || "";
+    if (isPresentationPreviewRequest(
+      req,
+      cookie,
+      allowBrowserOrigin(req, previewAndSiteOrigins)
+    )) {
+      next();
+      return;
+    }
+    requireCsrf(req, res, next);
+  };
+  app2.post("/api/sanity/query", requireCsrfUnlessPresentation, async (req, res) => {
     if (!allowBrowserOrigin(req, previewAndSiteOrigins)) {
       res.status(403).json({ error: "Forbidden" });
       return;
@@ -1371,7 +1409,7 @@ function createServer() {
       allowBrowserOrigin(req, previewAndSiteOrigins)
     );
     const token = process.env.SANITY_API_READ_TOKEN?.trim();
-    if (!isDev) {
+    if (!isDev && !isPreviewSession) {
       const hasProvenance = Boolean((req.get("origin") || "").trim()) || Boolean((req.get("referer") || "").trim());
       if (!hasProvenance) {
         res.status(403).json({ error: "Forbidden" });

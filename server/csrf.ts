@@ -26,7 +26,8 @@ export const buildCsrfSetCookie = (token: string, isDev: boolean): string => {
     `${CSRF_COOKIE_NAME}=${encodeURIComponent(token)}`,
     "Path=/",
     `Max-Age=${CSRF_MAX_AGE_S}`,
-    "SameSite=Lax",
+    // Presentation embeds the preview site in a cross-site iframe; Lax cookies are not sent on POST.
+    isDev ? "SameSite=Lax" : "SameSite=None",
   ];
   if (!isDev) parts.push("Secure");
   return parts.join("; ");

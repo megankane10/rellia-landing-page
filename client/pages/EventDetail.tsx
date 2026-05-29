@@ -8,7 +8,9 @@ import ScrollReveal from "@/components/ScrollReveal"
 import RelliaAction from "@/components/RelliaAction"
 import RelliaCta, { ctaActionFromHref } from "@/components/RelliaCta"
 import { useProgramsLandingPage } from "@/hooks/useCmsDocuments"
-import { downloadProgramsEventIcsFile } from "@/lib/eventCalendar"
+import { EventAddToCalendarButton } from "@/components/events/EventAddToCalendarButton"
+import { getProgramsEventCalendarInterval } from "@/lib/eventCalendar"
+import { getEventTemporalStatus } from "@shared/cms/eventTemporalStatus"
 import { LumaRegistrationEmbed } from "@/components/LumaRegistrationEmbed"
 import { getLumaEmbedIframeSrc } from "@/lib/lumaEmbed"
 import { cn } from "@/lib/utils"
@@ -115,16 +117,8 @@ function portableTextToPlainText(blocks: any): string {
     .join(" ")
 }
 
-const getEventStatus = (event: any): "upcoming" | "past" => {
-  const explicit = event?.status
-  if (explicit === "upcoming" || explicit === "past") return explicit
-
-  const candidate = event?.startsAt
-  if (typeof candidate !== "string" || !candidate.trim()) return "upcoming"
-  const t = Date.parse(candidate)
-  if (!Number.isFinite(t)) return "upcoming"
-  return t < Date.now() ? "past" : "upcoming"
-}
+const getEventStatus = (event: Parameters<typeof getEventTemporalStatus>[0]): "upcoming" | "past" =>
+  getEventTemporalStatus(event)
 
 export default function EventDetail() {
   const { slug } = useParams()
@@ -291,22 +285,15 @@ export default function EventDetail() {
     }
   }
 
-  const handleHeroCtaClick = async () => {
-    if (!showHeroEventCta) return
-    if (addToCalendarEnabled) {
-      const ok = await downloadProgramsEventIcsFile(event, canonical)
-      if (!ok) {
-        window.alert(
-          "Calendar file could not be created. Add calendar start (and optional end) as ISO 8601 times in the CMS.",
-        )
-      }
-      return
-    }
+  const handleHeroCtaClick = () => {
+    if (!showHeroEventCta || addToCalendarEnabled) return
     setShowForm(true)
     setTimeout(() => {
       document.getElementById("event-content-area")?.scrollIntoView({ behavior: "smooth", block: "start" })
     }, 50)
   }
+
+  const calendarIntervalReady = Boolean(getProgramsEventCalendarInterval(event))
 
   const registerHref = event.href?.trim() ?? ""
 
@@ -488,17 +475,31 @@ export default function EventDetail() {
 
                     {showHeroEventCta ? (
                       <div className="mt-9 flex w-full justify-start sm:mt-10 md:mt-12">
-                        <RelliaAction
-                          type="button"
-                          variant="relliaCtaPrimary"
-                          size="compact"
-                          className="inline-flex w-full cursor-pointer px-6 py-3 text-sm sm:w-auto sm:px-8 sm:text-[15px]"
-                          onClick={handleHeroCtaClick}
-                          aria-haspopup={!addToCalendarEnabled ? "dialog" : undefined}
-                          aria-label={addToCalendarEnabled ? "Add to Calendar" : "Register now"}
-                        >
-                          {addToCalendarEnabled ? "Add to Calendar" : "Register now"}
-                        </RelliaAction>
+                        {addToCalendarEnabled ? (
+                          calendarIntervalReady ? (
+                            <EventAddToCalendarButton
+                              event={event}
+                              canonicalUrl={canonical}
+                              className="w-full sm:w-auto"
+                            />
+                          ) : (
+                            <p className="font-urbanist text-sm text-black/60">
+                              Add start and end times in the CMS to enable Add to Calendar.
+                            </p>
+                          )
+                        ) : (
+                          <RelliaAction
+                            type="button"
+                            variant="relliaCtaPrimary"
+                            size="compact"
+                            className="inline-flex w-full cursor-pointer px-6 py-3 text-sm sm:w-auto sm:px-8 sm:text-[15px]"
+                            onClick={handleHeroCtaClick}
+                            aria-haspopup="dialog"
+                            aria-label="Register now"
+                          >
+                            Register now
+                          </RelliaAction>
+                        )}
                       </div>
                     ) : null}
                   </div>
