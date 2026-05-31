@@ -1445,6 +1445,61 @@ function createServer() {
     }
   );
   app2.get(
+    "/api/cms/events/:slug",
+    rateLimitJson(sanityPublishedRate, SANITY_PUBLISHED_MAX_PER_MIN),
+    async (req, res) => {
+      if (!allowBrowserOrigin(req, previewAndSiteOrigins)) {
+        res.status(403).json({ error: "Forbidden" });
+        return;
+      }
+      const slug = typeof req.params.slug === "string" ? req.params.slug.trim() : "";
+      if (!slug || slug.length > 200) {
+        res.status(400).json({ error: "Invalid slug" });
+        return;
+      }
+      const apiResolved = resolveSanityApiConfig();
+      if (apiResolved.status === "dataset_not_allowed") {
+        res.status(503).json({
+          error: `Sanity dataset "${apiResolved.attemptedDataset}" is not allowed for this deployment.`
+        });
+        return;
+      }
+      if (apiResolved.status === "missing_project") {
+        res.status(503).json({ error: "Sanity API is not configured." });
+        return;
+      }
+      const { projectId, dataset } = apiResolved;
+      const token = process.env.SANITY_API_READ_TOKEN?.trim();
+      const entry = SANITY_QUERY_WHITELIST.eventBySlug;
+      try {
+        const publicClient = createClient2({
+          projectId,
+          dataset,
+          ...token ? { token } : {},
+          useCdn: false,
+          apiVersion: "2024-01-01"
+        });
+        const data = await publicClient.fetch(entry.query, { slug });
+        if (!data) {
+          res.status(404).json({ error: "Event not found" });
+          return;
+        }
+        res.setHeader(
+          "Cache-Control",
+          "public, s-maxage=60, stale-while-revalidate=120"
+        );
+        res.status(200).json({
+          data: stripSanityMetadata(data, "eventBySlug")
+        });
+      } catch (err) {
+        res.status(502).json({
+          error: "Sanity fetch failed",
+          message: err instanceof Error ? err.message : String(err)
+        });
+      }
+    }
+  );
+  app2.get(
     "/api/studio",
     rateLimitText(studioRedirectRate, STUDIO_REDIRECT_MAX_PER_MIN),
     (_req, res) => {

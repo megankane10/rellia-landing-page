@@ -51,8 +51,18 @@ const fetchBySlug = async (
   }
 }
 
-export const fetchEventBySlugForPrerender = (slug: string) =>
-  fetchBySlug(eventBySlugQuery, slug)
+export const fetchEventBySlugForPrerender = async (slug: string) => {
+  const fromSanity = await fetchBySlug(eventBySlugQuery, slug)
+  if (fromSanity) return fromSanity
+  const trimmed = slug.trim()
+  if (!trimmed) return null
+  const events = await fetchEventsForPrerender()
+  return (
+    events.find(
+      (row) => typeof row.slug === "string" && row.slug.trim() === trimmed,
+    ) ?? null
+  )
+}
 
 export const fetchProgramBySlugForPrerender = (slug: string) =>
   fetchBySlug(programBySlugQuery, slug)

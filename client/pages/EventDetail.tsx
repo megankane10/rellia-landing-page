@@ -260,8 +260,15 @@ export default function EventDetail() {
         ? event.detailBody
         : null
   const detailPortable: SanityPortableText | null = descriptionBody
-  const detailPlainParagraphs =
-    typeof event.detailBody === "string" ? splitEventDetailBody(event.detailBody) : []
+  const detailPlainParagraphs = (() => {
+    if (typeof event.eventDescription === "string" && event.eventDescription.trim()) {
+      return splitEventDetailBody(event.eventDescription)
+    }
+    if (typeof event.detailBody === "string") {
+      return splitEventDetailBody(event.detailBody)
+    }
+    return []
+  })()
   const hasDetailBodyContent =
     Boolean(detailPortable?.length) || detailPlainParagraphs.length > 0
   const showLumaIframe = !isPast && Boolean(embedSrc) && event.embedLumaOnDetailPage !== false
@@ -480,7 +487,6 @@ export default function EventDetail() {
                             <EventAddToCalendarButton
                               event={event}
                               canonicalUrl={canonical}
-                              className="w-full sm:w-auto"
                             />
                           ) : (
                             <p className="font-urbanist text-sm text-black/60">

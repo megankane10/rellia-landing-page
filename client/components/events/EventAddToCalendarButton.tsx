@@ -42,7 +42,7 @@ export const EventAddToCalendarButton = ({
   }
 
   return (
-    <div className={cn("relative w-full sm:w-auto", className)}>
+    <div className={cn("inline-block", className)}>
       <label htmlFor={`event-calendar-${event.slug ?? event.title}`} className="sr-only">
         Add to calendar
       </label>
@@ -51,8 +51,8 @@ export const EventAddToCalendarButton = ({
         value={selected}
         onChange={(e) => void handleSelectChange(e.target.value)}
         className={cn(
-          "h-12 w-full min-w-[220px] cursor-pointer appearance-none rounded-full border-2 border-rellia-teal bg-rellia-teal",
-          "px-6 pr-12 font-host-grotesk text-sm font-semibold text-white sm:text-[15px]",
+          "h-12 w-fit cursor-pointer rounded-full border-2 border-rellia-teal bg-rellia-teal",
+          "px-6 font-host-grotesk text-sm font-semibold text-white sm:text-[15px]",
           "transition-[background-color,border-color,color,box-shadow] duration-500 ease-out",
           "hover:border-rellia-mint hover:bg-rellia-mint hover:text-rellia-teal",
           "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-teal focus-visible:ring-offset-2",
@@ -66,12 +66,6 @@ export const EventAddToCalendarButton = ({
           </option>
         ))}
       </select>
-      <span
-        className="pointer-events-none absolute right-5 top-1/2 -translate-y-1/2 font-host-grotesk text-xs font-bold text-current"
-        aria-hidden
-      >
-        ▼
-      </span>
     </div>
   )
 }

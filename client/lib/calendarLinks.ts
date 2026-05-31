@@ -2,7 +2,7 @@ import { format } from "date-fns"
 import type { ProgramsEventCard } from "@shared/cms/types"
 import { getProgramsEventCalendarInterval } from "@/lib/eventCalendar"
 
-export type CalendarProvider = "google" | "outlook" | "office365" | "yahoo" | "ics"
+export type CalendarProvider = "google" | "outlook" | "ics"
 
 const encode = (value: string) => encodeURIComponent(value)
 
@@ -35,22 +35,6 @@ export const buildCalendarProviderLinks = (
     `&startdt=${encode(start.toISOString())}` +
     `&enddt=${encode(end.toISOString())}`
 
-  const office365Href =
-    `https://outlook.office.com/calendar/0/deeplink/compose?path=/calendar/action/compose&rru=addevent` +
-    `&subject=${encode(title)}` +
-    `&body=${encode(description)}` +
-    `&location=${encode(location)}` +
-    `&startdt=${encode(start.toISOString())}` +
-    `&enddt=${encode(end.toISOString())}`
-
-  const yahooHref =
-    `https://calendar.yahoo.com/?v=60&view=d&type=20` +
-    `&title=${encode(title)}` +
-    `&st=${encode(format(start, "yyyyMMdd'T'HHmmss"))}` +
-    `&et=${encode(format(end, "yyyyMMdd'T'HHmmss"))}` +
-    `&desc=${encode(description)}` +
-    `&in_loc=${encode(location)}`
-
   const icsHref = `data:text/calendar;charset=utf-8,${encode(
     [
       "BEGIN:VCALENDAR",
@@ -70,10 +54,8 @@ export const buildCalendarProviderLinks = (
   return {
     providers: [
       { id: "google", label: "Google Calendar", href: googleHref },
-      { id: "outlook", label: "Outlook.com", href: outlookHref },
-      { id: "office365", label: "Microsoft 365", href: office365Href },
-      { id: "yahoo", label: "Yahoo Calendar", href: yahooHref },
-      { id: "ics", label: "Apple / iCal (.ics)", href: icsHref },
+      { id: "outlook", label: "Outlook", href: outlookHref },
+      { id: "ics", label: "Apple Calendar", href: icsHref },
     ],
   }
 }

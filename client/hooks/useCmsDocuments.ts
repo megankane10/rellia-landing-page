@@ -1,5 +1,5 @@
-import { useQuery } from "@tanstack/react-query";
-import { fetchPublicCmsEvents } from "@/lib/cmsPublicFetch";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { fetchPublicCmsEvents, fetchPublicCmsEventBySlug } from "@/lib/cmsPublicFetch";
 import { sanityFetch } from "@/lib/sanity";
 
 import {
@@ -277,18 +277,32 @@ export const useEvents = () =>
     refetchOnMount: "always",
   })
 
-export const useEventBySlug = (slug: string) =>
-  useQuery({
-    queryKey: ["cms", "event", slug],
+export const useEventBySlug = (slug: string) => {
+  const queryClient = useQueryClient()
+  const trimmed = slug.trim()
+  return useQuery({
+    queryKey: ["cms", "event", trimmed],
     queryFn: async () => {
-      const trimmed = slug.trim()
       if (!trimmed) return null
+      const fromPublic = await fetchPublicCmsEventBySlug<any>(trimmed)
+      if (fromPublic) return fromPublic
       const raw = await sanityFetch<any>("eventBySlug", { slug: trimmed })
-      return raw ?? null
+      if (raw) return raw
+      const cachedList = queryClient.getQueryData<any[]>(["cms", "events"])
+      const fromCache = cachedList?.find((event) => event?.slug === trimmed)
+      if (fromCache) return fromCache
+      const fromList = await fetchPublicCmsEvents<any>()
+      return fromList.find((event) => event?.slug === trimmed) ?? null
     },
-    enabled: Boolean(slug.trim()),
+    enabled: Boolean(trimmed),
     staleTime: staleTimeMs,
+    refetchOnMount: "always",
+    placeholderData: () => {
+      const cachedList = queryClient.getQueryData<any[]>(["cms", "events"])
+      return cachedList?.find((event) => event?.slug === trimmed) ?? undefined
+    },
   })
+}
 
 type ProgramPageQueryResult = Partial<QmsProgramContent> & {
   sections?: CmsPageSection[]
