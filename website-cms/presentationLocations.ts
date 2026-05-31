@@ -13,6 +13,8 @@ export const presentationMainDocuments = defineDocuments([
   {route: '/membership', type: 'paymentPage'},
   {route: '/consulting', type: 'consultingPage'},
   {route: '/startup-diagnostic', type: 'diagnosticLandingPage'},
+  {route: '/terms', type: 'termsPage'},
+  {route: '/privacy', type: 'privacyPage'},
   {route: '/stories', type: 'storiesPage'},
   {route: '/founders', type: 'networkFoundersPage'},
   {route: '/advisors', type: 'networkAdvisorsPage'},
@@ -188,6 +190,18 @@ export const presentationLocations = {
     select: {title: 'title'},
     resolve: (doc) => ({
       locations: [{title: doc?.title || 'Startup diagnostic', href: '/startup-diagnostic'}],
+    }),
+  }),
+  termsPage: defineLocations({
+    select: {title: 'title'},
+    resolve: (doc) => ({
+      locations: [{title: doc?.title || 'Terms of use', href: '/terms'}],
+    }),
+  }),
+  privacyPage: defineLocations({
+    select: {title: 'title'},
+    resolve: (doc) => ({
+      locations: [{title: doc?.title || 'Privacy policy', href: '/privacy'}],
     }),
   }),
 }

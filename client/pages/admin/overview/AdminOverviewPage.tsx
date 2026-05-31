@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query"
 import { ArrowRight, FileEdit, Inbox, Stethoscope, Users } from "lucide-react"
 import { Bar, BarChart, CartesianGrid, Cell, Pie, PieChart, XAxis, YAxis } from "recharts"
 import { useAuth } from "@/context/AuthContext"
-import { fetchAdminTeam } from "@/lib/adminApi"
+import { fetchAdminTeam, fetchAdminStripeMetrics } from "@/lib/adminApi"
 import AdminPageHeader from "@/components/admin/AdminPageHeader"
 import AdminSystemStatus from "@/components/admin/AdminSystemStatus"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -18,14 +18,16 @@ import {
 import {
   buildLastNDaysTrend,
   buildStatusBreakdown,
-  countNewSubmissions,
   countRecentAll,
+  countSubmissionsBetweenDays,
   countUnresolved,
+  formatPercentChange,
   greetingForUser,
+  percentChange,
 } from "@/lib/adminOverview"
 import { getAdminDisplayName } from "@/lib/adminUserProfile"
 import { cmsContentQueryKey, fetchCmsContentQueue, isCmsContentEnabled } from "@/lib/adminSanityContent"
-import { formatAdminDate, statusBadgeClass } from "@/lib/adminSubmissionStatus"
+import { formatAdminDate, isActiveSubmissionStatus, statusBadgeClass } from "@/lib/adminSubmissionStatus"
 import { Badge } from "@/components/ui/badge"
 import { cn } from "@/lib/utils"
 
@@ -52,19 +54,35 @@ type StatCardProps = {
   label: string
   value: number | string
   hint?: string
+  changePct?: number | null
   href?: string
   loading?: boolean
 }
 
-const StatCard = ({ label, value, hint, href, loading }: StatCardProps) => {
+const StatCard = ({ label, value, hint, changePct, href, loading }: StatCardProps) => {
+  const changeLabel = formatPercentChange(changePct ?? null)
+  const changeTone =
+    changePct === null || changePct === 0
+      ? "text-muted-foreground"
+      : changePct > 0
+        ? "text-emerald-600"
+        : "text-amber-700"
+
   const body = (
-    <Card className={cn(href && "transition-colors hover:border-rellia-teal/25 hover:bg-rellia-mint/5")}>
+    <Card className={cn("rounded-2xl", href && "transition-colors hover:border-rellia-teal/25 hover:bg-rellia-mint/5")}>
       <CardHeader className="pb-2">
         <CardDescription className="font-urbanist text-xs uppercase tracking-wide">{label}</CardDescription>
         {loading ? (
-          <Skeleton className="mt-2 h-9 w-16" />
+          <Skeleton className="mt-2 h-9 w-16 rounded-xl" />
         ) : (
-          <CardTitle className="font-host-grotesk text-3xl tabular-nums">{value}</CardTitle>
+          <div className="flex items-end justify-between gap-3">
+            <CardTitle className="font-host-grotesk text-3xl tabular-nums">{value}</CardTitle>
+            {changePct !== undefined ? (
+              <span className={cn("font-urbanist text-sm font-semibold tabular-nums", changeTone)}>
+                {changeLabel}
+              </span>
+            ) : null}
+          </div>
         )}
       </CardHeader>
       {hint ? (
@@ -77,7 +95,7 @@ const StatCard = ({ label, value, hint, href, loading }: StatCardProps) => {
 
   if (!href) return body
   return (
-    <Link to={href} className="block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-xl">
+    <Link to={href} className="block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-2xl">
       {body}
     </Link>
   )
@@ -103,6 +121,12 @@ const AdminOverviewPage = () => {
     enabled: Boolean(token),
     staleTime: 60_000,
   })
+  const stripeQuery = useQuery({
+    queryKey: ["admin-stripe-metrics", token],
+    queryFn: () => fetchAdminStripeMetrics(token),
+    enabled: Boolean(token),
+    staleTime: 5 * 60_000,
+  })
 
   const loading = contactsQuery.isLoading || diagnosticsQuery.isLoading
   const contacts = contactsQuery.data ?? []
@@ -117,10 +141,27 @@ const AdminOverviewPage = () => {
     .slice(0, 5)
 
   const unresolved = countUnresolved(contacts, diagnostics)
-  const newCount = countNewSubmissions(contacts, diagnostics)
   const weekCount = countRecentAll(contacts, diagnostics)
+  const previousWeekCount = countSubmissionsBetweenDays(contacts, diagnostics, 14, 7)
+  const weekChangePct = percentChange(weekCount, previousWeekCount)
+  const previousUnresolved = countSubmissionsBetweenDays(
+    contacts.filter((row) => isActiveSubmissionStatus(row.status as "New" | "In Progress" | "Resolved" | null)),
+    diagnostics.filter((row) => isActiveSubmissionStatus(row.status as "New" | "In Progress" | "Resolved" | null)),
+    14,
+    7,
+  )
+  const unresolvedChangePct = percentChange(unresolved, previousUnresolved)
   const draftCount = draftsQuery.data?.length ?? 0
   const teamCount = teamQuery.data?.length ?? 0
+  const stripeMetrics = stripeQuery.data
+  const revenueDisplay =
+    stripeMetrics?.configured && typeof stripeMetrics.revenueLast30Days === "number"
+      ? new Intl.NumberFormat("en-CA", {
+          style: "currency",
+          currency: (stripeMetrics.currency ?? "cad").toUpperCase(),
+          maximumFractionDigits: 0,
+        }).format(stripeMetrics.revenueLast30Days / 100)
+      : "—"
 
   return (
     <div className="space-y-6">
@@ -130,33 +171,37 @@ const AdminOverviewPage = () => {
         actions={<AdminSystemStatus />}
       />
 
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-6">
+      <div className="grid gap-4 md:grid-cols-3">
         <StatCard
           label="Needs attention"
           value={unresolved}
           hint="New or in progress"
+          changePct={unresolvedChangePct}
           href="/admin/inbox"
           loading={loading}
         />
-        <StatCard label="New submissions" value={newCount} href="/admin/inbox" loading={loading} />
-        <StatCard label="Last 7 days" value={weekCount} loading={loading} />
         <StatCard
-          label="Web forms"
-          value={contacts.length}
-          href="/admin/inbox?tab=contact"
+          label="Submissions (7 days)"
+          value={weekCount}
+          hint="Web forms + diagnostics"
+          changePct={weekChangePct}
           loading={loading}
         />
         <StatCard
-          label="Diagnostics"
-          value={diagnostics.length}
-          href="/admin/inbox?tab=diagnostic"
-          loading={loading}
+          label="Stripe revenue (30 days)"
+          value={revenueDisplay}
+          hint={
+            stripeMetrics?.configured
+              ? "Server-side read only — secret key never exposed to the browser"
+              : "Add STRIPE_SECRET_KEY on the server to enable"
+          }
+          changePct={stripeMetrics?.revenueChangePct}
+          loading={stripeQuery.isLoading}
         />
-        <StatCard label="CMS drafts" value={draftCount} href="/admin/drafts" loading={draftsQuery.isLoading} />
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
-        <Card>
+        <Card className="rounded-2xl">
           <CardHeader>
             <CardTitle className="font-host-grotesk text-lg">Submissions this week</CardTitle>
             <CardDescription className="font-urbanist">Daily web forms and startup diagnostics</CardDescription>
@@ -179,7 +224,7 @@ const AdminOverviewPage = () => {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="rounded-2xl">
           <CardHeader>
             <CardTitle className="font-host-grotesk text-lg">Status breakdown</CardTitle>
             <CardDescription className="font-urbanist">All inbox items by workflow status</CardDescription>
@@ -234,7 +279,7 @@ const AdminOverviewPage = () => {
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
-        <Card>
+        <Card className="rounded-2xl">
           <CardHeader className="flex flex-row items-center justify-between gap-2">
             <div>
               <CardTitle className="flex items-center gap-2 font-host-grotesk text-lg">
@@ -287,7 +332,7 @@ const AdminOverviewPage = () => {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="rounded-2xl">
           <CardHeader className="flex flex-row items-center justify-between gap-2">
             <div>
               <CardTitle className="flex items-center gap-2 font-host-grotesk text-lg">
@@ -344,7 +389,7 @@ const AdminOverviewPage = () => {
       <div className="grid gap-4 sm:grid-cols-2">
         <Link
           to="/admin/drafts"
-          className="flex items-center gap-3 rounded-xl border border-border bg-card p-4 transition-colors hover:border-rellia-teal/25 hover:bg-rellia-mint/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          className="flex items-center gap-3 rounded-2xl border border-border bg-card p-4 transition-colors hover:border-rellia-teal/25 hover:bg-rellia-mint/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         >
           <FileEdit className="h-8 w-8 text-rellia-teal" aria-hidden />
           <div>
@@ -357,7 +402,7 @@ const AdminOverviewPage = () => {
         </Link>
         <Link
           to="/admin/team"
-          className="flex items-center gap-3 rounded-xl border border-border bg-card p-4 transition-colors hover:border-rellia-teal/25 hover:bg-rellia-mint/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          className="flex items-center gap-3 rounded-2xl border border-border bg-card p-4 transition-colors hover:border-rellia-teal/25 hover:bg-rellia-mint/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         >
           <Users className="h-8 w-8 text-rellia-teal" aria-hidden />
           <div>

@@ -46,12 +46,12 @@ export const AdvisorsDirectoryToolbarSkeleton = () => (
   </div>
 )
 
-export const DirectoryGridSkeleton = ({ className }: { className?: string }) => (
+export const DirectoryGridSkeleton = ({ className, count = 6 }: { className?: string; count?: number }) => (
   <div
     className={cn("mt-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3", className)}
     aria-hidden
   >
-    {Array.from({ length: 6 }).map((_, index) => (
+    {Array.from({ length: count }).map((_, index) => (
       <div
         key={index}
         className="overflow-hidden rounded-2xl border border-black/10 bg-black/[0.02]"

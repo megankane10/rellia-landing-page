@@ -1,6 +1,6 @@
-import { NavLink, useLocation, useNavigate } from "react-router-dom"
+import { NavLink, useLocation } from "react-router-dom"
 import { useQuery } from "@tanstack/react-query"
-import { CircleHelp, FileEdit, Inbox, LayoutDashboard, Users } from "lucide-react"
+import { CircleHelp, FileEdit, Inbox, LayoutDashboard, Users, X } from "lucide-react"
 import { useAuth } from "@/context/AuthContext"
 import { supabase } from "@/lib/supabase"
 import { isActiveSubmissionStatus } from "@/lib/adminSubmissionStatus"
@@ -16,8 +16,10 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  useSidebar,
 } from "@/components/ui/sidebar"
 import { cn } from "@/lib/utils"
+import { useIsMobile } from "@/hooks/use-mobile"
 
 const FAVICON_SRC = "/favicon.ico"
 
@@ -73,6 +75,8 @@ const MAIN_NAV: NavItem[] = [
 const AdminAppSidebar = () => {
   const { session } = useAuth()
   const { pathname } = useLocation()
+  const isMobile = useIsMobile()
+  const { setOpenMobile } = useSidebar()
 
   const { data: unresolvedCount = 0 } = useQuery({
     queryKey: ["admin-unresolved-submissions-count"],
@@ -81,15 +85,34 @@ const AdminAppSidebar = () => {
     staleTime: 30_000,
   })
 
+  const handleNavClick = () => {
+    if (isMobile) setOpenMobile(false)
+  }
+
   return (
     <Sidebar collapsible="offcanvas" className="border-sidebar-border">
       <SidebarHeader className="border-b border-sidebar-border px-4 py-4">
         <div className="flex items-center gap-3">
           <img src={FAVICON_SRC} alt="" width={32} height={32} className="h-8 w-8 rounded-lg" aria-hidden />
-          <div className="min-w-0">
+          <div className="min-w-0 flex-1">
             <p className="truncate font-host-grotesk text-sm font-semibold text-sidebar-foreground">Rellia Admin</p>
             <p className="truncate font-urbanist text-xs text-sidebar-foreground/60">Internal dashboard</p>
           </div>
+          {isMobile ? (
+            <button
+              type="button"
+              onClick={() => setOpenMobile(false)}
+              className={cn(
+                "inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full",
+                "border border-sidebar-border bg-sidebar text-sidebar-foreground",
+                "transition-colors hover:bg-sidebar-accent",
+                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+              )}
+              aria-label="Close navigation menu"
+            >
+              <X className="h-4 w-4" aria-hidden />
+            </button>
+          ) : null}
         </div>
       </SidebarHeader>
 
@@ -106,7 +129,7 @@ const AdminAppSidebar = () => {
                 return (
                   <SidebarMenuItem key={item.to}>
                     <SidebarMenuButton asChild isActive={active} tooltip={item.label}>
-                      <NavLink to={item.to} end={item.end} className="flex w-full items-center">
+                      <NavLink to={item.to} end={item.end} className="flex w-full items-center" onClick={handleNavClick}>
                         <item.icon aria-hidden />
                         <span className="flex min-w-0 flex-1 items-center gap-2">
                           <span>{item.label}</span>

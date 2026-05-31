@@ -1,5 +1,6 @@
 import { FilloutStandardEmbed } from "@fillout/react"
-import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog"
+import { X } from "lucide-react"
+import { Dialog, DialogClose, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog"
 import { cn } from "@/lib/utils"
 
 type FilloutPopupDialogProps = {
@@ -35,8 +36,11 @@ export default function FilloutPopupDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
+        hideClose
         aria-label={title}
+        overlayClassName="z-[10010] bg-black/55"
         className={cn(
+          "z-[10010]",
           "w-[min(92vw,900px)] max-w-none",
           "max-h-[min(86vh,860px)] overflow-hidden",
           "rounded-2xl border border-black/10 bg-white p-0 shadow-2xl md:rounded-3xl",
@@ -51,6 +55,17 @@ export default function FilloutPopupDialog({
               {description}
             </DialogDescription>
           </div>
+          <DialogClose
+            className={cn(
+              "inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full",
+              "border border-black/10 bg-white text-black shadow-sm",
+              "transition-colors hover:bg-black/[0.04]",
+              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-teal/40 focus-visible:ring-offset-2",
+            )}
+            aria-label="Close dialog"
+          >
+            <X className="h-4 w-4" aria-hidden />
+          </DialogClose>
         </div>
 
         <div className="max-h-[min(72vh,720px)] overflow-y-auto p-3 sm:p-4">

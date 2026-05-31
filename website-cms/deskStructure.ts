@@ -243,17 +243,6 @@ const supportPanel = (S: StructureBuilder) =>
         ]),
     )
 
-const buildPagesGroup = (S: StructureBuilder) =>
-  S.listItem()
-    .title('Build a page')
-    .icon(ComposeIcon)
-    .child(
-      S.documentTypeList('page')
-        .apiVersion(API_VERSION)
-        .title('Custom pages')
-        .defaultOrdering([{field: 'title', direction: 'asc'}]),
-    )
-
 const HIDDEN_FROM_CATCH_ALL = new Set([
   'globalSettings',
   'navigation',
@@ -308,6 +297,5 @@ export const deskStructure = (S: StructureBuilder) =>
       S.divider(),
       supportPanel(S),
       S.divider(),
-      buildPagesGroup(S),
       ...S.documentTypeListItems().filter((item) => !HIDDEN_FROM_CATCH_ALL.has(item.getId() || '')),
     ])

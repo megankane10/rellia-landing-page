@@ -154,7 +154,7 @@ export const storyBySlugQuery = `*[_type == "story" && slug.current == $slug && 
   ${seoFragment}
 }`
 
-export const pageBySlugQuery = `*[_type == "page" && slug.current == $slug][0]{
+export const pageBySlugQuery = `*[_type == "page" && slug.current == $slug && !(_id in path("drafts.**"))][0]{
   title,
   "slug": slug.current,
   ${seoFragment},
@@ -167,6 +167,25 @@ export const pageBySlugQuery = `*[_type == "page" && slug.current == $slug][0]{
       ...,
       "imageUrl": image.asset->url,
       cta{ label, href, description, badge }
+    },
+    items[]{
+      question,
+      answer
+    }
+  },
+  pageBuilder[]{
+    ...,
+    "imageUrl": image.asset->url,
+    primaryCta{ label, href, description, badge },
+    secondaryCta{ label, href, description, badge },
+    cards[]{
+      ...,
+      "imageUrl": image.asset->url,
+      cta{ label, href, description, badge }
+    },
+    items[]{
+      question,
+      answer
     }
   }
 }`

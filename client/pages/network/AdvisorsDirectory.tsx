@@ -71,18 +71,10 @@ function AdvisorCard({
           aria-hidden
           className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-90"
         />
-        <div className="absolute bottom-3 left-3 z-10 flex flex-wrap gap-1.5 max-w-[calc(100%-1.5rem)]">
-          <span className="rounded-full border border-rellia-mint/20 bg-rellia-teal/60 px-2.5 py-0.5 font-urbanist text-[11px] font-semibold text-rellia-mint/90 backdrop-blur-sm shadow-sm">
+        <div className="absolute left-3 top-3 z-10 max-w-[calc(100%-1.5rem)]">
+          <span className="inline-flex rounded-full border border-rellia-mint/20 bg-rellia-teal/80 px-2.5 py-0.5 font-urbanist text-[11px] font-semibold text-rellia-mint/95 backdrop-blur-sm shadow-sm">
             {advisor.filter}
           </span>
-          {advisor.industries.map((tag) => (
-            <span
-              key={tag}
-              className="rounded-full border border-white/15 bg-black/40 px-2.5 py-0.5 font-urbanist text-[11px] font-medium text-white/90 backdrop-blur-sm shadow-sm"
-            >
-              {tag}
-            </span>
-          ))}
         </div>
       </div>
       <div className="flex flex-1 flex-col p-6 md:p-7">

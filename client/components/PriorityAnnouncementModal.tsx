@@ -40,7 +40,7 @@ export const PriorityAnnouncementModal = ({
   const handleClose = () => onOpenChange(false)
 
   const handleOpenChange = (next: boolean) => {
-    if (next) onOpenChange(true)
+    onOpenChange(next)
   }
 
   return (

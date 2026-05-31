@@ -160,7 +160,15 @@ export const useCmsPageBySlug = (slug: string) =>
       const trimmed = slug.trim()
       if (!trimmed) return null
       const raw = await sanityFetch<CmsPageContent>("pageBySlug", { slug: trimmed })
-      return raw ?? null
+      if (!raw) return null
+      const mergedSections = [
+        ...(Array.isArray(raw.sections) ? raw.sections : []),
+        ...(Array.isArray(raw.pageBuilder) ? raw.pageBuilder : []),
+      ]
+      return {
+        ...raw,
+        sections: mergedSections.length > 0 ? mergedSections : raw.sections,
+      }
     },
     staleTime: staleTimeMs,
   })

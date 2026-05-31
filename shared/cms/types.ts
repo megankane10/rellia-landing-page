@@ -220,6 +220,20 @@ export type CmsSectionDiagnosticSurvey = {
   categories?: string[]
 }
 
+export type CmsSectionFaqItem = {
+  _key?: string
+  question: string
+  answer: string
+}
+
+export type CmsSectionFaq = {
+  _type: "sectionFaq"
+  _key?: string
+  title?: string
+  subtitle?: string
+  items?: CmsSectionFaqItem[]
+}
+
 export type CmsPageSection =
   | CmsSectionHero
   | CmsSectionRichText
@@ -229,12 +243,14 @@ export type CmsPageSection =
   | CmsSectionEngageBand
   | CmsSectionJourneyTimeline
   | CmsSectionDiagnosticSurvey
+  | CmsSectionFaq
 
 export type CmsPageContent = {
   title: string
   slug: string
   seo?: SeoContent
   sections?: CmsPageSection[]
+  pageBuilder?: CmsPageSection[]
 }
 
 export type CmsSingletonPageContent = CmsPageVisibility & {

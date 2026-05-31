@@ -64,6 +64,7 @@ import {sectionFeatureGrid} from './objects/sectionFeatureGrid'
 import {sectionEngageBand} from './objects/sectionEngageBand'
 import {sectionJourneyTimeline} from './objects/sectionJourneyTimeline'
 import {sectionDiagnosticSurvey} from './objects/sectionDiagnosticSurvey'
+import {sectionFaq} from './objects/sectionFaq'
 
 export const schemaTypes = [
   // Singletons & globals
@@ -133,4 +134,5 @@ export const schemaTypes = [
   sectionEngageBand,
   sectionJourneyTimeline,
   sectionDiagnosticSurvey,
+  sectionFaq,
 ]

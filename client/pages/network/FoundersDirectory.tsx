@@ -28,7 +28,7 @@ import { isSanityConfigured } from "@/lib/sanity";
 import { allowCmsSeedFallbacks, isMainBranchBuild } from "@/lib/deploymentEnv";
 import { isCmsQueryLoading } from "@/lib/cmsQueryState";
 import {
-  DirectoryFilterSelectSkeleton,
+  AdvisorsDirectoryToolbarSkeleton,
   DirectoryGridSkeleton,
 } from "@/components/cms/CmsPageLoadingShell";
 import {
@@ -48,9 +48,7 @@ function FounderDirectoryCard({
   company: FounderCompany;
   onOpen: () => void;
 }) {
-  const businessModels = Array.isArray((company as { businessModel?: string[] }).businessModel)
-    ? (company as { businessModel: string[] }).businessModel
-    : []
+  const primarySpecialty = company.specialties[0]
 
   return (
     <motion.article
@@ -77,24 +75,13 @@ function FounderDirectoryCard({
           alt=""
           className="max-h-[72%] w-auto max-w-[72%] object-contain object-center transition duration-500 ease-out group-hover:scale-[1.02]"
         />
-        <div className="absolute bottom-3 left-3 z-10 flex flex-wrap gap-1.5 max-w-[calc(100%-1.5rem)]">
-          {company.specialties.map((s) => (
-            <span
-              key={s}
-              className="rounded-full border border-rellia-teal/15 bg-rellia-mint/60 px-2 py-0.5 font-urbanist text-[10px] font-bold text-rellia-teal/90 backdrop-blur-sm shadow-sm"
-            >
-              {s}
+        {primarySpecialty ? (
+          <div className="absolute left-3 top-3 z-10 max-w-[calc(100%-1.5rem)]">
+            <span className="inline-flex rounded-full border border-rellia-teal/15 bg-rellia-mint/90 px-2.5 py-0.5 font-urbanist text-[10px] font-bold text-rellia-teal shadow-sm">
+              {primarySpecialty}
             </span>
-          ))}
-          {businessModels.map((bm) => (
-            <span
-              key={bm}
-              className="rounded-full border border-black/10 bg-black/[0.04] px-2 py-0.5 font-urbanist text-[10px] font-bold text-black/60 backdrop-blur-sm shadow-sm"
-            >
-              {bm}
-            </span>
-          ))}
-        </div>
+          </div>
+        ) : null}
       </div>
       <div className="flex flex-1 flex-col p-6 md:p-7">
         <h3 className="font-host-grotesk text-lg font-bold tracking-tight text-black group-hover:underline decoration-2 underline-offset-4">
@@ -380,11 +367,7 @@ export default function FoundersDirectory() {
               </label>
 
               {filterUiLoading ? (
-                <div className="flex w-full flex-col gap-3 md:w-auto md:flex-row md:flex-wrap md:items-center md:gap-4">
-                  <DirectoryFilterSelectSkeleton />
-                  <DirectoryFilterSelectSkeleton />
-                  <DirectoryFilterSelectSkeleton />
-                </div>
+                <AdvisorsDirectoryToolbarSkeleton />
               ) : dynamicGroups.length > 0 ? (
                 <div className="flex w-full flex-col gap-3 md:w-auto md:flex-row md:flex-wrap md:items-center md:gap-4">
                   {dynamicGroups.map((g) => {
@@ -498,7 +481,7 @@ export default function FoundersDirectory() {
             </div>
 
             {companiesListLoading ? (
-              <DirectoryGridSkeleton />
+              <DirectoryGridSkeleton count={4} />
             ) : companies.length === 0 ? (
               <FilteredListEmptyState
                 className="mt-10"

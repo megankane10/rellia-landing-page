@@ -84,6 +84,42 @@ export const countNewSubmissions = (contacts: ContactRow[], diagnostics: Company
 export const countRecentAll = (contacts: ContactRow[], diagnostics: CompanyProfileRow[], withinDays = 7) =>
   countRecentSubmissions(contacts, withinDays) + countRecentSubmissions(diagnostics, withinDays)
 
+export const countSubmissionsBetweenDays = (
+  contacts: ContactRow[],
+  diagnostics: CompanyProfileRow[],
+  startDaysAgo: number,
+  endDaysAgo: number,
+) => {
+  const now = Date.now()
+  const dayMs = 24 * 60 * 60 * 1000
+  const start = now - startDaysAgo * dayMs
+  const end = now - endDaysAgo * dayMs
+
+  const inWindow = (iso: string) => {
+    const t = new Date(iso).getTime()
+    return t >= start && t < end
+  }
+
+  return (
+    contacts.filter((row) => inWindow(row.created_at)).length +
+    diagnostics.filter((row) => inWindow(row.created_at)).length
+  )
+}
+
+export const percentChange = (current: number, previous: number): number | null => {
+  if (previous === 0) {
+    if (current === 0) return null
+    return 100
+  }
+  return Math.round(((current - previous) / previous) * 100)
+}
+
+export const formatPercentChange = (value: number | null): string => {
+  if (value === null) return "—"
+  if (value > 0) return `+${value}%`
+  return `${value}%`
+}
+
 export const greetingForUser = (displayName: string, email?: string | null): string => {
   const hour = new Date().getHours()
   const time =

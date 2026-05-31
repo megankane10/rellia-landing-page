@@ -15,6 +15,7 @@ import { stripSanityMetadata } from "./sanityResponseSanitize";
 import {
   isPresentationPreviewRequest,
   isSanityStudioReferer,
+  hasSanityPreviewPerspectiveCookie,
   resolveSanityStudioUrl,
 } from "./sanityPreview";
 import { resolveSanityApiConfig } from "./sanityEnv";
@@ -459,6 +460,12 @@ export function createServer() {
         .status(500)
         .send(err instanceof Error ? err.message : "Unexpected error");
     }
+  });
+
+  app.get("/api/draft-mode/status", (_req, res) => {
+    const cookie = _req.headers.cookie || "";
+    res.setHeader("content-type", "application/json");
+    res.json({ active: hasSanityPreviewPerspectiveCookie(cookie) });
   });
 
   app.get(
@@ -1362,6 +1369,122 @@ export function createServer() {
       } catch (err) {
         console.error("Admin team error:", err);
         res.status(500).json({ error: "Unexpected server error." });
+      }
+    },
+  );
+
+  const adminStripeMetricsRate = new Map<string, RateState>();
+  const ADMIN_STRIPE_METRICS_MAX_PER_MIN = 20;
+
+  app.get(
+    "/api/admin/stripe-metrics",
+    rateLimitJson(adminStripeMetricsRate, ADMIN_STRIPE_METRICS_MAX_PER_MIN),
+    async (req, res) => {
+      if (!allowBrowserOrigin(req)) {
+        res.status(403).json({ error: "Forbidden" });
+        return;
+      }
+
+      const authHeader = typeof req.headers.authorization === "string" ? req.headers.authorization : "";
+      const token = authHeader.startsWith("Bearer ") ? authHeader.slice(7).trim() : "";
+      if (!token) {
+        res.status(401).json({ error: "Sign in required." });
+        return;
+      }
+
+      const supabaseUrl = (process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || "").trim().replace(/\/$/, "");
+      const serviceRoleKey = (
+        process.env.SUPABASE_SERVICE_ROLE_KEY ||
+        process.env.SUPABASE_SECRET_KEY ||
+        process.env.SUPABASE_SERVICE_KEY ||
+        ""
+      ).trim();
+      const anonKey = (
+        process.env.VITE_SUPABASE_ANON_KEY ||
+        process.env.VITE_SUPABASE_PUBLISHABLE_KEY ||
+        process.env.SUPABASE_ANON_KEY ||
+        ""
+      ).trim();
+
+      if (!supabaseUrl || !serviceRoleKey || !anonKey) {
+        res.status(501).json({ error: "Supabase admin credentials are not configured on the server." });
+        return;
+      }
+
+      try {
+        const { createClient } = await import("@supabase/supabase-js");
+        const sessionClient = createClient(supabaseUrl, anonKey, {
+          auth: { autoRefreshToken: false, persistSession: false },
+        });
+        const { data: userData, error: userError } = await sessionClient.auth.getUser(token);
+        if (userError || !userData.user) {
+          res.status(401).json({ error: "Invalid or expired session." });
+          return;
+        }
+
+        const secretKey = process.env.STRIPE_SECRET_KEY?.trim();
+        if (!secretKey) {
+          res.setHeader("content-type", "application/json");
+          res.json({ configured: false });
+          return;
+        }
+
+        const { default: Stripe } = await import("stripe");
+        const stripe = new Stripe(secretKey);
+        const now = Math.floor(Date.now() / 1000);
+        const thirtyDays = 30 * 24 * 60 * 60;
+
+        const sumSucceededCharges = async (gte: number, lt?: number) => {
+          let total = 0;
+          let startingAfter: string | undefined;
+          let hasMore = true;
+
+          while (hasMore) {
+            const page = await stripe.charges.list({
+              created: lt ? { gte, lt } : { gte },
+              limit: 100,
+              ...(startingAfter ? { starting_after: startingAfter } : {}),
+            });
+
+            for (const charge of page.data) {
+              if (charge.status === "succeeded" && charge.paid) {
+                total += charge.amount - (charge.amount_refunded ?? 0);
+              }
+            }
+
+            hasMore = page.has_more;
+            startingAfter = page.data.length > 0 ? page.data[page.data.length - 1]?.id : undefined;
+            if (!startingAfter) hasMore = false;
+          }
+
+          return total;
+        };
+
+        const currentStart = now - thirtyDays;
+        const previousStart = now - thirtyDays * 2;
+        const [revenueLast30Days, revenuePrevious30Days] = await Promise.all([
+          sumSucceededCharges(currentStart),
+          sumSucceededCharges(previousStart, currentStart),
+        ]);
+
+        const revenueChangePct =
+          revenuePrevious30Days === 0
+            ? revenueLast30Days > 0
+              ? 100
+              : null
+            : Math.round(((revenueLast30Days - revenuePrevious30Days) / revenuePrevious30Days) * 100);
+
+        res.setHeader("content-type", "application/json");
+        res.json({
+          configured: true,
+          currency: "cad",
+          revenueLast30Days,
+          revenuePrevious30Days,
+          revenueChangePct,
+        });
+      } catch (err) {
+        console.error("Admin stripe metrics error:", err);
+        res.status(500).json({ error: "Could not load Stripe metrics." });
       }
     },
   );

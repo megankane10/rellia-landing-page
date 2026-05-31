@@ -1,12 +1,23 @@
-import { useEffect, useRef } from "react"
+import { useEffect, useRef, useState } from "react"
 import { useLocation, useNavigate } from "react-router-dom"
 import { useQueryClient } from "@tanstack/react-query"
 import { enableVisualEditing } from "@sanity/visual-editing"
 import type { HistoryUpdate } from "@sanity/visual-editing"
 import {
   getSanityStudioUrl,
-  isSanityPresentationPreview,
+  isSanityPresentationIframe,
 } from "@/lib/sanityPresentation"
+
+const fetchDraftModeActive = async (): Promise<boolean> => {
+  try {
+    const res = await fetch("/api/draft-mode/status", { credentials: "same-origin" })
+    if (!res.ok) return false
+    const json = (await res.json()) as { active?: boolean }
+    return json.active === true
+  } catch {
+    return false
+  }
+}
 
 /**
  * Connects the marketing site to Sanity Presentation (click-to-edit overlays + comlink).
@@ -18,16 +29,32 @@ export const VisualEditingOverlay = () => {
   const queryClient = useQueryClient()
   const routeNavigateRef = useRef<((update: HistoryUpdate) => void) | null>(null)
   const connectAttemptRef = useRef(0)
+  const [previewActive, setPreviewActive] = useState(isSanityPresentationIframe())
 
   useEffect(() => {
-    if (!isSanityPresentationPreview()) return
+    if (isSanityPresentationIframe()) {
+      setPreviewActive(true)
+      return
+    }
+
+    let cancelled = false
+    void fetchDraftModeActive().then((active) => {
+      if (!cancelled) setPreviewActive(active)
+    })
+
+    return () => {
+      cancelled = true
+    }
+  }, [location.pathname])
+
+  useEffect(() => {
+    if (!previewActive) return
 
     const studioUrl = getSanityStudioUrl()
     connectAttemptRef.current += 1
 
     const disable = enableVisualEditing({
       zIndex: 100_001,
-      studioUrl,
       history: {
         subscribe: (onNavigate) => {
           routeNavigateRef.current = onNavigate
@@ -45,11 +72,8 @@ export const VisualEditingOverlay = () => {
           }
         },
       },
-      refresh: (payload) => {
+      refresh: () => {
         void queryClient.invalidateQueries({ queryKey: ["cms"] })
-        if (payload.source === "mutation" && payload.livePreviewEnabled) {
-          return false
-        }
         return false
       },
     })
@@ -63,15 +87,15 @@ export const VisualEditingOverlay = () => {
       routeNavigateRef.current = null
       disable()
     }
-  }, [navigate, queryClient])
+  }, [navigate, previewActive, queryClient])
 
   useEffect(() => {
-    if (!isSanityPresentationPreview()) return
+    if (!previewActive) return
     routeNavigateRef.current?.({
       type: "push",
       url: `${location.pathname}${location.search}${location.hash}`,
     })
-  }, [location.pathname, location.search, location.hash])
+  }, [location.pathname, location.search, location.hash, previewActive])
 
   return null
 }

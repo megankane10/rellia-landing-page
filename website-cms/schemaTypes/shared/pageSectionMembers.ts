@@ -10,4 +10,5 @@ export const pageSectionMembers = [
   defineArrayMember({type: 'sectionEligibilityBento'}),
   defineArrayMember({type: 'sectionJourneyTimeline'}),
   defineArrayMember({type: 'sectionDiagnosticSurvey'}),
+  defineArrayMember({type: 'sectionFaq'}),
 ]

@@ -18,6 +18,7 @@ import type {
   CmsSectionEngageBand,
   CmsSectionJourneyTimeline,
   CmsSectionDiagnosticSurvey,
+  CmsSectionFaq,
   NavItem,
   SanityPortableText,
 } from "@shared/cms/types"
@@ -25,6 +26,7 @@ import { normalizeToPortableText } from "@shared/cms/normalizePortableText"
 import { Link } from "react-router-dom"
 import * as LucideIcons from "lucide-react"
 import { ArrowRight, CalendarDays } from "lucide-react"
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 
 const isExternalHref = (href: string) => /^(https?:\/\/|mailto:|tel:)/i.test(href)
 
@@ -486,6 +488,48 @@ const SectionDiagnosticSurvey = ({ section }: { section: CmsSectionDiagnosticSur
   )
 }
 
+const SectionFaq = ({ section }: { section: CmsSectionFaq }) => {
+  const items = (section.items ?? []).filter((item) => item.question?.trim() && item.answer?.trim())
+  if (items.length === 0) return null
+
+  return (
+    <section className="py-16 md:py-24 bg-white">
+      <div className="max-w-[900px] mx-auto px-6 md:px-10">
+        <ScrollReveal>
+          {section.title?.trim() ? (
+            <h2 className="font-host-grotesk text-2xl md:text-[32px] font-semibold leading-tight tracking-tight text-black mb-3 text-left">
+              {section.title}
+            </h2>
+          ) : null}
+          {section.subtitle?.trim() ? (
+            <p className="font-urbanist text-base md:text-lg text-black/60 mb-8 max-w-2xl text-left">
+              {section.subtitle}
+            </p>
+          ) : null}
+          <div className="rounded-3xl border border-black/10 bg-white px-7 py-0 shadow-sm">
+            <Accordion type="single" collapsible>
+              {items.map((item, index) => (
+                <AccordionItem
+                  key={item._key ?? `${item.question}-${index}`}
+                  value={item._key ?? `faq-${index}`}
+                  className={index === items.length - 1 ? "-mx-7 px-7 border-b-0" : "-mx-7 px-7 border-b border-black/10"}
+                >
+                  <AccordionTrigger className="text-left text-base md:text-lg font-medium text-black py-4 md:py-5 min-h-[64px] md:min-h-[72px]">
+                    {item.question}
+                  </AccordionTrigger>
+                  <AccordionContent className="pb-5 text-black/70 font-urbanist text-sm md:text-base leading-relaxed whitespace-pre-line">
+                    {item.answer}
+                  </AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
+          </div>
+        </ScrollReveal>
+      </div>
+    </section>
+  )
+}
+
 const renderSection = (section: CmsPageSection) => {
   switch (section._type) {
     case "sectionHero":
@@ -504,6 +548,8 @@ const renderSection = (section: CmsPageSection) => {
       return <SectionJourneyTimeline section={section} />
     case "sectionDiagnosticSurvey":
       return <SectionDiagnosticSurvey section={section} />
+    case "sectionFaq":
+      return <SectionFaq section={section} />
     default:
       return null
   }

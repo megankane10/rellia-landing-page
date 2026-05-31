@@ -1,8 +1,7 @@
-import { useMemo } from "react"
-import { format } from "date-fns"
-import { AddToCalendarButton, type AddToCalendarButtonType } from "add-to-calendar-button-react"
+import { useMemo, useState } from "react"
 import type { ProgramsEventCard } from "@shared/cms/types"
-import { getProgramsEventCalendarInterval } from "@/lib/eventCalendar"
+import { buildCalendarProviderLinks, type CalendarProvider } from "@/lib/calendarLinks"
+import { downloadProgramsEventIcsFile } from "@/lib/eventCalendar"
 import { cn } from "@/lib/utils"
 
 type EventAddToCalendarButtonProps = {
@@ -16,46 +15,63 @@ export const EventAddToCalendarButton = ({
   canonicalUrl,
   className,
 }: EventAddToCalendarButtonProps) => {
-  const props = useMemo(() => {
-    const interval = getProgramsEventCalendarInterval(event)
-    if (!interval) return null
+  const links = useMemo(
+    () => buildCalendarProviderLinks(event, canonicalUrl),
+    [canonicalUrl, event],
+  )
+  const [selected, setSelected] = useState<CalendarProvider | "">("")
 
-    const { start, end } = interval
-    const location = event.location?.trim() ?? ""
-    const description = event.dateTime?.trim() || canonicalUrl
+  if (!links) return null
 
-    return {
-      name: event.title,
-      startDate: format(start, "yyyy-MM-dd"),
-      endDate: format(end, "yyyy-MM-dd"),
-      startTime: format(start, "HH:mm"),
-      endTime: format(end, "HH:mm"),
-      timeZone: "America/Toronto",
-      location,
-      description,
-      options: ["Apple", "Google", "iCal", "Microsoft365", "Outlook.com", "Yahoo"] as AddToCalendarButtonType["options"],
+  const handleSelectChange = async (value: string) => {
+    const provider = value as CalendarProvider
+    setSelected(provider)
+    if (!provider) return
+
+    const match = links.providers.find((entry) => entry.id === provider)
+    if (!match) return
+
+    if (provider === "ics") {
+      await downloadProgramsEventIcsFile(event, canonicalUrl)
+      setSelected("")
+      return
     }
-  }, [canonicalUrl, event])
 
-  if (!props) return null
+    window.open(match.href, "_blank", "noopener,noreferrer")
+    setSelected("")
+  }
 
   return (
-    <div className={cn("event-add-to-calendar", className)}>
-      <AddToCalendarButton
-        name={props.name}
-        startDate={props.startDate}
-        endDate={props.endDate}
-        startTime={props.startTime}
-        endTime={props.endTime}
-        timeZone={props.timeZone}
-        location={props.location}
-        description={props.description}
-        options={props.options}
-        label="Add to Calendar"
-        buttonStyle="round"
-        lightMode="light"
-        styleLight="--btn-background: #0D3540; --btn-text: #fff; --btn-border: #0D3540; --font: Host Grotesk, system-ui, sans-serif; --btn-border-radius: 9999px;"
-      />
+    <div className={cn("relative w-full sm:w-auto", className)}>
+      <label htmlFor={`event-calendar-${event.slug ?? event.title}`} className="sr-only">
+        Add to calendar
+      </label>
+      <select
+        id={`event-calendar-${event.slug ?? event.title}`}
+        value={selected}
+        onChange={(e) => void handleSelectChange(e.target.value)}
+        className={cn(
+          "h-12 w-full min-w-[220px] cursor-pointer appearance-none rounded-full border-2 border-rellia-teal bg-rellia-teal",
+          "px-6 pr-12 font-host-grotesk text-sm font-semibold text-white sm:text-[15px]",
+          "transition-[background-color,border-color,color,box-shadow] duration-500 ease-out",
+          "hover:border-rellia-mint hover:bg-rellia-mint hover:text-rellia-teal",
+          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-teal focus-visible:ring-offset-2",
+        )}
+        aria-label="Add to calendar — choose your calendar app"
+      >
+        <option value="">Add to Calendar</option>
+        {links.providers.map((provider) => (
+          <option key={provider.id} value={provider.id}>
+            {provider.label}
+          </option>
+        ))}
+      </select>
+      <span
+        className="pointer-events-none absolute right-5 top-1/2 -translate-y-1/2 font-host-grotesk text-xs font-bold text-current"
+        aria-hidden
+      >
+        ▼
+      </span>
     </div>
   )
 }

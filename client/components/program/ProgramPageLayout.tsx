@@ -480,20 +480,8 @@ const ProgramPageLayout = ({
               <div className="lg:w-[50%] shrink-0 mb-10 lg:mb-0 lg:sticky lg:top-32 lg:self-start">
                 <ScrollReveal>
                   <h2 className="font-host-grotesk text-2xl font-semibold leading-tight tracking-tight text-black md:text-[32px]">
-                    {q.timelineTitle.includes("&") ? (
-                      <>
-                        {q.timelineTitle.split("&")[0].trim()}
-                        <br />
-                        {"& "}
-                        {q.timelineTitle.split("&").slice(1).join("&").trim()}
-                      </>
-                    ) : (
-                      q.timelineTitle
-                    )}
+                    {q.timelineTitle}
                   </h2>
-                  <p className="font-urbanist text-black/60 text-base md:text-lg mt-4 max-w-sm">
-                    {q.timelineSubtitle}
-                  </p>
                 </ScrollReveal>
               </div>
               <div className="flex-1">

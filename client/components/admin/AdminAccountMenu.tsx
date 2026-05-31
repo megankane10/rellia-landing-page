@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { useNavigate } from "react-router-dom"
-import { LogOut, Pencil, UserRound } from "lucide-react"
+import { LogOut, Pencil, Upload, UserRound } from "lucide-react"
 import { useAuth } from "@/context/AuthContext"
 import { supabase } from "@/lib/supabase"
+import { uploadAdminAvatar } from "@/lib/adminAvatarUpload"
 import {
   buildAdminUserMetadata,
   getAdminAvatarUrl,
@@ -29,32 +30,58 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { cn } from "@/lib/utils"
+
 const AVATAR_URL_KEY = "avatar_url"
 
 const AdminAccountMenu = () => {
   const { user, signOut } = useAuth()
   const navigate = useNavigate()
   const isMobile = useIsMobile()
+  const fileInputRef = useRef<HTMLInputElement>(null)
   const [profileOpen, setProfileOpen] = useState(false)
   const [fullName, setFullName] = useState("")
   const [avatarUrl, setAvatarUrl] = useState("")
+  const [pendingAvatarFile, setPendingAvatarFile] = useState<File | null>(null)
+  const [avatarPreviewUrl, setAvatarPreviewUrl] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
+  const [uploading, setUploading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   const displayName = getAdminDisplayName(user) || user?.email || "Admin"
   const initials = getAdminInitials(user)
-  const avatarSrc = getAdminAvatarUrl(user)
+  const avatarSrc = avatarPreviewUrl || getAdminAvatarUrl(user)
 
   useEffect(() => {
     if (!profileOpen) return
     setFullName(getAdminDisplayName(user))
     setAvatarUrl(getAdminAvatarUrl(user))
+    setPendingAvatarFile(null)
+    setAvatarPreviewUrl(null)
     setError(null)
   }, [profileOpen, user])
+
+  useEffect(() => {
+    if (!pendingAvatarFile) {
+      setAvatarPreviewUrl(null)
+      return
+    }
+    const objectUrl = URL.createObjectURL(pendingAvatarFile)
+    setAvatarPreviewUrl(objectUrl)
+    return () => URL.revokeObjectURL(objectUrl)
+  }, [pendingAvatarFile])
 
   const handleSignOut = async () => {
     await signOut()
     navigate("/admin/login", { replace: true })
+  }
+
+  const handleAvatarFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    event.target.value = ""
+    if (!file) return
+    setPendingAvatarFile(file)
+    setError(null)
   }
 
   const handleSaveProfile = async () => {
@@ -62,36 +89,86 @@ const AdminAccountMenu = () => {
       setError("Please enter your name.")
       return
     }
-    setSaving(true)
-    setError(null)
-    const trimmedAvatar = avatarUrl.trim()
-    const { error: updateError } = await supabase.auth.updateUser({
-      data: {
-        ...buildAdminUserMetadata(fullName),
-        ...(trimmedAvatar ? { [AVATAR_URL_KEY]: trimmedAvatar } : { [AVATAR_URL_KEY]: null }),
-      },
-    })
-    setSaving(false)
-    if (updateError) {
-      setError(updateError.message)
+    if (!user?.id) {
+      setError("You must be signed in to update your profile.")
       return
     }
-    setProfileOpen(false)
+
+    setSaving(true)
+    setError(null)
+
+    let nextAvatarUrl = avatarUrl.trim()
+
+    try {
+      if (pendingAvatarFile) {
+        setUploading(true)
+        nextAvatarUrl = await uploadAdminAvatar(user.id, pendingAvatarFile)
+        setUploading(false)
+      }
+
+      const { error: updateError } = await supabase.auth.updateUser({
+        data: {
+          ...buildAdminUserMetadata(fullName),
+          ...(nextAvatarUrl ? { [AVATAR_URL_KEY]: nextAvatarUrl } : { [AVATAR_URL_KEY]: null }),
+        },
+      })
+
+      if (updateError) {
+        setError(updateError.message)
+        return
+      }
+
+      setProfileOpen(false)
+    } catch (uploadError) {
+      setError(uploadError instanceof Error ? uploadError.message : "Could not upload photo.")
+    } finally {
+      setUploading(false)
+      setSaving(false)
+    }
   }
 
   const profileDialog = (
     <Dialog open={profileOpen} onOpenChange={setProfileOpen}>
       <DialogContent className="z-[10003] font-host-grotesk sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
+        <DialogHeader className="text-left">
+          <DialogTitle className="flex items-center gap-2 text-left">
             <UserRound className="h-5 w-5 text-rellia-teal" aria-hidden />
             Your profile
           </DialogTitle>
-          <DialogDescription className="font-urbanist">
-            Updates your display name and optional profile photo URL across the admin dashboard.
+          <DialogDescription className="font-urbanist text-left">
+            Update your display name and upload a profile photo for the admin dashboard.
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-4 font-urbanist">
+          <div className="flex items-center gap-4">
+            <Avatar className="h-16 w-16 border border-border">
+              {avatarSrc ? <AvatarImage src={avatarSrc} alt="" /> : null}
+              <AvatarFallback className="bg-rellia-mint/40 text-lg text-rellia-teal">{initials}</AvatarFallback>
+            </Avatar>
+            <div className="space-y-2">
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/jpeg,image/png,image/webp,image/gif"
+                className="sr-only"
+                onChange={handleAvatarFileChange}
+              />
+              <Button
+                type="button"
+                variant="outline"
+                className="rounded-full"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={saving || uploading}
+              >
+                <Upload className="mr-2 h-4 w-4" aria-hidden />
+                {pendingAvatarFile ? "Change photo" : "Upload photo"}
+              </Button>
+              {pendingAvatarFile ? (
+                <p className="text-xs text-muted-foreground">{pendingAvatarFile.name}</p>
+              ) : null}
+            </div>
+          </div>
+
           <div className="space-y-1">
             <Label htmlFor="admin-profile-name">Display name</Label>
             <Input
@@ -102,26 +179,32 @@ const AdminAccountMenu = () => {
             />
           </div>
           <div className="space-y-1">
-            <Label htmlFor="admin-profile-avatar">Profile photo URL</Label>
+            <Label htmlFor="admin-profile-avatar">Or paste image URL</Label>
             <Input
               id="admin-profile-avatar"
               type="url"
               value={avatarUrl}
               onChange={(e) => setAvatarUrl(e.target.value)}
               placeholder="https://…"
+              disabled={Boolean(pendingAvatarFile)}
             />
             <p className="text-xs text-muted-foreground">
-              Paste a link to a square image (team headshot, Gravatar, etc.). Leave blank to use initials.
+              Upload is preferred. URL works as a fallback if storage is unavailable.
             </p>
           </div>
           {error ? <p className="text-sm text-destructive">{error}</p> : null}
         </div>
         <DialogFooter className="gap-2 sm:gap-0">
-          <Button type="button" variant="outline" onClick={() => setProfileOpen(false)}>
+          <Button type="button" variant="outline" className="rounded-full" onClick={() => setProfileOpen(false)}>
             Cancel
           </Button>
-          <Button type="button" onClick={() => void handleSaveProfile()} disabled={saving}>
-            {saving ? "Saving…" : "Save"}
+          <Button
+            type="button"
+            className="rounded-full"
+            onClick={() => void handleSaveProfile()}
+            disabled={saving || uploading}
+          >
+            {saving || uploading ? "Saving…" : "Save"}
           </Button>
         </DialogFooter>
       </DialogContent>
@@ -159,7 +242,7 @@ const AdminAccountMenu = () => {
             <Button
               type="button"
               variant="outline"
-              className="w-full justify-start rounded-lg font-urbanist text-destructive hover:text-destructive"
+              className={cn("w-full justify-start rounded-lg font-urbanist text-destructive hover:text-destructive")}
               onClick={() => void handleSignOut()}
             >
               <LogOut className="mr-2 h-4 w-4" aria-hidden />

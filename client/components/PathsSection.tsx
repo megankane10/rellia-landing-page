@@ -12,15 +12,8 @@ import { useHomePage } from "@/hooks/useCmsDocuments"
 import type { HomePathsCard } from "@shared/cms/types"
 import NetworkMetricsSection from "@/components/NetworkMetricsSection"
 
-/** Layered soft blurs using brand colors */
-const BrandBlurField = () => (
-  <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
-    <div className="absolute -left-[10%] -top-[10%] h-[500px] w-[500px] rounded-full bg-rellia-mint/30 blur-[120px]" />
-    <div className="absolute right-[5%] top-[15%] h-[400px] w-[400px] rounded-full bg-rellia-teal/15 blur-[100px]" />
-    <div className="absolute left-[20%] bottom-[10%] h-[450px] w-[450px] rounded-full bg-rellia-mint/20 blur-[110px]" />
-    <div className="absolute right-[25%] -bottom-[5%] h-[350px] w-[350px] rounded-full bg-rellia-teal/10 blur-[90px]" />
-  </div>
-)
+/** Layered soft blurs — disabled for solid white section background */
+const BrandBlurField = () => null
 
 const ROLE_IDS: NetworkPathRoleId[] = ["founder", "advisor", "investor", "partner"]
 
@@ -170,15 +163,6 @@ export default function PathsSection() {
           }
           className="relative mx-auto flex w-full max-w-4xl flex-col items-center text-center"
         >
-          <div
-            aria-hidden
-            className="pointer-events-none absolute left-1/2 top-[39%] z-0 h-[min(34vw,170px)] w-[min(72vw,320px)] -translate-x-1/2 -translate-y-1/2 rounded-[58%] bg-rellia-mint/38 blur-[52px] md:top-[40%] md:h-[210px] md:w-[380px] md:blur-[62px]"
-          />
-          <div
-            aria-hidden
-            className="pointer-events-none absolute left-1/2 top-[38%] z-0 h-[min(52vw,260px)] w-[min(92vw,400px)] -translate-x-1/2 -translate-y-1/2 rounded-[55%] bg-gradient-to-br from-rellia-mint/58 via-rellia-mint/38 to-rellia-mint/22 blur-[56px] md:top-[40%] md:h-[300px] md:w-[460px] md:blur-[76px]"
-          />
-
           <motion.h2
             variants={headingContainerVariants}
             initial="hidden"
