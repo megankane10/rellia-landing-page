@@ -27,15 +27,17 @@ export default function AnnouncementModal({
   const handleDismiss = () => onOpenChange(false)
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange} modal={false}>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
         id="announcement-modal"
         hideClose
+        disableSlide
         aria-label="Announcement"
         onOpenAutoFocus={(event) => event.preventDefault()}
-        overlayClassName="z-[10001] bg-transparent pointer-events-none"
+        onInteractOutside={(event) => event.preventDefault()}
+        overlayClassName="z-[10010] bg-transparent pointer-events-none"
         className={cn(
-          "z-[10001] pointer-events-auto",
+          "z-[10010] pointer-events-auto",
           "left-4 right-4 bottom-4 top-auto w-auto max-w-none translate-x-0 translate-y-0",
           "sm:right-5 sm:left-auto sm:bottom-5 sm:w-[min(94vw,460px)] md:right-8 md:bottom-8",
           "gap-0 rounded-[2.25rem] border border-black/[0.08] py-7 px-6 md:rounded-[2.75rem] md:py-9 md:px-8",

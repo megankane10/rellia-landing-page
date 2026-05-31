@@ -272,6 +272,12 @@ export default function Navbar({
     globalSettings.priorityModalEnabled === true &&
     Boolean(globalSettings.priorityModalHeading?.trim())
 
+  const announcementEligible =
+    !hideAnnouncement &&
+    !announcementDismissed &&
+    globalSettings.announcementEnabled === true &&
+    Boolean(globalSettings.announcementText?.trim())
+
   useEffect(() => {
     if (hideAnnouncement || priorityModalDismissed || !priorityModalEligible) return
     const timer = window.setTimeout(() => setPriorityModalDelayElapsed(true), PRIORITY_MODAL_DELAY_MS)
@@ -279,16 +285,13 @@ export default function Navbar({
   }, [hideAnnouncement, priorityModalDismissed, priorityModalEligible])
 
   useEffect(() => {
-    if (hideAnnouncement || announcementDismissed) return
-    if (priorityModalEligible && !priorityModalDismissed) return
+    if (hideAnnouncement || announcementDismissed || !announcementEligible) {
+      setAnnouncementDelayElapsed(false)
+      return
+    }
     const timer = window.setTimeout(() => setAnnouncementDelayElapsed(true), ANNOUNCEMENT_DELAY_MS)
     return () => window.clearTimeout(timer)
-  }, [
-    hideAnnouncement,
-    announcementDismissed,
-    priorityModalEligible,
-    priorityModalDismissed,
-  ])
+  }, [hideAnnouncement, announcementDismissed, announcementEligible])
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 12)
@@ -445,18 +448,10 @@ export default function Navbar({
   const ctaUsesAnchor =
     ctaOpenInNewTab || isExternalHref(resolvedCtaTo) || resolvedCtaTo.startsWith("/api/")
 
-  const announcementEligible =
-    !hideAnnouncement &&
-    !announcementDismissed &&
-    globalSettings.announcementEnabled === true &&
-    Boolean(globalSettings.announcementText?.trim())
-
-  const showPriorityModal = priorityModalEligible && priorityModalDelayElapsed
+  const showPriorityModal =
+    priorityModalEligible && priorityModalDelayElapsed && !priorityModalDismissed
   const showAnnouncement =
-    announcementEligible &&
-    announcementDelayElapsed &&
-    (!priorityModalEligible || priorityModalDismissed) &&
-    !showPriorityModal
+    announcementEligible && announcementDelayElapsed && !showPriorityModal
 
   const handleAnnouncementDismiss = () => {
     setAnnouncementDismissed(true)

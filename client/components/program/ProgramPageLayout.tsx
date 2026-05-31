@@ -611,7 +611,7 @@ const ProgramPageLayout = ({
                     </p>
                     <RelliaAction
                       type="button"
-                      variant="mintTealFill"
+                      variant="heroSolidOnTeal"
                       size="comfortable"
                       onClick={openEnrollmentForm}
                       className="px-10 w-fit"
