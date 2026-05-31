@@ -798,7 +798,7 @@ var isPresentationPreviewRequest = (req, cookieHeader, siteOriginsAllowed) => {
   return (req.get(SANITY_PRESENTATION_HEADER) || "").trim() === "1";
 };
 
-// server/sanityEnv.ts
+// shared/cms/sanityEnv.ts
 var parseList = (raw) => (raw ?? "").split(",").map((s) => s.trim()).filter(Boolean);
 var resolveSanityApiConfig = () => {
   const deployed = process.env.NODE_ENV === "production" || Boolean(process.env.VERCEL);
@@ -1396,6 +1396,52 @@ function createServer() {
       const token = issueCsrfToken();
       res.setHeader("Set-Cookie", buildCsrfSetCookie(token, isDev));
       res.status(200).json({ csrfToken: token });
+    }
+  );
+  app2.get(
+    "/api/cms/events",
+    rateLimitJson(sanityPublishedRate, SANITY_PUBLISHED_MAX_PER_MIN),
+    async (req, res) => {
+      if (!allowBrowserOrigin(req, previewAndSiteOrigins)) {
+        res.status(403).json({ error: "Forbidden" });
+        return;
+      }
+      const apiResolved = resolveSanityApiConfig();
+      if (apiResolved.status === "dataset_not_allowed") {
+        res.status(503).json({
+          error: `Sanity dataset "${apiResolved.attemptedDataset}" is not allowed for this deployment.`
+        });
+        return;
+      }
+      if (apiResolved.status === "missing_project") {
+        res.status(503).json({ error: "Sanity API is not configured." });
+        return;
+      }
+      const { projectId, dataset } = apiResolved;
+      const token = process.env.SANITY_API_READ_TOKEN?.trim();
+      const entry = SANITY_QUERY_WHITELIST.events;
+      try {
+        const publicClient = createClient2({
+          projectId,
+          dataset,
+          ...token ? { token } : {},
+          useCdn: false,
+          apiVersion: "2024-01-01"
+        });
+        const data = await publicClient.fetch(entry.query, {});
+        res.setHeader(
+          "Cache-Control",
+          "public, s-maxage=60, stale-while-revalidate=120"
+        );
+        res.status(200).json({
+          data: stripSanityMetadata(data, "events")
+        });
+      } catch (err) {
+        res.status(502).json({
+          error: "Sanity fetch failed",
+          message: err instanceof Error ? err.message : String(err)
+        });
+      }
     }
   );
   app2.get(

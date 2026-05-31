@@ -28,9 +28,6 @@ dist-ssr
 .env
 .env.*
 !.env.example
-
-# Generated at build for prerender (requires SANITY_API_READ_TOKEN on Vercel Build)
-shared/cms/build-snapshots/
 .vercel
 
 # esbuild output for Vercel serverless (`pnpm run build:api`; created on Vercel during build)

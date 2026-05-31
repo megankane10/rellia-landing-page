@@ -4,11 +4,23 @@
  *
  * Requires SANITY_API_READ_TOKEN in .env / .env.local or Vercel Build env.
  */
+import { mkdirSync, writeFileSync } from "node:fs"
+import { dirname, resolve } from "node:path"
+import { fileURLToPath } from "node:url"
 import { createClient } from "@sanity/client"
 import "./loadEnv"
 import { eventsQuery } from "../shared/cms/groqQueries"
 import { resolveSanityApiConfig } from "../shared/cms/sanityEnv"
-import { writeEventsBuildSnapshot } from "../shared/cms/buildSnapshots"
+
+const eventsSnapshotPath = resolve(
+  dirname(fileURLToPath(import.meta.url)),
+  "../shared/cms/build-snapshots/events.json",
+)
+
+const writeEventsBuildSnapshot = (rows: Record<string, unknown>[]): void => {
+  mkdirSync(dirname(eventsSnapshotPath), { recursive: true })
+  writeFileSync(eventsSnapshotPath, JSON.stringify(rows, null, 0), "utf8")
+}
 
 const main = async () => {
   const config = resolveSanityApiConfig()

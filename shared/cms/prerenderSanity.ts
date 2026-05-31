@@ -10,8 +10,13 @@ import {
   storyBySlugQuery,
   storiesQuery,
 } from "./groqQueries"
-import { readEventsBuildSnapshot } from "./buildSnapshots"
+import eventsBuildSnapshot from "./build-snapshots/events.json"
 import { trySanityApiConfig } from "./sanityEnv"
+
+const snapshotEvents = (): Record<string, unknown>[] =>
+  Array.isArray(eventsBuildSnapshot)
+    ? (eventsBuildSnapshot as Record<string, unknown>[])
+    : []
 
 let prerenderClient: SanityClient | null = null
 
@@ -66,7 +71,7 @@ export const fetchEventsForPrerender = async (): Promise<Record<string, unknown>
     }
   }
 
-  return readEventsBuildSnapshot()
+  return snapshotEvents()
 }
 
 export const fetchPageBySlugForPrerender = (slug: string) =>
