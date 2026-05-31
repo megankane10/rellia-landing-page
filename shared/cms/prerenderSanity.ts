@@ -10,25 +10,14 @@ import {
   storyBySlugQuery,
   storiesQuery,
 } from "./groqQueries"
-
-const getPrerenderSanityConfig = (): { projectId: string; dataset: string } | null => {
-  const projectId =
-    process.env.VITE_SANITY_PROJECT_ID?.trim() ||
-    process.env.SANITY_API_PROJECT_ID?.trim() ||
-    ""
-  const dataset =
-    process.env.VITE_SANITY_DATASET?.trim() ||
-    process.env.SANITY_API_DATASET?.trim() ||
-    "production"
-  if (!projectId) return null
-  return { projectId, dataset }
-}
+import { readEventsBuildSnapshot } from "./buildSnapshots"
+import { trySanityApiConfig } from "./sanityEnv"
 
 let prerenderClient: SanityClient | null = null
 
 const getPrerenderSanityClient = (): SanityClient | null => {
   if (prerenderClient) return prerenderClient
-  const config = getPrerenderSanityConfig()
+  const config = trySanityApiConfig()
   if (!config) return null
   const token = process.env.SANITY_API_READ_TOKEN?.trim()
   prerenderClient = createClient({
@@ -68,13 +57,16 @@ export const fetchStoryBySlugForPrerender = (slug: string) =>
 
 export const fetchEventsForPrerender = async (): Promise<Record<string, unknown>[]> => {
   const client = getPrerenderSanityClient()
-  if (!client) return []
-  try {
-    const rows = await client.fetch<Record<string, unknown>[]>(eventsQuery)
-    return Array.isArray(rows) ? rows : []
-  } catch {
-    return []
+  if (client) {
+    try {
+      const rows = await client.fetch<Record<string, unknown>[]>(eventsQuery)
+      if (Array.isArray(rows) && rows.length > 0) return rows
+    } catch {
+      // fall through to build snapshot
+    }
   }
+
+  return readEventsBuildSnapshot()
 }
 
 export const fetchPageBySlugForPrerender = (slug: string) =>

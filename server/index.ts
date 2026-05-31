@@ -393,6 +393,57 @@ export function createServer() {
     },
   );
 
+  /** Public events directory — no CSRF; used by /events and prerender fallbacks. */
+  app.get(
+    "/api/cms/events",
+    rateLimitJson(sanityPublishedRate, SANITY_PUBLISHED_MAX_PER_MIN),
+    async (req, res) => {
+      if (!allowBrowserOrigin(req, previewAndSiteOrigins)) {
+        res.status(403).json({ error: "Forbidden" });
+        return;
+      }
+
+      const apiResolved = resolveSanityApiConfig();
+      if (apiResolved.status === "dataset_not_allowed") {
+        res.status(503).json({
+          error: `Sanity dataset "${apiResolved.attemptedDataset}" is not allowed for this deployment.`,
+        });
+        return;
+      }
+      if (apiResolved.status === "missing_project") {
+        res.status(503).json({ error: "Sanity API is not configured." });
+        return;
+      }
+
+      const { projectId, dataset } = apiResolved;
+      const token = process.env.SANITY_API_READ_TOKEN?.trim();
+      const entry = SANITY_QUERY_WHITELIST.events;
+
+      try {
+        const publicClient = createClient({
+          projectId,
+          dataset,
+          ...(token ? { token } : {}),
+          useCdn: false,
+          apiVersion: "2024-01-01",
+        });
+        const data = await publicClient.fetch(entry.query, {});
+        res.setHeader(
+          "Cache-Control",
+          "public, s-maxage=60, stale-while-revalidate=120",
+        );
+        res.status(200).json({
+          data: stripSanityMetadata(data, "events"),
+        });
+      } catch (err) {
+        res.status(502).json({
+          error: "Sanity fetch failed",
+          message: err instanceof Error ? err.message : String(err),
+        });
+      }
+    },
+  );
+
   // Public convenience redirect to Sanity Studio. Studio itself authenticates.
   app.get(
     "/api/studio",

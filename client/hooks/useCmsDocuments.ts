@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { fetchPublicCmsEvents } from "@/lib/cmsPublicFetch";
 import { sanityFetch } from "@/lib/sanity";
 
 import {
@@ -267,10 +268,13 @@ export const useEvents = () =>
   useQuery({
     queryKey: ["cms", "events"],
     queryFn: async () => {
+      const fromPublic = await fetchPublicCmsEvents<any>()
+      if (fromPublic.length > 0) return fromPublic
       const raw = await sanityFetch<any[]>("events")
       return raw ?? []
     },
     staleTime: staleTimeMs,
+    refetchOnMount: "always",
   })
 
 export const useEventBySlug = (slug: string) =>

@@ -20,7 +20,7 @@ import { HeroHeadlinePortable } from "@/components/HeroHeadlinePortable"
 import { DEFAULT_EVENTS_LANDING_HERO_PORTABLE } from "@shared/cms/inlineHeroHeadline"
 import { allowCmsSeedFallbacks } from "@/lib/deploymentEnv"
 import { normalizeCmsEventForCard } from "@/lib/cmsEventList"
-import { isCmsListAwaitingData, isCmsQueryLoading } from "@/lib/cmsQueryState"
+import { isCmsListAwaitingData, isCmsQueryLoading, shouldShowCmsEmptyState } from "@/lib/cmsQueryState"
 import { DirectoryGridSkeleton } from "@/components/cms/CmsPageLoadingShell"
 import { isSanityConfigured } from "@/lib/sanity"
 import { getEventStartTimestamp, getEventTemporalStatus } from "@shared/cms/eventTemporalStatus"
@@ -194,7 +194,7 @@ export default function Events() {
 
               {eventsLoading ? (
                 <DirectoryGridSkeleton />
-              ) : visibleEvents.length === 0 ? (
+              ) : shouldShowCmsEmptyState(eventsQuery) && visibleEvents.length === 0 ? (
                 <FilteredListEmptyState
                   className="mt-12"
                   icon={CalendarDays}
