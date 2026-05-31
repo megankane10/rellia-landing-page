@@ -59,5 +59,6 @@ export const useApplyCmsSeo = (
     if (merged) {
       setPageSeo(merged)
     }
+    return () => setPageSeo(null)
   }, [merged, setPageSeo])
 }

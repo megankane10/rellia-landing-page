@@ -1,4 +1,13 @@
-import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from "react"
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useLayoutEffect,
+  useMemo,
+  useState,
+  type ReactNode,
+} from "react"
+import { useLocation } from "react-router-dom"
 
 export type PageSeoOverrides = {
   title?: string
@@ -20,12 +29,15 @@ const EMPTY_OVERRIDES: PageSeoOverrides = {}
 const noopSetPageSeo = () => {}
 
 export const PageSeoProvider = ({ children }: { children: ReactNode }) => {
+  const { pathname } = useLocation()
   const [overrides, setOverridesState] = useState<PageSeoOverrides>({})
 
+  useLayoutEffect(() => {
+    setOverridesState({})
+  }, [pathname])
+
   const setPageSeo = useCallback((next: PageSeoOverrides | null | undefined) => {
-    setTimeout(() => {
-      setOverridesState(next && typeof next === "object" ? next : {})
-    }, 0)
+    setOverridesState(next && typeof next === "object" ? next : {})
   }, [])
 
   const value = useMemo(() => ({ overrides, setPageSeo }), [overrides, setPageSeo])

@@ -30,11 +30,13 @@ const getPrerenderSanityClient = (): SanityClient | null => {
   if (prerenderClient) return prerenderClient
   const config = getPrerenderSanityConfig()
   if (!config) return null
+  const token = process.env.SANITY_API_READ_TOKEN?.trim()
   prerenderClient = createClient({
     projectId: config.projectId,
     dataset: config.dataset,
     apiVersion: "2024-01-01",
-    useCdn: true,
+    useCdn: false,
+    ...(token ? { token } : {}),
   })
   return prerenderClient
 }
