@@ -2351,7 +2351,15 @@ export function mergeGlobalSettings(
   partial: Partial<GlobalSettingsContent> | null | undefined,
 ): GlobalSettingsContent {
   const p = omitNullish((partial ?? {}) as Record<string, unknown>) as Partial<GlobalSettingsContent>
-  return { ...DEFAULT_GLOBAL_SETTINGS, ...p }
+  const base = { ...DEFAULT_GLOBAL_SETTINGS, ...p }
+  if (
+    typeof base.announcementText === "string" &&
+    base.announcementText.trim() &&
+    p.announcementEnabled !== false
+  ) {
+    base.announcementEnabled = true
+  }
+  return base
 }
 
 export function mergeHomePage(partial: Partial<HomePageContent> | null | undefined): HomePageContent {

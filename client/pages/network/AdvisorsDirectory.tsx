@@ -22,7 +22,7 @@ import { NETWORK_PATH_ROLE_TAG } from "@/lib/networkPathRoles";
 import { isSanityConfigured } from "@/lib/sanity";
 import { allowCmsSeedFallbacks, isMainBranchBuild } from "@/lib/deploymentEnv";
 import { isCmsQueryLoading } from "@/lib/cmsQueryState";
-import { AdvisorsDirectoryToolbarSkeleton, DirectoryGridSkeleton } from "@/components/cms/CmsPageLoadingShell";
+import { DirectoryGridSkeleton } from "@/components/cms/CmsPageLoadingShell";
 import {
   directoryGroupHasCountry,
   findExpertiseGroup,
@@ -100,9 +100,6 @@ export default function AdvisorsDirectory() {
   const { data: cmsFilters } = advisorFiltersQuery;
   const filterGroupsQuery = useDirectoryFilterGroups();
   const { data: cmsFilterGroups } = filterGroupsQuery;
-  const filterUiLoading =
-    isSanityConfigured() &&
-    (isCmsQueryLoading(filterGroupsQuery) || isCmsQueryLoading(advisorFiltersQuery))
   const advisorsListLoading = isSanityConfigured() && isCmsQueryLoading(advisorsQuery)
   const [query, setQuery] = useState("");
   const [legacyFilter, setLegacyFilter] = useState<string>("all")
@@ -278,9 +275,6 @@ export default function AdvisorsDirectory() {
 
         <section className="py-12 md:py-16">
           <div className="mx-auto max-w-[1300px] px-6 md:px-10">
-            {filterUiLoading ? (
-              <AdvisorsDirectoryToolbarSkeleton />
-            ) : (
             <div className="mb-10 flex flex-col gap-4 md:flex-row md:items-center">
               <label className="relative flex-1 block">
                 <span className="sr-only">Search advisors</span>
@@ -393,7 +387,6 @@ export default function AdvisorsDirectory() {
                 )}
               </div>
             </div>
-            )}
 
             {!advisorsListLoading ? (
             <div className="mb-6 flex items-center justify-between border-b border-black/10 pb-4">

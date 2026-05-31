@@ -1,5 +1,6 @@
+import { useEffect } from "react"
+import { createPortal } from "react-dom"
 import { X } from "lucide-react"
-import { Dialog, DialogClose, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog"
 import { cn } from "@/lib/utils"
 import { CmsCtaLink, cmsCtaButtonClass } from "@/components/CmsCtaLink"
 
@@ -26,42 +27,49 @@ export default function AnnouncementModal({
 
   const handleDismiss = () => onOpenChange(false)
 
-  return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent
-        id="announcement-modal"
-        hideClose
-        disableSlide
-        aria-label="Announcement"
-        onOpenAutoFocus={(event) => event.preventDefault()}
-        onInteractOutside={(event) => event.preventDefault()}
-        overlayClassName="z-[10010] bg-transparent pointer-events-none"
+  useEffect(() => {
+    if (!open) return
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") onOpenChange(false)
+    }
+    window.addEventListener("keydown", handleKeyDown)
+    return () => window.removeEventListener("keydown", handleKeyDown)
+  }, [open, onOpenChange])
+
+  if (!open || typeof document === "undefined") return null
+
+  return createPortal(
+    <div
+      id="announcement-modal"
+      role="dialog"
+      aria-modal="false"
+      aria-label="Site announcement"
+      className={cn(
+        "fixed z-[10010] pointer-events-none",
+        "left-4 right-4 bottom-4 sm:left-auto sm:right-5 sm:bottom-5 md:right-8 md:bottom-8",
+        "w-auto max-w-none sm:w-[min(94vw,460px)]",
+        "animate-in fade-in slide-in-from-bottom-4 duration-300",
+      )}
+    >
+      <div
         className={cn(
-          "z-[10010] pointer-events-auto",
-          "left-4 right-4 bottom-4 top-auto w-auto max-w-none translate-x-0 translate-y-0",
-          "sm:right-5 sm:left-auto sm:bottom-5 sm:w-[min(94vw,460px)] md:right-8 md:bottom-8",
-          "gap-0 rounded-[2.25rem] border border-black/[0.08] py-7 px-6 md:rounded-[2.75rem] md:py-9 md:px-8",
+          "pointer-events-auto",
+          "rounded-[2.25rem] border border-black/[0.08] py-7 px-6 md:rounded-[2.75rem] md:py-9 md:px-8",
           "shadow-[0_20px_50px_rgba(13,53,64,0.3)]",
           "bg-gradient-to-r from-rellia-mint via-rellia-greyTeal to-rellia-mint",
-          "data-[state=closed]:slide-out-to-bottom-4 data-[state=open]:slide-in-from-bottom-4",
-          "data-[state=closed]:slide-out-to-right-0 data-[state=open]:slide-in-from-right-0",
-          "data-[state=closed]:zoom-out-100 data-[state=open]:zoom-in-100",
         )}
       >
-        <DialogTitle className="sr-only">Site Announcement</DialogTitle>
-        <DialogDescription className="sr-only">
-          Important updates and announcements for Rellia Health members and visitors.
-        </DialogDescription>
         <div className="flex w-full flex-col items-stretch text-left">
           <div className="mb-3 flex items-center justify-between gap-3">
             <span className="inline-flex items-center gap-1.5 rounded-full border border-rellia-teal/25 bg-transparent px-2.5 py-1 text-[11px] font-bold uppercase tracking-[0.14em] text-rellia-teal">
               <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rellia-teal opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-rellia-teal"></span>
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rellia-teal opacity-75" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-rellia-teal" />
               </span>
               {pillText?.trim() || "LIVE"}
             </span>
-            <DialogClose
+            <button
+              type="button"
               className={cn(
                 "inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full",
                 "border border-rellia-teal/20 bg-white/80 text-rellia-teal",
@@ -71,14 +79,14 @@ export default function AnnouncementModal({
               onClick={handleDismiss}
             >
               <X className="h-4 w-4" aria-hidden />
-            </DialogClose>
+            </button>
           </div>
 
           <p className="font-urbanist text-[19px] font-semibold leading-relaxed text-black md:text-[22px] md:leading-relaxed">
             {text}
           </p>
- 
-          {showButton && (
+
+          {showButton ? (
             <div className="mt-5">
               <CmsCtaLink
                 href={trimmedLink!}
@@ -88,9 +96,10 @@ export default function AnnouncementModal({
                 {trimmedLabel}
               </CmsCtaLink>
             </div>
-          )}
+          ) : null}
         </div>
-      </DialogContent>
-    </Dialog>
+      </div>
+    </div>,
+    document.body,
   )
 }

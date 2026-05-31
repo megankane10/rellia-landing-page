@@ -28,7 +28,6 @@ import { isSanityConfigured } from "@/lib/sanity";
 import { allowCmsSeedFallbacks, isMainBranchBuild } from "@/lib/deploymentEnv";
 import { isCmsQueryLoading } from "@/lib/cmsQueryState";
 import {
-  AdvisorsDirectoryToolbarSkeleton,
   DirectoryGridSkeleton,
 } from "@/components/cms/CmsPageLoadingShell";
 import {
@@ -111,9 +110,6 @@ export default function FoundersDirectory() {
   const { data: cmsSpecialties } = specialtiesQuery;
   const filterGroupsQuery = useDirectoryFilterGroups();
   const { data: cmsFilterGroups } = filterGroupsQuery;
-  const filterUiLoading =
-    isSanityConfigured() &&
-    (isCmsQueryLoading(filterGroupsQuery) || isCmsQueryLoading(specialtiesQuery))
   const companiesListLoading = isSanityConfigured() && isCmsQueryLoading(companiesQuery)
   const [query, setQuery] = useState("");
   const [specialtyFilter, setSpecialtyFilter] = useState<string>("all");
@@ -366,9 +362,7 @@ export default function FoundersDirectory() {
                 />
               </label>
 
-              {filterUiLoading ? (
-                <AdvisorsDirectoryToolbarSkeleton />
-              ) : dynamicGroups.length > 0 ? (
+              {dynamicGroups.length > 0 ? (
                 <div className="flex w-full flex-col gap-3 md:w-auto md:flex-row md:flex-wrap md:items-center md:gap-4">
                   {dynamicGroups.map((g) => {
                     const options = dynamicGroupOptions.get(g.id) ?? []

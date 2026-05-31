@@ -245,7 +245,7 @@ export default function Navbar({
   const ANNOUNCEMENT_DISMISSED_SESSION_KEY = "rellia-announcement-dismissed-session"
   const PRIORITY_MODAL_DISMISSED_SESSION_KEY = "rellia-priority-modal-dismissed-session"
   const PRIORITY_MODAL_DELAY_MS = 3_000
-  const ANNOUNCEMENT_DELAY_MS = 10_000
+  const ANNOUNCEMENT_DELAY_MS = 4_000
   const [announcementDismissed, setAnnouncementDismissed] = useState(() => {
     if (typeof window === "undefined") return false
     try {
@@ -275,8 +275,8 @@ export default function Navbar({
   const announcementEligible =
     !hideAnnouncement &&
     !announcementDismissed &&
-    globalSettings.announcementEnabled === true &&
-    Boolean(globalSettings.announcementText?.trim())
+    Boolean(globalSettings.announcementText?.trim()) &&
+    globalSettings.announcementEnabled !== false
 
   useEffect(() => {
     if (hideAnnouncement || priorityModalDismissed || !priorityModalEligible) return
