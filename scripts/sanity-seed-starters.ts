@@ -83,7 +83,7 @@ const studioGuideDoc = {
       _key: "publish",
       heading: "Drafts vs published vs the live site",
       body:
-        "Studio “Published” saves to this dataset. Page visibility (Live / Hidden / Placeholder) controls whether the marketing site shows the real page. Preview deploys use the preview dataset; www uses production after pnpm sanity:promote.",
+        "Studio “Published” saves to the live website dataset. Page visibility (Live / Hidden / Placeholder) controls whether the marketing site shows the real page. Publish in Studio to update www.relliahealth.com — no developer step required.",
     },
   ],
 }

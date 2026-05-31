@@ -75,8 +75,8 @@ const AdminHelpPage = () => (
         </CardHeader>
         <CardContent className="space-y-2 font-urbanist text-sm leading-relaxed text-muted-foreground">
           <p>
-            <strong className="text-foreground">Sanity Studio</strong> — page text, heroes, SEO, events, stories,
-            founders directory, legal pages (terms/privacy), and visibility (Live vs coming soon).
+            <strong className="text-foreground">Sanity Studio</strong> — page text, heroes, images, SEO, events, stories,
+            advisors, founders directory, legal pages (terms/privacy), and visibility (Live vs coming soon).
           </p>
           <p>
             <strong className="text-foreground">Admin dashboard (here)</strong> — contact forms, investor
@@ -87,17 +87,17 @@ const AdminHelpPage = () => (
 
       <Card>
         <CardHeader>
-          <CardTitle className="font-host-grotesk text-lg">Preview site vs live website</CardTitle>
+          <CardTitle className="font-host-grotesk text-lg">Publishing to the live site</CardTitle>
         </CardHeader>
         <CardContent className="space-y-2 font-urbanist text-sm leading-relaxed text-muted-foreground">
           <p>
-            Changes published in Studio on the <strong className="text-foreground">preview</strong> dataset appear on the
-            Vercel preview URL (staging). They do <strong className="text-foreground">not</strong> automatically appear
-            on <code className="text-xs">www.relliahealth.com</code> until the same content is in the{" "}
-            <strong className="text-foreground">production</strong> dataset.
+            Sanity Studio edits the <strong className="text-foreground">live website</strong> directly. When you click{" "}
+            <strong className="text-foreground">Publish</strong>, changes appear on{" "}
+            <code className="text-xs">www.relliahealth.com</code> within about a minute (refresh the page if needed).
           </p>
           <p>
-            Your developer runs <code className="text-xs">pnpm sanity:promote</code> when preview is approved for launch.
+            Use <strong className="text-foreground">Presentation</strong> in Studio to preview draft changes before
+            publishing. Unpublished drafts stay private until you publish.
           </p>
         </CardContent>
       </Card>
@@ -124,7 +124,6 @@ const AdminHelpPage = () => (
           <ul className="list-disc space-y-1 pl-5">
             <li>New page types, forms, or checkout flows</li>
             <li>Site down, login broken, or inbox empty after sign-in</li>
-            <li>Promoting preview content to production</li>
             <li>Domain, DNS, or environment variable changes on Vercel</li>
             <li>Adding or removing admin users (invite via Supabase Auth)</li>
           </ul>

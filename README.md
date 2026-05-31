@@ -17,36 +17,30 @@ React SPA for **Rellia Health**, connecting founders, clinicians, and health sys
 
 Do day-to-day work on **`Additions`**. After review, merge into **`main`** for production.
 
-### Sanity: two datasets (not the same as “drafts”)
+### Sanity: Studio → live site (editor workflow)
 
-Sanity stores **two separate content databases** in one project:
+Sanity Studio at [relliahealth.sanity.studio](https://relliahealth.sanity.studio) edits the **`production`** dataset — the same database **`www.relliahealth.com`** reads. **Publish in Studio = live site update** within ~30 seconds (refresh the page).
 
-| Dataset | What it is | Who sees it |
-|---------|------------|-------------|
-| **`preview`** | Staging copy for experiments, seed scripts, and pre-launch pages | Preview site (`relliahealth.vercel.app`) when env uses `preview` |
-| **`production`** | Live copy for the public marketing site | `www.relliahealth.com` when env uses `production` |
+| Who | Dataset | Where changes appear |
+|-----|---------|----------------------|
+| **Editors (Studio)** | **`production`** | `www.relliahealth.com` after Publish |
+| **Developers (Additions preview deploy)** | **`preview`** | `relliahealth.vercel.app` only |
 
-**Important:** Content you **publish** in Studio on the `preview` dataset is **published on preview**, not hidden drafts. It does **not** automatically appear on `www` until the same content exists in the **`production`** dataset (copy, re-publish, or migrate).
+Use **Presentation** in Studio to preview drafts on the live site before publishing. The admin **Content drafts** panel lists unpublished draft documents still being edited.
 
-The admin dashboard **Content drafts** panel shows:
+**One-time migration** (if staging had content production lacks):
 
-- **Unpublished draft** documents (`drafts.*` IDs) in the dataset the admin app is configured to read
-- **Recently edited published** documents in that same dataset
+```bash
+pnpm sanity:sync-to-production:dry
+pnpm sanity:sync-to-production -- --apply
+```
 
-It does **not** mean “everything on preview that is missing from main.” Stories, alumni, and advisor profiles on the preview site are usually **published documents in the `preview` dataset**, not draft queue items.
-
-### Promote preview → production (events)
-
-When preview has correct `startsAt` / `endsAt` but production does not:
+Legacy event-only sync (rarely needed):
 
 ```bash
 pnpm sanity:promote:dry
 pnpm sanity:promote -- --apply-production
 ```
-
-To remove an event entirely: `pnpm sanity:delete-event -- digital-health-salon-toronto --datasets=production,preview`
-
-To remove advisor/alumni from www only (keep on preview), unpublish those types in Studio on the **production** dataset.
 
 ### Static seed fallbacks (code defaults)
 
@@ -68,9 +62,9 @@ Use this when transferring the site to the Rellia team. Items marked **editor** 
 | 1 | **Vercel production env** — `VITE_SANITY_DATASET=production`, `SANITY_API_DATASET=production`, `SANITY_API_READ_TOKEN`, `SANITY_ENFORCE_VERCEL_DATASET=true`, Supabase + Stripe keys from `.env.example` | Live site reads the correct CMS dataset and APIs work |
 | 2 | **Vercel preview env** — same keys with `preview` dataset; `SANITY_STUDIO_PREVIEW_URL` = preview deploy URL | Staging matches Studio default dataset |
 | 3 | **Sanity Studio** — deployed (`pnpm sanity:studio:deploy`); Looker embed URL in **Site settings → Analytics** | Editors use https://relliahealth.sanity.studio |
-| 4 | **Seed starter content** — `pnpm sanity:seed:starters` on **preview** and **production** (terms, privacy, guide) | Empty legal singletons in Studio confuse editors |
-| 5 | **Production CMS audit** — events have `startsAt`/`endsAt`; retire old events; publish only what should be on www | Prevents wrong dates or ghost events on live site |
-| 6 | **Promote when ready** — `pnpm sanity:promote:dry` then `pnpm sanity:promote -- --apply-production` | Copies approved preview changes to production |
+| 4 | **Seed starter content** — `pnpm sanity:seed:starters` on **production** (terms, privacy, guide) if singletons are empty | Editors see legal pages in Studio |
+| 5 | **Production CMS audit** — events have `startsAt`/`endsAt`; publish only what should be on www | Prevents wrong dates or ghost events on live site |
+| 6 | **One-time sync** — `pnpm sanity:sync-to-production -- --apply` if preview had content production lacks | Aligns live site before client handoff |
 | 7 | **Supabase** — run `scripts/supabase_admin_policies.sql` for inbox status updates; run `scripts/supabase_revert_admin_role_policies.sql` if strict admin-role RLS was ever applied | Any invited user can sign in and read submissions |
 | 8 | **Admin access** — invite users in Supabase Auth; set `ADMIN_SIGNUP_ENABLED=false` on Vercel after onboarding | No public self-signup on `/admin/signup` |
 | 9 | **Smoke test** — www + preview: home, contact submit, diagnostic submit, admin login → Overview + Inbox | Confirms end-to-end paths |
@@ -96,7 +90,7 @@ Use this when transferring the site to the Rellia team. Items marked **editor** 
 | **Stripe in admin** | Membership checkout works on the site; admin does not show payment history. |
 | **HubSpot / legacy investor flows** | External tools may still exist outside the Supabase inbox. |
 | **Email alerts on new submissions** | Not built; optional Supabase webhook → email later. |
-| **Automatic preview→production** | Editors must ask a developer to run `sanity:promote` (or train one technical owner). |
+| **Automatic preview→production** | Not needed for editors — Studio edits production directly. Developers still use `preview` on the Additions Vercel deploy. |
 | **Diagnostic survey copy** | `/diagnostics` survey content is largely code + Supabase, not Sanity page documents. |
 
 Diagnostic survey routes (`/diagnostics`, `/diagnostic-survey`) use Supabase, not Sanity page content.

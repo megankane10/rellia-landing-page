@@ -23,6 +23,8 @@
     "sanity:cleanup": "tsx scripts/sanity-cleanup.ts",
     "sanity:promote:dry": "tsx scripts/promote-preview-to-production.ts",
     "sanity:promote": "tsx scripts/promote-preview-to-production.ts",
+    "sanity:sync-to-production:dry": "tsx scripts/sync-preview-to-production.ts",
+    "sanity:sync-to-production": "tsx scripts/sync-preview-to-production.ts",
     "sanity:delete-event": "tsx scripts/delete-sanity-event.ts",
     "sanity:studio:dev": "pnpm -C website-cms run dev",
     "sanity:studio:deploy": "pnpm -C website-cms run deploy",

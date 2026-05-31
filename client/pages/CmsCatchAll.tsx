@@ -46,8 +46,7 @@ export default function CmsCatchAll() {
             <h1 className="font-host-grotesk text-3xl font-semibold text-black">{page?.title ?? slug}</h1>
             <p className="mt-4 font-urbanist text-base text-black/65 leading-relaxed">
               This page is published in Sanity but has no sections yet. Add at least one section under{" "}
-              <strong>Page sections</strong> (or <strong>Page builder</strong>) in the CMS, then publish and run{" "}
-              <code className="rounded bg-black/5 px-1.5 py-0.5 text-sm">pnpm sanity:promote</code> for production.
+              <strong>Page sections</strong> (or <strong>Page builder</strong>) in Studio, then publish.
             </p>
           </div>
         )}

@@ -37,8 +37,8 @@ import type {
   SeoContent,
 } from "@shared/cms/types";
 
-// Keep Sanity-published changes feeling “instant” on Vercel.
-const staleTimeMs = 30 * 1000
+// Keep Sanity-published changes feeling “instant” on the live site.
+const staleTimeMs = 15 * 1000
 
 export const useGlobalSettings = () =>
   useQuery({

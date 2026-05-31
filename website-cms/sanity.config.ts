@@ -27,16 +27,17 @@ const theme = buildLegacyTheme({
 } as Record<string, string>)
 
 const previewOrigin = (
-  process.env.SANITY_STUDIO_PREVIEW_URL || 'https://relliahealth.vercel.app'
+  process.env.SANITY_STUDIO_PREVIEW_URL || 'https://www.relliahealth.com'
 ).replace(/\/$/, '')
 
 export default defineConfig({
   name: 'default',
   title: 'Rellia Web Studio',
+  subtitle: 'Live website content — Publish to update relliahealth.com',
   icon: RelliaStudioIcon,
 
   projectId: process.env.SANITY_STUDIO_PROJECT_ID || 'ggbt0o98',
-  dataset: process.env.SANITY_STUDIO_DATASET || 'preview',
+  dataset: process.env.SANITY_STUDIO_DATASET || 'production',
 
   theme,
 
