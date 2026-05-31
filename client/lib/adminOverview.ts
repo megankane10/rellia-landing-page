@@ -28,7 +28,7 @@ export const buildLastNDaysTrend = (
     const dayStart = new Date(now.getTime() - i * DAY_MS)
     const dayEnd = new Date(dayStart.getTime() + DAY_MS)
     const dateKey = dayStart.toISOString().slice(0, 10)
-    const label = dayStart.toLocaleDateString("en-CA", { weekday: "short", month: "short", day: "numeric" })
+    const label = dayStart.toLocaleDateString("en-CA", { month: "short", day: "numeric" })
 
     const inRange = (iso: string) => {
       const t = new Date(iso).getTime()
@@ -118,6 +118,12 @@ export const formatPercentChange = (value: number | null): string => {
   if (value === null) return "—"
   if (value > 0) return `+${value}%`
   return `${value}%`
+}
+
+export const welcomeBackTitle = (displayName: string, email?: string | null): string => {
+  const raw = displayName.trim() || email?.split("@")[0]?.trim() || "there"
+  const first = raw.split(/\s+/)[0] ?? raw
+  return `Welcome back, ${first}`
 }
 
 export const greetingForUser = (displayName: string, email?: string | null): string => {

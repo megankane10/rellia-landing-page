@@ -16,7 +16,7 @@ import cors from "cors";
 import express from "express";
 import helmet from "helmet";
 import { z as z2 } from "zod";
-import { createClient } from "@sanity/client";
+import { createClient as createClient2 } from "@sanity/client";
 import { validatePreviewUrl } from "@sanity/preview-url-secret";
 import { withoutSecretSearchParams } from "@sanity/preview-url-secret/without-secret-search-params";
 import { perspectiveCookieName as perspectiveCookieName2 } from "@sanity/preview-url-secret/constants";
@@ -1049,6 +1049,98 @@ var extractSanityDraftDocs = (body) => {
   });
 };
 
+// server/sanityPublishSync.ts
+import { createClient } from "@sanity/client";
+var isPublishedId = (id) => Boolean(id) && !id.startsWith("drafts.");
+var isSyncableType = (type) => Boolean(type) && !type.startsWith("system.") && !type.startsWith("sanity.");
+var extractPublishedMutationIds = (body) => {
+  if (!body || typeof body !== "object") {
+    return { upsertIds: [], deleteIds: [] };
+  }
+  const record = body;
+  const upsert = /* @__PURE__ */ new Set();
+  const deleted = /* @__PURE__ */ new Set();
+  const ids = record.ids;
+  if (ids && typeof ids === "object") {
+    const bucket = ids;
+    for (const key of ["created", "updated"]) {
+      const list = bucket[key];
+      if (!Array.isArray(list)) continue;
+      for (const id of list) {
+        if (typeof id === "string" && isPublishedId(id)) upsert.add(id);
+      }
+    }
+    const removed = bucket.deleted;
+    if (Array.isArray(removed)) {
+      for (const id of removed) {
+        if (typeof id === "string" && isPublishedId(id)) deleted.add(id);
+      }
+    }
+  }
+  if (Array.isArray(record.documents)) {
+    for (const doc of record.documents) {
+      if (!doc || typeof doc !== "object") continue;
+      const row = doc;
+      const id = typeof row._id === "string" ? row._id : "";
+      if (isPublishedId(id)) upsert.add(id);
+    }
+  }
+  return {
+    upsertIds: [...upsert],
+    deleteIds: [...deleted]
+  };
+};
+var stripForReplace = (doc) => {
+  const { _rev, ...rest } = doc;
+  return rest;
+};
+var syncPublishedDocsToProduction = async (options) => {
+  const { projectId, writeToken, upsertIds, deleteIds } = options;
+  if (upsertIds.length === 0 && deleteIds.length === 0) {
+    return { synced: 0, deleted: 0, skipped: 0 };
+  }
+  const preview = createClient({
+    projectId,
+    dataset: "preview",
+    token: writeToken,
+    apiVersion: "2024-01-01",
+    useCdn: false
+  });
+  const production = createClient({
+    projectId,
+    dataset: "production",
+    token: writeToken,
+    apiVersion: "2024-01-01",
+    useCdn: false
+  });
+  let synced = 0;
+  let skipped = 0;
+  for (const id of upsertIds) {
+    const doc = await preview.fetch(`*[_id == $id][0]{...}`, { id });
+    if (!doc || typeof doc._type !== "string" || !isSyncableType(doc._type)) {
+      skipped += 1;
+      continue;
+    }
+    if (doc._type === "sanity.imageAsset" || doc._type === "sanity.fileAsset" || id.startsWith("image-") || id.startsWith("file-")) {
+      await production.createOrReplace(stripForReplace(doc));
+      synced += 1;
+      continue;
+    }
+    await production.createOrReplace(stripForReplace(doc));
+    synced += 1;
+  }
+  let deleted = 0;
+  if (deleteIds.length > 0) {
+    const tx = production.transaction();
+    for (const id of deleteIds) {
+      tx.delete(id);
+    }
+    await tx.commit();
+    deleted = deleteIds.length;
+  }
+  return { synced, deleted, skipped };
+};
+
 // server/index.ts
 var headerOne = (req, name) => {
   const v = req.headers?.[name];
@@ -1256,6 +1348,47 @@ function createServer() {
       res.status(200).json({ ok: true, notified });
     }
   );
+  const sanityPublishWebhookRate = /* @__PURE__ */ new Map();
+  const SANITY_PUBLISH_WEBHOOK_MAX_PER_MIN = 120;
+  app2.post(
+    "/api/webhooks/sanity-publish",
+    rateLimitJson(sanityPublishWebhookRate, SANITY_PUBLISH_WEBHOOK_MAX_PER_MIN),
+    async (req, res) => {
+      const expectedSecret = process.env.SANITY_PUBLISH_WEBHOOK_SECRET?.trim();
+      if (!expectedSecret) {
+        res.status(501).json({ error: "SANITY_PUBLISH_WEBHOOK_SECRET is not configured" });
+        return;
+      }
+      const providedSecret = (typeof req.query.secret === "string" ? req.query.secret : "") || headerOne(req, "x-webhook-secret")?.trim() || "";
+      if (!providedSecret || providedSecret !== expectedSecret) {
+        res.status(401).json({ error: "Unauthorized" });
+        return;
+      }
+      const writeToken = process.env.SANITY_API_WRITE_TOKEN?.trim();
+      const projectId = process.env.SANITY_API_PROJECT_ID?.trim() || process.env.VITE_SANITY_PROJECT_ID?.trim() || "ggbt0o98";
+      if (!writeToken) {
+        res.status(501).json({ error: "Missing SANITY_API_WRITE_TOKEN" });
+        return;
+      }
+      const { upsertIds, deleteIds } = extractPublishedMutationIds(req.body);
+      if (upsertIds.length === 0 && deleteIds.length === 0) {
+        res.status(200).json({ ok: true, synced: 0, deleted: 0, skipped: 0 });
+        return;
+      }
+      try {
+        const result = await syncPublishedDocsToProduction({
+          projectId,
+          writeToken,
+          upsertIds,
+          deleteIds
+        });
+        res.status(200).json({ ok: true, ...result });
+      } catch (err) {
+        console.error("Sanity publish sync error:", err);
+        res.status(500).json({ error: "Could not sync published content to production." });
+      }
+    }
+  );
   app2.get(
     "/api/csrf-token",
     rateLimitJson(csrfIssueRate, CSRF_TOKEN_MAX_PER_MIN),
@@ -1331,7 +1464,7 @@ function createServer() {
           res.status(503).send("Sanity is not configured (set SANITY_API_PROJECT_ID)");
           return;
         }
-        const previewClient = createClient({
+        const previewClient = createClient2({
           projectId: apiResolved.projectId,
           dataset: apiResolved.dataset,
           token,
@@ -1496,7 +1629,7 @@ function createServer() {
           res.status(501).json({ error: "Missing SANITY_API_READ_TOKEN" });
           return;
         }
-        const previewClient = createClient({
+        const previewClient = createClient2({
           projectId,
           dataset,
           token,
@@ -1513,7 +1646,7 @@ function createServer() {
         });
         return;
       }
-      const publicClient = createClient({
+      const publicClient = createClient2({
         projectId,
         dataset,
         ...token ? { token } : {},
@@ -2002,8 +2135,8 @@ function createServer() {
         return;
       }
       try {
-        const { createClient: createClient2 } = await import("@supabase/supabase-js");
-        const sessionClient = createClient2(supabaseUrl, anonKey, {
+        const { createClient: createClient3 } = await import("@supabase/supabase-js");
+        const sessionClient = createClient3(supabaseUrl, anonKey, {
           auth: { autoRefreshToken: false, persistSession: false }
         });
         const { data: userData, error: userError } = await sessionClient.auth.getUser(token);
@@ -2011,7 +2144,7 @@ function createServer() {
           res.status(401).json({ error: "Invalid or expired session." });
           return;
         }
-        const adminClient = createClient2(supabaseUrl, serviceRoleKey, {
+        const adminClient = createClient3(supabaseUrl, serviceRoleKey, {
           auth: { autoRefreshToken: false, persistSession: false }
         });
         const { data: listData, error: listError } = await adminClient.auth.admin.listUsers({
@@ -2030,6 +2163,7 @@ function createServer() {
             id: u.id,
             email: u.email ?? "",
             fullName: fullNameRaw.trim() || null,
+            avatarUrl: typeof meta.avatar_url === "string" ? meta.avatar_url.trim() || null : typeof meta.picture === "string" ? meta.picture.trim() || null : null,
             createdAt: u.created_at,
             lastSignInAt: u.last_sign_in_at ?? null,
             confirmedAt: u.email_confirmed_at ?? null
@@ -2067,8 +2201,8 @@ function createServer() {
         return;
       }
       try {
-        const { createClient: createClient2 } = await import("@supabase/supabase-js");
-        const sessionClient = createClient2(supabaseUrl, anonKey, {
+        const { createClient: createClient3 } = await import("@supabase/supabase-js");
+        const sessionClient = createClient3(supabaseUrl, anonKey, {
           auth: { autoRefreshToken: false, persistSession: false }
         });
         const { data: userData, error: userError } = await sessionClient.auth.getUser(token);
@@ -2109,10 +2243,51 @@ function createServer() {
         };
         const currentStart = now - thirtyDays;
         const previousStart = now - thirtyDays * 2;
-        const [revenueLast30Days, revenuePrevious30Days] = await Promise.all([
+        const sevenDaysStart = now - 7 * 24 * 60 * 60;
+        const [revenueLast30Days, revenuePrevious30Days, recentCharges] = await Promise.all([
           sumSucceededCharges(currentStart),
-          sumSucceededCharges(previousStart, currentStart)
+          sumSucceededCharges(previousStart, currentStart),
+          (async () => {
+            const rows = [];
+            let startingAfter;
+            let hasMore = true;
+            while (hasMore) {
+              const page = await stripe.charges.list({
+                created: { gte: sevenDaysStart },
+                limit: 100,
+                ...startingAfter ? { starting_after: startingAfter } : {}
+              });
+              for (const charge of page.data) {
+                if (charge.status === "succeeded" && charge.paid) {
+                  rows.push({
+                    created: charge.created,
+                    amount: charge.amount - (charge.amount_refunded ?? 0)
+                  });
+                }
+              }
+              hasMore = page.has_more;
+              startingAfter = page.data.length > 0 ? page.data[page.data.length - 1]?.id : void 0;
+              if (!startingAfter) hasMore = false;
+            }
+            return rows;
+          })()
         ]);
+        const dayMs = 24 * 60 * 60;
+        const revenueDaily = [];
+        const today = /* @__PURE__ */ new Date();
+        today.setHours(0, 0, 0, 0);
+        for (let i = 6; i >= 0; i -= 1) {
+          const dayStart = new Date(today.getTime() - i * dayMs * 1e3);
+          const dayEnd = dayStart.getTime() + dayMs * 1e3;
+          const startSec = Math.floor(dayStart.getTime() / 1e3);
+          const endSec = Math.floor(dayEnd / 1e3);
+          const amount = recentCharges.filter((row) => row.created >= startSec && row.created < endSec).reduce((sum, row) => sum + row.amount, 0);
+          revenueDaily.push({
+            label: dayStart.toLocaleDateString("en-CA", { month: "short", day: "numeric" }),
+            dateKey: dayStart.toISOString().slice(0, 10),
+            amount
+          });
+        }
         const revenueChangePct = revenuePrevious30Days === 0 ? revenueLast30Days > 0 ? 100 : null : Math.round((revenueLast30Days - revenuePrevious30Days) / revenuePrevious30Days * 100);
         res.setHeader("content-type", "application/json");
         res.json({
@@ -2120,7 +2295,8 @@ function createServer() {
           currency: "cad",
           revenueLast30Days,
           revenuePrevious30Days,
-          revenueChangePct
+          revenueChangePct,
+          revenueDaily
         });
       } catch (err) {
         console.error("Admin stripe metrics error:", err);
@@ -2157,8 +2333,8 @@ function createServer() {
         return;
       }
       try {
-        const { createClient: createClient2 } = await import("@supabase/supabase-js");
-        const adminClient = createClient2(supabaseUrl, serviceRoleKey, {
+        const { createClient: createClient3 } = await import("@supabase/supabase-js");
+        const adminClient = createClient3(supabaseUrl, serviceRoleKey, {
           auth: { autoRefreshToken: false, persistSession: false }
         });
         const { error } = await adminClient.auth.admin.createUser({

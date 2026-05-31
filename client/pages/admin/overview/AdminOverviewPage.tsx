@@ -22,8 +22,8 @@ import {
   countSubmissionsBetweenDays,
   countUnresolved,
   formatPercentChange,
-  greetingForUser,
   percentChange,
+  welcomeBackTitle,
 } from "@/lib/adminOverview"
 import { getAdminDisplayName } from "@/lib/adminUserProfile"
 import { cmsContentQueryKey, fetchCmsContentQueue, isCmsContentEnabled } from "@/lib/adminSanityContent"
@@ -44,22 +44,33 @@ const trendChartConfig = {
   diagnostics: { label: "Diagnostics", color: CHART_COLORS.diagnostics },
 }
 
-const statusChartConfig = {
-  New: { label: "New", color: CHART_COLORS.new },
-  "In Progress": { label: "In progress", color: CHART_COLORS.progress },
-  Resolved: { label: "Resolved", color: CHART_COLORS.resolved },
+const revenueChartConfig = {
+  amount: { label: "Revenue", color: CHART_COLORS.contacts },
 }
+
+const CHART_X_AXIS_PROPS = {
+  tickLine: false as const,
+  axisLine: false as const,
+  tickMargin: 8,
+  fontSize: 11,
+  interval: 0 as const,
+  angle: -35,
+  textAnchor: "end" as const,
+  height: 48,
+}
+
+const CHART_MARGIN = { top: 8, right: 8, left: 0, bottom: 24 }
 
 type StatCardProps = {
   label: string
   value: number | string
-  hint?: string
   changePct?: number | null
+  changeCompare?: string
   href?: string
   loading?: boolean
 }
 
-const StatCard = ({ label, value, hint, changePct, href, loading }: StatCardProps) => {
+const StatCard = ({ label, value, changePct, changeCompare, href, loading }: StatCardProps) => {
   const changeLabel = formatPercentChange(changePct ?? null)
   const changeTone =
     changePct === null || changePct === 0
@@ -69,27 +80,34 @@ const StatCard = ({ label, value, hint, changePct, href, loading }: StatCardProp
         : "text-amber-700"
 
   const body = (
-    <Card className={cn("rounded-2xl", href && "transition-colors hover:border-rellia-teal/25 hover:bg-rellia-mint/5")}>
-      <CardHeader className="pb-2">
-        <CardDescription className="font-urbanist text-xs uppercase tracking-wide">{label}</CardDescription>
+    <Card
+      className={cn(
+        "flex h-full flex-col rounded-2xl",
+        href && "transition-colors hover:border-rellia-teal/25 hover:bg-rellia-mint/5",
+      )}
+    >
+      <CardHeader className="flex flex-1 flex-col pb-4">
+        <p className="font-urbanist text-sm font-normal text-foreground/85">{label}</p>
         {loading ? (
-          <Skeleton className="mt-2 h-9 w-16 rounded-xl" />
+          <Skeleton className="mt-3 h-9 w-24 rounded-xl" />
         ) : (
-          <div className="flex items-end justify-between gap-3">
-            <CardTitle className="font-host-grotesk text-3xl tabular-nums">{value}</CardTitle>
+          <div className="mt-3 flex items-start justify-between gap-3">
+            <CardTitle className="font-host-grotesk text-3xl tabular-nums leading-none">{value}</CardTitle>
             {changePct !== undefined ? (
-              <span className={cn("font-urbanist text-sm font-semibold tabular-nums", changeTone)}>
-                {changeLabel}
-              </span>
+              <div className="shrink-0 text-right">
+                <span className={cn("font-urbanist text-sm font-semibold tabular-nums", changeTone)}>
+                  {changeLabel}
+                </span>
+                {changeCompare ? (
+                  <p className="mt-0.5 font-urbanist text-[11px] leading-tight text-muted-foreground">
+                    {changeCompare}
+                  </p>
+                ) : null}
+              </div>
             ) : null}
           </div>
         )}
       </CardHeader>
-      {hint ? (
-        <CardContent className="pt-0">
-          <p className="font-urbanist text-xs text-muted-foreground">{hint}</p>
-        </CardContent>
-      ) : null}
     </Card>
   )
 
@@ -101,11 +119,17 @@ const StatCard = ({ label, value, hint, changePct, href, loading }: StatCardProp
   )
 }
 
+const statusChartConfig = {
+  New: { label: "New", color: CHART_COLORS.new },
+  "In Progress": { label: "In progress", color: CHART_COLORS.progress },
+  Resolved: { label: "Resolved", color: CHART_COLORS.resolved },
+}
+
 const AdminOverviewPage = () => {
   const { user, session } = useAuth()
   const token = session?.access_token ?? ""
   const displayName = getAdminDisplayName(user)
-  const greeting = greetingForUser(displayName, user?.email)
+  const pageTitle = welcomeBackTitle(displayName, user?.email)
 
   const contactsQuery = useQuery({ queryKey: ["admin-contact-submissions"], queryFn: fetchContactSubmissions })
   const diagnosticsQuery = useQuery({ queryKey: ["admin-company-profiles"], queryFn: fetchDiagnosticSubmissions })
@@ -154,48 +178,55 @@ const AdminOverviewPage = () => {
   const draftCount = draftsQuery.data?.length ?? 0
   const teamCount = teamQuery.data?.length ?? 0
   const stripeMetrics = stripeQuery.data
+  const revenueCurrency = (stripeMetrics?.currency ?? "cad").toUpperCase()
   const revenueDisplay =
     stripeMetrics?.configured && typeof stripeMetrics.revenueLast30Days === "number"
       ? new Intl.NumberFormat("en-CA", {
           style: "currency",
-          currency: (stripeMetrics.currency ?? "cad").toUpperCase(),
+          currency: revenueCurrency,
           maximumFractionDigits: 0,
         }).format(stripeMetrics.revenueLast30Days / 100)
       : "—"
+  const revenueTrend = (stripeMetrics?.revenueDaily ?? []).map((row) => ({
+    ...row,
+    amountDollars: row.amount / 100,
+  }))
+  const formatRevenueTick = (value: number) =>
+    new Intl.NumberFormat("en-CA", {
+      style: "currency",
+      currency: revenueCurrency,
+      maximumFractionDigits: 0,
+    }).format(value)
 
   return (
     <div className="space-y-6">
       <AdminPageHeader
-        title={greeting}
+        title={pageTitle}
         description="Snapshot of submissions, CMS drafts, and system health."
         actions={<AdminSystemStatus />}
       />
 
-      <div className="grid gap-4 md:grid-cols-3">
+      <div className="grid items-stretch gap-4 md:grid-cols-3">
         <StatCard
           label="Needs attention"
           value={unresolved}
-          hint="New or in progress"
           changePct={unresolvedChangePct}
+          changeCompare="vs prior 7 days"
           href="/admin/inbox"
           loading={loading}
         />
         <StatCard
           label="Submissions (7 days)"
           value={weekCount}
-          hint="Web forms + diagnostics"
           changePct={weekChangePct}
+          changeCompare="vs prior 7 days"
           loading={loading}
         />
         <StatCard
-          label="Stripe revenue (30 days)"
+          label="Revenue"
           value={revenueDisplay}
-          hint={
-            stripeMetrics?.configured
-              ? "Server-side read only — secret key never exposed to the browser"
-              : "Add STRIPE_SECRET_KEY on the server to enable"
-          }
           changePct={stripeMetrics?.revenueChangePct}
+          changeCompare="vs prior 30 days"
           loading={stripeQuery.isLoading}
         />
       </div>
@@ -208,12 +239,12 @@ const AdminOverviewPage = () => {
           </CardHeader>
           <CardContent>
             {loading ? (
-              <Skeleton className="h-[220px] w-full rounded-lg" />
+              <Skeleton className="h-[240px] w-full rounded-lg" />
             ) : (
-              <ChartContainer config={trendChartConfig} className="h-[220px] w-full">
-                <BarChart data={trend} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
+              <ChartContainer config={trendChartConfig} className="h-[240px] w-full">
+                <BarChart data={trend} margin={CHART_MARGIN}>
                   <CartesianGrid vertical={false} strokeDasharray="3 3" />
-                  <XAxis dataKey="label" tickLine={false} axisLine={false} tickMargin={8} fontSize={11} />
+                  <XAxis dataKey="label" {...CHART_X_AXIS_PROPS} />
                   <YAxis allowDecimals={false} tickLine={false} axisLine={false} width={28} fontSize={11} />
                   <ChartTooltip content={<ChartTooltipContent />} />
                   <Bar dataKey="contacts" stackId="a" fill="var(--color-contacts)" radius={[0, 0, 0, 0]} />
@@ -225,6 +256,45 @@ const AdminOverviewPage = () => {
         </Card>
 
         <Card className="rounded-2xl">
+          <CardHeader>
+            <CardTitle className="font-host-grotesk text-lg">Revenue</CardTitle>
+            <CardDescription className="font-urbanist">Daily Stripe charges (last 7 days)</CardDescription>
+          </CardHeader>
+          <CardContent>
+            {stripeQuery.isLoading ? (
+              <Skeleton className="h-[240px] w-full rounded-lg" />
+            ) : !stripeMetrics?.configured ? (
+              <p className="font-urbanist text-sm text-muted-foreground">
+                Add STRIPE_SECRET_KEY on the server to enable revenue tracking.
+              </p>
+            ) : (
+              <ChartContainer config={revenueChartConfig} className="h-[240px] w-full">
+                <BarChart data={revenueTrend} margin={CHART_MARGIN}>
+                  <CartesianGrid vertical={false} strokeDasharray="3 3" />
+                  <XAxis dataKey="label" {...CHART_X_AXIS_PROPS} />
+                  <YAxis
+                    tickLine={false}
+                    axisLine={false}
+                    width={56}
+                    fontSize={11}
+                    tickFormatter={formatRevenueTick}
+                  />
+                  <ChartTooltip
+                    content={
+                      <ChartTooltipContent
+                        formatter={(value) => formatRevenueTick(Number(value))}
+                      />
+                    }
+                  />
+                  <Bar dataKey="amountDollars" fill="var(--color-amount)" radius={[4, 4, 0, 0]} />
+                </BarChart>
+              </ChartContainer>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+
+      <Card className="rounded-2xl">
           <CardHeader>
             <CardTitle className="font-host-grotesk text-lg">Status breakdown</CardTitle>
             <CardDescription className="font-urbanist">All inbox items by workflow status</CardDescription>
@@ -276,7 +346,6 @@ const AdminOverviewPage = () => {
             )}
           </CardContent>
         </Card>
-      </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
         <Card className="rounded-2xl">

@@ -100,6 +100,11 @@ Rellia offers founder programs (QMS, fundraising, regulatory, clinical validatio
 - [/founders/alumni/patientcompanion](https://www.relliahealth.com/founders/alumni/patientcompanion): Alumni company profile in the Rellia Health founder network.
 
 
+## CMS pages
+
+- [/test](https://www.relliahealth.com/test): Public page on relliahealth.com.
+
+
 ## Legal
 
 - [/privacy](https://www.relliahealth.com/privacy): How Rellia Health collects, uses, and protects personal information when you use our website and services.

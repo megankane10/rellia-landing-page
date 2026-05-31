@@ -30,6 +30,10 @@ import {
   extractSanityDraftDocs,
   notifySanityDraftToSlack,
 } from "./slackNotify";
+import {
+  extractPublishedMutationIds,
+  syncPublishedDocsToProduction,
+} from "./sanityPublishSync";
 
 type RequestLike = {
   headers?: Record<string, unknown>;
@@ -321,6 +325,61 @@ export function createServer() {
       }
 
       res.status(200).json({ ok: true, notified });
+    },
+  );
+
+  const sanityPublishWebhookRate = new Map<string, RateState>();
+  const SANITY_PUBLISH_WEBHOOK_MAX_PER_MIN = 120;
+
+  app.post(
+    "/api/webhooks/sanity-publish",
+    rateLimitJson(sanityPublishWebhookRate, SANITY_PUBLISH_WEBHOOK_MAX_PER_MIN),
+    async (req, res) => {
+      const expectedSecret = process.env.SANITY_PUBLISH_WEBHOOK_SECRET?.trim();
+      if (!expectedSecret) {
+        res.status(501).json({ error: "SANITY_PUBLISH_WEBHOOK_SECRET is not configured" });
+        return;
+      }
+
+      const providedSecret =
+        (typeof req.query.secret === "string" ? req.query.secret : "") ||
+        headerOne(req, "x-webhook-secret")?.trim() ||
+        "";
+
+      if (!providedSecret || providedSecret !== expectedSecret) {
+        res.status(401).json({ error: "Unauthorized" });
+        return;
+      }
+
+      const writeToken = process.env.SANITY_API_WRITE_TOKEN?.trim();
+      const projectId =
+        process.env.SANITY_API_PROJECT_ID?.trim() ||
+        process.env.VITE_SANITY_PROJECT_ID?.trim() ||
+        "ggbt0o98";
+
+      if (!writeToken) {
+        res.status(501).json({ error: "Missing SANITY_API_WRITE_TOKEN" });
+        return;
+      }
+
+      const { upsertIds, deleteIds } = extractPublishedMutationIds(req.body);
+      if (upsertIds.length === 0 && deleteIds.length === 0) {
+        res.status(200).json({ ok: true, synced: 0, deleted: 0, skipped: 0 });
+        return;
+      }
+
+      try {
+        const result = await syncPublishedDocsToProduction({
+          projectId,
+          writeToken,
+          upsertIds,
+          deleteIds,
+        });
+        res.status(200).json({ ok: true, ...result });
+      } catch (err) {
+        console.error("Sanity publish sync error:", err);
+        res.status(500).json({ error: "Could not sync published content to production." });
+      }
     },
   );
 
@@ -1356,6 +1415,12 @@ export function createServer() {
               id: u.id,
               email: u.email ?? "",
               fullName: fullNameRaw.trim() || null,
+              avatarUrl:
+                typeof meta.avatar_url === "string"
+                  ? meta.avatar_url.trim() || null
+                  : typeof meta.picture === "string"
+                    ? meta.picture.trim() || null
+                    : null,
               createdAt: u.created_at,
               lastSignInAt: u.last_sign_in_at ?? null,
               confirmedAt: u.email_confirmed_at ?? null,
@@ -1462,10 +1527,55 @@ export function createServer() {
 
         const currentStart = now - thirtyDays;
         const previousStart = now - thirtyDays * 2;
-        const [revenueLast30Days, revenuePrevious30Days] = await Promise.all([
+        const sevenDaysStart = now - 7 * 24 * 60 * 60;
+
+        const [revenueLast30Days, revenuePrevious30Days, recentCharges] = await Promise.all([
           sumSucceededCharges(currentStart),
           sumSucceededCharges(previousStart, currentStart),
+          (async () => {
+            const rows: Array<{ created: number; amount: number }> = [];
+            let startingAfter: string | undefined;
+            let hasMore = true;
+            while (hasMore) {
+              const page = await stripe.charges.list({
+                created: { gte: sevenDaysStart },
+                limit: 100,
+                ...(startingAfter ? { starting_after: startingAfter } : {}),
+              });
+              for (const charge of page.data) {
+                if (charge.status === "succeeded" && charge.paid) {
+                  rows.push({
+                    created: charge.created,
+                    amount: charge.amount - (charge.amount_refunded ?? 0),
+                  });
+                }
+              }
+              hasMore = page.has_more;
+              startingAfter = page.data.length > 0 ? page.data[page.data.length - 1]?.id : undefined;
+              if (!startingAfter) hasMore = false;
+            }
+            return rows;
+          })(),
         ]);
+
+        const dayMs = 24 * 60 * 60;
+        const revenueDaily: Array<{ label: string; dateKey: string; amount: number }> = [];
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        for (let i = 6; i >= 0; i -= 1) {
+          const dayStart = new Date(today.getTime() - i * dayMs * 1000);
+          const dayEnd = dayStart.getTime() + dayMs * 1000;
+          const startSec = Math.floor(dayStart.getTime() / 1000);
+          const endSec = Math.floor(dayEnd / 1000);
+          const amount = recentCharges
+            .filter((row) => row.created >= startSec && row.created < endSec)
+            .reduce((sum, row) => sum + row.amount, 0);
+          revenueDaily.push({
+            label: dayStart.toLocaleDateString("en-CA", { month: "short", day: "numeric" }),
+            dateKey: dayStart.toISOString().slice(0, 10),
+            amount,
+          });
+        }
 
         const revenueChangePct =
           revenuePrevious30Days === 0
@@ -1481,6 +1591,7 @@ export function createServer() {
           revenueLast30Days,
           revenuePrevious30Days,
           revenueChangePct,
+          revenueDaily,
         });
       } catch (err) {
         console.error("Admin stripe metrics error:", err);

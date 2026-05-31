@@ -6,6 +6,7 @@ import { fetchAdminTeam } from "@/lib/adminApi"
 import AdminPageHeader from "@/components/admin/AdminPageHeader"
 import AdminRecordList from "@/components/admin/AdminRecordList"
 import AdminCompactEmptyState from "@/components/admin/AdminCompactEmptyState"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -27,6 +28,27 @@ const memberStatus = (member: AdminTeamUser) =>
     </span>
   )
 
+const memberInitials = (member: AdminTeamUser) => {
+  const name = member.fullName?.trim()
+  if (name) {
+    const parts = name.split(/\s+/).filter(Boolean)
+    if (parts.length >= 2) {
+      return `${parts[0]!.charAt(0)}${parts[parts.length - 1]!.charAt(0)}`.toUpperCase()
+    }
+    return parts[0]!.charAt(0).toUpperCase()
+  }
+  return member.email.charAt(0).toUpperCase()
+}
+
+const memberAvatar = (member: AdminTeamUser) => (
+  <Avatar className="h-9 w-9 shrink-0">
+    {member.avatarUrl ? <AvatarImage src={member.avatarUrl} alt="" /> : null}
+    <AvatarFallback className="bg-rellia-mint/25 font-urbanist text-xs font-medium text-rellia-teal">
+      {memberInitials(member)}
+    </AvatarFallback>
+  </Avatar>
+)
+
 const AdminTeamPage = () => {
   const { session } = useAuth()
   const token = session?.access_token ?? ""
@@ -43,7 +65,10 @@ const AdminTeamPage = () => {
       key: "name",
       header: "Name",
       cell: (member) => (
-        <span className="font-medium text-foreground">{member.fullName?.trim() || "—"}</span>
+        <div className="flex items-center gap-3">
+          {memberAvatar(member)}
+          <span className="font-medium text-foreground">{member.fullName?.trim() || "—"}</span>
+        </div>
       ),
     },
     {
@@ -121,7 +146,15 @@ const AdminTeamPage = () => {
               getRowKey={(member) => member.id}
               columns={columns}
               mobileFields={[
-                { label: "Name", value: (member) => member.fullName?.trim() || "—" },
+                {
+                  label: "Member",
+                  value: (member) => (
+                    <div className="flex items-center gap-2">
+                      {memberAvatar(member)}
+                      <span>{member.fullName?.trim() || member.email}</span>
+                    </div>
+                  ),
+                },
                 { label: "Email", value: (member) => member.email },
                 { label: "Status", value: (member) => memberStatus(member) },
               ]}

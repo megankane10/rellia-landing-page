@@ -2,6 +2,7 @@ export type AdminTeamUser = {
   id: string
   email: string
   fullName: string | null
+  avatarUrl: string | null
   createdAt: string
   lastSignInAt: string | null
   confirmedAt: string | null
@@ -28,6 +29,7 @@ export type AdminStripeMetrics = {
   revenueLast30Days?: number
   revenuePrevious30Days?: number
   revenueChangePct?: number | null
+  revenueDaily?: Array<{ label: string; dateKey: string; amount: number }>
 }
 
 export const fetchAdminStripeMetrics = async (accessToken: string): Promise<AdminStripeMetrics> => {
