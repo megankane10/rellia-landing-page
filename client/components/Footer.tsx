@@ -5,6 +5,7 @@ import { InstagramFilled, LinkedInFilled, MailFilled } from "@/components/icons/
 import { useGlobalSettings, useNavigation } from "@/hooks/useCmsDocuments"
 import type { NavItem } from "@shared/cms/types"
 import { GETPROVEN_VENDORS_GRID_URL } from "@/config/partnerLinks"
+import { ArrowUpRight } from "lucide-react"
 
 const isExternalHref = (href: string) => /^(https?:\/\/|mailto:|tel:)/i.test(href)
 
@@ -38,7 +39,7 @@ const FALLBACK_FOOTER_COLUMNS: NavItem[] = [
       { label: "Founders", href: "/founders" },
       { label: "Advisors", href: "/advisors" },
       { label: "Investors", href: "/investors" },
-      { label: "Industry Partners", href: GETPROVEN_VENDORS_GRID_URL },
+      { label: "Explore Industry Partners", href: GETPROVEN_VENDORS_GRID_URL },
     ],
   },
   {
@@ -48,7 +49,7 @@ const FALLBACK_FOOTER_COLUMNS: NavItem[] = [
       { label: "Stories", href: "/stories" },
       { label: "Explore Alumni", href: "/founders/alumni" },
       { label: "Explore Advisors", href: "/advisors/directory" },
-      { label: "Industry Partners Directory", href: GETPROVEN_VENDORS_GRID_URL },
+      { label: "Explore Industry Partners", href: GETPROVEN_VENDORS_GRID_URL },
     ],
   },
   {
@@ -165,15 +166,19 @@ export default function Footer() {
                     <nav className="flex flex-col gap-2 md:gap-3" aria-label={`${col.label} links`}>
                       {links.map((l) => {
                         if (isExternalHref(l.href)) {
+                          const isIndustryPartnersDirectory = l.href === GETPROVEN_VENDORS_GRID_URL
                           return (
                             <a
                               key={l.href}
                               href={l.href}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className={footerLinkClass}
+                              className={`inline-flex items-center gap-1.5 ${footerLinkClass}`}
                             >
-                              {l.label}
+                              <span>{isIndustryPartnersDirectory ? "Explore Industry Partners" : l.label}</span>
+                              {isIndustryPartnersDirectory ? (
+                                <ArrowUpRight className="h-4 w-4 shrink-0 opacity-80" aria-hidden />
+                              ) : null}
                             </a>
                           )
                         }

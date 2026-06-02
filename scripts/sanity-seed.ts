@@ -22,6 +22,7 @@ import {
 } from "../shared/cms/inlineHeroHeadline"
 import { ADVISOR_DIRECTORY_SEED, ADVISOR_FILTER_OPTIONS } from "../client/data/advisorDirectory"
 import { FOUNDER_DIRECTORY, ALL_LEVELS, ALL_SPECIALTIES } from "../client/data/founderDirectory"
+import { PORTFOLIO_LOGO_MARKS } from "../client/data/portfolioLogos"
 import { ROUTE_SEO } from "../client/config/seo"
 import { STORIES } from "../client/content/stories"
 import { CAREERS_OPEN_ROLES } from "../shared/careersOpenRoles"
@@ -750,6 +751,105 @@ const toSanityImageFieldValue = (assetId: string | null) =>
       }
     : undefined
 
+/** Careers join-team band — uploaded to Sanity so production does not rely on Pexels fallbacks. */
+const CAREERS_TEAM_MARQUEE_URLS = [
+  "https://images.pexels.com/photos/3184292/pexels-photo-3184292.jpeg?auto=compress&cs=tinysrgb&w=900",
+  "https://images.pexels.com/photos/3184418/pexels-photo-3184418.jpeg?auto=compress&cs=tinysrgb&w=900",
+  "https://images.pexels.com/photos/3184360/pexels-photo-3184360.jpeg?auto=compress&cs=tinysrgb&w=900",
+  "https://images.pexels.com/photos/3184296/pexels-photo-3184296.jpeg?auto=compress&cs=tinysrgb&w=900",
+  "https://images.pexels.com/photos/3184339/pexels-photo-3184339.jpeg?auto=compress&cs=tinysrgb&w=900",
+  "https://images.pexels.com/photos/3184465/pexels-photo-3184465.jpeg?auto=compress&cs=tinysrgb&w=900",
+] as const
+
+const resolveRemoteImageAssetId = async (
+  client: ReturnType<typeof createClient>,
+  url: string,
+  filename: string,
+): Promise<string | null> => {
+  try {
+    const res = await fetch(url)
+    if (!res.ok) return null
+    const buffer = Buffer.from(await res.arrayBuffer())
+    const uploaded = await client.assets.upload("image", buffer, { filename })
+    return uploaded?._id ?? null
+  } catch {
+    return null
+  }
+}
+
+const buildLogoMarqueeItems = async (
+  client: ReturnType<typeof createClient>,
+  marks: ReadonlyArray<{ readonly name: string; readonly src: string }>,
+) => {
+  const items: Array<{
+    _type: "logoMarqueeItem"
+    _key: string
+    name: string
+    logo?: ReturnType<typeof toSanityImageFieldValue>
+  }> = []
+  for (const mark of marks) {
+    const assetId = await resolveImageAssetId(client, mark.src)
+    const logo = toSanityImageFieldValue(assetId)
+    if (!logo) continue
+    items.push({
+      _type: "logoMarqueeItem",
+      _key: `logo-${slugify(mark.name)}`,
+      name: mark.name,
+      logo,
+    })
+  }
+  return items
+}
+
+const buildCareersTeamMarqueeImages = async (client: ReturnType<typeof createClient>) => {
+  const images: Array<{ _key: string; alt: string; asset?: { _type: "reference"; _ref: string } }> = []
+  let index = 0
+  for (const url of CAREERS_TEAM_MARQUEE_URLS) {
+    const filename = `careers-marquee-${index + 1}.jpg`
+    const assetId = await resolveRemoteImageAssetId(client, url, filename)
+    if (!assetId) continue
+    images.push({
+      _key: `careers-marquee-${index}`,
+      alt: "",
+      asset: { _type: "reference", _ref: assetId },
+    })
+    index += 1
+  }
+  return images.map((row) => ({
+    _key: row._key,
+    alt: row.alt,
+    _type: "image" as const,
+    asset: row.asset,
+  }))
+}
+
+/** Membership fields actually rendered on /membership (no legacy hero/image-card copy). */
+const paymentPageSeedDocument = () => ({
+  _id: "paymentPage",
+  _type: "paymentPage",
+  ...pagePublishingLive,
+  benefitsPanelHeadline: DEFAULT_PAYMENT_PAGE.benefitsPanelHeadline,
+  benefitsTitle: DEFAULT_PAYMENT_PAGE.benefitsTitle,
+  benefits: DEFAULT_PAYMENT_PAGE.benefits,
+  choosePlanHeadline: DEFAULT_PAYMENT_PAGE.choosePlanHeadline,
+  pricingMonthlyAmount: DEFAULT_PAYMENT_PAGE.pricingMonthlyAmount,
+  pricingAnnualAmount: DEFAULT_PAYMENT_PAGE.pricingAnnualAmount,
+  pricingMonthlyDiscountEnabled: DEFAULT_PAYMENT_PAGE.pricingMonthlyDiscountEnabled,
+  pricingMonthlyCompareAmount: DEFAULT_PAYMENT_PAGE.pricingMonthlyCompareAmount,
+  pricingAnnualDiscountEnabled: DEFAULT_PAYMENT_PAGE.pricingAnnualDiscountEnabled,
+  pricingAnnualCompareAmount: DEFAULT_PAYMENT_PAGE.pricingAnnualCompareAmount,
+  monthlyProceedLabel: DEFAULT_PAYMENT_PAGE.monthlyProceedLabel,
+  annualProceedLabel: DEFAULT_PAYMENT_PAGE.annualProceedLabel,
+  discountBannerEnabled: DEFAULT_PAYMENT_PAGE.discountBannerEnabled,
+  discountBannerBadge: DEFAULT_PAYMENT_PAGE.discountBannerBadge,
+  discountBannerTitle: DEFAULT_PAYMENT_PAGE.discountBannerTitle,
+  discountBannerSubtitle: DEFAULT_PAYMENT_PAGE.discountBannerSubtitle,
+  discountBannerApplyLabel: DEFAULT_PAYMENT_PAGE.discountBannerApplyLabel,
+  promoPillEnabled: DEFAULT_PAYMENT_PAGE.promoPillEnabled,
+  promoMessage: DEFAULT_PAYMENT_PAGE.promoMessage,
+  seo: { ...(seoForRoute("/membership") ?? {}), noIndex: true },
+})
+
 async function main() {
   const projectId =
     process.env.SANITY_API_PROJECT_ID?.trim() ||
@@ -770,6 +870,10 @@ async function main() {
   })
 
   const mutations: any[] = []
+
+  const foundersLogoMarquee = await buildLogoMarqueeItems(client, PORTFOLIO_LOGO_MARKS)
+  const investorsLogoMarquee = await buildLogoMarqueeItems(client, PORTFOLIO_LOGO_MARKS)
+  const careersTeamMarqueeImages = await buildCareersTeamMarqueeImages(client)
 
   // Clear existing directory docs so seed is the source of truth.
   // These docs were originally created in Studio with random IDs, so deterministic seeding
@@ -823,6 +927,7 @@ async function main() {
       useModularPage: false,
       ...pagePublishingLive,
       seo: seoForRoute("/founders"),
+      logoMarquee: foundersLogoMarquee.length > 0 ? foundersLogoMarquee : undefined,
       sections: [
         {
           _type: "sectionHero",
@@ -935,6 +1040,7 @@ async function main() {
       useModularPage: false,
       ...pagePublishingLive,
       seo: seoForRoute("/investors"),
+      logoMarquee: investorsLogoMarquee.length > 0 ? investorsLogoMarquee : undefined,
       sections: [
         {
           _type: "sectionHero",
@@ -1115,6 +1221,8 @@ async function main() {
         responsibilities: role.responsibilities,
         linkedInApplyUrl: role.linkedInApplyUrl,
       })),
+      teamMarqueeImages:
+        careersTeamMarqueeImages.length > 0 ? careersTeamMarqueeImages : undefined,
       seo: seoForRoute("/careers"),
     },
   })
@@ -1276,17 +1384,13 @@ async function main() {
     createOrReplace: {
       _id: "applyPage",
       _type: "applyPage",
+      ...pagePublishingLive,
       ...DEFAULT_APPLY_PAGE,
       seo: seoForRoute("/apply"),
     },
   })
   mutations.push({
-    createOrReplace: {
-      _id: "paymentPage",
-      _type: "paymentPage",
-      ...DEFAULT_PAYMENT_PAGE,
-      seo: { ...(seoForRoute("/membership") ?? {}), noIndex: true },
-    },
+    createOrReplace: paymentPageSeedDocument(),
   })
   mutations.push({
     createOrReplace: {
@@ -1600,6 +1704,7 @@ async function main() {
         country: advisor.country,
         yearJoined: advisor.yearJoined,
         industries: advisor.industries,
+        snapshot: advisor.focus,
         focus: advisor.focus,
         filter: filterRefId
           ? { _type: "reference", _ref: filterRefId }

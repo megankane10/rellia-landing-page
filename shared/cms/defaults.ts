@@ -1,8 +1,6 @@
 import {
   threePartHeroHeadline,
   DEFAULT_HOME_TESTIMONIALS_TITLE_PORTABLE,
-  DEFAULT_PAYMENT_HERO_PORTABLE,
-  DEFAULT_PAYMENT_IMAGE_CARD_HEADLINE_PORTABLE,
   DEFAULT_PROGRAMS_LANDING_HERO_PORTABLE,
 } from "./inlineHeroHeadline"
 import type {
@@ -2240,14 +2238,13 @@ export const DEFAULT_QMS_PROGRAM: QmsProgramContent = {
   ],
 }
 
+/** Fields used by `client/pages/Payment.tsx` — matches Studio membership schema. */
 export const DEFAULT_PAYMENT_PAGE: PaymentPageContent = {
-  badge: "Rellia Health",
-  headline: "You're approved for the Rellia program!",
-  introCheckout: "Complete your enrollment with the secure checkout below.",
-  introFallback:
-    "Complete your enrollment with the secure Stripe payment page (opens in a new tab).",
-  introFallbackError:
-    "We couldn't load embedded checkout. Use the secure Stripe payment page below (opens in a new tab).",
+  badge: "",
+  headline: "",
+  introCheckout: "",
+  introFallback: "",
+  introFallbackError: "",
   benefitsTitle: "Join the Rellia Health Network",
   benefits: [
     "Personalized warm introductions to the right investors, partners, and clinicians",
@@ -2256,9 +2253,8 @@ export const DEFAULT_PAYMENT_PAGE: PaymentPageContent = {
     "Access to advisory consulting that would cost >$300/hr anywhere else",
     "Cancel any time — no long-term commitment required",
   ],
-  successTitle: "Payment received",
-  successBody:
-    "Thank you — your enrollment payment went through. We'll be in touch with next steps.",
+  successTitle: "",
+  successBody: "",
   discountBannerEnabled: true,
   discountBannerBadge: "LIMITED OFFER",
   discountBannerTitle:
@@ -2266,21 +2262,8 @@ export const DEFAULT_PAYMENT_PAGE: PaymentPageContent = {
   discountBannerSubtitle: "",
   discountBannerApplyLabel: "Apply code",
   discountBannerApplyHref: "",
-  heroHeadlinePortable: DEFAULT_PAYMENT_HERO_PORTABLE,
-  heroSubheadline:
-    "Where founders, mentors, investors, and clinicians build the future of healthcare — together.",
-  imageCardBadge: "The benefits",
-  imageCardHeadlinePortable: DEFAULT_PAYMENT_IMAGE_CARD_HEADLINE_PORTABLE,
-  imageCardSrc: "/images/cta-home-conference.webp",
-  imageCardAlt: "Healthcare community event space",
-  highlightBenefits: [
-    "Find investors who are excited about your healthcare",
-    "Get feedback directly from clinicians and patients",
-    "Secure placement in hospital pilot programs",
-    "Partner with digital health industry leaders",
-  ],
-  pricingMonthlyBadge: "Monthly membership",
-  pricingAnnualBadge: "Annual membership",
+  pricingMonthlyBadge: "",
+  pricingAnnualBadge: "",
   pricingMonthlyAmount: "$30",
   pricingAnnualAmount: "$25",
   pricingMonthlyDiscountEnabled: false,
@@ -2292,15 +2275,15 @@ export const DEFAULT_PAYMENT_PAGE: PaymentPageContent = {
   promoPillEnabled: true,
   promoMessage:
     "Founding members get 50% off first purchase using code {code}",
-  pricingPerSuffix: "/month",
-  popularLabel: "POPULAR",
+  pricingPerSuffix: "",
+  popularLabel: "",
   monthlyProceedLabel: "Proceed to payment",
   annualProceedLabel: "Proceed to payment",
-  questionsTitle: "Questions before getting started?",
-  questionsFaqLabel: "See Frequently Asked Questions",
-  questionsFaqPath: "/faq",
-  questionsContactLabel: "Get in Touch",
-  questionsContactPath: "/contact",
+  questionsTitle: "",
+  questionsFaqLabel: "",
+  questionsFaqPath: "",
+  questionsContactLabel: "",
+  questionsContactPath: "",
 }
 
 export const DEFAULT_APPLY_PAGE: ApplyPageContent = {
@@ -2528,11 +2511,6 @@ export function mergePaymentPage(
   const base = { ...DEFAULT_PAYMENT_PAGE, ...p }
   const benefits = compactList(p.benefits).filter((x): x is string => typeof x === "string" && x.trim() !== "")
   base.benefits = benefits.length > 0 ? benefits : DEFAULT_PAYMENT_PAGE.benefits
-  const highlightBenefits = compactList(p.highlightBenefits).filter(
-    (x): x is string => typeof x === "string" && x.trim() !== "",
-  )
-  base.highlightBenefits =
-    highlightBenefits.length > 0 ? highlightBenefits : DEFAULT_PAYMENT_PAGE.highlightBenefits
   const fill = (key: keyof PaymentPageContent, fallback: string) => {
     const v = base[key]
     if (typeof v === "string" && !v.trim()) {

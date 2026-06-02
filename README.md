@@ -183,8 +183,10 @@ Starts the Node server that serves the built SPA and API (default port from `POR
 | `pnpm dev` | Vite dev server (hot reload) + Express middleware |
 | `pnpm build` | Build SPA, Node server bundle, and `api/index.js` |
 | `pnpm start` | Run production Node server locally (`dist/server/node-build.mjs`) |
-| `pnpm sanity:seed` | Full seed — singletons, events, directory (`scripts/sanity-seed.ts`; deletes/replaces advisors) |
+| `pnpm sanity:seed` | Full seed — singletons, events, stories, directories, logo marquees, careers image scroll, membership copy aligned with `/membership` (deletes/replaces advisors & alumni) |
 | `pnpm sanity:seed:starters` | Safe starter seed — terms, privacy, CMS guide, consulting/diagnostic shells (no directory wipe) |
+
+After schema changes, run **`pnpm sanity:seed`** on **preview** first, verify the site, then **`pnpm sanity:sync-to-production -- --apply`** (or seed production directly) so www does not rely on code fallbacks.
 | `pnpm sanity:cleanup` | Remove obsolete docs + duplicate singletons/slugs (`scripts/sanity-cleanup.ts`) |
 | `pnpm test` | Vitest |
 | `pnpm typecheck` | TypeScript (`tsc`) |
