@@ -55,7 +55,7 @@ const CHART_X_AXIS_PROPS = {
   height: 48,
 }
 
-const CHART_MARGIN = { top: 8, right: 8, left: 0, bottom: 24 }
+const CHART_MARGIN = { top: 8, right: 4, left: 0, bottom: 32 }
 
 type StatCardProps = {
   label: string
@@ -175,7 +175,7 @@ const AdminOverviewPage = () => {
         actions={<AdminSystemStatus />}
       />
 
-      <div className="grid items-stretch gap-4 md:grid-cols-2">
+      <div className="grid grid-cols-1 items-stretch gap-4 sm:grid-cols-2">
         <StatCard
           label="Needs attention"
           value={unresolved}
@@ -202,7 +202,7 @@ const AdminOverviewPage = () => {
           {loading ? (
             <Skeleton className="h-[280px] w-full rounded-lg" />
           ) : (
-            <ChartContainer config={trendChartConfig} className="h-[280px] w-full">
+            <ChartContainer config={trendChartConfig} className="h-[240px] w-full min-w-0 sm:h-[280px]">
               <BarChart data={trend} margin={CHART_MARGIN}>
                 <CartesianGrid vertical={false} strokeDasharray="3 3" />
                 <XAxis dataKey="label" {...CHART_X_AXIS_PROPS} />

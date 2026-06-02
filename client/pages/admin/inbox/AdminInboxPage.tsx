@@ -317,7 +317,9 @@ const AdminInboxPage = () => {
     }
 
     const listShell = (content: ReactNode) => (
-      <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">{content}</div>
+      <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm [&_ul]:p-3 [&_ul]:md:p-0">
+        {content}
+      </div>
     )
 
     if (tab === "contact") {

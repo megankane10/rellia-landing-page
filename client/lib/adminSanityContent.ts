@@ -89,7 +89,11 @@ export const formatCmsDocumentTypeLabel = (type: string): string => {
     .trim()
 }
 
-export const ADMIN_SANITY_DATASET_TABS: { id: AdminSanityDataset; label: string }[] = [
-  { id: "production", label: "Public Production Dataset" },
-  { id: "preview", label: "Staging Development Dataset" },
+export const ADMIN_SANITY_DATASET_TABS: {
+  id: AdminSanityDataset
+  label: string
+  shortLabel: string
+}[] = [
+  { id: "production", label: "Public Production Dataset", shortLabel: "Production" },
+  { id: "preview", label: "Staging Development Dataset", shortLabel: "Staging" },
 ]

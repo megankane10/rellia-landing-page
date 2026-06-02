@@ -99,7 +99,7 @@ const AdminTeamPage = () => {
 
   return (
     <div className="space-y-6">
-      <div className="rounded-r-xl border-l-4 border-indigo-600 bg-indigo-50/60 p-4">
+      <div className="rounded-r-xl border-l-4 border-indigo-600 bg-indigo-50/60 p-4 sm:p-5">
         <div className="flex flex-col gap-1.5">
           <span className="text-sm font-semibold text-indigo-900">🔒 Administrative Access Controls</span>
           <p className="text-xs leading-relaxed text-indigo-700">

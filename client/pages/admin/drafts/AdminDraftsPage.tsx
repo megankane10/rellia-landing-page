@@ -75,7 +75,7 @@ const AdminDraftsPage = () => {
       ) : (
         <>
           <div
-            className="mb-6 flex flex-wrap gap-2 border-b border-slate-200 pb-4"
+            className="mb-6 flex flex-col gap-2 border-b border-slate-200 pb-4 sm:flex-row sm:flex-wrap"
             role="tablist"
             aria-label="Sanity dataset"
           >
@@ -87,13 +87,15 @@ const AdminDraftsPage = () => {
                 aria-selected={dataset === tab.id}
                 onClick={() => handleDatasetChange(tab.id)}
                 className={cn(
-                  "rounded-lg px-4 py-2 font-urbanist text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                  "w-full rounded-lg px-4 py-2.5 text-left font-urbanist text-sm font-medium transition-all sm:w-auto sm:text-center",
+                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
                   dataset === tab.id
                     ? "bg-slate-900 text-white shadow-sm"
                     : "bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900",
                 )}
               >
-                {tab.label}
+                <span className="sm:hidden">{tab.shortLabel}</span>
+                <span className="hidden sm:inline">{tab.label}</span>
               </button>
             ))}
           </div>

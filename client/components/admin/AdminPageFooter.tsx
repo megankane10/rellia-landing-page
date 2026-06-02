@@ -10,7 +10,7 @@ const AdminPageFooter = () => {
 
   return (
     <footer className="mt-12 border-t border-slate-100 pt-6 pb-8">
-      <div className="grid gap-6 text-sm font-urbanist md:grid-cols-3">
+      <div className="grid gap-6 text-sm font-urbanist sm:grid-cols-2 lg:grid-cols-3">
         <div>
           <p className="text-slate-600">Rellia Admin Panel</p>
           <p className="mt-1 text-xs text-slate-400">© {year} Rellia Health. Internal use only.</p>
