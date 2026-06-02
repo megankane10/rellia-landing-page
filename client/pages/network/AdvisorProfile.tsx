@@ -54,6 +54,12 @@ export default function AdvisorProfile() {
     return () => setPageSeo(null);
   }, [active, setPageSeo]);
 
+  useEffect(() => {
+    if (id) {
+      window.scrollTo({ top: 0, behavior: "instant" });
+    }
+  }, [id]);
+
   if (isSanityConfigured() && isCmsQueryLoading(advisorsQuery)) {
     return <CmsPageLoadingShell />;
   }

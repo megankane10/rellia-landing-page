@@ -57,7 +57,6 @@ function AdvisorCard({
     ...(advisor.filter ? [advisor.filter] : []),
     ...(Array.isArray(advisor.industries) ? advisor.industries : []),
   ]
-  const locationLabel = formatAdvisorLocation(advisor)
 
   return (
     <motion.article
@@ -98,17 +97,7 @@ function AdvisorCard({
         <p className="mt-1 font-urbanist text-sm font-medium text-black/77">
           {advisor.organization}
         </p>
-        {(advisor.snapshot ?? advisor.focus)?.trim() ? (
-          <p className="mt-2 font-urbanist text-sm text-black/55 leading-relaxed line-clamp-3">
-            {advisor.snapshot ?? advisor.focus}
-          </p>
-        ) : null}
-        {locationLabel ? (
-          <p className="mt-2 font-urbanist text-xs font-medium text-black/55 leading-snug">
-            {locationLabel}
-          </p>
-        ) : null}
-        <p className="mt-1 font-urbanist text-sm text-black/60">
+        <p className="mt-2 font-urbanist text-sm text-black/55 leading-relaxed">
           {advisor.role}
         </p>
       </div>

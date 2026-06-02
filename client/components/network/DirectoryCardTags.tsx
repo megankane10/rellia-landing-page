@@ -15,6 +15,8 @@ export const DirectoryCardTags = ({
   const unique = [...new Set(tags.map((t) => t.trim()).filter(Boolean))]
   if (unique.length === 0) return null
 
+  const [primary, ...secondary] = unique
+
   return (
     <div
       className={cn(
@@ -22,14 +24,28 @@ export const DirectoryCardTags = ({
         className,
       )}
     >
-      {unique.map((tag) => (
+      {/* Primary tag — teal pill with softer opacity */}
+      <span
+        key={primary}
+        className={cn(
+          "inline-flex rounded-full border px-2.5 py-0.5 font-urbanist text-[10px] font-semibold backdrop-blur-sm shadow-sm",
+          variant === "onPhoto"
+            ? "border-rellia-mint/70 bg-rellia-mint/35 text-white"
+            : "border-rellia-teal/30 bg-rellia-mint/22 text-rellia-teal",
+        )}
+      >
+        {primary}
+      </span>
+
+      {/* Secondary tags — neutral chips */}
+      {secondary.map((tag) => (
         <span
           key={tag}
           className={cn(
             "inline-flex rounded-full border px-2.5 py-0.5 font-urbanist text-[10px] font-semibold backdrop-blur-sm shadow-sm",
             variant === "onPhoto"
-              ? "border-white/35 bg-rellia-teal/55 text-white"
-              : "border-rellia-teal/20 bg-white/80 text-rellia-teal",
+              ? "border-white/22 bg-black/45 text-white/92"
+              : "border-black/10 bg-white/85 text-black/78",
           )}
         >
           {tag}
