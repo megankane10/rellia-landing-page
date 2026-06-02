@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom"
 import { ExternalLink } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -9,6 +10,15 @@ const GOOGLE_DOC_EDIT_URL =
   "https://docs.google.com/document/d/17lMkt2Jqa4fswCd_DpjHpvwMQH-5QBMDvzcw5MGLDVo/edit?usp=sharing"
 const GOOGLE_DOC_EMBED_URL =
   "https://docs.google.com/document/d/e/2PACX-1vSmTtp1CbT0nL2DjluTFCgV6E8ezDIbRPL_iSRvTtLZnmYQNXjHiwnoUuArw0GEg5hUSzw8wAkGroUE/pub?embedded=true"
+
+const routeBadge = (to: string, label: string) => (
+  <Link
+    to={to}
+    className="inline-flex rounded bg-slate-100 px-2 py-0.5 font-mono text-xs text-slate-800 transition-colors hover:bg-slate-200"
+  >
+    {label}
+  </Link>
+)
 
 const WEBSITE_TOOLS = [
   {
@@ -50,7 +60,7 @@ const AdminHelpPage = () => (
       description="Plain-language guides for editors plus links to external tools."
     />
 
-    <div className="grid gap-4 md:grid-cols-2">
+    <div id="docs" className="scroll-mt-6 grid grid-cols-1 gap-6 md:grid-cols-2">
       <Card>
         <CardHeader>
           <CardTitle className="font-host-grotesk text-lg">What this dashboard is for</CardTitle>
@@ -63,8 +73,15 @@ const AdminHelpPage = () => (
           </p>
           <p>
             Marketing copy, images, events, and program pages are edited in{" "}
-            <strong className="text-foreground">Sanity Studio</strong> (separate app). You do not need to touch code for
-            day-to-day content updates.
+            <a
+              href="https://relliahealth.sanity.studio"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-medium text-rellia-teal underline hover:text-rellia-teal/80"
+            >
+              Sanity Studio
+            </a>{" "}
+            (separate app). You do not need to touch code for day-to-day content updates.
           </p>
         </CardContent>
       </Card>
@@ -75,12 +92,21 @@ const AdminHelpPage = () => (
         </CardHeader>
         <CardContent className="space-y-2 font-urbanist text-sm leading-relaxed text-muted-foreground">
           <p>
-            <strong className="text-foreground">Sanity Studio</strong> — page text, heroes, images, SEO, events, stories,
-            advisors, founders directory, legal pages (terms/privacy), and visibility (Live vs coming soon).
+            <a
+              href="https://relliahealth.sanity.studio"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-medium text-foreground underline decoration-rellia-teal/40 hover:text-rellia-teal"
+            >
+              Sanity Studio
+            </a>{" "}
+            — page text, heroes, images, SEO, events, stories, advisors, founders directory, legal pages (terms/privacy),
+            and visibility (Live vs coming soon).
           </p>
           <p>
-            <strong className="text-foreground">Admin dashboard (here)</strong> — contact forms, investor
-            notifications, startup diagnostic results, team accounts, and a list of unpublished Sanity drafts.
+            <strong className="text-foreground">Admin dashboard (here)</strong> — contact forms, investor notifications,
+            startup diagnostic results, team accounts, and a list of unpublished Sanity drafts. Start from{" "}
+            {routeBadge("/admin/overview", "Overview")} or {routeBadge("/admin/inbox", "Inbox")}.
           </p>
         </CardContent>
       </Card>
@@ -93,11 +119,19 @@ const AdminHelpPage = () => (
           <p>
             Sanity Studio edits the <strong className="text-foreground">live website</strong> directly. When you click{" "}
             <strong className="text-foreground">Publish</strong>, changes appear on{" "}
-            <code className="text-xs">www.relliahealth.com</code> within about a minute (refresh the page if needed).
+            <a
+              href="https://www.relliahealth.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-mono text-xs text-slate-800 underline hover:text-rellia-teal"
+            >
+              www.relliahealth.com
+            </a>{" "}
+            within about a minute (refresh the page if needed).
           </p>
           <p>
             Use <strong className="text-foreground">Presentation</strong> in Studio to preview draft changes before
-            publishing. Unpublished drafts stay private until you publish.
+            publishing. Track unpublished work in {routeBadge("/admin/drafts", "Sanity drafts")}.
           </p>
         </CardContent>
       </Card>
@@ -108,9 +142,10 @@ const AdminHelpPage = () => (
         </CardHeader>
         <CardContent className="space-y-2 font-urbanist text-sm leading-relaxed text-muted-foreground">
           <p>
-            Contact, investor notify, and similar forms save to the <strong className="text-foreground">Inbox → Web
-            forms</strong> tab. Startup diagnostic completions save under{" "}
-            <strong className="text-foreground">Startup diagnostic</strong>. Update status as you work each lead.
+            Contact, investor notify, and similar forms save under {routeBadge("/admin/inbox?tab=contact", "Inbox")} →{" "}
+            <span className="font-medium text-foreground">Web forms</span>. Startup diagnostic completions save under{" "}
+            {routeBadge("/admin/inbox?tab=diagnostic", "Inbox")} →{" "}
+            <span className="font-medium text-foreground">Startup diagnostic</span>. Update status as you work each lead.
           </p>
           <p>Membership checkout and payment flows use Stripe — they are not listed in this inbox.</p>
         </CardContent>
@@ -125,19 +160,22 @@ const AdminHelpPage = () => (
             <li>New page types, forms, or checkout flows</li>
             <li>Site down, login broken, or inbox empty after sign-in</li>
             <li>Domain, DNS, or environment variable changes on Vercel</li>
-            <li>Adding or removing admin users (invite via Supabase Auth)</li>
+            <li>
+              Adding or removing admin users — see {routeBadge("/admin/team", "Team")} or invite via Supabase Auth
+            </li>
           </ul>
         </CardContent>
       </Card>
 
-      <Card>
+      <Card id="account" className="scroll-mt-6">
         <CardHeader>
           <CardTitle className="font-host-grotesk text-lg">Your account</CardTitle>
         </CardHeader>
         <CardContent className="font-urbanist text-sm leading-relaxed text-muted-foreground">
           <p>
-            Click your name at the bottom of the sidebar to update your display name, optional profile photo URL, or sign
-            out. New invites set their name when accepting the invitation.
+            Click your profile at the bottom of the sidebar and choose <strong className="text-foreground">View Profile</strong>{" "}
+            to update your display name or photo, or <strong className="text-foreground">Logout</strong> when finished.
+            New invites set their name when accepting the invitation.
           </p>
         </CardContent>
       </Card>
@@ -173,7 +211,8 @@ const AdminHelpPage = () => (
       <CardContent className="space-y-3 font-urbanist text-sm text-muted-foreground">
         <p>
           Set <code className="rounded bg-muted px-1 text-xs">ADMIN_SIGNUP_ENABLED=true</code> on the server (Vercel,
-          not <code className="text-xs">VITE_</code>). When disabled, invite users through Supabase instead.
+          not <code className="text-xs">VITE_</code>). When disabled, invite users through Supabase instead. Open{" "}
+          {routeBadge("/admin/signup", "Signup")} only while the flag is enabled.
         </p>
         <Button type="button" variant="outline" size="sm" asChild className="rounded-full">
           <a href={VERCEL_ENV_URL} target="_blank" rel="noopener noreferrer">

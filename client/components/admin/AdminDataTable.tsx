@@ -25,21 +25,21 @@ const AdminDataTable = <T,>({
 }: AdminDataTableProps<T>) => {
   if (rows.length === 0) {
     return (
-      <p className={cn("py-6 text-center font-urbanist text-sm text-black/50", className)}>{emptyMessage}</p>
+      <p className={cn("py-6 text-center font-urbanist text-sm text-slate-500", className)}>{emptyMessage}</p>
     )
   }
 
   return (
-    <div className={cn("-mx-5 overflow-x-auto md:-mx-6", className)}>
+    <div className={cn("overflow-x-auto", className)}>
       <table className="w-full min-w-[520px] border-collapse text-left">
         <thead>
-          <tr className="border-b border-black/[0.06] bg-black/[0.02]">
+          <tr className="border-b border-slate-200 bg-slate-50/80">
             {columns.map((col) => (
               <th
                 key={col.key}
                 scope="col"
                 className={cn(
-                  "px-5 py-2.5 font-urbanist text-[11px] font-semibold uppercase tracking-[0.12em] text-black/45 first:pl-5 last:pr-5 md:px-6",
+                  "px-5 py-3 font-urbanist text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-500 first:pl-5 last:pr-5",
                   col.className,
                 )}
               >
@@ -52,13 +52,13 @@ const AdminDataTable = <T,>({
           {rows.map((row) => (
             <tr
               key={getRowKey(row)}
-              className="border-b border-black/[0.04] transition-colors last:border-0 hover:bg-rellia-mint/[0.06]"
+              className="border-b border-slate-100 transition-colors last:border-0 hover:bg-slate-50/80"
             >
               {columns.map((col) => (
                 <td
                   key={col.key}
                   className={cn(
-                    "px-5 py-3 align-middle font-urbanist text-sm text-black/80 first:pl-5 last:pr-5 md:px-6",
+                    "px-5 py-3.5 align-middle font-urbanist text-sm text-slate-800 first:pl-5 last:pr-5",
                     col.className,
                   )}
                 >

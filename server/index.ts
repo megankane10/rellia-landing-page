@@ -18,7 +18,7 @@ import {
   hasSanityPreviewPerspectiveCookie,
   resolveSanityStudioUrl,
 } from "./sanityPreview";
-import { resolveSanityApiConfig } from "./sanityEnv";
+import { resolveAdminSanityDataset, resolveSanityApiConfig } from "./sanityEnv";
 import {
   buildCsrfSetCookie,
   issueCsrfToken,
@@ -1707,6 +1707,98 @@ export function createServer() {
       } catch (err) {
         console.error("Admin stripe metrics error:", err);
         res.status(500).json({ error: "Could not load Stripe metrics." });
+      }
+    },
+  );
+
+  const adminSanityDraftsRate = new Map<string, RateState>();
+  const ADMIN_SANITY_DRAFTS_MAX_PER_MIN = 40;
+
+  app.get(
+    "/api/admin/sanity-drafts",
+    rateLimitJson(adminSanityDraftsRate, ADMIN_SANITY_DRAFTS_MAX_PER_MIN),
+    async (req, res) => {
+      if (!allowBrowserOrigin(req)) {
+        res.status(403).json({ error: "Forbidden" });
+        return;
+      }
+
+      const authHeader = typeof req.headers.authorization === "string" ? req.headers.authorization : "";
+      const token = authHeader.startsWith("Bearer ") ? authHeader.slice(7).trim() : "";
+      if (!token) {
+        res.status(401).json({ error: "Sign in required." });
+        return;
+      }
+
+      const datasetParam = typeof req.query.dataset === "string" ? req.query.dataset : undefined;
+      const dataset = resolveAdminSanityDataset(datasetParam);
+      if (!dataset) {
+        res.status(400).json({ error: "Invalid or disallowed Sanity dataset." });
+        return;
+      }
+
+      const supabaseUrl = (process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || "").trim().replace(/\/$/, "");
+      const serviceRoleKey = (
+        process.env.SUPABASE_SERVICE_ROLE_KEY ||
+        process.env.SUPABASE_SECRET_KEY ||
+        process.env.SUPABASE_SERVICE_KEY ||
+        ""
+      ).trim();
+      const anonKey = (
+        process.env.VITE_SUPABASE_ANON_KEY ||
+        process.env.VITE_SUPABASE_PUBLISHABLE_KEY ||
+        process.env.SUPABASE_ANON_KEY ||
+        ""
+      ).trim();
+
+      if (!supabaseUrl || !serviceRoleKey || !anonKey) {
+        res.status(501).json({ error: "Supabase admin credentials are not configured on the server." });
+        return;
+      }
+
+      const apiResolved = resolveSanityApiConfig();
+      if (apiResolved.status === "missing_project") {
+        res.status(503).json({ error: "Sanity API is not configured on the server." });
+        return;
+      }
+      if (apiResolved.status === "dataset_not_allowed") {
+        res.status(503).json({
+          error: `Sanity dataset "${apiResolved.attemptedDataset}" is not allowed for this deployment.`,
+        });
+        return;
+      }
+
+      const sanityToken = process.env.SANITY_API_READ_TOKEN?.trim() || "";
+      const projectId = apiResolved.projectId;
+
+      try {
+        const { createClient: createSupabaseClient } = await import("@supabase/supabase-js");
+        const sessionClient = createSupabaseClient(supabaseUrl, anonKey, {
+          auth: { autoRefreshToken: false, persistSession: false },
+        });
+        const { data: userData, error: userError } = await sessionClient.auth.getUser(token);
+        if (userError || !userData.user) {
+          res.status(401).json({ error: "Invalid or expired session." });
+          return;
+        }
+
+        const entry = SANITY_QUERY_WHITELIST.sanityDrafts;
+        const publicClient = createClient({
+          projectId,
+          dataset,
+          ...(sanityToken ? { token: sanityToken } : {}),
+          useCdn: false,
+          apiVersion: "2024-01-01",
+        });
+        const data = await publicClient.fetch(entry.query, {});
+        res.setHeader("content-type", "application/json");
+        res.json({
+          dataset,
+          drafts: stripSanityMetadata(data, "sanityDrafts"),
+        });
+      } catch (err) {
+        console.error("Admin sanity drafts error:", err);
+        res.status(502).json({ error: "Could not load Sanity drafts." });
       }
     },
   );

@@ -12,9 +12,13 @@ export const isActiveSubmissionStatus = (status: SubmissionStatus | null | undef
 }
 
 export const statusBadgeClass = (status: SubmissionStatus) => {
-  if (status === "Resolved") return "bg-emerald-50 text-emerald-800 border-emerald-200"
-  if (status === "In Progress") return "bg-amber-50 text-amber-900 border-amber-200"
-  return "bg-sky-50 text-sky-900 border-sky-200"
+  if (status === "Resolved") {
+    return "bg-emerald-50 text-emerald-700 font-medium px-2.5 py-1 text-xs rounded-full border border-emerald-100"
+  }
+  if (status === "In Progress") {
+    return "bg-amber-50 text-amber-700 font-medium px-2.5 py-1 text-xs rounded-full border border-amber-100"
+  }
+  return "bg-blue-50 text-blue-700 font-medium px-2.5 py-1 text-xs rounded-full border border-blue-100"
 }
 
 export const formatAdminDate = (iso: string) =>

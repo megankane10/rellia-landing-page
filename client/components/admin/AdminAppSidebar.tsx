@@ -90,13 +90,13 @@ const AdminAppSidebar = () => {
   }
 
   return (
-    <Sidebar collapsible="offcanvas" className="border-sidebar-border">
-      <SidebarHeader className="border-b border-sidebar-border px-4 py-4">
+    <Sidebar collapsible="offcanvas" className="flex flex-col border-slate-800 bg-slate-900 text-slate-400">
+      <SidebarHeader className="border-b border-slate-800 px-4 py-4">
         <div className="flex items-center gap-3">
           <img src={FAVICON_SRC} alt="" width={32} height={32} className="h-8 w-8 rounded-lg" aria-hidden />
           <div className="min-w-0 flex-1">
-            <p className="truncate font-host-grotesk text-sm font-semibold text-sidebar-foreground">Rellia Admin</p>
-            <p className="truncate font-urbanist text-xs text-sidebar-foreground/60">Internal dashboard</p>
+            <p className="truncate font-host-grotesk text-sm font-semibold text-white">Rellia Admin</p>
+            <p className="truncate font-urbanist text-xs text-slate-400">Internal dashboard</p>
           </div>
           {isMobile ? (
             <button
@@ -104,8 +104,8 @@ const AdminAppSidebar = () => {
               onClick={() => setOpenMobile(false)}
               className={cn(
                 "inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full",
-                "border border-sidebar-border bg-sidebar text-sidebar-foreground",
-                "transition-colors hover:bg-sidebar-accent",
+                "border border-slate-700 bg-slate-800 text-slate-200",
+                "transition-all hover:bg-white/10 hover:text-white",
                 "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
               )}
               aria-label="Close navigation menu"
@@ -116,9 +116,11 @@ const AdminAppSidebar = () => {
         </div>
       </SidebarHeader>
 
-      <SidebarContent>
+      <SidebarContent className="flex-1">
         <SidebarGroup>
-          <SidebarGroupLabel className="font-urbanist text-[11px] uppercase tracking-wider">Workspace</SidebarGroupLabel>
+          <SidebarGroupLabel className="font-urbanist text-[11px] uppercase tracking-wider text-slate-500">
+            Workspace
+          </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {MAIN_NAV.map((item) => {
@@ -128,7 +130,16 @@ const AdminAppSidebar = () => {
 
                 return (
                   <SidebarMenuItem key={item.to}>
-                    <SidebarMenuButton asChild isActive={active} tooltip={item.label}>
+                    <SidebarMenuButton
+                      asChild
+                      isActive={active}
+                      tooltip={item.label}
+                      className={cn(
+                        "text-slate-400 transition-all rounded-lg",
+                        "hover:bg-white/10 hover:text-white",
+                        "data-[active=true]:bg-white/10 data-[active=true]:text-white data-[active=true]:font-medium",
+                      )}
+                    >
                       <NavLink to={item.to} end={item.end} className="flex w-full items-center" onClick={handleNavClick}>
                         <item.icon aria-hidden />
                         <span className="flex min-w-0 flex-1 items-center gap-2">
@@ -156,7 +167,7 @@ const AdminAppSidebar = () => {
         </SidebarGroup>
       </SidebarContent>
 
-      <SidebarFooter className="border-t border-sidebar-border p-3">
+      <SidebarFooter className="mt-auto border-t border-slate-800 p-3">
         <AdminAccountMenu />
       </SidebarFooter>
     </Sidebar>

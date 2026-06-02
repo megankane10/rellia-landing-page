@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react"
-import { useNavigate } from "react-router-dom"
-import { LogOut, Pencil, Upload, UserRound } from "lucide-react"
+import { Link, useNavigate } from "react-router-dom"
+import { LogOut, Settings, Upload, UserRound } from "lucide-react"
 import { useAuth } from "@/context/AuthContext"
 import { supabase } from "@/lib/supabase"
 import { uploadAdminAvatar } from "@/lib/adminAvatarUpload"
@@ -216,38 +216,38 @@ const AdminAccountMenu = () => {
       <>
         <div className="space-y-3 px-1">
           <div className="flex items-center gap-3 rounded-lg px-2 py-2">
-            <Avatar className="h-10 w-10 border border-sidebar-border">
+            <Avatar className="h-10 w-10 border border-slate-700">
               {avatarSrc ? <AvatarImage src={avatarSrc} alt="" /> : null}
-              <AvatarFallback className="bg-rellia-mint/40 font-urbanist text-xs text-rellia-teal">
-                {initials}
-              </AvatarFallback>
+              <AvatarFallback className="bg-slate-800 font-urbanist text-xs text-slate-200">{initials}</AvatarFallback>
             </Avatar>
             <div className="min-w-0 flex-1">
-              <p className="truncate font-urbanist text-sm font-medium text-sidebar-foreground">{displayName}</p>
+              <p className="truncate font-urbanist text-sm font-medium text-white">{displayName}</p>
               {user?.email ? (
-                <p className="truncate font-urbanist text-xs text-sidebar-foreground/55">{user.email}</p>
+                <p className="truncate font-urbanist text-xs text-slate-400">{user.email}</p>
               ) : null}
             </div>
           </div>
-          <div className="flex flex-col gap-2">
-            <Button
+          <div className="flex flex-col gap-1">
+            <button
               type="button"
-              variant="outline"
-              className="w-full justify-start rounded-lg font-urbanist"
+              className="rounded-lg px-3 py-2 text-left font-urbanist text-sm text-slate-300 transition-all hover:bg-white/10 hover:text-white"
               onClick={() => setProfileOpen(true)}
             >
-              <Pencil className="mr-2 h-4 w-4" aria-hidden />
-              Edit name & photo
-            </Button>
-            <Button
+              View Profile
+            </button>
+            <Link
+              to="/admin/help#account"
+              className="rounded-lg px-3 py-2 font-urbanist text-sm text-slate-300 transition-all hover:bg-white/10 hover:text-white"
+            >
+              Account Settings
+            </Link>
+            <button
               type="button"
-              variant="outline"
-              className={cn("w-full justify-start rounded-lg font-urbanist text-destructive hover:text-destructive")}
+              className="rounded-lg px-3 py-2 text-left font-urbanist text-sm text-red-300 transition-all hover:bg-white/10 hover:text-white"
               onClick={() => void handleSignOut()}
             >
-              <LogOut className="mr-2 h-4 w-4" aria-hidden />
-              Sign out
-            </Button>
+              Logout
+            </button>
           </div>
         </div>
         {profileDialog}
@@ -261,27 +261,32 @@ const AdminAccountMenu = () => {
         <DropdownMenuTrigger asChild>
           <button
             type="button"
-            className="flex w-full items-center gap-3 rounded-lg px-2 py-2 text-left transition-colors hover:bg-sidebar-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="flex w-full items-center gap-3 rounded-lg px-2 py-2 text-left transition-all hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             aria-label="Account menu"
+            aria-haspopup="menu"
           >
-            <Avatar className="h-9 w-9 border border-sidebar-border">
+            <Avatar className="h-9 w-9 border border-slate-700">
               {avatarSrc ? <AvatarImage src={avatarSrc} alt="" /> : null}
-              <AvatarFallback className="bg-rellia-mint/40 font-urbanist text-xs text-rellia-teal">
-                {initials}
-              </AvatarFallback>
+              <AvatarFallback className="bg-slate-800 font-urbanist text-xs text-slate-200">{initials}</AvatarFallback>
             </Avatar>
             <div className="min-w-0 flex-1">
-              <p className="truncate font-urbanist text-sm font-medium text-sidebar-foreground">{displayName}</p>
-              {getAdminDisplayName(user) ? (
-                <p className="truncate font-urbanist text-xs text-sidebar-foreground/55">{user?.email}</p>
+              <p className="truncate font-urbanist text-sm font-medium text-white">{displayName}</p>
+              {user?.email ? (
+                <p className="truncate font-urbanist text-xs text-slate-400">{user.email}</p>
               ) : null}
             </div>
           </button>
         </DropdownMenuTrigger>
         <DropdownMenuContent side="top" align="start" className="z-[10002] w-56 font-urbanist">
           <DropdownMenuItem onSelect={() => setProfileOpen(true)}>
-            <Pencil className="mr-2 h-4 w-4" aria-hidden />
-            Edit name & photo
+            <UserRound className="mr-2 h-4 w-4" aria-hidden />
+            View Profile
+          </DropdownMenuItem>
+          <DropdownMenuItem asChild>
+            <Link to="/admin/help#account" className="flex cursor-pointer items-center">
+              <Settings className="mr-2 h-4 w-4" aria-hidden />
+              Account Settings
+            </Link>
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem
@@ -289,7 +294,7 @@ const AdminAccountMenu = () => {
             onSelect={() => void handleSignOut()}
           >
             <LogOut className="mr-2 h-4 w-4" aria-hidden />
-            Sign out
+            Logout
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

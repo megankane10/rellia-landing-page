@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query"
 import { ArrowRight, FileEdit, Inbox, Stethoscope, Users } from "lucide-react"
 import { Bar, BarChart, CartesianGrid, Cell, Pie, PieChart, XAxis, YAxis } from "recharts"
 import { useAuth } from "@/context/AuthContext"
-import { fetchAdminTeam, fetchAdminStripeMetrics } from "@/lib/adminApi"
+import { fetchAdminTeam } from "@/lib/adminApi"
 import AdminPageHeader from "@/components/admin/AdminPageHeader"
 import AdminSystemStatus from "@/components/admin/AdminSystemStatus"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -42,10 +42,6 @@ const CHART_COLORS = {
 const trendChartConfig = {
   contacts: { label: "Web forms", color: CHART_COLORS.contacts },
   diagnostics: { label: "Diagnostics", color: CHART_COLORS.diagnostics },
-}
-
-const revenueChartConfig = {
-  amount: { label: "Revenue", color: CHART_COLORS.contacts },
 }
 
 const CHART_X_AXIS_PROPS = {
@@ -145,13 +141,6 @@ const AdminOverviewPage = () => {
     enabled: Boolean(token),
     staleTime: 60_000,
   })
-  const stripeQuery = useQuery({
-    queryKey: ["admin-stripe-metrics", token],
-    queryFn: () => fetchAdminStripeMetrics(token),
-    enabled: Boolean(token),
-    staleTime: 5 * 60_000,
-  })
-
   const loading = contactsQuery.isLoading || diagnosticsQuery.isLoading
   const contacts = contactsQuery.data ?? []
   const diagnostics = diagnosticsQuery.data ?? []
@@ -177,26 +166,6 @@ const AdminOverviewPage = () => {
   const unresolvedChangePct = percentChange(unresolved, previousUnresolved)
   const draftCount = draftsQuery.data?.length ?? 0
   const teamCount = teamQuery.data?.length ?? 0
-  const stripeMetrics = stripeQuery.data
-  const revenueCurrency = (stripeMetrics?.currency ?? "cad").toUpperCase()
-  const revenueDisplay =
-    stripeMetrics?.configured && typeof stripeMetrics.revenueLast30Days === "number"
-      ? new Intl.NumberFormat("en-CA", {
-          style: "currency",
-          currency: revenueCurrency,
-          maximumFractionDigits: 0,
-        }).format(stripeMetrics.revenueLast30Days / 100)
-      : "—"
-  const revenueTrend = (stripeMetrics?.revenueDaily ?? []).map((row) => ({
-    ...row,
-    amountDollars: row.amount / 100,
-  }))
-  const formatRevenueTick = (value: number) =>
-    new Intl.NumberFormat("en-CA", {
-      style: "currency",
-      currency: revenueCurrency,
-      maximumFractionDigits: 0,
-    }).format(value)
 
   return (
     <div className="space-y-6">
@@ -206,7 +175,7 @@ const AdminOverviewPage = () => {
         actions={<AdminSystemStatus />}
       />
 
-      <div className="grid items-stretch gap-4 md:grid-cols-3">
+      <div className="grid items-stretch gap-4 md:grid-cols-2">
         <StatCard
           label="Needs attention"
           value={unresolved}
@@ -222,130 +191,81 @@ const AdminOverviewPage = () => {
           changeCompare="vs prior 7 days"
           loading={loading}
         />
-        <StatCard
-          label="Revenue"
-          value={revenueDisplay}
-          changePct={stripeMetrics?.revenueChangePct}
-          changeCompare="vs prior 30 days"
-          loading={stripeQuery.isLoading}
-        />
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-2">
-        <Card className="rounded-2xl">
-          <CardHeader>
-            <CardTitle className="font-host-grotesk text-lg">Submissions this week</CardTitle>
-            <CardDescription className="font-urbanist">Daily web forms and startup diagnostics</CardDescription>
-          </CardHeader>
-          <CardContent>
-            {loading ? (
-              <Skeleton className="h-[240px] w-full rounded-lg" />
-            ) : (
-              <ChartContainer config={trendChartConfig} className="h-[240px] w-full">
-                <BarChart data={trend} margin={CHART_MARGIN}>
-                  <CartesianGrid vertical={false} strokeDasharray="3 3" />
-                  <XAxis dataKey="label" {...CHART_X_AXIS_PROPS} />
-                  <YAxis allowDecimals={false} tickLine={false} axisLine={false} width={28} fontSize={11} />
-                  <ChartTooltip content={<ChartTooltipContent />} />
-                  <Bar dataKey="contacts" stackId="a" fill="var(--color-contacts)" radius={[0, 0, 0, 0]} />
-                  <Bar dataKey="diagnostics" stackId="a" fill="var(--color-diagnostics)" radius={[4, 4, 0, 0]} />
-                </BarChart>
-              </ChartContainer>
-            )}
-          </CardContent>
-        </Card>
-
-        <Card className="rounded-2xl">
-          <CardHeader>
-            <CardTitle className="font-host-grotesk text-lg">Revenue</CardTitle>
-            <CardDescription className="font-urbanist">Daily Stripe charges (last 7 days)</CardDescription>
-          </CardHeader>
-          <CardContent>
-            {stripeQuery.isLoading ? (
-              <Skeleton className="h-[240px] w-full rounded-lg" />
-            ) : !stripeMetrics?.configured ? (
-              <p className="font-urbanist text-sm text-muted-foreground">
-                Add STRIPE_SECRET_KEY on the server to enable revenue tracking.
-              </p>
-            ) : (
-              <ChartContainer config={revenueChartConfig} className="h-[240px] w-full">
-                <BarChart data={revenueTrend} margin={CHART_MARGIN}>
-                  <CartesianGrid vertical={false} strokeDasharray="3 3" />
-                  <XAxis dataKey="label" {...CHART_X_AXIS_PROPS} />
-                  <YAxis
-                    tickLine={false}
-                    axisLine={false}
-                    width={56}
-                    fontSize={11}
-                    tickFormatter={formatRevenueTick}
-                  />
-                  <ChartTooltip
-                    content={
-                      <ChartTooltipContent
-                        formatter={(value) => formatRevenueTick(Number(value))}
-                      />
-                    }
-                  />
-                  <Bar dataKey="amountDollars" fill="var(--color-amount)" radius={[4, 4, 0, 0]} />
-                </BarChart>
-              </ChartContainer>
-            )}
-          </CardContent>
-        </Card>
-      </div>
+      <Card className="w-full rounded-2xl">
+        <CardHeader>
+          <CardTitle className="font-host-grotesk text-lg">Submissions this week</CardTitle>
+          <CardDescription className="font-urbanist">Daily web forms and startup diagnostics</CardDescription>
+        </CardHeader>
+        <CardContent>
+          {loading ? (
+            <Skeleton className="h-[280px] w-full rounded-lg" />
+          ) : (
+            <ChartContainer config={trendChartConfig} className="h-[280px] w-full">
+              <BarChart data={trend} margin={CHART_MARGIN}>
+                <CartesianGrid vertical={false} strokeDasharray="3 3" />
+                <XAxis dataKey="label" {...CHART_X_AXIS_PROPS} />
+                <YAxis allowDecimals={false} tickLine={false} axisLine={false} width={28} fontSize={11} />
+                <ChartTooltip content={<ChartTooltipContent />} />
+                <Bar dataKey="contacts" stackId="a" fill="var(--color-contacts)" radius={[0, 0, 0, 0]} />
+                <Bar dataKey="diagnostics" stackId="a" fill="var(--color-diagnostics)" radius={[4, 4, 0, 0]} />
+              </BarChart>
+            </ChartContainer>
+          )}
+        </CardContent>
+      </Card>
 
       <Card className="rounded-2xl">
-          <CardHeader>
-            <CardTitle className="font-host-grotesk text-lg">Status breakdown</CardTitle>
-            <CardDescription className="font-urbanist">All inbox items by workflow status</CardDescription>
-          </CardHeader>
-          <CardContent className="flex flex-col items-center gap-4 sm:flex-row">
-            {loading ? (
-              <Skeleton className="h-[220px] w-full rounded-lg" />
-            ) : (
-              <>
-                <ChartContainer config={statusChartConfig} className="mx-auto h-[200px] w-full max-w-[200px]">
-                  <PieChart>
-                    <ChartTooltip content={<ChartTooltipContent hideLabel />} />
-                    <Pie
-                      data={statusBreakdown}
-                      dataKey="count"
-                      nameKey="status"
-                      innerRadius={48}
-                      outerRadius={72}
-                      paddingAngle={2}
-                    >
-                      {statusBreakdown.map((entry) => (
-                        <Cell
-                          key={entry.status}
-                          fill={
-                            entry.status === "New"
-                              ? CHART_COLORS.new
-                              : entry.status === "In Progress"
-                                ? CHART_COLORS.progress
-                                : CHART_COLORS.resolved
-                          }
-                        />
-                      ))}
-                    </Pie>
-                  </PieChart>
-                </ChartContainer>
-                <ul className="flex flex-1 flex-col gap-2 font-urbanist text-sm">
-                  {statusBreakdown.map((row) => (
-                    <li key={row.status} className="flex items-center justify-between gap-4">
-                      <span className="flex items-center gap-2">
-                        <Badge variant="outline" className={cn("rounded-full text-xs", statusBadgeClass(row.status))}>
-                          {row.status}
-                        </Badge>
-                      </span>
-                      <span className="tabular-nums font-medium">{row.count}</span>
-                    </li>
-                  ))}
-                </ul>
-              </>
-            )}
-          </CardContent>
-        </Card>
+        <CardHeader>
+          <CardTitle className="font-host-grotesk text-lg">Status breakdown</CardTitle>
+          <CardDescription className="font-urbanist">All inbox items by workflow status</CardDescription>
+        </CardHeader>
+        <CardContent>
+          {loading ? (
+            <Skeleton className="mx-auto h-[220px] max-w-md rounded-lg" />
+          ) : (
+            <div className="mx-auto flex w-full max-w-md flex-wrap items-center justify-center gap-6">
+              <ChartContainer config={statusChartConfig} className="h-[200px] w-[200px] shrink-0">
+                <PieChart>
+                  <ChartTooltip content={<ChartTooltipContent hideLabel />} />
+                  <Pie
+                    data={statusBreakdown}
+                    dataKey="count"
+                    nameKey="status"
+                    innerRadius={48}
+                    outerRadius={72}
+                    paddingAngle={2}
+                  >
+                    {statusBreakdown.map((entry) => (
+                      <Cell
+                        key={entry.status}
+                        fill={
+                          entry.status === "New"
+                            ? CHART_COLORS.new
+                            : entry.status === "In Progress"
+                              ? CHART_COLORS.progress
+                              : CHART_COLORS.resolved
+                        }
+                      />
+                    ))}
+                  </Pie>
+                </PieChart>
+              </ChartContainer>
+              <ul className="flex shrink-0 flex-col gap-2 font-urbanist text-sm">
+                {statusBreakdown.map((row) => (
+                  <li key={row.status} className="flex items-center justify-between gap-6">
+                    <Badge variant="outline" className={cn("border-0", statusBadgeClass(row.status))}>
+                      {row.status}
+                    </Badge>
+                    <span className="tabular-nums font-medium">{row.count}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </CardContent>
+      </Card>
 
       <div className="grid gap-6 lg:grid-cols-2">
         <Card className="rounded-2xl">
@@ -388,10 +308,7 @@ const AdminOverviewPage = () => {
                         {contactTypeLabel(row)} · {formatAdminDate(row.created_at)}
                       </p>
                     </div>
-                    <Badge
-                      variant="outline"
-                      className={cn("shrink-0 rounded-full text-xs", statusBadgeClass(row.status ?? "New"))}
-                    >
+                    <Badge variant="outline" className={cn("shrink-0 border-0", statusBadgeClass(row.status ?? "New"))}>
                       {row.status ?? "New"}
                     </Badge>
                   </li>
@@ -441,10 +358,7 @@ const AdminOverviewPage = () => {
                         {row.name} · {formatAdminDate(row.created_at)}
                       </p>
                     </div>
-                    <Badge
-                      variant="outline"
-                      className={cn("shrink-0 rounded-full text-xs", statusBadgeClass(row.status ?? "New"))}
-                    >
+                    <Badge variant="outline" className={cn("shrink-0 border-0", statusBadgeClass(row.status ?? "New"))}>
                       {row.status ?? "New"}
                     </Badge>
                   </li>

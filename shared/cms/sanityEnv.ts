@@ -73,3 +73,19 @@ export const trySanityApiConfig = (): SanityApiConfig | null => {
   if (r.status !== "ok") return null
   return { projectId: r.projectId, dataset: r.dataset }
 }
+
+export const ADMIN_SANITY_DATASETS = ["production", "preview"] as const
+export type AdminSanityDataset = (typeof ADMIN_SANITY_DATASETS)[number]
+
+/** Validates dataset name for admin draft monitor (production vs preview). */
+export const resolveAdminSanityDataset = (
+  requested: string | undefined,
+): AdminSanityDataset | null => {
+  const normalized = (requested?.trim() || "production").toLowerCase()
+  if (normalized !== "production" && normalized !== "preview") return null
+
+  const allowed = parseList(process.env.SANITY_ALLOWED_DATASETS)
+  if (allowed.length > 0 && !allowed.includes(normalized)) return null
+
+  return normalized as AdminSanityDataset
+}

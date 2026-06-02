@@ -99,6 +99,47 @@ const AdminTeamPage = () => {
 
   return (
     <div className="space-y-6">
+      <div className="rounded-r-xl border-l-4 border-indigo-600 bg-indigo-50/60 p-4">
+        <div className="flex flex-col gap-1.5">
+          <span className="text-sm font-semibold text-indigo-900">🔒 Administrative Access Controls</span>
+          <p className="text-xs leading-relaxed text-indigo-700">
+            To register a brand-new administrator account, choose one of the following methods:
+          </p>
+          <ul className="mt-1 list-inside list-disc space-y-1 text-xs text-indigo-700">
+            <li>
+              Use the direct link to{" "}
+              <a
+                href="https://supabase.com/dashboard/project/agsvypnmlrvpbgrsxtqy/auth/users"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-medium underline transition-colors hover:text-indigo-900"
+              >
+                Invite via Supabase Console
+              </a>{" "}
+              (Note: Platforms enforce a strict native safety limit of 3 invitations per day).
+            </li>
+            <li>
+              Alternatively, temporarily switch your deployment variable <strong>ADMIN_SIGNUP_ENABLED</strong> to{" "}
+              <strong>&quot;true&quot;</strong> within your{" "}
+              <a
+                href="https://vercel.com/relliahealth/settings/environment-variables"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-medium underline transition-colors hover:text-indigo-900"
+              >
+                Vercel Dashboard Settings
+              </a>
+              . This temporarily activates the public registration endpoint located at{" "}
+              <a href="/admin/signup" className="font-medium underline transition-colors hover:text-indigo-900">
+                /admin/signup
+              </a>
+              . Remember to toggle this variable back to &quot;false&quot; immediately after your team registration is
+              completed to prevent open backdoors.
+            </li>
+          </ul>
+        </div>
+      </div>
+
       <AdminPageHeader
         title="Team"
         description="Dashboard accounts and invite status."

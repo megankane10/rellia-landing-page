@@ -1,4 +1,6 @@
 import { studioDeskUrl } from "@shared/admin/notifyLinks"
+import type { AdminSanityDataset } from "@shared/cms/sanityEnv"
+import { fetchAdminSanityDrafts } from "@/lib/adminApi"
 import { getSanityDataset, isSanityConfigured, sanityFetch } from "@/lib/sanity"
 
 export type SanityContentRow = {
@@ -18,18 +20,30 @@ const isContentRow = (row: {
   !row._type.startsWith("sanity.") &&
   row._type !== "system.schema"
 
-/** Unpublished Sanity drafts only — published docs stay in Studio, not this queue. */
+const mapDraftRows = (
+  rows: Array<{ _id: string; _type: string; title?: string; _updatedAt?: string }>,
+): SanityContentRow[] =>
+  rows.filter(isContentRow).map((row) => ({ ...row, status: "unpublished" as const }))
+
+/** Unpublished Sanity drafts for the deployment's default dataset (legacy proxy path). */
 export const fetchCmsContentQueue = async (): Promise<SanityContentRow[]> => {
   const draftRows = await sanityFetch<{ _id: string; _type: string; title?: string; _updatedAt?: string }[]>(
     "sanityDrafts",
   )
-
-  return (Array.isArray(draftRows) ? draftRows : [])
-    .filter(isContentRow)
-    .map((row) => ({ ...row, status: "unpublished" as const }))
+  return mapDraftRows(Array.isArray(draftRows) ? draftRows : [])
 }
 
-export const cmsContentQueryKey = () => ["admin-sanity-content-queue", getSanityDataset() || "none"] as const
+/** Unpublished drafts for a specific dataset (production or preview). Requires admin session. */
+export const fetchCmsContentQueueForDataset = async (
+  accessToken: string,
+  dataset: AdminSanityDataset,
+): Promise<SanityContentRow[]> => {
+  const draftRows = await fetchAdminSanityDrafts(accessToken, dataset)
+  return mapDraftRows(draftRows)
+}
+
+export const cmsContentQueryKey = (dataset?: AdminSanityDataset) =>
+  ["admin-sanity-content-queue", dataset ?? (getSanityDataset() || "none")] as const
 
 export const formatCmsContentRelative = (iso?: string) => {
   if (!iso) return "Recently"
@@ -74,3 +88,8 @@ export const formatCmsDocumentTypeLabel = (type: string): string => {
     .replace(/^./, (c) => c.toUpperCase())
     .trim()
 }
+
+export const ADMIN_SANITY_DATASET_TABS: { id: AdminSanityDataset; label: string }[] = [
+  { id: "production", label: "Public Production Dataset" },
+  { id: "preview", label: "Staging Development Dataset" },
+]

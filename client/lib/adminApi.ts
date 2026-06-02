@@ -23,6 +23,32 @@ export const fetchAdminTeam = async (accessToken: string): Promise<AdminTeamUser
   return data.users ?? []
 }
 
+export type AdminSanityDraftRow = {
+  _id: string
+  _type: string
+  title?: string
+  _updatedAt?: string
+}
+
+export const fetchAdminSanityDrafts = async (
+  accessToken: string,
+  dataset: "production" | "preview",
+): Promise<AdminSanityDraftRow[]> => {
+  const params = new URLSearchParams({ dataset })
+  const res = await fetch(`/api/admin/sanity-drafts?${params.toString()}`, {
+    headers: { Authorization: `Bearer ${accessToken}` },
+    credentials: "same-origin",
+  })
+
+  if (!res.ok) {
+    const body = (await res.json().catch(() => ({}))) as { error?: string }
+    throw new Error(body.error ?? `Could not load Sanity drafts (${res.status})`)
+  }
+
+  const data = (await res.json()) as { drafts?: AdminSanityDraftRow[] }
+  return data.drafts ?? []
+}
+
 export type AdminStripeMetrics = {
   configured: boolean
   currency?: string

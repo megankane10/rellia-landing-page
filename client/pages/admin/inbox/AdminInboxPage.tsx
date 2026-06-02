@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react"
+import { useMemo, useState, type ReactNode } from "react"
 import { Link, useSearchParams } from "react-router-dom"
 import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { Inbox, Search, Stethoscope } from "lucide-react"
@@ -37,7 +37,7 @@ type SubmissionTab = "contact" | "diagnostic"
 const UNRESOLVED_COUNT_KEY = ["admin-unresolved-submissions-count"] as const
 
 const StatusTag = ({ status }: { status: SubmissionStatus }) => (
-  <Badge variant="outline" className={cn("rounded-full font-urbanist text-xs", statusBadgeClass(status))}>
+  <Badge variant="outline" className={cn("border-0 font-urbanist", statusBadgeClass(status))}>
     {status}
   </Badge>
 )
@@ -316,8 +316,12 @@ const AdminInboxPage = () => {
       )
     }
 
+    const listShell = (content: ReactNode) => (
+      <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">{content}</div>
+    )
+
     if (tab === "contact") {
-      return (
+      return listShell(
         <AdminRecordList
           rows={filteredContactRows}
           getRowKey={(row) => row.id}
@@ -357,11 +361,11 @@ const AdminInboxPage = () => {
               onConfirm={() => void handleContactDelete(row.id)}
             />
           )}
-        />
+        />,
       )
     }
 
-    return (
+    return listShell(
       <AdminRecordList
         rows={filteredDiagnosticRows}
         getRowKey={(row) => row.id}
@@ -401,7 +405,7 @@ const AdminInboxPage = () => {
             onConfirm={() => void handleDiagnosticDelete(row.id)}
           />
         )}
-      />
+      />,
     )
   }
 

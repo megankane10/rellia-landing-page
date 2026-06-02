@@ -1,5 +1,6 @@
 import { Outlet } from "react-router-dom"
 import AdminAppSidebar from "@/components/admin/AdminAppSidebar"
+import AdminPageFooter from "@/components/admin/AdminPageFooter"
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
 import { Separator } from "@/components/ui/separator"
 
@@ -15,6 +16,7 @@ const AdminShell = () => (
         </header>
         <main id="main-content" className="flex-1 overflow-x-hidden overflow-y-auto p-4 md:p-6 lg:p-8">
           <Outlet />
+          <AdminPageFooter />
         </main>
       </SidebarInset>
     </div>

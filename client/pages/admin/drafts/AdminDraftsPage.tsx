@@ -1,28 +1,37 @@
 import { useMemo, useState } from "react"
 import { useQuery } from "@tanstack/react-query"
 import { ExternalLink, FileEdit } from "lucide-react"
+import { useAuth } from "@/context/AuthContext"
+import type { AdminSanityDataset } from "@shared/cms/sanityEnv"
 import AdminPageHeader from "@/components/admin/AdminPageHeader"
 import AdminContentQueueList from "@/components/admin/AdminContentQueueList"
 import AdminCompactEmptyState from "@/components/admin/AdminCompactEmptyState"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import {
+  ADMIN_SANITY_DATASET_TABS,
   cmsContentQueryKey,
-  fetchCmsContentQueue,
+  fetchCmsContentQueueForDataset,
   formatCmsDocumentTypeLabel,
   isCmsContentEnabled,
 } from "@/lib/adminSanityContent"
 import { cn } from "@/lib/utils"
 
+const DATASET_EMPTY_MESSAGE =
+  "Dataset is currently synchronized. There are no unpublished changes or document drafts waiting inside this workspace connection."
+
 const AdminDraftsPage = () => {
+  const { session } = useAuth()
+  const token = session?.access_token ?? ""
   const cmsConfigured = isCmsContentEnabled()
+  const [dataset, setDataset] = useState<AdminSanityDataset>("production")
   const [typeFilter, setTypeFilter] = useState<string>("all")
 
   const { data, isLoading, error } = useQuery({
-    queryKey: cmsContentQueryKey(),
-    queryFn: fetchCmsContentQueue,
+    queryKey: cmsContentQueryKey(dataset),
+    queryFn: () => fetchCmsContentQueueForDataset(token, dataset),
     staleTime: 60_000,
-    enabled: cmsConfigured,
+    enabled: cmsConfigured && Boolean(token),
   })
 
   const draftRows = data ?? []
@@ -33,6 +42,11 @@ const AdminDraftsPage = () => {
     if (typeFilter === "all") return draftRows
     return draftRows.filter((row) => row._type === typeFilter)
   }, [draftRows, typeFilter])
+
+  const handleDatasetChange = (next: AdminSanityDataset) => {
+    setDataset(next)
+    setTypeFilter("all")
+  }
 
   return (
     <div>
@@ -60,52 +74,78 @@ const AdminDraftsPage = () => {
         </Card>
       ) : (
         <>
-          <div className="mb-4 flex flex-wrap gap-2" role="group" aria-label="Filter by document type">
-            <button
-              type="button"
-              onClick={() => setTypeFilter("all")}
-              className={cn(
-                "rounded-full px-3 py-1.5 font-urbanist text-xs transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-                typeFilter === "all"
-                  ? "bg-rellia-mint/35 text-rellia-teal"
-                  : "bg-muted text-muted-foreground hover:bg-muted/80",
-              )}
-            >
-              All ({draftRows.length})
-            </button>
-            {typeOptions.map((type) => {
-              const count = draftRows.filter((row) => row._type === type).length
-              return (
-                <button
-                  key={type}
-                  type="button"
-                  onClick={() => setTypeFilter(type)}
-                  className={cn(
-                    "rounded-full px-3 py-1.5 font-urbanist text-xs transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-                    typeFilter === type
-                      ? "bg-rellia-mint/35 text-rellia-teal"
-                      : "bg-muted text-muted-foreground hover:bg-muted/80",
-                  )}
-                >
-                  {formatCmsDocumentTypeLabel(type)} ({count})
-                </button>
-              )
-            })}
+          <div
+            className="mb-6 flex flex-wrap gap-2 border-b border-slate-200 pb-4"
+            role="tablist"
+            aria-label="Sanity dataset"
+          >
+            {ADMIN_SANITY_DATASET_TABS.map((tab) => (
+              <button
+                key={tab.id}
+                type="button"
+                role="tab"
+                aria-selected={dataset === tab.id}
+                onClick={() => handleDatasetChange(tab.id)}
+                className={cn(
+                  "rounded-lg px-4 py-2 font-urbanist text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                  dataset === tab.id
+                    ? "bg-slate-900 text-white shadow-sm"
+                    : "bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900",
+                )}
+              >
+                {tab.label}
+              </button>
+            ))}
           </div>
+
+          {typeOptions.length > 0 ? (
+            <div className="mb-4 flex flex-wrap gap-2" role="group" aria-label="Filter by document type">
+              <button
+                type="button"
+                onClick={() => setTypeFilter("all")}
+                className={cn(
+                  "rounded-full px-3 py-1.5 font-urbanist text-xs transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                  typeFilter === "all"
+                    ? "bg-rellia-mint/35 text-rellia-teal"
+                    : "bg-muted text-muted-foreground hover:bg-muted/80",
+                )}
+              >
+                All ({draftRows.length})
+              </button>
+              {typeOptions.map((type) => {
+                const count = draftRows.filter((row) => row._type === type).length
+                return (
+                  <button
+                    key={type}
+                    type="button"
+                    onClick={() => setTypeFilter(type)}
+                    className={cn(
+                      "rounded-full px-3 py-1.5 font-urbanist text-xs transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                      typeFilter === type
+                        ? "bg-rellia-mint/35 text-rellia-teal"
+                        : "bg-muted text-muted-foreground hover:bg-muted/80",
+                    )}
+                  >
+                    {formatCmsDocumentTypeLabel(type)} ({count})
+                  </button>
+                )
+              })}
+            </div>
+          ) : null}
 
           {!isLoading && !error && filteredRows.length === 0 ? (
             <AdminCompactEmptyState
               icon={FileEdit}
-              title="No drafts in this category"
-              description="Published content or drafts in other types may still exist in Sanity Studio."
+              title="All caught up"
+              description={DATASET_EMPTY_MESSAGE}
             />
           ) : (
             <AdminContentQueueList
               rows={filteredRows}
               isLoading={isLoading}
               error={error}
-              dataset=""
-              emptyTitle="No drafts in this category"
+              dataset={dataset}
+              emptyTitle={DATASET_EMPTY_MESSAGE}
               groupByType={false}
             />
           )}
