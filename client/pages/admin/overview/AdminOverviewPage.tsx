@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom"
 import { useQuery } from "@tanstack/react-query"
-import { ArrowRight, FileEdit, Inbox, Stethoscope, Users } from "lucide-react"
-import { Bar, BarChart, CartesianGrid, Cell, Pie, PieChart, XAxis, YAxis } from "recharts"
+import { ArrowRight, FileEdit, Inbox, Stethoscope, TrendingUp, Users } from "lucide-react"
+import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts"
 import { useAuth } from "@/context/AuthContext"
 import { fetchAdminTeam } from "@/lib/adminApi"
 import AdminPageHeader from "@/components/admin/AdminPageHeader"
@@ -157,6 +157,9 @@ const AdminOverviewPage = () => {
   const weekCount = countRecentAll(contacts, diagnostics)
   const previousWeekCount = countSubmissionsBetweenDays(contacts, diagnostics, 14, 7)
   const weekChangePct = percentChange(weekCount, previousWeekCount)
+  const weekDiagnostics = countSubmissionsBetweenDays([], diagnostics, 7, 0)
+  const previousWeekDiagnostics = countSubmissionsBetweenDays([], diagnostics, 14, 7)
+  const diagnosticsChangePct = percentChange(weekDiagnostics, previousWeekDiagnostics)
   const previousUnresolved = countSubmissionsBetweenDays(
     contacts.filter((row) => isActiveSubmissionStatus(row.status as "New" | "In Progress" | "Resolved" | null)),
     diagnostics.filter((row) => isActiveSubmissionStatus(row.status as "New" | "In Progress" | "Resolved" | null)),
@@ -166,6 +169,18 @@ const AdminOverviewPage = () => {
   const unresolvedChangePct = percentChange(unresolved, previousUnresolved)
   const draftCount = draftsQuery.data?.length ?? 0
   const teamCount = teamQuery.data?.length ?? 0
+
+  const totalStatusCount = statusBreakdown.reduce((sum, row) => sum + row.count, 0)
+  const statusRows = statusBreakdown.map((row) => ({
+    ...row,
+    pct: totalStatusCount > 0 ? Math.round((row.count / totalStatusCount) * 100) : 0,
+    fill:
+      row.status === "New"
+        ? CHART_COLORS.new
+        : row.status === "In Progress"
+          ? CHART_COLORS.progress
+          : CHART_COLORS.resolved,
+  }))
 
   return (
     <div className="space-y-6">
@@ -216,56 +231,80 @@ const AdminOverviewPage = () => {
         </CardContent>
       </Card>
 
-      <Card className="rounded-2xl">
-        <CardHeader>
-          <CardTitle className="font-host-grotesk text-lg">Status breakdown</CardTitle>
-          <CardDescription className="font-urbanist">All inbox items by workflow status</CardDescription>
-        </CardHeader>
-        <CardContent>
-          {loading ? (
-            <Skeleton className="mx-auto h-[220px] max-w-md rounded-lg" />
-          ) : (
-            <div className="mx-auto flex w-full max-w-md flex-wrap items-center justify-center gap-6">
-              <ChartContainer config={statusChartConfig} className="h-[200px] w-[200px] shrink-0">
-                <PieChart>
-                  <ChartTooltip content={<ChartTooltipContent hideLabel />} />
-                  <Pie
-                    data={statusBreakdown}
-                    dataKey="count"
-                    nameKey="status"
-                    innerRadius={48}
-                    outerRadius={72}
-                    paddingAngle={2}
-                  >
-                    {statusBreakdown.map((entry) => (
-                      <Cell
-                        key={entry.status}
-                        fill={
-                          entry.status === "New"
-                            ? CHART_COLORS.new
-                            : entry.status === "In Progress"
-                              ? CHART_COLORS.progress
-                              : CHART_COLORS.resolved
-                        }
+      <div className="grid gap-4 lg:grid-cols-2">
+        <Card className="rounded-2xl">
+          <CardHeader>
+            <CardTitle className="font-host-grotesk text-lg">Status breakdown</CardTitle>
+            <CardDescription className="font-urbanist">Distribution across New, In progress, and Resolved</CardDescription>
+          </CardHeader>
+          <CardContent>
+            {loading ? (
+              <Skeleton className="h-[220px] w-full rounded-xl" />
+            ) : (
+              <div className="space-y-4">
+                {statusRows.map((row) => (
+                  <div key={row.status} className="space-y-2">
+                    <div className="flex items-center justify-between gap-3">
+                      <Badge variant="outline" className={cn("border-0", statusBadgeClass(row.status))}>
+                        {row.status}
+                      </Badge>
+                      <div className="flex items-center gap-3 font-urbanist text-sm">
+                        <span className="text-muted-foreground tabular-nums">{row.pct}%</span>
+                        <span className="font-semibold tabular-nums text-foreground">{row.count}</span>
+                      </div>
+                    </div>
+                    <div className="h-2 w-full rounded-full bg-slate-100">
+                      <div
+                        className="h-2 rounded-full"
+                        style={{ width: `${row.pct}%`, background: row.fill }}
+                        aria-hidden
                       />
-                    ))}
-                  </Pie>
-                </PieChart>
-              </ChartContainer>
-              <ul className="flex shrink-0 flex-col gap-2 font-urbanist text-sm">
-                {statusBreakdown.map((row) => (
-                  <li key={row.status} className="flex items-center justify-between gap-6">
-                    <Badge variant="outline" className={cn("border-0", statusBadgeClass(row.status))}>
-                      {row.status}
-                    </Badge>
-                    <span className="tabular-nums font-medium">{row.count}</span>
-                  </li>
+                    </div>
+                  </div>
                 ))}
-              </ul>
-            </div>
-          )}
-        </CardContent>
-      </Card>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        <Card className="rounded-2xl">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 font-host-grotesk text-lg">
+              <TrendingUp className="h-4 w-4 text-rellia-teal" aria-hidden />
+              Diagnostic survey
+            </CardTitle>
+            <CardDescription className="font-urbanist">Weekly diagnostic intake volume</CardDescription>
+          </CardHeader>
+          <CardContent>
+            {loading ? (
+              <Skeleton className="h-[220px] w-full rounded-xl" />
+            ) : (
+              <div className="grid gap-3 sm:grid-cols-2">
+                <div className="rounded-2xl border border-border bg-card p-4">
+                  <p className="font-urbanist text-sm text-muted-foreground">Submissions this week</p>
+                  <p className="mt-2 font-host-grotesk text-3xl font-semibold tabular-nums">{weekDiagnostics}</p>
+                </div>
+                <div className="rounded-2xl border border-border bg-card p-4">
+                  <p className="font-urbanist text-sm text-muted-foreground">Change vs prior week</p>
+                  <p
+                    className={cn(
+                      "mt-2 font-host-grotesk text-3xl font-semibold tabular-nums",
+                      diagnosticsChangePct === null || diagnosticsChangePct === 0
+                        ? "text-foreground"
+                        : diagnosticsChangePct > 0
+                          ? "text-emerald-600"
+                          : "text-amber-700",
+                    )}
+                  >
+                    {formatPercentChange(diagnosticsChangePct)}
+                  </p>
+                  <p className="mt-1 font-urbanist text-xs text-muted-foreground">vs prior 7 days</p>
+                </div>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
         <Card className="rounded-2xl">

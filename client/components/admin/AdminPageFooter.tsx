@@ -37,6 +37,19 @@ const AdminPageFooter = () => {
             Website
             <ArrowUpRight className="h-3.5 w-3.5" aria-hidden />
           </a>
+          <span className="hidden h-4 w-px bg-slate-200 sm:inline" aria-hidden />
+          <Link
+            to="/admin/inbox?tab=contact&source=contact"
+            className="inline-flex items-center gap-1 transition-colors hover:text-rellia-teal focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded"
+          >
+            Contact responses
+          </Link>
+          <Link
+            to="/admin/inbox?tab=contact&source=investor"
+            className="inline-flex items-center gap-1 transition-colors hover:text-rellia-teal focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded"
+          >
+            Investor responses
+          </Link>
         </div>
       </div>
     </footer>
