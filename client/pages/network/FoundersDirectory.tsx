@@ -48,7 +48,9 @@ function FounderDirectoryCard({
   company: FounderCompany;
   onOpen: () => void;
 }) {
-  const cardTags = company.specialties ?? []
+  const specialtyTags = company.specialties ?? []
+  const businessModelTags = Array.isArray(company.businessModel) ? company.businessModel : []
+  const cardTags = [...specialtyTags, ...businessModelTags]
 
   return (
     <motion.article
