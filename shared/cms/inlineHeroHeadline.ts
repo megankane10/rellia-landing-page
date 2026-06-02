@@ -79,13 +79,3 @@ export const DEFAULT_HOME_TESTIMONIALS_TITLE_PORTABLE: SanityPortableText = twoP
 
 export const DEFAULT_ABOUT_HERO_LINE2_PORTABLE: SanityPortableText = fullMintLineHeroHeadline("next generation")
 
-export const DEFAULT_PAYMENT_HERO_PORTABLE: SanityPortableText = threePartHeroHeadline(
-  "Join the ",
-  "kindest place",
-  " in health tech",
-)
-
-export const DEFAULT_PAYMENT_IMAGE_CARD_HEADLINE_PORTABLE: SanityPortableText = twoPartImageCardHeadline(
-  "Warm introductions can make ",
-  "all the difference",
-)

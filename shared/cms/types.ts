@@ -673,13 +673,14 @@ export type PaymentPageContent = CmsPageVisibility & {
   discountBannerSubtitle: string
   discountBannerApplyLabel: string
   discountBannerApplyHref: string
-  heroHeadlinePortable: SanityPortableText
-  heroSubheadline: string
-  imageCardBadge: string
-  imageCardHeadlinePortable: SanityPortableText
-  imageCardSrc: string
-  imageCardAlt: string
-  highlightBenefits: string[]
+  /** Legacy membership layout — not rendered on /membership */
+  heroHeadlinePortable?: SanityPortableText
+  heroSubheadline?: string
+  imageCardBadge?: string
+  imageCardHeadlinePortable?: SanityPortableText
+  imageCardSrc?: string
+  imageCardAlt?: string
+  highlightBenefits?: string[]
   pricingMonthlyBadge: string
   pricingAnnualBadge: string
   pricingMonthlyAmount: string
