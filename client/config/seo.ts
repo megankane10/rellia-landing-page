@@ -576,14 +576,6 @@ export const getDefaultOgImageUrl = (): string => {
   return `${base}?v=${encodeURIComponent(ogImageVersion)}`
 }
 
-export const getStoriesOgImageUrl = (): string => {
-  const ogImageVersion = ((import.meta as unknown as { env?: Record<string, unknown> })?.env
-    ?.VITE_OG_IMAGE_VERSION as string | undefined)?.trim()
-  const base = `${getSiteUrl()}/stories-ogimage.png`
-  if (!ogImageVersion) return base
-  return `${base}?v=${encodeURIComponent(ogImageVersion)}`
-}
-
 export const getDefaultOgImageAlt = (): string => {
   return "Rellia Health Network -- The expertise you need. The support you deserve."
 }
