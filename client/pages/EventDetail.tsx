@@ -273,9 +273,16 @@ export default function EventDetail() {
     Boolean(detailPortable?.length) || detailPlainParagraphs.length > 0
   const showLumaIframe = !isPast && Boolean(embedSrc) && event.embedLumaOnDetailPage !== false
   const addToCalendarEnabled = event.addToCalendarEnabled === true
+  const registerHref = event.href?.trim() || event.ticketingUrl?.trim() || ""
+  const customLink = event.customLinkButton
+  const customLinkHref = customLink?.url?.trim()
+  const customLinkLabel = customLink?.buttonText?.trim() || "Learn more"
   const showHeroEventCta =
     !isPast &&
-    (addToCalendarEnabled || Boolean(embedSrc) || Boolean(event.href?.trim()))
+    (addToCalendarEnabled ||
+      Boolean(embedSrc) ||
+      Boolean(registerHref) ||
+      Boolean(customLinkHref))
   const pageTitle = eventMeta!.pageTitle
   const eventDescription = eventMeta!.eventDescription
   const canonical = eventMeta!.canonical
@@ -301,8 +308,6 @@ export default function EventDetail() {
   }
 
   const calendarIntervalReady = Boolean(getProgramsEventCalendarInterval(event))
-
-  const registerHref = event.href?.trim() ?? ""
 
   const tagLabel = isPast ? "Past" : "Upcoming"
 
@@ -481,7 +486,7 @@ export default function EventDetail() {
                     </div>
 
                     {showHeroEventCta ? (
-                      <div className="mt-9 flex w-full justify-start sm:mt-10 md:mt-12">
+                      <div className="mt-9 flex w-full flex-col items-stretch gap-3 sm:mt-10 sm:flex-row sm:flex-wrap sm:items-center md:mt-12">
                         {addToCalendarEnabled ? (
                           calendarIntervalReady ? (
                             <EventAddToCalendarButton
@@ -501,11 +506,28 @@ export default function EventDetail() {
                             className="inline-flex w-full cursor-pointer px-6 py-3 text-sm sm:w-auto sm:px-8 sm:text-[15px]"
                             onClick={handleHeroCtaClick}
                             aria-haspopup="dialog"
-                            aria-label="Register now"
+                            aria-label={event.buttonText?.trim() || "Register now"}
                           >
-                            Register now
+                            {event.buttonText?.trim() || "Register now"}
                           </RelliaAction>
                         )}
+                        {customLinkHref ? (
+                          <RelliaAction
+                            asChild
+                            variant="outlineOnWhite"
+                            size="compact"
+                            className="inline-flex w-full cursor-pointer px-6 py-3 text-sm sm:w-auto sm:px-8 sm:text-[15px]"
+                          >
+                            <a
+                              href={customLinkHref}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="cursor-pointer"
+                            >
+                              {customLinkLabel}
+                            </a>
+                          </RelliaAction>
+                        ) : null}
                       </div>
                     ) : null}
                   </div>

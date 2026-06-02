@@ -1,9 +1,42 @@
 import type {SeoFieldsPluginConfig} from 'sanity-plugin-seofields'
+import {
+  MARKETING_PAGE_DISPLAY_LABEL,
+  MARKETING_PAGE_ROUTE_PREFIX,
+  MARKETING_PAGE_SEO_TYPES,
+  marketingPageSeoGroq,
+} from './marketingPageSeo'
 
-/** Shared seoFields plugin options — simpler tabs, no paid health dashboard. */
+const previewBaseUrl =
+  (typeof process !== 'undefined' && process.env.SANITY_STUDIO_PREVIEW_URL?.replace(/\/$/, '')) ||
+  'https://www.relliahealth.com'
+
+/** Shared seoFields plugin options — simpler tabs, marketing-page SEO dashboard. */
 export const seoPluginConfig: SeoFieldsPluginConfig = {
-  seoPreview: true,
-  healthDashboard: false,
+  seoPreview: {
+    prefix: (doc) => {
+      const type = typeof doc?._type === 'string' ? doc._type : ''
+      const segment = MARKETING_PAGE_ROUTE_PREFIX[type as keyof typeof MARKETING_PAGE_ROUTE_PREFIX]
+      return segment ? `/${segment}` : '/'
+    },
+    titleSuffix: 'Rellia Health',
+  },
+  baseUrl: previewBaseUrl,
+  apiVersion: '2024-01-01',
+  healthDashboard: {
+    toolTitle: 'SEO',
+    content: {
+      title: 'Page SEO',
+      description: 'Review and edit search metadata for main marketing routes.',
+    },
+    query: {
+      requireSeo: false,
+      groq: marketingPageSeoGroq,
+      types: [...MARKETING_PAGE_SEO_TYPES],
+    },
+    typeDisplayLabels: MARKETING_PAGE_DISPLAY_LABEL,
+    showTypeColumn: true,
+    compactStats: true,
+  },
   defaultHiddenFields: ['keywords', 'metaAttributes', 'openGraphSiteName', 'twitterSite'],
   fieldGroups: [
     {

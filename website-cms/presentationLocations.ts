@@ -1,25 +1,27 @@
 import {defineDocuments, defineLocations} from 'sanity/presentation'
 
+const singletonDoc = (type: string) => `_type == "${type}" && _id == "${type}"`
+
 /** Resolve iframe URLs → primary editable CMS documents (Presentation navigator). */
 export const presentationMainDocuments = defineDocuments([
-  {route: '/', type: 'homePage'},
-  {route: '/about', type: 'aboutPage'},
-  {route: '/faq', type: 'faqPage'},
-  {route: '/careers', type: 'careersPage'},
-  {route: '/programs', type: 'programsLandingPage'},
-  {route: '/events', type: 'eventsLandingPage'},
-  {route: '/contact', type: 'contactPage'},
-  {route: '/apply', type: 'applyPage'},
-  {route: '/membership', type: 'paymentPage'},
-  {route: '/consulting', type: 'consultingPage'},
-  {route: '/startup-diagnostic', type: 'diagnosticLandingPage'},
-  {route: '/terms', type: 'termsPage'},
-  {route: '/privacy', type: 'privacyPage'},
-  {route: '/stories', type: 'storiesPage'},
-  {route: '/founders', type: 'networkFoundersPage'},
-  {route: '/advisors', type: 'networkAdvisorsPage'},
-  {route: '/investors', type: 'networkInvestorsPage'},
-  {route: '/industry-partners', type: 'networkPartnersPage'},
+  {route: '/', filter: singletonDoc('homePage')},
+  {route: '/about', filter: singletonDoc('aboutPage')},
+  {route: '/faq', filter: singletonDoc('faqPage')},
+  {route: '/careers', filter: singletonDoc('careersPage')},
+  {route: '/programs', filter: singletonDoc('programsLandingPage')},
+  {route: '/events', filter: singletonDoc('eventsLandingPage')},
+  {route: '/contact', filter: singletonDoc('contactPage')},
+  {route: '/apply', filter: singletonDoc('applyPage')},
+  {route: '/membership', filter: singletonDoc('paymentPage')},
+  {route: '/consulting', filter: singletonDoc('consultingPage')},
+  {route: '/startup-diagnostic', filter: singletonDoc('diagnosticLandingPage')},
+  {route: '/terms', filter: singletonDoc('termsPage')},
+  {route: '/privacy', filter: singletonDoc('privacyPage')},
+  {route: '/stories', filter: singletonDoc('storiesPage')},
+  {route: '/founders', filter: singletonDoc('networkFoundersPage')},
+  {route: '/advisors', filter: singletonDoc('networkAdvisorsPage')},
+  {route: '/investors', filter: singletonDoc('networkInvestorsPage')},
+  {route: '/industry-partners', filter: singletonDoc('networkPartnersPage')},
   {
     route: '/stories/:slug',
     filter: (ctx) =>
@@ -34,11 +36,6 @@ export const presentationMainDocuments = defineDocuments([
     route: '/programs/:slug',
     filter: (ctx) =>
       `_type == "program" && slug.current == "${ctx.params.slug ?? ''}"`,
-  },
-  {
-    route: '/:slug',
-    filter: (ctx) =>
-      `_type == "page" && slug.current == "${ctx.params.slug ?? ''}"`,
   },
 ])
 
@@ -149,16 +146,6 @@ export const presentationLocations = {
       if (!slug) return {message: 'Add a slug to preview this program.', tone: 'caution'}
       return {
         locations: [{title: doc?.title || 'Program', href: `/programs/${slug}`}],
-      }
-    },
-  }),
-  page: defineLocations({
-    select: {title: 'title', slug: 'slug.current'},
-    resolve: (doc) => {
-      const slug = typeof doc?.slug === 'string' ? doc.slug.trim() : ''
-      if (!slug) return {message: 'Add a slug for this modular page.', tone: 'caution'}
-      return {
-        locations: [{title: doc?.title || 'Page', href: `/${slug}`}],
       }
     },
   }),

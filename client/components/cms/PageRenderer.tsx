@@ -3,9 +3,17 @@ import PageHeader from "@/components/PageHeader"
 import { PortableRichText } from "@/components/PortableRichText"
 import RelliaAction from "@/components/RelliaAction"
 import NetworkEyebrow from "@/components/network/NetworkEyebrow"
+import NetworkMetricsSection from "@/components/NetworkMetricsSection"
 import SectionHeading from "@/components/SectionHeading"
 import ScrollReveal from "@/components/ScrollReveal"
 import { relliaTealGlassCardClass } from "@/lib/relliaTealGlassCard"
+import { cmsCleanText, cmsDisplayText } from "@/lib/cmsStega"
+import {
+  extractFilloutId,
+  FILLOUT_APPLY_FORM_ID,
+  FILLOUT_EMBED_VIEWPORT_MIN_CLASS,
+  PROGRAM_FILLOUT_EMBED_MIN_CLASS,
+} from "@/lib/filloutApplyForm"
 import { cn } from "@/lib/utils"
 import type {
   CmsPageContent,
@@ -19,14 +27,19 @@ import type {
   CmsSectionJourneyTimeline,
   CmsSectionDiagnosticSurvey,
   CmsSectionFaq,
+  CmsSectionMarketingHero,
+  CmsSectionMetrics,
+  CmsSectionFormEmbed,
   NavItem,
   SanityPortableText,
 } from "@shared/cms/types"
 import { normalizeToPortableText } from "@shared/cms/normalizePortableText"
+import { RoleHero } from "@/pages/network/_shared"
 import { Link } from "react-router-dom"
 import * as LucideIcons from "lucide-react"
 import { ArrowRight, CalendarDays } from "lucide-react"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
+import { FilloutStandardEmbed } from "@fillout/react"
 
 const isExternalHref = (href: string) => /^(https?:\/\/|mailto:|tel:)/i.test(href)
 
@@ -53,21 +66,150 @@ const CtaLink = ({
   className?: string
   children?: ReactNode
 }) => {
-  const href = normalizeInternalHref(item.href)
-  const content = children ?? item.label
+  const href = normalizeInternalHref(cmsCleanText(item.href))
+  const content = children ?? cmsDisplayText(item.label)
 
   if (isExternalHref(href)) {
     return (
-      <a href={href} target="_blank" rel="noopener noreferrer" className={className} aria-label={item.label}>
+      <a href={href} target="_blank" rel="noopener noreferrer" className={className} aria-label={cmsCleanText(item.label)}>
         {content}
       </a>
     )
   }
 
   return (
-    <Link to={href} className={className} aria-label={item.label}>
+    <Link to={href} className={className} aria-label={cmsCleanText(item.label)}>
       {content}
     </Link>
+  )
+}
+
+const SectionMarketingHero = ({ section }: { section: CmsSectionMarketingHero }) => {
+  const titleRaw = cmsDisplayText(section.title)
+  const accent = cmsCleanText(section.accentPhrase)
+  const title: ReactNode =
+    accent && !titleRaw.toLowerCase().includes(accent.toLowerCase()) ? (
+      <>
+        {titleRaw}{" "}
+        <span className="text-rellia-mint">{accent}</span>
+      </>
+    ) : accent ? (
+      <>
+        {titleRaw.replace(new RegExp(accent, "i"), "")}
+        <span className="text-rellia-mint">{accent}</span>
+      </>
+    ) : (
+      titleRaw
+    )
+
+  const imageSrc =
+    cmsCleanText(section.imageUrl) || "/images/network-hero.png"
+  const primaryHref = section.primaryCta?.href ? normalizeInternalHref(cmsCleanText(section.primaryCta.href)) : "/"
+  const secondaryHref = section.secondaryCta?.href
+    ? normalizeInternalHref(cmsCleanText(section.secondaryCta.href))
+    : undefined
+
+  return (
+    <RoleHero
+      eyebrowLabel={cmsDisplayText(section.eyebrowLabel) || undefined}
+      title={title}
+      subtitle={cmsDisplayText(section.subtitle)}
+      imageSrc={imageSrc}
+      primaryCta={{
+        label: cmsDisplayText(section.primaryCta?.label) || "Learn more",
+        to: primaryHref,
+      }}
+      secondaryCta={
+        section.secondaryCta?.href
+          ? {
+              label: cmsDisplayText(section.secondaryCta.label) || "Contact",
+              to: secondaryHref || "/contact",
+            }
+          : undefined
+      }
+    />
+  )
+}
+
+const SectionMetrics = ({ section }: { section: CmsSectionMetrics }) => {
+  const metrics =
+    section.metrics?.map((m) => ({
+      label: cmsDisplayText(m.label),
+      value: m.value,
+      suffix: cmsDisplayText(m.suffix),
+    })) ?? []
+
+  if (metrics.length === 0) return null
+
+  return (
+    <NetworkMetricsSection
+      heading={cmsDisplayText(section.heading)}
+      subheading={cmsDisplayText(section.subheading) || ""}
+      metrics={metrics}
+    />
+  )
+}
+
+const SectionFormEmbed = ({ section }: { section: CmsSectionFormEmbed }) => {
+  const formId =
+    extractFilloutId(cmsCleanText(section.filloutFormUrl)) || FILLOUT_APPLY_FORM_ID
+  const layout = section.layout ?? "standalone"
+
+  if (layout === "split") {
+    const benefits = (section.benefits ?? []).map((b) => cmsDisplayText(b)).filter(Boolean)
+    const panelImage = cmsCleanText(section.panelImageUrl)
+
+    return (
+      <section className="bg-white py-16 md:py-24 lg:py-28">
+        <div className="mx-auto grid max-w-[1300px] grid-cols-1 items-stretch gap-12 px-6 md:px-10 lg:grid-cols-2 lg:gap-16">
+          <div className="relative flex min-h-[480px] flex-col overflow-hidden rounded-[1.75rem] bg-rellia-teal p-8 md:p-10 lg:p-12">
+            {panelImage ? (
+              <div className="pointer-events-none absolute inset-0" aria-hidden>
+                <img
+                  src={panelImage}
+                  alt=""
+                  className="h-full w-full object-cover opacity-[0.35] mix-blend-overlay"
+                />
+                <div className="absolute inset-0 bg-gradient-to-br from-rellia-teal via-[#0f5c5c] to-rellia-teal/85" />
+              </div>
+            ) : (
+              <div className="absolute inset-0 bg-gradient-to-br from-rellia-teal via-[#0f5c5c] to-rellia-teal/85" aria-hidden />
+            )}
+            <div className="relative z-10 flex flex-col">
+              {section.panelHeadline ? (
+                <h2 className="mb-8 font-host-grotesk text-2xl font-semibold leading-tight tracking-tight text-rellia-mint md:text-[32px]">
+                  {cmsDisplayText(section.panelHeadline)}
+                </h2>
+              ) : null}
+              {section.panelBody ? (
+                <p className="mb-8 max-w-md font-urbanist text-base leading-relaxed text-white/90 md:text-lg">
+                  {cmsDisplayText(section.panelBody)}
+                </p>
+              ) : null}
+              {benefits.length > 0 ? (
+                <ul className="mt-auto flex flex-col gap-y-4 font-urbanist text-base text-white/95 md:text-lg">
+                  {benefits.map((benefit) => (
+                    <li key={benefit} className="flex items-start gap-3">
+                      <span className="mt-2 h-2.5 w-2.5 shrink-0 rounded-full bg-rellia-mint" aria-hidden />
+                      {benefit}
+                    </li>
+                  ))}
+                </ul>
+              ) : null}
+            </div>
+          </div>
+          <div className={cn("min-h-[520px] w-full", PROGRAM_FILLOUT_EMBED_MIN_CLASS)}>
+            <FilloutStandardEmbed filloutId={formId} dynamicResize />
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  return (
+    <section className={cn("w-full bg-white pt-[72px] md:pt-[86px]", FILLOUT_EMBED_VIEWPORT_MIN_CLASS)}>
+      <FilloutStandardEmbed filloutId={formId} dynamicResize />
+    </section>
   )
 }
 
@@ -497,13 +639,13 @@ const SectionFaq = ({ section }: { section: CmsSectionFaq }) => {
       <div className="max-w-[900px] mx-auto px-6 md:px-10">
         <ScrollReveal>
           {section.title?.trim() ? (
-            <h2 className="font-host-grotesk text-2xl md:text-[32px] font-semibold leading-tight tracking-tight text-black mb-3 text-left">
-              {section.title}
+            <h2 className="mb-4 text-left font-host-grotesk text-3xl font-bold leading-[1.12] tracking-tight text-black sm:text-[2rem] md:mb-5 md:text-4xl lg:text-[2.65rem]">
+              {cmsDisplayText(section.title)}
             </h2>
           ) : null}
           {section.subtitle?.trim() ? (
-            <p className="font-urbanist text-base md:text-lg text-black/60 mb-8 max-w-2xl text-left">
-              {section.subtitle}
+            <p className="mb-10 max-w-2xl text-left font-urbanist text-lg leading-relaxed text-black/65 md:text-xl">
+              {cmsDisplayText(section.subtitle)}
             </p>
           ) : null}
           <div className="rounded-3xl border border-black/10 bg-white px-7 py-0 shadow-sm">
@@ -514,11 +656,11 @@ const SectionFaq = ({ section }: { section: CmsSectionFaq }) => {
                   value={item._key ?? `faq-${index}`}
                   className={index === items.length - 1 ? "-mx-7 px-7 border-b-0" : "-mx-7 px-7 border-b border-black/10"}
                 >
-                  <AccordionTrigger className="text-left text-base md:text-lg font-medium text-black py-4 md:py-5 min-h-[64px] md:min-h-[72px]">
-                    {item.question}
+                  <AccordionTrigger className="min-h-[64px] py-4 text-left text-base font-medium text-black md:min-h-[72px] md:py-5 md:text-lg">
+                    {cmsDisplayText(item.question)}
                   </AccordionTrigger>
-                  <AccordionContent className="pb-5 text-black/70 font-urbanist text-sm md:text-base leading-relaxed whitespace-pre-line">
-                    {item.answer}
+                  <AccordionContent className="pb-5 font-urbanist text-base leading-relaxed text-black/70 whitespace-pre-line md:text-lg">
+                    {cmsDisplayText(item.answer)}
                   </AccordionContent>
                 </AccordionItem>
               ))}
@@ -532,6 +674,12 @@ const SectionFaq = ({ section }: { section: CmsSectionFaq }) => {
 
 const renderSection = (section: CmsPageSection) => {
   switch (section._type) {
+    case "sectionMarketingHero":
+      return <SectionMarketingHero section={section} />
+    case "sectionMetrics":
+      return <SectionMetrics section={section} />
+    case "sectionFormEmbed":
+      return <SectionFormEmbed section={section} />
     case "sectionHero":
       return <SectionHero section={section} />
     case "sectionRichText":

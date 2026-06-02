@@ -43,7 +43,7 @@ function CompanyInfoPopover({ t }: { t: Testimonial }) {
         side="top"
         className={cn(
           "border-rellia-teal bg-rellia-teal p-5 text-white shadow-2xl",
-          "w-[min(calc(100vw-2rem),20rem)] sm:w-80 rounded-2xl z-50",
+          "w-[min(calc(100vw-2rem),20rem)] sm:w-80 rounded-3xl z-50",
         )}
       >
         <div className="flex flex-col gap-2">
@@ -116,7 +116,7 @@ function TestimonialCard({
   return (
     <div
       className={cn(
-        "flex h-full w-full min-w-0 flex-col overflow-hidden rounded-2xl border border-black/10 bg-white p-4 md:p-5",
+        "flex h-full w-full min-w-0 flex-col overflow-hidden rounded-3xl border border-black/10 bg-white p-4 md:p-5",
         "transition-[max-height] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:transition-none",
         isExpanded && "max-h-[min(92vh,2400px)] min-h-0"
       )}

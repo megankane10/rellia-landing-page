@@ -38,7 +38,13 @@ export type CareersOpenRole = {
   linkedInApplyUrl: string
 }
 
-export type CareersPageContent = {
+export type CareersTeamMarqueeImage = {
+  src?: string
+  alt?: string
+}
+
+export type CareersPageContent = CmsPageVisibility & {
+  teamMarqueeImages?: CareersTeamMarqueeImage[]
   defaultTab?: "hiring" | "volunteer"
   enableHiringTab?: boolean
   enableVolunteerTab?: boolean
@@ -234,7 +240,49 @@ export type CmsSectionFaq = {
   items?: CmsSectionFaqItem[]
 }
 
+export type CmsSectionMarketingHero = {
+  _type: "sectionMarketingHero"
+  _key?: string
+  eyebrowLabel?: string
+  title: string
+  accentPhrase?: string
+  subtitle?: string
+  imageUrl?: string
+  imageAlt?: string
+  primaryCta?: NavItem
+  secondaryCta?: NavItem
+}
+
+export type CmsSectionMetricsItem = {
+  _key?: string
+  label: string
+  value: number
+  suffix?: string
+}
+
+export type CmsSectionMetrics = {
+  _type: "sectionMetrics"
+  _key?: string
+  heading: string
+  subheading?: string
+  metrics?: CmsSectionMetricsItem[]
+}
+
+export type CmsSectionFormEmbed = {
+  _type: "sectionFormEmbed"
+  _key?: string
+  layout?: "standalone" | "split"
+  filloutFormUrl: string
+  panelHeadline?: string
+  panelBody?: string
+  benefits?: string[]
+  panelImageUrl?: string
+}
+
 export type CmsPageSection =
+  | CmsSectionMarketingHero
+  | CmsSectionMetrics
+  | CmsSectionFormEmbed
   | CmsSectionHero
   | CmsSectionRichText
   | CmsSectionCardsGrid
@@ -443,6 +491,8 @@ export type ProgramsEventCard = {
   endsAt?: string
   /** Rich description from Sanity `eventDescription` (portable text). */
   eventDescription?: SanityPortableText
+  ticketingUrl?: string
+  customLinkButton?: { buttonText?: string; url?: string }
   /** Manual label in Studio; listing/detail prefer `startsAt` / `endsAt` when set. */
   status?: "upcoming" | "past" | "hidden"
 }
@@ -492,9 +542,12 @@ export type ContactPageContent = {
   intro: string
   sideImageSrc: string
   sideImageAlt: string
+  leftLogoImageSrc?: string
   quoteText: string
+  quotePersonImageSrc?: string
   quoteAttributionName: string
   quoteAttributionRole: string
+  footerEmail?: string
   successTitle: string
   successBody: string
   labels: {
@@ -604,7 +657,7 @@ export type NotFoundContent = {
   seo?: SeoContent
 }
 
-export type PaymentPageContent = {
+export type PaymentPageContent = CmsPageVisibility & {
   badge: string
   headline: string
   introCheckout: string

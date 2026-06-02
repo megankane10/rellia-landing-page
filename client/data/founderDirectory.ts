@@ -1,3 +1,4 @@
+import type { SanityPortableText } from "@shared/cms/types"
 import { PORTFOLIO_LOGO_MARKS } from "./portfolioLogos"
 
 export type Specialty = "Women’s Health" | "Neurology" | "Cardiology" | "Oncology" | "Mental Health" | "Pediatrics"
@@ -11,6 +12,8 @@ export type FounderPerson = {
   role: string
   bio: string
   linkedinUrl?: string
+  websiteUrl?: string
+  socialLinks?: Array<{ platform?: string; label?: string; url?: string }>
   imageSrc?: string
 }
 
@@ -35,6 +38,7 @@ export type FounderCompany = {
   founders: FounderPerson[]
   programs: string[]
   linkedinUrl?: string
+  profileBody?: SanityPortableText
 }
 
 const SPECIALTY_CYCLE: Specialty[] = ["Women’s Health", "Neurology", "Cardiology", "Oncology", "Mental Health", "Pediatrics"]

@@ -1,34 +1,70 @@
 import {defineField, defineType} from 'sanity'
 import {documentGroups, FIELDSET_SEO} from '../shared/fieldGroups'
 import {singletonLayoutFields} from '../shared/singletonLayoutFields'
+import {singletonPublishingAtTop} from '../shared/documentTopFields'
+import {publishingGroup} from '../shared/pageVisibilityFields'
 
 export const contactPage = defineType({
   name: 'contactPage',
   title: 'Contact page',
   type: 'document',
-  groups: documentGroups,
+  groups: [publishingGroup, ...documentGroups.filter((g) => g.name !== 'publishing')],
   fieldsets: [FIELDSET_SEO],
   fields: [
+    ...singletonPublishingAtTop,
     defineField({name: 'heroBadge', type: 'string', title: 'Hero badge', group: 'content'}),
     defineField({name: 'pageTitle', type: 'string', group: 'content'}),
     defineField({name: 'intro', type: 'text', rows: 3, group: 'content'}),
     defineField({
       name: 'sideImage',
-      title: 'Side image',
+      title: 'Left panel background image',
       type: 'image',
       options: {hotspot: true},
       group: 'content',
     }),
     defineField({
       name: 'sideImageSrc',
-      title: 'Side image URL (fallback if no image upload)',
+      title: 'Left panel background URL (fallback)',
       type: 'string',
       group: 'content',
     }),
-    defineField({name: 'sideImageAlt', type: 'string', title: 'Side image alt text', group: 'content'}),
+    defineField({name: 'sideImageAlt', type: 'string', title: 'Background image alt text', group: 'content'}),
+    defineField({
+      name: 'leftLogoImage',
+      title: 'Left panel logo (top)',
+      type: 'image',
+      options: {hotspot: true},
+      group: 'content',
+    }),
+    defineField({
+      name: 'leftLogoImageSrc',
+      title: 'Left panel logo URL (fallback)',
+      type: 'string',
+      group: 'content',
+    }),
     defineField({name: 'quoteText', type: 'text', rows: 3, title: 'Quote on image', group: 'content'}),
+    defineField({
+      name: 'quotePersonImage',
+      title: 'Quote — person photo',
+      type: 'image',
+      options: {hotspot: true},
+      group: 'content',
+    }),
+    defineField({
+      name: 'quotePersonImageSrc',
+      title: 'Quote — person photo URL (fallback)',
+      type: 'string',
+      group: 'content',
+    }),
     defineField({name: 'quoteAttributionName', type: 'string', title: 'Quote — name', group: 'content'}),
     defineField({name: 'quoteAttributionRole', type: 'string', title: 'Quote — role', group: 'content'}),
+    defineField({
+      name: 'footerEmail',
+      title: 'Footer email (left panel)',
+      type: 'string',
+      initialValue: 'hello@relliahealth.com',
+      group: 'content',
+    }),
     defineField({name: 'successTitle', type: 'string', group: 'content'}),
     defineField({name: 'successBody', type: 'text', rows: 2, group: 'content'}),
     defineField({

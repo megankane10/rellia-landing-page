@@ -30,6 +30,7 @@ import { isCmsQueryLoading } from "@/lib/cmsQueryState";
 import {
   DirectoryGridSkeleton,
 } from "@/components/cms/CmsPageLoadingShell";
+import { DirectoryCardTags } from "@/components/network/DirectoryCardTags";
 import {
   directoryGroupHasCountry,
   getCountryFilterOptions,
@@ -47,7 +48,7 @@ function FounderDirectoryCard({
   company: FounderCompany;
   onOpen: () => void;
 }) {
-  const primarySpecialty = company.specialties[0]
+  const cardTags = company.specialties ?? []
 
   return (
     <motion.article
@@ -74,26 +75,20 @@ function FounderDirectoryCard({
           alt=""
           className="max-h-[72%] w-auto max-w-[72%] object-contain object-center transition duration-500 ease-out group-hover:scale-[1.02]"
         />
-        {primarySpecialty ? (
-          <div className="absolute left-3 top-3 z-10 max-w-[calc(100%-1.5rem)]">
-            <span className="inline-flex rounded-full border border-rellia-teal/15 bg-rellia-mint/90 px-2.5 py-0.5 font-urbanist text-[10px] font-bold text-rellia-teal shadow-sm">
-              {primarySpecialty}
-            </span>
-          </div>
-        ) : null}
+        <DirectoryCardTags tags={cardTags} variant="onLight" />
       </div>
       <div className="flex flex-1 flex-col p-6 md:p-7">
         <h3 className="font-host-grotesk text-lg font-bold tracking-tight text-black group-hover:underline decoration-2 underline-offset-4">
           {company.logoName}
         </h3>
-        {Array.isArray(company.country) && company.country.length > 0 && (
-          <p className="mt-1 font-urbanist text-sm font-medium text-black/70 leading-snug">
-            {company.country.join(", ")}
-          </p>
-        )}
         {(company.shortDescription?.trim() || company.tagline?.trim()) && (
           <p className="mt-2 font-urbanist text-sm text-black/55 leading-relaxed line-clamp-3">
             {company.shortDescription?.trim() || company.tagline}
+          </p>
+        )}
+        {Array.isArray(company.country) && company.country.length > 0 && (
+          <p className="mt-2 font-urbanist text-xs font-medium text-black/55 leading-snug">
+            {company.country.join(", ")}
           </p>
         )}
       </div>
@@ -116,8 +111,6 @@ export default function FoundersDirectory() {
   const [countryFilter, setCountryFilter] = useState<string>("all");
   const [businessModelFilter, setBusinessModelFilter] = useState<string>("all");
   const [groupFilters, setGroupFilters] = useState<Record<string, string>>({});
-  const [activeId, setActiveId] = useState<string | null>(null);
-
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const country = params.get("country");
@@ -164,6 +157,7 @@ export default function FoundersDirectory() {
             country: Array.isArray(c.country) ? c.country : (c.country ? [c.country] : []),
             yearJoined: typeof c.yearJoined === "number" ? c.yearJoined : 0,
             founders: Array.isArray(c.founders) ? c.founders : [],
+            programs: [],
             profileBody: c.profileBody,
             linkedinUrl: c.linkedinUrl,
           }
@@ -282,11 +276,6 @@ export default function FoundersDirectory() {
   useEffect(() => {
     setPage(1);
   }, [query, specialtyFilter, countryFilter, businessModelFilter, groupFilters]);
-
-  const active = useMemo(
-    () => companies.find((c) => c.id === activeId) ?? null,
-    [activeId, companies],
-  );
 
   const EASE_OUT: [number, number, number, number] = [0.16, 1, 0.3, 1];
   const container: Variants = {

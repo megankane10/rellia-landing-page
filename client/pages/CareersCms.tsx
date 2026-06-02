@@ -117,8 +117,6 @@ const getPerkIcon = (key: string): LucideIcon => {
   }
 }
 
-const joinTeamMarqueeImages = [...TEAM_MARQUEE_IMAGES, ...TEAM_MARQUEE_IMAGES]
-
 const JOIN_TEAM_MARQUEE_LOOP_SEC = 56
 
 /** Shared geometry + RelliaCta-style hover (lift + fill, no sweep) */
@@ -138,15 +136,23 @@ type CareersJoinTeamCta = {
   ariaLabel: string
 }
 
+type CareersMarqueeSlide = { src: string; alt?: string }
+
 const CareersJoinTeamSection = ({
   primaryCta,
   secondaryCta,
+  marqueeSlides,
 }: {
   primaryCta: CareersJoinTeamCta | null
   secondaryCta: CareersJoinTeamCta | null
+  marqueeSlides: CareersMarqueeSlide[]
 }) => {
   const reduceMotion = useReducedMotion()
   const [showApplyForm, setShowApplyForm] = useState(false)
+  const joinTeamMarqueeSlides = useMemo(
+    () => [...marqueeSlides, ...marqueeSlides],
+    [marqueeSlides],
+  )
 
   const handlePrimaryClick = () => {
     if (primaryCta?.action !== "scroll" || !primaryCta.scrollTargetId) return
@@ -258,9 +264,15 @@ const CareersJoinTeamSection = ({
                         : { duration: JOIN_TEAM_MARQUEE_LOOP_SEC, repeat: Number.POSITIVE_INFINITY, ease: "linear" }
                     }
                   >
-                    {joinTeamMarqueeImages.map((src, index) => (
-                      <div key={`${src}-${index}`} className={joinTeamImageTileClass}>
-                        <img src={src} alt="" className="h-full w-full object-cover" loading="lazy" decoding="async" />
+                    {joinTeamMarqueeSlides.map((slide, index) => (
+                      <div key={`${slide.src}-${index}`} className={joinTeamImageTileClass}>
+                        <img
+                          src={slide.src}
+                          alt={slide.alt ?? ""}
+                          className="h-full w-full object-cover"
+                          loading="lazy"
+                          decoding="async"
+                        />
                       </div>
                     ))}
                   </motion.div>
@@ -361,15 +373,14 @@ export default function CareersCms() {
   const enableHiring = careersCms.enableHiringTab !== false
   const enableVolunteer = careersCms.enableVolunteerTab !== false && volunteerAvailable
 
-  const joinTeamPrimaryCta: CareersJoinTeamCta | null =
-    enableHiring && openRoles.length > 0
-      ? {
-          action: "scroll",
-          scrollTargetId: "open-roles",
-          label: "See open roles",
-          ariaLabel: "See open roles — jump to open roles",
-        }
-      : null
+  const joinTeamPrimaryCta: CareersJoinTeamCta | null = enableHiring
+    ? {
+        action: "scroll",
+        scrollTargetId: "open-roles",
+        label: "Work with us",
+        ariaLabel: "Work with us — jump to open roles",
+      }
+    : null
 
   const joinTeamSecondaryCta: CareersJoinTeamCta | null = enableVolunteer
     ? {
@@ -378,6 +389,17 @@ export default function CareersCms() {
         ariaLabel: "Volunteer with us — show application form",
       }
     : null
+
+  const teamMarqueeSlides = useMemo((): CareersMarqueeSlide[] => {
+    const fromCms = careersCms.teamMarqueeImages
+      ?.map((img) => ({
+        src: img.src?.trim() ?? "",
+        alt: img.alt?.trim(),
+      }))
+      .filter((slide) => Boolean(slide.src))
+    if (fromCms && fromCms.length > 0) return fromCms
+    return TEAM_MARQUEE_IMAGES.map((src) => ({ src, alt: "" }))
+  }, [careersCms.teamMarqueeImages])
 
   return (
     <div className="min-h-screen overflow-x-hidden bg-white font-host-grotesk">
@@ -394,9 +416,10 @@ export default function CareersCms() {
           subtitle="We connect founders, clinicians, and capital so the right ideas reach patients. If you thrive in fast-moving, mission-driven environments, we would love to meet you."
         />
 
-        <CareersJoinTeamSection 
-          primaryCta={joinTeamPrimaryCta} 
-          secondaryCta={joinTeamSecondaryCta} 
+        <CareersJoinTeamSection
+          primaryCta={joinTeamPrimaryCta}
+          secondaryCta={joinTeamSecondaryCta}
+          marqueeSlides={teamMarqueeSlides}
         />
 
         <WhyRellia
@@ -440,11 +463,8 @@ export default function CareersCms() {
         </section>
 
         {enableHiring ? (
-          <section
-            id="open-roles"
-            className="scroll-mt-28 flex min-h-[max(46rem,92svh)] flex-col bg-rellia-cream/60"
-          >
-            <div className="mx-auto flex w-full max-w-[1300px] flex-col px-6 py-16 md:px-10 md:py-20">
+          <section id="open-roles" className="scroll-mt-28 px-6 py-16 md:px-10 md:py-20">
+            <div className="mx-auto flex min-h-[max(46rem,92svh)] w-full max-w-[1300px] flex-col rounded-3xl bg-rellia-cream/60 px-6 py-16 md:px-10 md:py-20">
               <ScrollReveal className="flex min-w-0 flex-col">
                 <h2 className="font-host-grotesk text-2xl font-semibold tracking-tight text-black md:text-[32px]">
                   Open Roles
@@ -452,7 +472,7 @@ export default function CareersCms() {
 
                 <div className="mt-10 w-full shrink-0">
                   {openRoles.length > 0 ? (
-                    <div className="overflow-hidden rounded-3xl border border-black/10 bg-white px-0 shadow-sm md:px-2">
+                    <div className="overflow-hidden rounded-[28px] border border-black/10 bg-white px-0 shadow-sm md:px-2">
                       <Accordion
                         type="single"
                         collapsible

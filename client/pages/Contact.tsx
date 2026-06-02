@@ -60,9 +60,9 @@ function LeftPanel({ copy }: { copy: typeof DEFAULT_CONTACT_PAGE }) {
       <div className="relative flex min-h-[min(480px,calc(100vh-10rem))] flex-1 flex-col overflow-hidden rounded-[1.75rem] bg-rellia-teal">
         <div className="absolute inset-0">
           <img
-            src="/health_tech_collaboration_1778023064936.png"
-            alt=""
-            aria-hidden
+            src={copy.sideImageSrc || "/health_tech_collaboration_1778023064936.png"}
+            alt={copy.sideImageAlt || ""}
+            aria-hidden={!copy.sideImageAlt?.trim()}
             width={1920}
             height={1080}
             loading="eager"
@@ -83,7 +83,7 @@ function LeftPanel({ copy }: { copy: typeof DEFAULT_CONTACT_PAGE }) {
           >
             <div className="mb-6 pl-2">
               <img
-                src="/images/hologram-logo.png"
+                src={copy.leftLogoImageSrc || "/images/hologram-logo.png"}
                 alt=""
                 aria-hidden
                 width={64}
@@ -102,7 +102,7 @@ function LeftPanel({ copy }: { copy: typeof DEFAULT_CONTACT_PAGE }) {
               <div className="mt-8 flex items-center gap-4 md:gap-5">
                 <div className="h-[62px] w-[62px] md:h-[78px] md:w-[78px] shrink-0 overflow-hidden rounded-2xl border-2 border-white/20 shadow-xl">
                   <img
-                    src="/images/megan-headshot.jpeg"
+                    src={copy.quotePersonImageSrc || "/images/megan-headshot.jpeg"}
                     alt={`${copy.quoteAttributionName}, ${copy.quoteAttributionRole}`}
                     width={78}
                     height={78}
@@ -127,8 +127,11 @@ function LeftPanel({ copy }: { copy: typeof DEFAULT_CONTACT_PAGE }) {
               className="mt-auto border-t border-white/10 pt-8 flex justify-start"
             >
               <p className="font-host-grotesk text-sm font-medium text-white pl-2">
-                <a href="mailto:hello@relliahealth.com" className="hover:underline underline-offset-4">
-                  hello@relliahealth.com
+                <a
+                  href={`mailto:${copy.footerEmail || "hello@relliahealth.com"}`}
+                  className="hover:underline underline-offset-4"
+                >
+                  {copy.footerEmail || "hello@relliahealth.com"}
                 </a>
               </p>
             </motion.div>
@@ -246,29 +249,7 @@ function ContactForm() {
         </div>
       </div>
 
-      {/* Row 2: Email */}
-      <div className="space-y-2.5">
-        <label className="text-xs font-bold text-rellia-teal font-host-grotesk uppercase tracking-wider ml-1">Work Email</label>
-        <div className="relative group">
-          <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-black/25 group-focus-within:text-rellia-teal transition-colors" />
-          <input
-            {...register("email", { 
-              required: "Email is required", 
-              pattern: { value: /^\S+@\S+$/i, message: "Invalid email" } 
-            })}
-            type="email"
-            placeholder="jane@company.com"
-            className={cn(
-              "w-full pl-11 pr-4 py-3.5 bg-black/[0.03] border-2 border-black/[0.03] rounded-[14px] font-urbanist text-black placeholder:text-black/25 outline-none transition-all duration-300",
-              "focus:bg-white focus:border-rellia-teal/20 focus:ring-4 focus:ring-rellia-teal/5",
-              errors.email && "border-red-100 bg-red-50/20 focus:border-red-200 focus:ring-red-500/5"
-            )}
-          />
-        </div>
-        {errors.email && <p className="text-xs font-semibold text-red-500 ml-1">{errors.email.message}</p>}
-      </div>
-
-      {/* Row 3: Company & Job Title */}
+      {/* Row 2: Company & Job Title */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-7">
         <div className="space-y-2.5">
           <label className="text-xs font-bold text-rellia-teal font-host-grotesk uppercase tracking-wider ml-1">Company</label>
@@ -295,6 +276,30 @@ function ContactForm() {
             )}
           />
         </div>
+      </div>
+
+      {/* Row 3: Email */}
+      <div className="space-y-2.5">
+        <label className="text-xs font-bold text-rellia-teal font-host-grotesk uppercase tracking-wider ml-1">Work Email</label>
+        <div className="relative group">
+          <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-black/25 group-focus-within:text-rellia-teal transition-colors" />
+          <input
+            {...register("email", {
+              required: "Email is required",
+              pattern: { value: /^\S+@\S+$/i, message: "Invalid email" },
+            })}
+            type="email"
+            placeholder="jane@company.com"
+            className={cn(
+              "w-full pl-11 pr-4 py-3.5 bg-black/[0.03] border-2 border-black/[0.03] rounded-[14px] font-urbanist text-black placeholder:text-black/25 outline-none transition-all duration-300",
+              "focus:bg-white focus:border-rellia-teal/20 focus:ring-4 focus:ring-rellia-teal/5",
+              errors.email && "border-red-100 bg-red-50/20 focus:border-red-200 focus:ring-red-500/5",
+            )}
+          />
+        </div>
+        {errors.email ? (
+          <p className="text-xs font-semibold text-red-500 ml-1">{errors.email.message}</p>
+        ) : null}
       </div>
 
       {/* Row 4: Message */}

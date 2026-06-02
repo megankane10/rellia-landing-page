@@ -51,7 +51,7 @@ const ENGAGEMENT: readonly EngagementItem[] = [
     body: "Centralize your offers and verified references inside our exclusive marketplace for health tech execution.",
     href: GETPROVEN_VENDORS_GRID_URL,
     external: true,
-    cta: "Explore directory",
+    cta: "Explore Industry Partners",
     icon: LayoutGrid,
   },
   {

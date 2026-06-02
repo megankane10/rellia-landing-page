@@ -2,14 +2,20 @@ import {defineField, defineType} from 'sanity'
 import {documentGroups, FIELDSET_SEO} from '../shared/fieldGroups'
 import {seoField} from '../shared/seoField'
 import {pageBuilderField} from '../shared/pageBuilderField'
+import {eventPublishingFields} from '../shared/documentTopFields'
 
 export const event = defineType({
   name: 'event',
   title: 'Event',
   type: 'document',
-  groups: [...documentGroups, {name: 'ticketing', title: 'Ticketing & calendar'}],
+  groups: [
+    {name: 'publishing', title: 'Publishing', default: true},
+    ...documentGroups.filter((g) => g.name !== 'publishing'),
+    {name: 'ticketing', title: 'Ticketing & calendar'},
+  ],
   fieldsets: [FIELDSET_SEO],
   fields: [
+    ...eventPublishingFields,
     defineField({
       name: 'title',
       type: 'string',
@@ -39,6 +45,15 @@ export const event = defineType({
       group: 'content',
     }),
     defineField({
+      name: 'dateTime',
+      title: 'Date & time label (legacy)',
+      type: 'string',
+      hidden: true,
+      readOnly: true,
+      description: 'Deprecated — use Start/End date & time. Kept for older documents.',
+      group: 'content',
+    }),
+    defineField({
       name: 'person',
       title: 'Host',
       type: 'string',
@@ -65,21 +80,22 @@ export const event = defineType({
       options: {hotspot: true},
       group: 'content',
     }),
-    defineField({name: 'href', type: 'string', group: 'content'}),
+    defineField({name: 'href', title: 'Registration URL (Luma / external)', type: 'string', group: 'content'}),
     defineField({name: 'comingSoon', type: 'boolean', group: 'content'}),
-    defineField({name: 'buttonText', title: 'CTA label', type: 'string', group: 'ticketing'}),
-    defineField({name: 'lumaEventId', title: 'Luma event ID', type: 'string', group: 'ticketing'}),
-    defineField({
-      name: 'ticketingUrl',
-      title: 'Ticketing / registration URL',
-      type: 'url',
-      group: 'ticketing',
-    }),
     defineField({
       name: 'eventDescription',
       title: 'Event description',
       type: 'portableText',
       description: 'Rich description for the event detail page.',
+      group: 'content',
+    }),
+    defineField({
+      name: 'detailBody',
+      title: 'Detail body (legacy)',
+      type: 'portableText',
+      hidden: true,
+      readOnly: true,
+      description: 'Deprecated — use Event description. Kept for older documents.',
       group: 'content',
     }),
     defineField({
@@ -89,23 +105,23 @@ export const event = defineType({
       initialValue: 'About this event',
       group: 'content',
     }),
+    defineField({name: 'buttonText', title: 'CTA label', type: 'string', group: 'ticketing'}),
+    defineField({name: 'lumaEventId', title: 'Luma event ID', type: 'string', group: 'ticketing'}),
+    defineField({
+      name: 'ticketingUrl',
+      title: 'Ticketing / registration URL',
+      type: 'url',
+      group: 'ticketing',
+    }),
+    defineField({
+      name: 'customLinkButton',
+      title: 'Custom link button',
+      type: 'customLinkButton',
+      description: 'Optional extra button on the event page (e.g. sponsor site, resources).',
+      group: 'ticketing',
+    }),
     defineField({name: 'embedLumaOnDetailPage', type: 'boolean', group: 'ticketing'}),
     defineField({name: 'addToCalendarEnabled', type: 'boolean', group: 'ticketing'}),
-    defineField({
-      name: 'status',
-      type: 'string',
-      options: {
-        layout: 'radio',
-        list: [
-          {title: 'Upcoming', value: 'upcoming'},
-          {title: 'Past', value: 'past'},
-          {title: 'Hidden', value: 'hidden'},
-        ],
-      },
-      initialValue: 'upcoming',
-      group: 'content',
-    }),
-    defineField({name: 'sortOrder', type: 'number', initialValue: 0, group: 'content'}),
     pageBuilderField,
     seoField,
   ],

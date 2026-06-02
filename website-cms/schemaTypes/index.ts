@@ -47,6 +47,7 @@ import {linkAnnotation} from './objects/linkAnnotation'
 import {socialLink} from './objects/socialLink'
 import {themeColors} from './objects/themeColors'
 import {ctaButton} from './objects/ctaButton'
+import {customLinkButton} from './objects/customLinkButton'
 import {inlineHeroHeadline} from './objects/inlineHeroHeadline'
 import {
   pageBuilder,
@@ -65,6 +66,9 @@ import {sectionEngageBand} from './objects/sectionEngageBand'
 import {sectionJourneyTimeline} from './objects/sectionJourneyTimeline'
 import {sectionDiagnosticSurvey} from './objects/sectionDiagnosticSurvey'
 import {sectionFaq} from './objects/sectionFaq'
+import {sectionMarketingHero} from './objects/sectionMarketingHero'
+import {sectionMetrics} from './objects/sectionMetrics'
+import {sectionFormEmbed} from './objects/sectionFormEmbed'
 
 export const schemaTypes = [
   // Singletons & globals
@@ -117,6 +121,7 @@ export const schemaTypes = [
   socialLink,
   themeColors,
   ctaButton,
+  customLinkButton,
   portableText,
   portableRichText,
   inlineHeroHeadline,
@@ -135,4 +140,7 @@ export const schemaTypes = [
   sectionJourneyTimeline,
   sectionDiagnosticSurvey,
   sectionFaq,
+  sectionMarketingHero,
+  sectionMetrics,
+  sectionFormEmbed,
 ]

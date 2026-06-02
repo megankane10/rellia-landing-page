@@ -14,6 +14,7 @@ export const socialLink = defineType({
         layout: 'dropdown',
         list: [
           {title: 'LinkedIn', value: 'linkedin'},
+          {title: 'Website', value: 'website'},
           {title: 'Instagram', value: 'instagram'},
           {title: 'X (Twitter)', value: 'x'},
           {title: 'YouTube', value: 'youtube'},

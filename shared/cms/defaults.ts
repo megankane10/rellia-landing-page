@@ -2115,12 +2115,15 @@ export const DEFAULT_CONTACT_PAGE: ContactPageContent = {
   pageTitle: "Let's Get in Touch",
   intro:
     "Have questions or want to explore opportunities with Rellia Health?\n\nWe’re here to listen, support, and collaborate. Drop us a message!",
-  sideImageSrc: "/images/hero-contact.png",
+  sideImageSrc: "/health_tech_collaboration_1778023064936.png",
   sideImageAlt: "Rellia contact — team and collaboration",
+  leftLogoImageSrc: "/images/hologram-logo.png",
+  quotePersonImageSrc: "/images/megan-headshot.jpeg",
   quoteText:
     "We meet health tech founders where they’re at, surrounding them with people who get it and get them",
   quoteAttributionName: "Megan Kane",
   quoteAttributionRole: "Executive Director",
+  footerEmail: "hello@relliahealth.com",
   successTitle: "Message sent",
   successBody: "Thanks for reaching out. We'll be in touch shortly.",
   labels: {
@@ -2486,6 +2489,15 @@ export function mergeContactPage(
   }
   if (!base.sideImageAlt?.trim()) {
     base.sideImageAlt = DEFAULT_CONTACT_PAGE.sideImageAlt
+  }
+  if (!base.leftLogoImageSrc?.trim()) {
+    base.leftLogoImageSrc = DEFAULT_CONTACT_PAGE.leftLogoImageSrc
+  }
+  if (!base.quotePersonImageSrc?.trim()) {
+    base.quotePersonImageSrc = DEFAULT_CONTACT_PAGE.quotePersonImageSrc
+  }
+  if (!base.footerEmail?.trim()) {
+    base.footerEmail = DEFAULT_CONTACT_PAGE.footerEmail
   }
   return base
 }

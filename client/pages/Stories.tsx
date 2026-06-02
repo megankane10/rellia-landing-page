@@ -98,7 +98,11 @@ const DEFAULT_STORIES_SUBTITLE =
 export default function Stories() {
   const { data: cmsStories } = useStories()
   const { data: storiesLanding } = useStoriesPage()
-  useApplyCmsSeo(storiesLanding?.seo)
+  useApplyCmsSeo(storiesLanding?.seo, {
+    title: "Stories - Rellia Health",
+    description:
+      "The latest founder spotlights, industry insights, and program updates from Rellia Health.",
+  })
 
   const heroSubtitle = storiesLanding?.subheadline?.trim() || DEFAULT_STORIES_SUBTITLE
 

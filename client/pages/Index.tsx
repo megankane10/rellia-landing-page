@@ -11,11 +11,16 @@ import Footer from "@/components/Footer";
 import { useHomePage } from "@/hooks/useCmsDocuments";
 import { DEFAULT_HOME_PAGE } from "@shared/cms/defaults";
 import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo";
+import { clampMetaDescription, clampMetaTitle, getSeoForPathname } from "@/config/seo";
 
 export default function Index() {
   const { data } = useHomePage();
   const home = data ?? DEFAULT_HOME_PAGE;
-  useApplyCmsSeo(home.seo);
+  const homeRouteSeo = getSeoForPathname("/");
+  useApplyCmsSeo(home.seo, {
+    title: clampMetaTitle(homeRouteSeo.title),
+    description: clampMetaDescription(homeRouteSeo.description),
+  });
 
   return (
     <div className="min-h-screen bg-white font-host-grotesk overflow-x-hidden">

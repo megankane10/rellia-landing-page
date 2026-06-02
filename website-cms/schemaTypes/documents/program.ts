@@ -2,19 +2,22 @@ import {defineField, defineType} from 'sanity'
 import {documentGroups, FIELDSET_SEO} from '../shared/fieldGroups'
 import {seoField} from '../shared/seoField'
 import {pageSectionMembers} from '../shared/pageSectionMembers'
+import {programPublishingFields} from '../shared/documentTopFields'
 
 export const program = defineType({
   name: 'program',
   title: 'Program',
   type: 'document',
   groups: [
-    {name: 'card', title: 'Program card', default: true},
+    {name: 'publishing', title: 'Publishing', default: true},
+    {name: 'card', title: 'Program card'},
     {name: 'detail', title: 'Detail page'},
-    {name: 'publishing', title: 'Publishing'},
+    {name: 'layout', title: 'Layout builder'},
     {name: 'seo', title: 'SEO & metadata'},
   ],
   fieldsets: [FIELDSET_SEO],
   fields: [
+    ...programPublishingFields,
     defineField({
       name: 'title',
       type: 'string',
@@ -70,21 +73,6 @@ export const program = defineType({
       type: 'string',
       group: 'card',
     }),
-    defineField({
-      name: 'status',
-      type: 'string',
-      options: {
-        layout: 'radio',
-        list: [
-          {title: 'Available', value: 'available'},
-          {title: 'Waitlist', value: 'waitlist'},
-          {title: 'Hidden', value: 'hidden'},
-        ],
-      },
-      initialValue: 'available',
-      group: 'publishing',
-    }),
-    defineField({name: 'sortOrder', type: 'number', initialValue: 0, group: 'publishing'}),
     defineField({
       name: 'paymentUrl',
       type: 'url',

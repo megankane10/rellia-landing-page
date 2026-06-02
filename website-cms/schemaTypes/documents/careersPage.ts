@@ -1,16 +1,49 @@
 import {defineArrayMember, defineField, defineType} from 'sanity'
 import {documentGroups, FIELDSET_SEO} from '../shared/fieldGroups'
 import {singletonLayoutFields} from '../shared/singletonLayoutFields'
+import {singletonPublishingAtTop} from '../shared/documentTopFields'
+import {publishingGroup} from '../shared/pageVisibilityFields'
 
 const GROUP_OPEN_ROLES = {name: 'openRoles' as const, title: 'Open roles'}
+const GROUP_JOIN_TEAM = {name: 'joinTeam' as const, title: 'Join team marquee'}
 
 export const careersPage = defineType({
   name: 'careersPage',
   title: 'Careers page',
   type: 'document',
-  groups: [GROUP_OPEN_ROLES, ...documentGroups],
+  groups: [publishingGroup, GROUP_JOIN_TEAM, GROUP_OPEN_ROLES, ...documentGroups.filter((g) => g.name !== 'publishing')],
   fieldsets: [FIELDSET_SEO],
   fields: [
+    ...singletonPublishingAtTop,
+    defineField({
+      name: 'teamMarqueeImages',
+      title: 'Join team — image scroll',
+      type: 'array',
+      description:
+        'Photos in the horizontal scroll on the careers “Join the team” band. Upload at least 4–6 images; order controls scroll sequence.',
+      group: 'joinTeam',
+      of: [
+        defineArrayMember({
+          type: 'image',
+          options: {hotspot: true},
+          fields: [
+            defineField({
+              name: 'alt',
+              title: 'Alt text',
+              type: 'string',
+              description: 'Leave empty for decorative photos.',
+            }),
+          ],
+          preview: {
+            select: {media: 'asset', alt: 'alt'},
+            prepare({media, alt}) {
+              return {title: alt?.trim() || 'Marquee image', media}
+            },
+          },
+        }),
+      ],
+      options: {sortable: true},
+    }),
     defineField({
       name: 'defaultTab',
       title: 'Default tab',

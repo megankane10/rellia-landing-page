@@ -1,16 +1,27 @@
 import {defineField, defineType} from 'sanity'
 import {documentGroups, FIELDSET_SEO} from '../shared/fieldGroups'
 import {singletonLayoutFields} from '../shared/singletonLayoutFields'
+import {singletonPublishingAtTop} from '../shared/documentTopFields'
+import {publishingGroup} from '../shared/pageVisibilityFields'
 
 export const paymentPage = defineType({
   name: 'paymentPage',
   title: 'Payment page (/membership)',
   type: 'document',
-  groups: documentGroups,
+  groups: [publishingGroup, ...documentGroups.filter((g) => g.name !== 'publishing')],
   fieldsets: [FIELDSET_SEO],
   fields: [
+    ...singletonPublishingAtTop,
     defineField({name: 'badge', type: 'string', title: 'Eyebrow label', group: 'content'}),
     defineField({name: 'headline', type: 'string', title: 'Main headline', group: 'content'}),
+    defineField({
+      name: 'introCheckout',
+      type: 'text',
+      rows: 2,
+      title: 'Intro (embedded checkout)',
+      description: 'Shown when Stripe embedded checkout loads successfully.',
+      group: 'content',
+    }),
     defineField({
       name: 'introFallback',
       type: 'text',
@@ -18,6 +29,14 @@ export const paymentPage = defineType({
       title: 'Intro (payment links)',
       description:
         'Copy above the monthly/annual buttons. Explains that checkout opens in a new tab (Stripe Payment Link).',
+      group: 'content',
+    }),
+    defineField({
+      name: 'introFallbackError',
+      type: 'text',
+      rows: 2,
+      title: 'Intro (checkout error fallback)',
+      description: 'Shown when embedded checkout fails to load.',
       group: 'content',
     }),
     defineField({name: 'benefitsTitle', type: 'string', title: 'Benefits section title', group: 'content'}),
@@ -72,7 +91,8 @@ export const paymentPage = defineType({
       name: 'heroHeadlinePortable',
       title: 'Hero headline',
       type: 'inlineHeroHeadline',
-      description: 'Use Mint on the emphasized phrase.',
+      description:
+        'Live site default: “Join the kindest place in health tech”. Use Mint on the emphasized phrase.',
       group: 'content',
       validation: (Rule) => Rule.required().min(1),
     }),

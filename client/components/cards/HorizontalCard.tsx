@@ -249,7 +249,7 @@ export function HorizontalCard(props: HorizontalCardProps) {
       ) : null}
 
       {/* Image */}
-      <div className="relative w-32 h-32 shrink-0 rounded-xl overflow-hidden bg-rellia-teal/5 md:w-[220px] md:h-[220px] lg:w-[260px] lg:h-[260px] aspect-square">
+      <div className="relative w-28 h-28 shrink-0 rounded-xl overflow-hidden bg-rellia-teal/5 md:w-[180px] md:h-[180px] lg:w-[220px] lg:h-[220px] aspect-square">
         <img
           src={programImageSrc}
           alt={program.title}

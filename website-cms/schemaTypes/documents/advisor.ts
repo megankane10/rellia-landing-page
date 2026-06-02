@@ -23,13 +23,6 @@ export const advisor = defineType({
     }),
     defineField({name: 'organization', title: 'Organization', type: 'string', group: 'profile'}),
     defineField({name: 'role', title: 'Role / title', type: 'string', group: 'profile'}),
-    defineField({
-      name: 'roleTitle',
-      title: 'Role / title (alias)',
-      type: 'string',
-      hidden: true,
-      group: 'profile',
-    }),
     defineField({name: 'location', title: 'Location', type: 'string', group: 'profile'}),
     defineField({
       name: 'country',
@@ -44,24 +37,35 @@ export const advisor = defineType({
           {title: 'Germany', value: 'Germany'},
           {title: 'France', value: 'France'},
           {title: 'Australia', value: 'Australia'},
-        ]
+        ],
       },
       group: 'profile',
     }),
     defineField({name: 'yearJoined', title: 'Year joined', type: 'string', description: 'e.g. 2024', group: 'profile'}),
+    defineField({
+      name: 'snapshot',
+      title: 'Snapshot',
+      type: 'string',
+      description:
+        'One sentence for the directory card and the Snapshot box on the profile page.',
+      group: 'profile',
+      validation: (Rule) => Rule.max(280),
+    }),
+    defineField({
+      name: 'focus',
+      title: 'Snapshot (legacy key)',
+      type: 'string',
+      hidden: true,
+      readOnly: true,
+      description: 'Deprecated — use Snapshot. Kept so older documents do not show schema warnings.',
+      group: 'profile',
+    }),
     defineField({
       name: 'industries',
       title: 'Industry tags',
       type: 'array',
       of: [{type: 'string'}],
       group: 'directory',
-    }),
-    defineField({
-      name: 'focus',
-      title: 'Card summary',
-      type: 'string',
-      description: 'One sentence shown on the directory card.',
-      group: 'profile',
     }),
     defineField({
       name: 'filter',
@@ -74,7 +78,7 @@ export const advisor = defineType({
     }),
     defineField({
       name: 'directoryFilters',
-      title: 'Directory filters (new)',
+      title: 'Directory filters',
       description:
         'Add this advisor to one or more filter groups. These groups power the dropdown filters on the directory pages.',
       type: 'array',
@@ -117,30 +121,36 @@ export const advisor = defineType({
         }),
       ],
     }),
-    defineField({name: 'photo', title: 'Avatar', type: 'image', options: {hotspot: true}, group: 'profile'}),
     defineField({
-      name: 'avatar',
-      title: 'Avatar (alias)',
+      name: 'photo',
+      title: 'Avatar',
       type: 'image',
-      hidden: true,
+      options: {hotspot: true},
       group: 'profile',
     }),
-    defineField({name: 'photoSrc', title: 'Photo URL (fallback)', type: 'string', description: 'Fallback URL if no upload', group: 'profile'}),
-    defineField({name: 'linkedInUrl', title: 'LinkedIn', type: 'url', group: 'links'}),
-    defineField({name: 'websiteUrl', title: 'Website', type: 'url', group: 'links'}),
-    defineField({name: 'bio', title: 'Bio (short)', type: 'text', rows: 6, group: 'profile'}),
+    defineField({
+      name: 'photoSrc',
+      title: 'Photo URL (fallback)',
+      type: 'string',
+      description: 'Fallback URL if no upload',
+      group: 'profile',
+    }),
+    defineField({
+      name: 'bio',
+      title: 'About bio',
+      type: 'text',
+      rows: 8,
+      description: 'Plain-text bio shown in the About section on the profile page.',
+      group: 'profile',
+    }),
     defineField({
       name: 'bioRich',
-      title: 'Bio (rich text)',
+      title: 'Bio (rich text, legacy)',
       type: 'portableText',
+      hidden: true,
+      readOnly: true,
+      description: 'Deprecated — content was merged into About bio. Safe to clear in old documents.',
       group: 'profile',
-    }),
-    defineField({
-      name: 'socialLinks',
-      title: 'Social & professional links',
-      type: 'array',
-      of: [defineArrayMember({type: 'socialLink'})],
-      group: 'links',
     }),
     defineField({name: 'mentoringStyle', title: 'Mentoring style', type: 'text', rows: 4, group: 'profile'}),
     defineField({
@@ -150,6 +160,28 @@ export const advisor = defineType({
       of: [{type: 'string'}],
       group: 'profile',
     }),
+    defineField({
+      name: 'socialLinks',
+      title: 'Social & professional links',
+      type: 'array',
+      of: [defineArrayMember({type: 'socialLink'})],
+      description: 'LinkedIn, website, and other links shown on the profile sidebar.',
+      group: 'links',
+    }),
+    defineField({
+      name: 'linkedInUrl',
+      title: 'LinkedIn (direct URL, legacy)',
+      type: 'url',
+      description: 'Optional fallback if not using Social links above.',
+      group: 'links',
+    }),
+    defineField({
+      name: 'websiteUrl',
+      title: 'Website (direct URL, legacy)',
+      type: 'url',
+      description: 'Optional fallback if not using Social links above.',
+      group: 'links',
+    }),
     defineField({name: 'seo', type: 'seoFields', group: 'seo', fieldset: 'seo'}),
   ],
   preview: {
@@ -157,13 +189,14 @@ export const advisor = defineType({
       name: 'name',
       role: 'role',
       organization: 'organization',
+      snapshot: 'snapshot',
+      focus: 'focus',
       media: 'photo',
     },
-    prepare({name, role, organization, media}) {
+    prepare({name, role, organization, snapshot, focus, media}) {
       const title = name?.trim() || 'Untitled advisor'
-      const subtitleParts = [role, organization].filter(
-        (part): part is string => typeof part === 'string' && Boolean(part.trim()),
-      )
+      const subtitleParts = [role, organization, snapshot || focus]
+        .filter((part): part is string => typeof part === 'string' && Boolean(part.trim()))
       return {
         title,
         subtitle: subtitleParts.length ? subtitleParts.join(' · ') : undefined,

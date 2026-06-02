@@ -33,14 +33,16 @@ export type AdvisorDirectoryEntry = {
   country: string | string[]
   yearJoined: string
   industries: string[]
-  /** Short card summary */
+  /** Short card summary (directory card + profile snapshot) */
   focus: string
+  snapshot?: string
   filter: AdvisorDirectoryFilter
   /** Portrait photo for cards and profile */
   photoSrc: string
   linkedInUrl: string
   /** Personal or org site */
   websiteUrl?: string
+  socialLinks?: Array<{ platform?: string; label?: string; url?: string }>
   /** Rich modal copy */
   bio: string
   mentoringStyle: string

@@ -1,4 +1,4 @@
-import {defineField, defineType} from 'sanity'
+import {defineArrayMember, defineField, defineType} from 'sanity'
 import {seoField} from '../shared/seoField'
 
 export const alumniCompany = defineType({
@@ -27,7 +27,14 @@ export const alumniCompany = defineType({
             defineField({name: 'name', type: 'string', validation: (Rule) => Rule.required()}),
             defineField({name: 'role', type: 'string'}),
             defineField({name: 'bio', type: 'text', rows: 3}),
-            defineField({name: 'linkedinUrl', type: 'url'}),
+            defineField({name: 'linkedinUrl', type: 'url', title: 'LinkedIn (legacy)'}),
+            defineField({name: 'websiteUrl', type: 'url', title: 'Website (legacy)'}),
+            defineField({
+              name: 'socialLinks',
+              title: 'Social & professional links',
+              type: 'array',
+              of: [defineArrayMember({type: 'socialLink'})],
+            }),
             defineField({
               name: 'image',
               title: 'Photo',

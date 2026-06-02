@@ -441,11 +441,8 @@ export default function Careers() {
           </div>
         </section>
 
-        <section
-          id="open-roles"
-          className="scroll-mt-28 flex min-h-[max(46rem,92svh)] flex-col bg-rellia-cream/60"
-        >
-          <div className="mx-auto flex w-full max-w-[1300px] flex-col px-6 py-16 md:px-10 md:py-20">
+        <section id="open-roles" className="scroll-mt-28 px-6 py-16 md:px-10 md:py-20">
+          <div className="mx-auto flex min-h-[max(46rem,92svh)] w-full max-w-[1300px] flex-col rounded-3xl bg-rellia-cream/60 px-6 py-16 md:px-10 md:py-20">
             <ScrollReveal className="flex min-w-0 flex-col">
               <h2 className="font-host-grotesk text-2xl font-semibold tracking-tight text-black md:text-[32px]">
                 Open Roles
@@ -453,7 +450,7 @@ export default function Careers() {
 
               <div className="mt-10 w-full shrink-0">
                 {CAREERS_OPEN_ROLES.length > 0 ? (
-                <div className="overflow-hidden rounded-3xl border border-black/10 bg-white px-0 shadow-sm md:px-2">
+                <div className="overflow-hidden rounded-[28px] border border-black/10 bg-white px-0 shadow-sm md:px-2">
                   <Accordion type="single" collapsible className="w-full">
                     {CAREERS_OPEN_ROLES.map((role, index) => (
                       <AccordionItem

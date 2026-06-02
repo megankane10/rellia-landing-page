@@ -23,6 +23,7 @@ import { isSanityConfigured } from "@/lib/sanity";
 import { allowCmsSeedFallbacks, isMainBranchBuild } from "@/lib/deploymentEnv";
 import { isCmsQueryLoading } from "@/lib/cmsQueryState";
 import { DirectoryGridSkeleton } from "@/components/cms/CmsPageLoadingShell";
+import { DirectoryCardTags } from "@/components/network/DirectoryCardTags";
 import {
   directoryGroupHasCountry,
   findExpertiseGroup,
@@ -34,6 +35,17 @@ import {
 const DIRECTORY_TITLE_CLASS =
   "font-host-grotesk text-4xl font-extrabold tracking-tight text-black md:text-5xl";
 
+const formatAdvisorLocation = (advisor: AdvisorDirectoryEntry): string => {
+  const city = advisor.location?.trim()
+  const country = Array.isArray(advisor.country)
+    ? advisor.country.filter(Boolean).join(", ")
+    : typeof advisor.country === "string"
+      ? advisor.country.trim()
+      : ""
+  if (city && country) return `${city}, ${country}`
+  return city || country
+}
+
 function AdvisorCard({
   advisor,
   onDetails,
@@ -41,6 +53,12 @@ function AdvisorCard({
   advisor: AdvisorDirectoryEntry;
   onDetails: () => void;
 }) {
+  const cardTags = [
+    ...(advisor.filter ? [advisor.filter] : []),
+    ...(Array.isArray(advisor.industries) ? advisor.industries : []),
+  ]
+  const locationLabel = formatAdvisorLocation(advisor)
+
   return (
     <motion.article
       layout
@@ -71,11 +89,7 @@ function AdvisorCard({
           aria-hidden
           className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-90"
         />
-        <div className="absolute left-3 top-3 z-10 max-w-[calc(100%-1.5rem)]">
-          <span className="inline-flex rounded-full border border-rellia-mint/20 bg-rellia-teal/80 px-2.5 py-0.5 font-urbanist text-[11px] font-semibold text-rellia-mint/95 backdrop-blur-sm shadow-sm">
-            {advisor.filter}
-          </span>
-        </div>
+        <DirectoryCardTags tags={cardTags} variant="onPhoto" />
       </div>
       <div className="flex flex-1 flex-col p-6 md:p-7">
         <h3 className="font-host-grotesk text-lg font-bold tracking-tight text-black group-hover:underline decoration-2 underline-offset-4">
@@ -84,7 +98,17 @@ function AdvisorCard({
         <p className="mt-1 font-urbanist text-sm font-medium text-black/77">
           {advisor.organization}
         </p>
-        <p className="mt-0.5 font-urbanist text-sm text-black/60">
+        {(advisor.snapshot ?? advisor.focus)?.trim() ? (
+          <p className="mt-2 font-urbanist text-sm text-black/55 leading-relaxed line-clamp-3">
+            {advisor.snapshot ?? advisor.focus}
+          </p>
+        ) : null}
+        {locationLabel ? (
+          <p className="mt-2 font-urbanist text-xs font-medium text-black/55 leading-snug">
+            {locationLabel}
+          </p>
+        ) : null}
+        <p className="mt-1 font-urbanist text-sm text-black/60">
           {advisor.role}
         </p>
       </div>

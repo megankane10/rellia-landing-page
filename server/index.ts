@@ -811,9 +811,7 @@ export function createServer() {
           perspective: "drafts",
           stega: { enabled: true, studioUrl: resolveSanityStudioUrl() },
         });
-        const data = await previewClient.fetch(entry.query, fetchParams, {
-          filterResponse: false,
-        });
+        const data = await previewClient.fetch(entry.query, fetchParams);
         res.status(200).json({
           data: stripSanityMetadata(data, parsedBody.data.queryId),
         });

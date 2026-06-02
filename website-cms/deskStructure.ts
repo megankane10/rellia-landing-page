@@ -64,11 +64,17 @@ const pagesGroup = (S: StructureBuilder) =>
         .title('Pages')
         .items([
           singleton(S, 'Home', 'homePage', HomeIcon),
+          singleton(S, 'Programs landing', 'programsLandingPage', DocumentTextIcon),
+          singleton(S, 'Apply', 'applyPage', DocumentTextIcon),
+          singleton(S, 'Founders page', 'networkFoundersPage', DocumentTextIcon),
+          singleton(S, 'Advisors page', 'networkAdvisorsPage', DocumentTextIcon),
+          singleton(S, 'Investors page', 'networkInvestorsPage', DocumentTextIcon),
+          singleton(S, 'Industry partners page', 'networkPartnersPage', DocumentTextIcon),
+          singleton(S, 'Contact', 'contactPage', DocumentTextIcon),
+          S.divider(),
           singleton(S, 'About', 'aboutPage', DocumentTextIcon),
           singleton(S, 'Careers', 'careersPage', DocumentTextIcon),
           singleton(S, 'FAQ', 'faqPage', DocumentTextIcon),
-          singleton(S, 'Contact', 'contactPage', DocumentTextIcon),
-          singleton(S, 'Apply', 'applyPage', DocumentTextIcon),
           singleton(S, 'Membership', 'paymentPage', DocumentTextIcon),
           singleton(S, 'Consulting', 'consultingPage', DocumentTextIcon),
           singleton(S, 'Diagnostic survey copy', 'diagnosticSurveyContent', DocumentTextIcon),
@@ -78,24 +84,8 @@ const pagesGroup = (S: StructureBuilder) =>
           singleton(S, 'Terms of use', 'termsPage', DocumentTextIcon),
           singleton(S, 'Privacy policy', 'privacyPage', DocumentTextIcon),
           S.divider(),
-          singleton(S, 'Programs landing', 'programsLandingPage', DocumentTextIcon),
           singleton(S, 'Events landing', 'eventsLandingPage', DocumentTextIcon),
           singleton(S, 'Stories landing', 'storiesPage', DocumentTextIcon),
-          S.divider(),
-          singleton(S, 'Founders page', 'networkFoundersPage', DocumentTextIcon),
-          singleton(S, 'Advisors page', 'networkAdvisorsPage', DocumentTextIcon),
-          singleton(S, 'Investors page', 'networkInvestorsPage', DocumentTextIcon),
-          singleton(S, 'Industry partners page', 'networkPartnersPage', DocumentTextIcon),
-          S.divider(),
-          S.listItem()
-            .title('Modular pages (custom URL)')
-            .icon(DocumentTextIcon)
-            .child(
-              S.documentTypeList('page')
-                .apiVersion(API_VERSION)
-                .title('Modular pages')
-                .defaultOrdering([{field: 'title', direction: 'asc'}]),
-            ),
         ]),
     )
 

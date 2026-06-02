@@ -4,10 +4,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import RelliaAction from "@/components/RelliaAction";
 import { ArrowLeft, MapPin, Calendar, Copy, Check } from "lucide-react";
-import {
-  GlobeFilled,
-  LinkedInFilled,
-} from "@/components/icons/SocialIcons";
+import { ProfileSocialLinks } from "@/components/network/ProfileSocialLinks";
 import { ShareIconCopy } from "@/components/share/sharePageIcons";
 import { ADVISOR_DIRECTORY_SEED } from "@/data/advisorDirectory";
 import { allowCmsSeedFallbacks, isMainBranchBuild } from "@/lib/deploymentEnv";
@@ -51,7 +48,7 @@ export default function AdvisorProfile() {
     if (!active) return;
     setPageSeo({
       title: clampMetaTitle(`${active.name} - Advisors`),
-      description: clampMetaDescription(active.focus),
+      description: clampMetaDescription(active.snapshot ?? active.focus),
       ogImage: resolveSocialOgImageUrl(active.photoSrc),
     });
     return () => setPageSeo(null);
@@ -78,6 +75,7 @@ export default function AdvisorProfile() {
           <div className="mb-8">
             <Link
               to="/advisors/directory"
+              replace
               className="inline-flex items-center gap-2 font-host-grotesk text-sm font-bold text-rellia-teal hover:underline hover:underline-offset-4"
             >
               <ArrowLeft className="h-4 w-4" /> Back to Advisors Directory
@@ -144,26 +142,11 @@ export default function AdvisorProfile() {
                 </div>
 
                 <div className="mt-6 pt-6 border-t border-black/10 flex items-center gap-3">
-                  <a
-                    href={active.linkedInUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-black/10 bg-white text-black hover:bg-black/5 transition-colors"
-                    aria-label="LinkedIn Profile"
-                  >
-                    <LinkedInFilled className="h-5 w-5" />
-                  </a>
-                  {active.websiteUrl && (
-                    <a
-                      href={active.websiteUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-black/10 bg-white text-black hover:bg-black/5 transition-colors"
-                      aria-label="Website"
-                    >
-                      <GlobeFilled className="h-5 w-5" />
-                    </a>
-                  )}
+                  <ProfileSocialLinks
+                    links={active.socialLinks}
+                    linkedInUrl={active.linkedInUrl}
+                    websiteUrl={active.websiteUrl}
+                  />
                   <button
                     onClick={handleCopyLink}
                     className={cn(
@@ -200,7 +183,7 @@ export default function AdvisorProfile() {
                     Snapshot
                   </h3>
                   <p className="font-urbanist text-base leading-relaxed text-black/80">
-                    {active.focus}
+                    {active.snapshot ?? active.focus}
                   </p>
                 </div>
               </section>
@@ -224,6 +207,7 @@ export default function AdvisorProfile() {
           <div className="mt-16 pt-8 border-t border-black/10">
             <Link
               to="/advisors/directory"
+              replace
               className="inline-flex items-center gap-2 font-host-grotesk text-sm font-bold text-rellia-teal hover:underline hover:underline-offset-4"
             >
               <ArrowLeft className="h-4 w-4" /> Back to Advisors Directory

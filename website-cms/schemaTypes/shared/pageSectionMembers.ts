@@ -1,14 +1,17 @@
 import {defineArrayMember} from 'sanity'
 
-/** Modular page sections available on custom pages and program detail pages. */
+/** Modular page sections — prefer site-matched blocks; legacy types kept for existing content. */
 export const pageSectionMembers = [
-  defineArrayMember({type: 'sectionHero'}),
+  defineArrayMember({type: 'sectionMarketingHero'}),
+  defineArrayMember({type: 'sectionMetrics'}),
+  defineArrayMember({type: 'sectionFaq'}),
+  defineArrayMember({type: 'sectionFormEmbed'}),
   defineArrayMember({type: 'sectionRichText'}),
+  defineArrayMember({type: 'sectionHero'}),
   defineArrayMember({type: 'sectionCardsGrid'}),
   defineArrayMember({type: 'sectionFeatureGrid'}),
   defineArrayMember({type: 'sectionEngageBand'}),
   defineArrayMember({type: 'sectionEligibilityBento'}),
   defineArrayMember({type: 'sectionJourneyTimeline'}),
   defineArrayMember({type: 'sectionDiagnosticSurvey'}),
-  defineArrayMember({type: 'sectionFaq'}),
 ]

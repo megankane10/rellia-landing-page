@@ -130,7 +130,7 @@ export default function WhyRellia({
                     key={c.title}
                     onMouseEnter={() => setActiveIndex(idx)}
                     className={cn(
-                      "group relative overflow-hidden rounded-2xl border border-black/10 bg-white",
+                      "group relative overflow-hidden rounded-3xl border border-black/10 bg-white",
                       "transition-[flex-grow] duration-[900ms] ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:transition-none",
                       "will-change-[flex-grow]",
                       "min-h-[440px]",
@@ -144,7 +144,7 @@ export default function WhyRellia({
                       type="button"
                       onFocus={() => setActiveIndex(idx)}
                       onClick={() => setActiveIndex(idx)}
-                      className="absolute inset-0 z-10 cursor-pointer rounded-2xl outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-white"
+                      className="absolute inset-0 z-10 cursor-pointer rounded-3xl outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-white"
                       aria-label={`Select ${c.title}`}
                     />
 
@@ -223,7 +223,7 @@ export default function WhyRellia({
                         tabIndex={0}
                         aria-label={c.title}
                         className={cn(
-                          "relative shrink-0 snap-start overflow-hidden rounded-2xl border border-black/10 bg-white",
+                          "relative shrink-0 snap-start overflow-hidden rounded-3xl border border-black/10 bg-white",
                           "min-h-[360px] w-[92%]",
                           "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-white",
                         )}

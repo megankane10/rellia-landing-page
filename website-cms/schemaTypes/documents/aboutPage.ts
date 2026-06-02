@@ -1,14 +1,17 @@
 import {defineField, defineType} from 'sanity'
 import {documentGroups, FIELDSET_SEO} from '../shared/fieldGroups'
 import {singletonLayoutFields} from '../shared/singletonLayoutFields'
+import {singletonPublishingAtTop} from '../shared/documentTopFields'
+import {publishingGroup} from '../shared/pageVisibilityFields'
 
 export const aboutPage = defineType({
   name: 'aboutPage',
   title: 'About page',
   type: 'document',
-  groups: documentGroups,
+  groups: [publishingGroup, ...documentGroups.filter((g) => g.name !== 'publishing')],
   fieldsets: [FIELDSET_SEO],
   fields: [
+    ...singletonPublishingAtTop,
     defineField({
       name: 'heroHeadlinePortable',
       title: 'Hero headline',

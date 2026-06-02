@@ -1,4 +1,6 @@
 import {defineField, defineType} from 'sanity'
+import {preparePortableHeadlinePreview} from '../shared/portableTextPreview'
+import {studioListMedia} from '../shared/studioListMedia'
 
 export const storiesPage = defineType({
   name: 'storiesPage',
@@ -21,5 +23,16 @@ export const storiesPage = defineType({
     defineField({name: 'subheadline', title: 'Subtitle', type: 'text', rows: 2, group: 'content'}),
     defineField({name: 'seo', type: 'seoFields', group: 'seo', fieldset: 'seo'}),
   ],
+  preview: {
+    select: {headlinePortable: 'headlinePortable', subheadline: 'subheadline'},
+    prepare: ({headlinePortable, subheadline}) => ({
+      ...preparePortableHeadlinePreview({
+        headline: headlinePortable,
+        fallback: 'Stories',
+        subtitle: subheadline,
+      }),
+      media: studioListMedia.document,
+    }),
+  },
 })
 

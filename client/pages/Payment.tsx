@@ -86,33 +86,31 @@ export default function Payment() {
                   <div className="absolute -left-20 -top-20 w-[400px] h-[400px] bg-rellia-mint/10 blur-[100px] rounded-full" />
                 </div>
 
-                <div className="relative z-10 flex flex-col h-full justify-between">
-                  <div>
-                    <h1 className="font-host-grotesk text-2xl md:text-[32px] font-semibold tracking-tight text-rellia-mint mb-10 leading-tight">
-                      {p.benefitsPanelHeadline?.trim() || p.benefitsTitle}
-                    </h1>
+                <div className="relative z-10 flex min-h-[520px] flex-col">
+                  <h1 className="font-host-grotesk text-2xl md:text-[32px] font-semibold tracking-tight text-rellia-mint mb-10 leading-tight">
+                    {p.benefitsPanelHeadline?.trim() || p.benefitsTitle}
+                  </h1>
 
-                    <div className="flex flex-col gap-y-5 md:gap-y-6 pb-20">
-                      {benefitsGrid.map((benefit, index) => {
-                        return (
-                          <div key={index} className="flex items-start gap-4 group">
-                            <span
-                              className="mt-2 h-2.5 w-2.5 shrink-0 rounded-full bg-rellia-mint transition-transform duration-300 group-hover:scale-110"
-                              aria-hidden
-                            />
-                            <p className="font-urbanist text-white text-base sm:text-lg font-medium leading-relaxed">
-                              {benefit}
-                            </p>
-                          </div>
-                        )
-                      })}
-                    </div>
+                  <div className="flex flex-col gap-y-5 md:gap-y-6">
+                    {benefitsGrid.map((benefit, index) => {
+                      return (
+                        <div key={index} className="flex items-start gap-4 group">
+                          <span
+                            className="mt-2 h-2.5 w-2.5 shrink-0 rounded-full bg-rellia-mint transition-transform duration-300 group-hover:scale-110"
+                            aria-hidden
+                          />
+                          <p className="font-urbanist text-white text-base sm:text-lg font-medium leading-relaxed">
+                            {benefit}
+                          </p>
+                        </div>
+                      )
+                    })}
                   </div>
 
-                  <div className="absolute bottom-8 left-8 md:bottom-10 md:left-10 lg:bottom-12 lg:left-12">
-                    <img 
-                      src="/images/hologram-logo.png" 
-                      alt="" 
+                  <div className="mt-auto pt-10 self-start">
+                    <img
+                      src="/images/hologram-logo.png"
+                      alt=""
                       aria-hidden
                       width={48}
                       height={48}

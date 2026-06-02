@@ -3,10 +3,7 @@ import { useParams, Link, useLocation } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { ArrowLeft, MapPin, Calendar, Copy, Check } from "lucide-react";
-import {
-  GlobeFilled,
-  LinkedInFilled,
-} from "@/components/icons/SocialIcons";
+import { ProfileSocialLinks } from "@/components/network/ProfileSocialLinks";
 import { ShareIconCopy } from "@/components/share/sharePageIcons";
 import { FOUNDER_DIRECTORY } from "@/data/founderDirectory";
 import { allowCmsSeedFallbacks, isMainBranchBuild } from "@/lib/deploymentEnv";
@@ -25,6 +22,7 @@ import CmsPageLoadingShell from "@/components/cms/CmsPageLoadingShell";
 import { isSanityConfigured } from "@/lib/sanity";
 import ImageExpandModal from "@/components/ImageExpandModal";
 import { PortableRichText } from "@/components/PortableRichText";
+import type { SanityPortableText } from "@shared/cms/types";
 
 export default function FounderProfile() {
   const { id } = useParams<{ id: string }>();
@@ -88,6 +86,7 @@ export default function FounderProfile() {
           <div className="mb-8">
             <Link
               to="/founders/alumni"
+              replace
               className="inline-flex items-center gap-2 font-host-grotesk text-sm font-bold text-rellia-teal hover:underline hover:underline-offset-4"
             >
               <ArrowLeft className="h-4 w-4" /> Back to Alumni List
@@ -112,13 +111,8 @@ export default function FounderProfile() {
                 <h1 className="font-host-grotesk text-3xl font-bold tracking-tight text-black mb-2">
                   {active.logoName}
                 </h1>
-                {Array.isArray(active.country) && active.country.length > 0 && (
-                  <p className="font-urbanist text-base font-medium text-black/70 mb-2">
-                    {active.country.join(", ")}
-                  </p>
-                )}
                 {(active.shortDescription?.trim() || active.tagline?.trim()) && (
-                  <p className="font-urbanist text-sm text-black/55 mb-6 leading-relaxed">
+                  <p className="font-urbanist text-base font-medium text-black/70 mb-6 leading-relaxed">
                     {active.shortDescription?.trim() || active.tagline}
                   </p>
                 )}
@@ -151,9 +145,12 @@ export default function FounderProfile() {
                   <div className="flex items-center gap-3 text-black/70">
                     <MapPin className="h-5 w-5 text-rellia-teal shrink-0" />
                     <span className="font-urbanist text-base font-medium text-black/75">
-                      {(active as any).location && active.country 
-                        ? `${(active as any).location}, ${Array.isArray(active.country) ? active.country.join(", ") : active.country}` 
-                        : ((active as any).location || (Array.isArray(active.country) ? active.country.join(", ") : active.country))}
+                      {(active as any).location?.trim() ||
+                        (Array.isArray(active.country)
+                          ? active.country.join(", ")
+                          : typeof active.country === "string"
+                            ? active.country
+                            : "")}
                     </span>
                   </div>
                   <div className="flex items-center gap-3 text-black/70">
@@ -165,26 +162,10 @@ export default function FounderProfile() {
                 </div>
 
                 <div className="mt-6 pt-6 border-t border-black/10 flex items-center gap-3">
-                  <a
-                    href={active.websiteUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-black/10 bg-white text-black hover:bg-black/5 transition-colors"
-                    aria-label="Visit Website"
-                  >
-                    <GlobeFilled className="h-5 w-5" />
-                  </a>
-                  {active.linkedinUrl && (
-                    <a
-                      href={active.linkedinUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-black/10 bg-white text-black hover:bg-black/5 transition-colors"
-                      aria-label="LinkedIn Company Profile"
-                    >
-                      <LinkedInFilled className="h-5 w-5" />
-                    </a>
-                  )}
+                  <ProfileSocialLinks
+                    websiteUrl={active.websiteUrl}
+                    linkedInUrl={active.linkedinUrl}
+                  />
                   <button
                     onClick={handleCopyLink}
                     className={cn(
@@ -246,19 +227,13 @@ export default function FounderProfile() {
                             {f.role}
                           </p>
                         </div>
-                        {f.linkedinUrl && (
-                          <div className="mt-3 flex">
-                            <a
-                              href={f.linkedinUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="inline-flex h-8 w-8 items-center justify-center rounded-xl border border-rellia-teal/15 bg-rellia-mint/20 text-rellia-teal shadow-sm transition-all duration-300 hover:bg-rellia-teal hover:text-white"
-                              aria-label={`Visit ${f.name} on LinkedIn`}
-                            >
-                              <LinkedInFilled className="h-3.5 w-3.5" />
-                            </a>
-                          </div>
-                        )}
+                        <ProfileSocialLinks
+                          links={f.socialLinks}
+                          linkedInUrl={f.linkedinUrl}
+                          websiteUrl={f.websiteUrl}
+                          iconClassName="h-3.5 w-3.5"
+                          className="mt-3 gap-2"
+                        />
                       </div>
                     </div>
                   ))}
@@ -268,7 +243,7 @@ export default function FounderProfile() {
 
               {(active as { profileBody?: unknown }).profileBody ? (
                 <section className="scroll-mt-28">
-                  <PortableRichText value={(active as { profileBody: unknown }).profileBody} />
+                  <PortableRichText value={(active as { profileBody: SanityPortableText }).profileBody} />
                 </section>
               ) : active.longDescription ? (
                 <section className="scroll-mt-28">
@@ -309,6 +284,7 @@ export default function FounderProfile() {
           <div className="mt-16 pt-8 border-t border-black/10">
             <Link
               to="/founders/alumni"
+              replace
               className="inline-flex items-center gap-2 font-host-grotesk text-sm font-bold text-rellia-teal hover:underline hover:underline-offset-4"
             >
               <ArrowLeft className="h-4 w-4" /> Back to Alumni List

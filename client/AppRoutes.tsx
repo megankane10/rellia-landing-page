@@ -1,5 +1,5 @@
 import { useEffect, type ReactNode } from "react"
-import { Routes, Route, Navigate, useParams } from "react-router-dom"
+import { Routes, Route, Navigate, useParams, useLocation } from "react-router-dom"
 import { Analytics } from "@vercel/analytics/react"
 import { SpeedInsights } from "@vercel/speed-insights/react"
 import ScrollToTop from "@/components/ScrollToTop"
@@ -101,8 +101,11 @@ export const RouterShell = ({ children }: { children: ReactNode }) => (
   </PageSeoProvider>
 )
 
-export const AppRoutes = () => (
-  <Routes>
+export const AppRoutes = () => {
+  const location = useLocation()
+
+  return (
+  <Routes location={location} key={location.pathname}>
     <Route path="/" element={<Index />} />
 
     <Route path="/about" element={<About />} />
@@ -186,4 +189,5 @@ export const AppRoutes = () => (
 
     <Route path="*" element={<CmsCatchAll />} />
   </Routes>
-)
+  )
+}

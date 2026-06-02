@@ -57,7 +57,7 @@ export const ProgramCard = ({
     >
       <div className="flex min-h-0 flex-1 flex-col">
         {/* Image */}
-        <div className="relative w-32 h-32 shrink-0 overflow-hidden aspect-square rounded-xl bg-rellia-teal/5 ml-2 mt-2 sm:m-0 sm:w-full sm:h-auto sm:aspect-square sm:rounded-xl">
+        <div className="relative w-28 h-28 shrink-0 overflow-hidden aspect-square rounded-xl bg-rellia-teal/5 ml-2 mt-2 sm:m-0 sm:w-full sm:h-auto sm:aspect-square sm:rounded-xl">
             {/* Desktop badge overlay (keep out of the way of the image on mobile) */}
             {isWaitlistCard ? (
               <div className="absolute right-3 top-3 z-10 hidden sm:block">

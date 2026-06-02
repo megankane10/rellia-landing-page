@@ -1,4 +1,6 @@
 import {defineField, defineType} from 'sanity'
+import {preparePortableHeadlinePreview} from '../shared/portableTextPreview'
+import {studioListMedia} from '../shared/studioListMedia'
 
 export const eventsLandingPage = defineType({
   name: 'eventsLandingPage',
@@ -34,5 +36,16 @@ export const eventsLandingPage = defineType({
     defineField({name: 'ctaSecondaryHref', title: 'Secondary button link', type: 'string', group: 'cta'}),
     defineField({name: 'seo', type: 'seoFields', group: 'seo', fieldset: 'seo'}),
   ],
+  preview: {
+    select: {heroTitlePortable: 'heroTitlePortable', heroSubtitle: 'heroSubtitle'},
+    prepare: ({heroTitlePortable, heroSubtitle}) => ({
+      ...preparePortableHeadlinePreview({
+        headline: heroTitlePortable,
+        fallback: 'Events',
+        subtitle: heroSubtitle,
+      }),
+      media: studioListMedia.document,
+    }),
+  },
 })
 

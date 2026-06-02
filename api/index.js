@@ -170,15 +170,17 @@ var storyBySlugQuery = `*[_type == "story" && slug.current == $slug && !(_id in 
   body,
   ${seoFragment}
 }`;
-var pageBySlugQuery = `*[_type == "page" && slug.current == $slug && !(_id in path("drafts.**"))][0]{
+var pageBySlugQuery = `*[_type == "page" && slug.current == $slug && slug.current != "terms" && slug.current != "privacy" && !(_id in path("drafts.**"))][0]{
   title,
   "slug": slug.current,
   ${seoFragment},
   sections[]{
     ...,
     "imageUrl": image.asset->url,
+    "panelImageUrl": panelImage.asset->url,
     primaryCta{ label, href, description, badge },
     secondaryCta{ label, href, description, badge },
+    metrics[]{ label, value, suffix },
     cards[]{
       ...,
       "imageUrl": image.asset->url,
@@ -192,8 +194,10 @@ var pageBySlugQuery = `*[_type == "page" && slug.current == $slug && !(_id in pa
   pageBuilder[]{
     ...,
     "imageUrl": image.asset->url,
+    "panelImageUrl": panelImage.asset->url,
     primaryCta{ label, href, description, badge },
     secondaryCta{ label, href, description, badge },
+    metrics[]{ label, value, suffix },
     cards[]{
       ...,
       "imageUrl": image.asset->url,
@@ -208,8 +212,10 @@ var pageBySlugQuery = `*[_type == "page" && slug.current == $slug && !(_id in pa
 var pageSectionsFragment = `sections[]{
   ...,
   "imageUrl": image.asset->url,
+  "panelImageUrl": panelImage.asset->url,
   primaryCta{ label, href, description, badge },
   secondaryCta{ label, href, description, badge },
+  metrics[]{ label, value, suffix },
   cards[]{
     ...,
     "imageUrl": image.asset->url,
@@ -463,6 +469,8 @@ var eventsQuery = `*[_type == "event" && status != "hidden" && !(_id in path("dr
   buttonText,
   location,
   lumaEventId,
+  ticketingUrl,
+  customLinkButton{ buttonText, url },
   eventDescription,
   "detailBody": coalesce(eventDescription, detailBody),
   detailBodyHeading,
@@ -484,6 +492,8 @@ var eventBySlugQuery = `*[_type == "event" && slug.current == $slug && !(_id in 
   buttonText,
   location,
   lumaEventId,
+  ticketingUrl,
+  customLinkButton{ buttonText, url },
   eventDescription,
   "detailBody": coalesce(eventDescription, detailBody),
   detailBodyHeading,
@@ -499,9 +509,12 @@ var contactPageQuery = `*[_type == "contactPage"][0]{
   intro,
   "sideImageSrc": coalesce(sideImage.asset->url, sideImageSrc),
   sideImageAlt,
+  "leftLogoImageSrc": coalesce(leftLogoImage.asset->url, leftLogoImageSrc),
   quoteText,
+  "quotePersonImageSrc": coalesce(quotePersonImage.asset->url, quotePersonImageSrc),
   quoteAttributionName,
   quoteAttributionRole,
+  footerEmail,
   successTitle,
   successBody,
   labels,
@@ -548,6 +561,7 @@ var diagnosticSurveyContentQuery = `*[_type == "diagnosticSurveyContent"][0]{
   }
 }`;
 var paymentPageQuery = `*[_type == "paymentPage"][0]{
+  ${pageVisibilityFragment},
   badge,
   headline,
   introCheckout,
@@ -594,6 +608,11 @@ var paymentPageQuery = `*[_type == "paymentPage"][0]{
   ${seoFragment}
 }`;
 var careersPageQuery = `*[_type == "careersPage"][0]{
+  ${pageVisibilityFragment},
+  teamMarqueeImages[]{
+    "src": asset->url,
+    alt
+  },
   defaultTab,
   enableHiringTab,
   enableVolunteerTab,
@@ -622,7 +641,8 @@ var advisorsQuery = `*[_type == "advisor" && !(_id in path("drafts.**"))]{
   country,
   yearJoined,
   industries,
-  focus,
+  "snapshot": coalesce(snapshot, focus),
+  "focus": coalesce(snapshot, focus),
   "filter": filter->label,
   directoryFilters[]{
     "groupId": group->slug.current,
@@ -634,6 +654,7 @@ var advisorsQuery = `*[_type == "advisor" && !(_id in path("drafts.**"))]{
   "photoSrc": coalesce(photo.asset->url, photoSrc),
   linkedInUrl,
   websiteUrl,
+  socialLinks[]{ platform, label, url },
   bio,
   mentoringStyle,
   highlights
@@ -667,6 +688,8 @@ var alumniCompaniesQuery = `*[_type == "alumniCompany" && !(_id in path("drafts.
     role,
     bio,
     linkedinUrl,
+    websiteUrl,
+    socialLinks[]{ platform, label, url },
     "imageSrc": image.asset->url
   }
 }`;
@@ -1739,9 +1762,7 @@ function createServer() {
           perspective: "drafts",
           stega: { enabled: true, studioUrl: resolveSanityStudioUrl() }
         });
-        const data2 = await previewClient.fetch(entry.query, fetchParams, {
-          filterResponse: false
-        });
+        const data2 = await previewClient.fetch(entry.query, fetchParams);
         res.status(200).json({
           data: stripSanityMetadata(data2, parsedBody.data.queryId)
         });
