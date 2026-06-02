@@ -65,7 +65,7 @@ const MAIN_NAV: NavItem[] = [
   { to: "/admin/team", label: "Team", icon: Users, end: true },
   {
     to: "/admin/drafts",
-    label: "Sanity drafts",
+    label: "Sanity Drafts",
     icon: FileEdit,
     isActiveMatch: (path) => path.startsWith("/admin/drafts") || path.startsWith("/admin/content"),
   },
@@ -90,13 +90,16 @@ const AdminAppSidebar = () => {
   }
 
   return (
-    <Sidebar collapsible="offcanvas" className="flex flex-col border-slate-800 bg-slate-900 text-slate-400">
-      <SidebarHeader className="border-b border-slate-800 px-4 py-4">
+    <Sidebar
+      collapsible="offcanvas"
+      className="flex flex-col bg-slate-950 text-slate-200 border-r border-slate-800/60"
+    >
+      <SidebarHeader className="border-b border-slate-800/60 px-4 py-4">
         <div className="flex items-center gap-3">
           <img src={FAVICON_SRC} alt="" width={32} height={32} className="h-8 w-8 rounded-lg" aria-hidden />
           <div className="min-w-0 flex-1">
-            <p className="truncate font-host-grotesk text-sm font-semibold text-white">Rellia Admin</p>
-            <p className="truncate font-urbanist text-xs text-slate-400">Internal dashboard</p>
+            <p className="truncate font-host-grotesk text-sm font-semibold text-white">Admin Dashboard</p>
+            <p className="truncate font-urbanist text-xs text-slate-300/80">Internal workspace</p>
           </div>
           {isMobile ? (
             <button
@@ -104,7 +107,7 @@ const AdminAppSidebar = () => {
               onClick={() => setOpenMobile(false)}
               className={cn(
                 "inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full",
-                "border border-slate-700 bg-slate-800 text-slate-200",
+                "border border-slate-700/80 bg-slate-900 text-slate-100",
                 "transition-all hover:bg-white/10 hover:text-white",
                 "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
               )}
@@ -118,7 +121,7 @@ const AdminAppSidebar = () => {
 
       <SidebarContent className="flex-1">
         <SidebarGroup>
-          <SidebarGroupLabel className="font-urbanist text-[11px] uppercase tracking-wider text-slate-500">
+          <SidebarGroupLabel className="font-urbanist text-[11px] uppercase tracking-wider text-slate-300/60">
             Workspace
           </SidebarGroupLabel>
           <SidebarGroupContent>
@@ -135,9 +138,9 @@ const AdminAppSidebar = () => {
                       isActive={active}
                       tooltip={item.label}
                       className={cn(
-                        "text-slate-400 transition-all rounded-lg",
-                        "hover:bg-white/10 hover:text-white",
-                        "data-[active=true]:bg-white/10 data-[active=true]:text-white data-[active=true]:font-medium",
+                        "rounded-xl text-slate-200/80 transition-all",
+                        "hover:bg-rellia-teal/15 hover:text-white",
+                        "data-[active=true]:bg-rellia-teal/20 data-[active=true]:text-white data-[active=true]:font-semibold",
                       )}
                     >
                       <NavLink to={item.to} end={item.end} className="flex w-full items-center" onClick={handleNavClick}>

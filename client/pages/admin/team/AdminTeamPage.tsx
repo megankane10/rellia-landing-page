@@ -1,6 +1,6 @@
 import { useMemo } from "react"
 import { useQuery } from "@tanstack/react-query"
-import { ExternalLink, Users } from "lucide-react"
+import { ExternalLink, ShieldCheck, Users } from "lucide-react"
 import { useAuth } from "@/context/AuthContext"
 import { fetchAdminTeam } from "@/lib/adminApi"
 import AdminPageHeader from "@/components/admin/AdminPageHeader"
@@ -99,20 +99,23 @@ const AdminTeamPage = () => {
 
   return (
     <div className="space-y-6">
-      <div className="rounded-r-xl border-l-4 border-indigo-600 bg-indigo-50/60 p-4 sm:p-5">
-        <div className="flex flex-col gap-1.5">
-          <span className="text-sm font-semibold text-indigo-900">🔒 Administrative Access Controls</span>
-          <p className="text-xs leading-relaxed text-indigo-700">
+      <div className="rounded-2xl border border-rellia-teal/15 bg-rellia-mint/15 p-4 sm:p-5">
+        <div className="flex flex-col gap-2">
+          <span className="inline-flex items-center gap-2 text-sm font-semibold text-rellia-teal">
+            <ShieldCheck className="h-4 w-4" aria-hidden />
+            Administrative access controls
+          </span>
+          <p className="text-xs leading-relaxed text-rellia-teal/80">
             To register a brand-new administrator account, choose one of the following methods:
           </p>
-          <ul className="mt-1 list-inside list-disc space-y-1 text-xs text-indigo-700">
+          <ul className="mt-1 list-inside list-disc space-y-1 text-xs text-rellia-teal/80">
             <li>
               Use the direct link to{" "}
               <a
                 href="https://supabase.com/dashboard/project/agsvypnmlrvpbgrsxtqy/auth/users"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="font-medium underline transition-colors hover:text-indigo-900"
+                className="font-medium underline transition-colors hover:text-rellia-teal"
               >
                 Invite via Supabase Console
               </a>{" "}
@@ -125,12 +128,12 @@ const AdminTeamPage = () => {
                 href="https://vercel.com/relliahealth/settings/environment-variables"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="font-medium underline transition-colors hover:text-indigo-900"
+                className="font-medium underline transition-colors hover:text-rellia-teal"
               >
                 Vercel Dashboard Settings
               </a>
               . This temporarily activates the public registration endpoint located at{" "}
-              <a href="/admin/signup" className="font-medium underline transition-colors hover:text-indigo-900">
+              <a href="/admin/signup" className="font-medium underline transition-colors hover:text-rellia-teal">
                 /admin/signup
               </a>
               . Remember to toggle this variable back to &quot;false&quot; immediately after your team registration is

@@ -171,7 +171,7 @@ const AdminOverviewPage = () => {
     <div className="space-y-6">
       <AdminPageHeader
         title={pageTitle}
-        description="Snapshot of submissions, CMS drafts, and system health."
+        description="Review, track, and update website inquiries and edit drafts."
         actions={<AdminSystemStatus />}
       />
 
@@ -185,7 +185,7 @@ const AdminOverviewPage = () => {
           loading={loading}
         />
         <StatCard
-          label="Submissions (7 days)"
+          label="Submissions this week"
           value={weekCount}
           changePct={weekChangePct}
           changeCompare="vs prior 7 days"
@@ -376,7 +376,7 @@ const AdminOverviewPage = () => {
         >
           <FileEdit className="h-8 w-8 text-rellia-teal" aria-hidden />
           <div>
-            <p className="font-host-grotesk font-semibold">Sanity drafts</p>
+            <p className="font-host-grotesk font-semibold">Sanity Drafts</p>
             <p className="font-urbanist text-sm text-muted-foreground">
               {draftCount} unpublished {draftCount === 1 ? "document" : "documents"} waiting in CMS
             </p>

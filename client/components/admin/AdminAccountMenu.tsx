@@ -129,7 +129,7 @@ const AdminAccountMenu = () => {
 
   const profileDialog = (
     <Dialog open={profileOpen} onOpenChange={setProfileOpen}>
-      <DialogContent className="z-[10003] font-host-grotesk sm:max-w-md">
+      <DialogContent className="z-[10003] w-[calc(100vw-2rem)] max-w-[calc(100vw-2rem)] font-host-grotesk sm:max-w-md">
         <DialogHeader className="text-left">
           <DialogTitle className="flex items-center gap-2 text-left">
             <UserRound className="h-5 w-5 text-rellia-teal" aria-hidden />

@@ -1,8 +1,6 @@
 import { Link } from "react-router-dom"
+import { ArrowUpRight } from "lucide-react"
 import { resolveSanityStudioOrigin } from "@shared/admin/notifyLinks"
-
-const SUPABASE_STATUS_URL = "https://status.supabase.com/"
-const VERCEL_STATUS_URL = "https://www.vercel-status.com/"
 
 const AdminPageFooter = () => {
   const studioUrl = resolveSanityStudioOrigin()
@@ -10,51 +8,34 @@ const AdminPageFooter = () => {
 
   return (
     <footer className="mt-12 border-t border-slate-100 pt-6 pb-8">
-      <div className="grid gap-6 text-sm font-urbanist sm:grid-cols-2 lg:grid-cols-3">
+      <div className="flex flex-col gap-3 text-sm font-urbanist sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <p className="text-slate-600">Rellia Admin Panel</p>
+          <p className="text-slate-600">Admin Dashboard</p>
           <p className="mt-1 text-xs text-slate-400">© {year} Rellia Health. Internal use only.</p>
         </div>
 
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-slate-700">
           <Link
             to="/admin/help#docs"
-            className="w-fit text-slate-700 transition-colors hover:text-rellia-teal focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded"
+            className="inline-flex items-center gap-1 transition-colors hover:text-rellia-teal focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded"
           >
             Documentation
           </Link>
           <a
-            href={SUPABASE_STATUS_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="w-fit text-slate-700 transition-colors hover:text-rellia-teal focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded"
-          >
-            Supabase system status
-          </a>
-          <a
-            href={VERCEL_STATUS_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="w-fit text-slate-700 transition-colors hover:text-rellia-teal focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded"
-          >
-            Vercel system status
-          </a>
-        </div>
-
-        <div className="flex flex-col gap-2">
-          <a
             href={studioUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="w-fit text-slate-700 transition-colors hover:text-rellia-teal focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded"
+            className="inline-flex items-center gap-1 transition-colors hover:text-rellia-teal focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded"
           >
-            Sanity Studio portal
+            Sanity Studio
+            <ArrowUpRight className="h-3.5 w-3.5" aria-hidden />
           </a>
           <a
             href="/"
-            className="w-fit text-slate-700 transition-colors hover:text-rellia-teal focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded"
+            className="inline-flex items-center gap-1 transition-colors hover:text-rellia-teal focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded"
           >
-            Main production website
+            Website
+            <ArrowUpRight className="h-3.5 w-3.5" aria-hidden />
           </a>
         </div>
       </div>

@@ -53,15 +53,33 @@ const AdminInboxPage = () => {
   const [searchParams, setSearchParams] = useSearchParams()
   const tabParam = searchParams.get("tab")
   const tab: SubmissionTab = tabParam === "diagnostic" ? "diagnostic" : "contact"
+  const sourceParam = searchParams.get("source")
+  const contactSource: "all" | "contact" | "investor" =
+    sourceParam === "investor" ? "investor" : sourceParam === "contact" ? "contact" : "all"
   const [statusFilter, setStatusFilter] = useState<StatusFilterValue>("all")
   const [searchQuery, setSearchQuery] = useState("")
   const [updatingId, setUpdatingId] = useState<string | null>(null)
   const [statusWritesEnabled, setStatusWritesEnabled] = useState(true)
 
   const setTab = (next: SubmissionTab) => {
-    setSearchParams({ tab: next }, { replace: true })
+    setSearchParams((prev) => {
+      const nextParams = new URLSearchParams(prev)
+      nextParams.set("tab", next)
+      if (next !== "contact") nextParams.delete("source")
+      return nextParams
+    }, { replace: true })
     setStatusFilter("all")
     setSearchQuery("")
+  }
+
+  const setContactSource = (next: "all" | "contact" | "investor") => {
+    setSearchParams((prev) => {
+      const nextParams = new URLSearchParams(prev)
+      nextParams.set("tab", "contact")
+      if (next === "all") nextParams.delete("source")
+      else nextParams.set("source", next)
+      return nextParams
+    }, { replace: true })
   }
 
   const contactsQuery = useQuery({ queryKey: ["admin-contact-submissions"], queryFn: fetchContactSubmissions })
@@ -81,6 +99,12 @@ const AdminInboxPage = () => {
     () =>
       [...contactRows]
         .filter((row) => matchesStatusFilter(row, statusFilter))
+        .filter((row) => {
+          if (contactSource === "all") return true
+          const type = String(row.submission_type ?? "").trim().toLowerCase()
+          if (contactSource === "investor") return type === "investor"
+          return type !== "investor"
+        })
         .filter((row) =>
           matchesSearch(
             [contactDisplayName(row), row.email, row.company ?? "", contactTypeLabel(row)].join(" "),
@@ -88,7 +112,7 @@ const AdminInboxPage = () => {
           ),
         )
         .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()),
-    [contactRows, statusFilter, searchQuery],
+    [contactRows, statusFilter, searchQuery, contactSource],
   )
 
   const filteredDiagnosticRows = useMemo(
@@ -429,14 +453,55 @@ const AdminInboxPage = () => {
       ) : null}
 
       <Tabs value={tab} onValueChange={(value) => setTab(value as SubmissionTab)} className="space-y-4">
-        <TabsList className="grid h-auto w-full max-w-md grid-cols-2">
-          <TabsTrigger value="contact" className="font-urbanist">
-            Web forms
-          </TabsTrigger>
-          <TabsTrigger value="diagnostic" className="font-urbanist">
-            Startup diagnostic
-          </TabsTrigger>
+        <TabsList className="h-auto w-full max-w-md bg-transparent p-0">
+          <div className="grid w-full grid-cols-2 gap-2">
+            <TabsTrigger
+              value="contact"
+              className={cn(
+                "w-full rounded-xl px-4 py-2.5 font-urbanist text-sm font-semibold",
+                "data-[state=active]:bg-rellia-teal data-[state=active]:text-white data-[state=active]:shadow-sm",
+                "data-[state=inactive]:bg-slate-100 data-[state=inactive]:text-slate-700 data-[state=inactive]:hover:bg-slate-200",
+              )}
+            >
+              Contact
+            </TabsTrigger>
+            <TabsTrigger
+              value="diagnostic"
+              className={cn(
+                "w-full rounded-xl px-4 py-2.5 font-urbanist text-sm font-semibold",
+                "data-[state=active]:bg-rellia-teal data-[state=active]:text-white data-[state=active]:shadow-sm",
+                "data-[state=inactive]:bg-slate-100 data-[state=inactive]:text-slate-700 data-[state=inactive]:hover:bg-slate-200",
+              )}
+            >
+              Diagnostic Survey
+            </TabsTrigger>
+          </div>
         </TabsList>
+
+        {tab === "contact" ? (
+          <div className="flex flex-wrap gap-2" role="group" aria-label="Contact submission type">
+            {([
+              { id: "all", label: "All" },
+              { id: "contact", label: "Contact" },
+              { id: "investor", label: "Investor" },
+            ] as const).map((pill) => (
+              <button
+                key={pill.id}
+                type="button"
+                onClick={() => setContactSource(pill.id)}
+                className={cn(
+                  "rounded-full px-3 py-1.5 font-urbanist text-xs font-semibold transition-colors",
+                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                  contactSource === pill.id
+                    ? "bg-rellia-mint/35 text-rellia-teal"
+                    : "bg-muted text-muted-foreground hover:bg-muted/80",
+                )}
+              >
+                {pill.label}
+              </button>
+            ))}
+          </div>
+        ) : null}
 
         <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
           <div className="relative w-full max-w-md flex-1">
