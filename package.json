@@ -134,6 +134,11 @@
     "onlyBuiltDependencies": [
       "esbuild",
       "@swc/core"
-    ]
+    ],
+    "overrides": {
+      "qs": ">=6.15.2",
+      "body-parser": ">=2.2.2",
+      "path-to-regexp@>=8.0.0": ">=8.4.2"
+    }
   }
 }
