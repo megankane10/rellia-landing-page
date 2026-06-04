@@ -44,6 +44,7 @@ export function DiagnosticSurveySection() {
   const sections = useMemo(() => mergeDiagnosticSurveySections(surveyCms ?? undefined), [surveyCms])
 
   const [currentIndex, setCurrentIndex] = useState(0)
+  const [direction, setDirection] = useState(1)
 
   // Use dynamic slides derived from the merged CMS sections
   const slides = useMemo(() => {
@@ -73,6 +74,7 @@ export function DiagnosticSurveySection() {
   useEffect(() => {
     if (slides.length === 0) return
     const timer = setInterval(() => {
+      setDirection(1)
       setCurrentIndex((prev) => (prev + 1) % slides.length)
     }, 4500)
     return () => clearInterval(timer)
@@ -80,17 +82,33 @@ export function DiagnosticSurveySection() {
 
   const handlePrev = () => {
     if (slides.length === 0) return
+    setDirection(-1)
     setCurrentIndex((prev) => (prev - 1 + slides.length) % slides.length)
   }
 
   const handleNext = () => {
     if (slides.length === 0) return
+    setDirection(1)
     setCurrentIndex((prev) => (prev + 1) % slides.length)
   }
 
   const currentItem = slides[currentIndex] || { icon: Compass, title: "", description: "" }
   const CurrentIcon = currentItem.icon
 
+  const variants = {
+    enter: (dir: number) => ({
+      x: dir > 0 ? 30 : -30,
+      opacity: 0,
+    }),
+    center: {
+      x: 0,
+      opacity: 1,
+    },
+    exit: (dir: number) => ({
+      x: dir > 0 ? -30 : 30,
+      opacity: 0,
+    }),
+  }
 
   return (
     <section className="w-full bg-rellia-cream/20 px-6 py-28 md:px-10 md:py-40 border-t border-black/10 flex items-center">
@@ -106,7 +124,7 @@ export function DiagnosticSurveySection() {
               </p>
               <RelliaAction asChild variant="mintTealFill" size="comfortable" className="w-full sm:w-auto justify-center">
                 <Link to="/startup-diagnostic" className="inline-flex cursor-pointer items-center gap-2">
-                  Take Diagnostic Survey
+                  Learn more
                   <ArrowRight className="h-5 w-5" aria-hidden />
                 </Link>
               </RelliaAction>
@@ -124,9 +142,11 @@ export function DiagnosticSurveySection() {
                   <AnimatePresence mode="wait" initial={false}>
                     <motion.div
                       key={currentIndex}
-                      initial={{ opacity: 0, x: 30 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      exit={{ opacity: 0, x: -30 }}
+                      custom={direction}
+                      variants={variants}
+                      initial="enter"
+                      animate="center"
+                      exit="exit"
                       transition={{ duration: 0.25, ease: "easeInOut" }}
                       className="flex flex-col items-start gap-4 w-full"
                     >

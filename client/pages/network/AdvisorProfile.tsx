@@ -131,14 +131,14 @@ export default function AdvisorProfile() {
                 </div>
 
                 <div className="space-y-4">
-                  <div className="flex items-center gap-3 text-black/70">
-                    <MapPin className="h-5 w-5 text-rellia-teal shrink-0" />
-                    <span className="font-urbanist text-base font-medium text-black/75">
-                      {active.location && active.country 
-                        ? `${active.location}, ${Array.isArray(active.country) ? active.country.join(", ") : active.country}` 
-                        : (active.location || (Array.isArray(active.country) ? active.country.join(", ") : active.country))}
-                    </span>
-                  </div>
+                  {active.country && (
+                    <div className="flex items-center gap-3 text-black/70">
+                      <MapPin className="h-5 w-5 text-rellia-teal shrink-0" />
+                      <span className="font-urbanist text-base font-medium text-black/75">
+                        {Array.isArray(active.country) ? active.country.join(", ") : active.country}
+                      </span>
+                    </div>
+                  )}
                   <div className="flex items-center gap-3 text-black/70">
                     <Calendar className="h-5 w-5 text-rellia-teal shrink-0" />
                     <span className="font-urbanist text-base font-medium text-black/75">

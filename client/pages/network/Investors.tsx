@@ -220,14 +220,6 @@ export default function Investors() {
 
   const [showNotifyForm, setShowNotifyForm] = useState(false)
 
-  if (useModularLayout) {
-    return (
-      <CmsPageVisibilityGate page={page}>
-        <NetworkCmsPage page={page} query={investorsPageQuery} />
-      </CmsPageVisibilityGate>
-    )
-  }
-
   const logoMarks = useMemo(() => {
     const fromCms = (page?.logoMarquee ?? [])
       .map((entry) => ({
@@ -245,6 +237,14 @@ export default function Investors() {
     if (fromCms.length > 0) return fromCms
     return [...INVESTOR_BRAND_SVG_MARKS]
   }, [page?.logoMarquee])
+
+  if (useModularLayout) {
+    return (
+      <CmsPageVisibilityGate page={page}>
+        <NetworkCmsPage page={page} query={investorsPageQuery} />
+      </CmsPageVisibilityGate>
+    )
+  }
 
   return (
     <CmsPageVisibilityGate page={page}>

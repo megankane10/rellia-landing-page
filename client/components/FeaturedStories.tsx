@@ -107,7 +107,7 @@ export default function FeaturedStories({
       <div className="mx-auto w-full max-w-[1300px] px-6 md:px-10">
         <div>
           <ScrollReveal>
-            <div className="relative w-full overflow-hidden rounded-2xl bg-rellia-teal shadow-[0_22px_56px_-18px_rgba(12,61,73,0.42),0_8px_24px_-12px_rgba(0,0,0,0.14)] md:rounded-3xl">
+            <div className="relative w-full overflow-hidden rounded-3xl bg-rellia-teal shadow-[0_22px_56px_-18px_rgba(12,61,73,0.42),0_8px_24px_-12px_rgba(0,0,0,0.14)] md:rounded-[32px]">
               <div
                 className={cn(
                   "relative w-full overflow-hidden",

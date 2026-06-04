@@ -128,7 +128,7 @@ const splitProgramsEventDateTimeRaw = (raw: string): { datePart: string; timePar
   const trimmed = raw.trim()
   if (!trimmed) return { datePart: "", timePart: "" }
 
-  let normalized = trimmed
+  const normalized = trimmed
     .replace(/\s*[—–]\s*/g, CARD_DATE_TIME_SPLIT)
     .replace(/\s+at\s+/gi, CARD_DATE_TIME_SPLIT)
 

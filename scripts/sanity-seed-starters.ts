@@ -154,15 +154,15 @@ async function main() {
     },
   ]
 
-  // eslint-disable-next-line no-console
+   
   console.log(`Seeding editor starters on ${projectId}/${dataset}…`)
   await client.mutate(mutations, { autoGenerateArrayKeys: true })
-  // eslint-disable-next-line no-console
+   
   console.log("Done: termsPage, privacyPage, studioGuide, consultingPage, diagnosticLandingPage")
 }
 
 main().catch((err) => {
-  // eslint-disable-next-line no-console
+   
   console.error(err)
   process.exitCode = 1
 })

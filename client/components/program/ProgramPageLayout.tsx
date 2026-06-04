@@ -328,7 +328,7 @@ const ProgramPageLayout = ({
                     alt={resolvedHeroImageAlt}
                     className={cn(
                       "h-full w-full rounded-2xl",
-                      Boolean(programDoc?.imageSrc || heroImageSrc)
+                      programDoc?.imageSrc || heroImageSrc
                         ? "object-cover"
                         : "object-cover object-[0%_0%]",
                     )}

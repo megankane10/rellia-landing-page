@@ -100,7 +100,7 @@ export function HorizontalCard(props: HorizontalCardProps) {
     return (
       <article
         className={cn(
-          "group relative flex flex-col md:flex-row items-start md:items-center w-full bg-white transition-all duration-300 py-6 md:py-10 px-4 md:px-8 border-b border-black/[0.06] hover:bg-black/[0.03] gap-6 md:gap-0",
+          "group relative flex flex-col md:flex-row items-start md:items-center w-full bg-white transition-all duration-300 py-4 md:py-6 px-4 md:px-8 border-b border-black/[0.06] hover:bg-black/[0.03] gap-6 md:gap-0",
           "hover:rounded-2xl hover:border-black/10 hover:shadow-[0_24px_60px_-20px_rgba(0,0,0,0.12)] hover:z-20 ring-2 ring-transparent hover:ring-rellia-teal",
           className
         )}
@@ -235,7 +235,7 @@ export function HorizontalCard(props: HorizontalCardProps) {
   return (
     <article
       className={cn(
-        "group relative flex w-full transition-all duration-500 py-6 md:py-10 px-4 md:px-8 gap-6 md:gap-10 items-start flex-col md:flex-row",
+        "group relative flex w-full transition-all duration-500 py-4 md:py-6 px-4 md:px-8 gap-6 md:gap-10 items-start flex-col md:flex-row",
         "border-b border-black/[0.06]",
         "hover:rounded-2xl hover:border-black/10 hover:shadow-[0_24px_60px_-20px_rgba(0,0,0,0.12)] hover:bg-black/[0.03] hover:z-20 outline outline-2 outline-offset-[8px] outline-transparent hover:outline-rellia-teal",
         hasHref ? "cursor-pointer" : "",

@@ -33,6 +33,8 @@ const RouteSeo = ({
   const normalizedPathname = normalizePathname(pathname)
   const base = getSiteUrl()
 
+  const { overrides } = useOptionalPageSeo()
+
   // Item detail pages set Helmet in-page; RouteSeo after children would overwrite them.
   if (isItemDetailPath(normalizedPathname)) return null
   const {
@@ -40,8 +42,6 @@ const RouteSeo = ({
     description: defaultDescription,
     indexable,
   } = getSeoForPathname(normalizedPathname)
-
-  const { overrides } = useOptionalPageSeo()
 
   const title = clampMetaTitle(titleOverride || overrides.title || defaultTitle)
   const description = clampMetaDescription(

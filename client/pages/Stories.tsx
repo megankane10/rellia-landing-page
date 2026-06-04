@@ -45,7 +45,7 @@ const StoryGridCard = ({
       <Link
         to={`/stories/${story.slug}`}
         className={cn(
-          "group flex h-[360px] w-full flex-col overflow-hidden rounded-2xl md:h-[430px]",
+          "group flex h-auto w-full flex-col overflow-hidden rounded-2xl",
           "transition-all duration-500 ease-in hover:-translate-y-0.5",
           "outline outline-2 outline-offset-[10px] outline-transparent hover:outline-rellia-teal",
           "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-white",
@@ -75,7 +75,7 @@ const StoryGridCard = ({
             {cleanTitle}
           </h3>
 
-          <p className="mt-1.5 line-clamp-3 md:line-clamp-4 overflow-hidden break-words font-urbanist text-sm leading-relaxed text-black/70 md:text-base">
+          <p className="mt-1.5 line-clamp-3 overflow-hidden break-words font-urbanist text-sm leading-relaxed text-black/70 md:text-base">
             {story.excerpt}
           </p>
         </div>

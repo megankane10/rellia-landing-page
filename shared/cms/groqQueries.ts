@@ -681,7 +681,6 @@ export const advisorsQuery = `*[_type == "advisor" && !(_id in path("drafts.**")
   name,
   organization,
   role,
-  location,
   country,
   yearJoined,
   industries,

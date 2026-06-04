@@ -23,7 +23,7 @@ export const advisor = defineType({
     }),
     defineField({name: 'organization', title: 'Organization', type: 'string', group: 'profile'}),
     defineField({name: 'role', title: 'Role / title', type: 'string', group: 'profile'}),
-    defineField({name: 'location', title: 'Location', type: 'string', group: 'profile'}),
+
     defineField({
       name: 'country',
       title: 'Country',

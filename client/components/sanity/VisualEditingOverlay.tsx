@@ -79,7 +79,7 @@ export const VisualEditingOverlay = () => {
     })
 
     if (import.meta.env.DEV) {
-      // eslint-disable-next-line no-console
+       
       console.info("[sanity] Visual editing enabled", { studioUrl, attempt: connectAttemptRef.current })
     }
 

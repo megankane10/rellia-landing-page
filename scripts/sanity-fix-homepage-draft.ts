@@ -45,12 +45,12 @@ async function main() {
     .createOrReplace(nextDraft)
     .commit({ autoGenerateArrayKeys: true })
 
-  // eslint-disable-next-line no-console
+   
   console.log(`Synced ${draft ? "existing" : "new"} draft from published: ${draftId}`)
 }
 
 main().catch((err) => {
-  // eslint-disable-next-line no-console
+   
   console.error(err)
   process.exitCode = 1
 })

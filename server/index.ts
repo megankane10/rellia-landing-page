@@ -553,7 +553,7 @@ export function createServer() {
         }
 
         const start = new Date(startRaw);
-        let end = endRaw ? new Date(endRaw) : new Date(start.getTime() + 90 * 60 * 1000);
+        const end = endRaw ? new Date(endRaw) : new Date(start.getTime() + 90 * 60 * 1000);
 
         const title = event.title?.trim() || "Rellia Health Event";
         const location = event.location?.trim() || "";

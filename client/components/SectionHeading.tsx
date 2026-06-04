@@ -49,7 +49,7 @@ export default function SectionHeading({
       {description ? (
         <p
           className={cn(
-            "font-urbanist font-medium leading-relaxed tracking-tight mt-4",
+            "font-urbanist font-medium leading-relaxed tracking-tight mt-2",
             isLight ? "text-white/80" : "text-black/70",
             "text-base md:text-lg",
             isCenter && "mx-auto max-w-[680px]",

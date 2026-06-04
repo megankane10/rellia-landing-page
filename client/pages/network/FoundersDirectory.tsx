@@ -84,12 +84,12 @@ function FounderDirectoryCard({
           {company.logoName}
         </h3>
         {(company.shortDescription?.trim() || company.tagline?.trim()) && (
-          <p className="mt-2 font-urbanist text-sm text-black/55 leading-relaxed line-clamp-3">
+          <p className="mt-1 font-urbanist text-sm font-medium text-black/77 leading-relaxed line-clamp-3">
             {company.shortDescription?.trim() || company.tagline}
           </p>
         )}
         {Array.isArray(company.country) && company.country.length > 0 && (
-          <p className="mt-2 font-urbanist text-xs font-medium text-black/55 leading-snug">
+          <p className="mt-2 font-urbanist text-sm text-black/55 leading-relaxed">
             {company.country.join(", ")}
           </p>
         )}

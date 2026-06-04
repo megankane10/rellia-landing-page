@@ -671,7 +671,6 @@ var advisorsQuery = `*[_type == "advisor" && !(_id in path("drafts.**"))]{
   name,
   organization,
   role,
-  location,
   country,
   yearJoined,
   industries,
@@ -1604,7 +1603,7 @@ function createServer() {
           return;
         }
         const start = new Date(startRaw);
-        let end = endRaw ? new Date(endRaw) : new Date(start.getTime() + 90 * 60 * 1e3);
+        const end = endRaw ? new Date(endRaw) : new Date(start.getTime() + 90 * 60 * 1e3);
         const title = event.title?.trim() || "Rellia Health Event";
         const location = event.location?.trim() || "";
         const canonicalUrl = `${siteOrigin}/events/${slug}`;

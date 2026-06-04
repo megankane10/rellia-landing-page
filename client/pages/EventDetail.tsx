@@ -617,7 +617,7 @@ export default function EventDetail() {
           </div>
         </section>
 
-        <section id="event-content-area" className="border-t border-black/10 bg-white min-h-[500px]">
+        <section id="event-content-area" className="bg-white min-h-[500px]">
           <AnimatePresence mode="wait">
             {!showForm ? (
               <motion.div key="content-view" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.3 }}>

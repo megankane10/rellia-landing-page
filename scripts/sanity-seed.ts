@@ -1849,17 +1849,17 @@ async function main() {
   const chunkSize = 50
   for (let i = 0; i < mutations.length; i += chunkSize) {
     const chunk = mutations.slice(i, i + chunkSize)
-    // eslint-disable-next-line no-console
+     
     console.log(`Committing ${chunk.length} mutations (${i + 1}-${Math.min(i + chunkSize, mutations.length)}/${mutations.length})`)
     await client.mutate(chunk, { autoGenerateArrayKeys: true })
   }
 
-  // eslint-disable-next-line no-console
+   
   console.log("Seed complete")
 }
 
 main().catch((err) => {
-  // eslint-disable-next-line no-console
+   
   console.error(err)
   process.exitCode = 1
 })

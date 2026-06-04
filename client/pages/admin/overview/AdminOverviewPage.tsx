@@ -1,7 +1,7 @@
 import { useState, useMemo } from "react"
 import { Link } from "react-router-dom"
 import { useQuery } from "@tanstack/react-query"
-import { ArrowRight, ChevronLeft, ChevronRight, FileEdit, Inbox, Stethoscope, Users } from "lucide-react"
+import { ArrowRight, ChevronLeft, ChevronRight, FileEdit, Inbox, Stethoscope, Users, TrendingUp, AlertCircle } from "lucide-react"
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts"
 import { useAuth } from "@/context/AuthContext"
 import { fetchAdminTeam } from "@/lib/adminApi"
@@ -168,12 +168,9 @@ const AdminOverviewPage = () => {
     .slice(0, 5)
 
   const unresolved = countUnresolved(contacts, diagnostics)
-  const weekCount = countRecentAll(contacts, diagnostics)
-  const previousWeekCount = countSubmissionsBetweenDays(contacts, diagnostics, 14, 7)
+  const weekCount = countSubmissionsBetweenDays(contacts, diagnostics, (weekOffset + 1) * 7, weekOffset * 7)
+  const previousWeekCount = countSubmissionsBetweenDays(contacts, diagnostics, (weekOffset + 2) * 7, (weekOffset + 1) * 7)
   const weekChangePct = percentChange(weekCount, previousWeekCount)
-  const weekDiagnostics = countSubmissionsBetweenDays([], diagnostics, 7, 0)
-  const previousWeekDiagnostics = countSubmissionsBetweenDays([], diagnostics, 14, 7)
-  const diagnosticsChangePct = percentChange(weekDiagnostics, previousWeekDiagnostics)
   const previousUnresolved = countSubmissionsBetweenDays(
     contacts.filter((row) => isActiveSubmissionStatus(row.status as "New" | "In Progress" | "Resolved" | null)),
     diagnostics.filter((row) => isActiveSubmissionStatus(row.status as "New" | "In Progress" | "Resolved" | null)),
@@ -282,7 +279,7 @@ const AdminOverviewPage = () => {
           loading={loading}
         />
         <StatCard
-          label="Submissions this week"
+          label="Submissions by week"
           value={weekCount}
           changePct={weekChangePct}
           changeCompare="vs prior 7 days"
@@ -378,82 +375,83 @@ const AdminOverviewPage = () => {
             </CardTitle>
             <CardDescription className="font-urbanist">Diagnostics analysis and startup levels</CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-5">
             {loading ? (
               <Skeleton className="h-[220px] w-full rounded-xl" />
             ) : (
               <>
-                <div className="grid gap-3 sm:grid-cols-2">
-                  <div className="rounded-2xl border border-border bg-card p-4">
-                    <p className="font-urbanist text-sm text-muted-foreground">Submissions this week</p>
-                    <p className="mt-2 font-host-grotesk text-3xl font-semibold tabular-nums">{weekDiagnostics}</p>
-                  </div>
-                  <div className="rounded-2xl border border-border bg-card p-4">
-                    <p className="font-urbanist text-sm text-muted-foreground">Change vs prior week</p>
-                    <p
-                      className={cn(
-                        "mt-2 font-host-grotesk text-3xl font-semibold tabular-nums",
-                        diagnosticsChangePct === null || diagnosticsChangePct === 0
-                          ? "text-foreground"
-                          : diagnosticsChangePct > 0
-                            ? "text-emerald-600"
-                            : "text-amber-700",
-                      )}
-                    >
-                      {formatPercentChange(diagnosticsChangePct)}
-                    </p>
-                    <p className="mt-1 font-urbanist text-xs text-muted-foreground">vs prior 7 days</p>
-                  </div>
-                </div>
-
-                <div className="border-t border-border pt-4">
-                  <p className="font-host-grotesk text-sm font-semibold text-foreground mb-2">Submissions by Level</p>
+                <div className="space-y-3">
+                  <p className="font-host-grotesk text-sm font-semibold text-foreground">Startup Levels Distribution</p>
                   {Object.keys(stageCounts).length === 0 ? (
-                    <p className="font-urbanist text-xs text-muted-foreground">No stage data available.</p>
+                    <p className="font-urbanist text-xs text-muted-foreground">No level data available.</p>
                   ) : (
-                    <div className="flex flex-wrap gap-1.5">
-                      {Object.entries(stageCounts).map(([stage, count]) => (
-                        <Badge key={stage} variant="secondary" className="font-urbanist text-xs font-normal">
-                          {stage}: <span className="font-semibold ml-1">{count}</span>
-                        </Badge>
-                      ))}
+                    <div className="grid gap-3 sm:grid-cols-2">
+                      {Object.entries(stageCounts).map(([stage, count]) => {
+                        const total = diagnostics.length
+                        const pct = total > 0 ? Math.round((count / total) * 100) : 0
+                        return (
+                          <div key={stage} className="rounded-xl border border-slate-100 bg-slate-50/50 p-3 flex flex-col justify-between shadow-sm">
+                            <div className="flex items-center justify-between text-xs font-urbanist">
+                              <span className="font-semibold text-slate-700">{stage}</span>
+                              <span className="font-bold text-slate-900">{count} {count === 1 ? "startup" : "startups"} ({pct}%)</span>
+                            </div>
+                            <div className="mt-2 h-1.5 w-full rounded-full bg-slate-200/60 overflow-hidden">
+                              <div
+                                className="h-full rounded-full bg-rellia-teal transition-all duration-500"
+                                style={{ width: `${pct}%` }}
+                              />
+                            </div>
+                          </div>
+                        )
+                      })}
                     </div>
                   )}
                 </div>
 
-                <div className="grid gap-4 border-t border-border pt-4 sm:grid-cols-2">
-                  <div>
-                    <p className="font-host-grotesk text-sm font-semibold text-emerald-700 mb-2">Most Common Strengths</p>
+                <div className="grid gap-4 border-t border-border pt-5 sm:grid-cols-2">
+                  <div className="rounded-2xl bg-emerald-50/30 border border-emerald-100/50 p-4 shadow-inner">
+                    <div className="flex items-center gap-2 mb-3">
+                      <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-emerald-100 text-emerald-700 shadow-sm">
+                        <TrendingUp className="h-4 w-4" />
+                      </div>
+                      <p className="font-host-grotesk text-sm font-bold text-emerald-900">Key Strengths</p>
+                    </div>
                     {responsesQuery.isLoading ? (
                       <Skeleton className="h-10 w-full" />
                     ) : textStats.topStrengths.length === 0 ? (
-                      <p className="font-urbanist text-xs text-muted-foreground">No data yet</p>
+                      <p className="font-urbanist text-xs text-muted-foreground">No strength data reported yet.</p>
                     ) : (
-                      <ul className="space-y-1">
-                        {textStats.topStrengths.map((s) => (
-                          <li key={s} className="font-urbanist text-xs text-emerald-800 flex items-center gap-1.5">
-                            <span className="h-1.5 w-1.5 rounded-full bg-emerald-600" />
-                            {s}
-                          </li>
+                      <div className="flex flex-col gap-2">
+                        {textStats.topStrengths.map((s, idx) => (
+                          <div key={s} className="flex items-center gap-2 font-urbanist text-xs text-emerald-800 bg-white border border-emerald-100/60 rounded-xl px-3 py-2 shadow-sm">
+                            <span className="font-bold text-emerald-600/80">#{idx + 1}</span>
+                            <span className="font-medium">{s}</span>
+                          </div>
                         ))}
-                      </ul>
+                      </div>
                     )}
                   </div>
-                  <div>
-                    <p className="font-host-grotesk text-sm font-semibold text-amber-800 mb-2">Most Common Weaknesses</p>
+
+                  <div className="rounded-2xl bg-amber-50/30 border border-amber-100/50 p-4 shadow-inner">
+                    <div className="flex items-center gap-2 mb-3">
+                      <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-amber-100 text-amber-700 shadow-sm">
+                        <AlertCircle className="h-4 w-4" />
+                      </div>
+                      <p className="font-host-grotesk text-sm font-bold text-amber-900">Top Growth Gaps</p>
+                    </div>
                     {responsesQuery.isLoading ? (
                       <Skeleton className="h-10 w-full" />
                     ) : textStats.topWeaknesses.length === 0 ? (
-                      <p className="font-urbanist text-xs text-muted-foreground">No data yet</p>
+                      <p className="font-urbanist text-xs text-muted-foreground">No weakness data reported yet.</p>
                     ) : (
-                      <ul className="space-y-1">
-                        {textStats.topWeaknesses.map((w) => (
-                          <li key={w} className="font-urbanist text-xs text-amber-900 flex items-center gap-1.5">
-                            <span className="h-1.5 w-1.5 rounded-full bg-amber-600" />
-                            {w}
-                          </li>
+                      <div className="flex flex-col gap-2">
+                        {textStats.topWeaknesses.map((w, idx) => (
+                          <div key={w} className="flex items-center gap-2 font-urbanist text-xs text-amber-900 bg-white border border-amber-100/60 rounded-xl px-3 py-2 shadow-sm">
+                            <span className="font-bold text-amber-600/80">#{idx + 1}</span>
+                            <span className="font-medium">{w}</span>
+                          </div>
                         ))}
-                      </ul>
+                      </div>
                     )}
                   </div>
                 </div>

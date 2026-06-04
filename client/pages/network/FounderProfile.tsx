@@ -142,17 +142,18 @@ export default function FounderProfile() {
                 </div>
 
                 <div className="space-y-4">
-                  <div className="flex items-center gap-3 text-black/70">
-                    <MapPin className="h-5 w-5 text-rellia-teal shrink-0" />
-                    <span className="font-urbanist text-base font-medium text-black/75">
-                      {(active as any).location?.trim() ||
-                        (Array.isArray(active.country)
-                          ? active.country.join(", ")
+                  {active.country && (Array.isArray(active.country) ? active.country.length > 0 : true) && (
+                    <div className="flex items-center gap-3 text-black/70">
+                      <MapPin className="h-5 w-5 text-rellia-teal shrink-0" />
+                      <span className="font-urbanist text-base font-medium text-black/75">
+                        {Array.isArray(active.country)
+                          ? active.country.filter(Boolean).join(", ")
                           : typeof active.country === "string"
                             ? active.country
-                            : "")}
-                    </span>
-                  </div>
+                            : ""}
+                      </span>
+                    </div>
+                  )}
                   <div className="flex items-center gap-3 text-black/70">
                     <Calendar className="h-5 w-5 text-rellia-teal shrink-0" />
                     <span className="font-urbanist text-base font-medium text-black/75">
@@ -203,21 +204,23 @@ export default function FounderProfile() {
                   Meet the Founders
                 </h3>
                 <div className="grid gap-6 sm:grid-cols-2">
-                  {active.founders.map((f, i) => (
-                    <div
-                      key={i}
-                      className="group flex flex-row gap-5 p-5 rounded-2xl border border-black/5 bg-black/[0.01] hover:bg-black/[0.02] hover:border-rellia-teal/20 transition-all duration-300 shadow-sm"
-                    >
+                  {active.founders.map((f, i) => {
+                    const avatarUrl = f.imageSrc || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200&h=200&fit=crop";
+                    return (
                       <div
-                        onClick={() => setActiveImage({ src: f.imageSrc, alt: f.name })}
-                        className="relative shrink-0 w-24 h-24 sm:w-28 sm:h-28 overflow-hidden rounded-2xl border border-black/5 shadow-inner cursor-pointer"
+                        key={i}
+                        className="group flex flex-row gap-5 p-5 rounded-2xl border border-black/5 bg-black/[0.01] hover:bg-black/[0.02] hover:border-rellia-teal/20 transition-all duration-300 shadow-sm"
                       >
-                        <img
-                          src={f.imageSrc}
-                          alt={f.name}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                        />
-                      </div>
+                        <div
+                          onClick={() => setActiveImage({ src: avatarUrl, alt: f.name })}
+                          className="relative shrink-0 w-24 h-24 sm:w-28 sm:h-28 overflow-hidden rounded-2xl border border-black/5 shadow-inner cursor-pointer"
+                        >
+                          <img
+                            src={avatarUrl}
+                            alt={f.name}
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                          />
+                        </div>
                       <div className="flex-1 flex flex-col justify-between py-0.5">
                         <div>
                           <h4 className="font-host-grotesk text-lg font-bold text-black group-hover:text-rellia-teal transition-colors duration-300">
@@ -236,7 +239,8 @@ export default function FounderProfile() {
                         />
                       </div>
                     </div>
-                  ))}
+                  )
+                })}
                 </div>
               </section>
 
