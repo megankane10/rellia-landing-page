@@ -4,6 +4,17 @@ This document details plans and recommendations for optimizing the Rellia Admin 
 
 ---
 
+## 🚀 Latest Audit Status (June 2026 Update)
+
+A recent codebase audit shows that:
+* **Completed / In Progress**: No changes have been made to the admin dashboard code ([`client/pages/admin/`](../client/pages/admin)) or components.
+* **Still Left to Do (Outstanding Roadmap)**:
+  * **Collapsible shadcn Sidebar**: Installing `@/components/ui/sidebar` to replace the custom state-based slide-over layout.
+  * **Responsive Table Layouts**: Modifying [`AdminDataTable.tsx`](../client/components/admin/AdminDataTable.tsx) so tables collapse to a card stack structure on small mobile viewports.
+  * **shadcn Chart wrappers**: Integrating responsive and themeable Recharts charts.
+  * **SaaS Layout Structure**: Using standard grid wrappers and consistent visual style elements (like `.admin-glass-card`).
+---
+
 ## 1. Current Dashboard Audit
 
 ### 1.1 Architecture & Stack

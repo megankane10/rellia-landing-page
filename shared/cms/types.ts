@@ -639,7 +639,43 @@ export type DiagnosticSurveyCmsSection = {
   }[]
 }
 
+export type DiagnosticSurveyCmsJourneyStep = {
+  title: string
+  description: string
+  icon?: string
+}
+
 export type DiagnosticSurveyContent = {
+  introTitle?: string
+  introSubtitle?: string
+  stages?: string[]
+  introJourneyTitle?: string
+  introJourneySteps?: DiagnosticSurveyCmsJourneyStep[]
+  introWhatYouGetTitle?: string
+  introWhatYouGetBullets?: string[]
+  introStartupDetailsTitle?: string
+  introStartButtonLabel?: string
+  submitTitle?: string
+  submitSubtitle?: string
+  submitProfileTitle?: string
+  submitGeneratingTitle?: string
+  submitGeneratingBody?: string
+  submitGeneratingBullets?: string[]
+  submitDetailsTitle?: string
+  submitConfirmButtonLabel?: string
+  processingTitle?: string
+  processingSubtitle?: string
+  processingSteps?: string[]
+  reportHeaderThankYou?: string
+  reportStrengthsTitle?: string
+  reportGapsTitle?: string
+  reportRoadmapTitle?: string
+  reportFullBreakdownTitle?: string
+  reportProgramsTitle?: string
+  reportAdvisorsTitle?: string
+  reportMembershipCtaTitle?: string
+  reportMembershipCtaBody?: string
+  reportMembershipCtaButton?: string
   sections?: DiagnosticSurveyCmsSection[]
 }
 

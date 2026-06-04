@@ -51,7 +51,7 @@ export type RouteSeoConfig = {
 
 export const ROUTE_SEO: Record<string, RouteSeoConfig> = {
   "/": {
-    title: "Accelerating Digital Health - Rellia Health",
+    title: "Accelerating Digital Health — Rellia Health",
     description:
       "Rellia Health connects founders, clinicians, and health systems to build the future of care. Join our network and explore programs.",
     indexable: true,
@@ -233,7 +233,7 @@ export const ROUTE_SEO: Record<string, RouteSeoConfig> = {
     indexable: true,
   },
   "/stories": {
-    title: "Stories - Rellia Health",
+    title: "Stories — Rellia Health",
     description:
       "The latest founder spotlights, industry insights, & program updates. Stay current with the people and ideas shaping the future of health.",
     indexable: true,
@@ -269,75 +269,75 @@ export const ROUTE_SEO: Record<string, RouteSeoConfig> = {
     indexable: true,
   },
   "/admin/login": {
-    title: "Sign In - Admin",
+    title: "Sign In — Admin",
     description:
       "Sign in to the Rellia Health admin portal to review diagnostic survey submissions and internal reports.",
     indexable: false,
   },
   "/admin/signup": {
-    title: "Create account - admin",
+    title: "Create account — admin",
     description:
       "Create a Rellia Health admin account when signup is enabled. Internal access for diagnostic submission review.",
     indexable: false,
   },
   "/accept-invite": {
-    title: "Accept Invitation - Admin",
+    title: "Accept Invitation — Admin",
     description:
       "Accept your Rellia Health admin invitation and set a password to access the internal dashboard.",
     indexable: false,
   },
   "/admin/auth/callback": {
-    title: "Authentication - Admin",
+    title: "Authentication — Admin",
     description: "Completing admin authentication for the Rellia Health dashboard.",
     indexable: false,
   },
   "/admin/set-password": {
-    title: "Set Password - Admin",
+    title: "Set Password — Admin",
     description: "Choose a password to finish setting up your Rellia Health admin account.",
     indexable: false,
   },
   "/admin/inbox": {
-    title: "Inbox - Admin",
+    title: "Inbox — Admin",
     description: "Review contact form, investor, and diagnostic submissions in the Rellia Health admin dashboard.",
     indexable: false,
   },
   "/admin/overview": {
-    title: "Inbox - Admin",
+    title: "Inbox — Admin",
     description: "Review contact form, investor, and diagnostic submissions in the Rellia Health admin dashboard.",
     indexable: false,
   },
   "/admin/submissions": {
-    title: "Inbox - Admin",
+    title: "Inbox — Admin",
     description: "Review contact form, investor, and diagnostic submissions in the Rellia Health admin dashboard.",
     indexable: false,
   },
   "/admin/team": {
-    title: "Team - Admin",
+    title: "Team — Admin",
     description: "Manage admin users with access to the Rellia Health internal dashboard.",
     indexable: false,
   },
   "/admin/drafts": {
-    title: "Sanity Drafts - Admin",
+    title: "Sanity Drafts — Admin",
     description: "Unpublished Sanity CMS drafts awaiting review in the Rellia Health admin dashboard.",
     indexable: false,
   },
   "/admin/content": {
-    title: "Sanity Drafts - Admin",
+    title: "Sanity Drafts — Admin",
     description: "Unpublished Sanity CMS drafts awaiting review in the Rellia Health admin dashboard.",
     indexable: false,
   },
   "/admin/help": {
-    title: "Help - Admin",
+    title: "Help — Admin",
     description: "Tools, documentation, and environment guidance for Rellia Health dashboard administrators.",
     indexable: false,
   },
   "/admin/resources": {
-    title: "Help - Admin",
+    title: "Help — Admin",
     description: "Tools, documentation, and environment guidance for Rellia Health dashboard administrators.",
     indexable: false,
   },
   "/admin/dashboard": {
-    title: "Dashboard - Admin",
+    title: "Dashboard — Admin",
     description:
       "Rellia Health admin dashboard for diagnostic submissions, company profiles, and operational review.",
     indexable: false,

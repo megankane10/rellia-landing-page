@@ -548,6 +548,40 @@ var applyPageQuery = `*[_type == "applyPage"][0]{
   ${seoFragment}
 }`;
 var diagnosticSurveyContentQuery = `*[_type == "diagnosticSurveyContent"][0]{
+  introTitle,
+  introSubtitle,
+  stages,
+  introJourneyTitle,
+  introJourneySteps[]{
+    title,
+    description,
+    icon
+  },
+  introWhatYouGetTitle,
+  introWhatYouGetBullets,
+  introStartupDetailsTitle,
+  introStartButtonLabel,
+  submitTitle,
+  submitSubtitle,
+  submitProfileTitle,
+  submitGeneratingTitle,
+  submitGeneratingBody,
+  submitGeneratingBullets,
+  submitDetailsTitle,
+  submitConfirmButtonLabel,
+  processingTitle,
+  processingSubtitle,
+  processingSteps,
+  reportHeaderThankYou,
+  reportStrengthsTitle,
+  reportGapsTitle,
+  reportRoadmapTitle,
+  reportFullBreakdownTitle,
+  reportProgramsTitle,
+  reportAdvisorsTitle,
+  reportMembershipCtaTitle,
+  reportMembershipCtaBody,
+  reportMembershipCtaButton,
   sections[]{
     id,
     icon,
@@ -847,6 +881,13 @@ var resolveSanityApiConfig = () => {
     return { status: "ok", projectId: "ggbt0o98", dataset };
   }
   return { status: "missing_project" };
+};
+var resolveAdminSanityDataset = (requested) => {
+  const normalized = (requested?.trim() || "production").toLowerCase();
+  if (normalized !== "production" && normalized !== "preview") return null;
+  const allowed = parseList(process.env.SANITY_ALLOWED_DATASETS);
+  if (allowed.length > 0 && !allowed.includes(normalized)) return null;
+  return normalized;
 };
 
 // server/csrf.ts
@@ -1519,6 +1560,88 @@ function createServer() {
           error: "Sanity fetch failed",
           message: err instanceof Error ? err.message : String(err)
         });
+      }
+    }
+  );
+  app2.get(
+    "/api/cms/events/:slug/ics",
+    rateLimitText(sanityPublishedRate, SANITY_PUBLISHED_MAX_PER_MIN),
+    async (req, res) => {
+      const slug = typeof req.params.slug === "string" ? req.params.slug.trim() : "";
+      if (!slug || slug.length > 200) {
+        res.status(400).send("Invalid slug");
+        return;
+      }
+      const apiResolved = resolveSanityApiConfig();
+      if (apiResolved.status === "dataset_not_allowed") {
+        res.status(503).send("Sanity dataset not allowed");
+        return;
+      }
+      if (apiResolved.status === "missing_project") {
+        res.status(503).send("Sanity project config missing");
+        return;
+      }
+      const { projectId, dataset } = apiResolved;
+      const token = process.env.SANITY_API_READ_TOKEN?.trim();
+      const entry = SANITY_QUERY_WHITELIST.eventBySlug;
+      try {
+        const publicClient = createClient2({
+          projectId,
+          dataset,
+          ...token ? { token } : {},
+          useCdn: false,
+          apiVersion: "2024-01-01"
+        });
+        const event = await publicClient.fetch(entry.query, { slug });
+        if (!event) {
+          res.status(404).send("Event not found");
+          return;
+        }
+        const startRaw = event.startsAt?.trim();
+        const endRaw = event.endsAt?.trim();
+        if (!startRaw) {
+          res.status(400).send("Event start date is missing");
+          return;
+        }
+        const start = new Date(startRaw);
+        let end = endRaw ? new Date(endRaw) : new Date(start.getTime() + 90 * 60 * 1e3);
+        const title = event.title?.trim() || "Rellia Health Event";
+        const location = event.location?.trim() || "";
+        const canonicalUrl = `${siteOrigin}/events/${slug}`;
+        const description = `${title}. ${event.dateTime?.trim() ?? event.startsAt ?? ""}`.trim();
+        const toIcsUtc = (d) => {
+          const iso = d.toISOString();
+          const base = iso.includes(".") ? `${iso.slice(0, iso.indexOf("."))}Z` : iso;
+          return base.replace(/[-:]/g, "");
+        };
+        const escapeIcsText = (raw) => raw.replace(/\\/g, "\\\\").replace(/\n/g, "\\n").replace(/;/g, "\\;").replace(/,/g, "\\,");
+        const uid = `${slug}-${start.getTime()}@relliahealth.com`;
+        const lines = [
+          "BEGIN:VCALENDAR",
+          "VERSION:2.0",
+          "PRODID:-//Rellia Health//EN",
+          "CALSCALE:GREGORIAN",
+          "METHOD:PUBLISH",
+          "BEGIN:VEVENT",
+          `UID:${escapeIcsText(uid)}`,
+          `DTSTAMP:${toIcsUtc(/* @__PURE__ */ new Date())}`,
+          `DTSTART:${toIcsUtc(start)}`,
+          `DTEND:${toIcsUtc(end)}`,
+          `SUMMARY:${escapeIcsText(title)}`,
+          `DESCRIPTION:${escapeIcsText(description)}`,
+          `LOCATION:${escapeIcsText(location)}`,
+          `URL:${escapeIcsText(canonicalUrl)}`,
+          "END:VEVENT",
+          "END:VCALENDAR"
+        ];
+        const icsContent = `${lines.join("\r\n")}\r
+`;
+        res.setHeader("Content-Type", "text/calendar; charset=utf-8");
+        res.setHeader("Content-Disposition", `inline; filename="${slug}.ics"`);
+        res.status(200).send(icsContent);
+      } catch (err) {
+        console.error("ICS generation error:", err);
+        res.status(500).send("Internal server error generating calendar event");
       }
     }
   );
@@ -2423,6 +2546,78 @@ function createServer() {
       } catch (err) {
         console.error("Admin stripe metrics error:", err);
         res.status(500).json({ error: "Could not load Stripe metrics." });
+      }
+    }
+  );
+  const adminSanityDraftsRate = /* @__PURE__ */ new Map();
+  const ADMIN_SANITY_DRAFTS_MAX_PER_MIN = 40;
+  app2.get(
+    "/api/admin/sanity-drafts",
+    rateLimitJson(adminSanityDraftsRate, ADMIN_SANITY_DRAFTS_MAX_PER_MIN),
+    async (req, res) => {
+      if (!allowBrowserOrigin(req)) {
+        res.status(403).json({ error: "Forbidden" });
+        return;
+      }
+      const authHeader = typeof req.headers.authorization === "string" ? req.headers.authorization : "";
+      const token = authHeader.startsWith("Bearer ") ? authHeader.slice(7).trim() : "";
+      if (!token) {
+        res.status(401).json({ error: "Sign in required." });
+        return;
+      }
+      const datasetParam = typeof req.query.dataset === "string" ? req.query.dataset : void 0;
+      const dataset = resolveAdminSanityDataset(datasetParam);
+      if (!dataset) {
+        res.status(400).json({ error: "Invalid or disallowed Sanity dataset." });
+        return;
+      }
+      const supabaseUrl = (process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || "").trim().replace(/\/$/, "");
+      const serviceRoleKey = (process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_KEY || "").trim();
+      const anonKey = (process.env.VITE_SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_PUBLISHABLE_KEY || process.env.SUPABASE_ANON_KEY || "").trim();
+      if (!supabaseUrl || !serviceRoleKey || !anonKey) {
+        res.status(501).json({ error: "Supabase admin credentials are not configured on the server." });
+        return;
+      }
+      const apiResolved = resolveSanityApiConfig();
+      if (apiResolved.status === "missing_project") {
+        res.status(503).json({ error: "Sanity API is not configured on the server." });
+        return;
+      }
+      if (apiResolved.status === "dataset_not_allowed") {
+        res.status(503).json({
+          error: `Sanity dataset "${apiResolved.attemptedDataset}" is not allowed for this deployment.`
+        });
+        return;
+      }
+      const sanityToken = process.env.SANITY_API_READ_TOKEN?.trim() || "";
+      const projectId = apiResolved.projectId;
+      try {
+        const { createClient: createSupabaseClient } = await import("@supabase/supabase-js");
+        const sessionClient = createSupabaseClient(supabaseUrl, anonKey, {
+          auth: { autoRefreshToken: false, persistSession: false }
+        });
+        const { data: userData, error: userError } = await sessionClient.auth.getUser(token);
+        if (userError || !userData.user) {
+          res.status(401).json({ error: "Invalid or expired session." });
+          return;
+        }
+        const entry = SANITY_QUERY_WHITELIST.sanityDrafts;
+        const publicClient = createClient2({
+          projectId,
+          dataset,
+          ...sanityToken ? { token: sanityToken } : {},
+          useCdn: false,
+          apiVersion: "2024-01-01"
+        });
+        const data = await publicClient.fetch(entry.query, {});
+        res.setHeader("content-type", "application/json");
+        res.json({
+          dataset,
+          drafts: stripSanityMetadata(data, "sanityDrafts")
+        });
+      } catch (err) {
+        console.error("Admin sanity drafts error:", err);
+        res.status(502).json({ error: "Could not load Sanity drafts." });
       }
     }
   );

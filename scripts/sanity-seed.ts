@@ -736,6 +736,17 @@ const resolveImageAssetId = async (
 
   const filename = path.basename(filePath)
 
+  if (filename === "portfolio-geoclaim.png") {
+    const existingIds = await client.fetch<string[]>(
+      `*[_type == "sanity.imageAsset" && originalFilename == $filename]._id`,
+      { filename },
+    )
+    for (const existingId of existingIds) {
+      console.log(`Force deleting old asset ${existingId} for new portfolio-geoclaim.png`)
+      await client.delete(existingId).catch(() => {})
+    }
+  }
+
   const existing = await client.fetch<string | null>(
     `*[_type == "sanity.imageAsset" && originalFilename == $filename][0]._id`,
     { filename },
@@ -1400,6 +1411,60 @@ async function main() {
     createOrReplace: {
       _id: "diagnosticSurveyContent",
       _type: "diagnosticSurveyContent",
+      introTitle: "How ready is your startup, really?",
+      introSubtitle: "Our diagnostic tool assesses your health tech startup across 12 critical domains. Get an automated report, personalized advisory board matches, and a program roadmap tailored to your gaps.",
+      stages: [
+        "Idea / Discovery",
+        "Prototype / MVP",
+        "Pilot / Seed",
+        "Early Growth (Series A+)",
+        "Scale-up",
+      ],
+      introJourneyTitle: "Your Diagnostic Journey",
+      introJourneySteps: [
+        { title: "Capture Your Context", description: "Tell us about your startup, stage, and mission.", icon: "Building2" },
+        { title: "12-Domain Deep Dive", description: "15-minute assessment of your regulatory, clinical, and commercial readiness.", icon: "Target" },
+        { title: "Personalized Growth Roadmap", description: "Immediate analysis of your top strengths and priority gaps.", icon: "Sparkles" },
+        { title: "Advisory Board Match", description: "Personalized assignment of mentors based on your results.", icon: "Users" }
+      ],
+      introWhatYouGetTitle: "What you’ll get",
+      introWhatYouGetBullets: [
+        "Top 3 strengths + gaps with priority level",
+        "Concrete roadmap recommendations",
+        "Advisor focus areas matched to your gaps"
+      ],
+      introStartupDetailsTitle: "Tell us about your startup",
+      introStartButtonLabel: "Start Assessment",
+      submitTitle: "Review, then generate your roadmap",
+      submitSubtitle: "You’re about to submit your responses. After confirmation, we’ll generate your report and save your submission in the Rellia CMS.",
+      submitProfileTitle: "Your Assessment Profile",
+      submitGeneratingTitle: "Generating Your Report",
+      submitGeneratingBody: "We're assessing your results in order to assign you your personalized advisory board and recommended Rellia programs.",
+      submitGeneratingBullets: [
+        "Top 3 Gaps & Strengths",
+        "Customized Recommendation Roadmap",
+        "Assigned Advisory Board Matches",
+        "Meeting Links for Advisors"
+      ],
+      submitDetailsTitle: "Submission details",
+      submitConfirmButtonLabel: "Confirm & Generate Report",
+      processingTitle: "Personalizing your report",
+      processingSubtitle: "We're assessing your results in order to assign you your personalized advisory board and program roadmap.",
+      processingSteps: [
+        "Analyzing section scores",
+        "Mapping gaps to advisors",
+        "Building your roadmap"
+      ],
+      reportHeaderThankYou: "Thanks - we've saved your diagnostic submission for {company}. Your next step is to focus on the lowest-scoring domains first, then reinforce what's already working so you can move faster with less risk.",
+      reportStrengthsTitle: "Top Strengths",
+      reportGapsTitle: "Priority Gaps",
+      reportRoadmapTitle: "Recommended Roadmap",
+      reportFullBreakdownTitle: "Full Readiness Breakdown",
+      reportProgramsTitle: "Program Matches",
+      reportAdvisorsTitle: "Custom Advisory Board",
+      reportMembershipCtaTitle: "Detailed report access is restricted",
+      reportMembershipCtaBody: "Join Rellia Health to unlock your custom advisory board, full gap analysis, and personalized actions - and accelerate your journey.",
+      reportMembershipCtaButton: "Apply for Membership",
       sections: DIAGNOSTIC_SURVEY_SECTIONS,
     },
   })

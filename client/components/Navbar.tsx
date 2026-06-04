@@ -361,7 +361,6 @@ export default function Navbar({
     pathname === "/stories" ||
     pathname === "/privacy" ||
     pathname === "/terms" ||
-    pathname === "/network" ||
     pathname === "/founders" ||
     pathname.startsWith("/founders/") ||
     pathname === "/advisors" ||

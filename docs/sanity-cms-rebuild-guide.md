@@ -2,6 +2,23 @@
 
 Ultra-minimalist, editor-first Sanity Studio for the Rellia marketing site. Builds on [sanity-cms-audit-and-rebuild-plan.md](./sanity-cms-audit-and-rebuild-plan.md).
 
+---
+
+## 🚀 Latest Audit Status (June 2026 Update)
+
+A recent codebase audit shows that some changes have been merged:
+* **Completed (Diagnostic Survey CMS Migration)**:
+  * Bespoke text and step collection fields (`introTitle`, `introSubtitle`, `processingTitle`, `reportMembershipCtaBody`, etc.) have been added to the [`diagnosticSurveyContent.ts`](../website-cms/schemaTypes/documents/diagnosticSurveyContent.ts) document schema.
+  * The query proxy [`groqQueries.ts`](../shared/cms/groqQueries.ts) has been updated with `diagnosticSurveyContentQuery` to fetch all these new fields.
+  * The frontend page [`DiagnosticSurvey.tsx`](../client/pages/DiagnosticSurvey.tsx) was refactored to query and display these fields from the CMS dynamically rather than relying on hardcoded page copy.
+* **Still Left to Do (Outstanding CMS Roadmap)**:
+  * **Unified Page Builder System**: Standardizing modular layouts on `section*` objects and deleting or disabling the unused `pageBuilder` blocks (`heroSection`, `featuresSection`, etc.).
+  * **Reusable Section References**: Creating the `reusableSection` document type and adding references to modular page section builders.
+  * **Standardized Headings**: Migrating text headings from simple strings to constrained `richHeading` rich text fields to support formatting options like the custom `mintAccent` decorator.
+  * **Sidebar Restructuring**: Organizing `deskStructure.ts` for editor ease of use (grouping by Site, Pages, Collections, etc.).
+
+---
+
 ## Branding
 
 | Setting | Value |

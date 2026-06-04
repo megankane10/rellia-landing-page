@@ -27,6 +27,7 @@ import {
   Heart,
   Briefcase,
   Clock,
+  Lock,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import Navbar from "@/components/Navbar";
@@ -217,7 +218,7 @@ const coerceStringList = (value: unknown): string[] => {
   return []
 }
 
-const validateMemberInfo = (info: MemberInfo): Record<string, string> => {
+const validateMemberInfo = (info: MemberInfo, stagesList: string[] = STAGES): Record<string, string> => {
   const next: Record<string, string> = {}
 
   if (!info.name.trim()) next.name = "Name is required"
@@ -226,7 +227,7 @@ const validateMemberInfo = (info: MemberInfo): Record<string, string> => {
   const stage = info.stage.trim()
   if (!stage) {
     next.stage = "Stage is required"
-  } else if (!STAGES.includes(stage)) {
+  } else if (!stagesList.includes(stage)) {
     next.stage = "Select a valid stage"
   }
 
@@ -242,8 +243,8 @@ const validateMemberInfo = (info: MemberInfo): Record<string, string> => {
   return next
 }
 
-const isMemberInfoValid = (info: MemberInfo): boolean =>
-  Object.keys(validateMemberInfo(info)).length === 0
+const isMemberInfoValid = (info: MemberInfo, stagesList: string[] = STAGES): boolean =>
+  Object.keys(validateMemberInfo(info, stagesList)).length === 0
 
 const TYPE_LABELS: Record<string, string> = {
   confidence: "Confidence check",
@@ -287,6 +288,70 @@ const css = `
 .ds-delay-3 { animation-delay: 720ms; }
 `;
 
+const DEFAULT_INTRO_TITLE = "How ready is your startup, really?"
+const DEFAULT_INTRO_SUBTITLE = "Our diagnostic tool assesses your health tech startup across 12 critical domains. Get an automated report, personalized advisory board matches, and a program roadmap tailored to your gaps."
+const DEFAULT_INTRO_JOURNEY_TITLE = "Your Diagnostic Journey"
+const DEFAULT_INTRO_JOURNEY_STEPS = [
+  { title: "Capture Your Context", description: "Tell us about your startup, stage, and mission.", icon: "Building2" },
+  { title: "12-Domain Deep Dive", description: "15-minute assessment of your regulatory, clinical, and commercial readiness.", icon: "Target" },
+  { title: "Personalized Growth Roadmap", description: "Immediate analysis of your top strengths and priority gaps.", icon: "Sparkles" },
+  { title: "Advisory Board Match", description: "Personalized assignment of mentors based on your results.", icon: "Users" }
+]
+const DEFAULT_INTRO_WHAT_YOU_GET_TITLE = "What you’ll get"
+const DEFAULT_INTRO_WHAT_YOU_GET_BULLETS = [
+  "Top 3 strengths + gaps with priority level",
+  "Concrete roadmap recommendations",
+  "Advisor focus areas matched to your gaps"
+]
+const DEFAULT_INTRO_STARTUP_DETAILS_TITLE = "Tell us about your startup"
+const DEFAULT_INTRO_START_BUTTON_LABEL = "Begin Assessment"
+
+const DEFAULT_SUBMIT_TITLE = "Review, then generate your roadmap"
+const DEFAULT_SUBMIT_SUBTITLE = "You’re about to submit your responses. After confirmation, we’ll generate your report and save your submission in the Rellia CMS."
+const DEFAULT_SUBMIT_PROFILE_TITLE = "Your Assessment Profile"
+const DEFAULT_SUBMIT_GENERATING_TITLE = "Generating Your Report"
+const DEFAULT_SUBMIT_GENERATING_BODY = "We're assessing your results in order to assign you your personalized advisory board and recommended Rellia programs."
+const DEFAULT_SUBMIT_GENERATING_BULLETS = [
+  "Top 3 Gaps & Strengths",
+  "Customized Recommendation Roadmap",
+  "Assigned Advisory Board Matches",
+  "Meeting Links for Advisors"
+]
+const DEFAULT_SUBMIT_DETAILS_TITLE = "Submission details"
+const DEFAULT_SUBMIT_CONFIRM_BUTTON_LABEL = "Confirm & Generate Report"
+
+const DEFAULT_PROCESSING_TITLE = "Personalizing your report"
+const DEFAULT_PROCESSING_SUBTITLE = "We're assessing your results in order to assign you your personalized advisory board and program roadmap."
+const DEFAULT_PROCESSING_STEPS = [
+  "Analyzing section scores",
+  "Mapping gaps to advisors",
+  "Building your roadmap"
+]
+
+const DEFAULT_REPORT_HEADER_THANK_YOU = "Thanks - we've saved your diagnostic submission for {company}. Your next step is to focus on the lowest-scoring domains first, then reinforce what's already working so you can move faster with less risk."
+const DEFAULT_REPORT_STRENGTHS_TITLE = "Top Strengths"
+const DEFAULT_REPORT_GAPS_TITLE = "Priority Gaps"
+const DEFAULT_REPORT_ROADMAP_TITLE = "Recommended Roadmap"
+const DEFAULT_REPORT_FULL_BREAKDOWN_TITLE = "Full Readiness Breakdown"
+const DEFAULT_REPORT_PROGRAMS_TITLE = "Program Matches"
+const DEFAULT_REPORT_ADVISORS_TITLE = "Custom Advisory Board"
+const DEFAULT_REPORT_MEMBERSHIP_CTA_TITLE = "Detailed report access is restricted"
+const DEFAULT_REPORT_MEMBERSHIP_CTA_BODY = "Join Rellia Health to unlock your custom advisory board, full gap analysis, and personalized actions - and accelerate your journey."
+const DEFAULT_REPORT_MEMBERSHIP_CTA_BUTTON = "Apply for Membership"
+
+const INTRO_ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
+  Building2,
+  Target,
+  Sparkles,
+  Users,
+};
+
+const DUMMY_HEADSHOTS = [
+  "/images/samd.jpg",
+  "/images/ibukun.jpg",
+  "/images/team-megankane.jpg",
+];
+
 // ─── MAIN COMPONENT ───────────────────────────────────────────────────────────
 
 export default function DiagnosticSurvey() {
@@ -298,7 +363,7 @@ export default function DiagnosticSurvey() {
   const [memberInfo, setMemberInfo] = useState<MemberInfo>({
     name: "",
     company: "",
-    stage: STAGES[0],
+    stage: "",
     email: "",
     desc: "",
   });
@@ -362,6 +427,61 @@ export default function DiagnosticSurvey() {
     [surveyCms],
   )
 
+  const stages = useMemo(() => {
+    if (surveyCms?.stages && surveyCms.stages.length > 0) {
+      return surveyCms.stages
+    }
+    return STAGES
+  }, [surveyCms])
+
+  // Set default stage when stages load from Sanity, but don't overwrite restored localStorage values
+  useEffect(() => {
+    if (stages.length > 0 && !memberInfo.stage) {
+      setMemberInfo((prev) => ({
+        ...prev,
+        stage: prev.stage || stages[0],
+      }))
+    }
+  }, [stages, memberInfo.stage])
+
+  const introTitle = surveyCms?.introTitle || DEFAULT_INTRO_TITLE;
+  const introSubtitle = surveyCms?.introSubtitle || DEFAULT_INTRO_SUBTITLE;
+  const introJourneyTitle = surveyCms?.introJourneyTitle || DEFAULT_INTRO_JOURNEY_TITLE;
+  const introJourneySteps = useMemo(() => {
+    if (surveyCms?.introJourneySteps && surveyCms.introJourneySteps.length > 0) {
+      return surveyCms.introJourneySteps.map((step) => {
+        const IconComponent = (step.icon ? INTRO_ICON_MAP[step.icon] : null) || Target;
+        return {
+          icon: IconComponent,
+          t: step.title,
+          d: step.description,
+        };
+      });
+    }
+    return DEFAULT_INTRO_JOURNEY_STEPS.map((step) => ({
+      icon: (INTRO_ICON_MAP[step.icon] || Target),
+      t: step.title,
+      d: step.description,
+    }));
+  }, [surveyCms]);
+  const introWhatYouGetTitle = surveyCms?.introWhatYouGetTitle || DEFAULT_INTRO_WHAT_YOU_GET_TITLE;
+  const introWhatYouGetBullets = surveyCms?.introWhatYouGetBullets || DEFAULT_INTRO_WHAT_YOU_GET_BULLETS;
+  const introStartupDetailsTitle = surveyCms?.introStartupDetailsTitle || DEFAULT_INTRO_STARTUP_DETAILS_TITLE;
+  const introStartButtonLabel = surveyCms?.introStartButtonLabel || DEFAULT_INTRO_START_BUTTON_LABEL;
+
+  const submitTitle = surveyCms?.submitTitle || DEFAULT_SUBMIT_TITLE;
+  const submitSubtitle = surveyCms?.submitSubtitle || DEFAULT_SUBMIT_SUBTITLE;
+  const submitProfileTitle = surveyCms?.submitProfileTitle || DEFAULT_SUBMIT_PROFILE_TITLE;
+  const submitGeneratingTitle = surveyCms?.submitGeneratingTitle || DEFAULT_SUBMIT_GENERATING_TITLE;
+  const submitGeneratingBody = surveyCms?.submitGeneratingBody || DEFAULT_SUBMIT_GENERATING_BODY;
+  const submitGeneratingBullets = surveyCms?.submitGeneratingBullets || DEFAULT_SUBMIT_GENERATING_BULLETS;
+  const submitDetailsTitle = surveyCms?.submitDetailsTitle || DEFAULT_SUBMIT_DETAILS_TITLE;
+  const submitConfirmButtonLabel = surveyCms?.submitConfirmButtonLabel || DEFAULT_SUBMIT_CONFIRM_BUTTON_LABEL;
+
+  const processingTitle = surveyCms?.processingTitle || DEFAULT_PROCESSING_TITLE;
+  const processingSubtitle = surveyCms?.processingSubtitle || DEFAULT_PROCESSING_SUBTITLE;
+  const processingSteps = surveyCms?.processingSteps || DEFAULT_PROCESSING_STEPS;
+
   const completedSections = sections.filter(
     (s) =>
       answers[s.id] && Object.keys(answers[s.id]).length === s.questions.length,
@@ -380,8 +500,8 @@ export default function DiagnosticSurvey() {
     secAnswers[currentQIdx] !== undefined ? secAnswers[currentQIdx] : -1;
 
   const goToSection = (i: number) => {
-    if (!isMemberInfoValid(memberInfo)) {
-      setErrors(validateMemberInfo(memberInfo))
+    if (!isMemberInfoValid(memberInfo, stages)) {
+      setErrors(validateMemberInfo(memberInfo, stages))
       setView("intro")
       return
     }
@@ -391,7 +511,7 @@ export default function DiagnosticSurvey() {
   };
   const goToIntro = () => setView("intro");
   const startSurvey = () => {
-    const newErrors = validateMemberInfo(memberInfo)
+    const newErrors = validateMemberInfo(memberInfo, stages)
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors)
       return
@@ -614,7 +734,7 @@ export default function DiagnosticSurvey() {
         return section ? DATA_MAP[section.id] : null;
       })
       .filter(Boolean);
-  }, [diagResult]);
+  }, [diagResult, sections]);
 
   return (
     <div className="min-h-screen bg-rellia-cream font-host-grotesk text-rellia-teal selection:bg-rellia-mint/30 selection:text-rellia-teal pt-[72px] md:pt-[86px]">
@@ -870,14 +990,16 @@ export default function DiagnosticSurvey() {
               <div className="animate-ds-up flex flex-col gap-10">
                 <div className="space-y-6">
                   <h1 className="font-host-grotesk text-4xl font-bold leading-[1.1] tracking-tight text-black md:text-6xl">
-                    How ready is your startup,{" "}
-                    <span className="italic text-rellia-teal">really?</span>
+                    {introTitle === DEFAULT_INTRO_TITLE ? (
+                      <>
+                        How ready is your startup, <span className="italic text-rellia-teal">really?</span>
+                      </>
+                    ) : (
+                      introTitle
+                    )}
                   </h1>
                   <p className="font-urbanist text-lg leading-relaxed text-rellia-teal/70 md:text-xl">
-                    Our diagnostic tool assesses your health tech startup across
-                    12 critical domains. Get an automated report, personalized
-                    advisory board matches, and a program roadmap tailored to
-                    your gaps.
+                    {introSubtitle}
                   </p>
                 </div>
 
@@ -885,31 +1007,10 @@ export default function DiagnosticSurvey() {
                   <div className="space-y-6">
                     <div className="rounded-3xl border border-rellia-teal/10 bg-white p-8 shadow-sm">
                       <h3 className="mb-8 text-xs font-bold uppercase tracking-widest text-rellia-teal">
-                        Your Diagnostic Journey
+                        {introJourneyTitle}
                       </h3>
                       <div className="space-y-8">
-                        {[
-                          {
-                            icon: Building2,
-                            t: "Capture Your Context",
-                            d: "Tell us about your startup, stage, and mission.",
-                          },
-                          {
-                            icon: Target,
-                            t: "12-Domain Deep Dive",
-                            d: "15-minute assessment of your regulatory, clinical, and commercial readiness.",
-                          },
-                          {
-                            icon: Sparkles,
-                            t: "Personalized Growth Roadmap",
-                            d: "Immediate analysis of your top strengths and priority gaps.",
-                          },
-                          {
-                            icon: Users,
-                            t: "Advisory Board Match",
-                            d: "Personalized assignment of mentors based on your results.",
-                          },
-                        ].map((item, i) => (
+                        {introJourneySteps.map((item, i) => (
                           <div key={i} className="relative flex gap-4">
                             <div className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-rellia-teal/20 bg-rellia-teal text-rellia-mint">
                               <span
@@ -943,14 +1044,10 @@ export default function DiagnosticSurvey() {
 
                       <div className="mt-10 rounded-2xl border border-rellia-teal/5 bg-rellia-cream/20 p-5">
                         <div className="text-[10px] font-bold uppercase tracking-widest text-rellia-teal/50">
-                          What you’ll get
+                          {introWhatYouGetTitle}
                         </div>
                         <div className="mt-3 space-y-2">
-                          {[
-                            "Top 3 strengths + gaps with priority level",
-                            "Concrete roadmap recommendations",
-                            "Advisor focus areas matched to your gaps",
-                          ].map((line) => (
+                          {introWhatYouGetBullets.map((line) => (
                             <div key={line} className="flex items-start gap-3 text-xs text-black">
                               <div className="mt-1.5 h-2 w-2 rounded-full bg-rellia-mint" />
                               <span className="leading-relaxed">{line}</span>
@@ -963,7 +1060,7 @@ export default function DiagnosticSurvey() {
 
                   <div className="rounded-3xl border border-rellia-teal/10 bg-white p-8 shadow-sm flex flex-col h-full">
                     <h3 className="mb-6 text-xs font-bold uppercase tracking-widest text-rellia-teal">
-                      Tell us about your startup
+                      {introStartupDetailsTitle}
                     </h3>
                     <div className="space-y-4 flex-1">
                       <div className="space-y-1.5">
@@ -1041,7 +1138,7 @@ export default function DiagnosticSurvey() {
                                 }))
                               }
                             >
-                              {STAGES.map((s) => (
+                              {stages.map((s) => (
                                 <option key={s} value={s}>
                                   {s}
                                 </option>
@@ -1121,7 +1218,7 @@ export default function DiagnosticSurvey() {
                       className="w-full justify-center shadow-lg transition-transform active:scale-[0.98] py-4 mt-6"
                       onClick={startSurvey}
                     >
-                      Begin Assessment
+                      {introStartButtonLabel}
                       <ArrowRight className="ml-2 h-4 w-4" />
                     </RelliaAction>
                   </div>
@@ -1235,17 +1332,17 @@ export default function DiagnosticSurvey() {
               <div className="animate-ds-up flex flex-col gap-10">
                 <div className="space-y-4">
                   <h2 className="font-host-grotesk text-3xl font-bold text-rellia-teal md:text-5xl">
-                    Review, then generate your roadmap
+                    {submitTitle}
                   </h2>
                   <p className="w-full text-rellia-teal/60">
-                    You’re about to submit your responses. After confirmation, we’ll generate your report and save your submission in the Rellia CMS.
+                    {submitSubtitle}
                   </p>
                 </div>
 
                 <div className="grid gap-6 md:grid-cols-2 items-stretch">
                   <div className="rounded-[32px] border border-rellia-teal/10 bg-white p-8 shadow-sm flex flex-col h-full">
                     <h3 className="mb-6 text-xs font-bold uppercase tracking-widest text-rellia-teal">
-                      Your Assessment Profile
+                      {submitProfileTitle}
                     </h3>
                     <div className="space-y-2 flex-1">
                       {sections.map((s) => {
@@ -1273,20 +1370,13 @@ export default function DiagnosticSurvey() {
                     <div className="rounded-[32px] border border-rellia-teal/10 bg-rellia-mint/10 p-8 flex-1 flex flex-col justify-center">
                       <h3 className="mb-4 font-host-grotesk text-xl font-bold flex items-center gap-2">
                         <Sparkles className="h-5 w-5 text-rellia-teal" />
-                        Generating Your Report
+                        {submitGeneratingTitle}
                       </h3>
                       <p className="text-sm text-rellia-teal/70 leading-relaxed mb-6">
-                        We're assessing your results in order to assign you your
-                        personalized advisory board and recommended Rellia
-                        programs.
+                        {submitGeneratingBody}
                       </p>
                       <div className="space-y-3">
-                        {[
-                          "Top 3 Gaps & Strengths",
-                          "Customized Recommendation Roadmap",
-                          "Assigned Advisory Board Matches",
-                          "Meeting Links for Advisors",
-                        ].map((l) => (
+                        {submitGeneratingBullets.map((l) => (
                           <div
                             key={l}
                             className="flex items-center gap-2 text-xs font-medium text-rellia-teal/80"
@@ -1299,7 +1389,7 @@ export default function DiagnosticSurvey() {
                     </div>
                     <div className="rounded-[24px] border border-rellia-teal/10 bg-white p-6">
                       <h4 className="text-xs font-bold uppercase tracking-widest text-rellia-teal">
-                        Submission details
+                        {submitDetailsTitle}
                       </h4>
                       <div className="mt-4 space-y-2 text-sm text-rellia-teal/70">
                         <p>
@@ -1323,7 +1413,7 @@ export default function DiagnosticSurvey() {
                       size="comfortable"
                       className="w-full justify-center shadow-xl transition-all hover:scale-[1.02] active:scale-95"
                       onClick={() => {
-                        const nextErrors = validateMemberInfo(memberInfo)
+                        const nextErrors = validateMemberInfo(memberInfo, stages)
                         if (Object.keys(nextErrors).length > 0) {
                           setErrors(nextErrors)
                           setView("intro")
@@ -1332,7 +1422,7 @@ export default function DiagnosticSurvey() {
                         submitSurvey()
                       }}
                     >
-                      Confirm & Generate Report
+                      {submitConfirmButtonLabel}
                       <ArrowRight className="ml-2 h-5 w-5" />
                     </RelliaAction>
                   </div>
@@ -1345,30 +1435,25 @@ export default function DiagnosticSurvey() {
               <div className="flex flex-1 flex-col items-center justify-center text-center">
                 <div className="animate-ds-spin mb-10 h-16 w-16 rounded-full border-4 border-rellia-teal/10 border-t-rellia-teal" />
                 <h2 className="mb-4 font-host-grotesk text-3xl font-bold">
-                  Personalizing your report
+                  {processingTitle}
                 </h2>
                 <p className="mb-12 max-w-md text-rellia-teal/60">
-                  We're assessing your results in order to assign you your
-                  personalized advisory board and program roadmap.
+                  {processingSubtitle}
                 </p>
 
                 <div className="w-full max-w-xs space-y-4">
-                  {[
-                    { l: "Analyzing section scores", s: procStep >= 0 },
-                    { l: "Mapping gaps to advisors", s: procStep >= 1 },
-                    { l: "Building your roadmap", s: procStep >= 2 },
-                  ].map((step, i) => (
+                  {processingSteps.map((step, i) => (
                     <div
                       key={i}
                       className="flex items-center gap-4 text-left transition-all duration-500"
                     >
                       <div
-                        className={`h-2.5 w-2.5 rounded-full ${step.s ? "bg-green-500" : "bg-rellia-teal/10 animate-pulse"}`}
+                        className={`h-2.5 w-2.5 rounded-full ${procStep >= i ? "bg-green-500" : "bg-rellia-teal/10 animate-pulse"}`}
                       />
                       <span
-                        className={`text-sm font-medium ${step.s ? "text-rellia-teal" : "text-rellia-teal/20"}`}
+                        className={`text-sm font-medium ${procStep >= i ? "text-rellia-teal" : "text-rellia-teal/20"}`}
                       >
-                        {step.l}
+                        {step}
                       </span>
                     </div>
                   ))}
@@ -1377,297 +1462,339 @@ export default function DiagnosticSurvey() {
             )}
 
             {/* ── REPORT VIEW ── */}
-            {view === "report" && diagResult && (
-              <div className="animate-ds-up flex flex-col gap-12 pb-20">
-                <div className="space-y-6">
-                  <div className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
-                    <div>
-                      <h1 className="font-host-grotesk text-4xl font-bold text-rellia-teal md:text-5xl">
-                        {memberInfo.company}
-                      </h1>
-                      <div className="mt-2 text-sm font-medium text-rellia-teal/45">
-                        {memberInfo.stage} ·{" "}
-                        {new Date().toLocaleDateString("en-CA", {
-                          year: "numeric",
-                          month: "long",
-                          day: "numeric",
-                        })}
+            {view === "report" && diagResult && (() => {
+              const thankYouText = (surveyCms?.reportHeaderThankYou || DEFAULT_REPORT_HEADER_THANK_YOU)
+                .replace(/\{company\}/gi, memberInfo.company);
+              return (
+                <div className="animate-ds-up flex flex-col gap-12 pb-20">
+                  <div className="space-y-6">
+                    <div className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
+                      <div>
+                        <h1 className="font-host-grotesk text-4xl font-bold text-rellia-teal md:text-5xl">
+                          {memberInfo.company}
+                        </h1>
+                        <div className="mt-2 text-sm font-medium text-rellia-teal/45">
+                          {memberInfo.stage} ·{" "}
+                          {new Date().toLocaleDateString("en-CA", {
+                            year: "numeric",
+                            month: "long",
+                            day: "numeric",
+                          })}
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            try {
+                              window.localStorage.removeItem(LOCAL_STORAGE_KEY)
+                            } catch {
+                              // ignore
+                            }
+                            setDiagResult(null)
+                            setView("intro")
+                          }}
+                          className="group inline-flex items-center gap-1.5 text-sm font-bold text-rellia-teal"
+                        >
+                          <span className="group-hover:underline">Start over</span>
+                          <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+                        </button>
                       </div>
                     </div>
-                    <div className="flex items-center gap-3">
-                      <button
-                        type="button"
-                        onClick={() => {
-                          try {
-                            window.localStorage.removeItem(LOCAL_STORAGE_KEY)
-                          } catch {
-                            // ignore
-                          }
-                          setDiagResult(null)
-                          setView("intro")
-                        }}
-                        className="group inline-flex items-center gap-1.5 text-sm font-bold text-rellia-teal"
-                      >
-                        <span className="group-hover:underline">Start over</span>
-                        <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-                      </button>
-                    </div>
-                  </div>
 
-                  <div className="rounded-[32px] border border-rellia-teal/10 bg-white p-8 shadow-sm md:p-10 relative overflow-hidden">
-                    <div className="absolute top-0 right-0 p-4 opacity-5">
-                      <Sparkles className="h-24 w-24 text-rellia-teal" />
-                    </div>
-                    <p className="font-urbanist text-xl leading-relaxed text-rellia-teal/80 md:text-2xl relative z-10">
-                      Thanks - we've saved your diagnostic submission for {memberInfo.company}. Your next step is to focus on the lowest-scoring domains first, then reinforce what's already working so you can move faster with less risk.
-                    </p>
-                  </div>
-
-                  {/* Warning banner indicating locked details
-                  <div className="rounded-[32px] border border-amber-200 bg-amber-50/50 p-8 shadow-sm flex flex-col md:flex-row items-start md:items-center gap-6">
-                    <div className="shrink-0 flex h-12 w-12 items-center justify-center rounded-2xl bg-amber-600 text-white shadow-sm">
-                      <AlertTriangle className="h-6 w-6 text-white" />
-                    </div>
-                    <div className="flex-1">
-                      <h4 className="font-host-grotesk text-lg font-bold text-amber-900 leading-tight">Detailed Report Access Restricted</h4>
-                      <p className="mt-1 font-urbanist text-sm leading-relaxed text-amber-800">
-                        This summary view is a preliminary preview. Access to your full detailed gap analysis report, personalized priority actions, and assigned advisor dashboard is restricted. Apply for a <strong>Rellia Health membership</strong> to instantly unlock full access.
+                    <div className="rounded-[32px] bg-gradient-to-br from-[#0d3540] via-rellia-teal to-[#144853] p-8 shadow-md md:p-10 relative overflow-hidden text-white">
+                      <div className="absolute -right-8 -bottom-8 opacity-10 pointer-events-none select-none z-0">
+                        <img 
+                          src="/images/hologram-logo.png" 
+                          alt="Hologram Logo" 
+                          className="w-48 h-48 md:w-64 md:h-64 object-contain"
+                        />
+                      </div>
+                      <p className="font-urbanist text-xl leading-relaxed text-white/90 md:text-2xl relative z-10">
+                        {thankYouText}
                       </p>
                     </div>
-                    <RelliaAction asChild variant="mintTealFill" size="comfortable" className="w-full md:w-auto shrink-0 justify-center">
-                      <Link to="/apply">
-                        Unlock Full Report
-                        <ArrowRight className="ml-2 h-4 w-4" />
-                      </Link>
-                    </RelliaAction>
-                  </div> */}
-                </div> 
+                  </div> 
 
-                <div className="space-y-12">
-                  {/* Strengths */}
-                  <section className="space-y-4">
-                    <h2 className="text-xs font-bold uppercase tracking-widest text-green-700 flex items-center gap-2">
-                      <CheckCircle2 className="h-4 w-4" />
-                      Top Strengths
-                    </h2>
-                    <div className="grid gap-4 sm:grid-cols-3">
-                      {(diagResult.top3_strengths ?? []).map((s, i) => (
-                        <div
-                          key={i}
-                          className="rounded-3xl border border-green-100 bg-green-50/50 p-6 shadow-sm"
-                        >
-                          <div className="flex items-start justify-between gap-4">
-                            <h3 className="font-host-grotesk text-lg font-bold tracking-tight text-green-900">
-                              {s.category}
-                            </h3>
-                            <div className="shrink-0 rounded-full bg-green-100 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-green-700">
-                              {s.score}%
-                            </div>
-                          </div>
-                          <p className="mt-3 font-urbanist text-sm leading-relaxed text-green-900/70">
-                            {s.note}
-                          </p>
-                        </div>
-                      ))}
-                    </div>
-                  </section>
-
-                  {/* Weaknesses */}
-                  <section className="space-y-4">
-                    <h2 className="text-xs font-bold uppercase tracking-widest text-red-700 flex items-center gap-2">
-                      <AlertTriangle className="h-4 w-4" />
-                      Priority Gaps
-                    </h2>
-                    <div className="grid gap-4 sm:grid-cols-3">
-                      {(diagResult.top3_weaknesses ?? []).map((w, i) => (
-                        <div
-                          key={i}
-                          className="rounded-3xl border border-red-100 bg-red-50/50 p-6 shadow-sm"
-                        >
-                          <div className="flex items-start justify-between gap-4">
-                            <h3 className="font-host-grotesk text-lg font-bold tracking-tight text-red-900">
-                              {w.category}
-                            </h3>
-                            <div className="shrink-0 rounded-full bg-red-100 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-red-700">
-                              {w.priority}
-                            </div>
-                          </div>
-                          <p className="mt-3 font-urbanist text-sm leading-relaxed text-red-900/70">
-                            {w.note}
-                          </p>
-                        </div>
-                      ))}
-                    </div>
-                  </section>
-
-                  {/* Roadmap + Accelerate */}
-                  <section className="grid gap-6 md:grid-cols-2 items-stretch">
-                    <div className="rounded-[32px] border border-rellia-teal/10 bg-white p-8 shadow-sm flex flex-col h-full">
-                      <h2 className="text-xs font-bold uppercase tracking-widest text-rellia-teal">
-                        Recommended Roadmap
+                  <div className="space-y-12">
+                    {/* Strengths */}
+                    <section className="space-y-4">
+                      <h2 className="text-xs font-bold uppercase tracking-widest text-green-700 flex items-center gap-2">
+                        <CheckCircle2 className="h-4 w-4" />
+                        {surveyCms?.reportStrengthsTitle || DEFAULT_REPORT_STRENGTHS_TITLE}
                       </h2>
-                      <div className="mt-6 space-y-4 flex-1">
-                        {diagResult.recommendations.map((r, i) => (
-                          <div key={i} className="flex gap-4">
-                            <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-rellia-mint text-rellia-teal text-[10px] font-black">
-                              {i + 1}
+                      <div className="grid gap-4 sm:grid-cols-3">
+                        {(diagResult.top3_strengths ?? []).map((s, i) => (
+                          <div
+                            key={i}
+                            className="rounded-3xl border border-green-100 bg-green-50/50 p-6 shadow-sm"
+                          >
+                            <div className="flex items-start justify-between gap-4">
+                              <h3 className="font-host-grotesk text-lg font-bold tracking-tight text-green-900">
+                                {s.category}
+                              </h3>
+                              <div className="shrink-0 rounded-full bg-green-100 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-green-700">
+                                {s.score}%
+                              </div>
                             </div>
-                            <p className="font-urbanist text-sm font-medium leading-relaxed text-rellia-teal/80">
-                              {r}
+                            <p className="mt-3 font-urbanist text-sm leading-relaxed text-green-900/70">
+                              {s.note}
                             </p>
                           </div>
                         ))}
                       </div>
-                    </div>
+                    </section>
 
-                    <div className="rounded-[32px] bg-rellia-teal p-8 text-white shadow-2xl relative overflow-hidden flex flex-col h-full">
-                      <div className="absolute -bottom-4 -right-4 h-24 w-24 bg-rellia-mint/20 rounded-full blur-2xl" />
-                      <h2 className="font-host-grotesk text-2xl font-bold leading-tight relative z-10">
-                      Detailed report access is restricted
+                    {/* Weaknesses */}
+                    <section className="space-y-4">
+                      <h2 className="text-xs font-bold uppercase tracking-widest text-red-700 flex items-center gap-2">
+                        <AlertTriangle className="h-4 w-4" />
+                        {surveyCms?.reportGapsTitle || DEFAULT_REPORT_GAPS_TITLE}
                       </h2>
-                      <p className="mt-4 text-sm leading-relaxed text-white/70 relative z-10 flex-1">
-                      Join Rellia Health to unlock your full gap analysis, personalized actions, and advisory board - and accelerate your journey.
-                      </p>
-                      <RelliaAction
-                        asChild
-                        variant="heroSolidOnTeal"
-                        size="comfortable"
-                        className="w-full justify-center transition-transform active:scale-95 relative z-10 mt-8"
-                      >
-                        <Link to="/apply">
-                          Apply for Membership
-                          <ArrowRight className="ml-2 h-5 w-5" />
-                        </Link>
-                      </RelliaAction>
-                    </div>
-                  </section>
-
-                  {/* Full readiness breakdown */}
-                  <section className="space-y-4">
-                    <h2 className="text-xs font-bold uppercase tracking-widest text-rellia-teal">
-                      Full Readiness Breakdown
-                    </h2>
-                    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                      {sections.map((s) => {
-                        const sc = getSectionScore(s.id, answers, sections) ?? 0;
-                        return (
+                      <div className="grid gap-4 sm:grid-cols-3">
+                        {(diagResult.top3_weaknesses ?? []).map((w, i) => (
                           <div
-                            key={s.id}
-                            className="rounded-3xl border border-rellia-teal/10 bg-white p-6 shadow-sm"
-                          >
-                            <div className="flex items-start justify-between gap-3">
-                              <div className="min-w-0">
-                                <div className="text-[10px] font-bold uppercase tracking-widest text-rellia-teal/40">
-                                  {s.id.replace(/_/g, " ")}
-                                </div>
-                                <div className="mt-1 font-host-grotesk text-base font-bold text-rellia-teal">
-                                  {s.title}
-                                </div>
-                              </div>
-                              <div className={cn("text-base font-black", scoreClass(sc))}>
-                                {sc}%
-                              </div>
-                            </div>
-                            <div className="mt-4 h-1.5 w-full overflow-hidden rounded-full bg-rellia-teal/5">
-                              <div
-                                className={cn("h-full transition-all duration-1000", scoreBarClass(sc))}
-                                style={{ width: `${sc}%` }}
-                              />
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </section>
-
-                  {/* Advisory board + programs */}
-                  <section className="grid gap-6 md:grid-cols-2 items-stretch">
-                    <div className="rounded-[32px] border border-rellia-teal/10 bg-white p-8 shadow-sm flex flex-col h-full">
-                      <h2 className="text-xs font-bold uppercase tracking-widest text-rellia-teal">
-                        Find Advisors for Your Gaps
-                      </h2>
-                      <div className="mt-6 flex flex-col gap-4 flex-1">
-                        {diagResult.top3_weaknesses.map((w, i) => (
-                          <Link
                             key={i}
-                            to={`/advisors/directory?specialty=${encodeURIComponent(w.category)}`}
-                            className="group flex flex-1 items-center justify-between gap-4 rounded-3xl border border-rellia-teal/15 bg-rellia-cream px-6 py-5 transition-[background-color,box-shadow,transform] hover:bg-rellia-mint/20 hover:shadow-md hover:-translate-y-[1px]"
+                            className="rounded-3xl border border-red-100 bg-red-50/50 p-6 shadow-sm"
                           >
-                            <div className="min-w-0">
-                              <div className="font-urbanist text-[10px] font-bold uppercase tracking-widest text-rellia-teal/50">
-                                Priority {i + 1} Gap
-                              </div>
-                              <div className="mt-1 font-host-grotesk text-base font-bold tracking-tight text-black">
-                                See advisors for {w.category}
+                            <div className="flex items-start justify-between gap-4">
+                              <h3 className="font-host-grotesk text-lg font-bold tracking-tight text-red-900">
+                                {w.category}
+                              </h3>
+                              <div className="shrink-0 rounded-full bg-red-100 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-red-700">
+                                {w.priority}
                               </div>
                             </div>
-                            <ChevronRight className="h-5 w-5 shrink-0 text-rellia-teal/40 transition-colors group-hover:text-rellia-teal" />
-                          </Link>
+                            <p className="mt-3 font-urbanist text-sm leading-relaxed text-red-900/70">
+                              {w.note}
+                            </p>
+                          </div>
                         ))}
                       </div>
-                    </div>
+                    </section>
 
-                    <div className="rounded-[32px] border border-rellia-teal/10 bg-white p-8 shadow-sm flex flex-col h-full">
-                      <div className="flex items-center justify-between gap-4">
-                        <h2 className="text-xs font-bold uppercase tracking-widest text-rellia-teal">
-                          Program Matches
-                        </h2>
-                        <Link
-                          to="/programs"
-                          className="text-[10px] font-bold uppercase tracking-widest text-rellia-teal/60 hover:text-rellia-teal transition-colors"
-                        >
-                          View all programs →
-                        </Link>
-                      </div>
-
-                      <div className="mt-6 grid gap-4">
-                        {recommendedPrograms.map((prog, i) => {
-                          const href = prog?.programHref || "/programs"
-                          const meta = PROGRAM_META_BY_HREF[href]
+                    {/* Full readiness breakdown (Detailed Assessment) */}
+                    <section className="space-y-4">
+                      <h2 className="text-xs font-bold uppercase tracking-widest text-rellia-teal">
+                        {surveyCms?.reportFullBreakdownTitle || DEFAULT_REPORT_FULL_BREAKDOWN_TITLE}
+                      </h2>
+                      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                        {sections.map((s) => {
+                          const sc = getSectionScore(s.id, answers, sections) ?? 0;
                           return (
-                            <Link
-                              key={i}
-                              to={href}
-                              className="group flex items-center gap-4 rounded-3xl border border-black/10 bg-white p-4 shadow-sm transition-[transform,box-shadow] hover:shadow-md hover:-translate-y-[1px]"
+                            <div
+                              key={s.id}
+                              className="rounded-3xl border border-rellia-teal/10 bg-white p-6 shadow-sm"
                             >
-                              <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-lg bg-rellia-cream">
-                                {meta?.imageSrc ? (
-                                  <img
-                                    src={meta.imageSrc}
-                                    alt={meta.imageAlt || meta.title}
-                                    className="h-full w-full object-cover"
-                                    loading="lazy"
-                                  />
-                                ) : (
-                                  <div className="h-full w-full" />
-                                )}
-                              </div>
-                              <div className="min-w-0 flex-1">
-                                <div className="font-host-grotesk text-base font-bold tracking-tight text-black">
-                                  {meta?.title || prog?.program || "Program"}
+                              <div className="flex items-center justify-between gap-3">
+                                <div className="min-w-0 flex-1 font-host-grotesk text-base font-bold text-rellia-teal">
+                                  {s.title}
+                                </div>
+                                <div className={cn("text-base font-black shrink-0", scoreClass(sc))}>
+                                  {sc}%
                                 </div>
                               </div>
-                              <ChevronRight className="h-5 w-5 text-black/30 group-hover:text-black/60 transition-colors" />
-                            </Link>
-                          )
+                              <div className="mt-4 h-1.5 w-full overflow-hidden rounded-full bg-rellia-teal/5">
+                                <div
+                                  className={cn("h-full transition-all duration-1000", scoreBarClass(sc))}
+                                  style={{ width: `${sc}%` }}
+                                />
+                              </div>
+                            </div>
+                          );
                         })}
                       </div>
-                    </div>
-                  </section>
+                    </section>
 
-                  <div className="pt-4 text-center">
-                    <button
-                      type="button"
-                      onClick={() => window.print()}
-                      className="text-[10px] font-bold uppercase tracking-widest text-rellia-teal/40 hover:text-rellia-teal transition-colors inline-flex items-center justify-center gap-2"
-                    >
-                      <Printer className="h-3.5 w-3.5" />
-                      Print / Save as PDF
-                    </button>
+                    {/* Roadmap + Program Matches */}
+                    <section className="grid gap-6 md:grid-cols-2 items-stretch">
+                      {/* Roadmap action block */}
+                      <div className="rounded-[32px] border border-rellia-teal/10 bg-white p-8 shadow-sm flex flex-col h-full">
+                        <h2 className="text-xs font-bold uppercase tracking-widest text-rellia-teal">
+                          {surveyCms?.reportRoadmapTitle || DEFAULT_REPORT_ROADMAP_TITLE}
+                        </h2>
+                        <div className="mt-6 flex flex-col gap-8 flex-1">
+                          {diagResult.recommendations.map((r, i) => (
+                            <div key={i} className="flex gap-4 relative z-10 items-start">
+                              <div className="relative flex flex-col items-center self-stretch">
+                                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-rellia-mint text-rellia-teal text-xs font-black shadow-sm z-10">
+                                  {i + 1}
+                                </div>
+                                {i < diagResult.recommendations.length - 1 && (
+                                  <div className="absolute top-4 left-4 w-[2px] h-[calc(100%+2rem)] -translate-x-1/2 bg-rellia-mint z-0" />
+                                )}
+                              </div>
+                              <p className="font-urbanist text-sm font-medium leading-relaxed text-rellia-teal/80 pt-1.5">
+                                {r}
+                              </p>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Suggested programs block */}
+                      <div className="rounded-[32px] border border-rellia-teal/10 bg-white p-8 shadow-sm flex flex-col h-full">
+                        <div className="flex items-center justify-between gap-4">
+                          <h2 className="text-xs font-bold uppercase tracking-widest text-rellia-teal">
+                            {surveyCms?.reportProgramsTitle || DEFAULT_REPORT_PROGRAMS_TITLE}
+                          </h2>
+                          <Link
+                            to="/programs"
+                            className="text-[10px] font-bold uppercase tracking-widest text-rellia-teal/60 hover:text-rellia-teal transition-colors"
+                          >
+                            View all programs →
+                          </Link>
+                        </div>
+
+                        <div className="mt-6 grid gap-4">
+                          {recommendedPrograms.map((prog, i) => {
+                            const href = prog?.programHref || "/programs"
+                            const meta = PROGRAM_META_BY_HREF[href]
+                            console.log("Program Matches Card Image Lookup:", { prog, href, meta })
+                            return (
+                              <Link
+                                key={i}
+                                to={href}
+                                className="group flex items-center justify-between gap-4 rounded-3xl border border-rellia-teal/5 bg-rellia-cream/10 px-5 py-4 transition-[transform,box-shadow] hover:shadow-md hover:-translate-y-[1px]"
+                              >
+                                <div className="flex items-center gap-4 min-w-0">
+                                  <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-xl border border-rellia-teal/10 bg-rellia-cream">
+                                    {meta?.imageSrc ? (
+                                      <img
+                                        src={meta.imageSrc}
+                                        alt={meta.imageAlt || meta.title}
+                                        className="h-full w-full object-cover"
+                                        loading="lazy"
+                                      />
+                                    ) : (
+                                      <div className="h-full w-full" />
+                                    )}
+                                  </div>
+                                  <div className="min-w-0">
+                                    <div className="font-host-grotesk text-sm font-bold tracking-tight text-rellia-teal">
+                                      {meta?.title || prog?.program || "Program"}
+                                    </div>
+                                  </div>
+                                </div>
+                                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-rellia-teal/5 group-hover:bg-rellia-teal/10 transition-colors">
+                                  <ChevronRight className="h-4 w-4 text-rellia-teal/40 group-hover:text-rellia-teal/70 transition-colors" />
+                                </div>
+                              </Link>
+                            )
+                          })}
+                        </div>
+                      </div>
+                    </section>
+
+                    {/* Custom Advisory Board (LinkedIn-style locked) + Membership CTA */}
+                    <section className="grid gap-6 md:grid-cols-2 items-stretch">
+                      {/* LinkedIn-style Advisors block */}
+                      <div className="rounded-[32px] border border-rellia-teal/10 bg-white p-8 shadow-sm flex flex-col h-full">
+                        <h2 className="text-xs font-bold uppercase tracking-widest text-rellia-teal">
+                          {surveyCms?.reportAdvisorsTitle || DEFAULT_REPORT_ADVISORS_TITLE}
+                        </h2>
+                        <p className="mt-2 text-xs leading-relaxed text-rellia-teal/60">
+                          Matches based on your top 3 priorities. Join Rellia Health to unlock direct access.
+                        </p>
+                        <div className="mt-6 flex flex-col gap-4 flex-1">
+                          {diagResult.top3_weaknesses.map((w, i) => {
+                            const dummyPhoto = DUMMY_HEADSHOTS[i % DUMMY_HEADSHOTS.length];
+                            const categoryTitle = w.category;
+                            
+                            // Derive specialized advisor title
+                            let advisorTitle = `${categoryTitle} Advisor`;
+                            if (categoryTitle.toLowerCase().includes("ip") || categoryTitle.toLowerCase().includes("intellectual")) {
+                              advisorTitle = "IP Strategy Advisor";
+                            } else if (categoryTitle.toLowerCase().includes("regulatory")) {
+                              advisorTitle = "Regulatory Strategy Advisor";
+                            } else if (categoryTitle.toLowerCase().includes("clinical")) {
+                              advisorTitle = "Clinical Evidence Advisor";
+                            } else if (categoryTitle.toLowerCase().includes("design")) {
+                              advisorTitle = "UX & Product Design Advisor";
+                            } else if (categoryTitle.toLowerCase().includes("dev") || categoryTitle.toLowerCase().includes("engineering")) {
+                              advisorTitle = "Quality Systems Specialist";
+                            } else if (categoryTitle.toLowerCase().includes("reimbursement")) {
+                              advisorTitle = "Reimbursement Strategy Advisor";
+                            } else if (categoryTitle.toLowerCase().includes("fundraising")) {
+                              advisorTitle = "Healthcare Investor / Partner";
+                            }
+                            
+                            return (
+                              <div
+                                key={i}
+                                className="group flex items-center justify-between gap-4 rounded-3xl border border-rellia-teal/5 bg-rellia-cream/10 px-5 py-4"
+                              >
+                                <div className="flex items-center gap-4">
+                                  <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-full border border-rellia-teal/10">
+                                    <img
+                                      src={dummyPhoto}
+                                      alt="Blurred Advisor Match"
+                                      className="h-full w-full object-cover filter blur-[5px] scale-110"
+                                    />
+                                  </div>
+                                  <div className="min-w-0">
+                                    <div className="flex items-center gap-1.5">
+                                      <span className="blur-[3px] select-none text-sm font-bold text-rellia-teal/80">
+                                        Advisor Name
+                                      </span>
+                                      <span className="shrink-0 rounded bg-rellia-mint/20 px-1.5 py-0.5 text-[8px] font-black uppercase tracking-wider text-rellia-teal/70">
+                                        Vetted
+                                      </span>
+                                    </div>
+                                    <div className="mt-0.5 text-xs font-semibold text-rellia-teal/70">
+                                      {advisorTitle}
+                                    </div>
+                                  </div>
+                                </div>
+                                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-rellia-teal/5">
+                                  <Lock className="h-4 w-4 text-rellia-teal/40" />
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+
+                      {/* Join the membership CTA block */}
+                      <div className="rounded-[32px] bg-rellia-teal p-8 text-white shadow-2xl relative overflow-hidden flex flex-col h-full justify-between">
+                        <div className="absolute -bottom-4 -right-4 h-24 w-24 bg-rellia-mint/20 rounded-full blur-2xl" />
+                        <div>
+                          <ShieldCheck className="h-12 w-12 text-rellia-mint mb-6 relative z-10 shrink-0" />
+                          <h2 className="font-host-grotesk text-2xl font-bold leading-tight text-rellia-mint relative z-10">
+                            {surveyCms?.reportMembershipCtaTitle || DEFAULT_REPORT_MEMBERSHIP_CTA_TITLE}
+                          </h2>
+                          <p className="mt-4 text-sm leading-relaxed text-white relative z-10">
+                            {surveyCms?.reportMembershipCtaBody || DEFAULT_REPORT_MEMBERSHIP_CTA_BODY}
+                          </p>
+                        </div>
+                        <RelliaAction
+                          asChild
+                          variant="heroSolidOnTeal"
+                          size="comfortable"
+                          className="w-full justify-center transition-transform active:scale-95 relative z-10 mt-8"
+                        >
+                          <Link to="/apply">
+                            {surveyCms?.reportMembershipCtaButton || DEFAULT_REPORT_MEMBERSHIP_CTA_BUTTON}
+                            <ArrowRight className="ml-2 h-5 w-5" />
+                          </Link>
+                        </RelliaAction>
+                      </div>
+                    </section>
+
+                    <div className="pt-4 text-center">
+                      <button
+                        type="button"
+                        onClick={() => window.print()}
+                        className="text-[10px] font-bold uppercase tracking-widest text-rellia-teal/40 hover:text-rellia-teal transition-colors inline-flex items-center justify-center gap-2"
+                      >
+                        <Printer className="h-3.5 w-3.5" />
+                        Print / Save as PDF
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </div>
-            )}
+              );
+            })()}
           </div>
         </main>
       </div>

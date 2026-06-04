@@ -121,7 +121,7 @@ Diagnostic survey routes (`/diagnostics`, `/diagnostic-survey`) use Supabase, no
 | `api/index.js` | Committed Vercel **`/api/*`** handler (rebuild with **`pnpm run build:api`** after server changes) |
 | `shared/` | Shared CMS types, GROQ helpers, query whitelist (`shared/cms/sanityQueryRegistry.ts`), merge helpers, default fallbacks |
 | `public/` | Static files (`robots.txt`, `sitemap.xml`, images, `favicon.ico`, `ogimage.png`) |
-| `website-cms/` | Sanity Studio (separate `package.json`; run its own install for Studio dev) |
+| [`website-cms/`](./website-cms/README.md) | Sanity Studio CMS package containing schemas, visual editing presentation settings, and setup instructions. |
 | `data/` | Optional local artifacts (e.g. `contact-submissions.jsonl` in `.gitignore`); not part of the runtime app bundle |
 | `design-system/` | Design notes (e.g. `design-system/rellia-health/MASTER.md`); verify against live Tailwind tokens in `tailwind.config.ts` before treating as source of truth |
 
