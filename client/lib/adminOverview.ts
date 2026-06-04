@@ -19,13 +19,15 @@ export const buildLastNDaysTrend = (
   contacts: ContactRow[],
   diagnostics: CompanyProfileRow[],
   days = 7,
+  offsetWeeks = 0,
 ): DaySubmissionCount[] => {
   const buckets: DaySubmissionCount[] = []
   const now = new Date()
   now.setHours(0, 0, 0, 0)
+  const startOffset = offsetWeeks * 7 * DAY_MS
 
   for (let i = days - 1; i >= 0; i--) {
-    const dayStart = new Date(now.getTime() - i * DAY_MS)
+    const dayStart = new Date(now.getTime() - i * DAY_MS - startOffset)
     const dayEnd = new Date(dayStart.getTime() + DAY_MS)
     const dateKey = dayStart.toISOString().slice(0, 10)
     const label = dayStart.toLocaleDateString("en-CA", { month: "short", day: "numeric" })

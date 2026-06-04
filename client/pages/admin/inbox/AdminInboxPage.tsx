@@ -58,6 +58,7 @@ const AdminInboxPage = () => {
     sourceParam === "investor" ? "investor" : sourceParam === "contact" ? "contact" : "all"
   const [statusFilter, setStatusFilter] = useState<StatusFilterValue>("all")
   const [searchQuery, setSearchQuery] = useState("")
+  const [levelFilter, setLevelFilter] = useState<string>("all")
   const [updatingId, setUpdatingId] = useState<string | null>(null)
   const [statusWritesEnabled, setStatusWritesEnabled] = useState(true)
 
@@ -70,6 +71,7 @@ const AdminInboxPage = () => {
     }, { replace: true })
     setStatusFilter("all")
     setSearchQuery("")
+    setLevelFilter("all")
   }
 
   const setContactSource = (next: "all" | "contact" | "investor") => {
@@ -119,12 +121,29 @@ const AdminInboxPage = () => {
     () =>
       [...diagnosticRows]
         .filter((row) => matchesStatusFilter(row, statusFilter))
+        .filter((row) => {
+          if (levelFilter === "all") return true
+          return String(row.stage ?? "").trim().toLowerCase() === levelFilter.trim().toLowerCase()
+        })
         .filter((row) =>
           matchesSearch([row.name, row.work_email, row.company_name, row.stage ?? ""].join(" "), searchQuery),
         )
         .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()),
-    [diagnosticRows, statusFilter, searchQuery],
+    [diagnosticRows, statusFilter, searchQuery, levelFilter],
   )
+
+  const diagnosticLevels = useMemo(() => {
+    const list = ["all", "Idea / Discovery", "Prototype / MVP", "Pilot / Seed", "Early Growth (Series A+)", "Scale-up"]
+    diagnosticRows.forEach((row) => {
+      if (row.stage) {
+        const stageTrimmed = row.stage.trim()
+        if (!list.some((item) => item.toLowerCase() === stageTrimmed.toLowerCase())) {
+          list.push(stageTrimmed)
+        }
+      }
+    })
+    return list
+  }, [diagnosticRows])
 
   const invalidateSubmissionQueries = () => {
     void queryClient.invalidateQueries({ queryKey: UNRESOLVED_COUNT_KEY })
@@ -463,7 +482,7 @@ const AdminInboxPage = () => {
                 "data-[state=inactive]:bg-slate-100 data-[state=inactive]:text-slate-700 data-[state=inactive]:hover:bg-slate-200",
               )}
             >
-              Contact
+              Web forms
             </TabsTrigger>
             <TabsTrigger
               value="diagnostic"
@@ -473,7 +492,7 @@ const AdminInboxPage = () => {
                 "data-[state=inactive]:bg-slate-100 data-[state=inactive]:text-slate-700 data-[state=inactive]:hover:bg-slate-200",
               )}
             >
-              Diagnostic Survey
+              Diagnostic Surveys
             </TabsTrigger>
           </div>
         </TabsList>
@@ -498,6 +517,27 @@ const AdminInboxPage = () => {
                 )}
               >
                 {pill.label}
+              </button>
+            ))}
+          </div>
+        ) : null}
+
+        {tab === "diagnostic" ? (
+          <div className="flex flex-wrap gap-2" role="group" aria-label="Diagnostic levels filter">
+            {diagnosticLevels.map((lvl) => (
+              <button
+                key={lvl}
+                type="button"
+                onClick={() => setLevelFilter(lvl)}
+                className={cn(
+                  "rounded-full px-3 py-1.5 font-urbanist text-xs font-semibold transition-colors",
+                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                  levelFilter === lvl
+                    ? "bg-rellia-mint/35 text-rellia-teal"
+                    : "bg-muted text-muted-foreground hover:bg-muted/80",
+                )}
+              >
+                {lvl === "all" ? "All Levels" : lvl}
               </button>
             ))}
           </div>

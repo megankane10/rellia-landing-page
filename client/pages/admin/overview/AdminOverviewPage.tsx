@@ -1,9 +1,11 @@
+import { useState, useMemo } from "react"
 import { Link } from "react-router-dom"
 import { useQuery } from "@tanstack/react-query"
-import { ArrowRight, FileEdit, Inbox, Stethoscope, TrendingUp, Users } from "lucide-react"
+import { ArrowRight, ChevronLeft, ChevronRight, FileEdit, Inbox, Stethoscope, Users } from "lucide-react"
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts"
 import { useAuth } from "@/context/AuthContext"
 import { fetchAdminTeam } from "@/lib/adminApi"
+import { supabase } from "@/lib/supabase"
 import AdminPageHeader from "@/components/admin/AdminPageHeader"
 import AdminSystemStatus from "@/components/admin/AdminSystemStatus"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -127,8 +129,20 @@ const AdminOverviewPage = () => {
   const displayName = getAdminDisplayName(user)
   const pageTitle = welcomeBackTitle(displayName, user?.email)
 
+  const [weekOffset, setWeekOffset] = useState(0)
+
   const contactsQuery = useQuery({ queryKey: ["admin-contact-submissions"], queryFn: fetchContactSubmissions })
   const diagnosticsQuery = useQuery({ queryKey: ["admin-company-profiles"], queryFn: fetchDiagnosticSubmissions })
+  const responsesQuery = useQuery({
+    queryKey: ["admin-diagnostic-responses"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("diagnostic_responses")
+        .select("top3_strengths, top3_weaknesses")
+      if (error) throw error
+      return data ?? []
+    },
+  })
   const draftsQuery = useQuery({
     queryKey: cmsContentQueryKey(),
     queryFn: fetchCmsContentQueue,
@@ -144,7 +158,7 @@ const AdminOverviewPage = () => {
   const loading = contactsQuery.isLoading || diagnosticsQuery.isLoading
   const contacts = contactsQuery.data ?? []
   const diagnostics = diagnosticsQuery.data ?? []
-  const trend = buildLastNDaysTrend(contacts, diagnostics)
+  const trend = buildLastNDaysTrend(contacts, diagnostics, 7, weekOffset)
   const statusBreakdown = buildStatusBreakdown(contacts, diagnostics)
   const recentContacts = [...contacts]
     .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
@@ -182,6 +196,74 @@ const AdminOverviewPage = () => {
           : CHART_COLORS.resolved,
   }))
 
+  const stageCounts = useMemo(() => {
+    const counts: Record<string, number> = {}
+    diagnostics.forEach((row) => {
+      const stage = row.stage || "Not Specified"
+      counts[stage] = (counts[stage] || 0) + 1
+    })
+    return counts
+  }, [diagnostics])
+
+  const textStats = useMemo(() => {
+    const strengthsCount: Record<string, number> = {}
+    const weaknessesCount: Record<string, number> = {}
+
+    const responses = responsesQuery.data ?? []
+    responses.forEach((resp) => {
+      const strengths = resp.top3_strengths as any[] | null
+      const weaknesses = resp.top3_weaknesses as any[] | null
+
+      if (Array.isArray(strengths)) {
+        strengths.forEach((s) => {
+          if (s?.category) {
+            strengthsCount[s.category] = (strengthsCount[s.category] || 0) + 1
+          }
+        })
+      }
+      if (Array.isArray(weaknesses)) {
+        weaknesses.forEach((w) => {
+          if (w?.category) {
+            weaknessesCount[w.category] = (weaknessesCount[w.category] || 0) + 1
+          }
+        })
+      }
+    })
+
+    const topStrengths = Object.entries(strengthsCount)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 3)
+      .map(([category]) => category)
+
+    const topWeaknesses = Object.entries(weaknessesCount)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 3)
+      .map(([category]) => category)
+
+    return { topStrengths, topWeaknesses }
+  }, [responsesQuery.data])
+
+  const getWeekRangeLabel = (offset: number) => {
+    const now = new Date()
+    now.setHours(0, 0, 0, 0)
+    const DAY_MS = 24 * 60 * 60 * 1000
+    const firstDay = new Date(now.getTime() - 6 * DAY_MS - offset * 7 * DAY_MS)
+    const lastDay = new Date(now.getTime() - offset * 7 * DAY_MS)
+
+    const formatOptions: Intl.DateTimeFormatOptions = { month: "short", day: "numeric" }
+    const startStr = firstDay.toLocaleDateString("en-US", formatOptions)
+    const endStr = lastDay.toLocaleDateString("en-US", formatOptions)
+
+    const currentYear = new Date().getFullYear()
+    const startYear = firstDay.getFullYear()
+    const endYear = lastDay.getFullYear()
+
+    const startYearStr = startYear !== currentYear ? `, ${startYear}` : ""
+    const endYearStr = endYear !== currentYear ? `, ${endYear}` : ""
+
+    return `${startStr}${startYearStr} – ${endStr}${endYearStr}`
+  }
+
   return (
     <div className="space-y-6">
       <AdminPageHeader
@@ -209,9 +291,31 @@ const AdminOverviewPage = () => {
       </div>
 
       <Card className="w-full rounded-2xl">
-        <CardHeader>
-          <CardTitle className="font-host-grotesk text-lg">Submissions this week</CardTitle>
-          <CardDescription className="font-urbanist">Daily web forms and startup diagnostics</CardDescription>
+        <CardHeader className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <CardTitle className="font-host-grotesk text-lg">Submissions by week</CardTitle>
+            <CardDescription className="font-urbanist">Daily web forms and startup diagnostics</CardDescription>
+          </div>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setWeekOffset((prev) => prev + 1)}
+              className="flex h-8 w-8 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-700 transition-colors hover:bg-slate-50 active:bg-slate-100 disabled:opacity-50"
+              aria-label="Previous week"
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </button>
+            <span className="font-urbanist text-xs font-semibold text-slate-700 min-w-[130px] text-center">
+              {getWeekRangeLabel(weekOffset)}
+            </span>
+            <button
+              onClick={() => setWeekOffset((prev) => Math.max(0, prev - 1))}
+              disabled={weekOffset === 0}
+              className="flex h-8 w-8 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-700 transition-colors hover:bg-slate-50 active:bg-slate-100 disabled:opacity-50"
+              aria-label="Next week"
+            >
+              <ChevronRight className="h-4 w-4" />
+            </button>
+          </div>
         </CardHeader>
         <CardContent>
           {loading ? (
@@ -269,38 +373,91 @@ const AdminOverviewPage = () => {
 
         <Card className="rounded-2xl">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2 font-host-grotesk text-lg">
-              <TrendingUp className="h-4 w-4 text-rellia-teal" aria-hidden />
+            <CardTitle className="font-host-grotesk text-lg">
               Diagnostic survey
             </CardTitle>
-            <CardDescription className="font-urbanist">Weekly diagnostic intake volume</CardDescription>
+            <CardDescription className="font-urbanist">Diagnostics analysis and startup levels</CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="space-y-4">
             {loading ? (
               <Skeleton className="h-[220px] w-full rounded-xl" />
             ) : (
-              <div className="grid gap-3 sm:grid-cols-2">
-                <div className="rounded-2xl border border-border bg-card p-4">
-                  <p className="font-urbanist text-sm text-muted-foreground">Submissions this week</p>
-                  <p className="mt-2 font-host-grotesk text-3xl font-semibold tabular-nums">{weekDiagnostics}</p>
+              <>
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <div className="rounded-2xl border border-border bg-card p-4">
+                    <p className="font-urbanist text-sm text-muted-foreground">Submissions this week</p>
+                    <p className="mt-2 font-host-grotesk text-3xl font-semibold tabular-nums">{weekDiagnostics}</p>
+                  </div>
+                  <div className="rounded-2xl border border-border bg-card p-4">
+                    <p className="font-urbanist text-sm text-muted-foreground">Change vs prior week</p>
+                    <p
+                      className={cn(
+                        "mt-2 font-host-grotesk text-3xl font-semibold tabular-nums",
+                        diagnosticsChangePct === null || diagnosticsChangePct === 0
+                          ? "text-foreground"
+                          : diagnosticsChangePct > 0
+                            ? "text-emerald-600"
+                            : "text-amber-700",
+                      )}
+                    >
+                      {formatPercentChange(diagnosticsChangePct)}
+                    </p>
+                    <p className="mt-1 font-urbanist text-xs text-muted-foreground">vs prior 7 days</p>
+                  </div>
                 </div>
-                <div className="rounded-2xl border border-border bg-card p-4">
-                  <p className="font-urbanist text-sm text-muted-foreground">Change vs prior week</p>
-                  <p
-                    className={cn(
-                      "mt-2 font-host-grotesk text-3xl font-semibold tabular-nums",
-                      diagnosticsChangePct === null || diagnosticsChangePct === 0
-                        ? "text-foreground"
-                        : diagnosticsChangePct > 0
-                          ? "text-emerald-600"
-                          : "text-amber-700",
+
+                <div className="border-t border-border pt-4">
+                  <p className="font-host-grotesk text-sm font-semibold text-foreground mb-2">Submissions by Level</p>
+                  {Object.keys(stageCounts).length === 0 ? (
+                    <p className="font-urbanist text-xs text-muted-foreground">No stage data available.</p>
+                  ) : (
+                    <div className="flex flex-wrap gap-1.5">
+                      {Object.entries(stageCounts).map(([stage, count]) => (
+                        <Badge key={stage} variant="secondary" className="font-urbanist text-xs font-normal">
+                          {stage}: <span className="font-semibold ml-1">{count}</span>
+                        </Badge>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                <div className="grid gap-4 border-t border-border pt-4 sm:grid-cols-2">
+                  <div>
+                    <p className="font-host-grotesk text-sm font-semibold text-emerald-700 mb-2">Most Common Strengths</p>
+                    {responsesQuery.isLoading ? (
+                      <Skeleton className="h-10 w-full" />
+                    ) : textStats.topStrengths.length === 0 ? (
+                      <p className="font-urbanist text-xs text-muted-foreground">No data yet</p>
+                    ) : (
+                      <ul className="space-y-1">
+                        {textStats.topStrengths.map((s) => (
+                          <li key={s} className="font-urbanist text-xs text-emerald-800 flex items-center gap-1.5">
+                            <span className="h-1.5 w-1.5 rounded-full bg-emerald-600" />
+                            {s}
+                          </li>
+                        ))}
+                      </ul>
                     )}
-                  >
-                    {formatPercentChange(diagnosticsChangePct)}
-                  </p>
-                  <p className="mt-1 font-urbanist text-xs text-muted-foreground">vs prior 7 days</p>
+                  </div>
+                  <div>
+                    <p className="font-host-grotesk text-sm font-semibold text-amber-800 mb-2">Most Common Weaknesses</p>
+                    {responsesQuery.isLoading ? (
+                      <Skeleton className="h-10 w-full" />
+                    ) : textStats.topWeaknesses.length === 0 ? (
+                      <p className="font-urbanist text-xs text-muted-foreground">No data yet</p>
+                    ) : (
+                      <ul className="space-y-1">
+                        {textStats.topWeaknesses.map((w) => (
+                          <li key={w} className="font-urbanist text-xs text-amber-900 flex items-center gap-1.5">
+                            <span className="h-1.5 w-1.5 rounded-full bg-amber-600" />
+                            {w}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
                 </div>
-              </div>
+              </>
             )}
           </CardContent>
         </Card>

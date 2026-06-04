@@ -237,12 +237,12 @@ const AdminHelpPage = () => (
             </a>
           </Button>
         </CardHeader>
-        <CardContent>
-          <div className="overflow-hidden rounded-lg border border-border">
+        <CardContent className="p-2 sm:p-6">
+          <div className="overflow-hidden rounded-lg border border-border bg-white">
             <iframe
               src={GOOGLE_DOC_EMBED_URL}
               title="Rellia admin operations guide"
-              className="h-[min(60vh,520px)] w-full border-0 bg-white sm:h-[min(70vh,640px)]"
+              className="h-[min(60vh,520px)] w-full border-0 bg-white sm:h-[min(70vh,640px)] max-sm:w-[125%] max-sm:h-[650px] max-sm:scale-[0.8] max-sm:origin-top-left"
               loading="lazy"
             />
           </div>

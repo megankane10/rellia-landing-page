@@ -1,6 +1,7 @@
 import { useMemo } from "react"
+import { Link } from "react-router-dom"
 import { useQuery } from "@tanstack/react-query"
-import { ExternalLink, ShieldCheck, Users } from "lucide-react"
+import { ExternalLink, Key, ShieldCheck, UserPlus, Users } from "lucide-react"
 import { useAuth } from "@/context/AuthContext"
 import { fetchAdminTeam } from "@/lib/adminApi"
 import AdminPageHeader from "@/components/admin/AdminPageHeader"
@@ -99,47 +100,38 @@ const AdminTeamPage = () => {
 
   return (
     <div className="space-y-6">
-      <div className="rounded-2xl border border-rellia-teal/15 bg-rellia-mint/15 p-4 sm:p-5">
-        <div className="flex flex-col gap-2">
-          <span className="inline-flex items-center gap-2 text-sm font-semibold text-rellia-teal">
-            <ShieldCheck className="h-4 w-4" aria-hidden />
-            Administrative access controls
-          </span>
-          <p className="text-xs leading-relaxed text-rellia-teal/80">
-            To register a brand-new administrator account, choose one of the following methods:
+      <div className="grid gap-4 sm:grid-cols-2">
+        <a
+          href="https://supabase.com/dashboard/project/agsvypnmlrvpbgrsxtqy/auth/users"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex flex-col items-center justify-center rounded-2xl border border-rellia-teal/15 bg-rellia-mint/10 p-6 text-center transition-all hover:border-rellia-teal/30 hover:bg-rellia-mint/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        >
+          <UserPlus className="h-10 w-10 text-rellia-teal mb-3" aria-hidden />
+          <span className="font-host-grotesk font-bold text-base text-foreground">Invite Admin User</span>
+          <span className="mt-1 font-urbanist text-xs text-muted-foreground">Invite via Supabase. 3 invites/day limit</span>
+        </a>
+
+        <div
+          className="flex flex-col items-center justify-center rounded-2xl border border-border bg-card p-6 text-center transition-all hover:border-rellia-teal/25 hover:bg-rellia-mint/5"
+        >
+          <Key className="h-10 w-10 text-rellia-teal mb-3" aria-hidden />
+          <a
+            href="https://vercel.com/relliahealth/~/settings/environment-variables"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-host-grotesk font-bold text-base text-foreground flex items-center gap-1 hover:text-rellia-teal hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded"
+          >
+            Enable Signup
+            <ExternalLink className="h-3.5 w-3.5" aria-hidden />
+          </a>
+          <p className="mt-1 font-urbanist text-xs text-muted-foreground max-w-sm">
+            Click on the project name &gt; change the variable and make sure to disable after use. Admins can use the{" "}
+            <Link to="/admin/signup" className="text-rellia-teal font-medium hover:underline">
+              signup page
+            </Link>{" "}
+            while enabled.
           </p>
-          <ul className="mt-1 list-inside list-disc space-y-1 text-xs text-rellia-teal/80">
-            <li>
-              Use the direct link to{" "}
-              <a
-                href="https://supabase.com/dashboard/project/agsvypnmlrvpbgrsxtqy/auth/users"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="font-medium underline transition-colors hover:text-rellia-teal"
-              >
-                Invite via Supabase Console
-              </a>{" "}
-              (Note: Platforms enforce a strict native safety limit of 3 invitations per day).
-            </li>
-            <li>
-              Alternatively, temporarily switch your deployment variable <strong>ADMIN_SIGNUP_ENABLED</strong> to{" "}
-              <strong>&quot;true&quot;</strong> within your{" "}
-              <a
-                href="https://vercel.com/relliahealth/settings/environment-variables"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="font-medium underline transition-colors hover:text-rellia-teal"
-              >
-                Vercel Dashboard Settings
-              </a>
-              . This temporarily activates the public registration endpoint located at{" "}
-              <a href="/admin/signup" className="font-medium underline transition-colors hover:text-rellia-teal">
-                /admin/signup
-              </a>
-              . Remember to toggle this variable back to &quot;false&quot; immediately after your team registration is
-              completed to prevent open backdoors.
-            </li>
-          </ul>
         </div>
       </div>
 

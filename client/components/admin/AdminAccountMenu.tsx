@@ -233,14 +233,8 @@ const AdminAccountMenu = () => {
               className="rounded-lg px-3 py-2 text-left font-urbanist text-sm text-slate-300 transition-all hover:bg-white/10 hover:text-white"
               onClick={() => setProfileOpen(true)}
             >
-              View Profile
+              Edit Profile
             </button>
-            <Link
-              to="/admin/help#account"
-              className="rounded-lg px-3 py-2 font-urbanist text-sm text-slate-300 transition-all hover:bg-white/10 hover:text-white"
-            >
-              Account Settings
-            </Link>
             <button
               type="button"
               className="rounded-lg px-3 py-2 text-left font-urbanist text-sm text-red-300 transition-all hover:bg-white/10 hover:text-white"
@@ -280,13 +274,7 @@ const AdminAccountMenu = () => {
         <DropdownMenuContent side="top" align="start" className="z-[10002] w-56 font-urbanist">
           <DropdownMenuItem onSelect={() => setProfileOpen(true)}>
             <UserRound className="mr-2 h-4 w-4" aria-hidden />
-            View Profile
-          </DropdownMenuItem>
-          <DropdownMenuItem asChild>
-            <Link to="/admin/help#account" className="flex cursor-pointer items-center">
-              <Settings className="mr-2 h-4 w-4" aria-hidden />
-              Account Settings
-            </Link>
+            Edit Profile
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem

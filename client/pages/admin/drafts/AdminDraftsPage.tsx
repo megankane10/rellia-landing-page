@@ -78,30 +78,28 @@ const AdminDraftsPage = () => {
             <strong className="text-rellia-teal">Preview vs Production:</strong> Drafts live inside a specific Sanity dataset.
             Switch datasets to see unpublished work that will affect the staging site (preview) vs the live site (production).
           </div>
-          <div
-            className="mb-6 flex flex-col gap-2 sm:flex-row sm:flex-wrap"
-            role="tablist"
-            aria-label="Sanity dataset"
-          >
-            {ADMIN_SANITY_DATASET_TABS.map((tab) => (
-              <button
-                key={tab.id}
-                type="button"
-                role="tab"
-                aria-selected={dataset === tab.id}
-                onClick={() => handleDatasetChange(tab.id)}
-                className={cn(
-                  "w-full rounded-lg px-4 py-2.5 text-left font-urbanist text-sm font-medium transition-all sm:w-auto sm:text-center",
-                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-                  dataset === tab.id
-                    ? "bg-rellia-teal text-white shadow-sm"
-                    : "bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900",
-                )}
-              >
-                <span className="sm:hidden">{tab.shortLabel}</span>
-                <span className="hidden sm:inline">{tab.label}</span>
-              </button>
-            ))}
+          <div className="mb-6 h-auto w-full max-w-md bg-transparent p-0">
+            <div className="grid w-full grid-cols-2 gap-2" role="tablist" aria-label="Sanity dataset">
+              {ADMIN_SANITY_DATASET_TABS.map((tab) => (
+                <button
+                  key={tab.id}
+                  type="button"
+                  role="tab"
+                  aria-selected={dataset === tab.id}
+                  onClick={() => handleDatasetChange(tab.id)}
+                  className={cn(
+                    "w-full rounded-xl px-4 py-2.5 font-urbanist text-sm font-semibold transition-all text-center",
+                    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                    dataset === tab.id
+                      ? "bg-rellia-teal text-white shadow-sm"
+                      : "bg-slate-100 text-slate-700 hover:bg-slate-200",
+                  )}
+                >
+                  <span className="sm:hidden">{tab.shortLabel}</span>
+                  <span className="hidden sm:inline">{tab.label}</span>
+                </button>
+              ))}
+            </div>
           </div>
 
           {typeOptions.length > 0 ? (
