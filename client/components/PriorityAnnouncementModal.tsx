@@ -48,11 +48,13 @@ export const PriorityAnnouncementModal = ({
       <DialogContent
         id="priority-announcement-modal"
         hideClose
+        disableSlide={true}
         onInteractOutside={(event) => event.preventDefault()}
         onEscapeKeyDown={(event) => event.preventDefault()}
         overlayClassName="z-[10001] bg-black/55"
         className={cn(
-          "z-[10001]",
+          "z-[10001] duration-300",
+          "data-[state=open]:animate-priority-modal-in data-[state=closed]:animate-priority-modal-out",
           "gap-0 overflow-hidden border-black/10 p-0 sm:max-w-[min(92vw,520px)]",
           "rounded-[1.75rem] shadow-[0_24px_60px_rgba(13,53,64,0.35)]",
         )}

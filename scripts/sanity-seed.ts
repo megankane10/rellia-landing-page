@@ -22,7 +22,7 @@ import {
 } from "../shared/cms/inlineHeroHeadline"
 import { ADVISOR_DIRECTORY_SEED, ADVISOR_FILTER_OPTIONS } from "../client/data/advisorDirectory"
 import { FOUNDER_DIRECTORY, ALL_LEVELS, ALL_SPECIALTIES } from "../client/data/founderDirectory"
-import { PORTFOLIO_LOGO_MARKS } from "../client/data/portfolioLogos"
+import { PORTFOLIO_LOGO_MARKS, INVESTOR_BRAND_SVG_MARKS } from "../client/data/portfolioLogos"
 import { ROUTE_SEO } from "../client/config/seo"
 import { STORIES } from "../client/content/stories"
 import { CAREERS_OPEN_ROLES } from "../shared/careersOpenRoles"
@@ -887,7 +887,7 @@ async function main() {
   const mutations: any[] = []
 
   const foundersLogoMarquee = await buildLogoMarqueeItems(client, PORTFOLIO_LOGO_MARKS)
-  const investorsLogoMarquee = await buildLogoMarqueeItems(client, PORTFOLIO_LOGO_MARKS)
+  const investorsLogoMarquee = await buildLogoMarqueeItems(client, INVESTOR_BRAND_SVG_MARKS)
   const careersTeamMarqueeImages = await buildCareersTeamMarqueeImages(client)
 
   // Clear existing directory docs so seed is the source of truth.

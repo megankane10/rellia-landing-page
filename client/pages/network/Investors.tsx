@@ -7,7 +7,7 @@ import WhyRellia from "@/components/WhyRellia"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
 import LogoMarquee from "@/components/LogoMarquee"
-import { INVESTOR_BRAND_SVG_MARKS } from "@/data/portfolioLogos"
+import { INVESTOR_BRAND_SVG_MARKS, PORTFOLIO_LOGO_MARKS } from "@/data/portfolioLogos"
 import InvestorNotifyForm from "@/components/network/InvestorNotifyForm"
 import RelliaAction from "@/components/RelliaAction"
 import RelliaCta from "@/components/RelliaCta"
@@ -234,7 +234,14 @@ export default function Investors() {
         name: typeof entry?.name === "string" ? entry.name.trim() : "",
         src: typeof entry?.src === "string" ? entry.src.trim() : "",
       }))
-      .filter((entry) => entry.name && entry.src)
+      .filter((entry) => {
+        if (!entry.name || !entry.src) return false
+        // Filter out portfolio logos if they leak into Sanity's investor page document
+        const isPortfolio = PORTFOLIO_LOGO_MARKS.some(
+          (p) => p.name.toLowerCase() === entry.name.toLowerCase(),
+        )
+        return !isPortfolio
+      })
     if (fromCms.length > 0) return fromCms
     return [...INVESTOR_BRAND_SVG_MARKS]
   }, [page?.logoMarquee])

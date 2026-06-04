@@ -32,7 +32,7 @@ export const StoryPostHero = ({
   return (
     <section 
       className={cn(
-        "relative overflow-hidden transition-all duration-500",
+        "relative overflow-hidden transition-all duration-500 rounded-b-[2.5rem] md:rounded-b-[3.5rem]",
         isBgMode 
           ? "bg-rellia-teal text-black pt-24 pb-16 md:pt-32 md:pb-24 lg:pt-[120px] lg:pb-[100px] group layout-background" 
           : "bg-rellia-cream text-black pt-24 pb-12 md:pt-32 md:pb-16"

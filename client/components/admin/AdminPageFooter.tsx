@@ -8,7 +8,7 @@ const AdminPageFooter = () => {
 
   return (
     <footer className="mt-12 border-t border-slate-100 pt-6 pb-8">
-      <div className="flex flex-col gap-3 text-sm font-urbanist sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-col-reverse gap-3 text-sm font-urbanist sm:flex-row sm:items-center sm:justify-between">
         <div>
           <p className="text-slate-600">Admin Dashboard</p>
           <p className="mt-1 text-xs text-slate-400">© {year} Rellia Health. Internal use only.</p>
@@ -19,36 +19,7 @@ const AdminPageFooter = () => {
             to="/admin/help#docs"
             className="inline-flex items-center gap-1 transition-colors hover:text-rellia-teal focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded"
           >
-            Documentation
-          </Link>
-          <a
-            href={studioUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 transition-colors hover:text-rellia-teal focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded"
-          >
-            Sanity Studio
-            <ArrowUpRight className="h-3.5 w-3.5" aria-hidden />
-          </a>
-          <a
-            href="/"
-            className="inline-flex items-center gap-1 transition-colors hover:text-rellia-teal focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded"
-          >
-            Website
-            <ArrowUpRight className="h-3.5 w-3.5" aria-hidden />
-          </a>
-          <span className="hidden h-4 w-px bg-slate-200 sm:inline" aria-hidden />
-          <Link
-            to="/admin/inbox?tab=contact&source=contact"
-            className="inline-flex items-center gap-1 transition-colors hover:text-rellia-teal focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded"
-          >
-            Contact responses
-          </Link>
-          <Link
-            to="/admin/inbox?tab=contact&source=investor"
-            className="inline-flex items-center gap-1 transition-colors hover:text-rellia-teal focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded"
-          >
-            Investor responses
+            Need help?
           </Link>
         </div>
       </div>

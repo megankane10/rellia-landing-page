@@ -45,7 +45,7 @@ const StoryGridCard = ({
       <Link
         to={`/stories/${story.slug}`}
         className={cn(
-          "group flex h-[410px] w-full flex-col overflow-hidden rounded-2xl md:h-[430px]",
+          "group flex h-[360px] w-full flex-col overflow-hidden rounded-2xl md:h-[430px]",
           "transition-all duration-500 ease-in hover:-translate-y-0.5",
           "outline outline-2 outline-offset-[10px] outline-transparent hover:outline-rellia-teal",
           "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-white",
@@ -75,15 +75,7 @@ const StoryGridCard = ({
             {cleanTitle}
           </h3>
 
-          <p
-            className="mt-1.5 max-h-[6rem] overflow-hidden break-words font-urbanist text-sm leading-relaxed text-black/70 md:max-h-[6.9rem] md:text-base"
-            style={{
-              display: "-webkit-box",
-              WebkitLineClamp: 4,
-              WebkitBoxOrient: "vertical",
-              overflow: "hidden",
-            }}
-          >
+          <p className="mt-1.5 line-clamp-3 md:line-clamp-4 overflow-hidden break-words font-urbanist text-sm leading-relaxed text-black/70 md:text-base">
             {story.excerpt}
           </p>
         </div>
@@ -258,7 +250,7 @@ export default function Stories() {
               <motion.div
                 layout
                 transition={{ layout: { duration: 0.32, ease: [0.16, 1, 0.3, 1] } }}
-                className="mt-6 grid grid-cols-1 gap-0 md:grid-cols-2 md:gap-8 xl:grid-cols-3 will-change-transform"
+                className="mt-6 grid grid-cols-1 gap-12 md:grid-cols-2 md:gap-8 xl:grid-cols-3 will-change-transform"
               >
                 <AnimatePresence mode="sync" initial={false}>
                   {pageStories.map((story, i) => (

@@ -234,7 +234,7 @@ export default function Footer() {
             </a>
           </div>
 
-          <div className="flex flex-col gap-4 border-t border-white/10 pt-6 sm:flex-row sm:items-center sm:justify-between md:pt-8">
+          <div className="flex flex-col-reverse gap-4 border-t border-white/10 pt-6 sm:flex-row sm:items-center sm:justify-between md:pt-8">
             <p className="text-center font-urbanist text-[13px] leading-snug text-white/55 sm:text-left md:text-sm">
               &copy; {new Date().getFullYear()} {g.copyrightLine} Ontario, Canada
             </p>

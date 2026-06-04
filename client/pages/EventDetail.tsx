@@ -350,7 +350,7 @@ export default function EventDetail() {
 
       <main id="main-content" className="flex flex-1 flex-col">
         {/* Match StoryPost hero rhythm: pt-24 pb-12 md:pt-32 md:pb-16 */}
-        <section className="relative overflow-hidden bg-rellia-cream pb-12 pt-24 md:pb-16 md:pt-32">
+        <section className="relative overflow-hidden bg-rellia-cream pb-12 pt-24 md:pb-16 md:pt-32 rounded-b-[2.5rem] md:rounded-b-[3.5rem]">
           <div aria-hidden className="pointer-events-none absolute inset-0">
             <div className="absolute -left-28 -top-32 h-[520px] w-[520px] rounded-full bg-rellia-mint/20 blur-3xl" />
             <div className="absolute -right-40 top-1/3 h-[560px] w-[560px] -translate-y-1/2 rounded-full bg-rellia-teal/10 blur-3xl" />

@@ -170,9 +170,7 @@ const ProgramPageLayout = ({
   staticBlocks: { howItWorksCards, pillars, timeline },
   isWaitlist = false,
 }: ProgramPageLayoutProps) => {
-  const [timelineOpen, setTimelineOpen] = useState<string | undefined>(
-    undefined,
-  );
+  const [timelineOpen, setTimelineOpen] = useState<string>("");
   const [showForm, setShowForm] = useState(false);
   const [cardImages, setCardImages] = useState<string[]>([]);
   const location = useLocation();

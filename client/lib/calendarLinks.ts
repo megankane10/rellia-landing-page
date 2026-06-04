@@ -48,7 +48,7 @@ export const buildCalendarProviderLinks = (
   return {
     providers: [
       { id: "google", label: "Google Calendar", href: googleHref },
-      { id: "outlook", label: "Outlook", href: outlookHref },
+      { id: "outlook", label: "Outlook Calendar", href: outlookHref },
       { id: "ics", label: "Apple Calendar", href: icsHref },
     ],
   }

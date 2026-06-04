@@ -135,7 +135,7 @@ export default function HowItWorks(props?: HowItWorksProps) {
                 {heading}
               </div>
             ) : (
-              <h2 className="font-host-grotesk text-2xl font-semibold leading-tight tracking-tight text-white md:text-[32px]">
+              <h2 className="font-host-grotesk text-2xl font-semibold leading-tight tracking-tight text-rellia-mint md:text-[32px]">
                 Where we focus
               </h2>
             )}

@@ -1,6 +1,7 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useMemo } from "react"
 import { Link } from "react-router-dom"
 import { motion, AnimatePresence } from "framer-motion"
+import * as LucideIcons from "lucide-react"
 import {
   ArrowRight,
   Palette,
@@ -20,90 +21,76 @@ import {
 } from "lucide-react"
 import RelliaAction from "@/components/RelliaAction"
 import { Reveal } from "@/pages/network/_shared"
+import { useDiagnosticSurveyContent } from "@/hooks/useCmsDocuments"
+import { mergeDiagnosticSurveySections } from "@/lib/mergeDiagnosticSurvey"
 
-const howItWorksSteps = [
-  {
-    icon: Palette,
-    title: 'Product Design & UI/UX',
-    description: 'Establish design credibility with intuitive healthcare interfaces and smooth user workflows.'
-  },
-  {
-    icon: Code2,
-    title: 'Product Development',
-    description: 'Build secure, scalable products integrating healthcare standards and engineering best practices.'
-  },
-  {
-    icon: Activity,
-    title: 'Clinical Evidence',
-    description: 'Design clinical validation protocols, gather evidence, and build study credibility.'
-  },
-  {
-    icon: ShieldCheck,
-    title: 'Regulatory Strategy',
-    description: 'Set up ISO 13485 QMS and prepare compliant filings for FDA and Health Canada.'
-  },
-  {
-    icon: Scale,
-    title: 'Legal & Privacy',
-    description: 'Ensure absolute compliance with HIPAA, PIPEDA, and robust system security.'
-  },
-  {
-    icon: FileText,
-    title: 'IP Strategy',
-    description: 'Protect your unique IP, patent designs, and establish freedom to operate.'
-  },
-  {
-    icon: DollarSign,
-    title: 'Reimbursement',
-    description: 'Formulate insurance coverage pathways and navigate public/private billing codes.'
-  },
-  {
-    icon: TrendingUp,
-    title: 'Fundraising',
-    description: 'Craft high-signal pitch decks, financial models, and diligence-proof datarooms.'
-  },
-  {
-    icon: Megaphone,
-    title: 'Marketing & Branding',
-    description: 'Build healthcare brand awareness, trust, and clear scientific positioning.'
-  },
-  {
-    icon: Compass,
-    title: 'Go-To-Market',
-    description: 'Define your buyer, pricing structures, pilot pipelines, and enterprise deals.'
-  },
-  {
-    icon: Building2,
-    title: 'Health System Navigation',
-    description: 'Overcome procurement delays, build clinical champion networks, and close sales.'
-  },
-  {
-    icon: Briefcase,
-    title: 'Operations & Scaling',
-    description: 'Formulate operational rhythms, scalable hiring patterns, and strong governance.'
-  }
-];
+const fallbackIcons: Record<string, any> = {
+  product_design: Palette,
+  product_dev: Code2,
+  clinical: Activity,
+  regulatory: ShieldCheck,
+  legal: Scale,
+  ip: FileText,
+  reimbursement: DollarSign,
+  fundraising: TrendingUp,
+  marketing: Megaphone,
+  gtm: Compass,
+  healthcare: Building2,
+  operations: Briefcase,
+}
 
 export function DiagnosticSurveySection() {
+  const { data: surveyCms } = useDiagnosticSurveyContent()
+  const sections = useMemo(() => mergeDiagnosticSurveySections(surveyCms ?? undefined), [surveyCms])
+
   const [currentIndex, setCurrentIndex] = useState(0)
 
+  // Use dynamic slides derived from the merged CMS sections
+  const slides = useMemo(() => {
+    return sections.map((section) => {
+      // Find dynamic icon or fall back to section id mapping
+      let IconComponent = fallbackIcons[section.id] || Compass
+      const iconName = section.icon?.trim()
+      if (iconName) {
+        if ((LucideIcons as any)[iconName]) {
+          IconComponent = (LucideIcons as any)[iconName]
+        } else {
+          // PascalCase check
+          const pascalName = iconName.charAt(0).toUpperCase() + iconName.slice(1)
+          if ((LucideIcons as any)[pascalName]) {
+            IconComponent = (LucideIcons as any)[pascalName]
+          }
+        }
+      }
+      return {
+        icon: IconComponent,
+        title: section.title,
+        description: section.desc,
+      }
+    })
+  }, [sections])
+
   useEffect(() => {
+    if (slides.length === 0) return
     const timer = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % howItWorksSteps.length)
+      setCurrentIndex((prev) => (prev + 1) % slides.length)
     }, 4500)
     return () => clearInterval(timer)
-  }, [currentIndex])
+  }, [currentIndex, slides.length])
 
   const handlePrev = () => {
-    setCurrentIndex((prev) => (prev - 1 + howItWorksSteps.length) % howItWorksSteps.length)
+    if (slides.length === 0) return
+    setCurrentIndex((prev) => (prev - 1 + slides.length) % slides.length)
   }
 
   const handleNext = () => {
-    setCurrentIndex((prev) => (prev + 1) % howItWorksSteps.length)
+    if (slides.length === 0) return
+    setCurrentIndex((prev) => (prev + 1) % slides.length)
   }
 
-  const currentItem = howItWorksSteps[currentIndex]
+  const currentItem = slides[currentIndex] || { icon: Compass, title: "", description: "" }
   const CurrentIcon = currentItem.icon
+
 
   return (
     <section className="w-full bg-rellia-cream/20 px-6 py-28 md:px-10 md:py-40 border-t border-black/10 flex items-center">
@@ -156,7 +143,7 @@ export function DiagnosticSurveySection() {
 
                 <div className="mt-5 flex items-center justify-between border-t border-black/5 pt-3.5">
                   <span className="font-host-grotesk text-xs font-bold text-black/45 tracking-wider">
-                    {String(currentIndex + 1).padStart(2, '0')} / {String(howItWorksSteps.length).padStart(2, '0')}
+                    {String(currentIndex + 1).padStart(2, '0')} / {String(slides.length).padStart(2, '0')}
                   </span>
                   <div className="flex items-center gap-1.5">
                     <button

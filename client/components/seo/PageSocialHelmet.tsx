@@ -6,6 +6,8 @@ export type PageSocialHelmetProps = {
   canonical: string
   ogImage?: string
   ogType?: "website" | "article"
+  ogImageWidth?: number
+  ogImageHeight?: number
 }
 
 /** Per-item Open Graph / Twitter tags. Use on detail pages; RouteSeo skips these paths. */
@@ -15,8 +17,14 @@ const PageSocialHelmet = ({
   canonical,
   ogImage,
   ogType = "website",
+  ogImageWidth,
+  ogImageHeight,
 }: PageSocialHelmetProps) => {
   const includeImage = Boolean(ogImage?.trim())
+
+  const defaultHeight = ogType === "article" ? 630 : 1200
+  const width = ogImageWidth ?? 1200
+  const height = ogImageHeight ?? defaultHeight
 
   return (
     <Helmet htmlAttributes={{ lang: "en" }}>
@@ -34,8 +42,8 @@ const PageSocialHelmet = ({
       {includeImage ? (
         <>
           <meta property="og:image" content={ogImage} />
-          <meta property="og:image:width" content="1200" />
-          <meta property="og:image:height" content="1200" />
+          <meta property="og:image:width" content={String(width)} />
+          <meta property="og:image:height" content={String(height)} />
         </>
       ) : null}
 
