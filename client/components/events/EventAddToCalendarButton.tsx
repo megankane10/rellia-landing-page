@@ -33,7 +33,7 @@ const triggerClassName = cn(
 )
 
 const providerButtonClassName = cn(
-  "flex w-full items-center justify-between gap-3 rounded-2xl border border-black/10 bg-white px-4 py-3.5 text-left",
+  "flex w-full items-center justify-start gap-3 rounded-2xl border border-black/10 bg-white px-4 py-3.5 text-left",
   "font-host-grotesk text-sm font-semibold text-rellia-teal transition-colors",
   "hover:border-rellia-teal/30 hover:bg-rellia-cream/40",
   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-teal focus-visible:ring-offset-2",
@@ -71,7 +71,7 @@ type CalendarPickerBodyProps = {
 const PROVIDER_ICONS: Record<CalendarProvider, string> = {
   google: "https://cdn.jsdelivr.net/gh/glincker/thesvg@main/public/icons/google-calendar-2026/default.svg",
   outlook: "https://cdn.jsdelivr.net/gh/glincker/thesvg@main/public/icons/microsoft-outlook/default.svg",
-  ics: "https://cdn.jsdelivr.net/gh/glincker/thesvg@main/public/icons/apple/default.svg",
+  ics: "https://cdn.jsdelivr.net/gh/glincker/thesvg@main/public/icons/apple/mono.svg",
 }
 
 const CalendarPickerBody = ({ providers, onPick }: CalendarPickerBodyProps) => (
@@ -83,13 +83,13 @@ const CalendarPickerBody = ({ providers, onPick }: CalendarPickerBodyProps) => (
           className={providerButtonClassName}
           onClick={() => onPick(provider.id)}
         >
-          <span>{provider.label}</span>
           <img
             src={PROVIDER_ICONS[provider.id]}
             alt={`${provider.label} icon`}
             className="h-[22px] w-[22px] shrink-0"
             aria-hidden
           />
+          <span>{provider.label}</span>
         </button>
       </li>
     ))}
