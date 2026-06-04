@@ -8,7 +8,6 @@ export const siteSettings = defineType({
   groups: [
     {name: 'brand', title: 'Brand', default: true},
     {name: 'social', title: 'Social links'},
-    {name: 'analytics', title: 'Analytics (Studio)'},
     {name: 'seo', title: 'Default SEO'},
   ],
   fields: [
@@ -53,14 +52,7 @@ export const siteSettings = defineType({
       options: {layout: 'list'},
       group: 'social',
     }),
-    defineField({
-      name: 'lookerStudioEmbedUrl',
-      title: 'Looker Studio embed URL',
-      type: 'url',
-      group: 'analytics',
-      description:
-        'Powers the Analytics tool in the Studio top bar. In Looker Studio: Share → Embed report → copy the iframe src URL. You can also set SANITY_STUDIO_LOOKER_EMBED_URL in website-cms/.env for local dev.',
-    }),
+
     defineField({
       name: 'defaultSeo',
       title: 'Default SEO fallback',

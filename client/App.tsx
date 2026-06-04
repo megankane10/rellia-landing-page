@@ -6,7 +6,6 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { HelmetProvider } from "react-helmet-async"
 import { BrowserRouter } from "react-router-dom"
 import { Analytics } from "@vercel/analytics/react"
-import { SpeedInsights } from "@vercel/speed-insights/react"
 import ScrollToTop from "@/components/ScrollToTop"
 import RouteSeo from "@/components/RouteSeo"
 import { AppRoutes, RouterShell } from "./AppRoutes"
@@ -51,7 +50,6 @@ const ThirdPartyPreloads = () => {
 const VercelObservability = () => (
   <>
     <Analytics />
-    <SpeedInsights />
   </>
 )
 

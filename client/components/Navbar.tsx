@@ -246,14 +246,22 @@ export default function Navbar({
   const PRIORITY_MODAL_DISMISSED_SESSION_KEY = "rellia-priority-modal-dismissed-session"
   const PRIORITY_MODAL_DELAY_MS = 3_000
   const ANNOUNCEMENT_DELAY_MS = 4_000
-  const [announcementDismissed, setAnnouncementDismissed] = useState(() => {
-    if (typeof window === "undefined") return false
+  const [announcementDismissed, setAnnouncementDismissed] = useState(false)
+
+  useEffect(() => {
+    if (typeof window === "undefined") return
     try {
-      return window.sessionStorage.getItem(ANNOUNCEMENT_DISMISSED_SESSION_KEY) === "1"
+      const text = globalSettings.announcementText?.trim() ?? ""
+      const stored = window.sessionStorage.getItem(ANNOUNCEMENT_DISMISSED_SESSION_KEY)
+      if (text && stored === text) {
+        setAnnouncementDismissed(true)
+      } else {
+        setAnnouncementDismissed(false)
+      }
     } catch {
-      return false
+      /* storage unavailable */
     }
-  })
+  }, [globalSettings.announcementText])
   const [priorityModalDismissed, setPriorityModalDismissed] = useState(() => {
     if (typeof window === "undefined") return false
     try {
@@ -457,7 +465,10 @@ export default function Navbar({
     setAnnouncementDismissed(true)
     setAnnouncementDelayElapsed(false)
     try {
-      window.sessionStorage.setItem(ANNOUNCEMENT_DISMISSED_SESSION_KEY, "1")
+      const text = globalSettings.announcementText?.trim() ?? ""
+      if (text) {
+        window.sessionStorage.setItem(ANNOUNCEMENT_DISMISSED_SESSION_KEY, text)
+      }
     } catch {
       /* storage unavailable */
     }

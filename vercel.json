@@ -7,6 +7,13 @@
       "maxDuration": 30
     }
   },
+  "redirects": [
+    {
+      "source": "/studio",
+      "destination": "https://relliahealth.sanity.studio",
+      "permanent": false
+    }
+  ],
   "headers": [
     {
       "source": "/(.*)",

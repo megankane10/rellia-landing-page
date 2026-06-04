@@ -9,7 +9,7 @@ export const event = defineType({
   title: 'Event',
   type: 'document',
   groups: [
-    {name: 'publishing', title: 'Publishing', default: true},
+    {name: 'publishing', title: 'Publishing'},
     ...documentGroups.filter((g) => g.name !== 'publishing'),
     {name: 'ticketing', title: 'Ticketing & calendar'},
   ],

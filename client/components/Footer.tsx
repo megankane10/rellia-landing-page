@@ -166,7 +166,8 @@ export default function Footer() {
                     <nav className="flex flex-col gap-2 md:gap-3" aria-label={`${col.label} links`}>
                       {links.map((l) => {
                         if (isExternalHref(l.href)) {
-                          const isIndustryPartnersDirectory = l.href === GETPROVEN_VENDORS_GRID_URL
+                          const isIndustryPartnersDirectory =
+                            col.label === "Resources" && l.href === GETPROVEN_VENDORS_GRID_URL
                           return (
                             <a
                               key={l.href}
