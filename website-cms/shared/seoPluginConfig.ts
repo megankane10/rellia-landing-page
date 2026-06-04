@@ -22,21 +22,6 @@ export const seoPluginConfig: SeoFieldsPluginConfig = {
   },
   baseUrl: previewBaseUrl,
   apiVersion: '2024-01-01',
-  healthDashboard: {
-    toolTitle: 'SEO',
-    content: {
-      title: 'Page SEO',
-      description: 'Review and edit search metadata for main marketing routes.',
-    },
-    query: {
-      requireSeo: false,
-      groq: marketingPageSeoGroq,
-      types: [...MARKETING_PAGE_SEO_TYPES],
-    },
-    typeDisplayLabels: MARKETING_PAGE_DISPLAY_LABEL,
-    showTypeColumn: true,
-    compactStats: true,
-  },
   defaultHiddenFields: ['keywords', 'metaAttributes', 'openGraphSiteName', 'twitterSite'],
   fieldGroups: [
     {

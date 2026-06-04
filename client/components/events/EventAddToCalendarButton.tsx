@@ -2,7 +2,6 @@ import { useCallback, useEffect, useMemo, useState } from "react"
 import { Calendar } from "lucide-react"
 import type { ProgramsEventCard } from "@shared/cms/types"
 import { buildCalendarProviderLinks, type CalendarProvider } from "@/lib/calendarLinks"
-import { downloadProgramsEventIcsFile } from "@/lib/eventCalendar"
 import { cn } from "@/lib/utils"
 import {
   Dialog,
@@ -69,6 +68,12 @@ type CalendarPickerBodyProps = {
   onPick: (provider: CalendarProvider) => void
 }
 
+const PROVIDER_ICONS: Record<CalendarProvider, string> = {
+  google: "https://cdn.jsdelivr.net/gh/glincker/thesvg@main/public/icons/google-calendar-2026/default.svg",
+  outlook: "https://cdn.jsdelivr.net/gh/glincker/thesvg@main/public/icons/microsoft-outlook/default.svg",
+  ics: "https://cdn.jsdelivr.net/gh/glincker/thesvg@main/public/icons/apple/default.svg",
+}
+
 const CalendarPickerBody = ({ providers, onPick }: CalendarPickerBodyProps) => (
   <ul className="mt-2 flex flex-col gap-2">
     {providers.map((provider) => (
@@ -79,7 +84,12 @@ const CalendarPickerBody = ({ providers, onPick }: CalendarPickerBodyProps) => (
           onClick={() => onPick(provider.id)}
         >
           <span>{provider.label}</span>
-          <Calendar className="h-4 w-4 shrink-0 opacity-60" aria-hidden />
+          <img
+            src={PROVIDER_ICONS[provider.id]}
+            alt={`${provider.label} icon`}
+            className="h-[22px] w-[22px] shrink-0"
+            aria-hidden
+          />
         </button>
       </li>
     ))}
@@ -99,22 +109,16 @@ export const EventAddToCalendarButton = ({
   const preferBottomSheet = usePreferBottomSheet()
 
   const handlePick = useCallback(
-    async (provider: CalendarProvider) => {
+    (provider: CalendarProvider) => {
       if (!links) return
 
       const match = links.providers.find((entry) => entry.id === provider)
       if (!match) return
 
-      if (provider === "ics") {
-        await downloadProgramsEventIcsFile(event, canonicalUrl)
-        setOpen(false)
-        return
-      }
-
       openCalendarUrl(match.href)
       setOpen(false)
     },
-    [canonicalUrl, event, links],
+    [links],
   )
 
   if (!links) return null

@@ -35,21 +35,15 @@ export const buildCalendarProviderLinks = (
     `&startdt=${encode(start.toISOString())}` +
     `&enddt=${encode(end.toISOString())}`
 
-  const icsHref = `data:text/calendar;charset=utf-8,${encode(
-    [
-      "BEGIN:VCALENDAR",
-      "VERSION:2.0",
-      "BEGIN:VEVENT",
-      `DTSTART:${format(start, "yyyyMMdd'T'HHmmss")}`,
-      `DTEND:${format(end, "yyyyMMdd'T'HHmmss")}`,
-      `SUMMARY:${title}`,
-      `DESCRIPTION:${description}`,
-      `LOCATION:${location}`,
-      `URL:${canonicalUrl}`,
-      "END:VEVENT",
-      "END:VCALENDAR",
-    ].join("\n"),
-  )}`
+  const slug =
+    event.slug?.trim() ||
+    event.title
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-|-$/g, "") ||
+    "event"
+  const origin = typeof window !== "undefined" ? window.location.origin : "https://www.relliahealth.com"
+  const icsHref = `${origin}/api/cms/events/${slug}/ics`
 
   return {
     providers: [

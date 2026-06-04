@@ -1,8 +1,4 @@
-import {useEffect, useState} from 'react'
 import {LinkIcon} from '@sanity/icons'
-import {useClient} from 'sanity'
-
-const LOOKER_QUERY = `*[_id == "siteSettings"][0].lookerStudioEmbedUrl`
 
 const panelRootStyle: Record<string, string | number> = {
   boxSizing: 'border-box',
@@ -44,37 +40,9 @@ const emptyStateStyle: Record<string, string | number> = {
 }
 
 export const LookerStudioPanel = () => {
-  const client = useClient({apiVersion: '2024-01-01'})
-  const [cmsUrl, setCmsUrl] = useState<string | null>(null)
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    let cancelled = false
-    client
-      .fetch<string | null>(LOOKER_QUERY)
-      .then((url) => {
-        if (!cancelled) setCmsUrl(typeof url === 'string' ? url : null)
-      })
-      .finally(() => {
-        if (!cancelled) setLoading(false)
-      })
-    return () => {
-      cancelled = true
-    }
-  }, [client])
-
   const envUrl = (process.env.SANITY_STUDIO_LOOKER_EMBED_URL || '').trim()
-  const embedUrl = (cmsUrl || envUrl).trim()
 
-  if (loading) {
-    return (
-      <div style={{...panelRootStyle, alignItems: 'center', justifyContent: 'center'}}>
-        <p style={{margin: 0, opacity: 0.7}}>Loading analytics…</p>
-      </div>
-    )
-  }
-
-  if (!embedUrl) {
+  if (!envUrl) {
     return (
       <div style={panelRootStyle}>
         <div style={emptyStateStyle}>
@@ -82,13 +50,7 @@ export const LookerStudioPanel = () => {
             Looker Studio embed URL is not set
           </p>
           <p style={{margin: '0 0 1rem', opacity: 0.85}}>
-            Open <strong>Site → Site settings → Analytics (Studio)</strong> and paste the embed URL
-            from Looker Studio (Share → Embed report → copy iframe <code>src</code>).
-          </p>
-          <p style={{margin: 0, opacity: 0.75, fontSize: '0.9rem'}}>
-            For local Studio only, set{' '}
-            <code style={{fontSize: '0.9em'}}>SANITY_STUDIO_LOOKER_EMBED_URL</code> in{' '}
-            <code>website-cms/.env</code>.
+            Please set the <code>SANITY_STUDIO_LOOKER_EMBED_URL</code> environment variable.
           </p>
         </div>
       </div>
@@ -98,7 +60,7 @@ export const LookerStudioPanel = () => {
   return (
     <div style={panelRootStyle}>
       <div style={toolbarStyle}>
-        <a href={embedUrl} target="_blank" rel="noopener noreferrer" style={openLinkStyle}>
+        <a href={envUrl} target="_blank" rel="noopener noreferrer" style={openLinkStyle}>
           <LinkIcon />
           Open in Looker Studio
         </a>
@@ -106,7 +68,7 @@ export const LookerStudioPanel = () => {
       <div style={iframeWrapStyle}>
         <iframe
           title="Looker Studio performance dashboard"
-          src={embedUrl}
+          src={envUrl}
           style={{
             position: 'absolute',
             inset: 0,

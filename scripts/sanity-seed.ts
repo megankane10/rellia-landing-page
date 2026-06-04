@@ -684,7 +684,11 @@ const FALLBACK_FOOTER_COLUMNS = [
       { enabled: true, label: "Stories", href: "/stories" },
       { enabled: true, label: "Explore Alumni", href: "/founders/alumni" },
       { enabled: true, label: "Explore Advisors", href: "/advisors/directory" },
-      { enabled: true, label: "Industry Partners Directory", href: "/industry-partners/directory" },
+      {
+        enabled: true,
+        label: "Explore Industry Partners",
+        href: "https://relliahealthresources.getproven.com/vendors?limit=10&view=grid",
+      },
     ],
   },
   {
