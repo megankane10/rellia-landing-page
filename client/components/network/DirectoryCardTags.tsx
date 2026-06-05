@@ -40,8 +40,8 @@ export const DirectoryCardTags = ({
         <span
           key={tag}
           className={cn(
-            "inline-flex rounded-full border px-2.5 py-0.5 font-urbanist text-[10px] font-bold shadow-sm",
-            "border-[#adcac6] bg-[#e2f4f2] text-rellia-teal",
+            "inline-flex rounded-full border px-2.5 py-0.5 font-urbanist text-[10.5px] font-extrabold shadow-sm",
+            "border-[#adcac6] bg-white text-rellia-teal",
           )}
         >
           {tag}
