@@ -26,10 +26,7 @@ const AdminDraftsPage = () => {
   const { session } = useAuth()
   const token = session?.access_token ?? ""
   const cmsConfigured = isCmsContentEnabled()
-  const [dataset, setDataset] = useState<AdminSanityDataset>(() => {
-    const defaultDs = getSanityDataset();
-    return defaultDs === "preview" ? "preview" : "production";
-  })
+  const dataset: AdminSanityDataset = "production"
   const [typeFilter, setTypeFilter] = useState<string>("all")
 
   const { data, isLoading, error } = useQuery({
@@ -47,11 +44,6 @@ const AdminDraftsPage = () => {
     if (typeFilter === "all") return draftRows
     return draftRows.filter((row) => row._type === typeFilter)
   }, [draftRows, typeFilter])
-
-  const handleDatasetChange = (next: AdminSanityDataset) => {
-    setDataset(next)
-    setTypeFilter("all")
-  }
 
   return (
     <div>
@@ -80,37 +72,15 @@ const AdminDraftsPage = () => {
       ) : (
         <>
           <AdminTipBox
-            title="Preview vs Production"
+            title="Unpublished Changes"
             icon={FileEdit}
             storageKey="rellia-admin-drafts-tip-collapsed"
             className="mb-6"
           >
             <p>
-              Drafts live inside a specific Sanity dataset. Switch datasets to see unpublished work that will affect the staging site (preview) vs the live site (production).
+              These are documents in the production dataset that have pending, unpublished changes. Open Sanity Studio to edit, publish, or discard them.
             </p>
           </AdminTipBox>
-          <div className="mb-6 h-[48px] w-full bg-slate-100/80 p-1 rounded-2xl border border-black/5 shadow-sm max-w-none">
-            <div className="grid w-full grid-cols-2 h-full items-center" role="tablist" aria-label="Sanity dataset">
-              {ADMIN_SANITY_DATASET_TABS.map((tab) => (
-                <button
-                  key={tab.id}
-                  type="button"
-                  role="tab"
-                  aria-selected={dataset === tab.id}
-                  onClick={() => handleDatasetChange(tab.id)}
-                  className={cn(
-                    "w-full h-full rounded-xl px-4 py-2 font-urbanist text-sm font-bold transition-all duration-200 text-center flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-                    dataset === tab.id
-                      ? "bg-white text-rellia-teal shadow-[0_4px_12px_rgba(0,0,0,0.06)] border border-black/5"
-                      : "text-slate-600 hover:text-slate-900 bg-transparent",
-                  )}
-                >
-                  <span className="sm:hidden">{tab.shortLabel}</span>
-                  <span className="hidden sm:inline">{tab.label}</span>
-                </button>
-              ))}
-            </div>
-          </div>
 
           {typeOptions.length > 0 ? (
             <div className="mb-4 flex flex-wrap gap-2" role="group" aria-label="Filter by document type">

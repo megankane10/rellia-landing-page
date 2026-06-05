@@ -72,6 +72,7 @@ export const page = defineType({
       type: 'seoFields',
       fieldset: 'seo',
       group: 'seo',
+      hidden: true,
     }),
   ],
 })

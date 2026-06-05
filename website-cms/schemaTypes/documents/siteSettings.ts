@@ -59,6 +59,7 @@ export const siteSettings = defineType({
       type: 'siteDefaultSeo',
       group: 'seo',
       description: 'Used when a page does not define its own SEO fields.',
+      hidden: true,
     }),
   ],
   preview: {

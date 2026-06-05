@@ -197,6 +197,12 @@ export const careersPage = defineType({
               type: 'string',
             }),
           ],
+          preview: {
+            select: {media: 'asset', alt: 'alt'},
+            prepare({media, alt}) {
+              return {title: alt?.trim() || 'Slider image', media}
+            },
+          },
         }),
       ],
       options: {sortable: true},

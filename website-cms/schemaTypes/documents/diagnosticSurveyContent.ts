@@ -3,16 +3,23 @@ import {studioListMedia} from '../shared/studioListMedia'
 
 export const diagnosticSurveyContent = defineType({
   name: 'diagnosticSurveyContent',
-  title: 'Diagnostic survey copy',
+  title: 'Diagnostic Survey Page',
   type: 'document',
   description:
-    'Editable question and answer text for /diagnostic-survey. Scoring logic stays in the app — do not change option scores unless engineering approves.',
+    'Editable question, answer, and report content for the interactive startup diagnostic survey at /diagnostic-survey.',
+  groups: [
+    {name: 'intro', title: 'Introduction & Form', default: true},
+    {name: 'questions', title: 'Survey Questions'},
+    {name: 'submit', title: 'Submit & Loading Screen'},
+    {name: 'report', title: 'Report Content'},
+  ],
   fields: [
     defineField({
       name: 'introNote',
       type: 'text',
       rows: 2,
       readOnly: true,
+      group: 'questions',
       initialValue:
         'Section IDs and question order must match the live survey. Edit labels and descriptions only.',
     }),
@@ -20,6 +27,7 @@ export const diagnosticSurveyContent = defineType({
       name: 'sections',
       title: 'Survey sections',
       type: 'array',
+      group: 'questions',
       of: [
         defineArrayMember({
           type: 'object',
@@ -76,10 +84,10 @@ export const diagnosticSurveyContent = defineType({
                             }),
                           ],
                           preview: {
-                            select: {title: 'label', subtitle: 'desc'},
-                            prepare: ({title, subtitle}) => ({
-                              title: title || 'Option',
-                              subtitle,
+                            select: {label: 'label', desc: 'desc'},
+                            prepare: ({label, desc}) => ({
+                              title: label || 'Option',
+                              subtitle: desc,
                               media: studioListMedia.link,
                             }),
                           },
@@ -88,8 +96,8 @@ export const diagnosticSurveyContent = defineType({
                     }),
                   ],
                   preview: {
-                    select: {title: 'text'},
-                    prepare: ({title}) => ({title: title || 'Question', media: studioListMedia.link}),
+                    select: {text: 'text'},
+                    prepare: ({text}) => ({title: text || 'Question', media: studioListMedia.link}),
                   },
                 }),
               ],
@@ -110,6 +118,7 @@ export const diagnosticSurveyContent = defineType({
       name: 'introTitle',
       title: 'Introduction Title',
       type: 'string',
+      group: 'intro',
       initialValue: 'How ready is your startup, really?',
     }),
     defineField({
@@ -117,6 +126,7 @@ export const diagnosticSurveyContent = defineType({
       title: 'Introduction Subtitle',
       type: 'text',
       rows: 3,
+      group: 'intro',
       initialValue:
         'Our diagnostic tool assesses your health tech startup across 12 critical domains. Get an automated report, personalized advisory board matches, and a program roadmap tailored to your gaps.',
     }),
@@ -124,6 +134,7 @@ export const diagnosticSurveyContent = defineType({
       name: 'stages',
       title: 'Startup stages (Dropdown options)',
       type: 'array',
+      group: 'intro',
       description: 'Stages options shown in the dropdown on the introduction step of the diagnostic survey.',
       of: [defineArrayMember({ type: 'string' })],
       initialValue: [
@@ -138,12 +149,14 @@ export const diagnosticSurveyContent = defineType({
       name: 'introJourneyTitle',
       title: 'Journey Section Title',
       type: 'string',
+      group: 'intro',
       initialValue: 'Your Diagnostic Journey',
     }),
     defineField({
       name: 'introJourneySteps',
       title: 'Journey Section Steps',
       type: 'array',
+      group: 'intro',
       of: [
         defineArrayMember({
           type: 'object',
@@ -153,6 +166,17 @@ export const diagnosticSurveyContent = defineType({
             defineField({ name: 'description', title: 'Step Description', type: 'text', rows: 2 }),
             defineField({ name: 'icon', title: 'Icon Name (Lucide)', type: 'string' }),
           ],
+          preview: {
+            select: {
+              title: 'title',
+              subtitle: 'description',
+            },
+            prepare: ({title, subtitle}) => ({
+              title: title || 'Step',
+              subtitle,
+              media: studioListMedia.link,
+            }),
+          },
         }),
       ],
     }),
@@ -160,30 +184,35 @@ export const diagnosticSurveyContent = defineType({
       name: 'introWhatYouGetTitle',
       title: 'What You Get Title',
       type: 'string',
+      group: 'intro',
       initialValue: 'What you’ll get',
     }),
     defineField({
       name: 'introWhatYouGetBullets',
       title: 'What You Get Bullets',
       type: 'array',
+      group: 'intro',
       of: [defineArrayMember({ type: 'string' })],
     }),
     defineField({
       name: 'introStartupDetailsTitle',
       title: 'Startup Details Block Title',
       type: 'string',
+      group: 'intro',
       initialValue: 'Tell us about your startup',
     }),
     defineField({
       name: 'introStartButtonLabel',
       title: 'Start Button Label',
       type: 'string',
+      group: 'intro',
       initialValue: 'Start Assessment',
     }),
     defineField({
       name: 'submitTitle',
       title: 'Submit Screen Title',
       type: 'string',
+      group: 'submit',
       initialValue: 'Review, then generate your roadmap',
     }),
     defineField({
@@ -191,6 +220,7 @@ export const diagnosticSurveyContent = defineType({
       title: 'Submit Screen Subtitle',
       type: 'text',
       rows: 2,
+      group: 'submit',
       initialValue:
         'You’re about to submit your responses. After confirmation, we’ll generate your report and save your submission in the Rellia CMS.',
     }),
@@ -198,12 +228,14 @@ export const diagnosticSurveyContent = defineType({
       name: 'submitProfileTitle',
       title: 'Submit Profile Card Title',
       type: 'string',
+      group: 'submit',
       initialValue: 'Your Assessment Profile',
     }),
     defineField({
       name: 'submitGeneratingTitle',
       title: 'Submit Generating Card Title',
       type: 'string',
+      group: 'submit',
       initialValue: 'Generating Your Report',
     }),
     defineField({
@@ -211,6 +243,7 @@ export const diagnosticSurveyContent = defineType({
       title: 'Submit Generating Card Body',
       type: 'text',
       rows: 2,
+      group: 'submit',
       initialValue:
         "We're assessing your results in order to assign you your personalized advisory board and recommended Rellia programs.",
     }),
@@ -218,24 +251,28 @@ export const diagnosticSurveyContent = defineType({
       name: 'submitGeneratingBullets',
       title: 'Submit Generating Card Bullets',
       type: 'array',
+      group: 'submit',
       of: [defineArrayMember({ type: 'string' })],
     }),
     defineField({
       name: 'submitDetailsTitle',
       title: 'Submit Details Card Title',
       type: 'string',
+      group: 'submit',
       initialValue: 'Submission details',
     }),
     defineField({
       name: 'submitConfirmButtonLabel',
       title: 'Submit Confirm Button Label',
       type: 'string',
+      group: 'submit',
       initialValue: 'Confirm & Generate Report',
     }),
     defineField({
       name: 'processingTitle',
       title: 'Processing Title',
       type: 'string',
+      group: 'submit',
       initialValue: 'Personalizing your report',
     }),
     defineField({
@@ -243,6 +280,7 @@ export const diagnosticSurveyContent = defineType({
       title: 'Processing Subtitle',
       type: 'text',
       rows: 2,
+      group: 'submit',
       initialValue:
         "We're assessing your results in order to assign you your personalized advisory board and program roadmap.",
     }),
@@ -250,6 +288,7 @@ export const diagnosticSurveyContent = defineType({
       name: 'processingSteps',
       title: 'Processing Steps list',
       type: 'array',
+      group: 'submit',
       of: [defineArrayMember({ type: 'string' })],
     }),
     defineField({
@@ -257,6 +296,7 @@ export const diagnosticSurveyContent = defineType({
       title: 'Report Header Thank-you',
       type: 'text',
       rows: 3,
+      group: 'report',
       initialValue:
         "Thanks - we've saved your diagnostic submission for {company}. Your next step is to focus on the lowest-scoring domains first, then reinforce what's already working so you can move faster with less risk.",
     }),
@@ -264,42 +304,49 @@ export const diagnosticSurveyContent = defineType({
       name: 'reportStrengthsTitle',
       title: 'Report Strengths Title',
       type: 'string',
+      group: 'report',
       initialValue: 'Top Strengths',
     }),
     defineField({
       name: 'reportGapsTitle',
       title: 'Report Gaps Title',
       type: 'string',
+      group: 'report',
       initialValue: 'Priority Gaps',
     }),
     defineField({
       name: 'reportRoadmapTitle',
       title: 'Report Roadmap Title',
       type: 'string',
+      group: 'report',
       initialValue: 'Recommended Roadmap',
     }),
     defineField({
       name: 'reportFullBreakdownTitle',
       title: 'Report Full Breakdown Title',
       type: 'string',
+      group: 'report',
       initialValue: 'Full Readiness Breakdown',
     }),
     defineField({
       name: 'reportProgramsTitle',
       title: 'Report Programs Title',
       type: 'string',
+      group: 'report',
       initialValue: 'Program Matches',
     }),
     defineField({
       name: 'reportAdvisorsTitle',
       title: 'Report Advisors Title',
       type: 'string',
+      group: 'report',
       initialValue: 'Custom Advisory Board',
     }),
     defineField({
       name: 'reportMembershipCtaTitle',
       title: 'Membership CTA Title',
       type: 'string',
+      group: 'report',
       initialValue: 'Detailed report access is restricted',
     }),
     defineField({
@@ -307,6 +354,7 @@ export const diagnosticSurveyContent = defineType({
       title: 'Membership CTA Body',
       type: 'text',
       rows: 3,
+      group: 'report',
       initialValue:
         'Join Rellia Health to unlock your custom advisory board, full gap analysis, and personalized actions - and accelerate your journey.',
     }),
@@ -314,12 +362,13 @@ export const diagnosticSurveyContent = defineType({
       name: 'reportMembershipCtaButton',
       title: 'Membership CTA Button Label',
       type: 'string',
+      group: 'report',
       initialValue: 'Apply for Membership',
     }),
   ],
   preview: {
     prepare() {
-      return {title: 'Diagnostic survey copy', media: studioListMedia.document}
+      return {title: 'Diagnostic Survey Page', media: studioListMedia.document}
     },
   },
 })

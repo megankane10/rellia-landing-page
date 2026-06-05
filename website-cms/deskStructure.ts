@@ -77,7 +77,7 @@ const pagesGroup = (S: StructureBuilder) =>
           singleton(S, 'FAQ', 'faqPage', DocumentTextIcon),
           singleton(S, 'Membership', 'paymentPage', DocumentTextIcon),
           singleton(S, 'Consulting', 'consultingPage', DocumentTextIcon),
-          singleton(S, 'Diagnostic survey copy', 'diagnosticSurveyContent', DocumentTextIcon),
+          singleton(S, 'Diagnostic Survey Page', 'diagnosticSurveyContent', DocumentTextIcon),
           singleton(S, 'Startup diagnostic', 'diagnosticLandingPage', DocumentTextIcon),
           singleton(S, 'Not found', 'notFoundPage', DocumentTextIcon),
           S.divider(),
@@ -86,15 +86,6 @@ const pagesGroup = (S: StructureBuilder) =>
           S.divider(),
           singleton(S, 'Events landing', 'eventsLandingPage', DocumentTextIcon),
           singleton(S, 'Stories landing', 'storiesPage', DocumentTextIcon),
-          S.divider(),
-          S.listItem()
-            .title('Modular Pages')
-            .icon(ComposeIcon)
-            .child(
-              S.documentTypeList('page')
-                .apiVersion(API_VERSION)
-                .title('Modular Pages')
-            ),
         ]),
     )
 
@@ -285,10 +276,22 @@ const HIDDEN_FROM_CATCH_ALL = new Set([
   'privacyPage',
 ])
 
+const buildNewPageItem = (S: StructureBuilder) =>
+  S.listItem()
+    .title('Build a new page')
+    .icon(ComposeIcon)
+    .child(
+      S.documentTypeList('page')
+        .apiVersion(API_VERSION)
+        .title('Build a new page')
+    )
+
 export const deskStructure = (S: StructureBuilder) =>
   S.list()
     .title('Website Editor')
     .items([
+      buildNewPageItem(S),
+      S.divider(),
       siteGroup(S),
       pagesGroup(S),
       collectionsGroup(S),

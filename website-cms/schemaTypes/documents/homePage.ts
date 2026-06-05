@@ -82,14 +82,43 @@ export const homePage = defineType({
           name: 'feature',
           type: 'object',
           fields: [
-            {
+            defineField({
               name: 'iconKey',
               title: 'Icon key',
               type: 'string',
               description: 'Example: target, userRound, bookOpen',
-            },
-
+            }),
+            defineField({
+              name: 'title',
+              title: 'Title',
+              type: 'string',
+            }),
+            defineField({
+              name: 'description',
+              title: 'Description',
+              type: 'text',
+              rows: 3,
+            }),
+            defineField({
+              name: 'buttonLabel',
+              title: 'Button label',
+              type: 'string',
+            }),
+            defineField({
+              name: 'buttonPath',
+              title: 'Button link',
+              type: 'string',
+            }),
+            defineField({
+              name: 'image',
+              title: 'Image',
+              type: 'image',
+              options: { hotspot: true },
+            }),
           ],
+          preview: {
+            select: { title: 'title', subtitle: 'description', media: 'image' },
+          },
         }),
       ],
     }),
@@ -130,6 +159,9 @@ export const homePage = defineType({
             { name: 'image', type: 'image', options: { hotspot: true } },
             { name: 'imageSrc', type: 'string', description: 'Fallback URL if no upload' },
           ],
+          preview: {
+            select: { title: 'name', subtitle: 'company', media: 'image' },
+          },
         }),
       ],
     }),
@@ -176,7 +208,7 @@ export const homePage = defineType({
             defineField({ name: 'ctaTo', type: 'string', description: 'Internal path, e.g. /founders' }),
           ],
           preview: {
-            select: { title: 'title', subtitle: 'roleId' },
+            select: { title: 'title', subtitle: 'roleId', media: 'image' },
           },
         }),
       ],
