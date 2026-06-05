@@ -1115,8 +1115,8 @@ async function main() {
       })),
       teamMarqueeImages:
         careersTeamMarqueeImages.length > 0 ? careersTeamMarqueeImages : undefined,
-      lifeAtRelliaHeading: "Life at Rellia",
-      lifeAtRelliaSubheading: "We are building a remote-first, high-standards health-tech company. Our team brings deep clinical, technical, and operational expertise to help founders transform care. We focus on outcome-oriented work, mutual support, and constant learning.",
+      lifeAtRelliaHeading: "Built by healthtech insiders, for builders",
+      lifeAtRelliaSubheading: "We are building a remote-first, high-standards healthtech company. Our team brings deep clinical, technical, and operational expertise to help founders transform care. We focus on outcome-oriented work, mutual support, and constant learning.",
       lifeAtRelliaImages:
         careersLifeAtRelliaImages.length > 0 ? careersLifeAtRelliaImages : undefined,
       lifeAtRelliaLinks: [
