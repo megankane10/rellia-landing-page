@@ -44,14 +44,28 @@ const memberInitials = (member: AdminTeamUser) => {
   return member.email.charAt(0).toUpperCase()
 }
 
-const memberAvatar = (member: AdminTeamUser) => (
-  <Avatar className="h-9 w-9 shrink-0">
-    {member.avatarUrl ? <AvatarImage src={member.avatarUrl} alt="" /> : null}
-    <AvatarFallback className="bg-rellia-mint/25 font-urbanist text-xs font-medium text-rellia-teal">
-      {memberInitials(member)}
-    </AvatarFallback>
-  </Avatar>
-)
+const memberAvatar = (member: AdminTeamUser) => {
+  const email = member.email?.trim().toLowerCase()
+  const name = (member.fullName ?? "").trim().toLowerCase()
+  const hasRemoved = member.avatarUrl === "removed"
+  
+  const resolvedAvatarUrl = hasRemoved
+    ? ""
+    : member.avatarUrl || (
+        (email === "megan@relliahealth.com" || name.includes("megan"))
+          ? "/images/megan-headshot.jpeg"
+          : ""
+      )
+
+  return (
+    <Avatar className="h-9 w-9 shrink-0">
+      {resolvedAvatarUrl ? <AvatarImage src={resolvedAvatarUrl} alt="" /> : null}
+      <AvatarFallback className="bg-rellia-mint/25 font-urbanist text-xs font-medium text-rellia-teal">
+        {memberInitials(member)}
+      </AvatarFallback>
+    </Avatar>
+  )
+}
 
 const AdminTeamPage = () => {
   const { session } = useAuth()
