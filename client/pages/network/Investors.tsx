@@ -238,6 +238,53 @@ export default function Investors() {
     return [...INVESTOR_BRAND_SVG_MARKS]
   }, [page?.logoMarquee])
 
+  const COLOR_PALETTE = useMemo(
+    () => [
+      COLORS.blue,
+      COLORS.teal,
+      COLORS.slate,
+      COLORS.cyan,
+      COLORS.indigo,
+      COLORS.mint,
+      COLORS.violet,
+    ],
+    []
+  )
+
+  const charts = useMemo(() => {
+    if (Array.isArray(page?.foundersCluster) && page.foundersCluster.length > 0) {
+      return page.foundersCluster.map((chart) => {
+        const segments = (chart.segments ?? []).map((seg, idx) => ({
+          name: seg.name || "",
+          value: seg.value || 0,
+          fill: COLOR_PALETTE[idx % COLOR_PALETTE.length],
+        }))
+        return {
+          title: chart.title || "",
+          data: segments,
+          ariaLabel: `Pie chart of ${chart.title || "distribution"}`
+        }
+      })
+    }
+    return [
+      {
+        title: "B2B vs B2C",
+        data: B2B_DATA,
+        ariaLabel: "Pie chart of B2B versus B2C versus hybrid share",
+      },
+      {
+        title: "Stages",
+        data: STAGE_DATA,
+        ariaLabel: "Pie chart of company stages from idea through Series A",
+      },
+      {
+        title: "Device & delivery",
+        data: DEVICE_DATA,
+        ariaLabel: "Pie chart of device types and delivery models",
+      },
+    ]
+  }, [page?.foundersCluster, COLOR_PALETTE])
+
   if (useModularLayout) {
     return (
       <CmsPageVisibilityGate page={page}>
@@ -299,27 +346,15 @@ export default function Investors() {
                     </p>
                   </ScrollReveal>
                   <div className="mt-12 grid grid-cols-1 gap-6 lg:grid-cols-3">
-                    <Reveal delay={0.05}>
-                      <IllustrativePie
-                        title="B2B vs B2C"
-                        data={B2B_DATA}
-                        ariaLabel="Pie chart of B2B versus B2C versus hybrid share"
-                      />
-                    </Reveal>
-                    <Reveal delay={0.08}>
-                      <IllustrativePie
-                        title="Stages"
-                        data={STAGE_DATA}
-                        ariaLabel="Pie chart of company stages from idea through Series A"
-                      />
-                    </Reveal>
-                    <Reveal delay={0.11}>
-                      <IllustrativePie
-                        title="Device & delivery"
-                        data={DEVICE_DATA}
-                        ariaLabel="Pie chart of device types and delivery models"
-                      />
-                    </Reveal>
+                    {charts.map((chart, idx) => (
+                      <Reveal key={chart.title || idx} delay={0.05 + idx * 0.03}>
+                        <IllustrativePie
+                          title={chart.title}
+                          data={chart.data}
+                          ariaLabel={chart.ariaLabel}
+                        />
+                      </Reveal>
+                    ))}
                   </div>
                 </PipelinePhotoSection>
               </div>

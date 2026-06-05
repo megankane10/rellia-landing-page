@@ -11,8 +11,7 @@ export const careersPage = defineType({
   name: 'careersPage',
   title: 'Careers page',
   type: 'document',
-  groups: [publishingGroup, GROUP_JOIN_TEAM, GROUP_OPEN_ROLES, ...documentGroups.filter((g) => g.name !== 'publishing')],
-  fieldsets: [FIELDSET_SEO],
+  groups: [publishingGroup, GROUP_JOIN_TEAM, GROUP_OPEN_ROLES, ...documentGroups.filter((g) => g.name !== 'publishing' && g.name !== 'seo')],
   fields: [
     ...singletonPublishingAtTop,
     defineField({
@@ -162,7 +161,6 @@ export const careersPage = defineType({
       options: {sortable: true},
     }),
     ...singletonLayoutFields,
-    defineField({name: 'seo', type: 'seoFields', group: 'seo', fieldset: 'seo'}),
   ],
 })
 

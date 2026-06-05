@@ -569,12 +569,13 @@ export default function Navbar({
             {primaryLinks.map((item) => {
               if (!item.hasChildren) {
                 if (isExternalHref(item.href)) {
+                  const isMailToOrTel = /^(mailto:|tel:)/i.test(item.href)
                   return (
                     <a
                       key={item.href}
                       href={item.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                      target={isMailToOrTel ? undefined : "_blank"}
+                      rel={isMailToOrTel ? undefined : "noopener noreferrer"}
                       className={getNavItemClass(false, desktopTone)}
                       aria-label={item.label}
                     >
@@ -707,12 +708,13 @@ export default function Navbar({
                 if (!item.hasChildren) {
                   const activeCls = item.active ? "bg-white/10 ring-1 ring-white/15 text-rellia-mint" : ""
                   if (isExternalHref(item.href)) {
+                    const isMailToOrTel = /^(mailto:|tel:)/i.test(item.href)
                     return (
                       <a
                         key={item.href}
                         href={item.href}
-                        target="_blank"
-                        rel="noopener noreferrer"
+                        target={isMailToOrTel ? undefined : "_blank"}
+                        rel={isMailToOrTel ? undefined : "noopener noreferrer"}
                         className={cn(baseCls, activeCls)}
                         onClick={handleCloseMobile}
                         aria-label={item.label}

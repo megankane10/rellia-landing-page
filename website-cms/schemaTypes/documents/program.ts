@@ -1,6 +1,5 @@
 import {defineField, defineType} from 'sanity'
-import {documentGroups, FIELDSET_SEO} from '../shared/fieldGroups'
-import {seoField} from '../shared/seoField'
+import {documentGroups} from '../shared/fieldGroups'
 import {pageSectionMembers} from '../shared/pageSectionMembers'
 import {programPublishingFields} from '../shared/documentTopFields'
 
@@ -12,10 +11,7 @@ export const program = defineType({
     {name: 'publishing', title: 'Publishing', default: true},
     {name: 'card', title: 'Program card'},
     {name: 'detail', title: 'Detail page'},
-    {name: 'layout', title: 'Layout builder'},
-    {name: 'seo', title: 'SEO & metadata'},
   ],
-  fieldsets: [FIELDSET_SEO],
   fields: [
     ...programPublishingFields,
     defineField({
@@ -121,7 +117,7 @@ export const program = defineType({
       group: 'detail',
       of: pageSectionMembers,
     }),
-    seoField,
+
   ],
   preview: {
     select: {

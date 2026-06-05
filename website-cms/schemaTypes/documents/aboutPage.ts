@@ -8,8 +8,7 @@ export const aboutPage = defineType({
   name: 'aboutPage',
   title: 'About page',
   type: 'document',
-  groups: [publishingGroup, ...documentGroups.filter((g) => g.name !== 'publishing')],
-  fieldsets: [FIELDSET_SEO],
+  groups: [publishingGroup, ...documentGroups.filter((g) => g.name !== 'publishing' && g.name !== 'seo')],
   fields: [
     ...singletonPublishingAtTop,
     defineField({
@@ -72,6 +71,5 @@ export const aboutPage = defineType({
     defineField({name: 'ctaFounderLabel', type: 'string', group: 'content'}),
     defineField({name: 'ctaTeamLabel', type: 'string', group: 'content'}),
     ...singletonLayoutFields,
-    defineField({name: 'seo', type: 'seoFields', group: 'seo', fieldset: 'seo'}),
   ],
 })

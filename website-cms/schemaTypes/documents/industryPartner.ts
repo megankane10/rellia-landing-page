@@ -1,13 +1,13 @@
 import {defineField, defineType} from 'sanity'
-import {documentGroups, FIELDSET_SEO} from '../shared/fieldGroups'
-import {seoField} from '../shared/seoField'
+
 
 export const industryPartner = defineType({
   name: 'industryPartner',
   title: 'Industry partner',
   type: 'document',
-  groups: documentGroups,
-  fieldsets: [FIELDSET_SEO],
+  groups: [
+    {name: 'content', title: 'Content', default: true},
+  ],
   fields: [
     defineField({
       name: 'companyName',
@@ -62,7 +62,7 @@ export const industryPartner = defineType({
       group: 'content',
     }),
     defineField({name: 'sortOrder', title: 'Sort order', type: 'number', initialValue: 0, group: 'content'}),
-    seoField,
+
   ],
   preview: {
     select: {title: 'companyName', tier: 'partnershipTier', media: 'logo'},

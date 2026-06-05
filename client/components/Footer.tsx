@@ -58,8 +58,8 @@ const FALLBACK_FOOTER_COLUMNS: NavItem[] = [
     children: [
       { label: "About Us", href: "/about" },
       { label: "FAQ", href: "/faq" },
-      { label: "Careers", href: "/careers" },
       { label: "Contact", href: "/contact" },
+      { label: "Careers", href: "/careers" },
     ],
   },
 ] as const
@@ -168,12 +168,13 @@ export default function Footer() {
                         if (isExternalHref(l.href)) {
                           const isIndustryPartnersDirectory =
                             col.label === "Resources" && l.href === GETPROVEN_VENDORS_GRID_URL
+                          const isMailToOrTel = /^(mailto:|tel:)/i.test(l.href)
                           return (
                             <a
                               key={l.href}
                               href={l.href}
-                              target="_blank"
-                              rel="noopener noreferrer"
+                              target={isMailToOrTel ? undefined : "_blank"}
+                              rel={isMailToOrTel ? undefined : "noopener noreferrer"}
                               className={`inline-flex items-center gap-1.5 ${footerLinkClass}`}
                             >
                               <span>{isIndustryPartnersDirectory ? "Explore Industry Partners" : l.label}</span>

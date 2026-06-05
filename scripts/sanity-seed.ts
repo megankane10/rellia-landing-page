@@ -698,8 +698,8 @@ const FALLBACK_FOOTER_COLUMNS = [
     children: [
       { enabled: true, label: "About Us", href: "/about" },
       { enabled: true, label: "FAQ", href: "/faq" },
-      { enabled: true, label: "Careers", href: "/careers" },
       { enabled: true, label: "Contact", href: "/contact" },
+      { enabled: true, label: "Careers", href: "/careers" },
     ],
   },
 ] as const
@@ -939,74 +939,8 @@ async function main() {
       _id: "networkFoundersPage",
       _type: "networkFoundersPage",
       title: "Founders",
-      useModularPage: false,
       ...pagePublishingLive,
-      seo: seoForRoute("/founders"),
       logoMarquee: foundersLogoMarquee.length > 0 ? foundersLogoMarquee : undefined,
-      sections: [
-        {
-          _type: "sectionHero",
-          _key: "hero",
-          badge: "Founders",
-          headline: [block("nf-hero-hl", "Are you building in health tech?", "normal")],
-          subheadline: [
-            block(
-              "nf-hero-sub",
-              "Rellia is for founders who are serious about building in health tech — from idea through Series A.",
-              "normal",
-            ),
-          ],
-          primaryCta: { label: "Apply to join", href: "/apply" },
-          secondaryCta: { label: "View alumni directory", href: "/founders/alumni" },
-        },
-        {
-          _type: "sectionRichText",
-          _key: "intro",
-          title: "What you’ll get",
-          body: [
-            {
-              _type: "block",
-              _key: "p1",
-              style: "normal",
-              markDefs: [],
-              children: [
-                {
-                  _type: "span",
-                  _key: "p1s1",
-                  text: "Clear outcomes, direct access to domain experts, and a high-signal community built for founders navigating healthcare.",
-                  marks: [],
-                },
-              ],
-            },
-          ],
-        },
-        {
-          _type: "sectionCardsGrid",
-          _key: "cards",
-          title: "Why founders join",
-          subtitle: "Edit, add, remove, and reorder these cards in Sanity.",
-          cards: [
-            {
-              _type: "card",
-              _key: "c1",
-              title: "Regulatory & evidence clarity",
-              body: "Avoid costly missteps and build the right documentation and evidence at the right time.",
-            },
-            {
-              _type: "card",
-              _key: "c2",
-              title: "Advisors who’ve done it",
-              body: "Get practical guidance from operators, clinicians, and specialists with real experience.",
-            },
-            {
-              _type: "card",
-              _key: "c3",
-              title: "Community + accountability",
-              body: "Surround yourself with builders facing the same constraints and timelines.",
-            },
-          ],
-        },
-      ],
     },
   })
   mutations.push({
@@ -1014,37 +948,7 @@ async function main() {
       _id: "networkAdvisorsPage",
       _type: "networkAdvisorsPage",
       title: "Advisors",
-      useModularPage: false,
       ...pagePublishingLive,
-      seo: seoForRoute("/advisors"),
-      sections: [
-        {
-          _type: "sectionHero",
-          _key: "hero",
-          badge: "Advisors",
-          headline: [block("na-hero-hl", "Some people are wired to help others succeed.", "normal")],
-          subheadline: [
-            block(
-              "na-hero-sub",
-              "Mentor serious health tech founders through structured, respectful engagements — stay close to innovation while keeping flexibility.",
-              "normal",
-            ),
-          ],
-          primaryCta: { label: "Apply to join", href: "/apply" },
-          secondaryCta: { label: "Browse our Advisors", href: "/advisors/directory" },
-        },
-        {
-          _type: "sectionCardsGrid",
-          _key: "models",
-          title: "Ways to support founders",
-          subtitle: "These are editable sections — you can reorder or rewrite anytime.",
-          cards: [
-            { _type: "card", _key: "m1", title: "Community & network", body: "Engage in curated intros and async support without rigid mandates." },
-            { _type: "card", _key: "m2", title: "Advisory roles", body: "Join milestone-scoped charters when there’s mutual fit." },
-            { _type: "card", _key: "m3", title: "Workshops", body: "Lead targeted sessions where founders need pattern-level clarity." },
-          ],
-        },
-      ],
     },
   })
   mutations.push({
@@ -1052,44 +956,35 @@ async function main() {
       _id: "networkInvestorsPage",
       _type: "networkInvestorsPage",
       title: "Investors",
-      useModularPage: false,
       ...pagePublishingLive,
-      seo: seoForRoute("/investors"),
       logoMarquee: investorsLogoMarquee.length > 0 ? investorsLogoMarquee : undefined,
-      sections: [
+      foundersCluster: [
         {
-          _type: "sectionHero",
-          _key: "hero",
-          badge: "Investors",
-          headline: [block("ni-hero-hl", "Stop sorting through cold pitch decks.", "normal")],
-          subheadline: [
-            block(
-              "ni-hero-sub",
-              "Meet Rellia-backed teams with sharper clinical, regulatory, and commercial milestones — before diligence becomes a fire drill.",
-              "normal",
-            ),
+          _key: "chart-b2b",
+          title: "B2B vs B2C",
+          segments: [
+            { _key: "seg-1", name: "B2B / enterprise", value: 62 },
+            { _key: "seg-2", name: "B2C / patient", value: 24 },
+            { _key: "seg-3", name: "Hybrid", value: 14 },
           ],
-          primaryCta: { label: "Get notified", href: "/contact" },
         },
         {
-          _type: "sectionRichText",
-          _key: "note",
-          title: "How it works",
-          body: [
-            {
-              _type: "block",
-              _key: "p1",
-              style: "normal",
-              markDefs: [],
-              children: [
-                {
-                  _type: "span",
-                  _key: "p1s1",
-                  text: "This page is now fully CMS-driven. Add sections for thesis alignment, dealflow, cohort updates, and more — and reorder them any time.",
-                  marks: [],
-                },
-              ],
-            },
+          _key: "chart-stages",
+          title: "Stages",
+          segments: [
+            { _key: "seg-1", name: "Idea / pre-product", value: 12 },
+            { _key: "seg-2", name: "Pre-seed", value: 26 },
+            { _key: "seg-3", name: "Seed", value: 38 },
+            { _key: "seg-4", name: "Series A", value: 24 },
+          ],
+        },
+        {
+          _key: "chart-device",
+          title: "Device & delivery",
+          segments: [
+            { _key: "seg-1", name: "Med device / diagnostics", value: 34 },
+            { _key: "seg-2", name: "Digital / SaMD", value: 41 },
+            { _key: "seg-3", name: "Services + tech", value: 25 },
           ],
         },
       ],
@@ -1100,55 +995,7 @@ async function main() {
       _id: "networkPartnersPage",
       _type: "networkPartnersPage",
       title: "Industry Partners",
-      useModularPage: false,
       ...pagePublishingLive,
-      seo: seoForRoute("/industry-partners"),
-      sections: [
-        {
-          _type: "sectionHero",
-          _key: "hero",
-          badge: "Industry partners",
-          headline: [block("np-hero-hl", "Reach the founders who need you.", "normal")],
-          subheadline: [
-            block(
-              "np-hero-sub",
-              "Pilot design, integration support, and enterprise credibility — so promising products don’t die in procurement limbo.",
-              "normal",
-            ),
-          ],
-          primaryCta: { label: "Apply to join", href: "/apply" },
-          secondaryCta: { label: "See vendor directory", href: "/industry-partners/directory" },
-        },
-        {
-          _type: "sectionCardsGrid",
-          _key: "engage",
-          title: "Partner engagement",
-          subtitle: "Swap these cards, change CTAs, or add new sections anytime.",
-          cards: [
-            {
-              _type: "card",
-              _key: "p1",
-              title: "Integrations",
-              body: "Support founders with integration guidance and distribution clarity.",
-              cta: { label: "Contact", href: "/contact" },
-            },
-            {
-              _type: "card",
-              _key: "p2",
-              title: "Pilot pathways",
-              body: "Create credible routes to pilot and evaluate products in real environments.",
-              cta: { label: "Contact", href: "/contact" },
-            },
-            {
-              _type: "card",
-              _key: "p3",
-              title: "Services & vendors",
-              body: "Offer vetted services that reduce time-to-evidence and time-to-market.",
-              cta: { label: "Contact", href: "/contact" },
-            },
-          ],
-        },
-      ],
     },
   })
   mutations.push({
@@ -1156,9 +1003,7 @@ async function main() {
       _id: "consultingPage",
       _type: "consultingPage",
       title: "Consulting",
-      useModularPage: false,
       ...pagePublishingLive,
-      seo: seoForRoute("/consulting"),
     },
   })
   mutations.push({
@@ -1166,9 +1011,7 @@ async function main() {
       _id: "diagnosticLandingPage",
       _type: "diagnosticLandingPage",
       title: "Startup Diagnostic",
-      useModularPage: false,
       ...pagePublishingLive,
-      seo: seoForRoute("/startup-diagnostic"),
     },
   })
   mutations.push({

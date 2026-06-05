@@ -202,8 +202,7 @@ export const paymentPage = defineType({
   name: 'paymentPage',
   title: 'Payment page (/membership)',
   type: 'document',
-  groups: [publishingGroup, ...documentGroups.filter((g) => g.name !== 'publishing')],
-  fieldsets: [FIELDSET_SEO],
+  groups: [publishingGroup, ...documentGroups.filter((g) => g.name !== 'publishing' && g.name !== 'seo')],
   fields: [
     ...singletonPublishingAtTop,
     defineField({
@@ -339,6 +338,5 @@ export const paymentPage = defineType({
     }),
     ...legacyMembershipFields,
     ...singletonLayoutFields,
-    defineField({name: 'seo', type: 'seoFields', group: 'seo', fieldset: 'seo'}),
   ],
 })

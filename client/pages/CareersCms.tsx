@@ -9,8 +9,8 @@ import WhyRellia from "@/components/WhyRellia"
 import { FilloutStandardEmbed } from "@fillout/react"
 import { FILLOUT_APPLY_FORM_ID, FILLOUT_EMBED_VIEWPORT_MIN_CLASS } from "@/lib/filloutApplyForm"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
-import { motion, useReducedMotion, AnimatePresence } from "framer-motion"
-import { BriefcaseBusiness, Building2, ExternalLink, Laptop, MapPin, Users, UserRound, Check, type LucideIcon } from "lucide-react"
+import { motion, useReducedMotion, AnimatePresence, useScroll, useTransform } from "framer-motion"
+import { BriefcaseBusiness, Building2, ExternalLink, Laptop, MapPin, Users, UserRound, Check, ArrowRight, type LucideIcon } from "lucide-react"
 import type { CareersOpenRole, CareersPageContent, HomeWhyFeature } from "@shared/cms/types"
 import { DEFAULT_GLOBAL_SETTINGS } from "@shared/cms/defaults"
 import { CAREERS_VOLUNTEER_ENABLED } from "@shared/careersPageConfig"
@@ -23,7 +23,7 @@ import { buildPageUrl } from "@/config/seo"
 import FilteredListEmptyState from "@/components/FilteredListEmptyState"
 import { isSanityConfigured } from "@/lib/sanity"
 import { allowCmsSeedFallbacks, isStrictProductionSite } from "@/lib/deploymentEnv"
-import { useMemo, useState, useEffect } from "react"
+import { useMemo, useState, useEffect, useRef } from "react"
 import { useLocation } from "react-router-dom"
 import { ShareIconCopy } from "@/components/share/sharePageIcons"
 
@@ -119,16 +119,6 @@ const getPerkIcon = (key: string): LucideIcon => {
 
 const JOIN_TEAM_MARQUEE_LOOP_SEC = 56
 
-/** Shared geometry + RelliaCta-style hover (lift + fill, no sweep) */
-const joinTeamCtaSharedClass = cn(
-  "group relative isolate inline-flex cursor-pointer items-center justify-center overflow-hidden rounded-full border-2 border-rellia-teal outline-none",
-  "px-8 py-3.5 font-host-grotesk text-base font-semibold leading-none tracking-tight md:px-10 md:py-4 md:text-lg",
-  "transition-[transform,box-shadow,border-color,background-color,color] duration-300 motion-reduce:transition-none",
-  "before:hidden",
-  "focus-visible:ring-2 focus-visible:ring-rellia-teal focus-visible:ring-offset-2 focus-visible:ring-offset-rellia-greyTeal",
-  "motion-safe:hover:-translate-y-0.5 motion-safe:hover:shadow-lg",
-)
-
 type CareersJoinTeamCta = {
   action: "scroll" | "form"
   scrollTargetId?: string
@@ -147,12 +137,17 @@ const CareersJoinTeamSection = ({
   secondaryCta: CareersJoinTeamCta | null
   marqueeSlides: CareersMarqueeSlide[]
 }) => {
+  const sectionRef = useRef<HTMLElement | null>(null)
   const reduceMotion = useReducedMotion()
   const [showApplyForm, setShowApplyForm] = useState(false)
-  const joinTeamMarqueeSlides = useMemo(
-    () => [...marqueeSlides, ...marqueeSlides],
-    [marqueeSlides],
-  )
+
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start 95%", "end 5%"],
+  })
+  const bgY = useTransform(scrollYProgress, [0, 1], ["-12%", "12%"])
+
+  const bgSrc = marqueeSlides[0]?.src || "/images/careers-img.jpg"
 
   const handlePrimaryClick = () => {
     if (primaryCta?.action !== "scroll" || !primaryCta.scrollTargetId) return
@@ -165,19 +160,13 @@ const CareersJoinTeamSection = ({
     setShowApplyForm(true)
   }
 
-  /** Narrow fade only at viewport edges; full-opacity center so the strip clearly overflows */
-  const marqueeMaskStyle = {
-    maskImage:
-      "linear-gradient(90deg, transparent 0%, black 1.25%, black 98.75%, transparent 100%)",
-    WebkitMaskImage:
-      "linear-gradient(90deg, transparent 0%, black 1.25%, black 98.75%, transparent 100%)",
-  } as const
-
-  const joinTeamImageTileClass =
-    "relative h-40 w-[12rem] shrink-0 overflow-hidden rounded-2xl sm:h-[13.5rem] sm:w-[13.5rem] md:h-[15rem] md:w-[16.5rem] lg:h-[16.5rem] lg:w-[19rem]"
-
   return (
-    <section className="relative z-[2] w-full overflow-hidden bg-white">
+    <section
+      ref={(node) => {
+        sectionRef.current = node
+      }}
+      className="relative z-[2] w-full overflow-hidden bg-gradient-to-b from-[#144853] from-50% to-white to-50% py-4 md:py-6"
+    >
       <AnimatePresence mode="wait">
         {!showApplyForm ? (
           <motion.div
@@ -185,56 +174,57 @@ const CareersJoinTeamSection = ({
             initial={{ opacity: 1 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.4 }}
-            className="relative flex min-h-0 shrink-0 flex-col overflow-x-hidden bg-white pt-10 pb-6 md:pt-14 md:pb-8"
+            className="relative w-full overflow-hidden rounded-[2.5rem] md:rounded-[3.5rem] shadow-lg"
           >
-            <div className="relative z-10 flex h-full min-h-0 w-full flex-1 flex-col">
-              <div className="mx-auto w-full max-w-[1300px] shrink-0 px-6 md:px-10">
-                <h2 className="max-w-3xl font-host-grotesk text-3xl font-bold leading-[1.12] tracking-tight text-black sm:text-[2rem] md:text-4xl lg:max-w-4xl lg:text-[2.65rem]">
-                  Help us <span className="text-rellia-teal">empower the founders</span> who are changing the world.
-                </h2>
-
-                {primaryCta || secondaryCta ? (
-                  <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
-                    {primaryCta ? (
-                      <button
-                        type="button"
-                        onClick={handlePrimaryClick}
-                        className={cn(
-                          joinTeamCtaSharedClass,
-                          "border-rellia-teal bg-rellia-teal hover:border-rellia-mint hover:bg-rellia-mint",
-                        )}
-                        aria-label={primaryCta.ariaLabel}
-                      >
-                        <span className="relative z-10 text-white transition-colors duration-300 group-hover:text-rellia-teal">
-                          {primaryCta.label}
-                        </span>
-                      </button>
-                    ) : null}
-                    {secondaryCta ? (
-                      <button
-                        type="button"
-                        onClick={handleSecondaryClick}
-                        className={cn(
-                          joinTeamCtaSharedClass,
-                          "border-rellia-teal bg-transparent hover:border-rellia-mint hover:bg-rellia-mint",
-                        )}
-                        aria-label={secondaryCta.ariaLabel}
-                      >
-                        <span className="relative z-10 text-rellia-teal transition-colors duration-300 group-hover:text-rellia-teal">
-                          {secondaryCta.label}
-                        </span>
-                      </button>
-                    ) : null}
-                  </div>
-                ) : null}
+            <div className="relative min-h-[780px] sm:min-h-[820px] md:min-h-[800px] lg:min-h-[880px] w-full overflow-hidden flex flex-col justify-center">
+              <div className="absolute inset-0 overflow-hidden" aria-hidden>
+                <motion.img
+                  src={bgSrc}
+                  alt=""
+                  className="h-full w-full object-cover scale-[1.12]"
+                  style={reduceMotion ? undefined : { y: bgY }}
+                  loading="lazy"
+                />
+                <div className="absolute inset-0 bg-rellia-teal/35" />
+                <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/30 to-black/60" />
               </div>
 
-              <div className="mt-8 mx-auto w-full max-w-[1300px] px-6 md:px-10">
-                <img
-                  src="/images/careers-img.jpg"
-                  alt="Rellia Team"
-                  className="w-full h-auto rounded-3xl object-cover"
-                />
+              <div className="relative z-10 mx-auto flex w-full max-w-[1300px] flex-col px-6 py-20 md:px-10 md:py-28 justify-center">
+                <div className="max-w-3xl flex flex-col items-start text-left">
+                  <ScrollReveal>
+                    <h2 className="font-host-grotesk text-3xl font-bold leading-[1.12] tracking-tight text-white sm:text-[2.25rem] md:text-5xl lg:text-[3.25rem]">
+                      Help us <span className="text-rellia-mint">empower the founders</span> who are changing the world.
+                    </h2>
+
+                    {primaryCta || secondaryCta ? (
+                      <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-center">
+                        {primaryCta ? (
+                          <RelliaAction
+                            type="button"
+                            onClick={handlePrimaryClick}
+                            variant="mintOnTealStrip"
+                            size="comfortable"
+                            aria-label={primaryCta.ariaLabel}
+                          >
+                            {primaryCta.label}
+                            <ArrowRight className="h-4 w-4" aria-hidden />
+                          </RelliaAction>
+                        ) : null}
+                        {secondaryCta ? (
+                          <RelliaAction
+                            type="button"
+                            onClick={handleSecondaryClick}
+                            variant="heroGhostOnTeal"
+                            size="comfortable"
+                            aria-label={secondaryCta.ariaLabel}
+                          >
+                            {secondaryCta.label}
+                          </RelliaAction>
+                        ) : null}
+                      </div>
+                    ) : null}
+                  </ScrollReveal>
+                </div>
               </div>
             </div>
           </motion.div>

@@ -10,9 +10,7 @@ export const programsLandingPage = defineType({
     {name: 'hero', title: 'Hero', default: true},
     {name: 'programs', title: 'Programs'},
     {name: 'cta', title: 'CTA'},
-    {name: 'seo', title: 'SEO & metadata'},
   ],
-  fieldsets: [{name: 'seo', title: 'SEO & metadata'}],
   fields: [
     defineField({
       name: 'heroTitlePortable',
@@ -44,7 +42,6 @@ export const programsLandingPage = defineType({
     defineField({name: 'ctaBody', title: 'CTA body', type: 'text', rows: 2, group: 'cta'}),
     defineField({name: 'ctaButtonLabel', title: 'CTA button label', type: 'string', group: 'cta'}),
     defineField({name: 'ctaButtonHref', title: 'CTA button link', type: 'string', group: 'cta'}),
-    defineField({name: 'seo', type: 'seoFields', group: 'seo', fieldset: 'seo'}),
   ],
   preview: {
     select: {heroTitlePortable: 'heroTitlePortable', heroSubtitle: 'heroSubtitle'},

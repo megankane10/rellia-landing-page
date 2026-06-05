@@ -8,9 +8,7 @@ export const storiesPage = defineType({
   type: 'document',
   groups: [
     {name: 'content', title: 'Content', default: true},
-    {name: 'seo', title: 'SEO & metadata'},
   ],
-  fieldsets: [{name: 'seo', title: 'SEO & metadata'}],
   fields: [
     defineField({
       name: 'headlinePortable',
@@ -21,7 +19,6 @@ export const storiesPage = defineType({
       validation: (Rule) => Rule.required().min(1),
     }),
     defineField({name: 'subheadline', title: 'Subtitle', type: 'text', rows: 2, group: 'content'}),
-    defineField({name: 'seo', type: 'seoFields', group: 'seo', fieldset: 'seo'}),
   ],
   preview: {
     select: {headlinePortable: 'headlinePortable', subheadline: 'subheadline'},
@@ -35,4 +32,3 @@ export const storiesPage = defineType({
     }),
   },
 })
-

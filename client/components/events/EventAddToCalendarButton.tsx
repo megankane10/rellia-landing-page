@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from "react"
 import { Calendar } from "lucide-react"
 import type { ProgramsEventCard } from "@shared/cms/types"
 import { buildCalendarProviderLinks, type CalendarProvider } from "@/lib/calendarLinks"
+import { downloadProgramsEventIcsFile } from "@/lib/eventCalendar"
 import { cn } from "@/lib/utils"
 import {
   Dialog,
@@ -112,13 +113,19 @@ export const EventAddToCalendarButton = ({
     (provider: CalendarProvider) => {
       if (!links) return
 
+      if (provider === "ics") {
+        void downloadProgramsEventIcsFile(event, canonicalUrl)
+        setOpen(false)
+        return
+      }
+
       const match = links.providers.find((entry) => entry.id === provider)
       if (!match) return
 
       openCalendarUrl(match.href)
       setOpen(false)
     },
-    [links],
+    [links, event, canonicalUrl],
   )
 
   if (!links) return null

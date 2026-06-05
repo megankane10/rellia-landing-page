@@ -39,6 +39,9 @@ import {
   fetchPageBySlugForPrerender,
   fetchProgramBySlugForPrerender,
   fetchStoryBySlugForPrerender,
+  fetchPaymentPageForPrerender,
+  fetchProgramsLandingForPrerender,
+  fetchProgramsForPrerender,
 } from "@shared/cms/prerenderSanity"
 
 const RESERVED_FIRST_SEGMENTS = new Set([
@@ -409,6 +412,29 @@ export const prerender = async (data: { url: string }) => {
     await prerenderQueryClient.prefetchQuery({
       queryKey: ["cms", "directoryFilterGroups"],
       queryFn: async () => filterGroups,
+    })
+  }
+
+  if (pathname === "/membership") {
+    const paymentPage = await fetchPaymentPageForPrerender()
+    await prerenderQueryClient.prefetchQuery({
+      queryKey: ["cms", "paymentPage"],
+      queryFn: async () => paymentPage,
+    })
+  }
+
+  if (pathname === "/programs") {
+    const [landing, list] = await Promise.all([
+      fetchProgramsLandingForPrerender(),
+      fetchProgramsForPrerender(),
+    ])
+    await prerenderQueryClient.prefetchQuery({
+      queryKey: ["cms", "programsLanding"],
+      queryFn: async () => landing,
+    })
+    await prerenderQueryClient.prefetchQuery({
+      queryKey: ["cms", "programs"],
+      queryFn: async () => list,
     })
   }
 

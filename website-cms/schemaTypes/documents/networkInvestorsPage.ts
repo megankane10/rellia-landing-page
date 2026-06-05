@@ -1,6 +1,5 @@
 import {defineArrayMember, defineField, defineType} from 'sanity'
 import {logoMarqueeField} from '../objects/logoMarqueeItem'
-import {seoField} from '../shared/seoField'
 import {publishingGroup, pageVisibilityFields} from '../shared/pageVisibilityFields'
 
 export const networkInvestorsPage = defineType({
@@ -10,9 +9,7 @@ export const networkInvestorsPage = defineType({
   groups: [
     {name: 'content', title: 'Content', default: true},
     publishingGroup,
-    {name: 'seo', title: 'SEO & metadata'},
   ],
-  fieldsets: [{name: 'seo', title: 'SEO & metadata'}],
   fields: [
     defineField({
       name: 'title',
@@ -22,33 +19,53 @@ export const networkInvestorsPage = defineType({
     }),
     {...logoMarqueeField, group: 'content'},
     defineField({
-      name: 'useModularPage',
-      title: 'Use modular CMS layout',
-      type: 'boolean',
-      initialValue: false,
-      description:
-        'When enabled, the site renders the modular section stack below. When off (default), visitors see the full designed Investors marketing page.',
-      group: 'content',
-    }),
-    defineField({
-      name: 'sections',
-      title: 'Modular sections',
-      description:
-        'Drag blocks to reorder. Empty or disable modular layout to use the full marketing page.',
+      name: 'foundersCluster',
+      title: 'Founders Cluster (Pie Charts)',
+      description: 'Define the pie charts showing how founders cluster on the investors page.',
       type: 'array',
       group: 'content',
       of: [
-        defineArrayMember({type: 'sectionHero'}),
-        defineArrayMember({type: 'sectionRichText'}),
-        defineArrayMember({type: 'sectionCardsGrid'}),
-        defineArrayMember({type: 'sectionEligibilityBento'}),
-        defineArrayMember({type: 'sectionFeatureGrid'}),
-        defineArrayMember({type: 'sectionEngageBand'}),
-        defineArrayMember({type: 'sectionJourneyTimeline'}),
-        defineArrayMember({type: 'sectionDiagnosticSurvey'}),
+        defineArrayMember({
+          type: 'object',
+          name: 'clusterChart',
+          title: 'Cluster Chart',
+          fields: [
+            defineField({
+              name: 'title',
+              type: 'string',
+              title: 'Chart Title',
+              validation: (Rule) => Rule.required(),
+            }),
+            defineField({
+              name: 'segments',
+              type: 'array',
+              title: 'Segments / Slices',
+              of: [
+                defineArrayMember({
+                  type: 'object',
+                  name: 'chartSegment',
+                  title: 'Chart Segment',
+                  fields: [
+                    defineField({
+                      name: 'name',
+                      type: 'string',
+                      title: 'Segment Name',
+                      validation: (Rule) => Rule.required(),
+                    }),
+                    defineField({
+                      name: 'value',
+                      type: 'number',
+                      title: 'Percentage Share',
+                      validation: (Rule) => Rule.required().min(0).max(100),
+                    }),
+                  ],
+                }),
+              ],
+            }),
+          ],
+        }),
       ],
     }),
     ...pageVisibilityFields,
-    {...seoField, fieldset: 'seo'},
   ],
 })

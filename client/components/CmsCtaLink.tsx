@@ -22,11 +22,12 @@ export const CmsCtaLink = ({ href, className, onClick, children }: CmsCtaLinkPro
   const normalized = normalizeHref(href)
 
   if (isExternalHref(normalized)) {
+    const isMailToOrTel = /^(mailto:|tel:)/i.test(normalized)
     return (
       <a
         href={normalized}
-        target="_blank"
-        rel="noopener noreferrer"
+        target={isMailToOrTel ? undefined : "_blank"}
+        rel={isMailToOrTel ? undefined : "noopener noreferrer"}
         onClick={onClick}
         className={className}
       >

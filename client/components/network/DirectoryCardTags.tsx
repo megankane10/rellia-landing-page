@@ -41,9 +41,7 @@ export const DirectoryCardTags = ({
           key={tag}
           className={cn(
             "inline-flex rounded-full border px-2.5 py-0.5 font-urbanist text-[10px] font-semibold backdrop-blur-sm shadow-sm",
-            variant === "onPhoto"
-              ? "border-white/20 bg-black/40 text-white/90"
-              : "border-black/10 bg-black/5 text-black/60",
+            "border-white/10 bg-black/45 text-white",
           )}
         >
           {tag}

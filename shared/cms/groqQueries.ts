@@ -233,7 +233,14 @@ export const networkInvestorsPageQuery = `*[_type == "networkInvestorsPage"][0]{
   ${pageVisibilityFragment},
   ${logoMarqueeFragment},
   ${seoFragment},
-  ${pageSectionsFragment}
+  ${pageSectionsFragment},
+  foundersCluster[]{
+    title,
+    segments[]{
+      name,
+      value
+    }
+  }
 }`
 
 export const diagnosticLandingPageQuery = `*[_id == "diagnosticLandingPage"][0]{
