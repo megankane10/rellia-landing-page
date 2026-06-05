@@ -43,6 +43,18 @@ export type CareersTeamMarqueeImage = {
   alt?: string
 }
 
+export type CareersLifeAtRelliaLink = {
+  platformName: string
+  url: string
+  iconKey: string
+  tooltip: string
+}
+
+export type CareersLifeAtRelliaImage = {
+  src?: string
+  alt?: string
+}
+
 export type CareersPageContent = CmsPageVisibility & {
   teamMarqueeImages?: CareersTeamMarqueeImage[]
   defaultTab?: "hiring" | "volunteer"
@@ -58,6 +70,10 @@ export type CareersPageContent = CmsPageVisibility & {
   showVolunteerNavBadge?: boolean
   openRoles?: CareersOpenRole[]
   seo?: SeoContent
+  lifeAtRelliaHeading?: string
+  lifeAtRelliaSubheading?: string
+  lifeAtRelliaImages?: CareersLifeAtRelliaImage[]
+  lifeAtRelliaLinks?: CareersLifeAtRelliaLink[]
 }
 
 export type SeoContent = {
@@ -401,6 +417,10 @@ export type GlobalSettingsContent = {
   priorityModalSecondaryButtonLink?: string
   priorityModalImageUrl?: string
   priorityModalImageAlt?: string
+  priorityModalFormEnabled?: boolean
+  priorityModalFormButtonLabel?: string
+  priorityModalFormPlaceholderName?: string
+  priorityModalFormPlaceholderEmail?: string
 }
 
 export type SiteSettingsContent = {

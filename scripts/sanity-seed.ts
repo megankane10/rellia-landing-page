@@ -776,6 +776,12 @@ const CAREERS_TEAM_MARQUEE_URLS = [
   "https://images.pexels.com/photos/3184465/pexels-photo-3184465.jpeg?auto=compress&cs=tinysrgb&w=900",
 ] as const
 
+const CAREERS_LIFE_AT_RELLIA_URLS = [
+  "https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800&auto=format&fit=crop&q=80",
+  "https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&auto=format&fit=crop&q=80",
+  "https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=800&auto=format&fit=crop&q=80"
+] as const
+
 const resolveRemoteImageAssetId = async (
   client: ReturnType<typeof createClient>,
   url: string,
@@ -825,6 +831,28 @@ const buildCareersTeamMarqueeImages = async (client: ReturnType<typeof createCli
     if (!assetId) continue
     images.push({
       _key: `careers-marquee-${index}`,
+      alt: "",
+      asset: { _type: "reference", _ref: assetId },
+    })
+    index += 1
+  }
+  return images.map((row) => ({
+    _key: row._key,
+    alt: row.alt,
+    _type: "image" as const,
+    asset: row.asset,
+  }))
+}
+
+const buildCareersLifeAtRelliaImages = async (client: ReturnType<typeof createClient>) => {
+  const images: Array<{ _key: string; alt: string; asset?: { _type: "reference"; _ref: string } }> = []
+  let index = 0
+  for (const url of CAREERS_LIFE_AT_RELLIA_URLS) {
+    const filename = `careers-life-at-rellia-${index + 1}.jpg`
+    const assetId = await resolveRemoteImageAssetId(client, url, filename)
+    if (!assetId) continue
+    images.push({
+      _key: `careers-life-at-rellia-${index}`,
       alt: "",
       asset: { _type: "reference", _ref: assetId },
     })
@@ -889,6 +917,7 @@ async function main() {
   const foundersLogoMarquee = await buildLogoMarqueeItems(client, PORTFOLIO_LOGO_MARKS)
   const investorsLogoMarquee = await buildLogoMarqueeItems(client, INVESTOR_BRAND_SVG_MARKS)
   const careersTeamMarqueeImages = await buildCareersTeamMarqueeImages(client)
+  const careersLifeAtRelliaImages = await buildCareersLifeAtRelliaImages(client)
 
   // Clear existing directory docs so seed is the source of truth.
   // These docs were originally created in Studio with random IDs, so deterministic seeding
@@ -1081,6 +1110,28 @@ async function main() {
       })),
       teamMarqueeImages:
         careersTeamMarqueeImages.length > 0 ? careersTeamMarqueeImages : undefined,
+      lifeAtRelliaHeading: "Life at Rellia",
+      lifeAtRelliaSubheading: "We are building a remote-first, high-standards health-tech company. Our team brings deep clinical, technical, and operational expertise to help founders transform care. We focus on outcome-oriented work, mutual support, and constant learning.",
+      lifeAtRelliaImages:
+        careersLifeAtRelliaImages.length > 0 ? careersLifeAtRelliaImages : undefined,
+      lifeAtRelliaLinks: [
+        {
+          _type: "lifeAtRelliaLink",
+          _key: "linkedin",
+          platformName: "LinkedIn",
+          url: "https://www.linkedin.com/company/rellia-health",
+          iconKey: "linkedin",
+          tooltip: "Follow us on LinkedIn",
+        },
+        {
+          _type: "lifeAtRelliaLink",
+          _key: "instagram",
+          platformName: "Instagram",
+          url: "https://www.instagram.com/relliahealth",
+          iconKey: "instagram",
+          tooltip: "Follow us on Instagram",
+        }
+      ],
       seo: seoForRoute("/careers"),
     },
   })

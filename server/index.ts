@@ -945,6 +945,104 @@ export function createServer() {
     message: z.string().trim().min(1).max(8000),
   });
 
+  const modalSubmitSchema = z.object({
+    name: z.string().trim().min(1).max(200),
+    email: z.string().trim().email().max(254),
+    source: z.string().trim().max(100).optional(),
+  });
+
+  app.post(
+    "/api/modal-submit",
+    rateLimitJson(contactRate, CONTACT_MAX_PER_MIN),
+    requireCsrfUnlessPresentation,
+    async (req, res) => {
+      if (!allowBrowserOrigin(req, previewAndSiteOrigins)) {
+        res.status(403).json({ error: "Forbidden" });
+        return;
+      }
+
+      const parsed = modalSubmitSchema.safeParse(req.body);
+      if (!parsed.success) {
+        res.status(400).json({
+          error: "Invalid request",
+          details: parsed.error.flatten(),
+        });
+        return;
+      }
+
+      const { name, email, source } = parsed.data;
+      const spaceIndex = name.indexOf(" ");
+      const firstName = spaceIndex > 0 ? name.slice(0, spaceIndex) : name;
+      const lastName = spaceIndex > 0 ? name.slice(spaceIndex + 1).trim() : ".";
+
+      const supabaseUrl = (
+        process.env.SUPABASE_URL ||
+        process.env.VITE_SUPABASE_URL ||
+        ""
+      )
+        .trim()
+        .replace(/\/$/, "");
+      const serviceRoleKey = (
+        process.env.SUPABASE_SERVICE_ROLE_KEY ||
+        process.env.SUPABASE_SECRET_KEY ||
+        process.env.SUPABASE_SERVICE_KEY ||
+        ""
+      ).trim();
+      const anonKey = (
+        process.env.VITE_SUPABASE_ANON_KEY ||
+        process.env.VITE_SUPABASE_PUBLISHABLE_KEY ||
+        process.env.SUPABASE_ANON_KEY ||
+        ""
+      ).trim();
+      const supabaseKey = serviceRoleKey || anonKey;
+
+      if (!supabaseUrl || !supabaseKey) {
+        res.status(501).json({
+          error: "Supabase integration is not configured on the server.",
+        });
+        return;
+      }
+
+      const row = {
+        first_name: firstName,
+        last_name: lastName,
+        email,
+        company: null,
+        job_title: null,
+        message: `Priority modal form submission. Source: ${source || "priority modal"}`,
+        submission_type: "modal",
+      };
+
+      try {
+        const insertRes = await fetch(
+          `${supabaseUrl}/rest/v1/contact_responses`,
+          {
+            method: "POST",
+            headers: {
+              apikey: supabaseKey,
+              Authorization: `Bearer ${supabaseKey}`,
+              "content-type": "application/json",
+              Prefer: "return=minimal",
+            },
+            body: JSON.stringify(row),
+          },
+        );
+
+        if (insertRes.ok) {
+          res.status(200).json({ ok: true });
+          return;
+        }
+
+        const errText = await insertRes.text();
+        console.error("Supabase modal insert failed", insertRes.status, errText);
+        res.status(502).json({ error: "Could not save your submission." });
+      } catch (err) {
+        console.error("Modal insert error", err);
+        res.status(502).json({ error: "Could not save your submission." });
+      }
+    },
+  );
+
   app.post(
     "/api/contact",
     rateLimitJson(contactRate, CONTACT_MAX_PER_MIN),
