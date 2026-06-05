@@ -1314,6 +1314,8 @@ async function main() {
               timelineSubtitle: DEFAULT_QMS_PROGRAM.timelineSubtitle,
               pricingBadge: DEFAULT_QMS_PROGRAM.pricingBadge,
               pricingAmount: DEFAULT_QMS_PROGRAM.pricingAmount,
+              pricingDiscountEnabled: DEFAULT_QMS_PROGRAM.pricingDiscountEnabled ?? false,
+              pricingCompareAmount: DEFAULT_QMS_PROGRAM.pricingCompareAmount ?? "",
               pricingSubAmount: DEFAULT_QMS_PROGRAM.pricingSubAmount,
               pricingDescription: DEFAULT_QMS_PROGRAM.pricingDescription,
               pricingBullets: DEFAULT_QMS_PROGRAM.pricingBullets,

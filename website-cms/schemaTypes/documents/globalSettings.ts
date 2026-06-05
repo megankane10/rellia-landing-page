@@ -167,6 +167,22 @@ export const globalSettings = defineType({
       group: 'popups',
       fieldset: 'priorityModalGroup',
     }),
+    defineField({
+      name: 'priorityModalSecondaryButtonLabel',
+      title: 'Secondary button label',
+      type: 'string',
+      description: 'Leave empty to hide the secondary button.',
+      group: 'popups',
+      fieldset: 'priorityModalGroup',
+    }),
+    defineField({
+      name: 'priorityModalSecondaryButtonLink',
+      title: 'Secondary button link',
+      type: 'string',
+      description: 'Internal path or full https URL.',
+      group: 'popups',
+      fieldset: 'priorityModalGroup',
+    }),
   ],
   preview: {
     prepare() {

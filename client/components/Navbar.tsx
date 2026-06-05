@@ -503,6 +503,8 @@ export default function Navbar({
         pillText={globalSettings.priorityModalPillText}
         buttonLabel={globalSettings.priorityModalButtonLabel}
         buttonLink={globalSettings.priorityModalButtonLink}
+        secondaryButtonLabel={globalSettings.priorityModalSecondaryButtonLabel}
+        secondaryButtonLink={globalSettings.priorityModalSecondaryButtonLink}
       />
 
       <AnnouncementModal

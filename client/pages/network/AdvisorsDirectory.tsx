@@ -77,18 +77,14 @@ function AdvisorCard({
       tabIndex={0}
       aria-label={`Open profile for ${advisor.name}`}
     >
-      <div className="relative aspect-video w-full overflow-hidden bg-gradient-to-br from-rellia-cream to-rellia-cream/40 shrink-0">
+      <div className="relative aspect-video w-full overflow-hidden bg-white border-b border-black/[0.05] shrink-0">
         <img
           src={advisor.photoSrc}
           alt=""
           className="h-full w-full object-cover object-top transition duration-500 ease-out group-hover:scale-[1.03] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
           loading="lazy"
         />
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-90"
-        />
-        <DirectoryCardTags tags={cardTags} variant="onPhoto" />
+        <DirectoryCardTags tags={cardTags} variant="onLight" />
       </div>
       <div className="flex flex-1 flex-col p-6 md:p-7">
         <h3 className="font-host-grotesk text-lg font-bold tracking-tight text-black group-hover:underline decoration-2 underline-offset-4">
