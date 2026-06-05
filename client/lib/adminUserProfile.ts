@@ -20,6 +20,7 @@ export const getAdminAvatarUrl = (user: User | null | undefined): string => {
     (typeof meta.picture === "string" && meta.picture) ||
     ""
   const val = raw.trim()
+  if (val === "removed") return ""
   if (val) return val
 
   // Fallback for Megan Kane if no avatar is explicitly uploaded

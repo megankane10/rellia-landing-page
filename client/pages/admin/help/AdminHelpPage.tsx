@@ -43,6 +43,16 @@ const WEBSITE_TOOLS = [
     description: "Source code and pull requests.",
   },
   {
+    href: "https://analytics.google.com/analytics/",
+    label: "Google Analytics 4",
+    description: "Monitor website traffic, visitor behavior, and conversion events.",
+  },
+  {
+    href: "https://search.google.com/search-console/performance",
+    label: "Google Search Console",
+    description: "Track search traffic, indexation status, and search visibility.",
+  },
+  {
     href: "https://relliahealth.com",
     label: "Public website",
     description: "Open the live marketing site.",
@@ -177,7 +187,7 @@ const AdminHelpPage = () => (
       </Card>
     </div>
 
-    <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+    <div className="w-full">
       <AdminTipBox
         title="Sign-in Help"
         icon={ShieldAlert}
@@ -187,25 +197,6 @@ const AdminHelpPage = () => (
         <p>
           If you cannot sign in or see an error message, try opening a private browsing window (Incognito mode) or refreshing your browser window. If your account has not been activated yet, ask a manager to resend your invitation email.
         </p>
-      </AdminTipBox>
-
-      <AdminTipBox
-        title="Inviting New Team Members"
-        icon={UserPlus}
-        storageKey="rellia-admin-signup-help-tip-collapsed"
-        className="rounded-2xl"
-      >
-        <div className="space-y-3">
-          <p>
-            To invite a new editor or administrator to the dashboard, go to the {routeBadge("/admin/team", "Team")} page and send an invitation link. For security, public registrations are turned off. If you need to enable temporary signup links, contact your technical administrator to turn on the registration setting in the environment panel.
-          </p>
-          <Button type="button" variant="outline" size="sm" asChild className="rounded-full bg-white/80 border-rellia-teal/20 text-rellia-teal hover:bg-rellia-mint/15">
-            <a href={VERCEL_ENV_URL} target="_blank" rel="noopener noreferrer">
-              Vercel environment variables
-              <ExternalLink className="ml-1.5 h-3.5 w-3.5" aria-hidden />
-            </a>
-          </Button>
-        </div>
       </AdminTipBox>
     </div>
 

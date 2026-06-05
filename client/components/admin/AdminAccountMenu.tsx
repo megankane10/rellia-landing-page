@@ -50,12 +50,19 @@ const AdminAccountMenu = () => {
 
   const displayName = getAdminDisplayName(user) || user?.email || "Admin"
   const initials = getAdminInitials(user)
-  const avatarSrc = avatarPreviewUrl || getAdminAvatarUrl(user)
+  
+  const avatarSrc = avatarPreviewUrl
+    ? avatarPreviewUrl
+    : avatarUrl === "removed"
+      ? ""
+      : avatarUrl || getAdminAvatarUrl(user)
+
+  const hasAvatar = Boolean(avatarPreviewUrl || (avatarUrl !== "removed" && (avatarUrl || getAdminAvatarUrl(user))))
 
   useEffect(() => {
     if (!profileOpen) return
     setFullName(getAdminDisplayName(user))
-    setAvatarUrl(getAdminAvatarUrl(user))
+    setAvatarUrl(user?.user_metadata?.[AVATAR_URL_KEY] ?? "")
     setPendingAvatarFile(null)
     setAvatarPreviewUrl(null)
     setError(null)
@@ -82,6 +89,15 @@ const AdminAccountMenu = () => {
     if (!file) return
     setPendingAvatarFile(file)
     setError(null)
+  }
+
+  const handleRemoveAvatar = () => {
+    setPendingAvatarFile(null)
+    setAvatarPreviewUrl(null)
+    setAvatarUrl("removed")
+    if (fileInputRef.current) {
+      fileInputRef.current.value = ""
+    }
   }
 
   const handleSaveProfile = async () => {
@@ -153,16 +169,29 @@ const AdminAccountMenu = () => {
                 className="sr-only"
                 onChange={handleAvatarFileChange}
               />
-              <Button
-                type="button"
-                variant="outline"
-                className="rounded-full"
-                onClick={() => fileInputRef.current?.click()}
-                disabled={saving || uploading}
-              >
-                <Upload className="mr-2 h-4 w-4" aria-hidden />
-                {pendingAvatarFile ? "Change photo" : "Upload photo"}
-              </Button>
+              <div className="flex flex-wrap gap-2 items-center">
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="rounded-full"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={saving || uploading}
+                >
+                  <Upload className="mr-2 h-4 w-4" aria-hidden />
+                  {pendingAvatarFile ? "Change photo" : "Upload photo"}
+                </Button>
+                {hasAvatar && (
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    className="rounded-full text-destructive hover:bg-destructive/10"
+                    onClick={handleRemoveAvatar}
+                    disabled={saving || uploading}
+                  >
+                    Remove
+                  </Button>
+                )}
+              </div>
               {pendingAvatarFile ? (
                 <p className="text-xs text-muted-foreground">{pendingAvatarFile.name}</p>
               ) : null}

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react"
-import { ChevronDown, ChevronUp, type LucideIcon } from "lucide-react"
+import { X, type LucideIcon } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 type AdminTipBoxProps = {
@@ -33,17 +33,18 @@ export default function AdminTipBox({
     }
   }, [storageKey])
 
-  const handleToggle = () => {
-    const nextState = !collapsed
-    setCollapsed(nextState)
+  const handleDismiss = () => {
+    setCollapsed(true)
     if (storageKey) {
       try {
-        localStorage.setItem(storageKey, String(nextState))
+        localStorage.setItem(storageKey, "true")
       } catch (e) {
         // Ignore storage errors
       }
     }
   }
+
+  if (collapsed) return null
 
   return (
     <div
@@ -65,19 +66,15 @@ export default function AdminTipBox({
 
         <button
           type="button"
-          onClick={handleToggle}
+          onClick={handleDismiss}
           className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-rellia-teal/10 bg-white/90 text-rellia-teal/80 transition-colors hover:bg-white hover:text-rellia-teal focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-teal/40"
-          aria-label={collapsed ? "Expand tip" : "Collapse tip"}
+          aria-label="Dismiss tip"
         >
-          {collapsed ? (
-            <ChevronDown className="h-4.5 w-4.5" />
-          ) : (
-            <ChevronUp className="h-4.5 w-4.5" />
-          )}
+          <X className="h-4.5 w-4.5" />
         </button>
       </div>
 
-      {!collapsed && children && (
+      {children && (
         <div className="mt-4 border-t border-rellia-teal/10 pt-4 font-urbanist text-sm leading-relaxed text-black/75">
           {children}
         </div>

@@ -274,12 +274,13 @@ const AdminOverviewPage = () => {
     const weaknessesCount: Record<string, number> = {}
 
     const responses = responsesQuery.data ?? []
-    responses.forEach((resp) => {
+    const filteredResponses = responses.filter((resp) => {
       const stage = profileStageMap.get(resp.company_profile_id)
-      if (selectedStage !== "all" && stage !== selectedStage) {
-        return
-      }
+      return selectedStage === "all" || stage === selectedStage
+    })
+    const totalResponses = filteredResponses.length
 
+    filteredResponses.forEach((resp) => {
       const strengths = resp.top3_strengths as any[] | null
       const weaknesses = resp.top3_weaknesses as any[] | null
 
@@ -302,12 +303,20 @@ const AdminOverviewPage = () => {
     const topStrengths = Object.entries(strengthsCount)
       .sort((a, b) => b[1] - a[1])
       .slice(0, 3)
-      .map(([category]) => category)
+      .map(([category, count]) => ({
+        category,
+        count,
+        pct: totalResponses > 0 ? Math.round((count / totalResponses) * 100) : 0,
+      }))
 
     const topWeaknesses = Object.entries(weaknessesCount)
       .sort((a, b) => b[1] - a[1])
       .slice(0, 3)
-      .map(([category]) => category)
+      .map(([category, count]) => ({
+        category,
+        count,
+        pct: totalResponses > 0 ? Math.round((count / totalResponses) * 100) : 0,
+      }))
 
     return { topStrengths, topWeaknesses }
   }, [responsesQuery.data, profileStageMap, selectedStage])
@@ -434,76 +443,55 @@ const AdminOverviewPage = () => {
         />
       </div>
 
-      <Card className="w-full rounded-2xl">
-        <CardHeader className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <CardTitle className="font-host-grotesk text-lg">Submissions by week</CardTitle>
-            <CardDescription className="font-urbanist">Daily web forms and startup diagnostics</CardDescription>
-          </div>
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => setWeekOffset((prev) => prev + 1)}
-              className="flex h-8 w-8 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-700 transition-colors hover:bg-slate-50 active:bg-slate-100 disabled:opacity-50"
-              aria-label="Previous week"
-            >
-              <ChevronLeft className="h-4 w-4" />
-            </button>
-            <span className="font-urbanist text-xs font-semibold text-slate-700 min-w-[130px] text-center">
-              {getWeekRangeLabel(weekOffset)}
-            </span>
-            <button
-              onClick={() => setWeekOffset((prev) => Math.max(0, prev - 1))}
-              disabled={weekOffset === 0}
-              className="flex h-8 w-8 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-700 transition-colors hover:bg-slate-50 active:bg-slate-100 disabled:opacity-50"
-              aria-label="Next week"
-            >
-              <ChevronRight className="h-4 w-4" />
-            </button>
-          </div>
-        </CardHeader>
-        <CardContent>
-          {loading ? (
-            <Skeleton className="h-[280px] w-full rounded-lg" />
-          ) : (
-            <ChartContainer config={trendChartConfig} className="h-[240px] w-full min-w-0 sm:h-[280px]">
-              <BarChart data={trend} margin={CHART_MARGIN}>
-                <CartesianGrid vertical={false} strokeDasharray="3 3" />
-                <XAxis dataKey="label" {...CHART_X_AXIS_PROPS} />
-                <YAxis allowDecimals={false} tickLine={false} axisLine={false} width={28} fontSize={11} />
-                <ChartTooltip content={<ChartTooltipContent />} />
-                <Bar dataKey="contacts" stackId="a" fill="var(--color-contacts)" radius={[0, 0, 0, 0]} />
-                <Bar dataKey="diagnostics" stackId="a" fill="var(--color-diagnostics)" radius={[4, 4, 0, 0]} />
-              </BarChart>
-            </ChartContainer>
-          )}
-        </CardContent>
-      </Card>
+      <div className="grid gap-4 lg:grid-cols-3">
+        {/* Submissions by week */}
+        <Card className="lg:col-span-2 rounded-2xl">
+          <CardHeader className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <CardTitle className="font-host-grotesk text-lg">Submissions by week</CardTitle>
+              <CardDescription className="font-urbanist text-xs">Daily web forms and startup diagnostics</CardDescription>
+            </div>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setWeekOffset((prev) => prev + 1)}
+                className="flex h-8 w-8 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-700 transition-colors hover:bg-slate-50 active:bg-slate-100 disabled:opacity-50"
+                aria-label="Previous week"
+              >
+                <ChevronLeft className="h-4 w-4" />
+              </button>
+              <span className="font-urbanist text-xs font-semibold text-slate-700 min-w-[130px] text-center">
+                {getWeekRangeLabel(weekOffset)}
+              </span>
+              <button
+                onClick={() => setWeekOffset((prev) => Math.max(0, prev - 1))}
+                disabled={weekOffset === 0}
+                className="flex h-8 w-8 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-700 transition-colors hover:bg-slate-50 active:bg-slate-100 disabled:opacity-50"
+                aria-label="Next week"
+              >
+                <ChevronRight className="h-4 w-4" />
+              </button>
+            </div>
+          </CardHeader>
+          <CardContent>
+            {loading ? (
+              <Skeleton className="h-[280px] w-full rounded-lg" />
+            ) : (
+              <ChartContainer config={trendChartConfig} className="h-[240px] w-full min-w-0 sm:h-[280px]">
+                <BarChart data={trend} margin={CHART_MARGIN}>
+                  <CartesianGrid vertical={false} strokeDasharray="3 3" />
+                  <XAxis dataKey="label" {...CHART_X_AXIS_PROPS} />
+                  <YAxis allowDecimals={false} tickLine={false} axisLine={false} width={28} fontSize={11} />
+                  <ChartTooltip content={<ChartTooltipContent />} />
+                  <Bar dataKey="contacts" stackId="a" fill="var(--color-contacts)" radius={[0, 0, 0, 0]} />
+                  <Bar dataKey="diagnostics" stackId="a" fill="var(--color-diagnostics)" radius={[4, 4, 0, 0]} />
+                </BarChart>
+              </ChartContainer>
+            )}
+          </CardContent>
+        </Card>
 
-      {/* Level Filter Dropdown */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-slate-50 border border-slate-100 p-4 rounded-2xl">
-        <div className="space-y-0.5">
-          <h3 className="font-host-grotesk font-bold text-sm text-slate-800">Filter Diagnostic Metrics</h3>
-          <p className="font-urbanist text-xs text-slate-500">Filter status breakdown and startup analysis by startup level.</p>
-        </div>
-        <div className="flex items-center gap-3">
-          <label htmlFor="stage-filter" className="font-urbanist text-xs font-semibold text-slate-600">Startup Level:</label>
-          <select
-            id="stage-filter"
-            value={selectedStage}
-            onChange={(e) => setSelectedStage(e.target.value)}
-            className="bg-white border border-slate-200 rounded-xl px-3 py-1.5 font-urbanist text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-rellia-teal"
-          >
-            <option value="all">All Levels</option>
-            {allStages.map((stage) => (
-              <option key={stage} value={stage}>{stage}</option>
-            ))}
-          </select>
-        </div>
-      </div>
-
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {/* Card 1: Submission Status */}
-        <Card className="rounded-2xl flex flex-col h-full">
+        <Card className="lg:col-span-1 rounded-2xl flex flex-col h-full">
           <CardHeader className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between pb-2">
             <div>
               <CardTitle className="font-host-grotesk text-base">Submission Status</CardTitle>
@@ -565,12 +553,26 @@ const AdminOverviewPage = () => {
             )}
           </CardContent>
         </Card>
+      </div>
 
+      <div className="grid gap-4 lg:grid-cols-3">
         {/* Card 2: Startup Level Distribution */}
-        <Card className="rounded-2xl flex flex-col h-full">
-          <CardHeader className="pb-2">
-            <CardTitle className="font-host-grotesk text-base">Startup Level Distribution</CardTitle>
-            <CardDescription className="font-urbanist text-xs">Breakdown of diagnostic survey stages</CardDescription>
+        <Card className="lg:col-span-1 rounded-2xl flex flex-col h-full">
+          <CardHeader className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between pb-2">
+            <div>
+              <CardTitle className="font-host-grotesk text-base">Level Distribution</CardTitle>
+              <CardDescription className="font-urbanist text-xs">Diagnostic survey stages</CardDescription>
+            </div>
+            <select
+              value={selectedStage}
+              onChange={(e) => setSelectedStage(e.target.value)}
+              className="bg-white border border-slate-200 rounded-xl px-2.5 py-1 font-urbanist text-xs font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-rellia-teal w-full sm:w-auto"
+            >
+              <option value="all">All Levels</option>
+              {allStages.map((stage) => (
+                <option key={stage} value={stage}>{stage}</option>
+              ))}
+            </select>
           </CardHeader>
           <CardContent className="flex-1 flex flex-col justify-center min-h-[180px] pb-6">
             {loading ? (
@@ -614,48 +616,68 @@ const AdminOverviewPage = () => {
         </Card>
 
         {/* Card 3: Top Strengths & Growth Gaps */}
-        <Card className="rounded-2xl h-full flex flex-col">
+        <Card className="lg:col-span-2 rounded-2xl h-full flex flex-col">
           <CardHeader className="pb-2">
             <CardTitle className="font-host-grotesk text-base">Strengths & Weaknesses</CardTitle>
-            <CardDescription className="font-urbanist text-xs">Top capabilities and growth gaps</CardDescription>
+            <CardDescription className="font-urbanist text-xs">Top capabilities and growth gaps based on diagnostic responses</CardDescription>
           </CardHeader>
-          <CardContent className="flex-1 flex flex-col justify-between gap-3 pt-2">
-            <div className="rounded-xl bg-emerald-50/20 border border-emerald-100/40 p-2.5 flex-1 flex flex-col justify-center">
-              <div className="flex items-center gap-1.5 mb-1.5">
-                <TrendingUp className="h-3.5 w-3.5 text-emerald-600" />
+          <CardContent className="flex-1 flex flex-col md:flex-row gap-4 pt-2">
+            <div className="rounded-xl bg-emerald-50/20 border border-emerald-100/40 p-4 flex-1 flex flex-col justify-center">
+              <div className="flex items-center gap-1.5 mb-3">
+                <TrendingUp className="h-4 w-4 text-emerald-600" />
                 <p className="font-host-grotesk text-xs font-bold text-emerald-950">Key Strengths</p>
               </div>
               {responsesQuery.isLoading ? (
-                <Skeleton className="h-6 w-full" />
+                <Skeleton className="h-24 w-full" />
               ) : textStats.topStrengths.length === 0 ? (
-                <p className="font-urbanist text-[11px] text-muted-foreground">No data reported.</p>
+                <p className="font-urbanist text-xs text-muted-foreground">No data reported.</p>
               ) : (
-                <div className="flex flex-col gap-1.5">
-                  {textStats.topStrengths.map((s, idx) => (
-                    <div key={s} className="flex items-center gap-1.5 font-urbanist text-[11px] text-emerald-800 bg-white border border-emerald-100/40 rounded-lg px-2 py-0.5 shadow-sm">
-                      <span className="font-bold text-emerald-600/70">#{idx + 1}</span>
-                      <span className="font-medium truncate">{s}</span>
+                <div className="flex flex-col gap-3">
+                  {textStats.topStrengths.map((s) => (
+                    <div key={s.category} className="space-y-1">
+                      <div className="flex justify-between items-center text-xs font-urbanist">
+                        <span className="font-bold text-emerald-900 truncate max-w-[70%]">{s.category}</span>
+                        <span className="text-emerald-700 font-semibold shrink-0">
+                          {s.count} {s.count === 1 ? 'startup' : 'startups'} ({s.pct}%)
+                        </span>
+                      </div>
+                      <div className="h-2 w-full bg-slate-100/80 rounded-full overflow-hidden">
+                        <div 
+                          className="h-full bg-emerald-500 rounded-full transition-all duration-500" 
+                          style={{ width: `${s.pct}%` }} 
+                        />
+                      </div>
                     </div>
                   ))}
                 </div>
               )}
             </div>
 
-            <div className="rounded-xl bg-amber-50/20 border border-amber-100/40 p-2.5 flex-1 flex flex-col justify-center">
-              <div className="flex items-center gap-1.5 mb-1.5">
-                <AlertCircle className="h-3.5 w-3.5 text-amber-600" />
+            <div className="rounded-xl bg-amber-50/20 border border-amber-100/40 p-4 flex-1 flex flex-col justify-center">
+              <div className="flex items-center gap-1.5 mb-3">
+                <AlertCircle className="h-4 w-4 text-amber-600" />
                 <p className="font-host-grotesk text-xs font-bold text-amber-950">Top Growth Gaps</p>
               </div>
               {responsesQuery.isLoading ? (
-                <Skeleton className="h-6 w-full" />
+                <Skeleton className="h-24 w-full" />
               ) : textStats.topWeaknesses.length === 0 ? (
-                <p className="font-urbanist text-[11px] text-muted-foreground">No data reported.</p>
+                <p className="font-urbanist text-xs text-muted-foreground">No data reported.</p>
               ) : (
-                <div className="flex flex-col gap-1.5">
-                  {textStats.topWeaknesses.map((w, idx) => (
-                    <div key={w} className="flex items-center gap-1.5 font-urbanist text-[11px] text-amber-900 bg-white border border-amber-100/40 rounded-lg px-2 py-0.5 shadow-sm">
-                      <span className="font-bold text-amber-600/70">#{idx + 1}</span>
-                      <span className="font-medium truncate">{w}</span>
+                <div className="flex flex-col gap-3">
+                  {textStats.topWeaknesses.map((w) => (
+                    <div key={w.category} className="space-y-1">
+                      <div className="flex justify-between items-center text-xs font-urbanist">
+                        <span className="font-bold text-amber-950 truncate max-w-[70%]">{w.category}</span>
+                        <span className="text-amber-700 font-semibold shrink-0">
+                          {w.count} {w.count === 1 ? 'startup' : 'startups'} ({w.pct}%)
+                        </span>
+                      </div>
+                      <div className="h-2 w-full bg-slate-100/80 rounded-full overflow-hidden">
+                        <div 
+                          className="h-full bg-amber-500 rounded-full transition-all duration-500" 
+                          style={{ width: `${w.pct}%` }} 
+                        />
+                      </div>
                     </div>
                   ))}
                 </div>
