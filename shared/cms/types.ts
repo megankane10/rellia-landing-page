@@ -386,6 +386,8 @@ export type GlobalSettingsContent = {
   priorityModalPillText?: string
   priorityModalButtonLabel?: string
   priorityModalButtonLink?: string
+  priorityModalSecondaryButtonLabel?: string
+  priorityModalSecondaryButtonLink?: string
   priorityModalImageUrl?: string
   priorityModalImageAlt?: string
 }

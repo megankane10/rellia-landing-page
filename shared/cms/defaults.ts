@@ -1320,6 +1320,8 @@ export const DEFAULT_GLOBAL_SETTINGS: GlobalSettingsContent = {
   priorityModalPillText: "ANNOUNCEMENT",
   priorityModalButtonLabel: "Explore Programs",
   priorityModalButtonLink: "/programs",
+  priorityModalSecondaryButtonLabel: "Learn More",
+  priorityModalSecondaryButtonLink: "/about",
 }
 
 export const DEFAULT_HOME_PAGE: HomePageContent = {
@@ -2196,6 +2198,8 @@ export const DEFAULT_QMS_PROGRAM: QmsProgramContent = {
   timelineSubtitle: "A structured journey through the key requirements for a successful QMS",
   pricingBadge: "Monthly subscription",
   pricingAmount: "$2000",
+  pricingDiscountEnabled: true,
+  pricingCompareAmount: "$3,000",
   pricingSubAmount: ".00",
   pricingDescription:
     "Join the only program designed to help you implement an audit-ready Quality Management System without the headaches.",
@@ -2269,10 +2273,10 @@ export const DEFAULT_PAYMENT_PAGE: PaymentPageContent = {
   pricingAnnualBadge: "",
   pricingMonthlyAmount: "$30",
   pricingAnnualAmount: "$25",
-  pricingMonthlyDiscountEnabled: false,
-  pricingMonthlyCompareAmount: "",
-  pricingAnnualDiscountEnabled: false,
-  pricingAnnualCompareAmount: "",
+  pricingMonthlyDiscountEnabled: true,
+  pricingMonthlyCompareAmount: "$50",
+  pricingAnnualDiscountEnabled: true,
+  pricingAnnualCompareAmount: "$40",
   benefitsPanelHeadline: "Join the network today",
   choosePlanHeadline: "Choose your plan",
   promoPillEnabled: true,
