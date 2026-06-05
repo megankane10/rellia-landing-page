@@ -76,7 +76,7 @@ export const PriorityAnnouncementModal = ({
 
           <div className="mb-4 flex w-full items-center justify-between gap-4">
             {showPill ? (
-              <span className="inline-flex items-center rounded-full border border-rellia-teal/25 bg-rellia-mint/30 px-3 py-1 font-urbanist text-[11px] font-bold uppercase tracking-[0.14em] text-rellia-teal">
+              <span className="inline-flex items-center rounded-full border border-rellia-teal/25 bg-rellia-mint/30 px-3 py-1 font-urbanist text-[11px] font-extrabold uppercase tracking-[0.14em] text-rellia-teal">
                 {pillText}
               </span>
             ) : (
