@@ -298,6 +298,4 @@ export const deskStructure = (S: StructureBuilder) =>
       peopleGroup(S),
       S.divider(),
       supportPanel(S),
-      S.divider(),
-      ...S.documentTypeListItems().filter((item) => !HIDDEN_FROM_CATCH_ALL.has(item.getId() || '')),
     ])

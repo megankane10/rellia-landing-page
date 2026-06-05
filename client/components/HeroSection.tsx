@@ -5,6 +5,8 @@ import { ArrowRight } from "lucide-react"
 import RelliaAction from "@/components/RelliaAction"
 import { motion, useReducedMotion } from "framer-motion"
 import { cn } from "@/lib/utils"
+import { splitStega, isVisualEditingPreview } from "@/lib/cmsStega"
+
 
 /** Stagger timing must stay in sync with `headlineBelowFoldDelayMs` below */
 const HEADLINE_STAGGER_CHILDREN_S = 0.15
@@ -46,13 +48,18 @@ type HeroSectionProps = {
 export default function HeroSection({ content }: HeroSectionProps) {
   const navigate = useNavigate()
   const reduceMotion = useReducedMotion()
-  const [showBelowFold, setShowBelowFold] = useState(reduceMotion)
+  const isPreview = isVisualEditingPreview()
+  const [showBelowFold, setShowBelowFold] = useState(reduceMotion || isPreview)
 
   const heroVideoSrc =
     content.heroBackgroundVideoUrl?.trim() || DEFAULT_HERO_VIDEO_SRC
 
+  const { cleaned: cleanHeadline, encoded: headlineStega } = useMemo(() => {
+    return splitStega(content.headlinePrefix ?? "You are the future of health tech.")
+  }, [content.headlinePrefix])
+
   const headlineLines = useMemo(() => {
-    const words = (content.headlinePrefix ?? "You are the future of health tech.").trim().split(/\s+/).filter(Boolean)
+    const words = cleanHeadline.trim().split(/\s+/).filter(Boolean)
     const lines: string[][] = [[]]
     words.forEach((w) => {
       lines[lines.length - 1].push(w)
@@ -61,17 +68,17 @@ export default function HeroSection({ content }: HeroSectionProps) {
       }
     })
     return lines.filter((l) => l.length > 0)
-  }, [content.headlinePrefix])
+  }, [cleanHeadline])
 
   useEffect(() => {
-    if (reduceMotion) {
+    if (reduceMotion || isPreview) {
       setShowBelowFold(true)
       return
     }
     const ms = headlineBelowFoldDelayMs(headlineLines.length)
     const t = window.setTimeout(() => setShowBelowFold(true), ms)
     return () => window.clearTimeout(t)
-  }, [reduceMotion, headlineLines.length])
+  }, [reduceMotion, isPreview, headlineLines.length])
 
   const headlineContainerVariants = {
     hidden: {},
@@ -146,6 +153,7 @@ export default function HeroSection({ content }: HeroSectionProps) {
                   <span key={`mobile-word-${wIdx}`}>{word}</span>
                 ))}
               </motion.span>
+              {headlineStega ? <span className="hidden" aria-hidden="true">{headlineStega}</span> : null}
             </motion.h1>
 
             {/* Desktop-only split-line headline with animations */}
@@ -170,6 +178,7 @@ export default function HeroSection({ content }: HeroSectionProps) {
                   </motion.span>
                 </div>
               ))}
+              {headlineStega ? <span className="hidden" aria-hidden="true">{headlineStega}</span> : null}
             </motion.h1>
           </div>
 

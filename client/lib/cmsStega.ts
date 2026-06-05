@@ -21,3 +21,19 @@ export const cmsDisplayText = (value: string | null | undefined): string => {
 /** Safe trim for logic (filters, href checks) — always uses clean text. */
 export const cmsCleanText = (value: string | null | undefined): string =>
   stegaClean(value ?? "").trim()
+
+/**
+ * Splits a stega-encoded string into cleaned text and its encoded stega metadata.
+ * Useful when stega characters interfere with layout/CSS (e.g. negative letter-spacing)
+ * or string manipulation (like splitting words), allowing you to render the cleaned text
+ * and put the encoded metadata in a hidden span to preserve click-to-edit.
+ */
+export const splitStega = (
+  value: string | null | undefined,
+): { cleaned: string; encoded: string } => {
+  const original = value ?? ""
+  const cleaned = stegaClean(original)
+  const encoded = original.slice(cleaned.length)
+  return { cleaned, encoded }
+}
+

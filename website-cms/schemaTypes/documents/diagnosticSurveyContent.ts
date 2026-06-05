@@ -15,15 +15,6 @@ export const diagnosticSurveyContent = defineType({
   ],
   fields: [
     defineField({
-      name: 'introNote',
-      type: 'text',
-      rows: 2,
-      readOnly: true,
-      group: 'questions',
-      initialValue:
-        'Section IDs and question order must match the live survey. Edit labels and descriptions only.',
-    }),
-    defineField({
       name: 'sections',
       title: 'Survey sections',
       type: 'array',
