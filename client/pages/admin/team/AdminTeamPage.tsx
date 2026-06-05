@@ -109,9 +109,20 @@ const AdminTeamPage = () => {
         storageKey="rellia-admin-team-tip-collapsed"
         className="w-full"
       >
-        <p className="font-urbanist text-sm text-black/70 leading-relaxed mb-4">
-          Invite colleagues from Supabase Auth to grant dashboard access. To allow new registrations via the signup page, toggle the <code className="text-xs font-semibold text-rellia-teal bg-rellia-mint/10 px-1 py-0.5 rounded">ADMIN_SIGNUP_ENABLED</code> environment variable to <code className="text-xs font-semibold text-rellia-teal bg-rellia-mint/10 px-1 py-0.5 rounded">true</code> in Vercel settings and remember to disable it after use.
-        </p>
+        <div className="font-urbanist text-sm text-black/70 leading-relaxed space-y-3 mb-5">
+          <div className="flex items-start gap-2">
+            <span className="font-bold text-rellia-teal shrink-0 mt-0.5">•</span>
+            <p>
+              <strong>Invite Admin User:</strong> Invite colleagues directly via Supabase Auth to grant dashboard access. <em>Note: Supabase Auth has a default limit of 3 email invitations per day.</em>
+            </p>
+          </div>
+          <div className="flex items-start gap-2">
+            <span className="font-bold text-rellia-teal shrink-0 mt-0.5">•</span>
+            <p>
+              <strong>Enable Signup:</strong> Alternatively, users can register themselves via <Link to="/admin/signup" className="text-rellia-teal font-semibold hover:underline">the signup page</Link>. To allow this, toggle the <code className="text-xs font-semibold text-rellia-teal bg-rellia-mint/10 px-1 py-0.5 rounded">ADMIN_SIGNUP_ENABLED</code> environment variable to <code className="text-xs font-semibold text-rellia-teal bg-rellia-mint/10 px-1 py-0.5 rounded">true</code> in Vercel settings and remember to disable it after use.
+            </p>
+          </div>
+        </div>
         <div className="grid gap-4 sm:grid-cols-2 mt-4">
           <a
             href="https://supabase.com/dashboard/project/agsvypnmlrvpbgrsxtqy/auth/users"

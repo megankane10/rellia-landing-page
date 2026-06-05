@@ -515,7 +515,7 @@ export default function Careers() {
                     Built by healthtech insiders, for builders
                   </h2>
                   <p className="mt-4 font-urbanist text-lg text-black/60 leading-relaxed max-w-xl">
-                    We are building a remote-first, high-standards healthtech company. Our team brings deep clinical, technical, and operational expertise to help founders transform care. We focus on outcome-oriented work, mutual support, and constant learning.
+                    We are a remote-first, high-standards team of builders, clinicians, and operators dedicated to supporting healthtech founders. We cultivate an environment of high autonomy, rapid iteration, and deep clinical empathy to build the future of care.
                   </p>
                   
                   {/* Socials / proofs container */}

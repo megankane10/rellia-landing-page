@@ -31,25 +31,25 @@ const whyFeatures: HomeWhyFeature[] = [
     iconKey: "",
     title: "12 Scored Domains",
     description: "Every critical health tech domain is assessed, from clinical evidence to quality management and unit economics.",
-    imageSrc: "https://images.pexels.com/photos/3130634/pexels-photo-3130634.jpeg?auto=compress&cs=tinysrgb&w=1200"
+    imageSrc: "https://images.pexels.com/photos/590016/pexels-photo-590016.jpeg?auto=compress&cs=tinysrgb&w=1200" // domains (business metrics/graphs)
   },
   {
     iconKey: "",
     title: "AI-Powered Analysis",
     description: "Identify your top 3 strengths and priority gaps instantly. Detailed reports and gap analyses are exclusive to Rellia members.",
-    imageSrc: "https://images.pexels.com/photos/1585314/pexels-photo-1585314.jpeg?auto=compress&cs=tinysrgb&w=1200"
+    imageSrc: "https://images.pexels.com/photos/3182811/pexels-photo-3182811.jpeg?auto=compress&cs=tinysrgb&w=1200" // AI analysis (team collaborating on dashboard data)
   },
   {
     iconKey: "",
     title: "Advisor Matching",
     description: "Members are automatically matched and introduced to pre-vetted advisors based on their startup's gap profile.",
-    imageSrc: "https://images.pexels.com/photos/1287145/pexels-photo-1287145.jpeg?auto=compress&cs=tinysrgb&w=1200"
+    imageSrc: "https://images.pexels.com/photos/3182761/pexels-photo-3182761.jpeg?auto=compress&cs=tinysrgb&w=1200" // advisor matching (mentorship consultation)
   },
   {
     iconKey: "",
     title: "Founding Membership",
     description: "Get early access to exclusive networking sessions, peer mentorship, and dedicated resources from day one.",
-    imageSrc: "https://images.pexels.com/photos/1445416/pexels-photo-1445416.jpeg?auto=compress&cs=tinysrgb&w=1200"
+    imageSrc: "https://images.pexels.com/photos/5668858/pexels-photo-5668858.jpeg?auto=compress&cs=tinysrgb&w=1200" // founding membership (partnership/handshake)
   }
 ];
 

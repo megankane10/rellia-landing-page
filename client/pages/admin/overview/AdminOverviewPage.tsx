@@ -46,6 +46,10 @@ const trendChartConfig = {
   diagnostics: { label: "Diagnostics", color: CHART_COLORS.diagnostics },
 }
 
+const stageChartConfig = {
+  count: { label: "Startups", color: CHART_COLORS.contacts },
+}
+
 const CHART_X_AXIS_PROPS = {
   tickLine: false as const,
   axisLine: false as const,
@@ -227,6 +231,13 @@ const AdminOverviewPage = () => {
     return counts
   }, [diagnostics])
 
+  const stageChartData = useMemo(() => {
+    return Object.entries(stageCounts).map(([stage, count]) => ({
+      stage,
+      count,
+    }))
+  }, [stageCounts])
+
   const textStats = useMemo(() => {
     const strengthsCount: Record<string, number> = {}
     const weaknessesCount: Record<string, number> = {}
@@ -373,7 +384,7 @@ const AdminOverviewPage = () => {
           loading={loading}
         />
         <StatCard
-          label="Submissions by week"
+          label="Submissions this week"
           value={weekCount}
           changePct={weekChangePct}
           changeCompare="vs prior 7 days"
@@ -430,7 +441,7 @@ const AdminOverviewPage = () => {
         <Card className="rounded-2xl">
           <CardHeader className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <CardTitle className="font-host-grotesk text-lg">Status breakdown</CardTitle>
+              <CardTitle className="font-host-grotesk text-lg">Submission Status</CardTitle>
               <CardDescription className="font-urbanist">Distribution across New, In progress, and Resolved</CardDescription>
             </div>
             <div className="flex gap-1 border border-slate-100 bg-slate-50/50 p-1 rounded-xl w-fit">
@@ -459,45 +470,33 @@ const AdminOverviewPage = () => {
                 <p className="font-urbanist text-sm text-muted-foreground">No submissions found for this filter.</p>
               </div>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-[1.1fr_0.9fr] gap-4 items-center">
-                <div className="h-[200px] w-full flex items-center justify-center">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <PieChart>
-                      <Pie
-                        data={statusRows.filter((r) => r.value > 0)}
-                        cx="50%"
-                        cy="50%"
-                        innerRadius={50}
-                        outerRadius={70}
-                        paddingAngle={3}
-                        dataKey="value"
-                      >
-                        {statusRows.filter((r) => r.value > 0).map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={entry.fill} />
-                        ))}
-                      </Pie>
-                      <Tooltip
-                        formatter={(value: any, name: any) => [`${value} (${statusRows.find(r => r.name === name)?.pct}%)`, name]}
-                        contentStyle={{ borderRadius: "12px", border: "1px solid rgba(0,0,0,0.08)", boxShadow: "0 10px 30px rgba(0,0,0,0.06)", fontFamily: "Urbanist" }}
-                      />
-                    </PieChart>
-                  </ResponsiveContainer>
-                </div>
-                <div className="space-y-2.5">
-                  <div className="rounded-xl border border-slate-100 bg-slate-50/50 p-2.5">
-                    <p className="font-urbanist text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">Total Submissions</p>
-                    <p className="font-host-grotesk text-xl font-bold text-slate-900 mt-0.5">{totalStatusCount}</p>
-                  </div>
-                  <div className="flex gap-2">
-                    <div className="flex-1 rounded-xl border border-[#ccfbf1]/30 bg-[#ccfbf1]/10 p-2">
-                      <p className="font-urbanist text-[9px] text-[#0f766e] uppercase tracking-wider font-bold">New</p>
-                      <p className="font-host-grotesk text-base font-bold text-[#0f766e] mt-0.5">{newCount}</p>
-                    </div>
-                    <div className="flex-1 rounded-xl border border-emerald-100/30 bg-emerald-50/10 p-2">
-                      <p className="font-urbanist text-[9px] text-emerald-700 uppercase tracking-wider font-bold">Resolved</p>
-                      <p className="font-host-grotesk text-base font-bold text-emerald-700 mt-0.5">{resolvedCount}</p>
-                    </div>
-                  </div>
+              <div className="relative h-[220px] w-full flex items-center justify-center">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={statusRows.filter((r) => r.value > 0)}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={55}
+                      outerRadius={70}
+                      paddingAngle={3}
+                      dataKey="value"
+                    >
+                      {statusRows.filter((r) => r.value > 0).map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.fill} />
+                      ))}
+                    </Pie>
+                    <Tooltip
+                      formatter={(value: any, name: any) => [`${value} (${statusRows.find(r => r.name === name)?.pct}%)`, name]}
+                      contentStyle={{ borderRadius: "12px", border: "1px solid rgba(0,0,0,0.08)", boxShadow: "0 10px 30px rgba(0,0,0,0.06)", fontFamily: "Urbanist" }}
+                    />
+                  </PieChart>
+                </ResponsiveContainer>
+                
+                {/* Centered count inside donut hole */}
+                <div className="absolute flex flex-col items-center justify-center text-center pointer-events-none">
+                  <span className="font-urbanist text-[11px] text-slate-500 uppercase tracking-wider font-semibold">Total</span>
+                  <span className="font-host-grotesk text-2xl font-bold text-slate-800 leading-none mt-1">{totalStatusCount}</span>
                 </div>
               </div>
             )}
@@ -511,40 +510,53 @@ const AdminOverviewPage = () => {
             </CardTitle>
             <CardDescription className="font-urbanist">Diagnostics analysis and startup levels</CardDescription>
           </CardHeader>
-          <CardContent className="space-y-5">
+          <CardContent>
             {loading ? (
               <Skeleton className="h-[220px] w-full rounded-xl" />
             ) : (
-              <>
+              <div className="grid grid-cols-1 lg:grid-cols-[1.15fr_0.85fr] gap-6 items-start">
+                {/* Left side: Levels chart */}
                 <div className="space-y-3">
                   <p className="font-host-grotesk text-sm font-semibold text-foreground">Startup Levels Distribution</p>
-                  {Object.keys(stageCounts).length === 0 ? (
-                    <p className="font-urbanist text-xs text-muted-foreground">No level data available.</p>
+                  {stageChartData.length === 0 ? (
+                    <p className="font-urbanist text-xs text-muted-foreground py-10">No level data available.</p>
                   ) : (
-                    <div className="grid gap-3 sm:grid-cols-2">
-                      {Object.entries(stageCounts).map(([stage, count]) => {
-                        const total = diagnostics.length
-                        const pct = total > 0 ? Math.round((count / total) * 100) : 0
-                        return (
-                          <div key={stage} className="rounded-xl border border-slate-100 bg-slate-50/50 p-3 flex flex-col justify-between shadow-sm">
-                            <div className="flex items-center justify-between text-xs font-urbanist">
-                              <span className="font-semibold text-slate-700">{stage}</span>
-                              <span className="font-bold text-slate-900">{count} {count === 1 ? "startup" : "startups"} ({pct}%)</span>
-                            </div>
-                            <div className="mt-2 h-1.5 w-full rounded-full bg-slate-200/60 overflow-hidden">
-                              <div
-                                className="h-full rounded-full bg-rellia-teal transition-all duration-500"
-                                style={{ width: `${pct}%` }}
-                              />
-                            </div>
-                          </div>
-                        )
-                      })}
-                    </div>
+                    <ChartContainer config={stageChartConfig} className="h-[240px] w-full min-w-0">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <BarChart
+                          data={stageChartData}
+                          layout="vertical"
+                          margin={{ top: 5, right: 15, left: -10, bottom: 5 }}
+                        >
+                          <CartesianGrid strokeDasharray="3 3" horizontal={false} />
+                          <XAxis type="number" allowDecimals={false} hide />
+                          <YAxis
+                            dataKey="stage"
+                            type="category"
+                            tickLine={false}
+                            axisLine={false}
+                            width={110}
+                            fontSize={10}
+                            className="font-urbanist text-slate-700"
+                          />
+                          <Tooltip
+                            content={<ChartTooltipContent />}
+                            cursor={{ fill: "transparent" }}
+                          />
+                          <Bar
+                            dataKey="count"
+                            fill="var(--color-count)"
+                            radius={[0, 4, 4, 0]}
+                            barSize={18}
+                          />
+                        </BarChart>
+                      </ResponsiveContainer>
+                    </ChartContainer>
                   )}
                 </div>
 
-                <div className="grid gap-4 border-t border-border pt-5 sm:grid-cols-2">
+                {/* Right side: Strengths & Gaps lists */}
+                <div className="space-y-4 w-full">
                   <div className="rounded-2xl bg-emerald-50/30 border border-emerald-100/50 p-4 shadow-inner">
                     <div className="flex items-center gap-2 mb-3">
                       <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-emerald-100 text-emerald-700 shadow-sm">
@@ -591,96 +603,7 @@ const AdminOverviewPage = () => {
                     )}
                   </div>
                 </div>
-
-                {/* Pie charts for strengths and gaps */}
-                <div className="grid gap-6 border-t border-border pt-5 sm:grid-cols-2">
-                  <div className="flex flex-col items-center">
-                    <p className="font-host-grotesk text-sm font-semibold text-slate-800 mb-2">Strengths by Domain</p>
-                    {responsesQuery.isLoading ? (
-                      <Skeleton className="h-[160px] w-full rounded-xl" />
-                    ) : strengthsPieData.length === 0 ? (
-                      <p className="font-urbanist text-xs text-muted-foreground py-10">No data available.</p>
-                    ) : (
-                      <>
-                        <div className="h-[140px] w-full relative">
-                          <ResponsiveContainer width="100%" height="100%">
-                            <PieChart>
-                              <Pie
-                                data={strengthsPieData}
-                                cx="50%"
-                                cy="50%"
-                                innerRadius={35}
-                                outerRadius={55}
-                                paddingAngle={2}
-                                dataKey="value"
-                              >
-                                {strengthsPieData.map((entry, index) => (
-                                  <Cell key={`cell-${index}`} fill={entry.fill} />
-                                ))}
-                              </Pie>
-                              <Tooltip
-                                contentStyle={{ borderRadius: "12px", border: "1px solid rgba(0,0,0,0.08)", boxShadow: "0 10px 30px rgba(0,0,0,0.06)", fontFamily: "Urbanist" }}
-                              />
-                            </PieChart>
-                          </ResponsiveContainer>
-                        </div>
-                        <div className="mt-2 flex flex-wrap gap-1.5 justify-center max-h-24 overflow-y-auto w-full px-1">
-                          {strengthsPieData.map((d) => (
-                            <span key={d.name} className="inline-flex items-center gap-1 text-[9px] font-urbanist font-medium text-slate-600 bg-slate-50 border border-slate-100 rounded-md px-1.5 py-0.5 shadow-sm">
-                              <span className="h-1.5 w-1.5 rounded-full shrink-0" style={{ backgroundColor: d.fill }} />
-                              <span className="truncate max-w-[80px]">{d.name}</span>
-                              <span className="text-slate-400 font-bold">({d.value})</span>
-                            </span>
-                          ))}
-                        </div>
-                      </>
-                    )}
-                  </div>
-
-                  <div className="flex flex-col items-center border-t pt-5 sm:border-t-0 sm:pt-0 sm:border-l sm:pl-6 border-slate-100">
-                    <p className="font-host-grotesk text-sm font-semibold text-slate-800 mb-2">Gaps by Domain</p>
-                    {responsesQuery.isLoading ? (
-                      <Skeleton className="h-[160px] w-full rounded-xl" />
-                    ) : gapsPieData.length === 0 ? (
-                      <p className="font-urbanist text-xs text-muted-foreground py-10">No data available.</p>
-                    ) : (
-                      <>
-                        <div className="h-[140px] w-full relative">
-                          <ResponsiveContainer width="100%" height="100%">
-                            <PieChart>
-                              <Pie
-                                data={gapsPieData}
-                                cx="50%"
-                                cy="50%"
-                                innerRadius={35}
-                                outerRadius={55}
-                                paddingAngle={2}
-                                dataKey="value"
-                              >
-                                {gapsPieData.map((entry, index) => (
-                                  <Cell key={`cell-${index}`} fill={entry.fill} />
-                                ))}
-                              </Pie>
-                              <Tooltip
-                                contentStyle={{ borderRadius: "12px", border: "1px solid rgba(0,0,0,0.08)", boxShadow: "0 10px 30px rgba(0,0,0,0.06)", fontFamily: "Urbanist" }}
-                              />
-                            </PieChart>
-                          </ResponsiveContainer>
-                        </div>
-                        <div className="mt-2 flex flex-wrap gap-1.5 justify-center max-h-24 overflow-y-auto w-full px-1">
-                          {gapsPieData.map((d) => (
-                            <span key={d.name} className="inline-flex items-center gap-1 text-[9px] font-urbanist font-medium text-slate-600 bg-slate-50 border border-slate-100 rounded-md px-1.5 py-0.5 shadow-sm">
-                              <span className="h-1.5 w-1.5 rounded-full shrink-0" style={{ backgroundColor: d.fill }} />
-                              <span className="truncate max-w-[80px]">{d.name}</span>
-                              <span className="text-slate-400 font-bold">({d.value})</span>
-                            </span>
-                          ))}
-                        </div>
-                      </>
-                    )}
-                  </div>
-                </div>
-              </>
+              </div>
             )}
           </CardContent>
         </Card>

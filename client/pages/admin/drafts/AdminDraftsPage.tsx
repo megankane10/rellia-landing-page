@@ -89,8 +89,8 @@ const AdminDraftsPage = () => {
               Drafts live inside a specific Sanity dataset. Switch datasets to see unpublished work that will affect the staging site (preview) vs the live site (production).
             </p>
           </AdminTipBox>
-          <div className="mb-6 h-auto w-full max-w-md bg-transparent p-0">
-            <div className="grid w-full grid-cols-2 gap-2" role="tablist" aria-label="Sanity dataset">
+          <div className="mb-6 h-[48px] w-full bg-slate-100/80 p-1 rounded-2xl border border-black/5 shadow-sm max-w-none">
+            <div className="grid w-full grid-cols-2 h-full items-center" role="tablist" aria-label="Sanity dataset">
               {ADMIN_SANITY_DATASET_TABS.map((tab) => (
                 <button
                   key={tab.id}
@@ -99,11 +99,10 @@ const AdminDraftsPage = () => {
                   aria-selected={dataset === tab.id}
                   onClick={() => handleDatasetChange(tab.id)}
                   className={cn(
-                    "w-full rounded-xl px-4 py-2.5 font-urbanist text-sm font-semibold transition-all text-center",
-                    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                    "w-full h-full rounded-xl px-4 py-2 font-urbanist text-sm font-bold transition-all duration-200 text-center flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
                     dataset === tab.id
-                      ? "bg-rellia-teal text-white shadow-sm"
-                      : "bg-slate-100 text-slate-700 hover:bg-slate-200",
+                      ? "bg-white text-rellia-teal shadow-[0_4px_12px_rgba(0,0,0,0.06)] border border-black/5"
+                      : "text-slate-600 hover:text-slate-900 bg-transparent",
                   )}
                 >
                   <span className="sm:hidden">{tab.shortLabel}</span>

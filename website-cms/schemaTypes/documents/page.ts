@@ -1,6 +1,5 @@
 import {defineField, defineType} from 'sanity'
 import {pageSectionMembers} from '../shared/pageSectionMembers'
-import {pageBuilderField} from '../shared/pageBuilderField'
 
 const RESERVED_PAGE_SLUGS = [
   'about',
@@ -66,10 +65,6 @@ export const page = defineType({
       title: 'Page sections',
       type: 'array',
       of: pageSectionMembers,
-      group: 'content',
-    }),
-    defineField({
-      ...pageBuilderField,
       group: 'content',
     }),
     defineField({

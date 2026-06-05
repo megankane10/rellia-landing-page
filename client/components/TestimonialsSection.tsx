@@ -132,7 +132,7 @@ function TestimonialCard({
             ref={quoteRef}
             className={cn(
               "relative z-0 font-urbanist text-[15px] leading-relaxed text-black/75",
-              isExpanded ? "whitespace-normal opacity-100" : "line-clamp-5 opacity-90 h-auto md:h-[121.875px]",
+              isExpanded ? "whitespace-normal opacity-100" : "line-clamp-5 opacity-90 h-[121.875px]",
               "transition-opacity duration-300 ease-out motion-reduce:transition-none",
             )}
           >

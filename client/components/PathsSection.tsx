@@ -227,7 +227,7 @@ export default function PathsSection() {
                       aria-hidden
                       className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/95 via-black/60 via-40% to-transparent"
                     />
-                    <div className="absolute right-3 top-3 inline-flex items-center gap-2 rounded-full bg-black/40 px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-white/95 ring-1 ring-white/15 sm:right-4 sm:top-4">
+                    <div className="absolute right-3 top-3 inline-flex items-center gap-2 rounded-full bg-black/35 px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-white/95 backdrop-blur-md ring-1 ring-white/10 sm:right-4 sm:top-4">
                       <Icon className="h-3.5 w-3.5 shrink-0" aria-hidden />
                       {card.tagLabel}
                     </div>

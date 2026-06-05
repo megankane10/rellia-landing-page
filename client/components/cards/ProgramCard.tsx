@@ -68,7 +68,7 @@ export const ProgramCard = ({
             ) : null}
             {showCornerBadge ? (
               <div className="absolute right-3 top-3 z-10 hidden sm:block">
-                <span className="inline-flex items-center rounded-full bg-rellia-mint/90 px-3 py-1 font-host-grotesk text-[11px] font-extrabold uppercase tracking-[0.16em] text-rellia-teal shadow-lg ring-1 ring-white/50">
+                <span className="inline-flex items-center rounded-full bg-rellia-mint/70 px-3 py-1 font-host-grotesk text-[11px] font-extrabold uppercase tracking-[0.16em] text-rellia-teal shadow-lg ring-1 ring-white/40 backdrop-blur-md">
                   {displayTag}
                 </span>
               </div>

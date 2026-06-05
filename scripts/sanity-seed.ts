@@ -1116,7 +1116,7 @@ async function main() {
       teamMarqueeImages:
         careersTeamMarqueeImages.length > 0 ? careersTeamMarqueeImages : undefined,
       lifeAtRelliaHeading: "Built by healthtech insiders, for builders",
-      lifeAtRelliaSubheading: "We are building a remote-first, high-standards healthtech company. Our team brings deep clinical, technical, and operational expertise to help founders transform care. We focus on outcome-oriented work, mutual support, and constant learning.",
+      lifeAtRelliaSubheading: "We are a remote-first, high-standards team of builders, clinicians, and operators dedicated to supporting healthtech founders. We cultivate an environment of high autonomy, rapid iteration, and deep clinical empathy to build the future of care.",
       lifeAtRelliaImages:
         careersLifeAtRelliaImages.length > 0 ? careersLifeAtRelliaImages : undefined,
       lifeAtRelliaLinks: [
