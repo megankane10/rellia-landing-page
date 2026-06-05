@@ -302,10 +302,10 @@ export default function Partners() {
             },
           ]}
           cardImages={[
-            "https://images.pexels.com/photos/1231622/pexels-photo-1231622.jpeg?auto=compress&cs=tinysrgb&w=1200",
-            "https://images.pexels.com/photos/1105379/pexels-photo-1105379.jpeg?auto=compress&cs=tinysrgb&w=1200",
-            "https://images.pexels.com/photos/1632790/pexels-photo-1632790.jpeg?auto=compress&cs=tinysrgb&w=1200",
-            "https://images.pexels.com/photos/3125195/pexels-photo-3125195.jpeg?auto=compress&cs=tinysrgb&w=1200",
+            "https://images.pexels.com/photos/3184319/pexels-photo-3184319.jpeg?auto=compress&cs=tinysrgb&w=1200", // vetted scale (corporate scale meeting/collaboration)
+            "https://images.pexels.com/photos/3184296/pexels-photo-3184296.jpeg?auto=compress&cs=tinysrgb&w=1200", // pilot sequencing (working together on software/system setup)
+            "https://images.pexels.com/photos/3184465/pexels-photo-3184465.jpeg?auto=compress&cs=tinysrgb&w=1200", // compliance (signing secure paperwork/legal compliance)
+            "https://images.pexels.com/photos/3184311/pexels-photo-3184311.jpeg?auto=compress&cs=tinysrgb&w=1200", // GTM engagement (go-to-market/commercial partnership discussion)
           ]}
           sectionClassName="bg-rellia-cream/20"
         />

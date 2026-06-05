@@ -35,10 +35,10 @@ export default function WhyRellia({
 
   const defaultCardImages = useMemo(
     () => [
-      "https://images.pexels.com/photos/255379/pexels-photo-255379.jpeg?auto=compress&cs=tinysrgb&w=1200", // network (abstract bokeh connection nodes)
-      "https://images.pexels.com/photos/268533/pexels-photo-268533.jpeg?auto=compress&cs=tinysrgb&w=1200", // founders (lone tree representing strong roots/growth)
-      "https://images.pexels.com/photos/129731/pexels-photo-129731.jpeg?auto=compress&cs=tinysrgb&w=1200", // programs (modern clean structured geometric pattern)
-      "https://images.pexels.com/photos/1757363/pexels-photo-1757363.jpeg?auto=compress&cs=tinysrgb&w=1200", // outcomes (serene emerald lake representing clarity and success)
+      "https://images.pexels.com/photos/3184292/pexels-photo-3184292.jpeg?auto=compress&cs=tinysrgb&w=1200", // network/outcomes (team collaborating on charts/outcomes)
+      "https://images.pexels.com/photos/3182761/pexels-photo-3182761.jpeg?auto=compress&cs=tinysrgb&w=1200", // founders/advisors (1:1 business mentorship/advisory consultation)
+      "https://images.pexels.com/photos/3184328/pexels-photo-3184328.jpeg?auto=compress&cs=tinysrgb&w=1200", // programs/resources (active workshop/technical training with post-its)
+      "https://images.pexels.com/photos/3183186/pexels-photo-3183186.jpeg?auto=compress&cs=tinysrgb&w=1200", // outcomes/community (professional group networking/talking)
     ],
     [],
   )

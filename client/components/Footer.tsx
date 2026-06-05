@@ -246,6 +246,7 @@ export default function Footer() {
               <Link to="/terms" className={legalLinkClass}>
                 Terms of Service
               </Link>
+              <span className="text-white/25 select-none" aria-hidden>|</span>
               <Link to="/privacy" className={legalLinkClass}>
                 Privacy Policy
               </Link>

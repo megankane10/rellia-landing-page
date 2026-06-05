@@ -593,10 +593,10 @@ function MembershipDifferentSection() {
       sectionDescription="Operator-led support in a community where quality is defended by application review—not open signup churn."
       features={whyFeatures}
       cardImages={[
-        "https://images.pexels.com/photos/814499/pexels-photo-814499.jpeg?auto=compress&cs=tinysrgb&w=1200",
-        "https://images.pexels.com/photos/1423600/pexels-photo-1423600.jpeg?auto=compress&cs=tinysrgb&w=1200",
-        "https://images.pexels.com/photos/310452/pexels-photo-310452.jpeg?auto=compress&cs=tinysrgb&w=1200",
-        "https://images.pexels.com/photos/417074/pexels-photo-417074.jpeg?auto=compress&cs=tinysrgb&w=1200",
+        "https://images.pexels.com/photos/5668858/pexels-photo-5668858.jpeg?auto=compress&cs=tinysrgb&w=1200", // intros (handshake/introduction)
+        "https://images.pexels.com/photos/3184296/pexels-photo-3184296.jpeg?auto=compress&cs=tinysrgb&w=1200", // slack (collaborating on computer/chat)
+        "https://images.pexels.com/photos/3845126/pexels-photo-3845126.jpeg?auto=compress&cs=tinysrgb&w=1200", // programs (clinical research laboratory setting)
+        "https://images.pexels.com/photos/3184465/pexels-photo-3184465.jpeg?auto=compress&cs=tinysrgb&w=1200", // equity (signing partnership documents)
       ]}
       sectionClassName="bg-white"
     />
@@ -790,7 +790,7 @@ function ExploreNetworkSection() {
                       aria-hidden
                       className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 via-40% to-transparent"
                     />
-                    <div className="absolute right-4 top-4 inline-flex items-center gap-2 rounded-full bg-black/45 px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-white/90 backdrop-blur">
+                    <div className="absolute right-4 top-4 inline-flex items-center gap-2 rounded-full bg-black/35 px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-white/90 backdrop-blur-md border border-white/10">
                       <TagIcon className="h-3.5 w-3.5 shrink-0" aria-hidden />
                       {card.roleId === "founder" ? "Alumni" : tag.label}
                     </div>

@@ -8,7 +8,7 @@ import {seoPluginConfig} from './shared/seoPluginConfig'
 import {schemaTypes} from './schemaTypes'
 import {deskStructure} from './deskStructure'
 import {presentationLocations, presentationMainDocuments} from './presentationLocations'
-import {relliaAnalyticsTool} from './studio/relliaAnalyticsTool'
+
 
 const theme = buildLegacyTheme({
   '--black': '#0B0F12',
@@ -41,7 +41,7 @@ export default defineConfig({
 
   theme,
 
-  tools: (prev) => [...prev, relliaAnalyticsTool()],
+
 
   plugins: [
     seofields(seoPluginConfig),

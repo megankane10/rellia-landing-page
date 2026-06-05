@@ -333,10 +333,10 @@ export default function Investors() {
                   iconKey: "",
                 }))}
                 cardImages={[
-                  "https://images.pexels.com/photos/1666012/pexels-photo-1666012.jpeg?auto=compress&cs=tinysrgb&w=1200",
-                  "https://images.pexels.com/photos/2088205/pexels-photo-2088205.jpeg?auto=compress&cs=tinysrgb&w=1200",
-                  "https://images.pexels.com/photos/1547813/pexels-photo-1547813.jpeg?auto=compress&cs=tinysrgb&w=1200",
-                  "https://images.pexels.com/photos/1485637/pexels-photo-1485637.jpeg?auto=compress&cs=tinysrgb&w=1200",
+                  "https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=1200", // diligence (analysis/charts/collaboration)
+                  "https://images.pexels.com/photos/3182811/pexels-photo-3182811.jpeg?auto=compress&cs=tinysrgb&w=1200", // operators (experienced business operations meeting)
+                  "https://images.pexels.com/photos/5668858/pexels-photo-5668858.jpeg?auto=compress&cs=tinysrgb&w=1200", // intros (investor introductions/handshake)
+                  "https://images.pexels.com/photos/3183158/pexels-photo-3183158.jpeg?auto=compress&cs=tinysrgb&w=1200", // pattern visibility (strategic analysis/presentation)
                 ]}
                 sectionClassName="bg-rellia-cream/20"
               />
