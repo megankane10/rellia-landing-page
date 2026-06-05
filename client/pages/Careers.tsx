@@ -162,7 +162,7 @@ function LifeAtRelliaSlider({ images = LIFE_AT_RELLIA_IMAGES }: { images?: strin
 
   return (
     <div className="relative aspect-square w-full max-w-[480px] overflow-hidden rounded-[2.5rem] bg-rellia-cream/40 shadow-md">
-      <AnimatePresence mode="wait">
+      <AnimatePresence>
         <motion.img
           key={currentSlide}
           src={images[currentSlide]}
