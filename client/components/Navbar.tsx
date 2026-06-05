@@ -278,7 +278,6 @@ export default function Navbar({
   const priorityModalEligible =
     !hideAnnouncement &&
     !priorityModalDismissed &&
-    !isStrictProductionSite() &&
     globalSettings.priorityModalEnabled === true &&
     Boolean(globalSettings.priorityModalHeading?.trim())
 

@@ -1314,7 +1314,7 @@ export const DEFAULT_GLOBAL_SETTINGS: GlobalSettingsContent = {
   announcementButtonLabel: "Learn More",
   announcementButtonLink: "/programs/regulatory-strategy-sprint",
   announcementPillText: "LIVE",
-  priorityModalEnabled: true,
+  priorityModalEnabled: false,
   priorityModalHeading: "Welcome to the Preview Environment",
   priorityModalBody: "This preview environment displays unpublished changes. You can review all current drafts on the drafts dashboard, or edit content in the Sanity Studio.",
   priorityModalPillText: "PREVIEW",

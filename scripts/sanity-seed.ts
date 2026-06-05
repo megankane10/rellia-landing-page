@@ -934,7 +934,12 @@ async function main() {
 
   // Singletons: IDs match deskStructure documentIds
   mutations.push({
-    createOrReplace: { _id: "globalSettings", _type: "globalSettings", ...DEFAULT_GLOBAL_SETTINGS },
+    createOrReplace: {
+      _id: "globalSettings",
+      _type: "globalSettings",
+      ...DEFAULT_GLOBAL_SETTINGS,
+      priorityModalEnabled: dataset === "preview",
+    },
   })
   mutations.push({
     createOrReplace: {
