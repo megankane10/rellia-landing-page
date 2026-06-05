@@ -12,6 +12,11 @@
       "source": "/studio",
       "destination": "https://relliahealth.sanity.studio",
       "permanent": false
+    },
+    {
+      "source": "/blog",
+      "destination": "/stories",
+      "permanent": true
     }
   ],
   "headers": [

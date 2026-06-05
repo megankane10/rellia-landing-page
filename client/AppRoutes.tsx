@@ -132,6 +132,7 @@ export const AppRoutes = () => {
     </Route>
 
     <Route path="/network" element={<Navigate to="/founders" replace />} />
+    <Route path="/blog" element={<Navigate to="/stories" replace />} />
     <Route path="/apply" element={<Apply />} />
     <Route path="/consulting" element={<Consulting />} />
     <Route path="/founders" element={<Founders />} />

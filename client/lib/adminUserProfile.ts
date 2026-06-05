@@ -19,7 +19,17 @@ export const getAdminAvatarUrl = (user: User | null | undefined): string => {
     (typeof meta[AVATAR_URL_KEY] === "string" && meta[AVATAR_URL_KEY]) ||
     (typeof meta.picture === "string" && meta.picture) ||
     ""
-  return raw.trim()
+  const val = raw.trim()
+  if (val) return val
+
+  // Fallback for Megan Kane if no avatar is explicitly uploaded
+  const email = user?.email?.trim().toLowerCase()
+  const name = getAdminDisplayName(user).toLowerCase()
+  if (email === "megan@relliahealth.com" || name.includes("megan")) {
+    return "/images/megan-headshot.jpeg"
+  }
+
+  return ""
 }
 
 export const getAdminInitials = (user: User | null | undefined): string => {

@@ -29,7 +29,9 @@ import {
   Video,
   FileText,
   Facebook,
-  type LucideIcon
+  type LucideIcon,
+  Pause,
+  Play
 } from "lucide-react"
 import type { CareersOpenRole, CareersPageContent, HomeWhyFeature } from "@shared/cms/types"
 import { DEFAULT_GLOBAL_SETTINGS } from "@shared/cms/defaults"
@@ -160,6 +162,8 @@ function getSocialIcon(platform: string) {
 function LifeAtRelliaSlider({ images }: { images?: Array<{ src?: string; alt?: string; caption?: string }> }) {
   const [currentSlide, setCurrentSlide] = useState(0)
   const [direction, setDirection] = useState(0)
+  const [isPaused, setIsPaused] = useState(false)
+  const [progress, setProgress] = useState(0)
 
   const slides = useMemo(() => {
     const list = images?.filter(Boolean) ?? []
@@ -170,12 +174,14 @@ function LifeAtRelliaSlider({ images }: { images?: Array<{ src?: string; alt?: s
   const goToSlide = (idx: number) => {
     setDirection(idx > currentSlide ? 1 : -1)
     setCurrentSlide(idx)
+    setProgress(0)
   }
 
   const handlePrev = () => {
     if (currentSlide > 0) {
       setDirection(-1)
       setCurrentSlide(prev => prev - 1)
+      setProgress(0)
     }
   }
 
@@ -183,17 +189,30 @@ function LifeAtRelliaSlider({ images }: { images?: Array<{ src?: string; alt?: s
     if (currentSlide < slides.length - 1) {
       setDirection(1)
       setCurrentSlide(prev => prev + 1)
+      setProgress(0)
     }
   }
 
   useEffect(() => {
     if (slides.length <= 1) return
+    if (isPaused) return
+
+    const intervalTime = 30 // ms
+    const step = (intervalTime / 5000) * 100
+
     const timer = setInterval(() => {
-      setDirection(1)
-      setCurrentSlide((prev) => (prev + 1) % slides.length)
-    }, 5000)
+      setProgress((prev) => {
+        if (prev >= 100) {
+          setCurrentSlide((curr) => (curr + 1) % slides.length)
+          setDirection(1)
+          return 0
+        }
+        return prev + step
+      })
+    }, intervalTime)
+
     return () => clearInterval(timer)
-  }, [slides.length])
+  }, [slides.length, isPaused])
 
   const slideVariants = {
     enter: (dir: number) => ({ x: dir > 0 ? '100%' : '-100%', opacity: 0 }),
@@ -214,24 +233,42 @@ function LifeAtRelliaSlider({ images }: { images?: Array<{ src?: string; alt?: s
             initial="enter"
             animate="center"
             exit="exit"
-            transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ duration: 0.6, ease: "easeInOut" }}
             className="absolute inset-0 h-full w-full object-cover"
           />
         </AnimatePresence>
+        
         {slides.length > 1 && (
-          <div className="absolute bottom-6 left-1/2 flex -translate-x-1/2 gap-2 z-10">
-            {slides.map((_, index) => (
-              <button
-                key={index}
-                onClick={() => goToSlide(index)}
-                className={cn(
-                  "h-2 rounded-full transition-all duration-300",
-                  currentSlide === index ? "w-6 bg-white" : "w-2 bg-white/50"
-                )}
-                aria-label={`Go to slide ${index + 1}`}
-              />
-            ))}
-          </div>
+          <>
+            <div className="absolute bottom-6 left-1/2 flex -translate-x-1/2 gap-2 z-10">
+              {slides.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => goToSlide(index)}
+                  className={cn(
+                    "relative h-2 rounded-full bg-white/40 overflow-hidden transition-all duration-300",
+                    currentSlide === index ? "w-8" : "w-2 hover:bg-white/60"
+                  )}
+                  aria-label={`Go to slide ${index + 1}`}
+                >
+                  {currentSlide === index && (
+                    <div
+                      className="absolute inset-y-0 left-0 bg-rellia-teal"
+                      style={{ width: `${progress}%` }}
+                    />
+                  )}
+                </button>
+              ))}
+            </div>
+            
+            <button
+              onClick={() => setIsPaused(!isPaused)}
+              className="absolute bottom-4 right-4 z-20 flex h-8 w-8 items-center justify-center rounded-full bg-black/40 text-white backdrop-blur-sm transition-all hover:bg-black/60 active:scale-95"
+              aria-label={isPaused ? "Play slideshow" : "Pause slideshow"}
+            >
+              {isPaused ? <Play className="h-3.5 w-3.5 fill-white" /> : <Pause className="h-3.5 w-3.5 fill-white" />}
+            </button>
+          </>
         )}
       </div>
       {slides[currentSlide]?.caption && (
@@ -261,8 +298,8 @@ function LifeAtRelliaSocialButton({
         target="_blank"
         rel="noopener noreferrer"
         className={cn(
-          "flex h-14 w-14 items-center justify-center rounded-full border border-black/10 text-black/60",
-          "transition-all duration-300 hover:border-rellia-teal hover:bg-rellia-teal/[0.03] hover:text-rellia-teal"
+          "flex h-14 w-14 items-center justify-center rounded-full border border-rellia-teal text-rellia-teal",
+          "transition-all duration-300 hover:bg-rellia-mint hover:border-rellia-mint hover:text-rellia-teal"
         )}
         aria-label={tooltip}
       >

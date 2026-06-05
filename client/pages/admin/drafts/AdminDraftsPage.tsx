@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react"
 import { useQuery } from "@tanstack/react-query"
+import { useSearchParams } from "react-router-dom"
 import { ExternalLink, FileEdit } from "lucide-react"
 import { useAuth } from "@/context/AuthContext"
 import type { AdminSanityDataset } from "@shared/cms/sanityEnv"
@@ -8,6 +9,7 @@ import AdminContentQueueList from "@/components/admin/AdminContentQueueList"
 import AdminCompactEmptyState from "@/components/admin/AdminCompactEmptyState"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import {
   ADMIN_SANITY_DATASET_TABS,
   cmsContentQueryKey,
@@ -26,7 +28,16 @@ const AdminDraftsPage = () => {
   const { session } = useAuth()
   const token = session?.access_token ?? ""
   const cmsConfigured = isCmsContentEnabled()
-  const dataset: AdminSanityDataset = "production"
+  
+  const [searchParams, setSearchParams] = useSearchParams()
+  const datasetParam = searchParams.get("dataset")
+  
+  const defaultDataset = (datasetParam as AdminSanityDataset) || (getSanityDataset() as AdminSanityDataset) || "production"
+  const [selectedDataset, setSelectedDataset] = useState<AdminSanityDataset>(
+    defaultDataset === "preview" || defaultDataset === "production" ? defaultDataset : "production"
+  )
+  
+  const dataset = selectedDataset
   const [typeFilter, setTypeFilter] = useState<string>("all")
 
   const { data, isLoading, error } = useQuery({
@@ -35,6 +46,19 @@ const AdminDraftsPage = () => {
     staleTime: 60_000,
     enabled: cmsConfigured && Boolean(token),
   })
+
+  const handleDatasetChange = (nextDataset: AdminSanityDataset) => {
+    setSelectedDataset(nextDataset)
+    setTypeFilter("all")
+    setSearchParams(
+      (prev) => {
+        const nextParams = new URLSearchParams(prev)
+        nextParams.set("dataset", nextDataset)
+        return nextParams
+      },
+      { replace: true }
+    )
+  }
 
   const draftRows = data ?? []
 
@@ -72,15 +96,39 @@ const AdminDraftsPage = () => {
       ) : (
         <>
           <AdminTipBox
-            title="Unpublished Changes"
+            title="Drafts Guide"
             icon={FileEdit}
             storageKey="rellia-admin-drafts-tip-collapsed"
             className="mb-6"
           >
             <p>
-              These are documents in the production dataset that have pending, unpublished changes. Open Sanity Studio to edit, publish, or discard them.
+              This page displays content edits (like updates to programs, events, or team profiles) that have been saved in the Sanity editing system but are not yet live on the public website. To make these changes visible to visitors, click the "Open Studio" button above, locate the document, and click the "Publish" button at the bottom of the page.
             </p>
           </AdminTipBox>
+
+          <Tabs
+            value={selectedDataset}
+            onValueChange={(val) => handleDatasetChange(val as AdminSanityDataset)}
+            className="mb-6"
+          >
+            <TabsList className="h-[40px] w-full bg-slate-100/80 p-1 rounded-xl border border-black/5 shadow-sm max-w-md">
+              <div className="grid w-full grid-cols-2 h-full items-center">
+                {ADMIN_SANITY_DATASET_TABS.map((tab) => (
+                  <TabsTrigger
+                    key={tab.id}
+                    value={tab.id}
+                    className={cn(
+                      "w-full h-full rounded-lg px-3 py-1.5 font-urbanist text-xs font-bold transition-all duration-200",
+                      "data-[state=active]:bg-white data-[state=active]:text-rellia-teal data-[state=active]:shadow-[0_2px_8px_rgba(0,0,0,0.06)] data-[state=active]:border data-[state=active]:border-black/5",
+                      "data-[state=inactive]:text-slate-600 data-[state=inactive]:hover:text-slate-900 data-[state=inactive]:bg-transparent",
+                    )}
+                  >
+                    {tab.shortLabel}
+                  </TabsTrigger>
+                ))}
+              </div>
+            </TabsList>
+          </Tabs>
 
           {typeOptions.length > 0 ? (
             <div className="mb-4 flex flex-wrap gap-2" role="group" aria-label="Filter by document type">

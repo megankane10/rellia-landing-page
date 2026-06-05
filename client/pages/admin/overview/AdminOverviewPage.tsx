@@ -41,6 +41,16 @@ const CHART_COLORS = {
   resolved: "hsl(142 76% 36%)",
 }
 
+const STAGE_COLORS = [
+  "hsl(174 42% 35%)", // Teal
+  "hsl(174 55% 72%)", // Mint
+  "hsl(199 89% 48%)", // Blue
+  "hsl(38 92% 50%)",  // Orange/Amber
+  "hsl(142 76% 36%)", // Green
+  "hsl(322 81% 43%)", // Pink
+  "hsl(262 83% 58%)", // Violet
+]
+
 const trendChartConfig = {
   contacts: { label: "Web forms", color: CHART_COLORS.contacts },
   diagnostics: { label: "Diagnostics", color: CHART_COLORS.diagnostics },
@@ -135,6 +145,7 @@ const AdminOverviewPage = () => {
 
   const [weekOffset, setWeekOffset] = useState(0)
   const [statusFilter, setStatusFilter] = useState<"all" | "survey" | "web">("all")
+  const [selectedStage, setSelectedStage] = useState<string>("all")
 
   const contactsQuery = useQuery({ queryKey: ["admin-contact-submissions"], queryFn: fetchContactSubmissions })
   const diagnosticsQuery = useQuery({ queryKey: ["admin-company-profiles"], queryFn: fetchDiagnosticSubmissions })
@@ -143,7 +154,7 @@ const AdminOverviewPage = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("diagnostic_responses")
-        .select("top3_strengths, top3_weaknesses")
+        .select("company_profile_id, top3_strengths, top3_weaknesses")
       if (error) throw error
       return data ?? []
     },
@@ -168,13 +179,18 @@ const AdminOverviewPage = () => {
   // Filtered status breakdown logic
   const filteredContacts = useMemo(() => {
     if (statusFilter === "survey") return []
+    if (selectedStage !== "all") return [] // Exclude contacts when filtering by startup level
     return contacts
-  }, [contacts, statusFilter])
+  }, [contacts, statusFilter, selectedStage])
 
   const filteredDiagnostics = useMemo(() => {
     if (statusFilter === "web") return []
-    return diagnostics
-  }, [diagnostics, statusFilter])
+    let list = diagnostics
+    if (selectedStage !== "all") {
+      list = list.filter((d) => d.stage === selectedStage)
+    }
+    return list
+  }, [diagnostics, statusFilter, selectedStage])
 
   const statusBreakdown = useMemo(() => {
     return buildStatusBreakdown(filteredContacts, filteredDiagnostics)
@@ -222,21 +238,36 @@ const AdminOverviewPage = () => {
   const newCount = useMemo(() => statusBreakdown.find((r) => r.status === "New")?.count ?? 0, [statusBreakdown])
   const resolvedCount = useMemo(() => statusBreakdown.find((r) => r.status === "Resolved")?.count ?? 0, [statusBreakdown])
 
-  const stageCounts = useMemo(() => {
+  const allStages = useMemo(() => {
+    const stages = new Set<string>()
+    diagnostics.forEach((row) => {
+      if (row.stage) stages.add(row.stage)
+    })
+    return Array.from(stages).sort()
+  }, [diagnostics])
+
+  const profileStageMap = useMemo(() => {
+    const map = new Map<string, string | null>()
+    diagnostics.forEach((d) => {
+      map.set(d.id, d.stage)
+    })
+    return map
+  }, [diagnostics])
+
+  const stageChartData = useMemo(() => {
     const counts: Record<string, number> = {}
     diagnostics.forEach((row) => {
       const stage = row.stage || "Not Specified"
       counts[stage] = (counts[stage] || 0) + 1
     })
-    return counts
-  }, [diagnostics])
-
-  const stageChartData = useMemo(() => {
-    return Object.entries(stageCounts).map(([stage, count]) => ({
-      stage,
-      count,
+    const total = Object.values(counts).reduce((sum, val) => sum + val, 0)
+    return Object.entries(counts).map(([stage, count], idx) => ({
+      name: stage,
+      value: count,
+      pct: total > 0 ? Math.round((count / total) * 100) : 0,
+      fill: STAGE_COLORS[idx % STAGE_COLORS.length]
     }))
-  }, [stageCounts])
+  }, [diagnostics])
 
   const textStats = useMemo(() => {
     const strengthsCount: Record<string, number> = {}
@@ -244,6 +275,11 @@ const AdminOverviewPage = () => {
 
     const responses = responsesQuery.data ?? []
     responses.forEach((resp) => {
+      const stage = profileStageMap.get(resp.company_profile_id)
+      if (selectedStage !== "all" && stage !== selectedStage) {
+        return
+      }
+
       const strengths = resp.top3_strengths as any[] | null
       const weaknesses = resp.top3_weaknesses as any[] | null
 
@@ -274,13 +310,16 @@ const AdminOverviewPage = () => {
       .map(([category]) => category)
 
     return { topStrengths, topWeaknesses }
-  }, [responsesQuery.data])
+  }, [responsesQuery.data, profileStageMap, selectedStage])
 
   // Strengths and Gaps Pie Chart data
   const strengthsPieData = useMemo(() => {
     const counts: Record<string, number> = {}
     const responses = responsesQuery.data ?? []
     responses.forEach((resp) => {
+      const stage = profileStageMap.get(resp.company_profile_id)
+      if (selectedStage !== "all" && stage !== selectedStage) return
+
       const strengths = resp.top3_strengths as any[] | null
       if (Array.isArray(strengths)) {
         strengths.forEach((s) => {
@@ -309,12 +348,15 @@ const AdminOverviewPage = () => {
         value: val,
         fill: palette[idx % palette.length]
       }))
-  }, [responsesQuery.data])
+  }, [responsesQuery.data, profileStageMap, selectedStage])
 
   const gapsPieData = useMemo(() => {
     const counts: Record<string, number> = {}
     const responses = responsesQuery.data ?? []
     responses.forEach((resp) => {
+      const stage = profileStageMap.get(resp.company_profile_id)
+      if (selectedStage !== "all" && stage !== selectedStage) return
+
       const weaknesses = resp.top3_weaknesses as any[] | null
       if (Array.isArray(weaknesses)) {
         weaknesses.forEach((w) => {
@@ -343,7 +385,7 @@ const AdminOverviewPage = () => {
         value: val,
         fill: palette[idx % palette.length]
       }))
-  }, [responsesQuery.data])
+  }, [responsesQuery.data, profileStageMap, selectedStage])
 
   const getWeekRangeLabel = (offset: number) => {
     const now = new Date()
@@ -437,21 +479,44 @@ const AdminOverviewPage = () => {
         </CardContent>
       </Card>
 
-      <div className="grid gap-4 lg:grid-cols-2">
-        <Card className="rounded-2xl">
-          <CardHeader className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+      {/* Level Filter Dropdown */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-slate-50 border border-slate-100 p-4 rounded-2xl">
+        <div className="space-y-0.5">
+          <h3 className="font-host-grotesk font-bold text-sm text-slate-800">Filter Diagnostic Metrics</h3>
+          <p className="font-urbanist text-xs text-slate-500">Filter status breakdown and startup analysis by startup level.</p>
+        </div>
+        <div className="flex items-center gap-3">
+          <label htmlFor="stage-filter" className="font-urbanist text-xs font-semibold text-slate-600">Startup Level:</label>
+          <select
+            id="stage-filter"
+            value={selectedStage}
+            onChange={(e) => setSelectedStage(e.target.value)}
+            className="bg-white border border-slate-200 rounded-xl px-3 py-1.5 font-urbanist text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-rellia-teal"
+          >
+            <option value="all">All Levels</option>
+            {allStages.map((stage) => (
+              <option key={stage} value={stage}>{stage}</option>
+            ))}
+          </select>
+        </div>
+      </div>
+
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        {/* Card 1: Submission Status */}
+        <Card className="rounded-2xl flex flex-col h-full">
+          <CardHeader className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between pb-2">
             <div>
-              <CardTitle className="font-host-grotesk text-lg">Submission Status</CardTitle>
-              <CardDescription className="font-urbanist">Distribution across New, In progress, and Resolved</CardDescription>
+              <CardTitle className="font-host-grotesk text-base">Submission Status</CardTitle>
+              <CardDescription className="font-urbanist text-xs">Distribution of submissions</CardDescription>
             </div>
-            <div className="flex gap-1 border border-slate-100 bg-slate-50/50 p-1 rounded-xl w-fit">
+            <div className="flex gap-1 border border-slate-100 bg-slate-50/50 p-0.5 rounded-lg w-fit">
               {(["all", "web", "survey"] as const).map((mode) => (
                 <button
                   key={mode}
                   type="button"
                   onClick={() => setStatusFilter(mode)}
                   className={cn(
-                    "px-2.5 py-1 font-urbanist text-[11px] font-bold rounded-lg transition-all",
+                    "px-2 py-0.5 font-urbanist text-[10px] font-bold rounded transition-all",
                     statusFilter === mode
                       ? "bg-rellia-teal text-white shadow-sm"
                       : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
@@ -462,23 +527,23 @@ const AdminOverviewPage = () => {
               ))}
             </div>
           </CardHeader>
-          <CardContent>
+          <CardContent className="flex-1 flex flex-col justify-center min-h-[180px] pb-6">
             {loading ? (
-              <Skeleton className="h-[220px] w-full rounded-xl" />
+              <Skeleton className="h-[150px] w-full rounded-xl" />
             ) : totalStatusCount === 0 ? (
-              <div className="flex h-[220px] flex-col items-center justify-center text-center">
-                <p className="font-urbanist text-sm text-muted-foreground">No submissions found for this filter.</p>
+              <div className="flex h-[150px] flex-col items-center justify-center text-center">
+                <p className="font-urbanist text-xs text-muted-foreground">No submissions found.</p>
               </div>
             ) : (
-              <div className="relative h-[220px] w-full flex items-center justify-center">
+              <div className="relative h-[150px] w-full flex items-center justify-center">
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
                     <Pie
                       data={statusRows.filter((r) => r.value > 0)}
                       cx="50%"
                       cy="50%"
-                      innerRadius={55}
-                      outerRadius={70}
+                      innerRadius={45}
+                      outerRadius={60}
                       paddingAngle={3}
                       dataKey="value"
                     >
@@ -488,123 +553,114 @@ const AdminOverviewPage = () => {
                     </Pie>
                     <Tooltip
                       formatter={(value: any, name: any) => [`${value} (${statusRows.find(r => r.name === name)?.pct}%)`, name]}
-                      contentStyle={{ borderRadius: "12px", border: "1px solid rgba(0,0,0,0.08)", boxShadow: "0 10px 30px rgba(0,0,0,0.06)", fontFamily: "Urbanist" }}
+                      contentStyle={{ borderRadius: "12px", border: "1px solid rgba(0,0,0,0.08)", boxShadow: "0 10px 30px rgba(0,0,0,0.06)", fontFamily: "Urbanist", fontSize: "11px" }}
                     />
                   </PieChart>
                 </ResponsiveContainer>
-                
-                {/* Centered count inside donut hole */}
                 <div className="absolute flex flex-col items-center justify-center text-center pointer-events-none">
-                  <span className="font-urbanist text-[11px] text-slate-500 uppercase tracking-wider font-semibold">Total</span>
-                  <span className="font-host-grotesk text-2xl font-bold text-slate-800 leading-none mt-1">{totalStatusCount}</span>
+                  <span className="font-urbanist text-[9px] text-slate-500 uppercase tracking-wider font-semibold">Total</span>
+                  <span className="font-host-grotesk text-xl font-bold text-slate-800 leading-none mt-0.5">{totalStatusCount}</span>
                 </div>
               </div>
             )}
           </CardContent>
         </Card>
 
-        <Card className="rounded-2xl">
-          <CardHeader>
-            <CardTitle className="font-host-grotesk text-lg">
-              Diagnostic survey
-            </CardTitle>
-            <CardDescription className="font-urbanist">Diagnostics analysis and startup levels</CardDescription>
+        {/* Card 2: Startup Level Distribution */}
+        <Card className="rounded-2xl flex flex-col h-full">
+          <CardHeader className="pb-2">
+            <CardTitle className="font-host-grotesk text-base">Startup Level Distribution</CardTitle>
+            <CardDescription className="font-urbanist text-xs">Breakdown of diagnostic survey stages</CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="flex-1 flex flex-col justify-center min-h-[180px] pb-6">
             {loading ? (
-              <Skeleton className="h-[220px] w-full rounded-xl" />
+              <Skeleton className="h-[150px] w-full rounded-xl" />
+            ) : stageChartData.length === 0 ? (
+              <div className="flex h-[150px] flex-col items-center justify-center text-center">
+                <p className="font-urbanist text-xs text-muted-foreground">No stage data found.</p>
+              </div>
             ) : (
-              <div className="grid grid-cols-1 lg:grid-cols-[1.15fr_0.85fr] gap-6 items-start">
-                {/* Left side: Levels chart */}
-                <div className="space-y-3">
-                  <p className="font-host-grotesk text-sm font-semibold text-foreground">Startup Levels Distribution</p>
-                  {stageChartData.length === 0 ? (
-                    <p className="font-urbanist text-xs text-muted-foreground py-10">No level data available.</p>
-                  ) : (
-                    <ChartContainer config={stageChartConfig} className="h-[240px] w-full min-w-0">
-                      <ResponsiveContainer width="100%" height="100%">
-                        <BarChart
-                          data={stageChartData}
-                          layout="vertical"
-                          margin={{ top: 5, right: 15, left: -10, bottom: 5 }}
-                        >
-                          <CartesianGrid strokeDasharray="3 3" horizontal={false} />
-                          <XAxis type="number" allowDecimals={false} hide />
-                          <YAxis
-                            dataKey="stage"
-                            type="category"
-                            tickLine={false}
-                            axisLine={false}
-                            width={110}
-                            fontSize={10}
-                            className="font-urbanist text-slate-700"
-                          />
-                          <Tooltip
-                            content={<ChartTooltipContent />}
-                            cursor={{ fill: "transparent" }}
-                          />
-                          <Bar
-                            dataKey="count"
-                            fill="var(--color-count)"
-                            radius={[0, 4, 4, 0]}
-                            barSize={18}
-                          />
-                        </BarChart>
-                      </ResponsiveContainer>
-                    </ChartContainer>
-                  )}
-                </div>
-
-                {/* Right side: Strengths & Gaps lists */}
-                <div className="space-y-4 w-full">
-                  <div className="rounded-2xl bg-emerald-50/30 border border-emerald-100/50 p-4 shadow-inner">
-                    <div className="flex items-center gap-2 mb-3">
-                      <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-emerald-100 text-emerald-700 shadow-sm">
-                        <TrendingUp className="h-4 w-4" />
-                      </div>
-                      <p className="font-host-grotesk text-sm font-bold text-emerald-900">Key Strengths</p>
-                    </div>
-                    {responsesQuery.isLoading ? (
-                      <Skeleton className="h-10 w-full" />
-                    ) : textStats.topStrengths.length === 0 ? (
-                      <p className="font-urbanist text-xs text-muted-foreground">No strength data reported yet.</p>
-                    ) : (
-                      <div className="flex flex-col gap-2">
-                        {textStats.topStrengths.map((s, idx) => (
-                          <div key={s} className="flex items-center gap-2 font-urbanist text-xs text-emerald-800 bg-white border border-emerald-100/60 rounded-xl px-3 py-2 shadow-sm">
-                            <span className="font-bold text-emerald-600/80">#{idx + 1}</span>
-                            <span className="font-medium">{s}</span>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-
-                  <div className="rounded-2xl bg-amber-50/30 border border-amber-100/50 p-4 shadow-inner">
-                    <div className="flex items-center gap-2 mb-3">
-                      <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-amber-100 text-amber-700 shadow-sm">
-                        <AlertCircle className="h-4 w-4" />
-                      </div>
-                      <p className="font-host-grotesk text-sm font-bold text-amber-900">Top Growth Gaps</p>
-                    </div>
-                    {responsesQuery.isLoading ? (
-                      <Skeleton className="h-10 w-full" />
-                    ) : textStats.topWeaknesses.length === 0 ? (
-                      <p className="font-urbanist text-xs text-muted-foreground">No weakness data reported yet.</p>
-                    ) : (
-                      <div className="flex flex-col gap-2">
-                        {textStats.topWeaknesses.map((w, idx) => (
-                          <div key={w} className="flex items-center gap-2 font-urbanist text-xs text-amber-900 bg-white border border-amber-100/60 rounded-xl px-3 py-2 shadow-sm">
-                            <span className="font-bold text-amber-600/80">#{idx + 1}</span>
-                            <span className="font-medium">{w}</span>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
+              <div className="relative h-[150px] w-full flex items-center justify-center">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={stageChartData.filter((r) => r.value > 0)}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={45}
+                      outerRadius={60}
+                      paddingAngle={3}
+                      dataKey="value"
+                    >
+                      {stageChartData.filter((r) => r.value > 0).map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.fill} />
+                      ))}
+                    </Pie>
+                    <Tooltip
+                      formatter={(value: any, name: any) => [`${value} (${stageChartData.find(r => r.name === name)?.pct}%)`, name]}
+                      contentStyle={{ borderRadius: "12px", border: "1px solid rgba(0,0,0,0.08)", boxShadow: "0 10px 30px rgba(0,0,0,0.06)", fontFamily: "Urbanist", fontSize: "11px" }}
+                    />
+                  </PieChart>
+                </ResponsiveContainer>
+                <div className="absolute flex flex-col items-center justify-center text-center pointer-events-none">
+                  <span className="font-urbanist text-[9px] text-slate-500 uppercase tracking-wider font-semibold">Total</span>
+                  <span className="font-host-grotesk text-xl font-bold text-slate-800 leading-none mt-0.5">
+                    {diagnostics.length}
+                  </span>
                 </div>
               </div>
             )}
+          </CardContent>
+        </Card>
+
+        {/* Card 3: Top Strengths & Growth Gaps */}
+        <Card className="rounded-2xl h-full flex flex-col">
+          <CardHeader className="pb-2">
+            <CardTitle className="font-host-grotesk text-base">Strengths & Weaknesses</CardTitle>
+            <CardDescription className="font-urbanist text-xs">Top capabilities and growth gaps</CardDescription>
+          </CardHeader>
+          <CardContent className="flex-1 flex flex-col justify-between gap-3 pt-2">
+            <div className="rounded-xl bg-emerald-50/20 border border-emerald-100/40 p-2.5 flex-1 flex flex-col justify-center">
+              <div className="flex items-center gap-1.5 mb-1.5">
+                <TrendingUp className="h-3.5 w-3.5 text-emerald-600" />
+                <p className="font-host-grotesk text-xs font-bold text-emerald-950">Key Strengths</p>
+              </div>
+              {responsesQuery.isLoading ? (
+                <Skeleton className="h-6 w-full" />
+              ) : textStats.topStrengths.length === 0 ? (
+                <p className="font-urbanist text-[11px] text-muted-foreground">No data reported.</p>
+              ) : (
+                <div className="flex flex-col gap-1.5">
+                  {textStats.topStrengths.map((s, idx) => (
+                    <div key={s} className="flex items-center gap-1.5 font-urbanist text-[11px] text-emerald-800 bg-white border border-emerald-100/40 rounded-lg px-2 py-0.5 shadow-sm">
+                      <span className="font-bold text-emerald-600/70">#{idx + 1}</span>
+                      <span className="font-medium truncate">{s}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div className="rounded-xl bg-amber-50/20 border border-amber-100/40 p-2.5 flex-1 flex flex-col justify-center">
+              <div className="flex items-center gap-1.5 mb-1.5">
+                <AlertCircle className="h-3.5 w-3.5 text-amber-600" />
+                <p className="font-host-grotesk text-xs font-bold text-amber-950">Top Growth Gaps</p>
+              </div>
+              {responsesQuery.isLoading ? (
+                <Skeleton className="h-6 w-full" />
+              ) : textStats.topWeaknesses.length === 0 ? (
+                <p className="font-urbanist text-[11px] text-muted-foreground">No data reported.</p>
+              ) : (
+                <div className="flex flex-col gap-1.5">
+                  {textStats.topWeaknesses.map((w, idx) => (
+                    <div key={w} className="flex items-center gap-1.5 font-urbanist text-[11px] text-amber-900 bg-white border border-amber-100/40 rounded-lg px-2 py-0.5 shadow-sm">
+                      <span className="font-bold text-amber-600/70">#{idx + 1}</span>
+                      <span className="font-medium truncate">{w}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           </CardContent>
         </Card>
       </div>

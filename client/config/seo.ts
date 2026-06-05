@@ -302,7 +302,7 @@ export const ROUTE_SEO: Record<string, RouteSeoConfig> = {
     indexable: false,
   },
   "/admin/overview": {
-    title: "Inbox — Admin",
+    title: "Overview — Admin",
     description: "Review contact form, investor, and diagnostic submissions in the Rellia Health admin dashboard.",
     indexable: false,
   },

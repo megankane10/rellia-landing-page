@@ -1,15 +1,16 @@
 import { Link } from "react-router-dom"
-import { ExternalLink } from "lucide-react"
+import { ExternalLink, ShieldAlert, UserPlus } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import AdminPageHeader from "@/components/admin/AdminPageHeader"
+import AdminTipBox from "@/components/admin/AdminTipBox"
 import { cn } from "@/lib/utils"
 
 const VERCEL_ENV_URL = "https://vercel.com/relliahealth/settings/environment-variables"
-const GOOGLE_DOC_EDIT_URL =
-  "https://docs.google.com/document/d/17lMkt2Jqa4fswCd_DpjHpvwMQH-5QBMDvzcw5MGLDVo/edit?usp=sharing"
 const GOOGLE_DOC_EMBED_URL =
-  "https://docs.google.com/document/d/e/2PACX-1vSmTtp1CbT0nL2DjluTFCgV6E8ezDIbRPL_iSRvTtLZnmYQNXjHiwnoUuArw0GEg5hUSzw8wAkGroUE/pub?embedded=true"
+  "https://docs.google.com/document/d/e/2PACX-1vRHFF2JddINakhOmHkg2_nFO_dgENKl7ygBQAAPxT1CfDC-fFZeId9KAgYxnzDTPxqKjV96CUV4l5nS/pub?embedded=true"
+const GOOGLE_DOC_VIEW_URL =
+  "https://docs.google.com/document/d/e/2PACX-1vRHFF2JddINakhOmHkg2_nFO_dgENKl7ygBQAAPxT1CfDC-fFZeId9KAgYxnzDTPxqKjV96CUV4l5nS/pub"
 
 const routeBadge = (to: string, label: string) => (
   <Link
@@ -21,11 +22,6 @@ const routeBadge = (to: string, label: string) => (
 )
 
 const WEBSITE_TOOLS = [
-  {
-    href: GOOGLE_DOC_EDIT_URL,
-    label: "Documentation",
-    description: "How to use this dashboard and operate the marketing site.",
-  },
   {
     href: "https://relliahealth.sanity.studio",
     label: "Sanity Studio",
@@ -61,7 +57,7 @@ const AdminHelpPage = () => (
     />
 
     <div id="docs" className="scroll-mt-6 grid grid-cols-1 gap-6 md:grid-cols-2">
-      <Card>
+      <Card className="rounded-2xl">
         <CardHeader>
           <CardTitle className="font-host-grotesk text-lg">What this dashboard is for</CardTitle>
         </CardHeader>
@@ -86,7 +82,7 @@ const AdminHelpPage = () => (
         </CardContent>
       </Card>
 
-      <Card>
+      <Card className="rounded-2xl">
         <CardHeader>
           <CardTitle className="font-host-grotesk text-lg">Two places to edit content</CardTitle>
         </CardHeader>
@@ -111,7 +107,7 @@ const AdminHelpPage = () => (
         </CardContent>
       </Card>
 
-      <Card>
+      <Card className="rounded-2xl">
         <CardHeader>
           <CardTitle className="font-host-grotesk text-lg">Publishing to the live site</CardTitle>
         </CardHeader>
@@ -136,7 +132,7 @@ const AdminHelpPage = () => (
         </CardContent>
       </Card>
 
-      <Card>
+      <Card className="rounded-2xl">
         <CardHeader>
           <CardTitle className="font-host-grotesk text-lg">Where website forms go</CardTitle>
         </CardHeader>
@@ -151,7 +147,7 @@ const AdminHelpPage = () => (
         </CardContent>
       </Card>
 
-      <Card>
+      <Card className="rounded-2xl">
         <CardHeader>
           <CardTitle className="font-host-grotesk text-lg">When to contact a developer</CardTitle>
         </CardHeader>
@@ -167,7 +163,7 @@ const AdminHelpPage = () => (
         </CardContent>
       </Card>
 
-      <Card id="account" className="scroll-mt-6">
+      <Card id="account" className="scroll-mt-6 rounded-2xl">
         <CardHeader>
           <CardTitle className="font-host-grotesk text-lg">Your account</CardTitle>
         </CardHeader>
@@ -181,57 +177,47 @@ const AdminHelpPage = () => (
       </Card>
     </div>
 
-    <Card>
-      <CardHeader>
-        <CardTitle className="font-host-grotesk text-lg">Sign-in problems</CardTitle>
-        <CardDescription className="font-urbanist">
-          If login fails or the inbox stays empty after sign-in.
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-3 font-urbanist text-sm leading-relaxed text-muted-foreground">
+    <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+      <AdminTipBox
+        title="Sign-in Help"
+        icon={ShieldAlert}
+        storageKey="rellia-admin-signin-help-tip-collapsed"
+        className="rounded-2xl"
+      >
         <p>
-          <strong className="text-foreground">Hard refresh</strong> the login page or use a private window if you see an
-          outdated “admin access” message.
+          If you cannot sign in or see an error message, try opening a private browsing window (Incognito mode) or refreshing your browser window. If your account has not been activated yet, ask a manager to resend your invitation email.
         </p>
-        <p>
-          <strong className="text-foreground">Database policies:</strong> If a developer enabled strict admin-role RLS,
-          run <code className="text-xs">scripts/supabase_revert_admin_role_policies.sql</code> in Supabase so any signed-in
-          user can read submissions.
-        </p>
-      </CardContent>
-    </Card>
+      </AdminTipBox>
 
-    <Card>
-      <CardHeader>
-        <CardTitle className="font-host-grotesk text-lg">Signup access</CardTitle>
-        <CardDescription className="font-urbanist">
-          Control whether the public <code className="text-xs">/admin/signup</code> page can create accounts.
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-3 font-urbanist text-sm text-muted-foreground">
-        <p>
-          Set <code className="rounded bg-muted px-1 text-xs">ADMIN_SIGNUP_ENABLED=true</code> on the server (Vercel,
-          not <code className="text-xs">VITE_</code>). When disabled, invite users through Supabase instead. Open{" "}
-          {routeBadge("/admin/signup", "Signup")} only while the flag is enabled.
-        </p>
-        <Button type="button" variant="outline" size="sm" asChild className="rounded-full">
-          <a href={VERCEL_ENV_URL} target="_blank" rel="noopener noreferrer">
-            Vercel environment variables
-            <ExternalLink className="ml-1.5 h-3.5 w-3.5" aria-hidden />
-          </a>
-        </Button>
-      </CardContent>
-    </Card>
+      <AdminTipBox
+        title="Inviting New Team Members"
+        icon={UserPlus}
+        storageKey="rellia-admin-signup-help-tip-collapsed"
+        className="rounded-2xl"
+      >
+        <div className="space-y-3">
+          <p>
+            To invite a new editor or administrator to the dashboard, go to the {routeBadge("/admin/team", "Team")} page and send an invitation link. For security, public registrations are turned off. If you need to enable temporary signup links, contact your technical administrator to turn on the registration setting in the environment panel.
+          </p>
+          <Button type="button" variant="outline" size="sm" asChild className="rounded-full bg-white/80 border-rellia-teal/20 text-rellia-teal hover:bg-rellia-mint/15">
+            <a href={VERCEL_ENV_URL} target="_blank" rel="noopener noreferrer">
+              Vercel environment variables
+              <ExternalLink className="ml-1.5 h-3.5 w-3.5" aria-hidden />
+            </a>
+          </Button>
+        </div>
+      </AdminTipBox>
+    </div>
 
     <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(260px,320px)]">
-      <Card>
+      <Card className="rounded-2xl">
         <CardHeader className="flex flex-row flex-wrap items-start justify-between gap-3">
           <div>
             <CardTitle className="font-host-grotesk text-lg">Operations guide</CardTitle>
             <CardDescription className="font-urbanist">Shared runbook for marketing and submissions.</CardDescription>
           </div>
           <Button type="button" variant="outline" size="sm" asChild className="shrink-0 rounded-full">
-            <a href={GOOGLE_DOC_EDIT_URL} target="_blank" rel="noopener noreferrer">
+            <a href={GOOGLE_DOC_VIEW_URL} target="_blank" rel="noopener noreferrer">
               Open doc
               <ExternalLink className="ml-1.5 h-3.5 w-3.5" aria-hidden />
             </a>
@@ -249,7 +235,7 @@ const AdminHelpPage = () => (
         </CardContent>
       </Card>
 
-      <Card>
+      <Card className="rounded-2xl">
         <CardHeader>
           <CardTitle className="font-host-grotesk text-lg">Quick links</CardTitle>
         </CardHeader>
