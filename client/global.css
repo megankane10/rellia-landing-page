@@ -119,12 +119,12 @@
 @keyframes priority-modal-in {
   0% {
     opacity: 0;
-    transform: translate(-50%, -60%) scale(0.95);
+    transform: translate(-50%, -50%) translateY(-40px);
     filter: blur(12px);
   }
   100% {
     opacity: 1;
-    transform: translate(-50%, -50%) scale(1);
+    transform: translate(-50%, -50%) translateY(0);
     filter: blur(0px);
   }
 }
@@ -132,12 +132,12 @@
 @keyframes priority-modal-out {
   0% {
     opacity: 1;
-    transform: translate(-50%, -50%) scale(1);
+    transform: translate(-50%, -50%) translateY(0);
     filter: blur(0px);
   }
   100% {
     opacity: 0;
-    transform: translate(-50%, -60%) scale(0.95);
+    transform: translate(-50%, -50%) translateY(-40px);
     filter: blur(12px);
   }
 }

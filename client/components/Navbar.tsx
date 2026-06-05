@@ -505,6 +505,10 @@ export default function Navbar({
         buttonLink={globalSettings.priorityModalButtonLink}
         secondaryButtonLabel={globalSettings.priorityModalSecondaryButtonLabel}
         secondaryButtonLink={globalSettings.priorityModalSecondaryButtonLink}
+        formEnabled={globalSettings.priorityModalFormEnabled}
+        formButtonLabel={globalSettings.priorityModalFormButtonLabel}
+        formPlaceholderName={globalSettings.priorityModalFormPlaceholderName}
+        formPlaceholderEmail={globalSettings.priorityModalFormPlaceholderEmail}
       />
 
       <AnnouncementModal

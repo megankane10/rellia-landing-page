@@ -373,6 +373,7 @@ export function RoleHero({
   primaryCta,
   secondaryCta,
   onPrimaryClick,
+  onSecondaryClick,
   className,
   titleClassName,
   subtitleClassName,
@@ -383,8 +384,9 @@ export function RoleHero({
   subtitle: React.ReactNode
   imageSrc: string
   primaryCta: { label: string; to?: string }
-  secondaryCta?: { label: string; to: string }
+  secondaryCta?: { label: string; to?: string }
   onPrimaryClick?: () => void
+  onSecondaryClick?: () => void
   className?: string
   titleClassName?: string
   subtitleClassName?: string
@@ -408,6 +410,27 @@ export function RoleHero({
     return (
       <Link to={primaryCta.to || "/"} className="inline-flex w-full cursor-pointer items-center justify-center gap-2 sm:w-auto">
         {primaryCta.label}
+        <ArrowRight className="h-4 w-4" aria-hidden />
+      </Link>
+    )
+  }
+
+  const renderSecondary = () => {
+    if (onSecondaryClick) {
+      return (
+        <button
+          type="button"
+          onClick={onSecondaryClick}
+          className="inline-flex w-full cursor-pointer items-center justify-center gap-2 sm:w-auto"
+        >
+          {secondaryCta?.label}
+          <ArrowRight className="h-4 w-4" aria-hidden />
+        </button>
+      )
+    }
+    return (
+      <Link to={secondaryCta?.to || "/"} className="inline-flex w-full cursor-pointer items-center justify-center gap-2 sm:w-auto">
+        {secondaryCta?.label}
         <ArrowRight className="h-4 w-4" aria-hidden />
       </Link>
     )
@@ -460,10 +483,7 @@ export function RoleHero({
                 size="comfortable"
                 className="w-full min-w-0 justify-center border-white/45 hover:border-white/70 sm:min-w-[220px] sm:w-auto"
               >
-                <Link to={secondaryCta.to} className="inline-flex w-full cursor-pointer items-center justify-center gap-2 sm:w-auto">
-                  {secondaryCta.label}
-                  <ArrowRight className="h-4 w-4" aria-hidden />
-                </Link>
+                {renderSecondary()}
               </RelliaAction>
             )}
           </div>

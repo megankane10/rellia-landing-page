@@ -6,12 +6,19 @@ import {publishingGroup} from '../shared/pageVisibilityFields'
 
 const GROUP_OPEN_ROLES = {name: 'openRoles' as const, title: 'Open roles'}
 const GROUP_JOIN_TEAM = {name: 'joinTeam' as const, title: 'Join team marquee'}
+const GROUP_LIFE_AT_RELLIA = {name: 'lifeAtRellia' as const, title: 'Life at Rellia'}
 
 export const careersPage = defineType({
   name: 'careersPage',
   title: 'Careers page',
   type: 'document',
-  groups: [publishingGroup, GROUP_JOIN_TEAM, GROUP_OPEN_ROLES, ...documentGroups.filter((g) => g.name !== 'publishing' && g.name !== 'seo')],
+  groups: [
+    publishingGroup,
+    GROUP_JOIN_TEAM,
+    GROUP_OPEN_ROLES,
+    GROUP_LIFE_AT_RELLIA,
+    ...documentGroups.filter((g) => g.name !== 'publishing' && g.name !== 'seo'),
+  ],
   fields: [
     ...singletonPublishingAtTop,
     defineField({
@@ -158,7 +165,96 @@ export const careersPage = defineType({
           },
         }),
       ],
+    }),
+    defineField({
+      name: 'lifeAtRelliaHeading',
+      title: 'Life at Rellia — Heading',
+      type: 'string',
+      initialValue: 'Life at Rellia',
+      group: 'lifeAtRellia',
+    }),
+    defineField({
+      name: 'lifeAtRelliaSubheading',
+      title: 'Life at Rellia — Subheading',
+      type: 'text',
+      rows: 4,
+      initialValue: 'We are building a remote-first, high-standards health-tech company. Our team brings deep clinical, technical, and operational expertise to help founders transform care.',
+      group: 'lifeAtRellia',
+    }),
+    defineField({
+      name: 'lifeAtRelliaImages',
+      title: 'Life at Rellia — Slider Images',
+      type: 'array',
+      group: 'lifeAtRellia',
+      of: [
+        defineArrayMember({
+          type: 'image',
+          options: {hotspot: true},
+          fields: [
+            defineField({
+              name: 'alt',
+              title: 'Alt text',
+              type: 'string',
+            }),
+          ],
+        }),
+      ],
       options: {sortable: true},
+    }),
+    defineField({
+      name: 'lifeAtRelliaLinks',
+      title: 'Life at Rellia — Social/Proof Links',
+      type: 'array',
+      group: 'lifeAtRellia',
+      of: [
+        defineArrayMember({
+          type: 'object',
+          name: 'lifeAtRelliaLink',
+          title: 'Link / Button',
+          fields: [
+            defineField({
+              name: 'platformName',
+              title: 'Platform / Title',
+              type: 'string',
+              validation: (Rule) => Rule.required(),
+            }),
+            defineField({
+              name: 'url',
+              title: 'URL',
+              type: 'url',
+              validation: (Rule) => Rule.required().uri({scheme: ['http', 'https']}),
+            }),
+            defineField({
+              name: 'iconKey',
+              title: 'Icon Type',
+              type: 'string',
+              options: {
+                list: [
+                  {title: 'LinkedIn', value: 'linkedin'},
+                  {title: 'Instagram', value: 'instagram'},
+                  {title: 'YouTube', value: 'youtube'},
+                  {title: 'Twitter / X', value: 'twitter'},
+                  {title: 'Video', value: 'video'},
+                  {title: 'Article / Document', value: 'article'},
+                  {title: 'Website / Link', value: 'link'},
+                ],
+              },
+              initialValue: 'link',
+              validation: (Rule) => Rule.required(),
+            }),
+            defineField({
+              name: 'tooltip',
+              title: 'Hover Tooltip text',
+              type: 'string',
+              description: 'e.g. "Follow us on LinkedIn" or "Read our blog post"',
+              validation: (Rule) => Rule.required(),
+            }),
+          ],
+          preview: {
+            select: {title: 'platformName', subtitle: 'tooltip'},
+          },
+        }),
+      ],
     }),
     ...singletonLayoutFields,
   ],

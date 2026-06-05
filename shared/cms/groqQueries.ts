@@ -48,7 +48,11 @@ export const globalSettingsQuery = `*[_type == "globalSettings"][0]{
   priorityModalSecondaryButtonLabel,
   priorityModalSecondaryButtonLink,
   "priorityModalImageUrl": priorityModalImage.asset->url,
-  "priorityModalImageAlt": priorityModalImage.alt
+  "priorityModalImageAlt": priorityModalImage.alt,
+  priorityModalFormEnabled,
+  priorityModalFormButtonLabel,
+  priorityModalFormPlaceholderName,
+  priorityModalFormPlaceholderEmail
 }`;
 
 export const navigationQuery = `*[_type == "navigation"][0]{
@@ -681,6 +685,18 @@ export const careersPageQuery = `*[_type == "careersPage"][0]{
     description,
     responsibilities,
     linkedInApplyUrl
+  },
+  lifeAtRelliaHeading,
+  lifeAtRelliaSubheading,
+  lifeAtRelliaImages[]{
+    "src": asset->url,
+    alt
+  },
+  lifeAtRelliaLinks[]{
+    platformName,
+    url,
+    iconKey,
+    tooltip
   },
   ${seoFragment}
 }`
