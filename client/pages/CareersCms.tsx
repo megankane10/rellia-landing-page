@@ -17,6 +17,8 @@ import {
   Users,
   UserRound,
   Check,
+  ChevronLeft,
+  ChevronRight,
   ArrowRight,
   Linkedin,
   Instagram,
@@ -154,50 +156,111 @@ const getSocialIcon = (key: string): LucideIcon => {
   }
 }
 
-function LifeAtRelliaSlider({ images }: { images?: Array<{ src?: string; alt?: string }> }) {
+function LifeAtRelliaSlider({ images }: { images?: Array<{ src?: string; alt?: string; caption?: string }> }) {
   const [currentSlide, setCurrentSlide] = useState(0)
+  const [direction, setDirection] = useState(0)
 
   const slides = useMemo(() => {
-    const list = images?.map((img) => img.src).filter(Boolean) as string[]
-    if (list && list.length > 0) return list
-    return LIFE_AT_RELLIA_IMAGES
+    const list = images?.filter(Boolean) ?? []
+    if (list.length > 0) return list.map(img => ({ src: img.src || '', caption: img.caption || '' }))
+    return LIFE_AT_RELLIA_IMAGES.map(src => ({ src, caption: '' }))
   }, [images])
+
+  const goToSlide = (idx: number) => {
+    setDirection(idx > currentSlide ? 1 : -1)
+    setCurrentSlide(idx)
+  }
+
+  const handlePrev = () => {
+    if (currentSlide > 0) {
+      setDirection(-1)
+      setCurrentSlide(prev => prev - 1)
+    }
+  }
+
+  const handleNext = () => {
+    if (currentSlide < slides.length - 1) {
+      setDirection(1)
+      setCurrentSlide(prev => prev + 1)
+    }
+  }
 
   useEffect(() => {
     if (slides.length <= 1) return
     const timer = setInterval(() => {
+      setDirection(1)
       setCurrentSlide((prev) => (prev + 1) % slides.length)
-    }, 4000)
+    }, 5000)
     return () => clearInterval(timer)
   }, [slides.length])
 
+  const slideVariants = {
+    enter: (dir: number) => ({ x: dir > 0 ? '100%' : '-100%', opacity: 0 }),
+    center: { x: 0, opacity: 1 },
+    exit: (dir: number) => ({ x: dir > 0 ? '-100%' : '100%', opacity: 0 }),
+  }
+
   return (
-    <div className="relative aspect-square w-full overflow-hidden rounded-[2.5rem] bg-rellia-cream/40 shadow-md">
-      <AnimatePresence mode="wait">
-        <motion.img
-          key={currentSlide}
-          src={slides[currentSlide]}
-          alt="Life at Rellia"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.6 }}
-          className="absolute inset-0 h-full w-full object-cover"
-        />
-      </AnimatePresence>
+    <div className="flex flex-col">
+      <div className="relative aspect-square w-full max-w-[360px] overflow-hidden rounded-[2.5rem] bg-rellia-cream/40 shadow-md">
+        <AnimatePresence initial={false} custom={direction} mode="wait">
+          <motion.img
+            key={currentSlide}
+            src={slides[currentSlide]?.src}
+            alt="Life at Rellia"
+            custom={direction}
+            variants={slideVariants}
+            initial="enter"
+            animate="center"
+            exit="exit"
+            transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+            className="absolute inset-0 h-full w-full object-cover"
+          />
+        </AnimatePresence>
+        {slides.length > 1 && (
+          <div className="absolute bottom-6 left-1/2 flex -translate-x-1/2 gap-2 z-10">
+            {slides.map((_, index) => (
+              <button
+                key={index}
+                onClick={() => goToSlide(index)}
+                className={cn(
+                  "h-2 rounded-full transition-all duration-300",
+                  currentSlide === index ? "w-6 bg-white" : "w-2 bg-white/50"
+                )}
+                aria-label={`Go to slide ${index + 1}`}
+              />
+            ))}
+          </div>
+        )}
+      </div>
+      {slides[currentSlide]?.caption && (
+        <p className="mt-3 font-urbanist text-sm text-black/60 text-center max-w-[360px]">
+          {slides[currentSlide].caption}
+        </p>
+      )}
       {slides.length > 1 && (
-        <div className="absolute bottom-6 left-1/2 flex -translate-x-1/2 gap-2 z-10">
-          {slides.map((_, index) => (
-            <button
-              key={index}
-              onClick={() => setCurrentSlide(index)}
-              className={cn(
-                "h-2 rounded-full transition-all duration-300",
-                currentSlide === index ? "w-6 bg-white" : "w-2 bg-white/50"
-              )}
-              aria-label={`Go to slide ${index + 1}`}
-            />
-          ))}
+        <div className="mt-4 flex items-center gap-2 max-w-[360px] justify-center">
+          <button
+            type="button"
+            onClick={handlePrev}
+            disabled={currentSlide === 0}
+            className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-black/10 bg-white text-rellia-teal shadow-sm transition hover:bg-black/5 disabled:opacity-40"
+            aria-label="Previous image"
+          >
+            <ChevronLeft className="h-5 w-5" fill="currentColor" aria-hidden />
+          </button>
+          <span className="font-urbanist text-xs font-semibold text-black/55 uppercase tracking-[0.14em]">
+            {currentSlide + 1} / {slides.length}
+          </span>
+          <button
+            type="button"
+            onClick={handleNext}
+            disabled={currentSlide === slides.length - 1}
+            className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-black/10 bg-white text-rellia-teal shadow-sm transition hover:bg-black/5 disabled:opacity-40"
+            aria-label="Next image"
+          >
+            <ChevronRight className="h-5 w-5" fill="currentColor" aria-hidden />
+          </button>
         </div>
       )}
     </div>
@@ -322,7 +385,7 @@ export default function CareersCms() {
 
   return (
     <div className="min-h-screen overflow-x-hidden bg-white font-host-grotesk">
-      <Navbar />
+      <Navbar forceSolid />
 
       <main id="main-content">
         <AnimatePresence mode="wait">
@@ -361,7 +424,7 @@ export default function CareersCms() {
               className="lg:flex lg:h-[82vh] lg:flex-col"
             >
               <RoleHero
-                eyebrowLabel="Careers"
+                eyebrowLabel="Join the team"
                 imageSrc="/images/careers-img.jpg"
                 className="lg:flex-1"
                 title={
@@ -558,7 +621,7 @@ export default function CareersCms() {
       ) : null}
 
       {/* Life at Rellia Section */}
-      <section id="life-at-rellia" className="bg-white py-24 border-t border-black/10">
+      <section id="life-at-rellia" className="bg-white py-14 md:py-18">
         <div className="mx-auto max-w-[1300px] px-6 md:px-10">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16 items-center">
             {/* Image Slider */}
@@ -569,14 +632,11 @@ export default function CareersCms() {
             {/* Copy & Social Links */}
             <ScrollReveal>
               <div className="flex flex-col items-start justify-center">
-                <PillTag label="Culture" className="mb-4" />
-                <h2 className="font-host-grotesk text-3xl font-bold tracking-tight text-black sm:text-4xl">
-                  {careersCms.lifeAtRelliaHeading || "Life at Rellia"}
+                <PillTag label="Culture" className="mb-4 border-rellia-teal/20 bg-rellia-teal/8" labelClassName="text-rellia-teal font-bold" />
+                <h2 className="font-host-grotesk text-2xl font-bold tracking-tight text-black sm:text-3xl">
+                  {careersCms.lifeAtRelliaHeading || "Built by healthtech insiders, for builders"}
                 </h2>
-                <p className="mt-4 font-urbanist text-lg text-black/60 leading-relaxed max-w-xl">
-                  {careersCms.lifeAtRelliaSubheading ||
-                    "We are building a remote-first, high-standards health-tech company. Our team brings deep clinical, technical, and operational expertise to help founders transform care. We focus on outcome-oriented work, mutual support, and constant learning."}
-                </p>
+
                 
                 {/* Socials / proofs container */}
                 {Array.isArray(careersCms.lifeAtRelliaLinks) && careersCms.lifeAtRelliaLinks.length > 0 ? (
@@ -614,7 +674,7 @@ export default function CareersCms() {
         <RelliaCta
           title="Questions before you **apply**?"
           body="Tell us what you are looking for—we are happy to point you to the right conversation."
-          primary={{ label: "Contact Rellia", to: "/contact" }}
+          primary={{ label: "Get in touch", to: "/contact" }}
         />
       </div>
       </main>

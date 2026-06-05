@@ -43,11 +43,11 @@ export default function NetworkEyebrow({
       dot={dot}
       className={cn(
         tone === "onDark"
-          ? "border-white/35 bg-transparent shadow-none backdrop-blur-2xl"
-          : "border-rellia-teal/20 bg-white/90 shadow-sm backdrop-blur-md",
+          ? "border-white/30 bg-white/15 shadow-sm backdrop-blur-xl"
+          : "border-rellia-teal/20 bg-white/70 shadow-sm backdrop-blur-lg",
         className,
       )}
-      labelClassName={tone === "onLight" ? "text-rellia-teal" : undefined}
+      labelClassName={tone === "onLight" ? "text-rellia-teal font-semibold" : undefined}
     />
   )
 }

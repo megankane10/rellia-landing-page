@@ -111,6 +111,34 @@ export const PriorityAnnouncementModal = ({
     }
   }
 
+  const renderBodyWithLinks = (text?: string) => {
+    if (!text) return null
+    const parts = text.split("Sanity Studio")
+    if (parts.length <= 1) return text
+    return (
+      <>
+        {parts.map((part, index) => {
+          const isLast = index === parts.length - 1
+          return (
+            <span key={index}>
+              {part}
+              {!isLast && (
+                <a
+                  href="https://relliahealth.sanity.studio"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-semibold text-rellia-teal underline hover:text-rellia-teal/80"
+                >
+                  Sanity Studio
+                </a>
+              )}
+            </span>
+          )
+        })}
+      </>
+    )
+  }
+
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent
@@ -121,10 +149,12 @@ export const PriorityAnnouncementModal = ({
         onEscapeKeyDown={(event) => event.preventDefault()}
         overlayClassName="z-[10001] bg-black/55"
         className={cn(
-          "z-[10001] duration-300",
+          "z-[10001] duration-300 p-0 gap-0 overflow-hidden",
           "data-[state=open]:animate-priority-modal-in data-[state=closed]:animate-priority-modal-out",
-          "gap-0 overflow-hidden border-black/10 p-0 sm:max-w-[min(92vw,520px)]",
-          "rounded-3xl shadow-[0_24px_60px_rgba(13,53,64,0.35)]",
+          "border-black/[0.08] sm:max-w-[min(92vw,520px)]",
+          "shadow-[0_20px_50px_rgba(13,53,64,0.3)]",
+          "bg-gradient-to-r from-rellia-mint via-rellia-greyTeal to-rellia-mint",
+          "!rounded-[2.25rem] md:!rounded-[2.75rem]"
         )}
         aria-label={heading}
       >
@@ -144,7 +174,7 @@ export const PriorityAnnouncementModal = ({
 
           <div className="mb-4 flex w-full items-center justify-between gap-4">
             {showPill ? (
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-rellia-teal/25 bg-transparent px-2.5 py-1 text-[11px] font-extrabold uppercase tracking-[0.14em] text-rellia-teal">
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-rellia-teal/25 bg-transparent px-2.5 py-1 text-[11px] font-black uppercase tracking-[0.14em] text-rellia-teal">
                 <span className="relative flex h-2 w-2">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rellia-teal opacity-75" />
                   <span className="relative inline-flex rounded-full h-2 w-2 bg-rellia-teal" />
@@ -174,7 +204,9 @@ export const PriorityAnnouncementModal = ({
           </h2>
 
           {body?.trim() ? (
-            <p className="mt-3 font-urbanist text-base leading-relaxed text-black/70">{body}</p>
+            <p className="mt-3 font-urbanist text-base leading-relaxed text-black/70">
+              {renderBodyWithLinks(body)}
+            </p>
           ) : null}
 
           {formEnabled ? (

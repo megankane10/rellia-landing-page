@@ -35,10 +35,10 @@ export default function WhyRellia({
 
   const defaultCardImages = useMemo(
     () => [
-      "/images/whyrellia-network-2.jpg",
-      "/images/whyrellia-founders-2.jpg",
-      "/images/whyrellia-programs-2.jpg",
-      "/images/whyrellia-outcomes-2.jpg",
+      "https://images.pexels.com/photos/255379/pexels-photo-255379.jpeg?auto=compress&cs=tinysrgb&w=1200", // network (abstract bokeh connection nodes)
+      "https://images.pexels.com/photos/268533/pexels-photo-268533.jpeg?auto=compress&cs=tinysrgb&w=1200", // founders (lone tree representing strong roots/growth)
+      "https://images.pexels.com/photos/129731/pexels-photo-129731.jpeg?auto=compress&cs=tinysrgb&w=1200", // programs (modern clean structured geometric pattern)
+      "https://images.pexels.com/photos/1757363/pexels-photo-1757363.jpeg?auto=compress&cs=tinysrgb&w=1200", // outcomes (serene emerald lake representing clarity and success)
     ],
     [],
   )

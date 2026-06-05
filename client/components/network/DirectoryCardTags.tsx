@@ -35,13 +35,13 @@ export const DirectoryCardTags = ({
         {primary}
       </span>
 
-      {/* Secondary tags — neutral chips */}
+      {/* Secondary tags — brand color chips with light background */}
       {secondary.map((tag) => (
         <span
           key={tag}
           className={cn(
             "inline-flex rounded-full border px-2.5 py-0.5 font-urbanist text-[10px] font-semibold backdrop-blur-sm shadow-sm",
-            "border-white/10 bg-black/45 text-white",
+            "border-rellia-teal/15 bg-rellia-mint/20 text-rellia-teal",
           )}
         >
           {tag}

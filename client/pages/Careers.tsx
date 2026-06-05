@@ -40,6 +40,84 @@ import { RoleHero } from "./network/_shared"
 
 const g = DEFAULT_GLOBAL_SETTINGS
 
+const CAREERS_WHY_FEATURES: HomeWhyFeature[] = [
+  {
+    iconKey: "users",
+    title: "Mission you can feel",
+    description:
+      "Every week you will see founders ship, learn, and reset with support from people who have been in the room when healthcare products actually get adopted.",
+  },
+  {
+    iconKey: "target",
+    title: "Craft, not chaos",
+    description:
+      "We run tight programs with clear owners, thoughtful rituals, and space to improve how we work—so energy goes to members and outcomes, not noise.",
+  },
+  {
+    iconKey: "bookOpen",
+    title: "Learn beside experts",
+    description:
+      "You will sit alongside clinicians, operators, and investors who care about getting the details right—from diligence to deployment.",
+  },
+  {
+    iconKey: "userRound",
+    title: "Humans first",
+    description:
+      "Kindness is not a slogan here. We expect high standards and direct feedback, and we build trust by showing up for each other and the community.",
+  },
+]
+
+const CAREERS_WHY_CARD_IMAGES: string[] = [
+  "https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=1200",
+  "https://images.pexels.com/photos/3183150/pexels-photo-3183150.jpeg?auto=compress&cs=tinysrgb&w=1200",
+  "https://images.pexels.com/photos/3182812/pexels-photo-3182812.jpeg?auto=compress&cs=tinysrgb&w=1200",
+  "https://images.pexels.com/photos/3184369/pexels-photo-3184369.jpeg?auto=compress&cs=tinysrgb&w=1200",
+]
+
+const CAREERS_PERKS: HomeWhyFeature[] = [
+  {
+    iconKey: "users",
+    title: "In the room with the industry",
+    description:
+      "Clinicians, founders, and operators show up in our programs—you hear what actually moves care and procurement, not polished slide stories.",
+  },
+  {
+    iconKey: "building2",
+    title: "Office when it helps",
+    description:
+      "Remote-first with intentional in-person weeks: cohort sessions, workshops, and shared space when you want to work beside the team.",
+  },
+  {
+    iconKey: "laptop",
+    title: "Small team, real ownership",
+    description:
+      "Startup reality: clear priorities, Direct feedback, and permission to fix how we work—without layers of process for its own sake.",
+  },
+  {
+    iconKey: "mapPin",
+    title: "Out with the community",
+    description:
+      "Member events, partner conversations, and field context on how buying decisions get made—so you are not guessing from a distance.",
+  },
+]
+
+const getPerkIcon = (key: string): LucideIcon => {
+  switch (key) {
+    case "users":
+      return Users
+    case "building2":
+      return Building2
+    case "laptop":
+      return Laptop
+    case "mapPin":
+      return MapPin
+    case "userRound":
+      return UserRound
+    default:
+      return Users
+  }
+}
+
 const LIFE_AT_RELLIA_IMAGES = [
   "https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800&auto=format&fit=crop&q=80",
   "https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&auto=format&fit=crop&q=80",

@@ -10,6 +10,7 @@ import { CareersHiringBadge } from "@/components/CareersHiringBadge"
 import RelliaAction from "@/components/RelliaAction"
 import { InstagramFilled, LinkedInFilled, MailFilled } from "@/components/icons/SocialIcons"
 import type { NavItem } from "@shared/cms/types"
+import { isStrictProductionSite } from "@/lib/deploymentEnv"
 
 const LOGO_DEFAULT = "/images/logo-rellia-footer.webp"
 /** Wordmark for transparent bar on light heroes (FAQ, story posts) */
@@ -277,6 +278,7 @@ export default function Navbar({
   const priorityModalEligible =
     !hideAnnouncement &&
     !priorityModalDismissed &&
+    !isStrictProductionSite() &&
     globalSettings.priorityModalEnabled === true &&
     Boolean(globalSettings.priorityModalHeading?.trim())
 
