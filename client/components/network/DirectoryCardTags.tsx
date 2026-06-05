@@ -24,14 +24,12 @@ export const DirectoryCardTags = ({
         className,
       )}
     >
-      {/* Primary tag — teal pill with softer opacity */}
+      {/* Primary tag — brand teal pill */}
       <span
         key={primary}
         className={cn(
           "inline-flex rounded-full border px-2.5 py-0.5 font-urbanist text-[10px] font-semibold backdrop-blur-sm shadow-sm",
-          variant === "onPhoto"
-            ? "border-rellia-mint/70 bg-rellia-mint/35 text-white"
-            : "border-rellia-teal/30 bg-rellia-mint/22 text-rellia-teal",
+          "border-rellia-teal bg-rellia-teal text-white",
         )}
       >
         {primary}
@@ -44,8 +42,8 @@ export const DirectoryCardTags = ({
           className={cn(
             "inline-flex rounded-full border px-2.5 py-0.5 font-urbanist text-[10px] font-semibold backdrop-blur-sm shadow-sm",
             variant === "onPhoto"
-              ? "border-white/22 bg-black/45 text-white/92"
-              : "border-black/10 bg-white/85 text-black/78",
+              ? "border-white/20 bg-black/40 text-white/90"
+              : "border-black/10 bg-black/5 text-black/60",
           )}
         >
           {tag}

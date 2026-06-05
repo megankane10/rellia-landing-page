@@ -15,7 +15,7 @@ import {
   clampMetaTitle,
   resolveSocialOgImageUrl,
 } from "@/config/seo";
-import { useOptionalPageSeo } from "@/context/PageSeoContext";
+import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo";
 import { useAlumniCompanies } from "@/hooks/useCmsDocuments";
 import { isCmsQueryLoading } from "@/lib/cmsQueryState";
 import CmsPageLoadingShell from "@/components/cms/CmsPageLoadingShell";
@@ -46,18 +46,13 @@ export default function FounderProfile() {
 
   const canonicalUrl = buildPageUrl(location.pathname);
   const [copied, setCopied] = useState(false);
-  const { setPageSeo } = useOptionalPageSeo();
   const [activeImage, setActiveImage] = useState<{ src: string; alt: string } | null>(null);
 
-  useEffect(() => {
-    if (!active) return;
-    setPageSeo({
-      title: clampMetaTitle(`${active.logoName} - Alumni`),
-      description: clampMetaDescription(active.shortDescription),
-      ogImage: resolveSocialOgImageUrl(active.logoSrc),
-    });
-    return () => setPageSeo(null);
-  }, [active, setPageSeo]);
+  useApplyCmsSeo(null, active ? {
+    title: clampMetaTitle(`${active.logoName} - Alumni`),
+    description: clampMetaDescription(active.shortDescription),
+    ogImage: resolveSocialOgImageUrl(active.logoSrc),
+  } : undefined);
 
   useEffect(() => {
     if (id) {

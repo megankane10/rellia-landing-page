@@ -1314,9 +1314,12 @@ export const DEFAULT_GLOBAL_SETTINGS: GlobalSettingsContent = {
   announcementButtonLabel: "Learn More",
   announcementButtonLink: "/programs/regulatory-strategy-sprint",
   announcementPillText: "LIVE",
-  priorityModalEnabled: false,
-  priorityModalHeading: "",
-  priorityModalBody: "",
+  priorityModalEnabled: true,
+  priorityModalHeading: "Welcome to Rellia Health Additions!",
+  priorityModalBody: "Discover our latest program updates and alumni listings. We are continuously improving the platform with new design tokens, directories, and dashboard insights to accelerate your journey to market.",
+  priorityModalPillText: "ANNOUNCEMENT",
+  priorityModalButtonLabel: "Explore Programs",
+  priorityModalButtonLink: "/programs",
 }
 
 export const DEFAULT_HOME_PAGE: HomePageContent = {

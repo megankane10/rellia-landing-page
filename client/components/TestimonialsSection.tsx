@@ -132,7 +132,7 @@ function TestimonialCard({
             ref={quoteRef}
             className={cn(
               "relative z-0 font-urbanist text-[15px] leading-relaxed text-black/75",
-              isExpanded ? "whitespace-normal opacity-100" : "line-clamp-5 opacity-90",
+              isExpanded ? "whitespace-normal opacity-100" : "line-clamp-4 opacity-90 h-auto md:h-[97.5px]",
               "transition-opacity duration-300 ease-out motion-reduce:transition-none",
             )}
           >
@@ -316,7 +316,7 @@ export default function TestimonialsSection({
           >
             <div className="relative flex flex-col gap-4 md:gap-5">
               <div className="md:[mask-image:linear-gradient(to_right,black_85%,transparent_100%)]">
-                <CarouselContent className="-ml-2 items-start md:-ml-6">
+                <CarouselContent className="-ml-2 items-stretch md:-ml-6">
                   {orderedTestimonials.map((t, idx) => (
                     <CarouselItem
                       key={t.name}

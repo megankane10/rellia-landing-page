@@ -70,12 +70,12 @@ const StoryGridCard = ({
           </div>
 
           <h3
-            className="mt-1 line-clamp-2 font-host-grotesk text-[16px] font-semibold leading-snug text-black group-hover:underline group-hover:underline-offset-4 md:text-lg"
+            className="mt-1 line-clamp-2 h-auto md:h-[50px] font-host-grotesk text-[16px] font-semibold leading-snug text-black group-hover:underline group-hover:underline-offset-4 md:text-lg"
           >
             {cleanTitle}
           </h3>
 
-          <p className="mt-1.5 line-clamp-3 overflow-hidden break-words font-urbanist text-sm leading-relaxed text-black/70 md:text-base">
+          <p className="mt-1.5 line-clamp-3 h-auto md:h-[78px] overflow-hidden break-words font-urbanist text-sm leading-relaxed text-black/70 md:text-base">
             {story.excerpt}
           </p>
         </div>

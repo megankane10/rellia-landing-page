@@ -16,7 +16,7 @@ import {
   clampMetaTitle,
   resolveSocialOgImageUrl,
 } from "@/config/seo";
-import { useOptionalPageSeo } from "@/context/PageSeoContext";
+import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo";
 import { useAdvisors } from "@/hooks/useCmsDocuments";
 import { isCmsQueryLoading } from "@/lib/cmsQueryState";
 import CmsPageLoadingShell from "@/components/cms/CmsPageLoadingShell";
@@ -41,18 +41,13 @@ export default function AdvisorProfile() {
 
   const canonicalUrl = buildPageUrl(location.pathname);
   const [copied, setCopied] = useState(false);
-  const { setPageSeo } = useOptionalPageSeo();
   const [activeImage, setActiveImage] = useState<{ src: string; alt: string } | null>(null);
 
-  useEffect(() => {
-    if (!active) return;
-    setPageSeo({
-      title: clampMetaTitle(`${active.name} - Advisors`),
-      description: clampMetaDescription(active.snapshot ?? active.focus),
-      ogImage: resolveSocialOgImageUrl(active.photoSrc),
-    });
-    return () => setPageSeo(null);
-  }, [active, setPageSeo]);
+  useApplyCmsSeo(null, active ? {
+    title: clampMetaTitle(`${active.name} - Advisors`),
+    description: clampMetaDescription(active.snapshot ?? active.focus),
+    ogImage: resolveSocialOgImageUrl(active.photoSrc),
+  } : undefined);
 
   useEffect(() => {
     if (id) {
