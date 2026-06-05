@@ -2,7 +2,7 @@ import { useState, useMemo } from "react"
 import { Link } from "react-router-dom"
 import { useQuery } from "@tanstack/react-query"
 import { ArrowRight, ChevronLeft, ChevronRight, FileEdit, Inbox, Stethoscope, Users, TrendingUp, AlertCircle } from "lucide-react"
-import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts"
+import { Bar, BarChart, CartesianGrid, XAxis, YAxis, PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from "recharts"
 import { useAuth } from "@/context/AuthContext"
 import { fetchAdminTeam } from "@/lib/adminApi"
 import { supabase } from "@/lib/supabase"
@@ -130,6 +130,7 @@ const AdminOverviewPage = () => {
   const pageTitle = welcomeBackTitle(displayName, user?.email)
 
   const [weekOffset, setWeekOffset] = useState(0)
+  const [statusFilter, setStatusFilter] = useState<"all" | "survey" | "web">("all")
 
   const contactsQuery = useQuery({ queryKey: ["admin-contact-submissions"], queryFn: fetchContactSubmissions })
   const diagnosticsQuery = useQuery({ queryKey: ["admin-company-profiles"], queryFn: fetchDiagnosticSubmissions })
@@ -159,7 +160,22 @@ const AdminOverviewPage = () => {
   const contacts = contactsQuery.data ?? []
   const diagnostics = diagnosticsQuery.data ?? []
   const trend = buildLastNDaysTrend(contacts, diagnostics, 7, weekOffset)
-  const statusBreakdown = buildStatusBreakdown(contacts, diagnostics)
+
+  // Filtered status breakdown logic
+  const filteredContacts = useMemo(() => {
+    if (statusFilter === "survey") return []
+    return contacts
+  }, [contacts, statusFilter])
+
+  const filteredDiagnostics = useMemo(() => {
+    if (statusFilter === "web") return []
+    return diagnostics
+  }, [diagnostics, statusFilter])
+
+  const statusBreakdown = useMemo(() => {
+    return buildStatusBreakdown(filteredContacts, filteredDiagnostics)
+  }, [filteredContacts, filteredDiagnostics])
+
   const recentContacts = [...contacts]
     .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
     .slice(0, 5)
@@ -181,17 +197,26 @@ const AdminOverviewPage = () => {
   const draftCount = draftsQuery.data?.length ?? 0
   const teamCount = teamQuery.data?.length ?? 0
 
-  const totalStatusCount = statusBreakdown.reduce((sum, row) => sum + row.count, 0)
-  const statusRows = statusBreakdown.map((row) => ({
-    ...row,
-    pct: totalStatusCount > 0 ? Math.round((row.count / totalStatusCount) * 100) : 0,
-    fill:
-      row.status === "New"
-        ? CHART_COLORS.new
-        : row.status === "In Progress"
-          ? CHART_COLORS.progress
-          : CHART_COLORS.resolved,
-  }))
+  const totalStatusCount = useMemo(() => {
+    return statusBreakdown.reduce((sum, row) => sum + row.count, 0)
+  }, [statusBreakdown])
+
+  const statusRows = useMemo(() => {
+    return statusBreakdown.map((row) => ({
+      name: row.status,
+      value: row.count,
+      pct: totalStatusCount > 0 ? Math.round((row.count / totalStatusCount) * 100) : 0,
+      fill:
+        row.status === "New"
+          ? CHART_COLORS.new
+          : row.status === "In Progress"
+            ? CHART_COLORS.progress
+            : CHART_COLORS.resolved,
+    }))
+  }, [statusBreakdown, totalStatusCount])
+
+  const newCount = useMemo(() => statusBreakdown.find((r) => r.status === "New")?.count ?? 0, [statusBreakdown])
+  const resolvedCount = useMemo(() => statusBreakdown.find((r) => r.status === "Resolved")?.count ?? 0, [statusBreakdown])
 
   const stageCounts = useMemo(() => {
     const counts: Record<string, number> = {}
@@ -238,6 +263,75 @@ const AdminOverviewPage = () => {
       .map(([category]) => category)
 
     return { topStrengths, topWeaknesses }
+  }, [responsesQuery.data])
+
+  // Strengths and Gaps Pie Chart data
+  const strengthsPieData = useMemo(() => {
+    const counts: Record<string, number> = {}
+    const responses = responsesQuery.data ?? []
+    responses.forEach((resp) => {
+      const strengths = resp.top3_strengths as any[] | null
+      if (Array.isArray(strengths)) {
+        strengths.forEach((s) => {
+          if (s?.category) {
+            counts[s.category] = (counts[s.category] || 0) + 1
+          }
+        })
+      }
+    })
+
+    const palette = [
+      "hsl(174 42% 35%)", // Rellia Teal
+      "hsl(175 42% 73%)", // Rellia Mint
+      "hsl(199 89% 48%)", // Blue
+      "hsl(38 92% 50%)",  // Orange/Amber
+      "hsl(142 76% 36%)", // Green
+      "hsl(322 81% 43%)", // Pink
+      "hsl(262 83% 58%)", // Violet
+      "hsl(28 80% 52%)"   // Red-orange
+    ]
+
+    return Object.entries(counts)
+      .sort((a, b) => b[1] - a[1])
+      .map(([category, val], idx) => ({
+        name: category,
+        value: val,
+        fill: palette[idx % palette.length]
+      }))
+  }, [responsesQuery.data])
+
+  const gapsPieData = useMemo(() => {
+    const counts: Record<string, number> = {}
+    const responses = responsesQuery.data ?? []
+    responses.forEach((resp) => {
+      const weaknesses = resp.top3_weaknesses as any[] | null
+      if (Array.isArray(weaknesses)) {
+        weaknesses.forEach((w) => {
+          if (w?.category) {
+            counts[w.category] = (counts[w.category] || 0) + 1
+          }
+        })
+      }
+    })
+
+    const palette = [
+      "hsl(38 92% 50%)",  // Orange/Amber
+      "hsl(28 80% 52%)",   // Red-orange
+      "hsl(322 81% 43%)", // Pink
+      "hsl(174 42% 35%)", // Rellia Teal
+      "hsl(199 89% 48%)", // Blue
+      "hsl(262 83% 58%)", // Violet
+      "hsl(142 76% 36%)", // Green
+      "hsl(175 42% 73%)"  // Rellia Mint
+    ]
+
+    return Object.entries(counts)
+      .sort((a, b) => b[1] - a[1])
+      .map(([category, val], idx) => ({
+        name: category,
+        value: val,
+        fill: palette[idx % palette.length]
+      }))
   }, [responsesQuery.data])
 
   const getWeekRangeLabel = (offset: number) => {
@@ -334,35 +428,77 @@ const AdminOverviewPage = () => {
 
       <div className="grid gap-4 lg:grid-cols-2">
         <Card className="rounded-2xl">
-          <CardHeader>
-            <CardTitle className="font-host-grotesk text-lg">Status breakdown</CardTitle>
-            <CardDescription className="font-urbanist">Distribution across New, In progress, and Resolved</CardDescription>
+          <CardHeader className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <CardTitle className="font-host-grotesk text-lg">Status breakdown</CardTitle>
+              <CardDescription className="font-urbanist">Distribution across New, In progress, and Resolved</CardDescription>
+            </div>
+            <div className="flex gap-1 border border-slate-100 bg-slate-50/50 p-1 rounded-xl w-fit">
+              {(["all", "web", "survey"] as const).map((mode) => (
+                <button
+                  key={mode}
+                  type="button"
+                  onClick={() => setStatusFilter(mode)}
+                  className={cn(
+                    "px-2.5 py-1 font-urbanist text-[11px] font-bold rounded-lg transition-all",
+                    statusFilter === mode
+                      ? "bg-rellia-teal text-white shadow-sm"
+                      : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
+                  )}
+                >
+                  {mode === "all" ? "All" : mode === "web" ? "Web" : "Survey"}
+                </button>
+              ))}
+            </div>
           </CardHeader>
           <CardContent>
             {loading ? (
               <Skeleton className="h-[220px] w-full rounded-xl" />
+            ) : totalStatusCount === 0 ? (
+              <div className="flex h-[220px] flex-col items-center justify-center text-center">
+                <p className="font-urbanist text-sm text-muted-foreground">No submissions found for this filter.</p>
+              </div>
             ) : (
-              <div className="space-y-4">
-                {statusRows.map((row) => (
-                  <div key={row.status} className="space-y-2">
-                    <div className="flex items-center justify-between gap-3">
-                      <Badge variant="outline" className={cn("border-0", statusBadgeClass(row.status))}>
-                        {row.status}
-                      </Badge>
-                      <div className="flex items-center gap-3 font-urbanist text-sm">
-                        <span className="text-muted-foreground tabular-nums">{row.pct}%</span>
-                        <span className="font-semibold tabular-nums text-foreground">{row.count}</span>
-                      </div>
-                    </div>
-                    <div className="h-2 w-full rounded-full bg-slate-100">
-                      <div
-                        className="h-2 rounded-full"
-                        style={{ width: `${row.pct}%`, background: row.fill }}
-                        aria-hidden
+              <div className="grid grid-cols-1 sm:grid-cols-[1.1fr_0.9fr] gap-4 items-center">
+                <div className="h-[200px] w-full flex items-center justify-center">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <Pie
+                        data={statusRows.filter((r) => r.value > 0)}
+                        cx="50%"
+                        cy="50%"
+                        innerRadius={50}
+                        outerRadius={70}
+                        paddingAngle={3}
+                        dataKey="value"
+                      >
+                        {statusRows.filter((r) => r.value > 0).map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={entry.fill} />
+                        ))}
+                      </Pie>
+                      <Tooltip
+                        formatter={(value: any, name: any) => [`${value} (${statusRows.find(r => r.name === name)?.pct}%)`, name]}
+                        contentStyle={{ borderRadius: "12px", border: "1px solid rgba(0,0,0,0.08)", boxShadow: "0 10px 30px rgba(0,0,0,0.06)", fontFamily: "Urbanist" }}
                       />
+                    </PieChart>
+                  </ResponsiveContainer>
+                </div>
+                <div className="space-y-2.5">
+                  <div className="rounded-xl border border-slate-100 bg-slate-50/50 p-2.5">
+                    <p className="font-urbanist text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">Total Submissions</p>
+                    <p className="font-host-grotesk text-xl font-bold text-slate-900 mt-0.5">{totalStatusCount}</p>
+                  </div>
+                  <div className="flex gap-2">
+                    <div className="flex-1 rounded-xl border border-[#ccfbf1]/30 bg-[#ccfbf1]/10 p-2">
+                      <p className="font-urbanist text-[9px] text-[#0f766e] uppercase tracking-wider font-bold">New</p>
+                      <p className="font-host-grotesk text-base font-bold text-[#0f766e] mt-0.5">{newCount}</p>
+                    </div>
+                    <div className="flex-1 rounded-xl border border-emerald-100/30 bg-emerald-50/10 p-2">
+                      <p className="font-urbanist text-[9px] text-emerald-700 uppercase tracking-wider font-bold">Resolved</p>
+                      <p className="font-host-grotesk text-base font-bold text-emerald-700 mt-0.5">{resolvedCount}</p>
                     </div>
                   </div>
-                ))}
+                </div>
               </div>
             )}
           </CardContent>
@@ -452,6 +588,95 @@ const AdminOverviewPage = () => {
                           </div>
                         ))}
                       </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Pie charts for strengths and gaps */}
+                <div className="grid gap-6 border-t border-border pt-5 sm:grid-cols-2">
+                  <div className="flex flex-col items-center">
+                    <p className="font-host-grotesk text-sm font-semibold text-slate-800 mb-2">Strengths by Domain</p>
+                    {responsesQuery.isLoading ? (
+                      <Skeleton className="h-[160px] w-full rounded-xl" />
+                    ) : strengthsPieData.length === 0 ? (
+                      <p className="font-urbanist text-xs text-muted-foreground py-10">No data available.</p>
+                    ) : (
+                      <>
+                        <div className="h-[140px] w-full relative">
+                          <ResponsiveContainer width="100%" height="100%">
+                            <PieChart>
+                              <Pie
+                                data={strengthsPieData}
+                                cx="50%"
+                                cy="50%"
+                                innerRadius={35}
+                                outerRadius={55}
+                                paddingAngle={2}
+                                dataKey="value"
+                              >
+                                {strengthsPieData.map((entry, index) => (
+                                  <Cell key={`cell-${index}`} fill={entry.fill} />
+                                ))}
+                              </Pie>
+                              <Tooltip
+                                contentStyle={{ borderRadius: "12px", border: "1px solid rgba(0,0,0,0.08)", boxShadow: "0 10px 30px rgba(0,0,0,0.06)", fontFamily: "Urbanist" }}
+                              />
+                            </PieChart>
+                          </ResponsiveContainer>
+                        </div>
+                        <div className="mt-2 flex flex-wrap gap-1.5 justify-center max-h-24 overflow-y-auto w-full px-1">
+                          {strengthsPieData.map((d) => (
+                            <span key={d.name} className="inline-flex items-center gap-1 text-[9px] font-urbanist font-medium text-slate-600 bg-slate-50 border border-slate-100 rounded-md px-1.5 py-0.5 shadow-sm">
+                              <span className="h-1.5 w-1.5 rounded-full shrink-0" style={{ backgroundColor: d.fill }} />
+                              <span className="truncate max-w-[80px]">{d.name}</span>
+                              <span className="text-slate-400 font-bold">({d.value})</span>
+                            </span>
+                          ))}
+                        </div>
+                      </>
+                    )}
+                  </div>
+
+                  <div className="flex flex-col items-center border-t pt-5 sm:border-t-0 sm:pt-0 sm:border-l sm:pl-6 border-slate-100">
+                    <p className="font-host-grotesk text-sm font-semibold text-slate-800 mb-2">Gaps by Domain</p>
+                    {responsesQuery.isLoading ? (
+                      <Skeleton className="h-[160px] w-full rounded-xl" />
+                    ) : gapsPieData.length === 0 ? (
+                      <p className="font-urbanist text-xs text-muted-foreground py-10">No data available.</p>
+                    ) : (
+                      <>
+                        <div className="h-[140px] w-full relative">
+                          <ResponsiveContainer width="100%" height="100%">
+                            <PieChart>
+                              <Pie
+                                data={gapsPieData}
+                                cx="50%"
+                                cy="50%"
+                                innerRadius={35}
+                                outerRadius={55}
+                                paddingAngle={2}
+                                dataKey="value"
+                              >
+                                {gapsPieData.map((entry, index) => (
+                                  <Cell key={`cell-${index}`} fill={entry.fill} />
+                                ))}
+                              </Pie>
+                              <Tooltip
+                                contentStyle={{ borderRadius: "12px", border: "1px solid rgba(0,0,0,0.08)", boxShadow: "0 10px 30px rgba(0,0,0,0.06)", fontFamily: "Urbanist" }}
+                              />
+                            </PieChart>
+                          </ResponsiveContainer>
+                        </div>
+                        <div className="mt-2 flex flex-wrap gap-1.5 justify-center max-h-24 overflow-y-auto w-full px-1">
+                          {gapsPieData.map((d) => (
+                            <span key={d.name} className="inline-flex items-center gap-1 text-[9px] font-urbanist font-medium text-slate-600 bg-slate-50 border border-slate-100 rounded-md px-1.5 py-0.5 shadow-sm">
+                              <span className="h-1.5 w-1.5 rounded-full shrink-0" style={{ backgroundColor: d.fill }} />
+                              <span className="truncate max-w-[80px]">{d.name}</span>
+                              <span className="text-slate-400 font-bold">({d.value})</span>
+                            </span>
+                          ))}
+                        </div>
+                      </>
                     )}
                   </div>
                 </div>

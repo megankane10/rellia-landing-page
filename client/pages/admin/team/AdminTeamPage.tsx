@@ -15,11 +15,13 @@ import { formatAdminDate } from "@/lib/adminSubmissionStatus"
 import type { AdminTableColumn } from "@/components/admin/AdminDataTable"
 import type { AdminTeamUser } from "@/lib/adminApi"
 
+import AdminTipBox from "@/components/admin/AdminTipBox"
+
 const SUPABASE_AUTH_USERS_URL =
   "https://supabase.com/dashboard/project/agsvypnmlrvpbgrsxtqy/auth/users"
 
-const memberStatus = (member: AdminTeamUser) =>
-  member.confirmedAt ? (
+const memberStatus = (member: AdminTeamUser) => {
+  return member.confirmedAt ? (
     <span className="inline-flex rounded-full bg-rellia-mint/30 px-2.5 py-0.5 text-xs font-medium text-rellia-teal">
       Active
     </span>
@@ -28,6 +30,7 @@ const memberStatus = (member: AdminTeamUser) =>
       Invite pending
     </span>
   )
+}
 
 const memberInitials = (member: AdminTeamUser) => {
   const name = member.fullName?.trim()
@@ -100,40 +103,39 @@ const AdminTeamPage = () => {
 
   return (
     <div className="space-y-6">
-      <div className="grid gap-4 sm:grid-cols-2">
-        <a
-          href="https://supabase.com/dashboard/project/agsvypnmlrvpbgrsxtqy/auth/users"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex flex-col items-center justify-center rounded-2xl border border-rellia-teal/15 bg-rellia-mint/10 p-6 text-center transition-all hover:border-rellia-teal/30 hover:bg-rellia-mint/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-        >
-          <UserPlus className="h-10 w-10 text-rellia-teal mb-3" aria-hidden />
-          <span className="font-host-grotesk font-bold text-base text-foreground">Invite Admin User</span>
-          <span className="mt-1 font-urbanist text-xs text-muted-foreground">Invite via Supabase. 3 invites/day limit</span>
-        </a>
+      <AdminTipBox
+        title="Invite your team members"
+        icon={UserPlus}
+        storageKey="rellia-admin-team-tip-collapsed"
+        className="w-full"
+      >
+        <p className="font-urbanist text-sm text-black/70 leading-relaxed mb-4">
+          Invite colleagues from Supabase Auth to grant dashboard access. To allow new registrations via the signup page, toggle the <code className="text-xs font-semibold text-rellia-teal bg-rellia-mint/10 px-1 py-0.5 rounded">ADMIN_SIGNUP_ENABLED</code> environment variable to <code className="text-xs font-semibold text-rellia-teal bg-rellia-mint/10 px-1 py-0.5 rounded">true</code> in Vercel settings and remember to disable it after use.
+        </p>
+        <div className="grid gap-4 sm:grid-cols-2 mt-4">
+          <a
+            href="https://supabase.com/dashboard/project/agsvypnmlrvpbgrsxtqy/auth/users"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex flex-col items-center justify-center rounded-2xl border border-rellia-teal/15 bg-white p-5 text-center transition-all hover:border-rellia-teal/30 hover:bg-rellia-mint/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-teal"
+          >
+            <UserPlus className="h-8 w-8 text-rellia-teal mb-2" aria-hidden />
+            <span className="font-host-grotesk font-bold text-sm text-foreground">Invite Admin User</span>
+            <span className="mt-0.5 font-urbanist text-[11px] text-muted-foreground">Go to Supabase Auth</span>
+          </a>
 
-        <div
-          className="flex flex-col items-center justify-center rounded-2xl border border-border bg-card p-6 text-center transition-all hover:border-rellia-teal/25 hover:bg-rellia-mint/5"
-        >
-          <Key className="h-10 w-10 text-rellia-teal mb-3" aria-hidden />
           <a
             href="https://vercel.com/relliahealth/~/settings/environment-variables"
             target="_blank"
             rel="noopener noreferrer"
-            className="font-host-grotesk font-bold text-base text-foreground flex items-center gap-1 hover:text-rellia-teal hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded"
+            className="flex flex-col items-center justify-center rounded-2xl border border-rellia-teal/15 bg-white p-5 text-center transition-all hover:border-rellia-teal/30 hover:bg-rellia-mint/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-teal"
           >
-            Enable Signup
-            <ExternalLink className="h-3.5 w-3.5" aria-hidden />
+            <Key className="h-8 w-8 text-rellia-teal mb-2" aria-hidden />
+            <span className="font-host-grotesk font-bold text-sm text-foreground">Enable Signup</span>
+            <span className="mt-0.5 font-urbanist text-[11px] text-muted-foreground">Go to Vercel Settings</span>
           </a>
-          <p className="mt-1 font-urbanist text-xs text-muted-foreground max-w-sm">
-            Click on the project name &gt; change the variable and make sure to disable after use. Admins can use the{" "}
-            <Link to="/admin/signup" className="text-rellia-teal font-medium hover:underline">
-              signup page
-            </Link>{" "}
-            while enabled.
-          </p>
         </div>
-      </div>
+      </AdminTipBox>
 
       <AdminPageHeader
         title="Team"

@@ -9,7 +9,9 @@ import {
   fetchCmsContentQueue,
   isCmsContentEnabled,
 } from "@/lib/adminSanityContent"
+import AdminTipBox from "@/components/admin/AdminTipBox"
 import { getSanityDataset } from "@/lib/sanity"
+import { FileEdit } from "lucide-react"
 
 const STUDIO_HOME = "https://relliahealth.sanity.studio"
 
@@ -81,9 +83,13 @@ const AdminContentList = () => {
 
       {cmsConfigured && (
         <>
-          <div className="rounded-2xl border border-rellia-teal/15 bg-rellia-mint/10 px-5 py-4 font-urbanist text-sm leading-relaxed text-black/75">
-            <p className="font-host-grotesk font-semibold text-rellia-teal">How this list works</p>
-            <ul className="mt-2 list-disc space-y-1.5 pl-5">
+          <AdminTipBox
+            title="How this list works"
+            icon={FileEdit}
+            storageKey="rellia-admin-content-tip-collapsed"
+            className="mb-6"
+          >
+            <ul className="list-disc space-y-1.5 pl-5">
               <li>
                 Only <strong>unpublished drafts</strong> appear here (
                 <code className="text-xs">drafts.*</code> ids in Sanity). They are not on the public
@@ -99,7 +105,7 @@ const AdminContentList = () => {
                 <em>Advisor</em>.
               </li>
             </ul>
-          </div>
+          </AdminTipBox>
 
           <AdminContentQueueList
             rows={draftRows}

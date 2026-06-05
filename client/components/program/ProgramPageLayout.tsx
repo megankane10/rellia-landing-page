@@ -46,6 +46,7 @@ import { CmsHeroTextSkeleton } from "@/components/cms/CmsTextSkeleton"
 import { useProgramBySlug, useProgramPageBySlug } from "@/hooks/useCmsDocuments"
 import { isAnyCmsQueryLoading } from "@/lib/cmsQueryState"
 import { isSanityConfigured } from "@/lib/sanity"
+import { isStrictProductionSite } from "@/lib/deploymentEnv"
 import PageSocialHelmet from "@/components/seo/PageSocialHelmet"
 import { PEXELS_HEALTH_MEETING, PEXELS_OFFICE_COLLABORATION, LOCAL_METRICS_BG_JPEG } from "@/config/pexelsFallbacks"
 import {
@@ -599,7 +600,7 @@ const ProgramPageLayout = ({
                           </span>
                         ) : null}
                       </span>
-                      {q.pricingDiscountEnabled && q.pricingCompareAmount?.trim() ? (
+                      {q.pricingDiscountEnabled && !isStrictProductionSite() && q.pricingCompareAmount?.trim() ? (
                         <span className="relative inline-block text-3xl md:text-4xl font-bold text-white/45 ml-2">
                           {q.pricingCompareAmount.trim()}
                           <span

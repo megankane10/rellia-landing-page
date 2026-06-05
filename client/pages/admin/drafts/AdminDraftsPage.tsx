@@ -15,6 +15,8 @@ import {
   formatCmsDocumentTypeLabel,
   isCmsContentEnabled,
 } from "@/lib/adminSanityContent"
+import AdminTipBox from "@/components/admin/AdminTipBox"
+import { getSanityDataset } from "@/lib/sanity"
 import { cn } from "@/lib/utils"
 
 const DATASET_EMPTY_MESSAGE =
@@ -24,7 +26,10 @@ const AdminDraftsPage = () => {
   const { session } = useAuth()
   const token = session?.access_token ?? ""
   const cmsConfigured = isCmsContentEnabled()
-  const [dataset, setDataset] = useState<AdminSanityDataset>("production")
+  const [dataset, setDataset] = useState<AdminSanityDataset>(() => {
+    const defaultDs = getSanityDataset();
+    return defaultDs === "preview" ? "preview" : "production";
+  })
   const [typeFilter, setTypeFilter] = useState<string>("all")
 
   const { data, isLoading, error } = useQuery({
@@ -74,10 +79,16 @@ const AdminDraftsPage = () => {
         </Card>
       ) : (
         <>
-          <div className="mb-4 rounded-2xl border border-rellia-teal/15 bg-rellia-mint/10 px-4 py-3 font-urbanist text-sm text-rellia-teal/85">
-            <strong className="text-rellia-teal">Preview vs Production:</strong> Drafts live inside a specific Sanity dataset.
-            Switch datasets to see unpublished work that will affect the staging site (preview) vs the live site (production).
-          </div>
+          <AdminTipBox
+            title="Preview vs Production"
+            icon={FileEdit}
+            storageKey="rellia-admin-drafts-tip-collapsed"
+            className="mb-6"
+          >
+            <p>
+              Drafts live inside a specific Sanity dataset. Switch datasets to see unpublished work that will affect the staging site (preview) vs the live site (production).
+            </p>
+          </AdminTipBox>
           <div className="mb-6 h-auto w-full max-w-md bg-transparent p-0">
             <div className="grid w-full grid-cols-2 gap-2" role="tablist" aria-label="Sanity dataset">
               {ADMIN_SANITY_DATASET_TABS.map((tab) => (
