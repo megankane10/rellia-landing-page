@@ -9,6 +9,7 @@ import { FilloutStandardEmbed } from "@fillout/react"
 import { FILLOUT_APPLY_FORM_ID, FILLOUT_EMBED_VIEWPORT_MIN_CLASS } from "@/lib/filloutApplyForm"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { motion, useReducedMotion, AnimatePresence } from "framer-motion"
+import { LinkedInFilled, InstagramFilled, GlobeFilled } from "@/components/icons/SocialIcons"
 import {
   BriefcaseBusiness,
   Building2,
@@ -26,6 +27,7 @@ import {
   Globe,
   Video,
   FileText,
+  Facebook,
   type LucideIcon
 } from "lucide-react"
 import type { HomeWhyFeature } from "@shared/cms/types"
@@ -124,25 +126,24 @@ const LIFE_AT_RELLIA_IMAGES = [
   "https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=800&auto=format&fit=crop&q=80"
 ]
 
-const getSocialIcon = (key: string): LucideIcon => {
-  switch (key.toLowerCase()) {
+function getSocialIcon(platform: string) {
+  switch (platform.toLowerCase()) {
     case "linkedin":
-      return Linkedin
+      return LinkedInFilled
     case "instagram":
-      return Instagram
-    case "youtube":
-      return Youtube
+      return InstagramFilled
     case "twitter":
     case "x":
       return Twitter
-    case "video":
-      return Video
-    case "article":
-    case "paper":
+    case "facebook":
+      return Facebook
+    case "youtube":
+      return Youtube
+    case "document":
       return FileText
     case "website":
     case "globe":
-      return Globe
+      return GlobeFilled
     default:
       return ExternalLink
   }
@@ -160,7 +161,7 @@ function LifeAtRelliaSlider({ images = LIFE_AT_RELLIA_IMAGES }: { images?: strin
   }, [images.length])
 
   return (
-    <div className="relative aspect-square w-full overflow-hidden rounded-[2.5rem] bg-rellia-cream/40 shadow-md">
+    <div className="relative aspect-square w-full max-w-[480px] overflow-hidden rounded-[2.5rem] bg-rellia-cream/40 shadow-md">
       <AnimatePresence mode="wait">
         <motion.img
           key={currentSlide}
@@ -509,12 +510,12 @@ export default function Careers() {
               {/* Copy & Social Links */}
               <ScrollReveal>
                 <div className="flex flex-col items-start justify-center">
-                  <PillTag label="Culture" className="mb-4" />
-                  <h2 className="font-host-grotesk text-3xl font-bold tracking-tight text-black sm:text-4xl">
-                    Life at Rellia
+                  <PillTag label="Culture" className="mb-4 border-rellia-teal/20 bg-rellia-teal/8" labelClassName="text-rellia-teal font-bold" />
+                  <h2 className="font-host-grotesk text-2xl font-bold tracking-tight text-black sm:text-3xl">
+                    Built by healthtech insiders, for builders
                   </h2>
                   <p className="mt-4 font-urbanist text-lg text-black/60 leading-relaxed max-w-xl">
-                    We are building a remote-first, high-standards health-tech company. Our team brings deep clinical, technical, and operational expertise to help founders transform care. We focus on outcome-oriented work, mutual support, and constant learning.
+                    We are building a remote-first, high-standards healthtech company. Our team brings deep clinical, technical, and operational expertise to help founders transform care. We focus on outcome-oriented work, mutual support, and constant learning.
                   </p>
                   
                   {/* Socials / proofs container */}

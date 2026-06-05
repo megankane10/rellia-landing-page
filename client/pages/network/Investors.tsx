@@ -332,6 +332,12 @@ export default function Investors() {
                   description: b.body,
                   iconKey: "",
                 }))}
+                cardImages={[
+                  "https://images.pexels.com/photos/1666012/pexels-photo-1666012.jpeg?auto=compress&cs=tinysrgb&w=1200",
+                  "https://images.pexels.com/photos/2088205/pexels-photo-2088205.jpeg?auto=compress&cs=tinysrgb&w=1200",
+                  "https://images.pexels.com/photos/1547813/pexels-photo-1547813.jpeg?auto=compress&cs=tinysrgb&w=1200",
+                  "https://images.pexels.com/photos/1485637/pexels-photo-1485637.jpeg?auto=compress&cs=tinysrgb&w=1200",
+                ]}
                 sectionClassName="bg-rellia-cream/20"
               />
 

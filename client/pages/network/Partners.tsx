@@ -301,6 +301,12 @@ export default function Partners() {
               iconKey: "",
             },
           ]}
+          cardImages={[
+            "https://images.pexels.com/photos/1231622/pexels-photo-1231622.jpeg?auto=compress&cs=tinysrgb&w=1200",
+            "https://images.pexels.com/photos/1105379/pexels-photo-1105379.jpeg?auto=compress&cs=tinysrgb&w=1200",
+            "https://images.pexels.com/photos/1632790/pexels-photo-1632790.jpeg?auto=compress&cs=tinysrgb&w=1200",
+            "https://images.pexels.com/photos/3125195/pexels-photo-3125195.jpeg?auto=compress&cs=tinysrgb&w=1200",
+          ]}
           sectionClassName="bg-rellia-cream/20"
         />
 

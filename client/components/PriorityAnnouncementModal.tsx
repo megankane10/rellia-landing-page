@@ -1,11 +1,6 @@
-import { useState } from "react"
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogTitle,
-} from "@/components/ui/dialog"
+import { useState, useEffect } from "react"
+import { createPortal } from "react-dom"
+import { motion, AnimatePresence } from "framer-motion"
 import { X } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { CmsCtaLink, cmsCtaButtonClass } from "@/components/CmsCtaLink"
@@ -70,13 +65,14 @@ export const PriorityAnnouncementModal = ({
     setSubmitError(null)
   }
 
-  const handleOpenChange = (next: boolean) => {
-    if (!next) {
-      handleClose()
-    } else {
-      onOpenChange(next)
+  useEffect(() => {
+    if (!open) return
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") handleClose()
     }
-  }
+    window.addEventListener("keydown", handleKeyDown)
+    return () => window.removeEventListener("keydown", handleKeyDown)
+  }, [open])
 
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -139,145 +135,162 @@ export const PriorityAnnouncementModal = ({
     )
   }
 
-  return (
-    <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent
-        id="priority-announcement-modal"
-        hideClose
-        disableSlide={true}
-        onInteractOutside={(event) => event.preventDefault()}
-        onEscapeKeyDown={(event) => event.preventDefault()}
-        overlayClassName="z-[10001] bg-black/55"
-        className={cn(
-          "z-[10001] duration-300 p-0 gap-0 overflow-hidden",
-          "data-[state=open]:animate-priority-modal-in data-[state=closed]:animate-priority-modal-out",
-          "border-black/[0.08] sm:max-w-[min(92vw,520px)]",
-          "shadow-[0_20px_50px_rgba(13,53,64,0.3)]",
-          "bg-gradient-to-r from-rellia-mint via-rellia-greyTeal to-rellia-mint",
-          "!rounded-[2.25rem] md:!rounded-[2.75rem]"
-        )}
-        aria-label={heading}
-      >
-        {imageSrc?.trim() ? (
-          <div className="relative aspect-[16/9] w-full overflow-hidden bg-rellia-mint/30">
-            <img
-              src={imageSrc}
-              alt={imageAlt?.trim() || ""}
-              className="h-full w-full object-cover"
-            />
-          </div>
-        ) : null}
+  if (typeof document === "undefined") return null
 
-        <div className="px-6 py-7 md:px-8 md:py-8">
-          <DialogTitle className="sr-only">{heading}</DialogTitle>
-          <DialogDescription className="sr-only">{body || heading}</DialogDescription>
+  return createPortal(
+    <AnimatePresence>
+      {open && (
+        <>
+          {/* Backdrop Overlay */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.35 }}
+            onClick={handleClose}
+            className="fixed inset-0 z-[10001] bg-black/55 backdrop-blur-[2px]"
+          />
 
-          <div className="mb-4 flex w-full items-center justify-between gap-4">
-            {showPill ? (
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-rellia-teal/25 bg-transparent px-2.5 py-1 text-[11px] font-black uppercase tracking-[0.14em] text-rellia-teal">
-                <span className="relative flex h-2 w-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rellia-teal opacity-75" />
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-rellia-teal" />
-                </span>
-                {pillText}
-              </span>
-            ) : (
-              <span aria-hidden />
-            )}
-
-            <DialogClose
+          {/* Modal Container */}
+          <div className="fixed inset-0 z-[10001] flex items-center justify-center p-4 pointer-events-none">
+            <motion.div
+              id="priority-announcement-modal"
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="priority-modal-title"
+              initial={{ opacity: 0, y: -40, filter: "blur(12px)" }}
+              animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+              exit={{ opacity: 0, y: -40, filter: "blur(12px)" }}
+              transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
               className={cn(
-                "inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full",
-                "border border-black/10 bg-white/95 text-black shadow-sm",
-                "transition-opacity hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-teal/40 focus-visible:ring-offset-2",
-                "-mr-2 md:-mr-4",
+                "pointer-events-auto w-full max-w-[min(92vw,520px)] overflow-hidden border border-black/[0.08]",
+                "shadow-[0_20px_50px_rgba(13,53,64,0.3)]",
+                "bg-gradient-to-r from-rellia-mint via-rellia-greyTeal to-rellia-mint",
+                "rounded-[2.25rem] md:rounded-[2.75rem]"
               )}
-              aria-label="Close announcement"
-              onClick={handleClose}
             >
-              <X className="h-5 w-5" aria-hidden />
-            </DialogClose>
-          </div>
-
-          <h2 className="font-host-grotesk text-2xl font-bold tracking-tight text-black md:text-[1.65rem] leading-tight">
-            {heading}
-          </h2>
-
-          {body?.trim() ? (
-            <p className="mt-3 font-urbanist text-base leading-relaxed text-black/70">
-              {renderBodyWithLinks(body)}
-            </p>
-          ) : null}
-
-          {formEnabled ? (
-            <form onSubmit={handleFormSubmit} className="mt-6 space-y-4">
-              {submitSuccess ? (
-                <div className="font-urbanist text-sm font-semibold text-rellia-mintDark bg-rellia-mint/20 border border-rellia-mint/30 rounded-2xl p-4">
-                  Thank you! Your submission has been received.
+              {imageSrc?.trim() ? (
+                <div className="relative aspect-[16/9] w-full overflow-hidden bg-rellia-mint/30">
+                  <img
+                    src={imageSrc}
+                    alt={imageAlt?.trim() || ""}
+                    className="h-full w-full object-cover"
+                  />
                 </div>
-              ) : (
-                <>
-                  <div className="flex flex-col gap-3">
-                    <input
-                      type="text"
-                      required
-                      placeholder={formPlaceholderName?.trim() || "First name"}
-                      value={formName}
-                      onChange={(e) => setFormName(e.target.value)}
-                      className="h-12 w-full rounded-full border border-black/10 bg-black/[0.01] px-5 font-urbanist text-sm placeholder-black/40 outline-none focus:border-rellia-teal focus:ring-1 focus:ring-rellia-teal"
-                    />
-                    <input
-                      type="email"
-                      required
-                      placeholder={formPlaceholderEmail?.trim() || "Email address"}
-                      value={formEmail}
-                      onChange={(e) => setFormEmail(e.target.value)}
-                      className="h-12 w-full rounded-full border border-black/10 bg-black/[0.01] px-5 font-urbanist text-sm placeholder-black/40 outline-none focus:border-rellia-teal focus:ring-1 focus:ring-rellia-teal"
-                    />
-                  </div>
-                  {submitError && (
-                    <p className="font-urbanist text-xs text-red-500 mt-1">{submitError}</p>
-                  )}
-                  <button
-                    type="submit"
-                    disabled={submitting}
-                    className="inline-flex h-14 w-full items-center justify-center rounded-full bg-rellia-teal font-host-grotesk text-sm font-bold text-white hover:bg-rellia-teal/95 transition-all shadow-md hover:shadow-lg disabled:opacity-50"
-                  >
-                    {submitting ? "Submitting..." : (formButtonLabel?.trim() || "Subscribe")}
-                  </button>
-                </>
-              )}
-            </form>
-          ) : null}
+              ) : null}
 
-          {showPrimary || showSecondary ? (
-            <div className="mt-6 flex flex-col gap-3 w-full">
-              {showPrimary ? (
-                <CmsCtaLink
-                  href={trimmedLink!}
-                  onClick={handleClose}
-                  className={cn(cmsCtaButtonClass, "w-full")}
-                >
-                  {trimmedLabel}
-                </CmsCtaLink>
-              ) : null}
-              {showSecondary ? (
-                <CmsCtaLink
-                  href={trimmedSecondaryLink!}
-                  onClick={handleClose}
-                  className={cn(
-                    "inline-flex h-14 w-full items-center justify-center rounded-full px-4 border border-black/15",
-                    "bg-white font-host-grotesk text-sm font-semibold text-black hover:bg-black/5 transition-colors duration-200",
-                    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-teal/40 focus-visible:ring-offset-2",
+              <div className="px-6 py-7 md:px-8 md:py-8">
+                <div className="mb-4 flex w-full items-center justify-between gap-4">
+                  {showPill ? (
+                    <span className="inline-flex items-center gap-1.5 rounded-full border border-rellia-teal/25 bg-transparent px-2.5 py-1 text-[11px] font-black font-host-grotesk uppercase tracking-[0.14em] text-rellia-teal">
+                      <span className="relative flex h-2 w-2">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rellia-teal opacity-75" />
+                        <span className="relative inline-flex rounded-full h-2 w-2 bg-rellia-teal" />
+                      </span>
+                      {pillText}
+                    </span>
+                  ) : (
+                    <span aria-hidden />
                   )}
-                >
-                  {trimmedSecondaryLabel}
-                </CmsCtaLink>
-              ) : null}
-            </div>
-          ) : null}
-        </div>
-      </DialogContent>
-    </Dialog>
+
+                  <button
+                    type="button"
+                    className={cn(
+                      "inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full",
+                      "border border-black/10 bg-white/95 text-black shadow-sm",
+                      "transition-opacity hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-teal/40 focus-visible:ring-offset-2",
+                      "-mr-2 md:-mr-4",
+                    )}
+                    aria-label="Close announcement"
+                    onClick={handleClose}
+                  >
+                    <X className="h-5 w-5" aria-hidden />
+                  </button>
+                </div>
+
+                <h2 id="priority-modal-title" className="font-host-grotesk text-2xl font-bold tracking-tight text-black md:text-[1.65rem] leading-tight">
+                  {heading}
+                </h2>
+
+                {body?.trim() ? (
+                  <p className="mt-3 font-urbanist text-base leading-relaxed text-black/70">
+                    {renderBodyWithLinks(body)}
+                  </p>
+                ) : null}
+
+                {formEnabled ? (
+                  <form onSubmit={handleFormSubmit} className="mt-6 space-y-4">
+                    {submitSuccess ? (
+                      <div className="font-urbanist text-sm font-semibold text-rellia-mintDark bg-rellia-mint/20 border border-rellia-mint/30 rounded-2xl p-4">
+                        Thank you! Your submission has been received.
+                      </div>
+                    ) : (
+                      <>
+                        <div className="flex flex-col gap-3">
+                          <input
+                            type="text"
+                            required
+                            placeholder={formPlaceholderName?.trim() || "First name"}
+                            value={formName}
+                            onChange={(e) => setFormName(e.target.value)}
+                            className="h-12 w-full rounded-full border border-black/10 bg-black/[0.01] px-5 font-urbanist text-sm placeholder-black/40 outline-none focus:border-rellia-teal focus:ring-1 focus:ring-rellia-teal"
+                          />
+                          <input
+                            type="email"
+                            required
+                            placeholder={formPlaceholderEmail?.trim() || "Email address"}
+                            value={formEmail}
+                            onChange={(e) => setFormEmail(e.target.value)}
+                            className="h-12 w-full rounded-full border border-black/10 bg-black/[0.01] px-5 font-urbanist text-sm placeholder-black/40 outline-none focus:border-rellia-teal focus:ring-1 focus:ring-rellia-teal"
+                          />
+                        </div>
+                        {submitError && (
+                          <p className="font-urbanist text-xs text-red-500 mt-1">{submitError}</p>
+                        )}
+                        <button
+                          type="submit"
+                          disabled={submitting}
+                          className="inline-flex h-14 w-full items-center justify-center rounded-full bg-rellia-teal font-host-grotesk text-sm font-bold text-white hover:bg-rellia-teal/95 transition-all shadow-md hover:shadow-lg disabled:opacity-50"
+                        >
+                          {submitting ? "Submitting..." : (formButtonLabel?.trim() || "Subscribe")}
+                        </button>
+                      </>
+                    )}
+                  </form>
+                ) : null}
+
+                {showPrimary || showSecondary ? (
+                  <div className="mt-6 flex flex-col gap-3 w-full">
+                    {showPrimary ? (
+                      <CmsCtaLink
+                        href={trimmedLink!}
+                        onClick={handleClose}
+                        className={cn(cmsCtaButtonClass, "w-full")}
+                      >
+                        {trimmedLabel}
+                      </CmsCtaLink>
+                    ) : null}
+                    {showSecondary ? (
+                      <CmsCtaLink
+                        href={trimmedSecondaryLink!}
+                        onClick={handleClose}
+                        className={cn(
+                          "inline-flex h-14 w-full items-center justify-center rounded-full px-4 border border-black/15",
+                          "bg-white font-host-grotesk text-sm font-semibold text-black hover:bg-black/5 transition-colors duration-200",
+                          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-teal/40 focus-visible:ring-offset-2",
+                        )}
+                      >
+                        {trimmedSecondaryLabel}
+                      </CmsCtaLink>
+                    ) : null}
+                  </div>
+                ) : null}
+              </div>
+            </motion.div>
+          </div>
+        </>
+      )}
+    </AnimatePresence>,
+    document.body
   )
 }

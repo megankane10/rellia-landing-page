@@ -8,6 +8,7 @@ import { FilloutStandardEmbed } from "@fillout/react"
 import { FILLOUT_APPLY_FORM_ID, FILLOUT_EMBED_VIEWPORT_MIN_CLASS } from "@/lib/filloutApplyForm"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { motion, useReducedMotion, AnimatePresence } from "framer-motion"
+import { LinkedInFilled, InstagramFilled, GlobeFilled } from "@/components/icons/SocialIcons"
 import {
   BriefcaseBusiness,
   Building2,
@@ -27,6 +28,7 @@ import {
   Globe,
   Video,
   FileText,
+  Facebook,
   type LucideIcon
 } from "lucide-react"
 import type { CareersOpenRole, CareersPageContent, HomeWhyFeature } from "@shared/cms/types"
@@ -132,25 +134,24 @@ const LIFE_AT_RELLIA_IMAGES = [
   "https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=800&auto=format&fit=crop&q=80"
 ]
 
-const getSocialIcon = (key: string): LucideIcon => {
-  switch (key.toLowerCase()) {
+function getSocialIcon(platform: string) {
+  switch (platform.toLowerCase()) {
     case "linkedin":
-      return Linkedin
+      return LinkedInFilled
     case "instagram":
-      return Instagram
-    case "youtube":
-      return Youtube
+      return InstagramFilled
     case "twitter":
     case "x":
       return Twitter
-    case "video":
-      return Video
-    case "article":
-    case "paper":
+    case "facebook":
+      return Facebook
+    case "youtube":
+      return Youtube
+    case "document":
       return FileText
     case "website":
     case "globe":
-      return Globe
+      return GlobeFilled
     default:
       return ExternalLink
   }
@@ -202,7 +203,7 @@ function LifeAtRelliaSlider({ images }: { images?: Array<{ src?: string; alt?: s
 
   return (
     <div className="flex flex-col">
-      <div className="relative aspect-square w-full max-w-[360px] overflow-hidden rounded-[2.5rem] bg-rellia-cream/40 shadow-md">
+      <div className="relative aspect-square w-full max-w-[480px] overflow-hidden rounded-[2.5rem] bg-rellia-cream/40 shadow-md">
         <AnimatePresence initial={false} custom={direction} mode="wait">
           <motion.img
             key={currentSlide}
@@ -234,34 +235,9 @@ function LifeAtRelliaSlider({ images }: { images?: Array<{ src?: string; alt?: s
         )}
       </div>
       {slides[currentSlide]?.caption && (
-        <p className="mt-3 font-urbanist text-sm text-black/60 text-center max-w-[360px]">
+        <p className="mt-3 font-urbanist text-sm text-black/60 text-center max-w-[480px]">
           {slides[currentSlide].caption}
         </p>
-      )}
-      {slides.length > 1 && (
-        <div className="mt-4 flex items-center gap-2 max-w-[360px] justify-center">
-          <button
-            type="button"
-            onClick={handlePrev}
-            disabled={currentSlide === 0}
-            className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-black/10 bg-white text-rellia-teal shadow-sm transition hover:bg-black/5 disabled:opacity-40"
-            aria-label="Previous image"
-          >
-            <ChevronLeft className="h-5 w-5" fill="currentColor" aria-hidden />
-          </button>
-          <span className="font-urbanist text-xs font-semibold text-black/55 uppercase tracking-[0.14em]">
-            {currentSlide + 1} / {slides.length}
-          </span>
-          <button
-            type="button"
-            onClick={handleNext}
-            disabled={currentSlide === slides.length - 1}
-            className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-black/10 bg-white text-rellia-teal shadow-sm transition hover:bg-black/5 disabled:opacity-40"
-            aria-label="Next image"
-          >
-            <ChevronRight className="h-5 w-5" fill="currentColor" aria-hidden />
-          </button>
-        </div>
       )}
     </div>
   )
@@ -637,7 +613,10 @@ export default function CareersCms() {
                   {careersCms.lifeAtRelliaHeading || "Built by healthtech insiders, for builders"}
                 </h2>
 
-                
+                <p className="mt-4 font-urbanist text-lg text-black/60 leading-relaxed max-w-xl">
+                  {careersCms.lifeAtRelliaSubheading || "We are building a remote-first, high-standards healthtech company. Our team brings deep clinical, technical, and operational expertise to help founders transform care. We focus on outcome-oriented work, mutual support, and constant learning."}
+                </p>
+
                 {/* Socials / proofs container */}
                 {Array.isArray(careersCms.lifeAtRelliaLinks) && careersCms.lifeAtRelliaLinks.length > 0 ? (
                   <div className="mt-8 flex flex-wrap gap-4">
