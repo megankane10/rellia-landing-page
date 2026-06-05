@@ -5,7 +5,6 @@ import {singletonPublishingAtTop} from '../shared/documentTopFields'
 import {publishingGroup} from '../shared/pageVisibilityFields'
 
 const GROUP_OPEN_ROLES = {name: 'openRoles' as const, title: 'Open roles'}
-const GROUP_JOIN_TEAM = {name: 'joinTeam' as const, title: 'Join team marquee'}
 const GROUP_LIFE_AT_RELLIA = {name: 'lifeAtRellia' as const, title: 'Life at Rellia'}
 
 export const careersPage = defineType({
@@ -14,42 +13,13 @@ export const careersPage = defineType({
   type: 'document',
   groups: [
     publishingGroup,
-    GROUP_JOIN_TEAM,
     GROUP_OPEN_ROLES,
     GROUP_LIFE_AT_RELLIA,
     ...documentGroups.filter((g) => g.name !== 'publishing' && g.name !== 'seo'),
   ],
   fields: [
     ...singletonPublishingAtTop,
-    defineField({
-      name: 'teamMarqueeImages',
-      title: 'Join team — image scroll',
-      type: 'array',
-      description:
-        'Photos in the horizontal scroll on the careers “Join the team” band. Upload at least 4–6 images; order controls scroll sequence.',
-      group: 'joinTeam',
-      of: [
-        defineArrayMember({
-          type: 'image',
-          options: {hotspot: true},
-          fields: [
-            defineField({
-              name: 'alt',
-              title: 'Alt text',
-              type: 'string',
-              description: 'Leave empty for decorative photos.',
-            }),
-          ],
-          preview: {
-            select: {media: 'asset', alt: 'alt'},
-            prepare({media, alt}) {
-              return {title: alt?.trim() || 'Marquee image', media}
-            },
-          },
-        }),
-      ],
-      options: {sortable: true},
-    }),
+
     defineField({
       name: 'defaultTab',
       title: 'Default tab',
@@ -262,7 +232,7 @@ export const careersPage = defineType({
         }),
       ],
     }),
-    ...singletonLayoutFields,
+
   ],
 })
 

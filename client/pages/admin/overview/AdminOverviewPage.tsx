@@ -421,7 +421,6 @@ const AdminOverviewPage = () => {
     <div className="space-y-6">
       <AdminPageHeader
         title={pageTitle}
-        description="Review, track, and update website inquiries and edit drafts."
         actions={<AdminSystemStatus />}
       />
 
@@ -523,31 +522,43 @@ const AdminOverviewPage = () => {
                 <p className="font-urbanist text-xs text-muted-foreground">No submissions found.</p>
               </div>
             ) : (
-              <div className="relative h-[150px] w-full flex items-center justify-center">
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <Pie
-                      data={statusRows.filter((r) => r.value > 0)}
-                      cx="50%"
-                      cy="50%"
-                      innerRadius={45}
-                      outerRadius={60}
-                      paddingAngle={3}
-                      dataKey="value"
-                    >
-                      {statusRows.filter((r) => r.value > 0).map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={entry.fill} />
-                      ))}
-                    </Pie>
-                    <Tooltip
-                      formatter={(value: any, name: any) => [`${value} (${statusRows.find(r => r.name === name)?.pct}%)`, name]}
-                      contentStyle={{ borderRadius: "12px", border: "1px solid rgba(0,0,0,0.08)", boxShadow: "0 10px 30px rgba(0,0,0,0.06)", fontFamily: "Urbanist", fontSize: "11px" }}
-                    />
-                  </PieChart>
-                </ResponsiveContainer>
-                <div className="absolute flex flex-col items-center justify-center text-center pointer-events-none">
-                  <span className="font-urbanist text-[9px] text-slate-500 uppercase tracking-wider font-semibold">Total</span>
-                  <span className="font-host-grotesk text-xl font-bold text-slate-800 leading-none mt-0.5">{totalStatusCount}</span>
+              <div className="flex flex-col gap-4">
+                <div className="relative h-[150px] w-full flex items-center justify-center">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <Pie
+                        data={statusRows.filter((r) => r.value > 0)}
+                        cx="50%"
+                        cy="50%"
+                        innerRadius={45}
+                        outerRadius={60}
+                        paddingAngle={3}
+                        dataKey="value"
+                      >
+                        {statusRows.filter((r) => r.value > 0).map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={entry.fill} />
+                        ))}
+                      </Pie>
+                      <Tooltip
+                        formatter={(value: any, name: any) => [`${value} (${statusRows.find(r => r.name === name)?.pct}%)`, name]}
+                        contentStyle={{ borderRadius: "12px", border: "1px solid rgba(0,0,0,0.08)", boxShadow: "0 10px 30px rgba(0,0,0,0.06)", fontFamily: "Urbanist", fontSize: "11px" }}
+                      />
+                    </PieChart>
+                  </ResponsiveContainer>
+                  <div className="absolute flex flex-col items-center justify-center text-center pointer-events-none">
+                    <span className="font-urbanist text-[9px] text-slate-500 uppercase tracking-wider font-semibold">Total</span>
+                    <span className="font-host-grotesk text-xl font-bold text-slate-800 leading-none mt-0.5">{totalStatusCount}</span>
+                  </div>
+                </div>
+
+                <div className="flex flex-wrap justify-center gap-x-4 gap-y-1.5 font-urbanist text-xs">
+                  {statusRows.filter((r) => r.value > 0).map((row) => (
+                    <div key={row.name} className="flex items-center gap-1.5">
+                      <span className="h-2 w-2 rounded-full shrink-0" style={{ backgroundColor: row.fill }} />
+                      <span className="font-semibold text-slate-700">{row.name}</span>
+                      <span className="text-slate-400">({row.value})</span>
+                    </div>
+                  ))}
                 </div>
               </div>
             )}
@@ -582,33 +593,45 @@ const AdminOverviewPage = () => {
                 <p className="font-urbanist text-xs text-muted-foreground">No stage data found.</p>
               </div>
             ) : (
-              <div className="relative h-[150px] w-full flex items-center justify-center">
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <Pie
-                      data={stageChartData.filter((r) => r.value > 0)}
-                      cx="50%"
-                      cy="50%"
-                      innerRadius={45}
-                      outerRadius={60}
-                      paddingAngle={3}
-                      dataKey="value"
-                    >
-                      {stageChartData.filter((r) => r.value > 0).map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={entry.fill} />
-                      ))}
-                    </Pie>
-                    <Tooltip
-                      formatter={(value: any, name: any) => [`${value} (${stageChartData.find(r => r.name === name)?.pct}%)`, name]}
-                      contentStyle={{ borderRadius: "12px", border: "1px solid rgba(0,0,0,0.08)", boxShadow: "0 10px 30px rgba(0,0,0,0.06)", fontFamily: "Urbanist", fontSize: "11px" }}
-                    />
-                  </PieChart>
-                </ResponsiveContainer>
-                <div className="absolute flex flex-col items-center justify-center text-center pointer-events-none">
-                  <span className="font-urbanist text-[9px] text-slate-500 uppercase tracking-wider font-semibold">Total</span>
-                  <span className="font-host-grotesk text-xl font-bold text-slate-800 leading-none mt-0.5">
-                    {diagnostics.length}
-                  </span>
+              <div className="flex flex-col gap-4">
+                <div className="relative h-[150px] w-full flex items-center justify-center">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <Pie
+                        data={stageChartData.filter((r) => r.value > 0)}
+                        cx="50%"
+                        cy="50%"
+                        innerRadius={45}
+                        outerRadius={60}
+                        paddingAngle={3}
+                        dataKey="value"
+                      >
+                        {stageChartData.filter((r) => r.value > 0).map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={entry.fill} />
+                        ))}
+                      </Pie>
+                      <Tooltip
+                        formatter={(value: any, name: any) => [`${value} (${stageChartData.find(r => r.name === name)?.pct}%)`, name]}
+                        contentStyle={{ borderRadius: "12px", border: "1px solid rgba(0,0,0,0.08)", boxShadow: "0 10px 30px rgba(0,0,0,0.06)", fontFamily: "Urbanist", fontSize: "11px" }}
+                      />
+                    </PieChart>
+                  </ResponsiveContainer>
+                  <div className="absolute flex flex-col items-center justify-center text-center pointer-events-none">
+                    <span className="font-urbanist text-[9px] text-slate-500 uppercase tracking-wider font-semibold">Total</span>
+                    <span className="font-host-grotesk text-xl font-bold text-slate-800 leading-none mt-0.5">
+                      {diagnostics.length}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="flex flex-wrap justify-center gap-x-4 gap-y-1.5 font-urbanist text-xs">
+                  {stageChartData.filter((r) => r.value > 0).map((row) => (
+                    <div key={row.name} className="flex items-center gap-1.5">
+                      <span className="h-2 w-2 rounded-full shrink-0" style={{ backgroundColor: row.fill }} />
+                      <span className="font-semibold text-slate-700">{row.name}</span>
+                      <span className="text-slate-400">({row.value})</span>
+                    </div>
+                  ))}
                 </div>
               </div>
             )}

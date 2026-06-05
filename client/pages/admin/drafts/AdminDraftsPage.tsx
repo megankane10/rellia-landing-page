@@ -73,7 +73,6 @@ const AdminDraftsPage = () => {
     <div>
       <AdminPageHeader
         title="Sanity Drafts"
-        description="Unpublished CMS documents waiting for review. Open Sanity Studio to edit and publish."
         actions={
           <Button type="button" variant="outline" size="sm" asChild className="rounded-full">
             <a href="https://relliahealth.sanity.studio" target="_blank" rel="noopener noreferrer">
@@ -101,9 +100,22 @@ const AdminDraftsPage = () => {
             storageKey="rellia-admin-drafts-tip-collapsed"
             className="mb-6"
           >
-            <p>
-              This page displays content edits (like updates to programs, events, or team profiles) that have been saved in the Sanity editing system but are not yet live on the public website. To make these changes visible to visitors, click the "Open Studio" button above, locate the document, and click the "Publish" button at the bottom of the page.
-            </p>
+            <div className="space-y-3 font-urbanist text-sm text-black/75">
+              <p>
+                This page displays content edits (such as updates to programs, events, or team profiles) that are saved in the editing system (Sanity Studio) but are not yet live. Select a dataset view below to check its drafts:
+              </p>
+              <div className="flex flex-col gap-2 pl-3.5 border-l-2 border-rellia-teal/15 my-2">
+                <p>
+                  <strong>Production (Live Site):</strong> Contains draft changes for the live, public website. Once published, these changes will appear to all visitors on the web.
+                </p>
+                <p>
+                  <strong>Preview (Staging Site):</strong> Contains draft changes for the staging/preview testing site. Use this to review and test layout adjustments in a safe environment before copying edits over to the live site.
+                </p>
+              </div>
+              <p>
+                To make these changes visible on the website, click the <strong>Open Studio</strong> button above, find the page or section you edited, and click <strong>Publish</strong>.
+              </p>
+            </div>
           </AdminTipBox>
 
           <Tabs
@@ -111,15 +123,15 @@ const AdminDraftsPage = () => {
             onValueChange={(val) => handleDatasetChange(val as AdminSanityDataset)}
             className="mb-6"
           >
-            <TabsList className="h-[40px] w-full bg-slate-100/80 p-1 rounded-xl border border-black/5 shadow-sm max-w-md">
+            <TabsList className="h-[48px] w-full bg-slate-100/80 p-1 rounded-2xl border border-black/5 shadow-sm max-w-none">
               <div className="grid w-full grid-cols-2 h-full items-center">
                 {ADMIN_SANITY_DATASET_TABS.map((tab) => (
                   <TabsTrigger
                     key={tab.id}
                     value={tab.id}
                     className={cn(
-                      "w-full h-full rounded-lg px-3 py-1.5 font-urbanist text-xs font-bold transition-all duration-200",
-                      "data-[state=active]:bg-white data-[state=active]:text-rellia-teal data-[state=active]:shadow-[0_2px_8px_rgba(0,0,0,0.06)] data-[state=active]:border data-[state=active]:border-black/5",
+                      "w-full h-full rounded-xl px-4 py-2 font-urbanist text-sm font-bold transition-all duration-200",
+                      "data-[state=active]:bg-white data-[state=active]:text-rellia-teal data-[state=active]:shadow-[0_4px_12px_rgba(0,0,0,0.06)] data-[state=active]:border data-[state=active]:border-black/5",
                       "data-[state=inactive]:text-slate-600 data-[state=inactive]:hover:text-slate-900 data-[state=inactive]:bg-transparent",
                     )}
                   >

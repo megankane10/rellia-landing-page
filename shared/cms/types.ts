@@ -38,10 +38,7 @@ export type CareersOpenRole = {
   linkedInApplyUrl: string
 }
 
-export type CareersTeamMarqueeImage = {
-  src?: string
-  alt?: string
-}
+
 
 export type CareersLifeAtRelliaLink = {
   platformName: string
@@ -56,7 +53,6 @@ export type CareersLifeAtRelliaImage = {
 }
 
 export type CareersPageContent = CmsPageVisibility & {
-  teamMarqueeImages?: CareersTeamMarqueeImage[]
   defaultTab?: "hiring" | "volunteer"
   enableHiringTab?: boolean
   enableVolunteerTab?: boolean

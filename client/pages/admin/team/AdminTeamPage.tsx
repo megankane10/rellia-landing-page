@@ -164,7 +164,6 @@ const AdminTeamPage = () => {
 
       <AdminPageHeader
         title="Team"
-        description="Dashboard accounts and invite status."
         actions={
           <Button type="button" variant="outline" size="sm" asChild className="rounded-full">
             <a href={SUPABASE_AUTH_USERS_URL} target="_blank" rel="noopener noreferrer">

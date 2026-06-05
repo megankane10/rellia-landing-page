@@ -665,10 +665,6 @@ export const paymentPageQuery = `*[_type == "paymentPage"][0]{
 
 export const careersPageQuery = `*[_type == "careersPage"][0]{
   ${pageVisibilityFragment},
-  teamMarqueeImages[]{
-    "src": asset->url,
-    alt
-  },
   defaultTab,
   enableHiringTab,
   enableVolunteerTab,

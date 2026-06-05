@@ -1,6 +1,31 @@
 import React, { useState, useEffect } from "react"
-import { X, type LucideIcon } from "lucide-react"
+import { ChevronDown, ChevronUp, type LucideIcon } from "lucide-react"
 import { cn } from "@/lib/utils"
+
+/**
+ * Developer Guide: How to Edit or Add Tip Boxes
+ * 
+ * 1. To EDIT an existing tip box:
+ *    - Locate the file where it is used (e.g. `client/pages/admin/help/AdminHelpPage.tsx`).
+ *    - Modify the title, icon, or children contents inside the component.
+ * 
+ * 2. To ADD a new tip box:
+ *    - Import `AdminTipBox` and the desired Lucide icon in your page.
+ *    - Place the component where needed in your JSX:
+ *      ```tsx
+ *      <AdminTipBox
+ *        title="Your Title"
+ *        icon={YourIcon}
+ *        storageKey="unique-key-for-localstorage-state"
+ *      >
+ *        <p>Your content goes here...</p>
+ *      </AdminTipBox>
+ *      ```
+ * 
+ * 3. Collapsible state persistence:
+ *    - Assign a unique `storageKey` string (e.g. "rellia-admin-my-new-tip-collapsed")
+ *      to ensure the collapse/expand state is remembered when the user navigates between pages.
+ */
 
 type AdminTipBoxProps = {
   title: string
@@ -26,6 +51,8 @@ export default function AdminTipBox({
         const value = localStorage.getItem(storageKey)
         if (value === "true") {
           setCollapsed(true)
+        } else if (value === "false") {
+          setCollapsed(false)
         }
       } catch (e) {
         // Ignore storage access errors
@@ -33,24 +60,24 @@ export default function AdminTipBox({
     }
   }, [storageKey])
 
-  const handleDismiss = () => {
-    setCollapsed(true)
+  const handleToggle = () => {
+    const nextCollapsed = !collapsed
+    setCollapsed(nextCollapsed)
     if (storageKey) {
       try {
-        localStorage.setItem(storageKey, "true")
+        localStorage.setItem(storageKey, nextCollapsed ? "true" : "false")
       } catch (e) {
         // Ignore storage errors
       }
     }
   }
 
-  if (collapsed) return null
-
   return (
     <div
       className={cn(
-        "rounded-[1.75rem] border border-rellia-teal/15 p-5 shadow-sm relative transition-all duration-300",
+        "rounded-[1.75rem] border border-rellia-teal/15 shadow-sm relative transition-all duration-300",
         "bg-gradient-to-r from-rellia-mint/15 via-rellia-cream/40 to-rellia-greyTeal/20",
+        collapsed ? "py-3 px-5" : "p-5",
         className
       )}
     >
@@ -66,15 +93,20 @@ export default function AdminTipBox({
 
         <button
           type="button"
-          onClick={handleDismiss}
+          onClick={handleToggle}
           className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-rellia-teal/10 bg-white/90 text-rellia-teal/80 transition-colors hover:bg-white hover:text-rellia-teal focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-teal/40"
-          aria-label="Dismiss tip"
+          aria-expanded={!collapsed}
+          aria-label={collapsed ? "Expand tip" : "Collapse tip"}
         >
-          <X className="h-4.5 w-4.5" />
+          {collapsed ? (
+            <ChevronDown className="h-4.5 w-4.5" />
+          ) : (
+            <ChevronUp className="h-4.5 w-4.5" />
+          )}
         </button>
       </div>
 
-      {children && (
+      {!collapsed && children && (
         <div className="mt-4 border-t border-rellia-teal/10 pt-4 font-urbanist text-sm leading-relaxed text-black/75">
           {children}
         </div>

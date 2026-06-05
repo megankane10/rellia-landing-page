@@ -465,7 +465,6 @@ const AdminInboxPage = () => {
     <div>
       <AdminPageHeader
         title="Inbox"
-        description="Website form submissions, investor notifications, and startup diagnostic leads. Filter by status or search by name and email."
       />
 
       {!statusWritesEnabled ? (
