@@ -1444,6 +1444,34 @@ async function main() {
           body:
             "On Vercel Preview (not www): set SANITY_API_READ_TOKEN, SANITY_STUDIO_URL=https://relliahealth.sanity.studio, and SANITY_STUDIO_PREVIEW_URL to your exact preview URL (no trailing slash). In website-cms/.env for hosted Studio, set the same SANITY_STUDIO_PREVIEW_URL. Open Presentation, wait for the iframe to load, then click content to edit. WebSocket warnings in the Studio console are usually harmless.",
         },
+        {
+          _type: "guideSection",
+          _key: "create_pages",
+          heading: "1. Creating a New Custom Page",
+          body:
+            "To build a brand new page on your website, navigate to the Pages menu in the Studio sidebar and click the '+' icon to create a new page document. Give it a title and a unique URL slug (e.g. /partner-program). Note: Slug names that conflict with pre-built routes (like about, careers, or contact) are reserved and will be blocked by the system to prevent overriding static layouts.",
+        },
+        {
+          _type: "guideSection",
+          _key: "page_sections",
+          heading: "2. Composing with Page Sections (Blocks)",
+          body:
+            "Custom pages are composed entirely of modular blocks added to the Page sections list. You can add, reorder, or remove sections as needed:\n\n• Marketing Hero & Section Hero: Standard banner designs with large headings, support text, background images, and action buttons (CTAs).\n• Section Rich Text: Standard editor for text articles, headings, bullet lists, and basic styled paragraphs.\n• Cards Grid: A grid layout displaying images/icons, badges, descriptions, tags, and individual action buttons.\n• Eligibility Bento: A stylized layout showcasing structured criteria cards with graphic backgrounds.\n• Journey Timeline: Side-by-side timelines mapping comparisons or steps.\n• FAQ Section: Collapsible question-and-answer accordion cards.\n• Form Embed: Standalone or split layouts displaying registration forms.",
+        },
+        {
+          _type: "guideSection",
+          _key: "luma_forms",
+          heading: "3. Embedding Luma Forms",
+          body:
+            "You can embed interactive Luma event signup forms in two ways:\n\n• On Event Detail Pages: Inside any Event document, copy the stable Luma ID (e.g. evt-xxxxxx) and paste it into the Luma Event ID field. Toggle on the Embed Luma on Detail Page option to automatically insert the registration widget.\n• On Modular Pages: Add a Form embed section block to your page. Input the full Luma event URL (e.g. https://lu.ma/event/evt-xxxxxx) into the form link field to display it as an inline registration page.",
+        },
+        {
+          _type: "guideSection",
+          _key: "program_pricing",
+          heading: "4. Program Pricing Sections",
+          body:
+            "When creating or updating Program documents, you can customize program pricing modules without code. Navigate to the Detail page tab group on the program schema:\n\n• Fill in the Price (sale) field (e.g. $1,500) and sub-amount details.\n• Toggle on Show strikethrough compare price and enter a compare amount to highlight a discount (e.g., compare price $2,000).\n• Add descriptive bullet items to the pricing details list to summarize what is included in the program purchase.",
+        },
       ],
     },
   })

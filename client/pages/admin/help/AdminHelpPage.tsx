@@ -186,60 +186,6 @@ const AdminHelpPage = () => (
       </Card>
     </div>
 
-    <Card className="rounded-2xl border-rellia-teal/15 bg-gradient-to-r from-rellia-mint/5 via-white to-rellia-cream/10">
-      <CardHeader>
-        <CardTitle className="font-host-grotesk text-lg text-rellia-teal">CMS Page Builder & Custom Pages Guide</CardTitle>
-        <CardDescription className="font-urbanist">Step-by-step instructions on creating new pages, adding sections, embedding forms, and setting up pricing.</CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-4 font-urbanist text-sm leading-relaxed text-muted-foreground">
-        <div>
-          <h4 className="font-host-grotesk font-bold text-foreground mb-1">1. Creating a New Page</h4>
-          <p>
-            To build a brand new page on your website, open <strong>Sanity Studio</strong>, navigate to the <strong>Pages</strong> menu in the sidebar, and click the "+" icon to create a new page document. Give it a title and a unique URL slug (e.g. <code className="bg-slate-100 px-1.5 py-0.5 rounded text-xs font-mono text-rellia-teal bg-rellia-mint/10">/partner-program</code>). <em>Note: Slug names that conflict with pre-built routes (like about, careers, or contact) are reserved and will be blocked by the system to prevent overriding static layouts.</em>
-          </p>
-        </div>
-
-        <div>
-          <h4 className="font-host-grotesk font-bold text-foreground mb-1">2. Composing with Page Sections (Blocks)</h4>
-          <p>
-            Custom pages are composed entirely of modular blocks added to the <strong>Page sections</strong> list. You can add, reorder, or remove sections as needed:
-          </p>
-          <ul className="list-disc pl-5 mt-1.5 space-y-1">
-            <li><strong>Marketing Hero & Section Hero:</strong> Standard banner designs with large headings, support text, background images, and action call-to-buttons (CTAs).</li>
-            <li><strong>Section Rich Text:</strong> Standard editor for text articles, headings, bullet lists, and basic styled paragraphs.</li>
-            <li><strong>Cards Grid:</strong> A grid layout displaying images/icons, badges, descriptions, tags, and individual action buttons.</li>
-            <li><strong>Eligibility Bento:</strong> A stylized layout showcasing structured criteria cards with graphic backgrounds.</li>
-            <li><strong>Journey Timeline:</strong> Side-by-side timelines mapping comparisons or steps.</li>
-            <li><strong>FAQ Section:</strong> Collapsible question-and-answer accordion cards.</li>
-            <li><strong>Form Embed:</strong> Standalone or split layouts displaying registration forms.</li>
-          </ul>
-        </div>
-
-        <div>
-          <h4 className="font-host-grotesk font-bold text-foreground mb-1">3. Embedding Luma Forms</h4>
-          <p>
-            You can embed interactive Luma event signup forms in two ways:
-          </p>
-          <ul className="list-disc pl-5 mt-1.5 space-y-1">
-            <li><strong>On Event Detail Pages:</strong> Inside any <strong>Event</strong> document, copy the stable Luma ID (e.g. <code className="bg-slate-100 px-1.5 py-0.5 rounded text-xs font-mono text-rellia-teal bg-rellia-mint/10">evt-xxxxxx</code>) and paste it into the <em>Luma Event ID</em> field. Toggle on the <em>Embed Luma on Detail Page</em> option to automatically insert the registration widget.</li>
-            <li><strong>On Modular Pages:</strong> Add a <strong>Form embed</strong> section block to your page. Input the full Luma event URL (e.g. <code className="bg-slate-100 px-1.5 py-0.5 rounded text-xs font-mono text-rellia-teal bg-rellia-mint/10">https://lu.ma/event/evt-xxxxxx</code>) into the form link field to display it as an inline registration page.</li>
-          </ul>
-        </div>
-
-        <div>
-          <h4 className="font-host-grotesk font-bold text-foreground mb-1">4. Program Pricing Sections</h4>
-          <p>
-            When creating or updating <strong>Program</strong> documents, you can customize program pricing modules without code. Navigate to the <em>Detail page</em> tab group on the program schema:
-          </p>
-          <ul className="list-disc pl-5 mt-1.5 space-y-1">
-            <li>Fill in the <strong>Price (sale)</strong> field (e.g. <code className="bg-slate-100 px-1.5 py-0.5 rounded text-xs font-mono text-rellia-teal bg-rellia-mint/10">$1,500</code>) and sub-amount details.</li>
-            <li>Toggle on <strong>Show strikethrough compare price</strong> and enter a compare amount to highlight a discount (e.g., compare price <code className="bg-slate-100 px-1.5 py-0.5 rounded text-xs font-mono text-rellia-teal bg-rellia-mint/10">$2,000</code>).</li>
-            <li>Add descriptive bullet items to the pricing details list to summarize what is included in the program purchase.</li>
-          </ul>
-        </div>
-      </CardContent>
-    </Card>
-
     <div className="w-full">
       <AdminTipBox
         title="Sign-in Help"
