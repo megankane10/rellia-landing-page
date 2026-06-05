@@ -19,6 +19,8 @@ export type PriorityAnnouncementModalProps = {
   pillText?: string
   buttonLabel?: string
   buttonLink?: string
+  secondaryButtonLabel?: string
+  secondaryButtonLink?: string
 }
 
 export const PriorityAnnouncementModal = ({
@@ -31,10 +33,16 @@ export const PriorityAnnouncementModal = ({
   pillText,
   buttonLabel,
   buttonLink,
+  secondaryButtonLabel,
+  secondaryButtonLink,
 }: PriorityAnnouncementModalProps) => {
   const trimmedLabel = buttonLabel?.trim()
   const trimmedLink = buttonLink?.trim()
-  const showButton = Boolean(trimmedLabel && trimmedLink)
+  const trimmedSecondaryLabel = secondaryButtonLabel?.trim()
+  const trimmedSecondaryLink = secondaryButtonLink?.trim()
+
+  const showPrimary = Boolean(trimmedLabel && trimmedLink)
+  const showSecondary = Boolean(trimmedSecondaryLabel && trimmedSecondaryLink)
   const showPill = Boolean(pillText?.trim())
 
   const handleClose = () => onOpenChange(false)
@@ -56,7 +64,7 @@ export const PriorityAnnouncementModal = ({
           "z-[10001] duration-300",
           "data-[state=open]:animate-priority-modal-in data-[state=closed]:animate-priority-modal-out",
           "gap-0 overflow-hidden border-black/10 p-0 sm:max-w-[min(92vw,520px)]",
-          "rounded-[1.75rem] shadow-[0_24px_60px_rgba(13,53,64,0.35)]",
+          "rounded-3xl shadow-[0_24px_60px_rgba(13,53,64,0.35)]",
         )}
         aria-label={heading}
       >
@@ -105,15 +113,30 @@ export const PriorityAnnouncementModal = ({
             <p className="mt-3 font-urbanist text-base leading-relaxed text-black/70">{body}</p>
           ) : null}
 
-          {showButton ? (
-            <div className="mt-6">
-              <CmsCtaLink
-                href={trimmedLink!}
-                onClick={handleClose}
-                className={cmsCtaButtonClass}
-              >
-                {trimmedLabel}
-              </CmsCtaLink>
+          {showPrimary || showSecondary ? (
+            <div className={cn("mt-6", showPrimary && showSecondary ? "grid grid-cols-2 gap-3" : "w-full")}>
+              {showPrimary ? (
+                <CmsCtaLink
+                  href={trimmedLink!}
+                  onClick={handleClose}
+                  className={cmsCtaButtonClass}
+                >
+                  {trimmedLabel}
+                </CmsCtaLink>
+              ) : null}
+              {showSecondary ? (
+                <CmsCtaLink
+                  href={trimmedSecondaryLink!}
+                  onClick={handleClose}
+                  className={cn(
+                    "inline-flex h-14 w-full items-center justify-center rounded-full px-4 border border-black/15",
+                    "bg-white font-host-grotesk text-sm font-semibold text-black hover:bg-black/5 transition-colors duration-200",
+                    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-teal/40 focus-visible:ring-offset-2",
+                  )}
+                >
+                  {trimmedSecondaryLabel}
+                </CmsCtaLink>
+              ) : null}
             </div>
           ) : null}
         </div>

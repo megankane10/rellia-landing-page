@@ -45,6 +45,8 @@ export const globalSettingsQuery = `*[_type == "globalSettings"][0]{
   priorityModalPillText,
   priorityModalButtonLabel,
   priorityModalButtonLink,
+  priorityModalSecondaryButtonLabel,
+  priorityModalSecondaryButtonLink,
   "priorityModalImageUrl": priorityModalImage.asset->url,
   "priorityModalImageAlt": priorityModalImage.alt
 }`;

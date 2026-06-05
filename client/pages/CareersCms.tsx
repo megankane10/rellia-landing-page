@@ -185,29 +185,8 @@ const CareersJoinTeamSection = ({
             initial={{ opacity: 1 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.4 }}
-            className="relative flex min-h-0 shrink-0 flex-col overflow-x-hidden bg-rellia-greyTeal py-10 pb-16 md:h-[80svh] md:max-h-[80svh] md:pb-14 md:py-14"
+            className="relative flex min-h-0 shrink-0 flex-col overflow-x-hidden bg-white pt-10 pb-6 md:pt-14 md:pb-8"
           >
-            <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-br from-rellia-teal/15 via-rellia-greyTeal to-rellia-mint/15" />
-              <div className="absolute inset-0 opacity-90 [background:radial-gradient(ellipse_120%_70%_at_0%_0%,rgba(157,214,208,0.35),transparent_55%),radial-gradient(ellipse_90%_60%_at_100%_15%,rgba(13,53,64,0.18),transparent_50%),radial-gradient(ellipse_80%_55%_at_50%_100%,rgba(157,214,208,0.22),transparent_52%),radial-gradient(ellipse_45%_40%_at_75%_55%,rgba(255,255,255,0.14),transparent_45%)]" />
-              <div className="absolute inset-0 opacity-[0.65] mix-blend-soft-light [background-image:radial-gradient(ellipse_85%_45%_at_12%_-8%,rgba(255,255,255,0.2),transparent_55%),radial-gradient(ellipse_70%_50%_at_92%_22%,rgba(157,214,208,0.2),transparent_50%),radial-gradient(ellipse_60%_42%_at_48%_92%,rgba(13,53,64,0.1),transparent_52%)]" />
-              <div className="absolute -right-[10%] top-[-8%] h-[min(68vw,26rem)] w-[min(68vw,26rem)] rounded-full bg-gradient-to-bl from-rellia-mint/40 via-rellia-mint/15 to-transparent blur-[76px] md:top-0 md:h-[30rem] md:w-[30rem] md:blur-[92px]" />
-              <div className="absolute -left-[16%] top-[22%] h-[min(78vw,24rem)] w-[min(78vw,24rem)] rounded-[55%] bg-gradient-to-tr from-rellia-teal/28 via-rellia-teal/8 to-transparent blur-[84px]" />
-              <div className="absolute left-[55%] top-[35%] h-[min(70vw,22rem)] w-[min(85vw,28rem)] -translate-x-1/2 rounded-[48%] bg-gradient-to-b from-rellia-mint/25 via-rellia-teal/10 to-transparent blur-[88px] md:left-1/2" />
-              <div className="absolute -right-[4%] bottom-[0%] h-[min(55vw,18rem)] w-[min(55vw,20rem)] rounded-full bg-gradient-to-t from-white/30 via-rellia-mint/12 to-transparent blur-[70px]" />
-              <div className="absolute left-[-8%] bottom-[8%] h-[min(50vw,16rem)] w-[min(60vw,20rem)] rounded-[45%] bg-gradient-to-br from-rellia-mint/20 to-transparent blur-[64px]" />
-              <div className="absolute right-[20%] top-[12%] h-[min(40vw,12rem)] w-[min(48vw,14rem)] rounded-full bg-gradient-to-br from-white/22 to-rellia-mint/10 blur-[56px] md:right-[18%]" />
-              <div className="absolute left-0 top-0 h-[280px] w-[200px] -translate-x-[72px] md:h-[340px] md:w-[240px] md:-translate-x-[88px]">
-                <div className="absolute left-8 top-8 h-[220px] w-[2px] bg-gradient-to-b from-rellia-mint/45 via-rellia-mint/15 to-transparent md:h-[280px]" />
-                <div className="absolute left-12 top-12 h-[200px] w-px bg-gradient-to-b from-rellia-mint/35 via-white/12 to-transparent md:h-[260px]" />
-                <div className="absolute left-16 top-4 h-[240px] w-[2px] bg-gradient-to-b from-rellia-mint/38 via-rellia-mint/12 to-transparent md:h-[300px]" />
-                <div className="absolute left-[4.5rem] top-10 h-[210px] w-px bg-gradient-to-b from-white/20 via-rellia-mint/10 to-transparent md:h-[270px]" />
-                <div className="absolute left-[5.5rem] top-14 h-[190px] w-[2px] bg-gradient-to-b from-rellia-mint/32 via-white/8 to-transparent md:h-[250px]" />
-                <div className="absolute left-[6.75rem] top-6 h-[230px] w-px bg-gradient-to-b from-rellia-mint/28 via-rellia-mint/8 to-transparent md:h-[290px]" />
-                <div className="absolute left-[8rem] top-16 h-[180px] w-[2px] bg-gradient-to-b from-white/14 via-rellia-mint/12 to-transparent md:h-[240px]" />
-              </div>
-            </div>
-
             <div className="relative z-10 flex h-full min-h-0 w-full flex-1 flex-col">
               <div className="mx-auto w-full max-w-[1300px] shrink-0 px-6 md:px-10">
                 <h2 className="max-w-3xl font-host-grotesk text-3xl font-bold leading-[1.12] tracking-tight text-black sm:text-[2rem] md:text-4xl lg:max-w-4xl lg:text-[2.65rem]">
@@ -215,7 +194,7 @@ const CareersJoinTeamSection = ({
                 </h2>
 
                 {primaryCta || secondaryCta ? (
-                  <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center md:mt-10">
+                  <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
                     {primaryCta ? (
                       <button
                         type="button"
@@ -250,33 +229,12 @@ const CareersJoinTeamSection = ({
                 ) : null}
               </div>
 
-              <div className="mt-4 min-h-0 w-full flex-1 flex items-end overflow-x-clip overflow-y-visible md:mt-5 md:overflow-y-hidden lg:mt-6">
-                <div
-                  className="relative h-full min-h-0 w-full overflow-x-clip py-2 md:py-3 translate-y-[20%] [mask-size:100%_100%] [mask-repeat:no-repeat]"
-                  style={marqueeMaskStyle}
-                >
-                  <motion.div
-                    className="flex w-max min-w-max gap-3 will-change-transform md:gap-5"
-                    animate={reduceMotion ? { x: 0 } : { x: ["0%", "-50%"] }}
-                    transition={
-                      reduceMotion
-                        ? { duration: 0 }
-                        : { duration: JOIN_TEAM_MARQUEE_LOOP_SEC, repeat: Number.POSITIVE_INFINITY, ease: "linear" }
-                    }
-                  >
-                    {joinTeamMarqueeSlides.map((slide, index) => (
-                      <div key={`${slide.src}-${index}`} className={joinTeamImageTileClass}>
-                        <img
-                          src={slide.src}
-                          alt={slide.alt ?? ""}
-                          className="h-full w-full object-cover"
-                          loading="lazy"
-                          decoding="async"
-                        />
-                      </div>
-                    ))}
-                  </motion.div>
-                </div>
+              <div className="mt-8 mx-auto w-full max-w-[1300px] px-6 md:px-10">
+                <img
+                  src="/images/careers-img.jpg"
+                  alt="Rellia Team"
+                  className="w-full h-auto rounded-3xl object-cover"
+                />
               </div>
             </div>
           </motion.div>
@@ -463,14 +421,15 @@ export default function CareersCms() {
         </section>
 
         {enableHiring ? (
-          <section id="open-roles" className="scroll-mt-28 px-6 py-16 md:px-10 md:py-20">
-            <div className="mx-auto flex min-h-[max(46rem,92svh)] w-full max-w-[1300px] flex-col rounded-3xl bg-rellia-cream/60 px-6 py-16 md:px-10 md:py-20">
-              <ScrollReveal className="flex min-w-0 flex-col">
-                <h2 className="font-host-grotesk text-2xl font-semibold tracking-tight text-black md:text-[32px]">
-                  Open Roles
-                </h2>
+          <section id="open-roles" className="scroll-mt-28 px-0 py-16 md:py-20">
+            <div className="flex min-h-[max(46rem,92svh)] w-full flex-col rounded-3xl bg-rellia-cream/60 py-16 md:py-20">
+              <div className="mx-auto w-full max-w-[1300px] px-6 md:px-10 flex flex-col">
+                <ScrollReveal className="flex min-w-0 flex-col">
+                  <h2 className="font-host-grotesk text-2xl font-semibold tracking-tight text-black md:text-[32px]">
+                    Open Roles
+                  </h2>
 
-                <div className="mt-10 w-full shrink-0">
+                  <div className="mt-10 w-full shrink-0">
                   {openRoles.length > 0 ? (
                     <div className="overflow-hidden rounded-[28px] border border-black/10 bg-white px-0 shadow-sm md:px-2">
                       <Accordion
@@ -588,6 +547,7 @@ export default function CareersCms() {
                   LinkedIn
                 </a>
               </p>
+              </div>
             </div>
           </section>
         ) : null}
