@@ -204,7 +204,7 @@ function LifeAtRelliaSlider({ images }: { images?: Array<{ src?: string; alt?: s
   return (
     <div className="flex flex-col">
       <div className="relative aspect-square w-full max-w-[480px] overflow-hidden rounded-[2.5rem] bg-rellia-cream/40 shadow-md">
-        <AnimatePresence initial={false} custom={direction} mode="wait">
+        <AnimatePresence initial={false} custom={direction}>
           <motion.img
             key={currentSlide}
             src={slides[currentSlide]?.src}
