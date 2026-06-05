@@ -256,6 +256,12 @@ export default function Advisors() {
             description: `${c.summary} ${c.detail}`,
             iconKey: "",
           }))}
+          cardImages={[
+            "https://images.pexels.com/photos/167699/pexels-photo-167699.jpeg?auto=compress&cs=tinysrgb&w=1200",
+            "https://images.pexels.com/photos/957024/pexels-photo-957024.jpeg?auto=compress&cs=tinysrgb&w=1200",
+            "https://images.pexels.com/photos/312839/pexels-photo-312839.jpeg?auto=compress&cs=tinysrgb&w=1200",
+            "https://images.pexels.com/photos/531602/pexels-photo-531602.jpeg?auto=compress&cs=tinysrgb&w=1200",
+          ]}
           sectionClassName="bg-white"
         />
 

@@ -592,6 +592,12 @@ function MembershipDifferentSection() {
       sectionTitle="What makes Rellia membership different"
       sectionDescription="Operator-led support in a community where quality is defended by application review—not open signup churn."
       features={whyFeatures}
+      cardImages={[
+        "https://images.pexels.com/photos/814499/pexels-photo-814499.jpeg?auto=compress&cs=tinysrgb&w=1200",
+        "https://images.pexels.com/photos/1423600/pexels-photo-1423600.jpeg?auto=compress&cs=tinysrgb&w=1200",
+        "https://images.pexels.com/photos/310452/pexels-photo-310452.jpeg?auto=compress&cs=tinysrgb&w=1200",
+        "https://images.pexels.com/photos/417074/pexels-photo-417074.jpeg?auto=compress&cs=tinysrgb&w=1200",
+      ]}
       sectionClassName="bg-white"
     />
   );
