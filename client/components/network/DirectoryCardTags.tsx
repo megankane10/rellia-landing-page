@@ -24,12 +24,12 @@ export const DirectoryCardTags = ({
         className,
       )}
     >
-      {/* Primary tag — brand teal pill */}
+      {/* Primary tag — brand teal pill with transparency and blur */}
       <span
         key={primary}
         className={cn(
           "inline-flex rounded-full border px-2.5 py-0.5 font-urbanist text-[10px] font-semibold backdrop-blur-sm shadow-sm",
-          "border-rellia-teal bg-rellia-teal text-white",
+          "border-rellia-teal/30 bg-rellia-teal/80 text-white",
         )}
       >
         {primary}

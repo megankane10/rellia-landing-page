@@ -61,7 +61,7 @@ const StoryGridCard = ({
           />
         </div>
 
-        <div className="flex min-h-0 flex-1 flex-col overflow-hidden px-1.5 pt-3 pb-1">
+        <div className="flex min-h-0 flex-1 flex-col overflow-hidden px-1.5 pt-3 pb-1 md:h-[160px]">
           <div className="inline-flex items-center gap-2 w-fit">
             <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-rellia-teal" aria-hidden />
             <span className="font-host-grotesk text-[11px] font-semibold uppercase tracking-[0.14em] text-rellia-teal">
@@ -70,12 +70,12 @@ const StoryGridCard = ({
           </div>
 
           <h3
-            className="mt-1 line-clamp-2 h-auto md:h-[50px] font-host-grotesk text-[16px] font-semibold leading-snug text-black group-hover:underline group-hover:underline-offset-4 md:text-lg"
+            className="mt-1 line-clamp-2 h-auto font-host-grotesk text-[16px] font-semibold leading-snug text-black group-hover:underline group-hover:underline-offset-4 md:text-lg"
           >
             {cleanTitle}
           </h3>
 
-          <p className="mt-1.5 line-clamp-3 h-auto md:h-[78px] overflow-hidden break-words font-urbanist text-sm leading-relaxed text-black/70 md:text-base">
+          <p className="mt-3 line-clamp-4 h-auto overflow-hidden break-words font-urbanist text-sm leading-relaxed text-black/70 md:text-base">
             {story.excerpt}
           </p>
         </div>
