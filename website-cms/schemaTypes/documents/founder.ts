@@ -1,14 +1,14 @@
 import {defineArrayMember, defineField, defineType} from 'sanity'
-import {documentGroups, FIELDSET_SEO} from '../shared/fieldGroups'
-import {seoField} from '../shared/seoField'
+
 
 /** Standalone founder profile (directory companies remain `alumniCompany`) */
 export const founder = defineType({
   name: 'founder',
   title: 'Founder profile',
   type: 'document',
-  groups: documentGroups,
-  fieldsets: [FIELDSET_SEO],
+  groups: [
+    {name: 'content', title: 'Content', default: true},
+  ],
   fields: [
     defineField({
       name: 'name',
@@ -59,7 +59,7 @@ export const founder = defineType({
       group: 'content',
     }),
     defineField({name: 'sortOrder', title: 'Sort order', type: 'number', initialValue: 0, group: 'content'}),
-    seoField,
+
   ],
   preview: {
     select: {title: 'name', subtitle: 'roleTitle', media: 'avatar'},

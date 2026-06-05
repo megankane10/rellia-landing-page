@@ -1,5 +1,4 @@
 import {defineArrayMember, defineField, defineType} from 'sanity'
-import {seoField} from '../shared/seoField'
 import {studioListMedia} from '../shared/studioListMedia'
 
 export const applyPage = defineType({
@@ -9,9 +8,7 @@ export const applyPage = defineType({
   groups: [
     {name: 'content', title: 'Content', default: true},
     {name: 'cta', title: 'Bottom CTA'},
-    {name: 'seo', title: 'SEO & metadata'},
   ],
-  fieldsets: [{name: 'seo', title: 'SEO & metadata'}],
   fields: [
     defineField({
       name: 'headingTitle',
@@ -105,7 +102,6 @@ export const applyPage = defineType({
       initialValue: '/contact',
       group: 'cta',
     }),
-    seoField,
   ],
   preview: {
     prepare() {

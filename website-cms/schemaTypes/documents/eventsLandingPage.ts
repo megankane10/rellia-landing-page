@@ -9,9 +9,7 @@ export const eventsLandingPage = defineType({
   groups: [
     {name: 'hero', title: 'Hero', default: true},
     {name: 'cta', title: 'CTA'},
-    {name: 'seo', title: 'SEO & metadata'},
   ],
-  fieldsets: [{name: 'seo', title: 'SEO & metadata'}],
   fields: [
     defineField({
       name: 'heroTitlePortable',
@@ -34,7 +32,6 @@ export const eventsLandingPage = defineType({
     defineField({name: 'ctaPrimaryHref', title: 'Primary button link', type: 'string', group: 'cta'}),
     defineField({name: 'ctaSecondaryLabel', title: 'Secondary button label', type: 'string', group: 'cta'}),
     defineField({name: 'ctaSecondaryHref', title: 'Secondary button link', type: 'string', group: 'cta'}),
-    defineField({name: 'seo', type: 'seoFields', group: 'seo', fieldset: 'seo'}),
   ],
   preview: {
     select: {heroTitlePortable: 'heroTitlePortable', heroSubtitle: 'heroSubtitle'},
@@ -48,4 +45,3 @@ export const eventsLandingPage = defineType({
     }),
   },
 })
-

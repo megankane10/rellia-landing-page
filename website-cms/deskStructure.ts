@@ -86,6 +86,15 @@ const pagesGroup = (S: StructureBuilder) =>
           S.divider(),
           singleton(S, 'Events landing', 'eventsLandingPage', DocumentTextIcon),
           singleton(S, 'Stories landing', 'storiesPage', DocumentTextIcon),
+          S.divider(),
+          S.listItem()
+            .title('Modular Pages')
+            .icon(ComposeIcon)
+            .child(
+              S.documentTypeList('page')
+                .apiVersion(API_VERSION)
+                .title('Modular Pages')
+            ),
         ]),
     )
 

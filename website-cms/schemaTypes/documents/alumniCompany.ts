@@ -1,5 +1,5 @@
 import {defineArrayMember, defineField, defineType} from 'sanity'
-import {seoField} from '../shared/seoField'
+
 
 export const alumniCompany = defineType({
   name: 'alumniCompany',
@@ -10,9 +10,7 @@ export const alumniCompany = defineType({
     {name: 'profile', title: 'Company profile'},
     {name: 'directory', title: 'Directory filters'},
     {name: 'links', title: 'Links'},
-    {name: 'seo', title: 'SEO & metadata'},
   ],
-  fieldsets: [{name: 'seo', title: 'SEO & metadata'}],
   fields: [
     defineField({
       name: 'founders',
@@ -198,7 +196,7 @@ export const alumniCompany = defineType({
       readOnly: true,
       description: 'Deprecated — use Logo upload. Remove this field value to clear warnings.',
     }),
-    defineField({name: 'seo', type: 'seoFields', group: 'seo', fieldset: 'seo'}),
+
   ],
   preview: {
     select: {

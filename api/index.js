@@ -245,7 +245,14 @@ var networkInvestorsPageQuery = `*[_type == "networkInvestorsPage"][0]{
   ${pageVisibilityFragment},
   ${logoMarqueeFragment},
   ${seoFragment},
-  ${pageSectionsFragment}
+  ${pageSectionsFragment},
+  foundersCluster[]{
+    title,
+    segments[]{
+      name,
+      value
+    }
+  }
 }`;
 var diagnosticLandingPageQuery = `*[_id == "diagnosticLandingPage"][0]{
   title,
@@ -1638,7 +1645,7 @@ function createServer() {
         const icsContent = `${lines.join("\r\n")}\r
 `;
         res.setHeader("Content-Type", "text/calendar; charset=utf-8");
-        res.setHeader("Content-Disposition", `inline; filename="${slug}.ics"`);
+        res.setHeader("Content-Disposition", `attachment; filename="${slug}.ics"`);
         res.status(200).send(icsContent);
       } catch (err) {
         console.error("ICS generation error:", err);

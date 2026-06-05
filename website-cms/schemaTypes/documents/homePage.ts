@@ -12,9 +12,7 @@ export const homePage = defineType({
     { name: 'testimonials', title: 'Testimonials' },
     { name: 'paths', title: 'Paths section' },
     { name: 'layout', title: 'Layout builder' },
-    { name: 'seo', title: 'SEO & metadata' },
   ],
-  fieldsets: [{ name: 'seo', title: 'SEO & metadata' }],
   fields: [
     defineField({ name: 'headlinePrefix', title: 'Headline (line 1)', type: 'string', group: 'hero' }),
     defineField({ name: 'subheadline', title: 'Hero subtitle', type: 'string', group: 'hero' }),
@@ -184,6 +182,5 @@ export const homePage = defineType({
       ],
     }),
     ...singletonLayoutFields,
-    defineField({ name: 'seo', type: 'seoFields', group: 'seo', fieldset: 'seo' }),
   ],
 })

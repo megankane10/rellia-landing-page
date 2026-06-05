@@ -1,13 +1,13 @@
 import {defineArrayMember, defineField, defineType} from 'sanity'
-import {documentGroups, FIELDSET_SEO} from '../shared/fieldGroups'
-import {seoField} from '../shared/seoField'
+
 
 export const investor = defineType({
   name: 'investor',
   title: 'Investor',
   type: 'document',
-  groups: documentGroups,
-  fieldsets: [FIELDSET_SEO],
+  groups: [
+    {name: 'content', title: 'Content', default: true},
+  ],
   fields: [
     defineField({
       name: 'name',
@@ -57,7 +57,7 @@ export const investor = defineType({
       group: 'content',
     }),
     defineField({name: 'sortOrder', title: 'Sort order', type: 'number', initialValue: 0, group: 'content'}),
-    seoField,
+
   ],
   preview: {
     select: {title: 'name', subtitle: 'organization', media: 'avatar'},

@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useRef } from "react"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
 import PageHeader from "@/components/PageHeader"
@@ -10,8 +10,8 @@ import WhyRellia from "@/components/WhyRellia"
 import { FilloutStandardEmbed } from "@fillout/react"
 import { FILLOUT_APPLY_FORM_ID, FILLOUT_EMBED_VIEWPORT_MIN_CLASS } from "@/lib/filloutApplyForm"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
-import { motion, useReducedMotion } from "framer-motion"
-import { BriefcaseBusiness, Building2, ExternalLink, Laptop, MapPin, Users, UserRound, Check, type LucideIcon } from "lucide-react"
+import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion"
+import { BriefcaseBusiness, Building2, ExternalLink, Laptop, MapPin, Users, UserRound, Check, ArrowRight, type LucideIcon } from "lucide-react"
 import type { HomeWhyFeature } from "@shared/cms/types"
 import { DEFAULT_GLOBAL_SETTINGS } from "@shared/cms/defaults"
 import { CAREERS_VOLUNTEER_ENABLED, careersHasPublishedOpenRoles } from "@shared/careersPageConfig"
@@ -131,36 +131,64 @@ const CareersJoinTeamSection = ({
   primaryCta: CareersJoinTeamCta | null
   secondaryCta: CareersJoinTeamCta | null
 }) => {
+  const sectionRef = useRef<HTMLElement | null>(null)
   const reduceMotion = useReducedMotion()
   const [showForm, setShowForm] = useState(false)
 
-  /** Narrow fade only at viewport edges; full-opacity center so the strip clearly overflows */
-  const marqueeMaskStyle = {
-    maskImage:
-      "linear-gradient(90deg, transparent 0%, black 1.25%, black 98.75%, transparent 100%)",
-    WebkitMaskImage:
-      "linear-gradient(90deg, transparent 0%, black 1.25%, black 98.75%, transparent 100%)",
-  } as const
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start 95%", "end 5%"],
+  })
+  const bgY = useTransform(scrollYProgress, [0, 1], ["-12%", "12%"])
 
-  const joinTeamImageTileClass =
-    "relative h-40 w-[12rem] shrink-0 overflow-hidden rounded-2xl sm:h-[13.5rem] sm:w-[13.5rem] md:h-[15rem] md:w-[16.5rem] lg:h-[16.5rem] lg:w-[19rem]"
+  const bgSrc = "/images/careers-img.jpg"
 
   const renderCta = (cta: CareersJoinTeamCta, isPrimary: boolean) => {
     const isVolunteer = cta.label.toLowerCase().includes("volunteer")
-    const variant = isPrimary ? "relliaCtaPrimary" : "relliaCtaSecondary"
+    const isScroll = cta.href.startsWith("#")
+    
+    // We want the CTA to have action scroll/form just like in CareersCms
+    const handleClick = (e: React.MouseEvent) => {
+      if (isVolunteer) {
+        e.preventDefault()
+        setShowForm(true)
+      } else if (isScroll) {
+        e.preventDefault()
+        const targetId = cta.href.slice(1)
+        const target = document.getElementById(targetId)
+        target?.scrollIntoView({ behavior: "smooth", block: "start" })
+      }
+    }
 
     if (isVolunteer) {
       return (
         <RelliaAction
           key={cta.label}
           type="button"
-          variant={variant}
+          variant={isPrimary ? "mintOnTealStrip" : "heroGhostOnTeal"}
           size="comfortable"
-          className="cursor-pointer px-8 md:px-10"
+          className="cursor-pointer"
           aria-label={cta.ariaLabel}
-          onClick={() => setShowForm(true)}
+          onClick={handleClick}
         >
           {cta.label}
+        </RelliaAction>
+      )
+    }
+
+    if (isScroll) {
+      return (
+        <RelliaAction
+          key={cta.label}
+          type="button"
+          variant={isPrimary ? "mintOnTealStrip" : "heroGhostOnTeal"}
+          size="comfortable"
+          className="cursor-pointer"
+          aria-label={cta.ariaLabel}
+          onClick={handleClick}
+        >
+          {cta.label}
+          {isPrimary && <ArrowRight className="h-4 w-4" aria-hidden />}
         </RelliaAction>
       )
     }
@@ -169,18 +197,25 @@ const CareersJoinTeamSection = ({
       <RelliaAction
         key={cta.label}
         asChild
-        variant={variant}
+        variant={isPrimary ? "mintOnTealStrip" : "heroGhostOnTeal"}
         size="comfortable"
-        className="px-8 md:px-10"
         aria-label={cta.ariaLabel}
       >
-        <a href={cta.href}>{cta.label}</a>
+        <a href={cta.href}>
+          {cta.label}
+          {isPrimary && <ArrowRight className="h-4 w-4" aria-hidden />}
+        </a>
       </RelliaAction>
     )
   }
 
   return (
-    <section className="relative z-[2] w-full overflow-hidden bg-white">
+    <section
+      ref={(node) => {
+        sectionRef.current = node
+      }}
+      className="relative z-[2] w-full overflow-hidden bg-gradient-to-b from-[#144853] from-50% to-white to-50% py-4 md:py-6"
+    >
       <AnimatePresence mode="wait">
         {!showForm ? (
           <motion.div
@@ -188,26 +223,36 @@ const CareersJoinTeamSection = ({
             initial={{ opacity: 1 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.4 }}
-            className="relative flex h-auto min-h-0 shrink-0 flex-col overflow-hidden bg-white pt-10 pb-6 md:pt-14 md:pb-8"
+            className="relative w-full overflow-hidden rounded-[2.5rem] md:rounded-[3.5rem] shadow-lg"
           >
-            <div className="relative z-10 flex h-full min-h-0 w-full flex-1 flex-col">
-              <div className="mx-auto w-full max-w-[1300px] shrink-0 px-6 md:px-10 text-left">
-                <h2 className="max-w-3xl font-host-grotesk text-3xl font-bold leading-[1.12] tracking-tight text-black sm:text-[2rem] md:text-4xl lg:max-w-4xl lg:text-[2.65rem]">
-                  Help us <span className="text-rellia-teal">empower the founders</span> who are changing the world.
-                </h2>
-
-                <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
-                  {primaryCta && renderCta(primaryCta, true)}
-                  {secondaryCta && renderCta(secondaryCta, false)}
-                </div>
+            <div className="relative min-h-[780px] sm:min-h-[820px] md:min-h-[800px] lg:min-h-[880px] w-full overflow-hidden flex flex-col justify-center">
+              <div className="absolute inset-0 overflow-hidden" aria-hidden>
+                <motion.img
+                  src={bgSrc}
+                  alt=""
+                  className="h-full w-full object-cover scale-[1.12]"
+                  style={reduceMotion ? undefined : { y: bgY }}
+                  loading="lazy"
+                />
+                <div className="absolute inset-0 bg-rellia-teal/35" />
+                <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/30 to-black/60" />
               </div>
 
-              <div className="mt-8 mx-auto w-full max-w-[1300px] px-6 md:px-10">
-                <img
-                  src="/images/careers-img.jpg"
-                  alt="Rellia Team"
-                  className="w-full h-auto rounded-3xl object-cover"
-                />
+              <div className="relative z-10 mx-auto flex w-full max-w-[1300px] flex-col px-6 py-20 md:px-10 md:py-28 justify-center">
+                <div className="max-w-3xl flex flex-col items-start text-left">
+                  <ScrollReveal>
+                    <h2 className="font-host-grotesk text-3xl font-bold leading-[1.12] tracking-tight text-white sm:text-[2.25rem] md:text-5xl lg:text-[3.25rem]">
+                      Help us <span className="text-rellia-mint">empower the founders</span> who are changing the world.
+                    </h2>
+
+                    {primaryCta || secondaryCta ? (
+                      <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-center">
+                        {primaryCta && renderCta(primaryCta, true)}
+                        {secondaryCta && renderCta(secondaryCta, false)}
+                      </div>
+                    ) : null}
+                  </ScrollReveal>
+                </div>
               </div>
             </div>
           </motion.div>
@@ -217,13 +262,24 @@ const CareersJoinTeamSection = ({
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, ease: "easeOut" }}
-            className={cn("w-full bg-white pb-10", FILLOUT_EMBED_VIEWPORT_MIN_CLASS)}
+            className={cn("w-full bg-white pt-12 pb-4", FILLOUT_EMBED_VIEWPORT_MIN_CLASS)}
           >
-            <FilloutStandardEmbed
-              filloutId={FILLOUT_APPLY_FORM_ID}
-              inheritParameters
-              dynamicResize
-            />
+            <div className="mx-auto max-w-[1100px] px-6 md:px-10">
+              <button
+                type="button"
+                onClick={() => setShowForm(false)}
+                className="mb-6 inline-flex items-center gap-2 text-sm font-semibold text-black/60 hover:text-black transition-colors"
+              >
+                ← Back
+              </button>
+              <div className="overflow-hidden rounded-3xl border border-black/10 bg-white shadow-lg">
+                <FilloutStandardEmbed
+                  filloutId={FILLOUT_APPLY_FORM_ID}
+                  inheritParameters
+                  dynamicResize
+                />
+              </div>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>

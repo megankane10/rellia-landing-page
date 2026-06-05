@@ -1,13 +1,11 @@
 import {defineField, defineType} from 'sanity'
-import {documentGroups, FIELDSET_SEO} from '../shared/fieldGroups'
-import {seoField} from '../shared/seoField'
+
 
 export const story = defineType({
   name: 'story',
   title: 'Story',
   type: 'document',
-  groups: [...documentGroups, {name: 'metrics', title: 'Reading metrics'}],
-  fieldsets: [FIELDSET_SEO],
+  groups: [{name: 'content', title: 'Content', default: true}, {name: 'metrics', title: 'Reading metrics'}],
   fields: [
     defineField({
       name: 'featured',
@@ -97,7 +95,7 @@ export const story = defineType({
       description: 'Optional metric for editorial sorting — not live analytics.',
       group: 'metrics',
     }),
-    seoField,
+
   ],
   preview: {
     select: {

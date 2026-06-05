@@ -1,5 +1,4 @@
 import {defineField, defineType} from 'sanity'
-import {seoField} from '../shared/seoField'
 
 export const termsPage = defineType({
   name: 'termsPage',
@@ -7,9 +6,7 @@ export const termsPage = defineType({
   type: 'document',
   groups: [
     {name: 'content', title: 'Content', default: true},
-    {name: 'seo', title: 'SEO & metadata'},
   ],
-  fieldsets: [{name: 'seo', title: 'SEO & metadata'}],
   fields: [
     defineField({
       name: 'title',
@@ -40,7 +37,6 @@ export const termsPage = defineType({
       description: 'Use headings (H2/H3), paragraphs, and bullet lists for each section.',
       group: 'content',
     }),
-    seoField,
   ],
   preview: {
     prepare() {

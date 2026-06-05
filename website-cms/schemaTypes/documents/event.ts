@@ -1,7 +1,6 @@
 import {defineField, defineType} from 'sanity'
 import {documentGroups, FIELDSET_SEO} from '../shared/fieldGroups'
-import {seoField} from '../shared/seoField'
-import {pageBuilderField} from '../shared/pageBuilderField'
+
 import {eventPublishingFields} from '../shared/documentTopFields'
 
 export const event = defineType({
@@ -10,10 +9,9 @@ export const event = defineType({
   type: 'document',
   groups: [
     {name: 'publishing', title: 'Publishing'},
-    ...documentGroups.filter((g) => g.name !== 'publishing'),
+    {name: 'content', title: 'Content', default: true},
     {name: 'ticketing', title: 'Ticketing & calendar'},
   ],
-  fieldsets: [FIELDSET_SEO],
   fields: [
     ...eventPublishingFields,
     defineField({
@@ -122,8 +120,7 @@ export const event = defineType({
     }),
     defineField({name: 'embedLumaOnDetailPage', type: 'boolean', group: 'ticketing'}),
     defineField({name: 'addToCalendarEnabled', type: 'boolean', group: 'ticketing'}),
-    pageBuilderField,
-    seoField,
+
   ],
   preview: {
     select: {

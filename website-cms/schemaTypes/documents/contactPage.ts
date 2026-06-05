@@ -8,8 +8,7 @@ export const contactPage = defineType({
   name: 'contactPage',
   title: 'Contact page',
   type: 'document',
-  groups: [publishingGroup, ...documentGroups.filter((g) => g.name !== 'publishing')],
-  fieldsets: [FIELDSET_SEO],
+  groups: [publishingGroup, ...documentGroups.filter((g) => g.name !== 'publishing' && g.name !== 'seo')],
   fields: [
     ...singletonPublishingAtTop,
     defineField({name: 'heroBadge', type: 'string', title: 'Hero badge', group: 'content'}),
@@ -133,6 +132,5 @@ export const contactPage = defineType({
     defineField({name: 'submitLabel', type: 'string', group: 'content'}),
     defineField({name: 'sendingLabel', type: 'string', group: 'content'}),
     ...singletonLayoutFields,
-    defineField({name: 'seo', type: 'seoFields', group: 'seo', fieldset: 'seo'}),
   ],
 })

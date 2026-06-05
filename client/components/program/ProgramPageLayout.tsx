@@ -591,18 +591,25 @@ const ProgramPageLayout = ({
                       {q.pricingBadge}
                     </h2>
                     <div className="mt-5 flex flex-wrap items-baseline gap-x-3 gap-y-1">
-                      {q.pricingDiscountEnabled &&
-                      q.pricingCompareAmount?.trim() ? (
-                        <span className="text-4xl md:text-5xl font-bold text-white/45 line-through">
-                          {q.pricingCompareAmount.trim()}
-                        </span>
-                      ) : null}
                       <span className="text-6xl md:text-7xl font-extrabold text-white tracking-tight">
                         {q.pricingAmount}
-                        <span className="text-4xl md:text-5xl">
-                          {q.pricingSubAmount}
-                        </span>
+                        {q.pricingSubAmount ? (
+                          <span className="text-4xl md:text-5xl">
+                            {q.pricingSubAmount}
+                          </span>
+                        ) : null}
                       </span>
+                      {q.pricingDiscountEnabled && q.pricingCompareAmount?.trim() ? (
+                        <span className="relative inline-block text-3xl md:text-4xl font-bold text-white/45 ml-2">
+                          {q.pricingCompareAmount.trim()}
+                          <span
+                            className="absolute inset-0 pointer-events-none"
+                            style={{
+                              background: `linear-gradient(to top right, transparent 45%, #9DD6D0 46%, #9DD6D0 54%, transparent 55%)`
+                            }}
+                          />
+                        </span>
+                      ) : null}
                     </div>
                     <p className="mt-5 mb-10 font-urbanist text-white/80 text-base md:text-lg leading-relaxed max-w-md">
                       {q.pricingDescription}

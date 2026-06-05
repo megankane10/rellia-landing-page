@@ -8,9 +8,7 @@ export const advisor = defineType({
     {name: 'profile', title: 'Profile', default: true},
     {name: 'directory', title: 'Directory filters'},
     {name: 'links', title: 'Links'},
-    {name: 'seo', title: 'SEO & metadata'},
   ],
-  fieldsets: [{name: 'seo', title: 'SEO & metadata'}],
   fields: [
     defineField({name: 'name', title: 'Name', type: 'string', validation: (Rule) => Rule.required(), group: 'profile'}),
     defineField({
@@ -182,7 +180,7 @@ export const advisor = defineType({
       description: 'Optional fallback if not using Social links above.',
       group: 'links',
     }),
-    defineField({name: 'seo', type: 'seoFields', group: 'seo', fieldset: 'seo'}),
+
   ],
   preview: {
     select: {

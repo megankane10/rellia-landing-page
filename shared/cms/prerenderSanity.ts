@@ -9,6 +9,9 @@ import {
   programBySlugQuery,
   storyBySlugQuery,
   storiesQuery,
+  paymentPageQuery,
+  programsLandingQuery,
+  programsQuery,
 } from "./groqQueries"
 import eventsBuildSnapshot from "./build-snapshots/events.json"
 import { trySanityApiConfig } from "./sanityEnv"
@@ -154,6 +157,39 @@ export const fetchCmsPageSlugsForPrerender = async (): Promise<string[]> => {
     return rows
       .map((row) => row.slug?.trim())
       .filter((slug): slug is string => Boolean(slug))
+  } catch {
+    return []
+  }
+}
+
+export const fetchPaymentPageForPrerender = async (): Promise<Record<string, unknown> | null> => {
+  const client = getPrerenderSanityClient()
+  if (!client) return null
+  try {
+    const doc = await client.fetch<Record<string, unknown> | null>(paymentPageQuery)
+    return doc ?? null
+  } catch {
+    return null
+  }
+}
+
+export const fetchProgramsLandingForPrerender = async (): Promise<Record<string, unknown> | null> => {
+  const client = getPrerenderSanityClient()
+  if (!client) return null
+  try {
+    const doc = await client.fetch<Record<string, unknown> | null>(programsLandingQuery)
+    return doc ?? null
+  } catch {
+    return null
+  }
+}
+
+export const fetchProgramsForPrerender = async (): Promise<Record<string, unknown>[]> => {
+  const client = getPrerenderSanityClient()
+  if (!client) return []
+  try {
+    const rows = await client.fetch<Record<string, unknown>[]>(programsQuery)
+    return Array.isArray(rows) ? rows : []
   } catch {
     return []
   }

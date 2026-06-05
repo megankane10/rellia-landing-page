@@ -301,6 +301,16 @@ export type CmsPageContent = {
   pageBuilder?: CmsPageSection[]
 }
 
+export type ClusterChartSegment = {
+  name: string
+  value: number
+}
+
+export type ClusterChart = {
+  title: string
+  segments: ClusterChartSegment[]
+}
+
 export type CmsSingletonPageContent = CmsPageVisibility & {
   title: string
   /** When true and sections exist, `/founders` etc. render modular CMS sections instead of the full marketing page. */
@@ -308,6 +318,7 @@ export type CmsSingletonPageContent = CmsPageVisibility & {
   logoMarquee?: Array<{ name: string; src: string; href?: string }>
   seo?: SeoContent
   sections?: CmsPageSection[]
+  foundersCluster?: ClusterChart[]
 }
 
 export type SanityImageAsset = {
