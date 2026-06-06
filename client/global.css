@@ -103,17 +103,9 @@
     @apply inline-flex font-urbanist text-[13px] font-normal leading-snug text-white/55 transition-colors duration-300 md:text-sm;
   }
 
-  .built-by-credit:hover .built-by-name,
-  .built-by-credit:focus-visible .built-by-name {
-    opacity: 0.95;
-  }
-
   .built-by-credit-label {
     @apply inline-flex items-baseline gap-1;
     color: rgba(255, 255, 255, 0.55);
-    background-size: 220% auto;
-    -webkit-background-clip: text;
-    background-clip: text;
     transition: color 0.35s ease;
   }
 
@@ -127,26 +119,31 @@
       rgba(157, 214, 208, 0.95) 60%,
       rgba(255, 255, 255, 0.55) 100%
     );
+    background-size: 220% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
     color: transparent;
     animation: glow-sweep 2.2s linear infinite;
   }
 
-  /* Safdar is bolder so it fills more stroke area and appears brighter through the gradient */
   .built-by-name {
     font-weight: 700;
     color: rgba(255, 255, 255, 0.85);
-    transition: color 0.35s ease, opacity 0.35s ease;
+    transition: color 0.35s ease;
   }
 
   .built-by-credit:hover .built-by-name,
   .built-by-credit:focus-visible .built-by-name {
     color: inherit;
+    -webkit-text-fill-color: inherit;
   }
 
   @media (prefers-reduced-motion: reduce) {
     .built-by-credit:hover .built-by-credit-label {
       animation: none;
       background: none;
+      -webkit-text-fill-color: initial;
       color: rgba(255, 255, 255, 0.80);
     }
   }
@@ -190,17 +187,15 @@
     z-index: 0;
     border-radius: 1.05rem;
     padding: 1px;
-    /* Same linear sweep as the text — clean and synced, with a neat drop shadow glow filter on the border */
-    background: linear-gradient(
-      90deg,
-      rgba(157, 214, 208, 0.05) 0%,
-      rgba(157, 214, 208, 0.7) 35%,
-      rgba(200, 240, 238, 0.98) 50%,
-      rgba(157, 214, 208, 0.7) 65%,
-      rgba(157, 214, 208, 0.05) 100%
+    /* Spinning conical gradient to represent a single line circling around the box */
+    background: conic-gradient(
+      from 0deg,
+      transparent 60%,
+      rgba(157, 214, 208, 0.3) 80%,
+      rgba(200, 240, 238, 0.98) 95%,
+      rgba(157, 214, 208, 0.3) 100%
     );
-    background-size: 220% 100%;
-    animation: glow-sweep 2.2s linear infinite;
+    animation: rotate-border 2.5s linear infinite;
     -webkit-mask:
       linear-gradient(#fff 0 0) content-box,
       linear-gradient(#fff 0 0);
@@ -210,14 +205,13 @@
       linear-gradient(#fff 0 0);
     mask-composite: exclude;
     pointer-events: none;
-    filter: drop-shadow(0 0 6px rgba(157, 214, 208, 0.6));
+    filter: drop-shadow(0 0 6px rgba(157, 214, 208, 0.7));
   }
 
   @media (prefers-reduced-motion: reduce) {
     .built-by-tooltip::before {
       animation: none;
       background: rgba(157, 214, 208, 0.45);
-      background-size: 100% 100%;
     }
   }
 }
@@ -244,6 +238,15 @@
   }
   100% {
     background-position: -200% center;
+  }
+}
+
+@keyframes rotate-border {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
   }
 }
 
