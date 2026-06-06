@@ -86,16 +86,16 @@ const handleBackToTopKeyDown = (event: React.KeyboardEvent<HTMLButtonElement>) =
   handleScrollToTop()
 }
 
-const BackToTopButton = () => (
+const BackToTopLink = () => (
   <button
     type="button"
     onClick={handleScrollToTop}
     onKeyDown={handleBackToTopKeyDown}
-    className="group inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-4 py-2 font-urbanist text-[13px] font-medium leading-none text-white shadow-[0_8px_24px_-12px_rgba(0,0,0,0.45)] transition-all duration-300 hover:border-rellia-mint/50 hover:bg-rellia-mint/15 hover:text-rellia-mint focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-rellia-teal md:text-sm"
+    className="group inline-flex cursor-pointer items-center gap-1.5 border-0 bg-transparent p-0 font-urbanist text-[13px] leading-none text-white/70 transition-colors hover:text-rellia-mint focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-rellia-teal md:text-sm"
     aria-label="Back to top"
   >
     <ArrowUp
-      className="h-4 w-4 transition-transform duration-300 group-hover:-translate-y-0.5 motion-reduce:transition-none"
+      className="h-3.5 w-3.5 transition-transform duration-300 group-hover:-translate-y-0.5 motion-reduce:transition-none motion-reduce:group-hover:translate-y-0"
       aria-hidden
     />
     <span>Back to top</span>
@@ -256,7 +256,7 @@ export default function Footer() {
           </div>
 
           {/* Mobile socials after links, before divider */}
-          <div className="mb-10 flex items-center justify-center gap-3 md:mb-12 md:hidden">
+          <div className="mb-6 flex items-center justify-center gap-3 md:hidden">
             <a
               href={g.linkedinUrl}
               target="_blank"
@@ -284,11 +284,11 @@ export default function Footer() {
             </a>
           </div>
 
-          <div className="mb-6 flex justify-center md:mb-8 md:justify-end">
-            <BackToTopButton />
+          <div className="mb-1 flex justify-start md:mb-1.5">
+            <BackToTopLink />
           </div>
 
-          <div className="border-t border-white/10 pt-6 md:pt-8">
+          <div className="border-t border-white/10 pt-4 md:pt-5">
             <div className="grid grid-cols-1 items-center gap-5 md:grid-cols-[1fr_auto_1fr] md:gap-6">
               <p className="text-center font-urbanist text-[13px] leading-snug text-white/55 md:text-left md:text-sm">
                 &copy; {new Date().getFullYear()} {g.copyrightLine} Ontario, Canada

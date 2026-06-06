@@ -2323,7 +2323,7 @@ export const DEFAULT_APPLY_PAGE: ApplyPageContent = {
     },
   ],
   showRoleLinks: true,
-  applyButtonLabel: "Apply now",
+  applyButtonLabel: "Apply Now",
   bottomCtaTitle: "Explore the **Rellia network**",
   bottomCtaBody:
     "See how members connect across programs, partners, and resources—or get in touch with questions about membership.",

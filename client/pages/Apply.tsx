@@ -10,6 +10,7 @@ import { useApplyPage } from "@/hooks/useCmsDocuments"
 import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo"
 import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
+import { ArrowRight } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 export default function Apply() {
@@ -17,6 +18,20 @@ export default function Apply() {
   const apply = applyCms ?? DEFAULT_APPLY_PAGE
   useApplyCmsSeo(apply.seo)
   const [showForm, setShowForm] = useState(false)
+
+  const applyNowButton = (
+    <RelliaAction
+      type="button"
+      variant="mintTealFill"
+      size="comfortable"
+      className="w-full min-w-0 justify-center sm:min-w-[220px] sm:w-auto sm:px-10"
+      onClick={() => setShowForm(true)}
+      aria-label={apply.applyButtonLabel}
+    >
+      {apply.applyButtonLabel}
+      <ArrowRight aria-hidden />
+    </RelliaAction>
+  )
 
   return (
     <div className="flex min-h-screen flex-col bg-white font-host-grotesk">
@@ -36,23 +51,12 @@ export default function Apply() {
               transition={{ duration: 0.3 }}
             >
               <MembershipPathTimeline
-                className="border-t border-black/10 pt-12 md:pt-16 lg:pt-20"
+                className="border-t-0 bg-white pt-8 md:pt-10 lg:pt-12"
                 headingTitle={apply.headingTitle}
                 subheading={apply.subheading}
                 steps={apply.steps}
                 showRoleLinks={apply.showRoleLinks}
-                belowTimeline={
-                  <RelliaAction
-                    type="button"
-                    variant="relliaCtaPrimary"
-                    size="comfortable"
-                    className="cursor-pointer px-10"
-                    onClick={() => setShowForm(true)}
-                    aria-label="Show application form"
-                  >
-                    {apply.applyButtonLabel}
-                  </RelliaAction>
-                }
+                belowTimeline={applyNowButton}
               />
             </motion.div>
           ) : (
@@ -83,8 +87,9 @@ export default function Apply() {
           )}
         </AnimatePresence>
 
-        <div className={cn("bg-rellia-cream/25", showForm && "bg-rellia-cream/40")}>
+        <div className={cn("bg-white", showForm && "bg-rellia-cream/40")}>
           <RelliaCta
+            aboveSectionTone="white"
             title={apply.bottomCtaTitle}
             body={apply.bottomCtaBody}
             primary={{

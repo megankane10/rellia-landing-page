@@ -1,30 +1,16 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { 
-  ArrowRight, 
-  ShieldCheck,
-  Zap,
-  Users,
-  Lock,
-} from 'lucide-react';
+import { ShieldCheck, ShieldCheck as ShieldIcon, Zap, Users } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
-import RelliaAction from '@/components/RelliaAction';
 import RouteSeo from '@/components/RouteSeo';
 import { CmsModularSingletonPage } from '@/components/cms/CmsModularSingletonPage';
 import { useDiagnosticLandingPage } from '@/hooks/useCmsDocuments';
 import { useApplyCmsSeo } from '@/hooks/useApplyCmsSeo';
 import { RoleHero } from "./network/_shared";
 import PillTag, { PILL_ON_IMAGE_BLUR_CLASS } from "@/components/PillTag";
-import { cn } from '@/lib/utils';
-import { PAGE_HEADER_TITLE_SIZE_CLASS } from '@/components/PageHeader';
 import type { HomeWhyFeature } from "@shared/cms/types";
-
 import WhyRellia from '@/components/WhyRellia';
 import MembershipPathTimeline from '@/components/MembershipPathTimeline';
 import RelliaCta from '@/components/RelliaCta';
-
-import { ShieldCheck as ShieldIcon } from 'lucide-react';
 
 const whyFeatures: HomeWhyFeature[] = [
   {
@@ -60,6 +46,25 @@ const timelineSteps = [
   { title: 'Report Access', description: 'Rellia members immediately unlock their custom diagnostic report and advisor matching.' }
 ];
 
+const HERO_TRUST_BADGES = [
+  { label: "100% Private", icon: ShieldCheck },
+  { label: "~15 Minutes", icon: Zap },
+  { label: "Advisor Matching", icon: Users },
+] as const
+
+const DiagnosticHeroBadges = () => (
+  <div className="flex flex-wrap items-center gap-3">
+    {HERO_TRUST_BADGES.map((item) => (
+      <PillTag
+        key={item.label}
+        label={item.label}
+        dot={<item.icon className="h-3.5 w-3.5 shrink-0 text-rellia-mint" />}
+        className={PILL_ON_IMAGE_BLUR_CLASS}
+      />
+    ))}
+  </div>
+)
+
 export default function DiagnosticLanding() {
   const { data: cmsPage } = useDiagnosticLandingPage()
   useApplyCmsSeo(cmsPage?.seo, {
@@ -82,37 +87,15 @@ export default function DiagnosticLanding() {
 
       <div className="lg:flex lg:h-[82vh] lg:flex-col">
         <RoleHero
-          eyebrowLabel="Readiness tool"
-          imageSrc="/images/diagnostics-hero.jpg"
+          heroBadges={<DiagnosticHeroBadges />}
+          imageSrc="https://images.pexels.com/photos/590016/pexels-photo-590016.jpeg?auto=compress&cs=tinysrgb&w=1600"
           className="lg:flex-1"
-          titleClassName="max-w-5xl"
-          subtitleClassName="max-w-3xl"
           title={
             <>
-              Benchmark your startup across <span className="text-rellia-mint">12 critical domains</span>
+              How ready is your health tech <span className="text-rellia-mint">startup?</span>
             </>
           }
-          subtitle={
-            <div className="flex flex-col items-start">
-              <p className="font-urbanist text-lg leading-relaxed text-white/85 md:text-xl">
-                Benchmark your startup across 12 critical domains. Get an instant readiness score and identify hidden blockers.
-              </p>
-              <div className="mt-8 flex flex-wrap items-center gap-3">
-                {[
-                  { label: "100% Private", icon: ShieldCheck },
-                  { label: "~15 Minutes", icon: Zap },
-                  { label: "Advisor Matching", icon: Users },
-                ].map((item) => (
-                  <PillTag
-                    key={item.label}
-                    label={item.label}
-                    dot={<item.icon className="h-3.5 w-3.5 text-rellia-mint shrink-0" />}
-                    className={PILL_ON_IMAGE_BLUR_CLASS}
-                  />
-                ))}
-              </div>
-            </div>
-          }
+          subtitle="Get an instant readiness score, surface hidden blockers across 12 domains, and unlock advisor matching when you join Rellia."
           primaryCta={{
             label: "Begin Free Assessment",
             to: "/diagnostic-survey"
@@ -128,7 +111,7 @@ export default function DiagnosticLanding() {
       />
 
       {/* NO STONE LEFT UNTURNED SECTION (removed bottom tag cloud of topics) */}
-      <section className="border-b border-black/5 px-4 py-16 md:px-6 md:py-24">
+      <section className="px-4 py-12 md:px-6 md:py-16">
         <div className="mx-auto w-full max-w-[1400px] overflow-hidden rounded-[2rem] border border-black/5 bg-[#fbfcf8] px-6 py-14 md:rounded-[2.5rem] md:px-10 md:py-20 lg:px-14">
           <div className="mx-auto flex w-full max-w-[1200px] flex-col gap-12 lg:flex-row lg:items-start">
             <div className="flex-1">
@@ -180,15 +163,15 @@ export default function DiagnosticLanding() {
       {/* SURVEY TO INSIGHTS TIMELINE SECTION */}
       <MembershipPathTimeline 
         headingTitle="Survey to insights in 15 minutes"
-        subheading="A streamlined, high-signal diagnostic flow built specifically for healthcare innovators."
+        subheading="Four focused steps from startup context to a personalized gap profile you can act on."
         steps={timelineSteps}
         showRoleLinks={false}
-        className="bg-rellia-cream/15"
+        className="border-t-0 bg-white py-10 md:py-12 lg:py-14 pb-20 md:pb-24"
       />
 
-      {/* FINAL CTA SECTION using RelliaCta */}
-      <div className="bg-rellia-cream/15">
+      <div className="bg-white">
         <RelliaCta 
+          aboveSectionTone="white"
           title="Benchmark your **startup** today"
           body="Identify your blind spots, secure regulatory clarity, and discover what gets health systems to say yes."
           primary={{ label: "Take the Diagnostic", to: "/diagnostic-survey" }}

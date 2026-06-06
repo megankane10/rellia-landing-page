@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react"
+import { useMemo, useState, type ReactNode } from "react"
 import { motion, useReducedMotion } from "framer-motion"
 import { cn } from "@/lib/utils"
 import RelliaAction from "@/components/RelliaAction"
@@ -367,6 +367,7 @@ export function MultiStepSignupForm({
 export function RoleHero({
   roleId,
   eyebrowLabel,
+  heroBadges,
   title,
   subtitle,
   imageSrc,
@@ -380,6 +381,8 @@ export function RoleHero({
 }: {
   roleId?: "founder" | "advisor" | "investor" | "partner"
   eyebrowLabel?: string
+  /** Replaces the default eyebrow pill (e.g. trust badges on diagnostic hero). */
+  heroBadges?: React.ReactNode
   title: React.ReactNode
   subtitle: React.ReactNode
   imageSrc: string
@@ -454,7 +457,11 @@ export function RoleHero({
 
       <div className="relative z-10 mx-auto max-w-[1300px] px-6 pb-20 pt-10 md:px-10 md:pb-28 md:pt-14 lg:flex lg:flex-1 lg:flex-col lg:justify-center lg:pb-20 lg:pt-0">
         <Reveal className="flex flex-col items-start text-left">
-          <NetworkEyebrow label={label} tone="onDark" className="mb-6 md:mb-8" />
+          {heroBadges ? (
+            <div className="mb-6 md:mb-8">{heroBadges}</div>
+          ) : (
+            <NetworkEyebrow label={label} tone="onDark" className="mb-6 md:mb-8" />
+          )}
           <h1
             className={cn(
               "font-bold leading-[1.08] tracking-tight text-white drop-shadow-sm [&_span]:!text-rellia-mint [&_strong]:!text-rellia-mint [&_em]:!text-rellia-mint",
