@@ -1316,7 +1316,7 @@ export const DEFAULT_GLOBAL_SETTINGS: GlobalSettingsContent = {
   announcementPillText: "LIVE",
   priorityModalEnabled: true,
   priorityModalHeading: "This is what our priority dialog looks like.",
-  priorityModalBody: "",
+  priorityModalBody: "Enter your details below to see how form submissions work in this dialog.",
   priorityModalPillText: "PREVIEW",
   priorityModalButtonLabel: "",
   priorityModalButtonLink: "",

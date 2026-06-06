@@ -219,7 +219,7 @@ export const PriorityAnnouncementModal = ({
                 ) : null}
 
                 {formEnabled ? (
-                  <form onSubmit={handleFormSubmit} className="mt-6 space-y-4">
+                  <form onSubmit={handleFormSubmit} className={`${body?.trim() ? 'mt-6' : 'mt-4'} space-y-4`}>
                     {submitSuccess ? (
                       <div className="font-urbanist text-sm font-semibold text-rellia-mintDark bg-rellia-mint/20 border border-rellia-mint/30 rounded-2xl p-4">
                         Thank you! Your submission has been received.
@@ -233,7 +233,7 @@ export const PriorityAnnouncementModal = ({
                             placeholder={formPlaceholderName?.trim() || "First name"}
                             value={formName}
                             onChange={(e) => setFormName(e.target.value)}
-                            className="h-12 w-full rounded-full border border-rellia-teal/30 bg-white px-5 font-urbanist text-sm text-black placeholder-black/40 outline-none focus:border-rellia-teal focus:ring-2 focus:ring-rellia-teal/20"
+                            className="h-12 w-full rounded-full border border-black/20 bg-black/[0.09] px-5 font-urbanist text-sm text-black/90 placeholder-black/45 outline-none transition-colors focus:border-rellia-teal/60 focus:bg-black/[0.12] focus:ring-2 focus:ring-rellia-teal/15"
                           />
                           <input
                             type="email"
@@ -241,7 +241,7 @@ export const PriorityAnnouncementModal = ({
                             placeholder={formPlaceholderEmail?.trim() || "Email address"}
                             value={formEmail}
                             onChange={(e) => setFormEmail(e.target.value)}
-                            className="h-12 w-full rounded-full border border-rellia-teal/30 bg-white px-5 font-urbanist text-sm text-black placeholder-black/40 outline-none focus:border-rellia-teal focus:ring-2 focus:ring-rellia-teal/20"
+                            className="h-12 w-full rounded-full border border-black/20 bg-black/[0.09] px-5 font-urbanist text-sm text-black/90 placeholder-black/45 outline-none transition-colors focus:border-rellia-teal/60 focus:bg-black/[0.12] focus:ring-2 focus:ring-rellia-teal/15"
                           />
                         </div>
                         {submitError && (

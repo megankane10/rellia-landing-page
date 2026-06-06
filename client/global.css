@@ -110,12 +110,6 @@
 
   .built-by-credit-label {
     @apply inline-flex items-baseline gap-1;
-  }
-
-  /* .built-by-name inherits the gradient sweep from .built-by-credit-label — no separate colour needed */
-
-  .built-by-credit:hover .built-by-credit-label,
-  .built-by-credit:focus-visible .built-by-credit-label {
     background: linear-gradient(
       90deg,
       rgba(255, 255, 255, 0.45) 0%,
@@ -128,14 +122,21 @@
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
-    animation: glow-sweep 2.2s ease-in-out infinite;
+    animation: glow-sweep 3s ease-in-out infinite;
+  }
+
+  /* Safdar is bolder so it fills more stroke area and appears brighter through the gradient */
+  .built-by-name {
+    font-weight: 600;
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .built-by-credit:hover .built-by-credit-label,
-    .built-by-credit:focus-visible .built-by-credit-label {
+    .built-by-credit-label {
       animation: none;
       background: none;
+      color: rgba(255, 255, 255, 0.60);
+    }
+    .built-by-name {
       color: #9dd6d0;
     }
   }
@@ -155,9 +156,8 @@
     font-weight: 500;
     line-height: 1.375;
     color: rgba(255, 255, 255, 0.92);
-    /* rotating mint glow border — orbits around the tooltip */
-    filter: none;
-    overflow: visible;
+    box-shadow: none !important;
+    overflow: hidden;
   }
 
   .built-by-tooltip-inner {
@@ -181,17 +181,17 @@
     z-index: 0;
     border-radius: inherit;
     padding: 1px;
-    /* Rotating conic gradient border — mint sweeps around the tooltip */
-    background: conic-gradient(
-      from var(--angle, 0deg),
-      rgba(157, 214, 208, 0) 0deg,
-      rgba(157, 214, 208, 0.55) 60deg,
-      rgba(200, 240, 238, 0.9) 90deg,
-      rgba(157, 214, 208, 0.55) 120deg,
-      rgba(157, 214, 208, 0) 180deg
+    /* Same linear sweep as the text — clean and synced */
+    background: linear-gradient(
+      90deg,
+      rgba(157, 214, 208, 0) 0%,
+      rgba(157, 214, 208, 0.6) 35%,
+      rgba(200, 240, 238, 0.95) 50%,
+      rgba(157, 214, 208, 0.6) 65%,
+      rgba(157, 214, 208, 0) 100%
     );
-    background-size: 100% 100%;
-    animation: rotate-border 3s linear infinite;
+    background-size: 220% 100%;
+    animation: glow-sweep 3s ease-in-out infinite;
     -webkit-mask:
       linear-gradient(#fff 0 0) content-box,
       linear-gradient(#fff 0 0);
@@ -246,17 +246,6 @@
   }
 }
 
-@keyframes rotate-border {
-  0%   { --angle: 0deg; }
-  100% { --angle: 360deg; }
-}
-
-/* Register the --angle custom property so the browser can animate it */
-@property --angle {
-  syntax: "<angle>";
-  initial-value: 0deg;
-  inherits: false;
-}
 
 @keyframes priority-modal-in {
   0% {

@@ -260,9 +260,15 @@ export default function Navbar({
     globalSettings.priorityModalEnabled === true &&
     Boolean(globalSettings.priorityModalHeading?.trim())
 
+  // If the priority modal is configured, the announcement never shows for this visit
+  const priorityModalConfigured =
+    globalSettings.priorityModalEnabled === true &&
+    Boolean(globalSettings.priorityModalHeading?.trim())
+
   const announcementEligible =
     !hideAnnouncement &&
     !announcementDismissed &&
+    !priorityModalConfigured &&
     Boolean(globalSettings.announcementText?.trim()) &&
     globalSettings.announcementEnabled !== false
 
