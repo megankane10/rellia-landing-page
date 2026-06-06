@@ -5,7 +5,7 @@ import RelliaAction from "@/components/RelliaAction"
 import RelliaCta from "@/components/RelliaCta"
 import { FilloutStandardEmbed } from "@fillout/react"
 import { FILLOUT_APPLY_FORM_ID, FILLOUT_EMBED_VIEWPORT_MIN_CLASS } from "@/lib/filloutApplyForm"
-import { DEFAULT_APPLY_PAGE } from "@shared/cms/defaults"
+import { mergeApplyPage } from "@shared/cms/defaults"
 import { useApplyPage } from "@/hooks/useCmsDocuments"
 import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo"
 import { useState } from "react"
@@ -15,7 +15,7 @@ import { cn } from "@/lib/utils"
 
 export default function Apply() {
   const { data: applyCms } = useApplyPage()
-  const apply = applyCms ?? DEFAULT_APPLY_PAGE
+  const apply = applyCms ?? mergeApplyPage(undefined)
   useApplyCmsSeo(apply.seo)
   const [showForm, setShowForm] = useState(false)
 
