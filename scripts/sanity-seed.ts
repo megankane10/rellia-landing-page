@@ -938,7 +938,7 @@ async function main() {
       _id: "globalSettings",
       _type: "globalSettings",
       ...DEFAULT_GLOBAL_SETTINGS,
-      priorityModalEnabled: dataset === "preview",
+      priorityModalEnabled: true,
     },
   })
   mutations.push({
