@@ -187,13 +187,13 @@
     z-index: 0;
     border-radius: 1.05rem;
     padding: 1px;
-    /* Spinning conical gradient to represent a single line circling around the box */
+    /* Conic gradient that rotates dynamically using the --angle custom property, creating a single orbiting line sweep */
     background: conic-gradient(
-      from 0deg,
-      transparent 60%,
-      rgba(157, 214, 208, 0.3) 80%,
-      rgba(200, 240, 238, 0.98) 95%,
-      rgba(157, 214, 208, 0.3) 100%
+      from var(--angle, 0deg),
+      transparent 50%,
+      rgba(157, 214, 208, 0.4) 75%,
+      rgba(200, 240, 238, 0.98) 90%,
+      rgba(157, 214, 208, 0.4) 100%
     );
     animation: rotate-border 2.5s linear infinite;
     -webkit-mask:
@@ -243,11 +243,17 @@
 
 @keyframes rotate-border {
   0% {
-    transform: rotate(0deg);
+    --angle: 0deg;
   }
   100% {
-    transform: rotate(360deg);
+    --angle: 360deg;
   }
+}
+
+@property --angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
 }
 
 
