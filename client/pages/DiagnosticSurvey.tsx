@@ -353,7 +353,7 @@ const css = `
   .diagnostic-report {
     padding: 0 !important;
     margin: 0 !important;
-    gap: 0.45rem !important;
+    gap: 0.75rem !important;
     animation: none !important;
   }
 
@@ -386,7 +386,7 @@ const css = `
     color: #111 !important;
     padding: 0.45rem 0.6rem !important;
     page-break-inside: avoid;
-    margin-bottom: 0.25rem !important;
+    margin-bottom: 0.75rem !important;
   }
 
   .diagnostic-report-summary p {
@@ -402,8 +402,13 @@ const css = `
 
   .diagnostic-report section {
     page-break-inside: auto;
-    margin-bottom: 0.35rem;
+    margin-bottom: 1.15rem;
     break-inside: auto;
+  }
+
+  .diagnostic-report .diagnostic-print-stack > section + section,
+  .diagnostic-report .diagnostic-print-stack > .diagnostic-print-page-two {
+    margin-top: 1.35rem !important;
   }
 
   .diagnostic-report section h2 {
@@ -411,8 +416,8 @@ const css = `
     font-size: 8pt !important;
     letter-spacing: 0.06em !important;
     border-bottom: 1px solid #ddd;
-    padding-bottom: 0.2rem;
-    margin-bottom: 0.35rem;
+    padding-bottom: 0.3rem;
+    margin-bottom: 0.6rem;
   }
 
   .diagnostic-report .diagnostic-section-note {
@@ -422,7 +427,7 @@ const css = `
   .diagnostic-report .diagnostic-card-grid {
     display: grid !important;
     grid-template-columns: repeat(3, 1fr) !important;
-    gap: 0.3rem !important;
+    gap: 0.45rem !important;
   }
 
   .diagnostic-report .diagnostic-card {
@@ -458,67 +463,41 @@ const css = `
   }
 
   .diagnostic-report .diagnostic-breakdown-grid {
-    display: none !important;
-  }
-
-  .diagnostic-breakdown-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 8pt;
-    page-break-inside: avoid;
-  }
-
-  .diagnostic-breakdown-table th,
-  .diagnostic-breakdown-table td {
-    border: 1px solid #ccc;
-    padding: 0.25rem 0.35rem;
-    text-align: left;
-    vertical-align: middle;
-  }
-
-  .diagnostic-breakdown-table th {
-    background: #f5f5f5;
-    color: #0d3540 !important;
-    font-size: 7.5pt;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-  }
-
-  .diagnostic-breakdown-table td:last-child {
-    width: 3.5rem;
-    text-align: center;
-    font-weight: 700;
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 0.55rem !important;
   }
 
   .diagnostic-print-breakdown-section {
     page-break-after: always;
-    margin-bottom: 0 !important;
+    margin-bottom: 0.5rem !important;
+    padding-bottom: 0.5rem;
   }
 
   .diagnostic-print-page-two {
     page-break-before: always;
-    padding-top: 0.15rem;
+    padding-top: 0.5rem;
   }
 
   .diagnostic-print-page-two > section,
   .diagnostic-print-page-two > .diagnostic-print-programs {
-    margin-bottom: 0.65rem !important;
+    margin-bottom: 1.35rem !important;
     page-break-inside: avoid;
   }
 
   .diagnostic-print-page-two .diagnostic-roadmap-block,
   .diagnostic-print-page-two .diagnostic-membership-print {
-    margin-bottom: 0.55rem !important;
+    margin-bottom: 1.15rem !important;
   }
 
   .diagnostic-report .diagnostic-breakdown-item {
     background: #fff !important;
-    border: 1px solid #ccc !important;
+    border: 1px solid #bbb !important;
     box-shadow: none !important;
-    padding: 0.3rem 0.35rem !important;
-    border-radius: 3px !important;
+    padding: 0.55rem 0.65rem !important;
+    border-radius: 6px !important;
     page-break-inside: avoid;
+    min-height: 2.75rem;
   }
 
   .diagnostic-report .diagnostic-breakdown-item .diagnostic-score {
@@ -534,8 +513,9 @@ const css = `
 
   .diagnostic-report .diagnostic-breakdown-bar {
     background: #e5e5e5 !important;
-    height: 3px !important;
-    margin-top: 0.2rem !important;
+    height: 4px !important;
+    margin-top: 0.35rem !important;
+    border-radius: 999px !important;
   }
 
   .diagnostic-report .diagnostic-breakdown-bar-fill {
@@ -547,16 +527,20 @@ const css = `
     background: #fff !important;
     border: 1px solid #ccc !important;
     box-shadow: none !important;
-    padding: 0.45rem 0.55rem !important;
+    padding: 0.65rem 0.75rem !important;
     border-radius: 4px !important;
     page-break-inside: auto;
     margin-top: 0 !important;
   }
 
+  .diagnostic-report .diagnostic-roadmap-block h2 {
+    margin-bottom: 0.55rem !important;
+  }
+
   .diagnostic-report .diagnostic-roadmap-step {
     display: flex !important;
     gap: 0.35rem !important;
-    margin-bottom: 0.25rem !important;
+    margin-bottom: 0.45rem !important;
   }
 
   .diagnostic-report .diagnostic-roadmap-num {
@@ -584,6 +568,7 @@ const css = `
 
   .diagnostic-report .diagnostic-membership-print {
     border-left: 3px solid #0d3540 !important;
+    margin-top: 0.25rem !important;
   }
 
   .diagnostic-report .diagnostic-membership-print h2 {
@@ -591,15 +576,20 @@ const css = `
     font-size: 10pt !important;
     font-weight: 400 !important;
     color: #0d3540 !important;
-    margin-bottom: 0.2rem !important;
+    margin: 0 0 0.65rem !important;
     padding: 0 !important;
+    line-height: 1.35 !important;
   }
 
   .diagnostic-report .diagnostic-membership-print p {
     color: #333 !important;
     font-size: 8.5pt !important;
-    line-height: 1.3 !important;
-    margin: 0 0 0.25rem !important;
+    line-height: 1.45 !important;
+    margin: 0 0 0.65rem !important;
+  }
+
+  .diagnostic-report .diagnostic-membership-print p:last-child {
+    margin-bottom: 0 !important;
   }
 
   .diagnostic-report .diagnostic-membership-print a {
@@ -609,21 +599,21 @@ const css = `
   }
 
   .diagnostic-report .diagnostic-print-programs {
-    margin-top: 0.2rem;
-    margin-bottom: 0.2rem;
+    margin-top: 0.35rem;
+    margin-bottom: 0.75rem;
   }
 
   .diagnostic-report .diagnostic-print-programs li {
     font-size: 8.5pt;
     color: #222;
-    margin-bottom: 0.1rem;
-    line-height: 1.25;
+    margin-bottom: 0.25rem;
+    line-height: 1.35;
   }
 
   .diagnostic-report .diagnostic-print-footer {
     border-top: 1px solid #ccc;
-    margin-top: 0.25rem;
-    padding-top: 0.25rem;
+    margin-top: 0.75rem;
+    padding-top: 0.45rem;
     font-size: 7pt;
     color: #666 !important;
     text-align: center;
@@ -631,15 +621,15 @@ const css = `
   }
 
   .diagnostic-report .space-y-12 > :not([hidden]) ~ :not([hidden]) {
-    margin-top: 0.45rem !important;
+    margin-top: 1.35rem !important;
   }
 
   .diagnostic-report .space-y-6 > :not([hidden]) ~ :not([hidden]) {
-    margin-top: 0.35rem !important;
+    margin-top: 1rem !important;
   }
 
   .diagnostic-report .space-y-4 > :not([hidden]) ~ :not([hidden]) {
-    margin-top: 0.25rem !important;
+    margin-top: 0.75rem !important;
   }
 }
 `;
@@ -1103,10 +1093,10 @@ export default function DiagnosticSurvey() {
         description="Assess your health tech startup across 12 domains and get a personalized advisory board and program roadmap."
       />
 
-      <div className="relative flex min-h-[calc(100vh-72px)] pb-24 md:min-h-[calc(100vh-86px)] md:pb-28">
+      <div className="relative flex min-h-[calc(100vh-72px)] items-stretch md:min-h-[calc(100vh-86px)]">
         {/* ── DESKTOP SIDEBAR ── */}
-        <aside className="diagnostic-screen-only sticky top-[86px] hidden max-h-[calc(100vh-86px-7rem)] w-72 flex-col overflow-y-auto border-r border-rellia-teal/10 bg-white/50 backdrop-blur-md lg:flex rounded-b-3xl">
-          <div className="flex flex-col gap-6 p-6 pb-8">
+        <aside className="diagnostic-screen-only hidden w-72 shrink-0 flex-col border-r border-rellia-teal/10 bg-white/50 backdrop-blur-md lg:flex min-h-[calc(100vh-72px)] md:min-h-[calc(100vh-86px)] rounded-b-3xl">
+          <div className="flex flex-col gap-6 p-6">
             <div className="space-y-2">
               <div className="flex justify-between text-[10px] font-bold uppercase tracking-widest text-rellia-teal/50">
                 <span>Progress</span>
@@ -1905,7 +1895,7 @@ export default function DiagnosticSurvey() {
                     </div>
                   </div>
 
-                  <div className="space-y-12">
+                  <div className="diagnostic-print-stack space-y-12">
                     {/* Strengths */}
                     <section className="space-y-4">
                       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 w-full">
@@ -1971,7 +1961,7 @@ export default function DiagnosticSurvey() {
                       <h2 className="text-xs font-bold uppercase tracking-widest text-rellia-teal">
                         {surveyCms?.reportFullBreakdownTitle || DEFAULT_REPORT_FULL_BREAKDOWN_TITLE}
                       </h2>
-                      <div className="diagnostic-screen-only diagnostic-breakdown-grid grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                      <div className="diagnostic-breakdown-grid grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                         {sections.map((s) => {
                           const sc = getSectionScore(s.id, answers, sections) ?? 0;
                           return (
@@ -1997,25 +1987,6 @@ export default function DiagnosticSurvey() {
                           );
                         })}
                       </div>
-                      <table className="diagnostic-print-only diagnostic-breakdown-table">
-                        <thead>
-                          <tr>
-                            <th scope="col">Domain</th>
-                            <th scope="col">Score</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {sections.map((s) => {
-                            const sc = getSectionScore(s.id, answers, sections) ?? 0
-                            return (
-                              <tr key={s.id}>
-                                <td>{s.title}</td>
-                                <td>{sc}%</td>
-                              </tr>
-                            )
-                          })}
-                        </tbody>
-                      </table>
                     </section>
 
                     <div className="diagnostic-print-page-two space-y-12">
@@ -2256,7 +2227,7 @@ export default function DiagnosticSurvey() {
         </main>
       </div>
 
-      <div className="diagnostic-screen-only mt-10 md:mt-12">
+      <div className="diagnostic-screen-only mt-16 md:mt-20">
         <Footer />
       </div>
     </div>
