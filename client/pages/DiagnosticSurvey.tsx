@@ -287,6 +287,311 @@ const css = `
 .ds-delay-1 { animation-delay: 320ms; }
 .ds-delay-2 { animation-delay: 520ms; }
 .ds-delay-3 { animation-delay: 720ms; }
+
+.diagnostic-print-only { display: none !important; }
+
+@media print {
+  @page {
+    margin: 0.55cm 0.75cm;
+    size: letter;
+  }
+
+  html, body {
+    background: #fff !important;
+    color: #111 !important;
+    font-size: 9.5pt;
+    height: auto !important;
+    -webkit-print-color-adjust: economy;
+    print-color-adjust: economy;
+  }
+
+  nav, footer, aside, .diagnostic-screen-only, .diagnostic-print-hide {
+    display: none !important;
+  }
+
+  .diagnostic-page {
+    padding-top: 0 !important;
+    min-height: auto !important;
+    background: #fff !important;
+  }
+
+  main {
+    padding: 0 !important;
+  }
+
+  .diagnostic-print-only {
+    display: block !important;
+  }
+
+  .diagnostic-print-letterhead {
+    display: flex !important;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    border-bottom: 1.5px solid #0d3540;
+    padding-bottom: 0.35rem;
+    margin-bottom: 0.3rem;
+    page-break-after: avoid;
+  }
+
+  .diagnostic-print-letterhead img {
+    height: 26px;
+    width: auto;
+    object-fit: contain;
+  }
+
+  .diagnostic-print-letterhead-title {
+    font-family: "Host Grotesk", sans-serif;
+    font-size: 13pt;
+    font-weight: 400;
+    line-height: 1.2;
+    color: #0d3540 !important;
+    text-align: right;
+    letter-spacing: 0.03em;
+  }
+
+  .diagnostic-report {
+    padding: 0 !important;
+    margin: 0 !important;
+    gap: 0.45rem !important;
+    animation: none !important;
+  }
+
+  .diagnostic-report-header {
+    border-bottom: none;
+    padding-bottom: 0;
+    margin-bottom: 0.25rem;
+    page-break-after: avoid;
+  }
+
+  .diagnostic-report-header h1 {
+    color: #0d3540 !important;
+    font-size: 16pt !important;
+    font-weight: 700 !important;
+    margin: 0 !important;
+  }
+
+  .diagnostic-report-meta {
+    color: #444 !important;
+    font-size: 8.5pt !important;
+    margin-top: 0.15rem !important;
+  }
+
+  .diagnostic-report-summary {
+    background: #fff !important;
+    border: 1px solid #ccc !important;
+    border-left: 3px solid #0d3540 !important;
+    box-shadow: none !important;
+    color: #111 !important;
+    padding: 0.45rem 0.6rem !important;
+    page-break-inside: avoid;
+    margin-bottom: 0.25rem !important;
+  }
+
+  .diagnostic-report-summary p {
+    color: #222 !important;
+    font-size: 9.5pt !important;
+    line-height: 1.35 !important;
+    margin: 0 !important;
+  }
+
+  .diagnostic-report-summary img {
+    display: none !important;
+  }
+
+  .diagnostic-report section {
+    page-break-inside: auto;
+    margin-bottom: 0.35rem;
+    break-inside: auto;
+  }
+
+  .diagnostic-report section h2 {
+    color: #0d3540 !important;
+    font-size: 8pt !important;
+    letter-spacing: 0.06em !important;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 0.2rem;
+    margin-bottom: 0.35rem;
+  }
+
+  .diagnostic-report .diagnostic-section-note {
+    display: none !important;
+  }
+
+  .diagnostic-report .diagnostic-card-grid {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 0.3rem !important;
+  }
+
+  .diagnostic-report .diagnostic-card {
+    background: #fff !important;
+    border: 1px solid #bbb !important;
+    box-shadow: none !important;
+    border-radius: 4px !important;
+    padding: 0.35rem 0.45rem !important;
+    min-height: auto !important;
+  }
+
+  .diagnostic-report .diagnostic-card-strength {
+    border-left: 2px solid #333 !important;
+  }
+
+  .diagnostic-report .diagnostic-card-gap {
+    border-left: 2px solid #666 !important;
+  }
+
+  .diagnostic-report .diagnostic-card-badge {
+    background: #eee !important;
+    color: #111 !important;
+    border: 1px solid #ccc !important;
+    font-size: 7pt !important;
+    padding: 0.05rem 0.3rem !important;
+  }
+
+  .diagnostic-report .diagnostic-card h3 {
+    color: #111 !important;
+    font-size: 8.5pt !important;
+    margin-top: 0.15rem !important;
+    line-height: 1.2 !important;
+  }
+
+  .diagnostic-report .diagnostic-breakdown-grid {
+    display: grid !important;
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: 0.25rem !important;
+  }
+
+  .diagnostic-report .diagnostic-breakdown-item {
+    background: #fff !important;
+    border: 1px solid #ccc !important;
+    box-shadow: none !important;
+    padding: 0.3rem 0.35rem !important;
+    border-radius: 3px !important;
+    page-break-inside: avoid;
+  }
+
+  .diagnostic-report .diagnostic-breakdown-item .diagnostic-score {
+    color: #111 !important;
+    font-weight: 700 !important;
+    font-size: 8.5pt !important;
+  }
+
+  .diagnostic-report .diagnostic-breakdown-item .font-host-grotesk {
+    font-size: 7.5pt !important;
+    line-height: 1.15 !important;
+  }
+
+  .diagnostic-report .diagnostic-breakdown-bar {
+    background: #e5e5e5 !important;
+    height: 3px !important;
+    margin-top: 0.2rem !important;
+  }
+
+  .diagnostic-report .diagnostic-breakdown-bar-fill {
+    background: #333 !important;
+  }
+
+  .diagnostic-report .diagnostic-roadmap-block,
+  .diagnostic-report .diagnostic-membership-print {
+    background: #fff !important;
+    border: 1px solid #ccc !important;
+    box-shadow: none !important;
+    padding: 0.45rem 0.55rem !important;
+    border-radius: 4px !important;
+    page-break-inside: auto;
+    margin-top: 0 !important;
+  }
+
+  .diagnostic-report .diagnostic-roadmap-step {
+    display: flex !important;
+    gap: 0.35rem !important;
+    margin-bottom: 0.25rem !important;
+  }
+
+  .diagnostic-report .diagnostic-roadmap-num {
+    background: #eee !important;
+    color: #111 !important;
+    border: 1px solid #bbb !important;
+    box-shadow: none !important;
+    width: 1rem !important;
+    height: 1rem !important;
+    font-size: 7pt !important;
+    flex-shrink: 0 !important;
+  }
+
+  .diagnostic-report .diagnostic-roadmap-step p {
+    color: #222 !important;
+    font-size: 8.5pt !important;
+    line-height: 1.3 !important;
+    margin: 0 !important;
+    padding-top: 0 !important;
+  }
+
+  .diagnostic-report .diagnostic-roadmap-step .diagnostic-roadmap-line {
+    display: none !important;
+  }
+
+  .diagnostic-report .diagnostic-membership-print {
+    border-left: 3px solid #0d3540 !important;
+  }
+
+  .diagnostic-report .diagnostic-membership-print h2 {
+    border: none !important;
+    font-size: 10pt !important;
+    font-weight: 400 !important;
+    color: #0d3540 !important;
+    margin-bottom: 0.2rem !important;
+    padding: 0 !important;
+  }
+
+  .diagnostic-report .diagnostic-membership-print p {
+    color: #333 !important;
+    font-size: 8.5pt !important;
+    line-height: 1.3 !important;
+    margin: 0 0 0.25rem !important;
+  }
+
+  .diagnostic-report .diagnostic-membership-print a {
+    color: #0d3540 !important;
+    font-weight: 700 !important;
+    text-decoration: underline !important;
+  }
+
+  .diagnostic-report .diagnostic-print-programs {
+    margin-top: 0.2rem;
+    margin-bottom: 0.2rem;
+  }
+
+  .diagnostic-report .diagnostic-print-programs li {
+    font-size: 8.5pt;
+    color: #222;
+    margin-bottom: 0.1rem;
+    line-height: 1.25;
+  }
+
+  .diagnostic-report .diagnostic-print-footer {
+    border-top: 1px solid #ccc;
+    margin-top: 0.25rem;
+    padding-top: 0.25rem;
+    font-size: 7pt;
+    color: #666 !important;
+    text-align: center;
+    page-break-before: avoid;
+  }
+
+  .diagnostic-report .space-y-12 > :not([hidden]) ~ :not([hidden]) {
+    margin-top: 0.45rem !important;
+  }
+
+  .diagnostic-report .space-y-6 > :not([hidden]) ~ :not([hidden]) {
+    margin-top: 0.35rem !important;
+  }
+
+  .diagnostic-report .space-y-4 > :not([hidden]) ~ :not([hidden]) {
+    margin-top: 0.25rem !important;
+  }
+}
 `;
 
 const DEFAULT_INTRO_TITLE = "How ready is your startup, really?"
@@ -738,9 +1043,11 @@ export default function DiagnosticSurvey() {
   }, [diagResult, sections]);
 
   return (
-    <div className="min-h-screen bg-rellia-cream font-host-grotesk text-rellia-teal selection:bg-rellia-mint/30 selection:text-rellia-teal pt-[72px] md:pt-[86px]">
+    <div className="diagnostic-page min-h-screen bg-rellia-cream font-host-grotesk text-rellia-teal selection:bg-rellia-mint/30 selection:text-rellia-teal pt-[72px] md:pt-[86px]">
       <style>{css}</style>
-      <Navbar />
+      <div className="diagnostic-screen-only">
+        <Navbar />
+      </div>
       <RouteSeo
         title="Startup Diagnostic | Rellia Health"
         description="Assess your health tech startup across 12 domains and get a personalized advisory board and program roadmap."
@@ -748,7 +1055,7 @@ export default function DiagnosticSurvey() {
 
       <div className="relative flex min-h-[calc(100vh-72px)] md:min-h-[calc(100vh-86px)]">
         {/* ── DESKTOP SIDEBAR ── */}
-        <aside className="sticky top-[86px] hidden h-[calc(100vh-86px)] w-72 flex-col border-r border-rellia-teal/10 bg-white/50 backdrop-blur-md lg:flex rounded-b-3xl">
+        <aside className="diagnostic-screen-only sticky top-[86px] hidden h-[calc(100vh-86px)] w-72 flex-col border-r border-rellia-teal/10 bg-white/50 backdrop-blur-md lg:flex rounded-b-3xl">
           <div className="flex flex-col gap-6 p-6">
             <div className="space-y-2">
               <div className="flex justify-between text-[10px] font-bold uppercase tracking-widest text-rellia-teal/50">
@@ -847,7 +1154,7 @@ export default function DiagnosticSurvey() {
         {/* ── MAIN CONTENT AREA ── */}
         <main className="flex-1">
           {/* MOBILE SUB-HEADER */}
-          <div className="fixed inset-x-0 top-[72px] z-[60] border-b border-rellia-teal/10 bg-rellia-cream/90 backdrop-blur-md md:top-[86px] lg:hidden">
+          <div className="diagnostic-screen-only fixed inset-x-0 top-[72px] z-[60] border-b border-rellia-teal/10 bg-rellia-cream/90 backdrop-blur-md md:top-[86px] lg:hidden">
             <div className="flex items-center justify-between px-4 py-2">
               <div className="flex flex-1 flex-col justify-center gap-1">
                 <div className="h-1 overflow-hidden rounded-full bg-rellia-teal/10">
@@ -1477,22 +1784,41 @@ export default function DiagnosticSurvey() {
             {/* ── REPORT VIEW ── */}
             {view === "report" && diagResult && (() => {
               const thankYouText = (surveyCms?.reportHeaderThankYou || DEFAULT_REPORT_HEADER_THANK_YOU)
-                .replace(/\{company\}/gi, memberInfo.company);
+                .replace(/\{company\}/gi, memberInfo.company)
+              const membershipTitle = surveyCms?.reportMembershipCtaTitle || DEFAULT_REPORT_MEMBERSHIP_CTA_TITLE
+              const membershipBody = surveyCms?.reportMembershipCtaBody || DEFAULT_REPORT_MEMBERSHIP_CTA_BODY
+              const reportDate = new Date().toLocaleDateString("en-CA", {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              })
+
+              const handlePrintReport = () => {
+                window.print()
+              }
+
               return (
-                <div className="animate-ds-up flex flex-col gap-12 pb-20">
+                <div id="diagnostic-report" className="diagnostic-report animate-ds-up flex flex-col gap-12 pb-12">
+                  <div className="diagnostic-print-only diagnostic-print-letterhead">
+                    <img src="/images/logo-rellia-filled.webp" alt="Rellia Health" />
+                    <div className="diagnostic-print-letterhead-title">STARTUP DIAGNOSTIC REPORT</div>
+                  </div>
+
+                  <div className="diagnostic-print-only diagnostic-report-header">
+                    <h1>{memberInfo.company}</h1>
+                    <div className="diagnostic-report-meta">
+                      {memberInfo.stage} · {reportDate} · {memberInfo.name}
+                    </div>
+                  </div>
+
                   <div className="space-y-6">
-                    <div className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
+                    <div className="diagnostic-screen-only flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
                       <div>
                         <h1 className="font-host-grotesk text-4xl font-bold text-rellia-teal md:text-5xl">
                           {memberInfo.company}
                         </h1>
                         <div className="mt-2 text-sm font-medium text-rellia-teal/45">
-                          {memberInfo.stage} ·{" "}
-                          {new Date().toLocaleDateString("en-CA", {
-                            year: "numeric",
-                            month: "long",
-                            day: "numeric",
-                          })}
+                          {memberInfo.stage} · {reportDate}
                         </div>
                       </div>
                       <div className="flex items-center gap-3">
@@ -1515,11 +1841,11 @@ export default function DiagnosticSurvey() {
                       </div>
                     </div>
 
-                    <div className="rounded-[32px] bg-gradient-to-br from-[#0d3540] via-rellia-teal to-[#144853] p-8 shadow-md md:p-10 relative overflow-hidden text-white">
-                      <div className="absolute -right-8 -bottom-8 opacity-10 pointer-events-none select-none z-0">
-                        <img 
-                          src="/images/hologram-logo.png" 
-                          alt="Hologram Logo" 
+                    <div className="diagnostic-report-summary rounded-[32px] bg-gradient-to-br from-[#0d3540] via-rellia-teal to-[#144853] p-8 shadow-md md:p-10 relative overflow-hidden text-white">
+                      <div className="diagnostic-screen-only absolute -right-8 -bottom-8 opacity-10 pointer-events-none select-none z-0">
+                        <img
+                          src="/images/hologram-logo.png"
+                          alt=""
                           className="w-48 h-48 md:w-64 md:h-64 object-contain"
                         />
                       </div>
@@ -1527,28 +1853,28 @@ export default function DiagnosticSurvey() {
                         {thankYouText}
                       </p>
                     </div>
-                  </div> 
+                  </div>
 
                   <div className="space-y-12">
                     {/* Strengths */}
                     <section className="space-y-4">
                       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 w-full">
                         <h2 className="text-xs font-bold uppercase tracking-widest text-green-700 flex items-center gap-2">
-                          <CheckCircle2 className="h-4 w-4" />
+                          <CheckCircle2 className="diagnostic-screen-only h-4 w-4" />
                           {surveyCms?.reportStrengthsTitle || DEFAULT_REPORT_STRENGTHS_TITLE}
                         </h2>
-                        <span className="text-xs font-urbanist font-medium text-black text-left sm:text-right">
+                        <span className="diagnostic-section-note text-xs font-urbanist font-medium text-black text-left sm:text-right">
                           Above-average readiness compared to your other domains.
                         </span>
                       </div>
-                      <div className="grid gap-4 sm:grid-cols-3">
+                      <div className="diagnostic-card-grid grid gap-4 sm:grid-cols-3">
                         {(diagResult.top3_strengths ?? []).map((s, i) => (
                           <div
                             key={i}
-                            className="rounded-3xl border border-green-100 bg-green-50/50 p-6 shadow-sm flex flex-col justify-center min-h-[92px]"
+                            className="diagnostic-card diagnostic-card-strength rounded-3xl border border-green-100 bg-green-50/50 p-6 shadow-sm flex flex-col justify-center min-h-[92px]"
                           >
                             <div className="flex flex-col items-start gap-2">
-                              <div className="shrink-0 rounded-full bg-green-100 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-green-700">
+                              <div className="diagnostic-card-badge shrink-0 rounded-full bg-green-100 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-green-700">
                                 {s.score}%
                               </div>
                               <h3 className="font-host-grotesk text-lg font-bold tracking-tight text-green-900">
@@ -1564,21 +1890,21 @@ export default function DiagnosticSurvey() {
                     <section className="space-y-4">
                       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 w-full">
                         <h2 className="text-xs font-bold uppercase tracking-widest text-red-700 flex items-center gap-2">
-                          <AlertTriangle className="h-4 w-4" />
+                          <AlertTriangle className="diagnostic-screen-only h-4 w-4" />
                           {surveyCms?.reportGapsTitle || DEFAULT_REPORT_GAPS_TITLE}
                         </h2>
-                        <span className="text-xs font-urbanist font-medium text-black text-left sm:text-right">
+                        <span className="diagnostic-section-note text-xs font-urbanist font-medium text-black text-left sm:text-right">
                           Likely bottlenecks—tighten these before scaling execution or diligence.
                         </span>
                       </div>
-                      <div className="grid gap-4 sm:grid-cols-3">
+                      <div className="diagnostic-card-grid grid gap-4 sm:grid-cols-3">
                         {(diagResult.top3_weaknesses ?? []).map((w, i) => (
                           <div
                             key={i}
-                            className="rounded-3xl border border-red-100 bg-red-50/50 p-6 shadow-sm flex flex-col justify-center min-h-[92px]"
+                            className="diagnostic-card diagnostic-card-gap rounded-3xl border border-red-100 bg-red-50/50 p-6 shadow-sm flex flex-col justify-center min-h-[92px]"
                           >
                             <div className="flex flex-col items-start gap-2">
-                              <div className="shrink-0 rounded-full bg-red-100 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-red-700">
+                              <div className="diagnostic-card-badge shrink-0 rounded-full bg-red-100 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-red-700">
                                 {w.priority}
                               </div>
                               <h3 className="font-host-grotesk text-lg font-bold tracking-tight text-red-900">
@@ -1595,25 +1921,25 @@ export default function DiagnosticSurvey() {
                       <h2 className="text-xs font-bold uppercase tracking-widest text-rellia-teal">
                         {surveyCms?.reportFullBreakdownTitle || DEFAULT_REPORT_FULL_BREAKDOWN_TITLE}
                       </h2>
-                      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                      <div className="diagnostic-breakdown-grid grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                         {sections.map((s) => {
                           const sc = getSectionScore(s.id, answers, sections) ?? 0;
                           return (
                             <div
                               key={s.id}
-                              className="rounded-3xl border border-rellia-teal/10 bg-white p-6 shadow-sm"
+                              className="diagnostic-breakdown-item rounded-3xl border border-rellia-teal/10 bg-white p-6 shadow-sm"
                             >
                               <div className="flex items-center justify-between gap-3">
                                 <div className="min-w-0 flex-1 font-host-grotesk text-base font-bold text-rellia-teal">
                                   {s.title}
                                 </div>
-                                <div className={cn("text-base font-black shrink-0", scoreClass(sc))}>
+                                <div className={cn("diagnostic-score text-base font-black shrink-0", scoreClass(sc))}>
                                   {sc}%
                                 </div>
                               </div>
-                              <div className="mt-4 h-1.5 w-full overflow-hidden rounded-full bg-rellia-teal/5">
+                              <div className="diagnostic-breakdown-bar mt-4 h-1.5 w-full overflow-hidden rounded-full bg-rellia-teal/5">
                                 <div
-                                  className={cn("h-full transition-all duration-1000", scoreBarClass(sc))}
+                                  className={cn("diagnostic-breakdown-bar-fill h-full transition-all duration-1000", scoreBarClass(sc))}
                                   style={{ width: `${sc}%` }}
                                 />
                               </div>
@@ -1626,19 +1952,19 @@ export default function DiagnosticSurvey() {
                     {/* Roadmap + Program Matches */}
                     <section className="grid gap-6 md:grid-cols-2 items-stretch">
                       {/* Roadmap action block */}
-                      <div className="rounded-[32px] border border-rellia-teal/10 bg-white p-8 shadow-sm flex flex-col h-full">
+                      <div className="diagnostic-roadmap-block rounded-[32px] border border-rellia-teal/10 bg-white p-8 shadow-sm flex flex-col h-full">
                         <h2 className="text-xs font-bold uppercase tracking-widest text-rellia-teal">
                           {surveyCms?.reportRoadmapTitle || DEFAULT_REPORT_ROADMAP_TITLE}
                         </h2>
                         <div className="mt-6 flex flex-col gap-8 flex-1">
                           {diagResult.recommendations.map((r, i) => (
-                            <div key={i} className="flex gap-4 relative z-10 items-start">
+                            <div key={i} className="diagnostic-roadmap-step flex gap-4 relative z-10 items-start">
                               <div className="relative flex flex-col items-center self-stretch">
-                                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-rellia-mint text-rellia-teal text-xs font-black shadow-sm z-10">
+                                <div className="diagnostic-roadmap-num flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-rellia-mint text-rellia-teal text-xs font-black shadow-sm z-10">
                                   {i + 1}
                                 </div>
                                 {i < diagResult.recommendations.length - 1 && (
-                                  <div className="absolute top-4 left-4 w-[2px] h-[calc(100%+2rem)] -translate-x-1/2 bg-rellia-mint z-0" />
+                                  <div className="diagnostic-roadmap-line absolute top-4 left-4 w-[2px] h-[calc(100%+2rem)] -translate-x-1/2 bg-rellia-mint z-0" />
                                 )}
                               </div>
                               <p className="font-urbanist text-sm font-medium leading-relaxed text-rellia-teal/80 pt-1.5">
@@ -1650,7 +1976,7 @@ export default function DiagnosticSurvey() {
                       </div>
 
                       {/* Suggested programs block */}
-                      <div className="rounded-[32px] border border-rellia-teal/10 bg-white p-8 shadow-sm flex flex-col h-full">
+                      <div className="diagnostic-print-hide rounded-[32px] border border-rellia-teal/10 bg-white p-8 shadow-sm flex flex-col h-full">
                         <div className="flex items-center justify-between gap-4">
                           <h2 className="text-xs font-bold uppercase tracking-widest text-rellia-teal">
                             {surveyCms?.reportProgramsTitle || DEFAULT_REPORT_PROGRAMS_TITLE}
@@ -1667,7 +1993,6 @@ export default function DiagnosticSurvey() {
                           {recommendedPrograms.map((prog, i) => {
                             const href = prog?.programHref || "/programs"
                             const meta = PROGRAM_META_BY_HREF[href]
-                            console.log("Program Matches Card Image Lookup:", { prog, href, meta })
                             return (
                               <Link
                                 key={i}
@@ -1703,10 +2028,25 @@ export default function DiagnosticSurvey() {
                       </div>
                     </section>
 
+                    <section className="diagnostic-print-only diagnostic-print-programs">
+                      <h2>{surveyCms?.reportProgramsTitle || DEFAULT_REPORT_PROGRAMS_TITLE}</h2>
+                      <ul>
+                        {recommendedPrograms.map((prog, i) => {
+                          const href = prog?.programHref || "/programs"
+                          const meta = PROGRAM_META_BY_HREF[href]
+                          return (
+                            <li key={i}>
+                              {meta?.title || prog?.program || "Program"} — relliahealth.com{href}
+                            </li>
+                          )
+                        })}
+                      </ul>
+                    </section>
+
                     {/* Custom Advisory Board (LinkedIn-style locked) + Membership CTA */}
                     <section className="grid gap-6 md:grid-cols-2 items-stretch">
                       {/* LinkedIn-style Advisors block */}
-                      <div className="rounded-[32px] border border-rellia-teal/10 bg-white p-8 shadow-sm flex flex-col h-full">
+                      <div className="diagnostic-print-hide rounded-[32px] border border-rellia-teal/10 bg-white p-8 shadow-sm flex flex-col h-full">
                         <h2 className="text-xs font-bold uppercase tracking-widest text-rellia-teal">
                           {surveyCms?.reportAdvisorsTitle || DEFAULT_REPORT_ADVISORS_TITLE}
                         </h2>
@@ -1773,7 +2113,7 @@ export default function DiagnosticSurvey() {
                       </div>
 
                       {/* Join the membership CTA block */}
-                      <div className="rounded-[32px] p-8 text-white shadow-2xl relative overflow-hidden flex flex-col justify-end min-h-[420px]">
+                      <div className="diagnostic-print-hide rounded-[32px] p-8 text-white shadow-2xl relative overflow-hidden flex flex-col justify-end min-h-[420px]">
                         <img
                           src={surveyCms?.reportMembershipCtaImageSrc || "https://images.pexels.com/photos/3783725/pexels-photo-3783725.jpeg?auto=compress&cs=tinysrgb&w=1200"}
                           alt=""
@@ -1785,11 +2125,11 @@ export default function DiagnosticSurvey() {
                         />
                         <div className="relative z-10 space-y-5">
                           <div>
-                            <h2 className="font-host-grotesk text-lg font-bold leading-tight text-white">
-                              {surveyCms?.reportMembershipCtaTitle || DEFAULT_REPORT_MEMBERSHIP_CTA_TITLE}
+                            <h2 className="font-host-grotesk text-2xl md:text-3xl font-normal leading-snug text-white">
+                              {membershipTitle}
                             </h2>
                             <p className="mt-2 text-sm leading-relaxed text-white/80">
-                              {surveyCms?.reportMembershipCtaBody || DEFAULT_REPORT_MEMBERSHIP_CTA_BODY}
+                              {membershipBody}
                             </p>
                           </div>
                           <RelliaAction
@@ -1807,15 +2147,35 @@ export default function DiagnosticSurvey() {
                       </div>
                     </section>
 
-                    <div className="pt-4 text-center">
-                      <button
+                    <section className="diagnostic-print-only diagnostic-membership-print">
+                      <h2>{membershipTitle}</h2>
+                      <p>{membershipBody}</p>
+                      <p>
+                        This summary report covers your top strengths, priority gaps, and high-level roadmap.
+                        Join Rellia Health membership to unlock your full gap analysis, custom advisory board matches,
+                        and personalized action plan.
+                      </p>
+                      <p>
+                        Apply at{" "}
+                        <a href="https://www.relliahealth.com/apply">relliahealth.com/apply</a>
+                      </p>
+                    </section>
+
+                    <div className="diagnostic-print-only diagnostic-print-footer">
+                      Rellia Health · Startup Diagnostic · Generated {reportDate} · relliahealth.com
+                    </div>
+
+                    <div className="diagnostic-screen-only pt-2 text-center">
+                      <RelliaAction
                         type="button"
-                        onClick={() => window.print()}
-                        className="text-[10px] font-bold uppercase tracking-widest text-rellia-teal/40 hover:text-rellia-teal transition-colors inline-flex items-center justify-center gap-2"
+                        variant="outlineOnWhite"
+                        size="comfortable"
+                        className="mx-auto w-full max-w-md justify-center border-rellia-teal/20"
+                        onClick={handlePrintReport}
                       >
-                        <Printer className="h-3.5 w-3.5" />
+                        <Printer className="mr-2 h-5 w-5" />
                         Print / Save as PDF
-                      </button>
+                      </RelliaAction>
                     </div>
                   </div>
                 </div>
@@ -1825,7 +2185,9 @@ export default function DiagnosticSurvey() {
         </main>
       </div>
 
-      <Footer />
+      <div className="diagnostic-screen-only">
+        <Footer />
+      </div>
     </div>
   );
 }
