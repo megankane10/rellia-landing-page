@@ -1,4 +1,4 @@
-import { ShieldCheck, ShieldCheck as ShieldIcon, Zap, Users } from 'lucide-react';
+import { ShieldCheck, ShieldCheck as ShieldIcon, Zap, Users, Lock, Sparkles } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import RouteSeo from '@/components/RouteSeo';
@@ -119,17 +119,28 @@ export default function DiagnosticLanding() {
 
             </div>
             <div className="flex-1 lg:pl-12">
-              <div className="relative">
+              <div className="relative p-4">
+                {/* Floating Blobs */}
+                <div className="absolute -top-4 -left-3 sm:-left-6 z-20 flex items-center gap-2 rounded-full border border-rellia-teal/15 bg-white/95 px-4 py-2 text-[11px] font-bold text-rellia-teal shadow-[0_12px_36px_-6px_rgba(13,53,64,0.18)] backdrop-blur-md">
+                  <Sparkles className="h-3.5 w-3.5 text-rellia-mint" />
+                  Personalized Roadmap
+                </div>
+
+                <div className="absolute top-[35%] -right-4 sm:-right-8 z-20 flex items-center gap-2 rounded-full border border-rellia-teal/15 bg-rellia-teal px-4 py-2 text-[11px] font-bold text-white shadow-[0_12px_36px_-6px_rgba(13,53,64,0.25)]">
+                  <Users className="h-3.5 w-3.5 text-rellia-mint" />
+                  Matched Advisors
+                </div>
+
+                <div className="absolute -bottom-4 left-8 z-20 flex items-center gap-2 rounded-full border border-black/5 bg-[#fbfcf8]/95 px-4 py-2 text-[11px] font-bold text-black/75 shadow-[0_12px_30px_-6px_rgba(0,0,0,0.12)] backdrop-blur-md">
+                  <ShieldIcon className="h-3.5 w-3.5 text-green-600" />
+                  Blind Spot Discovery
+                </div>
+
                 <div className="absolute -inset-4 rounded-[40px] bg-rellia-teal/5 blur-2xl pointer-events-none" />
-                <div className="relative rounded-[40px] border border-black/10 bg-white p-8 md:p-10 shadow-lg">
-                  <div className="mb-6 flex flex-wrap items-center justify-between gap-3 border-b border-black/5 pb-4">
-                    <h4 className="text-xs font-black uppercase tracking-widest text-rellia-teal">SAMPLE REPORT PREVIEW</h4>
-                    <div className="flex items-center gap-1.5 rounded-full bg-rellia-teal/5 px-2.5 py-1 text-[10px] font-bold text-rellia-teal uppercase tracking-widest">
-                      <ShieldCheck className="h-3 w-3" /> Members Only
-                    </div>
-                  </div>
-                  <div className="flex flex-col sm:flex-row gap-5">
-                    <div className="flex-1 rounded-2xl bg-[#fafafa] p-5 border border-black/5 flex flex-col justify-center">
+                <div className="relative rounded-[40px] border border-black/10 bg-white p-8 md:p-10 shadow-lg z-10">
+                  <div className="space-y-5">
+                    {/* Blocker Assessment */}
+                    <div className="rounded-2xl bg-[#fafafa] p-5 border border-black/5 flex flex-col justify-center">
                       <div className="mb-3 flex justify-between items-baseline gap-2">
                         <span className="text-sm font-bold text-black/75">Regulatory Strategy</span>
                         <span className="text-xs font-black text-red-600 uppercase tracking-wider">32% (Critical Gap)</span>
@@ -138,14 +149,26 @@ export default function DiagnosticLanding() {
                         <div className="h-full w-[32%] bg-red-600" />
                       </div>
                     </div>
-                    <div className="flex-[1.2] rounded-2xl bg-rellia-teal/[0.02] p-5 border border-rellia-teal/10">
-                      <h5 className="mb-2 text-sm font-bold text-rellia-teal flex items-center gap-2">
-                        <ShieldIcon className="h-4 w-4 text-amber-500" />
-                        Priority Blockers: Traceability
-                      </h5>
-                      <p className="font-urbanist text-xs text-black/65 leading-relaxed">
-                        Your software development process currently lacks a formal traceability matrix linking user needs, system requirements, and clinical verification test results. This is a critical regulatory gate for both FDA 510(k) and Health Canada SaMD submissions.
-                      </p>
+
+                    {/* Vetted Advisor Match */}
+                    <div className="border-t border-black/5 pt-5">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-black/45">Vetted Advisor Match</span>
+                      <div className="mt-3 flex items-center justify-between gap-4 rounded-2xl border border-rellia-teal/5 bg-rellia-teal/[0.02] px-4 py-3">
+                        <div className="flex items-center gap-3">
+                          <div className="h-9 w-9 overflow-hidden rounded-full border border-black/10 bg-black/5">
+                            <img
+                              src="https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=100"
+                              alt="Advisor"
+                              className="h-full w-full object-cover blur-sm scale-110"
+                            />
+                          </div>
+                          <div className="min-w-0">
+                            <div className="blur-[2.5px] select-none text-xs font-bold text-black/75">Regulatory Director</div>
+                            <div className="text-[10px] text-black/45">Ex-FDA Reviewer</div>
+                          </div>
+                        </div>
+                        <Lock className="h-4 w-4 text-rellia-teal/40" />
+                      </div>
                     </div>
                   </div>
                 </div>
