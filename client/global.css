@@ -100,7 +100,7 @@
   }
 
   .built-by-credit {
-    @apply inline-flex font-urbanist text-[13px] font-normal leading-snug text-white/45 transition-colors duration-300 md:text-sm;
+    @apply inline-flex font-urbanist text-[13px] font-normal leading-snug text-white/60 transition-colors duration-300 md:text-sm;
   }
 
   .built-by-credit:hover,
@@ -112,9 +112,7 @@
     @apply inline-flex items-baseline gap-1;
   }
 
-  .built-by-name {
-    @apply text-white/80 transition-colors duration-300;
-  }
+  /* .built-by-name inherits the gradient sweep from .built-by-credit-label — no separate colour needed */
 
   .built-by-credit:hover .built-by-credit-label,
   .built-by-credit:focus-visible .built-by-credit-label {
@@ -140,11 +138,6 @@
       background: none;
       color: #9dd6d0;
     }
-
-    .built-by-credit:hover .built-by-name,
-    .built-by-credit:focus-visible .built-by-name {
-      color: inherit;
-    }
   }
 
   .built-by-tooltip {
@@ -162,8 +155,9 @@
     font-weight: 500;
     line-height: 1.375;
     color: rgba(255, 255, 255, 0.92);
-    box-shadow: none !important;
-    filter: drop-shadow(0 0 6px rgba(157, 214, 208, 0.35));
+    /* rotating mint glow border — orbits around the tooltip */
+    filter: none;
+    overflow: visible;
   }
 
   .built-by-tooltip-inner {
@@ -187,16 +181,17 @@
     z-index: 0;
     border-radius: inherit;
     padding: 1px;
-    background: linear-gradient(
-      90deg,
-      rgba(255, 255, 255, 0.35) 0%,
-      rgba(157, 214, 208, 0.85) 40%,
-      rgba(255, 255, 255, 0.95) 50%,
-      rgba(157, 214, 208, 0.85) 60%,
-      rgba(255, 255, 255, 0.35) 100%
+    /* Rotating conic gradient border — mint sweeps around the tooltip */
+    background: conic-gradient(
+      from var(--angle, 0deg),
+      rgba(157, 214, 208, 0) 0deg,
+      rgba(157, 214, 208, 0.55) 60deg,
+      rgba(200, 240, 238, 0.9) 90deg,
+      rgba(157, 214, 208, 0.55) 120deg,
+      rgba(157, 214, 208, 0) 180deg
     );
-    background-size: 220% 100%;
-    animation: tooltip-border-sweep 2.2s ease-in-out infinite;
+    background-size: 100% 100%;
+    animation: rotate-border 3s linear infinite;
     -webkit-mask:
       linear-gradient(#fff 0 0) content-box,
       linear-gradient(#fff 0 0);
@@ -251,13 +246,16 @@
   }
 }
 
-@keyframes tooltip-border-sweep {
-  0% {
-    background-position: 200% 0;
-  }
-  100% {
-    background-position: -200% 0;
-  }
+@keyframes rotate-border {
+  0%   { --angle: 0deg; }
+  100% { --angle: 360deg; }
+}
+
+/* Register the --angle custom property so the browser can animate it */
+@property --angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
 }
 
 @keyframes priority-modal-in {
