@@ -132,7 +132,7 @@ export default function Footer() {
       style={{ backgroundColor: "var(--footer-backdrop, transparent)" }}
     >
       <div className="w-full rounded-2xl border border-white/10 bg-rellia-teal text-white shadow-[0_28px_80px_-40px_rgba(13,53,64,0.55)] md:rounded-[28px]">
-        <div className="px-4 py-10 md:px-10 md:py-16 lg:px-12">
+        <div className="px-4 py-6 md:px-10 md:py-10 lg:px-12">
           {/* Mobile header (logo + tagline first) */}
           <div className="mb-10 flex flex-col items-start gap-4 text-left md:hidden">
             <Link to="/" className="flex items-center justify-start">
