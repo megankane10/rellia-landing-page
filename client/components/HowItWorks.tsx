@@ -164,7 +164,7 @@ export default function HowItWorks(props?: HowItWorksProps) {
               return (
                 <div
                   key={step.title}
-                  className="flex h-[200px] w-full max-w-[320px] flex-col px-1 md:px-2 items-start"
+                  className="flex h-[200px] w-full max-w-[320px] flex-col px-1 md:px-2 items-start justify-center"
                 >
                   <Icon className="h-7 w-7 text-rellia-mint" aria-hidden />
                   <p className="mt-5 font-host-grotesk text-lg font-semibold leading-snug tracking-tight text-white line-clamp-2">

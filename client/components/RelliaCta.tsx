@@ -34,7 +34,7 @@ const parseTitleEmphasis = (title: string): ReactNode[] => {
     if (segment.startsWith("**") && segment.endsWith("**") && segment.length >= 4) {
       const inner = segment.slice(2, -2)
       return (
-        <span key={`e-${index}`} className="font-semibold text-rellia-teal">
+        <span key={`e-${index}`} className="font-medium text-rellia-teal">
           {inner}
         </span>
       )
@@ -174,7 +174,7 @@ export default function RelliaCta({
       ) : null}
       <section
         className={cn(
-          "relative mt-0 flex w-full flex-col justify-center overflow-hidden bg-rellia-greyTeal px-[30px] pt-[7.5rem] pb-[9rem] md:mt-0 md:pt-[10.5rem] md:pb-48 lg:mt-0 lg:pt-[13.5rem] lg:pb-[15rem]",
+          "relative mt-0 flex w-full flex-col justify-center overflow-hidden bg-rellia-greyTeal px-[30px] pt-[7.5rem] pb-[7.5rem] md:mt-0 md:pt-[10.5rem] md:pb-[10.5rem] lg:mt-0 lg:pt-[13.5rem] lg:pb-[13.5rem]",
           roundedClassName,
           className,
         )}

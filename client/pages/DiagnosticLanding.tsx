@@ -54,14 +54,10 @@ const HERO_TRUST_BADGES = [
 
 const DiagnosticHeroBadges = () => (
   <div className="flex flex-wrap items-center gap-3">
-    {HERO_TRUST_BADGES.map((item) => (
-      <PillTag
-        key={item.label}
-        label={item.label}
-        dot={<item.icon className="h-3.5 w-3.5 shrink-0 text-rellia-mint" />}
-        className={PILL_ON_IMAGE_BLUR_CLASS}
-      />
-    ))}
+    <PillTag
+      label="LAUNCH READINESS"
+      className={PILL_ON_IMAGE_BLUR_CLASS}
+    />
   </div>
 )
 
@@ -88,11 +84,11 @@ export default function DiagnosticLanding() {
       <div className="lg:flex lg:h-[82vh] lg:flex-col">
         <RoleHero
           heroBadges={<DiagnosticHeroBadges />}
-          imageSrc="https://images.pexels.com/photos/7089020/pexels-photo-7089020.jpeg?auto=compress&cs=tinysrgb&w=1600"
+          imageSrc="https://images.pexels.com/photos/3825368/pexels-photo-3825368.jpeg?auto=compress&cs=tinysrgb&w=1600"
           className="lg:flex-1"
           title={
             <>
-              How ready is your health tech <span className="text-rellia-mint">startup?</span>
+              Pressure-test your startup for <span className="text-rellia-mint">healthcare reality.</span>
             </>
           }
           subtitle="Get an instant readiness score, surface hidden blockers across 12 domains, and unlock advisor matching when you join Rellia."

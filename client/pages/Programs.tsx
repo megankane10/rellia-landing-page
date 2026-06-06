@@ -219,7 +219,7 @@ export default function Programs() {
                 <motion.div
                   layout
                   transition={{ layout: { duration: 0.32, ease: [0.16, 1, 0.3, 1] } }}
-                  className="flex flex-col gap-4 will-change-transform"
+                  className="flex flex-col gap-8 will-change-transform"
                 >
                   <AnimatePresence mode="sync" initial={false}>
                     {pagePrograms.map((p: any) => (
