@@ -3,8 +3,7 @@
 
 React SPA for **Rellia Health**, connecting founders, clinicians, and health systems around the future of care.
 
-**Production**: [relliahealth.com](https://www.relliahealth.com) <br>
-**Stage 2 plan**: [STAGE-2.md](./STAGE-2.md)
+**Production**: [relliahealth.com](https://www.relliahealth.com)
 
 ---
 
@@ -337,30 +336,15 @@ All **`/api/*`** routes are served by the serverless entry **`api/index.js`** (b
 
 ---
 
-## Orphaned or unused code (housekeeping backlog)
-
-These are **not wired into the running UI** or **not referenced by `package.json`** as of the last repo scan — safe to remove or integrate after confirmation.
-
-| Item | Notes |
-|------|--------|
-| `client/lib/sanityImage.ts` | Exports `urlForImage`; **no imports** in app routes yet (optional helper for CMS images). |
-| `client/components/ui/beams.tsx` | Exports `BackgroundBeams`; **no imports** anywhere. |
-| `three`, `@react-three/fiber`, `@react-three/drei` | Listed in `package.json` **devDependencies** but **no TS/TSX imports** found; likely removable if you confirm no dynamic/runtime use (see also [STAGE-2.md](./STAGE-2.md)). |
-| `scripts/fix-homepage-data.ts`, `scripts/thorough-cleanup.ts`, `scripts/debug-sanity.ts`, `scripts/cleanup-programs.ts`, `scripts/sanity-fix-homepage-draft.ts` | **No `pnpm` scripts** point at these; ad-hoc maintenance only. |
-| `design-system/rellia-health/MASTER.md` | Palette/fonts (e.g. Outfit/Work Sans, sky/orange) **do not match** live `tailwind.config.ts` (Host Grotesk, Urbanist, `rellia.teal` / mint). Treat as **draft or outdated** unless reconciled. |
-
----
-
 ## Security notes and fixes to prioritize
 
-This is a **codebase review checklist**, not a penetration test. Address in order of risk for your threat model.
+This is a codebase review checklist, not a penetration test. Address in order of risk for your threat model.
 
 1. **CORS defaults** — If **`ALLOWED_ORIGINS`** is empty in production, `server/index.ts` allows **any** browser `Origin` for the `cors()` middleware (with a console warning). **Fix:** set explicit comma-separated origins for every deployed hostname (preview + prod).
 2. **CSRF escape hatch** — **`REQUIRE_API_CSRF=false`** disables CSRF on POST APIs. **Fix:** never set in production except a documented break-glass; rotate tokens if it was ever used on a shared environment.
 3. **Sanity dataset exposure** — Public datasets are readable without your app; the app mitigates with a **query whitelist** and server proxy, but **secrets and embargoed copy do not belong** in public datasets. **Fix:** align with `.env.example` (private datasets + read tokens where the plan allows).
 4. **Preview / draft endpoints** — Draft-mode routes trust **Origin/Referer** heuristics and Sanity domains (`server/index.ts`). **Fix:** keep **`SANITY_API_READ_TOKEN`** scoped and rotated; restrict **`ALLOWED_ORIGINS`**; monitor abuse of `/api/draft-mode/*`.
-5. **Dependency surface** — Unused heavy deps (e.g. Three.js stack if confirmed unused) increase supply-chain risk and bundle audit noise. **Fix:** remove or justify per [STAGE-2.md](./STAGE-2.md).
-6. **CSP** — Global CSP in `vercel.json` only sets **`frame-ancestors`** (for Sanity framing). **Fix:** if you tighten `Content-Security-Policy` further, regression-test HubSpot, Fillout, Luma embeds, and Stripe checkout flows ([STAGE-2.md](./STAGE-2.md) calls this out).
+5. **CSP** — Global CSP in `vercel.json` only sets **`frame-ancestors`** (for Sanity framing). **Fix:** if you tighten `Content-Security-Policy` further, regression-test HubSpot, Fillout, Luma embeds, and Stripe checkout flows.
 
 ---
 
