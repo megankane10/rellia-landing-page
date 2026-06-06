@@ -88,7 +88,7 @@ export default function DiagnosticLanding() {
       <div className="lg:flex lg:h-[82vh] lg:flex-col">
         <RoleHero
           heroBadges={<DiagnosticHeroBadges />}
-          imageSrc="https://images.pexels.com/photos/590016/pexels-photo-590016.jpeg?auto=compress&cs=tinysrgb&w=1600"
+          imageSrc="https://images.pexels.com/photos/7089020/pexels-photo-7089020.jpeg?auto=compress&cs=tinysrgb&w=1600"
           className="lg:flex-1"
           title={
             <>

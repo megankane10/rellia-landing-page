@@ -202,6 +202,9 @@ export default function Footer() {
                   <MailFilled className="h-5 w-5 text-white/85 transition-colors duration-300 group-hover:text-rellia-teal" />
                 </a>
               </div>
+              <div className="mt-4">
+                <BackToTopLink />
+              </div>
             </div>
 
             <div
@@ -260,37 +263,40 @@ export default function Footer() {
           </div>
 
           {/* Mobile socials after links, before divider */}
-          <div className="mb-6 flex items-center justify-center gap-3 md:hidden">
-            <a
-              href={g.linkedinUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group rounded-full bg-white/5 p-2 transition-all duration-300 hover:bg-rellia-mint"
-              aria-label="Rellia Health on LinkedIn"
-            >
-              <LinkedInFilled className="h-5 w-5 text-white/85 transition-colors duration-300 group-hover:text-rellia-teal" />
-            </a>
-            <a
-              href={g.instagramUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group rounded-full bg-white/5 p-2 transition-all duration-300 hover:bg-rellia-mint"
-              aria-label="Rellia Health on Instagram"
-            >
-              <InstagramFilled className="h-5 w-5 text-white/85 transition-colors duration-300 group-hover:text-rellia-teal" />
-            </a>
-            <a
-              href={`mailto:${g.supportEmail}`}
-              className="group rounded-full bg-white/5 p-2 transition-all duration-300 hover:bg-rellia-mint"
-              aria-label={`Email ${g.supportEmail}`}
-            >
-              <MailFilled className="h-5 w-5 text-white/85 transition-colors duration-300 group-hover:text-rellia-teal" />
-            </a>
+          <div className="mb-6 flex flex-col items-center justify-center gap-4 md:hidden">
+            <div className="flex items-center justify-center gap-3">
+              <a
+                href={g.linkedinUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group rounded-full bg-white/5 p-2 transition-all duration-300 hover:bg-rellia-mint"
+                aria-label="Rellia Health on LinkedIn"
+              >
+                <LinkedInFilled className="h-5 w-5 text-white/85 transition-colors duration-300 group-hover:text-rellia-teal" />
+              </a>
+              <a
+                href={g.instagramUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group rounded-full bg-white/5 p-2 transition-all duration-300 hover:bg-rellia-mint"
+                aria-label="Rellia Health on Instagram"
+              >
+                <InstagramFilled className="h-5 w-5 text-white/85 transition-colors duration-300 group-hover:text-rellia-teal" />
+              </a>
+              <a
+                href={`mailto:${g.supportEmail}`}
+                className="group rounded-full bg-white/5 p-2 transition-all duration-300 hover:bg-rellia-mint"
+                aria-label={`Email ${g.supportEmail}`}
+              >
+                <MailFilled className="h-5 w-5 text-white/85 transition-colors duration-300 group-hover:text-rellia-teal" />
+              </a>
+            </div>
+            <div className="mt-2">
+              <BackToTopLink />
+            </div>
           </div>
 
-          <div className="mb-1 flex justify-start md:mb-1.5">
-            <BackToTopLink />
-          </div>
+
 
           <div className="border-t border-white/10 pt-4 md:pt-5">
             <div className="grid grid-cols-1 items-center gap-5 md:grid-cols-[1fr_auto_1fr] md:gap-6">
