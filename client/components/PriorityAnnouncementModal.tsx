@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react"
 import { createPortal } from "react-dom"
 import { motion, AnimatePresence } from "framer-motion"
-import { X } from "lucide-react"
+import { Check, X } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { CmsCtaLink, cmsCtaButtonClass } from "@/components/CmsCtaLink"
 import { clearApiCsrfCache, getApiCsrfHeaders } from "@/lib/apiCsrf"
@@ -266,8 +266,10 @@ export const PriorityAnnouncementModal = ({
                 {formEnabled ? (
                   <form onSubmit={handleFormSubmit} className={`${body?.trim() ? 'mt-6' : 'mt-4'} space-y-4`}>
                     {submitSuccess ? (
-                      <div className="font-urbanist text-sm font-semibold text-rellia-mintDark bg-rellia-mint/20 border border-rellia-mint/30 rounded-2xl p-4">
-                        Thank you! Your submission has been received.
+                      <div className="flex justify-center py-8" role="status" aria-label="Submission received">
+                        <span className="inline-flex h-16 w-16 items-center justify-center rounded-full bg-rellia-teal text-white shadow-md">
+                          <Check className="h-8 w-8" strokeWidth={2.5} aria-hidden />
+                        </span>
                       </div>
                     ) : (
                       <>

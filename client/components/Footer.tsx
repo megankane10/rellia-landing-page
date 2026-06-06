@@ -78,13 +78,18 @@ const footerSectionHeadingClass =
 const legalLinkClass =
   "font-urbanist text-[13px] leading-snug text-white/70 transition-colors hover:text-rellia-mint md:text-sm"
 
-const BUILT_BY_DISMISS_MS = 400
+const BUILT_BY_TOOLTIP_DISMISS_MS = 420
+const BUILT_BY_FADE_BACK_MS = 450
+
+type BuiltBySweepPhase = "idle" | "forward" | "reverse" | "fade-back"
 
 const BuiltByCredit = () => {
   const [open, setOpen] = React.useState(false)
   const [isHovered, setIsHovered] = React.useState(false)
   const [isClosing, setIsClosing] = React.useState(false)
+  const [sweepPhase, setSweepPhase] = React.useState<BuiltBySweepPhase>("idle")
   const dismissTimerRef = React.useRef<ReturnType<typeof setTimeout> | null>(null)
+  const fadeBackTimerRef = React.useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const clearDismissTimer = () => {
     if (dismissTimerRef.current) {
@@ -93,25 +98,51 @@ const BuiltByCredit = () => {
     }
   }
 
+  const clearFadeBackTimer = () => {
+    if (fadeBackTimerRef.current) {
+      clearTimeout(fadeBackTimerRef.current)
+      fadeBackTimerRef.current = null
+    }
+  }
+
   const handlePointerEnter = () => {
     clearDismissTimer()
+    clearFadeBackTimer()
     setIsClosing(false)
     setIsHovered(true)
+    setSweepPhase("forward")
     setOpen(true)
   }
 
   const handlePointerLeave = () => {
     setIsHovered(false)
+    setSweepPhase("reverse")
     setIsClosing(true)
     clearDismissTimer()
     dismissTimerRef.current = setTimeout(() => {
       setOpen(false)
       setIsClosing(false)
       dismissTimerRef.current = null
-    }, BUILT_BY_DISMISS_MS)
+    }, BUILT_BY_TOOLTIP_DISMISS_MS)
   }
 
-  React.useEffect(() => () => clearDismissTimer(), [])
+  const handleSweepAnimationEnd = (event: React.AnimationEvent<HTMLSpanElement>) => {
+    if (event.animationName !== "glow-sweep-reverse") return
+    setSweepPhase("fade-back")
+    clearFadeBackTimer()
+    fadeBackTimerRef.current = setTimeout(() => {
+      setSweepPhase("idle")
+      fadeBackTimerRef.current = null
+    }, BUILT_BY_FADE_BACK_MS)
+  }
+
+  React.useEffect(
+    () => () => {
+      clearDismissTimer()
+      clearFadeBackTimer()
+    },
+    [],
+  )
 
   return (
     <Tooltip open={open} onOpenChange={setOpen} delayDuration={0}>
@@ -128,12 +159,15 @@ const BuiltByCredit = () => {
           onBlur={handlePointerLeave}
           onTouchStart={() => {
             clearDismissTimer()
+            clearFadeBackTimer()
             setIsClosing(false)
             setIsHovered(true)
+            setSweepPhase("forward")
             setOpen(true)
           }}
           onTouchEnd={() => {
             setIsHovered(false)
+            setSweepPhase("reverse")
             setIsClosing(true)
             clearDismissTimer()
             dismissTimerRef.current = setTimeout(() => {
@@ -142,21 +176,33 @@ const BuiltByCredit = () => {
             }, 2000)
           }}
         >
-          <span
-            className={cn(
-              "built-by-credit-label",
-              isHovered && "built-by-credit-label--sweep-forward",
-              !isHovered && isClosing && "built-by-credit-label--sweep-reverse",
-            )}
-          >
-            Built by <span className="built-by-name">Safdar</span>
+          <span className="built-by-credit-label">
+            <span className="built-by-credit-base" aria-hidden="true">
+              Built by <span className="built-by-name">Safdar</span>
+            </span>
+            <span
+              className={cn(
+                "built-by-credit-sweep",
+                (isHovered || sweepPhase === "forward") && "built-by-credit-sweep--forward",
+                sweepPhase === "reverse" && "built-by-credit-sweep--reverse",
+                sweepPhase === "fade-back" && "built-by-credit-sweep--fade-out",
+              )}
+              onAnimationEnd={handleSweepAnimationEnd}
+              aria-hidden="true"
+            >
+              Built by <span className="built-by-name">Safdar</span>
+            </span>
+            <span className="sr-only">Built by Safdar</span>
           </span>
         </a>
       </TooltipTrigger>
       <TooltipContent
         side="top"
         sideOffset={8}
-        className={cn("built-by-tooltip", isClosing && "built-by-tooltip--closing")}
+        className={cn(
+          "built-by-tooltip !animate-none data-[state=closed]:!animate-none",
+          isClosing && "built-by-tooltip--closing",
+        )}
       >
         <span className="built-by-tooltip-inner">
           Let&apos;s connect on LinkedIn
