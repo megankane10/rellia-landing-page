@@ -315,8 +315,13 @@ export default function TestimonialsSection({
             className="relative w-full max-w-full min-w-0"
           >
             <div className="relative flex flex-col gap-4 md:gap-5">
-              <div className="md:[mask-image:linear-gradient(to_right,black_85%,transparent_100%)]">
-                <CarouselContent className="-ml-2 items-start md:-ml-6 md:pr-[18%]">
+              <div
+                className={cn(
+                  "transition-[mask-image] duration-300 ease-out",
+                  canScrollNext && "md:[mask-image:linear-gradient(to_right,black_85%,transparent_100%)]"
+                )}
+              >
+                <CarouselContent className="-ml-2 items-start md:-ml-6">
                   {orderedTestimonials.map((t, idx) => (
                     <CarouselItem
                       key={t.name}

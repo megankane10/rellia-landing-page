@@ -336,7 +336,7 @@ const DEFAULT_REPORT_ROADMAP_TITLE = "Recommended Roadmap"
 const DEFAULT_REPORT_FULL_BREAKDOWN_TITLE = "Full Readiness Breakdown"
 const DEFAULT_REPORT_PROGRAMS_TITLE = "Program Matches"
 const DEFAULT_REPORT_ADVISORS_TITLE = "Custom Advisory Board"
-const DEFAULT_REPORT_MEMBERSHIP_CTA_TITLE = "Unlock your custom growth roadmap"
+const DEFAULT_REPORT_MEMBERSHIP_CTA_TITLE = "Your personalized blueprint is waiting."
 const DEFAULT_REPORT_MEMBERSHIP_CTA_BODY = "Join Rellia Health to unlock your custom advisory board, full gap analysis, and personalized actions - and accelerate your journey."
 const DEFAULT_REPORT_MEMBERSHIP_CTA_BUTTON = "Apply for Membership"
 
@@ -1532,13 +1532,13 @@ export default function DiagnosticSurvey() {
                   <div className="space-y-12">
                     {/* Strengths */}
                     <section className="space-y-4">
-                      <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
+                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 w-full">
                         <h2 className="text-xs font-bold uppercase tracking-widest text-green-700 flex items-center gap-2">
                           <CheckCircle2 className="h-4 w-4" />
                           {surveyCms?.reportStrengthsTitle || DEFAULT_REPORT_STRENGTHS_TITLE}
                         </h2>
-                        <span className="text-xs font-urbanist font-medium text-green-800/70">
-                          — Above-average readiness compared to your other domains.
+                        <span className="text-xs font-urbanist font-medium text-black text-left sm:text-right">
+                          Above-average readiness compared to your other domains.
                         </span>
                       </div>
                       <div className="grid gap-4 sm:grid-cols-3">
@@ -1547,13 +1547,13 @@ export default function DiagnosticSurvey() {
                             key={i}
                             className="rounded-3xl border border-green-100 bg-green-50/50 p-6 shadow-sm flex flex-col justify-center min-h-[92px]"
                           >
-                            <div className="flex items-start justify-between gap-4">
-                              <h3 className="font-host-grotesk text-lg font-bold tracking-tight text-green-900">
-                                {s.category}
-                              </h3>
+                            <div className="flex flex-col items-start gap-2">
                               <div className="shrink-0 rounded-full bg-green-100 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-green-700">
                                 {s.score}%
                               </div>
+                              <h3 className="font-host-grotesk text-lg font-bold tracking-tight text-green-900">
+                                {s.category}
+                              </h3>
                             </div>
                           </div>
                         ))}
@@ -1562,13 +1562,13 @@ export default function DiagnosticSurvey() {
 
                     {/* Weaknesses */}
                     <section className="space-y-4">
-                      <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
+                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 w-full">
                         <h2 className="text-xs font-bold uppercase tracking-widest text-red-700 flex items-center gap-2">
                           <AlertTriangle className="h-4 w-4" />
                           {surveyCms?.reportGapsTitle || DEFAULT_REPORT_GAPS_TITLE}
                         </h2>
-                        <span className="text-xs font-urbanist font-medium text-red-800/70">
-                          — Likely bottlenecks—tighten these before scaling execution or diligence.
+                        <span className="text-xs font-urbanist font-medium text-black text-left sm:text-right">
+                          Likely bottlenecks—tighten these before scaling execution or diligence.
                         </span>
                       </div>
                       <div className="grid gap-4 sm:grid-cols-3">
@@ -1577,13 +1577,13 @@ export default function DiagnosticSurvey() {
                             key={i}
                             className="rounded-3xl border border-red-100 bg-red-50/50 p-6 shadow-sm flex flex-col justify-center min-h-[92px]"
                           >
-                            <div className="flex items-start justify-between gap-4">
-                              <h3 className="font-host-grotesk text-lg font-bold tracking-tight text-red-900">
-                                {w.category}
-                              </h3>
+                            <div className="flex flex-col items-start gap-2">
                               <div className="shrink-0 rounded-full bg-red-100 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-red-700">
                                 {w.priority}
                               </div>
+                              <h3 className="font-host-grotesk text-lg font-bold tracking-tight text-red-900">
+                                {w.category}
+                              </h3>
                             </div>
                           </div>
                         ))}
@@ -1781,11 +1781,11 @@ export default function DiagnosticSurvey() {
                         />
                         <div
                           aria-hidden
-                          className="absolute inset-0 bg-gradient-to-t from-[#0d3540] via-[#0d3540]/80 via-40% to-transparent z-0"
+                          className="absolute bottom-0 left-0 right-0 h-[65%] bg-gradient-to-t from-[#0d3540] via-[#0d3540]/90 to-transparent z-0"
                         />
                         <div className="relative z-10 space-y-5">
                           <div>
-                            <h2 className="font-host-grotesk text-lg font-bold leading-tight text-white uppercase tracking-wider">
+                            <h2 className="font-host-grotesk text-lg font-bold leading-tight text-white">
                               {surveyCms?.reportMembershipCtaTitle || DEFAULT_REPORT_MEMBERSHIP_CTA_TITLE}
                             </h2>
                             <p className="mt-2 text-sm leading-relaxed text-white/80">
