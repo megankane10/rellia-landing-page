@@ -602,6 +602,7 @@ export const diagnosticSurveyContentQuery = `*[_type == "diagnosticSurveyContent
   reportMembershipCtaTitle,
   reportMembershipCtaBody,
   reportMembershipCtaButton,
+  "reportMembershipCtaImageSrc": reportMembershipCtaImage.asset->url,
   sections[]{
     id,
     icon,

@@ -918,6 +918,13 @@ async function main() {
   const investorsLogoMarquee = await buildLogoMarqueeItems(client, INVESTOR_BRAND_SVG_MARKS)
   const careersTeamMarqueeImages = await buildCareersTeamMarqueeImages(client)
   const careersLifeAtRelliaImages = await buildCareersLifeAtRelliaImages(client)
+  const reportMembershipCtaImageId = await resolveRemoteImageAssetId(
+    client,
+    "https://images.pexels.com/photos/3783725/pexels-photo-3783725.jpeg?auto=compress&cs=tinysrgb&w=1200",
+    "report-membership-cta-image.jpg"
+  )
+  const reportMembershipCtaImageValue = toSanityImageFieldValue(reportMembershipCtaImageId)
+
 
   // Clear existing directory docs so seed is the source of truth.
   // These docs were originally created in Studio with random IDs, so deterministic seeding
@@ -1363,9 +1370,10 @@ async function main() {
       reportFullBreakdownTitle: "Full Readiness Breakdown",
       reportProgramsTitle: "Program Matches",
       reportAdvisorsTitle: "Custom Advisory Board",
-      reportMembershipCtaTitle: "Detailed report access is restricted",
+      reportMembershipCtaTitle: "Unlock your custom growth roadmap",
       reportMembershipCtaBody: "Join Rellia Health to unlock your custom advisory board, full gap analysis, and personalized actions - and accelerate your journey.",
       reportMembershipCtaButton: "Apply for Membership",
+      reportMembershipCtaImage: reportMembershipCtaImageValue,
       sections: DIAGNOSTIC_SURVEY_SECTIONS,
     },
   })

@@ -705,6 +705,7 @@ export type DiagnosticSurveyContent = {
   reportMembershipCtaTitle?: string
   reportMembershipCtaBody?: string
   reportMembershipCtaButton?: string
+  reportMembershipCtaImageSrc?: string
   sections?: DiagnosticSurveyCmsSection[]
 }
 

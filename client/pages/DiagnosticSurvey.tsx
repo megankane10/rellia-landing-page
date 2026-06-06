@@ -336,7 +336,7 @@ const DEFAULT_REPORT_ROADMAP_TITLE = "Recommended Roadmap"
 const DEFAULT_REPORT_FULL_BREAKDOWN_TITLE = "Full Readiness Breakdown"
 const DEFAULT_REPORT_PROGRAMS_TITLE = "Program Matches"
 const DEFAULT_REPORT_ADVISORS_TITLE = "Custom Advisory Board"
-const DEFAULT_REPORT_MEMBERSHIP_CTA_TITLE = "Detailed report access is restricted"
+const DEFAULT_REPORT_MEMBERSHIP_CTA_TITLE = "Unlock your custom growth roadmap"
 const DEFAULT_REPORT_MEMBERSHIP_CTA_BODY = "Join Rellia Health to unlock your custom advisory board, full gap analysis, and personalized actions - and accelerate your journey."
 const DEFAULT_REPORT_MEMBERSHIP_CTA_BUTTON = "Apply for Membership"
 
@@ -1532,15 +1532,20 @@ export default function DiagnosticSurvey() {
                   <div className="space-y-12">
                     {/* Strengths */}
                     <section className="space-y-4">
-                      <h2 className="text-xs font-bold uppercase tracking-widest text-green-700 flex items-center gap-2">
-                        <CheckCircle2 className="h-4 w-4" />
-                        {surveyCms?.reportStrengthsTitle || DEFAULT_REPORT_STRENGTHS_TITLE}
-                      </h2>
+                      <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
+                        <h2 className="text-xs font-bold uppercase tracking-widest text-green-700 flex items-center gap-2">
+                          <CheckCircle2 className="h-4 w-4" />
+                          {surveyCms?.reportStrengthsTitle || DEFAULT_REPORT_STRENGTHS_TITLE}
+                        </h2>
+                        <span className="text-xs font-urbanist font-medium text-green-800/70">
+                          — Above-average readiness compared to your other domains.
+                        </span>
+                      </div>
                       <div className="grid gap-4 sm:grid-cols-3">
                         {(diagResult.top3_strengths ?? []).map((s, i) => (
                           <div
                             key={i}
-                            className="rounded-3xl border border-green-100 bg-green-50/50 p-6 shadow-sm"
+                            className="rounded-3xl border border-green-100 bg-green-50/50 p-6 shadow-sm flex flex-col justify-center min-h-[92px]"
                           >
                             <div className="flex items-start justify-between gap-4">
                               <h3 className="font-host-grotesk text-lg font-bold tracking-tight text-green-900">
@@ -1550,9 +1555,6 @@ export default function DiagnosticSurvey() {
                                 {s.score}%
                               </div>
                             </div>
-                            <p className="mt-3 font-urbanist text-sm leading-relaxed text-green-900/70">
-                              {s.note}
-                            </p>
                           </div>
                         ))}
                       </div>
@@ -1560,15 +1562,20 @@ export default function DiagnosticSurvey() {
 
                     {/* Weaknesses */}
                     <section className="space-y-4">
-                      <h2 className="text-xs font-bold uppercase tracking-widest text-red-700 flex items-center gap-2">
-                        <AlertTriangle className="h-4 w-4" />
-                        {surveyCms?.reportGapsTitle || DEFAULT_REPORT_GAPS_TITLE}
-                      </h2>
+                      <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
+                        <h2 className="text-xs font-bold uppercase tracking-widest text-red-700 flex items-center gap-2">
+                          <AlertTriangle className="h-4 w-4" />
+                          {surveyCms?.reportGapsTitle || DEFAULT_REPORT_GAPS_TITLE}
+                        </h2>
+                        <span className="text-xs font-urbanist font-medium text-red-800/70">
+                          — Likely bottlenecks—tighten these before scaling execution or diligence.
+                        </span>
+                      </div>
                       <div className="grid gap-4 sm:grid-cols-3">
                         {(diagResult.top3_weaknesses ?? []).map((w, i) => (
                           <div
                             key={i}
-                            className="rounded-3xl border border-red-100 bg-red-50/50 p-6 shadow-sm"
+                            className="rounded-3xl border border-red-100 bg-red-50/50 p-6 shadow-sm flex flex-col justify-center min-h-[92px]"
                           >
                             <div className="flex items-start justify-between gap-4">
                               <h3 className="font-host-grotesk text-lg font-bold tracking-tight text-red-900">
@@ -1578,9 +1585,6 @@ export default function DiagnosticSurvey() {
                                 {w.priority}
                               </div>
                             </div>
-                            <p className="mt-3 font-urbanist text-sm leading-relaxed text-red-900/70">
-                              {w.note}
-                            </p>
                           </div>
                         ))}
                       </div>
@@ -1769,35 +1773,37 @@ export default function DiagnosticSurvey() {
                       </div>
 
                       {/* Join the membership CTA block */}
-                      <div className="rounded-[32px] p-8 text-white shadow-2xl relative overflow-hidden flex flex-col h-full justify-between min-h-[360px]">
+                      <div className="rounded-[32px] p-8 text-white shadow-2xl relative overflow-hidden flex flex-col justify-end min-h-[420px]">
                         <img
-                          src="https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=1200"
+                          src={surveyCms?.reportMembershipCtaImageSrc || "https://images.pexels.com/photos/3783725/pexels-photo-3783725.jpeg?auto=compress&cs=tinysrgb&w=1200"}
                           alt=""
                           className="absolute inset-0 h-full w-full object-cover"
                         />
                         <div
                           aria-hidden
-                          className="absolute inset-0 bg-gradient-to-b from-[#0d3540]/80 via-[#0d3540]/90 to-[#0d3540]/95 z-0"
+                          className="absolute inset-0 bg-gradient-to-t from-[#0d3540] via-[#0d3540]/80 via-40% to-transparent z-0"
                         />
-                        <div className="relative z-10">
-                          <h2 className="font-host-grotesk text-2xl font-bold leading-tight text-rellia-mint">
-                            {surveyCms?.reportMembershipCtaTitle || DEFAULT_REPORT_MEMBERSHIP_CTA_TITLE}
-                          </h2>
-                          <p className="mt-4 text-sm leading-relaxed text-white">
-                            {surveyCms?.reportMembershipCtaBody || DEFAULT_REPORT_MEMBERSHIP_CTA_BODY}
-                          </p>
+                        <div className="relative z-10 space-y-5">
+                          <div>
+                            <h2 className="font-host-grotesk text-lg font-bold leading-tight text-white uppercase tracking-wider">
+                              {surveyCms?.reportMembershipCtaTitle || DEFAULT_REPORT_MEMBERSHIP_CTA_TITLE}
+                            </h2>
+                            <p className="mt-2 text-sm leading-relaxed text-white/80">
+                              {surveyCms?.reportMembershipCtaBody || DEFAULT_REPORT_MEMBERSHIP_CTA_BODY}
+                            </p>
+                          </div>
+                          <RelliaAction
+                            asChild
+                            variant="heroSolidOnTeal"
+                            size="comfortable"
+                            className="w-full justify-center transition-transform active:scale-95 relative z-10 mt-0"
+                          >
+                            <Link to="/apply">
+                              {surveyCms?.reportMembershipCtaButton || DEFAULT_REPORT_MEMBERSHIP_CTA_BUTTON}
+                              <ArrowRight className="ml-2 h-5 w-5" />
+                            </Link>
+                          </RelliaAction>
                         </div>
-                        <RelliaAction
-                          asChild
-                          variant="heroSolidOnTeal"
-                          size="comfortable"
-                          className="w-full justify-center transition-transform active:scale-95 relative z-10 mt-8"
-                        >
-                          <Link to="/apply">
-                            {surveyCms?.reportMembershipCtaButton || DEFAULT_REPORT_MEMBERSHIP_CTA_BUTTON}
-                            <ArrowRight className="ml-2 h-5 w-5" />
-                          </Link>
-                        </RelliaAction>
                       </div>
                     </section>
 

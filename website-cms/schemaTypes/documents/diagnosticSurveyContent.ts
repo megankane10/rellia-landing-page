@@ -356,6 +356,15 @@ export const diagnosticSurveyContent = defineType({
       group: 'report',
       initialValue: 'Apply for Membership',
     }),
+    defineField({
+      name: 'reportMembershipCtaImage',
+      title: 'Membership CTA Background Image',
+      type: 'image',
+      group: 'report',
+      options: {
+        hotspot: true,
+      },
+    }),
   ],
   preview: {
     prepare() {
