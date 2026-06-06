@@ -42,7 +42,7 @@ const whyFeatures: HomeWhyFeature[] = [
 const timelineSteps = [
   { title: 'Startup Context', description: 'Provide high-level details about your product mission, stage, and targets.' },
   { title: 'Deep Assessment', description: 'Evaluate your status across 12 sections with zero-BS honest reflections.' },
-  { title: 'Score Generation', description: 'Our AI processes scores to evaluate strengths, priority gaps, and blockers.' },
+  { title: 'Score Analysis', description: 'Our custom assessment framework evaluates your strengths, priority gaps, and blockers.' },
   { title: 'Report Access', description: 'Rellia members immediately unlock their custom diagnostic report and advisor matching.' }
 ];
 
@@ -122,23 +122,23 @@ export default function DiagnosticLanding() {
               <div className="relative">
                 <div className="absolute -inset-4 rounded-[40px] bg-rellia-teal/5 blur-2xl pointer-events-none" />
                 <div className="relative rounded-[40px] border border-black/10 bg-white p-8 md:p-10 shadow-lg">
-                  <div className="mb-6 flex items-center justify-between border-b border-black/5 pb-4">
-                    <h4 className="text-xs font-bold uppercase tracking-widest text-black/45">Sample Report Preview</h4>
+                  <div className="mb-6 flex flex-wrap items-center justify-between gap-3 border-b border-black/5 pb-4">
+                    <h4 className="text-xs font-black uppercase tracking-widest text-rellia-teal">SAMPLE REPORT PREVIEW</h4>
                     <div className="flex items-center gap-1.5 rounded-full bg-rellia-teal/5 px-2.5 py-1 text-[10px] font-bold text-rellia-teal uppercase tracking-widest">
                       <ShieldCheck className="h-3 w-3" /> Members Only
                     </div>
                   </div>
-                  <div className="space-y-6">
-                    <div className="rounded-2xl bg-[#fafafa] p-4 border border-black/5">
-                      <div className="mb-2 flex justify-between">
-                        <span className="text-xs font-bold text-black/75">Regulatory Strategy</span>
-                        <span className="text-xs font-black text-red-600">32% (Critical Gap)</span>
+                  <div className="flex flex-col sm:flex-row gap-5">
+                    <div className="flex-1 rounded-2xl bg-[#fafafa] p-5 border border-black/5 flex flex-col justify-center">
+                      <div className="mb-3 flex justify-between items-baseline gap-2">
+                        <span className="text-sm font-bold text-black/75">Regulatory Strategy</span>
+                        <span className="text-xs font-black text-red-600 uppercase tracking-wider">32% (Critical Gap)</span>
                       </div>
                       <div className="h-2 w-full rounded-full bg-black/5 overflow-hidden">
                         <div className="h-full w-[32%] bg-red-600" />
                       </div>
                     </div>
-                    <div className="rounded-2xl bg-rellia-teal/[0.02] p-5 border border-rellia-teal/10">
+                    <div className="flex-[1.2] rounded-2xl bg-rellia-teal/[0.02] p-5 border border-rellia-teal/10">
                       <h5 className="mb-2 text-sm font-bold text-rellia-teal flex items-center gap-2">
                         <ShieldIcon className="h-4 w-4 text-amber-500" />
                         Priority Blockers: Traceability
@@ -162,7 +162,7 @@ export default function DiagnosticLanding() {
         subheading="Four focused steps from startup context to a personalized gap profile you can act on."
         steps={timelineSteps}
         showRoleLinks={false}
-        className="border-t-0 bg-white py-10 md:py-12 lg:py-14 pb-20 md:pb-24"
+        className="border-t-0 bg-white py-10 md:py-12 lg:py-14 pb-28 md:pb-36"
       />
 
       <div className="bg-white">

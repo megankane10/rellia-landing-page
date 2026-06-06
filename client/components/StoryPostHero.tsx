@@ -48,10 +48,7 @@ export const StoryPostHero = ({
             fetchPriority="high"
           />
           <div 
-            className="absolute inset-0" 
-            style={{
-              background: "linear-gradient(to right, rgba(197,216,213,0.97) 0%, rgba(197,216,213,0.85) 45%, rgba(197,216,213,0.4) 75%, rgba(197,216,213,0.15) 100%)"
-            }}
+            className="absolute inset-0 bg-gradient-to-b from-rellia-greyTeal/98 via-rellia-greyTeal/90 to-rellia-greyTeal/20 md:bg-gradient-to-r md:from-rellia-greyTeal/97 md:via-rellia-greyTeal/85 md:to-rellia-greyTeal/15" 
           />
         </div>
       ) : (
