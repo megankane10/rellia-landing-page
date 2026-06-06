@@ -109,15 +109,19 @@ const BuiltByCredit = () => (
         href={SAFDAR_LINKEDIN_URL}
         target="_blank"
         rel="noopener noreferrer"
-        className="built-by-credit inline-flex items-center gap-1 rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-rellia-teal"
-        aria-label="Built by Safdar — connect on LinkedIn"
+        className="built-by-credit rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-rellia-teal"
+        aria-label="Built by Safdar — let's connect on LinkedIn"
       >
-        <span>Built by</span>
-        <span className="built-by-name font-medium">Safdar</span>
+        <span className="built-by-credit-label">
+          Built by <span className="built-by-name">Safdar</span>
+        </span>
       </a>
     </TooltipTrigger>
     <TooltipContent side="top" sideOffset={8} className="built-by-tooltip">
-      <span className="built-by-tooltip-inner">Connect on LinkedIn ↗</span>
+      <span className="built-by-tooltip-inner">
+        Let&apos;s connect on LinkedIn
+        <ArrowUpRight className="h-3.5 w-3.5 shrink-0" aria-hidden />
+      </span>
     </TooltipContent>
   </Tooltip>
 )

@@ -100,7 +100,7 @@
   }
 
   .built-by-credit {
-    @apply font-urbanist text-[13px] leading-snug text-white/55 transition-colors duration-300 md:text-sm;
+    @apply inline-flex font-urbanist text-[13px] font-normal leading-snug text-white/55 transition-colors duration-300 md:text-sm;
   }
 
   .built-by-credit:hover,
@@ -108,49 +108,50 @@
     @apply text-white/70;
   }
 
-  .built-by-name {
-    background: linear-gradient(
-      90deg,
-      rgba(255, 255, 255, 0.5) 0%,
-      rgba(255, 255, 255, 0.5) 20%,
-      #9dd6d0 38%,
-      #ffffff 48%,
-      #d4f3ef 52%,
-      #9dd6d0 58%,
-      rgba(255, 255, 255, 0.95) 62%,
-      rgba(255, 255, 255, 0.5) 80%,
-      rgba(255, 255, 255, 0.5) 100%
-    );
-    background-size: 320% auto;
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: rgba(255, 255, 255, 0.7);
-    transition: color 0.4s ease, text-shadow 0.4s ease;
+  .built-by-credit-label {
+    @apply inline-flex items-baseline gap-1;
   }
 
-  .built-by-credit:hover .built-by-name,
-  .built-by-credit:focus-visible .built-by-name {
+  .built-by-name {
+    @apply text-white/40;
+  }
+
+  .built-by-credit:hover .built-by-credit-label,
+  .built-by-credit:focus-visible .built-by-credit-label {
+    background: linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.55) 0%,
+      rgba(157, 214, 208, 0.95) 45%,
+      rgba(255, 255, 255, 0.9) 55%,
+      rgba(157, 214, 208, 0.95) 65%,
+      rgba(255, 255, 255, 0.55) 100%
+    );
+    background-size: 220% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
     color: transparent;
-    animation: glow-sweep 3.2s ease-in-out 0.35s infinite;
-    text-shadow:
-      0 0 22px rgba(157, 214, 208, 0.75),
-      0 0 10px rgba(255, 255, 255, 0.45);
+    animation: glow-sweep 1.4s ease-in-out infinite;
   }
 
   @media (prefers-reduced-motion: reduce) {
+    .built-by-credit:hover .built-by-credit-label,
+    .built-by-credit:focus-visible .built-by-credit-label {
+      animation: none;
+      background: none;
+      color: #9dd6d0;
+    }
+
     .built-by-credit:hover .built-by-name,
     .built-by-credit:focus-visible .built-by-name {
-      animation: none;
-      color: #9dd6d0;
-      text-shadow: none;
+      color: inherit;
     }
   }
 
   .built-by-tooltip {
     position: relative;
     isolation: isolate;
-    overflow: visible;
-    max-width: 220px;
+    overflow: hidden;
+    max-width: 240px;
     border: none !important;
     border-radius: 1rem;
     background: transparent !important;
@@ -167,41 +168,52 @@
   .built-by-tooltip-inner {
     position: relative;
     z-index: 1;
-    display: block;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.375rem;
     border-radius: calc(1rem - 1px);
     background: #06181e;
     padding: 0.625rem 1rem;
     color: rgba(255, 255, 255, 0.92);
-    box-shadow:
-      0 20px 50px -16px rgba(0, 0, 0, 0.55),
-      0 0 0 1px rgba(157, 214, 208, 0.1);
+    box-shadow: 0 20px 50px -16px rgba(0, 0, 0, 0.55);
   }
 
   .built-by-tooltip::before {
     content: "";
     position: absolute;
-    inset: -1px;
-    z-index: -1;
+    inset: 0;
+    z-index: 0;
     border-radius: inherit;
-    background: conic-gradient(
-      from 0deg,
-      transparent 0deg,
-      transparent 250deg,
-      rgba(157, 214, 208, 0.35) 285deg,
-      #9dd6d0 315deg,
-      #ffffff 340deg,
-      #9dd6d0 20deg,
-      rgba(157, 214, 208, 0.35) 55deg,
-      transparent 90deg
+    padding: 1px;
+    background: linear-gradient(
+      90deg,
+      rgba(157, 214, 208, 0.18) 0%,
+      rgba(157, 214, 208, 0.18) 32%,
+      rgba(157, 214, 208, 0.85) 46%,
+      #9dd6d0 50%,
+      rgba(157, 214, 208, 0.85) 54%,
+      rgba(157, 214, 208, 0.18) 68%,
+      rgba(157, 214, 208, 0.18) 100%
     );
-    animation: tooltip-outline-spin 3.5s linear infinite;
+    background-size: 220% 100%;
+    animation: tooltip-border-sweep 2s linear infinite;
+    -webkit-mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+    pointer-events: none;
   }
 
   .built-by-tooltip::after {
     content: "";
     position: absolute;
     inset: 1px;
-    z-index: -1;
+    z-index: 0;
     border-radius: calc(1rem - 1px);
     background: #06181e;
   }
@@ -210,6 +222,7 @@
     .built-by-tooltip::before {
       animation: none;
       background: rgba(157, 214, 208, 0.35);
+      background-size: 100% 100%;
     }
   }
 }
@@ -239,12 +252,12 @@
   }
 }
 
-@keyframes tooltip-outline-spin {
+@keyframes tooltip-border-sweep {
   0% {
-    transform: rotate(0deg);
+    background-position: 200% 0;
   }
   100% {
-    transform: rotate(360deg);
+    background-position: -200% 0;
   }
 }
 
