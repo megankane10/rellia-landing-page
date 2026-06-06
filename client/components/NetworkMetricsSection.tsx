@@ -3,7 +3,7 @@ import { Globe, Rocket, Users, type LucideIcon } from "lucide-react"
 import { useEffect, useMemo, useRef, useState } from "react"
 import { cn } from "@/lib/utils"
 import { relliaTealGlassCardClass } from "@/lib/relliaTealGlassCard"
-import PillTag from "@/components/PillTag"
+import PillTag, { PILL_ON_IMAGE_BLUR_CLASS } from "@/components/PillTag"
 import { PAGE_HEADER_TITLE_SIZE_CLASS } from "@/components/PageHeader"
 
 function useCountUp(target: number, enabled: boolean, durationMs = 1200) {
@@ -211,7 +211,7 @@ export default function NetworkMetricsSection({ heading, subheading, metrics }: 
               <div className="mb-4 md:mb-6">
                 <PillTag
                   label="Network impact"
-                  className="border-white/35 bg-transparent shadow-none backdrop-blur-2xl"
+                  className={PILL_ON_IMAGE_BLUR_CLASS}
                   dot={
                     <motion.span
                       aria-hidden

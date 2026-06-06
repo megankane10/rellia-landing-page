@@ -15,7 +15,7 @@ import { CmsModularSingletonPage } from '@/components/cms/CmsModularSingletonPag
 import { useDiagnosticLandingPage } from '@/hooks/useCmsDocuments';
 import { useApplyCmsSeo } from '@/hooks/useApplyCmsSeo';
 import { RoleHero } from "./network/_shared";
-import PillTag from "@/components/PillTag";
+import PillTag, { PILL_ON_IMAGE_BLUR_CLASS } from "@/components/PillTag";
 import { cn } from '@/lib/utils';
 import { PAGE_HEADER_TITLE_SIZE_CLASS } from '@/components/PageHeader';
 import type { HomeWhyFeature } from "@shared/cms/types";
@@ -82,14 +82,14 @@ export default function DiagnosticLanding() {
 
       <div className="lg:flex lg:h-[82vh] lg:flex-col">
         <RoleHero
-          eyebrowLabel="Startup Diagnostic"
+          eyebrowLabel="Readiness tool"
           imageSrc="/images/diagnostics-hero.jpg"
           className="lg:flex-1"
           titleClassName="max-w-5xl"
           subtitleClassName="max-w-3xl"
           title={
             <>
-              How ready is your <span className="text-rellia-mint">startup, really?</span>
+              Benchmark your startup across <span className="text-rellia-mint">12 critical domains</span>
             </>
           }
           subtitle={
@@ -107,7 +107,7 @@ export default function DiagnosticLanding() {
                     key={item.label}
                     label={item.label}
                     dot={<item.icon className="h-3.5 w-3.5 text-rellia-mint shrink-0" />}
-                    className="border-white/20 bg-white/10"
+                    className={PILL_ON_IMAGE_BLUR_CLASS}
                   />
                 ))}
               </div>

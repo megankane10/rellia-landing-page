@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { PAGE_HEADER_TITLE_SIZE_CLASS } from "@/components/PageHeader";
 import NetworkEyebrow from "@/components/network/NetworkEyebrow";
+import { PILL_ON_IMAGE_BLUR_CLASS } from "@/components/PillTag";
 import SectionHeading from "@/components/SectionHeading";
 import MembershipPathTimeline from "@/components/MembershipPathTimeline";
 import Navbar from "@/components/Navbar";
@@ -790,7 +791,7 @@ function ExploreNetworkSection() {
                       aria-hidden
                       className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 via-40% to-transparent"
                     />
-                    <div className="absolute right-4 top-4 inline-flex items-center gap-2 rounded-full bg-black/35 px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-white/90 backdrop-blur-md border border-white/10">
+                    <div className={cn("absolute right-4 top-4 inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-white/90", PILL_ON_IMAGE_BLUR_CLASS)}>
                       <TagIcon className="h-3.5 w-3.5 shrink-0" aria-hidden />
                       {card.roleId === "founder" ? "Alumni" : tag.label}
                     </div>

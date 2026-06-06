@@ -11,6 +11,7 @@ import ScrollReveal from "@/components/ScrollReveal"
 import { useHomePage } from "@/hooks/useCmsDocuments"
 import type { HomePathsCard } from "@shared/cms/types"
 import NetworkMetricsSection from "@/components/NetworkMetricsSection"
+import { PILL_ON_IMAGE_BLUR_CLASS } from "@/components/PillTag"
 
 /** Layered soft blurs — disabled for solid white section background */
 const BrandBlurField = () => null
@@ -227,7 +228,7 @@ export default function PathsSection() {
                       aria-hidden
                       className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/95 via-black/60 via-40% to-transparent"
                     />
-                    <div className="absolute right-3 top-3 inline-flex items-center gap-2 rounded-full bg-black/35 px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-white/95 backdrop-blur-md ring-1 ring-white/10 sm:right-4 sm:top-4">
+                    <div className={cn("absolute right-3 top-3 inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-white/95 sm:right-4 sm:top-4", PILL_ON_IMAGE_BLUR_CLASS)}>
                       <Icon className="h-3.5 w-3.5 shrink-0" aria-hidden />
                       {card.tagLabel}
                     </div>

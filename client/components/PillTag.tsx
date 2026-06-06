@@ -1,6 +1,10 @@
 import type { ReactNode } from "react"
 import { cn } from "@/lib/utils"
 
+/** Transparent blur pill for badges over photography (matches NetworkMetricsSection). */
+export const PILL_ON_IMAGE_BLUR_CLASS =
+  "border-white/35 bg-transparent shadow-none backdrop-blur-2xl"
+
 type PillTagProps = {
   label: string
   dot?: ReactNode

@@ -6,7 +6,7 @@ import { Heart, Stethoscope, Globe, Zap, type LucideIcon } from "lucide-react";
 import { IconFeatureCard } from "@/components/cards/IconFeatureCard";
 import { TeamMemberCard } from "@/components/cards/TeamMemberCard";
 import PageHeader, { PAGE_HEADER_TITLE_SIZE_CLASS } from "@/components/PageHeader"
-import PillTag from "@/components/PillTag"
+import PillTag, { PILL_ON_IMAGE_BLUR_CLASS } from "@/components/PillTag"
 import { useAboutPage } from "@/hooks/useCmsDocuments";
 import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo";
 import { DEFAULT_ABOUT_PAGE } from "@shared/cms/defaults";
@@ -144,7 +144,7 @@ export default function About() {
               <div className="flex flex-col items-start text-left mt-8 md:mt-10 lg:mt-24">
                 <ScrollReveal>
                   <div className="mb-7 md:mb-8">
-                    <PillTag label="OUR VALUES" />
+                    <PillTag label="OUR VALUES" className={PILL_ON_IMAGE_BLUR_CLASS} />
                   </div>
                   <h2
                     className={`font-host-grotesk font-bold leading-tight tracking-tight text-white max-w-4xl ${PAGE_HEADER_TITLE_SIZE_CLASS}`}

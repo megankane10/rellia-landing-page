@@ -1,13 +1,13 @@
 import type { ReactNode } from "react"
 import { motion, useReducedMotion } from "framer-motion"
-import PillTag from "@/components/PillTag"
+import PillTag, { PILL_ON_IMAGE_BLUR_CLASS } from "@/components/PillTag"
 import { cn } from "@/lib/utils"
 
 type NetworkEyebrowTone = "onDark" | "onLight"
 
 /**
  * Matches “Network impact” pill styling from {@link NetworkMetricsSection}
- * — frosted capsule + mint dot (not the teal SectionPillBadge).
+ * — transparent blur capsule + mint dot (not the teal SectionPillBadge).
  */
 export default function NetworkEyebrow({
   label,
@@ -43,7 +43,7 @@ export default function NetworkEyebrow({
       dot={dot}
       className={cn(
         tone === "onDark"
-          ? "border-white/30 bg-white/15 shadow-sm backdrop-blur-xl"
+          ? PILL_ON_IMAGE_BLUR_CLASS
           : "border-rellia-teal/20 bg-white/70 shadow-sm backdrop-blur-lg",
         className,
       )}

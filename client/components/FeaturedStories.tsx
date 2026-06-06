@@ -7,7 +7,7 @@ import { getFeaturedStories } from "@/content/stories"
 import { AnimatePresence, motion } from "framer-motion"
 import { useEffect, useMemo, useState } from "react"
 import SectionHeading from "@/components/SectionHeading"
-import PillTag from "@/components/PillTag"
+import PillTag, { PILL_ON_IMAGE_BLUR_CLASS } from "@/components/PillTag"
 import { useFeaturedStories } from "@/hooks/useCmsDocuments"
 import { allowCmsSeedFallbacks } from "@/lib/deploymentEnv"
 import { isSanityConfigured } from "@/lib/sanity"
@@ -149,6 +149,7 @@ export default function FeaturedStories({
                         <div className="mb-5">
                           <PillTag
                             label={activeStory.tag}
+                            className={PILL_ON_IMAGE_BLUR_CLASS}
                             dot={<span className="h-2 w-2 shrink-0 rounded-full bg-rellia-mint" aria-hidden />}
                           />
                         </div>
