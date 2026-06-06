@@ -292,7 +292,7 @@ const css = `
 
 @media print {
   @page {
-    margin: 0.55cm 0.75cm;
+    margin: 0.35cm 0.75cm 0.55cm;
     size: letter;
   }
 
@@ -329,13 +329,13 @@ const css = `
     justify-content: space-between;
     gap: 0.75rem;
     border-bottom: 1.5px solid #0d3540;
-    padding-bottom: 0.35rem;
-    margin-bottom: 0.3rem;
+    padding-bottom: 0.25rem;
+    margin-bottom: 0.2rem;
     page-break-after: avoid;
   }
 
   .diagnostic-print-letterhead img {
-    height: 26px;
+    height: 38px;
     width: auto;
     object-fit: contain;
   }
@@ -360,7 +360,8 @@ const css = `
   .diagnostic-report-header {
     border-bottom: none;
     padding-bottom: 0;
-    margin-bottom: 0.25rem;
+    margin-bottom: 0.15rem;
+    margin-top: 0;
     page-break-after: avoid;
   }
 
@@ -457,9 +458,58 @@ const css = `
   }
 
   .diagnostic-report .diagnostic-breakdown-grid {
-    display: grid !important;
-    grid-template-columns: repeat(4, 1fr) !important;
-    gap: 0.25rem !important;
+    display: none !important;
+  }
+
+  .diagnostic-breakdown-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 8pt;
+    page-break-inside: avoid;
+  }
+
+  .diagnostic-breakdown-table th,
+  .diagnostic-breakdown-table td {
+    border: 1px solid #ccc;
+    padding: 0.25rem 0.35rem;
+    text-align: left;
+    vertical-align: middle;
+  }
+
+  .diagnostic-breakdown-table th {
+    background: #f5f5f5;
+    color: #0d3540 !important;
+    font-size: 7.5pt;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .diagnostic-breakdown-table td:last-child {
+    width: 3.5rem;
+    text-align: center;
+    font-weight: 700;
+  }
+
+  .diagnostic-print-breakdown-section {
+    page-break-after: always;
+    margin-bottom: 0 !important;
+  }
+
+  .diagnostic-print-page-two {
+    page-break-before: always;
+    padding-top: 0.15rem;
+  }
+
+  .diagnostic-print-page-two > section,
+  .diagnostic-print-page-two > .diagnostic-print-programs {
+    margin-bottom: 0.65rem !important;
+    page-break-inside: avoid;
+  }
+
+  .diagnostic-print-page-two .diagnostic-roadmap-block,
+  .diagnostic-print-page-two .diagnostic-membership-print {
+    margin-bottom: 0.55rem !important;
   }
 
   .diagnostic-report .diagnostic-breakdown-item {
@@ -1053,10 +1103,10 @@ export default function DiagnosticSurvey() {
         description="Assess your health tech startup across 12 domains and get a personalized advisory board and program roadmap."
       />
 
-      <div className="relative flex min-h-[calc(100vh-72px)] md:min-h-[calc(100vh-86px)]">
+      <div className="relative flex min-h-[calc(100vh-72px)] pb-24 md:min-h-[calc(100vh-86px)] md:pb-28">
         {/* ── DESKTOP SIDEBAR ── */}
-        <aside className="diagnostic-screen-only sticky top-[86px] hidden h-[calc(100vh-86px)] w-72 flex-col border-r border-rellia-teal/10 bg-white/50 backdrop-blur-md lg:flex rounded-b-3xl">
-          <div className="flex flex-col gap-6 p-6">
+        <aside className="diagnostic-screen-only sticky top-[86px] hidden max-h-[calc(100vh-86px-7rem)] w-72 flex-col overflow-y-auto border-r border-rellia-teal/10 bg-white/50 backdrop-blur-md lg:flex rounded-b-3xl">
+          <div className="flex flex-col gap-6 p-6 pb-8">
             <div className="space-y-2">
               <div className="flex justify-between text-[10px] font-bold uppercase tracking-widest text-rellia-teal/50">
                 <span>Progress</span>
@@ -1917,11 +1967,11 @@ export default function DiagnosticSurvey() {
                     </section>
 
                     {/* Full readiness breakdown (Detailed Assessment) */}
-                    <section className="space-y-4">
+                    <section className="diagnostic-print-breakdown-section space-y-4">
                       <h2 className="text-xs font-bold uppercase tracking-widest text-rellia-teal">
                         {surveyCms?.reportFullBreakdownTitle || DEFAULT_REPORT_FULL_BREAKDOWN_TITLE}
                       </h2>
-                      <div className="diagnostic-breakdown-grid grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                      <div className="diagnostic-screen-only diagnostic-breakdown-grid grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                         {sections.map((s) => {
                           const sc = getSectionScore(s.id, answers, sections) ?? 0;
                           return (
@@ -1947,8 +1997,28 @@ export default function DiagnosticSurvey() {
                           );
                         })}
                       </div>
+                      <table className="diagnostic-print-only diagnostic-breakdown-table">
+                        <thead>
+                          <tr>
+                            <th scope="col">Domain</th>
+                            <th scope="col">Score</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {sections.map((s) => {
+                            const sc = getSectionScore(s.id, answers, sections) ?? 0
+                            return (
+                              <tr key={s.id}>
+                                <td>{s.title}</td>
+                                <td>{sc}%</td>
+                              </tr>
+                            )
+                          })}
+                        </tbody>
+                      </table>
                     </section>
 
+                    <div className="diagnostic-print-page-two space-y-12">
                     {/* Roadmap + Program Matches */}
                     <section className="grid gap-6 md:grid-cols-2 items-stretch">
                       {/* Roadmap action block */}
@@ -2160,6 +2230,7 @@ export default function DiagnosticSurvey() {
                         <a href="https://www.relliahealth.com/apply">relliahealth.com/apply</a>
                       </p>
                     </section>
+                    </div>
 
                     <div className="diagnostic-print-only diagnostic-print-footer">
                       Rellia Health · Startup Diagnostic · Generated {reportDate} · relliahealth.com
@@ -2185,7 +2256,7 @@ export default function DiagnosticSurvey() {
         </main>
       </div>
 
-      <div className="diagnostic-screen-only">
+      <div className="diagnostic-screen-only mt-10 md:mt-12">
         <Footer />
       </div>
     </div>

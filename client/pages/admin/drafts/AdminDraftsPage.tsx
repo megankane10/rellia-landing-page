@@ -5,6 +5,7 @@ import { ExternalLink, FileEdit } from "lucide-react"
 import { useAuth } from "@/context/AuthContext"
 import type { AdminSanityDataset } from "@shared/cms/sanityEnv"
 import AdminPageHeader from "@/components/admin/AdminPageHeader"
+import AdminDownloadCsvButton from "@/components/admin/AdminDownloadCsvButton"
 import AdminContentQueueList from "@/components/admin/AdminContentQueueList"
 import AdminCompactEmptyState from "@/components/admin/AdminCompactEmptyState"
 import { Button } from "@/components/ui/button"
@@ -74,12 +75,25 @@ const AdminDraftsPage = () => {
       <AdminPageHeader
         title="Sanity Drafts"
         actions={
-          <Button type="button" variant="outline" size="sm" asChild className="rounded-full">
-            <a href="https://relliahealth.sanity.studio" target="_blank" rel="noopener noreferrer">
-              Open Studio
-              <ExternalLink className="ml-1.5 h-3.5 w-3.5" aria-hidden />
-            </a>
-          </Button>
+          <>
+            <AdminDownloadCsvButton
+              filename={`rellia-sanity-drafts-${dataset}`}
+              rows={filteredRows}
+              columns={[
+                { header: "Title", value: (row) => row.title ?? row._id },
+                { header: "Type", value: (row) => formatCmsDocumentTypeLabel(row._type) },
+                { header: "Document ID", value: (row) => row._id },
+                { header: "Updated", value: (row) => row._updatedAt ?? "" },
+                { header: "Status", value: (row) => row.status },
+              ]}
+            />
+            <Button type="button" variant="outline" size="sm" asChild className="rounded-full">
+              <a href="https://relliahealth.sanity.studio" target="_blank" rel="noopener noreferrer">
+                Open Studio
+                <ExternalLink className="ml-1.5 h-3.5 w-3.5" aria-hidden />
+              </a>
+            </Button>
+          </>
         }
       />
 

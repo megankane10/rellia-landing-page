@@ -4,6 +4,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { Inbox, Search, Stethoscope } from "lucide-react"
 import { supabase } from "@/lib/supabase"
 import AdminPageHeader from "@/components/admin/AdminPageHeader"
+import AdminDownloadCsvButton from "@/components/admin/AdminDownloadCsvButton"
 import AdminRecordList from "@/components/admin/AdminRecordList"
 import AdminSubmissionStatusFilter from "@/components/admin/AdminSubmissionStatusFilter"
 import AdminSubmissionStatusSelect from "@/components/admin/AdminSubmissionStatusSelect"
@@ -465,6 +466,35 @@ const AdminInboxPage = () => {
     <div>
       <AdminPageHeader
         title="Inbox"
+        actions={
+          tab === "contact" ? (
+            <AdminDownloadCsvButton
+              filename="rellia-contact-submissions"
+              rows={filteredContactRows}
+              columns={[
+                { header: "Name", value: (row) => contactDisplayName(row) },
+                { header: "Type", value: (row) => contactTypeLabel(row) },
+                { header: "Email", value: (row) => row.email },
+                { header: "Company", value: (row) => row.company ?? "" },
+                { header: "Received", value: (row) => formatAdminDate(row.created_at) },
+                { header: "Status", value: (row) => row.status ?? "New" },
+              ]}
+            />
+          ) : (
+            <AdminDownloadCsvButton
+              filename="rellia-diagnostic-submissions"
+              rows={filteredDiagnosticRows}
+              columns={[
+                { header: "Founder", value: (row) => row.name },
+                { header: "Company", value: (row) => row.company_name },
+                { header: "Email", value: (row) => row.work_email },
+                { header: "Stage", value: (row) => row.stage ?? "" },
+                { header: "Received", value: (row) => formatAdminDate(row.created_at) },
+                { header: "Status", value: (row) => row.status ?? "New" },
+              ]}
+            />
+          )
+        }
       />
 
       {!statusWritesEnabled ? (

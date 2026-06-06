@@ -5,6 +5,7 @@ import { ExternalLink, Key, ShieldCheck, UserPlus, Users } from "lucide-react"
 import { useAuth } from "@/context/AuthContext"
 import { fetchAdminTeam } from "@/lib/adminApi"
 import AdminPageHeader from "@/components/admin/AdminPageHeader"
+import AdminDownloadCsvButton from "@/components/admin/AdminDownloadCsvButton"
 import AdminRecordList from "@/components/admin/AdminRecordList"
 import AdminCompactEmptyState from "@/components/admin/AdminCompactEmptyState"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -171,12 +172,31 @@ const AdminTeamPage = () => {
       <AdminPageHeader
         title="Team"
         actions={
-          <Button type="button" variant="outline" size="sm" asChild className="rounded-full">
-            <a href={SUPABASE_AUTH_USERS_URL} target="_blank" rel="noopener noreferrer">
-              Invite in Supabase
-              <ExternalLink className="ml-1.5 h-3.5 w-3.5" aria-hidden />
-            </a>
-          </Button>
+          <>
+            <AdminDownloadCsvButton
+              filename="rellia-admin-team"
+              rows={users}
+              columns={[
+                { header: "Name", value: (member) => member.fullName?.trim() || "" },
+                { header: "Email", value: (member) => member.email },
+                { header: "Joined", value: (member) => formatAdminDate(member.createdAt) },
+                {
+                  header: "Status",
+                  value: (member) => (member.confirmedAt ? "Active" : "Invite pending"),
+                },
+                {
+                  header: "Last sign-in",
+                  value: (member) => (member.lastSignInAt ? formatAdminDate(member.lastSignInAt) : ""),
+                },
+              ]}
+            />
+            <Button type="button" variant="outline" size="sm" asChild className="rounded-full">
+              <a href={SUPABASE_AUTH_USERS_URL} target="_blank" rel="noopener noreferrer">
+                Invite in Supabase
+                <ExternalLink className="ml-1.5 h-3.5 w-3.5" aria-hidden />
+              </a>
+            </Button>
+          </>
         }
       />
 

@@ -1306,6 +1306,12 @@ const isSubjectOption = (o: unknown): o is ContactSubjectOption =>
   typeof (o as ContactSubjectOption).value === "string" &&
   typeof (o as ContactSubjectOption).label === "string"
 
+export const DEFAULT_THEME_COLORS = {
+  primary: "#0D3540",
+  secondary: "#EEF2F2",
+  accent: "#9DD6D0",
+} as const
+
 export const DEFAULT_GLOBAL_SETTINGS: GlobalSettingsContent = {
   footerTagline:
     "Rellia connects promising digital health founders with industry experts, clinicians, and engaged investors.",

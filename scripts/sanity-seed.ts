@@ -8,6 +8,7 @@ import {
   DEFAULT_CONTACT_PAGE,
   DEFAULT_FAQ_PAGE,
   DEFAULT_GLOBAL_SETTINGS,
+  DEFAULT_THEME_COLORS,
   DEFAULT_HOME_PAGE,
   DEFAULT_NOT_FOUND,
   DEFAULT_APPLY_PAGE,
@@ -1006,7 +1007,10 @@ async function main() {
     "report-membership-cta-image.jpg"
   )
   const reportMembershipCtaImageValue = toSanityImageFieldValue(reportMembershipCtaImageId)
-
+  const logoLightAssetId = await resolveImageAssetId(client, "/images/logo-rellia-footer.webp")
+  const logoDarkAssetId = await resolveImageAssetId(client, "/images/logo-rellia-filled.webp")
+  const logoLightValue = toSanityImageFieldValue(logoLightAssetId)
+  const logoDarkValue = toSanityImageFieldValue(logoDarkAssetId)
 
   // Clear existing directory docs so seed is the source of truth.
   // These docs were originally created in Studio with random IDs, so deterministic seeding
@@ -1027,6 +1031,7 @@ async function main() {
       _id: "globalSettings",
       _type: "globalSettings",
       ...DEFAULT_GLOBAL_SETTINGS,
+      themeColors: DEFAULT_THEME_COLORS,
       priorityModalEnabled: true,
       priorityModalHeading: "This is what our priority dialog looks like.",
       priorityModalBody: "Enter your details below to see how form submissions work in this dialog.",
@@ -1482,7 +1487,7 @@ async function main() {
     },
   })
 
-  // Site settings singleton exists in desk; seed minimal safe defaults
+  // Site settings singleton exists in desk; seed text fields + logos when assets exist locally
   const siteDefaultSeo = seoForRoute("/")
   mutations.push({
     createOrReplace: {
@@ -1490,8 +1495,24 @@ async function main() {
       _type: "siteSettings",
       brandName: "Rellia Health",
       faviconPath: "/favicon.ico",
-      lookerStudioEmbedUrl:
-        "https://datastudio.google.com/embed/reporting/694548a7-7a81-4328-8519-b655996dc800/page/FvRzF",
+      logoLight: logoLightValue,
+      logoDark: logoDarkValue,
+      socialLinks: [
+        {
+          _type: "socialLink",
+          _key: "linkedin",
+          platform: "linkedin",
+          label: "Rellia on LinkedIn",
+          url: "https://www.linkedin.com/company/relliahealth",
+        },
+        {
+          _type: "socialLink",
+          _key: "instagram",
+          platform: "instagram",
+          label: "Rellia on Instagram",
+          url: "https://www.instagram.com/relliahealth/",
+        },
+      ],
       defaultSeo: siteDefaultSeo
         ? {
             title: siteDefaultSeo.title ?? siteDefaultSeo.metaTitle,
