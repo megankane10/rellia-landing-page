@@ -259,7 +259,7 @@ export const PriorityAnnouncementModal = ({
                   </form>
                 ) : null}
 
-                {showPrimary || showSecondary ? (
+                {(!formEnabled && (showPrimary || showSecondary)) ? (
                   <div className="mt-6 flex flex-col gap-3 w-full">
                     {showPrimary ? (
                       <CmsCtaLink

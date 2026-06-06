@@ -100,51 +100,60 @@
   }
 
   .built-by-credit {
-    @apply inline-flex font-urbanist text-[13px] font-normal leading-snug text-white/60 transition-colors duration-300 md:text-sm;
+    @apply inline-flex font-urbanist text-[13px] font-normal leading-snug text-white/55 transition-colors duration-300 md:text-sm;
   }
 
-  .built-by-credit:hover,
-  .built-by-credit:focus-visible {
-    @apply text-white/80;
+  .built-by-credit:hover .built-by-name,
+  .built-by-credit:focus-visible .built-by-name {
+    opacity: 0.95;
   }
 
   .built-by-credit-label {
     @apply inline-flex items-baseline gap-1;
-    background: linear-gradient(
-      90deg,
-      rgba(255, 255, 255, 0.45) 0%,
-      rgba(157, 214, 208, 0.95) 40%,
-      rgba(255, 255, 255, 0.95) 50%,
-      rgba(157, 214, 208, 0.95) 60%,
-      rgba(255, 255, 255, 0.45) 100%
-    );
+    color: rgba(255, 255, 255, 0.55);
     background-size: 220% auto;
     -webkit-background-clip: text;
     background-clip: text;
+    transition: color 0.35s ease;
+  }
+
+  .built-by-credit:hover .built-by-credit-label,
+  .built-by-credit:focus-visible .built-by-credit-label {
+    background-image: linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.55) 0%,
+      rgba(157, 214, 208, 0.95) 40%,
+      rgba(255, 255, 255, 0.95) 50%,
+      rgba(157, 214, 208, 0.95) 60%,
+      rgba(255, 255, 255, 0.55) 100%
+    );
     color: transparent;
-    animation: glow-sweep 3s ease-in-out infinite;
+    animation: glow-sweep 2.2s linear infinite;
   }
 
   /* Safdar is bolder so it fills more stroke area and appears brighter through the gradient */
   .built-by-name {
-    font-weight: 600;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.85);
+    transition: color 0.35s ease, opacity 0.35s ease;
+  }
+
+  .built-by-credit:hover .built-by-name,
+  .built-by-credit:focus-visible .built-by-name {
+    color: inherit;
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .built-by-credit-label {
+    .built-by-credit:hover .built-by-credit-label {
       animation: none;
       background: none;
-      color: rgba(255, 255, 255, 0.60);
-    }
-    .built-by-name {
-      color: #9dd6d0;
+      color: rgba(255, 255, 255, 0.80);
     }
   }
 
   .built-by-tooltip {
     position: relative;
     isolation: isolate;
-    overflow: hidden;
     max-width: 240px;
     border: none !important;
     border-radius: 1rem;
@@ -157,7 +166,7 @@
     line-height: 1.375;
     color: rgba(255, 255, 255, 0.92);
     box-shadow: none !important;
-    overflow: hidden;
+    overflow: visible !important;
   }
 
   .built-by-tooltip-inner {
@@ -177,21 +186,21 @@
   .built-by-tooltip::before {
     content: "";
     position: absolute;
-    inset: 0;
+    inset: -1px;
     z-index: 0;
-    border-radius: inherit;
+    border-radius: 1.05rem;
     padding: 1px;
-    /* Same linear sweep as the text — clean and synced */
+    /* Same linear sweep as the text — clean and synced, with a neat drop shadow glow filter on the border */
     background: linear-gradient(
       90deg,
-      rgba(157, 214, 208, 0) 0%,
-      rgba(157, 214, 208, 0.6) 35%,
-      rgba(200, 240, 238, 0.95) 50%,
-      rgba(157, 214, 208, 0.6) 65%,
-      rgba(157, 214, 208, 0) 100%
+      rgba(157, 214, 208, 0.05) 0%,
+      rgba(157, 214, 208, 0.7) 35%,
+      rgba(200, 240, 238, 0.98) 50%,
+      rgba(157, 214, 208, 0.7) 65%,
+      rgba(157, 214, 208, 0.05) 100%
     );
     background-size: 220% 100%;
-    animation: glow-sweep 3s ease-in-out infinite;
+    animation: glow-sweep 2.2s linear infinite;
     -webkit-mask:
       linear-gradient(#fff 0 0) content-box,
       linear-gradient(#fff 0 0);
@@ -201,21 +210,13 @@
       linear-gradient(#fff 0 0);
     mask-composite: exclude;
     pointer-events: none;
-  }
-
-  .built-by-tooltip::after {
-    content: "";
-    position: absolute;
-    inset: 1px;
-    z-index: 0;
-    border-radius: calc(1rem - 1px);
-    background: #06181e;
+    filter: drop-shadow(0 0 6px rgba(157, 214, 208, 0.6));
   }
 
   @media (prefers-reduced-motion: reduce) {
     .built-by-tooltip::before {
       animation: none;
-      background: rgba(157, 214, 208, 0.35);
+      background: rgba(157, 214, 208, 0.45);
       background-size: 100% 100%;
     }
   }

@@ -247,9 +247,21 @@ export default function Navbar({
   const PRIORITY_MODAL_DISMISSED_SESSION_KEY = "rellia-priority-modal-dismissed-session"
   const PRIORITY_MODAL_DELAY_MS = 3_000
   const ANNOUNCEMENT_DELAY_MS = 4_000
-  const [announcementDismissed, setAnnouncementDismissed] = useState(false)
 
-  const [priorityModalDismissed, setPriorityModalDismissed] = useState(false)
+  const [announcementDismissed, setAnnouncementDismissed] = useState(() => {
+    if (typeof window !== "undefined") {
+      return sessionStorage.getItem(ANNOUNCEMENT_DISMISSED_SESSION_KEY) === "true"
+    }
+    return false
+  })
+
+  const [priorityModalDismissed, setPriorityModalDismissed] = useState(() => {
+    if (typeof window !== "undefined") {
+      return sessionStorage.getItem(PRIORITY_MODAL_DISMISSED_SESSION_KEY) === "true"
+    }
+    return false
+  })
+
   const [announcementDelayElapsed, setAnnouncementDelayElapsed] = useState(false)
   const [priorityModalDelayElapsed, setPriorityModalDelayElapsed] = useState(false)
   const location = useLocation()
@@ -260,10 +272,11 @@ export default function Navbar({
     globalSettings.priorityModalEnabled === true &&
     Boolean(globalSettings.priorityModalHeading?.trim())
 
-  // If the priority modal is configured, the announcement never shows for this visit
+  // If the priority modal is configured AND active, the announcement never shows for this visit
   const priorityModalConfigured =
     globalSettings.priorityModalEnabled === true &&
-    Boolean(globalSettings.priorityModalHeading?.trim())
+    Boolean(globalSettings.priorityModalHeading?.trim()) &&
+    !priorityModalDismissed
 
   const announcementEligible =
     !hideAnnouncement &&
@@ -449,11 +462,17 @@ export default function Navbar({
   const handleAnnouncementDismiss = () => {
     setAnnouncementDismissed(true)
     setAnnouncementDelayElapsed(false)
+    if (typeof window !== "undefined") {
+      sessionStorage.setItem(ANNOUNCEMENT_DISMISSED_SESSION_KEY, "true")
+    }
   }
 
   const handlePriorityModalDismiss = () => {
     setPriorityModalDismissed(true)
     setPriorityModalDelayElapsed(false)
+    if (typeof window !== "undefined") {
+      sessionStorage.setItem(PRIORITY_MODAL_DISMISSED_SESSION_KEY, "true")
+    }
   }
 
   const handleAnnouncementOpenChange = (next: boolean) => {
