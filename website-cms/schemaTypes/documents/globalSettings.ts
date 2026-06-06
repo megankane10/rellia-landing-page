@@ -14,7 +14,7 @@ export const globalSettings = defineType({
   fieldsets: [
     {
       name: 'announcementGroup',
-      title: 'Bottom Popup (Announcement Dialogue)',
+      title: 'Bottom Popup (Announcement / Promotional Message)',
       options: {collapsible: true, collapsed: false},
     },
     {
@@ -70,7 +70,7 @@ export const globalSettings = defineType({
       title: 'Enable bottom popup',
       type: 'boolean',
       description:
-        'When on, the bottom popup shows after ~4 seconds if popup message text is set below. Turn off to hide the popup even when message text exists. Visitors who dismiss it will not see it again until they clear site data / use a new browser session.',
+        'When on, the bottom popup shows after ~4 seconds if popup message text is set below. Used for announcements, promotional messages, or short alerts. Turn off to hide the popup even when message text exists. Visitors who dismiss it will not see it again until they clear site data / use a new browser session.',
       initialValue: false,
       group: 'popups',
       fieldset: 'announcementGroup',
@@ -80,7 +80,7 @@ export const globalSettings = defineType({
       title: 'Popup message',
       type: 'text',
       rows: 3,
-      description: 'Main message text for the bottom popup.',
+      description: 'Main message text for the bottom popup (announcements or promotional messages).',
       group: 'popups',
       fieldset: 'announcementGroup',
     }),
@@ -114,7 +114,7 @@ export const globalSettings = defineType({
       title: 'Enable priority modal',
       type: 'boolean',
       description:
-        'Shows a centered modal for high-importance messages. Takes precedence over the bottom popup until dismissed.',
+        'Shows a centered modal for high-importance messages (like newsletter signups, signup list emails, or important message alerts).',
       initialValue: false,
       group: 'popups',
       fieldset: 'priorityModalGroup',
@@ -131,6 +131,7 @@ export const globalSettings = defineType({
       title: 'Body text',
       type: 'text',
       rows: 5,
+      description: 'Subheading text for more high priority modals (e.g. newsletter signups, signup list emails, or an important message with a link to another page).',
       group: 'popups',
       fieldset: 'priorityModalGroup',
     }),
