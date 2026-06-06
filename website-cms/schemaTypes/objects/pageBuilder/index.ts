@@ -25,5 +25,6 @@ export const pageBuilder = defineType({
     defineArrayMember({type: 'sectionCardsGrid'}),
     defineArrayMember({type: 'sectionEngageBand'}),
     defineArrayMember({type: 'sectionFaq'}),
+    defineArrayMember({type: 'sectionRelliaCta'}),
   ],
 })

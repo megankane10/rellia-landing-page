@@ -1376,6 +1376,8 @@ export const DEFAULT_HOME_PAGE: HomePageContent = {
   ctaTitle: "Are you the next **Rellia Health** success story?",
   ctaButtonLabel: "Apply to Join Now",
   ctaButtonPath: "/apply",
+  ctaSecondaryButtonLabel: "Explore Programs",
+  ctaSecondaryButtonPath: "/programs",
   ctaImageUrl: "/images/cta-home-conference.webp",
   ctaImageAlt: "Man speaking at conference",
   testimonialsTitlePortable: DEFAULT_HOME_TESTIMONIALS_TITLE_PORTABLE,

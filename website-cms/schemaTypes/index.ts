@@ -69,6 +69,7 @@ import {sectionFaq} from './objects/sectionFaq'
 import {sectionMarketingHero} from './objects/sectionMarketingHero'
 import {sectionMetrics} from './objects/sectionMetrics'
 import {sectionFormEmbed} from './objects/sectionFormEmbed'
+import {sectionRelliaCta} from './objects/sectionRelliaCta'
 
 export const schemaTypes = [
   // Singletons & globals
@@ -143,4 +144,5 @@ export const schemaTypes = [
   sectionMarketingHero,
   sectionMetrics,
   sectionFormEmbed,
+  sectionRelliaCta,
 ]

@@ -168,8 +168,8 @@ export const pageBySlugQuery = `*[_type == "page" && slug.current == $slug && sl
     ...,
     "imageUrl": image.asset->url,
     "panelImageUrl": panelImage.asset->url,
-    primaryCta{ label, href, description, badge },
-    secondaryCta{ label, href, description, badge },
+    primaryCta{ label, href, description, badge, openInNewTab },
+    secondaryCta{ label, href, description, badge, openInNewTab },
     metrics[]{ label, value, suffix },
     cards[]{
       ...,
@@ -177,16 +177,29 @@ export const pageBySlugQuery = `*[_type == "page" && slug.current == $slug && sl
       cta{ label, href, description, badge }
     },
     items[]{
+      ...,
       question,
-      answer
+      answer,
+      link{ label, href, description, badge },
+      "imageUrl": image.asset->url
+    },
+    leftColumn{
+      title,
+      body,
+      steps[]{ id, label, detail, icon }
+    },
+    rightColumn{
+      title,
+      body,
+      steps[]{ id, label, detail, icon }
     }
   },
   pageBuilder[]{
     ...,
     "imageUrl": image.asset->url,
     "panelImageUrl": panelImage.asset->url,
-    primaryCta{ label, href, description, badge },
-    secondaryCta{ label, href, description, badge },
+    primaryCta{ label, href, description, badge, openInNewTab },
+    secondaryCta{ label, href, description, badge, openInNewTab },
     metrics[]{ label, value, suffix },
     cards[]{
       ...,
@@ -194,8 +207,21 @@ export const pageBySlugQuery = `*[_type == "page" && slug.current == $slug && sl
       cta{ label, href, description, badge }
     },
     items[]{
+      ...,
       question,
-      answer
+      answer,
+      link{ label, href, description, badge },
+      "imageUrl": image.asset->url
+    },
+    leftColumn{
+      title,
+      body,
+      steps[]{ id, label, detail, icon }
+    },
+    rightColumn{
+      title,
+      body,
+      steps[]{ id, label, detail, icon }
     }
   }
 }`
@@ -205,12 +231,29 @@ const pageSectionsFragment = `sections[]{
   "imageUrl": image.asset->url,
   "panelImageUrl": panelImage.asset->url,
   primaryCta{ label, href, description, badge },
-  secondaryCta{ label, href, description, badge },
+  secondaryCta{ label, href, description, badge, openInNewTab },
   metrics[]{ label, value, suffix },
   cards[]{
     ...,
     "imageUrl": image.asset->url,
     cta{ label, href, description, badge }
+  },
+  items[]{
+    ...,
+    question,
+    answer,
+    link{ label, href, description, badge },
+    "imageUrl": image.asset->url
+  },
+  leftColumn{
+    title,
+    body,
+    steps[]{ id, label, detail, icon }
+  },
+  rightColumn{
+    title,
+    body,
+    steps[]{ id, label, detail, icon }
   }
 }`
 
@@ -312,6 +355,8 @@ export const homePageQuery = `*[_type == "homePage"][0]{
   ctaTitle,
   ctaButtonLabel,
   ctaButtonPath,
+  ctaSecondaryButtonLabel,
+  ctaSecondaryButtonPath,
   "ctaImageUrl": coalesce(ctaImage.asset->url, ctaImageUrl),
   ctaImageAlt,
   testimonials[]{

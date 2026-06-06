@@ -187,12 +187,32 @@ export type CmsSectionFeatureGrid = {
   items?: CmsSectionFeatureGridItem[]
 }
 
+export type CmsCtaButton = {
+  label: string
+  href: string
+  variant?: "primary" | "secondary" | "text"
+  openInNewTab?: boolean
+}
+
+export type CmsSectionRelliaCta = {
+  _type: "sectionRelliaCta"
+  _key?: string
+  title: string
+  body?: string
+  primaryCta: CmsCtaButton
+  secondaryCta?: CmsCtaButton
+  size?: "default" | "compact"
+  primaryStyle?: "button" | "text"
+  aboveSectionTone?: "none" | "white" | "grey"
+}
+
 export type CmsSectionEngageBandItem = {
   _key?: string
   title: string
   body?: string
   icon?: string
   href?: string
+  link?: NavItem
 }
 
 export type CmsSectionEngageBand = {
@@ -224,6 +244,16 @@ export type CmsSectionJourneyTimeline = {
   rightColumnTitle?: string
   rightColumnBody?: string
   rightColumnSteps?: CmsSectionJourneyTimelineStep[]
+  leftColumn?: {
+    title?: string
+    body?: string
+    steps?: CmsSectionJourneyTimelineStep[]
+  }
+  rightColumn?: {
+    title?: string
+    body?: string
+    steps?: CmsSectionJourneyTimelineStep[]
+  }
 }
 
 export type CmsSectionDiagnosticSurvey = {
@@ -304,6 +334,7 @@ export type CmsPageSection =
   | CmsSectionJourneyTimeline
   | CmsSectionDiagnosticSurvey
   | CmsSectionFaq
+  | CmsSectionRelliaCta
 
 export type CmsPageContent = {
   title: string
@@ -382,6 +413,8 @@ export type HomePageContent = {
   ctaTitle: string
   ctaButtonLabel: string
   ctaButtonPath: string
+  ctaSecondaryButtonLabel?: string
+  ctaSecondaryButtonPath?: string
   ctaImageUrl: string
   ctaImageAlt: string
   howItWorksSectionTitle: string
