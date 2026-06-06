@@ -133,6 +133,12 @@ const AdminTeamPage = () => {
           <div className="flex items-start gap-2">
             <span className="font-bold text-rellia-teal shrink-0 mt-0.5">•</span>
             <p>
+              <strong>Add Admin Directly:</strong> You can add users directly to the dashboard from Supabase Auth by entering the admin account's name, email, and password.
+            </p>
+          </div>
+          <div className="flex items-start gap-2">
+            <span className="font-bold text-rellia-teal shrink-0 mt-0.5">•</span>
+            <p>
               <strong>Enable Signup:</strong> Alternatively, users can register themselves via <Link to="/admin/signup" className="text-rellia-teal font-semibold hover:underline">the signup page</Link>. To allow this, toggle the <code className="text-xs font-semibold text-rellia-teal bg-rellia-mint/10 px-1 py-0.5 rounded">ADMIN_SIGNUP_ENABLED</code> environment variable to <code className="text-xs font-semibold text-rellia-teal bg-rellia-mint/10 px-1 py-0.5 rounded">true</code> in Vercel settings and remember to disable it after use.
             </p>
           </div>
@@ -145,7 +151,7 @@ const AdminTeamPage = () => {
             className="flex flex-col items-center justify-center rounded-2xl border border-rellia-teal/15 bg-white p-5 text-center transition-all hover:border-rellia-teal/30 hover:bg-rellia-mint/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-teal"
           >
             <UserPlus className="h-8 w-8 text-rellia-teal mb-2" aria-hidden />
-            <span className="font-host-grotesk font-bold text-sm text-foreground">Invite Admin User</span>
+            <span className="font-host-grotesk font-bold text-sm text-foreground">Invite or Add Admin</span>
             <span className="mt-0.5 font-urbanist text-[11px] text-muted-foreground">Go to Supabase Auth</span>
           </a>
 
