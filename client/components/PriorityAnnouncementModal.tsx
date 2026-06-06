@@ -163,10 +163,14 @@ export const PriorityAnnouncementModal = ({
               exit={{ opacity: 0, y: -40, filter: "blur(12px)" }}
               transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
               className={cn(
-                "pointer-events-auto w-full max-w-[min(92vw,520px)] overflow-hidden border border-black/[0.08]",
+                "pointer-events-auto w-full overflow-hidden border border-black/[0.08]",
                 "shadow-[0_20px_50px_rgba(13,53,64,0.3)]",
                 "bg-gradient-to-r from-rellia-mint via-rellia-greyTeal to-rellia-mint",
-                "rounded-[2.25rem] md:rounded-[2.75rem]"
+                "rounded-[2.25rem] md:rounded-[2.75rem]",
+                // Wide layout if there is a form or 2 action buttons; narrower layout for 1 or 0 buttons
+                (formEnabled || (showPrimary && showSecondary))
+                  ? "max-w-[min(92vw,520px)]"
+                  : "max-w-[min(92vw,440px)]"
               )}
             >
               {imageSrc?.trim() ? (
@@ -208,12 +212,12 @@ export const PriorityAnnouncementModal = ({
                   </button>
                 </div>
 
-                <h2 id="priority-modal-title" className="font-host-grotesk text-2xl font-bold tracking-tight text-black md:text-[1.65rem] leading-tight">
+                <h2 id="priority-modal-title" className="font-host-grotesk text-2xl font-bold tracking-tight text-rellia-teal md:text-[1.65rem] leading-tight">
                   {heading}
                 </h2>
 
                 {body?.trim() ? (
-                  <p className="mt-3 font-urbanist text-base leading-relaxed text-black/70">
+                  <p className="mt-3 font-urbanist text-base leading-relaxed text-black">
                     {renderBodyWithLinks(body)}
                   </p>
                 ) : null}

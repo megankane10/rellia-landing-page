@@ -266,22 +266,21 @@ export default function Navbar({
   const [priorityModalDelayElapsed, setPriorityModalDelayElapsed] = useState(false)
   const location = useLocation()
 
+  const isAdditionsBranch =
+    typeof window !== "undefined" &&
+    (!window.location.hostname.includes("relliahealth.com") ||
+     import.meta.env.VITE_SANITY_DATASET === "preview")
+
   const priorityModalEligible =
+    isAdditionsBranch &&
     !hideAnnouncement &&
     !priorityModalDismissed &&
     globalSettings.priorityModalEnabled === true &&
     Boolean(globalSettings.priorityModalHeading?.trim())
 
-  // If the priority modal is configured AND active, the announcement never shows for this visit
-  const priorityModalConfigured =
-    globalSettings.priorityModalEnabled === true &&
-    Boolean(globalSettings.priorityModalHeading?.trim()) &&
-    !priorityModalDismissed
-
   const announcementEligible =
     !hideAnnouncement &&
     !announcementDismissed &&
-    !priorityModalConfigured &&
     Boolean(globalSettings.announcementText?.trim()) &&
     globalSettings.announcementEnabled !== false
 
