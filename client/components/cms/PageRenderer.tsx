@@ -30,6 +30,9 @@ import type {
   CmsSectionMarketingHero,
   CmsSectionMetrics,
   CmsSectionFormEmbed,
+  CmsSectionRelliaCta,
+  CmsSectionTestimonials,
+  CmsCtaButton,
   NavItem,
   SanityPortableText,
 } from "@shared/cms/types"
@@ -40,6 +43,8 @@ import * as LucideIcons from "lucide-react"
 import { ArrowRight, CalendarDays } from "lucide-react"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { FilloutStandardEmbed } from "@fillout/react"
+import RelliaCta, { ctaActionFromHref } from "@/components/RelliaCta"
+import ProgramTrustedMembersSection from "@/components/program/ProgramTrustedMembersSection"
 
 const isExternalHref = (href: string) => /^(https?:\/\/|mailto:|tel:)/i.test(href)
 
@@ -48,6 +53,22 @@ const normalizeInternalHref = (href: string) => {
   if (!trimmed) return "/"
   if (isExternalHref(trimmed)) return trimmed
   return trimmed.startsWith("/") ? trimmed : `/${trimmed}`
+}
+
+const ctaButtonToAction = (button?: CmsCtaButton | null) => {
+  const label = cmsCleanText(button?.label)
+  const href = cmsCleanText(button?.href)
+  if (!label || !href) return undefined
+  const action = ctaActionFromHref(label, href)
+  if (button?.openInNewTab) action.external = true
+  return action
+}
+
+const engageItemHref = (item: NonNullable<CmsSectionEngageBand["items"]>[number]) => {
+  const fromLink = cmsCleanText(item?.link?.href)
+  if (fromLink) return normalizeInternalHref(fromLink)
+  const fromHref = cmsCleanText(item?.href)
+  return fromHref ? normalizeInternalHref(fromHref) : "#"
 }
 
 const LucideIcon = ({ name, className }: { name?: string; className?: string }) => {
@@ -496,7 +517,7 @@ const SectionEngageBand = ({ section }: { section: CmsSectionEngageBand }) => {
             {items.map((item, idx) => (
               <Link
                 key={item._key ?? idx}
-                to={item.href || "#"}
+                to={engageItemHref(item)}
                 className="group flex h-full min-h-[168px] flex-col rounded-2xl border border-white/15 bg-white/5 p-5 backdrop-blur-md transition duration-300 hover:border-rellia-mint/40 hover:bg-white/10 cursor-pointer focus-visible:outline-none sm:min-h-[184px] sm:p-6"
               >
                 <LucideIcon name={item.icon} className="h-7 w-7 text-rellia-mint transition-transform duration-300 group-hover:scale-105" />
@@ -518,6 +539,13 @@ const SectionEngageBand = ({ section }: { section: CmsSectionEngageBand }) => {
 }
 
 const SectionJourneyTimeline = ({ section }: { section: CmsSectionJourneyTimeline }) => {
+  const leftColumnTitle = section.leftColumnTitle ?? section.leftColumn?.title
+  const leftColumnBody = section.leftColumnBody ?? section.leftColumn?.body
+  const leftColumnSteps = section.leftColumnSteps ?? section.leftColumn?.steps ?? []
+  const rightColumnTitle = section.rightColumnTitle ?? section.rightColumn?.title
+  const rightColumnBody = section.rightColumnBody ?? section.rightColumn?.body
+  const rightColumnSteps = section.rightColumnSteps ?? section.rightColumn?.steps ?? []
+
   return (
     <section className="bg-rellia-cream/20 py-14 md:py-20 px-6 md:px-10">
       <div className="mx-auto max-w-[1300px]">
@@ -531,15 +559,15 @@ const SectionJourneyTimeline = ({ section }: { section: CmsSectionJourneyTimelin
           <div className="grid grid-cols-1 gap-7 lg:grid-cols-[200px_1fr] lg:gap-12">
             <div>
               <p className="font-host-grotesk text-base font-semibold uppercase tracking-[0.14em] text-black/55">
-                {section.leftColumnTitle}
+                {leftColumnTitle}
               </p>
               <p className="mt-3 font-urbanist text-base leading-relaxed text-black/70">
-                {section.leftColumnBody}
+                {leftColumnBody}
               </p>
             </div>
 
             <div className="grid grid-cols-1 justify-items-start gap-4 sm:grid-cols-2 sm:justify-items-end sm:gap-4 xl:grid-cols-3 md:w-full">
-              {(section.leftColumnSteps ?? []).map((m) => (
+              {leftColumnSteps.map((m) => (
                 <div key={m.id} className="flex items-center gap-3 rounded-full border border-rellia-cream/80 bg-rellia-cream/35 p-2 pr-5 text-left transition duration-300 hover:border-rellia-teal/20 hover:shadow-sm md:w-full">
                   <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-rellia-teal/5 text-rellia-teal">
                     <LucideIcon name={m.icon} className="h-4.5 w-4.5" />
@@ -557,15 +585,15 @@ const SectionJourneyTimeline = ({ section }: { section: CmsSectionJourneyTimelin
           <div className="grid grid-cols-1 gap-7 lg:grid-cols-[200px_1fr] lg:gap-12">
             <div>
               <p className="font-host-grotesk text-base font-semibold uppercase tracking-[0.14em] text-rellia-teal/80">
-                {section.rightColumnTitle}
+                {rightColumnTitle}
               </p>
               <p className="mt-3 font-urbanist text-base leading-relaxed text-black/70">
-                {section.rightColumnBody}
+                {rightColumnBody}
               </p>
             </div>
 
             <div className="grid grid-cols-1 justify-items-start gap-10 sm:grid-cols-2 sm:justify-items-end sm:gap-6 xl:grid-cols-3">
-              {(section.rightColumnSteps ?? []).map((m) => (
+              {rightColumnSteps.map((m) => (
                 <div key={m.id} className="flex flex-col items-start text-left md:w-full md:max-w-[280px]">
                   <span className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-rellia-teal text-white">
                     <LucideIcon name={m.icon} className="h-5 w-5" />
@@ -627,6 +655,40 @@ const SectionDiagnosticSurvey = ({ section }: { section: CmsSectionDiagnosticSur
         </div>
       </div>
     </section>
+  )
+}
+
+const SectionTestimonials = ({ section }: { section: CmsSectionTestimonials }) => {
+  const testimonials = section.testimonials ?? []
+  if (testimonials.length === 0) return null
+  return (
+    <ProgramTrustedMembersSection
+      title={cmsCleanText(section.heading) || "Already trusted by Rellia members"}
+      testimonials={testimonials}
+    />
+  )
+}
+
+const SectionRelliaCtaBlock = ({ section }: { section: CmsSectionRelliaCta }) => {
+  const primary = ctaButtonToAction(section.primaryCta)
+  if (!primary) return null
+
+  return (
+    <RelliaCta
+      title={cmsDisplayText(section.title)}
+      body={cmsDisplayText(section.body) || undefined}
+      primary={primary}
+      secondary={ctaButtonToAction(section.secondaryCta)}
+      size={section.size ?? "default"}
+      primaryStyle={section.primaryStyle ?? "button"}
+      aboveSectionTone={
+        section.aboveSectionTone === "grey"
+          ? "grey"
+          : section.aboveSectionTone === "white"
+            ? "white"
+            : undefined
+      }
+    />
   )
 }
 
@@ -698,6 +760,10 @@ const renderSection = (section: CmsPageSection) => {
       return <SectionDiagnosticSurvey section={section} />
     case "sectionFaq":
       return <SectionFaq section={section} />
+    case "sectionRelliaCta":
+      return <SectionRelliaCtaBlock section={section} />
+    case "sectionTestimonials":
+      return <SectionTestimonials section={section} />
     default:
       return null
   }

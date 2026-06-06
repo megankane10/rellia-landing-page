@@ -17,7 +17,6 @@ export const pageBuilder = defineType({
     defineArrayMember({type: 'featuresSection'}),
     defineArrayMember({type: 'contentSection'}),
     defineArrayMember({type: 'carouselSection'}),
-    defineArrayMember({type: 'testimonialSection'}),
     // Legacy section types remain available on modular `page` documents
     defineArrayMember({type: 'sectionHero'}),
     defineArrayMember({type: 'sectionRichText'}),
@@ -25,5 +24,6 @@ export const pageBuilder = defineType({
     defineArrayMember({type: 'sectionCardsGrid'}),
     defineArrayMember({type: 'sectionEngageBand'}),
     defineArrayMember({type: 'sectionFaq'}),
+    defineArrayMember({type: 'sectionRelliaCta'}),
   ],
 })

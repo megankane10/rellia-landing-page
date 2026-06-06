@@ -26,7 +26,7 @@ const CMS: QmsProgramContent = {
   pricingSubAmount: ".00",
   pricingDescription: "Join the waitlist to be notified when Advisory Board Match opens for enrollment.",
   pricingBullets: ["Advisor matching from Rellia's network", "Equity benchmarking data", "Legal agreement templates", "Facilitated onboarding"],
-  bottomCtaTitle: "**Ready** to build your advisory board?",
+  bottomCtaTitle: "Ready to build your advisory board?",
   bottomCtaBody: "Join the waitlist and we'll let you know when the next cohort opens.",
   bottomCtaButtonLabel: "Contact",
   bottomContactHref: "/contact",

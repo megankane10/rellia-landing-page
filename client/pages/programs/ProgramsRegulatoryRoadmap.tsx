@@ -26,7 +26,7 @@ const CMS: QmsProgramContent = {
   pricingSubAmount: ".00",
   pricingDescription: "The next cohort of the Regulatory Strategy Sprint is opening soon. Secure your spot now to ensure your participation.",
   pricingBullets: ["Multi-jurisdiction classification", "Pathway selection guidance", "Intended use statement drafting", "Regulatory milestone timeline"],
-  bottomCtaTitle: "Not sure if your product needs a **regulatory pathway**?",
+  bottomCtaTitle: "Not sure if your product needs a regulatory pathway?",
   bottomCtaBody: "Many health tech products require regulatory clearance — but not all do. Reach out and we'll help you figure out where you stand.",
   bottomCtaButtonLabel: "Contact Us",
   bottomContactHref: "/contact",

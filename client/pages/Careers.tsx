@@ -538,7 +538,7 @@ export default function Careers() {
 
         <RelliaCta
           aboveSectionTone="white"
-          title="Questions before you **apply**?"
+          title="Questions before you apply?"
           body="Tell us what you are looking for—we are happy to point you to the right conversation."
           primary={{ label: "Contact Rellia", to: "/contact" }}
         />

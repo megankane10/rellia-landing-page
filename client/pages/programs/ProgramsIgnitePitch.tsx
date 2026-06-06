@@ -26,7 +26,7 @@ const CMS: QmsProgramContent = {
   pricingSubAmount: ".00",
   pricingDescription: "Join the waitlist to be the first to know when Ignite: Pitch Foundations opens for enrollment.",
   pricingBullets: ["8-week structured curriculum", "Live pitch practice sessions", "1-on-1 narrative coaching", "Investor-ready deck template"],
-  bottomCtaTitle: "**Ready** to pitch with confidence?",
+  bottomCtaTitle: "Ready to pitch with confidence?",
   bottomCtaBody: "Join the waitlist and we'll notify you as soon as the next cohort opens.",
   bottomCtaButtonLabel: "Contact",
   bottomContactHref: "/contact",

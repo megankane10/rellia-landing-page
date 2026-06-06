@@ -135,6 +135,156 @@ const main = async () => {
     }
   }
 
+  const stripMarkers = (value: unknown) =>
+    typeof value === 'string' ? value.replace(/\*\*/g, '') : value
+
+  // 4. Strip legacy ** emphasis markers from CTA title fields
+  const ctaDocs = await client.fetch<
+    Array<{_id: string; bottomCtaTitle?: string; ctaTitle?: string; bottomTitle?: string}>
+  >(
+    `*[_type in ["applyPage","homePage","faqPage","programsLandingPage","eventsLandingPage","paymentPage","careersPage","consultingPage","diagnosticLandingPage"] && (
+      defined(bottomCtaTitle) || defined(ctaTitle) || defined(bottomTitle)
+    )]{ _id, bottomCtaTitle, ctaTitle, bottomTitle }`,
+  )
+  let ctaPatches = 0
+  for (const doc of ctaDocs) {
+    const patch: Record<string, string> = {}
+    if (typeof doc.bottomCtaTitle === 'string' && doc.bottomCtaTitle.includes('**')) {
+      patch.bottomCtaTitle = stripMarkers(doc.bottomCtaTitle) as string
+    }
+    if (typeof doc.ctaTitle === 'string' && doc.ctaTitle.includes('**')) {
+      patch.ctaTitle = stripMarkers(doc.ctaTitle) as string
+    }
+    if (typeof doc.bottomTitle === 'string' && doc.bottomTitle.includes('**')) {
+      patch.bottomTitle = stripMarkers(doc.bottomTitle) as string
+    }
+    if (Object.keys(patch).length === 0) continue
+    await client.patch(doc._id).set(patch).commit()
+    ctaPatches += 1
+  }
+  console.log(`Stripped ** markers from ${ctaPatches} singleton CTA field(s).`)
+
+  const sectionDocs = await client.fetch<Array<{_id: string; sections?: Array<Record<string, unknown>>}>>(
+    `*[_type in ["page","program"] && defined(sections)]{ _id, sections }`,
+  )
+  let sectionCtaPatches = 0
+  for (const doc of sectionDocs) {
+    if (!Array.isArray(doc.sections)) continue
+    let changed = false
+    const sections = doc.sections.map((section) => {
+      if (typeof section?.title === 'string' && section.title.includes('**')) {
+        changed = true
+        return {...section, title: stripMarkers(section.title)}
+      }
+      return section
+    })
+    if (!changed) continue
+    await client.patch(doc._id).set({sections}).commit()
+    sectionCtaPatches += 1
+  }
+  if (sectionCtaPatches) {
+    console.log(`Stripped ** markers from sections on ${sectionCtaPatches} page/program doc(s).`)
+  }
+
+  // 4b. Migrate embedded careers open roles → openRole collection documents
+  const careersWithEmbeddedRoles = await client.fetch<
+    Array<{
+      _id: string
+      openRoles?: Array<{
+        roleId?: string
+        id?: string
+        title?: string
+        location?: string
+        employmentType?: string
+        description?: string
+        responsibilities?: string[]
+        linkedInApplyUrl?: string
+      }>
+    }>
+  >(`*[_type == "careersPage" && count(openRoles) > 0]{ _id, openRoles }`)
+
+  let migratedRoles = 0
+  for (const doc of careersWithEmbeddedRoles) {
+    const roles = doc.openRoles ?? []
+    for (const [index, role] of roles.entries()) {
+      const rawRoleId = role.roleId
+      const anchor = (() => {
+        if (typeof rawRoleId === 'string') return rawRoleId.trim()
+        if (
+          rawRoleId &&
+          typeof rawRoleId === 'object' &&
+          typeof (rawRoleId as {current?: string}).current === 'string'
+        ) {
+          return (rawRoleId as {current: string}).current.trim()
+        }
+        if (typeof role.id === 'string') return role.id.trim()
+        return ''
+      })()
+      if (!anchor || !role.title?.trim()) continue
+      const docId = `openRole.${anchor}`
+      await client.createOrReplace({
+        _id: docId,
+        _type: 'openRole',
+        roleId: {_type: 'slug', current: anchor},
+        title: role.title,
+        location: role.location ?? '',
+        employmentType: role.employmentType ?? '',
+        description: role.description ?? '',
+        responsibilities: role.responsibilities ?? [],
+        linkedInApplyUrl: role.linkedInApplyUrl ?? '',
+        sortOrder: index,
+      })
+      migratedRoles += 1
+    }
+    await client
+      .patch(doc._id)
+      .unset([
+        'openRoles',
+        'defaultTab',
+        'enableHiringTab',
+        'enableVolunteerTab',
+        'tabsLabelHiring',
+        'tabsLabelVolunteer',
+      ])
+      .commit()
+  }
+  if (migratedRoles) {
+    console.log(`Migrated ${migratedRoles} embedded open role(s) to openRole documents.`)
+  }
+
+  const careersLegacyTabOnly = await client.fetch<Array<{_id: string}>>(
+    `*[_type == "careersPage" && (defined(defaultTab) || defined(enableHiringTab) || defined(enableVolunteerTab) || defined(tabsLabelHiring) || defined(tabsLabelVolunteer))]{ _id }`,
+  )
+  if (careersLegacyTabOnly.length) {
+    const tx = client.transaction()
+    for (const doc of careersLegacyTabOnly) {
+      tx.patch(doc._id, {
+        unset: [
+          'defaultTab',
+          'enableHiringTab',
+          'enableVolunteerTab',
+          'tabsLabelHiring',
+          'tabsLabelVolunteer',
+        ],
+      })
+    }
+    await tx.commit()
+    console.log(`Removed legacy careers tab fields on ${careersLegacyTabOnly.length} doc(s).`)
+  }
+
+  // 5. Remove orphaned careers team marquee images (feature removed from site)
+  const careersWithMarquee = await client.fetch<Array<{_id: string}>>(
+    `*[_type == "careersPage" && defined(teamMarqueeImages)]{ _id }`,
+  )
+  if (careersWithMarquee.length) {
+    const tx = client.transaction()
+    for (const doc of careersWithMarquee) {
+      tx.patch(doc._id, {unset: ['teamMarqueeImages']})
+    }
+    await tx.commit()
+    console.log(`Unset teamMarqueeImages on ${careersWithMarquee.length} careersPage doc(s).`)
+  }
+
   console.log('\nCleanup complete.\n')
 }
 

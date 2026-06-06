@@ -279,7 +279,7 @@ export default function Events() {
         </section>
 
         <RelliaCta
-          title={landing?.ctaTitle || "Want to **speak** at a Rellia event?"}
+          title={landing?.ctaTitle || "Want to speak at a Rellia event?"}
           body={
             landing?.ctaBody ||
             "If you have a practical playbook for founders building in health tech, we’d love to hear from you."

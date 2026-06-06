@@ -948,7 +948,7 @@ export function createServer() {
   const modalSubmitSchema = z.object({
     name: z.string().trim().min(1).max(200),
     email: z.string().trim().email().max(254),
-    source: z.string().trim().max(100).optional(),
+    source: z.string().trim().max(200).optional(),
   });
 
   app.post(

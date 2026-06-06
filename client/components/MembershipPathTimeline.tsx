@@ -32,28 +32,34 @@ const MEMBERSHIP_PATH_STEPS = [
   },
 ] as const
 
-const ROLE_LINKS = [
+export type MembershipRoleLink = {
+  title: string
+  description: string
+  href: string
+}
+
+const DEFAULT_ROLE_LINKS: MembershipRoleLink[] = [
   {
     title: "Founders",
     description: "Programs, cohorts, and support for health tech builders.",
-    to: "/founders",
+    href: "/founders",
   },
   {
     title: "Advisors",
     description: "How we work with operators, clinicians, and domain experts.",
-    to: "/advisors",
+    href: "/advisors",
   },
   {
     title: "Investors",
     description: "Deal flow, diligence, and how we connect capital to the network.",
-    to: "/investors",
+    href: "/investors",
   },
   {
     title: "Industry partners",
     description: "Collaboration models for organizations backing the ecosystem.",
-    to: "/industry-partners",
+    href: "/industry-partners",
   },
-] as const
+]
 
 const RELLIA_TEAL = "#0D3540"
 
@@ -68,6 +74,8 @@ export type MembershipPathTimelineProps = {
   headingTitle?: ReactNode
   subheading?: string
   showRoleLinks?: boolean
+  /** Override default role link cards (from CMS on /apply). */
+  roleLinks?: readonly MembershipRoleLink[]
   /** Override default membership steps (e.g. consulting pathway) */
   steps?: readonly MembershipPathStep[]
   /** Accessible name for the step list */
@@ -92,6 +100,7 @@ const MembershipPathTimeline = ({
   headingTitle = defaultHeadingTitle,
   subheading = defaultSubheading,
   showRoleLinks = true,
+  roleLinks,
   steps,
   timelineAriaLabel = "Membership application steps",
   horizontalFromMd = false,
@@ -99,6 +108,7 @@ const MembershipPathTimeline = ({
   headingFooter,
 }: MembershipPathTimelineProps = {}) => {
   const stepsToRender = steps ?? MEMBERSHIP_PATH_STEPS
+  const roleLinksToRender = roleLinks?.length ? roleLinks : DEFAULT_ROLE_LINKS
   const stepCount = stepsToRender.length
   const showDesktopHorizontal = stepCount === 4 && !horizontalFromMd
   const showMdHorizontalRow = horizontalFromMd && stepCount > 0
@@ -334,10 +344,10 @@ const MembershipPathTimeline = ({
             </h3>
 
             <ul className="mt-8 grid grid-cols-1 gap-3 md:mt-10 md:grid-cols-4 md:gap-4 lg:gap-5">
-              {ROLE_LINKS.map((role) => (
-              <li key={role.to} className="min-w-0">
+              {roleLinksToRender.map((role) => (
+              <li key={role.href} className="min-w-0">
                 <Link
-                  to={role.to}
+                  to={role.href}
                   className={cn(
                     "group flex h-full min-h-0 flex-col rounded-2xl border border-black/10 bg-white p-4 shadow-sm transition md:min-h-[8.5rem] md:p-5",
                     "hover:border-rellia-teal/35 hover:shadow-md",

@@ -56,6 +56,7 @@ export default function Apply() {
                 subheading={apply.subheading}
                 steps={apply.steps}
                 showRoleLinks={apply.showRoleLinks}
+                roleLinks={apply.roleLinks}
                 belowTimeline={applyNowButton}
               />
             </motion.div>

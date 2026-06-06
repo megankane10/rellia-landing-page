@@ -13,8 +13,6 @@ export default function PlaceholderPage({
   title: string
   subtitle?: string
 }) {
-  const emphasisTitle = title.startsWith("**") ? title : `**${title}**`
-
   return (
     <div className="flex min-h-screen flex-col bg-white font-host-grotesk overflow-x-hidden">
       <Navbar forceSolid={true} />
@@ -22,7 +20,7 @@ export default function PlaceholderPage({
       <main id="main-content" className="flex flex-1 flex-col">
         <RelliaCta
           icon={<Sparkles className="h-20 w-20 text-rellia-teal" strokeWidth={1.25} />}
-          title={emphasisTitle}
+          title={title}
           body={subtitle ?? defaultSubtitle}
           primary={ctaActionFromHref("Back to home", "/")}
           secondary={ctaActionFromHref("Get in touch", "/contact")}

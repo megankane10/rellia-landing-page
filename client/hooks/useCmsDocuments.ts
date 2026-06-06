@@ -11,6 +11,8 @@ import {
   mergeNotFound,
   mergePaymentPage,
   mergeApplyPage,
+  mergeConsultingPage,
+  mergeDiagnosticLandingPage,
   mergeProgramsLanding,
   mergeQmsProgram,
   DEFAULT_QMS_PROGRAM,
@@ -27,7 +29,10 @@ import type {
   HomePageContent,
   NotFoundContent,
   ApplyPageContent,
+  ConsultingPageContent,
   CareersPageContent,
+  CareersOpenRole,
+  DiagnosticLandingPageContent,
   DiagnosticSurveyContent,
   PaymentPageContent,
   ProgramsLandingContent,
@@ -37,6 +42,7 @@ import type {
   SanityPortableText,
   SeoContent,
 } from "@shared/cms/types";
+import { filterValidOpenRoles } from "@shared/careersOpenRolesVisibility";
 
 // Keep Sanity-published changes feeling “instant” on the live site.
 const staleTimeMs = 15 * 1000
@@ -372,8 +378,15 @@ export const useCareersPage = () =>
   useQuery({
     queryKey: ["cms", "careersPage"],
     queryFn: async () => {
-      const raw = await sanityFetch<Partial<CareersPageContent>>("careersPage");
-      return raw ?? null;
+      const [raw, rolesRaw] = await Promise.all([
+        sanityFetch<Partial<CareersPageContent>>("careersPage"),
+        sanityFetch<Array<Partial<CareersOpenRole> & { roleId?: string }>>("openRoles"),
+      ])
+      const openRoles = filterValidOpenRoles(
+        rolesRaw?.length ? rolesRaw : raw?.openRoles,
+      )
+      if (!raw) return openRoles.length ? ({ openRoles } satisfies Partial<CareersPageContent>) : null
+      return { ...raw, openRoles }
     },
     staleTime: staleTimeMs,
   });
@@ -467,8 +480,8 @@ export const useDiagnosticLandingPage = () =>
   useQuery({
     queryKey: ["cms", "diagnosticLandingPage"],
     queryFn: async () => {
-      const raw = await sanityFetch<CmsSingletonPageContent>("diagnosticLandingPage")
-      return raw ?? null
+      const raw = await sanityFetch<Partial<DiagnosticLandingPageContent>>("diagnosticLandingPage")
+      return mergeDiagnosticLandingPage(raw ?? undefined)
     },
     staleTime: staleTimeMs,
   })
@@ -477,8 +490,8 @@ export const useConsultingPage = () =>
   useQuery({
     queryKey: ["cms", "consultingPage"],
     queryFn: async () => {
-      const raw = await sanityFetch<CmsSingletonPageContent>("consultingPage")
-      return raw ?? null
+      const raw = await sanityFetch<Partial<ConsultingPageContent>>("consultingPage")
+      return mergeConsultingPage(raw ?? undefined)
     },
     staleTime: staleTimeMs,
   })

@@ -49,8 +49,17 @@ export default function Index() {
         />
         <FeaturedStories />
         <RelliaCta
+          aboveSectionTone="white"
           title={home.ctaTitle}
           primary={{ label: home.ctaButtonLabel, to: home.ctaButtonPath }}
+          secondary={
+            home.ctaSecondaryButtonLabel?.trim() && home.ctaSecondaryButtonPath?.trim()
+              ? {
+                  label: home.ctaSecondaryButtonLabel,
+                  to: home.ctaSecondaryButtonPath,
+                }
+              : undefined
+          }
         />
       </main>
       <Footer />

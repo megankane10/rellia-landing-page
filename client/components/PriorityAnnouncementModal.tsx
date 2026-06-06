@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion"
 import { X } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { CmsCtaLink, cmsCtaButtonClass } from "@/components/CmsCtaLink"
-import { getApiCsrfHeaders } from "@/lib/apiCsrf"
+import { clearApiCsrfCache, getApiCsrfHeaders } from "@/lib/apiCsrf"
 
 export type PriorityAnnouncementModalProps = {
   open: boolean
@@ -74,32 +74,73 @@ export const PriorityAnnouncementModal = ({
     return () => window.removeEventListener("keydown", handleKeyDown)
   }, [open])
 
-  const handleFormSubmit = async (e: React.FormEvent) => {
+  const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setSubmitting(true)
     setSubmitError(null)
 
-    try {
+    const formData = new FormData(e.currentTarget)
+    const name = String(formData.get("name") ?? formName).trim()
+    const email = String(formData.get("email") ?? formEmail).trim()
+    const source = (heading || "priority modal").trim().slice(0, 200)
+
+    if (!name) {
+      setSubmitError("Please enter your name.")
+      setSubmitting(false)
+      return
+    }
+
+    if (!email) {
+      setSubmitError("Please enter your email address.")
+      setSubmitting(false)
+      return
+    }
+
+    const payload = { name, email, source }
+
+    const postOnce = async () => {
       const csrf = await getApiCsrfHeaders()
-      const response = await fetch("/api/modal-submit", {
+      return fetch("/api/modal-submit", {
         method: "POST",
+        credentials: "same-origin",
         headers: {
           "content-type": "application/json",
           ...csrf,
         },
-        body: JSON.stringify({
-          name: formName,
-          email: formEmail,
-          source: heading || "priority modal",
-        }),
+        body: JSON.stringify(payload),
       })
+    }
+
+    try {
+      let response = await postOnce()
+      let data = (await response.json().catch(() => ({}))) as {
+        error?: string
+        code?: string
+        details?: { fieldErrors?: Record<string, string[]> }
+      }
+
+      if (!response.ok && response.status === 403 && data.code === "CSRF") {
+        clearApiCsrfCache()
+        response = await postOnce()
+        data = (await response.json().catch(() => ({}))) as typeof data
+      }
 
       if (response.ok) {
         setSubmitSuccess(true)
-      } else {
-        const data = await response.json().catch(() => ({}))
-        setSubmitError(data.error || "Could not save your submission. Please try again.")
+        return
       }
+
+      const fieldErrors = data.details?.fieldErrors
+      if (fieldErrors?.email?.length) {
+        setSubmitError("Please enter a valid email address.")
+        return
+      }
+      if (fieldErrors?.name?.length) {
+        setSubmitError("Please enter your name.")
+        return
+      }
+
+      setSubmitError(data.error || "Could not save your submission. Please try again.")
     } catch {
       setSubmitError("Could not submit your request. Check your internet connection.")
     } finally {
@@ -233,18 +274,24 @@ export const PriorityAnnouncementModal = ({
                         <div className="flex flex-col gap-3">
                           <input
                             type="text"
+                            name="name"
+                            autoComplete="name"
                             required
                             placeholder={formPlaceholderName?.trim() || "First name"}
                             value={formName}
                             onChange={(e) => setFormName(e.target.value)}
+                            onInput={(e) => setFormName(e.currentTarget.value)}
                             className="h-12 w-full rounded-full border border-black/20 bg-black/[0.09] px-5 font-urbanist text-sm text-black/90 placeholder-black/45 outline-none transition-colors focus:border-rellia-teal/60 focus:bg-black/[0.12] focus:ring-2 focus:ring-rellia-teal/15"
                           />
                           <input
                             type="email"
+                            name="email"
+                            autoComplete="email"
                             required
                             placeholder={formPlaceholderEmail?.trim() || "Email address"}
                             value={formEmail}
                             onChange={(e) => setFormEmail(e.target.value)}
+                            onInput={(e) => setFormEmail(e.currentTarget.value)}
                             className="h-12 w-full rounded-full border border-black/20 bg-black/[0.09] px-5 font-urbanist text-sm text-black/90 placeholder-black/45 outline-none transition-colors focus:border-rellia-teal/60 focus:bg-black/[0.12] focus:ring-2 focus:ring-rellia-teal/15"
                           />
                         </div>

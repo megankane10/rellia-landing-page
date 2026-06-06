@@ -168,8 +168,8 @@ export const pageBySlugQuery = `*[_type == "page" && slug.current == $slug && sl
     ...,
     "imageUrl": image.asset->url,
     "panelImageUrl": panelImage.asset->url,
-    primaryCta{ label, href, description, badge },
-    secondaryCta{ label, href, description, badge },
+    primaryCta{ label, href, description, badge, openInNewTab },
+    secondaryCta{ label, href, description, badge, openInNewTab },
     metrics[]{ label, value, suffix },
     cards[]{
       ...,
@@ -177,16 +177,29 @@ export const pageBySlugQuery = `*[_type == "page" && slug.current == $slug && sl
       cta{ label, href, description, badge }
     },
     items[]{
+      ...,
       question,
-      answer
+      answer,
+      link{ label, href, description, badge },
+      "imageUrl": image.asset->url
+    },
+    leftColumn{
+      title,
+      body,
+      steps[]{ id, label, detail, icon }
+    },
+    rightColumn{
+      title,
+      body,
+      steps[]{ id, label, detail, icon }
     }
   },
   pageBuilder[]{
     ...,
     "imageUrl": image.asset->url,
     "panelImageUrl": panelImage.asset->url,
-    primaryCta{ label, href, description, badge },
-    secondaryCta{ label, href, description, badge },
+    primaryCta{ label, href, description, badge, openInNewTab },
+    secondaryCta{ label, href, description, badge, openInNewTab },
     metrics[]{ label, value, suffix },
     cards[]{
       ...,
@@ -194,8 +207,21 @@ export const pageBySlugQuery = `*[_type == "page" && slug.current == $slug && sl
       cta{ label, href, description, badge }
     },
     items[]{
+      ...,
       question,
-      answer
+      answer,
+      link{ label, href, description, badge },
+      "imageUrl": image.asset->url
+    },
+    leftColumn{
+      title,
+      body,
+      steps[]{ id, label, detail, icon }
+    },
+    rightColumn{
+      title,
+      body,
+      steps[]{ id, label, detail, icon }
     }
   }
 }`
@@ -205,12 +231,37 @@ const pageSectionsFragment = `sections[]{
   "imageUrl": image.asset->url,
   "panelImageUrl": panelImage.asset->url,
   primaryCta{ label, href, description, badge },
-  secondaryCta{ label, href, description, badge },
+  secondaryCta{ label, href, description, badge, openInNewTab },
   metrics[]{ label, value, suffix },
   cards[]{
     ...,
     "imageUrl": image.asset->url,
     cta{ label, href, description, badge }
+  },
+  items[]{
+    ...,
+    question,
+    answer,
+    link{ label, href, description, badge },
+    "imageUrl": image.asset->url
+  },
+  leftColumn{
+    title,
+    body,
+    steps[]{ id, label, detail, icon }
+  },
+  rightColumn{
+    title,
+    body,
+    steps[]{ id, label, detail, icon }
+  },
+  testimonials[]{
+    quote,
+    name,
+    role,
+    company,
+    "image": coalesce(imageSrc, image.asset->url),
+    "logo": coalesce(logoSrc, logo.asset->url)
   }
 }`
 
@@ -247,10 +298,53 @@ export const networkInvestorsPageQuery = `*[_type == "networkInvestorsPage"][0]{
   }
 }`
 
+const landingTestimonialsFragment = `testimonials[]{
+  quote,
+  name,
+  role,
+  company,
+  "image": coalesce(imageSrc, image.asset->url),
+  "logo": coalesce(logoSrc, logo.asset->url)
+}`
+
 export const diagnosticLandingPageQuery = `*[_id == "diagnosticLandingPage"][0]{
   title,
   useModularPage,
   ${pageVisibilityFragment},
+  heroBadgeLabel,
+  heroTitle,
+  heroAccentPhrase,
+  heroSubtitle,
+  "heroImageSrc": coalesce(heroImageUrl, heroImage.asset->url),
+  heroPrimaryCtaLabel,
+  heroPrimaryCtaHref,
+  readinessTitle,
+  readinessDescription,
+  readinessFeatures[]{
+    title,
+    description,
+    "imageSrc": coalesce(imageSrc, image.asset->url)
+  },
+  infographicTitle,
+  infographicBody,
+  infographicTopWeaknessLabel,
+  infographicTopWeaknessScore,
+  infographicGapLabel,
+  infographicAdvisorMatchLabel,
+  infographicAdvisorRole,
+  infographicAdvisorSubtitle,
+  infographicBlobRoadmap,
+  infographicBlobAdvisors,
+  infographicBlobBlindSpot,
+  timelineTitle,
+  timelineSubheading,
+  timelineSteps[]{ title, description },
+  ctaTitle,
+  ctaBody,
+  ctaPrimaryLabel,
+  ctaPrimaryHref,
+  ctaSecondaryLabel,
+  ctaSecondaryHref,
   ${seoFragment},
   ${pageSectionsFragment}
 }`
@@ -259,6 +353,39 @@ export const consultingPageQuery = `*[_id == "consultingPage"][0]{
   title,
   useModularPage,
   ${pageVisibilityFragment},
+  heroEyebrow,
+  heroTitle,
+  heroAccentPhrase,
+  heroSubtitle,
+  "heroImageSrc": coalesce(heroImageUrl, heroImage.asset->url),
+  heroPrimaryCtaLabel,
+  heroPrimaryCtaHref,
+  heroSecondaryCtaLabel,
+  heroSecondaryCtaHref,
+  fitTitle,
+  fitDescription,
+  fitBullets,
+  "fitImageSrc": coalesce(fitImageUrl, fitImage.asset->url),
+  servicesTitle,
+  servicesSubtitle,
+  services[]{ title, body, ctaLabel, iconKey },
+  testimonialsTitle,
+  ${landingTestimonialsFragment},
+  membershipTitle,
+  membershipDescription,
+  membershipStats[]{ label, value },
+  membershipSavingsTitle,
+  membershipSavingsBody,
+  membershipPrimaryCtaLabel,
+  membershipPrimaryCtaHref,
+  membershipSecondaryCtaLabel,
+  membershipSecondaryCtaHref,
+  ctaTitle,
+  ctaBody,
+  ctaPrimaryLabel,
+  ctaPrimaryHref,
+  ctaSecondaryLabel,
+  ctaSecondaryHref,
   ${seoFragment},
   ${pageSectionsFragment}
 }`
@@ -312,6 +439,8 @@ export const homePageQuery = `*[_type == "homePage"][0]{
   ctaTitle,
   ctaButtonLabel,
   ctaButtonPath,
+  ctaSecondaryButtonLabel,
+  ctaSecondaryButtonPath,
   "ctaImageUrl": coalesce(ctaImage.asset->url, ctaImageUrl),
   ctaImageAlt,
   testimonials[]{
@@ -557,6 +686,7 @@ export const applyPageQuery = `*[_type == "applyPage"][0]{
   subheading,
   steps[]{ title, description },
   showRoleLinks,
+  roleLinks[]{ title, description, href },
   applyButtonLabel,
   bottomCtaTitle,
   bottomCtaBody,
@@ -664,25 +794,22 @@ export const paymentPageQuery = `*[_type == "paymentPage"][0]{
   ${seoFragment}
 }`;
 
+export const openRolesQuery = `*[_type == "openRole" && !(_id in path("drafts.**"))] | order(sortOrder asc, title asc){
+  "id": roleId.current,
+  title,
+  location,
+  employmentType,
+  description,
+  responsibilities,
+  linkedInApplyUrl
+}`
+
 export const careersPageQuery = `*[_type == "careersPage"][0]{
   ${pageVisibilityFragment},
-  defaultTab,
-  enableHiringTab,
-  enableVolunteerTab,
-  tabsLabelHiring,
-  tabsLabelVolunteer,
+  careersContentMode,
   publishOpenRolesOnProduction,
   showHiringNavBadge,
   showVolunteerNavBadge,
-  openRoles[]{
-    "id": roleId,
-    title,
-    location,
-    employmentType,
-    description,
-    responsibilities,
-    linkedInApplyUrl
-  },
   lifeAtRelliaHeading,
   lifeAtRelliaSubheading,
   lifeAtRelliaImages[]{

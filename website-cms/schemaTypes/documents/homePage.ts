@@ -124,7 +124,20 @@ export const homePage = defineType({
     }),
     defineField({ name: 'ctaTitle', title: 'CTA title', type: 'string', group: 'highlights' }),
     defineField({ name: 'ctaButtonLabel', title: 'CTA button label', type: 'string', group: 'highlights' }),
-    defineField({ name: 'ctaButtonPath', title: 'CTA button link', type: 'string', group: 'highlights' }),
+    defineField({ name: 'ctaButtonPath', title: 'CTA primary button link', type: 'string', group: 'highlights' }),
+    defineField({
+      name: 'ctaSecondaryButtonLabel',
+      title: 'CTA secondary button label',
+      type: 'string',
+      group: 'highlights',
+      description: 'Optional second button in the bottom grey-teal CTA band.',
+    }),
+    defineField({
+      name: 'ctaSecondaryButtonPath',
+      title: 'CTA secondary button link',
+      type: 'string',
+      group: 'highlights',
+    }),
     defineField({
       name: 'ctaImage',
       title: 'CTA image',

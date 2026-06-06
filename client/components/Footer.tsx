@@ -8,6 +8,7 @@ import type { NavItem } from "@shared/cms/types"
 import { GETPROVEN_VENDORS_GRID_URL } from "@/config/partnerLinks"
 import { ArrowUpRight } from "lucide-react"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
+import { cn } from "@/lib/utils"
 
 const SAFDAR_LINKEDIN_URL = "https://www.linkedin.com/in/safdarmd/"
 
@@ -77,8 +78,41 @@ const footerSectionHeadingClass =
 const legalLinkClass =
   "font-urbanist text-[13px] leading-snug text-white/70 transition-colors hover:text-rellia-mint md:text-sm"
 
+const BUILT_BY_DISMISS_MS = 400
+
 const BuiltByCredit = () => {
   const [open, setOpen] = React.useState(false)
+  const [isHovered, setIsHovered] = React.useState(false)
+  const [isClosing, setIsClosing] = React.useState(false)
+  const dismissTimerRef = React.useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  const clearDismissTimer = () => {
+    if (dismissTimerRef.current) {
+      clearTimeout(dismissTimerRef.current)
+      dismissTimerRef.current = null
+    }
+  }
+
+  const handlePointerEnter = () => {
+    clearDismissTimer()
+    setIsClosing(false)
+    setIsHovered(true)
+    setOpen(true)
+  }
+
+  const handlePointerLeave = () => {
+    setIsHovered(false)
+    setIsClosing(true)
+    clearDismissTimer()
+    dismissTimerRef.current = setTimeout(() => {
+      setOpen(false)
+      setIsClosing(false)
+      dismissTimerRef.current = null
+    }, BUILT_BY_DISMISS_MS)
+  }
+
+  React.useEffect(() => () => clearDismissTimer(), [])
+
   return (
     <Tooltip open={open} onOpenChange={setOpen} delayDuration={0}>
       <TooltipTrigger asChild>
@@ -88,15 +122,42 @@ const BuiltByCredit = () => {
           rel="noopener noreferrer"
           className="built-by-credit rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-rellia-teal"
           aria-label="Built by Safdar — let's connect on LinkedIn"
-          onTouchStart={() => setOpen(true)}
-          onTouchEnd={() => setTimeout(() => setOpen(false), 2000)}
+          onMouseEnter={handlePointerEnter}
+          onMouseLeave={handlePointerLeave}
+          onFocus={handlePointerEnter}
+          onBlur={handlePointerLeave}
+          onTouchStart={() => {
+            clearDismissTimer()
+            setIsClosing(false)
+            setIsHovered(true)
+            setOpen(true)
+          }}
+          onTouchEnd={() => {
+            setIsHovered(false)
+            setIsClosing(true)
+            clearDismissTimer()
+            dismissTimerRef.current = setTimeout(() => {
+              setOpen(false)
+              setIsClosing(false)
+            }, 2000)
+          }}
         >
-          <span className="built-by-credit-label">
+          <span
+            className={cn(
+              "built-by-credit-label",
+              isHovered && "built-by-credit-label--sweep-forward",
+              !isHovered && isClosing && "built-by-credit-label--sweep-reverse",
+            )}
+          >
             Built by <span className="built-by-name">Safdar</span>
           </span>
         </a>
       </TooltipTrigger>
-      <TooltipContent side="top" sideOffset={8} className="built-by-tooltip">
+      <TooltipContent
+        side="top"
+        sideOffset={8}
+        className={cn("built-by-tooltip", isClosing && "built-by-tooltip--closing")}
+      >
         <span className="built-by-tooltip-inner">
           Let&apos;s connect on LinkedIn
           <ArrowUpRight className="h-3.5 w-3.5 shrink-0" aria-hidden />

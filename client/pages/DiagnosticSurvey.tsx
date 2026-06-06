@@ -292,14 +292,15 @@ const css = `
 
 @media print {
   @page {
-    margin: 1.2cm 1.4cm;
+    margin: 0.55cm 0.75cm;
     size: letter;
   }
 
   html, body {
     background: #fff !important;
     color: #111 !important;
-    font-size: 11pt;
+    font-size: 9.5pt;
+    height: auto !important;
     -webkit-print-color-adjust: economy;
     print-color-adjust: economy;
   }
@@ -308,50 +309,90 @@ const css = `
     display: none !important;
   }
 
+  .diagnostic-page {
+    padding-top: 0 !important;
+    min-height: auto !important;
+    background: #fff !important;
+  }
+
+  main {
+    padding: 0 !important;
+  }
+
   .diagnostic-print-only {
     display: block !important;
+  }
+
+  .diagnostic-print-letterhead {
+    display: flex !important;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    border-bottom: 1.5px solid #0d3540;
+    padding-bottom: 0.35rem;
+    margin-bottom: 0.3rem;
+    page-break-after: avoid;
+  }
+
+  .diagnostic-print-letterhead img {
+    height: 26px;
+    width: auto;
+    object-fit: contain;
+  }
+
+  .diagnostic-print-letterhead-title {
+    font-family: "Host Grotesk", sans-serif;
+    font-size: 13pt;
+    font-weight: 400;
+    line-height: 1.2;
+    color: #0d3540 !important;
+    text-align: right;
+    letter-spacing: 0.03em;
   }
 
   .diagnostic-report {
     padding: 0 !important;
     margin: 0 !important;
-    gap: 1.25rem !important;
+    gap: 0.45rem !important;
     animation: none !important;
   }
 
   .diagnostic-report-header {
-    border-bottom: 2px solid #0d3540;
-    padding-bottom: 0.75rem;
-    margin-bottom: 0.5rem;
+    border-bottom: none;
+    padding-bottom: 0;
+    margin-bottom: 0.25rem;
     page-break-after: avoid;
   }
 
   .diagnostic-report-header h1 {
     color: #0d3540 !important;
-    font-size: 22pt !important;
+    font-size: 16pt !important;
+    font-weight: 700 !important;
     margin: 0 !important;
   }
 
   .diagnostic-report-meta {
     color: #444 !important;
-    font-size: 10pt !important;
-    margin-top: 0.25rem !important;
+    font-size: 8.5pt !important;
+    margin-top: 0.15rem !important;
   }
 
   .diagnostic-report-summary {
     background: #fff !important;
     border: 1px solid #ccc !important;
-    border-left: 4px solid #0d3540 !important;
+    border-left: 3px solid #0d3540 !important;
     box-shadow: none !important;
     color: #111 !important;
-    padding: 0.85rem 1rem !important;
+    padding: 0.45rem 0.6rem !important;
     page-break-inside: avoid;
+    margin-bottom: 0.25rem !important;
   }
 
   .diagnostic-report-summary p {
     color: #222 !important;
-    font-size: 11pt !important;
-    line-height: 1.5 !important;
+    font-size: 9.5pt !important;
+    line-height: 1.35 !important;
+    margin: 0 !important;
   }
 
   .diagnostic-report-summary img {
@@ -359,84 +400,92 @@ const css = `
   }
 
   .diagnostic-report section {
-    page-break-inside: avoid;
-    margin-bottom: 1rem;
+    page-break-inside: auto;
+    margin-bottom: 0.35rem;
+    break-inside: auto;
   }
 
   .diagnostic-report section h2 {
     color: #0d3540 !important;
-    font-size: 9pt !important;
-    letter-spacing: 0.08em !important;
+    font-size: 8pt !important;
+    letter-spacing: 0.06em !important;
     border-bottom: 1px solid #ddd;
-    padding-bottom: 0.35rem;
-    margin-bottom: 0.6rem;
+    padding-bottom: 0.2rem;
+    margin-bottom: 0.35rem;
   }
 
   .diagnostic-report .diagnostic-section-note {
-    color: #555 !important;
-    font-size: 9pt !important;
+    display: none !important;
   }
 
   .diagnostic-report .diagnostic-card-grid {
     display: grid !important;
     grid-template-columns: repeat(3, 1fr) !important;
-    gap: 0.5rem !important;
+    gap: 0.3rem !important;
   }
 
   .diagnostic-report .diagnostic-card {
     background: #fff !important;
     border: 1px solid #bbb !important;
     box-shadow: none !important;
-    border-radius: 6px !important;
-    padding: 0.55rem 0.65rem !important;
+    border-radius: 4px !important;
+    padding: 0.35rem 0.45rem !important;
     min-height: auto !important;
   }
 
   .diagnostic-report .diagnostic-card-strength {
-    border-left: 3px solid #333 !important;
+    border-left: 2px solid #333 !important;
   }
 
   .diagnostic-report .diagnostic-card-gap {
-    border-left: 3px solid #666 !important;
+    border-left: 2px solid #666 !important;
   }
 
   .diagnostic-report .diagnostic-card-badge {
     background: #eee !important;
     color: #111 !important;
     border: 1px solid #ccc !important;
-    font-size: 8pt !important;
-    padding: 0.1rem 0.4rem !important;
+    font-size: 7pt !important;
+    padding: 0.05rem 0.3rem !important;
   }
 
   .diagnostic-report .diagnostic-card h3 {
     color: #111 !important;
-    font-size: 10pt !important;
-    margin-top: 0.25rem !important;
+    font-size: 8.5pt !important;
+    margin-top: 0.15rem !important;
+    line-height: 1.2 !important;
   }
 
   .diagnostic-report .diagnostic-breakdown-grid {
     display: grid !important;
-    grid-template-columns: repeat(3, 1fr) !important;
-    gap: 0.45rem !important;
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: 0.25rem !important;
   }
 
   .diagnostic-report .diagnostic-breakdown-item {
     background: #fff !important;
     border: 1px solid #ccc !important;
     box-shadow: none !important;
-    padding: 0.5rem 0.6rem !important;
-    border-radius: 4px !important;
+    padding: 0.3rem 0.35rem !important;
+    border-radius: 3px !important;
+    page-break-inside: avoid;
   }
 
   .diagnostic-report .diagnostic-breakdown-item .diagnostic-score {
     color: #111 !important;
     font-weight: 700 !important;
+    font-size: 8.5pt !important;
+  }
+
+  .diagnostic-report .diagnostic-breakdown-item .font-host-grotesk {
+    font-size: 7.5pt !important;
+    line-height: 1.15 !important;
   }
 
   .diagnostic-report .diagnostic-breakdown-bar {
     background: #e5e5e5 !important;
-    height: 4px !important;
-    margin-top: 0.35rem !important;
+    height: 3px !important;
+    margin-top: 0.2rem !important;
   }
 
   .diagnostic-report .diagnostic-breakdown-bar-fill {
@@ -448,15 +497,16 @@ const css = `
     background: #fff !important;
     border: 1px solid #ccc !important;
     box-shadow: none !important;
-    padding: 0.75rem 0.85rem !important;
+    padding: 0.45rem 0.55rem !important;
     border-radius: 4px !important;
-    page-break-inside: avoid;
+    page-break-inside: auto;
+    margin-top: 0 !important;
   }
 
   .diagnostic-report .diagnostic-roadmap-step {
     display: flex !important;
-    gap: 0.5rem !important;
-    margin-bottom: 0.45rem !important;
+    gap: 0.35rem !important;
+    margin-bottom: 0.25rem !important;
   }
 
   .diagnostic-report .diagnostic-roadmap-num {
@@ -464,16 +514,16 @@ const css = `
     color: #111 !important;
     border: 1px solid #bbb !important;
     box-shadow: none !important;
-    width: 1.25rem !important;
-    height: 1.25rem !important;
-    font-size: 8pt !important;
+    width: 1rem !important;
+    height: 1rem !important;
+    font-size: 7pt !important;
     flex-shrink: 0 !important;
   }
 
   .diagnostic-report .diagnostic-roadmap-step p {
     color: #222 !important;
-    font-size: 10pt !important;
-    line-height: 1.4 !important;
+    font-size: 8.5pt !important;
+    line-height: 1.3 !important;
     margin: 0 !important;
     padding-top: 0 !important;
   }
@@ -483,23 +533,23 @@ const css = `
   }
 
   .diagnostic-report .diagnostic-membership-print {
-    border-left: 4px solid #0d3540 !important;
-    margin-top: 0.75rem;
+    border-left: 3px solid #0d3540 !important;
   }
 
   .diagnostic-report .diagnostic-membership-print h2 {
     border: none !important;
-    font-size: 12pt !important;
+    font-size: 10pt !important;
+    font-weight: 400 !important;
     color: #0d3540 !important;
-    margin-bottom: 0.35rem !important;
+    margin-bottom: 0.2rem !important;
     padding: 0 !important;
   }
 
   .diagnostic-report .diagnostic-membership-print p {
     color: #333 !important;
-    font-size: 10pt !important;
-    line-height: 1.45 !important;
-    margin: 0 0 0.4rem !important;
+    font-size: 8.5pt !important;
+    line-height: 1.3 !important;
+    margin: 0 0 0.25rem !important;
   }
 
   .diagnostic-report .diagnostic-membership-print a {
@@ -508,23 +558,38 @@ const css = `
     text-decoration: underline !important;
   }
 
-  .diagnostic-report .diagnostic-print-footer {
-    border-top: 1px solid #ccc;
-    margin-top: 1rem;
-    padding-top: 0.5rem;
-    font-size: 8pt;
-    color: #666 !important;
-    text-align: center;
-  }
-
   .diagnostic-report .diagnostic-print-programs {
-    margin-top: 0.5rem;
+    margin-top: 0.2rem;
+    margin-bottom: 0.2rem;
   }
 
   .diagnostic-report .diagnostic-print-programs li {
-    font-size: 10pt;
+    font-size: 8.5pt;
     color: #222;
-    margin-bottom: 0.2rem;
+    margin-bottom: 0.1rem;
+    line-height: 1.25;
+  }
+
+  .diagnostic-report .diagnostic-print-footer {
+    border-top: 1px solid #ccc;
+    margin-top: 0.25rem;
+    padding-top: 0.25rem;
+    font-size: 7pt;
+    color: #666 !important;
+    text-align: center;
+    page-break-before: avoid;
+  }
+
+  .diagnostic-report .space-y-12 > :not([hidden]) ~ :not([hidden]) {
+    margin-top: 0.45rem !important;
+  }
+
+  .diagnostic-report .space-y-6 > :not([hidden]) ~ :not([hidden]) {
+    margin-top: 0.35rem !important;
+  }
+
+  .diagnostic-report .space-y-4 > :not([hidden]) ~ :not([hidden]) {
+    margin-top: 0.25rem !important;
   }
 }
 `;
@@ -978,7 +1043,7 @@ export default function DiagnosticSurvey() {
   }, [diagResult, sections]);
 
   return (
-    <div className="min-h-screen bg-rellia-cream font-host-grotesk text-rellia-teal selection:bg-rellia-mint/30 selection:text-rellia-teal pt-[72px] md:pt-[86px]">
+    <div className="diagnostic-page min-h-screen bg-rellia-cream font-host-grotesk text-rellia-teal selection:bg-rellia-mint/30 selection:text-rellia-teal pt-[72px] md:pt-[86px]">
       <style>{css}</style>
       <div className="diagnostic-screen-only">
         <Navbar />
@@ -1733,37 +1798,16 @@ export default function DiagnosticSurvey() {
               }
 
               return (
-                <div id="diagnostic-report" className="diagnostic-report animate-ds-up flex flex-col gap-12 pb-20">
+                <div id="diagnostic-report" className="diagnostic-report animate-ds-up flex flex-col gap-12 pb-12">
+                  <div className="diagnostic-print-only diagnostic-print-letterhead">
+                    <img src="/images/logo-rellia-filled.webp" alt="Rellia Health" />
+                    <div className="diagnostic-print-letterhead-title">STARTUP DIAGNOSTIC REPORT</div>
+                  </div>
+
                   <div className="diagnostic-print-only diagnostic-report-header">
-                    <div className="text-[10pt] font-bold uppercase tracking-widest text-[#0d3540]">
-                      Rellia Health · Startup Diagnostic Report
-                    </div>
                     <h1>{memberInfo.company}</h1>
                     <div className="diagnostic-report-meta">
                       {memberInfo.stage} · {reportDate} · {memberInfo.name}
-                    </div>
-                  </div>
-
-                  <div className="diagnostic-screen-only sticky top-[72px] z-50 -mx-4 border-b border-rellia-teal/10 bg-white/95 px-4 py-3 shadow-sm backdrop-blur-md md:top-[86px] md:-mx-8 md:px-8">
-                    <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                      <div className="min-w-0">
-                        <p className="font-host-grotesk text-sm font-bold text-rellia-teal">
-                          Your diagnostic report is ready
-                        </p>
-                        <p className="font-urbanist text-xs text-rellia-teal/60">
-                          Save or print a copy for your team
-                        </p>
-                      </div>
-                      <RelliaAction
-                        type="button"
-                        variant="mintTealFill"
-                        size="comfortable"
-                        className="w-full shrink-0 justify-center shadow-lg sm:w-auto sm:min-w-[220px]"
-                        onClick={handlePrintReport}
-                      >
-                        <Printer className="mr-2 h-5 w-5" />
-                        Print / Save as PDF
-                      </RelliaAction>
                     </div>
                   </div>
 
@@ -1799,9 +1843,9 @@ export default function DiagnosticSurvey() {
 
                     <div className="diagnostic-report-summary rounded-[32px] bg-gradient-to-br from-[#0d3540] via-rellia-teal to-[#144853] p-8 shadow-md md:p-10 relative overflow-hidden text-white">
                       <div className="diagnostic-screen-only absolute -right-8 -bottom-8 opacity-10 pointer-events-none select-none z-0">
-                        <img 
-                          src="/images/hologram-logo.png" 
-                          alt="" 
+                        <img
+                          src="/images/hologram-logo.png"
+                          alt=""
                           className="w-48 h-48 md:w-64 md:h-64 object-contain"
                         />
                       </div>
@@ -1809,7 +1853,7 @@ export default function DiagnosticSurvey() {
                         {thankYouText}
                       </p>
                     </div>
-                  </div> 
+                  </div>
 
                   <div className="space-y-12">
                     {/* Strengths */}
@@ -2041,7 +2085,7 @@ export default function DiagnosticSurvey() {
                                   <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-full border border-rellia-teal/10">
                                     <img
                                       src={dummyPhoto}
-                                      alt=""
+                                      alt="Blurred Advisor Match"
                                       className="h-full w-full object-cover filter blur-[5px] scale-110"
                                     />
                                   </div>
@@ -2081,7 +2125,7 @@ export default function DiagnosticSurvey() {
                         />
                         <div className="relative z-10 space-y-5">
                           <div>
-                            <h2 className="font-host-grotesk text-lg font-bold leading-tight text-white">
+                            <h2 className="font-host-grotesk text-2xl md:text-3xl font-normal leading-snug text-white">
                               {membershipTitle}
                             </h2>
                             <p className="mt-2 text-sm leading-relaxed text-white/80">

@@ -14,6 +14,8 @@ import {
   DEFAULT_PAYMENT_PAGE,
   DEFAULT_PROGRAMS_LANDING,
   DEFAULT_QMS_PROGRAM,
+  DEFAULT_CONSULTING_PAGE,
+  DEFAULT_DIAGNOSTIC_LANDING_PAGE,
 } from "../shared/cms/defaults"
 import { DIAGNOSTIC_SURVEY_SECTIONS } from "../client/data/diagnosticSurveySections"
 import {
@@ -766,16 +768,6 @@ const toSanityImageFieldValue = (assetId: string | null) =>
       }
     : undefined
 
-/** Careers join-team band — uploaded to Sanity so production does not rely on Pexels fallbacks. */
-const CAREERS_TEAM_MARQUEE_URLS = [
-  "https://images.pexels.com/photos/3184292/pexels-photo-3184292.jpeg?auto=compress&cs=tinysrgb&w=900",
-  "https://images.pexels.com/photos/3184418/pexels-photo-3184418.jpeg?auto=compress&cs=tinysrgb&w=900",
-  "https://images.pexels.com/photos/3184360/pexels-photo-3184360.jpeg?auto=compress&cs=tinysrgb&w=900",
-  "https://images.pexels.com/photos/3184296/pexels-photo-3184296.jpeg?auto=compress&cs=tinysrgb&w=900",
-  "https://images.pexels.com/photos/3184339/pexels-photo-3184339.jpeg?auto=compress&cs=tinysrgb&w=900",
-  "https://images.pexels.com/photos/3184465/pexels-photo-3184465.jpeg?auto=compress&cs=tinysrgb&w=900",
-] as const
-
 const CAREERS_LIFE_AT_RELLIA_URLS = [
   "https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800&auto=format&fit=crop&q=80",
   "https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&auto=format&fit=crop&q=80",
@@ -822,28 +814,6 @@ const buildLogoMarqueeItems = async (
   return items
 }
 
-const buildCareersTeamMarqueeImages = async (client: ReturnType<typeof createClient>) => {
-  const images: Array<{ _key: string; alt: string; asset?: { _type: "reference"; _ref: string } }> = []
-  let index = 0
-  for (const url of CAREERS_TEAM_MARQUEE_URLS) {
-    const filename = `careers-marquee-${index + 1}.jpg`
-    const assetId = await resolveRemoteImageAssetId(client, url, filename)
-    if (!assetId) continue
-    images.push({
-      _key: `careers-marquee-${index}`,
-      alt: "",
-      asset: { _type: "reference", _ref: assetId },
-    })
-    index += 1
-  }
-  return images.map((row) => ({
-    _key: row._key,
-    alt: row.alt,
-    _type: "image" as const,
-    asset: row.asset,
-  }))
-}
-
 const buildCareersLifeAtRelliaImages = async (client: ReturnType<typeof createClient>) => {
   const images: Array<{ _key: string; alt: string; asset?: { _type: "reference"; _ref: string } }> = []
   let index = 0
@@ -864,6 +834,119 @@ const buildCareersLifeAtRelliaImages = async (client: ReturnType<typeof createCl
     _type: "image" as const,
     asset: row.asset,
   }))
+}
+
+const consultingPageSeedDocument = () => {
+  const c = DEFAULT_CONSULTING_PAGE
+  return {
+    _id: "consultingPage",
+    _type: "consultingPage",
+    title: c.title,
+    ...pagePublishingLive,
+    heroEyebrow: c.heroEyebrow,
+    heroTitle: c.heroTitle,
+    heroAccentPhrase: c.heroAccentPhrase,
+    heroSubtitle: c.heroSubtitle,
+    heroImageUrl: c.heroImageSrc,
+    heroPrimaryCtaLabel: c.heroPrimaryCtaLabel,
+    heroPrimaryCtaHref: c.heroPrimaryCtaHref,
+    heroSecondaryCtaLabel: c.heroSecondaryCtaLabel,
+    heroSecondaryCtaHref: c.heroSecondaryCtaHref,
+    fitTitle: c.fitTitle,
+    fitDescription: c.fitDescription,
+    fitBullets: c.fitBullets,
+    fitImageUrl: c.fitImageSrc,
+    servicesTitle: c.servicesTitle,
+    servicesSubtitle: c.servicesSubtitle,
+    services: (c.services ?? []).map((service, index) => ({
+      _type: "consultingService",
+      _key: `service-${index}`,
+      title: service.title,
+      body: service.body,
+      ctaLabel: service.ctaLabel,
+      iconKey: service.iconKey,
+    })),
+    testimonialsTitle: c.testimonialsTitle,
+    testimonials: (c.testimonials ?? []).map((item, index) => ({
+      _type: "landingTestimonialItem",
+      _key: `testimonial-${index}`,
+      quote: item.quote,
+      name: item.name,
+      role: item.role,
+      company: item.company,
+      imageSrc: item.image,
+      logoSrc: item.logo,
+    })),
+    membershipTitle: c.membershipTitle,
+    membershipDescription: c.membershipDescription,
+    membershipStats: (c.membershipStats ?? []).map((stat, index) => ({
+      _key: `stat-${index}`,
+      label: stat.label,
+      value: stat.value,
+    })),
+    membershipSavingsTitle: c.membershipSavingsTitle,
+    membershipSavingsBody: c.membershipSavingsBody,
+    membershipPrimaryCtaLabel: c.membershipPrimaryCtaLabel,
+    membershipPrimaryCtaHref: c.membershipPrimaryCtaHref,
+    membershipSecondaryCtaLabel: c.membershipSecondaryCtaLabel,
+    membershipSecondaryCtaHref: c.membershipSecondaryCtaHref,
+    ctaTitle: c.ctaTitle,
+    ctaBody: c.ctaBody,
+    ctaPrimaryLabel: c.ctaPrimaryLabel,
+    ctaPrimaryHref: c.ctaPrimaryHref,
+    seo: seoForRoute("/consulting"),
+  }
+}
+
+const diagnosticLandingPageSeedDocument = () => {
+  const d = DEFAULT_DIAGNOSTIC_LANDING_PAGE
+  return {
+    _id: "diagnosticLandingPage",
+    _type: "diagnosticLandingPage",
+    title: d.title,
+    ...pagePublishingLive,
+    heroBadgeLabel: d.heroBadgeLabel,
+    heroTitle: d.heroTitle,
+    heroAccentPhrase: d.heroAccentPhrase,
+    heroSubtitle: d.heroSubtitle,
+    heroImageUrl: d.heroImageSrc,
+    heroPrimaryCtaLabel: d.heroPrimaryCtaLabel,
+    heroPrimaryCtaHref: d.heroPrimaryCtaHref,
+    readinessTitle: d.readinessTitle,
+    readinessDescription: d.readinessDescription,
+    readinessFeatures: (d.readinessFeatures ?? []).map((feature, index) => ({
+      _type: "readinessFeature",
+      _key: `readiness-${index}`,
+      title: feature.title,
+      description: feature.description,
+      imageSrc: feature.imageSrc,
+    })),
+    infographicTitle: d.infographicTitle,
+    infographicBody: d.infographicBody,
+    infographicTopWeaknessLabel: d.infographicTopWeaknessLabel,
+    infographicTopWeaknessScore: d.infographicTopWeaknessScore,
+    infographicGapLabel: d.infographicGapLabel,
+    infographicAdvisorMatchLabel: d.infographicAdvisorMatchLabel,
+    infographicAdvisorRole: d.infographicAdvisorRole,
+    infographicAdvisorSubtitle: d.infographicAdvisorSubtitle,
+    infographicBlobRoadmap: d.infographicBlobRoadmap,
+    infographicBlobAdvisors: d.infographicBlobAdvisors,
+    infographicBlobBlindSpot: d.infographicBlobBlindSpot,
+    timelineTitle: d.timelineTitle,
+    timelineSubheading: d.timelineSubheading,
+    timelineSteps: (d.timelineSteps ?? []).map((step, index) => ({
+      _key: `timeline-${index}`,
+      title: step.title,
+      description: step.description,
+    })),
+    ctaTitle: d.ctaTitle,
+    ctaBody: d.ctaBody,
+    ctaPrimaryLabel: d.ctaPrimaryLabel,
+    ctaPrimaryHref: d.ctaPrimaryHref,
+    ctaSecondaryLabel: d.ctaSecondaryLabel,
+    ctaSecondaryHref: d.ctaSecondaryHref,
+    seo: seoForRoute("/startup-diagnostic"),
+  }
 }
 
 /** Membership fields actually rendered on /membership (no legacy hero/image-card copy). */
@@ -916,7 +999,6 @@ async function main() {
 
   const foundersLogoMarquee = await buildLogoMarqueeItems(client, PORTFOLIO_LOGO_MARKS)
   const investorsLogoMarquee = await buildLogoMarqueeItems(client, INVESTOR_BRAND_SVG_MARKS)
-  const careersTeamMarqueeImages = await buildCareersTeamMarqueeImages(client)
   const careersLifeAtRelliaImages = await buildCareersLifeAtRelliaImages(client)
   const reportMembershipCtaImageId = await resolveRemoteImageAssetId(
     client,
@@ -946,6 +1028,16 @@ async function main() {
       _type: "globalSettings",
       ...DEFAULT_GLOBAL_SETTINGS,
       priorityModalEnabled: true,
+      priorityModalHeading: "This is what our priority dialog looks like.",
+      priorityModalBody: "Enter your details below to see how form submissions work in this dialog.",
+      priorityModalButtonLabel: "",
+      priorityModalButtonLink: "",
+      priorityModalSecondaryButtonLabel: "",
+      priorityModalSecondaryButtonLink: "",
+      priorityModalFormEnabled: true,
+      priorityModalFormButtonLabel: "Send",
+      priorityModalFormPlaceholderName: "Your name",
+      priorityModalFormPlaceholderEmail: "Email address",
     },
   })
   mutations.push({
@@ -955,7 +1047,7 @@ async function main() {
       ...pagePublishingLive,
       heroTitlePortable: DEFAULT_EVENTS_LANDING_HERO_PORTABLE,
       heroSubtitle: "Join live sessions with operators, clinicians, and health tech leaders.",
-      ctaTitle: "Want to **speak** at a Rellia event?",
+      ctaTitle: "Want to speak at a Rellia event?",
       ctaBody: "If you have a practical playbook for founders building in health tech, we’d love to hear from you.",
       ctaPrimaryLabel: "Contact",
       ctaPrimaryHref: "/contact",
@@ -1039,22 +1131,8 @@ async function main() {
       ...pagePublishingLive,
     },
   })
-  mutations.push({
-    createOrReplace: {
-      _id: "consultingPage",
-      _type: "consultingPage",
-      title: "Consulting",
-      ...pagePublishingLive,
-    },
-  })
-  mutations.push({
-    createOrReplace: {
-      _id: "diagnosticLandingPage",
-      _type: "diagnosticLandingPage",
-      title: "Startup Diagnostic",
-      ...pagePublishingLive,
-    },
-  })
+  mutations.push({ createOrReplace: consultingPageSeedDocument() })
+  mutations.push({ createOrReplace: diagnosticLandingPageSeedDocument() })
   mutations.push({
     createOrReplace: {
       _id: "termsPage",
@@ -1099,29 +1177,37 @@ async function main() {
       seo: seoForRoute("/about"),
     },
   })
-  mutations.push({
-    createOrReplace: {
-      _id: "careersPage",
-      _type: "careersPage",
-      ...pagePublishingLive,
-      defaultTab: "hiring",
-      enableHiringTab: true,
-      enableVolunteerTab: true,
-      tabsLabelHiring: "Hiring",
-      tabsLabelVolunteer: "Volunteer",
-      openRoles: CAREERS_OPEN_ROLES.map((role) => ({
+  const existingOpenRoleIds = await client.fetch<string[]>(`*[_type == "openRole"]._id`)
+  for (const id of existingOpenRoleIds) {
+    mutations.push({ delete: { id } })
+    if (id.startsWith("drafts.")) continue
+    mutations.push({ delete: { id: `drafts.${id}` } })
+  }
+
+  CAREERS_OPEN_ROLES.forEach((role, index) => {
+    mutations.push({
+      createOrReplace: {
+        _id: `openRole.${role.id}`,
         _type: "openRole",
-        _key: role.id,
-        roleId: role.id,
+        roleId: { _type: "slug", current: role.id },
         title: role.title,
         location: role.location,
         employmentType: role.employmentType,
         description: role.description,
         responsibilities: role.responsibilities,
         linkedInApplyUrl: role.linkedInApplyUrl,
-      })),
-      teamMarqueeImages:
-        careersTeamMarqueeImages.length > 0 ? careersTeamMarqueeImages : undefined,
+        sortOrder: index,
+      },
+    })
+  })
+
+  mutations.push({
+    createOrReplace: {
+      _id: "careersPage",
+      _type: "careersPage",
+      ...pagePublishingLive,
+      careersContentMode: "both",
+      publishOpenRolesOnProduction: false,
       lifeAtRelliaHeading: "Built by healthtech insiders, for builders",
       lifeAtRelliaSubheading: "We are a remote-first, high-standards team of builders, clinicians, and operators dedicated to supporting healthtech founders. We cultivate an environment of high autonomy, rapid iteration, and deep clinical empathy to build the future of care.",
       lifeAtRelliaImages:
@@ -1480,6 +1566,41 @@ async function main() {
           body:
             "When creating or updating Program documents, you can customize program pricing modules without code. Navigate to the Detail page tab group on the program schema:\n\n• Fill in the Price (sale) field (e.g. $1,500) and sub-amount details.\n• Toggle on Show strikethrough compare price and enter a compare amount to highlight a discount (e.g., compare price $2,000).\n• Add descriptive bullet items to the pricing details list to summarize what is included in the program purchase.",
         },
+        {
+          _type: "guideSection",
+          _key: "careers_open_roles",
+          heading: "5. Careers and open roles",
+          body:
+            "Careers page mode (both / hiring only / volunteer only) controls hero buttons and which sections appear on /careers. Job listings live under Collections → Open roles — add one document per role with title, location, apply URL, and responsibilities. Turn on Show open roles on production (www) only when listings are ready for the public site. HIRING and VOLUNTEER nav badges are separate toggles on the Careers page.",
+        },
+        {
+          _type: "guideSection",
+          _key: "consulting_diagnostic",
+          heading: "6. Consulting and Startup Diagnostic pages",
+          body:
+            "Pages → Consulting and Pages → Startup Diagnostic use grouped tabs (Hero, sections, CTA) — edit copy and images there without using the page builder. The diagnostic survey questions and scoring live in a separate document; do not change scoring logic without engineering.",
+        },
+        {
+          _type: "guideSection",
+          _key: "apply_role_boxes",
+          heading: "7. Apply page role boxes",
+          body:
+            "Pages → Apply includes Role path links — three cards below the membership timeline (Founder, Advisor, etc.). Each row has title, short description, and link. Reorder or rewrite copy there; the timeline steps are on the same document.",
+        },
+        {
+          _type: "guideSection",
+          _key: "after_main",
+          heading: "8. After engineering merges to main",
+          body:
+            "1) Confirm the Vercel preview deployment has the latest code. 2) Ask engineering to run seed/sync if content looks empty. 3) Publish changed documents in Studio (preview dataset). 4) Review on the Vercel preview URL (Additions) — not www yet. 5) When ready, engineering promotes preview → production (see docs/sanity-dataset-sync-guide.md). 6) Toggle Careers → Show open roles on production when real jobs should appear on www.",
+        },
+        {
+          _type: "guideSection",
+          _key: "do_not_touch",
+          heading: "What not to touch",
+          body:
+            "Diagnostic survey scoring weights, reserved URL slugs (about, careers, contact, etc.), admin dashboard routes, and Stripe payment links — contact engineering before changing. CTA headlines are plain text (no ** bold markers).",
+        },
       ],
     },
   })
@@ -1581,6 +1702,70 @@ async function main() {
           body: privacyPortableText(),
         },
       ],
+    },
+  })
+
+  mutations.push({
+    createOrReplace: {
+      _id: "page.cms-handoff-test",
+      _type: "page",
+      title: "CMS Handoff Test",
+      slug: { _type: "slug", current: "cms-handoff-test" },
+      sections: [
+        {
+          _type: "sectionMarketingHero",
+          _key: "handoff-hero",
+          eyebrowLabel: "Page builder test",
+          title: "CMS handoff test page",
+          accentPhrase: "mixed sections",
+          subtitle:
+            "This page is for editors and engineering to verify modular blocks render correctly before publishing custom pages.",
+          imageUrl:
+            "https://images.pexels.com/photos/3184292/pexels-photo-3184292.jpeg?auto=compress&cs=tinysrgb&w=1600",
+          primaryCta: { label: "Apply to join", href: "/apply" },
+          secondaryCta: { label: "Contact us", href: "/contact" },
+        },
+        {
+          _type: "sectionFeatureGrid",
+          _key: "handoff-features",
+          badge: "Blocks",
+          title: [{ _type: "block", _key: "fg-title", style: "normal", markDefs: [], children: [{ _type: "span", _key: "fg-title-span", text: "What you can compose", marks: [] }] }],
+          subtitle: [{ _type: "block", _key: "fg-sub", style: "normal", markDefs: [], children: [{ _type: "span", _key: "fg-sub-span", text: "Stack heroes, grids, testimonials, and CTA bands without code.", marks: [] }] }],
+          items: [
+            { _key: "f1", icon: "Layers", title: "Modular sections", body: "Add, reorder, and remove blocks in Studio." },
+            { _key: "f2", icon: "Eye", title: "Preview first", body: "Review on the Vercel preview URL before www." },
+            { _key: "f3", icon: "Rocket", title: "Ship when ready", body: "Publish in Studio, then promote to production." },
+          ],
+        },
+        {
+          _type: "sectionTestimonials",
+          _key: "handoff-testimonials",
+          heading: "Already trusted by Rellia members",
+          testimonials: (DEFAULT_CONSULTING_PAGE.testimonials ?? []).slice(0, 2).map((item, index) => ({
+            _type: "landingTestimonialItem",
+            _key: `handoff-t-${index}`,
+            quote: item.quote,
+            name: item.name,
+            role: item.role,
+            company: item.company,
+            imageSrc: item.image,
+            logoSrc: item.logo,
+          })),
+        },
+        {
+          _type: "sectionRelliaCta",
+          _key: "handoff-cta",
+          title: "Ready to build your own page?",
+          body: "Duplicate this test page in Studio or start fresh under Build a new page.",
+          primaryCta: { label: "View programs", href: "/programs", variant: "primary" },
+          secondaryCta: { label: "Talk to us", href: "/contact", variant: "secondary" },
+        },
+      ],
+      seo: {
+        metaTitle: "CMS handoff test — Rellia Health",
+        metaDescription: "Internal test page for verifying Sanity page-builder sections.",
+        noIndex: true,
+      },
     },
   })
 
