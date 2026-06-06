@@ -195,7 +195,7 @@
       rgba(200, 240, 238, 0.98) 90%,
       rgba(157, 214, 208, 0.4) 100%
     );
-    animation: rotate-border 2.5s linear infinite;
+    animation: rotate-border 2.8s ease-in-out infinite;
     -webkit-mask:
       linear-gradient(#fff 0 0) content-box,
       linear-gradient(#fff 0 0);
