@@ -233,7 +233,7 @@ export const PriorityAnnouncementModal = ({
                             placeholder={formPlaceholderName?.trim() || "First name"}
                             value={formName}
                             onChange={(e) => setFormName(e.target.value)}
-                            className="h-12 w-full rounded-full border border-black/10 bg-black/[0.01] px-5 font-urbanist text-sm placeholder-black/40 outline-none focus:border-rellia-teal focus:ring-1 focus:ring-rellia-teal"
+                            className="h-12 w-full rounded-full border border-rellia-teal/30 bg-white px-5 font-urbanist text-sm text-black placeholder-black/40 outline-none focus:border-rellia-teal focus:ring-2 focus:ring-rellia-teal/20"
                           />
                           <input
                             type="email"
@@ -241,7 +241,7 @@ export const PriorityAnnouncementModal = ({
                             placeholder={formPlaceholderEmail?.trim() || "Email address"}
                             value={formEmail}
                             onChange={(e) => setFormEmail(e.target.value)}
-                            className="h-12 w-full rounded-full border border-black/10 bg-black/[0.01] px-5 font-urbanist text-sm placeholder-black/40 outline-none focus:border-rellia-teal focus:ring-1 focus:ring-rellia-teal"
+                            className="h-12 w-full rounded-full border border-rellia-teal/30 bg-white px-5 font-urbanist text-sm text-black placeholder-black/40 outline-none focus:border-rellia-teal focus:ring-2 focus:ring-rellia-teal/20"
                           />
                         </div>
                         {submitError && (

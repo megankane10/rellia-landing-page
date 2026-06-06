@@ -5,7 +5,7 @@ import { InstagramFilled, LinkedInFilled, MailFilled } from "@/components/icons/
 import { useGlobalSettings, useNavigation } from "@/hooks/useCmsDocuments"
 import type { NavItem } from "@shared/cms/types"
 import { GETPROVEN_VENDORS_GRID_URL } from "@/config/partnerLinks"
-import { ArrowUp, ArrowUpRight } from "lucide-react"
+import { ArrowUpRight } from "lucide-react"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 
 const SAFDAR_LINKEDIN_URL = "https://www.linkedin.com/in/safdarmd/"
@@ -76,32 +76,6 @@ const footerSectionHeadingClass =
 const legalLinkClass =
   "font-urbanist text-[13px] leading-snug text-white/70 transition-colors hover:text-rellia-mint md:text-sm"
 
-const handleScrollToTop = () => {
-  window.scrollTo({ top: 0, behavior: "smooth" })
-}
-
-const handleBackToTopKeyDown = (event: React.KeyboardEvent<HTMLButtonElement>) => {
-  if (event.key !== "Enter" && event.key !== " ") return
-  event.preventDefault()
-  handleScrollToTop()
-}
-
-const BackToTopLink = () => (
-  <button
-    type="button"
-    onClick={handleScrollToTop}
-    onKeyDown={handleBackToTopKeyDown}
-    className="group inline-flex cursor-pointer items-center gap-1.5 border-0 bg-transparent p-0 font-urbanist text-[13px] leading-none text-white/70 transition-colors hover:text-rellia-mint focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-rellia-teal md:text-sm"
-    aria-label="Back to top"
-  >
-    <ArrowUp
-      className="h-3.5 w-3.5 transition-transform duration-300 group-hover:-translate-y-0.5 motion-reduce:transition-none motion-reduce:group-hover:translate-y-0"
-      aria-hidden
-    />
-    <span>Back to top</span>
-  </button>
-)
-
 const BuiltByCredit = () => (
   <Tooltip delayDuration={200}>
     <TooltipTrigger asChild>
@@ -169,7 +143,7 @@ export default function Footer() {
             </p>
           </div>
 
-          <div className="mb-14 flex flex-col gap-10 md:mb-16 md:flex-row md:items-start md:gap-16 lg:gap-24 xl:gap-28">
+          <div className="mb-8 flex flex-col gap-10 md:mb-10 md:flex-row md:items-start md:gap-16 lg:gap-24 xl:gap-28">
             <div className="hidden min-w-0 flex-col gap-6 md:flex md:max-w-[280px] md:shrink-0">
               <Link to="/" className="flex items-center">
                 <img src="/images/hologram-logo.png" alt="Rellia" className="h-10 w-auto" />
@@ -201,9 +175,6 @@ export default function Footer() {
                 >
                   <MailFilled className="h-5 w-5 text-white/85 transition-colors duration-300 group-hover:text-rellia-teal" />
                 </a>
-              </div>
-              <div className="mt-4">
-                <BackToTopLink />
               </div>
             </div>
 
@@ -262,8 +233,7 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* Mobile socials after links, before divider */}
-          <div className="mb-6 flex flex-col items-center justify-center gap-4 md:hidden">
+          <div className="mb-4 flex flex-col items-center justify-center gap-4 md:hidden">
             <div className="flex items-center justify-center gap-3">
               <a
                 href={g.linkedinUrl}
@@ -291,12 +261,7 @@ export default function Footer() {
                 <MailFilled className="h-5 w-5 text-white/85 transition-colors duration-300 group-hover:text-rellia-teal" />
               </a>
             </div>
-            <div className="mt-2">
-              <BackToTopLink />
-            </div>
           </div>
-
-
 
           <div className="border-t border-white/10 pt-4 md:pt-5">
             <div className="grid grid-cols-1 items-center gap-5 md:grid-cols-[1fr_auto_1fr] md:gap-6">
