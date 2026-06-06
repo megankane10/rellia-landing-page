@@ -1,5 +1,6 @@
 import {defineArrayMember, defineField, defineType} from 'sanity'
 import {internalLabelField, sectionListPreview} from '../shared/sectionPreview'
+import {headingToneField, lucideIconField, showBadgeField} from '../shared/sectionAppearanceFields'
 
 export const sectionEngageBand = defineType({
   name: 'sectionEngageBand',
@@ -7,7 +8,9 @@ export const sectionEngageBand = defineType({
   type: 'object',
   fields: [
     defineField(internalLabelField),
+    showBadgeField,
     defineField({name: 'badge', type: 'string'}),
+    headingToneField,
     defineField({name: 'title', type: 'portableRichText'}),
     defineField({name: 'subtitle', type: 'portableRichText'}),
     defineField({
@@ -18,7 +21,7 @@ export const sectionEngageBand = defineType({
           type: 'object',
           name: 'item',
           fields: [
-            defineField({name: 'icon', type: 'string'}),
+            lucideIconField('Shown above the card title. Leave empty to hide.'),
             defineField({name: 'title', type: 'string', validation: (Rule) => Rule.required()}),
             defineField({name: 'body', type: 'text', rows: 3}),
             defineField({name: 'link', type: 'navItem'}),

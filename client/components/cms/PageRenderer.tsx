@@ -45,6 +45,12 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { FilloutStandardEmbed } from "@fillout/react"
 import RelliaCta, { ctaActionFromHref } from "@/components/RelliaCta"
 import ProgramTrustedMembersSection from "@/components/program/ProgramTrustedMembersSection"
+import { SectionPortableText } from "@/components/cms/SectionPortableText"
+import {
+  defaultHeadingToneForBackground,
+  resolveHeadingTone,
+  sectionBackgroundClass,
+} from "@/lib/cmsSectionAppearance"
 
 const isExternalHref = (href: string) => /^(https?:\/\/|mailto:|tel:)/i.test(href)
 
@@ -165,8 +171,11 @@ const SectionMetrics = ({ section }: { section: CmsSectionMetrics }) => {
   return (
     <NetworkMetricsSection
       heading={cmsDisplayText(section.heading)}
-      subheading={cmsDisplayText(section.subheading) || ""}
+      subheading={cmsDisplayText(section.subheading) || undefined}
       metrics={metrics}
+      contained={false}
+      showBadge={section.showBadge !== false}
+      badgeLabel={cmsDisplayText(section.badgeLabel) || "Network impact"}
     />
   )
 }
@@ -183,7 +192,7 @@ const SectionFormEmbed = ({ section }: { section: CmsSectionFormEmbed }) => {
     return (
       <section className="bg-white py-16 md:py-24 lg:py-28">
         <div className="mx-auto grid max-w-[1300px] grid-cols-1 items-stretch gap-12 px-6 md:px-10 lg:grid-cols-2 lg:gap-16">
-          <div className="relative flex min-h-[480px] flex-col overflow-hidden rounded-[1.75rem] bg-rellia-teal p-8 md:p-10 lg:p-12">
+          <div className="relative flex min-h-[480px] flex-col overflow-hidden bg-rellia-teal p-8 md:p-10 lg:p-12">
             {panelImage ? (
               <div className="pointer-events-none absolute inset-0" aria-hidden>
                 <img
@@ -457,21 +466,54 @@ const SectionEligibilityBento = ({ section }: { section: CmsSectionEligibilityBe
 
 const SectionFeatureGrid = ({ section }: { section: CmsSectionFeatureGrid }) => {
   const items = section.items ?? []
+  const background = section.background ?? "white"
+  const headingTone = resolveHeadingTone(section.headingTone, defaultHeadingToneForBackground(background))
+  const showBadge = section.showBadge !== false && Boolean(section.badge?.trim())
+
   return (
-    <section className="w-full bg-white px-6 py-16 md:px-10 md:py-24">
+    <section className={cn("w-full px-6 py-16 md:px-10 md:py-24", sectionBackgroundClass(background))}>
       <div className="mx-auto max-w-[1300px]">
-        {section.badge && <NetworkEyebrow label={section.badge} tone="onLight" />}
-        <div className="mt-5">
-           <PortableRichText value={section.title as any} className="prose-h2:text-3xl prose-h2:md:text-4xl prose-h2:font-bold prose-h2:tracking-tight prose-h2:text-black" />
-           {section.subtitle && <PortableRichText value={section.subtitle as any} className="mt-4 prose-p:text-black/65" />}
+        {showBadge ? (
+          <NetworkEyebrow label={section.badge!} tone={headingTone === "light" ? "onDark" : "onLight"} />
+        ) : null}
+        <div className={cn(showBadge && "mt-5")}>
+          <SectionPortableText value={section.title} variant="heading" tone={headingTone} />
+          {section.subtitle ? (
+            <SectionPortableText
+              value={section.subtitle}
+              variant="subheading"
+              tone={headingTone}
+              className="mt-4"
+            />
+          ) : null}
         </div>
         <div className="mt-16 grid grid-cols-1 items-start gap-10 sm:grid-cols-2 md:mt-20 md:gap-x-12 md:gap-y-14 lg:mt-24 lg:gap-x-16 lg:gap-y-16">
           {items.map((item, idx) => (
             <ScrollReveal key={item._key ?? idx} delay={0.05 * idx}>
               <div className="flex w-full flex-col items-start text-left">
-                <LucideIcon name={item.icon} className="h-9 w-9 shrink-0 text-rellia-teal" />
-                <h3 className="mt-5 font-host-grotesk text-xl font-semibold text-rellia-teal md:text-2xl">{item.title}</h3>
-                <p className="mt-3 max-w-xl font-urbanist text-base leading-relaxed text-black/75 md:text-lg">{item.body}</p>
+                <LucideIcon
+                  name={item.icon}
+                  className={cn(
+                    "h-9 w-9 shrink-0",
+                    headingTone === "light" ? "text-rellia-mint" : "text-rellia-teal",
+                  )}
+                />
+                <h3
+                  className={cn(
+                    "mt-5 font-host-grotesk text-xl font-semibold md:text-2xl",
+                    headingTone === "light" ? "text-white" : "text-rellia-teal",
+                  )}
+                >
+                  {item.title}
+                </h3>
+                <p
+                  className={cn(
+                    "mt-3 max-w-xl font-urbanist text-base leading-relaxed md:text-lg",
+                    headingTone === "light" ? "text-white/80" : "text-black/75",
+                  )}
+                >
+                  {item.body}
+                </p>
               </div>
             </ScrollReveal>
           ))}
@@ -483,6 +525,9 @@ const SectionFeatureGrid = ({ section }: { section: CmsSectionFeatureGrid }) => 
 
 const SectionEngageBand = ({ section }: { section: CmsSectionEngageBand }) => {
   const items = section.items ?? []
+  const headingTone = resolveHeadingTone(section.headingTone, "light")
+  const showBadge = section.showBadge !== false && Boolean(section.badge?.trim())
+
   return (
     <section className="relative w-full overflow-hidden bg-rellia-teal px-6 py-16 md:px-10 md:py-24">
       <img
@@ -500,15 +545,18 @@ const SectionEngageBand = ({ section }: { section: CmsSectionEngageBand }) => {
       <div className="relative z-10 mx-auto max-w-[1300px]">
         <ScrollReveal>
           <div className="mb-8 md:mb-10">
-            {section.badge && <NetworkEyebrow label={section.badge} tone="onDark" />}
-            <div className="mt-5 prose-h2:text-3xl prose-h2:md:text-[40px] prose-h2:font-semibold prose-h2:tracking-tight prose-h2:text-white">
-                <PortableRichText value={section.title as any} />
+            {showBadge ? <NetworkEyebrow label={section.badge!} tone="onDark" /> : null}
+            <div className={cn(showBadge && "mt-5")}>
+              <SectionPortableText value={section.title} variant="heading" tone={headingTone} />
+              {section.subtitle ? (
+                <SectionPortableText
+                  value={section.subtitle}
+                  variant="subheading"
+                  tone={headingTone}
+                  className="mt-4 max-w-2xl"
+                />
+              ) : null}
             </div>
-            {section.subtitle && (
-              <div className="mt-4 max-w-2xl prose-p:text-base prose-p:md:text-lg prose-p:font-medium prose-p:text-white/80">
-                <PortableRichText value={section.subtitle as any} />
-              </div>
-            )}
           </div>
         </ScrollReveal>
 
@@ -520,7 +568,17 @@ const SectionEngageBand = ({ section }: { section: CmsSectionEngageBand }) => {
                 to={engageItemHref(item)}
                 className="group flex h-full min-h-[168px] flex-col rounded-2xl border border-white/15 bg-white/5 p-5 backdrop-blur-md transition duration-300 hover:border-rellia-mint/40 hover:bg-white/10 cursor-pointer focus-visible:outline-none sm:min-h-[184px] sm:p-6"
               >
-                <LucideIcon name={item.icon} className="h-7 w-7 text-rellia-mint transition-transform duration-300 group-hover:scale-105" />
+                {item.icon ? (
+                  <LucideIcon
+                    name={item.icon}
+                    className="h-7 w-7 text-rellia-mint transition-transform duration-300 group-hover:scale-105"
+                  />
+                ) : (
+                  <span
+                    className="inline-flex h-7 w-7 items-center justify-center rounded-full border border-white/20 bg-white/10"
+                    aria-hidden
+                  />
+                )}
                 <p className="mt-5 font-host-grotesk text-lg font-semibold leading-snug tracking-tight text-white">
                   {item.title}
                 </p>
@@ -551,8 +609,10 @@ const SectionJourneyTimeline = ({ section }: { section: CmsSectionJourneyTimelin
       <div className="mx-auto max-w-[1300px]">
         {section.badge && <NetworkEyebrow label={section.badge} tone="onLight" />}
         <div className="mt-5">
-           <PortableRichText value={section.title as any} className="prose-h2:text-3xl prose-h2:md:text-4xl prose-h2:font-bold prose-h2:tracking-tight prose-h2:text-black" />
-           {section.description && <PortableRichText value={section.description as any} className="mt-4 prose-p:text-black/65" />}
+          <SectionPortableText value={section.title} variant="heading" tone="dark" />
+          {section.description ? (
+            <SectionPortableText value={section.description} variant="subheading" tone="dark" className="mt-4" />
+          ) : null}
         </div>
 
         <div className="mt-16 space-y-12 md:mt-20 md:space-y-16">
@@ -622,14 +682,17 @@ const SectionDiagnosticSurvey = ({ section }: { section: CmsSectionDiagnosticSur
           <div className="flex flex-col items-start lg:sticky lg:top-32">
             <ScrollReveal>
               {section.badge && <NetworkEyebrow label={section.badge} tone="onLight" />}
-              <div className="mt-4 mb-6 prose-h2:text-3xl prose-h2:md:text-[44px] prose-h2:font-bold prose-h2:tracking-tight prose-h2:text-black prose-h2:leading-tight">
-                <PortableRichText value={section.title as any} />
+              <div className="mt-4 mb-6">
+                <SectionPortableText value={section.title} variant="heading" tone="dark" />
               </div>
-              {section.subtitle && (
-                <div className="mb-10 max-w-xl prose-p:text-lg prose-p:md:text-xl prose-p:leading-relaxed prose-p:text-black/70">
-                    <PortableRichText value={section.subtitle as any} />
-                </div>
-              )}
+              {section.subtitle ? (
+                <SectionPortableText
+                  value={section.subtitle}
+                  variant="subheading"
+                  tone="dark"
+                  className="mb-10 max-w-xl"
+                />
+              ) : null}
               <RelliaAction asChild variant="mintTealFill" size="comfortable" className="w-full sm:w-auto justify-center">
                 <Link to={section.ctaHref || "#"} className="inline-flex cursor-pointer items-center gap-2">
                   {section.ctaLabel || "Take Survey"}
@@ -688,6 +751,7 @@ const SectionRelliaCtaBlock = ({ section }: { section: CmsSectionRelliaCta }) =>
             ? "white"
             : undefined
       }
+      roundedClassName="rounded-none"
     />
   )
 }
@@ -710,13 +774,13 @@ const SectionFaq = ({ section }: { section: CmsSectionFaq }) => {
               {cmsDisplayText(section.subtitle)}
             </p>
           ) : null}
-          <div className="rounded-3xl border border-black/10 bg-white px-7 py-0 shadow-sm">
+          <div className="border-y border-black/10 bg-white">
             <Accordion type="single" collapsible>
               {items.map((item, index) => (
                 <AccordionItem
                   key={item._key ?? `${item.question}-${index}`}
                   value={item._key ?? `faq-${index}`}
-                  className={index === items.length - 1 ? "-mx-7 px-7 border-b-0" : "-mx-7 px-7 border-b border-black/10"}
+                  className={index === items.length - 1 ? "border-b-0" : "border-b border-black/10"}
                 >
                   <AccordionTrigger className="min-h-[64px] py-4 text-left text-base font-medium text-black md:min-h-[72px] md:py-5 md:text-lg">
                     {cmsDisplayText(item.question)}

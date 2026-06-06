@@ -179,7 +179,10 @@ export type CmsSectionFeatureGridItem = {
 export type CmsSectionFeatureGrid = {
   _type: "sectionFeatureGrid"
   _key?: string
+  showBadge?: boolean
   badge?: string
+  headingTone?: "auto" | "light" | "dark"
+  background?: "white" | "teal" | "cream"
   title?: string | SanityPortableText
   subtitle?: string | SanityPortableText
   items?: CmsSectionFeatureGridItem[]
@@ -223,7 +226,9 @@ export type CmsSectionEngageBandItem = {
 export type CmsSectionEngageBand = {
   _type: "sectionEngageBand"
   _key?: string
+  showBadge?: boolean
   badge?: string
+  headingTone?: "auto" | "light" | "dark"
   title?: string | SanityPortableText
   subtitle?: string | SanityPortableText
   items?: CmsSectionEngageBandItem[]
@@ -310,6 +315,8 @@ export type CmsSectionMetricsItem = {
 export type CmsSectionMetrics = {
   _type: "sectionMetrics"
   _key?: string
+  showBadge?: boolean
+  badgeLabel?: string
   heading: string
   subheading?: string
   metrics?: CmsSectionMetricsItem[]

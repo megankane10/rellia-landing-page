@@ -124,6 +124,16 @@ const resolveSeedEventEndsAt = (e: {
  * fields (home page CTA image). Defaults to `https://relliahealth.com`.
  */
 
+const ptBlock = (key: string, text: string, style: "normal" | "h2" = "h2") => [
+  {
+    _type: "block" as const,
+    _key: key,
+    style,
+    markDefs: [],
+    children: [{ _type: "span" as const, _key: `${key}-span`, text, marks: [] as string[] }],
+  },
+]
+
 type PortableTextBlock = {
   _type: "block"
   _key: string
@@ -1802,21 +1812,44 @@ async function main() {
         {
           _type: "sectionMarketingHero",
           _key: "shf-hero",
-          eyebrowLabel: "Rellia Health",
-          title: "Where health founders",
-          accentPhrase: "build with confidence",
+          eyebrowLabel: "Page builder showcase",
+          title: "Supporting health founders",
+          accentPhrase: "at every stage",
           subtitle:
-            "Rellia connects healthcare innovators with vetted advisors, practical programs, and a network that understands regulatory, clinical, and commercial realities.",
+            "This page demonstrates every modular section available in Sanity — heroes, metrics, grids, timelines, forms, and more.",
           imageUrl:
             "https://images.pexels.com/photos/3182761/pexels-photo-3182761.jpeg?auto=compress&cs=tinysrgb&w=1600",
           primaryCta: { label: "Apply to join", href: "/apply" },
           secondaryCta: { label: "Take the diagnostic", href: "/startup-diagnostic" },
         },
         {
+          _type: "sectionRichText",
+          _key: "shf-rich",
+          title: "Built for healthcare's pace",
+          body: [
+            {
+              _type: "block",
+              _key: "shf-rich-p1",
+              style: "normal",
+              markDefs: [],
+              children: [
+                {
+                  _type: "span",
+                  _key: "shf-rich-p1-span",
+                  text: "Rellia is a curated network and practical support system for health tech founders navigating clinical validation, regulatory pathways, and enterprise procurement.",
+                  marks: [],
+                },
+              ],
+            },
+          ],
+        },
+        {
           _type: "sectionMetrics",
           _key: "shf-metrics",
-          heading: "Built for outcomes that compound",
-          subheading: "Structured support designed for healthcare's regulatory and commercial realities.",
+          showBadge: true,
+          badgeLabel: "By the numbers",
+          heading: "Outcomes that compound over time",
+          subheading: "Structured support designed for regulated markets — not generic startup advice.",
           metrics: [
             { _key: "m1", label: "Critical domains assessed", value: 12 },
             { _key: "m2", label: "Advisor network", value: 150, suffix: "+" },
@@ -1824,69 +1857,219 @@ async function main() {
           ],
         },
         {
+          _type: "sectionHero",
+          _key: "shf-hero-alt",
+          badge: "Section: Hero",
+          headline: ptBlock("shf-hero-alt-h", "A flexible hero block for interior pages"),
+          subheadline: ptBlock(
+            "shf-hero-alt-sub",
+            "Use when you need a teal band with optional background image, badge, and dual CTAs.",
+            "normal",
+          ),
+          primaryCta: { label: "Explore programs", href: "/programs" },
+          secondaryCta: { label: "Contact us", href: "/contact" },
+        },
+        {
           _type: "sectionFeatureGrid",
           _key: "shf-features",
+          showBadge: true,
           badge: "How we help",
-          title: [{ _type: "block", _key: "shf-fg-title", style: "normal", markDefs: [], children: [{ _type: "span", _key: "shf-fg-title-span", text: "Support at every inflection point", marks: [] }] }],
-          subtitle: [{ _type: "block", _key: "shf-fg-sub", style: "normal", markDefs: [], children: [{ _type: "span", _key: "shf-fg-sub-span", text: "From first pilot to scale, Rellia gives founders structured guidance—not generic startup advice.", marks: [] }] }],
+          headingTone: "auto",
+          background: "white",
+          title: ptBlock("shf-fg-title", "Support at every inflection point"),
+          subtitle: ptBlock(
+            "shf-fg-sub",
+            "From first pilot to scale, Rellia gives founders structured guidance with vetted operators.",
+            "normal",
+          ),
           items: [
             {
               _key: "f1",
               icon: "Target",
               title: "Readiness diagnostics",
-              body: "Benchmark your startup across regulatory, clinical, commercial, and operational domains—then get a prioritized roadmap.",
+              body: "Benchmark across regulatory, clinical, commercial, and operational domains.",
             },
             {
               _key: "f2",
               icon: "Users",
               title: "Matched advisors",
-              body: "Connect with operators who have shipped in healthcare: ex-FDA reviewers, health system leaders, and repeat founders.",
+              body: "Connect with ex-FDA reviewers, health system leaders, and repeat founders.",
             },
             {
               _key: "f3",
               icon: "Layers",
               title: "Programs & playbooks",
-              body: "Join cohort-based sprints for QMS, evidence generation, procurement readiness, and go-to-market in regulated markets.",
+              body: "Cohort sprints for QMS, evidence generation, and procurement readiness.",
             },
             {
               _key: "f4",
               icon: "Heart",
               title: "Founder community",
-              body: "Learn alongside peers navigating the same buyer cycles, security reviews, and clinical validation milestones.",
+              body: "Learn alongside peers navigating the same buyer and validation cycles.",
             },
+          ],
+        },
+        {
+          _type: "sectionCardsGrid",
+          _key: "shf-cards",
+          title: "Programs snapshot",
+          subtitle: "Card grid with optional icons, badges, tags, and CTAs per card.",
+          cards: [
+            {
+              _key: "c1",
+              title: "QMS Sprint",
+              body: "Build a startup-friendly quality system with expert guidance.",
+              iconKey: "ShieldCheck",
+              badge: "Program",
+              cta: { label: "Learn more", href: "/programs" },
+            },
+            {
+              _key: "c2",
+              title: "Startup Diagnostic",
+              body: "15-minute assessment with instant readiness scoring.",
+              iconKey: "Zap",
+              badge: "Free tool",
+              cta: { label: "Start now", href: "/startup-diagnostic" },
+            },
+            {
+              _key: "c3",
+              title: "Advisor matching",
+              body: "Get introduced to operators with relevant healthcare experience.",
+              iconKey: "Users",
+              cta: { label: "Browse advisors", href: "/advisors" },
+            },
+          ],
+        },
+        {
+          _type: "sectionEligibilityBento",
+          _key: "shf-bento",
+          badge: "Who it's for",
+          title: "Built for serious health tech teams",
+          description: "Eligibility bento cards with photography and bold overlay headlines.",
+          items: [
+            { _key: "b1", text: "Digital health & SaMD founders" },
+            { _key: "b2", text: "Teams preparing for health-system pilots" },
+            { _key: "b3", text: "Companies navigating FDA or CE pathways" },
+            { _key: "b4", text: "Founders building enterprise-grade evidence" },
           ],
         },
         {
           _type: "sectionEngageBand",
           _key: "shf-engage",
+          showBadge: true,
           badge: "Get started",
-          title: [{ _type: "block", _key: "shf-engage-title", style: "normal", markDefs: [], children: [{ _type: "span", _key: "shf-engage-title-span", text: "Three ways to engage with Rellia", marks: [] }] }],
+          headingTone: "light",
+          title: ptBlock("shf-engage-title", "Three ways to engage with Rellia"),
+          subtitle: ptBlock(
+            "shf-engage-sub",
+            "Each card supports a Lucide icon, body copy, and internal link.",
+            "normal",
+          ),
           items: [
             {
               _key: "e1",
+              icon: "ClipboardCheck",
               title: "Startup diagnostic",
-              body: "Take a 15-minute assessment and receive an instant readiness score with gap analysis.",
+              body: "Take a 15-minute assessment and receive an instant readiness score.",
               link: { label: "Start diagnostic", href: "/startup-diagnostic" },
             },
             {
               _key: "e2",
+              icon: "Rocket",
               title: "Apply to programs",
-              body: "Join structured cohorts designed for health tech founders at specific stages.",
+              body: "Join structured cohorts designed for health tech founders.",
               link: { label: "View programs", href: "/programs" },
             },
             {
               _key: "e3",
+              icon: "Users",
               title: "Explore the network",
               body: "Meet founders, advisors, and industry partners in the Rellia ecosystem.",
               link: { label: "Browse network", href: "/founders" },
             },
+            {
+              _key: "e4",
+              icon: "Compass",
+              title: "Read founder stories",
+              body: "See how members navigated pilots, procurement, and regulatory milestones.",
+              link: { label: "View stories", href: "/stories" },
+            },
+          ],
+        },
+        {
+          _type: "sectionJourneyTimeline",
+          _key: "shf-journey",
+          badge: "Your journey",
+          title: ptBlock("shf-journey-title", "What you own vs. where we help"),
+          description: ptBlock(
+            "shf-journey-desc",
+            "Journey timeline with two columns — pill steps on the left, detail cards on the right.",
+            "normal",
+          ),
+          leftColumn: {
+            title: "You own",
+            body: "Vision, product, and customer relationships stay with your team.",
+            steps: [
+              { _key: "ls1", id: "vision", label: "Product vision", detail: "", icon: "Sparkles" },
+              { _key: "ls2", id: "customers", label: "Customer relationships", detail: "", icon: "Heart" },
+              { _key: "ls3", id: "team", label: "Core team", detail: "", icon: "Users" },
+            ],
+          },
+          rightColumn: {
+            title: "We help with",
+            body: "Structured playbooks, expert operators, and a network that de-risks the path.",
+            steps: [
+              {
+                _key: "rs1",
+                id: "regulatory",
+                label: "Regulatory strategy",
+                detail: "Map pathways, evidence plans, and submission readiness.",
+                icon: "ShieldCheck",
+              },
+              {
+                _key: "rs2",
+                id: "commercial",
+                label: "Commercialization",
+                detail: "Pilot design, procurement, and health-system engagement.",
+                icon: "Target",
+              },
+              {
+                _key: "rs3",
+                id: "quality",
+                label: "Quality systems",
+                detail: "QMS foundations that scale with your product.",
+                icon: "Layers",
+              },
+            ],
+          },
+        },
+        {
+          _type: "sectionDiagnosticSurvey",
+          _key: "shf-survey",
+          badge: "Diagnostic",
+          title: ptBlock("shf-survey-title", "Benchmark your startup in ~15 minutes"),
+          subtitle: ptBlock(
+            "shf-survey-sub",
+            "Private assessment across 12 critical domains with instant gap analysis.",
+            "normal",
+          ),
+          ctaLabel: "Take the diagnostic",
+          ctaHref: "/startup-diagnostic",
+          categoriesTitle: "Domains we assess",
+          categories: [
+            "Regulatory & quality",
+            "Clinical validation",
+            "Security & privacy",
+            "Commercial readiness",
+            "Implementation",
+            "Team & operations",
           ],
         },
         {
           _type: "sectionTestimonials",
           _key: "shf-testimonials",
           heading: "What members say",
-          testimonials: (DEFAULT_CONSULTING_PAGE.testimonials ?? []).slice(0, 2).map((item, index) => ({
+          testimonials: (DEFAULT_CONSULTING_PAGE.testimonials ?? []).slice(0, 3).map((item, index) => ({
             _type: "landingTestimonialItem",
             _key: `shf-t-${index}`,
             quote: item.quote,
@@ -1898,10 +2081,23 @@ async function main() {
           })),
         },
         {
+          _type: "sectionFormEmbed",
+          _key: "shf-form",
+          layout: "split",
+          filloutFormUrl: "https://forms.fillout.com/t/r5hdDmQodfus",
+          panelHeadline: "Apply to Rellia",
+          panelBody: "Split form embed — supporting copy and bullet list beside the Fillout form.",
+          benefits: [
+            "Vetted advisor introductions",
+            "Programs matched to your stage",
+            "Private founder community access",
+          ],
+        },
+        {
           _type: "sectionFaq",
           _key: "shf-faq",
           title: "Common questions",
-          subtitle: "Quick answers about how Rellia supports health tech founders.",
+          subtitle: "FAQ accordion section — flat edges in page builder layout.",
           items: [
             {
               _key: "q1",
@@ -1911,15 +2107,15 @@ async function main() {
             },
             {
               _key: "q2",
-              question: "Is the startup diagnostic really free?",
+              question: "Can I customize section tags and heading colors?",
               answer:
-                "Yes. The diagnostic is private, takes about 15 minutes, and gives you an immediate readiness score with suggested next steps.",
+                "Yes. Feature grid and engage band sections support show/hide badge, heading tone (light/dark/auto), and background color for feature grids.",
             },
             {
               _key: "q3",
               question: "How does advisor matching work?",
               answer:
-                "Based on your diagnostic gaps and stage, we suggest vetted advisors with relevant healthcare operating experience. You choose who to engage.",
+                "Based on your diagnostic gaps and stage, we suggest vetted advisors with relevant healthcare operating experience.",
             },
           ],
         },
@@ -1930,6 +2126,7 @@ async function main() {
           body: "Join a network built for healthcare's unique pace. Start with the diagnostic or apply directly to Rellia programs.",
           primaryCta: { label: "Apply now", href: "/apply", variant: "primary" },
           secondaryCta: { label: "Contact us", href: "/contact", variant: "secondary" },
+          aboveSectionTone: "white",
         },
       ],
       seo: {

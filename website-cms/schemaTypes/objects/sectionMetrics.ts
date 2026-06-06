@@ -1,5 +1,6 @@
 import {defineArrayMember, defineField, defineType} from 'sanity'
 import {internalLabelField, sectionListPreview} from '../shared/sectionPreview'
+import {showBadgeField} from '../shared/sectionAppearanceFields'
 
 /** Home / network metrics band — matches NetworkMetricsSection on the site. */
 export const sectionMetrics = defineType({
@@ -8,6 +9,14 @@ export const sectionMetrics = defineType({
   type: 'object',
   fields: [
     defineField(internalLabelField),
+    showBadgeField,
+    defineField({
+      name: 'badgeLabel',
+      title: 'Badge label',
+      type: 'string',
+      initialValue: 'Network impact',
+      hidden: ({parent}) => parent?.showBadge === false,
+    }),
     defineField({name: 'heading', title: 'Heading', type: 'string', validation: (Rule) => Rule.required()}),
     defineField({name: 'subheading', title: 'Subheading', type: 'text', rows: 3}),
     defineField({

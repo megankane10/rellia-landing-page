@@ -1,5 +1,10 @@
 import {defineArrayMember, defineField, defineType} from 'sanity'
 import {internalLabelField, sectionListPreview} from '../shared/sectionPreview'
+import {
+  headingToneField,
+  sectionBackgroundField,
+  showBadgeField,
+} from '../shared/sectionAppearanceFields'
 
 export const sectionFeatureGrid = defineType({
   name: 'sectionFeatureGrid',
@@ -7,7 +12,10 @@ export const sectionFeatureGrid = defineType({
   type: 'object',
   fields: [
     defineField(internalLabelField),
+    showBadgeField,
     defineField({name: 'badge', type: 'string'}),
+    headingToneField,
+    sectionBackgroundField,
     defineField({name: 'title', type: 'portableRichText'}),
     defineField({name: 'subtitle', type: 'portableRichText'}),
     defineField({

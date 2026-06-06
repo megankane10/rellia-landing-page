@@ -49,8 +49,12 @@ export type NetworkMetric = {
 
 type NetworkMetricsSectionProps = {
   heading: string;
-  subheading: string;
+  subheading?: string;
   metrics: NetworkMetric[];
+  /** When false, renders edge-to-edge without rounded container (page builder). */
+  contained?: boolean;
+  showBadge?: boolean;
+  badgeLabel?: string;
 };
 
 function AccentHeading({ text }: { text: string }) {
@@ -117,7 +121,14 @@ function MetricValue({
   );
 }
 
-export default function NetworkMetricsSection({ heading, subheading, metrics }: NetworkMetricsSectionProps) {
+export default function NetworkMetricsSection({
+  heading,
+  subheading,
+  metrics,
+  contained = true,
+  showBadge = true,
+  badgeLabel = "Network impact",
+}: NetworkMetricsSectionProps) {
   const sectionRef = useRef<HTMLDivElement | null>(null);
   const [entered, setEntered] = useState(false);
   const [countReady, setCountReady] = useState(false)
@@ -175,13 +186,21 @@ export default function NetworkMetricsSection({ heading, subheading, metrics }: 
 
   return (
     <section
-      className="relative z-[2] w-full bg-white py-4 md:py-6 overflow-hidden"
+      className={cn(
+        "relative z-[2] w-full overflow-hidden",
+        contained ? "bg-white py-4 md:py-6" : "bg-rellia-teal py-16 md:py-24",
+      )}
     >
       <div
         ref={(node) => {
           sectionRef.current = node
         }}
-        className="relative flex h-auto min-h-[1060px] w-full flex-col overflow-hidden rounded-[2.5rem] md:rounded-[3.5rem] sm:min-h-0 sm:h-[820px] md:h-[840px] lg:h-[780px] xl:h-[800px] shadow-lg"
+        className={cn(
+          "relative flex w-full flex-col overflow-hidden",
+          contained
+            ? "h-auto min-h-[1060px] rounded-[2.5rem] shadow-lg sm:min-h-0 sm:h-[820px] md:h-[840px] md:rounded-[3.5rem] lg:h-[780px] xl:h-[800px]"
+            : "min-h-[560px] md:min-h-[620px]",
+        )}
       >
         <div className="absolute inset-0 overflow-hidden" aria-hidden>
           <motion.img
@@ -209,25 +228,32 @@ export default function NetworkMetricsSection({ heading, subheading, metrics }: 
               className="flex flex-col items-start text-left w-full"
             >
               <div className="mb-4 md:mb-6">
-                <PillTag
-                  label="Network impact"
-                  className={PILL_ON_IMAGE_BLUR_CLASS}
-                  dot={
-                    <motion.span
-                      aria-hidden
-                      className="relative inline-flex h-2 w-2 rounded-full bg-rellia-mint"
-                      initial={false}
-                      animate={reduceMotion ? undefined : { opacity: [1, 1, 1], transform: ["scale(1)", "scale(1.35)", "scale(1)"] }}
-                      transition={reduceMotion ? undefined : { duration: 1.6, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" }}
-                    />
-                  }
-                />
+                {showBadge ? (
+                  <PillTag
+                    label={badgeLabel}
+                    className={PILL_ON_IMAGE_BLUR_CLASS}
+                    dot={
+                      <motion.span
+                        aria-hidden
+                        className="relative inline-flex h-2 w-2 rounded-full bg-rellia-mint"
+                        initial={false}
+                        animate={reduceMotion ? undefined : { opacity: [1, 1, 1], transform: ["scale(1)", "scale(1.35)", "scale(1)"] }}
+                        transition={reduceMotion ? undefined : { duration: 1.6, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" }}
+                      />
+                    }
+                  />
+                ) : null}
               </div>
               <h2
                 className={`font-host-grotesk max-w-3xl font-bold leading-tight tracking-tight text-white ${PAGE_HEADER_TITLE_SIZE_CLASS}`}
               >
                 <AccentHeading text={heading} />
               </h2>
+              {subheading?.trim() ? (
+                <p className="mt-4 max-w-2xl font-urbanist text-base font-medium leading-relaxed text-white/80 md:text-lg">
+                  {subheading.trim()}
+                </p>
+              ) : null}
             </motion.div>
           </div>
 
