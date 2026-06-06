@@ -156,6 +156,7 @@ export const storyBySlugQuery = `*[_type == "story" && slug.current == $slug && 
   "tag": filters[0]->title,
   publishedAt,
   featured,
+  headerLayout,
   body,
   ${seoFragment}
 }`

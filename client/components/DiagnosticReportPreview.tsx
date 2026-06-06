@@ -39,18 +39,18 @@ export default function DiagnosticReportPreview({
 
   return (
     <div className="relative p-4">
-      <div className="absolute -top-4 -left-3 z-20 flex items-center gap-2 rounded-full border border-rellia-teal/15 bg-white/95 px-4 py-2 text-[11px] font-bold text-rellia-teal shadow-[0_12px_36px_-6px_rgba(13,53,64,0.18)] backdrop-blur-md sm:-left-6">
-        <Sparkles className="h-3.5 w-3.5 text-rellia-mint" aria-hidden />
+      <div className="absolute -top-5 -left-4 z-20 flex items-center gap-2.5 rounded-full border border-rellia-teal/15 bg-white/95 px-5 py-2.5 text-xs font-bold text-rellia-teal shadow-[0_14px_40px_-6px_rgba(13,53,64,0.2)] backdrop-blur-md sm:-left-7 sm:px-6 sm:py-3 sm:text-sm">
+        <Sparkles className="h-4 w-4 text-rellia-mint sm:h-[18px] sm:w-[18px]" aria-hidden />
         {blobRoadmap}
       </div>
 
-      <div className="absolute top-[35%] -right-4 z-20 flex items-center gap-2 rounded-full border border-rellia-teal/15 bg-rellia-teal px-4 py-2 text-[11px] font-bold text-white shadow-[0_12px_36px_-6px_rgba(13,53,64,0.25)] sm:-right-8">
-        <Users className="h-3.5 w-3.5 text-rellia-mint" aria-hidden />
+      <div className="absolute top-[35%] -right-5 z-20 flex items-center gap-2.5 rounded-full border border-rellia-teal/15 bg-rellia-teal px-5 py-2.5 text-xs font-bold text-white shadow-[0_14px_40px_-6px_rgba(13,53,64,0.28)] sm:-right-10 sm:px-6 sm:py-3 sm:text-sm">
+        <Users className="h-4 w-4 text-rellia-mint sm:h-[18px] sm:w-[18px]" aria-hidden />
         {blobAdvisors}
       </div>
 
-      <div className="absolute -bottom-4 left-8 z-20 flex items-center gap-2 rounded-full border border-black/5 bg-[#fbfcf8]/95 px-4 py-2 text-[11px] font-bold text-black/75 shadow-[0_12px_30px_-6px_rgba(0,0,0,0.12)] backdrop-blur-md">
-        <ShieldCheck className="h-3.5 w-3.5 text-green-600" aria-hidden />
+      <div className="absolute -bottom-5 left-6 z-20 flex items-center gap-2.5 rounded-full border border-black/5 bg-[#fbfcf8]/95 px-5 py-2.5 text-xs font-bold text-black/75 shadow-[0_14px_36px_-6px_rgba(0,0,0,0.14)] backdrop-blur-md sm:left-10 sm:px-6 sm:py-3 sm:text-sm">
+        <ShieldCheck className="h-4 w-4 text-green-600 sm:h-[18px] sm:w-[18px]" aria-hidden />
         {blobBlindSpot}
       </div>
 

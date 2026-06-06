@@ -231,9 +231,18 @@
     filter: drop-shadow(0 0 6px rgba(157, 214, 208, 0.7));
   }
 
+  .built-by-tooltip--opening {
+    animation: built-by-tooltip-enter 0.36s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    transform-origin: center bottom;
+  }
+
   .built-by-tooltip--closing {
     animation: built-by-tooltip-dismiss 0.42s cubic-bezier(0.4, 0, 0.2, 1) forwards;
     transform-origin: center bottom;
+  }
+
+  .built-by-tooltip--opening::before {
+    animation: rotate-border 1.8s cubic-bezier(0.45, 0.09, 0.55, 0.91) infinite;
   }
 
   .built-by-tooltip--closing::before {
@@ -242,13 +251,18 @@
 
   @media (prefers-reduced-motion: reduce) {
     .built-by-tooltip::before,
+    .built-by-tooltip--opening::before,
     .built-by-tooltip--closing::before {
       animation: none;
       background: rgba(157, 214, 208, 0.45);
     }
 
+    .built-by-tooltip--opening,
     .built-by-tooltip--closing {
       animation: none;
+    }
+
+    .built-by-tooltip--closing {
       opacity: 0;
     }
   }
@@ -288,14 +302,25 @@
   }
 }
 
+@keyframes built-by-tooltip-enter {
+  0% {
+    opacity: 0;
+    transform: translateY(8px) scale(0.86);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
 @keyframes built-by-tooltip-dismiss {
   0% {
     opacity: 1;
-    transform: scale(1);
+    transform: translateY(0) scale(1);
   }
   100% {
     opacity: 0;
-    transform: scale(0.78);
+    transform: translateY(6px) scale(0.82);
   }
 }
 

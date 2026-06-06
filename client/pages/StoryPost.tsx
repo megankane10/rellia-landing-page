@@ -224,6 +224,7 @@ export default function StoryPost() {
             coverImageAlt={headerCoverAlt}
             toAbsoluteImageUrl={toAbsoluteImageUrl}
             shareBlock={shareBlock}
+            layoutMode={cmsStory.headerLayout === "block" ? "block" : "background"}
           />
 
           <section className="px-6 md:px-10 py-10 md:py-14">

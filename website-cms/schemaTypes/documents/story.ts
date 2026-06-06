@@ -75,6 +75,22 @@ export const story = defineType({
       group: 'content',
     }),
     defineField({
+      name: 'headerLayout',
+      title: 'Header layout',
+      type: 'string',
+      options: {
+        list: [
+          {title: 'Background image', value: 'background'},
+          {title: 'Image block (side-by-side)', value: 'block'},
+        ],
+        layout: 'radio',
+      },
+      initialValue: 'background',
+      description:
+        'Background fills the hero behind text. Image block shows the cover beside the headline on larger screens.',
+      group: 'content',
+    }),
+    defineField({
       name: 'body',
       title: 'Story content',
       type: 'portableRichText',

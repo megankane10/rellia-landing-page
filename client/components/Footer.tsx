@@ -201,6 +201,7 @@ const BuiltByCredit = () => {
         sideOffset={8}
         className={cn(
           "built-by-tooltip !animate-none data-[state=closed]:!animate-none",
+          open && !isClosing && "built-by-tooltip--opening",
           isClosing && "built-by-tooltip--closing",
         )}
       >

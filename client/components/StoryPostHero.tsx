@@ -34,7 +34,7 @@ export const StoryPostHero = ({
       className={cn(
         "relative overflow-hidden transition-all duration-500 rounded-b-[2.5rem] md:rounded-b-[3.5rem]",
         isBgMode 
-          ? "bg-rellia-teal text-black pt-24 pb-16 md:pt-32 md:pb-24 lg:pt-[120px] lg:pb-[100px] group layout-background" 
+          ? "bg-rellia-teal text-white pt-24 pb-16 md:pt-32 md:pb-24 lg:pt-[120px] lg:pb-[100px] group layout-background" 
           : "bg-rellia-cream text-black pt-24 pb-12 md:pt-32 md:pb-16"
       )}
     >
@@ -43,12 +43,17 @@ export const StoryPostHero = ({
           <img
             src={toAbsoluteImageUrl(coverSrc)}
             alt={coverAlt}
-            className="h-full w-full object-cover"
+            className="h-full w-full object-cover object-center md:object-[center_right]"
             loading="eager"
             fetchPriority="high"
           />
-          <div 
-            className="absolute inset-0 bg-gradient-to-b from-rellia-greyTeal/98 via-rellia-greyTeal/90 to-rellia-greyTeal/20 md:bg-gradient-to-r md:from-rellia-greyTeal/97 md:via-rellia-greyTeal/85 md:to-rellia-greyTeal/15" 
+          <div
+            className="absolute inset-0 bg-gradient-to-b from-rellia-teal/95 via-rellia-teal/78 to-rellia-teal/25 md:bg-gradient-to-r md:from-rellia-teal/95 md:via-rellia-teal/62 md:to-transparent"
+            aria-hidden
+          />
+          <div
+            className="absolute inset-0 bg-gradient-to-b from-black/55 via-black/30 to-transparent md:bg-gradient-to-r md:from-black/72 md:via-black/28 md:to-transparent"
+            aria-hidden
           />
         </div>
       ) : (
@@ -79,11 +84,21 @@ export const StoryPostHero = ({
                   </div>
                 </div>
 
-                <h1 className="mt-6 font-host-grotesk text-3xl font-medium leading-tight tracking-tight text-rellia-teal md:text-4xl lg:text-5xl">
+                <h1
+                  className={cn(
+                    "mt-6 font-host-grotesk text-3xl font-medium leading-tight tracking-tight md:text-4xl lg:text-5xl",
+                    isBgMode ? "text-white" : "text-rellia-teal",
+                  )}
+                >
                   {title}
                 </h1>
                 {excerpt ? (
-                  <p className="mt-4 max-w-3xl font-urbanist text-base font-normal leading-relaxed text-black md:text-lg">
+                  <p
+                    className={cn(
+                      "mt-4 max-w-3xl font-urbanist text-base font-normal leading-relaxed md:text-lg",
+                      isBgMode ? "text-white/88" : "text-black",
+                    )}
+                  >
                     {excerpt}
                   </p>
                 ) : null}

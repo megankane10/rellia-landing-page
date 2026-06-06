@@ -1644,6 +1644,8 @@ async function main() {
         excerpt: story.excerpt,
         headerImage: toSanityImageFieldValue(storyImageAssetId),
         headerImageAlt: story.coverImageAlt,
+        headerLayout:
+          slug === "founder-spotlight-the-pilot-that-became-procurement" ? "block" : "background",
         body: portableStoryBody(story),
         seo: {
           metaTitle: story.seoTitle,
@@ -1765,6 +1767,157 @@ async function main() {
         metaTitle: "CMS handoff test — Rellia Health",
         metaDescription: "Internal test page for verifying Sanity page-builder sections.",
         noIndex: true,
+      },
+    },
+  })
+
+  mutations.push({
+    createOrReplace: {
+      _id: "page.supporting-health-founders",
+      _type: "page",
+      title: "Supporting Health Founders",
+      slug: { _type: "slug", current: "supporting-health-founders" },
+      sections: [
+        {
+          _type: "sectionMarketingHero",
+          _key: "shf-hero",
+          eyebrowLabel: "Rellia Health",
+          title: "Where health founders",
+          accentPhrase: "build with confidence",
+          subtitle:
+            "Rellia connects healthcare innovators with vetted advisors, practical programs, and a network that understands regulatory, clinical, and commercial realities.",
+          imageUrl:
+            "https://images.pexels.com/photos/3182761/pexels-photo-3182761.jpeg?auto=compress&cs=tinysrgb&w=1600",
+          primaryCta: { label: "Apply to join", href: "/apply" },
+          secondaryCta: { label: "Take the diagnostic", href: "/startup-diagnostic" },
+        },
+        {
+          _type: "sectionMetrics",
+          _key: "shf-metrics",
+          heading: "Built for outcomes that compound",
+          subheading: "Structured support designed for healthcare's regulatory and commercial realities.",
+          metrics: [
+            { _key: "m1", label: "Critical domains assessed", value: 12 },
+            { _key: "m2", label: "Advisor network", value: 150, suffix: "+" },
+            { _key: "m3", label: "Avg. diagnostic time (min)", value: 15 },
+          ],
+        },
+        {
+          _type: "sectionFeatureGrid",
+          _key: "shf-features",
+          badge: "How we help",
+          title: [{ _type: "block", _key: "shf-fg-title", style: "normal", markDefs: [], children: [{ _type: "span", _key: "shf-fg-title-span", text: "Support at every inflection point", marks: [] }] }],
+          subtitle: [{ _type: "block", _key: "shf-fg-sub", style: "normal", markDefs: [], children: [{ _type: "span", _key: "shf-fg-sub-span", text: "From first pilot to scale, Rellia gives founders structured guidance—not generic startup advice.", marks: [] }] }],
+          items: [
+            {
+              _key: "f1",
+              icon: "Target",
+              title: "Readiness diagnostics",
+              body: "Benchmark your startup across regulatory, clinical, commercial, and operational domains—then get a prioritized roadmap.",
+            },
+            {
+              _key: "f2",
+              icon: "Users",
+              title: "Matched advisors",
+              body: "Connect with operators who have shipped in healthcare: ex-FDA reviewers, health system leaders, and repeat founders.",
+            },
+            {
+              _key: "f3",
+              icon: "Layers",
+              title: "Programs & playbooks",
+              body: "Join cohort-based sprints for QMS, evidence generation, procurement readiness, and go-to-market in regulated markets.",
+            },
+            {
+              _key: "f4",
+              icon: "Heart",
+              title: "Founder community",
+              body: "Learn alongside peers navigating the same buyer cycles, security reviews, and clinical validation milestones.",
+            },
+          ],
+        },
+        {
+          _type: "sectionEngageBand",
+          _key: "shf-engage",
+          badge: "Get started",
+          title: [{ _type: "block", _key: "shf-engage-title", style: "normal", markDefs: [], children: [{ _type: "span", _key: "shf-engage-title-span", text: "Three ways to engage with Rellia", marks: [] }] }],
+          items: [
+            {
+              _key: "e1",
+              title: "Startup diagnostic",
+              body: "Take a 15-minute assessment and receive an instant readiness score with gap analysis.",
+              link: { label: "Start diagnostic", href: "/startup-diagnostic" },
+            },
+            {
+              _key: "e2",
+              title: "Apply to programs",
+              body: "Join structured cohorts designed for health tech founders at specific stages.",
+              link: { label: "View programs", href: "/programs" },
+            },
+            {
+              _key: "e3",
+              title: "Explore the network",
+              body: "Meet founders, advisors, and industry partners in the Rellia ecosystem.",
+              link: { label: "Browse network", href: "/founders" },
+            },
+          ],
+        },
+        {
+          _type: "sectionTestimonials",
+          _key: "shf-testimonials",
+          heading: "What members say",
+          testimonials: (DEFAULT_CONSULTING_PAGE.testimonials ?? []).slice(0, 2).map((item, index) => ({
+            _type: "landingTestimonialItem",
+            _key: `shf-t-${index}`,
+            quote: item.quote,
+            name: item.name,
+            role: item.role,
+            company: item.company,
+            imageSrc: item.image,
+            logoSrc: item.logo,
+          })),
+        },
+        {
+          _type: "sectionFaq",
+          _key: "shf-faq",
+          title: "Common questions",
+          subtitle: "Quick answers about how Rellia supports health tech founders.",
+          items: [
+            {
+              _key: "q1",
+              question: "Who is Rellia for?",
+              answer:
+                "Early- to growth-stage health tech founders building products that must navigate clinical validation, regulatory pathways, and enterprise procurement.",
+            },
+            {
+              _key: "q2",
+              question: "Is the startup diagnostic really free?",
+              answer:
+                "Yes. The diagnostic is private, takes about 15 minutes, and gives you an immediate readiness score with suggested next steps.",
+            },
+            {
+              _key: "q3",
+              question: "How does advisor matching work?",
+              answer:
+                "Based on your diagnostic gaps and stage, we suggest vetted advisors with relevant healthcare operating experience. You choose who to engage.",
+            },
+          ],
+        },
+        {
+          _type: "sectionRelliaCta",
+          _key: "shf-cta",
+          title: "Ready to move faster—with fewer blind spots?",
+          body: "Join a network built for healthcare's unique pace. Start with the diagnostic or apply directly to Rellia programs.",
+          primaryCta: { label: "Apply now", href: "/apply", variant: "primary" },
+          secondaryCta: { label: "Contact us", href: "/contact", variant: "secondary" },
+        },
+      ],
+      seo: {
+        metaTitle: "Supporting Health Founders — Rellia Health",
+        metaDescription:
+          "Rellia Health connects healthcare founders with diagnostics, vetted advisors, and programs built for regulated markets.",
+        ogTitle: "Supporting Health Founders — Rellia Health",
+        ogDescription:
+          "Diagnostics, advisor matching, and practical programs for health tech founders.",
       },
     },
   })

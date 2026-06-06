@@ -110,7 +110,8 @@ export default function WhyRellia({
           align="left"
           title={sectionTitle}
           description={sectionDescription ?? DEFAULT_SECTION_DESCRIPTION}
-          className="mb-12 md:mb-16"
+          className="mb-16 md:mb-20"
+          descriptionClassName="mt-3 md:mt-4"
         />
 
         <ScrollReveal>

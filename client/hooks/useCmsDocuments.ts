@@ -109,6 +109,7 @@ export type CmsStoryListItem = {
 export type CmsStory = CmsStoryListItem & {
   body?: SanityPortableText | null
   seo?: SeoContent
+  headerLayout?: "background" | "block"
 }
 
 export const useFeaturedStories = () =>
