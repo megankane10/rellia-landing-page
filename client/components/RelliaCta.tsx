@@ -80,21 +80,21 @@ function CtaActionButton({
     </>
   )
 
-  const responsiveCtaClass =
-    "w-full min-w-0 max-w-full justify-center px-4 py-3.5 text-sm leading-snug sm:w-auto sm:px-8 sm:py-4 sm:text-base sm:leading-normal whitespace-normal sm:whitespace-nowrap focus-visible:ring-offset-rellia-greyTeal"
+  const heroWideButtonClass =
+    "w-full justify-center sm:flex-1 sm:min-w-0"
 
   const relliaVariant = variant === "primary" ? "relliaCtaPrimary" : "relliaCtaSecondary"
 
   if (action.to) {
     return (
-      <RelliaAction asChild variant={relliaVariant} size="comfortable" className={responsiveCtaClass}>
+      <RelliaAction asChild variant={relliaVariant} size="comfortable" className={heroWideButtonClass}>
         <Link to={action.to}>{content}</Link>
       </RelliaAction>
     )
   }
 
   return (
-    <RelliaAction asChild variant={relliaVariant} size="comfortable" className={responsiveCtaClass}>
+    <RelliaAction asChild variant={relliaVariant} size="comfortable" className={heroWideButtonClass}>
       <a
         href={action.href}
         {...(action.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
@@ -222,7 +222,7 @@ export default function RelliaCta({
                 <CtaActionTextLink action={primary} />
               </div>
             ) : (
-              <div className="mt-12 flex w-full max-w-full flex-col items-stretch justify-center gap-4 sm:mt-14 sm:flex-row sm:items-center">
+              <div className="mt-12 flex w-full max-w-3xl flex-col gap-4 sm:mt-14 sm:flex-row sm:items-stretch">
                 <CtaActionButton action={primary} variant="primary" />
                 {secondary ? <CtaActionButton action={secondary} variant="secondary" /> : null}
               </div>

@@ -946,6 +946,16 @@ async function main() {
       _type: "globalSettings",
       ...DEFAULT_GLOBAL_SETTINGS,
       priorityModalEnabled: true,
+      priorityModalHeading: "This is what our priority dialog looks like.",
+      priorityModalBody: "Enter your details below to see how form submissions work in this dialog.",
+      priorityModalButtonLabel: "",
+      priorityModalButtonLink: "",
+      priorityModalSecondaryButtonLabel: "",
+      priorityModalSecondaryButtonLink: "",
+      priorityModalFormEnabled: true,
+      priorityModalFormButtonLabel: "Send",
+      priorityModalFormPlaceholderName: "Your name",
+      priorityModalFormPlaceholderEmail: "Email address",
     },
   })
   mutations.push({

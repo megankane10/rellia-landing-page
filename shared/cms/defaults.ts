@@ -11,6 +11,7 @@ import type {
   FaqPageContent,
   GlobalSettingsContent,
   HomePageContent,
+  HomeWhyFeature,
   MarketingPageContent,
   NotFoundContent,
   PaymentPageContent,
@@ -2356,16 +2357,39 @@ export function mergeGlobalSettings(
   ) {
     base.announcementEnabled = true
   }
+  const priorityPrimaryLabel = (base.priorityModalButtonLabel ?? "").trim()
+  const prioritySecondaryLabel = (base.priorityModalSecondaryButtonLabel ?? "").trim()
+  if (base.priorityModalEnabled && !priorityPrimaryLabel && !prioritySecondaryLabel) {
+    base.priorityModalFormEnabled = true
+  }
   return base
 }
+
+const mergeWhyFeatures = (
+  fromCms: HomeWhyFeature[] | null | undefined,
+): HomeWhyFeature[] =>
+  DEFAULT_HOME_PAGE.whyFeatures.map((defaultFeature, index) => {
+    const cmsFeature = compactList(fromCms)[index]
+    if (!cmsFeature) return defaultFeature
+
+    return {
+      ...defaultFeature,
+      ...cmsFeature,
+      iconKey: cmsFeature.iconKey?.trim() || defaultFeature.iconKey,
+      title: cmsFeature.title?.trim() || defaultFeature.title,
+      description: cmsFeature.description?.trim() || defaultFeature.description,
+      buttonLabel: cmsFeature.buttonLabel?.trim() || defaultFeature.buttonLabel,
+      buttonPath: cmsFeature.buttonPath?.trim() || defaultFeature.buttonPath,
+      imageSrc: cmsFeature.imageSrc?.trim() || defaultFeature.imageSrc,
+    }
+  })
 
 export function mergeHomePage(partial: Partial<HomePageContent> | null | undefined): HomePageContent {
   const p = omitNullish((partial ?? {}) as Record<string, unknown>) as Partial<HomePageContent>
   const base = { ...DEFAULT_HOME_PAGE, ...p }
   const metrics = compactList(p.metrics)
   base.metrics = metrics.length > 0 ? metrics : DEFAULT_HOME_PAGE.metrics
-  const whyFeatures = compactList(p.whyFeatures)
-  base.whyFeatures = whyFeatures.length > 0 ? whyFeatures : DEFAULT_HOME_PAGE.whyFeatures
+  base.whyFeatures = mergeWhyFeatures(p.whyFeatures)
   const testimonials = compactList(p.testimonials)
   base.testimonials = testimonials.length > 0 ? testimonials : DEFAULT_HOME_PAGE.testimonials
   const pathsCards = compactList(p.pathsCards)
