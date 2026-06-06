@@ -26,7 +26,7 @@ const CMS: QmsProgramContent = {
   pricingSubAmount: ".00",
   pricingDescription: "Join the waitlist to be notified when First 50 Users opens for the next cohort.",
   pricingBullets: ["Clinician network access", "Facilitated usability sessions", "IRB guidance and templates", "Publishable findings report"],
-  bottomCtaTitle: "**Ready** to validate with real users?",
+  bottomCtaTitle: "Ready to validate with real users?",
   bottomCtaBody: "Join the waitlist and we'll notify you when the next cohort begins.",
   bottomCtaButtonLabel: "Contact",
   bottomContactHref: "/contact",

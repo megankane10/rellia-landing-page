@@ -26,7 +26,7 @@ const CMS: QmsProgramContent = {
   pricingSubAmount: ".00",
   pricingDescription: "Join the waitlist to be notified when the Low-Fidelity Prototype Lab opens.",
   pricingBullets: ["Requirements documentation", "Rapid prototyping tools", "Vendor matching and intros", "Technical architecture guidance"],
-  bottomCtaTitle: "**Ready** to build your prototype?",
+  bottomCtaTitle: "Ready to build your prototype?",
   bottomCtaBody: "Join the waitlist and we'll notify you when the next cohort starts.",
   bottomCtaButtonLabel: "Contact",
   bottomContactHref: "/contact",

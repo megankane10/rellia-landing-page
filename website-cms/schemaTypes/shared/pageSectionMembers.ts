@@ -15,4 +15,5 @@ export const pageSectionMembers = [
   defineArrayMember({type: 'sectionJourneyTimeline'}),
   defineArrayMember({type: 'sectionDiagnosticSurvey'}),
   defineArrayMember({type: 'sectionRelliaCta'}),
+  defineArrayMember({type: 'sectionTestimonials'}),
 ]

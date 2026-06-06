@@ -14,6 +14,8 @@ export const MARKETING_PAGE_SEO_TYPES = [
   'networkAdvisorsPage',
   'networkInvestorsPage',
   'networkPartnersPage',
+  'consultingPage',
+  'diagnosticLandingPage',
 ] as const
 
 export type MarketingPageSeoType = (typeof MARKETING_PAGE_SEO_TYPES)[number]
@@ -33,6 +35,8 @@ export const MARKETING_PAGE_ROUTE_PREFIX: Record<MarketingPageSeoType, string> =
   networkAdvisorsPage: 'advisors',
   networkInvestorsPage: 'investors',
   networkPartnersPage: 'industry-partners',
+  consultingPage: 'consulting',
+  diagnosticLandingPage: 'startup-diagnostic',
 }
 
 export const MARKETING_PAGE_DISPLAY_LABEL: Record<MarketingPageSeoType, string> = {
@@ -50,6 +54,8 @@ export const MARKETING_PAGE_DISPLAY_LABEL: Record<MarketingPageSeoType, string> 
   networkAdvisorsPage: 'Advisors',
   networkInvestorsPage: 'Investors',
   networkPartnersPage: 'Industry Partners',
+  consultingPage: 'Consulting',
+  diagnosticLandingPage: 'Startup diagnostic',
 }
 
 const marketingPageSeoTypesList = MARKETING_PAGE_SEO_TYPES.map((t) => `"${t}"`).join(', ')

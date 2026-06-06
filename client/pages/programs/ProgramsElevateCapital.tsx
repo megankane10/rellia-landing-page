@@ -26,7 +26,7 @@ const CMS: QmsProgramContent = {
   pricingSubAmount: ".00",
   pricingDescription: "Join the waitlist to be the first to know when Elevate: Healthcare Capital opens for enrollment.",
   pricingBullets: ["Healthcare investor mapping", "Financial model upgrade", "Mock pitch with investor panel", "Warm intro strategy"],
-  bottomCtaTitle: "**Ready** to raise healthcare capital?",
+  bottomCtaTitle: "Ready to raise healthcare capital?",
   bottomCtaBody: "Join the waitlist and we'll notify you when the next cohort starts.",
   bottomCtaButtonLabel: "Contact",
   bottomContactHref: "/contact",

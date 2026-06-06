@@ -26,7 +26,7 @@ const CMS: QmsProgramContent = {
   pricingSubAmount: ".00",
   pricingDescription: "Join the waitlist to be notified when Advance: Data Room Deep Dive opens for the next cohort.",
   pricingBullets: ["Data room platform setup", "Cap table and legal document templates", "Mock diligence with investors", "Healthcare-specific compliance docs"],
-  bottomCtaTitle: "**Ready** for due diligence?",
+  bottomCtaTitle: "Ready for due diligence?",
   bottomCtaBody: "Join the waitlist and we'll let you know when the next cohort begins.",
   bottomCtaButtonLabel: "Contact",
   bottomContactHref: "/contact",

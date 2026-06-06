@@ -266,7 +266,7 @@ export default function Advisors() {
         />
 
         <RelliaCta
-          title="**Apply** as an advisor"
+          title="Apply as an advisor"
           body="Share your background—we'll follow up with fit, expectations, and onboarding paths."
           primary={{ label: "Apply to join", to: "/apply" }}
           secondary={{ label: "Contact", to: "/contact" }}

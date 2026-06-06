@@ -888,7 +888,7 @@ export default function Founders() {
 
           <RelliaCta
             aboveSectionTone="white"
-            title="**Ready** to join?"
+            title="Ready to join?"
             body="Apply once—we'll follow up with fit, onboarding, and the fastest path into programs and intros."
             primary={{ label: "Apply to join", to: "/apply" }}
             secondary={{ label: "View programs", to: "/programs" }}

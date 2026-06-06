@@ -1,5 +1,5 @@
 import type { ReactNode } from "react"
-import { useEffect } from "react"
+import { useEffect, useMemo } from "react"
 import { Link } from "react-router-dom"
 import { ArrowRight } from "lucide-react"
 import { cn } from "@/lib/utils"
@@ -27,24 +27,10 @@ export const ctaActionFromHref = (label: string, href: string): RelliaCtaAction 
   return { label, href }
 }
 
-/** Wrap phrases in `**double asterisks**` for teal emphasis on black headlines. */
-const parseTitleEmphasis = (title: string): ReactNode[] => {
-  const segments = title.split(/(\*\*[^*]+\*\*)/g)
-  return segments.map((segment, index) => {
-    if (segment.startsWith("**") && segment.endsWith("**") && segment.length >= 4) {
-      const inner = segment.slice(2, -2)
-      return (
-        <span key={`e-${index}`} className="font-medium text-rellia-teal">
-          {inner}
-        </span>
-      )
-    }
-    return <span key={`t-${index}`}>{segment}</span>
-  })
-}
+const stripCtaTitleMarkers = (title: string) => title.replace(/\*\*/g, "")
 
 export type RelliaCtaProps = {
-  /** Main headline — black; use `**phrase**` for teal highlight */
+  /** Main headline — uniform teal typography (no inline emphasis markers). */
   title: string
   /** Optional supporting paragraph beneath the title. */
   body?: string
@@ -137,7 +123,7 @@ function CtaActionTextLink({ action }: { action: RelliaCtaAction }) {
 }
 
 /**
- * Bottom-of-page CTA on the grey-teal band. Radial blob behind copy; black headline with teal `**accents**`;
+ * Bottom-of-page CTA on the grey-teal band. Radial blob behind copy; teal headline;
  * black subcopy; primary teal button with white hover fill sweep; optional outline secondary.
  */
 export default function RelliaCta({
@@ -152,6 +138,8 @@ export default function RelliaCta({
   aboveSectionTone,
   roundedClassName = "rounded-t-[48px] md:rounded-t-[80px]",
 }: RelliaCtaProps) {
+  const displayTitle = useMemo(() => stripCtaTitleMarkers(title), [title])
+
   useEffect(() => {
     const root = document.documentElement
     root.style.setProperty("--footer-backdrop", "#C5D8D5")
@@ -199,11 +187,11 @@ export default function RelliaCta({
             {icon && <div className="mb-8">{icon}</div>}
             <h2
               className={cn(
-                "max-w-4xl font-host-grotesk font-medium tracking-tight leading-[1.12] text-rellia-teal [&_span]:text-rellia-teal [&_span]:!text-rellia-teal",
+                "max-w-4xl font-host-grotesk font-medium tracking-tight leading-[1.12] text-rellia-teal",
                 size === "compact" ? HEADING_CTA_BAND_COMPACT : HEADING_CTA_BAND_DEFAULT,
               )}
             >
-              {parseTitleEmphasis(title)}
+              {displayTitle}
             </h2>
 
             {body ? (

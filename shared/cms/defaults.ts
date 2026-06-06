@@ -6,8 +6,10 @@ import {
 import type {
   AboutPageContent,
   ApplyPageContent,
+  ConsultingPageContent,
   ContactPageContent,
   ContactSubjectOption,
+  DiagnosticLandingPageContent,
   FaqPageContent,
   GlobalSettingsContent,
   HomePageContent,
@@ -19,6 +21,7 @@ import type {
   ProgramsProgramCard,
   QmsProgramContent,
   SanityPortableText,
+  TrustedMemberTestimonial,
 } from "./types"
 
 /** Drop nullish values so `{ ...defaults, ...partial }` cannot wipe strings with CMS nulls */
@@ -1373,7 +1376,7 @@ export const DEFAULT_HOME_PAGE: HomePageContent = {
         "Beta test your ideas, find an accountability buddy, cheer each other on, share your deepest worries. Connect with fellow health tech founders who have been through it before.",
     },
   ],
-  ctaTitle: "Are you the next **Rellia Health** success story?",
+  ctaTitle: "Are you the next Rellia Health success story?",
   ctaButtonLabel: "Apply to Join Now",
   ctaButtonPath: "/apply",
   ctaSecondaryButtonLabel: "Explore Programs",
@@ -1574,7 +1577,7 @@ export const DEFAULT_ABOUT_PAGE: AboutPageContent = {
       linkedinUrl: "https://www.linkedin.com/in/kellyjiayihu/",
     },
   ],
-  ctaTitle: "You're in the **right** place.",
+  ctaTitle: "You're in the right place.",
   ctaBody:
     "If you're a founder who wants to do this right, we have the network and expertise to make it happen.",
   ctaFounderLabel: "Apply to join as a founder",
@@ -1663,7 +1666,7 @@ export const DEFAULT_FAQ_PAGE: FaqPageContent = {
     "We’re looking for the next wave of digital health innovators. If you’re clear on your vision but need the right network to execute, don't wait for the FAQ.",
   sidebarCtaLabel: "Apply to join",
   sidebarCtaPath: "/apply",
-  bottomTitle: "Every startup is **different**",
+  bottomTitle: "Every startup is different",
   bottomBody:
     "Tell us more about where you are today and where you want to be in the next 12–18 months. We'll share how Rellia can help accelerate that path, or recommend a better fit if we're not it.",
   bottomCtaLabel: "Get in Touch",
@@ -2113,7 +2116,7 @@ export const DEFAULT_PROGRAMS_LANDING: ProgramsLandingContent = {
       detailBody: SECOND_OPINION_USER_RESEARCH_DETAIL_BODY,
     },
   ],
-  ctaTitle: "Want the **full** experience?",
+  ctaTitle: "Want the full experience?",
   ctaBody:
     "Rellia members get access to all event recordings, program discounts, and individual mentorship.",
   ctaButtonLabel: "Apply to join",
@@ -2216,7 +2219,7 @@ export const DEFAULT_QMS_PROGRAM: QmsProgramContent = {
     "Instructional content",
     "Frameworks & templates",
   ],
-  bottomCtaTitle: "Let's **Build** Your QMS",
+  bottomCtaTitle: "Let's Build Your QMS",
   bottomCtaBody:
     "Still have questions or want to learn more about the program? Reach out at any time to speak with us directly.",
   bottomCtaButtonLabel: "Contact",
@@ -2326,8 +2329,30 @@ export const DEFAULT_APPLY_PAGE: ApplyPageContent = {
     },
   ],
   showRoleLinks: true,
+  roleLinks: [
+    {
+      title: "Founders",
+      description: "Programs, cohorts, and support for health tech builders.",
+      href: "/founders",
+    },
+    {
+      title: "Advisors",
+      description: "How we work with operators, clinicians, and domain experts.",
+      href: "/advisors",
+    },
+    {
+      title: "Investors",
+      description: "Deal flow, diligence, and how we connect capital to the network.",
+      href: "/investors",
+    },
+    {
+      title: "Industry partners",
+      description: "Collaboration models for organizations backing the ecosystem.",
+      href: "/industry-partners",
+    },
+  ],
   applyButtonLabel: "Apply Now",
-  bottomCtaTitle: "Explore the **Rellia network**",
+  bottomCtaTitle: "Explore the Rellia network",
   bottomCtaBody:
     "See how members connect across programs, partners, and resources—or get in touch with questions about membership.",
   bottomCtaPrimaryLabel: "Explore programs",
@@ -2621,6 +2646,11 @@ export function mergeApplyPage(
   if (typeof base.showRoleLinks !== "boolean") {
     base.showRoleLinks = DEFAULT_APPLY_PAGE.showRoleLinks
   }
+  const roleLinks = compactList(p.roleLinks).filter(
+    (link): link is NonNullable<ApplyPageContent["roleLinks"]>[number] =>
+      Boolean(link?.title?.trim() && link?.description?.trim() && link?.href?.trim()),
+  )
+  base.roleLinks = roleLinks.length > 0 ? roleLinks : DEFAULT_APPLY_PAGE.roleLinks
   const fill = (key: keyof ApplyPageContent, fallback: string) => {
     const v = base[key]
     if (typeof v === "string" && !v.trim()) {
@@ -2636,6 +2666,317 @@ export function mergeApplyPage(
   fill("bottomCtaPrimaryHref", DEFAULT_APPLY_PAGE.bottomCtaPrimaryHref)
   fill("bottomCtaSecondaryLabel", DEFAULT_APPLY_PAGE.bottomCtaSecondaryLabel)
   fill("bottomCtaSecondaryHref", DEFAULT_APPLY_PAGE.bottomCtaSecondaryHref)
+  return base
+}
+
+const DEFAULT_CONSULTING_TESTIMONIALS: TrustedMemberTestimonial[] = [
+  {
+    name: "Dr Stevie Foglia",
+    role: "Founder & CEO",
+    company: "Neuro-Mod",
+    image: "/images/drstrevie.png",
+    logo: "/images/portfolio-neuromod.png",
+    quote:
+      "The QMS fits seamlessly within our workflows and is directly personalized to our company and product. Rellia has been excellent to work with - they are true experts in their field.",
+  },
+  {
+    name: "Ibukun Elebute",
+    role: "Founder & COO",
+    company: "Cellect",
+    image: "/images/ibukun.jpg",
+    logo: "/images/cellect-logo.png",
+    quote:
+      "The Rellia QMS program was practical and startup-friendly, the process was easy to follow, and the support helped us understand not just what needed to be done, but how to do it properly.",
+  },
+  {
+    name: "Rooaa Shanshal",
+    role: "Co-Founder",
+    company: "Power of Play",
+    image: "/images/testimonials-rooaaS.jpeg",
+    logo: "/images/portfolio-pop.png",
+    quote:
+      "Being part of Rellia has been so incredibly valuable. Since joining, we've made real progress on building our QMS which is something that previously felt overwhelming.",
+  },
+]
+
+export const DEFAULT_CONSULTING_PAGE: ConsultingPageContent = {
+  title: "Consulting",
+  heroEyebrow: "Consulting",
+  heroTitle: "Founder consulting",
+  heroAccentPhrase: "built for healthcare reality",
+  heroSubtitle:
+    "One-to-one and small-team working sessions when you need depth beyond community rhythm—regulatory, clinical, commercial, and narrative—with specialists who have shipped in health tech.",
+  heroImageSrc:
+    "https://images.pexels.com/photos/7088483/pexels-photo-7088483.jpeg?auto=compress&cs=tinysrgb&w=1200",
+  heroPrimaryCtaLabel: "Start a conversation",
+  heroPrimaryCtaHref: "/contact",
+  heroSecondaryCtaLabel: "Apply for membership",
+  heroSecondaryCtaHref: "/apply",
+  fitTitle: "When consulting makes sense",
+  fitDescription:
+    "Membership gives ongoing access to community, programs, and broad intros. Consulting is for concentrated blocks of work where you need explicit outputs and senior judgment on the critical path.",
+  fitBullets: [
+    "You need scoped deep dives—FDA strategy, clinical evidence design, enterprise sales narrative—in focused sessions",
+    "Your team wants documentation or diligence artifacts reviewed before a board or investor cycle",
+    "You are navigating a pivot that touches regulatory labeling, pilot contracts, or interoperability commitments",
+  ],
+  fitImageSrc:
+    "https://images.pexels.com/photos/3760067/pexels-photo-3760067.jpeg?auto=compress&cs=tinysrgb&w=1200",
+  servicesTitle: "Common consulting sprints",
+  servicesSubtitle:
+    "Four areas founders most often need concentrated working time—scoped to outputs you can reuse in diligence and execution.",
+  services: [
+    {
+      title: "Regulatory Consulting",
+      body: "Secure ISO 13485 QMS compliance and structure your FDA 510(k) or Health Canada classification label.",
+      ctaLabel: "Explore regulatory",
+      iconKey: "ShieldCheck",
+    },
+    {
+      title: "Clinical Trials",
+      body: "Design pre-market feasibility studies, validate investigator protocols, and organize real-world evidence.",
+      ctaLabel: "Explore clinical",
+      iconKey: "Stethoscope",
+    },
+    {
+      title: "Marketing Strategy",
+      body: "Refine B2B health system positioning, sharpen value proposition models, and build pilot trust.",
+      ctaLabel: "Explore strategy",
+      iconKey: "Megaphone",
+    },
+    {
+      title: "Branding",
+      body: "Craft a premium clinical brand identity, consistent design systems, and highly-polished GTM materials.",
+      ctaLabel: "Explore branding",
+      iconKey: "Palette",
+    },
+  ],
+  testimonialsTitle: "Already trusted by Rellia members",
+  testimonials: DEFAULT_CONSULTING_TESTIMONIALS,
+  membershipTitle: "Membership makes consulting even more valuable",
+  membershipDescription:
+    "Rellia members get access to discounts and our full directory of vetted consultants—so you can move faster when a milestone becomes urgent.",
+  membershipStats: [
+    { label: "Member discount", value: "Up to 25% off" },
+    { label: "Vetted consultants", value: "Regulatory · Clinical · GTM" },
+    { label: "Fast matching", value: "Book within days" },
+  ],
+  membershipSavingsTitle: "Example savings",
+  membershipSavingsBody:
+    "A 6-hour sprint can save hundreds while keeping the same senior operator support.",
+  membershipPrimaryCtaLabel: "Apply for membership",
+  membershipPrimaryCtaHref: "/apply",
+  membershipSecondaryCtaLabel: "Ask about consulting",
+  membershipSecondaryCtaHref: "/contact",
+  ctaTitle: "Not sure which path fits?",
+  ctaBody: "Tell us your milestone—we'll recommend membership, consulting, or a blended rhythm.",
+  ctaPrimaryLabel: "Talk to us",
+  ctaPrimaryHref: "/contact",
+}
+
+export const DEFAULT_DIAGNOSTIC_LANDING_PAGE: DiagnosticLandingPageContent = {
+  title: "Startup Diagnostic",
+  heroBadgeLabel: "LAUNCH READINESS",
+  heroTitle: "Pressure-test your startup for",
+  heroAccentPhrase: "healthcare reality.",
+  heroSubtitle:
+    "Get an instant readiness score, surface hidden blockers across 12 domains, and unlock advisor matching when you join Rellia.",
+  heroImageSrc:
+    "https://images.pexels.com/photos/3825368/pexels-photo-3825368.jpeg?auto=compress&cs=tinysrgb&w=1600",
+  heroPrimaryCtaLabel: "Begin Free Assessment",
+  heroPrimaryCtaHref: "/diagnostic-survey",
+  readinessTitle: "A complete readiness map",
+  readinessDescription:
+    "Most founders have a few strong domains and several hidden gaps. This diagnostic exposes the full picture so you can build with confidence.",
+  readinessFeatures: [
+    {
+      title: "12 Scored Domains",
+      description:
+        "Every critical health tech domain is assessed, from clinical evidence to quality management and unit economics.",
+      imageSrc:
+        "https://images.pexels.com/photos/590016/pexels-photo-590016.jpeg?auto=compress&cs=tinysrgb&w=1200",
+    },
+    {
+      title: "AI-Powered Analysis",
+      description:
+        "Identify your top 3 strengths and priority gaps instantly. Detailed reports and gap analyses are exclusive to Rellia members.",
+      imageSrc:
+        "https://images.pexels.com/photos/3182811/pexels-photo-3182811.jpeg?auto=compress&cs=tinysrgb&w=1200",
+    },
+    {
+      title: "Advisor Matching",
+      description:
+        "Members are automatically matched and introduced to pre-vetted advisors based on their startup's gap profile.",
+      imageSrc:
+        "https://images.pexels.com/photos/3182761/pexels-photo-3182761.jpeg?auto=compress&cs=tinysrgb&w=1200",
+    },
+    {
+      title: "Founding Membership",
+      description:
+        "Get early access to exclusive networking sessions, peer mentorship, and dedicated resources from day one.",
+      imageSrc:
+        "https://images.pexels.com/photos/5668858/pexels-photo-5668858.jpeg?auto=compress&cs=tinysrgb&w=1200",
+    },
+  ],
+  infographicTitle: "No stone left unturned",
+  infographicBody:
+    "We've distilled years of digital health experience into a comprehensive assessment framework that covers the entire startup lifecycle. Rellia's custom platform maps every critical domain, ensuring regulatory alignment, clinical proof, and bulletproof operational scaling.",
+  infographicTopWeaknessLabel: "Regulatory Strategy",
+  infographicTopWeaknessScore: 32,
+  infographicGapLabel: "Critical Gap",
+  infographicAdvisorMatchLabel: "Vetted Advisor Match",
+  infographicAdvisorRole: "Regulatory Director",
+  infographicAdvisorSubtitle: "Ex-FDA Reviewer",
+  infographicBlobRoadmap: "Personalized Roadmap",
+  infographicBlobAdvisors: "Matched Advisors",
+  infographicBlobBlindSpot: "Blind Spot Discovery",
+  timelineTitle: "Survey to insights in 15 minutes",
+  timelineSubheading:
+    "Four focused steps from startup context to a personalized gap profile you can act on.",
+  timelineSteps: [
+    {
+      title: "Startup Context",
+      description: "Provide high-level details about your product mission, stage, and targets.",
+    },
+    {
+      title: "Deep Assessment",
+      description: "Evaluate your status across 12 sections with zero-BS honest reflections.",
+    },
+    {
+      title: "Score Analysis",
+      description:
+        "Our custom assessment framework evaluates your strengths, priority gaps, and blockers.",
+    },
+    {
+      title: "Report Access",
+      description:
+        "Rellia members immediately unlock their custom diagnostic report and advisor matching.",
+    },
+  ],
+  ctaTitle: "Benchmark your startup today",
+  ctaBody:
+    "Identify your blind spots, secure regulatory clarity, and discover what gets health systems to say yes.",
+  ctaPrimaryLabel: "Take the Diagnostic",
+  ctaPrimaryHref: "/diagnostic-survey",
+  ctaSecondaryLabel: "Join as Member",
+  ctaSecondaryHref: "/apply",
+}
+
+const fillString = <T extends Record<string, unknown>>(
+  base: T,
+  key: keyof T,
+  fallback: string,
+) => {
+  const v = base[key]
+  if (typeof v === "string" && !v.trim()) {
+    ;(base as Record<string, unknown>)[key as string] = fallback
+  }
+}
+
+export function mergeConsultingPage(
+  partial: Partial<ConsultingPageContent> | null | undefined,
+): ConsultingPageContent {
+  const p = omitNullish((partial ?? {}) as Record<string, unknown>) as Partial<ConsultingPageContent>
+  const base = { ...DEFAULT_CONSULTING_PAGE, ...p }
+  const services = compactList(p.services).filter((s) => Boolean(s?.title?.trim() && s?.body?.trim()))
+  base.services = services.length > 0 ? services : DEFAULT_CONSULTING_PAGE.services
+  const fitBullets = compactList(p.fitBullets).filter((b) => Boolean(b?.trim()))
+  base.fitBullets = fitBullets.length > 0 ? fitBullets : DEFAULT_CONSULTING_PAGE.fitBullets
+  const testimonials = compactList(p.testimonials).filter((t) =>
+    Boolean(t?.name?.trim() && t?.quote?.trim()),
+  )
+  base.testimonials =
+    testimonials.length > 0 ? testimonials : DEFAULT_CONSULTING_PAGE.testimonials
+  const membershipStats = compactList(p.membershipStats).filter((s) =>
+    Boolean(s?.label?.trim() && s?.value?.trim()),
+  )
+  base.membershipStats =
+    membershipStats.length > 0 ? membershipStats : DEFAULT_CONSULTING_PAGE.membershipStats
+  ;(
+    [
+      "heroEyebrow",
+      "heroTitle",
+      "heroAccentPhrase",
+      "heroSubtitle",
+      "heroPrimaryCtaLabel",
+      "heroPrimaryCtaHref",
+      "heroSecondaryCtaLabel",
+      "heroSecondaryCtaHref",
+      "fitTitle",
+      "fitDescription",
+      "servicesTitle",
+      "servicesSubtitle",
+      "testimonialsTitle",
+      "membershipTitle",
+      "membershipDescription",
+      "membershipSavingsTitle",
+      "membershipSavingsBody",
+      "membershipPrimaryCtaLabel",
+      "membershipPrimaryCtaHref",
+      "membershipSecondaryCtaLabel",
+      "membershipSecondaryCtaHref",
+      "ctaTitle",
+      "ctaBody",
+      "ctaPrimaryLabel",
+      "ctaPrimaryHref",
+    ] as const
+  ).forEach((key) => fillString(base, key, DEFAULT_CONSULTING_PAGE[key] as string))
+  if (!base.heroImageSrc?.trim()) base.heroImageSrc = DEFAULT_CONSULTING_PAGE.heroImageSrc
+  if (!base.fitImageSrc?.trim()) base.fitImageSrc = DEFAULT_CONSULTING_PAGE.fitImageSrc
+  return base
+}
+
+export function mergeDiagnosticLandingPage(
+  partial: Partial<DiagnosticLandingPageContent> | null | undefined,
+): DiagnosticLandingPageContent {
+  const p = omitNullish((partial ?? {}) as Record<string, unknown>) as Partial<DiagnosticLandingPageContent>
+  const base = { ...DEFAULT_DIAGNOSTIC_LANDING_PAGE, ...p }
+  const readinessFeatures = compactList(p.readinessFeatures).filter((f) =>
+    Boolean(f?.title?.trim() && f?.description?.trim()),
+  )
+  base.readinessFeatures =
+    readinessFeatures.length > 0
+      ? readinessFeatures
+      : DEFAULT_DIAGNOSTIC_LANDING_PAGE.readinessFeatures
+  const timelineSteps = compactList(p.timelineSteps).filter((s) =>
+    Boolean(s?.title?.trim() && s?.description?.trim()),
+  )
+  base.timelineSteps =
+    timelineSteps.length > 0 ? timelineSteps : DEFAULT_DIAGNOSTIC_LANDING_PAGE.timelineSteps
+  ;(
+    [
+      "heroBadgeLabel",
+      "heroTitle",
+      "heroAccentPhrase",
+      "heroSubtitle",
+      "heroPrimaryCtaLabel",
+      "heroPrimaryCtaHref",
+      "readinessTitle",
+      "readinessDescription",
+      "infographicTitle",
+      "infographicBody",
+      "infographicTopWeaknessLabel",
+      "infographicGapLabel",
+      "infographicAdvisorMatchLabel",
+      "infographicAdvisorRole",
+      "infographicAdvisorSubtitle",
+      "infographicBlobRoadmap",
+      "infographicBlobAdvisors",
+      "infographicBlobBlindSpot",
+      "timelineTitle",
+      "timelineSubheading",
+      "ctaTitle",
+      "ctaBody",
+      "ctaPrimaryLabel",
+      "ctaPrimaryHref",
+      "ctaSecondaryLabel",
+      "ctaSecondaryHref",
+    ] as const
+  ).forEach((key) => fillString(base, key, DEFAULT_DIAGNOSTIC_LANDING_PAGE[key] as string))
+  if (!base.heroImageSrc?.trim()) base.heroImageSrc = DEFAULT_DIAGNOSTIC_LANDING_PAGE.heroImageSrc
+  if (typeof base.infographicTopWeaknessScore !== "number") {
+    base.infographicTopWeaknessScore = DEFAULT_DIAGNOSTIC_LANDING_PAGE.infographicTopWeaknessScore
+  }
   return base
 }
 

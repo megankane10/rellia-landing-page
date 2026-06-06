@@ -312,7 +312,7 @@ export default function Partners() {
 
         <div className="bg-rellia-cream/20">
           <RelliaCta
-            title="**Partner** with Rellia"
+            title="Partner with Rellia"
             body="Tell us about your organization, integration surface area, and the founder profiles you want to see more of. We'll route you to the right partner lead."
             primary={{ label: "Apply", to: "/apply" }}
           />

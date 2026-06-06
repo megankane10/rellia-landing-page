@@ -1,10 +1,8 @@
 import {defineArrayMember, defineField, defineType} from 'sanity'
 import {documentGroups, FIELDSET_SEO} from '../shared/fieldGroups'
-import {singletonLayoutFields} from '../shared/singletonLayoutFields'
 import {singletonPublishingAtTop} from '../shared/documentTopFields'
 import {publishingGroup} from '../shared/pageVisibilityFields'
 
-const GROUP_OPEN_ROLES = {name: 'openRoles' as const, title: 'Open roles'}
 const GROUP_LIFE_AT_RELLIA = {name: 'lifeAtRellia' as const, title: 'Life at Rellia'}
 
 export const careersPage = defineType({
@@ -13,57 +11,26 @@ export const careersPage = defineType({
   type: 'document',
   groups: [
     publishingGroup,
-    GROUP_OPEN_ROLES,
     GROUP_LIFE_AT_RELLIA,
     ...documentGroups.filter((g) => g.name !== 'publishing' && g.name !== 'seo'),
   ],
   fields: [
     ...singletonPublishingAtTop,
-
     defineField({
-      name: 'defaultTab',
-      title: 'Default tab',
+      name: 'careersContentMode',
+      title: 'Careers page mode',
       type: 'string',
+      description:
+        'Controls hero buttons and which sections appear on /careers. Open roles are managed under Collections → Open roles.',
       options: {
         list: [
-          {title: 'Hiring', value: 'hiring'},
-          {title: 'Volunteer', value: 'volunteer'},
+          {title: 'Show both (Hiring + Volunteer)', value: 'both'},
+          {title: 'Hiring only (Work with us + open roles)', value: 'hiring_only'},
+          {title: 'Volunteer only (Volunteer button + form)', value: 'volunteer_only'},
         ],
         layout: 'radio',
       },
-      initialValue: 'hiring',
-      group: 'content',
-    }),
-    defineField({
-      name: 'enableHiringTab',
-      title: 'Enable Hiring tab',
-      type: 'boolean',
-      description:
-        'Shows the Hiring tab and section. Hiring content is still pre-coded; this only controls visibility.',
-      initialValue: true,
-      group: 'content',
-    }),
-    defineField({
-      name: 'enableVolunteerTab',
-      title: 'Enable Volunteer tab',
-      type: 'boolean',
-      description:
-        'Shows the Volunteer tab and embedded form. Volunteer content is still pre-coded; this only controls visibility.',
-      initialValue: true,
-      group: 'content',
-    }),
-    defineField({
-      name: 'tabsLabelHiring',
-      title: 'Hiring tab label',
-      type: 'string',
-      initialValue: 'Hiring',
-      group: 'content',
-    }),
-    defineField({
-      name: 'tabsLabelVolunteer',
-      title: 'Volunteer tab label',
-      type: 'string',
-      initialValue: 'Volunteer',
+      initialValue: 'both',
       group: 'content',
     }),
     defineField({
@@ -73,7 +40,7 @@ export const careersPage = defineType({
       description:
         'When off, /careers on relliahealth.com hides job listings (preview/Vercel still shows roles for editing). Turn on when real roles are ready for the public site.',
       initialValue: false,
-      group: 'openRoles',
+      group: 'content',
     }),
     defineField({
       name: 'showHiringNavBadge',
@@ -92,51 +59,6 @@ export const careersPage = defineType({
       group: 'content',
     }),
     defineField({
-      name: 'openRoles',
-      title: 'Open roles',
-      type: 'array',
-      description: 'Job listings on /careers#open-roles. Drag to reorder.',
-      group: 'openRoles',
-      of: [
-        defineArrayMember({
-          type: 'object',
-          name: 'openRole',
-          fields: [
-            defineField({
-              name: 'roleId',
-              title: 'URL anchor ID',
-              type: 'string',
-              description: 'Used in /careers#role-id — lowercase letters, numbers, hyphens only.',
-              validation: (Rule) =>
-                Rule.required().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, {
-                  name: 'slug',
-                  invert: false,
-                }),
-            }),
-            defineField({name: 'title', title: 'Job title', type: 'string', validation: (Rule) => Rule.required()}),
-            defineField({name: 'location', type: 'string', validation: (Rule) => Rule.required()}),
-            defineField({name: 'employmentType', title: 'Employment type', type: 'string', validation: (Rule) => Rule.required()}),
-            defineField({name: 'description', type: 'text', rows: 4, validation: (Rule) => Rule.required()}),
-            defineField({
-              name: 'responsibilities',
-              type: 'array',
-              of: [{type: 'string'}],
-              validation: (Rule) => Rule.min(1),
-            }),
-            defineField({
-              name: 'linkedInApplyUrl',
-              title: 'Apply URL (LinkedIn or other)',
-              type: 'url',
-              validation: (Rule) => Rule.required().uri({scheme: ['http', 'https']}),
-            }),
-          ],
-          preview: {
-            select: {title: 'title', subtitle: 'location'},
-          },
-        }),
-      ],
-    }),
-    defineField({
       name: 'lifeAtRelliaHeading',
       title: 'Life at Rellia — Heading',
       type: 'string',
@@ -148,7 +70,8 @@ export const careersPage = defineType({
       title: 'Life at Rellia — Subheading',
       type: 'text',
       rows: 4,
-      initialValue: 'We are building a remote-first, high-standards health-tech company. Our team brings deep clinical, technical, and operational expertise to help founders transform care.',
+      initialValue:
+        'We are building a remote-first, high-standards health-tech company. Our team brings deep clinical, technical, and operational expertise to help founders transform care.',
       group: 'lifeAtRellia',
     }),
     defineField({
@@ -183,7 +106,7 @@ export const careersPage = defineType({
       type: 'array',
       group: 'lifeAtRellia',
       of: [
-        defineArrayMember({
+        defineField({
           type: 'object',
           name: 'lifeAtRelliaLink',
           title: 'Link / Button',
@@ -222,7 +145,6 @@ export const careersPage = defineType({
               name: 'tooltip',
               title: 'Hover Tooltip text',
               type: 'string',
-              description: 'e.g. "Follow us on LinkedIn" or "Read our blog post"',
               validation: (Rule) => Rule.required(),
             }),
           ],
@@ -232,7 +154,5 @@ export const careersPage = defineType({
         }),
       ],
     }),
-
   ],
 })
-

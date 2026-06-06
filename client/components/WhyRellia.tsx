@@ -167,7 +167,7 @@ export default function WhyRellia({
                         className={cn(
                           "font-host-grotesk font-normal text-white text-3xl tracking-tight leading-tight",
                           "transition-transform duration-[700ms] ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:transition-none",
-                          isActive ? "delay-200 -translate-y-4" : "delay-0 translate-y-0",
+                          isActive ? "delay-200 -translate-y-1" : "delay-0 translate-y-0",
                         )}
                       >
                         {c.title}
@@ -175,7 +175,7 @@ export default function WhyRellia({
 
                       <div
                         className={cn(
-                          "mt-1.5 overflow-hidden",
+                          "mt-0.5 overflow-hidden",
                           "transition-[max-height,opacity,transform] duration-[1050ms] ease-[cubic-bezier(0.42,0,1,1)] motion-reduce:transition-none",
                           isActive
                             ? "delay-300 max-h-56 opacity-100 translate-y-0"
@@ -251,7 +251,7 @@ export default function WhyRellia({
                             className={cn(
                               "font-host-grotesk font-normal text-white text-2xl tracking-tight leading-tight",
                               "transition-transform duration-[700ms] ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:transition-none",
-                              isActive ? "delay-200 -translate-y-3" : "delay-0 translate-y-0",
+                              isActive ? "delay-200 -translate-y-1" : "delay-0 translate-y-0",
                             )}
                           >
                             {c.title}
@@ -259,7 +259,7 @@ export default function WhyRellia({
 
                           <div
                             className={cn(
-                              "mt-1.5 overflow-hidden",
+                              "mt-0.5 overflow-hidden",
                               "transition-[max-height,opacity,transform] duration-[1050ms] ease-[cubic-bezier(0.42,0,1,1)] motion-reduce:transition-none",
                               isActive
                                 ? "delay-300 max-h-64 opacity-100 translate-y-0"

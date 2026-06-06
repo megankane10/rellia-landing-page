@@ -52,12 +52,10 @@ export type CareersLifeAtRelliaImage = {
   alt?: string
 }
 
+export type CareersContentMode = "both" | "hiring_only" | "volunteer_only"
+
 export type CareersPageContent = CmsPageVisibility & {
-  defaultTab?: "hiring" | "volunteer"
-  enableHiringTab?: boolean
-  enableVolunteerTab?: boolean
-  tabsLabelHiring?: string
-  tabsLabelVolunteer?: string
+  careersContentMode?: CareersContentMode
   /** When true, open roles list on www.relliahealth.com (production). Preview/Vercel always shows roles from CMS. */
   publishOpenRolesOnProduction?: boolean
   /** Show HIRING pill next to Careers in nav/footer. Default off in Studio until you enable it. */
@@ -192,6 +190,13 @@ export type CmsCtaButton = {
   href: string
   variant?: "primary" | "secondary" | "text"
   openInNewTab?: boolean
+}
+
+export type CmsSectionTestimonials = {
+  _type: "sectionTestimonials"
+  _key?: string
+  heading?: string
+  testimonials?: TrustedMemberTestimonial[]
 }
 
 export type CmsSectionRelliaCta = {
@@ -334,6 +339,7 @@ export type CmsPageSection =
   | CmsSectionJourneyTimeline
   | CmsSectionDiagnosticSurvey
   | CmsSectionFaq
+  | CmsSectionTestimonials
   | CmsSectionRelliaCta
 
 export type CmsPageContent = {
@@ -362,6 +368,93 @@ export type CmsSingletonPageContent = CmsPageVisibility & {
   seo?: SeoContent
   sections?: CmsPageSection[]
   foundersCluster?: ClusterChart[]
+}
+
+export type ConsultingServiceCard = {
+  title: string
+  body: string
+  ctaLabel?: string
+  iconKey?: string
+}
+
+export type LandingStatRow = {
+  label: string
+  value: string
+}
+
+export type ConsultingPageContent = CmsSingletonPageContent & {
+  heroEyebrow?: string
+  heroTitle?: string
+  heroAccentPhrase?: string
+  heroSubtitle?: string
+  heroImageSrc?: string
+  heroPrimaryCtaLabel?: string
+  heroPrimaryCtaHref?: string
+  heroSecondaryCtaLabel?: string
+  heroSecondaryCtaHref?: string
+  fitTitle?: string
+  fitDescription?: string
+  fitBullets?: string[]
+  fitImageSrc?: string
+  servicesTitle?: string
+  servicesSubtitle?: string
+  services?: ConsultingServiceCard[]
+  testimonialsTitle?: string
+  testimonials?: TrustedMemberTestimonial[]
+  membershipTitle?: string
+  membershipDescription?: string
+  membershipStats?: LandingStatRow[]
+  membershipSavingsTitle?: string
+  membershipSavingsBody?: string
+  membershipPrimaryCtaLabel?: string
+  membershipPrimaryCtaHref?: string
+  membershipSecondaryCtaLabel?: string
+  membershipSecondaryCtaHref?: string
+  ctaTitle?: string
+  ctaBody?: string
+  ctaPrimaryLabel?: string
+  ctaPrimaryHref?: string
+  ctaSecondaryLabel?: string
+  ctaSecondaryHref?: string
+}
+
+export type DiagnosticReadinessFeature = {
+  title: string
+  description: string
+  imageSrc?: string
+}
+
+export type DiagnosticLandingPageContent = CmsSingletonPageContent & {
+  heroBadgeLabel?: string
+  heroTitle?: string
+  heroAccentPhrase?: string
+  heroSubtitle?: string
+  heroImageSrc?: string
+  heroPrimaryCtaLabel?: string
+  heroPrimaryCtaHref?: string
+  readinessTitle?: string
+  readinessDescription?: string
+  readinessFeatures?: DiagnosticReadinessFeature[]
+  infographicTitle?: string
+  infographicBody?: string
+  infographicTopWeaknessLabel?: string
+  infographicTopWeaknessScore?: number
+  infographicGapLabel?: string
+  infographicAdvisorMatchLabel?: string
+  infographicAdvisorRole?: string
+  infographicAdvisorSubtitle?: string
+  infographicBlobRoadmap?: string
+  infographicBlobAdvisors?: string
+  infographicBlobBlindSpot?: string
+  timelineTitle?: string
+  timelineSubheading?: string
+  timelineSteps?: ApplyPageStep[]
+  ctaTitle?: string
+  ctaBody?: string
+  ctaPrimaryLabel?: string
+  ctaPrimaryHref?: string
+  ctaSecondaryLabel?: string
+  ctaSecondaryHref?: string
 }
 
 export type SanityImageAsset = {
@@ -674,11 +767,18 @@ export type ApplyPageStep = {
   description: string
 }
 
+export type ApplyPageRoleLink = {
+  title: string
+  description: string
+  href: string
+}
+
 export type ApplyPageContent = {
   headingTitle: string
   subheading: string
   steps: ApplyPageStep[]
   showRoleLinks: boolean
+  roleLinks?: ApplyPageRoleLink[]
   applyButtonLabel: string
   bottomCtaTitle: string
   bottomCtaBody: string

@@ -25,7 +25,7 @@ const NotFound = () => {
         <h1 className="sr-only">{copy.title}</h1>
         <RelliaCta
           icon={<Search className="h-20 w-20 text-rellia-teal" strokeWidth={1.25} />}
-          title="**404**"
+          title="404"
           body={`${copy.title}. ${copy.message}`}
           primary={ctaActionFromHref(copy.ctaLabel || "Back to home", "/")}
           className="flex-1 mt-0 pt-20 md:pt-32 lg:pt-40"

@@ -33,14 +33,13 @@ import {
   Pause,
   Play
 } from "lucide-react"
-import type { CareersOpenRole, CareersPageContent, HomeWhyFeature } from "@shared/cms/types"
+import type { CareersOpenRole, CareersContentMode, CareersPageContent, HomeWhyFeature } from "@shared/cms/types"
 import { DEFAULT_GLOBAL_SETTINGS } from "@shared/cms/defaults"
 import { CAREERS_VOLUNTEER_ENABLED } from "@shared/careersPageConfig"
 import { resolveCareersOpenRoles } from "@shared/careersOpenRolesVisibility"
 import { cn } from "@/lib/utils"
-import { useQuery } from "@tanstack/react-query"
-import { sanityFetch } from "@/lib/sanity"
 import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo"
+import { useCareersPage } from "@/hooks/useCmsDocuments"
 import { buildPageUrl } from "@/config/seo"
 import FilteredListEmptyState from "@/components/FilteredListEmptyState"
 import { isSanityConfigured } from "@/lib/sanity"
@@ -327,14 +326,7 @@ export default function CareersCms() {
   const [showApplyForm, setShowApplyForm] = useState(false)
   const location = useLocation()
 
-  const { data: careersCmsRaw } = useQuery({
-    queryKey: ["cms", "careersPage"],
-    queryFn: async () => {
-      const raw = await sanityFetch<Partial<CareersPageContent>>("careersPage")
-      return raw ?? null
-    },
-    staleTime: 5 * 60 * 1000,
-  })
+  const { data: careersCmsRaw } = useCareersPage()
 
   const careersCms = normalizeCms(careersCmsRaw)
   useApplyCmsSeo(careersCms.seo)
@@ -375,24 +367,45 @@ export default function CareersCms() {
 
   const volunteerAvailable = CAREERS_VOLUNTEER_ENABLED
 
-  // Hiring tab should be allowed even if there are currently no published roles.
-  const enableHiring = careersCms.enableHiringTab !== false
-  const enableVolunteer = careersCms.enableVolunteerTab !== false && volunteerAvailable
+  const resolveContentMode = (): CareersContentMode => {
+    if (careersCms.careersContentMode) return careersCms.careersContentMode
+    const legacyHiring = (careersCms as { enableHiringTab?: boolean }).enableHiringTab !== false
+    const legacyVolunteer =
+      (careersCms as { enableVolunteerTab?: boolean }).enableVolunteerTab !== false &&
+      volunteerAvailable
+    if (legacyHiring && legacyVolunteer) return "both"
+    if (legacyVolunteer) return "volunteer_only"
+    return "hiring_only"
+  }
 
-  const joinTeamPrimaryCta = enableHiring
-    ? {
-        href: "#open-roles",
-        label: "Work with us",
-        ariaLabel: "Work with us — jump to open roles",
-      }
-    : null
+  const contentMode = resolveContentMode()
+  const showHiringSection = contentMode === "both" || contentMode === "hiring_only"
+  const showVolunteerFlow =
+    (contentMode === "both" || contentMode === "volunteer_only") && volunteerAvailable
 
-  const joinTeamSecondaryCta = enableVolunteer
-    ? {
-        label: "Volunteer with us",
-        ariaLabel: "Volunteer with us — show application form",
-      }
-    : null
+  const joinTeamPrimaryCta =
+    contentMode === "volunteer_only" && showVolunteerFlow
+      ? {
+          label: "Volunteer with us",
+          ariaLabel: "Volunteer with us — show application form",
+          opensForm: true,
+        }
+      : showHiringSection
+        ? {
+            href: "#open-roles",
+            label: "Work with us",
+            ariaLabel: "Work with us — jump to open roles",
+            opensForm: false,
+          }
+        : null
+
+  const joinTeamSecondaryCta =
+    contentMode === "both" && showVolunteerFlow
+      ? {
+          label: "Volunteer with us",
+          ariaLabel: "Volunteer with us — show application form",
+        }
+      : null
 
 
 
@@ -457,10 +470,13 @@ export default function CareersCms() {
                     : undefined
                 }
                 onPrimaryClick={() => {
-                  if (joinTeamPrimaryCta) {
-                    const target = document.getElementById("open-roles")
-                    target?.scrollIntoView({ behavior: "smooth", block: "start" })
+                  if (!joinTeamPrimaryCta) return
+                  if (joinTeamPrimaryCta.opensForm) {
+                    setShowApplyForm(true)
+                    return
                   }
+                  const target = document.getElementById("open-roles")
+                  target?.scrollIntoView({ behavior: "smooth", block: "start" })
                 }}
                 onSecondaryClick={
                   joinTeamSecondaryCta
@@ -514,7 +530,7 @@ export default function CareersCms() {
           </div>
         </section>
 
-        {enableHiring ? (
+        {showHiringSection ? (
           <section id="open-roles" className="scroll-mt-28 px-0 py-16 md:py-20">
             <div className="flex min-h-[max(46rem,92svh)] w-full flex-col rounded-[2.5rem] md:rounded-[3.5rem] bg-rellia-cream/60 py-16 md:py-20">
               <div className="mx-auto w-full max-w-[1300px] px-6 md:px-10 flex flex-col">
@@ -687,7 +703,7 @@ export default function CareersCms() {
 
       <RelliaCta
         aboveSectionTone="white"
-        title="Questions before you **apply**?"
+        title="Questions before you apply?"
         body="Tell us what you are looking for—we are happy to point you to the right conversation."
         primary={{ label: "Get in touch", to: "/contact" }}
       />

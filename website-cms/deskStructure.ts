@@ -132,14 +132,13 @@ const collectionsGroup = (S: StructureBuilder) =>
             ),
           S.divider(),
           S.listItem()
-            .title('Careers open roles')
+            .title('Open roles')
             .icon(CaseIcon)
             .child(
-              S.document()
-                .schemaType('careersPage')
-                .documentId('careersPage')
+              S.documentTypeList('openRole')
+                .apiVersion(API_VERSION)
                 .title('Open roles')
-                .views([S.view.form().title('Open roles').id('open-roles')]),
+                .defaultOrdering([{field: 'sortOrder', direction: 'asc'}]),
             ),
         ]),
     )
@@ -255,6 +254,7 @@ const HIDDEN_FROM_CATCH_ALL = new Set([
   'networkAdvisorsPage',
   'networkInvestorsPage',
   'networkPartnersPage',
+  'openRole',
   'program',
   'event',
   'story',

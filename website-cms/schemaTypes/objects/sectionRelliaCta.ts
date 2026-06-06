@@ -11,7 +11,7 @@ export const sectionRelliaCta = defineType({
       name: 'title',
       title: 'Headline',
       type: 'string',
-      description: 'Use **double asterisks** around a phrase for teal emphasis.',
+      description: 'Plain headline text — all CTA titles use the same font weight.',
       validation: (Rule) => Rule.required(),
     }),
     defineField({

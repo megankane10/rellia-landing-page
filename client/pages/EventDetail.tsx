@@ -206,7 +206,7 @@ export default function EventDetail() {
         <Navbar />
         <main id="main-content" className="flex flex-1 flex-col">
           <RelliaCta
-            title="**Event not found**"
+            title="Event not found"
             body="This event may have moved. Browse all events to see what is coming up."
             primary={ctaActionFromHref("All events", "/events")}
             secondary={ctaActionFromHref("Back to home", "/")}
@@ -228,7 +228,7 @@ export default function EventDetail() {
         <Navbar />
         <main id="main-content" className="flex flex-1 flex-col">
           <RelliaCta
-            title="**Event not found**"
+            title="Event not found"
             body="This event may have moved. Browse all events to see what is coming up."
             primary={ctaActionFromHref("All events", "/events")}
             secondary={ctaActionFromHref("Back to home", "/")}

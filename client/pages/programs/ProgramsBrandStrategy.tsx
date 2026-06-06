@@ -26,7 +26,7 @@ const CMS: QmsProgramContent = {
   pricingSubAmount: ".00",
   pricingDescription: "Join the waitlist to be notified when Design Your Brand Strategy opens for the next cohort.",
   pricingBullets: ["Visual identity development", "Website copy restructuring", "Sales collateral templates", "Design system documentation"],
-  bottomCtaTitle: "**Ready** to build your brand?",
+  bottomCtaTitle: "Ready to build your brand?",
   bottomCtaBody: "Join the waitlist and we'll notify you when the next cohort begins.",
   bottomCtaButtonLabel: "Contact",
   bottomContactHref: "/contact",

@@ -12,6 +12,7 @@ import { clampMetaDescription, clampMetaTitle, getSeoForPathname } from "@/confi
 import { cn } from "@/lib/utils"
 import { DEFAULT_PROGRAMS_LANDING } from "@shared/cms/defaults"
 import { HeroHeadlinePortable } from "@/components/HeroHeadlinePortable"
+import { DEFAULT_PROGRAMS_LANDING_HERO_PORTABLE } from "@shared/cms/inlineHeroHeadline"
 import { useEffect, useMemo, useState } from "react"
 import { AnimatePresence, motion } from "framer-motion"
 import { ChevronLeft, ChevronRight, LayoutGrid } from "lucide-react"
@@ -156,16 +157,29 @@ export default function Programs() {
       <main id="main-content">
         <PageHeader
           variant="dark"
-          title="Less theory. More progress."
-          subtitle="Every program is designed to help you accomplish your next milestone, not just learn about it."
+          titleClassName="text-4xl md:text-5xl lg:text-6xl"
+          title={
+            <HeroHeadlinePortable
+              value={pl.heroTitlePortable ?? DEFAULT_PROGRAMS_LANDING_HERO_PORTABLE}
+            />
+          }
+          subtitle={
+            pl.heroSubtitle ||
+            "Every program is designed to help you accomplish your next milestone, not just learn about it."
+          }
         />
 
         <section id="view-programs" className="pt-8 pb-12 md:pt-10 md:pb-16 bg-white">
           <div className="max-w-[1300px] mx-auto px-6 md:px-10">
             <ScrollReveal>
               <h2 className="mb-6 font-host-grotesk text-2xl md:text-3xl font-semibold leading-tight tracking-tight text-black">
-                Browse Programs
+                <HeroHeadlinePortable value={programsHeaderTitle} />
               </h2>
+              {pl.programsSectionSubtitle ? (
+                <p className="mb-8 max-w-2xl font-urbanist text-base leading-relaxed text-black/65 md:text-lg">
+                  {pl.programsSectionSubtitle}
+                </p>
+              ) : null}
 
               <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                 <div className="w-full md:w-auto">

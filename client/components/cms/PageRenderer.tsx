@@ -31,6 +31,7 @@ import type {
   CmsSectionMetrics,
   CmsSectionFormEmbed,
   CmsSectionRelliaCta,
+  CmsSectionTestimonials,
   CmsCtaButton,
   NavItem,
   SanityPortableText,
@@ -43,6 +44,7 @@ import { ArrowRight, CalendarDays } from "lucide-react"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { FilloutStandardEmbed } from "@fillout/react"
 import RelliaCta, { ctaActionFromHref } from "@/components/RelliaCta"
+import ProgramTrustedMembersSection from "@/components/program/ProgramTrustedMembersSection"
 
 const isExternalHref = (href: string) => /^(https?:\/\/|mailto:|tel:)/i.test(href)
 
@@ -656,6 +658,17 @@ const SectionDiagnosticSurvey = ({ section }: { section: CmsSectionDiagnosticSur
   )
 }
 
+const SectionTestimonials = ({ section }: { section: CmsSectionTestimonials }) => {
+  const testimonials = section.testimonials ?? []
+  if (testimonials.length === 0) return null
+  return (
+    <ProgramTrustedMembersSection
+      title={cmsCleanText(section.heading) || "Already trusted by Rellia members"}
+      testimonials={testimonials}
+    />
+  )
+}
+
 const SectionRelliaCtaBlock = ({ section }: { section: CmsSectionRelliaCta }) => {
   const primary = ctaButtonToAction(section.primaryCta)
   if (!primary) return null
@@ -749,6 +762,8 @@ const renderSection = (section: CmsPageSection) => {
       return <SectionFaq section={section} />
     case "sectionRelliaCta":
       return <SectionRelliaCtaBlock section={section} />
+    case "sectionTestimonials":
+      return <SectionTestimonials section={section} />
     default:
       return null
   }

@@ -4,6 +4,7 @@ import {navigation} from './documents/navigation'
 import {homePage} from './documents/homePage'
 import {aboutPage} from './documents/aboutPage'
 import {careersPage} from './documents/careersPage'
+import {openRole} from './documents/openRole'
 import {faqPage} from './documents/faqPage'
 import {programsLandingPage} from './documents/programsLandingPage'
 import {eventsLandingPage} from './documents/eventsLandingPage'
@@ -70,6 +71,8 @@ import {sectionMarketingHero} from './objects/sectionMarketingHero'
 import {sectionMetrics} from './objects/sectionMetrics'
 import {sectionFormEmbed} from './objects/sectionFormEmbed'
 import {sectionRelliaCta} from './objects/sectionRelliaCta'
+import {sectionTestimonials} from './objects/sectionTestimonials'
+import {landingTestimonialItem} from './objects/landingTestimonialItem'
 
 export const schemaTypes = [
   // Singletons & globals
@@ -79,6 +82,7 @@ export const schemaTypes = [
   homePage,
   aboutPage,
   careersPage,
+  openRole,
   faqPage,
   programsLandingPage,
   eventsLandingPage,
@@ -145,4 +149,6 @@ export const schemaTypes = [
   sectionMetrics,
   sectionFormEmbed,
   sectionRelliaCta,
+  sectionTestimonials,
+  landingTestimonialItem,
 ]

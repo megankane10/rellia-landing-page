@@ -11,6 +11,7 @@ export default function SectionHeading({
   animated = true,
   className,
   titleClassName,
+  descriptionClassName,
 }: {
   title: string;
   description?: string;
@@ -19,6 +20,7 @@ export default function SectionHeading({
   animated?: boolean;
   className?: string;
   titleClassName?: string;
+  descriptionClassName?: string;
 }) {
   const isCenter = align === "center";
   const isLight = tone === "light";
@@ -49,10 +51,11 @@ export default function SectionHeading({
       {description ? (
         <p
           className={cn(
-            "font-urbanist font-medium leading-relaxed tracking-tight mt-2",
+            "font-urbanist font-medium leading-relaxed tracking-tight mt-1",
             isLight ? "text-white/80" : "text-black/70",
             "text-base md:text-lg",
             isCenter && "mx-auto max-w-[680px]",
+            descriptionClassName,
           )}
         >
           {description}
