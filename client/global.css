@@ -124,7 +124,7 @@
     background-clip: text;
     -webkit-text-fill-color: transparent;
     color: transparent;
-    animation: glow-sweep 1.4s linear 3;
+    animation: glow-sweep 1.4s linear 1;
   }
 
   .built-by-name {
