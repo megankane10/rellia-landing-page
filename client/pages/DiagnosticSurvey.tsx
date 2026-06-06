@@ -28,6 +28,7 @@ import {
   Briefcase,
   Clock,
   Lock,
+  ArrowLeft,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import Navbar from "@/components/Navbar";
@@ -1004,42 +1005,44 @@ export default function DiagnosticSurvey() {
                 </div>
 
                 <div className="grid gap-6 lg:grid-cols-[1fr_400px] lg:items-stretch">
-                  <div className="space-y-6">
-                    <div className="rounded-3xl border border-rellia-teal/10 bg-white p-8 shadow-sm">
-                      <h3 className="mb-8 text-xs font-bold uppercase tracking-widest text-rellia-teal">
-                        {introJourneyTitle}
-                      </h3>
-                      <div className="space-y-8">
-                        {introJourneySteps.map((item, i) => (
-                          <div key={i} className="relative flex gap-4">
-                            <div className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-rellia-teal/20 bg-rellia-teal text-rellia-mint">
-                              <span
-                                className={cn(
-                                  "pointer-events-none absolute inset-0 -z-10 overflow-hidden rounded-full bg-rellia-mint/25",
-                                  "ds-timeline-fill",
-                                  i === 0 && "ds-delay-0",
-                                  i === 1 && "ds-delay-1",
-                                  i === 2 && "ds-delay-2",
-                                  i === 3 && "ds-delay-3",
-                                )}
-                              />
-                              <item.icon className="h-5 w-5" />
-                            </div>
+                  <div className="space-y-6 flex flex-col h-full">
+                    <div className="rounded-3xl border border-rellia-teal/10 bg-white p-8 shadow-sm flex-1 flex flex-col justify-between h-full">
+                      <div>
+                        <h3 className="mb-8 text-xs font-bold uppercase tracking-widest text-rellia-teal">
+                          {introJourneyTitle}
+                        </h3>
+                        <div className="space-y-8">
+                          {introJourneySteps.map((item, i) => (
+                            <div key={i} className="relative flex gap-4">
+                              <div className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-rellia-teal/20 bg-rellia-teal text-rellia-mint">
+                                <span
+                                  className={cn(
+                                    "pointer-events-none absolute inset-0 -z-10 overflow-hidden rounded-full bg-rellia-mint/25",
+                                    "ds-timeline-fill",
+                                    i === 0 && "ds-delay-0",
+                                    i === 1 && "ds-delay-1",
+                                    i === 2 && "ds-delay-2",
+                                    i === 3 && "ds-delay-3",
+                                  )}
+                                />
+                                <item.icon className="h-5 w-5" />
+                              </div>
 
-                            <div className="min-w-0 pt-0.5">
-                              <h4 className="font-bold text-sm text-rellia-teal">
-                                {item.t}
-                              </h4>
-                              <p className="text-xs text-rellia-teal/60 leading-relaxed">
-                                {item.d}
-                              </p>
-                            </div>
+                              <div className="min-w-0 pt-0.5">
+                                <h4 className="font-bold text-sm text-rellia-teal">
+                                  {item.t}
+                                </h4>
+                                <p className="text-xs text-rellia-teal/60 leading-relaxed">
+                                  {item.d}
+                                </p>
+                              </div>
 
-                            {i < 3 && (
-                              <div className="pointer-events-none absolute left-[22px] top-12 h-[36px] w-px bg-rellia-teal" />
-                            )}
-                          </div>
-                        ))}
+                              {i < 3 && (
+                                <div className="pointer-events-none absolute left-[22px] top-12 h-[36px] w-px bg-rellia-teal" />
+                              )}
+                            </div>
+                          ))}
+                        </div>
                       </div>
 
                       <div className="mt-10 rounded-2xl border border-rellia-teal/5 bg-rellia-cream/20 p-5">
@@ -1222,6 +1225,16 @@ export default function DiagnosticSurvey() {
                       <ArrowRight className="ml-2 h-4 w-4" />
                     </RelliaAction>
                   </div>
+                </div>
+
+                <div className="mt-8 flex justify-center lg:justify-start">
+                  <Link
+                    to="/startup-diagnostic"
+                    className="inline-flex items-center gap-2 font-host-grotesk text-sm font-semibold text-rellia-teal hover:text-rellia-teal/80 transition-colors"
+                  >
+                    <ArrowLeft className="h-4 w-4" />
+                    Learn more about how it works
+                  </Link>
                 </div>
               </div>
             )}
@@ -1671,7 +1684,7 @@ export default function DiagnosticSurvey() {
                                     )}
                                   </div>
                                   <div className="min-w-0">
-                                    <div className="font-host-grotesk text-sm font-bold tracking-tight text-rellia-teal">
+                                    <div className="font-host-grotesk text-sm font-bold tracking-tight text-black">
                                       {meta?.title || prog?.program || "Program"}
                                     </div>
                                   </div>
@@ -1756,14 +1769,21 @@ export default function DiagnosticSurvey() {
                       </div>
 
                       {/* Join the membership CTA block */}
-                      <div className="rounded-[32px] bg-rellia-teal p-8 text-white shadow-2xl relative overflow-hidden flex flex-col h-full justify-between">
-                        <div className="absolute -bottom-4 -right-4 h-24 w-24 bg-rellia-mint/20 rounded-full blur-2xl" />
-                        <div>
-                          <ShieldCheck className="h-12 w-12 text-rellia-mint mb-6 relative z-10 shrink-0" />
-                          <h2 className="font-host-grotesk text-2xl font-bold leading-tight text-rellia-mint relative z-10">
+                      <div className="rounded-[32px] p-8 text-white shadow-2xl relative overflow-hidden flex flex-col h-full justify-between min-h-[360px]">
+                        <img
+                          src="https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=1200"
+                          alt=""
+                          className="absolute inset-0 h-full w-full object-cover"
+                        />
+                        <div
+                          aria-hidden
+                          className="absolute inset-0 bg-gradient-to-b from-[#0d3540]/80 via-[#0d3540]/90 to-[#0d3540]/95 z-0"
+                        />
+                        <div className="relative z-10">
+                          <h2 className="font-host-grotesk text-2xl font-bold leading-tight text-rellia-mint">
                             {surveyCms?.reportMembershipCtaTitle || DEFAULT_REPORT_MEMBERSHIP_CTA_TITLE}
                           </h2>
-                          <p className="mt-4 text-sm leading-relaxed text-white relative z-10">
+                          <p className="mt-4 text-sm leading-relaxed text-white">
                             {surveyCms?.reportMembershipCtaBody || DEFAULT_REPORT_MEMBERSHIP_CTA_BODY}
                           </p>
                         </div>
