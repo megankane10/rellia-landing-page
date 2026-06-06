@@ -245,6 +245,15 @@
   0% {
     --angle: 0deg;
   }
+  20% {
+    --angle: 90deg;
+  }
+  45% {
+    --angle: 180deg;
+  }
+  70% {
+    --angle: 270deg;
+  }
   100% {
     --angle: 360deg;
   }
