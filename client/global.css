@@ -100,12 +100,12 @@
   }
 
   .built-by-credit {
-    @apply inline-flex font-urbanist text-[13px] font-normal leading-snug text-white/55 transition-colors duration-300 md:text-sm;
+    @apply inline-flex font-urbanist text-[13px] font-normal leading-snug text-white/45 transition-colors duration-300 md:text-sm;
   }
 
   .built-by-credit:hover,
   .built-by-credit:focus-visible {
-    @apply text-white/70;
+    @apply text-white/80;
   }
 
   .built-by-credit-label {
@@ -113,24 +113,24 @@
   }
 
   .built-by-name {
-    @apply text-white/40;
+    @apply text-white/80 transition-colors duration-300;
   }
 
   .built-by-credit:hover .built-by-credit-label,
   .built-by-credit:focus-visible .built-by-credit-label {
     background: linear-gradient(
       90deg,
-      rgba(255, 255, 255, 0.55) 0%,
-      rgba(157, 214, 208, 0.95) 45%,
-      rgba(255, 255, 255, 0.9) 55%,
-      rgba(157, 214, 208, 0.95) 65%,
-      rgba(255, 255, 255, 0.55) 100%
+      rgba(255, 255, 255, 0.45) 0%,
+      rgba(157, 214, 208, 0.95) 40%,
+      rgba(255, 255, 255, 0.95) 50%,
+      rgba(157, 214, 208, 0.95) 60%,
+      rgba(255, 255, 255, 0.45) 100%
     );
     background-size: 220% auto;
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
-    animation: glow-sweep 1.4s ease-in-out infinite;
+    animation: glow-sweep 2.2s ease-in-out infinite;
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -163,6 +163,7 @@
     line-height: 1.375;
     color: rgba(255, 255, 255, 0.92);
     box-shadow: none !important;
+    filter: drop-shadow(0 0 6px rgba(157, 214, 208, 0.35));
   }
 
   .built-by-tooltip-inner {
@@ -188,16 +189,14 @@
     padding: 1px;
     background: linear-gradient(
       90deg,
-      rgba(157, 214, 208, 0.18) 0%,
-      rgba(157, 214, 208, 0.18) 32%,
-      rgba(157, 214, 208, 0.85) 46%,
-      #9dd6d0 50%,
-      rgba(157, 214, 208, 0.85) 54%,
-      rgba(157, 214, 208, 0.18) 68%,
-      rgba(157, 214, 208, 0.18) 100%
+      rgba(255, 255, 255, 0.35) 0%,
+      rgba(157, 214, 208, 0.85) 40%,
+      rgba(255, 255, 255, 0.95) 50%,
+      rgba(157, 214, 208, 0.85) 60%,
+      rgba(255, 255, 255, 0.35) 100%
     );
     background-size: 220% 100%;
-    animation: tooltip-border-sweep 2s linear infinite;
+    animation: tooltip-border-sweep 2.2s ease-in-out infinite;
     -webkit-mask:
       linear-gradient(#fff 0 0) content-box,
       linear-gradient(#fff 0 0);
