@@ -9,7 +9,7 @@ const AdminShell = () => (
     <div className="flex min-h-[100dvh] w-full bg-background font-host-grotesk">
       <AdminAppSidebar />
       <SidebarInset className="min-w-0">
-        <header className="flex h-14 shrink-0 items-center gap-2 border-b border-border/80 bg-background/95 px-4 backdrop-blur supports-[backdrop-filter]:bg-background/80">
+        <header className="sticky top-0 z-30 flex h-14 shrink-0 items-center gap-2 border-b border-border/80 bg-background/95 px-4 backdrop-blur supports-[backdrop-filter]:bg-background/80">
           <SidebarTrigger className="-ml-1 text-rellia-teal" aria-label="Toggle navigation menu" />
           <Separator orientation="vertical" className="mr-2 h-4" />
           <p className="font-urbanist text-sm text-muted-foreground">Admin Dashboard</p>
