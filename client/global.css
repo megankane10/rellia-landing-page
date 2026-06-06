@@ -124,7 +124,7 @@
     background-clip: text;
     -webkit-text-fill-color: transparent;
     color: transparent;
-    animation: glow-sweep 2.2s linear infinite;
+    animation: glow-sweep 1.4s linear 3;
   }
 
   .built-by-name {
@@ -194,7 +194,7 @@
       rgba(200, 240, 238, 0.98) 90%,
       rgba(157, 214, 208, 0.4) 100%
     );
-    animation: rotate-border 2.8s cubic-bezier(0.45, 0.09, 0.55, 0.91) infinite;
+    animation: rotate-border 1.8s cubic-bezier(0.45, 0.09, 0.55, 0.91) infinite;
     -webkit-mask:
       linear-gradient(#fff 0 0) content-box,
       linear-gradient(#fff 0 0);

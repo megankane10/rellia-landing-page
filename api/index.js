@@ -595,6 +595,7 @@ var diagnosticSurveyContentQuery = `*[_type == "diagnosticSurveyContent"][0]{
   reportMembershipCtaTitle,
   reportMembershipCtaBody,
   reportMembershipCtaButton,
+  "reportMembershipCtaImageSrc": reportMembershipCtaImage.asset->url,
   sections[]{
     id,
     icon,

@@ -212,7 +212,7 @@ export const PriorityAnnouncementModal = ({
                   </button>
                 </div>
 
-                <h2 id="priority-modal-title" className="font-host-grotesk text-2xl font-bold tracking-tight text-rellia-teal md:text-[1.65rem] leading-tight">
+                <h2 id="priority-modal-title" className="font-urbanist text-[19px] font-semibold leading-relaxed text-black md:text-[22px] md:leading-relaxed">
                   {heading}
                 </h2>
 

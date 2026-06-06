@@ -1,3 +1,4 @@
+import * as React from "react"
 import { Link } from "react-router-dom"
 import { DEFAULT_GLOBAL_SETTINGS } from "@shared/cms/defaults"
 import { CareersHiringBadge } from "@/components/CareersHiringBadge"
@@ -76,29 +77,34 @@ const footerSectionHeadingClass =
 const legalLinkClass =
   "font-urbanist text-[13px] leading-snug text-white/70 transition-colors hover:text-rellia-mint md:text-sm"
 
-const BuiltByCredit = () => (
-  <Tooltip delayDuration={200}>
-    <TooltipTrigger asChild>
-      <a
-        href={SAFDAR_LINKEDIN_URL}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="built-by-credit rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-rellia-teal"
-        aria-label="Built by Safdar — let's connect on LinkedIn"
-      >
-        <span className="built-by-credit-label">
-          Built by <span className="built-by-name">Safdar</span>
+const BuiltByCredit = () => {
+  const [open, setOpen] = React.useState(false)
+  return (
+    <Tooltip open={open} onOpenChange={setOpen} delayDuration={0}>
+      <TooltipTrigger asChild>
+        <a
+          href={SAFDAR_LINKEDIN_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="built-by-credit rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-rellia-teal"
+          aria-label="Built by Safdar — let's connect on LinkedIn"
+          onTouchStart={() => setOpen(true)}
+          onTouchEnd={() => setTimeout(() => setOpen(false), 2000)}
+        >
+          <span className="built-by-credit-label">
+            Built by <span className="built-by-name">Safdar</span>
+          </span>
+        </a>
+      </TooltipTrigger>
+      <TooltipContent side="top" sideOffset={8} className="built-by-tooltip">
+        <span className="built-by-tooltip-inner">
+          Let&apos;s connect on LinkedIn
+          <ArrowUpRight className="h-3.5 w-3.5 shrink-0" aria-hidden />
         </span>
-      </a>
-    </TooltipTrigger>
-    <TooltipContent side="top" sideOffset={8} className="built-by-tooltip">
-      <span className="built-by-tooltip-inner">
-        Let&apos;s connect on LinkedIn
-        <ArrowUpRight className="h-3.5 w-3.5 shrink-0" aria-hidden />
-      </span>
-    </TooltipContent>
-  </Tooltip>
-)
+      </TooltipContent>
+    </Tooltip>
+  )
+}
 
 export default function Footer() {
   const { data: globalSettingsData } = useGlobalSettings()
@@ -265,16 +271,16 @@ export default function Footer() {
 
           <div className="border-t border-white/10 pt-4 md:pt-5">
             <div className="grid grid-cols-1 items-center gap-5 md:grid-cols-[1fr_auto_1fr] md:gap-6">
-              <p className="text-center font-urbanist text-[13px] leading-snug text-white/55 md:text-left md:text-sm">
+              <p className="text-center font-urbanist text-[13px] leading-snug text-white/55 md:text-left md:text-sm order-2 md:order-none">
                 &copy; {new Date().getFullYear()} {g.copyrightLine} Ontario, Canada
               </p>
 
-              <div className="flex justify-center md:px-4">
+              <div className="flex justify-center md:px-4 order-1 md:order-none">
                 <BuiltByCredit />
               </div>
 
               <nav
-                className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 md:justify-end lg:gap-x-8"
+                className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 md:justify-end lg:gap-x-8 order-3 md:order-none"
                 aria-label="Legal"
               >
                 <Link to="/terms" className={legalLinkClass}>

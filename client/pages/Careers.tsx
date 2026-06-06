@@ -510,7 +510,6 @@ export default function Careers() {
               {/* Copy & Social Links */}
               <ScrollReveal>
                 <div className="flex flex-col items-start justify-center">
-                  <PillTag label="Culture" className="mb-4 border-rellia-teal/20 bg-rellia-teal/8" labelClassName="text-rellia-teal font-bold" />
                   <h2 className="font-host-grotesk text-2xl font-bold tracking-tight text-black sm:text-3xl">
                     Built by healthtech insiders, for builders
                   </h2>
@@ -538,6 +537,7 @@ export default function Careers() {
         </section>
 
         <RelliaCta
+          aboveSectionTone="white"
           title="Questions before you **apply**?"
           body="Tell us what you are looking for—we are happy to point you to the right conversation."
           primary={{ label: "Contact Rellia", to: "/contact" }}

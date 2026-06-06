@@ -133,7 +133,7 @@ export default {
         "healthcare-fill":
           "healthcare-fill 1.15s cubic-bezier(0.22, 1, 0.36, 1) 0.65s both forwards",
         "rellia-gradient": "rellia-gradient 6s ease-in-out infinite",
-        "glow-sweep": "glow-sweep 3.2s ease-in-out 0.35s infinite",
+        "glow-sweep": "glow-sweep 2s ease-in-out 0.35s infinite",
       },
     },
   },
