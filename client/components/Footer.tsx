@@ -5,7 +5,10 @@ import { InstagramFilled, LinkedInFilled, MailFilled } from "@/components/icons/
 import { useGlobalSettings, useNavigation } from "@/hooks/useCmsDocuments"
 import type { NavItem } from "@shared/cms/types"
 import { GETPROVEN_VENDORS_GRID_URL } from "@/config/partnerLinks"
-import { ArrowUpRight } from "lucide-react"
+import { ArrowUp, ArrowUpRight } from "lucide-react"
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
+
+const SAFDAR_LINKEDIN_URL = "https://www.linkedin.com/in/safdarmd/"
 
 const isExternalHref = (href: string) => /^(https?:\/\/|mailto:|tel:)/i.test(href)
 
@@ -72,6 +75,56 @@ const footerSectionHeadingClass =
 
 const legalLinkClass =
   "font-urbanist text-[13px] leading-snug text-white/70 transition-colors hover:text-rellia-mint md:text-sm"
+
+const handleScrollToTop = () => {
+  window.scrollTo({ top: 0, behavior: "smooth" })
+}
+
+const handleBackToTopKeyDown = (event: React.KeyboardEvent<HTMLButtonElement>) => {
+  if (event.key !== "Enter" && event.key !== " ") return
+  event.preventDefault()
+  handleScrollToTop()
+}
+
+const BackToTopButton = () => (
+  <button
+    type="button"
+    onClick={handleScrollToTop}
+    onKeyDown={handleBackToTopKeyDown}
+    className="group inline-flex items-center gap-1.5 rounded-full border border-white/12 bg-white/[0.04] px-3 py-1.5 font-urbanist text-[12px] leading-none text-white/60 transition-all duration-300 hover:border-rellia-mint/35 hover:bg-rellia-mint/10 hover:text-rellia-mint focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-rellia-teal md:text-[13px]"
+    aria-label="Back to top"
+  >
+    <ArrowUp
+      className="h-3.5 w-3.5 transition-transform duration-300 group-hover:-translate-y-0.5 motion-reduce:transition-none"
+      aria-hidden
+    />
+    <span>Back to top</span>
+  </button>
+)
+
+const BuiltByCredit = () => (
+  <Tooltip delayDuration={200}>
+    <TooltipTrigger asChild>
+      <a
+        href={SAFDAR_LINKEDIN_URL}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="built-by-credit inline-flex items-center gap-1 rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-rellia-teal"
+        aria-label="Built by Safdar — connect on LinkedIn"
+      >
+        <span>Built by</span>
+        <span className="built-by-name font-medium">Safdar</span>
+      </a>
+    </TooltipTrigger>
+    <TooltipContent
+      side="top"
+      sideOffset={8}
+      className="max-w-[220px] border-white/10 bg-rellia-teal px-3 py-2 text-center font-urbanist text-xs leading-snug text-white shadow-[0_12px_40px_-16px_rgba(0,0,0,0.45)]"
+    >
+      Reach out on LinkedIn about your project
+    </TooltipContent>
+  </Tooltip>
+)
 
 export default function Footer() {
   const { data: globalSettingsData } = useGlobalSettings()
@@ -235,22 +288,34 @@ export default function Footer() {
             </a>
           </div>
 
-          <div className="flex flex-col-reverse gap-4 border-t border-white/10 pt-6 sm:flex-row sm:items-center sm:justify-between md:pt-8">
-            <p className="text-center font-urbanist text-[13px] leading-snug text-white/55 sm:text-left md:text-sm">
-              &copy; {new Date().getFullYear()} {g.copyrightLine} Ontario, Canada
-            </p>
-            <nav
-              className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 sm:justify-end lg:gap-x-8"
-              aria-label="Legal"
-            >
-              <Link to="/terms" className={legalLinkClass}>
-                Terms of Service
-              </Link>
-              <span className="text-white/25 select-none" aria-hidden>|</span>
-              <Link to="/privacy" className={legalLinkClass}>
-                Privacy Policy
-              </Link>
-            </nav>
+          <div className="border-t border-white/10 pt-6 md:pt-8">
+            <div className="grid grid-cols-1 items-center gap-5 md:grid-cols-[1fr_auto_1fr] md:gap-6">
+              <p className="text-center font-urbanist text-[13px] leading-snug text-white/55 md:text-left md:text-sm">
+                &copy; {new Date().getFullYear()} {g.copyrightLine} Ontario, Canada
+              </p>
+
+              <div className="flex justify-center md:px-4">
+                <BuiltByCredit />
+              </div>
+
+              <div className="flex flex-col items-center gap-3 sm:flex-row sm:justify-center md:justify-end md:gap-4">
+                <nav
+                  className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 lg:gap-x-8"
+                  aria-label="Legal"
+                >
+                  <Link to="/terms" className={legalLinkClass}>
+                    Terms of Service
+                  </Link>
+                  <span className="text-white/25 select-none" aria-hidden>
+                    |
+                  </span>
+                  <Link to="/privacy" className={legalLinkClass}>
+                    Privacy Policy
+                  </Link>
+                </nav>
+                <BackToTopButton />
+              </div>
+            </div>
           </div>
         </div>
       </div>

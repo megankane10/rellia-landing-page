@@ -115,6 +115,11 @@ export default {
           "50%": { backgroundPosition: "100% 50%" },
           "100%": { backgroundPosition: "0% 50%" },
         },
+        /** Footer credit: mint glow sweeps left→right across linked name */
+        "glow-sweep": {
+          "0%": { backgroundPosition: "200% center" },
+          "100%": { backgroundPosition: "-200% center" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -128,6 +133,7 @@ export default {
         "healthcare-fill":
           "healthcare-fill 1.15s cubic-bezier(0.22, 1, 0.36, 1) 0.65s both forwards",
         "rellia-gradient": "rellia-gradient 6s ease-in-out infinite",
+        "glow-sweep": "glow-sweep 1.4s ease-in-out infinite",
       },
     },
   },
