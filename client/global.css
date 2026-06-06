@@ -100,35 +100,41 @@
   }
 
   .built-by-credit {
-    @apply font-urbanist text-[12px] leading-snug text-white/40 transition-colors duration-300 md:text-[13px];
+    @apply font-urbanist text-[13px] leading-snug text-white/55 transition-colors duration-300 md:text-sm;
   }
 
   .built-by-credit:hover,
   .built-by-credit:focus-visible {
-    @apply text-white/55;
+    @apply text-white/70;
   }
 
   .built-by-name {
     background: linear-gradient(
       90deg,
-      rgba(255, 255, 255, 0.55) 0%,
-      rgba(157, 214, 208, 0.95) 45%,
-      rgba(255, 255, 255, 0.9) 55%,
-      rgba(157, 214, 208, 0.95) 65%,
-      rgba(255, 255, 255, 0.55) 100%
+      rgba(255, 255, 255, 0.5) 0%,
+      rgba(255, 255, 255, 0.5) 20%,
+      #9dd6d0 38%,
+      #ffffff 48%,
+      #d4f3ef 52%,
+      #9dd6d0 58%,
+      rgba(255, 255, 255, 0.95) 62%,
+      rgba(255, 255, 255, 0.5) 80%,
+      rgba(255, 255, 255, 0.5) 100%
     );
-    background-size: 220% auto;
+    background-size: 320% auto;
     -webkit-background-clip: text;
     background-clip: text;
-    color: rgba(255, 255, 255, 0.65);
-    transition: color 0.3s ease, text-shadow 0.3s ease;
+    color: rgba(255, 255, 255, 0.7);
+    transition: color 0.4s ease, text-shadow 0.4s ease;
   }
 
   .built-by-credit:hover .built-by-name,
   .built-by-credit:focus-visible .built-by-name {
     color: transparent;
-    animation: glow-sweep 1.4s ease-in-out infinite;
-    text-shadow: 0 0 18px rgba(157, 214, 208, 0.35);
+    animation: glow-sweep 3.2s ease-in-out 0.35s infinite;
+    text-shadow:
+      0 0 22px rgba(157, 214, 208, 0.75),
+      0 0 10px rgba(255, 255, 255, 0.45);
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -137,6 +143,73 @@
       animation: none;
       color: #9dd6d0;
       text-shadow: none;
+    }
+  }
+
+  .built-by-tooltip {
+    position: relative;
+    isolation: isolate;
+    overflow: visible;
+    max-width: 220px;
+    border: none !important;
+    border-radius: 1rem;
+    background: transparent !important;
+    padding: 0 !important;
+    text-align: center;
+    font-family: "Urbanist", -apple-system, Roboto, Helvetica, sans-serif;
+    font-size: 0.75rem;
+    font-weight: 500;
+    line-height: 1.375;
+    color: rgba(255, 255, 255, 0.92);
+    box-shadow: none !important;
+  }
+
+  .built-by-tooltip-inner {
+    position: relative;
+    z-index: 1;
+    display: block;
+    border-radius: calc(1rem - 1px);
+    background: #06181e;
+    padding: 0.625rem 1rem;
+    color: rgba(255, 255, 255, 0.92);
+    box-shadow:
+      0 20px 50px -16px rgba(0, 0, 0, 0.55),
+      0 0 0 1px rgba(157, 214, 208, 0.1);
+  }
+
+  .built-by-tooltip::before {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    z-index: -1;
+    border-radius: inherit;
+    background: conic-gradient(
+      from 0deg,
+      transparent 0deg,
+      transparent 250deg,
+      rgba(157, 214, 208, 0.35) 285deg,
+      #9dd6d0 315deg,
+      #ffffff 340deg,
+      #9dd6d0 20deg,
+      rgba(157, 214, 208, 0.35) 55deg,
+      transparent 90deg
+    );
+    animation: tooltip-outline-spin 3.5s linear infinite;
+  }
+
+  .built-by-tooltip::after {
+    content: "";
+    position: absolute;
+    inset: 1px;
+    z-index: -1;
+    border-radius: calc(1rem - 1px);
+    background: #06181e;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .built-by-tooltip::before {
+      animation: none;
+      background: rgba(157, 214, 208, 0.35);
     }
   }
 }
@@ -163,6 +236,15 @@
   }
   100% {
     background-position: -200% center;
+  }
+}
+
+@keyframes tooltip-outline-spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
   }
 }
 

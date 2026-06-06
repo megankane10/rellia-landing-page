@@ -240,20 +240,20 @@ function LifeAtRelliaSlider({ images }: { images?: Array<{ src?: string; alt?: s
         
         {slides.length > 1 && (
           <>
-            <div className="absolute bottom-6 left-1/2 flex -translate-x-1/2 gap-2 z-10">
+            <div className="absolute bottom-6 left-1/2 z-10 flex -translate-x-1/2 gap-2.5 rounded-full bg-black/35 px-3 py-2 backdrop-blur-md">
               {slides.map((_, index) => (
                 <button
                   key={index}
                   onClick={() => goToSlide(index)}
                   className={cn(
-                    "relative h-2 rounded-full bg-white/40 overflow-hidden transition-all duration-300",
-                    currentSlide === index ? "w-8" : "w-2 hover:bg-white/60"
+                    "relative h-2.5 overflow-hidden rounded-full transition-all duration-300",
+                    currentSlide === index ? "w-10 bg-white/30" : "w-2.5 bg-white/80 hover:bg-rellia-mint"
                   )}
                   aria-label={`Go to slide ${index + 1}`}
                 >
                   {currentSlide === index && (
                     <div
-                      className="absolute inset-y-0 left-0 bg-rellia-teal"
+                      className="absolute inset-y-0 left-0 rounded-full bg-rellia-mint shadow-[0_0_10px_rgba(157,214,208,0.85)]"
                       style={{ width: `${progress}%` }}
                     />
                   )}
