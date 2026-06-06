@@ -28,6 +28,8 @@
     "sanity:sync-to-production": "tsx scripts/sync-preview-to-production.ts",
     "sanity:sync-to-preview:dry": "tsx scripts/sync-production-to-preview.ts",
     "sanity:sync-to-preview": "tsx scripts/sync-production-to-preview.ts",
+    "sanity:sync-to-preview:preserve:dry": "tsx scripts/sync-production-to-preview.ts -- --preserve-placeholders",
+    "sanity:sync-to-preview:preserve": "tsx scripts/sync-production-to-preview.ts -- --apply --preserve-placeholders",
     "sanity:delete-event": "tsx scripts/delete-sanity-event.ts",
     "sanity:studio:dev": "pnpm -C website-cms run dev",
     "sanity:studio:deploy": "pnpm -C website-cms run deploy",

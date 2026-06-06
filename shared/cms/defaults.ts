@@ -1825,14 +1825,10 @@ export const DEFAULT_PROGRAMS_LANDING: ProgramsLandingContent = {
       style: "normal",
       _key: "programsSectionTitle",
       markDefs: [],
-      children: [
-        { _type: "span", _key: "t1", text: "Programming that ", marks: [] },
-        { _type: "span", _key: "t2", text: "fit your startup", marks: ["mint"] },
-      ],
+      children: [{ _type: "span", _key: "t1", text: "Explore programs", marks: [] }],
     },
   ],
-  programsSectionSubtitle:
-    "Every program is built around a single, focused outcome. Spend your time on exactly what you need right now, and leave the rest for later.",
+  programsSectionSubtitle: "",
   programs: [
     {
       title: "Build Your Quality Management System",

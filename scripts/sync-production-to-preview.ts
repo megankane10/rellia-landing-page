@@ -8,6 +8,9 @@
  * Apply:
  *   pnpm tsx scripts/sync-production-to-preview.ts --apply
  *
+ * Apply but keep preview placeholder reference content (stories, open roles, profiles):
+ *   pnpm tsx scripts/sync-production-to-preview.ts --apply --preserve-placeholders
+ *
  * Requires SANITY_API_WRITE_TOKEN in .env or .env.local
  */
 import { createClient, type SanityClient } from "@sanity/client"
@@ -25,6 +28,15 @@ const PROJECT_ID =
   "ggbt0o98"
 
 const BATCH_SIZE = 40
+
+/** Preview-only reference content — skipped when syncing production → preview for Additions. */
+const PRESERVE_PLACEHOLDER_TYPES = new Set([
+  "story",
+  "openRole",
+  "advisor",
+  "alumniCompany",
+  "founder",
+])
 
 const ALL_PUBLISHED_DOCS_GROQ = `*[
   !(_id in path("drafts.**"))
@@ -85,27 +97,44 @@ const countByType = (docs: Array<{ _type?: string }>) => {
 
 const main = async () => {
   const apply = process.argv.includes("--apply")
+  const preservePlaceholders = process.argv.includes("--preserve-placeholders")
   const source = makeClient("production")
   const target = makeClient("preview")
 
-  const [sourceDocs, targetDocs] = await Promise.all([
+  const [sourceDocsRaw, targetDocs] = await Promise.all([
     source.fetch<Array<Record<string, unknown>>>(ALL_PUBLISHED_DOCS_GROQ),
     target.fetch<Array<{ _id: string; _type?: string }>>(
       `*[!(_id in path("drafts.**")) && !(_type match "system.*")]{ _id, _type }`,
     ),
   ])
 
-  console.log(`\nProduction published documents (source): ${sourceDocs.length}`)
-  console.log(`Preview published documents (target before): ${targetDocs.length}\n`)
+  const skipped = preservePlaceholders
+    ? sourceDocsRaw.filter((doc) => PRESERVE_PLACEHOLDER_TYPES.has(String(doc._type ?? "")))
+    : []
+  const sourceDocs = preservePlaceholders
+    ? sourceDocsRaw.filter((doc) => !PRESERVE_PLACEHOLDER_TYPES.has(String(doc._type ?? "")))
+    : sourceDocsRaw
 
-  console.log("Production counts by type:")
+  console.log(`\nProduction published documents (source): ${sourceDocsRaw.length}`)
+  console.log(`Preview published documents (target before): ${targetDocs.length}`)
+  if (preservePlaceholders) {
+    console.log(
+      `\nPreserving preview placeholders (not overwritten): ${[...PRESERVE_PLACEHOLDER_TYPES].join(", ")}`,
+    )
+    console.log(`Skipped ${skipped.length} production doc(s) in those types.`)
+  }
+  console.log()
+
+  console.log("Documents to copy — counts by type:")
   for (const [type, count] of countByType(sourceDocs)) {
     console.log(`  ${type}: ${count}`)
   }
 
   if (!apply) {
     console.log(
-      "\nDry run only. Re-run with --apply to copy all production documents into preview.\n",
+      preservePlaceholders
+        ? "\nDry run only. Re-run with --apply --preserve-placeholders to sync production into preview while keeping placeholder stories, open roles, and profiles.\n"
+        : "\nDry run only. Re-run with --apply to copy all production documents into preview.\n",
     )
     return
   }
@@ -131,7 +160,11 @@ const main = async () => {
   )
 
   console.log(`\nPreview published documents (after): ${afterCount}\n`)
-  console.log("Sync complete. Preview dataset now matches production.\n")
+  console.log(
+    preservePlaceholders
+      ? "Sync complete. Preview matches production except preserved placeholder stories, open roles, and profiles.\n"
+      : "Sync complete. Preview dataset now matches production.\n",
+  )
 }
 
 main().catch((err) => {
