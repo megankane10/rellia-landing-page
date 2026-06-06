@@ -42,5 +42,6 @@ export const contactDisplayName = (row: ContactRow) =>
 
 export const contactTypeLabel = (row: ContactRow) => {
   if (row.submission_type === "investor") return "Investor notify"
+  if (row.submission_type === "modal") return "Priority modal"
   return "Contact"
 }

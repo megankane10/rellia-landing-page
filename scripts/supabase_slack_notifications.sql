@@ -198,17 +198,22 @@ declare
   subtitle_text text;
   body_text text;
   payload jsonb;
-  is_investor boolean;
+  submission_type text;
 begin
-  is_investor := coalesce(NEW.submission_type, OLD.submission_type) = 'investor';
-  submission_label := case when is_investor then 'Investor pitch' else 'Contact form' end;
+  submission_type := coalesce(NEW.submission_type, OLD.submission_type, 'contact');
+  submission_label := case submission_type
+    when 'investor' then 'Investor pitch'
+    when 'modal' then 'Priority modal'
+    else 'Contact form'
+  end;
   tab := 'contact';
   inbox_url := public.slack_admin_inbox_url(tab);
 
   if TG_OP = 'INSERT' then
     title_text := trim(coalesce(NEW.first_name, '') || ' ' || coalesce(NEW.last_name, ''));
-    subtitle_text := case
-      when is_investor then ':briefcase: *New investor submission*'
+    subtitle_text := case submission_type
+      when 'investor' then ':briefcase: *New investor submission*'
+      when 'modal' then ':bell: *New priority modal signup*'
       else ':incoming_envelope: *New contact submission*'
     end;
     body_text :=
@@ -234,8 +239,9 @@ begin
       return NEW;
     end if;
     title_text := trim(coalesce(NEW.first_name, '') || ' ' || coalesce(NEW.last_name, ''));
-    subtitle_text := case
-      when is_investor then ':arrows_counterclockwise: *Investor submission updated*'
+    subtitle_text := case submission_type
+      when 'investor' then ':arrows_counterclockwise: *Investor submission updated*'
+      when 'modal' then ':arrows_counterclockwise: *Priority modal signup updated*'
       else ':arrows_counterclockwise: *Contact submission updated*'
     end;
     body_text :=
@@ -255,8 +261,9 @@ begin
     );
   elsif TG_OP = 'DELETE' then
     title_text := trim(coalesce(OLD.first_name, '') || ' ' || coalesce(OLD.last_name, ''));
-    subtitle_text := case
-      when is_investor then ':wastebasket: *Investor submission deleted*'
+    subtitle_text := case submission_type
+      when 'investor' then ':wastebasket: *Investor submission deleted*'
+      when 'modal' then ':wastebasket: *Priority modal signup deleted*'
       else ':wastebasket: *Contact submission deleted*'
     end;
     body_text :=

@@ -1,5 +1,7 @@
--- Investor pitch-notification submissions (stored in contact_responses inbox)
--- Run in Supabase SQL Editor after scripts/supabase_setup.sql and supabase_admin_policies.sql
+-- Priority modal form submissions (stored in contact_responses inbox)
+-- Run in Supabase SQL Editor after scripts/supabase_setup.sql and supabase_investor_submissions.sql
+--
+-- Fixes: "Could not save your submission" when priority modal form posts submission_type = 'modal'
 
 alter table public.contact_responses
   add column if not exists submission_type text not null default 'contact';
