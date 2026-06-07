@@ -11,12 +11,13 @@ import { allowCmsSeedFallbacks, isMainBranchBuild } from "@/lib/deploymentEnv";
 import NotFound from "../NotFound";
 import { cn } from "@/lib/utils";
 import {
+  buildAdvisorProfileSeoTitle,
   buildPageUrl,
   clampMetaDescription,
-  clampMetaTitle,
   resolveSocialOgImageUrl,
 } from "@/config/seo";
 import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo";
+import PageSocialHelmet from "@/components/seo/PageSocialHelmet";
 import { useAdvisors } from "@/hooks/useCmsDocuments";
 import { isCmsQueryLoading } from "@/lib/cmsQueryState";
 import CmsPageLoadingShell from "@/components/cms/CmsPageLoadingShell";
@@ -44,7 +45,7 @@ export default function AdvisorProfile() {
   const [activeImage, setActiveImage] = useState<{ src: string; alt: string } | null>(null);
 
   useApplyCmsSeo(null, active ? {
-    title: clampMetaTitle(`${active.name} - Advisors`),
+    title: buildAdvisorProfileSeoTitle(active.name),
     description: clampMetaDescription(active.snapshot ?? active.focus),
     ogImage: resolveSocialOgImageUrl(active.photoSrc),
   } : undefined);
@@ -69,6 +70,12 @@ export default function AdvisorProfile() {
 
   return (
     <div className="min-h-screen overflow-x-hidden bg-white font-host-grotesk">
+      <PageSocialHelmet
+        title={buildAdvisorProfileSeoTitle(active.name)}
+        description={clampMetaDescription(active.snapshot ?? active.focus)}
+        canonical={canonicalUrl}
+        ogImage={resolveSocialOgImageUrl(active.photoSrc)}
+      />
       <Navbar forceSolid />
 
       <main id="main-content" className="pt-24 pb-16 md:pt-28">

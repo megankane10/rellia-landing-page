@@ -32,7 +32,7 @@ const DENSITY_IMG_HEIGHT: Record<LogoMarqueeDensity, string> = {
 const LogoItem = ({ logo, density }: { logo: LogoMark; density: LogoMarqueeDensity }) => (
   <div
     className={cn(
-      "flex shrink-0 items-center justify-center px-8 opacity-80 transition-opacity duration-200 *:fill-foreground hover:opacity-100",
+      "flex shrink-0 items-center justify-center px-8 opacity-[0.94] transition-opacity duration-200 *:fill-foreground hover:opacity-100",
       DENSITY_CELL_PADDING[density],
     )}
   >

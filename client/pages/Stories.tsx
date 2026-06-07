@@ -147,7 +147,7 @@ export default function Stories() {
 
   return (
     <div className="min-h-screen bg-white font-host-grotesk overflow-x-hidden">
-      <Navbar />
+      <Navbar darkHeroNav />
       <main id="main-content">
         <PageHeader
           variant="dark"

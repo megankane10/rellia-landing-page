@@ -215,6 +215,8 @@ export type NavbarProps = {
   ctaRadiusClassName?: string
   /** Force solid teal background regardless of path. */
   forceSolid?: boolean
+  /** Dark hero chrome: footer logo, white nav links, mint CTA (e.g. Stories landing). */
+  darkHeroNav?: boolean
   /** Override default home CTA label (e.g. admin: Manage website). */
   ctaLabel?: string
   /** Override default home CTA destination. */
@@ -228,6 +230,7 @@ export type NavbarProps = {
 export default function Navbar({
   ctaRadiusClassName = "rounded-full",
   forceSolid = false,
+  darkHeroNav = false,
   ctaLabel: ctaLabelOverride,
   ctaTo: ctaToOverride,
   ctaOpenInNewTab = false,
@@ -380,7 +383,7 @@ export default function Navbar({
 
   const hasTransparentTopBar = !forceSolid && (hasTealHero || isLightHeroNav)
 
-  const useLightNavChrome = !forceSolid && isLightHeroNav && !scrolled && !mobileOpen
+  const useLightNavChrome = !forceSolid && !darkHeroNav && isLightHeroNav && !scrolled && !mobileOpen
 
   const desktopTone: "light" | "dark" = useLightNavChrome ? "light" : "dark"
 
@@ -388,7 +391,11 @@ export default function Navbar({
     ? siteSettingsData.logoUrl.trim()
     : null
 
-  const logoSrc = useLightNavChrome ? LOGO_FILLED : cmsLogoUrl || LOGO_DEFAULT
+  const logoSrc = darkHeroNav || (!useLightNavChrome && hasTealHero && !scrolled)
+    ? LOGO_DEFAULT
+    : useLightNavChrome
+      ? LOGO_FILLED
+      : cmsLogoUrl || LOGO_DEFAULT
 
   const isExternalHref = useCallback((href: string) => /^(https?:\/\/|mailto:|tel:)/i.test(href), [])
 
@@ -434,7 +441,7 @@ export default function Navbar({
 
   const desktopRailCls = cn("hidden items-center md:flex gap-1")
 
-  const navCtaVariant = useLightNavChrome ? "relliaCtaPrimary" : ("heroSolidOnTeal" as const)
+  const navCtaVariant = darkHeroNav || useLightNavChrome ? "relliaCtaPrimary" : ("heroSolidOnTeal" as const)
 
   const menuIconBtnCls = cn(
     "inline-flex min-h-11 min-w-11 cursor-pointer items-center justify-center transition-[color] duration-200 motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 md:hidden",

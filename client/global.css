@@ -149,8 +149,14 @@
     animation: glow-sweep 1.4s linear 1 forwards;
   }
 
+  .built-by-credit-sweep--reverse {
+    opacity: 1;
+    animation: glow-sweep-reverse 1.4s linear 1 forwards;
+  }
+
   @media (prefers-reduced-motion: reduce) {
-    .built-by-credit-sweep--forward {
+    .built-by-credit-sweep--forward,
+    .built-by-credit-sweep--reverse {
       animation: none;
       opacity: 0;
     }
@@ -188,6 +194,7 @@
     gap: 0.375rem;
     border-radius: calc(1rem - 1px);
     background: #06181e;
+    opacity: 1;
     padding: 0.625rem 1rem;
     color: rgba(255, 255, 255, 0.92);
     box-shadow: 0 20px 50px -16px rgba(0, 0, 0, 0.55);
@@ -221,7 +228,7 @@
   }
 
   .built-by-tooltip--entering {
-    opacity: 0;
+    opacity: 1;
     transform: translateY(10px) scale(0.84);
     pointer-events: none;
     animation: built-by-tooltip-enter 0.48s cubic-bezier(0.16, 1, 0.3, 1) forwards;
@@ -235,6 +242,7 @@
   }
 
   .built-by-tooltip--leaving {
+    opacity: 1;
     animation: built-by-tooltip-dismiss 0.52s cubic-bezier(0.4, 0, 0.2, 1) forwards;
     transform-origin: center bottom;
     pointer-events: none;
@@ -255,7 +263,9 @@
   }
 
   .built-by-tooltip--leaving::before {
-    animation: rotate-border-reverse 0.52s cubic-bezier(0.45, 0.09, 0.55, 0.91) 1 forwards;
+    animation: rotate-border 1.8s cubic-bezier(0.45, 0.09, 0.55, 0.91) infinite;
+    opacity: 0;
+    transition: opacity 0.52s ease;
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -303,24 +313,31 @@
   }
 }
 
+@keyframes glow-sweep-reverse {
+  0% {
+    background-position: -200% center;
+    opacity: 1;
+  }
+  100% {
+    background-position: 200% center;
+    opacity: 0;
+  }
+}
+
 @keyframes built-by-tooltip-enter {
   0% {
-    opacity: 0;
     transform: translateY(10px) scale(0.84);
   }
   100% {
-    opacity: 1;
     transform: translateY(0) scale(1);
   }
 }
 
 @keyframes built-by-tooltip-dismiss {
   0% {
-    opacity: 1;
     transform: translateY(0) scale(1);
   }
   100% {
-    opacity: 0;
     transform: translateY(8px) scale(0.82);
   }
 }

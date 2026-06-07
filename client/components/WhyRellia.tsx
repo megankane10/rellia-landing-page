@@ -49,8 +49,9 @@ export default function WhyRellia({
 
   const handleScrollToIndex = useCallback((idx: number) => {
     const el = mobileCardRefs.current[idx]
-    if (!el) return
-    el.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "start" })
+    const root = mobileScrollerRef.current
+    if (!el || !root) return
+    root.scrollTo({ left: el.offsetLeft - root.offsetLeft, behavior: "smooth" })
   }, [])
 
   const handleGoPrev = useCallback(() => {
@@ -70,32 +71,47 @@ export default function WhyRellia({
     const root = mobileScrollerRef.current
     if (!root) return
 
-    const observed = mobileCardRefs.current.filter(Boolean) as HTMLElement[]
-    if (observed.length === 0) return
-
     setMobileIndex(0)
     setActiveIndex(null)
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const inView = entries
-          .filter((e) => e.isIntersecting)
-          .sort((a, b) => (b.intersectionRatio ?? 0) - (a.intersectionRatio ?? 0))[0]
+    let frame = 0
+    const syncActiveIndex = () => {
+      const cards = mobileCardRefs.current.filter(Boolean) as HTMLElement[]
+      if (cards.length === 0) return
 
-        if (!inView?.target) return
+      const rootRect = root.getBoundingClientRect()
+      const rootCenter = rootRect.left + rootRect.width / 2
+      let bestIdx = 0
+      let bestDistance = Number.POSITIVE_INFINITY
 
-        const idx = observed.findIndex((el) => el === inView.target)
-        if (idx < 0) return
-        setMobileIndex(idx)
-        // Keep mobile cards in their collapsed state by default. Users can still
-        // interact with the carousel controls without forced expansion.
-        setActiveIndex(null)
-      },
-      { root, threshold: [0.55, 0.6, 0.7] },
-    )
+      cards.forEach((card, idx) => {
+        const rect = card.getBoundingClientRect()
+        const cardCenter = rect.left + rect.width / 2
+        const distance = Math.abs(cardCenter - rootCenter)
+        if (distance < bestDistance) {
+          bestDistance = distance
+          bestIdx = idx
+        }
+      })
 
-    observed.forEach((el) => observer.observe(el))
-    return () => observer.disconnect()
+      setMobileIndex((prev) => (prev === bestIdx ? prev : bestIdx))
+    }
+
+    const handleScroll = () => {
+      if (frame) return
+      frame = window.requestAnimationFrame(() => {
+        frame = 0
+        syncActiveIndex()
+      })
+    }
+
+    root.addEventListener("scroll", handleScroll, { passive: true })
+    syncActiveIndex()
+
+    return () => {
+      root.removeEventListener("scroll", handleScroll)
+      if (frame) window.cancelAnimationFrame(frame)
+    }
   }, [cards.length])
 
   return (
@@ -207,12 +223,11 @@ export default function WhyRellia({
               <div className="relative">
                 <div
                   ref={mobileScrollerRef}
-                  className="flex gap-4 overflow-x-auto pb-2 snap-x snap-mandatory scroll-smooth overscroll-x-contain -mx-6 px-6 scroll-px-6"
+                  className="flex gap-4 overflow-x-auto pb-2 snap-x snap-mandatory overscroll-x-contain -mx-6 px-6 scroll-px-6 touch-pan-x"
                   style={{ WebkitOverflowScrolling: "touch" }}
                   aria-label="Why Rellia features"
                 >
                   {cards.map((c, idx) => {
-                    const isActive = mobileIndex === idx
                     const img = imageByIndex[idx] ?? "/images/whyrellia-network.jpg"
 
                     return (
@@ -233,11 +248,7 @@ export default function WhyRellia({
                           src={img}
                           alt=""
                           aria-hidden="true"
-                          className={cn(
-                            "absolute inset-0 h-full w-full object-cover",
-                            "transition-transform duration-[1200ms] ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:transition-none",
-                            isActive ? "scale-[1.04]" : "scale-100",
-                          )}
+                          className="absolute inset-0 h-full w-full object-cover"
                         />
                         <div
                           className={cn(
@@ -249,24 +260,12 @@ export default function WhyRellia({
 
                         <div className="relative z-20 flex h-full flex-col justify-end p-6">
                           <h3
-                            className={cn(
-                              "font-host-grotesk font-normal text-white text-2xl tracking-tight leading-tight",
-                              "transition-transform duration-[700ms] ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:transition-none",
-                              isActive ? "delay-200 -translate-y-1" : "delay-0 translate-y-0",
-                            )}
+                            className="font-host-grotesk font-normal text-white text-2xl tracking-tight leading-tight"
                           >
                             {c.title}
                           </h3>
 
-                          <div
-                            className={cn(
-                              "mt-2.5 overflow-hidden",
-                              "transition-[max-height,opacity,transform] duration-[1050ms] ease-[cubic-bezier(0.42,0,1,1)] motion-reduce:transition-none",
-                              isActive
-                                ? "delay-300 max-h-64 opacity-100 translate-y-0"
-                                : "delay-0 max-h-0 opacity-0 translate-y-6",
-                            )}
-                          >
+                          <div className="mt-2.5 overflow-hidden max-h-64 opacity-100 translate-y-0">
                             <p className="font-urbanist text-base leading-relaxed text-white/85">
                               {c.description}
                             </p>

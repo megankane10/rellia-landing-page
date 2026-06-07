@@ -368,14 +368,18 @@ export const isDirectoryItemPath = (pathname: string): boolean => {
   return false
 }
 
-/** Routes where the page sets its own Helmet (events, programs, stories detail). */
+/** Routes where the page sets its own Helmet (events, programs, stories, directory profiles). */
 export const isItemDetailPath = (pathname: string): boolean => {
   const key = normalizePathname(pathname)
-  if (key.startsWith("/events/") && key !== "/events") return true
-  if (key.startsWith("/programs/") && key !== "/programs") return true
   if (key.startsWith("/stories/") && key !== "/stories") return true
-  return false
+  return isDirectoryItemPath(key)
 }
+
+export const buildAdvisorProfileSeoTitle = (name: string): string =>
+  clampMetaTitle(`${name.trim()} — Advisors`)
+
+export const buildAlumniProfileSeoTitle = (name: string): string =>
+  clampMetaTitle(`${name.trim()} — Founders`)
 
 export const shouldUseDefaultOgImage = (pathname: string): boolean =>
   normalizePathname(pathname) === "/"

@@ -80,17 +80,25 @@ const legalLinkClass =
 
 const BUILT_BY_TOOLTIP_DISMISS_MS = 520
 const BUILT_BY_TOOLTIP_ENTER_MS = 480
+const BUILT_BY_SWEEP_REVERSE_MS = 1_400
 
-type BuiltBySweepPhase = "idle" | "forward"
+type BuiltBySweepPhase = "idle" | "forward" | "reverse"
 type BuiltByTooltipPhase = "hidden" | "entering" | "visible" | "leaving"
 
 const BuiltByCredit = () => {
   const [open, setOpen] = React.useState(false)
-  const [isHovered, setIsHovered] = React.useState(false)
   const [tooltipPhase, setTooltipPhase] = React.useState<BuiltByTooltipPhase>("hidden")
   const [sweepPhase, setSweepPhase] = React.useState<BuiltBySweepPhase>("idle")
+  const sweepTimerRef = React.useRef<ReturnType<typeof setTimeout> | null>(null)
   const dismissTimerRef = React.useRef<ReturnType<typeof setTimeout> | null>(null)
   const enterTimerRef = React.useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  const clearSweepTimer = () => {
+    if (sweepTimerRef.current) {
+      clearTimeout(sweepTimerRef.current)
+      sweepTimerRef.current = null
+    }
+  }
 
   const clearDismissTimer = () => {
     if (dismissTimerRef.current) {
@@ -129,19 +137,24 @@ const BuiltByCredit = () => {
   }
 
   const handlePointerEnter = () => {
-    setIsHovered(true)
+    clearSweepTimer()
     setSweepPhase("forward")
     beginTooltipEnter()
   }
 
   const handlePointerLeave = () => {
-    setIsHovered(false)
-    setSweepPhase("idle")
+    clearSweepTimer()
+    setSweepPhase("reverse")
+    sweepTimerRef.current = setTimeout(() => {
+      setSweepPhase("idle")
+      sweepTimerRef.current = null
+    }, BUILT_BY_SWEEP_REVERSE_MS)
     beginTooltipLeave()
   }
 
   React.useEffect(
     () => () => {
+      clearSweepTimer()
       clearDismissTimer()
       clearEnterTimer()
     },
@@ -164,13 +177,17 @@ const BuiltByCredit = () => {
           onFocus={handlePointerEnter}
           onBlur={handlePointerLeave}
           onTouchStart={() => {
-            setIsHovered(true)
+            clearSweepTimer()
             setSweepPhase("forward")
             beginTooltipEnter()
           }}
           onTouchEnd={() => {
-            setIsHovered(false)
-            setSweepPhase("idle")
+            clearSweepTimer()
+            setSweepPhase("reverse")
+            sweepTimerRef.current = setTimeout(() => {
+              setSweepPhase("idle")
+              sweepTimerRef.current = null
+            }, BUILT_BY_SWEEP_REVERSE_MS)
             clearDismissTimer()
             dismissTimerRef.current = setTimeout(() => {
               beginTooltipLeave()
@@ -184,7 +201,8 @@ const BuiltByCredit = () => {
             <span
               className={cn(
                 "built-by-credit-sweep",
-                (isHovered || sweepPhase === "forward") && "built-by-credit-sweep--forward",
+                sweepPhase === "forward" && "built-by-credit-sweep--forward",
+                sweepPhase === "reverse" && "built-by-credit-sweep--reverse",
               )}
               aria-hidden="true"
             >

@@ -15,7 +15,11 @@ import {
   isItemDetailPath,
   normalizePathname,
   resolveSocialOgImageUrl,
+  buildAdvisorProfileSeoTitle,
+  buildAlumniProfileSeoTitle,
 } from "@/config/seo"
+import { ADVISOR_DIRECTORY_SEED } from "@/data/advisorDirectory"
+import { FOUNDER_DIRECTORY } from "@/data/founderDirectory"
 import { AppRoutes, RouterShell } from "./AppRoutes"
 import { PageSeoProvider } from "@/context/PageSeoContext"
 import { DEFAULT_PROGRAMS_LANDING } from "@shared/cms/defaults"
@@ -200,12 +204,51 @@ const buildStorySeo = (
     : undefined,
 })
 
+const buildAdvisorProfileSeo = (
+  advisor: Record<string, unknown>,
+  siteOrigin: string,
+): ItemPrerenderSeo => {
+  const name = typeof advisor.name === "string" ? advisor.name : "Advisor"
+  const description =
+    (typeof advisor.snapshot === "string" ? advisor.snapshot : "") ||
+    (typeof advisor.focus === "string" ? advisor.focus : "") ||
+    "Advisor profile in the Rellia Health mentor directory."
+  const photoSrc = typeof advisor.photoSrc === "string" ? advisor.photoSrc : undefined
+
+  return {
+    title: buildAdvisorProfileSeoTitle(name),
+    description: clampMetaDescription(description),
+    ogImage: photoSrc ? resolveSocialOgImageUrl(photoSrc, siteOrigin) : undefined,
+  }
+}
+
+const buildAlumniProfileSeo = (
+  company: Record<string, unknown>,
+  siteOrigin: string,
+): ItemPrerenderSeo => {
+  const name =
+    (typeof company.logoName === "string" ? company.logoName : "") ||
+    (typeof company.name === "string" ? company.name : "Alumni company")
+  const description =
+    (typeof company.shortDescription === "string" ? company.shortDescription : "") ||
+    "Alumni company profile in the Rellia Health founder network."
+  const logoSrc = typeof company.logoSrc === "string" ? company.logoSrc : undefined
+
+  return {
+    title: buildAlumniProfileSeoTitle(name),
+    description: clampMetaDescription(description),
+    ogImage: logoSrc ? resolveSocialOgImageUrl(logoSrc, siteOrigin) : undefined,
+  }
+}
+
 const resolveItemPrerenderSeo = async (
   pathname: string,
   prefetched: {
     event?: Record<string, unknown> | null
     program?: Record<string, unknown> | null
     story?: Record<string, unknown> | null
+    advisor?: Record<string, unknown> | null
+    alumni?: Record<string, unknown> | null
   },
 ): Promise<ItemPrerenderSeo | null> => {
   const siteOrigin = getSiteUrl()
@@ -265,6 +308,26 @@ const resolveItemPrerenderSeo = async (
       )
     }
     return null
+  }
+
+  if (pathname.startsWith("/advisors/directory/") && pathname !== "/advisors/directory") {
+    const id = pathname.slice("/advisors/directory/".length)
+    const advisor =
+      prefetched.advisor ??
+      ADVISOR_DIRECTORY_SEED.find((entry) => entry.id === id) ??
+      null
+    if (!advisor) return null
+    return buildAdvisorProfileSeo(advisor as Record<string, unknown>, siteOrigin)
+  }
+
+  if (pathname.startsWith("/founders/alumni/") && pathname !== "/founders/alumni") {
+    const id = pathname.slice("/founders/alumni/".length)
+    const company =
+      prefetched.alumni ??
+      FOUNDER_DIRECTORY.find((entry) => entry.id === id) ??
+      null
+    if (!company) return null
+    return buildAlumniProfileSeo(company as Record<string, unknown>, siteOrigin)
   }
 
   return null
@@ -342,6 +405,8 @@ export const prerender = async (data: { url: string }) => {
     event?: Record<string, unknown> | null
     program?: Record<string, unknown> | null
     story?: Record<string, unknown> | null
+    advisor?: Record<string, unknown> | null
+    alumni?: Record<string, unknown> | null
   } = {}
 
   if (pathname.startsWith("/events/") && pathname !== "/events") {
@@ -375,6 +440,32 @@ export const prerender = async (data: { url: string }) => {
         queryFn: async () => prefetched.story,
       })
     }
+  }
+
+  if (pathname.startsWith("/advisors/directory/") && pathname !== "/advisors/directory") {
+    const id = pathname.slice("/advisors/directory/".length)
+    const advisors = await fetchAdvisorsForPrerender()
+    prefetched.advisor =
+      advisors.find((entry) => String(entry.id ?? "") === id) ??
+      (ADVISOR_DIRECTORY_SEED.find((entry) => entry.id === id) as Record<string, unknown> | undefined) ??
+      null
+    await prerenderQueryClient.prefetchQuery({
+      queryKey: ["cms", "advisors"],
+      queryFn: async () => advisors,
+    })
+  }
+
+  if (pathname.startsWith("/founders/alumni/") && pathname !== "/founders/alumni") {
+    const id = pathname.slice("/founders/alumni/".length)
+    const companies = await fetchAlumniCompaniesForPrerender()
+    prefetched.alumni =
+      companies.find((entry) => String(entry.id ?? "") === id) ??
+      (FOUNDER_DIRECTORY.find((entry) => entry.id === id) as Record<string, unknown> | undefined) ??
+      null
+    await prerenderQueryClient.prefetchQuery({
+      queryKey: ["cms", "alumniCompanies"],
+      queryFn: async () => companies,
+    })
   }
 
   if (pathname === "/events") {

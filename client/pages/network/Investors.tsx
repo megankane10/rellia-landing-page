@@ -1,5 +1,5 @@
 import type { ReactNode } from "react"
-import { useMemo, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import { PEXELS_OFFICE_COLLABORATION } from "@/config/pexelsFallbacks"
 import PageHeader from "@/components/PageHeader"
 import SectionHeading from "@/components/SectionHeading"
@@ -22,6 +22,7 @@ import {
   PieChart,
   ResponsiveContainer,
   Tooltip,
+  type PieLabelRenderProps,
 } from "recharts"
 import { CreamSection, GlassCard, GlassCardLight, LightSection, Reveal, RoleHero } from "./_shared"
 import { useNetworkInvestorsPage } from "@/hooks/useCmsDocuments"
@@ -81,6 +82,45 @@ const DEVICE_DATA = [
   { name: "Services + tech", value: 25, fill: COLORS.slate },
 ]
 
+const renderSlicePercentLabel = ({
+  cx,
+  cy,
+  midAngle,
+  innerRadius,
+  outerRadius,
+  value,
+  fill,
+}: PieLabelRenderProps) => {
+  if (
+    cx == null ||
+    cy == null ||
+    midAngle == null ||
+    innerRadius == null ||
+    outerRadius == null ||
+    value == null
+  ) {
+    return null
+  }
+
+  const radius = (Number(innerRadius) + Number(outerRadius)) / 2
+  const angle = (-midAngle * Math.PI) / 180
+  const x = Number(cx) + radius * 0.72 * Math.cos(angle)
+  const y = Number(cy) + radius * 0.72 * Math.sin(angle)
+
+  return (
+    <text
+      x={x}
+      y={y}
+      fill={String(fill)}
+      textAnchor="middle"
+      dominantBaseline="central"
+      className="font-urbanist text-[11px] font-bold"
+    >
+      {`${value}%`}
+    </text>
+  )
+}
+
 function IllustrativePie({
   title,
   data,
@@ -90,11 +130,33 @@ function IllustrativePie({
   data: Array<{ name: string; value: number; fill: string }>
   ariaLabel: string
 }) {
+  const chartRef = useRef<HTMLDivElement>(null)
+  const [chartInView, setChartInView] = useState(false)
+
+  useEffect(() => {
+    const el = chartRef.current
+    if (!el) return
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry?.isIntersecting) {
+          setChartInView(true)
+          observer.disconnect()
+        }
+      },
+      { threshold: 0.35, rootMargin: "0px 0px -8% 0px" },
+    )
+
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [])
+
   return (
     <GlassCardLight className="flex h-full flex-col p-6 md:p-8">
       <p className="font-host-grotesk text-lg font-semibold text-rellia-teal">{title}</p>
       <p className="mt-1 font-urbanist text-xs text-black/50">Illustrative mix for thesis fit—not a fund mandate.</p>
       <div
+        ref={chartRef}
         className="mt-4 h-[220px] w-full min-h-[220px]"
         role="img"
         aria-label={ariaLabel}
@@ -110,6 +172,12 @@ function IllustrativePie({
               innerRadius={52}
               outerRadius={84}
               paddingAngle={2}
+              isAnimationActive={chartInView}
+              animationBegin={0}
+              animationDuration={900}
+              animationEasing="ease-out"
+              label={renderSlicePercentLabel}
+              labelLine={false}
             >
               {data.map((entry) => (
                 <Cell key={entry.name} fill={entry.fill} stroke="transparent" />
@@ -341,7 +409,7 @@ export default function Investors() {
                 sectionClassName="bg-rellia-cream/20"
               />
 
-              <div className="bg-[#071018] py-10 md:py-16">
+              <div className="bg-rellia-cream/20 py-10 md:py-16">
                 <PipelinePhotoSection>
                   <ScrollReveal>
                     <h2 className="mt-5 font-host-grotesk text-3xl font-semibold leading-tight tracking-tight text-white md:text-[40px]">

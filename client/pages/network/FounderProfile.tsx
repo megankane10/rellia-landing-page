@@ -10,12 +10,13 @@ import { allowCmsSeedFallbacks, isMainBranchBuild } from "@/lib/deploymentEnv";
 import NotFound from "../NotFound";
 import { cn } from "@/lib/utils";
 import {
+  buildAlumniProfileSeoTitle,
   buildPageUrl,
   clampMetaDescription,
-  clampMetaTitle,
   resolveSocialOgImageUrl,
 } from "@/config/seo";
 import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo";
+import PageSocialHelmet from "@/components/seo/PageSocialHelmet";
 import { useAlumniCompanies } from "@/hooks/useCmsDocuments";
 import { isCmsQueryLoading } from "@/lib/cmsQueryState";
 import CmsPageLoadingShell from "@/components/cms/CmsPageLoadingShell";
@@ -49,7 +50,7 @@ export default function FounderProfile() {
   const [activeImage, setActiveImage] = useState<{ src: string; alt: string } | null>(null);
 
   useApplyCmsSeo(null, active ? {
-    title: clampMetaTitle(`${active.logoName} - Alumni`),
+    title: buildAlumniProfileSeoTitle(active.logoName),
     description: clampMetaDescription(active.shortDescription),
     ogImage: resolveSocialOgImageUrl(active.logoSrc),
   } : undefined);
@@ -74,6 +75,12 @@ export default function FounderProfile() {
 
   return (
     <div className="min-h-screen overflow-x-hidden bg-white font-host-grotesk">
+      <PageSocialHelmet
+        title={buildAlumniProfileSeoTitle(active.logoName)}
+        description={clampMetaDescription(active.shortDescription)}
+        canonical={canonicalUrl}
+        ogImage={resolveSocialOgImageUrl(active.logoSrc)}
+      />
       <Navbar forceSolid />
 
       <main id="main-content" className="pt-24 pb-16 md:pt-28">

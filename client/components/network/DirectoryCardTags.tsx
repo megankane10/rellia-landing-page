@@ -41,7 +41,7 @@ export const DirectoryCardTags = ({
           key={tag}
           className={cn(
             "inline-flex rounded-full border px-2.5 py-0.5 font-urbanist text-[10.5px] font-extrabold shadow-sm",
-            "border-[#adcac6] bg-white text-rellia-teal",
+            "border-[#adcac6]/80 bg-white/70 text-rellia-teal backdrop-blur-sm",
           )}
         >
           {tag}
