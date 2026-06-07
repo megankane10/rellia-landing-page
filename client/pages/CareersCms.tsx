@@ -44,11 +44,12 @@ import { buildPageUrl } from "@/config/seo"
 import FilteredListEmptyState from "@/components/FilteredListEmptyState"
 import RelliaAction from "@/components/RelliaAction"
 import { isSanityConfigured } from "@/lib/sanity"
-import { allowCmsSeedFallbacks, isStrictProductionSite } from "@/lib/deploymentEnv"
+import { allowCmsSeedFallbacks } from "@/lib/deploymentEnv"
 import { useMemo, useState, useEffect, useRef } from "react"
 import { useLocation } from "react-router-dom"
 import { ShareIconCopy } from "@/components/share/sharePageIcons"
 import { RoleHero } from "./network/_shared"
+import { PageRenderer } from "@/components/cms/PageRenderer"
 
 const g = DEFAULT_GLOBAL_SETTINGS
 
@@ -354,12 +355,13 @@ export default function CareersCms() {
   const openRoles = useMemo(
     (): CareersOpenRole[] =>
       resolveCareersOpenRoles(careersCms, {
-        isProductionSite: isStrictProductionSite(),
         allowSeedFallbacks: allowCmsSeedFallbacks(),
         isSanityConfigured: isSanityConfigured(),
       }),
     [careersCms],
   )
+
+  const useModularLayout = (careersCms.sections?.length ?? 0) > 0
 
   const handleCopyRoleLink = (roleId: string) => {
     const roleUrl = `${buildPageUrl("/careers")}#${roleId}`
@@ -384,6 +386,25 @@ export default function CareersCms() {
       }
     }
   }, [location.hash, openRoles])
+
+  if (useModularLayout) {
+    return (
+      <div className="min-h-screen overflow-x-hidden bg-white font-host-grotesk">
+        <Navbar />
+        <main id="main-content" className="pt-[72px] md:pt-[86px]">
+          <PageRenderer
+            page={{
+              title: "Careers",
+              slug: "careers",
+              seo: careersCms.seo,
+              sections: careersCms.sections,
+            }}
+          />
+        </main>
+        <Footer />
+      </div>
+    )
+  }
 
   const volunteerAvailable = CAREERS_VOLUNTEER_ENABLED
 

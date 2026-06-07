@@ -3,7 +3,7 @@ import {internalLabelField, sectionListPreview} from '../shared/sectionPreview'
 
 export const sectionRichText = defineType({
   name: 'sectionRichText',
-  title: 'Rich text',
+  title: 'Rich text block',
   type: 'object',
   fields: [
     defineField(internalLabelField),

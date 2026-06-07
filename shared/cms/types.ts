@@ -3,7 +3,6 @@ export type TrustedMemberTestimonial = {
   role: string
   company: string
   image: string
-  logo?: string
   quote: string
 }
 
@@ -54,16 +53,15 @@ export type CareersLifeAtRelliaImage = {
 
 export type CareersContentMode = "both" | "hiring_only" | "volunteer_only"
 
-export type CareersPageContent = CmsPageVisibility & {
+export type CareersPageContent = {
   careersContentMode?: CareersContentMode
-  /** When true, open roles list on www.relliahealth.com (production). Preview/Vercel always shows roles from CMS. */
-  publishOpenRolesOnProduction?: boolean
   /** Show HIRING pill next to Careers in nav/footer. Default off in Studio until you enable it. */
   showHiringNavBadge?: boolean
   /** Show VOLUNTEER pill next to Careers in nav/footer. Default off in Studio until you enable it. */
   showVolunteerNavBadge?: boolean
   openRoles?: CareersOpenRole[]
   seo?: SeoContent
+  sections?: CmsPageSection[]
   lifeAtRelliaHeading?: string
   lifeAtRelliaSubheading?: string
   lifeAtRelliaImages?: CareersLifeAtRelliaImage[]
@@ -396,15 +394,15 @@ export type ClusterChart = {
   segments: ClusterChartSegment[]
 }
 
-export type CmsSingletonPageContent = CmsPageVisibility & {
+export type CmsSingletonPageContent = {
   title: string
-  /** When true and sections exist, `/founders` etc. render modular CMS sections instead of the full marketing page. */
-  useModularPage?: boolean
   logoMarquee?: Array<{ name: string; src: string; href?: string }>
   seo?: SeoContent
   sections?: CmsPageSection[]
   foundersCluster?: ClusterChart[]
 }
+
+export type ProgramsLayoutPageContent = CmsSingletonPageContent
 
 export type ConsultingServiceCard = {
   title: string
@@ -728,7 +726,9 @@ export type ContactSubjectOption = {
 
 export type ContactPageContent = {
   heroBadge: string
-  pageTitle: string
+  heroHeadline: string
+  /** @deprecated Use heroHeadline */
+  pageTitle?: string
   intro: string
   sideImageSrc: string
   sideImageAlt: string
@@ -782,6 +782,7 @@ export type QmsProgramContent = {
   pillarsTitle: string
   timelineTitle: string
   timelineSubtitle: string
+  timelineSteps?: ApplyPageStep[]
   pricingBadge: string
   pricingAmount: string
   pricingDiscountEnabled?: boolean
@@ -925,7 +926,6 @@ export type PaymentPageContent = CmsPageVisibility & {
   pricingAnnualCompareAmount?: string
   benefitsPanelHeadline?: string
   choosePlanHeadline?: string
-  promoPillEnabled?: boolean
   promoMessage?: string
   pricingPerSuffix: string
   popularLabel: string

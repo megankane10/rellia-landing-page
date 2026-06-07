@@ -5,7 +5,7 @@ import {showBadgeField} from '../shared/sectionAppearanceFields'
 /** Page-builder metrics — white band with stats and optional side image. */
 export const sectionMetrics = defineType({
   name: 'sectionMetrics',
-  title: 'Metrics band',
+  title: 'Metrics band block',
   type: 'object',
   fields: [
     defineField(internalLabelField),

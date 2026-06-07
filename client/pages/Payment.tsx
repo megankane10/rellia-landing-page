@@ -196,9 +196,9 @@ export default function Payment() {
                       <ArrowRight className="ml-2 h-5 w-5" aria-hidden />
                     </RelliaAction>
 
-                    {p.discountBannerEnabled ? (
+                    {p.discountBannerEnabled || p.promoMessage?.trim() ? (
                       <div className="w-full flex flex-col items-start gap-4">
-                        {p.promoPillEnabled !== false ? (
+                        {p.promoMessage?.trim() ? (
                           <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-rellia-mint/20 text-rellia-teal text-xs font-black uppercase tracking-wider">
                             <span className="relative flex h-2 w-2">
                               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rellia-teal opacity-75"></span>

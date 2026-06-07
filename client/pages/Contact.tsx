@@ -56,7 +56,6 @@ function ContactSection({ copy }: { copy: typeof DEFAULT_CONTACT_PAGE }) {
 function LeftPanel({ copy }: { copy: typeof DEFAULT_CONTACT_PAGE }) {
   return (
     <div className="flex flex-col p-4 pb-8 md:p-6 md:pb-10 lg:p-8">
-      <h1 className="sr-only">{copy.pageTitle ?? "Contact Rellia Health"}</h1>
       <div className="relative flex min-h-[min(480px,calc(100vh-10rem))] flex-1 flex-col overflow-hidden rounded-[1.75rem] bg-rellia-teal">
         <div className="absolute inset-0">
           <img
@@ -82,6 +81,9 @@ function LeftPanel({ copy }: { copy: typeof DEFAULT_CONTACT_PAGE }) {
             className="flex flex-1 flex-col justify-between py-8"
           >
             <div className="mb-6 pl-2">
+              <h1 className="font-host-grotesk text-2xl font-semibold tracking-tight text-rellia-mint md:text-3xl mb-4">
+                {copy.heroHeadline ?? copy.pageTitle ?? "Contact Rellia Health"}
+              </h1>
               <img
                 src={copy.leftLogoImageSrc || "/images/hologram-logo.png"}
                 alt=""

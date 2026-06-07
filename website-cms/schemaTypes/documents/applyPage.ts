@@ -1,5 +1,11 @@
 import {defineArrayMember, defineField, defineType} from 'sanity'
 import {studioListMedia} from '../shared/studioListMedia'
+import {
+  CONTENT_SEO_FIELDSETS,
+  CONTENT_SEO_GROUPS,
+  singletonSectionsField,
+  singletonSeoField,
+} from '../shared/singletonContentFields'
 
 export const applyPage = defineType({
   name: 'applyPage',
@@ -8,7 +14,9 @@ export const applyPage = defineType({
   groups: [
     {name: 'content', title: 'Content', default: true},
     {name: 'cta', title: 'Bottom CTA'},
+    ...CONTENT_SEO_GROUPS.filter((g) => g.name !== 'content'),
   ],
+  fieldsets: CONTENT_SEO_FIELDSETS,
   fields: [
     defineField({
       name: 'headingTitle',
@@ -129,6 +137,8 @@ export const applyPage = defineType({
       initialValue: '/contact',
       group: 'cta',
     }),
+    singletonSectionsField,
+    singletonSeoField,
   ],
   preview: {
     prepare() {

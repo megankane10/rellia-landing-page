@@ -1,17 +1,18 @@
 import {defineArrayMember, defineField, defineType} from 'sanity'
 import {logoMarqueeField} from '../objects/logoMarqueeItem'
-import {publishingGroup, pageVisibilityFields} from '../shared/pageVisibilityFields'
+import {
+  CONTENT_SEO_FIELDSETS,
+  CONTENT_SEO_GROUPS,
+  singletonSectionsField,
+  singletonSeoField,
+} from '../shared/singletonContentFields'
 
 export const networkInvestorsPage = defineType({
   name: 'networkInvestorsPage',
   title: 'Network — Investors page (/investors)',
   type: 'document',
-  groups: [
-    {name: 'content', title: 'Content', default: true},
-    {name: 'seo', title: 'SEO & metadata'},
-    publishingGroup,
-  ],
-  fieldsets: [{name: 'seo', title: 'SEO & metadata'}],
+  groups: CONTENT_SEO_GROUPS,
+  fieldsets: CONTENT_SEO_FIELDSETS,
   fields: [
     defineField({
       name: 'title',
@@ -68,13 +69,7 @@ export const networkInvestorsPage = defineType({
         }),
       ],
     }),
-    defineField({
-      name: 'seo',
-      title: 'SEO & metadata',
-      type: 'seoFields',
-      fieldset: 'seo',
-      group: 'seo',
-    }),
-    ...pageVisibilityFields,
+    singletonSectionsField,
+    singletonSeoField,
   ],
 })

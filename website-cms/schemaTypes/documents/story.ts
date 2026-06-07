@@ -1,11 +1,17 @@
 import {defineField, defineType} from 'sanity'
-
+import {CONTENT_SEO_FIELDSETS, singletonSeoField} from '../shared/singletonContentFields'
+import {GROUP_SEO} from '../shared/fieldGroups'
 
 export const story = defineType({
   name: 'story',
   title: 'Story',
   type: 'document',
-  groups: [{name: 'content', title: 'Content', default: true}, {name: 'metrics', title: 'Reading metrics'}],
+  groups: [
+    {name: 'content', title: 'Content', default: true},
+    {name: 'metrics', title: 'Reading metrics'},
+    GROUP_SEO,
+  ],
+  fieldsets: CONTENT_SEO_FIELDSETS,
   fields: [
     defineField({
       name: 'featured',
@@ -34,20 +40,6 @@ export const story = defineType({
       description: 'Story category tags for filtering on /stories.',
       type: 'array',
       of: [{type: 'reference', to: [{type: 'storyFilter'}]}],
-      group: 'content',
-    }),
-    defineField({
-      name: 'author',
-      title: 'Author',
-      type: 'reference',
-      to: [{type: 'advisor'}, {type: 'founder'}],
-      group: 'content',
-    }),
-    defineField({
-      name: 'authorName',
-      title: 'Author name (override)',
-      type: 'string',
-      description: 'Used when no author reference is set.',
       group: 'content',
     }),
     defineField({
@@ -101,6 +93,7 @@ export const story = defineType({
       name: 'readingTimeMinutes',
       title: 'Reading time (minutes)',
       type: 'number',
+      description: 'Estimated reading time shown on the story card and detail page.',
       validation: (Rule) => Rule.min(1).max(120),
       group: 'metrics',
     }),
@@ -108,10 +101,10 @@ export const story = defineType({
       name: 'viewCount',
       title: 'View count (editorial)',
       type: 'number',
-      description: 'Optional metric for editorial sorting — not live analytics.',
+      description: 'Optional editorial metric for sorting or social proof — not live analytics.',
       group: 'metrics',
     }),
-
+    singletonSeoField,
   ],
   preview: {
     select: {

@@ -646,7 +646,7 @@ var eventBySlugQuery = `*[_type == "event" && slug.current == $slug && !(_id in 
 }`;
 var contactPageQuery = `*[_type == "contactPage"][0]{
   heroBadge,
-  pageTitle,
+  "heroHeadline": coalesce(heroHeadline, pageTitle),
   intro,
   "sideImageSrc": coalesce(sideImage.asset->url, sideImageSrc),
   sideImageAlt,
@@ -771,7 +771,6 @@ var paymentPageQuery = `*[_type == "paymentPage"][0]{
   pricingAnnualCompareAmount,
   benefitsPanelHeadline,
   choosePlanHeadline,
-  promoPillEnabled,
   promoMessage,
   pricingPerSuffix,
   popularLabel,
@@ -795,9 +794,7 @@ var openRolesQuery = `*[_type == "openRole" && !(_id in path("drafts.**"))] | or
   linkedInApplyUrl
 }`;
 var careersPageQuery = `*[_type == "careersPage"][0]{
-  ${pageVisibilityFragment},
   careersContentMode,
-  publishOpenRolesOnProduction,
   showHiringNavBadge,
   showVolunteerNavBadge,
   lifeAtRelliaHeading,
@@ -812,7 +809,8 @@ var careersPageQuery = `*[_type == "careersPage"][0]{
     iconKey,
     tooltip
   },
-  ${seoFragment}
+  ${seoFragment},
+  ${pageSectionsFragment}
 }`;
 var advisorsQuery = `*[_type == "advisor" && !(_id in path("drafts.**"))]{
   "id": slug.current,

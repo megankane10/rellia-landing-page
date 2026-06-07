@@ -3,6 +3,7 @@ import {
   LinkedInFilled,
 } from "@/components/icons/SocialIcons"
 import { cn } from "@/lib/utils"
+import { Mail } from "lucide-react"
 
 export type ProfileSocialLink = {
   platform?: string
@@ -17,6 +18,8 @@ type ProfileSocialLinksProps = {
   className?: string
   iconClassName?: string
 }
+
+type SocialKind = "linkedin" | "website" | "email" | "generic"
 
 const normalizeUrl = (url: string | undefined, platform: string): string | undefined => {
   const trimmed = url?.trim()
@@ -34,9 +37,9 @@ export const ProfileSocialLinks = ({
   className,
   iconClassName = "h-5 w-5",
 }: ProfileSocialLinksProps) => {
-  const items: { key: string; href: string; label: string; kind: "linkedin" | "website" | "generic" }[] = []
+  const items: { key: string; href: string; label: string; kind: SocialKind }[] = []
 
-  const push = (key: string, href: string | undefined, label: string, kind: "linkedin" | "website" | "generic") => {
+  const push = (key: string, href: string | undefined, label: string, kind: SocialKind) => {
     if (!href) return
     items.push({ key, href, label, kind })
   }
@@ -52,9 +55,17 @@ export const ProfileSocialLinks = ({
           ? "LinkedIn profile"
           : platform === "website"
             ? "Website"
-            : "External link")
-      const kind =
-        platform === "linkedin" ? "linkedin" : platform === "website" ? "website" : "generic"
+            : platform === "email"
+              ? "Email"
+              : "External link")
+      const kind: SocialKind =
+        platform === "linkedin"
+          ? "linkedin"
+          : platform === "website"
+            ? "website"
+            : platform === "email"
+              ? "email"
+              : "generic"
       push(`${platform}-${href}`, href, label, kind)
     }
   }
@@ -77,8 +88,8 @@ export const ProfileSocialLinks = ({
         <a
           key={item.key}
           href={item.href}
-          target="_blank"
-          rel="noopener noreferrer"
+          target={item.kind === "email" ? undefined : "_blank"}
+          rel={item.kind === "email" ? undefined : "noopener noreferrer"}
           className={buttonClass}
           aria-label={item.label}
         >
@@ -86,6 +97,8 @@ export const ProfileSocialLinks = ({
             <LinkedInFilled className={iconClassName} />
           ) : item.kind === "website" ? (
             <GlobeFilled className={iconClassName} />
+          ) : item.kind === "email" ? (
+            <Mail className={iconClassName} />
           ) : (
             <GlobeFilled className={iconClassName} />
           )}

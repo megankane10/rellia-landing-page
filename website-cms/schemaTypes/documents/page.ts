@@ -1,5 +1,6 @@
 import {defineField, defineType} from 'sanity'
 import {pageSectionMembers} from '../shared/pageSectionMembers'
+import {pageVisibilityFields, publishingGroup} from '../shared/pageVisibilityFields'
 
 const RESERVED_PAGE_SLUGS = [
   'about',
@@ -36,25 +37,29 @@ export const page = defineType({
   groups: [
     {name: 'content', title: 'Content', default: true},
     {name: 'seo', title: 'SEO & metadata'},
+    publishingGroup,
   ],
-  fieldsets: [{name: 'seo', title: 'SEO & metadata'}],
+  fieldsets: [{name: 'seo', title: 'SEO & metadata', options: {collapsible: true, collapsed: true}}],
   fields: [
+    ...pageVisibilityFields,
     defineField({
       name: 'title',
       type: 'string',
+      description: 'Page name shown in Studio and used for SEO if not overridden',
       validation: (Rule) => Rule.required(),
       group: 'content',
     }),
     defineField({
       name: 'slug',
       type: 'slug',
+      description: 'URL path (e.g. partner-program becomes /partner-program)',
       options: {source: 'title', maxLength: 96},
       validation: (Rule) =>
         Rule.required().custom((slug) => {
           const current = typeof slug?.current === 'string' ? slug.current.trim().toLowerCase() : ''
           if (!current) return 'Slug is required'
           if (RESERVED_PAGE_SLUGS.includes(current)) {
-            return `“/${current}” is a fixed site route. Edit the dedicated page under Pages instead of creating a modular page.`
+            return `"/${current}" is a fixed site route. Edit the dedicated page under Pages instead of creating a modular page.`
           }
           return true
         }),

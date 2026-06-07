@@ -7,6 +7,7 @@ import {careersPage} from './documents/careersPage'
 import {openRole} from './documents/openRole'
 import {faqPage} from './documents/faqPage'
 import {programsLandingPage} from './documents/programsLandingPage'
+import {programsLayoutPage} from './documents/programsLayoutPage'
 import {eventsLandingPage} from './documents/eventsLandingPage'
 import {contactPage} from './documents/contactPage'
 import {notFoundPage} from './documents/notFoundPage'
@@ -15,18 +16,12 @@ import {applyPage} from './documents/applyPage'
 import {diagnosticSurveyContent} from './documents/diagnosticSurveyContent'
 import {page} from './documents/page'
 import {advisor} from './documents/advisor'
-import {founder} from './documents/founder'
-import {investor} from './documents/investor'
-import {industryPartner} from './documents/industryPartner'
 import {alumniCompany} from './documents/alumniCompany'
 import {program} from './documents/program'
 import {event} from './documents/event'
 import {story} from './documents/story'
 import {storyFilter} from './documents/storyFilter'
 import {storiesPage} from './documents/storiesPage'
-import {advisorFilter} from './documents/advisorFilter'
-import {founderLevel} from './documents/founderLevel'
-import {founderSpecialty} from './documents/founderSpecialty'
 import {directoryFilterGroup} from './documents/directoryFilterGroup'
 import {networkFoundersPage} from './documents/networkFoundersPage'
 import {networkAdvisorsPage} from './documents/networkAdvisorsPage'
@@ -86,6 +81,7 @@ export const schemaTypes = [
   openRole,
   faqPage,
   programsLandingPage,
+  programsLayoutPage,
   eventsLandingPage,
   contactPage,
   notFoundPage,
@@ -104,18 +100,12 @@ export const schemaTypes = [
   studioGuide,
   // Collections
   advisor,
-  founder,
-  investor,
-  industryPartner,
   alumniCompany,
   program,
   event,
   story,
   storyFilter,
   storiesPage,
-  advisorFilter,
-  founderLevel,
-  founderSpecialty,
   directoryFilterGroup,
   // Objects & sections
   bodyCtaBox,

@@ -3,7 +3,7 @@ import {internalLabelField, sectionListPreview} from '../shared/sectionPreview'
 
 export const sectionDiagnosticSurvey = defineType({
   name: 'sectionDiagnosticSurvey',
-  title: 'Diagnostic split',
+  title: 'Diagnostic survey promo block',
   type: 'object',
   fields: [
     defineField(internalLabelField),

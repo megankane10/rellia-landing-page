@@ -1,16 +1,18 @@
 import {defineField, defineType} from 'sanity'
-import {documentGroups, FIELDSET_SEO} from '../shared/fieldGroups'
-import {singletonLayoutFields} from '../shared/singletonLayoutFields'
-import {singletonPublishingAtTop} from '../shared/documentTopFields'
-import {publishingGroup} from '../shared/pageVisibilityFields'
+import {
+  CONTENT_SEO_FIELDSETS,
+  CONTENT_SEO_GROUPS,
+  singletonSectionsField,
+  singletonSeoField,
+} from '../shared/singletonContentFields'
 
 export const aboutPage = defineType({
   name: 'aboutPage',
   title: 'About page',
   type: 'document',
-  groups: [publishingGroup, ...documentGroups.filter((g) => g.name !== 'publishing' && g.name !== 'seo')],
+  groups: CONTENT_SEO_GROUPS,
+  fieldsets: CONTENT_SEO_FIELDSETS,
   fields: [
-    ...singletonPublishingAtTop,
     defineField({
       name: 'heroHeadlinePortable',
       title: 'Hero headline',
@@ -70,6 +72,7 @@ export const aboutPage = defineType({
     defineField({name: 'ctaBody', type: 'text', rows: 3, group: 'content'}),
     defineField({name: 'ctaFounderLabel', type: 'string', group: 'content'}),
     defineField({name: 'ctaTeamLabel', type: 'string', group: 'content'}),
-    ...singletonLayoutFields,
+    singletonSectionsField,
+    singletonSeoField,
   ],
 })

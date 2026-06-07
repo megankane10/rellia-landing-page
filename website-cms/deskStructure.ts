@@ -65,6 +65,7 @@ const pagesGroup = (S: StructureBuilder) =>
         .items([
           singleton(S, 'Home', 'homePage', HomeIcon),
           singleton(S, 'Programs landing', 'programsLandingPage', DocumentTextIcon),
+          singleton(S, 'Programs layout', 'programsLayoutPage', DocumentTextIcon),
           singleton(S, 'Apply', 'applyPage', DocumentTextIcon),
           singleton(S, 'Founders page', 'networkFoundersPage', DocumentTextIcon),
           singleton(S, 'Advisors page', 'networkAdvisorsPage', DocumentTextIcon),
@@ -153,7 +154,6 @@ const advisorsPeopleGroup = (S: StructureBuilder) =>
         .items([
           S.documentTypeListItem('advisor').title('All advisors').icon(UsersIcon),
           S.divider(),
-          S.documentTypeListItem('advisorFilter').title('Filter tags').icon(TagIcon),
           S.listItem()
             .title('Filter groups')
             .icon(TagIcon)
@@ -171,17 +171,16 @@ const advisorsPeopleGroup = (S: StructureBuilder) =>
 
 const foundersPeopleGroup = (S: StructureBuilder) =>
   S.listItem()
-    .title('Founders')
+    .title('Alumni')
     .icon(UsersIcon)
     .child(
       S.list()
-        .title('Founders')
+        .title('Alumni')
         .items([
           S.documentTypeListItem('alumniCompany')
             .title('Companies')
             .icon(UsersIcon),
           S.divider(),
-          S.documentTypeListItem('founderSpecialty').title('Specialties').icon(TagIcon),
           S.listItem()
             .title('Filter groups')
             .icon(TagIcon)
@@ -240,6 +239,7 @@ const HIDDEN_FROM_CATCH_ALL = new Set([
   'aboutPage',
   'careersPage',
   'programsLandingPage',
+  'programsLayoutPage',
   'eventsLandingPage',
   'storiesPage',
   'faqPage',
@@ -262,15 +262,7 @@ const HIDDEN_FROM_CATCH_ALL = new Set([
   'page',
   'advisor',
   'alumniCompany',
-  'advisorFilter',
-  'founderSpecialty',
   'directoryFilterGroup',
-  'founderLevel',
-  'programPage',
-  'marketingPage',
-  'founder',
-  'investor',
-  'industryPartner',
   'studioGuide',
   'termsPage',
   'privacyPage',

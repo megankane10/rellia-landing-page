@@ -13,7 +13,6 @@ import LogoMarquee from "@/components/LogoMarquee"
 import { CreamSection, GlassCardLight, LightSection, Reveal, RoleHero } from "./_shared"
 import { useNetworkAdvisorsPage } from "@/hooks/useCmsDocuments"
 import NetworkCmsPage from "./NetworkCmsPage"
-import CmsPageVisibilityGate from "@/components/cms/CmsPageVisibilityGate"
 import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo"
 
 const BENEFITS = [
@@ -211,19 +210,13 @@ export default function Advisors() {
   const { data: page } = advisorsPageQuery
   useApplyCmsSeo(page?.seo)
 
-  const useModularLayout =
-    Boolean(page?.useModularPage) && (page?.sections?.length ?? 0) > 0
+  const useModularLayout = (page?.sections?.length ?? 0) > 0
 
   if (useModularLayout) {
-    return (
-      <CmsPageVisibilityGate page={page}>
-        <NetworkCmsPage page={page} query={advisorsPageQuery} />
-      </CmsPageVisibilityGate>
-    )
+    return <NetworkCmsPage page={page} query={advisorsPageQuery} slug="advisors" />
   }
 
   return (
-    <CmsPageVisibilityGate page={page}>
     <div className="min-h-screen overflow-x-hidden bg-white font-host-grotesk">
       <Navbar />
 
@@ -275,7 +268,6 @@ export default function Advisors() {
 
       <Footer />
     </div>
-    </CmsPageVisibilityGate>
   )
 }
 

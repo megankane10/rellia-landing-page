@@ -2125,6 +2125,7 @@ export const DEFAULT_PROGRAMS_LANDING: ProgramsLandingContent = {
 
 export const DEFAULT_CONTACT_PAGE: ContactPageContent = {
   heroBadge: "Contact",
+  heroHeadline: "Let's Get in Touch",
   pageTitle: "Let's Get in Touch",
   intro:
     "Have questions or want to explore opportunities with Rellia Health?\n\nWe’re here to listen, support, and collaborate. Drop us a message!",
@@ -2230,7 +2231,6 @@ export const DEFAULT_QMS_PROGRAM: QmsProgramContent = {
       role: "Founder & CEO",
       company: "Neuro-Mod",
       image: "/images/drstrevie.png",
-      logo: "/images/portfolio-neuromod.png",
       quote:
         "The QMS fits seamlessly within our workflows and is directly personalized to our company and product. Rellia has been excellent to work with - they are true experts in their field.",
     },
@@ -2239,7 +2239,6 @@ export const DEFAULT_QMS_PROGRAM: QmsProgramContent = {
       role: "Founder & COO",
       company: "Cellect",
       image: "/images/ibukun.jpg",
-      logo: "/images/cellect-logo.png",
       quote:
         "The Rellia QMS program was practical and startup-friendly, the process was easy to follow, and the support helped us understand not just what needed to be done, but how to do it properly.",
     },
@@ -2248,7 +2247,6 @@ export const DEFAULT_QMS_PROGRAM: QmsProgramContent = {
       role: "Co-Founder",
       company: "Power of Play",
       image: "/images/testimonials-rooaaS.jpeg",
-      logo: "/images/portfolio-pop.png",
       quote:
         "Since joining, we've made real progress on building our QMS which is something that previously felt overwhelming.",
     },
@@ -2531,6 +2529,10 @@ export function mergeContactPage(
   if (!base.heroBadge?.trim()) {
     base.heroBadge = DEFAULT_CONTACT_PAGE.heroBadge
   }
+  if (!base.heroHeadline?.trim()) {
+    base.heroHeadline =
+      base.pageTitle?.trim() || DEFAULT_CONTACT_PAGE.heroHeadline
+  }
   if (!base.sideImageSrc?.trim()) {
     base.sideImageSrc = DEFAULT_CONTACT_PAGE.sideImageSrc
   }
@@ -2678,7 +2680,6 @@ const DEFAULT_CONSULTING_TESTIMONIALS: TrustedMemberTestimonial[] = [
     role: "Founder & CEO",
     company: "Neuro-Mod",
     image: "/images/drstrevie.png",
-    logo: "/images/portfolio-neuromod.png",
     quote:
       "The QMS fits seamlessly within our workflows and is directly personalized to our company and product. Rellia has been excellent to work with - they are true experts in their field.",
   },
@@ -2687,7 +2688,6 @@ const DEFAULT_CONSULTING_TESTIMONIALS: TrustedMemberTestimonial[] = [
     role: "Founder & COO",
     company: "Cellect",
     image: "/images/ibukun.jpg",
-    logo: "/images/cellect-logo.png",
     quote:
       "The Rellia QMS program was practical and startup-friendly, the process was easy to follow, and the support helped us understand not just what needed to be done, but how to do it properly.",
   },
@@ -2696,7 +2696,6 @@ const DEFAULT_CONSULTING_TESTIMONIALS: TrustedMemberTestimonial[] = [
     role: "Co-Founder",
     company: "Power of Play",
     image: "/images/testimonials-rooaaS.jpeg",
-    logo: "/images/portfolio-pop.png",
     quote:
       "Being part of Rellia has been so incredibly valuable. Since joining, we've made real progress on building our QMS which is something that previously felt overwhelming.",
   },

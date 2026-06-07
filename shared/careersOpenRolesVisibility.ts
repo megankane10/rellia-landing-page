@@ -46,18 +46,14 @@ export type ResolveOpenRolesOptions = {
   isSanityConfigured: boolean
 }
 
-/**
- * Open roles on /careers. Production www only shows roles when
- * `publishOpenRolesOnProduction` is enabled in Careers page CMS (no seeding required).
- */
+/** Open roles on /careers — production hides seeded placeholder roles only. */
 export const resolveCareersOpenRoles = (
-  page: Partial<CareersPageContent> | null | undefined,
+  _page: Partial<CareersPageContent> | null | undefined,
   opts: ResolveOpenRolesOptions,
 ): CareersOpenRole[] => {
-  let fromCms = filterValidOpenRoles(page?.openRoles)
+  let fromCms = filterValidOpenRoles(_page?.openRoles)
 
   if (opts.isProductionSite) {
-    if (page?.publishOpenRolesOnProduction !== true) return []
     fromCms = fromCms.filter((role) => !PLACEHOLDER_OPEN_ROLE_IDS.has(role.id))
     return fromCms
   }

@@ -34,6 +34,7 @@ export const SANITY_QUERY_WHITELIST = {
   aboutPage: { query: G.aboutPageQuery, params: empty },
   faqPage: { query: G.faqPageQuery, params: empty },
   programsLanding: { query: G.programsLandingQuery, params: empty },
+  programsLayoutPage: { query: G.programsLayoutPageQuery, params: empty },
   eventsLanding: { query: G.eventsLandingQuery, params: empty },
   programs: { query: G.programsQuery, params: empty },
   programBySlug: { query: G.programBySlugQuery, params: slugParams },

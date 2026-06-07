@@ -14,7 +14,6 @@ import RelliaCta from "@/components/RelliaCta"
 import { CreamSection, GlassCardLight, LightSection, Reveal, RoleHero } from "./_shared"
 import { useNetworkPartnersPage } from "@/hooks/useCmsDocuments"
 import NetworkCmsPage from "./NetworkCmsPage"
-import CmsPageVisibilityGate from "@/components/cms/CmsPageVisibilityGate"
 import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo"
 
 const engagementCardClass =
@@ -240,19 +239,13 @@ export default function Partners() {
   const { data: page } = partnersPageQuery
   useApplyCmsSeo(page?.seo)
 
-  const useModularLayout =
-    Boolean(page?.useModularPage) && (page?.sections?.length ?? 0) > 0
+  const useModularLayout = (page?.sections?.length ?? 0) > 0
 
   if (useModularLayout) {
-    return (
-      <CmsPageVisibilityGate page={page}>
-        <NetworkCmsPage page={page} query={partnersPageQuery} />
-      </CmsPageVisibilityGate>
-    )
+    return <NetworkCmsPage page={page} query={partnersPageQuery} slug="partners" />
   }
 
   return (
-    <CmsPageVisibilityGate page={page}>
     <div className="min-h-screen overflow-x-hidden bg-white font-host-grotesk">
       <Navbar />
 
@@ -321,6 +314,5 @@ export default function Partners() {
 
       <Footer />
     </div>
-    </CmsPageVisibilityGate>
   )
 }

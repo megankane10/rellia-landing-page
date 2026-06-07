@@ -1,5 +1,11 @@
 import {defineField, defineType} from 'sanity'
+import {pageSectionMembers} from '../shared/pageSectionMembers'
 import {preparePortableHeadlinePreview} from '../shared/portableTextPreview'
+import {
+  CONTENT_SEO_FIELDSETS,
+  CONTENT_SEO_GROUPS,
+  singletonSeoField,
+} from '../shared/singletonContentFields'
 import {studioListMedia} from '../shared/studioListMedia'
 
 export const eventsLandingPage = defineType({
@@ -9,7 +15,10 @@ export const eventsLandingPage = defineType({
   groups: [
     {name: 'hero', title: 'Hero', default: true},
     {name: 'cta', title: 'CTA'},
+    {name: 'sections', title: 'Modular sections'},
+    ...CONTENT_SEO_GROUPS.filter((g) => g.name !== 'content'),
   ],
+  fieldsets: CONTENT_SEO_FIELDSETS,
   fields: [
     defineField({
       name: 'heroTitlePortable',
@@ -32,6 +41,14 @@ export const eventsLandingPage = defineType({
     defineField({name: 'ctaPrimaryHref', title: 'Primary button link', type: 'string', group: 'cta'}),
     defineField({name: 'ctaSecondaryLabel', title: 'Secondary button label', type: 'string', group: 'cta'}),
     defineField({name: 'ctaSecondaryHref', title: 'Secondary button link', type: 'string', group: 'cta'}),
+    defineField({
+      name: 'sections',
+      title: 'Page sections',
+      type: 'array',
+      of: pageSectionMembers,
+      group: 'sections',
+    }),
+    singletonSeoField,
   ],
   preview: {
     select: {heroTitlePortable: 'heroTitlePortable', heroSubtitle: 'heroSubtitle'},

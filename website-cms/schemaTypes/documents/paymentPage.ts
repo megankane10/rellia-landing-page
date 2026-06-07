@@ -1,8 +1,10 @@
 import {defineField, defineType} from 'sanity'
-import {documentGroups, FIELDSET_SEO} from '../shared/fieldGroups'
-import {singletonLayoutFields} from '../shared/singletonLayoutFields'
-import {singletonPublishingAtTop} from '../shared/documentTopFields'
-import {publishingGroup} from '../shared/pageVisibilityFields'
+import {
+  CONTENT_SEO_FIELDSETS,
+  CONTENT_SEO_GROUPS,
+  sectionDividerFieldset,
+  singletonSeoField,
+} from '../shared/singletonContentFields'
 
 const legacyMembershipFields = [
   defineField({
@@ -162,15 +164,22 @@ export const paymentPage = defineType({
   name: 'paymentPage',
   title: 'Payment page (/membership)',
   type: 'document',
-  groups: [publishingGroup, ...documentGroups.filter((g) => g.name !== 'publishing' && g.name !== 'seo')],
+  groups: CONTENT_SEO_GROUPS,
+  fieldsets: [
+    sectionDividerFieldset('benefitsDivider', 'Benefits panel'),
+    sectionDividerFieldset('pricingDivider', 'Plan pricing'),
+    sectionDividerFieldset('promoDivider', 'Promo & discount'),
+    sectionDividerFieldset('ctaDivider', 'Bottom CTA'),
+    ...CONTENT_SEO_FIELDSETS,
+  ],
   fields: [
-    ...singletonPublishingAtTop,
     defineField({
       name: 'benefitsPanelHeadline',
       type: 'string',
       title: 'Left panel headline',
       description: 'Teal benefits card headline (e.g. Join the network today).',
       group: 'content',
+      fieldset: 'benefitsDivider',
       validation: (Rule) => Rule.required(),
     }),
     defineField({
@@ -179,6 +188,7 @@ export const paymentPage = defineType({
       title: 'Benefits title (fallback)',
       description: 'Used only if left panel headline is empty.',
       group: 'content',
+      fieldset: 'benefitsDivider',
     }),
     defineField({
       name: 'benefits',
@@ -186,6 +196,7 @@ export const paymentPage = defineType({
       title: 'Benefits list',
       of: [{type: 'string'}],
       group: 'content',
+      fieldset: 'benefitsDivider',
       validation: (Rule) => Rule.min(1),
     }),
     defineField({
@@ -194,6 +205,7 @@ export const paymentPage = defineType({
       title: 'Plan picker headline',
       initialValue: 'Choose your plan',
       group: 'content',
+      fieldset: 'pricingDivider',
       validation: (Rule) => Rule.required(),
     }),
     defineField({
@@ -201,6 +213,7 @@ export const paymentPage = defineType({
       type: 'string',
       title: 'Monthly price (e.g. $30)',
       group: 'content',
+      fieldset: 'pricingDivider',
       validation: (Rule) => Rule.required(),
     }),
     defineField({
@@ -208,6 +221,7 @@ export const paymentPage = defineType({
       type: 'string',
       title: 'Annual price (e.g. $25)',
       group: 'content',
+      fieldset: 'pricingDivider',
       validation: (Rule) => Rule.required(),
     }),
     defineField({
@@ -216,12 +230,15 @@ export const paymentPage = defineType({
       title: 'Monthly — show compare price',
       initialValue: false,
       group: 'content',
+      fieldset: 'pricingDivider',
     }),
     defineField({
       name: 'pricingMonthlyCompareAmount',
       type: 'string',
       title: 'Monthly compare price',
+      description: 'Strikethrough price shown when compare price is enabled (e.g. $40).',
       group: 'content',
+      fieldset: 'pricingDivider',
     }),
     defineField({
       name: 'pricingAnnualDiscountEnabled',
@@ -229,24 +246,29 @@ export const paymentPage = defineType({
       title: 'Annual — show compare price',
       initialValue: false,
       group: 'content',
+      fieldset: 'pricingDivider',
     }),
     defineField({
       name: 'pricingAnnualCompareAmount',
       type: 'string',
       title: 'Annual compare price',
+      description: 'Strikethrough price shown when compare price is enabled (e.g. $35).',
       group: 'content',
+      fieldset: 'pricingDivider',
     }),
     defineField({
       name: 'monthlyProceedLabel',
       type: 'string',
       title: 'Monthly CTA label',
       group: 'content',
+      fieldset: 'pricingDivider',
     }),
     defineField({
       name: 'annualProceedLabel',
       type: 'string',
       title: 'Annual CTA label',
       group: 'content',
+      fieldset: 'pricingDivider',
     }),
     defineField({
       name: 'discountBannerEnabled',
@@ -254,18 +276,21 @@ export const paymentPage = defineType({
       title: 'Show promo block',
       initialValue: true,
       group: 'content',
+      fieldset: 'promoDivider',
     }),
     defineField({
       name: 'discountBannerBadge',
       type: 'string',
       title: 'Promo pill label',
       group: 'content',
+      fieldset: 'promoDivider',
     }),
     defineField({
       name: 'discountBannerTitle',
       type: 'string',
       title: 'Promo headline (legacy fallback)',
       group: 'content',
+      fieldset: 'promoDivider',
     }),
     defineField({
       name: 'discountBannerSubtitle',
@@ -274,27 +299,23 @@ export const paymentPage = defineType({
       title: 'Discount code',
       description: 'Copied when user taps Apply code.',
       group: 'content',
+      fieldset: 'promoDivider',
     }),
     defineField({
       name: 'discountBannerApplyLabel',
       type: 'string',
       title: 'Apply code button label',
       group: 'content',
-    }),
-    defineField({
-      name: 'promoPillEnabled',
-      type: 'boolean',
-      title: 'Show promo pill',
-      initialValue: true,
-      group: 'content',
+      fieldset: 'promoDivider',
     }),
     defineField({
       name: 'promoMessage',
       type: 'text',
       rows: 2,
       title: 'Promo message',
-      description: 'Use {code} where the discount code should appear.',
+      description: 'When set, the promo badge and message appear. Use {code} where the discount code should appear.',
       group: 'content',
+      fieldset: 'promoDivider',
     }),
     defineField({
       name: 'questionsTitle',
@@ -302,6 +323,7 @@ export const paymentPage = defineType({
       title: 'Bottom CTA headline',
       initialValue: 'Questions about membership?',
       group: 'content',
+      fieldset: 'ctaDivider',
     }),
     defineField({
       name: 'questionsBody',
@@ -311,6 +333,7 @@ export const paymentPage = defineType({
       initialValue:
         "Have questions about the membership, billing, or benefits? We're here to help you get the most out of the Rellia network.",
       group: 'content',
+      fieldset: 'ctaDivider',
     }),
     defineField({
       name: 'questionsContactLabel',
@@ -318,6 +341,7 @@ export const paymentPage = defineType({
       title: 'Bottom CTA primary button label',
       initialValue: 'Contact us',
       group: 'content',
+      fieldset: 'ctaDivider',
     }),
     defineField({
       name: 'questionsContactPath',
@@ -325,6 +349,7 @@ export const paymentPage = defineType({
       title: 'Bottom CTA primary button path',
       initialValue: '/contact',
       group: 'content',
+      fieldset: 'ctaDivider',
     }),
     defineField({
       name: 'questionsFaqLabel',
@@ -332,6 +357,7 @@ export const paymentPage = defineType({
       title: 'Bottom CTA secondary button label',
       initialValue: 'View FAQ',
       group: 'content',
+      fieldset: 'ctaDivider',
     }),
     defineField({
       name: 'questionsFaqPath',
@@ -339,8 +365,9 @@ export const paymentPage = defineType({
       title: 'Bottom CTA secondary button path',
       initialValue: '/faq',
       group: 'content',
+      fieldset: 'ctaDivider',
     }),
     ...legacyMembershipFields,
-    ...singletonLayoutFields,
+    singletonSeoField,
   ],
 })

@@ -1,5 +1,7 @@
 import {defineArrayMember, defineField, defineType} from 'sanity'
-import {publishingGroup, pageVisibilityFields} from '../shared/pageVisibilityFields'
+import {pageSectionMembers} from '../shared/pageSectionMembers'
+import {CONTENT_SEO_FIELDSETS, singletonSeoField} from '../shared/singletonContentFields'
+import {GROUP_SEO} from '../shared/fieldGroups'
 import {studioListMedia} from '../shared/studioListMedia'
 
 const GROUP_HERO = {name: 'hero', title: 'Hero', default: true}
@@ -8,12 +10,14 @@ const GROUP_SERVICES = {name: 'services', title: 'Services'}
 const GROUP_TESTIMONIALS = {name: 'testimonials', title: 'Testimonials'}
 const GROUP_MEMBERSHIP = {name: 'membership', title: 'Membership value'}
 const GROUP_CTA = {name: 'cta', title: 'Bottom CTA'}
+const GROUP_SECTIONS = {name: 'sections', title: 'Modular sections'}
 
 export const consultingPage = defineType({
   name: 'consultingPage',
   title: 'Consulting page (/consulting)',
   type: 'document',
-  groups: [GROUP_HERO, GROUP_FIT, GROUP_SERVICES, GROUP_TESTIMONIALS, GROUP_MEMBERSHIP, GROUP_CTA, publishingGroup],
+  groups: [GROUP_HERO, GROUP_FIT, GROUP_SERVICES, GROUP_TESTIMONIALS, GROUP_MEMBERSHIP, GROUP_CTA, GROUP_SECTIONS, GROUP_SEO],
+  fieldsets: CONTENT_SEO_FIELDSETS,
   fields: [
     defineField({name: 'title', type: 'string', initialValue: 'Consulting', group: 'hero'}),
     defineField({name: 'heroEyebrow', title: 'Hero eyebrow', type: 'string', initialValue: 'Consulting', group: 'hero'}),
@@ -210,7 +214,14 @@ export const consultingPage = defineType({
     }),
     defineField({name: 'ctaSecondaryLabel', title: 'Secondary CTA label', type: 'string', group: 'cta'}),
     defineField({name: 'ctaSecondaryHref', title: 'Secondary CTA link', type: 'string', group: 'cta'}),
-    ...pageVisibilityFields,
+    defineField({
+      name: 'sections',
+      title: 'Page sections',
+      type: 'array',
+      of: pageSectionMembers,
+      group: 'sections',
+    }),
+    singletonSeoField,
   ],
   preview: {
     prepare() {
