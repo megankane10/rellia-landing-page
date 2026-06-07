@@ -167,14 +167,14 @@ export const pageBySlugQuery = `*[_type == "page" && slug.current == $slug && sl
   ${seoFragment},
   sections[]{
     ...,
-    "imageUrl": image.asset->url,
-    "panelImageUrl": panelImage.asset->url,
+    "imageUrl": coalesce(image.asset->url, imageUrl),
+    "panelImageUrl": coalesce(panelImage.asset->url, panelImageUrl),
     primaryCta{ label, href, description, badge, openInNewTab },
     secondaryCta{ label, href, description, badge, openInNewTab },
     metrics[]{ label, value, suffix },
     cards[]{
       ...,
-      "imageUrl": image.asset->url,
+      "imageUrl": coalesce(image.asset->url, imageUrl),
       cta{ label, href, description, badge }
     },
     items[]{
@@ -182,7 +182,7 @@ export const pageBySlugQuery = `*[_type == "page" && slug.current == $slug && sl
       question,
       answer,
       link{ label, href, description, badge },
-      "imageUrl": image.asset->url
+      "imageUrl": coalesce(image.asset->url, imageUrl)
     },
     leftColumn{
       title,
@@ -197,14 +197,14 @@ export const pageBySlugQuery = `*[_type == "page" && slug.current == $slug && sl
   },
   pageBuilder[]{
     ...,
-    "imageUrl": image.asset->url,
-    "panelImageUrl": panelImage.asset->url,
+    "imageUrl": coalesce(image.asset->url, imageUrl),
+    "panelImageUrl": coalesce(panelImage.asset->url, panelImageUrl),
     primaryCta{ label, href, description, badge, openInNewTab },
     secondaryCta{ label, href, description, badge, openInNewTab },
     metrics[]{ label, value, suffix },
     cards[]{
       ...,
-      "imageUrl": image.asset->url,
+      "imageUrl": coalesce(image.asset->url, imageUrl),
       cta{ label, href, description, badge }
     },
     items[]{
@@ -212,7 +212,7 @@ export const pageBySlugQuery = `*[_type == "page" && slug.current == $slug && sl
       question,
       answer,
       link{ label, href, description, badge },
-      "imageUrl": image.asset->url
+      "imageUrl": coalesce(image.asset->url, imageUrl)
     },
     leftColumn{
       title,
@@ -229,14 +229,14 @@ export const pageBySlugQuery = `*[_type == "page" && slug.current == $slug && sl
 
 const pageSectionsFragment = `sections[]{
   ...,
-  "imageUrl": image.asset->url,
-  "panelImageUrl": panelImage.asset->url,
+  "imageUrl": coalesce(image.asset->url, imageUrl),
+  "panelImageUrl": coalesce(panelImage.asset->url, panelImageUrl),
   primaryCta{ label, href, description, badge },
   secondaryCta{ label, href, description, badge, openInNewTab },
   metrics[]{ label, value, suffix },
   cards[]{
     ...,
-    "imageUrl": image.asset->url,
+    "imageUrl": coalesce(image.asset->url, imageUrl),
     cta{ label, href, description, badge }
   },
   items[]{
@@ -244,7 +244,7 @@ const pageSectionsFragment = `sections[]{
     question,
     answer,
     link{ label, href, description, badge },
-    "imageUrl": image.asset->url
+    "imageUrl": coalesce(image.asset->url, imageUrl)
   },
   leftColumn{
     title,
@@ -425,7 +425,6 @@ export const homePageQuery = `*[_type == "homePage"][0]{
   secondaryCtaPath,
   "heroBackgroundVideoUrl": coalesce(heroBackgroundVideo.asset->url, heroBackgroundVideoUrl),
   metricsHeading,
-  metricsSubheading,
   metrics[]{ label, value, suffix },
   howItWorksSectionTitle,
   testimonialsTitlePortable,
@@ -788,6 +787,7 @@ export const paymentPageQuery = `*[_type == "paymentPage"][0]{
   monthlyProceedLabel,
   annualProceedLabel,
   questionsTitle,
+  questionsBody,
   questionsFaqLabel,
   questionsFaqPath,
   questionsContactLabel,

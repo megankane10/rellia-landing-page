@@ -331,6 +331,7 @@ export type CmsSectionFormEmbed = {
   panelBody?: string
   benefits?: string[]
   panelImageUrl?: string
+  ctaLabel?: string
 }
 
 export type CmsPageSection =
@@ -507,7 +508,6 @@ export type HomePageContent = {
   /** Resolved MP4/WebM URL: uploaded file in Studio, or fallback string, or site default in merge */
   heroBackgroundVideoUrl?: string
   metricsHeading: string
-  metricsSubheading: string
   metrics: HomeMetric[]
   whyFeatures: HomeWhyFeature[]
   ctaTitle: string
@@ -904,6 +904,7 @@ export type PaymentPageContent = CmsPageVisibility & {
   monthlyProceedLabel: string
   annualProceedLabel: string
   questionsTitle: string
+  questionsBody?: string
   questionsFaqLabel: string
   questionsFaqPath: string
   questionsContactLabel: string

@@ -24,7 +24,16 @@ export default function CmsCatchAll() {
   const slug = useMemo(() => getSingleSegmentSlug(location.pathname), [location.pathname])
   const pageQuery = useCmsPageBySlug(slug)
   const { data: page } = pageQuery
-  useApplyCmsSeo(page?.seo)
+  useApplyCmsSeo(
+    page?.seo,
+    page?.title
+      ? {
+          title: page.seo?.metaTitle?.trim()
+            ? undefined
+            : `${page.title} — Rellia Health`,
+        }
+      : undefined,
+  )
 
   if (!slug) return <NotFound />
 

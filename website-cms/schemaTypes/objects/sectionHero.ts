@@ -30,6 +30,7 @@ export const sectionHero = defineType({
       title: 'Secondary CTA',
     }),
     defineField({name: 'image', type: 'image', options: {hotspot: true}}),
+    defineField({name: 'imageUrl', title: 'Background image URL (fallback)', type: 'string'}),
     defineField({name: 'imageAlt', type: 'string'}),
   ],
   preview: sectionListPreview({typeLabel: 'Hero', fallback: 'Hero'}),

@@ -173,6 +173,7 @@ var storyBySlugQuery = `*[_type == "story" && slug.current == $slug && !(_id in 
   "tag": filters[0]->title,
   publishedAt,
   featured,
+  headerLayout,
   body,
   ${seoFragment}
 }`;
@@ -182,14 +183,14 @@ var pageBySlugQuery = `*[_type == "page" && slug.current == $slug && slug.curren
   ${seoFragment},
   sections[]{
     ...,
-    "imageUrl": image.asset->url,
-    "panelImageUrl": panelImage.asset->url,
+    "imageUrl": coalesce(image.asset->url, imageUrl),
+    "panelImageUrl": coalesce(panelImage.asset->url, panelImageUrl),
     primaryCta{ label, href, description, badge, openInNewTab },
     secondaryCta{ label, href, description, badge, openInNewTab },
     metrics[]{ label, value, suffix },
     cards[]{
       ...,
-      "imageUrl": image.asset->url,
+      "imageUrl": coalesce(image.asset->url, imageUrl),
       cta{ label, href, description, badge }
     },
     items[]{
@@ -197,7 +198,7 @@ var pageBySlugQuery = `*[_type == "page" && slug.current == $slug && slug.curren
       question,
       answer,
       link{ label, href, description, badge },
-      "imageUrl": image.asset->url
+      "imageUrl": coalesce(image.asset->url, imageUrl)
     },
     leftColumn{
       title,
@@ -212,14 +213,14 @@ var pageBySlugQuery = `*[_type == "page" && slug.current == $slug && slug.curren
   },
   pageBuilder[]{
     ...,
-    "imageUrl": image.asset->url,
-    "panelImageUrl": panelImage.asset->url,
+    "imageUrl": coalesce(image.asset->url, imageUrl),
+    "panelImageUrl": coalesce(panelImage.asset->url, panelImageUrl),
     primaryCta{ label, href, description, badge, openInNewTab },
     secondaryCta{ label, href, description, badge, openInNewTab },
     metrics[]{ label, value, suffix },
     cards[]{
       ...,
-      "imageUrl": image.asset->url,
+      "imageUrl": coalesce(image.asset->url, imageUrl),
       cta{ label, href, description, badge }
     },
     items[]{
@@ -227,7 +228,7 @@ var pageBySlugQuery = `*[_type == "page" && slug.current == $slug && slug.curren
       question,
       answer,
       link{ label, href, description, badge },
-      "imageUrl": image.asset->url
+      "imageUrl": coalesce(image.asset->url, imageUrl)
     },
     leftColumn{
       title,
@@ -243,14 +244,14 @@ var pageBySlugQuery = `*[_type == "page" && slug.current == $slug && slug.curren
 }`;
 var pageSectionsFragment = `sections[]{
   ...,
-  "imageUrl": image.asset->url,
-  "panelImageUrl": panelImage.asset->url,
+  "imageUrl": coalesce(image.asset->url, imageUrl),
+  "panelImageUrl": coalesce(panelImage.asset->url, panelImageUrl),
   primaryCta{ label, href, description, badge },
   secondaryCta{ label, href, description, badge, openInNewTab },
   metrics[]{ label, value, suffix },
   cards[]{
     ...,
-    "imageUrl": image.asset->url,
+    "imageUrl": coalesce(image.asset->url, imageUrl),
     cta{ label, href, description, badge }
   },
   items[]{
@@ -258,7 +259,7 @@ var pageSectionsFragment = `sections[]{
     question,
     answer,
     link{ label, href, description, badge },
-    "imageUrl": image.asset->url
+    "imageUrl": coalesce(image.asset->url, imageUrl)
   },
   leftColumn{
     title,
@@ -429,7 +430,6 @@ var homePageQuery = `*[_type == "homePage"][0]{
   secondaryCtaPath,
   "heroBackgroundVideoUrl": coalesce(heroBackgroundVideo.asset->url, heroBackgroundVideoUrl),
   metricsHeading,
-  metricsSubheading,
   metrics[]{ label, value, suffix },
   howItWorksSectionTitle,
   testimonialsTitlePortable,
@@ -778,6 +778,7 @@ var paymentPageQuery = `*[_type == "paymentPage"][0]{
   monthlyProceedLabel,
   annualProceedLabel,
   questionsTitle,
+  questionsBody,
   questionsFaqLabel,
   questionsFaqPath,
   questionsContactLabel,

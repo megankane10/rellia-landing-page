@@ -8,8 +8,10 @@ export const networkInvestorsPage = defineType({
   type: 'document',
   groups: [
     {name: 'content', title: 'Content', default: true},
+    {name: 'seo', title: 'SEO & metadata'},
     publishingGroup,
   ],
+  fieldsets: [{name: 'seo', title: 'SEO & metadata'}],
   fields: [
     defineField({
       name: 'title',
@@ -65,6 +67,13 @@ export const networkInvestorsPage = defineType({
           ],
         }),
       ],
+    }),
+    defineField({
+      name: 'seo',
+      title: 'SEO & metadata',
+      type: 'seoFields',
+      fieldset: 'seo',
+      group: 'seo',
     }),
     ...pageVisibilityFields,
   ],

@@ -9,6 +9,7 @@ import AdminRecordList from "@/components/admin/AdminRecordList"
 import AdminSubmissionStatusFilter from "@/components/admin/AdminSubmissionStatusFilter"
 import AdminSubmissionStatusSelect from "@/components/admin/AdminSubmissionStatusSelect"
 import AdminDeleteIconButton from "@/components/admin/AdminDeleteIconButton"
+import AdminNoteIconButton from "@/components/admin/AdminNoteIconButton"
 import AdminCompactEmptyState from "@/components/admin/AdminCompactEmptyState"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
@@ -257,13 +258,21 @@ const AdminInboxPage = () => {
     {
       key: "actions",
       header: "",
-      className: "w-12",
+      className: "w-24",
       cell: (row) => (
-        <AdminDeleteIconButton
-          label="Delete contact submission?"
-          description="This permanently removes the message from your inbox."
-          onConfirm={() => void handleContactDelete(row.id)}
-        />
+        <div className="flex items-center justify-end gap-0.5">
+          <AdminNoteIconButton
+            table="contact_responses"
+            submissionId={row.id}
+            note={row.admin_note}
+            onSaved={() => void queryClient.invalidateQueries({ queryKey: ["admin-contact-submissions"] })}
+          />
+          <AdminDeleteIconButton
+            label="Delete contact submission?"
+            description="This permanently removes the message from your inbox."
+            onConfirm={() => void handleContactDelete(row.id)}
+          />
+        </div>
       ),
     },
   ]
@@ -318,13 +327,21 @@ const AdminInboxPage = () => {
     {
       key: "actions",
       header: "",
-      className: "w-12",
+      className: "w-24",
       cell: (row) => (
-        <AdminDeleteIconButton
-          label="Delete diagnostic submission?"
-          description="This removes the company profile and linked diagnostic response."
-          onConfirm={() => void handleDiagnosticDelete(row.id)}
-        />
+        <div className="flex items-center justify-end gap-0.5">
+          <AdminNoteIconButton
+            table="company_profiles"
+            submissionId={row.id}
+            note={row.admin_note}
+            onSaved={() => void queryClient.invalidateQueries({ queryKey: ["admin-company-profiles"] })}
+          />
+          <AdminDeleteIconButton
+            label="Delete diagnostic submission?"
+            description="This removes the company profile and linked diagnostic response."
+            onConfirm={() => void handleDiagnosticDelete(row.id)}
+          />
+        </div>
       ),
     },
   ]
@@ -408,11 +425,19 @@ const AdminInboxPage = () => {
             },
           ]}
           mobileActions={(row) => (
-            <AdminDeleteIconButton
-              label="Delete contact submission?"
-              description="This permanently removes the message from your inbox."
-              onConfirm={() => void handleContactDelete(row.id)}
-            />
+            <div className="flex items-center gap-0.5">
+              <AdminNoteIconButton
+                table="contact_responses"
+                submissionId={row.id}
+                note={row.admin_note}
+                onSaved={() => void queryClient.invalidateQueries({ queryKey: ["admin-contact-submissions"] })}
+              />
+              <AdminDeleteIconButton
+                label="Delete contact submission?"
+                description="This permanently removes the message from your inbox."
+                onConfirm={() => void handleContactDelete(row.id)}
+              />
+            </div>
           )}
         />,
       )
@@ -452,11 +477,19 @@ const AdminInboxPage = () => {
           },
         ]}
         mobileActions={(row) => (
-          <AdminDeleteIconButton
-            label="Delete diagnostic submission?"
-            description="This removes the company profile and linked diagnostic response."
-            onConfirm={() => void handleDiagnosticDelete(row.id)}
-          />
+          <div className="flex items-center gap-0.5">
+            <AdminNoteIconButton
+              table="company_profiles"
+              submissionId={row.id}
+              note={row.admin_note}
+              onSaved={() => void queryClient.invalidateQueries({ queryKey: ["admin-company-profiles"] })}
+            />
+            <AdminDeleteIconButton
+              label="Delete diagnostic submission?"
+              description="This removes the company profile and linked diagnostic response."
+              onConfirm={() => void handleDiagnosticDelete(row.id)}
+            />
+          </div>
         )}
       />,
     )
@@ -478,6 +511,7 @@ const AdminInboxPage = () => {
                 { header: "Company", value: (row) => row.company ?? "" },
                 { header: "Received", value: (row) => formatAdminDate(row.created_at) },
                 { header: "Status", value: (row) => row.status ?? "New" },
+                { header: "Note", value: (row) => row.admin_note ?? "" },
               ]}
             />
           ) : (
@@ -491,6 +525,7 @@ const AdminInboxPage = () => {
                 { header: "Stage", value: (row) => row.stage ?? "" },
                 { header: "Received", value: (row) => formatAdminDate(row.created_at) },
                 { header: "Status", value: (row) => row.status ?? "New" },
+                { header: "Note", value: (row) => row.admin_note ?? "" },
               ]}
             />
           )

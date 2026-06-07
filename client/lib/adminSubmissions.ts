@@ -10,6 +10,7 @@ export type CompanyProfileRow = {
   stage: string | null
   description: string | null
   status?: SubmissionStatus | null
+  admin_note?: string | null
 }
 
 export type ContactRow = {
@@ -23,6 +24,7 @@ export type ContactRow = {
   message: string
   status?: SubmissionStatus | null
   submission_type?: string | null
+  admin_note?: string | null
 }
 
 export const fetchContactSubmissions = async (): Promise<ContactRow[]> => {

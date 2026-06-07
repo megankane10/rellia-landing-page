@@ -265,7 +265,6 @@ export default function PathsSection() {
 
     <NetworkMetricsSection
       heading={home?.metricsHeading || ""}
-      subheading={home?.metricsSubheading || ""}
       metrics={home?.metrics || []}
     />
     </>

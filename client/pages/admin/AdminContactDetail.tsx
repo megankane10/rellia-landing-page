@@ -7,6 +7,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 import AdminSubmissionStatusSelect from "@/components/admin/AdminSubmissionStatusSelect"
 import AdminDeleteSubmissionButton from "@/components/admin/AdminDeleteSubmissionButton"
 import AdminMailtoButton from "@/components/admin/AdminMailtoButton"
+import AdminSubmissionNoteEditor from "@/components/admin/AdminSubmissionNoteEditor"
 import {
   formatAdminDateLong,
   statusBadgeClass,
@@ -171,6 +172,14 @@ const AdminContactDetail = () => {
               subject={mailSubject}
               body={mailBody}
               label="Email sender"
+            />
+          </div>
+          <div className="border-t border-black/[0.06] pt-5">
+            <AdminSubmissionNoteEditor
+              table="contact_responses"
+              submissionId={data.id}
+              initialNote={(data as ContactSubmission & { admin_note?: string | null }).admin_note}
+              onSaved={() => void queryClient.invalidateQueries({ queryKey: ["admin-contact", id] })}
             />
           </div>
         </div>
