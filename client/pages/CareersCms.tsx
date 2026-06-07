@@ -42,6 +42,7 @@ import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo"
 import { useCareersPage } from "@/hooks/useCmsDocuments"
 import { buildPageUrl } from "@/config/seo"
 import FilteredListEmptyState from "@/components/FilteredListEmptyState"
+import RelliaAction from "@/components/RelliaAction"
 import { isSanityConfigured } from "@/lib/sanity"
 import { allowCmsSeedFallbacks, isStrictProductionSite } from "@/lib/deploymentEnv"
 import { useMemo, useState, useEffect, useRef } from "react"
@@ -394,7 +395,8 @@ export default function CareersCms() {
       volunteerAvailable
     if (legacyHiring && legacyVolunteer) return "both"
     if (legacyVolunteer) return "volunteer_only"
-    return "hiring_only"
+    if (legacyHiring) return "hiring_only"
+    return "both"
   }
 
   const contentMode = resolveContentMode()
@@ -430,7 +432,7 @@ export default function CareersCms() {
 
   return (
     <div className="min-h-screen overflow-x-hidden bg-white font-host-grotesk">
-      <Navbar forceSolid />
+      <Navbar darkHeroNav forceSolid={showApplyForm} />
 
       <main id="main-content">
         <AnimatePresence mode="wait">
@@ -472,6 +474,7 @@ export default function CareersCms() {
                 eyebrowLabel="Join the team"
                 imageSrc="/images/careers-img.jpg"
                 className="lg:flex-1"
+                skipNavOffset
                 title={
                   <>
                     Build the <span className="text-rellia-mint">future of health</span> at Rellia
@@ -514,7 +517,7 @@ export default function CareersCms() {
           sectionDescription="What it feels like to build here: pace without panic, depth without gatekeeping, and a team that sweats the small stuff so members do not have to."
           features={CAREERS_WHY_FEATURES}
           cardImages={CAREERS_WHY_CARD_IMAGES}
-          sectionClassName="bg-white pt-28 md:pt-32"
+          sectionClassName="bg-white pt-16 md:pt-20"
         />
 
         <section className="bg-white py-24 md:py-32 border-t border-black/10">
@@ -667,6 +670,35 @@ export default function CareersCms() {
           </div>
         </section>
       ) : null}
+
+        {showVolunteerFlow ? (
+          <section
+            id="careers-volunteer"
+            className="scroll-mt-28 border-t border-black/10 bg-white px-6 py-16 md:px-10 md:py-20"
+          >
+            <div className="mx-auto max-w-[1300px]">
+              <ScrollReveal className="mx-auto flex max-w-2xl flex-col items-center text-center">
+                <h2 className="font-host-grotesk text-2xl font-semibold tracking-tight text-black md:text-[32px]">
+                  Volunteer with us
+                </h2>
+                <p className="mt-4 font-urbanist text-lg leading-relaxed text-black/60">
+                  Share your expertise with health tech founders—flexible commitment, meaningful impact.
+                </p>
+                <RelliaAction
+                  type="button"
+                  variant="relliaCtaPrimary"
+                  size="comfortable"
+                  className="mt-8"
+                  onClick={() => setShowApplyForm(true)}
+                  aria-label="Open volunteer application form"
+                >
+                  Open volunteer application
+                  <ArrowRight className="ml-2 h-5 w-5" aria-hidden />
+                </RelliaAction>
+              </ScrollReveal>
+            </div>
+          </section>
+        ) : null}
 
       {/* Life at Rellia Section */}
       <section id="life-at-rellia" className="bg-white py-14 md:py-18">

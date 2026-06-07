@@ -1238,7 +1238,9 @@ async function main() {
       _type: "careersPage",
       ...pagePublishingLive,
       careersContentMode: "both",
-      publishOpenRolesOnProduction: false,
+      publishOpenRolesOnProduction: true,
+      showHiringNavBadge: true,
+      showVolunteerNavBadge: true,
       lifeAtRelliaHeading: "Built by healthtech insiders, for builders",
       lifeAtRelliaSubheading: "We are a remote-first, high-standards team of builders, clinicians, and operators dedicated to supporting healthtech founders. We cultivate an environment of high autonomy, rapid iteration, and deep clinical empathy to build the future of care.",
       lifeAtRelliaImages:

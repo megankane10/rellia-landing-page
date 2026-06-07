@@ -2166,7 +2166,7 @@ export default function DiagnosticSurvey() {
                         />
                         <div className="relative z-10 space-y-5">
                           <div>
-                            <h2 className="font-host-grotesk text-2xl md:text-3xl font-normal leading-snug text-white">
+                            <h2 className="font-host-grotesk text-xl md:text-2xl font-normal leading-snug text-white">
                               {membershipTitle}
                             </h2>
                             <p className="mt-2 text-sm leading-relaxed text-white/80">

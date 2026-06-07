@@ -464,7 +464,14 @@ export function RoleHero({
         className="pointer-events-none absolute -right-16 bottom-0 w-[min(52vw,420px)] opacity-[0.07] md:right-0"
       />
 
-      <div className="relative z-10 mx-auto max-w-[1300px] px-6 pb-20 pt-10 md:px-10 md:pb-28 md:pt-14 lg:flex lg:flex-1 lg:flex-col lg:justify-center lg:pb-20 lg:pt-0">
+      <div
+        className={cn(
+          "relative z-10 mx-auto max-w-[1300px] px-6 pb-20 md:px-10 md:pb-28 lg:flex lg:flex-1 lg:flex-col lg:justify-center lg:pb-20",
+          skipNavOffset
+            ? "pt-[calc(72px+2.5rem)] md:pt-[calc(86px+3.5rem)] lg:pt-[calc(86px+2rem)]"
+            : "pt-10 md:pt-14 lg:pt-0",
+        )}
+      >
         <Reveal className="flex flex-col items-start text-left">
           {heroBadges ? (
             <div className="mb-6 md:mb-8">{heroBadges}</div>

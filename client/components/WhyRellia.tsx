@@ -126,11 +126,9 @@ export default function WhyRellia({
           align="left"
           title={sectionTitle}
           description={sectionDescription ?? DEFAULT_SECTION_DESCRIPTION}
-          className="mb-16 md:mb-20"
-          descriptionClassName="mt-3 md:mt-4"
         />
 
-        <ScrollReveal>
+        <ScrollReveal className="mt-10 lg:mt-14">
           <>
             {/* Desktop: hover-expand cards */}
             <div
