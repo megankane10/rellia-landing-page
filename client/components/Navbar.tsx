@@ -375,15 +375,18 @@ export default function Navbar({
     pathname === "/careers" ||
     pathname === "/startup-diagnostic"
 
-  /** Light cream/white heroes (story posts, event detail, programs): transparent bar + light nav chrome until scroll */
+  /** Light cream/white heroes (event detail, programs): transparent bar + light nav chrome until scroll */
   const isLightHeroNav =
-    /^\/stories\/.+/.test(pathname) ||
     /^\/events\/.+/.test(pathname) ||
     /^\/programs\/.+/.test(pathname)
 
-  const hasTransparentTopBar = !forceSolid && (hasTealHero || isLightHeroNav)
+  const isStoryDetailPage = /^\/stories\/.+/.test(pathname)
 
-  const useLightNavChrome = !forceSolid && !darkHeroNav && isLightHeroNav && !scrolled && !mobileOpen
+  const hasTransparentTopBar = !forceSolid && (hasTealHero || isLightHeroNav || isStoryDetailPage)
+
+  const useDarkHeroNavChrome = darkHeroNav || isStoryDetailPage
+
+  const useLightNavChrome = !forceSolid && !useDarkHeroNavChrome && isLightHeroNav && !scrolled && !mobileOpen
 
   const desktopTone: "light" | "dark" = useLightNavChrome ? "light" : "dark"
 
@@ -391,7 +394,7 @@ export default function Navbar({
     ? siteSettingsData.logoUrl.trim()
     : null
 
-  const logoSrc = darkHeroNav || (!useLightNavChrome && hasTealHero && !scrolled)
+  const logoSrc = useDarkHeroNavChrome || (!useLightNavChrome && hasTealHero && !scrolled)
     ? LOGO_DEFAULT
     : useLightNavChrome
       ? LOGO_FILLED
@@ -441,7 +444,7 @@ export default function Navbar({
 
   const desktopRailCls = cn("hidden items-center md:flex gap-1")
 
-  const navCtaVariant = darkHeroNav || useLightNavChrome ? "relliaCtaPrimary" : ("heroSolidOnTeal" as const)
+  const navCtaVariant = useDarkHeroNavChrome || useLightNavChrome ? "relliaCtaPrimary" : ("heroSolidOnTeal" as const)
 
   const menuIconBtnCls = cn(
     "inline-flex min-h-11 min-w-11 cursor-pointer items-center justify-center transition-[color] duration-200 motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 md:hidden",

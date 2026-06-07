@@ -29,7 +29,6 @@ import {
   ShareIconLinkedIn,
   ShareIconMail,
   ShareIconX,
-  shareToolbarButtonClassName,
 } from "@/components/share/sharePageIcons"
 import { buildMailtoHref } from "@/lib/mailto"
 import { DEFAULT_GLOBAL_SETTINGS } from "@shared/cms/defaults"
@@ -91,19 +90,22 @@ export default function StoryPost() {
     }
   }
 
+  const shareToolbarButtonClassNameDark =
+    "inline-flex h-12 w-12 items-center justify-center rounded-full bg-white text-rellia-teal transition-transform transition-colors hover:-translate-y-0.5 hover:bg-rellia-mint focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-rellia-teal"
+
   const shareBlock = (
-    <div className="flex flex-col items-start gap-4 text-current">
-      <p className="font-host-grotesk text-[12px] font-semibold uppercase tracking-[0.14em] text-black/45">
+    <div className="flex flex-col items-start gap-4 text-white">
+      <p className="font-host-grotesk text-[12px] font-semibold uppercase tracking-[0.14em] text-white/70">
         Share this story
       </p>
-      <div className="h-px w-full bg-current opacity-15" aria-hidden />
+      <div className="h-px w-full bg-white/20" aria-hidden />
 
       <div className="flex flex-wrap items-center gap-3">
         <a
           href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(canonical)}&text=${encodeURIComponent(title)}`}
           target="_blank"
           rel="noopener noreferrer"
-          className={shareToolbarButtonClassName}
+          className={shareToolbarButtonClassNameDark}
           aria-label="Share on X"
         >
           <ShareIconX />
@@ -112,7 +114,7 @@ export default function StoryPost() {
           href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(canonical)}`}
           target="_blank"
           rel="noopener noreferrer"
-          className={shareToolbarButtonClassName}
+          className={shareToolbarButtonClassNameDark}
           aria-label="Share on LinkedIn"
         >
           <ShareIconLinkedIn />
@@ -121,7 +123,7 @@ export default function StoryPost() {
           href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(canonical)}`}
           target="_blank"
           rel="noopener noreferrer"
-          className={shareToolbarButtonClassName}
+          className={shareToolbarButtonClassNameDark}
           aria-label="Share on Facebook"
         >
           <ShareIconFacebook />
@@ -131,7 +133,7 @@ export default function StoryPost() {
             subject: title,
             body: `${title}\n\n${canonical}`,
           })}
-          className={shareToolbarButtonClassName}
+          className={shareToolbarButtonClassNameDark}
           aria-label="Share by email"
         >
           <ShareIconMail />
@@ -141,8 +143,8 @@ export default function StoryPost() {
           type="button"
           onClick={handleCopyLink}
           className={cn(
-            shareToolbarButtonClassName,
-            copyState === "copied" && "border-rellia-teal bg-rellia-mint text-rellia-teal shadow-md",
+            shareToolbarButtonClassNameDark,
+            copyState === "copied" && "border border-rellia-teal bg-rellia-mint text-rellia-teal shadow-md",
           )}
           aria-label={copyState === "copied" ? "Link copied" : "Copy story link"}
         >
@@ -157,7 +159,7 @@ export default function StoryPost() {
           {copyState === "copied" ? (
             <motion.span
               key="copied-feedback"
-              className="font-host-grotesk text-sm font-semibold text-rellia-teal"
+              className="font-host-grotesk text-sm font-semibold text-rellia-mint"
               initial={{ opacity: 0, y: 4, scale: 0.98 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -4, scale: 0.98 }}
@@ -224,7 +226,6 @@ export default function StoryPost() {
             coverImageAlt={headerCoverAlt}
             toAbsoluteImageUrl={toAbsoluteImageUrl}
             shareBlock={shareBlock}
-            layoutMode={cmsStory.headerLayout === "block" ? "block" : "background"}
           />
 
           <section className="px-6 md:px-10 py-10 md:py-14">

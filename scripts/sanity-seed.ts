@@ -1691,8 +1691,7 @@ async function main() {
         excerpt: story.excerpt,
         headerImage: toSanityImageFieldValue(storyImageAssetId),
         headerImageAlt: story.coverImageAlt,
-        headerLayout:
-          slug === "founder-spotlight-the-pilot-that-became-procurement" ? "block" : "background",
+        headerLayout: "block",
         body: portableStoryBody(story),
         seo: {
           metaTitle: story.seoTitle,

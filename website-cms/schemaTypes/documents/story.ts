@@ -85,9 +85,9 @@ export const story = defineType({
         ],
         layout: 'radio',
       },
-      initialValue: 'background',
+      initialValue: 'block',
       description:
-        'Background fills the hero behind text. Image block shows the cover beside the headline on larger screens.',
+        'Image block shows the cover beside the headline on larger screens (recommended). Background mode is deprecated on the site.',
       group: 'content',
     }),
     defineField({

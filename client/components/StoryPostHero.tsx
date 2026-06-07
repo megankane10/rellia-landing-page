@@ -1,5 +1,4 @@
 import type { ReactNode } from "react"
-import { useState } from "react"
 import ScrollReveal from "@/components/ScrollReveal"
 import { cn } from "@/lib/utils"
 
@@ -11,7 +10,6 @@ export type StoryPostHeroProps = {
   coverImageAlt?: string | null
   toAbsoluteImageUrl: (src: string) => string
   shareBlock: ReactNode
-  layoutMode?: "background" | "block"
 }
 
 export const StoryPostHero = ({
@@ -22,48 +20,23 @@ export const StoryPostHero = ({
   coverImageAlt,
   toAbsoluteImageUrl,
   shareBlock,
-  layoutMode = "background",
 }: StoryPostHeroProps) => {
   const coverSrc = coverImageSrc?.trim() || null
   const coverAlt = (coverImageAlt?.trim() || title).trim()
 
-  const isBgMode = layoutMode === "background" && coverSrc
-
   return (
-    <section 
+    <section
       className={cn(
-        "relative overflow-hidden transition-all duration-500 rounded-b-[2.5rem] md:rounded-b-[3.5rem]",
-        isBgMode 
-          ? "bg-rellia-teal text-white pt-24 pb-16 md:pt-32 md:pb-24 lg:pt-[120px] lg:pb-[100px] group layout-background" 
-          : "bg-rellia-cream text-black pt-24 pb-12 md:pt-32 md:pb-16"
+        "relative overflow-hidden rounded-b-[2.5rem] md:rounded-b-[3.5rem]",
+        "bg-gradient-to-br from-[#071f26] via-rellia-teal to-[#144853]",
+        "pt-24 pb-12 md:pt-32 md:pb-16 lg:pb-20",
+        "text-white",
       )}
     >
-      {isBgMode ? (
-        <div className="absolute inset-0 z-0 pointer-events-none">
-          <img
-            src={toAbsoluteImageUrl(coverSrc)}
-            alt={coverAlt}
-            className="h-full w-full object-cover object-center md:object-[center_right]"
-            loading="eager"
-            fetchPriority="high"
-          />
-          <div
-            className="absolute inset-0 bg-gradient-to-b from-rellia-teal/95 via-rellia-teal/78 to-rellia-teal/25 md:bg-gradient-to-r md:from-rellia-teal/95 md:via-rellia-teal/62 md:to-transparent"
-            aria-hidden
-          />
-          <div
-            className="absolute inset-0 bg-gradient-to-b from-black/55 via-black/30 to-transparent md:bg-gradient-to-r md:from-black/72 md:via-black/28 md:to-transparent"
-            aria-hidden
-          />
-        </div>
-      ) : (
-        <div aria-hidden className="pointer-events-none absolute inset-0">
-          <div className="absolute -left-28 -top-32 h-[520px] w-[520px] rounded-full bg-rellia-mint/20 blur-3xl" />
-          <div className="absolute -right-40 top-1/3 h-[560px] w-[560px] -translate-y-1/2 rounded-full bg-rellia-teal/10 blur-3xl" />
-          <div className="absolute bottom-[-220px] left-1/3 h-[620px] w-[620px] -translate-x-1/2 rounded-full bg-rellia-mint/15 blur-3xl" />
-          <div className="absolute inset-0 opacity-[0.18] mix-blend-multiply [background-image:radial-gradient(circle_at_20%_10%,rgba(13,53,64,0.10),transparent_55%),radial-gradient(circle_at_80%_35%,rgba(13,53,64,0.08),transparent_52%),radial-gradient(circle_at_40%_95%,rgba(13,53,64,0.09),transparent_55%)]" />
-        </div>
-      )}
+      <div aria-hidden className="pointer-events-none absolute inset-0">
+        <div className="absolute -left-32 top-0 h-96 w-96 rounded-full bg-rellia-mint/10 blur-3xl" />
+        <div className="absolute -right-24 bottom-0 h-80 w-80 rounded-full bg-white/5 blur-3xl" />
+      </div>
 
       <div className="relative z-10 mx-auto max-w-[1300px] px-6 md:px-10">
         <div className="mx-auto w-full max-w-[1100px]">
@@ -71,12 +44,12 @@ export const StoryPostHero = ({
             <div
               className={cn(
                 "flex flex-col gap-8",
-                (coverSrc && !isBgMode) && "lg:grid lg:grid-cols-[minmax(0,1fr)_min(42%,440px)] lg:items-start lg:gap-10",
+                coverSrc && "lg:grid lg:grid-cols-[minmax(0,1fr)_min(42%,440px)] lg:items-start lg:gap-10",
               )}
             >
-              <div className={cn("flex min-w-0 flex-col", isBgMode ? "max-w-[850px] z-10" : "")}>
+              <div className="flex min-w-0 flex-col">
                 <div className="flex flex-wrap items-center gap-3">
-                  <div className="inline-flex w-fit items-center gap-2 rounded-full bg-rellia-mint px-3 py-1.5 shrink-0">
+                  <div className="inline-flex w-fit shrink-0 items-center gap-2 rounded-full bg-rellia-mint px-3 py-1.5">
                     <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-rellia-teal" aria-hidden />
                     <span className="font-host-grotesk text-[11px] font-semibold uppercase tracking-[0.14em] text-rellia-teal">
                       {tag}
@@ -84,21 +57,11 @@ export const StoryPostHero = ({
                   </div>
                 </div>
 
-                <h1
-                  className={cn(
-                    "mt-6 font-host-grotesk text-3xl font-medium leading-tight tracking-tight md:text-4xl lg:text-5xl",
-                    isBgMode ? "text-white" : "text-rellia-teal",
-                  )}
-                >
+                <h1 className="mt-6 font-host-grotesk text-3xl font-medium leading-tight tracking-tight text-white md:text-4xl lg:text-5xl">
                   {title}
                 </h1>
                 {excerpt ? (
-                  <p
-                    className={cn(
-                      "mt-4 max-w-3xl font-urbanist text-base font-normal leading-relaxed md:text-lg",
-                      isBgMode ? "text-white/88" : "text-black",
-                    )}
-                  >
+                  <p className="mt-4 max-w-3xl font-urbanist text-base font-normal leading-relaxed text-white/85 md:text-lg">
                     {excerpt}
                   </p>
                 ) : null}
@@ -107,8 +70,8 @@ export const StoryPostHero = ({
                 {shareBlock}
               </div>
 
-              {(coverSrc && !isBgMode) ? (
-                <figure className="relative w-full shrink-0 overflow-hidden rounded-2xl border border-black/10 bg-black/5 shadow-[0_20px_48px_-28px_rgba(13,53,64,0.45)] aspect-[16/10] lg:aspect-[4/3]">
+              {coverSrc ? (
+                <figure className="relative aspect-[16/10] w-full shrink-0 overflow-hidden rounded-2xl border border-white/15 bg-black/20 shadow-[0_24px_56px_-28px_rgba(0,0,0,0.55)] lg:aspect-[4/3]">
                   <img
                     src={toAbsoluteImageUrl(coverSrc)}
                     alt={coverAlt}
