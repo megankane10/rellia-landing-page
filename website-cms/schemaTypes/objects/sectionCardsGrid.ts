@@ -33,6 +33,7 @@ export const sectionCardsGrid = defineType({
               description: 'Optional pill label above the title; leave empty to hide.',
             }),
             defineField({name: 'image', type: 'image', options: {hotspot: true}}),
+            defineField({name: 'imageUrl', title: 'Card image URL (fallback)', type: 'string'}),
             defineField({name: 'imageAlt', type: 'string'}),
             defineField({name: 'cta', type: 'navItem'}),
             defineField({

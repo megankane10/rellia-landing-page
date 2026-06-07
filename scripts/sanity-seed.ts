@@ -812,7 +812,17 @@ const buildLogoMarqueeItems = async (
     logo?: ReturnType<typeof toSanityImageFieldValue>
   }> = []
   for (const mark of marks) {
-    const assetId = await resolveImageAssetId(client, mark.src)
+    let assetId: string | null = null
+    if (isLocalPublicImagePath(mark.src)) {
+      assetId = await resolveImageAssetId(client, mark.src)
+    } else if (/^https?:\/\//i.test(mark.src)) {
+      const ext = mark.src.toLowerCase().endsWith(".svg") ? "svg" : "png"
+      assetId = await resolveRemoteImageAssetId(
+        client,
+        mark.src,
+        `${slugify(mark.name)}-logo.${ext}`,
+      )
+    }
     const logo = toSanityImageFieldValue(assetId)
     if (!logo) continue
     items.push({
@@ -1806,7 +1816,7 @@ async function main() {
     createOrReplace: {
       _id: "page.supporting-health-founders",
       _type: "page",
-      title: "Supporting Health Founders",
+      title: "Supporting Health Founders — Page Builder Showcase",
       slug: { _type: "slug", current: "supporting-health-founders" },
       sections: [
         {
@@ -1859,13 +1869,15 @@ async function main() {
         {
           _type: "sectionHero",
           _key: "shf-hero-alt",
-          badge: "Section: Hero",
+          badge: "Interior hero",
           headline: ptBlock("shf-hero-alt-h", "A flexible hero block for interior pages"),
           subheadline: ptBlock(
             "shf-hero-alt-sub",
             "Use when you need a teal band with optional background image, badge, and dual CTAs.",
             "normal",
           ),
+          imageUrl:
+            "https://images.pexels.com/photos/3183158/pexels-photo-3183158.jpeg?auto=compress&cs=tinysrgb&w=1600",
           primaryCta: { label: "Explore programs", href: "/programs" },
           secondaryCta: { label: "Contact us", href: "/contact" },
         },
@@ -1921,6 +1933,8 @@ async function main() {
               body: "Build a startup-friendly quality system with expert guidance.",
               iconKey: "ShieldCheck",
               badge: "Program",
+              imageUrl:
+                "https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=1200",
               cta: { label: "Learn more", href: "/programs" },
             },
             {
@@ -1929,6 +1943,8 @@ async function main() {
               body: "15-minute assessment with instant readiness scoring.",
               iconKey: "Zap",
               badge: "Free tool",
+              imageUrl:
+                "https://images.pexels.com/photos/3182811/pexels-photo-3182811.jpeg?auto=compress&cs=tinysrgb&w=1200",
               cta: { label: "Start now", href: "/startup-diagnostic" },
             },
             {
@@ -1936,6 +1952,8 @@ async function main() {
               title: "Advisor matching",
               body: "Get introduced to operators with relevant healthcare experience.",
               iconKey: "Users",
+              imageUrl:
+                "https://images.pexels.com/photos/5668858/pexels-photo-5668858.jpeg?auto=compress&cs=tinysrgb&w=1200",
               cta: { label: "Browse advisors", href: "/advisors" },
             },
           ],
@@ -1947,10 +1965,30 @@ async function main() {
           title: "Built for serious health tech teams",
           description: "Eligibility bento cards with photography and bold overlay headlines.",
           items: [
-            { _key: "b1", text: "Digital health & SaMD founders" },
-            { _key: "b2", text: "Teams preparing for health-system pilots" },
-            { _key: "b3", text: "Companies navigating FDA or CE pathways" },
-            { _key: "b4", text: "Founders building enterprise-grade evidence" },
+            {
+              _key: "b1",
+              text: "Digital health & SaMD founders",
+              imageUrl:
+                "https://images.pexels.com/photos/3184292/pexels-photo-3184292.jpeg?auto=compress&cs=tinysrgb&w=1200",
+            },
+            {
+              _key: "b2",
+              text: "Teams preparing for health-system pilots",
+              imageUrl:
+                "https://images.pexels.com/photos/3182761/pexels-photo-3182761.jpeg?auto=compress&cs=tinysrgb&w=1200",
+            },
+            {
+              _key: "b3",
+              text: "Companies navigating FDA or CE pathways",
+              imageUrl:
+                "https://images.pexels.com/photos/3183158/pexels-photo-3183158.jpeg?auto=compress&cs=tinysrgb&w=1200",
+            },
+            {
+              _key: "b4",
+              text: "Founders building enterprise-grade evidence",
+              imageUrl:
+                "https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=1200",
+            },
           ],
         },
         {
@@ -2086,7 +2124,10 @@ async function main() {
           layout: "split",
           filloutFormUrl: "https://forms.fillout.com/t/r5hdDmQodfus",
           panelHeadline: "Apply to Rellia",
-          panelBody: "Split form embed — supporting copy and bullet list beside the Fillout form.",
+          panelBody: "Click the button below to reveal the application form — same pattern as the Apply page.",
+          panelImageUrl:
+            "https://images.pexels.com/photos/3182761/pexels-photo-3182761.jpeg?auto=compress&cs=tinysrgb&w=1600",
+          ctaLabel: "Apply now",
           benefits: [
             "Vetted advisor introductions",
             "Programs matched to your stage",
@@ -2097,7 +2138,7 @@ async function main() {
           _type: "sectionFaq",
           _key: "shf-faq",
           title: "Common questions",
-          subtitle: "FAQ accordion section — flat edges in page builder layout.",
+          subtitle: "FAQ accordion with rounded card container; section bands stay square-edged.",
           items: [
             {
               _key: "q1",
@@ -2130,8 +2171,11 @@ async function main() {
         },
       ],
       seo: {
+        title: "Supporting Health Founders — Rellia Health",
         metaTitle: "Supporting Health Founders — Rellia Health",
         metaDescription:
+          "Rellia Health connects healthcare founders with diagnostics, vetted advisors, and programs built for regulated markets.",
+        description:
           "Rellia Health connects healthcare founders with diagnostics, vetted advisors, and programs built for regulated markets.",
         ogTitle: "Supporting Health Founders — Rellia Health",
         ogDescription:

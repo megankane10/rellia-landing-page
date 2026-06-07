@@ -21,6 +21,7 @@ export const sectionEligibilityBento = defineType({
             defineField({name: 'text', type: 'string', validation: (Rule) => Rule.required()}),
             defineField({name: 'pexelsQuery', type: 'string'}),
             defineField({name: 'image', type: 'image', options: {hotspot: true}}),
+            defineField({name: 'imageUrl', title: 'Card image URL (fallback)', type: 'string'}),
           ],
         }),
       ],

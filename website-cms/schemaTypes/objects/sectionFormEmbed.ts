@@ -61,6 +61,14 @@ export const sectionFormEmbed = defineType({
       type: 'string',
       hidden: ({parent}) => parent?.layout !== 'split',
     }),
+    defineField({
+      name: 'ctaLabel',
+      title: 'Reveal form button label',
+      type: 'string',
+      initialValue: 'Apply now',
+      description: 'Split layout shows this button first; the form appears after click.',
+      hidden: ({parent}) => parent?.layout !== 'split',
+    }),
   ],
   preview: sectionListPreview({typeLabel: 'Form embed', fallback: 'Form embed'}),
 })

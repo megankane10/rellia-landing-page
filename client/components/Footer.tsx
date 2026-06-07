@@ -78,28 +78,15 @@ const footerSectionHeadingClass =
 const legalLinkClass =
   "font-urbanist text-[13px] leading-snug text-white/70 transition-colors hover:text-rellia-mint md:text-sm"
 
-const BUILT_BY_TOOLTIP_DISMISS_MS = 520
 const BUILT_BY_FADE_BACK_MS = 450
-const BUILT_BY_TOOLTIP_ENTER_MS = 480
 
 type BuiltBySweepPhase = "idle" | "forward" | "reverse" | "fade-back"
-type BuiltByTooltipPhase = "hidden" | "entering" | "visible" | "leaving"
 
 const BuiltByCredit = () => {
   const [open, setOpen] = React.useState(false)
   const [isHovered, setIsHovered] = React.useState(false)
-  const [tooltipPhase, setTooltipPhase] = React.useState<BuiltByTooltipPhase>("hidden")
   const [sweepPhase, setSweepPhase] = React.useState<BuiltBySweepPhase>("idle")
-  const dismissTimerRef = React.useRef<ReturnType<typeof setTimeout> | null>(null)
   const fadeBackTimerRef = React.useRef<ReturnType<typeof setTimeout> | null>(null)
-  const enterTimerRef = React.useRef<ReturnType<typeof setTimeout> | null>(null)
-
-  const clearDismissTimer = () => {
-    if (dismissTimerRef.current) {
-      clearTimeout(dismissTimerRef.current)
-      dismissTimerRef.current = null
-    }
-  }
 
   const clearFadeBackTimer = () => {
     if (fadeBackTimerRef.current) {
@@ -108,46 +95,17 @@ const BuiltByCredit = () => {
     }
   }
 
-  const clearEnterTimer = () => {
-    if (enterTimerRef.current) {
-      clearTimeout(enterTimerRef.current)
-      enterTimerRef.current = null
-    }
-  }
-
-  const beginTooltipEnter = () => {
-    clearDismissTimer()
-    clearEnterTimer()
-    setTooltipPhase("entering")
-    setOpen(true)
-    enterTimerRef.current = setTimeout(() => {
-      setTooltipPhase("visible")
-      enterTimerRef.current = null
-    }, BUILT_BY_TOOLTIP_ENTER_MS)
-  }
-
-  const beginTooltipLeave = () => {
-    clearEnterTimer()
-    setTooltipPhase("leaving")
-    clearDismissTimer()
-    dismissTimerRef.current = setTimeout(() => {
-      setOpen(false)
-      setTooltipPhase("hidden")
-      dismissTimerRef.current = null
-    }, BUILT_BY_TOOLTIP_DISMISS_MS)
-  }
-
   const handlePointerEnter = () => {
     clearFadeBackTimer()
     setIsHovered(true)
     setSweepPhase("forward")
-    beginTooltipEnter()
+    setOpen(true)
   }
 
   const handlePointerLeave = () => {
     setIsHovered(false)
     setSweepPhase("reverse")
-    beginTooltipLeave()
+    setOpen(false)
   }
 
   const handleSweepAnimationEnd = (event: React.AnimationEvent<HTMLSpanElement>) => {
@@ -162,17 +120,13 @@ const BuiltByCredit = () => {
 
   React.useEffect(
     () => () => {
-      clearDismissTimer()
       clearFadeBackTimer()
-      clearEnterTimer()
     },
     [],
   )
 
-  const tooltipVisible = open || tooltipPhase === "leaving"
-
   return (
-    <Tooltip open={tooltipVisible} onOpenChange={setOpen} delayDuration={0}>
+    <Tooltip open={open} onOpenChange={setOpen} delayDuration={140}>
       <TooltipTrigger asChild>
         <a
           href={SAFDAR_LINKEDIN_URL}
@@ -188,15 +142,12 @@ const BuiltByCredit = () => {
             clearFadeBackTimer()
             setIsHovered(true)
             setSweepPhase("forward")
-            beginTooltipEnter()
+            setOpen(true)
           }}
           onTouchEnd={() => {
             setIsHovered(false)
             setSweepPhase("reverse")
-            clearDismissTimer()
-            dismissTimerRef.current = setTimeout(() => {
-              beginTooltipLeave()
-            }, 2000)
+            setTimeout(() => setOpen(false), 2000)
           }}
         >
           <span className="built-by-credit-label">
@@ -222,14 +173,7 @@ const BuiltByCredit = () => {
       <TooltipContent
         side="top"
         sideOffset={8}
-        forceMount
-        className={cn(
-          "built-by-tooltip !animate-none data-[state=closed]:!animate-none",
-          tooltipPhase === "entering" && "built-by-tooltip--entering",
-          tooltipPhase === "visible" && "built-by-tooltip--visible",
-          tooltipPhase === "leaving" && "built-by-tooltip--leaving",
-          tooltipPhase === "hidden" && "built-by-tooltip--hidden",
-        )}
+        className="built-by-tooltip !animate-none data-[state=closed]:!animate-none"
       >
         <span className="built-by-tooltip-inner">
           Let&apos;s connect on LinkedIn

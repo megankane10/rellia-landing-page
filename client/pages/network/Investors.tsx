@@ -341,7 +341,7 @@ export default function Investors() {
                 sectionClassName="bg-rellia-cream/20"
               />
 
-              <div className="py-10 md:py-16 bg-white">
+              <div className="bg-[#071018] py-10 md:py-16">
                 <PipelinePhotoSection>
                   <ScrollReveal>
                     <h2 className="mt-5 font-host-grotesk text-3xl font-semibold leading-tight tracking-tight text-white md:text-[40px]">

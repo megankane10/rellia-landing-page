@@ -331,6 +331,7 @@ export type CmsSectionFormEmbed = {
   panelBody?: string
   benefits?: string[]
   panelImageUrl?: string
+  ctaLabel?: string
 }
 
 export type CmsPageSection =
