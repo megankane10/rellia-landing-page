@@ -3,7 +3,7 @@ import {internalLabelField, sectionListPreview} from '../shared/sectionPreview'
 
 export const sectionDiagnosticSurvey = defineType({
   name: 'sectionDiagnosticSurvey',
-  title: 'Diagnostic split',
+  title: 'Text split',
   type: 'object',
   fields: [
     defineField(internalLabelField),
@@ -14,7 +14,7 @@ export const sectionDiagnosticSurvey = defineType({
       options: {
         layout: 'radio',
         list: [
-          {title: 'Text + category list', value: 'categories'},
+          {title: 'Text + list', value: 'categories'},
           {title: 'Text + full-height image', value: 'imageSplit'},
         ],
       },
@@ -23,30 +23,26 @@ export const sectionDiagnosticSurvey = defineType({
     defineField({name: 'badge', type: 'string'}),
     defineField({name: 'title', type: 'portableRichText'}),
     defineField({name: 'subtitle', type: 'portableRichText'}),
-    defineField({
-      name: 'cta',
-      title: 'Primary button',
-      type: 'builderCtaAction',
-      validation: (Rule) => Rule.required(),
-    }),
+    defineField({name: 'primaryCta', title: 'Primary button', type: 'navItem'}),
+    defineField({name: 'secondaryCta', title: 'Secondary button (optional)', type: 'navItem'}),
     defineField({
       name: 'categoriesTitle',
-      title: 'Categories heading',
+      title: 'List heading',
       type: 'string',
       hidden: ({parent}) => parent?.layout === 'imageSplit',
     }),
     defineField({
       name: 'categories',
-      title: 'Category labels',
+      title: 'List items',
       type: 'array',
       of: [defineArrayMember({type: 'string'})],
       hidden: ({parent}) => parent?.layout === 'imageSplit',
     }),
     defineField({
       name: 'categoryIcon',
-      title: 'Category list icon',
+      title: 'List item icon',
       type: 'string',
-      description: 'Lucide icon for each category row. Defaults to CalendarDays.',
+      description: 'Lucide icon for each list row. Defaults to CalendarDays.',
       hidden: ({parent}) => parent?.layout === 'imageSplit',
     }),
     defineField({
@@ -69,5 +65,5 @@ export const sectionDiagnosticSurvey = defineType({
       hidden: ({parent}) => parent?.layout !== 'imageSplit',
     }),
   ],
-  preview: sectionListPreview({typeLabel: 'Diagnostic split', fallback: 'Diagnostic'}),
+  preview: sectionListPreview({typeLabel: 'Text split', fallback: 'Text split'}),
 })

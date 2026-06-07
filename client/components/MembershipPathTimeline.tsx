@@ -3,6 +3,7 @@ import { useRef } from "react"
 import { Link } from "react-router-dom"
 import { ArrowRight } from "lucide-react"
 import { motion, useInView, useReducedMotion } from "framer-motion"
+import NetworkEyebrow from "@/components/network/NetworkEyebrow"
 import { cn } from "@/lib/utils"
 
 export type MembershipPathStep = {
@@ -86,6 +87,8 @@ export type MembershipPathTimelineProps = {
   belowTimeline?: ReactNode
   /** Rendered in the section header after the subheading (e.g. primary CTA left-aligned under intro copy). */
   headingFooter?: ReactNode
+  /** Optional eyebrow badge above the heading */
+  badge?: string
 }
 
 const defaultHeadingTitle = "Path to Membership"
@@ -106,6 +109,7 @@ const MembershipPathTimeline = ({
   horizontalFromMd = false,
   belowTimeline,
   headingFooter,
+  badge,
 }: MembershipPathTimelineProps = {}) => {
   const stepsToRender = steps ?? MEMBERSHIP_PATH_STEPS
   const roleLinksToRender = roleLinks?.length ? roleLinks : DEFAULT_ROLE_LINKS
@@ -155,6 +159,9 @@ const MembershipPathTimeline = ({
               headingFooter ? "pb-14 md:pb-16 lg:pb-20" : "pb-8 md:pb-10 lg:pb-12",
             )}
           >
+            {badge?.trim() ? (
+              <NetworkEyebrow label={badge.trim()} tone="onLight" className="mb-4 md:mb-5" />
+            ) : null}
             <h1
               id={headingId}
               className="font-host-grotesk text-3xl font-semibold leading-tight tracking-tight text-rellia-teal md:text-4xl lg:text-[2.75rem]"

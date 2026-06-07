@@ -292,10 +292,13 @@ export type CmsSectionDiagnosticSurvey = {
   badge?: string
   title?: string | SanityPortableText
   subtitle?: string | SanityPortableText
+  primaryCta?: NavItem
+  secondaryCta?: NavItem
+  /** @deprecated Use primaryCta / secondaryCta */
   cta?: CmsBuilderCtaAction
-  /** @deprecated Use cta instead */
+  /** @deprecated Use primaryCta */
   ctaLabel?: string
-  /** @deprecated Use cta instead */
+  /** @deprecated Use primaryCta */
   ctaHref?: string
   categoriesTitle?: string
   categories?: string[]

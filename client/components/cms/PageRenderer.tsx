@@ -216,59 +216,57 @@ const SectionFormEmbed = ({ section }: { section: CmsSectionFormEmbed }) => {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.3 }}
-              className="py-16 md:py-24 lg:py-28"
+              className="w-full"
             >
-              <div className="mx-auto max-w-[900px] px-6 md:px-10">
-                <div className="relative overflow-hidden rounded-[24px] bg-rellia-teal p-8 md:p-12 lg:p-14">
-                  {panelImage ? (
-                    <div className="pointer-events-none absolute inset-0" aria-hidden>
-                      <img
-                        src={panelImage}
-                        alt=""
-                        className="h-full w-full object-cover opacity-[0.32]"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-br from-rellia-teal/95 via-[#0f5c5c]/90 to-rellia-teal/85" />
-                    </div>
-                  ) : (
-                    <div
-                      className="absolute inset-0 bg-gradient-to-br from-rellia-teal via-[#0f5c5c] to-rellia-teal/85"
-                      aria-hidden
+              <div className="relative w-full overflow-hidden bg-rellia-teal py-16 md:py-24 lg:py-28">
+                {panelImage ? (
+                  <div className="pointer-events-none absolute inset-0" aria-hidden>
+                    <img
+                      src={panelImage}
+                      alt=""
+                      className="h-full w-full object-cover opacity-[0.32]"
                     />
-                  )}
-                  <div className="relative z-10">
-                    {section.panelHeadline ? (
-                      <h2 className="font-host-grotesk text-3xl font-semibold leading-tight tracking-tight text-rellia-mint md:text-[40px]">
-                        {cmsDisplayText(section.panelHeadline)}
-                      </h2>
-                    ) : null}
-                    {section.panelBody ? (
-                      <p className="mt-5 max-w-2xl font-urbanist text-base leading-relaxed text-white/90 md:text-lg">
-                        {cmsDisplayText(section.panelBody)}
-                      </p>
-                    ) : null}
-                    {benefits.length > 0 ? (
-                      <ul className="mt-8 flex flex-col gap-y-4 font-urbanist text-base text-white/95 md:text-lg">
-                        {benefits.map((benefit) => (
-                          <li key={benefit} className="flex items-start gap-3">
-                            <span className="mt-2 h-2.5 w-2.5 shrink-0 rounded-full bg-rellia-mint" aria-hidden />
-                            {benefit}
-                          </li>
-                        ))}
-                      </ul>
-                    ) : null}
-                    <div className="mt-10">
-                      <RelliaAction
-                        type="button"
-                        variant="mintOnTealStrip"
-                        size="comfortable"
-                        className="w-full justify-center sm:w-auto sm:min-w-[220px]"
-                        onClick={() => setShowForm(true)}
-                        aria-label={ctaLabel}
-                      >
-                        {ctaLabel}
-                        <ArrowRight className="h-4 w-4" aria-hidden />
-                      </RelliaAction>
-                    </div>
+                    <div className="absolute inset-0 bg-gradient-to-br from-rellia-teal/95 via-[#0f5c5c]/90 to-rellia-teal/85" />
+                  </div>
+                ) : (
+                  <div
+                    className="absolute inset-0 bg-gradient-to-br from-rellia-teal via-[#0f5c5c] to-rellia-teal/85"
+                    aria-hidden
+                  />
+                )}
+                <div className="relative z-10 mx-auto w-full max-w-[1300px] px-6 md:px-10 lg:px-14">
+                  {section.panelHeadline ? (
+                    <h2 className="font-host-grotesk text-3xl font-semibold leading-tight tracking-tight text-rellia-mint md:text-[40px]">
+                      {cmsDisplayText(section.panelHeadline)}
+                    </h2>
+                  ) : null}
+                  {section.panelBody ? (
+                    <p className="mt-5 max-w-2xl font-urbanist text-base leading-relaxed text-white/90 md:text-lg">
+                      {cmsDisplayText(section.panelBody)}
+                    </p>
+                  ) : null}
+                  {benefits.length > 0 ? (
+                    <ul className="mt-8 flex flex-col gap-y-4 font-urbanist text-base text-white/95 md:text-lg">
+                      {benefits.map((benefit) => (
+                        <li key={benefit} className="flex items-start gap-3">
+                          <span className="mt-2 h-2.5 w-2.5 shrink-0 rounded-full bg-rellia-mint" aria-hidden />
+                          {benefit}
+                        </li>
+                      ))}
+                    </ul>
+                  ) : null}
+                  <div className="mt-10">
+                    <RelliaAction
+                      type="button"
+                      variant="mintOnTealStrip"
+                      size="comfortable"
+                      className="w-full justify-center sm:w-auto sm:min-w-[220px]"
+                      onClick={() => setShowForm(true)}
+                      aria-label={ctaLabel}
+                    >
+                      {ctaLabel}
+                      <ArrowRight className="h-4 w-4" aria-hidden />
+                    </RelliaAction>
                   </div>
                 </div>
               </div>
@@ -279,9 +277,9 @@ const SectionFormEmbed = ({ section }: { section: CmsSectionFormEmbed }) => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.45, delay: 0.05 }}
-              className={cn("w-full pt-12 pb-4", FILLOUT_EMBED_VIEWPORT_MIN_CLASS)}
+              className={cn("w-full bg-rellia-cream/40 pt-12 pb-4", FILLOUT_EMBED_VIEWPORT_MIN_CLASS)}
             >
-              <div className="mx-auto max-w-[1100px] px-6 md:px-10">
+              <div className="mx-auto w-full max-w-[1300px] px-6 md:px-10">
                 <button
                   type="button"
                   onClick={() => setShowForm(false)}
@@ -301,8 +299,10 @@ const SectionFormEmbed = ({ section }: { section: CmsSectionFormEmbed }) => {
   }
 
   return (
-    <section className={cn("w-full bg-white", FILLOUT_EMBED_VIEWPORT_MIN_CLASS)}>
-      <FilloutStandardEmbed filloutId={formId} dynamicResize />
+    <section className={cn("w-full bg-rellia-cream/40", FILLOUT_EMBED_VIEWPORT_MIN_CLASS)}>
+      <div className={cn("w-full min-h-[700px] md:min-h-[1000px]", PROGRAM_FILLOUT_EMBED_MIN_CLASS)}>
+        <FilloutStandardEmbed filloutId={formId} dynamicResize />
+      </div>
     </section>
   )
 }
@@ -684,30 +684,22 @@ const SectionJourneyTimeline = ({ section }: { section: CmsSectionJourneyTimelin
   const subheading = cmsDisplayText(section.subheading) || undefined
 
   return (
-    <>
-      {section.badge?.trim() ? (
-        <div className="bg-rellia-cream/20 px-6 pt-14 md:px-10 md:pt-20">
-          <div className="mx-auto w-full max-w-[1300px]">
-            <NetworkEyebrow label={section.badge.trim()} tone="onLight" />
+    <MembershipPathTimeline
+      className="bg-rellia-cream/20"
+      badge={section.badge?.trim() || undefined}
+      headingTitle={headingTitle}
+      subheading={subheading}
+      steps={steps}
+      showRoleLinks={section.showRoleLinks !== false}
+      roleLinks={roleLinks}
+      belowTimeline={
+        section.cta?.label ? (
+          <div className="flex justify-start">
+            <BuilderCtaButton cta={section.cta} className="w-full justify-center sm:w-auto" />
           </div>
-        </div>
-      ) : null}
-      <MembershipPathTimeline
-        className={cn("bg-rellia-cream/20", section.badge?.trim() ? "border-t-0 pt-0" : "")}
-        headingTitle={headingTitle}
-        subheading={subheading}
-        steps={steps}
-        showRoleLinks={section.showRoleLinks !== false}
-        roleLinks={roleLinks}
-        belowTimeline={
-          section.cta?.label ? (
-            <div className="flex justify-start">
-              <BuilderCtaButton cta={section.cta} className="w-full justify-center sm:w-auto" />
-            </div>
-          ) : undefined
-        }
-      />
-    </>
+        ) : undefined
+      }
+    />
   )
 }
 
@@ -716,6 +708,14 @@ const SectionDiagnosticSurvey = ({ section }: { section: CmsSectionDiagnosticSur
   const categoryIconName = cmsCleanText(section.categoryIcon) || "CalendarDays"
   const imageSrc = cmsCleanText(section.imageUrl)
   const isImageSplit = layout === "imageSplit" && Boolean(imageSrc)
+
+  const primaryCta = section.primaryCta?.href
+    ? section.primaryCta
+    : section.cta?.label
+      ? { label: section.cta.label, href: section.cta.href ?? section.ctaHref ?? "/" }
+      : section.ctaLabel
+        ? { label: section.ctaLabel, href: section.ctaHref ?? "/" }
+        : undefined
 
   return (
     <section
@@ -740,7 +740,7 @@ const SectionDiagnosticSurvey = ({ section }: { section: CmsSectionDiagnosticSur
         >
           <ScrollReveal>
             {section.badge ? <NetworkEyebrow label={section.badge} tone="onLight" /> : null}
-            <div className="mt-4 mb-6">
+            <div className={cn("mb-6", section.badge ? "mt-5" : "mt-0")}>
               <SectionPortableText value={section.title} variant="heading" tone="dark" />
             </div>
             {section.subtitle ? (
@@ -751,12 +751,28 @@ const SectionDiagnosticSurvey = ({ section }: { section: CmsSectionDiagnosticSur
                 className="mb-10 max-w-xl"
               />
             ) : null}
-            <BuilderCtaButton
-              cta={section.cta}
-              fallbackLabel={section.ctaLabel}
-              fallbackHref={section.ctaHref}
-              className="w-full justify-center sm:w-auto"
-            />
+            {(primaryCta?.href || section.secondaryCta?.href) ? (
+              <div className="flex w-full flex-col gap-3 sm:flex-row sm:flex-wrap">
+                {primaryCta?.href ? (
+                  <RelliaAction asChild variant="mintTealFill" size="comfortable" className="w-full justify-center sm:w-auto">
+                    <CtaLink item={primaryCta} className="inline-flex w-full cursor-pointer items-center justify-center gap-2 sm:w-auto">
+                      {primaryCta.label}
+                      <ArrowRight className="h-5 w-5" aria-hidden />
+                    </CtaLink>
+                  </RelliaAction>
+                ) : null}
+                {section.secondaryCta?.href ? (
+                  <RelliaAction
+                    asChild
+                    variant="outlineOnWhite"
+                    size="comfortable"
+                    className="w-full justify-center sm:w-auto"
+                  >
+                    <CtaLink item={section.secondaryCta} className="inline-flex w-full cursor-pointer items-center justify-center gap-2 sm:w-auto" />
+                  </RelliaAction>
+                ) : null}
+              </div>
+            ) : null}
           </ScrollReveal>
         </div>
 

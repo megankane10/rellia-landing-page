@@ -177,78 +177,22 @@ var storyBySlugQuery = `*[_type == "story" && slug.current == $slug && !(_id in 
   body,
   ${seoFragment}
 }`;
-var pageBySlugQuery = `*[_type == "page" && slug.current == $slug && slug.current != "terms" && slug.current != "privacy" && !(_id in path("drafts.**"))][0]{
-  title,
-  "slug": slug.current,
-  ${seoFragment},
-  sections[]{
+var portableRichTextBodyFragment = `body[]{
+  ...,
+  _type == "image" => {
     ...,
-    "imageUrl": coalesce(image.asset->url, imageUrl),
-    "panelImageUrl": coalesce(panelImage.asset->url, panelImageUrl),
-    primaryCta{ label, href, description, badge, openInNewTab },
-    secondaryCta{ label, href, description, badge, openInNewTab },
-    metrics[]{ label, value, suffix },
-    cards[]{
-      ...,
-      "imageUrl": coalesce(image.asset->url, imageUrl),
-      cta{ label, href, description, badge }
-    },
-    items[]{
-      ...,
-      question,
-      answer,
-      link{ label, href, description, badge },
-      "imageUrl": coalesce(image.asset->url, imageUrl)
-    },
-    leftColumn{
-      title,
-      body,
-      steps[]{ id, label, detail, icon }
-    },
-    rightColumn{
-      title,
-      body,
-      steps[]{ id, label, detail, icon }
-    }
-  },
-  pageBuilder[]{
-    ...,
-    "imageUrl": coalesce(image.asset->url, imageUrl),
-    "panelImageUrl": coalesce(panelImage.asset->url, panelImageUrl),
-    primaryCta{ label, href, description, badge, openInNewTab },
-    secondaryCta{ label, href, description, badge, openInNewTab },
-    metrics[]{ label, value, suffix },
-    cards[]{
-      ...,
-      "imageUrl": coalesce(image.asset->url, imageUrl),
-      cta{ label, href, description, badge }
-    },
-    items[]{
-      ...,
-      question,
-      answer,
-      link{ label, href, description, badge },
-      "imageUrl": coalesce(image.asset->url, imageUrl)
-    },
-    leftColumn{
-      title,
-      body,
-      steps[]{ id, label, detail, icon }
-    },
-    rightColumn{
-      title,
-      body,
-      steps[]{ id, label, detail, icon }
-    }
+    "url": asset->url
   }
 }`;
-var pageSectionsFragment = `sections[]{
-  ...,
+var pageSectionFieldsFragment = `...,
   "imageUrl": coalesce(image.asset->url, imageUrl),
   "panelImageUrl": coalesce(panelImage.asset->url, panelImageUrl),
-  primaryCta{ label, href, description, badge },
+  primaryCta{ label, href, description, badge, openInNewTab },
   secondaryCta{ label, href, description, badge, openInNewTab },
+  cta{ label, actionType, href, filloutFormUrl },
   metrics[]{ label, value, suffix },
+  steps[]{ title, description },
+  roleLinks[]{ title, description, href },
   cards[]{
     ...,
     "imageUrl": coalesce(image.asset->url, imageUrl),
@@ -261,6 +205,7 @@ var pageSectionsFragment = `sections[]{
     link{ label, href, description, badge },
     "imageUrl": coalesce(image.asset->url, imageUrl)
   },
+  ${portableRichTextBodyFragment},
   leftColumn{
     title,
     body,
@@ -278,8 +223,15 @@ var pageSectionsFragment = `sections[]{
     company,
     "image": coalesce(imageSrc, image.asset->url),
     "logo": coalesce(logoSrc, logo.asset->url)
-  }
+  }`;
+var pageBySlugQuery = `*[_type == "page" && slug.current == $slug && slug.current != "terms" && slug.current != "privacy" && !(_id in path("drafts.**"))][0]{
+  title,
+  "slug": slug.current,
+  ${seoFragment},
+  sections[]{ ${pageSectionFieldsFragment} },
+  pageBuilder[]{ ${pageSectionFieldsFragment} }
 }`;
+var pageSectionsFragment = `sections[]{ ${pageSectionFieldsFragment} }`;
 var networkFoundersPageQuery = `*[_type == "networkFoundersPage"][0]{
   title,
   useModularPage,

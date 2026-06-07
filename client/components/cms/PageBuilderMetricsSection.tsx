@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react"
 import { cn } from "@/lib/utils"
-import PillTag from "@/components/PillTag"
+import NetworkEyebrow from "@/components/network/NetworkEyebrow"
 
 function useCountUp(target: number, enabled: boolean, durationMs = 1200) {
   const [value, setValue] = useState(0)
@@ -112,12 +112,7 @@ export default function PageBuilderMetricsSection({
     <div ref={sectionRef} className="w-full">
       <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-[1fr_min(380px,38%)] lg:gap-14 xl:gap-16">
         <div className="flex flex-col items-start text-left">
-          {showBadge ? (
-            <PillTag
-              label={badgeLabel}
-              className="border-rellia-teal/15 bg-rellia-mint/20 text-rellia-teal"
-            />
-          ) : null}
+          {showBadge ? <NetworkEyebrow label={badgeLabel} tone="onLight" /> : null}
           <h2
             className={cn(
               "font-host-grotesk text-3xl font-semibold leading-tight tracking-tight text-black md:text-[40px]",
