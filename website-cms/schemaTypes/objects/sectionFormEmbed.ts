@@ -4,7 +4,7 @@ import {internalLabelField, sectionListPreview} from '../shared/sectionPreview'
 /** Fillout embed — standalone form or split layout with supporting copy (like membership). */
 export const sectionFormEmbed = defineType({
   name: 'sectionFormEmbed',
-  title: 'Section: Form embed',
+  title: 'Form embed',
   type: 'object',
   fields: [
     defineField(internalLabelField),

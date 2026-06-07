@@ -23,8 +23,8 @@ export const CmsModularSingletonPage = ({ page, slug, fallback }: CmsModularSing
     return (
       <CmsPageVisibilityGate page={page}>
         <div className="min-h-screen overflow-x-hidden bg-white font-host-grotesk">
-          <Navbar />
-          <main id="main-content">
+          <Navbar forceSolid />
+          <main id="main-content" className="pt-[72px] md:pt-[86px]">
             <PageRenderer
               page={{
                 title: page?.title,

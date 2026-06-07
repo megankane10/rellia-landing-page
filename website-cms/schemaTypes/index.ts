@@ -48,6 +48,7 @@ import {linkAnnotation} from './objects/linkAnnotation'
 import {socialLink} from './objects/socialLink'
 import {themeColors} from './objects/themeColors'
 import {ctaButton} from './objects/ctaButton'
+import {builderCtaAction} from './objects/builderCtaAction'
 import {customLinkButton} from './objects/customLinkButton'
 import {inlineHeroHeadline} from './objects/inlineHeroHeadline'
 import {
@@ -126,6 +127,7 @@ export const schemaTypes = [
   socialLink,
   themeColors,
   ctaButton,
+  builderCtaAction,
   customLinkButton,
   portableText,
   portableRichText,

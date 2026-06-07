@@ -8,7 +8,7 @@ import {
 
 export const sectionFeatureGrid = defineType({
   name: 'sectionFeatureGrid',
-  title: 'Network: Feature Grid',
+  title: 'Text and icon grid',
   type: 'object',
   fields: [
     defineField(internalLabelField),
@@ -34,5 +34,5 @@ export const sectionFeatureGrid = defineType({
       ],
     }),
   ],
-  preview: sectionListPreview({typeLabel: 'Feature grid', fallback: 'Features'}),
+  preview: sectionListPreview({typeLabel: 'Text and icon grid', fallback: 'Features'}),
 })

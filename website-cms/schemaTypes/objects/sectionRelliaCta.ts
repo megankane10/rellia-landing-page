@@ -3,7 +3,7 @@ import {internalLabelField, sectionListPreview} from '../shared/sectionPreview'
 
 export const sectionRelliaCta = defineType({
   name: 'sectionRelliaCta',
-  title: 'CTA band (grey-teal)',
+  title: 'Call to action (CTA band)',
   type: 'object',
   fields: [
     defineField(internalLabelField),

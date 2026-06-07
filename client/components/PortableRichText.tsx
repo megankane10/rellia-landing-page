@@ -1,3 +1,4 @@
+import { useState } from "react"
 import { PortableText, type PortableTextComponents } from "@portabletext/react"
 import type { SanityPortableText } from "@shared/cms/types"
 import { normalizeToPortableText } from "@shared/cms/normalizePortableText"
@@ -5,9 +6,123 @@ import { cn } from "@/lib/utils"
 import { BodyCtaBox } from "@/components/BodyCtaBox"
 import { RichTextImageCarousel, type RichTextCarouselSlide } from "@/components/RichTextImageCarousel"
 import { parseBlockquoteAttribution, RichTextQuoteFigure } from "@/components/RichTextQuoteFigure"
+import ImageExpandModal from "@/components/ImageExpandModal"
+
+const InlineImageFigure = ({
+  src,
+  alt,
+  caption,
+}: {
+  src: string
+  alt: string
+  caption?: string
+}) => {
+  const [open, setOpen] = useState(false)
+  return (
+    <>
+      <figure className="my-8 md:my-10 [&:first-child]:mt-0">
+        <img
+          src={src}
+          alt={alt}
+          onClick={() => setOpen(true)}
+          className="h-auto w-full max-w-full cursor-pointer rounded-2xl border border-black/10 object-cover shadow-sm transition-opacity duration-200 hover:opacity-95"
+          loading="lazy"
+          decoding="async"
+        />
+        {caption ? (
+          <figcaption className="mt-3 font-urbanist text-sm text-black/55">{caption}</figcaption>
+        ) : null}
+      </figure>
+      <ImageExpandModal open={open} onOpenChange={setOpen} src={src} alt={alt} />
+    </>
+  )
+}
+
+const resolveYoutubeEmbed = (url: string) => {
+  const trimmed = url.trim()
+  const short = trimmed.match(/youtu\.be\/([A-Za-z0-9_-]+)/)
+  if (short?.[1]) return `https://www.youtube.com/embed/${short[1]}`
+  const watch = trimmed.match(/[?&]v=([A-Za-z0-9_-]+)/)
+  if (watch?.[1]) return `https://www.youtube.com/embed/${watch[1]}`
+  return null
+}
+
+const resolveVimeoEmbed = (url: string) => {
+  const match = url.trim().match(/vimeo\.com\/(?:video\/)?(\d+)/)
+  if (match?.[1]) return `https://player.vimeo.com/video/${match[1]}`
+  return null
+}
+
+const PortableVideoBlock = ({
+  videoUrl,
+  posterUrl,
+  caption,
+}: {
+  videoUrl: string
+  posterUrl?: string
+  caption?: string
+}) => {
+  const youtube = resolveYoutubeEmbed(videoUrl)
+  const vimeo = resolveVimeoEmbed(videoUrl)
+
+  return (
+    <figure className="my-8 md:my-10 [&:first-child]:mt-0">
+      <div className="overflow-hidden rounded-2xl border border-black/10 bg-black/5 aspect-video">
+        {youtube || vimeo ? (
+          <iframe
+            src={youtube ?? vimeo ?? ""}
+            title={caption?.trim() || "Embedded video"}
+            className="h-full w-full"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+          />
+        ) : (
+          <video
+            src={videoUrl}
+            poster={posterUrl?.trim() || undefined}
+            controls
+            playsInline
+            className="h-full w-full object-cover"
+          />
+        )}
+      </div>
+      {caption?.trim() ? (
+        <figcaption className="mt-3 font-urbanist text-sm text-black/55">{caption.trim()}</figcaption>
+      ) : null}
+    </figure>
+  )
+}
 
 const components: PortableTextComponents = {
   types: {
+    image: ({ value }) => {
+      const v = value as { url?: string; alt?: string; caption?: string; asset?: { url?: string } } | null
+      const src = (typeof v?.url === "string" ? v.url : v?.asset?.url)?.trim() ?? ""
+      const alt = typeof v?.alt === "string" ? v.alt.trim() : ""
+      const caption = typeof v?.caption === "string" ? v.caption.trim() : ""
+      if (!src || !alt) return null
+      return <InlineImageFigure src={src} alt={alt} caption={caption || undefined} />
+    },
+    eventDetailInlineImage: ({ value }) => {
+      const v = value as { imageSrc?: string; alt?: string; caption?: string } | null
+      const src = typeof v?.imageSrc === "string" ? v.imageSrc.trim() : ""
+      const alt = typeof v?.alt === "string" ? v.alt.trim() : ""
+      const caption = typeof v?.caption === "string" ? v.caption.trim() : ""
+      if (!src || !alt) return null
+      return <InlineImageFigure src={src} alt={alt} caption={caption || undefined} />
+    },
+    portableVideo: ({ value }) => {
+      const v = value as { videoUrl?: string; posterUrl?: string; caption?: string } | null
+      const videoUrl = typeof v?.videoUrl === "string" ? v.videoUrl.trim() : ""
+      if (!videoUrl) return null
+      return (
+        <PortableVideoBlock
+          videoUrl={videoUrl}
+          posterUrl={typeof v?.posterUrl === "string" ? v.posterUrl : undefined}
+          caption={typeof v?.caption === "string" ? v.caption : undefined}
+        />
+      )
+    },
     portableImageCarousel: ({ value }) => {
       const v = value as {
         title?: string

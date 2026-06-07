@@ -7,7 +7,6 @@ export const pageSectionMembers = [
   defineArrayMember({type: 'sectionFaq'}),
   defineArrayMember({type: 'sectionFormEmbed'}),
   defineArrayMember({type: 'sectionRichText'}),
-  defineArrayMember({type: 'sectionHero'}),
   defineArrayMember({type: 'sectionCardsGrid'}),
   defineArrayMember({type: 'sectionFeatureGrid'}),
   defineArrayMember({type: 'sectionEngageBand'}),

@@ -1827,11 +1827,11 @@ async function main() {
         {
           _type: "sectionMarketingHero",
           _key: "shf-hero",
-          eyebrowLabel: "Page builder showcase",
+          eyebrowLabel: "Hero with image",
           title: "Supporting health founders",
           accentPhrase: "at every stage",
           subtitle:
-            "This page demonstrates every modular section available in Sanity — heroes, metrics, grids, timelines, forms, and more.",
+            "Full-bleed teal hero with eyebrow label, mint accent phrase, background image, and primary/secondary navItem CTAs.",
           imageUrl:
             "https://images.pexels.com/photos/3182761/pexels-photo-3182761.jpeg?auto=compress&cs=tinysrgb&w=1600",
           primaryCta: { label: "Apply to join", href: "/apply" },
@@ -1840,7 +1840,8 @@ async function main() {
         {
           _type: "sectionRichText",
           _key: "shf-rich",
-          title: "Built for healthcare's pace",
+          title: "Rich text",
+          tag: "Portable text with headings, lists, inline images, URL images, video embeds, carousels, and CTA boxes.",
           body: [
             {
               _type: "block",
@@ -1856,15 +1857,33 @@ async function main() {
                 },
               ],
             },
+            {
+              _type: "eventDetailInlineImage",
+              _key: "shf-rich-img",
+              imageSrc:
+                "https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=1200",
+              alt: "Founders collaborating in a health tech workspace",
+              caption: "Inline image block — upload in Studio or paste a URL.",
+            },
+            {
+              _type: "portableVideo",
+              _key: "shf-rich-vid",
+              videoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+              caption: "Video block — YouTube, Vimeo, or direct .mp4 URL.",
+            },
           ],
         },
         {
           _type: "sectionMetrics",
           _key: "shf-metrics",
           showBadge: true,
-          badgeLabel: "By the numbers",
+          badgeLabel: "Metrics band",
           heading: "Outcomes that compound over time",
-          subheading: "Structured support designed for regulated markets — not generic startup advice.",
+          subheading:
+            "White full-width band: optional badge, heading, subheading, up to six animated stats, and an optional side image box on the right.",
+          imageUrl:
+            "https://images.pexels.com/photos/3183158/pexels-photo-3183158.jpeg?auto=compress&cs=tinysrgb&w=800",
+          imageAlt: "Health tech team reviewing metrics",
           metrics: [
             { _key: "m1", label: "Critical domains assessed", value: 12 },
             { _key: "m2", label: "Advisor network", value: 150, suffix: "+" },
@@ -1872,31 +1891,16 @@ async function main() {
           ],
         },
         {
-          _type: "sectionHero",
-          _key: "shf-hero-alt",
-          badge: "Interior hero",
-          headline: ptBlock("shf-hero-alt-h", "A flexible hero block for interior pages"),
-          subheadline: ptBlock(
-            "shf-hero-alt-sub",
-            "Use when you need a teal band with optional background image, badge, and dual CTAs.",
-            "normal",
-          ),
-          imageUrl:
-            "https://images.pexels.com/photos/3183158/pexels-photo-3183158.jpeg?auto=compress&cs=tinysrgb&w=1600",
-          primaryCta: { label: "Explore programs", href: "/programs" },
-          secondaryCta: { label: "Contact us", href: "/contact" },
-        },
-        {
           _type: "sectionFeatureGrid",
           _key: "shf-features",
           showBadge: true,
-          badge: "How we help",
+          badge: "Text and icon grid",
           headingTone: "auto",
           background: "white",
           title: ptBlock("shf-fg-title", "Support at every inflection point"),
           subtitle: ptBlock(
             "shf-fg-sub",
-            "From first pilot to scale, Rellia gives founders structured guidance with vetted operators.",
+            "Toggle badge visibility, heading tone (light/dark/auto), and background (white/teal/cream). Each item uses a Lucide icon key, title, and body.",
             "normal",
           ),
           items: [
@@ -1929,8 +1933,9 @@ async function main() {
         {
           _type: "sectionCardsGrid",
           _key: "shf-cards",
-          title: "Programs snapshot",
-          subtitle: "Card grid with optional icons, badges, tags, and CTAs per card.",
+          title: "Image grid",
+          subtitle:
+            "Unlimited cards in a responsive 1–3 column grid. Image, Lucide icon, badge, tags, and CTA are all optional per card — omit any field to hide it.",
           cards: [
             {
               _key: "c1",
@@ -1954,9 +1959,13 @@ async function main() {
             },
             {
               _key: "c3",
+              title: "Text-only card",
+              body: "No image, icon, badge, or tags — title and body only.",
+            },
+            {
+              _key: "c4",
               title: "Advisor matching",
-              body: "Get introduced to operators with relevant healthcare experience.",
-              iconKey: "Users",
+              body: "Card with image and CTA but no icon or badge.",
               imageUrl:
                 "https://images.pexels.com/photos/5668858/pexels-photo-5668858.jpeg?auto=compress&cs=tinysrgb&w=1200",
               cta: { label: "Browse advisors", href: "/advisors" },
@@ -1966,9 +1975,9 @@ async function main() {
         {
           _type: "sectionEligibilityBento",
           _key: "shf-bento",
-          badge: "Who it's for",
+          badge: "Eligibility bento",
           title: "Built for serious health tech teams",
-          description: "Eligibility bento cards with photography and bold overlay headlines.",
+          description: "Four-column photo bento with badge, title, description, and per-card image or Pexels fallback.",
           items: [
             {
               _key: "b1",
@@ -2000,12 +2009,12 @@ async function main() {
           _type: "sectionEngageBand",
           _key: "shf-engage",
           showBadge: true,
-          badge: "Get started",
+          badge: "Engage band",
           headingTone: "light",
           title: ptBlock("shf-engage-title", "Three ways to engage with Rellia"),
           subtitle: ptBlock(
             "shf-engage-sub",
-            "Each card supports a Lucide icon, body copy, and internal link.",
+            "Teal full-width band with badge, portable text heading/subheading, and linked cards (Lucide icon, title, body, navItem link).",
             "normal",
           ),
           items: [
@@ -2042,62 +2051,36 @@ async function main() {
         {
           _type: "sectionJourneyTimeline",
           _key: "shf-journey",
-          badge: "Your journey",
-          title: ptBlock("shf-journey-title", "What you own vs. where we help"),
-          description: ptBlock(
-            "shf-journey-desc",
-            "Journey timeline with two columns — pill steps on the left, detail cards on the right.",
-            "normal",
-          ),
-          leftColumn: {
-            title: "You own",
-            body: "Vision, product, and customer relationships stay with your team.",
-            steps: [
-              { _key: "ls1", id: "vision", label: "Product vision", detail: "", icon: "Sparkles" },
-              { _key: "ls2", id: "customers", label: "Customer relationships", detail: "", icon: "Heart" },
-              { _key: "ls3", id: "team", label: "Core team", detail: "", icon: "Users" },
-            ],
-          },
-          rightColumn: {
-            title: "We help with",
-            body: "Structured playbooks, expert operators, and a network that de-risks the path.",
-            steps: [
-              {
-                _key: "rs1",
-                id: "regulatory",
-                label: "Regulatory strategy",
-                detail: "Map pathways, evidence plans, and submission readiness.",
-                icon: "ShieldCheck",
-              },
-              {
-                _key: "rs2",
-                id: "commercial",
-                label: "Commercialization",
-                detail: "Pilot design, procurement, and health-system engagement.",
-                icon: "Target",
-              },
-              {
-                _key: "rs3",
-                id: "quality",
-                label: "Quality systems",
-                detail: "QMS foundations that scale with your product.",
-                icon: "Layers",
-              },
-            ],
-          },
+          badge: "Timeline",
+          headingTitle: "Path to membership",
+          subheading:
+            "Same numbered timeline as /apply — steps, optional role link cards, and a button that can link or reveal a Fillout embed.",
+          steps: DEFAULT_APPLY_PAGE.steps.map((step, index) => ({
+            _key: `shf-step-${index}`,
+            title: step.title,
+            description: step.description,
+          })),
+          showRoleLinks: true,
+          roleLinks: DEFAULT_APPLY_PAGE.roleLinks?.map((link, index) => ({
+            _key: `shf-role-${index}`,
+            title: link.title,
+            description: link.description,
+            href: link.href,
+          })),
+          cta: { label: "Apply now", actionType: "link", href: "/apply" },
         },
         {
           _type: "sectionDiagnosticSurvey",
           _key: "shf-survey",
-          badge: "Diagnostic",
-          title: ptBlock("shf-survey-title", "Benchmark your startup in ~15 minutes"),
+          layout: "categories",
+          badge: "Diagnostic split",
+          title: ptBlock("shf-survey-title", "Text + category list layout"),
           subtitle: ptBlock(
             "shf-survey-sub",
-            "Private assessment across 12 critical domains with instant gap analysis.",
+            "Left column: badge, portable text, and a button (link redirect or inline Fillout embed). Right column: category list with Lucide icon.",
             "normal",
           ),
-          ctaLabel: "Take the diagnostic",
-          ctaHref: "/startup-diagnostic",
+          cta: { label: "Take the diagnostic", actionType: "link", href: "/startup-diagnostic" },
           categoriesTitle: "Domains we assess",
           categories: [
             "Regulatory & quality",
@@ -2109,9 +2092,29 @@ async function main() {
           ],
         },
         {
+          _type: "sectionDiagnosticSurvey",
+          _key: "shf-survey-image",
+          layout: "imageSplit",
+          badge: "Diagnostic split",
+          title: ptBlock("shf-survey-img-title", "Text + full-height image layout"),
+          subtitle: ptBlock(
+            "shf-survey-img-sub",
+            "Switch layout to image split for a full-height right-side photo. Button below can open an embedded form instead of redirecting.",
+            "normal",
+          ),
+          cta: {
+            label: "Start embedded assessment",
+            actionType: "embed",
+            filloutFormUrl: "https://forms.fillout.com/t/r5hdDmQodfus",
+          },
+          imageUrl:
+            "https://images.pexels.com/photos/3182811/pexels-photo-3182811.jpeg?auto=compress&cs=tinysrgb&w=1600",
+          imageAlt: "Founder reviewing diagnostic results",
+        },
+        {
           _type: "sectionTestimonials",
           _key: "shf-testimonials",
-          heading: "What members say",
+          heading: "Testimonials",
           testimonials: (DEFAULT_CONSULTING_PAGE.testimonials ?? []).slice(0, 3).map((item, index) => ({
             _type: "landingTestimonialItem",
             _key: `shf-t-${index}`,
@@ -2128,8 +2131,9 @@ async function main() {
           _key: "shf-form",
           layout: "split",
           filloutFormUrl: "https://forms.fillout.com/t/r5hdDmQodfus",
-          panelHeadline: "Apply to Rellia",
-          panelBody: "Click the button below to reveal the application form — same pattern as the Apply page.",
+          panelHeadline: "Form embed",
+          panelBody:
+            "Standalone or split layout. Split shows a teal intro panel (headline, body, bullets, image) then reveals the Fillout form on button click.",
           panelImageUrl:
             "https://images.pexels.com/photos/3182761/pexels-photo-3182761.jpeg?auto=compress&cs=tinysrgb&w=1600",
           ctaLabel: "Apply now",
@@ -2142,8 +2146,8 @@ async function main() {
         {
           _type: "sectionFaq",
           _key: "shf-faq",
-          title: "Common questions",
-          subtitle: "FAQ accordion with rounded card container; section bands stay square-edged.",
+          title: "FAQ",
+          subtitle: "Accordion with section title, subtitle, and unlimited Q&A items in a rounded card.",
           items: [
             {
               _key: "q1",
@@ -2168,8 +2172,8 @@ async function main() {
         {
           _type: "sectionRelliaCta",
           _key: "shf-cta",
-          title: "Ready to move faster—with fewer blind spots?",
-          body: "Join a network built for healthcare's unique pace. Start with the diagnostic or apply directly to Rellia programs.",
+          title: "Call to action (CTA band)",
+          body: "Grey-teal footer band with headline, body, primary/secondary ctaButton fields, size, primary style, and above-section tone.",
           primaryCta: { label: "Apply now", href: "/apply", variant: "primary" },
           secondaryCta: { label: "Contact us", href: "/contact", variant: "secondary" },
           aboveSectionTone: "white",

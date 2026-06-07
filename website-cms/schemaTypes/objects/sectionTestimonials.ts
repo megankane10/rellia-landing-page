@@ -3,7 +3,7 @@ import {internalLabelField, sectionListPreview} from '../shared/sectionPreview'
 
 export const sectionTestimonials = defineType({
   name: 'sectionTestimonials',
-  title: 'Section: Testimonials carousel',
+  title: 'Testimonials',
   type: 'object',
   fields: [
     defineField(internalLabelField),

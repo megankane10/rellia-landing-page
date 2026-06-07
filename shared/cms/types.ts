@@ -234,48 +234,74 @@ export type CmsSectionEngageBand = {
   items?: CmsSectionEngageBandItem[]
 }
 
+export type CmsBuilderCtaAction = {
+  label: string
+  actionType?: "link" | "embed"
+  href?: string
+  filloutFormUrl?: string
+}
+
 export type CmsSectionJourneyTimelineStep = {
   _key?: string
-  id: string
-  label: string
-  detail: string
-  icon?: string
+  title: string
+  description: string
+}
+
+export type CmsSectionJourneyTimelineRoleLink = {
+  _key?: string
+  title: string
+  description: string
+  href: string
 }
 
 export type CmsSectionJourneyTimeline = {
   _type: "sectionJourneyTimeline"
   _key?: string
   badge?: string
+  headingTitle?: string
+  subheading?: string
+  steps?: CmsSectionJourneyTimelineStep[]
+  showRoleLinks?: boolean
+  roleLinks?: CmsSectionJourneyTimelineRoleLink[]
+  cta?: CmsBuilderCtaAction
+  /** @deprecated Legacy two-column layout */
   title?: string | SanityPortableText
   description?: string | SanityPortableText
   leftColumnTitle?: string
   leftColumnBody?: string
-  leftColumnSteps?: CmsSectionJourneyTimelineStep[]
+  leftColumnSteps?: Array<{ _key?: string; id: string; label: string; detail: string; icon?: string }>
   rightColumnTitle?: string
   rightColumnBody?: string
-  rightColumnSteps?: CmsSectionJourneyTimelineStep[]
+  rightColumnSteps?: Array<{ _key?: string; id: string; label: string; detail: string; icon?: string }>
   leftColumn?: {
     title?: string
     body?: string
-    steps?: CmsSectionJourneyTimelineStep[]
+    steps?: Array<{ _key?: string; id: string; label: string; detail: string; icon?: string }>
   }
   rightColumn?: {
     title?: string
     body?: string
-    steps?: CmsSectionJourneyTimelineStep[]
+    steps?: Array<{ _key?: string; id: string; label: string; detail: string; icon?: string }>
   }
 }
 
 export type CmsSectionDiagnosticSurvey = {
   _type: "sectionDiagnosticSurvey"
   _key?: string
+  layout?: "categories" | "imageSplit"
   badge?: string
   title?: string | SanityPortableText
   subtitle?: string | SanityPortableText
+  cta?: CmsBuilderCtaAction
+  /** @deprecated Use cta instead */
   ctaLabel?: string
+  /** @deprecated Use cta instead */
   ctaHref?: string
   categoriesTitle?: string
   categories?: string[]
+  categoryIcon?: string
+  imageUrl?: string
+  imageAlt?: string
 }
 
 export type CmsSectionFaqItem = {
@@ -320,6 +346,8 @@ export type CmsSectionMetrics = {
   heading: string
   subheading?: string
   metrics?: CmsSectionMetricsItem[]
+  imageUrl?: string
+  imageAlt?: string
 }
 
 export type CmsSectionFormEmbed = {

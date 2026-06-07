@@ -4,7 +4,7 @@ import {headingToneField, lucideIconField, showBadgeField} from '../shared/secti
 
 export const sectionEngageBand = defineType({
   name: 'sectionEngageBand',
-  title: 'Network: Engage Band (Teal)',
+  title: 'Engage band',
   type: 'object',
   fields: [
     defineField(internalLabelField),

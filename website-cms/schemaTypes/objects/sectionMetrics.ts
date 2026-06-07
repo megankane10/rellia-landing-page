@@ -2,10 +2,10 @@ import {defineArrayMember, defineField, defineType} from 'sanity'
 import {internalLabelField, sectionListPreview} from '../shared/sectionPreview'
 import {showBadgeField} from '../shared/sectionAppearanceFields'
 
-/** Home / network metrics band — matches NetworkMetricsSection on the site. */
+/** Page-builder metrics — white band with stats and optional side image. */
 export const sectionMetrics = defineType({
   name: 'sectionMetrics',
-  title: 'Section: Metrics',
+  title: 'Metrics band',
   type: 'object',
   fields: [
     defineField(internalLabelField),
@@ -42,6 +42,19 @@ export const sectionMetrics = defineType({
         }),
       ],
     }),
+    defineField({
+      name: 'image',
+      title: 'Side image',
+      type: 'image',
+      options: {hotspot: true},
+      description: 'Optional image shown in a box on the right.',
+    }),
+    defineField({
+      name: 'imageUrl',
+      title: 'Side image URL (fallback)',
+      type: 'string',
+    }),
+    defineField({name: 'imageAlt', title: 'Side image alt text', type: 'string'}),
   ],
-  preview: sectionListPreview({typeLabel: 'Metrics', fallback: 'Metrics'}),
+  preview: sectionListPreview({typeLabel: 'Metrics band', fallback: 'Metrics'}),
 })

@@ -30,8 +30,8 @@ export default function NetworkCmsPage({
 
   return (
     <div className="min-h-screen overflow-x-hidden bg-white font-host-grotesk">
-      <Navbar />
-      <main id="main-content">
+      <Navbar forceSolid />
+      <main id="main-content" className="pt-[72px] md:pt-[86px]">
         <PageRenderer page={{ title: page.title, slug: "network", seo: page.seo, sections: page.sections }} />
       </main>
       <Footer />

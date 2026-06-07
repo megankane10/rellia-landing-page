@@ -65,10 +65,33 @@ export const portableTextInlineUrlImageMember = defineArrayMember({
   ],
 })
 
+export const portableTextVideoMember = defineArrayMember({
+  type: 'object',
+  name: 'portableVideo',
+  title: 'Video',
+  fields: [
+    defineField({
+      name: 'videoUrl',
+      title: 'Video URL',
+      type: 'string',
+      description: 'YouTube, Vimeo, or direct .mp4 / .webm file URL.',
+      validation: (Rule) => Rule.required(),
+    }),
+    defineField({
+      name: 'posterUrl',
+      title: 'Poster image URL',
+      type: 'string',
+      description: 'Optional thumbnail for file-based videos.',
+    }),
+    defineField({name: 'caption', type: 'string', title: 'Caption'}),
+  ],
+})
+
 export const portableTextArrayMembers = [
   portableTextBlockMember,
   portableTextInlineImageMember,
   portableTextInlineUrlImageMember,
+  portableTextVideoMember,
   defineArrayMember({type: 'bodyCtaBox'}),
   defineArrayMember({type: 'portableImageCarousel'}),
 ]

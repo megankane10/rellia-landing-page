@@ -378,6 +378,7 @@ export function RoleHero({
   className,
   titleClassName,
   subtitleClassName,
+  skipNavOffset = false,
 }: {
   roleId?: "founder" | "advisor" | "investor" | "partner"
   eyebrowLabel?: string
@@ -393,6 +394,8 @@ export function RoleHero({
   className?: string
   titleClassName?: string
   subtitleClassName?: string
+  /** When true, omits top padding for fixed navbar (parent main handles offset). */
+  skipNavOffset?: boolean
 }) {
   const tag = roleId ? NETWORK_PATH_ROLE_TAG[roleId] : undefined
   const label = eyebrowLabel || (tag ? tag.label : "Network")
@@ -440,7 +443,13 @@ export function RoleHero({
   }
 
   return (
-    <section className={cn("relative overflow-hidden bg-rellia-teal pt-[72px] md:pt-[86px] lg:flex lg:flex-col lg:min-h-0 lg:pt-[96px]", className)}>
+    <section
+      className={cn(
+        "relative overflow-hidden bg-rellia-teal lg:flex lg:min-h-0 lg:flex-col",
+        skipNavOffset ? "pt-0 lg:pt-0" : "pt-[72px] md:pt-[86px] lg:pt-[96px]",
+        className,
+      )}
+    >
       <img
         src={imageSrc}
         alt=""

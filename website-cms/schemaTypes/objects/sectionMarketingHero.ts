@@ -4,7 +4,7 @@ import {internalLabelField, sectionListPreview} from '../shared/sectionPreview'
 /** Matches site marketing heroes (Consulting, network pages) — full-bleed teal + eyebrow. */
 export const sectionMarketingHero = defineType({
   name: 'sectionMarketingHero',
-  title: 'Section: Marketing hero',
+  title: 'Hero with image',
   type: 'object',
   fields: [
     defineField(internalLabelField),
@@ -33,5 +33,5 @@ export const sectionMarketingHero = defineType({
     defineField({name: 'primaryCta', title: 'Primary CTA', type: 'navItem'}),
     defineField({name: 'secondaryCta', title: 'Secondary CTA', type: 'navItem'}),
   ],
-  preview: sectionListPreview({typeLabel: 'Marketing hero', fallback: 'Marketing hero'}),
+  preview: sectionListPreview({typeLabel: 'Hero with image', fallback: 'Hero'}),
 })

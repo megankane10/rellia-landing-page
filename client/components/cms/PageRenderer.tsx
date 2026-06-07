@@ -4,7 +4,9 @@ import PageHeader from "@/components/PageHeader"
 import { PortableRichText } from "@/components/PortableRichText"
 import RelliaAction from "@/components/RelliaAction"
 import NetworkEyebrow from "@/components/network/NetworkEyebrow"
-import NetworkMetricsSection from "@/components/NetworkMetricsSection"
+import PageBuilderMetricsSection from "@/components/cms/PageBuilderMetricsSection"
+import MembershipPathTimeline from "@/components/MembershipPathTimeline"
+import { BuilderCtaButton } from "@/components/cms/BuilderCtaButton"
 import SectionHeading from "@/components/SectionHeading"
 import ScrollReveal from "@/components/ScrollReveal"
 import { relliaTealGlassCardClass } from "@/lib/relliaTealGlassCard"
@@ -41,7 +43,7 @@ import { normalizeToPortableText } from "@shared/cms/normalizePortableText"
 import { RoleHero } from "@/pages/network/_shared"
 import { Link } from "react-router-dom"
 import * as LucideIcons from "lucide-react"
-import { ArrowRight, CalendarDays } from "lucide-react"
+import { ArrowRight } from "lucide-react"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { FilloutStandardEmbed } from "@fillout/react"
 import RelliaCta, { ctaActionFromHref } from "@/components/RelliaCta"
@@ -52,21 +54,12 @@ import {
   resolveHeadingTone,
   sectionBackgroundClass,
 } from "@/lib/cmsSectionAppearance"
-import { cmsSectionStudioTitle } from "@/lib/cmsSectionLabels"
 
 const sectionHeadingClass =
   "font-host-grotesk text-3xl font-semibold leading-tight tracking-tight text-black md:text-[40px]"
 
-const SectionSanityLabel = ({ sectionType, tone = "dark" }: { sectionType: string; tone?: "dark" | "light" }) => (
-  <p
-    className={cn(
-      "mb-3 font-urbanist text-[11px] font-semibold uppercase tracking-[0.14em]",
-      tone === "light" ? "text-rellia-mint/75" : "text-rellia-teal/70",
-    )}
-  >
-    Sanity: {cmsSectionStudioTitle(sectionType)}
-  </p>
-)
+const sectionSubheadingClass =
+  "mt-4 max-w-3xl font-urbanist text-base leading-relaxed text-black/65 md:text-lg"
 
 const isExternalHref = (href: string) => /^(https?:\/\/|mailto:|tel:)/i.test(href)
 
@@ -153,11 +146,8 @@ const SectionMarketingHero = ({ section }: { section: CmsSectionMarketingHero })
     : undefined
 
   return (
-    <div className="relative">
-      <div className="pointer-events-none absolute left-6 top-[calc(72px+1rem)] z-20 md:left-10 md:top-[calc(86px+1.25rem)]">
-        <SectionSanityLabel sectionType={section._type} tone="light" />
-      </div>
-      <RoleHero
+    <RoleHero
+      skipNavOffset
       eyebrowLabel={cmsDisplayText(section.eyebrowLabel) || undefined}
       title={title}
       subtitle={cmsDisplayText(section.subtitle)}
@@ -175,7 +165,6 @@ const SectionMarketingHero = ({ section }: { section: CmsSectionMarketingHero })
           : undefined
       }
     />
-    </div>
   )
 }
 
@@ -191,15 +180,15 @@ const SectionMetrics = ({ section }: { section: CmsSectionMetrics }) => {
 
   return (
     <section className="w-full bg-white px-6 py-14 md:px-10 md:py-20">
-      <div className="mx-auto max-w-[1300px]">
-        <SectionSanityLabel sectionType={section._type} />
-        <NetworkMetricsSection
+      <div className="mx-auto w-full max-w-[1300px]">
+        <PageBuilderMetricsSection
           heading={cmsDisplayText(section.heading)}
           subheading={cmsDisplayText(section.subheading) || undefined}
           metrics={metrics}
-          contained={false}
           showBadge={section.showBadge !== false}
           badgeLabel={cmsDisplayText(section.badgeLabel) || "Network impact"}
+          imageUrl={cmsCleanText(section.imageUrl)}
+          imageAlt={cmsCleanText(section.imageAlt)}
         />
       </div>
     </section>
@@ -230,7 +219,6 @@ const SectionFormEmbed = ({ section }: { section: CmsSectionFormEmbed }) => {
               className="py-16 md:py-24 lg:py-28"
             >
               <div className="mx-auto max-w-[900px] px-6 md:px-10">
-                <SectionSanityLabel sectionType={section._type} />
                 <div className="relative overflow-hidden rounded-[24px] bg-rellia-teal p-8 md:p-12 lg:p-14">
                   {panelImage ? (
                     <div className="pointer-events-none absolute inset-0" aria-hidden>
@@ -313,7 +301,7 @@ const SectionFormEmbed = ({ section }: { section: CmsSectionFormEmbed }) => {
   }
 
   return (
-    <section className={cn("w-full bg-white pt-[72px] md:pt-[86px]", FILLOUT_EMBED_VIEWPORT_MIN_CLASS)}>
+    <section className={cn("w-full bg-white", FILLOUT_EMBED_VIEWPORT_MIN_CLASS)}>
       <FilloutStandardEmbed filloutId={formId} dynamicResize />
     </section>
   )
@@ -331,7 +319,7 @@ const SectionHero = ({ section }: { section: CmsSectionHero }) => {
   ) : undefined
 
   return (
-    <section className="w-full bg-rellia-teal pt-[72px] md:pt-[86px] lg:pt-[96px]">
+    <section className="w-full bg-rellia-teal lg:pt-[96px]">
       <div className="relative min-h-[320px] md:min-h-[380px]">
         {section.imageUrl ? (
           <>
@@ -351,7 +339,6 @@ const SectionHero = ({ section }: { section: CmsSectionHero }) => {
         <PageHeader
           title={
             <span className="inline-flex flex-col">
-              <SectionSanityLabel sectionType={section._type} tone="light" />
               {section.badge?.trim() ? (
                 <span className="mb-4 inline-flex w-fit items-center rounded-full border border-white/25 bg-white/10 px-4 py-1.5 font-host-grotesk text-[11px] font-semibold uppercase tracking-[0.14em] text-white/90 md:mb-5 md:text-xs">
                   {section.badge.trim()}
@@ -398,13 +385,15 @@ const SectionRichText = ({ section }: { section: CmsSectionRichText }) => {
   return (
     <section className="w-full bg-white px-6 py-14 md:px-10 md:py-20">
       <div className="mx-auto w-full max-w-[900px]">
-        <SectionSanityLabel sectionType={section._type} />
         {section.title?.trim() ? (
           <h2 className={sectionHeadingClass}>
             {section.title.trim()}
           </h2>
         ) : null}
-        <PortableRichText value={section.body ?? null} className={cn(section.title?.trim() ? "mt-8" : "")} />
+        {section.tag?.trim() ? (
+          <p className={cn(sectionSubheadingClass, section.title?.trim() ? "" : "mt-0")}>{section.tag.trim()}</p>
+        ) : null}
+        <PortableRichText value={section.body ?? null} className={cn(section.title?.trim() || section.tag?.trim() ? "mt-8" : "")} />
       </div>
     </section>
   )
@@ -417,7 +406,6 @@ const SectionCardsGrid = ({ section }: { section: CmsSectionCardsGrid }) => {
   return (
     <section className="w-full bg-white px-6 py-14 md:px-10 md:py-20">
       <div className="mx-auto w-full max-w-[1300px]">
-        <SectionSanityLabel sectionType={section._type} />
         {section.title?.trim() ? (
           <h2 className={sectionHeadingClass}>
             {section.title.trim()}
@@ -509,7 +497,6 @@ const SectionEligibilityBento = ({ section }: { section: CmsSectionEligibilityBe
   return (
     <section className="w-full bg-rellia-cream/25 px-6 py-16 md:px-10 md:py-24">
       <div className="mx-auto max-w-[1300px]">
-        <SectionSanityLabel sectionType={section._type} />
         {section.badge && <NetworkEyebrow label={section.badge} tone="onLight" />}
         <SectionHeading
           animated={false}
@@ -554,7 +541,6 @@ const SectionFeatureGrid = ({ section }: { section: CmsSectionFeatureGrid }) => 
   return (
     <section className={cn("w-full px-6 py-16 md:px-10 md:py-24", sectionBackgroundClass(background))}>
       <div className="mx-auto max-w-[1300px]">
-        <SectionSanityLabel sectionType={section._type} tone={headingTone === "light" ? "light" : "dark"} />
         {showBadge ? (
           <NetworkEyebrow label={section.badge!} tone={headingTone === "light" ? "onDark" : "onLight"} />
         ) : null}
@@ -627,7 +613,6 @@ const SectionEngageBand = ({ section }: { section: CmsSectionEngageBand }) => {
       <div className="relative z-10 mx-auto max-w-[1300px]">
         <ScrollReveal>
           <div className="mb-8 md:mb-10">
-            <SectionSanityLabel sectionType={section._type} tone="light" />
             {showBadge ? <NetworkEyebrow label={section.badge!} tone="onDark" /> : null}
             <div className={cn(showBadge && "mt-5")}>
               <SectionPortableText value={section.title} variant="heading" tone={headingTone} />
@@ -680,127 +665,130 @@ const SectionEngageBand = ({ section }: { section: CmsSectionEngageBand }) => {
 }
 
 const SectionJourneyTimeline = ({ section }: { section: CmsSectionJourneyTimeline }) => {
-  const leftColumnTitle = section.leftColumnTitle ?? section.leftColumn?.title
-  const leftColumnBody = section.leftColumnBody ?? section.leftColumn?.body
-  const leftColumnSteps = section.leftColumnSteps ?? section.leftColumn?.steps ?? []
-  const rightColumnTitle = section.rightColumnTitle ?? section.rightColumn?.title
-  const rightColumnBody = section.rightColumnBody ?? section.rightColumn?.body
-  const rightColumnSteps = section.rightColumnSteps ?? section.rightColumn?.steps ?? []
+  const steps =
+    section.steps?.map((step) => ({
+      title: cmsDisplayText(step.title),
+      description: cmsDisplayText(step.description),
+    })) ?? []
+
+  if (steps.length === 0) return null
+
+  const roleLinks =
+    section.roleLinks?.map((link) => ({
+      title: cmsDisplayText(link.title),
+      description: cmsDisplayText(link.description),
+      href: normalizeInternalHref(cmsCleanText(link.href)),
+    })) ?? []
+
+  const headingTitle = cmsDisplayText(section.headingTitle) || undefined
+  const subheading = cmsDisplayText(section.subheading) || undefined
 
   return (
-    <section className="bg-rellia-cream/20 py-14 md:py-20 px-6 md:px-10">
-      <div className="mx-auto max-w-[1300px]">
-        <SectionSanityLabel sectionType={section._type} />
-        {section.badge && <NetworkEyebrow label={section.badge} tone="onLight" />}
-        <div className="mt-5">
-          <SectionPortableText value={section.title} variant="heading" tone="dark" />
-          {section.description ? (
-            <SectionPortableText value={section.description} variant="subheading" tone="dark" className="mt-4" />
-          ) : null}
-        </div>
-
-        <div className="mt-16 space-y-12 md:mt-20 md:space-y-16">
-          <div className="grid grid-cols-1 gap-7 lg:grid-cols-[200px_1fr] lg:gap-12">
-            <div>
-              <p className="font-host-grotesk text-base font-semibold uppercase tracking-[0.14em] text-black/55">
-                {leftColumnTitle}
-              </p>
-              <p className="mt-3 font-urbanist text-base leading-relaxed text-black/70">
-                {leftColumnBody}
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 justify-items-start gap-4 sm:grid-cols-2 sm:justify-items-end sm:gap-4 xl:grid-cols-3 md:w-full">
-              {leftColumnSteps.map((m) => (
-                <div key={m.id} className="flex items-center gap-3 rounded-full border border-rellia-cream/80 bg-rellia-cream/35 p-2 pr-5 text-left transition duration-300 hover:border-rellia-teal/20 hover:shadow-sm md:w-full">
-                  <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-rellia-teal/5 text-rellia-teal">
-                    <LucideIcon name={m.icon} className="h-4.5 w-4.5" />
-                  </span>
-                  <p className="font-host-grotesk text-base font-semibold leading-none text-black">
-                    {m.label}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="h-px w-full bg-black/10" aria-hidden />
-
-          <div className="grid grid-cols-1 gap-7 lg:grid-cols-[200px_1fr] lg:gap-12">
-            <div>
-              <p className="font-host-grotesk text-base font-semibold uppercase tracking-[0.14em] text-rellia-teal/80">
-                {rightColumnTitle}
-              </p>
-              <p className="mt-3 font-urbanist text-base leading-relaxed text-black/70">
-                {rightColumnBody}
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 justify-items-start gap-10 sm:grid-cols-2 sm:justify-items-end sm:gap-6 xl:grid-cols-3">
-              {rightColumnSteps.map((m) => (
-                <div key={m.id} className="flex flex-col items-start text-left md:w-full md:max-w-[280px]">
-                  <span className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-rellia-teal text-white">
-                    <LucideIcon name={m.icon} className="h-5 w-5" />
-                  </span>
-                  <p className="mt-3 font-host-grotesk text-lg font-semibold leading-snug text-rellia-teal md:mt-3">
-                    {m.label}
-                  </p>
-                  <p className="mt-1.5 font-urbanist text-sm leading-relaxed text-rellia-teal/80">
-                    {m.detail}
-                  </p>
-                </div>
-              ))}
-            </div>
+    <>
+      {section.badge?.trim() ? (
+        <div className="bg-rellia-cream/20 px-6 pt-14 md:px-10 md:pt-20">
+          <div className="mx-auto w-full max-w-[1300px]">
+            <NetworkEyebrow label={section.badge.trim()} tone="onLight" />
           </div>
         </div>
-      </div>
-    </section>
+      ) : null}
+      <MembershipPathTimeline
+        className={cn("bg-rellia-cream/20", section.badge?.trim() ? "border-t-0 pt-0" : "")}
+        headingTitle={headingTitle}
+        subheading={subheading}
+        steps={steps}
+        showRoleLinks={section.showRoleLinks !== false}
+        roleLinks={roleLinks}
+        belowTimeline={
+          section.cta?.label ? (
+            <div className="flex justify-start">
+              <BuilderCtaButton cta={section.cta} className="w-full justify-center sm:w-auto" />
+            </div>
+          ) : undefined
+        }
+      />
+    </>
   )
 }
 
 const SectionDiagnosticSurvey = ({ section }: { section: CmsSectionDiagnosticSurvey }) => {
+  const layout = section.layout ?? "categories"
+  const categoryIconName = cmsCleanText(section.categoryIcon) || "CalendarDays"
+  const imageSrc = cmsCleanText(section.imageUrl)
+  const isImageSplit = layout === "imageSplit" && Boolean(imageSrc)
+
   return (
-    <section className="w-full bg-rellia-cream/20 px-6 py-28 md:px-10 md:py-40 border-t border-black/10 flex items-center min-h-[80vh]">
-      <div className="mx-auto w-full max-w-[1300px]">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-start">
-          <div className="flex flex-col items-start lg:sticky lg:top-32">
-            <ScrollReveal>
-              <SectionSanityLabel sectionType={section._type} />
-              {section.badge && <NetworkEyebrow label={section.badge} tone="onLight" />}
-              <div className="mt-4 mb-6">
-                <SectionPortableText value={section.title} variant="heading" tone="dark" />
-              </div>
-              {section.subtitle ? (
-                <SectionPortableText
-                  value={section.subtitle}
-                  variant="subheading"
-                  tone="dark"
-                  className="mb-10 max-w-xl"
-                />
-              ) : null}
-              <RelliaAction asChild variant="mintTealFill" size="comfortable" className="w-full sm:w-auto justify-center">
-                <Link to={section.ctaHref || "#"} className="inline-flex cursor-pointer items-center gap-2">
-                  {section.ctaLabel || "Take Survey"}
-                  <ArrowRight className="h-5 w-5" />
-                </Link>
-              </RelliaAction>
-            </ScrollReveal>
+    <section
+      className={cn(
+        "w-full border-t border-black/10 bg-rellia-cream/20 px-6 md:px-10",
+        isImageSplit ? "py-0" : "flex min-h-[80vh] items-center py-28 md:py-40",
+      )}
+    >
+      <div
+        className={cn(
+          "mx-auto w-full max-w-[1300px]",
+          isImageSplit
+            ? "grid min-h-[70vh] grid-cols-1 lg:grid-cols-2"
+            : "grid grid-cols-1 items-start gap-16 lg:grid-cols-2 lg:gap-24",
+        )}
+      >
+        <div
+          className={cn(
+            "flex flex-col items-start",
+            isImageSplit ? "justify-center py-16 lg:py-24 lg:pr-16" : "lg:sticky lg:top-32",
+          )}
+        >
+          <ScrollReveal>
+            {section.badge ? <NetworkEyebrow label={section.badge} tone="onLight" /> : null}
+            <div className="mt-4 mb-6">
+              <SectionPortableText value={section.title} variant="heading" tone="dark" />
+            </div>
+            {section.subtitle ? (
+              <SectionPortableText
+                value={section.subtitle}
+                variant="subheading"
+                tone="dark"
+                className="mb-10 max-w-xl"
+              />
+            ) : null}
+            <BuilderCtaButton
+              cta={section.cta}
+              fallbackLabel={section.ctaLabel}
+              fallbackHref={section.ctaHref}
+              className="w-full justify-center sm:w-auto"
+            />
+          </ScrollReveal>
+        </div>
+
+        {isImageSplit ? (
+          <div className="relative min-h-[320px] lg:min-h-full">
+            <img
+              src={imageSrc}
+              alt={cmsCleanText(section.imageAlt)}
+              className="absolute inset-0 h-full w-full object-cover"
+              loading="lazy"
+              decoding="async"
+            />
           </div>
-          
+        ) : (
           <div className="pt-2 lg:pt-4">
             <ScrollReveal delay={0.1}>
-              <h3 className="font-host-grotesk text-2xl font-bold text-black mb-8 border-b border-black/10 pb-4">{section.categoriesTitle}</h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-10">
+              <h3 className="mb-8 border-b border-black/10 pb-4 font-host-grotesk text-2xl font-bold text-black">
+                {section.categoriesTitle}
+              </h3>
+              <div className="grid grid-cols-1 gap-x-8 gap-y-10 sm:grid-cols-2">
                 {(section.categories ?? []).map((cat, idx) => (
                   <div key={idx} className="flex items-start gap-4">
-                    <span className="w-6 h-6 text-rellia-teal shrink-0 mt-0.5"><CalendarDays className="w-full h-full" /></span>
-                    <span className="font-host-grotesk font-semibold text-black/90 text-lg leading-snug">{cat}</span>
+                    <span className="mt-0.5 h-6 w-6 shrink-0 text-rellia-teal">
+                      <LucideIcon name={categoryIconName} className="h-full w-full" />
+                    </span>
+                    <span className="font-host-grotesk text-lg font-semibold leading-snug text-black/90">{cat}</span>
                   </div>
                 ))}
               </div>
             </ScrollReveal>
           </div>
-        </div>
+        )}
       </div>
     </section>
   )
@@ -811,9 +799,6 @@ const SectionTestimonials = ({ section }: { section: CmsSectionTestimonials }) =
   if (testimonials.length === 0) return null
   return (
     <section className="w-full bg-white">
-      <div className="mx-auto max-w-[1300px] px-6 pt-14 md:px-10 md:pt-20">
-        <SectionSanityLabel sectionType={section._type} />
-      </div>
       <ProgramTrustedMembersSection
         title={cmsCleanText(section.heading) || "Already trusted by Rellia members"}
         testimonials={testimonials}
@@ -827,11 +812,7 @@ const SectionRelliaCtaBlock = ({ section }: { section: CmsSectionRelliaCta }) =>
   if (!primary) return null
 
   return (
-    <div>
-      <div className="mx-auto max-w-[1300px] px-6 pt-6 md:px-10">
-        <SectionSanityLabel sectionType={section._type} />
-      </div>
-      <RelliaCta
+    <RelliaCta
         title={cmsDisplayText(section.title)}
         body={cmsDisplayText(section.body) || undefined}
         primary={primary}
@@ -847,7 +828,6 @@ const SectionRelliaCtaBlock = ({ section }: { section: CmsSectionRelliaCta }) =>
         }
         roundedClassName="rounded-none"
       />
-    </div>
   )
 }
 
@@ -859,7 +839,6 @@ const SectionFaq = ({ section }: { section: CmsSectionFaq }) => {
     <section className="bg-white py-16 md:py-24">
       <div className="mx-auto max-w-[900px] px-6 md:px-10">
         <ScrollReveal>
-          <SectionSanityLabel sectionType={section._type} />
           {section.title?.trim() ? (
             <h2 className={cn(sectionHeadingClass, "mb-4 md:mb-5")}>
               {cmsDisplayText(section.title)}

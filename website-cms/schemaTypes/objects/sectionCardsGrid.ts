@@ -3,7 +3,7 @@ import {internalLabelField, sectionListPreview} from '../shared/sectionPreview'
 
 export const sectionCardsGrid = defineType({
   name: 'sectionCardsGrid',
-  title: 'Section: Cards grid',
+  title: 'Image grid',
   type: 'object',
   fields: [
     defineField(internalLabelField),
@@ -13,6 +13,8 @@ export const sectionCardsGrid = defineType({
     defineField({
       name: 'cards',
       type: 'array',
+      description:
+        'Add as many cards as needed — the grid wraps responsively (1, 2, or 3 columns). Image, icon, badge, tags, and CTA are all optional per card.',
       of: [
         defineArrayMember({
           type: 'object',
@@ -47,5 +49,5 @@ export const sectionCardsGrid = defineType({
       ],
     }),
   ],
-  preview: sectionListPreview({typeLabel: 'Cards grid', fallback: 'Cards grid'}),
+  preview: sectionListPreview({typeLabel: 'Image grid', fallback: 'Image grid'}),
 })
