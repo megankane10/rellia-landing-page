@@ -176,7 +176,7 @@ export default function WhyRellia({
 
                       <div
                         className={cn(
-                          "mt-0.5 overflow-hidden",
+                          "mt-2.5 overflow-hidden",
                           "transition-[max-height,opacity,transform] duration-[1050ms] ease-[cubic-bezier(0.42,0,1,1)] motion-reduce:transition-none",
                           isActive
                             ? "delay-300 max-h-56 opacity-100 translate-y-0"
@@ -260,7 +260,7 @@ export default function WhyRellia({
 
                           <div
                             className={cn(
-                              "mt-0.5 overflow-hidden",
+                              "mt-2.5 overflow-hidden",
                               "transition-[max-height,opacity,transform] duration-[1050ms] ease-[cubic-bezier(0.42,0,1,1)] motion-reduce:transition-none",
                               isActive
                                 ? "delay-300 max-h-64 opacity-100 translate-y-0"

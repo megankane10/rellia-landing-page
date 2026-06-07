@@ -149,19 +149,8 @@
     animation: glow-sweep 1.4s linear 1 forwards;
   }
 
-  .built-by-credit-sweep--reverse {
-    opacity: 1;
-    animation: glow-sweep-reverse 1.4s linear 1 forwards;
-  }
-
-  .built-by-credit-sweep--fade-out {
-    opacity: 0;
-    animation: none;
-  }
-
   @media (prefers-reduced-motion: reduce) {
-    .built-by-credit-sweep--forward,
-    .built-by-credit-sweep--reverse {
+    .built-by-credit-sweep--forward {
       animation: none;
       opacity: 0;
     }
@@ -188,12 +177,6 @@
     color: rgba(255, 255, 255, 0.92);
     box-shadow: none !important;
     overflow: visible !important;
-    transform-origin: center bottom;
-    opacity: 0;
-    transform: translateY(6px) scale(0.96);
-    transition:
-      opacity 220ms cubic-bezier(0.16, 1, 0.3, 1),
-      transform 220ms cubic-bezier(0.16, 1, 0.3, 1);
   }
 
   .built-by-tooltip-inner {
@@ -237,35 +220,60 @@
     filter: drop-shadow(0 0 6px rgba(157, 214, 208, 0.7));
   }
 
-  .built-by-tooltip[data-state="open"] {
+  .built-by-tooltip--entering {
+    opacity: 0;
+    transform: translateY(10px) scale(0.84);
+    pointer-events: none;
+    animation: built-by-tooltip-enter 0.48s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    transform-origin: center bottom;
+  }
+
+  .built-by-tooltip--visible {
     opacity: 1;
     transform: translateY(0) scale(1);
+    transform-origin: center bottom;
   }
 
-  .built-by-tooltip[data-state="closed"] {
+  .built-by-tooltip--leaving {
+    animation: built-by-tooltip-dismiss 0.52s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    transform-origin: center bottom;
+    pointer-events: none;
+  }
+
+  .built-by-tooltip--hidden {
     opacity: 0;
-    transform: translateY(5px) scale(0.97);
-    transition:
-      opacity 180ms cubic-bezier(0.4, 0, 0.2, 1),
-      transform 180ms cubic-bezier(0.4, 0, 0.2, 1);
+    transform: translateY(8px) scale(0.84);
+    pointer-events: none;
   }
 
-  .built-by-tooltip[data-state="closed"]::before {
-    animation: rotate-border-reverse 0.22s cubic-bezier(0.45, 0.09, 0.55, 0.91) 1 forwards;
+  .built-by-tooltip--entering::before {
+    animation: rotate-border 1.8s cubic-bezier(0.45, 0.09, 0.55, 0.91) infinite;
+  }
+
+  .built-by-tooltip--visible::before {
+    animation: rotate-border 1.8s cubic-bezier(0.45, 0.09, 0.55, 0.91) infinite;
+  }
+
+  .built-by-tooltip--leaving::before {
+    animation: rotate-border-reverse 0.52s cubic-bezier(0.45, 0.09, 0.55, 0.91) 1 forwards;
   }
 
   @media (prefers-reduced-motion: reduce) {
     .built-by-tooltip::before,
-    .built-by-tooltip[data-state="closed"]::before {
+    .built-by-tooltip--entering::before,
+    .built-by-tooltip--leaving::before {
       animation: none;
       background: rgba(157, 214, 208, 0.45);
     }
 
-    .built-by-tooltip,
-    .built-by-tooltip[data-state="open"],
-    .built-by-tooltip[data-state="closed"] {
-      transition: opacity 120ms ease;
-      transform: none;
+    .built-by-tooltip--entering,
+    .built-by-tooltip--leaving {
+      animation: none;
+    }
+
+    .built-by-tooltip--leaving,
+    .built-by-tooltip--hidden {
+      opacity: 0;
     }
   }
 }
@@ -292,15 +300,6 @@
   }
   100% {
     background-position: -200% center;
-  }
-}
-
-@keyframes glow-sweep-reverse {
-  0% {
-    background-position: -200% center;
-  }
-  100% {
-    background-position: 200% center;
   }
 }
 
