@@ -924,13 +924,53 @@ const renderSection = (section: CmsPageSection) => {
   }
 }
 
-export const PageRenderer = ({ page }: { page: CmsPageContent }) => {
+export const PageRenderer = ({
+  page,
+  renderAfterFirstHero,
+}: {
+  page: CmsPageContent
+  renderAfterFirstHero?: ReactNode
+}) => {
   const sections = page.sections ?? []
-  return <SectionsRenderer sections={sections} />
+  return <SectionsRenderer sections={sections} renderAfterFirstHero={renderAfterFirstHero} />
 }
 
 export default PageRenderer
 
-export const SectionsRenderer = ({ sections }: { sections: CmsPageSection[] }) => {
-  return <>{sections.map((s, idx) => <div key={s._key ?? `${s._type}-${idx}`}>{renderSection(s)}</div>)}</>
+export const SectionsRenderer = ({
+  sections,
+  renderAfterFirstHero,
+}: {
+  sections: CmsPageSection[]
+  renderAfterFirstHero?: ReactNode
+}) => {
+  let heroSeen = false
+
+  return (
+    <>
+      {sections.map((s, idx) => {
+        const key = s._key ?? `${s._type}-${idx}`
+        const insertAfterHero =
+          !heroSeen && isHeroSection(s) && renderAfterFirstHero ? (
+            <>
+              {renderAfterFirstHero}
+            </>
+          ) : null
+
+        if (!heroSeen && isHeroSection(s)) {
+          heroSeen = true
+        }
+
+        return (
+          <div key={key}>
+            {renderSection(s)}
+            {insertAfterHero}
+          </div>
+        )
+      })}
+    </>
+  )
 }
+
+const isHeroSection = (section: CmsPageSection) =>
+  section._type === "sectionHero" || section._type === "sectionMarketingHero"

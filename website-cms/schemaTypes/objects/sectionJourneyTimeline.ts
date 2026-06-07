@@ -4,7 +4,7 @@ import {internalLabelField, sectionListPreview} from '../shared/sectionPreview'
 /** Membership-style numbered timeline — same component as /apply. */
 export const sectionJourneyTimeline = defineType({
   name: 'sectionJourneyTimeline',
-  title: 'Timeline',
+  title: 'Journey timeline block',
   type: 'object',
   fields: [
     defineField(internalLabelField),

@@ -8,7 +8,7 @@ import {
 
 export const sectionFeatureGrid = defineType({
   name: 'sectionFeatureGrid',
-  title: 'Text and icon grid',
+  title: 'Feature grid block',
   type: 'object',
   fields: [
     defineField(internalLabelField),

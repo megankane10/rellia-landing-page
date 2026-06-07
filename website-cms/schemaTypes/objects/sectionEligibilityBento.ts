@@ -3,7 +3,7 @@ import {internalLabelField, sectionListPreview} from '../shared/sectionPreview'
 
 export const sectionEligibilityBento = defineType({
   name: 'sectionEligibilityBento',
-  title: 'Eligibility bento',
+  title: 'Eligibility bento block',
   type: 'object',
   fields: [
     defineField(internalLabelField),

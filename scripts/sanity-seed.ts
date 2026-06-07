@@ -24,11 +24,29 @@ import {
   DEFAULT_STORIES_PAGE_HEADLINE_PORTABLE,
 } from "../shared/cms/inlineHeroHeadline"
 import { ADVISOR_DIRECTORY_SEED, ADVISOR_FILTER_OPTIONS } from "../client/data/advisorDirectory"
-import { FOUNDER_DIRECTORY, ALL_LEVELS, ALL_SPECIALTIES } from "../client/data/founderDirectory"
+import { FOUNDER_DIRECTORY, ALL_SPECIALTIES } from "../client/data/founderDirectory"
+import {
+  createCareersSections,
+  createNetworkAdvisorsSections,
+  createNetworkFoundersSections,
+  createNetworkInvestorsSections,
+  createNetworkPartnersSections,
+  createPowerOfPlayProfileBody,
+  createRichTextShowcase,
+  createWebsiteLaunchStoryBody,
+  DUMMY_ADVISOR,
+  DUMMY_OPEN_ROLE,
+  POWER_OF_PLAY_ALUMNI,
+  PRIORITY_MODAL_SEED,
+  PROGRAMS_LAYOUT_SEED,
+  QMS_PROGRAM_TESTIMONIALS_SEED,
+  QMS_PROGRAM_TIMELINE_STEPS,
+  STUDIO_GUIDE_SECTIONS,
+  WEBSITE_LAUNCH_STORY,
+} from "./seed/cmsSyncContent"
 import { PORTFOLIO_LOGO_MARKS, INVESTOR_LOGO_MARKS } from "../client/data/portfolioLogos"
 import { ROUTE_SEO } from "../client/config/seo"
 import { STORIES } from "../client/content/stories"
-import { CAREERS_OPEN_ROLES } from "../shared/careersOpenRoles"
 import { threePartHeroHeadline } from "../shared/cms/inlineHeroHeadline"
 import { legalSectionsToPortableText } from "../shared/cms/legal/sectionsToPortableText"
 import {
@@ -178,8 +196,6 @@ const seoForRoute = (pathname: string) => {
     robots: { noIndex, noFollow: false },
   }
 }
-
-const pagePublishingLive = { pageVisibility: "live" as const }
 
 const seedPublicOrigin = (
   process.env.SEED_PUBLIC_SITE_ORIGIN?.replace(/\/$/, "") ||
@@ -863,7 +879,6 @@ const consultingPageSeedDocument = () => {
     _id: "consultingPage",
     _type: "consultingPage",
     title: c.title,
-    ...pagePublishingLive,
     heroEyebrow: c.heroEyebrow,
     heroTitle: c.heroTitle,
     heroAccentPhrase: c.heroAccentPhrase,
@@ -896,7 +911,6 @@ const consultingPageSeedDocument = () => {
       role: item.role,
       company: item.company,
       imageSrc: item.image,
-      logoSrc: item.logo,
     })),
     membershipTitle: c.membershipTitle,
     membershipDescription: c.membershipDescription,
@@ -925,7 +939,6 @@ const diagnosticLandingPageSeedDocument = () => {
     _id: "diagnosticLandingPage",
     _type: "diagnosticLandingPage",
     title: d.title,
-    ...pagePublishingLive,
     heroBadgeLabel: d.heroBadgeLabel,
     heroTitle: d.heroTitle,
     heroAccentPhrase: d.heroAccentPhrase,
@@ -974,7 +987,6 @@ const diagnosticLandingPageSeedDocument = () => {
 const paymentPageSeedDocument = () => ({
   _id: "paymentPage",
   _type: "paymentPage",
-  ...pagePublishingLive,
   benefitsPanelHeadline: DEFAULT_PAYMENT_PAGE.benefitsPanelHeadline,
   benefitsTitle: DEFAULT_PAYMENT_PAGE.benefitsTitle,
   benefits: DEFAULT_PAYMENT_PAGE.benefits,
@@ -1058,24 +1070,13 @@ async function main() {
       _type: "globalSettings",
       ...DEFAULT_GLOBAL_SETTINGS,
       themeColors: DEFAULT_THEME_COLORS,
-      priorityModalEnabled: true,
-      priorityModalHeading: "This is what our priority dialog looks like.",
-      priorityModalBody: "Enter your details below to see how form submissions work in this dialog.",
-      priorityModalButtonLabel: "",
-      priorityModalButtonLink: "",
-      priorityModalSecondaryButtonLabel: "",
-      priorityModalSecondaryButtonLink: "",
-      priorityModalFormEnabled: true,
-      priorityModalFormButtonLabel: "Send",
-      priorityModalFormPlaceholderName: "Your name",
-      priorityModalFormPlaceholderEmail: "Email address",
+      ...PRIORITY_MODAL_SEED,
     },
   })
   mutations.push({
     createOrReplace: {
       _id: "eventsLandingPage",
       _type: "eventsLandingPage",
-      ...pagePublishingLive,
       heroTitlePortable: DEFAULT_EVENTS_LANDING_HERO_PORTABLE,
       heroSubtitle: "Join live sessions with operators, clinicians, and health tech leaders.",
       ctaTitle: "Want to speak at a Rellia event?",
@@ -1091,7 +1092,6 @@ async function main() {
     createOrReplace: {
       _id: "storiesPage",
       _type: "storiesPage",
-      ...pagePublishingLive,
       headlinePortable: DEFAULT_STORIES_PAGE_HEADLINE_PORTABLE,
       subheadline:
         "The latest founder spotlights, industry insights, & program updates. Stay current with the people and ideas shaping the future of health.",
@@ -1103,8 +1103,9 @@ async function main() {
       _id: "networkFoundersPage",
       _type: "networkFoundersPage",
       title: "Founders",
-      ...pagePublishingLive,
+      sections: createNetworkFoundersSections(ptBlock, DEFAULT_APPLY_PAGE),
       logoMarquee: foundersLogoMarquee.length > 0 ? foundersLogoMarquee : undefined,
+      seo: seoForRoute("/founders"),
     },
   })
   mutations.push({
@@ -1112,7 +1113,8 @@ async function main() {
       _id: "networkAdvisorsPage",
       _type: "networkAdvisorsPage",
       title: "Advisors",
-      ...pagePublishingLive,
+      sections: createNetworkAdvisorsSections(ptBlock),
+      seo: seoForRoute("/advisors"),
     },
   })
   mutations.push({
@@ -1120,8 +1122,9 @@ async function main() {
       _id: "networkInvestorsPage",
       _type: "networkInvestorsPage",
       title: "Investors",
-      ...pagePublishingLive,
+      sections: createNetworkInvestorsSections(ptBlock),
       logoMarquee: investorsLogoMarquee.length > 0 ? investorsLogoMarquee : undefined,
+      seo: seoForRoute("/investors"),
       foundersCluster: [
         {
           _key: "chart-b2b",
@@ -1159,7 +1162,8 @@ async function main() {
       _id: "networkPartnersPage",
       _type: "networkPartnersPage",
       title: "Industry Partners",
-      ...pagePublishingLive,
+      sections: createNetworkPartnersSections(ptBlock),
+      seo: seoForRoute("/industry-partners"),
     },
   })
   mutations.push({ createOrReplace: consultingPageSeedDocument() })
@@ -1191,7 +1195,6 @@ async function main() {
     createOrReplace: {
       _id: "homePage",
       _type: "homePage",
-      ...pagePublishingLive,
       ...DEFAULT_HOME_PAGE,
       ctaImageUrl: toSanityAbsoluteUrl(DEFAULT_HOME_PAGE.ctaImageUrl),
       seo: seoForRoute("/"),
@@ -1202,7 +1205,6 @@ async function main() {
     createOrReplace: {
       _id: "aboutPage",
       _type: "aboutPage",
-      ...pagePublishingLive,
       ...aboutFields,
       heroHeadlinePortable: threePartHeroHeadline("Empowering the", "next generation", " of health tech."),
       seo: seoForRoute("/about"),
@@ -1215,32 +1217,29 @@ async function main() {
     mutations.push({ delete: { id: `drafts.${id}` } })
   }
 
-  CAREERS_OPEN_ROLES.forEach((role, index) => {
-    mutations.push({
-      createOrReplace: {
-        _id: `openRole.${role.id}`,
-        _type: "openRole",
-        roleId: { _type: "slug", current: role.id },
-        title: role.title,
-        location: role.location,
-        employmentType: role.employmentType,
-        description: role.description,
-        responsibilities: role.responsibilities,
-        linkedInApplyUrl: role.linkedInApplyUrl,
-        sortOrder: index,
-      },
-    })
+  mutations.push({
+    createOrReplace: {
+      _id: `openRole.${DUMMY_OPEN_ROLE.id}`,
+      _type: "openRole",
+      roleId: { _type: "slug", current: DUMMY_OPEN_ROLE.id },
+      title: DUMMY_OPEN_ROLE.title,
+      location: DUMMY_OPEN_ROLE.location,
+      employmentType: DUMMY_OPEN_ROLE.employmentType,
+      description: DUMMY_OPEN_ROLE.description,
+      responsibilities: DUMMY_OPEN_ROLE.responsibilities,
+      linkedInApplyUrl: DUMMY_OPEN_ROLE.linkedInApplyUrl,
+      sortOrder: 0,
+    },
   })
 
   mutations.push({
     createOrReplace: {
       _id: "careersPage",
       _type: "careersPage",
-      ...pagePublishingLive,
       careersContentMode: "both",
-      publishOpenRolesOnProduction: true,
       showHiringNavBadge: true,
       showVolunteerNavBadge: true,
+      sections: createCareersSections(ptBlock),
       lifeAtRelliaHeading: "Built by healthtech insiders, for builders",
       lifeAtRelliaSubheading: "We are a remote-first, high-standards team of builders, clinicians, and operators dedicated to supporting healthtech founders. We cultivate an environment of high autonomy, rapid iteration, and deep clinical empathy to build the future of care.",
       lifeAtRelliaImages:
@@ -1270,7 +1269,6 @@ async function main() {
     createOrReplace: {
       _id: "faqPage",
       _type: "faqPage",
-      ...pagePublishingLive,
       ...DEFAULT_FAQ_PAGE,
       seo: seoForRoute("/faq"),
     },
@@ -1285,8 +1283,15 @@ async function main() {
     createOrReplace: {
       _id: "programsLandingPage",
       _type: "programsLandingPage",
-      ...pagePublishingLive,
       ...programsLandingFields,
+      seo: seoForRoute("/programs"),
+    },
+  })
+  mutations.push({
+    createOrReplace: {
+      _id: "programsLayoutPage",
+      _type: "programsLayoutPage",
+      ...PROGRAMS_LAYOUT_SEED,
       seo: seoForRoute("/programs"),
     },
   })
@@ -1323,6 +1328,7 @@ async function main() {
         waitlistHref: (program as any).waitlistHref,
         status: (program as any).waitlistHref ? "waitlist" : "available",
         sortOrder: index,
+        pricingDiscountEnabled: false,
         ...(isQms
           ? {
               paymentUrl: DEFAULT_QMS_PROGRAM.paymentUrl,
@@ -1337,9 +1343,15 @@ async function main() {
               pillarsTitle: DEFAULT_QMS_PROGRAM.pillarsTitle,
               timelineTitle: DEFAULT_QMS_PROGRAM.timelineTitle,
               timelineSubtitle: DEFAULT_QMS_PROGRAM.timelineSubtitle,
+              timelineSteps: QMS_PROGRAM_TIMELINE_STEPS.map((step, stepIndex) => ({
+                _key: `timeline-${stepIndex}`,
+                title: step.title,
+                description: step.description,
+                weekLabel: step.weekLabel,
+              })),
+              testimonials: QMS_PROGRAM_TESTIMONIALS_SEED,
               pricingBadge: DEFAULT_QMS_PROGRAM.pricingBadge,
               pricingAmount: DEFAULT_QMS_PROGRAM.pricingAmount,
-              pricingDiscountEnabled: DEFAULT_QMS_PROGRAM.pricingDiscountEnabled ?? false,
               pricingCompareAmount: DEFAULT_QMS_PROGRAM.pricingCompareAmount ?? "",
               pricingSubAmount: DEFAULT_QMS_PROGRAM.pricingSubAmount,
               pricingDescription: DEFAULT_QMS_PROGRAM.pricingDescription,
@@ -1417,7 +1429,6 @@ async function main() {
     createOrReplace: {
       _id: "contactPage",
       _type: "contactPage",
-      ...pagePublishingLive,
       ...DEFAULT_CONTACT_PAGE,
       seo: seoForRoute("/contact"),
     },
@@ -1426,7 +1437,6 @@ async function main() {
     createOrReplace: {
       _id: "applyPage",
       _type: "applyPage",
-      ...pagePublishingLive,
       ...DEFAULT_APPLY_PAGE,
       seo: seoForRoute("/apply"),
     },
@@ -1558,104 +1568,15 @@ async function main() {
       title: "How to use this CMS",
       intro:
         "Quick reference for editors using Rellia Web Studio. Update this page anytime — it is not shown on the public website.",
-      sections: [
-        {
-          _type: "guideSection",
-          _key: "seo",
-          heading: "SEO in Studio",
-          body:
-            "Each page has an SEO tab with a live Google preview (free). Ignore SEO Health Dashboard — it requires a paid license. Use the per-page SEO fields instead. Site-wide defaults live under Site → Site settings → Default SEO.",
-        },
-        {
-          _type: "guideSection",
-          _key: "analytics",
-          heading: "Analytics",
-          body:
-            "Use the Analytics tool in the Studio top bar (full-screen Looker embed). Set the URL under Site → Site settings → Analytics (Studio). In Looker: Share → Embed report → copy iframe src. Public site traffic also uses Vercel Analytics; add GA4 or Plausible in Vercel if you need marketing funnels beyond Looker.",
-        },
-        {
-          _type: "guideSection",
-          _key: "publish",
-          heading: "Drafts vs published vs the live site",
-          body:
-            "Two different ideas: (1) Studio “Published” = saved to the dataset. (2) Page visibility (Live / Hidden / Placeholder) = whether the marketing site shows the real page or a coming-soon message. A page can be Published in Studio but still show Placeholder on the site if visibility is set to Placeholder — change it under Publishing → Page visibility → Live. Preview Vercel deploys use the preview dataset; www uses production after pnpm sanity:promote.",
-        },
-        {
-          _type: "guideSection",
-          _key: "presentation",
-          heading: "Visual editing (Presentation)",
-          body:
-            "On Vercel Preview (not www): set SANITY_API_READ_TOKEN, SANITY_STUDIO_URL=https://relliahealth.sanity.studio, and SANITY_STUDIO_PREVIEW_URL to your exact preview URL (no trailing slash). In website-cms/.env for hosted Studio, set the same SANITY_STUDIO_PREVIEW_URL. Open Presentation, wait for the iframe to load, then click content to edit. WebSocket warnings in the Studio console are usually harmless.",
-        },
-        {
-          _type: "guideSection",
-          _key: "create_pages",
-          heading: "1. Creating a New Custom Page",
-          body:
-            "To build a brand new page on your website, navigate to the Pages menu in the Studio sidebar and click the '+' icon to create a new page document. Give it a title and a unique URL slug (e.g. /partner-program). Note: Slug names that conflict with pre-built routes (like about, careers, or contact) are reserved and will be blocked by the system to prevent overriding static layouts.",
-        },
-        {
-          _type: "guideSection",
-          _key: "page_sections",
-          heading: "2. Composing with Page Sections (Blocks)",
-          body:
-            "Custom pages are composed entirely of modular blocks added to the Page sections list. You can add, reorder, or remove sections as needed:\n\n• Marketing Hero & Section Hero: Standard banner designs with large headings, support text, background images, and action buttons (CTAs).\n• Section Rich Text: Standard editor for text articles, headings, bullet lists, and basic styled paragraphs.\n• Cards Grid: A grid layout displaying images/icons, badges, descriptions, tags, and individual action buttons.\n• Eligibility Bento: A stylized layout showcasing structured criteria cards with graphic backgrounds.\n• Journey Timeline: Side-by-side timelines mapping comparisons or steps.\n• FAQ Section: Collapsible question-and-answer accordion cards.\n• Form Embed: Standalone or split layouts displaying registration forms.",
-        },
-        {
-          _type: "guideSection",
-          _key: "luma_forms",
-          heading: "3. Embedding Luma Forms",
-          body:
-            "You can embed interactive Luma event signup forms in two ways:\n\n• On Event Detail Pages: Inside any Event document, copy the stable Luma ID (e.g. evt-xxxxxx) and paste it into the Luma Event ID field. Toggle on the Embed Luma on Detail Page option to automatically insert the registration widget.\n• On Modular Pages: Add a Form embed section block to your page. Input the full Luma event URL (e.g. https://lu.ma/event/evt-xxxxxx) into the form link field to display it as an inline registration page.",
-        },
-        {
-          _type: "guideSection",
-          _key: "program_pricing",
-          heading: "4. Program Pricing Sections",
-          body:
-            "When creating or updating Program documents, you can customize program pricing modules without code. Navigate to the Detail page tab group on the program schema:\n\n• Fill in the Price (sale) field (e.g. $1,500) and sub-amount details.\n• Toggle on Show strikethrough compare price and enter a compare amount to highlight a discount (e.g., compare price $2,000).\n• Add descriptive bullet items to the pricing details list to summarize what is included in the program purchase.",
-        },
-        {
-          _type: "guideSection",
-          _key: "careers_open_roles",
-          heading: "5. Careers and open roles",
-          body:
-            "Careers page mode (both / hiring only / volunteer only) controls hero buttons and which sections appear on /careers. Job listings live under Collections → Open roles — add one document per role with title, location, apply URL, and responsibilities. Turn on Show open roles on production (www) only when listings are ready for the public site. HIRING and VOLUNTEER nav badges are separate toggles on the Careers page.",
-        },
-        {
-          _type: "guideSection",
-          _key: "consulting_diagnostic",
-          heading: "6. Consulting and Startup Diagnostic pages",
-          body:
-            "Pages → Consulting and Pages → Startup Diagnostic use grouped tabs (Hero, sections, CTA) — edit copy and images there without using the page builder. The diagnostic survey questions and scoring live in a separate document; do not change scoring logic without engineering.",
-        },
-        {
-          _type: "guideSection",
-          _key: "apply_role_boxes",
-          heading: "7. Apply page role boxes",
-          body:
-            "Pages → Apply includes Role path links — three cards below the membership timeline (Founder, Advisor, etc.). Each row has title, short description, and link. Reorder or rewrite copy there; the timeline steps are on the same document.",
-        },
-        {
-          _type: "guideSection",
-          _key: "after_main",
-          heading: "8. After engineering merges to main",
-          body:
-            "1) Confirm the Vercel preview deployment has the latest code. 2) Ask engineering to run seed/sync if content looks empty. 3) Publish changed documents in Studio (preview dataset). 4) Review on the Vercel preview URL (Additions) — not www yet. 5) When ready, engineering promotes preview → production (see docs/sanity-dataset-sync-guide.md). 6) Toggle Careers → Show open roles on production when real jobs should appear on www.",
-        },
-        {
-          _type: "guideSection",
-          _key: "do_not_touch",
-          heading: "What not to touch",
-          body:
-            "Diagnostic survey scoring weights, reserved URL slugs (about, careers, contact, etc.), admin dashboard routes, and Stripe payment links — contact engineering before changing. CTA headlines are plain text (no ** bold markers).",
-        },
-      ],
+      sections: STUDIO_GUIDE_SECTIONS,
     },
   })
 
   // Story filters (used by story documents)
-  const storyTagSet = new Set(STORIES.map((s) => s.tag).filter(Boolean))
+  const storyTagSet = new Set([
+    ...STORIES.map((s) => s.tag).filter(Boolean),
+    WEBSITE_LAUNCH_STORY.tag,
+  ])
   Array.from(storyTagSet)
     .sort((a, b) => a.localeCompare(b))
     .forEach((tag, index) => {
@@ -1671,6 +1592,36 @@ async function main() {
         },
       })
     })
+
+  const websiteLaunchStoryFilterId = storyFilterIdForTag(WEBSITE_LAUNCH_STORY.tag)
+  const websiteLaunchImageAssetId = await resolveImageAssetId(
+    client,
+    WEBSITE_LAUNCH_STORY.coverImageSrc,
+  )
+  mutations.push({
+    createOrReplace: {
+      _id: `story.${WEBSITE_LAUNCH_STORY.slug}`,
+      _type: "story",
+      featured: WEBSITE_LAUNCH_STORY.featured,
+      title: WEBSITE_LAUNCH_STORY.title,
+      slug: { _type: "slug", current: WEBSITE_LAUNCH_STORY.slug },
+      filters: [{ _type: "reference", _ref: websiteLaunchStoryFilterId }],
+      publishedAt: WEBSITE_LAUNCH_STORY.publishedAt
+        ? new Date(WEBSITE_LAUNCH_STORY.publishedAt).toISOString()
+        : undefined,
+      excerpt: WEBSITE_LAUNCH_STORY.excerpt,
+      headerImage: toSanityImageFieldValue(websiteLaunchImageAssetId),
+      headerImageAlt: WEBSITE_LAUNCH_STORY.coverImageAlt,
+      headerLayout: "block",
+      body: createWebsiteLaunchStoryBody(ptBlock, bullet, block),
+      seo: {
+        metaTitle: WEBSITE_LAUNCH_STORY.seoTitle,
+        metaDescription: WEBSITE_LAUNCH_STORY.seoDescription,
+        ogTitle: WEBSITE_LAUNCH_STORY.seoTitle,
+        ogDescription: WEBSITE_LAUNCH_STORY.seoDescription,
+      },
+    },
+  })
 
   // Stories
   for (const story of STORIES) {
@@ -1799,7 +1750,6 @@ async function main() {
             role: item.role,
             company: item.company,
             imageSrc: item.image,
-            logoSrc: item.logo,
           })),
         },
         {
@@ -2123,7 +2073,6 @@ async function main() {
             role: item.role,
             company: item.company,
             imageSrc: item.image,
-            logoSrc: item.logo,
           })),
         },
         {
@@ -2193,47 +2142,58 @@ async function main() {
     },
   })
 
-  // Directory taxonomy: seed editable filter/level/specialty docs first so advisors and
-  // alumni companies can reference them.
-  const advisorFilterIdByLabel = new Map<string, string>()
-  for (const [index, opt] of ADVISOR_FILTER_OPTIONS.entries()) {
-    if (opt.id === "all") continue
-    const label = opt.label
-    const docId = `advisorFilter-${slugify(label)}`
-    advisorFilterIdByLabel.set(label, docId)
-    mutations.push({
-      createOrReplace: {
-        _id: docId,
-        _type: "advisorFilter",
-        label,
-        slug: { _type: "slug", current: slugify(label) },
-        sortOrder: index,
-      },
-    })
+  const existingAdvisorFilterIds = await client.fetch<string[]>(`*[_type == "advisorFilter"]._id`)
+  for (const id of existingAdvisorFilterIds) {
+    mutations.push({ delete: { id } })
+  }
+  const existingFounderSpecialtyDocIds = await client.fetch<string[]>(`*[_type == "founderSpecialty"]._id`)
+  for (const id of existingFounderSpecialtyDocIds) {
+    mutations.push({ delete: { id } })
   }
 
-  // New directory filter groups (power the dynamic directory filter UI)
-  const advisorsGroupSlug = slugify("Expertise")
+  // Directory filter groups (power the dynamic directory filter UI)
+  const advisorsCountryGroupSlug = slugify("Countries")
+  const advisorsSpecialtyGroupSlug = slugify("Specialties")
   const foundersCountryGroupSlug = slugify("Country")
   const foundersSpecialtyGroupSlug = slugify("Specialty")
   const foundersBusinessModelGroupSlug = slugify("Business Model")
 
+  mutations.push({ delete: { id: directoryFilterGroupId(slugify("Expertise")) } })
+  mutations.push({ delete: { id: "directoryFilterGroup-level" } })
+
   mutations.push({
     createOrReplace: {
-      _id: directoryFilterGroupId(advisorsGroupSlug),
+      _id: directoryFilterGroupId(advisorsCountryGroupSlug),
       _type: "directoryFilterGroup",
-      title: "Expertise",
-      slug: { _type: "slug", current: advisorsGroupSlug },
+      title: "Countries",
+      slug: { _type: "slug", current: advisorsCountryGroupSlug },
       appliesTo: "advisors",
       sortOrder: 0,
+      options: [
+        { _type: "option", label: "United States" },
+        { _type: "option", label: "Canada" },
+        { _type: "option", label: "United Kingdom" },
+        { _type: "option", label: "Germany" },
+        { _type: "option", label: "France" },
+        { _type: "option", label: "Australia" },
+      ],
+    },
+  })
+
+  mutations.push({
+    createOrReplace: {
+      _id: directoryFilterGroupId(advisorsSpecialtyGroupSlug),
+      _type: "directoryFilterGroup",
+      title: "Specialties",
+      slug: { _type: "slug", current: advisorsSpecialtyGroupSlug },
+      appliesTo: "advisors",
+      sortOrder: 1,
       options: ADVISOR_FILTER_OPTIONS.filter((o) => o.id !== "all").map((o) => ({
         _type: "option",
         label: o.label,
       })),
     },
   })
-
-  mutations.push({ delete: { id: "directoryFilterGroup-level" } })
 
   mutations.push({
     createOrReplace: {
@@ -2287,26 +2247,75 @@ async function main() {
     },
   })
 
-  // Removed Level taxonomy document seeding
+  const advisorCountryValues = (country: string | string[] | undefined): string[] => {
+    if (!country) return []
+    return Array.isArray(country) ? country : [country]
+  }
 
-  const founderSpecialtyIdByLabel = new Map<string, string>()
-  for (const [index, label] of ALL_SPECIALTIES.entries()) {
-    const docId = `founderSpecialty-${slugify(label)}`
-    founderSpecialtyIdByLabel.set(label, docId)
-    mutations.push({
-      createOrReplace: {
-        _id: docId,
-        _type: "founderSpecialty",
-        label,
-        slug: { _type: "slug", current: slugify(label) },
-        sortOrder: index,
-      },
-    })
+  const buildAdvisorDirectoryFilters = (advisor: (typeof ADVISOR_DIRECTORY_SEED)[number]) => {
+    const filters: Array<{
+      _type: "directoryFilterAssignment"
+      group: { _type: "reference"; _ref: string }
+      values: string[]
+    }> = []
+    const countries = advisorCountryValues(advisor.country)
+    if (countries.length > 0) {
+      filters.push({
+        _type: "directoryFilterAssignment",
+        group: { _type: "reference", _ref: directoryFilterGroupId(advisorsCountryGroupSlug) },
+        values: countries,
+      })
+    }
+    if (advisor.filter) {
+      filters.push({
+        _type: "directoryFilterAssignment",
+        group: { _type: "reference", _ref: directoryFilterGroupId(advisorsSpecialtyGroupSlug) },
+        values: [advisor.filter],
+      })
+    }
+    return filters.length > 0 ? filters : undefined
+  }
+
+  const buildAdvisorSocialLinks = (advisor: (typeof ADVISOR_DIRECTORY_SEED)[number]) => {
+    if (Array.isArray(advisor.socialLinks) && advisor.socialLinks.length > 0) {
+      return advisor.socialLinks.map((link, index) => ({
+        _type: "socialLink" as const,
+        _key: `social-${index}`,
+        platform: link.platform ?? "website",
+        label: link.label ?? "Website",
+        url: link.url ?? advisor.websiteUrl ?? advisor.linkedInUrl,
+      }))
+    }
+    const links: Array<{
+      _type: "socialLink"
+      _key: string
+      platform: string
+      label: string
+      url: string
+    }> = []
+    if (advisor.linkedInUrl) {
+      links.push({
+        _type: "socialLink",
+        _key: "linkedin",
+        platform: "linkedin",
+        label: "LinkedIn",
+        url: advisor.linkedInUrl,
+      })
+    }
+    if (advisor.websiteUrl) {
+      links.push({
+        _type: "socialLink",
+        _key: "website",
+        platform: "website",
+        label: "Website",
+        url: advisor.websiteUrl,
+      })
+    }
+    return links.length > 0 ? links : undefined
   }
 
   // Directory data
   for (const advisor of ADVISOR_DIRECTORY_SEED) {
-    const filterRefId = advisor.filter ? advisorFilterIdByLabel.get(advisor.filter) : undefined
     mutations.push({
       createOrReplace: {
         _id: `advisor-${advisor.id}`,
@@ -2316,41 +2325,73 @@ async function main() {
         organization: advisor.organization,
         role: advisor.role,
         location: advisor.location,
-        country: advisor.country,
+        country: advisorCountryValues(advisor.country),
         yearJoined: advisor.yearJoined,
         industries: advisor.industries,
-        snapshot: advisor.focus,
-        focus: advisor.focus,
-        filter: filterRefId
-          ? { _type: "reference", _ref: filterRefId }
-          : undefined,
-        directoryFilters: advisor.filter
-          ? [
-              {
-                _type: "directoryFilterAssignment",
-                group: { _type: "reference", _ref: directoryFilterGroupId(advisorsGroupSlug) },
-                values: [advisor.filter],
-              },
-            ]
-          : undefined,
+        snapshot: advisor.snapshot ?? advisor.focus,
+        directoryFilters: buildAdvisorDirectoryFilters(advisor),
         photoSrc: advisor.photoSrc,
-        linkedInUrl: advisor.linkedInUrl,
-        websiteUrl: advisor.websiteUrl,
-        bio: advisor.bio,
+        socialLinks: buildAdvisorSocialLinks(advisor),
+        bio: paragraphsToBlocks(`advisor-bio-${advisor.id}`, advisor.bio),
         mentoringStyle: advisor.mentoringStyle,
         highlights: advisor.highlights,
       },
     })
   }
 
+  mutations.push({
+    createOrReplace: {
+      _id: `advisor-${DUMMY_ADVISOR.id}`,
+      _type: "advisor",
+      slug: { _type: "slug", current: DUMMY_ADVISOR.id },
+      name: DUMMY_ADVISOR.name,
+      organization: DUMMY_ADVISOR.organization,
+      role: DUMMY_ADVISOR.role,
+      location: DUMMY_ADVISOR.location,
+      country: DUMMY_ADVISOR.country,
+      yearJoined: DUMMY_ADVISOR.yearJoined,
+      industries: DUMMY_ADVISOR.industries,
+      snapshot: DUMMY_ADVISOR.snapshot,
+      directoryFilters: [
+        {
+          _type: "directoryFilterAssignment",
+          group: { _type: "reference", _ref: directoryFilterGroupId(advisorsCountryGroupSlug) },
+          values: DUMMY_ADVISOR.country,
+        },
+        {
+          _type: "directoryFilterAssignment",
+          group: { _type: "reference", _ref: directoryFilterGroupId(advisorsSpecialtyGroupSlug) },
+          values: [DUMMY_ADVISOR.specialtyFilter],
+        },
+      ],
+      photoSrc: DUMMY_ADVISOR.photoSrc,
+      socialLinks: DUMMY_ADVISOR.socialLinks,
+      bio: createRichTextShowcase(`dummy-advisor`, ptBlock, bullet, block),
+      mentoringStyle: DUMMY_ADVISOR.mentoringStyle,
+      highlights: DUMMY_ADVISOR.highlights,
+    },
+  })
+
+  const buildFounderDirectoryFilters = (company: (typeof FOUNDER_DIRECTORY)[number]) =>
+    [
+      ...(company.country ?? []).map((c) => ({
+        _type: "directoryFilterAssignment" as const,
+        group: { _type: "reference", _ref: directoryFilterGroupId(foundersCountryGroupSlug) },
+        values: [c],
+      })),
+      ...(company.specialties ?? []).map((s) => ({
+        _type: "directoryFilterAssignment" as const,
+        group: { _type: "reference", _ref: directoryFilterGroupId(foundersSpecialtyGroupSlug) },
+        values: [s],
+      })),
+      ...(company.businessModel ?? []).map((bm) => ({
+        _type: "directoryFilterAssignment" as const,
+        group: { _type: "reference", _ref: directoryFilterGroupId(foundersBusinessModelGroupSlug) },
+        values: [bm],
+      })),
+    ].filter(Boolean)
+
   for (const company of FOUNDER_DIRECTORY) {
-    const specialtyRefs = (company.specialties ?? [])
-      .map((label) => founderSpecialtyIdByLabel.get(label))
-      .filter((id): id is string => Boolean(id))
-      .map((id) => ({
-        _type: "reference",
-        _ref: id,
-      }))
     mutations.push({
       createOrReplace: {
         _id: `alumniCompany-${company.id}`,
@@ -2358,38 +2399,57 @@ async function main() {
         slug: { _type: "slug", current: company.id },
         name: company.logoName,
         tagline: company.tagline,
-        specialties: specialtyRefs,
-        directoryFilters: [
-          ...(company.country ?? []).map((c) => ({
-            _type: "directoryFilterAssignment",
-            group: { _type: "reference", _ref: directoryFilterGroupId(foundersCountryGroupSlug) },
-            values: [c],
-          })),
-          ...(company.specialties ?? []).map((s) => ({
-            _type: "directoryFilterAssignment",
-            group: { _type: "reference", _ref: directoryFilterGroupId(foundersSpecialtyGroupSlug) },
-            values: [s],
-          })),
-          ...(company.businessModel ?? []).map((bm) => ({
-            _type: "directoryFilterAssignment",
-            group: { _type: "reference", _ref: directoryFilterGroupId(foundersBusinessModelGroupSlug) },
-            values: [bm],
-          })),
-        ].filter(Boolean),
+        specialties: company.specialties ?? [],
+        directoryFilters: buildFounderDirectoryFilters(company),
         shortDescription: company.shortDescription,
-        longDescription: company.longDescription,
         websiteUrl: company.websiteUrl,
         linkedinUrl: company.linkedinUrl,
-        traction: company.traction,
-        relliaCollaboration: company.relliaCollaboration,
         country: company.country,
         businessModel: company.businessModel,
         yearJoined: company.yearJoined,
-        logoSrc: company.logoSrc,
         founders: company.founders,
+        profileBody: company.profileBody,
       },
     })
   }
+
+  mutations.push({
+    createOrReplace: {
+      _id: `alumniCompany-${POWER_OF_PLAY_ALUMNI.id}`,
+      _type: "alumniCompany",
+      slug: { _type: "slug", current: POWER_OF_PLAY_ALUMNI.slug },
+      name: POWER_OF_PLAY_ALUMNI.name,
+      logoSrc: POWER_OF_PLAY_ALUMNI.logoSrc,
+      tagline: POWER_OF_PLAY_ALUMNI.tagline,
+      shortDescription: POWER_OF_PLAY_ALUMNI.shortDescription,
+      specialties: POWER_OF_PLAY_ALUMNI.specialties,
+      businessModel: POWER_OF_PLAY_ALUMNI.businessModel,
+      country: POWER_OF_PLAY_ALUMNI.country,
+      yearJoined: POWER_OF_PLAY_ALUMNI.yearJoined,
+      websiteUrl: POWER_OF_PLAY_ALUMNI.websiteUrl,
+      linkedinUrl: POWER_OF_PLAY_ALUMNI.linkedinUrl,
+      email: POWER_OF_PLAY_ALUMNI.email,
+      founders: POWER_OF_PLAY_ALUMNI.founders,
+      profileBody: createPowerOfPlayProfileBody(ptBlock, bullet, block),
+      directoryFilters: [
+        {
+          _type: "directoryFilterAssignment",
+          group: { _type: "reference", _ref: directoryFilterGroupId(foundersCountryGroupSlug) },
+          values: POWER_OF_PLAY_ALUMNI.country,
+        },
+        {
+          _type: "directoryFilterAssignment",
+          group: { _type: "reference", _ref: directoryFilterGroupId(foundersSpecialtyGroupSlug) },
+          values: POWER_OF_PLAY_ALUMNI.specialties,
+        },
+        {
+          _type: "directoryFilterAssignment",
+          group: { _type: "reference", _ref: directoryFilterGroupId(foundersBusinessModelGroupSlug) },
+          values: POWER_OF_PLAY_ALUMNI.businessModel,
+        },
+      ],
+    },
+  })
 
   // Batch in chunks (Sanity has request size limits)
   const chunkSize = 50

@@ -3,7 +3,7 @@ import {internalLabelField, sectionListPreview} from '../shared/sectionPreview'
 
 export const sectionFaq = defineType({
   name: 'sectionFaq',
-  title: 'FAQ accordion',
+  title: 'FAQ accordion block',
   type: 'object',
   fields: [
     defineField(internalLabelField),

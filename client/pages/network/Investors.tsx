@@ -28,7 +28,7 @@ import { CreamSection, GlassCard, GlassCardLight, LightSection, Reveal, RoleHero
 import { useNetworkInvestorsPage } from "@/hooks/useCmsDocuments"
 import NetworkCmsPage from "./NetworkCmsPage"
 import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo"
-import CmsPageVisibilityGate from "@/components/cms/CmsPageVisibilityGate"
+import type { ClusterChart, CmsSingletonPageContent } from "@shared/cms/types"
 
 const COLORS = {
   blue: "#2563eb",
@@ -278,13 +278,80 @@ function PortfolioSplit() {
   )
 }
 
+function FoundersClusterSection({
+  charts,
+}: {
+  charts: Array<{ title: string; data: Array<{ name: string; value: number; fill: string }>; ariaLabel: string }>
+}) {
+  if (charts.length === 0) return null
+
+  return (
+    <div className="bg-rellia-cream/20 py-10 md:py-16">
+      <PipelinePhotoSection>
+        <ScrollReveal>
+          <h2 className="mt-5 font-host-grotesk text-3xl font-semibold leading-tight tracking-tight text-white md:text-[40px]">
+            How founders cluster
+          </h2>
+          <p className="mt-4 max-w-2xl font-urbanist text-lg leading-relaxed text-white/85">
+            Illustrative distributions based on active introductions—useful for thesis alignment.
+          </p>
+        </ScrollReveal>
+        <div className="mt-12 grid grid-cols-1 gap-6 lg:grid-cols-3">
+          {charts.map((chart, idx) => (
+            <Reveal key={chart.title || idx} delay={0.05 + idx * 0.03}>
+              <IllustrativePie
+                title={chart.title}
+                data={chart.data}
+                ariaLabel={chart.ariaLabel}
+              />
+            </Reveal>
+          ))}
+        </div>
+      </PipelinePhotoSection>
+    </div>
+  )
+}
+
+function buildInvestorCharts(page: CmsSingletonPageContent | null | undefined, colorPalette: string[]) {
+  if (Array.isArray(page?.foundersCluster) && page.foundersCluster.length > 0) {
+    return page.foundersCluster.map((chart: ClusterChart) => {
+      const segments = (chart.segments ?? []).map((seg, idx) => ({
+        name: seg.name || "",
+        value: seg.value || 0,
+        fill: colorPalette[idx % colorPalette.length],
+      }))
+      return {
+        title: chart.title || "",
+        data: segments,
+        ariaLabel: `Pie chart of ${chart.title || "distribution"}`,
+      }
+    })
+  }
+  return [
+    {
+      title: "B2B vs B2C",
+      data: B2B_DATA,
+      ariaLabel: "Pie chart of B2B versus B2C versus hybrid share",
+    },
+    {
+      title: "Stages",
+      data: STAGE_DATA,
+      ariaLabel: "Pie chart of company stages from idea through Series A",
+    },
+    {
+      title: "Device & delivery",
+      data: DEVICE_DATA,
+      ariaLabel: "Pie chart of device types and delivery models",
+    },
+  ]
+}
+
 export default function Investors() {
   const investorsPageQuery = useNetworkInvestorsPage()
   const { data: page } = investorsPageQuery
   useApplyCmsSeo(page?.seo)
 
-  const useModularLayout =
-    Boolean(page?.useModularPage) && (page?.sections?.length ?? 0) > 0
+  const useModularLayout = (page?.sections?.length ?? 0) > 0
 
   const [showNotifyForm, setShowNotifyForm] = useState(false)
 
@@ -319,50 +386,36 @@ export default function Investors() {
     []
   )
 
-  const charts = useMemo(() => {
-    if (Array.isArray(page?.foundersCluster) && page.foundersCluster.length > 0) {
-      return page.foundersCluster.map((chart) => {
-        const segments = (chart.segments ?? []).map((seg, idx) => ({
-          name: seg.name || "",
-          value: seg.value || 0,
-          fill: COLOR_PALETTE[idx % COLOR_PALETTE.length],
-        }))
-        return {
-          title: chart.title || "",
-          data: segments,
-          ariaLabel: `Pie chart of ${chart.title || "distribution"}`
-        }
-      })
-    }
-    return [
-      {
-        title: "B2B vs B2C",
-        data: B2B_DATA,
-        ariaLabel: "Pie chart of B2B versus B2C versus hybrid share",
-      },
-      {
-        title: "Stages",
-        data: STAGE_DATA,
-        ariaLabel: "Pie chart of company stages from idea through Series A",
-      },
-      {
-        title: "Device & delivery",
-        data: DEVICE_DATA,
-        ariaLabel: "Pie chart of device types and delivery models",
-      },
-    ]
-  }, [page?.foundersCluster, COLOR_PALETTE])
+  const charts = useMemo(
+    () => buildInvestorCharts(page, COLOR_PALETTE),
+    [page?.foundersCluster, COLOR_PALETTE],
+  )
+
+  const hasCmsClusterData =
+    Array.isArray(page?.foundersCluster) && page.foundersCluster.length > 0
 
   if (useModularLayout) {
     return (
-      <CmsPageVisibilityGate page={page}>
-        <NetworkCmsPage page={page} query={investorsPageQuery} />
-      </CmsPageVisibilityGate>
+      <NetworkCmsPage
+        page={page}
+        query={investorsPageQuery}
+        slug="investors"
+        renderExtras={() => (
+          <>
+            <LogoMarquee
+              marks={logoMarks}
+              showHeading={false}
+              density="default"
+              sectionClassName="border-b border-black/[0.06] bg-white py-4"
+            />
+            {hasCmsClusterData ? <FoundersClusterSection charts={charts} /> : null}
+          </>
+        )}
+      />
     )
   }
 
   return (
-    <CmsPageVisibilityGate page={page}>
     <div className="min-h-screen overflow-x-hidden bg-white font-host-grotesk flex flex-col">
       <Navbar forceSolid={showNotifyForm} />
 
@@ -409,29 +462,7 @@ export default function Investors() {
                 sectionClassName="bg-rellia-cream/20"
               />
 
-              <div className="bg-rellia-cream/20 py-10 md:py-16">
-                <PipelinePhotoSection>
-                  <ScrollReveal>
-                    <h2 className="mt-5 font-host-grotesk text-3xl font-semibold leading-tight tracking-tight text-white md:text-[40px]">
-                      How founders cluster
-                    </h2>
-                    <p className="mt-4 max-w-2xl font-urbanist text-lg leading-relaxed text-white/85">
-                      Illustrative distributions based on active introductions—useful for thesis alignment.
-                    </p>
-                  </ScrollReveal>
-                  <div className="mt-12 grid grid-cols-1 gap-6 lg:grid-cols-3">
-                    {charts.map((chart, idx) => (
-                      <Reveal key={chart.title || idx} delay={0.05 + idx * 0.03}>
-                        <IllustrativePie
-                          title={chart.title}
-                          data={chart.data}
-                          ariaLabel={chart.ariaLabel}
-                        />
-                      </Reveal>
-                    ))}
-                  </div>
-                </PipelinePhotoSection>
-              </div>
+              <FoundersClusterSection charts={charts} />
 
               <section className="relative overflow-hidden bg-[#071018] px-6 py-16 text-white md:px-10 md:py-24">
                 <div aria-hidden className="pointer-events-none absolute inset-0">
@@ -543,6 +574,5 @@ export default function Investors() {
 
       <Footer />
     </div>
-    </CmsPageVisibilityGate>
   )
 }

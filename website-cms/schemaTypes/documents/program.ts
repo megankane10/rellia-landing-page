@@ -1,5 +1,6 @@
-import {defineField, defineType} from 'sanity'
-import {documentGroups} from '../shared/fieldGroups'
+import {defineArrayMember, defineField, defineType} from 'sanity'
+import {CONTENT_SEO_FIELDSETS, singletonSeoField} from '../shared/singletonContentFields'
+import {GROUP_SEO} from '../shared/fieldGroups'
 import {pageSectionMembers} from '../shared/pageSectionMembers'
 import {programPublishingFields} from '../shared/documentTopFields'
 
@@ -11,7 +12,9 @@ export const program = defineType({
     {name: 'publishing', title: 'Publishing', default: true},
     {name: 'card', title: 'Program card'},
     {name: 'detail', title: 'Detail page'},
+    GROUP_SEO,
   ],
+  fieldsets: CONTENT_SEO_FIELDSETS,
   fields: [
     ...programPublishingFields,
     defineField({
@@ -87,6 +90,36 @@ export const program = defineType({
     defineField({name: 'pillarsTitle', type: 'string', group: 'detail'}),
     defineField({name: 'timelineTitle', type: 'string', group: 'detail'}),
     defineField({name: 'timelineSubtitle', type: 'text', rows: 2, group: 'detail'}),
+    defineField({
+      name: 'timelineSteps',
+      title: 'Timeline steps',
+      type: 'array',
+      group: 'detail',
+      of: [
+        defineArrayMember({
+          type: 'object',
+          name: 'programTimelineStep',
+          fields: [
+            defineField({name: 'title', type: 'string', validation: (Rule) => Rule.required()}),
+            defineField({name: 'description', type: 'text', rows: 3}),
+            defineField({
+              name: 'weekLabel',
+              title: 'Week label',
+              type: 'string',
+              description: 'e.g. Week 1–2',
+            }),
+          ],
+          preview: {select: {title: 'title', subtitle: 'weekLabel'}},
+        }),
+      ],
+    }),
+    defineField({
+      name: 'testimonials',
+      title: 'Testimonials',
+      type: 'array',
+      of: [defineArrayMember({type: 'landingTestimonialItem'})],
+      group: 'detail',
+    }),
     defineField({name: 'pricingBadge', type: 'string', group: 'detail'}),
     defineField({name: 'pricingAmount', type: 'string', group: 'detail', title: 'Price (sale)'}),
     defineField({
@@ -117,7 +150,7 @@ export const program = defineType({
       group: 'detail',
       of: pageSectionMembers,
     }),
-
+    singletonSeoField,
   ],
   preview: {
     select: {

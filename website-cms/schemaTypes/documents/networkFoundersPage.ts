@@ -1,15 +1,18 @@
 import {defineField, defineType} from 'sanity'
 import {logoMarqueeField} from '../objects/logoMarqueeItem'
-import {publishingGroup, pageVisibilityFields} from '../shared/pageVisibilityFields'
+import {
+  CONTENT_SEO_FIELDSETS,
+  CONTENT_SEO_GROUPS,
+  singletonSectionsField,
+  singletonSeoField,
+} from '../shared/singletonContentFields'
 
 export const networkFoundersPage = defineType({
   name: 'networkFoundersPage',
   title: 'Network — Founders page (/founders)',
   type: 'document',
-  groups: [
-    {name: 'content', title: 'Page content', default: true},
-    publishingGroup,
-  ],
+  groups: CONTENT_SEO_GROUPS,
+  fieldsets: CONTENT_SEO_FIELDSETS,
   fields: [
     defineField({
       name: 'title',
@@ -18,6 +21,7 @@ export const networkFoundersPage = defineType({
       group: 'content',
     }),
     {...logoMarqueeField, group: 'content'},
-    ...pageVisibilityFields,
+    singletonSectionsField,
+    singletonSeoField,
   ],
 })

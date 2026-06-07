@@ -4,7 +4,7 @@ import {internalLabelField, sectionListPreview} from '../shared/sectionPreview'
 /** Matches site marketing heroes (Consulting, network pages) — full-bleed teal + eyebrow. */
 export const sectionMarketingHero = defineType({
   name: 'sectionMarketingHero',
-  title: 'Hero with image',
+  title: 'Marketing hero block',
   type: 'object',
   fields: [
     defineField(internalLabelField),

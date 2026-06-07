@@ -1,5 +1,11 @@
 import {defineArrayMember, defineField, defineType} from 'sanity'
-import {publishingGroup, pageVisibilityFields} from '../shared/pageVisibilityFields'
+import {pageSectionMembers} from '../shared/pageSectionMembers'
+import {
+  CONTENT_SEO_FIELDSETS,
+  sectionDividerFieldset,
+  singletonSeoField,
+} from '../shared/singletonContentFields'
+import {GROUP_SEO} from '../shared/fieldGroups'
 import {studioListMedia} from '../shared/studioListMedia'
 
 const GROUP_HERO = {name: 'hero', title: 'Hero', default: true}
@@ -7,14 +13,23 @@ const GROUP_READINESS = {name: 'readiness', title: 'Readiness map'}
 const GROUP_INFOGRAPHIC = {name: 'infographic', title: 'Infographic'}
 const GROUP_TIMELINE = {name: 'timeline', title: 'Timeline'}
 const GROUP_CTA = {name: 'cta', title: 'Bottom CTA'}
+const GROUP_SECTIONS = {name: 'sections', title: 'Modular sections'}
 
 export const diagnosticLandingPage = defineType({
   name: 'diagnosticLandingPage',
   title: 'Startup diagnostic landing (/startup-diagnostic)',
   type: 'document',
-  groups: [GROUP_HERO, GROUP_READINESS, GROUP_INFOGRAPHIC, GROUP_TIMELINE, GROUP_CTA, publishingGroup],
+  groups: [GROUP_HERO, GROUP_READINESS, GROUP_INFOGRAPHIC, GROUP_TIMELINE, GROUP_CTA, GROUP_SECTIONS, GROUP_SEO],
+  fieldsets: [
+    sectionDividerFieldset('heroDivider', 'Hero'),
+    sectionDividerFieldset('readinessDivider', 'Readiness map'),
+    sectionDividerFieldset('infographicDivider', 'Infographic'),
+    sectionDividerFieldset('timelineDivider', 'Timeline'),
+    sectionDividerFieldset('ctaDivider', 'Bottom CTA'),
+    ...CONTENT_SEO_FIELDSETS,
+  ],
   fields: [
-    defineField({name: 'title', type: 'string', initialValue: 'Startup Diagnostic', group: 'hero'}),
+    defineField({name: 'title', type: 'string', initialValue: 'Startup Diagnostic', group: 'hero', fieldset: 'heroDivider'}),
     defineField({
       name: 'surveyNote',
       title: 'Survey page note (editors)',
@@ -24,6 +39,7 @@ export const diagnosticLandingPage = defineType({
       initialValue:
         'The interactive survey at /diagnostic-survey is driven by the app (questions & scoring). Edit this landing page for marketing copy; contact engineering to change survey logic.',
       group: 'hero',
+      fieldset: 'heroDivider',
     }),
     defineField({
       name: 'heroBadgeLabel',
@@ -31,6 +47,7 @@ export const diagnosticLandingPage = defineType({
       type: 'string',
       initialValue: 'LAUNCH READINESS',
       group: 'hero',
+      fieldset: 'heroDivider',
     }),
     defineField({
       name: 'heroTitle',
@@ -38,6 +55,7 @@ export const diagnosticLandingPage = defineType({
       type: 'string',
       initialValue: 'Pressure-test your startup for',
       group: 'hero',
+      fieldset: 'heroDivider',
     }),
     defineField({
       name: 'heroAccentPhrase',
@@ -45,16 +63,18 @@ export const diagnosticLandingPage = defineType({
       type: 'string',
       initialValue: 'healthcare reality.',
       group: 'hero',
+      fieldset: 'heroDivider',
     }),
-    defineField({name: 'heroSubtitle', title: 'Hero subtitle', type: 'text', rows: 3, group: 'hero'}),
-    defineField({name: 'heroImage', title: 'Hero image', type: 'image', options: {hotspot: true}, group: 'hero'}),
-    defineField({name: 'heroImageUrl', title: 'Hero image URL (fallback)', type: 'string', group: 'hero'}),
+    defineField({name: 'heroSubtitle', title: 'Hero subtitle', type: 'text', rows: 3, group: 'hero', fieldset: 'heroDivider'}),
+    defineField({name: 'heroImage', title: 'Hero image', type: 'image', options: {hotspot: true}, group: 'hero', fieldset: 'heroDivider'}),
+    defineField({name: 'heroImageUrl', title: 'Hero image URL (fallback)', type: 'string', group: 'hero', fieldset: 'heroDivider'}),
     defineField({
       name: 'heroPrimaryCtaLabel',
       title: 'Primary CTA label',
       type: 'string',
       initialValue: 'Begin Free Assessment',
       group: 'hero',
+      fieldset: 'heroDivider',
     }),
     defineField({
       name: 'heroPrimaryCtaHref',
@@ -62,6 +82,7 @@ export const diagnosticLandingPage = defineType({
       type: 'string',
       initialValue: '/diagnostic-survey',
       group: 'hero',
+      fieldset: 'heroDivider',
     }),
     defineField({
       name: 'readinessTitle',
@@ -69,13 +90,15 @@ export const diagnosticLandingPage = defineType({
       type: 'string',
       initialValue: 'A complete readiness map',
       group: 'readiness',
+      fieldset: 'readinessDivider',
     }),
-    defineField({name: 'readinessDescription', title: 'Section description', type: 'text', rows: 3, group: 'readiness'}),
+    defineField({name: 'readinessDescription', title: 'Section description', type: 'text', rows: 3, group: 'readiness', fieldset: 'readinessDivider'}),
     defineField({
       name: 'readinessFeatures',
       title: 'Feature cards',
       type: 'array',
       group: 'readiness',
+      fieldset: 'readinessDivider',
       of: [
         defineArrayMember({
           type: 'object',
@@ -96,14 +119,16 @@ export const diagnosticLandingPage = defineType({
       type: 'string',
       initialValue: 'No stone left unturned',
       group: 'infographic',
+      fieldset: 'infographicDivider',
     }),
-    defineField({name: 'infographicBody', title: 'Section body', type: 'text', rows: 4, group: 'infographic'}),
+    defineField({name: 'infographicBody', title: 'Section body', type: 'text', rows: 4, group: 'infographic', fieldset: 'infographicDivider'}),
     defineField({
       name: 'infographicTopWeaknessLabel',
       title: 'Top weakness label',
       type: 'string',
       initialValue: 'Regulatory Strategy',
       group: 'infographic',
+      fieldset: 'infographicDivider',
     }),
     defineField({
       name: 'infographicTopWeaknessScore',
@@ -112,6 +137,7 @@ export const diagnosticLandingPage = defineType({
       initialValue: 32,
       validation: (Rule) => Rule.min(0).max(100),
       group: 'infographic',
+      fieldset: 'infographicDivider',
     }),
     defineField({
       name: 'infographicGapLabel',
@@ -119,6 +145,7 @@ export const diagnosticLandingPage = defineType({
       type: 'string',
       initialValue: 'Critical Gap',
       group: 'infographic',
+      fieldset: 'infographicDivider',
     }),
     defineField({
       name: 'infographicAdvisorMatchLabel',
@@ -126,6 +153,7 @@ export const diagnosticLandingPage = defineType({
       type: 'string',
       initialValue: 'Vetted Advisor Match',
       group: 'infographic',
+      fieldset: 'infographicDivider',
     }),
     defineField({
       name: 'infographicAdvisorRole',
@@ -133,6 +161,7 @@ export const diagnosticLandingPage = defineType({
       type: 'string',
       initialValue: 'Regulatory Director',
       group: 'infographic',
+      fieldset: 'infographicDivider',
     }),
     defineField({
       name: 'infographicAdvisorSubtitle',
@@ -140,6 +169,7 @@ export const diagnosticLandingPage = defineType({
       type: 'string',
       initialValue: 'Ex-FDA Reviewer',
       group: 'infographic',
+      fieldset: 'infographicDivider',
     }),
     defineField({
       name: 'infographicBlobRoadmap',
@@ -147,6 +177,7 @@ export const diagnosticLandingPage = defineType({
       type: 'string',
       initialValue: 'Personalized Roadmap',
       group: 'infographic',
+      fieldset: 'infographicDivider',
     }),
     defineField({
       name: 'infographicBlobAdvisors',
@@ -154,6 +185,7 @@ export const diagnosticLandingPage = defineType({
       type: 'string',
       initialValue: 'Matched Advisors',
       group: 'infographic',
+      fieldset: 'infographicDivider',
     }),
     defineField({
       name: 'infographicBlobBlindSpot',
@@ -161,6 +193,7 @@ export const diagnosticLandingPage = defineType({
       type: 'string',
       initialValue: 'Blind Spot Discovery',
       group: 'infographic',
+      fieldset: 'infographicDivider',
     }),
     defineField({
       name: 'timelineTitle',
@@ -168,13 +201,15 @@ export const diagnosticLandingPage = defineType({
       type: 'string',
       initialValue: 'Survey to insights in 15 minutes',
       group: 'timeline',
+      fieldset: 'timelineDivider',
     }),
-    defineField({name: 'timelineSubheading', title: 'Timeline subheading', type: 'text', rows: 2, group: 'timeline'}),
+    defineField({name: 'timelineSubheading', title: 'Timeline subheading', type: 'text', rows: 2, group: 'timeline', fieldset: 'timelineDivider'}),
     defineField({
       name: 'timelineSteps',
       title: 'Timeline steps',
       type: 'array',
       group: 'timeline',
+      fieldset: 'timelineDivider',
       of: [
         defineArrayMember({
           type: 'object',
@@ -192,14 +227,16 @@ export const diagnosticLandingPage = defineType({
       type: 'string',
       initialValue: 'Benchmark your startup today',
       group: 'cta',
+      fieldset: 'ctaDivider',
     }),
-    defineField({name: 'ctaBody', title: 'CTA body', type: 'text', rows: 2, group: 'cta'}),
+    defineField({name: 'ctaBody', title: 'CTA body', type: 'text', rows: 2, group: 'cta', fieldset: 'ctaDivider'}),
     defineField({
       name: 'ctaPrimaryLabel',
       title: 'Primary CTA label',
       type: 'string',
       initialValue: 'Take the Diagnostic',
       group: 'cta',
+      fieldset: 'ctaDivider',
     }),
     defineField({
       name: 'ctaPrimaryHref',
@@ -207,6 +244,7 @@ export const diagnosticLandingPage = defineType({
       type: 'string',
       initialValue: '/diagnostic-survey',
       group: 'cta',
+      fieldset: 'ctaDivider',
     }),
     defineField({
       name: 'ctaSecondaryLabel',
@@ -214,6 +252,7 @@ export const diagnosticLandingPage = defineType({
       type: 'string',
       initialValue: 'Join as Member',
       group: 'cta',
+      fieldset: 'ctaDivider',
     }),
     defineField({
       name: 'ctaSecondaryHref',
@@ -221,8 +260,16 @@ export const diagnosticLandingPage = defineType({
       type: 'string',
       initialValue: '/apply',
       group: 'cta',
+      fieldset: 'ctaDivider',
     }),
-    ...pageVisibilityFields,
+    defineField({
+      name: 'sections',
+      title: 'Page sections',
+      type: 'array',
+      of: pageSectionMembers,
+      group: 'sections',
+    }),
+    singletonSeoField,
   ],
   preview: {
     prepare() {

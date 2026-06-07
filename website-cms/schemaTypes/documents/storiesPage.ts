@@ -1,14 +1,19 @@
 import {defineField, defineType} from 'sanity'
 import {preparePortableHeadlinePreview} from '../shared/portableTextPreview'
+import {
+  CONTENT_SEO_FIELDSETS,
+  CONTENT_SEO_GROUPS,
+  singletonSectionsField,
+  singletonSeoField,
+} from '../shared/singletonContentFields'
 import {studioListMedia} from '../shared/studioListMedia'
 
 export const storiesPage = defineType({
   name: 'storiesPage',
   title: 'Stories page',
   type: 'document',
-  groups: [
-    {name: 'content', title: 'Content', default: true},
-  ],
+  groups: CONTENT_SEO_GROUPS,
+  fieldsets: CONTENT_SEO_FIELDSETS,
   fields: [
     defineField({
       name: 'headlinePortable',
@@ -19,6 +24,8 @@ export const storiesPage = defineType({
       validation: (Rule) => Rule.required().min(1),
     }),
     defineField({name: 'subheadline', title: 'Subtitle', type: 'text', rows: 2, group: 'content'}),
+    singletonSectionsField,
+    singletonSeoField,
   ],
   preview: {
     select: {headlinePortable: 'headlinePortable', subheadline: 'subheadline'},

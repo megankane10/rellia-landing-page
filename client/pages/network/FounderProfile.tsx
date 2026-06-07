@@ -113,17 +113,12 @@ export default function FounderProfile() {
                 <h1 className="font-host-grotesk text-3xl font-bold tracking-tight text-black mb-2">
                   {active.logoName}
                 </h1>
-                {(active.shortDescription?.trim() || active.tagline?.trim()) && (
+                {active.tagline?.trim() && (
                   <p className="font-urbanist text-base font-medium text-black/70 mb-6 leading-relaxed">
-                    {active.shortDescription?.trim() || active.tagline}
+                    {active.tagline}
                   </p>
                 )}
                 <div className="flex flex-wrap gap-2 mb-6">
-                  {active.level && (
-                    <span className="inline-flex rounded-full border border-rellia-teal/20 bg-rellia-mint/20 px-3 py-1 font-urbanist text-xs font-semibold text-rellia-teal">
-                      {active.level}
-                    </span>
-                  )}
                   {active.specialties.map((s) => (
                     <span
                       key={s}
@@ -203,7 +198,7 @@ export default function FounderProfile() {
               {/* 1. Meet the Founders */}
               <section className="not-prose scroll-mt-28">
                 <h3 className="mb-5 text-2xl font-host-grotesk font-semibold text-black flex items-center gap-2">
-                  Meet the Founders
+                  Meet the founders
                 </h3>
                 <div className="grid gap-6 sm:grid-cols-2">
                   {active.founders.map((f, i) => {
@@ -233,7 +228,19 @@ export default function FounderProfile() {
                           </p>
                         </div>
                         <ProfileSocialLinks
-                          links={f.socialLinks}
+                          links={[
+                            ...(Array.isArray(f.socialLinks) ? f.socialLinks : []),
+                            ...(typeof (f as { email?: string }).email === "string" &&
+                            (f as { email?: string }).email?.trim()
+                              ? [
+                                  {
+                                    platform: "email",
+                                    url: (f as { email?: string }).email,
+                                    label: `Email ${f.name}`,
+                                  },
+                                ]
+                              : []),
+                          ]}
                           linkedInUrl={f.linkedinUrl}
                           websiteUrl={f.websiteUrl}
                           iconClassName="h-3.5 w-3.5"
@@ -249,40 +256,12 @@ export default function FounderProfile() {
 
               {(active as { profileBody?: unknown }).profileBody ? (
                 <section className="scroll-mt-28">
+                  <h3 className="mb-4 font-host-grotesk text-2xl font-semibold text-black not-prose">
+                    About the company
+                  </h3>
                   <PortableRichText value={(active as { profileBody: SanityPortableText }).profileBody} />
                 </section>
-              ) : active.longDescription ? (
-                <section className="scroll-mt-28">
-                  <h3 className="mb-4 text-2xl font-host-grotesk font-semibold text-black">
-                    Overview
-                  </h3>
-                  <p className="font-urbanist text-base leading-relaxed text-black/75">
-                    {active.longDescription}
-                  </p>
-                </section>
               ) : null}
-
-              {active.traction && (
-                <section className="scroll-mt-28">
-                  <h3 className="mb-4 text-2xl font-host-grotesk font-semibold text-black">
-                    Traction & Roadmap
-                  </h3>
-                  <p className="font-urbanist text-base leading-relaxed text-black/75">
-                    {active.traction}
-                  </p>
-                </section>
-              )}
-
-              {active.relliaCollaboration && (
-                <section className="scroll-mt-28">
-                  <h3 className="mb-4 text-2xl font-host-grotesk font-semibold text-black">
-                    Collaborating through Rellia
-                  </h3>
-                  <p className="font-urbanist text-base leading-relaxed text-black/75">
-                    {active.relliaCollaboration}
-                  </p>
-                </section>
-              )}
 
             </div>
           </article>

@@ -65,7 +65,7 @@ export const marketingPageSeoGroq = `*[_type in [${marketingPageSeoTypesList}] &
   _type,
   "title": coalesce(
     headlinePrefix,
-    pageTitle,
+    coalesce(heroHeadline, pageTitle),
     title,
     headingTitle,
     headline,

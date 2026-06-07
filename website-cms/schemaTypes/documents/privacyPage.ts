@@ -1,12 +1,17 @@
 import {defineField, defineType} from 'sanity'
+import {
+  CONTENT_SEO_FIELDSETS,
+  CONTENT_SEO_GROUPS,
+  singletonSectionsField,
+  singletonSeoField,
+} from '../shared/singletonContentFields'
 
 export const privacyPage = defineType({
   name: 'privacyPage',
   title: 'Privacy policy',
   type: 'document',
-  groups: [
-    {name: 'content', title: 'Content', default: true},
-  ],
+  groups: CONTENT_SEO_GROUPS,
+  fieldsets: CONTENT_SEO_FIELDSETS,
   fields: [
     defineField({
       name: 'title',
@@ -44,6 +49,8 @@ export const privacyPage = defineType({
       description: 'Use headings (H2/H3), paragraphs, and bullet lists for each section.',
       group: 'content',
     }),
+    singletonSectionsField,
+    singletonSeoField,
   ],
   preview: {
     prepare() {

@@ -4,7 +4,7 @@ import {headingToneField, lucideIconField, showBadgeField} from '../shared/secti
 
 export const sectionEngageBand = defineType({
   name: 'sectionEngageBand',
-  title: 'Engage band',
+  title: 'Engage band block',
   type: 'object',
   fields: [
     defineField(internalLabelField),

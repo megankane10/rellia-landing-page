@@ -1,7 +1,11 @@
 import {defineArrayMember, defineField, defineType} from 'sanity'
-import {documentGroups, FIELDSET_SEO} from '../shared/fieldGroups'
-import {singletonPublishingAtTop} from '../shared/documentTopFields'
-import {publishingGroup} from '../shared/pageVisibilityFields'
+import {
+  CONTENT_SEO_FIELDSETS,
+  CONTENT_SEO_GROUPS,
+  sectionDividerFieldset,
+  singletonSectionsField,
+  singletonSeoField,
+} from '../shared/singletonContentFields'
 
 const GROUP_LIFE_AT_RELLIA = {name: 'lifeAtRellia' as const, title: 'Life at Rellia'}
 
@@ -9,13 +13,13 @@ export const careersPage = defineType({
   name: 'careersPage',
   title: 'Careers page',
   type: 'document',
-  groups: [
-    publishingGroup,
-    GROUP_LIFE_AT_RELLIA,
-    ...documentGroups.filter((g) => g.name !== 'publishing' && g.name !== 'seo'),
+  groups: [GROUP_LIFE_AT_RELLIA, ...CONTENT_SEO_GROUPS],
+  fieldsets: [
+    sectionDividerFieldset('contentDivider', 'Page content'),
+    sectionDividerFieldset('lifeAtRelliaDivider', 'Life at Rellia'),
+    ...CONTENT_SEO_FIELDSETS,
   ],
   fields: [
-    ...singletonPublishingAtTop,
     defineField({
       name: 'careersContentMode',
       title: 'Careers page mode',
@@ -32,15 +36,7 @@ export const careersPage = defineType({
       },
       initialValue: 'both',
       group: 'content',
-    }),
-    defineField({
-      name: 'publishOpenRolesOnProduction',
-      title: 'Show open roles on production (www)',
-      type: 'boolean',
-      description:
-        'When off, /careers on relliahealth.com hides job listings (preview/Vercel still shows roles for editing). Turn on when real roles are ready for the public site.',
-      initialValue: false,
-      group: 'content',
+      fieldset: 'contentDivider',
     }),
     defineField({
       name: 'showHiringNavBadge',
@@ -49,6 +45,7 @@ export const careersPage = defineType({
       description: 'Mint “HIRING” pill beside Careers in the header and footer. Off by default.',
       initialValue: false,
       group: 'content',
+      fieldset: 'contentDivider',
     }),
     defineField({
       name: 'showVolunteerNavBadge',
@@ -57,13 +54,16 @@ export const careersPage = defineType({
       description: 'Mint “VOLUNTEER” pill beside Careers in the header and footer. Off by default.',
       initialValue: false,
       group: 'content',
+      fieldset: 'contentDivider',
     }),
+    singletonSectionsField,
     defineField({
       name: 'lifeAtRelliaHeading',
       title: 'Life at Rellia — Heading',
       type: 'string',
       initialValue: 'Life at Rellia',
       group: 'lifeAtRellia',
+      fieldset: 'lifeAtRelliaDivider',
     }),
     defineField({
       name: 'lifeAtRelliaSubheading',
@@ -73,12 +73,14 @@ export const careersPage = defineType({
       initialValue:
         'We are building a remote-first, high-standards health-tech company. Our team brings deep clinical, technical, and operational expertise to help founders transform care.',
       group: 'lifeAtRellia',
+      fieldset: 'lifeAtRelliaDivider',
     }),
     defineField({
       name: 'lifeAtRelliaImages',
       title: 'Life at Rellia — Slider Images',
       type: 'array',
       group: 'lifeAtRellia',
+      fieldset: 'lifeAtRelliaDivider',
       of: [
         defineArrayMember({
           type: 'image',
@@ -105,6 +107,7 @@ export const careersPage = defineType({
       title: 'Life at Rellia — Social/Proof Links',
       type: 'array',
       group: 'lifeAtRellia',
+      fieldset: 'lifeAtRelliaDivider',
       of: [
         defineField({
           type: 'object',
@@ -154,5 +157,6 @@ export const careersPage = defineType({
         }),
       ],
     }),
+    singletonSeoField,
   ],
 })

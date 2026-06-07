@@ -206,8 +206,7 @@ const pageSectionFieldsFragment = `...,
     name,
     role,
     company,
-    "image": coalesce(imageSrc, image.asset->url),
-    "logo": coalesce(logoSrc, logo.asset->url)
+    "image": coalesce(imageSrc, image.asset->url)
   }`
 
 export const pageBySlugQuery = `*[_type == "page" && slug.current == $slug && slug.current != "terms" && slug.current != "privacy" && !(_id in path("drafts.**"))][0]{
@@ -222,8 +221,6 @@ const pageSectionsFragment = `sections[]{ ${pageSectionFieldsFragment} }`
 
 export const networkFoundersPageQuery = `*[_type == "networkFoundersPage"][0]{
   title,
-  useModularPage,
-  ${pageVisibilityFragment},
   ${logoMarqueeFragment},
   ${seoFragment},
   ${pageSectionsFragment}
@@ -231,16 +228,12 @@ export const networkFoundersPageQuery = `*[_type == "networkFoundersPage"][0]{
 
 export const networkAdvisorsPageQuery = `*[_type == "networkAdvisorsPage"][0]{
   title,
-  useModularPage,
-  ${pageVisibilityFragment},
   ${seoFragment},
   ${pageSectionsFragment}
 }`
 
 export const networkInvestorsPageQuery = `*[_type == "networkInvestorsPage"][0]{
   title,
-  useModularPage,
-  ${pageVisibilityFragment},
   ${logoMarqueeFragment},
   ${seoFragment},
   ${pageSectionsFragment},
@@ -258,14 +251,11 @@ const landingTestimonialsFragment = `testimonials[]{
   name,
   role,
   company,
-  "image": coalesce(imageSrc, image.asset->url),
-  "logo": coalesce(logoSrc, logo.asset->url)
+  "image": coalesce(imageSrc, image.asset->url)
 }`
 
 export const diagnosticLandingPageQuery = `*[_id == "diagnosticLandingPage"][0]{
   title,
-  useModularPage,
-  ${pageVisibilityFragment},
   heroBadgeLabel,
   heroTitle,
   heroAccentPhrase,
@@ -293,7 +283,7 @@ export const diagnosticLandingPageQuery = `*[_id == "diagnosticLandingPage"][0]{
   infographicBlobBlindSpot,
   timelineTitle,
   timelineSubheading,
-  timelineSteps[]{ title, description },
+  timelineSteps[]{ title, description, weekLabel },
   ctaTitle,
   ctaBody,
   ctaPrimaryLabel,
@@ -306,8 +296,6 @@ export const diagnosticLandingPageQuery = `*[_id == "diagnosticLandingPage"][0]{
 
 export const consultingPageQuery = `*[_id == "consultingPage"][0]{
   title,
-  useModularPage,
-  ${pageVisibilityFragment},
   heroEyebrow,
   heroTitle,
   heroAccentPhrase,
@@ -364,8 +352,6 @@ export const privacyPageQuery = `*[_id == "privacyPage"][0]{
 
 export const networkPartnersPageQuery = `*[_type == "networkPartnersPage"][0]{
   title,
-  useModularPage,
-  ${pageVisibilityFragment},
   ${seoFragment},
   ${pageSectionsFragment}
 }`
@@ -476,6 +462,12 @@ export const programsLandingQuery = `*[_type == "programsLandingPage"][0]{
   ${seoFragment}
 }`;
 
+export const programsLayoutPageQuery = `*[_type == "programsLayoutPage"][0]{
+  title,
+  ${seoFragment},
+  ${pageSectionsFragment}
+}`;
+
 export const eventsLandingQuery = `*[_type == "eventsLandingPage"][0]{
   heroTitlePortable,
   heroSubtitle,
@@ -512,6 +504,8 @@ const programDetailFields = `
   bottomCtaBody,
   bottomCtaButtonLabel,
   bottomContactHref,
+  timelineSteps[]{ title, description, weekLabel },
+  ${landingTestimonialsFragment},
   sections[]{
     ...,
     "imageUrl": image.asset->url,
@@ -605,7 +599,7 @@ export const eventBySlugQuery = `*[_type == "event" && slug.current == $slug && 
 
 export const contactPageQuery = `*[_type == "contactPage"][0]{
   heroBadge,
-  pageTitle,
+  "heroHeadline": coalesce(heroHeadline, pageTitle),
   intro,
   "sideImageSrc": coalesce(sideImage.asset->url, sideImageSrc),
   sideImageAlt,
@@ -734,7 +728,6 @@ export const paymentPageQuery = `*[_type == "paymentPage"][0]{
   pricingAnnualCompareAmount,
   benefitsPanelHeadline,
   choosePlanHeadline,
-  promoPillEnabled,
   promoMessage,
   pricingPerSuffix,
   popularLabel,
@@ -760,9 +753,7 @@ export const openRolesQuery = `*[_type == "openRole" && !(_id in path("drafts.**
 }`
 
 export const careersPageQuery = `*[_type == "careersPage"][0]{
-  ${pageVisibilityFragment},
   careersContentMode,
-  publishOpenRolesOnProduction,
   showHiringNavBadge,
   showVolunteerNavBadge,
   lifeAtRelliaHeading,
@@ -777,7 +768,8 @@ export const careersPageQuery = `*[_type == "careersPage"][0]{
     iconKey,
     tooltip
   },
-  ${seoFragment}
+  ${seoFragment},
+  ${pageSectionsFragment}
 }`
 
 export const advisorsQuery = `*[_type == "advisor" && !(_id in path("drafts.**"))]{
@@ -788,9 +780,7 @@ export const advisorsQuery = `*[_type == "advisor" && !(_id in path("drafts.**")
   country,
   yearJoined,
   industries,
-  "snapshot": coalesce(snapshot, focus),
-  "focus": coalesce(snapshot, focus),
-  "filter": filter->label,
+  snapshot,
   directoryFilters[]{
     "groupId": group->slug.current,
     "groupTitle": group->title,
@@ -799,10 +789,14 @@ export const advisorsQuery = `*[_type == "advisor" && !(_id in path("drafts.**")
     values
   },
   "photoSrc": coalesce(photo.asset->url, photoSrc),
-  linkedInUrl,
-  websiteUrl,
   socialLinks[]{ platform, label, url },
-  bio,
+  bio[]{
+    ...,
+    _type == "image" => {
+      ...,
+      "url": asset->url
+    }
+  },
   mentoringStyle,
   highlights
 }`;
@@ -812,7 +806,7 @@ export const alumniCompaniesQuery = `*[_type == "alumniCompany" && !(_id in path
   name,
   slug,
   tagline,
-  "specialties": specialties[]->label,
+  specialties,
   businessModel,
   directoryFilters[]{
     "groupId": group->slug.current,
@@ -822,12 +816,16 @@ export const alumniCompaniesQuery = `*[_type == "alumniCompany" && !(_id in path
     values
   },
   shortDescription,
-  longDescription,
-  profileBody,
+  profileBody[]{
+    ...,
+    _type == "image" => {
+      ...,
+      "url": asset->url
+    }
+  },
   websiteUrl,
   linkedinUrl,
-  traction,
-  relliaCollaboration,
+  email,
   country,
   yearJoined,
   "logoSrc": coalesce(logo.asset->url, logoSrc),
@@ -835,6 +833,7 @@ export const alumniCompaniesQuery = `*[_type == "alumniCompany" && !(_id in path
     name,
     role,
     bio,
+    email,
     linkedinUrl,
     websiteUrl,
     socialLinks[]{ platform, label, url },

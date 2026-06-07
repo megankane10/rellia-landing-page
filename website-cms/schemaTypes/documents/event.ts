@@ -1,6 +1,6 @@
 import {defineField, defineType} from 'sanity'
-import {documentGroups, FIELDSET_SEO} from '../shared/fieldGroups'
-
+import {CONTENT_SEO_FIELDSETS, singletonSeoField} from '../shared/singletonContentFields'
+import {GROUP_SEO} from '../shared/fieldGroups'
 import {eventPublishingFields} from '../shared/documentTopFields'
 
 export const event = defineType({
@@ -11,7 +11,9 @@ export const event = defineType({
     {name: 'publishing', title: 'Publishing'},
     {name: 'content', title: 'Content', default: true},
     {name: 'ticketing', title: 'Ticketing & calendar'},
+    GROUP_SEO,
   ],
+  fieldsets: CONTENT_SEO_FIELDSETS,
   fields: [
     ...eventPublishingFields,
     defineField({
@@ -68,7 +70,7 @@ export const event = defineType({
       name: 'virtualLink',
       title: 'Virtual event link',
       type: 'url',
-      description: 'Zoom, Luma, or meeting URL for online events.',
+      description: 'Meeting link for virtual attendees (not registration).',
       group: 'content',
     }),
     defineField({
@@ -78,7 +80,13 @@ export const event = defineType({
       options: {hotspot: true},
       group: 'content',
     }),
-    defineField({name: 'href', title: 'Registration URL (Luma / external)', type: 'string', group: 'content'}),
+    defineField({
+      name: 'href',
+      title: 'Registration URL',
+      type: 'string',
+      description: 'Primary registration URL (shown on event cards).',
+      group: 'content',
+    }),
     defineField({name: 'comingSoon', type: 'boolean', group: 'content'}),
     defineField({
       name: 'eventDescription',
@@ -88,27 +96,25 @@ export const event = defineType({
       group: 'content',
     }),
     defineField({
-      name: 'detailBody',
-      title: 'Detail body (legacy)',
-      type: 'portableText',
-      hidden: true,
-      readOnly: true,
-      description: 'Deprecated — use Event description. Kept for older documents.',
-      group: 'content',
-    }),
-    defineField({
       name: 'detailBodyHeading',
       title: 'Description section heading',
       type: 'string',
       initialValue: 'About this event',
       group: 'content',
     }),
-    defineField({name: 'buttonText', title: 'CTA label', type: 'string', group: 'ticketing'}),
+    defineField({
+      name: 'buttonText',
+      title: 'Registration button label',
+      type: 'string',
+      description: 'Registration button label on detail page.',
+      group: 'ticketing',
+    }),
     defineField({name: 'lumaEventId', title: 'Luma event ID', type: 'string', group: 'ticketing'}),
     defineField({
       name: 'ticketingUrl',
-      title: 'Ticketing / registration URL',
+      title: 'Alternative registration URL',
       type: 'url',
+      description: 'Alternative registration URL if different from href.',
       group: 'ticketing',
     }),
     defineField({
@@ -120,7 +126,7 @@ export const event = defineType({
     }),
     defineField({name: 'embedLumaOnDetailPage', type: 'boolean', group: 'ticketing'}),
     defineField({name: 'addToCalendarEnabled', type: 'boolean', group: 'ticketing'}),
-
+    singletonSeoField,
   ],
   preview: {
     select: {

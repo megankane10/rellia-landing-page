@@ -16,8 +16,6 @@ export const landingTestimonialItem = defineType({
       type: 'string',
       description: 'Used when no image is uploaded.',
     }),
-    defineField({name: 'logo', title: 'Company logo', type: 'image', options: {hotspot: true}}),
-    defineField({name: 'logoSrc', title: 'Logo URL (fallback)', type: 'string'}),
   ],
   preview: {
     select: {title: 'name', subtitle: 'company', media: 'image'},

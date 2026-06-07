@@ -3,7 +3,7 @@ import {internalLabelField, sectionListPreview} from '../shared/sectionPreview'
 
 export const sectionDiagnosticSurvey = defineType({
   name: 'sectionDiagnosticSurvey',
-  title: 'Text split',
+  title: 'Diagnostic survey promo block',
   type: 'object',
   fields: [
     defineField(internalLabelField),
@@ -65,5 +65,5 @@ export const sectionDiagnosticSurvey = defineType({
       hidden: ({parent}) => parent?.layout !== 'imageSplit',
     }),
   ],
-  preview: sectionListPreview({typeLabel: 'Text split', fallback: 'Text split'}),
+  preview: sectionListPreview({typeLabel: 'Diagnostic survey promo block', fallback: 'Diagnostic survey promo'}),
 })

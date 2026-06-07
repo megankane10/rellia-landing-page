@@ -46,7 +46,6 @@ import {
 } from "framer-motion";
 import { useNetworkFoundersPage } from "@/hooks/useCmsDocuments";
 import NetworkCmsPage from "./NetworkCmsPage";
-import CmsPageVisibilityGate from "@/components/cms/CmsPageVisibilityGate";
 import { PORTFOLIO_LOGO_MARKS } from "@/data/portfolioLogos";
 import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo";
 import WhyRellia from "@/components/WhyRellia";
@@ -832,8 +831,7 @@ export default function Founders() {
   const { data: page } = foundersPageQuery;
   useApplyCmsSeo(page?.seo);
 
-  const useModularLayout =
-    Boolean(page?.useModularPage) && (page?.sections?.length ?? 0) > 0;
+  const useModularLayout = (page?.sections?.length ?? 0) > 0;
 
   const logoMarks = useMemo(() => {
     const fromCms = (page?.logoMarquee ?? [])
@@ -848,15 +846,24 @@ export default function Founders() {
 
   if (useModularLayout) {
     return (
-      <CmsPageVisibilityGate page={page}>
-        <NetworkCmsPage page={page} query={foundersPageQuery} />
-      </CmsPageVisibilityGate>
+      <NetworkCmsPage
+        page={page}
+        query={foundersPageQuery}
+        slug="founders"
+        renderExtras={() => (
+          <LogoMarquee
+            showHeading={false}
+            density="compact"
+            marks={logoMarks}
+            sectionClassName="border-b border-black/[0.06] bg-white py-6 md:py-8 lg:flex lg:h-[18vh] lg:min-h-[140px] lg:items-center lg:py-0"
+          />
+        )}
+      />
     );
   }
 
   return (
-    <CmsPageVisibilityGate page={page}>
-      <div className="min-h-screen overflow-x-hidden bg-white font-host-grotesk">
+    <div className="min-h-screen overflow-x-hidden bg-white font-host-grotesk">
         <Navbar />
 
         <main id="main-content">
@@ -897,6 +904,5 @@ export default function Founders() {
 
         <Footer />
       </div>
-    </CmsPageVisibilityGate>
   );
 }

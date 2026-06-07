@@ -3,7 +3,7 @@ import {internalLabelField, sectionListPreview} from '../shared/sectionPreview'
 
 export const sectionCardsGrid = defineType({
   name: 'sectionCardsGrid',
-  title: 'Image grid',
+  title: 'Cards grid block',
   type: 'object',
   fields: [
     defineField(internalLabelField),

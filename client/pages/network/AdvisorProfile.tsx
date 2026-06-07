@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { useParams, Link, useLocation } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import RelliaAction from "@/components/RelliaAction";
 import { ArrowLeft, MapPin, Calendar, Copy, Check } from "lucide-react";
 import { ProfileSocialLinks } from "@/components/network/ProfileSocialLinks";
 import { ShareIconCopy } from "@/components/share/sharePageIcons";
@@ -23,6 +22,9 @@ import { isCmsQueryLoading } from "@/lib/cmsQueryState";
 import CmsPageLoadingShell from "@/components/cms/CmsPageLoadingShell";
 import { isSanityConfigured } from "@/lib/sanity";
 import ImageExpandModal from "@/components/ImageExpandModal";
+import { PortableRichText } from "@/components/PortableRichText";
+import { normalizeToPortableText } from "@shared/cms/normalizePortableText";
+import type { SanityPortableText } from "@shared/cms/types";
 
 export default function AdvisorProfile() {
   const { id } = useParams<{ id: string }>();
@@ -44,9 +46,14 @@ export default function AdvisorProfile() {
   const [copied, setCopied] = useState(false);
   const [activeImage, setActiveImage] = useState<{ src: string; alt: string } | null>(null);
 
+  const snapshotText =
+    typeof active?.snapshot === "string" && active.snapshot.trim()
+      ? active.snapshot.trim()
+      : undefined;
+
   useApplyCmsSeo(null, active ? {
     title: buildAdvisorProfileSeoTitle(active.name),
-    description: clampMetaDescription(active.snapshot ?? active.focus),
+    description: clampMetaDescription(snapshotText ?? active.bio),
     ogImage: resolveSocialOgImageUrl(active.photoSrc),
   } : undefined);
 
@@ -68,11 +75,17 @@ export default function AdvisorProfile() {
     setTimeout(() => setCopied(false), 2000);
   };
 
+  const bioPortable: SanityPortableText | null = Array.isArray(active.bio)
+    ? active.bio
+    : typeof active.bio === "string" && active.bio.trim()
+      ? normalizeToPortableText(active.bio)
+      : null;
+
   return (
     <div className="min-h-screen overflow-x-hidden bg-white font-host-grotesk">
       <PageSocialHelmet
         title={buildAdvisorProfileSeoTitle(active.name)}
-        description={clampMetaDescription(active.snapshot ?? active.focus)}
+        description={clampMetaDescription(snapshotText ?? active.bio)}
         canonical={canonicalUrl}
         ogImage={resolveSocialOgImageUrl(active.photoSrc)}
       />
@@ -183,18 +196,25 @@ export default function AdvisorProfile() {
 
             {/* Right Content - Rich Text Area */}
             <div className="min-w-0 space-y-10 pb-8 prose prose-lg max-w-none prose-headings:font-host-grotesk prose-headings:text-black prose-p:font-urbanist prose-p:text-black/80 prose-p:leading-relaxed prose-li:font-urbanist prose-li:text-black/80">
-              <section>
-                <h3 className="mb-3 text-2xl font-semibold">About</h3>
-                <p>{active.bio}</p>
-                <div className="rounded-2xl bg-rellia-cream/35 px-5 py-6 mt-8 border border-black/5 not-prose">
-                  <h3 className="font-host-grotesk text-sm font-semibold uppercase tracking-[0.12em] text-black/55 mb-2">
+              {snapshotText ? (
+                <section className="not-prose">
+                  <h3 className="mb-3 font-host-grotesk text-2xl font-semibold text-black">
                     Snapshot
                   </h3>
-                  <p className="font-urbanist text-base leading-relaxed text-black/80">
-                    {active.snapshot ?? active.focus}
+                  <p className="font-urbanist text-base leading-relaxed text-rellia-teal md:text-lg">
+                    {snapshotText}
                   </p>
-                </div>
-              </section>
+                </section>
+              ) : null}
+
+              {bioPortable ? (
+                <section className="scroll-mt-28">
+                  <h3 className="mb-4 font-host-grotesk text-2xl font-semibold text-black not-prose">
+                    About the advisor
+                  </h3>
+                  <PortableRichText value={bioPortable} />
+                </section>
+              ) : null}
 
               <section>
                 <h3 className="mb-3 text-2xl font-semibold">How they mentor</h3>

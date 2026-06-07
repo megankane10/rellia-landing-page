@@ -1,8 +1,7 @@
 import {defineField} from 'sanity'
-import {pageVisibilityFields} from './pageVisibilityFields'
 
-/** Page visibility controls — place first in singleton `fields` arrays. */
-export const singletonPublishingAtTop = [...pageVisibilityFields]
+/** Deprecated — page status lives on custom `page` documents only. */
+export const singletonPublishingAtTop: ReturnType<typeof defineField>[] = []
 
 export const programPublishingFields = [
   defineField({

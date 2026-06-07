@@ -1,18 +1,25 @@
 import {defineField, defineType} from 'sanity'
-import {documentGroups, FIELDSET_SEO} from '../shared/fieldGroups'
-import {singletonLayoutFields} from '../shared/singletonLayoutFields'
-import {singletonPublishingAtTop} from '../shared/documentTopFields'
-import {publishingGroup} from '../shared/pageVisibilityFields'
+import {
+  CONTENT_SEO_FIELDSETS,
+  CONTENT_SEO_GROUPS,
+  singletonSeoField,
+} from '../shared/singletonContentFields'
 
 export const contactPage = defineType({
   name: 'contactPage',
   title: 'Contact page',
   type: 'document',
-  groups: [publishingGroup, ...documentGroups.filter((g) => g.name !== 'publishing' && g.name !== 'seo')],
+  groups: CONTENT_SEO_GROUPS,
+  fieldsets: CONTENT_SEO_FIELDSETS,
   fields: [
-    ...singletonPublishingAtTop,
     defineField({name: 'heroBadge', type: 'string', title: 'Hero badge', group: 'content'}),
-    defineField({name: 'pageTitle', type: 'string', group: 'content'}),
+    defineField({
+      name: 'heroHeadline',
+      title: 'Hero headline',
+      type: 'string',
+      description: "Main heading visitors see (e.g. Let's get in touch)",
+      group: 'content',
+    }),
     defineField({name: 'intro', type: 'text', rows: 3, group: 'content'}),
     defineField({
       name: 'sideImage',
@@ -131,6 +138,6 @@ export const contactPage = defineType({
     }),
     defineField({name: 'submitLabel', type: 'string', group: 'content'}),
     defineField({name: 'sendingLabel', type: 'string', group: 'content'}),
-    ...singletonLayoutFields,
+    singletonSeoField,
   ],
 })

@@ -18,8 +18,13 @@ export const globalSettings = defineType({
       options: {collapsible: true, collapsed: false},
     },
     {
-      name: 'priorityModalGroup',
-      title: 'Priority Modal Settings',
+      name: 'priorityModalMessageGroup',
+      title: 'Priority modal — message & buttons',
+      options: {collapsible: true, collapsed: false},
+    },
+    {
+      name: 'priorityModalFormGroup',
+      title: 'Priority modal — email signup form',
       options: {collapsible: true, collapsed: false},
     },
   ],
@@ -117,14 +122,14 @@ export const globalSettings = defineType({
         'Shows a centered modal for high-importance messages (like newsletter signups, signup list emails, or important message alerts).',
       initialValue: false,
       group: 'popups',
-      fieldset: 'priorityModalGroup',
+      fieldset: 'priorityModalMessageGroup',
     }),
     defineField({
       name: 'priorityModalHeading',
       title: 'Heading',
       type: 'string',
       group: 'popups',
-      fieldset: 'priorityModalGroup',
+      fieldset: 'priorityModalMessageGroup',
     }),
     defineField({
       name: 'priorityModalBody',
@@ -133,7 +138,7 @@ export const globalSettings = defineType({
       rows: 5,
       description: 'Subheading text for more high priority modals (e.g. newsletter signups, signup list emails, or an important message with a link to another page).',
       group: 'popups',
-      fieldset: 'priorityModalGroup',
+      fieldset: 'priorityModalMessageGroup',
     }),
     defineField({
       name: 'priorityModalImage',
@@ -142,7 +147,7 @@ export const globalSettings = defineType({
       options: {hotspot: true},
       description: 'Optional hero image at the top of the modal.',
       group: 'popups',
-      fieldset: 'priorityModalGroup',
+      fieldset: 'priorityModalMessageGroup',
     }),
     defineField({
       name: 'priorityModalPillText',
@@ -150,7 +155,7 @@ export const globalSettings = defineType({
       type: 'string',
       description: 'e.g. IMPORTANT, NEW — leave empty to hide the pill.',
       group: 'popups',
-      fieldset: 'priorityModalGroup',
+      fieldset: 'priorityModalMessageGroup',
     }),
     defineField({
       name: 'priorityModalButtonLabel',
@@ -158,7 +163,7 @@ export const globalSettings = defineType({
       type: 'string',
       description: 'Leave empty to hide the primary button.',
       group: 'popups',
-      fieldset: 'priorityModalGroup',
+      fieldset: 'priorityModalMessageGroup',
     }),
     defineField({
       name: 'priorityModalButtonLink',
@@ -166,7 +171,7 @@ export const globalSettings = defineType({
       type: 'string',
       description: 'Internal path or full https URL.',
       group: 'popups',
-      fieldset: 'priorityModalGroup',
+      fieldset: 'priorityModalMessageGroup',
     }),
     defineField({
       name: 'priorityModalSecondaryButtonLabel',
@@ -174,7 +179,7 @@ export const globalSettings = defineType({
       type: 'string',
       description: 'Leave empty to hide the secondary button.',
       group: 'popups',
-      fieldset: 'priorityModalGroup',
+      fieldset: 'priorityModalMessageGroup',
     }),
     defineField({
       name: 'priorityModalSecondaryButtonLink',
@@ -182,7 +187,7 @@ export const globalSettings = defineType({
       type: 'string',
       description: 'Internal path or full https URL.',
       group: 'popups',
-      fieldset: 'priorityModalGroup',
+      fieldset: 'priorityModalMessageGroup',
     }),
     defineField({
       name: 'priorityModalFormEnabled',
@@ -191,7 +196,7 @@ export const globalSettings = defineType({
       description: 'Toggles a name and email submission form inside the modal.',
       initialValue: false,
       group: 'popups',
-      fieldset: 'priorityModalGroup',
+      fieldset: 'priorityModalFormGroup',
     }),
     defineField({
       name: 'priorityModalFormButtonLabel',
@@ -199,7 +204,7 @@ export const globalSettings = defineType({
       type: 'string',
       description: 'e.g. Subscribe, Sign Up — defaults to Subscribe.',
       group: 'popups',
-      fieldset: 'priorityModalGroup',
+      fieldset: 'priorityModalFormGroup',
     }),
     defineField({
       name: 'priorityModalFormPlaceholderName',
@@ -207,7 +212,7 @@ export const globalSettings = defineType({
       type: 'string',
       description: 'Defaults to First name.',
       group: 'popups',
-      fieldset: 'priorityModalGroup',
+      fieldset: 'priorityModalFormGroup',
     }),
     defineField({
       name: 'priorityModalFormPlaceholderEmail',
@@ -215,7 +220,7 @@ export const globalSettings = defineType({
       type: 'string',
       description: 'Defaults to Email address.',
       group: 'popups',
-      fieldset: 'priorityModalGroup',
+      fieldset: 'priorityModalFormGroup',
     }),
   ],
   preview: {

@@ -1,5 +1,10 @@
 import { defineField, defineType } from 'sanity'
-import { singletonLayoutFields } from '../shared/singletonLayoutFields'
+import {
+  CONTENT_SEO_FIELDSETS,
+  singletonSeoField,
+} from '../shared/singletonContentFields'
+import { GROUP_SEO } from '../shared/fieldGroups'
+import { pageSectionMembers } from '../shared/pageSectionMembers'
 
 export const homePage = defineType({
   name: 'homePage',
@@ -11,8 +16,10 @@ export const homePage = defineType({
     { name: 'highlights', title: 'Highlights' },
     { name: 'testimonials', title: 'Testimonials' },
     { name: 'paths', title: 'Paths section' },
-    { name: 'layout', title: 'Layout builder' },
+    { name: 'sections', title: 'Modular sections' },
+    GROUP_SEO,
   ],
+  fieldsets: CONTENT_SEO_FIELDSETS,
   fields: [
     defineField({ name: 'headlinePrefix', title: 'Headline (line 1)', type: 'string', group: 'hero' }),
     defineField({ name: 'subheadline', title: 'Hero subtitle', type: 'string', group: 'hero' }),
@@ -225,6 +232,13 @@ export const homePage = defineType({
         }),
       ],
     }),
-    ...singletonLayoutFields,
+    defineField({
+      name: 'sections',
+      title: 'Page sections',
+      type: 'array',
+      of: pageSectionMembers,
+      group: 'sections',
+    }),
+    singletonSeoField,
   ],
 })

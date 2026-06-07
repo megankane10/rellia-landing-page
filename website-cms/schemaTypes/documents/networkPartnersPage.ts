@@ -1,14 +1,17 @@
 import {defineField, defineType} from 'sanity'
-import {publishingGroup, pageVisibilityFields} from '../shared/pageVisibilityFields'
+import {
+  CONTENT_SEO_FIELDSETS,
+  CONTENT_SEO_GROUPS,
+  singletonSectionsField,
+  singletonSeoField,
+} from '../shared/singletonContentFields'
 
 export const networkPartnersPage = defineType({
   name: 'networkPartnersPage',
   title: 'Network — Industry Partners page (/industry-partners)',
   type: 'document',
-  groups: [
-    {name: 'content', title: 'Content', default: true},
-    publishingGroup,
-  ],
+  groups: CONTENT_SEO_GROUPS,
+  fieldsets: CONTENT_SEO_FIELDSETS,
   fields: [
     defineField({
       name: 'title',
@@ -16,6 +19,7 @@ export const networkPartnersPage = defineType({
       initialValue: 'Industry Partners',
       group: 'content',
     }),
-    ...pageVisibilityFields,
+    singletonSectionsField,
+    singletonSeoField,
   ],
 })
