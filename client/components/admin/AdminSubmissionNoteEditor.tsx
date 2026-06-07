@@ -67,7 +67,7 @@ const AdminSubmissionNoteEditor = ({
         }}
         placeholder="Add a note for your team…"
         rows={compact ? 4 : 5}
-        className="resize-y rounded-xl border-black/10 font-urbanist text-sm"
+        className="resize-y rounded-xl border-rellia-teal/15 bg-white/80 font-urbanist text-sm"
         aria-label="Submission note"
       />
       <div className="flex flex-wrap items-center gap-2">

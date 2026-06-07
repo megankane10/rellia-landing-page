@@ -174,14 +174,17 @@ const AdminContactDetail = () => {
               label="Email sender"
             />
           </div>
-          <div className="border-t border-black/[0.06] pt-5">
-            <AdminSubmissionNoteEditor
-              table="contact_responses"
-              submissionId={data.id}
-              initialNote={(data as ContactSubmission & { admin_note?: string | null }).admin_note}
-              onSaved={() => void queryClient.invalidateQueries({ queryKey: ["admin-contact", id] })}
-            />
-          </div>
+        </div>
+      </article>
+
+      <article className="overflow-hidden rounded-2xl border border-rellia-mint/40 bg-rellia-mint/15 shadow-sm">
+        <div className="px-5 py-5 md:px-6">
+          <AdminSubmissionNoteEditor
+            table="contact_responses"
+            submissionId={data.id}
+            initialNote={(data as ContactSubmission & { admin_note?: string | null }).admin_note}
+            onSaved={() => void queryClient.invalidateQueries({ queryKey: ["admin-contact", id] })}
+          />
         </div>
       </article>
     </div>
