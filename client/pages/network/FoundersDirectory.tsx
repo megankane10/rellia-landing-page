@@ -9,9 +9,9 @@ import {
   useReducedMotion,
   type Variants,
 } from "framer-motion";
-import { Building2, Search, ChevronDown } from "lucide-react";
+import { Building2, Search, ChevronDown, ArrowLeft } from "lucide-react";
 import FilteredListEmptyState from "@/components/FilteredListEmptyState";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, Link } from "react-router-dom";
 import { NETWORK_PATH_ROLE_TAG } from "@/lib/networkPathRoles";
 import {
   useAlumniCompanies,
@@ -540,6 +540,19 @@ export default function FoundersDirectory() {
                 )}
               </div>
             )}
+
+            {!companiesListLoading ? (
+              <div className="mt-12 border-t border-black/10 pt-8">
+                <Link
+                  to="/founders"
+                  className="inline-flex items-center gap-2 font-host-grotesk text-sm font-semibold text-rellia-teal hover:underline hover:underline-offset-4"
+                  aria-label="Back to Founders"
+                >
+                  <ArrowLeft className="h-4 w-4" aria-hidden />
+                  Back to Founders
+                </Link>
+              </div>
+            ) : null}
           </div>
         </section>
 
