@@ -3,15 +3,7 @@
 import type { CSSProperties, ReactNode } from "react"
 import { cn } from "@/lib/utils"
 
-/**
- * Brand SVG logos from Simple Icons (pinned npm package on unpkg — stable paths; `cdn.simpleicons.org`
- * was returning 404 for several slugs).
- * Illustrative placeholders only; not an endorsement or affiliation claim.
- */
-const SI_V = "9.0.0"
-const si = (slug: string) => `https://unpkg.com/simple-icons@${SI_V}/icons/${slug}.svg`
-
-import { INVESTOR_BRAND_SVG_MARKS, PORTFOLIO_LOGO_MARKS } from "@/data/portfolioLogos"
+import { PORTFOLIO_LOGO_MARKS } from "@/data/portfolioLogos"
 
 export type LogoMark = { name: string; src: string }
 

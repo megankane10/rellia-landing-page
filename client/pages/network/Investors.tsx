@@ -7,7 +7,7 @@ import WhyRellia from "@/components/WhyRellia"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
 import LogoMarquee from "@/components/LogoMarquee"
-import { INVESTOR_BRAND_SVG_MARKS, PORTFOLIO_LOGO_MARKS } from "@/data/portfolioLogos"
+import { INVESTOR_LOGO_MARKS, PORTFOLIO_LOGO_MARKS } from "@/data/portfolioLogos"
 import InvestorNotifyForm from "@/components/network/InvestorNotifyForm"
 import RelliaAction from "@/components/RelliaAction"
 import RelliaCta from "@/components/RelliaCta"
@@ -235,7 +235,7 @@ export default function Investors() {
         return !isPortfolio
       })
     if (fromCms.length > 0) return fromCms
-    return [...INVESTOR_BRAND_SVG_MARKS]
+    return [...INVESTOR_LOGO_MARKS]
   }, [page?.logoMarquee])
 
   const COLOR_PALETTE = useMemo(

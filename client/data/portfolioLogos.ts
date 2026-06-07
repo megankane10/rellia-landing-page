@@ -1,23 +1,25 @@
-/**
- * Brand SVG logos from Simple Icons (pinned npm package on unpkg — stable paths; `cdn.simpleicons.org`
- * was returning 404 for several slugs).
- * Illustrative placeholders only; not an endorsement or affiliation claim.
- */
-const SI_V = "9.0.0"
-const si = (slug: string) => `https://unpkg.com/simple-icons@${SI_V}/icons/${slug}.svg`
-
-export const INVESTOR_BRAND_SVG_MARKS = [
-  { name: "Google", src: si("google") },
-  { name: "Microsoft", src: si("microsoft") },
-  { name: "Amazon", src: si("amazon") },
-  { name: "Apple", src: si("apple") },
-  { name: "Meta", src: si("meta") },
-  { name: "IBM", src: si("ibm") },
-  { name: "Oracle", src: si("oracle") },
-  { name: "Salesforce", src: si("salesforce") },
-  { name: "Siemens", src: si("siemens") },
-  { name: "Intel", src: si("intel") },
+/** Investor logos served from /public/images/investors (also uploaded to Sanity logoMarquee). */
+export const INVESTOR_LOGO_MARKS = [
+  { name: "bCapital", src: "/images/investors/investor-bCapital.png" },
+  { name: "Forum", src: "/images/investors/investor-forum.png" },
+  { name: "Front Row", src: "/images/investors/investor-frontRow.png" },
+  { name: "GAIN", src: "/images/investors/investor-GAIN.png" },
+  { name: "Halo Health", src: "/images/investors/investor-haloHealth.png" },
+  { name: "Intelligence Ventures", src: "/images/investors/investor-intelligenceVentures.png" },
+  { name: "Koru", src: "/images/investors/investor-Koru.png" },
+  { name: "Medtech Angels", src: "/images/investors/investor-medtechAngels.png" },
+  { name: "Neo Bravo", src: "/images/investors/investor-neoBravo.png" },
+  { name: "Nurse Capital", src: "/images/investors/investor-NurseCapital.png" },
+  { name: "One Degree", src: "/images/investors/investor-oneDegree.png" },
+  { name: "Pioneer", src: "/images/investors/investor-pioneer.png" },
+  { name: "Robin Ventures", src: "/images/investors/investor-robinVentures.png" },
+  { name: "Saltgrass Capital", src: "/images/investors/investor-saltgassCapital.png" },
+  { name: "Spring Ventures", src: "/images/investors/investor-springVentures.png" },
+  { name: "The Firehood", src: "/images/investors/investor-theFirehood.png" },
 ] as const
+
+/** @deprecated Use INVESTOR_LOGO_MARKS */
+export const INVESTOR_BRAND_SVG_MARKS = INVESTOR_LOGO_MARKS
 
 /** Exported for founder directory cards and other reuse */
 export const PORTFOLIO_LOGO_MARKS = [
