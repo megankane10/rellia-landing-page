@@ -40,7 +40,6 @@ export const homePage = defineType({
         'Used when no file is uploaded. Site path (e.g. /videos/homehero.mp4) or full https URL to a video file.',
     }),
     defineField({ name: 'metricsHeading', title: 'Metrics title', type: 'string', group: 'metrics' }),
-    defineField({ name: 'metricsSubheading', title: 'Metrics subtitle', type: 'text', rows: 3, group: 'metrics' }),
     defineField({
       name: 'metrics',
       title: 'Metrics',

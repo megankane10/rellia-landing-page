@@ -135,8 +135,20 @@ const LIFE_AT_RELLIA_IMAGES = [
   "https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=800&auto=format&fit=crop&q=80"
 ]
 
-function getSocialIcon(platform: string) {
-  switch (platform.toLowerCase()) {
+const inferSocialIconKey = (iconKey: string, href: string) => {
+  const key = iconKey.trim().toLowerCase()
+  if (key && key !== "link") return key
+  const url = href.toLowerCase()
+  if (url.includes("linkedin.com")) return "linkedin"
+  if (url.includes("instagram.com")) return "instagram"
+  if (url.includes("youtube.com") || url.includes("youtu.be")) return "youtube"
+  if (url.includes("twitter.com") || url.includes("x.com")) return "twitter"
+  if (url.includes("facebook.com")) return "facebook"
+  return key || "link"
+}
+
+function getSocialIcon(iconKey: string, href = "") {
+  switch (inferSocialIconKey(iconKey, href)) {
     case "linkedin":
       return LinkedInFilled
     case "instagram":
@@ -148,13 +160,17 @@ function getSocialIcon(platform: string) {
       return Facebook
     case "youtube":
       return Youtube
+    case "video":
+      return Video
+    case "article":
     case "document":
       return FileText
     case "website":
     case "globe":
+    case "link":
       return GlobeFilled
     default:
-      return ExternalLink
+      return GlobeFilled
   }
 }
 
@@ -288,7 +304,10 @@ function LifeAtRelliaSocialButton({
   iconKey: string
   tooltip: string
 }) {
-  const IconComponent = getSocialIcon(iconKey)
+  const IconComponent = getSocialIcon(iconKey, href)
+  const isFilledBrandIcon = ["linkedin", "instagram", "globe", "link", "website"].includes(
+    inferSocialIconKey(iconKey, href),
+  )
 
   return (
     <div className="relative group">
@@ -297,12 +316,12 @@ function LifeAtRelliaSocialButton({
         target="_blank"
         rel="noopener noreferrer"
         className={cn(
-          "flex h-14 w-14 items-center justify-center rounded-full border border-rellia-teal text-rellia-teal",
+          "flex h-14 w-14 items-center justify-center rounded-full border border-rellia-teal bg-white text-rellia-teal",
           "transition-all duration-300 hover:bg-rellia-mint hover:border-rellia-mint hover:text-rellia-teal"
         )}
         aria-label={tooltip}
       >
-        <IconComponent className="h-6 w-6" />
+        <IconComponent className={cn("h-6 w-6", isFilledBrandIcon && "fill-current")} />
       </a>
       <div className="absolute bottom-full left-1/2 mb-3 -translate-x-1/2 scale-95 opacity-0 pointer-events-none group-hover:scale-100 group-hover:opacity-100 transition-all duration-200 z-20">
         <div className="relative bg-black text-white text-xs font-bold py-1.5 px-3 rounded-xl whitespace-nowrap shadow-md">

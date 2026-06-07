@@ -9,6 +9,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import AdminSubmissionStatusSelect from "@/components/admin/AdminSubmissionStatusSelect"
 import AdminDeleteSubmissionButton from "@/components/admin/AdminDeleteSubmissionButton"
 import AdminMailtoButton from "@/components/admin/AdminMailtoButton"
+import AdminSubmissionNoteEditor from "@/components/admin/AdminSubmissionNoteEditor"
 import AdminDiagnosticAnswers from "@/components/admin/AdminDiagnosticAnswers"
 import {
   Accordion,
@@ -32,6 +33,7 @@ type CompanyProfile = {
   stage: string | null
   description: string | null
   status?: SubmissionStatus | null
+  admin_note?: string | null
 }
 
 type SectionScore = { category: string; score: number }
@@ -214,6 +216,14 @@ const AdminCompany = () => {
               subject={`Re: ${profile.company_name} diagnostic submission`}
               body={`Hi ${profile.name},\n\n`}
               label="Email sender"
+            />
+          </div>
+          <div className="border-t border-black/[0.06] pt-5">
+            <AdminSubmissionNoteEditor
+              table="company_profiles"
+              submissionId={profile.id}
+              initialNote={profile.admin_note}
+              onSaved={() => void queryClient.invalidateQueries({ queryKey: ["admin-company", id] })}
             />
           </div>
         </div>

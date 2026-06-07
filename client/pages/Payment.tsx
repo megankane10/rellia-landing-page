@@ -63,7 +63,7 @@ export default function Payment() {
     <div className="min-h-screen bg-white font-host-grotesk overflow-x-hidden">
       <Navbar />
 
-      <main id="main-content">
+      <main id="main-content" className="flex w-full flex-1 flex-col pt-[72px] md:pt-[86px]">
         <section className="relative w-full border-t border-black/5 py-16 md:py-24 lg:py-32 bg-white">
           <motion.div
             initial={{ opacity: 0, y: 10 }}
@@ -123,7 +123,7 @@ export default function Payment() {
             </div>
 
             {/* Right: Plan Selection */}
-            <div className="flex flex-col w-full px-4 md:px-8">
+            <div className="flex flex-col w-full md:px-8">
               <div className="w-full h-full flex flex-col justify-center">
                 <h2 className="font-host-grotesk text-2xl md:text-[32px] font-semibold text-black mb-10 tracking-tight">
                   {p.choosePlanHeadline?.trim() || "Choose your plan"}
@@ -237,10 +237,10 @@ export default function Payment() {
         </section>
 
         <RelliaCta 
-          title={p.questionsTitle} 
-          body="Have questions about the membership, billing, or benefits? We're here to help you get the most out of the Rellia network."
-          primary={{ label: p.questionsContactLabel, to: p.questionsContactPath }}
-          secondary={{ label: p.questionsFaqLabel, to: p.questionsFaqPath }}
+          title={p.questionsTitle || "Questions about membership?"} 
+          body={p.questionsBody || "Have questions about the membership, billing, or benefits? We're here to help you get the most out of the Rellia network."}
+          primary={{ label: p.questionsContactLabel || "Contact us", to: p.questionsContactPath || "/contact" }}
+          secondary={{ label: p.questionsFaqLabel || "View FAQ", to: p.questionsFaqPath || "/faq" }}
           className="mt-20 md:mt-32"
         />
       </main>

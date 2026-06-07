@@ -7,7 +7,6 @@ import { useAuth } from "@/context/AuthContext"
 import { fetchAdminTeam } from "@/lib/adminApi"
 import { supabase } from "@/lib/supabase"
 import AdminPageHeader from "@/components/admin/AdminPageHeader"
-import AdminDownloadCsvButton from "@/components/admin/AdminDownloadCsvButton"
 import AdminSystemStatus from "@/components/admin/AdminSystemStatus"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
@@ -422,35 +421,7 @@ const AdminOverviewPage = () => {
     <div className="space-y-6">
       <AdminPageHeader
         title={pageTitle}
-        actions={
-          <div className="flex flex-wrap items-center gap-2">
-            <AdminDownloadCsvButton
-              filename="rellia-web-form-submissions"
-              rows={contacts}
-              columns={[
-                { header: "Name", value: (row) => contactDisplayName(row) },
-                { header: "Type", value: (row) => contactTypeLabel(row) },
-                { header: "Email", value: (row) => row.email },
-                { header: "Company", value: (row) => row.company ?? "" },
-                { header: "Received", value: (row) => formatAdminDate(row.created_at) },
-                { header: "Status", value: (row) => row.status ?? "New" },
-              ]}
-            />
-            <AdminDownloadCsvButton
-              filename="rellia-diagnostic-submissions"
-              rows={diagnostics}
-              columns={[
-                { header: "Founder", value: (row) => row.name },
-                { header: "Company", value: (row) => row.company_name },
-                { header: "Email", value: (row) => row.work_email },
-                { header: "Stage", value: (row) => row.stage ?? "" },
-                { header: "Received", value: (row) => formatAdminDate(row.created_at) },
-                { header: "Status", value: (row) => row.status ?? "New" },
-              ]}
-            />
-            <AdminSystemStatus />
-          </div>
-        }
+        actions={<AdminSystemStatus />}
       />
 
       <div className="grid grid-cols-1 items-stretch gap-4 sm:grid-cols-2">

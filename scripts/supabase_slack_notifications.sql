@@ -182,6 +182,37 @@ $$;
 revoke all on function public.notify_slack(jsonb) from public;
 grant execute on function public.notify_slack(jsonb) to postgres, service_role;
 
+-- ─── Slack colour helpers ────────────────────────────────────────────────────
+
+create or replace function public.slack_event_color(event_kind text, status_text text default null)
+returns text
+language sql
+immutable
+as $$
+  select case event_kind
+    when 'delete' then '#DC2626'
+    when 'insert' then '#0B0F12'
+    when 'note' then '#1A6B6B'
+    else case coalesce(status_text, 'New')
+      when 'New' then '#0EA5E9'
+      when 'In Progress' then '#F59E0B'
+      when 'Resolved' then '#16A34A'
+      else '#0B0F12'
+    end
+  end;
+$$;
+
+create or replace function public.slack_append_field(body text, label text, value text)
+returns text
+language sql
+immutable
+as $$
+  select case
+    when coalesce(nullif(trim(value), ''), '') = '' then body
+    else body || '*' || label || ':* ' || value || E'\n'
+  end;
+$$;
+
 -- ─── contact_responses ───────────────────────────────────────────────────────
 
 create or replace function public.slack_notify_contact_responses()
@@ -199,6 +230,8 @@ declare
   body_text text;
   payload jsonb;
   submission_type text;
+  display_name text;
+  bar_color text;
 begin
   submission_type := coalesce(NEW.submission_type, OLD.submission_type, 'contact');
   submission_label := case submission_type
@@ -210,19 +243,28 @@ begin
   inbox_url := public.slack_admin_inbox_url(tab);
 
   if TG_OP = 'INSERT' then
-    title_text := trim(coalesce(NEW.first_name, '') || ' ' || coalesce(NEW.last_name, ''));
-    subtitle_text := case submission_type
-      when 'investor' then ':briefcase: *New investor submission*'
-      when 'modal' then ':bell: *New priority modal signup*'
-      else ':incoming_envelope: *New contact submission*'
+    display_name := trim(coalesce(NEW.first_name, '') || ' ' || coalesce(NEW.last_name, ''));
+    title_text := case submission_type
+      when 'investor' then 'New investor submission'
+      when 'modal' then 'New priority modal signup'
+      else 'New form submission'
     end;
-    body_text :=
-      '*Type:* ' || submission_label || E'\n' ||
-      '*Email:* ' || NEW.email || E'\n' ||
-      '*Company:* ' || coalesce(nullif(trim(NEW.company), ''), '—') || E'\n' ||
-      case when coalesce(nullif(trim(NEW.job_title), ''), '') <> '' then '*Role:* ' || NEW.job_title || E'\n' else '' end ||
-      case when coalesce(nullif(trim(NEW.message), ''), '') <> '' then E'\n*Message:*\n>' || replace(NEW.message, E'\n', E'\n>') || E'\n' else '' end ||
-      '*Status:* ' || coalesce(NEW.status, 'New');
+    subtitle_text := case submission_type
+      when 'investor' then ':briefcase: Investor inbox'
+      when 'modal' then ':bell: Priority modal inbox'
+      else ':incoming_envelope: Web forms inbox'
+    end;
+    body_text := '';
+    body_text := public.slack_append_field(body_text, 'Name', display_name);
+    body_text := public.slack_append_field(body_text, 'Type', submission_label);
+    body_text := public.slack_append_field(body_text, 'Email', NEW.email);
+    body_text := public.slack_append_field(body_text, 'Company', NEW.company);
+    body_text := public.slack_append_field(body_text, 'Role', NEW.job_title);
+    if coalesce(nullif(trim(NEW.message), ''), '') <> '' then
+      body_text := body_text || E'\n*Message:*\n>' || replace(NEW.message, E'\n', E'\n>') || E'\n';
+    end if;
+    body_text := public.slack_append_field(body_text, 'Status', coalesce(NEW.status, 'New'));
+    bar_color := public.slack_event_color('insert');
 
     payload := public.slack_blocks_message(
       title_text,
@@ -231,23 +273,55 @@ begin
       'Open in admin',
       inbox_url,
       NEW.id::text,
-      '#0B0F12',
+      bar_color,
       'view_in_dashboard'
     );
   elsif TG_OP = 'UPDATE' then
+    display_name := trim(coalesce(NEW.first_name, '') || ' ' || coalesce(NEW.last_name, ''));
+
+    if OLD.admin_note is distinct from NEW.admin_note then
+      title_text := 'Admin note updated';
+      subtitle_text := ':memo: Web forms inbox';
+      body_text := '';
+      body_text := public.slack_append_field(body_text, 'Name', display_name);
+      body_text := public.slack_append_field(body_text, 'Type', submission_label);
+      body_text := public.slack_append_field(body_text, 'Email', NEW.email);
+      if coalesce(nullif(trim(NEW.admin_note), ''), '') <> '' then
+        body_text := body_text || E'\n*Note:*\n>' || replace(NEW.admin_note, E'\n', E'\n>') || E'\n';
+      else
+        body_text := body_text || E'\n*Note:* _(cleared)_' || E'\n';
+      end if;
+      bar_color := public.slack_event_color('note');
+
+      payload := public.slack_blocks_message(
+        title_text,
+        subtitle_text,
+        body_text,
+        'Open in admin',
+        inbox_url,
+        NEW.id::text,
+        bar_color,
+        'view_in_dashboard'
+      );
+      perform public.notify_slack(payload);
+    end if;
+
     if OLD.status is not distinct from NEW.status then
       return NEW;
     end if;
-    title_text := trim(coalesce(NEW.first_name, '') || ' ' || coalesce(NEW.last_name, ''));
-    subtitle_text := case submission_type
-      when 'investor' then ':arrows_counterclockwise: *Investor submission updated*'
-      when 'modal' then ':arrows_counterclockwise: *Priority modal signup updated*'
-      else ':arrows_counterclockwise: *Contact submission updated*'
+
+    title_text := case submission_type
+      when 'investor' then 'Investor submission updated'
+      when 'modal' then 'Priority modal signup updated'
+      else 'Form submission updated'
     end;
-    body_text :=
-      '*Type:* ' || submission_label || E'\n' ||
-      '*Email:* ' || NEW.email || E'\n' ||
-      '*Status:* `' || coalesce(OLD.status, '—') || '` → `' || coalesce(NEW.status, 'New') || '`';
+    subtitle_text := ':arrows_counterclockwise: Status change';
+    body_text := '';
+    body_text := public.slack_append_field(body_text, 'Name', display_name);
+    body_text := public.slack_append_field(body_text, 'Type', submission_label);
+    body_text := public.slack_append_field(body_text, 'Email', NEW.email);
+    body_text := body_text || '*Status:* `' || coalesce(OLD.status, '—') || '` → `' || coalesce(NEW.status, 'New') || '`' || E'\n';
+    bar_color := public.slack_event_color('status', NEW.status);
 
     payload := public.slack_blocks_message(
       title_text,
@@ -256,20 +330,23 @@ begin
       'Open in admin',
       inbox_url,
       NEW.id::text,
-      '#0B0F12',
+      bar_color,
       'view_in_dashboard'
     );
   elsif TG_OP = 'DELETE' then
-    title_text := trim(coalesce(OLD.first_name, '') || ' ' || coalesce(OLD.last_name, ''));
-    subtitle_text := case submission_type
-      when 'investor' then ':wastebasket: *Investor submission deleted*'
-      when 'modal' then ':wastebasket: *Priority modal signup deleted*'
-      else ':wastebasket: *Contact submission deleted*'
+    display_name := trim(coalesce(OLD.first_name, '') || ' ' || coalesce(OLD.last_name, ''));
+    title_text := case submission_type
+      when 'investor' then 'Investor submission deleted'
+      when 'modal' then 'Priority modal signup deleted'
+      else 'Form submission deleted'
     end;
-    body_text :=
-      '*Type:* ' || submission_label || E'\n' ||
-      '*Email:* ' || OLD.email || E'\n' ||
-      '*Last status:* ' || coalesce(OLD.status, '—');
+    subtitle_text := ':wastebasket: Removed from inbox';
+    body_text := '';
+    body_text := public.slack_append_field(body_text, 'Name', display_name);
+    body_text := public.slack_append_field(body_text, 'Type', submission_label);
+    body_text := public.slack_append_field(body_text, 'Email', OLD.email);
+    body_text := public.slack_append_field(body_text, 'Last status', coalesce(OLD.status, '—'));
+    bar_color := public.slack_event_color('delete');
 
     payload := public.slack_blocks_message(
       title_text,
@@ -278,7 +355,7 @@ begin
       'Open in admin',
       inbox_url,
       OLD.id::text,
-      '#0B0F12',
+      bar_color,
       'view_in_dashboard'
     );
   end if;
@@ -320,13 +397,14 @@ begin
 
   inbox_url := public.slack_admin_inbox_url('diagnostic');
 
-  title_text := coalesce(profile.name, '—');
-  subtitle_text := ':bar_chart: *Diagnostic report submitted*';
-  body_text :=
-    '*Company:* ' || coalesce(profile.company_name, '—') || E'\n' ||
-    '*Email:* ' || coalesce(profile.work_email, '—') || E'\n' ||
-    '*Stage:* ' || coalesce(profile.stage, '—') || E'\n' ||
-    '*Status:* ' || coalesce(profile.status, 'New');
+  title_text := 'Diagnostic report submitted';
+  subtitle_text := ':bar_chart: Diagnostic inbox';
+  body_text := '';
+  body_text := public.slack_append_field(body_text, 'Founder', profile.name);
+  body_text := public.slack_append_field(body_text, 'Company', profile.company_name);
+  body_text := public.slack_append_field(body_text, 'Email', profile.work_email);
+  body_text := public.slack_append_field(body_text, 'Stage', profile.stage);
+  body_text := public.slack_append_field(body_text, 'Status', coalesce(profile.status, 'New'));
 
   payload := public.slack_blocks_message(
     title_text,
@@ -335,7 +413,7 @@ begin
     'Open in admin',
     inbox_url,
     profile.id::text,
-    '#0B0F12',
+    public.slack_event_color('insert'),
     'view_in_dashboard'
   );
 
@@ -368,15 +446,43 @@ begin
   inbox_url := public.slack_admin_inbox_url('diagnostic');
 
   if TG_OP = 'UPDATE' then
+    if OLD.admin_note is distinct from NEW.admin_note then
+      title_text := 'Admin note updated';
+      subtitle_text := ':memo: Diagnostic inbox';
+      body_text := '';
+      body_text := public.slack_append_field(body_text, 'Founder', NEW.name);
+      body_text := public.slack_append_field(body_text, 'Company', NEW.company_name);
+      body_text := public.slack_append_field(body_text, 'Email', NEW.work_email);
+      if coalesce(nullif(trim(NEW.admin_note), ''), '') <> '' then
+        body_text := body_text || E'\n*Note:*\n>' || replace(NEW.admin_note, E'\n', E'\n>') || E'\n';
+      else
+        body_text := body_text || E'\n*Note:* _(cleared)_' || E'\n';
+      end if;
+
+      payload := public.slack_blocks_message(
+        title_text,
+        subtitle_text,
+        body_text,
+        'Open in admin',
+        inbox_url,
+        NEW.id::text,
+        public.slack_event_color('note'),
+        'view_in_dashboard'
+      );
+      perform public.notify_slack(payload);
+    end if;
+
     if OLD.status is not distinct from NEW.status then
       return NEW;
     end if;
-    title_text := coalesce(NEW.name, '—');
-    subtitle_text := ':arrows_counterclockwise: *Diagnostic lead updated*';
-    body_text :=
-      '*Company:* ' || coalesce(NEW.company_name, '—') || E'\n' ||
-      '*Email:* ' || coalesce(NEW.work_email, '—') || E'\n' ||
-      '*Status:* `' || coalesce(OLD.status, '—') || '` → `' || coalesce(NEW.status, 'New') || '`';
+
+    title_text := 'Diagnostic lead updated';
+    subtitle_text := ':arrows_counterclockwise: Status change';
+    body_text := '';
+    body_text := public.slack_append_field(body_text, 'Founder', NEW.name);
+    body_text := public.slack_append_field(body_text, 'Company', NEW.company_name);
+    body_text := public.slack_append_field(body_text, 'Email', NEW.work_email);
+    body_text := body_text || '*Status:* `' || coalesce(OLD.status, '—') || '` → `' || coalesce(NEW.status, 'New') || '`' || E'\n';
 
     payload := public.slack_blocks_message(
       title_text,
@@ -385,16 +491,17 @@ begin
       'Open in admin',
       inbox_url,
       NEW.id::text,
-      '#0B0F12',
+      public.slack_event_color('status', NEW.status),
       'view_in_dashboard'
     );
   elsif TG_OP = 'DELETE' then
-    title_text := coalesce(OLD.name, '—');
-    subtitle_text := ':wastebasket: *Diagnostic lead deleted*';
-    body_text :=
-      '*Company:* ' || coalesce(OLD.company_name, '—') || E'\n' ||
-      '*Email:* ' || coalesce(OLD.work_email, '—') || E'\n' ||
-      '*Last status:* ' || coalesce(OLD.status, '—');
+    title_text := 'Diagnostic lead deleted';
+    subtitle_text := ':wastebasket: Removed from inbox';
+    body_text := '';
+    body_text := public.slack_append_field(body_text, 'Founder', OLD.name);
+    body_text := public.slack_append_field(body_text, 'Company', OLD.company_name);
+    body_text := public.slack_append_field(body_text, 'Email', OLD.work_email);
+    body_text := public.slack_append_field(body_text, 'Last status', coalesce(OLD.status, '—'));
 
     payload := public.slack_blocks_message(
       title_text,
@@ -403,7 +510,7 @@ begin
       'Open in admin',
       inbox_url,
       OLD.id::text,
-      '#0B0F12',
+      public.slack_event_color('delete'),
       'view_in_dashboard'
     );
   else

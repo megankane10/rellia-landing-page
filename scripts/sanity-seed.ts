@@ -994,6 +994,12 @@ const paymentPageSeedDocument = () => ({
   discountBannerApplyLabel: DEFAULT_PAYMENT_PAGE.discountBannerApplyLabel,
   promoPillEnabled: DEFAULT_PAYMENT_PAGE.promoPillEnabled,
   promoMessage: DEFAULT_PAYMENT_PAGE.promoMessage,
+  questionsTitle: DEFAULT_PAYMENT_PAGE.questionsTitle,
+  questionsBody: DEFAULT_PAYMENT_PAGE.questionsBody,
+  questionsContactLabel: DEFAULT_PAYMENT_PAGE.questionsContactLabel,
+  questionsContactPath: DEFAULT_PAYMENT_PAGE.questionsContactPath,
+  questionsFaqLabel: DEFAULT_PAYMENT_PAGE.questionsFaqLabel,
+  questionsFaqPath: DEFAULT_PAYMENT_PAGE.questionsFaqPath,
   seo: { ...(seoForRoute("/membership") ?? {}), noIndex: true },
 })
 

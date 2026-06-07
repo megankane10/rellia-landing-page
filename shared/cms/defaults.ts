@@ -1348,8 +1348,6 @@ export const DEFAULT_HOME_PAGE: HomePageContent = {
   secondaryCtaPath: "/programs",
   heroBackgroundVideoUrl: "/videos/homehero.mp4",
   metricsHeading: "The right people make all the difference.",
-  metricsSubheading:
-    "Here is a look at the Rellia network—where health tech founders are connected with people who understand exactly what you're up against.",
   metrics: [
     { label: "Members in the Rellia community", value: 291 },
     { label: "Health tech startups", value: 81 },
@@ -2298,11 +2296,13 @@ export const DEFAULT_PAYMENT_PAGE: PaymentPageContent = {
   popularLabel: "",
   monthlyProceedLabel: "Proceed to payment",
   annualProceedLabel: "Proceed to payment",
-  questionsTitle: "",
-  questionsFaqLabel: "",
-  questionsFaqPath: "",
-  questionsContactLabel: "",
-  questionsContactPath: "",
+  questionsTitle: "Questions about membership?",
+  questionsBody:
+    "Have questions about the membership, billing, or benefits? We're here to help you get the most out of the Rellia network.",
+  questionsFaqLabel: "View FAQ",
+  questionsFaqPath: "/faq",
+  questionsContactLabel: "Contact us",
+  questionsContactPath: "/contact",
 }
 
 export const DEFAULT_APPLY_PAGE: ApplyPageContent = {
@@ -2613,6 +2613,7 @@ export function mergePaymentPage(
   fill("monthlyProceedLabel", DEFAULT_PAYMENT_PAGE.monthlyProceedLabel)
   fill("annualProceedLabel", DEFAULT_PAYMENT_PAGE.annualProceedLabel)
   fill("questionsTitle", DEFAULT_PAYMENT_PAGE.questionsTitle)
+  fill("questionsBody", DEFAULT_PAYMENT_PAGE.questionsBody ?? "")
   fill("questionsFaqLabel", DEFAULT_PAYMENT_PAGE.questionsFaqLabel)
   fill("questionsFaqPath", DEFAULT_PAYMENT_PAGE.questionsFaqPath)
   fill("questionsContactLabel", DEFAULT_PAYMENT_PAGE.questionsContactLabel)
