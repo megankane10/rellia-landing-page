@@ -107,12 +107,10 @@ const collectDynamicPaths = async (): Promise<string[]> => {
     .map((slug) => `/${slug}`)
     .filter((path) => !staticReserved.has(path))
 
-  const isMain = process.env.VERCEL_GIT_COMMIT_REF?.trim().toLowerCase() === "main"
-
-  const eventPaths = cmsEventPaths.length > 0 ? cmsEventPaths : (isMain ? [] : defaultEventPaths)
-  const storyPaths = cmsStoryPaths.length > 0 ? cmsStoryPaths : (isMain ? [] : seedStoryPaths)
-  const alumniPaths = cmsAlumniPaths.length > 0 ? cmsAlumniPaths : (isMain ? [] : seedAlumniPaths)
-  const advisorPaths = cmsAdvisorPaths.length > 0 ? cmsAdvisorPaths : (isMain ? [] : seedAdvisorPaths)
+  const eventPaths = cmsEventPaths.length > 0 ? cmsEventPaths : defaultEventPaths
+  const storyPaths = cmsStoryPaths.length > 0 ? cmsStoryPaths : seedStoryPaths
+  const alumniPaths = cmsAlumniPaths.length > 0 ? cmsAlumniPaths : seedAlumniPaths
+  const advisorPaths = cmsAdvisorPaths.length > 0 ? cmsAdvisorPaths : seedAdvisorPaths
 
   return mergeUniquePaths(eventPaths, storyPaths, alumniPaths, advisorPaths, cmsPagePaths)
 }

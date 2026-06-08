@@ -2,16 +2,16 @@ import { ExternalLink } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import AdminSectionCard from "@/components/admin/AdminSectionCard"
 import { cn } from "@/lib/utils"
+import {
+  OPERATIONS_DOC_EDIT_URL,
+  OPERATIONS_DOC_EMBED_URL,
+} from "@shared/cms/operationsDocUrl"
 
 const VERCEL_ENV_URL = "https://vercel.com/relliahealth/settings/environment-variables"
-const GOOGLE_DOC_EDIT_URL =
-  "https://docs.google.com/document/d/17lMkt2Jqa4fswCd_DpjHpvwMQH-5QBMDvzcw5MGLDVo/edit?usp=sharing"
-const GOOGLE_DOC_EMBED_URL =
-  "https://docs.google.com/document/d/e/2PACX-1vSmTtp1CbT0nL2DjluTFCgV6E8ezDIbRPL_iSRvTtLZnmYQNXjHiwnoUuArw0GEg5hUSzw8wAkGroUE/pub?embedded=true"
 
 const WEBSITE_TOOLS = [
   {
-    href: "https://docs.google.com/document/d/17lMkt2Jqa4fswCd_DpjHpvwMQH-5QBMDvzcw5MGLDVo/edit?usp=sharing",
+    href: OPERATIONS_DOC_EDIT_URL,
     label: "Documentation",
     description: "Instructions for using this dashboard and operating the marketing site.",
   },
@@ -99,7 +99,7 @@ const AdminResources = () => (
             asChild
             className="rounded-full border-rellia-teal/20 text-rellia-teal hover:bg-rellia-mint/15"
           >
-            <a href={GOOGLE_DOC_EDIT_URL} target="_blank" rel="noopener noreferrer">
+            <a href={OPERATIONS_DOC_EDIT_URL} target="_blank" rel="noopener noreferrer">
               View on Google Doc
               <ExternalLink className="ml-1.5 h-3.5 w-3.5" aria-hidden />
             </a>
@@ -108,7 +108,7 @@ const AdminResources = () => (
       >
         <div className="overflow-hidden rounded-2xl border border-black/[0.06] bg-black/[0.02]">
           <iframe
-            src={GOOGLE_DOC_EMBED_URL}
+            src={OPERATIONS_DOC_EMBED_URL}
             title="Rellia admin operations guide"
             className="h-[min(70vh,640px)] w-full border-0 bg-white"
             loading="lazy"

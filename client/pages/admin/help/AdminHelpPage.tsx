@@ -4,12 +4,12 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import AdminPageHeader from "@/components/admin/AdminPageHeader"
 import { cn } from "@/lib/utils"
+import {
+  OPERATIONS_DOC_EDIT_URL,
+  OPERATIONS_DOC_EMBED_URL,
+} from "@shared/cms/operationsDocUrl"
 
 const VERCEL_ENV_URL = "https://vercel.com/relliahealth/settings/environment-variables"
-const GOOGLE_DOC_EMBED_URL =
-  "https://docs.google.com/document/d/e/2PACX-1vRHFF2JddINakhOmHkg2_nFO_dgENKl7ygBQAAPxT1CfDC-fFZeId9KAgYxnzDTPxqKjV96CUV4l5nS/pub?embedded=true"
-const GOOGLE_DOC_VIEW_URL =
-  "https://docs.google.com/document/d/e/2PACX-1vRHFF2JddINakhOmHkg2_nFO_dgENKl7ygBQAAPxT1CfDC-fFZeId9KAgYxnzDTPxqKjV96CUV4l5nS/pub"
 
 const routeBadge = (to: string, label: string) => (
   <Link
@@ -21,6 +21,11 @@ const routeBadge = (to: string, label: string) => (
 )
 
 const WEBSITE_TOOLS = [
+  {
+    href: OPERATIONS_DOC_EDIT_URL,
+    label: "Documentation",
+    description: "Operations guide for the dashboard and marketing site.",
+  },
   {
     href: "https://relliahealth.sanity.studio",
     label: "Sanity Studio",
@@ -141,7 +146,7 @@ const AdminHelpPage = () => (
             <CardDescription className="font-urbanist">Shared runbook for marketing and submissions.</CardDescription>
           </div>
           <Button type="button" variant="outline" size="sm" asChild className="shrink-0 rounded-full">
-            <a href={GOOGLE_DOC_VIEW_URL} target="_blank" rel="noopener noreferrer">
+            <a href={OPERATIONS_DOC_EDIT_URL} target="_blank" rel="noopener noreferrer">
               Open doc
               <ExternalLink className="ml-1.5 h-3.5 w-3.5" aria-hidden />
             </a>
@@ -150,7 +155,7 @@ const AdminHelpPage = () => (
         <CardContent className="p-2 sm:p-6">
           <div className="overflow-hidden rounded-lg border border-border bg-white">
             <iframe
-              src={GOOGLE_DOC_EMBED_URL}
+              src={OPERATIONS_DOC_EMBED_URL}
               title="Rellia admin operations guide"
               className="h-[min(60vh,520px)] w-full border-0 bg-white sm:h-[min(70vh,640px)] max-sm:w-[125%] max-sm:h-[650px] max-sm:scale-[0.8] max-sm:origin-top-left"
               loading="lazy"

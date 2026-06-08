@@ -552,25 +552,12 @@ const PROGRAMS_EVENT_PRERENDER_PATHS = [
   ...DEFAULT_PROGRAMS_LANDING.pastEvents.map(programsEventDetailPath),
 ]
 
-const isMainBranchBuild = (): boolean => {
-  const ref = (
-    typeof process !== "undefined"
-      ? process.env?.VERCEL_GIT_COMMIT_REF
-      : (import.meta as unknown as { env?: Record<string, unknown> })?.env?.VITE_VERCEL_GIT_COMMIT_REF as string | undefined
-  ) ?? ""
-  return ref.trim().toLowerCase() === "main"
-}
+export const STORY_PRERENDER_PATHS: string[] = STORIES.map((story) => `/stories/${story.slug}`)
 
-export const STORY_PRERENDER_PATHS: string[] = isMainBranchBuild()
-  ? []
-  : STORIES.map((story) => `/stories/${story.slug}`)
-
-const SEED_DIRECTORY_PRERENDER_PATHS: string[] = isMainBranchBuild()
-  ? []
-  : [
-      ...FOUNDER_DIRECTORY.map((f) => `/founders/alumni/${f.id}`),
-      ...ADVISOR_DIRECTORY_SEED.map((a) => `/advisors/directory/${a.id}`),
-    ]
+const SEED_DIRECTORY_PRERENDER_PATHS: string[] = [
+  ...FOUNDER_DIRECTORY.map((f) => `/founders/alumni/${f.id}`),
+  ...ADVISOR_DIRECTORY_SEED.map((a) => `/advisors/directory/${a.id}`),
+]
 
 /** Showcase CMS profiles/stories — always prerender for social embed meta tags. */
 export const SHOWCASE_PRERENDER_PATHS: string[] = [

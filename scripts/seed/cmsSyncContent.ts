@@ -2,6 +2,7 @@ import { DEFAULT_APPLY_PAGE, DEFAULT_QMS_PROGRAM } from "../../shared/cms/defaul
 import type { ApplyPageContent } from "../../shared/cms/types"
 import { QMS_PROGRAM_STATIC_BLOCKS } from "../../shared/cms/programs/qms.static"
 import { GETPROVEN_VENDORS_GRID_URL } from "../../client/config/partnerLinks"
+import { OPERATIONS_DOC_EDIT_URL } from "../../shared/cms/operationsDocUrl"
 
 type PtBlockFn = (
   key: string,
@@ -1167,7 +1168,7 @@ export const STUDIO_GUIDE_SECTIONS = [
     _key: "quick_links",
     heading: "Quick links",
     body:
-      "Documentation — https://docs.google.com/document/d/17lMkt2Jqa4fswCd_DpjHpvwMQH-5QBMDvzcw5MGLDVo/edit?usp=sharing\nSanity Studio — https://relliahealth.sanity.studio\nSupabase — https://supabase.com/dashboard/project/agsvypnmlrvpbgrsxtqy\nVercel — https://vercel.com/relliahealth\nGitHub — https://github.com/Agrolax/rellia-landing-page\nWebsite — https://relliahealth.com",
+      `Documentation — ${OPERATIONS_DOC_EDIT_URL}\nSanity Studio — https://relliahealth.sanity.studio\nSupabase — https://supabase.com/dashboard/project/agsvypnmlrvpbgrsxtqy\nVercel — https://vercel.com/relliahealth\nGitHub — https://github.com/Agrolax/rellia-landing-page\nWebsite — https://relliahealth.com`,
   },
   {
     _type: "guideSection",

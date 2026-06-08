@@ -2,6 +2,7 @@ import { Outlet, useNavigate } from "react-router-dom"
 import { LogOut } from "lucide-react"
 import { useAuth } from "@/context/AuthContext"
 import { Button } from "@/components/ui/button"
+import { OPERATIONS_DOC_EDIT_URL } from "@shared/cms/operationsDocUrl"
 
 const FAVICON_SRC = "/favicon.ico"
 
@@ -65,7 +66,7 @@ const AdminLayout = () => {
             Website
           </a>
           <a
-            href="https://docs.google.com/document/d/17lMkt2Jqa4fswCd_DpjHpvwMQH-5QBMDvzcw5MGLDVo/edit?usp=sharing"
+            href={OPERATIONS_DOC_EDIT_URL}
             target="_blank"
             rel="noopener noreferrer"
             className="font-urbanist text-sm text-black/50 transition-colors hover:text-rellia-teal focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint rounded"
