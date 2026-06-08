@@ -1,5 +1,9 @@
 import type { ProgramsEventCard } from "@shared/cms/types"
 import { DEFAULT_HOME_PAGE } from "./defaults"
+import {
+  EVENT_FAVICON_HOST_SLUGS,
+  RELLIA_FAVICON_HOST_IMAGE,
+} from "./eventHostImage"
 
 export const PROGRAMS_EVENT_LOCATION_FALLBACK = "Virtual"
 
@@ -327,14 +331,17 @@ const hashProgramsEventKey = (key: string): number => {
 }
 
 /**
- * Speaker headshot for event cards and detail — stable hash into home testimonial portraits (+ Melissa `.jpg`),
- * `/favicon.ico` when Rellia-branded, or Mazhar’s testimonial portrait for Dr. Sabina Nagpal’s event.
+ * Speaker headshot for event cards and detail — CMS `hostImage`, Rellia favicon for branded hosts,
+ * stable hash into home testimonial portraits (+ Melissa `.jpg`), or named speaker overrides.
  */
-const RELLIA_FAVICON_HOST_IMAGE = "/favicon.ico"
-
 export const getProgramsEventSpeakerAvatarSrc = (event: ProgramsEventCard): string => {
   const cmsHostImage = event.hostImageSrc?.trim()
   if (cmsHostImage) return cmsHostImage
+
+  const slug = event.slug?.trim()
+  if (slug && EVENT_FAVICON_HOST_SLUGS.has(slug)) {
+    return RELLIA_FAVICON_HOST_IMAGE
+  }
 
   const parts = parseProgramsEventSpeaker(event.person)
   const speaker = (parts.speaker || (event.person ?? "").trim()).trim()
@@ -348,7 +355,6 @@ export const getProgramsEventSpeakerAvatarSrc = (event: ProgramsEventCard): stri
     return RELLIA_FAVICON_HOST_IMAGE
   }
   const isDrSabinaNagpalEvent =
-    event.slug === "leadership-under-pressure" ||
     (DR_SABINA_NAGPAL_SPEAKER_RE.test(speaker) && /\bNagpal\b/i.test(speaker)) ||
     DR_SABINA_NAGPAL_SPEAKER_RE.test(personRaw)
   if (isDrSabinaNagpalEvent) {

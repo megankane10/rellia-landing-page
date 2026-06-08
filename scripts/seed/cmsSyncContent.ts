@@ -1278,14 +1278,6 @@ export const buildProgramHowItWorksCardsSeed = (blocks: ProgramPageStaticBlocks)
     imageSrc: card.imageSrc,
   }))
 
-/** Events that should seed the Rellia favicon as the editable host portrait. */
-export const EVENT_FAVICON_HOST_SLUGS = new Set([
-  "leadership-under-pressure",
-  "set-your-stage",
-  "clinician-connect-primary-care",
-  "investor-readiness-how-vcs-evaluate-startups",
-])
-
 export const PROGRAMS_LAYOUT_SEED = {
   howItWorksTitle: DEFAULT_QMS_PROGRAM.howItWorksTitle,
   howItWorksIntro: DEFAULT_QMS_PROGRAM.howItWorksIntro,

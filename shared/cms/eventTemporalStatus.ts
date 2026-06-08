@@ -69,7 +69,7 @@ export const getEventEndTimestamp = (event: {
 
 /**
  * Upcoming vs past is derived from CMS datetimes when available.
- * Manual `status` in Sanity is ignored for upcoming/past (except `hidden`, filtered in GROQ).
+ * Manual `status` in Sanity is only used for visibility (`hidden`); upcoming/past comes from dates.
  */
 export type EventTemporalInput = Pick<
   ProgramsEventCard,
@@ -85,6 +85,5 @@ export const getEventTemporalStatus = (event: EventTemporalInput): "upcoming" | 
     return compareTs < Date.now() ? "past" : "upcoming"
   }
 
-  if (event.status === "past") return "past"
   return "upcoming"
 }

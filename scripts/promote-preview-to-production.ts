@@ -182,7 +182,8 @@ const main = async () => {
     const set: Record<string, unknown> = {}
     if (source.startsAt) set.startsAt = source.startsAt
     if (source.endsAt) set.endsAt = source.endsAt
-    if (source.status && source.status !== "hidden") set.status = source.status
+    if (source.status === "hidden") set.status = "hidden"
+    else if (prod.status === "hidden") set.status = "visible"
 
     const hasSet = Object.keys(set).length > 0
     const unsetDateTime = Boolean(prod.dateTime)

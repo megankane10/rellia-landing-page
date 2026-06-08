@@ -790,7 +790,6 @@ export type ProgramsEventCard = {
   /** Optional CMS host portrait; falls back to Rellia favicon for company-hosted events. */
   hostImageSrc?: string
   href?: string
-  comingSoon?: boolean
   buttonText?: string
   /** Optional stable path segment for `/events/:slug`. Generated from title + date when omitted. */
   slug?: string
@@ -824,8 +823,8 @@ export type ProgramsEventCard = {
   eventDescription?: SanityPortableText
   ticketingUrl?: string
   customLinkButton?: { buttonText?: string; url?: string }
-  /** Manual label in Studio; listing/detail prefer `startsAt` / `endsAt` when set. */
-  status?: "upcoming" | "past" | "hidden"
+  /** Studio visibility; upcoming/past is derived from `startsAt` / `endsAt` on the site. */
+  status?: "visible" | "hidden" | "upcoming" | "past"
 }
 
 export type ProgramsProgramCard = {

@@ -88,7 +88,6 @@ export const event = defineType({
       description: 'Primary registration URL (shown on event cards).',
       group: 'content',
     }),
-    defineField({name: 'comingSoon', type: 'boolean', group: 'content'}),
     defineField({
       name: 'eventDescription',
       title: 'Event description',
@@ -139,8 +138,7 @@ export const event = defineType({
     },
     prepare({title, status, startsAt, location, media}) {
       const displayTitle = title?.trim() || 'Untitled event'
-      const statusLabel =
-        status === 'past' ? 'Past' : status === 'hidden' ? 'Hidden' : 'Upcoming'
+      const statusLabel = status === 'hidden' ? 'Hidden' : 'Visible'
       const dateLabel = startsAt
         ? new Date(startsAt).toLocaleDateString(undefined, {
             month: 'short',

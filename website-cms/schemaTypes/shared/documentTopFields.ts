@@ -33,15 +33,16 @@ export const eventPublishingFields = [
     name: 'status',
     title: 'Event visibility',
     type: 'string',
+    description:
+      'Upcoming vs past is derived from Start/End date & time on the site. Use Hidden to remove an event from listings.',
     options: {
       layout: 'radio',
       list: [
-        {title: 'Upcoming', value: 'upcoming'},
-        {title: 'Past', value: 'past'},
+        {title: 'Visible', value: 'visible'},
         {title: 'Hidden', value: 'hidden'},
       ],
     },
-    initialValue: 'upcoming',
+    initialValue: 'visible',
     group: 'publishing',
   }),
   defineField({

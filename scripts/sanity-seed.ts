@@ -18,6 +18,7 @@ import {
   DEFAULT_CONSULTING_PAGE,
   DEFAULT_DIAGNOSTIC_LANDING_PAGE,
 } from "../shared/cms/defaults"
+import { EVENT_FAVICON_HOST_SLUGS } from "../shared/cms/eventHostImage"
 import { DIAGNOSTIC_SURVEY_SECTIONS } from "../client/data/diagnosticSurveySections"
 import {
   DEFAULT_EVENTS_LANDING_HERO_PORTABLE,
@@ -35,7 +36,6 @@ import {
   PRIORITY_MODAL_SEED,
   PROGRAMS_LAYOUT_SEED,
   PROGRAM_STATIC_BLOCKS_BY_SLUG,
-  EVENT_FAVICON_HOST_SLUGS,
   buildProgramPillarsSeed,
   buildProgramHowItWorksCardsSeed,
   QMS_PROGRAM_TESTIMONIALS_SEED,
@@ -1362,7 +1362,6 @@ async function main() {
           ? toSanityImageFieldValue(faviconHostAssetId)
           : undefined,
         href: e.href,
-        comingSoon: (e as any).comingSoon,
         buttonText: (e as any).buttonText,
         location: (e as any).location,
         lumaEventId: (e as any).lumaEventId,
@@ -1370,7 +1369,7 @@ async function main() {
         detailBodyHeading: (e as any).detailBodyHeading,
         embedLumaOnDetailPage: (e as any).embedLumaOnDetailPage,
         addToCalendarEnabled: (e as any).addToCalendarEnabled,
-        status: "upcoming",
+        status: "visible",
         sortOrder: index,
       },
     })
@@ -1394,7 +1393,6 @@ async function main() {
           ? toSanityImageFieldValue(faviconHostAssetId)
           : undefined,
         href: e.href,
-        comingSoon: (e as any).comingSoon,
         buttonText: (e as any).buttonText,
         location: (e as any).location,
         lumaEventId: (e as any).lumaEventId,
@@ -1402,7 +1400,7 @@ async function main() {
         detailBodyHeading: (e as any).detailBodyHeading,
         embedLumaOnDetailPage: (e as any).embedLumaOnDetailPage,
         addToCalendarEnabled: (e as any).addToCalendarEnabled,
-        status: "past",
+        status: "visible",
         sortOrder: index,
       },
     })
