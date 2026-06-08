@@ -70,14 +70,14 @@ export const FOUNDER_DIRECTORY: FounderCompany[] = [
     founders: [
       {
         name: "Deena Al-Sammak",
-        role: "Co-founder, Health Sciences Graduate",
+        role: "Health Sciences Graduate",
         bio: "Co-founder focused on clinical validation and program development for pediatric rehab tooling.",
         linkedinUrl: "https://www.linkedin.com/in/deena-al-sammak/",
         imageSrc: "/images/deenasammak-team.png",
       },
       {
         name: "Rooaa Shanshal",
-        role: "Co-founder, Software & Biomedical Engineer",
+        role: "Software & Biomedical Engineer",
         bio: "Co-founder leading product engineering for play-based strength measurement.",
         linkedinUrl: "https://www.linkedin.com/in/rooaashanshal/",
         imageSrc: "/images/testimonials-rooaaS.jpeg",

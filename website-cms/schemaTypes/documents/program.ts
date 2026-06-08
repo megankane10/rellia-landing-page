@@ -88,6 +88,20 @@ export const program = defineType({
     defineField({name: 'howItWorksTitle', type: 'string', group: 'detail'}),
     defineField({name: 'howItWorksIntro', type: 'text', rows: 3, group: 'detail'}),
     defineField({name: 'pillarsTitle', type: 'string', group: 'detail'}),
+    defineField({
+      name: 'pillars',
+      type: 'array',
+      of: [
+        defineArrayMember({
+          type: 'object',
+          fields: [
+            defineField({name: 'title', type: 'string'}),
+            defineField({name: 'description', type: 'text', rows: 3}),
+          ],
+        }),
+      ],
+      group: 'detail',
+    }),
     defineField({name: 'timelineTitle', type: 'string', group: 'detail'}),
     defineField({name: 'timelineSubtitle', type: 'text', rows: 2, group: 'detail'}),
     defineField({

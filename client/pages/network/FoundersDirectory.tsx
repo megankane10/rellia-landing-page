@@ -17,12 +17,12 @@ import {
   useAlumniCompanies,
   useFounderSpecialties,
   useDirectoryFilterGroups,
+  type DirectoryFilterGroup,
 } from "@/hooks/useCmsDocuments";
 import {
   FOUNDER_DIRECTORY,
   ALL_SPECIALTIES,
   type FounderCompany,
-  type Specialty,
 } from "@/data/founderDirectory";
 import { isSanityConfigured } from "@/lib/sanity";
 import { allowCmsSeedFallbacks } from "@/lib/deploymentEnv";
@@ -44,6 +44,13 @@ import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo";
 /** Gray-teal tone for directory heroes */
 const DIRECTORY_TITLE_CLASS =
   "font-host-grotesk text-4xl font-extrabold tracking-tight text-black md:text-5xl";
+
+/** Used when CMS filter groups have not loaded yet (common on Vercel first paint). */
+const FALLBACK_FOUNDER_FILTER_GROUPS: DirectoryFilterGroup[] = [
+  { id: "country", title: "Country", appliesTo: "both" },
+  { id: "specialty", title: "Specialty", appliesTo: "founders" },
+  { id: "business-model", title: "Business Model", appliesTo: "founders" },
+]
 
 function FounderDirectoryCard({
   company,
@@ -137,6 +144,27 @@ export default function FoundersDirectory() {
     }
   }, [location.search]);
 
+  const dynamicGroups = useMemo(() => {
+    const groups = Array.isArray(cmsFilterGroups) ? cmsFilterGroups : []
+    return filterFounderDirectoryGroups(
+      groups.filter((g) => g && (g.appliesTo === "founders" || g.appliesTo === "both")),
+    ).sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0) || a.title.localeCompare(b.title))
+  }, [cmsFilterGroups])
+
+  const activeFilterGroups =
+    dynamicGroups.length > 0 ? dynamicGroups : FALLBACK_FOUNDER_FILTER_GROUPS
+
+  useEffect(() => {
+    if (dynamicGroups.length === 0) return
+    setGroupFilters((prev) => {
+      const next = { ...prev }
+      if (countryFilter !== "all") next.country = countryFilter
+      if (specialtyFilter !== "all") next.specialty = specialtyFilter
+      if (businessModelFilter !== "all") next["business-model"] = businessModelFilter
+      return next
+    })
+  }, [dynamicGroups, countryFilter, specialtyFilter, businessModelFilter])
+
   const companies = useMemo<FounderCompany[]>(() => {
     if (!isSanityConfigured()) return []
 
@@ -181,30 +209,31 @@ export default function FoundersDirectory() {
     ogImage: alumniDirectoryOgImage,
   })
 
+  const resolvedGroupFilters = useMemo(() => {
+    if (dynamicGroups.length > 0) return groupFilters
+    return {
+      ...groupFilters,
+      ...(countryFilter !== "all" ? { country: countryFilter } : {}),
+      ...(specialtyFilter !== "all" ? { specialty: specialtyFilter } : {}),
+      ...(businessModelFilter !== "all"
+        ? { "business-model": businessModelFilter }
+        : {}),
+    }
+  }, [
+    dynamicGroups.length,
+    groupFilters,
+    countryFilter,
+    specialtyFilter,
+    businessModelFilter,
+  ])
+
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     return companies.filter((c) => {
-      const dynamicGroups = Array.isArray(cmsFilterGroups)
-        ? cmsFilterGroups.filter((g) => g && (g.appliesTo === "founders" || g.appliesTo === "both"))
-        : []
-
-      if (dynamicGroups.length > 0) {
-        for (const group of dynamicGroups) {
-          const selected = (groupFilters[group.id] ?? "all").trim()
-          if (!selected || selected === "all") continue
-          if (!matchesDirectoryFilterSelection(group, selected, c)) return false
-        }
-      } else {
-        const matchCountry =
-          countryFilter === "all" ||
-          c.country.includes(countryFilter);
-        const matchSpecialty =
-          specialtyFilter === "all" ||
-          c.specialties.includes(specialtyFilter as Specialty);
-        const matchBusinessModel =
-          businessModelFilter === "all" ||
-          (c.businessModel && c.businessModel.includes(businessModelFilter));
-        if (!matchCountry || !matchSpecialty || !matchBusinessModel) return false;
+      for (const group of activeFilterGroups) {
+        const selected = (resolvedGroupFilters[group.id] ?? "all").trim()
+        if (!selected || selected === "all") continue
+        if (!matchesDirectoryFilterSelection(group, selected, c)) return false
       }
 
       if (!q) return true;
@@ -215,14 +244,7 @@ export default function FoundersDirectory() {
         `${c.logoName} ${c.shortDescription} ${specialtiesStr} ${countriesStr} ${businessModelsStr} ${c.traction}`.toLowerCase();
       return blob.includes(q);
     });
-  }, [companies, cmsFilterGroups, groupFilters, query, specialtyFilter, countryFilter, businessModelFilter]);
-
-  const dynamicGroups = useMemo(() => {
-    const groups = Array.isArray(cmsFilterGroups) ? cmsFilterGroups : []
-    return filterFounderDirectoryGroups(
-      groups.filter((g) => g && (g.appliesTo === "founders" || g.appliesTo === "both")),
-    ).sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0) || a.title.localeCompare(b.title))
-  }, [cmsFilterGroups])
+  }, [companies, activeFilterGroups, resolvedGroupFilters, query]);
 
   const dynamicGroupOptions = useMemo(
     () => getDirectoryGroupOptionLabels(dynamicGroups, companies as never[]),
@@ -362,12 +384,18 @@ export default function FoundersDirectory() {
                       <div key={g.id} className="relative w-full md:w-auto">
                         <select
                           value={value}
-                          onChange={(e) =>
+                          onChange={(e) => {
+                            const value = e.target.value
                             setGroupFilters((prev) => ({
                               ...prev,
-                              [g.id]: e.target.value,
+                              [g.id]: value,
                             }))
-                          }
+                            if (g.id === "country") setCountryFilter(value)
+                            if (g.id === "specialty") setSpecialtyFilter(value)
+                            if (g.id === "business-model") {
+                              setBusinessModelFilter(value)
+                            }
+                          }}
                           className="h-14 w-full appearance-none rounded-2xl border border-black/10 bg-black/[0.02] pl-5 pr-14 md:min-w-[160px] font-urbanist text-base font-semibold text-black/80 outline-none hover:border-black/20 focus-visible:ring-2 focus-visible:ring-rellia-teal focus-visible:bg-white cursor-pointer"
                           aria-label={`Filter by ${g.title}`}
                         >
@@ -403,7 +431,11 @@ export default function FoundersDirectory() {
                     <div className="relative w-full md:w-auto">
                       <select
                         value={countryFilter}
-                        onChange={(e) => setCountryFilter(e.target.value)}
+                        onChange={(e) => {
+                          const value = e.target.value
+                          setCountryFilter(value)
+                          setGroupFilters((prev) => ({ ...prev, country: value }))
+                        }}
                         className="h-14 w-full appearance-none rounded-2xl border border-black/10 bg-black/[0.02] pl-5 pr-14 md:min-w-[160px] font-urbanist text-base font-semibold text-black/80 outline-none hover:border-black/20 focus-visible:ring-2 focus-visible:ring-rellia-teal focus-visible:bg-white cursor-pointer"
                       >
                         {countryFilters.map((f) => (
@@ -422,7 +454,11 @@ export default function FoundersDirectory() {
                   <div className="relative w-full md:w-auto">
                     <select
                       value={specialtyFilter}
-                      onChange={(e) => setSpecialtyFilter(e.target.value)}
+                      onChange={(e) => {
+                        const value = e.target.value
+                        setSpecialtyFilter(value)
+                        setGroupFilters((prev) => ({ ...prev, specialty: value }))
+                      }}
                       className="h-14 w-full appearance-none rounded-2xl border border-black/10 bg-black/[0.02] pl-5 pr-14 md:min-w-[160px] font-urbanist text-base font-semibold text-black/80 outline-none hover:border-black/20 focus-visible:ring-2 focus-visible:ring-rellia-teal focus-visible:bg-white cursor-pointer"
                     >
                       {specialtyFilters.map((s) => (
@@ -441,7 +477,14 @@ export default function FoundersDirectory() {
                   <div className="relative w-full md:w-auto">
                     <select
                       value={businessModelFilter}
-                      onChange={(e) => setBusinessModelFilter(e.target.value)}
+                      onChange={(e) => {
+                        const value = e.target.value
+                        setBusinessModelFilter(value)
+                        setGroupFilters((prev) => ({
+                          ...prev,
+                          "business-model": value,
+                        }))
+                      }}
                       className="h-14 w-full appearance-none rounded-2xl border border-black/10 bg-black/[0.02] pl-5 pr-14 md:min-w-[160px] font-urbanist text-base font-semibold text-black/80 outline-none hover:border-black/20 focus-visible:ring-2 focus-visible:ring-rellia-teal focus-visible:bg-white cursor-pointer"
                     >
                       {businessModelFilters.map((bm) => (
