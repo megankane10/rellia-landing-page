@@ -18,7 +18,7 @@ import {
   buildPageUrl,
   clampMetaDescription,
   clampMetaTitle,
-  resolveSocialOgImageUrl,
+  resolveSocialOgImage,
 } from "@/config/seo"
 import EventJsonLd from "@/components/seo/EventJsonLd"
 import PageSocialHelmet from "@/components/seo/PageSocialHelmet"
@@ -190,11 +190,16 @@ export default function EventDetail() {
     const eventDescription = clampMetaDescription(seoMetaDescription || seoOgDescription || finalDesc)
     const eventSlugPath = getProgramsEventSlug(event)
     const pagePath = `/events/${eventSlugPath}`
+    const resolvedOg = seoOgImageUrl
+      ? resolveSocialOgImage(seoOgImageUrl, undefined, { square: true })
+      : resolveSocialOgImage(event.imageSrc, undefined, { square: true })
     return {
       pageTitle,
       eventDescription,
       shareTitle: pageTitle,
-      ogImage: seoOgImageUrl || resolveSocialOgImageUrl(event.imageSrc, undefined, { square: true }),
+      ogImage: resolvedOg?.url,
+      ogImageWidth: resolvedOg?.width,
+      ogImageHeight: resolvedOg?.height,
       canonical: buildPageUrl(pagePath),
       pagePath,
     }
@@ -288,6 +293,8 @@ export default function EventDetail() {
   const canonical = eventMeta!.canonical
   const shareTitle = eventMeta!.shareTitle
   const ogImage = eventMeta!.ogImage
+  const ogImageWidth = eventMeta!.ogImageWidth
+  const ogImageHeight = eventMeta!.ogImageHeight
 
   const handleCopyLink = async () => {
     try {
@@ -328,6 +335,8 @@ export default function EventDetail() {
         description={eventDescription}
         canonical={canonical}
         ogImage={ogImage}
+        ogImageWidth={ogImageWidth}
+        ogImageHeight={ogImageHeight}
       />
 
       <EventJsonLd

@@ -409,7 +409,7 @@ export const getStaticOgImageForPathname = (pathname: string): string | undefine
   const key = normalizePathname(pathname)
   const src = STATIC_OG_IMAGE_BY_ROUTE[key]
   if (!src) return undefined
-  return resolveSocialOgImageUrl(src, getSiteUrl())
+  return resolveSocialOgImage(src, getSiteUrl(), { landscape: true })?.url
 }
 
 export const toAbsoluteOgImageUrl = (src: string, base = getSiteUrl()): string => {
@@ -432,12 +432,33 @@ const SOCIAL_OG_IMAGE_FALLBACKS: Record<string, string> = {
   "/images/complianceevent-desc.jpeg": "/images/aiHealthcareCompliance.jpg",
 }
 
+export const OG_IMAGE_LANDSCAPE = { width: 1200, height: 630 } as const
+export const OG_IMAGE_SQUARE = { width: 1200, height: 1200 } as const
+
 export type SocialOgImageOptions = {
-  /** Crop Sanity (and similar) assets to a square for event/program card previews. */
+  /** Center-crop to 1200×1200 without stretching (events, programs, portraits). */
   square?: boolean
+  /** Center-crop to 1200×630 without stretching (stories, link previews). */
+  landscape?: boolean
 }
 
-const withSanitySocialImage = (url: string, square: boolean): string => {
+export type ResolvedSocialOgImage = {
+  url: string
+  width?: number
+  height?: number
+}
+
+const normalizeShareOrigin = (origin: string): string => origin.replace(/\/$/, "")
+
+const getStrictOgDimensions = (
+  options: SocialOgImageOptions,
+): { width: number; height: number } | undefined => {
+  if (options.square) return OG_IMAGE_SQUARE
+  if (options.landscape) return OG_IMAGE_LANDSCAPE
+  return undefined
+}
+
+const applySanitySocialImageParams = (url: string, options: SocialOgImageOptions): string => {
   if (!url.includes("cdn.sanity.io")) return url
   try {
     const parsed = new URL(url)
@@ -445,28 +466,64 @@ const withSanitySocialImage = (url: string, square: boolean): string => {
       parsed.searchParams.set("fm", "jpg")
     }
     parsed.searchParams.set("auto", "format")
-    if (square) {
-      parsed.searchParams.set("w", "1200")
-      parsed.searchParams.set("h", "1200")
+
+    if (options.square) {
+      parsed.searchParams.set("w", String(OG_IMAGE_SQUARE.width))
+      parsed.searchParams.set("h", String(OG_IMAGE_SQUARE.height))
       parsed.searchParams.set("fit", "crop")
       parsed.searchParams.set("crop", "center")
-    } else if (!parsed.searchParams.has("w")) {
-      parsed.searchParams.set("w", "1200")
+      return parsed.toString()
     }
+
+    if (options.landscape) {
+      parsed.searchParams.set("w", String(OG_IMAGE_LANDSCAPE.width))
+      parsed.searchParams.set("h", String(OG_IMAGE_LANDSCAPE.height))
+      parsed.searchParams.set("fit", "crop")
+      parsed.searchParams.set("crop", "center")
+      return parsed.toString()
+    }
+
+    parsed.searchParams.set("w", String(OG_IMAGE_LANDSCAPE.width))
+    parsed.searchParams.set("fit", "max")
+    parsed.searchParams.delete("h")
+    parsed.searchParams.delete("crop")
     return parsed.toString()
   } catch {
     return url
   }
 }
 
-export const resolveSocialOgImageUrl = (
-  src: string | undefined,
-  origin = getShareOrigin(),
-  options: SocialOgImageOptions = {},
-): string | undefined => {
-  const trimmed = src?.trim()
-  if (!trimmed) return undefined
+const applyStrictLocalOgImage = (
+  absoluteUrl: string,
+  origin: string,
+  options: SocialOgImageOptions,
+): string => {
+  if (!options.square && !options.landscape) return absoluteUrl
+  try {
+    const parsed = new URL(absoluteUrl)
+    const base = normalizeShareOrigin(origin)
+    if (parsed.origin !== base) return absoluteUrl
+    const w = OG_IMAGE_LANDSCAPE.width
+    const h = options.square ? OG_IMAGE_SQUARE.height : OG_IMAGE_LANDSCAPE.height
+    return `${base}/_vercel/image?url=${encodeURIComponent(parsed.pathname)}&w=${w}&h=${h}&q=85&fit=cover`
+  } catch {
+    return absoluteUrl
+  }
+}
 
+const transformSocialOgImageUrl = (
+  url: string,
+  origin: string,
+  options: SocialOgImageOptions,
+): string => {
+  if (url.includes("cdn.sanity.io")) {
+    return applySanitySocialImageParams(url, options)
+  }
+  return applyStrictLocalOgImage(url, origin, options)
+}
+
+const resolveSocialOgSource = (src: string): string => {
+  const trimmed = src.trim()
   const pathOnly = trimmed.startsWith("http")
     ? (() => {
         try {
@@ -484,19 +541,26 @@ export const resolveSocialOgImageUrl = (
     resolved = SOCIAL_OG_IMAGE_FALLBACKS[jpgPath] ?? jpgPath
   }
 
-  const square = Boolean(options.square)
+  return resolved
+}
 
-  if (/^https?:\/\//i.test(resolved)) {
-    return withSanitySocialImage(resolved, square)
-  }
+export const resolveSocialOgImage = (
+  src: string | undefined,
+  origin = getShareOrigin(),
+  options: SocialOgImageOptions = {},
+): ResolvedSocialOgImage | undefined => {
+  const trimmed = src?.trim()
+  if (!trimmed) return undefined
 
-  const absolute = toAbsoluteOgImageUrl(resolved, origin)
+  const resolved = resolveSocialOgSource(trimmed)
+
+  const absolute = /^https?:\/\//i.test(resolved)
+    ? resolved
+    : toAbsoluteOgImageUrl(resolved, origin)
   if (!absolute) return undefined
 
   const withVersion = (() => {
-    if (/^https?:\/\//i.test(absolute) && absolute.includes("cdn.sanity.io")) {
-      return absolute
-    }
+    if (absolute.includes("cdn.sanity.io")) return absolute
     const version = (
       (import.meta as unknown as { env?: Record<string, unknown> })?.env
         ?.VITE_OG_IMAGE_VERSION as string | undefined
@@ -506,14 +570,34 @@ export const resolveSocialOgImageUrl = (
     return `${absolute}${joiner}v=${encodeURIComponent(version)}`
   })()
 
-  return withSanitySocialImage(withVersion, square)
+  const url = transformSocialOgImageUrl(withVersion, origin, options)
+  const dimensions = getStrictOgDimensions(options)
+  return dimensions ? { url, ...dimensions } : { url }
 }
 
+export const resolveSocialOgImageUrl = (
+  src: string | undefined,
+  origin = getShareOrigin(),
+  options: SocialOgImageOptions = {},
+): string | undefined => resolveSocialOgImage(src, origin, options)?.url
+
 /** Absolute OG image for share embeds; falls back to site default when source is missing. */
+export const resolveShareOgImage = (
+  src: string | undefined,
+  options: SocialOgImageOptions = {},
+): ResolvedSocialOgImage => {
+  const resolved = resolveSocialOgImage(src, getShareOrigin(), options)
+  if (resolved) return resolved
+  return {
+    url: getDefaultOgImageUrl(),
+    ...OG_IMAGE_LANDSCAPE,
+  }
+}
+
 export const resolveShareOgImageUrl = (
   src: string | undefined,
   options: SocialOgImageOptions = {},
-): string => resolveSocialOgImageUrl(src, getShareOrigin(), options) ?? getDefaultOgImageUrl()
+): string => resolveShareOgImage(src, options).url
 
 const EVENT_DETAIL_SEO: RouteSeoConfig = {
   title: "Event — Rellia Health",

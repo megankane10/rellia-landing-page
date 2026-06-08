@@ -21,10 +21,9 @@ const PageSocialHelmet = ({
   ogImageHeight,
 }: PageSocialHelmetProps) => {
   const includeImage = Boolean(ogImage?.trim())
-
-  const defaultHeight = ogType === "article" ? 630 : 1200
-  const width = ogImageWidth ?? 1200
-  const height = ogImageHeight ?? defaultHeight
+  const width = ogImageWidth
+  const height = ogImageHeight
+  const includeDimensions = typeof width === "number" && typeof height === "number"
 
   return (
     <Helmet htmlAttributes={{ lang: "en" }}>
@@ -42,8 +41,12 @@ const PageSocialHelmet = ({
       {includeImage ? (
         <>
           <meta property="og:image" content={ogImage} />
-          <meta property="og:image:width" content={String(width)} />
-          <meta property="og:image:height" content={String(height)} />
+          {includeDimensions ? (
+            <>
+              <meta property="og:image:width" content={String(width)} />
+              <meta property="og:image:height" content={String(height)} />
+            </>
+          ) : null}
         </>
       ) : null}
 

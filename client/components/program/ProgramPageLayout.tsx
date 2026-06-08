@@ -37,7 +37,7 @@ import {
   buildPageUrl,
   clampMetaDescription,
   clampMetaTitle,
-  resolveSocialOgImageUrl,
+  resolveSocialOgImage,
 } from "@/config/seo";
 import { cn } from "@/lib/utils";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
@@ -212,7 +212,7 @@ const ProgramPageLayout = ({
       programSeo?.ogTitle?.trim() ||
       (resolvedProgramTitle ? `${resolvedProgramTitle} — Rellia Health` : "Programs — Rellia Health"),
   )
-  const programOgImage = resolveSocialOgImageUrl(
+  const programOgImage = resolveSocialOgImage(
     programSeo?.ogImageUrl?.trim() || resolvedHeroImageSrc,
     undefined,
     { square: true },
@@ -256,7 +256,9 @@ const ProgramPageLayout = ({
         title={programPageTitle}
         description={programMetaDescription}
         canonical={canonicalUrl}
-        ogImage={programOgImage}
+        ogImage={programOgImage?.url}
+        ogImageWidth={programOgImage?.width}
+        ogImageHeight={programOgImage?.height}
       />
       <Navbar />
       <main id="main-content">

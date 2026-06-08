@@ -11,8 +11,8 @@ import {
   clampMetaDescription,
   clampMetaTitle,
   getShareOrigin,
-  resolveShareOgImageUrl,
-  resolveSocialOgImageUrl,
+  resolveShareOgImage,
+  resolveSocialOgImage,
 } from "@/config/seo"
 import StoryArticleJsonLd from "@/components/seo/StoryArticleJsonLd"
 import PageSocialHelmet from "@/components/seo/PageSocialHelmet"
@@ -86,9 +86,12 @@ export default function StoryPost() {
   const headerLayout = cmsStory?.headerLayout === "background" ? "background" : "block"
   const seoOgImageSrc =
     cmsStory?.seo?.ogImageUrl?.trim() || headerCoverSrc
-  const imageUrl = seoOgImageSrc
-    ? resolveSocialOgImageUrl(seoOgImageSrc) ?? toAbsoluteImageUrl(seoOgImageSrc)
-    : resolveShareOgImageUrl(undefined)
+  const resolvedOgImage = seoOgImageSrc
+    ? resolveSocialOgImage(seoOgImageSrc, undefined, { landscape: true }) ?? {
+        url: toAbsoluteImageUrl(seoOgImageSrc),
+      }
+    : resolveShareOgImage(undefined, { landscape: true })
+  const imageUrl = resolvedOgImage.url
   const shareTitle = resolvedTitle
 
   const handleCopyLink = async () => {
@@ -224,6 +227,8 @@ export default function StoryPost() {
           canonical={canonical}
           ogImage={imageUrl}
           ogType="article"
+          ogImageWidth={resolvedOgImage.width}
+          ogImageHeight={resolvedOgImage.height}
         />
 
         <Navbar />
@@ -287,6 +292,8 @@ export default function StoryPost() {
         canonical={canonical}
         ogImage={imageUrl}
         ogType="article"
+        ogImageWidth={resolvedOgImage.width}
+        ogImageHeight={resolvedOgImage.height}
       />
       <StoryArticleJsonLd
         headline={cmsStory?.title ?? story?.title ?? "Rellia Health story"}

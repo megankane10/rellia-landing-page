@@ -13,7 +13,7 @@ import {
   buildAdvisorProfileSeoTitle,
   buildPageUrl,
   clampMetaDescription,
-  resolveShareOgImageUrl,
+  resolveShareOgImage,
 } from "@/config/seo";
 import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo";
 import PageSocialHelmet from "@/components/seo/PageSocialHelmet";
@@ -64,12 +64,16 @@ export default function AdvisorProfile() {
     ? resolveAdvisorProfileDescription(snapshotText, active.bio)
     : "";
 
+  const advisorOgImage = active
+    ? resolveShareOgImage(active.photoSrc, { square: true })
+    : undefined
+
   useApplyCmsSeo(null, active ? {
     title: buildAdvisorProfileSeoTitle(active.name),
     description: clampMetaDescription(
       profileDescription || "Advisor profile in the Rellia Health mentor directory.",
     ),
-    ogImage: resolveShareOgImageUrl(active.photoSrc),
+    ogImage: advisorOgImage?.url,
   } : undefined);
 
   useEffect(() => {
@@ -109,7 +113,9 @@ export default function AdvisorProfile() {
           profileDescription || "Advisor profile in the Rellia Health mentor directory.",
         )}
         canonical={canonicalUrl}
-        ogImage={resolveShareOgImageUrl(active.photoSrc)}
+        ogImage={advisorOgImage?.url}
+        ogImageWidth={advisorOgImage?.width}
+        ogImageHeight={advisorOgImage?.height}
       />
       <Navbar forceSolid />
 

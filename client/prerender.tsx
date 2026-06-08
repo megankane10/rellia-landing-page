@@ -15,8 +15,8 @@ import {
   isClientOnlyAuthPath,
   isItemDetailPath,
   normalizePathname,
-  resolveShareOgImageUrl,
-  resolveSocialOgImageUrl,
+  resolveShareOgImage,
+  resolveSocialOgImage,
   buildAdvisorProfileSeoTitle,
   buildAlumniProfileSeoTitle,
 } from "@/config/seo"
@@ -108,6 +108,8 @@ export type ItemPrerenderSeo = {
   title: string
   description: string
   ogImage?: string
+  ogImageWidth?: number
+  ogImageHeight?: number
 }
 
 function portableTextToPlainText(blocks: any): string {
@@ -160,12 +162,15 @@ const buildEventSeo = (
     ? `${eventDate} · ${descText}`
     : eventDate
 
+  const ogImage = imageSrc
+    ? resolveSocialOgImage(imageSrc, siteOrigin, { square: true })
+    : undefined
   return {
     title: clampMetaTitle(title),
     description: clampMetaDescription(finalDesc),
-    ogImage: imageSrc
-      ? resolveSocialOgImageUrl(imageSrc, siteOrigin, { square: true })
-      : undefined,
+    ogImage: ogImage?.url,
+    ogImageWidth: ogImage?.width,
+    ogImageHeight: ogImage?.height,
   }
 }
 
@@ -185,12 +190,15 @@ const buildProgramSeo = (
   const cmsImageSrc = typeof program.imageSrc === "string" ? program.imageSrc : undefined
   const imageSrc = resolveProgramCardImageSrc(slug, cmsImageSrc)
 
+  const ogImage = imageSrc
+    ? resolveSocialOgImage(imageSrc, siteOrigin, { square: true })
+    : undefined
   return {
     title: clampMetaTitle(`${title} — Rellia Health`),
     description: clampMetaDescription(description),
-    ogImage: imageSrc
-      ? resolveSocialOgImageUrl(imageSrc, siteOrigin, { square: true })
-      : undefined,
+    ogImage: ogImage?.url,
+    ogImageWidth: ogImage?.width,
+    ogImageHeight: ogImage?.height,
   }
 }
 
@@ -223,12 +231,16 @@ const buildStorySeo = (
       "Stories and insights from Rellia Health.",
   )
   const ogSrc = seo?.ogImageUrl?.trim() || story.coverImageSrc?.trim()
+  const ogImage = ogSrc
+    ? resolveSocialOgImage(ogSrc, siteOrigin, { landscape: true }) ??
+      resolveShareOgImage(undefined, { landscape: true })
+    : resolveShareOgImage(undefined, { landscape: true })
   return {
     title,
     description,
-    ogImage: ogSrc
-      ? resolveSocialOgImageUrl(ogSrc, siteOrigin) ?? getDefaultOgImageUrl()
-      : getDefaultOgImageUrl(),
+    ogImage: ogImage.url,
+    ogImageWidth: ogImage.width,
+    ogImageHeight: ogImage.height,
   }
 }
 
@@ -243,10 +255,13 @@ const buildAdvisorProfileSeo = (
     "Advisor profile in the Rellia Health mentor directory."
   const photoSrc = typeof advisor.photoSrc === "string" ? advisor.photoSrc : undefined
 
+  const ogImage = resolveShareOgImage(photoSrc, { square: true })
   return {
     title: buildAdvisorProfileSeoTitle(name),
     description: clampMetaDescription(description),
-    ogImage: resolveShareOgImageUrl(photoSrc),
+    ogImage: ogImage.url,
+    ogImageWidth: ogImage.width,
+    ogImageHeight: ogImage.height,
   }
 }
 
@@ -262,10 +277,13 @@ const buildAlumniProfileSeo = (
     "Alumni company profile in the Rellia Health founder network."
   const logoSrc = typeof company.logoSrc === "string" ? company.logoSrc : undefined
 
+  const ogImage = resolveShareOgImage(logoSrc)
   return {
     title: buildAlumniProfileSeoTitle(name),
     description: clampMetaDescription(description),
-    ogImage: resolveShareOgImageUrl(logoSrc),
+    ogImage: ogImage.url,
+    ogImageWidth: ogImage.width,
+    ogImageHeight: ogImage.height,
   }
 }
 
@@ -392,11 +410,11 @@ const appendSocialMeta = (
     `<meta name="twitter:description" content="${escapeMetaAttr(seo.description)}" />`,
   )
   if (seo.ogImage) {
-    const isStory = pageUrl.includes("/stories/")
-    const height = isStory ? "630" : "1200"
     headElements.add(`<meta property="og:image" content="${escapeMetaAttr(seo.ogImage)}" />`)
-    headElements.add(`<meta property="og:image:width" content="1200" />`)
-    headElements.add(`<meta property="og:image:height" content="${height}" />`)
+    if (typeof seo.ogImageWidth === "number" && typeof seo.ogImageHeight === "number") {
+      headElements.add(`<meta property="og:image:width" content="${seo.ogImageWidth}" />`)
+      headElements.add(`<meta property="og:image:height" content="${seo.ogImageHeight}" />`)
+    }
     headElements.add(`<meta name="twitter:card" content="summary_large_image" />`)
     headElements.add(`<meta name="twitter:image" content="${escapeMetaAttr(seo.ogImage)}" />`)
   } else {
