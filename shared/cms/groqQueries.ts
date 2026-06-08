@@ -172,6 +172,20 @@ export const storiesPageQuery = `*[_type == "storiesPage"][0]{
   ${seoFragment}
 }`
 
+/** Lightweight story rows for Vite prerender build snapshots (no body). */
+export const storiesPrerenderSnapshotQuery = `*[_type == "story" && !(_id in path("drafts.**"))]{
+  title,
+  "slug": slug.current,
+  excerpt,
+  "coverImageSrc": headerImage.asset->url,
+  "coverImageAlt": headerImageAlt,
+  "tag": filters[0]->title,
+  publishedAt,
+  featured,
+  headerLayout,
+  ${seoFragment}
+}`
+
 export const storyBySlugQuery = `*[_type == "story" && slug.current == $slug && !(_id in path("drafts.**"))][0]{
   title,
   "slug": slug.current,

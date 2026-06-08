@@ -448,8 +448,6 @@ export type ResolvedSocialOgImage = {
   height?: number
 }
 
-const normalizeShareOrigin = (origin: string): string => origin.replace(/\/$/, "")
-
 const getStrictOgDimensions = (
   options: SocialOgImageOptions,
 ): { width: number; height: number } | undefined => {
@@ -465,7 +463,7 @@ const applySanitySocialImageParams = (url: string, options: SocialOgImageOptions
     if (!parsed.searchParams.has("fm")) {
       parsed.searchParams.set("fm", "jpg")
     }
-    parsed.searchParams.set("auto", "format")
+    parsed.searchParams.delete("auto")
 
     if (options.square) {
       parsed.searchParams.set("w", String(OG_IMAGE_SQUARE.width))
@@ -493,34 +491,22 @@ const applySanitySocialImageParams = (url: string, options: SocialOgImageOptions
   }
 }
 
-const applyStrictLocalOgImage = (
-  absoluteUrl: string,
-  origin: string,
-  options: SocialOgImageOptions,
-): string => {
-  if (!options.square && !options.landscape) return absoluteUrl
-  try {
-    const parsed = new URL(absoluteUrl)
-    const base = normalizeShareOrigin(origin)
-    if (parsed.origin !== base) return absoluteUrl
-    const w = OG_IMAGE_LANDSCAPE.width
-    const h = options.square ? OG_IMAGE_SQUARE.height : OG_IMAGE_LANDSCAPE.height
-    return `${base}/_vercel/image?url=${encodeURIComponent(parsed.pathname)}&w=${w}&h=${h}&q=85&fit=cover`
-  } catch {
-    return absoluteUrl
-  }
-}
+/** Static /public images — serve direct absolute URLs (/_vercel/image is not available on this deploy). */
+const applyLocalSocialImageUrl = (absoluteUrl: string): string => absoluteUrl
 
 const transformSocialOgImageUrl = (
   url: string,
-  origin: string,
+  _origin: string,
   options: SocialOgImageOptions,
 ): string => {
   if (url.includes("cdn.sanity.io")) {
     return applySanitySocialImageParams(url, options)
   }
-  return applyStrictLocalOgImage(url, origin, options)
+  return applyLocalSocialImageUrl(url)
 }
+
+const hasSanityOgCrop = (url: string, options: SocialOgImageOptions): boolean =>
+  url.includes("cdn.sanity.io") && Boolean(options.square || options.landscape)
 
 const resolveSocialOgSource = (src: string): string => {
   const trimmed = src.trim()
@@ -571,7 +557,9 @@ export const resolveSocialOgImage = (
   })()
 
   const url = transformSocialOgImageUrl(withVersion, origin, options)
-  const dimensions = getStrictOgDimensions(options)
+  const dimensions = hasSanityOgCrop(url, options)
+    ? getStrictOgDimensions(options)
+    : undefined
   return dimensions ? { url, ...dimensions } : { url }
 }
 

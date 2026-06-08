@@ -14,11 +14,17 @@ import {
   programsQuery,
 } from "./groqQueries"
 import eventsBuildSnapshot from "./build-snapshots/events.json"
+import storiesBuildSnapshot from "./build-snapshots/stories.json"
 import { trySanityApiConfig } from "./sanityEnv"
 
 const snapshotEvents = (): Record<string, unknown>[] =>
   Array.isArray(eventsBuildSnapshot)
     ? (eventsBuildSnapshot as Record<string, unknown>[])
+    : []
+
+const snapshotStories = (): Record<string, unknown>[] =>
+  Array.isArray(storiesBuildSnapshot)
+    ? (storiesBuildSnapshot as Record<string, unknown>[])
     : []
 
 let prerenderClient: SanityClient | null = null
@@ -70,8 +76,17 @@ export const fetchEventBySlugForPrerender = async (slug: string) => {
 export const fetchProgramBySlugForPrerender = (slug: string) =>
   fetchBySlug(programBySlugQuery, slug)
 
-export const fetchStoryBySlugForPrerender = (slug: string) =>
-  fetchBySlug(storyBySlugQuery, slug)
+export const fetchStoryBySlugForPrerender = async (slug: string) => {
+  const fromSanity = await fetchBySlug(storyBySlugQuery, slug)
+  if (fromSanity) return fromSanity
+  const trimmed = slug.trim()
+  if (!trimmed) return null
+  return (
+    snapshotStories().find(
+      (row) => typeof row.slug === "string" && row.slug.trim() === trimmed,
+    ) ?? null
+  )
+}
 
 export const fetchEventsForPrerender = async (): Promise<Record<string, unknown>[]> => {
   const client = getPrerenderSanityClient()
