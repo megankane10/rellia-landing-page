@@ -192,17 +192,39 @@ const buildProgramSeo = (
 }
 
 const buildStorySeo = (
-  story: { title: string; excerpt?: string; coverImageSrc?: string },
+  story: {
+    title: string
+    excerpt?: string
+    coverImageSrc?: string
+    seo?: {
+      metaTitle?: string
+      ogTitle?: string
+      metaDescription?: string
+      ogDescription?: string
+      ogImageUrl?: string
+    } | null
+  },
   siteOrigin: string,
-): ItemPrerenderSeo => ({
-  title: clampMetaTitle(`${story.title} — Rellia Health`),
-  description: clampMetaDescription(
-    story.excerpt?.trim() || "Stories and insights from Rellia Health.",
-  ),
-  ogImage: story.coverImageSrc?.trim()
-    ? resolveSocialOgImageUrl(story.coverImageSrc, siteOrigin)
-    : undefined,
-})
+): ItemPrerenderSeo => {
+  const seo = story.seo
+  const title = clampMetaTitle(
+    seo?.metaTitle?.trim() ||
+      seo?.ogTitle?.trim() ||
+      `${story.title} — Rellia Health`,
+  )
+  const description = clampMetaDescription(
+    seo?.metaDescription?.trim() ||
+      seo?.ogDescription?.trim() ||
+      story.excerpt?.trim() ||
+      "Stories and insights from Rellia Health.",
+  )
+  const ogSrc = seo?.ogImageUrl?.trim() || story.coverImageSrc?.trim()
+  return {
+    title,
+    description,
+    ogImage: ogSrc ? resolveSocialOgImageUrl(ogSrc, siteOrigin) : undefined,
+  }
+}
 
 const buildAdvisorProfileSeo = (
   advisor: Record<string, unknown>,
@@ -292,6 +314,16 @@ const resolveItemPrerenderSeo = async (
           title: cms.title,
           excerpt: typeof cms.excerpt === "string" ? cms.excerpt : undefined,
           coverImageSrc: typeof cms.coverImageSrc === "string" ? cms.coverImageSrc : undefined,
+          seo: (cms as { seo?: Record<string, unknown> | null }).seo as
+            | {
+                metaTitle?: string
+                ogTitle?: string
+                metaDescription?: string
+                ogDescription?: string
+                ogImageUrl?: string
+              }
+            | null
+            | undefined,
         },
         siteOrigin,
       )

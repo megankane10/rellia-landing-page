@@ -48,6 +48,7 @@ import { isAnyCmsQueryLoading } from "@/lib/cmsQueryState"
 import { isSanityConfigured } from "@/lib/sanity"
 import { isStrictProductionSite } from "@/lib/deploymentEnv"
 import PageSocialHelmet from "@/components/seo/PageSocialHelmet"
+import type { SeoContent } from "@shared/cms/types"
 import { PEXELS_HEALTH_MEETING, PEXELS_OFFICE_COLLABORATION, LOCAL_METRICS_BG_JPEG } from "@/config/pexelsFallbacks"
 import {
   Carousel,
@@ -205,15 +206,23 @@ const ProgramPageLayout = ({
   const resolvedHeroImageAlt = (heroImageAlt || resolvedProgramTitle || "Program image").trim()
 
   const canonicalUrl = buildPageUrl(location.pathname);
+  const programSeo = (programDoc as { seo?: SeoContent | null } | null | undefined)?.seo
   const programPageTitle = clampMetaTitle(
-    resolvedProgramTitle ? `${resolvedProgramTitle} — Rellia Health` : "Programs — Rellia Health",
+    programSeo?.metaTitle?.trim() ||
+      programSeo?.ogTitle?.trim() ||
+      (resolvedProgramTitle ? `${resolvedProgramTitle} — Rellia Health` : "Programs — Rellia Health"),
   )
-  const programOgImage = resolvedHeroImageSrc
-    ? resolveSocialOgImageUrl(resolvedHeroImageSrc, undefined, { square: true })
-    : undefined
+  const programOgImage = resolveSocialOgImageUrl(
+    programSeo?.ogImageUrl?.trim() || resolvedHeroImageSrc,
+    undefined,
+    { square: true },
+  )
 
   const programMetaDescription = clampMetaDescription(
-    resolvedProgramDescription || "Rellia Health program",
+    programSeo?.metaDescription?.trim() ||
+      programSeo?.ogDescription?.trim() ||
+      resolvedProgramDescription ||
+      "Rellia Health program",
   )
 
   const extraSections = (programPageData?.sections ?? []).filter(

@@ -1,24 +1,45 @@
 import {defineArrayMember, defineField, defineType} from 'sanity'
 import {logoMarqueeField} from '../objects/logoMarqueeItem'
+import {CONTENT_SEO_FIELDSETS, singletonSeoField} from '../shared/singletonContentFields'
 import {
-  CONTENT_SEO_FIELDSETS,
-  CONTENT_SEO_GROUPS,
-  singletonSeoField,
-} from '../shared/singletonContentFields'
+  NETWORK_PAGE_GROUPS,
+  networkCtaFields,
+  networkFeatureItemMember,
+  networkHeroFields,
+  networkWhyRelliaFields,
+} from '../shared/networkPageFields'
 
 export const networkInvestorsPage = defineType({
   name: 'networkInvestorsPage',
   title: 'Network — Investors page (/investors)',
   type: 'document',
-  groups: CONTENT_SEO_GROUPS,
+  groups: NETWORK_PAGE_GROUPS,
   fieldsets: CONTENT_SEO_FIELDSETS,
   fields: [
+    defineField({name: 'title', type: 'string', initialValue: 'Investors', group: 'hero'}),
+    ...networkHeroFields,
+    ...networkWhyRelliaFields,
+    defineField({name: 'pitchTitle', title: 'Pitch events section title', type: 'string', group: 'content'}),
+    defineField({name: 'pitchSubtitle', title: 'Pitch events section subtitle', type: 'text', rows: 2, group: 'content'}),
     defineField({
-      name: 'title',
-      type: 'string',
-      initialValue: 'Investors',
+      name: 'pitchCards',
+      title: 'Pitch event cards',
+      type: 'array',
       group: 'content',
+      of: [
+        defineArrayMember({
+          type: 'object',
+          name: 'networkPitchCard',
+          fields: [
+            defineField({name: 'title', type: 'string', validation: (Rule) => Rule.required()}),
+            defineField({name: 'body', type: 'text', rows: 3}),
+            defineField({name: 'imageUrl', title: 'Image URL', type: 'string'}),
+          ],
+          preview: {select: {title: 'title', subtitle: 'body'}},
+        }),
+      ],
     }),
+    ...networkCtaFields,
     {...logoMarqueeField, group: 'content'},
     defineField({
       name: 'foundersCluster',

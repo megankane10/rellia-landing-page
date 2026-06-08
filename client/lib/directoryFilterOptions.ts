@@ -108,6 +108,14 @@ export const findExpertiseGroup = (
   groups: DirectoryFilterGroup[],
 ): DirectoryFilterGroup | undefined => groups.find(isExpertiseGroup)
 
+export const isAdvisorDirectoryFilterGroup = (group: DirectoryFilterGroup): boolean =>
+  isCountryGroup(group) || isExpertiseGroup(group)
+
+export const filterAdvisorDirectoryGroups = (
+  groups: DirectoryFilterGroup[],
+): DirectoryFilterGroup[] =>
+  groups.filter(isAdvisorDirectoryFilterGroup)
+
 /** Union CMS options, advisorFilter docs, and canonical labels (full expertise list). */
 export const mergeExpertiseOptionLabels = (
   current: string[],

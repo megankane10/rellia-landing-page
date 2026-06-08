@@ -51,21 +51,26 @@ export default function StoryPost() {
       ? buildPageUrl(`/stories/${story.slug}`)
       : buildPageUrl("/stories")
 
-  const title = cmsStory?.title
-    ? `${cmsStory.title} — Rellia Health`
-    : story?.seoTitle ||
-      (story ? `${story.title} — Rellia Health` : "Stories — Rellia Health")
+  const titleSource =
+    cmsStory?.seo?.metaTitle?.trim() ||
+    cmsStory?.seo?.ogTitle?.trim() ||
+    story?.seoTitle ||
+    (cmsStory?.title
+      ? `${cmsStory.title} — Rellia Health`
+      : story
+        ? `${story.title} — Rellia Health`
+        : "Stories — Rellia Health")
 
-  const description =
+  const descriptionSource =
+    cmsStory?.seo?.metaDescription?.trim() ||
+    cmsStory?.seo?.ogDescription?.trim() ||
     cmsStory?.excerpt?.trim() ||
     story?.seoDescription ||
     story?.excerpt ||
-    cmsStory?.seo?.metaDescription?.trim() ||
-    cmsStory?.seo?.ogDescription?.trim() ||
     "Stories and insights from Rellia Health."
 
-  const resolvedTitle = clampMetaTitle(title)
-  const resolvedDescription = clampMetaDescription(description)
+  const resolvedTitle = clampMetaTitle(titleSource)
+  const resolvedDescription = clampMetaDescription(descriptionSource)
 
   const toAbsoluteImageUrl = (src: string): string => {
     const origin = getShareOrigin()
@@ -76,9 +81,13 @@ export default function StoryPost() {
 
   const headerCoverSrc = cmsStory?.coverImageSrc?.trim() || story?.coverImageSrc?.trim()
   const headerCoverAlt = cmsStory?.coverImageAlt?.trim() || story?.coverImageAlt?.trim() || cmsStory?.title || story?.title || ""
-  const imageUrl = headerCoverSrc
-    ? resolveSocialOgImageUrl(headerCoverSrc) ?? toAbsoluteImageUrl(headerCoverSrc)
+  const headerLayout = cmsStory?.headerLayout === "background" ? "background" : "block"
+  const seoOgImageSrc =
+    cmsStory?.seo?.ogImageUrl?.trim() || headerCoverSrc
+  const imageUrl = seoOgImageSrc
+    ? resolveSocialOgImageUrl(seoOgImageSrc) ?? toAbsoluteImageUrl(seoOgImageSrc)
     : undefined
+  const shareTitle = resolvedTitle
 
   const handleCopyLink = async () => {
     try {
@@ -102,7 +111,7 @@ export default function StoryPost() {
 
       <div className="flex flex-wrap items-center gap-3">
         <a
-          href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(canonical)}&text=${encodeURIComponent(title)}`}
+          href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(canonical)}&text=${encodeURIComponent(shareTitle)}`}
           target="_blank"
           rel="noopener noreferrer"
           className={shareToolbarButtonClassNameDark}
@@ -130,8 +139,8 @@ export default function StoryPost() {
         </a>
         <a
           href={buildMailtoHref(DEFAULT_GLOBAL_SETTINGS.supportEmail, {
-            subject: title,
-            body: `${title}\n\n${canonical}`,
+            subject: shareTitle,
+            body: `${shareTitle}\n\n${canonical}`,
           })}
           className={shareToolbarButtonClassNameDark}
           aria-label="Share by email"
@@ -224,6 +233,7 @@ export default function StoryPost() {
             excerpt={cmsStory.excerpt}
             coverImageSrc={headerCoverSrc}
             coverImageAlt={headerCoverAlt}
+            layout={headerLayout}
             toAbsoluteImageUrl={toAbsoluteImageUrl}
             shareBlock={shareBlock}
           />

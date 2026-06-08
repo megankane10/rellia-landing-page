@@ -32,7 +32,8 @@ export type AdvisorDirectoryEntry = {
   location?: string
   country: string | string[]
   yearJoined: string
-  industries: string[]
+  primaryExpertise?: string
+  directoryFilters?: Array<{ groupId?: string; values?: string[]; groupTitle?: string }>
   /** Short card summary (directory card + profile snapshot) */
   focus: string
   snapshot?: string

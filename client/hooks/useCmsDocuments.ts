@@ -38,6 +38,10 @@ import type {
   ProgramsLandingContent,
   QmsProgramContent,
   LegalPageContent,
+  NetworkAdvisorsPageContent,
+  NetworkFoundersPageContent,
+  NetworkInvestorsPageContent,
+  NetworkPartnersPageContent,
   SiteSettingsContent,
   SanityPortableText,
   SeoContent,
@@ -521,7 +525,7 @@ export const useNetworkFoundersPage = () =>
   useQuery({
     queryKey: ["cms", "network", "foundersPage"],
     queryFn: async () => {
-      const raw = await sanityFetch<CmsSingletonPageContent>("networkFoundersPage")
+      const raw = await sanityFetch<NetworkFoundersPageContent>("networkFoundersPage")
       return raw ?? null
     },
     staleTime: staleTimeMs,
@@ -531,7 +535,7 @@ export const useNetworkAdvisorsPage = () =>
   useQuery({
     queryKey: ["cms", "network", "advisorsPage"],
     queryFn: async () => {
-      const raw = await sanityFetch<CmsSingletonPageContent>("networkAdvisorsPage")
+      const raw = await sanityFetch<NetworkAdvisorsPageContent>("networkAdvisorsPage")
       return raw ?? null
     },
     staleTime: staleTimeMs,
@@ -541,7 +545,7 @@ export const useNetworkInvestorsPage = () =>
   useQuery({
     queryKey: ["cms", "network", "investorsPage"],
     queryFn: async () => {
-      const raw = await sanityFetch<CmsSingletonPageContent>("networkInvestorsPage")
+      const raw = await sanityFetch<NetworkInvestorsPageContent>("networkInvestorsPage")
       return raw ?? null
     },
     staleTime: staleTimeMs,
@@ -551,7 +555,7 @@ export const useNetworkPartnersPage = () =>
   useQuery({
     queryKey: ["cms", "network", "partnersPage"],
     queryFn: async () => {
-      const raw = await sanityFetch<CmsSingletonPageContent>("networkPartnersPage")
+      const raw = await sanityFetch<NetworkPartnersPageContent>("networkPartnersPage")
       return raw ?? null
     },
     staleTime: staleTimeMs,

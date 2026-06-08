@@ -11,7 +11,7 @@ import {
 } from "framer-motion";
 import { Search, UserSearch, ChevronDown, ArrowLeft } from "lucide-react";
 import FilteredListEmptyState from "@/components/FilteredListEmptyState";
-import { useAdvisors, useAdvisorFilters, useDirectoryFilterGroups } from "@/hooks/useCmsDocuments";
+import { useAdvisors, useDirectoryFilterGroups } from "@/hooks/useCmsDocuments";
 import {
   ADVISOR_DIRECTORY_SEED,
   ADVISOR_FILTER_OPTIONS,
@@ -25,12 +25,11 @@ import { isCmsQueryLoading } from "@/lib/cmsQueryState";
 import { DirectoryGridSkeleton } from "@/components/cms/CmsPageLoadingShell";
 import { DirectoryCardTags } from "@/components/network/DirectoryCardTags";
 import {
-  directoryGroupHasCountry,
+  filterAdvisorDirectoryGroups,
   findExpertiseGroup,
-  getCountryFilterOptions,
   getDirectoryGroupOptionLabels,
-  mergeExpertiseOptionLabels,
 } from "@/lib/directoryFilterOptions";
+import { resolveAdvisorPrimaryTag } from "@/lib/resolveAdvisorPrimaryTag";
 
 const DIRECTORY_TITLE_CLASS =
   "font-host-grotesk text-4xl font-extrabold tracking-tight text-black md:text-5xl";
@@ -53,10 +52,10 @@ function AdvisorCard({
   advisor: AdvisorDirectoryEntry;
   onDetails: () => void;
 }) {
-  const cardTags = [
-    ...(advisor.filter ? [advisor.filter] : []),
-    ...(Array.isArray(advisor.industries) ? advisor.industries : []),
-  ]
+  const cardTags = useMemo(() => {
+    const primary = resolveAdvisorPrimaryTag(advisor)
+    return primary ? [primary] : []
+  }, [advisor])
 
   return (
     <motion.article
@@ -105,8 +104,6 @@ export default function AdvisorsDirectory() {
   const reduceMotion = useReducedMotion();
   const advisorsQuery = useAdvisors();
   const { data: cmsAdvisors } = advisorsQuery;
-  const advisorFiltersQuery = useAdvisorFilters();
-  const { data: cmsFilters } = advisorFiltersQuery;
   const filterGroupsQuery = useDirectoryFilterGroups();
   const { data: cmsFilterGroups } = filterGroupsQuery;
   const advisorsListLoading = isSanityConfigured() && isCmsQueryLoading(advisorsQuery)
@@ -114,7 +111,6 @@ export default function AdvisorsDirectory() {
   const [legacyFilter, setLegacyFilter] = useState<string>("all")
   const [groupFilters, setGroupFilters] = useState<Record<string, string>>({})
   const location = useLocation();
-  const [countryFilter, setCountryFilter] = useState<string>("all");
 
   const advisors = useMemo<AdvisorDirectoryEntry[]>(() => {
     if (!isSanityConfigured()) return []
@@ -126,9 +122,9 @@ export default function AdvisorsDirectory() {
 
   const dynamicGroups = useMemo(() => {
     const groups = Array.isArray(cmsFilterGroups) ? cmsFilterGroups : []
-    return groups
-      .filter((g) => g && (g.appliesTo === "advisors" || g.appliesTo === "both"))
-      .sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0) || a.title.localeCompare(b.title))
+    return filterAdvisorDirectoryGroups(
+      groups.filter((g) => g && (g.appliesTo === "advisors" || g.appliesTo === "both")),
+    ).sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0) || a.title.localeCompare(b.title))
   }, [cmsFilterGroups])
 
   const expertiseGroup = useMemo(
@@ -145,57 +141,39 @@ export default function AdvisorsDirectory() {
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const country = params.get("country");
-    if (country) setCountryFilter(country);
-    const specialty = params.get("specialty");
+    const countryGroup = dynamicGroups.find(
+      (g) => g.title.toLowerCase() === "country" || g.id.toLowerCase().includes("country"),
+    );
+    if (country && countryGroup?.id) {
+      setGroupFilters((prev) => ({ ...prev, [countryGroup.id]: country }));
+    }
+    const specialty = params.get("specialty") ?? params.get("expertise");
     if (specialty) {
       setLegacyFilter(specialty);
       if (expertiseGroup?.id) {
         setGroupFilters((prev) => ({ ...prev, [expertiseGroup.id]: specialty }));
       }
     }
-  }, [location.search, expertiseGroup?.id])
+  }, [location.search, expertiseGroup?.id, dynamicGroups])
 
   const dynamicGroupOptions = useMemo(() => {
     const map = getDirectoryGroupOptionLabels(dynamicGroups, advisors as never[])
     const expertise = findExpertiseGroup(dynamicGroups)
     if (!expertise) return map
 
-    const cmsFilterLabels = Array.isArray(cmsFilters)
-      ? cmsFilters.map((f) => f.label).filter(Boolean)
-      : []
     const current = map.get(expertise.id) ?? []
-    map.set(
-      expertise.id,
-      mergeExpertiseOptionLabels(current, cmsFilterLabels, canonicalExpertiseLabels),
-    )
+    map.set(expertise.id, Array.from(new Set([...canonicalExpertiseLabels, ...current])).sort((a, b) => a.localeCompare(b)))
     return map
-  }, [advisors, canonicalExpertiseLabels, cmsFilters, dynamicGroups])
-
-  const showStandaloneCountryFilter = dynamicGroups.length === 0 || !directoryGroupHasCountry(dynamicGroups)
-
-  const countryFilters = useMemo<Array<{ id: string; label: string }>>(
-    () => getCountryFilterOptions(dynamicGroups, advisors as never[]),
-    [advisors, dynamicGroups],
-  )
+  }, [advisors, canonicalExpertiseLabels, dynamicGroups])
 
   const filterOptions = useMemo<Array<{ id: string; label: string }>>(() => {
-    const cmsFilterLabels = Array.isArray(cmsFilters)
-      ? cmsFilters.map((f) => f.label).filter(Boolean)
-      : []
-    const labels = mergeExpertiseOptionLabels([], cmsFilterLabels, canonicalExpertiseLabels)
-    return [{ id: "all", label: "All Specialties" }, ...labels.map((label) => ({ id: label, label }))]
-  }, [canonicalExpertiseLabels, cmsFilters])
+    const labels = Array.from(new Set(canonicalExpertiseLabels)).sort((a, b) => a.localeCompare(b))
+    return [{ id: "all", label: "All Expertise" }, ...labels.map((label) => ({ id: label, label }))]
+  }, [canonicalExpertiseLabels])
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     return advisors.filter((a) => {
-      // Filter by Country
-      if (countryFilter !== "all") {
-        const countries = Array.isArray(a.country) ? a.country : (a.country ? [a.country] : []);
-        const hasMatch = countries.some((ct: string) => ct.trim().toLowerCase() === countryFilter.toLowerCase());
-        if (!hasMatch) return false;
-      }
-
       if (dynamicGroups.length > 0) {
         for (const group of dynamicGroups) {
           const selected = (groupFilters[group.id] ?? "all").trim()
@@ -213,10 +191,10 @@ export default function AdvisorsDirectory() {
       }
       if (!q) return true;
       const blob =
-        `${a.name} ${a.organization} ${a.role} ${a.industries.join(" ")} ${a.focus} ${a.bio}`.toLowerCase();
+        `${a.name} ${a.organization} ${a.role} ${a.focus ?? ""} ${a.bio ?? ""}`.toLowerCase();
       return blob.includes(q);
     });
-  }, [advisors, dynamicGroups, groupFilters, legacyFilter, query, countryFilter]);
+  }, [advisors, dynamicGroups, groupFilters, legacyFilter, query]);
 
   const [page, setPage] = useState(1);
   const itemsPerPage = 12;
@@ -229,7 +207,7 @@ export default function AdvisorsDirectory() {
   // Reset page when filters change
   useEffect(() => {
     setPage(1);
-  }, [query, legacyFilter, groupFilters, countryFilter]);
+  }, [query, legacyFilter, groupFilters]);
 
   const EASE_OUT: [number, number, number, number] = [0.16, 1, 0.3, 1];
   const container: Variants = {
@@ -304,43 +282,21 @@ export default function AdvisorsDirectory() {
               </label>
 
               <div className="flex w-full flex-col gap-3 md:w-auto md:flex-row md:flex-wrap md:items-center">
-                {showStandaloneCountryFilter ? (
-                  <div className="relative w-full md:w-auto">
-                    <select
-                      value={countryFilter}
-                      onChange={(e) => setCountryFilter(e.target.value)}
-                      className="h-14 w-full appearance-none rounded-2xl border border-black/10 bg-black/[0.02] pl-5 pr-14 md:min-w-[200px] font-urbanist text-base font-semibold text-black/80 outline-none hover:border-black/20 focus-visible:ring-2 focus-visible:ring-rellia-teal focus-visible:bg-white cursor-pointer"
-                      aria-label="Filter by Country"
-                    >
-                      {countryFilters.map((f) => (
-                        <option key={f.id} value={f.id}>
-                          {f.label}
-                        </option>
-                      ))}
-                    </select>
-                    <ChevronDown
-                      className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-black/45"
-                      aria-hidden
-                    />
-                  </div>
-                ) : null}
-
                 {dynamicGroups.length > 0 ? (
                   <>
                     {dynamicGroups.map((g) => {
                       const options = dynamicGroupOptions.get(g.id) ?? []
                       const value = groupFilters[g.id] ?? "all"
-                      let displayTitle = g.title;
-                      if (displayTitle.toLowerCase() === "specialty") {
-                        displayTitle = "Specialties";
-                      } else if (displayTitle.toLowerCase() === "industry") {
-                        displayTitle = "Industries";
-                      } else if (displayTitle.toLowerCase() === "country") {
-                        displayTitle = "Countries";
-                      } else if (displayTitle.toLowerCase() === "business model") {
-                        displayTitle = "Business Models";
-                      } else if (!displayTitle.endsWith("s")) {
-                        displayTitle = displayTitle + "s";
+                      const normalizedTitle = g.title.toLowerCase()
+                      let displayTitle = g.title
+                      if (normalizedTitle === "country" || normalizedTitle === "countries") {
+                        displayTitle = "Countries"
+                      } else if (
+                        normalizedTitle === "expertise" ||
+                        normalizedTitle === "specialty" ||
+                        normalizedTitle === "specialties"
+                      ) {
+                        displayTitle = "Expertise"
                       }
                       return (
                         <div key={g.id} className="flex w-full md:w-auto">

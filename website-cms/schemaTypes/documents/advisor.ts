@@ -1,5 +1,20 @@
 import {defineArrayMember, defineField, defineType} from 'sanity'
 
+const EXPERTISE_OPTIONS = [
+  'Product Design & UI/UX',
+  'Product Development',
+  'Clinical Evidence',
+  'Regulatory Strategy',
+  'Legal & Privacy',
+  'IP Strategy',
+  'Reimbursement',
+  'Fundraising',
+  'Marketing & Branding',
+  'Go-To-Market',
+  'Health System Navigation',
+  'Operations & Scaling',
+]
+
 export const advisor = defineType({
   name: 'advisor',
   title: 'Advisor',
@@ -63,25 +78,26 @@ export const advisor = defineType({
     }),
     defineField({name: 'yearJoined', title: 'Year joined', type: 'string', description: 'e.g. 2024', group: 'profile'}),
     defineField({
-      name: 'bio',
-      title: 'About the advisor',
-      type: 'portableRichText',
-      description: 'Rich-text bio shown in the About section on the profile page.',
+      name: 'primaryExpertise',
+      title: 'Primary expertise tag',
+      type: 'string',
+      description:
+        'Shown on the profile sidebar and directory cards. Should match one of your Expertise directory filter values.',
+      options: {list: EXPERTISE_OPTIONS.map((label) => ({title: label, value: label}))},
       group: 'profile',
     }),
-    defineField({name: 'mentoringStyle', title: 'Mentoring style', type: 'text', rows: 4, group: 'profile'}),
     defineField({
-      name: 'highlights',
-      title: 'Highlights',
-      type: 'array',
-      of: [{type: 'string'}],
+      name: 'bio',
+      title: 'About the advisor',
+      type: 'advisorPortableText',
+      description: 'Paragraphs and bullet lists only. This is the last profile section on the page.',
       group: 'profile',
     }),
     defineField({
       name: 'directoryFilters',
       title: 'Directory filters',
       description:
-        'Add this advisor to one or more filter groups. These groups power the dropdown filters on the directory pages.',
+        'Assign Country and Expertise values. These power the dropdown filters on the advisors directory.',
       type: 'array',
       group: 'directory',
       of: [
@@ -102,7 +118,7 @@ export const advisor = defineType({
               title: 'Selected values',
               type: 'array',
               of: [{type: 'string'}],
-              description: "Example: Clinical, Regulatory, Seed, Women's Health, etc.",
+              description: 'Country names or expertise areas.',
               validation: (Rule) => Rule.min(1),
             }),
           ],
@@ -121,13 +137,6 @@ export const advisor = defineType({
           },
         }),
       ],
-    }),
-    defineField({
-      name: 'industries',
-      title: 'Industry tags',
-      type: 'array',
-      of: [{type: 'string'}],
-      group: 'directory',
     }),
     defineField({
       name: 'socialLinks',

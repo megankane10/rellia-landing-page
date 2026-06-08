@@ -28,6 +28,31 @@ const logoMarqueeFragment = `logoMarquee[]{
   href
 }`
 
+const networkHeroFragment = `heroEyebrow,
+  heroTitle,
+  heroAccentPhrase,
+  heroSubtitle,
+  "heroImageSrc": coalesce(heroImageUrl, heroImage.asset->url),
+  heroPrimaryCtaLabel,
+  heroPrimaryCtaHref,
+  heroSecondaryCtaLabel,
+  heroSecondaryCtaHref`
+
+const networkEngageFragment = `engageTitle,
+  engageSubtitle,
+  engageItems[]{ title, body, href, linkLabel, iconKey }`
+
+const networkWhyFragment = `whyTitle,
+  whyDescription,
+  whyFeatures[]{ title, body, iconKey }`
+
+const networkCtaFragment = `ctaTitle,
+  ctaBody,
+  ctaPrimaryLabel,
+  ctaPrimaryHref,
+  ctaSecondaryLabel,
+  ctaSecondaryHref`
+
 export const globalSettingsQuery = `*[_type == "globalSettings"][0]{
   footerTagline,
   supportEmail,
@@ -221,22 +246,52 @@ const pageSectionsFragment = `sections[]{ ${pageSectionFieldsFragment} }`
 
 export const networkFoundersPageQuery = `*[_type == "networkFoundersPage"][0]{
   title,
+  ${networkHeroFragment},
+  eligibilityTitle,
+  eligibilityDescription,
+  eligibilityItems[]{ text, imageUrl },
+  ${networkEngageFragment},
+  ${networkWhyFragment},
+  journeyTitle,
+  journeySubtitle,
+  journeySteps[]{ id, label, zone, detail },
+  exploreTitle,
+  exploreSubtitle,
+  exploreCards[]{ title, badge, imageUrl, ctaLabel, ctaHref },
+  deeperHelpTitle,
+  deeperHelpSubtitle,
+  deeperHelpFeatures[]{ title, body, iconKey },
+  deeperHelpCtaLabel,
+  deeperHelpCtaHref,
+  ${networkCtaFragment},
   ${logoMarqueeFragment},
-  ${seoFragment},
-  ${pageSectionsFragment}
+  ${seoFragment}
 }`
 
 export const networkAdvisorsPageQuery = `*[_type == "networkAdvisorsPage"][0]{
   title,
-  ${seoFragment},
-  ${pageSectionsFragment}
+  ${networkHeroFragment},
+  ${networkEngageFragment},
+  scheduleTitle,
+  scheduleItems[]{ title, body, iconKey },
+  benefitsTitle,
+  benefitsDescription,
+  benefitsBullets,
+  ${networkWhyFragment},
+  ${networkCtaFragment},
+  ${seoFragment}
 }`
 
 export const networkInvestorsPageQuery = `*[_type == "networkInvestorsPage"][0]{
   title,
+  ${networkHeroFragment},
+  ${networkWhyFragment},
+  pitchTitle,
+  pitchSubtitle,
+  pitchCards[]{ title, body, imageUrl },
+  ${networkCtaFragment},
   ${logoMarqueeFragment},
   ${seoFragment},
-  ${pageSectionsFragment},
   foundersCluster[]{
     title,
     segments[]{
@@ -244,6 +299,21 @@ export const networkInvestorsPageQuery = `*[_type == "networkInvestorsPage"][0]{
       value
     }
   }
+}`
+
+export const networkPartnersPageQuery = `*[_type == "networkPartnersPage"][0]{
+  title,
+  ${networkHeroFragment},
+  ${networkEngageFragment},
+  benefitsTitle,
+  benefitsDescription,
+  benefitsBullets,
+  directoryTitle,
+  directoryDescription,
+  directoryBullets,
+  ${networkWhyFragment},
+  ${networkCtaFragment},
+  ${seoFragment}
 }`
 
 const landingTestimonialsFragment = `testimonials[]{
@@ -348,12 +418,6 @@ export const privacyPageQuery = `*[_id == "privacyPage"][0]{
   legalNotice,
   body,
   ${seoFragment}
-}`
-
-export const networkPartnersPageQuery = `*[_type == "networkPartnersPage"][0]{
-  title,
-  ${seoFragment},
-  ${pageSectionsFragment}
 }`
 
 export const homePageQuery = `*[_type == "homePage"][0]{
@@ -779,7 +843,7 @@ export const advisorsQuery = `*[_type == "advisor" && !(_id in path("drafts.**")
   role,
   country,
   yearJoined,
-  industries,
+  primaryExpertise,
   snapshot,
   directoryFilters[]{
     "groupId": group->slug.current,
@@ -788,6 +852,10 @@ export const advisorsQuery = `*[_type == "advisor" && !(_id in path("drafts.**")
     "groupSortOrder": group->sortOrder,
     values
   },
+  "filter": coalesce(
+    primaryExpertise,
+    directoryFilters[group->title match "Expertise" || group->title match "Specialt*"][0].values[0]
+  ),
   "photoSrc": coalesce(photo.asset->url, photoSrc),
   email,
   socialLinks[]{ platform, label, url },
@@ -797,9 +865,7 @@ export const advisorsQuery = `*[_type == "advisor" && !(_id in path("drafts.**")
       ...,
       "url": asset->url
     }
-  },
-  mentoringStyle,
-  highlights
+  }
 }`;
 
 export const alumniCompaniesQuery = `*[_type == "alumniCompany" && !(_id in path("drafts.**"))]{

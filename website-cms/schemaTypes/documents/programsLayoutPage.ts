@@ -1,9 +1,6 @@
 import {defineArrayMember, defineField, defineType} from 'sanity'
-import {
-  CONTENT_SEO_FIELDSETS,
-  CONTENT_SEO_GROUPS,
-  singletonSeoField,
-} from '../shared/singletonContentFields'
+import {CONTENT_SEO_FIELDSETS, singletonSeoField} from '../shared/singletonContentFields'
+import {GROUP_SEO} from '../shared/fieldGroups'
 import {studioListMedia} from '../shared/studioListMedia'
 
 const GROUP_HOW_IT_WORKS = {name: 'howItWorks', title: 'How it works', default: true}
@@ -14,7 +11,7 @@ export const programsLayoutPage = defineType({
   name: 'programsLayoutPage',
   title: 'Programs layout (shared copy)',
   type: 'document',
-  groups: [GROUP_HOW_IT_WORKS, GROUP_PILLARS, GROUP_TIMELINE, ...CONTENT_SEO_GROUPS],
+  groups: [GROUP_HOW_IT_WORKS, GROUP_PILLARS, GROUP_TIMELINE, GROUP_SEO],
   fieldsets: CONTENT_SEO_FIELDSETS,
   fields: [
     defineField({

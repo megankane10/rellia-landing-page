@@ -13,6 +13,9 @@ import LogoMarquee from "@/components/LogoMarquee"
 import { CreamSection, GlassCardLight, LightSection, Reveal, RoleHero } from "./_shared"
 import { useNetworkAdvisorsPage } from "@/hooks/useCmsDocuments"
 import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo"
+import { mergeNetworkAdvisorsPage } from "@shared/cms/networkPageDefaults"
+import type { NetworkAdvisorsPageContent } from "@shared/cms/types"
+import { resolveNetworkIcon } from "@/lib/resolveNetworkIcon"
 
 const BENEFITS = [
   "Stay up to date on the latest innovations happening in your industry",
@@ -107,7 +110,15 @@ const ADVISOR_ENGAGEMENT = [
   },
 ]
 
-function SupportModelsSection() {
+function SupportModelsSection({ content }: { content: NetworkAdvisorsPageContent }) {
+  const cards = content.engageItems?.length ? content.engageItems : ADVISOR_ENGAGEMENT.map((card, index) => ({
+    title: card.title,
+    body: card.body,
+    href: card.to,
+    linkLabel: card.cta,
+    iconKey: ["Network", "Award", "BookOpen"][index],
+  }))
+
   return (
     <section className="relative w-full overflow-hidden bg-rellia-teal px-6 py-16 md:px-10 md:py-24">
       <img
@@ -125,24 +136,29 @@ function SupportModelsSection() {
       <div className="relative z-10 mx-auto max-w-[1300px]">
         <ScrollReveal>
           <h2 className="mt-5 font-host-grotesk text-2xl font-semibold leading-tight tracking-tight text-white md:text-[32px]">
-            Three ways to <span className="text-rellia-mint">work with Rellia</span>
+            {content.engageTitle ?? (
+              <>
+                Three ways to <span className="text-rellia-mint">work with Rellia</span>
+              </>
+            )}
           </h2>
           <p className="mt-4 max-w-2xl font-urbanist text-base font-medium leading-relaxed text-white/80 md:text-lg">
-            Community presence, formal advisory work, or program leadership—pick surfaces that fit your cadence.
+            {content.engageSubtitle ??
+              "Community presence, formal advisory work, or program leadership—pick surfaces that fit your cadence."}
           </p>
         </ScrollReveal>
 
         <ScrollReveal delay={0.12}>
           <div className="mt-12 grid grid-cols-1 gap-7 lg:grid-cols-3 lg:gap-6">
-            {ADVISOR_ENGAGEMENT.map((card) => {
-              const Icon = card.icon
+            {cards.map((card) => {
+              const Icon = resolveNetworkIcon(card.iconKey, Network)
               return (
-                <Link key={card.title} to={card.to} className={engagementCardClass}>
+                <Link key={card.title} to={card.href ?? "/apply"} className={engagementCardClass}>
                   <Icon className="h-6 w-6 md:h-7 md:w-7 text-rellia-mint transition-transform duration-300 group-hover:scale-105" aria-hidden />
                   <h3 className="mt-4 font-host-grotesk text-lg font-semibold tracking-tight text-white md:text-xl">{card.title}</h3>
                   <p className="mt-3 flex-1 font-urbanist text-xs leading-relaxed text-white/80 md:text-sm md:leading-relaxed">{card.body}</p>
                   <span className="mt-5 inline-flex items-center gap-1.5 font-host-grotesk text-xs font-semibold text-rellia-mint md:text-sm">
-                    {card.cta}
+                    {card.linkLabel ?? "Learn more"}
                     <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" aria-hidden />
                   </span>
                 </Link>
@@ -155,7 +171,12 @@ function SupportModelsSection() {
   )
 }
 
-function ScheduleSplit() {
+function ScheduleSplit({ content }: { content: NetworkAdvisorsPageContent }) {
+  const items = content.scheduleItems?.length ? content.scheduleItems : [
+    { title: "1–3 hours, on your terms", body: "Advisory roles are designed for short, high-leverage blocks—adjustable as your capacity changes. Depth when you opt in, never a second job by default.", iconKey: "Clock" },
+    { title: "Volunteer role", body: "Advisors serve on a volunteer basis, focused on impact and ecosystem development. We protect your boundaries while ensuring founders get high-signal feedback.", iconKey: "HeartHandshake" },
+  ]
+
   return (
     <section className="w-full bg-rellia-cream/25 px-6 py-20 md:px-10 md:py-32">
       <div className="mx-auto grid max-w-[1300px] gap-12 lg:grid-cols-[min(38%,420px)_1fr] lg:items-start lg:gap-20">
@@ -169,34 +190,30 @@ function ScheduleSplit() {
         </div>
         <div className="pt-2">
           <h2 className="mt-5 font-host-grotesk text-2xl font-semibold tracking-tight text-black md:text-[32px] leading-tight">
-            Built for <span className="text-rellia-teal">busy</span> schedules
+            {content.scheduleTitle ?? (
+              <>
+                Built for <span className="text-rellia-teal">busy</span> schedules
+              </>
+            )}
           </h2>
           
           <div className="mt-12 space-y-12">
-            <div className="flex gap-5">
+            {items.map((item, index) => {
+              const Icon = resolveNetworkIcon(item.iconKey, index === 0 ? Clock : HeartHandshake)
+              return (
+            <div key={item.title} className="flex gap-5">
               <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl text-rellia-teal">
-                <Clock className="h-7 w-7" aria-hidden />
+                <Icon className="h-7 w-7" aria-hidden />
               </span>
               <div>
-                <p className="font-host-grotesk text-xl font-bold text-black">1–3 hours, on your terms</p>
+                <p className="font-host-grotesk text-xl font-bold text-black">{item.title}</p>
                 <p className="mt-2 font-urbanist text-lg leading-relaxed text-black/70">
-                  Advisory roles are designed for short, high-leverage blocks—adjustable as your capacity changes. Depth when
-                  you opt in, never a second job by default.
+                  {item.body}
                 </p>
               </div>
             </div>
-
-            <div className="flex gap-5">
-              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl text-rellia-teal">
-                <HeartHandshake className="h-7 w-7" aria-hidden />
-              </span>
-              <div>
-                <p className="font-host-grotesk text-xl font-bold text-black">Volunteer role</p>
-                <p className="mt-2 font-urbanist text-lg leading-relaxed text-black/70">
-                  Advisors serve on a volunteer basis, focused on impact and ecosystem development. We protect your boundaries while ensuring founders get high-signal feedback.
-                </p>
-              </div>
-            </div>
+              )
+            })}
           </div>
         </div>
       </div>
@@ -208,6 +225,7 @@ export default function Advisors() {
   const advisorsPageQuery = useNetworkAdvisorsPage()
   const { data: page } = advisorsPageQuery
   useApplyCmsSeo(page?.seo)
+  const content = mergeNetworkAdvisorsPage(page)
 
   return (
     <div className="min-h-screen overflow-x-hidden bg-white font-host-grotesk">
@@ -217,29 +235,33 @@ export default function Advisors() {
         <div className="lg:flex lg:h-[82vh] lg:flex-col">
           <RoleHero
             roleId="advisor"
-            imageSrc="/images/advisors.jpg"
+            imageSrc={content.heroImageSrc ?? "/images/advisors.jpg"}
             className="lg:flex-1"
             title={
               <>
-                Some people are just wired to help <span className="text-rellia-mint">others succeed.</span>
+                {content.heroTitle ?? "Some people are just wired to help"}{" "}
+                <span className="text-rellia-mint">{content.heroAccentPhrase ?? "others succeed."}</span>
               </>
             }
-            subtitle="Mentor serious health tech founders through structured, respectful engagements—stay sharp on innovation while keeping flexibility for your career."
-            primaryCta={{ label: "Apply to join", to: "/apply" }}
-            secondaryCta={{ label: "Explore Advisors", to: "/advisors/directory" }}
+            subtitle={content.heroSubtitle ?? "Mentor serious health tech founders through structured, respectful engagements—stay sharp on innovation while keeping flexibility for your career."}
+            primaryCta={{ label: content.heroPrimaryCtaLabel ?? "Apply to join", to: content.heroPrimaryCtaHref ?? "/apply" }}
+            secondaryCta={{ label: content.heroSecondaryCtaLabel ?? "Explore Advisors", to: content.heroSecondaryCtaHref ?? "/advisors/directory" }}
           />
         </div>
 
-        <SupportModelsSection />
-        <ScheduleSplit />
-        <BenefitsSplitSection />
+        <SupportModelsSection content={content} />
+        <ScheduleSplit content={content} />
+        <BenefitsSplitSection content={content} />
 
         <WhyRellia
-          sectionTitle="What we look for"
-          sectionDescription="Effective advisors combine depth, specificity, and respect for founder momentum."
-          features={CRITERIA_ITEMS.map((c) => ({
+          sectionTitle={content.whyTitle ?? "What we look for"}
+          sectionDescription={content.whyDescription ?? "Effective advisors combine depth, specificity, and respect for founder momentum."}
+          features={(content.whyFeatures?.length ? content.whyFeatures : CRITERIA_ITEMS.map((c) => ({
             title: c.title,
-            description: `${c.summary} ${c.detail}`,
+            body: `${c.summary} ${c.detail}`,
+          }))).map((c) => ({
+            title: c.title,
+            description: c.body ?? "",
             iconKey: "",
           }))}
           cardImages={[
@@ -252,10 +274,10 @@ export default function Advisors() {
         />
 
         <RelliaCta
-          title="Apply as an advisor"
-          body="Share your background—we'll follow up with fit, expectations, and onboarding paths."
-          primary={{ label: "Apply to join", to: "/apply" }}
-          secondary={{ label: "Contact", to: "/contact" }}
+          title={content.ctaTitle ?? "Apply as an advisor"}
+          body={content.ctaBody ?? "Share your background—we'll follow up with fit, expectations, and onboarding paths."}
+          primary={{ label: content.ctaPrimaryLabel ?? "Apply to join", to: content.ctaPrimaryHref ?? "/apply" }}
+          secondary={{ label: content.ctaSecondaryLabel ?? "Contact", to: content.ctaSecondaryHref ?? "/contact" }}
         />
       </main>
 
@@ -264,19 +286,24 @@ export default function Advisors() {
   )
 }
 
-function BenefitsSplitSection() {
+function BenefitsSplitSection({ content }: { content: NetworkAdvisorsPageContent }) {
+  const bullets = content.benefitsBullets?.length ? content.benefitsBullets : BENEFITS
+
   return (
     <CreamSection>
       <div className="grid gap-12 lg:grid-cols-[1fr_1.05fr] lg:items-center lg:gap-16">
         <Reveal>
           <SectionHeading
             animated={false}
-            title="Mentorship that compounds"
-            description="Stay close to innovation without ambient noise—sharp conversations with founders who execute."
+            title={content.benefitsTitle ?? "Mentorship that compounds"}
+            description={
+              content.benefitsDescription ??
+              "Stay close to innovation without ambient noise—sharp conversations with founders who execute."
+            }
             className="mt-5"
           />
           <ul className="mt-10 max-w-xl space-y-4" aria-label="Advisor benefits">
-            {BENEFITS.map((line, idx) => (
+            {bullets.map((line, idx) => (
               <Reveal key={line} delay={0.04 * idx}>
                 <li className="flex gap-3 font-urbanist text-base leading-relaxed text-black/80 md:text-[17px]">
                   <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-rellia-mint/35">

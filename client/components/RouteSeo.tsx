@@ -9,6 +9,7 @@ import {
   getSeoForPathname,
   getSiteUrl,
   isItemDetailPath,
+  isStaticOgImageRoute,
   normalizePathname,
   shouldUseDefaultOgImage,
 } from "@/config/seo"
@@ -47,7 +48,6 @@ const RouteSeo = ({
   const description = clampMetaDescription(
     descriptionOverride || overrides.description || defaultDescription,
   )
-  const ogImage = ogImageOverride || overrides.ogImage
   const noIndex = noIndexOverride ?? overrides.noIndex ?? !indexable
 
   const canonicalUrl = noIndex
@@ -55,7 +55,10 @@ const RouteSeo = ({
     : `${base}${normalizedPathname === "/" ? "" : normalizedPathname}`
   const ogUrl = `${base}${normalizedPathname === "/" ? "" : normalizedPathname}`
   const cmsDefaultOg = siteSettingsData?.defaultSeo?.ogImageUrl?.trim()
-  const explicitOgImage = ogImage?.trim()
+  const allowOgImage = isStaticOgImageRoute(normalizedPathname)
+  const explicitOgImage = allowOgImage
+    ? (ogImageOverride || overrides.ogImage)?.trim()
+    : undefined
   const staticOg = getStaticOgImageForPathname(normalizedPathname)
   const useHomeDefaultOg = shouldUseDefaultOgImage(normalizedPathname)
   const imageUrl =

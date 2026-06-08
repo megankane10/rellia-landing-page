@@ -416,6 +416,142 @@ export type LandingStatRow = {
   value: string
 }
 
+export type NetworkEngageCard = {
+  title: string
+  body?: string
+  href?: string
+  linkLabel?: string
+  iconKey?: string
+}
+
+export type NetworkFeatureItem = {
+  title: string
+  body?: string
+  iconKey?: string
+}
+
+export type NetworkEligibilityItem = {
+  text: string
+  imageUrl?: string
+}
+
+export type NetworkExploreCard = {
+  title: string
+  badge?: string
+  imageUrl?: string
+  ctaLabel?: string
+  ctaHref?: string
+}
+
+export type NetworkJourneyStep = {
+  id: string
+  label: string
+  zone: "outside" | "rellia"
+  detail?: string
+}
+
+export type NetworkPitchCard = {
+  title: string
+  body?: string
+  imageUrl?: string
+}
+
+export type NetworkHeroContent = {
+  heroEyebrow?: string
+  heroTitle?: string
+  heroAccentPhrase?: string
+  heroSubtitle?: string
+  heroImageSrc?: string
+  heroPrimaryCtaLabel?: string
+  heroPrimaryCtaHref?: string
+  heroSecondaryCtaLabel?: string
+  heroSecondaryCtaHref?: string
+}
+
+export type NetworkFoundersPageContent = CmsSingletonPageContent &
+  NetworkHeroContent & {
+    eligibilityTitle?: string
+    eligibilityDescription?: string
+    eligibilityItems?: NetworkEligibilityItem[]
+    engageTitle?: string
+    engageSubtitle?: string
+    engageItems?: NetworkEngageCard[]
+    whyTitle?: string
+    whyDescription?: string
+    whyFeatures?: NetworkFeatureItem[]
+    journeyTitle?: string
+    journeySubtitle?: string
+    journeySteps?: NetworkJourneyStep[]
+    exploreTitle?: string
+    exploreSubtitle?: string
+    exploreCards?: NetworkExploreCard[]
+    deeperHelpTitle?: string
+    deeperHelpSubtitle?: string
+    deeperHelpFeatures?: NetworkFeatureItem[]
+    deeperHelpCtaLabel?: string
+    deeperHelpCtaHref?: string
+    ctaTitle?: string
+    ctaBody?: string
+    ctaPrimaryLabel?: string
+    ctaPrimaryHref?: string
+    ctaSecondaryLabel?: string
+    ctaSecondaryHref?: string
+  }
+
+export type NetworkAdvisorsPageContent = CmsSingletonPageContent &
+  NetworkHeroContent & {
+    engageTitle?: string
+    engageSubtitle?: string
+    engageItems?: NetworkEngageCard[]
+    scheduleTitle?: string
+    scheduleItems?: NetworkFeatureItem[]
+    benefitsTitle?: string
+    benefitsDescription?: string
+    benefitsBullets?: string[]
+    whyTitle?: string
+    whyDescription?: string
+    whyFeatures?: NetworkFeatureItem[]
+    ctaTitle?: string
+    ctaBody?: string
+    ctaPrimaryLabel?: string
+    ctaPrimaryHref?: string
+    ctaSecondaryLabel?: string
+    ctaSecondaryHref?: string
+  }
+
+export type NetworkInvestorsPageContent = CmsSingletonPageContent &
+  NetworkHeroContent & {
+    whyTitle?: string
+    whyDescription?: string
+    whyFeatures?: NetworkFeatureItem[]
+    pitchTitle?: string
+    pitchSubtitle?: string
+    pitchCards?: NetworkPitchCard[]
+    ctaTitle?: string
+    ctaBody?: string
+    ctaPrimaryLabel?: string
+  }
+
+export type NetworkPartnersPageContent = CmsSingletonPageContent &
+  NetworkHeroContent & {
+    engageTitle?: string
+    engageSubtitle?: string
+    engageItems?: NetworkEngageCard[]
+    benefitsTitle?: string
+    benefitsDescription?: string
+    benefitsBullets?: string[]
+    directoryTitle?: string
+    directoryDescription?: string
+    directoryBullets?: string[]
+    whyTitle?: string
+    whyDescription?: string
+    whyFeatures?: NetworkFeatureItem[]
+    ctaTitle?: string
+    ctaBody?: string
+    ctaPrimaryLabel?: string
+    ctaPrimaryHref?: string
+  }
+
 export type ConsultingPageContent = CmsSingletonPageContent & {
   heroEyebrow?: string
   heroTitle?: string
