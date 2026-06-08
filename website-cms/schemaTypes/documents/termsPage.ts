@@ -2,7 +2,6 @@ import {defineField, defineType} from 'sanity'
 import {
   CONTENT_SEO_FIELDSETS,
   CONTENT_SEO_GROUPS,
-  singletonSectionsField,
   singletonSeoField,
 } from '../shared/singletonContentFields'
 
@@ -42,7 +41,6 @@ export const termsPage = defineType({
       description: 'Use headings (H2/H3), paragraphs, and bullet lists for each section.',
       group: 'content',
     }),
-    singletonSectionsField,
     singletonSeoField,
   ],
   preview: {

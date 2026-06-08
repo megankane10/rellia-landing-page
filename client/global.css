@@ -149,14 +149,8 @@
     animation: glow-sweep 1.4s linear 1 forwards;
   }
 
-  .built-by-credit-sweep--reverse {
-    opacity: 1;
-    animation: glow-sweep-reverse 1.4s linear 1 forwards;
-  }
-
   @media (prefers-reduced-motion: reduce) {
-    .built-by-credit-sweep--forward,
-    .built-by-credit-sweep--reverse {
+    .built-by-credit-sweep--forward {
       animation: none;
       opacity: 0;
     }
@@ -172,6 +166,7 @@
     bottom: calc(100% + 0.5rem);
     left: 50%;
     z-index: 50;
+    isolation: isolate;
     max-width: 240px;
     width: max-content;
     pointer-events: none;
@@ -189,19 +184,49 @@
     font-weight: 500;
     line-height: 1.375;
     color: rgba(255, 255, 255, 0.92);
+    overflow: visible;
   }
 
   .built-by-tooltip-inner {
+    position: relative;
+    z-index: 1;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 0.375rem;
-    border-radius: 1rem;
-    border: 1px solid rgba(157, 214, 208, 0.35);
+    border-radius: calc(1rem - 1px);
     background: #06181e;
     padding: 0.625rem 1rem;
     color: rgba(255, 255, 255, 0.92);
-    box-shadow: 0 12px 32px -12px rgba(0, 0, 0, 0.55);
+    box-shadow: 0 20px 50px -16px rgba(0, 0, 0, 0.55);
+  }
+
+  .built-by-tooltip::before {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    z-index: 0;
+    border-radius: 1.05rem;
+    padding: 1px;
+    opacity: 0;
+    background: conic-gradient(
+      from var(--angle, 0deg),
+      transparent 50%,
+      rgba(157, 214, 208, 0.4) 75%,
+      rgba(200, 240, 238, 0.98) 90%,
+      rgba(157, 214, 208, 0.4) 100%
+    );
+    transition: opacity 0.2s ease;
+    -webkit-mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+    pointer-events: none;
+    filter: drop-shadow(0 0 6px rgba(157, 214, 208, 0.7));
   }
 
   .built-by-tooltip--visible {
@@ -210,9 +235,21 @@
     transform: translateX(-50%) translateY(0) scale(1);
   }
 
+  .built-by-tooltip--visible::before {
+    opacity: 1;
+    animation: rotate-border 1.8s cubic-bezier(0.45, 0.09, 0.55, 0.91) infinite;
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .built-by-tooltip {
       transition: none;
+    }
+
+    .built-by-tooltip::before,
+    .built-by-tooltip--visible::before {
+      animation: none;
+      background: rgba(157, 214, 208, 0.45);
+      opacity: 1;
     }
   }
 }
@@ -242,16 +279,21 @@
   }
 }
 
-@keyframes glow-sweep-reverse {
+@keyframes rotate-border {
   0% {
-    background-position: -200% center;
-    opacity: 1;
+    --angle: 0deg;
   }
   100% {
-    background-position: 200% center;
-    opacity: 0;
+    --angle: 360deg;
   }
 }
+
+@property --angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+
 
 @keyframes priority-modal-in {
   0% {

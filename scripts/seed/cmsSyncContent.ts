@@ -1006,16 +1006,16 @@ export const POWER_OF_PLAY_ALUMNI = {
 export const WEBSITE_LAUNCH_STORY = {
   slug: "website-launch",
   title: "Welcome to the new Rellia website",
-  tag: "Product",
+  tag: "Program Update",
   featured: true,
   excerpt:
-    "Our rebuilt marketing site is now fully CMS-driven—explore diagnostics, programs, network paths, stories, and modular page builder blocks.",
+    "Explore clearer paths for founders—benchmark readiness, join programs, meet advisors, and stay close to what is happening across the Rellia community.",
   coverImageSrc:
     "https://images.pexels.com/photos/3184292/pexels-photo-3184292.jpeg?auto=compress&cs=tinysrgb&w=1600",
   coverImageAlt: "Health tech team collaborating in a bright workspace",
-  seoTitle: "Website launch — Rellia Health",
+  seoTitle: "Welcome to the new Rellia website",
   seoDescription:
-    "Tour the new Rellia Health website: startup diagnostic, programs, founder network paths, events, and editor-friendly page builder sections.",
+    "Discover Rellia Health: startup diagnostic, structured programs, live events, and network paths built for health tech founders.",
   publishedAt: "2026-06-01",
 }
 
@@ -1024,83 +1024,69 @@ export const createWebsiteLaunchStoryBody = (
   bullet: BulletFn,
   block: BlockFn,
 ) => [
-  ...ptBlock("launch-h2", "A CMS-ready home for health tech builders", "h2"),
+  ...ptBlock("launch-h2", "Built for health tech builders", "h2"),
   ...ptBlock(
     "launch-intro",
-    "Rellia Health rebuilt its public site so operators, founders, and partners can explore programs, diagnostics, and network paths without waiting on engineering deploys. Every major page now pulls from Sanity—preview on Vercel, publish when ready, promote to production when aligned.",
+    "Whether you are validating your first clinical workflow, preparing for a seed round, or looking for operators who have shipped in regulated environments, Rellia is designed to meet you where you are. Our site brings the essentials into one place—so you can move from curiosity to action without hunting across tabs.",
+    "normal",
+  ),
+  ...ptBlock(
+    "launch-intro-2",
+    "Start with a quick readiness check, explore programs that match your stage, and see how founders, advisors, and partners plug into the same ecosystem. Everything here is meant to feel practical: fewer buzzwords, more signal about what happens next when you engage with Rellia.",
     "normal",
   ),
   block(
     "launch-quote",
-    "Healthcare innovation needs editorial speed without sacrificing the rigor founders expect from clinical and regulatory content.",
+    "The best health tech teams do not need more generic advice—they need clarity on regulatory, clinical, and commercial gaps before capital and pilots accelerate the wrong priorities.",
     "blockquote",
   ),
   ...ptBlock("launch-dx-h2", "Startup diagnostic", "h2"),
   ...ptBlock(
     "launch-dx-p",
-    "Take a 15-minute readiness assessment across regulatory, clinical, commercial, and operational domains. Your report highlights top strengths, priority gaps, advisor matches, and program recommendations.",
+    "Our Startup Diagnostic benchmarks your company across twelve domains that matter in health tech—from regulatory posture and clinical evidence to go-to-market motion and team readiness. In about fifteen minutes you receive a personalized report with strengths, priority gaps, and suggested next steps.",
+    "normal",
+  ),
+  ...ptBlock(
+    "launch-dx-p2",
+    "Founders use the diagnostic to align co-founders before a fundraise, sharpen advisor conversations, and decide which Rellia programs fit their current stage. It is private, structured, and built for teams who want an honest baseline—not a vanity score.",
     "normal",
   ),
   {
     _type: "bodyCtaBox",
     _key: "launch-dx-cta",
-    title: "Benchmark your readiness",
-    body: "Generate a personalized roadmap and advisory focus areas in one sitting.",
-    buttonLabel: "Take the diagnostic",
+    title: "See where you stand",
+    body: "Take the Startup Diagnostic and get a readiness snapshot with gap analysis you can share with your team.",
+    buttonLabel: "Start the diagnostic",
     buttonHref: "/startup-diagnostic",
   },
   ...ptBlock("launch-programs-h2", "Programs & events", "h2"),
-  bullet("launch-p1", "Structured programs from QMS foundations to fundraising intensives."),
-  bullet("launch-p2", "Live virtual events with operators, clinicians, and health tech leaders."),
+  ...ptBlock(
+    "launch-programs-p",
+    "Rellia programs combine operator-led curriculum, peer accountability, and access to advisors who have navigated FDA pathways, health system pilots, and reimbursement realities. Cohorts are stage-aware—whether you are building QMS foundations, refining your clinical story, or preparing for investor conversations.",
+    "normal",
+  ),
+  bullet("launch-p1", "Structured tracks with clear outcomes, office hours, and milestone reviews."),
+  bullet("launch-p2", "Live virtual events with clinicians, operators, and health tech leaders—designed for practical takeaways, not keynote theater."),
+  bullet("launch-p3", "Registration and waitlists for upcoming cohorts, so you can plan around your roadmap."),
+  block(
+    "launch-quote-2",
+    "Programs work best when founders know their gaps first—then every session, office hour, and intro compounds instead of feeling like another calendar block.",
+    "blockquote",
+  ),
+  ...ptBlock(
+    "launch-network-p",
+    "Beyond programs, Rellia connects founders with advisors, alumni, and industry partners through dedicated network paths. Explore stories from the community, see who is building in your specialty, and find the right door in—whether you are applying as a founder, advisor, investor, or partner.",
+    "normal",
+  ),
   {
     _type: "bodyCtaBox",
     _key: "launch-programs-cta",
-    title: "Explore programming",
-    body: "See cohort tracks, waitlists, and registration links managed in Studio.",
+    title: "Find your next step",
+    body: "Browse structured programs or see upcoming live sessions with the Rellia community.",
     buttonLabel: "View programs",
     buttonHref: "/programs",
-  },
-  {
-    _type: "portableImageCarousel",
-    _key: "launch-carousel",
-    title: "Network paths",
-    slides: [
-      {
-        _type: "portableImageCarouselSlide",
-        _key: "launch-carousel-0",
-        imageSrc: "/images/founders.jpg",
-        alt: "Founders network path",
-        caption: "Founders — programs, intros, and alumni directory",
-      },
-      {
-        _type: "portableImageCarouselSlide",
-        _key: "launch-carousel-1",
-        imageSrc: "/images/advisors.jpg",
-        alt: "Advisors network path",
-        caption: "Advisors — volunteer mentorship with healthcare depth",
-      },
-      {
-        _type: "portableImageCarouselSlide",
-        _key: "launch-carousel-2",
-        imageSrc: "/images/investors.jpg",
-        alt: "Investors network path",
-        caption: "Investors — diligence-ready founder introductions",
-      },
-    ],
-  },
-  {
-    _type: "bodyCtaBox",
-    _key: "launch-apply-cta",
-    title: "Ready to plug in?",
-    body: "One application routes you to membership, programming, and the right network path.",
-    buttonLabel: "Apply to join",
-    buttonHref: "/apply",
-  },
-  {
-    _type: "portableVideo",
-    _key: "launch-video",
-    videoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-    caption: "Video blocks embed directly in stories and rich text sections.",
+    secondaryButtonLabel: "See events",
+    secondaryButtonHref: "/events",
   },
 ]
 
@@ -1128,8 +1114,15 @@ export const STUDIO_GUIDE_SECTIONS = [
   },
   {
     _type: "guideSection",
+    _key: "prebuilt_pages",
+    heading: "Pre-built pages vs custom pages",
+    body:
+      "Most site routes (About, Careers, Network paths, Consulting, Startup diagnostic, Programs, etc.) use fixed layouts in code. Edit their copy and media through the structured fields on each page document — not modular page sections.\n\nModular page builder blocks are only for custom pages under Pages → + Create page. Those documents use Page sections and Page visibility (Live / Hidden / Placeholder).",
+  },
+  {
+    _type: "guideSection",
     _key: "custom_builder_fields",
-    heading: "Custom page builder — block field names",
+    heading: "Custom page builder — block field names (custom pages only)",
     body:
       "Page sections use these block types and key fields:\n\n• Marketing hero block — eyebrowLabel, title, accentPhrase, subtitle, imageUrl, primaryCta, secondaryCta\n• Engage band block — title/subtitle (portable text), items[] with icon, title, body, link\n• Text and icon grid — title/subtitle (portable text), items[] with icon (Lucide name), title, body; optional badge, headingTone, background\n• Eligibility bento block — title, description, items[] with text + imageUrl\n• Journey timeline block — headingTitle, subheading, steps[], optional roleLinks[], cta\n• Image grid block — title, subtitle, cards[] with title, body, imageUrl, badge, iconKey, cta, tags\n• CTA band block — title, body, primaryCta, secondaryCta, aboveSectionTone\n• Testimonial carousel block — heading, testimonials[] (quote, name, role, company, imageSrc)\n• FAQ block — title, subtitle, items[] question/answer\n• Form embed block — filloutFormUrl, layout (split/standalone), panel copy + benefits\n• Rich text (in stories/profiles) — headings, bullets, blockquote, bodyCtaBox, portableImageCarousel, portableVideo",
   },

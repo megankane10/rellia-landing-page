@@ -20,7 +20,7 @@ import {
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import { NETWORK_PATH_ROLE_TAG } from "@/lib/networkPathRoles";
 import { isSanityConfigured } from "@/lib/sanity";
-import { allowCmsSeedFallbacks, isMainBranchBuild } from "@/lib/deploymentEnv";
+import { allowCmsSeedFallbacks } from "@/lib/deploymentEnv";
 import { isCmsQueryLoading } from "@/lib/cmsQueryState";
 import { DirectoryGridSkeleton } from "@/components/cms/CmsPageLoadingShell";
 import { DirectoryCardTags } from "@/components/network/DirectoryCardTags";
@@ -117,7 +117,6 @@ export default function AdvisorsDirectory() {
   const [countryFilter, setCountryFilter] = useState<string>("all");
 
   const advisors = useMemo<AdvisorDirectoryEntry[]>(() => {
-    if (isMainBranchBuild()) return [];
     if (!isSanityConfigured()) return []
 
     if (Array.isArray(cmsAdvisors) && cmsAdvisors.length > 0)

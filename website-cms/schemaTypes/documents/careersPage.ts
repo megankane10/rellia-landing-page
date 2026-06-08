@@ -3,7 +3,6 @@ import {
   CONTENT_SEO_FIELDSETS,
   CONTENT_SEO_GROUPS,
   sectionDividerFieldset,
-  singletonSectionsField,
   singletonSeoField,
 } from '../shared/singletonContentFields'
 
@@ -56,7 +55,6 @@ export const careersPage = defineType({
       group: 'content',
       fieldset: 'contentDivider',
     }),
-    singletonSectionsField,
     defineField({
       name: 'lifeAtRelliaHeading',
       title: 'Life at Rellia — Heading',

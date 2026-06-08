@@ -73,17 +73,14 @@ function LeftPanel({ copy }: { copy: typeof DEFAULT_CONTACT_PAGE }) {
           <div className="absolute bottom-[-5%] right-[-5%] h-[40%] w-[40%] rounded-full bg-rellia-mint/10 blur-[100px]" />
         </div>
 
-        <div className="relative z-10 flex min-h-[min(480px,calc(100vh-10rem))] flex-1 flex-col p-6 md:p-10">
+        <div className="relative z-10 flex min-h-[min(480px,calc(100vh-10rem))] flex-1 flex-col justify-between p-8 md:p-10">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            className="flex flex-1 flex-col justify-between py-8"
+            className="flex flex-1 flex-col justify-center gap-8 py-4 md:py-6"
           >
-            <div className="mb-6 pl-2">
-              <h1 className="font-host-grotesk text-2xl font-semibold tracking-tight text-rellia-mint md:text-3xl mb-4">
-                {copy.heroHeadline ?? copy.pageTitle ?? "Contact Rellia Health"}
-              </h1>
+            <div className="pl-2">
               <img
                 src={copy.leftLogoImageSrc || "/images/hologram-logo.png"}
                 alt=""
@@ -96,8 +93,8 @@ function LeftPanel({ copy }: { copy: typeof DEFAULT_CONTACT_PAGE }) {
               />
             </div>
 
-            <div className="flex flex-1 flex-col justify-center py-6 pt-4 md:pt-6">
-              <p className="w-full font-urbanist text-2xl font-medium leading-snug text-white md:text-4xl lg:text-5xl px-2">
+            <div className="flex flex-col justify-center px-2">
+              <p className="w-full font-urbanist text-2xl font-medium leading-snug text-white md:text-4xl lg:text-5xl">
                 &ldquo;{copy.quoteText}&rdquo;
               </p>
 

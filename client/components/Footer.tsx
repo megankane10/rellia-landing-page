@@ -77,9 +77,9 @@ const footerSectionHeadingClass =
 const legalLinkClass =
   "font-urbanist text-[13px] leading-snug text-white/70 transition-colors hover:text-rellia-mint md:text-sm"
 
-const BUILT_BY_SWEEP_REVERSE_MS = 1_400
+const BUILT_BY_SWEEP_MS = 1_400
 
-type BuiltBySweepPhase = "idle" | "forward" | "reverse"
+type BuiltBySweepPhase = "idle" | "forward"
 
 const BuiltByCredit = () => {
   const [showTooltip, setShowTooltip] = React.useState(false)
@@ -101,22 +101,29 @@ const BuiltByCredit = () => {
     }
   }
 
-  const handlePointerEnter = () => {
+  const runSweepOnce = () => {
     clearSweepTimer()
+    setSweepPhase("idle")
+    requestAnimationFrame(() => {
+      setSweepPhase("forward")
+      sweepTimerRef.current = setTimeout(() => {
+        setSweepPhase("idle")
+        sweepTimerRef.current = null
+      }, BUILT_BY_SWEEP_MS)
+    })
+  }
+
+  const handlePointerEnter = () => {
     clearTouchDismissTimer()
-    setSweepPhase("forward")
+    runSweepOnce()
     setShowTooltip(true)
   }
 
   const handlePointerLeave = () => {
     clearSweepTimer()
+    setSweepPhase("idle")
     clearTouchDismissTimer()
-    setSweepPhase("reverse")
     setShowTooltip(false)
-    sweepTimerRef.current = setTimeout(() => {
-      setSweepPhase("idle")
-      sweepTimerRef.current = null
-    }, BUILT_BY_SWEEP_REVERSE_MS)
   }
 
   React.useEffect(
@@ -128,7 +135,7 @@ const BuiltByCredit = () => {
   )
 
   return (
-    <span className="relative inline-flex">
+    <span className="relative inline-flex overflow-visible">
       <a
         href={SAFDAR_LINKEDIN_URL}
         target="_blank"
@@ -159,7 +166,6 @@ const BuiltByCredit = () => {
             className={cn(
               "built-by-credit-sweep",
               sweepPhase === "forward" && "built-by-credit-sweep--forward",
-              sweepPhase === "reverse" && "built-by-credit-sweep--reverse",
             )}
             aria-hidden="true"
           >
@@ -352,7 +358,7 @@ export default function Footer() {
                 &copy; {new Date().getFullYear()} {g.copyrightLine} Ontario, Canada
               </p>
 
-              <div className="flex justify-center md:px-4 order-1 md:order-none">
+              <div className="flex justify-center overflow-visible md:px-4 order-1 md:order-none">
                 <BuiltByCredit />
               </div>
 

@@ -45,7 +45,6 @@ import {
   useTransform,
 } from "framer-motion";
 import { useNetworkFoundersPage } from "@/hooks/useCmsDocuments";
-import NetworkCmsPage from "./NetworkCmsPage";
 import { PORTFOLIO_LOGO_MARKS } from "@/data/portfolioLogos";
 import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo";
 import WhyRellia from "@/components/WhyRellia";
@@ -831,8 +830,6 @@ export default function Founders() {
   const { data: page } = foundersPageQuery;
   useApplyCmsSeo(page?.seo);
 
-  const useModularLayout = (page?.sections?.length ?? 0) > 0;
-
   const logoMarks = useMemo(() => {
     const fromCms = (page?.logoMarquee ?? [])
       .map((entry) => ({
@@ -843,24 +840,6 @@ export default function Founders() {
     if (fromCms.length > 0) return fromCms;
     return [...PORTFOLIO_LOGO_MARKS];
   }, [page?.logoMarquee]);
-
-  if (useModularLayout) {
-    return (
-      <NetworkCmsPage
-        page={page}
-        query={foundersPageQuery}
-        slug="founders"
-        renderExtras={() => (
-          <LogoMarquee
-            showHeading={false}
-            density="compact"
-            marks={logoMarks}
-            sectionClassName="border-b border-black/[0.06] bg-white py-6 md:py-8 lg:flex lg:h-[18vh] lg:min-h-[140px] lg:items-center lg:py-0"
-          />
-        )}
-      />
-    );
-  }
 
   return (
     <div className="min-h-screen overflow-x-hidden bg-white font-host-grotesk">

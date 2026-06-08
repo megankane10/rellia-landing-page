@@ -38,7 +38,7 @@ export default function DiagnosticReportPreview({
   const scoreWidth = `${Math.min(100, Math.max(0, topWeaknessScore))}%`
 
   return (
-    <div className="relative p-4">
+    <div className="relative w-full p-0 sm:p-4">
       <div className="absolute -top-5 -left-4 z-20 flex items-center gap-2.5 rounded-full border border-rellia-teal/15 bg-white/95 px-5 py-2.5 text-xs font-bold text-rellia-teal shadow-[0_14px_40px_-6px_rgba(13,53,64,0.2)] backdrop-blur-md sm:-left-7 sm:px-6 sm:py-3 sm:text-sm">
         <Sparkles className="h-4 w-4 text-rellia-mint sm:h-[18px] sm:w-[18px]" aria-hidden />
         {blobRoadmap}
@@ -55,7 +55,7 @@ export default function DiagnosticReportPreview({
       </div>
 
       <div className="pointer-events-none absolute -inset-4 rounded-[40px] bg-rellia-teal/5 blur-2xl" />
-      <div className="relative z-10 rounded-[40px] border border-black/10 bg-white p-8 shadow-lg md:p-10">
+      <div className="relative z-10 rounded-[28px] border border-black/10 bg-white p-5 shadow-lg sm:rounded-[40px] sm:p-8 md:p-10">
         <div className="space-y-5">
           <div className="flex flex-col justify-center rounded-2xl border border-black/5 bg-[#fafafa] p-5">
             <div className="mb-3 flex items-baseline justify-between gap-2">

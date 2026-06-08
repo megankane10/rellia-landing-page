@@ -21,15 +21,26 @@ export const bodyCtaBox = defineType({
     defineField({
       name: 'buttonLabel',
       type: 'string',
-      title: 'Button label',
+      title: 'Primary button label',
       validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: 'buttonHref',
       type: 'string',
-      title: 'Button URL',
+      title: 'Primary button URL',
       description: 'Site path (e.g. /contact) or full https URL',
       validation: (Rule) => Rule.required(),
+    }),
+    defineField({
+      name: 'secondaryButtonLabel',
+      type: 'string',
+      title: 'Secondary button label',
+      description: 'Optional second button (e.g. Programs + Events).',
+    }),
+    defineField({
+      name: 'secondaryButtonHref',
+      type: 'string',
+      title: 'Secondary button URL',
     }),
   ],
 })

@@ -6,7 +6,7 @@ import { ArrowLeft, MapPin, Calendar, Copy, Check } from "lucide-react";
 import { ProfileSocialLinks } from "@/components/network/ProfileSocialLinks";
 import { ShareIconCopy } from "@/components/share/sharePageIcons";
 import { FOUNDER_DIRECTORY } from "@/data/founderDirectory";
-import { allowCmsSeedFallbacks, isMainBranchBuild } from "@/lib/deploymentEnv";
+import { allowCmsSeedFallbacks } from "@/lib/deploymentEnv";
 import NotFound from "../NotFound";
 import { cn } from "@/lib/utils";
 import {
@@ -32,18 +32,16 @@ export default function FounderProfile() {
   const { data: cmsCompanies } = companiesQuery;
   const cmsActive = Array.isArray(cmsCompanies) ? cmsCompanies.find((c: any) => c?.id === id) : null;
   const active =
-    isMainBranchBuild()
-      ? undefined
-      : cmsActive
-        ? {
-            ...cmsActive,
-            id: cmsActive.id,
-            slug: cmsActive.id,
-            logoName: cmsActive.name,
-          }
-        : allowCmsSeedFallbacks()
-          ? FOUNDER_DIRECTORY.find((c) => c.id === id)
-          : undefined;
+    cmsActive
+      ? {
+          ...cmsActive,
+          id: cmsActive.id,
+          slug: cmsActive.id,
+          logoName: cmsActive.name,
+        }
+      : allowCmsSeedFallbacks()
+        ? FOUNDER_DIRECTORY.find((c) => c.id === id)
+        : undefined;
 
   const canonicalUrl = buildPageUrl(location.pathname);
   const [copied, setCopied] = useState(false);

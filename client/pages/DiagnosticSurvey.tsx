@@ -1093,9 +1093,9 @@ export default function DiagnosticSurvey() {
         description="Assess your health tech startup across 12 domains and get a personalized advisory board and program roadmap."
       />
 
-      <div className="relative flex min-h-[calc(100vh-72px)] items-stretch md:min-h-[calc(100vh-86px)]">
+      <div className="relative flex min-h-[calc(100vh-72px)] items-start md:min-h-[calc(100vh-86px)]">
         {/* ── DESKTOP SIDEBAR ── */}
-        <aside className="diagnostic-screen-only hidden w-72 shrink-0 flex-col border-r border-rellia-teal/10 bg-white/50 backdrop-blur-md lg:flex min-h-[calc(100vh-72px)] md:min-h-[calc(100vh-86px)] rounded-b-3xl">
+        <aside className="diagnostic-screen-only sticky top-[72px] z-20 hidden w-72 shrink-0 flex-col self-start overflow-y-auto rounded-b-3xl border-r border-rellia-teal/10 bg-white/50 backdrop-blur-md md:top-[86px] lg:flex lg:max-h-[calc(100vh-86px)]">
           <div className="flex flex-col gap-6 p-6">
             <div className="space-y-2">
               <div className="flex justify-between text-[10px] font-bold uppercase tracking-widest text-rellia-teal/50">
@@ -1194,7 +1194,7 @@ export default function DiagnosticSurvey() {
         {/* ── MAIN CONTENT AREA ── */}
         <main className="flex-1">
           {/* MOBILE SUB-HEADER */}
-          <div className="diagnostic-screen-only fixed inset-x-0 top-[72px] z-[60] border-b border-rellia-teal/10 bg-rellia-cream/90 backdrop-blur-md md:top-[86px] lg:hidden">
+          <div className="diagnostic-screen-only sticky top-[72px] z-[60] border-b border-rellia-teal/10 bg-rellia-cream/90 backdrop-blur-md md:top-[86px] lg:hidden">
             <div className="flex items-center justify-between px-4 py-2">
               <div className="flex flex-1 flex-col justify-center gap-1">
                 <div className="h-1 overflow-hidden rounded-full bg-rellia-teal/10">
@@ -1332,7 +1332,7 @@ export default function DiagnosticSurvey() {
             </AnimatePresence>
           </div>
 
-          <div className="mx-auto flex h-full max-w-5xl flex-col px-4 pb-8 pt-24 md:px-8 md:pb-12 md:pt-28 lg:px-12 lg:py-16">
+          <div className="mx-auto flex max-w-5xl flex-col px-4 pb-8 pt-6 md:px-8 md:pb-12 md:pt-8 lg:px-12 lg:py-16">
             {/* ── INTRO VIEW ── */}
             {view === "intro" && (
               <div className="animate-ds-up flex flex-col gap-10">

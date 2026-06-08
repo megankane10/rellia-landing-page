@@ -444,7 +444,7 @@ export default function Navbar({
 
   const desktopRailCls = cn("hidden items-center md:flex gap-1")
 
-  const navCtaVariant = useDarkHeroNavChrome || useLightNavChrome ? "relliaCtaPrimary" : ("heroSolidOnTeal" as const)
+  const navCtaVariant = "heroSolidOnTeal" as const
 
   const menuIconBtnCls = cn(
     "inline-flex min-h-11 min-w-11 cursor-pointer items-center justify-center transition-[color] duration-200 motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 md:hidden",

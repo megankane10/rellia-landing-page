@@ -2,7 +2,6 @@ import {defineField, defineType} from 'sanity'
 import {
   CONTENT_SEO_FIELDSETS,
   CONTENT_SEO_GROUPS,
-  singletonSectionsField,
   singletonSeoField,
 } from '../shared/singletonContentFields'
 
@@ -72,7 +71,6 @@ export const aboutPage = defineType({
     defineField({name: 'ctaBody', type: 'text', rows: 3, group: 'content'}),
     defineField({name: 'ctaFounderLabel', type: 'string', group: 'content'}),
     defineField({name: 'ctaTeamLabel', type: 'string', group: 'content'}),
-    singletonSectionsField,
     singletonSeoField,
   ],
 })

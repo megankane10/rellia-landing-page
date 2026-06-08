@@ -41,37 +41,27 @@ export const StoryPostHero = ({
       <div className="relative z-10 mx-auto max-w-[1300px] px-6 md:px-10">
         <div className="mx-auto w-full max-w-[1100px]">
           <ScrollReveal>
-            <div
-              className={cn(
-                "flex flex-col gap-8",
-                coverSrc && "lg:grid lg:grid-cols-[minmax(0,1fr)_min(42%,440px)] lg:items-start lg:gap-10",
-              )}
-            >
-              <div className="flex min-w-0 flex-col">
-                <div className="flex flex-wrap items-center gap-3">
-                  <div className="inline-flex w-fit shrink-0 items-center gap-2 rounded-full bg-rellia-mint px-3 py-1.5">
-                    <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-rellia-teal" aria-hidden />
-                    <span className="font-host-grotesk text-[11px] font-semibold uppercase tracking-[0.14em] text-rellia-teal">
-                      {tag}
-                    </span>
-                  </div>
+            <div className="flex min-w-0 flex-col">
+              <div className="flex flex-wrap items-center gap-3">
+                <div className="inline-flex w-fit shrink-0 items-center gap-2 rounded-full bg-rellia-mint px-3 py-1.5">
+                  <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-rellia-teal" aria-hidden />
+                  <span className="font-host-grotesk text-[11px] font-semibold uppercase tracking-[0.14em] text-rellia-teal">
+                    {tag}
+                  </span>
                 </div>
-
-                <h1 className="mt-6 font-host-grotesk text-3xl font-medium leading-tight tracking-tight text-white md:text-4xl lg:text-5xl">
-                  {title}
-                </h1>
-                {excerpt ? (
-                  <p className="mt-4 max-w-3xl font-urbanist text-base font-normal leading-relaxed text-white/85 md:text-lg">
-                    {excerpt}
-                  </p>
-                ) : null}
-
-                <div className="h-8 md:h-10" aria-hidden />
-                {shareBlock}
               </div>
 
+              <h1 className="mt-6 font-host-grotesk text-3xl font-medium leading-tight tracking-tight text-white md:text-4xl lg:text-5xl">
+                {title}
+              </h1>
+              {excerpt ? (
+                <p className="mt-4 max-w-3xl font-urbanist text-base font-normal leading-relaxed text-white/85 md:text-lg">
+                  {excerpt}
+                </p>
+              ) : null}
+
               {coverSrc ? (
-                <figure className="relative aspect-[16/10] w-full shrink-0 overflow-hidden rounded-2xl border border-white/15 bg-black/20 shadow-[0_24px_56px_-28px_rgba(0,0,0,0.55)] lg:aspect-[4/3]">
+                <figure className="relative mt-8 aspect-[16/10] w-full overflow-hidden rounded-2xl border border-white/15 bg-black/20 shadow-[0_24px_56px_-28px_rgba(0,0,0,0.55)] md:mt-10">
                   <img
                     src={toAbsoluteImageUrl(coverSrc)}
                     alt={coverAlt}
@@ -81,6 +71,9 @@ export const StoryPostHero = ({
                   />
                 </figure>
               ) : null}
+
+              <div className="h-8 md:h-10" aria-hidden />
+              {shareBlock}
             </div>
           </ScrollReveal>
         </div>

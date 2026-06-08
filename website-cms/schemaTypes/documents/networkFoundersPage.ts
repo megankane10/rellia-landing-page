@@ -3,7 +3,6 @@ import {logoMarqueeField} from '../objects/logoMarqueeItem'
 import {
   CONTENT_SEO_FIELDSETS,
   CONTENT_SEO_GROUPS,
-  singletonSectionsField,
   singletonSeoField,
 } from '../shared/singletonContentFields'
 
@@ -21,7 +20,6 @@ export const networkFoundersPage = defineType({
       group: 'content',
     }),
     {...logoMarqueeField, group: 'content'},
-    singletonSectionsField,
     singletonSeoField,
   ],
 })
