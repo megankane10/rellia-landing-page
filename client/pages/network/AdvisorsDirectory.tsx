@@ -80,11 +80,11 @@ function AdvisorCard({
       tabIndex={0}
       aria-label={`Open profile for ${advisor.name}`}
     >
-      <div className="relative aspect-[4/5] w-full overflow-hidden bg-white border-b border-black/[0.05] shrink-0">
+      <div className="relative aspect-video w-full overflow-hidden bg-white border-b border-black/[0.05] shrink-0">
         <img
           src={advisor.photoSrc}
           alt=""
-          className="h-full w-full object-cover object-top transition duration-500 ease-out group-hover:scale-[1.03] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
+          className="absolute inset-x-0 top-0 h-[calc(100%/0.6)] w-full object-cover object-top transition duration-500 ease-out group-hover:scale-[1.03] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
           loading="lazy"
         />
         <DirectoryCardTags tags={cardTags} variant="onLight" />

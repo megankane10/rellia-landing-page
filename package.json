@@ -23,6 +23,8 @@
     "sanity:sync:investor-logos": "tsx scripts/sync-investor-logos.ts",
     "sanity:seed:settings": "tsx scripts/sanity-seed-settings.ts",
     "sanity:seed:starters": "tsx scripts/sanity-seed-starters.ts",
+    "sanity:seed:story-filters": "tsx scripts/sanity-seed-story-filters.ts",
+    "sanity:migrate:story-seo": "tsx scripts/sanity-migrate-story-seo.ts",
     "sanity:cleanup": "tsx scripts/sanity-cleanup.ts",
     "sanity:promote:dry": "tsx scripts/promote-preview-to-production.ts",
     "sanity:promote": "tsx scripts/promote-preview-to-production.ts",

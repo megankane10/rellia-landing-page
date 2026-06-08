@@ -48,6 +48,8 @@ import {
   DEFAULT_NETWORK_PARTNERS_PAGE,
 } from "../shared/cms/networkPageDefaults"
 import { threePartHeroHeadline } from "../shared/cms/inlineHeroHeadline"
+import { buildStoryFilterMutations, storyFilterIdForTag } from "../shared/cms/storyFilters"
+import { buildStorySeoFieldsPayload } from "../shared/cms/storySeo"
 import { legalSectionsToPortableText } from "../shared/cms/legal/sectionsToPortableText"
 import {
   TERMS_EFFECTIVE_DATE,
@@ -257,8 +259,6 @@ type PortableStoryNode =
       title?: string
       slides: Array<{ _type: "portableImageCarouselSlide"; _key: string; imageSrc?: string; alt: string; caption?: string }>
     }
-
-const storyFilterIdForTag = (tag: string): string => `storyFilter-${slugify(tag)}`
 
 const directoryFilterGroupId = (slug: string): string => `directoryFilterGroup-${slug}`
 
@@ -1514,23 +1514,8 @@ async function main() {
     },
   })
 
-  // Story filters (used by story documents)
-  const storyTagSet = new Set([WEBSITE_LAUNCH_STORY.tag])
-  Array.from(storyTagSet)
-    .sort((a, b) => a.localeCompare(b))
-    .forEach((tag, index) => {
-      const id = storyFilterIdForTag(tag)
-      mutations.push({
-        createOrReplace: {
-          _id: id,
-          _type: "storyFilter",
-          title: tag,
-          slug: { _type: "slug", current: slugify(tag) },
-          description: `Stories tagged as ${tag}.`,
-          order: index,
-        },
-      })
-    })
+  // Story filters (used by story documents) — seed all confirmed categories
+  mutations.push(...buildStoryFilterMutations())
 
   const websiteLaunchStoryFilterId = storyFilterIdForTag(WEBSITE_LAUNCH_STORY.tag)
   const websiteLaunchImageAssetId = await resolveStoryCoverImageAssetId(
@@ -1554,12 +1539,11 @@ async function main() {
       headerImageAlt: WEBSITE_LAUNCH_STORY.coverImageAlt,
       headerLayout: "block",
       body: createWebsiteLaunchStoryBody(ptBlock, bullet, block),
-      seo: {
-        metaTitle: WEBSITE_LAUNCH_STORY.seoTitle,
-        metaDescription: WEBSITE_LAUNCH_STORY.seoDescription,
-        ogTitle: WEBSITE_LAUNCH_STORY.seoTitle,
-        ogDescription: WEBSITE_LAUNCH_STORY.seoDescription,
-      },
+      seo: buildStorySeoFieldsPayload({
+        storyTitle: WEBSITE_LAUNCH_STORY.title,
+        tag: WEBSITE_LAUNCH_STORY.tag,
+        description: WEBSITE_LAUNCH_STORY.seoDescription,
+      }),
     },
   })
 

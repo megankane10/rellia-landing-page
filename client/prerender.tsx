@@ -25,6 +25,7 @@ import { FOUNDER_DIRECTORY } from "@/data/founderDirectory"
 import { AppRoutes, RouterShell } from "./AppRoutes"
 import { PageSeoProvider } from "@/context/PageSeoContext"
 import { DEFAULT_PROGRAMS_LANDING } from "@shared/cms/defaults"
+import { buildDefaultStorySeoTitle } from "@shared/cms/storySeo"
 import { findProgramsEventBySlug } from "@shared/cms/eventSlug"
 import {
   getProgramsEventDisplayDateTime,
@@ -196,6 +197,7 @@ const buildProgramSeo = (
 const buildStorySeo = (
   story: {
     title: string
+    tag?: string
     excerpt?: string
     coverImageSrc?: string
     seo?: {
@@ -212,7 +214,7 @@ const buildStorySeo = (
   const title = clampMetaTitle(
     seo?.metaTitle?.trim() ||
       seo?.ogTitle?.trim() ||
-      `${story.title} — Rellia Health`,
+      buildDefaultStorySeoTitle(story.title, story.tag),
   )
   const description = clampMetaDescription(
     seo?.metaDescription?.trim() ||
@@ -316,6 +318,7 @@ const resolveItemPrerenderSeo = async (
       return buildStorySeo(
         {
           title: cms.title,
+          tag: typeof cms.tag === "string" ? cms.tag : undefined,
           excerpt: typeof cms.excerpt === "string" ? cms.excerpt : undefined,
           coverImageSrc: typeof cms.coverImageSrc === "string" ? cms.coverImageSrc : undefined,
           seo: (cms as { seo?: Record<string, unknown> | null }).seo as
@@ -337,6 +340,7 @@ const resolveItemPrerenderSeo = async (
       return buildStorySeo(
         {
           title: local.title,
+          tag: local.tag,
           excerpt: local.excerpt,
           coverImageSrc: local.coverImageSrc,
         },

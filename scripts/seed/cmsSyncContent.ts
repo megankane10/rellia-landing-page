@@ -1037,7 +1037,7 @@ export const WEBSITE_LAUNCH_STORY = {
     "Explore clearer paths for founders—benchmark readiness, join programs, meet advisors, and stay close to what is happening across the Rellia community.",
   coverImageSrc: "/images/website-launch-cartoon.png",
   coverImageAlt: "Cartoon illustration of a laptop and website interfaces",
-  seoTitle: "Welcome to the new Rellia website",
+  seoTitle: "Welcome to the new Rellia website — Program Update",
   seoDescription:
     "Discover Rellia Health: startup diagnostic, structured programs, live events, and network paths built for health tech founders.",
   publishedAt: "2026-06-01",

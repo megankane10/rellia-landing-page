@@ -1,4 +1,6 @@
-export type StoryTag = "Founder Story" | "Industry Insight" | "Program Update"
+import type { StoryTag } from "@shared/cms/storyFilters"
+
+export type { StoryTag }
 
 export type StoryBodyBlock =
   | { type: "p"; text: string }

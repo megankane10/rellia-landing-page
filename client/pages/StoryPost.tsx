@@ -33,6 +33,7 @@ import {
 } from "@/components/share/sharePageIcons"
 import { buildMailtoHref } from "@/lib/mailto"
 import { DEFAULT_GLOBAL_SETTINGS } from "@shared/cms/defaults"
+import { buildDefaultStorySeoTitle } from "@shared/cms/storySeo"
 import { StoryPostHero } from "@/components/StoryPostHero"
 import { RichTextQuoteFigure } from "@/components/RichTextQuoteFigure"
 import ImageExpandModal from "@/components/ImageExpandModal"
@@ -57,9 +58,9 @@ export default function StoryPost() {
     cmsStory?.seo?.ogTitle?.trim() ||
     story?.seoTitle ||
     (cmsStory?.title
-      ? `${cmsStory.title} — Rellia Health`
+      ? buildDefaultStorySeoTitle(cmsStory.title, cmsStory.tag)
       : story
-        ? `${story.title} — Rellia Health`
+        ? buildDefaultStorySeoTitle(story.title, story.tag)
         : "Stories — Rellia Health")
 
   const descriptionSource =
