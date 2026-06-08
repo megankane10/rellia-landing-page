@@ -25,6 +25,7 @@ import ImageExpandModal from "@/components/ImageExpandModal";
 import { PortableRichText } from "@/components/PortableRichText";
 import { normalizeToPortableText } from "@shared/cms/normalizePortableText";
 import type { SanityPortableText } from "@shared/cms/types";
+import { resolveAdvisorPrimaryTag } from "@/lib/resolveAdvisorPrimaryTag";
 
 export default function AdvisorProfile() {
   const { id } = useParams<{ id: string }>();
@@ -79,6 +80,8 @@ export default function AdvisorProfile() {
       ? normalizeToPortableText(active.bio)
       : null;
 
+  const primaryTag = resolveAdvisorPrimaryTag(active);
+
   return (
     <div className="min-h-screen overflow-x-hidden bg-white font-host-grotesk">
       <PageSocialHelmet
@@ -129,19 +132,13 @@ export default function AdvisorProfile() {
                   {active.role}
                 </p>
 
-                <div className="flex flex-wrap gap-2 mb-6">
-                  <span className="inline-flex rounded-full border border-rellia-teal/20 bg-rellia-mint/20 px-3 py-1 font-urbanist text-xs font-semibold text-rellia-teal">
-                    {active.filter}
-                  </span>
-                  {active.industries.map((tag) => (
-                    <span
-                      key={tag}
-                      className="inline-flex rounded-full border border-black/10 bg-black/[0.03] px-3 py-1 font-urbanist text-xs font-semibold text-black/70"
-                    >
-                      {tag}
+                {primaryTag ? (
+                  <div className="flex flex-wrap gap-2 mb-6">
+                    <span className="inline-flex rounded-full border border-rellia-teal/20 bg-rellia-mint/20 px-3 py-1 font-urbanist text-xs font-semibold text-rellia-teal">
+                      {primaryTag}
                     </span>
-                  ))}
-                </div>
+                  </div>
+                ) : null}
 
                 <div className="space-y-4">
                   {active.country && (
@@ -197,12 +194,14 @@ export default function AdvisorProfile() {
             <div className="min-w-0 space-y-10 pb-8 prose prose-lg max-w-none prose-headings:font-host-grotesk prose-headings:text-black prose-p:font-urbanist prose-p:text-black/80 prose-p:leading-relaxed prose-li:font-urbanist prose-li:text-black/80">
               {snapshotText ? (
                 <section className="not-prose">
-                  <h3 className="mb-3 font-host-grotesk text-2xl font-semibold text-black">
-                    Snapshot
-                  </h3>
-                  <p className="font-urbanist text-base leading-relaxed text-rellia-teal md:text-lg">
-                    {snapshotText}
-                  </p>
+                  <div className="rounded-2xl border border-black/5 bg-rellia-cream/35 px-5 py-6">
+                    <h3 className="mb-2 font-host-grotesk text-sm font-semibold uppercase tracking-[0.12em] text-rellia-teal">
+                      Snapshot
+                    </h3>
+                    <p className="font-urbanist text-base leading-relaxed text-black/80 md:text-lg">
+                      {snapshotText}
+                    </p>
+                  </div>
                 </section>
               ) : null}
 
@@ -214,20 +213,6 @@ export default function AdvisorProfile() {
                   <PortableRichText value={bioPortable} />
                 </section>
               ) : null}
-
-              <section>
-                <h3 className="mb-3 text-2xl font-semibold">How they mentor</h3>
-                <p>{active.mentoringStyle}</p>
-              </section>
-
-              <section>
-                <h3 className="mb-3 text-2xl font-semibold">Highlights</h3>
-                <ul className="list-disc pl-5">
-                  {active.highlights.map((line) => (
-                    <li key={line.slice(0, 40)}>{line}</li>
-                  ))}
-                </ul>
-              </section>
             </div>
           </article>
 

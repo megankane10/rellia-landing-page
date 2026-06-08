@@ -47,6 +47,9 @@ import {
 import { useNetworkFoundersPage } from "@/hooks/useCmsDocuments";
 import { PORTFOLIO_LOGO_MARKS } from "@/data/portfolioLogos";
 import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo";
+import { mergeNetworkFoundersPage } from "@shared/cms/networkPageDefaults";
+import type { NetworkFoundersPageContent } from "@shared/cms/types";
+import { resolveNetworkIcon } from "@/lib/resolveNetworkIcon";
 import WhyRellia from "@/components/WhyRellia";
 
 const HERO_FALLBACK = "/images/founders.jpg";
@@ -248,7 +251,7 @@ const CONSULTING_FEATURES = [
   },
 ] as const;
 
-function DeeperHelpValuesSection() {
+function DeeperHelpValuesSection({ content }: { content: NetworkFoundersPageContent }) {
   const sectionRef = useRef<HTMLElement | null>(null);
   const reduceMotion = useReducedMotion();
   const [isMobile, setIsMobile] = useState(true);
@@ -300,11 +303,11 @@ function DeeperHelpValuesSection() {
                     PAGE_HEADER_TITLE_SIZE_CLASS,
                   )}
                 >
-                  Need deeper help?
+                  {content.deeperHelpTitle ?? "Need deeper help?"}
                 </h2>
                 <p className="mt-5 max-w-2xl font-urbanist text-lg leading-relaxed text-white/80 md:text-xl">
-                  Scoped working sessions beyond community rhythm—clear
-                  deliverables for the milestone you&apos;re staring down.
+                  {content.deeperHelpSubtitle ??
+                    "Scoped working sessions beyond community rhythm—clear deliverables for the milestone you're staring down."}
                 </p>
                 <RelliaAction
                   asChild
@@ -313,11 +316,11 @@ function DeeperHelpValuesSection() {
                   className="mt-8"
                 >
                   <Link
-                    to="/consulting"
+                    to={content.deeperHelpCtaHref ?? "/consulting"}
                     className="inline-flex cursor-pointer items-center gap-2"
                     aria-label="Explore consulting"
                   >
-                    Explore consulting
+                    {content.deeperHelpCtaLabel ?? "Explore consulting"}
                     <ArrowRight className="h-4 w-4" aria-hidden />
                   </Link>
                 </RelliaAction>
@@ -327,8 +330,15 @@ function DeeperHelpValuesSection() {
             <div className="mt-12 sm:mt-[4.8rem] md:mt-[7.2rem] lg:mt-[8.4rem] lg:flex lg:flex-1 lg:items-center">
               <div className="w-full">
                 <div className="grid grid-cols-1 items-stretch gap-3 sm:grid-cols-2 sm:gap-4 md:gap-5 lg:grid-cols-3 xl:grid-cols-4">
-                  {CONSULTING_FEATURES.map((v, i) => {
-                    const Icon = v.icon;
+                  {(content.deeperHelpFeatures?.length
+                    ? content.deeperHelpFeatures
+                    : CONSULTING_FEATURES.map((v, index) => ({
+                        title: v.title,
+                        body: v.body,
+                        iconKey: ["CheckCircle2", "BookOpen", "Users", "UserPlus"][index],
+                      }))
+                  ).map((v, i) => {
+                    const Icon = resolveNetworkIcon(v.iconKey, CheckCircle2)
                     return (
                       <ScrollReveal
                         key={v.title}
@@ -365,8 +375,8 @@ function DeeperHelpValuesSection() {
   );
 }
 
-function FoundersHero() {
-  const heroSrc = HERO_FALLBACK;
+function FoundersHero({ content }: { content: NetworkFoundersPageContent }) {
+  const heroSrc = content.heroImageSrc ?? HERO_FALLBACK;
 
   return (
     <section className="relative overflow-hidden bg-rellia-teal pt-[72px] md:pt-[86px] lg:flex lg:flex-1 lg:flex-col lg:min-h-0 lg:pt-[96px]">
@@ -393,7 +403,7 @@ function FoundersHero() {
       <div className="relative z-10 mx-auto max-w-[1300px] px-6 pb-20 pt-10 md:px-10 md:pb-28 md:pt-14 lg:flex lg:flex-1 lg:flex-col lg:justify-center lg:pb-20 lg:pt-0">
         <Reveal className="flex flex-col items-start text-left">
           <NetworkEyebrow
-            label="Founders"
+            label={content.heroEyebrow ?? "Founders"}
             tone="onDark"
             className="mb-6 md:mb-8"
           />
@@ -403,12 +413,12 @@ function FoundersHero() {
               PAGE_HEADER_TITLE_SIZE_CLASS,
             )}
           >
-            Are you building in{" "}
-            <span className="text-rellia-mint">health tech?</span>
+            {content.heroTitle ?? "Are you building in"}{" "}
+            <span className="text-rellia-mint">{content.heroAccentPhrase ?? "health tech?"}</span>
           </h1>
           <p className="mt-6 max-w-2xl font-urbanist text-lg leading-relaxed text-white md:text-xl [&_span]:!text-white [&_strong]:!text-white">
-            You&apos;re building something that can change healthcare. We bring
-            the experts, programs, and connections to help you get there.
+            {content.heroSubtitle ??
+              "You're building something that can change healthcare. We bring the experts, programs, and connections to help you get there."}
           </p>
           <div className="mt-10 flex w-full flex-col gap-3 sm:flex-row sm:flex-wrap">
             <RelliaAction
@@ -418,11 +428,11 @@ function FoundersHero() {
               className="w-full min-w-0 justify-center sm:min-w-[220px] sm:w-auto"
             >
               <Link
-                to="/apply"
+                to={content.heroPrimaryCtaHref ?? "/apply"}
                 className="inline-flex w-full cursor-pointer items-center justify-center gap-2 sm:w-auto"
                 aria-label="Apply to join Rellia"
               >
-                Apply to join
+                {content.heroPrimaryCtaLabel ?? "Apply to join"}
                 <ArrowRight className="h-4 w-4" aria-hidden />
               </Link>
             </RelliaAction>
@@ -433,11 +443,11 @@ function FoundersHero() {
               className="w-full min-w-0 justify-center border-white/45 hover:border-white/70 sm:min-w-[220px] sm:w-auto"
             >
               <Link
-                to="/founders/alumni"
+                to={content.heroSecondaryCtaHref ?? "/founders/alumni"}
                 className="inline-flex w-full cursor-pointer items-center justify-center gap-2 sm:w-auto"
                 aria-label="Explore alumni directory"
               >
-                Explore Alumni
+                {content.heroSecondaryCtaLabel ?? "Explore Alumni"}
                 <ArrowRight className="h-4 w-4" aria-hidden />
               </Link>
             </RelliaAction>
@@ -448,7 +458,7 @@ function FoundersHero() {
   );
 }
 
-type EligibilityBentoItem = (typeof ELIGIBILITY_BENTO_ITEMS)[number];
+type EligibilityBentoItem = { text: string; fallbackUrl: string };
 
 const EligibilityBentoCard = ({
   item,
@@ -491,19 +501,32 @@ const EligibilityBentoCard = ({
   );
 };
 
-function EligibilitySection() {
+function EligibilitySection({ content }: { content: NetworkFoundersPageContent }) {
+  const items: EligibilityBentoItem[] = content.eligibilityItems?.length
+    ? content.eligibilityItems.map((item) => ({
+        text: item.text,
+        fallbackUrl: item.imageUrl ?? "",
+      }))
+    : ELIGIBILITY_BENTO_ITEMS.map((item) => ({
+        text: item.text,
+        fallbackUrl: item.fallbackUrl,
+      }))
+
   return (
     <section className="w-full bg-white px-6 py-16 md:px-10 md:py-24">
       <div className="mx-auto max-w-[1300px]">
         <SectionHeading
           animated={false}
-          title="Built for serious health tech teams"
-          description="Rellia works with companies where healthcare complexity is core to the product—evidence, regulation, workflow, and traction at once."
+          title={content.eligibilityTitle ?? "Built for serious health tech teams"}
+          description={
+            content.eligibilityDescription ??
+            "Rellia works with companies where healthcare complexity is core to the product—evidence, regulation, workflow, and traction at once."
+          }
           className="mt-5 max-w-full [&>p]:max-w-full [&>p]:text-left [&>p]:leading-relaxed"
         />
 
         <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:mt-14 lg:grid-cols-4">
-          {ELIGIBILITY_BENTO_ITEMS.map((item) => (
+          {items.map((item) => (
             <EligibilityBentoCard key={item.text} item={item} />
           ))}
         </div>
@@ -513,7 +536,18 @@ function EligibilitySection() {
 }
 
 /** Visual shell aligned with homepage {@link HowItWorks} — white background, elegant light cards */
-function EngageTealBand() {
+function EngageTealBand({ content }: { content: NetworkFoundersPageContent }) {
+  const cards =
+    content.engageItems?.length ?
+      content.engageItems
+    : ENGAGEMENT.map((item, index) => ({
+        title: item.title,
+        body: item.body,
+        href: item.to,
+        linkLabel: "Continue",
+        iconKey: ["UserPlus", "BookOpen", "Video", "Mail"][index] ?? "ArrowRight",
+      }))
+
   return (
     <section className="relative w-full overflow-hidden bg-white px-6 py-16 md:px-10 md:py-24">
       <img
@@ -533,23 +567,23 @@ function EngageTealBand() {
         <ScrollReveal>
           <div className="mb-8 md:mb-10">
             <h2 className="mt-5 font-host-grotesk text-2xl font-semibold leading-tight tracking-tight text-rellia-teal md:text-[32px]">
-              How to plug in this week
+              {content.engageTitle ?? "How to plug in this week"}
             </h2>
             <p className="mt-4 max-w-2xl font-urbanist text-base font-medium leading-relaxed text-black/80 md:text-lg">
-              Every path reconnects to the same high-trust network—pick what
-              fits your sprint.
+              {content.engageSubtitle ??
+                "Every path reconnects to the same high-trust network—pick what fits your sprint."}
             </p>
           </div>
         </ScrollReveal>
 
         <ScrollReveal delay={0.12}>
           <div className="mt-16 grid grid-cols-1 gap-7 md:mt-20 md:grid-cols-2 lg:mt-24 lg:grid-cols-4 lg:gap-6">
-            {ENGAGEMENT.map((item) => {
-              const Icon = item.icon;
+            {cards.map((item) => {
+              const Icon = resolveNetworkIcon(item.iconKey, UserPlus);
               return (
                 <Link
                   key={item.title}
-                  to={item.to}
+                  to={item.href ?? "/apply"}
                   className="group flex h-full min-h-[168px] flex-col rounded-2xl border border-black/10 bg-gradient-to-br from-rellia-teal to-[#144853] p-5 transition duration-300 hover:from-[#113f4a] hover:to-[#0f3842] hover:shadow-md cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-teal focus-visible:ring-offset-2 focus-visible:ring-offset-white sm:min-h-[184px] sm:p-6 items-start"
                 >
                   <Icon
@@ -563,7 +597,7 @@ function EngageTealBand() {
                     {item.body}
                   </p>
                   <span className="mt-4 inline-flex items-center gap-1 font-urbanist text-sm font-semibold text-rellia-mint">
-                    Continue
+                    {item.linkLabel ?? "Continue"}
                     <ArrowRight
                       className="h-4 w-4 transition-transform group-hover:translate-x-0.5"
                       aria-hidden
@@ -579,18 +613,25 @@ function EngageTealBand() {
   );
 }
 
-function MembershipDifferentSection() {
-  const whyFeatures = MEMBERSHIP_VALUE_PROPS.map((prop) => ({
+function MembershipDifferentSection({ content }: { content: NetworkFoundersPageContent }) {
+  const whyFeatures = content.whyFeatures?.length
+    ? content.whyFeatures
+    : MEMBERSHIP_VALUE_PROPS.map((prop) => ({ title: prop.title, body: prop.body }))
+
+  const features = whyFeatures.map((prop) => ({
     title: prop.title,
-    description: prop.body,
+    description: prop.body ?? "",
     iconKey: "",
-  }));
+  }))
 
   return (
     <WhyRellia
-      sectionTitle="What makes Rellia membership different"
-      sectionDescription="Operator-led support in a community where quality is defended by application review—not open signup churn."
-      features={whyFeatures}
+      sectionTitle={content.whyTitle ?? "What makes Rellia membership different"}
+      sectionDescription={
+        content.whyDescription ??
+        "Operator-led support in a community where quality is defended by application review—not open signup churn."
+      }
+      features={features}
       cardImages={[
         "https://images.pexels.com/photos/5668858/pexels-photo-5668858.jpeg?auto=compress&cs=tinysrgb&w=1200", // intros (handshake/introduction)
         "https://images.pexels.com/photos/3184296/pexels-photo-3184296.jpeg?auto=compress&cs=tinysrgb&w=1200", // slack (collaborating on computer/chat)
@@ -602,9 +643,10 @@ function MembershipDifferentSection() {
   );
 }
 
-function JourneySplitSection() {
-  const relliaSteps = JOURNEY_TIMELINE.filter((s) => s.zone === "rellia");
-  const outsideSteps = JOURNEY_TIMELINE.filter((s) => s.zone === "outside");
+function JourneySplitSection({ content }: { content: NetworkFoundersPageContent }) {
+  const timeline = content.journeySteps?.length ? content.journeySteps : JOURNEY_TIMELINE
+  const relliaSteps = timeline.filter((s) => s.zone === "rellia");
+  const outsideSteps = timeline.filter((s) => s.zone === "outside");
 
   const journeyIconById = {
     idea: Lightbulb,
@@ -631,7 +673,7 @@ function JourneySplitSection() {
       <div className="mx-auto max-w-[1300px]">
         <ScrollReveal variant="ctaReveal">
           <h2 className="w-full font-host-grotesk text-2xl font-semibold leading-tight tracking-tight text-rellia-teal md:text-[32px]">
-            Where Rellia meets your trajectory
+            {content.journeyTitle ?? "Where Rellia meets your trajectory"}
           </h2>
         </ScrollReveal>
 
@@ -641,15 +683,15 @@ function JourneySplitSection() {
               You own
             </span>
             <p className="max-w-2xl font-urbanist text-base font-normal leading-relaxed tracking-tight text-rellia-teal md:text-lg md:text-right">
-              We help you execute in healthcare complexity once you have
-              direction—without replacing early discovery.
+              {content.journeySubtitle ??
+                "We help you execute in healthcare complexity once you have direction—without replacing early discovery."}
             </p>
           </div>
         </ScrollReveal>
 
         <div className="mt-6 grid w-full grid-cols-1 items-center gap-4 md:grid-cols-3">
           {outsideSteps.map((m, idx) => {
-            const Icon = journeyIconById[m.id];
+            const Icon = journeyIconById[m.id as keyof typeof journeyIconById] ?? Lightbulb;
             return (
               <ScrollReveal
                 key={m.id}
@@ -709,7 +751,7 @@ function JourneySplitSection() {
 
         <div className="mt-6 grid w-full grid-cols-1 items-stretch gap-4 sm:grid-cols-2 md:grid-cols-4">
           {relliaSteps.map((m, idx) => {
-            const Icon = journeyIconById[m.id];
+            const Icon = journeyIconById[m.id as keyof typeof journeyIconById] ?? Lightbulb;
             const isLast = idx === relliaSteps.length - 1;
             return (
               <ScrollReveal
@@ -745,34 +787,49 @@ function JourneySplitSection() {
   );
 }
 
-function ExploreNetworkSection() {
+function ExploreNetworkSection({ content }: { content: NetworkFoundersPageContent }) {
+  const cards = content.exploreCards?.length
+    ? content.exploreCards.map((card, index) => ({
+        roleId: (index === 0 ? "founder" : "advisor") as "founder" | "advisor",
+        title: card.title,
+        to: card.ctaHref ?? (index === 0 ? "/founders/alumni" : "/advisors/directory"),
+        imageSrc: card.imageUrl ?? (index === 0 ? "/images/founders-header.jpg" : "/images/paths-advisor-pexels.jpg"),
+        badge: card.badge,
+      }))
+    : [
+        {
+          roleId: "founder" as const,
+          title: "See our alumni portfolio",
+          to: "/founders/alumni",
+          imageSrc: "/images/founders-header.jpg",
+          badge: "Alumni",
+        },
+        {
+          roleId: "advisor" as const,
+          title: "Find the operators you want",
+          to: "/advisors/directory",
+          imageSrc: "/images/paths-advisor-pexels.jpg",
+          badge: "Advisors",
+        },
+      ]
+
   return (
     <section className="w-full bg-white px-6 py-16 md:px-10 md:py-24">
       <div className="mx-auto max-w-[1300px]">
         <ScrollReveal>
           <SectionHeading
             animated={false}
-            title="Explore the network"
-            description="Browse alumni and advisors—then apply when you want curated intros and the right programming for your stage."
+            title={content.exploreTitle ?? "Explore the network"}
+            description={
+              content.exploreSubtitle ??
+              "Browse alumni and advisors—then apply when you want curated intros and the right programming for your stage."
+            }
             className="mt-5"
           />
         </ScrollReveal>
 
         <div className="mt-14 grid grid-cols-1 gap-6 md:mt-16 md:grid-cols-2 md:gap-7">
-          {[
-            {
-              roleId: "founder" as const,
-              title: "See our alumni portfolio",
-              to: "/founders/alumni",
-              imageSrc: "/images/founders-header.jpg",
-            },
-            {
-              roleId: "advisor" as const,
-              title: "Find the operators you want",
-              to: "/advisors/directory",
-              imageSrc: "/images/paths-advisor-pexels.jpg",
-            },
-          ].map((card, idx) => {
+          {cards.map((card, idx) => {
             const tag = NETWORK_PATH_ROLE_TAG[card.roleId];
             const TagIcon = tag.icon;
             return (
@@ -791,7 +848,7 @@ function ExploreNetworkSection() {
                     />
                     <div className={cn("absolute right-4 top-4 inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-white/90", PILL_ON_IMAGE_BLUR_CLASS)}>
                       <TagIcon className="h-3.5 w-3.5 shrink-0" aria-hidden />
-                      {card.roleId === "founder" ? "Alumni" : tag.label}
+                      {card.badge ?? (card.roleId === "founder" ? "Alumni" : tag.label)}
                     </div>
 
                     <div className="absolute inset-x-0 bottom-0 p-5 sm:p-6 md:p-8">
@@ -830,8 +887,10 @@ export default function Founders() {
   const { data: page } = foundersPageQuery;
   useApplyCmsSeo(page?.seo);
 
+  const content = useMemo(() => mergeNetworkFoundersPage(page), [page]);
+
   const logoMarks = useMemo(() => {
-    const fromCms = (page?.logoMarquee ?? [])
+    const fromCms = (content.logoMarquee ?? [])
       .map((entry) => ({
         name: typeof entry?.name === "string" ? entry.name.trim() : "",
         src: typeof entry?.src === "string" ? entry.src.trim() : "",
@@ -839,7 +898,7 @@ export default function Founders() {
       .filter((entry) => entry.name && entry.src);
     if (fromCms.length > 0) return fromCms;
     return [...PORTFOLIO_LOGO_MARKS];
-  }, [page?.logoMarquee]);
+  }, [content.logoMarquee]);
 
   return (
     <div className="min-h-screen overflow-x-hidden bg-white font-host-grotesk">
@@ -847,7 +906,7 @@ export default function Founders() {
 
         <main id="main-content">
           <div className="lg:flex lg:min-h-screen lg:flex-col">
-            <FoundersHero />
+            <FoundersHero content={content} />
             <LogoMarquee
               showHeading={false}
               density="compact"
@@ -855,9 +914,9 @@ export default function Founders() {
               sectionClassName="border-b border-black/[0.06] bg-white py-6 md:py-8 lg:flex lg:h-[18vh] lg:min-h-[140px] lg:items-center lg:py-0"
             />
           </div>
-          <EligibilitySection />
-          <EngageTealBand />
-          <MembershipDifferentSection />
+          <EligibilitySection content={content} />
+          <EngageTealBand content={content} />
+          <MembershipDifferentSection content={content} />
 
           <MembershipPathTimeline
             showRoleLinks={false}
@@ -867,17 +926,20 @@ export default function Founders() {
             className="border-t border-black/10"
           />
 
-          <JourneySplitSection />
+          <JourneySplitSection content={content} />
 
-          <ExploreNetworkSection />
-          <DeeperHelpValuesSection />
+          <ExploreNetworkSection content={content} />
+          <DeeperHelpValuesSection content={content} />
 
           <RelliaCta
             aboveSectionTone="white"
-            title="Ready to join?"
-            body="Apply once—we'll follow up with fit, onboarding, and the fastest path into programs and intros."
-            primary={{ label: "Apply to join", to: "/apply" }}
-            secondary={{ label: "View programs", to: "/programs" }}
+            title={content.ctaTitle ?? "Ready to join?"}
+            body={
+              content.ctaBody ??
+              "Apply once—we'll follow up with fit, onboarding, and the fastest path into programs and intros."
+            }
+            primary={{ label: content.ctaPrimaryLabel ?? "Apply to join", to: content.ctaPrimaryHref ?? "/apply" }}
+            secondary={{ label: content.ctaSecondaryLabel ?? "View programs", to: content.ctaSecondaryHref ?? "/programs" }}
           />
         </main>
 

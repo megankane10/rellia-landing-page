@@ -1,5 +1,5 @@
+import { useEffect, useMemo, useState } from "react"
 import type { ReactNode } from "react"
-import { useEffect, useMemo, useRef, useState } from "react"
 import { PEXELS_OFFICE_COLLABORATION } from "@/config/pexelsFallbacks"
 import PageHeader from "@/components/PageHeader"
 import SectionHeading from "@/components/SectionHeading"
@@ -28,7 +28,8 @@ import { CreamSection, GlassCard, GlassCardLight, LightSection, Reveal, RoleHero
 import { cn } from "@/lib/utils"
 import { useNetworkInvestorsPage } from "@/hooks/useCmsDocuments"
 import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo"
-import type { ClusterChart, CmsSingletonPageContent } from "@shared/cms/types"
+import { mergeNetworkInvestorsPage } from "@shared/cms/networkPageDefaults"
+import type { ClusterChart, NetworkInvestorsPageContent } from "@shared/cms/types"
 
 const COLORS = {
   blue: "#2563eb",
@@ -333,7 +334,7 @@ function FoundersClusterSection({
   )
 }
 
-function buildInvestorCharts(page: CmsSingletonPageContent | null | undefined, colorPalette: string[]) {
+function buildInvestorCharts(page: NetworkInvestorsPageContent | null | undefined, colorPalette: string[]) {
   if (Array.isArray(page?.foundersCluster) && page.foundersCluster.length > 0) {
     return page.foundersCluster.map((chart: ClusterChart) => {
       const segments = (chart.segments ?? []).map((seg, idx) => ({
@@ -371,11 +372,12 @@ export default function Investors() {
   const investorsPageQuery = useNetworkInvestorsPage()
   const { data: page } = investorsPageQuery
   useApplyCmsSeo(page?.seo)
+  const content = mergeNetworkInvestorsPage(page)
 
   const [showNotifyForm, setShowNotifyForm] = useState(false)
 
   const logoMarks = useMemo(() => {
-    const fromCms = (page?.logoMarquee ?? [])
+    const fromCms = (content.logoMarquee ?? [])
       .map((entry) => ({
         name: typeof entry?.name === "string" ? entry.name.trim() : "",
         src: typeof entry?.src === "string" ? entry.src.trim() : "",
@@ -390,7 +392,7 @@ export default function Investors() {
       })
     if (fromCms.length > 0) return fromCms
     return [...INVESTOR_LOGO_MARKS]
-  }, [page?.logoMarquee])
+  }, [content.logoMarquee])
 
   const COLOR_PALETTE = useMemo(
     () => [
@@ -406,12 +408,22 @@ export default function Investors() {
   )
 
   const charts = useMemo(
-    () => buildInvestorCharts(page, COLOR_PALETTE),
-    [page?.foundersCluster, COLOR_PALETTE],
+    () => buildInvestorCharts(content, COLOR_PALETTE),
+    [content?.foundersCluster, COLOR_PALETTE],
   )
 
-  const hasCmsClusterData =
-    Array.isArray(page?.foundersCluster) && page.foundersCluster.length > 0
+  const pitchCards = content.pitchCards?.length ? content.pitchCards : [
+    {
+      title: "Individual pitch session",
+      body: "A virtual session scoped to your thesis—dig into workflow, reimbursement, or regulatory edge cases without competing noise.",
+      imageUrl: "/images/whyrellia-founders.jpg",
+    },
+    {
+      title: "Group pitch event",
+      body: "See multiple teams with standardized milestones—ideal for pattern recognition and efficient filtering before deeper diligence.",
+      imageUrl: "/images/whyrellia-network-2.jpg",
+    },
+  ]
 
   return (
     <div className="min-h-screen overflow-x-hidden bg-white font-host-grotesk flex flex-col">
@@ -430,25 +442,32 @@ export default function Investors() {
               <div className="lg:flex lg:h-[82vh] lg:flex-col">
                 <RoleHero
                   roleId="investor"
-                  imageSrc="/images/investors.jpg"
+                  imageSrc={content.heroImageSrc ?? "/images/investors.jpg"}
                   className="lg:flex-1"
                   title={
                     <>
-                      Stop sorting through <span className="text-rellia-mint">cold pitch decks.</span>
+                      {content.heroTitle ?? "Stop sorting through"}{" "}
+                      <span className="text-rellia-mint">{content.heroAccentPhrase ?? "cold pitch decks."}</span>
                     </>
                   }
-                  subtitle="Meet Rellia-backed teams with sharper milestones—clinical, regulatory, and commercial—before the usual diligence scramble."
-                  primaryCta={{ label: "Get notified" }}
+                  subtitle={content.heroSubtitle ?? "Meet Rellia-backed teams with sharper milestones—clinical, regulatory, and commercial—before the usual diligence scramble."}
+                  primaryCta={{ label: content.heroPrimaryCtaLabel ?? "Get notified" }}
                   onPrimaryClick={() => setShowNotifyForm(true)}
                 />
               </div>
 
               <WhyRellia
-                sectionTitle="Benefits of investing alongside Rellia"
-                sectionDescription="We shorten the distance between credible narrative and reality checks from people who have scaled in healthcare."
-                features={INVESTOR_BENEFITS.map((b) => ({
+                sectionTitle={content.whyTitle ?? "Benefits of investing alongside Rellia"}
+                sectionDescription={
+                  content.whyDescription ??
+                  "We shorten the distance between credible narrative and reality checks from people who have scaled in healthcare."
+                }
+                features={(content.whyFeatures?.length ? content.whyFeatures : INVESTOR_BENEFITS.map((b) => ({
                   title: b.title,
-                  description: b.body,
+                  body: b.body,
+                }))).map((b) => ({
+                  title: b.title,
+                  description: b.body ?? "",
                   iconKey: "",
                 }))}
                 cardImages={[
@@ -470,47 +489,33 @@ export default function Investors() {
                 <div className="relative mx-auto max-w-[1300px] overflow-hidden rounded-b-[2.5rem] md:rounded-b-[3.5rem] pb-16 md:pb-20">
                   <ScrollReveal>
                     <h2 className="mt-5 font-host-grotesk text-2xl font-semibold leading-tight tracking-tight text-rellia-mint md:text-[32px]">
-                      Exclusive connections and pitch events
+                      {content.pitchTitle ?? "Exclusive connections and pitch events"}
                     </h2>
                     <p className="mt-6 max-w-2xl font-urbanist text-lg leading-relaxed text-white/80">
-                      Host a focused virtual session aligned to your mandate—or join a larger showcase to compare teams alongside fellow investors.
+                      {content.pitchSubtitle ??
+                        "Host a focused virtual session aligned to your mandate—or join a larger showcase to compare teams alongside fellow investors."}
                     </p>
                   </ScrollReveal>
                   <div className="mt-8 md:mt-12 grid grid-cols-1 gap-8 md:grid-cols-2">
-                    <Reveal delay={0.06}>
-                      <div className="group relative overflow-hidden rounded-[24px] border border-white/10 shadow-sm transition-[transform,box-shadow] duration-300 hover:-translate-y-[1px] hover:shadow-md h-[400px] md:h-[480px]">
-                        <img
-                          src="/images/whyrellia-founders.jpg"
-                          alt="Individual pitch session"
-                          className="absolute inset-0 h-full w-full object-cover transition duration-500 ease-out group-hover:scale-[1.03]"
-                          loading="lazy"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent pointer-events-none" />
-                        <div className="absolute inset-0 p-8 flex flex-col justify-end">
-                          <h3 className="font-host-grotesk text-2xl font-semibold text-white drop-shadow-sm">Individual pitch session</h3>
-                          <p className="mt-4 font-urbanist leading-relaxed text-white/90 text-lg">
-                            A virtual session scoped to your thesis—dig into workflow, reimbursement, or regulatory edge cases without competing noise.
-                          </p>
+                    {pitchCards.map((card, cardIndex) => (
+                      <Reveal key={card.title} delay={cardIndex === 0 ? 0.06 : 0.1}>
+                        <div className="group relative overflow-hidden rounded-[24px] border border-white/10 shadow-sm transition-[transform,box-shadow] duration-300 hover:-translate-y-[1px] hover:shadow-md h-[400px] md:h-[480px]">
+                          <img
+                            src={card.imageUrl ?? "/images/whyrellia-founders.jpg"}
+                            alt={card.title}
+                            className="absolute inset-0 h-full w-full object-cover transition duration-500 ease-out group-hover:scale-[1.03]"
+                            loading="lazy"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent pointer-events-none" />
+                          <div className="absolute inset-0 p-8 flex flex-col justify-end">
+                            <h3 className="font-host-grotesk text-2xl font-semibold text-white drop-shadow-sm">{card.title}</h3>
+                            <p className="mt-4 font-urbanist leading-relaxed text-white/90 text-lg">
+                              {card.body}
+                            </p>
+                          </div>
                         </div>
-                      </div>
-                    </Reveal>
-                    <Reveal delay={0.1}>
-                      <div className="group relative overflow-hidden rounded-[24px] border border-white/10 shadow-sm transition-[transform,box-shadow] duration-300 hover:-translate-y-[1px] hover:shadow-md h-[400px] md:h-[480px]">
-                        <img
-                          src="/images/whyrellia-network-2.jpg"
-                          alt="Group pitch event"
-                          className="absolute inset-0 h-full w-full object-cover transition duration-500 ease-out group-hover:scale-[1.03]"
-                          loading="lazy"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent pointer-events-none" />
-                        <div className="absolute inset-0 p-8 flex flex-col justify-end">
-                          <h3 className="font-host-grotesk text-2xl font-semibold text-white drop-shadow-sm">Group pitch event</h3>
-                          <p className="mt-4 font-urbanist leading-relaxed text-white/90 text-lg">
-                            See multiple teams with standardized milestones—ideal for pattern recognition and efficient filtering before deeper diligence.
-                          </p>
-                        </div>
-                      </div>
-                    </Reveal>
+                      </Reveal>
+                    ))}
                   </div>
                 </div>
               </section>

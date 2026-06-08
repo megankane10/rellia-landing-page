@@ -1,11 +1,9 @@
 /**
  * Seeds advisor-related data to Sanity:
- *   - advisorFilter documents (one per specialty tag)
- *   - directoryFilterGroup "Expertise" (powers the directory dropdown)
- *   - advisor documents (from ADVISOR_DIRECTORY_SEED)
+ *   - directoryFilterGroup "Country" (shared) and "Expertise"
+ *   - advisor documents (from ADVISOR_DIRECTORY_SEED + dummy showcase)
  *
  * Safe to run repeatedly — uses createOrReplace so it's fully idempotent.
- * Does NOT touch pages, navigation, programs, or any other CMS content.
  *
  * Requires: SANITY_API_WRITE_TOKEN (Editor token)
  * Optional: SANITY_API_PROJECT_ID (defaults to ggbt0o98)
@@ -17,6 +15,10 @@
 import { createClient } from "@sanity/client"
 import "./loadEnv"
 import { ADVISOR_DIRECTORY_SEED, ADVISOR_FILTER_OPTIONS } from "../client/data/advisorDirectory"
+import {
+  createDummyAdvisorBio,
+  DUMMY_ADVISOR,
+} from "./seed/cmsSyncContent"
 
 const slugify = (input: string): string =>
   input
@@ -33,6 +35,39 @@ const requireEnv = (key: string): string => {
 }
 
 const directoryFilterGroupId = (slug: string) => `directoryFilterGroup-${slug}`
+
+const block = (key: string, text: string) => ({
+  _type: "block" as const,
+  _key: key,
+  style: "normal" as const,
+  markDefs: [],
+  children: [{ _type: "span" as const, _key: `${key}-span`, text, marks: [] as string[] }],
+})
+
+const paragraphsToBlocks = (prefix: string, body: string) =>
+  body
+    .split("\n\n")
+    .map((p) => p.trim())
+    .filter(Boolean)
+    .map((p, i) => block(`${prefix}-${i}`, p))
+
+const ptBlock = (key: string, text: string, style = "normal") => ({
+  _type: "block" as const,
+  _key: key,
+  style,
+  markDefs: [],
+  children: [{ _type: "span" as const, _key: `${key}-span`, text, marks: [] as string[] }],
+})
+
+const bullet = (key: string, text: string) => ({
+  _type: "block" as const,
+  _key: key,
+  style: "normal" as const,
+  listItem: "bullet" as const,
+  level: 1,
+  markDefs: [],
+  children: [{ _type: "span" as const, _key: `${key}-span`, text, marks: [] as string[] }],
+})
 
 async function main() {
   const projectId =
@@ -57,48 +92,40 @@ async function main() {
 
   const mutations: any[] = []
 
-  // ── 1. Delete existing advisor documents so deterministic IDs replace any
-  //       Studio-created docs with random IDs.
-  const existingAdvisorIds = await client.fetch<string[]>(`*[_type == "advisor"]._id`)
-  for (const id of existingAdvisorIds) {
-    mutations.push({ delete: { id } })
+  const sharedCountryGroupSlug = slugify("Country")
+  const advisorsExpertiseGroupSlug = slugify("Expertise")
+
+  for (const legacyGroupSlug of [slugify("Countries"), slugify("Specialties")]) {
+    mutations.push({ delete: { id: directoryFilterGroupId(legacyGroupSlug) } })
   }
 
-  // Also clean up old advisorFilter docs that used the previous 4-category scheme.
-  // The new ones will be created below with fresh IDs derived from the new labels.
-  const existingFilterIds = await client.fetch<string[]>(`*[_type == "advisorFilter"]._id`)
-  for (const id of existingFilterIds) {
-    mutations.push({ delete: { id } })
-  }
-
-  // ── 2. Create one advisorFilter document per specialty tag
-  const advisorFilterIdByLabel = new Map<string, string>()
-  for (const [index, opt] of ADVISOR_FILTER_OPTIONS.entries()) {
-    if (opt.id === "all") continue
-    const label = opt.label
-    const docId = `advisorFilter-${slugify(label)}`
-    advisorFilterIdByLabel.set(label, docId)
-    mutations.push({
-      createOrReplace: {
-        _id: docId,
-        _type: "advisorFilter",
-        label,
-        slug: { _type: "slug", current: slugify(label) },
-        sortOrder: index,
-      },
-    })
-  }
-
-  // ── 3. Upsert the "Expertise" directoryFilterGroup used by the directory dropdown
-  const expertiseGroupSlug = slugify("Expertise")
   mutations.push({
     createOrReplace: {
-      _id: directoryFilterGroupId(expertiseGroupSlug),
+      _id: directoryFilterGroupId(sharedCountryGroupSlug),
+      _type: "directoryFilterGroup",
+      title: "Country",
+      slug: { _type: "slug", current: sharedCountryGroupSlug },
+      appliesTo: "both",
+      sortOrder: 0,
+      options: [
+        { _type: "option", label: "United States" },
+        { _type: "option", label: "Canada" },
+        { _type: "option", label: "United Kingdom" },
+        { _type: "option", label: "Germany" },
+        { _type: "option", label: "France" },
+        { _type: "option", label: "Australia" },
+      ],
+    },
+  })
+
+  mutations.push({
+    createOrReplace: {
+      _id: directoryFilterGroupId(advisorsExpertiseGroupSlug),
       _type: "directoryFilterGroup",
       title: "Expertise",
-      slug: { _type: "slug", current: expertiseGroupSlug },
+      slug: { _type: "slug", current: advisorsExpertiseGroupSlug },
       appliesTo: "advisors",
-      sortOrder: 0,
+      sortOrder: 1,
       options: ADVISOR_FILTER_OPTIONS.filter((o) => o.id !== "all").map((o) => ({
         _type: "option",
         label: o.label,
@@ -106,9 +133,41 @@ async function main() {
     },
   })
 
-  // ── 4. Seed each advisor
+  const existingAdvisorIds = await client.fetch<string[]>(`*[_type == "advisor"]._id`)
+  for (const id of existingAdvisorIds) {
+    mutations.push({ delete: { id } })
+  }
+
+  const advisorCountryValues = (country: string | string[] | undefined): string[] => {
+    if (!country) return []
+    return Array.isArray(country) ? country : [country]
+  }
+
+  const buildAdvisorDirectoryFilters = (advisor: (typeof ADVISOR_DIRECTORY_SEED)[number]) => {
+    const filters: Array<{
+      _type: "directoryFilterAssignment"
+      group: { _type: "reference"; _ref: string }
+      values: string[]
+    }> = []
+    const countries = advisorCountryValues(advisor.country)
+    if (countries.length > 0) {
+      filters.push({
+        _type: "directoryFilterAssignment",
+        group: { _type: "reference", _ref: directoryFilterGroupId(sharedCountryGroupSlug) },
+        values: countries,
+      })
+    }
+    if (advisor.filter) {
+      filters.push({
+        _type: "directoryFilterAssignment",
+        group: { _type: "reference", _ref: directoryFilterGroupId(advisorsExpertiseGroupSlug) },
+        values: [advisor.filter],
+      })
+    }
+    return filters.length > 0 ? filters : undefined
+  }
+
   for (const advisor of ADVISOR_DIRECTORY_SEED) {
-    const filterRefId = advisor.filter ? advisorFilterIdByLabel.get(advisor.filter) : undefined
     mutations.push({
       createOrReplace: {
         _id: `advisor-${advisor.id}`,
@@ -117,37 +176,47 @@ async function main() {
         name: advisor.name,
         organization: advisor.organization,
         role: advisor.role,
-        location: advisor.location,
-        country: advisor.country,
+        country: advisorCountryValues(advisor.country),
         yearJoined: advisor.yearJoined,
-        industries: advisor.industries,
-        focus: advisor.focus,
-        filter: filterRefId
-          ? { _type: "reference", _ref: filterRefId }
-          : undefined,
-        directoryFilters: advisor.filter
-          ? [
-              {
-                _type: "directoryFilterAssignment",
-                group: {
-                  _type: "reference",
-                  _ref: directoryFilterGroupId(expertiseGroupSlug),
-                },
-                values: [advisor.filter],
-              },
-            ]
-          : undefined,
+        primaryExpertise: advisor.filter,
+        snapshot: advisor.snapshot ?? advisor.focus,
+        directoryFilters: buildAdvisorDirectoryFilters(advisor),
         photoSrc: advisor.photoSrc,
-        linkedInUrl: advisor.linkedInUrl,
-        websiteUrl: advisor.websiteUrl,
-        bio: advisor.bio,
-        mentoringStyle: advisor.mentoringStyle,
-        highlights: advisor.highlights,
+        bio: paragraphsToBlocks(`advisor-bio-${advisor.id}`, advisor.bio),
       },
     })
   }
 
-  // ── 5. Commit in chunks (Sanity has request size limits)
+  mutations.push({
+    createOrReplace: {
+      _id: `advisor-${DUMMY_ADVISOR.id}`,
+      _type: "advisor",
+      slug: { _type: "slug", current: DUMMY_ADVISOR.id },
+      name: DUMMY_ADVISOR.name,
+      organization: DUMMY_ADVISOR.organization,
+      role: DUMMY_ADVISOR.role,
+      country: DUMMY_ADVISOR.country,
+      yearJoined: DUMMY_ADVISOR.yearJoined,
+      primaryExpertise: DUMMY_ADVISOR.primaryExpertise,
+      snapshot: DUMMY_ADVISOR.snapshot,
+      directoryFilters: [
+        {
+          _type: "directoryFilterAssignment",
+          group: { _type: "reference", _ref: directoryFilterGroupId(sharedCountryGroupSlug) },
+          values: DUMMY_ADVISOR.country,
+        },
+        {
+          _type: "directoryFilterAssignment",
+          group: { _type: "reference", _ref: directoryFilterGroupId(advisorsExpertiseGroupSlug) },
+          values: [DUMMY_ADVISOR.expertiseFilter],
+        },
+      ],
+      photoSrc: DUMMY_ADVISOR.photoSrc,
+      socialLinks: DUMMY_ADVISOR.socialLinks,
+      bio: createDummyAdvisorBio(ptBlock, bullet),
+    },
+  })
+
   const chunkSize = 50
   for (let i = 0; i < mutations.length; i += chunkSize) {
     const chunk = mutations.slice(i, i + chunkSize)
@@ -158,7 +227,7 @@ async function main() {
   }
 
   console.log(
-    `Done — seeded ${ADVISOR_DIRECTORY_SEED.length} advisors and ${advisorFilterIdByLabel.size} specialty tags.`,
+    `Done — seeded ${ADVISOR_DIRECTORY_SEED.length + 1} advisors with Country and Expertise filter groups.`,
   )
 }
 

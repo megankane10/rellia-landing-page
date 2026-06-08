@@ -153,9 +153,9 @@ export const createPowerOfPlayProfileBody = (
       {
         _type: "portableImageCarouselSlide",
         _key: "pop-slide-0",
-        imageSrc: "/images/portfolio-pop.png",
-        alt: "Power of Play pediatric rehab platform",
-        caption: "Play-based strength measurement designed for pediatric rehab.",
+        imageSrc:
+          "https://images.unsplash.com/photo-1503454537845-9dc6a119999f?w=1400&q=80&auto=format&fit=crop",
+        alt: "Children playing during pediatric rehabilitation",
       },
     ],
   },
@@ -929,6 +929,25 @@ export const DUMMY_OPEN_ROLE = {
   linkedInApplyUrl: "https://www.linkedin.com/company/relliahealth/jobs/",
 }
 
+export const createDummyAdvisorBio = (
+  ptBlock: PtBlockFn,
+  bullet: BulletFn,
+) => [
+  ...ptBlock(
+    "dummy-advisor-intro",
+    "This seeded profile demonstrates how advisors appear in the directory and on profile pages. Replace this copy with a real bio before promoting to production.",
+    "normal",
+  ),
+  ...ptBlock(
+    "dummy-advisor-body",
+    "Use short paragraphs and bullet lists to outline clinical background, operator experience, and the kinds of founder questions you help teams answer.",
+    "normal",
+  ),
+  bullet("dummy-advisor-b1", "[DUMMY] Clinical evidence planning for early digital health pilots"),
+  bullet("dummy-advisor-b2", "[DUMMY] Study design and endpoint selection aligned to buyer questions"),
+  bullet("dummy-advisor-b3", "[DUMMY] Async document review with clear next steps"),
+]
+
 export const DUMMY_ADVISOR = {
   id: "dummy-showcase-advisor",
   name: "Dr. Placeholder Example",
@@ -937,17 +956,11 @@ export const DUMMY_ADVISOR = {
   location: "Toronto, ON",
   country: ["Canada"],
   yearJoined: "2026",
-  industries: ["Digital health", "Clinical ops"],
+  primaryExpertise: "Clinical Evidence",
   snapshot:
-    "Seeded dummy advisor for testing directory filters, snapshot copy, and portable rich text blocks.",
+    "Seeded dummy advisor for testing directory filters, snapshot copy, and the About the advisor section.",
   photoSrc: "/images/nopicture-male.jpg",
-  mentoringStyle:
-    "Async document review with crisp next steps—this is placeholder copy for Studio previews only.",
-  highlights: [
-    "[DUMMY] Highlight one for rich profile testing",
-    "[DUMMY] Highlight two for list rendering",
-  ],
-  specialtyFilter: "Clinical Evidence",
+  expertiseFilter: "Clinical Evidence",
   socialLinks: [
     {
       _type: "socialLink",

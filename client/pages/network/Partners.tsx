@@ -14,6 +14,9 @@ import RelliaCta from "@/components/RelliaCta"
 import { CreamSection, GlassCardLight, LightSection, Reveal, RoleHero } from "./_shared"
 import { useNetworkPartnersPage } from "@/hooks/useCmsDocuments"
 import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo"
+import { mergeNetworkPartnersPage } from "@shared/cms/networkPageDefaults"
+import type { NetworkPartnersPageContent } from "@shared/cms/types"
+import { resolveNetworkIcon } from "@/lib/resolveNetworkIcon"
 
 const engagementCardClass =
   "group flex min-h-[190px] md:min-h-[220px] flex-col rounded-2xl border border-black/10 bg-gradient-to-br from-rellia-teal to-[#144853] p-5 md:p-7 transition duration-300 hover:from-[#113f4a] hover:to-[#0f3842] hover:shadow-md cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-teal focus-visible:ring-offset-2 focus-visible:ring-offset-white"
@@ -77,7 +80,16 @@ const BENEFITS = [
 ] as const
 
 /** Teal band + glass link cards — aligned with homepage How It Works rhythm */
-function PartnerEngageTealBand() {
+function PartnerEngageTealBand({ content }: { content: NetworkPartnersPageContent }) {
+  const cards = content.engageItems?.length ? content.engageItems : ENGAGEMENT.map((card, index) => ({
+    title: card.title,
+    body: card.body,
+    href: "href" in card ? card.href : card.to,
+    linkLabel: card.cta,
+    iconKey: ["LayoutGrid", "Megaphone", "Handshake"][index],
+    external: "external" in card ? card.external : false,
+  }))
+
   return (
     <section className="relative w-full overflow-hidden bg-white px-6 py-16 md:px-10 md:py-24">
       <img
@@ -96,25 +108,27 @@ function PartnerEngageTealBand() {
       <div className="relative z-10 mx-auto max-w-[1300px]">
         <ScrollReveal>
           <h2 className="mt-5 font-host-grotesk text-2xl font-semibold leading-tight tracking-tight text-rellia-teal md:text-[32px]">
-            Three ways to work with Rellia
+            {content.engageTitle ?? "Three ways to work with Rellia"}
           </h2>
           <p className="mt-4 max-w-2xl font-urbanist text-base font-medium leading-relaxed text-black/80 md:text-lg">
-            Large cards, clear intent—pick the path that matches how your team likes to start.
+            {content.engageSubtitle ??
+              "Large cards, clear intent—pick the path that matches how your team likes to start."}
           </p>
         </ScrollReveal>
 
         <ScrollReveal delay={0.12}>
           <div className="mt-12 grid grid-cols-1 gap-7 lg:grid-cols-3 lg:gap-6">
-            {ENGAGEMENT.map((card) => {
-              const Icon = card.icon
+            {cards.map((card) => {
+              const Icon = resolveNetworkIcon(card.iconKey, LayoutGrid)
+              const isExternal = Boolean((card as { external?: boolean }).external) || (card.href?.startsWith("http") ?? false)
               const inner = (
                 <>
                   <Icon className="h-6 w-6 md:h-7 md:w-7 text-rellia-mint transition-transform duration-300 group-hover:scale-105" aria-hidden />
                   <h3 className="mt-4 font-host-grotesk text-lg font-semibold tracking-tight text-white md:text-xl">{card.title}</h3>
                   <p className="mt-3 flex-1 font-urbanist text-xs leading-relaxed text-white/80 md:text-sm md:leading-relaxed">{card.body}</p>
                   <span className="mt-5 inline-flex items-center gap-1.5 font-host-grotesk text-xs font-semibold text-rellia-mint md:text-sm">
-                    {card.cta}
-                    {"external" in card && card.external ? (
+                    {card.linkLabel ?? "Learn more"}
+                    {isExternal ? (
                       <ArrowUpRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" aria-hidden />
                     ) : (
                       <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" aria-hidden />
@@ -122,10 +136,10 @@ function PartnerEngageTealBand() {
                   </span>
                 </>
               )
-              return "href" in card ? (
+              return isExternal ? (
                 <a
                   key={card.title}
-                  href={card.href}
+                  href={card.href ?? GETPROVEN_VENDORS_GRID_URL}
                   target="_blank"
                   rel="noopener noreferrer"
                   className={engagementCardClass}
@@ -133,7 +147,7 @@ function PartnerEngageTealBand() {
                   {inner}
                 </a>
               ) : (
-                <Link key={card.title} to={card.to} className={engagementCardClass}>
+                <Link key={card.title} to={card.href ?? "/contact"} className={engagementCardClass}>
                   {inner}
                 </Link>
               )
@@ -145,19 +159,24 @@ function PartnerEngageTealBand() {
   )
 }
 
-function BenefitsWithImageSplit() {
+function BenefitsWithImageSplit({ content }: { content: NetworkPartnersPageContent }) {
+  const bullets = content.benefitsBullets?.length ? content.benefitsBullets : BENEFITS
+
   return (
     <CreamSection>
       <div className="grid gap-12 md:grid-cols-[1fr_1.05fr] md:items-center md:gap-16">
         <Reveal>
           <SectionHeading
             animated={false}
-            title="Why partners stay"
-            description="What partners tell us they value most once programs are underway."
+            title={content.benefitsTitle ?? "Why partners stay"}
+            description={
+              content.benefitsDescription ??
+              "What partners tell us they value most once programs are underway."
+            }
             className="mt-5"
           />
           <ul className="mt-10 max-w-xl space-y-4" aria-label="Partner benefits">
-            {BENEFITS.map((line, idx) => (
+            {bullets.map((line, idx) => (
               <Reveal key={line} delay={0.04 * idx}>
                 <li className="flex gap-3 font-urbanist text-base leading-relaxed text-black/80 md:text-[17px]">
                   <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-rellia-mint/35">
@@ -185,7 +204,14 @@ function BenefitsWithImageSplit() {
 }
 
 
-function ExclusiveDirectorySplit() {
+function ExclusiveDirectorySplit({ content }: { content: NetworkPartnersPageContent }) {
+  const bullets = content.directoryBullets?.length ? content.directoryBullets : [
+    "Independent vendor marketplace focused on health tech needs",
+    "Exclusive deals with pre-negotiated terms for Rellia portcos",
+    "Pre-vetted service providers with verified healthcare references",
+    "Peer-to-peer insights on implementation and support quality",
+  ]
+
   return (
     <LightSection className="bg-rellia-cream/15">
       <div className="grid gap-12 lg:grid-cols-[1fr_1fr] lg:items-center lg:gap-20">
@@ -203,19 +229,21 @@ function ExclusiveDirectorySplit() {
         <Reveal className="order-1 lg:order-2">
           <div className="max-w-xl">
             <h2 className="mt-6 font-host-grotesk text-2xl font-semibold leading-tight tracking-tight text-black md:mt-8 md:text-[32px]">
-              An exclusive <span className="text-rellia-teal">directory</span> for health tech execution
+              {content.directoryTitle ? (
+                content.directoryTitle
+              ) : (
+                <>
+                  An exclusive <span className="text-rellia-teal">directory</span> for health tech execution
+                </>
+              )}
             </h2>
             <p className="mt-4 font-urbanist text-base font-medium leading-relaxed text-black/70 md:text-lg">
-              We maintain a curated directory of service providers and vendors with exclusive offers for Rellia members. Unlike generic marketplaces, our members trust these recommendations because they are grounded in peer usage and verified health tech experience.
+              {content.directoryDescription ??
+                "We maintain a curated directory of service providers and vendors with exclusive offers for Rellia members. Unlike generic marketplaces, our members trust these recommendations because they are grounded in peer usage and verified health tech experience."}
             </p>
             
             <ul className="mt-8 space-y-4" aria-label="Directory benefits">
-              {[
-                "Independent vendor marketplace focused on health tech needs",
-                "Exclusive deals with pre-negotiated terms for Rellia portcos",
-                "Pre-vetted service providers with verified healthcare references",
-                "Peer-to-peer insights on implementation and support quality"
-              ].map((line, idx) => (
+              {bullets.map((line, idx) => (
                 <Reveal key={idx} delay={0.04 * idx}>
                   <li className="flex gap-3 font-urbanist text-base leading-relaxed text-black/80 md:text-[17px]">
                     <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-rellia-mint/35">
@@ -237,6 +265,7 @@ export default function Partners() {
   const partnersPageQuery = useNetworkPartnersPage()
   const { data: page } = partnersPageQuery
   useApplyCmsSeo(page?.seo)
+  const content = mergeNetworkPartnersPage(page)
 
   return (
     <div className="min-h-screen overflow-x-hidden bg-white font-host-grotesk">
@@ -246,47 +275,51 @@ export default function Partners() {
         <div className="lg:flex lg:h-[82vh] lg:flex-col">
           <RoleHero
             roleId="partner"
-            imageSrc="/images/industrypartners.jpg"
+            imageSrc={content.heroImageSrc ?? "/images/industrypartners.jpg"}
             className="lg:flex-1"
           title={
             <>
-              Reach the health tech founders <span className="text-rellia-mint">who need you.</span>
+              {content.heroTitle ?? "Reach the health tech founders"}{" "}
+              <span className="text-rellia-mint">{content.heroAccentPhrase ?? "who need you."}</span>
             </>
           }
-          subtitle="Pilot design, integration support, and enterprise credibility—so promising products don’t die in procurement limbo."
-          primaryCta={{ label: "Apply to join", to: "/apply" }}
+          subtitle={content.heroSubtitle ?? "Pilot design, integration support, and enterprise credibility—so promising products don't die in procurement limbo."}
+          primaryCta={{ label: content.heroPrimaryCtaLabel ?? "Apply to join", to: content.heroPrimaryCtaHref ?? "/apply" }}
         />
         </div>
 
-        <PartnerEngageTealBand />
-        <BenefitsWithImageSplit />
-        <ExclusiveDirectorySplit />
+        <PartnerEngageTealBand content={content} />
+        <BenefitsWithImageSplit content={content} />
+        <ExclusiveDirectorySplit content={content} />
 
         <WhyRellia
-          sectionTitle="Why industry leaders partner with Rellia"
-          sectionDescription="We align commercial innovators, healthcare systems, and clinical networks around active pilots and structured technology adoption."
-          features={[
+          sectionTitle={content.whyTitle ?? "Why industry leaders partner with Rellia"}
+          sectionDescription={
+            content.whyDescription ??
+            "We align commercial innovators, healthcare systems, and clinical networks around active pilots and structured technology adoption."
+          }
+          features={(content.whyFeatures?.length ? content.whyFeatures : [
             {
               title: "Vetted healthcare scale",
-              description: "Skip cold emails and pre-screened meetings—connect directly with startups whose product, funding, and clinical roadmap are validated.",
-              iconKey: "",
+              body: "Skip cold emails and pre-screened meetings—connect directly with startups whose product, funding, and clinical roadmap are validated.",
             },
             {
               title: "Active pilot sequencing",
-              description: "Work with founders who know exactly what success metrics and integration boundaries they need to hit in system deployments.",
-              iconKey: "",
+              body: "Work with founders who know exactly what success metrics and integration boundaries they need to hit in system deployments.",
             },
             {
               title: "Secure compliance",
-              description: "Ensure technical standards and compliance logic align with hospital requirements right from first touch.",
-              iconKey: "",
+              body: "Ensure technical standards and compliance logic align with hospital requirements right from first touch.",
             },
             {
               title: "Direct GTM engagement",
-              description: "Co-design channels, APIs, and commercial handoffs within a community structured around real healthcare adoption.",
-              iconKey: "",
+              body: "Co-design channels, APIs, and commercial handoffs within a community structured around real healthcare adoption.",
             },
-          ]}
+          ]).map((feature) => ({
+            title: feature.title,
+            description: feature.body ?? "",
+            iconKey: "",
+          }))}
           cardImages={[
             "https://images.pexels.com/photos/3184319/pexels-photo-3184319.jpeg?auto=compress&cs=tinysrgb&w=1200", // vetted scale (corporate scale meeting/collaboration)
             "https://images.pexels.com/photos/3184296/pexels-photo-3184296.jpeg?auto=compress&cs=tinysrgb&w=1200", // pilot sequencing (working together on software/system setup)
@@ -298,9 +331,12 @@ export default function Partners() {
 
         <div className="bg-rellia-cream/20">
           <RelliaCta
-            title="Partner with Rellia"
-            body="Tell us about your organization, integration surface area, and the founder profiles you want to see more of. We'll route you to the right partner lead."
-            primary={{ label: "Apply", to: "/apply" }}
+            title={content.ctaTitle ?? "Partner with Rellia"}
+            body={
+              content.ctaBody ??
+              "Tell us about your organization, integration surface area, and the founder profiles you want to see more of. We'll route you to the right partner lead."
+            }
+            primary={{ label: content.ctaPrimaryLabel ?? "Apply", to: content.ctaPrimaryHref ?? "/apply" }}
           />
         </div>
       </main>

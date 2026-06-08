@@ -51,6 +51,27 @@ var logoMarqueeFragment = `logoMarquee[]{
   "src": logo.asset->url,
   href
 }`;
+var networkHeroFragment = `heroEyebrow,
+  heroTitle,
+  heroAccentPhrase,
+  heroSubtitle,
+  "heroImageSrc": coalesce(heroImageUrl, heroImage.asset->url),
+  heroPrimaryCtaLabel,
+  heroPrimaryCtaHref,
+  heroSecondaryCtaLabel,
+  heroSecondaryCtaHref`;
+var networkEngageFragment = `engageTitle,
+  engageSubtitle,
+  engageItems[]{ title, body, href, linkLabel, iconKey }`;
+var networkWhyFragment = `whyTitle,
+  whyDescription,
+  whyFeatures[]{ title, body, iconKey }`;
+var networkCtaFragment = `ctaTitle,
+  ctaBody,
+  ctaPrimaryLabel,
+  ctaPrimaryHref,
+  ctaSecondaryLabel,
+  ctaSecondaryHref`;
 var globalSettingsQuery = `*[_type == "globalSettings"][0]{
   footerTagline,
   supportEmail,
@@ -221,8 +242,7 @@ var pageSectionFieldsFragment = `...,
     name,
     role,
     company,
-    "image": coalesce(imageSrc, image.asset->url),
-    "logo": coalesce(logoSrc, logo.asset->url)
+    "image": coalesce(imageSrc, image.asset->url)
   }`;
 var pageBySlugQuery = `*[_type == "page" && slug.current == $slug && slug.current != "terms" && slug.current != "privacy" && !(_id in path("drafts.**"))][0]{
   title,
@@ -234,26 +254,50 @@ var pageBySlugQuery = `*[_type == "page" && slug.current == $slug && slug.curren
 var pageSectionsFragment = `sections[]{ ${pageSectionFieldsFragment} }`;
 var networkFoundersPageQuery = `*[_type == "networkFoundersPage"][0]{
   title,
-  useModularPage,
-  ${pageVisibilityFragment},
+  ${networkHeroFragment},
+  eligibilityTitle,
+  eligibilityDescription,
+  eligibilityItems[]{ text, imageUrl },
+  ${networkEngageFragment},
+  ${networkWhyFragment},
+  journeyTitle,
+  journeySubtitle,
+  journeySteps[]{ id, label, zone, detail },
+  exploreTitle,
+  exploreSubtitle,
+  exploreCards[]{ title, badge, imageUrl, ctaLabel, ctaHref },
+  deeperHelpTitle,
+  deeperHelpSubtitle,
+  deeperHelpFeatures[]{ title, body, iconKey },
+  deeperHelpCtaLabel,
+  deeperHelpCtaHref,
+  ${networkCtaFragment},
   ${logoMarqueeFragment},
-  ${seoFragment},
-  ${pageSectionsFragment}
+  ${seoFragment}
 }`;
 var networkAdvisorsPageQuery = `*[_type == "networkAdvisorsPage"][0]{
   title,
-  useModularPage,
-  ${pageVisibilityFragment},
-  ${seoFragment},
-  ${pageSectionsFragment}
+  ${networkHeroFragment},
+  ${networkEngageFragment},
+  scheduleTitle,
+  scheduleItems[]{ title, body, iconKey },
+  benefitsTitle,
+  benefitsDescription,
+  benefitsBullets,
+  ${networkWhyFragment},
+  ${networkCtaFragment},
+  ${seoFragment}
 }`;
 var networkInvestorsPageQuery = `*[_type == "networkInvestorsPage"][0]{
   title,
-  useModularPage,
-  ${pageVisibilityFragment},
+  ${networkHeroFragment},
+  ${networkWhyFragment},
+  pitchTitle,
+  pitchSubtitle,
+  pitchCards[]{ title, body, imageUrl },
+  ${networkCtaFragment},
   ${logoMarqueeFragment},
   ${seoFragment},
-  ${pageSectionsFragment},
   foundersCluster[]{
     title,
     segments[]{
@@ -262,18 +306,29 @@ var networkInvestorsPageQuery = `*[_type == "networkInvestorsPage"][0]{
     }
   }
 }`;
+var networkPartnersPageQuery = `*[_type == "networkPartnersPage"][0]{
+  title,
+  ${networkHeroFragment},
+  ${networkEngageFragment},
+  benefitsTitle,
+  benefitsDescription,
+  benefitsBullets,
+  directoryTitle,
+  directoryDescription,
+  directoryBullets,
+  ${networkWhyFragment},
+  ${networkCtaFragment},
+  ${seoFragment}
+}`;
 var landingTestimonialsFragment = `testimonials[]{
   quote,
   name,
   role,
   company,
-  "image": coalesce(imageSrc, image.asset->url),
-  "logo": coalesce(logoSrc, logo.asset->url)
+  "image": coalesce(imageSrc, image.asset->url)
 }`;
 var diagnosticLandingPageQuery = `*[_id == "diagnosticLandingPage"][0]{
   title,
-  useModularPage,
-  ${pageVisibilityFragment},
   heroBadgeLabel,
   heroTitle,
   heroAccentPhrase,
@@ -301,7 +356,7 @@ var diagnosticLandingPageQuery = `*[_id == "diagnosticLandingPage"][0]{
   infographicBlobBlindSpot,
   timelineTitle,
   timelineSubheading,
-  timelineSteps[]{ title, description },
+  timelineSteps[]{ title, description, weekLabel },
   ctaTitle,
   ctaBody,
   ctaPrimaryLabel,
@@ -313,8 +368,6 @@ var diagnosticLandingPageQuery = `*[_id == "diagnosticLandingPage"][0]{
 }`;
 var consultingPageQuery = `*[_id == "consultingPage"][0]{
   title,
-  useModularPage,
-  ${pageVisibilityFragment},
   heroEyebrow,
   heroTitle,
   heroAccentPhrase,
@@ -365,13 +418,6 @@ var privacyPageQuery = `*[_id == "privacyPage"][0]{
   legalNotice,
   body,
   ${seoFragment}
-}`;
-var networkPartnersPageQuery = `*[_type == "networkPartnersPage"][0]{
-  title,
-  useModularPage,
-  ${pageVisibilityFragment},
-  ${seoFragment},
-  ${pageSectionsFragment}
 }`;
 var homePageQuery = `*[_type == "homePage"][0]{
   headlinePrefix,
@@ -475,6 +521,11 @@ var programsLandingQuery = `*[_type == "programsLandingPage"][0]{
   ctaButtonHref,
   ${seoFragment}
 }`;
+var programsLayoutPageQuery = `*[_type == "programsLayoutPage"][0]{
+  title,
+  ${seoFragment},
+  ${pageSectionsFragment}
+}`;
 var eventsLandingQuery = `*[_type == "eventsLandingPage"][0]{
   heroTitlePortable,
   heroSubtitle,
@@ -510,6 +561,8 @@ var programDetailFields = `
   bottomCtaBody,
   bottomCtaButtonLabel,
   bottomContactHref,
+  timelineSteps[]{ title, description, weekLabel },
+  ${landingTestimonialsFragment},
   sections[]{
     ...,
     "imageUrl": image.asset->url,
@@ -771,10 +824,8 @@ var advisorsQuery = `*[_type == "advisor" && !(_id in path("drafts.**"))]{
   role,
   country,
   yearJoined,
-  industries,
-  "snapshot": coalesce(snapshot, focus),
-  "focus": coalesce(snapshot, focus),
-  "filter": filter->label,
+  primaryExpertise,
+  snapshot,
   directoryFilters[]{
     "groupId": group->slug.current,
     "groupTitle": group->title,
@@ -782,20 +833,27 @@ var advisorsQuery = `*[_type == "advisor" && !(_id in path("drafts.**"))]{
     "groupSortOrder": group->sortOrder,
     values
   },
+  "filter": coalesce(
+    primaryExpertise,
+    directoryFilters[group->title match "Expertise" || group->title match "Specialt*"][0].values[0]
+  ),
   "photoSrc": coalesce(photo.asset->url, photoSrc),
-  linkedInUrl,
-  websiteUrl,
+  email,
   socialLinks[]{ platform, label, url },
-  bio,
-  mentoringStyle,
-  highlights
+  bio[]{
+    ...,
+    _type == "image" => {
+      ...,
+      "url": asset->url
+    }
+  }
 }`;
 var alumniCompaniesQuery = `*[_type == "alumniCompany" && !(_id in path("drafts.**"))]{
   "id": slug.current,
   name,
   slug,
   tagline,
-  "specialties": specialties[]->label,
+  specialties,
   businessModel,
   directoryFilters[]{
     "groupId": group->slug.current,
@@ -805,12 +863,16 @@ var alumniCompaniesQuery = `*[_type == "alumniCompany" && !(_id in path("drafts.
     values
   },
   shortDescription,
-  longDescription,
-  profileBody,
+  profileBody[]{
+    ...,
+    _type == "image" => {
+      ...,
+      "url": asset->url
+    }
+  },
   websiteUrl,
   linkedinUrl,
-  traction,
-  relliaCollaboration,
+  email,
   country,
   yearJoined,
   "logoSrc": coalesce(logo.asset->url, logoSrc),
@@ -818,10 +880,11 @@ var alumniCompaniesQuery = `*[_type == "alumniCompany" && !(_id in path("drafts.
     name,
     role,
     bio,
+    email,
     linkedinUrl,
     websiteUrl,
     socialLinks[]{ platform, label, url },
-    "imageSrc": image.asset->url
+    "imageSrc": coalesce(image.asset->url, imageSrc)
   }
 }`;
 var advisorFiltersQuery = `*[_type == "advisorFilter"] | order(sortOrder asc, label asc){
@@ -893,6 +956,7 @@ var SANITY_QUERY_WHITELIST = {
   aboutPage: { query: aboutPageQuery, params: empty },
   faqPage: { query: faqPageQuery, params: empty },
   programsLanding: { query: programsLandingQuery, params: empty },
+  programsLayoutPage: { query: programsLayoutPageQuery, params: empty },
   eventsLanding: { query: eventsLandingQuery, params: empty },
   programs: { query: programsQuery, params: empty },
   programBySlug: { query: programBySlugQuery, params: slugParams },

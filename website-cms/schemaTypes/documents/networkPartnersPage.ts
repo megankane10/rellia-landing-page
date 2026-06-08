@@ -1,23 +1,43 @@
 import {defineField, defineType} from 'sanity'
+import {CONTENT_SEO_FIELDSETS, singletonSeoField} from '../shared/singletonContentFields'
 import {
-  CONTENT_SEO_FIELDSETS,
-  CONTENT_SEO_GROUPS,
-  singletonSeoField,
-} from '../shared/singletonContentFields'
+  NETWORK_PAGE_GROUPS,
+  networkCtaFields,
+  networkEngageBandFields,
+  networkHeroFields,
+  networkWhyRelliaFields,
+} from '../shared/networkPageFields'
 
 export const networkPartnersPage = defineType({
   name: 'networkPartnersPage',
   title: 'Network — Industry Partners page (/industry-partners)',
   type: 'document',
-  groups: CONTENT_SEO_GROUPS,
+  groups: NETWORK_PAGE_GROUPS,
   fieldsets: CONTENT_SEO_FIELDSETS,
   fields: [
+    defineField({name: 'title', type: 'string', initialValue: 'Industry Partners', group: 'hero'}),
+    ...networkHeroFields,
+    ...networkEngageBandFields,
+    defineField({name: 'benefitsTitle', title: 'Benefits section title', type: 'string', group: 'content'}),
+    defineField({name: 'benefitsDescription', title: 'Benefits section description', type: 'text', rows: 2, group: 'content'}),
     defineField({
-      name: 'title',
-      type: 'string',
-      initialValue: 'Industry Partners',
+      name: 'benefitsBullets',
+      title: 'Benefits bullet list',
+      type: 'array',
+      of: [{type: 'string'}],
       group: 'content',
     }),
+    defineField({name: 'directoryTitle', title: 'Directory section title', type: 'string', group: 'content'}),
+    defineField({name: 'directoryDescription', title: 'Directory section description', type: 'text', rows: 3, group: 'content'}),
+    defineField({
+      name: 'directoryBullets',
+      title: 'Directory bullet list',
+      type: 'array',
+      of: [{type: 'string'}],
+      group: 'content',
+    }),
+    ...networkWhyRelliaFields,
+    ...networkCtaFields,
     singletonSeoField,
   ],
 })

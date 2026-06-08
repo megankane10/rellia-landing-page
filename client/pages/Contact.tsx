@@ -73,67 +73,65 @@ function LeftPanel({ copy }: { copy: typeof DEFAULT_CONTACT_PAGE }) {
           <div className="absolute bottom-[-5%] right-[-5%] h-[40%] w-[40%] rounded-full bg-rellia-mint/10 blur-[100px]" />
         </div>
 
-        <div className="relative z-10 flex min-h-[min(480px,calc(100vh-10rem))] flex-1 flex-col justify-between p-8 md:p-10">
+        <div className="relative z-10 flex min-h-[min(480px,calc(100vh-10rem))] flex-1 flex-col p-8 md:p-10">
+          <div className="pl-2">
+            <img
+              src={copy.leftLogoImageSrc || "/images/hologram-logo.png"}
+              alt=""
+              aria-hidden
+              width={64}
+              height={64}
+              loading="lazy"
+              decoding="async"
+              className="h-12 w-12 md:h-16 md:w-16 opacity-90 drop-shadow-[0_0_15px_rgba(152,255,232,0.3)]"
+            />
+          </div>
+
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            className="flex flex-1 flex-col justify-center gap-8 py-4 md:py-6"
+            className="flex flex-1 flex-col justify-center px-2 py-6"
           >
-            <div className="pl-2">
-              <img
-                src={copy.leftLogoImageSrc || "/images/hologram-logo.png"}
-                alt=""
-                aria-hidden
-                width={64}
-                height={64}
-                loading="lazy"
-                decoding="async"
-                className="h-12 w-12 md:h-16 md:w-16 opacity-90 drop-shadow-[0_0_15px_rgba(152,255,232,0.3)]"
-              />
-            </div>
+            <p className="w-full font-urbanist text-2xl font-medium leading-snug text-white md:text-4xl lg:text-5xl">
+              &ldquo;{copy.quoteText}&rdquo;
+            </p>
 
-            <div className="flex flex-col justify-center px-2">
-              <p className="w-full font-urbanist text-2xl font-medium leading-snug text-white md:text-4xl lg:text-5xl">
-                &ldquo;{copy.quoteText}&rdquo;
-              </p>
-
-              <div className="mt-8 flex items-center gap-4 md:gap-5">
-                <div className="h-[62px] w-[62px] md:h-[78px] md:w-[78px] shrink-0 overflow-hidden rounded-2xl border-2 border-white/20 shadow-xl">
-                  <img
-                    src={copy.quotePersonImageSrc || "/images/megan-headshot.jpeg"}
-                    alt={`${copy.quoteAttributionName}, ${copy.quoteAttributionRole}`}
-                    width={78}
-                    height={78}
-                    loading="lazy"
-                    decoding="async"
-                    className="h-full w-full object-cover object-top"
-                  />
-                </div>
-                <div>
-                  <p className="font-host-grotesk text-[18px] md:text-[21px] font-medium tracking-wide text-rellia-mint">
-                    {copy.quoteAttributionName}
-                  </p>
-                  <p className="font-urbanist text-[15px] md:text-[18px] font-medium text-white/60">{copy.quoteAttributionRole}</p>
-                </div>
+            <div className="mt-8 flex items-center gap-4 md:gap-5">
+              <div className="h-[62px] w-[62px] md:h-[78px] md:w-[78px] shrink-0 overflow-hidden rounded-2xl border-2 border-white/20 shadow-xl">
+                <img
+                  src={copy.quotePersonImageSrc || "/images/megan-headshot.jpeg"}
+                  alt={`${copy.quoteAttributionName}, ${copy.quoteAttributionRole}`}
+                  width={78}
+                  height={78}
+                  loading="lazy"
+                  decoding="async"
+                  className="h-full w-full object-cover object-top"
+                />
+              </div>
+              <div>
+                <p className="font-host-grotesk text-[18px] md:text-[21px] font-medium tracking-wide text-rellia-mint">
+                  {copy.quoteAttributionName}
+                </p>
+                <p className="font-urbanist text-[15px] md:text-[18px] font-medium text-white/60">{copy.quoteAttributionRole}</p>
               </div>
             </div>
+          </motion.div>
 
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.3, duration: 0.8 }}
-              className="mt-auto border-t border-white/10 pt-8 flex justify-start"
-            >
-              <p className="font-host-grotesk text-sm font-medium text-white pl-2">
-                <a
-                  href={`mailto:${copy.footerEmail || "hello@relliahealth.com"}`}
-                  className="hover:underline underline-offset-4"
-                >
-                  {copy.footerEmail || "hello@relliahealth.com"}
-                </a>
-              </p>
-            </motion.div>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.3, duration: 0.8 }}
+            className="border-t border-white/10 pt-8 flex justify-start"
+          >
+            <p className="font-host-grotesk text-sm font-medium text-white pl-2">
+              <a
+                href={`mailto:${copy.footerEmail || "hello@relliahealth.com"}`}
+                className="hover:underline underline-offset-4"
+              >
+                {copy.footerEmail || "hello@relliahealth.com"}
+              </a>
+            </p>
           </motion.div>
         </div>
 

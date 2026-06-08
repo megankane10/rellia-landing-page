@@ -2,12 +2,15 @@ import type { ReactNode } from "react"
 import ScrollReveal from "@/components/ScrollReveal"
 import { cn } from "@/lib/utils"
 
+export type StoryPostHeroLayout = "background" | "block"
+
 export type StoryPostHeroProps = {
   tag: string
   title: string
   excerpt?: string | null
   coverImageSrc?: string | null
   coverImageAlt?: string | null
+  layout?: StoryPostHeroLayout
   toAbsoluteImageUrl: (src: string) => string
   shareBlock: ReactNode
 }
@@ -18,25 +21,45 @@ export const StoryPostHero = ({
   excerpt,
   coverImageSrc,
   coverImageAlt,
+  layout = "block",
   toAbsoluteImageUrl,
   shareBlock,
 }: StoryPostHeroProps) => {
   const coverSrc = coverImageSrc?.trim() || null
   const coverAlt = (coverImageAlt?.trim() || title).trim()
+  const useBackgroundLayout = layout === "background" && Boolean(coverSrc)
 
   return (
     <section
       className={cn(
         "relative overflow-hidden rounded-b-[2.5rem] md:rounded-b-[3.5rem]",
-        "bg-gradient-to-br from-[#071f26] via-rellia-teal to-[#144853]",
-        "pt-24 pb-12 md:pt-32 md:pb-16 lg:pb-20",
-        "text-white",
+        useBackgroundLayout
+          ? "min-h-[520px] bg-rellia-teal pt-24 pb-12 text-white md:min-h-[620px] md:pt-32 md:pb-16 lg:pb-20"
+          : cn(
+              "bg-gradient-to-br from-[#071f26] via-rellia-teal to-[#144853]",
+              "pt-24 pb-12 md:pt-32 md:pb-16 lg:pb-20",
+              "text-white",
+            ),
       )}
     >
-      <div aria-hidden className="pointer-events-none absolute inset-0">
-        <div className="absolute -left-32 top-0 h-96 w-96 rounded-full bg-rellia-mint/10 blur-3xl" />
-        <div className="absolute -right-24 bottom-0 h-80 w-80 rounded-full bg-white/5 blur-3xl" />
-      </div>
+      {useBackgroundLayout ? (
+        <div aria-hidden className="pointer-events-none absolute inset-0">
+          <img
+            src={toAbsoluteImageUrl(coverSrc!)}
+            alt=""
+            className="h-full w-full object-cover"
+            loading="eager"
+            fetchPriority="high"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/65 via-black/45 to-[#0d3540]/92" />
+          <div className="absolute inset-0 bg-gradient-to-tr from-rellia-teal/35 via-transparent to-black/20" />
+        </div>
+      ) : (
+        <div aria-hidden className="pointer-events-none absolute inset-0">
+          <div className="absolute -left-32 top-0 h-96 w-96 rounded-full bg-rellia-mint/10 blur-3xl" />
+          <div className="absolute -right-24 bottom-0 h-80 w-80 rounded-full bg-white/5 blur-3xl" />
+        </div>
+      )}
 
       <div className="relative z-10 mx-auto max-w-[1300px] px-6 md:px-10">
         <div className="mx-auto w-full max-w-[1100px]">
@@ -60,7 +83,7 @@ export const StoryPostHero = ({
                 </p>
               ) : null}
 
-              {coverSrc ? (
+              {!useBackgroundLayout && coverSrc ? (
                 <figure className="relative mt-8 aspect-[16/10] w-full max-w-3xl overflow-hidden rounded-2xl border border-white/15 bg-black/20 shadow-[0_24px_56px_-28px_rgba(0,0,0,0.55)] md:mt-10">
                   <img
                     src={toAbsoluteImageUrl(coverSrc)}
