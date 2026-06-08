@@ -1,6 +1,6 @@
 import type { DirectoryFilterGroup } from "@/hooks/useCmsDocuments"
 
-const isCountryGroup = (group: DirectoryFilterGroup): boolean => {
+export const isCountryGroup = (group: DirectoryFilterGroup): boolean => {
   const id = (group.id ?? "").toLowerCase()
   const title = (group.title ?? "").toLowerCase()
   return (
@@ -141,6 +141,103 @@ export const getCountryFilterOptions = (
 
 export const directoryGroupHasCountry = (groups: DirectoryFilterGroup[]): boolean =>
   groups.some(isCountryGroup)
+
+const isSpecialtyGroup = (group: DirectoryFilterGroup): boolean => {
+  const id = (group.id ?? "").toLowerCase()
+  const title = (group.title ?? "").toLowerCase()
+  return (
+    title === "specialty" ||
+    title === "specialties" ||
+    id === "specialty" ||
+    id.includes("specialty")
+  )
+}
+
+const isBusinessModelGroup = (group: DirectoryFilterGroup): boolean => {
+  const id = (group.id ?? "").toLowerCase()
+  const title = (group.title ?? "").toLowerCase()
+  return title === "business model" || id.includes("business-model")
+}
+
+const matchesDirectoryFilterAssignments = (
+  assignments: Array<{ groupId?: string; values?: string[] }> | undefined,
+  groupId: string,
+  selected: string,
+): boolean => {
+  const normalizedGroupId = groupId.trim()
+  const normalizedSelected = selected.trim()
+  if (!normalizedGroupId || !normalizedSelected) return false
+
+  return (Array.isArray(assignments) ? assignments : []).some((assignment) => {
+    if ((assignment?.groupId ?? "").trim() !== normalizedGroupId) return false
+    const values = Array.isArray(assignment?.values) ? assignment.values : []
+    return values.some(
+      (value) =>
+        typeof value === "string" &&
+        value.trim().toLowerCase() === normalizedSelected.toLowerCase(),
+    )
+  })
+}
+
+/** Match a directory filter dropdown value against CMS assignments and legacy tag fields. */
+export const matchesDirectoryFilterSelection = (
+  group: DirectoryFilterGroup,
+  selected: string,
+  entry: {
+    country?: string | string[]
+    specialties?: string[]
+    businessModel?: string[]
+    primaryExpertise?: string
+    filter?: string
+    directoryFilters?: Array<{ groupId?: string; values?: string[] }>
+  },
+): boolean => {
+  const normalizedSelected = selected.trim()
+  if (!normalizedSelected || normalizedSelected === "all") return true
+
+  const assignments = entry.directoryFilters
+  const fromAssignments = matchesDirectoryFilterAssignments(
+    assignments,
+    group.id ?? "",
+    normalizedSelected,
+  )
+
+  if (isCountryGroup(group)) {
+    const countries = Array.isArray(entry.country)
+      ? entry.country
+      : typeof entry.country === "string" && entry.country.trim()
+        ? [entry.country]
+        : []
+    const fromCountry = countries.some(
+      (country) => country.trim().toLowerCase() === normalizedSelected.toLowerCase(),
+    )
+    return fromAssignments || fromCountry
+  }
+
+  if (isSpecialtyGroup(group)) {
+    const fromSpecialties = (Array.isArray(entry.specialties) ? entry.specialties : []).some(
+      (specialty) => specialty.trim().toLowerCase() === normalizedSelected.toLowerCase(),
+    )
+    return fromAssignments || fromSpecialties
+  }
+
+  if (isBusinessModelGroup(group)) {
+    const fromBusinessModel = (Array.isArray(entry.businessModel) ? entry.businessModel : []).some(
+      (model) => model.trim().toLowerCase() === normalizedSelected.toLowerCase(),
+    )
+    return fromAssignments || fromBusinessModel
+  }
+
+  if (isExpertiseGroup(group)) {
+    const expertiseTags = [entry.primaryExpertise, entry.filter]
+      .filter((value): value is string => typeof value === "string" && Boolean(value.trim()))
+      .map((value) => value.trim().toLowerCase())
+    const fromExpertise = expertiseTags.includes(normalizedSelected.toLowerCase())
+    return fromAssignments || fromExpertise
+  }
+
+  return fromAssignments
+}
 
 export const isExpertiseGroup = (group: DirectoryFilterGroup): boolean => {
   const id = (group.id ?? "").toLowerCase()

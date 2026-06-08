@@ -492,6 +492,10 @@ export default function Navbar({
     if (!next) handlePriorityModalDismiss()
   }
 
+  const prioritySecondaryLabel = globalSettings.priorityModalSecondaryButtonLabel?.trim()
+  const prioritySecondaryLink = globalSettings.priorityModalSecondaryButtonLink?.trim()
+  const hasPrioritySecondaryCta = Boolean(prioritySecondaryLabel && prioritySecondaryLink)
+
   return (
     <>
       <PriorityAnnouncementModal
@@ -504,8 +508,8 @@ export default function Navbar({
         pillText={globalSettings.priorityModalPillText}
         buttonLabel={globalSettings.priorityModalButtonLabel}
         buttonLink={globalSettings.priorityModalButtonLink}
-        secondaryButtonLabel={globalSettings.priorityModalSecondaryButtonLabel}
-        secondaryButtonLink={globalSettings.priorityModalSecondaryButtonLink}
+        secondaryButtonLabel={hasPrioritySecondaryCta ? prioritySecondaryLabel : undefined}
+        secondaryButtonLink={hasPrioritySecondaryCta ? prioritySecondaryLink : undefined}
         formEnabled={globalSettings.priorityModalFormEnabled}
         formButtonLabel={globalSettings.priorityModalFormButtonLabel}
         formPlaceholderName={globalSettings.priorityModalFormPlaceholderName}

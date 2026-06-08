@@ -1550,7 +1550,7 @@ async function main() {
       excerpt: WEBSITE_LAUNCH_STORY.excerpt,
       headerImage: toSanityImageFieldValue(websiteLaunchImageAssetId),
       headerImageAlt: WEBSITE_LAUNCH_STORY.coverImageAlt,
-      headerLayout: "background",
+      headerLayout: "block",
       body: createWebsiteLaunchStoryBody(ptBlock, bullet, block),
       seo: {
         metaTitle: WEBSITE_LAUNCH_STORY.seoTitle,

@@ -28,6 +28,7 @@ import {
   filterAdvisorDirectoryGroups,
   findExpertiseGroup,
   getDirectoryGroupOptionLabels,
+  matchesDirectoryFilterSelection,
 } from "@/lib/directoryFilterOptions";
 import { resolveAdvisorPrimaryTag } from "@/lib/resolveAdvisorPrimaryTag";
 
@@ -183,13 +184,17 @@ export default function AdvisorsDirectory() {
         for (const group of dynamicGroups) {
           const selected = (groupFilters[group.id] ?? "all").trim()
           if (!selected || selected === "all") continue
-          const assignments = Array.isArray((a as any)?.directoryFilters) ? (a as any).directoryFilters : []
-          const match = assignments.some((as: any) => {
-            if ((as?.groupId ?? "").trim() !== group.id) return false
-            const values = Array.isArray(as?.values) ? as.values : []
-            return values.some((v: any) => typeof v === "string" && v.trim() === selected)
-          })
-          if (!match) return false
+          if (
+            !matchesDirectoryFilterSelection(group, selected, {
+              country: a.country,
+              primaryExpertise: a.primaryExpertise,
+              filter: a.filter,
+              directoryFilters: (a as { directoryFilters?: Array<{ groupId?: string; values?: string[] }> })
+                .directoryFilters,
+            })
+          ) {
+            return false
+          }
         }
       } else {
         if (legacyFilter !== "all" && a.filter !== legacyFilter) return false;

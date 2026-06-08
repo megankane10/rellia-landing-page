@@ -3,7 +3,7 @@ import react from "@vitejs/plugin-react-swc";
 import path from "path";
 import { vitePrerenderPlugin } from "vite-prerender-plugin";
 import { createServer } from "./server";
-import { PRERENDER_PATHS } from "./client/config/seo";
+import { PRERENDER_PATHS, SHOWCASE_PRERENDER_PATHS } from "./client/config/seo";
 import {
   fetchAdvisorProfilePathsForPrerender,
   fetchAlumniProfilePathsForPrerender,
@@ -46,6 +46,7 @@ const buildPrerenderRoutes = async (): Promise<string[]> => {
   return [
     ...new Set([
       ...PRERENDER_PATHS,
+      ...SHOWCASE_PRERENDER_PATHS,
       ...cmsStoryPaths,
       ...cmsAdvisorPaths,
       ...cmsAlumniPaths,

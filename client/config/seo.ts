@@ -572,6 +572,13 @@ const SEED_DIRECTORY_PRERENDER_PATHS: string[] = isMainBranchBuild()
       ...ADVISOR_DIRECTORY_SEED.map((a) => `/advisors/directory/${a.id}`),
     ]
 
+/** Showcase CMS profiles/stories — always prerender for social embed meta tags. */
+export const SHOWCASE_PRERENDER_PATHS: string[] = [
+  ...STORIES.map((story) => `/stories/${story.slug}`),
+  ...FOUNDER_DIRECTORY.map((f) => `/founders/alumni/${f.id}`),
+  ...ADVISOR_DIRECTORY_SEED.map((a) => `/advisors/directory/${a.id}`),
+]
+
 /** Auth/admin routes use AuthProvider client-side only — SEO via RouteSeo, not prerender. */
 export const isClientOnlyAuthPath = (pathname: string): boolean => {
   const key = normalizePathname(pathname)
@@ -588,6 +595,7 @@ export const PRERENDER_PATHS: string[] = [
   ...PROGRAMS_EVENT_PRERENDER_PATHS,
   ...STORY_PRERENDER_PATHS,
   ...SEED_DIRECTORY_PRERENDER_PATHS,
+  ...SHOWCASE_PRERENDER_PATHS,
 ]
 
 export const getDefaultOgImageUrl = (): string => {

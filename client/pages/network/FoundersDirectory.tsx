@@ -36,6 +36,7 @@ import {
   filterFounderDirectoryGroups,
   getCountryFilterOptions,
   getDirectoryGroupOptionLabels,
+  matchesDirectoryFilterSelection,
 } from "@/lib/directoryFilterOptions";
 import { resolveSocialOgImageUrl } from "@/config/seo";
 import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo";
@@ -191,20 +192,7 @@ export default function FoundersDirectory() {
         for (const group of dynamicGroups) {
           const selected = (groupFilters[group.id] ?? "all").trim()
           if (!selected || selected === "all") continue
-
-          if (group.id === "country" || group.id.toLowerCase().includes("country")) {
-            const hasMatch = c.country.some((ct: string) => ct.trim().toLowerCase() === selected.toLowerCase());
-            if (!hasMatch) return false;
-            continue;
-          }
-
-          const assignments = Array.isArray((c as any)?.directoryFilters) ? (c as any).directoryFilters : []
-          const match = assignments.some((as: any) => {
-            if ((as?.groupId ?? "").trim() !== group.id) return false
-            const values = Array.isArray(as?.values) ? as.values : []
-            return values.some((v: any) => typeof v === "string" && v.trim() === selected)
-          })
-          if (!match) return false
+          if (!matchesDirectoryFilterSelection(group, selected, c)) return false
         }
       } else {
         const matchCountry =

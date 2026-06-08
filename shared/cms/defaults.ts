@@ -2386,8 +2386,26 @@ export function mergeGlobalSettings(
   }
   const priorityPrimaryLabel = (base.priorityModalButtonLabel ?? "").trim()
   const prioritySecondaryLabel = (base.priorityModalSecondaryButtonLabel ?? "").trim()
+  const prioritySecondaryLink = (base.priorityModalSecondaryButtonLink ?? "").trim()
   if (base.priorityModalEnabled && !priorityPrimaryLabel && !prioritySecondaryLabel) {
     base.priorityModalFormEnabled = true
+  }
+  if (p.priorityModalEnabled === true) {
+    const cmsSecondaryLabel =
+      typeof p.priorityModalSecondaryButtonLabel === "string"
+        ? p.priorityModalSecondaryButtonLabel.trim()
+        : ""
+    const cmsSecondaryLink =
+      typeof p.priorityModalSecondaryButtonLink === "string"
+        ? p.priorityModalSecondaryButtonLink.trim()
+        : ""
+    if (!cmsSecondaryLabel || !cmsSecondaryLink) {
+      base.priorityModalSecondaryButtonLabel = ""
+      base.priorityModalSecondaryButtonLink = ""
+    }
+  } else if (!prioritySecondaryLabel || !prioritySecondaryLink) {
+    base.priorityModalSecondaryButtonLabel = ""
+    base.priorityModalSecondaryButtonLink = ""
   }
   return base
 }

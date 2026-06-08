@@ -375,6 +375,8 @@ const appendSocialMeta = (
   pageUrl: string,
 ) => {
   headElements.add(`<meta property="og:type" content="website" />`)
+  headElements.add(`<meta property="og:site_name" content="Rellia Health" />`)
+  headElements.add(`<meta property="og:locale" content="en_US" />`)
   headElements.add(`<meta property="og:title" content="${escapeMetaAttr(seo.title)}" />`)
   headElements.add(
     `<meta property="og:description" content="${escapeMetaAttr(seo.description)}" />`,
