@@ -26,6 +26,16 @@ import { PortableRichText } from "@/components/PortableRichText";
 import { normalizeToPortableText } from "@shared/cms/normalizePortableText";
 import type { SanityPortableText } from "@shared/cms/types";
 import { resolveAdvisorPrimaryTag } from "@/lib/resolveAdvisorPrimaryTag";
+import { portableTextToPlainText } from "@shared/cms/portableTextPlain";
+
+const resolveAdvisorProfileDescription = (
+  snapshot?: string,
+  bio?: unknown,
+): string => {
+  if (typeof snapshot === "string" && snapshot.trim()) return snapshot.trim()
+  if (typeof bio === "string" && bio.trim()) return bio.trim()
+  return portableTextToPlainText(bio)
+}
 
 export default function AdvisorProfile() {
   const { id } = useParams<{ id: string }>();
@@ -50,9 +60,15 @@ export default function AdvisorProfile() {
       ? active.snapshot.trim()
       : undefined;
 
+  const profileDescription = active
+    ? resolveAdvisorProfileDescription(snapshotText, active.bio)
+    : "";
+
   useApplyCmsSeo(null, active ? {
     title: buildAdvisorProfileSeoTitle(active.name),
-    description: clampMetaDescription(snapshotText ?? active.bio),
+    description: clampMetaDescription(
+      profileDescription || "Advisor profile in the Rellia Health mentor directory.",
+    ),
     ogImage: resolveSocialOgImageUrl(active.photoSrc),
   } : undefined);
 
@@ -86,7 +102,9 @@ export default function AdvisorProfile() {
     <div className="min-h-screen overflow-x-hidden bg-white font-host-grotesk">
       <PageSocialHelmet
         title={buildAdvisorProfileSeoTitle(active.name)}
-        description={clampMetaDescription(snapshotText ?? active.bio)}
+        description={clampMetaDescription(
+          profileDescription || "Advisor profile in the Rellia Health mentor directory.",
+        )}
         canonical={canonicalUrl}
         ogImage={resolveSocialOgImageUrl(active.photoSrc)}
       />
