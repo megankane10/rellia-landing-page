@@ -23,14 +23,11 @@ import {
   DEFAULT_EVENTS_LANDING_HERO_PORTABLE,
   DEFAULT_STORIES_PAGE_HEADLINE_PORTABLE,
 } from "../shared/cms/inlineHeroHeadline"
-import { ADVISOR_DIRECTORY_SEED, ADVISOR_FILTER_OPTIONS } from "../client/data/advisorDirectory"
-import { FOUNDER_DIRECTORY, ALL_SPECIALTIES } from "../client/data/founderDirectory"
+import { ADVISOR_FILTER_OPTIONS } from "../client/data/advisorDirectory"
+import { ALL_SPECIALTIES } from "../client/data/founderDirectory"
 import {
   createPowerOfPlayProfileBody,
-  createRichTextShowcase,
   createWebsiteLaunchStoryBody,
-  DUMMY_ADVISOR,
-  DUMMY_OPEN_ROLE,
   POWER_OF_PLAY_ALUMNI,
   PRIORITY_MODAL_SEED,
   PROGRAMS_LAYOUT_SEED,
@@ -1154,21 +1151,6 @@ async function main() {
 
   mutations.push({
     createOrReplace: {
-      _id: `openRole.${DUMMY_OPEN_ROLE.id}`,
-      _type: "openRole",
-      roleId: { _type: "slug", current: DUMMY_OPEN_ROLE.id },
-      title: DUMMY_OPEN_ROLE.title,
-      location: DUMMY_OPEN_ROLE.location,
-      employmentType: DUMMY_OPEN_ROLE.employmentType,
-      description: DUMMY_OPEN_ROLE.description,
-      responsibilities: DUMMY_OPEN_ROLE.responsibilities,
-      linkedInApplyUrl: DUMMY_OPEN_ROLE.linkedInApplyUrl,
-      sortOrder: 0,
-    },
-  })
-
-  mutations.push({
-    createOrReplace: {
       _id: "careersPage",
       _type: "careersPage",
       careersContentMode: "both",
@@ -1674,6 +1656,7 @@ async function main() {
       _type: "page",
       title: "Supporting Health Founders — Page Builder Showcase",
       slug: { _type: "slug", current: "supporting-health-founders" },
+      pageVisibility: "live",
       sections: [
         {
           _type: "sectionMarketingHero",
@@ -2148,172 +2131,7 @@ async function main() {
     },
   })
 
-  const advisorCountryValues = (country: string | string[] | undefined): string[] => {
-    if (!country) return []
-    return Array.isArray(country) ? country : [country]
-  }
-
-  const buildAdvisorDirectoryFilters = (advisor: (typeof ADVISOR_DIRECTORY_SEED)[number]) => {
-    const filters: Array<{
-      _type: "directoryFilterAssignment"
-      group: { _type: "reference"; _ref: string }
-      values: string[]
-    }> = []
-    const countries = advisorCountryValues(advisor.country)
-    if (countries.length > 0) {
-      filters.push({
-        _type: "directoryFilterAssignment",
-        group: { _type: "reference", _ref: directoryFilterGroupId(advisorsCountryGroupSlug) },
-        values: countries,
-      })
-    }
-    if (advisor.filter) {
-      filters.push({
-        _type: "directoryFilterAssignment",
-        group: { _type: "reference", _ref: directoryFilterGroupId(advisorsSpecialtyGroupSlug) },
-        values: [advisor.filter],
-      })
-    }
-    return filters.length > 0 ? filters : undefined
-  }
-
-  const buildAdvisorSocialLinks = (advisor: (typeof ADVISOR_DIRECTORY_SEED)[number]) => {
-    if (Array.isArray(advisor.socialLinks) && advisor.socialLinks.length > 0) {
-      return advisor.socialLinks.map((link, index) => ({
-        _type: "socialLink" as const,
-        _key: `social-${index}`,
-        platform: link.platform ?? "website",
-        label: link.label ?? "Website",
-        url: link.url ?? advisor.websiteUrl ?? advisor.linkedInUrl,
-      }))
-    }
-    const links: Array<{
-      _type: "socialLink"
-      _key: string
-      platform: string
-      label: string
-      url: string
-    }> = []
-    if (advisor.linkedInUrl) {
-      links.push({
-        _type: "socialLink",
-        _key: "linkedin",
-        platform: "linkedin",
-        label: "LinkedIn",
-        url: advisor.linkedInUrl,
-      })
-    }
-    if (advisor.websiteUrl) {
-      links.push({
-        _type: "socialLink",
-        _key: "website",
-        platform: "website",
-        label: "Website",
-        url: advisor.websiteUrl,
-      })
-    }
-    return links.length > 0 ? links : undefined
-  }
-
-  // Directory data
-  for (const advisor of ADVISOR_DIRECTORY_SEED) {
-    mutations.push({
-      createOrReplace: {
-        _id: `advisor-${advisor.id}`,
-        _type: "advisor",
-        slug: { _type: "slug", current: advisor.id },
-        name: advisor.name,
-        organization: advisor.organization,
-        role: advisor.role,
-        location: advisor.location,
-        country: advisorCountryValues(advisor.country),
-        yearJoined: advisor.yearJoined,
-        industries: advisor.industries,
-        snapshot: advisor.snapshot ?? advisor.focus,
-        directoryFilters: buildAdvisorDirectoryFilters(advisor),
-        photoSrc: advisor.photoSrc,
-        socialLinks: buildAdvisorSocialLinks(advisor),
-        bio: paragraphsToBlocks(`advisor-bio-${advisor.id}`, advisor.bio),
-        mentoringStyle: advisor.mentoringStyle,
-        highlights: advisor.highlights,
-      },
-    })
-  }
-
-  mutations.push({
-    createOrReplace: {
-      _id: `advisor-${DUMMY_ADVISOR.id}`,
-      _type: "advisor",
-      slug: { _type: "slug", current: DUMMY_ADVISOR.id },
-      name: DUMMY_ADVISOR.name,
-      organization: DUMMY_ADVISOR.organization,
-      role: DUMMY_ADVISOR.role,
-      location: DUMMY_ADVISOR.location,
-      country: DUMMY_ADVISOR.country,
-      yearJoined: DUMMY_ADVISOR.yearJoined,
-      industries: DUMMY_ADVISOR.industries,
-      snapshot: DUMMY_ADVISOR.snapshot,
-      directoryFilters: [
-        {
-          _type: "directoryFilterAssignment",
-          group: { _type: "reference", _ref: directoryFilterGroupId(advisorsCountryGroupSlug) },
-          values: DUMMY_ADVISOR.country,
-        },
-        {
-          _type: "directoryFilterAssignment",
-          group: { _type: "reference", _ref: directoryFilterGroupId(advisorsSpecialtyGroupSlug) },
-          values: [DUMMY_ADVISOR.specialtyFilter],
-        },
-      ],
-      photoSrc: DUMMY_ADVISOR.photoSrc,
-      socialLinks: DUMMY_ADVISOR.socialLinks,
-      bio: createRichTextShowcase(`dummy-advisor`, ptBlock, bullet, block),
-      mentoringStyle: DUMMY_ADVISOR.mentoringStyle,
-      highlights: DUMMY_ADVISOR.highlights,
-    },
-  })
-
-  const buildFounderDirectoryFilters = (company: (typeof FOUNDER_DIRECTORY)[number]) =>
-    [
-      ...(company.country ?? []).map((c) => ({
-        _type: "directoryFilterAssignment" as const,
-        group: { _type: "reference", _ref: directoryFilterGroupId(foundersCountryGroupSlug) },
-        values: [c],
-      })),
-      ...(company.specialties ?? []).map((s) => ({
-        _type: "directoryFilterAssignment" as const,
-        group: { _type: "reference", _ref: directoryFilterGroupId(foundersSpecialtyGroupSlug) },
-        values: [s],
-      })),
-      ...(company.businessModel ?? []).map((bm) => ({
-        _type: "directoryFilterAssignment" as const,
-        group: { _type: "reference", _ref: directoryFilterGroupId(foundersBusinessModelGroupSlug) },
-        values: [bm],
-      })),
-    ].filter(Boolean)
-
-  for (const company of FOUNDER_DIRECTORY) {
-    mutations.push({
-      createOrReplace: {
-        _id: `alumniCompany-${company.id}`,
-        _type: "alumniCompany",
-        slug: { _type: "slug", current: company.id },
-        name: company.logoName,
-        tagline: company.tagline,
-        specialties: company.specialties ?? [],
-        directoryFilters: buildFounderDirectoryFilters(company),
-        shortDescription: company.shortDescription,
-        websiteUrl: company.websiteUrl,
-        linkedinUrl: company.linkedinUrl,
-        country: company.country,
-        businessModel: company.businessModel,
-        yearJoined: company.yearJoined,
-        founders: company.founders,
-        profileBody: company.profileBody,
-      },
-    })
-  }
-
+  // Directory data — only seeded showcase alumni (placeholders removed).
   mutations.push({
     createOrReplace: {
       _id: `alumniCompany-${POWER_OF_PLAY_ALUMNI.id}`,

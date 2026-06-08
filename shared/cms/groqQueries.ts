@@ -789,6 +789,7 @@ export const advisorsQuery = `*[_type == "advisor" && !(_id in path("drafts.**")
     values
   },
   "photoSrc": coalesce(photo.asset->url, photoSrc),
+  email,
   socialLinks[]{ platform, label, url },
   bio[]{
     ...,
@@ -837,7 +838,7 @@ export const alumniCompaniesQuery = `*[_type == "alumniCompany" && !(_id in path
     linkedinUrl,
     websiteUrl,
     socialLinks[]{ platform, label, url },
-    "imageSrc": image.asset->url
+    "imageSrc": coalesce(image.asset->url, imageSrc)
   }
 }`;
 

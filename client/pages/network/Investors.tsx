@@ -168,12 +168,12 @@ function IllustrativePie({
       <p className="mt-1 font-urbanist text-xs text-black/50">Illustrative mix for thesis fit—not a fund mandate.</p>
       <div
         ref={chartRef}
-        className="mt-4 h-[240px] w-full min-h-[240px]"
+        className="mt-4 h-[260px] w-full min-h-[260px]"
         role="img"
         aria-label={ariaLabel}
       >
         <ResponsiveContainer width="100%" height="100%">
-          <PieChart margin={{ top: 8, right: 28, bottom: 8, left: 28 }}>
+          <PieChart margin={{ top: 20, right: 32, bottom: 4, left: 32 }}>
             <Pie
               data={data}
               dataKey="value"
@@ -211,16 +211,19 @@ function IllustrativePie({
 
 function PipelinePhotoSection({
   children,
+  roundedTop = true,
   roundedBottom = true,
 }: {
   children: ReactNode
+  roundedTop?: boolean
   roundedBottom?: boolean
 }) {
   return (
     <section
       className={cn(
         "relative overflow-hidden w-full",
-        roundedBottom ? "rounded-[2.5rem] md:rounded-[3.5rem]" : "rounded-t-[2.5rem] md:rounded-t-[3.5rem]",
+        roundedTop && "rounded-t-[2.5rem] md:rounded-t-[3.5rem]",
+        roundedBottom && "rounded-b-[2.5rem] md:rounded-b-[3.5rem]",
       )}
     >
       <img
@@ -304,8 +307,8 @@ function FoundersClusterSection({
   if (charts.length === 0) return null
 
   return (
-    <div className="bg-[#071018]">
-      <PipelinePhotoSection roundedBottom={false}>
+    <div className="bg-rellia-cream/20 pt-10 md:pt-16">
+      <PipelinePhotoSection roundedTop roundedBottom={false}>
         <ScrollReveal>
           <h2 className="mt-5 font-host-grotesk text-3xl font-semibold leading-tight tracking-tight text-white md:text-[40px]">
             How founders cluster
@@ -459,12 +462,12 @@ export default function Investors() {
 
               <FoundersClusterSection charts={charts} />
 
-              <section className="relative overflow-hidden bg-[#071018] px-6 py-16 text-white md:px-10 md:py-24 rounded-t-[2.5rem] md:rounded-t-[3.5rem] -mt-px">
+              <section className="relative overflow-hidden bg-[#071018] px-6 pb-16 pt-0 text-white md:px-10 md:pb-24">
                 <div aria-hidden className="pointer-events-none absolute inset-0">
                   <div className="absolute -left-32 top-0 h-96 w-96 rounded-full bg-teal-500/10 blur-3xl" />
                   <div className="absolute -right-24 bottom-0 h-80 w-80 rounded-full bg-blue-500/10 blur-3xl" />
                 </div>
-                <div className="relative mx-auto max-w-[1300px]">
+                <div className="relative mx-auto max-w-[1300px] overflow-hidden rounded-b-[2.5rem] md:rounded-b-[3.5rem] pb-16 md:pb-20">
                   <ScrollReveal>
                     <h2 className="mt-5 font-host-grotesk text-2xl font-semibold leading-tight tracking-tight text-rellia-mint md:text-[32px]">
                       Exclusive connections and pitch events
@@ -512,7 +515,7 @@ export default function Investors() {
                 </div>
               </section>
 
-              <LightSection className="bg-white">
+              <LightSection className="bg-white pt-10 md:pt-12">
                 <div className="mx-auto max-w-[1300px]">
                   <ScrollReveal>
                     <SectionHeading

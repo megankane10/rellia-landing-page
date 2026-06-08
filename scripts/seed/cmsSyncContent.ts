@@ -141,13 +141,24 @@ export const createPowerOfPlayProfileBody = (
   bullet: BulletFn,
   block: BlockFn,
 ) => [
-  ...ptBlock("pop-h2", "About the company", "h2"),
   ...ptBlock(
     "pop-intro",
     "Power of Play transforms pediatric rehabilitation by replacing rigid, adult-calibrated medical diagnostics with child-centric tools. Standard clinical tools are often too intimidating or insensitive to capture accurate metrics for low muscle tone. Our evidence-based solution integrates diagnostic sensitivity directly into an interactive, dinosaur-shaped hand-strength measurement platform that captures objective maximum effort through play.",
     "normal",
   ),
-  ...ptBlock("pop-traction-h2", "Traction & Roadmap", "h2"),
+  {
+    _type: "portableImageCarousel",
+    _key: "pop-hero-image",
+    slides: [
+      {
+        _type: "portableImageCarouselSlide",
+        _key: "pop-slide-0",
+        imageSrc: "/images/portfolio-pop.png",
+        alt: "Power of Play pediatric rehab platform",
+        caption: "Play-based strength measurement designed for pediatric rehab.",
+      },
+    ],
+  },
   bullet(
     "pop-t1",
     "Clinical Validation: Formally backed by 4-week usability pilots and over 200 user interviews with healthcare professionals.",
@@ -1010,8 +1021,7 @@ export const WEBSITE_LAUNCH_STORY = {
   featured: true,
   excerpt:
     "Explore clearer paths for founders—benchmark readiness, join programs, meet advisors, and stay close to what is happening across the Rellia community.",
-  coverImageSrc:
-    "https://images.pexels.com/photos/3184292/pexels-photo-3184292.jpeg?auto=compress&cs=tinysrgb&w=1600",
+  coverImageSrc: "/images/website-launch.png",
   coverImageAlt: "Health tech team collaborating in a bright workspace",
   seoTitle: "Welcome to the new Rellia website",
   seoDescription:
@@ -1030,6 +1040,19 @@ export const createWebsiteLaunchStoryBody = (
     "Whether you are validating your first clinical workflow, preparing for a seed round, or looking for operators who have shipped in regulated environments, Rellia is designed to meet you where you are. Our site brings the essentials into one place—so you can move from curiosity to action without hunting across tabs.",
     "normal",
   ),
+  {
+    _type: "portableImageCarousel",
+    _key: "launch-body-image",
+    slides: [
+      {
+        _type: "portableImageCarouselSlide",
+        _key: "launch-slide-0",
+        imageSrc: "/images/founders.jpg",
+        alt: "Health tech founders collaborating",
+        caption: "Programs, diagnostics, and network paths—all in one place.",
+      },
+    ],
+  },
   ...ptBlock(
     "launch-intro-2",
     "Start with a quick readiness check, explore programs that match your stage, and see how founders, advisors, and partners plug into the same ecosystem. Everything here is meant to feel practical: fewer buzzwords, more signal about what happens next when you engage with Rellia.",
@@ -1171,10 +1194,15 @@ export const STUDIO_GUIDE_SECTIONS = [
 ]
 
 export const PRIORITY_MODAL_SEED = {
+  announcementEnabled: true,
+  announcementText: "New programs and live events are open—see what is coming next for health tech founders.",
+  announcementPillText: "LIVE",
+  announcementButtonLabel: "View programs",
+  announcementButtonLink: "/programs",
   priorityModalEnabled: true,
   priorityModalHeading: "Welcome to the new Rellia website",
   priorityModalBody:
-    "We rebuilt the marketing site with a full CMS—explore updated network pages, programs, diagnostics, and stories. Read the launch post for a guided tour.",
+    "Explore clearer paths for founders—benchmark readiness with the startup diagnostic, browse programs and events, and meet the Rellia community.",
   priorityModalPillText: "NEW",
   priorityModalButtonLabel: "See what's new",
   priorityModalButtonLink: "/stories/website-launch",

@@ -15,6 +15,7 @@ type ProfileSocialLinksProps = {
   links?: ProfileSocialLink[] | null
   linkedInUrl?: string | null
   websiteUrl?: string | null
+  email?: string | null
   className?: string
   iconClassName?: string
 }
@@ -34,6 +35,7 @@ export const ProfileSocialLinks = ({
   links,
   linkedInUrl,
   websiteUrl,
+  email,
   className,
   iconClassName = "h-5 w-5",
 }: ProfileSocialLinksProps) => {
@@ -75,6 +77,9 @@ export const ProfileSocialLinks = ({
   }
   if (!items.some((i) => i.kind === "website")) {
     push("website-direct", websiteUrl?.trim(), "Website", "website")
+  }
+  if (!items.some((i) => i.kind === "email")) {
+    push("email-direct", normalizeUrl(email ?? undefined, "email"), "Email", "email")
   }
 
   if (items.length === 0) return null
