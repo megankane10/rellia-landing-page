@@ -28,6 +28,10 @@ import type {
 const omitNullish = <T extends Record<string, unknown>>(obj: T): Partial<T> =>
   Object.fromEntries(Object.entries(obj).filter(([, v]) => v != null)) as Partial<T>
 
+/** Trim CMS CTA copy and strip zero-width characters that render as empty buttons */
+export const normalizeCmsCtaField = (value?: string | null): string =>
+  (value ?? "").replace(/[\u200B-\u200D\uFEFF]/g, "").trim()
+
 const compactList = <T>(arr: T[] | null | undefined): NonNullable<T>[] =>
   (arr ?? []).filter((x): x is NonNullable<T> => x != null)
 
@@ -2384,21 +2388,15 @@ export function mergeGlobalSettings(
   ) {
     base.announcementEnabled = true
   }
-  const priorityPrimaryLabel = (base.priorityModalButtonLabel ?? "").trim()
-  const prioritySecondaryLabel = (base.priorityModalSecondaryButtonLabel ?? "").trim()
-  const prioritySecondaryLink = (base.priorityModalSecondaryButtonLink ?? "").trim()
+  const priorityPrimaryLabel = normalizeCmsCtaField(base.priorityModalButtonLabel)
+  const prioritySecondaryLabel = normalizeCmsCtaField(base.priorityModalSecondaryButtonLabel)
+  const prioritySecondaryLink = normalizeCmsCtaField(base.priorityModalSecondaryButtonLink)
   if (base.priorityModalEnabled && !priorityPrimaryLabel && !prioritySecondaryLabel) {
     base.priorityModalFormEnabled = true
   }
   if (partial != null) {
-    const rawSecondaryLabel =
-      typeof partial.priorityModalSecondaryButtonLabel === "string"
-        ? partial.priorityModalSecondaryButtonLabel.trim()
-        : ""
-    const rawSecondaryLink =
-      typeof partial.priorityModalSecondaryButtonLink === "string"
-        ? partial.priorityModalSecondaryButtonLink.trim()
-        : ""
+    const rawSecondaryLabel = normalizeCmsCtaField(partial.priorityModalSecondaryButtonLabel)
+    const rawSecondaryLink = normalizeCmsCtaField(partial.priorityModalSecondaryButtonLink)
     if (!rawSecondaryLabel || !rawSecondaryLink) {
       base.priorityModalSecondaryButtonLabel = ""
       base.priorityModalSecondaryButtonLink = ""

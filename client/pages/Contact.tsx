@@ -36,7 +36,7 @@ export default function Contact() {
 function ContactSection({ copy }: { copy: typeof DEFAULT_CONTACT_PAGE }) {
   return (
     <section className="relative w-full pt-[84px] md:pt-[100px] pb-[12px] md:pb-[14px]">
-      <div className="grid min-h-[calc(100vh-8rem)] grid-cols-1 lg:grid-cols-2">
+      <div className="grid grid-cols-1 lg:grid-cols-2">
         <LeftPanel copy={copy} />
 
         <div className="relative flex items-center justify-center overflow-hidden bg-white px-6 py-12 md:px-12 md:py-16 lg:px-16 lg:py-20">

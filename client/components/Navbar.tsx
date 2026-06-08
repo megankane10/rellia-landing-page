@@ -486,8 +486,8 @@ export default function Navbar({
     if (!next) handlePriorityModalDismiss()
   }
 
-  const prioritySecondaryLabel = globalSettings.priorityModalSecondaryButtonLabel?.trim()
-  const prioritySecondaryLink = globalSettings.priorityModalSecondaryButtonLink?.trim()
+  const prioritySecondaryLabel = globalSettings.priorityModalSecondaryButtonLabel
+  const prioritySecondaryLink = globalSettings.priorityModalSecondaryButtonLink
   const hasPrioritySecondaryCta = Boolean(prioritySecondaryLabel && prioritySecondaryLink)
 
   return (

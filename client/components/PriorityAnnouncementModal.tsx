@@ -5,6 +5,7 @@ import { Check, X } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { CmsCtaLink, cmsCtaButtonClass } from "@/components/CmsCtaLink"
 import { clearApiCsrfCache, getApiCsrfHeaders } from "@/lib/apiCsrf"
+import { normalizeCmsCtaField } from "@shared/cms/defaults"
 
 export type PriorityAnnouncementModalProps = {
   open: boolean
@@ -47,16 +48,14 @@ export const PriorityAnnouncementModal = ({
   const [submitSuccess, setSubmitSuccess] = useState(false)
   const [submitError, setSubmitError] = useState<string | null>(null)
 
-  const trimmedLabel = buttonLabel?.trim()
-  const trimmedLink = buttonLink?.trim()
-  const trimmedSecondaryLabel = secondaryButtonLabel?.trim()
-  const trimmedSecondaryLink = secondaryButtonLink?.trim()
+  const trimmedLabel = normalizeCmsCtaField(buttonLabel)
+  const trimmedLink = normalizeCmsCtaField(buttonLink)
+  const trimmedSecondaryLabel = normalizeCmsCtaField(secondaryButtonLabel)
+  const trimmedSecondaryLink = normalizeCmsCtaField(secondaryButtonLink)
 
   const showPrimary = Boolean(trimmedLabel && trimmedLink)
-  const showSecondary =
-    Boolean(trimmedSecondaryLabel && trimmedSecondaryLink) &&
-    trimmedSecondaryLabel!.length > 0 &&
-    trimmedSecondaryLink!.length > 0
+  const showSecondary = Boolean(trimmedSecondaryLabel && trimmedSecondaryLink)
+  const showActionButtons = !formEnabled && (showPrimary || showSecondary)
   const showPill = Boolean(pillText?.trim())
 
   const handleClose = () => {
@@ -207,8 +206,8 @@ export const PriorityAnnouncementModal = ({
               exit={{ opacity: 0, y: -40, filter: "blur(12px)" }}
               transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
               className={cn(
-                "pointer-events-auto w-full overflow-hidden border border-black/[0.08]",
-                "shadow-[0_20px_50px_rgba(13,53,64,0.3)]",
+                "pointer-events-auto w-full border border-black/[0.08]",
+                "shadow-[0_20px_40px_-10px_rgba(13,53,64,0.28)]",
                 "bg-gradient-to-r from-rellia-mint via-rellia-greyTeal to-rellia-mint",
                 "rounded-[2.25rem] md:rounded-[2.75rem]",
                 // Wide layout if there is a form or 2 action buttons; narrower layout for 1 or 0 buttons
@@ -218,7 +217,7 @@ export const PriorityAnnouncementModal = ({
               )}
             >
               {imageSrc?.trim() ? (
-                <div className="relative aspect-[16/9] w-full overflow-hidden bg-rellia-mint/30">
+                <div className="relative aspect-[16/9] w-full overflow-hidden rounded-t-[2.25rem] bg-rellia-mint/30 md:rounded-t-[2.75rem]">
                   <img
                     src={imageSrc}
                     alt={imageAlt?.trim() || ""}
@@ -227,7 +226,14 @@ export const PriorityAnnouncementModal = ({
                 </div>
               ) : null}
 
-              <div className="px-6 py-7 md:px-8 md:py-8">
+              <div
+                className={cn(
+                  "px-6 pt-7 md:px-8 md:pt-8",
+                  showActionButtons && showPrimary && showSecondary
+                    ? "pb-7 md:pb-8"
+                    : "pb-6 md:pb-7",
+                )}
+              >
                 <div className="mb-4 flex w-full items-center justify-between gap-4">
                   {showPill ? (
                     <span className="inline-flex items-center gap-1.5 rounded-full border border-rellia-teal/25 bg-transparent px-2.5 py-1 text-[11px] font-black font-host-grotesk uppercase tracking-[0.14em] text-rellia-teal">
@@ -315,8 +321,13 @@ export const PriorityAnnouncementModal = ({
                   </form>
                 ) : null}
 
-                {(!formEnabled && (showPrimary || showSecondary)) ? (
-                  <div className="mt-6 flex flex-col gap-3 w-full">
+                {showActionButtons ? (
+                  <div
+                    className={cn(
+                      "mt-6 flex w-full flex-col",
+                      showPrimary && showSecondary && "gap-3",
+                    )}
+                  >
                     {showPrimary ? (
                       <CmsCtaLink
                         href={trimmedLink!}
