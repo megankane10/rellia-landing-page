@@ -106,6 +106,18 @@ export const alumniCompany = defineType({
               type: 'image',
               options: {hotspot: true},
             }),
+            defineField({
+              name: 'imageSrc',
+              title: 'Photo URL (fallback)',
+              type: 'string',
+              description: 'Fallback URL if no upload (e.g. /images/deenasammak-team.png).',
+            }),
+            defineField({
+              name: 'email',
+              title: 'Email',
+              type: 'string',
+              description: 'Optional contact email shown in social icons.',
+            }),
           ],
           preview: {
             select: {title: 'name', subtitle: 'role', media: 'image'},

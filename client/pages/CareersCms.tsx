@@ -692,7 +692,7 @@ export default function CareersCms() {
 
                 {/* Socials / proofs container */}
                 {Array.isArray(careersCms.lifeAtRelliaLinks) && careersCms.lifeAtRelliaLinks.length > 0 ? (
-                  <div className="mt-8 flex flex-wrap gap-4">
+                  <div className="mt-12 flex flex-wrap gap-4">
                     {careersCms.lifeAtRelliaLinks.map((link) => (
                       <LifeAtRelliaSocialButton
                         key={link.platformName + link.url}
@@ -703,7 +703,7 @@ export default function CareersCms() {
                     ))}
                   </div>
                 ) : (
-                  <div className="mt-8 flex flex-wrap gap-4">
+                  <div className="mt-12 flex flex-wrap gap-4">
                     <LifeAtRelliaSocialButton
                       href={g.linkedinUrl}
                       iconKey="linkedin"

@@ -61,7 +61,7 @@ export const StoryPostHero = ({
               ) : null}
 
               {coverSrc ? (
-                <figure className="relative mt-8 aspect-[16/10] w-full overflow-hidden rounded-2xl border border-white/15 bg-black/20 shadow-[0_24px_56px_-28px_rgba(0,0,0,0.55)] md:mt-10">
+                <figure className="relative mt-8 aspect-[16/10] w-full max-w-3xl overflow-hidden rounded-2xl border border-white/15 bg-black/20 shadow-[0_24px_56px_-28px_rgba(0,0,0,0.55)] md:mt-10">
                   <img
                     src={toAbsoluteImageUrl(coverSrc)}
                     alt={coverAlt}

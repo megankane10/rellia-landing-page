@@ -165,6 +165,7 @@ export default function AdvisorProfile() {
                     links={active.socialLinks}
                     linkedInUrl={active.linkedInUrl}
                     websiteUrl={active.websiteUrl}
+                    email={(active as { email?: string }).email}
                   />
                   <button
                     onClick={handleCopyLink}

@@ -161,6 +161,7 @@ export default function FounderProfile() {
                   <ProfileSocialLinks
                     websiteUrl={active.websiteUrl}
                     linkedInUrl={active.linkedinUrl}
+                    email={(active as { email?: string }).email}
                   />
                   <button
                     onClick={handleCopyLink}
