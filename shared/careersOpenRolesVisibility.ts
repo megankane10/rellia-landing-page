@@ -1,7 +1,7 @@
 import type { CareersOpenRole, CareersPageContent } from "./cms/types"
 import { CAREERS_OPEN_ROLES } from "./careersOpenRoles"
 
-/** Seeded placeholder roles — never show on www unless explicitly published. */
+/** Legacy seeded role IDs — hidden on production if they still exist in an old dataset. */
 export const PLACEHOLDER_OPEN_ROLE_IDS = new Set([
   "program-operations-manager",
   "community-events-coordinator",

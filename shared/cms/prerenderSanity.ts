@@ -127,6 +127,22 @@ export const fetchDirectoryFilterGroupsForPrerender = async (): Promise<
   }
 }
 
+export const fetchAdvisorProfilePathsForPrerender = async (): Promise<string[]> => {
+  const rows = await fetchAdvisorsForPrerender()
+  return rows
+    .map((row) => (typeof row.id === "string" ? row.id.trim() : ""))
+    .filter(Boolean)
+    .map((id) => `/advisors/directory/${id}`)
+}
+
+export const fetchAlumniProfilePathsForPrerender = async (): Promise<string[]> => {
+  const rows = await fetchAlumniCompaniesForPrerender()
+  return rows
+    .map((row) => (typeof row.id === "string" ? row.id.trim() : ""))
+    .filter(Boolean)
+    .map((id) => `/founders/alumni/${id}`)
+}
+
 export const fetchStorySlugsForPrerender = async (): Promise<string[]> => {
   const client = getPrerenderSanityClient()
   if (!client) return []

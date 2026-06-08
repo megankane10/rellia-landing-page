@@ -87,6 +87,15 @@ export const advisor = defineType({
       group: 'profile',
     }),
     defineField({
+      name: 'industries',
+      title: 'Industry tags',
+      type: 'array',
+      of: [{type: 'string'}],
+      description:
+        'Optional secondary tags shown on directory cards and profiles. Not used for directory filtering.',
+      group: 'profile',
+    }),
+    defineField({
       name: 'bio',
       title: 'About the advisor',
       type: 'advisorPortableText',

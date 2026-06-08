@@ -54,7 +54,10 @@ function AdvisorCard({
 }) {
   const cardTags = useMemo(() => {
     const primary = resolveAdvisorPrimaryTag(advisor)
-    return primary ? [primary] : []
+    const industries = Array.isArray(advisor.industries)
+      ? advisor.industries.map((tag) => tag.trim()).filter(Boolean)
+      : []
+    return primary ? [primary, ...industries] : industries
   }, [advisor])
 
   return (

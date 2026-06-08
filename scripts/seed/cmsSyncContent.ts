@@ -153,9 +153,8 @@ export const createPowerOfPlayProfileBody = (
       {
         _type: "portableImageCarouselSlide",
         _key: "pop-slide-0",
-        imageSrc:
-          "https://images.unsplash.com/photo-1503454537845-9dc6a119999f?w=1400&q=80&auto=format&fit=crop",
-        alt: "Children playing during pediatric rehabilitation",
+        imageSrc: "/images/pexels-polesietoys-6139663.jpg",
+        alt: "Children playing with educational toys during pediatric rehabilitation",
       },
     ],
   },
@@ -960,6 +959,7 @@ export const DUMMY_ADVISOR = {
   snapshot:
     "Seeded dummy advisor for testing directory filters, snapshot copy, and the About the advisor section.",
   photoSrc: "/images/nopicture-male.jpg",
+  industries: ["Digital Health", "Pediatrics", "Clinical Research"],
   expertiseFilter: "Clinical Evidence",
   socialLinks: [
     {
@@ -1034,8 +1034,8 @@ export const WEBSITE_LAUNCH_STORY = {
   featured: true,
   excerpt:
     "Explore clearer paths for founders—benchmark readiness, join programs, meet advisors, and stay close to what is happening across the Rellia community.",
-  coverImageSrc: "/images/website-launch.png",
-  coverImageAlt: "Health tech team collaborating in a bright workspace",
+  coverImageSrc: "/images/website-launch-cartoon.png",
+  coverImageAlt: "Cartoon illustration of a laptop and website interfaces",
   seoTitle: "Welcome to the new Rellia website",
   seoDescription:
     "Discover Rellia Health: startup diagnostic, structured programs, live events, and network paths built for health tech founders.",

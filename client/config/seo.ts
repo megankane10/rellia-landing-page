@@ -509,6 +509,12 @@ export const resolveSocialOgImageUrl = (
   return withSanitySocialImage(withVersion, square)
 }
 
+/** Absolute OG image for share embeds; falls back to site default when source is missing. */
+export const resolveShareOgImageUrl = (
+  src: string | undefined,
+  options: SocialOgImageOptions = {},
+): string => resolveSocialOgImageUrl(src, getShareOrigin(), options) ?? getDefaultOgImageUrl()
+
 const EVENT_DETAIL_SEO: RouteSeoConfig = {
   title: "Event — Rellia Health",
   description:

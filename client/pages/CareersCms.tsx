@@ -44,7 +44,7 @@ import { buildPageUrl } from "@/config/seo"
 import FilteredListEmptyState from "@/components/FilteredListEmptyState"
 import RelliaAction from "@/components/RelliaAction"
 import { isSanityConfigured } from "@/lib/sanity"
-import { allowCmsSeedFallbacks } from "@/lib/deploymentEnv"
+import { allowCmsSeedFallbacks, isStrictProductionSite } from "@/lib/deploymentEnv"
 import { useMemo, useState, useEffect, useRef } from "react"
 import { useLocation } from "react-router-dom"
 import { ShareIconCopy } from "@/components/share/sharePageIcons"
@@ -356,6 +356,7 @@ export default function CareersCms() {
       resolveCareersOpenRoles(careersCms, {
         allowSeedFallbacks: allowCmsSeedFallbacks(),
         isSanityConfigured: isSanityConfigured(),
+        isProductionSite: isStrictProductionSite(),
       }),
     [careersCms],
   )

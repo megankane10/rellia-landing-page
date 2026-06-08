@@ -4,7 +4,11 @@ import path from "path";
 import { vitePrerenderPlugin } from "vite-prerender-plugin";
 import { createServer } from "./server";
 import { PRERENDER_PATHS } from "./client/config/seo";
-import { fetchStorySlugsForPrerender } from "./shared/cms/prerenderSanity";
+import {
+  fetchAdvisorProfilePathsForPrerender,
+  fetchAlumniProfilePathsForPrerender,
+  fetchStorySlugsForPrerender,
+} from "./shared/cms/prerenderSanity";
 
 const getBuildSiteUrl = (): string => {
   const explicit = process.env.VITE_SITE_URL?.trim();
@@ -32,10 +36,21 @@ const getOgImageVersion = (): string => {
 };
 
 const buildPrerenderRoutes = async (): Promise<string[]> => {
-  const cmsStoryPaths = (await fetchStorySlugsForPrerender()).map(
-    (slug) => `/stories/${slug}`,
-  );
-  return [...new Set([...PRERENDER_PATHS, ...cmsStoryPaths])];
+  const [cmsStoryPaths, cmsAdvisorPaths, cmsAlumniPaths] = await Promise.all([
+    fetchStorySlugsForPrerender().then((slugs) =>
+      slugs.map((slug) => `/stories/${slug}`),
+    ),
+    fetchAdvisorProfilePathsForPrerender(),
+    fetchAlumniProfilePathsForPrerender(),
+  ]);
+  return [
+    ...new Set([
+      ...PRERENDER_PATHS,
+      ...cmsStoryPaths,
+      ...cmsAdvisorPaths,
+      ...cmsAlumniPaths,
+    ]),
+  ];
 };
 
 // https://vitejs.dev/config/

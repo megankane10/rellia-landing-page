@@ -844,6 +844,7 @@ export const advisorsQuery = `*[_type == "advisor" && !(_id in path("drafts.**")
   country,
   yearJoined,
   primaryExpertise,
+  industries,
   snapshot,
   directoryFilters[]{
     "groupId": group->slug.current,

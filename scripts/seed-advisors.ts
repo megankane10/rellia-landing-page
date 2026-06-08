@@ -1,7 +1,7 @@
 /**
  * Seeds advisor-related data to Sanity:
  *   - directoryFilterGroup "Country" (shared) and "Expertise"
- *   - advisor documents (from ADVISOR_DIRECTORY_SEED + dummy showcase)
+ *   - showcase advisor document (dummy profile for editors)
  *
  * Safe to run repeatedly — uses createOrReplace so it's fully idempotent.
  *
@@ -14,7 +14,7 @@
 
 import { createClient } from "@sanity/client"
 import "./loadEnv"
-import { ADVISOR_DIRECTORY_SEED, ADVISOR_FILTER_OPTIONS } from "../client/data/advisorDirectory"
+import { ADVISOR_FILTER_OPTIONS } from "../client/data/advisorDirectory"
 import {
   createDummyAdvisorBio,
   DUMMY_ADVISOR,
@@ -35,21 +35,6 @@ const requireEnv = (key: string): string => {
 }
 
 const directoryFilterGroupId = (slug: string) => `directoryFilterGroup-${slug}`
-
-const block = (key: string, text: string) => ({
-  _type: "block" as const,
-  _key: key,
-  style: "normal" as const,
-  markDefs: [],
-  children: [{ _type: "span" as const, _key: `${key}-span`, text, marks: [] as string[] }],
-})
-
-const paragraphsToBlocks = (prefix: string, body: string) =>
-  body
-    .split("\n\n")
-    .map((p) => p.trim())
-    .filter(Boolean)
-    .map((p, i) => block(`${prefix}-${i}`, p))
 
 const ptBlock = (key: string, text: string, style = "normal") => ({
   _type: "block" as const,
@@ -138,55 +123,6 @@ async function main() {
     mutations.push({ delete: { id } })
   }
 
-  const advisorCountryValues = (country: string | string[] | undefined): string[] => {
-    if (!country) return []
-    return Array.isArray(country) ? country : [country]
-  }
-
-  const buildAdvisorDirectoryFilters = (advisor: (typeof ADVISOR_DIRECTORY_SEED)[number]) => {
-    const filters: Array<{
-      _type: "directoryFilterAssignment"
-      group: { _type: "reference"; _ref: string }
-      values: string[]
-    }> = []
-    const countries = advisorCountryValues(advisor.country)
-    if (countries.length > 0) {
-      filters.push({
-        _type: "directoryFilterAssignment",
-        group: { _type: "reference", _ref: directoryFilterGroupId(sharedCountryGroupSlug) },
-        values: countries,
-      })
-    }
-    if (advisor.filter) {
-      filters.push({
-        _type: "directoryFilterAssignment",
-        group: { _type: "reference", _ref: directoryFilterGroupId(advisorsExpertiseGroupSlug) },
-        values: [advisor.filter],
-      })
-    }
-    return filters.length > 0 ? filters : undefined
-  }
-
-  for (const advisor of ADVISOR_DIRECTORY_SEED) {
-    mutations.push({
-      createOrReplace: {
-        _id: `advisor-${advisor.id}`,
-        _type: "advisor",
-        slug: { _type: "slug", current: advisor.id },
-        name: advisor.name,
-        organization: advisor.organization,
-        role: advisor.role,
-        country: advisorCountryValues(advisor.country),
-        yearJoined: advisor.yearJoined,
-        primaryExpertise: advisor.filter,
-        snapshot: advisor.snapshot ?? advisor.focus,
-        directoryFilters: buildAdvisorDirectoryFilters(advisor),
-        photoSrc: advisor.photoSrc,
-        bio: paragraphsToBlocks(`advisor-bio-${advisor.id}`, advisor.bio),
-      },
-    })
-  }
-
   mutations.push({
     createOrReplace: {
       _id: `advisor-${DUMMY_ADVISOR.id}`,
@@ -198,6 +134,7 @@ async function main() {
       country: DUMMY_ADVISOR.country,
       yearJoined: DUMMY_ADVISOR.yearJoined,
       primaryExpertise: DUMMY_ADVISOR.primaryExpertise,
+      industries: DUMMY_ADVISOR.industries,
       snapshot: DUMMY_ADVISOR.snapshot,
       directoryFilters: [
         {
@@ -226,9 +163,7 @@ async function main() {
     await client.mutate(chunk, { autoGenerateArrayKeys: true })
   }
 
-  console.log(
-    `Done — seeded ${ADVISOR_DIRECTORY_SEED.length + 1} advisors with Country and Expertise filter groups.`,
-  )
+  console.log("Done — seeded showcase advisor with Country and Expertise filter groups.")
 }
 
 main().catch((err) => {

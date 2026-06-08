@@ -13,7 +13,7 @@ import {
   buildAdvisorProfileSeoTitle,
   buildPageUrl,
   clampMetaDescription,
-  resolveSocialOgImageUrl,
+  resolveShareOgImageUrl,
 } from "@/config/seo";
 import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo";
 import PageSocialHelmet from "@/components/seo/PageSocialHelmet";
@@ -69,7 +69,7 @@ export default function AdvisorProfile() {
     description: clampMetaDescription(
       profileDescription || "Advisor profile in the Rellia Health mentor directory.",
     ),
-    ogImage: resolveSocialOgImageUrl(active.photoSrc),
+    ogImage: resolveShareOgImageUrl(active.photoSrc),
   } : undefined);
 
   useEffect(() => {
@@ -97,6 +97,9 @@ export default function AdvisorProfile() {
       : null;
 
   const primaryTag = resolveAdvisorPrimaryTag(active);
+  const industryTags = Array.isArray(active.industries)
+    ? active.industries.map((tag: string) => tag.trim()).filter(Boolean)
+    : [];
 
   return (
     <div className="min-h-screen overflow-x-hidden bg-white font-host-grotesk">
@@ -106,7 +109,7 @@ export default function AdvisorProfile() {
           profileDescription || "Advisor profile in the Rellia Health mentor directory.",
         )}
         canonical={canonicalUrl}
-        ogImage={resolveSocialOgImageUrl(active.photoSrc)}
+        ogImage={resolveShareOgImageUrl(active.photoSrc)}
       />
       <Navbar forceSolid />
 
@@ -150,11 +153,21 @@ export default function AdvisorProfile() {
                   {active.role}
                 </p>
 
-                {primaryTag ? (
+                {primaryTag || industryTags.length > 0 ? (
                   <div className="flex flex-wrap gap-2 mb-6">
-                    <span className="inline-flex rounded-full border border-rellia-teal/20 bg-rellia-mint/20 px-3 py-1 font-urbanist text-xs font-semibold text-rellia-teal">
-                      {primaryTag}
-                    </span>
+                    {primaryTag ? (
+                      <span className="inline-flex rounded-full border border-rellia-teal/20 bg-rellia-mint/20 px-3 py-1 font-urbanist text-xs font-semibold text-rellia-teal">
+                        {primaryTag}
+                      </span>
+                    ) : null}
+                    {industryTags.map((tag) => (
+                      <span
+                        key={tag}
+                        className="inline-flex rounded-full border border-black/10 bg-rellia-cream/50 px-3 py-1 font-urbanist text-xs font-semibold text-black/70"
+                      >
+                        {tag}
+                      </span>
+                    ))}
                   </div>
                 ) : null}
 

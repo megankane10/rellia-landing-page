@@ -10,10 +10,12 @@ import {
   clampMetaDescription,
   clampMetaTitle,
   getSeoForPathname,
+  getDefaultOgImageUrl,
   getSiteUrl,
   isClientOnlyAuthPath,
   isItemDetailPath,
   normalizePathname,
+  resolveShareOgImageUrl,
   resolveSocialOgImageUrl,
   buildAdvisorProfileSeoTitle,
   buildAlumniProfileSeoTitle,
@@ -222,7 +224,9 @@ const buildStorySeo = (
   return {
     title,
     description,
-    ogImage: ogSrc ? resolveSocialOgImageUrl(ogSrc, siteOrigin) : undefined,
+    ogImage: ogSrc
+      ? resolveSocialOgImageUrl(ogSrc, siteOrigin) ?? getDefaultOgImageUrl()
+      : getDefaultOgImageUrl(),
   }
 }
 
@@ -240,7 +244,7 @@ const buildAdvisorProfileSeo = (
   return {
     title: buildAdvisorProfileSeoTitle(name),
     description: clampMetaDescription(description),
-    ogImage: photoSrc ? resolveSocialOgImageUrl(photoSrc, siteOrigin) : undefined,
+    ogImage: resolveShareOgImageUrl(photoSrc),
   }
 }
 
@@ -259,7 +263,7 @@ const buildAlumniProfileSeo = (
   return {
     title: buildAlumniProfileSeoTitle(name),
     description: clampMetaDescription(description),
-    ogImage: logoSrc ? resolveSocialOgImageUrl(logoSrc, siteOrigin) : undefined,
+    ogImage: resolveShareOgImageUrl(logoSrc),
   }
 }
 

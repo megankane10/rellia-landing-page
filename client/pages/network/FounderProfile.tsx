@@ -13,7 +13,7 @@ import {
   buildAlumniProfileSeoTitle,
   buildPageUrl,
   clampMetaDescription,
-  resolveSocialOgImageUrl,
+  resolveShareOgImageUrl,
 } from "@/config/seo";
 import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo";
 import PageSocialHelmet from "@/components/seo/PageSocialHelmet";
@@ -50,7 +50,7 @@ export default function FounderProfile() {
   useApplyCmsSeo(null, active ? {
     title: buildAlumniProfileSeoTitle(active.logoName),
     description: clampMetaDescription(active.shortDescription),
-    ogImage: resolveSocialOgImageUrl(active.logoSrc),
+    ogImage: resolveShareOgImageUrl(active.logoSrc),
   } : undefined);
 
   useEffect(() => {
@@ -77,7 +77,7 @@ export default function FounderProfile() {
         title={buildAlumniProfileSeoTitle(active.logoName)}
         description={clampMetaDescription(active.shortDescription)}
         canonical={canonicalUrl}
-        ogImage={resolveSocialOgImageUrl(active.logoSrc)}
+        ogImage={resolveShareOgImageUrl(active.logoSrc)}
       />
       <Navbar forceSolid />
 

@@ -11,6 +11,7 @@ import {
   clampMetaDescription,
   clampMetaTitle,
   getShareOrigin,
+  resolveShareOgImageUrl,
   resolveSocialOgImageUrl,
 } from "@/config/seo"
 import StoryArticleJsonLd from "@/components/seo/StoryArticleJsonLd"
@@ -86,7 +87,7 @@ export default function StoryPost() {
     cmsStory?.seo?.ogImageUrl?.trim() || headerCoverSrc
   const imageUrl = seoOgImageSrc
     ? resolveSocialOgImageUrl(seoOgImageSrc) ?? toAbsoluteImageUrl(seoOgImageSrc)
-    : undefined
+    : resolveShareOgImageUrl(undefined)
   const shareTitle = resolvedTitle
 
   const handleCopyLink = async () => {

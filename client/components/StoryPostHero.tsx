@@ -34,7 +34,7 @@ export const StoryPostHero = ({
       className={cn(
         "relative overflow-hidden rounded-b-[2.5rem] md:rounded-b-[3.5rem]",
         useBackgroundLayout
-          ? "min-h-[520px] bg-rellia-teal pt-24 pb-12 text-white md:min-h-[620px] md:pt-32 md:pb-16 lg:pb-20"
+          ? "flex min-h-[520px] flex-col bg-rellia-teal pt-24 pb-10 text-white md:min-h-[620px] md:pt-32 md:pb-12 lg:pb-14"
           : cn(
               "bg-gradient-to-br from-[#071f26] via-rellia-teal to-[#144853]",
               "pt-24 pb-12 md:pt-32 md:pb-16 lg:pb-20",
@@ -61,10 +61,25 @@ export const StoryPostHero = ({
         </div>
       )}
 
-      <div className="relative z-10 mx-auto max-w-[1300px] px-6 md:px-10">
-        <div className="mx-auto w-full max-w-[1100px]">
-          <ScrollReveal>
-            <div className="flex min-w-0 flex-col">
+      <div
+        className={cn(
+          "relative z-10 mx-auto max-w-[1300px] px-6 md:px-10",
+          useBackgroundLayout && "flex min-h-[inherit] flex-1 flex-col",
+        )}
+      >
+        <div
+          className={cn(
+            "mx-auto w-full max-w-[1100px]",
+            useBackgroundLayout && "flex min-h-[inherit] flex-1 flex-col",
+          )}
+        >
+          <ScrollReveal className={useBackgroundLayout ? "flex min-h-[inherit] flex-1 flex-col" : undefined}>
+            <div
+              className={cn(
+                "flex min-w-0 flex-col",
+                useBackgroundLayout && "min-h-[inherit] flex-1",
+              )}
+            >
               <div className="flex flex-wrap items-center gap-3">
                 <div className="inline-flex w-fit shrink-0 items-center gap-2 rounded-full bg-rellia-mint px-3 py-1.5">
                   <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-rellia-teal" aria-hidden />
@@ -78,7 +93,12 @@ export const StoryPostHero = ({
                 {title}
               </h1>
               {excerpt ? (
-                <p className="mt-4 max-w-3xl font-urbanist text-base font-normal leading-relaxed text-white/85 md:text-lg">
+                <p
+                  className={cn(
+                    "max-w-3xl font-urbanist text-base font-normal leading-relaxed text-white/85 md:text-lg",
+                    useBackgroundLayout ? "mt-6 md:mt-8" : "mt-4",
+                  )}
+                >
                   {excerpt}
                 </p>
               ) : null}
@@ -95,8 +115,14 @@ export const StoryPostHero = ({
                 </figure>
               ) : null}
 
-              <div className="h-8 md:h-10" aria-hidden />
-              {shareBlock}
+              {useBackgroundLayout ? (
+                <div className="mt-auto pt-10 pb-2 md:pt-14 md:pb-4">{shareBlock}</div>
+              ) : (
+                <>
+                  <div className="h-8 md:h-10" aria-hidden />
+                  {shareBlock}
+                </>
+              )}
             </div>
           </ScrollReveal>
         </div>

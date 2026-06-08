@@ -152,6 +152,7 @@ export default function FoundersDirectory() {
             specialties: Array.isArray(c.specialties) ? c.specialties : [],
             level: c.level,
             businessModel: Array.isArray(c.businessModel) ? c.businessModel : [],
+            directoryFilters: Array.isArray(c.directoryFilters) ? c.directoryFilters : [],
             shortDescription: c.shortDescription ?? "",
             longDescription: c.longDescription ?? "",
             websiteUrl: c.websiteUrl ?? "",

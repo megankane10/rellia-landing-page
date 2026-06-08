@@ -21,47 +21,7 @@
     <priority>0.80</priority>
   </url>
   <url>
-    <loc>https://www.relliahealth.com/advisors/directory/alex-rivera</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.65</priority>
-  </url>
-  <url>
-    <loc>https://www.relliahealth.com/advisors/directory/chris-dalton</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.65</priority>
-  </url>
-  <url>
     <loc>https://www.relliahealth.com/advisors/directory/dummy-showcase-advisor</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.65</priority>
-  </url>
-  <url>
-    <loc>https://www.relliahealth.com/advisors/directory/elena-ruiz</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.65</priority>
-  </url>
-  <url>
-    <loc>https://www.relliahealth.com/advisors/directory/henry-moss</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.65</priority>
-  </url>
-  <url>
-    <loc>https://www.relliahealth.com/advisors/directory/jordan-blake</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.65</priority>
-  </url>
-  <url>
-    <loc>https://www.relliahealth.com/advisors/directory/mei-tan</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.65</priority>
-  </url>
-  <url>
-    <loc>https://www.relliahealth.com/advisors/directory/priya-nair</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.65</priority>
-  </url>
-  <url>
-    <loc>https://www.relliahealth.com/advisors/directory/sam-okonkwo</loc>
     <changefreq>monthly</changefreq>
     <priority>0.65</priority>
   </url>

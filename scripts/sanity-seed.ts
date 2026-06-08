@@ -23,13 +23,14 @@ import {
   DEFAULT_EVENTS_LANDING_HERO_PORTABLE,
   DEFAULT_STORIES_PAGE_HEADLINE_PORTABLE,
 } from "../shared/cms/inlineHeroHeadline"
-import { ADVISOR_DIRECTORY_SEED, ADVISOR_FILTER_OPTIONS } from "../client/data/advisorDirectory"
+import { ADVISOR_FILTER_OPTIONS } from "../client/data/advisorDirectory"
 import { ALL_SPECIALTIES } from "../client/data/founderDirectory"
 import {
   createDummyAdvisorBio,
   createPowerOfPlayProfileBody,
   createWebsiteLaunchStoryBody,
   DUMMY_ADVISOR,
+  DUMMY_OPEN_ROLE,
   POWER_OF_PLAY_ALUMNI,
   PRIORITY_MODAL_SEED,
   PROGRAMS_LAYOUT_SEED,
@@ -1159,6 +1160,21 @@ async function main() {
 
   mutations.push({
     createOrReplace: {
+      _id: `openRole.${DUMMY_OPEN_ROLE.id}`,
+      _type: "openRole",
+      roleId: { _type: "slug", current: DUMMY_OPEN_ROLE.id },
+      title: DUMMY_OPEN_ROLE.title,
+      location: DUMMY_OPEN_ROLE.location,
+      employmentType: DUMMY_OPEN_ROLE.employmentType,
+      description: DUMMY_OPEN_ROLE.description,
+      responsibilities: DUMMY_OPEN_ROLE.responsibilities,
+      linkedInApplyUrl: DUMMY_OPEN_ROLE.linkedInApplyUrl,
+      sortOrder: 0,
+    },
+  })
+
+  mutations.push({
+    createOrReplace: {
       _id: "careersPage",
       _type: "careersPage",
       careersContentMode: "both",
@@ -2021,7 +2037,16 @@ async function main() {
     return Array.isArray(country) ? country : [country]
   }
 
-  const buildAdvisorSocialLinks = (advisor: (typeof ADVISOR_DIRECTORY_SEED)[number]) => {
+  type SeedAdvisor = {
+    id: string
+    linkedInUrl?: string
+    websiteUrl?: string
+    socialLinks?: Array<{ platform?: string; label?: string; url?: string }>
+    country?: string | string[]
+    filter?: string
+  }
+
+  const buildAdvisorSocialLinks = (advisor: SeedAdvisor) => {
     if (Array.isArray(advisor.socialLinks) && advisor.socialLinks.length > 0) {
       return advisor.socialLinks.map((link, index) => ({
         _type: "socialLink" as const,
@@ -2059,7 +2084,7 @@ async function main() {
     return links.length > 0 ? links : undefined
   }
 
-  const buildAdvisorDirectoryFilters = (advisor: (typeof ADVISOR_DIRECTORY_SEED)[number]) => {
+  const buildAdvisorDirectoryFilters = (advisor: SeedAdvisor & { filter?: string }) => {
     const filters: Array<{
       _type: "directoryFilterAssignment"
       group: { _type: "reference"; _ref: string }
@@ -2083,27 +2108,6 @@ async function main() {
     return filters.length > 0 ? filters : undefined
   }
 
-  for (const advisor of ADVISOR_DIRECTORY_SEED) {
-    mutations.push({
-      createOrReplace: {
-        _id: `advisor-${advisor.id}`,
-        _type: "advisor",
-        slug: { _type: "slug", current: advisor.id },
-        name: advisor.name,
-        organization: advisor.organization,
-        role: advisor.role,
-        country: advisorCountryValues(advisor.country),
-        yearJoined: advisor.yearJoined,
-        primaryExpertise: advisor.filter,
-        snapshot: advisor.snapshot ?? advisor.focus,
-        directoryFilters: buildAdvisorDirectoryFilters(advisor),
-        photoSrc: advisor.photoSrc,
-        socialLinks: buildAdvisorSocialLinks(advisor),
-        bio: paragraphsToBlocks(`advisor-bio-${advisor.id}`, advisor.bio),
-      },
-    })
-  }
-
   mutations.push({
     createOrReplace: {
       _id: `advisor-${DUMMY_ADVISOR.id}`,
@@ -2115,6 +2119,7 @@ async function main() {
       country: DUMMY_ADVISOR.country,
       yearJoined: DUMMY_ADVISOR.yearJoined,
       primaryExpertise: DUMMY_ADVISOR.primaryExpertise,
+      industries: DUMMY_ADVISOR.industries,
       snapshot: DUMMY_ADVISOR.snapshot,
       directoryFilters: [
         {

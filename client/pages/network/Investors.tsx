@@ -481,14 +481,14 @@ export default function Investors() {
 
               <FoundersClusterSection charts={charts} />
 
-              <section className="relative overflow-hidden bg-[#071018] px-6 pb-16 pt-0 text-white md:px-10 md:pb-24">
+              <section className="relative overflow-hidden bg-[#071018] px-6 py-16 text-white md:px-10 md:py-24">
                 <div aria-hidden className="pointer-events-none absolute inset-0">
                   <div className="absolute -left-32 top-0 h-96 w-96 rounded-full bg-teal-500/10 blur-3xl" />
                   <div className="absolute -right-24 bottom-0 h-80 w-80 rounded-full bg-blue-500/10 blur-3xl" />
                 </div>
-                <div className="relative mx-auto max-w-[1300px] overflow-hidden rounded-b-[2.5rem] md:rounded-b-[3.5rem] pb-16 md:pb-20">
+                <div className="relative mx-auto flex min-h-[min(72vh,760px)] max-w-[1300px] flex-col justify-center overflow-hidden rounded-b-[2.5rem] md:rounded-b-[3.5rem]">
                   <ScrollReveal>
-                    <h2 className="mt-5 font-host-grotesk text-2xl font-semibold leading-tight tracking-tight text-rellia-mint md:text-[32px]">
+                    <h2 className="font-host-grotesk text-2xl font-semibold leading-tight tracking-tight text-rellia-mint md:text-[32px]">
                       {content.pitchTitle ?? "Exclusive connections and pitch events"}
                     </h2>
                     <p className="mt-6 max-w-2xl font-urbanist text-lg leading-relaxed text-white/80">
@@ -496,7 +496,7 @@ export default function Investors() {
                         "Host a focused virtual session aligned to your mandate—or join a larger showcase to compare teams alongside fellow investors."}
                     </p>
                   </ScrollReveal>
-                  <div className="mt-8 md:mt-12 grid grid-cols-1 gap-8 md:grid-cols-2">
+                  <div className="mt-10 md:mt-14 grid grid-cols-1 gap-8 md:grid-cols-2">
                     {pitchCards.map((card, cardIndex) => (
                       <Reveal key={card.title} delay={cardIndex === 0 ? 0.06 : 0.1}>
                         <div className="group relative overflow-hidden rounded-[24px] border border-white/10 shadow-sm transition-[transform,box-shadow] duration-300 hover:-translate-y-[1px] hover:shadow-md h-[400px] md:h-[480px]">

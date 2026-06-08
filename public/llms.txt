@@ -58,7 +58,7 @@ Rellia offers founder programs (QMS, fundraising, regulatory, clinical validatio
 ## Stories & news
 
 - [/stories](https://www.relliahealth.com/stories): The latest founder spotlights, industry insights, & program updates. Stay current with the people and ideas shaping the future of health.
-- [/stories/website-launch](https://www.relliahealth.com/stories/website-launch): Public page on relliahealth.com.
+- [/stories/website-launch](https://www.relliahealth.com/stories/website-launch): Explore clearer paths for founders—benchmark readiness, join programs, meet advisors, and stay close to what is happening across the Rellia community.
 
 
 ## Startup diagnostic
@@ -68,15 +68,7 @@ Rellia offers founder programs (QMS, fundraising, regulatory, clinical validatio
 
 ## Directory profiles
 
-- [/advisors/directory/alex-rivera](https://www.relliahealth.com/advisors/directory/alex-rivera): Advisor profile in the Rellia Health mentor directory.
-- [/advisors/directory/chris-dalton](https://www.relliahealth.com/advisors/directory/chris-dalton): Advisor profile in the Rellia Health mentor directory.
 - [/advisors/directory/dummy-showcase-advisor](https://www.relliahealth.com/advisors/directory/dummy-showcase-advisor): Advisor profile in the Rellia Health mentor directory.
-- [/advisors/directory/elena-ruiz](https://www.relliahealth.com/advisors/directory/elena-ruiz): Advisor profile in the Rellia Health mentor directory.
-- [/advisors/directory/henry-moss](https://www.relliahealth.com/advisors/directory/henry-moss): Advisor profile in the Rellia Health mentor directory.
-- [/advisors/directory/jordan-blake](https://www.relliahealth.com/advisors/directory/jordan-blake): Advisor profile in the Rellia Health mentor directory.
-- [/advisors/directory/mei-tan](https://www.relliahealth.com/advisors/directory/mei-tan): Advisor profile in the Rellia Health mentor directory.
-- [/advisors/directory/priya-nair](https://www.relliahealth.com/advisors/directory/priya-nair): Advisor profile in the Rellia Health mentor directory.
-- [/advisors/directory/sam-okonkwo](https://www.relliahealth.com/advisors/directory/sam-okonkwo): Advisor profile in the Rellia Health mentor directory.
 - [/founders/alumni/power-of-play](https://www.relliahealth.com/founders/alumni/power-of-play): Alumni company profile in the Rellia Health founder network.
 
 
