@@ -1,6 +1,15 @@
 import { DEFAULT_APPLY_PAGE, DEFAULT_QMS_PROGRAM } from "../../shared/cms/defaults"
 import type { ApplyPageContent } from "../../shared/cms/types"
 import { QMS_PROGRAM_STATIC_BLOCKS } from "../../shared/cms/programs/qms.static"
+import { REGULATORY_ROADMAP_STATIC_BLOCKS } from "../../shared/cms/programs/regulatory-roadmap.static"
+import { PROTOTYPE_LAB_STATIC_BLOCKS } from "../../shared/cms/programs/prototype-lab.static"
+import { IGNITE_PITCH_STATIC_BLOCKS } from "../../shared/cms/programs/ignite-pitch.static"
+import { FIRST50_USERS_STATIC_BLOCKS } from "../../shared/cms/programs/first50-users.static"
+import { ELEVATE_CAPITAL_STATIC_BLOCKS } from "../../shared/cms/programs/elevate-capital.static"
+import { BRAND_STRATEGY_STATIC_BLOCKS } from "../../shared/cms/programs/brand-strategy.static"
+import { ADVISORY_BOARD_STATIC_BLOCKS } from "../../shared/cms/programs/advisory-board.static"
+import { ADVANCE_DATAROOM_STATIC_BLOCKS } from "../../shared/cms/programs/advance-dataroom.static"
+import type { ProgramPageStaticBlocks } from "../../shared/cms/programs/types"
 import { GETPROVEN_VENDORS_GRID_URL } from "../../client/config/partnerLinks"
 import { OPERATIONS_DOC_EDIT_URL } from "../../shared/cms/operationsDocUrl"
 
@@ -1228,15 +1237,46 @@ export const PRIORITY_MODAL_SEED = {
   priorityModalFormPlaceholderEmail: "Email address",
 }
 
+export const PROGRAM_STATIC_BLOCKS_BY_SLUG: Record<string, ProgramPageStaticBlocks> = {
+  "build-your-quality-management-system": QMS_PROGRAM_STATIC_BLOCKS,
+  "regulatory-strategy-sprint": REGULATORY_ROADMAP_STATIC_BLOCKS,
+  "low-fidelity-prototype-lab": PROTOTYPE_LAB_STATIC_BLOCKS,
+  "ignite-pitch-foundations": IGNITE_PITCH_STATIC_BLOCKS,
+  "first-50-users-clinical-feedback-intensive": FIRST50_USERS_STATIC_BLOCKS,
+  "elevate-healthcare-capital": ELEVATE_CAPITAL_STATIC_BLOCKS,
+  "design-your-brand-strategy": BRAND_STRATEGY_STATIC_BLOCKS,
+  "advisory-board-match": ADVISORY_BOARD_STATIC_BLOCKS,
+  "advance-data-room-deep-dive": ADVANCE_DATAROOM_STATIC_BLOCKS,
+}
+
+export const buildProgramPillarsSeed = (blocks: ProgramPageStaticBlocks) =>
+  blocks.pillars.map((pillar, index) => ({
+    _key: `pillar-${index}`,
+    title: pillar.title,
+    description: pillar.description,
+  }))
+
+export const buildProgramHowItWorksCardsSeed = (blocks: ProgramPageStaticBlocks) =>
+  blocks.howItWorksCards.map((card, index) => ({
+    _key: `hiw-${index}`,
+    title: card.title,
+    description: card.description,
+    imageSrc: card.imageSrc,
+  }))
+
+/** Events that should seed the Rellia favicon as the editable host portrait. */
+export const EVENT_FAVICON_HOST_SLUGS = new Set([
+  "leadership-under-pressure",
+  "set-your-stage",
+  "clinician-connect-primary-care",
+  "investor-readiness-how-vcs-evaluate-startups",
+])
+
 export const PROGRAMS_LAYOUT_SEED = {
   howItWorksTitle: DEFAULT_QMS_PROGRAM.howItWorksTitle,
   howItWorksIntro: DEFAULT_QMS_PROGRAM.howItWorksIntro,
   pillarsTitle: DEFAULT_QMS_PROGRAM.pillarsTitle,
-  pillars: QMS_PROGRAM_STATIC_BLOCKS.pillars.map((pillar, index) => ({
-    _key: `pillar-${index}`,
-    title: pillar.title,
-    body: pillar.description,
-  })),
+  pillars: buildProgramPillarsSeed(QMS_PROGRAM_STATIC_BLOCKS),
   timelineTitle: DEFAULT_QMS_PROGRAM.timelineTitle,
   timelineSubtitle: DEFAULT_QMS_PROGRAM.timelineSubtitle,
   timelineWeekLabelPrefix: "Week",

@@ -431,6 +431,7 @@ export type NetworkFeatureItem = {
   title: string
   body?: string
   iconKey?: string
+  imageSrc?: string
 }
 
 export type NetworkEligibilityItem = {
@@ -674,6 +675,8 @@ export type HomePageContent = {
   heroBackgroundVideoUrl?: string
   metricsHeading: string
   metrics: HomeMetric[]
+  whySectionTitle?: string
+  whySectionDescription?: string
   whyFeatures: HomeWhyFeature[]
   ctaTitle: string
   ctaButtonLabel: string
@@ -785,6 +788,8 @@ export type ProgramsEventCard = {
   dateTime: string
   person: string
   imageSrc: string
+  /** Optional CMS host portrait; falls back to Rellia favicon for company-hosted events. */
+  hostImageSrc?: string
   href?: string
   comingSoon?: boolean
   buttonText?: string
@@ -918,7 +923,9 @@ export type QmsProgramContent = {
   outcomes: string[]
   howItWorksTitle: string
   howItWorksIntro: string
+  howItWorksCards?: Array<{ title?: string; description?: string; imageSrc?: string }>
   pillarsTitle: string
+  pillars?: Array<{ title?: string; description?: string }>
   timelineTitle: string
   timelineSubtitle: string
   timelineSteps?: ApplyPageStep[]

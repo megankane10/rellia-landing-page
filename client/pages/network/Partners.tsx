@@ -2,6 +2,7 @@ import type { LucideIcon } from "lucide-react"
 import PageHeader from "@/components/PageHeader"
 import SectionHeading from "@/components/SectionHeading"
 import WhyRellia from "@/components/WhyRellia"
+import { mapNetworkWhyFeatures } from "@/lib/whyRelliaFeatures"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
 import RelliaAction from "@/components/RelliaAction"
@@ -298,34 +299,28 @@ export default function Partners() {
             content.whyDescription ??
             "We align commercial innovators, healthcare systems, and clinical networks around active pilots and structured technology adoption."
           }
-          features={(content.whyFeatures?.length ? content.whyFeatures : [
-            {
-              title: "Vetted healthcare scale",
-              body: "Skip cold emails and pre-screened meetings—connect directly with startups whose product, funding, and clinical roadmap are validated.",
-            },
-            {
-              title: "Active pilot sequencing",
-              body: "Work with founders who know exactly what success metrics and integration boundaries they need to hit in system deployments.",
-            },
-            {
-              title: "Secure compliance",
-              body: "Ensure technical standards and compliance logic align with hospital requirements right from first touch.",
-            },
-            {
-              title: "Direct GTM engagement",
-              body: "Co-design channels, APIs, and commercial handoffs within a community structured around real healthcare adoption.",
-            },
-          ]).map((feature) => ({
-            title: feature.title,
-            description: feature.body ?? "",
-            iconKey: "",
-          }))}
-          cardImages={[
-            "https://images.pexels.com/photos/3184319/pexels-photo-3184319.jpeg?auto=compress&cs=tinysrgb&w=1200", // vetted scale (corporate scale meeting/collaboration)
-            "https://images.pexels.com/photos/3184296/pexels-photo-3184296.jpeg?auto=compress&cs=tinysrgb&w=1200", // pilot sequencing (working together on software/system setup)
-            "https://images.pexels.com/photos/3184465/pexels-photo-3184465.jpeg?auto=compress&cs=tinysrgb&w=1200", // compliance (signing secure paperwork/legal compliance)
-            "https://images.pexels.com/photos/3184311/pexels-photo-3184311.jpeg?auto=compress&cs=tinysrgb&w=1200", // GTM engagement (go-to-market/commercial partnership discussion)
-          ]}
+          features={mapNetworkWhyFeatures(
+            content.whyFeatures?.length
+              ? content.whyFeatures
+              : [
+                  {
+                    title: "Vetted healthcare scale",
+                    body: "Skip cold emails and pre-screened meetings—connect directly with startups whose product, funding, and clinical roadmap are validated.",
+                  },
+                  {
+                    title: "Active pilot sequencing",
+                    body: "Work with founders who know exactly what success metrics and integration boundaries they need to hit in system deployments.",
+                  },
+                  {
+                    title: "Secure compliance",
+                    body: "Ensure technical standards and compliance logic align with hospital requirements right from first touch.",
+                  },
+                  {
+                    title: "Direct GTM engagement",
+                    body: "Co-design channels, APIs, and commercial handoffs within a community structured around real healthcare adoption.",
+                  },
+                ],
+          )}
           sectionClassName="bg-rellia-cream/20"
         />
 

@@ -58,6 +58,10 @@ import {
 import { DEFAULT_QMS_PROGRAM, mergeQmsProgram } from "@shared/cms/defaults"
 import type { QmsProgramContent } from "@shared/cms/types";
 import type { ProgramPageStaticBlocks } from "@shared/cms/programs/types";
+import {
+  resolveProgramHowItWorksCards,
+  resolveProgramPillars,
+} from "@shared/cms/programs/resolveProgramBlocks"
 import ProgramTrustedMembersSection from "@/components/program/ProgramTrustedMembersSection"
 import { resolveProgramCardImageSrc } from "@shared/cms/itemCardImage"
 
@@ -186,6 +190,8 @@ const ProgramPageLayout = ({
     cmsConfigured && isAnyCmsQueryLoading(programPageQuery, programDocQuery)
 
   const q = programPageData?.content ?? mergeQmsProgram(undefined, { ...DEFAULT_QMS_PROGRAM, ...(cms ?? {}) })
+  const resolvedHowItWorksCards = resolveProgramHowItWorksCards(q.howItWorksCards, howItWorksCards)
+  const resolvedPillars = resolveProgramPillars(q.pillars, pillars)
   const filloutId = extractFilloutId(q.paymentUrl);
   const hasEnrollmentForm = Boolean(filloutId) && !isWaitlist;
 
@@ -397,7 +403,7 @@ const ProgramPageLayout = ({
               </div>
             </ScrollReveal>
             <div className="mt-16 md:mt-20 grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-7">
-              {howItWorksCards.map((card, i) => {
+              {resolvedHowItWorksCards.map((card, i) => {
                 const bgImg = card.imageSrc || cardImages[i] || "";
                 return (
                   <ScrollReveal key={card.title} delay={i * 0.12}>
@@ -456,7 +462,7 @@ const ProgramPageLayout = ({
               <div className="pt-2">
                 <ScrollReveal delay={0.2}>
                   <div className="grid w-full grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12 sm:gap-8 lg:gap-6">
-                    {pillars.map((p) => {
+                    {resolvedPillars.map((p) => {
                       const Icon = p.icon;
                       return (
                         <div

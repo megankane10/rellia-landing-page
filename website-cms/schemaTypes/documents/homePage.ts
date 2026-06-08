@@ -71,6 +71,20 @@ export const homePage = defineType({
       group: 'highlights',
     }),
     defineField({
+      name: 'whySectionTitle',
+      title: 'Why Rellia section title',
+      type: 'string',
+      group: 'highlights',
+      initialValue: 'Why Rellia?',
+    }),
+    defineField({
+      name: 'whySectionDescription',
+      title: 'Why Rellia section description',
+      type: 'text',
+      rows: 2,
+      group: 'highlights',
+    }),
+    defineField({
       name: 'testimonialsTitlePortable',
       title: 'Testimonials section title',
       type: 'inlineHeroHeadline',

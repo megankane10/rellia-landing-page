@@ -34,6 +34,10 @@ import {
   POWER_OF_PLAY_ALUMNI,
   PRIORITY_MODAL_SEED,
   PROGRAMS_LAYOUT_SEED,
+  PROGRAM_STATIC_BLOCKS_BY_SLUG,
+  EVENT_FAVICON_HOST_SLUGS,
+  buildProgramPillarsSeed,
+  buildProgramHowItWorksCardsSeed,
   QMS_PROGRAM_TESTIMONIALS_SEED,
   QMS_PROGRAM_TIMELINE_STEPS,
   STUDIO_GUIDE_SECTIONS,
@@ -1250,12 +1254,36 @@ async function main() {
     mutations.push({ delete: { id: retiredProgramId } })
   }
 
+  const buildProgramDetailBlocksSeed = async (slug: string) => {
+    const staticBlocks = PROGRAM_STATIC_BLOCKS_BY_SLUG[slug]
+    if (!staticBlocks) return {}
+
+    const pillars = buildProgramPillarsSeed(staticBlocks)
+    const howItWorksCards = []
+    for (const card of buildProgramHowItWorksCardsSeed(staticBlocks)) {
+      const cardAssetId = card.imageSrc
+        ? await resolveImageAssetId(client, card.imageSrc)
+        : null
+      howItWorksCards.push({
+        _key: card._key,
+        title: card.title,
+        description: card.description,
+        image: toSanityImageFieldValue(cardAssetId),
+      })
+    }
+
+    return { pillars, howItWorksCards }
+  }
+
+  const faviconHostAssetId = await resolveImageAssetId(client, "/favicon.ico")
+
   // Programs: one document per program (card + detail page content)
   for (const [index, program] of DEFAULT_PROGRAMS_LANDING.programs.entries()) {
     const title = program.title?.trim()
     if (!title) continue
     const slug = (program.href || "").split("/").filter(Boolean).pop() || title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "")
     const programAssetId = await resolveImageAssetId(client, program.imageSrc)
+    const programDetailBlocks = await buildProgramDetailBlocksSeed(slug)
     const isQms = slug === "build-your-quality-management-system"
     mutations.push({
       createOrReplace: {
@@ -1271,6 +1299,7 @@ async function main() {
         status: (program as any).waitlistHref ? "waitlist" : "available",
         sortOrder: index,
         pricingDiscountEnabled: false,
+        ...programDetailBlocks,
         ...(isQms
           ? {
               paymentUrl: DEFAULT_QMS_PROGRAM.paymentUrl,
@@ -1323,6 +1352,9 @@ async function main() {
         endsAt: resolveSeedEventEndsAt(e as any),
         person: e.person,
         image: toSanityImageFieldValue(eventAssetId),
+        hostImage: EVENT_FAVICON_HOST_SLUGS.has(slug)
+          ? toSanityImageFieldValue(faviconHostAssetId)
+          : undefined,
         href: e.href,
         comingSoon: (e as any).comingSoon,
         buttonText: (e as any).buttonText,
@@ -1352,6 +1384,9 @@ async function main() {
         endsAt: resolveSeedEventEndsAt(e as any),
         person: e.person,
         image: toSanityImageFieldValue(eventAssetId),
+        hostImage: EVENT_FAVICON_HOST_SLUGS.has(slug)
+          ? toSanityImageFieldValue(faviconHostAssetId)
+          : undefined,
         href: e.href,
         comingSoon: (e as any).comingSoon,
         buttonText: (e as any).buttonText,

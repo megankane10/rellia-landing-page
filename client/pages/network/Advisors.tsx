@@ -1,6 +1,7 @@
 import PageHeader from "@/components/PageHeader"
 import SectionHeading from "@/components/SectionHeading"
 import WhyRellia from "@/components/WhyRellia"
+import { mapNetworkWhyFeatures } from "@/lib/whyRelliaFeatures"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
 import RelliaAction from "@/components/RelliaAction"
@@ -256,20 +257,14 @@ export default function Advisors() {
         <WhyRellia
           sectionTitle={content.whyTitle ?? "What we look for"}
           sectionDescription={content.whyDescription ?? "Effective advisors combine depth, specificity, and respect for founder momentum."}
-          features={(content.whyFeatures?.length ? content.whyFeatures : CRITERIA_ITEMS.map((c) => ({
-            title: c.title,
-            body: `${c.summary} ${c.detail}`,
-          }))).map((c) => ({
-            title: c.title,
-            description: c.body ?? "",
-            iconKey: "",
-          }))}
-          cardImages={[
-            "https://images.pexels.com/photos/3184311/pexels-photo-3184311.jpeg?auto=compress&cs=tinysrgb&w=1200", // senior judgment (consultation/discussion)
-            "https://images.pexels.com/photos/3184287/pexels-photo-3184287.jpeg?auto=compress&cs=tinysrgb&w=1200", // specific edge (focusing on data/charts)
-            "https://images.pexels.com/photos/3184306/pexels-photo-3184306.jpeg?auto=compress&cs=tinysrgb&w=1200", // boundaries (structured working session/laptop)
-            "https://images.pexels.com/photos/3184317/pexels-photo-3184317.jpeg?auto=compress&cs=tinysrgb&w=1200", // momentum (hand raised, active/positive team dynamic)
-          ]}
+          features={mapNetworkWhyFeatures(
+            content.whyFeatures?.length
+              ? content.whyFeatures
+              : CRITERIA_ITEMS.map((c) => ({
+                  title: c.title,
+                  body: `${c.summary} ${c.detail}`,
+                })),
+          )}
           sectionClassName="bg-white"
         />
 

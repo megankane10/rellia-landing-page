@@ -7,6 +7,9 @@ import type {
   NetworkPartnersPageContent,
 } from "./types"
 
+const pexelsCardImage = (photoId: string) =>
+  `https://images.pexels.com/photos/${photoId}/pexels-photo-${photoId}.jpeg?auto=compress&cs=tinysrgb&w=1200`
+
 export const DEFAULT_NETWORK_ENGAGE_FOUNDERS: NetworkEngageCard[] = [
   {
     title: "Apply for membership",
@@ -105,21 +108,25 @@ export const DEFAULT_NETWORK_FOUNDERS_PAGE: NetworkFoundersPageContent = {
       title: "Warm, qualified intros",
       body: "Introductions to investors, partners, and clinicians who understand your stage—not spray-and-pray blasts.",
       iconKey: "UserPlus",
+      imageSrc: pexelsCardImage("5668858"),
     },
     {
       title: "Slack community with signal",
       body: "A vetted network where people answer with operator context because application review keeps quality high.",
       iconKey: "MessagesSquare",
+      imageSrc: pexelsCardImage("3184296"),
     },
     {
       title: "Programs for healthcare reality",
       body: "Workshops and tracks built for regulatory, clinical, and commercial work—not generic startup content.",
       iconKey: "GraduationCap",
+      imageSrc: pexelsCardImage("3845126"),
     },
     {
       title: "Equity-friendly access",
       body: "Depth from experienced advisors and operators without giving up ownership to join.",
       iconKey: "Percent",
+      imageSrc: pexelsCardImage("3184465"),
     },
   ],
   journeyTitle: "Where Rellia meets your trajectory",
@@ -319,21 +326,25 @@ export const DEFAULT_NETWORK_ADVISORS_PAGE: NetworkAdvisorsPageContent = {
       title: "Senior judgment",
       body: "You have led, practiced, or scaled inside healthcare—not only consulted from the sidelines.",
       iconKey: "Scale",
+      imageSrc: pexelsCardImage("3184311"),
     },
     {
       title: "Specific edge",
       body: "A narrow expertise beats a general resume—matching works best when your strengths are obvious.",
       iconKey: "Crosshair",
+      imageSrc: pexelsCardImage("3184287"),
     },
     {
       title: "Boundaries with generosity",
       body: "You protect scope and safety while still leaving founders with a crisp next step.",
       iconKey: "ShieldCheck",
+      imageSrc: pexelsCardImage("3184306"),
     },
     {
       title: "Momentum-aware advice",
       body: "Guidance is timed to milestones founders must hit—not theoretical debates detached from evidence plans.",
       iconKey: "Gauge",
+      imageSrc: pexelsCardImage("3184317"),
     },
   ],
   ctaTitle: "Apply as an advisor",
@@ -361,21 +372,25 @@ export const DEFAULT_NETWORK_INVESTORS_PAGE: NetworkInvestorsPageContent = {
       title: "Diligence-ready narratives",
       body: "Teams arrive with clearer milestones across clinical, regulatory, and commercial tracks—less scramble in your inbox.",
       iconKey: "ShieldCheck",
+      imageSrc: pexelsCardImage("3184291"),
     },
     {
       title: "Operator-backed signal",
       body: "Founders are coached by advisors who have shipped in healthcare—not generic mentors recycling buzzwords.",
       iconKey: "Sparkles",
+      imageSrc: pexelsCardImage("3182811"),
     },
     {
       title: "Curated intros",
       body: "Sessions are thesis-aware and hosted virtually—focused conversations instead of crowded demo days.",
       iconKey: "Users",
+      imageSrc: pexelsCardImage("5668858"),
     },
     {
       title: "Pattern visibility",
       body: "See how companies cluster by stage, modality, and buyer so you can tune allocation faster.",
       iconKey: "BarChart3",
+      imageSrc: pexelsCardImage("3183158"),
     },
   ],
   pitchTitle: "Exclusive connections and pitch events",
@@ -459,21 +474,25 @@ export const DEFAULT_NETWORK_PARTNERS_PAGE: NetworkPartnersPageContent = {
       title: "Vetted healthcare scale",
       body: "Skip cold emails and pre-screened meetings—connect directly with startups whose product, funding, and clinical roadmap are validated.",
       iconKey: "ShieldCheck",
+      imageSrc: pexelsCardImage("3184319"),
     },
     {
       title: "Active pilot sequencing",
       body: "Work with founders who know exactly what success metrics and integration boundaries they need to hit in system deployments.",
       iconKey: "Target",
+      imageSrc: pexelsCardImage("3184296"),
     },
     {
       title: "Secure compliance",
       body: "Ensure technical standards and compliance logic align with hospital requirements right from first touch.",
       iconKey: "ShieldCheck",
+      imageSrc: pexelsCardImage("3184465"),
     },
     {
       title: "Direct GTM engagement",
       body: "Co-design channels, APIs, and commercial handoffs within a community structured around real healthcare adoption.",
       iconKey: "Megaphone",
+      imageSrc: pexelsCardImage("3184311"),
     },
   ],
   ctaTitle: "Partner with Rellia",
@@ -486,6 +505,23 @@ export const DEFAULT_NETWORK_PARTNERS_PAGE: NetworkPartnersPageContent = {
 const pickList = <T>(cms: T[] | undefined, fallback: T[]): T[] =>
   Array.isArray(cms) && cms.length > 0 ? cms : fallback
 
+const mergeNetworkWhyFeatures = (
+  cms: NetworkFeatureItem[] | null | undefined,
+  defaults: NetworkFeatureItem[],
+): NetworkFeatureItem[] =>
+  defaults.map((defaultFeature, index) => {
+    const cmsFeature = cms?.[index]
+    if (!cmsFeature) return defaultFeature
+    return {
+      ...defaultFeature,
+      ...cmsFeature,
+      title: cmsFeature.title?.trim() || defaultFeature.title,
+      body: cmsFeature.body?.trim() || defaultFeature.body,
+      iconKey: cmsFeature.iconKey?.trim() || defaultFeature.iconKey,
+      imageSrc: cmsFeature.imageSrc?.trim() || defaultFeature.imageSrc,
+    }
+  })
+
 export const mergeNetworkFoundersPage = (
   cms?: Partial<NetworkFoundersPageContent> | null,
 ): NetworkFoundersPageContent => ({
@@ -493,7 +529,10 @@ export const mergeNetworkFoundersPage = (
   ...cms,
   eligibilityItems: pickList(cms?.eligibilityItems, DEFAULT_NETWORK_FOUNDERS_PAGE.eligibilityItems ?? []),
   engageItems: pickList(cms?.engageItems, DEFAULT_NETWORK_FOUNDERS_PAGE.engageItems ?? []),
-  whyFeatures: pickList(cms?.whyFeatures, DEFAULT_NETWORK_FOUNDERS_PAGE.whyFeatures ?? []),
+  whyFeatures: mergeNetworkWhyFeatures(
+    cms?.whyFeatures,
+    DEFAULT_NETWORK_FOUNDERS_PAGE.whyFeatures ?? [],
+  ),
   journeySteps: pickList(cms?.journeySteps, DEFAULT_NETWORK_FOUNDERS_PAGE.journeySteps ?? []),
   exploreCards: pickList(cms?.exploreCards, DEFAULT_NETWORK_FOUNDERS_PAGE.exploreCards ?? []),
   deeperHelpFeatures: pickList(
@@ -511,7 +550,10 @@ export const mergeNetworkAdvisorsPage = (
   engageItems: pickList(cms?.engageItems, DEFAULT_NETWORK_ADVISORS_PAGE.engageItems ?? []),
   scheduleItems: pickList(cms?.scheduleItems, DEFAULT_NETWORK_ADVISORS_PAGE.scheduleItems ?? []),
   benefitsBullets: pickList(cms?.benefitsBullets, DEFAULT_NETWORK_ADVISORS_PAGE.benefitsBullets ?? []),
-  whyFeatures: pickList(cms?.whyFeatures, DEFAULT_NETWORK_ADVISORS_PAGE.whyFeatures ?? []),
+  whyFeatures: mergeNetworkWhyFeatures(
+    cms?.whyFeatures,
+    DEFAULT_NETWORK_ADVISORS_PAGE.whyFeatures ?? [],
+  ),
 })
 
 export const mergeNetworkInvestorsPage = (
@@ -519,7 +561,10 @@ export const mergeNetworkInvestorsPage = (
 ): NetworkInvestorsPageContent => ({
   ...DEFAULT_NETWORK_INVESTORS_PAGE,
   ...cms,
-  whyFeatures: pickList(cms?.whyFeatures, DEFAULT_NETWORK_INVESTORS_PAGE.whyFeatures ?? []),
+  whyFeatures: mergeNetworkWhyFeatures(
+    cms?.whyFeatures,
+    DEFAULT_NETWORK_INVESTORS_PAGE.whyFeatures ?? [],
+  ),
   pitchCards: pickList(cms?.pitchCards, DEFAULT_NETWORK_INVESTORS_PAGE.pitchCards ?? []),
   foundersCluster: pickList(cms?.foundersCluster, DEFAULT_NETWORK_INVESTORS_PAGE.foundersCluster ?? []),
   logoMarquee: pickList(cms?.logoMarquee, DEFAULT_NETWORK_INVESTORS_PAGE.logoMarquee ?? []),
@@ -533,5 +578,8 @@ export const mergeNetworkPartnersPage = (
   engageItems: pickList(cms?.engageItems, DEFAULT_NETWORK_PARTNERS_PAGE.engageItems ?? []),
   benefitsBullets: pickList(cms?.benefitsBullets, DEFAULT_NETWORK_PARTNERS_PAGE.benefitsBullets ?? []),
   directoryBullets: pickList(cms?.directoryBullets, DEFAULT_NETWORK_PARTNERS_PAGE.directoryBullets ?? []),
-  whyFeatures: pickList(cms?.whyFeatures, DEFAULT_NETWORK_PARTNERS_PAGE.whyFeatures ?? []),
+  whyFeatures: mergeNetworkWhyFeatures(
+    cms?.whyFeatures,
+    DEFAULT_NETWORK_PARTNERS_PAGE.whyFeatures ?? [],
+  ),
 })

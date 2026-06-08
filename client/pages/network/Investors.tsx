@@ -4,6 +4,7 @@ import { PEXELS_OFFICE_COLLABORATION } from "@/config/pexelsFallbacks"
 import PageHeader from "@/components/PageHeader"
 import SectionHeading from "@/components/SectionHeading"
 import WhyRellia from "@/components/WhyRellia"
+import { mapNetworkWhyFeatures } from "@/lib/whyRelliaFeatures"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
 import LogoMarquee from "@/components/LogoMarquee"
@@ -462,20 +463,14 @@ export default function Investors() {
                   content.whyDescription ??
                   "We shorten the distance between credible narrative and reality checks from people who have scaled in healthcare."
                 }
-                features={(content.whyFeatures?.length ? content.whyFeatures : INVESTOR_BENEFITS.map((b) => ({
-                  title: b.title,
-                  body: b.body,
-                }))).map((b) => ({
-                  title: b.title,
-                  description: b.body ?? "",
-                  iconKey: "",
-                }))}
-                cardImages={[
-                  "https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=1200", // diligence (analysis/charts/collaboration)
-                  "https://images.pexels.com/photos/3182811/pexels-photo-3182811.jpeg?auto=compress&cs=tinysrgb&w=1200", // operators (experienced business operations meeting)
-                  "https://images.pexels.com/photos/5668858/pexels-photo-5668858.jpeg?auto=compress&cs=tinysrgb&w=1200", // intros (investor introductions/handshake)
-                  "https://images.pexels.com/photos/3183158/pexels-photo-3183158.jpeg?auto=compress&cs=tinysrgb&w=1200", // pattern visibility (strategic analysis/presentation)
-                ]}
+                features={mapNetworkWhyFeatures(
+                  content.whyFeatures?.length
+                    ? content.whyFeatures
+                    : INVESTOR_BENEFITS.map((b) => ({
+                        title: b.title,
+                        body: b.body,
+                      })),
+                )}
                 sectionClassName="bg-rellia-cream/20"
               />
 

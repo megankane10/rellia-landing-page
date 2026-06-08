@@ -31,14 +31,9 @@ export default function Index() {
         <PathsSection />
 
         <WhyRellia
-          sectionTitle="Why Rellia?"
+          sectionTitle={home.whySectionTitle ?? "Why Rellia?"}
+          sectionDescription={home.whySectionDescription}
           features={home.whyFeatures}
-          cardImages={[
-            "https://images.pexels.com/photos/3184292/pexels-photo-3184292.jpeg?auto=compress&cs=tinysrgb&w=1200", // outcomes
-            "https://images.pexels.com/photos/3182761/pexels-photo-3182761.jpeg?auto=compress&cs=tinysrgb&w=1200", // advisors
-            "https://images.pexels.com/photos/3184328/pexels-photo-3184328.jpeg?auto=compress&cs=tinysrgb&w=1200", // resources
-            "https://images.pexels.com/photos/3183186/pexels-photo-3183186.jpeg?auto=compress&cs=tinysrgb&w=1200", // community
-          ]}
         />
 
         <HowItWorks />

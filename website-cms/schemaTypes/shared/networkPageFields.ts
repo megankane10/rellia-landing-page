@@ -60,8 +60,15 @@ export const networkFeatureItemMember = defineArrayMember({
     defineField({name: 'title', type: 'string', validation: (Rule) => Rule.required()}),
     defineField({name: 'body', type: 'text', rows: 3}),
     defineField({name: 'iconKey', title: 'Icon', type: 'string'}),
+    defineField({
+      name: 'image',
+      title: 'Card image',
+      type: 'image',
+      options: {hotspot: true},
+      description: 'Background image for this Why Rellia card.',
+    }),
   ],
-  preview: {select: {title: 'title', subtitle: 'body'}},
+  preview: {select: {title: 'title', subtitle: 'body', media: 'image'}},
 })
 
 export const networkEligibilityItemMember = defineArrayMember({
@@ -69,9 +76,15 @@ export const networkEligibilityItemMember = defineArrayMember({
   name: 'networkEligibilityItem',
   fields: [
     defineField({name: 'text', type: 'string', validation: (Rule) => Rule.required()}),
-    defineField({name: 'imageUrl', title: 'Card image URL', type: 'string'}),
+    defineField({
+      name: 'image',
+      title: 'Card image',
+      type: 'image',
+      options: {hotspot: true},
+    }),
+    defineField({name: 'imageUrl', title: 'Card image URL (fallback)', type: 'string'}),
   ],
-  preview: {select: {title: 'text'}},
+  preview: {select: {title: 'text', media: 'image'}},
 })
 
 export const networkExploreCardMember = defineArrayMember({
@@ -80,7 +93,13 @@ export const networkExploreCardMember = defineArrayMember({
   fields: [
     defineField({name: 'title', type: 'string', validation: (Rule) => Rule.required()}),
     defineField({name: 'badge', type: 'string'}),
-    defineField({name: 'imageUrl', title: 'Image URL', type: 'string'}),
+    defineField({
+      name: 'image',
+      title: 'Card image',
+      type: 'image',
+      options: {hotspot: true},
+    }),
+    defineField({name: 'imageUrl', title: 'Image URL (fallback)', type: 'string'}),
     defineField({name: 'ctaLabel', title: 'Button label', type: 'string'}),
     defineField({name: 'ctaHref', title: 'Button link', type: 'string'}),
   ],

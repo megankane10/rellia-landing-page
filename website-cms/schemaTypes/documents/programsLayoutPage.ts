@@ -47,9 +47,9 @@ export const programsLayoutPage = defineType({
           name: 'programPillar',
           fields: [
             defineField({name: 'title', type: 'string', validation: (Rule) => Rule.required()}),
-            defineField({name: 'body', type: 'text', rows: 3, validation: (Rule) => Rule.required()}),
+            defineField({name: 'description', type: 'text', rows: 3, validation: (Rule) => Rule.required()}),
           ],
-          preview: {select: {title: 'title', subtitle: 'body'}},
+          preview: {select: {title: 'title', subtitle: 'description'}},
         }),
       ],
     }),

@@ -19,7 +19,7 @@ export type ProgramTimelineMonth = {
   weeks: (string | ProgramTimelineStep)[]
 }
 
-/** Content not yet modeled in Sanity — keep per-program in `*.static.ts` files. */
+/** Icons and timeline defaults — title/body/images merge from CMS when present. */
 export type ProgramPageStaticBlocks = {
   howItWorksCards: ProgramPageIconCard[]
   pillars: ProgramPageIconCard[]

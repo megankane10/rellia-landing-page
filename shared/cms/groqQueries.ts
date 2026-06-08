@@ -44,7 +44,7 @@ const networkEngageFragment = `engageTitle,
 
 const networkWhyFragment = `whyTitle,
   whyDescription,
-  whyFeatures[]{ title, body, iconKey }`
+  whyFeatures[]{ title, body, iconKey, "imageSrc": coalesce(imageSrc, image.asset->url) }`
 
 const networkCtaFragment = `ctaTitle,
   ctaBody,
@@ -263,7 +263,7 @@ export const networkFoundersPageQuery = `*[_type == "networkFoundersPage"][0]{
   ${networkHeroFragment},
   eligibilityTitle,
   eligibilityDescription,
-  eligibilityItems[]{ text, imageUrl },
+  eligibilityItems[]{ text, "imageUrl": coalesce(imageUrl, image.asset->url) },
   ${networkEngageFragment},
   ${networkWhyFragment},
   journeyTitle,
@@ -271,7 +271,7 @@ export const networkFoundersPageQuery = `*[_type == "networkFoundersPage"][0]{
   journeySteps[]{ id, label, zone, detail },
   exploreTitle,
   exploreSubtitle,
-  exploreCards[]{ title, badge, imageUrl, ctaLabel, ctaHref },
+  exploreCards[]{ title, badge, "imageUrl": coalesce(imageUrl, image.asset->url), ctaLabel, ctaHref },
   deeperHelpTitle,
   deeperHelpSubtitle,
   deeperHelpFeatures[]{ title, body, iconKey },
@@ -445,6 +445,8 @@ export const homePageQuery = `*[_type == "homePage"][0]{
   metricsHeading,
   metrics[]{ label, value, suffix },
   howItWorksSectionTitle,
+  whySectionTitle,
+  whySectionDescription,
   testimonialsTitlePortable,
   whyFeatures[]{ 
     iconKey, 
@@ -568,7 +570,13 @@ const programDetailFields = `
   outcomes,
   howItWorksTitle,
   howItWorksIntro,
+  howItWorksCards[]{
+    title,
+    description,
+    "imageSrc": image.asset->url
+  },
   pillarsTitle,
+  pillars[]{ title, description },
   timelineTitle,
   timelineSubtitle,
   pricingBadge,
@@ -634,6 +642,7 @@ export const eventsQuery = `*[_type == "event" && status != "hidden" && !(_id in
   dateTime,
   person,
   "imageSrc": image.asset->url,
+  "hostImageSrc": hostImage.asset->url,
   href,
   comingSoon,
   buttonText,
@@ -658,6 +667,7 @@ export const eventBySlugQuery = `*[_type == "event" && slug.current == $slug && 
   dateTime,
   person,
   "imageSrc": image.asset->url,
+  "hostImageSrc": hostImage.asset->url,
   href,
   comingSoon,
   buttonText,

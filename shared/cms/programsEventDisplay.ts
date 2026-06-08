@@ -330,7 +330,12 @@ const hashProgramsEventKey = (key: string): number => {
  * Speaker headshot for event cards and detail — stable hash into home testimonial portraits (+ Melissa `.jpg`),
  * `/favicon.ico` when Rellia-branded, or Mazhar’s testimonial portrait for Dr. Sabina Nagpal’s event.
  */
+const RELLIA_FAVICON_HOST_IMAGE = "/favicon.ico"
+
 export const getProgramsEventSpeakerAvatarSrc = (event: ProgramsEventCard): string => {
+  const cmsHostImage = event.hostImageSrc?.trim()
+  if (cmsHostImage) return cmsHostImage
+
   const parts = parseProgramsEventSpeaker(event.person)
   const speaker = (parts.speaker || (event.person ?? "").trim()).trim()
   const company = parts.company.trim()
@@ -340,7 +345,7 @@ export const getProgramsEventSpeakerAvatarSrc = (event: ProgramsEventCard): stri
     RELLIA_HEALTH_SPEAKER_RE.test(company) ||
     RELLIA_HEALTH_SPEAKER_RE.test(personRaw)
   ) {
-    return "/favicon.ico"
+    return RELLIA_FAVICON_HOST_IMAGE
   }
   const isDrSabinaNagpalEvent =
     event.slug === "leadership-under-pressure" ||

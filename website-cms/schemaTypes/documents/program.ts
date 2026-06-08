@@ -87,9 +87,29 @@ export const program = defineType({
     defineField({name: 'outcomes', type: 'array', of: [{type: 'string'}], group: 'detail'}),
     defineField({name: 'howItWorksTitle', type: 'string', group: 'detail'}),
     defineField({name: 'howItWorksIntro', type: 'text', rows: 3, group: 'detail'}),
+    defineField({
+      name: 'howItWorksCards',
+      title: 'How it works cards',
+      description: 'Three image cards below the how-it-works intro. Icons stay fixed in the site layout.',
+      type: 'array',
+      of: [
+        defineArrayMember({
+          type: 'object',
+          fields: [
+            defineField({name: 'title', type: 'string'}),
+            defineField({name: 'description', type: 'text', rows: 3}),
+            defineField({name: 'image', title: 'Card image', type: 'image', options: {hotspot: true}}),
+          ],
+          preview: {select: {title: 'title', subtitle: 'description', media: 'image'}},
+        }),
+      ],
+      group: 'detail',
+    }),
     defineField({name: 'pillarsTitle', type: 'string', group: 'detail'}),
     defineField({
       name: 'pillars',
+      title: 'Program pillar cards',
+      description: 'Four pillar cards (title + description). Icons stay fixed in the site layout.',
       type: 'array',
       of: [
         defineArrayMember({
@@ -98,6 +118,7 @@ export const program = defineType({
             defineField({name: 'title', type: 'string'}),
             defineField({name: 'description', type: 'text', rows: 3}),
           ],
+          preview: {select: {title: 'title', subtitle: 'description'}},
         }),
       ],
       group: 'detail',

@@ -51,6 +51,7 @@ import { mergeNetworkFoundersPage } from "@shared/cms/networkPageDefaults";
 import type { NetworkFoundersPageContent } from "@shared/cms/types";
 import { resolveNetworkIcon } from "@/lib/resolveNetworkIcon";
 import WhyRellia from "@/components/WhyRellia";
+import { mapNetworkWhyFeatures } from "@/lib/whyRelliaFeatures"
 
 const HERO_FALLBACK = "/images/founders.jpg";
 
@@ -618,12 +619,6 @@ function MembershipDifferentSection({ content }: { content: NetworkFoundersPageC
     ? content.whyFeatures
     : MEMBERSHIP_VALUE_PROPS.map((prop) => ({ title: prop.title, body: prop.body }))
 
-  const features = whyFeatures.map((prop) => ({
-    title: prop.title,
-    description: prop.body ?? "",
-    iconKey: "",
-  }))
-
   return (
     <WhyRellia
       sectionTitle={content.whyTitle ?? "What makes Rellia membership different"}
@@ -631,13 +626,7 @@ function MembershipDifferentSection({ content }: { content: NetworkFoundersPageC
         content.whyDescription ??
         "Operator-led support in a community where quality is defended by application review—not open signup churn."
       }
-      features={features}
-      cardImages={[
-        "https://images.pexels.com/photos/5668858/pexels-photo-5668858.jpeg?auto=compress&cs=tinysrgb&w=1200", // intros (handshake/introduction)
-        "https://images.pexels.com/photos/3184296/pexels-photo-3184296.jpeg?auto=compress&cs=tinysrgb&w=1200", // slack (collaborating on computer/chat)
-        "https://images.pexels.com/photos/3845126/pexels-photo-3845126.jpeg?auto=compress&cs=tinysrgb&w=1200", // programs (clinical research laboratory setting)
-        "https://images.pexels.com/photos/3184465/pexels-photo-3184465.jpeg?auto=compress&cs=tinysrgb&w=1200", // equity (signing partnership documents)
-      ]}
+      features={mapNetworkWhyFeatures(whyFeatures)}
       sectionClassName="bg-white"
     />
   );

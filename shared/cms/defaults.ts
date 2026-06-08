@@ -1358,30 +1358,41 @@ export const DEFAULT_HOME_PAGE: HomePageContent = {
     { label: "Countries around the world", value: 11 },
   ],
   howItWorksSectionTitle: "How does it work?",
+  whySectionTitle: "Why Rellia?",
+  whySectionDescription:
+    "A curated network and practical support system to help you move through the moments that make or break a healthcare startup.",
   whyFeatures: [
     {
       iconKey: "target",
       title: "The Outcomes",
       description:
         "Avoid mistakes on your path to market and easily achieve your milestones through our customized programs",
+      imageSrc:
+        "https://images.pexels.com/photos/3184292/pexels-photo-3184292.jpeg?auto=compress&cs=tinysrgb&w=1200",
     },
     {
       iconKey: "userRound",
       title: "The Advisors",
       description:
         "Access 1:1 guidance from experts with years of experience scaling health tech businesses.",
+      imageSrc:
+        "https://images.pexels.com/photos/3182761/pexels-photo-3182761.jpeg?auto=compress&cs=tinysrgb&w=1200",
     },
     {
       iconKey: "bookOpen",
       title: "The Resources",
       description:
         "Apply tangible tools, hands-on workshops, and proven templates to move your business forward right now",
+      imageSrc:
+        "https://images.pexels.com/photos/3184328/pexels-photo-3184328.jpeg?auto=compress&cs=tinysrgb&w=1200",
     },
     {
       iconKey: "users",
       title: "The Community",
       description:
         "Beta test your ideas, find an accountability buddy, cheer each other on, share your deepest worries. Connect with fellow health tech founders who have been through it before.",
+      imageSrc:
+        "https://images.pexels.com/photos/3183186/pexels-photo-3183186.jpeg?auto=compress&cs=tinysrgb&w=1200",
     },
   ],
   ctaTitle: "Are you the next Rellia Health success story?",
@@ -2433,6 +2444,12 @@ export function mergeHomePage(partial: Partial<HomePageContent> | null | undefin
   const metrics = compactList(p.metrics)
   base.metrics = metrics.length > 0 ? metrics : DEFAULT_HOME_PAGE.metrics
   base.whyFeatures = mergeWhyFeatures(p.whyFeatures)
+  if (!base.whySectionTitle?.trim()) {
+    base.whySectionTitle = DEFAULT_HOME_PAGE.whySectionTitle
+  }
+  if (!base.whySectionDescription?.trim()) {
+    base.whySectionDescription = DEFAULT_HOME_PAGE.whySectionDescription
+  }
   const testimonials = compactList(p.testimonials)
   base.testimonials = testimonials.length > 0 ? testimonials : DEFAULT_HOME_PAGE.testimonials
   const pathsCards = compactList(p.pathsCards)
@@ -2580,6 +2597,10 @@ export function mergeQmsProgram(
     pricingBullets.length > 0 ? pricingBullets : defaultFallback.pricingBullets
   const testimonials = compactList(p.testimonials)
   if (testimonials.length > 0) base.testimonials = testimonials
+  const pillars = compactList(p.pillars)
+  if (pillars.length > 0) base.pillars = pillars
+  const howItWorksCards = compactList(p.howItWorksCards)
+  if (howItWorksCards.length > 0) base.howItWorksCards = howItWorksCards
   if (typeof base.paymentUrl !== "string" || !base.paymentUrl.trim()) {
     base.paymentUrl = defaultFallback.paymentUrl
   }

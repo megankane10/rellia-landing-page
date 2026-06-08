@@ -65,7 +65,7 @@ var networkEngageFragment = `engageTitle,
   engageItems[]{ title, body, href, linkLabel, iconKey }`;
 var networkWhyFragment = `whyTitle,
   whyDescription,
-  whyFeatures[]{ title, body, iconKey }`;
+  whyFeatures[]{ title, body, iconKey, "imageSrc": coalesce(imageSrc, image.asset->url) }`;
 var networkCtaFragment = `ctaTitle,
   ctaBody,
   ctaPrimaryLabel,
@@ -185,6 +185,18 @@ var storiesPageQuery = `*[_type == "storiesPage"][0]{
   subheadline,
   ${seoFragment}
 }`;
+var storiesPrerenderSnapshotQuery = `*[_type == "story" && !(_id in path("drafts.**"))]{
+  title,
+  "slug": slug.current,
+  excerpt,
+  "coverImageSrc": headerImage.asset->url,
+  "coverImageAlt": headerImageAlt,
+  "tag": filters[0]->title,
+  publishedAt,
+  featured,
+  headerLayout,
+  ${seoFragment}
+}`;
 var storyBySlugQuery = `*[_type == "story" && slug.current == $slug && !(_id in path("drafts.**"))][0]{
   title,
   "slug": slug.current,
@@ -257,7 +269,7 @@ var networkFoundersPageQuery = `*[_type == "networkFoundersPage"][0]{
   ${networkHeroFragment},
   eligibilityTitle,
   eligibilityDescription,
-  eligibilityItems[]{ text, imageUrl },
+  eligibilityItems[]{ text, "imageUrl": coalesce(imageUrl, image.asset->url) },
   ${networkEngageFragment},
   ${networkWhyFragment},
   journeyTitle,
@@ -265,7 +277,7 @@ var networkFoundersPageQuery = `*[_type == "networkFoundersPage"][0]{
   journeySteps[]{ id, label, zone, detail },
   exploreTitle,
   exploreSubtitle,
-  exploreCards[]{ title, badge, imageUrl, ctaLabel, ctaHref },
+  exploreCards[]{ title, badge, "imageUrl": coalesce(imageUrl, image.asset->url), ctaLabel, ctaHref },
   deeperHelpTitle,
   deeperHelpSubtitle,
   deeperHelpFeatures[]{ title, body, iconKey },
@@ -430,6 +442,8 @@ var homePageQuery = `*[_type == "homePage"][0]{
   metricsHeading,
   metrics[]{ label, value, suffix },
   howItWorksSectionTitle,
+  whySectionTitle,
+  whySectionDescription,
   testimonialsTitlePortable,
   whyFeatures[]{ 
     iconKey, 
@@ -547,7 +561,13 @@ var programDetailFields = `
   outcomes,
   howItWorksTitle,
   howItWorksIntro,
+  howItWorksCards[]{
+    title,
+    description,
+    "imageSrc": image.asset->url
+  },
   pillarsTitle,
+  pillars[]{ title, description },
   timelineTitle,
   timelineSubtitle,
   pricingBadge,
@@ -610,6 +630,7 @@ var eventsQuery = `*[_type == "event" && status != "hidden" && !(_id in path("dr
   dateTime,
   person,
   "imageSrc": image.asset->url,
+  "hostImageSrc": hostImage.asset->url,
   href,
   comingSoon,
   buttonText,
@@ -633,6 +654,7 @@ var eventBySlugQuery = `*[_type == "event" && slug.current == $slug && !(_id in 
   dateTime,
   person,
   "imageSrc": image.asset->url,
+  "hostImageSrc": hostImage.asset->url,
   href,
   comingSoon,
   buttonText,
@@ -825,6 +847,7 @@ var advisorsQuery = `*[_type == "advisor" && !(_id in path("drafts.**"))]{
   country,
   yearJoined,
   primaryExpertise,
+  industries,
   snapshot,
   directoryFilters[]{
     "groupId": group->slug.current,
