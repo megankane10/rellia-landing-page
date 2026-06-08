@@ -79,7 +79,7 @@ export const event = defineType({
       type: 'image',
       options: {hotspot: true},
       group: 'content',
-      description: 'Optional host image; defaults to Rellia favicon if not set.',
+      description: 'Optional host image; defaults to the Rellia icon if not set.',
     }),
     defineField({
       name: 'href',

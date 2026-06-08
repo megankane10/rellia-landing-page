@@ -1281,7 +1281,7 @@ async function main() {
     return { pillars, howItWorksCards }
   }
 
-  const faviconHostAssetId = await resolveImageAssetId(client, "/favicon.ico")
+  const faviconHostAssetId = await resolveImageAssetId(client, "/images/favicon-192.png")
 
   // Programs: one document per program (card + detail page content)
   for (const [index, program] of DEFAULT_PROGRAMS_LANDING.programs.entries()) {

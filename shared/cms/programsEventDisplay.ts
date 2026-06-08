@@ -331,7 +331,7 @@ const hashProgramsEventKey = (key: string): number => {
 }
 
 /**
- * Speaker headshot for event cards and detail — CMS `hostImage`, Rellia favicon for branded hosts,
+ * Speaker headshot for event cards and detail — CMS `hostImage`, Rellia icon for branded hosts,
  * stable hash into home testimonial portraits (+ Melissa `.jpg`), or named speaker overrides.
  */
 export const getProgramsEventSpeakerAvatarSrc = (event: ProgramsEventCard): string => {
