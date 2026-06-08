@@ -388,15 +388,22 @@ export const shouldUseDefaultOgImage = (pathname: string): boolean =>
 const STATIC_OG_IMAGE_BY_ROUTE: Record<string, string> = {
   "/": "/ogimage.png",
   "/founders": "/founders-ogimage.png",
-  "/founders/alumni": "/founders-ogimage.png",
   "/advisors": "/advisors-ogimage.png",
+  "/investors": "/investors-ogimage.png",
   "/industry-partners": "/industrypartners-ogimage.png",
 }
+
+/** Routes that supply og:image from page context (e.g. first alumni company logo). */
+export const allowsPageContextOgImage = (pathname: string): boolean =>
+  normalizePathname(pathname) === "/founders/alumni"
 
 export const isStaticOgImageRoute = (pathname: string): boolean => {
   const key = normalizePathname(pathname)
   return key in STATIC_OG_IMAGE_BY_ROUTE || shouldUseDefaultOgImage(key)
 }
+
+export const allowsRouteSeoOgImage = (pathname: string): boolean =>
+  isStaticOgImageRoute(pathname) || allowsPageContextOgImage(pathname)
 
 export const getStaticOgImageForPathname = (pathname: string): string | undefined => {
   const key = normalizePathname(pathname)

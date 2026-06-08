@@ -1,6 +1,6 @@
 import { useLayoutEffect, useMemo } from "react"
 import { useLocation } from "react-router-dom"
-import { isStaticOgImageRoute, normalizePathname } from "@/config/seo"
+import { allowsRouteSeoOgImage, normalizePathname } from "@/config/seo"
 import { useOptionalPageSeo, type PageSeoOverrides } from "@/context/PageSeoContext"
 import type { SeoContent } from "@shared/cms/types"
 
@@ -40,7 +40,7 @@ export const useApplyCmsSeo = (
 ): void => {
   const { pathname } = useLocation()
   const { setPageSeo } = useOptionalPageSeo()
-  const allowOgImage = isStaticOgImageRoute(normalizePathname(pathname))
+  const allowOgImage = allowsRouteSeoOgImage(normalizePathname(pathname))
 
   const merged = useMemo(() => {
     if (!defaults && !seo) return null

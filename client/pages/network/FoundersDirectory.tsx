@@ -36,6 +36,8 @@ import {
   getCountryFilterOptions,
   getDirectoryGroupOptionLabels,
 } from "@/lib/directoryFilterOptions";
+import { resolveSocialOgImageUrl } from "@/config/seo";
+import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo";
 
 /** Gray-teal tone for directory heroes */
 const DIRECTORY_TITLE_CLASS =
@@ -166,6 +168,15 @@ export default function FoundersDirectory() {
     }
     return allowCmsSeedFallbacks() ? FOUNDER_DIRECTORY : [];
   }, [cmsCompanies]);
+
+  const alumniDirectoryOgImage = useMemo(() => {
+    const logoSrc = companies[0]?.logoSrc?.trim()
+    return logoSrc ? resolveSocialOgImageUrl(logoSrc) : undefined
+  }, [companies])
+
+  useApplyCmsSeo(null, {
+    ogImage: alumniDirectoryOgImage,
+  })
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
