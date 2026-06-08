@@ -80,7 +80,7 @@ function AdvisorCard({
       tabIndex={0}
       aria-label={`Open profile for ${advisor.name}`}
     >
-      <div className="relative aspect-video w-full overflow-hidden bg-white border-b border-black/[0.05] shrink-0">
+      <div className="relative aspect-[4/5] w-full overflow-hidden bg-white border-b border-black/[0.05] shrink-0">
         <img
           src={advisor.photoSrc}
           alt=""
