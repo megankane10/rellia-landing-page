@@ -150,6 +150,8 @@ const components: PortableTextComponents = {
         body?: string
         buttonLabel?: string
         buttonHref?: string
+        secondaryButtonLabel?: string
+        secondaryButtonHref?: string
       } | null
       if (!v?.title?.trim()) return null
       return (
@@ -158,6 +160,8 @@ const components: PortableTextComponents = {
           body={v.body}
           buttonLabel={(v.buttonLabel ?? "").trim() || "Learn more"}
           buttonHref={(v.buttonHref ?? "").trim() || "/"}
+          secondaryButtonLabel={v.secondaryButtonLabel}
+          secondaryButtonHref={v.secondaryButtonHref}
         />
       )
     },

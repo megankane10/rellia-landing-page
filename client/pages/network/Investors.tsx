@@ -25,8 +25,8 @@ import {
   type PieLabelRenderProps,
 } from "recharts"
 import { CreamSection, GlassCard, GlassCardLight, LightSection, Reveal, RoleHero } from "./_shared"
+import { cn } from "@/lib/utils"
 import { useNetworkInvestorsPage } from "@/hooks/useCmsDocuments"
-import NetworkCmsPage from "./NetworkCmsPage"
 import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo"
 import type { ClusterChart, CmsSingletonPageContent } from "@shared/cms/types"
 
@@ -86,7 +86,6 @@ const renderSlicePercentLabel = ({
   cx,
   cy,
   midAngle,
-  innerRadius,
   outerRadius,
   value,
   fill,
@@ -95,29 +94,41 @@ const renderSlicePercentLabel = ({
     cx == null ||
     cy == null ||
     midAngle == null ||
-    innerRadius == null ||
     outerRadius == null ||
     value == null
   ) {
     return null
   }
 
-  const radius = (Number(innerRadius) + Number(outerRadius)) / 2
-  const angle = (-midAngle * Math.PI) / 180
-  const x = Number(cx) + radius * 0.72 * Math.cos(angle)
-  const y = Number(cy) + radius * 0.72 * Math.sin(angle)
+  const radius = Number(outerRadius)
+  const centerX = Number(cx)
+  const centerY = Number(cy)
+  const angleRad = (-midAngle * Math.PI) / 180
+  const cos = Math.cos(angleRad)
+  const sin = Math.sin(angleRad)
+  const sx = centerX + radius * cos
+  const sy = centerY + radius * sin
+  const mx = centerX + (radius + 10) * cos
+  const my = centerY + (radius + 10) * sin
+  const ex = centerX + (radius + 22) * cos
+  const ey = centerY + (radius + 22) * sin
+  const textAnchor = cos >= 0 ? "start" : "end"
+  const textX = ex + (cos >= 0 ? 6 : -6)
 
   return (
-    <text
-      x={x}
-      y={y}
-      fill={String(fill)}
-      textAnchor="middle"
-      dominantBaseline="central"
-      className="font-urbanist text-[11px] font-bold"
-    >
-      {`${value}%`}
-    </text>
+    <g>
+      <line x1={sx} y1={sy} x2={ex} y2={ey} stroke={String(fill)} strokeWidth={1.5} opacity={0.85} />
+      <text
+        x={textX}
+        y={ey}
+        fill={String(fill)}
+        textAnchor={textAnchor}
+        dominantBaseline="central"
+        className="font-urbanist text-[11px] font-bold"
+      >
+        {`${value}%`}
+      </text>
+    </g>
   )
 }
 
@@ -157,20 +168,20 @@ function IllustrativePie({
       <p className="mt-1 font-urbanist text-xs text-black/50">Illustrative mix for thesis fit—not a fund mandate.</p>
       <div
         ref={chartRef}
-        className="mt-4 h-[220px] w-full min-h-[220px]"
+        className="mt-4 h-[240px] w-full min-h-[240px]"
         role="img"
         aria-label={ariaLabel}
       >
         <ResponsiveContainer width="100%" height="100%">
-          <PieChart>
+          <PieChart margin={{ top: 8, right: 28, bottom: 8, left: 28 }}>
             <Pie
               data={data}
               dataKey="value"
               nameKey="name"
               cx="50%"
               cy="50%"
-              innerRadius={52}
-              outerRadius={84}
+              innerRadius={48}
+              outerRadius={72}
               paddingAngle={2}
               isAnimationActive={chartInView}
               animationBegin={0}
@@ -200,11 +211,18 @@ function IllustrativePie({
 
 function PipelinePhotoSection({
   children,
+  roundedBottom = true,
 }: {
   children: ReactNode
+  roundedBottom?: boolean
 }) {
   return (
-    <section className="relative overflow-hidden rounded-[2.5rem] md:rounded-[3.5rem] w-full">
+    <section
+      className={cn(
+        "relative overflow-hidden w-full",
+        roundedBottom ? "rounded-[2.5rem] md:rounded-[3.5rem]" : "rounded-t-[2.5rem] md:rounded-t-[3.5rem]",
+      )}
+    >
       <img
         src="https://images.pexels.com/photos/7578803/pexels-photo-7578803.jpeg?auto=compress&cs=tinysrgb&w=1600"
         alt=""
@@ -286,8 +304,8 @@ function FoundersClusterSection({
   if (charts.length === 0) return null
 
   return (
-    <div className="bg-rellia-cream/20 py-10 md:py-16">
-      <PipelinePhotoSection>
+    <div className="bg-[#071018]">
+      <PipelinePhotoSection roundedBottom={false}>
         <ScrollReveal>
           <h2 className="mt-5 font-host-grotesk text-3xl font-semibold leading-tight tracking-tight text-white md:text-[40px]">
             How founders cluster
@@ -351,8 +369,6 @@ export default function Investors() {
   const { data: page } = investorsPageQuery
   useApplyCmsSeo(page?.seo)
 
-  const useModularLayout = (page?.sections?.length ?? 0) > 0
-
   const [showNotifyForm, setShowNotifyForm] = useState(false)
 
   const logoMarks = useMemo(() => {
@@ -393,27 +409,6 @@ export default function Investors() {
 
   const hasCmsClusterData =
     Array.isArray(page?.foundersCluster) && page.foundersCluster.length > 0
-
-  if (useModularLayout) {
-    return (
-      <NetworkCmsPage
-        page={page}
-        query={investorsPageQuery}
-        slug="investors"
-        renderExtras={() => (
-          <>
-            <LogoMarquee
-              marks={logoMarks}
-              showHeading={false}
-              density="default"
-              sectionClassName="border-b border-black/[0.06] bg-white py-4"
-            />
-            {hasCmsClusterData ? <FoundersClusterSection charts={charts} /> : null}
-          </>
-        )}
-      />
-    )
-  }
 
   return (
     <div className="min-h-screen overflow-x-hidden bg-white font-host-grotesk flex flex-col">
@@ -464,7 +459,7 @@ export default function Investors() {
 
               <FoundersClusterSection charts={charts} />
 
-              <section className="relative overflow-hidden bg-[#071018] px-6 py-16 text-white md:px-10 md:py-24">
+              <section className="relative overflow-hidden bg-[#071018] px-6 py-16 text-white md:px-10 md:py-24 rounded-t-[2.5rem] md:rounded-t-[3.5rem] -mt-px">
                 <div aria-hidden className="pointer-events-none absolute inset-0">
                   <div className="absolute -left-32 top-0 h-96 w-96 rounded-full bg-teal-500/10 blur-3xl" />
                   <div className="absolute -right-24 bottom-0 h-80 w-80 rounded-full bg-blue-500/10 blur-3xl" />

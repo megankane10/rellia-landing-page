@@ -11,6 +11,7 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { AnimatePresence, motion } from "framer-motion"
 import { BookOpen, ChevronLeft, ChevronRight } from "lucide-react"
 import FilteredListEmptyState from "@/components/FilteredListEmptyState"
+import { DirectoryGridSkeleton } from "@/components/cms/CmsPageLoadingShell"
 import { useStories, useStoriesPage } from "@/hooks/useCmsDocuments"
 import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo"
 import { HeroHeadlinePortable } from "@/components/HeroHeadlinePortable"
@@ -88,7 +89,7 @@ const DEFAULT_STORIES_SUBTITLE =
   "The latest founder spotlights, industry insights, & program updates. Stay current with the people and ideas shaping the future of health."
 
 export default function Stories() {
-  const { data: cmsStories } = useStories()
+  const { data: cmsStories, isPending: storiesPending } = useStories()
   const { data: storiesLanding } = useStoriesPage()
   useApplyCmsSeo(storiesLanding?.seo, {
     title: "Stories - Rellia Health",
@@ -100,6 +101,8 @@ export default function Stories() {
 
   const [activeTag, setActiveTag] = useState<(typeof tags)[number]>("All")
   const [page, setPage] = useState(1)
+
+  const storiesLoading = isSanityConfigured() && storiesPending && cmsStories === undefined
 
   const stories = useMemo(() => {
     if (!isSanityConfigured()) return []
@@ -234,12 +237,16 @@ export default function Stories() {
                 </div>
 
                 <p className="font-urbanist text-sm text-black/55 md:text-right">
-                  Showing {pageStories.length} of {filtered.length} stories
+                  {storiesLoading
+                    ? "Loading stories…"
+                    : `Showing ${pageStories.length} of ${filtered.length} stories`}
                 </p>
               </div>
             </ScrollReveal>
 
-            {filtered.length === 0 ? (
+            {storiesLoading ? (
+              <DirectoryGridSkeleton className="mt-6" count={6} />
+            ) : filtered.length === 0 ? (
               <FilteredListEmptyState
                 className="mt-6"
                 icon={BookOpen}

@@ -49,7 +49,6 @@ import { useMemo, useState, useEffect, useRef } from "react"
 import { useLocation } from "react-router-dom"
 import { ShareIconCopy } from "@/components/share/sharePageIcons"
 import { RoleHero } from "./network/_shared"
-import { PageRenderer } from "@/components/cms/PageRenderer"
 
 const g = DEFAULT_GLOBAL_SETTINGS
 
@@ -361,8 +360,6 @@ export default function CareersCms() {
     [careersCms],
   )
 
-  const useModularLayout = (careersCms.sections?.length ?? 0) > 0
-
   const handleCopyRoleLink = (roleId: string) => {
     const roleUrl = `${buildPageUrl("/careers")}#${roleId}`
     navigator.clipboard.writeText(roleUrl)
@@ -386,25 +383,6 @@ export default function CareersCms() {
       }
     }
   }, [location.hash, openRoles])
-
-  if (useModularLayout) {
-    return (
-      <div className="min-h-screen overflow-x-hidden bg-white font-host-grotesk">
-        <Navbar />
-        <main id="main-content" className="pt-[72px] md:pt-[86px]">
-          <PageRenderer
-            page={{
-              title: "Careers",
-              slug: "careers",
-              seo: careersCms.seo,
-              sections: careersCms.sections,
-            }}
-          />
-        </main>
-        <Footer />
-      </div>
-    )
-  }
 
   const volunteerAvailable = CAREERS_VOLUNTEER_ENABLED
 
@@ -691,35 +669,6 @@ export default function CareersCms() {
           </div>
         </section>
       ) : null}
-
-        {showVolunteerFlow ? (
-          <section
-            id="careers-volunteer"
-            className="scroll-mt-28 border-t border-black/10 bg-white px-6 py-16 md:px-10 md:py-20"
-          >
-            <div className="mx-auto max-w-[1300px]">
-              <ScrollReveal className="mx-auto flex max-w-2xl flex-col items-center text-center">
-                <h2 className="font-host-grotesk text-2xl font-semibold tracking-tight text-black md:text-[32px]">
-                  Volunteer with us
-                </h2>
-                <p className="mt-4 font-urbanist text-lg leading-relaxed text-black/60">
-                  Share your expertise with health tech founders—flexible commitment, meaningful impact.
-                </p>
-                <RelliaAction
-                  type="button"
-                  variant="relliaCtaPrimary"
-                  size="comfortable"
-                  className="mt-8"
-                  onClick={() => setShowApplyForm(true)}
-                  aria-label="Open volunteer application form"
-                >
-                  Open volunteer application
-                  <ArrowRight className="ml-2 h-5 w-5" aria-hidden />
-                </RelliaAction>
-              </ScrollReveal>
-            </div>
-          </section>
-        ) : null}
 
       {/* Life at Rellia Section */}
       <section id="life-at-rellia" className="bg-white py-14 md:py-18">

@@ -2,7 +2,6 @@ import {defineField, defineType} from 'sanity'
 import {
   CONTENT_SEO_FIELDSETS,
   CONTENT_SEO_GROUPS,
-  singletonSectionsField,
   singletonSeoField,
 } from '../shared/singletonContentFields'
 
@@ -19,7 +18,6 @@ export const networkPartnersPage = defineType({
       initialValue: 'Industry Partners',
       group: 'content',
     }),
-    singletonSectionsField,
     singletonSeoField,
   ],
 })

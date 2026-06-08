@@ -12,7 +12,6 @@ import { Link } from "react-router-dom"
 import LogoMarquee from "@/components/LogoMarquee"
 import { CreamSection, GlassCardLight, LightSection, Reveal, RoleHero } from "./_shared"
 import { useNetworkAdvisorsPage } from "@/hooks/useCmsDocuments"
-import NetworkCmsPage from "./NetworkCmsPage"
 import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo"
 
 const BENEFITS = [
@@ -209,12 +208,6 @@ export default function Advisors() {
   const advisorsPageQuery = useNetworkAdvisorsPage()
   const { data: page } = advisorsPageQuery
   useApplyCmsSeo(page?.seo)
-
-  const useModularLayout = (page?.sections?.length ?? 0) > 0
-
-  if (useModularLayout) {
-    return <NetworkCmsPage page={page} query={advisorsPageQuery} slug="advisors" />
-  }
 
   return (
     <div className="min-h-screen overflow-x-hidden bg-white font-host-grotesk">

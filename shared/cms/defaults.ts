@@ -2125,7 +2125,7 @@ export const DEFAULT_PROGRAMS_LANDING: ProgramsLandingContent = {
 
 export const DEFAULT_CONTACT_PAGE: ContactPageContent = {
   heroBadge: "Contact",
-  heroHeadline: "Let's Get in Touch",
+  heroHeadline: "",
   pageTitle: "Let's Get in Touch",
   intro:
     "Have questions or want to explore opportunities with Rellia Health?\n\nWe’re here to listen, support, and collaborate. Drop us a message!",

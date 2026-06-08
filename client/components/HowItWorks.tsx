@@ -93,7 +93,7 @@ export default function HowItWorks(props?: HowItWorksProps) {
   const columns = columnsProp ?? (stepsProp != null ? 2 : 3)
 
   return (
-    <section className="relative w-full bg-rellia-teal pt-10 pb-16 md:pt-14 md:pb-24 overflow-hidden rounded-[2.5rem] md:rounded-[3.5rem]">
+    <section className="relative flex w-full flex-col justify-center bg-rellia-teal py-16 md:py-20 overflow-hidden rounded-[2.5rem] md:rounded-[3.5rem]">
       <img
         src="/images/hologram-logo.png"
         alt=""
@@ -129,7 +129,7 @@ export default function HowItWorks(props?: HowItWorksProps) {
         </div>
 
         <ScrollReveal delay={0.1}>
-          <div className="mb-16 md:mb-20">
+          <div className="mb-12 md:mb-14">
             {heading ? (
               <div className="font-host-grotesk text-2xl font-semibold leading-tight tracking-tight text-white md:text-[32px]">
                 {heading}

@@ -26,11 +26,6 @@ import {
 import { ADVISOR_DIRECTORY_SEED, ADVISOR_FILTER_OPTIONS } from "../client/data/advisorDirectory"
 import { FOUNDER_DIRECTORY, ALL_SPECIALTIES } from "../client/data/founderDirectory"
 import {
-  createCareersSections,
-  createNetworkAdvisorsSections,
-  createNetworkFoundersSections,
-  createNetworkInvestorsSections,
-  createNetworkPartnersSections,
   createPowerOfPlayProfileBody,
   createRichTextShowcase,
   createWebsiteLaunchStoryBody,
@@ -46,7 +41,6 @@ import {
 } from "./seed/cmsSyncContent"
 import { PORTFOLIO_LOGO_MARKS, INVESTOR_LOGO_MARKS } from "../client/data/portfolioLogos"
 import { ROUTE_SEO } from "../client/config/seo"
-import { STORIES } from "../client/content/stories"
 import { threePartHeroHeadline } from "../shared/cms/inlineHeroHeadline"
 import { legalSectionsToPortableText } from "../shared/cms/legal/sectionsToPortableText"
 import {
@@ -261,92 +255,6 @@ type PortableStoryNode =
 const storyFilterIdForTag = (tag: string): string => `storyFilter-${slugify(tag)}`
 
 const directoryFilterGroupId = (slug: string): string => `directoryFilterGroup-${slug}`
-
-const portableStoryBody = (story: (typeof STORIES)[number]): PortableStoryNode[] => {
-  const nodes: PortableStoryNode[] = []
-
-  story.body.forEach((b, i) => {
-    const key = stableKey(`story-${story.slug}`, i)
-
-    if (b.type === "p") {
-      nodes.push(block(key, b.text, "normal"))
-      return
-    }
-    if (b.type === "h2") {
-      nodes.push(block(key, b.text, "h2"))
-      return
-    }
-    if (b.type === "h3") {
-      nodes.push(block(key, b.text, "h3"))
-      return
-    }
-
-    // Quotes/images in the local format don't map 1:1 to our portable schema.
-    // We convert them into supported portable types.
-    if (b.type === "quote") {
-      const attribution = (b.attribution ?? "").trim()
-      const text = attribution ? `${b.text}\n— ${attribution}` : b.text
-      nodes.push({
-        _type: "block",
-        _key: key,
-        style: "blockquote",
-        markDefs: [],
-        children: [{ _type: "span", _key: `${key}-span`, text, marks: [] }],
-      })
-      return
-    }
-
-    if (b.type === "cta") {
-      nodes.push({
-        _type: "bodyCtaBox",
-        _key: key,
-        title: b.title,
-        body: b.body,
-        buttonLabel: b.buttonLabel,
-        buttonHref: b.buttonHref,
-      })
-      return
-    }
-
-    if (b.type === "imageCarousel") {
-      nodes.push({
-        _type: "portableImageCarousel",
-        _key: key,
-        title: b.title,
-        slides: b.slides.map((s, slideIndex) => ({
-          _type: "portableImageCarouselSlide",
-          _key: stableKey(`${key}-slide`, slideIndex),
-          imageSrc: s.src,
-          alt: s.alt,
-          caption: s.caption,
-        })),
-      })
-      return
-    }
-
-    if (b.type === "image") {
-      // The portable rich text schema's standalone `image` requires a Sanity asset ref.
-      // Our local stories use remote URLs, so we represent it as a 1-slide carousel,
-      // which supports a plain imageSrc string URL.
-      nodes.push({
-        _type: "portableImageCarousel",
-        _key: key,
-        slides: [
-          {
-            _type: "portableImageCarouselSlide",
-            _key: stableKey(`${key}-slide`, 0),
-            imageSrc: b.src,
-            alt: b.alt,
-            caption: b.caption,
-          },
-        ],
-      })
-      return
-    }
-  })
-
-  return nodes
-}
 
 const TERMS_EFFECTIVE_DATE = "March 18, 2026"
 const TERMS_SECTIONS: Array<{
@@ -817,6 +725,27 @@ const resolveRemoteImageAssetId = async (
   }
 }
 
+const resolveStoryCoverImageAssetId = async (
+  client: ReturnType<typeof createClient>,
+  imageSrc: string | undefined,
+  filenameHint: string,
+): Promise<string | null> => {
+  const src = (imageSrc ?? "").trim()
+  if (!src) return null
+  if (isLocalPublicImagePath(src)) {
+    return resolveImageAssetId(client, src)
+  }
+  if (/^https?:\/\//i.test(src)) {
+    const ext = src.toLowerCase().includes(".webp")
+      ? "webp"
+      : src.toLowerCase().includes(".jpg") || src.toLowerCase().includes("jpeg")
+        ? "jpg"
+        : "png"
+    return resolveRemoteImageAssetId(client, src, `${filenameHint}.${ext}`)
+  }
+  return null
+}
+
 const buildLogoMarqueeItems = async (
   client: ReturnType<typeof createClient>,
   marks: ReadonlyArray<{ readonly name: string; readonly src: string }>,
@@ -1063,6 +992,16 @@ async function main() {
     mutations.push({ delete: { id } })
   }
 
+  const existingStoryIds = await client.fetch<string[]>(`*[_type == "story"]._id`)
+  for (const id of existingStoryIds) {
+    mutations.push({ delete: { id } })
+  }
+
+  const existingStoryFilterIds = await client.fetch<string[]>(`*[_type == "storyFilter"]._id`)
+  for (const id of existingStoryFilterIds) {
+    mutations.push({ delete: { id } })
+  }
+
   // Singletons: IDs match deskStructure documentIds
   mutations.push({
     createOrReplace: {
@@ -1103,7 +1042,6 @@ async function main() {
       _id: "networkFoundersPage",
       _type: "networkFoundersPage",
       title: "Founders",
-      sections: createNetworkFoundersSections(ptBlock, DEFAULT_APPLY_PAGE),
       logoMarquee: foundersLogoMarquee.length > 0 ? foundersLogoMarquee : undefined,
       seo: seoForRoute("/founders"),
     },
@@ -1113,7 +1051,6 @@ async function main() {
       _id: "networkAdvisorsPage",
       _type: "networkAdvisorsPage",
       title: "Advisors",
-      sections: createNetworkAdvisorsSections(ptBlock),
       seo: seoForRoute("/advisors"),
     },
   })
@@ -1122,7 +1059,6 @@ async function main() {
       _id: "networkInvestorsPage",
       _type: "networkInvestorsPage",
       title: "Investors",
-      sections: createNetworkInvestorsSections(ptBlock),
       logoMarquee: investorsLogoMarquee.length > 0 ? investorsLogoMarquee : undefined,
       seo: seoForRoute("/investors"),
       foundersCluster: [
@@ -1162,7 +1098,6 @@ async function main() {
       _id: "networkPartnersPage",
       _type: "networkPartnersPage",
       title: "Industry Partners",
-      sections: createNetworkPartnersSections(ptBlock),
       seo: seoForRoute("/industry-partners"),
     },
   })
@@ -1237,9 +1172,8 @@ async function main() {
       _id: "careersPage",
       _type: "careersPage",
       careersContentMode: "both",
-      showHiringNavBadge: true,
-      showVolunteerNavBadge: true,
-      sections: createCareersSections(ptBlock),
+      showHiringNavBadge: false,
+      showVolunteerNavBadge: false,
       lifeAtRelliaHeading: "Built by healthtech insiders, for builders",
       lifeAtRelliaSubheading: "We are a remote-first, high-standards team of builders, clinicians, and operators dedicated to supporting healthtech founders. We cultivate an environment of high autonomy, rapid iteration, and deep clinical empathy to build the future of care.",
       lifeAtRelliaImages:
@@ -1573,10 +1507,7 @@ async function main() {
   })
 
   // Story filters (used by story documents)
-  const storyTagSet = new Set([
-    ...STORIES.map((s) => s.tag).filter(Boolean),
-    WEBSITE_LAUNCH_STORY.tag,
-  ])
+  const storyTagSet = new Set([WEBSITE_LAUNCH_STORY.tag])
   Array.from(storyTagSet)
     .sort((a, b) => a.localeCompare(b))
     .forEach((tag, index) => {
@@ -1594,9 +1525,10 @@ async function main() {
     })
 
   const websiteLaunchStoryFilterId = storyFilterIdForTag(WEBSITE_LAUNCH_STORY.tag)
-  const websiteLaunchImageAssetId = await resolveImageAssetId(
+  const websiteLaunchImageAssetId = await resolveStoryCoverImageAssetId(
     client,
     WEBSITE_LAUNCH_STORY.coverImageSrc,
+    WEBSITE_LAUNCH_STORY.slug,
   )
   mutations.push({
     createOrReplace: {
@@ -1622,39 +1554,6 @@ async function main() {
       },
     },
   })
-
-  // Stories
-  for (const story of STORIES) {
-    const slug = (story.slug || "").trim()
-    if (!slug) continue
-
-    const storyFilterId = storyFilterIdForTag(story.tag)
-    const storyImageAssetId = await resolveImageAssetId(client, story.coverImageSrc)
-    mutations.push({
-      createOrReplace: {
-        _id: `story.${slug}`,
-        _type: "story",
-        featured: Boolean(story.featured),
-        title: story.title,
-        slug: { _type: "slug", current: slug },
-        filters: story.tag
-          ? [{ _type: "reference", _ref: storyFilterId }]
-          : undefined,
-        publishedAt: story.publishedAt ? new Date(story.publishedAt).toISOString() : undefined,
-        excerpt: story.excerpt,
-        headerImage: toSanityImageFieldValue(storyImageAssetId),
-        headerImageAlt: story.coverImageAlt,
-        headerLayout: "block",
-        body: portableStoryBody(story),
-        seo: {
-          metaTitle: story.seoTitle,
-          metaDescription: story.seoDescription,
-          ogTitle: story.seoTitle,
-          ogDescription: story.seoDescription,
-        },
-      },
-    })
-  }
 
   // Legal pages as modular CMS pages (so /terms and /privacy resolve via CmsCatchAll)
   mutations.push({

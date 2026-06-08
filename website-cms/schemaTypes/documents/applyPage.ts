@@ -3,7 +3,6 @@ import {studioListMedia} from '../shared/studioListMedia'
 import {
   CONTENT_SEO_FIELDSETS,
   CONTENT_SEO_GROUPS,
-  singletonSectionsField,
   singletonSeoField,
 } from '../shared/singletonContentFields'
 
@@ -137,7 +136,6 @@ export const applyPage = defineType({
       initialValue: '/contact',
       group: 'cta',
     }),
-    singletonSectionsField,
     singletonSeoField,
   ],
   preview: {

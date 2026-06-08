@@ -89,7 +89,7 @@ function DiagnosticFallback({ content }: { content: DiagnosticLandingPageContent
                 {content.infographicBody ?? DEFAULT_DIAGNOSTIC_LANDING_PAGE.infographicBody}
               </p>
             </div>
-            <div className="flex-1 lg:pl-12">
+            <div className="flex-1 w-full min-w-0 px-1 sm:px-0 lg:pl-12">
               <DiagnosticReportPreview
                 topWeaknessLabel={
                   content.infographicTopWeaknessLabel ??
@@ -170,8 +170,6 @@ export default function DiagnosticLanding() {
 
   return (
     <CmsModularSingletonPage
-      page={content}
-      slug="startup-diagnostic"
       fallback={<DiagnosticFallback content={content} />}
     />
   )

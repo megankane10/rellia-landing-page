@@ -13,7 +13,6 @@ import LogoMarquee from "@/components/LogoMarquee"
 import RelliaCta from "@/components/RelliaCta"
 import { CreamSection, GlassCardLight, LightSection, Reveal, RoleHero } from "./_shared"
 import { useNetworkPartnersPage } from "@/hooks/useCmsDocuments"
-import NetworkCmsPage from "./NetworkCmsPage"
 import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo"
 
 const engagementCardClass =
@@ -238,12 +237,6 @@ export default function Partners() {
   const partnersPageQuery = useNetworkPartnersPage()
   const { data: page } = partnersPageQuery
   useApplyCmsSeo(page?.seo)
-
-  const useModularLayout = (page?.sections?.length ?? 0) > 0
-
-  if (useModularLayout) {
-    return <NetworkCmsPage page={page} query={partnersPageQuery} slug="partners" />
-  }
 
   return (
     <div className="min-h-screen overflow-x-hidden bg-white font-host-grotesk">

@@ -1,5 +1,4 @@
 import {defineArrayMember, defineField, defineType} from 'sanity'
-import {pageSectionMembers} from '../shared/pageSectionMembers'
 import {
   CONTENT_SEO_FIELDSETS,
   sectionDividerFieldset,
@@ -13,13 +12,12 @@ const GROUP_READINESS = {name: 'readiness', title: 'Readiness map'}
 const GROUP_INFOGRAPHIC = {name: 'infographic', title: 'Infographic'}
 const GROUP_TIMELINE = {name: 'timeline', title: 'Timeline'}
 const GROUP_CTA = {name: 'cta', title: 'Bottom CTA'}
-const GROUP_SECTIONS = {name: 'sections', title: 'Modular sections'}
 
 export const diagnosticLandingPage = defineType({
   name: 'diagnosticLandingPage',
   title: 'Startup diagnostic landing (/startup-diagnostic)',
   type: 'document',
-  groups: [GROUP_HERO, GROUP_READINESS, GROUP_INFOGRAPHIC, GROUP_TIMELINE, GROUP_CTA, GROUP_SECTIONS, GROUP_SEO],
+  groups: [GROUP_HERO, GROUP_READINESS, GROUP_INFOGRAPHIC, GROUP_TIMELINE, GROUP_CTA, GROUP_SEO],
   fieldsets: [
     sectionDividerFieldset('heroDivider', 'Hero'),
     sectionDividerFieldset('readinessDivider', 'Readiness map'),
@@ -261,13 +259,6 @@ export const diagnosticLandingPage = defineType({
       initialValue: '/apply',
       group: 'cta',
       fieldset: 'ctaDivider',
-    }),
-    defineField({
-      name: 'sections',
-      title: 'Page sections',
-      type: 'array',
-      of: pageSectionMembers,
-      group: 'sections',
     }),
     singletonSeoField,
   ],

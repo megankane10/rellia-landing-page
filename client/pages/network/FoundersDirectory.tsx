@@ -25,7 +25,7 @@ import {
   type Specialty,
 } from "@/data/founderDirectory";
 import { isSanityConfigured } from "@/lib/sanity";
-import { allowCmsSeedFallbacks, isMainBranchBuild } from "@/lib/deploymentEnv";
+import { allowCmsSeedFallbacks } from "@/lib/deploymentEnv";
 import { isCmsQueryLoading } from "@/lib/cmsQueryState";
 import {
   DirectoryGridSkeleton,
@@ -134,7 +134,6 @@ export default function FoundersDirectory() {
   }, [location.search]);
 
   const companies = useMemo<FounderCompany[]>(() => {
-    if (isMainBranchBuild()) return [];
     if (!isSanityConfigured()) return []
 
     if (Array.isArray(cmsCompanies) && cmsCompanies.length > 0) {

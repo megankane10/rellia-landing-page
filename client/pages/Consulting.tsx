@@ -274,8 +274,6 @@ export default function Consulting() {
 
   return (
     <CmsModularSingletonPage
-      page={content}
-      slug="consulting"
       fallback={<ConsultingFallback content={content} />}
     />
   )

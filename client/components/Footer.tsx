@@ -7,7 +7,6 @@ import { useGlobalSettings, useNavigation } from "@/hooks/useCmsDocuments"
 import type { NavItem } from "@shared/cms/types"
 import { GETPROVEN_VENDORS_GRID_URL } from "@/config/partnerLinks"
 import { ArrowUpRight } from "lucide-react"
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 import { cn } from "@/lib/utils"
 
 const SAFDAR_LINKEDIN_URL = "https://www.linkedin.com/in/safdarmd/"
@@ -78,20 +77,15 @@ const footerSectionHeadingClass =
 const legalLinkClass =
   "font-urbanist text-[13px] leading-snug text-white/70 transition-colors hover:text-rellia-mint md:text-sm"
 
-const BUILT_BY_TOOLTIP_DISMISS_MS = 520
-const BUILT_BY_TOOLTIP_ENTER_MS = 480
-const BUILT_BY_SWEEP_REVERSE_MS = 1_400
+const BUILT_BY_SWEEP_MS = 1_400
 
-type BuiltBySweepPhase = "idle" | "forward" | "reverse"
-type BuiltByTooltipPhase = "hidden" | "entering" | "visible" | "leaving"
+type BuiltBySweepPhase = "idle" | "forward"
 
 const BuiltByCredit = () => {
-  const [open, setOpen] = React.useState(false)
-  const [tooltipPhase, setTooltipPhase] = React.useState<BuiltByTooltipPhase>("hidden")
+  const [showTooltip, setShowTooltip] = React.useState(false)
   const [sweepPhase, setSweepPhase] = React.useState<BuiltBySweepPhase>("idle")
   const sweepTimerRef = React.useRef<ReturnType<typeof setTimeout> | null>(null)
-  const dismissTimerRef = React.useRef<ReturnType<typeof setTimeout> | null>(null)
-  const enterTimerRef = React.useRef<ReturnType<typeof setTimeout> | null>(null)
+  const touchDismissTimerRef = React.useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const clearSweepTimer = () => {
     if (sweepTimerRef.current) {
@@ -100,136 +94,98 @@ const BuiltByCredit = () => {
     }
   }
 
-  const clearDismissTimer = () => {
-    if (dismissTimerRef.current) {
-      clearTimeout(dismissTimerRef.current)
-      dismissTimerRef.current = null
+  const clearTouchDismissTimer = () => {
+    if (touchDismissTimerRef.current) {
+      clearTimeout(touchDismissTimerRef.current)
+      touchDismissTimerRef.current = null
     }
   }
 
-  const clearEnterTimer = () => {
-    if (enterTimerRef.current) {
-      clearTimeout(enterTimerRef.current)
-      enterTimerRef.current = null
-    }
-  }
-
-  const beginTooltipEnter = () => {
-    clearDismissTimer()
-    clearEnterTimer()
-    setTooltipPhase("entering")
-    setOpen(true)
-    enterTimerRef.current = setTimeout(() => {
-      setTooltipPhase("visible")
-      enterTimerRef.current = null
-    }, BUILT_BY_TOOLTIP_ENTER_MS)
-  }
-
-  const beginTooltipLeave = () => {
-    clearEnterTimer()
-    setTooltipPhase("leaving")
-    clearDismissTimer()
-    dismissTimerRef.current = setTimeout(() => {
-      setOpen(false)
-      setTooltipPhase("hidden")
-      dismissTimerRef.current = null
-    }, BUILT_BY_TOOLTIP_DISMISS_MS)
+  const runSweepOnce = () => {
+    clearSweepTimer()
+    setSweepPhase("idle")
+    requestAnimationFrame(() => {
+      setSweepPhase("forward")
+      sweepTimerRef.current = setTimeout(() => {
+        setSweepPhase("idle")
+        sweepTimerRef.current = null
+      }, BUILT_BY_SWEEP_MS)
+    })
   }
 
   const handlePointerEnter = () => {
-    clearSweepTimer()
-    setSweepPhase("forward")
-    beginTooltipEnter()
+    clearTouchDismissTimer()
+    runSweepOnce()
+    setShowTooltip(true)
   }
 
   const handlePointerLeave = () => {
     clearSweepTimer()
-    setSweepPhase("reverse")
-    sweepTimerRef.current = setTimeout(() => {
-      setSweepPhase("idle")
-      sweepTimerRef.current = null
-    }, BUILT_BY_SWEEP_REVERSE_MS)
-    beginTooltipLeave()
+    setSweepPhase("idle")
+    clearTouchDismissTimer()
+    setShowTooltip(false)
   }
 
   React.useEffect(
     () => () => {
       clearSweepTimer()
-      clearDismissTimer()
-      clearEnterTimer()
+      clearTouchDismissTimer()
     },
     [],
   )
 
-  const tooltipVisible = open || tooltipPhase === "leaving"
-
   return (
-    <Tooltip open={tooltipVisible} onOpenChange={setOpen} delayDuration={0}>
-      <TooltipTrigger asChild>
-        <a
-          href={SAFDAR_LINKEDIN_URL}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="built-by-credit rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-rellia-teal"
-          aria-label="Built by Safdar — let's connect on LinkedIn"
-          onMouseEnter={handlePointerEnter}
-          onMouseLeave={handlePointerLeave}
-          onFocus={handlePointerEnter}
-          onBlur={handlePointerLeave}
-          onTouchStart={() => {
-            clearSweepTimer()
-            setSweepPhase("forward")
-            beginTooltipEnter()
-          }}
-          onTouchEnd={() => {
-            clearSweepTimer()
-            setSweepPhase("reverse")
-            sweepTimerRef.current = setTimeout(() => {
-              setSweepPhase("idle")
-              sweepTimerRef.current = null
-            }, BUILT_BY_SWEEP_REVERSE_MS)
-            clearDismissTimer()
-            dismissTimerRef.current = setTimeout(() => {
-              beginTooltipLeave()
-            }, 2000)
-          }}
-        >
-          <span className="built-by-credit-label">
-            <span className="built-by-credit-base" aria-hidden="true">
-              Built by <span className="built-by-name">Safdar</span>
-            </span>
-            <span
-              className={cn(
-                "built-by-credit-sweep",
-                sweepPhase === "forward" && "built-by-credit-sweep--forward",
-                sweepPhase === "reverse" && "built-by-credit-sweep--reverse",
-              )}
-              aria-hidden="true"
-            >
-              Built by <span className="built-by-name">Safdar</span>
-            </span>
-            <span className="sr-only">Built by Safdar</span>
+    <span className="relative inline-flex overflow-visible">
+      <a
+        href={SAFDAR_LINKEDIN_URL}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="built-by-credit rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-rellia-teal"
+        aria-label="Built by Safdar — let's connect on LinkedIn"
+        aria-describedby={showTooltip ? "built-by-safdar-tooltip" : undefined}
+        onMouseEnter={handlePointerEnter}
+        onMouseLeave={handlePointerLeave}
+        onFocus={handlePointerEnter}
+        onBlur={handlePointerLeave}
+        onTouchStart={() => {
+          handlePointerEnter()
+        }}
+        onTouchEnd={() => {
+          clearTouchDismissTimer()
+          touchDismissTimerRef.current = setTimeout(() => {
+            handlePointerLeave()
+            touchDismissTimerRef.current = null
+          }, 2000)
+        }}
+      >
+        <span className="built-by-credit-label">
+          <span className="built-by-credit-base" aria-hidden="true">
+            Built by <span className="built-by-name">Safdar</span>
           </span>
-        </a>
-      </TooltipTrigger>
-      <TooltipContent
-        side="top"
-        sideOffset={8}
-        forceMount
-        className={cn(
-          "built-by-tooltip !animate-none data-[state=closed]:!animate-none",
-          tooltipPhase === "entering" && "built-by-tooltip--entering",
-          tooltipPhase === "visible" && "built-by-tooltip--visible",
-          tooltipPhase === "leaving" && "built-by-tooltip--leaving",
-          tooltipPhase === "hidden" && "built-by-tooltip--hidden",
-        )}
+          <span
+            className={cn(
+              "built-by-credit-sweep",
+              sweepPhase === "forward" && "built-by-credit-sweep--forward",
+            )}
+            aria-hidden="true"
+          >
+            Built by <span className="built-by-name">Safdar</span>
+          </span>
+          <span className="sr-only">Built by Safdar</span>
+        </span>
+      </a>
+      <span
+        id="built-by-safdar-tooltip"
+        role="tooltip"
+        aria-hidden={!showTooltip}
+        className={cn("built-by-tooltip", showTooltip && "built-by-tooltip--visible")}
       >
         <span className="built-by-tooltip-inner">
           Let&apos;s connect on LinkedIn
           <ArrowUpRight className="h-3.5 w-3.5 shrink-0" aria-hidden />
         </span>
-      </TooltipContent>
-    </Tooltip>
+      </span>
+    </span>
   )
 }
 
@@ -402,7 +358,7 @@ export default function Footer() {
                 &copy; {new Date().getFullYear()} {g.copyrightLine} Ontario, Canada
               </p>
 
-              <div className="flex justify-center md:px-4 order-1 md:order-none">
+              <div className="flex justify-center overflow-visible md:px-4 order-1 md:order-none">
                 <BuiltByCredit />
               </div>
 
