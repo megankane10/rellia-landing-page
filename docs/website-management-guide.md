@@ -2,6 +2,8 @@
 
 This guide is for non-technical editors who manage the marketing site through **Sanity Studio** ([relliahealth.sanity.studio](https://relliahealth.sanity.studio)). Engineering handles code deploys; you handle words, images, and publishing.
 
+**Project status:** The marketing site and CMS handoff are complete (June 2026). Day-to-day work is publishing and content updates in Studio — not waiting on a rebuild.
+
 ---
 
 ## 1. Logging in and publishing
@@ -50,7 +52,7 @@ Publishing in Studio updates the dataset tied to that environment. After enginee
 
 ### Add or edit an event or story
 
-**Collections → Events** or **Stories**. Stories use tags from **Story filters** in Collections.
+**Collections → Events** or **Stories**. Stories use categories from **Collections → Stories → Categories** (Founder Story, Industry Insight, Program Update). Story SEO titles default to `Story title — Category` when the SEO tab is left empty.
 
 ### Post an open role (careers)
 

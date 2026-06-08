@@ -1,9 +1,11 @@
 # Sanity CMS audit + rebuild plan (v2)
 
+> **Status (June 2026):** Rebuild **complete** and in production. This document is retained as historical context; for day-to-day editing see [website-management-guide.md](./website-management-guide.md) and [sanity-cms-rebuild-guide.md](./sanity-cms-rebuild-guide.md).
+
 **Canonical editor brief:** [sanity-cms-rebuild-guide.md](./sanity-cms-rebuild-guide.md)  
 **Studio branding:** Project title **Rellia Web Studio** · Drawer header **Website Editor**
 
-This document audits the current setup and defines the rebuild path for an ultra-minimalist, editor-first CMS that stays stable when the frontend evolves.
+This document audits the setup and defined the rebuild path for an ultra-minimalist, editor-first CMS that stays stable when the frontend evolves.
 
 ---
 

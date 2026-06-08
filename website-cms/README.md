@@ -2,6 +2,8 @@
 
 This directory contains the **Sanity Studio** (v3) configuration, schemas, and structures used to manage dynamic content for the Rellia Health website.
 
+**Live Studio:** [relliahealth.sanity.studio](https://relliahealth.sanity.studio) · **Handoff guide:** [docs/website-management-guide.md](../docs/website-management-guide.md)
+
 ---
 
 ## Architecture & CMS Integration

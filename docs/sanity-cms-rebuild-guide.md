@@ -4,18 +4,18 @@ Ultra-minimalist, editor-first Sanity Studio for the Rellia marketing site. Buil
 
 ---
 
-## 🚀 Latest Audit Status (June 2026 Update)
+## Project status (June 2026 — complete)
 
-A recent codebase audit shows that some changes have been merged:
-* **Completed (Diagnostic Survey CMS Migration)**:
-  * Bespoke text and step collection fields (`introTitle`, `introSubtitle`, `processingTitle`, `reportMembershipCtaBody`, etc.) have been added to the [`diagnosticSurveyContent.ts`](../website-cms/schemaTypes/documents/diagnosticSurveyContent.ts) document schema.
-  * The query proxy [`groqQueries.ts`](../shared/cms/groqQueries.ts) has been updated with `diagnosticSurveyContentQuery` to fetch all these new fields.
-  * The frontend page [`DiagnosticSurvey.tsx`](../client/pages/DiagnosticSurvey.tsx) was refactored to query and display these fields from the CMS dynamically rather than relying on hardcoded page copy.
-* **Still Left to Do (Outstanding CMS Roadmap)**:
-  * **Unified Page Builder System**: Standardizing modular layouts on `section*` objects and deleting or disabling the unused `pageBuilder` blocks (`heroSection`, `featuresSection`, etc.).
-  * **Reusable Section References**: Creating the `reusableSection` document type and adding references to modular page section builders.
-  * **Standardized Headings**: Migrating text headings from simple strings to constrained `richHeading` rich text fields to support formatting options like the custom `mintAccent` decorator.
-  * **Sidebar Restructuring**: Organizing `deskStructure.ts` for editor ease of use (grouping by Site, Pages, Collections, etc.).
+The CMS rebuild and marketing site integration are **shipped**. Editors use **Rellia Web Studio** with grouped sidebar (Site, Pages, Collections, People, Support), page-builder sections, story/event/program collections, directory filter groups, and `seoFields` on documents.
+
+**Delivered in this phase:**
+* Diagnostic survey copy in [`diagnosticSurveyContent`](../website-cms/schemaTypes/documents/diagnosticSurveyContent.ts) + frontend wiring
+* Modular page sections + showcase page (`/supporting-health-founders`)
+* Stories with category filters, default SEO (`Title — Category`), and OG image crop (no stretch)
+* Advisor/founder directories with CMS filter groups
+* Admin inbox, drafts panel, and editor help routes
+
+**Optional later (not blocking handoff):** reusable section references, further `richHeading` migration on legacy strings, Stripe history in admin.
 
 ---
 

@@ -5,6 +5,8 @@ React SPA for **Rellia Health**, connecting founders, clinicians, and health sys
 
 **Production**: [relliahealth.com](https://www.relliahealth.com)
 
+**Status (June 2026):** Initial build and CMS handoff are **complete**. The site is live on Vercel; editors publish via [Sanity Studio](https://relliahealth.sanity.studio). Use **`main`** for production and **`Additions`** for integration preview. Ongoing work is content and optional enhancements only — see [Editor guide](./docs/website-management-guide.md).
+
 ---
 
 ## Branches and workflow
@@ -81,18 +83,16 @@ Use this when transferring the site to the Rellia team. Items marked **editor** 
 | Analytics | Studio top bar → **Analytics** (Looker) |
 | Help & links | Admin → **Help** |
 
-#### What is still not in scope (post-handoff / optional)
+#### Optional enhancements (not required for launch)
 
 | Area | Notes |
 |------|--------|
-| **Full modular CMS on every page** | Many routes still use designed React layouts until **Use modular CMS layout** + sections are built in Studio (e.g. consulting, some program pages). |
+| **More modular CMS pages** | Page builder + showcase sections are available; additional routes can adopt **Use modular CMS layout** when needed. |
 | **Stripe in admin** | Membership checkout works on the site; admin does not show payment history. |
-| **HubSpot / legacy investor flows** | External tools may still exist outside the Supabase inbox. |
-| **Email alerts on new submissions** | Not built; optional Supabase webhook → email later. |
-| **Automatic preview→production** | Not needed for editors — Studio edits production directly. Developers still use `preview` on the Additions Vercel deploy. |
-| **Diagnostic survey copy** | `/diagnostics` survey content is largely code + Supabase, not Sanity page documents. |
+| **Email alerts on new submissions** | Optional Supabase webhook → email later. |
+| **Dependabot alerts** | Review GitHub security advisories periodically. |
 
-Diagnostic survey routes (`/diagnostics`, `/diagnostic-survey`) use Supabase, not Sanity page content.
+**Operational docs:** [website-management-guide.md](./docs/website-management-guide.md) (editors) · [sanity-dataset-sync-guide.md](./docs/sanity-dataset-sync-guide.md) (preview ↔ production sync)
 
 ---
 
@@ -184,9 +184,11 @@ Starts the Node server that serves the built SPA and API (default port from `POR
 | `pnpm start` | Run production Node server locally (`dist/server/node-build.mjs`) |
 | `pnpm sanity:seed` | Full seed — singletons, events, stories, directories, logo marquees, careers image scroll, membership copy aligned with `/membership` (deletes/replaces advisors & alumni) |
 | `pnpm sanity:seed:starters` | Safe starter seed — terms, privacy, CMS guide, consulting/diagnostic shells (no directory wipe) |
+| `pnpm sanity:seed:story-filters` | Seed story category tags (Founder Story, Industry Insight, Program Update) — safe to re-run |
+| `pnpm sanity:migrate:story-seo` | Migrate story SEO fields to `seoFields` shape and default titles — safe to re-run |
+| `pnpm sanity:cleanup` | Remove obsolete docs + duplicate singletons/slugs (`scripts/sanity-cleanup.ts`) |
 
 After schema changes, run **`pnpm sanity:seed`** on **preview** first, verify the site, then **`pnpm sanity:sync-to-production -- --apply`** (or seed production directly) so www does not rely on code fallbacks.
-| `pnpm sanity:cleanup` | Remove obsolete docs + duplicate singletons/slugs (`scripts/sanity-cleanup.ts`) |
 | `pnpm test` | Vitest |
 | `pnpm typecheck` | TypeScript (`tsc`) |
 | `pnpm format.fix` | Prettier write |
