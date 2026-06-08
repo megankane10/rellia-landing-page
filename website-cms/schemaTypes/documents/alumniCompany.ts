@@ -70,13 +70,19 @@ export const alumniCompany = defineType({
       group: 'profile',
     }),
     defineField({name: 'yearJoined', title: 'Year joined', type: 'number', group: 'profile'}),
-    defineField({name: 'websiteUrl', title: 'Website', type: 'url', group: 'profile'}),
-    defineField({name: 'linkedinUrl', title: 'LinkedIn', type: 'url', group: 'profile'}),
+    defineField({
+      name: 'socialLinks',
+      title: 'Social & professional links',
+      type: 'array',
+      of: [defineArrayMember({type: 'socialLink'})],
+      description: 'LinkedIn, website, and other links shown on the company profile.',
+      group: 'profile',
+    }),
     defineField({
       name: 'email',
       title: 'Contact email',
       type: 'string',
-      description: 'Optional public contact email for the company profile.',
+      description: 'Optional public contact email shown in social icons.',
       group: 'profile',
     }),
     defineField({
@@ -92,8 +98,6 @@ export const alumniCompany = defineType({
             defineField({name: 'name', type: 'string', validation: (Rule) => Rule.required()}),
             defineField({name: 'role', type: 'string'}),
             defineField({name: 'bio', type: 'text', rows: 3}),
-            defineField({name: 'linkedinUrl', type: 'url', title: 'LinkedIn (legacy)'}),
-            defineField({name: 'websiteUrl', type: 'url', title: 'Website (legacy)'}),
             defineField({
               name: 'socialLinks',
               title: 'Social & professional links',

@@ -43,4 +43,13 @@ export const bodyCtaBox = defineType({
       title: 'Secondary button URL',
     }),
   ],
+  preview: {
+    select: {title: 'title', buttonLabel: 'buttonLabel'},
+    prepare({title, buttonLabel}) {
+      return {
+        title: title?.trim() || 'CTA box',
+        subtitle: buttonLabel?.trim() || undefined,
+      }
+    },
+  },
 })

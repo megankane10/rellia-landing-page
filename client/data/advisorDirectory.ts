@@ -29,10 +29,8 @@ export type AdvisorDirectoryEntry = {
   filter: AdvisorDirectoryFilter
   /** Portrait photo for cards and profile */
   photoSrc: string
-  linkedInUrl: string
-  /** Personal or org site */
-  websiteUrl?: string
   socialLinks?: Array<{ platform?: string; label?: string; url?: string }>
+  email?: string
   /** Rich modal copy */
   bio: string
   mentoringStyle: string
@@ -57,8 +55,6 @@ export const ADVISOR_DIRECTORY_SEED: AdvisorDirectoryEntry[] = [
       "Seeded dummy advisor for testing directory filters, snapshot copy, and the About the advisor section.",
     filter: "Clinical Evidence",
     photoSrc: "/images/nopicture-male.jpg",
-    linkedInUrl: "https://www.linkedin.com/in/example-placeholder",
-    websiteUrl: "https://example.com",
     bio: "This seeded profile demonstrates how advisors appear in the directory and on profile pages. Replace this copy with a real bio before promoting to production.",
     mentoringStyle:
       "Use short paragraphs and bullet lists to outline clinical background, operator experience, and the kinds of founder questions you help teams answer.",

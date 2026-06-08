@@ -13,6 +13,7 @@ import type {
   FaqPageContent,
   GlobalSettingsContent,
   HomePageContent,
+  HomePathsCard,
   HomeWhyFeature,
   MarketingPageContent,
   NotFoundContent,
@@ -1342,6 +1343,49 @@ export const DEFAULT_GLOBAL_SETTINGS: GlobalSettingsContent = {
   priorityModalFormPlaceholderEmail: "Email address",
 }
 
+export const DEFAULT_HOME_PATHS_CARDS: HomePathsCard[] = [
+  {
+    roleId: "founder",
+    tagLabel: "Founders",
+    title: "Build with signal",
+    subtitle: "Programs, mentors, and warm intros aligned to healthcare reality.",
+    imageSrc: "/images/paths-founder-pexels.jpg",
+    imageAlt: "Team of founders collaborating around a table",
+    ctaLabel: "I'm a founder",
+    ctaTo: "/founders",
+  },
+  {
+    roleId: "advisor",
+    tagLabel: "Advisors",
+    title: "Mentor decisively",
+    subtitle: "Join a bench built for outcomes—not open-ended overhead.",
+    imageSrc: "/images/paths-advisor-pexels.jpg",
+    imageAlt: "Professional advisor working with a colleague",
+    ctaLabel: "I'm an advisor",
+    ctaTo: "/advisors",
+  },
+  {
+    roleId: "investor",
+    tagLabel: "Investors",
+    title: "See founder quality",
+    subtitle: "Curated pitch events and diligence-friendly updates.",
+    imageSrc: "/images/paths-investor-pexels.jpg",
+    imageAlt: "Investor in conversation during a business meeting",
+    ctaLabel: "I'm an investor",
+    ctaTo: "/investors",
+  },
+  {
+    roleId: "partner",
+    tagLabel: "Partners",
+    title: "Drive adoption",
+    subtitle: "Partner pathways designed for pilots, integration, and trust.",
+    imageSrc: "/images/paths-partner-pexels.jpg",
+    imageAlt: "Two partners shaking hands after an agreement",
+    ctaLabel: "I'm a partner",
+    ctaTo: "/industry-partners",
+  },
+]
+
 export const DEFAULT_HOME_PAGE: HomePageContent = {
   headlinePrefix: "You are the future of health tech.",
   subheadline:
@@ -1402,6 +1446,8 @@ export const DEFAULT_HOME_PAGE: HomePageContent = {
   ctaSecondaryButtonPath: "/programs",
   ctaImageUrl: "/images/cta-home-conference.webp",
   ctaImageAlt: "Man speaking at conference",
+  pathsTitle: "Find your place in the community",
+  pathsCards: DEFAULT_HOME_PATHS_CARDS,
   testimonialsTitlePortable: DEFAULT_HOME_TESTIMONIALS_TITLE_PORTABLE,
   testimonials: [
     {
@@ -1564,36 +1610,46 @@ export const DEFAULT_ABOUT_PAGE: AboutPageContent = {
       role: "Executive Director, Co-Founder",
       bio: "Regulatory and Quality Management executive specializing in global market entry strategy and FDA/Health Canada submissions for SaMD and digital health companies.",
       imageSrc: "https://www.relliahealth.com/images/team-megankane.jpg",
-      linkedinUrl: "https://www.linkedin.com/in/megankane1/",
-      websiteUrl: "https://megankaneportfolio.carrd.co/",
+      socialLinks: [
+        { platform: "linkedin", label: "LinkedIn", url: "https://www.linkedin.com/in/megankane1/" },
+        { platform: "website", label: "Website", url: "https://megankaneportfolio.carrd.co/" },
+      ],
     },
     {
       name: "Deena Al-Sammak",
       role: "Program Manager, Co-Founder",
       bio: "Deena brings startup experience in the health tech space and leverages her experience to lead our program development and management",
       imageSrc: "https://www.relliahealth.com/images/team-deenasammak.png",
-      linkedinUrl: "https://www.linkedin.com/in/deena-al-sammak/",
+      socialLinks: [
+        { platform: "linkedin", label: "LinkedIn", url: "https://www.linkedin.com/in/deena-al-sammak/" },
+      ],
     },
     {
       name: "Khali Abdi",
       role: "User Experience, Community Strategy Manager",
       bio: "A Chemical Engineer & digital health founder, Khali blends her technical background with a deep commitment to human-centred design to ensure Rellia’s ecosystem is as intuitive as it is impactful.",
       imageSrc: "https://www.relliahealth.com/images/team-abdi.JPG",
-      linkedinUrl: "https://www.linkedin.com/in/khali-abdi/",
+      socialLinks: [
+        { platform: "linkedin", label: "LinkedIn", url: "https://www.linkedin.com/in/khali-abdi/" },
+      ],
     },
     {
       name: "Priyanka Ramjagsingh",
       role: "Operations Director",
       bio: "With a decade of experience embedded in early-stage health companies, Priyanka converts her deep regulatory and quality expertise into operational momentum, turning complexity into the strategic edge that moves teams forward.",
       imageSrc: "https://www.relliahealth.com/images/team-priyankaR.jpeg",
-      linkedinUrl: "https://www.linkedin.com/in/shyama-ramjagsingh/",
+      socialLinks: [
+        { platform: "linkedin", label: "LinkedIn", url: "https://www.linkedin.com/in/shyama-ramjagsingh/" },
+      ],
     },
     {
       name: "Kelly Hu",
       role: "Social Media Manager",
       bio: "A digital health founder herself, Kelly plans and executes content creation to boost engagement and showcase Rellia's growing network.",
       imageSrc: "https://www.relliahealth.com/images/team-KellyH.jpeg",
-      linkedinUrl: "https://www.linkedin.com/in/kellyjiayihu/",
+      socialLinks: [
+        { platform: "linkedin", label: "LinkedIn", url: "https://www.linkedin.com/in/kellyjiayihu/" },
+      ],
     },
   ],
   ctaTitle: "You're in the right place.",
@@ -2419,6 +2475,29 @@ export function mergeGlobalSettings(
   return base
 }
 
+const mergePathsCards = (fromCms: HomePathsCard[] | null | undefined): HomePathsCard[] => {
+  const byRole = new Map<HomePathsCard["roleId"], HomePathsCard>()
+  for (const card of compactList(fromCms)) {
+    if (card?.roleId) byRole.set(card.roleId, card)
+  }
+  return DEFAULT_HOME_PATHS_CARDS.map((defaultCard) => {
+    const cms = byRole.get(defaultCard.roleId)
+    if (!cms) return defaultCard
+    return {
+      ...defaultCard,
+      ...cms,
+      roleId: defaultCard.roleId,
+      tagLabel: cms.tagLabel?.trim() || defaultCard.tagLabel,
+      title: cms.title?.trim() || defaultCard.title,
+      subtitle: cms.subtitle?.trim() || defaultCard.subtitle,
+      imageSrc: cms.imageSrc?.trim() || defaultCard.imageSrc,
+      imageAlt: cms.imageAlt?.trim() || defaultCard.imageAlt,
+      ctaLabel: cms.ctaLabel?.trim() || defaultCard.ctaLabel,
+      ctaTo: cms.ctaTo?.trim() || defaultCard.ctaTo,
+    }
+  })
+}
+
 const mergeWhyFeatures = (
   fromCms: HomeWhyFeature[] | null | undefined,
 ): HomeWhyFeature[] =>
@@ -2452,8 +2531,10 @@ export function mergeHomePage(partial: Partial<HomePageContent> | null | undefin
   }
   const testimonials = compactList(p.testimonials)
   base.testimonials = testimonials.length > 0 ? testimonials : DEFAULT_HOME_PAGE.testimonials
-  const pathsCards = compactList(p.pathsCards)
-  if (pathsCards.length > 0) base.pathsCards = pathsCards
+  base.pathsCards = mergePathsCards(p.pathsCards)
+  if (!base.pathsTitle?.trim()) {
+    base.pathsTitle = DEFAULT_HOME_PAGE.pathsTitle
+  }
   if (!Array.isArray(base.testimonialsTitlePortable) || base.testimonialsTitlePortable.length === 0) {
     base.testimonialsTitlePortable = DEFAULT_HOME_PAGE.testimonialsTitlePortable
   }
@@ -2836,7 +2917,7 @@ export const DEFAULT_DIAGNOSTIC_LANDING_PAGE: DiagnosticLandingPageContent = {
         "https://images.pexels.com/photos/590016/pexels-photo-590016.jpeg?auto=compress&cs=tinysrgb&w=1200",
     },
     {
-      title: "AI-Powered Analysis",
+      title: "Instant Gap Analysis",
       description:
         "Identify your top 3 strengths and priority gaps instantly. Detailed reports and gap analyses are exclusive to Rellia members.",
       imageSrc:

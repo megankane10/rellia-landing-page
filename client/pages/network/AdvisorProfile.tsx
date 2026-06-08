@@ -197,8 +197,6 @@ export default function AdvisorProfile() {
                 <div className="mt-6 pt-6 border-t border-black/10 flex items-center gap-3">
                   <ProfileSocialLinks
                     links={active.socialLinks}
-                    linkedInUrl={active.linkedInUrl}
-                    websiteUrl={active.websiteUrl}
                     email={(active as { email?: string }).email}
                   />
                   <button

@@ -737,8 +737,7 @@ export type AboutTeamMember = {
   role?: string
   bio?: string
   imageSrc: string
-  linkedinUrl?: string
-  websiteUrl?: string
+  socialLinks?: Array<{ platform?: string; label?: string; url?: string }>
 }
 
 export type AboutPageContent = {

@@ -184,7 +184,6 @@ export default function FoundersDirectory() {
             directoryFilters: Array.isArray(c.directoryFilters) ? c.directoryFilters : [],
             shortDescription: c.shortDescription ?? "",
             longDescription: c.longDescription ?? "",
-            websiteUrl: c.websiteUrl ?? "",
             traction: c.traction ?? "",
             relliaCollaboration: c.relliaCollaboration ?? "",
             imageSrc: "",
@@ -193,7 +192,8 @@ export default function FoundersDirectory() {
             founders: Array.isArray(c.founders) ? c.founders : [],
             programs: [],
             profileBody: c.profileBody,
-            linkedinUrl: c.linkedinUrl,
+            socialLinks: Array.isArray(c.socialLinks) ? c.socialLinks : [],
+            email: (c as { email?: string }).email,
           }
         })
     }

@@ -34,6 +34,7 @@ import {
   extractPublishedMutationIds,
   syncPublishedDocsToProduction,
 } from "./sanityPublishSync";
+import { cmsHealthHandler } from "./cmsHealth";
 
 type RequestLike = {
   headers?: Record<string, unknown>;
@@ -288,6 +289,11 @@ export function createServer() {
 
   app.get("/health", rateLimitJson(healthRate, HEALTH_MAX_PER_MIN), healthHandler);
   app.get("/api/health", rateLimitJson(healthRate, HEALTH_MAX_PER_MIN), healthHandler);
+  app.get(
+    "/api/health/cms",
+    rateLimitJson(healthRate, HEALTH_MAX_PER_MIN),
+    cmsHealthHandler,
+  );
 
   const sanitySlackWebhookRate = new Map<string, RateState>();
   const SANITY_SLACK_WEBHOOK_MAX_PER_MIN = 60;

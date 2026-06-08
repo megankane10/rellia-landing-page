@@ -2,6 +2,7 @@ import {defineArrayMember, defineField} from 'sanity'
 
 export const portableTextBlockMember = defineArrayMember({
   type: 'block',
+  title: 'Paragraph',
   styles: [
     {title: 'Normal', value: 'normal'},
     {title: 'Heading 2', value: 'h2'},
@@ -26,6 +27,7 @@ export const portableTextBlockMember = defineArrayMember({
 
 export const portableTextInlineImageMember = defineArrayMember({
   type: 'image',
+  title: 'Image (upload)',
   options: {hotspot: true},
   fields: [
     {
@@ -47,13 +49,13 @@ export const portableTextInlineImageMember = defineArrayMember({
 export const portableTextInlineUrlImageMember = defineArrayMember({
   type: 'object',
   name: 'eventDetailInlineImage',
-  title: 'Image (URL)',
+  title: 'Image (URL fallback)',
   fields: [
     defineField({
       name: 'imageSrc',
       title: 'Image URL',
       type: 'string',
-      description: 'Relative site path (e.g. /images/…) or absolute URL.',
+      description: 'Relative site path (e.g. /images/…) or absolute URL. Prefer Image (upload) when possible.',
     }),
     defineField({
       name: 'alt',
@@ -63,12 +65,21 @@ export const portableTextInlineUrlImageMember = defineArrayMember({
     }),
     defineField({name: 'caption', type: 'string', title: 'Caption'}),
   ],
+  preview: {
+    select: {title: 'alt', subtitle: 'imageSrc'},
+    prepare({title, subtitle}) {
+      return {
+        title: title?.trim() || 'Image (URL)',
+        subtitle: subtitle?.trim() || undefined,
+      }
+    },
+  },
 })
 
 export const portableTextVideoMember = defineArrayMember({
   type: 'object',
   name: 'portableVideo',
-  title: 'Video',
+  title: 'Video embed',
   fields: [
     defineField({
       name: 'videoUrl',
@@ -85,6 +96,15 @@ export const portableTextVideoMember = defineArrayMember({
     }),
     defineField({name: 'caption', type: 'string', title: 'Caption'}),
   ],
+  preview: {
+    select: {title: 'videoUrl', subtitle: 'caption'},
+    prepare({title, subtitle}) {
+      return {
+        title: 'Video embed',
+        subtitle: subtitle?.trim() || title?.trim() || undefined,
+      }
+    },
+  },
 })
 
 export const portableTextArrayMembers = [

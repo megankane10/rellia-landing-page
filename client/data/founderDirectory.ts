@@ -10,10 +10,9 @@ export type FounderPerson = {
   name: string
   role: string
   bio: string
-  linkedinUrl?: string
-  websiteUrl?: string
   socialLinks?: Array<{ platform?: string; label?: string; url?: string }>
   imageSrc?: string
+  email?: string
 }
 
 export type FounderCompany = {
@@ -28,7 +27,6 @@ export type FounderCompany = {
   directoryFilters?: Array<{ groupId?: string; values?: string[]; groupTitle?: string }>
   shortDescription: string
   longDescription: string
-  websiteUrl: string
   traction: string
   relliaCollaboration: string
   imageSrc: string
@@ -37,7 +35,8 @@ export type FounderCompany = {
   yearJoined: number
   founders: FounderPerson[]
   programs: string[]
-  linkedinUrl?: string
+  socialLinks?: Array<{ platform?: string; label?: string; url?: string }>
+  email?: string
   profileBody?: SanityPortableText
 }
 
@@ -59,7 +58,6 @@ export const FOUNDER_DIRECTORY: FounderCompany[] = [
     shortDescription: "Taking a Play-Based Approach To Pediatric Rehabilitation",
     longDescription:
       "Power of Play builds play-based strength measurement tools for pediatric rehabilitation—helping clinicians track progress without turning therapy into a chore.",
-    websiteUrl: "https://powerofplayinc.com",
     traction:
       "Clinical validation and pilot programs with pediatric rehab partners; product engineering focused on home-use ergonomics and measurable outcomes.",
     relliaCollaboration:
@@ -67,23 +65,31 @@ export const FOUNDER_DIRECTORY: FounderCompany[] = [
     imageSrc: "/images/founders.jpg",
     country: ["Canada"],
     yearJoined: 2024,
+    email: "info@powerofplayinc.com",
+    socialLinks: [
+      { platform: "website", label: "Website", url: "https://powerofplayinc.com" },
+      { platform: "linkedin", label: "LinkedIn", url: "https://www.linkedin.com/company/power-of-play-pop/" },
+    ],
     founders: [
       {
         name: "Deena Al-Sammak",
         role: "Health Sciences Graduate",
         bio: "Co-founder focused on clinical validation and program development for pediatric rehab tooling.",
-        linkedinUrl: "https://www.linkedin.com/in/deena-al-sammak/",
+        socialLinks: [
+          { platform: "linkedin", label: "LinkedIn", url: "https://www.linkedin.com/in/deena-al-sammak/" },
+        ],
         imageSrc: "/images/deenasammak-team.png",
       },
       {
         name: "Rooaa Shanshal",
         role: "Software & Biomedical Engineer",
         bio: "Co-founder leading product engineering for play-based strength measurement.",
-        linkedinUrl: "https://www.linkedin.com/in/rooaashanshal/",
+        socialLinks: [
+          { platform: "linkedin", label: "LinkedIn", url: "https://www.linkedin.com/in/rooaashanshal/" },
+        ],
         imageSrc: "/images/testimonials-rooaaS.jpeg",
       },
     ],
     programs: [],
-    linkedinUrl: "https://www.linkedin.com/company/power-of-play-pop/",
   },
 ]

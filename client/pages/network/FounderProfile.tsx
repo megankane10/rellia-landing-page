@@ -159,8 +159,7 @@ export default function FounderProfile() {
 
                 <div className="mt-6 pt-6 border-t border-black/10 flex items-center gap-3">
                   <ProfileSocialLinks
-                    websiteUrl={active.websiteUrl}
-                    linkedInUrl={active.linkedinUrl}
+                    links={(active as { socialLinks?: Array<{ platform?: string; label?: string; url?: string }> }).socialLinks}
                     email={(active as { email?: string }).email}
                   />
                   <button
@@ -227,21 +226,8 @@ export default function FounderProfile() {
                           </p>
                         </div>
                         <ProfileSocialLinks
-                          links={[
-                            ...(Array.isArray(f.socialLinks) ? f.socialLinks : []),
-                            ...(typeof (f as { email?: string }).email === "string" &&
-                            (f as { email?: string }).email?.trim()
-                              ? [
-                                  {
-                                    platform: "email",
-                                    url: (f as { email?: string }).email,
-                                    label: `Email ${f.name}`,
-                                  },
-                                ]
-                              : []),
-                          ]}
-                          linkedInUrl={f.linkedinUrl}
-                          websiteUrl={f.websiteUrl}
+                          links={Array.isArray(f.socialLinks) ? f.socialLinks : []}
+                          email={(f as { email?: string }).email}
                           iconClassName="h-3.5 w-3.5"
                           className="mt-3 gap-2"
                         />

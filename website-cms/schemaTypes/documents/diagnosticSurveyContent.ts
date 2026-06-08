@@ -213,7 +213,7 @@ export const diagnosticSurveyContent = defineType({
       rows: 2,
       group: 'submit',
       initialValue:
-        'You’re about to submit your responses. After confirmation, we’ll generate your report and save your submission in the Rellia CMS.',
+        'You’re about to submit your responses. After confirmation, we’ll generate your personalized readiness report.',
     }),
     defineField({
       name: 'submitProfileTitle',

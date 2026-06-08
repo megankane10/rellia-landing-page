@@ -20,12 +20,19 @@ export const portableImageCarousel = defineType({
         defineArrayMember({
           type: 'object',
           name: 'portableImageCarouselSlide',
+          title: 'Carousel slide',
           fields: [
+            defineField({
+              name: 'image',
+              type: 'image',
+              title: 'Image',
+              options: {hotspot: true},
+            }),
             defineField({
               name: 'imageSrc',
               type: 'string',
-              title: 'Image URL',
-              description: 'Site path or https URL.',
+              title: 'Image URL (fallback)',
+              description: 'Use only if the image is not uploaded above.',
             }),
             defineField({
               name: 'alt',
@@ -40,8 +47,28 @@ export const portableImageCarousel = defineType({
               description: 'Optional; shown under that slide.',
             }),
           ],
+          preview: {
+            select: {title: 'alt', subtitle: 'caption', media: 'image'},
+            prepare({title, subtitle, media}) {
+              return {
+                title: title?.trim() || 'Carousel slide',
+                subtitle: subtitle?.trim() || undefined,
+                media,
+              }
+            },
+          },
         }),
       ],
     }),
   ],
+  preview: {
+    select: {title: 'title', slides: 'slides'},
+    prepare({title, slides}) {
+      const count = Array.isArray(slides) ? slides.length : 0
+      return {
+        title: title?.trim() || 'Image carousel',
+        subtitle: count ? `${count} slide${count === 1 ? '' : 's'}` : 'No slides',
+      }
+    },
+  },
 })

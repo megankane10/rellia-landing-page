@@ -13,7 +13,7 @@ import { DEFAULT_ABOUT_PAGE } from "@shared/cms/defaults";
 import { HeroHeadlinePortable } from "@/components/HeroHeadlinePortable"
 import { relliaTealGlassCardClass } from "@/lib/relliaTealGlassCard";
 import { cn } from "@/lib/utils";
-import { useRef, useState, useMemo, useEffect } from "react";
+import { useRef, useState, useEffect } from "react";
 import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
 
 const VALUE_ICONS: Record<string, LucideIcon> = {
@@ -66,18 +66,6 @@ export default function About() {
   // Pexels image (hotlinked) for values section parallax background
   const valuesBgImage =
     "https://images.pexels.com/photos/3184465/pexels-photo-3184465.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=1600";
-
-  const teamMembers = useMemo(() => {
-    return (about.team ?? []).map((t) => {
-      if (t.name === "Kelly Hu") {
-        return {
-          ...t,
-          linkedinUrl: "https://www.linkedin.com/in/kellyjiayihu/",
-        }
-      }
-      return t
-    })
-  }, [about.team])
 
   return (
     <div className="min-h-screen bg-white font-host-grotesk overflow-x-hidden">
@@ -196,15 +184,14 @@ export default function About() {
             </ScrollReveal>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {teamMembers.map((t) => (
+              {(about.team ?? []).map((t) => (
                 <div key={t.name}>
                   <TeamMemberCard
                     name={t.name}
                     role={t.role}
                     bio={t.bio}
                     imageSrc={t.imageSrc}
-                    linkedinUrl={t.linkedinUrl}
-                    websiteUrl={t.websiteUrl}
+                    socialLinks={t.socialLinks}
                     bioOpen={openTeamBioName === t.name}
                     onBioOpenChange={(next) => setOpenTeamBioName(next ? t.name : null)}
                   />

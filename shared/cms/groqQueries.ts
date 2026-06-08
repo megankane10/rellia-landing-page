@@ -32,7 +32,7 @@ const networkHeroFragment = `heroEyebrow,
   heroTitle,
   heroAccentPhrase,
   heroSubtitle,
-  "heroImageSrc": coalesce(heroImageUrl, heroImage.asset->url),
+  "heroImageSrc": coalesce(heroImage.asset->url, heroImageUrl),
   heroPrimaryCtaLabel,
   heroPrimaryCtaHref,
   heroSecondaryCtaLabel,
@@ -44,7 +44,7 @@ const networkEngageFragment = `engageTitle,
 
 const networkWhyFragment = `whyTitle,
   whyDescription,
-  whyFeatures[]{ title, body, iconKey, "imageSrc": coalesce(imageSrc, image.asset->url) }`
+  whyFeatures[]{ title, body, iconKey, "imageSrc": coalesce(image.asset->url, imageSrc) }`
 
 const networkCtaFragment = `ctaTitle,
   ctaBody,
@@ -172,6 +172,24 @@ export const storiesPageQuery = `*[_type == "storiesPage"][0]{
   ${seoFragment}
 }`
 
+const portableRichTextBlocksFragment = `[]{
+  ...,
+  _type == "image" => {
+    ...,
+    "url": asset->url
+  },
+  _type == "portableImageCarousel" => {
+    ...,
+    slides[]{
+      alt,
+      caption,
+      "imageSrc": coalesce(image.asset->url, imageSrc)
+    }
+  }
+}`
+
+const portableRichTextBodyFragment = `body${portableRichTextBlocksFragment}`
+
 /** Lightweight story rows for Vite prerender build snapshots (no body). */
 export const storiesPrerenderSnapshotQuery = `*[_type == "story" && !(_id in path("drafts.**"))]{
   title,
@@ -196,16 +214,8 @@ export const storyBySlugQuery = `*[_type == "story" && slug.current == $slug && 
   publishedAt,
   featured,
   headerLayout,
-  body,
+  body${portableRichTextBlocksFragment},
   ${seoFragment}
-}`
-
-const portableRichTextBodyFragment = `body[]{
-  ...,
-  _type == "image" => {
-    ...,
-    "url": asset->url
-  }
 }`
 
 const pageSectionFieldsFragment = `...,
@@ -245,7 +255,7 @@ const pageSectionFieldsFragment = `...,
     name,
     role,
     company,
-    "image": coalesce(imageSrc, image.asset->url)
+    "image": coalesce(image.asset->url, imageSrc)
   }`
 
 export const pageBySlugQuery = `*[_type == "page" && slug.current == $slug && slug.current != "terms" && slug.current != "privacy" && !(_id in path("drafts.**"))][0]{
@@ -263,7 +273,7 @@ export const networkFoundersPageQuery = `*[_type == "networkFoundersPage"][0]{
   ${networkHeroFragment},
   eligibilityTitle,
   eligibilityDescription,
-  eligibilityItems[]{ text, "imageUrl": coalesce(imageUrl, image.asset->url) },
+  eligibilityItems[]{ text, "imageUrl": coalesce(image.asset->url, imageUrl) },
   ${networkEngageFragment},
   ${networkWhyFragment},
   journeyTitle,
@@ -271,7 +281,7 @@ export const networkFoundersPageQuery = `*[_type == "networkFoundersPage"][0]{
   journeySteps[]{ id, label, zone, detail },
   exploreTitle,
   exploreSubtitle,
-  exploreCards[]{ title, badge, "imageUrl": coalesce(imageUrl, image.asset->url), ctaLabel, ctaHref },
+  exploreCards[]{ title, badge, "imageUrl": coalesce(image.asset->url, imageUrl), ctaLabel, ctaHref },
   deeperHelpTitle,
   deeperHelpSubtitle,
   deeperHelpFeatures[]{ title, body, iconKey },
@@ -335,7 +345,7 @@ const landingTestimonialsFragment = `testimonials[]{
   name,
   role,
   company,
-  "image": coalesce(imageSrc, image.asset->url)
+  "image": coalesce(image.asset->url, imageSrc)
 }`
 
 export const diagnosticLandingPageQuery = `*[_id == "diagnosticLandingPage"][0]{
@@ -344,7 +354,7 @@ export const diagnosticLandingPageQuery = `*[_id == "diagnosticLandingPage"][0]{
   heroTitle,
   heroAccentPhrase,
   heroSubtitle,
-  "heroImageSrc": coalesce(heroImageUrl, heroImage.asset->url),
+  "heroImageSrc": coalesce(heroImage.asset->url, heroImageUrl),
   heroPrimaryCtaLabel,
   heroPrimaryCtaHref,
   readinessTitle,
@@ -352,7 +362,7 @@ export const diagnosticLandingPageQuery = `*[_id == "diagnosticLandingPage"][0]{
   readinessFeatures[]{
     title,
     description,
-    "imageSrc": coalesce(imageSrc, image.asset->url)
+    "imageSrc": coalesce(image.asset->url, imageSrc)
   },
   infographicTitle,
   infographicBody,
@@ -384,7 +394,7 @@ export const consultingPageQuery = `*[_id == "consultingPage"][0]{
   heroTitle,
   heroAccentPhrase,
   heroSubtitle,
-  "heroImageSrc": coalesce(heroImageUrl, heroImage.asset->url),
+  "heroImageSrc": coalesce(heroImage.asset->url, heroImageUrl),
   heroPrimaryCtaLabel,
   heroPrimaryCtaHref,
   heroSecondaryCtaLabel,
@@ -454,7 +464,7 @@ export const homePageQuery = `*[_type == "homePage"][0]{
     description, 
     buttonLabel, 
     buttonPath,
-    "imageSrc": coalesce(imageSrc, image.asset->url)
+    "imageSrc": coalesce(image.asset->url, imageSrc)
   },
   ctaTitle,
   ctaButtonLabel,
@@ -469,7 +479,7 @@ export const homePageQuery = `*[_type == "homePage"][0]{
     company,
     quote,
     companyInfo,
-    "imageSrc": coalesce(imageSrc, image.asset->url)
+    "imageSrc": coalesce(image.asset->url, imageSrc)
   },
   pathsTitle,
   pathsCards[]{
@@ -477,7 +487,7 @@ export const homePageQuery = `*[_type == "homePage"][0]{
     tagLabel,
     title,
     subtitle,
-    "imageSrc": coalesce(imageSrc, image.asset->url),
+    "imageSrc": coalesce(image.asset->url, imageSrc),
     imageAlt,
     ctaLabel,
     ctaTo
@@ -501,9 +511,8 @@ export const aboutPageQuery = `*[_type == "aboutPage"][0]{
     name,
     role,
     bio,
-    linkedinUrl,
-    websiteUrl,
-    "imageSrc": coalesce(imageSrc, image.asset->url)
+    socialLinks[]{ platform, label, url },
+    "imageSrc": coalesce(image.asset->url, imageSrc)
   },
   ctaTitle,
   ctaBody,
@@ -651,7 +660,7 @@ export const eventsQuery = `*[_type == "event" && status != "hidden" && !(_id in
   ticketingUrl,
   customLinkButton{ buttonText, url },
   eventDescription,
-  "detailBody": coalesce(eventDescription, detailBody),
+  "detailBody": coalesce(eventDescription, detailBody)${portableRichTextBlocksFragment},
   detailBodyHeading,
   embedLumaOnDetailPage,
   addToCalendarEnabled,
@@ -676,7 +685,7 @@ export const eventBySlugQuery = `*[_type == "event" && slug.current == $slug && 
   ticketingUrl,
   customLinkButton{ buttonText, url },
   eventDescription,
-  "detailBody": coalesce(eventDescription, detailBody),
+  "detailBody": coalesce(eventDescription, detailBody)${portableRichTextBlocksFragment},
   detailBodyHeading,
   embedLumaOnDetailPage,
   addToCalendarEnabled,
@@ -908,15 +917,8 @@ export const alumniCompaniesQuery = `*[_type == "alumniCompany" && !(_id in path
     values
   },
   shortDescription,
-  profileBody[]{
-    ...,
-    _type == "image" => {
-      ...,
-      "url": asset->url
-    }
-  },
-  websiteUrl,
-  linkedinUrl,
+  profileBody${portableRichTextBlocksFragment},
+  socialLinks[]{ platform, label, url },
   email,
   country,
   yearJoined,
@@ -926,8 +928,6 @@ export const alumniCompaniesQuery = `*[_type == "alumniCompany" && !(_id in path
     role,
     bio,
     email,
-    linkedinUrl,
-    websiteUrl,
     socialLinks[]{ platform, label, url },
     "imageSrc": coalesce(image.asset->url, imageSrc)
   }

@@ -9,6 +9,7 @@ import {
 import RelliaAction from "@/components/RelliaAction"
 import ScrollReveal from "@/components/ScrollReveal"
 import { useHomePage } from "@/hooks/useCmsDocuments"
+import { DEFAULT_HOME_PAGE } from "@shared/cms/defaults"
 import type { HomePathsCard } from "@shared/cms/types"
 import NetworkMetricsSection from "@/components/NetworkMetricsSection"
 import { PILL_ON_IMAGE_BLUR_CLASS } from "@/components/PillTag"
@@ -97,15 +98,13 @@ export default function PathsSection() {
   const isInView = useInView(sectionRef, { once: true, margin: "-12% 0px -28% 0px" })
   const reduceMotion = useReducedMotion()
   const { data: home } = useHomePage()
-  const cmsCards = home?.pathsCards
+  const page = home ?? DEFAULT_HOME_PAGE
   const resolvedCards = useMemo<ResolvedCard[]>(() => {
-    if (!Array.isArray(cmsCards) || cmsCards.length === 0) {
-      return ROLE_IDS.map((id) => resolveCard(id))
-    }
-    return cmsCards
+    const cards = page.pathsCards ?? DEFAULT_HOME_PAGE.pathsCards ?? []
+    return cards
       .filter((c): c is HomePathsCard => Boolean(c) && isValidRoleId(c?.roleId))
       .map((c) => resolveCard(c.roleId, c))
-  }, [cmsCards])
+  }, [page.pathsCards])
 
   const headerHidden = reduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 36 }
   const headerVisible = { opacity: 1, y: 0 }
@@ -170,7 +169,7 @@ export default function PathsSection() {
             animate={isInView ? "visible" : "hidden"}
             className="relative z-10 flex flex-wrap justify-center gap-x-[0.22em] gap-y-2 text-balance font-host-grotesk text-3xl font-semibold leading-tight tracking-tight text-rellia-teal md:text-[44px] md:leading-[1.15]"
           >
-            {(home?.pathsTitle?.trim() || "Find your place in the community")
+            {(page.pathsTitle?.trim() || "Find your place in the community")
               .split(" ")
               .flatMap((word, idx, arr) => {
                 const nodes = [
@@ -264,8 +263,8 @@ export default function PathsSection() {
     </section>
 
     <NetworkMetricsSection
-      heading={home?.metricsHeading || ""}
-      metrics={home?.metrics || []}
+      heading={page.metricsHeading || ""}
+      metrics={page.metrics || []}
     />
     </>
   )

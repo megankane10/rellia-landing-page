@@ -1,4 +1,4 @@
-import {defineField, defineType} from 'sanity'
+import {defineArrayMember, defineField, defineType} from 'sanity'
 import {
   CONTENT_SEO_FIELDSETS,
   CONTENT_SEO_GROUPS,
@@ -59,8 +59,12 @@ export const aboutPage = defineType({
             {name: 'name', type: 'string'},
             {name: 'role', type: 'string'},
             {name: 'bio', type: 'text', rows: 3},
-            {name: 'linkedinUrl', type: 'url'},
-            {name: 'websiteUrl', type: 'url'},
+            defineField({
+              name: 'socialLinks',
+              title: 'Social & professional links',
+              type: 'array',
+              of: [defineArrayMember({type: 'socialLink'})],
+            }),
             {name: 'image', type: 'image', options: {hotspot: true}},
             {name: 'imageSrc', type: 'string'},
           ],

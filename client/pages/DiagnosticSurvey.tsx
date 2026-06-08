@@ -653,7 +653,7 @@ const DEFAULT_INTRO_STARTUP_DETAILS_TITLE = "Tell us about your startup"
 const DEFAULT_INTRO_START_BUTTON_LABEL = "Begin Assessment"
 
 const DEFAULT_SUBMIT_TITLE = "Review, then generate your roadmap"
-const DEFAULT_SUBMIT_SUBTITLE = "You’re about to submit your responses. After confirmation, we’ll generate your report and save your submission in the Rellia CMS."
+const DEFAULT_SUBMIT_SUBTITLE = "You’re about to submit your responses. After confirmation, we’ll generate your personalized readiness report."
 const DEFAULT_SUBMIT_PROFILE_TITLE = "Your Assessment Profile"
 const DEFAULT_SUBMIT_GENERATING_TITLE = "Generating Your Report"
 const DEFAULT_SUBMIT_GENERATING_BODY = "We're assessing your results in order to assign you your personalized advisory board and recommended Rellia programs."

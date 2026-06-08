@@ -3,6 +3,7 @@ import {
   LinkedInFilled,
 } from "@/components/icons/SocialIcons"
 import { cn } from "@/lib/utils"
+import { emailToSocialLink } from "@shared/cms/socialLinks"
 import { Mail } from "lucide-react"
 
 export type ProfileSocialLink = {
@@ -13,8 +14,6 @@ export type ProfileSocialLink = {
 
 type ProfileSocialLinksProps = {
   links?: ProfileSocialLink[] | null
-  linkedInUrl?: string | null
-  websiteUrl?: string | null
   email?: string | null
   className?: string
   iconClassName?: string
@@ -33,8 +32,6 @@ const normalizeUrl = (url: string | undefined, platform: string): string | undef
 
 export const ProfileSocialLinks = ({
   links,
-  linkedInUrl,
-  websiteUrl,
   email,
   className,
   iconClassName = "h-5 w-5",
@@ -72,14 +69,9 @@ export const ProfileSocialLinks = ({
     }
   }
 
-  if (!items.some((i) => i.kind === "linkedin")) {
-    push("linkedin-direct", linkedInUrl?.trim(), "LinkedIn profile", "linkedin")
-  }
-  if (!items.some((i) => i.kind === "website")) {
-    push("website-direct", websiteUrl?.trim(), "Website", "website")
-  }
-  if (!items.some((i) => i.kind === "email")) {
-    push("email-direct", normalizeUrl(email ?? undefined, "email"), "Email", "email")
+  const emailLink = emailToSocialLink(email, "Email")
+  if (emailLink && !items.some((item) => item.kind === "email")) {
+    push("email-direct", normalizeUrl(emailLink.url, "email"), emailLink.label ?? "Email", "email")
   }
 
   if (items.length === 0) return null

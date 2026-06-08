@@ -1000,9 +1000,23 @@ export const POWER_OF_PLAY_ALUMNI = {
   businessModel: ["B2B", "B2B2C", "Hardware"],
   country: ["Canada"],
   yearJoined: 2024,
-  websiteUrl: "https://powerofplayinc.com",
-  linkedinUrl: "https://www.linkedin.com/company/power-of-play-pop/",
   email: "info@powerofplayinc.com",
+  socialLinks: [
+    {
+      _type: "socialLink",
+      _key: "website",
+      platform: "website",
+      label: "Website",
+      url: "https://powerofplayinc.com",
+    },
+    {
+      _type: "socialLink",
+      _key: "linkedin",
+      platform: "linkedin",
+      label: "LinkedIn",
+      url: "https://www.linkedin.com/company/power-of-play-pop/",
+    },
+  ],
   founders: [
     {
       name: "Deena Al-Sammak",

@@ -5,22 +5,35 @@ import {
 } from '../shared/singletonContentFields'
 import { GROUP_SEO } from '../shared/fieldGroups'
 import { pageSectionMembers } from '../shared/pageSectionMembers'
+import { imageUploadField, imageUrlFallbackField } from '../shared/imageFields'
+
+const GROUP_HERO = { name: 'hero', title: '1 · Hero', default: true }
+const GROUP_PATHS = { name: 'paths', title: '2 · Paths section' }
+const GROUP_METRICS = { name: 'metrics', title: '3 · Metrics band' }
+const GROUP_WHY = { name: 'why', title: '4 · Why Rellia' }
+const GROUP_HOW = { name: 'howItWorks', title: '5 · How it works' }
+const GROUP_TESTIMONIALS = { name: 'testimonials', title: '6 · Testimonials' }
+const GROUP_CTA = { name: 'cta', title: '7 · Bottom CTA' }
+const GROUP_SECTIONS = { name: 'sections', title: 'Modular sections' }
 
 export const homePage = defineType({
   name: 'homePage',
   title: 'Home page',
   type: 'document',
   groups: [
-    { name: 'hero', title: 'Hero', default: true },
-    { name: 'metrics', title: 'Metrics' },
-    { name: 'highlights', title: 'Highlights' },
-    { name: 'testimonials', title: 'Testimonials' },
-    { name: 'paths', title: 'Paths section' },
-    { name: 'sections', title: 'Modular sections' },
+    GROUP_HERO,
+    GROUP_PATHS,
+    GROUP_METRICS,
+    GROUP_WHY,
+    GROUP_HOW,
+    GROUP_TESTIMONIALS,
+    GROUP_CTA,
+    GROUP_SECTIONS,
     GROUP_SEO,
   ],
   fieldsets: CONTENT_SEO_FIELDSETS,
   fields: [
+    // —— 1 · Hero (top of page) ——
     defineField({ name: 'headlinePrefix', title: 'Headline (line 1)', type: 'string', group: 'hero' }),
     defineField({ name: 'subheadline', title: 'Hero subtitle', type: 'string', group: 'hero' }),
     defineField({ name: 'primaryCtaLabel', title: 'Primary button label', type: 'string', group: 'hero' }),
@@ -46,7 +59,73 @@ export const homePage = defineType({
       description:
         'Used when no file is uploaded. Site path (e.g. /videos/homehero.mp4) or full https URL to a video file.',
     }),
-    defineField({ name: 'metricsHeading', title: 'Metrics title', type: 'string', group: 'metrics' }),
+
+    // —— 2 · Paths section ——
+    defineField({
+      name: 'pathsTitle',
+      title: 'Paths section title',
+      type: 'string',
+      description: 'Headline above the four role cards (e.g. “Find your place in the community”).',
+      group: 'paths',
+      initialValue: 'Find your place in the community',
+    }),
+    defineField({
+      name: 'pathsCards',
+      title: 'Paths section cards',
+      type: 'array',
+      description:
+        'Four role cards (Founder, Advisor, Investor, Partner). Each card falls back to site defaults when a field is left empty.',
+      group: 'paths',
+      of: [
+        defineField({
+          name: 'pathsCard',
+          title: 'Paths card',
+          type: 'object',
+          fields: [
+            defineField({
+              name: 'roleId',
+              title: 'Role',
+              type: 'string',
+              options: {
+                list: [
+                  { title: 'Founder', value: 'founder' },
+                  { title: 'Advisor', value: 'advisor' },
+                  { title: 'Investor', value: 'investor' },
+                  { title: 'Partner', value: 'partner' },
+                ],
+                layout: 'radio',
+              },
+              validation: (Rule) => Rule.required(),
+            }),
+            defineField({ name: 'tagLabel', title: 'Tag pill label', type: 'string' }),
+            defineField({ name: 'title', title: 'Card headline', type: 'string' }),
+            defineField({ name: 'subtitle', title: 'Card subtitle', type: 'text', rows: 2 }),
+            imageUploadField('image', 'Card image'),
+            imageUrlFallbackField('imageSrc', 'Card image URL (fallback)'),
+            defineField({ name: 'imageAlt', title: 'Image alt text', type: 'string' }),
+            defineField({ name: 'ctaLabel', title: 'Button label', type: 'string' }),
+            defineField({
+              name: 'ctaTo',
+              title: 'Button link',
+              type: 'string',
+              description: 'Internal path, e.g. /founders',
+            }),
+          ],
+          preview: {
+            select: { title: 'title', subtitle: 'roleId', media: 'image' },
+          },
+        }),
+      ],
+    }),
+
+    // —— 3 · Metrics band (below paths grid) ——
+    defineField({
+      name: 'metricsHeading',
+      title: 'Metrics title',
+      type: 'string',
+      group: 'metrics',
+      initialValue: 'The right people make all the difference.',
+    }),
     defineField({
       name: 'metrics',
       title: 'Metrics',
@@ -64,42 +143,31 @@ export const homePage = defineType({
         }),
       ],
     }),
-    defineField({
-      name: 'howItWorksSectionTitle',
-      title: 'How it works section title',
-      type: 'string',
-      group: 'highlights',
-    }),
+
+    // —— 4 · Why Rellia ——
     defineField({
       name: 'whySectionTitle',
-      title: 'Why Rellia section title',
+      title: 'Section title',
       type: 'string',
-      group: 'highlights',
+      group: 'why',
       initialValue: 'Why Rellia?',
     }),
     defineField({
       name: 'whySectionDescription',
-      title: 'Why Rellia section description',
+      title: 'Section description',
       type: 'text',
       rows: 2,
-      group: 'highlights',
-    }),
-    defineField({
-      name: 'testimonialsTitlePortable',
-      title: 'Testimonials section title',
-      type: 'inlineHeroHeadline',
-      description: 'Use the Teal decorator for the highlighted phrase (matches the live site).',
-      group: 'testimonials',
-      validation: (Rule) => Rule.required().min(1),
+      group: 'why',
     }),
     defineField({
       name: 'whyFeatures',
-      title: 'Why Rellia features',
+      title: 'Feature cards',
       type: 'array',
-      group: 'highlights',
+      group: 'why',
       of: [
         defineField({
           name: 'feature',
+          title: 'Feature card',
           type: 'object',
           fields: [
             defineField({
@@ -108,33 +176,12 @@ export const homePage = defineType({
               type: 'string',
               description: 'Example: target, userRound, bookOpen',
             }),
-            defineField({
-              name: 'title',
-              title: 'Title',
-              type: 'string',
-            }),
-            defineField({
-              name: 'description',
-              title: 'Description',
-              type: 'text',
-              rows: 3,
-            }),
-            defineField({
-              name: 'buttonLabel',
-              title: 'Button label',
-              type: 'string',
-            }),
-            defineField({
-              name: 'buttonPath',
-              title: 'Button link',
-              type: 'string',
-            }),
-            defineField({
-              name: 'image',
-              title: 'Image',
-              type: 'image',
-              options: { hotspot: true },
-            }),
+            defineField({ name: 'title', title: 'Title', type: 'string' }),
+            defineField({ name: 'description', title: 'Description', type: 'text', rows: 3 }),
+            defineField({ name: 'buttonLabel', title: 'Button label', type: 'string' }),
+            defineField({ name: 'buttonPath', title: 'Button link', type: 'string' }),
+            imageUploadField('image', 'Card image'),
+            imageUrlFallbackField('imageSrc', 'Card image URL (fallback)'),
           ],
           preview: {
             select: { title: 'title', subtitle: 'description', media: 'image' },
@@ -142,38 +189,25 @@ export const homePage = defineType({
         }),
       ],
     }),
-    defineField({ name: 'ctaTitle', title: 'CTA title', type: 'string', group: 'highlights' }),
-    defineField({ name: 'ctaButtonLabel', title: 'CTA button label', type: 'string', group: 'highlights' }),
-    defineField({ name: 'ctaButtonPath', title: 'CTA primary button link', type: 'string', group: 'highlights' }),
+
+    // —— 5 · How it works ——
     defineField({
-      name: 'ctaSecondaryButtonLabel',
-      title: 'CTA secondary button label',
+      name: 'howItWorksSectionTitle',
+      title: 'Section title',
       type: 'string',
-      group: 'highlights',
-      description: 'Optional second button in the bottom grey-teal CTA band.',
+      group: 'howItWorks',
+      initialValue: 'How does it work?',
     }),
+
+    // —— 6 · Testimonials ——
     defineField({
-      name: 'ctaSecondaryButtonPath',
-      title: 'CTA secondary button link',
-      type: 'string',
-      group: 'highlights',
+      name: 'testimonialsTitlePortable',
+      title: 'Section title',
+      type: 'inlineHeroHeadline',
+      description: 'Use the Teal decorator for the highlighted phrase (matches the live site).',
+      group: 'testimonials',
+      validation: (Rule) => Rule.required().min(1),
     }),
-    defineField({
-      name: 'ctaImage',
-      title: 'CTA image',
-      type: 'image',
-      options: { hotspot: true },
-      description: 'Upload an image to enable cropping. Falls back to “CTA image URL” below.',
-      group: 'highlights',
-    }),
-    defineField({
-      name: 'ctaImageUrl',
-      title: 'CTA image URL (fallback)',
-      type: 'url',
-      description: 'Optional fallback URL when no image is uploaded above.',
-      group: 'highlights',
-    }),
-    defineField({ name: 'ctaImageAlt', title: 'CTA image alt text', type: 'string', group: 'highlights' }),
     defineField({
       name: 'testimonials',
       title: 'Testimonials',
@@ -182,6 +216,7 @@ export const homePage = defineType({
       of: [
         defineField({
           name: 'testimonial',
+          title: 'Testimonial',
           type: 'object',
           fields: [
             { name: 'name', title: 'Name', type: 'string' },
@@ -189,8 +224,8 @@ export const homePage = defineType({
             { name: 'company', title: 'Company', type: 'string' },
             { name: 'quote', title: 'Quote', type: 'text', rows: 4 },
             { name: 'companyInfo', title: 'Company info', type: 'text', rows: 3 },
-            { name: 'image', type: 'image', options: { hotspot: true } },
-            { name: 'imageSrc', type: 'string', description: 'Fallback URL if no upload' },
+            imageUploadField('image', 'Photo'),
+            imageUrlFallbackField('imageSrc', 'Photo URL (fallback)'),
           ],
           preview: {
             select: { title: 'name', subtitle: 'company', media: 'image' },
@@ -198,54 +233,32 @@ export const homePage = defineType({
         }),
       ],
     }),
+
+    // —— 7 · Bottom CTA ——
+    defineField({ name: 'ctaTitle', title: 'CTA headline', type: 'string', group: 'cta' }),
+    defineField({ name: 'ctaButtonLabel', title: 'Primary button label', type: 'string', group: 'cta' }),
+    defineField({ name: 'ctaButtonPath', title: 'Primary button link', type: 'string', group: 'cta' }),
     defineField({
-      name: 'pathsTitle',
-      title: 'Paths section title',
+      name: 'ctaSecondaryButtonLabel',
+      title: 'Secondary button label',
       type: 'string',
-      description: 'Headline for the "Find your place in the community" section.',
-      group: 'paths',
+      group: 'cta',
+      description: 'Optional second button in the bottom CTA band.',
     }),
     defineField({
-      name: 'pathsCards',
-      title: 'Paths section cards',
-      type: 'array',
-      description:
-        'Cards shown in the network paths grid. Tag, title, image, and CTA are editable per card.',
-      group: 'paths',
-      of: [
-        defineField({
-          name: 'pathsCard',
-          type: 'object',
-          fields: [
-            defineField({
-              name: 'roleId',
-              type: 'string',
-              options: {
-                list: [
-                  { title: 'Founder', value: 'founder' },
-                  { title: 'Advisor', value: 'advisor' },
-                  { title: 'Investor', value: 'investor' },
-                  { title: 'Partner', value: 'partner' },
-                ],
-                layout: 'radio',
-              },
-              validation: (Rule) => Rule.required(),
-            }),
-            defineField({ name: 'tagLabel', type: 'string', description: 'Tag pill (e.g. Founder)' }),
-            defineField({ name: 'title', type: 'string' }),
-            defineField({ name: 'subtitle', type: 'text', rows: 2 }),
-            defineField({ name: 'image', type: 'image', options: { hotspot: true } }),
-            defineField({ name: 'imageSrc', type: 'string', description: 'Fallback image URL' }),
-            defineField({ name: 'imageAlt', type: 'string' }),
-            defineField({ name: 'ctaLabel', type: 'string' }),
-            defineField({ name: 'ctaTo', type: 'string', description: 'Internal path, e.g. /founders' }),
-          ],
-          preview: {
-            select: { title: 'title', subtitle: 'roleId', media: 'image' },
-          },
-        }),
-      ],
+      name: 'ctaSecondaryButtonPath',
+      title: 'Secondary button link',
+      type: 'string',
+      group: 'cta',
     }),
+    imageUploadField('ctaImage', 'CTA image', {
+      group: 'cta',
+      description: 'Upload an image to enable cropping. Falls back to “CTA image URL (fallback)” below.',
+    }),
+    imageUrlFallbackField('ctaImageUrl', 'CTA image URL (fallback)', 'cta'),
+    defineField({ name: 'ctaImageAlt', title: 'CTA image alt text', type: 'string', group: 'cta' }),
+
+    // —— Modular sections + SEO ——
     defineField({
       name: 'sections',
       title: 'Page sections',
@@ -255,4 +268,9 @@ export const homePage = defineType({
     }),
     singletonSeoField,
   ],
+  preview: {
+    prepare() {
+      return { title: 'Home page', subtitle: '/' }
+    },
+  },
 })

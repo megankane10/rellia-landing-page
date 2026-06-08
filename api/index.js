@@ -16,7 +16,7 @@ import cors from "cors";
 import express from "express";
 import helmet from "helmet";
 import { z as z2 } from "zod";
-import { createClient as createClient2 } from "@sanity/client";
+import { createClient as createClient3 } from "@sanity/client";
 import { validatePreviewUrl } from "@sanity/preview-url-secret";
 import { withoutSecretSearchParams } from "@sanity/preview-url-secret/without-secret-search-params";
 import { perspectiveCookieName as perspectiveCookieName2 } from "@sanity/preview-url-secret/constants";
@@ -55,7 +55,7 @@ var networkHeroFragment = `heroEyebrow,
   heroTitle,
   heroAccentPhrase,
   heroSubtitle,
-  "heroImageSrc": coalesce(heroImageUrl, heroImage.asset->url),
+  "heroImageSrc": coalesce(heroImage.asset->url, heroImageUrl),
   heroPrimaryCtaLabel,
   heroPrimaryCtaHref,
   heroSecondaryCtaLabel,
@@ -65,7 +65,7 @@ var networkEngageFragment = `engageTitle,
   engageItems[]{ title, body, href, linkLabel, iconKey }`;
 var networkWhyFragment = `whyTitle,
   whyDescription,
-  whyFeatures[]{ title, body, iconKey, "imageSrc": coalesce(imageSrc, image.asset->url) }`;
+  whyFeatures[]{ title, body, iconKey, "imageSrc": coalesce(image.asset->url, imageSrc) }`;
 var networkCtaFragment = `ctaTitle,
   ctaBody,
   ctaPrimaryLabel,
@@ -185,6 +185,22 @@ var storiesPageQuery = `*[_type == "storiesPage"][0]{
   subheadline,
   ${seoFragment}
 }`;
+var portableRichTextBlocksFragment = `[]{
+  ...,
+  _type == "image" => {
+    ...,
+    "url": asset->url
+  },
+  _type == "portableImageCarousel" => {
+    ...,
+    slides[]{
+      alt,
+      caption,
+      "imageSrc": coalesce(image.asset->url, imageSrc)
+    }
+  }
+}`;
+var portableRichTextBodyFragment = `body${portableRichTextBlocksFragment}`;
 var storiesPrerenderSnapshotQuery = `*[_type == "story" && !(_id in path("drafts.**"))]{
   title,
   "slug": slug.current,
@@ -207,15 +223,8 @@ var storyBySlugQuery = `*[_type == "story" && slug.current == $slug && !(_id in 
   publishedAt,
   featured,
   headerLayout,
-  body,
+  body${portableRichTextBlocksFragment},
   ${seoFragment}
-}`;
-var portableRichTextBodyFragment = `body[]{
-  ...,
-  _type == "image" => {
-    ...,
-    "url": asset->url
-  }
 }`;
 var pageSectionFieldsFragment = `...,
   "imageUrl": coalesce(image.asset->url, imageUrl),
@@ -254,7 +263,7 @@ var pageSectionFieldsFragment = `...,
     name,
     role,
     company,
-    "image": coalesce(imageSrc, image.asset->url)
+    "image": coalesce(image.asset->url, imageSrc)
   }`;
 var pageBySlugQuery = `*[_type == "page" && slug.current == $slug && slug.current != "terms" && slug.current != "privacy" && !(_id in path("drafts.**"))][0]{
   title,
@@ -269,7 +278,7 @@ var networkFoundersPageQuery = `*[_type == "networkFoundersPage"][0]{
   ${networkHeroFragment},
   eligibilityTitle,
   eligibilityDescription,
-  eligibilityItems[]{ text, "imageUrl": coalesce(imageUrl, image.asset->url) },
+  eligibilityItems[]{ text, "imageUrl": coalesce(image.asset->url, imageUrl) },
   ${networkEngageFragment},
   ${networkWhyFragment},
   journeyTitle,
@@ -277,7 +286,7 @@ var networkFoundersPageQuery = `*[_type == "networkFoundersPage"][0]{
   journeySteps[]{ id, label, zone, detail },
   exploreTitle,
   exploreSubtitle,
-  exploreCards[]{ title, badge, "imageUrl": coalesce(imageUrl, image.asset->url), ctaLabel, ctaHref },
+  exploreCards[]{ title, badge, "imageUrl": coalesce(image.asset->url, imageUrl), ctaLabel, ctaHref },
   deeperHelpTitle,
   deeperHelpSubtitle,
   deeperHelpFeatures[]{ title, body, iconKey },
@@ -337,7 +346,7 @@ var landingTestimonialsFragment = `testimonials[]{
   name,
   role,
   company,
-  "image": coalesce(imageSrc, image.asset->url)
+  "image": coalesce(image.asset->url, imageSrc)
 }`;
 var diagnosticLandingPageQuery = `*[_id == "diagnosticLandingPage"][0]{
   title,
@@ -345,7 +354,7 @@ var diagnosticLandingPageQuery = `*[_id == "diagnosticLandingPage"][0]{
   heroTitle,
   heroAccentPhrase,
   heroSubtitle,
-  "heroImageSrc": coalesce(heroImageUrl, heroImage.asset->url),
+  "heroImageSrc": coalesce(heroImage.asset->url, heroImageUrl),
   heroPrimaryCtaLabel,
   heroPrimaryCtaHref,
   readinessTitle,
@@ -353,7 +362,7 @@ var diagnosticLandingPageQuery = `*[_id == "diagnosticLandingPage"][0]{
   readinessFeatures[]{
     title,
     description,
-    "imageSrc": coalesce(imageSrc, image.asset->url)
+    "imageSrc": coalesce(image.asset->url, imageSrc)
   },
   infographicTitle,
   infographicBody,
@@ -384,7 +393,7 @@ var consultingPageQuery = `*[_id == "consultingPage"][0]{
   heroTitle,
   heroAccentPhrase,
   heroSubtitle,
-  "heroImageSrc": coalesce(heroImageUrl, heroImage.asset->url),
+  "heroImageSrc": coalesce(heroImage.asset->url, heroImageUrl),
   heroPrimaryCtaLabel,
   heroPrimaryCtaHref,
   heroSecondaryCtaLabel,
@@ -451,7 +460,7 @@ var homePageQuery = `*[_type == "homePage"][0]{
     description, 
     buttonLabel, 
     buttonPath,
-    "imageSrc": coalesce(imageSrc, image.asset->url)
+    "imageSrc": coalesce(image.asset->url, imageSrc)
   },
   ctaTitle,
   ctaButtonLabel,
@@ -466,7 +475,7 @@ var homePageQuery = `*[_type == "homePage"][0]{
     company,
     quote,
     companyInfo,
-    "imageSrc": coalesce(imageSrc, image.asset->url)
+    "imageSrc": coalesce(image.asset->url, imageSrc)
   },
   pathsTitle,
   pathsCards[]{
@@ -474,7 +483,7 @@ var homePageQuery = `*[_type == "homePage"][0]{
     tagLabel,
     title,
     subtitle,
-    "imageSrc": coalesce(imageSrc, image.asset->url),
+    "imageSrc": coalesce(image.asset->url, imageSrc),
     imageAlt,
     ctaLabel,
     ctaTo
@@ -497,9 +506,8 @@ var aboutPageQuery = `*[_type == "aboutPage"][0]{
     name,
     role,
     bio,
-    linkedinUrl,
-    websiteUrl,
-    "imageSrc": coalesce(imageSrc, image.asset->url)
+    socialLinks[]{ platform, label, url },
+    "imageSrc": coalesce(image.asset->url, imageSrc)
   },
   ctaTitle,
   ctaBody,
@@ -639,7 +647,7 @@ var eventsQuery = `*[_type == "event" && status != "hidden" && !(_id in path("dr
   ticketingUrl,
   customLinkButton{ buttonText, url },
   eventDescription,
-  "detailBody": coalesce(eventDescription, detailBody),
+  "detailBody": coalesce(eventDescription, detailBody)${portableRichTextBlocksFragment},
   detailBodyHeading,
   embedLumaOnDetailPage,
   addToCalendarEnabled,
@@ -663,7 +671,7 @@ var eventBySlugQuery = `*[_type == "event" && slug.current == $slug && !(_id in 
   ticketingUrl,
   customLinkButton{ buttonText, url },
   eventDescription,
-  "detailBody": coalesce(eventDescription, detailBody),
+  "detailBody": coalesce(eventDescription, detailBody)${portableRichTextBlocksFragment},
   detailBodyHeading,
   embedLumaOnDetailPage,
   addToCalendarEnabled,
@@ -886,15 +894,8 @@ var alumniCompaniesQuery = `*[_type == "alumniCompany" && !(_id in path("drafts.
     values
   },
   shortDescription,
-  profileBody[]{
-    ...,
-    _type == "image" => {
-      ...,
-      "url": asset->url
-    }
-  },
-  websiteUrl,
-  linkedinUrl,
+  profileBody${portableRichTextBlocksFragment},
+  socialLinks[]{ platform, label, url },
   email,
   country,
   yearJoined,
@@ -904,8 +905,6 @@ var alumniCompaniesQuery = `*[_type == "alumniCompany" && !(_id in path("drafts.
     role,
     bio,
     email,
-    linkedinUrl,
-    websiteUrl,
     socialLinks[]{ platform, label, url },
     "imageSrc": coalesce(image.asset->url, imageSrc)
   }
@@ -1390,6 +1389,121 @@ var syncPublishedDocsToProduction = async (options) => {
   return { synced, deleted, skipped };
 };
 
+// server/cmsHealth.ts
+import { createClient as createClient2 } from "@sanity/client";
+var envFlag = (name) => Boolean(process.env[name]?.trim());
+var resolveExpectedDataset = () => {
+  if (!process.env.VERCEL) return null;
+  const ve = process.env.VERCEL_ENV?.trim();
+  if (ve === "production") return "production";
+  if (ve === "preview") return "preview";
+  return null;
+};
+var cmsHealthHandler = async (_req, res) => {
+  const apiResolved = resolveSanityApiConfig();
+  const readTokenConfigured = envFlag("SANITY_API_READ_TOKEN");
+  const writeTokenConfigured = envFlag("SANITY_API_WRITE_TOKEN");
+  const publishWebhookSecretConfigured = envFlag("SANITY_PUBLISH_WEBHOOK_SECRET");
+  const expectedDataset = resolveExpectedDataset();
+  const publishWebhookReady = publishWebhookSecretConfigured && writeTokenConfigured && apiResolved.status === "ok";
+  let previewHomeTitle = null;
+  let productionHomeTitle = null;
+  let datasetProbeError = null;
+  if (writeTokenConfigured && apiResolved.status === "ok") {
+    try {
+      const token = process.env.SANITY_API_WRITE_TOKEN.trim();
+      const { projectId } = apiResolved;
+      const previewClient = createClient2({
+        projectId,
+        dataset: "preview",
+        token,
+        apiVersion: "2024-01-01",
+        useCdn: false
+      });
+      const productionClient = createClient2({
+        projectId,
+        dataset: "production",
+        token,
+        apiVersion: "2024-01-01",
+        useCdn: false
+      });
+      const titleQuery = `*[_id == "homePage"][0].pathsTitle`;
+      const [previewTitle, productionTitle] = await Promise.all([
+        previewClient.fetch(titleQuery),
+        productionClient.fetch(titleQuery)
+      ]);
+      previewHomeTitle = typeof previewTitle === "string" ? previewTitle : null;
+      productionHomeTitle = typeof productionTitle === "string" ? productionTitle : null;
+    } catch (err) {
+      datasetProbeError = err instanceof Error ? err.message : "Could not compare preview vs production datasets";
+    }
+  }
+  const datasetsInSync = previewHomeTitle !== null && productionHomeTitle !== null && previewHomeTitle === productionHomeTitle;
+  const issues = [];
+  if (apiResolved.status === "missing_project") {
+    issues.push("Set SANITY_API_PROJECT_ID or VITE_SANITY_PROJECT_ID on this deployment.");
+  }
+  if (apiResolved.status === "dataset_not_allowed") {
+    issues.push(
+      `Dataset "${apiResolved.attemptedDataset}" is not in SANITY_ALLOWED_DATASETS for this deployment.`
+    );
+  }
+  if (!readTokenConfigured) {
+    issues.push("SANITY_API_READ_TOKEN is missing \u2014 /api/sanity/query will fail.");
+  }
+  if (process.env.VERCEL_ENV === "production" && !publishWebhookSecretConfigured) {
+    issues.push(
+      "SANITY_PUBLISH_WEBHOOK_SECRET is missing \u2014 Studio publish will not sync preview \u2192 production."
+    );
+  }
+  if (process.env.VERCEL_ENV === "production" && !writeTokenConfigured) {
+    issues.push("SANITY_API_WRITE_TOKEN is missing \u2014 publish webhook cannot copy to production.");
+  }
+  if (expectedDataset && apiResolved.status === "ok" && apiResolved.dataset !== expectedDataset) {
+    issues.push(
+      `This deployment should read dataset "${expectedDataset}" but is configured for "${apiResolved.dataset}".`
+    );
+  }
+  if (writeTokenConfigured && previewHomeTitle !== null && productionHomeTitle !== null && !datasetsInSync) {
+    issues.push(
+      "preview and production datasets differ (sample: homePage.pathsTitle). Publish webhook may not have run, or run pnpm sanity:sync-to-production -- --apply."
+    );
+  }
+  if (datasetProbeError) {
+    issues.push(datasetProbeError);
+  }
+  const ok = issues.length === 0;
+  res.status(ok ? 200 : 503).json({
+    ok,
+    vercelEnv: process.env.VERCEL_ENV ?? null,
+    cms: {
+      projectId: apiResolved.status === "ok" ? apiResolved.projectId : null,
+      activeDataset: apiResolved.status === "ok" ? apiResolved.dataset : null,
+      expectedDataset,
+      clientDataset: process.env.VITE_SANITY_DATASET?.trim() || null,
+      enforceVercelDataset: envFlag("SANITY_ENFORCE_VERCEL_DATASET"),
+      allowedDatasets: process.env.SANITY_ALLOWED_DATASETS?.split(",").map((s) => s.trim()).filter(Boolean) ?? []
+    },
+    tokens: {
+      readTokenConfigured,
+      writeTokenConfigured,
+      publishWebhookSecretConfigured,
+      publishWebhookReady
+    },
+    sync: {
+      previewHomePathsTitle: previewHomeTitle,
+      productionHomePathsTitle: productionHomeTitle,
+      datasetsInSync
+    },
+    issues,
+    hints: {
+      publishWebhookUrl: "POST https://www.relliahealth.com/api/webhooks/sanity-publish?secret=<SANITY_PUBLISH_WEBHOOK_SECRET>",
+      publishWebhookNote: "Replace <SANITY_PUBLISH_WEBHOOK_SECRET> with the real value from Vercel Production env \u2014 not the literal text YOUR_SECRET.",
+      manualSync: "pnpm sanity:sync-to-production -- --apply"
+    }
+  });
+};
+
 // server/index.ts
 var headerOne = (req, name) => {
   const v = req.headers?.[name];
@@ -1568,6 +1682,11 @@ function createServer() {
   };
   app2.get("/health", rateLimitJson(healthRate, HEALTH_MAX_PER_MIN), healthHandler);
   app2.get("/api/health", rateLimitJson(healthRate, HEALTH_MAX_PER_MIN), healthHandler);
+  app2.get(
+    "/api/health/cms",
+    rateLimitJson(healthRate, HEALTH_MAX_PER_MIN),
+    cmsHealthHandler
+  );
   const sanitySlackWebhookRate = /* @__PURE__ */ new Map();
   const SANITY_SLACK_WEBHOOK_MAX_PER_MIN = 60;
   app2.post(
@@ -1670,7 +1789,7 @@ function createServer() {
       const token = process.env.SANITY_API_READ_TOKEN?.trim();
       const entry = SANITY_QUERY_WHITELIST.events;
       try {
-        const publicClient = createClient2({
+        const publicClient = createClient3({
           projectId,
           dataset,
           ...token ? { token } : {},
@@ -1721,7 +1840,7 @@ function createServer() {
       const token = process.env.SANITY_API_READ_TOKEN?.trim();
       const entry = SANITY_QUERY_WHITELIST.eventBySlug;
       try {
-        const publicClient = createClient2({
+        const publicClient = createClient3({
           projectId,
           dataset,
           ...token ? { token } : {},
@@ -1770,7 +1889,7 @@ function createServer() {
       const token = process.env.SANITY_API_READ_TOKEN?.trim();
       const entry = SANITY_QUERY_WHITELIST.eventBySlug;
       try {
-        const publicClient = createClient2({
+        const publicClient = createClient3({
           projectId,
           dataset,
           ...token ? { token } : {},
@@ -1896,7 +2015,7 @@ function createServer() {
           res.status(503).send("Sanity is not configured (set SANITY_API_PROJECT_ID)");
           return;
         }
-        const previewClient = createClient2({
+        const previewClient = createClient3({
           projectId: apiResolved.projectId,
           dataset: apiResolved.dataset,
           token,
@@ -2061,7 +2180,7 @@ function createServer() {
           res.status(501).json({ error: "Missing SANITY_API_READ_TOKEN" });
           return;
         }
-        const previewClient = createClient2({
+        const previewClient = createClient3({
           projectId,
           dataset,
           token,
@@ -2076,7 +2195,7 @@ function createServer() {
         });
         return;
       }
-      const publicClient = createClient2({
+      const publicClient = createClient3({
         projectId,
         dataset,
         ...token ? { token } : {},
@@ -2637,8 +2756,8 @@ function createServer() {
         return;
       }
       try {
-        const { createClient: createClient3 } = await import("@supabase/supabase-js");
-        const sessionClient = createClient3(supabaseUrl, anonKey, {
+        const { createClient: createClient4 } = await import("@supabase/supabase-js");
+        const sessionClient = createClient4(supabaseUrl, anonKey, {
           auth: { autoRefreshToken: false, persistSession: false }
         });
         const { data: userData, error: userError } = await sessionClient.auth.getUser(token);
@@ -2646,7 +2765,7 @@ function createServer() {
           res.status(401).json({ error: "Invalid or expired session." });
           return;
         }
-        const adminClient = createClient3(supabaseUrl, serviceRoleKey, {
+        const adminClient = createClient4(supabaseUrl, serviceRoleKey, {
           auth: { autoRefreshToken: false, persistSession: false }
         });
         const { data: listData, error: listError } = await adminClient.auth.admin.listUsers({
@@ -2703,8 +2822,8 @@ function createServer() {
         return;
       }
       try {
-        const { createClient: createClient3 } = await import("@supabase/supabase-js");
-        const sessionClient = createClient3(supabaseUrl, anonKey, {
+        const { createClient: createClient4 } = await import("@supabase/supabase-js");
+        const sessionClient = createClient4(supabaseUrl, anonKey, {
           auth: { autoRefreshToken: false, persistSession: false }
         });
         const { data: userData, error: userError } = await sessionClient.auth.getUser(token);
@@ -2859,7 +2978,7 @@ function createServer() {
           return;
         }
         const entry = SANITY_QUERY_WHITELIST.sanityDrafts;
-        const publicClient = createClient2({
+        const publicClient = createClient3({
           projectId,
           dataset,
           ...sanityToken ? { token: sanityToken } : {},
@@ -2907,8 +3026,8 @@ function createServer() {
         return;
       }
       try {
-        const { createClient: createClient3 } = await import("@supabase/supabase-js");
-        const adminClient = createClient3(supabaseUrl, serviceRoleKey, {
+        const { createClient: createClient4 } = await import("@supabase/supabase-js");
+        const adminClient = createClient4(supabaseUrl, serviceRoleKey, {
           auth: { autoRefreshToken: false, persistSession: false }
         });
         const { error } = await adminClient.auth.admin.createUser({
