@@ -3,7 +3,58 @@ import type { DirectoryFilterGroup } from "@/hooks/useCmsDocuments"
 const isCountryGroup = (group: DirectoryFilterGroup): boolean => {
   const id = (group.id ?? "").toLowerCase()
   const title = (group.title ?? "").toLowerCase()
-  return id === "country" || id.includes("country") || title === "country" || title.includes("country")
+  return (
+    id === "country" ||
+    id === "countries" ||
+    title === "country" ||
+    title === "countries"
+  )
+}
+
+const countryGroupPriority = (group: DirectoryFilterGroup): number => {
+  const id = (group.id ?? "").toLowerCase()
+  const title = (group.title ?? "").toLowerCase()
+  if (id === "country" || title === "country") return 0
+  if (id === "countries" || title === "countries") return 1
+  return 2
+}
+
+const expertiseGroupPriority = (group: DirectoryFilterGroup): number => {
+  const id = (group.id ?? "").toLowerCase()
+  const title = (group.title ?? "").toLowerCase()
+  if (id === "expertise" || title === "expertise") return 0
+  if (title === "specialty" || title === "specialties" || id.includes("specialt")) return 1
+  return 2
+}
+
+/** Keep a single Country and single Expertise/Specialty group when Sanity has legacy duplicates. */
+export const dedupeDirectoryFilterGroups = (
+  groups: DirectoryFilterGroup[],
+): DirectoryFilterGroup[] => {
+  const countryGroups = groups.filter(isCountryGroup)
+  const expertiseGroups = groups.filter(isExpertiseGroup)
+  const preferredCountry =
+    countryGroups.length > 0
+      ? [...countryGroups].sort(
+          (a, b) => countryGroupPriority(a) - countryGroupPriority(b),
+        )[0]
+      : undefined
+  const preferredExpertise =
+    expertiseGroups.length > 0
+      ? [...expertiseGroups].sort(
+          (a, b) => expertiseGroupPriority(a) - expertiseGroupPriority(b),
+        )[0]
+      : undefined
+
+  return groups.filter((group) => {
+    if (isCountryGroup(group)) {
+      return preferredCountry?.id === group.id
+    }
+    if (isExpertiseGroup(group)) {
+      return preferredExpertise?.id === group.id
+    }
+    return true
+  })
 }
 
 export const getDirectoryGroupOptionLabels = (
@@ -114,7 +165,25 @@ export const isAdvisorDirectoryFilterGroup = (group: DirectoryFilterGroup): bool
 export const filterAdvisorDirectoryGroups = (
   groups: DirectoryFilterGroup[],
 ): DirectoryFilterGroup[] =>
-  groups.filter(isAdvisorDirectoryFilterGroup)
+  dedupeDirectoryFilterGroups(groups.filter(isAdvisorDirectoryFilterGroup))
+
+export const filterFounderDirectoryGroups = (
+  groups: DirectoryFilterGroup[],
+): DirectoryFilterGroup[] => {
+  const allowed = (group: DirectoryFilterGroup): boolean => {
+    const id = (group.id ?? "").toLowerCase()
+    const title = (group.title ?? "").toLowerCase()
+    return (
+      isCountryGroup(group) ||
+      title === "specialty" ||
+      title === "specialties" ||
+      id.includes("specialty") ||
+      title === "business model" ||
+      id.includes("business-model")
+    )
+  }
+  return dedupeDirectoryFilterGroups(groups.filter(allowed))
+}
 
 /** Union CMS options, advisorFilter docs, and canonical labels (full expertise list). */
 export const mergeExpertiseOptionLabels = (

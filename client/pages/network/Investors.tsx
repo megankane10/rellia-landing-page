@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import type { ReactNode } from "react"
 import { PEXELS_OFFICE_COLLABORATION } from "@/config/pexelsFallbacks"
 import PageHeader from "@/components/PageHeader"

@@ -142,7 +142,9 @@ export default function AdvisorsDirectory() {
     const params = new URLSearchParams(location.search);
     const country = params.get("country");
     const countryGroup = dynamicGroups.find(
-      (g) => g.title.toLowerCase() === "country" || g.id.toLowerCase().includes("country"),
+      (g) =>
+        g.title.toLowerCase() === "country" ||
+        g.id.toLowerCase() === "country",
     );
     if (country && countryGroup?.id) {
       setGroupFilters((prev) => ({ ...prev, [countryGroup.id]: country }));

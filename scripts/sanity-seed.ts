@@ -1939,8 +1939,13 @@ async function main() {
   const foundersSpecialtyGroupSlug = slugify("Specialty")
   const foundersBusinessModelGroupSlug = slugify("Business Model")
 
-  for (const legacyGroupSlug of [slugify("Countries"), slugify("Specialties")]) {
-    mutations.push({ delete: { id: directoryFilterGroupId(legacyGroupSlug) } })
+  const existingFilterGroupIds = await client.fetch<string[]>(
+    `*[_type == "directoryFilterGroup"]._id`,
+  )
+  for (const id of existingFilterGroupIds) {
+    mutations.push({ delete: { id } })
+    if (id.startsWith("drafts.")) continue
+    mutations.push({ delete: { id: `drafts.${id}` } })
   }
   mutations.push({ delete: { id: "directoryFilterGroup-level" } })
 

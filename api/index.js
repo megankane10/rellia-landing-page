@@ -902,7 +902,7 @@ var founderSpecialtiesQuery = `*[_type == "founderSpecialty"] | order(sortOrder 
   label,
   sortOrder
 }`;
-var directoryFilterGroupsQuery = `*[_type == "directoryFilterGroup"] | order(sortOrder asc, title asc){
+var directoryFilterGroupsQuery = `*[_type == "directoryFilterGroup" && !(_id in path("drafts.**"))] | order(sortOrder asc, title asc){
   "id": slug.current,
   title,
   appliesTo,

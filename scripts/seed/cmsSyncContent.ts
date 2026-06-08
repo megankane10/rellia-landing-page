@@ -1208,16 +1208,16 @@ export const STUDIO_GUIDE_SECTIONS = [
 
 export const PRIORITY_MODAL_SEED = {
   announcementEnabled: true,
-  announcementText: "New programs and live events are open—see what is coming next for health tech founders.",
+  announcementText: "The Regulatory Strategy Sprint is now accepting applications.",
   announcementPillText: "LIVE",
-  announcementButtonLabel: "View programs",
-  announcementButtonLink: "/programs",
+  announcementButtonLabel: "Learn More",
+  announcementButtonLink: "/programs/regulatory-strategy-sprint",
   priorityModalEnabled: true,
   priorityModalHeading: "Welcome to the new Rellia website",
   priorityModalBody:
-    "Explore clearer paths for founders—benchmark readiness with the startup diagnostic, browse programs and events, and meet the Rellia community.",
+    "Read our launch story, then explore programs, advisors, and the rest of the site.",
   priorityModalPillText: "NEW",
-  priorityModalButtonLabel: "See what's new",
+  priorityModalButtonLabel: "Read the story",
   priorityModalButtonLink: "/stories/website-launch",
   priorityModalSecondaryButtonLabel: "",
   priorityModalSecondaryButtonLink: "",

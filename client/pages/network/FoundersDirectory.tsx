@@ -33,6 +33,7 @@ import {
 import { DirectoryCardTags } from "@/components/network/DirectoryCardTags";
 import {
   directoryGroupHasCountry,
+  filterFounderDirectoryGroups,
   getCountryFilterOptions,
   getDirectoryGroupOptionLabels,
 } from "@/lib/directoryFilterOptions";
@@ -229,9 +230,9 @@ export default function FoundersDirectory() {
 
   const dynamicGroups = useMemo(() => {
     const groups = Array.isArray(cmsFilterGroups) ? cmsFilterGroups : []
-    return groups
-      .filter((g) => g && (g.appliesTo === "founders" || g.appliesTo === "both"))
-      .sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0) || a.title.localeCompare(b.title))
+    return filterFounderDirectoryGroups(
+      groups.filter((g) => g && (g.appliesTo === "founders" || g.appliesTo === "both")),
+    ).sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0) || a.title.localeCompare(b.title))
   }, [cmsFilterGroups])
 
   const dynamicGroupOptions = useMemo(

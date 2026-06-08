@@ -2205,7 +2205,7 @@ export const DEFAULT_QMS_PROGRAM: QmsProgramContent = {
   howItWorksIntro:
     "Each week, you will receive the following guidance to ensure your success throughout the program.",
   pillarsTitle: "Program Pillars",
-  timelineTitle: "Program timeline",
+  timelineTitle: "Program Timeline & Details",
   timelineSubtitle: "A structured journey through the key requirements for a successful QMS",
   pricingBadge: "Monthly subscription",
   pricingAmount: "$2000",

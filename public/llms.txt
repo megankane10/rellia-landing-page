@@ -58,17 +58,7 @@ Rellia offers founder programs (QMS, fundraising, regulatory, clinical validatio
 ## Stories & news
 
 - [/stories](https://www.relliahealth.com/stories): The latest founder spotlights, industry insights, & program updates. Stay current with the people and ideas shaping the future of health.
-- [/stories/founder-spotlight-the-first-clinical-champion](https://www.relliahealth.com/stories/founder-spotlight-the-first-clinical-champion): Your first champion is not your biggest fan—they’re your first risk partner. Here’s what worked, what didn’t, and the script that finally got a real yes.
-- [/stories/founder-spotlight-the-pilot-that-became-procurement](https://www.relliahealth.com/stories/founder-spotlight-the-pilot-that-became-procurement): A founder shares the three changes that turned a promising pilot into a signed rollout—without adding months of bureaucracy or burning out the clinical team.
-- [/stories/founder-spotlight-what-we-stopped-building](https://www.relliahealth.com/stories/founder-spotlight-what-we-stopped-building): A founder explains how they cut scope without sacrificing outcomes—and why “less product” was the reason implementation finally worked.
-- [/stories/industry-insight-commercialization-milestones-that-reduce-risk](https://www.relliahealth.com/stories/industry-insight-commercialization-milestones-that-reduce-risk): Not all milestones change what’s true for the buyer. Here’s a checklist for choosing milestones that reduce clinical, operational, security, and financial risk.
-- [/stories/industry-insight-evidence-that-compounds](https://www.relliahealth.com/stories/industry-insight-evidence-that-compounds): Trust is cumulative—but only if you collect evidence in a way that fits the product lifecycle. Here’s a lightweight approach that strengthens credibility every month.
-- [/stories/industry-insight-implementation-is-a-product](https://www.relliahealth.com/stories/industry-insight-implementation-is-a-product): Implementation isn’t what happens after the sale. It’s part of what the buyer is buying. Here’s how to design onboarding that earns trust fast.
-- [/stories/industry-insight-security-reviews-without-stalling](https://www.relliahealth.com/stories/industry-insight-security-reviews-without-stalling): Security reviews can either become a momentum-killer or a trust accelerant. Here’s how to show your work, reduce uncertainty, and keep the timeline moving.
-- [/stories/program-update-how-we-run-founder-salons](https://www.relliahealth.com/stories/program-update-how-we-run-founder-salons): Founder salons can become performative. We designed ours to produce clarity: one constraint, one decision, and one next move per founder.
-- [/stories/program-update-office-hours-to-decisions](https://www.relliahealth.com/stories/program-update-office-hours-to-decisions): We rebuilt office hours so founders leave with one thing: a decision they can ship this week. Here’s the format and why it works.
-- [/stories/program-update-the-qms-sprint-playbook](https://www.relliahealth.com/stories/program-update-the-qms-sprint-playbook): A behind-the-scenes look at how we run quality sprints so teams leave with real artifacts: scope, risk decisions, document skeletons, and a plan they can execute next week.
-- [/stories/the-one-decision-healthcare-buyers-need](https://www.relliahealth.com/stories/the-one-decision-healthcare-buyers-need): Most deals don’t fail because the product is weak. They fail because the next stakeholder can’t safely approve it. Here’s a practical way to structure proof so every meeting reduces risk.
+- [/stories/website-launch](https://www.relliahealth.com/stories/website-launch): Public page on relliahealth.com.
 
 
 ## Startup diagnostic
@@ -80,29 +70,18 @@ Rellia offers founder programs (QMS, fundraising, regulatory, clinical validatio
 
 - [/advisors/directory/alex-rivera](https://www.relliahealth.com/advisors/directory/alex-rivera): Advisor profile in the Rellia Health mentor directory.
 - [/advisors/directory/chris-dalton](https://www.relliahealth.com/advisors/directory/chris-dalton): Advisor profile in the Rellia Health mentor directory.
+- [/advisors/directory/dummy-showcase-advisor](https://www.relliahealth.com/advisors/directory/dummy-showcase-advisor): Advisor profile in the Rellia Health mentor directory.
 - [/advisors/directory/elena-ruiz](https://www.relliahealth.com/advisors/directory/elena-ruiz): Advisor profile in the Rellia Health mentor directory.
 - [/advisors/directory/henry-moss](https://www.relliahealth.com/advisors/directory/henry-moss): Advisor profile in the Rellia Health mentor directory.
 - [/advisors/directory/jordan-blake](https://www.relliahealth.com/advisors/directory/jordan-blake): Advisor profile in the Rellia Health mentor directory.
 - [/advisors/directory/mei-tan](https://www.relliahealth.com/advisors/directory/mei-tan): Advisor profile in the Rellia Health mentor directory.
 - [/advisors/directory/priya-nair](https://www.relliahealth.com/advisors/directory/priya-nair): Advisor profile in the Rellia Health mentor directory.
 - [/advisors/directory/sam-okonkwo](https://www.relliahealth.com/advisors/directory/sam-okonkwo): Advisor profile in the Rellia Health mentor directory.
-- [/founders/alumni/akesyn](https://www.relliahealth.com/founders/alumni/akesyn): Alumni company profile in the Rellia Health founder network.
-- [/founders/alumni/carepathstudio](https://www.relliahealth.com/founders/alumni/carepathstudio): Alumni company profile in the Rellia Health founder network.
-- [/founders/alumni/dott](https://www.relliahealth.com/founders/alumni/dott): Alumni company profile in the Rellia Health founder network.
-- [/founders/alumni/geoclaim](https://www.relliahealth.com/founders/alumni/geoclaim): Alumni company profile in the Rellia Health founder network.
-- [/founders/alumni/glowlytics](https://www.relliahealth.com/founders/alumni/glowlytics): Alumni company profile in the Rellia Health founder network.
-- [/founders/alumni/healcycle](https://www.relliahealth.com/founders/alumni/healcycle): Alumni company profile in the Rellia Health founder network.
-- [/founders/alumni/mea](https://www.relliahealth.com/founders/alumni/mea): Alumni company profile in the Rellia Health founder network.
-- [/founders/alumni/miraei](https://www.relliahealth.com/founders/alumni/miraei): Alumni company profile in the Rellia Health founder network.
-- [/founders/alumni/myligo](https://www.relliahealth.com/founders/alumni/myligo): Alumni company profile in the Rellia Health founder network.
-- [/founders/alumni/neuromod](https://www.relliahealth.com/founders/alumni/neuromod): Alumni company profile in the Rellia Health founder network.
-- [/founders/alumni/newgen](https://www.relliahealth.com/founders/alumni/newgen): Alumni company profile in the Rellia Health founder network.
-- [/founders/alumni/patientcompanion](https://www.relliahealth.com/founders/alumni/patientcompanion): Alumni company profile in the Rellia Health founder network.
+- [/founders/alumni/power-of-play](https://www.relliahealth.com/founders/alumni/power-of-play): Alumni company profile in the Rellia Health founder network.
 
 
 ## CMS pages
 
-- [/cms-handoff-test](https://www.relliahealth.com/cms-handoff-test): Public page on relliahealth.com.
 - [/supporting-health-founders](https://www.relliahealth.com/supporting-health-founders): Public page on relliahealth.com.
 
 
