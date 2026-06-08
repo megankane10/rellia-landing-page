@@ -18,7 +18,6 @@ import StoryArticleJsonLd from "@/components/seo/StoryArticleJsonLd"
 import PageSocialHelmet from "@/components/seo/PageSocialHelmet"
 import { ChevronLeft, Check } from "lucide-react"
 import { RichTextImageCarousel } from "@/components/RichTextImageCarousel"
-import { AnimatePresence, motion } from "framer-motion"
 import { PortableRichText } from "@/components/PortableRichText"
 import { useStoryBySlug } from "@/hooks/useCmsDocuments"
 import { isCmsQueryLoading, shouldShowCmsEmptyState } from "@/lib/cmsQueryState"
@@ -108,82 +107,64 @@ export default function StoryPost() {
     "inline-flex h-12 w-12 items-center justify-center rounded-full bg-white text-rellia-teal transition-transform transition-colors hover:-translate-y-0.5 hover:bg-rellia-mint focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-rellia-teal"
 
   const shareBlock = (
-    <div className="flex flex-col items-start gap-4 text-white">
-      <p className="font-host-grotesk text-[12px] font-semibold uppercase tracking-[0.14em] text-white/70">
-        Share this story
-      </p>
-      <div className="h-px w-full bg-white/20" aria-hidden />
+    <div
+      className="flex flex-wrap items-center gap-3 md:flex-col md:items-center md:gap-2.5"
+      role="group"
+      aria-label="Share this story"
+    >
+      <a
+        href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(canonical)}&text=${encodeURIComponent(shareTitle)}`}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={shareToolbarButtonClassNameDark}
+        aria-label="Share on X"
+      >
+        <ShareIconX />
+      </a>
+      <a
+        href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(canonical)}`}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={shareToolbarButtonClassNameDark}
+        aria-label="Share on LinkedIn"
+      >
+        <ShareIconLinkedIn />
+      </a>
+      <a
+        href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(canonical)}`}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={shareToolbarButtonClassNameDark}
+        aria-label="Share on Facebook"
+      >
+        <ShareIconFacebook />
+      </a>
+      <a
+        href={buildMailtoHref(DEFAULT_GLOBAL_SETTINGS.supportEmail, {
+          subject: shareTitle,
+          body: `${shareTitle}\n\n${canonical}`,
+        })}
+        className={shareToolbarButtonClassNameDark}
+        aria-label="Share by email"
+      >
+        <ShareIconMail />
+      </a>
 
-      <div className="flex flex-wrap items-center gap-3">
-        <a
-          href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(canonical)}&text=${encodeURIComponent(shareTitle)}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className={shareToolbarButtonClassNameDark}
-          aria-label="Share on X"
-        >
-          <ShareIconX />
-        </a>
-        <a
-          href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(canonical)}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className={shareToolbarButtonClassNameDark}
-          aria-label="Share on LinkedIn"
-        >
-          <ShareIconLinkedIn />
-        </a>
-        <a
-          href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(canonical)}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className={shareToolbarButtonClassNameDark}
-          aria-label="Share on Facebook"
-        >
-          <ShareIconFacebook />
-        </a>
-        <a
-          href={buildMailtoHref(DEFAULT_GLOBAL_SETTINGS.supportEmail, {
-            subject: shareTitle,
-            body: `${shareTitle}\n\n${canonical}`,
-          })}
-          className={shareToolbarButtonClassNameDark}
-          aria-label="Share by email"
-        >
-          <ShareIconMail />
-        </a>
-
-        <button
-          type="button"
-          onClick={handleCopyLink}
-          className={cn(
-            shareToolbarButtonClassNameDark,
-            copyState === "copied" && "border border-rellia-teal bg-rellia-mint text-rellia-teal shadow-md",
-          )}
-          aria-label={copyState === "copied" ? "Link copied" : "Copy story link"}
-        >
-          {copyState === "copied" ? (
-            <Check className="h-5 w-5 shrink-0 animate-scale-in" />
-          ) : (
-            <ShareIconCopy />
-          )}
-        </button>
-
-        <AnimatePresence mode="wait" initial={false}>
-          {copyState === "copied" ? (
-            <motion.span
-              key="copied-feedback"
-              className="font-host-grotesk text-sm font-semibold text-rellia-mint"
-              initial={{ opacity: 0, y: 4, scale: 0.98 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: -4, scale: 0.98 }}
-              transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
-            >
-              Copied!
-            </motion.span>
-          ) : null}
-        </AnimatePresence>
-      </div>
+      <button
+        type="button"
+        onClick={handleCopyLink}
+        className={cn(
+          shareToolbarButtonClassNameDark,
+          copyState === "copied" && "border border-rellia-teal bg-rellia-mint text-rellia-teal shadow-md",
+        )}
+        aria-label={copyState === "copied" ? "Link copied" : "Copy story link"}
+      >
+        {copyState === "copied" ? (
+          <Check className="h-5 w-5 shrink-0 animate-scale-in" />
+        ) : (
+          <ShareIconCopy />
+        )}
+      </button>
     </div>
   )
 

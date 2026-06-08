@@ -78,6 +78,7 @@ export const StoryPostHero = ({
               className={cn(
                 "flex min-w-0 flex-col",
                 useBackgroundLayout && "min-h-[inherit] flex-1",
+                !useBackgroundLayout && "md:relative",
               )}
             >
               <div className="flex flex-wrap items-center gap-3">
@@ -104,25 +105,41 @@ export const StoryPostHero = ({
               ) : null}
 
               {!useBackgroundLayout && coverSrc ? (
-                <figure className="relative mt-8 aspect-[16/10] w-full max-w-3xl overflow-hidden rounded-2xl border border-white/15 bg-black/20 shadow-[0_24px_56px_-28px_rgba(0,0,0,0.55)] md:mt-10">
-                  <img
-                    src={toAbsoluteImageUrl(coverSrc)}
-                    alt={coverAlt}
-                    className="h-full w-full object-cover"
-                    loading="eager"
-                    fetchPriority="high"
-                  />
-                </figure>
+                <div className="mt-8 md:mt-10">
+                  <div className="relative">
+                    <figure className="relative aspect-[16/10] w-full max-w-3xl overflow-hidden rounded-2xl border border-white/15 bg-black/20 shadow-[0_24px_56px_-28px_rgba(0,0,0,0.55)]">
+                      <img
+                        src={toAbsoluteImageUrl(coverSrc)}
+                        alt={coverAlt}
+                        className="h-full w-full object-cover"
+                        loading="eager"
+                        fetchPriority="high"
+                      />
+                    </figure>
+                    <aside
+                      className="hidden md:flex md:absolute md:right-0 md:top-1/2 md:-translate-y-1/2"
+                      aria-label="Share this story"
+                    >
+                      {shareBlock}
+                    </aside>
+                  </div>
+                  <div className="mt-8 md:hidden">{shareBlock}</div>
+                </div>
               ) : null}
 
               {useBackgroundLayout ? (
                 <div className="mt-auto pt-10 pb-2 md:pt-14 md:pb-4">{shareBlock}</div>
-              ) : (
+              ) : !coverSrc ? (
                 <>
-                  <div className="h-8 md:h-10" aria-hidden />
-                  {shareBlock}
+                  <div className="mt-8 md:hidden">{shareBlock}</div>
+                  <aside
+                    className="hidden md:flex md:absolute md:right-0 md:top-6"
+                    aria-label="Share this story"
+                  >
+                    {shareBlock}
+                  </aside>
                 </>
-              )}
+              ) : null}
             </div>
           </ScrollReveal>
         </div>
