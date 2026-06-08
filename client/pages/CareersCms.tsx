@@ -414,8 +414,8 @@ export default function CareersCms() {
       : showHiringSection
         ? {
             href: "#open-roles",
-            label: "Work with us",
-            ariaLabel: "Work with us — jump to open roles",
+            label: "See open roles",
+            ariaLabel: "See open roles — jump to open roles",
             opensForm: false,
           }
         : null

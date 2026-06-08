@@ -1016,6 +1016,8 @@ async function main() {
       ...DEFAULT_GLOBAL_SETTINGS,
       themeColors: DEFAULT_THEME_COLORS,
       ...PRIORITY_MODAL_SEED,
+      priorityModalSecondaryButtonLabel: "",
+      priorityModalSecondaryButtonLink: "",
     },
   })
   mutations.push({

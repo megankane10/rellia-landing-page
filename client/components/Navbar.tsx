@@ -269,13 +269,7 @@ export default function Navbar({
   const [priorityModalDelayElapsed, setPriorityModalDelayElapsed] = useState(false)
   const location = useLocation()
 
-  const isAdditionsBranch =
-    typeof window !== "undefined" &&
-    (!window.location.hostname.includes("relliahealth.com") ||
-     import.meta.env.VITE_SANITY_DATASET === "preview")
-
   const priorityModalEligible =
-    isAdditionsBranch &&
     !hideAnnouncement &&
     !priorityModalDismissed &&
     globalSettings.priorityModalEnabled === true &&

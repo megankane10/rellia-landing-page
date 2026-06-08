@@ -53,7 +53,10 @@ export const PriorityAnnouncementModal = ({
   const trimmedSecondaryLink = secondaryButtonLink?.trim()
 
   const showPrimary = Boolean(trimmedLabel && trimmedLink)
-  const showSecondary = Boolean(trimmedSecondaryLabel && trimmedSecondaryLink)
+  const showSecondary =
+    Boolean(trimmedSecondaryLabel && trimmedSecondaryLink) &&
+    trimmedSecondaryLabel!.length > 0 &&
+    trimmedSecondaryLink!.length > 0
   const showPill = Boolean(pillText?.trim())
 
   const handleClose = () => {

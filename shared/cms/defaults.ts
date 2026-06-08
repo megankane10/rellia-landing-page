@@ -1330,8 +1330,8 @@ export const DEFAULT_GLOBAL_SETTINGS: GlobalSettingsContent = {
   priorityModalPillText: "PREVIEW",
   priorityModalButtonLabel: "View Drafts Dashboard",
   priorityModalButtonLink: "/admin/drafts",
-  priorityModalSecondaryButtonLabel: "Go to Production Site",
-  priorityModalSecondaryButtonLink: "https://www.relliahealth.com",
+  priorityModalSecondaryButtonLabel: "",
+  priorityModalSecondaryButtonLink: "",
   priorityModalFormEnabled: false,
   priorityModalFormButtonLabel: "Subscribe",
   priorityModalFormPlaceholderName: "First name",
@@ -2390,16 +2390,16 @@ export function mergeGlobalSettings(
   if (base.priorityModalEnabled && !priorityPrimaryLabel && !prioritySecondaryLabel) {
     base.priorityModalFormEnabled = true
   }
-  if (p.priorityModalEnabled === true) {
-    const cmsSecondaryLabel =
-      typeof p.priorityModalSecondaryButtonLabel === "string"
-        ? p.priorityModalSecondaryButtonLabel.trim()
+  if (partial != null) {
+    const rawSecondaryLabel =
+      typeof partial.priorityModalSecondaryButtonLabel === "string"
+        ? partial.priorityModalSecondaryButtonLabel.trim()
         : ""
-    const cmsSecondaryLink =
-      typeof p.priorityModalSecondaryButtonLink === "string"
-        ? p.priorityModalSecondaryButtonLink.trim()
+    const rawSecondaryLink =
+      typeof partial.priorityModalSecondaryButtonLink === "string"
+        ? partial.priorityModalSecondaryButtonLink.trim()
         : ""
-    if (!cmsSecondaryLabel || !cmsSecondaryLink) {
+    if (!rawSecondaryLabel || !rawSecondaryLink) {
       base.priorityModalSecondaryButtonLabel = ""
       base.priorityModalSecondaryButtonLink = ""
     }
