@@ -2080,13 +2080,6 @@ async function main() {
     return filters.length > 0 ? filters : undefined
   }
 
-  const existingAdvisorIds = await client.fetch<string[]>(`*[_type == "advisor"]._id`)
-  for (const id of existingAdvisorIds) {
-    mutations.push({ delete: { id } })
-    if (id.startsWith("drafts.")) continue
-    mutations.push({ delete: { id: `drafts.${id}` } })
-  }
-
   for (const advisor of ADVISOR_DIRECTORY_SEED) {
     mutations.push({
       createOrReplace: {
