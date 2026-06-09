@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/carousel"
 import { cn } from "@/lib/utils"
 import type { HomeTestimonial, SanityPortableText } from "@shared/cms/types"
+import { cmsCleanText, cmsDisplayText } from "@/lib/cmsStega"
 import LogoMarquee from "@/components/LogoMarquee"
 import { HeroHeadlinePortable } from "@/components/HeroHeadlinePortable"
 
@@ -50,7 +51,7 @@ function CompanyInfoPopover({ t }: { t: Testimonial }) {
           <h5 className="font-host-grotesk font-semibold text-rellia-mint border-b border-white/10 pb-2 mb-1">
             About {t.company}
           </h5>
-          <p className="font-urbanist text-sm leading-relaxed text-white/90">{t.companyInfo}</p>
+          <p className="font-urbanist text-sm leading-relaxed text-white/90">{cmsDisplayText(t.companyInfo)}</p>
         </div>
       </PopoverContent>
     </Popover>
@@ -68,19 +69,20 @@ function TestimonialCard({
   onRequestExpand: () => void
   onRequestCollapse: () => void
 }) {
-  const isMelissa = t.name.toLowerCase().includes("melissa")
+  const cleanName = cmsCleanText(t.name)
+  const isMelissa = cleanName.toLowerCase().includes("melissa")
   const imgSrc = isMelissa ? "/images/testimonials-melissaW.jpg" : t.imageSrc
   const role = isMelissa ? "Founder" : t.role
   const quoteRef = useRef<HTMLParagraphElement | null>(null)
   const initials = useMemo(
     () =>
-      t.name
+      cleanName
         .replace(/^(dr|mr|mrs|ms|prof)\.?\s+/i, "")
         .split(" ")
         .map((n) => n[0])
         .join("")
         .slice(0, 3),
-    [t.name],
+    [cleanName],
   )
 
   const [showExpand, setShowExpand] = useState(false)
@@ -136,7 +138,7 @@ function TestimonialCard({
               "transition-opacity duration-300 ease-out motion-reduce:transition-none",
             )}
           >
-            &ldquo;{t.quote}&rdquo;
+            &ldquo;{cmsDisplayText(t.quote)}&rdquo;
           </p>
           {showExpand && !isExpanded ? (
             <>
@@ -180,7 +182,7 @@ function TestimonialCard({
           <Avatar className="h-12 w-12 shrink-0 rounded-lg border border-black/10">
             <AvatarImage
               src={imgSrc}
-              alt={t.name}
+              alt={cleanName}
               className={cn("object-cover", isMelissa && "object-[38%_50%]")}
             />
             <AvatarFallback className="rounded-lg bg-rellia-teal text-xs font-semibold text-white">
@@ -190,12 +192,12 @@ function TestimonialCard({
 
           <div className="min-w-0 flex-1">
             <h4 className="truncate font-host-grotesk text-base font-semibold leading-snug text-black">
-              {t.name}
+              {cmsDisplayText(t.name)}
             </h4>
             <p className="mt-0.5 font-urbanist text-sm leading-snug text-black/75">
-              <span className="font-medium text-black/80">{role},</span>{" "}
+              <span className="font-medium text-black/80">{cmsDisplayText(role)},</span>{" "}
               <span className="inline-flex min-w-0 items-center gap-1 text-black/55">
-                <span className="min-w-0 truncate">{t.company}</span>
+                <span className="min-w-0 truncate">{cmsDisplayText(t.company)}</span>
                 <CompanyInfoPopover t={t} />
               </span>
             </p>
@@ -225,15 +227,15 @@ export default function TestimonialsSection({
   const [canScrollNext, setCanScrollNext] = useState(false)
   const orderedTestimonials = useMemo(() => {
     const list = [...testimonials]
-    const melissaIndex = list.findIndex((t) => t.name.toLowerCase().includes("melissa"))
-    const mazharIndex = list.findIndex((t) => t.name.toLowerCase().includes("mazhar"))
+    const melissaIndex = list.findIndex((t) => cmsCleanText(t.name).toLowerCase().includes("melissa"))
+    const mazharIndex = list.findIndex((t) => cmsCleanText(t.name).toLowerCase().includes("mazhar"))
     if (melissaIndex >= 0 && mazharIndex >= 0 && mazharIndex !== melissaIndex + 1) {
       const [mazhar] = list.splice(mazharIndex, 1)
       const insertAt = melissaIndex + 1
       list.splice(insertAt, 0, mazhar)
     }
 
-    const sahilIndex = list.findIndex((t) => t.name.toLowerCase().includes("sahil"))
+    const sahilIndex = list.findIndex((t) => cmsCleanText(t.name).toLowerCase().includes("sahil"))
     const targetIndex = 2
     if (sahilIndex >= 0 && sahilIndex !== targetIndex) {
       const [sahil] = list.splice(sahilIndex, 1)

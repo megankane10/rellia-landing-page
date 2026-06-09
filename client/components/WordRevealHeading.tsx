@@ -1,6 +1,8 @@
 import { useMemo } from "react"
 import { motion, useReducedMotion } from "framer-motion"
+import { stegaClean } from "@sanity/client/stega"
 import { cn } from "@/lib/utils"
+import { cmsDisplayText, isVisualEditingPreview } from "@/lib/cmsStega"
 
 export default function WordRevealHeading({
   text,
@@ -17,12 +19,21 @@ export default function WordRevealHeading({
   stagger?: number
 }) {
   const reduceMotion = useReducedMotion()
+  const isPreview = isVisualEditingPreview()
 
   const words = useMemo(() => {
-    const trimmed = (text ?? "").trim()
+    const trimmed = stegaClean(text ?? "").trim()
     if (!trimmed) return []
     return trimmed.split(/\s+/g)
   }, [text])
+
+  if (isPreview) {
+    return (
+      <Tag className={cn("text-balance", className)}>
+        {cmsDisplayText(text)}
+      </Tag>
+    )
+  }
 
   return (
     <Tag className={cn("text-balance", className)}>

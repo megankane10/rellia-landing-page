@@ -1,5 +1,10 @@
 /**
  * Copy all published documents (including image/file assets) from preview → production.
+ *
+ * ⚠️  DESTRUCTIVE — replaces matching documents in production. Do not run on a live site
+ *     with editor-owned content unless you explicitly want to overwrite production.
+ *     Safe Studio deploy does not run this script.
+ *
  * Run once before handoff so www matches staging, then Studio edits production directly.
  *
  * Dry run (counts only):

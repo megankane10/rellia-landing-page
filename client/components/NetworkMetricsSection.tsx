@@ -2,9 +2,9 @@ import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion
 import { Globe, Rocket, Users, type LucideIcon } from "lucide-react"
 import { useEffect, useMemo, useRef, useState } from "react"
 import { cn } from "@/lib/utils"
-import { relliaTealGlassCardClass } from "@/lib/relliaTealGlassCard"
 import PillTag, { PILL_ON_IMAGE_BLUR_CLASS } from "@/components/PillTag"
 import { PAGE_HEADER_TITLE_SIZE_CLASS } from "@/components/PageHeader"
+import { cmsCleanText, cmsDisplayText, isVisualEditingPreview, splitStega } from "@/lib/cmsStega"
 
 function useCountUp(target: number, enabled: boolean, durationMs = 1200) {
   const [value, setValue] = useState(0);
@@ -59,15 +59,22 @@ type NetworkMetricsSectionProps = {
 
 function AccentHeading({ text }: { text: string }) {
   const target = "all the difference"
-  const raw = (text ?? "").trim()
-  if (!raw) return null
+  const { cleaned: raw, encoded: stegaTail } = splitStega(text)
+  const trimmed = raw.trim()
+  if (!trimmed) return null
 
-  const idx = raw.toLowerCase().indexOf(target)
-  if (idx === -1) return <>{raw}</>
+  const idx = trimmed.toLowerCase().indexOf(target)
+  if (idx === -1) {
+    return (
+      <>
+        {cmsDisplayText(text)}
+      </>
+    )
+  }
 
-  const before = raw.slice(0, idx).trimEnd()
-  const match = raw.slice(idx, idx + target.length)
-  const after = raw.slice(idx + target.length)
+  const before = trimmed.slice(0, idx).trimEnd()
+  const match = trimmed.slice(idx, idx + target.length)
+  const after = trimmed.slice(idx + target.length)
 
   return (
     <>
@@ -80,11 +87,13 @@ function AccentHeading({ text }: { text: string }) {
       ) : null}
       <span className="text-rellia-mint">{match}</span>
       {after}
+      {stegaTail ? <span className="sr-only">{stegaTail}</span> : null}
     </>
   )
 }
 
 const METRIC_ROW_ICONS: LucideIcon[] = [Users, Rocket, Globe]
+const METRIC_FALLBACK_LABELS = ["Members", "Startups", "Countries"]
 
 const sentenceCase = (text: string) => {
   const raw = (text ?? "").trim()
@@ -98,24 +107,28 @@ function MetricValue({
   label,
   index,
   entered,
+  previewMode,
 }: {
   metric: NetworkMetric;
   label: string;
   index: number;
   entered: boolean;
+  previewMode: boolean;
 }) {
-  const count = useCountUp(metric.value, entered, 1200 + index * 150);
+  const count = useCountUp(metric.value, entered && !previewMode, 1200 + index * 150);
   const Icon = METRIC_ROW_ICONS[index] ?? Users
+  const displayValue = previewMode ? metric.value : count
+  const displaySuffix = cmsDisplayText(metric.suffix)
 
   return (
     <div className="inline-flex max-w-full flex-col items-start">
       <Icon className="h-10 w-10 text-rellia-mint md:h-11 md:w-11" strokeWidth={1.35} aria-hidden />
       <div className="mt-4 font-host-grotesk text-5xl font-semibold leading-none tracking-tight text-white md:text-6xl">
-        {count}
-        {metric.suffix ?? ""}
+        {displayValue}
+        {displaySuffix}
       </div>
       <p className="mt-3 font-urbanist text-lg font-medium leading-snug text-white/80 md:text-xl">
-        {label}
+        {cmsDisplayText(label)}
       </p>
     </div>
   );
@@ -133,6 +146,7 @@ export default function NetworkMetricsSection({
   const [entered, setEntered] = useState(false);
   const [countReady, setCountReady] = useState(false)
   const reduceMotion = useReducedMotion()
+  const previewMode = isVisualEditingPreview()
   const [isMobile, setIsMobile] = useState(true)
 
   useEffect(() => {
@@ -143,7 +157,6 @@ export default function NetworkMetricsSection({
   }, [])
 
   const metricList = useMemo(() => metrics, [metrics]);
-  const labels = useMemo(() => ["Members", "Startups", "Countries"], [])
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ["start 95%", "end 5%"],
@@ -151,6 +164,12 @@ export default function NetworkMetricsSection({
   const bgY = useTransform(scrollYProgress, [0, 1], ["-18%", "18%"])
 
   useEffect(() => {
+    if (previewMode) {
+      setEntered(true)
+      setCountReady(true)
+      return
+    }
+
     const el = sectionRef.current;
     if (!el) return;
 
@@ -169,11 +188,11 @@ export default function NetworkMetricsSection({
 
     observer.observe(el)
     return () => observer.disconnect()
-  }, [entered])
+  }, [entered, previewMode])
 
   useEffect(() => {
     if (!entered) return
-    if (reduceMotion) {
+    if (previewMode || reduceMotion) {
       setCountReady(true)
       return
     }
@@ -182,7 +201,7 @@ export default function NetworkMetricsSection({
     // Matches the last tile's delay (~0.28s) + duration (~0.45s) + a small buffer.
     const t = window.setTimeout(() => setCountReady(true), 820)
     return () => window.clearTimeout(t)
-  }, [entered, reduceMotion])
+  }, [entered, previewMode, reduceMotion])
 
   return (
     <section
@@ -261,10 +280,10 @@ export default function NetworkMetricsSection({
             <div className="w-full">
               <div className="flex w-full flex-col items-start gap-10 sm:flex-row sm:flex-wrap sm:justify-start sm:gap-x-12 sm:gap-y-10 md:gap-x-14 md:gap-y-11 lg:gap-x-16 lg:gap-y-11 xl:gap-x-[4.25rem]">
                 {metricList.slice(0, 3).map((m, i) => {
-                  const label = labels[i] ?? sentenceCase(m.label)
+                  const label = cmsCleanText(m.label) || sentenceCase(cmsCleanText(METRIC_FALLBACK_LABELS[i]))
                   return (
                     <motion.div
-                      key={`${m.label}-${label}`}
+                      key={`${cmsCleanText(m.label)}-${i}`}
                       initial={reduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 18 }}
                       animate={
                         reduceMotion
@@ -293,7 +312,7 @@ export default function NetworkMetricsSection({
                             : { duration: 0.6, ease: [0.22, 1, 0.36, 1], delay: 0.1 + i * 0.12 }
                         }
                       />
-                      <MetricValue metric={m} label={label} index={i} entered={entered && countReady} />
+                      <MetricValue metric={m} label={m.label?.trim() ? m.label : label} index={i} entered={entered && countReady} previewMode={previewMode} />
                     </motion.div>
                   )
                 })}

@@ -11,6 +11,7 @@ import {
 import type { LucideIcon } from "lucide-react"
 import ScrollReveal from "./ScrollReveal"
 import { cn } from "@/lib/utils"
+import { cmsDisplayText } from "@/lib/cmsStega"
 
 export type HowItWorksStep = {
   icon: LucideIcon
@@ -132,7 +133,7 @@ export default function HowItWorks(props?: HowItWorksProps) {
           <div className="mb-12 md:mb-14">
             {heading ? (
               <div className="font-host-grotesk text-2xl font-semibold leading-tight tracking-tight text-white md:text-[32px]">
-                {heading}
+                {typeof heading === "string" ? cmsDisplayText(heading) : heading}
               </div>
             ) : (
               <h2 className="font-host-grotesk text-2xl font-semibold leading-tight tracking-tight text-rellia-mint md:text-[32px]">
@@ -141,7 +142,7 @@ export default function HowItWorks(props?: HowItWorksProps) {
             )}
             {subheading ? (
               <div className="mt-4 font-urbanist text-base font-medium leading-relaxed tracking-tight text-white/80 md:text-lg w-full">
-                {subheading}
+                {typeof subheading === "string" ? cmsDisplayText(subheading) : subheading}
               </div>
             ) : (
               <p className="mt-4 font-urbanist text-base font-medium leading-relaxed tracking-tight text-white/80 md:text-lg w-full">
@@ -168,10 +169,10 @@ export default function HowItWorks(props?: HowItWorksProps) {
                 >
                   <Icon className="h-7 w-7 text-rellia-mint" aria-hidden />
                   <p className="mt-5 font-host-grotesk text-lg font-semibold leading-snug tracking-tight text-white line-clamp-2">
-                    {step.title}
+                    {cmsDisplayText(step.title)}
                   </p>
                   <p className="mt-3 font-urbanist text-sm leading-relaxed text-white/80 line-clamp-3">
-                    {step.description}
+                    {cmsDisplayText(step.description)}
                   </p>
                 </div>
               )

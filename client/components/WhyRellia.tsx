@@ -5,6 +5,7 @@ import ScrollReveal from "./ScrollReveal"
 import SectionHeading from "@/components/SectionHeading"
 import { cn } from "@/lib/utils"
 import type { HomeWhyFeature } from "@shared/cms/types"
+import { cmsDisplayText } from "@/lib/cmsStega"
 
 const DEFAULT_SECTION_DESCRIPTION =
   "A curated network and practical support system to help you move through the moments that make or break a healthcare startup."
@@ -185,7 +186,7 @@ export default function WhyRellia({
                           isActive ? "delay-200 -translate-y-1" : "delay-0 translate-y-0",
                         )}
                       >
-                        {c.title}
+                        {cmsDisplayText(c.title)}
                       </h3>
 
                       <div
@@ -198,7 +199,7 @@ export default function WhyRellia({
                         )}
                       >
                         <p className="max-w-[40ch] font-urbanist text-base leading-relaxed text-white/85">
-                          {c.description}
+                          {cmsDisplayText(c.description)}
                         </p>
                         {c.buttonLabel && c.buttonPath && (
                           <Link
@@ -206,7 +207,7 @@ export default function WhyRellia({
                             className="relative z-30 mt-4 inline-flex items-center text-sm font-bold text-rellia-mint hover:underline hover:underline-offset-4"
                             onClick={(e) => e.stopPropagation()}
                           >
-                            {c.buttonLabel}
+                            {cmsDisplayText(c.buttonLabel)}
                           </Link>
                         )}
                       </div>
@@ -260,19 +261,19 @@ export default function WhyRellia({
                           <h3
                             className="font-host-grotesk font-normal text-white text-2xl tracking-tight leading-tight"
                           >
-                            {c.title}
+                            {cmsDisplayText(c.title)}
                           </h3>
 
                           <div className="mt-2.5 overflow-hidden max-h-64 opacity-100 translate-y-0">
                             <p className="font-urbanist text-base leading-relaxed text-white/85">
-                              {c.description}
+                              {cmsDisplayText(c.description)}
                             </p>
                             {c.buttonLabel && c.buttonPath && (
                               <Link
                                 to={c.buttonPath}
                                 className="mt-4 inline-flex items-center text-sm font-bold text-rellia-mint hover:underline hover:underline-offset-4"
                               >
-                                {c.buttonLabel}
+                                {cmsDisplayText(c.buttonLabel)}
                               </Link>
                             )}
                           </div>

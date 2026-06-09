@@ -34,7 +34,6 @@ export const buildSiteOrigins = (): Set<string> => {
   // Known production hosts
   origins.add("https://www.relliahealth.com")
   origins.add("https://relliahealth.com")
-  origins.add("https://relliahealth.vercel.app")
 
   return origins
 }

@@ -2,6 +2,7 @@ import { cn } from "@/lib/utils"
 import { HEADING_SECTION } from "@/lib/typography"
 import ScrollReveal from "@/components/ScrollReveal"
 import WordRevealHeading from "@/components/WordRevealHeading"
+import { cmsDisplayText } from "@/lib/cmsStega"
 
 export default function SectionHeading({
   title,
@@ -48,7 +49,7 @@ export default function SectionHeading({
           {title}
         </h2>
       )}
-      {description ? (
+          {description ? (
         <p
           className={cn(
             "font-urbanist font-medium leading-relaxed tracking-tight mt-1",
@@ -58,7 +59,7 @@ export default function SectionHeading({
             descriptionClassName,
           )}
         >
-          {description}
+          {cmsDisplayText(description)}
         </p>
       ) : null}
     </ScrollReveal>

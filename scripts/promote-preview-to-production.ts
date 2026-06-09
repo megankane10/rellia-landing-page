@@ -1,7 +1,12 @@
 /**
  * Align production CMS with preview for events (dates) and hide retired items on www.
  *
- * Preview dataset  → staging (relliahealth.vercel.app, Studio default, visual editing)
+ * ⚠️  DESTRUCTIVE — overwrites documents in the production dataset. Never run after
+ *     editors have published live content unless you intend to replace production CMS data.
+ *     Studio deploy (`pnpm sanity:studio:deploy`) does NOT touch document content — only
+ *     this script (or `sanity:seed`, `sanity:sync-to-production`) can wipe editor changes.
+ *
+ * Preview dataset  → legacy staging dataset (engineering only)
  * Production dataset → live (www.relliahealth.com)
  *
  * Dry-run (prints diff, no writes):

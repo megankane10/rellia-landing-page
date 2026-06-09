@@ -13,6 +13,7 @@ import { DEFAULT_HOME_PAGE } from "@shared/cms/defaults"
 import type { HomePathsCard } from "@shared/cms/types"
 import NetworkMetricsSection from "@/components/NetworkMetricsSection"
 import { PILL_ON_IMAGE_BLUR_CLASS } from "@/components/PillTag"
+import { cmsCleanText, cmsDisplayText, isVisualEditingPreview } from "@/lib/cmsStega"
 
 /** Layered soft blurs — disabled for solid white section background */
 const BrandBlurField = () => null
@@ -84,19 +85,23 @@ const resolveCard = (id: NetworkPathRoleId, cms?: HomePathsCard): ResolvedCard =
   const tag = NETWORK_PATH_ROLE_TAG[id]
   return {
     roleId: id,
-    tagLabel: cms?.tagLabel?.trim() || tag.label,
-    title: cms?.title?.trim() || meta.title,
-    imageSrc: cms?.imageSrc?.trim() || meta.imageSrc,
-    imageAlt: cms?.imageAlt?.trim() || meta.imageAlt,
-    ctaLabel: cms?.ctaLabel?.trim() || CTA_PHRASE[id],
-    ctaTo: cms?.ctaTo?.trim() || meta.ctaTo,
+    tagLabel: cmsCleanText(cms?.tagLabel) || tag.label,
+    title: cmsCleanText(cms?.title) || meta.title,
+    imageSrc: cmsCleanText(cms?.imageSrc) || meta.imageSrc,
+    imageAlt: cmsCleanText(cms?.imageAlt) || meta.imageAlt,
+    ctaLabel: cmsCleanText(cms?.ctaLabel) || CTA_PHRASE[id],
+    ctaTo: cmsCleanText(cms?.ctaTo) || meta.ctaTo,
   }
 }
+
+const displayCardField = (cmsValue: string | undefined, resolved: string) =>
+  cmsValue?.trim() ? cmsDisplayText(cmsValue) : resolved
 
 export default function PathsSection() {
   const sectionRef = useRef<HTMLElement | null>(null)
   const isInView = useInView(sectionRef, { once: true, margin: "-12% 0px -28% 0px" })
   const reduceMotion = useReducedMotion()
+  const previewMode = isVisualEditingPreview()
   const { data: home } = useHomePage()
   const page = home ?? DEFAULT_HOME_PAGE
   const resolvedCards = useMemo<ResolvedCard[]>(() => {
@@ -105,6 +110,11 @@ export default function PathsSection() {
       .filter((c): c is HomePathsCard => Boolean(c) && isValidRoleId(c?.roleId))
       .map((c) => resolveCard(c.roleId, c))
   }, [page.pathsCards])
+
+  const pathsCardsRaw = page.pathsCards ?? DEFAULT_HOME_PAGE.pathsCards ?? []
+  const pathsTitleRaw = page.pathsTitle?.trim()
+    ? page.pathsTitle
+    : "Find your place in the community"
 
   const headerHidden = reduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 36 }
   const headerVisible = { opacity: 1, y: 0 }
@@ -169,29 +179,33 @@ export default function PathsSection() {
             animate={isInView ? "visible" : "hidden"}
             className="relative z-10 flex flex-wrap justify-center gap-x-[0.22em] gap-y-2 text-balance font-host-grotesk text-3xl font-semibold leading-tight tracking-tight text-rellia-teal md:text-[44px] md:leading-[1.15]"
           >
-            {(page.pathsTitle?.trim() || "Find your place in the community")
-              .split(" ")
-              .flatMap((word, idx, arr) => {
-                const nodes = [
-                  <motion.span
-                    key={`${idx}-${word}`}
-                    variants={headingWordVariants}
-                    className={cn("inline-block will-change-[transform,filter]")}
-                  >
-                    {word}
-                  </motion.span>,
-                ]
-                if (word.toLowerCase() === "place" || (idx === Math.ceil(arr.length / 2) - 1 && arr.length > 4)) {
-                  nodes.push(
-                    <span
-                      key={`${idx}-${word}-line`}
-                      aria-hidden
-                      className="h-0 w-full shrink-0 basis-full overflow-hidden"
-                    />,
-                  )
-                }
-                return nodes
-              })}
+            {previewMode ? (
+              cmsDisplayText(pathsTitleRaw)
+            ) : (
+              cmsCleanText(pathsTitleRaw)
+                .split(" ")
+                .flatMap((word, idx, arr) => {
+                  const nodes = [
+                    <motion.span
+                      key={`${idx}-${word}`}
+                      variants={headingWordVariants}
+                      className={cn("inline-block will-change-[transform,filter]")}
+                    >
+                      {word}
+                    </motion.span>,
+                  ]
+                  if (word.toLowerCase() === "place" || (idx === Math.ceil(arr.length / 2) - 1 && arr.length > 4)) {
+                    nodes.push(
+                      <span
+                        key={`${idx}-${word}-line`}
+                        aria-hidden
+                        className="h-0 w-full shrink-0 basis-full overflow-hidden"
+                      />,
+                    )
+                  }
+                  return nodes
+                })
+            )}
           </motion.h2>
         </motion.div>
 
@@ -206,6 +220,7 @@ export default function PathsSection() {
           >
             {resolvedCards.map((card, idx) => {
               const Icon = NETWORK_PATH_ROLE_TAG[card.roleId].icon
+              const cmsCard = pathsCardsRaw.find((c) => c?.roleId === card.roleId)
               return (
                 <ScrollReveal key={card.roleId} variant="ctaReveal" delay={idx * 0.15}>
                   <article
@@ -229,12 +244,12 @@ export default function PathsSection() {
                     />
                     <div className={cn("absolute right-3 top-3 inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-white/95 sm:right-4 sm:top-4", PILL_ON_IMAGE_BLUR_CLASS)}>
                       <Icon className="h-3.5 w-3.5 shrink-0" aria-hidden />
-                      {card.tagLabel}
+                      {displayCardField(cmsCard?.tagLabel, card.tagLabel)}
                     </div>
 
                     <div className="absolute inset-x-0 bottom-0 p-5 md:p-6">
                       <h3 className="font-host-grotesk text-xl font-normal tracking-tight text-white md:text-2xl">
-                        {card.title}
+                        {displayCardField(cmsCard?.title, card.title)}
                       </h3>
 
                       <RelliaAction
@@ -246,9 +261,9 @@ export default function PathsSection() {
                         <Link
                           to={card.ctaTo}
                           className="inline-flex cursor-pointer items-center justify-center"
-                          aria-label={card.ctaLabel}
+                          aria-label={cmsCleanText(cmsCard?.ctaLabel) || card.ctaLabel}
                         >
-                          {card.ctaLabel}
+                          {displayCardField(cmsCard?.ctaLabel, card.ctaLabel)}
                         </Link>
                       </RelliaAction>
                     </div>

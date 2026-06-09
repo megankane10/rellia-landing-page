@@ -79,6 +79,36 @@ Use this when transferring the site to the Rellia team. Items marked **editor** 
 
 **Operational docs:** [website-management-guide.md](./docs/website-management-guide.md) (editors) · [sanity-dataset-sync-guide.md](./docs/sanity-dataset-sync-guide.md) (legacy dataset sync, engineering only)
 
+### Editing with Claude or another AI agent
+
+Non-developers can use Claude (Cursor, Claude Code, or similar) to request site changes. Share this repo and the prompts below so the agent follows safe workflow.
+
+**What the agent should do**
+
+| Task | Safe approach |
+|------|----------------|
+| Copy / content changes | Edit in **Sanity Studio** ([relliahealth.sanity.studio](https://relliahealth.sanity.studio)) → **Publish**. No code deploy needed. |
+| Code or layout changes | Create a **feature branch** from `main`, implement, open a PR, merge to `main`. Vercel deploys www automatically. |
+| Studio schema / Presentation | Run `pnpm sanity:studio:deploy` from repo root after schema changes. **Does not delete CMS content.** |
+
+**What the agent must never run on production without explicit approval**
+
+- `pnpm sanity:seed` — **replaces** singletons, events, directories, and more with code defaults
+- `pnpm sanity:sync-to-production -- --apply` — copies an entire dataset over production
+- `pnpm sanity:promote -- --apply-production` — overwrites production event/network docs from legacy preview dataset
+
+**Example prompts for the client**
+
+```
+We need to update the homepage metrics headline. Open Sanity Studio, Home page → 3 · Metrics band, edit "Metrics title", and Publish. Do not run seed scripts.
+
+Create a branch `content/update-events-copy` from main. Update only the events landing hero in Sanity schema defaults if needed, or tell me to edit Events landing in Studio. Open a PR when done; do not push to main directly.
+
+Fix a bug in the contact form: branch from main named `fix/contact-validation`, fix only the contact API validation, run pnpm typecheck && pnpm test, then open a PR.
+```
+
+**Branch naming:** `fix/…`, `feat/…`, or `content/…` — one topic per branch. Delete after merge.
+
 ---
 
 ## Tech stack
@@ -167,13 +197,14 @@ Starts the Node server that serves the built SPA and API (default port from `POR
 | `pnpm dev` | Vite dev server (hot reload) + Express middleware |
 | `pnpm build` | Build SPA, Node server bundle, and `api/index.js` |
 | `pnpm start` | Run production Node server locally (`dist/server/node-build.mjs`) |
-| `pnpm sanity:seed` | Full seed — singletons, events, stories, directories, logo marquees, careers image scroll, membership copy aligned with `/membership` (deletes/replaces advisors & alumni) |
-| `pnpm sanity:seed:starters` | Safe starter seed — terms, privacy, CMS guide, consulting/diagnostic shells (no directory wipe) |
+| `pnpm sanity:seed` | **Destructive on production** — full seed: singletons, events, stories, directories (replaces advisors & alumni) |
+| `pnpm sanity:seed:starters` | Safer starter seed — terms, privacy, CMS guide only (no directory wipe) |
 | `pnpm sanity:seed:story-filters` | Seed story category tags (Founder Story, Industry Insight, Program Update) — safe to re-run |
 | `pnpm sanity:migrate:story-seo` | Migrate story SEO fields to `seoFields` shape and default titles — safe to re-run |
 | `pnpm sanity:cleanup` | Remove obsolete docs + duplicate singletons/slugs (`scripts/sanity-cleanup.ts`) |
 
-After schema changes, run **`pnpm sanity:seed`** or **`pnpm sanity:seed:starters`** on **production** (with `SANITY_API_WRITE_TOKEN`) so www does not rely on code fallbacks.
+After schema changes, run **`pnpm sanity:seed:starters`** on **production** if new singleton shells are needed. Avoid **`pnpm sanity:seed`** on production unless you intend to reset CMS content to code defaults.
+
 | `pnpm test` | Vitest |
 | `pnpm typecheck` | TypeScript (`tsc`) |
 | `pnpm format.fix` | Prettier write |
@@ -235,6 +266,17 @@ Set the same variables on **Vercel → Settings → Environment Variables** for 
 4. Server needs **`SANITY_API_READ_TOKEN`** (draft GROQ) for Presentation. The iframe sends `x-sanity-presentation: 1` so `/api/sanity/query` returns stega before the HttpOnly cookie is visible to JS.
 5. Seed content: `pnpm sanity:seed:starters` on **production** (requires `SANITY_API_WRITE_TOKEN`).
 6. After schema changes: `pnpm sanity:cleanup` on **production** (removes orphans and duplicate docs).
+
+### Studio deploy vs CMS content (why edits disappeared)
+
+| Command | Affects live copy in Sanity? |
+|---------|------------------------------|
+| `pnpm sanity:studio:deploy` | **No** — updates Studio UI, schemas, Presentation config only |
+| **Publish** in Studio | **Yes** — writes to the `production` dataset; www reads this |
+| `pnpm sanity:seed` | **Yes — overwrites** many documents with repo defaults |
+| `pnpm sanity:sync-to-production -- --apply` | **Yes — replaces** production docs from legacy `preview` dataset |
+
+If published Studio edits vanished after an engineering session, the usual cause was running a **seed** or **sync/promote** script—not `sanity deploy`. Deploying Studio is safe for editor content; seed/sync is not.
 
 **Deploy Studio** (Sanity CLI is installed under `website-cms/`, not globally — do not run bare `sanity deploy`):
 

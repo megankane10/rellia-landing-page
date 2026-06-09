@@ -6,6 +6,8 @@ import { cn } from "@/lib/utils"
 import { HEADING_CTA_BAND_COMPACT, HEADING_CTA_BAND_DEFAULT } from "@/lib/typography"
 import ScrollReveal from "@/components/ScrollReveal"
 import RelliaAction from "@/components/RelliaAction"
+import { cmsCleanText, cmsDisplayText, isVisualEditingPreview } from "@/lib/cmsStega"
+import { stegaClean } from "@sanity/client/stega"
 
 /**
  * One CTA action — either an internal route (`to`) or an external link / mailto (`href`).
@@ -61,7 +63,7 @@ function CtaActionButton({
 }) {
   const content = (
     <>
-      {action.label}
+      {cmsDisplayText(action.label)}
       <ArrowRight />
     </>
   )
@@ -94,7 +96,7 @@ function CtaActionButton({
 function CtaActionTextLink({ action }: { action: RelliaCtaAction }) {
   const content = (
     <>
-      {action.label}
+      {cmsDisplayText(action.label)}
       <ArrowRight className="h-4 w-4" aria-hidden />
     </>
   )
@@ -104,7 +106,7 @@ function CtaActionTextLink({ action }: { action: RelliaCtaAction }) {
 
   if (action.to) {
     return (
-      <Link to={action.to} className={linkClassName} aria-label={action.label}>
+      <Link to={action.to} className={linkClassName} aria-label={cmsCleanText(action.label)}>
         {content}
       </Link>
     )
@@ -114,7 +116,7 @@ function CtaActionTextLink({ action }: { action: RelliaCtaAction }) {
     <a
       href={action.href}
       className={linkClassName}
-      aria-label={action.label}
+      aria-label={cmsCleanText(action.label)}
       {...(action.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
     >
       {content}
@@ -138,7 +140,10 @@ export default function RelliaCta({
   aboveSectionTone,
   roundedClassName = "rounded-t-[48px] md:rounded-t-[80px]",
 }: RelliaCtaProps) {
-  const displayTitle = useMemo(() => stripCtaTitleMarkers(title), [title])
+  const displayTitle = useMemo(() => {
+    if (isVisualEditingPreview()) return cmsDisplayText(title)
+    return stripCtaTitleMarkers(stegaClean(title))
+  }, [title])
 
   useEffect(() => {
     const root = document.documentElement
@@ -201,7 +206,7 @@ export default function RelliaCta({
                   size === "compact" ? "text-base md:text-lg" : "text-lg md:text-xl lg:text-2xl",
                 )}
               >
-                {body}
+                {cmsDisplayText(body)}
               </p>
             ) : null}
 

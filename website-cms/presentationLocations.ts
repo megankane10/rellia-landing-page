@@ -15,6 +15,7 @@ export const presentationMainDocuments = defineDocuments([
   {route: '/membership', filter: singletonDoc('paymentPage')},
   {route: '/consulting', filter: singletonDoc('consultingPage')},
   {route: '/startup-diagnostic', filter: singletonDoc('diagnosticLandingPage')},
+  {route: '/diagnostic-survey', filter: singletonDoc('diagnosticSurveyContent')},
   {route: '/terms', filter: singletonDoc('termsPage')},
   {route: '/privacy', filter: singletonDoc('privacyPage')},
   {route: '/stories', filter: singletonDoc('storiesPage')},
@@ -36,6 +37,21 @@ export const presentationMainDocuments = defineDocuments([
     route: '/programs/:slug',
     filter: (ctx) =>
       `_type == "program" && slug.current == "${ctx.params.slug ?? ''}"`,
+  },
+  {
+    route: '/advisors/directory/:id',
+    filter: (ctx) =>
+      `_type == "advisor" && slug.current == "${ctx.params.id ?? ''}"`,
+  },
+  {
+    route: '/founders/alumni/:id',
+    filter: (ctx) =>
+      `_type == "alumniCompany" && slug.current == "${ctx.params.id ?? ''}"`,
+  },
+  {
+    route: '/:slug',
+    filter: (ctx) =>
+      `_type == "page" && slug.current == "${ctx.params.slug ?? ''}"`,
   },
 ])
 
@@ -190,5 +206,45 @@ export const presentationLocations = {
     resolve: (doc) => ({
       locations: [{title: doc?.title || 'Privacy policy', href: '/privacy'}],
     }),
+  }),
+  advisor: defineLocations({
+    select: {name: 'name', slug: 'slug.current'},
+    resolve: (doc) => {
+      const slug = typeof doc?.slug === 'string' ? doc.slug.trim() : ''
+      if (!slug) return {message: 'Add a URL key to preview this advisor.', tone: 'caution'}
+      return {
+        locations: [{title: doc?.name || 'Advisor', href: `/advisors/directory/${slug}`}],
+      }
+    },
+  }),
+  alumniCompany: defineLocations({
+    select: {name: 'name', slug: 'slug.current'},
+    resolve: (doc) => {
+      const slug = typeof doc?.slug === 'string' ? doc.slug.trim() : ''
+      if (!slug) return {message: 'Add a URL key to preview this company.', tone: 'caution'}
+      return {
+        locations: [{title: doc?.name || 'Alumni company', href: `/founders/alumni/${slug}`}],
+      }
+    },
+  }),
+  openRole: defineLocations({
+    select: {title: 'title', roleId: 'roleId.current'},
+    resolve: (doc) => {
+      const anchor = typeof doc?.roleId === 'string' ? doc.roleId.trim() : ''
+      const href = anchor ? `/careers#${anchor}` : '/careers'
+      return {
+        locations: [{title: doc?.title || 'Open role', href}],
+      }
+    },
+  }),
+  page: defineLocations({
+    select: {title: 'title', slug: 'slug.current'},
+    resolve: (doc) => {
+      const slug = typeof doc?.slug === 'string' ? doc.slug.trim() : ''
+      if (!slug) return {message: 'Add a slug to preview this page.', tone: 'caution'}
+      return {
+        locations: [{title: doc?.title || 'Page', href: `/${slug}`}],
+      }
+    },
   }),
 }
