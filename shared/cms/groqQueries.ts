@@ -44,7 +44,7 @@ const networkEngageFragment = `engageTitle,
 
 const networkWhyFragment = `whyTitle,
   whyDescription,
-  whyFeatures[]{ title, body, iconKey, "imageSrc": coalesce(image.asset->url, imageSrc) }`
+  whyFeatures[]{ title, body, iconKey, buttonLabel, buttonPath, "imageSrc": coalesce(image.asset->url, imageSrc) }`
 
 const networkCtaFragment = `ctaTitle,
   ctaBody,
@@ -362,6 +362,8 @@ export const diagnosticLandingPageQuery = `*[_id == "diagnosticLandingPage"][0]{
   readinessFeatures[]{
     title,
     description,
+    buttonLabel,
+    buttonPath,
     "imageSrc": coalesce(image.asset->url, imageSrc)
   },
   infographicTitle,
@@ -455,6 +457,8 @@ export const homePageQuery = `*[_id == "homePage"][0]{
   metricsHeading,
   metrics[]{ label, value, suffix },
   howItWorksSectionTitle,
+  howItWorksSectionDescription,
+  howItWorksSteps[]{ iconKey, title, description },
   whySectionTitle,
   whySectionDescription,
   testimonialsTitlePortable,

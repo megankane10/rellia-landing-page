@@ -1,5 +1,6 @@
 import {defineArrayMember, defineField} from 'sanity'
 import {GROUP_SEO} from './fieldGroups'
+import {imageUploadField, imageUrlFallbackField} from './imageFields'
 
 export const NETWORK_PAGE_GROUPS = [
   {name: 'hero', title: 'Hero', default: true},
@@ -58,14 +59,23 @@ export const networkFeatureItemMember = defineArrayMember({
   name: 'networkFeatureItem',
   fields: [
     defineField({name: 'title', type: 'string', validation: (Rule) => Rule.required()}),
-    defineField({name: 'body', type: 'text', rows: 3}),
-    defineField({name: 'iconKey', title: 'Icon', type: 'string'}),
     defineField({
-      name: 'image',
-      title: 'Card image',
-      type: 'image',
-      options: {hotspot: true},
-      description: 'Background image for this Why Rellia card.',
+      name: 'body',
+      title: 'Description',
+      type: 'text',
+      rows: 3,
+    }),
+    defineField({name: 'iconKey', title: 'Icon', type: 'string'}),
+    imageUploadField('image', 'Card image', {
+      description: 'Background image for this expandable image panel.',
+    }),
+    imageUrlFallbackField('imageSrc', 'Card image URL (fallback)'),
+    defineField({name: 'buttonLabel', title: 'Optional button label', type: 'string'}),
+    defineField({
+      name: 'buttonPath',
+      title: 'Optional button link',
+      type: 'string',
+      description: 'Internal path, e.g. /programs',
     }),
   ],
   preview: {select: {title: 'title', subtitle: 'body', media: 'image'}},
@@ -145,12 +155,26 @@ export const networkEngageBandFields = [
 ]
 
 export const networkWhyRelliaFields = [
-  defineField({name: 'whyTitle', title: 'Why Rellia section title', type: 'string', group: 'content'}),
-  defineField({name: 'whyDescription', title: 'Why Rellia section description', type: 'text', rows: 2, group: 'content'}),
+  defineField({
+    name: 'whyTitle',
+    title: 'Section heading',
+    type: 'string',
+    description: 'Headline above the four expandable image panels (WhyRellia component).',
+    group: 'content',
+  }),
+  defineField({
+    name: 'whyDescription',
+    title: 'Section intro',
+    type: 'text',
+    rows: 2,
+    description: 'Short paragraph under the heading.',
+    group: 'content',
+  }),
   defineField({
     name: 'whyFeatures',
-    title: 'Why Rellia features',
+    title: 'Feature cards (4 image panels)',
     type: 'array',
+    description: 'Up to four cards with background image, title, description, and optional button.',
     of: [networkFeatureItemMember],
     group: 'content',
   }),

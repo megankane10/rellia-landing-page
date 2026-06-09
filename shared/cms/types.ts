@@ -442,6 +442,8 @@ export type NetworkFeatureItem = {
   body?: string
   iconKey?: string
   imageSrc?: string
+  buttonLabel?: string
+  buttonPath?: string
 }
 
 export type NetworkEligibilityItem = {
@@ -606,6 +608,8 @@ export type DiagnosticReadinessFeature = {
   title: string
   description: string
   imageSrc?: string
+  buttonLabel?: string
+  buttonPath?: string
 }
 
 export type DiagnosticLandingPageContent = CmsSingletonPageContent & {
@@ -665,6 +669,12 @@ export type HomeWhyFeature = {
   buttonPath?: string
 }
 
+export type HowItWorksStepContent = {
+  iconKey: string
+  title: string
+  description: string
+}
+
 export type HomeTestimonial = {
   name: string
   role: string
@@ -696,6 +706,8 @@ export type HomePageContent = {
   ctaImageUrl: string
   ctaImageAlt: string
   howItWorksSectionTitle: string
+  howItWorksSectionDescription?: string
+  howItWorksSteps?: HowItWorksStepContent[]
   testimonialsTitlePortable: SanityPortableText
   testimonials: HomeTestimonial[]
   pathsTitle?: string

@@ -10,8 +10,8 @@ import { imageUploadField, imageUrlFallbackField } from '../shared/imageFields'
 const GROUP_HERO = { name: 'hero', title: '1 · Hero', default: true }
 const GROUP_PATHS = { name: 'paths', title: '2 · Paths section' }
 const GROUP_METRICS = { name: 'metrics', title: '3 · Metrics band' }
-const GROUP_WHY = { name: 'why', title: '4 · Why Rellia' }
-const GROUP_HOW = { name: 'howItWorks', title: '5 · How it works' }
+const GROUP_WHY = { name: 'why', title: '4 · Feature cards (image panels)' }
+const GROUP_HOW = { name: 'howItWorks', title: '5 · Focus areas (teal band)' }
 const GROUP_TESTIMONIALS = { name: 'testimonials', title: '6 · Testimonials' }
 const GROUP_CTA = { name: 'cta', title: '7 · Bottom CTA' }
 const GROUP_SECTIONS = { name: 'sections', title: 'Modular sections' }
@@ -144,25 +144,28 @@ export const homePage = defineType({
       ],
     }),
 
-    // —— 4 · Why Rellia ——
+    // —— 4 · Feature cards (WhyRellia image panels) ——
     defineField({
       name: 'whySectionTitle',
-      title: 'Section title',
+      title: 'Section heading',
       type: 'string',
+      description: 'Headline above the four expandable image panels.',
       group: 'why',
       initialValue: 'Why Rellia?',
     }),
     defineField({
       name: 'whySectionDescription',
-      title: 'Section description',
+      title: 'Section intro',
       type: 'text',
       rows: 2,
+      description: 'Short paragraph under the heading.',
       group: 'why',
     }),
     defineField({
       name: 'whyFeatures',
-      title: 'Feature cards',
+      title: 'Feature cards (4 image panels)',
       type: 'array',
+      description: 'Up to four cards with background image, title, description, and optional button.',
       group: 'why',
       of: [
         defineField({
@@ -174,12 +177,17 @@ export const homePage = defineType({
               name: 'iconKey',
               title: 'Icon key',
               type: 'string',
-              description: 'Example: target, userRound, bookOpen',
+              description: 'Optional metadata — not shown on the image panels.',
             }),
             defineField({ name: 'title', title: 'Title', type: 'string' }),
             defineField({ name: 'description', title: 'Description', type: 'text', rows: 3 }),
-            defineField({ name: 'buttonLabel', title: 'Button label', type: 'string' }),
-            defineField({ name: 'buttonPath', title: 'Button link', type: 'string' }),
+            defineField({ name: 'buttonLabel', title: 'Optional button label', type: 'string' }),
+            defineField({
+              name: 'buttonPath',
+              title: 'Optional button link',
+              type: 'string',
+              description: 'Internal path, e.g. /programs',
+            }),
             imageUploadField('image', 'Card image'),
             imageUrlFallbackField('imageSrc', 'Card image URL (fallback)'),
           ],
@@ -190,13 +198,47 @@ export const homePage = defineType({
       ],
     }),
 
-    // —— 5 · How it works ——
+    // —— 5 · Focus areas (teal HowItWorks band) ——
     defineField({
       name: 'howItWorksSectionTitle',
-      title: 'Section title',
+      title: 'Section heading',
       type: 'string',
       group: 'howItWorks',
-      initialValue: 'How does it work?',
+      initialValue: 'Where we focus',
+    }),
+    defineField({
+      name: 'howItWorksSectionDescription',
+      title: 'Section intro',
+      type: 'text',
+      rows: 2,
+      group: 'howItWorks',
+      initialValue:
+        "Health tech commercialization is complex, and generic start-up advice won't help you. These are the areas where Rellia can help.",
+    }),
+    defineField({
+      name: 'howItWorksSteps',
+      title: 'Focus area items',
+      type: 'array',
+      description: 'Icon + title + description grid inside the teal band.',
+      group: 'howItWorks',
+      of: [
+        defineField({
+          name: 'howItWorksStep',
+          title: 'Focus area',
+          type: 'object',
+          fields: [
+            defineField({
+              name: 'iconKey',
+              title: 'Icon',
+              type: 'string',
+              description: 'Lucide icon name, e.g. BriefcaseBusiness, Megaphone, Building2',
+            }),
+            defineField({ name: 'title', title: 'Title', type: 'string' }),
+            defineField({ name: 'description', title: 'Description', type: 'text', rows: 3 }),
+          ],
+          preview: { select: { title: 'title', subtitle: 'description' } },
+        }),
+      ],
     }),
 
     // —— 6 · Testimonials ——

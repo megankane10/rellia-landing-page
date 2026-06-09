@@ -1,3 +1,5 @@
+import { useMemo } from "react"
+import { BriefcaseBusiness } from "lucide-react"
 import HomeOrganizationJsonLd from "@/components/HomeOrganizationJsonLd";
 import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/HeroSection";
@@ -12,10 +14,20 @@ import { useHomePage } from "@/hooks/useCmsDocuments";
 import { DEFAULT_HOME_PAGE } from "@shared/cms/defaults";
 import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo";
 import { clampMetaDescription, clampMetaTitle, getSeoForPathname } from "@/config/seo";
+import { resolveNetworkIcon } from "@/lib/resolveNetworkIcon";
 
 export default function Index() {
   const { data } = useHomePage();
   const home = data ?? DEFAULT_HOME_PAGE;
+  const howItWorksSteps = useMemo(
+    () =>
+      (home.howItWorksSteps ?? DEFAULT_HOME_PAGE.howItWorksSteps ?? []).map((step) => ({
+        icon: resolveNetworkIcon(step.iconKey, BriefcaseBusiness),
+        title: step.title,
+        description: step.description,
+      })),
+    [home.howItWorksSteps],
+  )
   const homeRouteSeo = getSeoForPathname("/");
   useApplyCmsSeo(home.seo, {
     title: clampMetaTitle(homeRouteSeo.title),
@@ -36,7 +48,12 @@ export default function Index() {
           features={home.whyFeatures}
         />
 
-        <HowItWorks />
+        <HowItWorks
+          heading={home.howItWorksSectionTitle ?? "Where we focus"}
+          subheading={home.howItWorksSectionDescription}
+          steps={howItWorksSteps}
+          columns={3}
+        />
         <TestimonialsSection
           titlePortable={home.testimonialsTitlePortable}
           testimonials={home.testimonials}

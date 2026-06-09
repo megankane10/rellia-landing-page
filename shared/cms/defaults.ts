@@ -1401,7 +1401,65 @@ export const DEFAULT_HOME_PAGE: HomePageContent = {
     { label: "Health tech startups", value: 81 },
     { label: "Countries around the world", value: 11 },
   ],
-  howItWorksSectionTitle: "How does it work?",
+  howItWorksSectionTitle: "Where we focus",
+  howItWorksSectionDescription:
+    "Health tech commercialization is complex, and generic start-up advice won't help you. These are the areas where Rellia can help.",
+  howItWorksSteps: [
+    {
+      iconKey: "BriefcaseBusiness",
+      title: "Product Design and Development",
+      description:
+        "Turn your concept into a credible MVP with smart scope, architecture trade-offs, and interoperability guidance.",
+    },
+    {
+      iconKey: "ClipboardList",
+      title: "User Feedback",
+      description:
+        "Collect the proof that matters—usability, pilots, and validation—so you can iterate fast and show traction clearly.",
+    },
+    {
+      iconKey: "BadgeCheck",
+      title: "Regulatory and Legal Compliance",
+      description:
+        "Navigate privacy, security, IP, and classification with less guesswork—stay compliant without slowing the roadmap.",
+    },
+    {
+      iconKey: "DollarSign",
+      title: "Fundraising",
+      description:
+        "Sharpen your narrative, metrics, and materials—be ready for grants, angels, or VC with a diligence-proof data room.",
+    },
+    {
+      iconKey: "Megaphone",
+      title: "Marketing and Commercial Strategy",
+      description:
+        "Clarify positioning and go-to-market for healthcare—build trust and move prospects from interest to commitment.",
+    },
+    {
+      iconKey: "Building2",
+      title: "Navigating Healthcare Systems",
+      description:
+        "Understand procurement, reimbursement, and adoption realities—so your plan matches how health systems actually buy and roll out.",
+    },
+    {
+      iconKey: "ShieldCheck",
+      title: "Security and Trust",
+      description:
+        "Get ahead of security reviews with practical evidence, policies, and vendor requirements—without stalling progress.",
+    },
+    {
+      iconKey: "Activity",
+      title: "Operations and Scaling",
+      description:
+        "Set the operating rhythm—metrics, customer success, hiring, and finance—so you can scale what's working without chaos.",
+    },
+    {
+      iconKey: "Handshake",
+      title: "Partnership Readiness",
+      description:
+        "Prepare for pilots and partnerships with the right materials, stakeholders, and execution plan—so teams can say yes faster.",
+    },
+  ],
   whySectionTitle: "Why Rellia?",
   whySectionDescription:
     "A curated network and practical support system to help you move through the moments that make or break a healthcare startup.",
@@ -2517,6 +2575,22 @@ const mergeWhyFeatures = (
     }
   })
 
+const mergeHowItWorksSteps = (
+  fromCms: HomePageContent["howItWorksSteps"] | null | undefined,
+): HomePageContent["howItWorksSteps"] =>
+  DEFAULT_HOME_PAGE.howItWorksSteps!.map((defaultStep, index) => {
+    const cmsStep = compactList(fromCms)[index]
+    if (!cmsStep) return defaultStep
+
+    return {
+      ...defaultStep,
+      ...cmsStep,
+      iconKey: cmsStep.iconKey?.trim() || defaultStep.iconKey,
+      title: cmsStep.title?.trim() || defaultStep.title,
+      description: cmsStep.description?.trim() || defaultStep.description,
+    }
+  })
+
 export function mergeHomePage(partial: Partial<HomePageContent> | null | undefined): HomePageContent {
   const p = omitNullish((partial ?? {}) as Record<string, unknown>) as Partial<HomePageContent>
   const base = { ...DEFAULT_HOME_PAGE, ...p }
@@ -2529,6 +2603,13 @@ export function mergeHomePage(partial: Partial<HomePageContent> | null | undefin
   if (!base.whySectionDescription?.trim()) {
     base.whySectionDescription = DEFAULT_HOME_PAGE.whySectionDescription
   }
+  if (!base.howItWorksSectionTitle?.trim()) {
+    base.howItWorksSectionTitle = DEFAULT_HOME_PAGE.howItWorksSectionTitle
+  }
+  if (!base.howItWorksSectionDescription?.trim()) {
+    base.howItWorksSectionDescription = DEFAULT_HOME_PAGE.howItWorksSectionDescription
+  }
+  base.howItWorksSteps = mergeHowItWorksSteps(p.howItWorksSteps)
   const testimonials = compactList(p.testimonials)
   base.testimonials = testimonials.length > 0 ? testimonials : DEFAULT_HOME_PAGE.testimonials
   base.pathsCards = mergePathsCards(p.pathsCards)
@@ -3046,18 +3127,30 @@ export function mergeConsultingPage(
   return base
 }
 
+const mergeReadinessFeatures = (
+  fromCms: DiagnosticLandingPageContent["readinessFeatures"] | null | undefined,
+): DiagnosticLandingPageContent["readinessFeatures"] =>
+  (DEFAULT_DIAGNOSTIC_LANDING_PAGE.readinessFeatures ?? []).map((defaultFeature, index) => {
+    const cmsFeature = compactList(fromCms)[index]
+    if (!cmsFeature) return defaultFeature
+
+    return {
+      ...defaultFeature,
+      ...cmsFeature,
+      title: cmsFeature.title?.trim() || defaultFeature.title,
+      description: cmsFeature.description?.trim() || defaultFeature.description,
+      imageSrc: cmsFeature.imageSrc?.trim() || defaultFeature.imageSrc,
+      buttonLabel: cmsFeature.buttonLabel?.trim() || defaultFeature.buttonLabel,
+      buttonPath: cmsFeature.buttonPath?.trim() || defaultFeature.buttonPath,
+    }
+  })
+
 export function mergeDiagnosticLandingPage(
   partial: Partial<DiagnosticLandingPageContent> | null | undefined,
 ): DiagnosticLandingPageContent {
   const p = omitNullish((partial ?? {}) as Record<string, unknown>) as Partial<DiagnosticLandingPageContent>
   const base = { ...DEFAULT_DIAGNOSTIC_LANDING_PAGE, ...p }
-  const readinessFeatures = compactList(p.readinessFeatures).filter((f) =>
-    Boolean(f?.title?.trim() && f?.description?.trim()),
-  )
-  base.readinessFeatures =
-    readinessFeatures.length > 0
-      ? readinessFeatures
-      : DEFAULT_DIAGNOSTIC_LANDING_PAGE.readinessFeatures
+  base.readinessFeatures = mergeReadinessFeatures(p.readinessFeatures)
   const timelineSteps = compactList(p.timelineSteps).filter((s) =>
     Boolean(s?.title?.trim() && s?.description?.trim()),
   )

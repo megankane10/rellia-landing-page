@@ -32,6 +32,8 @@ const toWhyFeatures = (content: DiagnosticLandingPageContent): HomeWhyFeature[] 
     title: f.title,
     description: f.description,
     imageSrc: f.imageSrc,
+    buttonLabel: f.buttonLabel,
+    buttonPath: f.buttonPath,
   }))
 
 function DiagnosticFallback({ content }: { content: DiagnosticLandingPageContent }) {

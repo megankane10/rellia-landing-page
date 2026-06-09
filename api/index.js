@@ -65,7 +65,7 @@ var networkEngageFragment = `engageTitle,
   engageItems[]{ title, body, href, linkLabel, iconKey }`;
 var networkWhyFragment = `whyTitle,
   whyDescription,
-  whyFeatures[]{ title, body, iconKey, "imageSrc": coalesce(image.asset->url, imageSrc) }`;
+  whyFeatures[]{ title, body, iconKey, buttonLabel, buttonPath, "imageSrc": coalesce(image.asset->url, imageSrc) }`;
 var networkCtaFragment = `ctaTitle,
   ctaBody,
   ctaPrimaryLabel,
@@ -362,6 +362,8 @@ var diagnosticLandingPageQuery = `*[_id == "diagnosticLandingPage"][0]{
   readinessFeatures[]{
     title,
     description,
+    buttonLabel,
+    buttonPath,
     "imageSrc": coalesce(image.asset->url, imageSrc)
   },
   infographicTitle,
@@ -451,6 +453,8 @@ var homePageQuery = `*[_id == "homePage"][0]{
   metricsHeading,
   metrics[]{ label, value, suffix },
   howItWorksSectionTitle,
+  howItWorksSectionDescription,
+  howItWorksSteps[]{ iconKey, title, description },
   whySectionTitle,
   whySectionDescription,
   testimonialsTitlePortable,

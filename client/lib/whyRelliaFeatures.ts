@@ -5,6 +5,8 @@ type NetworkWhyFeatureInput = {
   body?: string
   iconKey?: string
   imageSrc?: string
+  buttonLabel?: string
+  buttonPath?: string
 }
 
 export const mapNetworkWhyFeatures = (
@@ -15,4 +17,6 @@ export const mapNetworkWhyFeatures = (
     description: item.body ?? "",
     iconKey: item.iconKey ?? "",
     imageSrc: item.imageSrc,
+    buttonLabel: item.buttonLabel,
+    buttonPath: item.buttonPath,
   }))

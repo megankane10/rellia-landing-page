@@ -519,6 +519,8 @@ export const mergeNetworkWhyFeatures = (
       body: cmsFeature.body?.trim() || defaultFeature.body,
       iconKey: cmsFeature.iconKey?.trim() || defaultFeature.iconKey,
       imageSrc: cmsFeature.imageSrc?.trim() || defaultFeature.imageSrc,
+      buttonLabel: cmsFeature.buttonLabel?.trim() || defaultFeature.buttonLabel,
+      buttonPath: cmsFeature.buttonPath?.trim() || defaultFeature.buttonPath,
     }
   })
 

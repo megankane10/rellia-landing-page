@@ -8,7 +8,7 @@ import {GROUP_SEO} from '../shared/fieldGroups'
 import {studioListMedia} from '../shared/studioListMedia'
 
 const GROUP_HERO = {name: 'hero', title: 'Hero', default: true}
-const GROUP_READINESS = {name: 'readiness', title: 'Readiness map'}
+const GROUP_READINESS = {name: 'readiness', title: 'Feature cards (image panels)'}
 const GROUP_INFOGRAPHIC = {name: 'infographic', title: 'Infographic'}
 const GROUP_TIMELINE = {name: 'timeline', title: 'Timeline'}
 const GROUP_CTA = {name: 'cta', title: 'Bottom CTA'}
@@ -20,7 +20,7 @@ export const diagnosticLandingPage = defineType({
   groups: [GROUP_HERO, GROUP_READINESS, GROUP_INFOGRAPHIC, GROUP_TIMELINE, GROUP_CTA, GROUP_SEO],
   fieldsets: [
     sectionDividerFieldset('heroDivider', 'Hero'),
-    sectionDividerFieldset('readinessDivider', 'Readiness map'),
+    sectionDividerFieldset('readinessDivider', 'Feature cards (image panels)'),
     sectionDividerFieldset('infographicDivider', 'Infographic'),
     sectionDividerFieldset('timelineDivider', 'Timeline'),
     sectionDividerFieldset('ctaDivider', 'Bottom CTA'),
@@ -84,17 +84,27 @@ export const diagnosticLandingPage = defineType({
     }),
     defineField({
       name: 'readinessTitle',
-      title: 'Section title',
+      title: 'Section heading',
       type: 'string',
+      description: 'Headline above the four expandable image panels.',
       initialValue: 'A complete readiness map',
       group: 'readiness',
       fieldset: 'readinessDivider',
     }),
-    defineField({name: 'readinessDescription', title: 'Section description', type: 'text', rows: 3, group: 'readiness', fieldset: 'readinessDivider'}),
+    defineField({
+      name: 'readinessDescription',
+      title: 'Section intro',
+      type: 'text',
+      rows: 3,
+      description: 'Short paragraph under the heading.',
+      group: 'readiness',
+      fieldset: 'readinessDivider',
+    }),
     defineField({
       name: 'readinessFeatures',
-      title: 'Feature cards',
+      title: 'Feature cards (4 image panels)',
       type: 'array',
+      description: 'Up to four cards with background image, title, description, and optional button.',
       group: 'readiness',
       fieldset: 'readinessDivider',
       of: [
@@ -106,6 +116,13 @@ export const diagnosticLandingPage = defineType({
             defineField({name: 'description', type: 'text', rows: 3, validation: (Rule) => Rule.required()}),
             defineField({name: 'image', type: 'image', options: {hotspot: true}}),
             defineField({name: 'imageSrc', title: 'Image URL (fallback)', type: 'string'}),
+            defineField({name: 'buttonLabel', title: 'Optional button label', type: 'string'}),
+            defineField({
+              name: 'buttonPath',
+              title: 'Optional button link',
+              type: 'string',
+              description: 'Internal path, e.g. /diagnostic-survey',
+            }),
           ],
           preview: {select: {title: 'title', subtitle: 'description', media: 'image'}},
         }),
