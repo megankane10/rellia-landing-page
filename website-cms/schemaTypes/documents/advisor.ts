@@ -57,8 +57,9 @@ export const advisor = defineType({
     defineField({
       name: 'bio',
       title: 'About the advisor',
-      type: 'advisorPortableText',
-      description: 'Paragraphs and bullet lists only. This is the last profile section on the page.',
+      type: 'portableText',
+      description:
+        'Full rich text — headings, images, quote boxes, CTA boxes, carousels, and video. Shown as the last profile section on the page.',
       group: 'profile',
     }),
     defineField({

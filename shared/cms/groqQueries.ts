@@ -924,13 +924,7 @@ export const advisorsQuery = `*[_type == "advisor" && !(_id in path("drafts.**")
   "photoSrc": coalesce(photo.asset->url, photoSrc),
   email,
   socialLinks[]{ platform, label, url },
-  bio[]{
-    ...,
-    _type == "image" => {
-      ...,
-      "url": asset->url
-    }
-  }
+  bio${portableRichTextBlocksFragment}
 }`;
 
 export const alumniCompaniesQuery = `*[_type == "alumniCompany" && !(_id in path("drafts.**"))]{

@@ -1,4 +1,4 @@
-import {defineArrayMember, defineField, defineType} from 'sanity'
+import {defineField, defineType} from 'sanity'
 
 export const marketingPage = defineType({
   name: 'marketingPage',
@@ -15,13 +15,8 @@ export const marketingPage = defineType({
     defineField({name: 'subtitle', type: 'text', rows: 3}),
     defineField({
       name: 'body',
-      type: 'array',
+      type: 'portableText',
       title: 'Body',
-      of: [
-        defineArrayMember({type: 'block'}),
-        defineArrayMember({type: 'bodyCtaBox'}),
-        defineArrayMember({type: 'portableImageCarousel'}),
-      ],
     }),
   ],
 })

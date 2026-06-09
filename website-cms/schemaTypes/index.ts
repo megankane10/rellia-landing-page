@@ -38,7 +38,6 @@ import {logoMarqueeItem} from './objects/logoMarqueeItem'
 import {siteDefaultSeo} from './objects/siteDefaultSeo'
 import {studioGuide} from './documents/studioGuide'
 import {navItem} from './objects/navItem'
-import {advisorPortableText} from './objects/advisorPortableText'
 import {portableRichText} from './objects/portableRichText'
 import {portableText} from './objects/portableText'
 import {linkAnnotation} from './objects/linkAnnotation'
@@ -123,7 +122,6 @@ export const schemaTypes = [
   builderCtaAction,
   customLinkButton,
   portableText,
-  advisorPortableText,
   portableRichText,
   inlineHeroHeadline,
   heroSection,
