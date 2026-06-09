@@ -4,7 +4,8 @@
  *
  * Restrictions (env):
  * - SANITY_ALLOWED_DATASETS — comma-separated names; if set, any other dataset is rejected.
- * - SANITY_ENFORCE_VERCEL_DATASET=true — on Vercel, bind dataset to VERCEL_ENV.
+ * - SANITY_ENFORCE_VERCEL_DATASET=true — on Vercel, bind dataset to deployment:
+ *   production deploy → production; preview deploy → SANITY_VERCEL_PREVIEW_DATASET (default production).
  */
 
 const parseList = (raw: string | undefined): string[] =>
@@ -42,8 +43,14 @@ export const resolveSanityApiConfig = (): ResolveSanityApiConfigResult => {
 
   if (enforceVercel && process.env.VERCEL) {
     const ve = process.env.VERCEL_ENV?.trim()
-    if (ve === "preview") dataset = "preview"
     if (ve === "production") dataset = "production"
+    if (ve === "preview") {
+      dataset =
+        process.env.SANITY_VERCEL_PREVIEW_DATASET?.trim() ||
+        process.env.SANITY_API_DATASET?.trim() ||
+        process.env.VITE_SANITY_DATASET?.trim() ||
+        "production"
+    }
   }
 
   const explicitAllowed = parseList(process.env.SANITY_ALLOWED_DATASETS)
@@ -67,6 +74,10 @@ export const resolveSanityApiConfig = (): ResolveSanityApiConfigResult => {
 
   return { status: "missing_project" }
 }
+
+/** Vercel preview deployment (relliahealth.vercel.app, PR previews). */
+export const isVercelPreviewDeployment = (): boolean =>
+  Boolean(process.env.VERCEL) && process.env.VERCEL_ENV?.trim() === "preview"
 
 export const trySanityApiConfig = (): SanityApiConfig | null => {
   const r = resolveSanityApiConfig()

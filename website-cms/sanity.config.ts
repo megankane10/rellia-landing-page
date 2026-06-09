@@ -33,11 +33,11 @@ const previewOrigin = (
 export default defineConfig({
   name: 'default',
   title: 'Rellia Web Studio',
-  subtitle: 'Preview staging — Publish syncs to relliahealth.com',
+  subtitle: 'Production CMS — drafts on Vercel preview, Publish updates www',
   icon: RelliaStudioIcon,
 
   projectId: process.env.SANITY_STUDIO_PROJECT_ID || 'ggbt0o98',
-  dataset: process.env.SANITY_STUDIO_DATASET || 'preview',
+  dataset: process.env.SANITY_STUDIO_DATASET || 'production',
 
   theme,
 
@@ -52,7 +52,7 @@ export default defineConfig({
       previewUrl: {
         // If Studio is deployed (https) and previewUrl is http://localhost, the iframe will be blocked as mixed content.
         // For local Studio dev, set SANITY_STUDIO_PREVIEW_URL=http://localhost:5173
-        // Must match the Vercel preview deployment that has SANITY_API_READ_TOKEN configured.
+        // Vercel preview deploy: production dataset + drafts perspective (SANITY_API_READ_TOKEN required).
         origin: previewOrigin,
         initial: previewOrigin,
         previewMode: {

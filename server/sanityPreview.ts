@@ -1,5 +1,6 @@
 import type express from "express"
 import { perspectiveCookieName } from "@sanity/preview-url-secret/constants"
+import { isVercelPreviewDeployment } from "../shared/cms/sanityEnv"
 
 export const SANITY_STUDIO_FALLBACK_URL = "https://relliahealth.sanity.studio"
 
@@ -26,3 +27,8 @@ export const isPresentationPreviewRequest = (
   if (!siteOriginsAllowed) return false
   return (req.get(SANITY_PRESENTATION_HEADER) || "").trim() === "1"
 }
+
+/** Drafts perspective: Presentation iframe, draft-mode cookie, or Vercel preview deploy. */
+export const shouldUseSanityDraftsPerspective = (
+  isPreviewSession: boolean,
+): boolean => isPreviewSession || isVercelPreviewDeployment()

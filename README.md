@@ -14,7 +14,9 @@ React SPA for **Rellia Health**, connecting founders, clinicians, and health sys
 | Branch | Git role | Typical Vercel deploy | Sanity dataset (`VITE_SANITY_DATASET`) |
 |--------|----------|----------------------|----------------------------------------|
 | **`main`** | Production code | `www.relliahealth.com` | **`production`** |
-| **`Additions`** | Integration / review before `main` | `relliahealth.vercel.app` (preview) | **`preview`** |
+| **`Additions`** | Integration / review before `main` | `relliahealth.vercel.app` (preview) | **`production`** + **drafts** perspective |
+
+The legacy **`preview`** dataset is optional for local seed experiments only.
 
 Do day-to-day work on **`Additions`**. After review, merge into **`main`** for production.
 
@@ -24,10 +26,11 @@ Sanity Studio at [relliahealth.sanity.studio](https://relliahealth.sanity.studio
 
 | Who | Dataset | Where changes appear |
 |-----|---------|----------------------|
-| **Editors (Studio)** | **`production`** | `www.relliahealth.com` after Publish |
-| **Developers (Additions preview deploy)** | **`preview`** | `relliahealth.vercel.app` only |
+| **Editors (Studio)** | **`production`** | **Publish** → `www.relliahealth.com` (published only) |
+| **Editors (draft review)** | **`production`** + drafts | `relliahealth.vercel.app` or Studio **Presentation** |
+| **Developers (Additions)** | **`production`** + drafts | Code QA on Vercel preview URL |
 
-Use **Presentation** in Studio to preview drafts on the live site before publishing. The admin **Content drafts** panel lists unpublished draft documents still being edited.
+Use **Presentation** in Studio (iframe → `relliahealth.vercel.app`) to preview unpublished work. The admin **Content drafts** panel lists draft documents.
 
 **One-time migration** (if staging had content production lacks):
 
@@ -61,7 +64,7 @@ Use this when transferring the site to the Rellia team. Items marked **editor** 
 | # | Task | Why it matters |
 |---|------|----------------|
 | 1 | **Vercel production env** — `VITE_SANITY_DATASET=production`, `SANITY_API_DATASET=production`, `SANITY_API_READ_TOKEN`, `SANITY_ENFORCE_VERCEL_DATASET=true`, Supabase + Stripe keys from `.env.example` | Live site reads the correct CMS dataset and APIs work |
-| 2 | **Vercel preview env** — same keys with `preview` dataset; `SANITY_STUDIO_PREVIEW_URL` = preview deploy URL | Staging matches Studio default dataset |
+| 2 | **Vercel preview env** — `production` dataset + `SANITY_VERCEL_PREVIEW_DATASET=production`; `SANITY_STUDIO_PREVIEW_URL` = `https://relliahealth.vercel.app` | Draft review on Vercel; www stays published-only |
 | 3 | **Sanity Studio** — deployed (`pnpm sanity:studio:deploy`); Looker embed URL in **Site settings → Analytics** | Editors use https://relliahealth.sanity.studio |
 | 4 | **Seed starter content** — `pnpm sanity:seed:starters` on **production** (terms, privacy, guide) if singletons are empty | Editors see legal pages in Studio |
 | 5 | **Production CMS audit** — events have `startsAt`/`endsAt`; publish only what should be on www | Prevents wrong dates or ghost events on live site |

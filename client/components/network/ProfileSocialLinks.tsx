@@ -3,7 +3,7 @@ import {
   LinkedInFilled,
 } from "@/components/icons/SocialIcons"
 import { cn } from "@/lib/utils"
-import { emailToSocialLink } from "@shared/cms/socialLinks"
+import { emailToSocialLink, resolveSocialPlatform } from "@shared/cms/socialLinks"
 import { Mail } from "lucide-react"
 
 export type ProfileSocialLink = {
@@ -19,7 +19,7 @@ type ProfileSocialLinksProps = {
   iconClassName?: string
 }
 
-type SocialKind = "linkedin" | "website" | "email" | "generic"
+type SocialKind = "linkedin" | "website" | "instagram" | "x" | "youtube" | "email" | "generic"
 
 const normalizeUrl = (url: string | undefined, platform: string): string | undefined => {
   const trimmed = url?.trim()
@@ -45,7 +45,7 @@ export const ProfileSocialLinks = ({
 
   if (Array.isArray(links)) {
     for (const link of links) {
-      const platform = (link.platform ?? "other").toLowerCase()
+      const platform = resolveSocialPlatform(link.platform, link.url, link.label)
       const href = normalizeUrl(link.url, platform)
       if (!href) continue
       const label =
@@ -54,17 +54,29 @@ export const ProfileSocialLinks = ({
           ? "LinkedIn profile"
           : platform === "website"
             ? "Website"
-            : platform === "email"
-              ? "Email"
-              : "External link")
+            : platform === "instagram"
+              ? "Instagram"
+              : platform === "x"
+                ? "X profile"
+                : platform === "youtube"
+                  ? "YouTube"
+                  : platform === "email"
+                    ? "Email"
+                    : "External link")
       const kind: SocialKind =
         platform === "linkedin"
           ? "linkedin"
           : platform === "website"
             ? "website"
-            : platform === "email"
-              ? "email"
-              : "generic"
+            : platform === "instagram"
+              ? "instagram"
+              : platform === "x"
+                ? "x"
+                : platform === "youtube"
+                  ? "youtube"
+                  : platform === "email"
+                    ? "email"
+                    : "generic"
       push(`${platform}-${href}`, href, label, kind)
     }
   }
@@ -97,7 +109,7 @@ export const ProfileSocialLinks = ({
           ) : item.kind === "email" ? (
             <Mail className={iconClassName} />
           ) : (
-            <GlobeFilled className={iconClassName} />
+            <GlobeFilled className={iconClassName} aria-hidden="true" />
           )}
         </a>
       ))}

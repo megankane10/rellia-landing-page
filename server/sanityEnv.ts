@@ -1,4 +1,5 @@
 export {
+  isVercelPreviewDeployment,
   resolveSanityApiConfig,
   resolveAdminSanityDataset,
   trySanityApiConfig,

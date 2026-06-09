@@ -14,12 +14,13 @@ This guide is for non-technical editors who manage the marketing site through **
 
 ### Preview vs live website
 
-| Environment | Dataset | Where you check |
-|-------------|---------|-----------------|
-| **Preview** (Vercel “Additions” URL) | `preview` | Safe place to review changes before the public site updates |
-| **Production** (www.relliahealth.com) | `production` | Live marketing site |
+| Where | What you see |
+|-------|----------------|
+| **www.relliahealth.com** | **Published** content only (live site) |
+| **relliahealth.vercel.app** | **Drafts + published** from the same production dataset — review before Publish |
+| **Studio → Presentation** | Same draft preview as the Vercel URL (iframe) |
 
-Publishing in Studio updates the dataset tied to that environment. After engineering promotes content from preview to production, publish again on production if needed.
+**Publish** in Studio pushes changes to www. Use the Vercel URL or Presentation to check unpublished work first.
 
 **Page visibility** (Live / Hidden / Placeholder) is separate from Publish. A page can be published in Studio but still show “coming soon” on the site if visibility is not **Live**. Check **Publishing → Page visibility** on each page singleton.
 
@@ -44,7 +45,7 @@ Publishing in Studio updates the dataset tied to that environment. After enginee
 
 ### Homepage hero
 
-**Pages → Home** → Hero tab. Update headline, subtitle, CTAs, and hero image. Publish, then review on the preview URL.
+**Pages → Home** → Hero tab. Update headline, subtitle, CTAs, and hero image. Use **Presentation** to preview, then **Publish** and confirm on www.
 
 ### Add or edit a program
 
@@ -105,9 +106,9 @@ Use this checklist when a large CMS or code update lands on `main`:
 2. **Content sync** — If Studio looks empty or stale, ask engineering to run:
    - `pnpm sanity:seed` (preview dataset), or
    - sync per [sanity-dataset-sync-guide.md](./sanity-dataset-sync-guide.md)
-3. **Publish** changed documents in Studio (preview dataset).
-4. **Review on preview URL** — Use the Vercel Additions / preview link, not www.
-5. **Promote to production** — Engineering runs `pnpm sanity:sync-to-production` or `pnpm sanity:promote` when you sign off.
+3. **Publish** changed documents in Studio (production dataset → www).
+4. **Review on www** — Spot-check the live pages you changed.
+5. **Preview deploy** — Engineering may sync `preview` for `relliahealth.vercel.app` if needed; editors do not need to wait on this.
 6. **Careers** — Enable **Show open roles on production** when real listings should go live on www.
 7. **Final check** — Spot-check homepage, careers, apply, consulting, and any new custom pages on www.
 

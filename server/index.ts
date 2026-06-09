@@ -17,8 +17,13 @@ import {
   isSanityStudioReferer,
   hasSanityPreviewPerspectiveCookie,
   resolveSanityStudioUrl,
+  shouldUseSanityDraftsPerspective,
 } from "./sanityPreview";
-import { resolveAdminSanityDataset, resolveSanityApiConfig } from "./sanityEnv";
+import {
+  isVercelPreviewDeployment,
+  resolveAdminSanityDataset,
+  resolveSanityApiConfig,
+} from "./sanityEnv";
 import {
   buildCsrfSetCookie,
   issueCsrfToken,
@@ -426,17 +431,25 @@ export function createServer() {
       const entry = SANITY_QUERY_WHITELIST.events;
 
       try {
+        const useDrafts = isVercelPreviewDeployment();
+        if (useDrafts && !token) {
+          res.status(501).json({ error: "Missing SANITY_API_READ_TOKEN" });
+          return;
+        }
         const publicClient = createClient({
           projectId,
           dataset,
           ...(token ? { token } : {}),
           useCdn: false,
           apiVersion: "2024-01-01",
+          ...(useDrafts ? { perspective: "drafts" as const } : {}),
         });
         const data = await publicClient.fetch(entry.query, {});
         res.setHeader(
           "Cache-Control",
-          "public, s-maxage=60, stale-while-revalidate=120",
+          useDrafts
+            ? "private, no-store"
+            : "public, s-maxage=60, stale-while-revalidate=120",
         );
         res.status(200).json({
           data: stripSanityMetadata(data, "events"),
@@ -484,12 +497,18 @@ export function createServer() {
       const entry = SANITY_QUERY_WHITELIST.eventBySlug;
 
       try {
+        const useDrafts = isVercelPreviewDeployment();
+        if (useDrafts && !token) {
+          res.status(501).json({ error: "Missing SANITY_API_READ_TOKEN" });
+          return;
+        }
         const publicClient = createClient({
           projectId,
           dataset,
           ...(token ? { token } : {}),
           useCdn: false,
           apiVersion: "2024-01-01",
+          ...(useDrafts ? { perspective: "drafts" as const } : {}),
         });
         const data = await publicClient.fetch(entry.query, { slug });
         if (!data) {
@@ -498,7 +517,9 @@ export function createServer() {
         }
         res.setHeader(
           "Cache-Control",
-          "public, s-maxage=60, stale-while-revalidate=120",
+          useDrafts
+            ? "private, no-store"
+            : "public, s-maxage=60, stale-while-revalidate=120",
         );
         res.status(200).json({
           data: stripSanityMetadata(data, "eventBySlug"),
@@ -827,9 +848,10 @@ export function createServer() {
       cookie,
       allowBrowserOrigin(req, previewAndSiteOrigins),
     );
+    const useDraftsPerspective = shouldUseSanityDraftsPerspective(isPreviewSession);
     const token = process.env.SANITY_API_READ_TOKEN?.trim();
 
-    if (!isDev && !isPreviewSession) {
+    if (!isDev && !isPreviewSession && !isVercelPreviewDeployment()) {
       const hasProvenance =
         Boolean((req.get("origin") || "").trim()) ||
         Boolean((req.get("referer") || "").trim());
@@ -840,8 +862,8 @@ export function createServer() {
     }
 
     const ip = getClientIp(req);
-    const rateMap = isPreviewSession ? sanityPreviewRate : sanityPublishedRate;
-    const rateMax = isPreviewSession
+    const rateMap = useDraftsPerspective ? sanityPreviewRate : sanityPublishedRate;
+    const rateMax = useDraftsPerspective
       ? SANITY_PREVIEW_MAX_PER_MIN
       : SANITY_PUBLISHED_MAX_PER_MIN;
     if (!applyRateLimit(rateMap, ip, rateMax)) {
@@ -899,7 +921,7 @@ export function createServer() {
     const fetchParams = paramsParsed.data as Record<string, unknown>;
 
     try {
-      if (isPreviewSession) {
+      if (useDraftsPerspective) {
         if (!token) {
           res.status(501).json({ error: "Missing SANITY_API_READ_TOKEN" });
           return;
@@ -911,7 +933,9 @@ export function createServer() {
           useCdn: false,
           apiVersion: "2024-01-01",
           perspective: "drafts",
-          stega: { enabled: true, studioUrl: resolveSanityStudioUrl() },
+          ...(isPreviewSession
+            ? { stega: { enabled: true, studioUrl: resolveSanityStudioUrl() } }
+            : {}),
         });
         const data = await previewClient.fetch(entry.query, fetchParams);
         res.status(200).json({

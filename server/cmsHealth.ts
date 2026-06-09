@@ -8,7 +8,14 @@ const resolveExpectedDataset = (): string | null => {
   if (!process.env.VERCEL) return null
   const ve = process.env.VERCEL_ENV?.trim()
   if (ve === "production") return "production"
-  if (ve === "preview") return "preview"
+  if (ve === "preview") {
+    return (
+      process.env.SANITY_VERCEL_PREVIEW_DATASET?.trim() ||
+      process.env.SANITY_API_DATASET?.trim() ||
+      process.env.VITE_SANITY_DATASET?.trim() ||
+      "production"
+    )
+  }
   return null
 }
 

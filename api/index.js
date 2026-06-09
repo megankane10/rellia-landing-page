@@ -640,7 +640,6 @@ var eventsQuery = `*[_type == "event" && status != "hidden" && !(_id in path("dr
   "imageSrc": image.asset->url,
   "hostImageSrc": hostImage.asset->url,
   href,
-  comingSoon,
   buttonText,
   location,
   lumaEventId,
@@ -664,7 +663,6 @@ var eventBySlugQuery = `*[_type == "event" && slug.current == $slug && !(_id in 
   "imageSrc": image.asset->url,
   "hostImageSrc": hostImage.asset->url,
   href,
-  comingSoon,
   buttonText,
   location,
   lumaEventId,
@@ -1025,19 +1023,6 @@ var stripSanityMetadata = (value, queryId) => {
 
 // server/sanityPreview.ts
 import { perspectiveCookieName } from "@sanity/preview-url-secret/constants";
-var SANITY_STUDIO_FALLBACK_URL = "https://relliahealth.sanity.studio";
-var resolveSanityStudioUrl = () => process.env.SANITY_STUDIO_URL?.trim() || SANITY_STUDIO_FALLBACK_URL;
-var isSanityStudioReferer = (req) => {
-  const referer = (req.get("referer") || "").toLowerCase();
-  return referer.includes(".sanity.studio") || referer.includes(".sanity.io");
-};
-var hasSanityPreviewPerspectiveCookie = (cookieHeader) => cookieHeader.includes(`${perspectiveCookieName}=`);
-var SANITY_PRESENTATION_HEADER = "x-sanity-presentation";
-var isPresentationPreviewRequest = (req, cookieHeader, siteOriginsAllowed) => {
-  if (hasSanityPreviewPerspectiveCookie(cookieHeader)) return true;
-  if (!siteOriginsAllowed) return false;
-  return (req.get(SANITY_PRESENTATION_HEADER) || "").trim() === "1";
-};
 
 // shared/cms/sanityEnv.ts
 var parseList = (raw) => (raw ?? "").split(",").map((s) => s.trim()).filter(Boolean);
@@ -1048,8 +1033,10 @@ var resolveSanityApiConfig = () => {
   const enforceVercel = process.env.SANITY_ENFORCE_VERCEL_DATASET === "true" || process.env.SANITY_ENFORCE_VERCEL_DATASET === "1";
   if (enforceVercel && process.env.VERCEL) {
     const ve = process.env.VERCEL_ENV?.trim();
-    if (ve === "preview") dataset = "preview";
     if (ve === "production") dataset = "production";
+    if (ve === "preview") {
+      dataset = process.env.SANITY_VERCEL_PREVIEW_DATASET?.trim() || process.env.SANITY_API_DATASET?.trim() || process.env.VITE_SANITY_DATASET?.trim() || "production";
+    }
   }
   const explicitAllowed = parseList(process.env.SANITY_ALLOWED_DATASETS);
   if (explicitAllowed.length > 0 && !explicitAllowed.includes(dataset)) {
@@ -1066,6 +1053,7 @@ var resolveSanityApiConfig = () => {
   }
   return { status: "missing_project" };
 };
+var isVercelPreviewDeployment = () => Boolean(process.env.VERCEL) && process.env.VERCEL_ENV?.trim() === "preview";
 var resolveAdminSanityDataset = (requested) => {
   const normalized = (requested?.trim() || "production").toLowerCase();
   if (normalized !== "production" && normalized !== "preview") return null;
@@ -1073,6 +1061,22 @@ var resolveAdminSanityDataset = (requested) => {
   if (allowed.length > 0 && !allowed.includes(normalized)) return null;
   return normalized;
 };
+
+// server/sanityPreview.ts
+var SANITY_STUDIO_FALLBACK_URL = "https://relliahealth.sanity.studio";
+var resolveSanityStudioUrl = () => process.env.SANITY_STUDIO_URL?.trim() || SANITY_STUDIO_FALLBACK_URL;
+var isSanityStudioReferer = (req) => {
+  const referer = (req.get("referer") || "").toLowerCase();
+  return referer.includes(".sanity.studio") || referer.includes(".sanity.io");
+};
+var hasSanityPreviewPerspectiveCookie = (cookieHeader) => cookieHeader.includes(`${perspectiveCookieName}=`);
+var SANITY_PRESENTATION_HEADER = "x-sanity-presentation";
+var isPresentationPreviewRequest = (req, cookieHeader, siteOriginsAllowed) => {
+  if (hasSanityPreviewPerspectiveCookie(cookieHeader)) return true;
+  if (!siteOriginsAllowed) return false;
+  return (req.get(SANITY_PRESENTATION_HEADER) || "").trim() === "1";
+};
+var shouldUseSanityDraftsPerspective = (isPreviewSession) => isPreviewSession || isVercelPreviewDeployment();
 
 // server/csrf.ts
 import { randomBytes } from "node:crypto";
@@ -1396,7 +1400,9 @@ var resolveExpectedDataset = () => {
   if (!process.env.VERCEL) return null;
   const ve = process.env.VERCEL_ENV?.trim();
   if (ve === "production") return "production";
-  if (ve === "preview") return "preview";
+  if (ve === "preview") {
+    return process.env.SANITY_VERCEL_PREVIEW_DATASET?.trim() || process.env.SANITY_API_DATASET?.trim() || process.env.VITE_SANITY_DATASET?.trim() || "production";
+  }
   return null;
 };
 var cmsHealthHandler = async (_req, res) => {
@@ -1789,17 +1795,23 @@ function createServer() {
       const token = process.env.SANITY_API_READ_TOKEN?.trim();
       const entry = SANITY_QUERY_WHITELIST.events;
       try {
+        const useDrafts = isVercelPreviewDeployment();
+        if (useDrafts && !token) {
+          res.status(501).json({ error: "Missing SANITY_API_READ_TOKEN" });
+          return;
+        }
         const publicClient = createClient3({
           projectId,
           dataset,
           ...token ? { token } : {},
           useCdn: false,
-          apiVersion: "2024-01-01"
+          apiVersion: "2024-01-01",
+          ...useDrafts ? { perspective: "drafts" } : {}
         });
         const data = await publicClient.fetch(entry.query, {});
         res.setHeader(
           "Cache-Control",
-          "public, s-maxage=60, stale-while-revalidate=120"
+          useDrafts ? "private, no-store" : "public, s-maxage=60, stale-while-revalidate=120"
         );
         res.status(200).json({
           data: stripSanityMetadata(data, "events")
@@ -1840,12 +1852,18 @@ function createServer() {
       const token = process.env.SANITY_API_READ_TOKEN?.trim();
       const entry = SANITY_QUERY_WHITELIST.eventBySlug;
       try {
+        const useDrafts = isVercelPreviewDeployment();
+        if (useDrafts && !token) {
+          res.status(501).json({ error: "Missing SANITY_API_READ_TOKEN" });
+          return;
+        }
         const publicClient = createClient3({
           projectId,
           dataset,
           ...token ? { token } : {},
           useCdn: false,
-          apiVersion: "2024-01-01"
+          apiVersion: "2024-01-01",
+          ...useDrafts ? { perspective: "drafts" } : {}
         });
         const data = await publicClient.fetch(entry.query, { slug });
         if (!data) {
@@ -1854,7 +1872,7 @@ function createServer() {
         }
         res.setHeader(
           "Cache-Control",
-          "public, s-maxage=60, stale-while-revalidate=120"
+          useDrafts ? "private, no-store" : "public, s-maxage=60, stale-while-revalidate=120"
         );
         res.status(200).json({
           data: stripSanityMetadata(data, "eventBySlug")
@@ -2119,8 +2137,9 @@ function createServer() {
       cookie,
       allowBrowserOrigin(req, previewAndSiteOrigins)
     );
+    const useDraftsPerspective = shouldUseSanityDraftsPerspective(isPreviewSession);
     const token = process.env.SANITY_API_READ_TOKEN?.trim();
-    if (!isDev && !isPreviewSession) {
+    if (!isDev && !isPreviewSession && !isVercelPreviewDeployment()) {
       const hasProvenance = Boolean((req.get("origin") || "").trim()) || Boolean((req.get("referer") || "").trim());
       if (!hasProvenance) {
         res.status(403).json({ error: "Forbidden" });
@@ -2128,8 +2147,8 @@ function createServer() {
       }
     }
     const ip = getClientIp(req);
-    const rateMap = isPreviewSession ? sanityPreviewRate : sanityPublishedRate;
-    const rateMax = isPreviewSession ? SANITY_PREVIEW_MAX_PER_MIN : SANITY_PUBLISHED_MAX_PER_MIN;
+    const rateMap = useDraftsPerspective ? sanityPreviewRate : sanityPublishedRate;
+    const rateMax = useDraftsPerspective ? SANITY_PREVIEW_MAX_PER_MIN : SANITY_PUBLISHED_MAX_PER_MIN;
     if (!applyRateLimit(rateMap, ip, rateMax)) {
       res.status(429).json({ error: "Too many requests. Please try again shortly." });
       return;
@@ -2175,7 +2194,7 @@ function createServer() {
     const { projectId, dataset } = apiResolved;
     const fetchParams = paramsParsed.data;
     try {
-      if (isPreviewSession) {
+      if (useDraftsPerspective) {
         if (!token) {
           res.status(501).json({ error: "Missing SANITY_API_READ_TOKEN" });
           return;
@@ -2187,7 +2206,7 @@ function createServer() {
           useCdn: false,
           apiVersion: "2024-01-01",
           perspective: "drafts",
-          stega: { enabled: true, studioUrl: resolveSanityStudioUrl() }
+          ...isPreviewSession ? { stega: { enabled: true, studioUrl: resolveSanityStudioUrl() } } : {}
         });
         const data2 = await previewClient.fetch(entry.query, fetchParams);
         res.status(200).json({
