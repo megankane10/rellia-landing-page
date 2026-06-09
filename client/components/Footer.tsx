@@ -180,10 +180,7 @@ const BuiltByCredit = () => {
         aria-hidden={!showTooltip}
         className={cn("built-by-tooltip", showTooltip && "built-by-tooltip--visible")}
       >
-        <span className="built-by-tooltip-inner">
-          Let&apos;s connect on LinkedIn
-          <ArrowUpRight className="h-3.5 w-3.5 shrink-0" aria-hidden />
-        </span>
+        <span className="built-by-tooltip-inner">Let&apos;s connect on LinkedIn</span>
       </span>
     </span>
   )
