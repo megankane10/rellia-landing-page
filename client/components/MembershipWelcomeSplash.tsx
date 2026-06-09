@@ -8,7 +8,7 @@ export type MembershipWelcomeSplashProps = {
   subheading: string
   backgroundSrc: string
   logoSrc: string
-  /** Kept for CMS compatibility; hold time after reveal is fixed at 1.5s. */
+  /** Kept for CMS compatibility; hold time after reveal is fixed at 3s. */
   totalSeconds?: number
   onComplete: () => void
 }
@@ -19,7 +19,7 @@ const HEADING_STAGGER_S = 0.2
 const HEADING_WORD_DURATION_S = 0.88
 const HEADING_DELAY_CHILDREN_S = 0.34
 const SUBHEADING_REVEAL_S = 0.45
-const READ_HOLD_MS = 1500
+const READ_HOLD_MS = 3000
 const ANIM_EXIT_MS = 550
 
 const SLIDE_EASE = [0.4, 0, 0.2, 1] as const

@@ -227,6 +227,8 @@ export type NavbarProps = {
   hideAnnouncement?: boolean
   /** Fully hide the bar (e.g. membership welcome splash). */
   forceHidden?: boolean
+  /** Pause announcement/priority modals and reset their delay timers (e.g. during splash). */
+  deferModals?: boolean
   /** Transparent bar + dark hero chrome (white links), like the home hero. */
   forceTransparentHero?: boolean
 }
@@ -240,6 +242,7 @@ export default function Navbar({
   ctaOpenInNewTab = false,
   hideAnnouncement = false,
   forceHidden = false,
+  deferModals = false,
   forceTransparentHero = false,
 }: NavbarProps) {
   const { data: navigationData } = useNavigation()
@@ -288,19 +291,27 @@ export default function Navbar({
     globalSettings.announcementEnabled !== false
 
   useEffect(() => {
+    if (deferModals) {
+      setPriorityModalDelayElapsed(false)
+      return
+    }
     if (hideAnnouncement || priorityModalDismissed || !priorityModalEligible) return
     const timer = window.setTimeout(() => setPriorityModalDelayElapsed(true), PRIORITY_MODAL_DELAY_MS)
     return () => window.clearTimeout(timer)
-  }, [hideAnnouncement, priorityModalDismissed, priorityModalEligible])
+  }, [deferModals, hideAnnouncement, priorityModalDismissed, priorityModalEligible])
 
   useEffect(() => {
+    if (deferModals) {
+      setAnnouncementDelayElapsed(false)
+      return
+    }
     if (hideAnnouncement || announcementDismissed || !announcementEligible) {
       setAnnouncementDelayElapsed(false)
       return
     }
     const timer = window.setTimeout(() => setAnnouncementDelayElapsed(true), ANNOUNCEMENT_DELAY_MS)
     return () => window.clearTimeout(timer)
-  }, [hideAnnouncement, announcementDismissed, announcementEligible])
+  }, [deferModals, hideAnnouncement, announcementDismissed, announcementEligible])
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 12)
@@ -465,9 +476,15 @@ export default function Navbar({
     ctaOpenInNewTab || isExternalHref(resolvedCtaTo) || resolvedCtaTo.startsWith("/api/")
 
   const showPriorityModal =
-    priorityModalEligible && priorityModalDelayElapsed && !priorityModalDismissed
+    !deferModals &&
+    priorityModalEligible &&
+    priorityModalDelayElapsed &&
+    !priorityModalDismissed
   const showAnnouncement =
-    announcementEligible && announcementDelayElapsed && !showPriorityModal
+    !deferModals &&
+    announcementEligible &&
+    announcementDelayElapsed &&
+    !showPriorityModal
 
   const handleAnnouncementDismiss = () => {
     setAnnouncementDismissed(true)

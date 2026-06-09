@@ -100,7 +100,7 @@ export default function Payment() {
         onComplete={handleSplashComplete}
       />
 
-      <Navbar forceHidden={showSplash} />
+      <Navbar forceHidden={showSplash} deferModals={showSplash} />
 
       <main id="main-content" className="flex w-full flex-1 flex-col">
         <section className="relative w-full pt-[84px] md:pt-[100px] pb-[12px] md:pb-[14px]">
