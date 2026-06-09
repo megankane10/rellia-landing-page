@@ -96,7 +96,7 @@ export const paymentPage = defineType({
       title: 'Splash hold after reveal (seconds)',
       description:
         'Seconds to pause after the headline and subheadline finish animating in, before the splash slides away (0.5–8).',
-      initialValue: 3.8,
+      initialValue: 2.7,
       validation: (Rule) => Rule.min(0.5).max(8),
       group: 'content',
       fieldset: 'welcomeSplashDivider',
