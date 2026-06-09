@@ -8,8 +8,8 @@ export type MembershipWelcomeSplashProps = {
   subheading: string
   backgroundSrc: string
   logoSrc: string
-  /** Total splash duration in seconds (enter, brief hold, exit). */
-  totalSeconds: number
+  /** Kept for CMS compatibility; hold time after reveal is fixed at 1.5s. */
+  totalSeconds?: number
   onComplete: () => void
 }
 
@@ -18,12 +18,9 @@ type SplashPhase = "enter" | "hold" | "exit" | "done"
 const HEADING_STAGGER_S = 0.2
 const HEADING_WORD_DURATION_S = 0.88
 const HEADING_DELAY_CHILDREN_S = 0.34
-const SUBHEADING_DURATION_S = 0.72
-const SUBHEADING_GAP_AFTER_HEADING_S = 0.12
+const SUBHEADING_REVEAL_S = 0.45
+const READ_HOLD_MS = 1500
 const ANIM_EXIT_MS = 550
-const HOLD_AFTER_CONTENT_MS = 280
-
-const clampTotalSeconds = (seconds: number) => Math.min(8, Math.max(2.5, seconds))
 
 const SLIDE_EASE = [0.4, 0, 0.2, 1] as const
 
@@ -33,14 +30,11 @@ export default function MembershipWelcomeSplash({
   subheading,
   backgroundSrc,
   logoSrc,
-  totalSeconds,
   onComplete,
 }: MembershipWelcomeSplashProps) {
   const reduceMotion = useReducedMotion()
   const previewMode = isVisualEditingPreview()
   const [phase, setPhase] = useState<SplashPhase>("enter")
-
-  const totalMs = useMemo(() => clampTotalSeconds(totalSeconds) * 1000, [totalSeconds])
 
   const headingText = previewMode ? cmsDisplayText(heading) : cmsCleanText(heading)
   const subheadingText = previewMode ? cmsDisplayText(subheading) : cmsCleanText(subheading)
@@ -55,17 +49,23 @@ export default function MembershipWelcomeSplash({
     return (
       HEADING_DELAY_CHILDREN_S +
       (wordCount - 1) * HEADING_STAGGER_S +
-      HEADING_WORD_DURATION_S +
-      SUBHEADING_GAP_AFTER_HEADING_S
+      HEADING_WORD_DURATION_S
     )
   }, [reduceMotion, words.length])
 
   const timings = useMemo(() => {
+    const revealMs = Math.round(
+      (subheadingDelay + (reduceMotion ? 0 : SUBHEADING_REVEAL_S)) * 1000,
+    )
+    const holdMs = READ_HOLD_MS
     const exitMs = ANIM_EXIT_MS
-    const holdMs = HOLD_AFTER_CONTENT_MS
-    const enterMs = totalMs - exitMs - holdMs
-    return { enterMs, holdMs, exitMs, totalMs }
-  }, [totalMs])
+    return {
+      revealMs,
+      holdMs,
+      exitMs,
+      totalMs: revealMs + holdMs + exitMs,
+    }
+  }, [reduceMotion, subheadingDelay])
 
   const headingContainerVariants = {
     hidden: {},
@@ -105,13 +105,16 @@ export default function MembershipWelcomeSplash({
       const brief = window.setTimeout(() => {
         setPhase("done")
         onComplete()
-      }, 300)
+      }, READ_HOLD_MS + ANIM_EXIT_MS)
       return () => window.clearTimeout(brief)
     }
 
     setPhase("enter")
-    const holdTimer = window.setTimeout(() => setPhase("hold"), timings.enterMs)
-    const exitTimer = window.setTimeout(() => setPhase("exit"), timings.enterMs + timings.holdMs)
+    const holdTimer = window.setTimeout(() => setPhase("hold"), timings.revealMs)
+    const exitTimer = window.setTimeout(
+      () => setPhase("exit"),
+      timings.revealMs + timings.holdMs,
+    )
     const doneTimer = window.setTimeout(() => {
       setPhase("done")
       onComplete()
@@ -141,16 +144,13 @@ export default function MembershipWelcomeSplash({
       aria-modal="true"
       aria-label="Membership welcome"
     >
-      <div className="relative flex h-full w-full flex-col overflow-hidden rounded-b-[1.75rem] md:rounded-b-[2.25rem] shadow-[0_24px_80px_-20px_rgba(7,31,38,0.55)]">
+      <div className="relative flex h-full w-full flex-col">
         <div className="absolute inset-0">
-          <motion.img
+          <img
             src={backgroundSrc}
             alt=""
             aria-hidden
             className="h-full w-full object-cover"
-            initial={reduceMotion ? { scale: 1 } : { scale: 1.05 }}
-            animate={{ scale: 1 }}
-            transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1] }}
           />
           <div
             className="absolute inset-0 bg-gradient-to-br from-[#071f26]/75 via-rellia-teal/60 to-[#0a2e36]/80"
@@ -228,14 +228,10 @@ export default function MembershipWelcomeSplash({
                 color: "rgba(255, 255, 255, 0.82)",
                 textShadow: "0 2px 24px rgba(0, 0, 0, 0.8), 0 1px 6px rgba(0, 0, 0, 0.7)",
               }}
-              initial={
-                reduceMotion
-                  ? { y: 0, filter: "blur(0px)" }
-                  : { y: 22, filter: "blur(10px)" }
-              }
-              animate={{ y: 0, filter: "blur(0px)" }}
+              initial={reduceMotion ? { y: 0 } : { y: 12 }}
+              animate={{ y: 0 }}
               transition={{
-                duration: reduceMotion ? 0 : SUBHEADING_DURATION_S,
+                duration: reduceMotion ? 0 : SUBHEADING_REVEAL_S,
                 delay: reduceMotion ? 0 : subheadingDelay,
                 ease: [0.22, 1, 0.36, 1],
               }}
