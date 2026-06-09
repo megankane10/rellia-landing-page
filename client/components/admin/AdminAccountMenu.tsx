@@ -4,6 +4,7 @@ import { LogOut, Settings, Upload, UserRound } from "lucide-react"
 import { useAuth } from "@/context/AuthContext"
 import { supabase } from "@/lib/supabase"
 import { uploadAdminAvatar } from "@/lib/adminAvatarUpload"
+import ImageCropDialog from "@/components/ImageCropDialog"
 import {
   buildAdminUserMetadata,
   getAdminAvatarUrl,
@@ -43,6 +44,8 @@ const AdminAccountMenu = () => {
   const [fullName, setFullName] = useState("")
   const [avatarUrl, setAvatarUrl] = useState("")
   const [pendingAvatarFile, setPendingAvatarFile] = useState<File | null>(null)
+  const [cropSourceFile, setCropSourceFile] = useState<File | null>(null)
+  const [cropDialogOpen, setCropDialogOpen] = useState(false)
   const [avatarPreviewUrl, setAvatarPreviewUrl] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
   const [uploading, setUploading] = useState(false)
@@ -64,6 +67,8 @@ const AdminAccountMenu = () => {
     setFullName(getAdminDisplayName(user))
     setAvatarUrl(user?.user_metadata?.[AVATAR_URL_KEY] ?? "")
     setPendingAvatarFile(null)
+    setCropSourceFile(null)
+    setCropDialogOpen(false)
     setAvatarPreviewUrl(null)
     setError(null)
   }, [profileOpen, user])
@@ -87,8 +92,20 @@ const AdminAccountMenu = () => {
     const file = event.target.files?.[0]
     event.target.value = ""
     if (!file) return
-    setPendingAvatarFile(file)
+    setCropSourceFile(file)
+    setCropDialogOpen(true)
     setError(null)
+  }
+
+  const handleAvatarCropConfirm = (file: File) => {
+    setPendingAvatarFile(file)
+    setCropSourceFile(null)
+    setAvatarUrl("")
+    setError(null)
+  }
+
+  const handleAvatarCropCancel = () => {
+    setCropSourceFile(null)
   }
 
   const handleRemoveAvatar = () => {
@@ -274,6 +291,18 @@ const AdminAccountMenu = () => {
           </div>
         </div>
         {profileDialog}
+
+        <ImageCropDialog
+          open={cropDialogOpen}
+          file={cropSourceFile}
+          title="Crop profile photo"
+          description="Crop to a square from the top of the image so it displays correctly in the dashboard."
+          aspect={1}
+          maxOutputSize={512}
+          onOpenChange={setCropDialogOpen}
+          onConfirm={handleAvatarCropConfirm}
+          onCancel={handleAvatarCropCancel}
+        />
       </>
     )
   }
@@ -317,6 +346,18 @@ const AdminAccountMenu = () => {
       </DropdownMenu>
 
       {profileDialog}
+
+      <ImageCropDialog
+        open={cropDialogOpen}
+        file={cropSourceFile}
+        title="Crop profile photo"
+        description="Crop to a square from the top of the image so it displays correctly in the dashboard."
+        aspect={1}
+        maxOutputSize={512}
+        onOpenChange={setCropDialogOpen}
+        onConfirm={handleAvatarCropConfirm}
+        onCancel={handleAvatarCropCancel}
+      />
     </>
   )
 }

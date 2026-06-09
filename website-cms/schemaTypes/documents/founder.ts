@@ -48,7 +48,7 @@ export const founder = defineType({
       name: 'avatar',
       title: 'Avatar',
       type: 'image',
-      options: {hotspot: true},
+      options: {hotspot: true, cropAspect: 1, cropAspectPreset: 'square'},
       group: 'content',
     }),
     defineField({

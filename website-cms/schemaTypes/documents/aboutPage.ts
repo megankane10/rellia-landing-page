@@ -65,7 +65,7 @@ export const aboutPage = defineType({
               type: 'array',
               of: [defineArrayMember({type: 'socialLink'})],
             }),
-            {name: 'image', type: 'image', options: {hotspot: true}},
+            {name: 'image', type: 'image', options: {hotspot: true, cropAspect: 1, cropAspectPreset: 'square'}},
             {name: 'imageSrc', type: 'string'},
           ],
         }),

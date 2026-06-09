@@ -40,7 +40,7 @@ export const advisor = defineType({
       name: 'photo',
       title: 'Avatar',
       type: 'image',
-      options: {hotspot: true},
+      options: {hotspot: true, cropAspect: 3 / 4, cropAspectPreset: 'portrait'},
       group: 'profile',
     }),
     defineField({
