@@ -5,6 +5,8 @@ import {
 } from "@/lib/parseMembershipPanelDescription"
 import { cmsCleanText, cmsDisplayText, isVisualEditingPreview } from "@/lib/cmsStega"
 
+const PANEL_IMAGE_SRC = "/images/membership-splash.jpg"
+
 type MembershipBenefitsPanelProps = {
   headline: string
   description: string
@@ -27,18 +29,18 @@ const PanelDescription = ({
       {content.paragraphs.map((paragraph, index) => (
         <p
           key={`p-${index}`}
-          className="font-urbanist text-[15px] font-normal leading-relaxed text-white/72 [text-shadow:0_1px_14px_rgba(0,0,0,0.5)] md:text-base"
+          className="font-urbanist text-[15px] font-normal leading-relaxed text-white/82 [text-shadow:0_2px_16px_rgba(0,0,0,0.55)] md:text-base"
         >
           {previewMode ? cmsDisplayText(paragraph) : cmsCleanText(paragraph)}
         </p>
       ))}
 
       {content.bullets.length > 0 ? (
-        <ul className="list-disc space-y-3 pl-5 marker:text-white/40">
+        <ul className="list-disc space-y-3 pl-5 marker:text-white/55">
           {content.bullets.map((bullet, index) => (
             <li
               key={`b-${index}`}
-              className="font-urbanist text-[15px] font-normal leading-relaxed text-white/68 [text-shadow:0_1px_14px_rgba(0,0,0,0.5)] md:text-base"
+              className="font-urbanist text-[15px] font-normal leading-relaxed text-white/78 [text-shadow:0_2px_16px_rgba(0,0,0,0.55)] md:text-base"
             >
               {previewMode ? cmsDisplayText(bullet) : cmsCleanText(bullet)}
             </li>
@@ -57,7 +59,9 @@ export default function MembershipBenefitsPanel({
   className,
 }: MembershipBenefitsPanelProps) {
   const previewMode = isVisualEditingPreview()
-  const showImage = imageEnabled && Boolean(imageSrc?.trim())
+  const resolvedImageSrc = imageSrc?.trim() || PANEL_IMAGE_SRC
+  const showImage = imageEnabled && Boolean(resolvedImageSrc)
+
   const parsed = parseMembershipPanelDescription(description)
 
   return (
@@ -70,7 +74,7 @@ export default function MembershipBenefitsPanel({
       <div className="absolute inset-0 pointer-events-none" aria-hidden>
         {showImage ? (
           <img
-            src={imageSrc}
+            src={resolvedImageSrc}
             alt=""
             className="h-full w-full scale-105 object-cover"
           />
@@ -78,13 +82,13 @@ export default function MembershipBenefitsPanel({
         <div
           className={cn(
             "absolute inset-0 bg-gradient-to-br from-rellia-teal via-[#0c4a4a] to-[#071f26]",
-            showImage && "via-[#0c4a4a]/90 to-[#071f26]/92",
+            showImage && "from-rellia-teal/72 via-[#0c4a4a]/58 to-[#071f26]/68",
           )}
         />
         {showImage ? (
           <>
-            <div className="absolute inset-0 bg-gradient-to-t from-[#071f26]/90 via-[#071f26]/50 to-black/25" />
-            <div className="absolute inset-y-0 left-0 w-full bg-gradient-to-r from-black/60 via-black/30 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#071f26]/55 via-[#071f26]/22 to-transparent" />
+            <div className="absolute inset-y-0 left-0 w-full bg-gradient-to-r from-black/35 via-black/12 to-transparent" />
           </>
         ) : (
           <>

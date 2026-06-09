@@ -60,6 +60,10 @@ const main = async () => {
       ...patchFields,
       welcomeSplashBackgroundSrc: DEFAULT_PAYMENT_PAGE.welcomeSplashBackgroundSrc,
     })
+    .set({
+      benefitsPanelImageSrc: DEFAULT_PAYMENT_PAGE.benefitsPanelImageSrc,
+      welcomeSplashDurationSeconds: DEFAULT_PAYMENT_PAGE.welcomeSplashDurationSeconds,
+    })
     .commit()
 
   console.log(`Patched paymentPage fields (setIfMissing only) on dataset: ${dataset}`)

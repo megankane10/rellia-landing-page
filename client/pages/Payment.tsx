@@ -94,8 +94,8 @@ export default function Payment() {
           DEFAULT_PAYMENT_PAGE.welcomeSplashLogoSrc ||
           "/svgs/rellia-secondary-logo-circle-health-white-rgb.svg"
         }
-        holdSeconds={
-          p.welcomeSplashDurationSeconds ?? DEFAULT_PAYMENT_PAGE.welcomeSplashDurationSeconds ?? 2.5
+        totalSeconds={
+          p.welcomeSplashDurationSeconds ?? DEFAULT_PAYMENT_PAGE.welcomeSplashDurationSeconds ?? 3.5
         }
         onComplete={handleSplashComplete}
       />

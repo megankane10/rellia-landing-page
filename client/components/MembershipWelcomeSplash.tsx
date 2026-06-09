@@ -8,18 +8,22 @@ export type MembershipWelcomeSplashProps = {
   subheading: string
   backgroundSrc: string
   logoSrc: string
-  /** How long the splash stays on screen after content finishes animating in (seconds). */
-  holdSeconds: number
+  /** Total splash duration in seconds (enter, brief hold, exit). */
+  totalSeconds: number
   onComplete: () => void
 }
 
 type SplashPhase = "enter" | "hold" | "exit" | "done"
 
-/** Fixed content reveal timing — not controlled by CMS. */
-const ANIM_ENTER_MS = 3000
-const ANIM_EXIT_MS = 1000
+const HEADING_STAGGER_S = 0.2
+const HEADING_WORD_DURATION_S = 0.88
+const HEADING_DELAY_CHILDREN_S = 0.34
+const SUBHEADING_DURATION_S = 0.72
+const SUBHEADING_GAP_AFTER_HEADING_S = 0.12
+const ANIM_EXIT_MS = 550
+const HOLD_AFTER_CONTENT_MS = 280
 
-const clampHoldSeconds = (seconds: number) => Math.min(8, Math.max(1.5, seconds))
+const clampTotalSeconds = (seconds: number) => Math.min(8, Math.max(2.5, seconds))
 
 const SLIDE_EASE = [0.4, 0, 0.2, 1] as const
 
@@ -29,24 +33,14 @@ export default function MembershipWelcomeSplash({
   subheading,
   backgroundSrc,
   logoSrc,
-  holdSeconds,
+  totalSeconds,
   onComplete,
 }: MembershipWelcomeSplashProps) {
   const reduceMotion = useReducedMotion()
   const previewMode = isVisualEditingPreview()
   const [phase, setPhase] = useState<SplashPhase>("enter")
 
-  const holdMs = useMemo(() => clampHoldSeconds(holdSeconds) * 1000, [holdSeconds])
-
-  const timings = useMemo(
-    () => ({
-      enterMs: ANIM_ENTER_MS,
-      holdMs,
-      exitMs: ANIM_EXIT_MS,
-      totalMs: ANIM_ENTER_MS + holdMs + ANIM_EXIT_MS,
-    }),
-    [holdMs],
-  )
+  const totalMs = useMemo(() => clampTotalSeconds(totalSeconds) * 1000, [totalSeconds])
 
   const headingText = previewMode ? cmsDisplayText(heading) : cmsCleanText(heading)
   const subheadingText = previewMode ? cmsDisplayText(subheading) : cmsCleanText(subheading)
@@ -55,12 +49,30 @@ export default function MembershipWelcomeSplash({
     [heading, headingText, previewMode],
   )
 
+  const subheadingDelay = useMemo(() => {
+    if (reduceMotion) return 0
+    const wordCount = Math.max(words.length, 1)
+    return (
+      HEADING_DELAY_CHILDREN_S +
+      (wordCount - 1) * HEADING_STAGGER_S +
+      HEADING_WORD_DURATION_S +
+      SUBHEADING_GAP_AFTER_HEADING_S
+    )
+  }, [reduceMotion, words.length])
+
+  const timings = useMemo(() => {
+    const exitMs = ANIM_EXIT_MS
+    const holdMs = HOLD_AFTER_CONTENT_MS
+    const enterMs = totalMs - exitMs - holdMs
+    return { enterMs, holdMs, exitMs, totalMs }
+  }, [totalMs])
+
   const headingContainerVariants = {
     hidden: {},
     visible: {
       transition: {
-        staggerChildren: reduceMotion ? 0 : 0.16,
-        delayChildren: reduceMotion ? 0 : 0.28,
+        staggerChildren: reduceMotion ? 0 : HEADING_STAGGER_S,
+        delayChildren: reduceMotion ? 0 : HEADING_DELAY_CHILDREN_S,
       },
     },
   }
@@ -76,7 +88,7 @@ export default function MembershipWelcomeSplash({
       y: 0,
       filter: "blur(0px)",
       transition: {
-        duration: reduceMotion ? 0 : 0.9,
+        duration: reduceMotion ? 0 : HEADING_WORD_DURATION_S,
         ease: [0.33, 1, 0.68, 1] as const,
       },
     },
@@ -212,11 +224,11 @@ export default function MembershipWelcomeSplash({
 
             <motion.p
               className="mt-6 max-w-2xl font-urbanist text-xl font-normal leading-relaxed text-white/65 [text-shadow:0_2px_20px_rgba(0,0,0,0.75),0_1px_4px_rgba(0,0,0,0.65)] md:mt-8 md:text-2xl md:leading-relaxed"
-              initial={reduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 24 }}
+              initial={reduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{
-                duration: reduceMotion ? 0 : 0.85,
-                delay: reduceMotion ? 0 : 0.72,
+                duration: reduceMotion ? 0 : SUBHEADING_DURATION_S,
+                delay: reduceMotion ? 0 : subheadingDelay,
                 ease: [0.22, 1, 0.36, 1],
               }}
             >

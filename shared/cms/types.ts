@@ -1142,7 +1142,7 @@ export type PaymentPageContent = CmsPageVisibility & {
   welcomeSplashSubheading?: string
   welcomeSplashBackgroundSrc?: string
   welcomeSplashLogoSrc?: string
-  /** Seconds the splash stays visible after content animates in. */
+  /** Total splash duration in seconds. */
   welcomeSplashDurationSeconds?: number
   seo?: SeoContent
 }

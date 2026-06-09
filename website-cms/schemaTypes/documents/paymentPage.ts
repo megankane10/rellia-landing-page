@@ -227,11 +227,11 @@ export const paymentPage = defineType({
     defineField({
       name: 'welcomeSplashDurationSeconds',
       type: 'number',
-      title: 'Splash hold time (seconds)',
+      title: 'Splash total duration (seconds)',
       description:
-        'How long the welcome screen stays visible after the content animation finishes. Reveal and slide-up timing are fixed in code.',
-      initialValue: 2.5,
-      validation: (Rule) => Rule.min(1.5).max(8),
+        'Total time for the welcome screen (content reveal, brief hold, then slide-up). Heading and subheading animation timing are fixed in code.',
+      initialValue: 3.5,
+      validation: (Rule) => Rule.min(2.5).max(8),
       group: 'content',
       fieldset: 'welcomeSplashDivider',
       hidden: ({parent}) => !parent?.welcomeSplashEnabled,
