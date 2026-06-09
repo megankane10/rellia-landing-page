@@ -442,7 +442,9 @@ export function createServer() {
           ...(token ? { token } : {}),
           useCdn: false,
           apiVersion: "2024-01-01",
-          ...(useDrafts ? { perspective: "drafts" as const } : {}),
+          ...(useDrafts
+            ? { perspective: "drafts" as const }
+            : { perspective: "published" as const }),
         });
         const data = await publicClient.fetch(entry.query, {});
         res.setHeader(
@@ -508,7 +510,9 @@ export function createServer() {
           ...(token ? { token } : {}),
           useCdn: false,
           apiVersion: "2024-01-01",
-          ...(useDrafts ? { perspective: "drafts" as const } : {}),
+          ...(useDrafts
+            ? { perspective: "drafts" as const }
+            : { perspective: "published" as const }),
         });
         const data = await publicClient.fetch(entry.query, { slug });
         if (!data) {
@@ -565,6 +569,7 @@ export function createServer() {
           ...(token ? { token } : {}),
           useCdn: false,
           apiVersion: "2024-01-01",
+          perspective: "published",
         });
         const event = await publicClient.fetch(entry.query, { slug });
         if (!event) {
@@ -953,6 +958,7 @@ export function createServer() {
         ...(token ? { token } : {}),
         useCdn: false,
         apiVersion: "2024-01-01",
+        perspective: "published",
       });
       const data = await publicClient.fetch(entry.query, fetchParams);
       res.status(200).json({

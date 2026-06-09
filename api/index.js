@@ -72,7 +72,7 @@ var networkCtaFragment = `ctaTitle,
   ctaPrimaryHref,
   ctaSecondaryLabel,
   ctaSecondaryHref`;
-var globalSettingsQuery = `*[_type == "globalSettings"][0]{
+var globalSettingsQuery = `*[_id == "globalSettings"][0]{
   footerTagline,
   supportEmail,
   linkedinUrl,
@@ -98,7 +98,7 @@ var globalSettingsQuery = `*[_type == "globalSettings"][0]{
   priorityModalFormPlaceholderName,
   priorityModalFormPlaceholderEmail
 }`;
-var navigationQuery = `*[_type == "navigation"][0]{
+var navigationQuery = `*[_id == "navigation"][0]{
   primary[]{
     label,
     href,
@@ -136,7 +136,7 @@ var navigationQuery = `*[_type == "navigation"][0]{
     }
   }
 }`;
-var siteSettingsQuery = `*[_type == "siteSettings"][0]{
+var siteSettingsQuery = `*[_id == "siteSettings"][0]{
   "siteName": coalesce(brandName, siteName),
   "logoUrl": coalesce(logoLight.asset->url, logo.asset->url),
   faviconPath,
@@ -180,7 +180,7 @@ var storiesQuery = `*[_type == "story" && !(_id in path("drafts.**"))]
   publishedAt,
   featured
 }`;
-var storiesPageQuery = `*[_type == "storiesPage"][0]{
+var storiesPageQuery = `*[_id == "storiesPage"][0]{
   headlinePortable,
   subheadline,
   ${seoFragment}
@@ -273,7 +273,7 @@ var pageBySlugQuery = `*[_type == "page" && slug.current == $slug && slug.curren
   pageBuilder[]{ ${pageSectionFieldsFragment} }
 }`;
 var pageSectionsFragment = `sections[]{ ${pageSectionFieldsFragment} }`;
-var networkFoundersPageQuery = `*[_type == "networkFoundersPage"][0]{
+var networkFoundersPageQuery = `*[_id == "networkFoundersPage"][0]{
   title,
   ${networkHeroFragment},
   eligibilityTitle,
@@ -296,7 +296,7 @@ var networkFoundersPageQuery = `*[_type == "networkFoundersPage"][0]{
   ${logoMarqueeFragment},
   ${seoFragment}
 }`;
-var networkAdvisorsPageQuery = `*[_type == "networkAdvisorsPage"][0]{
+var networkAdvisorsPageQuery = `*[_id == "networkAdvisorsPage"][0]{
   title,
   ${networkHeroFragment},
   ${networkEngageFragment},
@@ -309,7 +309,7 @@ var networkAdvisorsPageQuery = `*[_type == "networkAdvisorsPage"][0]{
   ${networkCtaFragment},
   ${seoFragment}
 }`;
-var networkInvestorsPageQuery = `*[_type == "networkInvestorsPage"][0]{
+var networkInvestorsPageQuery = `*[_id == "networkInvestorsPage"][0]{
   title,
   ${networkHeroFragment},
   ${networkWhyFragment},
@@ -327,7 +327,7 @@ var networkInvestorsPageQuery = `*[_type == "networkInvestorsPage"][0]{
     }
   }
 }`;
-var networkPartnersPageQuery = `*[_type == "networkPartnersPage"][0]{
+var networkPartnersPageQuery = `*[_id == "networkPartnersPage"][0]{
   title,
   ${networkHeroFragment},
   ${networkEngageFragment},
@@ -440,7 +440,7 @@ var privacyPageQuery = `*[_id == "privacyPage"][0]{
   body,
   ${seoFragment}
 }`;
-var homePageQuery = `*[_type == "homePage"][0]{
+var homePageQuery = `*[_id == "homePage"][0]{
   headlinePrefix,
   subheadline,
   primaryCtaLabel,
@@ -490,7 +490,7 @@ var homePageQuery = `*[_type == "homePage"][0]{
   },
   ${seoFragment}
 }`;
-var aboutPageQuery = `*[_type == "aboutPage"][0]{
+var aboutPageQuery = `*[_id == "aboutPage"][0]{
   heroHeadlinePortable,
   heroIntro,
   missionTitle,
@@ -515,7 +515,7 @@ var aboutPageQuery = `*[_type == "aboutPage"][0]{
   ctaTeamLabel,
   ${seoFragment}
 }`;
-var faqPageQuery = `*[_type == "faqPage" && !(_id in path("drafts.**"))] | order(_updatedAt desc)[0]{
+var faqPageQuery = `*[_id == "faqPage"][0]{
   badge,
   title,
   subtitle,
@@ -530,7 +530,7 @@ var faqPageQuery = `*[_type == "faqPage" && !(_id in path("drafts.**"))] | order
   bottomCtaPath,
   ${seoFragment}
 }`;
-var programsLandingQuery = `*[_type == "programsLandingPage"][0]{
+var programsLandingQuery = `*[_id == "programsLandingPage"][0]{
   heroTitlePortable,
   heroSubtitle,
   heroPrimaryCtaLabel,
@@ -543,12 +543,12 @@ var programsLandingQuery = `*[_type == "programsLandingPage"][0]{
   ctaButtonHref,
   ${seoFragment}
 }`;
-var programsLayoutPageQuery = `*[_type == "programsLayoutPage"][0]{
+var programsLayoutPageQuery = `*[_id == "programsLayoutPage"][0]{
   title,
   ${seoFragment},
   ${pageSectionsFragment}
 }`;
-var eventsLandingQuery = `*[_type == "eventsLandingPage"][0]{
+var eventsLandingQuery = `*[_id == "eventsLandingPage"][0]{
   heroTitlePortable,
   heroSubtitle,
   ctaTitle,
@@ -677,7 +677,7 @@ var eventBySlugQuery = `*[_type == "event" && slug.current == $slug && !(_id in 
   sortOrder,
   ${seoFragment}
 }`;
-var contactPageQuery = `*[_type == "contactPage"][0]{
+var contactPageQuery = `*[_id == "contactPage"][0]{
   heroBadge,
   "heroHeadline": coalesce(heroHeadline, pageTitle),
   intro,
@@ -701,13 +701,13 @@ var contactPageQuery = `*[_type == "contactPage"][0]{
   sendingLabel,
   ${seoFragment}
 }`;
-var notFoundQuery = `*[_type == "notFoundPage"][0]{
+var notFoundQuery = `*[_id == "notFoundPage"][0]{
   title,
   message,
   ctaLabel,
   ${seoFragment}
 }`;
-var applyPageQuery = `*[_type == "applyPage"][0]{
+var applyPageQuery = `*[_id == "applyPage"][0]{
   headingTitle,
   subheading,
   steps[]{ title, description },
@@ -722,7 +722,7 @@ var applyPageQuery = `*[_type == "applyPage"][0]{
   bottomCtaSecondaryHref,
   ${seoFragment}
 }`;
-var diagnosticSurveyContentQuery = `*[_type == "diagnosticSurveyContent"][0]{
+var diagnosticSurveyContentQuery = `*[_id == "diagnosticSurveyContent"][0]{
   introTitle,
   introSubtitle,
   stages,
@@ -770,7 +770,7 @@ var diagnosticSurveyContentQuery = `*[_type == "diagnosticSurveyContent"][0]{
     }
   }
 }`;
-var paymentPageQuery = `*[_type == "paymentPage"][0]{
+var paymentPageQuery = `*[_id == "paymentPage"][0]{
   ${pageVisibilityFragment},
   badge,
   headline,
@@ -826,7 +826,7 @@ var openRolesQuery = `*[_type == "openRole" && !(_id in path("drafts.**"))] | or
   responsibilities,
   linkedInApplyUrl
 }`;
-var careersPageQuery = `*[_type == "careersPage"][0]{
+var careersPageQuery = `*[_id == "careersPage"][0]{
   careersContentMode,
   showHiringNavBadge,
   showVolunteerNavBadge,
@@ -1813,7 +1813,7 @@ function createServer() {
           ...token ? { token } : {},
           useCdn: false,
           apiVersion: "2024-01-01",
-          ...useDrafts ? { perspective: "drafts" } : {}
+          ...useDrafts ? { perspective: "drafts" } : { perspective: "published" }
         });
         const data = await publicClient.fetch(entry.query, {});
         res.setHeader(
@@ -1870,7 +1870,7 @@ function createServer() {
           ...token ? { token } : {},
           useCdn: false,
           apiVersion: "2024-01-01",
-          ...useDrafts ? { perspective: "drafts" } : {}
+          ...useDrafts ? { perspective: "drafts" } : { perspective: "published" }
         });
         const data = await publicClient.fetch(entry.query, { slug });
         if (!data) {
@@ -1919,7 +1919,8 @@ function createServer() {
           dataset,
           ...token ? { token } : {},
           useCdn: false,
-          apiVersion: "2024-01-01"
+          apiVersion: "2024-01-01",
+          perspective: "published"
         });
         const event = await publicClient.fetch(entry.query, { slug });
         if (!event) {
@@ -2226,7 +2227,8 @@ function createServer() {
         dataset,
         ...token ? { token } : {},
         useCdn: false,
-        apiVersion: "2024-01-01"
+        apiVersion: "2024-01-01",
+        perspective: "published"
       });
       const data = await publicClient.fetch(entry.query, fetchParams);
       res.status(200).json({

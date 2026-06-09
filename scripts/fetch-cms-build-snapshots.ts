@@ -48,6 +48,7 @@ const main = async () => {
     token,
     apiVersion: "2024-01-01",
     useCdn: false,
+    perspective: "published",
   })
 
   try {

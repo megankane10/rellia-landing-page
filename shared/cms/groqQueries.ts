@@ -53,7 +53,7 @@ const networkCtaFragment = `ctaTitle,
   ctaSecondaryLabel,
   ctaSecondaryHref`
 
-export const globalSettingsQuery = `*[_type == "globalSettings"][0]{
+export const globalSettingsQuery = `*[_id == "globalSettings"][0]{
   footerTagline,
   supportEmail,
   linkedinUrl,
@@ -80,7 +80,7 @@ export const globalSettingsQuery = `*[_type == "globalSettings"][0]{
   priorityModalFormPlaceholderEmail
 }`;
 
-export const navigationQuery = `*[_type == "navigation"][0]{
+export const navigationQuery = `*[_id == "navigation"][0]{
   primary[]{
     label,
     href,
@@ -119,7 +119,7 @@ export const navigationQuery = `*[_type == "navigation"][0]{
   }
 }`
 
-export const siteSettingsQuery = `*[_type == "siteSettings"][0]{
+export const siteSettingsQuery = `*[_id == "siteSettings"][0]{
   "siteName": coalesce(brandName, siteName),
   "logoUrl": coalesce(logoLight.asset->url, logo.asset->url),
   faviconPath,
@@ -166,7 +166,7 @@ export const storiesQuery = `*[_type == "story" && !(_id in path("drafts.**"))]
   featured
 }`
 
-export const storiesPageQuery = `*[_type == "storiesPage"][0]{
+export const storiesPageQuery = `*[_id == "storiesPage"][0]{
   headlinePortable,
   subheadline,
   ${seoFragment}
@@ -268,7 +268,7 @@ export const pageBySlugQuery = `*[_type == "page" && slug.current == $slug && sl
 
 const pageSectionsFragment = `sections[]{ ${pageSectionFieldsFragment} }`
 
-export const networkFoundersPageQuery = `*[_type == "networkFoundersPage"][0]{
+export const networkFoundersPageQuery = `*[_id == "networkFoundersPage"][0]{
   title,
   ${networkHeroFragment},
   eligibilityTitle,
@@ -292,7 +292,7 @@ export const networkFoundersPageQuery = `*[_type == "networkFoundersPage"][0]{
   ${seoFragment}
 }`
 
-export const networkAdvisorsPageQuery = `*[_type == "networkAdvisorsPage"][0]{
+export const networkAdvisorsPageQuery = `*[_id == "networkAdvisorsPage"][0]{
   title,
   ${networkHeroFragment},
   ${networkEngageFragment},
@@ -306,7 +306,7 @@ export const networkAdvisorsPageQuery = `*[_type == "networkAdvisorsPage"][0]{
   ${seoFragment}
 }`
 
-export const networkInvestorsPageQuery = `*[_type == "networkInvestorsPage"][0]{
+export const networkInvestorsPageQuery = `*[_id == "networkInvestorsPage"][0]{
   title,
   ${networkHeroFragment},
   ${networkWhyFragment},
@@ -325,7 +325,7 @@ export const networkInvestorsPageQuery = `*[_type == "networkInvestorsPage"][0]{
   }
 }`
 
-export const networkPartnersPageQuery = `*[_type == "networkPartnersPage"][0]{
+export const networkPartnersPageQuery = `*[_id == "networkPartnersPage"][0]{
   title,
   ${networkHeroFragment},
   ${networkEngageFragment},
@@ -444,7 +444,7 @@ export const privacyPageQuery = `*[_id == "privacyPage"][0]{
   ${seoFragment}
 }`
 
-export const homePageQuery = `*[_type == "homePage"][0]{
+export const homePageQuery = `*[_id == "homePage"][0]{
   headlinePrefix,
   subheadline,
   primaryCtaLabel,
@@ -495,7 +495,7 @@ export const homePageQuery = `*[_type == "homePage"][0]{
   ${seoFragment}
 }`;
 
-export const aboutPageQuery = `*[_type == "aboutPage"][0]{
+export const aboutPageQuery = `*[_id == "aboutPage"][0]{
   heroHeadlinePortable,
   heroIntro,
   missionTitle,
@@ -521,7 +521,7 @@ export const aboutPageQuery = `*[_type == "aboutPage"][0]{
   ${seoFragment}
 }`;
 
-export const faqPageQuery = `*[_type == "faqPage" && !(_id in path("drafts.**"))] | order(_updatedAt desc)[0]{
+export const faqPageQuery = `*[_id == "faqPage"][0]{
   badge,
   title,
   subtitle,
@@ -537,7 +537,7 @@ export const faqPageQuery = `*[_type == "faqPage" && !(_id in path("drafts.**"))
   ${seoFragment}
 }`;
 
-export const programsLandingQuery = `*[_type == "programsLandingPage"][0]{
+export const programsLandingQuery = `*[_id == "programsLandingPage"][0]{
   heroTitlePortable,
   heroSubtitle,
   heroPrimaryCtaLabel,
@@ -551,13 +551,13 @@ export const programsLandingQuery = `*[_type == "programsLandingPage"][0]{
   ${seoFragment}
 }`;
 
-export const programsLayoutPageQuery = `*[_type == "programsLayoutPage"][0]{
+export const programsLayoutPageQuery = `*[_id == "programsLayoutPage"][0]{
   title,
   ${seoFragment},
   ${pageSectionsFragment}
 }`;
 
-export const eventsLandingQuery = `*[_type == "eventsLandingPage"][0]{
+export const eventsLandingQuery = `*[_id == "eventsLandingPage"][0]{
   heroTitlePortable,
   heroSubtitle,
   ctaTitle,
@@ -692,7 +692,7 @@ export const eventBySlugQuery = `*[_type == "event" && slug.current == $slug && 
   ${seoFragment}
 }`
 
-export const contactPageQuery = `*[_type == "contactPage"][0]{
+export const contactPageQuery = `*[_id == "contactPage"][0]{
   heroBadge,
   "heroHeadline": coalesce(heroHeadline, pageTitle),
   intro,
@@ -717,14 +717,14 @@ export const contactPageQuery = `*[_type == "contactPage"][0]{
   ${seoFragment}
 }`;
 
-export const notFoundQuery = `*[_type == "notFoundPage"][0]{
+export const notFoundQuery = `*[_id == "notFoundPage"][0]{
   title,
   message,
   ctaLabel,
   ${seoFragment}
 }`;
 
-export const applyPageQuery = `*[_type == "applyPage"][0]{
+export const applyPageQuery = `*[_id == "applyPage"][0]{
   headingTitle,
   subheading,
   steps[]{ title, description },
@@ -740,7 +740,7 @@ export const applyPageQuery = `*[_type == "applyPage"][0]{
   ${seoFragment}
 }`
 
-export const diagnosticSurveyContentQuery = `*[_type == "diagnosticSurveyContent"][0]{
+export const diagnosticSurveyContentQuery = `*[_id == "diagnosticSurveyContent"][0]{
   introTitle,
   introSubtitle,
   stages,
@@ -789,7 +789,7 @@ export const diagnosticSurveyContentQuery = `*[_type == "diagnosticSurveyContent
   }
 }`
 
-export const paymentPageQuery = `*[_type == "paymentPage"][0]{
+export const paymentPageQuery = `*[_id == "paymentPage"][0]{
   ${pageVisibilityFragment},
   badge,
   headline,
@@ -847,7 +847,7 @@ export const openRolesQuery = `*[_type == "openRole" && !(_id in path("drafts.**
   linkedInApplyUrl
 }`
 
-export const careersPageQuery = `*[_type == "careersPage"][0]{
+export const careersPageQuery = `*[_id == "careersPage"][0]{
   careersContentMode,
   showHiringNavBadge,
   showVolunteerNavBadge,

@@ -39,6 +39,7 @@ const getPrerenderSanityClient = (): SanityClient | null => {
     dataset: config.dataset,
     apiVersion: "2024-01-01",
     useCdn: false,
+    perspective: "published",
     ...(token ? { token } : {}),
   })
   return prerenderClient
