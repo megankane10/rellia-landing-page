@@ -33,7 +33,8 @@ import {
   Pause,
   Play
 } from "lucide-react"
-import type { CareersOpenRole, CareersContentMode, CareersPageContent, HomeWhyFeature } from "@shared/cms/types"
+import type { CareersOpenRole, CareersContentMode, CareersPageContent } from "@shared/cms/types"
+import { mapNetworkWhyFeatures } from "@/lib/whyRelliaFeatures"
 import { DEFAULT_GLOBAL_SETTINGS } from "@shared/cms/defaults"
 import { CAREERS_VOLUNTEER_ENABLED } from "@shared/careersPageConfig"
 import { resolveCareersOpenRoles } from "@shared/careersOpenRolesVisibility"
@@ -51,67 +52,6 @@ import { ShareIconCopy } from "@/components/share/sharePageIcons"
 import { RoleHero } from "./network/_shared"
 
 const g = DEFAULT_GLOBAL_SETTINGS
-
-const CAREERS_WHY_FEATURES: HomeWhyFeature[] = [
-  {
-    iconKey: "users",
-    title: "Mission you can feel",
-    description:
-      "Every week you will see founders ship, learn, and reset with support from people who have been in the room when healthcare products actually get adopted.",
-  },
-  {
-    iconKey: "target",
-    title: "Craft, not chaos",
-    description:
-      "We run tight programs with clear owners, thoughtful rituals, and space to improve how we work—so energy goes to members and outcomes, not noise.",
-  },
-  {
-    iconKey: "bookOpen",
-    title: "Learn beside experts",
-    description:
-      "You will sit alongside clinicians, operators, and investors who care about getting the details right—from diligence to deployment.",
-  },
-  {
-    iconKey: "userRound",
-    title: "Humans first",
-    description:
-      "Kindness is not a slogan here. We expect high standards and direct feedback, and we build trust by showing up for each other and the community.",
-  },
-]
-
-const CAREERS_WHY_CARD_IMAGES: string[] = [
-  "https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=1200",
-  "https://images.pexels.com/photos/3183150/pexels-photo-3183150.jpeg?auto=compress&cs=tinysrgb&w=1200",
-  "https://images.pexels.com/photos/3182812/pexels-photo-3182812.jpeg?auto=compress&cs=tinysrgb&w=1200",
-  "https://images.pexels.com/photos/3184369/pexels-photo-3184369.jpeg?auto=compress&cs=tinysrgb&w=1200",
-]
-
-const CAREERS_PERKS: HomeWhyFeature[] = [
-  {
-    iconKey: "users",
-    title: "In the room with the industry",
-    description:
-      "Clinicians, founders, and operators show up in our programs—you hear what actually moves care and procurement, not polished slide stories.",
-  },
-  {
-    iconKey: "building2",
-    title: "Office when it helps",
-    description:
-      "Remote-first with intentional in-person weeks: cohort sessions, workshops, and shared space when you want to work beside the team.",
-  },
-  {
-    iconKey: "laptop",
-    title: "Small team, real ownership",
-    description:
-      "Startup reality: clear priorities, Direct feedback, and permission to fix how we work—without layers of process for its own sake.",
-  },
-  {
-    iconKey: "mapPin",
-    title: "Out with the community",
-    description:
-      "Member events, partner conversations, and field context on how buying decisions get made—so you are not guessing from a distance.",
-  },
-]
 
 const getPerkIcon = (key: string): LucideIcon => {
   switch (key) {
@@ -513,10 +453,9 @@ export default function CareersCms() {
         </AnimatePresence>
 
         <WhyRellia
-          sectionTitle="Building What Matters Most"
-          sectionDescription="What it feels like to build here: pace without panic, depth without gatekeeping, and a team that sweats the small stuff so members do not have to."
-          features={CAREERS_WHY_FEATURES}
-          cardImages={CAREERS_WHY_CARD_IMAGES}
+          sectionTitle={careersCms.whyTitle ?? "Building What Matters Most"}
+          sectionDescription={careersCms.whyDescription}
+          features={mapNetworkWhyFeatures(careersCms.whyFeatures ?? [])}
           sectionClassName="bg-white pt-16 md:pt-20"
         />
 
@@ -524,16 +463,16 @@ export default function CareersCms() {
           <div className="mx-auto max-w-[1300px] px-6 md:px-10">
             <ScrollReveal className="max-w-3xl mb-16">
               <h2 className="font-host-grotesk text-2xl font-semibold tracking-tight text-black md:text-[32px]">
-                How we work
+                {careersCms.perksTitle ?? "How we work"}
               </h2>
               <p className="mt-4 font-urbanist text-lg md:text-xl text-black/60 leading-relaxed">
-                A lean health-tech team: industry proximity, intentional office time, and the pace of a startup—not a corporate perks sheet.
+                {careersCms.perksDescription}
               </p>
             </ScrollReveal>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10 lg:gap-x-16 lg:gap-y-12">
-              {CAREERS_PERKS.map((perk) => {
-                const IconComponent = getPerkIcon(perk.iconKey)
+              {(careersCms.perksItems ?? []).map((perk) => {
+                const IconComponent = getPerkIcon(perk.iconKey ?? "")
                 return (
                   <ScrollReveal key={perk.title} className="flex flex-col items-start text-left">
                     <IconComponent className="h-8 w-8 text-rellia-teal mb-4" aria-hidden />
@@ -542,7 +481,7 @@ export default function CareersCms() {
                         {perk.title}
                       </h3>
                       <p className="font-urbanist text-base leading-relaxed text-black/70">
-                        {perk.description}
+                        {perk.body}
                       </p>
                     </div>
                   </ScrollReveal>
@@ -558,7 +497,7 @@ export default function CareersCms() {
               <div className="mx-auto w-full max-w-[1300px] px-6 md:px-10 flex flex-col">
                 <ScrollReveal className="flex min-w-0 flex-col">
                   <h2 className="font-host-grotesk text-2xl font-semibold tracking-tight text-black md:text-[32px]">
-                    Open Roles
+                    {careersCms.openRolesTitle ?? "Open Roles"}
                   </h2>
 
                   <div className="mt-10 w-full shrink-0">
@@ -725,9 +664,12 @@ export default function CareersCms() {
 
       <RelliaCta
         aboveSectionTone="white"
-        title="Questions before you apply?"
-        body="Tell us what you are looking for—we are happy to point you to the right conversation."
-        primary={{ label: "Get in touch", to: "/contact" }}
+        title={careersCms.ctaTitle ?? "Questions before you apply?"}
+        body={careersCms.ctaBody}
+        primary={{
+          label: careersCms.ctaPrimaryLabel ?? "Get in touch",
+          to: careersCms.ctaPrimaryHref ?? "/contact",
+        }}
       />
       </main>
 

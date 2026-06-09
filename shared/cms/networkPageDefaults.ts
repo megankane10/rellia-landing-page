@@ -505,7 +505,7 @@ export const DEFAULT_NETWORK_PARTNERS_PAGE: NetworkPartnersPageContent = {
 const pickList = <T>(cms: T[] | undefined, fallback: T[]): T[] =>
   Array.isArray(cms) && cms.length > 0 ? cms : fallback
 
-const mergeNetworkWhyFeatures = (
+export const mergeNetworkWhyFeatures = (
   cms: NetworkFeatureItem[] | null | undefined,
   defaults: NetworkFeatureItem[],
 ): NetworkFeatureItem[] =>

@@ -851,6 +851,12 @@ export const careersPageQuery = `*[_id == "careersPage"][0]{
   careersContentMode,
   showHiringNavBadge,
   showVolunteerNavBadge,
+  ${networkWhyFragment},
+  perksTitle,
+  perksDescription,
+  perksItems[]{ title, body, iconKey },
+  openRolesTitle,
+  ${networkCtaFragment},
   lifeAtRelliaHeading,
   lifeAtRelliaSubheading,
   lifeAtRelliaImages[]{
@@ -863,8 +869,7 @@ export const careersPageQuery = `*[_id == "careersPage"][0]{
     iconKey,
     tooltip
   },
-  ${seoFragment},
-  ${pageSectionsFragment}
+  ${seoFragment}
 }`
 
 export const advisorsQuery = `*[_type == "advisor" && !(_id in path("drafts.**"))]{

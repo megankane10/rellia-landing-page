@@ -17,6 +17,7 @@ import {
   mergeQmsProgram,
   DEFAULT_QMS_PROGRAM,
 } from "@shared/cms/defaults";
+import { mergeCareersPage } from "@shared/cms/careersPageDefaults";
 import type {
   AboutPageContent,
   ContactPageContent,
@@ -390,8 +391,8 @@ export const useCareersPage = () =>
       const openRoles = filterValidOpenRoles(
         rolesRaw?.length ? rolesRaw : raw?.openRoles,
       )
-      if (!raw) return openRoles.length ? ({ openRoles } satisfies Partial<CareersPageContent>) : null
-      return { ...raw, openRoles }
+      const merged = mergeCareersPage(raw ?? undefined)
+      return { ...merged, openRoles }
     },
     staleTime: staleTimeMs,
   });

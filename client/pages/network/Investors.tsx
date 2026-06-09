@@ -540,9 +540,15 @@ export default function Investors() {
 
               <div className="bg-rellia-cream/35">
                 <RelliaCta
-                  title="Partner concierge"
-                  body="Share a portfolio company and the milestone you want to unlock—we’ll suggest the lightest-weight Rellia touchpoints to match."
-                  primary={{ label: "Explore the Alumni Directory", to: "/founders/alumni" }}
+                  title={content.ctaTitle ?? "Partner concierge"}
+                  body={
+                    content.ctaBody ??
+                    "Share a portfolio company and the milestone you want to unlock—we’ll suggest the lightest-weight Rellia touchpoints to match."
+                  }
+                  primary={{
+                    label: content.ctaPrimaryLabel ?? "Explore the Alumni Directory",
+                    to: content.ctaPrimaryHref ?? "/founders/alumni",
+                  }}
                 />
               </div>
             </motion.div>

@@ -5,8 +5,29 @@ import {
   sectionDividerFieldset,
   singletonSeoField,
 } from '../shared/singletonContentFields'
+import {
+  networkCtaFields,
+  networkFeatureItemMember,
+  networkWhyRelliaFields,
+} from '../shared/networkPageFields'
 
 const GROUP_LIFE_AT_RELLIA = {name: 'lifeAtRellia' as const, title: 'Life at Rellia'}
+
+const careersPerkItemMember = defineArrayMember({
+  type: 'object',
+  name: 'careersPerkItem',
+  fields: [
+    defineField({name: 'title', type: 'string', validation: (Rule) => Rule.required()}),
+    defineField({name: 'body', type: 'text', rows: 3}),
+    defineField({
+      name: 'iconKey',
+      title: 'Icon',
+      type: 'string',
+      description: 'Lucide icon name, e.g. Users, Building2, Laptop, MapPin',
+    }),
+  ],
+  preview: {select: {title: 'title', subtitle: 'body'}},
+})
 
 export const careersPage = defineType({
   name: 'careersPage',
@@ -15,6 +36,8 @@ export const careersPage = defineType({
   groups: [GROUP_LIFE_AT_RELLIA, ...CONTENT_SEO_GROUPS],
   fieldsets: [
     sectionDividerFieldset('contentDivider', 'Page content'),
+    sectionDividerFieldset('whyRelliaDivider', 'Why Rellia cards'),
+    sectionDividerFieldset('howWeWorkDivider', 'How we work grid'),
     sectionDividerFieldset('lifeAtRelliaDivider', 'Life at Rellia'),
     ...CONTENT_SEO_FIELDSETS,
   ],
@@ -55,6 +78,66 @@ export const careersPage = defineType({
       group: 'content',
       fieldset: 'contentDivider',
     }),
+    defineField({
+      name: 'whyTitle',
+      title: 'Why Rellia section title',
+      type: 'string',
+      initialValue: 'Building What Matters Most',
+      group: 'content',
+      fieldset: 'whyRelliaDivider',
+    }),
+    defineField({
+      name: 'whyDescription',
+      title: 'Why Rellia section description',
+      type: 'text',
+      rows: 2,
+      group: 'content',
+      fieldset: 'whyRelliaDivider',
+    }),
+    defineField({
+      name: 'whyFeatures',
+      title: 'Why Rellia feature cards',
+      type: 'array',
+      of: [networkFeatureItemMember],
+      group: 'content',
+      fieldset: 'whyRelliaDivider',
+    }),
+    defineField({
+      name: 'perksTitle',
+      title: 'How we work — section title',
+      type: 'string',
+      initialValue: 'How we work',
+      group: 'content',
+      fieldset: 'howWeWorkDivider',
+    }),
+    defineField({
+      name: 'perksDescription',
+      title: 'How we work — section description',
+      type: 'text',
+      rows: 2,
+      group: 'content',
+      fieldset: 'howWeWorkDivider',
+    }),
+    defineField({
+      name: 'perksItems',
+      title: 'How we work — perk items',
+      type: 'array',
+      of: [careersPerkItemMember],
+      group: 'content',
+      fieldset: 'howWeWorkDivider',
+    }),
+    defineField({
+      name: 'openRolesTitle',
+      title: 'Open roles section title',
+      type: 'string',
+      initialValue: 'Open Roles',
+      group: 'content',
+      fieldset: 'contentDivider',
+    }),
+    ...networkCtaFields.map((field) => ({
+      ...field,
+      fieldset: 'contentDivider' as const,
+    })),
     defineField({
       name: 'lifeAtRelliaHeading',
       title: 'Life at Rellia — Heading',

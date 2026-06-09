@@ -51,6 +51,7 @@ import {
   DEFAULT_NETWORK_INVESTORS_PAGE,
   DEFAULT_NETWORK_PARTNERS_PAGE,
 } from "../shared/cms/networkPageDefaults"
+import { DEFAULT_CAREERS_PAGE } from "../shared/cms/careersPageDefaults"
 import { threePartHeroHeadline } from "../shared/cms/inlineHeroHeadline"
 import { buildStoryFilterMutations, storyFilterIdForTag } from "../shared/cms/storyFilters"
 import { buildStorySeoFieldsPayload } from "../shared/cms/storySeo"
@@ -1192,6 +1193,17 @@ async function main() {
       careersContentMode: "both",
       showHiringNavBadge: false,
       showVolunteerNavBadge: false,
+      whyTitle: DEFAULT_CAREERS_PAGE.whyTitle,
+      whyDescription: DEFAULT_CAREERS_PAGE.whyDescription,
+      whyFeatures: DEFAULT_CAREERS_PAGE.whyFeatures,
+      perksTitle: DEFAULT_CAREERS_PAGE.perksTitle,
+      perksDescription: DEFAULT_CAREERS_PAGE.perksDescription,
+      perksItems: DEFAULT_CAREERS_PAGE.perksItems,
+      openRolesTitle: DEFAULT_CAREERS_PAGE.openRolesTitle,
+      ctaTitle: DEFAULT_CAREERS_PAGE.ctaTitle,
+      ctaBody: DEFAULT_CAREERS_PAGE.ctaBody,
+      ctaPrimaryLabel: DEFAULT_CAREERS_PAGE.ctaPrimaryLabel,
+      ctaPrimaryHref: DEFAULT_CAREERS_PAGE.ctaPrimaryHref,
       lifeAtRelliaHeading: "Built by healthtech insiders, for builders",
       lifeAtRelliaSubheading: "We are a remote-first, high-standards team of builders, clinicians, and operators dedicated to supporting healthtech founders. We cultivate an environment of high autonomy, rapid iteration, and deep clinical empathy to build the future of care.",
       lifeAtRelliaImages:

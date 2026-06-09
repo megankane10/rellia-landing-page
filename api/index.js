@@ -830,6 +830,12 @@ var careersPageQuery = `*[_id == "careersPage"][0]{
   careersContentMode,
   showHiringNavBadge,
   showVolunteerNavBadge,
+  ${networkWhyFragment},
+  perksTitle,
+  perksDescription,
+  perksItems[]{ title, body, iconKey },
+  openRolesTitle,
+  ${networkCtaFragment},
   lifeAtRelliaHeading,
   lifeAtRelliaSubheading,
   lifeAtRelliaImages[]{
@@ -842,8 +848,7 @@ var careersPageQuery = `*[_id == "careersPage"][0]{
     iconKey,
     tooltip
   },
-  ${seoFragment},
-  ${pageSectionsFragment}
+  ${seoFragment}
 }`;
 var advisorsQuery = `*[_type == "advisor" && !(_id in path("drafts.**"))]{
   "id": slug.current,

@@ -61,7 +61,17 @@ export type CareersPageContent = {
   showVolunteerNavBadge?: boolean
   openRoles?: CareersOpenRole[]
   seo?: SeoContent
-  sections?: CmsPageSection[]
+  whyTitle?: string
+  whyDescription?: string
+  whyFeatures?: NetworkFeatureItem[]
+  perksTitle?: string
+  perksDescription?: string
+  perksItems?: NetworkFeatureItem[]
+  openRolesTitle?: string
+  ctaTitle?: string
+  ctaBody?: string
+  ctaPrimaryLabel?: string
+  ctaPrimaryHref?: string
   lifeAtRelliaHeading?: string
   lifeAtRelliaSubheading?: string
   lifeAtRelliaImages?: CareersLifeAtRelliaImage[]
