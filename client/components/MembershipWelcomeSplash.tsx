@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react"
-import { motion, useReducedMotion } from "framer-motion"
+import { AnimatePresence, motion, useAnimationControls, useReducedMotion } from "framer-motion"
 import { cmsCleanText, cmsDisplayText, isVisualEditingPreview } from "@/lib/cmsStega"
 
 export type MembershipWelcomeSplashProps = {
@@ -18,11 +18,12 @@ type SplashPhase = "enter" | "hold" | "exit" | "done"
 const HEADING_STAGGER_S = 0.2
 const HEADING_WORD_DURATION_S = 0.88
 const HEADING_DELAY_CHILDREN_S = 0.34
-const SUBHEADING_REVEAL_S = 0.45
+const SUBHEADING_REVEAL_S = 0.72
 const READ_HOLD_MS = 3000
-const ANIM_EXIT_MS = 550
+const ANIM_EXIT_MS = 720
 
 const SLIDE_EASE = [0.4, 0, 0.2, 1] as const
+const REVEAL_EASE = [0.33, 1, 0.68, 1] as const
 
 export default function MembershipWelcomeSplash({
   enabled,
@@ -34,6 +35,7 @@ export default function MembershipWelcomeSplash({
 }: MembershipWelcomeSplashProps) {
   const reduceMotion = useReducedMotion()
   const previewMode = isVisualEditingPreview()
+  const exitControls = useAnimationControls()
   const [phase, setPhase] = useState<SplashPhase>("enter")
   const [showSubheading, setShowSubheading] = useState(Boolean(reduceMotion))
 
@@ -54,19 +56,13 @@ export default function MembershipWelcomeSplash({
     )
   }, [reduceMotion, words.length])
 
-  const timings = useMemo(() => {
-    const revealMs = Math.round(
-      (subheadingDelay + (reduceMotion ? 0 : SUBHEADING_REVEAL_S)) * 1000,
-    )
-    const holdMs = READ_HOLD_MS
-    const exitMs = ANIM_EXIT_MS
-    return {
-      revealMs,
-      holdMs,
-      exitMs,
-      totalMs: revealMs + holdMs + exitMs,
-    }
-  }, [reduceMotion, subheadingDelay])
+  const revealMs = useMemo(
+    () =>
+      Math.round(
+        (subheadingDelay + (reduceMotion ? 0 : SUBHEADING_REVEAL_S)) * 1000,
+      ),
+    [reduceMotion, subheadingDelay],
+  )
 
   const headingContainerVariants = {
     hidden: {},
@@ -90,7 +86,7 @@ export default function MembershipWelcomeSplash({
       filter: "blur(0px)",
       transition: {
         duration: reduceMotion ? 0 : HEADING_WORD_DURATION_S,
-        ease: [0.33, 1, 0.68, 1] as const,
+        ease: REVEAL_EASE,
       },
     },
   }
@@ -125,22 +121,36 @@ export default function MembershipWelcomeSplash({
     }
 
     setPhase("enter")
-    const holdTimer = window.setTimeout(() => setPhase("hold"), timings.revealMs)
     const exitTimer = window.setTimeout(
       () => setPhase("exit"),
-      timings.revealMs + timings.holdMs,
+      revealMs + READ_HOLD_MS,
     )
-    const doneTimer = window.setTimeout(() => {
-      setPhase("done")
-      onComplete()
-    }, timings.totalMs)
+
+    return () => window.clearTimeout(exitTimer)
+  }, [enabled, onComplete, reduceMotion, revealMs])
+
+  useEffect(() => {
+    if (phase !== "exit" || reduceMotion) return
+
+    let cancelled = false
+    void exitControls
+      .start({
+        y: "-100vh",
+        transition: {
+          duration: ANIM_EXIT_MS / 1000,
+          ease: SLIDE_EASE,
+        },
+      })
+      .then(() => {
+        if (cancelled) return
+        setPhase("done")
+        onComplete()
+      })
 
     return () => {
-      window.clearTimeout(holdTimer)
-      window.clearTimeout(exitTimer)
-      window.clearTimeout(doneTimer)
+      cancelled = true
     }
-  }, [enabled, onComplete, reduceMotion, timings])
+  }, [exitControls, onComplete, phase, reduceMotion])
 
   if (!enabled || phase === "done") return null
 
@@ -148,13 +158,9 @@ export default function MembershipWelcomeSplash({
 
   return (
     <motion.div
-      className="fixed inset-0 z-[250] overflow-hidden"
+      className="fixed inset-0 z-[250] overflow-hidden transform-gpu"
       initial={{ y: 0 }}
-      animate={{ y: isExiting ? "-100%" : 0 }}
-      transition={{
-        duration: isExiting ? ANIM_EXIT_MS / 1000 : 0,
-        ease: SLIDE_EASE,
-      }}
+      animate={exitControls}
       role="dialog"
       aria-modal="true"
       aria-label="Membership welcome"
@@ -182,27 +188,26 @@ export default function MembershipWelcomeSplash({
         </div>
 
         <div className="relative z-10 flex min-h-full flex-1 items-center px-6 py-24 md:px-12 lg:px-16">
-          <motion.div
-            className="mx-auto w-full max-w-3xl text-left"
-            initial={reduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 28 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-          >
+          <div className="mx-auto w-full max-w-3xl text-left">
             <motion.div
               className="mb-16 md:mb-20 lg:mb-24"
               initial={reduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: -64 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1.1, ease: [0.22, 1, 0.36, 1] }}
+              transition={{ duration: 1.1, ease: REVEAL_EASE }}
             >
               <motion.img
                 src={logoSrc}
                 alt=""
                 aria-hidden
                 className="h-[4.5rem] w-[4.5rem] drop-shadow-[0_12px_32px_rgba(0,0,0,0.5)] md:h-24 md:w-24 lg:h-28 lg:w-28"
-                animate={reduceMotion ? undefined : { rotate: 360 }}
+                animate={
+                  reduceMotion || isExiting
+                    ? { rotate: 0 }
+                    : { rotate: 360 }
+                }
                 transition={
-                  reduceMotion
-                    ? undefined
+                  reduceMotion || isExiting
+                    ? { duration: 0.2 }
                     : {
                         rotate: {
                           duration: 18,
@@ -237,25 +242,32 @@ export default function MembershipWelcomeSplash({
               </motion.h1>
             )}
 
-            {showSubheading ? (
-              <motion.p
-                className="mt-6 max-w-2xl font-urbanist text-xl font-normal leading-relaxed md:mt-8 md:text-2xl md:leading-relaxed"
-                style={{
-                  color: "rgba(255, 255, 255, 0.82)",
-                  textShadow:
-                    "0 2px 24px rgba(0, 0, 0, 0.8), 0 1px 6px rgba(0, 0, 0, 0.7)",
-                }}
-                initial={reduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 28 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{
-                  duration: reduceMotion ? 0 : SUBHEADING_REVEAL_S,
-                  ease: SLIDE_EASE,
-                }}
-              >
-                {subheadingText}
-              </motion.p>
-            ) : null}
-          </motion.div>
+            <AnimatePresence>
+              {showSubheading ? (
+                <motion.p
+                  key="splash-subheading"
+                  className="mt-6 max-w-2xl font-urbanist text-xl font-normal leading-relaxed md:mt-8 md:text-2xl md:leading-relaxed"
+                  style={{
+                    color: "rgba(255, 255, 255, 0.82)",
+                    textShadow:
+                      "0 2px 24px rgba(0, 0, 0, 0.8), 0 1px 6px rgba(0, 0, 0, 0.7)",
+                  }}
+                  initial={
+                    reduceMotion
+                      ? { opacity: 1, y: 0, filter: "blur(0px)" }
+                      : { opacity: 0, y: 32, filter: "blur(12px)" }
+                  }
+                  animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                  transition={{
+                    duration: reduceMotion ? 0 : SUBHEADING_REVEAL_S,
+                    ease: REVEAL_EASE,
+                  }}
+                >
+                  {subheadingText}
+                </motion.p>
+              ) : null}
+            </AnimatePresence>
+          </div>
         </div>
       </div>
     </motion.div>
