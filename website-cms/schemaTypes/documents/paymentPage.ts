@@ -249,7 +249,7 @@ export const paymentPage = defineType({
       type: 'number',
       title: 'Splash total duration (seconds)',
       description:
-        'Legacy field — splash timing is fixed in code (2s hold after reveal, then slide-up). Not editable via this number.',
+        'Seconds from splash start until the slide-up exit begins (2.5–8). Must be long enough for the headline reveal; extra time is hold after reveal.',
       initialValue: 3.5,
       validation: (Rule) => Rule.min(2.5).max(8),
       group: 'content',

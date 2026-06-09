@@ -8,7 +8,7 @@ export type MembershipWelcomeSplashProps = {
   subheading: string
   backgroundSrc: string
   logoSrc: string
-  /** Kept for CMS compatibility; hold time after reveal is fixed at 2s. */
+  /** Total splash time before slide-up exit (from CMS welcomeSplashDurationSeconds). */
   totalSeconds?: number
   onComplete: () => void
 }
@@ -26,8 +26,16 @@ const SUBHEADING_NEARLY_DONE_OFFSET_S = 0.38
  * File: client/components/MembershipWelcomeSplash.tsx
  */
 const PROGRESS_BAR_EDGE: "top" | "bottom" = "bottom"
-const READ_HOLD_MS = 2000
+const MIN_SPLASH_TOTAL_SECONDS = 2.5
+const MAX_SPLASH_TOTAL_SECONDS = 8
+const DEFAULT_SPLASH_TOTAL_SECONDS = 3.5
+const MIN_HOLD_AFTER_REVEAL_MS = 500
 const ANIM_EXIT_MS = 720
+
+const resolveSplashTotalSeconds = (value?: number) => {
+  if (typeof value !== "number" || !Number.isFinite(value)) return DEFAULT_SPLASH_TOTAL_SECONDS
+  return Math.min(MAX_SPLASH_TOTAL_SECONDS, Math.max(MIN_SPLASH_TOTAL_SECONDS, value))
+}
 
 const SLIDE_EASE = [0.4, 0, 0.2, 1] as const
 const REVEAL_EASE = [0.33, 1, 0.68, 1] as const
@@ -45,6 +53,7 @@ export default function MembershipWelcomeSplash({
   subheading,
   backgroundSrc,
   logoSrc,
+  totalSeconds,
   onComplete,
 }: MembershipWelcomeSplashProps) {
   const reduceMotion = useReducedMotion()
@@ -82,7 +91,15 @@ export default function MembershipWelcomeSplash({
     return Math.round(contentRevealEndS * 1000)
   }, [headingRevealEndS, reduceMotion, subheadingStartS])
 
-  const preExitDurationMs = useMemo(() => revealMs + READ_HOLD_MS, [revealMs])
+  const configuredTotalSeconds = useMemo(
+    () => resolveSplashTotalSeconds(totalSeconds),
+    [totalSeconds],
+  )
+
+  const preExitDurationMs = useMemo(() => {
+    const configuredMs = Math.round(configuredTotalSeconds * 1000)
+    return Math.max(revealMs + MIN_HOLD_AFTER_REVEAL_MS, configuredMs)
+  }, [configuredTotalSeconds, revealMs])
 
   const handleProgressComplete = useCallback(() => {
     if (reduceMotion || phase === "exit" || phase === "done") return
@@ -132,12 +149,12 @@ export default function MembershipWelcomeSplash({
       const brief = window.setTimeout(() => {
         setPhase("done")
         onComplete()
-      }, READ_HOLD_MS + ANIM_EXIT_MS)
+      }, Math.round(configuredTotalSeconds * 1000) + ANIM_EXIT_MS)
       return () => window.clearTimeout(brief)
     }
 
     setPhase("enter")
-  }, [enabled, onComplete, reduceMotion])
+  }, [configuredTotalSeconds, enabled, onComplete, reduceMotion])
 
   useEffect(() => {
     if (phase !== "exit" || reduceMotion) return
