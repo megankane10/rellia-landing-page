@@ -129,8 +129,7 @@ export default function Payment() {
           }
           holdAfterRevealSeconds={
             p.welcomeSplashDurationSeconds ??
-            DEFAULT_PAYMENT_PAGE.welcomeSplashDurationSeconds ??
-            3
+            DEFAULT_PAYMENT_PAGE.welcomeSplashDurationSeconds
           }
           onComplete={handleSplashComplete}
         />

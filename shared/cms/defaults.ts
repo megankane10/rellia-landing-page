@@ -2436,7 +2436,7 @@ export const DEFAULT_PAYMENT_PAGE: PaymentPageContent = {
     "Secure your spot in the Rellia network to finalize your membership and unlock your exclusive founder benefits.",
   welcomeSplashBackgroundSrc: "/images/membership-splash.jpg",
   welcomeSplashLogoSrc: "/svgs/rellia-secondary-logo-circle-health-white-rgb.svg",
-  welcomeSplashDurationSeconds: 3,
+  welcomeSplashDurationSeconds: 3.8,
 }
 
 export const getPaymentPagePanelDescription = (
