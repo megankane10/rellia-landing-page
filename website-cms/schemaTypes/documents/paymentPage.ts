@@ -231,7 +231,7 @@ export const paymentPage = defineType({
       title: 'Splash total duration (seconds)',
       description:
         'Controls the full sequence: logo + heading reveal (~45%), hold (~30%), then exit (~25%). Allowed range: 3–12 seconds.',
-      initialValue: 5.5,
+      initialValue: 4.5,
       validation: (Rule) => Rule.min(3).max(12),
       group: 'content',
       fieldset: 'welcomeSplashDivider',

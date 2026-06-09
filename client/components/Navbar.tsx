@@ -225,6 +225,8 @@ export type NavbarProps = {
   ctaOpenInNewTab?: boolean
   /** Hide the announcement modal on focused flows (e.g. admin). */
   hideAnnouncement?: boolean
+  /** Fully hide the bar (e.g. membership welcome splash). */
+  forceHidden?: boolean
 }
 
 export default function Navbar({
@@ -235,6 +237,7 @@ export default function Navbar({
   ctaTo: ctaToOverride,
   ctaOpenInNewTab = false,
   hideAnnouncement = false,
+  forceHidden = false,
 }: NavbarProps) {
   const { data: navigationData } = useNavigation()
   const { data: globalSettingsData } = useGlobalSettings()
@@ -522,8 +525,10 @@ export default function Navbar({
       <header>
       <nav
         aria-label="Main navigation"
+        aria-hidden={forceHidden}
         className={cn(
-          "fixed inset-x-0 top-0 z-[9999] transform-gpu transition-[background-color,backdrop-filter,border-color,box-shadow] duration-500 ease-out motion-reduce:transition-none",
+          "fixed inset-x-0 top-0 z-[9999] transform-gpu transition-[background-color,backdrop-filter,border-color,box-shadow,opacity,transform] duration-500 ease-out motion-reduce:transition-none",
+          forceHidden && "pointer-events-none opacity-0 -translate-y-3",
           mobileOpen && "border-b border-white/10 bg-rellia-teal shadow-[0_10px_30px_-24px_rgba(0,0,0,0.35)] backdrop-blur-2xl",
           !mobileOpen && scrolled && "bg-rellia-teal shadow-[0_10px_30px_-24px_rgba(0,0,0,0.35)] backdrop-blur-2xl",
           !mobileOpen &&

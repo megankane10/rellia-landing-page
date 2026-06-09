@@ -5,12 +5,12 @@ import {
   Copy,
   ShieldCheck,
 } from "lucide-react"
-import { motion } from "framer-motion"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
 import RelliaAction from "@/components/RelliaAction"
 import RelliaCta from "@/components/RelliaCta"
 import MembershipWelcomeSplash from "@/components/MembershipWelcomeSplash"
+import MembershipBenefitsPanel from "@/components/MembershipBenefitsPanel"
 import { usePaymentPage } from "@/hooks/useCmsDocuments"
 import { DEFAULT_PAYMENT_PAGE } from "@shared/cms/defaults"
 import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo"
@@ -36,6 +36,11 @@ export default function Payment() {
   const currentHref = selectedPlan === "annual" ? annualHref : monthlyHref
 
   const showSplash = Boolean(p.welcomeSplashEnabled) && !splashComplete && !previewMode
+
+  const splashBackgroundSrc =
+    p.welcomeSplashBackgroundSrc?.trim() ||
+    DEFAULT_PAYMENT_PAGE.welcomeSplashBackgroundSrc ||
+    ""
 
   const handleSplashComplete = useCallback(() => {
     setSplashComplete(true)
@@ -80,85 +85,29 @@ export default function Payment() {
         enabled={Boolean(p.welcomeSplashEnabled) && !previewMode}
         heading={p.welcomeSplashHeading ?? DEFAULT_PAYMENT_PAGE.welcomeSplashHeading ?? ""}
         subheading={p.welcomeSplashSubheading ?? DEFAULT_PAYMENT_PAGE.welcomeSplashSubheading ?? ""}
-        backgroundSrc={
-          p.welcomeSplashBackgroundSrc?.trim() ||
-          DEFAULT_PAYMENT_PAGE.welcomeSplashBackgroundSrc ||
-          ""
-        }
+        backgroundSrc={splashBackgroundSrc}
         logoSrc={
           p.welcomeSplashLogoSrc?.trim() ||
           DEFAULT_PAYMENT_PAGE.welcomeSplashLogoSrc ||
           "/svgs/rellia-secondary-logo-circle-health-white-rgb.svg"
         }
         durationSeconds={
-          p.welcomeSplashDurationSeconds ?? DEFAULT_PAYMENT_PAGE.welcomeSplashDurationSeconds ?? 5.5
+          p.welcomeSplashDurationSeconds ?? DEFAULT_PAYMENT_PAGE.welcomeSplashDurationSeconds ?? 4.5
         }
         onComplete={handleSplashComplete}
       />
 
-      <Navbar />
+      <Navbar forceHidden={showSplash} />
 
-      <main
-        id="main-content"
-        className={cn(
-          "flex w-full flex-1 flex-col transition-opacity duration-500",
-          showSplash ? "opacity-0" : "opacity-100",
-        )}
-      >
+      <main id="main-content" className="flex w-full flex-1 flex-col">
         <section className="relative w-full pt-[84px] md:pt-[100px] pb-[12px] md:pb-[14px]">
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: showSplash ? 0 : 1, y: showSplash ? 10 : 0 }}
-            transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
-            className="grid grid-cols-1 lg:grid-cols-2"
-          >
+          <div className="grid grid-cols-1 lg:grid-cols-2">
             <div className="flex flex-col p-4 pb-8 md:p-6 md:pb-10 lg:p-8">
-              <div className="relative flex min-h-[min(520px,calc(100vh-10rem))] flex-1 flex-col overflow-hidden rounded-[1.75rem] bg-rellia-teal p-8 md:p-10 lg:p-12 w-full">
-                <div className="absolute inset-0 pointer-events-none">
-                  <img
-                    src="/images/benefits-payment.jpg"
-                    alt=""
-                    aria-hidden
-                    className="h-full w-full object-cover opacity-[0.35] mix-blend-overlay scale-105"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-br from-rellia-teal via-[#0f5c5c] to-rellia-teal/85" />
-                  <div className="absolute -left-20 -top-20 w-[400px] h-[400px] bg-rellia-mint/10 blur-[100px] rounded-full" />
-                </div>
-
-                <div className="relative z-10 flex min-h-0 flex-1 flex-col">
-                  <h1 className="font-host-grotesk text-2xl md:text-[32px] font-semibold tracking-tight text-rellia-mint mb-10 leading-tight">
-                    {p.benefitsPanelHeadline?.trim() || p.benefitsTitle}
-                  </h1>
-
-                  <div className="flex flex-col gap-y-5 md:gap-y-6">
-                    {benefitsGrid.map((benefit, index) => {
-                      return (
-                        <div key={index} className="flex items-start gap-4 group">
-                          <span
-                            className="mt-2 h-2.5 w-2.5 shrink-0 rounded-full bg-rellia-mint transition-transform duration-300 group-hover:scale-110"
-                            aria-hidden
-                          />
-                          <p className="font-urbanist text-white text-base sm:text-lg font-medium leading-relaxed">
-                            {benefit}
-                          </p>
-                        </div>
-                      )
-                    })}
-                  </div>
-
-                  <div className="mt-auto pt-10 self-start">
-                    <img
-                      src="/images/hologram-logo.png"
-                      alt=""
-                      aria-hidden
-                      width={48}
-                      height={48}
-                      loading="lazy"
-                      className="h-12 w-12 opacity-90 drop-shadow-[0_0_15px_rgba(152,255,232,0.35)]"
-                    />
-                  </div>
-                </div>
-              </div>
+              <MembershipBenefitsPanel
+                headline={p.benefitsPanelHeadline?.trim() || p.benefitsTitle}
+                benefits={benefitsGrid}
+                backgroundSrc={splashBackgroundSrc}
+              />
             </div>
 
             <div className="relative flex items-center justify-center overflow-hidden bg-white px-6 py-12 md:px-12 md:py-16 lg:px-16 lg:py-20">
@@ -274,7 +223,7 @@ export default function Payment() {
                 ) : null}
               </div>
             </div>
-          </motion.div>
+          </div>
         </section>
 
         <RelliaCta

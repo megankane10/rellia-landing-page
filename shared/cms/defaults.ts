@@ -2423,7 +2423,7 @@ export const DEFAULT_PAYMENT_PAGE: PaymentPageContent = {
   welcomeSplashBackgroundSrc:
     "https://images.pexels.com/photos/1583582/pexels-photo-1583582.jpeg?auto=compress&cs=tinysrgb&w=1920",
   welcomeSplashLogoSrc: "/svgs/rellia-secondary-logo-circle-health-white-rgb.svg",
-  welcomeSplashDurationSeconds: 5.5,
+  welcomeSplashDurationSeconds: 4.5,
 }
 
 export const DEFAULT_APPLY_PAGE: ApplyPageContent = {
