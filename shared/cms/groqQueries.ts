@@ -176,13 +176,19 @@ const portableRichTextBlocksFragment = `[]{
   ...,
   _type == "image" => {
     ...,
-    "url": asset->url
+    "url": asset->url,
+    displayMode
+  },
+  _type == "eventDetailInlineImage" => {
+    ...,
+    displayMode
   },
   _type == "portableImageCarousel" => {
     ...,
     slides[]{
       alt,
       caption,
+      displayMode,
       "imageSrc": coalesce(image.asset->url, imageSrc)
     }
   }

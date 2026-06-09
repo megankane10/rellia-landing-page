@@ -1,17 +1,20 @@
 import {useCallback, useRef, useState, type ChangeEvent} from 'react'
 import {ImageIcon, UploadIcon} from '@sanity/icons'
 import {Box, Button, Card, Flex, Stack, Text} from '@sanity/ui'
-import {PatchEvent, set, type ObjectInputProps, useClient} from 'sanity'
+import {PatchEvent, set, type ObjectInputProps, useClient, useFormCallbacks} from 'sanity'
 import type {ImageValue} from 'sanity'
 import {CROP_ASPECT_PRESETS, type CropAspectPreset} from '../../../shared/image/cropImage'
-import {ImageCropModal} from './ImageCropModal'
+import {ImageCropModal, type RichTextImageUploadMode} from './ImageCropModal'
 
 type ImageCropOptions = {
   cropAspect?: number
   cropAspectPreset?: CropAspectPreset
   cropMaxSize?: number
   cropAllowAspectChange?: boolean
+  cropAllowFullImage?: boolean
 }
+
+type ImageValueWithDisplay = ImageValue & {displayMode?: RichTextImageUploadMode}
 
 const resolveAspectPreset = (options?: ImageCropOptions): CropAspectPreset => {
   if (options?.cropAspectPreset) return options.cropAspectPreset
@@ -22,7 +25,7 @@ const resolveAspectPreset = (options?: ImageCropOptions): CropAspectPreset => {
 }
 
 export const CroppedImageInput = (props: ObjectInputProps<ImageValue>) => {
-  const {value, onChange, readOnly, renderDefault, schemaType} = props
+  const {value, onChange, readOnly, renderDefault, schemaType, path} = props
   const options = (schemaType.options ?? {}) as ImageCropOptions
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [cropFile, setCropFile] = useState<File | null>(null)
@@ -30,13 +33,26 @@ export const CroppedImageInput = (props: ObjectInputProps<ImageValue>) => {
   const [error, setError] = useState<string | null>(null)
 
   const client = useClient({apiVersion: '2024-01-01'})
+  const {onChange: onFormChange} = useFormCallbacks()
   const fixedAspect = typeof options.cropAspect === 'number' ? options.cropAspect : undefined
   const allowAspectChange = options.cropAllowAspectChange ?? !fixedAspect
+  const allowFullImage = options.cropAllowFullImage ?? false
   const defaultAspectPreset = resolveAspectPreset(options)
   const maxOutputSize = options.cropMaxSize ?? 2400
+  const fieldName = path[path.length - 1]
+
+  const applyDisplayMode = useCallback(
+    (uploadMode: RichTextImageUploadMode) => {
+      if (!allowFullImage || fieldName !== 'image') return
+
+      const slidePath = path.slice(0, -1)
+      onFormChange(PatchEvent.from(set(uploadMode, [...slidePath, 'displayMode'])))
+    },
+    [allowFullImage, fieldName, onFormChange, path],
+  )
 
   const uploadCroppedFile = useCallback(
-    async (file: File) => {
+    async (file: File, uploadMode: RichTextImageUploadMode) => {
       setUploading(true)
       setError(null)
 
@@ -46,17 +62,20 @@ export const CroppedImageInput = (props: ObjectInputProps<ImageValue>) => {
           contentType: file.type,
         })
 
-        onChange(
-          PatchEvent.from(
-            set({
-              _type: 'image',
-              asset: {
-                _type: 'reference',
-                _ref: asset._id,
-              },
-            }),
-          ),
-        )
+        const nextValue: ImageValueWithDisplay = {
+          _type: 'image',
+          asset: {
+            _type: 'reference',
+            _ref: asset._id,
+          },
+        }
+
+        if (allowFullImage && fieldName !== 'image') {
+          nextValue.displayMode = uploadMode
+        }
+
+        onChange(PatchEvent.from(set(nextValue)))
+        applyDisplayMode(uploadMode)
       } catch (uploadError) {
         setError(uploadError instanceof Error ? uploadError.message : 'Could not upload image.')
       } finally {
@@ -64,7 +83,7 @@ export const CroppedImageInput = (props: ObjectInputProps<ImageValue>) => {
         setCropFile(null)
       }
     },
-    [client, onChange],
+    [allowFullImage, applyDisplayMode, client, fieldName, onChange],
   )
 
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -101,7 +120,9 @@ export const CroppedImageInput = (props: ObjectInputProps<ImageValue>) => {
             </Text>
             <Stack space={3} flex={1}>
               <Text size={1} muted>
-                Upload an image, then crop it to the right size before it is saved to Sanity.
+                {allowFullImage
+                  ? 'Upload an image, then choose cropped banner or full display before it is saved.'
+                  : 'Upload an image, then crop it to the right size before it is saved to Sanity.'}
               </Text>
               <Button
                 icon={UploadIcon}
@@ -137,10 +158,11 @@ export const CroppedImageInput = (props: ObjectInputProps<ImageValue>) => {
         file={cropFile}
         aspect={fixedAspect}
         allowAspectChange={allowAspectChange}
+        allowFullImage={allowFullImage}
         defaultAspectPreset={defaultAspectPreset}
         maxOutputSize={maxOutputSize}
         onClose={() => setCropFile(null)}
-        onConfirm={(file) => void uploadCroppedFile(file)}
+        onConfirm={(file, uploadMode) => void uploadCroppedFile(file, uploadMode)}
       />
     </Stack>
   )

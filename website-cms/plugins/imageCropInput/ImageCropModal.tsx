@@ -1,6 +1,6 @@
 import {useCallback, useEffect, useState} from 'react'
 import Cropper, {type Area} from 'react-easy-crop'
-import {Box, Button, Dialog, Flex, Label, Select, Stack, Text} from '@sanity/ui'
+import {Box, Button, Dialog, Flex, Label, Radio, Select, Stack, Text} from '@sanity/ui'
 import {
   CROP_ASPECT_PRESETS,
   cropFileToFile,
@@ -16,15 +16,18 @@ const PRESET_LABELS: Record<CropAspectPreset, string> = {
   wide: 'Wide (16:9)',
 }
 
+export type RichTextImageUploadMode = 'full' | 'cropped'
+
 type ImageCropModalProps = {
   open: boolean
   file: File | null
   aspect?: number
   allowAspectChange?: boolean
+  allowFullImage?: boolean
   defaultAspectPreset?: CropAspectPreset
   maxOutputSize?: number
   onClose: () => void
-  onConfirm: (file: File) => void
+  onConfirm: (file: File, uploadMode: RichTextImageUploadMode) => void
 }
 
 export const ImageCropModal = ({
@@ -32,12 +35,14 @@ export const ImageCropModal = ({
   file,
   aspect: fixedAspect,
   allowAspectChange = false,
+  allowFullImage = false,
   defaultAspectPreset = 'square',
   maxOutputSize = 2000,
   onClose,
   onConfirm,
 }: ImageCropModalProps) => {
   const [imageSrc, setImageSrc] = useState<string | null>(null)
+  const [uploadMode, setUploadMode] = useState<RichTextImageUploadMode>('cropped')
   const [crop, setCrop] = useState({x: 0, y: 0})
   const [zoom, setZoom] = useState(1)
   const [aspectPreset, setAspectPreset] = useState<CropAspectPreset>(defaultAspectPreset)
@@ -62,6 +67,7 @@ export const ImageCropModal = ({
     const objectUrl = URL.createObjectURL(file)
     setImageSrc(objectUrl)
     setAspectPreset(defaultAspectPreset)
+    setUploadMode('cropped')
 
     return () => URL.revokeObjectURL(objectUrl)
   }, [open, file, defaultAspectPreset])
@@ -84,7 +90,22 @@ export const ImageCropModal = ({
   }, [aspect, mediaSize])
 
   const handleConfirm = async () => {
-    if (!file || !croppedAreaPixels) return
+    if (!file) return
+    if (uploadMode === 'full' && allowFullImage) {
+      setSaving(true)
+      setError(null)
+      try {
+        onConfirm(file, 'full')
+        onClose()
+      } catch (uploadError) {
+        setError(uploadError instanceof Error ? uploadError.message : 'Could not upload image.')
+      } finally {
+        setSaving(false)
+      }
+      return
+    }
+
+    if (!croppedAreaPixels) return
 
     setSaving(true)
     setError(null)
@@ -94,7 +115,7 @@ export const ImageCropModal = ({
         maxWidth: maxOutputSize,
         maxHeight: maxOutputSize,
       })
-      onConfirm(cropped)
+      onConfirm(cropped, 'cropped')
       onClose()
     } catch (cropError) {
       setError(cropError instanceof Error ? cropError.message : 'Could not crop image.')
@@ -115,11 +136,32 @@ export const ImageCropModal = ({
     >
       <Stack space={4} padding={4}>
         <Text muted size={1}>
-          Drag to reposition. Images are cropped from the top by default so faces and headers are not
-          cut off awkwardly on the site.
+          {allowFullImage
+            ? 'Choose whether the image should fill a wide banner on the site or show in full. Cropped images are aligned from the top by default.'
+            : 'Drag to reposition. Images are cropped from the top by default so faces and headers are not cut off awkwardly on the site.'}
         </Text>
 
-        {allowAspectChange && !fixedAspect ? (
+        {allowFullImage ? (
+          <Stack space={2}>
+            <Label>On-site display</Label>
+            <Flex gap={4} wrap="wrap">
+              <Radio
+                checked={uploadMode === 'cropped'}
+                label="Cropped (wide banner)"
+                name="rich-text-image-upload-mode"
+                onChange={() => setUploadMode('cropped')}
+              />
+              <Radio
+                checked={uploadMode === 'full'}
+                label="Full image"
+                name="rich-text-image-upload-mode"
+                onChange={() => setUploadMode('full')}
+              />
+            </Flex>
+          </Stack>
+        ) : null}
+
+        {allowAspectChange && !fixedAspect && uploadMode === 'cropped' ? (
           <Stack space={2}>
             <Label>Aspect ratio</Label>
             <Select
@@ -135,47 +177,68 @@ export const ImageCropModal = ({
           </Stack>
         ) : null}
 
-        <Box
-          style={{
-            position: 'relative',
-            height: 'min(52vh, 360px)',
-            width: '100%',
-            overflow: 'hidden',
-            borderRadius: '12px',
-            background: 'var(--card-muted-bg-color)',
-          }}
-        >
-          {imageSrc ? (
-            <Cropper
-              key={String(aspect)}
-              image={imageSrc}
-              crop={crop}
-              zoom={zoom}
-              aspect={aspect}
-              onCropChange={setCrop}
-              onZoomChange={setZoom}
-              onCropComplete={(_area, areaPixels) => setCroppedAreaPixels(areaPixels)}
-              onMediaLoaded={handleMediaLoaded}
-              objectFit="contain"
-              restrictPosition
-              showGrid
-            />
-          ) : null}
-        </Box>
+        {uploadMode === 'full' && allowFullImage ? (
+          <Box
+            style={{
+              width: '100%',
+              overflow: 'hidden',
+              borderRadius: '12px',
+              background: 'var(--card-muted-bg-color)',
+            }}
+          >
+            {imageSrc ? (
+              <img
+                src={imageSrc}
+                alt="Full image preview"
+                style={{display: 'block', width: '100%', height: 'auto'}}
+              />
+            ) : null}
+          </Box>
+        ) : (
+          <>
+            <Box
+              style={{
+                position: 'relative',
+                height: 'min(52vh, 360px)',
+                width: '100%',
+                overflow: 'hidden',
+                borderRadius: '12px',
+                background: 'var(--card-muted-bg-color)',
+              }}
+            >
+              {imageSrc ? (
+                <Cropper
+                  key={String(aspect)}
+                  image={imageSrc}
+                  crop={crop}
+                  zoom={zoom}
+                  aspect={aspect}
+                  onCropChange={setCrop}
+                  onZoomChange={setZoom}
+                  onCropComplete={(_area, areaPixels) => setCroppedAreaPixels(areaPixels)}
+                  onMediaLoaded={handleMediaLoaded}
+                  objectFit="contain"
+                  restrictPosition
+                  showGrid
+                />
+              ) : null}
+            </Box>
 
-        <Stack space={2}>
-          <Label>Zoom</Label>
-          <input
-            type="range"
-            min={1}
-            max={3}
-            step={0.01}
-            value={zoom}
-            onChange={(event) => setZoom(Number(event.currentTarget.value))}
-            aria-label="Crop zoom"
-            style={{width: '100%'}}
-          />
-        </Stack>
+            <Stack space={2}>
+              <Label>Zoom</Label>
+              <input
+                type="range"
+                min={1}
+                max={3}
+                step={0.01}
+                value={zoom}
+                onChange={(event) => setZoom(Number(event.currentTarget.value))}
+                aria-label="Crop zoom"
+                style={{width: '100%'}}
+              />
+            </Stack>
+          </>
+        )}
 
         {error ? (
           <Text size={1} style={{color: 'var(--card-critical-fg-color)'}}>
@@ -187,9 +250,20 @@ export const ImageCropModal = ({
           <Button mode="ghost" text="Cancel" onClick={onClose} disabled={saving} />
           <Button
             tone="primary"
-            text={saving ? 'Uploading…' : 'Use cropped image'}
+            text={
+              saving
+                ? 'Uploading…'
+                : uploadMode === 'full' && allowFullImage
+                  ? 'Use full image'
+                  : 'Use cropped image'
+            }
             onClick={() => void handleConfirm()}
-            disabled={!file || !croppedAreaPixels || saving}
+            disabled={
+              !file ||
+              saving ||
+              (uploadMode === 'cropped' && !croppedAreaPixels) ||
+              (uploadMode === 'full' && !allowFullImage)
+            }
           />
         </Flex>
       </Stack>

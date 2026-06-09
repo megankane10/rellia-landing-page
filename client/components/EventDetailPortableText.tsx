@@ -6,28 +6,46 @@ import { BodyCtaBox } from "@/components/BodyCtaBox"
 import { RichTextImageCarousel, type RichTextCarouselSlide } from "@/components/RichTextImageCarousel"
 import { parseBlockquoteAttribution, RichTextQuoteFigure } from "@/components/RichTextQuoteFigure"
 import ImageExpandModal from "@/components/ImageExpandModal"
+import {
+  normalizeRichTextImageDisplayMode,
+  richTextCroppedFrameClassName,
+  richTextInlineImageClassName,
+  type RichTextImageDisplayMode,
+} from "@/lib/richTextImageDisplay"
 
 const EventDetailInlineImageComponent = ({
   src,
   alt,
   caption,
+  displayMode: displayModeProp,
 }: {
   src: string
   alt: string
   caption?: string
+  displayMode?: RichTextImageDisplayMode
 }) => {
   const [open, setOpen] = useState(false)
+  const displayMode = normalizeRichTextImageDisplayMode(displayModeProp)
+  const isFull = displayMode === "full"
+
   return (
     <>
       <figure className="mt-8 md:mt-10 [&:first-child]:mt-0">
-        <img
-          src={src}
-          alt={alt}
-          onClick={() => setOpen(true)}
-          className="h-auto w-full max-w-full cursor-pointer rounded-2xl border border-black/10 shadow-sm transition-opacity duration-200 hover:opacity-95"
-          loading="lazy"
-          decoding="async"
-        />
+        <div
+          className={cn(
+            isFull ? undefined : richTextCroppedFrameClassName,
+            !isFull && "rounded-2xl border border-black/10 shadow-sm",
+          )}
+        >
+          <img
+            src={src}
+            alt={alt}
+            onClick={() => setOpen(true)}
+            className={richTextInlineImageClassName(displayMode)}
+            loading="lazy"
+            decoding="async"
+          />
+        </div>
         {caption ? (
           <figcaption className="mt-3 font-urbanist text-sm leading-snug text-black/55 md:text-[15px]">
             {caption}
@@ -51,6 +69,9 @@ const components: PortableTextComponents = {
           imageSrc: typeof s?.imageSrc === "string" ? s.imageSrc.trim() : "",
           alt: typeof s?.alt === "string" ? s.alt.trim() : "",
           caption: typeof s?.caption === "string" ? s.caption.trim() : undefined,
+          displayMode: normalizeRichTextImageDisplayMode(
+            (s as { displayMode?: string }).displayMode,
+          ),
         }))
         .filter((s) => s.imageSrc.length > 0 && s.alt.length > 0)
       if (slides.length === 0) return null
@@ -63,12 +84,19 @@ const components: PortableTextComponents = {
       )
     },
     eventDetailInlineImage: ({ value }) => {
-      const v = value as { imageSrc?: string; alt?: string; caption?: string } | null
+      const v = value as { imageSrc?: string; alt?: string; caption?: string; displayMode?: string } | null
       const src = typeof v?.imageSrc === "string" ? v.imageSrc.trim() : ""
       const alt = typeof v?.alt === "string" ? v.alt.trim() : ""
       const caption = typeof v?.caption === "string" ? v.caption.trim() : ""
       if (!src || !alt) return null
-      return <EventDetailInlineImageComponent src={src} alt={alt} caption={caption} />
+      return (
+        <EventDetailInlineImageComponent
+          src={src}
+          alt={alt}
+          caption={caption}
+          displayMode={normalizeRichTextImageDisplayMode(v?.displayMode)}
+        />
+      )
     },
     eventDetailDivider: () => (
       <hr className="mt-8 border-0 border-t border-black/15 md:mt-10" />

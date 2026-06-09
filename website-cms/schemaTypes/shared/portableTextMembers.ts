@@ -1,4 +1,5 @@
 import {defineArrayMember, defineField} from 'sanity'
+import {richTextImageCropOptions, richTextImageDisplayModeField} from './richTextImageFields'
 
 export const portableTextBlockMember = defineArrayMember({
   type: 'block',
@@ -28,7 +29,7 @@ export const portableTextBlockMember = defineArrayMember({
 export const portableTextInlineImageMember = defineArrayMember({
   type: 'image',
   title: 'Image (upload)',
-  options: {hotspot: true},
+  options: richTextImageCropOptions,
   fields: [
     {
       name: 'alt',
@@ -43,6 +44,7 @@ export const portableTextInlineImageMember = defineArrayMember({
         }),
     },
     {name: 'caption', title: 'Caption', type: 'string'},
+    richTextImageDisplayModeField,
   ],
 })
 
@@ -64,6 +66,7 @@ export const portableTextInlineUrlImageMember = defineArrayMember({
       validation: (Rule) => Rule.required(),
     }),
     defineField({name: 'caption', type: 'string', title: 'Caption'}),
+    richTextImageDisplayModeField,
   ],
   preview: {
     select: {title: 'alt', subtitle: 'imageSrc'},

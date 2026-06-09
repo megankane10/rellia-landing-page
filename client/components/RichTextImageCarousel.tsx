@@ -3,11 +3,18 @@ import useEmblaCarousel from "embla-carousel-react"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import { cn } from "@/lib/utils"
 import ImageExpandModal from "@/components/ImageExpandModal"
+import {
+  normalizeRichTextImageDisplayMode,
+  richTextCarouselImageClassName,
+  richTextCroppedFrameClassName,
+  type RichTextImageDisplayMode,
+} from "@/lib/richTextImageDisplay"
 
 export type RichTextCarouselSlide = {
   imageSrc: string
   alt: string
   caption?: string
+  displayMode?: RichTextImageDisplayMode
 }
 
 export type RichTextImageCarouselProps = {
@@ -61,23 +68,29 @@ export const RichTextImageCarousel = ({ title, slides, className }: RichTextImag
       <div className="relative overflow-hidden rounded-2xl border border-black/10 bg-white shadow-sm">
         <div ref={emblaRef} className="overflow-hidden">
           <div className="flex">
-            {validSlides.map((slide, index) => (
+            {validSlides.map((slide, index) => {
+              const displayMode = normalizeRichTextImageDisplayMode(slide.displayMode)
+              const isFull = displayMode === "full"
+
+              return (
               <div key={`${slide.imageSrc}-${index}`} className="min-w-0 flex-[0_0_100%]">
-                <img
-                  src={slide.imageSrc.trim()}
-                  alt={slide.alt.trim()}
-                  className="h-auto w-full cursor-pointer transition-opacity duration-200 hover:opacity-95"
-                  onClick={() => setActiveImage({ src: slide.imageSrc.trim(), alt: slide.alt.trim() })}
-                  loading={index === 0 ? "eager" : "lazy"}
-                  decoding="async"
-                />
+                <div className={isFull ? "relative w-full" : richTextCroppedFrameClassName}>
+                  <img
+                    src={slide.imageSrc.trim()}
+                    alt={slide.alt.trim()}
+                    className={richTextCarouselImageClassName(displayMode, index)}
+                    onClick={() => setActiveImage({ src: slide.imageSrc.trim(), alt: slide.alt.trim() })}
+                    loading={index === 0 ? "eager" : "lazy"}
+                    decoding="async"
+                  />
+                </div>
                 {slide.caption?.trim() ? (
                   <p className="border-t border-black/10 bg-white px-4 py-3 font-urbanist text-sm leading-snug text-black/55 md:px-5 md:text-[15px]">
                     {slide.caption.trim()}
                   </p>
                 ) : null}
               </div>
-            ))}
+            )})}
           </div>
         </div>
 

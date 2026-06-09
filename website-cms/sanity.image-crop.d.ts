@@ -6,5 +6,6 @@ declare module 'sanity' {
     cropAspectPreset?: CropAspectPreset
     cropMaxSize?: number
     cropAllowAspectChange?: boolean
+    cropAllowFullImage?: boolean
   }
 }
