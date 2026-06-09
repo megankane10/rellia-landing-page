@@ -63,19 +63,14 @@ export const RichTextImageCarousel = ({ title, slides, className }: RichTextImag
           <div className="flex">
             {validSlides.map((slide, index) => (
               <div key={`${slide.imageSrc}-${index}`} className="min-w-0 flex-[0_0_100%]">
-                <div className="relative aspect-[16/10] w-full md:aspect-[21/9]">
-                  <img
-                    src={slide.imageSrc.trim()}
-                    alt={slide.alt.trim()}
-                    className={cn(
-                      "h-full w-full object-cover cursor-pointer hover:opacity-95 transition-opacity duration-200",
-                      index === 0 && "object-top",
-                    )}
-                    onClick={() => setActiveImage({ src: slide.imageSrc.trim(), alt: slide.alt.trim() })}
-                    loading={index === 0 ? "eager" : "lazy"}
-                    decoding="async"
-                  />
-                </div>
+                <img
+                  src={slide.imageSrc.trim()}
+                  alt={slide.alt.trim()}
+                  className="h-auto w-full cursor-pointer transition-opacity duration-200 hover:opacity-95"
+                  onClick={() => setActiveImage({ src: slide.imageSrc.trim(), alt: slide.alt.trim() })}
+                  loading={index === 0 ? "eager" : "lazy"}
+                  decoding="async"
+                />
                 {slide.caption?.trim() ? (
                   <p className="border-t border-black/10 bg-white px-4 py-3 font-urbanist text-sm leading-snug text-black/55 md:px-5 md:text-[15px]">
                     {slide.caption.trim()}

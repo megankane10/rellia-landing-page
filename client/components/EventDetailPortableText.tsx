@@ -24,7 +24,7 @@ const EventDetailInlineImageComponent = ({
           src={src}
           alt={alt}
           onClick={() => setOpen(true)}
-          className="h-auto w-full max-w-full rounded-2xl border border-black/10 object-cover shadow-sm cursor-pointer hover:opacity-95 transition-opacity duration-200"
+          className="h-auto w-full max-w-full cursor-pointer rounded-2xl border border-black/10 shadow-sm transition-opacity duration-200 hover:opacity-95"
           loading="lazy"
           decoding="async"
         />
