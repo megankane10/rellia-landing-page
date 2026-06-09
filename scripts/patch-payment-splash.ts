@@ -1,6 +1,11 @@
 import { createClient } from "@sanity/client"
+import fs from "node:fs"
+import path from "node:path"
+import { promises as fsp } from "node:fs"
 import "./loadEnv"
 import { DEFAULT_PAYMENT_PAGE } from "../shared/cms/defaults"
+
+const UPLOADABLE_EXTENSIONS = new Set([".jpg", ".jpeg", ".png", ".webp", ".gif", ".svg"])
 
 const patchFields = {
   welcomeSplashEnabled: DEFAULT_PAYMENT_PAGE.welcomeSplashEnabled,
@@ -11,6 +16,49 @@ const patchFields = {
   benefitsPanelDescription: DEFAULT_PAYMENT_PAGE.benefitsPanelDescription,
   benefitsPanelImageEnabled: DEFAULT_PAYMENT_PAGE.benefitsPanelImageEnabled,
   benefitsPanelImageSrc: DEFAULT_PAYMENT_PAGE.benefitsPanelImageSrc,
+}
+
+const localPublicFilePath = (src: string): string | null => {
+  const trimmed = src.trim()
+  if (!trimmed.startsWith("/")) return null
+  if (!/^\/(images|svgs)\//i.test(trimmed)) return null
+  return path.join(process.cwd(), "public", trimmed.replace(/^\//, ""))
+}
+
+const toSanityImageFieldValue = (assetId: string | null) =>
+  assetId
+    ? {
+        _type: "image" as const,
+        asset: { _type: "reference" as const, _ref: assetId },
+      }
+    : undefined
+
+const resolveLocalAssetId = async (
+  client: ReturnType<typeof createClient>,
+  src: string | undefined,
+): Promise<string | null> => {
+  const filePath = src ? localPublicFilePath(src) : null
+  if (!filePath) return null
+
+  const ext = path.extname(filePath).toLowerCase()
+  if (!UPLOADABLE_EXTENSIONS.has(ext)) return null
+
+  try {
+    await fsp.stat(filePath)
+  } catch {
+    return null
+  }
+
+  const filename = path.basename(filePath)
+  const existing = await client.fetch<string | null>(
+    `*[_type == "sanity.imageAsset" && originalFilename == $filename][0]._id`,
+    { filename },
+  )
+  if (existing) return existing
+
+  const stream = fs.createReadStream(filePath)
+  const uploaded = await client.assets.upload("image", stream as never, { filename })
+  return uploaded?._id ?? null
 }
 
 const main = async () => {
@@ -33,6 +81,31 @@ const main = async () => {
     useCdn: false,
   })
 
+  const splashBackgroundAssetId = await resolveLocalAssetId(
+    client,
+    DEFAULT_PAYMENT_PAGE.welcomeSplashBackgroundSrc,
+  )
+  const panelBackgroundAssetId = await resolveLocalAssetId(
+    client,
+    DEFAULT_PAYMENT_PAGE.benefitsPanelImageSrc,
+  )
+  const splashLogoAssetId = await resolveLocalAssetId(
+    client,
+    DEFAULT_PAYMENT_PAGE.welcomeSplashLogoSrc,
+  )
+
+  const imageFields = {
+    ...(toSanityImageFieldValue(splashBackgroundAssetId)
+      ? { welcomeSplashBackground: toSanityImageFieldValue(splashBackgroundAssetId) }
+      : {}),
+    ...(toSanityImageFieldValue(panelBackgroundAssetId)
+      ? { benefitsPanelImage: toSanityImageFieldValue(panelBackgroundAssetId) }
+      : {}),
+    ...(toSanityImageFieldValue(splashLogoAssetId)
+      ? { welcomeSplashLogo: toSanityImageFieldValue(splashLogoAssetId) }
+      : {}),
+  }
+
   const exists = await client.fetch<string | null>(
     '*[_id == "paymentPage"][0]._id',
   )
@@ -42,6 +115,7 @@ const main = async () => {
       _id: "paymentPage",
       _type: "paymentPage",
       ...patchFields,
+      ...imageFields,
       welcomeSplashBackgroundSrc: DEFAULT_PAYMENT_PAGE.welcomeSplashBackgroundSrc,
       benefitsPanelHeadline: DEFAULT_PAYMENT_PAGE.benefitsPanelHeadline,
       benefitsTitle: DEFAULT_PAYMENT_PAGE.benefitsTitle,
@@ -58,15 +132,15 @@ const main = async () => {
     .patch("paymentPage")
     .setIfMissing({
       ...patchFields,
+      ...imageFields,
       welcomeSplashBackgroundSrc: DEFAULT_PAYMENT_PAGE.welcomeSplashBackgroundSrc,
-    })
-    .set({
-      benefitsPanelImageSrc: DEFAULT_PAYMENT_PAGE.benefitsPanelImageSrc,
-      welcomeSplashDurationSeconds: DEFAULT_PAYMENT_PAGE.welcomeSplashDurationSeconds,
     })
     .commit()
 
-  console.log(`Patched paymentPage fields (setIfMissing only) on dataset: ${dataset}`)
+  console.log(`Patched paymentPage on dataset: ${dataset}`)
+  if (splashBackgroundAssetId) console.log("  welcomeSplashBackground asset ready")
+  if (panelBackgroundAssetId) console.log("  benefitsPanelImage asset ready")
+  if (splashLogoAssetId) console.log("  welcomeSplashLogo asset ready")
 }
 
 main().catch((err) => {

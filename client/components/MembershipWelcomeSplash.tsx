@@ -35,6 +35,7 @@ export default function MembershipWelcomeSplash({
   const reduceMotion = useReducedMotion()
   const previewMode = isVisualEditingPreview()
   const [phase, setPhase] = useState<SplashPhase>("enter")
+  const [showSubheading, setShowSubheading] = useState(Boolean(reduceMotion))
 
   const headingText = previewMode ? cmsDisplayText(heading) : cmsCleanText(heading)
   const subheadingText = previewMode ? cmsDisplayText(subheading) : cmsCleanText(subheading)
@@ -93,6 +94,20 @@ export default function MembershipWelcomeSplash({
       },
     },
   }
+
+  useEffect(() => {
+    if (!enabled || reduceMotion || previewMode) {
+      setShowSubheading(true)
+      return
+    }
+
+    setShowSubheading(false)
+    const subheadingTimer = window.setTimeout(
+      () => setShowSubheading(true),
+      subheadingDelay * 1000,
+    )
+    return () => window.clearTimeout(subheadingTimer)
+  }, [enabled, previewMode, reduceMotion, subheadingDelay])
 
   useEffect(() => {
     if (!enabled) {
@@ -222,22 +237,24 @@ export default function MembershipWelcomeSplash({
               </motion.h1>
             )}
 
-            <motion.p
-              className="mt-6 max-w-2xl font-urbanist text-xl font-normal leading-relaxed md:mt-8 md:text-2xl md:leading-relaxed"
-              style={{
-                color: "rgba(255, 255, 255, 0.82)",
-                textShadow: "0 2px 24px rgba(0, 0, 0, 0.8), 0 1px 6px rgba(0, 0, 0, 0.7)",
-              }}
-              initial={reduceMotion ? { y: 0 } : { y: 12 }}
-              animate={{ y: 0 }}
-              transition={{
-                duration: reduceMotion ? 0 : SUBHEADING_REVEAL_S,
-                delay: reduceMotion ? 0 : subheadingDelay,
-                ease: [0.22, 1, 0.36, 1],
-              }}
-            >
-              {subheadingText}
-            </motion.p>
+            {showSubheading ? (
+              <motion.p
+                className="mt-6 max-w-2xl font-urbanist text-xl font-normal leading-relaxed md:mt-8 md:text-2xl md:leading-relaxed"
+                style={{
+                  color: "rgba(255, 255, 255, 0.82)",
+                  textShadow:
+                    "0 2px 24px rgba(0, 0, 0, 0.8), 0 1px 6px rgba(0, 0, 0, 0.7)",
+                }}
+                initial={reduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 28 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{
+                  duration: reduceMotion ? 0 : SUBHEADING_REVEAL_S,
+                  ease: SLIDE_EASE,
+                }}
+              >
+                {subheadingText}
+              </motion.p>
+            ) : null}
           </motion.div>
         </div>
       </div>

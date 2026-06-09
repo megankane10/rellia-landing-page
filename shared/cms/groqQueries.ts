@@ -850,7 +850,7 @@ export const paymentPageQuery = `*[_id == "paymentPage"][0]{
   benefitsPanelBullet3,
   benefitsPanelBullet4,
   benefitsPanelImageEnabled,
-  benefitsPanelImageSrc,
+  "benefitsPanelImageSrc": coalesce(benefitsPanelImage.asset->url, benefitsPanelImageSrc),
   choosePlanHeadline,
   promoMessage,
   pricingPerSuffix,
@@ -866,8 +866,8 @@ export const paymentPageQuery = `*[_id == "paymentPage"][0]{
   welcomeSplashEnabled,
   welcomeSplashHeading,
   welcomeSplashSubheading,
-  welcomeSplashBackgroundSrc,
-  welcomeSplashLogoSrc,
+  "welcomeSplashBackgroundSrc": coalesce(welcomeSplashBackground.asset->url, welcomeSplashBackgroundSrc),
+  "welcomeSplashLogoSrc": coalesce(welcomeSplashLogo.asset->url, welcomeSplashLogoSrc),
   welcomeSplashDurationSeconds,
   ${seoFragment}
 }`;
