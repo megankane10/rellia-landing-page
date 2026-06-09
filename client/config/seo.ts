@@ -1,5 +1,6 @@
 import { DEFAULT_PROGRAMS_LANDING } from "../../shared/cms/defaults"
 import { programsEventDetailPath } from "../../shared/cms/eventSlug"
+import { resolveProgramCardImageSrc } from "../../shared/cms/itemCardImage"
 import { STORIES } from "../content/stories"
 import { FOUNDER_DIRECTORY } from "../data/founderDirectory"
 import { ADVISOR_DIRECTORY_SEED } from "../data/advisorDirectory"
@@ -380,6 +381,52 @@ export const buildAdvisorProfileSeoTitle = (name: string): string =>
 
 export const buildAlumniProfileSeoTitle = (name: string): string =>
   clampMetaTitle(`${name.trim()} — Founders`)
+
+export const buildProgramSeoTitle = (programName: string): string =>
+  clampMetaTitle(`${programName.trim() || "Program"} — Rellia Health`)
+
+export type ProgramSocialMetaInput = {
+  title?: string | null
+  heroTitle?: string | null
+  description?: string | null
+  heroDescription?: string | null
+  imageSrc?: string | null
+  routeHeroImageSrc?: string | null
+  slug?: string
+}
+
+export type ProgramSocialMeta = {
+  title: string
+  description: string
+  ogImage?: ResolvedSocialOgImage
+}
+
+/** Title + description for program detail pages (no Sanity SEO fields). */
+export const resolveProgramSocialMeta = (
+  input: ProgramSocialMetaInput,
+  siteOrigin?: string,
+): ProgramSocialMeta => {
+  const name = (input.title?.trim() || input.heroTitle?.trim() || "Program").trim()
+  const description = clampMetaDescription(
+    input.heroDescription?.trim() ||
+      input.description?.trim() ||
+      "Explore this Rellia Health program for healthcare founders and operators.",
+  )
+  const imageSrc = resolveProgramCardImageSrc(
+    input.slug?.trim() ?? "",
+    input.imageSrc,
+    input.routeHeroImageSrc,
+  )
+  const ogImage = imageSrc
+    ? resolveSocialOgImage(imageSrc, siteOrigin, { square: true })
+    : undefined
+
+  return {
+    title: buildProgramSeoTitle(name),
+    description,
+    ogImage,
+  }
+}
 
 export const shouldUseDefaultOgImage = (pathname: string): boolean =>
   normalizePathname(pathname) === "/"

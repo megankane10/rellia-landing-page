@@ -75,6 +75,7 @@ Rellia offers founder programs (QMS, fundraising, regulatory, clinical validatio
 ## CMS pages
 
 - [/supporting-health-founders](https://www.relliahealth.com/supporting-health-founders): Public page on relliahealth.com.
+- [/test](https://www.relliahealth.com/test): Public page on relliahealth.com.
 
 
 ## Legal

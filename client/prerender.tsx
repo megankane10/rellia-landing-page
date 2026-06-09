@@ -19,12 +19,13 @@ import {
   resolveSocialOgImage,
   buildAdvisorProfileSeoTitle,
   buildAlumniProfileSeoTitle,
+  resolveProgramSocialMeta,
 } from "@/config/seo"
 import { ADVISOR_DIRECTORY_SEED } from "@/data/advisorDirectory"
 import { FOUNDER_DIRECTORY } from "@/data/founderDirectory"
 import { AppRoutes, RouterShell } from "./AppRoutes"
 import { PageSeoProvider } from "@/context/PageSeoContext"
-import { DEFAULT_PROGRAMS_LANDING } from "@shared/cms/defaults"
+import { DEFAULT_PROGRAMS_LANDING, DEFAULT_QMS_PROGRAM, mergeQmsProgram } from "@shared/cms/defaults"
 import { buildDefaultStorySeoTitle } from "@shared/cms/storySeo"
 import { findProgramsEventBySlug } from "@shared/cms/eventSlug"
 import {
@@ -35,7 +36,6 @@ import {
 import {
   defaultProgramRecordForSlug,
   resolveEventCardImageSrc,
-  resolveProgramCardImageSrc,
 } from "@shared/cms/itemCardImage"
 import {
   fetchAdvisorsForPrerender,
@@ -180,25 +180,26 @@ const buildProgramSeo = (
   pathname: string,
   siteOrigin: string,
 ): ItemPrerenderSeo => {
-  const title =
-    (typeof program.title === "string" ? program.title : "") ||
-    getSeoForPathname(pathname).title.replace(/ — Rellia Health$/, "")
-  const description =
-    (typeof program.heroDescription === "string" ? program.heroDescription : "") ||
-    (typeof program.description === "string" ? program.description : "") ||
-    getSeoForPathname(pathname).description
-  const cmsImageSrc = typeof program.imageSrc === "string" ? program.imageSrc : undefined
-  const imageSrc = resolveProgramCardImageSrc(slug, cmsImageSrc)
-
-  const ogImage = imageSrc
-    ? resolveSocialOgImage(imageSrc, siteOrigin, { square: true })
-    : undefined
+  const routeSeo = getSeoForPathname(pathname)
+  const routeTitle = routeSeo.title.replace(/ — Rellia Health$/, "").trim()
+  const social = resolveProgramSocialMeta(
+    {
+      title: typeof program.title === "string" ? program.title : routeTitle || undefined,
+      heroTitle: typeof program.heroTitle === "string" ? program.heroTitle : undefined,
+      description: typeof program.description === "string" ? program.description : undefined,
+      heroDescription:
+        typeof program.heroDescription === "string" ? program.heroDescription : undefined,
+      imageSrc: typeof program.imageSrc === "string" ? program.imageSrc : undefined,
+      slug,
+    },
+    siteOrigin,
+  )
   return {
-    title: clampMetaTitle(`${title} — Rellia Health`),
-    description: clampMetaDescription(description),
-    ogImage: ogImage?.url,
-    ogImageWidth: ogImage?.width,
-    ogImageHeight: ogImage?.height,
+    title: social.title,
+    description: social.description,
+    ogImage: social.ogImage?.url,
+    ogImageWidth: social.ogImage?.width,
+    ogImageHeight: social.ogImage?.height,
   }
 }
 
@@ -484,9 +485,21 @@ export const prerender = async (data: { url: string }) => {
     const slug = pathname.slice("/programs/".length)
     prefetched.program = await fetchProgramBySlugForPrerender(slug)
     if (prefetched.program) {
+      const programDoc = prefetched.program
       await prerenderQueryClient.prefetchQuery({
         queryKey: ["cms", "program", slug],
-        queryFn: async () => prefetched.program,
+        queryFn: async () => programDoc,
+      })
+      await prerenderQueryClient.prefetchQuery({
+        queryKey: ["cms", "programBySlug", slug],
+        queryFn: async () => {
+          const raw = programDoc
+          const content = mergeQmsProgram(raw ?? undefined, DEFAULT_QMS_PROGRAM)
+          return {
+            content,
+            sections: Array.isArray(raw.sections) ? raw.sections : [],
+          }
+        },
       })
     }
   }
@@ -626,10 +639,21 @@ export const prerender = async (data: { url: string }) => {
 
   const headElements = new Set<string>()
   const helmet = helmetContext.helmet
+
+  if (itemSeo) {
+    appendSocialMeta(headElements, itemSeo, pageUrl)
+  }
+
   if (helmet) {
-    const extra = [helmet.meta.toString(), helmet.link.toString(), helmet.script.toString(), helmet.style.toString()].filter(
-      (s) => s && s.trim().length > 0,
-    )
+    const helmetChunks = itemSeo
+      ? [helmet.link.toString(), helmet.script.toString(), helmet.style.toString()]
+      : [
+          helmet.meta.toString(),
+          helmet.link.toString(),
+          helmet.script.toString(),
+          helmet.style.toString(),
+        ]
+    const extra = helmetChunks.filter((s) => s && s.trim().length > 0)
     for (const chunk of extra) {
       headElements.add(chunk)
     }
@@ -637,10 +661,6 @@ export const prerender = async (data: { url: string }) => {
 
   const documentTitle =
     itemSeo?.title || helmetTitleText(helmet ?? undefined) || routeSeo.title
-
-  if (itemSeo) {
-    appendSocialMeta(headElements, itemSeo, pageUrl)
-  }
 
   return {
     html,

@@ -320,11 +320,13 @@ type ProgramPageQueryResult = Partial<QmsProgramContent> & {
   sections?: CmsPageSection[]
 }
 
-export const useProgramPageBySlug = (slug: string, fallback?: Partial<QmsProgramContent>) =>
-  useQuery({
-    queryKey: ["cms", "programBySlug", slug],
+export const useProgramPageBySlug = (slug: string, fallback?: Partial<QmsProgramContent>) => {
+  const queryClient = useQueryClient()
+  const trimmed = slug.trim()
+  return useQuery({
+    queryKey: ["cms", "programBySlug", trimmed],
     queryFn: async () => {
-      const raw = await sanityFetch<ProgramPageQueryResult>("programBySlug", { slug })
+      const raw = await sanityFetch<ProgramPageQueryResult>("programBySlug", { slug: trimmed })
       const content = mergeQmsProgram(raw ?? undefined, {
         ...DEFAULT_QMS_PROGRAM,
         ...(fallback ?? {}),
@@ -334,9 +336,24 @@ export const useProgramPageBySlug = (slug: string, fallback?: Partial<QmsProgram
         sections: Array.isArray(raw?.sections) ? raw.sections : [],
       }
     },
-    enabled: Boolean(slug.trim()),
+    enabled: Boolean(trimmed),
     staleTime: staleTimeMs,
+    placeholderData: () => {
+      const cached = queryClient.getQueryData<CmsProgram>(["cms", "program", trimmed])
+      if (!cached) return undefined
+      const content = mergeQmsProgram(cached, {
+        ...DEFAULT_QMS_PROGRAM,
+        ...(fallback ?? {}),
+      })
+      return {
+        content,
+        sections: Array.isArray((cached as ProgramPageQueryResult).sections)
+          ? (cached as ProgramPageQueryResult).sections
+          : [],
+      }
+    },
   })
+}
 
 export const useContactPage = () =>
   useQuery({

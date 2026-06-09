@@ -15,6 +15,7 @@ import {
 } from "./groqQueries"
 import eventsBuildSnapshot from "./build-snapshots/events.json"
 import storiesBuildSnapshot from "./build-snapshots/stories.json"
+import { defaultProgramRecordForSlug } from "./itemCardImage"
 import { trySanityApiConfig } from "./sanityEnv"
 
 const snapshotEvents = (): Record<string, unknown>[] =>
@@ -74,8 +75,20 @@ export const fetchEventBySlugForPrerender = async (slug: string) => {
   )
 }
 
-export const fetchProgramBySlugForPrerender = (slug: string) =>
-  fetchBySlug(programBySlugQuery, slug)
+export const fetchProgramBySlugForPrerender = async (slug: string) => {
+  const fromSanity = await fetchBySlug(programBySlugQuery, slug)
+  if (fromSanity) return fromSanity
+  const trimmed = slug.trim()
+  if (!trimmed) return null
+  return defaultProgramRecordForSlug(trimmed)
+}
+
+export const fetchProgramSlugsForPrerender = async (): Promise<string[]> => {
+  const rows = await fetchProgramsForPrerender()
+  return rows
+    .map((row) => (typeof row.slug === "string" ? row.slug.trim() : ""))
+    .filter(Boolean)
+}
 
 export const fetchStoryBySlugForPrerender = async (slug: string) => {
   const fromSanity = await fetchBySlug(storyBySlugQuery, slug)

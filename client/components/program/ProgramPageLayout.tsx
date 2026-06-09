@@ -33,12 +33,7 @@ import {
 } from "lucide-react";
 import { getCurrentMonthDeadline } from "@/lib/dateUtils";
 import RelliaAction from "@/components/RelliaAction";
-import {
-  buildPageUrl,
-  clampMetaDescription,
-  clampMetaTitle,
-  resolveSocialOgImage,
-} from "@/config/seo";
+import { buildPageUrl, resolveProgramSocialMeta } from "@/config/seo"
 import { cn } from "@/lib/utils";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { SectionsRenderer } from "@/components/cms/PageRenderer"
@@ -48,7 +43,6 @@ import { isAnyCmsQueryLoading } from "@/lib/cmsQueryState"
 import { isSanityConfigured } from "@/lib/sanity"
 import { isStrictProductionSite } from "@/lib/deploymentEnv"
 import PageSocialHelmet from "@/components/seo/PageSocialHelmet"
-import type { SeoContent } from "@shared/cms/types"
 import { PEXELS_HEALTH_MEETING, PEXELS_OFFICE_COLLABORATION, LOCAL_METRICS_BG_JPEG } from "@/config/pexelsFallbacks"
 import {
   Carousel,
@@ -197,41 +191,29 @@ const ProgramPageLayout = ({
   const filloutId = extractFilloutId(q.paymentUrl);
   const hasEnrollmentForm = Boolean(filloutId) && !isWaitlist;
 
-  const resolvedProgramTitle = cmsHeroLoading
-    ? ""
-    : (programDoc?.title || q.heroTitle || "").trim()
-  const resolvedProgramDescription = cmsHeroLoading
-    ? ""
-    : (
-        (programDoc as { description?: string } | null | undefined)?.description ||
-        q.heroDescription ||
-        ""
-      ).trim()
+  const resolvedProgramTitle = (programDoc?.title || q.heroTitle || cms?.heroTitle || "").trim()
+  const resolvedProgramDescription = (
+    (programDoc as { description?: string } | null | undefined)?.description ||
+    q.heroDescription ||
+    cms?.heroDescription ||
+    ""
+  ).trim()
 
   const programSlug = (cmsSlug ?? "").trim()
   const resolvedHeroImageSrc =
     resolveProgramCardImageSrc(programSlug, programDoc?.imageSrc, heroImageSrc)?.trim() ?? ""
   const resolvedHeroImageAlt = (heroImageAlt || resolvedProgramTitle || "Program image").trim()
 
-  const canonicalUrl = buildPageUrl(location.pathname);
-  const programSeo = (programDoc as { seo?: SeoContent | null } | null | undefined)?.seo
-  const programPageTitle = clampMetaTitle(
-    programSeo?.metaTitle?.trim() ||
-      programSeo?.ogTitle?.trim() ||
-      (resolvedProgramTitle ? `${resolvedProgramTitle} — Rellia Health` : "Programs — Rellia Health"),
-  )
-  const programOgImage = resolveSocialOgImage(
-    programSeo?.ogImageUrl?.trim() || resolvedHeroImageSrc,
-    undefined,
-    { square: true },
-  )
-
-  const programMetaDescription = clampMetaDescription(
-    programSeo?.metaDescription?.trim() ||
-      programSeo?.ogDescription?.trim() ||
-      resolvedProgramDescription ||
-      "Rellia Health program",
-  )
+  const canonicalUrl = buildPageUrl(location.pathname)
+  const programSocial = resolveProgramSocialMeta({
+    title: programDoc?.title,
+    heroTitle: q.heroTitle || cms?.heroTitle,
+    description: (programDoc as { description?: string } | null | undefined)?.description,
+    heroDescription: q.heroDescription || cms?.heroDescription,
+    imageSrc: programDoc?.imageSrc,
+    routeHeroImageSrc: heroImageSrc,
+    slug: programSlug,
+  })
 
   const extraSections = (programPageData?.sections ?? []).filter(
     (s) => s._type !== "sectionHero",
@@ -261,12 +243,12 @@ const ProgramPageLayout = ({
   return (
     <div className="min-h-screen bg-white font-host-grotesk overflow-x-hidden">
       <PageSocialHelmet
-        title={programPageTitle}
-        description={programMetaDescription}
+        title={programSocial.title}
+        description={programSocial.description}
         canonical={canonicalUrl}
-        ogImage={programOgImage?.url}
-        ogImageWidth={programOgImage?.width}
-        ogImageHeight={programOgImage?.height}
+        ogImage={programSocial.ogImage?.url}
+        ogImageWidth={programSocial.ogImage?.width}
+        ogImageHeight={programSocial.ogImage?.height}
       />
       <Navbar />
       <main id="main-content">

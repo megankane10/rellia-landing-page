@@ -7,6 +7,7 @@ import { PRERENDER_PATHS, SHOWCASE_PRERENDER_PATHS } from "./client/config/seo";
 import {
   fetchAdvisorProfilePathsForPrerender,
   fetchAlumniProfilePathsForPrerender,
+  fetchProgramSlugsForPrerender,
   fetchStorySlugsForPrerender,
 } from "./shared/cms/prerenderSanity";
 
@@ -36,22 +37,27 @@ const getOgImageVersion = (): string => {
 };
 
 const buildPrerenderRoutes = async (): Promise<string[]> => {
-  const [cmsStoryPaths, cmsAdvisorPaths, cmsAlumniPaths] = await Promise.all([
-    fetchStorySlugsForPrerender().then((slugs) =>
-      slugs.map((slug) => `/stories/${slug}`),
-    ),
-    fetchAdvisorProfilePathsForPrerender(),
-    fetchAlumniProfilePathsForPrerender(),
-  ]);
+  const [cmsStoryPaths, cmsProgramPaths, cmsAdvisorPaths, cmsAlumniPaths] =
+    await Promise.all([
+      fetchStorySlugsForPrerender().then((slugs) =>
+        slugs.map((slug) => `/stories/${slug}`),
+      ),
+      fetchProgramSlugsForPrerender().then((slugs) =>
+        slugs.map((slug) => `/programs/${slug}`),
+      ),
+      fetchAdvisorProfilePathsForPrerender(),
+      fetchAlumniProfilePathsForPrerender(),
+    ])
   return [
     ...new Set([
       ...PRERENDER_PATHS,
       ...SHOWCASE_PRERENDER_PATHS,
       ...cmsStoryPaths,
+      ...cmsProgramPaths,
       ...cmsAdvisorPaths,
       ...cmsAlumniPaths,
     ]),
-  ];
+  ]
 };
 
 // https://vitejs.dev/config/
