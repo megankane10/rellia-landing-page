@@ -8,6 +8,10 @@ export type ProgramCmsTimelineWeek = {
 export type ProgramCmsTimelineStep = {
   title?: string
   stepLabel?: string
+  /** @deprecated Legacy flat timeline rows — migrated to `weeks`. */
+  weekLabel?: string
+  /** @deprecated Legacy newline-separated bullet list — migrated to `weeks`. */
+  description?: string
   weeks?: ProgramCmsTimelineWeek[]
 }
 
@@ -51,6 +55,12 @@ export const resolveProgramHowItWorksCards = (
     }
   })
 
+const parseLegacyDescription = (description?: string): string[] =>
+  (description ?? "")
+    .split("\n")
+    .map((line) => line.trim())
+    .filter(Boolean)
+
 const normalizeCmsWeeks = (
   weeks: ProgramCmsTimelineWeek[] | undefined,
 ): ProgramTimelineMonth["weeks"] =>
@@ -66,6 +76,18 @@ const normalizeCmsWeeks = (
     })
     .filter((week): week is NonNullable<typeof week> => week !== null)
 
+const hasStructuredTimeline = (steps: ProgramCmsTimelineStep[]) =>
+  steps.some((step) =>
+    (step.weeks ?? []).some((week) => (week.points ?? []).some((point) => point.trim())),
+  )
+
+const isLegacyTimeline = (steps: ProgramCmsTimelineStep[]) =>
+  steps.every(
+    (step) =>
+      !step.weeks?.length &&
+      Boolean(step.description?.trim() || step.weekLabel?.trim()),
+  )
+
 export const resolveProgramTimeline = (
   cmsSteps: ProgramCmsTimelineStep[] | undefined,
   staticTimeline: ProgramTimelineMonth[],
@@ -73,10 +95,21 @@ export const resolveProgramTimeline = (
   const steps = (cmsSteps ?? []).filter((step) => Boolean(step?.title?.trim()))
   if (steps.length === 0) return staticTimeline
 
+  if (!hasStructuredTimeline(steps)) {
+    if (isLegacyTimeline(steps)) {
+      return steps.map((step, index) => ({
+        month: step.title?.trim() || step.weekLabel?.trim() || `Step ${index + 1}`,
+        stepLabel: step.weekLabel?.trim() || step.stepLabel?.trim() || `Step ${index + 1}`,
+        weeks: parseLegacyDescription(step.description),
+      }))
+    }
+
+    return staticTimeline
+  }
+
   return steps.map((step, index) => {
     const staticMonth = staticTimeline[index]
-    const cmsWeeks = normalizeCmsWeeks(step.weeks)
-    const weeks = cmsWeeks.length > 0 ? cmsWeeks : (staticMonth?.weeks ?? [])
+    const weeks = normalizeCmsWeeks(step.weeks)
 
     return {
       month: step.title!.trim(),

@@ -967,6 +967,10 @@ export type ProgramTimelineWeekCms = {
 export type ProgramTimelineStepCms = {
   title: string
   stepLabel?: string
+  /** @deprecated Legacy flat timeline rows — migrated to `weeks`. */
+  weekLabel?: string
+  /** @deprecated Legacy newline-separated bullet list — migrated to `weeks`. */
+  description?: string
   weeks?: ProgramTimelineWeekCms[]
 }
 

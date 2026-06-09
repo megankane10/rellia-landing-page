@@ -626,7 +626,7 @@ const programDetailFields = `
   bottomCtaBody,
   bottomCtaButtonLabel,
   bottomContactHref,
-  timelineSteps[]{ title, stepLabel, weeks[]{ heading, points } },
+  timelineSteps[]{ title, stepLabel, weekLabel, description, weeks[]{ heading, points } },
   ${landingTestimonialsFragment},
   sections[]{
     ...,
