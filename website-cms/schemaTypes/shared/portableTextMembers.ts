@@ -115,6 +115,7 @@ export const portableTextArrayMembers = [
   portableTextInlineImageMember,
   portableTextInlineUrlImageMember,
   portableTextVideoMember,
+  defineArrayMember({type: 'portableQuoteBox'}),
   defineArrayMember({type: 'bodyCtaBox'}),
   defineArrayMember({type: 'portableImageCarousel'}),
 ]

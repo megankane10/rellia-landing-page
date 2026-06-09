@@ -206,6 +206,13 @@ const components: PortableTextComponents = {
         />
       )
     },
+    portableQuoteBox: ({ value }) => {
+      const v = value as { quote?: string; attribution?: string } | null
+      const quote = typeof v?.quote === "string" ? v.quote.trim() : ""
+      if (!quote) return null
+      const attribution = typeof v?.attribution === "string" ? v.attribution.trim() : undefined
+      return <RichTextQuoteFigure quote={quote} attribution={attribution || null} />
+    },
   },
   block: {
     h2: ({ children }) => (
