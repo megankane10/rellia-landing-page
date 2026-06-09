@@ -177,7 +177,7 @@ export default function MembershipWelcomeSplash({
       aria-label="Membership welcome"
     >
       <div
-        className={`pointer-events-none z-20 h-[2px] ${progressBarPositionClass}`}
+        className={`pointer-events-none z-20 h-[4px] ${progressBarPositionClass}`}
         aria-hidden
       >
         <motion.div
