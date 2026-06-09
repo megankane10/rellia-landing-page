@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react"
-import { AnimatePresence, motion, useAnimationControls, useReducedMotion } from "framer-motion"
+import { motion, useAnimationControls, useReducedMotion } from "framer-motion"
 import { cmsCleanText, cmsDisplayText, isVisualEditingPreview } from "@/lib/cmsStega"
 
 export type MembershipWelcomeSplashProps = {
@@ -37,7 +37,6 @@ export default function MembershipWelcomeSplash({
   const previewMode = isVisualEditingPreview()
   const exitControls = useAnimationControls()
   const [phase, setPhase] = useState<SplashPhase>("enter")
-  const [showSubheading, setShowSubheading] = useState(Boolean(reduceMotion))
 
   const headingText = previewMode ? cmsDisplayText(heading) : cmsCleanText(heading)
   const subheadingText = previewMode ? cmsDisplayText(subheading) : cmsCleanText(subheading)
@@ -46,7 +45,7 @@ export default function MembershipWelcomeSplash({
     [heading, headingText, previewMode],
   )
 
-  const subheadingDelay = useMemo(() => {
+  const headingRevealEndS = useMemo(() => {
     if (reduceMotion) return 0
     const wordCount = Math.max(words.length, 1)
     return (
@@ -59,9 +58,9 @@ export default function MembershipWelcomeSplash({
   const revealMs = useMemo(
     () =>
       Math.round(
-        (subheadingDelay + (reduceMotion ? 0 : SUBHEADING_REVEAL_S)) * 1000,
+        Math.max(headingRevealEndS, reduceMotion ? 0 : SUBHEADING_REVEAL_S) * 1000,
       ),
-    [reduceMotion, subheadingDelay],
+    [headingRevealEndS, reduceMotion],
   )
 
   const totalDurationMs = useMemo(
@@ -95,20 +94,6 @@ export default function MembershipWelcomeSplash({
       },
     },
   }
-
-  useEffect(() => {
-    if (!enabled || reduceMotion || previewMode) {
-      setShowSubheading(true)
-      return
-    }
-
-    setShowSubheading(false)
-    const subheadingTimer = window.setTimeout(
-      () => setShowSubheading(true),
-      subheadingDelay * 1000,
-    )
-    return () => window.clearTimeout(subheadingTimer)
-  }, [enabled, previewMode, reduceMotion, subheadingDelay])
 
   useEffect(() => {
     if (!enabled) {
@@ -262,31 +247,39 @@ export default function MembershipWelcomeSplash({
               </motion.h1>
             )}
 
-            <AnimatePresence>
-              {showSubheading ? (
-                <motion.p
-                  key="splash-subheading"
-                  className="mt-6 max-w-2xl font-urbanist text-xl font-normal leading-relaxed md:mt-8 md:text-2xl md:leading-relaxed"
-                  style={{
-                    color: "rgba(255, 255, 255, 0.82)",
-                    textShadow:
-                      "0 2px 24px rgba(0, 0, 0, 0.8), 0 1px 6px rgba(0, 0, 0, 0.7)",
-                  }}
-                  initial={
-                    reduceMotion
-                      ? { opacity: 1, y: 0, filter: "blur(0px)" }
-                      : { opacity: 0, y: 32, filter: "blur(12px)" }
-                  }
-                  animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                  transition={{
-                    duration: reduceMotion ? 0 : SUBHEADING_REVEAL_S,
-                    ease: REVEAL_EASE,
-                  }}
-                >
-                  {subheadingText}
-                </motion.p>
-              ) : null}
-            </AnimatePresence>
+            {previewMode ? (
+              <p
+                className="mt-6 max-w-2xl font-urbanist text-xl font-normal leading-relaxed md:mt-8 md:text-2xl md:leading-relaxed"
+                style={{
+                  color: "rgba(255, 255, 255, 0.82)",
+                  textShadow:
+                    "0 2px 24px rgba(0, 0, 0, 0.8), 0 1px 6px rgba(0, 0, 0, 0.7)",
+                }}
+              >
+                {subheadingText}
+              </p>
+            ) : (
+              <motion.p
+                className="mt-6 max-w-2xl font-urbanist text-xl font-normal leading-relaxed md:mt-8 md:text-2xl md:leading-relaxed"
+                style={{
+                  color: "rgba(255, 255, 255, 0.82)",
+                  textShadow:
+                    "0 2px 24px rgba(0, 0, 0, 0.8), 0 1px 6px rgba(0, 0, 0, 0.7)",
+                }}
+                initial={
+                  reduceMotion
+                    ? { opacity: 1, y: 0, filter: "blur(0px)" }
+                    : { opacity: 0, y: 32, filter: "blur(12px)" }
+                }
+                animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                transition={{
+                  duration: reduceMotion ? 0 : SUBHEADING_REVEAL_S,
+                  ease: REVEAL_EASE,
+                }}
+              >
+                {subheadingText}
+              </motion.p>
+            )}
           </div>
         </div>
       </div>
