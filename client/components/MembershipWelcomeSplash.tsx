@@ -18,9 +18,9 @@ type SplashPhase = "enter" | "hold" | "exit" | "done"
 const clampDuration = (seconds: number) => Math.min(12, Math.max(3, seconds))
 
 const phaseRatios = {
-  enter: 0.38,
-  hold: 0.32,
-  exit: 0.3,
+  enter: 0.36,
+  hold: 0.3,
+  exit: 0.34,
 } as const
 
 const SLIDE_EASE = [0.4, 0, 0.2, 1] as const
@@ -61,8 +61,8 @@ export default function MembershipWelcomeSplash({
     hidden: {},
     visible: {
       transition: {
-        staggerChildren: reduceMotion ? 0 : 0.11,
-        delayChildren: reduceMotion ? 0 : 0.2,
+        staggerChildren: reduceMotion ? 0 : 0.1,
+        delayChildren: reduceMotion ? 0 : 0.16,
       },
     },
   }
@@ -78,7 +78,7 @@ export default function MembershipWelcomeSplash({
       y: 0,
       filter: "blur(0px)",
       transition: {
-        duration: reduceMotion ? 0 : 0.72,
+        duration: reduceMotion ? 0 : 0.65,
         ease: [0.33, 1, 0.68, 1] as const,
       },
     },
@@ -95,7 +95,7 @@ export default function MembershipWelcomeSplash({
       const brief = window.setTimeout(() => {
         setPhase("done")
         onComplete()
-      }, 300)
+      }, 250)
       return () => window.clearTimeout(brief)
     }
 
@@ -121,7 +121,7 @@ export default function MembershipWelcomeSplash({
 
   return (
     <motion.div
-      className="fixed inset-0 z-[200] overflow-hidden"
+      className="fixed inset-0 z-[100] overflow-hidden"
       initial={{ y: 0 }}
       animate={{ y: isExiting ? "-100%" : 0 }}
       transition={{
@@ -139,42 +139,42 @@ export default function MembershipWelcomeSplash({
             alt=""
             aria-hidden
             className="h-full w-full object-cover"
-            initial={reduceMotion ? { scale: 1 } : { scale: 1.06 }}
+            initial={reduceMotion ? { scale: 1 } : { scale: 1.05 }}
             animate={{ scale: 1 }}
-            transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
           />
           <div
-            className="absolute inset-0 bg-gradient-to-br from-[#071f26]/80 via-rellia-teal/72 to-[#0a2e36]/88"
+            className="absolute inset-0 bg-gradient-to-br from-[#071f26]/75 via-rellia-teal/60 to-[#0a2e36]/80"
             aria-hidden
           />
           <div
-            className="absolute inset-0 bg-gradient-to-t from-[#071f26]/92 via-[#071f26]/35 to-black/25"
+            className="absolute inset-0 bg-gradient-to-t from-[#071f26]/85 via-[#071f26]/25 to-black/15"
             aria-hidden
           />
           <div
-            className="absolute inset-y-0 left-0 w-full max-w-3xl bg-gradient-to-r from-black/65 via-black/35 to-transparent md:max-w-4xl"
+            className="absolute inset-y-0 left-0 w-full max-w-4xl bg-gradient-to-r from-black/55 via-black/20 to-transparent lg:max-w-5xl"
             aria-hidden
           />
         </div>
 
-        <div className="relative z-10 flex flex-1 items-center px-6 pb-16 pt-[max(5.5rem,18vh)] md:px-12 md:pb-20 lg:px-16">
+        <div className="relative z-10 flex min-h-full flex-1 items-center px-6 py-24 md:px-12 lg:px-16">
           <motion.div
-            className="mx-auto w-full max-w-2xl text-left"
-            initial={reduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 28 }}
+            className="mx-auto w-full max-w-3xl text-left"
+            initial={reduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.65, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
           >
             <motion.div
-              className="mb-6 md:mb-8"
-              initial={reduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: -48 }}
+              className="mb-8 md:mb-10"
+              initial={reduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: -56 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.85, ease: [0.22, 1, 0.36, 1] }}
+              transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
             >
               <motion.img
                 src={logoSrc}
                 alt=""
                 aria-hidden
-                className="h-14 w-14 drop-shadow-[0_10px_28px_rgba(0,0,0,0.45)] md:h-[4.25rem] md:w-[4.25rem]"
+                className="h-[4.5rem] w-[4.5rem] drop-shadow-[0_12px_32px_rgba(0,0,0,0.5)] md:h-24 md:w-24 lg:h-28 lg:w-28"
                 animate={reduceMotion ? undefined : { rotate: 360 }}
                 transition={
                   reduceMotion
@@ -191,7 +191,7 @@ export default function MembershipWelcomeSplash({
             </motion.div>
 
             {previewMode ? (
-              <h1 className="text-balance font-host-grotesk text-[2rem] font-semibold leading-[1.12] tracking-tight text-white drop-shadow-[0_2px_24px_rgba(0,0,0,0.45)] md:text-[2.75rem] lg:text-5xl">
+              <h1 className="text-balance font-host-grotesk text-[2.35rem] font-semibold leading-[1.1] tracking-tight text-white [text-shadow:0_2px_28px_rgba(0,0,0,0.55)] md:text-5xl lg:text-[3.35rem]">
                 {headingText}
               </h1>
             ) : (
@@ -199,7 +199,7 @@ export default function MembershipWelcomeSplash({
                 variants={headingContainerVariants}
                 initial="hidden"
                 animate="visible"
-                className="flex flex-wrap gap-x-[0.22em] gap-y-1 text-balance font-host-grotesk text-[2rem] font-semibold leading-[1.12] tracking-tight text-white drop-shadow-[0_2px_24px_rgba(0,0,0,0.45)] md:text-[2.75rem] lg:text-5xl"
+                className="flex flex-wrap gap-x-[0.22em] gap-y-1 text-balance font-host-grotesk text-[2.35rem] font-semibold leading-[1.1] tracking-tight text-white [text-shadow:0_2px_28px_rgba(0,0,0,0.55)] md:text-5xl lg:text-[3.35rem]"
               >
                 {words.map((word, idx) => (
                   <motion.span
@@ -214,12 +214,12 @@ export default function MembershipWelcomeSplash({
             )}
 
             <motion.p
-              className="mt-5 max-w-xl font-urbanist text-base font-normal leading-relaxed text-white/72 drop-shadow-[0_2px_16px_rgba(0,0,0,0.5)] md:mt-6 md:text-lg md:leading-relaxed"
-              initial={reduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 24 }}
+              className="mt-6 max-w-2xl font-urbanist text-xl font-normal leading-relaxed text-white [text-shadow:0_2px_20px_rgba(0,0,0,0.75),0_1px_4px_rgba(0,0,0,0.65)] md:mt-8 md:text-2xl md:leading-relaxed"
+              initial={reduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{
-                duration: reduceMotion ? 0 : 0.68,
-                delay: reduceMotion ? 0 : 0.42,
+                duration: reduceMotion ? 0 : 0.6,
+                delay: reduceMotion ? 0 : 0.36,
                 ease: [0.22, 1, 0.36, 1],
               }}
             >

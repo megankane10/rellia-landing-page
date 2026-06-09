@@ -227,6 +227,8 @@ export type NavbarProps = {
   hideAnnouncement?: boolean
   /** Fully hide the bar (e.g. membership welcome splash). */
   forceHidden?: boolean
+  /** Transparent bar + dark hero chrome (white links), like the home hero. */
+  forceTransparentHero?: boolean
 }
 
 export default function Navbar({
@@ -238,6 +240,7 @@ export default function Navbar({
   ctaOpenInNewTab = false,
   hideAnnouncement = false,
   forceHidden = false,
+  forceTransparentHero = false,
 }: NavbarProps) {
   const { data: navigationData } = useNavigation()
   const { data: globalSettingsData } = useGlobalSettings()
@@ -379,9 +382,10 @@ export default function Navbar({
 
   const isStoryDetailPage = /^\/stories\/.+/.test(pathname)
 
-  const hasTransparentTopBar = !forceSolid && (hasTealHero || isLightHeroNav || isStoryDetailPage)
+  const hasTransparentTopBar =
+    !forceSolid && (forceTransparentHero || hasTealHero || isLightHeroNav || isStoryDetailPage)
 
-  const useDarkHeroNavChrome = darkHeroNav || isStoryDetailPage
+  const useDarkHeroNavChrome = darkHeroNav || isStoryDetailPage || forceTransparentHero
 
   const useLightNavChrome = !forceSolid && !useDarkHeroNavChrome && isLightHeroNav && !scrolled && !mobileOpen
 

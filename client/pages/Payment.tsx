@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import {
   CheckCircle2,
   ArrowRight,
@@ -12,7 +12,7 @@ import RelliaCta from "@/components/RelliaCta"
 import MembershipWelcomeSplash from "@/components/MembershipWelcomeSplash"
 import MembershipBenefitsPanel from "@/components/MembershipBenefitsPanel"
 import { usePaymentPage } from "@/hooks/useCmsDocuments"
-import { DEFAULT_PAYMENT_PAGE } from "@shared/cms/defaults"
+import { DEFAULT_PAYMENT_PAGE, getPaymentPagePanelBullets } from "@shared/cms/defaults"
 import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo"
 import { cn } from "@/lib/utils"
 import { PriceDisplay } from "@/components/cms/PriceDisplay"
@@ -40,7 +40,14 @@ export default function Payment() {
   const splashBackgroundSrc =
     p.welcomeSplashBackgroundSrc?.trim() ||
     DEFAULT_PAYMENT_PAGE.welcomeSplashBackgroundSrc ||
+    "/images/membership-splash.jpg"
+
+  const panelImageSrc =
+    p.benefitsPanelImageSrc?.trim() ||
+    DEFAULT_PAYMENT_PAGE.benefitsPanelImageSrc ||
     ""
+
+  const panelBullets = getPaymentPagePanelBullets(p)
 
   const handleSplashComplete = useCallback(() => {
     setSplashComplete(true)
@@ -75,10 +82,6 @@ export default function Payment() {
     }
   }, [showSplash])
 
-  const benefitsGrid = useMemo(() => {
-    return p.benefits.filter(b => !b.toLowerCase().includes("cancel")).slice(0, 4)
-  }, [p.benefits])
-
   return (
     <div className="min-h-screen bg-white font-host-grotesk overflow-x-hidden">
       <MembershipWelcomeSplash
@@ -92,12 +95,12 @@ export default function Payment() {
           "/svgs/rellia-secondary-logo-circle-health-white-rgb.svg"
         }
         durationSeconds={
-          p.welcomeSplashDurationSeconds ?? DEFAULT_PAYMENT_PAGE.welcomeSplashDurationSeconds ?? 4.5
+          p.welcomeSplashDurationSeconds ?? DEFAULT_PAYMENT_PAGE.welcomeSplashDurationSeconds ?? 3.5
         }
         onComplete={handleSplashComplete}
       />
 
-      <Navbar forceHidden={showSplash} />
+      <Navbar forceTransparentHero={showSplash} />
 
       <main id="main-content" className="flex w-full flex-1 flex-col">
         <section className="relative w-full pt-[84px] md:pt-[100px] pb-[12px] md:pb-[14px]">
@@ -105,8 +108,9 @@ export default function Payment() {
             <div className="flex flex-col p-4 pb-8 md:p-6 md:pb-10 lg:p-8">
               <MembershipBenefitsPanel
                 headline={p.benefitsPanelHeadline?.trim() || p.benefitsTitle}
-                benefits={benefitsGrid}
-                backgroundSrc={splashBackgroundSrc}
+                bullets={panelBullets}
+                imageEnabled={p.benefitsPanelImageEnabled ?? DEFAULT_PAYMENT_PAGE.benefitsPanelImageEnabled}
+                imageSrc={panelImageSrc}
               />
             </div>
 

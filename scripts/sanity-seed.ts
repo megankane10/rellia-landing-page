@@ -970,6 +970,12 @@ const paymentPageSeedDocument = () => ({
   welcomeSplashBackgroundSrc: DEFAULT_PAYMENT_PAGE.welcomeSplashBackgroundSrc,
   welcomeSplashLogoSrc: DEFAULT_PAYMENT_PAGE.welcomeSplashLogoSrc,
   welcomeSplashDurationSeconds: DEFAULT_PAYMENT_PAGE.welcomeSplashDurationSeconds,
+  benefitsPanelBullet1: DEFAULT_PAYMENT_PAGE.benefitsPanelBullet1,
+  benefitsPanelBullet2: DEFAULT_PAYMENT_PAGE.benefitsPanelBullet2,
+  benefitsPanelBullet3: DEFAULT_PAYMENT_PAGE.benefitsPanelBullet3,
+  benefitsPanelBullet4: DEFAULT_PAYMENT_PAGE.benefitsPanelBullet4,
+  benefitsPanelImageEnabled: DEFAULT_PAYMENT_PAGE.benefitsPanelImageEnabled,
+  benefitsPanelImageSrc: DEFAULT_PAYMENT_PAGE.benefitsPanelImageSrc,
   seo: { ...(seoForRoute("/membership") ?? {}), noIndex: true },
 })
 
@@ -1480,6 +1486,12 @@ async function main() {
         welcomeSplashBackgroundSrc: DEFAULT_PAYMENT_PAGE.welcomeSplashBackgroundSrc,
         welcomeSplashLogoSrc: DEFAULT_PAYMENT_PAGE.welcomeSplashLogoSrc,
         welcomeSplashDurationSeconds: DEFAULT_PAYMENT_PAGE.welcomeSplashDurationSeconds,
+        benefitsPanelBullet1: DEFAULT_PAYMENT_PAGE.benefitsPanelBullet1,
+        benefitsPanelBullet2: DEFAULT_PAYMENT_PAGE.benefitsPanelBullet2,
+        benefitsPanelBullet3: DEFAULT_PAYMENT_PAGE.benefitsPanelBullet3,
+        benefitsPanelBullet4: DEFAULT_PAYMENT_PAGE.benefitsPanelBullet4,
+        benefitsPanelImageEnabled: DEFAULT_PAYMENT_PAGE.benefitsPanelImageEnabled,
+        benefitsPanelImageSrc: DEFAULT_PAYMENT_PAGE.benefitsPanelImageSrc,
       },
     },
   })

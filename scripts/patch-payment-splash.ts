@@ -2,6 +2,20 @@ import { createClient } from "@sanity/client"
 import "./loadEnv"
 import { DEFAULT_PAYMENT_PAGE } from "../shared/cms/defaults"
 
+const patchFields = {
+  welcomeSplashEnabled: DEFAULT_PAYMENT_PAGE.welcomeSplashEnabled,
+  welcomeSplashHeading: DEFAULT_PAYMENT_PAGE.welcomeSplashHeading,
+  welcomeSplashSubheading: DEFAULT_PAYMENT_PAGE.welcomeSplashSubheading,
+  welcomeSplashLogoSrc: DEFAULT_PAYMENT_PAGE.welcomeSplashLogoSrc,
+  welcomeSplashDurationSeconds: DEFAULT_PAYMENT_PAGE.welcomeSplashDurationSeconds,
+  benefitsPanelBullet1: DEFAULT_PAYMENT_PAGE.benefitsPanelBullet1,
+  benefitsPanelBullet2: DEFAULT_PAYMENT_PAGE.benefitsPanelBullet2,
+  benefitsPanelBullet3: DEFAULT_PAYMENT_PAGE.benefitsPanelBullet3,
+  benefitsPanelBullet4: DEFAULT_PAYMENT_PAGE.benefitsPanelBullet4,
+  benefitsPanelImageEnabled: DEFAULT_PAYMENT_PAGE.benefitsPanelImageEnabled,
+  benefitsPanelImageSrc: DEFAULT_PAYMENT_PAGE.benefitsPanelImageSrc,
+}
+
 const main = async () => {
   const projectId =
     process.env.SANITY_API_PROJECT_ID?.trim() ||
@@ -22,15 +36,6 @@ const main = async () => {
     useCdn: false,
   })
 
-  const splashFields = {
-    welcomeSplashEnabled: DEFAULT_PAYMENT_PAGE.welcomeSplashEnabled,
-    welcomeSplashHeading: DEFAULT_PAYMENT_PAGE.welcomeSplashHeading,
-    welcomeSplashSubheading: DEFAULT_PAYMENT_PAGE.welcomeSplashSubheading,
-    welcomeSplashBackgroundSrc: DEFAULT_PAYMENT_PAGE.welcomeSplashBackgroundSrc,
-    welcomeSplashLogoSrc: DEFAULT_PAYMENT_PAGE.welcomeSplashLogoSrc,
-    welcomeSplashDurationSeconds: DEFAULT_PAYMENT_PAGE.welcomeSplashDurationSeconds,
-  }
-
   const exists = await client.fetch<string | null>(
     '*[_id == "paymentPage"][0]._id',
   )
@@ -39,7 +44,8 @@ const main = async () => {
     await client.createIfNotExists({
       _id: "paymentPage",
       _type: "paymentPage",
-      ...splashFields,
+      ...patchFields,
+      welcomeSplashBackgroundSrc: DEFAULT_PAYMENT_PAGE.welcomeSplashBackgroundSrc,
       benefitsPanelHeadline: DEFAULT_PAYMENT_PAGE.benefitsPanelHeadline,
       benefitsTitle: DEFAULT_PAYMENT_PAGE.benefitsTitle,
       benefits: DEFAULT_PAYMENT_PAGE.benefits,
@@ -47,12 +53,19 @@ const main = async () => {
       pricingMonthlyAmount: DEFAULT_PAYMENT_PAGE.pricingMonthlyAmount,
       pricingAnnualAmount: DEFAULT_PAYMENT_PAGE.pricingAnnualAmount,
     })
-    console.log(`Created paymentPage with splash defaults on dataset: ${dataset}`)
+    console.log(`Created paymentPage with defaults on dataset: ${dataset}`)
     return
   }
 
-  await client.patch("paymentPage").setIfMissing(splashFields).commit()
-  console.log(`Patched paymentPage splash fields on dataset: ${dataset}`)
+  await client
+    .patch("paymentPage")
+    .setIfMissing({
+      ...patchFields,
+      welcomeSplashBackgroundSrc: DEFAULT_PAYMENT_PAGE.welcomeSplashBackgroundSrc,
+    })
+    .commit()
+
+  console.log(`Patched paymentPage fields (setIfMissing only) on dataset: ${dataset}`)
 }
 
 main().catch((err) => {
