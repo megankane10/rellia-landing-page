@@ -1,9 +1,5 @@
 import type { ProgramsEventCard } from "@shared/cms/types"
-import { DEFAULT_HOME_PAGE } from "./defaults"
-import {
-  EVENT_FAVICON_HOST_SLUGS,
-  RELLIA_FAVICON_HOST_IMAGE,
-} from "./eventHostImage"
+import { resolveEventHostImageSrc } from "./eventHostImage"
 
 export const PROGRAMS_EVENT_LOCATION_FALLBACK = "Virtual"
 
@@ -293,103 +289,9 @@ export const formatProgramsEventDetailTimeEst = (raw: string): string => {
   return stripped ? `${stripped} EST` : ""
 }
 
-/** Extra portrait paths not duplicated on the home testimonials list (carousel uses `.jpg` for Melissa). */
-const PROGRAMS_EVENT_SPEAKER_EXTRA_AVATARS = ["/images/testimonials-melissaW.jpg"] as const
-
-const buildProgramsEventSpeakerAvatarPool = (): readonly string[] => {
-  const fromHome = DEFAULT_HOME_PAGE.testimonials
-    .map((t) => t.imageSrc.trim())
-    .filter((src) => src.length > 0)
-  const merged = [...fromHome, ...PROGRAMS_EVENT_SPEAKER_EXTRA_AVATARS]
-  const unique = Array.from(new Set(merged))
-  return unique.length > 0 ? unique : [...PROGRAMS_EVENT_SPEAKER_EXTRA_AVATARS]
-}
-
-const PROGRAMS_EVENT_SPEAKER_AVATAR_POOL = buildProgramsEventSpeakerAvatarPool()
-
-const RELLIA_HEALTH_SPEAKER_RE = /rellia\s*health/i
-
-const DR_SABINA_NAGPAL_SPEAKER_RE = /dr\.?\s*sabina|sabina.*nagpal/i
-const MAZHAR_TESTIMONIAL_PORTRAIT = "/images/testimonials-MazharS.jpeg"
-
-const BRENTON_HILL_SPEAKER_RE = /brenton\s*hill/i
-const BRENTON_HILL_EVENT_PORTRAIT = "/images/testimonials-nickS.jpeg"
-
-const AI_COLLECTIVE_HOST_RE = /ai\s*collective/i
-const AI_COLLECTIVE_HOST_LOGO = "/images/logo-aicollective.jpg"
-
-const ERIC_HAYWOOD_SPEAKER_RE = /eric\s*haywood/i
-const INTERSYSTEMS_VENTURES_RE = /intersystems\s*ventures/i
-const ERIC_HAYWOOD_HOST_PORTRAIT = "/images/host-erik.png"
-
-const hashProgramsEventKey = (key: string): number => {
-  let h = 0
-  for (let i = 0; i < key.length; i++) {
-    h = (h * 31 + key.charCodeAt(i)) | 0
-  }
-  return h
-}
-
-/**
- * Speaker headshot for event cards and detail — CMS `hostImage`, Rellia icon for branded hosts,
- * stable hash into home testimonial portraits (+ Melissa `.jpg`), or named speaker overrides.
- */
-export const getProgramsEventSpeakerAvatarSrc = (event: ProgramsEventCard): string => {
-  const cmsHostImage = event.hostImageSrc?.trim()
-  if (cmsHostImage) return cmsHostImage
-
-  const slug = event.slug?.trim()
-  if (slug && EVENT_FAVICON_HOST_SLUGS.has(slug)) {
-    return RELLIA_FAVICON_HOST_IMAGE
-  }
-
-  const parts = parseProgramsEventSpeaker(event.person)
-  const speaker = (parts.speaker || (event.person ?? "").trim()).trim()
-  const company = parts.company.trim()
-  const personRaw = (event.person ?? "").trim()
-  if (
-    RELLIA_HEALTH_SPEAKER_RE.test(speaker) ||
-    RELLIA_HEALTH_SPEAKER_RE.test(company) ||
-    RELLIA_HEALTH_SPEAKER_RE.test(personRaw)
-  ) {
-    return RELLIA_FAVICON_HOST_IMAGE
-  }
-  const isDrSabinaNagpalEvent =
-    (DR_SABINA_NAGPAL_SPEAKER_RE.test(speaker) && /\bNagpal\b/i.test(speaker)) ||
-    DR_SABINA_NAGPAL_SPEAKER_RE.test(personRaw)
-  if (isDrSabinaNagpalEvent) {
-    return MAZHAR_TESTIMONIAL_PORTRAIT
-  }
-  const isBrentonHillEvent =
-    event.slug === "why-healthcare-says-no-to-your-ai" ||
-    BRENTON_HILL_SPEAKER_RE.test(speaker) ||
-    BRENTON_HILL_SPEAKER_RE.test(personRaw)
-  if (isBrentonHillEvent) {
-    return BRENTON_HILL_EVENT_PORTRAIT
-  }
-  const isAiCollectiveHost =
-    event.slug === "ai-healthcare-compliance" ||
-    AI_COLLECTIVE_HOST_RE.test(speaker) ||
-    AI_COLLECTIVE_HOST_RE.test(company) ||
-    AI_COLLECTIVE_HOST_RE.test(personRaw)
-  if (isAiCollectiveHost) {
-    return AI_COLLECTIVE_HOST_LOGO
-  }
-
-  if (
-    ERIC_HAYWOOD_SPEAKER_RE.test(speaker) ||
-    ERIC_HAYWOOD_SPEAKER_RE.test(personRaw) ||
-    INTERSYSTEMS_VENTURES_RE.test(company) ||
-    INTERSYSTEMS_VENTURES_RE.test(personRaw)
-  ) {
-    return ERIC_HAYWOOD_HOST_PORTRAIT
-  }
-
-  const key = `${event.title}-${getProgramsEventDisplayDateTime(event)}-${event.person}`
-  const pool = PROGRAMS_EVENT_SPEAKER_AVATAR_POOL
-  const idx = Math.abs(hashProgramsEventKey(key)) % pool.length
-  return pool[idx] ?? pool[0]
-}
+/** Speaker headshot for event cards and detail — shared with `resolveEventHostImageSrc`. */
+export const getProgramsEventSpeakerAvatarSrc = (event: ProgramsEventCard): string =>
+  resolveEventHostImageSrc(event)
 
 export const parseProgramsEventSpeaker = (person: string | undefined) => {
   const raw = (person ?? "").trim()
