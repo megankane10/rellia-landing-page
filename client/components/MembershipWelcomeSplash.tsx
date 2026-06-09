@@ -189,7 +189,7 @@ export default function MembershipWelcomeSplash({
             transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
           >
             <motion.div
-              className="mb-8 md:mb-10"
+              className="mb-16 md:mb-20 lg:mb-24"
               initial={reduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: -64 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1.1, ease: [0.22, 1, 0.36, 1] }}
