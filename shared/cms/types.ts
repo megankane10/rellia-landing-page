@@ -480,6 +480,7 @@ export type NetworkJourneyStep = {
   label: string
   zone: "outside" | "rellia"
   detail?: string
+  iconKey?: string
 }
 
 export type NetworkPitchCard = {
@@ -514,8 +515,10 @@ export type NetworkFoundersPageContent = CmsSingletonPageContent &
     whyTitle?: string
     whyDescription?: string
     whyFeatures?: NetworkFeatureItem[]
+    showJourneySection?: boolean
     journeyTitle?: string
-    journeySubtitle?: string
+    journeyHelpBadge?: string
+    journeyHelpHeading?: string
     journeySteps?: NetworkJourneyStep[]
     exploreTitle?: string
     exploreSubtitle?: string
@@ -956,6 +959,17 @@ export type ContactPageContent = {
   seo?: SeoContent
 }
 
+export type ProgramTimelineWeekCms = {
+  heading?: string
+  points: string[]
+}
+
+export type ProgramTimelineStepCms = {
+  title: string
+  stepLabel?: string
+  weeks?: ProgramTimelineWeekCms[]
+}
+
 export type QmsProgramContent = {
   paymentUrl: string
   heroTitle: string
@@ -971,7 +985,7 @@ export type QmsProgramContent = {
   pillars?: Array<{ title?: string; description?: string }>
   timelineTitle: string
   timelineSubtitle: string
-  timelineSteps?: ApplyPageStep[]
+  timelineSteps?: ProgramTimelineStepCms[]
   pricingBadge: string
   pricingAmount: string
   pricingDiscountEnabled?: boolean

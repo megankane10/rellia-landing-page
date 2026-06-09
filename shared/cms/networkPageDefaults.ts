@@ -133,13 +133,16 @@ export const DEFAULT_NETWORK_FOUNDERS_PAGE: NetworkFoundersPageContent = {
     },
   ],
   journeyTitle: "Where Rellia meets your trajectory",
-  journeySubtitle:
-    "We help you execute in healthcare complexity once you have direction—without replacing early discovery.",
+  showJourneySection: true,
+  journeyHelpBadge: "We help with",
+  journeyHelpHeading:
+    "Programs, operators, and warm intros aligned to milestones that survive clinical, regulatory, and buyer scrutiny.",
   journeySteps: [
     {
       id: "idea",
       label: "Product idea",
       zone: "outside",
+      iconKey: "Lightbulb",
       detail:
         "Exploring problems and narratives on your own or with peers—the groundwork before scoped execution. Not where Rellia substitutes for your discovery process.",
     },
@@ -147,6 +150,7 @@ export const DEFAULT_NETWORK_FOUNDERS_PAGE: NetworkFoundersPageContent = {
       id: "edu",
       label: "Industry education",
       zone: "outside",
+      iconKey: "GraduationCap",
       detail:
         "Learning reimbursement, stakeholder maps, and regulatory vocabulary broadly available through courses and content—foundational, not a substitute for operator feedback.",
     },
@@ -154,6 +158,7 @@ export const DEFAULT_NETWORK_FOUNDERS_PAGE: NetworkFoundersPageContent = {
       id: "problem",
       label: "Problem statement",
       zone: "outside",
+      iconKey: "MessagesSquare",
       detail:
         "Clarifying who benefits and what would count as success in a care or buyer workflow. Rellia does not write your strategy doc for you—but we help pressure-test it once you're building.",
     },
@@ -161,6 +166,7 @@ export const DEFAULT_NETWORK_FOUNDERS_PAGE: NetworkFoundersPageContent = {
       id: "mvp",
       label: "MVP development",
       zone: "rellia",
+      iconKey: "Hammer",
       detail:
         "Ship a scope operators can review: safety basics, interoperability touchpoints, and a validation plan that won't be thrown away in the next phase.",
     },
@@ -168,6 +174,7 @@ export const DEFAULT_NETWORK_FOUNDERS_PAGE: NetworkFoundersPageContent = {
       id: "feedback",
       label: "User feedback",
       zone: "rellia",
+      iconKey: "MessagesSquare",
       detail:
         "Structured feedback from clinicians, patients, and buyers so you learn what to fix before you scale sales or studies.",
     },
@@ -175,6 +182,7 @@ export const DEFAULT_NETWORK_FOUNDERS_PAGE: NetworkFoundersPageContent = {
       id: "funding",
       label: "Funding",
       zone: "rellia",
+      iconKey: "Percent",
       detail:
         "A de-risked story: milestones, clinical or economic logic, and a use-of-funds plan that matches healthcare diligence.",
     },
@@ -182,6 +190,7 @@ export const DEFAULT_NETWORK_FOUNDERS_PAGE: NetworkFoundersPageContent = {
       id: "reg",
       label: "Regulatory",
       zone: "rellia",
+      iconKey: "ShieldCheck",
       detail:
         "Map QMS, labeling, and risk early so evidence and software releases stay aligned to submission pathways.",
     },
@@ -189,6 +198,7 @@ export const DEFAULT_NETWORK_FOUNDERS_PAGE: NetworkFoundersPageContent = {
       id: "clinical",
       label: "Clinical evidence",
       zone: "rellia",
+      iconKey: "Stethoscope",
       detail:
         "Pilots and studies that produce decision-grade signal: workflow fit, outcomes, and endpoints buyers actually care about.",
     },
@@ -196,6 +206,7 @@ export const DEFAULT_NETWORK_FOUNDERS_PAGE: NetworkFoundersPageContent = {
       id: "commercial",
       label: "Commercialization",
       zone: "rellia",
+      iconKey: "Target",
       detail:
         "Repeatable revenue: pricing, procurement, channel partners, and delivery that holds up at scale.",
     },
@@ -203,6 +214,7 @@ export const DEFAULT_NETWORK_FOUNDERS_PAGE: NetworkFoundersPageContent = {
       id: "launch",
       label: "Launch & scale",
       zone: "rellia",
+      iconKey: "Rocket",
       detail:
         "Grow into health systems and markets with the intros, playbooks, and peer network to sustain momentum after first revenue.",
     },
@@ -530,6 +542,26 @@ export const mergeNetworkWhyFeatures = (
     }
   })
 
+export const mergeNetworkJourneySteps = (
+  cms: NetworkFoundersPageContent["journeySteps"] | null | undefined,
+  defaults: NonNullable<NetworkFoundersPageContent["journeySteps"]>,
+): NonNullable<NetworkFoundersPageContent["journeySteps"]> => {
+  if (!Array.isArray(cms) || cms.length === 0) return defaults
+  return cms.map((cmsStep, index) => {
+    const defaultStep = defaults[index] ?? defaults.find((step) => step.id === cmsStep.id)
+    if (!defaultStep) return cmsStep
+    return {
+      ...defaultStep,
+      ...cmsStep,
+      id: cmsStep.id?.trim() || defaultStep.id,
+      label: cmsStep.label?.trim() || defaultStep.label,
+      zone: cmsStep.zone ?? defaultStep.zone,
+      detail: cmsStep.detail?.trim() || defaultStep.detail,
+      iconKey: cmsStep.iconKey?.trim() || defaultStep.iconKey,
+    }
+  })
+}
+
 const mergeNetworkHeroFields = <T extends NetworkFoundersPageContent>(
   cms: Partial<T> | null | undefined,
   defaults: T,
@@ -549,7 +581,10 @@ export const mergeNetworkFoundersPage = (
     cms?.whyFeatures,
     DEFAULT_NETWORK_FOUNDERS_PAGE.whyFeatures ?? [],
   ),
-  journeySteps: pickList(cms?.journeySteps, DEFAULT_NETWORK_FOUNDERS_PAGE.journeySteps ?? []),
+  journeySteps: mergeNetworkJourneySteps(
+    cms?.journeySteps,
+    DEFAULT_NETWORK_FOUNDERS_PAGE.journeySteps ?? [],
+  ),
   exploreCards: pickList(cms?.exploreCards, DEFAULT_NETWORK_FOUNDERS_PAGE.exploreCards ?? []),
   deeperHelpFeatures: pickList(
     cms?.deeperHelpFeatures,

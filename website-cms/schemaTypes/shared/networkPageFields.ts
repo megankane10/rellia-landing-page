@@ -119,6 +119,12 @@ export const networkJourneyStepMember = defineArrayMember({
       validation: (Rule) => Rule.required(),
     }),
     defineField({name: 'detail', type: 'text', rows: 2}),
+    defineField({
+      name: 'iconKey',
+      title: 'Icon',
+      type: 'string',
+      description: 'Lucide icon name, e.g. Lightbulb, Rocket, ShieldCheck',
+    }),
   ],
   preview: {select: {title: 'label', subtitle: 'zone'}},
 })

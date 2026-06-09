@@ -124,11 +124,12 @@ const MEMBERSHIP_VALUE_PROPS = [
 type JourneyZone = "outside" | "rellia";
 
 type JourneyStep = {
-  id: string;
-  label: string;
-  zone: JourneyZone;
-  detail: string;
-};
+  id: string
+  label: string
+  zone: JourneyZone
+  detail: string
+  iconKey?: string
+}
 
 const JOURNEY_TIMELINE: JourneyStep[] = [
   {
@@ -634,8 +635,8 @@ function MembershipDifferentSection({ content }: { content: NetworkFoundersPageC
 
 function JourneySplitSection({ content }: { content: NetworkFoundersPageContent }) {
   const timeline = content.journeySteps?.length ? content.journeySteps : JOURNEY_TIMELINE
-  const relliaSteps = timeline.filter((s) => s.zone === "rellia");
-  const outsideSteps = timeline.filter((s) => s.zone === "outside");
+  const relliaSteps = timeline.filter((s) => s.zone === "rellia")
+  const outsideSteps = timeline.filter((s) => s.zone === "outside")
 
   const journeyIconById = {
     idea: Lightbulb,
@@ -648,14 +649,20 @@ function JourneySplitSection({ content }: { content: NetworkFoundersPageContent 
     clinical: Stethoscope,
     commercial: Target,
     launch: Rocket,
-  } satisfies Record<JourneyStep["id"], typeof Lightbulb>;
+  } satisfies Record<JourneyStep["id"], typeof Lightbulb>
 
-  const outsideCardBaseDelay = 0.06;
-  const outsideCardStagger = 0.07;
-  const dividerDelay = 0.16;
-  const bottomHeaderDelay = 0.2;
-  const relliaCardBaseDelay = 0.24;
-  const relliaCardStagger = 0.07;
+  const resolveJourneyIcon = (step: JourneyStep) =>
+    resolveNetworkIcon(
+      step.iconKey,
+      journeyIconById[step.id as keyof typeof journeyIconById] ?? Lightbulb,
+    )
+
+  const outsideCardBaseDelay = 0.06
+  const outsideCardStagger = 0.07
+  const dividerDelay = 0.16
+  const bottomHeaderDelay = 0.2
+  const relliaCardBaseDelay = 0.24
+  const relliaCardStagger = 0.07
 
   return (
     <section className="w-full overflow-hidden border-t border-black/[0.06] bg-white px-6 py-16 md:px-10 md:py-24">
@@ -666,21 +673,9 @@ function JourneySplitSection({ content }: { content: NetworkFoundersPageContent 
           </h2>
         </ScrollReveal>
 
-        <ScrollReveal variant="ctaReveal" delay={0.1} className="mt-8 md:mt-10">
-          <div className="flex w-full flex-col items-start gap-4 md:flex-row md:items-start md:justify-between md:gap-8">
-            <span className="inline-flex shrink-0 items-center rounded-full bg-rellia-cream px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.14em] text-rellia-teal">
-              You own
-            </span>
-            <p className="max-w-2xl font-urbanist text-base font-normal leading-relaxed tracking-tight text-rellia-teal md:text-lg md:text-right">
-              {content.journeySubtitle ??
-                "We help you execute in healthcare complexity once you have direction—without replacing early discovery."}
-            </p>
-          </div>
-        </ScrollReveal>
-
         <div className="mt-6 grid w-full grid-cols-1 items-center gap-4 md:grid-cols-3">
           {outsideSteps.map((m, idx) => {
-            const Icon = journeyIconById[m.id as keyof typeof journeyIconById] ?? Lightbulb;
+            const Icon = resolveJourneyIcon(m)
             return (
               <ScrollReveal
                 key={m.id}
@@ -696,7 +691,7 @@ function JourneySplitSection({ content }: { content: NetworkFoundersPageContent 
                   </h3>
                 </article>
               </ScrollReveal>
-            );
+            )
           })}
         </div>
 
@@ -729,19 +724,19 @@ function JourneySplitSection({ content }: { content: NetworkFoundersPageContent 
         >
           <div className="flex w-full flex-col items-start gap-4 md:flex-row md:items-start md:justify-between md:gap-8">
             <span className="inline-flex shrink-0 items-center rounded-full bg-rellia-mint px-3.5 py-1.5 text-xs font-semibold uppercase tracking-[0.14em] text-rellia-teal">
-              We help with
+              {content.journeyHelpBadge ?? "We help with"}
             </span>
             <h3 className="max-w-2xl font-urbanist text-base font-normal leading-relaxed tracking-tight text-rellia-teal md:text-lg md:text-right">
-              Programs, operators, and warm intros aligned to milestones that
-              survive clinical, regulatory, and buyer scrutiny.
+              {content.journeyHelpHeading ??
+                "Programs, operators, and warm intros aligned to milestones that survive clinical, regulatory, and buyer scrutiny."}
             </h3>
           </div>
         </ScrollReveal>
 
         <div className="mt-6 grid w-full grid-cols-1 items-stretch gap-4 sm:grid-cols-2 md:grid-cols-4">
           {relliaSteps.map((m, idx) => {
-            const Icon = journeyIconById[m.id as keyof typeof journeyIconById] ?? Lightbulb;
-            const isLast = idx === relliaSteps.length - 1;
+            const Icon = resolveJourneyIcon(m)
+            const isLast = idx === relliaSteps.length - 1
             return (
               <ScrollReveal
                 key={m.id}
@@ -768,12 +763,12 @@ function JourneySplitSection({ content }: { content: NetworkFoundersPageContent 
                   </p>
                 </article>
               </ScrollReveal>
-            );
+            )
           })}
         </div>
       </div>
     </section>
-  );
+  )
 }
 
 function ExploreNetworkSection({ content }: { content: NetworkFoundersPageContent }) {
@@ -915,7 +910,9 @@ export default function Founders() {
             className="border-t border-black/10"
           />
 
-          <JourneySplitSection content={content} />
+          {content.showJourneySection !== false ? (
+            <JourneySplitSection content={content} />
+          ) : null}
 
           <ExploreNetworkSection content={content} />
           <DeeperHelpValuesSection content={content} />
