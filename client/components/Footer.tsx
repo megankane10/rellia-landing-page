@@ -141,7 +141,7 @@ const BuiltByCredit = () => {
         target="_blank"
         rel="noopener noreferrer"
         className="built-by-credit rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-rellia-teal"
-        aria-label="Built by Safdar — let's connect on LinkedIn"
+        aria-label="Built by Safdar — Connect on LinkedIn"
         aria-describedby={showTooltip ? "built-by-safdar-tooltip" : undefined}
         onMouseEnter={handlePointerEnter}
         onMouseLeave={handlePointerLeave}
@@ -180,7 +180,10 @@ const BuiltByCredit = () => {
         aria-hidden={!showTooltip}
         className={cn("built-by-tooltip", showTooltip && "built-by-tooltip--visible")}
       >
-        <span className="built-by-tooltip-inner">Let&apos;s connect on LinkedIn</span>
+        <span className="built-by-tooltip-inner inline-flex items-center gap-2">
+          <LinkedInFilled className="h-4 w-4 shrink-0 text-rellia-mint" aria-hidden />
+          Connect on LinkedIn
+        </span>
       </span>
     </span>
   )
