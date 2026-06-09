@@ -1,5 +1,6 @@
 import {
   GlobeFilled,
+  InstagramFilled,
   LinkedInFilled,
 } from "@/components/icons/SocialIcons"
 import { cn } from "@/lib/utils"
@@ -12,11 +13,15 @@ export type ProfileSocialLink = {
   url?: string
 }
 
+type ProfileSocialLinksVariant = "light" | "onDark"
+
 type ProfileSocialLinksProps = {
   links?: ProfileSocialLink[] | null
   email?: string | null
   className?: string
   iconClassName?: string
+  /** `onDark` for overlays and tinted backgrounds (e.g. team bio cards). */
+  variant?: ProfileSocialLinksVariant
 }
 
 type SocialKind = "linkedin" | "website" | "instagram" | "x" | "youtube" | "email" | "generic"
@@ -30,11 +35,19 @@ const normalizeUrl = (url: string | undefined, platform: string): string | undef
   return trimmed
 }
 
+const BUTTON_CLASS: Record<ProfileSocialLinksVariant, string> = {
+  light:
+    "inline-flex h-10 w-10 items-center justify-center rounded-full border border-black/10 bg-white text-black transition-colors hover:border-black/20 hover:bg-black/[0.07] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-teal focus-visible:ring-offset-2",
+  onDark:
+    "inline-flex h-9 w-9 items-center justify-center rounded-xl border border-white/25 bg-white/10 text-white backdrop-blur-sm transition-[color,background-color,border-color] duration-200 ease-in-out visited:text-white hover:border-white/50 hover:bg-white/20 hover:text-rellia-mint visited:hover:text-rellia-mint focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-rellia-teal",
+}
+
 export const ProfileSocialLinks = ({
   links,
   email,
   className,
   iconClassName = "h-5 w-5",
+  variant = "light",
 }: ProfileSocialLinksProps) => {
   const items: { key: string; href: string; label: string; kind: SocialKind }[] = []
 
@@ -88,8 +101,7 @@ export const ProfileSocialLinks = ({
 
   if (items.length === 0) return null
 
-  const buttonClass =
-    "inline-flex h-10 w-10 items-center justify-center rounded-full border border-black/10 bg-white text-black hover:bg-black/5 transition-colors"
+  const buttonClass = BUTTON_CLASS[variant]
 
   return (
     <div className={cn("flex flex-wrap items-center gap-3", className)}>
@@ -104,6 +116,8 @@ export const ProfileSocialLinks = ({
         >
           {item.kind === "linkedin" ? (
             <LinkedInFilled className={iconClassName} />
+          ) : item.kind === "instagram" ? (
+            <InstagramFilled className={iconClassName} />
           ) : item.kind === "website" ? (
             <GlobeFilled className={iconClassName} />
           ) : item.kind === "email" ? (

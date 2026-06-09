@@ -205,6 +205,7 @@ export function TeamMemberCard({
                         links={socialLinks}
                         className="gap-2"
                         iconClassName="h-4 w-4"
+                        variant="onDark"
                       />
                     </>
                   ) : null}
