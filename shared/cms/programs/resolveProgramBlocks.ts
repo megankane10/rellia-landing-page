@@ -1,9 +1,14 @@
 import type { ProgramPageIconCard, ProgramTimelineMonth } from "./types"
 
+export type ProgramCmsTimelineWeek = {
+  heading?: string
+  points?: string[]
+}
+
 export type ProgramCmsTimelineStep = {
   title?: string
-  description?: string
-  weekLabel?: string
+  stepLabel?: string
+  weeks?: ProgramCmsTimelineWeek[]
 }
 
 export type ProgramCmsPillar = {
@@ -46,6 +51,21 @@ export const resolveProgramHowItWorksCards = (
     }
   })
 
+const normalizeCmsWeeks = (
+  weeks: ProgramCmsTimelineWeek[] | undefined,
+): ProgramTimelineMonth["weeks"] =>
+  (weeks ?? [])
+    .map((week) => {
+      const points = (week.points ?? []).map((point) => point.trim()).filter(Boolean)
+      if (points.length === 0) return null
+
+      const heading = week.heading?.trim()
+      if (heading) return { heading, points }
+      if (points.length === 1) return points[0]
+      return { points }
+    })
+    .filter((week): week is NonNullable<typeof week> => week !== null)
+
 export const resolveProgramTimeline = (
   cmsSteps: ProgramCmsTimelineStep[] | undefined,
   staticTimeline: ProgramTimelineMonth[],
@@ -54,15 +74,14 @@ export const resolveProgramTimeline = (
   if (steps.length === 0) return staticTimeline
 
   return steps.map((step, index) => {
-    const points = (step.description ?? "")
-      .split("\n")
-      .map((line) => line.trim())
-      .filter(Boolean)
+    const staticMonth = staticTimeline[index]
+    const cmsWeeks = normalizeCmsWeeks(step.weeks)
+    const weeks = cmsWeeks.length > 0 ? cmsWeeks : (staticMonth?.weeks ?? [])
 
     return {
       month: step.title!.trim(),
-      stepLabel: step.weekLabel?.trim() || `Step ${index + 1}`,
-      weeks: points.length > 0 ? points : [step.description?.trim() || ""],
+      stepLabel: step.stepLabel?.trim() || staticMonth?.stepLabel || `Step ${index + 1}`,
+      weeks,
     }
   })
 }

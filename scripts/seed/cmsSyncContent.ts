@@ -1304,15 +1304,35 @@ export const PROGRAM_TIMELINE_SUBTITLE_BY_SLUG: Record<string, string> = {
 
 export const buildProgramTimelineStepsSeed = (blocks: ProgramPageStaticBlocks) =>
   blocks.timeline.map((month, index) => {
-    const points = month.weeks.flatMap((week) =>
-      typeof week === "string" ? [week] : week.points,
-    )
+    const stringWeeks = month.weeks.every((week) => typeof week === "string")
+    const weeks = stringWeeks
+      ? [
+          {
+            _key: "week-0",
+            points: month.weeks.filter((week): week is string => typeof week === "string"),
+          },
+        ]
+      : month.weeks.map((week, weekIndex) => {
+          if (typeof week === "string") {
+            return {
+              _key: `week-${weekIndex}`,
+              points: [week],
+            }
+          }
+
+          return {
+            _key: `week-${weekIndex}`,
+            heading: week.heading,
+            points: week.points,
+          }
+        })
 
     return {
+      _type: "programTimelineStep" as const,
       _key: `timeline-${index}`,
       title: month.month,
-      description: points.join("\n"),
-      weekLabel: month.stepLabel ?? `Month ${index + 1}`,
+      stepLabel: month.stepLabel ?? `Step ${index + 1}`,
+      weeks,
     }
   })
 

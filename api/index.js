@@ -614,7 +614,7 @@ var programDetailFields = `
   bottomCtaBody,
   bottomCtaButtonLabel,
   bottomContactHref,
-  timelineSteps[]{ title, description, weekLabel },
+  timelineSteps[]{ title, stepLabel, weeks[]{ heading, points } },
   ${landingTestimonialsFragment},
   sections[]{
     ...,

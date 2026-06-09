@@ -128,25 +128,11 @@ export const program = defineType({
     defineField({
       name: 'timelineSteps',
       title: 'Timeline steps',
+      description:
+        'One accordion item per month. Add week groups inside each step for small headings and bullet points.',
       type: 'array',
       group: 'detail',
-      of: [
-        defineArrayMember({
-          type: 'object',
-          name: 'programTimelineStep',
-          fields: [
-            defineField({name: 'title', type: 'string', validation: (Rule) => Rule.required()}),
-            defineField({name: 'description', type: 'text', rows: 3}),
-            defineField({
-              name: 'weekLabel',
-              title: 'Week label',
-              type: 'string',
-              description: 'e.g. Week 1–2',
-            }),
-          ],
-          preview: {select: {title: 'title', subtitle: 'weekLabel'}},
-        }),
-      ],
+      of: [defineArrayMember({type: 'programTimelineStep'})],
     }),
     defineField({
       name: 'testimonials',

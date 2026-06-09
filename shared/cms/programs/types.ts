@@ -15,7 +15,7 @@ export type ProgramTimelineStep = {
 
 export type ProgramTimelineMonth = {
   month: string
-  /** Optional badge above the accordion title (from CMS weekLabel). */
+  /** Optional badge above the accordion title (from CMS stepLabel). */
   stepLabel?: string
   /** Supports simple strings or structured objects with headings and sub-points. */
   weeks: (string | ProgramTimelineStep)[]
