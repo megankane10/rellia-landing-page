@@ -5,32 +5,29 @@ React SPA for **Rellia Health**, connecting founders, clinicians, and health sys
 
 **Production**: [relliahealth.com](https://www.relliahealth.com)
 
-**Status (June 2026):** Initial build and CMS handoff are **complete**. The site is live on Vercel; editors publish via [Sanity Studio](https://relliahealth.sanity.studio). Use **`main`** for production and **`Additions`** for integration preview. Ongoing work is content and optional enhancements only — see [Editor guide](./docs/website-management-guide.md).
+**Status (June 2026):** The site is live on Vercel; editors publish via [Sanity Studio](https://relliahealth.sanity.studio). See [Editor guide](./docs/website-management-guide.md).
 
 ---
 
 ## Branches and workflow
 
-| Branch | Git role | Typical Vercel deploy | Sanity dataset (`VITE_SANITY_DATASET`) |
-|--------|----------|----------------------|----------------------------------------|
-| **`main`** | Production code | `www.relliahealth.com` | **`production`** |
-| **`Additions`** | Integration / review before `main` | `relliahealth.vercel.app` (preview) | **`production`** + **drafts** perspective |
+| Branch | Git role | Vercel deploy | Sanity dataset |
+|--------|----------|---------------|----------------|
+| **`main`** | Production | `www.relliahealth.com` | **`production`** |
 
-The legacy **`preview`** dataset is optional for local seed experiments only.
-
-Do day-to-day work on **`Additions`**. After review, merge into **`main`** for production.
+Editors use **Sanity Studio** only. Optional Vercel preview deploys (PR branches) are not part of the editor workflow.
 
 ### Sanity: Studio → live site (editor workflow)
 
 Sanity Studio at [relliahealth.sanity.studio](https://relliahealth.sanity.studio) edits the **`production`** dataset — the same database **`www.relliahealth.com`** reads. **Publish in Studio = live site update** within ~30 seconds (refresh the page).
 
-| Who | Dataset | Where changes appear |
-|-----|---------|----------------------|
-| **Editors (Studio)** | **`production`** | **Publish** → `www.relliahealth.com` (published only) |
-| **Editors (draft review)** | **`production`** + drafts | `relliahealth.vercel.app` or Studio **Presentation** |
-| **Developers (Additions)** | **`production`** + drafts | Code QA on Vercel preview URL |
+| Who | Where | What appears |
+|-----|-------|--------------|
+| **Visitors** | **www.relliahealth.com** | **Published** content only |
+| **Editors (Studio)** | **Publish** | Updates www within ~30 seconds |
+| **Editors (Presentation)** | Studio preview panel | **Drafts** — not visible to public visitors |
 
-Use **Presentation** in Studio (iframe → `relliahealth.vercel.app`) to preview unpublished work. The admin **Content drafts** panel lists draft documents.
+Use **Presentation** in Studio to preview unpublished work. **Publish** when ready for www.
 
 **One-time migration** (if staging had content production lacks):
 
@@ -64,7 +61,7 @@ Use this when transferring the site to the Rellia team. Items marked **editor** 
 | # | Task | Why it matters |
 |---|------|----------------|
 | 1 | **Vercel production env** — `VITE_SANITY_DATASET=production`, `SANITY_API_DATASET=production`, `SANITY_API_READ_TOKEN`, `SANITY_ENFORCE_VERCEL_DATASET=true`, Supabase + Stripe keys from `.env.example` | Live site reads the correct CMS dataset and APIs work |
-| 2 | **Vercel preview env** — `production` dataset + `SANITY_VERCEL_PREVIEW_DATASET=production`; `SANITY_STUDIO_PREVIEW_URL` = `https://relliahealth.vercel.app` | Draft review on Vercel; www stays published-only |
+| 2 | **Vercel production env** — `VITE_SANITY_DATASET=production`, `SANITY_STUDIO_PREVIEW_URL=https://www.relliahealth.com` | Live site + Studio Presentation |
 | 3 | **Sanity Studio** — deployed (`pnpm sanity:studio:deploy`); Looker embed URL in **Site settings → Analytics** | Editors use https://relliahealth.sanity.studio |
 | 4 | **Seed starter content** — `pnpm sanity:seed:starters` on **production** (terms, privacy, guide) if singletons are empty | Editors see legal pages in Studio |
 | 5 | **Production CMS audit** — events have `startsAt`/`endsAt`; publish only what should be on www | Prevents wrong dates or ghost events on live site |

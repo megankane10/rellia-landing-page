@@ -27,13 +27,13 @@ const theme = buildLegacyTheme({
 } as Record<string, string>)
 
 const previewOrigin = (
-  process.env.SANITY_STUDIO_PREVIEW_URL || 'https://relliahealth.vercel.app'
+  process.env.SANITY_STUDIO_PREVIEW_URL || 'https://www.relliahealth.com'
 ).replace(/\/$/, '')
 
 export default defineConfig({
   name: 'default',
   title: 'Rellia Web Studio',
-  subtitle: 'Production CMS — drafts on Vercel preview, Publish updates www',
+  subtitle: 'Publish updates www — Presentation previews drafts on www only in Studio',
   icon: RelliaStudioIcon,
 
   projectId: process.env.SANITY_STUDIO_PROJECT_ID || 'ggbt0o98',
@@ -52,7 +52,7 @@ export default defineConfig({
       previewUrl: {
         // If Studio is deployed (https) and previewUrl is http://localhost, the iframe will be blocked as mixed content.
         // For local Studio dev, set SANITY_STUDIO_PREVIEW_URL=http://localhost:5173
-        // Vercel preview deploy: production dataset + drafts perspective (SANITY_API_READ_TOKEN required).
+        // Presentation iframe on www (draft mode). Requires SANITY_API_READ_TOKEN on Vercel production.
         origin: previewOrigin,
         initial: previewOrigin,
         previewMode: {

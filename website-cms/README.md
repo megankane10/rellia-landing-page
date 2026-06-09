@@ -25,10 +25,8 @@ The codebase divides environment scopes strictly using environment variables:
 
 | Environment / Branch | `VITE_SANITY_DATASET` / `SANITY_API_DATASET` | Purpose | Seeding Fallback Allowed? |
 | :--- | :--- | :--- | :--- |
-| **`main` (Production)** | **`production`** | Live website content | **No** (Uses Sanity production only; empty if down) |
-| **`Additions` (Preview)** | **`production`** (recommended) | Code QA deploy — mirrors www CMS | **No** |
-| **Local experiments** | **`preview`** (optional) | Seed / schema testing only | **Yes** |
-| **Local Dev** | Configuration dependent (`preview` recommended) | Local developer environment | **Yes** (If using `preview` dataset / unconfigured) |
+| **`main` (Production)** | **`production`** | Live website + Studio | **No** |
+| **Local Dev / seed** | **`preview`** (optional) | Developer experiments | **Yes** |
 
 > [!IMPORTANT]
 > To prevent ghost events or outdated dummy data on the live site, **no code-defaults or static seeds are permitted to load when the VITE_SANITY_DATASET is `production`**. This is enforced by `client/lib/deploymentEnv.ts` → `allowCmsSeedFallbacks()`.
@@ -51,13 +49,12 @@ The site integrates `@sanity/visual-editing` to enable click-to-edit overlays an
 
 ### Setup Checklist
 
-**Editors (hosted Studio)** — Studio edits **`production`**. **Publish** updates [www.relliahealth.com](https://www.relliahealth.com). Unpublished drafts appear on [relliahealth.vercel.app](https://relliahealth.vercel.app).
+**Editors (hosted Studio)** — Studio edits **`production`**. **Publish** updates [www.relliahealth.com](https://www.relliahealth.com). **Presentation** previews drafts inside Studio only (iframe → www).
 
 - **Sanity Studio** env:
   - `SANITY_STUDIO_DATASET=production`
-  - `SANITY_STUDIO_PREVIEW_URL=https://relliahealth.vercel.app` (Presentation iframe — drafts)
-- **Vercel Production** (`www`): `VITE_SANITY_DATASET=production`, published content only
-- **Vercel Preview** (`relliahealth.vercel.app`): `VITE_SANITY_DATASET=production`, `SANITY_VERCEL_PREVIEW_DATASET=production`, `SANITY_API_READ_TOKEN` (drafts perspective)
+  - `SANITY_STUDIO_PREVIEW_URL=https://www.relliahealth.com`
+- **Vercel Production** (`www`): `VITE_SANITY_DATASET=production`, `SANITY_API_READ_TOKEN` (for Presentation draft mode), published content for normal visitors
 
 ---
 

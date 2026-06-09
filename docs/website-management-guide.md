@@ -16,11 +16,12 @@ This guide is for non-technical editors who manage the marketing site through **
 
 | Where | What you see |
 |-------|----------------|
-| **www.relliahealth.com** | **Published** content only (live site) |
-| **relliahealth.vercel.app** | **Drafts + published** from the same production dataset — review before Publish |
-| **Studio → Presentation** | Same draft preview as the Vercel URL (iframe) |
+| **www.relliahealth.com** (normal browsing) | **Published** content only — what visitors see |
+| **Studio → Presentation** | **Drafts + published** inside Studio’s preview panel only (not on the public site) |
 
-**Publish** in Studio pushes changes to www. Use the Vercel URL or Presentation to check unpublished work first.
+**Publish** in Studio is what makes changes live on www. Saving without publishing keeps work as a draft.
+
+If you used **Presentation** earlier and www looked wrong in the same browser tab, open www in a **new tab** or refresh — unpublished content must not appear on the public site.
 
 **Page visibility** (Live / Hidden / Placeholder) is separate from Publish. A page can be published in Studio but still show “coming soon” on the site if visibility is not **Live**. Check **Publishing → Page visibility** on each page singleton.
 

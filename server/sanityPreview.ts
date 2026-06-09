@@ -28,7 +28,21 @@ export const isPresentationPreviewRequest = (
   return (req.get(SANITY_PRESENTATION_HEADER) || "").trim() === "1"
 }
 
-/** Drafts perspective: Presentation iframe, draft-mode cookie, or Vercel preview deploy. */
+/** Drafts perspective: Vercel preview deploy, or Presentation iframe on www (not stale cookies). */
 export const shouldUseSanityDraftsPerspective = (
+  req: express.Request,
   isPreviewSession: boolean,
-): boolean => isPreviewSession || isVercelPreviewDeployment()
+): boolean => {
+  if (isVercelPreviewDeployment()) return true
+
+  const hasPresentationHeader =
+    (req.get(SANITY_PRESENTATION_HEADER) || "").trim() === "1"
+
+  // Production www: drafts only inside Studio Presentation (header). A leftover
+  // draft-mode cookie must not show unpublished content on the public site.
+  if (process.env.VERCEL_ENV === "production") {
+    return hasPresentationHeader
+  }
+
+  return isPreviewSession
+}

@@ -1076,7 +1076,14 @@ var isPresentationPreviewRequest = (req, cookieHeader, siteOriginsAllowed) => {
   if (!siteOriginsAllowed) return false;
   return (req.get(SANITY_PRESENTATION_HEADER) || "").trim() === "1";
 };
-var shouldUseSanityDraftsPerspective = (isPreviewSession) => isPreviewSession || isVercelPreviewDeployment();
+var shouldUseSanityDraftsPerspective = (req, isPreviewSession) => {
+  if (isVercelPreviewDeployment()) return true;
+  const hasPresentationHeader = (req.get(SANITY_PRESENTATION_HEADER) || "").trim() === "1";
+  if (process.env.VERCEL_ENV === "production") {
+    return hasPresentationHeader;
+  }
+  return isPreviewSession;
+};
 
 // server/csrf.ts
 import { randomBytes } from "node:crypto";
@@ -2137,7 +2144,7 @@ function createServer() {
       cookie,
       allowBrowserOrigin(req, previewAndSiteOrigins)
     );
-    const useDraftsPerspective = shouldUseSanityDraftsPerspective(isPreviewSession);
+    const useDraftsPerspective = shouldUseSanityDraftsPerspective(req, isPreviewSession);
     const token = process.env.SANITY_API_READ_TOKEN?.trim();
     if (!isDev && !isPreviewSession && !isVercelPreviewDeployment()) {
       const hasProvenance = Boolean((req.get("origin") || "").trim()) || Boolean((req.get("referer") || "").trim());

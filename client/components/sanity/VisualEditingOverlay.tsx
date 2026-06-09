@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useRef } from "react"
 import { useLocation, useNavigate } from "react-router-dom"
 import { useQueryClient } from "@tanstack/react-query"
 import { enableVisualEditing } from "@sanity/visual-editing"
@@ -8,20 +8,9 @@ import {
   isSanityPresentationIframe,
 } from "@/lib/sanityPresentation"
 
-const fetchDraftModeActive = async (): Promise<boolean> => {
-  try {
-    const res = await fetch("/api/draft-mode/status", { credentials: "same-origin" })
-    if (!res.ok) return false
-    const json = (await res.json()) as { active?: boolean }
-    return json.active === true
-  } catch {
-    return false
-  }
-}
-
 /**
  * Connects the marketing site to Sanity Presentation (click-to-edit overlays + comlink).
- * Requires draft-mode cookie + stega-encoded CMS responses from `/api/sanity/query`.
+ * Only active inside Studio’s Presentation iframe — not from a stale draft-mode cookie on www.
  */
 export const VisualEditingOverlay = () => {
   const navigate = useNavigate()
@@ -29,23 +18,7 @@ export const VisualEditingOverlay = () => {
   const queryClient = useQueryClient()
   const routeNavigateRef = useRef<((update: HistoryUpdate) => void) | null>(null)
   const connectAttemptRef = useRef(0)
-  const [previewActive, setPreviewActive] = useState(isSanityPresentationIframe())
-
-  useEffect(() => {
-    if (isSanityPresentationIframe()) {
-      setPreviewActive(true)
-      return
-    }
-
-    let cancelled = false
-    void fetchDraftModeActive().then((active) => {
-      if (!cancelled) setPreviewActive(active)
-    })
-
-    return () => {
-      cancelled = true
-    }
-  }, [location.pathname])
+  const previewActive = isSanityPresentationIframe()
 
   useEffect(() => {
     if (!previewActive) return

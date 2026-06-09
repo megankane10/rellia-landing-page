@@ -848,7 +848,7 @@ export function createServer() {
       cookie,
       allowBrowserOrigin(req, previewAndSiteOrigins),
     );
-    const useDraftsPerspective = shouldUseSanityDraftsPerspective(isPreviewSession);
+    const useDraftsPerspective = shouldUseSanityDraftsPerspective(req, isPreviewSession);
     const token = process.env.SANITY_API_READ_TOKEN?.trim();
 
     if (!isDev && !isPreviewSession && !isVercelPreviewDeployment()) {
