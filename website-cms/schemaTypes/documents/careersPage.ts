@@ -1,10 +1,10 @@
 import {defineArrayMember, defineField, defineType} from 'sanity'
 import {
   CONTENT_SEO_FIELDSETS,
-  CONTENT_SEO_GROUPS,
   sectionDividerFieldset,
   singletonSeoField,
 } from '../shared/singletonContentFields'
+import {GROUP_SEO} from '../shared/fieldGroups'
 import {
   networkCtaFields,
   networkFeatureItemMember,
@@ -35,7 +35,12 @@ export const careersPage = defineType({
   name: 'careersPage',
   title: 'Careers page',
   type: 'document',
-  groups: [GROUP_HERO, GROUP_LIFE_AT_RELLIA, ...CONTENT_SEO_GROUPS],
+  groups: [
+    GROUP_HERO,
+    GROUP_LIFE_AT_RELLIA,
+    {name: 'content', title: 'Content'},
+    GROUP_SEO,
+  ],
   fieldsets: [
     sectionDividerFieldset('heroDivider', 'Hero'),
     sectionDividerFieldset('contentDivider', 'Page content'),
