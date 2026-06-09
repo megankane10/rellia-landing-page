@@ -27,6 +27,11 @@ const readMembershipSplashCompleteFromSession = () => {
   return sessionStorage.getItem(MEMBERSHIP_SPLASH_COMPLETE_SESSION_KEY) === "true"
 }
 
+const markMembershipSplashSeenInSession = () => {
+  if (typeof window === "undefined") return
+  sessionStorage.setItem(MEMBERSHIP_SPLASH_COMPLETE_SESSION_KEY, "true")
+}
+
 export default function Payment() {
   const { data: paymentCms } = usePaymentPage()
   const p = paymentCms ?? DEFAULT_PAYMENT_PAGE
@@ -62,10 +67,19 @@ export default function Payment() {
 
   const handleSplashComplete = useCallback(() => {
     setSplashComplete(true)
-    if (typeof window !== "undefined") {
-      sessionStorage.setItem(MEMBERSHIP_SPLASH_COMPLETE_SESSION_KEY, "true")
+    markMembershipSplashSeenInSession()
+  }, [])
+
+  useEffect(() => {
+    if (readMembershipSplashCompleteFromSession()) {
+      setSplashComplete(true)
     }
   }, [])
+
+  useEffect(() => {
+    if (!showSplash) return
+    markMembershipSplashSeenInSession()
+  }, [showSplash])
 
   const handleCopyCode = () => {
     const code = p.discountBannerSubtitle.trim() || "RELLIA50"
@@ -98,21 +112,23 @@ export default function Payment() {
 
   return (
     <div className="min-h-screen bg-white font-host-grotesk overflow-x-hidden">
-      <MembershipWelcomeSplash
-        enabled={Boolean(p.welcomeSplashEnabled) && !previewMode}
-        heading={p.welcomeSplashHeading ?? DEFAULT_PAYMENT_PAGE.welcomeSplashHeading ?? ""}
-        subheading={p.welcomeSplashSubheading ?? DEFAULT_PAYMENT_PAGE.welcomeSplashSubheading ?? ""}
-        backgroundSrc={splashBackgroundSrc}
-        logoSrc={
-          p.welcomeSplashLogoSrc?.trim() ||
-          DEFAULT_PAYMENT_PAGE.welcomeSplashLogoSrc ||
-          "/svgs/rellia-secondary-logo-circle-health-white-rgb.svg"
-        }
-        totalSeconds={
-          p.welcomeSplashDurationSeconds ?? DEFAULT_PAYMENT_PAGE.welcomeSplashDurationSeconds ?? 3.5
-        }
-        onComplete={handleSplashComplete}
-      />
+      {showSplash ? (
+        <MembershipWelcomeSplash
+          enabled
+          heading={p.welcomeSplashHeading ?? DEFAULT_PAYMENT_PAGE.welcomeSplashHeading ?? ""}
+          subheading={p.welcomeSplashSubheading ?? DEFAULT_PAYMENT_PAGE.welcomeSplashSubheading ?? ""}
+          backgroundSrc={splashBackgroundSrc}
+          logoSrc={
+            p.welcomeSplashLogoSrc?.trim() ||
+            DEFAULT_PAYMENT_PAGE.welcomeSplashLogoSrc ||
+            "/svgs/rellia-secondary-logo-circle-health-white-rgb.svg"
+          }
+          totalSeconds={
+            p.welcomeSplashDurationSeconds ?? DEFAULT_PAYMENT_PAGE.welcomeSplashDurationSeconds ?? 3.5
+          }
+          onComplete={handleSplashComplete}
+        />
+      ) : null}
 
       <Navbar deferModals={showSplash} />
 
