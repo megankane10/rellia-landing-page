@@ -7,6 +7,7 @@ import {
 } from "lucide-react"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
+import ScrollReveal from "@/components/ScrollReveal"
 import RelliaAction from "@/components/RelliaAction"
 import RelliaCta from "@/components/RelliaCta"
 import MembershipWelcomeSplash from "@/components/MembershipWelcomeSplash"
@@ -19,6 +20,13 @@ import { PriceDisplay } from "@/components/cms/PriceDisplay"
 import { formatPromoMessage } from "@/lib/mergeDiagnosticSurvey"
 import { isVisualEditingPreview } from "@/lib/cmsStega"
 
+const MEMBERSHIP_SPLASH_COMPLETE_SESSION_KEY = "rellia-membership-splash-complete-session"
+
+const readMembershipSplashCompleteFromSession = () => {
+  if (typeof window === "undefined") return false
+  return sessionStorage.getItem(MEMBERSHIP_SPLASH_COMPLETE_SESSION_KEY) === "true"
+}
+
 export default function Payment() {
   const { data: paymentCms } = usePaymentPage()
   const p = paymentCms ?? DEFAULT_PAYMENT_PAGE
@@ -28,7 +36,10 @@ export default function Payment() {
   const [codeCopied, setCodeCopied] = useState(false)
   const [selectedPlan, setSelectedPlan] = useState<"monthly" | "annual" | null>(null)
   const [splashComplete, setSplashComplete] = useState(
-    () => !DEFAULT_PAYMENT_PAGE.welcomeSplashEnabled || previewMode,
+    () =>
+      !DEFAULT_PAYMENT_PAGE.welcomeSplashEnabled ||
+      previewMode ||
+      readMembershipSplashCompleteFromSession(),
   )
 
   const monthlyHref = (import.meta.env.VITE_STRIPE_MONTHLY_PLAN_LINK as string | undefined)?.trim()
@@ -51,6 +62,9 @@ export default function Payment() {
 
   const handleSplashComplete = useCallback(() => {
     setSplashComplete(true)
+    if (typeof window !== "undefined") {
+      sessionStorage.setItem(MEMBERSHIP_SPLASH_COMPLETE_SESSION_KEY, "true")
+    }
   }, [])
 
   const handleCopyCode = () => {
@@ -100,21 +114,26 @@ export default function Payment() {
         onComplete={handleSplashComplete}
       />
 
-      <Navbar forceHidden={showSplash} deferModals={showSplash} />
+      <Navbar deferModals={showSplash} />
 
       <main id="main-content" className="flex w-full flex-1 flex-col">
         <section className="relative w-full pt-[84px] md:pt-[100px] pb-[12px] md:pb-[14px]">
           <div className="grid grid-cols-1 lg:grid-cols-2">
-            <div className="flex flex-col p-4 pb-8 md:p-6 md:pb-10 lg:p-8">
+            <ScrollReveal variant="ctaReveal" hold={showSplash} className="flex flex-col p-4 pb-8 md:p-6 md:pb-10 lg:p-8">
               <MembershipBenefitsPanel
                 headline={p.benefitsPanelHeadline?.trim() || p.benefitsTitle}
                 description={panelDescription}
                 imageEnabled={p.benefitsPanelImageEnabled ?? DEFAULT_PAYMENT_PAGE.benefitsPanelImageEnabled}
                 imageSrc={panelImageSrc}
               />
-            </div>
+            </ScrollReveal>
 
-            <div className="relative flex items-center justify-center overflow-hidden bg-white px-6 py-12 md:px-12 md:py-16 lg:px-16 lg:py-20">
+            <ScrollReveal
+              variant="ctaReveal"
+              delay={0.12}
+              hold={showSplash}
+              className="relative flex items-center justify-center overflow-hidden bg-white px-6 py-12 md:px-12 md:py-16 lg:px-16 lg:py-20"
+            >
               <div className="absolute top-1/4 -right-20 w-80 h-80 bg-rellia-mint/5 rounded-full blur-[120px] pointer-events-none" />
               <div className="absolute bottom-10 -right-20 w-80 h-80 bg-rellia-mint/10 rounded-full blur-[120px] pointer-events-none" />
 
@@ -226,17 +245,19 @@ export default function Payment() {
                   </div>
                 ) : null}
               </div>
-            </div>
+            </ScrollReveal>
           </div>
         </section>
 
-        <RelliaCta
-          title={p.questionsTitle || "Questions about membership?"}
-          body={p.questionsBody || "Have questions about the membership, billing, or benefits? We're here to help you get the most out of the Rellia network."}
-          primary={{ label: p.questionsContactLabel || "Contact us", to: p.questionsContactPath || "/contact" }}
-          secondary={{ label: p.questionsFaqLabel || "View FAQ", to: p.questionsFaqPath || "/faq" }}
-          className="mt-20 md:mt-32"
-        />
+        <ScrollReveal variant="ctaReveal" delay={0.08} hold={showSplash}>
+          <RelliaCta
+            title={p.questionsTitle || "Questions about membership?"}
+            body={p.questionsBody || "Have questions about the membership, billing, or benefits? We're here to help you get the most out of the Rellia network."}
+            primary={{ label: p.questionsContactLabel || "Contact us", to: p.questionsContactPath || "/contact" }}
+            secondary={{ label: p.questionsFaqLabel || "View FAQ", to: p.questionsFaqPath || "/faq" }}
+            className="mt-20 md:mt-32"
+          />
+        </ScrollReveal>
       </main>
 
       <Footer />

@@ -8,6 +8,8 @@ type ScrollRevealProps = {
   /** `ctaReveal`: slide up + unblur (e.g. bottom CTA band) */
   /** `lineReveal`: vertical grow top→bottom + unblur (e.g. trajectory divider) */
   variant?: "default" | "ctaReveal" | "lineReveal"
+  /** When true, keeps hidden state and skips reveal until hold is cleared (e.g. membership splash). */
+  hold?: boolean
 } & Pick<HTMLAttributes<HTMLDivElement>, "aria-hidden">
 
 export default function ScrollReveal({
@@ -15,6 +17,7 @@ export default function ScrollReveal({
   delay = 0,
   className = "",
   variant = "default",
+  hold = false,
   "aria-hidden": ariaHidden,
 }: ScrollRevealProps) {
   const ref = useRef<HTMLDivElement>(null)
@@ -22,7 +25,7 @@ export default function ScrollReveal({
 
   useEffect(() => {
     const el = ref.current;
-    if (!el) return;
+    if (!el || hold) return;
 
     let revealed = false;
     const reveal = () => {
@@ -75,7 +78,7 @@ export default function ScrollReveal({
     });
 
     return () => observer.disconnect();
-  }, [delay, reduceMotion, variant]);
+  }, [delay, hold, reduceMotion, variant]);
 
   const initialCls =
     variant === "ctaReveal"

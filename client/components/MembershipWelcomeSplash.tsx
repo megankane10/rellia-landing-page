@@ -168,7 +168,7 @@ export default function MembershipWelcomeSplash({
 
   return (
     <motion.div
-      className="fixed left-0 right-0 top-0 z-[250] w-full overflow-hidden transform-gpu"
+      className="fixed left-0 right-0 top-0 z-[10050] w-full overflow-hidden transform-gpu"
       style={splashViewportStyle}
       initial={{ y: 0 }}
       animate={exitControls}
