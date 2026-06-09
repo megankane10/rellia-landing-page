@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react"
+import { useCallback, useEffect, useMemo, useState } from "react"
 import { motion, useAnimationControls, useReducedMotion } from "framer-motion"
 import { cmsCleanText, cmsDisplayText, isVisualEditingPreview } from "@/lib/cmsStega"
 
@@ -8,7 +8,7 @@ export type MembershipWelcomeSplashProps = {
   subheading: string
   backgroundSrc: string
   logoSrc: string
-  /** Kept for CMS compatibility; hold time after reveal is fixed at 3s. */
+  /** Kept for CMS compatibility; hold time after reveal is fixed at 2s. */
   totalSeconds?: number
   onComplete: () => void
 }
@@ -19,11 +19,19 @@ const HEADING_STAGGER_S = 0.2
 const HEADING_WORD_DURATION_S = 0.88
 const HEADING_DELAY_CHILDREN_S = 0.34
 const SUBHEADING_REVEAL_S = 0.72
-const READ_HOLD_MS = 3000
+/** Start subheading when the heading is nearly finished. */
+const SUBHEADING_NEARLY_DONE_OFFSET_S = 0.18
+const READ_HOLD_MS = 2000
 const ANIM_EXIT_MS = 720
 
 const SLIDE_EASE = [0.4, 0, 0.2, 1] as const
 const REVEAL_EASE = [0.33, 1, 0.68, 1] as const
+
+const splashViewportStyle = {
+  height: "calc(100dvh + env(safe-area-inset-top, 0px))",
+  minHeight: "calc(100dvh + env(safe-area-inset-top, 0px))",
+  marginTop: "calc(-1 * env(safe-area-inset-top, 0px))",
+} as const
 
 export default function MembershipWelcomeSplash({
   enabled,
@@ -55,18 +63,25 @@ export default function MembershipWelcomeSplash({
     )
   }, [reduceMotion, words.length])
 
-  const revealMs = useMemo(
-    () =>
-      Math.round(
-        Math.max(headingRevealEndS, reduceMotion ? 0 : SUBHEADING_REVEAL_S) * 1000,
-      ),
-    [headingRevealEndS, reduceMotion],
+  const subheadingStartS = useMemo(
+    () => Math.max(0, headingRevealEndS - SUBHEADING_NEARLY_DONE_OFFSET_S),
+    [headingRevealEndS],
   )
 
-  const totalDurationMs = useMemo(
-    () => revealMs + READ_HOLD_MS + ANIM_EXIT_MS,
-    [revealMs],
-  )
+  const revealMs = useMemo(() => {
+    const contentRevealEndS = Math.max(
+      headingRevealEndS,
+      subheadingStartS + (reduceMotion ? 0 : SUBHEADING_REVEAL_S),
+    )
+    return Math.round(contentRevealEndS * 1000)
+  }, [headingRevealEndS, reduceMotion, subheadingStartS])
+
+  const preExitDurationMs = useMemo(() => revealMs + READ_HOLD_MS, [revealMs])
+
+  const handleProgressComplete = useCallback(() => {
+    if (reduceMotion || phase === "exit" || phase === "done") return
+    setPhase("exit")
+  }, [phase, reduceMotion])
 
   const headingContainerVariants = {
     hidden: {},
@@ -111,13 +126,7 @@ export default function MembershipWelcomeSplash({
     }
 
     setPhase("enter")
-    const exitTimer = window.setTimeout(
-      () => setPhase("exit"),
-      revealMs + READ_HOLD_MS,
-    )
-
-    return () => window.clearTimeout(exitTimer)
-  }, [enabled, onComplete, reduceMotion, revealMs])
+  }, [enabled, onComplete, reduceMotion])
 
   useEffect(() => {
     if (phase !== "exit" || reduceMotion) return
@@ -125,7 +134,7 @@ export default function MembershipWelcomeSplash({
     let cancelled = false
     void exitControls
       .start({
-        y: "-100vh",
+        y: "-100%",
         transition: {
           duration: ANIM_EXIT_MS / 1000,
           ease: SLIDE_EASE,
@@ -148,7 +157,8 @@ export default function MembershipWelcomeSplash({
 
   return (
     <motion.div
-      className="fixed inset-0 z-[250] overflow-hidden transform-gpu"
+      className="fixed left-0 right-0 top-0 z-[250] w-full overflow-hidden transform-gpu"
+      style={splashViewportStyle}
       initial={{ y: 0 }}
       animate={exitControls}
       role="dialog"
@@ -164,13 +174,14 @@ export default function MembershipWelcomeSplash({
           initial={{ scaleX: reduceMotion ? 1 : 0 }}
           animate={{ scaleX: 1 }}
           transition={{
-            duration: reduceMotion ? 0 : totalDurationMs / 1000,
+            duration: reduceMotion ? 0 : preExitDurationMs / 1000,
             ease: "linear",
           }}
+          onAnimationComplete={handleProgressComplete}
         />
       </div>
 
-      <div className="relative flex h-full w-full flex-col">
+      <div className="relative flex h-full min-h-full w-full flex-col">
         <div className="absolute inset-0">
           <img
             src={backgroundSrc}
@@ -273,6 +284,7 @@ export default function MembershipWelcomeSplash({
                 }
                 animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
                 transition={{
+                  delay: reduceMotion ? 0 : subheadingStartS,
                   duration: reduceMotion ? 0 : SUBHEADING_REVEAL_S,
                   ease: REVEAL_EASE,
                 }}
