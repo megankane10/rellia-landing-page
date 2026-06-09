@@ -51,11 +51,14 @@ export default function Payment() {
   const annualHref = (import.meta.env.VITE_STRIPE_ANNUAL_PLAN_LINK as string | undefined)?.trim()
   const currentHref = selectedPlan === "annual" ? annualHref : monthlyHref
 
+  const splashEnabled = paymentCmsPending
+    ? DEFAULT_PAYMENT_PAGE.welcomeSplashEnabled
+    : Boolean(p.welcomeSplashEnabled)
+
   const showSplash =
-    Boolean(p.welcomeSplashEnabled) &&
+    splashEnabled &&
     !splashComplete &&
-    !previewMode &&
-    !paymentCmsPending
+    !previewMode
 
   const splashBackgroundSrc =
     p.welcomeSplashBackgroundSrc?.trim() ||
@@ -79,6 +82,13 @@ export default function Payment() {
       setSplashComplete(true)
     }
   }, [])
+
+  useEffect(() => {
+    if (paymentCmsPending || previewMode) return
+    if (!p.welcomeSplashEnabled) {
+      setSplashComplete(true)
+    }
+  }, [paymentCmsPending, p.welcomeSplashEnabled, previewMode])
 
   useEffect(() => {
     if (!showSplash) return
@@ -135,7 +145,11 @@ export default function Payment() {
         />
       ) : null}
 
-      <Navbar deferModals={showSplash} />
+      <div
+        className={cn(showSplash && "invisible pointer-events-none")}
+        aria-hidden={showSplash}
+      >
+      <Navbar deferModals={showSplash} forceHidden={showSplash} />
 
       <main id="main-content" className="flex w-full flex-1 flex-col">
         <section className="relative w-full pt-[84px] md:pt-[100px] pb-[12px] md:pb-[14px]">
@@ -282,6 +296,7 @@ export default function Payment() {
       </main>
 
       <Footer />
+      </div>
     </div>
   )
 }
