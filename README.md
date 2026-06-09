@@ -15,7 +15,7 @@ React SPA for **Rellia Health**, connecting founders, clinicians, and health sys
 |--------|----------|---------------|----------------|
 | **`main`** | Production | `www.relliahealth.com` | **`production`** |
 
-Editors use **Sanity Studio** only. Optional Vercel preview deploys (PR branches) are not part of the editor workflow.
+Editors use **Sanity Studio** only. There is no separate staging site — Studio and www share the **production** dataset.
 
 ### Sanity: Studio → live site (editor workflow)
 
@@ -29,26 +29,12 @@ Sanity Studio at [relliahealth.sanity.studio](https://relliahealth.sanity.studio
 
 Use **Presentation** in Studio to preview unpublished work. **Publish** when ready for www.
 
-**One-time migration** (if staging had content production lacks):
-
-```bash
-pnpm sanity:sync-to-production:dry
-pnpm sanity:sync-to-production -- --apply
-```
-
-Legacy event-only sync (rarely needed):
-
-```bash
-pnpm sanity:promote:dry
-pnpm sanity:promote -- --apply-production
-```
-
 ### Static seed fallbacks (code defaults)
 
 `client/lib/deploymentEnv.ts` controls hardcoded fallbacks in `shared/cms/defaults.ts` (sample events, stories, alumni/advisor seed directories, etc.):
 
-- **Allowed** when `VITE_SANITY_DATASET` is **`preview`** (preview deploy + local dev with preview env)
-- **Never** when `VITE_SANITY_DATASET` is **`production`** — the live site must use Sanity production only, or show empty sections if CMS is down (no silent revert to old baked-in events)
+- **Allowed** only for **local dev** when `VITE_SANITY_DATASET` is not **`production`**
+- **Never** on **www** or when `VITE_SANITY_DATASET=production` — the live site uses Sanity only, or shows empty sections if CMS is down
 
 If production showed removed events (e.g. an old salon) or missing dates, typical causes were: CMS fetch failing/empty and the events page falling back to defaults, or outdated documents still **published** in the **production** dataset. Fix content in Studio on the **production** dataset, or unpublish/delete there.
 
@@ -65,11 +51,10 @@ Use this when transferring the site to the Rellia team. Items marked **editor** 
 | 3 | **Sanity Studio** — deployed (`pnpm sanity:studio:deploy`); Looker embed URL in **Site settings → Analytics** | Editors use https://relliahealth.sanity.studio |
 | 4 | **Seed starter content** — `pnpm sanity:seed:starters` on **production** (terms, privacy, guide) if singletons are empty | Editors see legal pages in Studio |
 | 5 | **Production CMS audit** — events have `startsAt`/`endsAt`; publish only what should be on www | Prevents wrong dates or ghost events on live site |
-| 6 | **One-time sync** — `pnpm sanity:sync-to-production -- --apply` if preview had content production lacks | Aligns live site before client handoff |
-| 7 | **Supabase** — run `scripts/supabase_admin_policies.sql` for inbox status updates; run `scripts/supabase_revert_admin_role_policies.sql` if strict admin-role RLS was ever applied | Any invited user can sign in and read submissions |
-| 8 | **Admin access** — invite users in Supabase Auth; set `ADMIN_SIGNUP_ENABLED=false` on Vercel after onboarding | No public self-signup on `/admin/signup` |
-| 9 | **Smoke test** — www + preview: home, contact submit, diagnostic submit, admin login → Overview + Inbox | Confirms end-to-end paths |
-| 10 | **Dependabot** — review or dismiss GitHub security alerts on the repo | Hygiene, not blocking launch |
+| 6 | **Supabase** — run `scripts/supabase_admin_policies.sql` for inbox status updates; run `scripts/supabase_revert_admin_role_policies.sql` if strict admin-role RLS was ever applied | Any invited user can sign in and read submissions |
+| 7 | **Admin access** — invite users in Supabase Auth; set `ADMIN_SIGNUP_ENABLED=false` on Vercel after onboarding | No public self-signup on `/admin/signup` |
+| 8 | **Smoke test** — www: home, contact submit, diagnostic submit, admin login → Overview + Inbox + Sanity drafts | Confirms end-to-end paths |
+| 9 | **Dependabot** — review or dismiss GitHub security alerts on the repo | Hygiene, not blocking launch |
 
 #### Editor onboarding (30–60 min)
 
@@ -92,7 +77,7 @@ Use this when transferring the site to the Rellia team. Items marked **editor** 
 | **Email alerts on new submissions** | Optional Supabase webhook → email later. |
 | **Dependabot alerts** | Review GitHub security advisories periodically. |
 
-**Operational docs:** [website-management-guide.md](./docs/website-management-guide.md) (editors) · [sanity-dataset-sync-guide.md](./docs/sanity-dataset-sync-guide.md) (preview ↔ production sync)
+**Operational docs:** [website-management-guide.md](./docs/website-management-guide.md) (editors) · [sanity-dataset-sync-guide.md](./docs/sanity-dataset-sync-guide.md) (legacy dataset sync, engineering only)
 
 ---
 
@@ -148,7 +133,7 @@ pnpm install
 cp .env.example .env
 ```
 
-Edit `.env` for Sanity, HubSpot, CORS, CSRF, Stripe links, and site URL. **Authoritative list and staging vs production notes:** `.env.example`.
+Edit `.env` for Sanity, HubSpot, CORS, CSRF, Stripe links, and site URL. **Authoritative list:** `.env.example`.
 
 **Run the Vite dev server** (Express API is attached in dev — see `vite.config.ts`)
 
@@ -188,7 +173,7 @@ Starts the Node server that serves the built SPA and API (default port from `POR
 | `pnpm sanity:migrate:story-seo` | Migrate story SEO fields to `seoFields` shape and default titles — safe to re-run |
 | `pnpm sanity:cleanup` | Remove obsolete docs + duplicate singletons/slugs (`scripts/sanity-cleanup.ts`) |
 
-After schema changes, run **`pnpm sanity:seed`** on **preview** first, verify the site, then **`pnpm sanity:sync-to-production -- --apply`** (or seed production directly) so www does not rely on code fallbacks.
+After schema changes, run **`pnpm sanity:seed`** or **`pnpm sanity:seed:starters`** on **production** (with `SANITY_API_WRITE_TOKEN`) so www does not rely on code fallbacks.
 | `pnpm test` | Vitest |
 | `pnpm typecheck` | TypeScript (`tsc`) |
 | `pnpm format.fix` | Prettier write |
@@ -226,9 +211,9 @@ Set the same variables on **Vercel → Settings → Environment Variables** for 
 
 **If signup shows “API unavailable”:** open **`/api/health`** on the same host (or **`/health`**, which Vercel rewrites to the API). You should see `{"ok":true}` as JSON — not the SPA HTML. If you get HTML or “Cannot GET”, the serverless API is not running (check deploy logs for `build:api`, and that `api/index.js` exists). Local `pnpm start` also serves **`/health`** directly. Dev loads `.env` and `.env.local` via `server/loadEnv.ts`.
 
-**CMS status on the dashboard:** **Database** pings Supabase; **CMS** runs the same **`sanityDrafts`** query as the drafts panel (dataset from **`VITE_SANITY_DATASET`**). **Offline** usually means missing **`SANITY_API_READ_TOKEN`** on the server or a dataset mismatch (`preview` vs `production`). Preview edits do not appear when the admin app queries `production`.
+**CMS status on the dashboard:** **Database** pings Supabase; **CMS** runs the same **`sanityDrafts`** query as **Sanity drafts** (production dataset). **Offline** usually means missing **`SANITY_API_READ_TOKEN`** on the server.
 
-**Seed / defaults:** See **Static seed fallbacks** under [Branches and workflow](#branches-and-workflow). Production dataset never uses code defaults; preview dataset may when CMS is empty.
+**Seed / defaults:** See **Static seed fallbacks** under [Branches and workflow](#branches-and-workflow). www never uses code defaults.
 
 ---
 
@@ -246,10 +231,10 @@ Set the same variables on **Vercel → Settings → Environment Variables** for 
 
 1. Mount **`VisualEditingOverlay`** in `client/App.tsx` (enables `@sanity/visual-editing` comlink + overlays inside the Presentation iframe).
 2. Studio **`presentationTool`** uses `previewMode.enable` / `disable` → `/api/draft-mode/*` (see `website-cms/sanity.config.ts`).
-3. Preview deploy must set **`SANITY_STUDIO_URL`** (stega) and **`SANITY_API_READ_TOKEN`** (draft GROQ). The iframe also sends `x-sanity-presentation: 1` so `/api/sanity/query` returns stega even before the HttpOnly cookie is visible to JS.
-4. Set **`SANITY_STUDIO_PREVIEW_URL`** on the hosted Studio to your preview deployment origin.
-4. Seed preview content: `pnpm sanity:seed` (requires `SANITY_API_WRITE_TOKEN` and matching project/dataset env).
-5. After schema changes: `pnpm sanity:cleanup` on the **`preview`** dataset (removes `diagnosticSubmission` orphans and duplicate docs).
+3. Hosted Studio must set **`SANITY_STUDIO_PREVIEW_URL=https://www.relliahealth.com`** so Presentation loads www in the iframe.
+4. Server needs **`SANITY_API_READ_TOKEN`** (draft GROQ) for Presentation. The iframe sends `x-sanity-presentation: 1` so `/api/sanity/query` returns stega before the HttpOnly cookie is visible to JS.
+5. Seed content: `pnpm sanity:seed:starters` on **production** (requires `SANITY_API_WRITE_TOKEN`).
+6. After schema changes: `pnpm sanity:cleanup` on **production** (removes orphans and duplicate docs).
 
 **Deploy Studio** (Sanity CLI is installed under `website-cms/`, not globally — do not run bare `sanity deploy`):
 
@@ -275,14 +260,12 @@ Hosted Studio: https://relliahealth.sanity.studio/
 
 | Where | Variable | Purpose |
 |-------|----------|---------|
-| **Vercel Preview** | `SANITY_API_READ_TOKEN` | **Required** — draft-mode + preview GROQ with stega |
-| **Vercel Preview** | `SANITY_STUDIO_URL` | Your hosted Studio URL (e.g. `https://<project>.sanity.studio`) — stega + draft API |
-| **Vercel Preview** | `VITE_SANITY_PROJECT_ID` / `VITE_SANITY_DATASET=preview` | Client CMS reads |
-| **Vercel Preview** | `SANITY_API_PROJECT_ID` / `SANITY_API_DATASET=preview` | Server `/api/sanity/query` |
-| **Sanity Studio env** (sanity.io → Project → Studio) | `SANITY_STUDIO_PREVIEW_URL` | Exact preview site origin (e.g. `https://relliahealth.vercel.app`) |
-| **Sanity Studio env** | `SANITY_STUDIO_DATASET=preview` | Match Additions / preview deploy |
+| **Vercel Production** | `SANITY_API_READ_TOKEN` | Draft-mode + Presentation GROQ with stega |
+| **Vercel Production** | `VITE_SANITY_DATASET=production` / `SANITY_API_DATASET=production` | Client + server read production |
+| **Sanity Studio env** | `SANITY_STUDIO_DATASET=production` | Studio edits the live dataset |
+| **Sanity Studio env** | `SANITY_STUDIO_PREVIEW_URL` | `https://www.relliahealth.com` — Presentation iframe target |
 
-Create the read token in [sanity.io/manage](https://sanity.io/manage) → API → Tokens → **Viewer** (or read-only with draft access). Redeploy Vercel Preview after adding tokens.
+Create the read token in [sanity.io/manage](https://sanity.io/manage) → API → Tokens → **Viewer** (or read-only with draft access). Redeploy production after adding tokens.
 
 **Studio sidebar:** Page singletons live under **Pages** (not scattered at the top level).
 
@@ -299,7 +282,7 @@ pnpm build
 pnpm dev   # smoke-test key routes and button hovers
 ```
 
-In Sanity Studio: open **Presentation** → confirm iframe loads the preview URL → edit a field → confirm click-to-edit overlay on the preview site.
+In Sanity Studio: open **Presentation** → confirm iframe loads www → edit a field → confirm click-to-edit overlay inside Studio.
 
 ---
 
@@ -342,7 +325,7 @@ All **`/api/*`** routes are served by the serverless entry **`api/index.js`** (b
 
 This is a codebase review checklist, not a penetration test. Address in order of risk for your threat model.
 
-1. **CORS defaults** — If **`ALLOWED_ORIGINS`** is empty in production, `server/index.ts` allows **any** browser `Origin` for the `cors()` middleware (with a console warning). **Fix:** set explicit comma-separated origins for every deployed hostname (preview + prod).
+1. **CORS defaults** — If **`ALLOWED_ORIGINS`** is empty in production, `server/index.ts` allows **any** browser `Origin` for the `cors()` middleware (with a console warning). **Fix:** set explicit comma-separated origins for www and Studio.
 2. **CSRF escape hatch** — **`REQUIRE_API_CSRF=false`** disables CSRF on POST APIs. **Fix:** never set in production except a documented break-glass; rotate tokens if it was ever used on a shared environment.
 3. **Sanity dataset exposure** — Public datasets are readable without your app; the app mitigates with a **query whitelist** and server proxy, but **secrets and embargoed copy do not belong** in public datasets. **Fix:** align with `.env.example` (private datasets + read tokens where the plan allows).
 4. **Preview / draft endpoints** — Draft-mode routes trust **Origin/Referer** heuristics and Sanity domains (`server/index.ts`). **Fix:** keep **`SANITY_API_READ_TOKEN`** scoped and rotated; restrict **`ALLOWED_ORIGINS`**; monitor abuse of `/api/draft-mode/*`.

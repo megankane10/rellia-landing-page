@@ -1163,14 +1163,14 @@ export const STUDIO_GUIDE_SECTIONS = [
     _key: "publish",
     heading: "Drafts vs published vs the live site",
     body:
-      "Studio “Published” means saved to the dataset. Custom builder pages also have Page visibility (Live / Hidden / Placeholder). Preview Vercel deploys use the preview dataset; www uses production after pnpm sanity:promote.",
+      "Studio “Published” saves to the production dataset that powers www.relliahealth.com. Custom builder pages also have Page visibility (Live / Hidden / Placeholder). Publish in Studio to update the live site — no developer deploy step.",
   },
   {
     _type: "guideSection",
     _key: "presentation",
     heading: "Visual editing (Presentation)",
     body:
-      "On Vercel Preview (not www): set SANITY_API_READ_TOKEN, SANITY_STUDIO_URL=https://relliahealth.sanity.studio, and SANITY_STUDIO_PREVIEW_URL to your exact preview URL (no trailing slash). Open Presentation, wait for the iframe to load, then click content to edit.",
+      "In Studio, open Presentation to preview drafts on www.relliahealth.com inside the Studio panel only (visitors never see unpublished content). Ensure SANITY_STUDIO_PREVIEW_URL=https://www.relliahealth.com. Click content in the iframe to jump to the matching field.",
   },
   {
     _type: "guideSection",

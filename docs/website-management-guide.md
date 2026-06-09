@@ -63,7 +63,7 @@ If you used **Presentation** earlier and www looked wrong in the same browser ta
 3. **URL anchor ID** becomes the in-page link (e.g. `/careers#program-operations-manager`).
 4. On **Pages → Careers**:
    - Set **Careers page mode** (both / hiring only / volunteer only).
-   - Turn on **Show open roles on production (www)** only when jobs should appear on the live site (preview always shows roles for editing).
+   - Turn on **Show open roles on production (www)** when jobs should appear on the live site.
 
 ### Update apply steps and role boxes
 
@@ -84,7 +84,7 @@ Do **not** change diagnostic **survey scoring** in **Diagnostic Survey Page** wi
 
 **Build a new page** → add title and slug → stack **Page sections** (Marketing hero, Feature grid, Testimonials, CTA band, etc.). Avoid slugs that match existing routes (about, careers, contact, programs, …).
 
-**Test page:** after seeding, `/cms-handoff-test` demonstrates mixed blocks (preview only until promoted).
+**Test page:** `/cms-handoff-test` demonstrates mixed blocks when that page document exists and visibility is Live.
 
 ---
 
@@ -113,8 +113,8 @@ When engineering deploys a new version to `main`:
 
 | Platform | Role |
 |----------|------|
-| **Vercel** | Hosts the site; preview vs production URLs |
-| **Sanity** | Content database and Studio |
+| **Vercel** | Hosts www.relliahealth.com (production) |
+| **Sanity** | Production dataset + Studio — Publish updates www |
 | **Fillout** | Apply and volunteer application forms |
 | **Stripe** | Membership checkout link |
 | **LinkedIn** | Job apply URLs on open role documents |
@@ -126,5 +126,6 @@ For form IDs, payment links, or promote/sync commands, contact engineering.
 ## 7. Getting help
 
 - In Studio: **Support → How to use this CMS**
-- Engineering: dataset promote/sync — [sanity-dataset-sync-guide.md](./sanity-dataset-sync-guide.md)
+- Admin dashboard: **Sanity drafts** tab for unpublished production documents
+- Engineering: legacy dataset sync (rare) — [sanity-dataset-sync-guide.md](./sanity-dataset-sync-guide.md)
 - This file: `docs/website-management-guide.md` in the repository

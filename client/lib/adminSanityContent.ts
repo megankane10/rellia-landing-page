@@ -89,11 +89,5 @@ export const formatCmsDocumentTypeLabel = (type: string): string => {
     .trim()
 }
 
-export const ADMIN_SANITY_DATASET_TABS: {
-  id: AdminSanityDataset
-  label: string
-  shortLabel: string
-}[] = [
-  { id: "production", label: "Public Production Dataset", shortLabel: "Production" },
-  { id: "preview", label: "Staging Development Dataset", shortLabel: "Staging" },
-]
+/** Production dataset only — Studio and www share one CMS database. */
+export const ADMIN_SANITY_PRODUCTION_DATASET: AdminSanityDataset = "production"

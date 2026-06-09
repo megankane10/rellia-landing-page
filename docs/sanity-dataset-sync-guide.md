@@ -1,6 +1,8 @@
-# Sanity CMS Dataset Sync Guide (Production → Preview)
+# Sanity CMS Dataset Sync Guide (legacy)
 
-This guide explains how to overwrite the staging (`preview`) dataset with the verified content from the live (`production`) dataset. This ensures that developers working on preview deployments see the exact same content as the live marketing site.
+> **June 2026:** Studio and www both use the **production** dataset. There is no editor-facing staging site. Use this guide only for one-off engineering maintenance on the legacy `preview` dataset — not for day-to-day publishing.
+
+This guide explains how to overwrite the `preview` dataset with content from `production` (or the reverse via `pnpm sanity:sync-to-production`).
 
 ---
 

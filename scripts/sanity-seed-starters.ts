@@ -83,7 +83,21 @@ const studioGuideDoc = {
       _key: "publish",
       heading: "Drafts vs published vs the live site",
       body:
-        "Studio “Published” saves to the live website dataset. Page visibility (Live / Hidden / Placeholder) controls whether the marketing site shows the real page. Publish in Studio to update www.relliahealth.com — no developer step required.",
+        "Studio “Published” saves to the production dataset that powers www.relliahealth.com. Page visibility (Live / Hidden / Placeholder) controls whether the marketing site shows the real page. Publish in Studio to update the live site — no developer deploy step.",
+    },
+    {
+      _type: "guideSection",
+      _key: "presentation",
+      heading: "Visual editing (Presentation)",
+      body:
+        "Open Presentation in Studio to preview drafts on www inside the Studio panel only. Set SANITY_STUDIO_PREVIEW_URL=https://www.relliahealth.com. Unpublished work never appears to public visitors browsing www directly.",
+    },
+    {
+      _type: "guideSection",
+      _key: "admin_drafts",
+      heading: "Admin dashboard — Sanity drafts",
+      body:
+        "Admin → Sanity drafts lists unpublished documents in the production dataset. Open Studio from that page to review and publish. The overview home card shows the same draft count.",
     },
     {
       _type: "guideSection",

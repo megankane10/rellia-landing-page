@@ -73,6 +73,71 @@ const CHART_X_AXIS_PROPS = {
 
 const CHART_MARGIN = { top: 8, right: 4, left: 0, bottom: 32 }
 
+const PIE_TOOLTIP_STYLE = {
+  borderRadius: "12px",
+  border: "1px solid rgba(0,0,0,0.08)",
+  boxShadow: "0 10px 30px rgba(0,0,0,0.06)",
+  fontFamily: "Urbanist",
+  fontSize: "11px",
+  zIndex: 50,
+} as const
+
+type PieSliceRow = { name: string; value: number; pct: number; fill: string }
+
+const DonutChartWithCenter = ({
+  data,
+  centerLabel,
+  centerValue,
+  tooltipRows,
+}: {
+  data: PieSliceRow[]
+  centerLabel: string
+  centerValue: number | string
+  tooltipRows: PieSliceRow[]
+}) => {
+  const slices = data.filter((row) => row.value > 0)
+
+  return (
+    <div className="relative flex h-[150px] w-full items-center justify-center">
+      <div className="absolute inset-0 z-10">
+        <ResponsiveContainer width="100%" height="100%">
+          <PieChart>
+            <Pie
+              data={slices}
+              cx="50%"
+              cy="50%"
+              innerRadius={45}
+              outerRadius={60}
+              paddingAngle={3}
+              dataKey="value"
+            >
+              {slices.map((entry, index) => (
+                <Cell key={`cell-${index}`} fill={entry.fill} />
+              ))}
+            </Pie>
+            <Tooltip
+              formatter={(value: number | string, name: string) => [
+                `${value} (${tooltipRows.find((row) => row.name === name)?.pct ?? 0}%)`,
+                name,
+              ]}
+              wrapperStyle={{ zIndex: 50 }}
+              contentStyle={PIE_TOOLTIP_STYLE}
+            />
+          </PieChart>
+        </ResponsiveContainer>
+      </div>
+      <div className="pointer-events-none absolute z-0 flex flex-col items-center justify-center text-center">
+        <span className="font-urbanist text-[9px] font-semibold uppercase tracking-wider text-slate-500">
+          {centerLabel}
+        </span>
+        <span className="mt-0.5 font-host-grotesk text-xl font-bold leading-none text-slate-800">
+          {centerValue}
+        </span>
+      </div>
+    </div>
+  )
+}
+
 type StatCardProps = {
   label: string
   value: number | string
@@ -523,33 +588,12 @@ const AdminOverviewPage = () => {
               </div>
             ) : (
               <div className="flex flex-col gap-4">
-                <div className="relative h-[150px] w-full flex items-center justify-center">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <PieChart>
-                      <Pie
-                        data={statusRows.filter((r) => r.value > 0)}
-                        cx="50%"
-                        cy="50%"
-                        innerRadius={45}
-                        outerRadius={60}
-                        paddingAngle={3}
-                        dataKey="value"
-                      >
-                        {statusRows.filter((r) => r.value > 0).map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={entry.fill} />
-                        ))}
-                      </Pie>
-                      <Tooltip
-                        formatter={(value: any, name: any) => [`${value} (${statusRows.find(r => r.name === name)?.pct}%)`, name]}
-                        contentStyle={{ borderRadius: "12px", border: "1px solid rgba(0,0,0,0.08)", boxShadow: "0 10px 30px rgba(0,0,0,0.06)", fontFamily: "Urbanist", fontSize: "11px" }}
-                      />
-                    </PieChart>
-                  </ResponsiveContainer>
-                  <div className="absolute flex flex-col items-center justify-center text-center pointer-events-none">
-                    <span className="font-urbanist text-[9px] text-slate-500 uppercase tracking-wider font-semibold">Total</span>
-                    <span className="font-host-grotesk text-xl font-bold text-slate-800 leading-none mt-0.5">{totalStatusCount}</span>
-                  </div>
-                </div>
+                <DonutChartWithCenter
+                  data={statusRows}
+                  centerLabel="Total"
+                  centerValue={totalStatusCount}
+                  tooltipRows={statusRows}
+                />
 
                 <div className="flex flex-wrap justify-center gap-x-4 gap-y-1.5 font-urbanist text-xs">
                   {statusRows.filter((r) => r.value > 0).map((row) => (
@@ -594,35 +638,12 @@ const AdminOverviewPage = () => {
               </div>
             ) : (
               <div className="flex flex-col gap-4">
-                <div className="relative h-[150px] w-full flex items-center justify-center">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <PieChart>
-                      <Pie
-                        data={stageChartData.filter((r) => r.value > 0)}
-                        cx="50%"
-                        cy="50%"
-                        innerRadius={45}
-                        outerRadius={60}
-                        paddingAngle={3}
-                        dataKey="value"
-                      >
-                        {stageChartData.filter((r) => r.value > 0).map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={entry.fill} />
-                        ))}
-                      </Pie>
-                      <Tooltip
-                        formatter={(value: any, name: any) => [`${value} (${stageChartData.find(r => r.name === name)?.pct}%)`, name]}
-                        contentStyle={{ borderRadius: "12px", border: "1px solid rgba(0,0,0,0.08)", boxShadow: "0 10px 30px rgba(0,0,0,0.06)", fontFamily: "Urbanist", fontSize: "11px" }}
-                      />
-                    </PieChart>
-                  </ResponsiveContainer>
-                  <div className="absolute flex flex-col items-center justify-center text-center pointer-events-none">
-                    <span className="font-urbanist text-[9px] text-slate-500 uppercase tracking-wider font-semibold">Total</span>
-                    <span className="font-host-grotesk text-xl font-bold text-slate-800 leading-none mt-0.5">
-                      {diagnostics.length}
-                    </span>
-                  </div>
-                </div>
+                <DonutChartWithCenter
+                  data={stageChartData}
+                  centerLabel="Total"
+                  centerValue={diagnostics.length}
+                  tooltipRows={stageChartData}
+                />
 
                 <div className="flex flex-wrap justify-center gap-x-4 gap-y-1.5 font-urbanist text-xs">
                   {stageChartData.filter((r) => r.value > 0).map((row) => (

@@ -117,15 +117,11 @@ This document outlines the architecture, current state, and step-by-step impleme
 
 ## 1. Current Sanity Architecture & Setup
 
-### 1.1 Dataset Architecture & Linking
-The project uses two primary datasets to separate draft/staging content from production:
+### 1.1 Dataset Architecture & Linking (current)
 
-1. **`preview` Dataset**: 
-   * **Purpose**: Serves as the database for the staging site (`relliahealth.vercel.app`), local development, and the Sanity Studio default interface.
-   * **Visual Editing**: Connected to Sanity's `presentationTool`.
-2. **`production` Dataset**: 
-   * **Purpose**: Serves as the database for the live public site (`www.relliahealth.com`).
-   * **Promotion/Syncing**: Content is synced from `preview` to `production` using the sync script located at `scripts/promote-preview-to-production.ts`. Running `pnpm sanity:promote -- --apply-production` pushes approved events, categories, and documents to production.
+**Production only for editors:** Sanity Studio and **www.relliahealth.com** both read/write the **`production`** dataset. **Publish in Studio = live site update.**
+
+The legacy **`preview`** dataset and Vercel preview deploys are no longer part of the editor workflow. Engineering may still run `scripts/sync-*` for one-off dataset maintenance.
 
 ### 1.2 Frontend Query Flow (Security Model)
 To prevent exposure of Sanity API keys or complex queries in the browser, the project uses a secure query proxy:

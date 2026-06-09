@@ -39,7 +39,7 @@ const WEBSITE_TOOLS = [
   {
     href: "https://vercel.com/relliahealth",
     label: "Vercel",
-    description: "Deployments, domains, and environment variables.",
+    description: "Hosting and environment variables (production deploy).",
   },
   {
     href: "https://github.com/Agrolax/rellia-landing-page",
@@ -101,6 +101,38 @@ const AdminHelpPage = () => (
             <h4 className="font-bold text-foreground">Deleting Submissions</h4>
             <p>
               Remove unwanted or spam submissions permanently by clicking the trash icon. A confirmation dialog will appear.
+            </p>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card className="rounded-3xl border border-black/[0.06] bg-white">
+        <CardHeader>
+          <CardTitle className="font-host-grotesk text-lg">Sanity CMS & drafts</CardTitle>
+          <CardDescription className="font-urbanist">
+            How website content connects to this dashboard.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4 font-urbanist text-sm leading-relaxed text-muted-foreground">
+          <div className="space-y-2">
+            <h4 className="font-bold text-foreground">One live dataset</h4>
+            <p>
+              Sanity Studio and www.relliahealth.com both use the <strong>production</strong> dataset.{" "}
+              <strong>Publish</strong> in Studio updates the public site — there is no separate staging site.
+            </p>
+          </div>
+          <div className="space-y-2">
+            <h4 className="font-bold text-foreground">Sanity drafts tab</h4>
+            <p>
+              {routeBadge("/admin/drafts", "Sanity drafts")} lists unpublished documents. Open Studio from that
+              page, review the change, and click <strong>Publish</strong> when ready.
+            </p>
+          </div>
+          <div className="space-y-2">
+            <h4 className="font-bold text-foreground">Preview before publish</h4>
+            <p>
+              Use <strong>Presentation</strong> inside Sanity Studio to preview drafts on www inside Studio only.
+              Public visitors always see published content.
             </p>
           </div>
         </CardContent>
