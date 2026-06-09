@@ -1,39 +1,45 @@
-import { useEffect, useMemo, useState } from "react"
+import { useCallback, useEffect, useMemo, useState } from "react"
 import {
   CheckCircle2,
   ArrowRight,
-  Zap,
   Copy,
-  Sparkles,
   ShieldCheck,
-  Users,
-  Target,
 } from "lucide-react"
 import { motion } from "framer-motion"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
 import RelliaAction from "@/components/RelliaAction"
 import RelliaCta from "@/components/RelliaCta"
+import MembershipWelcomeSplash from "@/components/MembershipWelcomeSplash"
 import { usePaymentPage } from "@/hooks/useCmsDocuments"
 import { DEFAULT_PAYMENT_PAGE } from "@shared/cms/defaults"
 import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo"
 import { cn } from "@/lib/utils"
 import { PriceDisplay } from "@/components/cms/PriceDisplay"
 import { formatPromoMessage } from "@/lib/mergeDiagnosticSurvey"
-
-const BENEFIT_ICONS = [Sparkles, ShieldCheck, Users, Target, Zap]
+import { isVisualEditingPreview } from "@/lib/cmsStega"
 
 export default function Payment() {
   const { data: paymentCms } = usePaymentPage()
   const p = paymentCms ?? DEFAULT_PAYMENT_PAGE
   useApplyCmsSeo(p.seo)
+  const previewMode = isVisualEditingPreview()
 
   const [codeCopied, setCodeCopied] = useState(false)
   const [selectedPlan, setSelectedPlan] = useState<"monthly" | "annual" | null>(null)
+  const [splashComplete, setSplashComplete] = useState(
+    () => !DEFAULT_PAYMENT_PAGE.welcomeSplashEnabled || previewMode,
+  )
 
   const monthlyHref = (import.meta.env.VITE_STRIPE_MONTHLY_PLAN_LINK as string | undefined)?.trim()
   const annualHref = (import.meta.env.VITE_STRIPE_ANNUAL_PLAN_LINK as string | undefined)?.trim()
   const currentHref = selectedPlan === "annual" ? annualHref : monthlyHref
+
+  const showSplash = Boolean(p.welcomeSplashEnabled) && !splashComplete && !previewMode
+
+  const handleSplashComplete = useCallback(() => {
+    setSplashComplete(true)
+  }, [])
 
   const handleCopyCode = () => {
     const code = p.discountBannerSubtitle.trim() || "RELLIA50"
@@ -55,30 +61,63 @@ export default function Payment() {
     return () => { document.head.removeChild(meta) }
   }, [])
 
+  useEffect(() => {
+    if (!showSplash) return
+    const previousOverflow = document.body.style.overflow
+    document.body.style.overflow = "hidden"
+    return () => {
+      document.body.style.overflow = previousOverflow
+    }
+  }, [showSplash])
+
   const benefitsGrid = useMemo(() => {
     return p.benefits.filter(b => !b.toLowerCase().includes("cancel")).slice(0, 4)
   }, [p.benefits])
 
   return (
     <div className="min-h-screen bg-white font-host-grotesk overflow-x-hidden">
+      <MembershipWelcomeSplash
+        enabled={Boolean(p.welcomeSplashEnabled) && !previewMode}
+        heading={p.welcomeSplashHeading ?? DEFAULT_PAYMENT_PAGE.welcomeSplashHeading ?? ""}
+        subheading={p.welcomeSplashSubheading ?? DEFAULT_PAYMENT_PAGE.welcomeSplashSubheading ?? ""}
+        backgroundSrc={
+          p.welcomeSplashBackgroundSrc?.trim() ||
+          DEFAULT_PAYMENT_PAGE.welcomeSplashBackgroundSrc ||
+          ""
+        }
+        logoSrc={
+          p.welcomeSplashLogoSrc?.trim() ||
+          DEFAULT_PAYMENT_PAGE.welcomeSplashLogoSrc ||
+          "/svgs/rellia-secondary-logo-circle-health-white-rgb.svg"
+        }
+        durationSeconds={
+          p.welcomeSplashDurationSeconds ?? DEFAULT_PAYMENT_PAGE.welcomeSplashDurationSeconds ?? 5.5
+        }
+        onComplete={handleSplashComplete}
+      />
+
       <Navbar />
 
-      <main id="main-content" className="flex w-full flex-1 flex-col pt-[72px] md:pt-[86px]">
-        <section className="relative w-full border-t border-black/5 py-16 md:py-24 lg:py-32 bg-white">
+      <main
+        id="main-content"
+        className={cn(
+          "flex w-full flex-1 flex-col transition-opacity duration-500",
+          showSplash ? "opacity-0" : "opacity-100",
+        )}
+      >
+        <section className="relative w-full pt-[84px] md:pt-[100px] pb-[12px] md:pb-[14px]">
           <motion.div
             initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-            className="relative z-10 max-w-[1300px] mx-auto px-6 md:px-10 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center"
+            animate={{ opacity: showSplash ? 0 : 1, y: showSplash ? 10 : 0 }}
+            transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+            className="grid grid-cols-1 lg:grid-cols-2"
           >
-            {/* Left: Benefits Card */}
-            <div className="flex flex-col w-full">
-              <div className="relative flex flex-col overflow-hidden rounded-[1.75rem] bg-rellia-teal p-8 md:p-10 lg:p-12 w-full h-full min-h-[600px]">
-                {/* Background image & gradient overlay contained within card */}
+            <div className="flex flex-col p-4 pb-8 md:p-6 md:pb-10 lg:p-8">
+              <div className="relative flex min-h-[min(520px,calc(100vh-10rem))] flex-1 flex-col overflow-hidden rounded-[1.75rem] bg-rellia-teal p-8 md:p-10 lg:p-12 w-full">
                 <div className="absolute inset-0 pointer-events-none">
-                  <img 
-                    src="/images/benefits-payment.jpg" 
-                    alt="" 
+                  <img
+                    src="/images/benefits-payment.jpg"
+                    alt=""
                     aria-hidden
                     className="h-full w-full object-cover opacity-[0.35] mix-blend-overlay scale-105"
                   />
@@ -86,7 +125,7 @@ export default function Payment() {
                   <div className="absolute -left-20 -top-20 w-[400px] h-[400px] bg-rellia-mint/10 blur-[100px] rounded-full" />
                 </div>
 
-                <div className="relative z-10 flex min-h-[520px] flex-col">
+                <div className="relative z-10 flex min-h-0 flex-1 flex-col">
                   <h1 className="font-host-grotesk text-2xl md:text-[32px] font-semibold tracking-tight text-rellia-mint mb-10 leading-tight">
                     {p.benefitsPanelHeadline?.trim() || p.benefitsTitle}
                   </h1>
@@ -122,122 +161,124 @@ export default function Payment() {
               </div>
             </div>
 
-            {/* Right: Plan Selection */}
-            <div className="flex flex-col w-full md:px-8">
-              <div className="w-full h-full flex flex-col justify-center">
+            <div className="relative flex items-center justify-center overflow-hidden bg-white px-6 py-12 md:px-12 md:py-16 lg:px-16 lg:py-20">
+              <div className="absolute top-1/4 -right-20 w-80 h-80 bg-rellia-mint/5 rounded-full blur-[120px] pointer-events-none" />
+              <div className="absolute bottom-10 -right-20 w-80 h-80 bg-rellia-mint/10 rounded-full blur-[120px] pointer-events-none" />
+
+              <div className="relative z-10 w-full max-w-xl">
                 <h2 className="font-host-grotesk text-2xl md:text-[32px] font-semibold text-black mb-10 tracking-tight">
                   {p.choosePlanHeadline?.trim() || "Choose your plan"}
                 </h2>
-                    
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full mb-6">
-                      <button
-                        type="button"
-                        onClick={() => setSelectedPlan("annual")}
-                        className={cn(
-                          "relative flex flex-col items-start p-6 md:p-8 rounded-3xl border-2 transition-all duration-300 text-left min-w-0",
-                          selectedPlan === "annual" 
-                            ? "border-rellia-teal bg-white shadow-lg ring-4 ring-rellia-teal/5" 
-                            : "border-black/5 bg-black/[0.02] hover:bg-black/[0.04] hover:border-black/10"
-                        )}
-                      >
-                        {selectedPlan === "annual" && (
-                          <CheckCircle2 className="absolute top-4 right-4 h-5 w-5 text-rellia-teal" />
-                        )}
-                        <span className="font-host-grotesk text-xs font-bold uppercase tracking-widest text-rellia-teal mb-4">Annual</span>
-                        <PriceDisplay
-                          amount={p.pricingAnnualAmount}
-                          compareAmount={p.pricingAnnualCompareAmount}
-                          discountEnabled={p.pricingAnnualDiscountEnabled}
-                          suffix="/yr"
-                          suffixClassName="text-black/40 font-medium text-base"
-                        />
-                      </button>
 
-                      <button
-                        type="button"
-                        onClick={() => setSelectedPlan("monthly")}
-                        className={cn(
-                          "relative flex flex-col items-start p-6 md:p-8 rounded-3xl border-2 transition-all duration-300 text-left min-w-0",
-                          selectedPlan === "monthly" 
-                            ? "border-rellia-teal bg-white shadow-lg ring-4 ring-rellia-teal/5" 
-                            : "border-black/5 bg-black/[0.02] hover:bg-black/[0.04] hover:border-black/10"
-                        )}
-                      >
-                        {selectedPlan === "monthly" && (
-                          <CheckCircle2 className="absolute top-4 right-4 h-5 w-5 text-rellia-teal" />
-                        )}
-                        <span className="font-host-grotesk text-xs font-bold uppercase tracking-widest text-rellia-teal mb-4">Monthly</span>
-                        <PriceDisplay
-                          amount={p.pricingMonthlyAmount}
-                          compareAmount={p.pricingMonthlyCompareAmount}
-                          discountEnabled={p.pricingMonthlyDiscountEnabled}
-                          suffix="/mo"
-                          suffixClassName="text-black/40 font-medium text-base"
-                        />
-                      </button>
-                    </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full mb-6">
+                  <button
+                    type="button"
+                    onClick={() => setSelectedPlan("annual")}
+                    className={cn(
+                      "relative flex flex-col items-start p-6 md:p-8 rounded-3xl border-2 transition-all duration-300 text-left min-w-0",
+                      selectedPlan === "annual"
+                        ? "border-rellia-teal bg-white shadow-lg ring-4 ring-rellia-teal/5"
+                        : "border-black/5 bg-black/[0.02] hover:bg-black/[0.04] hover:border-black/10",
+                    )}
+                  >
+                    {selectedPlan === "annual" && (
+                      <CheckCircle2 className="absolute top-4 right-4 h-5 w-5 text-rellia-teal" />
+                    )}
+                    <span className="font-host-grotesk text-xs font-bold uppercase tracking-widest text-rellia-teal mb-4">Annual</span>
+                    <PriceDisplay
+                      amount={p.pricingAnnualAmount}
+                      compareAmount={p.pricingAnnualCompareAmount}
+                      discountEnabled={p.pricingAnnualDiscountEnabled}
+                      suffix="/yr"
+                      suffixClassName="text-black/40 font-medium text-base"
+                    />
+                  </button>
 
-                    <div className="flex items-center gap-2 mb-10 pl-1">
-                      <ShieldCheck className="h-4 w-4 text-black/30" />
-                      <p className="font-urbanist text-sm font-medium text-black/40">
-                        {p.benefits.find(b => b.toLowerCase().includes("cancel")) || "Cancel at any time"}
-                      </p>
-                    </div>
-
-                    <RelliaAction 
-                      type="button" 
-                      variant="mintTealFill" 
-                      size="comfortable" 
-                      disabled={!selectedPlan || !currentHref}
-                      onClick={handleProceed}
-                      className="w-full h-[60px] text-lg font-bold mb-12 shadow-md hover:shadow-lg transition-all"
-                    >
-                      {selectedPlan === "annual" ? p.annualProceedLabel : (selectedPlan === "monthly" ? p.monthlyProceedLabel : "Select a plan")}
-                      <ArrowRight className="ml-2 h-5 w-5" aria-hidden />
-                    </RelliaAction>
-
-                    {p.discountBannerEnabled || p.promoMessage?.trim() ? (
-                      <div className="w-full flex flex-col items-start gap-4">
-                        {p.promoMessage?.trim() ? (
-                          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-rellia-mint/20 text-rellia-teal text-xs font-black uppercase tracking-wider">
-                            <span className="relative flex h-2 w-2">
-                              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rellia-teal opacity-75"></span>
-                              <span className="relative inline-flex rounded-full h-2 w-2 bg-rellia-teal"></span>
-                            </span>
-                            {p.discountBannerBadge.trim() || "Limited time"}
-                          </span>
-                        ) : null}
-                        <div className="space-y-4">
-                          <p className="font-urbanist text-lg text-black/70">
-                            {formatPromoMessage(
-                              p.promoMessage?.trim() ||
-                                p.discountBannerTitle?.trim() ||
-                                "Founding members get 50% off first purchase using code {code}",
-                              p.discountBannerSubtitle.trim() || "RELLIA50",
-                            )}
-                          </p>
-                          <button
-                            type="button"
-                            onClick={handleCopyCode}
-                            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-black/5 hover:bg-black/10 transition-colors font-host-grotesk text-sm font-bold text-black"
-                          >
-                            {codeCopied ? (
-                              <CheckCircle2 className="h-4 w-4 text-rellia-teal" />
-                            ) : (
-                              <Copy className="h-4 w-4" />
-                            )}
-                            {codeCopied ? "Code copied!" : "Copy code"}
-                          </button>
-                        </div>
-                      </div>
-                    ) : null}
-                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setSelectedPlan("monthly")}
+                    className={cn(
+                      "relative flex flex-col items-start p-6 md:p-8 rounded-3xl border-2 transition-all duration-300 text-left min-w-0",
+                      selectedPlan === "monthly"
+                        ? "border-rellia-teal bg-white shadow-lg ring-4 ring-rellia-teal/5"
+                        : "border-black/5 bg-black/[0.02] hover:bg-black/[0.04] hover:border-black/10",
+                    )}
+                  >
+                    {selectedPlan === "monthly" && (
+                      <CheckCircle2 className="absolute top-4 right-4 h-5 w-5 text-rellia-teal" />
+                    )}
+                    <span className="font-host-grotesk text-xs font-bold uppercase tracking-widest text-rellia-teal mb-4">Monthly</span>
+                    <PriceDisplay
+                      amount={p.pricingMonthlyAmount}
+                      compareAmount={p.pricingMonthlyCompareAmount}
+                      discountEnabled={p.pricingMonthlyDiscountEnabled}
+                      suffix="/mo"
+                      suffixClassName="text-black/40 font-medium text-base"
+                    />
+                  </button>
                 </div>
+
+                <div className="flex items-center gap-2 mb-10 pl-1">
+                  <ShieldCheck className="h-4 w-4 text-black/30" />
+                  <p className="font-urbanist text-sm font-medium text-black/40">
+                    {p.benefits.find(b => b.toLowerCase().includes("cancel")) || "Cancel at any time"}
+                  </p>
+                </div>
+
+                <RelliaAction
+                  type="button"
+                  variant="mintTealFill"
+                  size="comfortable"
+                  disabled={!selectedPlan || !currentHref}
+                  onClick={handleProceed}
+                  className="w-full h-[60px] text-lg font-bold mb-12 shadow-md hover:shadow-lg transition-all"
+                >
+                  {selectedPlan === "annual" ? p.annualProceedLabel : (selectedPlan === "monthly" ? p.monthlyProceedLabel : "Select a plan")}
+                  <ArrowRight className="ml-2 h-5 w-5" aria-hidden />
+                </RelliaAction>
+
+                {p.discountBannerEnabled || p.promoMessage?.trim() ? (
+                  <div className="w-full flex flex-col items-start gap-4">
+                    {p.promoMessage?.trim() ? (
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-rellia-mint/20 text-rellia-teal text-xs font-black uppercase tracking-wider">
+                        <span className="relative flex h-2 w-2">
+                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rellia-teal opacity-75"></span>
+                          <span className="relative inline-flex rounded-full h-2 w-2 bg-rellia-teal"></span>
+                        </span>
+                        {p.discountBannerBadge.trim() || "Limited time"}
+                      </span>
+                    ) : null}
+                    <div className="space-y-4">
+                      <p className="font-urbanist text-lg text-black/70">
+                        {formatPromoMessage(
+                          p.promoMessage?.trim() ||
+                            p.discountBannerTitle?.trim() ||
+                            "Founding members get 50% off first purchase using code {code}",
+                          p.discountBannerSubtitle.trim() || "RELLIA50",
+                        )}
+                      </p>
+                      <button
+                        type="button"
+                        onClick={handleCopyCode}
+                        className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-black/5 hover:bg-black/10 transition-colors font-host-grotesk text-sm font-bold text-black"
+                      >
+                        {codeCopied ? (
+                          <CheckCircle2 className="h-4 w-4 text-rellia-teal" />
+                        ) : (
+                          <Copy className="h-4 w-4" />
+                        )}
+                        {codeCopied ? "Code copied!" : "Copy code"}
+                      </button>
+                    </div>
+                  </div>
+                ) : null}
+              </div>
+            </div>
           </motion.div>
         </section>
 
-        <RelliaCta 
-          title={p.questionsTitle || "Questions about membership?"} 
+        <RelliaCta
+          title={p.questionsTitle || "Questions about membership?"}
           body={p.questionsBody || "Have questions about the membership, billing, or benefits? We're here to help you get the most out of the Rellia network."}
           primary={{ label: p.questionsContactLabel || "Contact us", to: p.questionsContactPath || "/contact" }}
           secondary={{ label: p.questionsFaqLabel || "View FAQ", to: p.questionsFaqPath || "/faq" }}

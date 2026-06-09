@@ -960,6 +960,12 @@ const paymentPageSeedDocument = () => ({
   questionsContactPath: DEFAULT_PAYMENT_PAGE.questionsContactPath,
   questionsFaqLabel: DEFAULT_PAYMENT_PAGE.questionsFaqLabel,
   questionsFaqPath: DEFAULT_PAYMENT_PAGE.questionsFaqPath,
+  welcomeSplashEnabled: DEFAULT_PAYMENT_PAGE.welcomeSplashEnabled,
+  welcomeSplashHeading: DEFAULT_PAYMENT_PAGE.welcomeSplashHeading,
+  welcomeSplashSubheading: DEFAULT_PAYMENT_PAGE.welcomeSplashSubheading,
+  welcomeSplashBackgroundSrc: DEFAULT_PAYMENT_PAGE.welcomeSplashBackgroundSrc,
+  welcomeSplashLogoSrc: DEFAULT_PAYMENT_PAGE.welcomeSplashLogoSrc,
+  welcomeSplashDurationSeconds: DEFAULT_PAYMENT_PAGE.welcomeSplashDurationSeconds,
   seo: { ...(seoForRoute("/membership") ?? {}), noIndex: true },
 })
 
@@ -1442,7 +1448,20 @@ async function main() {
     },
   })
   mutations.push({
-    createOrReplace: paymentPageSeedDocument(),
+    createIfNotExists: paymentPageSeedDocument(),
+  })
+  mutations.push({
+    patch: {
+      id: "paymentPage",
+      setIfMissing: {
+        welcomeSplashEnabled: DEFAULT_PAYMENT_PAGE.welcomeSplashEnabled,
+        welcomeSplashHeading: DEFAULT_PAYMENT_PAGE.welcomeSplashHeading,
+        welcomeSplashSubheading: DEFAULT_PAYMENT_PAGE.welcomeSplashSubheading,
+        welcomeSplashBackgroundSrc: DEFAULT_PAYMENT_PAGE.welcomeSplashBackgroundSrc,
+        welcomeSplashLogoSrc: DEFAULT_PAYMENT_PAGE.welcomeSplashLogoSrc,
+        welcomeSplashDurationSeconds: DEFAULT_PAYMENT_PAGE.welcomeSplashDurationSeconds,
+      },
+    },
   })
   mutations.push({
     createOrReplace: {

@@ -166,6 +166,7 @@ export const paymentPage = defineType({
   type: 'document',
   groups: CONTENT_SEO_GROUPS,
   fieldsets: [
+    sectionDividerFieldset('welcomeSplashDivider', 'Welcome splash'),
     sectionDividerFieldset('benefitsDivider', 'Benefits panel'),
     sectionDividerFieldset('pricingDivider', 'Plan pricing'),
     sectionDividerFieldset('promoDivider', 'Promo & discount'),
@@ -173,6 +174,69 @@ export const paymentPage = defineType({
     ...CONTENT_SEO_FIELDSETS,
   ],
   fields: [
+    defineField({
+      name: 'welcomeSplashEnabled',
+      type: 'boolean',
+      title: 'Show welcome splash',
+      description:
+        'Full-screen welcome animation when approved members land on /membership. Turn off to show the payment page immediately.',
+      initialValue: true,
+      group: 'content',
+      fieldset: 'welcomeSplashDivider',
+    }),
+    defineField({
+      name: 'welcomeSplashHeading',
+      type: 'string',
+      title: 'Splash headline',
+      initialValue: 'Congratulations! Your application is approved.',
+      group: 'content',
+      fieldset: 'welcomeSplashDivider',
+      hidden: ({parent}) => !parent?.welcomeSplashEnabled,
+    }),
+    defineField({
+      name: 'welcomeSplashSubheading',
+      type: 'text',
+      rows: 3,
+      title: 'Splash subheadline',
+      initialValue:
+        'Secure your spot in the Rellia network to finalize your membership and unlock your exclusive founder benefits.',
+      group: 'content',
+      fieldset: 'welcomeSplashDivider',
+      hidden: ({parent}) => !parent?.welcomeSplashEnabled,
+    }),
+    defineField({
+      name: 'welcomeSplashBackgroundSrc',
+      type: 'url',
+      title: 'Splash background image URL',
+      description: 'Full-screen photo behind the welcome message.',
+      initialValue:
+        'https://images.pexels.com/photos/1583582/pexels-photo-1583582.jpeg?auto=compress&cs=tinysrgb&w=1920',
+      group: 'content',
+      fieldset: 'welcomeSplashDivider',
+      hidden: ({parent}) => !parent?.welcomeSplashEnabled,
+    }),
+    defineField({
+      name: 'welcomeSplashLogoSrc',
+      type: 'string',
+      title: 'Splash logo path',
+      description: 'Circle network logo shown above the headline (e.g. /svgs/rellia-secondary-logo-circle-health-white-rgb.svg).',
+      initialValue: '/svgs/rellia-secondary-logo-circle-health-white-rgb.svg',
+      group: 'content',
+      fieldset: 'welcomeSplashDivider',
+      hidden: ({parent}) => !parent?.welcomeSplashEnabled,
+    }),
+    defineField({
+      name: 'welcomeSplashDurationSeconds',
+      type: 'number',
+      title: 'Splash total duration (seconds)',
+      description:
+        'Controls the full sequence: logo + heading reveal (~45%), hold (~30%), then exit (~25%). Allowed range: 3–12 seconds.',
+      initialValue: 5.5,
+      validation: (Rule) => Rule.min(3).max(12),
+      group: 'content',
+      fieldset: 'welcomeSplashDivider',
+      hidden: ({parent}) => !parent?.welcomeSplashEnabled,
+    }),
     defineField({
       name: 'benefitsPanelHeadline',
       type: 'string',

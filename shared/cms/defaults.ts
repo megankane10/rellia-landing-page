@@ -2416,6 +2416,14 @@ export const DEFAULT_PAYMENT_PAGE: PaymentPageContent = {
   questionsFaqPath: "/faq",
   questionsContactLabel: "Contact us",
   questionsContactPath: "/contact",
+  welcomeSplashEnabled: true,
+  welcomeSplashHeading: "Congratulations! Your application is approved.",
+  welcomeSplashSubheading:
+    "Secure your spot in the Rellia network to finalize your membership and unlock your exclusive founder benefits.",
+  welcomeSplashBackgroundSrc:
+    "https://images.pexels.com/photos/1583582/pexels-photo-1583582.jpeg?auto=compress&cs=tinysrgb&w=1920",
+  welcomeSplashLogoSrc: "/svgs/rellia-secondary-logo-circle-health-white-rgb.svg",
+  welcomeSplashDurationSeconds: 5.5,
 }
 
 export const DEFAULT_APPLY_PAGE: ApplyPageContent = {
@@ -2818,6 +2826,22 @@ export function mergePaymentPage(
   fill("benefitsPanelHeadline", DEFAULT_PAYMENT_PAGE.benefitsPanelHeadline ?? "")
   fill("choosePlanHeadline", DEFAULT_PAYMENT_PAGE.choosePlanHeadline ?? "")
   fill("promoMessage", DEFAULT_PAYMENT_PAGE.promoMessage ?? "")
+  fill("welcomeSplashHeading", DEFAULT_PAYMENT_PAGE.welcomeSplashHeading ?? "")
+  fill("welcomeSplashSubheading", DEFAULT_PAYMENT_PAGE.welcomeSplashSubheading ?? "")
+  fill(
+    "welcomeSplashBackgroundSrc",
+    DEFAULT_PAYMENT_PAGE.welcomeSplashBackgroundSrc ?? "",
+  )
+  fill("welcomeSplashLogoSrc", DEFAULT_PAYMENT_PAGE.welcomeSplashLogoSrc ?? "")
+  if (typeof base.welcomeSplashEnabled !== "boolean") {
+    base.welcomeSplashEnabled = DEFAULT_PAYMENT_PAGE.welcomeSplashEnabled
+  }
+  if (
+    typeof base.welcomeSplashDurationSeconds !== "number" ||
+    !Number.isFinite(base.welcomeSplashDurationSeconds)
+  ) {
+    base.welcomeSplashDurationSeconds = DEFAULT_PAYMENT_PAGE.welcomeSplashDurationSeconds
+  }
   return base
 }
 

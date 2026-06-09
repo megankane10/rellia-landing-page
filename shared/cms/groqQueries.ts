@@ -848,6 +848,12 @@ export const paymentPageQuery = `*[_id == "paymentPage"][0]{
   questionsFaqPath,
   questionsContactLabel,
   questionsContactPath,
+  welcomeSplashEnabled,
+  welcomeSplashHeading,
+  welcomeSplashSubheading,
+  welcomeSplashBackgroundSrc,
+  welcomeSplashLogoSrc,
+  welcomeSplashDurationSeconds,
   ${seoFragment}
 }`;
 

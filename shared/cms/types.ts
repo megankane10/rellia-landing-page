@@ -1109,5 +1109,12 @@ export type PaymentPageContent = CmsPageVisibility & {
   questionsFaqPath: string
   questionsContactLabel: string
   questionsContactPath: string
+  welcomeSplashEnabled?: boolean
+  welcomeSplashHeading?: string
+  welcomeSplashSubheading?: string
+  welcomeSplashBackgroundSrc?: string
+  welcomeSplashLogoSrc?: string
+  /** Total splash duration in seconds — entrance, hold, and exit scale proportionally. */
+  welcomeSplashDurationSeconds?: number
   seo?: SeoContent
 }
