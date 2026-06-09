@@ -2407,16 +2407,14 @@ export const DEFAULT_PAYMENT_PAGE: PaymentPageContent = {
   pricingAnnualDiscountEnabled: false,
   pricingAnnualCompareAmount: "$40",
   benefitsPanelHeadline: "Join the network today",
-  benefitsPanelBullet1:
-    "Personalized warm introductions to the right investors, partners, and clinicians",
-  benefitsPanelBullet2:
-    "Healthcare industry templates and resources ready to use in your business",
-  benefitsPanelBullet3:
-    "Exclusive workshops, webinars, and networking events with industry leaders",
-  benefitsPanelBullet4:
-    "Access to advisory consulting that would cost >$300/hr anywhere else",
+  benefitsPanelDescription: `Unlock founder benefits built for health tech operators moving from approval to active membership.
+
+- Personalized warm introductions to the right investors, partners, and clinicians
+- Healthcare industry templates and resources ready to use in your business
+- Exclusive workshops, webinars, and networking events with industry leaders
+- Access to advisory consulting that would cost >$300/hr anywhere else`,
   benefitsPanelImageEnabled: true,
-  benefitsPanelImageSrc: "/images/benefits-payment.jpg",
+  benefitsPanelImageSrc: "/images/membership-splash.jpg",
   choosePlanHeadline: "Choose your plan",
   promoPillEnabled: true,
   promoMessage:
@@ -2438,20 +2436,24 @@ export const DEFAULT_PAYMENT_PAGE: PaymentPageContent = {
     "Secure your spot in the Rellia network to finalize your membership and unlock your exclusive founder benefits.",
   welcomeSplashBackgroundSrc: "/images/membership-splash.jpg",
   welcomeSplashLogoSrc: "/svgs/rellia-secondary-logo-circle-health-white-rgb.svg",
-  welcomeSplashDurationSeconds: 3.5,
+  welcomeSplashDurationSeconds: 2.5,
 }
 
-export const getPaymentPagePanelBullets = (
+export const getPaymentPagePanelDescription = (
   page: Pick<
     PaymentPageContent,
+    | "benefitsPanelDescription"
     | "benefitsPanelBullet1"
     | "benefitsPanelBullet2"
     | "benefitsPanelBullet3"
     | "benefitsPanelBullet4"
     | "benefits"
   >,
-): string[] => {
-  const fromFields = [
+): string => {
+  const description = page.benefitsPanelDescription?.trim()
+  if (description) return description
+
+  const legacyBullets = [
     page.benefitsPanelBullet1,
     page.benefitsPanelBullet2,
     page.benefitsPanelBullet3,
@@ -2460,11 +2462,19 @@ export const getPaymentPagePanelBullets = (
     .map((value) => value?.trim())
     .filter((value): value is string => Boolean(value))
 
-  if (fromFields.length > 0) return fromFields
+  if (legacyBullets.length > 0) {
+    return legacyBullets.map((bullet) => `- ${bullet}`).join("\n")
+  }
 
-  return page.benefits
+  const fromBenefits = page.benefits
     .filter((benefit) => !benefit.toLowerCase().includes("cancel"))
     .slice(0, 4)
+
+  if (fromBenefits.length > 0) {
+    return fromBenefits.map((benefit) => `- ${benefit}`).join("\n")
+  }
+
+  return DEFAULT_PAYMENT_PAGE.benefitsPanelDescription ?? ""
 }
 
 export const DEFAULT_APPLY_PAGE: ApplyPageContent = {
@@ -2873,10 +2883,7 @@ export function mergePaymentPage(
     base.promoPillEnabled = DEFAULT_PAYMENT_PAGE.promoPillEnabled
   }
   fill("benefitsPanelHeadline", DEFAULT_PAYMENT_PAGE.benefitsPanelHeadline ?? "")
-  fill("benefitsPanelBullet1", DEFAULT_PAYMENT_PAGE.benefitsPanelBullet1 ?? "")
-  fill("benefitsPanelBullet2", DEFAULT_PAYMENT_PAGE.benefitsPanelBullet2 ?? "")
-  fill("benefitsPanelBullet3", DEFAULT_PAYMENT_PAGE.benefitsPanelBullet3 ?? "")
-  fill("benefitsPanelBullet4", DEFAULT_PAYMENT_PAGE.benefitsPanelBullet4 ?? "")
+  fill("benefitsPanelDescription", DEFAULT_PAYMENT_PAGE.benefitsPanelDescription ?? "")
   fill("benefitsPanelImageSrc", DEFAULT_PAYMENT_PAGE.benefitsPanelImageSrc ?? "")
   if (typeof base.benefitsPanelImageEnabled !== "boolean") {
     base.benefitsPanelImageEnabled = DEFAULT_PAYMENT_PAGE.benefitsPanelImageEnabled

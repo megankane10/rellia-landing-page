@@ -1114,9 +1114,14 @@ export type PaymentPageContent = CmsPageVisibility & {
   pricingAnnualDiscountEnabled?: boolean
   pricingAnnualCompareAmount?: string
   benefitsPanelHeadline?: string
+  benefitsPanelDescription?: string
+  /** @deprecated Use benefitsPanelDescription */
   benefitsPanelBullet1?: string
+  /** @deprecated Use benefitsPanelDescription */
   benefitsPanelBullet2?: string
+  /** @deprecated Use benefitsPanelDescription */
   benefitsPanelBullet3?: string
+  /** @deprecated Use benefitsPanelDescription */
   benefitsPanelBullet4?: string
   benefitsPanelImageEnabled?: boolean
   benefitsPanelImageSrc?: string
@@ -1137,7 +1142,7 @@ export type PaymentPageContent = CmsPageVisibility & {
   welcomeSplashSubheading?: string
   welcomeSplashBackgroundSrc?: string
   welcomeSplashLogoSrc?: string
-  /** Total splash duration in seconds — entrance, hold, and exit scale proportionally. */
+  /** Seconds the splash stays visible after content animates in. */
   welcomeSplashDurationSeconds?: number
   seo?: SeoContent
 }

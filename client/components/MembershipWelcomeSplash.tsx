@@ -8,20 +8,18 @@ export type MembershipWelcomeSplashProps = {
   subheading: string
   backgroundSrc: string
   logoSrc: string
-  /** Total splash duration in seconds (entrance, hold, and exit scale together). */
-  durationSeconds: number
+  /** How long the splash stays on screen after content finishes animating in (seconds). */
+  holdSeconds: number
   onComplete: () => void
 }
 
 type SplashPhase = "enter" | "hold" | "exit" | "done"
 
-const clampDuration = (seconds: number) => Math.min(12, Math.max(3, seconds))
+/** Fixed content reveal timing — not controlled by CMS. */
+const ANIM_ENTER_MS = 3000
+const ANIM_EXIT_MS = 1000
 
-const phaseRatios = {
-  enter: 0.36,
-  hold: 0.3,
-  exit: 0.34,
-} as const
+const clampHoldSeconds = (seconds: number) => Math.min(8, Math.max(1.5, seconds))
 
 const SLIDE_EASE = [0.4, 0, 0.2, 1] as const
 
@@ -31,24 +29,24 @@ export default function MembershipWelcomeSplash({
   subheading,
   backgroundSrc,
   logoSrc,
-  durationSeconds,
+  holdSeconds,
   onComplete,
 }: MembershipWelcomeSplashProps) {
   const reduceMotion = useReducedMotion()
   const previewMode = isVisualEditingPreview()
   const [phase, setPhase] = useState<SplashPhase>("enter")
 
-  const totalMs = useMemo(
-    () => clampDuration(durationSeconds) * 1000,
-    [durationSeconds],
-  )
+  const holdMs = useMemo(() => clampHoldSeconds(holdSeconds) * 1000, [holdSeconds])
 
-  const timings = useMemo(() => {
-    const enterMs = totalMs * phaseRatios.enter
-    const holdMs = totalMs * phaseRatios.hold
-    const exitMs = totalMs * phaseRatios.exit
-    return { enterMs, holdMs, exitMs, totalMs }
-  }, [totalMs])
+  const timings = useMemo(
+    () => ({
+      enterMs: ANIM_ENTER_MS,
+      holdMs,
+      exitMs: ANIM_EXIT_MS,
+      totalMs: ANIM_ENTER_MS + holdMs + ANIM_EXIT_MS,
+    }),
+    [holdMs],
+  )
 
   const headingText = previewMode ? cmsDisplayText(heading) : cmsCleanText(heading)
   const subheadingText = previewMode ? cmsDisplayText(subheading) : cmsCleanText(subheading)
@@ -61,8 +59,8 @@ export default function MembershipWelcomeSplash({
     hidden: {},
     visible: {
       transition: {
-        staggerChildren: reduceMotion ? 0 : 0.1,
-        delayChildren: reduceMotion ? 0 : 0.16,
+        staggerChildren: reduceMotion ? 0 : 0.16,
+        delayChildren: reduceMotion ? 0 : 0.28,
       },
     },
   }
@@ -70,7 +68,7 @@ export default function MembershipWelcomeSplash({
   const headingWordVariants = {
     hidden: {
       opacity: reduceMotion ? 1 : 0,
-      y: reduceMotion ? 0 : 22,
+      y: reduceMotion ? 0 : 24,
       filter: reduceMotion ? "blur(0px)" : "blur(10px)",
     },
     visible: {
@@ -78,7 +76,7 @@ export default function MembershipWelcomeSplash({
       y: 0,
       filter: "blur(0px)",
       transition: {
-        duration: reduceMotion ? 0 : 0.65,
+        duration: reduceMotion ? 0 : 0.9,
         ease: [0.33, 1, 0.68, 1] as const,
       },
     },
@@ -95,7 +93,7 @@ export default function MembershipWelcomeSplash({
       const brief = window.setTimeout(() => {
         setPhase("done")
         onComplete()
-      }, 250)
+      }, 300)
       return () => window.clearTimeout(brief)
     }
 
@@ -117,15 +115,14 @@ export default function MembershipWelcomeSplash({
   if (!enabled || phase === "done") return null
 
   const isExiting = phase === "exit"
-  const exitDuration = timings.exitMs / 1000
 
   return (
     <motion.div
-      className="fixed inset-0 z-[100] overflow-hidden"
+      className="fixed inset-0 z-[250] overflow-hidden"
       initial={{ y: 0 }}
       animate={{ y: isExiting ? "-100%" : 0 }}
       transition={{
-        duration: isExiting ? exitDuration : 0,
+        duration: isExiting ? ANIM_EXIT_MS / 1000 : 0,
         ease: SLIDE_EASE,
       }}
       role="dialog"
@@ -141,7 +138,7 @@ export default function MembershipWelcomeSplash({
             className="h-full w-full object-cover"
             initial={reduceMotion ? { scale: 1 } : { scale: 1.05 }}
             animate={{ scale: 1 }}
-            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1] }}
           />
           <div
             className="absolute inset-0 bg-gradient-to-br from-[#071f26]/75 via-rellia-teal/60 to-[#0a2e36]/80"
@@ -160,15 +157,15 @@ export default function MembershipWelcomeSplash({
         <div className="relative z-10 flex min-h-full flex-1 items-center px-6 py-24 md:px-12 lg:px-16">
           <motion.div
             className="mx-auto w-full max-w-3xl text-left"
-            initial={reduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 24 }}
+            initial={reduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 28 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
           >
             <motion.div
               className="mb-8 md:mb-10"
-              initial={reduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: -56 }}
+              initial={reduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: -64 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+              transition={{ duration: 1.1, ease: [0.22, 1, 0.36, 1] }}
             >
               <motion.img
                 src={logoSrc}
@@ -214,12 +211,12 @@ export default function MembershipWelcomeSplash({
             )}
 
             <motion.p
-              className="mt-6 max-w-2xl font-urbanist text-xl font-normal leading-relaxed text-white [text-shadow:0_2px_20px_rgba(0,0,0,0.75),0_1px_4px_rgba(0,0,0,0.65)] md:mt-8 md:text-2xl md:leading-relaxed"
-              initial={reduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+              className="mt-6 max-w-2xl font-urbanist text-xl font-normal leading-relaxed text-white/65 [text-shadow:0_2px_20px_rgba(0,0,0,0.75),0_1px_4px_rgba(0,0,0,0.65)] md:mt-8 md:text-2xl md:leading-relaxed"
+              initial={reduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 24 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{
-                duration: reduceMotion ? 0 : 0.6,
-                delay: reduceMotion ? 0 : 0.36,
+                duration: reduceMotion ? 0 : 0.85,
+                delay: reduceMotion ? 0 : 0.72,
                 ease: [0.22, 1, 0.36, 1],
               }}
             >

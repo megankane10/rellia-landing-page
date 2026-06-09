@@ -12,7 +12,7 @@ import RelliaCta from "@/components/RelliaCta"
 import MembershipWelcomeSplash from "@/components/MembershipWelcomeSplash"
 import MembershipBenefitsPanel from "@/components/MembershipBenefitsPanel"
 import { usePaymentPage } from "@/hooks/useCmsDocuments"
-import { DEFAULT_PAYMENT_PAGE, getPaymentPagePanelBullets } from "@shared/cms/defaults"
+import { DEFAULT_PAYMENT_PAGE, getPaymentPagePanelDescription } from "@shared/cms/defaults"
 import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo"
 import { cn } from "@/lib/utils"
 import { PriceDisplay } from "@/components/cms/PriceDisplay"
@@ -45,9 +45,9 @@ export default function Payment() {
   const panelImageSrc =
     p.benefitsPanelImageSrc?.trim() ||
     DEFAULT_PAYMENT_PAGE.benefitsPanelImageSrc ||
-    ""
+    "/images/membership-splash.jpg"
 
-  const panelBullets = getPaymentPagePanelBullets(p)
+  const panelDescription = getPaymentPagePanelDescription(p)
 
   const handleSplashComplete = useCallback(() => {
     setSplashComplete(true)
@@ -94,13 +94,13 @@ export default function Payment() {
           DEFAULT_PAYMENT_PAGE.welcomeSplashLogoSrc ||
           "/svgs/rellia-secondary-logo-circle-health-white-rgb.svg"
         }
-        durationSeconds={
-          p.welcomeSplashDurationSeconds ?? DEFAULT_PAYMENT_PAGE.welcomeSplashDurationSeconds ?? 3.5
+        holdSeconds={
+          p.welcomeSplashDurationSeconds ?? DEFAULT_PAYMENT_PAGE.welcomeSplashDurationSeconds ?? 2.5
         }
         onComplete={handleSplashComplete}
       />
 
-      <Navbar forceTransparentHero={showSplash} />
+      <Navbar forceHidden={showSplash} />
 
       <main id="main-content" className="flex w-full flex-1 flex-col">
         <section className="relative w-full pt-[84px] md:pt-[100px] pb-[12px] md:pb-[14px]">
@@ -108,7 +108,7 @@ export default function Payment() {
             <div className="flex flex-col p-4 pb-8 md:p-6 md:pb-10 lg:p-8">
               <MembershipBenefitsPanel
                 headline={p.benefitsPanelHeadline?.trim() || p.benefitsTitle}
-                bullets={panelBullets}
+                description={panelDescription}
                 imageEnabled={p.benefitsPanelImageEnabled ?? DEFAULT_PAYMENT_PAGE.benefitsPanelImageEnabled}
                 imageSrc={panelImageSrc}
               />

@@ -1,21 +1,64 @@
 import { cn } from "@/lib/utils"
+import {
+  parseMembershipPanelDescription,
+  type ParsedMembershipPanelDescription,
+} from "@/lib/parseMembershipPanelDescription"
+import { cmsCleanText, cmsDisplayText, isVisualEditingPreview } from "@/lib/cmsStega"
 
 type MembershipBenefitsPanelProps = {
   headline: string
-  bullets: string[]
+  description: string
   imageEnabled?: boolean
   imageSrc?: string
   className?: string
 }
 
+const PanelDescription = ({
+  content,
+  previewMode,
+}: {
+  content: ParsedMembershipPanelDescription
+  previewMode: boolean
+}) => {
+  if (content.paragraphs.length === 0 && content.bullets.length === 0) return null
+
+  return (
+    <div className="mt-6 space-y-5 md:mt-8">
+      {content.paragraphs.map((paragraph, index) => (
+        <p
+          key={`p-${index}`}
+          className="font-urbanist text-[15px] font-normal leading-relaxed text-white/72 [text-shadow:0_1px_14px_rgba(0,0,0,0.5)] md:text-base"
+        >
+          {previewMode ? cmsDisplayText(paragraph) : cmsCleanText(paragraph)}
+        </p>
+      ))}
+
+      {content.bullets.length > 0 ? (
+        <ul className="list-disc space-y-3 pl-5 marker:text-white/40">
+          {content.bullets.map((bullet, index) => (
+            <li
+              key={`b-${index}`}
+              className="font-urbanist text-[15px] font-normal leading-relaxed text-white/68 [text-shadow:0_1px_14px_rgba(0,0,0,0.5)] md:text-base"
+            >
+              {previewMode ? cmsDisplayText(bullet) : cmsCleanText(bullet)}
+            </li>
+          ))}
+        </ul>
+      ) : null}
+    </div>
+  )
+}
+
 export default function MembershipBenefitsPanel({
   headline,
-  bullets,
+  description,
   imageEnabled = true,
   imageSrc,
   className,
 }: MembershipBenefitsPanelProps) {
+  const previewMode = isVisualEditingPreview()
   const showImage = imageEnabled && Boolean(imageSrc?.trim())
+  const parsed = parseMembershipPanelDescription(description)
 
   return (
     <div
@@ -40,8 +83,8 @@ export default function MembershipBenefitsPanel({
         />
         {showImage ? (
           <>
-            <div className="absolute inset-0 bg-gradient-to-t from-[#071f26]/88 via-[#071f26]/40 to-transparent" />
-            <div className="absolute inset-y-0 left-0 w-full bg-gradient-to-r from-black/50 via-black/20 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#071f26]/90 via-[#071f26]/50 to-black/25" />
+            <div className="absolute inset-y-0 left-0 w-full bg-gradient-to-r from-black/60 via-black/30 to-transparent" />
           </>
         ) : (
           <>
@@ -54,22 +97,12 @@ export default function MembershipBenefitsPanel({
       <div className="relative z-10 flex min-h-0 flex-1 flex-col justify-end p-8 md:p-10 lg:p-11">
         <div className="max-w-md">
           <h1 className="font-host-grotesk text-[1.75rem] font-semibold leading-tight tracking-tight text-white drop-shadow-[0_2px_20px_rgba(0,0,0,0.45)] md:text-[2.125rem]">
-            {headline}
+            {previewMode ? cmsDisplayText(headline) : cmsCleanText(headline)}
           </h1>
+          <div className="mt-5 h-px w-10 bg-rellia-mint/70 md:mt-6" aria-hidden />
         </div>
 
-        {bullets.length > 0 ? (
-          <ul className="mt-6 list-disc space-y-3 pl-5 marker:text-white/45 md:mt-8 md:space-y-3.5">
-            {bullets.map((bullet, index) => (
-              <li
-                key={index}
-                className="font-urbanist text-[15px] font-normal leading-relaxed text-white/78 [text-shadow:0_1px_14px_rgba(0,0,0,0.45)] md:text-base"
-              >
-                {bullet}
-              </li>
-            ))}
-          </ul>
-        ) : null}
+        <PanelDescription content={parsed} previewMode={previewMode} />
       </div>
     </div>
   )
