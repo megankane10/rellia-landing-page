@@ -64,6 +64,11 @@ export default function MembershipWelcomeSplash({
     [reduceMotion, subheadingDelay],
   )
 
+  const totalDurationMs = useMemo(
+    () => revealMs + READ_HOLD_MS + ANIM_EXIT_MS,
+    [revealMs],
+  )
+
   const headingContainerVariants = {
     hidden: {},
     visible: {
@@ -165,6 +170,21 @@ export default function MembershipWelcomeSplash({
       aria-modal="true"
       aria-label="Membership welcome"
     >
+      <div
+        className="pointer-events-none absolute inset-x-0 top-0 z-20 h-[2px]"
+        aria-hidden
+      >
+        <motion.div
+          className="h-full w-full origin-left bg-rellia-mint"
+          initial={{ scaleX: reduceMotion ? 1 : 0 }}
+          animate={{ scaleX: 1 }}
+          transition={{
+            duration: reduceMotion ? 0 : totalDurationMs / 1000,
+            ease: "linear",
+          }}
+        />
+      </div>
+
       <div className="relative flex h-full w-full flex-col">
         <div className="absolute inset-0">
           <img
