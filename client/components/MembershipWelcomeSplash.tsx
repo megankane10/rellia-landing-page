@@ -223,9 +223,17 @@ export default function MembershipWelcomeSplash({
             )}
 
             <motion.p
-              className="mt-6 max-w-2xl font-urbanist text-xl font-normal leading-relaxed text-white/65 [text-shadow:0_2px_20px_rgba(0,0,0,0.75),0_1px_4px_rgba(0,0,0,0.65)] md:mt-8 md:text-2xl md:leading-relaxed"
-              initial={reduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
+              className="mt-6 max-w-2xl font-urbanist text-xl font-normal leading-relaxed md:mt-8 md:text-2xl md:leading-relaxed"
+              style={{
+                color: "rgba(255, 255, 255, 0.82)",
+                textShadow: "0 2px 24px rgba(0, 0, 0, 0.8), 0 1px 6px rgba(0, 0, 0, 0.7)",
+              }}
+              initial={
+                reduceMotion
+                  ? { y: 0, filter: "blur(0px)" }
+                  : { y: 22, filter: "blur(10px)" }
+              }
+              animate={{ y: 0, filter: "blur(0px)" }}
               transition={{
                 duration: reduceMotion ? 0 : SUBHEADING_DURATION_S,
                 delay: reduceMotion ? 0 : subheadingDelay,

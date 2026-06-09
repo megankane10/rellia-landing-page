@@ -29,18 +29,29 @@ const PanelDescription = ({
       {content.paragraphs.map((paragraph, index) => (
         <p
           key={`p-${index}`}
-          className="font-urbanist text-[15px] font-normal leading-relaxed text-white/82 [text-shadow:0_2px_16px_rgba(0,0,0,0.55)] md:text-base"
+          className="font-urbanist text-[15px] font-normal leading-relaxed md:text-base"
+          style={{
+            color: "rgba(255, 255, 255, 0.84)",
+            textShadow: "0 2px 18px rgba(0, 0, 0, 0.65)",
+          }}
         >
           {previewMode ? cmsDisplayText(paragraph) : cmsCleanText(paragraph)}
         </p>
       ))}
 
       {content.bullets.length > 0 ? (
-        <ul className="list-disc space-y-3 pl-5 marker:text-white/55">
+        <ul
+          className="list-disc space-y-3 pl-5"
+          style={{ color: "rgba(255, 255, 255, 0.72)" }}
+        >
           {content.bullets.map((bullet, index) => (
             <li
               key={`b-${index}`}
-              className="font-urbanist text-[15px] font-normal leading-relaxed text-white/78 [text-shadow:0_2px_16px_rgba(0,0,0,0.55)] md:text-base"
+              className="font-urbanist text-[15px] font-normal leading-relaxed md:text-base"
+              style={{
+                color: "rgba(255, 255, 255, 0.78)",
+                textShadow: "0 2px 16px rgba(0, 0, 0, 0.6)",
+              }}
             >
               {previewMode ? cmsDisplayText(bullet) : cmsCleanText(bullet)}
             </li>
