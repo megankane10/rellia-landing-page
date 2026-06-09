@@ -9,6 +9,7 @@ import { useConsultingPage } from "@/hooks/useCmsDocuments"
 import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo"
 import { CmsModularSingletonPage } from "@/components/cms/CmsModularSingletonPage"
 import { DEFAULT_CONSULTING_PAGE } from "@shared/cms/defaults"
+import { NetworkHeroTitle } from "@/components/NetworkHeroTitle"
 import type { ConsultingPageContent } from "@shared/cms/types"
 import {
   CheckCircle2,
@@ -144,10 +145,10 @@ function ConsultingFallback({ content }: { content: ConsultingPageContent }) {
             imageSrc={content.heroImageSrc ?? DEFAULT_CONSULTING_PAGE.heroImageSrc}
             className="lg:flex-1"
             title={
-              <>
-                {content.heroTitle ?? DEFAULT_CONSULTING_PAGE.heroTitle}{" "}
-                <span className="text-rellia-mint">{content.heroAccentPhrase ?? DEFAULT_CONSULTING_PAGE.heroAccentPhrase}</span>
-              </>
+              <NetworkHeroTitle
+                content={content}
+                fallback={DEFAULT_CONSULTING_PAGE.heroTitlePortable!}
+              />
             }
             subtitle={content.heroSubtitle ?? DEFAULT_CONSULTING_PAGE.heroSubtitle}
             primaryCta={{

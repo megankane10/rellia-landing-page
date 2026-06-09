@@ -50,6 +50,8 @@ import { useMemo, useState, useEffect, useRef } from "react"
 import { useLocation } from "react-router-dom"
 import { ShareIconCopy } from "@/components/share/sharePageIcons"
 import { RoleHero } from "./network/_shared"
+import { DEFAULT_CAREERS_PAGE } from "@shared/cms/careersPageDefaults"
+import { NetworkHeroTitle } from "@/components/NetworkHeroTitle"
 
 const g = DEFAULT_GLOBAL_SETTINGS
 
@@ -416,13 +418,10 @@ export default function CareersCms() {
                 className="lg:flex-1"
                 skipNavOffset
                 title={
-                  <>
-                    {careersCms.heroTitle ?? "Build the"}{" "}
-                    <span className="text-rellia-mint">
-                      {careersCms.heroAccentPhrase ?? "future of health"}
-                    </span>{" "}
-                    {careersCms.heroTitleSuffix ?? "at Rellia"}
-                  </>
+                  <NetworkHeroTitle
+                    content={careersCms}
+                    fallback={DEFAULT_CAREERS_PAGE.heroTitlePortable!}
+                  />
                 }
                 subtitle={careersCms.heroSubtitle}
                 primaryCta={

@@ -6,6 +6,8 @@ import type {
   NetworkInvestorsPageContent,
   NetworkPartnersPageContent,
 } from "./types"
+import { twoPartHeroHeadline } from "./inlineHeroHeadline"
+import { resolveHeroTitlePortable } from "./resolveHeroHeadline"
 
 const pexelsCardImage = (photoId: string) =>
   `https://images.pexels.com/photos/${photoId}/pexels-photo-${photoId}.jpeg?auto=compress&cs=tinysrgb&w=1200`
@@ -44,6 +46,7 @@ export const DEFAULT_NETWORK_ENGAGE_FOUNDERS: NetworkEngageCard[] = [
 export const DEFAULT_NETWORK_FOUNDERS_PAGE: NetworkFoundersPageContent = {
   title: "Founders",
   heroEyebrow: "Founders",
+  heroTitlePortable: twoPartHeroHeadline("Are you building in", "health tech?"),
   heroTitle: "Are you building in",
   heroAccentPhrase: "health tech?",
   heroSubtitle:
@@ -53,14 +56,6 @@ export const DEFAULT_NETWORK_FOUNDERS_PAGE: NetworkFoundersPageContent = {
   heroPrimaryCtaHref: "/apply",
   heroSecondaryCtaLabel: "Explore Alumni",
   heroSecondaryCtaHref: "/founders/alumni",
-  directoryTitle: "Explore Alumni",
-  directorySubtitle:
-    "Representative companies from the Rellia portfolio network—specialty tags and summaries help you see who is building alongside you.",
-  directoryCtaTitle: "Ready to build your network?",
-  directoryCtaBody:
-    "Apply for membership to access exclusive events, diagnostic tools, and directly connect with operators in our directory.",
-  directoryCtaPrimaryLabel: "Apply for Membership",
-  directoryCtaPrimaryHref: "/apply",
   eligibilityTitle: "Built for serious health tech teams",
   eligibilityDescription:
     "Rellia works with companies where healthcare complexity is core to the product—evidence, regulation, workflow, and traction at once.",
@@ -269,6 +264,7 @@ export const DEFAULT_NETWORK_FOUNDERS_PAGE: NetworkFoundersPageContent = {
 export const DEFAULT_NETWORK_ADVISORS_PAGE: NetworkAdvisorsPageContent = {
   title: "Advisors",
   heroEyebrow: "Advisors",
+  heroTitlePortable: twoPartHeroHeadline("Some people are just wired to help", "others succeed."),
   heroTitle: "Some people are just wired to help",
   heroAccentPhrase: "others succeed.",
   heroSubtitle:
@@ -361,18 +357,12 @@ export const DEFAULT_NETWORK_ADVISORS_PAGE: NetworkAdvisorsPageContent = {
   ctaPrimaryHref: "/apply",
   ctaSecondaryLabel: "Contact",
   ctaSecondaryHref: "/contact",
-  directoryTitle: "Explore Advisors",
-  directorySubtitle:
-    "Browse advisors by expertise and industry—each profile links to a full bio and ways to connect.",
-  directoryCtaTitle: "Ready to advise health tech founders?",
-  directoryCtaBody: "Apply to join the advisor network and mentor founders through structured, respectful engagements.",
-  directoryCtaPrimaryLabel: "Apply to join",
-  directoryCtaPrimaryHref: "/apply",
 }
 
 export const DEFAULT_NETWORK_INVESTORS_PAGE: NetworkInvestorsPageContent = {
   title: "Investors",
   heroEyebrow: "Investors",
+  heroTitlePortable: twoPartHeroHeadline("Stop sorting through", "cold pitch decks."),
   heroTitle: "Stop sorting through",
   heroAccentPhrase: "cold pitch decks.",
   heroSubtitle:
@@ -431,6 +421,7 @@ export const DEFAULT_NETWORK_INVESTORS_PAGE: NetworkInvestorsPageContent = {
 export const DEFAULT_NETWORK_PARTNERS_PAGE: NetworkPartnersPageContent = {
   title: "Industry Partners",
   heroEyebrow: "Industry Partners",
+  heroTitlePortable: twoPartHeroHeadline("Reach the health tech founders", "who need you."),
   heroTitle: "Reach the health tech founders",
   heroAccentPhrase: "who need you.",
   heroSubtitle:
@@ -539,11 +530,19 @@ export const mergeNetworkWhyFeatures = (
     }
   })
 
+const mergeNetworkHeroFields = <T extends NetworkFoundersPageContent>(
+  cms: Partial<T> | null | undefined,
+  defaults: T,
+): T => ({
+  ...defaults,
+  ...cms,
+  heroTitlePortable: resolveHeroTitlePortable(cms, defaults.heroTitlePortable!),
+})
+
 export const mergeNetworkFoundersPage = (
   cms?: Partial<NetworkFoundersPageContent> | null,
 ): NetworkFoundersPageContent => ({
-  ...DEFAULT_NETWORK_FOUNDERS_PAGE,
-  ...cms,
+  ...mergeNetworkHeroFields(cms, DEFAULT_NETWORK_FOUNDERS_PAGE),
   eligibilityItems: pickList(cms?.eligibilityItems, DEFAULT_NETWORK_FOUNDERS_PAGE.eligibilityItems ?? []),
   engageItems: pickList(cms?.engageItems, DEFAULT_NETWORK_FOUNDERS_PAGE.engageItems ?? []),
   whyFeatures: mergeNetworkWhyFeatures(
@@ -557,21 +556,12 @@ export const mergeNetworkFoundersPage = (
     DEFAULT_NETWORK_FOUNDERS_PAGE.deeperHelpFeatures ?? [],
   ),
   logoMarquee: pickList(cms?.logoMarquee, DEFAULT_NETWORK_FOUNDERS_PAGE.logoMarquee ?? []),
-  directoryTitle: cms?.directoryTitle?.trim() || DEFAULT_NETWORK_FOUNDERS_PAGE.directoryTitle,
-  directorySubtitle: cms?.directorySubtitle?.trim() || DEFAULT_NETWORK_FOUNDERS_PAGE.directorySubtitle,
-  directoryCtaTitle: cms?.directoryCtaTitle?.trim() || DEFAULT_NETWORK_FOUNDERS_PAGE.directoryCtaTitle,
-  directoryCtaBody: cms?.directoryCtaBody?.trim() || DEFAULT_NETWORK_FOUNDERS_PAGE.directoryCtaBody,
-  directoryCtaPrimaryLabel:
-    cms?.directoryCtaPrimaryLabel?.trim() || DEFAULT_NETWORK_FOUNDERS_PAGE.directoryCtaPrimaryLabel,
-  directoryCtaPrimaryHref:
-    cms?.directoryCtaPrimaryHref?.trim() || DEFAULT_NETWORK_FOUNDERS_PAGE.directoryCtaPrimaryHref,
 })
 
 export const mergeNetworkAdvisorsPage = (
   cms?: Partial<NetworkAdvisorsPageContent> | null,
 ): NetworkAdvisorsPageContent => ({
-  ...DEFAULT_NETWORK_ADVISORS_PAGE,
-  ...cms,
+  ...mergeNetworkHeroFields(cms, DEFAULT_NETWORK_ADVISORS_PAGE),
   engageItems: pickList(cms?.engageItems, DEFAULT_NETWORK_ADVISORS_PAGE.engageItems ?? []),
   scheduleItems: pickList(cms?.scheduleItems, DEFAULT_NETWORK_ADVISORS_PAGE.scheduleItems ?? []),
   benefitsBullets: pickList(cms?.benefitsBullets, DEFAULT_NETWORK_ADVISORS_PAGE.benefitsBullets ?? []),
@@ -579,21 +569,12 @@ export const mergeNetworkAdvisorsPage = (
     cms?.whyFeatures,
     DEFAULT_NETWORK_ADVISORS_PAGE.whyFeatures ?? [],
   ),
-  directoryTitle: cms?.directoryTitle?.trim() || DEFAULT_NETWORK_ADVISORS_PAGE.directoryTitle,
-  directorySubtitle: cms?.directorySubtitle?.trim() || DEFAULT_NETWORK_ADVISORS_PAGE.directorySubtitle,
-  directoryCtaTitle: cms?.directoryCtaTitle?.trim() || DEFAULT_NETWORK_ADVISORS_PAGE.directoryCtaTitle,
-  directoryCtaBody: cms?.directoryCtaBody?.trim() || DEFAULT_NETWORK_ADVISORS_PAGE.directoryCtaBody,
-  directoryCtaPrimaryLabel:
-    cms?.directoryCtaPrimaryLabel?.trim() || DEFAULT_NETWORK_ADVISORS_PAGE.directoryCtaPrimaryLabel,
-  directoryCtaPrimaryHref:
-    cms?.directoryCtaPrimaryHref?.trim() || DEFAULT_NETWORK_ADVISORS_PAGE.directoryCtaPrimaryHref,
 })
 
 export const mergeNetworkInvestorsPage = (
   cms?: Partial<NetworkInvestorsPageContent> | null,
 ): NetworkInvestorsPageContent => ({
-  ...DEFAULT_NETWORK_INVESTORS_PAGE,
-  ...cms,
+  ...mergeNetworkHeroFields(cms, DEFAULT_NETWORK_INVESTORS_PAGE),
   whyFeatures: mergeNetworkWhyFeatures(
     cms?.whyFeatures,
     DEFAULT_NETWORK_INVESTORS_PAGE.whyFeatures ?? [],
@@ -606,8 +587,7 @@ export const mergeNetworkInvestorsPage = (
 export const mergeNetworkPartnersPage = (
   cms?: Partial<NetworkPartnersPageContent> | null,
 ): NetworkPartnersPageContent => ({
-  ...DEFAULT_NETWORK_PARTNERS_PAGE,
-  ...cms,
+  ...mergeNetworkHeroFields(cms, DEFAULT_NETWORK_PARTNERS_PAGE),
   engageItems: pickList(cms?.engageItems, DEFAULT_NETWORK_PARTNERS_PAGE.engageItems ?? []),
   benefitsBullets: pickList(cms?.benefitsBullets, DEFAULT_NETWORK_PARTNERS_PAGE.benefitsBullets ?? []),
   directoryBullets: pickList(cms?.directoryBullets, DEFAULT_NETWORK_PARTNERS_PAGE.directoryBullets ?? []),

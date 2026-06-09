@@ -1,8 +1,11 @@
 import {
   threePartHeroHeadline,
+  twoPartHeroHeadline,
+  DEFAULT_HOME_METRICS_HEADLINE_PORTABLE,
   DEFAULT_HOME_TESTIMONIALS_TITLE_PORTABLE,
   DEFAULT_PROGRAMS_LANDING_HERO_PORTABLE,
 } from "./inlineHeroHeadline"
+import { resolveHeroTitlePortable, resolveMetricsHeadlinePortable } from "./resolveHeroHeadline"
 import type {
   AboutPageContent,
   ApplyPageContent,
@@ -1395,7 +1398,10 @@ export const DEFAULT_HOME_PAGE: HomePageContent = {
   secondaryCtaLabel: "See our Programs",
   secondaryCtaPath: "/programs",
   heroBackgroundVideoUrl: "/videos/homehero.mp4",
-  metricsHeading: "The right people make all the difference.",
+  showBadge: true,
+  metricsBadgeLabel: "Network impact",
+  metricsHeadingPortable: DEFAULT_HOME_METRICS_HEADLINE_PORTABLE,
+  metricsBackgroundImageUrl: "/images/metrics-bg-pexels-2.jpg",
   metrics: [
     { label: "Members in the Rellia community", value: 291 },
     { label: "Health tech startups", value: 81 },
@@ -1621,7 +1627,7 @@ export const DEFAULT_HOME_PAGE: HomePageContent = {
 }
 
 export const DEFAULT_ABOUT_PAGE: AboutPageContent = {
-  heroHeadlinePortable: threePartHeroHeadline("Empowering the", "next generation", " of health tech."),
+  heroTitlePortable: threePartHeroHeadline("Empowering the", "next generation", " of health tech."),
   heroIntro:
     "Rellia Health is a virtual incubator dedicated to accelerating the commercialization of digital health solutions that matter.",
   missionTitle: "Our Mission",
@@ -2613,6 +2619,14 @@ export function mergeHomePage(partial: Partial<HomePageContent> | null | undefin
   if (!Array.isArray(base.testimonialsTitlePortable) || base.testimonialsTitlePortable.length === 0) {
     base.testimonialsTitlePortable = DEFAULT_HOME_PAGE.testimonialsTitlePortable
   }
+  base.metricsHeadingPortable = resolveMetricsHeadlinePortable(p, DEFAULT_HOME_PAGE.metricsHeadingPortable!)
+  if (base.showBadge == null) base.showBadge = DEFAULT_HOME_PAGE.showBadge ?? true
+  if (!base.metricsBadgeLabel?.trim()) {
+    base.metricsBadgeLabel = DEFAULT_HOME_PAGE.metricsBadgeLabel
+  }
+  if (!base.metricsBackgroundImageUrl?.trim()) {
+    base.metricsBackgroundImageUrl = DEFAULT_HOME_PAGE.metricsBackgroundImageUrl
+  }
   return base
 }
 
@@ -2626,8 +2640,8 @@ export function mergeAboutPage(partial: Partial<AboutPageContent> | null | undef
   base.values = values.length > 0 ? values : DEFAULT_ABOUT_PAGE.values
   const team = compactList(p.team)
   base.team = team.length > 0 ? team : DEFAULT_ABOUT_PAGE.team
-  if (!Array.isArray(base.heroHeadlinePortable) || base.heroHeadlinePortable.length === 0) {
-    base.heroHeadlinePortable = DEFAULT_ABOUT_PAGE.heroHeadlinePortable
+  if (!Array.isArray(base.heroTitlePortable) || base.heroTitlePortable.length === 0) {
+    base.heroTitlePortable = DEFAULT_ABOUT_PAGE.heroTitlePortable
   }
   return base
 }
@@ -2790,8 +2804,8 @@ export function mergePaymentPage(
   fill("heroSubheadline", DEFAULT_PAYMENT_PAGE.heroSubheadline)
   fill("imageCardBadge", DEFAULT_PAYMENT_PAGE.imageCardBadge)
   fill("imageCardSrc", DEFAULT_PAYMENT_PAGE.imageCardSrc)
-  if (!Array.isArray(base.heroHeadlinePortable) || base.heroHeadlinePortable.length === 0) {
-    base.heroHeadlinePortable = DEFAULT_PAYMENT_PAGE.heroHeadlinePortable
+  if (!Array.isArray(base.heroTitlePortable) || base.heroTitlePortable.length === 0) {
+    base.heroTitlePortable = DEFAULT_PAYMENT_PAGE.heroTitlePortable
   }
   if (!Array.isArray(base.imageCardHeadlinePortable) || base.imageCardHeadlinePortable.length === 0) {
     base.imageCardHeadlinePortable = DEFAULT_PAYMENT_PAGE.imageCardHeadlinePortable
@@ -2911,6 +2925,7 @@ const DEFAULT_CONSULTING_TESTIMONIALS: TrustedMemberTestimonial[] = [
 export const DEFAULT_CONSULTING_PAGE: ConsultingPageContent = {
   title: "Consulting",
   heroEyebrow: "Consulting",
+  heroTitlePortable: twoPartHeroHeadline("Founder consulting", "built for healthcare reality"),
   heroTitle: "Founder consulting",
   heroAccentPhrase: "built for healthcare reality",
   heroSubtitle:
@@ -2986,6 +3001,7 @@ export const DEFAULT_CONSULTING_PAGE: ConsultingPageContent = {
 export const DEFAULT_DIAGNOSTIC_LANDING_PAGE: DiagnosticLandingPageContent = {
   title: "Startup Diagnostic",
   heroBadgeLabel: "LAUNCH READINESS",
+  heroTitlePortable: twoPartHeroHeadline("Pressure-test your startup for", "healthcare reality."),
   heroTitle: "Pressure-test your startup for",
   heroAccentPhrase: "healthcare reality.",
   heroSubtitle:
@@ -3130,6 +3146,7 @@ export function mergeConsultingPage(
       "ctaPrimaryHref",
     ] as const
   ).forEach((key) => fillString(base, key, DEFAULT_CONSULTING_PAGE[key] as string))
+  base.heroTitlePortable = resolveHeroTitlePortable(p, DEFAULT_CONSULTING_PAGE.heroTitlePortable!)
   if (!base.heroImageSrc?.trim()) base.heroImageSrc = DEFAULT_CONSULTING_PAGE.heroImageSrc
   if (!base.fitImageSrc?.trim()) base.fitImageSrc = DEFAULT_CONSULTING_PAGE.fitImageSrc
   return base
@@ -3194,6 +3211,7 @@ export function mergeDiagnosticLandingPage(
       "ctaSecondaryHref",
     ] as const
   ).forEach((key) => fillString(base, key, DEFAULT_DIAGNOSTIC_LANDING_PAGE[key] as string))
+  base.heroTitlePortable = resolveHeroTitlePortable(p, DEFAULT_DIAGNOSTIC_LANDING_PAGE.heroTitlePortable!)
   if (!base.heroImageSrc?.trim()) base.heroImageSrc = DEFAULT_DIAGNOSTIC_LANDING_PAGE.heroImageSrc
   if (typeof base.infographicTopWeaknessScore !== "number") {
     base.infographicTopWeaknessScore = DEFAULT_DIAGNOSTIC_LANDING_PAGE.infographicTopWeaknessScore

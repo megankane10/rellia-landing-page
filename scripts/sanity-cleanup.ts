@@ -30,7 +30,9 @@ const SINGLETON_TYPES = [
   'eventsLandingPage',
   'storiesPage',
   'networkFoundersPage',
+  'networkAlumniDirectoryPage',
   'networkAdvisorsPage',
+  'networkAdvisorsDirectoryPage',
   'networkInvestorsPage',
   'networkPartnersPage',
 ] as const

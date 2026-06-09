@@ -4,6 +4,7 @@ import {
   CONTENT_SEO_GROUPS,
   singletonSeoField,
 } from '../shared/singletonContentFields'
+import {portableHeadlineField} from '../shared/inlineHeroHeadlineField'
 
 export const aboutPage = defineType({
   name: 'aboutPage',
@@ -12,15 +13,7 @@ export const aboutPage = defineType({
   groups: CONTENT_SEO_GROUPS,
   fieldsets: CONTENT_SEO_FIELDSETS,
   fields: [
-    defineField({
-      name: 'heroHeadlinePortable',
-      title: 'Hero headline',
-      type: 'inlineHeroHeadline',
-      description:
-        'One headline field. Select text and use Mint or Teal for accent colour, Strong for weight.',
-      group: 'content',
-      validation: (Rule) => Rule.required().min(1),
-    }),
+    portableHeadlineField({group: 'content', required: true}),
     defineField({name: 'heroIntro', type: 'text', rows: 3, group: 'content'}),
     defineField({name: 'missionTitle', type: 'string', group: 'content'}),
     defineField({name: 'missionParagraphs', type: 'array', of: [{type: 'text', rows: 4}], group: 'content'}),

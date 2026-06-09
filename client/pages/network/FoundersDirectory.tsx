@@ -16,10 +16,10 @@ import { NETWORK_PATH_ROLE_TAG } from "@/lib/networkPathRoles"
 import {
   useAlumniCompanies,
   useDirectoryFilterGroups,
-  useNetworkFoundersPage,
+  useNetworkAlumniDirectoryPage,
   type DirectoryFilterGroup,
 } from "@/hooks/useCmsDocuments"
-import { mergeNetworkFoundersPage } from "@shared/cms/networkPageDefaults"
+import { mergeNetworkAlumniDirectoryPage } from "@shared/cms/directoryPageDefaults"
 import { FOUNDER_DIRECTORY, type FounderCompany } from "@/data/founderDirectory"
 import { isSanityConfigured } from "@/lib/sanity"
 import { allowCmsSeedFallbacks } from "@/lib/deploymentEnv"
@@ -130,8 +130,8 @@ function FounderDirectoryCard({
 }
 
 export default function FoundersDirectory() {
-  const { data: foundersPageRaw } = useNetworkFoundersPage()
-  const foundersPage = mergeNetworkFoundersPage(foundersPageRaw ?? undefined)
+  const { data: alumniDirectoryRaw } = useNetworkAlumniDirectoryPage()
+  const alumniDirectory = mergeNetworkAlumniDirectoryPage(alumniDirectoryRaw ?? undefined)
   const reduceMotion = useReducedMotion()
   const location = useLocation()
   const companiesQuery = useAlumniCompanies()
@@ -189,7 +189,7 @@ export default function FoundersDirectory() {
     return logoSrc ? resolveSocialOgImageUrl(logoSrc) : undefined
   }, [companies])
 
-  useApplyCmsSeo(null, {
+  useApplyCmsSeo(alumniDirectory.seo, {
     ogImage: alumniDirectoryOgImage,
   })
 
@@ -275,9 +275,9 @@ export default function FoundersDirectory() {
               <TagIcon className="h-3.5 w-3.5 shrink-0" aria-hidden />
               Founders
             </div>
-            <h1 className={DIRECTORY_TITLE_CLASS}>{foundersPage.directoryTitle ?? "Explore Alumni"}</h1>
+            <h1 className={DIRECTORY_TITLE_CLASS}>{alumniDirectory.directoryTitle ?? "Explore Alumni"}</h1>
             <p className="mt-4 max-w-2xl font-urbanist text-lg leading-relaxed text-black/70">
-              {foundersPage.directorySubtitle}
+              {alumniDirectory.directorySubtitle}
             </p>
           </div>
         </section>
@@ -435,11 +435,11 @@ export default function FoundersDirectory() {
         </section>
 
         <RelliaCta
-          title={foundersPage.directoryCtaTitle ?? "Ready to build your network?"}
-          body={foundersPage.directoryCtaBody}
+          title={alumniDirectory.directoryCtaTitle ?? "Ready to build your network?"}
+          body={alumniDirectory.directoryCtaBody}
           primary={{
-            label: foundersPage.directoryCtaPrimaryLabel ?? "Apply for Membership",
-            to: foundersPage.directoryCtaPrimaryHref ?? "/apply",
+            label: alumniDirectory.directoryCtaPrimaryLabel ?? "Apply for Membership",
+            to: alumniDirectory.directoryCtaPrimaryHref ?? "/apply",
           }}
         />
       </main>

@@ -62,6 +62,10 @@ export type NetworkDirectoryChrome = {
   directoryCtaPrimaryHref?: string
 }
 
+export type NetworkDirectoryPageContent = NetworkDirectoryChrome & {
+  seo?: SeoContent
+}
+
 export type CareersPageContent = NetworkHeroContent & {
   heroTitleSuffix?: string
   careersContentMode?: CareersContentMode
@@ -343,7 +347,8 @@ export type CmsSectionMarketingHero = {
   _type: "sectionMarketingHero"
   _key?: string
   eyebrowLabel?: string
-  title: string
+  headlinePortable?: SanityPortableText
+  title?: string
   accentPhrase?: string
   subtitle?: string
   imageUrl?: string
@@ -364,7 +369,8 @@ export type CmsSectionMetrics = {
   _key?: string
   showBadge?: boolean
   badgeLabel?: string
-  heading: string
+  headlinePortable?: SanityPortableText
+  heading?: string
   subheading?: string
   metrics?: CmsSectionMetricsItem[]
   imageUrl?: string
@@ -484,7 +490,10 @@ export type NetworkPitchCard = {
 
 export type NetworkHeroContent = {
   heroEyebrow?: string
+  heroTitlePortable?: SanityPortableText
+  /** @deprecated Split fields — only used when migrating old documents. */
   heroTitle?: string
+  /** @deprecated Split fields — only used when migrating old documents. */
   heroAccentPhrase?: string
   heroSubtitle?: string
   heroImageSrc?: string
@@ -495,8 +504,7 @@ export type NetworkHeroContent = {
 }
 
 export type NetworkFoundersPageContent = CmsSingletonPageContent &
-  NetworkHeroContent &
-  NetworkDirectoryChrome & {
+  NetworkHeroContent & {
     eligibilityTitle?: string
     eligibilityDescription?: string
     eligibilityItems?: NetworkEligibilityItem[]
@@ -526,8 +534,7 @@ export type NetworkFoundersPageContent = CmsSingletonPageContent &
   }
 
 export type NetworkAdvisorsPageContent = CmsSingletonPageContent &
-  NetworkHeroContent &
-  NetworkDirectoryChrome & {
+  NetworkHeroContent & {
     engageTitle?: string
     engageSubtitle?: string
     engageItems?: NetworkEngageCard[]
@@ -582,7 +589,10 @@ export type NetworkPartnersPageContent = CmsSingletonPageContent &
 
 export type ConsultingPageContent = CmsSingletonPageContent & {
   heroEyebrow?: string
+  heroTitlePortable?: SanityPortableText
+  /** @deprecated Split fields — only used when migrating old documents. */
   heroTitle?: string
+  /** @deprecated Split fields — only used when migrating old documents. */
   heroAccentPhrase?: string
   heroSubtitle?: string
   heroImageSrc?: string
@@ -626,7 +636,10 @@ export type DiagnosticReadinessFeature = {
 
 export type DiagnosticLandingPageContent = CmsSingletonPageContent & {
   heroBadgeLabel?: string
+  heroTitlePortable?: SanityPortableText
+  /** @deprecated Split fields — only used when migrating old documents. */
   heroTitle?: string
+  /** @deprecated Split fields — only used when migrating old documents. */
   heroAccentPhrase?: string
   heroSubtitle?: string
   heroImageSrc?: string
@@ -705,7 +718,11 @@ export type HomePageContent = {
   secondaryCtaPath: string
   /** Resolved MP4/WebM URL: uploaded file in Studio, or fallback string, or site default in merge */
   heroBackgroundVideoUrl?: string
-  metricsHeading: string
+  showBadge?: boolean
+  metricsBadgeLabel?: string
+  metricsHeadingPortable?: SanityPortableText
+  metricsHeading?: string
+  metricsBackgroundImageUrl?: string
   metrics: HomeMetric[]
   whySectionTitle?: string
   whySectionDescription?: string
@@ -775,7 +792,7 @@ export type AboutTeamMember = {
 }
 
 export type AboutPageContent = {
-  heroHeadlinePortable: SanityPortableText
+  heroTitlePortable: SanityPortableText
   heroIntro: string
   missionTitle: string
   missionParagraphs: string[]
@@ -1081,7 +1098,7 @@ export type PaymentPageContent = CmsPageVisibility & {
   discountBannerApplyLabel: string
   discountBannerApplyHref: string
   /** Legacy membership layout — not rendered on /membership */
-  heroHeadlinePortable?: SanityPortableText
+  heroTitlePortable?: SanityPortableText
   heroSubheadline?: string
   imageCardBadge?: string
   imageCardHeadlinePortable?: SanityPortableText

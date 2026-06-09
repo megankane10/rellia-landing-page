@@ -1,5 +1,6 @@
 import {defineField, defineType} from 'sanity'
 import {preparePortableHeadlinePreview} from '../shared/portableTextPreview'
+import {portableHeadlineField} from '../shared/inlineHeroHeadlineField'
 import {
   CONTENT_SEO_FIELDSETS,
   CONTENT_SEO_GROUPS,
@@ -19,14 +20,7 @@ export const programsLandingPage = defineType({
   ],
   fieldsets: CONTENT_SEO_FIELDSETS,
   fields: [
-    defineField({
-      name: 'heroTitlePortable',
-      title: 'Hero headline',
-      type: 'inlineHeroHeadline',
-      description: 'Use Mint/Teal decorators for highlighted phrases.',
-      group: 'hero',
-      validation: (Rule) => Rule.required().min(1),
-    }),
+    portableHeadlineField({group: 'hero', required: true}),
     defineField({name: 'heroSubtitle', title: 'Hero subtitle', type: 'text', rows: 3, group: 'hero'}),
     defineField({name: 'heroPrimaryCtaLabel', title: 'Primary button label', type: 'string', group: 'hero'}),
     defineField({name: 'heroSecondaryCtaLabel', title: 'Secondary button label', type: 'string', group: 'hero'}),

@@ -24,6 +24,8 @@ export const SANITY_QUERY_WHITELIST = {
   pageBySlug: { query: G.pageBySlugQuery, params: slugParams },
   networkFoundersPage: { query: G.networkFoundersPageQuery, params: empty },
   networkAdvisorsPage: { query: G.networkAdvisorsPageQuery, params: empty },
+  networkAlumniDirectoryPage: { query: G.networkAlumniDirectoryPageQuery, params: empty },
+  networkAdvisorsDirectoryPage: { query: G.networkAdvisorsDirectoryPageQuery, params: empty },
   networkInvestorsPage: { query: G.networkInvestorsPageQuery, params: empty },
   networkPartnersPage: { query: G.networkPartnersPageQuery, params: empty },
   diagnosticLandingPage: { query: G.diagnosticLandingPageQuery, params: empty },

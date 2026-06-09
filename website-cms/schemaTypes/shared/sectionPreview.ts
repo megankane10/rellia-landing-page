@@ -19,12 +19,15 @@ export const sectionListPreview = ({
     badge: 'badge',
     tag: 'tag',
     heading: 'heading',
+    headlinePortable: 'headlinePortable',
   },
   prepare(selection) {
     const label =
       (typeof selection.internalLabel === 'string' && selection.internalLabel.trim()) ||
       (typeof selection.title === 'string' && selection.title.trim()) ||
       (typeof selection.heading === 'string' && selection.heading.trim()) ||
+      (Array.isArray(selection.headlinePortable) &&
+        selection.headlinePortable[0]?.children?.[0]?.text?.trim()) ||
       (typeof selection.badge === 'string' && selection.badge.trim()) ||
       (typeof selection.tag === 'string' && selection.tag.trim()) ||
       fallback ||

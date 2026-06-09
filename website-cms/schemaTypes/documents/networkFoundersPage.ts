@@ -12,7 +12,6 @@ import {
   networkJourneyStepMember,
   networkWhyRelliaFields,
 } from '../shared/networkPageFields'
-import {networkDirectoryChromeFields} from '../shared/directoryPageFields'
 
 export const networkFoundersPage = defineType({
   name: 'networkFoundersPage',
@@ -75,7 +74,6 @@ export const networkFoundersPage = defineType({
     defineField({name: 'deeperHelpCtaLabel', title: 'Consulting CTA label', type: 'string', group: 'content'}),
     defineField({name: 'deeperHelpCtaHref', title: 'Consulting CTA link', type: 'string', group: 'content'}),
     ...networkCtaFields,
-    ...networkDirectoryChromeFields,
     {...logoMarqueeField, group: 'content'},
     singletonSeoField,
   ],

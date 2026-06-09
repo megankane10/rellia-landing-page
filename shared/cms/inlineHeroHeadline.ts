@@ -77,5 +77,11 @@ export const DEFAULT_HOME_TESTIMONIALS_TITLE_PORTABLE: SanityPortableText = twoP
   "teal",
 )
 
+export const DEFAULT_HOME_METRICS_HEADLINE_PORTABLE: SanityPortableText = threePartHeroHeadline(
+  "The right people make",
+  "all the difference",
+  ".",
+)
+
 export const DEFAULT_ABOUT_HERO_LINE2_PORTABLE: SanityPortableText = fullMintLineHeroHeadline("next generation")
 

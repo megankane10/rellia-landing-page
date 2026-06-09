@@ -14,7 +14,8 @@ import LogoMarquee from "@/components/LogoMarquee"
 import { CreamSection, GlassCardLight, LightSection, Reveal, RoleHero } from "./_shared"
 import { useNetworkAdvisorsPage } from "@/hooks/useCmsDocuments"
 import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo"
-import { mergeNetworkAdvisorsPage } from "@shared/cms/networkPageDefaults"
+import { mergeNetworkAdvisorsPage, DEFAULT_NETWORK_ADVISORS_PAGE } from "@shared/cms/networkPageDefaults"
+import { NetworkHeroTitle } from "@/components/NetworkHeroTitle"
 import type { NetworkAdvisorsPageContent } from "@shared/cms/types"
 import { resolveNetworkIcon } from "@/lib/resolveNetworkIcon"
 
@@ -240,8 +241,7 @@ export default function Advisors() {
             className="lg:flex-1"
             title={
               <>
-                {content.heroTitle ?? "Some people are just wired to help"}{" "}
-                <span className="text-rellia-mint">{content.heroAccentPhrase ?? "others succeed."}</span>
+                <NetworkHeroTitle content={content} fallback={DEFAULT_NETWORK_ADVISORS_PAGE.heroTitlePortable!} />
               </>
             }
             subtitle={content.heroSubtitle ?? "Mentor serious health tech founders through structured, respectful engagements—stay sharp on innovation while keeping flexibility for your career."}

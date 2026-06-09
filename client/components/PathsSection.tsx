@@ -10,6 +10,7 @@ import RelliaAction from "@/components/RelliaAction"
 import ScrollReveal from "@/components/ScrollReveal"
 import { useHomePage } from "@/hooks/useCmsDocuments"
 import { DEFAULT_HOME_PAGE } from "@shared/cms/defaults"
+import { resolveMetricsHeadlinePortable } from "@shared/cms/resolveHeroHeadline"
 import type { HomePathsCard } from "@shared/cms/types"
 import NetworkMetricsSection from "@/components/NetworkMetricsSection"
 import { PILL_ON_IMAGE_BLUR_CLASS } from "@/components/PillTag"
@@ -278,8 +279,11 @@ export default function PathsSection() {
     </section>
 
     <NetworkMetricsSection
-      heading={page.metricsHeading || ""}
+      heading={resolveMetricsHeadlinePortable(page, DEFAULT_HOME_PAGE.metricsHeadingPortable!)}
       metrics={page.metrics || []}
+      showBadge={page.showBadge !== false}
+      badgeLabel={page.metricsBadgeLabel || "Network impact"}
+      backgroundImageUrl={page.metricsBackgroundImageUrl}
     />
     </>
   )

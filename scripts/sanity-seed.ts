@@ -54,6 +54,10 @@ import {
 import { PORTFOLIO_LOGO_MARKS, INVESTOR_LOGO_MARKS } from "../client/data/portfolioLogos"
 import { ROUTE_SEO } from "../client/config/seo"
 import {
+  DEFAULT_NETWORK_ALUMNI_DIRECTORY_PAGE,
+  DEFAULT_NETWORK_ADVISORS_DIRECTORY_PAGE,
+} from "../shared/cms/directoryPageDefaults"
+import {
   DEFAULT_NETWORK_ADVISORS_PAGE,
   DEFAULT_NETWORK_FOUNDERS_PAGE,
   DEFAULT_NETWORK_INVESTORS_PAGE,
@@ -1083,6 +1087,22 @@ async function main() {
   })
   mutations.push({
     createOrReplace: {
+      _id: "networkAlumniDirectoryPage",
+      _type: "networkAlumniDirectoryPage",
+      ...DEFAULT_NETWORK_ALUMNI_DIRECTORY_PAGE,
+      seo: seoForRoute("/founders/alumni"),
+    },
+  })
+  mutations.push({
+    createOrReplace: {
+      _id: "networkAdvisorsDirectoryPage",
+      _type: "networkAdvisorsDirectoryPage",
+      ...DEFAULT_NETWORK_ADVISORS_DIRECTORY_PAGE,
+      seo: seoForRoute("/advisors/directory"),
+    },
+  })
+  mutations.push({
+    createOrReplace: {
       _id: "networkInvestorsPage",
       _type: "networkInvestorsPage",
       ...DEFAULT_NETWORK_INVESTORS_PAGE,
@@ -1171,13 +1191,13 @@ async function main() {
       seo: seoForRoute("/"),
     },
   })
-  const { heroHeadlinePortable: _aboutHeroDefault, ...aboutFields } = DEFAULT_ABOUT_PAGE
+  const { heroTitlePortable: _aboutHeroDefault, ...aboutFields } = DEFAULT_ABOUT_PAGE
   mutations.push({
     createOrReplace: {
       _id: "aboutPage",
       _type: "aboutPage",
       ...aboutFields,
-      heroHeadlinePortable: threePartHeroHeadline("Empowering the", "next generation", " of health tech."),
+      heroTitlePortable: threePartHeroHeadline("Empowering the", "next generation", " of health tech."),
       seo: seoForRoute("/about"),
     },
   })

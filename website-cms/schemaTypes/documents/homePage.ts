@@ -5,6 +5,8 @@ import {
 } from '../shared/singletonContentFields'
 import { GROUP_SEO } from '../shared/fieldGroups'
 import { imageUploadField, imageUrlFallbackField } from '../shared/imageFields'
+import { showBadgeField } from '../shared/sectionAppearanceFields'
+import { portableHeadlineField } from '../shared/inlineHeroHeadlineField'
 
 const GROUP_HERO = { name: 'hero', title: '1 · Hero', default: true }
 const GROUP_PATHS = { name: 'paths', title: '2 · Paths section' }
@@ -115,13 +117,22 @@ export const homePage = defineType({
     }),
 
     // —— 3 · Metrics band (below paths grid) ——
+    defineField({ ...showBadgeField, group: 'metrics' }),
     defineField({
-      name: 'metricsHeading',
-      title: 'Metrics title',
+      name: 'metricsBadgeLabel',
+      title: 'Badge label',
       type: 'string',
       group: 'metrics',
-      initialValue: 'The right people make all the difference.',
+      initialValue: 'Network impact',
+      hidden: ({ parent }) => parent?.showBadge === false,
     }),
+    portableHeadlineField({
+      name: 'metricsHeadingPortable',
+      title: 'Metrics title',
+      group: 'metrics',
+    }),
+    imageUploadField('metricsBackgroundImage', 'Background image', { group: 'metrics' }),
+    imageUrlFallbackField('metricsBackgroundImageUrl', 'Background image URL (fallback)', 'metrics'),
     defineField({
       name: 'metrics',
       title: 'Metrics',

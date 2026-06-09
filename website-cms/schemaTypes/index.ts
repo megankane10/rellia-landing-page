@@ -27,6 +27,10 @@ import {networkFoundersPage} from './documents/networkFoundersPage'
 import {networkAdvisorsPage} from './documents/networkAdvisorsPage'
 import {networkInvestorsPage} from './documents/networkInvestorsPage'
 import {networkPartnersPage} from './documents/networkPartnersPage'
+import {
+  networkAlumniDirectoryPage,
+  networkAdvisorsDirectoryPage,
+} from './documents/networkDirectoryPages'
 import {consultingPage} from './documents/consultingPage'
 import {diagnosticLandingPage} from './documents/diagnosticLandingPage'
 import {termsPage} from './documents/termsPage'
@@ -94,6 +98,8 @@ export const schemaTypes = [
   networkAdvisorsPage,
   networkInvestorsPage,
   networkPartnersPage,
+  networkAlumniDirectoryPage,
+  networkAdvisorsDirectoryPage,
   consultingPage,
   diagnosticLandingPage,
   termsPage,

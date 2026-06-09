@@ -47,7 +47,8 @@ import {
 import { useNetworkFoundersPage } from "@/hooks/useCmsDocuments";
 import { PORTFOLIO_LOGO_MARKS } from "@/data/portfolioLogos";
 import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo";
-import { mergeNetworkFoundersPage } from "@shared/cms/networkPageDefaults";
+import { mergeNetworkFoundersPage, DEFAULT_NETWORK_FOUNDERS_PAGE } from "@shared/cms/networkPageDefaults"
+import { NetworkHeroTitle } from "@/components/NetworkHeroTitle";
 import type { NetworkFoundersPageContent } from "@shared/cms/types";
 import { resolveNetworkIcon } from "@/lib/resolveNetworkIcon";
 import WhyRellia from "@/components/WhyRellia";
@@ -414,8 +415,7 @@ function FoundersHero({ content }: { content: NetworkFoundersPageContent }) {
               PAGE_HEADER_TITLE_SIZE_CLASS,
             )}
           >
-            {content.heroTitle ?? "Are you building in"}{" "}
-            <span className="text-rellia-mint">{content.heroAccentPhrase ?? "health tech?"}</span>
+            <NetworkHeroTitle content={content} fallback={DEFAULT_NETWORK_FOUNDERS_PAGE.heroTitlePortable!} />
           </h1>
           <p className="mt-6 max-w-2xl font-urbanist text-lg leading-relaxed text-white md:text-xl [&_span]:!text-white [&_strong]:!text-white">
             {content.heroSubtitle ??

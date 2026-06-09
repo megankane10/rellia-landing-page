@@ -15,7 +15,8 @@ import RelliaCta from "@/components/RelliaCta"
 import { CreamSection, GlassCardLight, LightSection, Reveal, RoleHero } from "./_shared"
 import { useNetworkPartnersPage } from "@/hooks/useCmsDocuments"
 import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo"
-import { mergeNetworkPartnersPage } from "@shared/cms/networkPageDefaults"
+import { mergeNetworkPartnersPage, DEFAULT_NETWORK_PARTNERS_PAGE } from "@shared/cms/networkPageDefaults"
+import { NetworkHeroTitle } from "@/components/NetworkHeroTitle"
 import type { NetworkPartnersPageContent } from "@shared/cms/types"
 import { resolveNetworkIcon } from "@/lib/resolveNetworkIcon"
 
@@ -280,8 +281,7 @@ export default function Partners() {
             className="lg:flex-1"
           title={
             <>
-              {content.heroTitle ?? "Reach the health tech founders"}{" "}
-              <span className="text-rellia-mint">{content.heroAccentPhrase ?? "who need you."}</span>
+              <NetworkHeroTitle content={content} fallback={DEFAULT_NETWORK_PARTNERS_PAGE.heroTitlePortable!} />
             </>
           }
           subtitle={content.heroSubtitle ?? "Pilot design, integration support, and enterprise credibility—so promising products don't die in procurement limbo."}

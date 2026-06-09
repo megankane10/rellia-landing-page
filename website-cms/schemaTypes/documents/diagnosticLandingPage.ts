@@ -6,6 +6,7 @@ import {
 } from '../shared/singletonContentFields'
 import {GROUP_SEO} from '../shared/fieldGroups'
 import {studioListMedia} from '../shared/studioListMedia'
+import {portableHeadlineField} from '../shared/inlineHeroHeadlineField'
 
 const GROUP_HERO = {name: 'hero', title: 'Hero', default: true}
 const GROUP_READINESS = {name: 'readiness', title: 'Feature cards (image panels)'}
@@ -47,22 +48,7 @@ export const diagnosticLandingPage = defineType({
       group: 'hero',
       fieldset: 'heroDivider',
     }),
-    defineField({
-      name: 'heroTitle',
-      title: 'Hero headline (before accent)',
-      type: 'string',
-      initialValue: 'Pressure-test your startup for',
-      group: 'hero',
-      fieldset: 'heroDivider',
-    }),
-    defineField({
-      name: 'heroAccentPhrase',
-      title: 'Hero accent phrase (mint)',
-      type: 'string',
-      initialValue: 'healthcare reality.',
-      group: 'hero',
-      fieldset: 'heroDivider',
-    }),
+    portableHeadlineField({group: 'hero', fieldset: 'heroDivider'}),
     defineField({name: 'heroSubtitle', title: 'Hero subtitle', type: 'text', rows: 3, group: 'hero', fieldset: 'heroDivider'}),
     defineField({name: 'heroImage', title: 'Hero image', type: 'image', options: {hotspot: true}, group: 'hero', fieldset: 'heroDivider'}),
     defineField({name: 'heroImageUrl', title: 'Hero image URL (fallback)', type: 'string', group: 'hero', fieldset: 'heroDivider'}),

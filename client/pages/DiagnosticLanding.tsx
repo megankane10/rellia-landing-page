@@ -13,6 +13,7 @@ import WhyRellia from '@/components/WhyRellia'
 import MembershipPathTimeline from '@/components/MembershipPathTimeline'
 import RelliaCta from '@/components/RelliaCta'
 import { DEFAULT_DIAGNOSTIC_LANDING_PAGE } from '@shared/cms/defaults'
+import { NetworkHeroTitle } from "@/components/NetworkHeroTitle"
 
 const HERO_TRUST_BADGES = [
   { label: "100% Private", icon: ShieldCheck },
@@ -57,12 +58,10 @@ function DiagnosticFallback({ content }: { content: DiagnosticLandingPageContent
           imageSrc={content.heroImageSrc ?? DEFAULT_DIAGNOSTIC_LANDING_PAGE.heroImageSrc}
           className="lg:flex-1"
           title={
-            <>
-              {content.heroTitle ?? DEFAULT_DIAGNOSTIC_LANDING_PAGE.heroTitle}{" "}
-              <span className="text-rellia-mint">
-                {content.heroAccentPhrase ?? DEFAULT_DIAGNOSTIC_LANDING_PAGE.heroAccentPhrase}
-              </span>
-            </>
+            <NetworkHeroTitle
+              content={content}
+              fallback={DEFAULT_DIAGNOSTIC_LANDING_PAGE.heroTitlePortable!}
+            />
           }
           subtitle={content.heroSubtitle ?? DEFAULT_DIAGNOSTIC_LANDING_PAGE.heroSubtitle}
           primaryCta={{

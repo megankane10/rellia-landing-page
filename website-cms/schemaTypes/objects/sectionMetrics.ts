@@ -1,6 +1,7 @@
 import {defineArrayMember, defineField, defineType} from 'sanity'
 import {internalLabelField, sectionListPreview} from '../shared/sectionPreview'
 import {showBadgeField} from '../shared/sectionAppearanceFields'
+import {portableHeadlineField} from '../shared/inlineHeroHeadlineField'
 
 /** Page-builder metrics — white band with stats and optional side image. */
 export const sectionMetrics = defineType({
@@ -17,7 +18,7 @@ export const sectionMetrics = defineType({
       initialValue: 'Network impact',
       hidden: ({parent}) => parent?.showBadge === false,
     }),
-    defineField({name: 'heading', title: 'Heading', type: 'string', validation: (Rule) => Rule.required()}),
+    portableHeadlineField({name: 'headlinePortable', title: 'Heading', required: true}),
     defineField({name: 'subheading', title: 'Subheading', type: 'text', rows: 3}),
     defineField({
       name: 'metrics',

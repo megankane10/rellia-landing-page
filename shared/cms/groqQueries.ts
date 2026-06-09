@@ -29,8 +29,7 @@ const logoMarqueeFragment = `logoMarquee[]{
 }`
 
 const networkHeroFragment = `heroEyebrow,
-  heroTitle,
-  heroAccentPhrase,
+  "heroTitlePortable": coalesce(heroTitlePortable, heroHeadlinePortable),
   heroSubtitle,
   "heroImageSrc": coalesce(heroImage.asset->url, heroImageUrl),
   heroPrimaryCtaLabel,
@@ -294,27 +293,21 @@ export const networkFoundersPageQuery = `*[_id == "networkFoundersPage"][0]{
   deeperHelpCtaLabel,
   deeperHelpCtaHref,
   ${networkCtaFragment},
+  ${logoMarqueeFragment},
+  ${seoFragment}
+}`
+
+export const networkAlumniDirectoryPageQuery = `*[_id == "networkAlumniDirectoryPage"][0]{
   directoryTitle,
   directorySubtitle,
   directoryCtaTitle,
   directoryCtaBody,
   directoryCtaPrimaryLabel,
   directoryCtaPrimaryHref,
-  ${logoMarqueeFragment},
   ${seoFragment}
 }`
 
-export const networkAdvisorsPageQuery = `*[_id == "networkAdvisorsPage"][0]{
-  title,
-  ${networkHeroFragment},
-  ${networkEngageFragment},
-  scheduleTitle,
-  scheduleItems[]{ title, body, iconKey },
-  benefitsTitle,
-  benefitsDescription,
-  benefitsBullets,
-  ${networkWhyFragment},
-  ${networkCtaFragment},
+export const networkAdvisorsDirectoryPageQuery = `*[_id == "networkAdvisorsDirectoryPage"][0]{
   directoryTitle,
   directorySubtitle,
   directoryCtaTitle,
@@ -325,6 +318,20 @@ export const networkAdvisorsPageQuery = `*[_id == "networkAdvisorsPage"][0]{
 }`
 
 export const networkInvestorsPageQuery = `*[_id == "networkInvestorsPage"][0]{
+  title,
+  ${networkHeroFragment},
+  ${networkEngageFragment},
+  scheduleTitle,
+  scheduleItems[]{ title, body, iconKey },
+  benefitsTitle,
+  benefitsDescription,
+  benefitsBullets,
+  ${networkWhyFragment},
+  ${networkCtaFragment},
+  ${seoFragment}
+}`
+
+export const networkAdvisorsPageQuery = `*[_id == "networkAdvisorsPage"][0]{
   title,
   ${networkHeroFragment},
   ${networkWhyFragment},
@@ -369,8 +376,7 @@ const landingTestimonialsFragment = `testimonials[]{
 export const diagnosticLandingPageQuery = `*[_id == "diagnosticLandingPage"][0]{
   title,
   heroBadgeLabel,
-  heroTitle,
-  heroAccentPhrase,
+  "heroTitlePortable": coalesce(heroTitlePortable, heroHeadlinePortable),
   heroSubtitle,
   "heroImageSrc": coalesce(heroImage.asset->url, heroImageUrl),
   heroPrimaryCtaLabel,
@@ -410,8 +416,7 @@ export const diagnosticLandingPageQuery = `*[_id == "diagnosticLandingPage"][0]{
 export const consultingPageQuery = `*[_id == "consultingPage"][0]{
   title,
   heroEyebrow,
-  heroTitle,
-  heroAccentPhrase,
+  "heroTitlePortable": coalesce(heroTitlePortable, heroHeadlinePortable),
   heroSubtitle,
   "heroImageSrc": coalesce(heroImage.asset->url, heroImageUrl),
   heroPrimaryCtaLabel,
@@ -470,7 +475,10 @@ export const homePageQuery = `*[_id == "homePage"][0]{
   secondaryCtaLabel,
   secondaryCtaPath,
   "heroBackgroundVideoUrl": coalesce(heroBackgroundVideo.asset->url, heroBackgroundVideoUrl),
-  metricsHeading,
+  showBadge,
+  metricsBadgeLabel,
+  metricsHeadingPortable,
+  "metricsBackgroundImageUrl": coalesce(metricsBackgroundImage.asset->url, metricsBackgroundImageUrl),
   metrics[]{ label, value, suffix },
   howItWorksSectionTitle,
   howItWorksSectionDescription,
@@ -514,7 +522,7 @@ export const homePageQuery = `*[_id == "homePage"][0]{
 }`;
 
 export const aboutPageQuery = `*[_id == "aboutPage"][0]{
-  heroHeadlinePortable,
+  "heroTitlePortable": coalesce(heroTitlePortable, heroHeadlinePortable),
   heroIntro,
   missionTitle,
   missionParagraphs,
@@ -820,7 +828,7 @@ export const paymentPageQuery = `*[_id == "paymentPage"][0]{
   discountBannerSubtitle,
   discountBannerApplyLabel,
   discountBannerApplyHref,
-  heroHeadlinePortable,
+  "heroTitlePortable": coalesce(heroTitlePortable, heroHeadlinePortable),
   heroSubheadline,
   imageCardBadge,
   imageCardHeadlinePortable,

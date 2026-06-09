@@ -4,7 +4,9 @@ import { useEffect, useMemo, useRef, useState } from "react"
 import { cn } from "@/lib/utils"
 import PillTag, { PILL_ON_IMAGE_BLUR_CLASS } from "@/components/PillTag"
 import { PAGE_HEADER_TITLE_SIZE_CLASS } from "@/components/PageHeader"
-import { cmsCleanText, cmsDisplayText, isVisualEditingPreview, splitStega } from "@/lib/cmsStega"
+import { HeroHeadlinePortable } from "@/components/HeroHeadlinePortable"
+import { cmsCleanText, cmsDisplayText, isVisualEditingPreview } from "@/lib/cmsStega"
+import type { SanityPortableText } from "@shared/cms/types"
 
 function useCountUp(target: number, enabled: boolean, durationMs = 1200) {
   const [value, setValue] = useState(0);
@@ -48,49 +50,17 @@ export type NetworkMetric = {
 };
 
 type NetworkMetricsSectionProps = {
-  heading: string;
-  subheading?: string;
-  metrics: NetworkMetric[];
+  heading: SanityPortableText | string
+  subheading?: string
+  metrics: NetworkMetric[]
   /** When false, renders edge-to-edge without rounded container (page builder). */
-  contained?: boolean;
-  showBadge?: boolean;
-  badgeLabel?: string;
-};
-
-function AccentHeading({ text }: { text: string }) {
-  const target = "all the difference"
-  const { cleaned: raw, encoded: stegaTail } = splitStega(text)
-  const trimmed = raw.trim()
-  if (!trimmed) return null
-
-  const idx = trimmed.toLowerCase().indexOf(target)
-  if (idx === -1) {
-    return (
-      <>
-        {cmsDisplayText(text)}
-      </>
-    )
-  }
-
-  const before = trimmed.slice(0, idx).trimEnd()
-  const match = trimmed.slice(idx, idx + target.length)
-  const after = trimmed.slice(idx + target.length)
-
-  return (
-    <>
-      {before ? (
-        <>
-          <span className="inline">{before}</span>
-          <span className="md:hidden"> </span>
-          <br className="hidden md:block" aria-hidden />
-        </>
-      ) : null}
-      <span className="text-rellia-mint">{match}</span>
-      {after}
-      {stegaTail ? <span className="sr-only">{stegaTail}</span> : null}
-    </>
-  )
+  contained?: boolean
+  showBadge?: boolean
+  badgeLabel?: string
+  backgroundImageUrl?: string
 }
+
+const DEFAULT_METRICS_BACKGROUND = "/images/metrics-bg-pexels-2.jpg"
 
 const METRIC_ROW_ICONS: LucideIcon[] = [Users, Rocket, Globe]
 const METRIC_FALLBACK_LABELS = ["Members", "Startups", "Countries"]
@@ -141,6 +111,7 @@ export default function NetworkMetricsSection({
   contained = true,
   showBadge = true,
   badgeLabel = "Network impact",
+  backgroundImageUrl,
 }: NetworkMetricsSectionProps) {
   const sectionRef = useRef<HTMLDivElement | null>(null);
   const [entered, setEntered] = useState(false);
@@ -157,6 +128,7 @@ export default function NetworkMetricsSection({
   }, [])
 
   const metricList = useMemo(() => metrics, [metrics]);
+  const metricsBackgroundSrc = cmsCleanText(backgroundImageUrl) || DEFAULT_METRICS_BACKGROUND
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ["start 95%", "end 5%"],
@@ -223,7 +195,7 @@ export default function NetworkMetricsSection({
       >
         <div className="absolute inset-0 overflow-hidden" aria-hidden>
           <motion.img
-            src="/images/metrics-bg-pexels-2.jpg"
+            src={metricsBackgroundSrc}
             alt=""
             className="h-full w-full object-cover scale-[1.12] object-[62%_50%]"
             style={reduceMotion ? undefined : { y: bgY }}
@@ -249,7 +221,7 @@ export default function NetworkMetricsSection({
               <div className="mb-4 md:mb-6">
                 {showBadge ? (
                   <PillTag
-                    label={badgeLabel}
+                    label={cmsDisplayText(badgeLabel) || badgeLabel}
                     className={PILL_ON_IMAGE_BLUR_CLASS}
                     dot={
                       <motion.span
@@ -266,7 +238,7 @@ export default function NetworkMetricsSection({
               <h2
                 className={`font-host-grotesk max-w-3xl font-bold leading-tight tracking-tight text-white ${PAGE_HEADER_TITLE_SIZE_CLASS}`}
               >
-                <AccentHeading text={heading} />
+                <HeroHeadlinePortable value={heading} />
               </h2>
               {subheading?.trim() ? (
                 <p className="mt-4 max-w-2xl font-urbanist text-base font-medium leading-relaxed text-white/80 md:text-lg">

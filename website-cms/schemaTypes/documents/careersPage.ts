@@ -56,15 +56,6 @@ export const careersPage = defineType({
       fieldset: 'heroDivider' as const,
     })),
     defineField({
-      name: 'heroTitleSuffix',
-      title: 'Hero headline (after accent)',
-      type: 'string',
-      description: 'Text after the mint accent phrase, e.g. “at Rellia”.',
-      initialValue: 'at Rellia',
-      group: 'hero',
-      fieldset: 'heroDivider',
-    }),
-    defineField({
       name: 'careersContentMode',
       title: 'Careers page mode',
       type: 'string',

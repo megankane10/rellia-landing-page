@@ -40,6 +40,7 @@ import type {
   QmsProgramContent,
   LegalPageContent,
   NetworkAdvisorsPageContent,
+  NetworkDirectoryPageContent,
   NetworkFoundersPageContent,
   NetworkInvestorsPageContent,
   NetworkPartnersPageContent,
@@ -524,6 +525,26 @@ export const useNetworkAdvisorsPage = () =>
     queryKey: ["cms", "network", "advisorsPage"],
     queryFn: async () => {
       const raw = await sanityFetch<NetworkAdvisorsPageContent>("networkAdvisorsPage")
+      return raw ?? null
+    },
+    staleTime: staleTimeMs,
+  })
+
+export const useNetworkAlumniDirectoryPage = () =>
+  useQuery({
+    queryKey: ["cms", "network", "alumniDirectoryPage"],
+    queryFn: async () => {
+      const raw = await sanityFetch<NetworkDirectoryPageContent>("networkAlumniDirectoryPage")
+      return raw ?? null
+    },
+    staleTime: staleTimeMs,
+  })
+
+export const useNetworkAdvisorsDirectoryPage = () =>
+  useQuery({
+    queryKey: ["cms", "network", "advisorsDirectoryPage"],
+    queryFn: async () => {
+      const raw = await sanityFetch<NetworkDirectoryPageContent>("networkAdvisorsDirectoryPage")
       return raw ?? null
     },
     staleTime: staleTimeMs,

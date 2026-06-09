@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react"
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react"
 import { cn } from "@/lib/utils"
 import NetworkEyebrow from "@/components/network/NetworkEyebrow"
 
@@ -44,7 +44,7 @@ export type PageBuilderMetric = {
 }
 
 type PageBuilderMetricsSectionProps = {
-  heading: string
+  heading: ReactNode
   subheading?: string
   metrics: PageBuilderMetric[]
   showBadge?: boolean

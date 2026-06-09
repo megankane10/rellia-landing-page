@@ -6,6 +6,7 @@ import {
   CONTENT_SEO_GROUPS,
   singletonSeoField,
 } from '../shared/singletonContentFields'
+import {portableHeadlineField} from '../shared/inlineHeroHeadlineField'
 import {studioListMedia} from '../shared/studioListMedia'
 
 export const eventsLandingPage = defineType({
@@ -20,14 +21,7 @@ export const eventsLandingPage = defineType({
   ],
   fieldsets: CONTENT_SEO_FIELDSETS,
   fields: [
-    defineField({
-      name: 'heroTitlePortable',
-      title: 'Hero headline',
-      type: 'inlineHeroHeadline',
-      description: 'Main headline. Use Mint/Teal decorators for colored phrases.',
-      group: 'hero',
-      validation: (Rule) => Rule.required().min(1),
-    }),
+    portableHeadlineField({group: 'hero', required: true}),
     defineField({
       name: 'heroSubtitle',
       title: 'Subtitle',

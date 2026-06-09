@@ -177,6 +177,18 @@ export const presentationLocations = {
       locations: [{title: doc?.title || 'Advisors', href: '/advisors'}],
     }),
   }),
+  networkAlumniDirectoryPage: defineLocations({
+    select: {directoryTitle: 'directoryTitle'},
+    resolve: (doc) => ({
+      locations: [{title: doc?.directoryTitle || 'Explore Alumni', href: '/founders/alumni'}],
+    }),
+  }),
+  networkAdvisorsDirectoryPage: defineLocations({
+    select: {directoryTitle: 'directoryTitle'},
+    resolve: (doc) => ({
+      locations: [{title: doc?.directoryTitle || 'Explore Advisors', href: '/advisors/directory'}],
+    }),
+  }),
   networkInvestorsPage: defineLocations({
     select: {title: 'title'},
     resolve: (doc) => ({

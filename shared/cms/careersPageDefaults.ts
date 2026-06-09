@@ -1,4 +1,6 @@
 import { mergeNetworkWhyFeatures } from "./networkPageDefaults"
+import { threePartHeroHeadline } from "./inlineHeroHeadline"
+import { resolveHeroTitlePortable } from "./resolveHeroHeadline"
 import type { CareersPageContent, NetworkFeatureItem } from "./types"
 
 export const DEFAULT_CAREERS_WHY_FEATURES: NetworkFeatureItem[] = [
@@ -65,6 +67,7 @@ export const DEFAULT_CAREERS_PERKS: NetworkFeatureItem[] = [
 
 export const DEFAULT_CAREERS_PAGE: CareersPageContent = {
   heroEyebrow: "Join the team",
+  heroTitlePortable: threePartHeroHeadline("Build the", "future of health", " at Rellia"),
   heroTitle: "Build the",
   heroAccentPhrase: "future of health",
   heroTitleSuffix: "at Rellia",
@@ -108,6 +111,7 @@ export const mergeCareersPage = (
   ...DEFAULT_CAREERS_PAGE,
   ...cms,
   heroEyebrow: cms?.heroEyebrow?.trim() || DEFAULT_CAREERS_PAGE.heroEyebrow,
+  heroTitlePortable: resolveHeroTitlePortable(cms, DEFAULT_CAREERS_PAGE.heroTitlePortable!),
   heroTitle: cms?.heroTitle?.trim() || DEFAULT_CAREERS_PAGE.heroTitle,
   heroAccentPhrase: cms?.heroAccentPhrase?.trim() || DEFAULT_CAREERS_PAGE.heroAccentPhrase,
   heroTitleSuffix: cms?.heroTitleSuffix?.trim() || DEFAULT_CAREERS_PAGE.heroTitleSuffix,

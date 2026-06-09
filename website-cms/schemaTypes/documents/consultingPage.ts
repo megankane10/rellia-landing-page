@@ -2,6 +2,7 @@ import {defineArrayMember, defineField, defineType} from 'sanity'
 import {CONTENT_SEO_FIELDSETS, singletonSeoField} from '../shared/singletonContentFields'
 import {GROUP_SEO} from '../shared/fieldGroups'
 import {studioListMedia} from '../shared/studioListMedia'
+import {networkHeroFields} from '../shared/networkPageFields'
 
 const GROUP_HERO = {name: 'hero', title: 'Hero', default: true}
 const GROUP_FIT = {name: 'fit', title: 'Fit section'}
@@ -18,52 +19,11 @@ export const consultingPage = defineType({
   fieldsets: CONTENT_SEO_FIELDSETS,
   fields: [
     defineField({name: 'title', type: 'string', initialValue: 'Consulting', group: 'hero'}),
-    defineField({name: 'heroEyebrow', title: 'Hero eyebrow', type: 'string', initialValue: 'Consulting', group: 'hero'}),
-    defineField({
-      name: 'heroTitle',
-      title: 'Hero headline',
-      type: 'string',
-      initialValue: 'Founder consulting',
-      group: 'hero',
-    }),
-    defineField({
-      name: 'heroAccentPhrase',
-      title: 'Hero accent phrase (mint)',
-      type: 'string',
-      initialValue: 'built for healthcare reality',
-      group: 'hero',
-    }),
-    defineField({name: 'heroSubtitle', title: 'Hero subtitle', type: 'text', rows: 3, group: 'hero'}),
-    defineField({name: 'heroImage', title: 'Hero image', type: 'image', options: {hotspot: true}, group: 'hero'}),
-    defineField({name: 'heroImageUrl', title: 'Hero image URL (fallback)', type: 'string', group: 'hero'}),
-    defineField({
-      name: 'heroPrimaryCtaLabel',
-      title: 'Primary CTA label',
-      type: 'string',
-      initialValue: 'Start a conversation',
-      group: 'hero',
-    }),
-    defineField({
-      name: 'heroPrimaryCtaHref',
-      title: 'Primary CTA link',
-      type: 'string',
-      initialValue: '/contact',
-      group: 'hero',
-    }),
-    defineField({
-      name: 'heroSecondaryCtaLabel',
-      title: 'Secondary CTA label',
-      type: 'string',
-      initialValue: 'Apply for membership',
-      group: 'hero',
-    }),
-    defineField({
-      name: 'heroSecondaryCtaHref',
-      title: 'Secondary CTA link',
-      type: 'string',
-      initialValue: '/apply',
-      group: 'hero',
-    }),
+    ...networkHeroFields.map((field) =>
+      field.name === 'heroEyebrow'
+        ? {...field, initialValue: 'Consulting'}
+        : field,
+    ),
     defineField({
       name: 'fitTitle',
       title: 'Section title',

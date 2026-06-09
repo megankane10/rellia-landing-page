@@ -11,8 +11,9 @@ import {
 } from "framer-motion";
 import { Search, UserSearch, ChevronDown, ArrowLeft } from "lucide-react";
 import FilteredListEmptyState from "@/components/FilteredListEmptyState";
-import { useAdvisors, useDirectoryFilterGroups, useNetworkAdvisorsPage } from "@/hooks/useCmsDocuments";
-import { mergeNetworkAdvisorsPage } from "@shared/cms/networkPageDefaults"
+import { useAdvisors, useDirectoryFilterGroups, useNetworkAdvisorsDirectoryPage } from "@/hooks/useCmsDocuments";
+import { mergeNetworkAdvisorsDirectoryPage } from "@shared/cms/directoryPageDefaults"
+import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo"
 import {
   ADVISOR_DIRECTORY_SEED,
   ADVISOR_FILTER_OPTIONS,
@@ -102,8 +103,9 @@ function AdvisorCard({
 }
 
 export default function AdvisorsDirectory() {
-  const { data: advisorsPageRaw } = useNetworkAdvisorsPage()
-  const advisorsPage = mergeNetworkAdvisorsPage(advisorsPageRaw ?? undefined)
+  const { data: advisorsDirectoryRaw } = useNetworkAdvisorsDirectoryPage()
+  const advisorsDirectory = mergeNetworkAdvisorsDirectoryPage(advisorsDirectoryRaw ?? undefined)
+  useApplyCmsSeo(advisorsDirectory.seo)
   const reduceMotion = useReducedMotion();
   const advisorsQuery = useAdvisors();
   const { data: cmsAdvisors } = advisorsQuery;
@@ -245,9 +247,9 @@ export default function AdvisorsDirectory() {
               <TagIcon className="h-3.5 w-3.5 shrink-0" aria-hidden />
               {tag.label}
             </div>
-            <h1 className={DIRECTORY_TITLE_CLASS}>{advisorsPage.directoryTitle ?? "Explore Advisors"}</h1>
+            <h1 className={DIRECTORY_TITLE_CLASS}>{advisorsDirectory.directoryTitle ?? "Explore Advisors"}</h1>
             <p className="mt-4 max-w-2xl font-urbanist text-lg leading-relaxed text-black/70">
-              {advisorsPage.directorySubtitle}
+              {advisorsDirectory.directorySubtitle}
             </p>
           </div>
         </section>
@@ -423,11 +425,11 @@ export default function AdvisorsDirectory() {
         </section>
 
         <RelliaCta
-          title={advisorsPage.directoryCtaTitle ?? "Looking for specialized advice?"}
-          body={advisorsPage.directoryCtaBody}
+          title={advisorsDirectory.directoryCtaTitle ?? "Looking for specialized advice?"}
+          body={advisorsDirectory.directoryCtaBody}
           primary={{
-            label: advisorsPage.directoryCtaPrimaryLabel ?? "Apply for Membership",
-            to: advisorsPage.directoryCtaPrimaryHref ?? "/apply",
+            label: advisorsDirectory.directoryCtaPrimaryLabel ?? "Apply for Membership",
+            to: advisorsDirectory.directoryCtaPrimaryHref ?? "/apply",
           }}
           secondary={{ label: "Learn about Advisors", to: "/advisors" }}
         />

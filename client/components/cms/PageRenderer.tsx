@@ -39,6 +39,8 @@ import type {
   NavItem,
   SanityPortableText,
 } from "@shared/cms/types"
+import { HeroHeadlinePortable } from "@/components/HeroHeadlinePortable"
+import { resolveHeroTitlePortable } from "@shared/cms/resolveHeroHeadline"
 import { normalizeToPortableText } from "@shared/cms/normalizePortableText"
 import { RoleHero } from "@/pages/network/_shared"
 import { Link } from "react-router-dom"
@@ -121,22 +123,15 @@ const CtaLink = ({
 }
 
 const SectionMarketingHero = ({ section }: { section: CmsSectionMarketingHero }) => {
-  const titleRaw = cmsDisplayText(section.title)
-  const accent = cmsCleanText(section.accentPhrase)
-  const title: ReactNode =
-    accent && !titleRaw.toLowerCase().includes(accent.toLowerCase()) ? (
-      <>
-        {titleRaw}{" "}
-        <span className="text-rellia-mint">{accent}</span>
-      </>
-    ) : accent ? (
-      <>
-        {titleRaw.replace(new RegExp(accent, "i"), "")}
-        <span className="text-rellia-mint">{accent}</span>
-      </>
-    ) : (
-      titleRaw
-    )
+  const headline =
+    section.headlinePortable ??
+    (section.title
+      ? resolveHeroTitlePortable(
+          { heroTitle: section.title, heroAccentPhrase: section.accentPhrase },
+          normalizeToPortableText(section.title) ?? [],
+        )
+      : null)
+  const title: ReactNode = headline?.length ? <HeroHeadlinePortable value={headline} /> : null
 
   const imageSrc =
     cmsCleanText(section.imageUrl) || "/images/network-hero.png"
@@ -178,11 +173,17 @@ const SectionMetrics = ({ section }: { section: CmsSectionMetrics }) => {
 
   if (metrics.length === 0) return null
 
+  const headingPortable =
+    section.headlinePortable ??
+    (section.heading
+      ? normalizeToPortableText(section.heading)
+      : null)
+
   return (
     <section className="w-full bg-white px-6 py-14 md:px-10 md:py-20">
       <div className="mx-auto w-full max-w-[1300px]">
         <PageBuilderMetricsSection
-          heading={cmsDisplayText(section.heading)}
+          heading={headingPortable?.length ? <HeroHeadlinePortable value={headingPortable} /> : null}
           subheading={cmsDisplayText(section.subheading) || undefined}
           metrics={metrics}
           showBadge={section.showBadge !== false}

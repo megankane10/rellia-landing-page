@@ -52,8 +52,7 @@ var logoMarqueeFragment = `logoMarquee[]{
   href
 }`;
 var networkHeroFragment = `heroEyebrow,
-  heroTitle,
-  heroAccentPhrase,
+  "heroTitlePortable": coalesce(heroTitlePortable, heroHeadlinePortable),
   heroSubtitle,
   "heroImageSrc": coalesce(heroImage.asset->url, heroImageUrl),
   heroPrimaryCtaLabel,
@@ -299,16 +298,28 @@ var networkFoundersPageQuery = `*[_id == "networkFoundersPage"][0]{
   deeperHelpCtaLabel,
   deeperHelpCtaHref,
   ${networkCtaFragment},
+  ${logoMarqueeFragment},
+  ${seoFragment}
+}`;
+var networkAlumniDirectoryPageQuery = `*[_id == "networkAlumniDirectoryPage"][0]{
   directoryTitle,
   directorySubtitle,
   directoryCtaTitle,
   directoryCtaBody,
   directoryCtaPrimaryLabel,
   directoryCtaPrimaryHref,
-  ${logoMarqueeFragment},
   ${seoFragment}
 }`;
-var networkAdvisorsPageQuery = `*[_id == "networkAdvisorsPage"][0]{
+var networkAdvisorsDirectoryPageQuery = `*[_id == "networkAdvisorsDirectoryPage"][0]{
+  directoryTitle,
+  directorySubtitle,
+  directoryCtaTitle,
+  directoryCtaBody,
+  directoryCtaPrimaryLabel,
+  directoryCtaPrimaryHref,
+  ${seoFragment}
+}`;
+var networkInvestorsPageQuery = `*[_id == "networkInvestorsPage"][0]{
   title,
   ${networkHeroFragment},
   ${networkEngageFragment},
@@ -319,15 +330,9 @@ var networkAdvisorsPageQuery = `*[_id == "networkAdvisorsPage"][0]{
   benefitsBullets,
   ${networkWhyFragment},
   ${networkCtaFragment},
-  directoryTitle,
-  directorySubtitle,
-  directoryCtaTitle,
-  directoryCtaBody,
-  directoryCtaPrimaryLabel,
-  directoryCtaPrimaryHref,
   ${seoFragment}
 }`;
-var networkInvestorsPageQuery = `*[_id == "networkInvestorsPage"][0]{
+var networkAdvisorsPageQuery = `*[_id == "networkAdvisorsPage"][0]{
   title,
   ${networkHeroFragment},
   ${networkWhyFragment},
@@ -369,8 +374,7 @@ var landingTestimonialsFragment = `testimonials[]{
 var diagnosticLandingPageQuery = `*[_id == "diagnosticLandingPage"][0]{
   title,
   heroBadgeLabel,
-  heroTitle,
-  heroAccentPhrase,
+  "heroTitlePortable": coalesce(heroTitlePortable, heroHeadlinePortable),
   heroSubtitle,
   "heroImageSrc": coalesce(heroImage.asset->url, heroImageUrl),
   heroPrimaryCtaLabel,
@@ -409,8 +413,7 @@ var diagnosticLandingPageQuery = `*[_id == "diagnosticLandingPage"][0]{
 var consultingPageQuery = `*[_id == "consultingPage"][0]{
   title,
   heroEyebrow,
-  heroTitle,
-  heroAccentPhrase,
+  "heroTitlePortable": coalesce(heroTitlePortable, heroHeadlinePortable),
   heroSubtitle,
   "heroImageSrc": coalesce(heroImage.asset->url, heroImageUrl),
   heroPrimaryCtaLabel,
@@ -466,7 +469,10 @@ var homePageQuery = `*[_id == "homePage"][0]{
   secondaryCtaLabel,
   secondaryCtaPath,
   "heroBackgroundVideoUrl": coalesce(heroBackgroundVideo.asset->url, heroBackgroundVideoUrl),
-  metricsHeading,
+  showBadge,
+  metricsBadgeLabel,
+  metricsHeadingPortable,
+  "metricsBackgroundImageUrl": coalesce(metricsBackgroundImage.asset->url, metricsBackgroundImageUrl),
   metrics[]{ label, value, suffix },
   howItWorksSectionTitle,
   howItWorksSectionDescription,
@@ -509,7 +515,7 @@ var homePageQuery = `*[_id == "homePage"][0]{
   ${seoFragment}
 }`;
 var aboutPageQuery = `*[_id == "aboutPage"][0]{
-  heroHeadlinePortable,
+  "heroTitlePortable": coalesce(heroTitlePortable, heroHeadlinePortable),
   heroIntro,
   missionTitle,
   missionParagraphs,
@@ -801,7 +807,7 @@ var paymentPageQuery = `*[_id == "paymentPage"][0]{
   discountBannerSubtitle,
   discountBannerApplyLabel,
   discountBannerApplyHref,
-  heroHeadlinePortable,
+  "heroTitlePortable": coalesce(heroTitlePortable, heroHeadlinePortable),
   heroSubheadline,
   imageCardBadge,
   imageCardHeadlinePortable,
@@ -829,6 +835,12 @@ var paymentPageQuery = `*[_id == "paymentPage"][0]{
   questionsFaqPath,
   questionsContactLabel,
   questionsContactPath,
+  welcomeSplashEnabled,
+  welcomeSplashHeading,
+  welcomeSplashSubheading,
+  welcomeSplashBackgroundSrc,
+  welcomeSplashLogoSrc,
+  welcomeSplashDurationSeconds,
   ${seoFragment}
 }`;
 var openRolesQuery = `*[_type == "openRole" && !(_id in path("drafts.**"))] | order(sortOrder asc, title asc){
@@ -902,13 +914,7 @@ var advisorsQuery = `*[_type == "advisor" && !(_id in path("drafts.**"))]{
   "photoSrc": coalesce(photo.asset->url, photoSrc),
   email,
   socialLinks[]{ platform, label, url },
-  bio[]{
-    ...,
-    _type == "image" => {
-      ...,
-      "url": asset->url
-    }
-  }
+  bio${portableRichTextBlocksFragment}
 }`;
 var alumniCompaniesQuery = `*[_type == "alumniCompany" && !(_id in path("drafts.**"))]{
   "id": slug.current,
@@ -1005,6 +1011,8 @@ var SANITY_QUERY_WHITELIST = {
   pageBySlug: { query: pageBySlugQuery, params: slugParams },
   networkFoundersPage: { query: networkFoundersPageQuery, params: empty },
   networkAdvisorsPage: { query: networkAdvisorsPageQuery, params: empty },
+  networkAlumniDirectoryPage: { query: networkAlumniDirectoryPageQuery, params: empty },
+  networkAdvisorsDirectoryPage: { query: networkAdvisorsDirectoryPageQuery, params: empty },
   networkInvestorsPage: { query: networkInvestorsPageQuery, params: empty },
   networkPartnersPage: { query: networkPartnersPageQuery, params: empty },
   diagnosticLandingPage: { query: diagnosticLandingPageQuery, params: empty },
@@ -1202,7 +1210,6 @@ var buildSiteOrigins = () => {
   }
   origins.add("https://www.relliahealth.com");
   origins.add("https://relliahealth.com");
-  origins.add("https://relliahealth.vercel.app");
   return origins;
 };
 var isAllowedBrowserOrigin = (req, baseOrigins, isDev) => {

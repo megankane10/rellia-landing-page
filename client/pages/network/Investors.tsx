@@ -29,7 +29,8 @@ import { CreamSection, GlassCard, GlassCardLight, LightSection, Reveal, RoleHero
 import { cn } from "@/lib/utils"
 import { useNetworkInvestorsPage } from "@/hooks/useCmsDocuments"
 import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo"
-import { mergeNetworkInvestorsPage } from "@shared/cms/networkPageDefaults"
+import { mergeNetworkInvestorsPage, DEFAULT_NETWORK_INVESTORS_PAGE } from "@shared/cms/networkPageDefaults"
+import { NetworkHeroTitle } from "@/components/NetworkHeroTitle"
 import type { ClusterChart, NetworkInvestorsPageContent } from "@shared/cms/types"
 
 const COLORS = {
@@ -447,8 +448,7 @@ export default function Investors() {
                   className="lg:flex-1"
                   title={
                     <>
-                      {content.heroTitle ?? "Stop sorting through"}{" "}
-                      <span className="text-rellia-mint">{content.heroAccentPhrase ?? "cold pitch decks."}</span>
+                      <NetworkHeroTitle content={content} fallback={DEFAULT_NETWORK_INVESTORS_PAGE.heroTitlePortable!} />
                     </>
                   }
                   subtitle={content.heroSubtitle ?? "Meet Rellia-backed teams with sharper milestones—clinical, regulatory, and commercial—before the usual diligence scramble."}

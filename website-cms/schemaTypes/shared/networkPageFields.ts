@@ -1,6 +1,7 @@
 import {defineArrayMember, defineField} from 'sanity'
 import {GROUP_SEO} from './fieldGroups'
 import {imageUploadField, imageUrlFallbackField} from './imageFields'
+import {portableHeadlineField} from './inlineHeroHeadlineField'
 
 export const NETWORK_PAGE_GROUPS = [
   {name: 'hero', title: 'Hero', default: true},
@@ -15,18 +16,7 @@ export const networkHeroFields = [
     type: 'string',
     group: 'hero',
   }),
-  defineField({
-    name: 'heroTitle',
-    title: 'Hero headline (before accent)',
-    type: 'string',
-    group: 'hero',
-  }),
-  defineField({
-    name: 'heroAccentPhrase',
-    title: 'Hero accent phrase (mint)',
-    type: 'string',
-    group: 'hero',
-  }),
+  portableHeadlineField({group: 'hero'}),
   defineField({name: 'heroSubtitle', title: 'Hero subtitle', type: 'text', rows: 3, group: 'hero'}),
   defineField({name: 'heroImage', title: 'Hero image', type: 'image', options: {hotspot: true}, group: 'hero'}),
   defineField({name: 'heroImageUrl', title: 'Hero image URL (fallback)', type: 'string', group: 'hero'}),
