@@ -99,19 +99,13 @@ Do **not** change diagnostic **survey scoring** in **Diagnostic Survey Page** wi
 
 ---
 
-## 5. After engineering merges to main
+## 5. After a site code update (rare)
 
-Use this checklist when a large CMS or code update lands on `main`:
+When engineering deploys a new version to `main`:
 
-1. **Confirm preview deploy** — Vercel preview should show the latest build (engineering can verify).
-2. **Content sync** — If Studio looks empty or stale, ask engineering to run:
-   - `pnpm sanity:seed` (preview dataset), or
-   - sync per [sanity-dataset-sync-guide.md](./sanity-dataset-sync-guide.md)
-3. **Publish** changed documents in Studio (production dataset → www).
-4. **Review on www** — Spot-check the live pages you changed.
-5. **Preview deploy** — Engineering may sync `preview` for `relliahealth.vercel.app` if needed; editors do not need to wait on this.
-6. **Careers** — Enable **Show open roles on production** when real listings should go live on www.
-7. **Final check** — Spot-check homepage, careers, apply, consulting, and any new custom pages on www.
+1. **Publish** any content you changed in Studio.
+2. **Review on www** — spot-check homepage, careers, apply, and pages you edit often.
+3. **Careers** — enable **Show open roles on production** when jobs should appear on www.
 
 ---
 
