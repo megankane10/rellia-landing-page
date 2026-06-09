@@ -15,17 +15,23 @@ export type MembershipWelcomeSplashProps = {
 
 type SplashPhase = "enter" | "hold" | "exit" | "done"
 
-const HEADING_STAGGER_S = 0.2
-const HEADING_WORD_DURATION_S = 0.88
-const HEADING_DELAY_CHILDREN_S = 0.34
+const HEADING_STAGGER_S = 0.22
+const HEADING_WORD_DURATION_S = 1.02
+const HEADING_DELAY_CHILDREN_S = 0.4
 const SUBHEADING_REVEAL_S = 0.72
-/** Start subheading when the heading is nearly finished. */
-const SUBHEADING_NEARLY_DONE_OFFSET_S = 0.18
+/** Start subheading before the heading finishes (seconds). Increase = earlier subheading. */
+const SUBHEADING_NEARLY_DONE_OFFSET_S = 0.38
+/**
+ * Progress bar placement. Change to "top" to move it back to the top edge.
+ * File: client/components/MembershipWelcomeSplash.tsx
+ */
+const PROGRESS_BAR_EDGE: "top" | "bottom" = "bottom"
 const READ_HOLD_MS = 2000
 const ANIM_EXIT_MS = 720
 
 const SLIDE_EASE = [0.4, 0, 0.2, 1] as const
 const REVEAL_EASE = [0.33, 1, 0.68, 1] as const
+const HEADING_WORD_EASE = [0.22, 0.03, 0.26, 1] as const
 
 const splashViewportStyle = {
   height: "calc(100dvh + env(safe-area-inset-top, 0px))",
@@ -96,8 +102,8 @@ export default function MembershipWelcomeSplash({
   const headingWordVariants = {
     hidden: {
       opacity: reduceMotion ? 1 : 0,
-      y: reduceMotion ? 0 : 24,
-      filter: reduceMotion ? "blur(0px)" : "blur(10px)",
+      y: reduceMotion ? 0 : 18,
+      filter: reduceMotion ? "blur(0px)" : "blur(8px)",
     },
     visible: {
       opacity: 1,
@@ -105,10 +111,15 @@ export default function MembershipWelcomeSplash({
       filter: "blur(0px)",
       transition: {
         duration: reduceMotion ? 0 : HEADING_WORD_DURATION_S,
-        ease: REVEAL_EASE,
+        ease: HEADING_WORD_EASE,
       },
     },
   }
+
+  const progressBarPositionClass =
+    PROGRESS_BAR_EDGE === "top"
+      ? "absolute inset-x-0 top-0"
+      : "absolute inset-x-0 bottom-0"
 
   useEffect(() => {
     if (!enabled) {
@@ -166,7 +177,7 @@ export default function MembershipWelcomeSplash({
       aria-label="Membership welcome"
     >
       <div
-        className="pointer-events-none absolute inset-x-0 top-0 z-20 h-[2px]"
+        className={`pointer-events-none z-20 h-[2px] ${progressBarPositionClass}`}
         aria-hidden
       >
         <motion.div
