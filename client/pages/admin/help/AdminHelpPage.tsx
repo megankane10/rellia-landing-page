@@ -1,4 +1,3 @@
-import { Link } from "react-router-dom"
 import { ExternalLink } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -10,15 +9,6 @@ import {
 } from "@shared/cms/operationsDocUrl"
 
 const VERCEL_ENV_URL = "https://vercel.com/relliahealth/settings/environment-variables"
-
-const routeBadge = (to: string, label: string) => (
-  <Link
-    to={to}
-    className="inline-flex rounded bg-slate-100 px-2 py-0.5 font-mono text-xs text-slate-800 transition-colors hover:bg-slate-200"
-  >
-    {label}
-  </Link>
-)
 
 const WEBSITE_TOOLS = [
   {
@@ -101,38 +91,6 @@ const AdminHelpPage = () => (
             <h4 className="font-bold text-foreground">Deleting Submissions</h4>
             <p>
               Remove unwanted or spam submissions permanently by clicking the trash icon. A confirmation dialog will appear.
-            </p>
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card className="rounded-3xl border border-black/[0.06] bg-white">
-        <CardHeader>
-          <CardTitle className="font-host-grotesk text-lg">Sanity CMS & drafts</CardTitle>
-          <CardDescription className="font-urbanist">
-            How website content connects to this dashboard.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4 font-urbanist text-sm leading-relaxed text-muted-foreground">
-          <div className="space-y-2">
-            <h4 className="font-bold text-foreground">One live dataset</h4>
-            <p>
-              Sanity Studio and www.relliahealth.com both use the <strong>production</strong> dataset.{" "}
-              <strong>Publish</strong> in Studio updates the public site — there is no separate staging site.
-            </p>
-          </div>
-          <div className="space-y-2">
-            <h4 className="font-bold text-foreground">Sanity drafts tab</h4>
-            <p>
-              {routeBadge("/admin/drafts", "Sanity drafts")} lists unpublished documents. Open Studio from that
-              page, review the change, and click <strong>Publish</strong> when ready.
-            </p>
-          </div>
-          <div className="space-y-2">
-            <h4 className="font-bold text-foreground">Preview before publish</h4>
-            <p>
-              Use <strong>Presentation</strong> inside Sanity Studio to preview drafts on www inside Studio only.
-              Public visitors always see published content.
             </p>
           </div>
         </CardContent>

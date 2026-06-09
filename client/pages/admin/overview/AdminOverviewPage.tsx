@@ -159,19 +159,19 @@ const StatCard = ({ label, value, changePct, changeCompare, href, loading }: Sta
   const body = (
     <Card
       className={cn(
-        "flex h-full flex-col rounded-2xl",
+        "flex h-full min-w-0 flex-col rounded-2xl",
         href && "transition-colors hover:border-rellia-teal/25 hover:bg-rellia-mint/5",
       )}
     >
-      <CardHeader className="flex flex-1 flex-col pb-4">
+      <CardHeader className="flex flex-1 flex-col p-4 pb-4 sm:p-6">
         <p className="font-urbanist text-sm font-normal text-foreground/85">{label}</p>
         {loading ? (
           <Skeleton className="mt-3 h-9 w-24 rounded-xl" />
         ) : (
-          <div className="mt-3 flex items-start justify-between gap-3">
-            <CardTitle className="font-host-grotesk text-3xl tabular-nums leading-none">{value}</CardTitle>
+          <div className="mt-3 flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between sm:gap-3">
+            <CardTitle className="font-host-grotesk text-2xl tabular-nums leading-none sm:text-3xl">{value}</CardTitle>
             {changePct !== undefined ? (
-              <div className="shrink-0 text-right">
+              <div className="sm:shrink-0 sm:text-right">
                 <span className={cn("font-urbanist text-sm font-semibold tabular-nums", changeTone)}>
                   {changeLabel}
                 </span>
@@ -190,7 +190,10 @@ const StatCard = ({ label, value, changePct, changeCompare, href, loading }: Sta
 
   if (!href) return body
   return (
-    <Link to={href} className="block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-2xl">
+    <Link
+      to={href}
+      className="block min-w-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-2xl"
+    >
       {body}
     </Link>
   )
@@ -489,7 +492,7 @@ const AdminOverviewPage = () => {
         actions={<AdminSystemStatus />}
       />
 
-      <div className="grid grid-cols-1 items-stretch gap-4 sm:grid-cols-2">
+      <div className="grid min-w-0 grid-cols-1 items-stretch gap-4 sm:grid-cols-2">
         <StatCard
           label="Needs attention"
           value={unresolved}
