@@ -135,6 +135,9 @@ const main = async () => {
       ...imageFields,
       welcomeSplashBackgroundSrc: DEFAULT_PAYMENT_PAGE.welcomeSplashBackgroundSrc,
     })
+    .set({
+      welcomeSplashDurationSeconds: DEFAULT_PAYMENT_PAGE.welcomeSplashDurationSeconds,
+    })
     .commit()
 
   console.log(`Patched paymentPage on dataset: ${dataset}`)

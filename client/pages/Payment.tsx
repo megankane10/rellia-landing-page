@@ -33,7 +33,7 @@ const markMembershipSplashSeenInSession = () => {
 }
 
 export default function Payment() {
-  const { data: paymentCms } = usePaymentPage()
+  const { data: paymentCms, isPending: paymentCmsPending } = usePaymentPage()
   const p = paymentCms ?? DEFAULT_PAYMENT_PAGE
   useApplyCmsSeo(p.seo)
   const previewMode = isVisualEditingPreview()
@@ -51,7 +51,11 @@ export default function Payment() {
   const annualHref = (import.meta.env.VITE_STRIPE_ANNUAL_PLAN_LINK as string | undefined)?.trim()
   const currentHref = selectedPlan === "annual" ? annualHref : monthlyHref
 
-  const showSplash = Boolean(p.welcomeSplashEnabled) && !splashComplete && !previewMode
+  const showSplash =
+    Boolean(p.welcomeSplashEnabled) &&
+    !splashComplete &&
+    !previewMode &&
+    !paymentCmsPending
 
   const splashBackgroundSrc =
     p.welcomeSplashBackgroundSrc?.trim() ||
@@ -123,8 +127,10 @@ export default function Payment() {
             DEFAULT_PAYMENT_PAGE.welcomeSplashLogoSrc ||
             "/svgs/rellia-secondary-logo-circle-health-white-rgb.svg"
           }
-          totalSeconds={
-            p.welcomeSplashDurationSeconds ?? DEFAULT_PAYMENT_PAGE.welcomeSplashDurationSeconds ?? 3.5
+          holdAfterRevealSeconds={
+            p.welcomeSplashDurationSeconds ??
+            DEFAULT_PAYMENT_PAGE.welcomeSplashDurationSeconds ??
+            3
           }
           onComplete={handleSplashComplete}
         />
@@ -209,7 +215,7 @@ export default function Payment() {
                 <div className="flex items-center gap-2 mb-10 pl-1">
                   <ShieldCheck className="h-4 w-4 text-black/30" />
                   <p className="font-urbanist text-sm font-medium text-black/40">
-                    {p.benefits.find(b => b.toLowerCase().includes("cancel")) || "Cancel at any time"}
+                    Cancel at any time
                   </p>
                 </div>
 

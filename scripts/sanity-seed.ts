@@ -1490,6 +1490,14 @@ async function main() {
     },
   })
   mutations.push({
+    patch: {
+      id: "paymentPage",
+      set: {
+        welcomeSplashDurationSeconds: DEFAULT_PAYMENT_PAGE.welcomeSplashDurationSeconds,
+      },
+    },
+  })
+  mutations.push({
     createOrReplace: {
       _id: "diagnosticSurveyContent",
       _type: "diagnosticSurveyContent",

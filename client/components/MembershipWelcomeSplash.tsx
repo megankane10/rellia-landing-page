@@ -8,8 +8,8 @@ export type MembershipWelcomeSplashProps = {
   subheading: string
   backgroundSrc: string
   logoSrc: string
-  /** Total splash time before slide-up exit (from CMS welcomeSplashDurationSeconds). */
-  totalSeconds?: number
+  /** Seconds to hold after headline + subheading finish revealing (CMS welcomeSplashDurationSeconds). */
+  holdAfterRevealSeconds?: number
   onComplete: () => void
 }
 
@@ -26,15 +26,19 @@ const SUBHEADING_NEARLY_DONE_OFFSET_S = 0.38
  * File: client/components/MembershipWelcomeSplash.tsx
  */
 const PROGRESS_BAR_EDGE: "top" | "bottom" = "bottom"
-const MIN_SPLASH_TOTAL_SECONDS = 2.5
-const MAX_SPLASH_TOTAL_SECONDS = 8
-const DEFAULT_SPLASH_TOTAL_SECONDS = 3.5
-const MIN_HOLD_AFTER_REVEAL_MS = 500
+const MIN_HOLD_AFTER_REVEAL_SECONDS = 0.5
+const MAX_HOLD_AFTER_REVEAL_SECONDS = 8
+const DEFAULT_HOLD_AFTER_REVEAL_SECONDS = 3
 const ANIM_EXIT_MS = 720
 
-const resolveSplashTotalSeconds = (value?: number) => {
-  if (typeof value !== "number" || !Number.isFinite(value)) return DEFAULT_SPLASH_TOTAL_SECONDS
-  return Math.min(MAX_SPLASH_TOTAL_SECONDS, Math.max(MIN_SPLASH_TOTAL_SECONDS, value))
+const resolveHoldAfterRevealSeconds = (value?: number) => {
+  if (typeof value !== "number" || !Number.isFinite(value)) {
+    return DEFAULT_HOLD_AFTER_REVEAL_SECONDS
+  }
+  return Math.min(
+    MAX_HOLD_AFTER_REVEAL_SECONDS,
+    Math.max(MIN_HOLD_AFTER_REVEAL_SECONDS, value),
+  )
 }
 
 const SLIDE_EASE = [0.4, 0, 0.2, 1] as const
@@ -53,7 +57,7 @@ export default function MembershipWelcomeSplash({
   subheading,
   backgroundSrc,
   logoSrc,
-  totalSeconds,
+  holdAfterRevealSeconds,
   onComplete,
 }: MembershipWelcomeSplashProps) {
   const reduceMotion = useReducedMotion()
@@ -91,15 +95,15 @@ export default function MembershipWelcomeSplash({
     return Math.round(contentRevealEndS * 1000)
   }, [headingRevealEndS, reduceMotion, subheadingStartS])
 
-  const configuredTotalSeconds = useMemo(
-    () => resolveSplashTotalSeconds(totalSeconds),
-    [totalSeconds],
-  )
+  const holdAfterRevealMs = useMemo(() => {
+    const seconds = resolveHoldAfterRevealSeconds(holdAfterRevealSeconds)
+    return Math.round(seconds * 1000)
+  }, [holdAfterRevealSeconds])
 
-  const preExitDurationMs = useMemo(() => {
-    const configuredMs = Math.round(configuredTotalSeconds * 1000)
-    return Math.max(revealMs + MIN_HOLD_AFTER_REVEAL_MS, configuredMs)
-  }, [configuredTotalSeconds, revealMs])
+  const preExitDurationMs = useMemo(
+    () => revealMs + holdAfterRevealMs,
+    [holdAfterRevealMs, revealMs],
+  )
 
   const handleProgressComplete = useCallback(() => {
     if (reduceMotion || phase === "exit" || phase === "done") return
@@ -149,12 +153,12 @@ export default function MembershipWelcomeSplash({
       const brief = window.setTimeout(() => {
         setPhase("done")
         onComplete()
-      }, Math.round(configuredTotalSeconds * 1000) + ANIM_EXIT_MS)
+      }, preExitDurationMs + ANIM_EXIT_MS)
       return () => window.clearTimeout(brief)
     }
 
     setPhase("enter")
-  }, [configuredTotalSeconds, enabled, onComplete, reduceMotion])
+  }, [enabled, onComplete, preExitDurationMs, reduceMotion])
 
   useEffect(() => {
     if (phase !== "exit" || reduceMotion) return
@@ -198,6 +202,7 @@ export default function MembershipWelcomeSplash({
         aria-hidden
       >
         <motion.div
+          key={preExitDurationMs}
           className="h-full w-full origin-left bg-rellia-mint"
           initial={{ scaleX: reduceMotion ? 1 : 0 }}
           animate={{ scaleX: 1 }}

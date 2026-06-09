@@ -7,6 +7,8 @@ React SPA for **Rellia Health**, connecting founders, clinicians, and health sys
 
 **Status (June 2026):** The site is live on Vercel; editors publish via [Sanity Studio](https://relliahealth.sanity.studio). See [Editor guide](./docs/website-management-guide.md).
 
+**CMS legacy / cleanup backlog:** [docs/cms-legacy-audit.md](./docs/cms-legacy-audit.md) — fields to remove, schema deploy notes, and wiring still in code but hidden from Studio.
+
 ---
 
 ## Branches and workflow

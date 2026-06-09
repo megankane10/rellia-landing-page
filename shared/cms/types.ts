@@ -1142,7 +1142,7 @@ export type PaymentPageContent = CmsPageVisibility & {
   welcomeSplashSubheading?: string
   welcomeSplashBackgroundSrc?: string
   welcomeSplashLogoSrc?: string
-  /** Total splash duration in seconds. */
+  /** Seconds to hold after headline + subheading finish revealing. */
   welcomeSplashDurationSeconds?: number
   seo?: SeoContent
 }

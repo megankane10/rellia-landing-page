@@ -12,6 +12,7 @@ export const EVENT_FAVICON_HOST_SLUGS = new Set([
   "set-your-stage",
   "clinician-connect-primary-care",
   "investor-readiness-how-vcs-evaluate-startups",
+  "why-healthcare-says-no-to-your-ai",
 ])
 
 export const eventUsesRelliaFaviconHost = (slug: string | undefined): boolean =>
@@ -91,9 +92,7 @@ export const resolveEventHostImageSrc = (event: ProgramsEventCard): string => {
   }
 
   const isBrentonHillEvent =
-    event.slug === "why-healthcare-says-no-to-your-ai" ||
-    BRENTON_HILL_SPEAKER_RE.test(speaker) ||
-    BRENTON_HILL_SPEAKER_RE.test(personRaw)
+    BRENTON_HILL_SPEAKER_RE.test(speaker) || BRENTON_HILL_SPEAKER_RE.test(personRaw)
   if (isBrentonHillEvent) {
     return BRENTON_HILL_EVENT_PORTRAIT
   }
