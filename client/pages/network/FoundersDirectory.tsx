@@ -17,8 +17,10 @@ import {
   useAlumniCompanies,
   useFounderSpecialties,
   useDirectoryFilterGroups,
+  useNetworkFoundersPage,
   type DirectoryFilterGroup,
 } from "@/hooks/useCmsDocuments";
+import { mergeNetworkFoundersPage } from "@shared/cms/networkPageDefaults"
 import {
   FOUNDER_DIRECTORY,
   ALL_SPECIALTIES,
@@ -110,6 +112,8 @@ function FounderDirectoryCard({
 }
 
 export default function FoundersDirectory() {
+  const { data: foundersPageRaw } = useNetworkFoundersPage()
+  const foundersPage = mergeNetworkFoundersPage(foundersPageRaw ?? undefined)
   const reduceMotion = useReducedMotion();
   const location = useLocation();
   const companiesQuery = useAlumniCompanies();
@@ -343,11 +347,9 @@ export default function FoundersDirectory() {
               <TagIcon className="h-3.5 w-3.5 shrink-0" aria-hidden />
               Founders
             </div>
-            <h1 className={DIRECTORY_TITLE_CLASS}>Explore Alumni</h1>
+            <h1 className={DIRECTORY_TITLE_CLASS}>{foundersPage.directoryTitle ?? "Explore Alumni"}</h1>
             <p className="mt-4 max-w-2xl font-urbanist text-lg leading-relaxed text-black/70">
-              Representative companies from the Rellia portfolio
-              network—specialty tags and summaries help you see who is building
-              alongside you.
+              {foundersPage.directorySubtitle}
             </p>
           </div>
         </section>
@@ -600,9 +602,12 @@ export default function FoundersDirectory() {
         </section>
 
         <RelliaCta
-          title="Ready to build your network?"
-          body="Apply for membership to access exclusive events, diagnostic tools, and directly connect with operators in our directory."
-          primary={{ label: "Apply for Membership", to: "/apply" }}
+          title={foundersPage.directoryCtaTitle ?? "Ready to build your network?"}
+          body={foundersPage.directoryCtaBody}
+          primary={{
+            label: foundersPage.directoryCtaPrimaryLabel ?? "Apply for Membership",
+            to: foundersPage.directoryCtaPrimaryHref ?? "/apply",
+          }}
         />
       </main>
 

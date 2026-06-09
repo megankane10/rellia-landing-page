@@ -8,9 +8,11 @@ import {
 import {
   networkCtaFields,
   networkFeatureItemMember,
+  networkHeroFields,
   networkWhyRelliaFields,
 } from '../shared/networkPageFields'
 
+const GROUP_HERO = {name: 'hero' as const, title: 'Hero', default: true}
 const GROUP_LIFE_AT_RELLIA = {name: 'lifeAtRellia' as const, title: 'Life at Rellia'}
 
 const careersPerkItemMember = defineArrayMember({
@@ -33,8 +35,9 @@ export const careersPage = defineType({
   name: 'careersPage',
   title: 'Careers page',
   type: 'document',
-  groups: [GROUP_LIFE_AT_RELLIA, ...CONTENT_SEO_GROUPS],
+  groups: [GROUP_HERO, GROUP_LIFE_AT_RELLIA, ...CONTENT_SEO_GROUPS],
   fieldsets: [
+    sectionDividerFieldset('heroDivider', 'Hero'),
     sectionDividerFieldset('contentDivider', 'Page content'),
     sectionDividerFieldset('whyRelliaDivider', 'Feature cards (image panels)'),
     sectionDividerFieldset('howWeWorkDivider', 'How we work grid'),
@@ -42,6 +45,20 @@ export const careersPage = defineType({
     ...CONTENT_SEO_FIELDSETS,
   ],
   fields: [
+    ...networkHeroFields.map((field) => ({
+      ...field,
+      group: 'hero' as const,
+      fieldset: 'heroDivider' as const,
+    })),
+    defineField({
+      name: 'heroTitleSuffix',
+      title: 'Hero headline (after accent)',
+      type: 'string',
+      description: 'Text after the mint accent phrase, e.g. “at Rellia”.',
+      initialValue: 'at Rellia',
+      group: 'hero',
+      fieldset: 'heroDivider',
+    }),
     defineField({
       name: 'careersContentMode',
       title: 'Careers page mode',

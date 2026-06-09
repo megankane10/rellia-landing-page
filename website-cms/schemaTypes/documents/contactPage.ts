@@ -12,15 +12,6 @@ export const contactPage = defineType({
   groups: CONTENT_SEO_GROUPS,
   fieldsets: CONTENT_SEO_FIELDSETS,
   fields: [
-    defineField({name: 'heroBadge', type: 'string', title: 'Hero badge', group: 'content'}),
-    defineField({
-      name: 'heroHeadline',
-      title: 'Hero headline',
-      type: 'string',
-      description: "Main heading visitors see (e.g. Let's get in touch)",
-      group: 'content',
-    }),
-    defineField({name: 'intro', type: 'text', rows: 3, group: 'content'}),
     defineField({
       name: 'sideImage',
       title: 'Left panel background image',

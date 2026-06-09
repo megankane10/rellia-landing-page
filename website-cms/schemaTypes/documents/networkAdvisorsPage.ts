@@ -8,6 +8,7 @@ import {
   networkHeroFields,
   networkWhyRelliaFields,
 } from '../shared/networkPageFields'
+import {networkDirectoryChromeFields} from '../shared/directoryPageFields'
 
 export const networkAdvisorsPage = defineType({
   name: 'networkAdvisorsPage',
@@ -38,6 +39,7 @@ export const networkAdvisorsPage = defineType({
     }),
     ...networkWhyRelliaFields,
     ...networkCtaFields,
+    ...networkDirectoryChromeFields,
     singletonSeoField,
   ],
 })

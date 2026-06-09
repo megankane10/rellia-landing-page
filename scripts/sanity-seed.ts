@@ -34,10 +34,10 @@ import {
   DUMMY_OPEN_ROLE,
   POWER_OF_PLAY_ALUMNI,
   PRIORITY_MODAL_SEED,
-  PROGRAMS_LAYOUT_SEED,
   PROGRAM_STATIC_BLOCKS_BY_SLUG,
   buildProgramPillarsSeed,
   buildProgramHowItWorksCardsSeed,
+  buildProgramTimelineFieldsSeed,
   QMS_PROGRAM_TESTIMONIALS_SEED,
   QMS_PROGRAM_TIMELINE_STEPS,
   STUDIO_GUIDE_SECTIONS,
@@ -1150,7 +1150,10 @@ async function main() {
         _type: "pathsCard",
         ...card,
       })),
-      ctaImageUrl: DEFAULT_HOME_PAGE.ctaImageUrl,
+      howItWorksSteps: (DEFAULT_HOME_PAGE.howItWorksSteps ?? []).map((step, index) => ({
+        _key: `hiw-${index}`,
+        ...step,
+      })),
       seo: seoForRoute("/"),
     },
   })
@@ -1193,6 +1196,12 @@ async function main() {
       careersContentMode: "both",
       showHiringNavBadge: false,
       showVolunteerNavBadge: false,
+      heroEyebrow: DEFAULT_CAREERS_PAGE.heroEyebrow,
+      heroTitle: DEFAULT_CAREERS_PAGE.heroTitle,
+      heroAccentPhrase: DEFAULT_CAREERS_PAGE.heroAccentPhrase,
+      heroTitleSuffix: DEFAULT_CAREERS_PAGE.heroTitleSuffix,
+      heroSubtitle: DEFAULT_CAREERS_PAGE.heroSubtitle,
+      heroImageSrc: DEFAULT_CAREERS_PAGE.heroImageSrc,
       whyTitle: DEFAULT_CAREERS_PAGE.whyTitle,
       whyDescription: DEFAULT_CAREERS_PAGE.whyDescription,
       whyFeatures: DEFAULT_CAREERS_PAGE.whyFeatures,
@@ -1251,15 +1260,6 @@ async function main() {
       seo: seoForRoute("/programs"),
     },
   })
-  mutations.push({
-    createOrReplace: {
-      _id: "programsLayoutPage",
-      _type: "programsLayoutPage",
-      ...PROGRAMS_LAYOUT_SEED,
-      seo: seoForRoute("/programs"),
-    },
-  })
-
   const legacyProgramPages = await client.fetch<string[]>('*[_type == "programPage"]._id')
   for (const id of legacyProgramPages) {
     mutations.push({ delete: { id } })
@@ -1290,7 +1290,11 @@ async function main() {
       })
     }
 
-    return { pillars, howItWorksCards }
+    return {
+      pillars,
+      howItWorksCards,
+      ...buildProgramTimelineFieldsSeed(slug, staticBlocks),
+    }
   }
 
   const faviconHostAssetId = await resolveImageAssetId(client, "/images/favicon-192.png")
@@ -1332,12 +1336,7 @@ async function main() {
               pillarsTitle: DEFAULT_QMS_PROGRAM.pillarsTitle,
               timelineTitle: DEFAULT_QMS_PROGRAM.timelineTitle,
               timelineSubtitle: DEFAULT_QMS_PROGRAM.timelineSubtitle,
-              timelineSteps: QMS_PROGRAM_TIMELINE_STEPS.map((step, stepIndex) => ({
-                _key: `timeline-${stepIndex}`,
-                title: step.title,
-                description: step.description,
-                weekLabel: step.weekLabel,
-              })),
+              timelineSteps: QMS_PROGRAM_TIMELINE_STEPS,
               testimonials: QMS_PROGRAM_TESTIMONIALS_SEED,
               pricingBadge: DEFAULT_QMS_PROGRAM.pricingBadge,
               pricingAmount: DEFAULT_QMS_PROGRAM.pricingAmount,

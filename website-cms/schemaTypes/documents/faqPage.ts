@@ -12,7 +12,6 @@ export const faqPage = defineType({
   groups: CONTENT_SEO_GROUPS,
   fieldsets: CONTENT_SEO_FIELDSETS,
   fields: [
-    defineField({name: 'badge', type: 'string', group: 'content'}),
     defineField({name: 'title', type: 'string', group: 'content'}),
     defineField({name: 'subtitle', type: 'text', rows: 2, group: 'content'}),
     defineField({

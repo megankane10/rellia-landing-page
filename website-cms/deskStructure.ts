@@ -65,7 +65,6 @@ const pagesGroup = (S: StructureBuilder) =>
         .items([
           singleton(S, 'Home', 'homePage', HomeIcon),
           singleton(S, 'Programs landing', 'programsLandingPage', DocumentTextIcon),
-          singleton(S, 'Programs layout', 'programsLayoutPage', DocumentTextIcon),
           singleton(S, 'Apply', 'applyPage', DocumentTextIcon),
           singleton(S, 'Founders page', 'networkFoundersPage', DocumentTextIcon),
           singleton(S, 'Advisors page', 'networkAdvisorsPage', DocumentTextIcon),
@@ -239,7 +238,6 @@ const HIDDEN_FROM_CATCH_ALL = new Set([
   'aboutPage',
   'careersPage',
   'programsLandingPage',
-  'programsLayoutPage',
   'eventsLandingPage',
   'storiesPage',
   'faqPage',

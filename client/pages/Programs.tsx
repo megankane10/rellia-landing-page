@@ -167,8 +167,13 @@ export default function Programs() {
           <div className="max-w-[1300px] mx-auto px-6 md:px-10">
             <ScrollReveal>
               <h2 className="mb-6 font-host-grotesk text-2xl md:text-3xl font-semibold leading-tight tracking-tight text-black">
-                Explore programs
+                {pl.programsSectionTitle ?? "Explore programs"}
               </h2>
+              {pl.programsSectionSubtitle?.trim() ? (
+                <p className="mb-6 max-w-3xl font-urbanist text-base leading-relaxed text-black/60 md:text-lg">
+                  {pl.programsSectionSubtitle}
+                </p>
+              ) : null}
 
               <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                 <div className="w-full md:w-auto">

@@ -1718,7 +1718,6 @@ export const DEFAULT_ABOUT_PAGE: AboutPageContent = {
 }
 
 export const DEFAULT_FAQ_PAGE: FaqPageContent = {
-  badge: "Frequently Asked Questions",
   title: "Everything you need to know about Rellia",
   subtitle: "We've collected the most common questions our members ask before joining.",
   items: [
@@ -1952,15 +1951,7 @@ export const DEFAULT_PROGRAMS_LANDING: ProgramsLandingContent = {
     "Targeted programs and live events designed to help you accomplish your next milestone, not just learn about it.",
   heroPrimaryCtaLabel: "View Programs",
   heroSecondaryCtaLabel: "View Events",
-  programsSectionTitle: [
-    {
-      _type: "block",
-      style: "normal",
-      _key: "programsSectionTitle",
-      markDefs: [],
-      children: [{ _type: "span", _key: "t1", text: "Explore programs", marks: [] }],
-    },
-  ],
+  programsSectionTitle: "Explore programs",
   programsSectionSubtitle: "",
   programs: [
     {
@@ -2253,11 +2244,6 @@ export const DEFAULT_PROGRAMS_LANDING: ProgramsLandingContent = {
 }
 
 export const DEFAULT_CONTACT_PAGE: ContactPageContent = {
-  heroBadge: "Contact",
-  heroHeadline: "",
-  pageTitle: "Let's Get in Touch",
-  intro:
-    "Have questions or want to explore opportunities with Rellia Health?\n\nWe’re here to listen, support, and collaborate. Drop us a message!",
   sideImageSrc: "/health_tech_collaboration_1778023064936.png",
   sideImageAlt: "Rellia contact — team and collaboration",
   leftLogoImageSrc: "/images/hologram-logo.png",
@@ -2684,6 +2670,9 @@ export function mergeProgramsLanding(
   if (!Array.isArray(base.heroTitlePortable) || base.heroTitlePortable.length === 0) {
     base.heroTitlePortable = DEFAULT_PROGRAMS_LANDING.heroTitlePortable
   }
+  if (!base.programsSectionTitle?.trim()) {
+    base.programsSectionTitle = DEFAULT_PROGRAMS_LANDING.programsSectionTitle
+  }
   return base
 }
 
@@ -2721,13 +2710,6 @@ export function mergeContactPage(
   if (!base.companySizePlaceholder?.trim()) {
     base.companySizePlaceholder = DEFAULT_CONTACT_PAGE.companySizePlaceholder
   }
-  if (!base.heroBadge?.trim()) {
-    base.heroBadge = DEFAULT_CONTACT_PAGE.heroBadge
-  }
-  if (!base.heroHeadline?.trim()) {
-    base.heroHeadline =
-      base.pageTitle?.trim() || DEFAULT_CONTACT_PAGE.heroHeadline
-  }
   if (!base.sideImageSrc?.trim()) {
     base.sideImageSrc = DEFAULT_CONTACT_PAGE.sideImageSrc
   }
@@ -2763,6 +2745,8 @@ export function mergeQmsProgram(
   if (pillars.length > 0) base.pillars = pillars
   const howItWorksCards = compactList(p.howItWorksCards)
   if (howItWorksCards.length > 0) base.howItWorksCards = howItWorksCards
+  const timelineSteps = compactList(p.timelineSteps).filter((step) => Boolean(step?.title?.trim()))
+  if (timelineSteps.length > 0) base.timelineSteps = timelineSteps
   if (typeof base.paymentUrl !== "string" || !base.paymentUrl.trim()) {
     base.paymentUrl = defaultFallback.paymentUrl
   }

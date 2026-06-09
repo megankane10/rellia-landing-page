@@ -1,5 +1,4 @@
 import {defineField, defineType} from 'sanity'
-import {pageSectionMembers} from '../shared/pageSectionMembers'
 import {preparePortableHeadlinePreview} from '../shared/portableTextPreview'
 import {
   CONTENT_SEO_FIELDSETS,
@@ -17,7 +16,6 @@ export const programsLandingPage = defineType({
     {name: 'programs', title: 'Programs'},
     {name: 'cta', title: 'CTA'},
     ...CONTENT_SEO_GROUPS.filter((g) => g.name !== 'content'),
-    {name: 'sections', title: 'Modular sections'},
   ],
   fieldsets: CONTENT_SEO_FIELDSETS,
   fields: [
@@ -34,31 +32,22 @@ export const programsLandingPage = defineType({
     defineField({name: 'heroSecondaryCtaLabel', title: 'Secondary button label', type: 'string', group: 'hero'}),
     defineField({
       name: 'programsSectionTitle',
-      title: 'Programs section title (unused)',
-      type: 'inlineHeroHeadline',
-      description: 'Legacy field — /programs shows a fixed “Explore programs” heading in black with no subtitle.',
+      title: 'Programs grid heading',
+      type: 'string',
+      initialValue: 'Explore programs',
       group: 'programs',
-      hidden: true,
     }),
     defineField({
       name: 'programsSectionSubtitle',
-      title: 'Programs section subtitle (unused)',
+      title: 'Programs grid intro',
       type: 'text',
-      rows: 3,
+      rows: 2,
       group: 'programs',
-      hidden: true,
     }),
     defineField({name: 'ctaTitle', title: 'CTA title', type: 'string', group: 'cta'}),
     defineField({name: 'ctaBody', title: 'CTA body', type: 'text', rows: 2, group: 'cta'}),
     defineField({name: 'ctaButtonLabel', title: 'CTA button label', type: 'string', group: 'cta'}),
     defineField({name: 'ctaButtonHref', title: 'CTA button link', type: 'string', group: 'cta'}),
-    defineField({
-      name: 'sections',
-      title: 'Page sections',
-      type: 'array',
-      of: pageSectionMembers,
-      group: 'sections',
-    }),
     singletonSeoField,
   ],
   preview: {

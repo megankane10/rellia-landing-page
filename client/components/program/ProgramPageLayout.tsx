@@ -61,6 +61,7 @@ import type { ProgramPageStaticBlocks } from "@shared/cms/programs/types";
 import {
   resolveProgramHowItWorksCards,
   resolveProgramPillars,
+  resolveProgramTimeline,
 } from "@shared/cms/programs/resolveProgramBlocks"
 import ProgramTrustedMembersSection from "@/components/program/ProgramTrustedMembersSection"
 import { resolveProgramCardImageSrc } from "@shared/cms/itemCardImage"
@@ -192,6 +193,7 @@ const ProgramPageLayout = ({
   const q = programPageData?.content ?? mergeQmsProgram(undefined, { ...DEFAULT_QMS_PROGRAM, ...(cms ?? {}) })
   const resolvedHowItWorksCards = resolveProgramHowItWorksCards(q.howItWorksCards, howItWorksCards)
   const resolvedPillars = resolveProgramPillars(q.pillars, pillars)
+  const resolvedTimeline = resolveProgramTimeline(q.timelineSteps, timeline)
   const filloutId = extractFilloutId(q.paymentUrl);
   const hasEnrollmentForm = Boolean(filloutId) && !isWaitlist;
 
@@ -498,6 +500,11 @@ const ProgramPageLayout = ({
                   <h2 className="font-host-grotesk text-2xl font-semibold leading-tight tracking-tight text-black md:text-[32px]">
                     {q.timelineTitle}
                   </h2>
+                  {q.timelineSubtitle?.trim() ? (
+                    <p className="mt-4 font-urbanist text-base leading-relaxed text-black/60 md:text-lg">
+                      {q.timelineSubtitle}
+                    </p>
+                  ) : null}
                 </ScrollReveal>
               </div>
               <div className="flex-1">
@@ -509,7 +516,7 @@ const ProgramPageLayout = ({
                     onValueChange={setTimelineOpen}
                     className="flex flex-col gap-0"
                   >
-                    {timeline.map((month, idx) => (
+                    {resolvedTimeline.map((month, idx) => (
                       <AccordionItem
                         key={month.month}
                         value={month.month}
@@ -536,7 +543,7 @@ const ProgramPageLayout = ({
                               : "text-black/40",
                           )}
                         >
-                          Step {idx + 1}
+                          {month.stepLabel ?? `Step ${idx + 1}`}
                         </span>
                         <AccordionTrigger className="font-host-grotesk font-semibold text-black text-lg md:text-xl py-2 hover:no-underline [&[data-state=open]]:text-rellia-teal transition-colors text-left">
                           {month.month}

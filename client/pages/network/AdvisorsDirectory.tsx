@@ -11,7 +11,8 @@ import {
 } from "framer-motion";
 import { Search, UserSearch, ChevronDown, ArrowLeft } from "lucide-react";
 import FilteredListEmptyState from "@/components/FilteredListEmptyState";
-import { useAdvisors, useDirectoryFilterGroups } from "@/hooks/useCmsDocuments";
+import { useAdvisors, useDirectoryFilterGroups, useNetworkAdvisorsPage } from "@/hooks/useCmsDocuments";
+import { mergeNetworkAdvisorsPage } from "@shared/cms/networkPageDefaults"
 import {
   ADVISOR_DIRECTORY_SEED,
   ADVISOR_FILTER_OPTIONS,
@@ -105,6 +106,8 @@ function AdvisorCard({
 }
 
 export default function AdvisorsDirectory() {
+  const { data: advisorsPageRaw } = useNetworkAdvisorsPage()
+  const advisorsPage = mergeNetworkAdvisorsPage(advisorsPageRaw ?? undefined)
   const reduceMotion = useReducedMotion();
   const advisorsQuery = useAdvisors();
   const { data: cmsAdvisors } = advisorsQuery;
@@ -261,10 +264,9 @@ export default function AdvisorsDirectory() {
               <TagIcon className="h-3.5 w-3.5 shrink-0" aria-hidden />
               {tag.label}
             </div>
-            <h1 className={DIRECTORY_TITLE_CLASS}>Explore Advisors</h1>
+            <h1 className={DIRECTORY_TITLE_CLASS}>{advisorsPage.directoryTitle ?? "Explore Advisors"}</h1>
             <p className="mt-4 max-w-2xl font-urbanist text-lg leading-relaxed text-black/70">
-              Search and filter operators, clinicians, and specialists who opt
-              into high-signal mentorship with serious founders.
+              {advisorsPage.directorySubtitle}
             </p>
           </div>
         </section>
@@ -464,9 +466,12 @@ export default function AdvisorsDirectory() {
         </section>
 
         <RelliaCta
-          title="Looking for specialized advice?"
-          body="Access our full network of operators, clinicians, and subject matter experts."
-          primary={{ label: "Apply for Membership", to: "/apply" }}
+          title={advisorsPage.directoryCtaTitle ?? "Looking for specialized advice?"}
+          body={advisorsPage.directoryCtaBody}
+          primary={{
+            label: advisorsPage.directoryCtaPrimaryLabel ?? "Apply for Membership",
+            to: advisorsPage.directoryCtaPrimaryHref ?? "/apply",
+          }}
           secondary={{ label: "Learn about Advisors", to: "/advisors" }}
         />
       </main>

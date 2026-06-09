@@ -64,6 +64,13 @@ export const DEFAULT_CAREERS_PERKS: NetworkFeatureItem[] = [
 ]
 
 export const DEFAULT_CAREERS_PAGE: CareersPageContent = {
+  heroEyebrow: "Join the team",
+  heroTitle: "Build the",
+  heroAccentPhrase: "future of health",
+  heroTitleSuffix: "at Rellia",
+  heroSubtitle:
+    "We connect founders, clinicians, and capital so the right ideas reach patients. If you thrive in fast-moving, mission-driven environments, we would love to meet you.",
+  heroImageSrc: "/images/careers-img.jpg",
   whyTitle: "Building What Matters Most",
   whyDescription:
     "What it feels like to build here: pace without panic, depth without gatekeeping, and a team that sweats the small stuff so members do not have to.",
@@ -100,6 +107,12 @@ export const mergeCareersPage = (
 ): CareersPageContent => ({
   ...DEFAULT_CAREERS_PAGE,
   ...cms,
+  heroEyebrow: cms?.heroEyebrow?.trim() || DEFAULT_CAREERS_PAGE.heroEyebrow,
+  heroTitle: cms?.heroTitle?.trim() || DEFAULT_CAREERS_PAGE.heroTitle,
+  heroAccentPhrase: cms?.heroAccentPhrase?.trim() || DEFAULT_CAREERS_PAGE.heroAccentPhrase,
+  heroTitleSuffix: cms?.heroTitleSuffix?.trim() || DEFAULT_CAREERS_PAGE.heroTitleSuffix,
+  heroSubtitle: cms?.heroSubtitle?.trim() || DEFAULT_CAREERS_PAGE.heroSubtitle,
+  heroImageSrc: cms?.heroImageSrc?.trim() || DEFAULT_CAREERS_PAGE.heroImageSrc,
   whyTitle: cms?.whyTitle?.trim() || DEFAULT_CAREERS_PAGE.whyTitle,
   whyDescription: cms?.whyDescription?.trim() || DEFAULT_CAREERS_PAGE.whyDescription,
   whyFeatures: mergeNetworkWhyFeatures(cms?.whyFeatures, DEFAULT_CAREERS_WHY_FEATURES),

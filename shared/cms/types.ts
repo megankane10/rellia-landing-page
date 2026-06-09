@@ -53,7 +53,17 @@ export type CareersLifeAtRelliaImage = {
 
 export type CareersContentMode = "both" | "hiring_only" | "volunteer_only"
 
-export type CareersPageContent = {
+export type NetworkDirectoryChrome = {
+  directoryTitle?: string
+  directorySubtitle?: string
+  directoryCtaTitle?: string
+  directoryCtaBody?: string
+  directoryCtaPrimaryLabel?: string
+  directoryCtaPrimaryHref?: string
+}
+
+export type CareersPageContent = NetworkHeroContent & {
+  heroTitleSuffix?: string
   careersContentMode?: CareersContentMode
   /** Show HIRING pill next to Careers in nav/footer. Default off in Studio until you enable it. */
   showHiringNavBadge?: boolean
@@ -485,7 +495,8 @@ export type NetworkHeroContent = {
 }
 
 export type NetworkFoundersPageContent = CmsSingletonPageContent &
-  NetworkHeroContent & {
+  NetworkHeroContent &
+  NetworkDirectoryChrome & {
     eligibilityTitle?: string
     eligibilityDescription?: string
     eligibilityItems?: NetworkEligibilityItem[]
@@ -515,7 +526,8 @@ export type NetworkFoundersPageContent = CmsSingletonPageContent &
   }
 
 export type NetworkAdvisorsPageContent = CmsSingletonPageContent &
-  NetworkHeroContent & {
+  NetworkHeroContent &
+  NetworkDirectoryChrome & {
     engageTitle?: string
     engageSubtitle?: string
     engageItems?: NetworkEngageCard[]
@@ -789,7 +801,6 @@ export type FaqItem = {
 }
 
 export type FaqPageContent = {
-  badge: string
   title: string
   subtitle: string
   items: FaqItem[]
@@ -871,7 +882,7 @@ export type ProgramsLandingContent = {
   heroSubtitle: string
   heroPrimaryCtaLabel: string
   heroSecondaryCtaLabel: string
-  programsSectionTitle: SanityPortableText
+  programsSectionTitle: string
   programsSectionSubtitle: string
   programs: ProgramsProgramCard[]
   upcomingEvents: ProgramsEventCard[]
@@ -889,11 +900,6 @@ export type ContactSubjectOption = {
 }
 
 export type ContactPageContent = {
-  heroBadge: string
-  heroHeadline: string
-  /** @deprecated Use heroHeadline */
-  pageTitle?: string
-  intro: string
   sideImageSrc: string
   sideImageAlt: string
   leftLogoImageSrc?: string

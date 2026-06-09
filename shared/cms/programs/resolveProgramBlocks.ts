@@ -1,4 +1,10 @@
-import type { ProgramPageIconCard } from "./types"
+import type { ProgramPageIconCard, ProgramTimelineMonth } from "./types"
+
+export type ProgramCmsTimelineStep = {
+  title?: string
+  description?: string
+  weekLabel?: string
+}
 
 export type ProgramCmsPillar = {
   title?: string
@@ -39,3 +45,24 @@ export const resolveProgramHowItWorksCards = (
       imageSrc: cms.imageSrc?.trim() || staticCard.imageSrc,
     }
   })
+
+export const resolveProgramTimeline = (
+  cmsSteps: ProgramCmsTimelineStep[] | undefined,
+  staticTimeline: ProgramTimelineMonth[],
+): ProgramTimelineMonth[] => {
+  const steps = (cmsSteps ?? []).filter((step) => Boolean(step?.title?.trim()))
+  if (steps.length === 0) return staticTimeline
+
+  return steps.map((step, index) => {
+    const points = (step.description ?? "")
+      .split("\n")
+      .map((line) => line.trim())
+      .filter(Boolean)
+
+    return {
+      month: step.title!.trim(),
+      stepLabel: step.weekLabel?.trim() || `Step ${index + 1}`,
+      weeks: points.length > 0 ? points : [step.description?.trim() || ""],
+    }
+  })
+}

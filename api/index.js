@@ -293,6 +293,12 @@ var networkFoundersPageQuery = `*[_id == "networkFoundersPage"][0]{
   deeperHelpCtaLabel,
   deeperHelpCtaHref,
   ${networkCtaFragment},
+  directoryTitle,
+  directorySubtitle,
+  directoryCtaTitle,
+  directoryCtaBody,
+  directoryCtaPrimaryLabel,
+  directoryCtaPrimaryHref,
   ${logoMarqueeFragment},
   ${seoFragment}
 }`;
@@ -307,6 +313,12 @@ var networkAdvisorsPageQuery = `*[_id == "networkAdvisorsPage"][0]{
   benefitsBullets,
   ${networkWhyFragment},
   ${networkCtaFragment},
+  directoryTitle,
+  directorySubtitle,
+  directoryCtaTitle,
+  directoryCtaBody,
+  directoryCtaPrimaryLabel,
+  directoryCtaPrimaryHref,
   ${seoFragment}
 }`;
 var networkInvestorsPageQuery = `*[_id == "networkInvestorsPage"][0]{
@@ -386,8 +398,7 @@ var diagnosticLandingPageQuery = `*[_id == "diagnosticLandingPage"][0]{
   ctaPrimaryHref,
   ctaSecondaryLabel,
   ctaSecondaryHref,
-  ${seoFragment},
-  ${pageSectionsFragment}
+  ${seoFragment}
 }`;
 var consultingPageQuery = `*[_id == "consultingPage"][0]{
   title,
@@ -424,8 +435,7 @@ var consultingPageQuery = `*[_id == "consultingPage"][0]{
   ctaPrimaryHref,
   ctaSecondaryLabel,
   ctaSecondaryHref,
-  ${seoFragment},
-  ${pageSectionsFragment}
+  ${seoFragment}
 }`;
 var termsPageQuery = `*[_id == "termsPage"][0]{
   title,
@@ -471,8 +481,6 @@ var homePageQuery = `*[_id == "homePage"][0]{
   ctaButtonPath,
   ctaSecondaryButtonLabel,
   ctaSecondaryButtonPath,
-  "ctaImageUrl": coalesce(ctaImage.asset->url, ctaImageUrl),
-  ctaImageAlt,
   testimonials[]{
     name,
     role,
@@ -520,7 +528,6 @@ var aboutPageQuery = `*[_id == "aboutPage"][0]{
   ${seoFragment}
 }`;
 var faqPageQuery = `*[_id == "faqPage"][0]{
-  badge,
   title,
   subtitle,
   items[]{ id, question, answer },
@@ -682,9 +689,6 @@ var eventBySlugQuery = `*[_type == "event" && slug.current == $slug && !(_id in 
   ${seoFragment}
 }`;
 var contactPageQuery = `*[_id == "contactPage"][0]{
-  heroBadge,
-  "heroHeadline": coalesce(heroHeadline, pageTitle),
-  intro,
   "sideImageSrc": coalesce(sideImage.asset->url, sideImageSrc),
   sideImageAlt,
   "leftLogoImageSrc": coalesce(leftLogoImage.asset->url, leftLogoImageSrc),
@@ -834,6 +838,8 @@ var careersPageQuery = `*[_id == "careersPage"][0]{
   careersContentMode,
   showHiringNavBadge,
   showVolunteerNavBadge,
+  ${networkHeroFragment},
+  heroTitleSuffix,
   ${networkWhyFragment},
   perksTitle,
   perksDescription,

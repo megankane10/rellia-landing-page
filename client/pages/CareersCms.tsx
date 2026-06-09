@@ -411,16 +411,20 @@ export default function CareersCms() {
               className="lg:flex lg:h-[82vh] lg:flex-col"
             >
               <RoleHero
-                eyebrowLabel="Join the team"
-                imageSrc="/images/careers-img.jpg"
+                eyebrowLabel={careersCms.heroEyebrow ?? "Join the team"}
+                imageSrc={careersCms.heroImageSrc ?? "/images/careers-img.jpg"}
                 className="lg:flex-1"
                 skipNavOffset
                 title={
                   <>
-                    Build the <span className="text-rellia-mint">future of health</span> at Rellia
+                    {careersCms.heroTitle ?? "Build the"}{" "}
+                    <span className="text-rellia-mint">
+                      {careersCms.heroAccentPhrase ?? "future of health"}
+                    </span>{" "}
+                    {careersCms.heroTitleSuffix ?? "at Rellia"}
                   </>
                 }
-                subtitle="We connect founders, clinicians, and capital so the right ideas reach patients. If you thrive in fast-moving, mission-driven environments, we would love to meet you."
+                subtitle={careersCms.heroSubtitle}
                 primaryCta={
                   joinTeamPrimaryCta
                     ? { label: joinTeamPrimaryCta.label }

@@ -1288,13 +1288,47 @@ export const PROGRAMS_LAYOUT_SEED = {
   timelineWeekLabelPrefix: "Week",
 }
 
-export const QMS_PROGRAM_TIMELINE_STEPS = QMS_PROGRAM_STATIC_BLOCKS.timeline.flatMap((month) =>
-  month.weeks.map((week) => ({
-    title: week.heading,
-    description: week.points.join("\n"),
-    weekLabel: week.heading,
-  })),
-)
+export const PROGRAM_TIMELINE_SUBTITLE_BY_SLUG: Record<string, string> = {
+  "build-your-quality-management-system":
+    "A structured journey through the key requirements for a successful QMS",
+  "regulatory-strategy-sprint":
+    "4 weeks to build your regulatory roadmap from classification to market",
+  "low-fidelity-prototype-lab": "8 weeks from concept to prototype with vendor-ready specs",
+  "ignite-pitch-foundations": "An 8-week intensive to take you from idea to investor-ready pitch",
+  "first-50-users-clinical-feedback-intensive":
+    "8 weeks from prototype to validated clinical feedback",
+  "elevate-healthcare-capital": "8 weeks to elevate your fundraising for healthcare capital",
+  "design-your-brand-strategy": "8 weeks to build a brand that earns healthcare trust",
+  "advisory-board-match": "8 weeks to build your advisory board with the right experts",
+  "advance-data-room-deep-dive": "8 weeks to build a diligence-ready data room from scratch",
+}
+
+export const buildProgramTimelineStepsSeed = (blocks: ProgramPageStaticBlocks) =>
+  blocks.timeline.map((month, index) => {
+    const points = month.weeks.flatMap((week) =>
+      typeof week === "string" ? [week] : week.points,
+    )
+
+    return {
+      _key: `timeline-${index}`,
+      title: month.month,
+      description: points.join("\n"),
+      weekLabel: month.stepLabel ?? `Month ${index + 1}`,
+    }
+  })
+
+export const buildProgramTimelineFieldsSeed = (
+  slug: string,
+  blocks: ProgramPageStaticBlocks,
+) => ({
+  timelineTitle: "Program Timeline & Details",
+  timelineSubtitle:
+    PROGRAM_TIMELINE_SUBTITLE_BY_SLUG[slug] ??
+    "A structured journey through the program milestones",
+  timelineSteps: buildProgramTimelineStepsSeed(blocks),
+})
+
+export const QMS_PROGRAM_TIMELINE_STEPS = buildProgramTimelineStepsSeed(QMS_PROGRAM_STATIC_BLOCKS)
 
 export const QMS_PROGRAM_TESTIMONIALS_SEED = (DEFAULT_QMS_PROGRAM.testimonials ?? []).map(
   (item, index) => ({

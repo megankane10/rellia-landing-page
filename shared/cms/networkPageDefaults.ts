@@ -53,6 +53,14 @@ export const DEFAULT_NETWORK_FOUNDERS_PAGE: NetworkFoundersPageContent = {
   heroPrimaryCtaHref: "/apply",
   heroSecondaryCtaLabel: "Explore Alumni",
   heroSecondaryCtaHref: "/founders/alumni",
+  directoryTitle: "Explore Alumni",
+  directorySubtitle:
+    "Representative companies from the Rellia portfolio network—specialty tags and summaries help you see who is building alongside you.",
+  directoryCtaTitle: "Ready to build your network?",
+  directoryCtaBody:
+    "Apply for membership to access exclusive events, diagnostic tools, and directly connect with operators in our directory.",
+  directoryCtaPrimaryLabel: "Apply for Membership",
+  directoryCtaPrimaryHref: "/apply",
   eligibilityTitle: "Built for serious health tech teams",
   eligibilityDescription:
     "Rellia works with companies where healthcare complexity is core to the product—evidence, regulation, workflow, and traction at once.",
@@ -353,6 +361,13 @@ export const DEFAULT_NETWORK_ADVISORS_PAGE: NetworkAdvisorsPageContent = {
   ctaPrimaryHref: "/apply",
   ctaSecondaryLabel: "Contact",
   ctaSecondaryHref: "/contact",
+  directoryTitle: "Explore Advisors",
+  directorySubtitle:
+    "Browse advisors by expertise and industry—each profile links to a full bio and ways to connect.",
+  directoryCtaTitle: "Ready to advise health tech founders?",
+  directoryCtaBody: "Apply to join the advisor network and mentor founders through structured, respectful engagements.",
+  directoryCtaPrimaryLabel: "Apply to join",
+  directoryCtaPrimaryHref: "/apply",
 }
 
 export const DEFAULT_NETWORK_INVESTORS_PAGE: NetworkInvestorsPageContent = {
@@ -542,6 +557,14 @@ export const mergeNetworkFoundersPage = (
     DEFAULT_NETWORK_FOUNDERS_PAGE.deeperHelpFeatures ?? [],
   ),
   logoMarquee: pickList(cms?.logoMarquee, DEFAULT_NETWORK_FOUNDERS_PAGE.logoMarquee ?? []),
+  directoryTitle: cms?.directoryTitle?.trim() || DEFAULT_NETWORK_FOUNDERS_PAGE.directoryTitle,
+  directorySubtitle: cms?.directorySubtitle?.trim() || DEFAULT_NETWORK_FOUNDERS_PAGE.directorySubtitle,
+  directoryCtaTitle: cms?.directoryCtaTitle?.trim() || DEFAULT_NETWORK_FOUNDERS_PAGE.directoryCtaTitle,
+  directoryCtaBody: cms?.directoryCtaBody?.trim() || DEFAULT_NETWORK_FOUNDERS_PAGE.directoryCtaBody,
+  directoryCtaPrimaryLabel:
+    cms?.directoryCtaPrimaryLabel?.trim() || DEFAULT_NETWORK_FOUNDERS_PAGE.directoryCtaPrimaryLabel,
+  directoryCtaPrimaryHref:
+    cms?.directoryCtaPrimaryHref?.trim() || DEFAULT_NETWORK_FOUNDERS_PAGE.directoryCtaPrimaryHref,
 })
 
 export const mergeNetworkAdvisorsPage = (
@@ -556,6 +579,14 @@ export const mergeNetworkAdvisorsPage = (
     cms?.whyFeatures,
     DEFAULT_NETWORK_ADVISORS_PAGE.whyFeatures ?? [],
   ),
+  directoryTitle: cms?.directoryTitle?.trim() || DEFAULT_NETWORK_ADVISORS_PAGE.directoryTitle,
+  directorySubtitle: cms?.directorySubtitle?.trim() || DEFAULT_NETWORK_ADVISORS_PAGE.directorySubtitle,
+  directoryCtaTitle: cms?.directoryCtaTitle?.trim() || DEFAULT_NETWORK_ADVISORS_PAGE.directoryCtaTitle,
+  directoryCtaBody: cms?.directoryCtaBody?.trim() || DEFAULT_NETWORK_ADVISORS_PAGE.directoryCtaBody,
+  directoryCtaPrimaryLabel:
+    cms?.directoryCtaPrimaryLabel?.trim() || DEFAULT_NETWORK_ADVISORS_PAGE.directoryCtaPrimaryLabel,
+  directoryCtaPrimaryHref:
+    cms?.directoryCtaPrimaryHref?.trim() || DEFAULT_NETWORK_ADVISORS_PAGE.directoryCtaPrimaryHref,
 })
 
 export const mergeNetworkInvestorsPage = (

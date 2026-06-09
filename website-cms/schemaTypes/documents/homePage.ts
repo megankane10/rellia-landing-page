@@ -4,7 +4,6 @@ import {
   singletonSeoField,
 } from '../shared/singletonContentFields'
 import { GROUP_SEO } from '../shared/fieldGroups'
-import { pageSectionMembers } from '../shared/pageSectionMembers'
 import { imageUploadField, imageUrlFallbackField } from '../shared/imageFields'
 
 const GROUP_HERO = { name: 'hero', title: '1 · Hero', default: true }
@@ -14,8 +13,6 @@ const GROUP_WHY = { name: 'why', title: '4 · Feature cards (image panels)' }
 const GROUP_HOW = { name: 'howItWorks', title: '5 · Focus areas (teal band)' }
 const GROUP_TESTIMONIALS = { name: 'testimonials', title: '6 · Testimonials' }
 const GROUP_CTA = { name: 'cta', title: '7 · Bottom CTA' }
-const GROUP_SECTIONS = { name: 'sections', title: 'Modular sections' }
-
 export const homePage = defineType({
   name: 'homePage',
   title: 'Home page',
@@ -28,7 +25,6 @@ export const homePage = defineType({
     GROUP_HOW,
     GROUP_TESTIMONIALS,
     GROUP_CTA,
-    GROUP_SECTIONS,
     GROUP_SEO,
   ],
   fieldsets: CONTENT_SEO_FIELDSETS,
@@ -292,21 +288,6 @@ export const homePage = defineType({
       title: 'Secondary button link',
       type: 'string',
       group: 'cta',
-    }),
-    imageUploadField('ctaImage', 'CTA image', {
-      group: 'cta',
-      description: 'Upload an image to enable cropping. Falls back to “CTA image URL (fallback)” below.',
-    }),
-    imageUrlFallbackField('ctaImageUrl', 'CTA image URL (fallback)', 'cta'),
-    defineField({ name: 'ctaImageAlt', title: 'CTA image alt text', type: 'string', group: 'cta' }),
-
-    // —— Modular sections + SEO ——
-    defineField({
-      name: 'sections',
-      title: 'Page sections',
-      type: 'array',
-      of: pageSectionMembers,
-      group: 'sections',
     }),
     singletonSeoField,
   ],
