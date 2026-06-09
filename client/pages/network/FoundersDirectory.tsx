@@ -1,69 +1,87 @@
-import { useEffect, useMemo, useState } from "react";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
-import RelliaCta from "@/components/RelliaCta";
-import { cn } from "@/lib/utils";
+import { useEffect, useMemo, useState } from "react"
+import Navbar from "@/components/Navbar"
+import Footer from "@/components/Footer"
+import RelliaCta from "@/components/RelliaCta"
+import { cn } from "@/lib/utils"
 import {
   motion,
   AnimatePresence,
   useReducedMotion,
   type Variants,
-} from "framer-motion";
-import { Building2, Search, ChevronDown, ArrowLeft } from "lucide-react";
-import FilteredListEmptyState from "@/components/FilteredListEmptyState";
-import { useNavigate, useLocation, Link } from "react-router-dom";
-import { NETWORK_PATH_ROLE_TAG } from "@/lib/networkPathRoles";
+} from "framer-motion"
+import { Building2, Search, ChevronDown, ArrowLeft } from "lucide-react"
+import FilteredListEmptyState from "@/components/FilteredListEmptyState"
+import { useNavigate, useLocation, Link } from "react-router-dom"
+import { NETWORK_PATH_ROLE_TAG } from "@/lib/networkPathRoles"
 import {
   useAlumniCompanies,
-  useFounderSpecialties,
   useDirectoryFilterGroups,
   useNetworkFoundersPage,
   type DirectoryFilterGroup,
-} from "@/hooks/useCmsDocuments";
+} from "@/hooks/useCmsDocuments"
 import { mergeNetworkFoundersPage } from "@shared/cms/networkPageDefaults"
+import { FOUNDER_DIRECTORY, type FounderCompany } from "@/data/founderDirectory"
+import { isSanityConfigured } from "@/lib/sanity"
+import { allowCmsSeedFallbacks } from "@/lib/deploymentEnv"
+import { isCmsQueryLoading } from "@/lib/cmsQueryState"
+import { DirectoryGridSkeleton } from "@/components/cms/CmsPageLoadingShell"
+import { DirectoryCardTags } from "@/components/network/DirectoryCardTags"
 import {
-  FOUNDER_DIRECTORY,
-  ALL_SPECIALTIES,
-  type FounderCompany,
-} from "@/data/founderDirectory";
-import { isSanityConfigured } from "@/lib/sanity";
-import { allowCmsSeedFallbacks } from "@/lib/deploymentEnv";
-import { isCmsQueryLoading } from "@/lib/cmsQueryState";
-import {
-  DirectoryGridSkeleton,
-} from "@/components/cms/CmsPageLoadingShell";
-import { DirectoryCardTags } from "@/components/network/DirectoryCardTags";
-import {
-  directoryGroupHasCountry,
   filterFounderDirectoryGroups,
-  getCountryFilterOptions,
   getDirectoryGroupOptionLabels,
   matchesDirectoryFilterSelection,
-} from "@/lib/directoryFilterOptions";
-import { resolveSocialOgImageUrl } from "@/config/seo";
-import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo";
+} from "@/lib/directoryFilterOptions"
+import { resolveSocialOgImageUrl } from "@/config/seo"
+import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo"
 
-/** Gray-teal tone for directory heroes */
 const DIRECTORY_TITLE_CLASS =
-  "font-host-grotesk text-4xl font-extrabold tracking-tight text-black md:text-5xl";
+  "font-host-grotesk text-4xl font-extrabold tracking-tight text-black md:text-5xl"
 
-/** Used when CMS filter groups have not loaded yet (common on Vercel first paint). */
 const FALLBACK_FOUNDER_FILTER_GROUPS: DirectoryFilterGroup[] = [
   { id: "country", title: "Country", appliesTo: "both" },
   { id: "specialty", title: "Specialty", appliesTo: "founders" },
   { id: "business-model", title: "Business Model", appliesTo: "founders" },
 ]
 
+const getFilterGroupLabel = (title: string): string => {
+  const normalizedTitle = title.toLowerCase()
+  if (normalizedTitle === "country" || normalizedTitle === "countries") return "Countries"
+  if (normalizedTitle === "specialty" || normalizedTitle === "specialties") return "Specialties"
+  if (normalizedTitle === "business model") return "Business Models"
+  return title.endsWith("s") ? title : `${title}s`
+}
+
+const mapCmsCompany = (c: Record<string, unknown>): FounderCompany => ({
+  id: String(c.id),
+  slug: String(c.id),
+  logoName: String(c.name),
+  logoSrc: typeof c.logoSrc === "string" ? c.logoSrc : "",
+  tagline: typeof c.tagline === "string" ? c.tagline : "",
+  countries: Array.isArray(c.countries) ? c.countries.filter(Boolean) : [],
+  specialtyTags: Array.isArray(c.specialtyTags) ? c.specialtyTags.filter(Boolean) : [],
+  businessModels: Array.isArray(c.businessModels) ? c.businessModels.filter(Boolean) : [],
+  directoryFilters: Array.isArray(c.directoryFilters) ? c.directoryFilters : [],
+  shortDescription: typeof c.shortDescription === "string" ? c.shortDescription : "",
+  longDescription: typeof c.longDescription === "string" ? c.longDescription : "",
+  traction: typeof c.traction === "string" ? c.traction : "",
+  relliaCollaboration: typeof c.relliaCollaboration === "string" ? c.relliaCollaboration : "",
+  imageSrc: "",
+  yearJoined: typeof c.yearJoined === "number" ? c.yearJoined : 0,
+  founders: Array.isArray(c.founders) ? c.founders : [],
+  programs: [],
+  profileBody: c.profileBody as FounderCompany["profileBody"],
+  socialLinks: Array.isArray(c.socialLinks) ? c.socialLinks : [],
+  email: typeof c.email === "string" ? c.email : undefined,
+})
+
 function FounderDirectoryCard({
   company,
   onOpen,
 }: {
-  company: FounderCompany;
-  onOpen: () => void;
+  company: FounderCompany
+  onOpen: () => void
 }) {
-  const specialtyTags = company.specialties ?? []
-  const businessModelTags = Array.isArray(company.businessModel) ? company.businessModel : []
-  const cardTags = [...specialtyTags, ...businessModelTags]
+  const cardTags = [...company.specialtyTags, ...company.businessModels]
 
   return (
     <motion.article
@@ -76,8 +94,8 @@ function FounderDirectoryCard({
       onClick={onOpen}
       onKeyDown={(e) => {
         if (e.key === "Enter" || e.key === " ") {
-          e.preventDefault();
-          onOpen();
+          e.preventDefault()
+          onOpen()
         }
       }}
       role="button"
@@ -101,52 +119,28 @@ function FounderDirectoryCard({
             {company.shortDescription?.trim() || company.tagline}
           </p>
         )}
-        {Array.isArray(company.country) && company.country.length > 0 && (
+        {company.countries.length > 0 && (
           <p className="mt-2 font-urbanist text-sm text-black/55 leading-relaxed">
-            {company.country.join(", ")}
+            {company.countries.join(", ")}
           </p>
         )}
       </div>
     </motion.article>
-  );
+  )
 }
 
 export default function FoundersDirectory() {
   const { data: foundersPageRaw } = useNetworkFoundersPage()
   const foundersPage = mergeNetworkFoundersPage(foundersPageRaw ?? undefined)
-  const reduceMotion = useReducedMotion();
-  const location = useLocation();
-  const companiesQuery = useAlumniCompanies();
-  const { data: cmsCompanies } = companiesQuery;
-  const specialtiesQuery = useFounderSpecialties();
-  const { data: cmsSpecialties } = specialtiesQuery;
-  const filterGroupsQuery = useDirectoryFilterGroups();
-  const { data: cmsFilterGroups } = filterGroupsQuery;
+  const reduceMotion = useReducedMotion()
+  const location = useLocation()
+  const companiesQuery = useAlumniCompanies()
+  const { data: cmsCompanies } = companiesQuery
+  const filterGroupsQuery = useDirectoryFilterGroups()
+  const { data: cmsFilterGroups } = filterGroupsQuery
   const companiesListLoading = isSanityConfigured() && isCmsQueryLoading(companiesQuery)
-  const [query, setQuery] = useState("");
-  const [specialtyFilter, setSpecialtyFilter] = useState<string>("all");
-  const [countryFilter, setCountryFilter] = useState<string>("all");
-  const [businessModelFilter, setBusinessModelFilter] = useState<string>("all");
-  const [groupFilters, setGroupFilters] = useState<Record<string, string>>({});
-  useEffect(() => {
-    const params = new URLSearchParams(location.search);
-    const country = params.get("country");
-    const specialty = params.get("specialty");
-    const businessModel = params.get("businessModel");
-
-    if (country) {
-      setCountryFilter(country);
-      setGroupFilters((prev) => ({ ...prev, country: country }));
-    }
-    if (specialty) {
-      setSpecialtyFilter(specialty);
-      setGroupFilters((prev) => ({ ...prev, specialty: specialty }));
-    }
-    if (businessModel) {
-      setBusinessModelFilter(businessModel);
-      setGroupFilters((prev) => ({ ...prev, "business-model": businessModel }));
-    }
-  }, [location.search]);
+  const [query, setQuery] = useState("")
+  const [groupFilters, setGroupFilters] = useState<Record<string, string>>({})
 
   const dynamicGroups = useMemo(() => {
     const groups = Array.isArray(cmsFilterGroups) ? cmsFilterGroups : []
@@ -159,50 +153,36 @@ export default function FoundersDirectory() {
     dynamicGroups.length > 0 ? dynamicGroups : FALLBACK_FOUNDER_FILTER_GROUPS
 
   useEffect(() => {
-    if (dynamicGroups.length === 0) return
-    setGroupFilters((prev) => {
-      const next = { ...prev }
-      if (countryFilter !== "all") next.country = countryFilter
-      if (specialtyFilter !== "all") next.specialty = specialtyFilter
-      if (businessModelFilter !== "all") next["business-model"] = businessModelFilter
-      return next
-    })
-  }, [dynamicGroups, countryFilter, specialtyFilter, businessModelFilter])
+    const params = new URLSearchParams(location.search)
+    const next: Record<string, string> = {}
+
+    const country = params.get("country")
+    const specialty = params.get("specialty")
+    const businessModel = params.get("businessModel")
+
+    const countryGroup = activeFilterGroups.find((g) => g.id === "country")
+    const specialtyGroup = activeFilterGroups.find((g) => g.id === "specialty")
+    const businessModelGroup = activeFilterGroups.find((g) => g.id === "business-model")
+
+    if (country && countryGroup) next[countryGroup.id] = country
+    if (specialty && specialtyGroup) next[specialtyGroup.id] = specialty
+    if (businessModel && businessModelGroup) next[businessModelGroup.id] = businessModel
+
+    if (Object.keys(next).length > 0) {
+      setGroupFilters((prev) => ({ ...prev, ...next }))
+    }
+  }, [location.search, activeFilterGroups])
 
   const companies = useMemo<FounderCompany[]>(() => {
     if (!isSanityConfigured()) return []
 
     if (Array.isArray(cmsCompanies) && cmsCompanies.length > 0) {
       return cmsCompanies
-        .filter((c: any) => c && typeof c.id === "string" && typeof c.name === "string")
-        .map((c: any): FounderCompany => {
-          return {
-            id: c.id,
-            slug: c.id,
-            logoName: c.name,
-            logoSrc: c.logoSrc,
-            tagline: c.tagline ?? "",
-            specialties: Array.isArray(c.specialties) ? c.specialties : [],
-            level: c.level,
-            businessModel: Array.isArray(c.businessModel) ? c.businessModel : [],
-            directoryFilters: Array.isArray(c.directoryFilters) ? c.directoryFilters : [],
-            shortDescription: c.shortDescription ?? "",
-            longDescription: c.longDescription ?? "",
-            traction: c.traction ?? "",
-            relliaCollaboration: c.relliaCollaboration ?? "",
-            imageSrc: "",
-            country: Array.isArray(c.country) ? c.country : (c.country ? [c.country] : []),
-            yearJoined: typeof c.yearJoined === "number" ? c.yearJoined : 0,
-            founders: Array.isArray(c.founders) ? c.founders : [],
-            programs: [],
-            profileBody: c.profileBody,
-            socialLinks: Array.isArray(c.socialLinks) ? c.socialLinks : [],
-            email: (c as { email?: string }).email,
-          }
-        })
+        .filter((c) => c && typeof c.id === "string" && typeof c.name === "string")
+        .map((c) => mapCmsCompany(c as Record<string, unknown>))
     }
-    return allowCmsSeedFallbacks() ? FOUNDER_DIRECTORY : [];
-  }, [cmsCompanies]);
+    return allowCmsSeedFallbacks() ? FOUNDER_DIRECTORY : []
+  }, [cmsCompanies])
 
   const alumniDirectoryOgImage = useMemo(() => {
     const logoSrc = companies[0]?.logoSrc?.trim()
@@ -213,99 +193,48 @@ export default function FoundersDirectory() {
     ogImage: alumniDirectoryOgImage,
   })
 
-  const resolvedGroupFilters = useMemo(() => {
-    if (dynamicGroups.length > 0) return groupFilters
-    return {
-      ...groupFilters,
-      ...(countryFilter !== "all" ? { country: countryFilter } : {}),
-      ...(specialtyFilter !== "all" ? { specialty: specialtyFilter } : {}),
-      ...(businessModelFilter !== "all"
-        ? { "business-model": businessModelFilter }
-        : {}),
-    }
-  }, [
-    dynamicGroups.length,
-    groupFilters,
-    countryFilter,
-    specialtyFilter,
-    businessModelFilter,
-  ])
-
   const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase();
+    const q = query.trim().toLowerCase()
     return companies.filter((c) => {
       for (const group of activeFilterGroups) {
-        const selected = (resolvedGroupFilters[group.id] ?? "all").trim()
+        const selected = (groupFilters[group.id] ?? "all").trim()
         if (!selected || selected === "all") continue
         if (!matchesDirectoryFilterSelection(group, selected, c)) return false
       }
 
-      if (!q) return true;
-      const specialtiesStr = c.specialties.join(" ");
-      const countriesStr = c.country.join(" ");
-      const businessModelsStr = c.businessModel ? c.businessModel.join(" ") : "";
-      const blob =
-        `${c.logoName} ${c.shortDescription} ${specialtiesStr} ${countriesStr} ${businessModelsStr} ${c.traction}`.toLowerCase();
-      return blob.includes(q);
-    });
-  }, [companies, activeFilterGroups, resolvedGroupFilters, query]);
+      if (!q) return true
+      const blob = [
+        c.logoName,
+        c.shortDescription,
+        c.specialtyTags.join(" "),
+        c.countries.join(" "),
+        c.businessModels.join(" "),
+        c.traction,
+      ]
+        .join(" ")
+        .toLowerCase()
+      return blob.includes(q)
+    })
+  }, [companies, activeFilterGroups, groupFilters, query])
 
   const dynamicGroupOptions = useMemo(
-    () => getDirectoryGroupOptionLabels(dynamicGroups, companies as never[]),
-    [companies, dynamicGroups],
+    () => getDirectoryGroupOptionLabels(activeFilterGroups, companies),
+    [companies, activeFilterGroups],
   )
 
-  const showStandaloneCountryFilter =
-    dynamicGroups.length === 0 || !directoryGroupHasCountry(dynamicGroups)
-
-  const countryFilters = useMemo<Array<{ id: string; label: string }>>(
-    () => getCountryFilterOptions(dynamicGroups, companies as never[]),
-    [companies, dynamicGroups],
-  )
-
-  const businessModelFilters = useMemo<Array<{ id: string; label: string }>>(() => {
-    const models = new Set<string>();
-    for (const c of companies) {
-      const bm = c.businessModel;
-      if (Array.isArray(bm)) {
-        bm.forEach((m) => {
-          if (m) models.add(m);
-        });
-      }
-    }
-    return [
-      { id: "all", label: "All Business Models" },
-      ...Array.from(models).sort().map((m) => ({ id: m, label: m })),
-    ];
-  }, [companies]);
-
-  const specialtyFilters = useMemo<Array<{ id: string; label: string }>>(() => {
-    if (Array.isArray(cmsSpecialties) && cmsSpecialties.length > 0) {
-      return [
-        { id: "all", label: "All Specialties" },
-        ...cmsSpecialties.map((s) => ({ id: s.label, label: s.label })),
-      ];
-    }
-    return [
-      { id: "all", label: "All Specialties" },
-      ...ALL_SPECIALTIES.map((s) => ({ id: s, label: s })),
-    ];
-  }, [cmsSpecialties]);
-
-  const [page, setPage] = useState(1);
-  const itemsPerPage = 12;
-  const totalPages = Math.ceil(filtered.length / itemsPerPage);
+  const [page, setPage] = useState(1)
+  const itemsPerPage = 12
+  const totalPages = Math.ceil(filtered.length / itemsPerPage)
 
   const paginated = useMemo(() => {
-    return filtered.slice((page - 1) * itemsPerPage, page * itemsPerPage);
-  }, [filtered, page]);
+    return filtered.slice((page - 1) * itemsPerPage, page * itemsPerPage)
+  }, [filtered, page])
 
-  // Reset page when filters change
   useEffect(() => {
-    setPage(1);
-  }, [query, specialtyFilter, countryFilter, businessModelFilter, groupFilters]);
+    setPage(1)
+  }, [query, groupFilters])
 
-  const EASE_OUT: [number, number, number, number] = [0.16, 1, 0.3, 1];
+  const EASE_OUT: [number, number, number, number] = [0.16, 1, 0.3, 1]
   const container: Variants = {
     hidden: reduceMotion ? {} : { opacity: 0, y: 10 },
     show: {
@@ -320,17 +249,17 @@ export default function FoundersDirectory() {
             staggerChildren: 0.06,
           },
     },
-  };
+  }
   const item: Variants = {
     hidden: reduceMotion ? {} : { opacity: 0, y: 14 },
     show: reduceMotion
       ? {}
       : { opacity: 1, y: 0, transition: { duration: 0.4, ease: EASE_OUT } },
-  };
+  }
 
-  const navigate = useNavigate();
-  const tag = NETWORK_PATH_ROLE_TAG["founder"];
-  const TagIcon = tag.icon;
+  const navigate = useNavigate()
+  const tag = NETWORK_PATH_ROLE_TAG["founder"]
+  const TagIcon = tag.icon
   return (
     <div className="min-h-screen overflow-x-hidden bg-white font-host-grotesk">
       <Navbar forceSolid />
@@ -338,7 +267,6 @@ export default function FoundersDirectory() {
       <main id="main-content">
         <section className="relative overflow-hidden border-b border-black/10 bg-rellia-greyTeal pt-28 pb-12 md:pt-36 md:pb-16">
           <div className="absolute inset-0 bg-noise opacity-[0.03] mix-blend-overlay pointer-events-none" />
-          {/* Mobile-only mint blur blobs */}
           <div className="md:hidden absolute -left-12 -top-12 h-32 w-32 rounded-full bg-rellia-mint/20 blur-2xl pointer-events-none" />
           <div className="md:hidden absolute -right-8 top-1/4 h-24 w-24 rounded-full bg-rellia-mint/15 blur-2xl pointer-events-none" />
 
@@ -356,7 +284,6 @@ export default function FoundersDirectory() {
 
         <section className="py-12 md:py-16">
           <div className="mx-auto max-w-[1300px] px-6 md:px-10">
-            {/* Top Filter Bar */}
             <div className="mb-10 flex flex-col gap-4 md:flex-row md:items-center">
               <label className="relative flex-1 block">
                 <span className="sr-only">Search companies</span>
@@ -377,72 +304,28 @@ export default function FoundersDirectory() {
                 />
               </label>
 
-              {dynamicGroups.length > 0 ? (
-                <div className="flex w-full flex-col gap-3 md:w-auto md:flex-row md:flex-wrap md:items-center md:gap-4">
-                  {dynamicGroups.map((g) => {
-                    const options = dynamicGroupOptions.get(g.id) ?? []
-                    const value = groupFilters[g.id] ?? "all"
-                    return (
-                      <div key={g.id} className="relative w-full md:w-auto">
-                        <select
-                          value={value}
-                          onChange={(e) => {
-                            const value = e.target.value
-                            setGroupFilters((prev) => ({
-                              ...prev,
-                              [g.id]: value,
-                            }))
-                            if (g.id === "country") setCountryFilter(value)
-                            if (g.id === "specialty") setSpecialtyFilter(value)
-                            if (g.id === "business-model") {
-                              setBusinessModelFilter(value)
-                            }
-                          }}
-                          className="h-14 w-full appearance-none rounded-2xl border border-black/10 bg-black/[0.02] pl-5 pr-14 md:min-w-[160px] font-urbanist text-base font-semibold text-black/80 outline-none hover:border-black/20 focus-visible:ring-2 focus-visible:ring-rellia-teal focus-visible:bg-white cursor-pointer"
-                          aria-label={`Filter by ${g.title}`}
-                        >
-                          <option value="all">
-                            All{" "}
-                            {g.title.toLowerCase() === "country"
-                              ? "Countries"
-                              : g.title.toLowerCase() === "specialty"
-                              ? "Specialties"
-                              : g.title.toLowerCase() === "business model"
-                              ? "Business Models"
-                              : g.title.endsWith("s")
-                              ? g.title
-                              : g.title + "s"}
-                          </option>
-                          {options.map((opt) => (
-                            <option key={opt} value={opt}>
-                              {opt}
-                            </option>
-                          ))}
-                        </select>
-                        <ChevronDown
-                          className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-black/45"
-                          aria-hidden
-                        />
-                      </div>
-                    )
-                  })}
-                </div>
-              ) : (
-                <div className="flex w-full flex-col gap-3 md:w-auto md:flex-row md:flex-wrap md:items-center md:gap-4">
-                  {showStandaloneCountryFilter ? (
-                    <div className="relative w-full md:w-auto">
+              <div className="flex w-full flex-col gap-3 md:w-auto md:flex-row md:flex-wrap md:items-center md:gap-4">
+                {activeFilterGroups.map((g) => {
+                  const options = dynamicGroupOptions.get(g.id) ?? []
+                  const value = groupFilters[g.id] ?? "all"
+                  return (
+                    <div key={g.id} className="relative w-full md:w-auto">
                       <select
-                        value={countryFilter}
+                        value={value}
                         onChange={(e) => {
-                          const value = e.target.value
-                          setCountryFilter(value)
-                          setGroupFilters((prev) => ({ ...prev, country: value }))
+                          const nextValue = e.target.value
+                          setGroupFilters((prev) => ({
+                            ...prev,
+                            [g.id]: nextValue,
+                          }))
                         }}
                         className="h-14 w-full appearance-none rounded-2xl border border-black/10 bg-black/[0.02] pl-5 pr-14 md:min-w-[160px] font-urbanist text-base font-semibold text-black/80 outline-none hover:border-black/20 focus-visible:ring-2 focus-visible:ring-rellia-teal focus-visible:bg-white cursor-pointer"
+                        aria-label={`Filter by ${g.title}`}
                       >
-                        {countryFilters.map((f) => (
-                          <option key={f.id} value={f.id}>
-                            {f.label}
+                        <option value="all">All {getFilterGroupLabel(g.title)}</option>
+                        {options.map((opt) => (
+                          <option key={opt} value={opt}>
+                            {opt}
                           </option>
                         ))}
                       </select>
@@ -451,57 +334,9 @@ export default function FoundersDirectory() {
                         aria-hidden
                       />
                     </div>
-                  ) : null}
-
-                  <div className="relative w-full md:w-auto">
-                    <select
-                      value={specialtyFilter}
-                      onChange={(e) => {
-                        const value = e.target.value
-                        setSpecialtyFilter(value)
-                        setGroupFilters((prev) => ({ ...prev, specialty: value }))
-                      }}
-                      className="h-14 w-full appearance-none rounded-2xl border border-black/10 bg-black/[0.02] pl-5 pr-14 md:min-w-[160px] font-urbanist text-base font-semibold text-black/80 outline-none hover:border-black/20 focus-visible:ring-2 focus-visible:ring-rellia-teal focus-visible:bg-white cursor-pointer"
-                    >
-                      {specialtyFilters.map((s) => (
-                        <option key={s.id} value={s.id}>
-                          {s.label}
-                        </option>
-                      ))}
-                    </select>
-                    <ChevronDown
-                      className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-black/45"
-                      aria-hidden
-                    />
-                  </div>
-
-                  {/* Business Model Filter */}
-                  <div className="relative w-full md:w-auto">
-                    <select
-                      value={businessModelFilter}
-                      onChange={(e) => {
-                        const value = e.target.value
-                        setBusinessModelFilter(value)
-                        setGroupFilters((prev) => ({
-                          ...prev,
-                          "business-model": value,
-                        }))
-                      }}
-                      className="h-14 w-full appearance-none rounded-2xl border border-black/10 bg-black/[0.02] pl-5 pr-14 md:min-w-[160px] font-urbanist text-base font-semibold text-black/80 outline-none hover:border-black/20 focus-visible:ring-2 focus-visible:ring-rellia-teal focus-visible:bg-white cursor-pointer"
-                    >
-                      {businessModelFilters.map((bm) => (
-                        <option key={bm.id} value={bm.id}>
-                          {bm.label}
-                        </option>
-                      ))}
-                    </select>
-                    <ChevronDown
-                      className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-black/45"
-                      aria-hidden
-                    />
-                  </div>
-                </div>
-              )}
+                  )
+                })}
+              </div>
             </div>
 
             <div className="mb-6 flex items-center justify-between border-b border-black/10 pb-4">
@@ -574,9 +409,7 @@ export default function FoundersDirectory() {
                     <button
                       type="button"
                       disabled={page === totalPages}
-                      onClick={() =>
-                        setPage((p) => Math.min(totalPages, p + 1))
-                      }
+                      onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                       className="flex h-10 w-10 items-center justify-center rounded-full border border-black/10 font-urbanist text-sm font-semibold text-black disabled:opacity-40 disabled:cursor-not-allowed hover:bg-black/5 transition-colors"
                     >
                       &rarr;
@@ -613,5 +446,5 @@ export default function FoundersDirectory() {
 
       <Footer />
     </div>
-  );
+  )
 }

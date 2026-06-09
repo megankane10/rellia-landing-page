@@ -25,7 +25,15 @@ import {
   DEFAULT_STORIES_PAGE_HEADLINE_PORTABLE,
 } from "../shared/cms/inlineHeroHeadline"
 import { ADVISOR_FILTER_OPTIONS } from "../client/data/advisorDirectory"
-import { ALL_SPECIALTIES } from "../client/data/founderDirectory"
+
+const FOUNDER_SPECIALTY_OPTIONS = [
+  "Women's Health",
+  "Neurology",
+  "Cardiology",
+  "Oncology",
+  "Mental Health",
+  "Pediatrics",
+]
 import {
   createDummyAdvisorBio,
   createPowerOfPlayProfileBody,
@@ -2043,7 +2051,7 @@ async function main() {
       slug: { _type: "slug", current: foundersSpecialtyGroupSlug },
       appliesTo: "founders",
       sortOrder: 1,
-      options: ALL_SPECIALTIES.map((label) => ({ _type: "option", label })),
+      options: FOUNDER_SPECIALTY_OPTIONS.map((label) => ({ _type: "option", label })),
     },
   })
 
@@ -2152,16 +2160,14 @@ async function main() {
       name: DUMMY_ADVISOR.name,
       organization: DUMMY_ADVISOR.organization,
       role: DUMMY_ADVISOR.role,
-      country: DUMMY_ADVISOR.country,
       yearJoined: DUMMY_ADVISOR.yearJoined,
-      primaryExpertise: DUMMY_ADVISOR.primaryExpertise,
       industries: DUMMY_ADVISOR.industries,
       snapshot: DUMMY_ADVISOR.snapshot,
       directoryFilters: [
         {
           _type: "directoryFilterAssignment",
           group: { _type: "reference", _ref: directoryFilterGroupId(sharedCountryGroupSlug) },
-          values: DUMMY_ADVISOR.country,
+          values: DUMMY_ADVISOR.countries,
         },
         {
           _type: "directoryFilterAssignment",
@@ -2185,9 +2191,6 @@ async function main() {
       logoSrc: POWER_OF_PLAY_ALUMNI.logoSrc,
       tagline: POWER_OF_PLAY_ALUMNI.tagline,
       shortDescription: POWER_OF_PLAY_ALUMNI.shortDescription,
-      specialties: POWER_OF_PLAY_ALUMNI.specialties,
-      businessModel: POWER_OF_PLAY_ALUMNI.businessModel,
-      country: POWER_OF_PLAY_ALUMNI.country,
       yearJoined: POWER_OF_PLAY_ALUMNI.yearJoined,
       socialLinks: POWER_OF_PLAY_ALUMNI.socialLinks,
       email: POWER_OF_PLAY_ALUMNI.email,
@@ -2197,17 +2200,17 @@ async function main() {
         {
           _type: "directoryFilterAssignment",
           group: { _type: "reference", _ref: directoryFilterGroupId(sharedCountryGroupSlug) },
-          values: POWER_OF_PLAY_ALUMNI.country,
+          values: POWER_OF_PLAY_ALUMNI.countries,
         },
         {
           _type: "directoryFilterAssignment",
           group: { _type: "reference", _ref: directoryFilterGroupId(foundersSpecialtyGroupSlug) },
-          values: POWER_OF_PLAY_ALUMNI.specialties,
+          values: POWER_OF_PLAY_ALUMNI.specialtyTags,
         },
         {
           _type: "directoryFilterAssignment",
           group: { _type: "reference", _ref: directoryFilterGroupId(foundersBusinessModelGroupSlug) },
-          values: POWER_OF_PLAY_ALUMNI.businessModel,
+          values: POWER_OF_PLAY_ALUMNI.businessModels,
         },
       ],
     },

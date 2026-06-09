@@ -1,14 +1,5 @@
 import {defineArrayMember, defineField, defineType} from 'sanity'
 
-const SPECIALTY_OPTIONS = [
-  {title: "Women's Health", value: "Women's Health"},
-  {title: 'Neurology', value: 'Neurology'},
-  {title: 'Cardiology', value: 'Cardiology'},
-  {title: 'Oncology', value: 'Oncology'},
-  {title: 'Mental Health', value: 'Mental Health'},
-  {title: 'Pediatrics', value: 'Pediatrics'},
-]
-
 export const alumniCompany = defineType({
   name: 'alumniCompany',
   title: 'Alumni company',
@@ -50,23 +41,6 @@ export const alumniCompany = defineType({
       type: 'text',
       rows: 3,
       description: 'Shown on directory cards and under the company name on the profile page.',
-      group: 'profile',
-    }),
-    defineField({
-      name: 'country',
-      title: 'Country',
-      type: 'array',
-      of: [{type: 'string'}],
-      options: {
-        list: [
-          {title: 'United States', value: 'United States'},
-          {title: 'Canada', value: 'Canada'},
-          {title: 'United Kingdom', value: 'United Kingdom'},
-          {title: 'Germany', value: 'Germany'},
-          {title: 'France', value: 'France'},
-          {title: 'Australia', value: 'Australia'},
-        ],
-      },
       group: 'profile',
     }),
     defineField({name: 'yearJoined', title: 'Year joined', type: 'number', group: 'profile'}),
@@ -138,36 +112,10 @@ export const alumniCompany = defineType({
       group: 'founders',
     }),
     defineField({
-      name: 'specialties',
-      title: 'Specialty tags',
-      type: 'array',
-      of: [{type: 'string'}],
-      options: {list: SPECIALTY_OPTIONS},
-      description: 'Inline specialty tags for directory cards. Use Directory filters for grouped filter tags.',
-      group: 'directory',
-    }),
-    defineField({
-      name: 'businessModel',
-      title: 'Business model',
-      type: 'array',
-      of: [{type: 'string'}],
-      options: {
-        list: [
-          {title: 'B2B', value: 'B2B'},
-          {title: 'B2C', value: 'B2C'},
-          {title: 'B2B2C', value: 'B2B2C'},
-          {title: 'SaaS', value: 'SaaS'},
-          {title: 'Marketplace', value: 'Marketplace'},
-          {title: 'Hardware', value: 'Hardware'},
-          {title: 'Services', value: 'Services'},
-          {title: 'Subscription', value: 'Subscription'},
-        ],
-      },
-      group: 'directory',
-    }),
-    defineField({
       name: 'directoryFilters',
       title: 'Directory filters',
+      description:
+        'Assign Country, Specialty, and Business Model values. These power directory filters and the tags shown on cards and profiles.',
       type: 'array',
       group: 'directory',
       of: [

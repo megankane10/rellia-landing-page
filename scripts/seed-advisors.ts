@@ -131,16 +131,14 @@ async function main() {
       name: DUMMY_ADVISOR.name,
       organization: DUMMY_ADVISOR.organization,
       role: DUMMY_ADVISOR.role,
-      country: DUMMY_ADVISOR.country,
       yearJoined: DUMMY_ADVISOR.yearJoined,
-      primaryExpertise: DUMMY_ADVISOR.primaryExpertise,
       industries: DUMMY_ADVISOR.industries,
       snapshot: DUMMY_ADVISOR.snapshot,
       directoryFilters: [
         {
           _type: "directoryFilterAssignment",
           group: { _type: "reference", _ref: directoryFilterGroupId(sharedCountryGroupSlug) },
-          values: DUMMY_ADVISOR.country,
+          values: DUMMY_ADVISOR.countries,
         },
         {
           _type: "directoryFilterAssignment",

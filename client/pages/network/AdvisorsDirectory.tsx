@@ -38,11 +38,7 @@ const DIRECTORY_TITLE_CLASS =
 
 const formatAdvisorLocation = (advisor: AdvisorDirectoryEntry): string => {
   const city = advisor.location?.trim()
-  const country = Array.isArray(advisor.country)
-    ? advisor.country.filter(Boolean).join(", ")
-    : typeof advisor.country === "string"
-      ? advisor.country.trim()
-      : ""
+  const country = advisor.countries.filter(Boolean).join(", ")
   if (city && country) return `${city}, ${country}`
   return city || country
 }
@@ -115,7 +111,6 @@ export default function AdvisorsDirectory() {
   const { data: cmsFilterGroups } = filterGroupsQuery;
   const advisorsListLoading = isSanityConfigured() && isCmsQueryLoading(advisorsQuery)
   const [query, setQuery] = useState("");
-  const [legacyFilter, setLegacyFilter] = useState<string>("all")
   const [groupFilters, setGroupFilters] = useState<Record<string, string>>({})
   const location = useLocation();
 
@@ -156,12 +151,9 @@ export default function AdvisorsDirectory() {
     if (country && countryGroup?.id) {
       setGroupFilters((prev) => ({ ...prev, [countryGroup.id]: country }));
     }
-    const specialty = params.get("specialty") ?? params.get("expertise");
-    if (specialty) {
-      setLegacyFilter(specialty);
-      if (expertiseGroup?.id) {
-        setGroupFilters((prev) => ({ ...prev, [expertiseGroup.id]: specialty }));
-      }
+    const specialty = params.get("specialty") ?? params.get("expertise")
+    if (specialty && expertiseGroup?.id) {
+      setGroupFilters((prev) => ({ ...prev, [expertiseGroup.id]: specialty }))
     }
   }, [location.search, expertiseGroup?.id, dynamicGroups])
 
@@ -175,39 +167,28 @@ export default function AdvisorsDirectory() {
     return map
   }, [advisors, canonicalExpertiseLabels, dynamicGroups])
 
-  const filterOptions = useMemo<Array<{ id: string; label: string }>>(() => {
-    const labels = Array.from(new Set(canonicalExpertiseLabels)).sort((a, b) => a.localeCompare(b))
-    return [{ id: "all", label: "All Expertise" }, ...labels.map((label) => ({ id: label, label }))]
-  }, [canonicalExpertiseLabels])
-
   const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase();
+    const q = query.trim().toLowerCase()
     return advisors.filter((a) => {
-      if (dynamicGroups.length > 0) {
-        for (const group of dynamicGroups) {
-          const selected = (groupFilters[group.id] ?? "all").trim()
-          if (!selected || selected === "all") continue
-          if (
-            !matchesDirectoryFilterSelection(group, selected, {
-              country: a.country,
-              primaryExpertise: a.primaryExpertise,
-              filter: a.filter,
-              directoryFilters: (a as { directoryFilters?: Array<{ groupId?: string; values?: string[] }> })
-                .directoryFilters,
-            })
-          ) {
-            return false
-          }
+      for (const group of dynamicGroups) {
+        const selected = (groupFilters[group.id] ?? "all").trim()
+        if (!selected || selected === "all") continue
+        if (
+          !matchesDirectoryFilterSelection(group, selected, {
+            countries: a.countries,
+            expertiseTags: a.expertiseTags,
+            directoryFilters: a.directoryFilters,
+          })
+        ) {
+          return false
         }
-      } else {
-        if (legacyFilter !== "all" && a.filter !== legacyFilter) return false;
       }
-      if (!q) return true;
+      if (!q) return true
       const blob =
-        `${a.name} ${a.organization} ${a.role} ${a.focus ?? ""} ${a.bio ?? ""}`.toLowerCase();
-      return blob.includes(q);
-    });
-  }, [advisors, dynamicGroups, groupFilters, legacyFilter, query]);
+        `${a.name} ${a.organization} ${a.role} ${a.focus ?? ""} ${a.expertiseTags.join(" ")} ${a.bio ?? ""}`.toLowerCase()
+      return blob.includes(q)
+    })
+  }, [advisors, dynamicGroups, groupFilters, query])
 
   const [page, setPage] = useState(1);
   const itemsPerPage = 12;
@@ -220,7 +201,7 @@ export default function AdvisorsDirectory() {
   // Reset page when filters change
   useEffect(() => {
     setPage(1);
-  }, [query, legacyFilter, groupFilters]);
+  }, [query, groupFilters])
 
   const EASE_OUT: [number, number, number, number] = [0.16, 1, 0.3, 1];
   const container: Variants = {
@@ -294,73 +275,49 @@ export default function AdvisorsDirectory() {
               </label>
 
               <div className="flex w-full flex-col gap-3 md:w-auto md:flex-row md:flex-wrap md:items-center">
-                {dynamicGroups.length > 0 ? (
-                  <>
-                    {dynamicGroups.map((g) => {
-                      const options = dynamicGroupOptions.get(g.id) ?? []
-                      const value = groupFilters[g.id] ?? "all"
-                      const normalizedTitle = g.title.toLowerCase()
-                      let displayTitle = g.title
-                      if (normalizedTitle === "country" || normalizedTitle === "countries") {
-                        displayTitle = "Countries"
-                      } else if (
-                        normalizedTitle === "expertise" ||
-                        normalizedTitle === "specialty" ||
-                        normalizedTitle === "specialties"
-                      ) {
-                        displayTitle = "Expertise"
-                      }
-                      return (
-                        <div key={g.id} className="flex w-full md:w-auto">
-                          <div className="relative w-full md:w-auto">
-                            <select
-                              value={value}
-                              onChange={(e) =>
-                                setGroupFilters((prev) => ({
-                                  ...prev,
-                                  [g.id]: e.target.value,
-                                }))
-                              }
-                              className="h-14 w-full appearance-none rounded-2xl border border-black/10 bg-black/[0.02] pl-5 pr-14 md:min-w-[200px] font-urbanist text-base font-semibold text-black/80 outline-none hover:border-black/20 focus-visible:ring-2 focus-visible:ring-rellia-teal focus-visible:bg-white cursor-pointer"
-                              aria-label={`Filter by ${g.title}`}
-                            >
-                              <option value="all">All {displayTitle}</option>
-                              {options.map((opt) => (
-                                <option key={opt} value={opt}>
-                                  {opt}
-                                </option>
-                              ))}
-                            </select>
-                            <ChevronDown
-                              className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-black/45"
-                              aria-hidden
-                            />
-                          </div>
-                        </div>
-                      )
-                    })}
-                  </>
-                ) : (
-                  <div className="flex w-full shrink-0 md:w-auto">
-                    <div className="relative w-full md:w-auto">
-                      <select
-                        value={legacyFilter}
-                        onChange={(e) => setLegacyFilter(e.target.value)}
-                        className="h-14 w-full appearance-none rounded-2xl border border-black/10 bg-black/[0.02] pl-5 pr-14 md:min-w-[200px] font-urbanist text-base font-semibold text-black/80 outline-none hover:border-black/20 focus-visible:ring-2 focus-visible:ring-rellia-teal focus-visible:bg-white cursor-pointer"
-                      >
-                        {filterOptions.map((f) => (
-                          <option key={f.id} value={f.id}>
-                            {f.label}
-                          </option>
-                        ))}
-                      </select>
-                      <ChevronDown
-                        className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-black/45"
-                        aria-hidden
-                      />
+                {dynamicGroups.map((g) => {
+                  const options = dynamicGroupOptions.get(g.id) ?? []
+                  const value = groupFilters[g.id] ?? "all"
+                  const normalizedTitle = g.title.toLowerCase()
+                  let displayTitle = g.title
+                  if (normalizedTitle === "country" || normalizedTitle === "countries") {
+                    displayTitle = "Countries"
+                  } else if (
+                    normalizedTitle === "expertise" ||
+                    normalizedTitle === "specialty" ||
+                    normalizedTitle === "specialties"
+                  ) {
+                    displayTitle = "Expertise"
+                  }
+                  return (
+                    <div key={g.id} className="flex w-full md:w-auto">
+                      <div className="relative w-full md:w-auto">
+                        <select
+                          value={value}
+                          onChange={(e) =>
+                            setGroupFilters((prev) => ({
+                              ...prev,
+                              [g.id]: e.target.value,
+                            }))
+                          }
+                          className="h-14 w-full appearance-none rounded-2xl border border-black/10 bg-black/[0.02] pl-5 pr-14 md:min-w-[200px] font-urbanist text-base font-semibold text-black/80 outline-none hover:border-black/20 focus-visible:ring-2 focus-visible:ring-rellia-teal focus-visible:bg-white cursor-pointer"
+                          aria-label={`Filter by ${g.title}`}
+                        >
+                          <option value="all">All {displayTitle}</option>
+                          {options.map((opt) => (
+                            <option key={opt} value={opt}>
+                              {opt}
+                            </option>
+                          ))}
+                        </select>
+                        <ChevronDown
+                          className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-black/45"
+                          aria-hidden
+                        />
+                      </div>
                     </div>
-                  </div>
-                )}
+                  )
+                })}
               </div>
             </div>
 

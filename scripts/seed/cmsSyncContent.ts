@@ -963,9 +963,8 @@ export const DUMMY_ADVISOR = {
   organization: "Example Health Systems (DUMMY)",
   role: "Dummy Advisor Profile — Not Real",
   location: "Toronto, ON",
-  country: ["Canada"],
+  countries: ["Canada"],
   yearJoined: "2026",
-  primaryExpertise: "Clinical Evidence",
   snapshot:
     "Seeded dummy advisor for testing directory filters, snapshot copy, and the About the advisor section.",
   photoSrc: "/images/nopicture-male.jpg",
@@ -996,9 +995,9 @@ export const POWER_OF_PLAY_ALUMNI = {
   logoSrc: "/images/portfolio-pop.png",
   tagline: "Taking a Play-Based Approach To Pediatric Rehabilitation",
   shortDescription: "Taking a Play-Based Approach To Pediatric Rehabilitation",
-  specialties: ["Pediatrics"],
-  businessModel: ["B2B", "B2B2C", "Hardware"],
-  country: ["Canada"],
+  countries: ["Canada"],
+  specialtyTags: ["Pediatrics"],
+  businessModels: ["B2B", "B2B2C", "Hardware"],
   yearJoined: 2024,
   email: "info@powerofplayinc.com",
   socialLinks: [
@@ -1219,7 +1218,7 @@ export const STUDIO_GUIDE_SECTIONS = [
     _key: "directories",
     heading: "Advisor & alumni directories",
     body:
-      "Filter groups (Countries, Specialties, etc.) live under Collections → Directory filter groups. Assign tags per profile under Directory filters. Alumni specialty tags are plain strings on the company profile; advisor industry tags are separate from filter groups.",
+      "Filter groups (Country, Specialty, Expertise, Business Model, etc.) live under Alumni or Advisors → Filter groups. Assign values per profile under Directory filters — those assignments power dropdown filters and the tags shown on cards and profiles. Advisor industry tags are optional display-only extras.",
   },
   {
     _type: "guideSection",

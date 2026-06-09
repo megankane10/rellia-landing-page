@@ -63,13 +63,10 @@ export const isCmsContentEnabled = () => isSanityConfigured()
 /** Human-readable Sanity `_type` labels for admin content queue sections. */
 export const CMS_DOCUMENT_TYPE_LABELS: Record<string, string> = {
   advisor: "Advisor",
-  advisorFilter: "Advisor filter tag",
   alumniCompany: "Alumni company",
   directoryFilterGroup: "Directory filter group",
   event: "Event",
   founder: "Founder",
-  founderLevel: "Founder level",
-  founderSpecialty: "Founder specialty",
   globalSettings: "Global settings",
   homePage: "Home page",
   investor: "Investor",

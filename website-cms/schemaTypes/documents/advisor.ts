@@ -1,20 +1,5 @@
 import {defineArrayMember, defineField, defineType} from 'sanity'
 
-const EXPERTISE_OPTIONS = [
-  'Product Design & UI/UX',
-  'Product Development',
-  'Clinical Evidence',
-  'Regulatory Strategy',
-  'Legal & Privacy',
-  'IP Strategy',
-  'Reimbursement',
-  'Fundraising',
-  'Marketing & Branding',
-  'Go-To-Market',
-  'Health System Navigation',
-  'Operations & Scaling',
-]
-
 export const advisor = defineType({
   name: 'advisor',
   title: 'Advisor',
@@ -59,33 +44,7 @@ export const advisor = defineType({
       group: 'profile',
       validation: (Rule) => Rule.max(280),
     }),
-    defineField({
-      name: 'country',
-      title: 'Country',
-      type: 'array',
-      of: [{type: 'string'}],
-      options: {
-        list: [
-          {title: 'United States', value: 'United States'},
-          {title: 'Canada', value: 'Canada'},
-          {title: 'United Kingdom', value: 'United Kingdom'},
-          {title: 'Germany', value: 'Germany'},
-          {title: 'France', value: 'France'},
-          {title: 'Australia', value: 'Australia'},
-        ],
-      },
-      group: 'profile',
-    }),
     defineField({name: 'yearJoined', title: 'Year joined', type: 'string', description: 'e.g. 2024', group: 'profile'}),
-    defineField({
-      name: 'primaryExpertise',
-      title: 'Primary expertise tag',
-      type: 'string',
-      description:
-        'Shown on the profile sidebar and directory cards. Should match one of your Expertise directory filter values.',
-      options: {list: EXPERTISE_OPTIONS.map((label) => ({title: label, value: label}))},
-      group: 'profile',
-    }),
     defineField({
       name: 'industries',
       title: 'Industry tags',
@@ -106,7 +65,7 @@ export const advisor = defineType({
       name: 'directoryFilters',
       title: 'Directory filters',
       description:
-        'Assign Country and Expertise values. These power the dropdown filters on the advisors directory.',
+        'Assign Country and Expertise values. These power directory filters and the primary expertise tag on cards and profiles.',
       type: 'array',
       group: 'directory',
       of: [

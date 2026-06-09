@@ -189,13 +189,19 @@ var portableRichTextBlocksFragment = `[]{
   ...,
   _type == "image" => {
     ...,
-    "url": asset->url
+    "url": asset->url,
+    displayMode
+  },
+  _type == "eventDetailInlineImage" => {
+    ...,
+    displayMode
   },
   _type == "portableImageCarousel" => {
     ...,
     slides[]{
       alt,
       caption,
+      displayMode,
       "imageSrc": coalesce(image.asset->url, imageSrc)
     }
   }
@@ -865,9 +871,7 @@ var advisorsQuery = `*[_type == "advisor" && !(_id in path("drafts.**"))]{
   name,
   organization,
   role,
-  country,
   yearJoined,
-  primaryExpertise,
   industries,
   snapshot,
   directoryFilters[]{
@@ -877,9 +881,23 @@ var advisorsQuery = `*[_type == "advisor" && !(_id in path("drafts.**"))]{
     "groupSortOrder": group->sortOrder,
     values
   },
-  "filter": coalesce(
-    primaryExpertise,
-    directoryFilters[group->title match "Expertise" || group->title match "Specialt*"][0].values[0]
+  "countries": coalesce(
+    directoryFilters[
+      group->slug.current in ["country", "countries"] ||
+      group->title match "Countr*"
+    ][0].values,
+    country,
+    []
+  ),
+  "expertiseTags": coalesce(
+    directoryFilters[
+      group->slug.current match "expertise" ||
+      group->title match "Expertise" ||
+      group->title match "Specialt*"
+    ][0].values,
+    select(defined(primaryExpertise) => [primaryExpertise], []),
+    select(defined(filter) => [filter], []),
+    []
   ),
   "photoSrc": coalesce(photo.asset->url, photoSrc),
   email,
@@ -897,8 +915,6 @@ var alumniCompaniesQuery = `*[_type == "alumniCompany" && !(_id in path("drafts.
   name,
   slug,
   tagline,
-  specialties,
-  businessModel,
   directoryFilters[]{
     "groupId": group->slug.current,
     "groupTitle": group->title,
@@ -906,11 +922,34 @@ var alumniCompaniesQuery = `*[_type == "alumniCompany" && !(_id in path("drafts.
     "groupSortOrder": group->sortOrder,
     values
   },
+  "countries": coalesce(
+    directoryFilters[
+      group->slug.current in ["country", "countries"] ||
+      group->title match "Countr*"
+    ][0].values,
+    country,
+    []
+  ),
+  "specialtyTags": coalesce(
+    directoryFilters[
+      group->slug.current in ["specialty", "specialties"] ||
+      group->title match "Specialt*"
+    ][0].values,
+    specialties,
+    []
+  ),
+  "businessModels": coalesce(
+    directoryFilters[
+      group->slug.current match "business-model" ||
+      group->title match "Business Model*"
+    ][0].values,
+    businessModel,
+    []
+  ),
   shortDescription,
   profileBody${portableRichTextBlocksFragment},
   socialLinks[]{ platform, label, url },
   email,
-  country,
   yearJoined,
   "logoSrc": coalesce(logo.asset->url, logoSrc),
   founders[]{
@@ -921,21 +960,6 @@ var alumniCompaniesQuery = `*[_type == "alumniCompany" && !(_id in path("drafts.
     socialLinks[]{ platform, label, url },
     "imageSrc": coalesce(image.asset->url, imageSrc)
   }
-}`;
-var advisorFiltersQuery = `*[_type == "advisorFilter"] | order(sortOrder asc, label asc){
-  "id": slug.current,
-  label,
-  sortOrder
-}`;
-var founderLevelsQuery = `*[_type == "founderLevel"] | order(sortOrder asc, label asc){
-  "id": slug.current,
-  label,
-  sortOrder
-}`;
-var founderSpecialtiesQuery = `*[_type == "founderSpecialty"] | order(sortOrder asc, label asc){
-  "id": slug.current,
-  label,
-  sortOrder
 }`;
 var directoryFilterGroupsQuery = `*[_type == "directoryFilterGroup" && !(_id in path("drafts.**"))] | order(sortOrder asc, title asc){
   "id": slug.current,
@@ -1006,9 +1030,6 @@ var SANITY_QUERY_WHITELIST = {
   openRoles: { query: openRolesQuery, params: empty },
   advisors: { query: advisorsQuery, params: empty },
   alumniCompanies: { query: alumniCompaniesQuery, params: empty },
-  advisorFilters: { query: advisorFiltersQuery, params: empty },
-  founderLevels: { query: founderLevelsQuery, params: empty },
-  founderSpecialties: { query: founderSpecialtiesQuery, params: empty },
   directoryFilterGroups: { query: directoryFilterGroupsQuery, params: empty },
   sanityDrafts: { query: sanityDraftsQuery, params: empty },
   sanityRecentEdits: { query: sanityRecentEditsQuery, params: empty }

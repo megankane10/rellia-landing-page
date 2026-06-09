@@ -1,10 +1,5 @@
 import type { SanityPortableText } from "@shared/cms/types"
-
-export type Specialty = "Women’s Health" | "Neurology" | "Cardiology" | "Oncology" | "Mental Health" | "Pediatrics"
-export const ALL_SPECIALTIES: Specialty[] = ["Women’s Health", "Neurology", "Cardiology", "Oncology", "Mental Health", "Pediatrics"]
-
-export type FounderLevel = "Pre-seed" | "Seed" | "Series A" | "Series B" | "Series C+"
-export const ALL_LEVELS: FounderLevel[] = ["Pre-seed", "Seed", "Series A", "Series B", "Series C+"]
+import type { DirectoryFilterAssignment } from "@/lib/directoryFilterValues"
 
 export type FounderPerson = {
   name: string
@@ -21,17 +16,16 @@ export type FounderCompany = {
   logoName: string
   logoSrc: string
   tagline: string
-  specialties: Specialty[]
-  level?: FounderLevel
-  businessModel: string[]
-  directoryFilters?: Array<{ groupId?: string; values?: string[]; groupTitle?: string }>
+  countries: string[]
+  specialtyTags: string[]
+  businessModels: string[]
+  directoryFilters?: DirectoryFilterAssignment[]
   shortDescription: string
   longDescription: string
   traction: string
   relliaCollaboration: string
   imageSrc: string
   location?: string
-  country: string[]
   yearJoined: number
   founders: FounderPerson[]
   programs: string[]
@@ -53,8 +47,18 @@ export const FOUNDER_DIRECTORY: FounderCompany[] = [
     logoName: "Power of Play",
     logoSrc: "/images/portfolio-pop.png",
     tagline: "Taking a Play-Based Approach To Pediatric Rehabilitation",
-    specialties: ["Pediatrics"],
-    businessModel: ["B2B", "B2B2C", "Hardware"],
+    countries: ["Canada"],
+    specialtyTags: ["Pediatrics"],
+    businessModels: ["B2B", "B2B2C", "Hardware"],
+    directoryFilters: [
+      { groupId: "country", groupTitle: "Country", values: ["Canada"] },
+      { groupId: "specialty", groupTitle: "Specialty", values: ["Pediatrics"] },
+      {
+        groupId: "business-model",
+        groupTitle: "Business Model",
+        values: ["B2B", "B2B2C", "Hardware"],
+      },
+    ],
     shortDescription: "Taking a Play-Based Approach To Pediatric Rehabilitation",
     longDescription:
       "Power of Play builds play-based strength measurement tools for pediatric rehabilitation—helping clinicians track progress without turning therapy into a chore.",
@@ -63,7 +67,6 @@ export const FOUNDER_DIRECTORY: FounderCompany[] = [
     relliaCollaboration:
       "Rellia membership supports warm operator intros, advisor deep-dives on clinical validation, and program cadence aligned to study and regulatory timelines.",
     imageSrc: "/images/founders.jpg",
-    country: ["Canada"],
     yearJoined: 2024,
     email: "info@powerofplayinc.com",
     socialLinks: [

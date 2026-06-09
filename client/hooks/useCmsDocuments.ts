@@ -469,36 +469,6 @@ export const useDirectoryFilterGroups = () =>
     staleTime: staleTimeMs,
   })
 
-export const useAdvisorFilters = () =>
-  useQuery({
-    queryKey: ["cms", "advisorFilters"],
-    queryFn: async () => {
-      const raw = await sanityFetch<DirectoryTaxonomyOption[]>("advisorFilters")
-      return Array.isArray(raw) ? raw : []
-    },
-    staleTime: staleTimeMs,
-  })
-
-export const useFounderLevels = () =>
-  useQuery({
-    queryKey: ["cms", "founderLevels"],
-    queryFn: async () => {
-      const raw = await sanityFetch<DirectoryTaxonomyOption[]>("founderLevels")
-      return Array.isArray(raw) ? raw : []
-    },
-    staleTime: staleTimeMs,
-  })
-
-export const useFounderSpecialties = () =>
-  useQuery({
-    queryKey: ["cms", "founderSpecialties"],
-    queryFn: async () => {
-      const raw = await sanityFetch<DirectoryTaxonomyOption[]>("founderSpecialties")
-      return Array.isArray(raw) ? raw : []
-    },
-    staleTime: staleTimeMs,
-  })
-
 export const useDiagnosticLandingPage = () =>
   useQuery({
     queryKey: ["cms", "diagnosticLandingPage"],

@@ -1,4 +1,11 @@
 import type { DirectoryFilterGroup } from "@/hooks/useCmsDocuments"
+import {
+  getDirectoryBusinessModels,
+  getDirectoryCountries,
+  getDirectoryExpertiseTags,
+  getDirectorySpecialties,
+  type DirectoryFilterAssignment,
+} from "@/lib/directoryFilterValues"
 
 export const isCountryGroup = (group: DirectoryFilterGroup): boolean => {
   const id = (group.id ?? "").toLowerCase()
@@ -94,51 +101,6 @@ export const getDirectoryGroupOptionLabels = (
   return optionsByGroupId
 }
 
-export const getCountryFilterOptions = (
-  groups: DirectoryFilterGroup[],
-  entries: Array<{
-    country?: string | string[]
-    directoryFilters?: Array<{ groupId?: string; values?: string[] }>
-  }>,
-): Array<{ id: string; label: string }> => {
-  const list = new Set<string>()
-
-  const countryGroup = groups.find(isCountryGroup)
-  if (countryGroup) {
-    for (const opt of Array.isArray(countryGroup.options) ? countryGroup.options : []) {
-      const label = (opt?.label ?? "").trim()
-      if (label) list.add(label)
-    }
-    for (const entry of entries) {
-      const assignments = Array.isArray(entry?.directoryFilters) ? entry.directoryFilters : []
-      for (const assignment of assignments) {
-        if ((assignment?.groupId ?? "").trim() !== countryGroup.id) continue
-        for (const v of Array.isArray(assignment?.values) ? assignment.values : []) {
-          const label = typeof v === "string" ? v.trim() : ""
-          if (label) list.add(label)
-        }
-      }
-    }
-  }
-
-  for (const entry of entries) {
-    if (Array.isArray(entry.country)) {
-      entry.country.forEach((ct) => {
-        if (ct?.trim()) list.add(ct.trim())
-      })
-    } else if (typeof entry.country === "string" && entry.country.trim()) {
-      list.add(entry.country.trim())
-    }
-  }
-
-  return [
-    { id: "all", label: "All Countries" },
-    ...Array.from(list)
-      .sort((a, b) => a.localeCompare(b))
-      .map((ct) => ({ id: ct, label: ct })),
-  ]
-}
-
 export const directoryGroupHasCountry = (groups: DirectoryFilterGroup[]): boolean =>
   groups.some(isCountryGroup)
 
@@ -159,84 +121,74 @@ const isBusinessModelGroup = (group: DirectoryFilterGroup): boolean => {
   return title === "business model" || id.includes("business-model")
 }
 
-const matchesDirectoryFilterAssignments = (
-  assignments: Array<{ groupId?: string; values?: string[] }> | undefined,
+const getDirectoryFilterValuesForGroup = (
+  assignments: DirectoryFilterAssignment[] | undefined,
   groupId: string,
-  selected: string,
-): boolean => {
+): string[] => {
   const normalizedGroupId = groupId.trim()
-  const normalizedSelected = selected.trim()
-  if (!normalizedGroupId || !normalizedSelected) return false
-
-  return (Array.isArray(assignments) ? assignments : []).some((assignment) => {
-    if ((assignment?.groupId ?? "").trim() !== normalizedGroupId) return false
-    const values = Array.isArray(assignment?.values) ? assignment.values : []
-    return values.some(
-      (value) =>
-        typeof value === "string" &&
-        value.trim().toLowerCase() === normalizedSelected.toLowerCase(),
-    )
-  })
+  if (!normalizedGroupId) return []
+  const values = new Set<string>()
+  for (const assignment of Array.isArray(assignments) ? assignments : []) {
+    if ((assignment.groupId ?? "").trim() !== normalizedGroupId) continue
+    for (const value of Array.isArray(assignment.values) ? assignment.values : []) {
+      const trimmed = typeof value === "string" ? value.trim() : ""
+      if (trimmed) values.add(trimmed)
+    }
+  }
+  return Array.from(values)
 }
 
-/** Match a directory filter dropdown value against CMS assignments and legacy tag fields. */
+const getUnifiedGroupValues = (
+  group: DirectoryFilterGroup,
+  entry: {
+    directoryFilters?: DirectoryFilterAssignment[]
+    countries?: string[]
+    specialtyTags?: string[]
+    businessModels?: string[]
+    expertiseTags?: string[]
+  },
+): string[] => {
+  const fromGroupId = getDirectoryFilterValuesForGroup(entry.directoryFilters, group.id ?? "")
+  if (fromGroupId.length > 0) return fromGroupId
+
+  const assignments = entry.directoryFilters
+  if (isCountryGroup(group)) {
+    const fromAssignments = getDirectoryCountries(assignments)
+    return fromAssignments.length > 0 ? fromAssignments : (entry.countries ?? [])
+  }
+  if (isSpecialtyGroup(group)) {
+    const fromAssignments = getDirectorySpecialties(assignments)
+    return fromAssignments.length > 0 ? fromAssignments : (entry.specialtyTags ?? [])
+  }
+  if (isBusinessModelGroup(group)) {
+    const fromAssignments = getDirectoryBusinessModels(assignments)
+    return fromAssignments.length > 0 ? fromAssignments : (entry.businessModels ?? [])
+  }
+  if (isExpertiseGroup(group)) {
+    const fromAssignments = getDirectoryExpertiseTags(assignments)
+    return fromAssignments.length > 0 ? fromAssignments : (entry.expertiseTags ?? [])
+  }
+  return []
+}
+
+/** Match a directory filter dropdown value against CMS directory filter assignments. */
 export const matchesDirectoryFilterSelection = (
   group: DirectoryFilterGroup,
   selected: string,
   entry: {
-    country?: string | string[]
-    specialties?: string[]
-    businessModel?: string[]
-    primaryExpertise?: string
-    filter?: string
-    directoryFilters?: Array<{ groupId?: string; values?: string[] }>
+    directoryFilters?: DirectoryFilterAssignment[]
+    countries?: string[]
+    specialtyTags?: string[]
+    businessModels?: string[]
+    expertiseTags?: string[]
   },
 ): boolean => {
-  const normalizedSelected = selected.trim()
+  const normalizedSelected = selected.trim().toLowerCase()
   if (!normalizedSelected || normalizedSelected === "all") return true
 
-  const assignments = entry.directoryFilters
-  const fromAssignments = matchesDirectoryFilterAssignments(
-    assignments,
-    group.id ?? "",
-    normalizedSelected,
+  return getUnifiedGroupValues(group, entry).some(
+    (value) => value.trim().toLowerCase() === normalizedSelected,
   )
-
-  if (isCountryGroup(group)) {
-    const countries = Array.isArray(entry.country)
-      ? entry.country
-      : typeof entry.country === "string" && entry.country.trim()
-        ? [entry.country]
-        : []
-    const fromCountry = countries.some(
-      (country) => country.trim().toLowerCase() === normalizedSelected.toLowerCase(),
-    )
-    return fromAssignments || fromCountry
-  }
-
-  if (isSpecialtyGroup(group)) {
-    const fromSpecialties = (Array.isArray(entry.specialties) ? entry.specialties : []).some(
-      (specialty) => specialty.trim().toLowerCase() === normalizedSelected.toLowerCase(),
-    )
-    return fromAssignments || fromSpecialties
-  }
-
-  if (isBusinessModelGroup(group)) {
-    const fromBusinessModel = (Array.isArray(entry.businessModel) ? entry.businessModel : []).some(
-      (model) => model.trim().toLowerCase() === normalizedSelected.toLowerCase(),
-    )
-    return fromAssignments || fromBusinessModel
-  }
-
-  if (isExpertiseGroup(group)) {
-    const expertiseTags = [entry.primaryExpertise, entry.filter]
-      .filter((value): value is string => typeof value === "string" && Boolean(value.trim()))
-      .map((value) => value.trim().toLowerCase())
-    const fromExpertise = expertiseTags.includes(normalizedSelected.toLowerCase())
-    return fromAssignments || fromExpertise
-  }
-
-  return fromAssignments
 }
 
 export const isExpertiseGroup = (group: DirectoryFilterGroup): boolean => {
@@ -282,24 +234,3 @@ export const filterFounderDirectoryGroups = (
   return dedupeDirectoryFilterGroups(groups.filter(allowed))
 }
 
-/** Union CMS options, advisorFilter docs, and canonical labels (full expertise list). */
-export const mergeExpertiseOptionLabels = (
-  current: string[],
-  advisorFilterLabels: string[],
-  canonicalLabels: string[],
-): string[] => {
-  const merged = new Set<string>()
-  for (const label of canonicalLabels) {
-    const trimmed = label.trim()
-    if (trimmed) merged.add(trimmed)
-  }
-  for (const label of advisorFilterLabels) {
-    const trimmed = label.trim()
-    if (trimmed) merged.add(trimmed)
-  }
-  for (const label of current) {
-    const trimmed = label.trim()
-    if (trimmed) merged.add(trimmed)
-  }
-  return Array.from(merged).sort((a, b) => a.localeCompare(b))
-}

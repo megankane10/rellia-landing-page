@@ -178,11 +178,11 @@ export default function AdvisorProfile() {
                 ) : null}
 
                 <div className="space-y-4">
-                  {active.country && (
+                  {Array.isArray(active.countries) && active.countries.length > 0 && (
                     <div className="flex items-center gap-3 text-black/70">
                       <MapPin className="h-5 w-5 text-rellia-teal shrink-0" />
                       <span className="font-urbanist text-base font-medium text-black/75">
-                        {Array.isArray(active.country) ? active.country.join(", ") : active.country}
+                        {active.countries.join(", ")}
                       </span>
                     </div>
                   )}

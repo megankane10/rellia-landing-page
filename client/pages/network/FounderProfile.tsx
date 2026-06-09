@@ -117,7 +117,10 @@ export default function FounderProfile() {
                   </p>
                 )}
                 <div className="flex flex-wrap gap-2 mb-6">
-                  {active.specialties.map((s) => (
+                  {(Array.isArray((active as { specialtyTags?: string[] }).specialtyTags)
+                    ? (active as { specialtyTags: string[] }).specialtyTags
+                    : []
+                  ).map((s) => (
                     <span
                       key={s}
                       className="inline-flex rounded-full border border-rellia-teal/20 bg-rellia-mint/20 px-3 py-1 font-urbanist text-xs font-semibold text-rellia-teal"
@@ -125,27 +128,26 @@ export default function FounderProfile() {
                       {s}
                     </span>
                   ))}
-                  {Array.isArray((active as any).businessModel) &&
-                    (active as any).businessModel.map((bm: string) => (
-                      <span
-                        key={bm}
-                        className="inline-flex rounded-full border border-black/10 bg-black/[0.03] px-3 py-1 font-urbanist text-xs font-semibold text-black/70"
-                      >
-                        {bm}
-                      </span>
-                    ))}
+                  {(Array.isArray((active as { businessModels?: string[] }).businessModels)
+                    ? (active as { businessModels: string[] }).businessModels
+                    : []
+                  ).map((bm) => (
+                    <span
+                      key={bm}
+                      className="inline-flex rounded-full border border-black/10 bg-black/[0.03] px-3 py-1 font-urbanist text-xs font-semibold text-black/70"
+                    >
+                      {bm}
+                    </span>
+                  ))}
                 </div>
 
                 <div className="space-y-4">
-                  {active.country && (Array.isArray(active.country) ? active.country.length > 0 : true) && (
+                  {Array.isArray((active as { countries?: string[] }).countries) &&
+                    (active as { countries: string[] }).countries.length > 0 && (
                     <div className="flex items-center gap-3 text-black/70">
                       <MapPin className="h-5 w-5 text-rellia-teal shrink-0" />
                       <span className="font-urbanist text-base font-medium text-black/75">
-                        {Array.isArray(active.country)
-                          ? active.country.filter(Boolean).join(", ")
-                          : typeof active.country === "string"
-                            ? active.country
-                            : ""}
+                        {(active as { countries: string[] }).countries.filter(Boolean).join(", ")}
                       </span>
                     </div>
                   )}

@@ -18,15 +18,14 @@ export type AdvisorDirectoryEntry = {
   organization: string
   role: string
   location?: string
-  country: string | string[]
+  countries: string[]
   yearJoined: string
-  primaryExpertise?: string
+  expertiseTags: string[]
   industries?: string[]
   directoryFilters?: Array<{ groupId?: string; values?: string[]; groupTitle?: string }>
   /** Short card summary (directory card + profile snapshot) */
   focus: string
   snapshot?: string
-  filter: AdvisorDirectoryFilter
   /** Portrait photo for cards and profile */
   photoSrc: string
   socialLinks?: Array<{ platform?: string; label?: string; url?: string }>
@@ -45,15 +44,18 @@ export const ADVISOR_DIRECTORY_SEED: AdvisorDirectoryEntry[] = [
     organization: "Example Health Systems (DUMMY)",
     role: "Dummy Advisor Profile — Not Real",
     location: "Toronto, ON",
-    country: ["Canada"],
+    countries: ["Canada"],
     yearJoined: "2026",
-    primaryExpertise: "Clinical Evidence",
+    expertiseTags: ["Clinical Evidence"],
     industries: ["Digital Health", "Pediatrics", "Clinical Research"],
+    directoryFilters: [
+      { groupId: "country", groupTitle: "Country", values: ["Canada"] },
+      { groupId: "expertise", groupTitle: "Expertise", values: ["Clinical Evidence"] },
+    ],
     snapshot:
       "Seeded dummy advisor for testing directory filters, snapshot copy, and the About the advisor section.",
     focus:
       "Seeded dummy advisor for testing directory filters, snapshot copy, and the About the advisor section.",
-    filter: "Clinical Evidence",
     photoSrc: "/images/nopicture-male.jpg",
     bio: "This seeded profile demonstrates how advisors appear in the directory and on profile pages. Replace this copy with a real bio before promoting to production.",
     mentoringStyle:
