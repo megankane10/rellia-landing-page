@@ -61,7 +61,7 @@ export default function NetworkJumpNav({ mode, className, hoverVariant }: Networ
     mode === "samePage" ? "focus-visible:ring-offset-rellia-teal" : "focus-visible:ring-offset-rellia-cream",
     resolvedHover === "darken" && "transition-colors duration-200 hover:bg-rellia-teal/70",
     resolvedHover === "lift" &&
-      "transition-[transform,box-shadow] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-2 hover:shadow-[0_22px_44px_-14px_rgba(13,53,64,0.42)] active:translate-y-[-6px]",
+      "transition-[transform,box-shadow] duration-300 transition-timing-function-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-2 hover:shadow-[0_22px_44px_-14px_rgba(13,53,64,0.42)] active:translate-y-[-6px]",
   )
   const navChrome = cn(
     "grid grid-cols-2 md:grid-cols-4 gap-px rounded-2xl overflow-hidden",

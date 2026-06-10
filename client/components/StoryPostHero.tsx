@@ -90,50 +90,46 @@ export const StoryPostHero = ({
                 </div>
               </div>
 
-              <div className={cn(!useBackgroundLayout && "w-full max-w-full")}>
-                <h1
+              <h1
+                className={cn(
+                  "mt-6 font-host-grotesk text-3xl font-medium leading-tight tracking-tight md:text-4xl lg:text-5xl",
+                  useBackgroundLayout ? "text-white" : "text-rellia-mint",
+                )}
+              >
+                {title}
+              </h1>
+              {excerpt ? (
+                <p
                   className={cn(
-                    "mt-6 font-host-grotesk text-3xl font-medium leading-tight tracking-tight md:text-4xl lg:text-5xl",
-                    useBackgroundLayout ? "text-white" : "text-rellia-mint",
+                    "max-w-3xl font-urbanist text-base font-normal leading-relaxed md:text-lg",
+                    useBackgroundLayout ? "mt-6 text-white/85 md:mt-8" : "mt-4 text-white",
                   )}
                 >
-                  {title}
-                </h1>
-
-                {useBackgroundLayout && excerpt ? (
-                  <p className="mt-6 max-w-3xl font-urbanist text-base font-normal leading-relaxed text-white/85 md:mt-8 md:text-lg">
-                    {excerpt}
-                  </p>
-                ) : null}
-
-                {!useBackgroundLayout && coverSrc ? (
-                  <div className="mt-8 md:mt-10">
-                    <div className="relative w-full max-w-full">
-                      <figure className="relative aspect-[16/10] w-full max-w-full overflow-hidden rounded-2xl border border-white/15 bg-black/20 shadow-[0_24px_56px_-28px_rgba(0,0,0,0.55)]">
-                        <img
-                          src={toAbsoluteImageUrl(coverSrc)}
-                          alt={coverAlt}
-                          className="h-full w-full object-cover"
-                          loading="eager"
-                          fetchPriority="high"
-                        />
-                      </figure>
-                      <aside
-                        className="hidden md:flex md:absolute md:right-0 md:top-1/2 md:-translate-y-1/2"
-                        aria-label="Share this story"
-                      >
-                        {shareBlock}
-                      </aside>
-                    </div>
-                    <div className="mt-8 md:hidden">{shareBlock}</div>
-                  </div>
-                ) : null}
-              </div>
-
-              {!useBackgroundLayout && excerpt ? (
-                <p className="mt-6 max-w-3xl font-urbanist text-base font-normal leading-relaxed text-white md:mt-8 md:text-lg">
                   {excerpt}
                 </p>
+              ) : null}
+
+              {!useBackgroundLayout && coverSrc ? (
+                <div className="mt-8 md:mt-10">
+                  <div className="relative w-full">
+                    <figure className="relative aspect-[16/10] w-full overflow-hidden rounded-2xl border border-white/15 bg-black/20 shadow-[0_24px_56px_-28px_rgba(0,0,0,0.55)]">
+                      <img
+                        src={toAbsoluteImageUrl(coverSrc)}
+                        alt={coverAlt}
+                        className="h-full w-full object-cover"
+                        loading="eager"
+                        fetchPriority="high"
+                      />
+                    </figure>
+                    <aside
+                      className="hidden md:flex md:absolute md:right-0 md:top-1/2 md:-translate-y-1/2"
+                      aria-label="Share this story"
+                    >
+                      {shareBlock}
+                    </aside>
+                  </div>
+                  <div className="mt-8 md:hidden">{shareBlock}</div>
+                </div>
               ) : null}
 
               {useBackgroundLayout ? (

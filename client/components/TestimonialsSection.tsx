@@ -119,7 +119,7 @@ function TestimonialCard({
     <div
       className={cn(
         "flex h-full w-full min-w-0 flex-col overflow-hidden rounded-3xl border border-black/10 bg-white p-4 md:p-5",
-        "transition-[max-height] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:transition-none",
+        "transition-[max-height] duration-500 transition-timing-function-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:transition-none",
         isExpanded && "max-h-[min(92vh,2400px)] min-h-0"
       )}
     >

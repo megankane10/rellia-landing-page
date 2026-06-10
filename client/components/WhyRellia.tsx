@@ -147,7 +147,7 @@ export default function WhyRellia({
                     onMouseEnter={() => setActiveIndex(idx)}
                     className={cn(
                       "group relative overflow-hidden rounded-3xl border border-black/10 bg-white",
-                      "transition-[flex-grow] duration-[900ms] ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:transition-none",
+                      "transition-[flex-grow] transition-duration-[900ms] transition-timing-function-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:transition-none",
                       "will-change-[flex-grow]",
                       "min-h-[440px]",
                     )}
@@ -170,7 +170,7 @@ export default function WhyRellia({
                         alt=""
                         className={cn(
                           "absolute inset-0 h-full w-full object-cover",
-                          "transition-transform duration-[1200ms] ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:transition-none",
+                          "transition-transform transition-duration-[1200ms] transition-timing-function-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:transition-none",
                           isActive ? "scale-[1.03]" : "scale-100",
                         )}
                       />
@@ -182,7 +182,7 @@ export default function WhyRellia({
                       <h3
                         className={cn(
                           "font-host-grotesk font-normal text-white text-3xl tracking-tight leading-tight",
-                          "transition-transform duration-[700ms] ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:transition-none",
+                          "transition-transform transition-duration-[700ms] transition-timing-function-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:transition-none",
                           isActive ? "delay-200 -translate-y-1" : "delay-0 translate-y-0",
                         )}
                       >
@@ -192,7 +192,7 @@ export default function WhyRellia({
                       <div
                         className={cn(
                           "mt-2.5 overflow-hidden",
-                          "transition-[max-height,opacity,transform] duration-[1050ms] ease-[cubic-bezier(0.42,0,1,1)] motion-reduce:transition-none",
+                          "transition-[max-height,opacity,transform] transition-duration-[1050ms] transition-timing-function-[cubic-bezier(0.42,0,1,1)] motion-reduce:transition-none",
                           isActive
                             ? "delay-300 max-h-56 opacity-100 translate-y-0"
                             : "delay-0 max-h-0 opacity-0 translate-y-6",

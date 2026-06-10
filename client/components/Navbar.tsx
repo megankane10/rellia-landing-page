@@ -717,7 +717,7 @@ export default function Navbar({
           className={cn(
             `fixed inset-x-0 z-[56] w-full md:hidden transform-gpu`,
             "bg-rellia-teal backdrop-blur-[56px] backdrop-saturate-150 shadow-2xl border-l border-white/10",
-            "will-change-transform transition-transform duration-500 ease-[cubic-bezier(0.42,0,0.58,1)] motion-reduce:transition-none",
+            "will-change-transform transition-transform duration-500 transition-timing-function-[cubic-bezier(0.42,0,0.58,1)] motion-reduce:transition-none",
             mobileOpen ? "translate-x-0" : "pointer-events-none translate-x-full",
           )}
           role="dialog"
