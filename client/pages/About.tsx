@@ -96,7 +96,7 @@ export default function About() {
                 </div>
 
                 <div className="relative min-h-0 w-full min-w-0">
-                  <div className="relative mx-auto aspect-[5/4] w-full max-w-full overflow-hidden rounded-xl shadow-lg sm:aspect-[5/4] lg:mx-0 lg:aspect-auto lg:h-full lg:min-h-[400px]">
+                  <div className="relative mx-auto aspect-[5/4] w-full max-w-full overflow-hidden rounded-[2.5rem] shadow-lg sm:aspect-[5/4] md:rounded-[3.5rem] lg:mx-0 lg:aspect-auto lg:h-full lg:min-h-[400px]">
                     <img
                       src={about.missionImageSrc}
                       alt={about.missionImageAlt}
