@@ -1,10 +1,12 @@
 import {defineField, defineType} from 'sanity'
+import {portableHeadlineField} from '../shared/inlineHeroHeadlineField'
 import {
   CONTENT_SEO_FIELDSETS,
   CONTENT_SEO_GROUPS,
   sectionDividerFieldset,
   singletonSeoField,
 } from '../shared/singletonContentFields'
+import {DEFAULT_MEMBERSHIP_SPLASH_HEADING_PORTABLE} from '../../../shared/cms/inlineHeroHeadline'
 
 export const paymentPage = defineType({
   name: 'paymentPage',
@@ -30,11 +32,10 @@ export const paymentPage = defineType({
       group: 'content',
       fieldset: 'welcomeSplashDivider',
     }),
-    defineField({
-      name: 'welcomeSplashHeading',
-      type: 'string',
+    portableHeadlineField({
+      name: 'welcomeSplashHeadingPortable',
       title: 'Splash headline',
-      initialValue: 'Congratulations! Your application is approved.',
+      initialValue: DEFAULT_MEMBERSHIP_SPLASH_HEADING_PORTABLE,
       group: 'content',
       fieldset: 'welcomeSplashDivider',
       hidden: ({parent}) => !parent?.welcomeSplashEnabled,

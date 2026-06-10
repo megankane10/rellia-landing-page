@@ -16,6 +16,12 @@ export type LegacyMetricsHeadlineFields = {
   metricsHeading?: string | null
 }
 
+export type LegacySplashHeadingFields = {
+  welcomeSplashHeadingPortable?: SanityPortableText | null
+  /** @deprecated Plain string — migrated to welcomeSplashHeadingPortable. */
+  welcomeSplashHeading?: string | null
+}
+
 /** Portable hero headline with fallback from legacy split fields or old field name. */
 export const resolveHeroTitlePortable = (
   cms: LegacyHeroHeadlineFields | null | undefined,
@@ -48,6 +54,27 @@ export const resolveHeroTitlePortable = (
 
 /** @deprecated Use resolveHeroTitlePortable */
 export const resolveHeroHeadlinePortable = resolveHeroTitlePortable
+
+/** Membership splash headline — inlineHeroHeadline with legacy plain-string fallback. */
+export const resolveWelcomeSplashHeadingPortable = (
+  cms: LegacySplashHeadingFields | null | undefined,
+  fallback: SanityPortableText,
+): SanityPortableText => {
+  if (
+    Array.isArray(cms?.welcomeSplashHeadingPortable) &&
+    cms.welcomeSplashHeadingPortable.length > 0
+  ) {
+    return cms.welcomeSplashHeadingPortable
+  }
+
+  const legacy = cms?.welcomeSplashHeading?.trim()
+  if (legacy) {
+    const normalized = normalizeToPortableText(legacy)
+    if (normalized?.length) return normalized
+  }
+
+  return fallback
+}
 
 /** Metrics band heading — supports inlineHeroHeadline or legacy plain string. */
 export const resolveMetricsHeadlinePortable = (

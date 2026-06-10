@@ -965,7 +965,7 @@ const paymentPageSeedDocument = () => ({
   questionsFaqLabel: DEFAULT_PAYMENT_PAGE.questionsFaqLabel,
   questionsFaqPath: DEFAULT_PAYMENT_PAGE.questionsFaqPath,
   welcomeSplashEnabled: DEFAULT_PAYMENT_PAGE.welcomeSplashEnabled,
-  welcomeSplashHeading: DEFAULT_PAYMENT_PAGE.welcomeSplashHeading,
+  welcomeSplashHeadingPortable: DEFAULT_PAYMENT_PAGE.welcomeSplashHeadingPortable,
   welcomeSplashSubheading: DEFAULT_PAYMENT_PAGE.welcomeSplashSubheading,
   welcomeSplashBackgroundSrc: DEFAULT_PAYMENT_PAGE.welcomeSplashBackgroundSrc,
   welcomeSplashLogoSrc: DEFAULT_PAYMENT_PAGE.welcomeSplashLogoSrc,
@@ -1478,7 +1478,7 @@ async function main() {
       id: "paymentPage",
       setIfMissing: {
         welcomeSplashEnabled: DEFAULT_PAYMENT_PAGE.welcomeSplashEnabled,
-        welcomeSplashHeading: DEFAULT_PAYMENT_PAGE.welcomeSplashHeading,
+        welcomeSplashHeadingPortable: DEFAULT_PAYMENT_PAGE.welcomeSplashHeadingPortable,
         welcomeSplashSubheading: DEFAULT_PAYMENT_PAGE.welcomeSplashSubheading,
         welcomeSplashBackgroundSrc: DEFAULT_PAYMENT_PAGE.welcomeSplashBackgroundSrc,
         welcomeSplashLogoSrc: DEFAULT_PAYMENT_PAGE.welcomeSplashLogoSrc,

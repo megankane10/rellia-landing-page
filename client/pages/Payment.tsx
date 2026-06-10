@@ -27,7 +27,7 @@ const readMembershipSplashCompleteFromSession = () => {
   return sessionStorage.getItem(MEMBERSHIP_SPLASH_COMPLETE_SESSION_KEY) === "true"
 }
 
-const markMembershipSplashCompleteInSession = () => {
+const markMembershipSplashSeenInSession = () => {
   if (typeof window === "undefined") return
   sessionStorage.setItem(MEMBERSHIP_SPLASH_COMPLETE_SESSION_KEY, "true")
 }
@@ -74,7 +74,7 @@ export default function Payment() {
 
   const handleSplashComplete = useCallback(() => {
     setSplashComplete(true)
-    markMembershipSplashCompleteInSession()
+    markMembershipSplashSeenInSession()
   }, [])
 
   useEffect(() => {
@@ -89,6 +89,11 @@ export default function Payment() {
       setSplashComplete(true)
     }
   }, [paymentCmsPending, p.welcomeSplashEnabled, previewMode])
+
+  useEffect(() => {
+    if (!showSplash) return
+    markMembershipSplashSeenInSession()
+  }, [showSplash])
 
   const handleCopyCode = () => {
     const code = p.discountBannerSubtitle.trim() || "RELLIA50"
@@ -124,7 +129,7 @@ export default function Payment() {
       {showSplash ? (
         <MembershipWelcomeSplash
           enabled
-          heading={p.welcomeSplashHeading ?? DEFAULT_PAYMENT_PAGE.welcomeSplashHeading ?? ""}
+          heading={p.welcomeSplashHeadingPortable ?? DEFAULT_PAYMENT_PAGE.welcomeSplashHeadingPortable}
           subheading={p.welcomeSplashSubheading ?? DEFAULT_PAYMENT_PAGE.welcomeSplashSubheading ?? ""}
           backgroundSrc={splashBackgroundSrc}
           logoSrc={

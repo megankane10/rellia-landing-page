@@ -11,6 +11,7 @@ type PortableHeadlineFieldOptions = {
   fieldset?: string
   required?: boolean
   initialValue?: unknown
+  hidden?: FieldDefinition['hidden']
 }
 
 /** Reusable inlineHeroHeadline field — one picker for dual-tone headings (no split accent fields). */
@@ -21,6 +22,7 @@ export const portableHeadlineField = ({
   fieldset,
   required = false,
   initialValue,
+  hidden,
 }: PortableHeadlineFieldOptions = {}): FieldDefinition =>
   defineField({
     name,
@@ -30,5 +32,6 @@ export const portableHeadlineField = ({
     group,
     fieldset,
     initialValue,
+    hidden,
     validation: required ? (Rule) => Rule.required().min(1) : undefined,
   })

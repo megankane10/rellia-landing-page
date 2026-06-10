@@ -433,11 +433,12 @@ export const shouldUseDefaultOgImage = (pathname: string): boolean =>
 
 /** Marketing routes with dedicated static OG artwork (all other routes: title + description only). */
 const STATIC_OG_IMAGE_BY_ROUTE: Record<string, string> = {
-  "/": "/ogimage.png",
-  "/founders": "/founders-ogimage.png",
-  "/advisors": "/advisors-ogimage.png",
-  "/investors": "/investors-ogimage.png",
-  "/industry-partners": "/industrypartners-ogimage.png",
+  "/": "/images/ogimage.png",
+  "/founders": "/images/ogimage-founders.png",
+  "/advisors": "/images/ogimage-advisors.png",
+  "/investors": "/images/ogimage-investors.png",
+  "/industry-partners": "/images/ogimage-industrypartners.png",
+  "/membership": "/images/ogimage-membership.png",
 }
 
 /** Routes that supply og:image from page context (e.g. first alumni company logo). */
@@ -707,7 +708,7 @@ export const PRERENDER_PATHS: string[] = [
 export const getDefaultOgImageUrl = (): string => {
   const ogImageVersion = ((import.meta as unknown as { env?: Record<string, unknown> })?.env
     ?.VITE_OG_IMAGE_VERSION as string | undefined)?.trim()
-  const base = `${getSiteUrl()}/ogimage.png`
+  const base = `${getSiteUrl()}/images/ogimage.png`
   if (!ogImageVersion) return base
   return `${base}?v=${encodeURIComponent(ogImageVersion)}`
 }

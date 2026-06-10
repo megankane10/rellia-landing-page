@@ -1156,6 +1156,8 @@ export type PaymentPageContent = CmsPageVisibility & {
   questionsContactLabel: string
   questionsContactPath: string
   welcomeSplashEnabled?: boolean
+  welcomeSplashHeadingPortable?: SanityPortableText
+  /** @deprecated Plain string — use welcomeSplashHeadingPortable. Still read for migration. */
   welcomeSplashHeading?: string
   welcomeSplashSubheading?: string
   welcomeSplashBackgroundSrc?: string

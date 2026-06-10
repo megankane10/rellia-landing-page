@@ -866,6 +866,7 @@ export const paymentPageQuery = `*[_id == "paymentPage"][0]{
   questionsContactLabel,
   questionsContactPath,
   welcomeSplashEnabled,
+  welcomeSplashHeadingPortable,
   welcomeSplashHeading,
   welcomeSplashSubheading,
   "welcomeSplashBackgroundSrc": coalesce(welcomeSplashBackground.asset->url, welcomeSplashBackgroundSrc),

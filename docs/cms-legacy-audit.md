@@ -12,6 +12,7 @@ This document tracks **legacy Sanity fields, code fallbacks, and wiring** that s
 
 | Item | Status |
 |------|--------|
+| `welcomeSplashHeadingPortable` | **Active** — dual-tone splash headline (`inlineHeroHeadline`). Select words → **Mint** or leave default white. Replaces plain `welcomeSplashHeading` string (still read as fallback). |
 | `welcomeSplashDurationSeconds` | **Active** — hold time after splash text reveals (0.5–8s). Visible under **Welcome splash** in Studio after schema deploy. |
 | `benefits` (“Cancel policy line”) | **Removed from Studio** — cancel copy is hardcoded in `client/pages/Payment.tsx`. |
 | `benefitsPanelBullet1`–`4` | **Removed from Studio** — use `benefitsPanelDescription` only. Merge still reads old bullets for migrated content. |
@@ -32,6 +33,7 @@ These fields are **queried and merged** in `shared/cms/groqQueries.ts`, `api/ind
 - `pricingMonthlyBadge`, `pricingAnnualBadge`, `pricingPerSuffix`, `popularLabel`
 - `discountBannerTitle`, `discountBannerApplyLabel`, `discountBannerApplyHref`
 - `benefits` (array), `benefitsPanelBullet1`–`4`
+- `welcomeSplashHeading` (plain string — superseded by `welcomeSplashHeadingPortable`)
 
 **Suggested follow-up:** One-time `sanity-cleanup` patch to `unset` these keys on `paymentPage`, then drop them from GROQ, types, and `DEFAULT_PAYMENT_PAGE`.
 

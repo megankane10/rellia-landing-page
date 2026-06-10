@@ -1,10 +1,18 @@
 import { useCallback, useEffect, useMemo, useState } from "react"
 import { motion, useAnimationControls, useReducedMotion } from "framer-motion"
-import { cmsCleanText, cmsDisplayText, isVisualEditingPreview } from "@/lib/cmsStega"
+import { HeroHeadlinePortable } from "@/components/HeroHeadlinePortable"
+import { cmsCleanText, isVisualEditingPreview } from "@/lib/cmsStega"
+import { cn } from "@/lib/utils"
+import { normalizeToPortableText } from "@shared/cms/normalizePortableText"
+import {
+  portableTextToAnimatedWords,
+  type PortableTextAnimatedWord,
+} from "@shared/cms/portableTextPlain"
+import type { SanityPortableText } from "@shared/cms/types"
 
 export type MembershipWelcomeSplashProps = {
   enabled: boolean
-  heading: string
+  heading: SanityPortableText | string | null | undefined
   subheading: string
   backgroundSrc: string
   logoSrc: string
@@ -51,6 +59,54 @@ const splashViewportStyle = {
   marginTop: "calc(-1 * env(safe-area-inset-top, 0px))",
 } as const
 
+const headingWordClass = (marks: string[]) =>
+  cn(
+    marks.includes("mint") && "text-rellia-mint",
+    marks.includes("teal") && "text-rellia-teal",
+    !marks.includes("mint") && !marks.includes("teal") && "text-white",
+  )
+
+const headingWordVariants = {
+  hidden: {
+    opacity: 0,
+    y: 18,
+    filter: "blur(8px)",
+  },
+  visible: {
+    opacity: 1,
+    y: 0,
+    filter: "blur(0px)",
+    transition: {
+      duration: HEADING_WORD_DURATION_S,
+      ease: HEADING_WORD_EASE,
+    },
+  },
+}
+
+const reducedHeadingWordVariants = {
+  hidden: { opacity: 1, y: 0, filter: "blur(0px)" },
+  visible: { opacity: 1, y: 0, filter: "blur(0px)" },
+}
+
+type HeadingWordMotionVariants = typeof headingWordVariants | typeof reducedHeadingWordVariants
+
+const SplashHeadingWord = ({
+  word,
+  marks,
+  variants,
+}: {
+  word: string
+  marks: string[]
+  variants: HeadingWordMotionVariants
+}) => (
+  <motion.span
+    variants={variants}
+    className={cn("inline-block will-change-[transform,filter]", headingWordClass(marks))}
+  >
+    {word}
+  </motion.span>
+)
+
 export default function MembershipWelcomeSplash({
   enabled,
   heading,
@@ -65,22 +121,27 @@ export default function MembershipWelcomeSplash({
   const exitControls = useAnimationControls()
   const [phase, setPhase] = useState<SplashPhase>("enter")
 
-  const headingText = previewMode ? cmsDisplayText(heading) : cmsCleanText(heading)
-  const subheadingText = previewMode ? cmsDisplayText(subheading) : cmsCleanText(subheading)
-  const words = useMemo(
-    () => (previewMode ? headingText : cmsCleanText(heading)).trim().split(/\s+/).filter(Boolean),
-    [heading, headingText, previewMode],
+  const headingPortable = useMemo(
+    () => normalizeToPortableText(heading) ?? [],
+    [heading],
   )
+
+  const animatedWords = useMemo(
+    (): PortableTextAnimatedWord[] => portableTextToAnimatedWords(headingPortable),
+    [headingPortable],
+  )
+
+  const subheadingText = previewMode ? subheading : cmsCleanText(subheading)
 
   const headingRevealEndS = useMemo(() => {
     if (reduceMotion) return 0
-    const wordCount = Math.max(words.length, 1)
+    const wordCount = Math.max(animatedWords.length, 1)
     return (
       HEADING_DELAY_CHILDREN_S +
       (wordCount - 1) * HEADING_STAGGER_S +
       HEADING_WORD_DURATION_S
     )
-  }, [reduceMotion, words.length])
+  }, [animatedWords.length, reduceMotion])
 
   const subheadingStartS = useMemo(
     () => Math.max(0, headingRevealEndS - SUBHEADING_NEARLY_DONE_OFFSET_S),
@@ -110,32 +171,20 @@ export default function MembershipWelcomeSplash({
     setPhase("exit")
   }, [phase, reduceMotion])
 
-  const headingContainerVariants = {
-    hidden: {},
-    visible: {
-      transition: {
-        staggerChildren: reduceMotion ? 0 : HEADING_STAGGER_S,
-        delayChildren: reduceMotion ? 0 : HEADING_DELAY_CHILDREN_S,
-      },
-    },
-  }
+  const wordVariants = reduceMotion ? reducedHeadingWordVariants : headingWordVariants
 
-  const headingWordVariants = {
-    hidden: {
-      opacity: reduceMotion ? 1 : 0,
-      y: reduceMotion ? 0 : 18,
-      filter: reduceMotion ? "blur(0px)" : "blur(8px)",
-    },
-    visible: {
-      opacity: 1,
-      y: 0,
-      filter: "blur(0px)",
-      transition: {
-        duration: reduceMotion ? 0 : HEADING_WORD_DURATION_S,
-        ease: HEADING_WORD_EASE,
+  const headingContainerMotionVariants = useMemo(
+    () => ({
+      hidden: {},
+      visible: {
+        transition: {
+          staggerChildren: reduceMotion ? 0 : HEADING_STAGGER_S,
+          delayChildren: reduceMotion ? 0 : HEADING_DELAY_CHILDREN_S,
+        },
       },
-    },
-  }
+    }),
+    [reduceMotion],
+  )
 
   const progressBarPositionClass =
     PROGRESS_BAR_EDGE === "top"
@@ -223,15 +272,15 @@ export default function MembershipWelcomeSplash({
             className="h-full w-full object-cover"
           />
           <div
-            className="absolute inset-0 bg-gradient-to-br from-[#071f26]/75 via-rellia-teal/60 to-[#0a2e36]/80"
+            className="absolute inset-0 bg-gradient-to-br from-[#071f26]/45 via-rellia-teal/30 to-[#0a2e36]/50 md:from-[#071f26]/55 md:via-rellia-teal/40 md:to-[#0a2e36]/60"
             aria-hidden
           />
           <div
-            className="absolute inset-0 bg-gradient-to-t from-[#071f26]/85 via-[#071f26]/25 to-black/15"
+            className="absolute inset-0 bg-gradient-to-t from-[#071f26]/50 via-[#071f26]/15 to-black/10 md:from-[#071f26]/65 md:via-[#071f26]/20 md:to-black/15"
             aria-hidden
           />
           <div
-            className="absolute inset-y-0 left-0 w-full max-w-4xl bg-gradient-to-r from-black/55 via-black/20 to-transparent lg:max-w-5xl"
+            className="absolute inset-y-0 left-0 w-full max-w-4xl bg-gradient-to-r from-black/30 via-black/10 to-transparent md:from-black/40 md:via-black/15 lg:max-w-5xl"
             aria-hidden
           />
         </div>
@@ -239,7 +288,7 @@ export default function MembershipWelcomeSplash({
         <div className="relative z-10 flex min-h-full flex-1 items-center px-6 py-24 md:px-12 lg:px-16">
           <div className="mx-auto w-full max-w-3xl text-left">
             <motion.div
-              className="mb-16 md:mb-20 lg:mb-24"
+              className="mb-14 md:mb-20 lg:mb-24"
               initial={reduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: -64 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1.1, ease: REVEAL_EASE }}
@@ -248,7 +297,7 @@ export default function MembershipWelcomeSplash({
                 src={logoSrc}
                 alt=""
                 aria-hidden
-                className="h-[4.5rem] w-[4.5rem] drop-shadow-[0_12px_32px_rgba(0,0,0,0.5)] md:h-24 md:w-24 lg:h-28 lg:w-28"
+                className="h-24 w-24 drop-shadow-[0_12px_32px_rgba(0,0,0,0.5)] md:h-28 md:w-28 lg:h-36 lg:w-36"
                 animate={
                   reduceMotion || isExiting
                     ? { rotate: 0 }
@@ -269,24 +318,23 @@ export default function MembershipWelcomeSplash({
             </motion.div>
 
             {previewMode ? (
-              <h1 className="text-balance font-host-grotesk text-[2.35rem] font-semibold leading-[1.1] tracking-tight text-white [text-shadow:0_2px_28px_rgba(0,0,0,0.55)] md:text-5xl lg:text-[3.35rem]">
-                {headingText}
+              <h1 className="text-balance font-host-grotesk text-[2.35rem] font-semibold leading-[1.1] tracking-tight [text-shadow:0_2px_28px_rgba(0,0,0,0.55)] md:text-5xl lg:text-[3.35rem]">
+                <HeroHeadlinePortable value={headingPortable} className="text-white" />
               </h1>
             ) : (
               <motion.h1
-                variants={headingContainerVariants}
+                variants={headingContainerMotionVariants}
                 initial="hidden"
                 animate="visible"
-                className="flex flex-wrap gap-x-[0.22em] gap-y-1 text-balance font-host-grotesk text-[2.35rem] font-semibold leading-[1.1] tracking-tight text-white [text-shadow:0_2px_28px_rgba(0,0,0,0.55)] md:text-5xl lg:text-[3.35rem]"
+                className="flex flex-wrap gap-x-[0.22em] gap-y-1 text-balance font-host-grotesk text-[2.35rem] font-semibold leading-[1.1] tracking-tight [text-shadow:0_2px_28px_rgba(0,0,0,0.55)] md:text-5xl lg:text-[3.35rem]"
               >
-                {words.map((word, idx) => (
-                  <motion.span
-                    key={`${idx}-${word}`}
-                    variants={headingWordVariants}
-                    className="inline-block will-change-[transform,filter]"
-                  >
-                    {word}
-                  </motion.span>
+                {animatedWords.map((entry, idx) => (
+                  <SplashHeadingWord
+                    key={`${idx}-${entry.text}`}
+                    word={entry.text}
+                    marks={entry.marks}
+                    variants={wordVariants}
+                  />
                 ))}
               </motion.h1>
             )}

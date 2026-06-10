@@ -1,4 +1,4 @@
-![Project Snapshot](public/ogimage.png)
+![Project Snapshot](public/images/ogimage.png)
 # Rellia Health — marketing site
 
 React SPA for **Rellia Health**, connecting founders, clinicians, and health systems around the future of care.
@@ -8,6 +8,8 @@ React SPA for **Rellia Health**, connecting founders, clinicians, and health sys
 **Status (June 2026):** The site is live on Vercel; editors publish via [Sanity Studio](https://relliahealth.sanity.studio). See [Editor guide](./docs/website-management-guide.md).
 
 **CMS legacy / cleanup backlog:** [docs/cms-legacy-audit.md](./docs/cms-legacy-audit.md) — fields to remove, schema deploy notes, and wiring still in code but hidden from Studio.
+
+**SEO & indexing (GSC):** [docs/seo-indexing-fixes.md](./docs/seo-indexing-fixes.md) — sitemap submission, request indexing, and coverage troubleshooting.
 
 ---
 
@@ -136,7 +138,7 @@ Fix a bug in the contact form: branch from main named `fix/contact-validation`, 
 | `scripts/vercel-api-entry.ts` | Source for the Vercel serverless API bundle |
 | `api/index.js` | Committed Vercel **`/api/*`** handler (rebuild with **`pnpm run build:api`** after server changes) |
 | `shared/` | Shared CMS types, GROQ helpers, query whitelist (`shared/cms/sanityQueryRegistry.ts`), merge helpers, default fallbacks |
-| `public/` | Static files (`robots.txt`, `sitemap.xml`, images, `favicon.ico`, `ogimage.png`) |
+| `public/` | Static files (`robots.txt`, `sitemap.xml`, images, `favicon.ico`, `images/ogimage*.png`) |
 | [`website-cms/`](./website-cms/README.md) | Sanity Studio CMS package containing schemas, visual editing presentation settings, and setup instructions. |
 | `data/` | Optional local artifacts (e.g. `contact-submissions.jsonl` in `.gitignore`); not part of the runtime app bundle |
 | `design-system/` | Design notes (e.g. `design-system/rellia-health/MASTER.md`); verify against live Tailwind tokens in `tailwind.config.ts` before treating as source of truth |
@@ -312,6 +314,32 @@ Hosted Studio: https://relliahealth.sanity.studio/
 Create the read token in [sanity.io/manage](https://sanity.io/manage) → API → Tokens → **Viewer** (or read-only with draft access). Redeploy production after adding tokens.
 
 **Studio sidebar:** Page singletons live under **Pages** (not scattered at the top level).
+
+---
+
+## Page metadata & Open Graph
+
+Static OG artwork lives in `public/images/` (1200×630 PNG, under 1 MB). Filename suffix after `ogimage-` maps to the route (homepage uses `ogimage.png` only).
+
+| Route / page type | `<title>` & description | `og:image` | `robots` | CMS overrides |
+|-------------------|-------------------------|------------|----------|---------------|
+| `/` (home) | `ROUTE_SEO` + optional Site settings SEO | `/images/ogimage.png` | index | Home page → SEO tab |
+| `/founders` | `ROUTE_SEO` | `/images/ogimage-founders.png` | index | Founders landing SEO |
+| `/advisors` | `ROUTE_SEO` | `/images/ogimage-advisors.png` | index | Advisors landing SEO |
+| `/investors` | `ROUTE_SEO` | `/images/ogimage-investors.png` | index | Investors landing SEO |
+| `/industry-partners` | `ROUTE_SEO` | `/images/ogimage-industrypartners.png` | index | Industry partners SEO |
+| `/membership` | `ROUTE_SEO` | `/images/ogimage-membership.png` | **noindex** (checkout) | Payment page → SEO tab |
+| `/about`, `/faq`, `/careers`, `/contact`, `/apply`, `/consulting`, `/programs`, `/events`, `/stories`, legal, diagnostic | `ROUTE_SEO` defaults | none (title + description only) | index unless noted | Matching singleton → SEO tab |
+| `/founders/alumni` (directory) | `ROUTE_SEO` | first alumni logo when available | index | — |
+| `/events/:slug`, `/programs/:slug` | generated or CMS `seo` | event/program card image (square crop) | index | Event / Program → SEO |
+| `/stories/:slug` | story SEO or default title | story hero image (landscape) | index | Story → SEO |
+| `/founders/alumni/:id`, `/advisors/directory/:id` | profile name + section | profile / card image | index | Profile SEO fields |
+| `/admin/*`, `/accept-invite` | admin titles | none | **noindex** | — |
+| Legacy redirects (`/network`, `/partners`, old program slugs) | redirect copy | none | **noindex** | — |
+
+**Implementation:** `client/config/seo.ts` (`ROUTE_SEO`, `STATIC_OG_IMAGE_BY_ROUTE`), `client/components/RouteSeo.tsx`, build-time `client/prerender.tsx`. Dynamic OG uses `resolveSocialOgImage()` (Sanity CDN JPG crop or absolute `/public` URL).
+
+**Regenerate sitemap after route changes:** `pnpm run generate:seo-files`
 
 ---
 

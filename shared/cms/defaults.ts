@@ -3,9 +3,14 @@ import {
   twoPartHeroHeadline,
   DEFAULT_HOME_METRICS_HEADLINE_PORTABLE,
   DEFAULT_HOME_TESTIMONIALS_TITLE_PORTABLE,
+  DEFAULT_MEMBERSHIP_SPLASH_HEADING_PORTABLE,
   DEFAULT_PROGRAMS_LANDING_HERO_PORTABLE,
 } from "./inlineHeroHeadline"
-import { resolveHeroTitlePortable, resolveMetricsHeadlinePortable } from "./resolveHeroHeadline"
+import {
+  resolveHeroTitlePortable,
+  resolveMetricsHeadlinePortable,
+  resolveWelcomeSplashHeadingPortable,
+} from "./resolveHeroHeadline"
 import type {
   AboutPageContent,
   ApplyPageContent,
@@ -2431,7 +2436,7 @@ export const DEFAULT_PAYMENT_PAGE: PaymentPageContent = {
   questionsContactLabel: "Contact us",
   questionsContactPath: "/contact",
   welcomeSplashEnabled: true,
-  welcomeSplashHeading: "Congratulations! Your application is approved.",
+  welcomeSplashHeadingPortable: DEFAULT_MEMBERSHIP_SPLASH_HEADING_PORTABLE,
   welcomeSplashSubheading:
     "Secure your spot in the Rellia network to finalize your membership and unlock your exclusive founder benefits.",
   welcomeSplashBackgroundSrc: "/images/membership-splash.jpg",
@@ -2890,7 +2895,13 @@ export function mergePaymentPage(
   }
   fill("choosePlanHeadline", DEFAULT_PAYMENT_PAGE.choosePlanHeadline ?? "")
   fill("promoMessage", DEFAULT_PAYMENT_PAGE.promoMessage ?? "")
-  fill("welcomeSplashHeading", DEFAULT_PAYMENT_PAGE.welcomeSplashHeading ?? "")
+  base.welcomeSplashHeadingPortable = resolveWelcomeSplashHeadingPortable(
+    {
+      welcomeSplashHeadingPortable: base.welcomeSplashHeadingPortable,
+      welcomeSplashHeading: base.welcomeSplashHeading,
+    },
+    DEFAULT_MEMBERSHIP_SPLASH_HEADING_PORTABLE,
+  )
   fill("welcomeSplashSubheading", DEFAULT_PAYMENT_PAGE.welcomeSplashSubheading ?? "")
   fill(
     "welcomeSplashBackgroundSrc",

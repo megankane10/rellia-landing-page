@@ -9,7 +9,7 @@ const UPLOADABLE_EXTENSIONS = new Set([".jpg", ".jpeg", ".png", ".webp", ".gif",
 
 const patchFields = {
   welcomeSplashEnabled: DEFAULT_PAYMENT_PAGE.welcomeSplashEnabled,
-  welcomeSplashHeading: DEFAULT_PAYMENT_PAGE.welcomeSplashHeading,
+  welcomeSplashHeadingPortable: DEFAULT_PAYMENT_PAGE.welcomeSplashHeadingPortable,
   welcomeSplashSubheading: DEFAULT_PAYMENT_PAGE.welcomeSplashSubheading,
   welcomeSplashLogoSrc: DEFAULT_PAYMENT_PAGE.welcomeSplashLogoSrc,
   welcomeSplashDurationSeconds: DEFAULT_PAYMENT_PAGE.welcomeSplashDurationSeconds,

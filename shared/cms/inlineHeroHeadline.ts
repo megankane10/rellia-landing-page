@@ -85,3 +85,14 @@ export const DEFAULT_HOME_METRICS_HEADLINE_PORTABLE: SanityPortableText = threeP
 
 export const DEFAULT_ABOUT_HERO_LINE2_PORTABLE: SanityPortableText = fullMintLineHeroHeadline("next generation")
 
+/** Membership welcome splash — mint accent on “Congratulations!” */
+export const DEFAULT_MEMBERSHIP_SPLASH_HEADING_PORTABLE: SanityPortableText = [
+  inlineHeroBlock(
+    [
+      { text: "Congratulations!", marks: ["mint"] },
+      { text: " Your application is approved." },
+    ],
+    "splash-heading",
+  ),
+]
+
