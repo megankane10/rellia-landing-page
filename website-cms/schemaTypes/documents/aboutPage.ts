@@ -1,4 +1,4 @@
-import {defineArrayMember, defineField, defineType} from 'sanity'
+import {defineField, defineType} from 'sanity'
 import {
   CONTENT_SEO_FIELDSETS,
   CONTENT_SEO_GROUPS,
@@ -42,27 +42,11 @@ export const aboutPage = defineType({
     defineField({name: 'teamSubtitle', type: 'text', rows: 2, group: 'content'}),
     defineField({
       name: 'team',
+      title: 'Team members',
       type: 'array',
       group: 'content',
-      of: [
-        defineField({
-          name: 'member',
-          type: 'object',
-          fields: [
-            {name: 'name', type: 'string'},
-            {name: 'role', type: 'string'},
-            {name: 'bio', type: 'text', rows: 3},
-            defineField({
-              name: 'socialLinks',
-              title: 'Social & professional links',
-              type: 'array',
-              of: [defineArrayMember({type: 'socialLink'})],
-            }),
-            {name: 'image', type: 'image', options: {hotspot: true, cropAspect: 1, cropAspectPreset: 'square'}},
-            {name: 'imageSrc', type: 'string'},
-          ],
-        }),
-      ],
+      description: 'Add, remove, or reorder team cards shown on the About page.',
+      of: [defineArrayMember({type: 'aboutTeamMember'})],
     }),
     defineField({name: 'ctaTitle', type: 'string', group: 'content'}),
     defineField({name: 'ctaBody', type: 'text', rows: 3, group: 'content'}),

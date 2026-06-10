@@ -74,6 +74,7 @@ import {sectionFormEmbed} from './objects/sectionFormEmbed'
 import {sectionRelliaCta} from './objects/sectionRelliaCta'
 import {sectionTestimonials} from './objects/sectionTestimonials'
 import {landingTestimonialItem} from './objects/landingTestimonialItem'
+import {aboutTeamMember} from './objects/aboutTeamMember'
 import {programTimelineStep, programTimelineWeek} from './objects/programTimelineStep'
 
 export const schemaTypes = [
@@ -152,6 +153,7 @@ export const schemaTypes = [
   sectionRelliaCta,
   sectionTestimonials,
   landingTestimonialItem,
+  aboutTeamMember,
   programTimelineWeek,
   programTimelineStep,
 ]

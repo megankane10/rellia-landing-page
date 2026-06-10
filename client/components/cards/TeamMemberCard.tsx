@@ -39,18 +39,19 @@ export function TeamMemberCard({
     if (typeof bioOpenProp !== "boolean") setUncontrolledBioOpen(next);
   };
 
-  // Team images live in `public/images/` but the extension varies (.png / .jpg / .jpeg).
-  // Try common extensions so the card doesn't break if the file is not a .png.
-  const base = imageSrc ?? personImageByFirstName(name);
-  const baseNoExt = base.replace(/\.(png|jpe?g)$/i, "");
-  const candidates = Array.from(
-    new Set([
-      base,
-      `${baseNoExt}.png`,
-      `${baseNoExt}.jpg`,
-      `${baseNoExt}.jpeg`,
-    ]),
-  );
+  const base = imageSrc ?? personImageByFirstName(name)
+  const isRemoteImage = /^https?:\/\//i.test(base)
+  const baseNoExt = base.replace(/\.(png|jpe?g)$/i, "")
+  const candidates = isRemoteImage
+    ? [base]
+    : Array.from(
+        new Set([
+          base,
+          `${baseNoExt}.png`,
+          `${baseNoExt}.jpg`,
+          `${baseNoExt}.jpeg`,
+        ]),
+      )
 
   const [candidateIndex, setCandidateIndex] = useState(0);
   const src = candidates[Math.min(candidateIndex, candidates.length - 1)];

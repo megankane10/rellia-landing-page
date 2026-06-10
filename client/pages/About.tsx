@@ -116,7 +116,7 @@ export default function About() {
           className="relative w-full overflow-hidden bg-white py-4 md:py-6"
         >
           <div className="relative w-full overflow-hidden rounded-[2.5rem] md:rounded-[3.5rem] shadow-lg">
-            <div className="relative min-h-[920px] w-full overflow-hidden sm:min-h-[960px] md:min-h-[940px] lg:min-h-[1020px]">
+            <div className="relative flex min-h-[880px] w-full flex-col overflow-hidden sm:min-h-[900px] md:min-h-[880px] lg:min-h-[960px]">
             <div className="absolute inset-0 overflow-hidden" aria-hidden>
               <motion.img
                 src={valuesBgImage}
@@ -128,20 +128,20 @@ export default function About() {
               <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/30 to-black/60" />
             </div>
 
-            <div className="relative z-10 mx-auto w-full max-w-[1300px] px-6 py-12 md:px-10 md:py-16 lg:py-20">
+            <div className="relative z-10 mx-auto flex min-h-[inherit] w-full max-w-[1300px] flex-1 flex-col px-6 pt-14 pb-8 md:px-10 md:pt-20 md:pb-10 lg:pt-24 lg:pb-12">
               <ScrollReveal>
-                <div className="mb-6 md:mb-8">
+                <div className="space-y-5 md:space-y-6">
                   <PillTag label="OUR VALUES" className={PILL_ON_IMAGE_BLUR_CLASS} />
+                  <h2
+                    className={`font-host-grotesk font-bold leading-tight tracking-tight text-white max-w-4xl ${PAGE_HEADER_TITLE_SIZE_CLASS}`}
+                  >
+                    {accentLastWords(about.valuesSubtitle, 4)}
+                  </h2>
                 </div>
-                <h2
-                  className={`font-host-grotesk font-bold leading-tight tracking-tight text-white max-w-4xl ${PAGE_HEADER_TITLE_SIZE_CLASS}`}
-                >
-                  {accentLastWords(about.valuesSubtitle, 4)}
-                </h2>
               </ScrollReveal>
 
-              <div className="mt-8 md:mt-10 lg:mt-12">
-                <div className="grid grid-cols-1 items-stretch gap-3 sm:grid-cols-2 sm:gap-4 md:gap-5 lg:grid-cols-3 xl:grid-cols-4">
+              <div className="flex flex-1 flex-col justify-center py-8 md:py-10 lg:py-12">
+                <div className="grid grid-cols-1 items-stretch gap-4 sm:grid-cols-2 sm:gap-5 md:gap-6 lg:grid-cols-3 xl:grid-cols-4">
                 {about.values.map((v, i) => {
                   const Icon = resolveValueIcon(v.iconKey);
 
