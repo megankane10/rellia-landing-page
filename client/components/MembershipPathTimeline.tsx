@@ -356,7 +356,7 @@ const MembershipPathTimeline = ({
                 <Link
                   to={role.href}
                   className={cn(
-                    "group flex h-full min-h-0 flex-col rounded-2xl border border-black/10 bg-white p-4 shadow-sm transition md:min-h-[8.5rem] md:p-5",
+                    "group flex h-full min-h-0 flex-col rounded-2xl border border-black/10 bg-black/[0.04] p-4 shadow-sm transition md:min-h-[8.5rem] md:p-5",
                     "hover:border-rellia-teal/35 hover:shadow-md",
                     "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2",
                   )}

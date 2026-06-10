@@ -5,6 +5,7 @@ import {
   clampMetaTitle,
   getDefaultOgImageUrl,
   getDefaultOgImageAlt,
+  RELLIA_SOCIAL_THEME_COLOR,
   getStaticOgImageForPathname,
   getSeoForPathname,
   getSiteUrl,
@@ -71,6 +72,7 @@ const RouteSeo = ({
   return (
     <Helmet htmlAttributes={{ lang: "en" }}>
       <title>{title}</title>
+      <meta name="theme-color" content={RELLIA_SOCIAL_THEME_COLOR} />
       <meta name="description" content={description} />
       {noIndex ? (
         <meta name="robots" content="noindex, nofollow" />

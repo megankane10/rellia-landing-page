@@ -32,7 +32,7 @@ const DENSITY_IMG_HEIGHT: Record<LogoMarqueeDensity, string> = {
 const LogoItem = ({ logo, density }: { logo: LogoMark; density: LogoMarqueeDensity }) => (
   <div
     className={cn(
-      "flex shrink-0 items-center justify-center px-8 opacity-[0.94] transition-opacity duration-200 *:fill-foreground hover:opacity-100",
+      "marquee-logo-cell pointer-events-none flex shrink-0 select-none items-center justify-center px-8 opacity-[0.94] *:fill-foreground",
       DENSITY_CELL_PADDING[density],
     )}
   >
@@ -41,8 +41,9 @@ const LogoItem = ({ logo, density }: { logo: LogoMark; density: LogoMarqueeDensi
       alt={logo.name}
       loading="eager"
       decoding="async"
+      draggable={false}
       className={cn(
-        "w-auto max-w-[min(100%,18.5rem)] object-contain",
+        "pointer-events-none w-auto max-w-[min(100%,18.5rem)] object-contain",
         DENSITY_IMG_HEIGHT[density],
       )}
     />
@@ -101,8 +102,18 @@ export default function LogoMarquee({
             -webkit-backface-visibility: hidden;
           }
 
-          .marquee-container:hover .marquee-track {
-            animation-play-state: var(--marquee-pause-on-hover, running);
+          @media (hover: hover) and (pointer: fine) {
+            .marquee-container:hover .marquee-track {
+              animation-play-state: var(--marquee-pause-on-hover, running);
+            }
+
+            .marquee-logo-cell {
+              transition: opacity 0.2s ease;
+            }
+
+            .marquee-logo-cell:hover {
+              opacity: 1;
+            }
           }
 
           @media (prefers-reduced-motion: reduce) {
@@ -111,24 +122,7 @@ export default function LogoMarquee({
             }
           }
 
-          /* Pixel-based fade so it stays visible on narrow screens; aligns to ~content gutter */
-          .marquee-fade-edges {
-            mask-image: linear-gradient(
-              to right,
-              transparent 0,
-              black 2.5rem,
-              black calc(100% - 2.5rem),
-              transparent 100%
-            );
-            -webkit-mask-image: linear-gradient(
-              to right,
-              transparent 0,
-              black 2.5rem,
-              black calc(100% - 2.5rem),
-              transparent 100%
-            );
-          }
-
+          /* Mask fades are desktop-only — iOS can blank the track when mask + transform + touch overlap */
           @media (min-width: 768px) {
             .marquee-fade-edges {
               mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
@@ -161,7 +155,7 @@ export default function LogoMarquee({
         >
           <div className="marquee-fade-edges relative overflow-hidden">
             <div
-              className="marquee-track flex w-max"
+              className="marquee-track pointer-events-none flex w-max touch-none"
               style={
                 {
                   "--marquee-duration": animationDuration,

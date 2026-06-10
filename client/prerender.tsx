@@ -11,6 +11,7 @@ import {
   clampMetaTitle,
   getSeoForPathname,
   getDefaultOgImageUrl,
+  RELLIA_SOCIAL_THEME_COLOR,
   getSiteUrl,
   isClientOnlyAuthPath,
   isItemDetailPath,
@@ -356,6 +357,7 @@ const appendSocialMeta = (
   seo: ItemPrerenderSeo,
   pageUrl: string,
 ) => {
+  headElements.add(`<meta name="theme-color" content="${RELLIA_SOCIAL_THEME_COLOR}" />`)
   headElements.add(`<meta property="og:type" content="website" />`)
   headElements.add(`<meta property="og:site_name" content="Rellia Health" />`)
   headElements.add(`<meta property="og:locale" content="en_US" />`)

@@ -1,4 +1,5 @@
 import { Helmet } from "react-helmet-async"
+import { RELLIA_SOCIAL_THEME_COLOR } from "@/config/seo"
 
 export type PageSocialHelmetProps = {
   title: string
@@ -28,6 +29,7 @@ const PageSocialHelmet = ({
   return (
     <Helmet htmlAttributes={{ lang: "en" }}>
       <title>{title}</title>
+      <meta name="theme-color" content={RELLIA_SOCIAL_THEME_COLOR} />
       <meta name="description" content={description} />
       <link rel="canonical" href={canonical} />
       <meta name="robots" content="index, follow" />

@@ -5,6 +5,9 @@ import { STORIES } from "../content/stories"
 import { FOUNDER_DIRECTORY } from "../data/founderDirectory"
 import { ADVISOR_DIRECTORY_SEED } from "../data/advisorDirectory"
 
+/** Browser chrome + social link-preview accent (rellia mint). */
+export const RELLIA_SOCIAL_THEME_COLOR = "#9DD6D0"
+
 /** Base URL for canonical links, Open Graph, and JSON-LD. Override via `VITE_SITE_URL` in env. */
 /** Trim for `<title>` — target ≤60 characters for SERP display. */
 export const clampMetaTitle = (value: string, max = 60): string => {
