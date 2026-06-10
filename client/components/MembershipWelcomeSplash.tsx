@@ -36,7 +36,7 @@ const SUBHEADING_NEARLY_DONE_OFFSET_S = 0.38
 const PROGRESS_BAR_EDGE: "top" | "bottom" = "bottom"
 const MIN_HOLD_AFTER_REVEAL_SECONDS = 0.5
 const MAX_HOLD_AFTER_REVEAL_SECONDS = 8
-const DEFAULT_HOLD_AFTER_REVEAL_SECONDS = 2.7
+const DEFAULT_HOLD_AFTER_REVEAL_SECONDS = 1.9
 const ANIM_EXIT_MS = 720
 
 const resolveHoldAfterRevealSeconds = (value?: number) => {

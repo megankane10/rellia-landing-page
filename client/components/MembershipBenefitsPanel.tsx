@@ -29,9 +29,8 @@ const PanelDescription = ({
       {content.paragraphs.map((paragraph, index) => (
         <p
           key={`p-${index}`}
-          className="font-urbanist text-[15px] font-normal leading-relaxed md:text-base"
+          className="font-urbanist text-[15px] font-normal leading-relaxed text-white md:text-base"
           style={{
-            color: "rgba(255, 255, 255, 0.84)",
             textShadow: "0 2px 18px rgba(0, 0, 0, 0.65)",
           }}
         >
@@ -111,10 +110,10 @@ export default function MembershipBenefitsPanel({
 
       <div className="relative z-10 flex min-h-0 flex-1 flex-col justify-end p-8 md:p-10 lg:p-11">
         <div className="max-w-md">
-          <h1 className="font-host-grotesk text-[1.75rem] font-semibold leading-tight tracking-tight text-white drop-shadow-[0_2px_20px_rgba(0,0,0,0.45)] md:text-[2.125rem]">
+          <h1 className="font-host-grotesk text-[1.75rem] font-semibold leading-tight tracking-tight text-rellia-mint drop-shadow-[0_2px_20px_rgba(0,0,0,0.45)] md:text-[2.125rem]">
             {previewMode ? cmsDisplayText(headline) : cmsCleanText(headline)}
           </h1>
-          <div className="mt-5 h-px w-10 bg-rellia-mint/70 md:mt-6" aria-hidden />
+          <div className="mt-5 h-0.5 w-10 bg-rellia-mint md:mt-6" aria-hidden />
         </div>
 
         <PanelDescription content={parsed} previewMode={previewMode} />
