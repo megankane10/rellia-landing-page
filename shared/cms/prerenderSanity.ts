@@ -5,6 +5,7 @@ import {
   directoryFilterGroupsQuery,
   eventBySlugQuery,
   eventsQuery,
+  careersPageQuery,
   openRolesQuery,
   pageBySlugQuery,
   programBySlugQuery,
@@ -14,7 +15,10 @@ import {
   programsLandingQuery,
   programsQuery,
 } from "./groqQueries"
+import { filterValidOpenRoles } from "../careersOpenRolesVisibility"
+import { mergeCareersPage } from "./careersPageDefaults"
 import { careersRoleDetailPath } from "./careersRoleShare"
+import type { CareersPageContent } from "./types"
 import eventsBuildSnapshot from "./build-snapshots/events.json"
 import storiesBuildSnapshot from "./build-snapshots/stories.json"
 import { defaultProgramRecordForSlug } from "./itemCardImage"
@@ -172,6 +176,26 @@ export const fetchAlumniProfilePathsForPrerender = async (): Promise<string[]> =
     .map((row) => (typeof row.id === "string" ? row.id.trim() : ""))
     .filter(Boolean)
     .map((id) => `/founders/alumni/${id}`)
+}
+
+export const fetchCareersPageForPrerender = async (): Promise<Partial<CareersPageContent> | null> => {
+  const client = getPrerenderSanityClient()
+  if (!client) return null
+  try {
+    const row = await client.fetch<Partial<CareersPageContent>>(careersPageQuery)
+    return row ?? null
+  } catch {
+    return null
+  }
+}
+
+export const prefetchCareersPageContent = async (): Promise<CareersPageContent> => {
+  const [raw, rolesRaw] = await Promise.all([
+    fetchCareersPageForPrerender(),
+    fetchOpenRolesForPrerender(),
+  ])
+  const openRoles = filterValidOpenRoles(rolesRaw?.length ? rolesRaw : raw?.openRoles)
+  return { ...mergeCareersPage(raw ?? undefined), openRoles }
 }
 
 export const fetchOpenRolesForPrerender = async (): Promise<

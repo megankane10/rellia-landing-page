@@ -50,7 +50,7 @@ import {
   fetchPageBySlugForPrerender,
   fetchProgramBySlugForPrerender,
   fetchStoryBySlugForPrerender,
-  fetchOpenRolesForPrerender,
+  prefetchCareersPageContent,
   fetchPaymentPageForPrerender,
   fetchProgramsLandingForPrerender,
   fetchProgramsForPrerender,
@@ -462,16 +462,19 @@ export const prerender = async (data: { url: string }) => {
     careersRole?: Record<string, unknown> | null
   } = {}
 
-  if (pathname.startsWith("/careers/roles/")) {
-    const roleId = parseCareersRoleIdFromPathname(pathname)
-    if (roleId) {
-      const roles = await fetchOpenRolesForPrerender()
-      prefetched.careersRole =
-        roles.find((row) => typeof row.id === "string" && row.id.trim() === roleId) ?? null
-      await prerenderQueryClient.prefetchQuery({
-        queryKey: ["cms", "careersPage"],
-        queryFn: async () => ({ openRoles: roles }),
-      })
+  if (pathname === "/careers" || pathname.startsWith("/careers/roles/")) {
+    const careersPage = await prefetchCareersPageContent()
+    await prerenderQueryClient.prefetchQuery({
+      queryKey: ["cms", "careersPage"],
+      queryFn: async () => careersPage,
+    })
+
+    if (pathname.startsWith("/careers/roles/")) {
+      const roleId = parseCareersRoleIdFromPathname(pathname)
+      if (roleId) {
+        prefetched.careersRole =
+          careersPage.openRoles?.find((row) => row.id.trim() === roleId) ?? null
+      }
     }
   }
 

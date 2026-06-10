@@ -862,7 +862,8 @@ var openRolesQuery = `*[_type == "openRole" && !(_id in path("drafts.**"))] | or
   description,
   responsibilities,
   applyButtonLabel,
-  applyButtonUrl
+  applyButtonUrl,
+  "linkedInApplyUrl": coalesce(applyButtonUrl, linkedInApplyUrl)
 }`;
 var careersPageQuery = `*[_id == "careersPage"][0]{
   careersContentMode,

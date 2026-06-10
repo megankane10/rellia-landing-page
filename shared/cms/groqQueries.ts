@@ -884,7 +884,8 @@ export const openRolesQuery = `*[_type == "openRole" && !(_id in path("drafts.**
   description,
   responsibilities,
   applyButtonLabel,
-  applyButtonUrl
+  applyButtonUrl,
+  "linkedInApplyUrl": coalesce(applyButtonUrl, linkedInApplyUrl)
 }`
 
 export const careersPageQuery = `*[_id == "careersPage"][0]{
