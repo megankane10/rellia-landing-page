@@ -28,10 +28,12 @@ import { AppRoutes, RouterShell } from "./AppRoutes"
 import { PageSeoProvider } from "@/context/PageSeoContext"
 import { DEFAULT_PROGRAMS_LANDING, DEFAULT_QMS_PROGRAM, mergeQmsProgram } from "@shared/cms/defaults"
 import {
+  resolveCareersRoleSeo,
   resolveEventCollectionSeo,
   resolveProgramCollectionSeo,
   resolveStoryCollectionSeo,
 } from "@shared/cms/collectionSeo"
+import { parseCareersRoleIdFromPathname } from "@shared/cms/careersRoleShare"
 import type { SeoContent } from "@shared/cms/types"
 import { findProgramsEventBySlug } from "@shared/cms/eventSlug"
 import { getProgramsEventLocationLabel } from "@shared/cms/programsEventDisplay"
@@ -48,6 +50,7 @@ import {
   fetchPageBySlugForPrerender,
   fetchProgramBySlugForPrerender,
   fetchStoryBySlugForPrerender,
+  fetchOpenRolesForPrerender,
   fetchPaymentPageForPrerender,
   fetchProgramsLandingForPrerender,
   fetchProgramsForPrerender,
@@ -183,6 +186,24 @@ const buildProgramSeo = (
   }
 }
 
+const buildCareersRoleSeo = (role: {
+  title?: string
+  location?: string
+  employmentType?: string
+  description?: unknown
+}): ItemPrerenderSeo => {
+  const resolved = resolveCareersRoleSeo({
+    title: typeof role.title === "string" ? role.title : "Open role",
+    location: typeof role.location === "string" ? role.location : undefined,
+    employmentType: typeof role.employmentType === "string" ? role.employmentType : undefined,
+    description: role.description,
+  })
+  return {
+    title: clampMetaTitle(resolved.title),
+    description: clampMetaDescription(resolved.description),
+  }
+}
+
 const buildStorySeo = (
   story: {
     title: string
@@ -265,9 +286,18 @@ const resolveItemPrerenderSeo = async (
     story?: Record<string, unknown> | null
     advisor?: Record<string, unknown> | null
     alumni?: Record<string, unknown> | null
+    careersRole?: Record<string, unknown> | null
   },
 ): Promise<ItemPrerenderSeo | null> => {
   const siteOrigin = getSiteUrl()
+
+  if (pathname.startsWith("/careers/roles/")) {
+    const roleId = parseCareersRoleIdFromPathname(pathname)
+    if (!roleId) return null
+    const role = prefetched.careersRole
+    if (!role || typeof role.title !== "string") return null
+    return buildCareersRoleSeo(role)
+  }
 
   if (pathname.startsWith("/events/") && pathname !== "/events") {
     const slug = pathname.slice("/events/".length)
@@ -429,7 +459,21 @@ export const prerender = async (data: { url: string }) => {
     story?: Record<string, unknown> | null
     advisor?: Record<string, unknown> | null
     alumni?: Record<string, unknown> | null
+    careersRole?: Record<string, unknown> | null
   } = {}
+
+  if (pathname.startsWith("/careers/roles/")) {
+    const roleId = parseCareersRoleIdFromPathname(pathname)
+    if (roleId) {
+      const roles = await fetchOpenRolesForPrerender()
+      prefetched.careersRole =
+        roles.find((row) => typeof row.id === "string" && row.id.trim() === roleId) ?? null
+      await prerenderQueryClient.prefetchQuery({
+        queryKey: ["cms", "careersPage"],
+        queryFn: async () => ({ openRoles: roles }),
+      })
+    }
+  }
 
   if (pathname.startsWith("/events/") && pathname !== "/events") {
     const slug = pathname.slice("/events/".length)

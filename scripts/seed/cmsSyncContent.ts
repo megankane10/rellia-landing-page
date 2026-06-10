@@ -935,7 +935,8 @@ export const DUMMY_OPEN_ROLE = {
     "[DUMMY] Second placeholder bullet for layout testing",
     "[DUMMY] Third bullet to confirm list rendering",
   ],
-  linkedInApplyUrl: "https://www.linkedin.com/company/relliahealth/jobs/",
+  applyButtonLabel: "Apply",
+  applyButtonUrl: "https://www.linkedin.com/company/relliahealth/jobs/",
 }
 
 export const createDummyAdvisorBio = (

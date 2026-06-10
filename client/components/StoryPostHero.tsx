@@ -90,14 +90,19 @@ export const StoryPostHero = ({
                 </div>
               </div>
 
-              <h1 className="mt-6 font-host-grotesk text-3xl font-medium leading-tight tracking-tight text-white md:text-4xl lg:text-5xl">
+              <h1
+                className={cn(
+                  "mt-6 font-host-grotesk text-3xl font-medium leading-tight tracking-tight md:text-4xl lg:text-5xl",
+                  useBackgroundLayout ? "text-white" : "text-rellia-mint",
+                )}
+              >
                 {title}
               </h1>
               {excerpt ? (
                 <p
                   className={cn(
-                    "max-w-3xl font-urbanist text-base font-normal leading-relaxed text-white/85 md:text-lg",
-                    useBackgroundLayout ? "mt-6 md:mt-8" : "mt-4",
+                    "max-w-3xl font-urbanist text-base font-normal leading-relaxed md:text-lg",
+                    useBackgroundLayout ? "mt-6 text-white/85 md:mt-8" : "mt-4 text-white",
                   )}
                 >
                   {excerpt}
@@ -106,8 +111,8 @@ export const StoryPostHero = ({
 
               {!useBackgroundLayout && coverSrc ? (
                 <div className="mt-8 md:mt-10">
-                  <div className="relative">
-                    <figure className="relative aspect-[16/10] w-full max-w-3xl overflow-hidden rounded-2xl border border-white/15 bg-black/20 shadow-[0_24px_56px_-28px_rgba(0,0,0,0.55)]">
+                  <div className="relative w-full">
+                    <figure className="relative aspect-[16/10] w-full overflow-hidden rounded-2xl border border-white/15 bg-black/20 shadow-[0_24px_56px_-28px_rgba(0,0,0,0.55)]">
                       <img
                         src={toAbsoluteImageUrl(coverSrc)}
                         alt={coverAlt}

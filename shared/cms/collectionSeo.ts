@@ -111,6 +111,47 @@ export const resolveProgramCollectionSeo = (input: {
   return { title, description, ogImageUrl: input.seo?.ogImageUrl?.trim() || undefined }
 }
 
+export const buildDefaultCareersRoleSeoTitle = (roleTitle: string): string => {
+  const title = roleTitle.trim()
+  if (!title) return "Careers — Rellia Health"
+  return `${title} — Careers`
+}
+
+const careersRoleDescriptionSnippet = (description: unknown): string => {
+  const compact = portableTextToPlainText(description).replace(/\s+/g, " ").trim()
+  if (!compact) return ""
+  const sentenceEnd = compact.search(/[.!?](\s|$)/)
+  if (sentenceEnd > 40 && sentenceEnd < 180) {
+    return compact.slice(0, sentenceEnd + 1).trim()
+  }
+  return compact.length > 160 ? `${compact.slice(0, 157).trim()}…` : compact
+}
+
+export const resolveCareersRoleSeo = (input: {
+  title: string
+  location?: string
+  employmentType?: string
+  description?: unknown
+}): ResolvedCollectionSeo => {
+  const roleTitle = input.title.trim() || "Open role"
+  const location = input.location?.trim()
+  const employmentType = input.employmentType?.trim()
+  const snippet = careersRoleDescriptionSnippet(input.description)
+
+  const metaParts = [roleTitle]
+  if (location) metaParts.push(location)
+  if (employmentType) metaParts.push(employmentType)
+
+  const description =
+    snippet ||
+    `Join Rellia Health as ${metaParts.join(" · ")}. View responsibilities and apply on our careers page.`
+
+  return {
+    title: buildDefaultCareersRoleSeoTitle(roleTitle),
+    description,
+  }
+}
+
 /** Sanity patch paths cleared so collection SEO auto-syncs from content fields. */
 export const COLLECTION_SEO_TEXT_UNSET_PATHS = [
   "seo.title",

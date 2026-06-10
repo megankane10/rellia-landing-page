@@ -9,7 +9,7 @@ export const openRole = defineType({
       name: 'roleId',
       title: 'URL anchor ID',
       type: 'slug',
-      description: 'Used in /careers#role-id — lowercase letters, numbers, hyphens only.',
+      description: 'Used in /careers/roles/role-id — lowercase letters, numbers, hyphens only.',
       options: {source: 'title', maxLength: 96},
       validation: (Rule) => Rule.required(),
     }),
@@ -21,18 +21,35 @@ export const openRole = defineType({
       type: 'string',
       validation: (Rule) => Rule.required(),
     }),
-    defineField({name: 'description', type: 'text', rows: 4, validation: (Rule) => Rule.required()}),
     defineField({
-      name: 'responsibilities',
-      type: 'array',
-      of: [{type: 'string'}],
-      validation: (Rule) => Rule.min(1),
+      name: 'description',
+      title: 'Role description',
+      type: 'openRoleDescription',
+      description:
+        'Rich text shown in the open role accordion on /careers. Use paragraph breaks, bold, and bullet lists — formatting appears on the live site.',
+      validation: (Rule) => Rule.required(),
     }),
     defineField({
-      name: 'linkedInApplyUrl',
-      title: 'Apply URL (LinkedIn or other)',
+      name: 'responsibilities',
+      title: 'Role highlights',
+      type: 'array',
+      of: [{type: 'string'}],
+      description: 'Optional short bullets under “Role highlights”. Leave empty to hide that section.',
+    }),
+    defineField({
+      name: 'applyButtonLabel',
+      title: 'Apply button label',
+      type: 'string',
+      description:
+        'Optional. The apply button is hidden unless both this label and Apply button URL are filled in.',
+    }),
+    defineField({
+      name: 'applyButtonUrl',
+      title: 'Apply button URL',
       type: 'url',
-      validation: (Rule) => Rule.required().uri({scheme: ['http', 'https']}),
+      description:
+        'Optional. LinkedIn job post, careers page, or mailto link. The apply button is hidden unless both this URL and Apply button label are filled in.',
+      validation: (Rule) => Rule.uri({allowRelative: false, scheme: ['http', 'https', 'mailto']}),
     }),
     defineField({
       name: 'sortOrder',

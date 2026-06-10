@@ -32,9 +32,10 @@ export type CareersOpenRole = {
   title: string
   location: string
   employmentType: string
-  description: string
+  description: SanityPortableText | null
   responsibilities: string[]
-  linkedInApplyUrl: string
+  applyButtonLabel?: string
+  applyButtonUrl?: string
 }
 
 

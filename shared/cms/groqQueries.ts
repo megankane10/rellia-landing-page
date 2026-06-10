@@ -883,7 +883,8 @@ export const openRolesQuery = `*[_type == "openRole" && !(_id in path("drafts.**
   employmentType,
   description,
   responsibilities,
-  linkedInApplyUrl
+  applyButtonLabel,
+  applyButtonUrl
 }`
 
 export const careersPageQuery = `*[_id == "careersPage"][0]{

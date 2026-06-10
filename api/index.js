@@ -861,7 +861,8 @@ var openRolesQuery = `*[_type == "openRole" && !(_id in path("drafts.**"))] | or
   employmentType,
   description,
   responsibilities,
-  linkedInApplyUrl
+  applyButtonLabel,
+  applyButtonUrl
 }`;
 var careersPageQuery = `*[_id == "careersPage"][0]{
   careersContentMode,

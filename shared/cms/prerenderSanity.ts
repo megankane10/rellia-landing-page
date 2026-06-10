@@ -5,6 +5,7 @@ import {
   directoryFilterGroupsQuery,
   eventBySlugQuery,
   eventsQuery,
+  openRolesQuery,
   pageBySlugQuery,
   programBySlugQuery,
   storyBySlugQuery,
@@ -13,6 +14,7 @@ import {
   programsLandingQuery,
   programsQuery,
 } from "./groqQueries"
+import { careersRoleDetailPath } from "./careersRoleShare"
 import eventsBuildSnapshot from "./build-snapshots/events.json"
 import storiesBuildSnapshot from "./build-snapshots/stories.json"
 import { defaultProgramRecordForSlug } from "./itemCardImage"
@@ -170,6 +172,29 @@ export const fetchAlumniProfilePathsForPrerender = async (): Promise<string[]> =
     .map((row) => (typeof row.id === "string" ? row.id.trim() : ""))
     .filter(Boolean)
     .map((id) => `/founders/alumni/${id}`)
+}
+
+export const fetchOpenRolesForPrerender = async (): Promise<
+  Array<{ id?: string; title?: string; location?: string; employmentType?: string; description?: string }>
+> => {
+  const client = getPrerenderSanityClient()
+  if (!client) return []
+  try {
+    const rows = await client.fetch<
+      Array<{ id?: string; title?: string; location?: string; employmentType?: string; description?: string }>
+    >(openRolesQuery)
+    return Array.isArray(rows) ? rows : []
+  } catch {
+    return []
+  }
+}
+
+export const fetchCareersRolePathsForPrerender = async (): Promise<string[]> => {
+  const rows = await fetchOpenRolesForPrerender()
+  return rows
+    .map((row) => (typeof row.id === "string" ? row.id.trim() : ""))
+    .filter(Boolean)
+    .map((id) => careersRoleDetailPath(id))
 }
 
 export const fetchStorySlugsForPrerender = async (): Promise<string[]> => {

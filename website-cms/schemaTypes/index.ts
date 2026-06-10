@@ -44,6 +44,7 @@ import {studioGuide} from './documents/studioGuide'
 import {navItem} from './objects/navItem'
 import {portableRichText} from './objects/portableRichText'
 import {portableText} from './objects/portableText'
+import {openRoleDescription} from './objects/openRoleDescription'
 import {membershipPanelPortableText} from './objects/membershipPanelPortableText'
 import {linkAnnotation} from './objects/linkAnnotation'
 import {socialLink} from './objects/socialLink'
@@ -131,6 +132,7 @@ export const schemaTypes = [
   builderCtaAction,
   customLinkButton,
   portableText,
+  openRoleDescription,
   membershipPanelPortableText,
   portableRichText,
   inlineHeroHeadline,

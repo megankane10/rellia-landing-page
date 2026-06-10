@@ -372,10 +372,18 @@ export const isDirectoryItemPath = (pathname: string): boolean => {
   return false
 }
 
+/** Careers open-role share URLs (`/careers/roles/:roleId`) set per-role Helmet in CareersCms. */
+export const isCareersRoleDetailPath = (pathname: string): boolean => {
+  const key = normalizePathname(pathname)
+  if (!key.startsWith("/careers/roles/")) return false
+  return key.length > "/careers/roles/".length
+}
+
 /** Routes where the page sets its own Helmet (events, programs, stories, directory profiles). */
 export const isItemDetailPath = (pathname: string): boolean => {
   const key = normalizePathname(pathname)
   if (key.startsWith("/stories/") && key !== "/stories") return true
+  if (isCareersRoleDetailPath(key)) return true
   return isDirectoryItemPath(key)
 }
 
@@ -475,6 +483,12 @@ export const buildPageUrl = (pathname: string): string => {
   const path = normalizePathname(pathname)
   const origin = getShareOrigin()
   return `${origin}${path === "/" ? "" : path}`
+}
+
+export const buildCareersRoleShareUrl = (roleId: string): string => {
+  const id = roleId.trim()
+  if (!id) return buildPageUrl("/careers")
+  return buildPageUrl(`/careers/roles/${encodeURIComponent(id)}`)
 }
 
 /** Social crawlers (LinkedIn, Slack, etc.) do not reliably support AVIF for og:image. */

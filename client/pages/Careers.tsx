@@ -34,8 +34,10 @@ import type { HomeWhyFeature } from "@shared/cms/types"
 import { DEFAULT_GLOBAL_SETTINGS } from "@shared/cms/defaults"
 import { CAREERS_VOLUNTEER_ENABLED, careersHasPublishedOpenRoles } from "@shared/careersPageConfig"
 import { CAREERS_OPEN_ROLES } from "@shared/careersOpenRoles"
+import { hasOpenRoleApplyButton } from "@shared/careersOpenRolesVisibility"
+import { PortableRichText } from "@/components/PortableRichText"
 import { cn } from "@/lib/utils"
-import { buildPageUrl } from "@/config/seo"
+import { buildCareersRoleShareUrl } from "@/config/seo"
 import FilteredListEmptyState from "@/components/FilteredListEmptyState"
 import { ShareIconCopy } from "@/components/share/sharePageIcons"
 import { RoleHero } from "./network/_shared"
@@ -236,7 +238,7 @@ export default function Careers() {
   const [showForm, setShowForm] = useState(false)
 
   const handleCopyRoleLink = (roleId: string) => {
-    const roleUrl = `${buildPageUrl("/careers")}#${roleId}`
+    const roleUrl = buildCareersRoleShareUrl(roleId)
     navigator.clipboard.writeText(roleUrl)
     setCopiedRoleId(roleId)
     setTimeout(() => setCopiedRoleId(null), 2000)
@@ -429,9 +431,10 @@ export default function Careers() {
                             {role.employmentType}
                           </span>
 
-                          <p className="mt-5 font-urbanist text-sm leading-relaxed text-black/75 md:text-base">
-                            {role.description}
-                          </p>
+                          <PortableRichText
+                            value={role.description}
+                            className="mt-5 text-sm leading-relaxed text-black/75 md:text-base prose-p:my-3 prose-p:font-urbanist prose-p:text-black/75"
+                          />
 
                           <div className="mt-6">
                             <h3 className="font-host-grotesk text-sm font-semibold uppercase tracking-wider text-black/80">
@@ -445,19 +448,21 @@ export default function Careers() {
                           </div>
 
                           <div className="mt-8 flex items-center gap-3">
-                            <a
-                              href={role.linkedInApplyUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="group inline-flex h-12 cursor-pointer items-center justify-center rounded-full bg-rellia-teal border-2 border-rellia-teal px-8 font-host-grotesk text-base font-bold text-white shadow-sm outline-none transition-all duration-300 hover:bg-[#07242a] hover:border-[#07242a]"
-                              aria-label={`Apply for ${role.title} on LinkedIn (opens in new tab)`}
-                            >
-                              <span className="relative z-10 inline-flex items-center gap-2">
-                                Apply
-                                <ExternalLink className="h-4.5 w-4.5" aria-hidden />
-                              </span>
-                            </a>
-                            
+                            {hasOpenRoleApplyButton(role) ? (
+                              <a
+                                href={role.applyButtonUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="group inline-flex h-12 cursor-pointer items-center justify-center rounded-full bg-rellia-teal border-2 border-rellia-teal px-8 font-host-grotesk text-base font-bold text-white shadow-sm outline-none transition-all duration-300 hover:bg-[#07242a] hover:border-[#07242a]"
+                                aria-label={`${role.applyButtonLabel} for ${role.title} (opens in new tab)`}
+                              >
+                                <span className="relative z-10 inline-flex items-center gap-2">
+                                  {role.applyButtonLabel}
+                                  <ExternalLink className="h-4.5 w-4.5" aria-hidden />
+                                </span>
+                              </a>
+                            ) : null}
+
                             <button
                               type="button"
                               onClick={() => handleCopyRoleLink(role.id)}

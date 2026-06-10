@@ -1221,7 +1221,8 @@ async function main() {
       employmentType: DUMMY_OPEN_ROLE.employmentType,
       description: DUMMY_OPEN_ROLE.description,
       responsibilities: DUMMY_OPEN_ROLE.responsibilities,
-      linkedInApplyUrl: DUMMY_OPEN_ROLE.linkedInApplyUrl,
+      applyButtonLabel: DUMMY_OPEN_ROLE.applyButtonLabel,
+      applyButtonUrl: DUMMY_OPEN_ROLE.applyButtonUrl,
       sortOrder: 0,
     },
   })

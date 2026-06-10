@@ -58,7 +58,7 @@ Rellia offers founder programs (QMS, fundraising, regulatory, clinical validatio
 ## Stories & news
 
 - [/stories](https://www.relliahealth.com/stories): The latest founder spotlights, industry insights, & program updates. Stay current with the people and ideas shaping the future of health.
-- [/stories/website-launch](https://www.relliahealth.com/stories/website-launch): Explore clearer paths for founders—benchmark readiness, join programs, meet advisors, and stay close to what is happening across the Rellia community.
+- [/stories/a-clearer-path-for-digital-health-founders](https://www.relliahealth.com/stories/a-clearer-path-for-digital-health-founders): Welcome to Rellia. We have redesigned our digital home to help you benchmark readiness, access specialized programs, and explore our healthcare network—all in one place.
 
 
 ## Startup diagnostic

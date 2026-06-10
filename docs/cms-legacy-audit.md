@@ -74,10 +74,25 @@ Host portrait resolution order:
 
 ## Careers page
 
-| Item | Notes |
-|------|-------|
-| `enableHiringTab` / volunteer tab flags | Read in `CareersCms.tsx` for backward compatibility with old datasets. |
-| Seeded role IDs | `shared/careersOpenRolesVisibility.ts` hides legacy role IDs on production. |
+| Item | Status |
+|------|--------|
+| **Open roles collection** (`openRole`) | **Active** — managed under Collections → Open roles (not embedded on `careersPage`). |
+| `description` | **Active** — `openRoleDescription` rich text (paragraphs, bold, bullet lists). Plain strings from older content are converted at read time via `normalizeToPortableText`. |
+| `applyButtonLabel` + `applyButtonUrl` | **Active** — optional pair; apply button on `/careers` renders only when **both** are set. |
+| `responsibilities` | **Active** — optional “Role highlights” bullets; section hidden when empty. |
+| Share URLs | **Active** — `/careers/roles/{roleId}` with per-role Open Graph title/description (prerendered at build). Copy-link uses this canonical URL. |
+| `careersContentMode` | **Active** — `both` \| `hiring_only` \| `volunteer_only` on `careersPage`. |
+| Seeded placeholder role IDs | `shared/careersOpenRolesVisibility.ts` hides `program-operations-manager` and `community-events-coordinator` on production only. |
+
+**Removed (June 2026):**
+
+- `linkedInApplyUrl` on `openRole` — replaced by `applyButtonLabel` + `applyButtonUrl`.
+- Embedded `openRoles` array on `careersPage` — migrated to `openRole` documents (`scripts/sanity-cleanup.ts`).
+- `enableHiringTab` / `enableVolunteerTab` / `defaultTab` on `careersPage` — use `careersContentMode` only.
+
+**Studio deploy required** after `openRole` schema changes (`pnpm sanity:studio:deploy`).
+
+**Suggested follow-up:** Run `sanity-cleanup` to `unset` `linkedInApplyUrl` on any remaining `openRole` documents in production.
 
 ---
 

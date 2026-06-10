@@ -37,18 +37,31 @@ import type { CareersOpenRole, CareersContentMode, CareersPageContent } from "@s
 import { mapNetworkWhyFeatures } from "@/lib/whyRelliaFeatures"
 import { DEFAULT_GLOBAL_SETTINGS } from "@shared/cms/defaults"
 import { CAREERS_VOLUNTEER_ENABLED } from "@shared/careersPageConfig"
-import { resolveCareersOpenRoles } from "@shared/careersOpenRolesVisibility"
+import { hasOpenRoleApplyButton, resolveCareersOpenRoles } from "@shared/careersOpenRolesVisibility"
 import { cn } from "@/lib/utils"
 import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo"
 import { useCareersPage } from "@/hooks/useCmsDocuments"
-import { buildPageUrl } from "@/config/seo"
+import {
+  buildCareersRoleShareUrl,
+  clampMetaDescription,
+  clampMetaTitle,
+  isCareersRoleDetailPath,
+} from "@/config/seo"
+import PageSocialHelmet from "@/components/seo/PageSocialHelmet"
+import {
+  buildCareersRoleShareMeta,
+  careersRoleDetailPath,
+  findCareersOpenRoleById,
+  resolveLinkedCareersRoleId,
+} from "@shared/cms/careersRoleShare"
 import FilteredListEmptyState from "@/components/FilteredListEmptyState"
 import RelliaAction from "@/components/RelliaAction"
 import { isSanityConfigured } from "@/lib/sanity"
 import { allowCmsSeedFallbacks, isStrictProductionSite } from "@/lib/deploymentEnv"
 import { useMemo, useState, useEffect, useRef } from "react"
-import { useLocation } from "react-router-dom"
+import { useLocation, useNavigate, useParams } from "react-router-dom"
 import { ShareIconCopy } from "@/components/share/sharePageIcons"
+import { PortableRichText } from "@/components/PortableRichText"
 import { RoleHero } from "./network/_shared"
 import { DEFAULT_CAREERS_PAGE } from "@shared/cms/careersPageDefaults"
 import { NetworkHeroTitle } from "@/components/NetworkHeroTitle"
@@ -287,11 +300,12 @@ export default function CareersCms() {
   const [activeRole, setActiveRole] = useState<string | undefined>(undefined)
   const [showApplyForm, setShowApplyForm] = useState(false)
   const location = useLocation()
+  const navigate = useNavigate()
+  const { roleId: roleIdParam } = useParams<{ roleId?: string }>()
 
-  const { data: careersCmsRaw } = useCareersPage()
+  const { data: careersCmsRaw, isPending: careersPagePending } = useCareersPage()
 
   const careersCms = normalizeCms(careersCmsRaw)
-  useApplyCmsSeo(careersCms.seo)
 
   const openRoles = useMemo(
     (): CareersOpenRole[] =>
@@ -303,43 +317,81 @@ export default function CareersCms() {
     [careersCms],
   )
 
+  const linkedRoleId = useMemo(
+    () =>
+      resolveLinkedCareersRoleId({
+        roleIdParam,
+        search: location.search,
+        hash: location.hash,
+      }),
+    [roleIdParam, location.search, location.hash],
+  )
+
+  const sharedRole = useMemo(
+    () => findCareersOpenRoleById(openRoles, linkedRoleId),
+    [openRoles, linkedRoleId],
+  )
+
+  const isRoleSharePage = isCareersRoleDetailPath(location.pathname)
+
+  const sharedRoleSeo = useMemo(
+    () => (sharedRole ? buildCareersRoleShareMeta(sharedRole) : null),
+    [sharedRole],
+  )
+
+  useApplyCmsSeo(
+    isRoleSharePage ? undefined : careersCms.seo,
+    sharedRoleSeo && !isRoleSharePage
+      ? {
+          title: clampMetaTitle(sharedRoleSeo.title),
+          description: clampMetaDescription(sharedRoleSeo.description),
+        }
+      : undefined,
+  )
+
+  const roleShareMeta = useMemo(() => {
+    if (!sharedRole || !sharedRoleSeo || !isRoleSharePage) return null
+    return {
+      title: clampMetaTitle(sharedRoleSeo.title),
+      description: clampMetaDescription(sharedRoleSeo.description),
+      canonical: buildCareersRoleShareUrl(sharedRole.id),
+    }
+  }, [sharedRole, sharedRoleSeo, isRoleSharePage])
+
   const handleCopyRoleLink = (roleId: string) => {
-    const roleUrl = `${buildPageUrl("/careers")}#${roleId}`
+    const roleUrl = buildCareersRoleShareUrl(roleId)
     navigator.clipboard.writeText(roleUrl)
     setCopiedRoleId(roleId)
     setTimeout(() => setCopiedRoleId(null), 2000)
   }
 
   useEffect(() => {
-    const hash = location.hash
-    if (hash) {
-      const roleId = hash.replace("#", "")
-      const roleExists = openRoles.some(r => r.id === roleId)
-      if (roleExists) {
-        setActiveRole(roleId)
-        setTimeout(() => {
-          const el = document.getElementById(roleId)
-          if (el) {
-            el.scrollIntoView({ behavior: "smooth", block: "center" })
-          }
-        }, 150)
-      }
+    if (careersPagePending) return
+
+    if (isRoleSharePage && linkedRoleId && !sharedRole) {
+      navigate("/careers", { replace: true })
+      return
     }
-  }, [location.hash, openRoles])
+
+    if (!linkedRoleId || !sharedRole) return
+
+    if (!isRoleSharePage) {
+      navigate(careersRoleDetailPath(linkedRoleId), { replace: true })
+      return
+    }
+
+    setActiveRole(linkedRoleId)
+    const scrollTimer = window.setTimeout(() => {
+      const el = document.getElementById(linkedRoleId)
+      el?.scrollIntoView({ behavior: "smooth", block: "center" })
+    }, 150)
+
+    return () => window.clearTimeout(scrollTimer)
+  }, [careersPagePending, linkedRoleId, sharedRole, isRoleSharePage, navigate])
 
   const volunteerAvailable = CAREERS_VOLUNTEER_ENABLED
 
-  const resolveContentMode = (): CareersContentMode => {
-    if (careersCms.careersContentMode) return careersCms.careersContentMode
-    const legacyHiring = (careersCms as { enableHiringTab?: boolean }).enableHiringTab !== false
-    const legacyVolunteer =
-      (careersCms as { enableVolunteerTab?: boolean }).enableVolunteerTab !== false &&
-      volunteerAvailable
-    if (legacyHiring && legacyVolunteer) return "both"
-    if (legacyVolunteer) return "volunteer_only"
-    if (legacyHiring) return "hiring_only"
-    return "both"
-  }
+  const resolveContentMode = (): CareersContentMode => careersCms.careersContentMode ?? "both"
 
   const contentMode = resolveContentMode()
   const showHiringSection = contentMode === "both" || contentMode === "hiring_only"
@@ -374,6 +426,13 @@ export default function CareersCms() {
 
   return (
     <div className="min-h-screen overflow-x-hidden bg-white font-host-grotesk">
+      {roleShareMeta ? (
+        <PageSocialHelmet
+          title={roleShareMeta.title}
+          description={roleShareMeta.description}
+          canonical={roleShareMeta.canonical}
+        />
+      ) : null}
       <Navbar darkHeroNav forceSolid={showApplyForm} />
 
       <main id="main-content">
@@ -544,34 +603,37 @@ export default function CareersCms() {
                                 {role.employmentType}
                               </span>
 
-                              <p className="mt-5 font-urbanist text-sm leading-relaxed text-black/75 md:text-base">
-                                {role.description}
-                              </p>
+                              <PortableRichText
+                                value={role.description}
+                                className="mt-5 text-sm leading-relaxed text-black/75 md:text-base prose-headings:font-host-grotesk prose-headings:text-black prose-p:my-3 prose-p:font-urbanist prose-p:text-black/75 prose-strong:text-black prose-ul:my-3 prose-ol:my-3 prose-li:font-urbanist prose-li:text-black/70"
+                              />
 
-                              <div className="mt-6">
-                                <h3 className="font-host-grotesk text-sm font-semibold uppercase tracking-wider text-black/80">
-                                  Role highlights
-                                </h3>
-                                <ul className="mt-3 list-disc space-y-2 pl-5 font-urbanist text-sm leading-relaxed text-black/70 md:text-base">
-                                  {role.responsibilities.map((line) => (
-                                    <li key={line}>{line}</li>
-                                  ))}
-                                </ul>
-                              </div>
+                              {role.responsibilities.length > 0 ? (
+                                <div className="mt-6">
+                                  <h3 className="font-host-grotesk text-sm font-semibold uppercase tracking-wider text-black/80">
+                                    Role highlights
+                                  </h3>
+                                  <ul className="mt-3 list-disc space-y-2 pl-5 font-urbanist text-sm leading-relaxed text-black/70 md:text-base">
+                                    {role.responsibilities.map((line) => (
+                                      <li key={line}>{line}</li>
+                                    ))}
+                                  </ul>
+                                </div>
+                              ) : null}
 
                               <div className="mt-8 flex items-center gap-3">
-                                <a
-                                  href={role.linkedInApplyUrl}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="group relative isolate inline-flex h-12 cursor-pointer items-center justify-center overflow-hidden rounded-full border-2 border-rellia-mint bg-rellia-mint px-8 font-host-grotesk text-base font-bold text-rellia-teal shadow-sm outline-none transition-[transform,background-color,color,border-color,box-shadow] duration-300 before:hidden motion-safe:hover:-translate-y-0.5 hover:border-rellia-teal hover:bg-rellia-teal hover:text-white"
-                                  aria-label={`Apply for ${role.title} on LinkedIn (opens in new tab)`}
-                                >
-                                  <span className="relative z-10">
-                                    Apply
-                                  </span>
-                                </a>
-                                
+                                {hasOpenRoleApplyButton(role) ? (
+                                  <a
+                                    href={role.applyButtonUrl}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="group relative isolate inline-flex h-12 cursor-pointer items-center justify-center overflow-hidden rounded-full border-2 border-rellia-mint bg-rellia-mint px-8 font-host-grotesk text-base font-bold text-rellia-teal shadow-sm outline-none transition-[transform,background-color,color,border-color,box-shadow] duration-300 before:hidden motion-safe:hover:-translate-y-0.5 hover:border-rellia-teal hover:bg-rellia-teal hover:text-white"
+                                    aria-label={`${role.applyButtonLabel} for ${role.title} (opens in new tab)`}
+                                  >
+                                    <span className="relative z-10">{role.applyButtonLabel}</span>
+                                  </a>
+                                ) : null}
+
                                 <button
                                   type="button"
                                   onClick={() => handleCopyRoleLink(role.id)}

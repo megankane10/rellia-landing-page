@@ -1,4 +1,6 @@
 import type { CareersOpenRole, CareersPageContent } from "./cms/types"
+import { normalizeToPortableText } from "./cms/normalizePortableText"
+import { portableTextToPlainText } from "./cms/portableTextPlain"
 import { CAREERS_OPEN_ROLES } from "./careersOpenRoles"
 
 /** Legacy seeded role IDs — hidden on production if they still exist in an old dataset. */
@@ -10,19 +12,28 @@ export const PLACEHOLDER_OPEN_ROLE_IDS = new Set([
 export const normalizeOpenRole = (role: Partial<CareersOpenRole> & { id?: string; roleId?: string }) => {
   const id =
     (typeof role.id === "string" ? role.id : typeof role.roleId === "string" ? role.roleId : "").trim()
+  const label = typeof role.applyButtonLabel === "string" ? role.applyButtonLabel.trim() : ""
+  const url = typeof role.applyButtonUrl === "string" ? role.applyButtonUrl.trim() : ""
+
   return {
     id,
     title: typeof role.title === "string" ? role.title.trim() : "",
     location: typeof role.location === "string" ? role.location.trim() : "",
     employmentType: typeof role.employmentType === "string" ? role.employmentType.trim() : "",
-    description: typeof role.description === "string" ? role.description.trim() : "",
+    description: normalizeToPortableText(role.description),
     responsibilities: Array.isArray(role.responsibilities)
       ? role.responsibilities.filter((r): r is string => typeof r === "string" && r.trim() !== "")
       : [],
-    linkedInApplyUrl:
-      typeof role.linkedInApplyUrl === "string" ? role.linkedInApplyUrl.trim() : "",
+    applyButtonLabel: label || undefined,
+    applyButtonUrl: url || undefined,
   }
 }
+
+export const hasOpenRoleDescription = (description: CareersOpenRole["description"]): boolean =>
+  Boolean(portableTextToPlainText(description))
+
+export const hasOpenRoleApplyButton = (role: Pick<CareersOpenRole, "applyButtonLabel" | "applyButtonUrl">): boolean =>
+  Boolean(role.applyButtonLabel?.trim() && role.applyButtonUrl?.trim())
 
 export const filterValidOpenRoles = (
   roles: Array<Partial<CareersOpenRole> & { id?: string; roleId?: string }> | undefined,
@@ -35,9 +46,7 @@ export const filterValidOpenRoles = (
         role.title &&
         role.location &&
         role.employmentType &&
-        role.description &&
-        role.responsibilities.length > 0 &&
-        role.linkedInApplyUrl,
+        hasOpenRoleDescription(role.description),
     )
 
 export type ResolveOpenRolesOptions = {

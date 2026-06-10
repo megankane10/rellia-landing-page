@@ -201,6 +201,8 @@ const main = async () => {
         description?: string
         responsibilities?: string[]
         linkedInApplyUrl?: string
+        applyButtonLabel?: string
+        applyButtonUrl?: string
       }>
     }>
   >(`*[_type == "careersPage" && count(openRoles) > 0]{ _id, openRoles }`)
@@ -233,7 +235,8 @@ const main = async () => {
         employmentType: role.employmentType ?? '',
         description: role.description ?? '',
         responsibilities: role.responsibilities ?? [],
-        linkedInApplyUrl: role.linkedInApplyUrl ?? '',
+        applyButtonLabel: role.applyButtonLabel?.trim() || 'Apply',
+        applyButtonUrl: role.applyButtonUrl?.trim() || role.linkedInApplyUrl?.trim() || '',
         sortOrder: index,
       })
       migratedRoles += 1
@@ -272,6 +275,18 @@ const main = async () => {
     }
     await tx.commit()
     console.log(`Removed legacy careers tab fields on ${careersLegacyTabOnly.length} doc(s).`)
+  }
+
+  const openRolesWithLegacyApplyUrl = await client.fetch<Array<{_id: string}>>(
+    `*[_type == "openRole" && defined(linkedInApplyUrl)]{ _id }`,
+  )
+  if (openRolesWithLegacyApplyUrl.length) {
+    const tx = client.transaction()
+    for (const doc of openRolesWithLegacyApplyUrl) {
+      tx.patch(doc._id, {unset: ['linkedInApplyUrl']})
+    }
+    await tx.commit()
+    console.log(`Unset linkedInApplyUrl on ${openRolesWithLegacyApplyUrl.length} openRole doc(s).`)
   }
 
   // 5. Remove orphaned careers team marquee images (feature removed from site)

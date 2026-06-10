@@ -109,6 +109,7 @@ export const AppRoutes = () => {
     <Route path="/about" element={<About />} />
     <Route path="/faq" element={<FAQ />} />
     <Route path="/careers" element={<Careers />} />
+    <Route path="/careers/roles/:roleId" element={<Careers />} />
     <Route path="/events" element={<Events />} />
     <Route path="/events/:slug" element={<EventDetail />} />
     <Route path="/programs" element={<ProgramsLayout />}>

@@ -7,6 +7,7 @@ import { PRERENDER_PATHS, SHOWCASE_PRERENDER_PATHS } from "./client/config/seo";
 import {
   fetchAdvisorProfilePathsForPrerender,
   fetchAlumniProfilePathsForPrerender,
+  fetchCareersRolePathsForPrerender,
   fetchProgramSlugsForPrerender,
   fetchStorySlugsForPrerender,
 } from "./shared/cms/prerenderSanity";
@@ -37,7 +38,7 @@ const getOgImageVersion = (): string => {
 };
 
 const buildPrerenderRoutes = async (): Promise<string[]> => {
-  const [cmsStoryPaths, cmsProgramPaths, cmsAdvisorPaths, cmsAlumniPaths] =
+  const [cmsStoryPaths, cmsProgramPaths, cmsAdvisorPaths, cmsAlumniPaths, cmsCareersRolePaths] =
     await Promise.all([
       fetchStorySlugsForPrerender().then((slugs) =>
         slugs.map((slug) => `/stories/${slug}`),
@@ -47,6 +48,7 @@ const buildPrerenderRoutes = async (): Promise<string[]> => {
       ),
       fetchAdvisorProfilePathsForPrerender(),
       fetchAlumniProfilePathsForPrerender(),
+      fetchCareersRolePathsForPrerender(),
     ])
   return [
     ...new Set([
@@ -56,6 +58,7 @@ const buildPrerenderRoutes = async (): Promise<string[]> => {
       ...cmsProgramPaths,
       ...cmsAdvisorPaths,
       ...cmsAlumniPaths,
+      ...cmsCareersRolePaths,
     ]),
   ]
 };
