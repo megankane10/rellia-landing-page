@@ -189,7 +189,7 @@ export default function NetworkMetricsSection({
         className={cn(
           "relative flex w-full flex-col overflow-hidden",
           contained
-            ? "h-auto min-h-[1060px] rounded-[2.5rem] shadow-lg sm:min-h-0 sm:h-[820px] md:h-[840px] md:rounded-[3.5rem] lg:h-[780px] xl:h-[800px]"
+            ? "h-auto min-h-[1100px] rounded-[2.5rem] shadow-lg sm:min-h-0 sm:h-[860px] md:h-[880px] md:rounded-[3.5rem] lg:h-[820px] xl:h-[840px]"
             : "min-h-[560px] md:min-h-[620px]",
         )}
       >

@@ -116,7 +116,7 @@ export default function About() {
           className="relative w-full overflow-hidden bg-white py-4 md:py-6"
         >
           <div className="relative w-full overflow-hidden rounded-[2.5rem] md:rounded-[3.5rem] shadow-lg">
-            <div className="relative w-full overflow-hidden">
+            <div className="relative min-h-[920px] w-full overflow-hidden sm:min-h-[960px] md:min-h-[940px] lg:min-h-[1020px]">
             <div className="absolute inset-0 overflow-hidden" aria-hidden>
               <motion.img
                 src={valuesBgImage}
