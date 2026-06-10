@@ -3,7 +3,11 @@ import fs from "node:fs"
 import path from "node:path"
 import { promises as fsp } from "node:fs"
 import "./loadEnv"
-import { DEFAULT_PAYMENT_PAGE } from "../shared/cms/defaults"
+import {
+  DEFAULT_PAYMENT_PAGE,
+  getPaymentPagePanelDescriptionPortable,
+} from "../shared/cms/defaults"
+import type { PaymentPageContent } from "../shared/cms/types"
 
 const UPLOADABLE_EXTENSIONS = new Set([".jpg", ".jpeg", ".png", ".webp", ".gif", ".svg"])
 
@@ -14,6 +18,7 @@ const patchFields = {
   welcomeSplashLogoSrc: DEFAULT_PAYMENT_PAGE.welcomeSplashLogoSrc,
   welcomeSplashDurationSeconds: DEFAULT_PAYMENT_PAGE.welcomeSplashDurationSeconds,
   benefitsPanelDescription: DEFAULT_PAYMENT_PAGE.benefitsPanelDescription,
+  benefitsPanelDescriptionPortable: DEFAULT_PAYMENT_PAGE.benefitsPanelDescriptionPortable,
   benefitsPanelImageEnabled: DEFAULT_PAYMENT_PAGE.benefitsPanelImageEnabled,
   benefitsPanelImageSrc: DEFAULT_PAYMENT_PAGE.benefitsPanelImageSrc,
 }
@@ -106,11 +111,24 @@ const main = async () => {
       : {}),
   }
 
-  const exists = await client.fetch<string | null>(
-    '*[_id == "paymentPage"][0]._id',
+  const existingDoc = await client.fetch<PaymentPageContent | null>(
+    `*[_id == "paymentPage"][0]{
+      _id,
+      benefitsPanelDescriptionPortable,
+      benefitsPanelDescription,
+      benefitsPanelBullet1,
+      benefitsPanelBullet2,
+      benefitsPanelBullet3,
+      benefitsPanelBullet4,
+      benefits
+    }`,
   )
 
-  if (!exists) {
+  const resolvedPortable = getPaymentPagePanelDescriptionPortable(
+    existingDoc ?? DEFAULT_PAYMENT_PAGE,
+  )
+
+  if (!existingDoc?._id) {
     await client.createIfNotExists({
       _id: "paymentPage",
       _type: "paymentPage",
@@ -128,17 +146,22 @@ const main = async () => {
     return
   }
 
-  await client
-    .patch("paymentPage")
-    .setIfMissing({
-      ...patchFields,
-      ...imageFields,
-      welcomeSplashBackgroundSrc: DEFAULT_PAYMENT_PAGE.welcomeSplashBackgroundSrc,
-    })
-    .set({
-      welcomeSplashDurationSeconds: DEFAULT_PAYMENT_PAGE.welcomeSplashDurationSeconds,
-    })
-    .commit()
+  const patch = client.patch("paymentPage").setIfMissing({
+    ...patchFields,
+    ...imageFields,
+    welcomeSplashBackgroundSrc: DEFAULT_PAYMENT_PAGE.welcomeSplashBackgroundSrc,
+  })
+
+  patch.set({
+    welcomeSplashDurationSeconds: DEFAULT_PAYMENT_PAGE.welcomeSplashDurationSeconds,
+  })
+
+  if (!existingDoc?.benefitsPanelDescriptionPortable?.length) {
+    patch.set({ benefitsPanelDescriptionPortable: resolvedPortable })
+    console.log("  migrated benefitsPanelDescriptionPortable from legacy/plain text")
+  }
+
+  await patch.commit()
 
   console.log(`Patched paymentPage on dataset: ${dataset}`)
   if (splashBackgroundAssetId) console.log("  welcomeSplashBackground asset ready")

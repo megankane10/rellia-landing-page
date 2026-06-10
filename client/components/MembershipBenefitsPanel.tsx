@@ -1,69 +1,21 @@
 import { cn } from "@/lib/utils"
-import {
-  parseMembershipPanelDescription,
-  type ParsedMembershipPanelDescription,
-} from "@/lib/parseMembershipPanelDescription"
 import { cmsCleanText, cmsDisplayText, isVisualEditingPreview } from "@/lib/cmsStega"
+import { MembershipPanelPortableText } from "@/components/MembershipPanelPortableText"
+import type { SanityPortableText } from "@shared/cms/types"
 
 const PANEL_IMAGE_SRC = "/images/membership-splash.jpg"
 
 type MembershipBenefitsPanelProps = {
   headline: string
-  description: string
+  descriptionPortable: SanityPortableText
   imageEnabled?: boolean
   imageSrc?: string
   className?: string
 }
 
-const PanelDescription = ({
-  content,
-  previewMode,
-}: {
-  content: ParsedMembershipPanelDescription
-  previewMode: boolean
-}) => {
-  if (content.paragraphs.length === 0 && content.bullets.length === 0) return null
-
-  return (
-    <div className="mt-6 space-y-5 md:mt-8">
-      {content.paragraphs.map((paragraph, index) => (
-        <p
-          key={`p-${index}`}
-          className="font-urbanist text-[15px] font-normal leading-relaxed text-white md:text-base"
-          style={{
-            textShadow: "0 2px 18px rgba(0, 0, 0, 0.65)",
-          }}
-        >
-          {previewMode ? cmsDisplayText(paragraph) : cmsCleanText(paragraph)}
-        </p>
-      ))}
-
-      {content.bullets.length > 0 ? (
-        <ul
-          className="list-disc space-y-3 pl-5"
-          style={{ color: "rgba(255, 255, 255, 0.72)" }}
-        >
-          {content.bullets.map((bullet, index) => (
-            <li
-              key={`b-${index}`}
-              className="font-urbanist text-[15px] font-normal leading-relaxed md:text-base"
-              style={{
-                color: "rgba(255, 255, 255, 0.78)",
-                textShadow: "0 2px 16px rgba(0, 0, 0, 0.6)",
-              }}
-            >
-              {previewMode ? cmsDisplayText(bullet) : cmsCleanText(bullet)}
-            </li>
-          ))}
-        </ul>
-      ) : null}
-    </div>
-  )
-}
-
 export default function MembershipBenefitsPanel({
   headline,
-  description,
+  descriptionPortable,
   imageEnabled = true,
   imageSrc,
   className,
@@ -71,8 +23,6 @@ export default function MembershipBenefitsPanel({
   const previewMode = isVisualEditingPreview()
   const resolvedImageSrc = imageSrc?.trim() || PANEL_IMAGE_SRC
   const showImage = imageEnabled && Boolean(resolvedImageSrc)
-
-  const parsed = parseMembershipPanelDescription(description)
 
   return (
     <div
@@ -116,7 +66,7 @@ export default function MembershipBenefitsPanel({
           <div className="mt-5 h-0.5 w-10 bg-rellia-mint md:mt-6" aria-hidden />
         </div>
 
-        <PanelDescription content={parsed} previewMode={previewMode} />
+        <MembershipPanelPortableText value={descriptionPortable} />
       </div>
     </div>
   )

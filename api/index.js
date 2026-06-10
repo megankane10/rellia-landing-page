@@ -218,7 +218,7 @@ var storiesPrerenderSnapshotQuery = `*[_type == "story" && !(_id in path("drafts
   headerLayout,
   ${seoFragment}
 }`;
-var storyBySlugQuery = `*[_type == "story" && slug.current == $slug && !(_id in path("drafts.**"))][0]{
+var storyBySlugQuery = `*[_type == "story" && (slug.current == $slug || $slug in coalesce(previousSlugs, [])) && !(_id in path("drafts.**"))][0]{
   title,
   "slug": slug.current,
   excerpt,
@@ -825,6 +825,7 @@ var paymentPageQuery = `*[_id == "paymentPage"][0]{
   pricingAnnualDiscountEnabled,
   pricingAnnualCompareAmount,
   benefitsPanelHeadline,
+  benefitsPanelDescriptionPortable,
   benefitsPanelDescription,
   benefitsPanelBullet1,
   benefitsPanelBullet2,

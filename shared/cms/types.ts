@@ -1132,6 +1132,7 @@ export type PaymentPageContent = CmsPageVisibility & {
   pricingAnnualDiscountEnabled?: boolean
   pricingAnnualCompareAmount?: string
   benefitsPanelHeadline?: string
+  benefitsPanelDescriptionPortable?: SanityPortableText
   benefitsPanelDescription?: string
   /** @deprecated Use benefitsPanelDescription */
   benefitsPanelBullet1?: string

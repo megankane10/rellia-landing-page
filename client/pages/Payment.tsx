@@ -13,7 +13,10 @@ import RelliaCta from "@/components/RelliaCta"
 import MembershipWelcomeSplash from "@/components/MembershipWelcomeSplash"
 import MembershipBenefitsPanel from "@/components/MembershipBenefitsPanel"
 import { usePaymentPage } from "@/hooks/useCmsDocuments"
-import { DEFAULT_PAYMENT_PAGE, getPaymentPagePanelDescription } from "@shared/cms/defaults"
+import {
+  DEFAULT_PAYMENT_PAGE,
+  getPaymentPagePanelDescriptionPortable,
+} from "@shared/cms/defaults"
 import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo"
 import { cn } from "@/lib/utils"
 import { PriceDisplay } from "@/components/cms/PriceDisplay"
@@ -70,7 +73,7 @@ export default function Payment() {
     DEFAULT_PAYMENT_PAGE.benefitsPanelImageSrc ||
     "/images/membership-splash.jpg"
 
-  const panelDescription = getPaymentPagePanelDescription(p)
+  const panelDescriptionPortable = getPaymentPagePanelDescriptionPortable(p)
 
   const handleSplashComplete = useCallback(() => {
     setSplashComplete(true)
@@ -157,7 +160,7 @@ export default function Payment() {
             <ScrollReveal variant="ctaReveal" hold={showSplash} className="flex flex-col p-4 pb-8 md:p-6 md:pb-10 lg:p-8">
               <MembershipBenefitsPanel
                 headline={p.benefitsPanelHeadline?.trim() || p.benefitsTitle}
-                description={panelDescription}
+                descriptionPortable={panelDescriptionPortable ?? []}
                 imageEnabled={p.benefitsPanelImageEnabled ?? DEFAULT_PAYMENT_PAGE.benefitsPanelImageEnabled}
                 imageSrc={panelImageSrc}
               />

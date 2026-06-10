@@ -150,14 +150,24 @@ export const paymentPage = defineType({
       hidden: ({parent}) => !parent?.benefitsPanelImageEnabled,
     }),
     defineField({
+      name: 'benefitsPanelDescriptionPortable',
+      type: 'membershipPanelPortableText',
+      title: 'Left panel description',
+      description:
+        'Intro copy and bullet list for the membership benefits panel. Use normal paragraphs and bullet lists.',
+      group: 'content',
+      fieldset: 'benefitsDivider',
+    }),
+    defineField({
       name: 'benefitsPanelDescription',
       type: 'text',
       rows: 10,
-      title: 'Left panel description',
-      description:
-        'Intro paragraph, then bullet lines starting with "- " (one per line). Example:\nUnlock founder benefits…\n\n- First benefit\n- Second benefit',
+      title: 'Left panel description (legacy)',
+      description: 'Deprecated — migrated to rich text. Kept for legacy reads only.',
       group: 'content',
       fieldset: 'benefitsDivider',
+      hidden: true,
+      readOnly: true,
     }),
     defineField({
       name: 'choosePlanHeadline',

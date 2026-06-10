@@ -846,6 +846,7 @@ export const paymentPageQuery = `*[_id == "paymentPage"][0]{
   pricingAnnualDiscountEnabled,
   pricingAnnualCompareAmount,
   benefitsPanelHeadline,
+  benefitsPanelDescriptionPortable,
   benefitsPanelDescription,
   benefitsPanelBullet1,
   benefitsPanelBullet2,

@@ -11,6 +11,11 @@ import {
   resolveMetricsHeadlinePortable,
   resolveWelcomeSplashHeadingPortable,
 } from "./resolveHeroHeadline"
+import {
+  getPaymentPagePanelDescriptionText,
+  membershipPanelDescriptionStringToPortable,
+  resolveBenefitsPanelDescriptionPortable,
+} from "./membershipPanelDescriptionPortable"
 import type {
   AboutPageContent,
   ApplyPageContent,
@@ -2418,6 +2423,14 @@ export const DEFAULT_PAYMENT_PAGE: PaymentPageContent = {
 - Healthcare industry templates and resources ready to use in your business
 - Exclusive workshops, webinars, and networking events with industry leaders
 - Access to advisory consulting that would cost >$300/hr anywhere else`,
+  benefitsPanelDescriptionPortable: membershipPanelDescriptionStringToPortable(
+    `Unlock founder benefits built for health tech operators moving from approval to active membership.
+
+- Personalized warm introductions to the right investors, partners, and clinicians
+- Healthcare industry templates and resources ready to use in your business
+- Exclusive workshops, webinars, and networking events with industry leaders
+- Access to advisory consulting that would cost >$300/hr anywhere else`,
+  ),
   benefitsPanelImageEnabled: true,
   benefitsPanelImageSrc: "/images/membership-splash.jpg",
   choosePlanHeadline: "Choose your plan",
@@ -2444,9 +2457,12 @@ export const DEFAULT_PAYMENT_PAGE: PaymentPageContent = {
   welcomeSplashDurationSeconds: 1.9,
 }
 
-export const getPaymentPagePanelDescription = (
+export const getPaymentPagePanelDescription = getPaymentPagePanelDescriptionText
+
+export const getPaymentPagePanelDescriptionPortable = (
   page: Pick<
     PaymentPageContent,
+    | "benefitsPanelDescriptionPortable"
     | "benefitsPanelDescription"
     | "benefitsPanelBullet1"
     | "benefitsPanelBullet2"
@@ -2454,33 +2470,11 @@ export const getPaymentPagePanelDescription = (
     | "benefitsPanelBullet4"
     | "benefits"
   >,
-): string => {
-  const description = page.benefitsPanelDescription?.trim()
-  if (description) return description
-
-  const legacyBullets = [
-    page.benefitsPanelBullet1,
-    page.benefitsPanelBullet2,
-    page.benefitsPanelBullet3,
-    page.benefitsPanelBullet4,
-  ]
-    .map((value) => value?.trim())
-    .filter((value): value is string => Boolean(value))
-
-  if (legacyBullets.length > 0) {
-    return legacyBullets.map((bullet) => `- ${bullet}`).join("\n")
-  }
-
-  const fromBenefits = page.benefits
-    .filter((benefit) => !benefit.toLowerCase().includes("cancel"))
-    .slice(0, 4)
-
-  if (fromBenefits.length > 0) {
-    return fromBenefits.map((benefit) => `- ${benefit}`).join("\n")
-  }
-
-  return DEFAULT_PAYMENT_PAGE.benefitsPanelDescription ?? ""
-}
+): PaymentPageContent["benefitsPanelDescriptionPortable"] =>
+  resolveBenefitsPanelDescriptionPortable(
+    page,
+    DEFAULT_PAYMENT_PAGE.benefitsPanelDescriptionPortable ?? [],
+  )
 
 export const DEFAULT_APPLY_PAGE: ApplyPageContent = {
   headingTitle: "Path to Membership",
@@ -2889,6 +2883,10 @@ export function mergePaymentPage(
   }
   fill("benefitsPanelHeadline", DEFAULT_PAYMENT_PAGE.benefitsPanelHeadline ?? "")
   fill("benefitsPanelDescription", DEFAULT_PAYMENT_PAGE.benefitsPanelDescription ?? "")
+  base.benefitsPanelDescriptionPortable = resolveBenefitsPanelDescriptionPortable(
+    base,
+    DEFAULT_PAYMENT_PAGE.benefitsPanelDescriptionPortable ?? [],
+  )
   fill("benefitsPanelImageSrc", DEFAULT_PAYMENT_PAGE.benefitsPanelImageSrc ?? "")
   if (typeof base.benefitsPanelImageEnabled !== "boolean") {
     base.benefitsPanelImageEnabled = DEFAULT_PAYMENT_PAGE.benefitsPanelImageEnabled
