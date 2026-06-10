@@ -92,6 +92,14 @@ Host portrait resolution order:
 
 **Studio deploy required** after `openRole` schema changes (`pnpm sanity:studio:deploy`).
 
+**String → rich text migration:** If Studio shows “Invalid property value” on `description`, the document still has a plain string from before `openRoleDescription` existed. Run:
+
+```bash
+SANITY_API_DATASET=production pnpm sanity:migrate:open-role-descriptions
+```
+
+Do **not** use Studio’s “Reset value” unless you intend to delete the copy and retype it.
+
 **Suggested follow-up:** Run `sanity-cleanup` to `unset` `linkedInApplyUrl` on any remaining `openRole` documents in production.
 
 ---

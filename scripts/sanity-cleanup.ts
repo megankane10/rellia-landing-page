@@ -277,6 +277,25 @@ const main = async () => {
     console.log(`Removed legacy careers tab fields on ${careersLegacyTabOnly.length} doc(s).`)
   }
 
+  const openRolesWithStringDescription = await client.fetch<
+    Array<{_id: string; description?: string}>
+  >(`*[_type == "openRole" && defined(description) && !is(description, "array")]{ _id, description }`)
+
+  if (openRolesWithStringDescription.length) {
+    const {plainStringToPortableTextBlocks} = await import(
+      '../shared/cms/normalizePortableText'
+    )
+    for (const doc of openRolesWithStringDescription) {
+      if (typeof doc.description !== 'string') continue
+      const blocks = plainStringToPortableTextBlocks(doc.description)
+      if (blocks.length === 0) continue
+      await client.patch(doc._id).set({description: blocks}).commit()
+    }
+    console.log(
+      `Migrated ${openRolesWithStringDescription.length} openRole description(s) from string to portable text.`,
+    )
+  }
+
   const openRolesWithLegacyApplyUrl = await client.fetch<Array<{_id: string}>>(
     `*[_type == "openRole" && defined(linkedInApplyUrl)]{ _id }`,
   )
