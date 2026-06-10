@@ -1093,9 +1093,9 @@ export default function DiagnosticSurvey() {
         description="Assess your health tech startup across 12 domains and get a personalized advisory board and program roadmap."
       />
 
-      <div className="relative flex min-h-[calc(100vh-72px)] items-start md:min-h-[calc(100vh-86px)]">
+      <div className="relative grid lg:grid-cols-[18rem_1fr]">
         {/* ── DESKTOP SIDEBAR ── */}
-        <aside className="diagnostic-screen-only sticky top-[72px] z-20 hidden w-72 shrink-0 flex-col self-start overflow-y-auto rounded-b-3xl border-r border-rellia-teal/10 bg-white/50 backdrop-blur-md md:top-[86px] lg:flex lg:max-h-[calc(100vh-86px)]">
+        <aside className="diagnostic-screen-only sticky top-[72px] z-20 hidden h-[calc(100vh-72px)] w-72 shrink-0 flex-col self-start overflow-y-auto rounded-b-3xl border-r border-rellia-teal/10 bg-white/50 backdrop-blur-md md:top-[86px] md:h-[calc(100vh-86px)] lg:flex">
           <div className="flex flex-col gap-6 p-6">
             <div className="space-y-2">
               <div className="flex justify-between text-[10px] font-bold uppercase tracking-widest text-rellia-teal/50">
@@ -1192,7 +1192,7 @@ export default function DiagnosticSurvey() {
         </aside>
 
         {/* ── MAIN CONTENT AREA ── */}
-        <main className="flex-1">
+        <main className="min-w-0 lg:col-start-2">
           {/* MOBILE SUB-HEADER */}
           <div className="diagnostic-screen-only sticky top-[72px] z-[60] border-b border-rellia-teal/10 bg-rellia-cream/90 backdrop-blur-md md:top-[86px] lg:hidden">
             <div className="flex items-center justify-between px-4 py-2">
@@ -2225,10 +2225,10 @@ export default function DiagnosticSurvey() {
             })()}
           </div>
         </main>
-      </div>
 
-      <div className="diagnostic-screen-only mt-16 md:mt-20">
-        <Footer />
+        <div className="diagnostic-screen-only col-span-full mt-16 md:mt-20">
+          <Footer />
+        </div>
       </div>
     </div>
   );
