@@ -33,7 +33,14 @@ import {
 } from "lucide-react";
 import { getCurrentMonthDeadline } from "@/lib/dateUtils";
 import RelliaAction from "@/components/RelliaAction";
-import { buildPageUrl, resolveProgramSocialMeta } from "@/config/seo"
+import {
+  buildPageUrl,
+  clampMetaDescription,
+  clampMetaTitle,
+  resolveProgramSocialMeta,
+  resolveSocialOgImage,
+} from "@/config/seo"
+import { resolveProgramCollectionSeo } from "@shared/cms/collectionSeo"
 import { cn } from "@/lib/utils";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { SectionsRenderer } from "@/components/cms/PageRenderer"
@@ -205,6 +212,13 @@ const ProgramPageLayout = ({
   const resolvedHeroImageAlt = (heroImageAlt || resolvedProgramTitle || "Program image").trim()
 
   const canonicalUrl = buildPageUrl(location.pathname)
+  const programSeoText = resolveProgramCollectionSeo({
+    title: programDoc?.title,
+    heroTitle: q.heroTitle || cms?.heroTitle,
+    description: (programDoc as { description?: string } | null | undefined)?.description,
+    heroDescription: q.heroDescription || cms?.heroDescription,
+    seo: programDoc?.seo,
+  })
   const programSocial = resolveProgramSocialMeta({
     title: programDoc?.title,
     heroTitle: q.heroTitle || cms?.heroTitle,
@@ -214,6 +228,12 @@ const ProgramPageLayout = ({
     routeHeroImageSrc: heroImageSrc,
     slug: programSlug,
   })
+  const programPageTitle = clampMetaTitle(programSeoText.title)
+  const programPageDescription = clampMetaDescription(programSeoText.description)
+  const programOgFromSeo = programSeoText.ogImageUrl
+    ? resolveSocialOgImage(programSeoText.ogImageUrl, undefined, { square: true })
+    : undefined
+  const programOgImage = programOgFromSeo ?? programSocial.ogImage
 
   const extraSections = (programPageData?.sections ?? []).filter(
     (s) => s._type !== "sectionHero",
@@ -243,12 +263,12 @@ const ProgramPageLayout = ({
   return (
     <div className="min-h-screen bg-white font-host-grotesk overflow-x-hidden">
       <PageSocialHelmet
-        title={programSocial.title}
-        description={programSocial.description}
+        title={programPageTitle}
+        description={programPageDescription}
         canonical={canonicalUrl}
-        ogImage={programSocial.ogImage?.url}
-        ogImageWidth={programSocial.ogImage?.width}
-        ogImageHeight={programSocial.ogImage?.height}
+        ogImage={programOgImage?.url}
+        ogImageWidth={programOgImage?.width}
+        ogImageHeight={programOgImage?.height}
       />
       <Navbar />
       <main id="main-content">

@@ -209,7 +209,7 @@ export const storiesPrerenderSnapshotQuery = `*[_type == "story" && !(_id in pat
   ${seoFragment}
 }`
 
-export const storyBySlugQuery = `*[_type == "story" && slug.current == $slug && !(_id in path("drafts.**"))][0]{
+export const storyBySlugQuery = `*[_type == "story" && (slug.current == $slug || $slug in coalesce(previousSlugs, [])) && !(_id in path("drafts.**"))][0]{
   title,
   "slug": slug.current,
   excerpt,

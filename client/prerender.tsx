@@ -26,13 +26,14 @@ import { FOUNDER_DIRECTORY } from "@/data/founderDirectory"
 import { AppRoutes, RouterShell } from "./AppRoutes"
 import { PageSeoProvider } from "@/context/PageSeoContext"
 import { DEFAULT_PROGRAMS_LANDING, DEFAULT_QMS_PROGRAM, mergeQmsProgram } from "@shared/cms/defaults"
-import { buildDefaultStorySeoTitle } from "@shared/cms/storySeo"
-import { findProgramsEventBySlug } from "@shared/cms/eventSlug"
 import {
-  getProgramsEventDisplayDateTime,
-  getProgramsEventLocationLabel,
-  shortenProgramsEventDateTime,
-} from "@shared/cms/programsEventDisplay"
+  resolveEventCollectionSeo,
+  resolveProgramCollectionSeo,
+  resolveStoryCollectionSeo,
+} from "@shared/cms/collectionSeo"
+import type { SeoContent } from "@shared/cms/types"
+import { findProgramsEventBySlug } from "@shared/cms/eventSlug"
+import { getProgramsEventLocationLabel } from "@shared/cms/programsEventDisplay"
 import {
   defaultProgramRecordForSlug,
   resolveEventCardImageSrc,
@@ -112,62 +113,28 @@ export type ItemPrerenderSeo = {
   ogImageHeight?: number
 }
 
-function portableTextToPlainText(blocks: any): string {
-  if (!blocks) return ""
-  if (typeof blocks === "string") return blocks
-  if (!Array.isArray(blocks)) return ""
-  return blocks
-    .map((block) => {
-      if (!block || typeof block !== "object") return ""
-      if (block.children && Array.isArray(block.children)) {
-        return block.children.map((child: any) => (child && typeof child === "object" ? child.text || "" : "")).join("")
-      }
-      return ""
-    })
-    .filter(Boolean)
-    .join(" ")
-}
-
 const buildEventSeo = (
   event: Record<string, unknown>,
   slug: string,
   siteOrigin: string,
 ): ItemPrerenderSeo => {
-  const title = typeof event.title === "string" ? event.title : "Event"
-  const computedDateTime = getProgramsEventDisplayDateTime(event as never)
-  const shortDateTime = shortenProgramsEventDateTime(computedDateTime)
   const cmsImageSrc = typeof event.imageSrc === "string" ? event.imageSrc : undefined
   const imageSrc = resolveEventCardImageSrc(slug, cmsImageSrc)
-
-  const descText = (() => {
-    if (event.eventDescription) {
-      if (typeof event.eventDescription === "string") return event.eventDescription
-      if (Array.isArray(event.eventDescription)) {
-        const text = portableTextToPlainText(event.eventDescription)
-        if (text.trim()) return text.trim()
-      }
-    }
-    if (event.detailBody) {
-      if (typeof event.detailBody === "string") return event.detailBody
-      if (Array.isArray(event.detailBody)) {
-        const text = portableTextToPlainText(event.detailBody)
-        if (text.trim()) return text.trim()
-      }
-    }
-    return ""
-  })()
-
-  const eventDate = shortDateTime || computedDateTime
-  const finalDesc = descText
-    ? `${eventDate} · ${descText}`
-    : eventDate
-
-  const ogImage = imageSrc
-    ? resolveSocialOgImage(imageSrc, siteOrigin, { square: true })
-    : undefined
+  const resolved = resolveEventCollectionSeo({
+    title: typeof event.title === "string" ? event.title : "Event",
+    eventDescription: event.eventDescription as never,
+    detailBody: event.detailBody as never,
+    startsAt: typeof event.startsAt === "string" ? event.startsAt : undefined,
+    endsAt: typeof event.endsAt === "string" ? event.endsAt : undefined,
+    dateTime: typeof event.dateTime === "string" ? event.dateTime : undefined,
+    seo: (event.seo as SeoContent | null | undefined) ?? null,
+    imageSrc,
+  })
+  const ogSrc = resolved.ogImageUrl || imageSrc
+  const ogImage = ogSrc ? resolveSocialOgImage(ogSrc, siteOrigin, { square: true }) : undefined
   return {
-    title: clampMetaTitle(title),
-    description: clampMetaDescription(finalDesc),
+    title: clampMetaTitle(resolved.title),
+    description: clampMetaDescription(resolved.description),
     ogImage: ogImage?.url,
     ogImageWidth: ogImage?.width,
     ogImageHeight: ogImage?.height,
@@ -182,6 +149,14 @@ const buildProgramSeo = (
 ): ItemPrerenderSeo => {
   const routeSeo = getSeoForPathname(pathname)
   const routeTitle = routeSeo.title.replace(/ — Rellia Health$/, "").trim()
+  const resolved = resolveProgramCollectionSeo({
+    title: typeof program.title === "string" ? program.title : routeTitle || undefined,
+    heroTitle: typeof program.heroTitle === "string" ? program.heroTitle : undefined,
+    description: typeof program.description === "string" ? program.description : undefined,
+    heroDescription:
+      typeof program.heroDescription === "string" ? program.heroDescription : undefined,
+    seo: (program.seo as SeoContent | null | undefined) ?? null,
+  })
   const social = resolveProgramSocialMeta(
     {
       title: typeof program.title === "string" ? program.title : routeTitle || undefined,
@@ -194,12 +169,16 @@ const buildProgramSeo = (
     },
     siteOrigin,
   )
+  const ogSrc = resolved.ogImageUrl || social.ogImage?.url
+  const ogImage = ogSrc
+    ? resolveSocialOgImage(ogSrc, siteOrigin, { square: true }) ?? social.ogImage
+    : social.ogImage
   return {
-    title: social.title,
-    description: social.description,
-    ogImage: social.ogImage?.url,
-    ogImageWidth: social.ogImage?.width,
-    ogImageHeight: social.ogImage?.height,
+    title: clampMetaTitle(resolved.title),
+    description: clampMetaDescription(resolved.description),
+    ogImage: ogImage?.url,
+    ogImageWidth: ogImage?.width,
+    ogImageHeight: ogImage?.height,
   }
 }
 
@@ -209,36 +188,25 @@ const buildStorySeo = (
     tag?: string
     excerpt?: string
     coverImageSrc?: string
-    seo?: {
-      metaTitle?: string
-      ogTitle?: string
-      metaDescription?: string
-      ogDescription?: string
-      ogImageUrl?: string
-    } | null
+    seo?: SeoContent | null
   },
   siteOrigin: string,
 ): ItemPrerenderSeo => {
-  const seo = story.seo
-  const title = clampMetaTitle(
-    seo?.metaTitle?.trim() ||
-      seo?.ogTitle?.trim() ||
-      buildDefaultStorySeoTitle(story.title, story.tag),
-  )
-  const description = clampMetaDescription(
-    seo?.metaDescription?.trim() ||
-      seo?.ogDescription?.trim() ||
-      story.excerpt?.trim() ||
-      "Stories and insights from Rellia Health.",
-  )
-  const ogSrc = seo?.ogImageUrl?.trim() || story.coverImageSrc?.trim()
+  const resolved = resolveStoryCollectionSeo({
+    title: story.title,
+    tag: story.tag,
+    excerpt: story.excerpt,
+    seo: story.seo,
+    coverImageSrc: story.coverImageSrc,
+  })
+  const ogSrc = resolved.ogImageUrl || story.coverImageSrc?.trim()
   const ogImage = ogSrc
     ? resolveSocialOgImage(ogSrc, siteOrigin, { landscape: true }) ??
       resolveShareOgImage(undefined, { landscape: true })
     : resolveShareOgImage(undefined, { landscape: true })
   return {
-    title,
-    description,
+    title: clampMetaTitle(resolved.title),
+    description: clampMetaDescription(resolved.description),
     ogImage: ogImage.url,
     ogImageWidth: ogImage.width,
     ogImageHeight: ogImage.height,
@@ -340,16 +308,7 @@ const resolveItemPrerenderSeo = async (
           tag: typeof cms.tag === "string" ? cms.tag : undefined,
           excerpt: typeof cms.excerpt === "string" ? cms.excerpt : undefined,
           coverImageSrc: typeof cms.coverImageSrc === "string" ? cms.coverImageSrc : undefined,
-          seo: (cms as { seo?: Record<string, unknown> | null }).seo as
-            | {
-                metaTitle?: string
-                ogTitle?: string
-                metaDescription?: string
-                ogDescription?: string
-                ogImageUrl?: string
-              }
-            | null
-            | undefined,
+          seo: (cms as { seo?: SeoContent | null }).seo,
         },
         siteOrigin,
       )

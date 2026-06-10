@@ -25,6 +25,8 @@
     "sanity:seed:starters": "tsx scripts/sanity-seed-starters.ts",
     "sanity:seed:story-filters": "tsx scripts/sanity-seed-story-filters.ts",
     "sanity:migrate:story-seo": "tsx scripts/sanity-migrate-story-seo.ts",
+    "sanity:migrate:collection-seo": "tsx scripts/sanity-migrate-collection-seo.ts",
+    "fix:story-slug": "tsx scripts/fix-story-slug.ts",
     "sanity:migrate:cms-headlines": "tsx scripts/sanity-migrate-cms-headlines.ts",
     "sanity:cleanup": "tsx scripts/sanity-cleanup.ts",
     "sanity:promote:dry": "tsx scripts/promote-preview-to-production.ts",

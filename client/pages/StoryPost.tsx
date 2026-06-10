@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { Link, useParams } from "react-router-dom"
+import { Link, Navigate, useParams } from "react-router-dom"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
 import ScrollReveal from "@/components/ScrollReveal"
@@ -32,7 +32,8 @@ import {
 } from "@/components/share/sharePageIcons"
 import { buildMailtoHref } from "@/lib/mailto"
 import { DEFAULT_GLOBAL_SETTINGS } from "@shared/cms/defaults"
-import { buildDefaultStorySeoTitle } from "@shared/cms/storySeo"
+import { resolveStoryCollectionSeo } from "@shared/cms/collectionSeo"
+import { resolveStorySlugRedirect } from "@shared/cms/storySlugRedirects"
 import { StoryPostHero } from "@/components/StoryPostHero"
 import { RichTextQuoteFigure } from "@/components/RichTextQuoteFigure"
 import ImageExpandModal from "@/components/ImageExpandModal"
@@ -40,6 +41,7 @@ import ImageExpandModal from "@/components/ImageExpandModal"
 export default function StoryPost() {
   const { slug } = useParams()
   const resolvedSlug = slug?.trim() ?? ""
+  const legacyRedirectSlug = resolvedSlug ? resolveStorySlugRedirect(resolvedSlug) : undefined
   const storyQuery = useStoryBySlug(resolvedSlug)
   const { data: cmsStory } = storyQuery
   const story = slug && allowCmsSeedFallbacks() ? getStoryBySlug(slug) : undefined
@@ -52,26 +54,32 @@ export default function StoryPost() {
       ? buildPageUrl(`/stories/${story.slug}`)
       : buildPageUrl("/stories")
 
-  const titleSource =
-    cmsStory?.seo?.metaTitle?.trim() ||
-    cmsStory?.seo?.ogTitle?.trim() ||
-    story?.seoTitle ||
-    (cmsStory?.title
-      ? buildDefaultStorySeoTitle(cmsStory.title, cmsStory.tag)
-      : story
-        ? buildDefaultStorySeoTitle(story.title, story.tag)
-        : "Stories — Rellia Health")
+  const storySeo = cmsStory
+    ? resolveStoryCollectionSeo({
+        title: cmsStory.title,
+        tag: cmsStory.tag,
+        excerpt: cmsStory.excerpt,
+        seo: cmsStory.seo,
+        coverImageSrc: cmsStory.coverImageSrc,
+      })
+    : story
+      ? resolveStoryCollectionSeo({
+          title: story.title,
+          tag: story.tag,
+          excerpt: story.excerpt,
+          coverImageSrc: story.coverImageSrc,
+          seo:
+            story.seoTitle || story.seoDescription
+              ? { metaTitle: story.seoTitle, metaDescription: story.seoDescription }
+              : undefined,
+        })
+      : resolveStoryCollectionSeo({
+          title: "Stories",
+          fallbackDescription: "Stories and insights from Rellia Health.",
+        })
 
-  const descriptionSource =
-    cmsStory?.seo?.metaDescription?.trim() ||
-    cmsStory?.seo?.ogDescription?.trim() ||
-    cmsStory?.excerpt?.trim() ||
-    story?.seoDescription ||
-    story?.excerpt ||
-    "Stories and insights from Rellia Health."
-
-  const resolvedTitle = clampMetaTitle(titleSource)
-  const resolvedDescription = clampMetaDescription(descriptionSource)
+  const resolvedTitle = clampMetaTitle(storySeo.title)
+  const resolvedDescription = clampMetaDescription(storySeo.description)
 
   const toAbsoluteImageUrl = (src: string): string => {
     const origin = getShareOrigin()
@@ -83,8 +91,7 @@ export default function StoryPost() {
   const headerCoverSrc = cmsStory?.coverImageSrc?.trim() || story?.coverImageSrc?.trim()
   const headerCoverAlt = cmsStory?.coverImageAlt?.trim() || story?.coverImageAlt?.trim() || cmsStory?.title || story?.title || ""
   const headerLayout = cmsStory?.headerLayout === "background" ? "background" : "block"
-  const seoOgImageSrc =
-    cmsStory?.seo?.ogImageUrl?.trim() || headerCoverSrc
+  const seoOgImageSrc = storySeo.ogImageUrl || headerCoverSrc
   const resolvedOgImage = seoOgImageSrc
     ? resolveSocialOgImage(seoOgImageSrc, undefined, { landscape: true }) ?? {
         url: toAbsoluteImageUrl(seoOgImageSrc),
@@ -167,6 +174,18 @@ export default function StoryPost() {
       </button>
     </div>
   )
+
+  if (legacyRedirectSlug && legacyRedirectSlug !== resolvedSlug) {
+    return <Navigate to={`/stories/${legacyRedirectSlug}`} replace />
+  }
+
+  if (
+    cmsStory?.slug &&
+    resolvedSlug &&
+    cmsStory.slug.trim() !== resolvedSlug
+  ) {
+    return <Navigate to={`/stories/${cmsStory.slug}`} replace />
+  }
 
   if (resolvedSlug && isSanityConfigured() && isCmsQueryLoading(storyQuery)) {
     return <CmsPageLoadingShell />

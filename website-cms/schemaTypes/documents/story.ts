@@ -31,7 +31,18 @@ export const story = defineType({
       name: 'slug',
       type: 'slug',
       options: {source: 'title', maxLength: 96},
+      description:
+        'Public URL: /stories/[slug]. Click Generate from title before publishing. Changing the slug after publish? Add the old slug under Previous slugs so old links keep working.',
       validation: (Rule) => Rule.required(),
+      group: 'content',
+    }),
+    defineField({
+      name: 'previousSlugs',
+      title: 'Previous slugs',
+      type: 'array',
+      of: [{type: 'string'}],
+      description:
+        'Optional legacy URL slugs that should still resolve to this story (e.g. after renaming).',
       group: 'content',
     }),
     defineField({

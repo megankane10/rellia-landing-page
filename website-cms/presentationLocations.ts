@@ -25,8 +25,10 @@ export const presentationMainDocuments = defineDocuments([
   {route: '/industry-partners', filter: singletonDoc('networkPartnersPage')},
   {
     route: '/stories/:slug',
-    filter: (ctx) =>
-      `_type == "story" && slug.current == "${ctx.params.slug ?? ''}"`,
+    filter: (ctx) => {
+      const slug = (ctx.params.slug ?? '').replace(/"/g, '\\"')
+      return `_type == "story" && (slug.current == "${slug}" || "${slug}" in coalesce(previousSlugs, []))`
+    },
   },
   {
     route: '/events/:slug',

@@ -32,10 +32,10 @@ export type Story = {
 /** Preview/dev fallback when Sanity has no stories — production uses CMS only. */
 export const STORIES: Story[] = [
   {
-    slug: "website-launch",
-    title: "Welcome to the new Rellia website",
+    slug: "a-clearer-path-for-digital-health-founders",
+    title: "A clearer path for digital health founders.",
     excerpt:
-      "Explore clearer paths for founders—benchmark readiness, join programs, meet advisors, and stay close to what is happening across the Rellia community.",
+      "Welcome to Rellia. We have redesigned our digital home to help you benchmark readiness, access specialized programs, and explore our healthcare network—all in one place.",
     tag: "Program Update",
     featured: true,
     coverImageSrc: "/images/website-launch-cartoon.png",

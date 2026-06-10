@@ -49,6 +49,7 @@ import { DEFAULT_GLOBAL_SETTINGS } from "@shared/cms/defaults"
 import { EventDetailPortableText } from "@/components/EventDetailPortableText"
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet"
 import type { SanityPortableText, SeoContent } from "@shared/cms/types"
+import { resolveEventCollectionSeo } from "@shared/cms/collectionSeo"
 import { useEventBySlug } from "@/hooks/useCmsDocuments"
 import { resolveEventCardImageSrc } from "@shared/cms/itemCardImage"
 import { allowCmsSeedFallbacks } from "@/lib/deploymentEnv"
@@ -101,22 +102,6 @@ const splitEventDetailBody = (raw: string | undefined): string[] => {
     .filter(Boolean)
 }
 
-function portableTextToPlainText(blocks: any): string {
-  if (!blocks) return ""
-  if (typeof blocks === "string") return blocks
-  if (!Array.isArray(blocks)) return ""
-  return blocks
-    .map((block) => {
-      if (!block || typeof block !== "object") return ""
-      if (block.children && Array.isArray(block.children)) {
-        return block.children.map((child: any) => (child && typeof child === "object" ? child.text || "" : "")).join("")
-      }
-      return ""
-    })
-    .filter(Boolean)
-    .join(" ")
-}
-
 const getEventStatus = (event: Parameters<typeof getEventTemporalStatus>[0]): "upcoming" | "past" =>
   getEventTemporalStatus(event)
 
@@ -154,44 +139,22 @@ export default function EventDetail() {
     const { _variant: _variantIgnored, ...event } = match
 
     const cmsSeo = (match as unknown as { seo?: SeoContent | null }).seo ?? null
-    const seoMetaTitle = cmsSeo?.metaTitle?.trim()
-    const seoOgTitle = cmsSeo?.ogTitle?.trim()
-    const seoMetaDescription = cmsSeo?.metaDescription?.trim()
-    const seoOgDescription = cmsSeo?.ogDescription?.trim()
-    const seoOgImageUrl = cmsSeo?.ogImageUrl?.trim()
-
-    const computedDateTime = getProgramsEventDisplayDateTime(event)
-    const shortDateTime = shortenProgramsEventDateTime(computedDateTime)
-
-    const descText = (() => {
-      if (event.eventDescription) {
-        if (typeof event.eventDescription === "string") return event.eventDescription
-        if (Array.isArray(event.eventDescription)) {
-          const text = portableTextToPlainText(event.eventDescription)
-          if (text.trim()) return text.trim()
-        }
-      }
-      if (event.detailBody) {
-        if (typeof event.detailBody === "string") return event.detailBody
-        if (Array.isArray(event.detailBody)) {
-          const text = portableTextToPlainText(event.detailBody)
-          if (text.trim()) return text.trim()
-        }
-      }
-      return ""
-    })()
-
-    const eventDate = shortDateTime || computedDateTime
-    const finalDesc = descText
-      ? `${eventDate} · ${descText}`
-      : eventDate
-
-    const pageTitle = clampMetaTitle(seoMetaTitle || seoOgTitle || `${event.title} - Events`)
-    const eventDescription = clampMetaDescription(seoMetaDescription || seoOgDescription || finalDesc)
+    const resolvedSeo = resolveEventCollectionSeo({
+      title: event.title,
+      eventDescription: event.eventDescription,
+      detailBody: event.detailBody,
+      startsAt: event.startsAt,
+      endsAt: event.endsAt,
+      dateTime: event.dateTime,
+      seo: cmsSeo,
+      imageSrc: event.imageSrc,
+    })
+    const pageTitle = clampMetaTitle(resolvedSeo.title)
+    const eventDescription = clampMetaDescription(resolvedSeo.description)
     const eventSlugPath = getProgramsEventSlug(event)
     const pagePath = `/events/${eventSlugPath}`
-    const resolvedOg = seoOgImageUrl
-      ? resolveSocialOgImage(seoOgImageUrl, undefined, { square: true })
+    const resolvedOg = resolvedSeo.ogImageUrl
+      ? resolveSocialOgImage(resolvedSeo.ogImageUrl, undefined, { square: true })
       : resolveSocialOgImage(event.imageSrc, undefined, { square: true })
     return {
       pageTitle,

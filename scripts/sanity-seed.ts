@@ -66,7 +66,6 @@ import {
 import { DEFAULT_CAREERS_PAGE } from "../shared/cms/careersPageDefaults"
 import { threePartHeroHeadline } from "../shared/cms/inlineHeroHeadline"
 import { buildStoryFilterMutations, storyFilterIdForTag } from "../shared/cms/storyFilters"
-import { buildStorySeoFieldsPayload } from "../shared/cms/storySeo"
 import { legalSectionsToPortableText } from "../shared/cms/legal/sectionsToPortableText"
 import {
   TERMS_EFFECTIVE_DATE,
@@ -1650,11 +1649,6 @@ async function main() {
       headerImageAlt: WEBSITE_LAUNCH_STORY.coverImageAlt,
       headerLayout: "block",
       body: createWebsiteLaunchStoryBody(ptBlock, bullet, block),
-      seo: buildStorySeoFieldsPayload({
-        storyTitle: WEBSITE_LAUNCH_STORY.title,
-        tag: WEBSITE_LAUNCH_STORY.tag,
-        description: WEBSITE_LAUNCH_STORY.seoDescription,
-      }),
     },
   })
 

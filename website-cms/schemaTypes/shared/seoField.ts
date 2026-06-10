@@ -7,4 +7,6 @@ export const seoField = defineField({
   type: 'seoFields',
   group: 'seo',
   fieldset: 'seo',
+  description:
+    'Optional overrides. When title and description are empty, the site derives them from the main content fields (e.g. story title + category, event title + description, program title + hero copy).',
 })

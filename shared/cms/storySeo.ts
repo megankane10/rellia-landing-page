@@ -1,12 +1,7 @@
 import { buildSeoFieldsPayload, type SeoFieldsPayload } from "./seoFieldsPayload"
+import { buildDefaultStorySeoTitle } from "./collectionSeo"
 
-export const buildDefaultStorySeoTitle = (storyTitle: string, tag?: string): string => {
-  const title = storyTitle.trim()
-  const category = tag?.trim()
-  if (!title) return category || "Rellia Health"
-  if (!category) return title
-  return `${title} — ${category}`
-}
+export { buildDefaultStorySeoTitle } from "./collectionSeo"
 
 export const buildStorySeoFieldsPayload = (input: {
   storyTitle: string

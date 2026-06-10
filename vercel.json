@@ -17,6 +17,16 @@
       "source": "/blog",
       "destination": "/stories",
       "permanent": true
+    },
+    {
+      "source": "/stories/website-launch",
+      "destination": "/stories/a-clearer-path-for-digital-health-founders",
+      "permanent": true
+    },
+    {
+      "source": "/stories/welcome-to-the-new-rellia-website",
+      "destination": "/stories/a-clearer-path-for-digital-health-founders",
+      "permanent": true
     }
   ],
   "headers": [

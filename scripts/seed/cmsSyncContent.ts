@@ -1051,8 +1051,8 @@ export const POWER_OF_PLAY_ALUMNI = {
 }
 
 export const WEBSITE_LAUNCH_STORY = {
-  slug: "website-launch",
-  title: "Welcome to the new Rellia website",
+  slug: "a-clearer-path-for-digital-health-founders",
+  title: "A clearer path for digital health founders.",
   tag: "Program Update",
   featured: true,
   excerpt:
@@ -1241,7 +1241,7 @@ export const PRIORITY_MODAL_SEED = {
     "Read our launch story, then explore programs, advisors, and the rest of the site.",
   priorityModalPillText: "NEW",
   priorityModalButtonLabel: "Read the story",
-  priorityModalButtonLink: "/stories/website-launch",
+  priorityModalButtonLink: "/stories/a-clearer-path-for-digital-health-founders",
   priorityModalSecondaryButtonLabel: "",
   priorityModalSecondaryButtonLink: "",
   priorityModalFormEnabled: false,

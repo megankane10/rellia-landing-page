@@ -9,6 +9,7 @@ import {schemaTypes} from './schemaTypes'
 import {deskStructure} from './deskStructure'
 import {presentationLocations, presentationMainDocuments} from './presentationLocations'
 import {imageCropInputPlugin} from './plugins/imageCropInput'
+import {collectionSlugPublishPlugin} from './plugins/collectionSlugPublish'
 
 
 const theme = buildLegacyTheme({
@@ -46,6 +47,7 @@ export default defineConfig({
 
   plugins: [
     imageCropInputPlugin(),
+    collectionSlugPublishPlugin(),
     seofields(seoPluginConfig),
     structureTool({
       structure: deskStructure,
