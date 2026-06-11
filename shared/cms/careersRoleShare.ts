@@ -71,4 +71,12 @@ export const findCareersOpenRoleById = (
   return roles.find((role) => role.id === id)
 }
 
-export const buildCareersRoleShareMeta = (role: CareersOpenRole) => resolveCareersRoleSeo(role)
+export const CAREERS_ROLE_SHARE_OG_FALLBACK = "/images/careers-img.jpg"
+
+export const buildCareersRoleShareMeta = (
+  role: CareersOpenRole,
+  options?: { heroImageSrc?: string },
+) => ({
+  ...resolveCareersRoleSeo(role),
+  ogImageUrl: options?.heroImageSrc?.trim() || CAREERS_ROLE_SHARE_OG_FALLBACK,
+})

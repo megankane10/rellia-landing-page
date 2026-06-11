@@ -50,7 +50,9 @@ import {
   buildCareersRoleShareUrl,
   clampMetaDescription,
   clampMetaTitle,
+  getSiteUrl,
   isCareersRoleDetailPath,
+  resolveShareOgImage,
 } from "@/config/seo"
 import PageSocialHelmet from "@/components/seo/PageSocialHelmet"
 import {
@@ -302,11 +304,13 @@ const normalizeCms = (raw: unknown): CareersPageContent => {
 
 export default function CareersCms() {
   const [copiedRoleId, setCopiedRoleId] = useState<string | null>(null)
-  const [activeRole, setActiveRole] = useState<string | undefined>(undefined)
-  const [showApplyForm, setShowApplyForm] = useState(false)
   const location = useLocation()
   const navigate = useNavigate()
   const { roleId: roleIdParam } = useParams<{ roleId?: string }>()
+  const [activeRole, setActiveRole] = useState<string | undefined>(
+    () => roleIdParam?.trim() || undefined,
+  )
+  const [showApplyForm, setShowApplyForm] = useState(false)
 
   const { data: careersCmsRaw, isPending: careersPagePending } = useCareersPage()
 
@@ -339,9 +343,15 @@ export default function CareersCms() {
 
   const isRoleSharePage = isCareersRoleDetailPath(location.pathname)
 
+  const careersHeroImageSrc =
+    careersCms.heroImageSrc?.trim() || DEFAULT_CAREERS_PAGE.heroImageSrc
+
   const sharedRoleSeo = useMemo(
-    () => (sharedRole ? buildCareersRoleShareMeta(sharedRole) : null),
-    [sharedRole],
+    () =>
+      sharedRole
+        ? buildCareersRoleShareMeta(sharedRole, { heroImageSrc: careersHeroImageSrc })
+        : null,
+    [sharedRole, careersHeroImageSrc],
   )
 
   useApplyCmsSeo(
@@ -356,12 +366,21 @@ export default function CareersCms() {
 
   const roleShareMeta = useMemo(() => {
     if (!sharedRole || !sharedRoleSeo || !isRoleSharePage) return null
+    const ogImage = resolveShareOgImage(sharedRoleSeo.ogImageUrl, getSiteUrl(), {
+      landscape: true,
+    })
     return {
       title: clampMetaTitle(sharedRoleSeo.title),
       description: clampMetaDescription(sharedRoleSeo.description),
       canonical: buildCareersRoleShareUrl(sharedRole.id),
+      ogImage: ogImage?.url,
+      ogImageWidth: ogImage?.width,
+      ogImageHeight: ogImage?.height,
     }
   }, [sharedRole, sharedRoleSeo, isRoleSharePage])
+
+  const accordionValue =
+    activeRole ?? (isRoleSharePage && linkedRoleId ? linkedRoleId : undefined)
 
   const handleCopyRoleLink = (roleId: string) => {
     const roleUrl = buildCareersRoleShareUrl(roleId)
@@ -436,6 +455,9 @@ export default function CareersCms() {
           title={roleShareMeta.title}
           description={roleShareMeta.description}
           canonical={roleShareMeta.canonical}
+          ogImage={roleShareMeta.ogImage}
+          ogImageWidth={roleShareMeta.ogImageWidth}
+          ogImageHeight={roleShareMeta.ogImageHeight}
         />
       ) : null}
       <Navbar darkHeroNav forceSolid={showApplyForm} />
@@ -574,7 +596,7 @@ export default function CareersCms() {
                         type="single"
                         collapsible
                         className="w-full"
-                        value={activeRole}
+                        value={accordionValue}
                         onValueChange={setActiveRole}
                       >
                         {openRoles.map((role, index) => (
@@ -632,13 +654,14 @@ export default function CareersCms() {
                                     asChild
                                     variant="mintTealFill"
                                     size="comfortable"
-                                    className="cursor-pointer"
+                                    className="min-w-[12.5rem] cursor-pointer justify-center px-10"
                                   >
                                     <a
                                       href={resolveOpenRoleApplyHref(role)}
                                       {...(isOpenRoleMailtoApplyUrl(role.applyButtonUrl)
                                         ? {}
                                         : { target: "_blank", rel: "noopener noreferrer" })}
+                                      className="inline-flex items-center gap-2"
                                       aria-label={`${role.applyButtonLabel} for ${role.title}${
                                         isOpenRoleMailtoApplyUrl(role.applyButtonUrl)
                                           ? " (opens email)"
@@ -646,6 +669,7 @@ export default function CareersCms() {
                                       }`}
                                     >
                                       {role.applyButtonLabel}
+                                      <ArrowRight className="h-5 w-5" aria-hidden />
                                     </a>
                                   </RelliaAction>
                                 ) : null}

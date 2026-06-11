@@ -186,21 +186,29 @@ const buildProgramSeo = (
   }
 }
 
-const buildCareersRoleSeo = (role: {
-  title?: string
-  location?: string
-  employmentType?: string
-  description?: unknown
-}): ItemPrerenderSeo => {
+const buildCareersRoleSeo = (
+  role: {
+    title?: string
+    location?: string
+    employmentType?: string
+    description?: unknown
+  },
+  heroImageSrc?: string,
+): ItemPrerenderSeo => {
   const resolved = resolveCareersRoleSeo({
     title: typeof role.title === "string" ? role.title : "Open role",
     location: typeof role.location === "string" ? role.location : undefined,
     employmentType: typeof role.employmentType === "string" ? role.employmentType : undefined,
     description: role.description,
   })
+  const ogSrc = heroImageSrc?.trim() || "/images/careers-img.jpg"
+  const ogImage = resolveSocialOgImage(ogSrc, getSiteUrl(), { landscape: true })
   return {
     title: clampMetaTitle(resolved.title),
     description: clampMetaDescription(resolved.description),
+    ogImage: ogImage?.url,
+    ogImageWidth: ogImage?.width,
+    ogImageHeight: ogImage?.height,
   }
 }
 
@@ -287,6 +295,7 @@ const resolveItemPrerenderSeo = async (
     advisor?: Record<string, unknown> | null
     alumni?: Record<string, unknown> | null
     careersRole?: Record<string, unknown> | null
+    careersPageHeroImageSrc?: string | null
   },
 ): Promise<ItemPrerenderSeo | null> => {
   const siteOrigin = getSiteUrl()
@@ -296,7 +305,11 @@ const resolveItemPrerenderSeo = async (
     if (!roleId) return null
     const role = prefetched.careersRole
     if (!role || typeof role.title !== "string") return null
-    return buildCareersRoleSeo(role)
+    const careersHero =
+      typeof prefetched.careersPageHeroImageSrc === "string"
+        ? prefetched.careersPageHeroImageSrc
+        : undefined
+    return buildCareersRoleSeo(role, careersHero)
   }
 
   if (pathname.startsWith("/events/") && pathname !== "/events") {
@@ -460,10 +473,13 @@ export const prerender = async (data: { url: string }) => {
     advisor?: Record<string, unknown> | null
     alumni?: Record<string, unknown> | null
     careersRole?: Record<string, unknown> | null
+    careersPageHeroImageSrc?: string | null
   } = {}
 
   if (pathname === "/careers" || pathname.startsWith("/careers/roles/")) {
     const careersPage = await prefetchCareersPageContent()
+    prefetched.careersPageHeroImageSrc =
+      typeof careersPage.heroImageSrc === "string" ? careersPage.heroImageSrc : null
     await prerenderQueryClient.prefetchQuery({
       queryKey: ["cms", "careersPage"],
       queryFn: async () => careersPage,
