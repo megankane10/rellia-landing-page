@@ -1095,8 +1095,8 @@ export default function DiagnosticSurvey() {
 
       <div className="relative flex min-h-[calc(100vh-72px)] items-start md:min-h-[calc(100vh-86px)]">
         {/* ── DESKTOP SIDEBAR ── */}
-        <aside className="diagnostic-screen-only sticky top-[72px] z-20 hidden w-72 shrink-0 flex-col self-start overflow-y-auto rounded-b-3xl border-r border-rellia-teal/10 bg-white/50 backdrop-blur-md md:top-[86px] lg:flex lg:max-h-[calc(100vh-86px)]">
-          <div className="flex flex-col gap-6 p-6">
+        <aside className="diagnostic-screen-only sticky top-[72px] z-20 hidden w-72 shrink-0 flex-col self-start overflow-y-auto rounded-b-3xl border-r border-rellia-teal/10 bg-white/50 backdrop-blur-md md:top-[86px] lg:flex lg:h-[calc(100vh-86px)] lg:max-h-[calc(100vh-86px)]">
+          <div className="flex h-full min-h-0 flex-col gap-6 p-6">
             <div className="space-y-2">
               <div className="flex justify-between text-[10px] font-bold uppercase tracking-widest text-rellia-teal/50">
                 <span>Progress</span>
@@ -2227,7 +2227,7 @@ export default function DiagnosticSurvey() {
         </main>
       </div>
 
-      <div className="diagnostic-screen-only mt-16 md:mt-20">
+      <div className="diagnostic-screen-only relative z-30 mt-16 md:mt-20">
         <Footer />
       </div>
     </div>
