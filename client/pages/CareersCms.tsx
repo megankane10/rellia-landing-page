@@ -37,7 +37,11 @@ import type { CareersOpenRole, CareersContentMode, CareersPageContent } from "@s
 import { mapNetworkWhyFeatures } from "@/lib/whyRelliaFeatures"
 import { DEFAULT_GLOBAL_SETTINGS } from "@shared/cms/defaults"
 import { CAREERS_VOLUNTEER_ENABLED } from "@shared/careersPageConfig"
-import { hasOpenRoleApplyButton, resolveCareersOpenRoles } from "@shared/careersOpenRolesVisibility"
+import {
+  hasOpenRoleApplyButton,
+  isOpenRoleMailtoApplyUrl,
+  resolveCareersOpenRoles,
+} from "@shared/careersOpenRolesVisibility"
 import { cn } from "@/lib/utils"
 import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo"
 import { useCareersPage } from "@/hooks/useCmsDocuments"
@@ -60,7 +64,7 @@ import { isSanityConfigured } from "@/lib/sanity"
 import { allowCmsSeedFallbacks, isStrictProductionSite } from "@/lib/deploymentEnv"
 import { useMemo, useState, useEffect, useRef } from "react"
 import { useLocation, useNavigate, useParams } from "react-router-dom"
-import { ShareIconCopy } from "@/components/share/sharePageIcons"
+import { ShareIconCopy, shareToolbarButtonClassName } from "@/components/share/sharePageIcons"
 import { PortableRichText } from "@/components/PortableRichText"
 import { RoleHero } from "./network/_shared"
 import { DEFAULT_CAREERS_PAGE } from "@shared/cms/careersPageDefaults"
@@ -623,36 +627,50 @@ export default function CareersCms() {
 
                               <div className="mt-8 flex items-center gap-3">
                                 {hasOpenRoleApplyButton(role) ? (
-                                  <a
-                                    href={role.applyButtonUrl}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="group relative isolate inline-flex h-12 cursor-pointer items-center justify-center overflow-hidden rounded-full border-2 border-rellia-mint bg-rellia-mint px-8 font-host-grotesk text-base font-bold text-rellia-teal shadow-sm outline-none transition-[transform,background-color,color,border-color,box-shadow] duration-300 before:hidden motion-safe:hover:-translate-y-0.5 hover:border-rellia-teal hover:bg-rellia-teal hover:text-white"
-                                    aria-label={`${role.applyButtonLabel} for ${role.title} (opens in new tab)`}
+                                  <RelliaAction
+                                    asChild
+                                    variant="mintTealFill"
+                                    size="comfortable"
+                                    className="cursor-pointer"
                                   >
-                                    <span className="relative z-10">{role.applyButtonLabel}</span>
-                                  </a>
+                                    <a
+                                      href={role.applyButtonUrl}
+                                      {...(isOpenRoleMailtoApplyUrl(role.applyButtonUrl)
+                                        ? {}
+                                        : { target: "_blank", rel: "noopener noreferrer" })}
+                                      aria-label={`${role.applyButtonLabel} for ${role.title}${
+                                        isOpenRoleMailtoApplyUrl(role.applyButtonUrl)
+                                          ? " (opens email)"
+                                          : " (opens in new tab)"
+                                      }`}
+                                    >
+                                      {role.applyButtonLabel}
+                                    </a>
+                                  </RelliaAction>
                                 ) : null}
 
                                 <button
                                   type="button"
                                   onClick={() => handleCopyRoleLink(role.id)}
-                                  className="group relative isolate inline-flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-full border-2 border-black/15 bg-white text-black shadow-sm outline-none transition-[transform,background-color,color,border-color,box-shadow] duration-300 before:hidden motion-safe:hover:-translate-y-0.5 hover:border-rellia-teal hover:bg-rellia-teal hover:text-white"
+                                  className={cn(
+                                    shareToolbarButtonClassName,
+                                    "relative shrink-0",
+                                    copiedRoleId === role.id &&
+                                      "bg-rellia-mint text-rellia-teal shadow-md",
+                                  )}
                                   title={copiedRoleId === role.id ? "Copied!" : "Copy link to role"}
                                   aria-label={copiedRoleId === role.id ? "Copied!" : "Copy link to role"}
                                 >
-                                  <span className="relative z-10 flex items-center justify-center">
-                                    {copiedRoleId === role.id ? (
-                                      <Check className="h-5 w-5 animate-scale-in" />
-                                    ) : (
-                                      <ShareIconCopy className="h-5 w-5" />
-                                    )}
-                                  </span>
-                                  {copiedRoleId === role.id && (
+                                  {copiedRoleId === role.id ? (
+                                    <Check className="h-6 w-6 shrink-0 animate-scale-in" />
+                                  ) : (
+                                    <ShareIconCopy />
+                                  )}
+                                  {copiedRoleId === role.id ? (
                                     <span className="absolute -top-11 left-1/2 -translate-x-1/2 rounded-full bg-rellia-teal px-3 py-1 text-xs font-bold text-white shadow-md whitespace-nowrap transition-all duration-200 z-50 animate-bounce">
                                       Copied!
                                     </span>
-                                  )}
+                                  ) : null}
                                 </button>
                               </div>
                             </AccordionContent>

@@ -35,6 +35,9 @@ export const hasOpenRoleDescription = (description: CareersOpenRole["description
 export const hasOpenRoleApplyButton = (role: Pick<CareersOpenRole, "applyButtonLabel" | "applyButtonUrl">): boolean =>
   Boolean(role.applyButtonLabel?.trim() && role.applyButtonUrl?.trim())
 
+export const isOpenRoleMailtoApplyUrl = (url: string | undefined): boolean =>
+  typeof url === "string" && url.trim().toLowerCase().startsWith("mailto:")
+
 export const filterValidOpenRoles = (
   roles: Array<Partial<CareersOpenRole> & { id?: string; roleId?: string }> | undefined,
 ): CareersOpenRole[] =>
