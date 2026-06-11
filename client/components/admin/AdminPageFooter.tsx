@@ -10,7 +10,7 @@ const AdminPageFooter = () => {
     <footer className="mt-12 border-t border-slate-100 pt-6 pb-8">
       <div className="flex flex-col-reverse gap-3 text-sm font-urbanist sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <p className="text-xs text-slate-400">© {year} Rellia Health. Internal use only.</p>
+          <p className="text-sm text-slate-400">© {year} Rellia Health. Internal use only.</p>
         </div>
 
         <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-slate-700">
