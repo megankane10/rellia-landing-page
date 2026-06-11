@@ -79,12 +79,12 @@ export const BuilderCtaButton = ({
       </RelliaAction>
     )
   } else if (isExternalHref(href)) {
+    const isMailToOrTel = /^(mailto:|tel:)/i.test(href)
     trigger = (
       <RelliaAction asChild variant={variant} size={size} className={className}>
         <a
           href={href}
-          target="_blank"
-          rel="noopener noreferrer"
+          {...(isMailToOrTel ? {} : { target: "_blank", rel: "noopener noreferrer" })}
           className="inline-flex cursor-pointer items-center gap-2"
           aria-label={label}
         >

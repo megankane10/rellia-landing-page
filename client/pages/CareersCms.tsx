@@ -41,6 +41,7 @@ import {
   hasOpenRoleApplyButton,
   isOpenRoleMailtoApplyUrl,
   resolveCareersOpenRoles,
+  resolveOpenRoleApplyHref,
 } from "@shared/careersOpenRolesVisibility"
 import { cn } from "@/lib/utils"
 import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo"
@@ -634,7 +635,7 @@ export default function CareersCms() {
                                     className="cursor-pointer"
                                   >
                                     <a
-                                      href={role.applyButtonUrl}
+                                      href={resolveOpenRoleApplyHref(role)}
                                       {...(isOpenRoleMailtoApplyUrl(role.applyButtonUrl)
                                         ? {}
                                         : { target: "_blank", rel: "noopener noreferrer" })}

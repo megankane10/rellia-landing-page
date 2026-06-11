@@ -2,6 +2,7 @@ import type { CareersOpenRole, CareersPageContent } from "./cms/types"
 import { normalizeToPortableText } from "./cms/normalizePortableText"
 import { portableTextToPlainText } from "./cms/portableTextPlain"
 import { CAREERS_OPEN_ROLES } from "./careersOpenRoles"
+import { buildMailtoHref, parseMailtoHref } from "./mailto"
 
 /** Legacy seeded role IDs — hidden on production if they still exist in an old dataset. */
 export const PLACEHOLDER_OPEN_ROLE_IDS = new Set([
@@ -37,6 +38,27 @@ export const hasOpenRoleApplyButton = (role: Pick<CareersOpenRole, "applyButtonL
 
 export const isOpenRoleMailtoApplyUrl = (url: string | undefined): boolean =>
   typeof url === "string" && url.trim().toLowerCase().startsWith("mailto:")
+
+export const resolveOpenRoleApplyHref = (
+  role: Pick<CareersOpenRole, "applyButtonUrl" | "title">,
+): string | undefined => {
+  const url = typeof role.applyButtonUrl === "string" ? role.applyButtonUrl.trim() : ""
+  if (!url) return undefined
+  if (!isOpenRoleMailtoApplyUrl(url)) return url
+
+  const parsed = parseMailtoHref(url)
+  const email = parsed?.email ?? url.slice(7).split("?")[0]?.trim()
+  if (!email) return url
+
+  const subjectFromTitle = role.title.trim()
+    ? `Application: ${role.title.trim()}`
+    : parsed?.subject
+
+  return buildMailtoHref(email, {
+    subject: subjectFromTitle,
+    body: parsed?.body,
+  })
+}
 
 export const filterValidOpenRoles = (
   roles: Array<Partial<CareersOpenRole> & { id?: string; roleId?: string }> | undefined,
