@@ -106,7 +106,7 @@ export default function AdvisorProfile() {
     : [];
 
   return (
-    <div className="min-h-screen overflow-x-hidden bg-white font-host-grotesk">
+    <div className="min-h-screen overflow-x-clip bg-white font-host-grotesk">
       <PageSocialHelmet
         title={buildAdvisorProfileSeoTitle(active.name)}
         description={clampMetaDescription(
@@ -130,9 +130,9 @@ export default function AdvisorProfile() {
               <ArrowLeft className="h-4 w-4" /> Back to Advisors Directory
             </Link>
           </div>
-          <article className="grid gap-10 lg:grid-cols-[minmax(280px,360px)_minmax(0,1fr)] lg:gap-x-14 xl:grid-cols-[400px_1fr]">
+          <article className="grid items-start gap-10 lg:grid-cols-[minmax(280px,360px)_minmax(0,1fr)] lg:gap-x-14 xl:grid-cols-[400px_1fr]">
             {/* Left Sidebar - Sticky */}
-            <div className="flex flex-col gap-6 lg:sticky lg:top-32 lg:self-start">
+            <div className="flex flex-col gap-6 lg:sticky lg:top-28 lg:self-start">
               <div 
                 onClick={() => setActiveImage({ src: active.photoSrc, alt: `Portrait of ${active.name}` })}
                 className="overflow-hidden rounded-2xl aspect-[4/5] w-full max-h-[min(42vh,440px)] cursor-pointer"

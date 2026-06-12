@@ -72,7 +72,7 @@ export default function FounderProfile() {
   };
 
   return (
-    <div className="min-h-screen overflow-x-hidden bg-white font-host-grotesk">
+    <div className="min-h-screen overflow-x-clip bg-white font-host-grotesk">
       <PageSocialHelmet
         title={buildAlumniProfileSeoTitle(active.logoName)}
         description={clampMetaDescription(active.shortDescription)}
@@ -92,9 +92,9 @@ export default function FounderProfile() {
               <ArrowLeft className="h-4 w-4" /> Back to Alumni List
             </Link>
           </div>
-          <article className="grid gap-10 lg:grid-cols-[minmax(280px,360px)_minmax(0,1fr)] lg:gap-x-14 xl:grid-cols-[400px_1fr]">
+          <article className="grid items-start gap-10 lg:grid-cols-[minmax(280px,360px)_minmax(0,1fr)] lg:gap-x-14 xl:grid-cols-[400px_1fr]">
             {/* Left Sidebar - Sticky */}
-            <div className="flex flex-col gap-6 lg:sticky lg:top-32 lg:self-start">
+            <div className="flex flex-col gap-6 lg:sticky lg:top-28 lg:self-start">
               <div className="flex min-h-[120px] items-center justify-start md:min-h-[140px]">
                 <img
                   src={active.logoSrc}

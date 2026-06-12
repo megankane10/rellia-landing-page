@@ -124,7 +124,7 @@ const renderSlicePercentLabel = ({
       <text
         x={textX}
         y={ey}
-        fill={String(fill)}
+        fill="#000000"
         textAnchor={textAnchor}
         dominantBaseline="central"
         className="font-urbanist text-[11px] font-bold"
@@ -198,8 +198,19 @@ function IllustrativePie({
               ))}
             </Pie>
             <Tooltip
-              formatter={(value: number) => [`${value}%`, "Share"]}
-              contentStyle={{ borderRadius: "12px", border: "1px solid rgba(0,0,0,0.08)" }}
+              content={({ active, payload }) => {
+                if (!active || !payload?.length) return null
+                const item = payload[0]
+                const sliceName = String(item.name ?? "")
+                const sliceValue = item.value
+                return (
+                  <div className="rounded-xl border border-black/10 bg-white px-3 py-2 text-xs shadow-md">
+                    <span className="font-urbanist font-semibold text-black">
+                      {sliceName}: {sliceValue}%
+                    </span>
+                  </div>
+                )
+              }}
             />
             <Legend
               verticalAlign="bottom"
