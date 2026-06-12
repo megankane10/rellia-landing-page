@@ -18,6 +18,7 @@ export type ProgramCmsTimelineStep = {
 export type ProgramCmsPillar = {
   title?: string
   description?: string
+  iconKey?: string
 }
 
 export type ProgramCmsHowItWorksCard = {
@@ -26,34 +27,53 @@ export type ProgramCmsHowItWorksCard = {
   imageSrc?: string
 }
 
+const hasText = (value?: string) => Boolean(value?.trim())
+
+const filterCmsCards = <T extends { title?: string; description?: string; imageSrc?: string }>(
+  cards: T[] | undefined,
+): T[] =>
+  (cards ?? []).filter(
+    (card) => hasText(card.title) || hasText(card.description) || hasText(card.imageSrc),
+  )
+
+const filterCmsPillars = (pillars: ProgramCmsPillar[] | undefined): ProgramCmsPillar[] =>
+  (pillars ?? []).filter((pillar) => hasText(pillar.title) || hasText(pillar.description))
+
 export const resolveProgramPillars = (
   cmsPillars: ProgramCmsPillar[] | undefined,
   staticPillars: ProgramPageIconCard[],
-): ProgramPageIconCard[] =>
-  staticPillars.map((staticPillar, index) => {
-    const cms = cmsPillars?.[index]
-    if (!cms) return staticPillar
+): ProgramPageIconCard[] => {
+  const cms = filterCmsPillars(cmsPillars)
+  if (cms.length === 0) return staticPillars
+
+  return cms.map((pillar, index) => {
+    const staticPillar = staticPillars[index] ?? staticPillars[staticPillars.length - 1]
     return {
-      ...staticPillar,
-      title: cms.title?.trim() || staticPillar.title,
-      description: cms.description?.trim() || staticPillar.description,
+      icon: staticPillar?.icon ?? staticPillars[0]?.icon,
+      iconKey: pillar.iconKey?.trim() || undefined,
+      title: pillar.title?.trim() || staticPillar?.title || "",
+      description: pillar.description?.trim() || staticPillar?.description || "",
     }
   })
+}
 
 export const resolveProgramHowItWorksCards = (
   cmsCards: ProgramCmsHowItWorksCard[] | undefined,
   staticCards: ProgramPageIconCard[],
-): ProgramPageIconCard[] =>
-  staticCards.map((staticCard, index) => {
-    const cms = cmsCards?.[index]
-    if (!cms) return staticCard
+): ProgramPageIconCard[] => {
+  const cms = filterCmsCards(cmsCards)
+  if (cms.length === 0) return staticCards
+
+  return cms.map((card, index) => {
+    const staticCard = staticCards[index] ?? staticCards[staticCards.length - 1]
     return {
-      ...staticCard,
-      title: cms.title?.trim() || staticCard.title,
-      description: cms.description?.trim() || staticCard.description,
-      imageSrc: cms.imageSrc?.trim() || staticCard.imageSrc,
+      icon: staticCard?.icon ?? staticCards[0]?.icon,
+      title: card.title?.trim() || staticCard?.title || "",
+      description: card.description?.trim() || staticCard?.description || "",
+      imageSrc: card.imageSrc?.trim() || staticCard?.imageSrc,
     }
   })
+}
 
 const parseLegacyDescription = (description?: string): string[] =>
   (description ?? "")

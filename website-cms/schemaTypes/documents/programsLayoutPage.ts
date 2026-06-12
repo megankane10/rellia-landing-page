@@ -1,4 +1,5 @@
 import {defineArrayMember, defineField, defineType} from 'sanity'
+import {iconKeyField} from '../shared/iconKeyField'
 import {CONTENT_SEO_FIELDSETS, singletonSeoField} from '../shared/singletonContentFields'
 import {GROUP_SEO} from '../shared/fieldGroups'
 import {studioListMedia} from '../shared/studioListMedia'
@@ -46,6 +47,7 @@ export const programsLayoutPage = defineType({
           type: 'object',
           name: 'programPillar',
           fields: [
+            iconKeyField(),
             defineField({name: 'title', type: 'string', validation: (Rule) => Rule.required()}),
             defineField({name: 'description', type: 'text', rows: 3, validation: (Rule) => Rule.required()}),
           ],

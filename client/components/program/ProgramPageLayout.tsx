@@ -45,7 +45,9 @@ import { cn } from "@/lib/utils";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { SectionsRenderer } from "@/components/cms/PageRenderer"
 import { CmsHeroTextSkeleton } from "@/components/cms/CmsTextSkeleton"
-import { useProgramBySlug, useProgramPageBySlug } from "@/hooks/useCmsDocuments"
+import { useProgramBySlug, useProgramPageBySlug, useProgramsLayoutPage } from "@/hooks/useCmsDocuments"
+import { resolveLucideIcon } from "@/lib/resolveLucideIcon"
+import { applyProgramsLayoutDefaults } from "@shared/cms/programsLayoutDefaults"
 import { isAnyCmsQueryLoading } from "@/lib/cmsQueryState"
 import { isSanityConfigured } from "@/lib/sanity"
 import { isStrictProductionSite } from "@/lib/deploymentEnv"
@@ -68,17 +70,13 @@ import ProgramTrustedMembersSection from "@/components/program/ProgramTrustedMem
 import { resolveProgramCardImageSrc } from "@shared/cms/itemCardImage"
 
 export type ProgramPageLayoutProps = {
-  /** Optional overrides merged after CMS fetch (e.g. env payment URL). */
-  cms?: Partial<QmsProgramContent>;
-  cmsSlug?: string;
-  heroImageSrc?: string;
-  heroImageAlt?: string;
-  outcomesSectionId: string;
-  paymentSectionId?: string;
-  staticBlocks: ProgramPageStaticBlocks;
-  /** When true, shows a "Waitlist" badge in the hero and changes the payment CTA to "Join Waitlist" */
-  isWaitlist?: boolean;
-};
+  /** Optional per-route fallbacks merged after CMS fetch (e.g. env payment URL). */
+  cms?: Partial<QmsProgramContent>
+  cmsSlug?: string
+  outcomesSectionId: string
+  paymentSectionId?: string
+  staticBlocks: ProgramPageStaticBlocks
+}
 
 const RELLIA_TEAL = "#0D3540";
 
@@ -171,12 +169,9 @@ const BackToPrograms = () => (
 const ProgramPageLayout = ({
   cms = {},
   cmsSlug,
-  heroImageSrc,
-  heroImageAlt,
   outcomesSectionId,
   paymentSectionId = "program-payment",
   staticBlocks: { howItWorksCards, pillars, timeline },
-  isWaitlist = false,
 }: ProgramPageLayoutProps) => {
   const [timelineOpen, setTimelineOpen] = useState<string>("");
   const [showForm, setShowForm] = useState(false);
@@ -184,17 +179,23 @@ const ProgramPageLayout = ({
   const location = useLocation();
   const programPageQuery = useProgramPageBySlug(cmsSlug ?? "", cms ?? {})
   const programDocQuery = useProgramBySlug(cmsSlug ?? "")
+  const layoutPageQuery = useProgramsLayoutPage()
   const { data: programPageData } = programPageQuery
   const { data: programDoc } = programDocQuery
+  const { data: layoutPage } = layoutPageQuery
 
   const cmsConfigured = isSanityConfigured() && Boolean(cmsSlug?.trim())
   const cmsHeroLoading =
-    cmsConfigured && isAnyCmsQueryLoading(programPageQuery, programDocQuery)
+    cmsConfigured && isAnyCmsQueryLoading(programPageQuery, programDocQuery, layoutPageQuery)
 
-  const q = programPageData?.content ?? mergeQmsProgram(undefined, { ...DEFAULT_QMS_PROGRAM, ...(cms ?? {}) })
+  const mergedContent =
+    programPageData?.content ?? mergeQmsProgram(undefined, { ...DEFAULT_QMS_PROGRAM, ...(cms ?? {}) })
+  const q = applyProgramsLayoutDefaults(mergedContent, layoutPage)
   const resolvedHowItWorksCards = resolveProgramHowItWorksCards(q.howItWorksCards, howItWorksCards)
   const resolvedPillars = resolveProgramPillars(q.pillars, pillars)
   const resolvedTimeline = resolveProgramTimeline(q.timelineSteps, timeline)
+  const programStatus = (programDoc?.status as string | undefined) ?? "available"
+  const isWaitlist = programStatus === "waitlist"
   const filloutId = extractFilloutId(q.paymentUrl);
   const hasEnrollmentForm = Boolean(filloutId) && !isWaitlist;
 
@@ -208,8 +209,8 @@ const ProgramPageLayout = ({
 
   const programSlug = (cmsSlug ?? "").trim()
   const resolvedHeroImageSrc =
-    resolveProgramCardImageSrc(programSlug, programDoc?.imageSrc, heroImageSrc)?.trim() ?? ""
-  const resolvedHeroImageAlt = (heroImageAlt || resolvedProgramTitle || "Program image").trim()
+    resolveProgramCardImageSrc(programSlug, programDoc?.imageSrc)?.trim() ?? ""
+  const resolvedHeroImageAlt = (resolvedProgramTitle || "Program image").trim()
 
   const canonicalUrl = buildPageUrl(location.pathname)
   const programSeoText = resolveProgramCollectionSeo({
@@ -225,7 +226,6 @@ const ProgramPageLayout = ({
     description: (programDoc as { description?: string } | null | undefined)?.description,
     heroDescription: q.heroDescription || cms?.heroDescription,
     imageSrc: programDoc?.imageSrc,
-    routeHeroImageSrc: heroImageSrc,
     slug: programSlug,
   })
   const programPageTitle = clampMetaTitle(programSeoText.title)
@@ -350,7 +350,7 @@ const ProgramPageLayout = ({
                     alt={resolvedHeroImageAlt}
                     className={cn(
                       "h-full w-full rounded-2xl",
-                      programDoc?.imageSrc || heroImageSrc
+                      programDoc?.imageSrc
                         ? "object-cover"
                         : "object-cover object-[0%_0%]",
                     )}
@@ -467,7 +467,7 @@ const ProgramPageLayout = ({
                 <ScrollReveal delay={0.2}>
                   <div className="grid w-full grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12 sm:gap-8 lg:gap-6">
                     {resolvedPillars.map((p) => {
-                      const Icon = p.icon;
+                      const Icon = resolveLucideIcon(p.iconKey, p.icon);
                       return (
                         <div
                           key={p.title}

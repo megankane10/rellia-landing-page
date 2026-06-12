@@ -3,6 +3,8 @@ import type { LucideIcon } from "lucide-react"
 /** One icon + title + body card (How it works, Pillars, etc.) */
 export type ProgramPageIconCard = {
   icon: LucideIcon
+  /** Optional CMS icon override (Lucide name). */
+  iconKey?: string
   title: string
   description: string
   imageSrc?: string

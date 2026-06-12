@@ -43,14 +43,16 @@ export const resolveProgramCardImageSrc = (
   cmsImageSrc?: string | null,
   routeHeroImageSrc?: string | null,
 ): string | undefined => {
+  const cmsSrc = cmsImageSrc?.trim()
+  if (cmsSrc) return cmsSrc
+
   const routeSrc = routeHeroImageSrc?.trim()
   if (routeSrc) return routeSrc
 
   const defaultSrc = findDefaultProgramBySlug(slug)?.imageSrc?.trim()
   if (defaultSrc) return defaultSrc
 
-  const cmsSrc = cmsImageSrc?.trim()
-  return cmsSrc || undefined
+  return undefined
 }
 
 export const defaultProgramRecordForSlug = (

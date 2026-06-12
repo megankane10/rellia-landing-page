@@ -37,6 +37,7 @@ import type {
   DiagnosticSurveyContent,
   PaymentPageContent,
   ProgramsLandingContent,
+  ProgramsLayoutPageContent,
   QmsProgramContent,
   LegalPageContent,
   NetworkAdvisorsPageContent,
@@ -246,6 +247,16 @@ export const usePrograms = () =>
     queryFn: async () => {
       const raw = await sanityFetch<any[]>("programs")
       return raw ?? []
+    },
+    staleTime: staleTimeMs,
+  })
+
+export const useProgramsLayoutPage = () =>
+  useQuery({
+    queryKey: ["cms", "programsLayoutPage"],
+    queryFn: async () => {
+      const raw = await sanityFetch<ProgramsLayoutPageContent | null>("programsLayoutPage")
+      return raw ?? null
     },
     staleTime: staleTimeMs,
   })

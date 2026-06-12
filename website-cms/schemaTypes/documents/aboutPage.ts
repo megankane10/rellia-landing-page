@@ -51,7 +51,21 @@ export const aboutPage = defineType({
     defineField({name: 'ctaTitle', type: 'string', group: 'content'}),
     defineField({name: 'ctaBody', type: 'text', rows: 3, group: 'content'}),
     defineField({name: 'ctaFounderLabel', type: 'string', group: 'content'}),
+    defineField({
+      name: 'ctaFounderHref',
+      title: 'Founder CTA link',
+      type: 'string',
+      initialValue: '/apply',
+      group: 'content',
+    }),
     defineField({name: 'ctaTeamLabel', type: 'string', group: 'content'}),
+    defineField({
+      name: 'ctaTeamHref',
+      title: 'Team CTA link',
+      type: 'string',
+      initialValue: '/careers',
+      group: 'content',
+    }),
     singletonSeoField,
   ],
 })

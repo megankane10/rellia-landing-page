@@ -2,6 +2,7 @@ import {defineArrayMember} from 'sanity'
 
 /** Modular page sections — prefer site-matched blocks; legacy types kept for existing content. */
 export const pageSectionMembers = [
+  defineArrayMember({type: 'sectionHero'}),
   defineArrayMember({type: 'sectionMarketingHero'}),
   defineArrayMember({type: 'sectionMetrics'}),
   defineArrayMember({type: 'sectionFaq'}),
