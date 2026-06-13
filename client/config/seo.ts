@@ -678,6 +678,9 @@ export const getSeoForPathname = (pathname: string): RouteSeoConfig => {
   if (key.startsWith("/events/") && key !== "/events") {
     return EVENT_DETAIL_SEO
   }
+  if (isCareersRoleDetailPath(key)) {
+    return ROUTE_SEO["/careers"] ?? NOT_FOUND_SEO
+  }
   if (key.startsWith("/admin") || key === "/accept-invite") {
     return ROUTE_SEO[key] ?? ADMIN_AREA_SEO
   }

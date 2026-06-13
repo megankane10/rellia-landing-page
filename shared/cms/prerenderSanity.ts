@@ -20,6 +20,7 @@ import { mergeCareersPage } from "./careersPageDefaults"
 import { careersRoleDetailPath } from "./careersRoleShare"
 import type { CareersPageContent } from "./types"
 import eventsBuildSnapshot from "./build-snapshots/events.json"
+import openRolesBuildSnapshot from "./build-snapshots/openRoles.json"
 import storiesBuildSnapshot from "./build-snapshots/stories.json"
 import { defaultProgramRecordForSlug } from "./itemCardImage"
 import { trySanityApiConfig } from "./sanityEnv"
@@ -32,6 +33,23 @@ const snapshotEvents = (): Record<string, unknown>[] =>
 const snapshotStories = (): Record<string, unknown>[] =>
   Array.isArray(storiesBuildSnapshot)
     ? (storiesBuildSnapshot as Record<string, unknown>[])
+    : []
+
+const snapshotOpenRoles = (): Array<{
+  id?: string
+  title?: string
+  location?: string
+  employmentType?: string
+  description?: string
+}> =>
+  Array.isArray(openRolesBuildSnapshot)
+    ? (openRolesBuildSnapshot as Array<{
+        id?: string
+        title?: string
+        location?: string
+        employmentType?: string
+        description?: string
+      }>)
     : []
 
 let prerenderClient: SanityClient | null = null
@@ -202,15 +220,18 @@ export const fetchOpenRolesForPrerender = async (): Promise<
   Array<{ id?: string; title?: string; location?: string; employmentType?: string; description?: string }>
 > => {
   const client = getPrerenderSanityClient()
-  if (!client) return []
-  try {
-    const rows = await client.fetch<
-      Array<{ id?: string; title?: string; location?: string; employmentType?: string; description?: string }>
-    >(openRolesQuery)
-    return Array.isArray(rows) ? rows : []
-  } catch {
-    return []
+  if (client) {
+    try {
+      const rows = await client.fetch<
+        Array<{ id?: string; title?: string; location?: string; employmentType?: string; description?: string }>
+      >(openRolesQuery)
+      if (Array.isArray(rows) && rows.length > 0) return rows
+    } catch {
+      // fall through to build snapshot
+    }
   }
+
+  return snapshotOpenRoles()
 }
 
 export const fetchCareersRolePathsForPrerender = async (): Promise<string[]> => {
