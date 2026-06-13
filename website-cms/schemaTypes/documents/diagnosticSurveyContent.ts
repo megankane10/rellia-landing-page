@@ -1,5 +1,6 @@
 import {defineArrayMember, defineField, defineType} from 'sanity'
 import {studioListMedia} from '../shared/studioListMedia'
+import {lucideIconField} from '../shared/iconKeyField'
 
 export const diagnosticSurveyContent = defineType({
   name: 'diagnosticSurveyContent',
@@ -30,7 +31,7 @@ export const diagnosticSurveyContent = defineType({
               type: 'string',
               validation: (Rule) => Rule.required(),
             }),
-            defineField({name: 'icon', title: 'Icon', type: 'string'}),
+            lucideIconField('Lucide icon for this survey section carousel slide.'),
             defineField({name: 'title', title: 'Section title', type: 'string'}),
             defineField({name: 'desc', title: 'Section description', type: 'text', rows: 2}),
             defineField({
@@ -155,7 +156,7 @@ export const diagnosticSurveyContent = defineType({
           fields: [
             defineField({ name: 'title', title: 'Step Title', type: 'string' }),
             defineField({ name: 'description', title: 'Step Description', type: 'text', rows: 2 }),
-            defineField({ name: 'icon', title: 'Icon Name (Lucide)', type: 'string' }),
+            lucideIconField('Lucide icon for this journey step.'),
           ],
           preview: {
             select: {

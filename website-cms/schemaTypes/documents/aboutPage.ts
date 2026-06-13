@@ -5,6 +5,7 @@ import {
   singletonSeoField,
 } from '../shared/singletonContentFields'
 import {portableHeadlineField} from '../shared/inlineHeroHeadlineField'
+import {iconKeyField} from '../shared/iconKeyField'
 
 export const aboutPage = defineType({
   name: 'aboutPage',
@@ -31,7 +32,7 @@ export const aboutPage = defineType({
           name: 'value',
           type: 'object',
           fields: [
-            {name: 'iconKey', type: 'string'},
+            iconKeyField(),
             {name: 'title', type: 'string'},
             {name: 'description', type: 'text', rows: 3},
           ],

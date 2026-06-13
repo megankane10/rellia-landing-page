@@ -44,7 +44,7 @@ import { resolveHeroTitlePortable } from "@shared/cms/resolveHeroHeadline"
 import { normalizeToPortableText } from "@shared/cms/normalizePortableText"
 import { RoleHero } from "@/pages/network/_shared"
 import { Link } from "react-router-dom"
-import * as LucideIcons from "lucide-react"
+import { CmsLucideIcon } from "@/components/icons/CmsLucideIcon"
 import { ArrowRight } from "lucide-react"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { FilloutStandardEmbed } from "@fillout/react"
@@ -86,13 +86,6 @@ const engageItemHref = (item: NonNullable<CmsSectionEngageBand["items"]>[number]
   if (fromLink) return normalizeInternalHref(fromLink)
   const fromHref = cmsCleanText(item?.href)
   return fromHref ? normalizeInternalHref(fromHref) : "#"
-}
-
-const LucideIcon = ({ name, className }: { name?: string; className?: string }) => {
-  if (!name) return null
-  const Icon = (LucideIcons as any)[name]
-  if (!Icon) return null
-  return <Icon className={className} aria-hidden />
 }
 
 const CtaLink = ({
@@ -454,7 +447,7 @@ const SectionCardsGrid = ({ section }: { section: CmsSectionCardsGrid }) => {
 
                 <div className="mt-4 flex items-start gap-3">
                   {card.iconKey?.trim() ? (
-                    <LucideIcon
+                    <CmsLucideIcon
                       name={card.iconKey.trim()}
                       className="mt-0.5 h-6 w-6 shrink-0 text-rellia-teal"
                     />
@@ -560,7 +553,7 @@ const SectionFeatureGrid = ({ section }: { section: CmsSectionFeatureGrid }) => 
           {items.map((item, idx) => (
             <ScrollReveal key={item._key ?? idx} delay={0.05 * idx}>
               <div className="flex w-full flex-col items-start text-left">
-                <LucideIcon
+                <CmsLucideIcon
                   name={item.icon}
                   className={cn(
                     "h-9 w-9 shrink-0",
@@ -638,7 +631,7 @@ const SectionEngageBand = ({ section }: { section: CmsSectionEngageBand }) => {
                 className="group flex h-full min-h-[168px] flex-col rounded-2xl border border-white/15 bg-white/5 p-5 backdrop-blur-md transition duration-300 hover:border-rellia-mint/40 hover:bg-white/10 cursor-pointer focus-visible:outline-none sm:min-h-[184px] sm:p-6"
               >
                 {item.icon ? (
-                  <LucideIcon
+                  <CmsLucideIcon
                     name={item.icon}
                     className="h-7 w-7 text-rellia-mint transition-transform duration-300 group-hover:scale-105"
                   />
@@ -797,7 +790,7 @@ const SectionDiagnosticSurvey = ({ section }: { section: CmsSectionDiagnosticSur
                 {(section.categories ?? []).map((cat, idx) => (
                   <div key={idx} className="flex items-start gap-4">
                     <span className="mt-0.5 h-6 w-6 shrink-0 text-rellia-teal">
-                      <LucideIcon name={categoryIconName} className="h-full w-full" />
+                      <CmsLucideIcon name={categoryIconName} className="h-full w-full" />
                     </span>
                     <span className="font-host-grotesk text-lg font-semibold leading-snug text-black/90">{cat}</span>
                   </div>

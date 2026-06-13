@@ -29,10 +29,10 @@ import {
   Video,
   FileText,
   Facebook,
-  type LucideIcon,
   Pause,
-  Play
+  Play,
 } from "lucide-react"
+import { resolveLucideIcon } from "@/lib/resolveLucideIcon"
 import type { CareersOpenRole, CareersContentMode, CareersPageContent } from "@shared/cms/types"
 import { mapNetworkWhyFeatures } from "@/lib/whyRelliaFeatures"
 import { DEFAULT_GLOBAL_SETTINGS } from "@shared/cms/defaults"
@@ -74,23 +74,6 @@ import { DEFAULT_CAREERS_PAGE } from "@shared/cms/careersPageDefaults"
 import { NetworkHeroTitle } from "@/components/NetworkHeroTitle"
 
 const g = DEFAULT_GLOBAL_SETTINGS
-
-const getPerkIcon = (key: string): LucideIcon => {
-  switch (key) {
-    case "users":
-      return Users
-    case "building2":
-      return Building2
-    case "laptop":
-      return Laptop
-    case "mapPin":
-      return MapPin
-    case "userRound":
-      return UserRound
-    default:
-      return Users
-  }
-}
 
 const LIFE_AT_RELLIA_IMAGES = [
   "https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800&auto=format&fit=crop&q=80",
@@ -561,7 +544,7 @@ export default function CareersCms() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10 lg:gap-x-16 lg:gap-y-12">
               {(careersCms.perksItems ?? []).map((perk) => {
-                const IconComponent = getPerkIcon(perk.iconKey ?? "")
+                const IconComponent = resolveLucideIcon(perk.iconKey ?? "", Users)
                 return (
                   <ScrollReveal key={perk.title} className="flex flex-col items-start text-left">
                     <IconComponent className="h-8 w-8 text-rellia-teal mb-4" aria-hidden />

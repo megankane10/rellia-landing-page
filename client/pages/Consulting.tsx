@@ -18,26 +18,10 @@ import {
   Stethoscope,
   Megaphone,
   ArrowRight,
-  type LucideIcon,
 } from "lucide-react"
-import * as LucideIcons from "lucide-react"
+import { resolveLucideIcon } from "@/lib/resolveLucideIcon"
 import { Link } from "react-router-dom"
 import { LightSection, Reveal, RoleHero } from "./network/_shared"
-
-const SERVICE_ICON_FALLBACK: Record<string, LucideIcon> = {
-  ShieldCheck,
-  Stethoscope,
-  Megaphone,
-  Palette,
-}
-
-const resolveServiceIcon = (iconKey?: string): LucideIcon => {
-  if (!iconKey) return ShieldCheck
-  const fromMap = SERVICE_ICON_FALLBACK[iconKey]
-  if (fromMap) return fromMap
-  const fromLucide = (LucideIcons as unknown as Record<string, LucideIcon>)[iconKey]
-  return fromLucide ?? ShieldCheck
-}
 
 function FitSectionSplit({ content }: { content: ConsultingPageContent }) {
   return (
@@ -107,7 +91,7 @@ function ServicesGridSection({ content }: { content: ConsultingPageContent }) {
         <ScrollReveal delay={0.12}>
           <div className="mt-12 grid grid-cols-1 gap-7 md:grid-cols-2 lg:grid-cols-4 lg:gap-6">
             {services.map((card) => {
-              const Icon = resolveServiceIcon(card.iconKey)
+              const Icon = resolveLucideIcon(card.iconKey, ShieldCheck)
               return (
                 <Link
                   key={card.title}

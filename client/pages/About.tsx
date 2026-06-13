@@ -2,7 +2,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import ScrollReveal from "@/components/ScrollReveal";
 import RelliaCta from "@/components/RelliaCta";
-import { Heart, Stethoscope, Globe, Zap, type LucideIcon } from "lucide-react"
+import { Heart } from "lucide-react"
 import { resolveLucideIcon } from "@/lib/resolveLucideIcon"
 import { IconFeatureCard } from "@/components/cards/IconFeatureCard";
 import { TeamMemberCard } from "@/components/cards/TeamMemberCard";
@@ -16,19 +16,6 @@ import { relliaTealGlassCardClass } from "@/lib/relliaTealGlassCard";
 import { cn } from "@/lib/utils";
 import { useRef, useState, useEffect } from "react";
 import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
-
-const VALUE_ICONS: Record<string, LucideIcon> = {
-  heart: Heart,
-  stethoscope: Stethoscope,
-  globe: Globe,
-  zap: Zap,
-};
-
-const resolveValueIcon = (key: string): LucideIcon => {
-  const normalized = key.trim().toLowerCase()
-  if (VALUE_ICONS[normalized]) return VALUE_ICONS[normalized]
-  return resolveLucideIcon(key, Heart)
-}
 
 const accentLastWords = (text: string, wordCount = 3) => {
   const raw = (text ?? "").trim()
@@ -148,7 +135,7 @@ export default function About() {
               <div className="flex flex-1 flex-col justify-center py-8 md:py-10 lg:py-12">
                 <div className="grid grid-cols-1 items-stretch gap-4 sm:grid-cols-2 sm:gap-5 md:gap-6 lg:grid-cols-3 xl:grid-cols-4">
                 {about.values.map((v, i) => {
-                  const Icon = resolveValueIcon(v.iconKey);
+                  const Icon = resolveLucideIcon(v.iconKey, Heart);
 
                   return (
                     <ScrollReveal key={v.title} delay={i * 0.08} className="flex h-full min-h-0">

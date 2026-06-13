@@ -3,6 +3,7 @@ import {CONTENT_SEO_FIELDSETS, singletonSeoField} from '../shared/singletonConte
 import {GROUP_SEO} from '../shared/fieldGroups'
 import {studioListMedia} from '../shared/studioListMedia'
 import {networkHeroFields} from '../shared/networkPageFields'
+import {iconKeyField} from '../shared/iconKeyField'
 
 const GROUP_HERO = {name: 'hero', title: 'Hero', default: true}
 const GROUP_FIT = {name: 'fit', title: 'Fit section'}
@@ -62,18 +63,8 @@ export const consultingPage = defineType({
             defineField({name: 'title', type: 'string', validation: (Rule) => Rule.required()}),
             defineField({name: 'body', type: 'text', rows: 3, validation: (Rule) => Rule.required()}),
             defineField({name: 'ctaLabel', title: 'Card link label', type: 'string'}),
-            defineField({
-              name: 'iconKey',
-              title: 'Icon',
-              type: 'string',
-              options: {
-                list: [
-                  {title: 'Shield', value: 'ShieldCheck'},
-                  {title: 'Stethoscope', value: 'Stethoscope'},
-                  {title: 'Megaphone', value: 'Megaphone'},
-                  {title: 'Palette', value: 'Palette'},
-                ],
-              },
+            iconKeyField({
+              description: 'Lucide icon for this service card, e.g. ShieldCheck, Stethoscope, Megaphone',
             }),
           ],
           preview: {select: {title: 'title', subtitle: 'body'}},

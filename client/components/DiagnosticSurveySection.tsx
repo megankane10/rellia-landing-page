@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from "react"
 import { Link } from "react-router-dom"
 import { motion, AnimatePresence } from "framer-motion"
-import * as LucideIcons from "lucide-react"
+import { resolveLucideIcon } from "@/lib/resolveLucideIcon"
 import {
   ArrowRight,
   Palette,
@@ -50,19 +50,10 @@ export function DiagnosticSurveySection() {
   const slides = useMemo(() => {
     return sections.map((section) => {
       // Find dynamic icon or fall back to section id mapping
-      let IconComponent = fallbackIcons[section.id] || Compass
       const iconName = section.icon?.trim()
-      if (iconName) {
-        if ((LucideIcons as any)[iconName]) {
-          IconComponent = (LucideIcons as any)[iconName]
-        } else {
-          // PascalCase check
-          const pascalName = iconName.charAt(0).toUpperCase() + iconName.slice(1)
-          if ((LucideIcons as any)[pascalName]) {
-            IconComponent = (LucideIcons as any)[pascalName]
-          }
-        }
-      }
+      const IconComponent = iconName
+        ? resolveLucideIcon(iconName, fallbackIcons[section.id] || Compass)
+        : fallbackIcons[section.id] || Compass
       return {
         icon: IconComponent,
         title: section.title,

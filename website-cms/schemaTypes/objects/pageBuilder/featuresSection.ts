@@ -1,4 +1,5 @@
 import {defineArrayMember, defineField, defineType} from 'sanity'
+import {lucideIconField} from '../../shared/iconKeyField'
 
 export const featuresSection = defineType({
   name: 'featuresSection',
@@ -40,22 +41,7 @@ export const featuresSection = defineType({
           type: 'object',
           name: 'featureItem',
           fields: [
-            defineField({
-              name: 'icon',
-              title: 'Icon',
-              type: 'string',
-              options: {
-                layout: 'dropdown',
-                list: [
-                  {title: 'Sparkles', value: 'sparkles'},
-                  {title: 'Users', value: 'users'},
-                  {title: 'Shield', value: 'shield'},
-                  {title: 'Chart', value: 'chart'},
-                  {title: 'Heart', value: 'heart'},
-                  {title: 'Zap', value: 'zap'},
-                ],
-              },
-            }),
+            lucideIconField(),
             defineField({name: 'title', title: 'Title', type: 'string', validation: (Rule) => Rule.required()}),
             defineField({name: 'description', title: 'Description', type: 'text', rows: 4}),
           ],

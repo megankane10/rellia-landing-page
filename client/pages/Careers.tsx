@@ -28,8 +28,8 @@ import {
   Video,
   FileText,
   Facebook,
-  type LucideIcon
 } from "lucide-react"
+import { resolveLucideIcon } from "@/lib/resolveLucideIcon"
 import type { HomeWhyFeature } from "@shared/cms/types"
 import { DEFAULT_GLOBAL_SETTINGS } from "@shared/cms/defaults"
 import { CAREERS_VOLUNTEER_ENABLED, careersHasPublishedOpenRoles } from "@shared/careersPageConfig"
@@ -104,23 +104,6 @@ const CAREERS_PERKS: HomeWhyFeature[] = [
       "Member events, partner conversations, and field context on how buying decisions get made—so you are not guessing from a distance.",
   },
 ]
-
-const getPerkIcon = (key: string): LucideIcon => {
-  switch (key) {
-    case "users":
-      return Users
-    case "building2":
-      return Building2
-    case "laptop":
-      return Laptop
-    case "mapPin":
-      return MapPin
-    case "userRound":
-      return UserRound
-    default:
-      return Users
-  }
-}
 
 const LIFE_AT_RELLIA_IMAGES = [
   "https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800&auto=format&fit=crop&q=80",
@@ -370,7 +353,7 @@ export default function Careers() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10 lg:gap-x-16 lg:gap-y-12">
               {CAREERS_PERKS.map((perk) => {
-                const IconComponent = getPerkIcon(perk.iconKey)
+                const IconComponent = resolveLucideIcon(perk.iconKey, Users)
                 return (
                   <ScrollReveal key={perk.title} className="flex flex-col items-start text-left">
                     <IconComponent className="h-8 w-8 text-rellia-teal mb-4" aria-hidden />

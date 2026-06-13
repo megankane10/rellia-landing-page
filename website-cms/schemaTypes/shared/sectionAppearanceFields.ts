@@ -37,27 +37,4 @@ export const sectionBackgroundField = defineField({
   initialValue: 'white',
 })
 
-export const lucideIconField = (description?: string) =>
-  defineField({
-    name: 'icon',
-    title: 'Icon',
-    type: 'string',
-    description: description ?? 'Lucide icon name (e.g. Users, Rocket, ShieldCheck). Leave empty to hide.',
-    options: {
-      layout: 'dropdown',
-      list: [
-        {title: 'Sparkles', value: 'Sparkles'},
-        {title: 'Users', value: 'Users'},
-        {title: 'ShieldCheck', value: 'ShieldCheck'},
-        {title: 'Target', value: 'Target'},
-        {title: 'Layers', value: 'Layers'},
-        {title: 'Heart', value: 'Heart'},
-        {title: 'Rocket', value: 'Rocket'},
-        {title: 'Zap', value: 'Zap'},
-        {title: 'Compass', value: 'Compass'},
-        {title: 'Stethoscope', value: 'Stethoscope'},
-        {title: 'ClipboardCheck', value: 'ClipboardCheck'},
-        {title: 'ArrowRight', value: 'ArrowRight'},
-      ],
-    },
-  })
+export {lucideIconField} from './iconKeyField'
