@@ -2,7 +2,8 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import ScrollReveal from "@/components/ScrollReveal";
 import RelliaCta from "@/components/RelliaCta";
-import { Heart, Stethoscope, Globe, Zap, type LucideIcon } from "lucide-react";
+import { Heart, Stethoscope, Globe, Zap, type LucideIcon } from "lucide-react"
+import { resolveLucideIcon } from "@/lib/resolveLucideIcon"
 import { IconFeatureCard } from "@/components/cards/IconFeatureCard";
 import { TeamMemberCard } from "@/components/cards/TeamMemberCard";
 import PageHeader, { PAGE_HEADER_TITLE_SIZE_CLASS } from "@/components/PageHeader"
@@ -23,7 +24,11 @@ const VALUE_ICONS: Record<string, LucideIcon> = {
   zap: Zap,
 };
 
-const resolveValueIcon = (key: string): LucideIcon => VALUE_ICONS[key] ?? Heart;
+const resolveValueIcon = (key: string): LucideIcon => {
+  const normalized = key.trim().toLowerCase()
+  if (VALUE_ICONS[normalized]) return VALUE_ICONS[normalized]
+  return resolveLucideIcon(key, Heart)
+}
 
 const accentLastWords = (text: string, wordCount = 3) => {
   const raw = (text ?? "").trim()
@@ -96,7 +101,7 @@ export default function About() {
                 </div>
 
                 <div className="relative min-h-0 w-full min-w-0">
-                  <div className="relative mx-auto aspect-[5/4] w-full max-w-full overflow-hidden rounded-[2.5rem] shadow-lg sm:aspect-[5/4] md:rounded-[3.5rem] lg:mx-0 lg:aspect-auto lg:h-full lg:min-h-[400px]">
+                  <div className="relative mx-auto aspect-[5/4] w-full max-w-full overflow-hidden rounded-[32px] shadow-lg sm:aspect-[5/4] lg:mx-0 lg:aspect-auto lg:h-full lg:min-h-[400px]">
                     <img
                       src={about.missionImageSrc}
                       alt={about.missionImageAlt}
@@ -204,8 +209,8 @@ export default function About() {
         <RelliaCta
           title={about.ctaTitle}
           body={about.ctaBody}
-          primary={{ label: about.ctaFounderLabel, to: "/apply" }}
-          secondary={{ label: about.ctaTeamLabel, to: "/careers" }}
+          primary={{ label: about.ctaFounderLabel, to: about.ctaFounderHref || "/apply" }}
+          secondary={{ label: about.ctaTeamLabel, to: about.ctaTeamHref || "/careers" }}
         />
       </main>
 

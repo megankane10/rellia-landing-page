@@ -301,8 +301,8 @@ const css = `
     color: #111 !important;
     font-size: 9.5pt;
     height: auto !important;
-    -webkit-print-color-adjust: economy;
-    print-color-adjust: economy;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
   }
 
   nav, footer, aside, .diagnostic-screen-only, .diagnostic-print-hide {
@@ -379,20 +379,21 @@ const css = `
   }
 
   .diagnostic-report-summary {
-    background: #fff !important;
-    border: 1px solid #ccc !important;
-    border-left: 3px solid #0d3540 !important;
+    background: linear-gradient(135deg, #0d3540 0%, #144853 55%, #1a5c6b 100%) !important;
+    border: 1px solid #0d3540 !important;
+    border-left: 4px solid #5eead4 !important;
     box-shadow: none !important;
-    color: #111 !important;
-    padding: 0.45rem 0.6rem !important;
+    color: #fff !important;
+    padding: 0.9rem 1rem !important;
     page-break-inside: avoid;
-    margin-bottom: 0.75rem !important;
+    margin-bottom: 1.1rem !important;
+    border-radius: 8px !important;
   }
 
   .diagnostic-report-summary p {
-    color: #222 !important;
+    color: #f8fffe !important;
     font-size: 9.5pt !important;
-    line-height: 1.35 !important;
+    line-height: 1.45 !important;
     margin: 0 !important;
   }
 
@@ -402,13 +403,13 @@ const css = `
 
   .diagnostic-report section {
     page-break-inside: auto;
-    margin-bottom: 1.15rem;
+    margin-bottom: 1.35rem;
     break-inside: auto;
   }
 
   .diagnostic-report .diagnostic-print-stack > section + section,
   .diagnostic-report .diagnostic-print-stack > .diagnostic-print-page-two {
-    margin-top: 1.35rem !important;
+    margin-top: 1.6rem !important;
   }
 
   .diagnostic-report section h2 {
@@ -440,11 +441,15 @@ const css = `
   }
 
   .diagnostic-report .diagnostic-card-strength {
-    border-left: 2px solid #333 !important;
+    background: #f0fdf4 !important;
+    border-color: #86efac !important;
+    border-left: 3px solid #16a34a !important;
   }
 
   .diagnostic-report .diagnostic-card-gap {
-    border-left: 2px solid #666 !important;
+    background: #fef2f2 !important;
+    border-color: #fecaca !important;
+    border-left: 3px solid #dc2626 !important;
   }
 
   .diagnostic-report .diagnostic-card-badge {
@@ -491,13 +496,13 @@ const css = `
   }
 
   .diagnostic-report .diagnostic-breakdown-item {
-    background: #fff !important;
-    border: 1px solid #bbb !important;
+    background: #f8fffe !important;
+    border: 1px solid #99d5c9 !important;
     box-shadow: none !important;
-    padding: 0.55rem 0.65rem !important;
+    padding: 0.65rem 0.75rem !important;
     border-radius: 6px !important;
     page-break-inside: avoid;
-    min-height: 2.75rem;
+    min-height: 2.85rem;
   }
 
   .diagnostic-report .diagnostic-breakdown-item .diagnostic-score {
@@ -519,7 +524,7 @@ const css = `
   }
 
   .diagnostic-report .diagnostic-breakdown-bar-fill {
-    background: #333 !important;
+    background: linear-gradient(90deg, #0d3540 0%, #144853 100%) !important;
   }
 
   .diagnostic-report .diagnostic-roadmap-block,
@@ -567,25 +572,65 @@ const css = `
   }
 
   .diagnostic-report .diagnostic-membership-print {
-    border-left: 3px solid #0d3540 !important;
-    margin-top: 0.25rem !important;
+    background: linear-gradient(180deg, #f0fdfa 0%, #fff 72%) !important;
+    border: 1px solid #99d5c9 !important;
+    border-left: 4px solid #0d3540 !important;
+    margin-top: 0.35rem !important;
+    padding: 0.9rem 1rem !important;
+    border-radius: 8px !important;
+  }
+
+  .diagnostic-report .diagnostic-membership-print-layout {
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    gap: 0.9rem;
+  }
+
+  .diagnostic-report .diagnostic-membership-print-image {
+    width: 32%;
+    min-width: 96px;
+    max-width: 148px;
+    flex-shrink: 0;
+    object-fit: cover;
+    border-radius: 6px;
+    align-self: stretch;
+    min-height: 5.5rem;
+    border: 1px solid #b7e0d8;
+  }
+
+  .diagnostic-report .diagnostic-membership-print--wide .diagnostic-membership-print-layout {
+    flex-direction: column;
+  }
+
+  .diagnostic-report .diagnostic-membership-print--wide .diagnostic-membership-print-image {
+    width: 100%;
+    max-width: none;
+    height: 118px;
+    min-height: 118px;
+    align-self: auto;
+  }
+
+  .diagnostic-report .diagnostic-membership-print-copy {
+    flex: 1;
+    min-width: 0;
   }
 
   .diagnostic-report .diagnostic-membership-print h2 {
     border: none !important;
-    font-size: 10pt !important;
-    font-weight: 400 !important;
+    font-size: 10.5pt !important;
+    font-weight: 600 !important;
     color: #0d3540 !important;
-    margin: 0 0 0.65rem !important;
+    margin: 0 0 0.7rem !important;
     padding: 0 !important;
     line-height: 1.35 !important;
   }
 
   .diagnostic-report .diagnostic-membership-print p {
-    color: #333 !important;
+    color: #1f3f47 !important;
     font-size: 8.5pt !important;
-    line-height: 1.45 !important;
-    margin: 0 0 0.65rem !important;
+    line-height: 1.5 !important;
+    margin: 0 0 0.7rem !important;
   }
 
   .diagnostic-report .diagnostic-membership-print p:last-child {
@@ -684,6 +729,8 @@ const DEFAULT_REPORT_ADVISORS_TITLE = "Custom Advisory Board"
 const DEFAULT_REPORT_MEMBERSHIP_CTA_TITLE = "Your personalized blueprint is waiting."
 const DEFAULT_REPORT_MEMBERSHIP_CTA_BODY = "Join Rellia Health to unlock your custom advisory board, full gap analysis, and personalized actions - and accelerate your journey."
 const DEFAULT_REPORT_MEMBERSHIP_CTA_BUTTON = "Apply for Membership"
+const DEFAULT_REPORT_MEMBERSHIP_CTA_IMAGE =
+  "https://images.pexels.com/photos/3783725/pexels-photo-3783725.jpeg?auto=compress&cs=tinysrgb&w=1200"
 
 const INTRO_ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
   Building2,
@@ -768,10 +815,25 @@ export default function DiagnosticSurvey() {
   }, [cmsAdvisors]);
 
   const { data: surveyCms } = useDiagnosticSurveyContent()
+  const reportMembershipImageSrc =
+    surveyCms?.reportMembershipCtaImageSrc?.trim() || DEFAULT_REPORT_MEMBERSHIP_CTA_IMAGE
+  const [membershipPrintImageLayout, setMembershipPrintImageLayout] = useState<"wide" | "square">(
+    "square",
+  )
   const sections = useMemo(
     () => mergeDiagnosticSurveySections(surveyCms ?? undefined),
     [surveyCms],
   )
+
+  useEffect(() => {
+    if (typeof window === "undefined") return
+    const img = new Image()
+    img.onload = () => {
+      const ratio = img.naturalWidth / Math.max(img.naturalHeight, 1)
+      setMembershipPrintImageLayout(ratio >= 1.2 ? "wide" : "square")
+    }
+    img.src = reportMembershipImageSrc
+  }, [reportMembershipImageSrc])
 
   const stages = useMemo(() => {
     if (surveyCms?.stages && surveyCms.stages.length > 0) {
@@ -2156,7 +2218,7 @@ export default function DiagnosticSurvey() {
                       {/* Join the membership CTA block */}
                       <div className="diagnostic-print-hide rounded-[32px] p-8 text-white shadow-2xl relative overflow-hidden flex flex-col justify-end min-h-[420px]">
                         <img
-                          src={surveyCms?.reportMembershipCtaImageSrc || "https://images.pexels.com/photos/3783725/pexels-photo-3783725.jpeg?auto=compress&cs=tinysrgb&w=1200"}
+                          src={reportMembershipImageSrc}
                           alt=""
                           className="absolute inset-0 h-full w-full object-cover"
                         />
@@ -2188,18 +2250,32 @@ export default function DiagnosticSurvey() {
                       </div>
                     </section>
 
-                    <section className="diagnostic-print-only diagnostic-membership-print">
-                      <h2>{membershipTitle}</h2>
-                      <p>{membershipBody}</p>
-                      <p>
-                        This summary report covers your top strengths, priority gaps, and high-level roadmap.
-                        Join Rellia Health membership to unlock your full gap analysis, custom advisory board matches,
-                        and personalized action plan.
-                      </p>
-                      <p>
-                        Apply at{" "}
-                        <a href="https://www.relliahealth.com/apply">relliahealth.com/apply</a>
-                      </p>
+                    <section
+                      className={cn(
+                        "diagnostic-print-only diagnostic-membership-print",
+                        membershipPrintImageLayout === "wide" && "diagnostic-membership-print--wide",
+                      )}
+                    >
+                      <div className="diagnostic-membership-print-layout">
+                        <img
+                          src={reportMembershipImageSrc}
+                          alt=""
+                          className="diagnostic-membership-print-image"
+                        />
+                        <div className="diagnostic-membership-print-copy">
+                          <h2>{membershipTitle}</h2>
+                          <p>{membershipBody}</p>
+                          <p>
+                            This summary report covers your top strengths, priority gaps, and high-level roadmap.
+                            Join Rellia Health membership to unlock your full gap analysis, custom advisory board matches,
+                            and personalized action plan.
+                          </p>
+                          <p>
+                            Apply at{" "}
+                            <a href="https://www.relliahealth.com/apply">relliahealth.com/apply</a>
+                          </p>
+                        </div>
+                      </div>
                     </section>
                     </div>
 

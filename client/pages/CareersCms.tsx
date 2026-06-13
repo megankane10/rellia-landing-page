@@ -67,7 +67,7 @@ import { isSanityConfigured } from "@/lib/sanity"
 import { allowCmsSeedFallbacks, isStrictProductionSite } from "@/lib/deploymentEnv"
 import { useMemo, useState, useEffect, useRef } from "react"
 import { useLocation, useNavigate, useParams } from "react-router-dom"
-import { ShareIconCopy, shareToolbarButtonClassName } from "@/components/share/sharePageIcons"
+import { ShareIconCopy } from "@/components/share/sharePageIcons"
 import { PortableRichText } from "@/components/PortableRichText"
 import { RoleHero } from "./network/_shared"
 import { DEFAULT_CAREERS_PAGE } from "@shared/cms/careersPageDefaults"
@@ -678,21 +678,21 @@ export default function CareersCms() {
                                   type="button"
                                   onClick={() => handleCopyRoleLink(role.id)}
                                   className={cn(
-                                    shareToolbarButtonClassName,
-                                    "relative shrink-0",
-                                    copiedRoleId === role.id &&
-                                      "bg-rellia-mint text-rellia-teal shadow-md",
+                                    "relative inline-flex h-14 w-14 shrink-0 items-center justify-center rounded-full border transition-all duration-300",
+                                    copiedRoleId === role.id
+                                      ? "border-rellia-teal bg-rellia-mint/20 text-rellia-teal"
+                                      : "border-black/10 bg-white text-black hover:bg-black/5",
                                   )}
                                   title={copiedRoleId === role.id ? "Copied!" : "Copy link to role"}
                                   aria-label={copiedRoleId === role.id ? "Copied!" : "Copy link to role"}
                                 >
                                   {copiedRoleId === role.id ? (
-                                    <Check className="h-6 w-6 shrink-0 animate-scale-in" />
+                                    <Check className="h-5 w-5 shrink-0 animate-scale-in" />
                                   ) : (
-                                    <ShareIconCopy />
+                                    <ShareIconCopy className="h-5 w-5" />
                                   )}
                                   {copiedRoleId === role.id ? (
-                                    <span className="absolute -top-11 left-1/2 -translate-x-1/2 rounded-full bg-rellia-teal px-3 py-1 text-xs font-bold text-white shadow-md whitespace-nowrap transition-all duration-200 z-50 animate-bounce">
+                                    <span className="pointer-events-none absolute -top-10 left-1/2 z-50 -translate-x-1/2 whitespace-nowrap rounded bg-black px-2 py-1 text-xs font-bold text-white shadow-md">
                                       Copied!
                                     </span>
                                   ) : null}

@@ -39,39 +39,15 @@ export default function Programs() {
   const programs = useMemo(() => {
     // Favor the standalone program collection, fallback to the landing page array, finally the hardcoded defaults.
     const rawList = (programsData && programsData.length > 0) ? programsData : (pl.programs ?? [])
-    
-    // Map of programs that MUST use specific local images to match their detail pages
-    const IMAGE_OVERRIDES: Record<string, string> = {
-      "buildyourqualitymanagementsystem": "/images/programs-buildYourQMS.png",
-      "advancedataroomdeepdive": "/images/programs-DataRoom.png",
-      "first50usersaclinicalfeedbackintensive": "/images/programs-first50Users.png",
-      "designyourbrandstrategy": "/images/programs-brandStrategy.png",
-      "regulatorystrategysprint": "/images/programs-regulatoryRoadmap.png",
-    }
-
-    const STATUS_OVERRIDES: Record<string, string> = {
-      "regulatorystrategysprint": "upcoming"
-    }
 
     const seenTitles = new Set<string>()
     const processed = rawList.filter((p: any) => {
       if (!p.title) return false
       const normalizedTitle = p.title.toLowerCase().trim().replace(/[^a-z0-9]/g, "")
-      
-      // Deduplicate
+
       if (seenTitles.has(normalizedTitle)) return false
       seenTitles.add(normalizedTitle)
-      
-      // Enforce overrides
-      if (IMAGE_OVERRIDES[normalizedTitle]) {
-        p.imageSrc = IMAGE_OVERRIDES[normalizedTitle]
-      }
-      if (STATUS_OVERRIDES[normalizedTitle]) {
-        p.status = STATUS_OVERRIDES[normalizedTitle]
-        // Ensure waitlist doesn't override upcoming status in the card UI
-        p.waitlistHref = ""
-      }
-      
+
       return true
     })
 

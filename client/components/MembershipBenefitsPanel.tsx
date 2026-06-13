@@ -60,7 +60,7 @@ export default function MembershipBenefitsPanel({
 
       <div className="relative z-10 flex min-h-0 flex-1 flex-col justify-end p-8 md:p-10 lg:p-11">
         <div className="max-w-md">
-          <h1 className="font-host-grotesk text-[1.75rem] font-semibold leading-tight tracking-tight text-rellia-mint drop-shadow-[0_2px_20px_rgba(0,0,0,0.45)] md:text-[2.125rem]">
+          <h1 className="font-host-grotesk text-[1.75rem] font-semibold leading-tight tracking-tight text-white drop-shadow-[0_2px_20px_rgba(0,0,0,0.45)] md:text-[2.125rem]">
             {previewMode ? cmsDisplayText(headline) : cmsCleanText(headline)}
           </h1>
           <div className="mt-5 h-0.5 w-10 bg-rellia-mint md:mt-6" aria-hidden />

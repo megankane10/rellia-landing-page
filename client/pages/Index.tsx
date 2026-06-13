@@ -14,7 +14,7 @@ import { useHomePage } from "@/hooks/useCmsDocuments";
 import { DEFAULT_HOME_PAGE } from "@shared/cms/defaults";
 import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo";
 import { clampMetaDescription, clampMetaTitle, getSeoForPathname } from "@/config/seo";
-import { resolveNetworkIcon } from "@/lib/resolveNetworkIcon";
+import { resolveLucideIcon } from "@/lib/resolveLucideIcon"
 
 export default function Index() {
   const { data } = useHomePage();
@@ -22,7 +22,7 @@ export default function Index() {
   const howItWorksSteps = useMemo(
     () =>
       (home.howItWorksSteps ?? DEFAULT_HOME_PAGE.howItWorksSteps ?? []).map((step) => ({
-        icon: resolveNetworkIcon(step.iconKey, BriefcaseBusiness),
+        icon: resolveLucideIcon(step.iconKey, BriefcaseBusiness),
         title: step.title,
         description: step.description,
       })),

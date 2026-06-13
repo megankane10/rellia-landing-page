@@ -432,7 +432,16 @@ export type CmsSingletonPageContent = {
   foundersCluster?: ClusterChart[]
 }
 
-export type ProgramsLayoutPageContent = CmsSingletonPageContent
+export type ProgramsLayoutPageContent = {
+  howItWorksTitle?: string
+  howItWorksIntro?: string
+  pillarsTitle?: string
+  pillars?: Array<{ title?: string; description?: string; iconKey?: string }>
+  timelineTitle?: string
+  timelineSubtitle?: string
+  timelineWeekLabelPrefix?: string
+  seo?: SeoContent
+}
 
 export type ConsultingServiceCard = {
   title: string
@@ -811,7 +820,9 @@ export type AboutPageContent = {
   ctaTitle: string
   ctaBody: string
   ctaFounderLabel: string
+  ctaFounderHref: string
   ctaTeamLabel: string
+  ctaTeamHref: string
   seo?: SeoContent
 }
 

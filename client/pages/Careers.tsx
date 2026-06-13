@@ -466,22 +466,25 @@ export default function Careers() {
                             <button
                               type="button"
                               onClick={() => handleCopyRoleLink(role.id)}
-                              className="group relative inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-full border-2 border-black/15 bg-white text-black/60 shadow-sm outline-none transition-all duration-300 hover:border-black/30 hover:text-black/80 hover:bg-black/5"
+                              className={cn(
+                                "relative inline-flex h-14 w-14 shrink-0 items-center justify-center rounded-full border transition-all duration-300",
+                                copiedRoleId === role.id
+                                  ? "border-rellia-teal bg-rellia-mint/20 text-rellia-teal"
+                                  : "border-black/10 bg-white text-black hover:bg-black/5",
+                              )}
                               title={copiedRoleId === role.id ? "Copied!" : "Copy link to role"}
                               aria-label={copiedRoleId === role.id ? "Copied!" : "Copy link to role"}
                             >
-                              <span className="relative z-10 flex items-center justify-center">
-                                {copiedRoleId === role.id ? (
-                                  <Check className="h-5 w-5 animate-scale-in text-rellia-teal" />
-                               ) : (
-                                  <ShareIconCopy className="h-5 w-5" />
-                                )}
-                              </span>
-                              {copiedRoleId === role.id && (
-                                <span className="absolute -top-11 left-1/2 -translate-x-1/2 rounded-full bg-rellia-teal px-3 py-1 text-xs font-bold text-white shadow-md whitespace-nowrap transition-all duration-200 z-50 animate-bounce">
+                              {copiedRoleId === role.id ? (
+                                <Check className="h-5 w-5 shrink-0 animate-scale-in" />
+                              ) : (
+                                <ShareIconCopy className="h-5 w-5" />
+                              )}
+                              {copiedRoleId === role.id ? (
+                                <span className="pointer-events-none absolute -top-10 left-1/2 z-50 -translate-x-1/2 whitespace-nowrap rounded bg-black px-2 py-1 text-xs font-bold text-white shadow-md">
                                   Copied!
                                 </span>
-                              )}
+                              ) : null}
                             </button>
                           </div>
                         </AccordionContent>

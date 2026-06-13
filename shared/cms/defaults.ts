@@ -1730,7 +1730,9 @@ export const DEFAULT_ABOUT_PAGE: AboutPageContent = {
   ctaBody:
     "If you're a founder who wants to do this right, we have the network and expertise to make it happen.",
   ctaFounderLabel: "Apply to join as a founder",
+  ctaFounderHref: "/apply",
   ctaTeamLabel: "Join the Rellia team",
+  ctaTeamHref: "/careers",
 }
 
 export const DEFAULT_FAQ_PAGE: FaqPageContent = {
@@ -2621,19 +2623,23 @@ const mergeWhyFeatures = (
 
 const mergeHowItWorksSteps = (
   fromCms: HomePageContent["howItWorksSteps"] | null | undefined,
-): HomePageContent["howItWorksSteps"] =>
-  DEFAULT_HOME_PAGE.howItWorksSteps!.map((defaultStep, index) => {
-    const cmsStep = compactList(fromCms)[index]
-    if (!cmsStep) return defaultStep
+): HomePageContent["howItWorksSteps"] => {
+  const cmsSteps = compactList(fromCms).filter(
+    (step) => step?.title?.trim() || step?.description?.trim() || step?.iconKey?.trim(),
+  )
+  if (cmsSteps.length === 0) return DEFAULT_HOME_PAGE.howItWorksSteps!
+
+  return cmsSteps.map((cmsStep, index) => {
+    const defaultStep =
+      DEFAULT_HOME_PAGE.howItWorksSteps![index] ?? DEFAULT_HOME_PAGE.howItWorksSteps![0]
 
     return {
-      ...defaultStep,
-      ...cmsStep,
       iconKey: cmsStep.iconKey?.trim() || defaultStep.iconKey,
       title: cmsStep.title?.trim() || defaultStep.title,
       description: cmsStep.description?.trim() || defaultStep.description,
     }
   })
+}
 
 export function mergeHomePage(partial: Partial<HomePageContent> | null | undefined): HomePageContent {
   const p = omitNullish((partial ?? {}) as Record<string, unknown>) as Partial<HomePageContent>
@@ -2687,6 +2693,8 @@ export function mergeAboutPage(partial: Partial<AboutPageContent> | null | undef
   if (!Array.isArray(base.heroTitlePortable) || base.heroTitlePortable.length === 0) {
     base.heroTitlePortable = DEFAULT_ABOUT_PAGE.heroTitlePortable
   }
+  if (!base.ctaFounderHref?.trim()) base.ctaFounderHref = DEFAULT_ABOUT_PAGE.ctaFounderHref
+  if (!base.ctaTeamHref?.trim()) base.ctaTeamHref = DEFAULT_ABOUT_PAGE.ctaTeamHref
   return base
 }
 

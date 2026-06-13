@@ -114,7 +114,7 @@ export const resolveProgramCollectionSeo = (input: {
 export const buildDefaultCareersRoleSeoTitle = (roleTitle: string): string => {
   const title = roleTitle.trim()
   if (!title) return "Careers — Rellia Health"
-  return `${title} — Careers`
+  return `${title} — Rellia Health Careers`
 }
 
 const careersRoleDescriptionSnippet = (description: unknown): string => {
@@ -142,9 +142,13 @@ export const resolveCareersRoleSeo = (input: {
   if (location) metaParts.push(location)
   if (employmentType) metaParts.push(employmentType)
 
-  const description =
-    snippet ||
-    `Join Rellia Health as ${metaParts.join(" · ")}. View responsibilities and apply on our careers page.`
+  const roleContext = [location, employmentType].filter(Boolean).join(" · ")
+
+  const description = snippet
+    ? roleContext
+      ? `${roleContext}. ${snippet}`
+      : snippet
+    : `Join Rellia Health as ${metaParts.join(" · ")}. View responsibilities and apply on our careers page.`
 
   return {
     title: buildDefaultCareersRoleSeoTitle(roleTitle),

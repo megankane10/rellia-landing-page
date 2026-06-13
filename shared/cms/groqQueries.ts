@@ -545,7 +545,9 @@ export const aboutPageQuery = `*[_id == "aboutPage"][0]{
   ctaTitle,
   ctaBody,
   ctaFounderLabel,
+  ctaFounderHref,
   ctaTeamLabel,
+  ctaTeamHref,
   ${seoFragment}
 }`;
 
@@ -579,10 +581,15 @@ export const programsLandingQuery = `*[_id == "programsLandingPage"][0]{
 }`;
 
 export const programsLayoutPageQuery = `*[_id == "programsLayoutPage"][0]{
-  title,
-  ${seoFragment},
-  ${pageSectionsFragment}
-}`;
+  howItWorksTitle,
+  howItWorksIntro,
+  pillarsTitle,
+  pillars[]{ title, description, iconKey },
+  timelineTitle,
+  timelineSubtitle,
+  timelineWeekLabelPrefix,
+  ${seoFragment}
+}`
 
 export const eventsLandingQuery = `*[_id == "eventsLandingPage"][0]{
   heroTitlePortable,
@@ -612,7 +619,7 @@ const programDetailFields = `
     "imageSrc": image.asset->url
   },
   pillarsTitle,
-  pillars[]{ title, description },
+  pillars[]{ title, description, iconKey },
   timelineTitle,
   timelineSubtitle,
   pricingBadge,

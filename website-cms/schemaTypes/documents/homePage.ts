@@ -7,6 +7,7 @@ import { GROUP_SEO } from '../shared/fieldGroups'
 import { imageUploadField, imageUrlFallbackField } from '../shared/imageFields'
 import { showBadgeField } from '../shared/sectionAppearanceFields'
 import { portableHeadlineField } from '../shared/inlineHeroHeadlineField'
+import {iconKeyField} from '../shared/iconKeyField'
 
 const GROUP_HERO = { name: 'hero', title: '1 · Hero', default: true }
 const GROUP_PATHS = { name: 'paths', title: '2 · Paths section' }
@@ -234,11 +235,8 @@ export const homePage = defineType({
           title: 'Focus area',
           type: 'object',
           fields: [
-            defineField({
-              name: 'iconKey',
-              title: 'Icon',
-              type: 'string',
-              description: 'Lucide icon name, e.g. BriefcaseBusiness, Megaphone, Building2',
+            iconKeyField({
+              description: 'Lucide icon for this focus area card.',
             }),
             defineField({ name: 'title', title: 'Title', type: 'string' }),
             defineField({ name: 'description', title: 'Description', type: 'text', rows: 3 }),

@@ -5,7 +5,7 @@ import { normalizeToPortableText } from "@shared/cms/normalizePortableText"
 import { cn } from "@/lib/utils"
 
 const bodyClass =
-  "font-urbanist text-[15px] font-normal leading-relaxed text-white md:text-base"
+  "font-urbanist text-[15px] font-normal leading-relaxed text-white/75 md:text-base"
 
 const bodyStyle = { textShadow: membershipPanelDescriptionTextShadow }
 
@@ -50,9 +50,9 @@ const components: PortableTextComponents = {
     ),
   },
   marks: {
-    strong: ({ children }) => <strong className="font-semibold text-white">{children}</strong>,
-    em: ({ children }) => <em className="italic text-white">{children}</em>,
-    underline: ({ children }) => <span className="underline text-white">{children}</span>,
+    strong: ({ children }) => <strong className="font-semibold text-white/75">{children}</strong>,
+    em: ({ children }) => <em className="italic text-white/75">{children}</em>,
+    underline: ({ children }) => <span className="underline text-white/75">{children}</span>,
     mint: ({ children }) => <span className="text-rellia-mint">{children}</span>,
     link: ({ value, children }) => {
       const href = typeof value?.href === "string" ? value.href : "#"
@@ -60,7 +60,7 @@ const components: PortableTextComponents = {
       return (
         <a
           href={href}
-          className="font-semibold text-white underline underline-offset-2 hover:text-rellia-mint"
+          className="font-semibold text-white/75 underline underline-offset-2 hover:text-white"
           style={bodyStyle}
           target={isExternal ? "_blank" : undefined}
           rel={isExternal ? "noopener noreferrer" : undefined}
@@ -75,7 +75,7 @@ const components: PortableTextComponents = {
       <ul
         className={cn(
           bodyClass,
-          "list-disc space-y-3 pl-5 text-white [&:not(:first-child)]:mt-5",
+          "list-disc space-y-3 pl-5 text-white/75 [&:not(:first-child)]:mt-5",
         )}
         style={bodyStyle}
       >
@@ -86,7 +86,7 @@ const components: PortableTextComponents = {
       <ol
         className={cn(
           bodyClass,
-          "list-decimal space-y-3 pl-5 text-white [&:not(:first-child)]:mt-5",
+          "list-decimal space-y-3 pl-5 text-white/75 [&:not(:first-child)]:mt-5",
         )}
         style={bodyStyle}
       >
@@ -95,8 +95,8 @@ const components: PortableTextComponents = {
     ),
   },
   listItem: {
-    bullet: ({ children }) => <li className="text-white">{children}</li>,
-    number: ({ children }) => <li className="text-white">{children}</li>,
+    bullet: ({ children }) => <li className="text-white/75">{children}</li>,
+    number: ({ children }) => <li className="text-white/75">{children}</li>,
   },
 }
 

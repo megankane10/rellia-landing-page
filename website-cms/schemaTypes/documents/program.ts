@@ -1,4 +1,5 @@
 import {defineArrayMember, defineField, defineType} from 'sanity'
+import {iconKeyField} from '../shared/iconKeyField'
 import {CONTENT_SEO_FIELDSETS, singletonSeoField} from '../shared/singletonContentFields'
 import {GROUP_SEO} from '../shared/fieldGroups'
 import {pageSectionMembers} from '../shared/pageSectionMembers'
@@ -90,7 +91,7 @@ export const program = defineType({
     defineField({
       name: 'howItWorksCards',
       title: 'How it works cards',
-      description: 'Three image cards below the how-it-works intro. Icons stay fixed in the site layout.',
+      description: 'Add, remove, or reorder image cards below the how-it-works intro.',
       type: 'array',
       of: [
         defineArrayMember({
@@ -109,12 +110,13 @@ export const program = defineType({
     defineField({
       name: 'pillars',
       title: 'Program pillar cards',
-      description: 'Four pillar cards (title + description). Icons stay fixed in the site layout.',
+      description: 'Add, remove, or reorder pillar cards. Optional icon per card (Lucide name).',
       type: 'array',
       of: [
         defineArrayMember({
           type: 'object',
           fields: [
+            iconKeyField({description: 'Optional Lucide icon. Falls back to the site default for this slot when empty.'}),
             defineField({name: 'title', type: 'string'}),
             defineField({name: 'description', type: 'text', rows: 3}),
           ],

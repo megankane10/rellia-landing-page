@@ -538,7 +538,9 @@ var aboutPageQuery = `*[_id == "aboutPage"][0]{
   ctaTitle,
   ctaBody,
   ctaFounderLabel,
+  ctaFounderHref,
   ctaTeamLabel,
+  ctaTeamHref,
   ${seoFragment}
 }`;
 var faqPageQuery = `*[_id == "faqPage"][0]{
@@ -569,9 +571,14 @@ var programsLandingQuery = `*[_id == "programsLandingPage"][0]{
   ${seoFragment}
 }`;
 var programsLayoutPageQuery = `*[_id == "programsLayoutPage"][0]{
-  title,
-  ${seoFragment},
-  ${pageSectionsFragment}
+  howItWorksTitle,
+  howItWorksIntro,
+  pillarsTitle,
+  pillars[]{ title, description, iconKey },
+  timelineTitle,
+  timelineSubtitle,
+  timelineWeekLabelPrefix,
+  ${seoFragment}
 }`;
 var eventsLandingQuery = `*[_id == "eventsLandingPage"][0]{
   heroTitlePortable,
@@ -600,7 +607,7 @@ var programDetailFields = `
     "imageSrc": image.asset->url
   },
   pillarsTitle,
-  pillars[]{ title, description },
+  pillars[]{ title, description, iconKey },
   timelineTitle,
   timelineSubtitle,
   pricingBadge,
