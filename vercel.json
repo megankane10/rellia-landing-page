@@ -21,6 +21,21 @@
       "permanent": true
     },
     {
+      "source": "/diagnostics",
+      "destination": "/startup-diagnostic",
+      "permanent": true
+    },
+    {
+      "source": "/survey",
+      "destination": "/diagnostic-survey",
+      "permanent": true
+    },
+    {
+      "source": "/policy",
+      "destination": "/privacy",
+      "permanent": true
+    },
+    {
       "source": "/stories/website-launch",
       "destination": "/stories/a-clearer-path-for-digital-health-founders",
       "permanent": true
@@ -88,7 +103,7 @@
       "destination": "/api?__path=$1"
     },
     {
-      "source": "/((?!api/)(?!_vercel/)(?!assets/)(?!images/)(?!videos/)(?!favicon\\.ico$)(?!robots\\.txt$)(?!sitemap\\.xml$)(?!llms\\.txt$)(?!placeholder\\.svg$).*)",
+      "source": "/(.*)",
       "destination": "/index.html"
     }
   ]

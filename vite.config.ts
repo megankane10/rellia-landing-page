@@ -1,9 +1,14 @@
 import { defineConfig, Plugin } from "vite";
-import react from "@vitejs/plugin-react-swc";
+import react from "@vitejs/plugin-react";
 import path from "path";
 import { vitePrerenderPlugin } from "vite-prerender-plugin";
 import { createServer } from "./server";
-import { PRERENDER_PATHS, SHOWCASE_PRERENDER_PATHS } from "./client/config/seo";
+import {
+  AUTH_SHELL_PRERENDER_PATHS,
+  isClientOnlyAuthPath,
+  PRERENDER_PATHS,
+  SHOWCASE_PRERENDER_PATHS,
+} from "./client/config/seo";
 import {
   fetchAdvisorProfilePathsForPrerender,
   fetchAlumniProfilePathsForPrerender,
@@ -62,12 +67,15 @@ const buildPrerenderRoutes = async (): Promise<string[]> => {
       slugs.map((slug) => `/events/${slug}`),
     ),
     fetchCmsPageSlugsForPrerender().then((slugs) =>
-      slugs.map((slug) => `/${slug}`),
+      slugs
+        .filter((slug) => !isClientOnlyAuthPath(`/${slug}`))
+        .map((slug) => `/${slug}`),
     ),
   ])
   return [
     ...new Set([
       ...PRERENDER_PATHS,
+      ...AUTH_SHELL_PRERENDER_PATHS,
       ...SHOWCASE_PRERENDER_PATHS,
       ...cmsStoryPaths,
       ...cmsProgramPaths,
