@@ -15,7 +15,8 @@ export const sectionHero = defineType({
     defineField({
       name: 'badge',
       type: 'string',
-      description: 'Optional pill/badge above the headline.',
+      title: 'Section tag',
+      description: 'Optional eyebrow pill above the headline (matches site hero / “Network impact” styling).',
     }),
     defineField({name: 'headline', type: 'portableRichText', validation: (Rule) => Rule.required()}),
     defineField({name: 'subheadline', type: 'portableRichText'}),

@@ -1,4 +1,6 @@
 import {defineArrayMember, defineField, defineType} from 'sanity'
+import {portableHeadlineField} from '../shared/inlineHeroHeadlineField'
+import {showBadgeField} from '../shared/sectionAppearanceFields'
 import {internalLabelField, sectionListPreview} from '../shared/sectionPreview'
 
 /** Membership-style numbered timeline — same component as /apply. */
@@ -8,12 +10,17 @@ export const sectionJourneyTimeline = defineType({
   type: 'object',
   fields: [
     defineField(internalLabelField),
-    defineField({name: 'badge', type: 'string', title: 'Eyebrow badge'}),
+    showBadgeField,
     defineField({
-      name: 'headingTitle',
-      title: 'Heading',
+      name: 'badge',
+      title: 'Section tag',
       type: 'string',
-      validation: (Rule) => Rule.required(),
+      hidden: ({parent}) => parent?.showBadge === false,
+    }),
+    portableHeadlineField({
+      name: 'headlinePortable',
+      title: 'Section heading',
+      required: true,
     }),
     defineField({
       name: 'subheading',

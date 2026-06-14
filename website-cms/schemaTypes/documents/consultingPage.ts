@@ -1,5 +1,5 @@
 import {defineArrayMember, defineField, defineType} from 'sanity'
-import {CONTENT_SEO_FIELDSETS, singletonSeoField} from '../shared/singletonContentFields'
+import {CONTENT_SEO_FIELDSETS, GROUP_MODULAR_SECTIONS, modularSectionsField, singletonSeoField} from '../shared/singletonContentFields'
 import {GROUP_SEO} from '../shared/fieldGroups'
 import {studioListMedia} from '../shared/studioListMedia'
 import {networkHeroFields} from '../shared/networkPageFields'
@@ -16,7 +16,7 @@ export const consultingPage = defineType({
   name: 'consultingPage',
   title: 'Consulting page (/consulting)',
   type: 'document',
-  groups: [GROUP_HERO, GROUP_FIT, GROUP_SERVICES, GROUP_TESTIMONIALS, GROUP_MEMBERSHIP, GROUP_CTA, GROUP_SEO],
+  groups: [GROUP_HERO, GROUP_FIT, GROUP_SERVICES, GROUP_TESTIMONIALS, GROUP_MEMBERSHIP, GROUP_CTA, GROUP_MODULAR_SECTIONS, GROUP_SEO],
   fieldsets: CONTENT_SEO_FIELDSETS,
   fields: [
     defineField({name: 'title', type: 'string', initialValue: 'Consulting', group: 'hero'}),
@@ -163,6 +163,10 @@ export const consultingPage = defineType({
     }),
     defineField({name: 'ctaSecondaryLabel', title: 'Secondary CTA label', type: 'string', group: 'cta'}),
     defineField({name: 'ctaSecondaryHref', title: 'Secondary CTA link', type: 'string', group: 'cta'}),
+    modularSectionsField({
+      description:
+        'Optional modular blocks rendered on /consulting after the membership section and before the footer CTA band.',
+    }),
     singletonSeoField,
   ],
   preview: {

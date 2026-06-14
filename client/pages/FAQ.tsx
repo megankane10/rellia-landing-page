@@ -77,14 +77,14 @@ export default function FAQ() {
                               "[&>span:first-child]:line-clamp-2 [&>span:first-child]:leading-snug",
                             ].join(" ")}
                           >
-                            {item.question}
+                            {cmsDisplayText(item.question)}
                           </AccordionTrigger>
                           <AccordionContent
                             className={[
                               "pb-5 text-black/70 font-urbanist text-sm md:text-base leading-relaxed",
                             ].join(" ")}
                           >
-                            {item.answer}
+                            {cmsDisplayText(item.answer)}
                           </AccordionContent>
                         </AccordionItem>
                       ))}
@@ -97,16 +97,16 @@ export default function FAQ() {
                 <ScrollReveal>
                   <div className="lg:sticky lg:top-28">
                     <h3 className="font-host-grotesk font-semibold text-black text-lg md:text-xl tracking-tight mb-2.5">
-                      {faq.sidebarTitle}
+                      {cmsDisplayText(faq.sidebarTitle)}
                     </h3>
                     <p className="font-urbanist text-black/60 text-sm leading-relaxed mb-4">
-                      {faq.sidebarBody}
+                      {cmsDisplayText(faq.sidebarBody)}
                     </p>
                     <Link
                       to={faq.sidebarCtaPath}
                       className="inline-flex items-center gap-2 font-host-grotesk text-sm font-semibold text-rellia-teal hover:underline hover:underline-offset-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-white"
                     >
-                      {faq.sidebarCtaLabel}
+                      {cmsDisplayText(faq.sidebarCtaLabel)}
                       <ArrowRight className="h-4 w-4" aria-hidden />
                     </Link>
                   </div>

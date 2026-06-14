@@ -127,6 +127,13 @@ const studioGuideDoc = {
       body:
         "When creating or updating Program documents, you can customize program pricing modules without code. Navigate to the Detail page tab group on the program schema:\n\n• Fill in the Price (sale) field (e.g. $1,500) and sub-amount details.\n• Toggle on Show strikethrough compare price and enter a compare amount to highlight a discount (e.g., compare price $2,000).\n• Add descriptive bullet items to the pricing details list to summarize what is included in the program purchase.",
     },
+    {
+      _type: "guideSection",
+      _key: "diagnostic_matches",
+      heading: "5. Startup diagnostic — program & advisor matches",
+      body:
+        "After a founder completes the startup diagnostic survey, the report shows program matches and advisor matches automatically — you do not assign these by hand in Studio.\n\nProgram matches: the report reads the founder’s three lowest-scoring survey areas and maps each area to a recommended Rellia program (for example, regulatory gaps → Regulatory Roadmap). That mapping lives in the website code.\n\nAdvisor matches: the report compares those weak areas to advisor profiles under People → Advisors. Advisors whose focus or industries align are suggested (up to three names).\n\nWhat you can edit: survey intro and report headings in Diagnostic Survey Page; advisor names, focus areas, and bios in People → Advisors; program titles, descriptions, and URLs in Collections → Programs.\n\nWhat needs engineering: scoring weights, the domain-to-program mapping, and matching rules.",
+    },
   ],
 }
 

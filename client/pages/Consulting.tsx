@@ -3,6 +3,7 @@ import Footer from "@/components/Footer"
 import SectionHeading from "@/components/SectionHeading"
 import RelliaAction from "@/components/RelliaAction"
 import RelliaCta from "@/components/RelliaCta"
+import { SectionsRenderer } from "@/components/cms/PageRenderer"
 import ScrollReveal from "@/components/ScrollReveal"
 import ProgramTrustedMembersSection from "@/components/program/ProgramTrustedMembersSection"
 import { useConsultingPage } from "@/hooks/useCmsDocuments"
@@ -21,6 +22,7 @@ import {
 } from "lucide-react"
 import { resolveLucideIcon } from "@/lib/resolveLucideIcon"
 import { Link } from "react-router-dom"
+import { cmsDisplayText } from "@/lib/cmsStega"
 import { LightSection, Reveal, RoleHero } from "./network/_shared"
 
 function FitSectionSplit({ content }: { content: ConsultingPageContent }) {
@@ -30,8 +32,8 @@ function FitSectionSplit({ content }: { content: ConsultingPageContent }) {
         <div>
           <SectionHeading
             animated={false}
-            title={content.fitTitle ?? DEFAULT_CONSULTING_PAGE.fitTitle!}
-            description={content.fitDescription ?? DEFAULT_CONSULTING_PAGE.fitDescription}
+            title={cmsDisplayText(content.fitTitle ?? DEFAULT_CONSULTING_PAGE.fitTitle!)}
+            description={cmsDisplayText(content.fitDescription ?? DEFAULT_CONSULTING_PAGE.fitDescription)}
             className="mt-5"
           />
           <ul className="mt-10 max-w-3xl space-y-4" role="list">
@@ -39,7 +41,7 @@ function FitSectionSplit({ content }: { content: ConsultingPageContent }) {
               <Reveal key={`${line.slice(0, 32)}-${idx}`} delay={0.04 * idx}>
                 <li className="flex gap-3 font-urbanist text-base leading-relaxed text-black/80 md:text-[17px]">
                   <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-rellia-teal" aria-hidden />
-                  {line}
+                  {cmsDisplayText(line)}
                 </li>
               </Reveal>
             ))}
@@ -81,10 +83,10 @@ function ServicesGridSection({ content }: { content: ConsultingPageContent }) {
       <div className="relative z-10 mx-auto max-w-[1300px]">
         <ScrollReveal>
           <h2 className="mt-5 font-host-grotesk text-2xl font-semibold leading-tight tracking-tight text-rellia-teal md:text-[32px]">
-            {content.servicesTitle ?? DEFAULT_CONSULTING_PAGE.servicesTitle}
+            {cmsDisplayText(content.servicesTitle ?? DEFAULT_CONSULTING_PAGE.servicesTitle)}
           </h2>
           <p className="mt-4 max-w-2xl font-urbanist text-base font-medium leading-relaxed text-black/80 md:text-lg">
-            {content.servicesSubtitle ?? DEFAULT_CONSULTING_PAGE.servicesSubtitle}
+            {cmsDisplayText(content.servicesSubtitle ?? DEFAULT_CONSULTING_PAGE.servicesSubtitle)}
           </p>
         </ScrollReveal>
 
@@ -99,10 +101,10 @@ function ServicesGridSection({ content }: { content: ConsultingPageContent }) {
                   className="group flex min-h-[240px] cursor-pointer flex-col rounded-2xl border border-black/10 bg-gradient-to-br from-rellia-teal to-[#144853] p-8 transition duration-300 hover:from-[#113f4a] hover:to-[#0f3842] hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-teal focus-visible:ring-offset-2 focus-visible:ring-offset-white"
                 >
                   <Icon className="h-8 w-8 text-rellia-mint transition-transform duration-300 group-hover:scale-105" aria-hidden />
-                  <h3 className="mt-5 font-host-grotesk text-xl font-semibold tracking-tight text-white">{card.title}</h3>
-                  <p className="mt-4 flex-1 font-urbanist text-sm leading-relaxed text-white/80">{card.body}</p>
+                  <h3 className="mt-5 font-host-grotesk text-xl font-semibold tracking-tight text-white">{cmsDisplayText(card.title)}</h3>
+                  <p className="mt-4 flex-1 font-urbanist text-sm leading-relaxed text-white/80">{cmsDisplayText(card.body)}</p>
                   <span className="mt-6 inline-flex items-center gap-2 font-host-grotesk text-sm font-semibold text-rellia-mint">
-                    {card.ctaLabel ?? "Learn more"}
+                    {cmsDisplayText(card.ctaLabel ?? "Learn more")}
                     <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" aria-hidden />
                   </span>
                 </Link>
@@ -125,7 +127,7 @@ function ConsultingFallback({ content }: { content: ConsultingPageContent }) {
       <main id="main-content">
         <div className="lg:flex lg:h-[82vh] lg:flex-col">
           <RoleHero
-            eyebrowLabel={content.heroEyebrow ?? DEFAULT_CONSULTING_PAGE.heroEyebrow}
+            eyebrowLabel={cmsDisplayText(content.heroEyebrow ?? DEFAULT_CONSULTING_PAGE.heroEyebrow)}
             imageSrc={content.heroImageSrc ?? DEFAULT_CONSULTING_PAGE.heroImageSrc}
             className="lg:flex-1"
             title={
@@ -134,13 +136,13 @@ function ConsultingFallback({ content }: { content: ConsultingPageContent }) {
                 fallback={DEFAULT_CONSULTING_PAGE.heroTitlePortable!}
               />
             }
-            subtitle={content.heroSubtitle ?? DEFAULT_CONSULTING_PAGE.heroSubtitle}
+            subtitle={cmsDisplayText(content.heroSubtitle ?? DEFAULT_CONSULTING_PAGE.heroSubtitle)}
             primaryCta={{
-              label: content.heroPrimaryCtaLabel ?? DEFAULT_CONSULTING_PAGE.heroPrimaryCtaLabel!,
+              label: cmsDisplayText(content.heroPrimaryCtaLabel ?? DEFAULT_CONSULTING_PAGE.heroPrimaryCtaLabel!),
               to: content.heroPrimaryCtaHref ?? DEFAULT_CONSULTING_PAGE.heroPrimaryCtaHref!,
             }}
             secondaryCta={{
-              label: content.heroSecondaryCtaLabel ?? DEFAULT_CONSULTING_PAGE.heroSecondaryCtaLabel!,
+              label: cmsDisplayText(content.heroSecondaryCtaLabel ?? DEFAULT_CONSULTING_PAGE.heroSecondaryCtaLabel!),
               to: content.heroSecondaryCtaHref ?? DEFAULT_CONSULTING_PAGE.heroSecondaryCtaHref!,
             }}
           />
@@ -149,7 +151,7 @@ function ConsultingFallback({ content }: { content: ConsultingPageContent }) {
         <FitSectionSplit content={content} />
         <ServicesGridSection content={content} />
         <ProgramTrustedMembersSection
-          title={content.testimonialsTitle ?? DEFAULT_CONSULTING_PAGE.testimonialsTitle}
+          title={cmsDisplayText(content.testimonialsTitle ?? DEFAULT_CONSULTING_PAGE.testimonialsTitle)}
           testimonials={content.testimonials ?? DEFAULT_CONSULTING_PAGE.testimonials}
         />
 
@@ -159,8 +161,8 @@ function ConsultingFallback({ content }: { content: ConsultingPageContent }) {
               <ScrollReveal>
                 <SectionHeading
                   animated={false}
-                  title={content.membershipTitle ?? DEFAULT_CONSULTING_PAGE.membershipTitle!}
-                  description={content.membershipDescription ?? DEFAULT_CONSULTING_PAGE.membershipDescription}
+                  title={cmsDisplayText(content.membershipTitle ?? DEFAULT_CONSULTING_PAGE.membershipTitle!)}
+                  description={cmsDisplayText(content.membershipDescription ?? DEFAULT_CONSULTING_PAGE.membershipDescription)}
                   className="mt-5"
                 />
                 <div className="mt-10 flex flex-col gap-4 sm:flex-row sm:items-center">
@@ -169,7 +171,7 @@ function ConsultingFallback({ content }: { content: ConsultingPageContent }) {
                       to={content.membershipPrimaryCtaHref ?? DEFAULT_CONSULTING_PAGE.membershipPrimaryCtaHref!}
                       className="inline-flex cursor-pointer items-center justify-center"
                     >
-                      {content.membershipPrimaryCtaLabel ?? DEFAULT_CONSULTING_PAGE.membershipPrimaryCtaLabel}
+                      {cmsDisplayText(content.membershipPrimaryCtaLabel ?? DEFAULT_CONSULTING_PAGE.membershipPrimaryCtaLabel)}
                     </Link>
                   </RelliaAction>
                   <RelliaAction
@@ -182,7 +184,7 @@ function ConsultingFallback({ content }: { content: ConsultingPageContent }) {
                       to={content.membershipSecondaryCtaHref ?? DEFAULT_CONSULTING_PAGE.membershipSecondaryCtaHref!}
                       className="inline-flex cursor-pointer items-center justify-center"
                     >
-                      {content.membershipSecondaryCtaLabel ?? DEFAULT_CONSULTING_PAGE.membershipSecondaryCtaLabel}
+                      {cmsDisplayText(content.membershipSecondaryCtaLabel ?? DEFAULT_CONSULTING_PAGE.membershipSecondaryCtaLabel)}
                     </Link>
                   </RelliaAction>
                 </div>
@@ -202,17 +204,17 @@ function ConsultingFallback({ content }: { content: ConsultingPageContent }) {
                         key={row.label}
                         className="flex items-center justify-between gap-4 rounded-2xl border border-black/10 bg-white/80 px-5 py-4 backdrop-blur-sm"
                       >
-                        <p className="font-urbanist text-sm font-medium text-black/60">{row.label}</p>
-                        <p className="font-host-grotesk text-base font-semibold text-rellia-teal">{row.value}</p>
+                        <p className="font-urbanist text-sm font-medium text-black/60">{cmsDisplayText(row.label)}</p>
+                        <p className="font-host-grotesk text-base font-semibold text-rellia-teal">{cmsDisplayText(row.value)}</p>
                       </div>
                     ))}
 
                     <div className="mt-2 rounded-2xl bg-rellia-teal px-5 py-4 text-white shadow-sm">
                       <p className="font-host-grotesk text-sm font-semibold uppercase tracking-[0.14em] text-rellia-mint">
-                        {content.membershipSavingsTitle ?? DEFAULT_CONSULTING_PAGE.membershipSavingsTitle}
+                        {cmsDisplayText(content.membershipSavingsTitle ?? DEFAULT_CONSULTING_PAGE.membershipSavingsTitle)}
                       </p>
                       <p className="mt-2 font-urbanist text-sm leading-relaxed text-white/85">
-                        {content.membershipSavingsBody ?? DEFAULT_CONSULTING_PAGE.membershipSavingsBody}
+                        {cmsDisplayText(content.membershipSavingsBody ?? DEFAULT_CONSULTING_PAGE.membershipSavingsBody)}
                       </p>
                     </div>
                   </div>
@@ -222,18 +224,20 @@ function ConsultingFallback({ content }: { content: ConsultingPageContent }) {
           </div>
         </LightSection>
 
+        {content.sections?.length ? <SectionsRenderer sections={content.sections} /> : null}
+
         <div className="bg-rellia-cream/20">
           <RelliaCta
-            title={content.ctaTitle ?? DEFAULT_CONSULTING_PAGE.ctaTitle!}
-            body={content.ctaBody ?? DEFAULT_CONSULTING_PAGE.ctaBody}
+            title={cmsDisplayText(content.ctaTitle ?? DEFAULT_CONSULTING_PAGE.ctaTitle!)}
+            body={cmsDisplayText(content.ctaBody ?? DEFAULT_CONSULTING_PAGE.ctaBody)}
             primary={{
-              label: content.ctaPrimaryLabel ?? DEFAULT_CONSULTING_PAGE.ctaPrimaryLabel!,
+              label: cmsDisplayText(content.ctaPrimaryLabel ?? DEFAULT_CONSULTING_PAGE.ctaPrimaryLabel!),
               to: content.ctaPrimaryHref ?? DEFAULT_CONSULTING_PAGE.ctaPrimaryHref!,
             }}
             secondary={
               content.ctaSecondaryLabel && content.ctaSecondaryHref
                 ? {
-                    label: content.ctaSecondaryLabel,
+                    label: cmsDisplayText(content.ctaSecondaryLabel),
                     to: content.ctaSecondaryHref,
                   }
                 : undefined

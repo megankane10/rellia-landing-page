@@ -11,6 +11,7 @@ import {
   resolveMetricsHeadlinePortable,
   resolveWelcomeSplashHeadingPortable,
 } from "./resolveHeroHeadline"
+import { resolveSectionHeadlinePortable } from "./resolveSectionHeadline"
 import { hasCmsString, pickCmsString } from "./cmsFieldUtils"
 import {
   getPaymentPagePanelDescriptionText,
@@ -1649,8 +1650,12 @@ export const DEFAULT_ABOUT_PAGE: AboutPageContent = {
   missionImageSrc:
     "https://images.pexels.com/photos/8460371/pexels-photo-8460371.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=1200",
   missionImageAlt: "Healthcare professionals meeting and collaborating together",
-  valuesTitle: "Values",
-  valuesSubtitle: "These principles guide every decision we make.",
+  valuesTag: "OUR VALUES",
+  showValuesTag: true,
+  valuesHeadlinePortable: twoPartHeroHeadline(
+    "These principles guide",
+    "every decision we make.",
+  ),
   values: [
     {
       iconKey: "heart",
@@ -2705,6 +2710,22 @@ export function mergeAboutPage(partial: Partial<AboutPageContent> | null | undef
   if (!Array.isArray(base.heroTitlePortable) || base.heroTitlePortable.length === 0) {
     base.heroTitlePortable = DEFAULT_ABOUT_PAGE.heroTitlePortable
   }
+  const legacyValues = p as Partial<AboutPageContent> & {
+    valuesTitle?: string
+    valuesSubtitle?: string
+  }
+  if (!hasCmsString(base.valuesTag)) {
+    base.valuesTag = legacyValues.valuesTitle?.trim() || DEFAULT_ABOUT_PAGE.valuesTag
+  }
+  if (base.showValuesTag == null) base.showValuesTag = true
+  base.valuesHeadlinePortable =
+    resolveSectionHeadlinePortable(
+      {
+        headlinePortable: p.valuesHeadlinePortable,
+        title: legacyValues.valuesSubtitle ?? legacyValues.valuesTitle,
+      },
+      DEFAULT_ABOUT_PAGE.valuesHeadlinePortable,
+    ) ?? DEFAULT_ABOUT_PAGE.valuesHeadlinePortable
   if (!base.ctaFounderHref?.trim()) base.ctaFounderHref = DEFAULT_ABOUT_PAGE.ctaFounderHref
   if (!base.ctaTeamHref?.trim()) base.ctaTeamHref = DEFAULT_ABOUT_PAGE.ctaTeamHref
   return base
@@ -3005,8 +3026,6 @@ export const DEFAULT_CONSULTING_PAGE: ConsultingPageContent = {
   title: "Consulting",
   heroEyebrow: "Consulting",
   heroTitlePortable: twoPartHeroHeadline("Founder consulting", "built for healthcare reality"),
-  heroTitle: "Founder consulting",
-  heroAccentPhrase: "built for healthcare reality",
   heroSubtitle:
     "One-to-one and small-team working sessions when you need depth beyond community rhythm—regulatory, clinical, commercial, and narrative—with specialists who have shipped in health tech.",
   heroImageSrc:
@@ -3081,8 +3100,6 @@ export const DEFAULT_DIAGNOSTIC_LANDING_PAGE: DiagnosticLandingPageContent = {
   title: "Startup Diagnostic",
   heroBadgeLabel: "LAUNCH READINESS",
   heroTitlePortable: twoPartHeroHeadline("Pressure-test your startup for", "healthcare reality."),
-  heroTitle: "Pressure-test your startup for",
-  heroAccentPhrase: "healthcare reality.",
   heroSubtitle:
     "Get an instant readiness score, surface hidden blockers across 12 domains, and unlock advisor matching when you join Rellia.",
   heroImageSrc:
@@ -3199,8 +3216,6 @@ export function mergeConsultingPage(
   ;(
     [
       "heroEyebrow",
-      "heroTitle",
-      "heroAccentPhrase",
       "heroSubtitle",
       "heroPrimaryCtaLabel",
       "heroPrimaryCtaHref",
@@ -3263,8 +3278,6 @@ export function mergeDiagnosticLandingPage(
   ;(
     [
       "heroBadgeLabel",
-      "heroTitle",
-      "heroAccentPhrase",
       "heroSubtitle",
       "heroPrimaryCtaLabel",
       "heroPrimaryCtaHref",

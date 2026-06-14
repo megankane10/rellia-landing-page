@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
 import RelliaCta from "@/components/RelliaCta"
+import { SectionsRenderer } from "@/components/cms/PageRenderer"
 import { cn } from "@/lib/utils"
 import {
   motion,
@@ -434,6 +435,10 @@ export default function FoundersDirectory() {
             ) : null}
           </div>
         </section>
+
+        {alumniDirectory.sections?.length ? (
+          <SectionsRenderer sections={alumniDirectory.sections} />
+        ) : null}
 
         <RelliaCta
           title={alumniDirectory.directoryCtaTitle ?? "Ready to build your network?"}

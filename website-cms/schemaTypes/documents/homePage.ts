@@ -1,6 +1,8 @@
 import { defineField, defineType } from 'sanity'
 import {
   CONTENT_SEO_FIELDSETS,
+  GROUP_MODULAR_SECTIONS,
+  modularSectionsField,
   singletonSeoField,
 } from '../shared/singletonContentFields'
 import { GROUP_SEO } from '../shared/fieldGroups'
@@ -17,6 +19,7 @@ const GROUP_WHY = { name: 'why', title: '4 · Feature cards (image panels)' }
 const GROUP_HOW = { name: 'howItWorks', title: '5 · Focus areas (teal band)' }
 const GROUP_TESTIMONIALS = { name: 'testimonials', title: '6 · Testimonials' }
 const GROUP_CTA = { name: 'cta', title: '7 · Bottom CTA' }
+const GROUP_MODULAR = { ...GROUP_MODULAR_SECTIONS, title: '8 · Modular sections' }
 export const homePage = defineType({
   name: 'homePage',
   title: 'Home page',
@@ -29,6 +32,7 @@ export const homePage = defineType({
     GROUP_HOW,
     GROUP_TESTIMONIALS,
     GROUP_CTA,
+    GROUP_MODULAR,
     GROUP_SEO,
   ],
   fieldsets: CONTENT_SEO_FIELDSETS,
@@ -299,6 +303,11 @@ export const homePage = defineType({
       title: 'Secondary button link',
       type: 'string',
       group: 'cta',
+    }),
+    modularSectionsField({
+      group: GROUP_MODULAR.name,
+      description:
+        'Optional modular blocks rendered on the home page after Featured Stories and before the footer CTA band.',
     }),
     singletonSeoField,
   ],

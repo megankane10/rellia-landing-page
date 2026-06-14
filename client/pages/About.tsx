@@ -14,26 +14,9 @@ import { DEFAULT_ABOUT_PAGE } from "@shared/cms/defaults";
 import { HeroHeadlinePortable } from "@/components/HeroHeadlinePortable"
 import { relliaTealGlassCardClass } from "@/lib/relliaTealGlassCard";
 import { cn } from "@/lib/utils";
-import { cmsCleanText, cmsDisplayText, isVisualEditingPreview } from "@/lib/cmsStega";
+import { cmsCleanText, cmsDisplayText } from "@/lib/cmsStega";
 import { useRef, useState, useEffect } from "react";
 import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
-
-const accentLastWords = (text: string, wordCount = 3) => {
-  if (isVisualEditingPreview()) return cmsDisplayText(text)
-  const raw = cmsCleanText(text)
-  if (!raw) return null
-  const words = raw.split(/\s+/).filter(Boolean)
-  if (words.length <= wordCount + 1) return raw
-
-  const head = words.slice(0, -wordCount).join(" ")
-  const tail = words.slice(-wordCount).join(" ")
-
-  return (
-    <>
-      {head} <span className="text-rellia-mint">{tail}</span>
-    </>
-  )
-}
 
 export default function About() {
   const { data } = useAboutPage();
@@ -125,11 +108,16 @@ export default function About() {
             <div className="relative z-10 mx-auto flex min-h-[inherit] w-full max-w-[1300px] flex-1 flex-col px-6 pt-14 pb-8 md:px-10 md:pt-20 md:pb-10 lg:pt-24 lg:pb-12">
               <ScrollReveal>
                 <div className="space-y-5 md:space-y-6">
-                  <PillTag label="OUR VALUES" className={PILL_ON_IMAGE_BLUR_CLASS} />
+                  {about.showValuesTag !== false && about.valuesTag ? (
+                    <PillTag
+                      label={cmsDisplayText(about.valuesTag)}
+                      className={PILL_ON_IMAGE_BLUR_CLASS}
+                    />
+                  ) : null}
                   <h2
                     className={`font-host-grotesk font-bold leading-tight tracking-tight text-white max-w-4xl ${PAGE_HEADER_TITLE_SIZE_CLASS}`}
                   >
-                    {accentLastWords(about.valuesSubtitle, 4)}
+                    <HeroHeadlinePortable value={about.valuesHeadlinePortable} />
                   </h2>
                 </div>
               </ScrollReveal>

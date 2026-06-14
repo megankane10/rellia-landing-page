@@ -4,9 +4,12 @@ import {imageUploadField, imageUrlFallbackField} from './imageFields'
 import {portableHeadlineField} from './inlineHeroHeadlineField'
 import {iconKeyField} from './iconKeyField'
 
+import {GROUP_MODULAR_SECTIONS} from './singletonContentFields'
+
 export const NETWORK_PAGE_GROUPS = [
   {name: 'hero', title: 'Hero', default: true},
   {name: 'content', title: 'Page sections'},
+  GROUP_MODULAR_SECTIONS,
   GROUP_SEO,
 ]
 

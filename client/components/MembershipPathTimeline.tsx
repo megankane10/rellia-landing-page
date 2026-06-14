@@ -5,6 +5,7 @@ import { ArrowRight } from "lucide-react"
 import { motion, useInView, useReducedMotion } from "framer-motion"
 import NetworkEyebrow from "@/components/network/NetworkEyebrow"
 import { cn } from "@/lib/utils"
+import { cmsDisplayText } from "@/lib/cmsStega"
 
 export type MembershipPathStep = {
   title: string
@@ -160,16 +161,16 @@ const MembershipPathTimeline = ({
             )}
           >
             {badge?.trim() ? (
-              <NetworkEyebrow label={badge.trim()} tone="onLight" className="mb-4 md:mb-5" />
+              <NetworkEyebrow label={cmsDisplayText(badge)} tone="onLight" className="mb-4 md:mb-5" />
             ) : null}
             <h1
               id={headingId}
               className="font-host-grotesk text-3xl font-semibold leading-tight tracking-tight text-rellia-teal md:text-4xl lg:text-[2.75rem]"
             >
-              {headingTitle}
+              {typeof headingTitle === "string" ? cmsDisplayText(headingTitle) : headingTitle}
             </h1>
             <p className="mt-4 font-urbanist text-base leading-relaxed text-black/70 md:text-lg md:leading-relaxed">
-              {subheading}
+              {cmsDisplayText(subheading)}
             </p>
             {headingFooter ? (
               <div className="mt-6 flex w-full justify-start md:mt-8">{headingFooter}</div>
@@ -217,10 +218,10 @@ const MembershipPathTimeline = ({
                   </motion.span>
                   <div className="min-w-0 flex-1 pt-0.5 text-left">
                     <h3 className="font-host-grotesk text-base font-semibold leading-snug text-black sm:text-lg">
-                      {step.title}
+                      {cmsDisplayText(step.title)}
                     </h3>
                     <p className="mt-1.5 font-urbanist text-sm leading-relaxed text-black/70">
-                      {step.description}
+                      {cmsDisplayText(step.description)}
                     </p>
                   </div>
                 </motion.li>
@@ -274,10 +275,10 @@ const MembershipPathTimeline = ({
                     {index + 1}
                   </motion.span>
                   <h3 className="mt-5 w-full font-host-grotesk text-base font-semibold leading-snug text-black xl:text-lg">
-                    {step.title}
+                    {cmsDisplayText(step.title)}
                   </h3>
                   <p className="mt-2 w-full font-urbanist text-sm leading-relaxed text-black/70">
-                    {step.description}
+                    {cmsDisplayText(step.description)}
                   </p>
                 </motion.div>
               ))}
@@ -321,10 +322,10 @@ const MembershipPathTimeline = ({
                     {index + 1}
                   </motion.span>
                   <h3 className="mt-5 w-full font-host-grotesk text-base font-semibold leading-snug text-black xl:text-lg">
-                    {step.title}
+                    {cmsDisplayText(step.title)}
                   </h3>
                   <p className="mt-2 w-full font-urbanist text-sm leading-relaxed text-black/70">
-                    {step.description}
+                    {cmsDisplayText(step.description)}
                   </p>
                 </motion.div>
               ))}
@@ -362,10 +363,10 @@ const MembershipPathTimeline = ({
                   )}
                 >
                   <span className="font-host-grotesk text-base font-semibold text-black group-hover:text-rellia-teal md:text-lg">
-                    {role.title}
+                    {cmsDisplayText(role.title)}
                   </span>
                   <span className="mt-2 flex-1 font-urbanist text-sm leading-relaxed text-black/65 md:mt-2">
-                    {role.description}
+                    {cmsDisplayText(role.description)}
                   </span>
                   <span className="mt-3 inline-flex items-center gap-1.5 font-urbanist text-sm font-semibold text-rellia-teal md:mt-4">
                     View page

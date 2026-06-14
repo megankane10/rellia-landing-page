@@ -9,6 +9,7 @@ import HowItWorks from "@/components/HowItWorks";
 import TestimonialsSection from "@/components/TestimonialsSection";
 import FeaturedStories from "@/components/FeaturedStories";
 import RelliaCta from "@/components/RelliaCta";
+import { SectionsRenderer } from "@/components/cms/PageRenderer";
 import Footer from "@/components/Footer";
 import { useHomePage } from "@/hooks/useCmsDocuments";
 import { DEFAULT_HOME_PAGE } from "@shared/cms/defaults";
@@ -17,6 +18,7 @@ import { clampMetaDescription, clampMetaTitle, getSeoForPathname } from "@/confi
 import { resolveLucideIcon } from "@/lib/resolveLucideIcon"
 import { resolveLogoMarqueeMarks } from "@/lib/resolveLogoMarqueeMarks"
 import { PORTFOLIO_LOGO_MARKS } from "@/data/portfolioLogos"
+import { cmsDisplayText } from "@/lib/cmsStega"
 
 export default function Index() {
   const { data } = useHomePage();
@@ -50,8 +52,8 @@ export default function Index() {
         <PathsSection />
 
         <WhyRellia
-          sectionTitle={home.whySectionTitle ?? "Why Rellia?"}
-          sectionDescription={home.whySectionDescription}
+          sectionTitle={cmsDisplayText(home.whySectionTitle ?? "Why Rellia?")}
+          sectionDescription={cmsDisplayText(home.whySectionDescription)}
           features={home.whyFeatures}
         />
 
@@ -68,6 +70,7 @@ export default function Index() {
           logoMarqueeMarks={logoMarqueeMarks}
         />
         <FeaturedStories />
+        {home.sections?.length ? <SectionsRenderer sections={home.sections} /> : null}
         <RelliaCta
           aboveSectionTone="white"
           title={home.ctaTitle}

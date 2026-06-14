@@ -6,6 +6,7 @@ import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carouse
 import { motion } from "framer-motion"
 
 import { type TrustedMemberTestimonial } from "@shared/cms/types"
+import { cmsDisplayText } from "@/lib/cmsStega"
 
 const DEFAULT_TESTIMONIALS: TrustedMemberTestimonial[] = [
   {
@@ -97,7 +98,7 @@ export default function ProgramTrustedMembersSection({
       <div className="relative z-10 mx-auto max-w-[1300px]">
         <ScrollReveal>
           <h2 className="mb-14 text-center font-host-grotesk text-2xl font-semibold leading-tight tracking-tight text-rellia-teal md:text-[32px]">
-            {title}
+            {cmsDisplayText(title)}
           </h2>
         </ScrollReveal>
 
@@ -116,7 +117,7 @@ export default function ProgramTrustedMembersSection({
                         "w-full font-host-grotesk font-medium leading-[1.3] tracking-tight text-white",
                         getQuoteFontSizeClass(t.quote)
                       )}>
-                        &ldquo;{t.quote}&rdquo;
+                        &ldquo;{cmsDisplayText(t.quote)}&rdquo;
                       </p>
                     </div>
 
@@ -127,10 +128,10 @@ export default function ProgramTrustedMembersSection({
                         </div>
                         <div className="flex min-w-0 flex-col items-start">
                           <h4 className="font-host-grotesk text-base font-semibold leading-tight text-rellia-mint md:text-lg">
-                            {t.name}
+                            {cmsDisplayText(t.name)}
                           </h4>
                           <p className="mt-0.5 font-urbanist text-xs font-normal text-white md:text-sm">
-                            {t.role} &bull; {t.company}
+                            {cmsDisplayText(t.role)} &bull; {cmsDisplayText(t.company)}
                           </p>
                         </div>
                       </div>

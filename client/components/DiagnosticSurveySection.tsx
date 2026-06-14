@@ -23,6 +23,7 @@ import RelliaAction from "@/components/RelliaAction"
 import { Reveal } from "@/pages/network/_shared"
 import { useDiagnosticSurveyContent } from "@/hooks/useCmsDocuments"
 import { mergeDiagnosticSurveySections } from "@/lib/mergeDiagnosticSurvey"
+import { cmsDisplayText } from "@/lib/cmsStega"
 
 const fallbackIcons: Record<string, any> = {
   product_design: Palette,
@@ -143,9 +144,9 @@ export function DiagnosticSurveySection() {
                     >
                       <CurrentIcon className="h-8 w-8 text-rellia-teal shrink-0" />
                       <div className="min-w-0 flex-1">
-                        <h4 className="font-host-grotesk text-lg md:text-xl font-bold text-black">{currentItem.title}</h4>
+                        <h4 className="font-host-grotesk text-lg md:text-xl font-bold text-black">{cmsDisplayText(currentItem.title)}</h4>
                         <p className="mt-2 font-urbanist text-base leading-relaxed text-black/70">
-                          {currentItem.description}
+                          {cmsDisplayText(currentItem.description)}
                         </p>
                       </div>
                     </motion.div>

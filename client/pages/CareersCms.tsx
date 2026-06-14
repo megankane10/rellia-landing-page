@@ -483,7 +483,7 @@ export default function CareersCms() {
               className="lg:flex lg:h-[82vh] lg:flex-col"
             >
               <RoleHero
-                eyebrowLabel={careersCms.heroEyebrow ?? "Join the team"}
+                eyebrowLabel={cmsDisplayText(careersCms.heroEyebrow ?? "Join the team")}
                 imageSrc={careersCms.heroImageSrc ?? "/images/careers-img.jpg"}
                 className="lg:flex-1"
                 skipNavOffset
@@ -493,15 +493,15 @@ export default function CareersCms() {
                     fallback={DEFAULT_CAREERS_PAGE.heroTitlePortable!}
                   />
                 }
-                subtitle={careersCms.heroSubtitle}
+                subtitle={cmsDisplayText(careersCms.heroSubtitle)}
                 primaryCta={
                   joinTeamPrimaryCta
-                    ? { label: joinTeamPrimaryCta.label }
-                    : { label: "See open roles" }
+                    ? { label: cmsDisplayText(joinTeamPrimaryCta.label) }
+                    : { label: cmsDisplayText("See open roles") }
                 }
                 secondaryCta={
                   joinTeamSecondaryCta
-                    ? { label: joinTeamSecondaryCta.label }
+                    ? { label: cmsDisplayText(joinTeamSecondaryCta.label) }
                     : undefined
                 }
                 onPrimaryClick={() => {
@@ -526,8 +526,8 @@ export default function CareersCms() {
         </AnimatePresence>
 
         <WhyRellia
-          sectionTitle={careersCms.whyTitle ?? "Building What Matters Most"}
-          sectionDescription={careersCms.whyDescription}
+          sectionTitle={cmsDisplayText(careersCms.whyTitle ?? "Building What Matters Most")}
+          sectionDescription={cmsDisplayText(careersCms.whyDescription)}
           features={mapNetworkWhyFeatures(careersCms.whyFeatures ?? [])}
           sectionClassName="bg-white pt-16 md:pt-20"
         />
@@ -536,10 +536,10 @@ export default function CareersCms() {
           <div className="mx-auto max-w-[1300px] px-6 md:px-10">
             <ScrollReveal className="max-w-3xl mb-16">
               <h2 className="font-host-grotesk text-2xl font-semibold tracking-tight text-black md:text-[32px]">
-                {careersCms.perksTitle ?? "How we work"}
+                {cmsDisplayText(careersCms.perksTitle ?? "How we work")}
               </h2>
               <p className="mt-4 font-urbanist text-lg md:text-xl text-black/60 leading-relaxed">
-                {careersCms.perksDescription}
+                {cmsDisplayText(careersCms.perksDescription)}
               </p>
             </ScrollReveal>
 
@@ -551,10 +551,10 @@ export default function CareersCms() {
                     <IconComponent className="h-8 w-8 text-rellia-teal mb-4" aria-hidden />
                     <div>
                       <h3 className="font-host-grotesk text-xl font-bold tracking-tight text-black mb-2">
-                        {perk.title}
+                        {cmsDisplayText(perk.title)}
                       </h3>
                       <p className="font-urbanist text-base leading-relaxed text-black/70">
-                        {perk.body}
+                        {cmsDisplayText(perk.body)}
                       </p>
                     </div>
                   </ScrollReveal>
@@ -570,7 +570,7 @@ export default function CareersCms() {
               <div className="mx-auto w-full max-w-[1300px] px-6 md:px-10 flex flex-col">
                 <ScrollReveal className="flex min-w-0 flex-col">
                   <h2 className="font-host-grotesk text-2xl font-semibold tracking-tight text-black md:text-[32px]">
-                    {careersCms.openRolesTitle ?? "Open Roles"}
+                    {cmsDisplayText(careersCms.openRolesTitle ?? "Open Roles")}
                   </h2>
 
                   <div className="mt-10 w-full shrink-0">
@@ -715,11 +715,14 @@ export default function CareersCms() {
             <ScrollReveal>
               <div className="flex flex-col items-start justify-center">
                 <h2 className="font-host-grotesk text-2xl font-bold tracking-tight text-black sm:text-3xl">
-                  {careersCms.lifeAtRelliaHeading || "Built by healthtech insiders, for builders"}
+                  {cmsDisplayText(careersCms.lifeAtRelliaHeading || "Built by healthtech insiders, for builders")}
                 </h2>
 
                 <p className="mt-4 font-urbanist text-lg text-black/60 leading-relaxed max-w-xl">
-                  {careersCms.lifeAtRelliaSubheading || "We are a remote-first, high-standards team of builders, clinicians, and operators dedicated to supporting healthtech founders. We cultivate an environment of high autonomy, rapid iteration, and deep clinical empathy to build the future of care."}
+                  {cmsDisplayText(
+                    careersCms.lifeAtRelliaSubheading ||
+                      "We are a remote-first, high-standards team of builders, clinicians, and operators dedicated to supporting healthtech founders. We cultivate an environment of high autonomy, rapid iteration, and deep clinical empathy to build the future of care.",
+                  )}
                 </p>
 
                 {/* Socials / proofs container */}
@@ -756,10 +759,10 @@ export default function CareersCms() {
 
       <RelliaCta
         aboveSectionTone="white"
-        title={careersCms.ctaTitle ?? "Questions before you apply?"}
-        body={careersCms.ctaBody}
+        title={cmsDisplayText(careersCms.ctaTitle ?? "Questions before you apply?")}
+        body={cmsDisplayText(careersCms.ctaBody)}
         primary={{
-          label: careersCms.ctaPrimaryLabel ?? "Get in touch",
+          label: cmsDisplayText(careersCms.ctaPrimaryLabel ?? "Get in touch"),
           to: careersCms.ctaPrimaryHref ?? "/contact",
         }}
       />

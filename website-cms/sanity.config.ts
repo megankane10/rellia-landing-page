@@ -10,6 +10,7 @@ import {deskStructure} from './deskStructure'
 import {presentationLocations, presentationMainDocuments} from './presentationLocations'
 import {imageCropInputPlugin} from './plugins/imageCropInput'
 import {collectionSlugPublishPlugin} from './plugins/collectionSlugPublish'
+import {ensureArrayKeysPlugin} from './plugins/ensureArrayKeys'
 
 
 const theme = buildLegacyTheme({
@@ -58,6 +59,7 @@ export default defineConfig({
 
   plugins: [
     imageCropInputPlugin(),
+    ensureArrayKeysPlugin(),
     collectionSlugPublishPlugin(),
     seofields(seoPluginConfig),
     structureTool({

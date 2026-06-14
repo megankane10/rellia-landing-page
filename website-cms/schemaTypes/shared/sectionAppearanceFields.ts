@@ -7,6 +7,21 @@ export const showBadgeField = defineField({
   initialValue: true,
 })
 
+export const showSectionTagField = defineField({
+  name: 'showTag',
+  title: 'Show section tag',
+  type: 'boolean',
+  initialValue: true,
+})
+
+export const sectionTagField = defineField({
+  name: 'tag',
+  title: 'Section tag',
+  type: 'string',
+  description: 'Eyebrow pill above the section heading (matches Network impact styling on the site).',
+  hidden: ({parent}) => parent?.showTag === false,
+})
+
 export const headingToneField = defineField({
   name: 'headingTone',
   title: 'Heading & subheading color',

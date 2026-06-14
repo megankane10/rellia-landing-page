@@ -4,10 +4,10 @@ import PageHeader from "@/components/PageHeader"
 import { PortableRichText } from "@/components/PortableRichText"
 import RelliaAction from "@/components/RelliaAction"
 import NetworkEyebrow from "@/components/network/NetworkEyebrow"
+import PillTag from "@/components/PillTag"
 import PageBuilderMetricsSection from "@/components/cms/PageBuilderMetricsSection"
 import MembershipPathTimeline from "@/components/MembershipPathTimeline"
 import { BuilderCtaButton } from "@/components/cms/BuilderCtaButton"
-import SectionHeading from "@/components/SectionHeading"
 import ScrollReveal from "@/components/ScrollReveal"
 import { relliaTealGlassCardClass } from "@/lib/relliaTealGlassCard"
 import { cmsCleanText, cmsDisplayText } from "@/lib/cmsStega"
@@ -40,7 +40,7 @@ import type {
   SanityPortableText,
 } from "@shared/cms/types"
 import { HeroHeadlinePortable } from "@/components/HeroHeadlinePortable"
-import { resolveHeroTitlePortable } from "@shared/cms/resolveHeroHeadline"
+import { resolveSectionHeadlinePortable } from "@shared/cms/resolveSectionHeadline"
 import { normalizeToPortableText } from "@shared/cms/normalizePortableText"
 import { RoleHero } from "@/pages/network/_shared"
 import { Link } from "react-router-dom"
@@ -62,6 +62,14 @@ const sectionHeadingClass =
 
 const sectionSubheadingClass =
   "mt-4 max-w-3xl font-urbanist text-base leading-relaxed text-black/65 md:text-lg"
+
+const sectionTagEyebrowClass = "mb-5 md:mb-6"
+
+const cardTagPillProps = {
+  className: "border-rellia-teal/20 bg-white/70 shadow-sm backdrop-blur-lg",
+  labelClassName: "text-rellia-teal font-semibold tracking-[0.14em]",
+  dot: <span aria-hidden className="h-2 w-2 shrink-0 rounded-full bg-rellia-teal" />,
+} as const
 
 const isExternalHref = (href: string) => /^(https?:\/\/|mailto:|tel:)/i.test(href)
 
@@ -116,14 +124,7 @@ const CtaLink = ({
 }
 
 const SectionMarketingHero = ({ section }: { section: CmsSectionMarketingHero }) => {
-  const headline =
-    section.headlinePortable ??
-    (section.title
-      ? resolveHeroTitlePortable(
-          { heroTitle: section.title, heroAccentPhrase: section.accentPhrase },
-          normalizeToPortableText(section.title) ?? [],
-        )
-      : null)
+  const headline = resolveSectionHeadlinePortable(section)
   const title: ReactNode = headline?.length ? <HeroHeadlinePortable value={headline} /> : null
 
   const imageSrc =
@@ -168,11 +169,7 @@ const SectionMetrics = ({ section }: { section: CmsSectionMetrics }) => {
 
   if (metrics.length === 0) return null
 
-  const headingPortable =
-    section.headlinePortable ??
-    (section.heading
-      ? normalizeToPortableText(section.heading)
-      : null)
+  const headingPortable = resolveSectionHeadlinePortable(section)
 
   return (
     <section className="w-full bg-white px-6 py-14 md:px-10 md:py-20">
@@ -336,9 +333,11 @@ const SectionHero = ({ section }: { section: CmsSectionHero }) => {
           title={
             <span className="inline-flex flex-col">
               {section.badge?.trim() ? (
-                <span className="mb-4 inline-flex w-fit items-center rounded-full border border-white/25 bg-white/10 px-4 py-1.5 font-host-grotesk text-[11px] font-semibold uppercase tracking-[0.14em] text-white/90 md:mb-5 md:text-xs">
-                  {section.badge.trim()}
-                </span>
+                <NetworkEyebrow
+                  label={section.badge.trim()}
+                  tone="onDark"
+                  className={sectionTagEyebrowClass}
+                />
               ) : null}
               <span>{title}</span>
             </span>
@@ -378,18 +377,28 @@ const SectionHero = ({ section }: { section: CmsSectionHero }) => {
 }
 
 const SectionRichText = ({ section }: { section: CmsSectionRichText }) => {
+  const headline = resolveSectionHeadlinePortable(section)
+  const showTag = section.showTag !== false && Boolean(section.tag?.trim())
+
   return (
     <section className="w-full bg-white px-6 py-14 md:px-10 md:py-20">
       <div className="mx-auto w-full max-w-[900px]">
-        {section.title?.trim() ? (
+        {showTag ? (
+          <NetworkEyebrow
+            label={cmsDisplayText(section.tag!)}
+            tone="onLight"
+            className={sectionTagEyebrowClass}
+          />
+        ) : null}
+        {headline?.length ? (
           <h2 className={sectionHeadingClass}>
-            {section.title.trim()}
+            <HeroHeadlinePortable value={headline} />
           </h2>
         ) : null}
-        {section.tag?.trim() ? (
-          <p className={cn(sectionSubheadingClass, section.title?.trim() ? "" : "mt-0")}>{section.tag.trim()}</p>
-        ) : null}
-        <PortableRichText value={section.body ?? null} className={cn(section.title?.trim() || section.tag?.trim() ? "mt-8" : "")} />
+        <PortableRichText
+          value={section.body ?? null}
+          className={cn(headline?.length || showTag ? "mt-8" : "")}
+        />
       </div>
     </section>
   )
@@ -399,17 +408,27 @@ const SectionCardsGrid = ({ section }: { section: CmsSectionCardsGrid }) => {
   const cards = section.cards ?? []
   if (cards.length === 0) return null
 
+  const headline = resolveSectionHeadlinePortable(section)
+  const showTag = section.showTag !== false && Boolean(section.tag?.trim())
+
   return (
     <section className="w-full bg-white px-6 py-14 md:px-10 md:py-20">
       <div className="mx-auto w-full max-w-[1300px]">
-        {section.title?.trim() ? (
+        {showTag ? (
+          <NetworkEyebrow
+            label={cmsDisplayText(section.tag!)}
+            tone="onLight"
+            className={sectionTagEyebrowClass}
+          />
+        ) : null}
+        {headline?.length ? (
           <h2 className={sectionHeadingClass}>
-            {section.title.trim()}
+            <HeroHeadlinePortable value={headline} />
           </h2>
         ) : null}
         {section.subtitle?.trim() ? (
-          <p className={cn("mt-4 max-w-3xl font-urbanist text-base leading-relaxed text-black/65 md:text-lg", !section.title?.trim() && "mt-0")}>
-            {section.subtitle.trim()}
+          <p className={cn("mt-4 max-w-3xl font-urbanist text-base leading-relaxed text-black/65 md:text-lg", !headline?.length && "mt-0")}>
+            {cmsDisplayText(section.subtitle)}
           </p>
         ) : null}
 
@@ -431,23 +450,18 @@ const SectionCardsGrid = ({ section }: { section: CmsSectionCardsGrid }) => {
                 </div>
               ) : null}
               <div className="flex flex-1 flex-col p-6 md:p-7">
-                <div className="flex flex-wrap items-center gap-2">
-                  {card.badge?.trim() ? (
-                    <span className="rounded-full border border-rellia-teal/20 bg-rellia-mint/15 px-3 py-1 font-urbanist text-xs font-semibold text-rellia-teal">
-                      {card.badge.trim()}
-                    </span>
-                  ) : null}
-                  {(card.tags ?? []).filter(Boolean).slice(0, 3).map((t) => (
-                    <span
-                      key={t}
-                      className="rounded-full border border-black/10 bg-black/[0.02] px-3 py-1 font-urbanist text-xs font-medium text-black/70"
-                    >
-                      {t}
-                    </span>
-                  ))}
-                </div>
+                {(card.badge?.trim() || (card.tags ?? []).some(Boolean)) ? (
+                  <div className="flex flex-wrap items-center gap-2">
+                    {card.badge?.trim() ? (
+                      <PillTag label={cmsDisplayText(card.badge)} {...cardTagPillProps} />
+                    ) : null}
+                    {(card.tags ?? []).filter(Boolean).slice(0, 3).map((t) => (
+                      <PillTag key={t} label={cmsDisplayText(t)} {...cardTagPillProps} />
+                    ))}
+                  </div>
+                ) : null}
 
-                <div className="mt-4 flex items-start gap-3">
+                <div className={cn("flex items-start gap-3", (card.badge?.trim() || (card.tags ?? []).some(Boolean)) && "mt-4")}>
                   {card.iconKey?.trim() ? (
                     <CmsLucideIcon
                       name={card.iconKey.trim()}
@@ -455,12 +469,12 @@ const SectionCardsGrid = ({ section }: { section: CmsSectionCardsGrid }) => {
                     />
                   ) : null}
                   <h3 className="font-host-grotesk text-lg font-bold tracking-tight text-black">
-                    {card.title}
+                    {cmsDisplayText(card.title)}
                   </h3>
                 </div>
                 {card.body?.trim() ? (
                   <p className="mt-3 flex-1 font-urbanist text-sm leading-relaxed text-black/70 md:text-[15px]">
-                    {card.body.trim()}
+                    {cmsDisplayText(card.body)}
                   </p>
                 ) : (
                   <div className="flex-1" />
@@ -489,17 +503,25 @@ const SectionEligibilityBento = ({ section }: { section: CmsSectionEligibilityBe
   const items = section.items ?? []
   const bentoFallbackImage =
     "https://images.pexels.com/photos/3184292/pexels-photo-3184292.jpeg?auto=compress&cs=tinysrgb&w=1200"
+  const headline = resolveSectionHeadlinePortable(section)
+  const showBadge = section.showBadge !== false && Boolean(section.badge?.trim())
 
   return (
     <section className="w-full bg-rellia-cream/25 px-6 py-16 md:px-10 md:py-24">
       <div className="mx-auto max-w-[1300px]">
-        {section.badge && <NetworkEyebrow label={section.badge} tone="onLight" />}
-        <SectionHeading
-          animated={false}
-          title={section.title ?? ""}
-          description={section.description}
-          className="mt-5 max-w-full [&>p]:max-w-full [&>p]:text-left [&>p]:leading-relaxed"
-        />
+        {showBadge ? (
+          <NetworkEyebrow label={cmsDisplayText(section.badge!)} tone="onLight" />
+        ) : null}
+        {headline?.length ? (
+          <h2 className={cn(sectionHeadingClass, showBadge && "mt-5")}>
+            <HeroHeadlinePortable value={headline} />
+          </h2>
+        ) : null}
+        {section.description?.trim() ? (
+          <p className={cn(sectionSubheadingClass, headline?.length && "mt-4")}>
+            {cmsDisplayText(section.description)}
+          </p>
+        ) : null}
 
         <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:mt-14 lg:grid-cols-4">
           {items.map((item, idx) => (
@@ -517,7 +539,7 @@ const SectionEligibilityBento = ({ section }: { section: CmsSectionEligibilityBe
               <div aria-hidden className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/15 to-transparent" />
               <div className="relative z-10 flex h-full min-h-0 w-full flex-1 flex-col justify-end p-6 text-left md:p-8">
                 <p className="self-start font-host-grotesk font-medium text-2xl md:text-[1.75rem] leading-[1.2] tracking-tight text-white [text-shadow:0_2px_28px_rgba(0,0,0,0.5)] max-w-[240px]">
-                  {item.text}
+                  {cmsDisplayText(item.text)}
                 </p>
               </div>
             </article>
@@ -676,14 +698,15 @@ const SectionJourneyTimeline = ({ section }: { section: CmsSectionJourneyTimelin
       href: normalizeInternalHref(cmsCleanText(link.href)),
     })) ?? []
 
-  const headingTitle = cmsDisplayText(section.headingTitle) || undefined
+  const headline = resolveSectionHeadlinePortable(section)
+  const showBadge = section.showBadge !== false && Boolean(section.badge?.trim())
   const subheading = cmsDisplayText(section.subheading) || undefined
 
   return (
     <MembershipPathTimeline
       className="bg-rellia-cream/20"
-      badge={section.badge?.trim() || undefined}
-      headingTitle={headingTitle}
+      badge={showBadge ? cmsDisplayText(section.badge!) : undefined}
+      headingTitle={headline?.length ? <HeroHeadlinePortable value={headline} /> : undefined}
       subheading={subheading}
       steps={steps}
       showRoleLinks={section.showRoleLinks !== false}
@@ -847,13 +870,15 @@ const SectionFaq = ({ section }: { section: CmsSectionFaq }) => {
   const items = (section.items ?? []).filter((item) => item.question?.trim() && item.answer?.trim())
   if (items.length === 0) return null
 
+  const headline = resolveSectionHeadlinePortable(section)
+
   return (
     <section className="bg-white py-16 md:py-24">
       <div className="mx-auto max-w-[900px] px-6 md:px-10">
         <ScrollReveal>
-          {section.title?.trim() ? (
+          {headline?.length ? (
             <h2 className={cn(sectionHeadingClass, "mb-4 md:mb-5")}>
-              {cmsDisplayText(section.title)}
+              <HeroHeadlinePortable value={headline} />
             </h2>
           ) : null}
           {section.subtitle?.trim() ? (

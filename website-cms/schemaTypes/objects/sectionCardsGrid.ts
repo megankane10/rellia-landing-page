@@ -1,4 +1,6 @@
 import {defineArrayMember, defineField, defineType} from 'sanity'
+import {portableHeadlineField} from '../shared/inlineHeroHeadlineField'
+import {sectionTagField, showSectionTagField} from '../shared/sectionAppearanceFields'
 import {internalLabelField, sectionListPreview} from '../shared/sectionPreview'
 import {iconKeyField} from '../shared/iconKeyField'
 
@@ -8,9 +10,10 @@ export const sectionCardsGrid = defineType({
   type: 'object',
   fields: [
     defineField(internalLabelField),
-    defineField({name: 'tag', type: 'string'}),
-    defineField({name: 'title', type: 'string'}),
-    defineField({name: 'subtitle', type: 'text', rows: 2}),
+    showSectionTagField,
+    sectionTagField,
+    portableHeadlineField({name: 'headlinePortable', title: 'Section heading'}),
+    defineField({name: 'subtitle', type: 'text', rows: 2, title: 'Section intro'}),
     defineField({
       name: 'cards',
       type: 'array',
@@ -30,7 +33,8 @@ export const sectionCardsGrid = defineType({
             defineField({
               name: 'badge',
               type: 'string',
-              description: 'Optional pill label above the title; leave empty to hide.',
+              title: 'Card tag',
+              description: 'Optional eyebrow pill above the card title (site pill styling).',
             }),
             defineField({name: 'image', type: 'image', options: {hotspot: true}}),
             defineField({name: 'imageUrl', title: 'Card image URL (fallback)', type: 'string'}),
@@ -39,8 +43,9 @@ export const sectionCardsGrid = defineType({
             defineField({
               name: 'tags',
               type: 'array',
-              of: [{type: 'string'}],
-              description: 'Simple per-card tags; used for UI chips and filtering.',
+              title: 'Card tags',
+              of: [defineArrayMember({type: 'string'})],
+              description: 'Optional pills shown above the card title (same styling as section eyebrow tags).',
             }),
           ],
         }),

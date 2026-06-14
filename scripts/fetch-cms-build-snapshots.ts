@@ -12,6 +12,7 @@ import "./loadEnv"
 import {
   eventsQuery,
   openRolesQuery,
+  pagesPrerenderSnapshotQuery,
   storiesPrerenderSnapshotQuery,
 } from "../shared/cms/groqQueries"
 import { resolveSanityApiConfig } from "../shared/cms/sanityEnv"
@@ -20,6 +21,7 @@ const snapshotsDir = resolve(dirname(fileURLToPath(import.meta.url)), "../shared
 const eventsSnapshotPath = resolve(snapshotsDir, "events.json")
 const storiesSnapshotPath = resolve(snapshotsDir, "stories.json")
 const openRolesSnapshotPath = resolve(snapshotsDir, "openRoles.json")
+const pagesSnapshotPath = resolve(snapshotsDir, "pages.json")
 
 const writeJsonSnapshot = (path: string, rows: Record<string, unknown>[]): void => {
   mkdirSync(dirname(path), { recursive: true })
@@ -35,17 +37,19 @@ const main = async () => {
     writeJsonSnapshot(eventsSnapshotPath, [])
     writeJsonSnapshot(storiesSnapshotPath, [])
     writeJsonSnapshot(openRolesSnapshotPath, [])
+    writeJsonSnapshot(pagesSnapshotPath, [])
     return
   }
 
   const token = process.env.SANITY_API_READ_TOKEN?.trim()
   if (!token) {
     console.warn(
-      "[cms-snapshot] SANITY_API_READ_TOKEN missing — prerender /events, /stories, and /careers/roles may use fallbacks until token is set on Vercel Build.",
+      "[cms-snapshot] SANITY_API_READ_TOKEN missing — prerender /events, /stories, /careers/roles, and custom CMS pages may use fallbacks until token is set on Vercel Build.",
     )
     writeJsonSnapshot(eventsSnapshotPath, [])
     writeJsonSnapshot(storiesSnapshotPath, [])
     writeJsonSnapshot(openRolesSnapshotPath, [])
+    writeJsonSnapshot(pagesSnapshotPath, [])
     return
   }
 
@@ -59,19 +63,22 @@ const main = async () => {
   })
 
   try {
-    const [eventRows, storyRows, openRoleRows] = await Promise.all([
+    const [eventRows, storyRows, openRoleRows, pageRows] = await Promise.all([
       client.fetch<Record<string, unknown>[]>(eventsQuery),
       client.fetch<Record<string, unknown>[]>(storiesPrerenderSnapshotQuery),
       client.fetch<Record<string, unknown>[]>(openRolesQuery),
+      client.fetch<Record<string, unknown>[]>(pagesPrerenderSnapshotQuery),
     ])
     const events = Array.isArray(eventRows) ? eventRows : []
     const stories = Array.isArray(storyRows) ? storyRows : []
     const openRoles = Array.isArray(openRoleRows) ? openRoleRows : []
+    const pages = Array.isArray(pageRows) ? pageRows : []
     writeJsonSnapshot(eventsSnapshotPath, events)
     writeJsonSnapshot(storiesSnapshotPath, stories)
     writeJsonSnapshot(openRolesSnapshotPath, openRoles)
+    writeJsonSnapshot(pagesSnapshotPath, pages)
     console.log(
-      `[cms-snapshot] Wrote ${events.length} events, ${stories.length} stories, ${openRoles.length} open roles (dataset=${config.dataset}).`,
+      `[cms-snapshot] Wrote ${events.length} events, ${stories.length} stories, ${openRoles.length} open roles, ${pages.length} custom pages (dataset=${config.dataset}).`,
     )
     if (
       events.length === 0 &&
@@ -105,6 +112,7 @@ const main = async () => {
     writeJsonSnapshot(eventsSnapshotPath, [])
     writeJsonSnapshot(storiesSnapshotPath, [])
     writeJsonSnapshot(openRolesSnapshotPath, [])
+    writeJsonSnapshot(pagesSnapshotPath, [])
   }
 }
 

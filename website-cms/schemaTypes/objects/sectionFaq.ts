@@ -1,4 +1,5 @@
 import {defineArrayMember, defineField, defineType} from 'sanity'
+import {portableHeadlineField} from '../shared/inlineHeroHeadlineField'
 import {internalLabelField, sectionListPreview} from '../shared/sectionPreview'
 
 export const sectionFaq = defineType({
@@ -7,11 +8,10 @@ export const sectionFaq = defineType({
   type: 'object',
   fields: [
     defineField(internalLabelField),
-    defineField({
-      name: 'title',
+    portableHeadlineField({
+      name: 'headlinePortable',
       title: 'Section heading',
-      type: 'string',
-      initialValue: 'Frequently asked questions',
+      initialValue: undefined,
     }),
     defineField({
       name: 'subtitle',

@@ -6,6 +6,7 @@ import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
 import RelliaAction from "@/components/RelliaAction"
 import RelliaCta from "@/components/RelliaCta"
+import { SectionsRenderer } from "@/components/cms/PageRenderer"
 import ScrollReveal from "@/components/ScrollReveal"
 import { cn } from "@/lib/utils"
 import { ArrowRight, Award, BookOpen, Clock, Crosshair, Gauge, HeartHandshake, Network, Scale, ShieldCheck, Sparkles, Check } from "lucide-react"
@@ -16,6 +17,7 @@ import { useNetworkAdvisorsPage } from "@/hooks/useCmsDocuments"
 import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo"
 import { mergeNetworkAdvisorsPage, DEFAULT_NETWORK_ADVISORS_PAGE } from "@shared/cms/networkPageDefaults"
 import { NetworkHeroTitle } from "@/components/NetworkHeroTitle"
+import { cmsDisplayText } from "@/lib/cmsStega"
 import type { NetworkAdvisorsPageContent } from "@shared/cms/types"
 import { resolveNetworkIcon } from "@/lib/resolveNetworkIcon"
 
@@ -138,15 +140,19 @@ function SupportModelsSection({ content }: { content: NetworkAdvisorsPageContent
       <div className="relative z-10 mx-auto max-w-[1300px]">
         <ScrollReveal>
           <h2 className="mt-5 font-host-grotesk text-2xl font-semibold leading-tight tracking-tight text-white md:text-[32px]">
-            {content.engageTitle ?? (
+            {content.engageTitle ? (
+              cmsDisplayText(content.engageTitle)
+            ) : (
               <>
                 Three ways to <span className="text-rellia-mint">work with Rellia</span>
               </>
             )}
           </h2>
           <p className="mt-4 max-w-2xl font-urbanist text-base font-medium leading-relaxed text-white/80 md:text-lg">
-            {content.engageSubtitle ??
-              "Community presence, formal advisory work, or program leadership—pick surfaces that fit your cadence."}
+            {cmsDisplayText(
+              content.engageSubtitle ??
+                "Community presence, formal advisory work, or program leadership—pick surfaces that fit your cadence.",
+            )}
           </p>
         </ScrollReveal>
 
@@ -157,10 +163,10 @@ function SupportModelsSection({ content }: { content: NetworkAdvisorsPageContent
               return (
                 <Link key={card.title} to={card.href ?? "/apply"} className={engagementCardClass}>
                   <Icon className="h-6 w-6 md:h-7 md:w-7 text-rellia-mint transition-transform duration-300 group-hover:scale-105" aria-hidden />
-                  <h3 className="mt-4 font-host-grotesk text-lg font-semibold tracking-tight text-white md:text-xl">{card.title}</h3>
-                  <p className="mt-3 flex-1 font-urbanist text-xs leading-relaxed text-white/80 md:text-sm md:leading-relaxed">{card.body}</p>
+                  <h3 className="mt-4 font-host-grotesk text-lg font-semibold tracking-tight text-white md:text-xl">{cmsDisplayText(card.title)}</h3>
+                  <p className="mt-3 flex-1 font-urbanist text-xs leading-relaxed text-white/80 md:text-sm md:leading-relaxed">{cmsDisplayText(card.body)}</p>
                   <span className="mt-5 inline-flex items-center gap-1.5 font-host-grotesk text-xs font-semibold text-rellia-mint md:text-sm">
-                    {card.linkLabel ?? "Learn more"}
+                    {cmsDisplayText(card.linkLabel ?? "Learn more")}
                     <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" aria-hidden />
                   </span>
                 </Link>
@@ -192,7 +198,9 @@ function ScheduleSplit({ content }: { content: NetworkAdvisorsPageContent }) {
         </div>
         <div className="pt-2">
           <h2 className="mt-5 font-host-grotesk text-2xl font-semibold tracking-tight text-black md:text-[32px] leading-tight">
-            {content.scheduleTitle ?? (
+            {content.scheduleTitle ? (
+              cmsDisplayText(content.scheduleTitle)
+            ) : (
               <>
                 Built for <span className="text-rellia-teal">busy</span> schedules
               </>
@@ -208,9 +216,9 @@ function ScheduleSplit({ content }: { content: NetworkAdvisorsPageContent }) {
                 <Icon className="h-7 w-7" aria-hidden />
               </span>
               <div>
-                <p className="font-host-grotesk text-xl font-bold text-black">{item.title}</p>
+                <p className="font-host-grotesk text-xl font-bold text-black">{cmsDisplayText(item.title)}</p>
                 <p className="mt-2 font-urbanist text-lg leading-relaxed text-black/70">
-                  {item.body}
+                  {cmsDisplayText(item.body)}
                 </p>
               </div>
             </div>
@@ -244,9 +252,9 @@ export default function Advisors() {
                 <NetworkHeroTitle content={content} fallback={DEFAULT_NETWORK_ADVISORS_PAGE.heroTitlePortable!} />
               </>
             }
-            subtitle={content.heroSubtitle ?? "Mentor serious health tech founders through structured, respectful engagements—stay sharp on innovation while keeping flexibility for your career."}
-            primaryCta={{ label: content.heroPrimaryCtaLabel ?? "Apply to join", to: content.heroPrimaryCtaHref ?? "/apply" }}
-            secondaryCta={{ label: content.heroSecondaryCtaLabel ?? "Explore Advisors", to: content.heroSecondaryCtaHref ?? "/advisors/directory" }}
+            subtitle={cmsDisplayText(content.heroSubtitle ?? "Mentor serious health tech founders through structured, respectful engagements—stay sharp on innovation while keeping flexibility for your career.")}
+            primaryCta={{ label: cmsDisplayText(content.heroPrimaryCtaLabel ?? "Apply to join"), to: content.heroPrimaryCtaHref ?? "/apply" }}
+            secondaryCta={{ label: cmsDisplayText(content.heroSecondaryCtaLabel ?? "Explore Advisors"), to: content.heroSecondaryCtaHref ?? "/advisors/directory" }}
           />
         </div>
 
@@ -255,8 +263,8 @@ export default function Advisors() {
         <BenefitsSplitSection content={content} />
 
         <WhyRellia
-          sectionTitle={content.whyTitle ?? "What we look for"}
-          sectionDescription={content.whyDescription ?? "Effective advisors combine depth, specificity, and respect for founder momentum."}
+          sectionTitle={cmsDisplayText(content.whyTitle ?? "What we look for")}
+          sectionDescription={cmsDisplayText(content.whyDescription ?? "Effective advisors combine depth, specificity, and respect for founder momentum.")}
           features={mapNetworkWhyFeatures(
             content.whyFeatures?.length
               ? content.whyFeatures
@@ -267,6 +275,8 @@ export default function Advisors() {
           )}
           sectionClassName="bg-white"
         />
+
+        {content.sections?.length ? <SectionsRenderer sections={content.sections} /> : null}
 
         <RelliaCta
           title={content.ctaTitle ?? "Apply as an advisor"}
@@ -290,11 +300,11 @@ function BenefitsSplitSection({ content }: { content: NetworkAdvisorsPageContent
         <Reveal>
           <SectionHeading
             animated={false}
-            title={content.benefitsTitle ?? "Mentorship that compounds"}
-            description={
+            title={cmsDisplayText(content.benefitsTitle ?? "Mentorship that compounds")}
+            description={cmsDisplayText(
               content.benefitsDescription ??
-              "Stay close to innovation without ambient noise—sharp conversations with founders who execute."
-            }
+                "Stay close to innovation without ambient noise—sharp conversations with founders who execute.",
+            )}
             className="mt-5"
           />
           <ul className="mt-10 max-w-xl space-y-4" aria-label="Advisor benefits">
@@ -304,7 +314,7 @@ function BenefitsSplitSection({ content }: { content: NetworkAdvisorsPageContent
                   <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-rellia-mint/35">
                     <Check className="h-3.5 w-3.5 text-rellia-teal" strokeWidth={3} aria-hidden />
                   </span>
-                  {line}
+                  {cmsDisplayText(line)}
                 </li>
               </Reveal>
             ))}

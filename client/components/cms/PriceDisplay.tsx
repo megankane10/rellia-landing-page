@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils"
+import { cmsDisplayText } from "@/lib/cmsStega"
 
 type PriceDisplayProps = {
   amount: string
@@ -27,10 +28,10 @@ export const PriceDisplay = ({
 
   return (
     <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
-      <span className={cn(amountClassName, showDiscount && "text-rellia-teal")}>{amount}</span>
+      <span className={cn(amountClassName, showDiscount && "text-rellia-teal")}>{cmsDisplayText(amount)}</span>
       {showDiscount ? (
         <span className={cn("relative inline-block ml-1.5", compareClassName)}>
-          {compareAmount.trim()}
+          {cmsDisplayText(compareAmount.trim())}
           <span
             className="absolute inset-0 pointer-events-none"
             style={{

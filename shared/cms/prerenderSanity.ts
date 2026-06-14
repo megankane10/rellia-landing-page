@@ -8,6 +8,7 @@ import {
   careersPageQuery,
   openRolesQuery,
   pageBySlugQuery,
+  pagesPrerenderSnapshotQuery,
   programBySlugQuery,
   storyBySlugQuery,
   storiesQuery,
@@ -21,6 +22,7 @@ import { careersRoleDetailPath } from "./careersRoleShare"
 import type { CareersPageContent } from "./types"
 import eventsBuildSnapshot from "./build-snapshots/events.json"
 import openRolesBuildSnapshot from "./build-snapshots/openRoles.json"
+import pagesBuildSnapshot from "./build-snapshots/pages.json"
 import storiesBuildSnapshot from "./build-snapshots/stories.json"
 import { defaultProgramRecordForSlug } from "./itemCardImage"
 import { trySanityApiConfig } from "./sanityEnv"
@@ -50,6 +52,11 @@ const snapshotOpenRoles = (): Array<{
         employmentType?: string
         description?: string
       }>)
+    : []
+
+const snapshotPages = (): Record<string, unknown>[] =>
+  Array.isArray(pagesBuildSnapshot)
+    ? (pagesBuildSnapshot as Record<string, unknown>[])
     : []
 
 let prerenderClient: SanityClient | null = null
@@ -140,8 +147,31 @@ export const fetchEventsForPrerender = async (): Promise<Record<string, unknown>
   return snapshotEvents()
 }
 
-export const fetchPageBySlugForPrerender = (slug: string) =>
-  fetchBySlug(pageBySlugQuery, slug)
+export const fetchPageBySlugForPrerender = async (slug: string) => {
+  const fromSanity = await fetchBySlug(pageBySlugQuery, slug)
+  if (fromSanity) return fromSanity
+  const trimmed = slug.trim()
+  if (!trimmed) return null
+  const pages = await fetchPagesForPrerender()
+  return (
+    pages.find(
+      (row) => typeof row.slug === "string" && row.slug.trim() === trimmed,
+    ) ?? null
+  )
+}
+
+export const fetchPagesForPrerender = async (): Promise<Record<string, unknown>[]> => {
+  const client = getPrerenderSanityClient()
+  if (client) {
+    try {
+      const rows = await client.fetch<Record<string, unknown>[]>(pagesPrerenderSnapshotQuery)
+      if (Array.isArray(rows) && rows.length > 0) return rows
+    } catch {
+      // fall through to build snapshot
+    }
+  }
+  return snapshotPages()
+}
 
 export const fetchAdvisorsForPrerender = async (): Promise<Record<string, unknown>[]> => {
   const client = getPrerenderSanityClient()
@@ -263,18 +293,10 @@ export const fetchEventSlugsForPrerender = async (): Promise<string[]> => {
 }
 
 export const fetchCmsPageSlugsForPrerender = async (): Promise<string[]> => {
-  const client = getPrerenderSanityClient()
-  if (!client) return []
-  try {
-    const rows = await client.fetch<{ slug?: string }[]>(
-      `*[_type == "page" && defined(slug.current) && !(_id in path("drafts.**"))]{ "slug": slug.current }`,
-    )
-    return rows
-      .map((row) => row.slug?.trim())
-      .filter((slug): slug is string => Boolean(slug))
-  } catch {
-    return []
-  }
+  const pages = await fetchPagesForPrerender()
+  return pages
+    .map((row) => (typeof row.slug === "string" ? row.slug.trim() : ""))
+    .filter(Boolean)
 }
 
 export const fetchPaymentPageForPrerender = async (): Promise<Record<string, unknown> | null> => {

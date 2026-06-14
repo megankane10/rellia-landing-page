@@ -12,11 +12,13 @@ import { ArrowRight, ArrowUpRight, Check, ExternalLink, Handshake, LayoutGrid, M
 import { Link } from "react-router-dom"
 import LogoMarquee from "@/components/LogoMarquee"
 import RelliaCta from "@/components/RelliaCta"
+import { SectionsRenderer } from "@/components/cms/PageRenderer"
 import { CreamSection, GlassCardLight, LightSection, Reveal, RoleHero } from "./_shared"
 import { useNetworkPartnersPage } from "@/hooks/useCmsDocuments"
 import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo"
 import { mergeNetworkPartnersPage, DEFAULT_NETWORK_PARTNERS_PAGE } from "@shared/cms/networkPageDefaults"
 import { NetworkHeroTitle } from "@/components/NetworkHeroTitle"
+import { cmsDisplayText } from "@/lib/cmsStega"
 import type { NetworkPartnersPageContent } from "@shared/cms/types"
 import { resolveNetworkIcon } from "@/lib/resolveNetworkIcon"
 
@@ -110,11 +112,13 @@ function PartnerEngageTealBand({ content }: { content: NetworkPartnersPageConten
       <div className="relative z-10 mx-auto max-w-[1300px]">
         <ScrollReveal>
           <h2 className="mt-5 font-host-grotesk text-2xl font-semibold leading-tight tracking-tight text-rellia-teal md:text-[32px]">
-            {content.engageTitle ?? "Three ways to work with Rellia"}
+            {cmsDisplayText(content.engageTitle ?? "Three ways to work with Rellia")}
           </h2>
           <p className="mt-4 max-w-2xl font-urbanist text-base font-medium leading-relaxed text-black/80 md:text-lg">
-            {content.engageSubtitle ??
-              "Large cards, clear intent—pick the path that matches how your team likes to start."}
+            {cmsDisplayText(
+              content.engageSubtitle ??
+                "Large cards, clear intent—pick the path that matches how your team likes to start.",
+            )}
           </p>
         </ScrollReveal>
 
@@ -126,10 +130,10 @@ function PartnerEngageTealBand({ content }: { content: NetworkPartnersPageConten
               const inner = (
                 <>
                   <Icon className="h-6 w-6 md:h-7 md:w-7 text-rellia-mint transition-transform duration-300 group-hover:scale-105" aria-hidden />
-                  <h3 className="mt-4 font-host-grotesk text-lg font-semibold tracking-tight text-white md:text-xl">{card.title}</h3>
-                  <p className="mt-3 flex-1 font-urbanist text-xs leading-relaxed text-white/80 md:text-sm md:leading-relaxed">{card.body}</p>
+                  <h3 className="mt-4 font-host-grotesk text-lg font-semibold tracking-tight text-white md:text-xl">{cmsDisplayText(card.title)}</h3>
+                  <p className="mt-3 flex-1 font-urbanist text-xs leading-relaxed text-white/80 md:text-sm md:leading-relaxed">{cmsDisplayText(card.body)}</p>
                   <span className="mt-5 inline-flex items-center gap-1.5 font-host-grotesk text-xs font-semibold text-rellia-mint md:text-sm">
-                    {card.linkLabel ?? "Learn more"}
+                    {cmsDisplayText(card.linkLabel ?? "Learn more")}
                     {isExternal ? (
                       <ArrowUpRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" aria-hidden />
                     ) : (
@@ -170,11 +174,11 @@ function BenefitsWithImageSplit({ content }: { content: NetworkPartnersPageConte
         <Reveal>
           <SectionHeading
             animated={false}
-            title={content.benefitsTitle ?? "Why partners stay"}
-            description={
+            title={cmsDisplayText(content.benefitsTitle ?? "Why partners stay")}
+            description={cmsDisplayText(
               content.benefitsDescription ??
-              "What partners tell us they value most once programs are underway."
-            }
+                "What partners tell us they value most once programs are underway.",
+            )}
             className="mt-5"
           />
           <ul className="mt-10 max-w-xl space-y-4" aria-label="Partner benefits">
@@ -184,7 +188,7 @@ function BenefitsWithImageSplit({ content }: { content: NetworkPartnersPageConte
                   <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-rellia-mint/35">
                     <Check className="h-3.5 w-3.5 text-rellia-teal" strokeWidth={3} aria-hidden />
                   </span>
-                  {line}
+                  {cmsDisplayText(line)}
                 </li>
               </Reveal>
             ))}
@@ -232,7 +236,7 @@ function ExclusiveDirectorySplit({ content }: { content: NetworkPartnersPageCont
           <div className="max-w-xl">
             <h2 className="mt-6 font-host-grotesk text-2xl font-semibold leading-tight tracking-tight text-black md:mt-8 md:text-[32px]">
               {content.directoryTitle ? (
-                content.directoryTitle
+                cmsDisplayText(content.directoryTitle)
               ) : (
                 <>
                   An exclusive <span className="text-rellia-teal">directory</span> for health tech execution
@@ -240,8 +244,10 @@ function ExclusiveDirectorySplit({ content }: { content: NetworkPartnersPageCont
               )}
             </h2>
             <p className="mt-4 font-urbanist text-base font-medium leading-relaxed text-black/70 md:text-lg">
-              {content.directoryDescription ??
-                "We maintain a curated directory of service providers and vendors with exclusive offers for Rellia members. Unlike generic marketplaces, our members trust these recommendations because they are grounded in peer usage and verified health tech experience."}
+              {cmsDisplayText(
+                content.directoryDescription ??
+                  "We maintain a curated directory of service providers and vendors with exclusive offers for Rellia members. Unlike generic marketplaces, our members trust these recommendations because they are grounded in peer usage and verified health tech experience.",
+              )}
             </p>
             
             <ul className="mt-8 space-y-4" aria-label="Directory benefits">
@@ -251,7 +257,7 @@ function ExclusiveDirectorySplit({ content }: { content: NetworkPartnersPageCont
                     <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-rellia-mint/35">
                       <Check className="h-3.5 w-3.5 text-rellia-teal" strokeWidth={3} aria-hidden />
                     </span>
-                    {line}
+                    {cmsDisplayText(line)}
                   </li>
                 </Reveal>
               ))}
@@ -284,8 +290,8 @@ export default function Partners() {
               <NetworkHeroTitle content={content} fallback={DEFAULT_NETWORK_PARTNERS_PAGE.heroTitlePortable!} />
             </>
           }
-          subtitle={content.heroSubtitle ?? "Pilot design, integration support, and enterprise credibility—so promising products don't die in procurement limbo."}
-          primaryCta={{ label: content.heroPrimaryCtaLabel ?? "Apply to join", to: content.heroPrimaryCtaHref ?? "/apply" }}
+          subtitle={cmsDisplayText(content.heroSubtitle ?? "Pilot design, integration support, and enterprise credibility—so promising products don't die in procurement limbo.")}
+          primaryCta={{ label: cmsDisplayText(content.heroPrimaryCtaLabel ?? "Apply to join"), to: content.heroPrimaryCtaHref ?? "/apply" }}
         />
         </div>
 
@@ -294,11 +300,11 @@ export default function Partners() {
         <ExclusiveDirectorySplit content={content} />
 
         <WhyRellia
-          sectionTitle={content.whyTitle ?? "Why industry leaders partner with Rellia"}
-          sectionDescription={
+          sectionTitle={cmsDisplayText(content.whyTitle ?? "Why industry leaders partner with Rellia")}
+          sectionDescription={cmsDisplayText(
             content.whyDescription ??
-            "We align commercial innovators, healthcare systems, and clinical networks around active pilots and structured technology adoption."
-          }
+              "We align commercial innovators, healthcare systems, and clinical networks around active pilots and structured technology adoption.",
+          )}
           features={mapNetworkWhyFeatures(
             content.whyFeatures?.length
               ? content.whyFeatures
@@ -323,6 +329,8 @@ export default function Partners() {
           )}
           sectionClassName="bg-rellia-cream/20"
         />
+
+        {content.sections?.length ? <SectionsRenderer sections={content.sections} /> : null}
 
         <div className="bg-rellia-cream/20">
           <RelliaCta

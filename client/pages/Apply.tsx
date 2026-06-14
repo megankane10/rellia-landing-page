@@ -12,6 +12,7 @@ import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { ArrowRight } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { cmsDisplayText } from "@/lib/cmsStega"
 
 export default function Apply() {
   const { data: applyCms } = useApplyPage()
@@ -26,9 +27,9 @@ export default function Apply() {
       size="comfortable"
       className="w-full min-w-0 justify-center sm:min-w-[220px] sm:w-auto sm:px-10"
       onClick={() => setShowForm(true)}
-      aria-label={apply.applyButtonLabel}
+      aria-label={cmsDisplayText(apply.applyButtonLabel)}
     >
-      {apply.applyButtonLabel}
+      {cmsDisplayText(apply.applyButtonLabel)}
       <ArrowRight aria-hidden />
     </RelliaAction>
   )

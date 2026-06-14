@@ -271,6 +271,14 @@ export const pageBySlugQuery = `*[_type == "page" && slug.current == $slug && sl
   pageBuilder[]{ _key, ${pageSectionFieldsFragment} }
 }`
 
+export const pagesPrerenderSnapshotQuery = `*[_type == "page" && defined(slug.current) && slug.current != "terms" && slug.current != "privacy" && !(_id in path("drafts.**"))]{
+  title,
+  "slug": slug.current,
+  ${seoFragment},
+  sections[]{ _key, ${pageSectionFieldsFragment} },
+  pageBuilder[]{ _key, ${pageSectionFieldsFragment} }
+}`
+
 const pageSectionsFragment = `sections[]{ _key, ${pageSectionFieldsFragment} }`
 
 export const networkFoundersPageQuery = `*[_id == "networkFoundersPage"][0]{
@@ -296,6 +304,7 @@ export const networkFoundersPageQuery = `*[_id == "networkFoundersPage"][0]{
   deeperHelpCtaHref,
   ${networkCtaFragment},
   ${logoMarqueeFragment},
+  ${pageSectionsFragment},
   ${seoFragment}
 }`
 
@@ -306,6 +315,7 @@ export const networkAlumniDirectoryPageQuery = `*[_id == "networkAlumniDirectory
   directoryCtaBody,
   directoryCtaPrimaryLabel,
   directoryCtaPrimaryHref,
+  ${pageSectionsFragment},
   ${seoFragment}
 }`
 
@@ -342,6 +352,7 @@ export const networkAdvisorsPageQuery = `*[_id == "networkAdvisorsPage"][0]{
   pitchCards[]{ _key, title, body, imageUrl },
   ${networkCtaFragment},
   ${logoMarqueeFragment},
+  ${pageSectionsFragment},
   ${seoFragment},
   foundersCluster[]{ _key,
     title,
@@ -364,6 +375,7 @@ export const networkPartnersPageQuery = `*[_id == "networkPartnersPage"][0]{
   directoryBullets,
   ${networkWhyFragment},
   ${networkCtaFragment},
+  ${pageSectionsFragment},
   ${seoFragment}
 }`
 
@@ -412,6 +424,7 @@ export const diagnosticLandingPageQuery = `*[_id == "diagnosticLandingPage"][0]{
   ctaPrimaryHref,
   ctaSecondaryLabel,
   ctaSecondaryHref,
+  ${pageSectionsFragment},
   ${seoFragment}
 }`
 
@@ -449,6 +462,7 @@ export const consultingPageQuery = `*[_id == "consultingPage"][0]{
   ctaPrimaryHref,
   ctaSecondaryLabel,
   ctaSecondaryHref,
+  ${pageSectionsFragment},
   ${seoFragment}
 }`
 
@@ -521,16 +535,20 @@ export const homePageQuery = `*[_id == "homePage"][0]{
     ctaLabel,
     ctaTo
   },
+  ${pageSectionsFragment},
   ${seoFragment}
 }`;
 
 export const aboutPageQuery = `*[_id == "aboutPage"][0]{
-  "heroTitlePortable": coalesce(heroTitlePortable, heroHeadlinePortable),
+  heroTitlePortable,
   heroIntro,
   missionTitle,
   missionParagraphs,
   "missionImageSrc": coalesce(missionImage.asset->url, missionImageSrc),
   missionImageAlt,
+  showValuesTag,
+  valuesTag,
+  valuesHeadlinePortable,
   valuesTitle,
   valuesSubtitle,
   values[]{ _key, iconKey, title, description },
@@ -578,6 +596,7 @@ export const programsLandingQuery = `*[_id == "programsLandingPage"][0]{
   ctaBody,
   ctaButtonLabel,
   ctaButtonHref,
+  ${pageSectionsFragment},
   ${seoFragment}
 }`;
 

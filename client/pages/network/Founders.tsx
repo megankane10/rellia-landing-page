@@ -10,6 +10,7 @@ import Footer from "@/components/Footer";
 import LogoMarquee from "@/components/LogoMarquee";
 import RelliaAction from "@/components/RelliaAction";
 import RelliaCta from "@/components/RelliaCta";
+import { SectionsRenderer } from "@/components/cms/PageRenderer";
 import { relliaTealGlassCardClass } from "@/lib/relliaTealGlassCard";
 import { cn } from "@/lib/utils";
 import {
@@ -914,6 +915,8 @@ export default function Founders() {
 
           <ExploreNetworkSection content={content} />
           <DeeperHelpValuesSection content={content} />
+
+          {content.sections?.length ? <SectionsRenderer sections={content.sections} /> : null}
 
           <RelliaCta
             aboveSectionTone="white"

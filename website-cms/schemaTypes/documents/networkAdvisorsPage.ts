@@ -1,5 +1,5 @@
 import {defineField, defineType} from 'sanity'
-import {CONTENT_SEO_FIELDSETS, singletonSeoField} from '../shared/singletonContentFields'
+import {CONTENT_SEO_FIELDSETS, modularSectionsField, singletonSeoField} from '../shared/singletonContentFields'
 import {
   NETWORK_PAGE_GROUPS,
   networkCtaFields,
@@ -38,6 +38,10 @@ export const networkAdvisorsPage = defineType({
     }),
     ...networkWhyRelliaFields,
     ...networkCtaFields,
+    modularSectionsField({
+      description:
+        'Optional modular blocks rendered on /advisors after the main page sections and before the footer CTA band.',
+    }),
     singletonSeoField,
   ],
 })

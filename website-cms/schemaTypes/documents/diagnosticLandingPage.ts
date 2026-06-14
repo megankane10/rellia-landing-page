@@ -1,6 +1,8 @@
 import {defineArrayMember, defineField, defineType} from 'sanity'
 import {
   CONTENT_SEO_FIELDSETS,
+  GROUP_MODULAR_SECTIONS,
+  modularSectionsField,
   sectionDividerFieldset,
   singletonSeoField,
 } from '../shared/singletonContentFields'
@@ -18,7 +20,7 @@ export const diagnosticLandingPage = defineType({
   name: 'diagnosticLandingPage',
   title: 'Startup diagnostic landing (/startup-diagnostic)',
   type: 'document',
-  groups: [GROUP_HERO, GROUP_READINESS, GROUP_INFOGRAPHIC, GROUP_TIMELINE, GROUP_CTA, GROUP_SEO],
+  groups: [GROUP_HERO, GROUP_READINESS, GROUP_INFOGRAPHIC, GROUP_TIMELINE, GROUP_CTA, GROUP_MODULAR_SECTIONS, GROUP_SEO],
   fieldsets: [
     sectionDividerFieldset('heroDivider', 'Hero'),
     sectionDividerFieldset('readinessDivider', 'Feature cards (image panels)'),
@@ -262,6 +264,10 @@ export const diagnosticLandingPage = defineType({
       initialValue: '/apply',
       group: 'cta',
       fieldset: 'ctaDivider',
+    }),
+    modularSectionsField({
+      description:
+        'Optional modular blocks rendered on /startup-diagnostic after the timeline and before the footer CTA band.',
     }),
     singletonSeoField,
   ],

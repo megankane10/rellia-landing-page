@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils"
 import { useContactPage } from "@/hooks/useCmsDocuments"
 import { DEFAULT_CONTACT_PAGE } from "@shared/cms/defaults"
 import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo"
+import { cmsDisplayText } from "@/lib/cmsStega"
 
 /**
  * Redesigned Contact Page for Rellia
@@ -94,7 +95,7 @@ function LeftPanel({ copy }: { copy: typeof DEFAULT_CONTACT_PAGE }) {
             className="flex flex-1 flex-col justify-center px-2 py-6"
           >
             <p className="w-full font-urbanist text-2xl font-medium leading-snug text-white md:text-4xl lg:text-5xl">
-              &ldquo;{copy.quoteText}&rdquo;
+              &ldquo;{cmsDisplayText(copy.quoteText)}&rdquo;
             </p>
 
             <div className="mt-8 flex items-center gap-4 md:gap-5">
@@ -111,9 +112,9 @@ function LeftPanel({ copy }: { copy: typeof DEFAULT_CONTACT_PAGE }) {
               </div>
               <div>
                 <p className="font-host-grotesk text-[18px] md:text-[21px] font-medium tracking-wide text-rellia-mint">
-                  {copy.quoteAttributionName}
+                  {cmsDisplayText(copy.quoteAttributionName)}
                 </p>
-                <p className="font-urbanist text-[15px] md:text-[18px] font-medium text-white/60">{copy.quoteAttributionRole}</p>
+                <p className="font-urbanist text-[15px] md:text-[18px] font-medium text-white/60">{cmsDisplayText(copy.quoteAttributionRole)}</p>
               </div>
             </div>
           </motion.div>
@@ -129,7 +130,7 @@ function LeftPanel({ copy }: { copy: typeof DEFAULT_CONTACT_PAGE }) {
                 href={`mailto:${copy.footerEmail || "hello@relliahealth.com"}`}
                 className="hover:underline underline-offset-4"
               >
-                {copy.footerEmail || "hello@relliahealth.com"}
+                {cmsDisplayText(copy.footerEmail || "hello@relliahealth.com")}
               </a>
             </p>
           </motion.div>

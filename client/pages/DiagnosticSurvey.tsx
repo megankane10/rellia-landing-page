@@ -582,33 +582,28 @@ const css = `
 
   .diagnostic-report .diagnostic-membership-print-layout {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     align-items: stretch;
-    gap: 0.9rem;
+    gap: 0.75rem;
   }
 
   .diagnostic-report .diagnostic-membership-print-image {
-    width: 32%;
-    min-width: 96px;
-    max-width: 148px;
+    width: 100%;
+    max-width: none;
+    height: auto;
     flex-shrink: 0;
     object-fit: cover;
     border-radius: 6px;
-    align-self: stretch;
-    min-height: 5.5rem;
+    align-self: auto;
+    min-height: 9rem;
+    max-height: none;
+    aspect-ratio: 16 / 9;
     border: 1px solid #b7e0d8;
   }
 
-  .diagnostic-report .diagnostic-membership-print--wide .diagnostic-membership-print-layout {
-    flex-direction: column;
-  }
-
   .diagnostic-report .diagnostic-membership-print--wide .diagnostic-membership-print-image {
-    width: 100%;
-    max-width: none;
-    height: 118px;
-    min-height: 118px;
-    align-self: auto;
+    aspect-ratio: 21 / 9;
+    min-height: 10rem;
   }
 
   .diagnostic-report .diagnostic-membership-print-copy {
@@ -618,7 +613,7 @@ const css = `
 
   .diagnostic-report .diagnostic-membership-print h2 {
     border: none !important;
-    font-size: 10.5pt !important;
+    font-size: 14pt !important;
     font-weight: 600 !important;
     color: #0d3540 !important;
     margin: 0 0 0.7rem !important;
@@ -1965,7 +1960,7 @@ export default function DiagnosticSurvey() {
                           <CheckCircle2 className="diagnostic-screen-only h-4 w-4" />
                           {surveyCms?.reportStrengthsTitle || DEFAULT_REPORT_STRENGTHS_TITLE}
                         </h2>
-                        <span className="diagnostic-section-note text-xs font-urbanist font-medium text-black text-left sm:text-right">
+                        <span className="diagnostic-section-note text-sm sm:text-base font-urbanist font-medium text-black/45 text-left sm:text-right">
                           Above-average readiness compared to your other domains.
                         </span>
                       </div>
@@ -1995,7 +1990,7 @@ export default function DiagnosticSurvey() {
                           <AlertTriangle className="diagnostic-screen-only h-4 w-4" />
                           {surveyCms?.reportGapsTitle || DEFAULT_REPORT_GAPS_TITLE}
                         </h2>
-                        <span className="diagnostic-section-note text-xs font-urbanist font-medium text-black text-left sm:text-right">
+                        <span className="diagnostic-section-note text-sm sm:text-base font-urbanist font-medium text-black/45 text-left sm:text-right">
                           Likely bottlenecks—tighten these before scaling execution or diligence.
                         </span>
                       </div>

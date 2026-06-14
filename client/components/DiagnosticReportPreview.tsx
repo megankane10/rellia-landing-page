@@ -1,4 +1,5 @@
 import { Lock, ShieldCheck, Sparkles, Users } from "lucide-react"
+import { cmsDisplayText } from "@/lib/cmsStega"
 
 export type DiagnosticReportPreviewProps = {
   topWeaknessLabel?: string
@@ -41,17 +42,17 @@ export default function DiagnosticReportPreview({
     <div className="relative w-full p-0 sm:p-4">
       <div className="absolute -top-5 -left-4 z-20 flex items-center gap-2.5 rounded-full border border-rellia-teal/15 bg-white/95 px-5 py-2.5 text-xs font-bold text-rellia-teal shadow-[0_14px_40px_-6px_rgba(13,53,64,0.2)] backdrop-blur-md sm:-left-7 sm:px-6 sm:py-3 sm:text-sm">
         <Sparkles className="h-4 w-4 text-rellia-mint sm:h-[18px] sm:w-[18px]" aria-hidden />
-        {blobRoadmap}
+        {cmsDisplayText(blobRoadmap)}
       </div>
 
       <div className="absolute top-[35%] -right-5 z-20 flex items-center gap-2.5 rounded-full border border-rellia-teal/15 bg-rellia-teal px-5 py-2.5 text-xs font-bold text-white shadow-[0_14px_40px_-6px_rgba(13,53,64,0.28)] sm:-right-10 sm:px-6 sm:py-3 sm:text-sm">
         <Users className="h-4 w-4 text-rellia-mint sm:h-[18px] sm:w-[18px]" aria-hidden />
-        {blobAdvisors}
+        {cmsDisplayText(blobAdvisors)}
       </div>
 
       <div className="absolute -bottom-5 left-6 z-20 flex items-center gap-2.5 rounded-full border border-black/5 bg-[#fbfcf8]/95 px-5 py-2.5 text-xs font-bold text-black/75 shadow-[0_14px_36px_-6px_rgba(0,0,0,0.14)] backdrop-blur-md sm:left-10 sm:px-6 sm:py-3 sm:text-sm">
         <ShieldCheck className="h-4 w-4 text-green-600 sm:h-[18px] sm:w-[18px]" aria-hidden />
-        {blobBlindSpot}
+        {cmsDisplayText(blobBlindSpot)}
       </div>
 
       <div className="pointer-events-none absolute -inset-4 rounded-[40px] bg-rellia-teal/5 blur-2xl" />
@@ -59,9 +60,9 @@ export default function DiagnosticReportPreview({
         <div className="space-y-5">
           <div className="flex flex-col justify-center rounded-2xl border border-black/5 bg-[#fafafa] p-5">
             <div className="mb-3 flex items-baseline justify-between gap-2">
-              <span className="text-sm font-bold text-black/75">{topWeaknessLabel}</span>
+              <span className="text-sm font-bold text-black/75">{cmsDisplayText(topWeaknessLabel)}</span>
               <span className="text-xs font-black uppercase tracking-wider text-red-600">
-                {topWeaknessScore}% ({topWeaknessGapLabel})
+                {topWeaknessScore}% ({cmsDisplayText(topWeaknessGapLabel)})
               </span>
             </div>
             <div className="h-2 w-full overflow-hidden rounded-full bg-black/5">
@@ -71,7 +72,7 @@ export default function DiagnosticReportPreview({
 
           <div className="border-t border-black/5 pt-5">
             <span className="text-[10px] font-bold uppercase tracking-wider text-black/45">
-              {advisorMatchLabel}
+              {cmsDisplayText(advisorMatchLabel)}
             </span>
             <div className="mt-3 flex items-center justify-between gap-4 rounded-2xl border border-rellia-teal/5 bg-rellia-teal/[0.02] px-4 py-3">
               <div className="flex items-center gap-3">
@@ -83,8 +84,8 @@ export default function DiagnosticReportPreview({
                   />
                 </div>
                 <div className="min-w-0">
-                  <div className="select-none text-xs font-bold text-black/75 blur-[2.5px]">{advisorRole}</div>
-                  <div className="text-[10px] text-black/45">{advisorSubtitle}</div>
+                  <div className="select-none text-xs font-bold text-black/75 blur-[2.5px]">{cmsDisplayText(advisorRole)}</div>
+                  <div className="text-[10px] text-black/45">{cmsDisplayText(advisorSubtitle)}</div>
                 </div>
               </div>
               <Lock className="h-4 w-4 text-rellia-teal/40" aria-hidden />

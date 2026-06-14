@@ -1,5 +1,5 @@
 import {defineArrayMember, defineField, defineType} from 'sanity'
-import {richTextImageCropOptions, richTextImageDisplayModeField} from '../shared/richTextImageFields'
+import {richTextImageCropOptions, richTextImageDisplayModeHiddenField} from '../shared/richTextImageFields'
 
 export const portableImageCarousel = defineType({
   name: 'portableImageCarousel',
@@ -29,7 +29,7 @@ export const portableImageCarousel = defineType({
               title: 'Image',
               options: richTextImageCropOptions,
             }),
-            richTextImageDisplayModeField,
+            richTextImageDisplayModeHiddenField,
             defineField({
               name: 'imageSrc',
               type: 'string',

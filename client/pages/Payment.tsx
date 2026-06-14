@@ -21,7 +21,7 @@ import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo"
 import { cn } from "@/lib/utils"
 import { PriceDisplay } from "@/components/cms/PriceDisplay"
 import { formatPromoMessage } from "@/lib/mergeDiagnosticSurvey"
-import { isVisualEditingPreview } from "@/lib/cmsStega"
+import { cmsDisplayText, isVisualEditingPreview } from "@/lib/cmsStega"
 
 const MEMBERSHIP_SPLASH_COMPLETE_SESSION_KEY = "rellia-membership-splash-complete-session"
 
@@ -177,7 +177,7 @@ export default function Payment() {
 
               <div className="relative z-10 w-full max-w-xl">
                 <h2 className="font-host-grotesk text-2xl md:text-[32px] font-semibold text-black mb-10 tracking-tight">
-                  {p.choosePlanHeadline?.trim() || "Choose your plan"}
+                  {cmsDisplayText(p.choosePlanHeadline?.trim() || "Choose your plan")}
                 </h2>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full mb-6">
@@ -243,7 +243,11 @@ export default function Payment() {
                   onClick={handleProceed}
                   className="w-full h-[60px] text-lg font-bold mb-12 shadow-md hover:shadow-lg transition-all"
                 >
-                  {selectedPlan === "annual" ? p.annualProceedLabel : (selectedPlan === "monthly" ? p.monthlyProceedLabel : "Select a plan")}
+                  {selectedPlan === "annual"
+                    ? cmsDisplayText(p.annualProceedLabel)
+                    : selectedPlan === "monthly"
+                      ? cmsDisplayText(p.monthlyProceedLabel)
+                      : "Select a plan"}
                   <ArrowRight className="ml-2 h-5 w-5" aria-hidden />
                 </RelliaAction>
 
@@ -255,7 +259,7 @@ export default function Payment() {
                           <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rellia-teal opacity-75"></span>
                           <span className="relative inline-flex rounded-full h-2 w-2 bg-rellia-teal"></span>
                         </span>
-                        {p.discountBannerBadge.trim() || "Limited time"}
+                        {cmsDisplayText(p.discountBannerBadge.trim() || "Limited time")}
                       </span>
                     ) : null}
                     <div className="space-y-4">

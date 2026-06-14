@@ -28,9 +28,18 @@ const EMPTY_OVERRIDES: PageSeoOverrides = {}
 
 const noopSetPageSeo = () => {}
 
-export const PageSeoProvider = ({ children }: { children: ReactNode }) => {
+type PageSeoProviderProps = {
+  children: ReactNode
+  /** Used during build-time prerender so RouteSeo sees CMS SEO before hydration. */
+  initialOverrides?: PageSeoOverrides
+}
+
+export const PageSeoProvider = ({
+  children,
+  initialOverrides = EMPTY_OVERRIDES,
+}: PageSeoProviderProps) => {
   const { pathname } = useLocation()
-  const [overrides, setOverridesState] = useState<PageSeoOverrides>({})
+  const [overrides, setOverridesState] = useState<PageSeoOverrides>(initialOverrides)
 
   useLayoutEffect(() => {
     setOverridesState({})

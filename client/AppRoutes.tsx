@@ -3,7 +3,7 @@ import { Routes, Route, Navigate, useParams, useLocation } from "react-router-do
 import { Analytics } from "@vercel/analytics/react"
 import ScrollToTop from "@/components/ScrollToTop"
 import RouteSeo from "@/components/RouteSeo"
-import { PageSeoProvider } from "@/context/PageSeoContext"
+import { PageSeoProvider, type PageSeoOverrides } from "@/context/PageSeoContext"
 import PageTransition from "@/components/PageTransition"
 import Index from "./pages/Index"
 import About from "./pages/About"
@@ -87,8 +87,14 @@ const VercelObservability = () => (
   </>
 )
 
-export const RouterShell = ({ children }: { children: ReactNode }) => (
-  <PageSeoProvider>
+export const RouterShell = ({
+  children,
+  initialPageSeo,
+}: {
+  children: ReactNode
+  initialPageSeo?: PageSeoOverrides
+}) => (
+  <PageSeoProvider initialOverrides={initialPageSeo}>
     <PageTransition />
     <VercelObservability />
     <ThirdPartyPreloads />

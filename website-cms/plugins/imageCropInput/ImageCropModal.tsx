@@ -145,18 +145,24 @@ export const ImageCropModal = ({
           <Stack space={2}>
             <Label>On-site display</Label>
             <Flex gap={4} wrap="wrap">
-              <Radio
-                checked={uploadMode === 'cropped'}
-                label="Cropped (wide banner)"
-                name="rich-text-image-upload-mode"
-                onChange={() => setUploadMode('cropped')}
-              />
-              <Radio
-                checked={uploadMode === 'full'}
-                label="Full image"
-                name="rich-text-image-upload-mode"
-                onChange={() => setUploadMode('full')}
-              />
+              <Flex align="center" gap={2} as="label" style={{cursor: 'pointer'}}>
+                <Radio
+                  checked={uploadMode === 'cropped'}
+                  name="rich-text-image-upload-mode"
+                  value="cropped"
+                  onChange={() => setUploadMode('cropped')}
+                />
+                <Text size={1}>Cropped (wide banner)</Text>
+              </Flex>
+              <Flex align="center" gap={2} as="label" style={{cursor: 'pointer'}}>
+                <Radio
+                  checked={uploadMode === 'full'}
+                  name="rich-text-image-upload-mode"
+                  value="full"
+                  onChange={() => setUploadMode('full')}
+                />
+                <Text size={1}>Full image</Text>
+              </Flex>
             </Flex>
           </Stack>
         ) : null}
