@@ -50,7 +50,7 @@ const AcceptInvite = () => {
           )
           return
         }
-        navigate("/admin/set-password", { replace: true })
+        navigate("/admin/set-password", { replace: true, state: { showWelcome: true } })
         return
       }
 

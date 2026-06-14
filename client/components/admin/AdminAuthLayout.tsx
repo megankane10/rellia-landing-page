@@ -6,7 +6,7 @@ import AdminBrandPanel from "@/components/admin/AdminBrandPanel"
 type AdminAuthLayoutProps = {
   title: string
   description?: string
-  leftHeading: string
+  leftHeading: ReactNode
   leftDescription: string
   children: ReactNode
   /** Mint accent on the left brand panel (admin auth flows). */

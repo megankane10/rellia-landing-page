@@ -5,6 +5,7 @@ import RelliaAction from "@/components/RelliaAction"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import AdminAuthLayout from "@/components/admin/AdminAuthLayout"
+import { ADMIN_AUTH_LEFT_DESCRIPTION, AdminAuthBrandHeading } from "@/components/admin/adminAuthBrandCopy"
 
 const AdminLogin = () => {
   const { signIn } = useAuth()
@@ -37,8 +38,8 @@ const AdminLogin = () => {
 
   return (
     <AdminAuthLayout
-      leftHeading="Hello! Ready to see what's new today?"
-      leftDescription="Log in to review the latest form submissions, coordinate inquiries, and easily track your website content drafts."
+      leftHeading={<AdminAuthBrandHeading />}
+      leftDescription={ADMIN_AUTH_LEFT_DESCRIPTION}
       title="Welcome Back"
       description="Sign in to access admin dashboard"
     >

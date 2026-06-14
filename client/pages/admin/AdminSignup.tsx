@@ -8,6 +8,7 @@ import { getApiCsrfHeaders } from "@/lib/apiCsrf"
 import { getAdminFirstName } from "@/lib/adminUserProfile"
 import { parseApiJson } from "@/lib/parseApiJson"
 import AdminAuthLayout from "@/components/admin/AdminAuthLayout"
+import { ADMIN_AUTH_LEFT_DESCRIPTION, AdminAuthBrandHeading } from "@/components/admin/adminAuthBrandCopy"
 
 const AdminSignup = () => {
   const { signIn } = useAuth()
@@ -86,15 +87,13 @@ const AdminSignup = () => {
     }
   }
 
-  const authLeftHeading = "Hello! Ready to see what's new today?"
-  const authLeftDescription =
-    "Log in to review the latest form submissions, coordinate inquiries, and easily track your website content drafts."
+  const authLeftHeading = <AdminAuthBrandHeading />
 
   if (signupEnabled === null) {
     return (
       <AdminAuthLayout
         leftHeading={authLeftHeading}
-        leftDescription={authLeftDescription}
+        leftDescription={ADMIN_AUTH_LEFT_DESCRIPTION}
         title="Create Admin Account"
         description="Rellia internal access only."
       >
@@ -112,7 +111,7 @@ const AdminSignup = () => {
   return (
     <AdminAuthLayout
       leftHeading={authLeftHeading}
-      leftDescription={authLeftDescription}
+      leftDescription={ADMIN_AUTH_LEFT_DESCRIPTION}
       title="Create Admin Account"
       description="Rellia internal access only."
     >

@@ -4,7 +4,7 @@ import { Link } from "react-router-dom"
 const HOLOGRAM_LOGO_SRC = "/images/hologram-logo.png"
 
 type AdminBrandPanelProps = {
-  heading: string
+  heading: ReactNode
   description: string
   children?: ReactNode
   /** Mint accent on admin auth screens; default keeps white text (e.g. contact page). */
@@ -14,7 +14,6 @@ type AdminBrandPanelProps = {
 /** Rounded teal brand panel with gradient — shared by admin login and contact page. */
 const AdminBrandPanel = ({ heading, description, children, textTone = "white" }: AdminBrandPanelProps) => {
   const headingClass = textTone === "mint" ? "text-rellia-mint" : "text-white"
-  const descriptionClass = textTone === "mint" ? "text-rellia-mint/80" : "text-white/70"
 
   return (
     <div className="flex flex-col p-4 md:p-6 lg:min-h-screen lg:p-8">
@@ -50,13 +49,15 @@ const AdminBrandPanel = ({ heading, description, children, textTone = "white" }:
             />
           </Link>
 
-          <div className="flex flex-1 flex-col justify-start py-10 md:py-12 lg:justify-center">
-            <h2
-              className="text-left font-urbanist text-2xl font-medium leading-snug text-white md:text-4xl lg:text-5xl max-w-sm px-2 pt-8 md:pt-12"
-            >
-              {heading}
+          <div className="flex w-full flex-1 flex-col justify-start py-10 md:py-12 lg:justify-center">
+            <h2 className="w-full px-2 pt-8 text-left font-urbanist text-2xl font-medium leading-snug md:pt-12 md:text-4xl lg:text-5xl">
+              {typeof heading === "string" ? (
+                <span className={headingClass}>{heading}</span>
+              ) : (
+                heading
+              )}
             </h2>
-            <p className="mt-5 text-left font-urbanist text-lg md:text-xl leading-relaxed text-white/60 max-w-sm px-2">
+            <p className="mt-5 w-full px-2 text-left font-urbanist text-lg leading-relaxed text-white/60 md:text-xl">
               {description}
             </p>
             {children}

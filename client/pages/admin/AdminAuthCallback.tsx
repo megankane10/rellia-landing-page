@@ -73,7 +73,10 @@ const AdminAuthCallback = () => {
         Boolean(invitedAt)
 
       if (needsPassword) {
-        navigate("/admin/set-password", { replace: true })
+        navigate("/admin/set-password", {
+          replace: true,
+          state: authType === "recovery" ? null : { showWelcome: true },
+        })
         return
       }
 
