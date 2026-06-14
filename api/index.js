@@ -177,7 +177,8 @@ var storiesQuery = `*[_type == "story" && !(_id in path("drafts.**"))]
   "coverImageAlt": headerImageAlt,
   "tag": filters[0]->title,
   publishedAt,
-  featured
+  featured,
+  ${seoFragment}
 }`;
 var storiesPageQuery = `*[_id == "storiesPage"][0]{
   headlinePortable,
@@ -280,6 +281,7 @@ var pageBySlugQuery = `*[_type == "page" && slug.current == $slug && slug.curren
 var pagesPrerenderSnapshotQuery = `*[_type == "page" && defined(slug.current) && slug.current != "terms" && slug.current != "privacy" && !(_id in path("drafts.**"))]{
   title,
   "slug": slug.current,
+  ${pageVisibilityFragment},
   ${seoFragment},
   sections[]{ _key, ${pageSectionFieldsFragment} },
   pageBuilder[]{ _key, ${pageSectionFieldsFragment} }
@@ -703,7 +705,8 @@ var eventsQuery = `*[_type == "event" && status != "hidden" && !(_id in path("dr
   embedLumaOnDetailPage,
   addToCalendarEnabled,
   status,
-  sortOrder
+  sortOrder,
+  ${seoFragment}
 }`;
 var eventBySlugQuery = `*[_type == "event" && slug.current == $slug && !(_id in path("drafts.**"))][0]{
   title,
@@ -807,6 +810,10 @@ var diagnosticSurveyContentQuery = `*[_id == "diagnosticSurveyContent"][0]{
   reportMembershipCtaBody,
   reportMembershipCtaButton,
   "reportMembershipCtaImageSrc": reportMembershipCtaImage.asset->url,
+  "reportMembershipCtaImageDisplayMode": reportMembershipCtaImage.displayMode,
+  "reportMembershipCtaImageWidth": reportMembershipCtaImage.asset->metadata.dimensions.width,
+  "reportMembershipCtaImageHeight": reportMembershipCtaImage.asset->metadata.dimensions.height,
+  "reportMembershipCtaImageHotspot": reportMembershipCtaImage.hotspot,
   sections[]{ _key,
     id,
     icon,

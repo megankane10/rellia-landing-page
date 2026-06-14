@@ -48,6 +48,7 @@ import {
   DrawerClose,
 } from "@/components/ui/drawer";
 import { cn } from "@/lib/utils";
+import { normalizeRichTextImageDisplayMode } from "@/lib/richTextImageDisplay";
 import { clearApiCsrfCache, getApiCsrfHeaders } from "@/lib/apiCsrf";
 import { PROGRAM_META_BY_HREF } from "@/config/programMeta";
 import FilteredListEmptyState from "@/components/FilteredListEmptyState";
@@ -587,26 +588,39 @@ const css = `
     gap: 0.75rem;
   }
 
+  .diagnostic-report .diagnostic-membership-print--square .diagnostic-membership-print-layout {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 0.85rem;
+  }
+
   .diagnostic-report .diagnostic-membership-print-image {
     width: 100%;
     max-width: none;
     height: auto;
     flex-shrink: 0;
-    object-fit: cover;
+    object-fit: contain;
     border-radius: 6px;
     align-self: auto;
-    min-height: 9rem;
+    min-height: 0;
     max-height: none;
-    aspect-ratio: 16 / 9;
+    aspect-ratio: auto;
     border: 1px solid #b7e0d8;
   }
 
   .diagnostic-report .diagnostic-membership-print--wide .diagnostic-membership-print-image {
-    aspect-ratio: 21 / 9;
-    min-height: 10rem;
+    width: 100%;
+    max-height: 9.5rem;
   }
 
-  .diagnostic-report .diagnostic-membership-print-copy {
+  .diagnostic-report .diagnostic-membership-print--square .diagnostic-membership-print-image {
+    width: 32%;
+    max-width: 32%;
+    max-height: 7.5rem;
+    align-self: flex-start;
+  }
+
+  .diagnostic-report .diagnostic-membership-print--square .diagnostic-membership-print-copy {
     flex: 1;
     min-width: 0;
   }
@@ -727,6 +741,27 @@ const DEFAULT_REPORT_MEMBERSHIP_CTA_BUTTON = "Apply for Membership"
 const DEFAULT_REPORT_MEMBERSHIP_CTA_IMAGE =
   "https://images.pexels.com/photos/3783725/pexels-photo-3783725.jpeg?auto=compress&cs=tinysrgb&w=1200"
 
+type MembershipPrintImageLayout = "wide" | "square"
+
+const MEMBERSHIP_PRINT_WIDE_RATIO = 1.2
+
+const resolveMembershipPrintImageLayout = (
+  width?: number,
+  height?: number,
+): MembershipPrintImageLayout => {
+  if (!width || !height) return "square"
+  return width / height >= MEMBERSHIP_PRINT_WIDE_RATIO ? "wide" : "square"
+}
+
+const getMembershipImageObjectPosition = (
+  hotspot?: { x?: number; y?: number },
+): string => {
+  if (typeof hotspot?.x === "number" && typeof hotspot?.y === "number") {
+    return `${Math.round(hotspot.x * 100)}% ${Math.round(hotspot.y * 100)}%`
+  }
+  return "center center"
+}
+
 const INTRO_ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
   Building2,
   Target,
@@ -812,23 +847,47 @@ export default function DiagnosticSurvey() {
   const { data: surveyCms } = useDiagnosticSurveyContent()
   const reportMembershipImageSrc =
     surveyCms?.reportMembershipCtaImageSrc?.trim() || DEFAULT_REPORT_MEMBERSHIP_CTA_IMAGE
-  const [membershipPrintImageLayout, setMembershipPrintImageLayout] = useState<"wide" | "square">(
-    "square",
+  const reportMembershipImageDisplayMode = normalizeRichTextImageDisplayMode(
+    surveyCms?.reportMembershipCtaImageDisplayMode,
   )
+  const reportMembershipImageObjectPosition = getMembershipImageObjectPosition(
+    surveyCms?.reportMembershipCtaImageHotspot,
+  )
+  const [membershipPrintImageLayout, setMembershipPrintImageLayout] =
+    useState<MembershipPrintImageLayout>(() =>
+      resolveMembershipPrintImageLayout(
+        surveyCms?.reportMembershipCtaImageWidth,
+        surveyCms?.reportMembershipCtaImageHeight,
+      ),
+    )
   const sections = useMemo(
     () => mergeDiagnosticSurveySections(surveyCms ?? undefined),
     [surveyCms],
   )
 
   useEffect(() => {
+    const cmsLayout = resolveMembershipPrintImageLayout(
+      surveyCms?.reportMembershipCtaImageWidth,
+      surveyCms?.reportMembershipCtaImageHeight,
+    )
+    if (surveyCms?.reportMembershipCtaImageWidth && surveyCms?.reportMembershipCtaImageHeight) {
+      setMembershipPrintImageLayout(cmsLayout)
+      return
+    }
+
     if (typeof window === "undefined") return
     const img = new Image()
     img.onload = () => {
-      const ratio = img.naturalWidth / Math.max(img.naturalHeight, 1)
-      setMembershipPrintImageLayout(ratio >= 1.2 ? "wide" : "square")
+      setMembershipPrintImageLayout(
+        resolveMembershipPrintImageLayout(img.naturalWidth, img.naturalHeight),
+      )
     }
     img.src = reportMembershipImageSrc
-  }, [reportMembershipImageSrc])
+  }, [
+    reportMembershipImageSrc,
+    surveyCms?.reportMembershipCtaImageHeight,
+    surveyCms?.reportMembershipCtaImageWidth,
+  ])
 
   const stages = useMemo(() => {
     if (surveyCms?.stages && surveyCms.stages.length > 0) {
@@ -2216,6 +2275,12 @@ export default function DiagnosticSurvey() {
                           src={reportMembershipImageSrc}
                           alt=""
                           className="absolute inset-0 h-full w-full object-cover"
+                          style={{
+                            objectPosition:
+                              reportMembershipImageDisplayMode === "full"
+                                ? reportMembershipImageObjectPosition
+                                : "center center",
+                          }}
                         />
                         <div
                           aria-hidden
@@ -2248,7 +2313,9 @@ export default function DiagnosticSurvey() {
                     <section
                       className={cn(
                         "diagnostic-print-only diagnostic-membership-print",
-                        membershipPrintImageLayout === "wide" && "diagnostic-membership-print--wide",
+                        membershipPrintImageLayout === "wide"
+                          ? "diagnostic-membership-print--wide"
+                          : "diagnostic-membership-print--square",
                       )}
                     >
                       <div className="diagnostic-membership-print-layout">

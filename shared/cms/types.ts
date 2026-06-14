@@ -1120,6 +1120,15 @@ export type DiagnosticSurveyContent = {
   reportMembershipCtaBody?: string
   reportMembershipCtaButton?: string
   reportMembershipCtaImageSrc?: string
+  reportMembershipCtaImageDisplayMode?: string
+  reportMembershipCtaImageWidth?: number
+  reportMembershipCtaImageHeight?: number
+  reportMembershipCtaImageHotspot?: {
+    x?: number
+    y?: number
+    width?: number
+    height?: number
+  }
   sections?: DiagnosticSurveyCmsSection[]
 }
 
