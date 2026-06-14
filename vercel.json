@@ -21,6 +21,21 @@
       "permanent": true
     },
     {
+      "source": "/diagnostics",
+      "destination": "/startup-diagnostic",
+      "permanent": true
+    },
+    {
+      "source": "/survey",
+      "destination": "/diagnostic-survey",
+      "permanent": true
+    },
+    {
+      "source": "/policy",
+      "destination": "/privacy",
+      "permanent": true
+    },
+    {
       "source": "/stories/website-launch",
       "destination": "/stories/a-clearer-path-for-digital-health-founders",
       "permanent": true
