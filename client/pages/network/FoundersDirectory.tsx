@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
 import RelliaCta from "@/components/RelliaCta"
+import { SectionsRenderer } from "@/components/cms/PageRenderer"
 import { cn } from "@/lib/utils"
 import {
   motion,
@@ -33,6 +34,7 @@ import {
 } from "@/lib/directoryFilterOptions"
 import { resolveSocialOgImageUrl } from "@/config/seo"
 import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo"
+import { cmsCleanText, cmsDisplayText } from "@/lib/cmsStega"
 
 const DIRECTORY_TITLE_CLASS =
   "font-host-grotesk text-4xl font-extrabold tracking-tight text-black md:text-5xl"
@@ -100,7 +102,7 @@ function FounderDirectoryCard({
       }}
       role="button"
       tabIndex={0}
-      aria-label={`Open details for ${company.logoName}`}
+      aria-label={`Open details for ${cmsCleanText(company.logoName)}`}
     >
       <div className="relative flex aspect-video w-full items-center justify-center bg-white border-b border-black/[0.05] shrink-0">
         <img
@@ -112,11 +114,11 @@ function FounderDirectoryCard({
       </div>
       <div className="flex flex-1 flex-col p-6 md:p-7">
         <h3 className="font-host-grotesk text-lg font-bold tracking-tight text-black group-hover:underline decoration-2 underline-offset-4">
-          {company.logoName}
+          {cmsDisplayText(company.logoName)}
         </h3>
         {(company.shortDescription?.trim() || company.tagline?.trim()) && (
           <p className="mt-1 font-urbanist text-sm font-medium text-black/77 leading-relaxed line-clamp-3">
-            {company.shortDescription?.trim() || company.tagline}
+            {cmsDisplayText(company.shortDescription?.trim() || company.tagline)}
           </p>
         )}
         {company.countries.length > 0 && (
@@ -433,6 +435,10 @@ export default function FoundersDirectory() {
             ) : null}
           </div>
         </section>
+
+        {alumniDirectory.sections?.length ? (
+          <SectionsRenderer sections={alumniDirectory.sections} />
+        ) : null}
 
         <RelliaCta
           title={alumniDirectory.directoryCtaTitle ?? "Ready to build your network?"}

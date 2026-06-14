@@ -60,7 +60,13 @@ export const isAllowedBrowserOrigin = (
   const originHeader = (req.get("origin") || "").trim()
   if (originHeader && allowed.has(originHeader)) return true
 
-  if (originHeader && (originHeader.endsWith(".sanity.studio") || originHeader.endsWith(".sanity.io"))) {
+  if (
+    originHeader &&
+    (originHeader.endsWith(".sanity.studio") ||
+      originHeader.endsWith(".sanity.io") ||
+      originHeader.includes("localhost:3333") ||
+      originHeader.includes("127.0.0.1:3333"))
+  ) {
     return true
   }
 
@@ -68,7 +74,13 @@ export const isAllowedBrowserOrigin = (
   const refererOrigin = safeOriginFromUrl(refererHeader)
   if (refererOrigin && allowed.has(refererOrigin)) return true
 
-  if (refererOrigin && (refererOrigin.endsWith(".sanity.studio") || refererOrigin.endsWith(".sanity.io"))) {
+  if (
+    refererOrigin &&
+    (refererOrigin.endsWith(".sanity.studio") ||
+      refererOrigin.endsWith(".sanity.io") ||
+      refererOrigin.includes("localhost:3333") ||
+      refererOrigin.includes("127.0.0.1:3333"))
+  ) {
     return true
   }
 

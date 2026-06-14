@@ -3,6 +3,7 @@ import Footer from "@/components/Footer"
 import ScrollReveal from "@/components/ScrollReveal"
 import RelliaCta, { ctaActionFromHref } from "@/components/RelliaCta"
 import { HorizontalCard } from "@/components/cards/HorizontalCard"
+import { SectionsRenderer } from "@/components/cms/PageRenderer"
 import PageHeader from "@/components/PageHeader"
 import { useEvents } from "@/hooks/useCmsDocuments"
 import { useEventsLandingPage } from "@/hooks/useCmsDocuments"
@@ -23,6 +24,7 @@ import { normalizeCmsEventForCard } from "@/lib/cmsEventList"
 import { isCmsListAwaitingData, isCmsQueryLoading, shouldShowCmsEmptyState } from "@/lib/cmsQueryState"
 import { DirectoryGridSkeleton } from "@/components/cms/CmsPageLoadingShell"
 import { isSanityConfigured } from "@/lib/sanity"
+import { cmsDisplayText } from "@/lib/cmsStega"
 import { getEventStartTimestamp, getEventTemporalStatus } from "@shared/cms/eventTemporalStatus"
 
 type EventFilter = "all" | "upcoming" | "past"
@@ -138,7 +140,7 @@ export default function Events() {
             />
           }
           subtitle={
-            landing?.heroSubtitle ||
+            cmsDisplayText(landing?.heroSubtitle) ||
             "Join live sessions with operators, clinicians, and health tech leaders."
           }
         />
@@ -277,6 +279,10 @@ export default function Events() {
             </ScrollReveal>
           </div>
         </section>
+
+        {landing?.sections?.length ? (
+          <SectionsRenderer sections={landing.sections} />
+        ) : null}
 
         <RelliaCta
           title={landing?.ctaTitle || "Want to speak at a Rellia event?"}

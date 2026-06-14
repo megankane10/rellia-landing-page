@@ -1,4 +1,6 @@
 import {defineArrayMember, defineField, defineType} from 'sanity'
+import {portableHeadlineField} from '../shared/inlineHeroHeadlineField'
+import {showBadgeField} from '../shared/sectionAppearanceFields'
 import {internalLabelField, sectionListPreview} from '../shared/sectionPreview'
 
 export const sectionEligibilityBento = defineType({
@@ -7,9 +9,19 @@ export const sectionEligibilityBento = defineType({
   type: 'object',
   fields: [
     defineField(internalLabelField),
-    defineField({name: 'badge', type: 'string'}),
-    defineField({name: 'title', type: 'string', initialValue: 'Built for serious health tech teams'}),
-    defineField({name: 'description', type: 'text', rows: 3}),
+    showBadgeField,
+    defineField({
+      name: 'badge',
+      title: 'Section tag',
+      type: 'string',
+      hidden: ({parent}) => parent?.showBadge === false,
+    }),
+    portableHeadlineField({
+      name: 'headlinePortable',
+      title: 'Section heading',
+      initialValue: undefined,
+    }),
+    defineField({name: 'description', type: 'text', rows: 3, title: 'Section intro'}),
     defineField({
       name: 'items',
       type: 'array',

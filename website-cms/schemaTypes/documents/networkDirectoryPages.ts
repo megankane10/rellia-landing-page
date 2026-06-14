@@ -1,5 +1,5 @@
 import {defineField, defineType} from 'sanity'
-import {CONTENT_SEO_FIELDSETS, singletonSeoField} from '../shared/singletonContentFields'
+import {CONTENT_SEO_FIELDSETS, GROUP_MODULAR_SECTIONS, modularSectionsField, singletonSeoField} from '../shared/singletonContentFields'
 import {GROUP_SEO} from '../shared/fieldGroups'
 import {networkDirectoryChromeFields} from '../shared/directoryPageFields'
 
@@ -9,9 +9,16 @@ export const networkAlumniDirectoryPage = defineType({
   name: 'networkAlumniDirectoryPage',
   title: 'Explore Alumni directory (/founders/alumni)',
   type: 'document',
-  groups: [GROUP_CONTENT, GROUP_SEO],
+  groups: [GROUP_CONTENT, GROUP_MODULAR_SECTIONS, GROUP_SEO],
   fieldsets: CONTENT_SEO_FIELDSETS,
-  fields: [...networkDirectoryChromeFields, singletonSeoField],
+  fields: [
+    ...networkDirectoryChromeFields,
+    modularSectionsField({
+      description:
+        'Optional modular blocks rendered on /founders/alumni after the directory grid and before the footer CTA band.',
+    }),
+    singletonSeoField,
+  ],
   preview: {
     prepare() {
       return {title: 'Explore Alumni directory', subtitle: '/founders/alumni'}

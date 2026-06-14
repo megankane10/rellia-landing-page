@@ -130,11 +130,13 @@ export function createServer() {
   const isDev = process.env.NODE_ENV !== "production";
 
   // Default Helmet CSP blocks Vite's inline dev scripts (React Refresh / HMR), which yields a blank page locally.
+  // frameguard must be off so Sanity Presentation (localhost:3333) can iframe the dev site.
   app.use(
     isDev
       ? helmet({
           contentSecurityPolicy: false,
           strictTransportSecurity: false,
+          frameguard: false,
         })
       : helmet({
           // Visual editing uses Studio -> iframe preview; framing is controlled by CSP headers in `vercel.json`.

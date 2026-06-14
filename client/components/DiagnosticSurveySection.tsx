@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from "react"
 import { Link } from "react-router-dom"
 import { motion, AnimatePresence } from "framer-motion"
-import * as LucideIcons from "lucide-react"
+import { resolveLucideIcon } from "@/lib/resolveLucideIcon"
 import {
   ArrowRight,
   Palette,
@@ -23,6 +23,7 @@ import RelliaAction from "@/components/RelliaAction"
 import { Reveal } from "@/pages/network/_shared"
 import { useDiagnosticSurveyContent } from "@/hooks/useCmsDocuments"
 import { mergeDiagnosticSurveySections } from "@/lib/mergeDiagnosticSurvey"
+import { cmsDisplayText } from "@/lib/cmsStega"
 
 const fallbackIcons: Record<string, any> = {
   product_design: Palette,
@@ -50,19 +51,10 @@ export function DiagnosticSurveySection() {
   const slides = useMemo(() => {
     return sections.map((section) => {
       // Find dynamic icon or fall back to section id mapping
-      let IconComponent = fallbackIcons[section.id] || Compass
       const iconName = section.icon?.trim()
-      if (iconName) {
-        if ((LucideIcons as any)[iconName]) {
-          IconComponent = (LucideIcons as any)[iconName]
-        } else {
-          // PascalCase check
-          const pascalName = iconName.charAt(0).toUpperCase() + iconName.slice(1)
-          if ((LucideIcons as any)[pascalName]) {
-            IconComponent = (LucideIcons as any)[pascalName]
-          }
-        }
-      }
+      const IconComponent = iconName
+        ? resolveLucideIcon(iconName, fallbackIcons[section.id] || Compass)
+        : fallbackIcons[section.id] || Compass
       return {
         icon: IconComponent,
         title: section.title,
@@ -152,9 +144,9 @@ export function DiagnosticSurveySection() {
                     >
                       <CurrentIcon className="h-8 w-8 text-rellia-teal shrink-0" />
                       <div className="min-w-0 flex-1">
-                        <h4 className="font-host-grotesk text-lg md:text-xl font-bold text-black">{currentItem.title}</h4>
+                        <h4 className="font-host-grotesk text-lg md:text-xl font-bold text-black">{cmsDisplayText(currentItem.title)}</h4>
                         <p className="mt-2 font-urbanist text-base leading-relaxed text-black/70">
-                          {currentItem.description}
+                          {cmsDisplayText(currentItem.description)}
                         </p>
                       </div>
                     </motion.div>

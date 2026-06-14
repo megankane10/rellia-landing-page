@@ -11,6 +11,7 @@ import {
   networkHeroFields,
   networkWhyRelliaFields,
 } from '../shared/networkPageFields'
+import {iconKeyField} from '../shared/iconKeyField'
 
 const GROUP_HERO = {name: 'hero' as const, title: 'Hero', default: true}
 const GROUP_LIFE_AT_RELLIA = {name: 'lifeAtRellia' as const, title: 'Life at Rellia'}
@@ -21,11 +22,8 @@ const careersPerkItemMember = defineArrayMember({
   fields: [
     defineField({name: 'title', type: 'string', validation: (Rule) => Rule.required()}),
     defineField({name: 'body', type: 'text', rows: 3}),
-    defineField({
-      name: 'iconKey',
-      title: 'Icon',
-      type: 'string',
-      description: 'Lucide icon name, e.g. Users, Building2, Laptop, MapPin',
+    iconKeyField({
+      description: 'Lucide icon for this perk card, e.g. Users, Building2, Laptop, MapPin',
     }),
   ],
   preview: {select: {title: 'title', subtitle: 'body'}},

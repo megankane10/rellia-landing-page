@@ -63,24 +63,27 @@ const lookupLucide = (candidate: string): LucideIcon | undefined => {
   return fromLucide
 }
 
-/** Resolve a CMS icon key (Lucide name or alias) to a component. */
-export const resolveLucideIcon = (
-  iconKey: string | null | undefined,
-  fallback: LucideIcon = ArrowRight,
-): LucideIcon => {
+const iconCandidates = (iconKey: string): string[] => [
+  iconKey,
+  toPascalCase(iconKey),
+  iconKey.charAt(0).toUpperCase() + iconKey.slice(1),
+]
+
+/** Resolve a CMS icon key to a Lucide component, or null when not found. */
+export const lookupLucideIcon = (iconKey: string | null | undefined): LucideIcon | null => {
   const cleaned = cmsCleanText(iconKey)
-  if (!cleaned) return fallback
+  if (!cleaned) return null
 
-  const candidates = [
-    cleaned,
-    toPascalCase(cleaned),
-    cleaned.charAt(0).toUpperCase() + cleaned.slice(1),
-  ]
-
-  for (const candidate of candidates) {
+  for (const candidate of iconCandidates(cleaned)) {
     const match = lookupLucide(candidate)
     if (match) return match
   }
 
-  return fallback
+  return null
 }
+
+/** Resolve a CMS icon key (Lucide name or alias) to a component. */
+export const resolveLucideIcon = (
+  iconKey: string | null | undefined,
+  fallback: LucideIcon = ArrowRight,
+): LucideIcon => lookupLucideIcon(iconKey) ?? fallback

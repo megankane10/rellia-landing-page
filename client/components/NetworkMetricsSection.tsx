@@ -44,8 +44,10 @@ function useCountUp(target: number, enabled: boolean, durationMs = 1200) {
 }
 
 export type NetworkMetric = {
+  _key?: string
   label: string;
   value: number;
+  valueText?: string;
   suffix?: string;
 };
 
@@ -66,7 +68,7 @@ const METRIC_ROW_ICONS: LucideIcon[] = [Users, Rocket, Globe]
 const METRIC_FALLBACK_LABELS = ["Members", "Startups", "Countries"]
 
 const sentenceCase = (text: string) => {
-  const raw = (text ?? "").trim()
+  const raw = cmsCleanText(text)
   if (!raw) return ""
   const normalized = raw.toLowerCase()
   return normalized.charAt(0).toUpperCase() + normalized.slice(1)
@@ -85,16 +87,17 @@ function MetricValue({
   entered: boolean;
   previewMode: boolean;
 }) {
-  const count = useCountUp(metric.value, entered && !previewMode, 1200 + index * 150);
+  const valueRaw = metric.valueText ?? String(metric.value)
+  const numericTarget = Number(cmsCleanText(valueRaw)) || 0
+  const count = useCountUp(numericTarget, entered && !previewMode, 1200 + index * 150);
   const Icon = METRIC_ROW_ICONS[index] ?? Users
-  const displayValue = previewMode ? metric.value : count
   const displaySuffix = cmsDisplayText(metric.suffix)
 
   return (
     <div className="inline-flex max-w-full flex-col items-start">
       <Icon className="h-10 w-10 text-rellia-mint md:h-11 md:w-11" strokeWidth={1.35} aria-hidden />
       <div className="mt-4 font-host-grotesk text-5xl font-semibold leading-none tracking-tight text-white md:text-6xl">
-        {displayValue}
+        {previewMode ? cmsDisplayText(valueRaw) : count}
         {displaySuffix}
       </div>
       <p className="mt-3 font-urbanist text-lg font-medium leading-snug text-white/80 md:text-xl">
@@ -113,11 +116,11 @@ export default function NetworkMetricsSection({
   badgeLabel = "Network impact",
   backgroundImageUrl,
 }: NetworkMetricsSectionProps) {
-  const sectionRef = useRef<HTMLDivElement | null>(null);
-  const [entered, setEntered] = useState(false);
-  const [countReady, setCountReady] = useState(false)
-  const reduceMotion = useReducedMotion()
   const previewMode = isVisualEditingPreview()
+  const sectionRef = useRef<HTMLDivElement | null>(null);
+  const [entered, setEntered] = useState(previewMode);
+  const [countReady, setCountReady] = useState(previewMode)
+  const reduceMotion = useReducedMotion()
   const [isMobile, setIsMobile] = useState(true)
 
   useEffect(() => {
@@ -128,7 +131,8 @@ export default function NetworkMetricsSection({
   }, [])
 
   const metricList = useMemo(() => metrics, [metrics]);
-  const metricsBackgroundSrc = cmsCleanText(backgroundImageUrl) || DEFAULT_METRICS_BACKGROUND
+  const metricsBackgroundSrc =
+    cmsDisplayText(backgroundImageUrl) || DEFAULT_METRICS_BACKGROUND
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ["start 95%", "end 5%"],
@@ -154,7 +158,6 @@ export default function NetworkMetricsSection({
           observer.disconnect()
         }
       },
-      // Trigger reveals when the section is meaningfully in view
       { threshold: 0.35 },
     )
 
@@ -169,11 +172,14 @@ export default function NetworkMetricsSection({
       return
     }
 
-    // Let the metric tiles slide in first, then start counting.
-    // Matches the last tile's delay (~0.28s) + duration (~0.45s) + a small buffer.
     const t = window.setTimeout(() => setCountReady(true), 820)
     return () => window.clearTimeout(t)
   }, [entered, previewMode, reduceMotion])
+
+  const headerMotionInitial = previewMode || reduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 22 }
+  const headerMotionAnimate = previewMode || reduceMotion || entered ? { opacity: 1, y: 0 } : { opacity: 0, y: 22 }
+  const tileMotionInitial = previewMode || reduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 18 }
+  const tileMotionAnimate = previewMode || reduceMotion || entered ? { opacity: 1, y: 0 } : { opacity: 0, y: 18 }
 
   return (
     <section
@@ -198,7 +204,7 @@ export default function NetworkMetricsSection({
             src={metricsBackgroundSrc}
             alt=""
             className="h-full w-full object-cover scale-[1.12] object-[62%_50%]"
-            style={reduceMotion ? undefined : { y: bgY }}
+            style={previewMode || reduceMotion || isMobile ? undefined : { y: bgY }}
           />
           <div className="absolute inset-0 bg-rellia-teal/35" />
           <div className="absolute inset-0 bg-gradient-to-b from-black/55 via-black/25 to-black/55" />
@@ -207,29 +213,23 @@ export default function NetworkMetricsSection({
         <div className="relative z-10 mx-auto flex min-h-0 w-full max-w-[1300px] flex-1 flex-col px-6 pb-10 pt-8 md:px-10 md:pb-8 md:pt-12 lg:pb-6">
           <div className="flex flex-col items-start text-left mt-4 md:mt-8 lg:mt-16">
             <motion.div
-              initial={reduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 22 }}
-              animate={
-                reduceMotion
-                  ? { opacity: 1, y: 0 }
-                  : entered
-                    ? { opacity: 1, y: 0 }
-                    : { opacity: 0, y: 22 }
-              }
-              transition={reduceMotion ? undefined : { duration: 0.65, ease: [0.16, 1, 0.3, 1] }}
+              initial={headerMotionInitial}
+              animate={headerMotionAnimate}
+              transition={previewMode || reduceMotion ? undefined : { duration: 0.65, ease: [0.16, 1, 0.3, 1] }}
               className="flex flex-col items-start text-left w-full"
             >
               <div className="mb-4 md:mb-6">
                 {showBadge ? (
                   <PillTag
-                    label={cmsDisplayText(badgeLabel) || badgeLabel}
+                    label={badgeLabel}
                     className={PILL_ON_IMAGE_BLUR_CLASS}
                     dot={
                       <motion.span
                         aria-hidden
                         className="relative inline-flex h-2 w-2 rounded-full bg-rellia-mint"
                         initial={false}
-                        animate={reduceMotion ? undefined : { opacity: [1, 1, 1], transform: ["scale(1)", "scale(1.35)", "scale(1)"] }}
-                        transition={reduceMotion ? undefined : { duration: 1.6, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" }}
+                        animate={previewMode || reduceMotion ? undefined : { opacity: [1, 1, 1], transform: ["scale(1)", "scale(1.35)", "scale(1)"] }}
+                        transition={previewMode || reduceMotion ? undefined : { duration: 1.6, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" }}
                       />
                     }
                   />
@@ -240,9 +240,9 @@ export default function NetworkMetricsSection({
               >
                 <HeroHeadlinePortable value={heading} />
               </h2>
-              {subheading?.trim() ? (
+              {cmsCleanText(subheading) ? (
                 <p className="mt-4 max-w-2xl font-urbanist text-base font-medium leading-relaxed text-white/80 md:text-lg">
-                  {subheading.trim()}
+                  {cmsDisplayText(subheading)}
                 </p>
               ) : null}
             </motion.div>
@@ -252,39 +252,28 @@ export default function NetworkMetricsSection({
             <div className="w-full">
               <div className="flex w-full flex-col items-start gap-10 sm:flex-row sm:flex-wrap sm:justify-start sm:gap-x-12 sm:gap-y-10 md:gap-x-14 md:gap-y-11 lg:gap-x-16 lg:gap-y-11 xl:gap-x-[4.25rem]">
                 {metricList.slice(0, 3).map((m, i) => {
-                  const label = cmsCleanText(m.label) || sentenceCase(cmsCleanText(METRIC_FALLBACK_LABELS[i]))
+                  const fallbackLabel = sentenceCase(METRIC_FALLBACK_LABELS[i])
+                  const label = cmsCleanText(m.label) ? m.label : fallbackLabel
                   return (
                     <motion.div
-                      key={`${cmsCleanText(m.label)}-${i}`}
-                      initial={reduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 18 }}
-                      animate={
-                        reduceMotion
-                          ? { opacity: 1, y: 0 }
-                          : entered
-                            ? { opacity: 1, y: 0 }
-                            : { opacity: 0, y: 18 }
-                      }
-                      transition={reduceMotion ? undefined : { duration: 0.52, ease: [0.16, 1, 0.3, 1], delay: 0.14 + i * 0.12 }}
+                      key={m._key ?? `${cmsCleanText(m.label)}-${i}`}
+                      initial={tileMotionInitial}
+                      animate={tileMotionAnimate}
+                      transition={previewMode || reduceMotion ? undefined : { duration: 0.52, ease: [0.16, 1, 0.3, 1], delay: 0.14 + i * 0.12 }}
                       className="relative w-full max-w-[260px] shrink-0 pl-6 md:max-w-[300px] md:pl-7"
                     >
                       <motion.span
                         aria-hidden
                         className="absolute left-0 top-1 bottom-1 w-[2px] rounded-full bg-rellia-mint origin-top"
-                        initial={reduceMotion ? { scaleY: 1, opacity: 1 } : { scaleY: 0, opacity: 0.6 }}
-                        animate={
-                          reduceMotion
-                            ? { scaleY: 1, opacity: 1 }
-                            : entered
-                              ? { scaleY: 1, opacity: 1 }
-                              : { scaleY: 0, opacity: 0.6 }
-                        }
+                        initial={previewMode || reduceMotion ? { scaleY: 1, opacity: 1 } : { scaleY: 0, opacity: 0.6 }}
+                        animate={previewMode || reduceMotion || entered ? { scaleY: 1, opacity: 1 } : { scaleY: 0, opacity: 0.6 }}
                         transition={
-                          reduceMotion
+                          previewMode || reduceMotion
                             ? undefined
                             : { duration: 0.6, ease: [0.22, 1, 0.36, 1], delay: 0.1 + i * 0.12 }
                         }
                       />
-                      <MetricValue metric={m} label={m.label?.trim() ? m.label : label} index={i} entered={entered && countReady} previewMode={previewMode} />
+                      <MetricValue metric={m} label={label} index={i} entered={entered && countReady} previewMode={previewMode} />
                     </motion.div>
                   )
                 })}
@@ -296,4 +285,3 @@ export default function NetworkMetricsSection({
     </section>
   );
 }
-

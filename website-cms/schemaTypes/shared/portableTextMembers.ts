@@ -1,5 +1,5 @@
 import {defineArrayMember, defineField} from 'sanity'
-import {richTextImageCropOptions, richTextImageDisplayModeField} from './richTextImageFields'
+import {richTextImageCropOptions, richTextImageDisplayModeHiddenField, richTextImageDisplayModeField} from './richTextImageFields'
 
 export const portableTextBlockMember = defineArrayMember({
   type: 'block',
@@ -44,7 +44,7 @@ export const portableTextInlineImageMember = defineArrayMember({
         }),
     },
     {name: 'caption', title: 'Caption', type: 'string'},
-    richTextImageDisplayModeField,
+    richTextImageDisplayModeHiddenField,
   ],
 })
 

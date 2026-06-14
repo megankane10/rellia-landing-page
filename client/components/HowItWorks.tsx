@@ -11,9 +11,10 @@ import {
 import type { LucideIcon } from "lucide-react"
 import ScrollReveal from "./ScrollReveal"
 import { cn } from "@/lib/utils"
-import { cmsDisplayText } from "@/lib/cmsStega"
+import { cmsDisplayText, cmsDisplayTextOr, cmsCleanText } from "@/lib/cmsStega"
 
 export type HowItWorksStep = {
+  _key?: string
   icon: LucideIcon
   title: string
   description: string
@@ -93,6 +94,21 @@ export default function HowItWorks(props?: HowItWorksProps) {
   /** Careers-style overrides default to 2 columns; homepage keeps three-up on large screens */
   const columns = columnsProp ?? (stepsProp != null ? 2 : 3)
 
+  const defaultSubheading =
+    "Health tech commercialization is complex, and generic start-up advice won't help you. These are the areas where Rellia can help."
+
+  const displayHeading =
+    typeof heading === "string"
+      ? cmsDisplayTextOr(heading, "Where we focus")
+      : heading ?? cmsDisplayTextOr(undefined, "Where we focus")
+
+  const displaySubheading =
+    typeof subheading === "string"
+      ? cmsDisplayTextOr(subheading, defaultSubheading)
+      : subheading ?? cmsDisplayTextOr(undefined, defaultSubheading)
+
+  const showHeadingBlock = heading != null || stepsProp == null
+
   return (
     <section className="relative flex w-full flex-col justify-center bg-rellia-teal py-16 md:py-20 overflow-hidden rounded-[2.5rem] md:rounded-[3.5rem]">
       <img
@@ -131,22 +147,22 @@ export default function HowItWorks(props?: HowItWorksProps) {
 
         <ScrollReveal delay={0.1}>
           <div className="mb-12 md:mb-14">
-            {heading ? (
+            {showHeadingBlock ? (
               <div className="font-host-grotesk text-2xl font-semibold leading-tight tracking-tight text-white md:text-[32px]">
-                {typeof heading === "string" ? cmsDisplayText(heading) : heading}
+                {displayHeading}
               </div>
             ) : (
               <h2 className="font-host-grotesk text-2xl font-semibold leading-tight tracking-tight text-rellia-mint md:text-[32px]">
                 Where we focus
               </h2>
             )}
-            {subheading ? (
+            {showHeadingBlock ? (
               <div className="mt-4 font-urbanist text-base font-medium leading-relaxed tracking-tight text-white/80 md:text-lg w-full">
-                {typeof subheading === "string" ? cmsDisplayText(subheading) : subheading}
+                {displaySubheading}
               </div>
             ) : (
               <p className="mt-4 font-urbanist text-base font-medium leading-relaxed tracking-tight text-white/80 md:text-lg w-full">
-                Health tech commercialization is complex, and generic start-up advice won't help you. These are the areas where Rellia can help.
+                {defaultSubheading}
               </p>
             )}
           </div>
@@ -159,12 +175,12 @@ export default function HowItWorks(props?: HowItWorksProps) {
               columns === 3 && "lg:grid-cols-3 lg:gap-8",
             )}
           >
-            {steps.map((step) => {
+            {steps.map((step, index) => {
               const Icon = step.icon
 
               return (
                 <div
-                  key={step.title}
+                  key={step._key ?? `${cmsCleanText(step.title)}-${index}`}
                   className="flex h-[200px] w-full max-w-[320px] flex-col px-1 md:px-2 items-start justify-center"
                 >
                   <Icon className="h-7 w-7 text-rellia-mint" aria-hidden />

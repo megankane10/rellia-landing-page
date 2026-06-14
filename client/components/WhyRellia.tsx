@@ -5,7 +5,7 @@ import ScrollReveal from "./ScrollReveal"
 import SectionHeading from "@/components/SectionHeading"
 import { cn } from "@/lib/utils"
 import type { HomeWhyFeature } from "@shared/cms/types"
-import { cmsDisplayText } from "@/lib/cmsStega"
+import { cmsDisplayText, isVisualEditingPreview } from "@/lib/cmsStega"
 
 const DEFAULT_SECTION_DESCRIPTION =
   "A curated network and practical support system to help you move through the moments that make or break a healthcare startup."
@@ -28,6 +28,7 @@ export default function WhyRellia({
   cardImages,
   sectionClassName,
 }: WhyRelliaProps) {
+  const previewMode = isVisualEditingPreview()
   const cards = useMemo(() => features.slice(0, 4), [features])
   const [activeIndex, setActiveIndex] = useState<number | null>(null)
   const [mobileIndex, setMobileIndex] = useState(0)
@@ -143,7 +144,7 @@ export default function WhyRellia({
 
                 return (
                   <article
-                    key={c.title}
+                    key={c._key ?? `${c.title}-${idx}`}
                     onMouseEnter={() => setActiveIndex(idx)}
                     className={cn(
                       "group relative overflow-hidden rounded-3xl border border-black/10 bg-white",
@@ -160,7 +161,10 @@ export default function WhyRellia({
                       type="button"
                       onFocus={() => setActiveIndex(idx)}
                       onClick={() => setActiveIndex(idx)}
-                      className="absolute inset-0 z-10 cursor-pointer rounded-3xl outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-white"
+                      className={cn(
+                        "absolute inset-0 z-10 cursor-pointer rounded-3xl outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-white",
+                        previewMode && "pointer-events-none",
+                      )}
                       aria-label={`Select ${c.title}`}
                     />
 
@@ -231,7 +235,7 @@ export default function WhyRellia({
 
                     return (
                       <article
-                        key={c.title}
+                        key={c._key ?? `${c.title}-${idx}`}
                         ref={(el) => {
                           mobileCardRefs.current[idx] = el
                         }}

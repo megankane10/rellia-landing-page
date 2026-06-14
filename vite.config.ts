@@ -10,6 +10,8 @@ import {
   fetchCareersRolePathsForPrerender,
   fetchProgramSlugsForPrerender,
   fetchStorySlugsForPrerender,
+  fetchEventSlugsForPrerender,
+  fetchCmsPageSlugsForPrerender,
 } from "./shared/cms/prerenderSanity";
 
 const getBuildSiteUrl = (): string => {
@@ -38,18 +40,31 @@ const getOgImageVersion = (): string => {
 };
 
 const buildPrerenderRoutes = async (): Promise<string[]> => {
-  const [cmsStoryPaths, cmsProgramPaths, cmsAdvisorPaths, cmsAlumniPaths, cmsCareersRolePaths] =
-    await Promise.all([
-      fetchStorySlugsForPrerender().then((slugs) =>
-        slugs.map((slug) => `/stories/${slug}`),
-      ),
-      fetchProgramSlugsForPrerender().then((slugs) =>
-        slugs.map((slug) => `/programs/${slug}`),
-      ),
-      fetchAdvisorProfilePathsForPrerender(),
-      fetchAlumniProfilePathsForPrerender(),
-      fetchCareersRolePathsForPrerender(),
-    ])
+  const [
+    cmsStoryPaths,
+    cmsProgramPaths,
+    cmsAdvisorPaths,
+    cmsAlumniPaths,
+    cmsCareersRolePaths,
+    cmsEventPaths,
+    cmsPagePaths,
+  ] = await Promise.all([
+    fetchStorySlugsForPrerender().then((slugs) =>
+      slugs.map((slug) => `/stories/${slug}`),
+    ),
+    fetchProgramSlugsForPrerender().then((slugs) =>
+      slugs.map((slug) => `/programs/${slug}`),
+    ),
+    fetchAdvisorProfilePathsForPrerender(),
+    fetchAlumniProfilePathsForPrerender(),
+    fetchCareersRolePathsForPrerender(),
+    fetchEventSlugsForPrerender().then((slugs) =>
+      slugs.map((slug) => `/events/${slug}`),
+    ),
+    fetchCmsPageSlugsForPrerender().then((slugs) =>
+      slugs.map((slug) => `/${slug}`),
+    ),
+  ])
   return [
     ...new Set([
       ...PRERENDER_PATHS,
@@ -59,6 +74,8 @@ const buildPrerenderRoutes = async (): Promise<string[]> => {
       ...cmsAdvisorPaths,
       ...cmsAlumniPaths,
       ...cmsCareersRolePaths,
+      ...cmsEventPaths,
+      ...cmsPagePaths,
     ]),
   ]
 };
@@ -69,7 +86,7 @@ export default defineConfig(async () => {
 
   return {
   server: {
-    host: "127.0.0.1",
+    host: "localhost",
     port: 5173,
     fs: {
       allow: ["./client", "./shared", path.resolve(__dirname, "./index.html")],

@@ -25,7 +25,6 @@ import {
 import { ADVISOR_DIRECTORY_SEED } from "@/data/advisorDirectory"
 import { FOUNDER_DIRECTORY } from "@/data/founderDirectory"
 import { AppRoutes, RouterShell } from "./AppRoutes"
-import { PageSeoProvider } from "@/context/PageSeoContext"
 import { DEFAULT_PROGRAMS_LANDING, DEFAULT_QMS_PROGRAM, mergeQmsProgram } from "@shared/cms/defaults"
 import {
   resolveCareersRoleSeo,
@@ -35,6 +34,9 @@ import {
 } from "@shared/cms/collectionSeo"
 import { parseCareersRoleIdFromPathname } from "@shared/cms/careersRoleShare"
 import type { SeoContent } from "@shared/cms/types"
+import { mergeCmsPageContent } from "@shared/cms/mergeCmsPageContent"
+import { mergePageSeo } from "@/hooks/useApplyCmsSeo"
+import type { PageSeoOverrides } from "@/context/PageSeoContext"
 import { findProgramsEventBySlug } from "@shared/cms/eventSlug"
 import { getProgramsEventLocationLabel } from "@shared/cms/programsEventDisplay"
 import {
@@ -93,7 +95,14 @@ const getSingleSegmentSlug = (pathname: string): string => {
 
 const prerenderQueryClient = new QueryClient({
   defaultOptions: {
-    queries: { retry: false },
+    queries: {
+      retry: false,
+      staleTime: Number.POSITIVE_INFINITY,
+      gcTime: Number.POSITIVE_INFINITY,
+      refetchOnMount: false,
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: false,
+    },
   },
 })
 
@@ -626,13 +635,23 @@ export const prerender = async (data: { url: string }) => {
     })
   }
 
+  let cmsPageInitialSeo: PageSeoOverrides | undefined
   const cmsPageSlug = getSingleSegmentSlug(pathname)
   if (cmsPageSlug && !RESERVED_FIRST_SEGMENTS.has(cmsPageSlug.toLowerCase())) {
-    const page = await fetchPageBySlugForPrerender(cmsPageSlug)
-    await prerenderQueryClient.prefetchQuery({
-      queryKey: ["cms", "page", cmsPageSlug],
-      queryFn: async () => page,
-    })
+    const page = mergeCmsPageContent(await fetchPageBySlugForPrerender(cmsPageSlug))
+    if (page) {
+      prerenderQueryClient.setQueryData(["cms", "page", cmsPageSlug], page)
+      cmsPageInitialSeo = mergePageSeo(page.seo, {
+        title: page.seo?.metaTitle?.trim()
+          ? undefined
+          : page.title
+            ? `${page.title} — Rellia Health`
+            : undefined,
+        noIndex: typeof page.seo?.noIndex === "boolean" ? undefined : false,
+      })
+    } else {
+      prerenderQueryClient.setQueryData(["cms", "page", cmsPageSlug], null)
+    }
   }
 
   const itemSeo = isItemDetailPath(pathname)
@@ -647,11 +666,9 @@ export const prerender = async (data: { url: string }) => {
           <Toaster />
           <Sonner />
           <StaticRouter location={data.url}>
-            <PageSeoProvider>
-              <RouterShell>
-                <AppRoutes />
-              </RouterShell>
-            </PageSeoProvider>
+            <RouterShell initialPageSeo={cmsPageInitialSeo}>
+              <AppRoutes />
+            </RouterShell>
           </StaticRouter>
         </TooltipProvider>
       </QueryClientProvider>

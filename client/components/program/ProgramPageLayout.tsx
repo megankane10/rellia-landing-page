@@ -68,6 +68,7 @@ import {
 } from "@shared/cms/programs/resolveProgramBlocks"
 import ProgramTrustedMembersSection from "@/components/program/ProgramTrustedMembersSection"
 import { resolveProgramCardImageSrc } from "@shared/cms/itemCardImage"
+import { cmsDisplayText } from "@/lib/cmsStega"
 
 export type ProgramPageLayoutProps = {
   /** Optional per-route fallbacks merged after CMS fetch (e.g. env payment URL). */
@@ -146,7 +147,7 @@ const OutcomesTimeline = ({ items }: { items: string[] }) => {
             </motion.span>
             <div className="min-w-0 flex-1 pt-1.5">
               <p className="font-urbanist text-[17px] md:text-lg leading-relaxed text-black/80">
-                {item}
+                {cmsDisplayText(item)}
               </p>
             </div>
           </motion.li>
@@ -298,10 +299,10 @@ const ProgramPageLayout = ({
                   ) : (
                     <>
                   <h1 className="max-w-3xl text-3xl md:text-4xl lg:text-5xl font-bold leading-[1.1] tracking-tight text-black">
-                    {resolvedProgramTitle}
+                    {cmsDisplayText(resolvedProgramTitle)}
                   </h1>
                   <p className="mt-5 max-w-xl font-urbanist text-base leading-relaxed text-black/60 md:text-lg">
-                    {resolvedProgramDescription}
+                    {cmsDisplayText(resolvedProgramDescription)}
                   </p>
                     </>
                   )}
@@ -325,7 +326,7 @@ const ProgramPageLayout = ({
                       onKeyDown={onKey(() => scrollTo(paymentSectionId))}
                       className="flex w-full sm:w-fit justify-center"
                     >
-                      {hasEnrollmentForm ? "Get started" : q.heroCtaLabel}
+                      {hasEnrollmentForm ? "Get started" : cmsDisplayText(q.heroCtaLabel)}
                       <ArrowRight className="h-4 w-4 ml-2" aria-hidden />
                     </RelliaAction>
                     <RelliaAction
@@ -374,10 +375,10 @@ const ProgramPageLayout = ({
             <ScrollReveal delay={0.1}>
               <div className="mb-6 md:mb-8">
                 <h2 className="font-host-grotesk text-2xl font-semibold leading-tight tracking-tight text-black md:text-[32px]">
-                  {q.outcomesTitle}
+                  {cmsDisplayText(q.outcomesTitle)}
                 </h2>
                 <p className="mt-4 font-urbanist text-base font-medium leading-relaxed tracking-tight text-black/65 md:text-lg">
-                  {q.outcomesIntro}
+                  {cmsDisplayText(q.outcomesIntro)}
                 </p>
               </div>
             </ScrollReveal>
@@ -399,10 +400,10 @@ const ProgramPageLayout = ({
             <ScrollReveal>
               <div className="mb-10 md:mb-14">
                 <h2 className="font-host-grotesk text-2xl font-semibold leading-tight tracking-tight text-black md:text-[32px]">
-                  {q.howItWorksTitle}
+                  {cmsDisplayText(q.howItWorksTitle)}
                 </h2>
                 <p className="mt-4 font-urbanist text-base font-medium leading-relaxed text-black/60 md:text-lg">
-                  {q.howItWorksIntro}
+                  {cmsDisplayText(q.howItWorksIntro)}
                 </p>
               </div>
             </ScrollReveal>
@@ -426,10 +427,10 @@ const ProgramPageLayout = ({
                       <div className="absolute inset-0 bg-rellia-teal/0 group-hover:bg-rellia-teal/20 transition-colors duration-500" />
                       <div className="relative z-10 flex flex-col justify-end h-full p-6 md:p-8">
                         <h4 className="font-host-grotesk font-semibold text-white text-xl md:text-2xl leading-snug mb-2">
-                          {card.title}
+                          {cmsDisplayText(card.title)}
                         </h4>
                         <p className="font-urbanist text-white/80 text-sm md:text-base leading-relaxed line-clamp-3">
-                          {card.description}
+                          {cmsDisplayText(card.description)}
                         </p>
                       </div>
                     </div>
@@ -459,7 +460,7 @@ const ProgramPageLayout = ({
               <ScrollReveal delay={0.1}>
                 <div className="mb-12 md:mb-16">
                   <h2 className="font-host-grotesk text-2xl font-semibold leading-tight tracking-tight text-white md:text-[32px]">
-                    {q.pillarsTitle}
+                    {cmsDisplayText(q.pillarsTitle)}
                   </h2>
                 </div>
               </ScrollReveal>
@@ -478,10 +479,10 @@ const ProgramPageLayout = ({
                             aria-hidden
                           />
                           <p className="mt-5 font-host-grotesk text-lg font-semibold leading-snug tracking-tight text-white line-clamp-2">
-                            {p.title}
+                            {cmsDisplayText(p.title)}
                           </p>
                           <p className="mt-3 font-urbanist text-sm leading-relaxed text-white/80 max-w-none sm:max-w-[260px]">
-                            {p.description}
+                            {cmsDisplayText(p.description)}
                           </p>
                         </div>
                       );
@@ -500,11 +501,11 @@ const ProgramPageLayout = ({
               <div className="lg:w-[50%] shrink-0 mb-10 lg:mb-0 lg:sticky lg:top-32 lg:self-start">
                 <ScrollReveal>
                   <h2 className="font-host-grotesk text-2xl font-semibold leading-tight tracking-tight text-black md:text-[32px]">
-                    {q.timelineTitle}
+                    {cmsDisplayText(q.timelineTitle)}
                   </h2>
                   {q.timelineSubtitle?.trim() ? (
                     <p className="mt-4 font-urbanist text-base leading-relaxed text-black/60 md:text-lg">
-                      {q.timelineSubtitle}
+                      {cmsDisplayText(q.timelineSubtitle)}
                     </p>
                   ) : null}
                 </ScrollReveal>
@@ -545,10 +546,10 @@ const ProgramPageLayout = ({
                               : "text-black/40",
                           )}
                         >
-                          {month.stepLabel ?? `Step ${idx + 1}`}
+                          {cmsDisplayText(month.stepLabel ?? `Step ${idx + 1}`)}
                         </span>
                         <AccordionTrigger className="font-host-grotesk font-semibold text-black text-lg md:text-xl py-2 hover:no-underline [&[data-state=open]]:text-rellia-teal transition-colors text-left">
-                          {month.month}
+                          {cmsDisplayText(month.month)}
                         </AccordionTrigger>
                         <AccordionContent className="pb-4">
                           <ul className="flex flex-col gap-4 pl-1">
@@ -558,7 +559,7 @@ const ProgramPageLayout = ({
                                   <li key={wIdx} className="flex items-start gap-2">
                                     <CheckCircle2 className="w-4 h-4 text-rellia-mint shrink-0 mt-0.5" />
                                     <span className="font-urbanist text-black text-base leading-relaxed">
-                                      {w}
+                                      {cmsDisplayText(w)}
                                     </span>
                                   </li>
                                 )
@@ -567,7 +568,7 @@ const ProgramPageLayout = ({
                                 <li key={wIdx} className="flex flex-col gap-2.5 mb-1 last:mb-0">
                                   {w.heading && (
                                     <span className="font-host-grotesk text-[10px] font-bold uppercase tracking-[0.18em] text-rellia-teal">
-                                      {w.heading}
+                                      {cmsDisplayText(w.heading)}
                                     </span>
                                   )}
                                   <div className="flex flex-col gap-4">
@@ -575,7 +576,7 @@ const ProgramPageLayout = ({
                                       <div key={ptIdx} className="flex items-start gap-2">
                                         <CheckCircle2 className="w-4 h-4 text-rellia-mint shrink-0 mt-0.5" />
                                         <span className="font-urbanist text-black text-base leading-relaxed">
-                                          {pt}
+                                          {cmsDisplayText(pt)}
                                         </span>
                                       </div>
                                     ))}
@@ -615,20 +616,20 @@ const ProgramPageLayout = ({
                   {/* Left: badge, price, description, button — top + left aligned */}
                   <div className="flex-1 flex flex-col justify-start items-start md:pr-12 lg:pr-16">
                     <h2 className="font-host-grotesk text-sm font-bold tracking-widest text-rellia-mint uppercase">
-                      {q.pricingBadge}
+                      {cmsDisplayText(q.pricingBadge)}
                     </h2>
                     <div className="mt-5 flex flex-wrap items-baseline gap-x-3 gap-y-1">
                       <span className="text-6xl md:text-7xl font-extrabold text-white tracking-tight">
-                        {q.pricingAmount}
+                        {cmsDisplayText(q.pricingAmount)}
                         {q.pricingSubAmount ? (
                           <span className="text-4xl md:text-5xl">
-                            {q.pricingSubAmount}
+                            {cmsDisplayText(q.pricingSubAmount)}
                           </span>
                         ) : null}
                       </span>
                       {q.pricingDiscountEnabled && !isStrictProductionSite() && q.pricingCompareAmount?.trim() ? (
                         <span className="relative inline-block text-3xl md:text-4xl font-bold text-white/45 ml-2">
-                          {q.pricingCompareAmount.trim()}
+                          {cmsDisplayText(q.pricingCompareAmount.trim())}
                           <span
                             className="absolute inset-0 pointer-events-none"
                             style={{
@@ -639,7 +640,7 @@ const ProgramPageLayout = ({
                       ) : null}
                     </div>
                     <p className="mt-5 mb-10 font-urbanist text-white/80 text-base md:text-lg leading-relaxed max-w-md">
-                      {q.pricingDescription}
+                      {cmsDisplayText(q.pricingDescription)}
                     </p>
                     <RelliaAction
                       type="button"
@@ -663,7 +664,7 @@ const ProgramPageLayout = ({
                         <li key={line} className="flex items-start gap-3">
                           <CheckCircle2 className="w-5 h-5 text-rellia-mint shrink-0 mt-0.5" />
                           <span className="font-urbanist text-white/80 text-base md:text-lg leading-relaxed">
-                            {line}
+                            {cmsDisplayText(line)}
                           </span>
                         </li>
                       ))}
@@ -720,6 +721,10 @@ const ProgramPageLayout = ({
           <BackToPrograms />
         </div>
 
+        {extraSections.length > 0 ? (
+          <SectionsRenderer sections={extraSections} />
+        ) : null}
+
         <RelliaCta
           title={q.bottomCtaTitle}
           body={q.bottomCtaBody}
@@ -728,10 +733,6 @@ const ProgramPageLayout = ({
             q.bottomContactHref,
           )}
         />
-
-        {extraSections.length > 0 ? (
-          <SectionsRenderer sections={extraSections} />
-        ) : null}
       </main>
       <Footer />
     </div>

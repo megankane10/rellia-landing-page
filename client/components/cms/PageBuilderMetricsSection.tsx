@@ -1,6 +1,12 @@
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react"
 import { cn } from "@/lib/utils"
 import NetworkEyebrow from "@/components/network/NetworkEyebrow"
+import {
+  cmsCleanText,
+  cmsDisplayText,
+  isVisualEditingPreview,
+  splitStega,
+} from "@/lib/cmsStega"
 
 function useCountUp(target: number, enabled: boolean, durationMs = 1200) {
   const [value, setValue] = useState(0)
@@ -38,8 +44,10 @@ function useCountUp(target: number, enabled: boolean, durationMs = 1200) {
 }
 
 export type PageBuilderMetric = {
+  _key?: string
   label: string
   value: number
+  valueText?: string
   suffix?: string
 }
 
@@ -57,21 +65,33 @@ function MetricStat({
   metric,
   index,
   entered,
+  previewMode,
 }: {
   metric: PageBuilderMetric
   index: number
   entered: boolean
+  previewMode: boolean
 }) {
-  const count = useCountUp(metric.value, entered, 1200 + index * 150)
+  const valueRaw = metric.valueText ?? String(metric.value)
+  const { cleaned: cleanValue, encoded: valueStega } = splitStega(valueRaw)
+  const numericTarget = Number(cmsCleanText(cleanValue)) || 0
+  const count = useCountUp(numericTarget, entered && !previewMode, 1200 + index * 150)
 
   return (
     <div className="flex flex-col items-start">
       <div className="font-host-grotesk text-4xl font-semibold leading-none tracking-tight text-rellia-teal md:text-5xl">
-        {count}
-        {metric.suffix ?? ""}
+        {previewMode ? (
+          <>
+            {cleanValue}
+            {valueStega ? <span className="hidden" aria-hidden="true">{valueStega}</span> : null}
+          </>
+        ) : (
+          count
+        )}
+        {cmsDisplayText(metric.suffix)}
       </div>
       <p className="mt-2 font-urbanist text-sm font-medium leading-snug text-black/70 md:text-base">
-        {metric.label}
+        {cmsDisplayText(metric.label)}
       </p>
     </div>
   )
@@ -88,9 +108,15 @@ export default function PageBuilderMetricsSection({
 }: PageBuilderMetricsSectionProps) {
   const sectionRef = useRef<HTMLDivElement | null>(null)
   const [entered, setEntered] = useState(false)
+  const previewMode = isVisualEditingPreview()
   const metricList = useMemo(() => metrics.slice(0, 6), [metrics])
 
   useEffect(() => {
+    if (previewMode) {
+      setEntered(true)
+      return
+    }
+
     const el = sectionRef.current
     if (!el || entered) return
 
@@ -106,13 +132,15 @@ export default function PageBuilderMetricsSection({
 
     observer.observe(el)
     return () => observer.disconnect()
-  }, [entered])
+  }, [entered, previewMode])
 
   return (
     <div ref={sectionRef} className="w-full">
       <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-[1fr_min(380px,38%)] lg:gap-14 xl:gap-16">
         <div className="flex flex-col items-start text-left">
-          {showBadge ? <NetworkEyebrow label={badgeLabel} tone="onLight" /> : null}
+          {showBadge ? (
+            <NetworkEyebrow label={cmsDisplayText(badgeLabel) || badgeLabel} tone="onLight" />
+          ) : null}
           <h2
             className={cn(
               "font-host-grotesk text-3xl font-semibold leading-tight tracking-tight text-black md:text-[40px]",
@@ -123,13 +151,19 @@ export default function PageBuilderMetricsSection({
           </h2>
           {subheading?.trim() ? (
             <p className="mt-4 max-w-2xl font-urbanist text-base leading-relaxed text-black/70 md:text-lg">
-              {subheading.trim()}
+              {cmsDisplayText(subheading)}
             </p>
           ) : null}
           {metricList.length > 0 ? (
             <div className="mt-10 grid w-full grid-cols-1 gap-8 sm:grid-cols-3 sm:gap-6">
               {metricList.map((metric, index) => (
-                <MetricStat key={`${metric.label}-${index}`} metric={metric} index={index} entered={entered} />
+                <MetricStat
+                  key={metric._key ?? `${cmsCleanText(metric.label)}-${index}`}
+                  metric={metric}
+                  index={index}
+                  entered={entered}
+                  previewMode={previewMode}
+                />
               ))}
             </div>
           ) : null}

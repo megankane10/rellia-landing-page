@@ -1,6 +1,7 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { fetchPublicCmsEvents, fetchPublicCmsEventBySlug } from "@/lib/cmsPublicFetch";
 import { sanityFetch } from "@/lib/sanity";
+import { isSanityPresentationIframe } from "@/lib/sanityPresentation";
 
 import {
   mergeAboutPage,
@@ -18,6 +19,7 @@ import {
   DEFAULT_QMS_PROGRAM,
 } from "@shared/cms/defaults";
 import { mergeCareersPage } from "@shared/cms/careersPageDefaults";
+import { mergeCmsPageContent } from "@shared/cms/mergeCmsPageContent";
 import type {
   AboutPageContent,
   ContactPageContent,
@@ -92,12 +94,20 @@ export const useSiteSettings = () =>
     staleTime: staleTimeMs,
   })
 
+export type HomePageQueryData = {
+  raw: Partial<HomePageContent> | null
+  merged: HomePageContent
+}
+
 export const useHomePage = () =>
   useQuery({
     queryKey: ["cms", "homePage"],
     queryFn: async () => {
-      const raw = await sanityFetch<Partial<HomePageContent>>("homePage");
-      return mergeHomePage(raw ?? undefined);
+      const raw = await sanityFetch<Partial<HomePageContent>>("homePage")
+      return {
+        raw: raw ?? null,
+        merged: mergeHomePage(raw ?? undefined),
+      } satisfies HomePageQueryData
     },
     staleTime: staleTimeMs,
   });
@@ -175,15 +185,7 @@ export const useCmsPageBySlug = (slug: string) =>
       const trimmed = slug.trim()
       if (!trimmed) return null
       const raw = await sanityFetch<CmsPageContent>("pageBySlug", { slug: trimmed })
-      if (!raw) return null
-      const mergedSections = [
-        ...(Array.isArray(raw.sections) ? raw.sections : []),
-        ...(Array.isArray(raw.pageBuilder) ? raw.pageBuilder : []),
-      ]
-      return {
-        ...raw,
-        sections: mergedSections.length > 0 ? mergedSections : raw.sections,
-      }
+      return mergeCmsPageContent(raw)
     },
     staleTime: staleTimeMs,
   })
@@ -228,6 +230,7 @@ export type EventsLandingContent = {
   ctaPrimaryHref?: string
   ctaSecondaryLabel?: string
   ctaSecondaryHref?: string
+  sections?: CmsPageSection[]
   seo?: SeoContent
 }
 
@@ -292,6 +295,11 @@ export const useEvents = () =>
   useQuery({
     queryKey: ["cms", "events"],
     queryFn: async () => {
+      // Presentation needs /api/sanity/query (drafts + stega). Public GET has neither.
+      if (isSanityPresentationIframe()) {
+        const raw = await sanityFetch<any[]>("events")
+        return raw ?? []
+      }
       const fromPublic = await fetchPublicCmsEvents<any>()
       if (fromPublic.length > 0) return fromPublic
       const raw = await sanityFetch<any[]>("events")
@@ -308,6 +316,10 @@ export const useEventBySlug = (slug: string) => {
     queryKey: ["cms", "event", trimmed],
     queryFn: async () => {
       if (!trimmed) return null
+      if (isSanityPresentationIframe()) {
+        const raw = await sanityFetch<any>("eventBySlug", { slug: trimmed })
+        return raw ?? null
+      }
       const fromPublic = await fetchPublicCmsEventBySlug<any>(trimmed)
       if (fromPublic) return fromPublic
       const raw = await sanityFetch<any>("eventBySlug", { slug: trimmed })

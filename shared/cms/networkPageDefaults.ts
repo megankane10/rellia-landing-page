@@ -8,6 +8,7 @@ import type {
 } from "./types"
 import { twoPartHeroHeadline } from "./inlineHeroHeadline"
 import { resolveHeroTitlePortable } from "./resolveHeroHeadline"
+import { pickCmsString } from "./cmsFieldUtils"
 
 const pexelsCardImage = (photoId: string) =>
   `https://images.pexels.com/photos/${photoId}/pexels-photo-${photoId}.jpeg?auto=compress&cs=tinysrgb&w=1200`
@@ -533,12 +534,12 @@ export const mergeNetworkWhyFeatures = (
     return {
       ...defaultFeature,
       ...cmsFeature,
-      title: cmsFeature.title?.trim() || defaultFeature.title,
-      body: cmsFeature.body?.trim() || defaultFeature.body,
-      iconKey: cmsFeature.iconKey?.trim() || defaultFeature.iconKey,
-      imageSrc: cmsFeature.imageSrc?.trim() || defaultFeature.imageSrc,
-      buttonLabel: cmsFeature.buttonLabel?.trim() || defaultFeature.buttonLabel,
-      buttonPath: cmsFeature.buttonPath?.trim() || defaultFeature.buttonPath,
+      title: pickCmsString(cmsFeature.title, defaultFeature.title),
+      body: pickCmsString(cmsFeature.body, defaultFeature.body),
+      iconKey: pickCmsString(cmsFeature.iconKey, defaultFeature.iconKey),
+      imageSrc: pickCmsString(cmsFeature.imageSrc, defaultFeature.imageSrc),
+      buttonLabel: pickCmsString(cmsFeature.buttonLabel, defaultFeature.buttonLabel),
+      buttonPath: pickCmsString(cmsFeature.buttonPath, defaultFeature.buttonPath),
     }
   })
 
@@ -553,11 +554,11 @@ export const mergeNetworkJourneySteps = (
     return {
       ...defaultStep,
       ...cmsStep,
-      id: cmsStep.id?.trim() || defaultStep.id,
-      label: cmsStep.label?.trim() || defaultStep.label,
+      id: pickCmsString(cmsStep.id, defaultStep.id),
+      label: pickCmsString(cmsStep.label, defaultStep.label),
       zone: cmsStep.zone ?? defaultStep.zone,
-      detail: cmsStep.detail?.trim() || defaultStep.detail,
-      iconKey: cmsStep.iconKey?.trim() || defaultStep.iconKey,
+      detail: pickCmsString(cmsStep.detail, defaultStep.detail),
+      iconKey: pickCmsString(cmsStep.iconKey, defaultStep.iconKey),
     }
   })
 }

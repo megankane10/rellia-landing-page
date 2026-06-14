@@ -4,12 +4,17 @@ import { isVercelPreviewDeployment } from "../shared/cms/sanityEnv"
 
 export const SANITY_STUDIO_FALLBACK_URL = "https://relliahealth.sanity.studio"
 
-export const resolveSanityStudioUrl = (): string =>
-  process.env.SANITY_STUDIO_URL?.trim() || SANITY_STUDIO_FALLBACK_URL
+const LOCAL_STUDIO_URL = "http://localhost:3333"
+
+export const resolveSanityStudioUrl = (): string => {
+  if (process.env.NODE_ENV !== "production") return LOCAL_STUDIO_URL
+  return process.env.SANITY_STUDIO_URL?.trim() || SANITY_STUDIO_FALLBACK_URL
+}
 
 export const isSanityStudioReferer = (req: express.Request): boolean => {
   const referer = (req.get("referer") || "").toLowerCase()
-  return referer.includes(".sanity.studio") || referer.includes(".sanity.io")
+  if (referer.includes(".sanity.studio") || referer.includes(".sanity.io")) return true
+  return referer.includes("localhost:3333") || referer.includes("127.0.0.1:3333")
 }
 
 export const hasSanityPreviewPerspectiveCookie = (cookieHeader: string): boolean =>

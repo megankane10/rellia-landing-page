@@ -2,7 +2,7 @@ import { cn } from "@/lib/utils"
 import { HEADING_SECTION } from "@/lib/typography"
 import ScrollReveal from "@/components/ScrollReveal"
 import WordRevealHeading from "@/components/WordRevealHeading"
-import { cmsDisplayText } from "@/lib/cmsStega"
+import { cmsDisplayText, isVisualEditingPreview } from "@/lib/cmsStega"
 
 export default function SectionHeading({
   title,
@@ -25,10 +25,12 @@ export default function SectionHeading({
 }) {
   const isCenter = align === "center";
   const isLight = tone === "light";
+  const previewMode = isVisualEditingPreview();
+  const useWordReveal = animated && !previewMode;
 
   return (
     <ScrollReveal className={cn(isCenter && "text-center", className)}>
-      {animated ? (
+      {useWordReveal ? (
         <WordRevealHeading
           text={title}
           as="h2"
@@ -46,7 +48,7 @@ export default function SectionHeading({
             titleClassName ?? HEADING_SECTION,
           )}
         >
-          {title}
+          {cmsDisplayText(title)}
         </h2>
       )}
           {description ? (

@@ -1,6 +1,6 @@
 import {defineField, defineType} from 'sanity'
 import {logoMarqueeField} from '../objects/logoMarqueeItem'
-import {CONTENT_SEO_FIELDSETS, singletonSeoField} from '../shared/singletonContentFields'
+import {CONTENT_SEO_FIELDSETS, modularSectionsField, singletonSeoField} from '../shared/singletonContentFields'
 import {
   NETWORK_PAGE_GROUPS,
   networkCtaFields,
@@ -101,6 +101,10 @@ export const networkFoundersPage = defineType({
     defineField({name: 'deeperHelpCtaHref', title: 'Consulting CTA link', type: 'string', group: 'content'}),
     ...networkCtaFields,
     {...logoMarqueeField, group: 'content'},
+    modularSectionsField({
+      description:
+        'Optional modular blocks rendered on /founders after the main page sections and before the footer CTA band.',
+    }),
     singletonSeoField,
   ],
 })

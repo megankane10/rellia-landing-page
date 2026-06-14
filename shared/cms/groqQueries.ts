@@ -22,7 +22,7 @@ const pageVisibilityFragment = `pageVisibility,
   placeholderCtaLabel,
   placeholderCtaHref`
 
-const logoMarqueeFragment = `logoMarquee[]{
+const logoMarqueeFragment = `logoMarquee[]{ _key,
   name,
   "src": logo.asset->url,
   href
@@ -39,11 +39,11 @@ const networkHeroFragment = `heroEyebrow,
 
 const networkEngageFragment = `engageTitle,
   engageSubtitle,
-  engageItems[]{ title, body, href, linkLabel, iconKey }`
+  engageItems[]{ _key, title, body, href, linkLabel, iconKey }`
 
 const networkWhyFragment = `whyTitle,
   whyDescription,
-  whyFeatures[]{ title, body, iconKey, buttonLabel, buttonPath, "imageSrc": coalesce(image.asset->url, imageSrc) }`
+  whyFeatures[]{ _key, title, body, iconKey, buttonLabel, buttonPath, "imageSrc": coalesce(image.asset->url, imageSrc) }`
 
 const networkCtaFragment = `ctaTitle,
   ctaBody,
@@ -80,17 +80,17 @@ export const globalSettingsQuery = `*[_id == "globalSettings"][0]{
 }`;
 
 export const navigationQuery = `*[_id == "navigation"][0]{
-  primary[]{
+  primary[]{ _key,
     label,
     href,
     description,
     badge,
-    children[]{
+    children[]{ _key,
       label,
       href,
       description,
       badge,
-      children[]{
+      children[]{ _key,
         label,
         href,
         description,
@@ -98,17 +98,17 @@ export const navigationQuery = `*[_id == "navigation"][0]{
       }
     }
   },
-  footer[]{
+  footer[]{ _key,
     label,
     href,
     description,
     badge,
-    children[]{
+    children[]{ _key,
       label,
       href,
       description,
       badge,
-      children[]{
+      children[]{ _key,
         label,
         href,
         description,
@@ -184,7 +184,7 @@ const portableRichTextBlocksFragment = `[]{
   },
   _type == "portableImageCarousel" => {
     ...,
-    slides[]{
+    slides[]{ _key,
       alt,
       caption,
       displayMode,
@@ -229,15 +229,15 @@ const pageSectionFieldsFragment = `...,
   primaryCta{ label, href, description, badge, openInNewTab },
   secondaryCta{ label, href, description, badge, openInNewTab },
   cta{ label, actionType, href, filloutFormUrl },
-  metrics[]{ label, value, suffix },
-  steps[]{ title, description },
-  roleLinks[]{ title, description, href },
-  cards[]{
+  metrics[]{ _key, label, "value": string(value), suffix },
+  steps[]{ _key, title, description },
+  roleLinks[]{ _key, title, description, href },
+  cards[]{ _key,
     ...,
     "imageUrl": coalesce(image.asset->url, imageUrl),
     cta{ label, href, description, badge }
   },
-  items[]{
+  items[]{ _key,
     ...,
     question,
     answer,
@@ -248,14 +248,14 @@ const pageSectionFieldsFragment = `...,
   leftColumn{
     title,
     body,
-    steps[]{ id, label, detail, icon }
+    steps[]{ _key, id, label, detail, icon }
   },
   rightColumn{
     title,
     body,
-    steps[]{ id, label, detail, icon }
+    steps[]{ _key, id, label, detail, icon }
   },
-  testimonials[]{
+  testimonials[]{ _key,
     quote,
     name,
     role,
@@ -267,35 +267,44 @@ export const pageBySlugQuery = `*[_type == "page" && slug.current == $slug && sl
   title,
   "slug": slug.current,
   ${seoFragment},
-  sections[]{ ${pageSectionFieldsFragment} },
-  pageBuilder[]{ ${pageSectionFieldsFragment} }
+  sections[]{ _key, ${pageSectionFieldsFragment} },
+  pageBuilder[]{ _key, ${pageSectionFieldsFragment} }
 }`
 
-const pageSectionsFragment = `sections[]{ ${pageSectionFieldsFragment} }`
+export const pagesPrerenderSnapshotQuery = `*[_type == "page" && defined(slug.current) && slug.current != "terms" && slug.current != "privacy" && !(_id in path("drafts.**"))]{
+  title,
+  "slug": slug.current,
+  ${seoFragment},
+  sections[]{ _key, ${pageSectionFieldsFragment} },
+  pageBuilder[]{ _key, ${pageSectionFieldsFragment} }
+}`
+
+const pageSectionsFragment = `sections[]{ _key, ${pageSectionFieldsFragment} }`
 
 export const networkFoundersPageQuery = `*[_id == "networkFoundersPage"][0]{
   title,
   ${networkHeroFragment},
   eligibilityTitle,
   eligibilityDescription,
-  eligibilityItems[]{ text, "imageUrl": coalesce(image.asset->url, imageUrl) },
+  eligibilityItems[]{ _key, text, "imageUrl": coalesce(image.asset->url, imageUrl) },
   ${networkEngageFragment},
   ${networkWhyFragment},
   showJourneySection,
   journeyTitle,
   journeyHelpBadge,
   journeyHelpHeading,
-  journeySteps[]{ id, label, zone, detail, iconKey },
+  journeySteps[]{ _key, id, label, zone, detail, iconKey },
   exploreTitle,
   exploreSubtitle,
-  exploreCards[]{ title, badge, "imageUrl": coalesce(image.asset->url, imageUrl), ctaLabel, ctaHref },
+  exploreCards[]{ _key, title, badge, "imageUrl": coalesce(image.asset->url, imageUrl), ctaLabel, ctaHref },
   deeperHelpTitle,
   deeperHelpSubtitle,
-  deeperHelpFeatures[]{ title, body, iconKey },
+  deeperHelpFeatures[]{ _key, title, body, iconKey },
   deeperHelpCtaLabel,
   deeperHelpCtaHref,
   ${networkCtaFragment},
   ${logoMarqueeFragment},
+  ${pageSectionsFragment},
   ${seoFragment}
 }`
 
@@ -306,6 +315,7 @@ export const networkAlumniDirectoryPageQuery = `*[_id == "networkAlumniDirectory
   directoryCtaBody,
   directoryCtaPrimaryLabel,
   directoryCtaPrimaryHref,
+  ${pageSectionsFragment},
   ${seoFragment}
 }`
 
@@ -324,7 +334,7 @@ export const networkInvestorsPageQuery = `*[_id == "networkInvestorsPage"][0]{
   ${networkHeroFragment},
   ${networkEngageFragment},
   scheduleTitle,
-  scheduleItems[]{ title, body, iconKey },
+  scheduleItems[]{ _key, title, body, iconKey },
   benefitsTitle,
   benefitsDescription,
   benefitsBullets,
@@ -339,13 +349,14 @@ export const networkAdvisorsPageQuery = `*[_id == "networkAdvisorsPage"][0]{
   ${networkWhyFragment},
   pitchTitle,
   pitchSubtitle,
-  pitchCards[]{ title, body, imageUrl },
+  pitchCards[]{ _key, title, body, imageUrl },
   ${networkCtaFragment},
   ${logoMarqueeFragment},
+  ${pageSectionsFragment},
   ${seoFragment},
-  foundersCluster[]{
+  foundersCluster[]{ _key,
     title,
-    segments[]{
+    segments[]{ _key,
       name,
       value
     }
@@ -364,10 +375,11 @@ export const networkPartnersPageQuery = `*[_id == "networkPartnersPage"][0]{
   directoryBullets,
   ${networkWhyFragment},
   ${networkCtaFragment},
+  ${pageSectionsFragment},
   ${seoFragment}
 }`
 
-const landingTestimonialsFragment = `testimonials[]{
+const landingTestimonialsFragment = `testimonials[]{ _key,
   quote,
   name,
   role,
@@ -385,7 +397,7 @@ export const diagnosticLandingPageQuery = `*[_id == "diagnosticLandingPage"][0]{
   heroPrimaryCtaHref,
   readinessTitle,
   readinessDescription,
-  readinessFeatures[]{
+  readinessFeatures[]{ _key,
     title,
     description,
     buttonLabel,
@@ -405,13 +417,14 @@ export const diagnosticLandingPageQuery = `*[_id == "diagnosticLandingPage"][0]{
   infographicBlobBlindSpot,
   timelineTitle,
   timelineSubheading,
-  timelineSteps[]{ title, description, weekLabel },
+  timelineSteps[]{ _key, title, description, weekLabel },
   ctaTitle,
   ctaBody,
   ctaPrimaryLabel,
   ctaPrimaryHref,
   ctaSecondaryLabel,
   ctaSecondaryHref,
+  ${pageSectionsFragment},
   ${seoFragment}
 }`
 
@@ -431,12 +444,12 @@ export const consultingPageQuery = `*[_id == "consultingPage"][0]{
   "fitImageSrc": coalesce(fitImageUrl, fitImage.asset->url),
   servicesTitle,
   servicesSubtitle,
-  services[]{ title, body, ctaLabel, iconKey },
+  services[]{ _key, title, body, ctaLabel, iconKey },
   testimonialsTitle,
   ${landingTestimonialsFragment},
   membershipTitle,
   membershipDescription,
-  membershipStats[]{ label, value },
+  membershipStats[]{ _key, label, value },
   membershipSavingsTitle,
   membershipSavingsBody,
   membershipPrimaryCtaLabel,
@@ -449,6 +462,7 @@ export const consultingPageQuery = `*[_id == "consultingPage"][0]{
   ctaPrimaryHref,
   ctaSecondaryLabel,
   ctaSecondaryHref,
+  ${pageSectionsFragment},
   ${seoFragment}
 }`
 
@@ -481,14 +495,14 @@ export const homePageQuery = `*[_id == "homePage"][0]{
   metricsBadgeLabel,
   metricsHeadingPortable,
   "metricsBackgroundImageUrl": coalesce(metricsBackgroundImage.asset->url, metricsBackgroundImageUrl),
-  metrics[]{ label, value, suffix },
+  metrics[]{ _key, label, "value": string(value), suffix },
   howItWorksSectionTitle,
   howItWorksSectionDescription,
-  howItWorksSteps[]{ iconKey, title, description },
+  howItWorksSteps[]{ _key, iconKey, title, description },
   whySectionTitle,
   whySectionDescription,
   testimonialsTitlePortable,
-  whyFeatures[]{ 
+  whyFeatures[]{ _key, 
     iconKey, 
     title, 
     description, 
@@ -501,7 +515,7 @@ export const homePageQuery = `*[_id == "homePage"][0]{
   ctaButtonPath,
   ctaSecondaryButtonLabel,
   ctaSecondaryButtonPath,
-  testimonials[]{
+  testimonials[]{ _key,
     name,
     role,
     company,
@@ -509,8 +523,9 @@ export const homePageQuery = `*[_id == "homePage"][0]{
     companyInfo,
     "imageSrc": coalesce(image.asset->url, imageSrc)
   },
+  ${logoMarqueeFragment},
   pathsTitle,
-  pathsCards[]{
+  pathsCards[]{ _key,
     roleId,
     tagLabel,
     title,
@@ -520,26 +535,30 @@ export const homePageQuery = `*[_id == "homePage"][0]{
     ctaLabel,
     ctaTo
   },
+  ${pageSectionsFragment},
   ${seoFragment}
 }`;
 
 export const aboutPageQuery = `*[_id == "aboutPage"][0]{
-  "heroTitlePortable": coalesce(heroTitlePortable, heroHeadlinePortable),
+  heroTitlePortable,
   heroIntro,
   missionTitle,
   missionParagraphs,
   "missionImageSrc": coalesce(missionImage.asset->url, missionImageSrc),
   missionImageAlt,
+  showValuesTag,
+  valuesTag,
+  valuesHeadlinePortable,
   valuesTitle,
   valuesSubtitle,
-  values[]{ iconKey, title, description },
+  values[]{ _key, iconKey, title, description },
   teamTitle,
   teamSubtitle,
-  team[]{
+  team[]{ _key,
     name,
     role,
     bio,
-    socialLinks[]{ platform, label, url },
+    socialLinks[]{ _key, platform, label, url },
     "imageSrc": coalesce(image.asset->url, imageSrc)
   },
   ctaTitle,
@@ -554,7 +573,7 @@ export const aboutPageQuery = `*[_id == "aboutPage"][0]{
 export const faqPageQuery = `*[_id == "faqPage"][0]{
   title,
   subtitle,
-  items[]{ id, question, answer },
+  items[]{ _key, id, question, answer },
   sidebarTitle,
   sidebarBody,
   sidebarCtaLabel,
@@ -577,6 +596,7 @@ export const programsLandingQuery = `*[_id == "programsLandingPage"][0]{
   ctaBody,
   ctaButtonLabel,
   ctaButtonHref,
+  ${pageSectionsFragment},
   ${seoFragment}
 }`;
 
@@ -584,7 +604,7 @@ export const programsLayoutPageQuery = `*[_id == "programsLayoutPage"][0]{
   howItWorksTitle,
   howItWorksIntro,
   pillarsTitle,
-  pillars[]{ title, description, iconKey },
+  pillars[]{ _key, title, description, iconKey },
   timelineTitle,
   timelineSubtitle,
   timelineWeekLabelPrefix,
@@ -600,6 +620,7 @@ export const eventsLandingQuery = `*[_id == "eventsLandingPage"][0]{
   ctaPrimaryHref,
   ctaSecondaryLabel,
   ctaSecondaryHref,
+  ${pageSectionsFragment},
   ${seoFragment}
 }`
 
@@ -613,13 +634,13 @@ const programDetailFields = `
   outcomes,
   howItWorksTitle,
   howItWorksIntro,
-  howItWorksCards[]{
+  howItWorksCards[]{ _key,
     title,
     description,
     "imageSrc": image.asset->url
   },
   pillarsTitle,
-  pillars[]{ title, description, iconKey },
+  pillars[]{ _key, title, description, iconKey },
   timelineTitle,
   timelineSubtitle,
   pricingBadge,
@@ -633,14 +654,14 @@ const programDetailFields = `
   bottomCtaBody,
   bottomCtaButtonLabel,
   bottomContactHref,
-  timelineSteps[]{ title, stepLabel, weekLabel, description, weeks[]{ heading, points } },
+  timelineSteps[]{ _key, title, stepLabel, weekLabel, description, weeks[]{ _key, heading, points } },
   ${landingTestimonialsFragment},
-  sections[]{
+  sections[]{ _key,
     ...,
     "imageUrl": image.asset->url,
     primaryCta{ label, href, description, badge },
     secondaryCta{ label, href, description, badge },
-    cards[]{
+    cards[]{ _key,
       ...,
       "imageUrl": image.asset->url,
       cta{ label, href, description, badge }
@@ -741,8 +762,8 @@ export const contactPageQuery = `*[_id == "contactPage"][0]{
   placeholders,
   subjectPlaceholder,
   companySizePlaceholder,
-  subjectOptions[]{ value, label },
-  companySizeOptions[]{ value, label },
+  subjectOptions[]{ _key, value, label },
+  companySizeOptions[]{ _key, value, label },
   submitLabel,
   sendingLabel,
   ${seoFragment}
@@ -758,9 +779,9 @@ export const notFoundQuery = `*[_id == "notFoundPage"][0]{
 export const applyPageQuery = `*[_id == "applyPage"][0]{
   headingTitle,
   subheading,
-  steps[]{ title, description },
+  steps[]{ _key, title, description },
   showRoleLinks,
-  roleLinks[]{ title, description, href },
+  roleLinks[]{ _key, title, description, href },
   applyButtonLabel,
   bottomCtaTitle,
   bottomCtaBody,
@@ -776,7 +797,7 @@ export const diagnosticSurveyContentQuery = `*[_id == "diagnosticSurveyContent"]
   introSubtitle,
   stages,
   introJourneyTitle,
-  introJourneySteps[]{
+  introJourneySteps[]{ _key,
     title,
     description,
     icon
@@ -807,15 +828,15 @@ export const diagnosticSurveyContentQuery = `*[_id == "diagnosticSurveyContent"]
   reportMembershipCtaBody,
   reportMembershipCtaButton,
   "reportMembershipCtaImageSrc": reportMembershipCtaImage.asset->url,
-  sections[]{
+  sections[]{ _key,
     id,
     icon,
     title,
     desc,
-    questions[]{
+    questions[]{ _key,
       text,
       type,
-      options[]{ label, desc, score }
+      options[]{ _key, label, desc, score }
     }
   }
 }`
@@ -904,16 +925,16 @@ export const careersPageQuery = `*[_id == "careersPage"][0]{
   ${networkWhyFragment},
   perksTitle,
   perksDescription,
-  perksItems[]{ title, body, iconKey },
+  perksItems[]{ _key, title, body, iconKey },
   openRolesTitle,
   ${networkCtaFragment},
   lifeAtRelliaHeading,
   lifeAtRelliaSubheading,
-  lifeAtRelliaImages[]{
+  lifeAtRelliaImages[]{ _key,
     "src": asset->url,
     alt
   },
-  lifeAtRelliaLinks[]{
+  lifeAtRelliaLinks[]{ _key,
     platformName,
     url,
     iconKey,
@@ -930,7 +951,7 @@ export const advisorsQuery = `*[_type == "advisor" && !(_id in path("drafts.**")
   yearJoined,
   industries,
   snapshot,
-  directoryFilters[]{
+  directoryFilters[]{ _key,
     "groupId": group->slug.current,
     "groupTitle": group->title,
     "groupAppliesTo": group->appliesTo,
@@ -957,7 +978,7 @@ export const advisorsQuery = `*[_type == "advisor" && !(_id in path("drafts.**")
   ),
   "photoSrc": coalesce(photo.asset->url, photoSrc),
   email,
-  socialLinks[]{ platform, label, url },
+  socialLinks[]{ _key, platform, label, url },
   bio${portableRichTextBlocksFragment}
 }`;
 
@@ -966,7 +987,7 @@ export const alumniCompaniesQuery = `*[_type == "alumniCompany" && !(_id in path
   name,
   slug,
   tagline,
-  directoryFilters[]{
+  directoryFilters[]{ _key,
     "groupId": group->slug.current,
     "groupTitle": group->title,
     "groupAppliesTo": group->appliesTo,
@@ -999,16 +1020,16 @@ export const alumniCompaniesQuery = `*[_type == "alumniCompany" && !(_id in path
   ),
   shortDescription,
   profileBody${portableRichTextBlocksFragment},
-  socialLinks[]{ platform, label, url },
+  socialLinks[]{ _key, platform, label, url },
   email,
   yearJoined,
   "logoSrc": coalesce(logo.asset->url, logoSrc),
-  founders[]{
+  founders[]{ _key,
     name,
     role,
     bio,
     email,
-    socialLinks[]{ platform, label, url },
+    socialLinks[]{ _key, platform, label, url },
     "imageSrc": coalesce(image.asset->url, imageSrc)
   }
 }`;
@@ -1018,7 +1039,7 @@ export const directoryFilterGroupsQuery = `*[_type == "directoryFilterGroup" && 
   title,
   appliesTo,
   sortOrder,
-  options[]{ label }
+  options[]{ _key, label }
 }`
 
 export const sanityDraftsQuery = `*[

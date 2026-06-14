@@ -9,6 +9,7 @@ import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
 import LogoMarquee from "@/components/LogoMarquee"
 import { INVESTOR_LOGO_MARKS, PORTFOLIO_LOGO_MARKS } from "@/data/portfolioLogos"
+import { resolveLogoMarqueeMarks } from "@/lib/resolveLogoMarqueeMarks"
 import InvestorNotifyForm from "@/components/network/InvestorNotifyForm"
 import RelliaAction from "@/components/RelliaAction"
 import RelliaCta from "@/components/RelliaCta"
@@ -31,6 +32,7 @@ import { useNetworkInvestorsPage } from "@/hooks/useCmsDocuments"
 import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo"
 import { mergeNetworkInvestorsPage, DEFAULT_NETWORK_INVESTORS_PAGE } from "@shared/cms/networkPageDefaults"
 import { NetworkHeroTitle } from "@/components/NetworkHeroTitle"
+import { cmsDisplayText } from "@/lib/cmsStega"
 import type { ClusterChart, NetworkInvestorsPageContent } from "@shared/cms/types"
 
 const COLORS = {
@@ -389,23 +391,13 @@ export default function Investors() {
 
   const [showNotifyForm, setShowNotifyForm] = useState(false)
 
-  const logoMarks = useMemo(() => {
-    const fromCms = (content.logoMarquee ?? [])
-      .map((entry) => ({
-        name: typeof entry?.name === "string" ? entry.name.trim() : "",
-        src: typeof entry?.src === "string" ? entry.src.trim() : "",
-      }))
-      .filter((entry) => {
-        if (!entry.name || !entry.src) return false
-        // Filter out portfolio logos if they leak into Sanity's investor page document
-        const isPortfolio = PORTFOLIO_LOGO_MARKS.some(
-          (p) => p.name.toLowerCase() === entry.name.toLowerCase(),
-        )
-        return !isPortfolio
-      })
-    if (fromCms.length > 0) return fromCms
-    return [...INVESTOR_LOGO_MARKS]
-  }, [content.logoMarquee])
+  const logoMarks = useMemo(
+    () =>
+      resolveLogoMarqueeMarks(content.logoMarquee, INVESTOR_LOGO_MARKS, {
+        excludeNames: PORTFOLIO_LOGO_MARKS.map((logo) => logo.name),
+      }),
+    [content.logoMarquee],
+  )
 
   const COLOR_PALETTE = useMemo(
     () => [
@@ -462,18 +454,18 @@ export default function Investors() {
                       <NetworkHeroTitle content={content} fallback={DEFAULT_NETWORK_INVESTORS_PAGE.heroTitlePortable!} />
                     </>
                   }
-                  subtitle={content.heroSubtitle ?? "Meet Rellia-backed teams with sharper milestones—clinical, regulatory, and commercial—before the usual diligence scramble."}
-                  primaryCta={{ label: content.heroPrimaryCtaLabel ?? "Get notified" }}
+                  subtitle={cmsDisplayText(content.heroSubtitle ?? "Meet Rellia-backed teams with sharper milestones—clinical, regulatory, and commercial—before the usual diligence scramble.")}
+                  primaryCta={{ label: cmsDisplayText(content.heroPrimaryCtaLabel ?? "Get notified") }}
                   onPrimaryClick={() => setShowNotifyForm(true)}
                 />
               </div>
 
               <WhyRellia
-                sectionTitle={content.whyTitle ?? "Benefits of investing alongside Rellia"}
-                sectionDescription={
+                sectionTitle={cmsDisplayText(content.whyTitle ?? "Benefits of investing alongside Rellia")}
+                sectionDescription={cmsDisplayText(
                   content.whyDescription ??
-                  "We shorten the distance between credible narrative and reality checks from people who have scaled in healthcare."
-                }
+                    "We shorten the distance between credible narrative and reality checks from people who have scaled in healthcare.",
+                )}
                 features={mapNetworkWhyFeatures(
                   content.whyFeatures?.length
                     ? content.whyFeatures
@@ -495,11 +487,13 @@ export default function Investors() {
                 <div className="relative mx-auto flex min-h-[min(72vh,760px)] max-w-[1300px] flex-col justify-center overflow-hidden rounded-b-[2.5rem] md:rounded-b-[3.5rem]">
                   <ScrollReveal>
                     <h2 className="font-host-grotesk text-2xl font-semibold leading-tight tracking-tight text-rellia-mint md:text-[32px]">
-                      {content.pitchTitle ?? "Exclusive connections and pitch events"}
+                      {cmsDisplayText(content.pitchTitle ?? "Exclusive connections and pitch events")}
                     </h2>
                     <p className="mt-6 max-w-2xl font-urbanist text-lg leading-relaxed text-white/80">
-                      {content.pitchSubtitle ??
-                        "Host a focused virtual session aligned to your mandate—or join a larger showcase to compare teams alongside fellow investors."}
+                      {cmsDisplayText(
+                        content.pitchSubtitle ??
+                          "Host a focused virtual session aligned to your mandate—or join a larger showcase to compare teams alongside fellow investors.",
+                      )}
                     </p>
                   </ScrollReveal>
                   <div className="mt-10 md:mt-14 grid grid-cols-1 gap-8 md:grid-cols-2">
@@ -514,9 +508,9 @@ export default function Investors() {
                           />
                           <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent pointer-events-none" />
                           <div className="absolute inset-0 p-8 flex flex-col justify-end">
-                            <h3 className="font-host-grotesk text-2xl font-semibold text-white drop-shadow-sm">{card.title}</h3>
+                            <h3 className="font-host-grotesk text-2xl font-semibold text-white drop-shadow-sm">{cmsDisplayText(card.title)}</h3>
                             <p className="mt-4 font-urbanist leading-relaxed text-white/90 text-lg">
-                              {card.body}
+                              {cmsDisplayText(card.body)}
                             </p>
                           </div>
                         </div>

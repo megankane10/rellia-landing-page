@@ -23,6 +23,8 @@ export const presentationMainDocuments = defineDocuments([
   {route: '/advisors', filter: singletonDoc('networkAdvisorsPage')},
   {route: '/investors', filter: singletonDoc('networkInvestorsPage')},
   {route: '/industry-partners', filter: singletonDoc('networkPartnersPage')},
+  {route: '/advisors/directory', filter: singletonDoc('networkAdvisorsDirectoryPage')},
+  {route: '/founders/alumni', filter: singletonDoc('networkAlumniDirectoryPage')},
   {
     route: '/stories/:slug',
     filter: (ctx) => {

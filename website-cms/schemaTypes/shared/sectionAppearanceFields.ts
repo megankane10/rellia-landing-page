@@ -7,6 +7,21 @@ export const showBadgeField = defineField({
   initialValue: true,
 })
 
+export const showSectionTagField = defineField({
+  name: 'showTag',
+  title: 'Show section tag',
+  type: 'boolean',
+  initialValue: true,
+})
+
+export const sectionTagField = defineField({
+  name: 'tag',
+  title: 'Section tag',
+  type: 'string',
+  description: 'Eyebrow pill above the section heading (matches Network impact styling on the site).',
+  hidden: ({parent}) => parent?.showTag === false,
+})
+
 export const headingToneField = defineField({
   name: 'headingTone',
   title: 'Heading & subheading color',
@@ -37,27 +52,4 @@ export const sectionBackgroundField = defineField({
   initialValue: 'white',
 })
 
-export const lucideIconField = (description?: string) =>
-  defineField({
-    name: 'icon',
-    title: 'Icon',
-    type: 'string',
-    description: description ?? 'Lucide icon name (e.g. Users, Rocket, ShieldCheck). Leave empty to hide.',
-    options: {
-      layout: 'dropdown',
-      list: [
-        {title: 'Sparkles', value: 'Sparkles'},
-        {title: 'Users', value: 'Users'},
-        {title: 'ShieldCheck', value: 'ShieldCheck'},
-        {title: 'Target', value: 'Target'},
-        {title: 'Layers', value: 'Layers'},
-        {title: 'Heart', value: 'Heart'},
-        {title: 'Rocket', value: 'Rocket'},
-        {title: 'Zap', value: 'Zap'},
-        {title: 'Compass', value: 'Compass'},
-        {title: 'Stethoscope', value: 'Stethoscope'},
-        {title: 'ClipboardCheck', value: 'ClipboardCheck'},
-        {title: 'ArrowRight', value: 'ArrowRight'},
-      ],
-    },
-  })
+export {lucideIconField} from './iconKeyField'

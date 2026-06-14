@@ -2,6 +2,7 @@ import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
 import ScrollReveal from "@/components/ScrollReveal"
 import RelliaCta, { ctaActionFromHref } from "@/components/RelliaCta"
+import { SectionsRenderer } from "@/components/cms/PageRenderer"
 import { DiagnosticSurveySection } from "@/components/DiagnosticSurveySection"
 import { HorizontalCard } from "@/components/cards"
 import PageHeader from "@/components/PageHeader"
@@ -17,6 +18,7 @@ import { useEffect, useMemo, useState } from "react"
 import { AnimatePresence, motion } from "framer-motion"
 import { ChevronLeft, ChevronRight, LayoutGrid } from "lucide-react"
 import FilteredListEmptyState from "@/components/FilteredListEmptyState"
+import { cmsDisplayText } from "@/lib/cmsStega"
 
 type ProgramFilter = "all" | "available" | "waitlist"
 const PAGE_SIZE = 12
@@ -134,7 +136,7 @@ export default function Programs() {
             />
           }
           subtitle={
-            pl.heroSubtitle ||
+            cmsDisplayText(pl.heroSubtitle) ||
             "Every program is designed to help you accomplish your next milestone, not just learn about it."
           }
         />
@@ -143,11 +145,11 @@ export default function Programs() {
           <div className="max-w-[1300px] mx-auto px-6 md:px-10">
             <ScrollReveal>
               <h2 className="mb-6 font-host-grotesk text-2xl md:text-3xl font-semibold leading-tight tracking-tight text-black">
-                {pl.programsSectionTitle ?? "Explore programs"}
+                {cmsDisplayText(pl.programsSectionTitle ?? "Explore programs")}
               </h2>
               {pl.programsSectionSubtitle?.trim() ? (
                 <p className="mb-6 max-w-3xl font-urbanist text-base leading-relaxed text-black/60 md:text-lg">
-                  {pl.programsSectionSubtitle}
+                  {cmsDisplayText(pl.programsSectionSubtitle)}
                 </p>
               ) : null}
 
@@ -268,6 +270,8 @@ export default function Programs() {
         </section>
         
         <DiagnosticSurveySection />
+
+        {pl.sections?.length ? <SectionsRenderer sections={pl.sections} /> : null}
 
         <RelliaCta
           title={pl.ctaTitle}

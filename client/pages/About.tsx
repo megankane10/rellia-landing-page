@@ -2,7 +2,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import ScrollReveal from "@/components/ScrollReveal";
 import RelliaCta from "@/components/RelliaCta";
-import { Heart, Stethoscope, Globe, Zap, type LucideIcon } from "lucide-react"
+import { Heart } from "lucide-react"
 import { resolveLucideIcon } from "@/lib/resolveLucideIcon"
 import { IconFeatureCard } from "@/components/cards/IconFeatureCard";
 import { TeamMemberCard } from "@/components/cards/TeamMemberCard";
@@ -14,37 +14,9 @@ import { DEFAULT_ABOUT_PAGE } from "@shared/cms/defaults";
 import { HeroHeadlinePortable } from "@/components/HeroHeadlinePortable"
 import { relliaTealGlassCardClass } from "@/lib/relliaTealGlassCard";
 import { cn } from "@/lib/utils";
+import { cmsCleanText, cmsDisplayText } from "@/lib/cmsStega";
 import { useRef, useState, useEffect } from "react";
 import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
-
-const VALUE_ICONS: Record<string, LucideIcon> = {
-  heart: Heart,
-  stethoscope: Stethoscope,
-  globe: Globe,
-  zap: Zap,
-};
-
-const resolveValueIcon = (key: string): LucideIcon => {
-  const normalized = key.trim().toLowerCase()
-  if (VALUE_ICONS[normalized]) return VALUE_ICONS[normalized]
-  return resolveLucideIcon(key, Heart)
-}
-
-const accentLastWords = (text: string, wordCount = 3) => {
-  const raw = (text ?? "").trim()
-  if (!raw) return null
-  const words = raw.split(/\s+/).filter(Boolean)
-  if (words.length <= wordCount + 1) return raw
-
-  const head = words.slice(0, -wordCount).join(" ")
-  const tail = words.slice(-wordCount).join(" ")
-
-  return (
-    <>
-      {head} <span className="text-rellia-mint">{tail}</span>
-    </>
-  )
-}
 
 export default function About() {
   const { data } = useAboutPage();
@@ -81,7 +53,7 @@ export default function About() {
           variant="dark"
           titleClassName={cn(PAGE_HEADER_TITLE_SIZE_CLASS, "max-w-3xl")}
           title={<HeroHeadlinePortable value={about.heroTitlePortable} />}
-          subtitle={about.heroIntro}
+          subtitle={cmsDisplayText(about.heroIntro)}
         />
 
         <section className="py-20 md:py-32 bg-white">
@@ -91,11 +63,11 @@ export default function About() {
                 <div className="relative min-h-0 w-full min-w-0 lg:pr-2 xl:pr-4">
                   <div className="absolute -top-4 -left-4 h-24 w-24 rounded-full bg-rellia-mint/20 blur-2xl pointer-events-none" />
                   <h2 className="relative text-black text-2xl md:text-[32px] font-semibold tracking-tight mb-6">
-                    {about.missionTitle}
+                    {cmsDisplayText(about.missionTitle)}
                   </h2>
                   <div className="relative space-y-5 text-black/70 text-base md:text-lg font-urbanist leading-relaxed">
                     {about.missionParagraphs.map((paragraph) => (
-                      <p key={paragraph.slice(0, 48)}>{paragraph}</p>
+                      <p key={cmsCleanText(paragraph).slice(0, 48)}>{cmsDisplayText(paragraph)}</p>
                     ))}
                   </div>
                 </div>
@@ -136,11 +108,16 @@ export default function About() {
             <div className="relative z-10 mx-auto flex min-h-[inherit] w-full max-w-[1300px] flex-1 flex-col px-6 pt-14 pb-8 md:px-10 md:pt-20 md:pb-10 lg:pt-24 lg:pb-12">
               <ScrollReveal>
                 <div className="space-y-5 md:space-y-6">
-                  <PillTag label="OUR VALUES" className={PILL_ON_IMAGE_BLUR_CLASS} />
+                  {about.showValuesTag !== false && about.valuesTag ? (
+                    <PillTag
+                      label={cmsDisplayText(about.valuesTag)}
+                      className={PILL_ON_IMAGE_BLUR_CLASS}
+                    />
+                  ) : null}
                   <h2
                     className={`font-host-grotesk font-bold leading-tight tracking-tight text-white max-w-4xl ${PAGE_HEADER_TITLE_SIZE_CLASS}`}
                   >
-                    {accentLastWords(about.valuesSubtitle, 4)}
+                    <HeroHeadlinePortable value={about.valuesHeadlinePortable} />
                   </h2>
                 </div>
               </ScrollReveal>
@@ -148,7 +125,7 @@ export default function About() {
               <div className="flex flex-1 flex-col justify-center py-8 md:py-10 lg:py-12">
                 <div className="grid grid-cols-1 items-stretch gap-4 sm:grid-cols-2 sm:gap-5 md:gap-6 lg:grid-cols-3 xl:grid-cols-4">
                 {about.values.map((v, i) => {
-                  const Icon = resolveValueIcon(v.iconKey);
+                  const Icon = resolveLucideIcon(v.iconKey, Heart);
 
                   return (
                     <ScrollReveal key={v.title} delay={i * 0.08} className="flex h-full min-h-0">
@@ -163,10 +140,10 @@ export default function About() {
                           aria-hidden
                         />
                         <p className="mt-2.5 font-host-grotesk text-sm font-semibold leading-snug tracking-tight text-white sm:mt-4 sm:text-lg md:text-xl">
-                          {v.title}
+                          {cmsDisplayText(v.title)}
                         </p>
                         <p className="mt-1.5 flex-1 font-urbanist text-xs leading-normal text-white/80 sm:mt-3 sm:text-base md:text-lg">
-                          {v.description}
+                          {cmsDisplayText(v.description)}
                         </p>
                       </div>
                     </ScrollReveal>
@@ -182,9 +159,9 @@ export default function About() {
         <section className="py-20 md:py-32 bg-white">
           <div className="max-w-[1300px] mx-auto px-6 md:px-10">
             <ScrollReveal className="text-center mb-12 md:mb-14">
-              <h2 className="text-black text-2xl md:text-[32px] font-semibold tracking-tight mb-4">{about.teamTitle}</h2>
+              <h2 className="text-black text-2xl md:text-[32px] font-semibold tracking-tight mb-4">{cmsDisplayText(about.teamTitle)}</h2>
               <p className="text-black/60 text-base md:text-lg font-urbanist max-w-2xl mx-auto leading-relaxed">
-                {about.teamSubtitle}
+                {cmsDisplayText(about.teamSubtitle)}
               </p>
             </ScrollReveal>
 

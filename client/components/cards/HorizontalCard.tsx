@@ -13,6 +13,7 @@ import { programsEventDetailPath } from "@shared/cms/eventSlug"
 import { cn } from "@/lib/utils"
 import { getCurrentMonthDeadline } from "@/lib/dateUtils"
 import { placeholderImageFromSeed } from "@/lib/placeholderImages"
+import { cmsCleanText, cmsDisplayText } from "@/lib/cmsStega"
 
 const shortenMonth = (dateStr: string) => {
   const months: Record<string, string> = {
@@ -95,7 +96,7 @@ export function HorizontalCard(props: HorizontalCardProps) {
     const computedTime = parsedTime || formatTimeFromStartsAt(event.startsAt)
     const timeMain = cleanBadgeTime(computedTime)
     const dateBits = extractEventDateBits(dateTimeLine)
-    const eventThumbSrc = event.imageSrc?.trim() ? event.imageSrc : placeholderImageFromSeed(event.slug || event.title, 720, 720)
+    const eventThumbSrc = event.imageSrc?.trim() ? event.imageSrc : placeholderImageFromSeed(cmsCleanText(event.slug || event.title), 720, 720)
 
     return (
       <article
@@ -106,7 +107,7 @@ export function HorizontalCard(props: HorizontalCardProps) {
         )}
       >
         <Link to={detailHref} className="absolute inset-0 z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-teal">
-          <span className="sr-only">View {event.title}</span>
+          <span className="sr-only">View {cmsCleanText(event.title)}</span>
         </Link>
 
         {/* Date Block (Desktop only) */}
@@ -167,7 +168,7 @@ export function HorizontalCard(props: HorizontalCardProps) {
           </div>
  
           <h3 className="font-host-grotesk text-2xl md:text-3xl font-medium leading-tight tracking-tight text-black group-hover:text-rellia-teal transition-colors duration-300 group-hover:underline decoration-2 underline-offset-4">
-            {event.title}
+            {cmsDisplayText(event.title)}
           </h3>
  
           {/* Mobile Image (Above Speaker) */}
@@ -175,7 +176,7 @@ export function HorizontalCard(props: HorizontalCardProps) {
             <div className="relative shrink-0 rounded-xl overflow-hidden bg-black/5 w-28 h-28 shadow-sm">
               <img
                 src={eventThumbSrc}
-                alt={event.title}
+                alt={cmsCleanText(event.title)}
                 className={cn(
                   "absolute inset-0 h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105",
                   variant === "past" && "opacity-90 saturate-[0.9]"
@@ -195,9 +196,9 @@ export function HorizontalCard(props: HorizontalCardProps) {
                   aria-hidden
                 />
                 <span className="font-urbanist text-[15px] md:text-base font-semibold text-black/80 leading-none truncate">
-                  {speakerName}
+                  {cmsDisplayText(speakerName)}
                   {speakerParts.company ? (
-                    <span className="font-normal text-black/45">, {speakerParts.company}</span>
+                    <span className="font-normal text-black/45">, {cmsDisplayText(speakerParts.company)}</span>
                   ) : null}
                 </span>
               </div>
@@ -209,7 +210,7 @@ export function HorizontalCard(props: HorizontalCardProps) {
         <div className="hidden md:block relative shrink-0 rounded-2xl overflow-hidden bg-black/5 md:w-[150px] md:h-[150px] lg:w-[170px] lg:h-[170px] md:ml-auto shadow-sm">
           <img
             src={eventThumbSrc}
-            alt={event.title}
+            alt={cmsCleanText(event.title)}
             className={cn(
               "absolute inset-0 h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105",
               variant === "past" && "opacity-90 saturate-[0.9]"
@@ -223,14 +224,14 @@ export function HorizontalCard(props: HorizontalCardProps) {
 
   // Program Card
   const program = item as Program
-  const hasHref = Boolean(program.href && program.href.trim().length > 0)
-  const hasWaitlistHref = Boolean(program.waitlistHref && program.waitlistHref.trim().length > 0)
+  const hasHref = Boolean(cmsCleanText(program.href))
+  const hasWaitlistHref = Boolean(cmsCleanText(program.waitlistHref))
   const isWaitlistStatus = (program as any)?.status === "waitlist"
   const isUpcomingStatus = (program as any)?.status === "upcoming"
   const isWaitlistCard = (hasWaitlistHref || isWaitlistStatus) && !isUpcomingStatus
   const programImageSrc = program.imageSrc?.trim()
     ? program.imageSrc
-    : placeholderImageFromSeed(program.title, 1200, 900)
+    : placeholderImageFromSeed(cmsCleanText(program.title), 1200, 900)
 
   return (
     <article
@@ -244,7 +245,7 @@ export function HorizontalCard(props: HorizontalCardProps) {
     >
       {hasHref ? (
         <Link to={program.href as string} className="absolute inset-0 z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-teal rounded-2xl">
-          <span className="sr-only">View {program.title}</span>
+          <span className="sr-only">View {cmsCleanText(program.title)}</span>
         </Link>
       ) : null}
 
@@ -252,7 +253,7 @@ export function HorizontalCard(props: HorizontalCardProps) {
       <div className="relative w-28 h-28 shrink-0 rounded-xl overflow-hidden bg-rellia-teal/5 md:w-[180px] md:h-[180px] lg:w-[220px] lg:h-[220px] aspect-square">
         <img
           src={programImageSrc}
-          alt={program.title}
+          alt={cmsCleanText(program.title)}
           className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
           loading="lazy"
         />
@@ -285,11 +286,11 @@ export function HorizontalCard(props: HorizontalCardProps) {
           "font-host-grotesk text-2xl md:text-[28px] font-medium leading-[1.15] tracking-tight text-black mb-2",
           (hasHref || isWaitlistCard) && "group-hover:text-rellia-teal transition-colors duration-300 group-hover:underline decoration-2 underline-offset-4"
         )}>
-          {program.title}
+          {cmsDisplayText(program.title)}
         </h3>
         
         <p className="font-urbanist text-[14px] md:text-[15px] font-medium leading-relaxed text-black/60 line-clamp-3">
-          {program.description}
+          {cmsDisplayText(program.description)}
         </p>
 
         {!isWaitlistCard ? (
@@ -297,7 +298,7 @@ export function HorizontalCard(props: HorizontalCardProps) {
             <div className="flex items-end gap-3 text-black/70">
               <CalendarDays className="h-7 w-7 text-rellia-teal" strokeWidth={2.25} aria-hidden />
               <span className="font-host-grotesk text-[12px] font-bold uppercase tracking-[0.18em] text-black/80">
-                DEADLINE: {program.deadline || getCurrentMonthDeadline()}
+                DEADLINE: {cmsDisplayText(program.deadline) || getCurrentMonthDeadline()}
               </span>
             </div>
           </div>

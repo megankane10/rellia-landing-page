@@ -1209,6 +1209,13 @@ export const STUDIO_GUIDE_SECTIONS = [
   },
   {
     _type: "guideSection",
+    _key: "diagnostic_matches",
+    heading: "Startup diagnostic — program & advisor matches",
+    body:
+      "After a founder completes the startup diagnostic survey, the report shows program matches and advisor matches automatically — you do not assign these by hand in Studio.\n\nProgram matches: the report reads the founder’s three lowest-scoring survey areas and maps each area to a recommended Rellia program (for example, regulatory gaps → Regulatory Roadmap). That mapping lives in the website code.\n\nAdvisor matches: the report compares those weak areas to advisor profiles under People → Advisors. Advisors whose focus or industries align are suggested (up to three names).\n\nWhat you can edit: survey intro and report headings in Diagnostic Survey Page; advisor names, focus areas, and bios in People → Advisors; program titles, descriptions, and URLs in Collections → Programs.\n\nWhat needs engineering: scoring weights, the domain-to-program mapping, and matching rules.",
+  },
+  {
+    _type: "guideSection",
     _key: "careers_open_roles",
     heading: "Careers and open roles",
     body:

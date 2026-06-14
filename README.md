@@ -5,11 +5,7 @@ React SPA for **Rellia Health**, connecting founders, clinicians, and health sys
 
 **Production**: [relliahealth.com](https://www.relliahealth.com)
 
-**Status (June 2026):** The site is live on Vercel; editors publish via [Sanity Studio](https://relliahealth.sanity.studio). See [Editor guide](./docs/website-management-guide.md).
-
-**CMS legacy / cleanup backlog:** [docs/cms-legacy-audit.md](./docs/cms-legacy-audit.md) — fields to remove, schema deploy notes, and wiring still in code but hidden from Studio.
-
-**SEO & indexing (GSC):** [docs/seo-indexing-fixes.md](./docs/seo-indexing-fixes.md) — sitemap submission, request indexing, and coverage troubleshooting.
+**Status (June 2026):** The site is live on Vercel; editors publish via [Sanity Studio](https://relliahealth.sanity.studio). See the [editor guide](./docs/website-management-guide.md).
 
 ---
 
@@ -81,7 +77,7 @@ Use this when transferring the site to the Rellia team. Items marked **editor** 
 | **Email alerts on new submissions** | Optional Supabase webhook → email later. |
 | **Dependabot alerts** | Review GitHub security advisories periodically. |
 
-**Operational docs:** [website-management-guide.md](./docs/website-management-guide.md) (editors) · [sanity-dataset-sync-guide.md](./docs/sanity-dataset-sync-guide.md) (legacy dataset sync, engineering only)
+**Editor guide:** [website-management-guide.md](./docs/website-management-guide.md)
 
 ### Editing with Claude or another AI agent
 

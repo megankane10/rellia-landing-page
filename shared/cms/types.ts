@@ -64,6 +64,7 @@ export type NetworkDirectoryChrome = {
 }
 
 export type NetworkDirectoryPageContent = NetworkDirectoryChrome & {
+  sections?: CmsPageSection[]
   seo?: SeoContent
 }
 
@@ -149,7 +150,10 @@ export type CmsSectionHero = {
 export type CmsSectionRichText = {
   _type: "sectionRichText"
   _key?: string
+  showTag?: boolean
   tag?: string
+  headlinePortable?: SanityPortableText
+  /** @deprecated Use headlinePortable */
   title?: string
   body?: SanityPortableText | null
 }
@@ -170,7 +174,10 @@ export type CmsSectionCardsGridCard = {
 export type CmsSectionCardsGrid = {
   _type: "sectionCardsGrid"
   _key?: string
+  showTag?: boolean
   tag?: string
+  headlinePortable?: SanityPortableText
+  /** @deprecated Use headlinePortable */
   title?: string
   subtitle?: string
   cards?: CmsSectionCardsGridCard[]
@@ -186,7 +193,10 @@ export type CmsSectionEligibilityBentoItem = {
 export type CmsSectionEligibilityBento = {
   _type: "sectionEligibilityBento"
   _key?: string
+  showBadge?: boolean
   badge?: string
+  headlinePortable?: SanityPortableText
+  /** @deprecated Use headlinePortable */
   title?: string
   description?: string
   items?: CmsSectionEligibilityBentoItem[]
@@ -280,7 +290,10 @@ export type CmsSectionJourneyTimelineRoleLink = {
 export type CmsSectionJourneyTimeline = {
   _type: "sectionJourneyTimeline"
   _key?: string
+  showBadge?: boolean
   badge?: string
+  headlinePortable?: SanityPortableText
+  /** @deprecated Use headlinePortable */
   headingTitle?: string
   subheading?: string
   steps?: CmsSectionJourneyTimelineStep[]
@@ -339,6 +352,8 @@ export type CmsSectionFaqItem = {
 export type CmsSectionFaq = {
   _type: "sectionFaq"
   _key?: string
+  headlinePortable?: SanityPortableText
+  /** @deprecated Use headlinePortable */
   title?: string
   subtitle?: string
   items?: CmsSectionFaqItem[]
@@ -349,8 +364,6 @@ export type CmsSectionMarketingHero = {
   _key?: string
   eyebrowLabel?: string
   headlinePortable?: SanityPortableText
-  title?: string
-  accentPhrase?: string
   subtitle?: string
   imageUrl?: string
   imageAlt?: string
@@ -361,7 +374,7 @@ export type CmsSectionMarketingHero = {
 export type CmsSectionMetricsItem = {
   _key?: string
   label: string
-  value: number
+  value: number | string
   suffix?: string
 }
 
@@ -371,7 +384,6 @@ export type CmsSectionMetrics = {
   showBadge?: boolean
   badgeLabel?: string
   headlinePortable?: SanityPortableText
-  heading?: string
   subheading?: string
   metrics?: CmsSectionMetricsItem[]
   imageUrl?: string
@@ -424,9 +436,16 @@ export type ClusterChart = {
   segments: ClusterChartSegment[]
 }
 
+export type LogoMarqueeEntry = {
+  _key?: string
+  name: string
+  src: string
+  href?: string
+}
+
 export type CmsSingletonPageContent = {
   title: string
-  logoMarquee?: Array<{ name: string; src: string; href?: string }>
+  logoMarquee?: LogoMarqueeEntry[]
   seo?: SeoContent
   sections?: CmsPageSection[]
   foundersCluster?: ClusterChart[]
@@ -693,12 +712,14 @@ export type SanityImageAsset = {
 }
 
 export type HomeMetric = {
+  _key?: string
   label: string
-  value: number
+  value: number | string
   suffix?: string
 }
 
 export type HomeWhyFeature = {
+  _key?: string
   iconKey: string
   title: string
   description: string
@@ -708,6 +729,7 @@ export type HomeWhyFeature = {
 }
 
 export type HowItWorksStepContent = {
+  _key?: string
   iconKey: string
   title: string
   description: string
@@ -752,8 +774,10 @@ export type HomePageContent = {
   howItWorksSteps?: HowItWorksStepContent[]
   testimonialsTitlePortable: SanityPortableText
   testimonials: HomeTestimonial[]
+  logoMarquee?: LogoMarqueeEntry[]
   pathsTitle?: string
   pathsCards?: HomePathsCard[]
+  sections?: CmsPageSection[]
   seo?: SeoContent
 }
 
@@ -811,8 +835,9 @@ export type AboutPageContent = {
   missionParagraphs: string[]
   missionImageSrc: string
   missionImageAlt: string
-  valuesTitle: string
-  valuesSubtitle: string
+  showValuesTag?: boolean
+  valuesTag?: string
+  valuesHeadlinePortable: SanityPortableText
   values: AboutValue[]
   teamTitle: string
   teamSubtitle: string
@@ -923,6 +948,7 @@ export type ProgramsLandingContent = {
   ctaBody: string
   ctaButtonLabel: string
   ctaButtonHref: string
+  sections?: CmsPageSection[]
   seo?: SeoContent
 }
 

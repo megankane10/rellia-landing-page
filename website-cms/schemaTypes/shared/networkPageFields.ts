@@ -2,10 +2,14 @@ import {defineArrayMember, defineField} from 'sanity'
 import {GROUP_SEO} from './fieldGroups'
 import {imageUploadField, imageUrlFallbackField} from './imageFields'
 import {portableHeadlineField} from './inlineHeroHeadlineField'
+import {iconKeyField} from './iconKeyField'
+
+import {GROUP_MODULAR_SECTIONS} from './singletonContentFields'
 
 export const NETWORK_PAGE_GROUPS = [
   {name: 'hero', title: 'Hero', default: true},
   {name: 'content', title: 'Page sections'},
+  GROUP_MODULAR_SECTIONS,
   GROUP_SEO,
 ]
 
@@ -34,12 +38,7 @@ export const networkEngageCardMember = defineArrayMember({
     defineField({name: 'body', type: 'text', rows: 2}),
     defineField({name: 'href', title: 'Link', type: 'string'}),
     defineField({name: 'linkLabel', title: 'Link label', type: 'string', initialValue: 'Continue'}),
-    defineField({
-      name: 'iconKey',
-      title: 'Icon',
-      type: 'string',
-      description: 'Lucide icon name, e.g. UserPlus, BookOpen, Network',
-    }),
+    iconKeyField(),
   ],
   preview: {select: {title: 'title', subtitle: 'body'}},
 })
@@ -55,7 +54,7 @@ export const networkFeatureItemMember = defineArrayMember({
       type: 'text',
       rows: 3,
     }),
-    defineField({name: 'iconKey', title: 'Icon', type: 'string'}),
+    iconKeyField(),
     imageUploadField('image', 'Card image', {
       description: 'Background image for this expandable image panel.',
     }),
@@ -119,10 +118,7 @@ export const networkJourneyStepMember = defineArrayMember({
       validation: (Rule) => Rule.required(),
     }),
     defineField({name: 'detail', type: 'text', rows: 2}),
-    defineField({
-      name: 'iconKey',
-      title: 'Icon',
-      type: 'string',
+    iconKeyField({
       description: 'Lucide icon name, e.g. Lightbulb, Rocket, ShieldCheck',
     }),
   ],

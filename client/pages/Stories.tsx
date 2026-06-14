@@ -19,6 +19,7 @@ import { HeroHeadlinePortable } from "@/components/HeroHeadlinePortable"
 import { DEFAULT_STORIES_PAGE_HEADLINE_PORTABLE } from "@shared/cms/inlineHeroHeadline"
 import { isSanityConfigured } from "@/lib/sanity"
 import { allowCmsSeedFallbacks } from "@/lib/deploymentEnv"
+import { cmsCleanText, cmsDisplayStoryTitle, cmsDisplayText } from "@/lib/cmsStega"
 
 const tags: Array<StoryTag | "All"> = ["All", ...CONFIRMED_STORY_TAGS]
 
@@ -37,11 +38,6 @@ const StoryGridCard = ({
     publishedAt: string
   }
 }) => {
-  const cleanTitle = useMemo(() => {
-    const raw = (story.title ?? "").trim()
-    return raw.replace(/^(founder story|industry insight|program update)\s*:\s*/i, "")
-  }, [story.title])
-
   return (
     <article className="h-full w-full">
       <Link
@@ -52,7 +48,7 @@ const StoryGridCard = ({
           "outline outline-2 outline-offset-[10px] outline-transparent hover:outline-rellia-teal",
           "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-white",
         )}
-        aria-label={`Read ${story.title}`}
+        aria-label={`Read ${cmsCleanText(story.title)}`}
       >
         <div className="relative aspect-video w-full shrink-0 overflow-hidden rounded-2xl bg-rellia-teal/5">
           <img
@@ -67,18 +63,18 @@ const StoryGridCard = ({
           <div className="inline-flex items-center gap-2 w-fit">
             <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-rellia-teal" aria-hidden />
             <span className="font-host-grotesk text-[11px] font-semibold uppercase tracking-[0.14em] text-rellia-teal">
-              {story.tag}
+              {cmsDisplayText(story.tag)}
             </span>
           </div>
 
           <h3
             className="mt-1 line-clamp-2 h-auto font-host-grotesk text-[16px] font-semibold leading-snug text-black group-hover:underline group-hover:underline-offset-4 md:text-lg"
           >
-            {cleanTitle}
+            {cmsDisplayStoryTitle(story.title)}
           </h3>
 
           <p className="mt-3 line-clamp-4 h-auto overflow-hidden break-words font-urbanist text-sm leading-relaxed text-black/70 md:text-base">
-            {story.excerpt}
+            {cmsDisplayText(story.excerpt)}
           </p>
         </div>
       </Link>

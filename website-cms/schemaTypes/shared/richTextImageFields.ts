@@ -8,6 +8,16 @@ export const richTextImageCropOptions = {
   cropAspectPreset: 'wide' as CropAspectPreset,
 }
 
+/** Persisted by the crop upload modal — not shown in the document form. */
+export const richTextImageDisplayModeHiddenField = defineField({
+  name: 'displayMode',
+  title: 'On-site display',
+  type: 'string',
+  hidden: true,
+  initialValue: 'cropped',
+})
+
+/** URL-only inline images have no upload modal — editors set display here. */
 export const richTextImageDisplayModeField = defineField({
   name: 'displayMode',
   title: 'On-site display',
@@ -20,6 +30,5 @@ export const richTextImageDisplayModeField = defineField({
     layout: 'radio',
   },
   initialValue: 'cropped',
-  description:
-    'Choose when uploading in the crop dialog, or change here later. Cropped fills a wide banner frame; Full shows the entire image.',
+  description: 'Cropped fills a wide banner frame; Full shows the entire image.',
 })

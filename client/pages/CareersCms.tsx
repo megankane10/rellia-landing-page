@@ -29,10 +29,10 @@ import {
   Video,
   FileText,
   Facebook,
-  type LucideIcon,
   Pause,
-  Play
+  Play,
 } from "lucide-react"
+import { resolveLucideIcon } from "@/lib/resolveLucideIcon"
 import type { CareersOpenRole, CareersContentMode, CareersPageContent } from "@shared/cms/types"
 import { mapNetworkWhyFeatures } from "@/lib/whyRelliaFeatures"
 import { DEFAULT_GLOBAL_SETTINGS } from "@shared/cms/defaults"
@@ -65,6 +65,7 @@ import FilteredListEmptyState from "@/components/FilteredListEmptyState"
 import RelliaAction from "@/components/RelliaAction"
 import { isSanityConfigured } from "@/lib/sanity"
 import { allowCmsSeedFallbacks, isStrictProductionSite } from "@/lib/deploymentEnv"
+import { cmsCleanText, cmsDisplayText } from "@/lib/cmsStega"
 import { useMemo, useState, useEffect, useRef } from "react"
 import { useLocation, useNavigate, useParams } from "react-router-dom"
 import { ShareIconCopy } from "@/components/share/sharePageIcons"
@@ -74,23 +75,6 @@ import { DEFAULT_CAREERS_PAGE } from "@shared/cms/careersPageDefaults"
 import { NetworkHeroTitle } from "@/components/NetworkHeroTitle"
 
 const g = DEFAULT_GLOBAL_SETTINGS
-
-const getPerkIcon = (key: string): LucideIcon => {
-  switch (key) {
-    case "users":
-      return Users
-    case "building2":
-      return Building2
-    case "laptop":
-      return Laptop
-    case "mapPin":
-      return MapPin
-    case "userRound":
-      return UserRound
-    default:
-      return Users
-  }
-}
 
 const LIFE_AT_RELLIA_IMAGES = [
   "https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800&auto=format&fit=crop&q=80",
@@ -499,7 +483,7 @@ export default function CareersCms() {
               className="lg:flex lg:h-[82vh] lg:flex-col"
             >
               <RoleHero
-                eyebrowLabel={careersCms.heroEyebrow ?? "Join the team"}
+                eyebrowLabel={cmsDisplayText(careersCms.heroEyebrow ?? "Join the team")}
                 imageSrc={careersCms.heroImageSrc ?? "/images/careers-img.jpg"}
                 className="lg:flex-1"
                 skipNavOffset
@@ -509,15 +493,15 @@ export default function CareersCms() {
                     fallback={DEFAULT_CAREERS_PAGE.heroTitlePortable!}
                   />
                 }
-                subtitle={careersCms.heroSubtitle}
+                subtitle={cmsDisplayText(careersCms.heroSubtitle)}
                 primaryCta={
                   joinTeamPrimaryCta
-                    ? { label: joinTeamPrimaryCta.label }
-                    : { label: "See open roles" }
+                    ? { label: cmsDisplayText(joinTeamPrimaryCta.label) }
+                    : { label: cmsDisplayText("See open roles") }
                 }
                 secondaryCta={
                   joinTeamSecondaryCta
-                    ? { label: joinTeamSecondaryCta.label }
+                    ? { label: cmsDisplayText(joinTeamSecondaryCta.label) }
                     : undefined
                 }
                 onPrimaryClick={() => {
@@ -542,8 +526,8 @@ export default function CareersCms() {
         </AnimatePresence>
 
         <WhyRellia
-          sectionTitle={careersCms.whyTitle ?? "Building What Matters Most"}
-          sectionDescription={careersCms.whyDescription}
+          sectionTitle={cmsDisplayText(careersCms.whyTitle ?? "Building What Matters Most")}
+          sectionDescription={cmsDisplayText(careersCms.whyDescription)}
           features={mapNetworkWhyFeatures(careersCms.whyFeatures ?? [])}
           sectionClassName="bg-white pt-16 md:pt-20"
         />
@@ -552,25 +536,25 @@ export default function CareersCms() {
           <div className="mx-auto max-w-[1300px] px-6 md:px-10">
             <ScrollReveal className="max-w-3xl mb-16">
               <h2 className="font-host-grotesk text-2xl font-semibold tracking-tight text-black md:text-[32px]">
-                {careersCms.perksTitle ?? "How we work"}
+                {cmsDisplayText(careersCms.perksTitle ?? "How we work")}
               </h2>
               <p className="mt-4 font-urbanist text-lg md:text-xl text-black/60 leading-relaxed">
-                {careersCms.perksDescription}
+                {cmsDisplayText(careersCms.perksDescription)}
               </p>
             </ScrollReveal>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10 lg:gap-x-16 lg:gap-y-12">
               {(careersCms.perksItems ?? []).map((perk) => {
-                const IconComponent = getPerkIcon(perk.iconKey ?? "")
+                const IconComponent = resolveLucideIcon(perk.iconKey ?? "", Users)
                 return (
                   <ScrollReveal key={perk.title} className="flex flex-col items-start text-left">
                     <IconComponent className="h-8 w-8 text-rellia-teal mb-4" aria-hidden />
                     <div>
                       <h3 className="font-host-grotesk text-xl font-bold tracking-tight text-black mb-2">
-                        {perk.title}
+                        {cmsDisplayText(perk.title)}
                       </h3>
                       <p className="font-urbanist text-base leading-relaxed text-black/70">
-                        {perk.body}
+                        {cmsDisplayText(perk.body)}
                       </p>
                     </div>
                   </ScrollReveal>
@@ -586,7 +570,7 @@ export default function CareersCms() {
               <div className="mx-auto w-full max-w-[1300px] px-6 md:px-10 flex flex-col">
                 <ScrollReveal className="flex min-w-0 flex-col">
                   <h2 className="font-host-grotesk text-2xl font-semibold tracking-tight text-black md:text-[32px]">
-                    {careersCms.openRolesTitle ?? "Open Roles"}
+                    {cmsDisplayText(careersCms.openRolesTitle ?? "Open Roles")}
                   </h2>
 
                   <div className="mt-10 w-full shrink-0">
@@ -618,16 +602,16 @@ export default function CareersCms() {
                             >
                               <span className="flex min-w-0 flex-1 flex-col gap-1.5 text-left sm:flex-row sm:items-start sm:justify-between sm:gap-6">
                                 <span className="min-w-0 text-lg font-medium text-black md:text-xl">
-                                  {role.title}
+                                  {cmsDisplayText(role.title)}
                                 </span>
                                 <span className="shrink-0 font-urbanist text-sm font-normal leading-snug text-black/55 sm:max-w-[min(280px,42%)] sm:pt-0.5 sm:text-right md:text-base">
-                                  {role.location}
+                                  {cmsDisplayText(role.location)}
                                 </span>
                               </span>
                             </AccordionTrigger>
                             <AccordionContent className="pb-6 pt-0 md:pb-8">
                               <span className="inline-flex rounded-full bg-rellia-teal/10 px-3 py-1 font-urbanist text-sm font-medium text-rellia-teal">
-                                {role.employmentType}
+                                {cmsDisplayText(role.employmentType)}
                               </span>
 
                               <PortableRichText
@@ -642,7 +626,7 @@ export default function CareersCms() {
                                   </h3>
                                   <ul className="mt-3 list-disc space-y-2 pl-5 font-urbanist text-sm leading-relaxed text-black/70 md:text-base">
                                     {role.responsibilities.map((line) => (
-                                      <li key={line}>{line}</li>
+                                      <li key={cmsCleanText(line)}>{cmsDisplayText(line)}</li>
                                     ))}
                                   </ul>
                                 </div>
@@ -662,13 +646,13 @@ export default function CareersCms() {
                                         ? {}
                                         : { target: "_blank", rel: "noopener noreferrer" })}
                                       className="inline-flex items-center gap-2"
-                                      aria-label={`${role.applyButtonLabel} for ${role.title}${
+                                      aria-label={`${cmsCleanText(role.applyButtonLabel)} for ${cmsCleanText(role.title)}${
                                         isOpenRoleMailtoApplyUrl(role.applyButtonUrl)
                                           ? " (opens email)"
                                           : " (opens in new tab)"
                                       }`}
                                     >
-                                      {role.applyButtonLabel}
+                                      {cmsDisplayText(role.applyButtonLabel)}
                                       <ArrowRight className="h-5 w-5" aria-hidden />
                                     </a>
                                   </RelliaAction>
@@ -731,11 +715,14 @@ export default function CareersCms() {
             <ScrollReveal>
               <div className="flex flex-col items-start justify-center">
                 <h2 className="font-host-grotesk text-2xl font-bold tracking-tight text-black sm:text-3xl">
-                  {careersCms.lifeAtRelliaHeading || "Built by healthtech insiders, for builders"}
+                  {cmsDisplayText(careersCms.lifeAtRelliaHeading || "Built by healthtech insiders, for builders")}
                 </h2>
 
                 <p className="mt-4 font-urbanist text-lg text-black/60 leading-relaxed max-w-xl">
-                  {careersCms.lifeAtRelliaSubheading || "We are a remote-first, high-standards team of builders, clinicians, and operators dedicated to supporting healthtech founders. We cultivate an environment of high autonomy, rapid iteration, and deep clinical empathy to build the future of care."}
+                  {cmsDisplayText(
+                    careersCms.lifeAtRelliaSubheading ||
+                      "We are a remote-first, high-standards team of builders, clinicians, and operators dedicated to supporting healthtech founders. We cultivate an environment of high autonomy, rapid iteration, and deep clinical empathy to build the future of care.",
+                  )}
                 </p>
 
                 {/* Socials / proofs container */}
@@ -772,10 +759,10 @@ export default function CareersCms() {
 
       <RelliaCta
         aboveSectionTone="white"
-        title={careersCms.ctaTitle ?? "Questions before you apply?"}
-        body={careersCms.ctaBody}
+        title={cmsDisplayText(careersCms.ctaTitle ?? "Questions before you apply?")}
+        body={cmsDisplayText(careersCms.ctaBody)}
         primary={{
-          label: careersCms.ctaPrimaryLabel ?? "Get in touch",
+          label: cmsDisplayText(careersCms.ctaPrimaryLabel ?? "Get in touch"),
           to: careersCms.ctaPrimaryHref ?? "/contact",
         }}
       />

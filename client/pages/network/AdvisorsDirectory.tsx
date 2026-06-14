@@ -33,6 +33,7 @@ import {
   matchesDirectoryFilterSelection,
 } from "@/lib/directoryFilterOptions";
 import { resolveAdvisorPrimaryTag } from "@/lib/resolveAdvisorPrimaryTag";
+import { cmsCleanText, cmsDisplayText } from "@/lib/cmsStega"
 
 const DIRECTORY_TITLE_CLASS =
   "font-host-grotesk text-4xl font-extrabold tracking-tight text-black md:text-5xl";
@@ -76,7 +77,7 @@ function AdvisorCard({
       }}
       role="button"
       tabIndex={0}
-      aria-label={`Open profile for ${advisor.name}`}
+      aria-label={`Open profile for ${cmsCleanText(advisor.name)}`}
     >
       <div className="relative aspect-[5/4] w-full overflow-hidden bg-white border-b border-black/[0.05] shrink-0">
         <img
@@ -89,13 +90,13 @@ function AdvisorCard({
       </div>
       <div className="flex flex-1 flex-col p-6 md:p-7">
         <h3 className="font-host-grotesk text-lg font-bold tracking-tight text-black group-hover:underline decoration-2 underline-offset-4">
-          {advisor.name}
+          {cmsDisplayText(advisor.name)}
         </h3>
         <p className="mt-1 font-urbanist text-sm font-medium text-black/77">
-          {advisor.organization}
+          {cmsDisplayText(advisor.organization)}
         </p>
         <p className="mt-2 font-urbanist text-sm text-black/55 leading-relaxed">
-          {advisor.role}
+          {cmsDisplayText(advisor.role)}
         </p>
       </div>
     </motion.article>

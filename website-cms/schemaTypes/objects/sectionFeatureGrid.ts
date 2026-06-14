@@ -5,6 +5,7 @@ import {
   sectionBackgroundField,
   showBadgeField,
 } from '../shared/sectionAppearanceFields'
+import {lucideIconField} from '../shared/iconKeyField'
 
 export const sectionFeatureGrid = defineType({
   name: 'sectionFeatureGrid',
@@ -26,7 +27,7 @@ export const sectionFeatureGrid = defineType({
           type: 'object',
           name: 'item',
           fields: [
-            defineField({name: 'icon', type: 'string', description: 'Lucide icon name (e.g. Users, Rocket, ShieldCheck)'}),
+            lucideIconField(),
             defineField({name: 'title', type: 'string', validation: (Rule) => Rule.required()}),
             defineField({name: 'body', type: 'text', rows: 3}),
           ],

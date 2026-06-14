@@ -64,11 +64,11 @@ The site integrates `@sanity/visual-editing` to enable click-to-edit overlays an
 
 From the project root:
 ```bash
-cd website-cms
-pnpm install
-pnpm dev
+pnpm sanity:studio:dev
 ```
-The studio runs on `http://localhost:3333` (or configured fallback port).
+The studio runs on `http://localhost:3333`.
+
+**Presentation locally:** run `pnpm dev` in another terminal (http://localhost:5173). Studio dev auto-targets that URL for the Presentation iframe. Ensure `SANITY_API_READ_TOKEN` is set in your root `.env` / `.env.local` so `/api/draft-mode/enable` can load drafts.
 
 ### Deploying the Studio
 

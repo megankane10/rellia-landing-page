@@ -37,3 +37,34 @@ export const splitStega = (
   return { cleaned, encoded }
 }
 
+/**
+ * Transform visible text while preserving stega metadata for Presentation overlays.
+ */
+export const cmsDisplayTextTransformed = (
+  value: string | null | undefined,
+  transform: (cleaned: string) => string,
+): string => {
+  const raw = value ?? ""
+  if (!raw) return ""
+  const { cleaned, encoded } = splitStega(raw)
+  const transformed = transform(cleaned)
+  if (isVisualEditingPreview()) return transformed + encoded
+  return transformed
+}
+
+const STORY_TITLE_PREFIX_RE =
+  /^(founder story|industry insight|program update)\s*:\s*/i
+
+export const cmsDisplayTextOr = (
+  value: string | null | undefined,
+  fallback: string,
+): string => (cmsCleanText(value) ? cmsDisplayText(value) : fallback)
+
+/** Strip redundant story category prefixes without breaking click-to-edit overlays. */
+export const cmsDisplayStoryTitle = (
+  value: string | null | undefined,
+): string =>
+  cmsDisplayTextTransformed(value, (cleaned) =>
+    cleaned.replace(STORY_TITLE_PREFIX_RE, "").trim(),
+  )
+

@@ -31,6 +31,7 @@ export default function CmsCatchAll() {
           title: page.seo?.metaTitle?.trim()
             ? undefined
             : `${page.title} — Rellia Health`,
+          noIndex: typeof page.seo?.noIndex === "boolean" ? undefined : false,
         }
       : undefined,
   )

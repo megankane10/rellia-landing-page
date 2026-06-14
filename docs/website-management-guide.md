@@ -74,7 +74,18 @@ If you used **Presentation** earlier and www looked wrong in the same browser ta
 - **Pages → Consulting** — grouped tabs: Hero, Fit, Services, Testimonials, Membership, CTA.
 - **Pages → Startup diagnostic** — Hero, Readiness, Infographic, Timeline, CTA.
 
-Do **not** change diagnostic **survey scoring** in **Diagnostic Survey Page** without engineering.
+> **Startup diagnostic — program & advisor matches (automatic)**
+>
+> After a founder completes the survey, the report shows **program matches** and **advisor matches**. These are generated automatically by the website — not hand-picked in Studio.
+>
+> - **Program matches** — The report looks at the founder’s three lowest-scoring survey areas and maps each area to a recommended Rellia program (for example, regulatory gaps → Regulatory Roadmap). The mapping is built into the website code.
+> - **Advisor matches** — The report compares those same weak areas to advisor profiles in **People → Advisors**. Advisors whose **focus** or **industries** align are suggested (up to three names).
+>
+> **What you can edit in Studio:** survey intro and report headings in **Diagnostic Survey Page**; advisor names, focus areas, and bios in **People → Advisors**; program titles, descriptions, and URLs in **Collections → Programs**.
+>
+> **What needs engineering:** scoring weights, the domain-to-program mapping, and matching rules.
+
+Do **not** change diagnostic **survey scoring weights** in **Diagnostic Survey Page** without engineering.
 
 ### Careers nav badges
 
@@ -127,5 +138,5 @@ For form IDs, payment links, or promote/sync commands, contact engineering.
 
 - In Studio: **Support → How to use this CMS**
 - Admin dashboard: **Sanity drafts** tab for unpublished production documents
-- Engineering: legacy dataset sync (rare) — [sanity-dataset-sync-guide.md](./sanity-dataset-sync-guide.md)
+- Engineering: contact your developer for code deploys, form IDs, or payment links
 - This file: `docs/website-management-guide.md` in the repository

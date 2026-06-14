@@ -1,5 +1,6 @@
 import type { LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { cmsDisplayText } from "@/lib/cmsStega";
 
 export type IconFeatureCardProps = {
   icon: LucideIcon;
@@ -33,10 +34,10 @@ export function IconFeatureCard({
           <Icon className="h-7 w-7 text-rellia-teal transition-colors duration-300" strokeWidth={1.75} />
         </div>
         <h3 className="font-host-grotesk text-2xl font-bold leading-tight tracking-tight text-black transition-colors duration-300 md:text-[28px]">
-          {title}
+          {cmsDisplayText(title)}
         </h3>
         <p className="font-urbanist text-base font-medium leading-relaxed tracking-tight text-black/70 transition-colors duration-300 md:text-[18px]">
-          {description}
+          {cmsDisplayText(description)}
         </p>
       </div>
     );
@@ -55,10 +56,10 @@ export function IconFeatureCard({
       </div>
 
       <h3 className="font-host-grotesk text-xl font-bold leading-tight tracking-tight text-black md:text-2xl">
-        {title}
+        {cmsDisplayText(title)}
       </h3>
 
-      <p className="font-urbanist text-base leading-relaxed text-black/60">{description}</p>
+      <p className="font-urbanist text-base leading-relaxed text-black/60">{cmsDisplayText(description)}</p>
     </div>
   );
 }

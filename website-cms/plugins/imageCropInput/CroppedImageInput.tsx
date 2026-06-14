@@ -121,7 +121,7 @@ export const CroppedImageInput = (props: ObjectInputProps<ImageValue>) => {
             <Stack space={3} flex={1}>
               <Text size={1} muted>
                 {allowFullImage
-                  ? 'Upload an image, then choose cropped banner or full display before it is saved.'
+                  ? 'Upload an image, then choose cropped banner or full display in the crop dialog.'
                   : 'Upload an image, then crop it to the right size before it is saved to Sanity.'}
               </Text>
               <Button

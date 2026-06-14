@@ -7,6 +7,7 @@ import NetworkEyebrow from "@/components/network/NetworkEyebrow"
 import { ArrowRight } from "lucide-react"
 import { Link } from "react-router-dom"
 import { PAGE_HEADER_TITLE_SIZE_CLASS } from "@/components/PageHeader"
+import { cmsCleanText, cmsDisplayText } from "@/lib/cmsStega"
 
 export function Reveal({
   children,
@@ -139,8 +140,8 @@ export function ProblemBlock({
     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
       {items.map((i) => (
         <GlassCard key={i.title} className="p-7">
-          <p className="font-host-grotesk text-xl font-semibold tracking-tight text-white">{i.title}</p>
-          <p className="mt-3 font-urbanist text-white/75 leading-relaxed">{i.body}</p>
+          <p className="font-host-grotesk text-xl font-semibold tracking-tight text-white">{cmsDisplayText(i.title)}</p>
+          <p className="mt-3 font-urbanist text-white/75 leading-relaxed">{cmsDisplayText(i.body)}</p>
         </GlassCard>
       ))}
     </div>
@@ -181,8 +182,8 @@ export function BentoGrid({
               <div aria-hidden className="absolute inset-0 bg-gradient-to-t from-black/45 via-black/15 to-transparent" />
             </div>
             <div className="bg-white p-7 sm:p-9">
-              <p className="font-host-grotesk text-2xl font-semibold tracking-tight text-rellia-teal">{i.title}</p>
-              <p className="mt-3 font-urbanist text-black/70 leading-relaxed">{i.body}</p>
+              <p className="font-host-grotesk text-2xl font-semibold tracking-tight text-rellia-teal">{cmsDisplayText(i.title)}</p>
+              <p className="mt-3 font-urbanist text-black/70 leading-relaxed">{cmsDisplayText(i.body)}</p>
             </div>
           </div>
         </GlassCard>
@@ -209,8 +210,8 @@ export function PathToSuccess({
               {idx + 1}
             </div>
             <div>
-              <p className="font-host-grotesk text-lg font-semibold text-white tracking-tight">{s.title}</p>
-              <p className="mt-2 font-urbanist text-white/75 leading-relaxed">{s.body}</p>
+              <p className="font-host-grotesk text-lg font-semibold text-white tracking-tight">{cmsDisplayText(s.title)}</p>
+              <p className="mt-2 font-urbanist text-white/75 leading-relaxed">{cmsDisplayText(s.body)}</p>
             </div>
           </div>
         ))}
@@ -229,8 +230,8 @@ export function PathToSuccess({
                 {idx + 1}
               </div>
               <div className="mt-5">
-                <p className="font-host-grotesk text-lg font-semibold text-white tracking-tight">{s.title}</p>
-                <p className="mt-2 font-urbanist text-white/75 leading-relaxed">{s.body}</p>
+                <p className="font-host-grotesk text-lg font-semibold text-white tracking-tight">{cmsDisplayText(s.title)}</p>
+                <p className="mt-2 font-urbanist text-white/75 leading-relaxed">{cmsDisplayText(s.body)}</p>
               </div>
             </div>
           ))}
@@ -398,7 +399,7 @@ export function RoleHero({
   skipNavOffset?: boolean
 }) {
   const tag = roleId ? NETWORK_PATH_ROLE_TAG[roleId] : undefined
-  const label = eyebrowLabel || (tag ? tag.label : "Network")
+  const label = cmsDisplayText(eyebrowLabel || (tag ? tag.label : "Network"))
   
   const renderPrimary = () => {
     if (onPrimaryClick) {
@@ -408,14 +409,14 @@ export function RoleHero({
           onClick={onPrimaryClick} 
           className="inline-flex w-full cursor-pointer items-center justify-center gap-2 sm:w-auto"
         >
-          {primaryCta.label}
+          {cmsDisplayText(primaryCta.label)}
           <ArrowRight className="h-4 w-4" aria-hidden />
         </button>
       )
     }
     return (
       <Link to={primaryCta.to || "/"} className="inline-flex w-full cursor-pointer items-center justify-center gap-2 sm:w-auto">
-        {primaryCta.label}
+        {cmsDisplayText(primaryCta.label)}
         <ArrowRight className="h-4 w-4" aria-hidden />
       </Link>
     )
@@ -429,14 +430,14 @@ export function RoleHero({
           onClick={onSecondaryClick}
           className="inline-flex w-full cursor-pointer items-center justify-center gap-2 sm:w-auto"
         >
-          {secondaryCta?.label}
+          {cmsDisplayText(secondaryCta?.label)}
           <ArrowRight className="h-4 w-4" aria-hidden />
         </button>
       )
     }
     return (
       <Link to={secondaryCta?.to || "/"} className="inline-flex w-full cursor-pointer items-center justify-center gap-2 sm:w-auto">
-        {secondaryCta?.label}
+        {cmsDisplayText(secondaryCta?.label)}
         <ArrowRight className="h-4 w-4" aria-hidden />
       </Link>
     )
@@ -488,7 +489,7 @@ export function RoleHero({
             {title}
           </h1>
           <div className={cn("mt-6 font-urbanist text-lg leading-relaxed text-white md:text-xl [&_span]:!text-white [&_strong]:!text-white", subtitleClassName ?? "max-w-2xl")}>
-            {subtitle}
+            {typeof subtitle === "string" ? cmsDisplayText(subtitle) : subtitle}
           </div>
           <div className="mt-10 flex w-full flex-col gap-3 sm:flex-row sm:flex-wrap">
             <RelliaAction

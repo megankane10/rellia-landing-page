@@ -4,6 +4,8 @@ import {portableHeadlineField} from '../shared/inlineHeroHeadlineField'
 import {
   CONTENT_SEO_FIELDSETS,
   CONTENT_SEO_GROUPS,
+  GROUP_MODULAR_SECTIONS,
+  modularSectionsField,
   singletonSeoField,
 } from '../shared/singletonContentFields'
 import {studioListMedia} from '../shared/studioListMedia'
@@ -16,6 +18,7 @@ export const programsLandingPage = defineType({
     {name: 'hero', title: 'Hero', default: true},
     {name: 'programs', title: 'Programs'},
     {name: 'cta', title: 'CTA'},
+    GROUP_MODULAR_SECTIONS,
     ...CONTENT_SEO_GROUPS.filter((g) => g.name !== 'content'),
   ],
   fieldsets: CONTENT_SEO_FIELDSETS,
@@ -42,6 +45,10 @@ export const programsLandingPage = defineType({
     defineField({name: 'ctaBody', title: 'CTA body', type: 'text', rows: 2, group: 'cta'}),
     defineField({name: 'ctaButtonLabel', title: 'CTA button label', type: 'string', group: 'cta'}),
     defineField({name: 'ctaButtonHref', title: 'CTA button link', type: 'string', group: 'cta'}),
+    modularSectionsField({
+      description:
+        'Optional modular blocks rendered on /programs after the programs grid and before the footer CTA band.',
+    }),
     singletonSeoField,
   ],
   preview: {
