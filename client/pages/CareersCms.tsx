@@ -350,7 +350,7 @@ export default function CareersCms() {
 
   const roleShareMeta = useMemo(() => {
     if (!sharedRole || !sharedRoleSeo || !isRoleSharePage) return null
-    const ogImage = resolveShareOgImage(sharedRoleSeo.ogImageUrl, getSiteUrl(), {
+    const ogImage = resolveShareOgImage(sharedRoleSeo.ogImageUrl, {
       landscape: true,
     })
     return {

@@ -116,7 +116,7 @@
     "cmdk": "^1.1.1",
     "date-fns": "^4.1.0",
     "embla-carousel-react": "^8.6.0",
-    "esbuild": "~0.25.8",
+    "esbuild": "~0.28.1",
     "eslint": "^9.39.4",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^7.1.1",
@@ -152,6 +152,8 @@
       "esbuild"
     ],
     "overrides": {
+      "esbuild": ">=0.28.1",
+      "yaml": ">=2.8.3",
       "qs": ">=6.15.2",
       "body-parser": ">=2.2.2",
       "path-to-regexp@>=8.0.0": ">=8.4.2",

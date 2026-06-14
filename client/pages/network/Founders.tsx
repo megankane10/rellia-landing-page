@@ -654,7 +654,7 @@ function JourneySplitSection({ content }: { content: NetworkFoundersPageContent 
     launch: Rocket,
   } satisfies Record<JourneyStep["id"], typeof Lightbulb>
 
-  const resolveJourneyIcon = (step: JourneyStep) =>
+  const resolveJourneyIcon = (step: Pick<JourneyStep, "id" | "iconKey">) =>
     resolveNetworkIcon(
       step.iconKey,
       journeyIconById[step.id as keyof typeof journeyIconById] ?? Lightbulb,

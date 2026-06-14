@@ -955,7 +955,6 @@ const paymentPageSeedDocument = () => ({
   discountBannerTitle: DEFAULT_PAYMENT_PAGE.discountBannerTitle,
   discountBannerSubtitle: DEFAULT_PAYMENT_PAGE.discountBannerSubtitle,
   discountBannerApplyLabel: DEFAULT_PAYMENT_PAGE.discountBannerApplyLabel,
-  promoPillEnabled: DEFAULT_PAYMENT_PAGE.promoPillEnabled,
   promoMessage: DEFAULT_PAYMENT_PAGE.promoMessage,
   questionsTitle: DEFAULT_PAYMENT_PAGE.questionsTitle,
   questionsBody: DEFAULT_PAYMENT_PAGE.questionsBody,

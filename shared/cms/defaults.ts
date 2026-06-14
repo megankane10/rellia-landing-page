@@ -2442,7 +2442,6 @@ export const DEFAULT_PAYMENT_PAGE: PaymentPageContent = {
   benefitsPanelImageEnabled: true,
   benefitsPanelImageSrc: "/images/membership-splash.jpg",
   choosePlanHeadline: "Choose your plan",
-  promoPillEnabled: true,
   promoMessage:
     "Founding members get 50% off first purchase using code {code}",
   pricingPerSuffix: "",
@@ -2918,9 +2917,6 @@ export function mergePaymentPage(
   }
   if (typeof base.pricingAnnualDiscountEnabled !== "boolean") {
     base.pricingAnnualDiscountEnabled = DEFAULT_PAYMENT_PAGE.pricingAnnualDiscountEnabled
-  }
-  if (typeof base.promoPillEnabled !== "boolean") {
-    base.promoPillEnabled = DEFAULT_PAYMENT_PAGE.promoPillEnabled
   }
   fill("benefitsPanelHeadline", DEFAULT_PAYMENT_PAGE.benefitsPanelHeadline ?? "")
   fill("benefitsPanelDescription", DEFAULT_PAYMENT_PAGE.benefitsPanelDescription ?? "")

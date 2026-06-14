@@ -19,7 +19,7 @@ import {
 import { filterValidOpenRoles } from "../careersOpenRolesVisibility"
 import { mergeCareersPage } from "./careersPageDefaults"
 import { careersRoleDetailPath } from "./careersRoleShare"
-import type { CareersPageContent } from "./types"
+import type { CareersOpenRole, CareersPageContent } from "./types"
 import eventsBuildSnapshot from "./build-snapshots/events.json"
 import openRolesBuildSnapshot from "./build-snapshots/openRoles.json"
 import pagesBuildSnapshot from "./build-snapshots/pages.json"
@@ -43,21 +43,11 @@ const snapshotStories = (): Record<string, unknown>[] =>
     ? (storiesBuildSnapshot as Record<string, unknown>[])
     : []
 
-const snapshotOpenRoles = (): Array<{
-  id?: string
-  title?: string
-  location?: string
-  employmentType?: string
-  description?: string
-}> =>
+const snapshotOpenRoles = (): Array<Partial<CareersOpenRole> & { id?: string; roleId?: string }> =>
   Array.isArray(openRolesBuildSnapshot)
-    ? (openRolesBuildSnapshot as Array<{
-        id?: string
-        title?: string
-        location?: string
-        employmentType?: string
-        description?: string
-      }>)
+    ? (openRolesBuildSnapshot as unknown as Array<
+        Partial<CareersOpenRole> & { id?: string; roleId?: string }
+      >)
     : []
 
 const snapshotPages = (): Record<string, unknown>[] =>
@@ -253,13 +243,13 @@ export const prefetchCareersPageContent = async (): Promise<CareersPageContent> 
 }
 
 export const fetchOpenRolesForPrerender = async (): Promise<
-  Array<{ id?: string; title?: string; location?: string; employmentType?: string; description?: string }>
+  Array<Partial<CareersOpenRole> & { id?: string; roleId?: string }>
 > => {
   const client = getPrerenderSanityClient()
   if (client) {
     try {
       const rows = await client.fetch<
-        Array<{ id?: string; title?: string; location?: string; employmentType?: string; description?: string }>
+        Array<Partial<CareersOpenRole> & { id?: string; roleId?: string }>
       >(openRolesQuery)
       if (Array.isArray(rows) && rows.length > 0) return rows
     } catch {

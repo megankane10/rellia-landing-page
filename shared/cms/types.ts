@@ -597,6 +597,9 @@ export type NetworkInvestorsPageContent = CmsSingletonPageContent &
     ctaTitle?: string
     ctaBody?: string
     ctaPrimaryLabel?: string
+    ctaPrimaryHref?: string
+    ctaSecondaryLabel?: string
+    ctaSecondaryHref?: string
   }
 
 export type NetworkPartnersPageContent = CmsSingletonPageContent &
