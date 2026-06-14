@@ -50,14 +50,14 @@ const AdminBrandPanel = ({ heading, description, children, textTone = "white" }:
           </Link>
 
           <div className="flex w-full flex-1 flex-col justify-start py-10 md:py-12 lg:justify-center">
-            <h2 className="w-full px-2 pt-8 text-left font-urbanist text-2xl font-medium leading-snug md:pt-12 md:text-4xl lg:text-5xl">
+            <h2 className="w-full px-2 pt-8 text-left font-urbanist text-2xl font-medium leading-relaxed md:pt-12 md:text-4xl md:leading-[1.45] lg:text-5xl lg:leading-[1.4]">
               {typeof heading === "string" ? (
                 <span className={headingClass}>{heading}</span>
               ) : (
                 heading
               )}
             </h2>
-            <p className="mt-5 w-full px-2 text-left font-urbanist text-lg leading-relaxed text-white/60 md:text-xl">
+            <p className="mt-5 w-full px-2 text-left font-urbanist text-lg leading-loose text-white/60 md:text-xl md:leading-[1.75]">
               {description}
             </p>
             {children}
