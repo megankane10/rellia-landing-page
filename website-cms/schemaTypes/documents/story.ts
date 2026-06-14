@@ -84,7 +84,7 @@ export const story = defineType({
       options: {
         list: [
           {title: 'Background image', value: 'background'},
-          {title: 'Image block (side-by-side)', value: 'block'},
+          {title: 'Image block', value: 'block'},
         ],
         layout: 'radio',
       },
