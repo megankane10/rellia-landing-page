@@ -706,7 +706,7 @@ export const SHOWCASE_PRERENDER_PATHS: string[] = [
   ...ADVISOR_DIRECTORY_SEED.map((a) => `/advisors/directory/${a.id}`),
 ]
 
-/** Auth/admin routes use AuthProvider client-side only — SEO via RouteSeo, not prerender. */
+/** Auth/admin routes hydrate client-side only (AuthProvider is browser-only). */
 export const isClientOnlyAuthPath = (pathname: string): boolean => {
   const key = normalizePathname(pathname)
   return key.startsWith("/admin") || key === "/accept-invite"
@@ -714,6 +714,13 @@ export const isClientOnlyAuthPath = (pathname: string): boolean => {
 
 /** @deprecated Use isClientOnlyAuthPath */
 export const isAdminPrerenderPath = isClientOnlyAuthPath
+
+/** Static HTML shells for admin/auth routes (no SSR auth; see `client/prerender.tsx`). */
+export const AUTH_SHELL_PRERENDER_PATHS: string[] = [
+  "/admin",
+  "/accept-invite",
+  ...Object.keys(ROUTE_SEO).filter((p) => isClientOnlyAuthPath(p)),
+]
 
 /** Paths emitted as static HTML at build time (see `client/prerender.tsx`). */
 export const PRERENDER_PATHS: string[] = [
