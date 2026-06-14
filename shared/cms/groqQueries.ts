@@ -162,7 +162,8 @@ export const storiesQuery = `*[_type == "story" && !(_id in path("drafts.**"))]
   "coverImageAlt": headerImageAlt,
   "tag": filters[0]->title,
   publishedAt,
-  featured
+  featured,
+  ${seoFragment}
 }`
 
 export const storiesPageQuery = `*[_id == "storiesPage"][0]{
@@ -274,6 +275,7 @@ export const pageBySlugQuery = `*[_type == "page" && slug.current == $slug && sl
 export const pagesPrerenderSnapshotQuery = `*[_type == "page" && defined(slug.current) && slug.current != "terms" && slug.current != "privacy" && !(_id in path("drafts.**"))]{
   title,
   "slug": slug.current,
+  ${pageVisibilityFragment},
   ${seoFragment},
   sections[]{ _key, ${pageSectionFieldsFragment} },
   pageBuilder[]{ _key, ${pageSectionFieldsFragment} }
@@ -719,7 +721,8 @@ export const eventsQuery = `*[_type == "event" && status != "hidden" && !(_id in
   embedLumaOnDetailPage,
   addToCalendarEnabled,
   status,
-  sortOrder
+  sortOrder,
+  ${seoFragment}
 }`
 
 export const eventBySlugQuery = `*[_type == "event" && slug.current == $slug && !(_id in path("drafts.**"))][0]{

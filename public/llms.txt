@@ -25,11 +25,15 @@ Rellia offers founder programs (QMS, fundraising, regulatory, clinical validatio
 
 ## Programs
 
+- [/programs/advance-data-room](https://www.relliahealth.com/programs/advance-data-room): Public page on relliahealth.com.
 - [/programs/advance-data-room-deep-dive](https://www.relliahealth.com/programs/advance-data-room-deep-dive): Navigate due diligence and data room management. Practical tools and tips for early-stage founders raising capital.
 - [/programs/advisory-board-match](https://www.relliahealth.com/programs/advisory-board-match): Recruit ideal experts for your startup. Rellia provides matchmaking, equity benchmarking, and legal frameworks for productive advisory relationships.
+- [/programs/build-your-qms](https://www.relliahealth.com/programs/build-your-qms): Public page on relliahealth.com.
 - [/programs/build-your-quality-management-system](https://www.relliahealth.com/programs/build-your-quality-management-system): Build a lean, scalable QMS for ISO 13485, MDSAP, and FDA compliance. Expert guidance for medtech and digital health founders.
+- [/programs/design-your-brand](https://www.relliahealth.com/programs/design-your-brand): Public page on relliahealth.com.
 - [/programs/design-your-brand-strategy](https://www.relliahealth.com/programs/design-your-brand-strategy): Develop a professional brand identity that earns trust from clinicians and investors. Includes sprints for website, UI, and sales collateral.
 - [/programs/elevate-healthcare-capital](https://www.relliahealth.com/programs/elevate-healthcare-capital): Refine your fundraising strategy for health tech. Upgrade your pitch to meet the technical and clinical expectations of healthcare investors.
+- [/programs/first-50-users](https://www.relliahealth.com/programs/first-50-users): Public page on relliahealth.com.
 - [/programs/first-50-users-clinical-feedback-intensive](https://www.relliahealth.com/programs/first-50-users-clinical-feedback-intensive): Validate your product with Rellia's clinician network. Gain IRB guidance and professional feedback to bridge the gap from prototype to clinical use.
 - [/programs/ignite-pitch-foundations](https://www.relliahealth.com/programs/ignite-pitch-foundations): Master fundraising essentials. Craft your first pitch deck and presentation with expert feedback to build investor confidence.
 - [/programs/low-fidelity-prototype-lab](https://www.relliahealth.com/programs/low-fidelity-prototype-lab): Transform your vision into a functional prototype. Connect with vetted development firms and testing experts to build your proof of concept.

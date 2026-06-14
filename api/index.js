@@ -277,6 +277,13 @@ var pageBySlugQuery = `*[_type == "page" && slug.current == $slug && slug.curren
   sections[]{ _key, ${pageSectionFieldsFragment} },
   pageBuilder[]{ _key, ${pageSectionFieldsFragment} }
 }`;
+var pagesPrerenderSnapshotQuery = `*[_type == "page" && defined(slug.current) && slug.current != "terms" && slug.current != "privacy" && !(_id in path("drafts.**"))]{
+  title,
+  "slug": slug.current,
+  ${seoFragment},
+  sections[]{ _key, ${pageSectionFieldsFragment} },
+  pageBuilder[]{ _key, ${pageSectionFieldsFragment} }
+}`;
 var pageSectionsFragment = `sections[]{ _key, ${pageSectionFieldsFragment} }`;
 var networkFoundersPageQuery = `*[_id == "networkFoundersPage"][0]{
   title,
@@ -301,6 +308,7 @@ var networkFoundersPageQuery = `*[_id == "networkFoundersPage"][0]{
   deeperHelpCtaHref,
   ${networkCtaFragment},
   ${logoMarqueeFragment},
+  ${pageSectionsFragment},
   ${seoFragment}
 }`;
 var networkAlumniDirectoryPageQuery = `*[_id == "networkAlumniDirectoryPage"][0]{
@@ -310,6 +318,7 @@ var networkAlumniDirectoryPageQuery = `*[_id == "networkAlumniDirectoryPage"][0]
   directoryCtaBody,
   directoryCtaPrimaryLabel,
   directoryCtaPrimaryHref,
+  ${pageSectionsFragment},
   ${seoFragment}
 }`;
 var networkAdvisorsDirectoryPageQuery = `*[_id == "networkAdvisorsDirectoryPage"][0]{
@@ -343,6 +352,7 @@ var networkAdvisorsPageQuery = `*[_id == "networkAdvisorsPage"][0]{
   pitchCards[]{ _key, title, body, imageUrl },
   ${networkCtaFragment},
   ${logoMarqueeFragment},
+  ${pageSectionsFragment},
   ${seoFragment},
   foundersCluster[]{ _key,
     title,
@@ -364,6 +374,7 @@ var networkPartnersPageQuery = `*[_id == "networkPartnersPage"][0]{
   directoryBullets,
   ${networkWhyFragment},
   ${networkCtaFragment},
+  ${pageSectionsFragment},
   ${seoFragment}
 }`;
 var landingTestimonialsFragment = `testimonials[]{ _key,
@@ -410,6 +421,7 @@ var diagnosticLandingPageQuery = `*[_id == "diagnosticLandingPage"][0]{
   ctaPrimaryHref,
   ctaSecondaryLabel,
   ctaSecondaryHref,
+  ${pageSectionsFragment},
   ${seoFragment}
 }`;
 var consultingPageQuery = `*[_id == "consultingPage"][0]{
@@ -446,6 +458,7 @@ var consultingPageQuery = `*[_id == "consultingPage"][0]{
   ctaPrimaryHref,
   ctaSecondaryLabel,
   ctaSecondaryHref,
+  ${pageSectionsFragment},
   ${seoFragment}
 }`;
 var termsPageQuery = `*[_id == "termsPage"][0]{
@@ -515,15 +528,19 @@ var homePageQuery = `*[_id == "homePage"][0]{
     ctaLabel,
     ctaTo
   },
+  ${pageSectionsFragment},
   ${seoFragment}
 }`;
 var aboutPageQuery = `*[_id == "aboutPage"][0]{
-  "heroTitlePortable": coalesce(heroTitlePortable, heroHeadlinePortable),
+  heroTitlePortable,
   heroIntro,
   missionTitle,
   missionParagraphs,
   "missionImageSrc": coalesce(missionImage.asset->url, missionImageSrc),
   missionImageAlt,
+  showValuesTag,
+  valuesTag,
+  valuesHeadlinePortable,
   valuesTitle,
   valuesSubtitle,
   values[]{ _key, iconKey, title, description },
@@ -569,6 +586,7 @@ var programsLandingQuery = `*[_id == "programsLandingPage"][0]{
   ctaBody,
   ctaButtonLabel,
   ctaButtonHref,
+  ${pageSectionsFragment},
   ${seoFragment}
 }`;
 var programsLayoutPageQuery = `*[_id == "programsLayoutPage"][0]{

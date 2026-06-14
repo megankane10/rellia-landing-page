@@ -1,13 +1,16 @@
 import { useEffect, useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
+import { useAuth } from "@/context/AuthContext"
 import RelliaAction from "@/components/RelliaAction"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { getApiCsrfHeaders } from "@/lib/apiCsrf"
+import { getAdminFirstName } from "@/lib/adminUserProfile"
 import { parseApiJson } from "@/lib/parseApiJson"
 import AdminAuthLayout from "@/components/admin/AdminAuthLayout"
 
 const AdminSignup = () => {
+  const { signIn } = useAuth()
   const navigate = useNavigate()
   const [signupEnabled, setSignupEnabled] = useState<boolean | null>(null)
   const [statusError, setStatusError] = useState<string | null>(null)
@@ -58,8 +61,24 @@ const AdminSignup = () => {
         setError(parsed.error)
         return
       }
-      setSuccess(true)
-      setTimeout(() => navigate("/admin/login", { replace: true }), 2000)
+
+      const trimmedEmail = email.trim()
+      const trimmedName = fullName.trim()
+      const { error: signInError } = await signIn(trimmedEmail, password)
+      if (signInError) {
+        setSuccess(true)
+        setError("Account created, but sign-in failed. Please sign in manually.")
+        setTimeout(() => navigate("/admin/login", { replace: true }), 2400)
+        return
+      }
+
+      navigate("/admin/overview", {
+        replace: true,
+        state: {
+          showWelcome: true,
+          firstName: getAdminFirstName(trimmedName, trimmedEmail),
+        },
+      })
     } catch {
       setError("Network error. Please try again.")
     } finally {

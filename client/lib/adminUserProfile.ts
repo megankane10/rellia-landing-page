@@ -3,6 +3,16 @@ import type { User } from "@supabase/supabase-js"
 const FULL_NAME_KEY = "full_name"
 const AVATAR_URL_KEY = "avatar_url"
 
+export const getAdminFirstName = (fullName: string, fallbackEmail?: string | null): string => {
+  const trimmed = fullName.trim()
+  if (trimmed) {
+    const first = trimmed.split(/\s+/).filter(Boolean)[0]
+    if (first) return first
+  }
+  const emailLocal = fallbackEmail?.trim().split("@")[0]?.trim()
+  return emailLocal || "there"
+}
+
 export const getAdminDisplayName = (user: User | null | undefined): string => {
   if (!user) return ""
   const meta = user.user_metadata ?? {}

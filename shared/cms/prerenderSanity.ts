@@ -26,6 +26,12 @@ import pagesBuildSnapshot from "./build-snapshots/pages.json"
 import storiesBuildSnapshot from "./build-snapshots/stories.json"
 import { defaultProgramRecordForSlug } from "./itemCardImage"
 import { trySanityApiConfig } from "./sanityEnv"
+import {
+  isCmsPageSitemapEligible,
+  isCmsSeoIndexable,
+  rowId,
+  rowSlug,
+} from "./sitemapIndexability"
 
 const snapshotEvents = (): Record<string, unknown>[] =>
   Array.isArray(eventsBuildSnapshot)
@@ -295,8 +301,120 @@ export const fetchEventSlugsForPrerender = async (): Promise<string[]> => {
 export const fetchCmsPageSlugsForPrerender = async (): Promise<string[]> => {
   const pages = await fetchPagesForPrerender()
   return pages
-    .map((row) => (typeof row.slug === "string" ? row.slug.trim() : ""))
+    .map((row) => rowSlug(row))
     .filter(Boolean)
+}
+
+/** Indexable custom CMS pages for sitemap (live visibility + SEO index on). */
+export const fetchIndexableCmsPagePathsForSitemap = async (): Promise<string[]> => {
+  const pages = await fetchPagesForPrerender()
+  return pages
+    .filter(isCmsPageSitemapEligible)
+    .map((row) => rowSlug(row))
+    .filter(Boolean)
+    .map((slug) => `/${slug}`)
+}
+
+/** Indexable published stories for sitemap. */
+export const fetchIndexableStoryPathsForSitemap = async (): Promise<string[]> => {
+  const client = getPrerenderSanityClient()
+  if (client) {
+    try {
+      const rows = await client.fetch<Record<string, unknown>[]>(storiesQuery)
+      if (Array.isArray(rows) && rows.length > 0) {
+        return rows
+          .filter(isCmsSeoIndexable)
+          .map((row) => rowSlug(row))
+          .filter(Boolean)
+          .map((slug) => `/stories/${slug}`)
+      }
+    } catch {
+      // fall through to build snapshot
+    }
+  }
+
+  return snapshotStories()
+    .filter(isCmsSeoIndexable)
+    .map((row) => rowSlug(row))
+    .filter(Boolean)
+    .map((slug) => `/stories/${slug}`)
+}
+
+/** Indexable published events for sitemap (excludes hidden + noIndex). */
+export const fetchIndexableEventPathsForSitemap = async (): Promise<string[]> => {
+  const rows = await fetchEventsForPrerender()
+  return rows
+    .filter(isCmsSeoIndexable)
+    .map((row) => rowSlug(row))
+    .filter(Boolean)
+    .map((slug) => `/events/${slug}`)
+}
+
+/** Indexable published programs for sitemap (excludes hidden + noIndex). */
+export const fetchIndexableProgramPathsForSitemap = async (): Promise<string[]> => {
+  const rows = await fetchProgramsForPrerender()
+  return rows
+    .filter(isCmsSeoIndexable)
+    .map((row) => rowSlug(row))
+    .filter(Boolean)
+    .map((slug) => `/programs/${slug}`)
+}
+
+/** Published alumni profile paths for sitemap. */
+export const fetchAlumniPathsForSitemap = async (): Promise<string[]> => {
+  return fetchAlumniProfilePathsForPrerender()
+}
+
+/** Published advisor profile paths for sitemap. */
+export const fetchAdvisorPathsForSitemap = async (): Promise<string[]> => {
+  return fetchAdvisorProfilePathsForPrerender()
+}
+
+/** Paths CMS marks as noindex — used to drop matching static ROUTE_SEO entries. */
+export const fetchCmsNoIndexPathsForSitemap = async (): Promise<string[]> => {
+  const [events, stories, programs, pages] = await Promise.all([
+    fetchEventsForPrerender(),
+    (async () => {
+      const client = getPrerenderSanityClient()
+      if (!client) return snapshotStories()
+      try {
+        const rows = await client.fetch<Record<string, unknown>[]>(storiesQuery)
+        return Array.isArray(rows) && rows.length > 0 ? rows : snapshotStories()
+      } catch {
+        return snapshotStories()
+      }
+    })(),
+    fetchProgramsForPrerender(),
+    fetchPagesForPrerender(),
+  ])
+
+  const excluded = new Set<string>()
+
+  for (const row of events) {
+    if (isCmsSeoIndexable(row)) continue
+    const slug = rowSlug(row)
+    if (slug) excluded.add(`/events/${slug}`)
+  }
+
+  for (const row of stories) {
+    if (isCmsSeoIndexable(row)) continue
+    const slug = rowSlug(row)
+    if (slug) excluded.add(`/stories/${slug}`)
+  }
+
+  for (const row of programs) {
+    if (isCmsSeoIndexable(row)) continue
+    const slug = rowSlug(row)
+    if (slug) excluded.add(`/programs/${slug}`)
+  }
+
+  for (const row of pages) {
+    if (isCmsPageSitemapEligible(row)) continue
+    const slug = rowSlug(row)
+    if (slug) excluded.add(`/${slug}`)
+  }
+
+  return [...excluded]
 }
 
 export const fetchPaymentPageForPrerender = async (): Promise<Record<string, unknown> | null> => {

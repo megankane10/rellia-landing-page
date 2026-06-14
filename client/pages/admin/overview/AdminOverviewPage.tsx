@@ -1,5 +1,5 @@
-import { useState, useMemo } from "react"
-import { Link } from "react-router-dom"
+import { useState, useMemo, useCallback, useEffect } from "react"
+import { Link, useLocation, useNavigate, useSearchParams } from "react-router-dom"
 import { useQuery } from "@tanstack/react-query"
 import { ArrowRight, ChevronLeft, ChevronRight, FileEdit, Inbox, Stethoscope, Users, TrendingUp, AlertCircle } from "lucide-react"
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis, PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from "recharts"
@@ -7,7 +7,9 @@ import { useAuth } from "@/context/AuthContext"
 import { fetchAdminTeam } from "@/lib/adminApi"
 import { supabase } from "@/lib/supabase"
 import AdminPageHeader from "@/components/admin/AdminPageHeader"
+import AdminSignupWelcomeSplash from "@/components/admin/AdminSignupWelcomeSplash"
 import AdminSystemStatus from "@/components/admin/AdminSystemStatus"
+import ScrollReveal from "@/components/ScrollReveal"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -27,7 +29,7 @@ import {
   percentChange,
   welcomeBackTitle,
 } from "@/lib/adminOverview"
-import { getAdminDisplayName } from "@/lib/adminUserProfile"
+import { getAdminDisplayName, getAdminFirstName } from "@/lib/adminUserProfile"
 import { cmsContentQueryKey, fetchCmsContentQueue, isCmsContentEnabled } from "@/lib/adminSanityContent"
 import { formatAdminDate, isActiveSubmissionStatus, statusBadgeClass } from "@/lib/adminSubmissionStatus"
 import { Badge } from "@/components/ui/badge"
@@ -205,11 +207,51 @@ const statusChartConfig = {
   Resolved: { label: "Resolved", color: CHART_COLORS.resolved },
 }
 
+type AdminWelcomeLocationState = {
+  showWelcome?: boolean
+  firstName?: string
+}
+
 const AdminOverviewPage = () => {
   const { user, session } = useAuth()
+  const location = useLocation()
+  const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
+  const welcomeState = (location.state as AdminWelcomeLocationState | null) ?? null
+  const previewWelcome = searchParams.get("previewWelcome") === "1"
+  const previewName = searchParams.get("name")?.trim() ?? ""
+  const wantsWelcome = welcomeState?.showWelcome === true || previewWelcome
+  const [splashComplete, setSplashComplete] = useState(!wantsWelcome)
+  const showSplash = wantsWelcome && !splashComplete
   const token = session?.access_token ?? ""
   const displayName = getAdminDisplayName(user)
   const pageTitle = welcomeBackTitle(displayName, user?.email)
+  const welcomeFirstName =
+    previewName ||
+    welcomeState?.firstName?.trim() ||
+    getAdminFirstName(displayName, user?.email)
+
+  const handleSplashComplete = useCallback(() => {
+    setSplashComplete(true)
+    if (!previewWelcome) return
+    const nextParams = new URLSearchParams(searchParams)
+    nextParams.delete("previewWelcome")
+    nextParams.delete("name")
+    const nextSearch = nextParams.toString()
+    navigate(
+      { pathname: location.pathname, search: nextSearch ? `?${nextSearch}` : "" },
+      { replace: true, state: null },
+    )
+  }, [location.pathname, navigate, previewWelcome, searchParams])
+
+  useEffect(() => {
+    if (!showSplash) return
+    const previousOverflow = document.body.style.overflow
+    document.body.style.overflow = "hidden"
+    return () => {
+      document.body.style.overflow = previousOverflow
+    }
+  }, [showSplash])
 
   const [weekOffset, setWeekOffset] = useState(0)
   const [statusFilter, setStatusFilter] = useState<"all" | "survey" | "web">("all")
@@ -486,12 +528,29 @@ const AdminOverviewPage = () => {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 space-y-6">
+      {showSplash ? (
+        <AdminSignupWelcomeSplash
+          firstName={welcomeFirstName}
+          onComplete={handleSplashComplete}
+        />
+      ) : null}
+
+      <div
+        className={cn(
+          "min-w-0 space-y-6",
+          showSplash && "invisible pointer-events-none",
+        )}
+        aria-hidden={showSplash}
+      >
+      <ScrollReveal variant="ctaReveal" hold={showSplash}>
       <AdminPageHeader
         title={pageTitle}
         actions={<AdminSystemStatus />}
       />
+      </ScrollReveal>
 
+      <ScrollReveal variant="ctaReveal" delay={0.06} hold={showSplash}>
       <div className="grid min-w-0 grid-cols-1 items-stretch gap-4 sm:grid-cols-2">
         <StatCard
           label="Needs attention"
@@ -509,16 +568,18 @@ const AdminOverviewPage = () => {
           loading={loading}
         />
       </div>
+      </ScrollReveal>
 
-      <div className="grid gap-4 lg:grid-cols-3">
+      <ScrollReveal variant="ctaReveal" delay={0.1} hold={showSplash}>
+      <div className="grid min-w-0 gap-4 lg:grid-cols-3">
         {/* Submissions by week */}
-        <Card className="lg:col-span-2 rounded-2xl">
+        <Card className="min-w-0 overflow-hidden lg:col-span-2 rounded-2xl">
           <CardHeader className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <div>
+            <div className="min-w-0">
               <CardTitle className="font-host-grotesk text-lg">Submissions by week</CardTitle>
               <CardDescription className="font-urbanist text-xs">Daily web forms and startup diagnostics</CardDescription>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex w-full min-w-0 flex-wrap items-center justify-start gap-2 sm:w-auto sm:justify-end">
               <button
                 onClick={() => setWeekOffset((prev) => prev + 1)}
                 className="flex h-8 w-8 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-700 transition-colors hover:bg-slate-50 active:bg-slate-100 disabled:opacity-50"
@@ -526,7 +587,7 @@ const AdminOverviewPage = () => {
               >
                 <ChevronLeft className="h-4 w-4" />
               </button>
-              <span className="font-urbanist text-xs font-semibold text-slate-700 min-w-[130px] text-center">
+              <span className="min-w-0 flex-1 text-center font-urbanist text-xs font-semibold text-slate-700 sm:min-w-[130px] sm:flex-none">
                 {getWeekRangeLabel(weekOffset)}
               </span>
               <button
@@ -539,11 +600,11 @@ const AdminOverviewPage = () => {
               </button>
             </div>
           </CardHeader>
-          <CardContent>
+          <CardContent className="min-w-0 overflow-x-auto">
             {loading ? (
-              <Skeleton className="h-[280px] w-full rounded-lg" />
+              <Skeleton className="h-[280px] w-full min-w-0 rounded-lg" />
             ) : (
-              <ChartContainer config={trendChartConfig} className="h-[240px] w-full min-w-0 sm:h-[280px]">
+              <ChartContainer config={trendChartConfig} className="h-[240px] w-full min-w-[280px] sm:h-[280px]">
                 <BarChart data={trend} margin={CHART_MARGIN}>
                   <CartesianGrid vertical={false} strokeDasharray="3 3" />
                   <XAxis dataKey="label" {...CHART_X_AXIS_PROPS} />
@@ -558,7 +619,7 @@ const AdminOverviewPage = () => {
         </Card>
 
         {/* Card 1: Submission Status */}
-        <Card className="lg:col-span-1 rounded-2xl flex flex-col h-full">
+        <Card className="min-w-0 overflow-hidden lg:col-span-1 rounded-2xl flex flex-col h-full">
           <CardHeader className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between pb-2">
             <div>
               <CardTitle className="font-host-grotesk text-base">Submission Status</CardTitle>
@@ -612,10 +673,12 @@ const AdminOverviewPage = () => {
           </CardContent>
         </Card>
       </div>
+      </ScrollReveal>
 
-      <div className="grid gap-4 lg:grid-cols-3">
+      <ScrollReveal variant="ctaReveal" delay={0.14} hold={showSplash}>
+      <div className="grid min-w-0 gap-4 lg:grid-cols-3">
         {/* Card 2: Startup Level Distribution */}
-        <Card className="lg:col-span-1 rounded-2xl flex flex-col h-full">
+        <Card className="min-w-0 overflow-hidden lg:col-span-1 rounded-2xl flex flex-col h-full">
           <CardHeader className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between pb-2">
             <div>
               <CardTitle className="font-host-grotesk text-base">Level Distribution</CardTitle>
@@ -663,13 +726,13 @@ const AdminOverviewPage = () => {
         </Card>
 
         {/* Card 3: Top Strengths & Growth Gaps */}
-        <Card className="lg:col-span-2 rounded-2xl h-full flex flex-col">
+        <Card className="min-w-0 overflow-hidden lg:col-span-2 rounded-2xl h-full flex flex-col">
           <CardHeader className="pb-2">
             <CardTitle className="font-host-grotesk text-base">Strengths & Weaknesses</CardTitle>
             <CardDescription className="font-urbanist text-xs">Top capabilities and growth gaps based on diagnostic responses</CardDescription>
           </CardHeader>
-          <CardContent className="flex-1 flex flex-col md:flex-row gap-4 pt-2">
-            <div className="rounded-xl bg-emerald-50/20 border border-emerald-100/40 p-4 flex-1 flex flex-col justify-center">
+          <CardContent className="flex min-w-0 flex-1 flex-col gap-4 pt-2 md:flex-row">
+            <div className="min-w-0 flex-1 rounded-xl bg-emerald-50/20 border border-emerald-100/40 p-4 flex flex-col justify-center">
               <div className="flex items-center gap-1.5 mb-3">
                 <TrendingUp className="h-4 w-4 text-emerald-600" />
                 <p className="font-host-grotesk text-xs font-bold text-emerald-950">Key Strengths</p>
@@ -700,7 +763,7 @@ const AdminOverviewPage = () => {
               )}
             </div>
 
-            <div className="rounded-xl bg-amber-50/20 border border-amber-100/40 p-4 flex-1 flex flex-col justify-center">
+            <div className="min-w-0 flex-1 rounded-xl bg-amber-50/20 border border-amber-100/40 p-4 flex flex-col justify-center">
               <div className="flex items-center gap-1.5 mb-3">
                 <AlertCircle className="h-4 w-4 text-amber-600" />
                 <p className="font-host-grotesk text-xs font-bold text-amber-950">Top Growth Gaps</p>
@@ -733,9 +796,11 @@ const AdminOverviewPage = () => {
           </CardContent>
         </Card>
       </div>
+      </ScrollReveal>
 
-      <div className="grid gap-6 lg:grid-cols-2">
-        <Card className="rounded-2xl">
+      <ScrollReveal variant="ctaReveal" delay={0.18} hold={showSplash}>
+      <div className="grid min-w-0 gap-6 lg:grid-cols-2">
+        <Card className="min-w-0 overflow-hidden rounded-2xl">
           <CardHeader className="flex flex-row items-center justify-between gap-2">
             <div>
               <CardTitle className="flex items-center gap-2 font-host-grotesk text-lg">
@@ -785,7 +850,7 @@ const AdminOverviewPage = () => {
           </CardContent>
         </Card>
 
-        <Card className="rounded-2xl">
+        <Card className="min-w-0 overflow-hidden rounded-2xl">
           <CardHeader className="flex flex-row items-center justify-between gap-2">
             <div>
               <CardTitle className="flex items-center gap-2 font-host-grotesk text-lg">
@@ -835,32 +900,36 @@ const AdminOverviewPage = () => {
           </CardContent>
         </Card>
       </div>
+      </ScrollReveal>
 
-      <div className="grid gap-4 sm:grid-cols-2">
+      <ScrollReveal variant="ctaReveal" delay={0.22} hold={showSplash}>
+      <div className="grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-2">
         <Link
           to="/admin/drafts"
-          className="flex items-center gap-3 rounded-2xl border border-border bg-card p-4 transition-colors hover:border-rellia-teal/25 hover:bg-rellia-mint/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          className="flex min-w-0 w-full items-center gap-3 rounded-2xl border border-border bg-card p-4 transition-colors hover:border-rellia-teal/25 hover:bg-rellia-mint/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         >
-          <FileEdit className="h-8 w-8 text-rellia-teal" aria-hidden />
-          <div>
+          <FileEdit className="h-8 w-8 shrink-0 text-rellia-teal" aria-hidden />
+          <div className="min-w-0 flex-1">
             <p className="font-host-grotesk font-semibold">Sanity Drafts</p>
             <p className="font-urbanist text-sm text-muted-foreground">
               {draftCount} unpublished {draftCount === 1 ? "document" : "documents"} waiting in CMS
             </p>
           </div>
-          <ArrowRight className="ml-auto h-4 w-4 text-muted-foreground" aria-hidden />
+          <ArrowRight className="ml-auto h-4 w-4 shrink-0 text-muted-foreground" aria-hidden />
         </Link>
         <Link
           to="/admin/team"
-          className="flex items-center gap-3 rounded-2xl border border-border bg-card p-4 transition-colors hover:border-rellia-teal/25 hover:bg-rellia-mint/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          className="flex min-w-0 w-full items-center gap-3 rounded-2xl border border-border bg-card p-4 transition-colors hover:border-rellia-teal/25 hover:bg-rellia-mint/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         >
-          <Users className="h-8 w-8 text-rellia-teal" aria-hidden />
-          <div>
+          <Users className="h-8 w-8 shrink-0 text-rellia-teal" aria-hidden />
+          <div className="min-w-0 flex-1">
             <p className="font-host-grotesk font-semibold">Team</p>
             <p className="font-urbanist text-sm text-muted-foreground">{teamCount} dashboard accounts</p>
           </div>
-          <ArrowRight className="ml-auto h-4 w-4 text-muted-foreground" aria-hidden />
+          <ArrowRight className="ml-auto h-4 w-4 shrink-0 text-muted-foreground" aria-hidden />
         </Link>
+      </div>
+      </ScrollReveal>
       </div>
     </div>
   )
