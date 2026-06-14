@@ -12,6 +12,7 @@ import { useFeaturedStories } from "@/hooks/useCmsDocuments"
 import { allowCmsSeedFallbacks } from "@/lib/deploymentEnv"
 import { isSanityConfigured } from "@/lib/sanity"
 import { CmsTextSkeleton } from "@/components/cms/CmsTextSkeleton"
+import { cmsCleanText, cmsDisplayText } from "@/lib/cmsStega"
 
 /** Auto-advance interval (progress bar uses same duration) */
 const ROTATE_MS = 6500
@@ -50,11 +51,11 @@ export default function FeaturedStories({
         slug: s.slug,
         title: s.title,
         excerpt: s.excerpt ?? "",
-        tag: (s.tag ?? "Story").trim() || "Story",
+        tag: s.tag ?? "Story",
         coverImageSrc: s.coverImageSrc ?? "",
-        coverImageAlt: (s.coverImageAlt ?? "Featured story cover").trim() || "Featured story cover",
+        coverImageAlt: s.coverImageAlt ?? "Featured story cover",
       }))
-      .filter((s) => s.slug && s.title && s.coverImageSrc)
+      .filter((s) => s.slug && cmsCleanText(s.title) && cmsCleanText(s.coverImageSrc))
 
     if (normalized.length > 0) return normalized
     return allowCmsSeedFallbacks() ? getFeaturedStories() : []
@@ -140,8 +141,8 @@ export default function FeaturedStories({
                   {activeStory ? (
                     <motion.img
                       key={activeStory.slug}
-                      src={activeStory.coverImageSrc}
-                      alt={activeStory.coverImageAlt}
+                      src={cmsDisplayText(activeStory.coverImageSrc)}
+                      alt={cmsDisplayText(activeStory.coverImageAlt)}
                       className="absolute inset-0 z-0 h-full w-full object-cover"
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
@@ -170,18 +171,18 @@ export default function FeaturedStories({
                       <div className="flex min-h-0 flex-1 w-full flex-col items-start text-left overflow-hidden">
                         <div className="mb-5">
                           <PillTag
-                            label={activeStory.tag}
+                            label={cmsDisplayText(activeStory.tag)}
                             className={PILL_ON_IMAGE_BLUR_CLASS}
                             dot={<span className="h-2 w-2 shrink-0 rounded-full bg-rellia-mint" aria-hidden />}
                           />
                         </div>
 
                         <h3 className="max-w-[1100px] font-host-grotesk font-medium text-white text-3xl tracking-tight leading-[1.05] sm:text-4xl md:text-5xl lg:text-[52px] line-clamp-3 md:line-clamp-none">
-                          {activeStory.title}
+                          {cmsDisplayText(activeStory.title)}
                         </h3>
 
                         <p className="mt-4 max-w-[780px] text-pretty text-white/85 text-sm font-urbanist leading-relaxed md:mt-5 md:text-base line-clamp-3">
-                          {activeStory.excerpt}
+                          {cmsDisplayText(activeStory.excerpt)}
                         </p>
                       </div>
 
@@ -192,7 +193,7 @@ export default function FeaturedStories({
                           size="comfortable"
                           className="inline-flex h-11 min-h-[44px] px-5 text-sm !py-0 md:h-auto md:min-h-0 md:px-8 md:text-base md:!py-4"
                         >
-                          <Link to={storyHref} aria-label={`Read: ${activeStory.title}`}>
+                          <Link to={storyHref} aria-label={`Read: ${cmsCleanText(activeStory.title)}`}>
                             Read story <ArrowRight className="h-4 w-4" aria-hidden />
                           </Link>
                         </RelliaAction>
@@ -216,7 +217,7 @@ export default function FeaturedStories({
                           <Link
                             to={storyHref}
                             className="inline-flex items-center gap-2 font-host-grotesk text-sm font-semibold text-rellia-mint hover:underline hover:underline-offset-4"
-                            aria-label={`Read: ${activeStory.title}`}
+                            aria-label={`Read: ${cmsCleanText(activeStory.title)}`}
                           >
                             Read story <ArrowRight className="h-4 w-4" aria-hidden />
                           </Link>

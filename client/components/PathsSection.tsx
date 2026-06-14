@@ -10,8 +10,8 @@ import RelliaAction from "@/components/RelliaAction"
 import ScrollReveal from "@/components/ScrollReveal"
 import { useHomePage } from "@/hooks/useCmsDocuments"
 import { DEFAULT_HOME_PAGE } from "@shared/cms/defaults"
-import { resolveMetricsHeadlinePortable } from "@shared/cms/resolveHeroHeadline"
 import type { HomePathsCard } from "@shared/cms/types"
+import { hasCmsString, pickCmsPortableText, pickRawOrMergedString } from "@shared/cms/cmsFieldUtils"
 import NetworkMetricsSection from "@/components/NetworkMetricsSection"
 import { PILL_ON_IMAGE_BLUR_CLASS } from "@/components/PillTag"
 import { cmsCleanText, cmsDisplayText, isVisualEditingPreview } from "@/lib/cmsStega"
@@ -88,7 +88,7 @@ const resolveCard = (id: NetworkPathRoleId, cms?: HomePathsCard): ResolvedCard =
     roleId: id,
     tagLabel: cmsCleanText(cms?.tagLabel) || tag.label,
     title: cmsCleanText(cms?.title) || meta.title,
-    imageSrc: cmsCleanText(cms?.imageSrc) || meta.imageSrc,
+    imageSrc: hasCmsString(cms?.imageSrc) ? cms!.imageSrc! : meta.imageSrc,
     imageAlt: cmsCleanText(cms?.imageAlt) || meta.imageAlt,
     ctaLabel: cmsCleanText(cms?.ctaLabel) || CTA_PHRASE[id],
     ctaTo: cmsCleanText(cms?.ctaTo) || meta.ctaTo,
@@ -103,8 +103,9 @@ export default function PathsSection() {
   const isInView = useInView(sectionRef, { once: true, margin: "-12% 0px -28% 0px" })
   const reduceMotion = useReducedMotion()
   const previewMode = isVisualEditingPreview()
-  const { data: home } = useHomePage()
-  const page = home ?? DEFAULT_HOME_PAGE
+  const { data: homeBundle } = useHomePage()
+  const page = homeBundle?.merged ?? DEFAULT_HOME_PAGE
+  const homeRaw = homeBundle?.raw
   const resolvedCards = useMemo<ResolvedCard[]>(() => {
     const cards = page.pathsCards ?? DEFAULT_HOME_PAGE.pathsCards ?? []
     return cards
@@ -113,9 +114,23 @@ export default function PathsSection() {
   }, [page.pathsCards])
 
   const pathsCardsRaw = page.pathsCards ?? DEFAULT_HOME_PAGE.pathsCards ?? []
-  const pathsTitleRaw = page.pathsTitle?.trim()
-    ? page.pathsTitle
-    : "Find your place in the community"
+  const pathsTitleRaw = pickRawOrMergedString(
+    homeRaw?.pathsTitle,
+    page.pathsTitle,
+    "Find your place in the community",
+  )
+
+  const metricsHeadingPortable = pickCmsPortableText(
+    homeRaw?.metricsHeadingPortable,
+    page.metricsHeadingPortable,
+    DEFAULT_HOME_PAGE.metricsHeadingPortable!,
+  )
+
+  const metricsBadgeLabel = pickRawOrMergedString(
+    homeRaw?.metricsBadgeLabel,
+    page.metricsBadgeLabel,
+    "Network impact",
+  )
 
   const headerHidden = reduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 36 }
   const headerVisible = { opacity: 1, y: 0 }
@@ -233,8 +248,8 @@ export default function PathsSection() {
                   >
                   <div className="relative aspect-[4/3] w-full overflow-hidden sm:aspect-[5/4] lg:aspect-[4/5]">
                     <img
-                      src={card.imageSrc}
-                      alt={card.imageAlt}
+                      src={hasCmsString(cmsCard?.imageSrc) ? cmsDisplayText(cmsCard!.imageSrc) : card.imageSrc}
+                      alt={displayCardField(cmsCard?.imageAlt, card.imageAlt)}
                       className="h-full w-full object-cover transition duration-500 ease-out group-hover:scale-[1.03] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
                       loading="lazy"
                       decoding="async"
@@ -279,11 +294,21 @@ export default function PathsSection() {
     </section>
 
     <NetworkMetricsSection
-      heading={resolveMetricsHeadlinePortable(page, DEFAULT_HOME_PAGE.metricsHeadingPortable!)}
-      metrics={page.metrics || []}
+      heading={metricsHeadingPortable}
+      metrics={(page.metrics || []).map((metric) => ({
+        _key: metric._key,
+        label: metric.label,
+        value: Number(cmsCleanText(String(metric.value))) || 0,
+        valueText: String(metric.value ?? ""),
+        suffix: metric.suffix,
+      }))}
       showBadge={page.showBadge !== false}
-      badgeLabel={page.metricsBadgeLabel || "Network impact"}
-      backgroundImageUrl={page.metricsBackgroundImageUrl}
+      badgeLabel={metricsBadgeLabel}
+      backgroundImageUrl={pickRawOrMergedString(
+        homeRaw?.metricsBackgroundImageUrl,
+        page.metricsBackgroundImageUrl,
+        DEFAULT_HOME_PAGE.metricsBackgroundImageUrl ?? "",
+      )}
     />
     </>
   )

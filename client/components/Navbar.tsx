@@ -249,7 +249,7 @@ export default function Navbar({
   const { data: globalSettingsData } = useGlobalSettings()
   const { data: homePageData } = useHomePage()
   const { data: siteSettingsData } = useSiteSettings()
-  const homePage = homePageData ?? DEFAULT_HOME_PAGE
+  const homePage = homePageData?.merged ?? DEFAULT_HOME_PAGE
   const globalSettings = globalSettingsData ?? DEFAULT_GLOBAL_SETTINGS
   const [scrolled, setScrolled] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)

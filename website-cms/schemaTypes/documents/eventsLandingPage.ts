@@ -41,6 +41,8 @@ export const eventsLandingPage = defineType({
       type: 'array',
       of: pageSectionMembers,
       group: 'sections',
+      description:
+        'Optional modular blocks rendered on /events after the event list and before the footer CTA band.',
     }),
     singletonSeoField,
   ],

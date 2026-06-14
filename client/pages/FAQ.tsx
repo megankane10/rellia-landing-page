@@ -10,14 +10,16 @@ import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo";
 import PageHeader from "@/components/PageHeader"
 import FaqPageJsonLd from "@/components/seo/FaqPageJsonLd"
 import { ArrowRight } from "lucide-react"
+import { cmsDisplayText, isVisualEditingPreview } from "@/lib/cmsStega"
 
 export default function FAQ() {
   const { data } = useFaqPage();
   const faq = data ?? DEFAULT_FAQ_PAGE;
   useApplyCmsSeo(faq.seo);
   const highlightPhrase = "need to know"
-  const titleLower = (faq.title ?? "").toLowerCase()
-  const highlightIndex = titleLower.indexOf(highlightPhrase)
+  const previewMode = isVisualEditingPreview()
+  const titleLower = cmsDisplayText(faq.title ?? "").toLowerCase()
+  const highlightIndex = previewMode ? -1 : titleLower.indexOf(highlightPhrase)
 
   return (
     <div className="min-h-screen bg-white font-host-grotesk overflow-x-hidden">
@@ -33,7 +35,9 @@ export default function FAQ() {
         <PageHeader
           variant="dark"
           title={
-            highlightIndex >= 0 ? (
+            previewMode ? (
+              cmsDisplayText(faq.title)
+            ) : highlightIndex >= 0 ? (
               <>
                 {faq.title.slice(0, highlightIndex)}
                 <span className="text-rellia-mint">
@@ -42,7 +46,7 @@ export default function FAQ() {
                 {faq.title.slice(highlightIndex + highlightPhrase.length)}
               </>
             ) : (
-              faq.title
+              cmsDisplayText(faq.title)
             )
           }
           subtitle={faq.subtitle}

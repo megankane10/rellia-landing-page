@@ -15,18 +15,25 @@ import { DEFAULT_HOME_PAGE } from "@shared/cms/defaults";
 import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo";
 import { clampMetaDescription, clampMetaTitle, getSeoForPathname } from "@/config/seo";
 import { resolveLucideIcon } from "@/lib/resolveLucideIcon"
+import { resolveLogoMarqueeMarks } from "@/lib/resolveLogoMarqueeMarks"
+import { PORTFOLIO_LOGO_MARKS } from "@/data/portfolioLogos"
 
 export default function Index() {
   const { data } = useHomePage();
-  const home = data ?? DEFAULT_HOME_PAGE;
+  const home = data?.merged ?? DEFAULT_HOME_PAGE;
   const howItWorksSteps = useMemo(
     () =>
       (home.howItWorksSteps ?? DEFAULT_HOME_PAGE.howItWorksSteps ?? []).map((step) => ({
+        _key: step._key,
         icon: resolveLucideIcon(step.iconKey, BriefcaseBusiness),
         title: step.title,
         description: step.description,
       })),
     [home.howItWorksSteps],
+  )
+  const logoMarqueeMarks = useMemo(
+    () => resolveLogoMarqueeMarks(home.logoMarquee, PORTFOLIO_LOGO_MARKS),
+    [home.logoMarquee],
   )
   const homeRouteSeo = getSeoForPathname("/");
   useApplyCmsSeo(home.seo, {
@@ -49,7 +56,7 @@ export default function Index() {
         />
 
         <HowItWorks
-          heading={home.howItWorksSectionTitle ?? "Where we focus"}
+          heading={home.howItWorksSectionTitle}
           subheading={home.howItWorksSectionDescription}
           steps={howItWorksSteps}
           columns={3}
@@ -58,6 +65,7 @@ export default function Index() {
           titlePortable={home.testimonialsTitlePortable}
           testimonials={home.testimonials}
           showHeaderIcon={false}
+          logoMarqueeMarks={logoMarqueeMarks}
         />
         <FeaturedStories />
         <RelliaCta

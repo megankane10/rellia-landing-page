@@ -14,11 +14,13 @@ import { DEFAULT_ABOUT_PAGE } from "@shared/cms/defaults";
 import { HeroHeadlinePortable } from "@/components/HeroHeadlinePortable"
 import { relliaTealGlassCardClass } from "@/lib/relliaTealGlassCard";
 import { cn } from "@/lib/utils";
+import { cmsCleanText, cmsDisplayText, isVisualEditingPreview } from "@/lib/cmsStega";
 import { useRef, useState, useEffect } from "react";
 import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
 
 const accentLastWords = (text: string, wordCount = 3) => {
-  const raw = (text ?? "").trim()
+  if (isVisualEditingPreview()) return cmsDisplayText(text)
+  const raw = cmsCleanText(text)
   if (!raw) return null
   const words = raw.split(/\s+/).filter(Boolean)
   if (words.length <= wordCount + 1) return raw
@@ -68,7 +70,7 @@ export default function About() {
           variant="dark"
           titleClassName={cn(PAGE_HEADER_TITLE_SIZE_CLASS, "max-w-3xl")}
           title={<HeroHeadlinePortable value={about.heroTitlePortable} />}
-          subtitle={about.heroIntro}
+          subtitle={cmsDisplayText(about.heroIntro)}
         />
 
         <section className="py-20 md:py-32 bg-white">
@@ -78,11 +80,11 @@ export default function About() {
                 <div className="relative min-h-0 w-full min-w-0 lg:pr-2 xl:pr-4">
                   <div className="absolute -top-4 -left-4 h-24 w-24 rounded-full bg-rellia-mint/20 blur-2xl pointer-events-none" />
                   <h2 className="relative text-black text-2xl md:text-[32px] font-semibold tracking-tight mb-6">
-                    {about.missionTitle}
+                    {cmsDisplayText(about.missionTitle)}
                   </h2>
                   <div className="relative space-y-5 text-black/70 text-base md:text-lg font-urbanist leading-relaxed">
                     {about.missionParagraphs.map((paragraph) => (
-                      <p key={paragraph.slice(0, 48)}>{paragraph}</p>
+                      <p key={cmsCleanText(paragraph).slice(0, 48)}>{cmsDisplayText(paragraph)}</p>
                     ))}
                   </div>
                 </div>
@@ -150,10 +152,10 @@ export default function About() {
                           aria-hidden
                         />
                         <p className="mt-2.5 font-host-grotesk text-sm font-semibold leading-snug tracking-tight text-white sm:mt-4 sm:text-lg md:text-xl">
-                          {v.title}
+                          {cmsDisplayText(v.title)}
                         </p>
                         <p className="mt-1.5 flex-1 font-urbanist text-xs leading-normal text-white/80 sm:mt-3 sm:text-base md:text-lg">
-                          {v.description}
+                          {cmsDisplayText(v.description)}
                         </p>
                       </div>
                     </ScrollReveal>
@@ -169,9 +171,9 @@ export default function About() {
         <section className="py-20 md:py-32 bg-white">
           <div className="max-w-[1300px] mx-auto px-6 md:px-10">
             <ScrollReveal className="text-center mb-12 md:mb-14">
-              <h2 className="text-black text-2xl md:text-[32px] font-semibold tracking-tight mb-4">{about.teamTitle}</h2>
+              <h2 className="text-black text-2xl md:text-[32px] font-semibold tracking-tight mb-4">{cmsDisplayText(about.teamTitle)}</h2>
               <p className="text-black/60 text-base md:text-lg font-urbanist max-w-2xl mx-auto leading-relaxed">
-                {about.teamSubtitle}
+                {cmsDisplayText(about.teamSubtitle)}
               </p>
             </ScrollReveal>
 

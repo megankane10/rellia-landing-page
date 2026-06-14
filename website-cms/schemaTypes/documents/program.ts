@@ -168,7 +168,7 @@ export const program = defineType({
     defineField({
       name: 'sections',
       title: 'Extra sections',
-      description: 'Modular blocks appended after the default program layout (hero, FAQ-style grids, CTAs, timelines, etc.).',
+      description: 'Modular blocks rendered after the default program layout and before the footer CTA band.',
       type: 'array',
       group: 'detail',
       of: pageSectionMembers,

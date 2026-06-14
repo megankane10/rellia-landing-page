@@ -1,9 +1,11 @@
-/** Hosted Studio URL used for stega / visual editing comlink. */
-export const getSanityStudioUrl = (): string =>
-  (import.meta.env.VITE_SANITY_STUDIO_URL || "https://relliahealth.sanity.studio").replace(
-    /\/$/,
-    "",
-  )
+const configuredStudioUrl = import.meta.env.VITE_SANITY_STUDIO_URL?.replace(/\/$/, "")
+
+/** Studio URL used for stega / visual editing comlink. */
+export const getSanityStudioUrl = (): string => {
+  if (configuredStudioUrl) return configuredStudioUrl
+  if (import.meta.env.DEV) return "http://localhost:3333"
+  return "https://relliahealth.sanity.studio"
+}
 
 /** True when the marketing site runs inside Sanity Presentation’s preview iframe. */
 export const isSanityPresentationIframe = (): boolean => {

@@ -2,6 +2,7 @@ import type { ReactNode } from "react"
 import ScrollReveal from "@/components/ScrollReveal"
 import { cn } from "@/lib/utils"
 import { HEADING_PAGE, HEADING_PAGE_SUBTITLE } from "@/lib/typography"
+import { cmsDisplayText } from "@/lib/cmsStega"
 
 /** Default page title size — matches Stories and standard `PageHeader` pages. Use with `font-bold leading-tight tracking-tight` plus text color. */
 export const PAGE_HEADER_TITLE_SIZE_CLASS = HEADING_PAGE
@@ -53,6 +54,8 @@ export default function PageHeader({
 }: PageHeaderProps) {
   const isDark = variant === "dark"
   const effectiveDateTrimmed = effectiveDate?.trim() ?? ""
+  const renderedSubtitle =
+    typeof subtitle === "string" ? cmsDisplayText(subtitle) : subtitle
 
   return (
     <section className={cn(isDark ? DARK_BG : LIGHT_BG, className)}>
@@ -128,7 +131,7 @@ export default function PageHeader({
             </h1>
           </div>
 
-          {subtitle ? (
+          {renderedSubtitle ? (
             <div
               className={cn(
                 "max-w-3xl font-urbanist leading-relaxed",
@@ -138,7 +141,7 @@ export default function PageHeader({
                 subtitleClassName ?? PAGE_HEADER_SUBTITLE_SIZE_CLASS,
               )}
             >
-              {subtitle}
+              {renderedSubtitle}
             </div>
           ) : null}
         </ScrollReveal>

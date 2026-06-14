@@ -1,6 +1,7 @@
 import { twoPartHeroHeadline, threePartHeroHeadline } from "./inlineHeroHeadline"
 import { normalizeToPortableText } from "./normalizePortableText"
 import type { SanityPortableText } from "./types"
+import { hasCmsString } from "./cmsFieldUtils"
 
 export type LegacyHeroHeadlineFields = {
   heroTitlePortable?: SanityPortableText | null
@@ -34,17 +35,20 @@ export const resolveHeroTitlePortable = (
     return cms.heroHeadlinePortable
   }
 
-  const title = cms?.heroTitle?.trim()
-  const accent = cms?.heroAccentPhrase?.trim()
-  const suffix = cms?.heroTitleSuffix?.trim()
+  const title = cms?.heroTitle
+  const accent = cms?.heroAccentPhrase
+  const suffix = cms?.heroTitleSuffix
 
-  if (title && accent && suffix) {
-    return threePartHeroHeadline(title, accent, suffix.startsWith(" ") ? suffix : ` ${suffix}`)
+  if (hasCmsString(title) && hasCmsString(accent) && hasCmsString(suffix)) {
+    const cleanTitle = title!
+    const cleanAccent = accent!
+    const cleanSuffix = suffix!
+    return threePartHeroHeadline(cleanTitle, cleanAccent, cleanSuffix.startsWith(" ") ? cleanSuffix : ` ${cleanSuffix}`)
   }
-  if (title && accent) {
-    return twoPartHeroHeadline(title, accent)
+  if (hasCmsString(title) && hasCmsString(accent)) {
+    return twoPartHeroHeadline(title!, accent!)
   }
-  if (title) {
+  if (hasCmsString(title)) {
     const normalized = normalizeToPortableText(title)
     if (normalized?.length) return normalized
   }
@@ -67,8 +71,8 @@ export const resolveWelcomeSplashHeadingPortable = (
     return cms.welcomeSplashHeadingPortable
   }
 
-  const legacy = cms?.welcomeSplashHeading?.trim()
-  if (legacy) {
+  const legacy = cms?.welcomeSplashHeading
+  if (hasCmsString(legacy)) {
     const normalized = normalizeToPortableText(legacy)
     if (normalized?.length) return normalized
   }
@@ -85,8 +89,8 @@ export const resolveMetricsHeadlinePortable = (
     return cms.metricsHeadingPortable
   }
 
-  const legacy = cms?.metricsHeading?.trim()
-  if (legacy) {
+  const legacy = cms?.metricsHeading
+  if (hasCmsString(legacy)) {
     const normalized = normalizeToPortableText(legacy)
     if (normalized?.length) return normalized
   }

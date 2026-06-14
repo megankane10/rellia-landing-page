@@ -28,9 +28,20 @@ const theme = buildLegacyTheme({
   '--default-button-primary-color--active': '#1A5C56',
 } as Record<string, string>)
 
-const previewOrigin = (
-  process.env.SANITY_STUDIO_PREVIEW_URL || 'https://www.relliahealth.com'
-).replace(/\/$/, '')
+const configuredPreviewUrl = process.env.SANITY_STUDIO_PREVIEW_URL?.replace(/\/$/, '')
+const isLocalPreviewUrl = (url: string | undefined) =>
+  Boolean(url && /localhost|127\.0\.0\.1/.test(url))
+
+/** When running `sanity dev`, default to the local Vite app unless preview URL is already local. */
+const previewOrigin = (() => {
+  if (configuredPreviewUrl && (process.env.NODE_ENV === 'production' || isLocalPreviewUrl(configuredPreviewUrl))) {
+    return configuredPreviewUrl
+  }
+  if (process.env.NODE_ENV !== 'production') {
+    return 'http://localhost:5173'
+  }
+  return configuredPreviewUrl || 'https://www.relliahealth.com'
+})()
 
 export default defineConfig({
   name: 'default',
@@ -54,9 +65,8 @@ export default defineConfig({
     }),
     presentationTool({
       previewUrl: {
-        // If Studio is deployed (https) and previewUrl is http://localhost, the iframe will be blocked as mixed content.
-        // For local Studio dev, set SANITY_STUDIO_PREVIEW_URL=http://localhost:5173
-        // Presentation iframe on www (draft mode). Requires SANITY_API_READ_TOKEN on Vercel production.
+        // Local `sanity dev` defaults preview to http://127.0.0.1:5173 (see previewOrigin above).
+        // Override with SANITY_STUDIO_PREVIEW_URL only when targeting a deployed site.
         origin: previewOrigin,
         initial: previewOrigin,
         previewMode: {
@@ -66,6 +76,7 @@ export default defineConfig({
       },
       allowOrigins: [
         'http://localhost:*',
+        'http://127.0.0.1:*',
         'https://*.vercel.app',
         'https://relliahealth.com',
         'https://www.relliahealth.com',

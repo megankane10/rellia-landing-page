@@ -2,10 +2,11 @@
 
 import type { CSSProperties, ReactNode } from "react"
 import { cn } from "@/lib/utils"
+import { cmsDisplayText, isVisualEditingPreview } from "@/lib/cmsStega"
 
 import { PORTFOLIO_LOGO_MARKS } from "@/data/portfolioLogos"
 
-export type LogoMark = { name: string; src: string }
+export type LogoMark = { _key?: string; name: string; src: string; href?: string }
 
 const SPEED_MAP = {
   slow: "60s",
@@ -29,22 +30,35 @@ const DENSITY_IMG_HEIGHT: Record<LogoMarqueeDensity, string> = {
 }
 
 /** Matches SmoothUI logo-cloud-3 (Logo Marquee) cell layout; images sit inside the same wrapper as SVG logos in the block. */
-const LogoItem = ({ logo, density }: { logo: LogoMark; density: LogoMarqueeDensity }) => (
+const LogoItem = ({
+  logo,
+  density,
+  previewMode,
+  itemKey,
+}: {
+  logo: LogoMark
+  density: LogoMarqueeDensity
+  previewMode: boolean
+  itemKey: string
+}) => (
   <div
     className={cn(
-      "marquee-logo-cell pointer-events-none flex shrink-0 select-none items-center justify-center px-8 opacity-[0.94] *:fill-foreground",
+      "marquee-logo-cell flex shrink-0 select-none items-center justify-center px-8 opacity-[0.94] *:fill-foreground",
       DENSITY_CELL_PADDING[density],
+      previewMode ? "pointer-events-auto" : "pointer-events-none",
     )}
   >
     <img
-      src={logo.src}
-      alt={logo.name}
+      src={cmsDisplayText(logo.src)}
+      alt={cmsDisplayText(logo.name)}
+      title={previewMode ? cmsDisplayText(logo.name) : undefined}
       loading="eager"
       decoding="async"
       draggable={false}
       className={cn(
-        "pointer-events-none w-auto max-w-[min(100%,18.5rem)] object-contain",
+        "w-auto max-w-[min(100%,18.5rem)] object-contain",
         DENSITY_IMG_HEIGHT[density],
+        previewMode ? "pointer-events-auto" : "pointer-events-none",
       )}
     />
   </div>
@@ -76,6 +90,7 @@ export default function LogoMarquee({
   /** Smaller cells and logos (use for thin strips under heroes). */
   density?: LogoMarqueeDensity
 }) {
+  const previewMode = isVisualEditingPreview()
   const logos = marks ?? PORTFOLIO_LOGO_MARKS
   const animationDuration = SPEED_MAP[speed]
   const animationDirection = direction === "right" ? "reverse" : "normal"
@@ -102,8 +117,13 @@ export default function LogoMarquee({
             -webkit-backface-visibility: hidden;
           }
 
+          .marquee-track--preview {
+            animation: none;
+            transform: none;
+          }
+
           @media (hover: hover) and (pointer: fine) {
-            .marquee-container:hover .marquee-track {
+            .marquee-container:hover .marquee-track:not(.marquee-track--preview) {
               animation-play-state: var(--marquee-pause-on-hover, running);
             }
 
@@ -155,7 +175,10 @@ export default function LogoMarquee({
         >
           <div className="marquee-fade-edges relative overflow-hidden">
             <div
-              className="marquee-track pointer-events-none flex w-max touch-none"
+              className={cn(
+                "marquee-track flex w-max touch-none",
+                previewMode ? "marquee-track--preview pointer-events-auto" : "pointer-events-none",
+              )}
               style={
                 {
                   "--marquee-duration": animationDuration,
@@ -164,12 +187,32 @@ export default function LogoMarquee({
                 } as CSSProperties
               }
             >
-              {logos.map((logo, index) => (
-                <LogoItem key={`first-${logo.name}-${index}`} logo={logo} density={density} />
-              ))}
-              {logos.map((logo, index) => (
-                <LogoItem key={`second-${logo.name}-${index}`} logo={logo} density={density} />
-              ))}
+              {logos.map((logo, index) => {
+                const itemKey = logo._key ?? `${logo.name}-${index}`
+                return (
+                  <LogoItem
+                    key={`first-${itemKey}`}
+                    itemKey={itemKey}
+                    logo={logo}
+                    density={density}
+                    previewMode={previewMode}
+                  />
+                )
+              })}
+              {previewMode
+                ? null
+                : logos.map((logo, index) => {
+                    const itemKey = logo._key ?? `${logo.name}-${index}`
+                    return (
+                      <LogoItem
+                        key={`second-${itemKey}`}
+                        itemKey={itemKey}
+                        logo={logo}
+                        density={density}
+                        previewMode={previewMode}
+                      />
+                    )
+                  })}
             </div>
           </div>
           {/* White scrim — reliable on iOS; sits above masked track, same edge as marquee */}

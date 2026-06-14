@@ -3,6 +3,7 @@ import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { ProfileSocialLinks, type ProfileSocialLink } from "@/components/network/ProfileSocialLinks";
 import { personImageByFirstName } from "@/lib/person-image";
 import { cn } from "@/lib/utils";
+import { cmsCleanText, cmsDisplayText } from "@/lib/cmsStega";
 
 export type TeamMemberCardProps = {
   name: string;
@@ -30,7 +31,7 @@ export function TeamMemberCard({
   const reduceMotion = useReducedMotion();
   const bioId = useId();
   const rootRef = useRef<HTMLDivElement | null>(null)
-  const descriptionText = bio?.trim() ? bio.trim() : "No description";
+  const descriptionText = bio?.trim() ? cmsDisplayText(bio) : "No description";
   const hasSocialLinks = Array.isArray(socialLinks) && socialLinks.length > 0;
   const bioOpen = typeof bioOpenProp === "boolean" ? bioOpenProp : uncontrolledBioOpen;
 
@@ -219,9 +220,9 @@ export function TeamMemberCard({
 
       {/* Name/role */}
       <div>
-        <h3 className="mb-1 text-lg font-semibold text-black md:text-xl">{name}</h3>
+        <h3 className="mb-1 text-lg font-semibold text-black md:text-xl">{cmsDisplayText(name)}</h3>
         {role ? (
-          <p className="text-sm font-semibold text-rellia-teal md:text-base">{role}</p>
+          <p className="text-sm font-semibold text-rellia-teal md:text-base">{cmsDisplayText(role)}</p>
         ) : null}
       </div>
     </div>

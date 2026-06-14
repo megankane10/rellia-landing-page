@@ -65,6 +65,7 @@ import FilteredListEmptyState from "@/components/FilteredListEmptyState"
 import RelliaAction from "@/components/RelliaAction"
 import { isSanityConfigured } from "@/lib/sanity"
 import { allowCmsSeedFallbacks, isStrictProductionSite } from "@/lib/deploymentEnv"
+import { cmsCleanText, cmsDisplayText } from "@/lib/cmsStega"
 import { useMemo, useState, useEffect, useRef } from "react"
 import { useLocation, useNavigate, useParams } from "react-router-dom"
 import { ShareIconCopy } from "@/components/share/sharePageIcons"
@@ -601,16 +602,16 @@ export default function CareersCms() {
                             >
                               <span className="flex min-w-0 flex-1 flex-col gap-1.5 text-left sm:flex-row sm:items-start sm:justify-between sm:gap-6">
                                 <span className="min-w-0 text-lg font-medium text-black md:text-xl">
-                                  {role.title}
+                                  {cmsDisplayText(role.title)}
                                 </span>
                                 <span className="shrink-0 font-urbanist text-sm font-normal leading-snug text-black/55 sm:max-w-[min(280px,42%)] sm:pt-0.5 sm:text-right md:text-base">
-                                  {role.location}
+                                  {cmsDisplayText(role.location)}
                                 </span>
                               </span>
                             </AccordionTrigger>
                             <AccordionContent className="pb-6 pt-0 md:pb-8">
                               <span className="inline-flex rounded-full bg-rellia-teal/10 px-3 py-1 font-urbanist text-sm font-medium text-rellia-teal">
-                                {role.employmentType}
+                                {cmsDisplayText(role.employmentType)}
                               </span>
 
                               <PortableRichText
@@ -625,7 +626,7 @@ export default function CareersCms() {
                                   </h3>
                                   <ul className="mt-3 list-disc space-y-2 pl-5 font-urbanist text-sm leading-relaxed text-black/70 md:text-base">
                                     {role.responsibilities.map((line) => (
-                                      <li key={line}>{line}</li>
+                                      <li key={cmsCleanText(line)}>{cmsDisplayText(line)}</li>
                                     ))}
                                   </ul>
                                 </div>
@@ -645,13 +646,13 @@ export default function CareersCms() {
                                         ? {}
                                         : { target: "_blank", rel: "noopener noreferrer" })}
                                       className="inline-flex items-center gap-2"
-                                      aria-label={`${role.applyButtonLabel} for ${role.title}${
+                                      aria-label={`${cmsCleanText(role.applyButtonLabel)} for ${cmsCleanText(role.title)}${
                                         isOpenRoleMailtoApplyUrl(role.applyButtonUrl)
                                           ? " (opens email)"
                                           : " (opens in new tab)"
                                       }`}
                                     >
-                                      {role.applyButtonLabel}
+                                      {cmsDisplayText(role.applyButtonLabel)}
                                       <ArrowRight className="h-5 w-5" aria-hidden />
                                     </a>
                                   </RelliaAction>

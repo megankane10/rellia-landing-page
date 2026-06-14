@@ -720,6 +720,10 @@ const ProgramPageLayout = ({
           <BackToPrograms />
         </div>
 
+        {extraSections.length > 0 ? (
+          <SectionsRenderer sections={extraSections} />
+        ) : null}
+
         <RelliaCta
           title={q.bottomCtaTitle}
           body={q.bottomCtaBody}
@@ -728,10 +732,6 @@ const ProgramPageLayout = ({
             q.bottomContactHref,
           )}
         />
-
-        {extraSections.length > 0 ? (
-          <SectionsRenderer sections={extraSections} />
-        ) : null}
       </main>
       <Footer />
     </div>

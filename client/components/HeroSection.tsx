@@ -5,7 +5,7 @@ import { ArrowRight } from "lucide-react"
 import RelliaAction from "@/components/RelliaAction"
 import { motion, useReducedMotion } from "framer-motion"
 import { cn } from "@/lib/utils"
-import { splitStega, isVisualEditingPreview } from "@/lib/cmsStega"
+import { splitStega, isVisualEditingPreview, cmsDisplayText } from "@/lib/cmsStega"
 
 
 /** Stagger timing must stay in sync with `headlineBelowFoldDelayMs` below */
@@ -138,6 +138,12 @@ export default function HeroSection({ content }: HeroSectionProps) {
       <div className="relative z-10 max-w-[1300px] mx-auto w-full px-6 md:px-10 pt-24 pb-12 md:pt-28 md:pb-24">
         <div className="flex w-full max-w-5xl flex-col items-start text-left">
           <div className="-mt-2 md:-mt-1 w-full">
+            {isPreview ? (
+              <h1 className="font-host-grotesk text-[42px] sm:text-[46px] md:text-[68px] lg:text-[82px] font-medium leading-[1.1] md:leading-[0.95] tracking-tight text-rellia-mint">
+                {cmsDisplayText(content.headlinePrefix)}
+              </h1>
+            ) : (
+              <>
             {/* Mobile-only unconstrained headline */}
             <motion.h1
               variants={headlineContainerVariants}
@@ -180,6 +186,8 @@ export default function HeroSection({ content }: HeroSectionProps) {
               ))}
               {headlineStega ? <span className="hidden" aria-hidden="true">{headlineStega}</span> : null}
             </motion.h1>
+              </>
+            )}
           </div>
 
           <motion.div
@@ -193,7 +201,7 @@ export default function HeroSection({ content }: HeroSectionProps) {
             className="mt-8 md:mt-9"
           >
             <p className="max-w-3xl text-pretty font-urbanist text-xl leading-relaxed text-white md:text-2xl">
-              {content.subheadline}
+              {cmsDisplayText(content.subheadline)}
             </p>
           </motion.div>
 
@@ -212,10 +220,10 @@ export default function HeroSection({ content }: HeroSectionProps) {
               variant="heroSolidOnTeal"
               size="comfortable"
               onClick={() => navigate(content.primaryCtaPath)}
-              aria-label={content.primaryCtaLabel || "Apply to Join"}
+              aria-label={cmsDisplayText(content.primaryCtaLabel) || "Apply to Join"}
               className="w-full justify-center sm:flex-1 sm:min-w-0"
             >
-              {content.primaryCtaLabel || "Apply to Join"}
+              {cmsDisplayText(content.primaryCtaLabel) || "Apply to Join"}
               <ArrowRight aria-hidden />
             </RelliaAction>
 
@@ -224,10 +232,10 @@ export default function HeroSection({ content }: HeroSectionProps) {
               variant="heroGhostOnTeal"
               size="comfortable"
               onClick={() => navigate(content.secondaryCtaPath)}
-              aria-label={content.secondaryCtaLabel || "Explore Programs"}
+              aria-label={cmsDisplayText(content.secondaryCtaLabel) || "Explore Programs"}
               className="w-full justify-center border-white/45 text-white hover:border-white/80 sm:flex-1 sm:min-w-0"
             >
-              {content.secondaryCtaLabel || "Explore Programs"}
+              {cmsDisplayText(content.secondaryCtaLabel) || "Explore Programs"}
               <ArrowRight aria-hidden />
             </RelliaAction>
           </motion.div>

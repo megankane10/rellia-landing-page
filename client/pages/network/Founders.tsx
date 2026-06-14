@@ -3,6 +3,7 @@ import { PAGE_HEADER_TITLE_SIZE_CLASS } from "@/components/PageHeader";
 import NetworkEyebrow from "@/components/network/NetworkEyebrow";
 import { PILL_ON_IMAGE_BLUR_CLASS } from "@/components/PillTag";
 import SectionHeading from "@/components/SectionHeading";
+import { cmsDisplayText, cmsDisplayTextOr } from "@/lib/cmsStega";
 import MembershipPathTimeline from "@/components/MembershipPathTimeline";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -46,6 +47,7 @@ import {
 } from "framer-motion";
 import { useNetworkFoundersPage } from "@/hooks/useCmsDocuments";
 import { PORTFOLIO_LOGO_MARKS } from "@/data/portfolioLogos";
+import { resolveLogoMarqueeMarks } from "@/lib/resolveLogoMarqueeMarks";
 import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo";
 import { mergeNetworkFoundersPage, DEFAULT_NETWORK_FOUNDERS_PAGE } from "@shared/cms/networkPageDefaults"
 import { NetworkHeroTitle } from "@/components/NetworkHeroTitle";
@@ -669,7 +671,7 @@ function JourneySplitSection({ content }: { content: NetworkFoundersPageContent 
       <div className="mx-auto max-w-[1300px]">
         <ScrollReveal variant="ctaReveal">
           <h2 className="w-full font-host-grotesk text-2xl font-semibold leading-tight tracking-tight text-rellia-teal md:text-[32px]">
-            {content.journeyTitle ?? "Where Rellia meets your trajectory"}
+            {cmsDisplayTextOr(content.journeyTitle, "Where Rellia meets your trajectory")}
           </h2>
         </ScrollReveal>
 
@@ -687,7 +689,7 @@ function JourneySplitSection({ content }: { content: NetworkFoundersPageContent 
                     <Icon className="h-4.5 w-4.5" aria-hidden />
                   </span>
                   <h3 className="font-host-grotesk text-base font-semibold leading-none text-black">
-                    {m.label}
+                    {cmsDisplayText(m.label)}
                   </h3>
                 </article>
               </ScrollReveal>
@@ -724,11 +726,13 @@ function JourneySplitSection({ content }: { content: NetworkFoundersPageContent 
         >
           <div className="flex w-full flex-col items-start gap-4 md:flex-row md:items-start md:justify-between md:gap-8">
             <span className="inline-flex shrink-0 items-center rounded-full bg-rellia-mint px-3.5 py-1.5 text-xs font-semibold uppercase tracking-[0.14em] text-rellia-teal">
-              {content.journeyHelpBadge ?? "We help with"}
+              {cmsDisplayTextOr(content.journeyHelpBadge, "We help with")}
             </span>
             <h3 className="max-w-2xl font-urbanist text-base font-normal leading-relaxed tracking-tight text-rellia-teal md:text-lg md:text-right">
-              {content.journeyHelpHeading ??
-                "Programs, operators, and warm intros aligned to milestones that survive clinical, regulatory, and buyer scrutiny."}
+              {cmsDisplayTextOr(
+                content.journeyHelpHeading,
+                "Programs, operators, and warm intros aligned to milestones that survive clinical, regulatory, and buyer scrutiny.",
+              )}
             </h3>
           </div>
         </ScrollReveal>
@@ -756,10 +760,10 @@ function JourneySplitSection({ content }: { content: NetworkFoundersPageContent 
                     <Icon className="h-5 w-5" aria-hidden />
                   </span>
                   <h4 className="font-host-grotesk text-base font-semibold leading-snug text-white">
-                    {m.label}
+                    {cmsDisplayText(m.label)}
                   </h4>
                   <p className="mt-2 flex-1 font-urbanist text-sm leading-relaxed text-white/80">
-                    {m.detail}
+                    {cmsDisplayText(m.detail)}
                   </p>
                 </article>
               </ScrollReveal>
@@ -873,16 +877,10 @@ export default function Founders() {
 
   const content = useMemo(() => mergeNetworkFoundersPage(page), [page]);
 
-  const logoMarks = useMemo(() => {
-    const fromCms = (content.logoMarquee ?? [])
-      .map((entry) => ({
-        name: typeof entry?.name === "string" ? entry.name.trim() : "",
-        src: typeof entry?.src === "string" ? entry.src.trim() : "",
-      }))
-      .filter((entry) => entry.name && entry.src);
-    if (fromCms.length > 0) return fromCms;
-    return [...PORTFOLIO_LOGO_MARKS];
-  }, [content.logoMarquee]);
+  const logoMarks = useMemo(
+    () => resolveLogoMarqueeMarks(content.logoMarquee, PORTFOLIO_LOGO_MARKS),
+    [content.logoMarquee],
+  );
 
   return (
     <div className="min-h-screen overflow-x-hidden bg-white font-host-grotesk">

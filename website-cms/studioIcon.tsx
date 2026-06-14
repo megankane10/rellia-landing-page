@@ -1,4 +1,4 @@
-/** Brand mark for Sanity Studio — static/ is served at /static/ in dev and production builds. */
+/** Brand mark for Sanity Studio nav — use the vector favicon at nav size, not manifest PNGs. */
 export const RelliaStudioIcon = () => (
   <img
     src="/static/favicon.svg"

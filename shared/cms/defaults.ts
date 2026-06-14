@@ -11,6 +11,7 @@ import {
   resolveMetricsHeadlinePortable,
   resolveWelcomeSplashHeadingPortable,
 } from "./resolveHeroHeadline"
+import { hasCmsString, pickCmsString } from "./cmsFieldUtils"
 import {
   getPaymentPagePanelDescriptionText,
   membershipPanelDescriptionStringToPortable,
@@ -2591,13 +2592,13 @@ const mergePathsCards = (fromCms: HomePathsCard[] | null | undefined): HomePaths
       ...defaultCard,
       ...cms,
       roleId: defaultCard.roleId,
-      tagLabel: cms.tagLabel?.trim() || defaultCard.tagLabel,
-      title: cms.title?.trim() || defaultCard.title,
-      subtitle: cms.subtitle?.trim() || defaultCard.subtitle,
-      imageSrc: cms.imageSrc?.trim() || defaultCard.imageSrc,
-      imageAlt: cms.imageAlt?.trim() || defaultCard.imageAlt,
-      ctaLabel: cms.ctaLabel?.trim() || defaultCard.ctaLabel,
-      ctaTo: cms.ctaTo?.trim() || defaultCard.ctaTo,
+      tagLabel: pickCmsString(cms.tagLabel, defaultCard.tagLabel),
+      title: pickCmsString(cms.title, defaultCard.title),
+      subtitle: pickCmsString(cms.subtitle, defaultCard.subtitle),
+      imageSrc: pickCmsString(cms.imageSrc, defaultCard.imageSrc),
+      imageAlt: pickCmsString(cms.imageAlt, defaultCard.imageAlt),
+      ctaLabel: pickCmsString(cms.ctaLabel, defaultCard.ctaLabel),
+      ctaTo: pickCmsString(cms.ctaTo, defaultCard.ctaTo),
     }
   })
 }
@@ -2612,12 +2613,12 @@ const mergeWhyFeatures = (
     return {
       ...defaultFeature,
       ...cmsFeature,
-      iconKey: cmsFeature.iconKey?.trim() || defaultFeature.iconKey,
-      title: cmsFeature.title?.trim() || defaultFeature.title,
-      description: cmsFeature.description?.trim() || defaultFeature.description,
-      buttonLabel: cmsFeature.buttonLabel?.trim() || defaultFeature.buttonLabel,
-      buttonPath: cmsFeature.buttonPath?.trim() || defaultFeature.buttonPath,
-      imageSrc: cmsFeature.imageSrc?.trim() || defaultFeature.imageSrc,
+      iconKey: pickCmsString(cmsFeature.iconKey, defaultFeature.iconKey),
+      title: pickCmsString(cmsFeature.title, defaultFeature.title),
+      description: pickCmsString(cmsFeature.description, defaultFeature.description),
+      buttonLabel: pickCmsString(cmsFeature.buttonLabel, defaultFeature.buttonLabel),
+      buttonPath: pickCmsString(cmsFeature.buttonPath, defaultFeature.buttonPath),
+      imageSrc: pickCmsString(cmsFeature.imageSrc, defaultFeature.imageSrc),
     }
   })
 
@@ -2625,7 +2626,10 @@ const mergeHowItWorksSteps = (
   fromCms: HomePageContent["howItWorksSteps"] | null | undefined,
 ): HomePageContent["howItWorksSteps"] => {
   const cmsSteps = compactList(fromCms).filter(
-    (step) => step?.title?.trim() || step?.description?.trim() || step?.iconKey?.trim(),
+    (step) =>
+      hasCmsString(step?.title) ||
+      hasCmsString(step?.description) ||
+      hasCmsString(step?.iconKey),
   )
   if (cmsSteps.length === 0) return DEFAULT_HOME_PAGE.howItWorksSteps!
 
@@ -2634,9 +2638,10 @@ const mergeHowItWorksSteps = (
       DEFAULT_HOME_PAGE.howItWorksSteps![index] ?? DEFAULT_HOME_PAGE.howItWorksSteps![0]
 
     return {
-      iconKey: cmsStep.iconKey?.trim() || defaultStep.iconKey,
-      title: cmsStep.title?.trim() || defaultStep.title,
-      description: cmsStep.description?.trim() || defaultStep.description,
+      _key: cmsStep._key,
+      iconKey: pickCmsString(cmsStep.iconKey, defaultStep.iconKey),
+      title: pickCmsString(cmsStep.title, defaultStep.title),
+      description: pickCmsString(cmsStep.description, defaultStep.description),
     }
   })
 }
@@ -2647,34 +2652,41 @@ export function mergeHomePage(partial: Partial<HomePageContent> | null | undefin
   const metrics = compactList(p.metrics)
   base.metrics = metrics.length > 0 ? metrics : DEFAULT_HOME_PAGE.metrics
   base.whyFeatures = mergeWhyFeatures(p.whyFeatures)
-  if (!base.whySectionTitle?.trim()) {
+  if (!hasCmsString(base.whySectionTitle)) {
     base.whySectionTitle = DEFAULT_HOME_PAGE.whySectionTitle
   }
-  if (!base.whySectionDescription?.trim()) {
+  if (!hasCmsString(base.whySectionDescription)) {
     base.whySectionDescription = DEFAULT_HOME_PAGE.whySectionDescription
   }
-  if (!base.howItWorksSectionTitle?.trim()) {
+  if (!hasCmsString(base.howItWorksSectionTitle)) {
     base.howItWorksSectionTitle = DEFAULT_HOME_PAGE.howItWorksSectionTitle
   }
-  if (!base.howItWorksSectionDescription?.trim()) {
+  if (!hasCmsString(base.howItWorksSectionDescription)) {
     base.howItWorksSectionDescription = DEFAULT_HOME_PAGE.howItWorksSectionDescription
   }
   base.howItWorksSteps = mergeHowItWorksSteps(p.howItWorksSteps)
   const testimonials = compactList(p.testimonials)
   base.testimonials = testimonials.length > 0 ? testimonials : DEFAULT_HOME_PAGE.testimonials
+  const logoMarquee = compactList(p.logoMarquee)
+  base.logoMarquee = logoMarquee.length > 0 ? logoMarquee : DEFAULT_HOME_PAGE.logoMarquee ?? []
   base.pathsCards = mergePathsCards(p.pathsCards)
-  if (!base.pathsTitle?.trim()) {
+  if (!hasCmsString(base.pathsTitle)) {
     base.pathsTitle = DEFAULT_HOME_PAGE.pathsTitle
   }
   if (!Array.isArray(base.testimonialsTitlePortable) || base.testimonialsTitlePortable.length === 0) {
     base.testimonialsTitlePortable = DEFAULT_HOME_PAGE.testimonialsTitlePortable
   }
-  base.metricsHeadingPortable = resolveMetricsHeadlinePortable(p, DEFAULT_HOME_PAGE.metricsHeadingPortable!)
-  if (base.showBadge == null) base.showBadge = DEFAULT_HOME_PAGE.showBadge ?? true
-  if (!base.metricsBadgeLabel?.trim()) {
+  base.metricsHeadingPortable =
+    Array.isArray(p.metricsHeadingPortable) && p.metricsHeadingPortable.length > 0
+      ? p.metricsHeadingPortable
+      : resolveMetricsHeadlinePortable(p, DEFAULT_HOME_PAGE.metricsHeadingPortable!)
+  if (hasCmsString(p.metricsBadgeLabel)) {
+    base.metricsBadgeLabel = p.metricsBadgeLabel!
+  } else if (!hasCmsString(base.metricsBadgeLabel)) {
     base.metricsBadgeLabel = DEFAULT_HOME_PAGE.metricsBadgeLabel
   }
-  if (!base.metricsBackgroundImageUrl?.trim()) {
+  if (base.showBadge == null) base.showBadge = DEFAULT_HOME_PAGE.showBadge ?? true
+  if (!hasCmsString(base.metricsBackgroundImageUrl)) {
     base.metricsBackgroundImageUrl = DEFAULT_HOME_PAGE.metricsBackgroundImageUrl
   }
   return base

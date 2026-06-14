@@ -1,6 +1,7 @@
 import type { SanityPortableText } from "@shared/cms/types"
 import { normalizeToPortableText } from "@shared/cms/normalizePortableText"
 import { cn } from "@/lib/utils"
+import { renderPtSpans, type PtBlock } from "@/lib/renderCmsPortableText"
 
 type SectionPortableTextProps = {
   value: SanityPortableText | string | null | undefined
@@ -9,8 +10,8 @@ type SectionPortableTextProps = {
   className?: string
 }
 
-const blockText = (block: { children?: Array<{ text?: string }> }) =>
-  (block.children ?? []).map((child) => child.text ?? "").join("").trim()
+const hasBlockText = (block: PtBlock) =>
+  (block.children ?? []).some((child) => (child.text ?? "").length > 0)
 
 export const SectionPortableText = ({ value, variant, tone, className }: SectionPortableTextProps) => {
   const normalized = normalizeToPortableText(value)
@@ -30,21 +31,21 @@ export const SectionPortableText = ({ value, variant, tone, className }: Section
     <div className={className}>
       {normalized.map((block, index) => {
         if (block._type !== "block") return null
-        const text = blockText(block as { children?: Array<{ text?: string }> })
-        if (!text) return null
+        const typedBlock = block as PtBlock
+        if (!hasBlockText(typedBlock)) return null
 
         if (variant === "subheading") {
           return (
-            <p key={block._key ?? index} className={cn(subheadingClass, index > 0 && "mt-3")}>
-              {text}
+            <p key={typedBlock._key ?? index} className={cn(subheadingClass, index > 0 && "mt-3")}>
+              {renderPtSpans(typedBlock.children, typedBlock.markDefs)}
             </p>
           )
         }
 
-        const Tag = block.style === "h3" ? "h3" : "h2"
+        const Tag = typedBlock.style === "h3" ? "h3" : "h2"
         return (
-          <Tag key={block._key ?? index} className={headingClass}>
-            {text}
+          <Tag key={typedBlock._key ?? index} className={headingClass}>
+            {renderPtSpans(typedBlock.children, typedBlock.markDefs)}
           </Tag>
         )
       })}

@@ -12,7 +12,7 @@ import {
 import { cn } from "@/lib/utils"
 import type { HomeTestimonial, SanityPortableText } from "@shared/cms/types"
 import { cmsCleanText, cmsDisplayText } from "@/lib/cmsStega"
-import LogoMarquee from "@/components/LogoMarquee"
+import LogoMarquee, { type LogoMark } from "@/components/LogoMarquee"
 import { HeroHeadlinePortable } from "@/components/HeroHeadlinePortable"
 
 const carouselArrowClass =
@@ -212,12 +212,14 @@ type TestimonialsSectionProps = {
   titlePortable: SanityPortableText
   testimonials: HomeTestimonial[]
   showHeaderIcon?: boolean
+  logoMarqueeMarks?: readonly LogoMark[]
 }
 
 export default function TestimonialsSection({
   titlePortable,
   testimonials,
   showHeaderIcon = true,
+  logoMarqueeMarks,
 }: TestimonialsSectionProps) {
   const [expandedName, setExpandedName] = useState<string | null>(null)
   const [carouselApi, setCarouselApi] = useState<unknown>(null)
@@ -392,7 +394,7 @@ export default function TestimonialsSection({
         </ScrollReveal>
 
         <div className="mt-6 md:mt-8">
-          <LogoMarquee flush showHeading={false} sectionClassName="py-0" />
+          <LogoMarquee flush showHeading={false} sectionClassName="py-0" marks={logoMarqueeMarks} />
         </div>
         </div>
       </div>

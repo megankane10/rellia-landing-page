@@ -46,7 +46,7 @@ export default function SectionHeading({
             titleClassName ?? HEADING_SECTION,
           )}
         >
-          {title}
+          {cmsDisplayText(title)}
         </h2>
       )}
           {description ? (

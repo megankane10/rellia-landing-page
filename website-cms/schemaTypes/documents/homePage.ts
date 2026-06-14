@@ -8,6 +8,7 @@ import { imageUploadField, imageUrlFallbackField } from '../shared/imageFields'
 import { showBadgeField } from '../shared/sectionAppearanceFields'
 import { portableHeadlineField } from '../shared/inlineHeroHeadlineField'
 import {iconKeyField} from '../shared/iconKeyField'
+import {logoMarqueeField} from '../objects/logoMarqueeItem'
 
 const GROUP_HERO = { name: 'hero', title: '1 · Hero', default: true }
 const GROUP_PATHS = { name: 'paths', title: '2 · Paths section' }
@@ -280,6 +281,7 @@ export const homePage = defineType({
         }),
       ],
     }),
+    {...logoMarqueeField, group: 'testimonials'},
 
     // —— 7 · Bottom CTA ——
     defineField({ name: 'ctaTitle', title: 'CTA headline', type: 'string', group: 'cta' }),

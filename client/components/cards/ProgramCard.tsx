@@ -5,6 +5,7 @@ import { getCurrentMonthDeadline } from "@/lib/dateUtils"
 import RelliaAction from "@/components/RelliaAction"
 import { cn } from "@/lib/utils"
 import FilloutPopupDialog from "@/components/FilloutPopupDialog"
+import { cmsCleanText, cmsDisplayText } from "@/lib/cmsStega"
 
 export type ProgramCardProps = {
   tag?: string
@@ -35,9 +36,9 @@ export const ProgramCard = ({
   deadline,
   className,
 }: ProgramCardProps) => {
-  const hasHref = Boolean(href && href.trim().length > 0)
-  const hasWaitlistHref = Boolean(waitlistHref && waitlistHref.trim().length > 0)
-  const rawTag = tag?.trim() ?? ""
+  const hasHref = Boolean(cmsCleanText(href))
+  const hasWaitlistHref = Boolean(cmsCleanText(waitlistHref))
+  const rawTag = cmsCleanText(tag)
   const isWaitlistStatus = rawTag.toLowerCase() === "waitlist"
   const isWaitlistCard = hasWaitlistHref || isWaitlistStatus
   const [waitlistOpen, setWaitlistOpen] = useState(false)
@@ -49,7 +50,7 @@ export const ProgramCard = ({
 
   return (
     <article
-      aria-label={`Program: ${title}${isWaitlistCard ? ". Coming soon — join the waitlist." : ""}`}
+      aria-label={`Program: ${cmsCleanText(title)}${isWaitlistCard ? ". Coming soon — join the waitlist." : ""}`}
       className={cn(
         "group flex h-full min-h-0 flex-col items-start overflow-hidden rounded-[20px] p-2 border border-black/10 bg-white shadow-sm transition-all duration-500 ease-in hover:bg-black/[0.03] hover:shadow-md outline outline-1 outline-offset-[10px] outline-transparent hover:outline-rellia-teal/20",
         className,
@@ -74,10 +75,10 @@ export const ProgramCard = ({
               </div>
             ) : null}
             {hasHref ? (
-              <Link to={href as string} aria-label={`Learn more about ${title}`} className="block h-full w-full">
+              <Link to={href as string} aria-label={`Learn more about ${cmsCleanText(title)}`} className="block h-full w-full">
                 <img
                   src={imageSrc}
-                  alt={title}
+                  alt={cmsCleanText(title)}
                   className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
                   loading="lazy"
                 />
@@ -85,7 +86,7 @@ export const ProgramCard = ({
             ) : (
               <img
                 src={imageSrc}
-                alt={title}
+                alt={cmsCleanText(title)}
                 className="h-full w-full object-cover transition-transform duration-500 ease-out"
                 loading="lazy"
               />
@@ -117,14 +118,14 @@ export const ProgramCard = ({
                     to={href as string}
                     className="transition-colors hover:text-rellia-teal focus-visible:outline-none"
                   >
-                    {title}
+                    {cmsDisplayText(title)}
                   </Link>
                 ) : (
-                  title
+                  cmsDisplayText(title)
                 )}
               </h3>
               <p className="mt-2 font-urbanist text-sm leading-relaxed text-black/55 line-clamp-3 sm:text-[15px]">
-                {description}
+                {cmsDisplayText(description)}
               </p>
             </div>
 
@@ -134,7 +135,7 @@ export const ProgramCard = ({
                 <div className="flex items-end gap-3">
                   <CalendarDays className="h-6 w-6 text-rellia-teal" strokeWidth={2.25} aria-hidden />
                   <span className="font-host-grotesk text-[12px] font-bold uppercase tracking-[0.18em] text-black/80">
-                    DEADLINE: {deadline || getCurrentMonthDeadline()}
+                    DEADLINE: {cmsDisplayText(deadline) || getCurrentMonthDeadline()}
                   </span>
                 </div>
               ) : (
@@ -154,11 +155,11 @@ export const ProgramCard = ({
                       setWaitlistOpen(true)
                     }
                   }}
-                  aria-label={`Join waitlist for ${title}`}
+                  aria-label={`Join waitlist for ${cmsCleanText(title)}`}
                 >
                   <span className="inline-flex items-center justify-center gap-2">
                     <Bell className="h-4 w-4 shrink-0" strokeWidth={2.25} />
-                    {buttonText || "Join Waitlist"}
+                    {cmsDisplayText(buttonText) || "Join Waitlist"}
                   </span>
                 </RelliaAction>
               )}

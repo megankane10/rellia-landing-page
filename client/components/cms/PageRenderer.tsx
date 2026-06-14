@@ -159,9 +159,11 @@ const SectionMarketingHero = ({ section }: { section: CmsSectionMarketingHero })
 const SectionMetrics = ({ section }: { section: CmsSectionMetrics }) => {
   const metrics =
     section.metrics?.map((m) => ({
-      label: cmsDisplayText(m.label),
-      value: m.value,
-      suffix: cmsDisplayText(m.suffix),
+      _key: m._key,
+      label: m.label,
+      value: Number(cmsCleanText(String(m.value))) || 0,
+      valueText: String(m.value ?? ""),
+      suffix: m.suffix,
     })) ?? []
 
   if (metrics.length === 0) return null

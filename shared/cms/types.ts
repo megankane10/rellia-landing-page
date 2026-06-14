@@ -361,7 +361,7 @@ export type CmsSectionMarketingHero = {
 export type CmsSectionMetricsItem = {
   _key?: string
   label: string
-  value: number
+  value: number | string
   suffix?: string
 }
 
@@ -424,9 +424,16 @@ export type ClusterChart = {
   segments: ClusterChartSegment[]
 }
 
+export type LogoMarqueeEntry = {
+  _key?: string
+  name: string
+  src: string
+  href?: string
+}
+
 export type CmsSingletonPageContent = {
   title: string
-  logoMarquee?: Array<{ name: string; src: string; href?: string }>
+  logoMarquee?: LogoMarqueeEntry[]
   seo?: SeoContent
   sections?: CmsPageSection[]
   foundersCluster?: ClusterChart[]
@@ -693,12 +700,14 @@ export type SanityImageAsset = {
 }
 
 export type HomeMetric = {
+  _key?: string
   label: string
-  value: number
+  value: number | string
   suffix?: string
 }
 
 export type HomeWhyFeature = {
+  _key?: string
   iconKey: string
   title: string
   description: string
@@ -708,6 +717,7 @@ export type HomeWhyFeature = {
 }
 
 export type HowItWorksStepContent = {
+  _key?: string
   iconKey: string
   title: string
   description: string
@@ -752,6 +762,7 @@ export type HomePageContent = {
   howItWorksSteps?: HowItWorksStepContent[]
   testimonialsTitlePortable: SanityPortableText
   testimonials: HomeTestimonial[]
+  logoMarquee?: LogoMarqueeEntry[]
   pathsTitle?: string
   pathsCards?: HomePathsCard[]
   seo?: SeoContent

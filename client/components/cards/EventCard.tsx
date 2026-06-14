@@ -11,6 +11,7 @@ import {
 import { programsEventDetailPath } from "@shared/cms/eventSlug"
 import RelliaAction from "@/components/RelliaAction"
 import { cn } from "@/lib/utils"
+import { cmsCleanText, cmsDisplayText } from "@/lib/cmsStega"
 
 export type EventCardProps = {
   event: ProgramsEventCard
@@ -67,7 +68,7 @@ export const EventCard = ({
         <div className="relative aspect-square w-full overflow-hidden rounded-xl bg-black/5 shrink-0">
           <img
             src={event.imageSrc}
-            alt={event.title}
+            alt={cmsCleanText(event.title)}
             className={cn(
               "absolute inset-0 h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105",
               variant === "past" && "opacity-90 saturate-[0.9]"
@@ -109,7 +110,7 @@ export const EventCard = ({
             </div>
             
             <h3 className="line-clamp-2 font-host-grotesk text-xl font-semibold leading-tight tracking-tight text-black group-hover:underline decoration-2 underline-offset-4">
-              {event.title}
+              {cmsDisplayText(event.title)}
             </h3>
           </div>
 
@@ -125,10 +126,10 @@ export const EventCard = ({
                 aria-hidden
               />
               <div className="min-w-0 flex-1">
-                <p className="font-host-grotesk text-sm font-medium leading-tight text-black truncate">{speakerName}</p>
+                <p className="font-host-grotesk text-sm font-medium leading-tight text-black truncate">{cmsDisplayText(speakerName)}</p>
                 {speakerCompany ? (
                   <p className="mt-0.5 font-urbanist text-xs font-normal leading-tight text-black/45 truncate">
-                    {speakerCompany}
+                    {cmsDisplayText(speakerCompany)}
                   </p>
                 ) : null}
               </div>
