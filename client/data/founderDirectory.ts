@@ -1,5 +1,6 @@
 import type { SanityPortableText } from "@shared/cms/types"
 import type { DirectoryFilterAssignment } from "@/lib/directoryFilterValues"
+import { POWER_OF_PLAY_PROFILE_BODY } from "../../shared/cms/powerOfPlayProfileBody"
 
 export type FounderPerson = {
   name: string
@@ -94,6 +95,7 @@ export const FOUNDER_DIRECTORY: FounderCompany[] = [
       },
     ],
     programs: [],
+    profileBody: POWER_OF_PLAY_PROFILE_BODY,
   },
 ]
 

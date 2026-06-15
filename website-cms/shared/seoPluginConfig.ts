@@ -38,7 +38,13 @@ export const seoPluginConfig: SeoFieldsPluginConfig = {
   // SEO fields are editable on all marketing singletons — no hidden-field overrides.
   fieldVisibility: {
     story: {
-      hiddenFields: ['robots'],
+      hiddenFields: ['robots', 'metaImage'],
+    },
+    event: {
+      hiddenFields: ['metaImage'],
+    },
+    program: {
+      hiddenFields: ['metaImage'],
     },
   },
 }

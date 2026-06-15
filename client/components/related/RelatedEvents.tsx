@@ -2,7 +2,7 @@ import { useEffect, useMemo } from "react"
 import ScrollReveal from "@/components/ScrollReveal"
 import RelatedContentSection from "@/components/related/RelatedContentSection"
 import RelatedEventCard from "@/components/related/RelatedEventCard"
-import { RELATED_COMPACT_GRID_CLASS } from "@/components/related/relatedCompactGrid"
+import { RELATED_COMPACT_EVENTS_GRID_CLASS } from "@/components/related/relatedCompactGrid"
 import { useEvents, useEventsLandingPage } from "@/hooks/useCmsDocuments"
 import { normalizeCmsEventForCard } from "@/lib/cmsEventList"
 import { allowCmsSeedFallbacks } from "@/lib/deploymentEnv"
@@ -73,10 +73,10 @@ const RelatedEvents = ({ currentSlug, onHasRelatedChange }: RelatedEventsProps) 
       subheadline={copy.relatedSectionSubheadline}
       viewAllHref="/events"
       viewAllLabel="View all events"
-      gridClassName={RELATED_COMPACT_GRID_CLASS}
+      gridClassName={RELATED_COMPACT_EVENTS_GRID_CLASS}
     >
       {related.map((event: ProgramsEventCard, index: number) => (
-        <ScrollReveal key={`${event.title}-${event.dateTime}`} delay={index * 0.05} className="h-full">
+        <ScrollReveal key={`${event.title}-${event.dateTime}`} delay={index * 0.05} className="w-full">
           <RelatedEventCard
             event={event}
             variant={getEventTemporalStatus(event) === "past" ? "past" : "upcoming"}

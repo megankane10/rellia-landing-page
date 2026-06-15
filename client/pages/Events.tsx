@@ -17,12 +17,12 @@ import { cn } from "@/lib/utils"
 import { motion, AnimatePresence } from "framer-motion"
 import FilteredListEmptyState from "@/components/FilteredListEmptyState"
 import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo"
+import { deriveHeroPageSeo } from "@/lib/cmsPageSeoDefaults"
 import { HeroHeadlinePortable } from "@/components/HeroHeadlinePortable"
 import { DEFAULT_EVENTS_LANDING_HERO_PORTABLE } from "@shared/cms/inlineHeroHeadline"
 import { allowCmsSeedFallbacks } from "@/lib/deploymentEnv"
 import { normalizeCmsEventForCard } from "@/lib/cmsEventList"
 import { isCmsListAwaitingData, isCmsQueryLoading, shouldShowCmsEmptyState } from "@/lib/cmsQueryState"
-import { DirectoryGridSkeleton } from "@/components/cms/CmsPageLoadingShell"
 import { isSanityConfigured } from "@/lib/sanity"
 import { cmsDisplayText } from "@/lib/cmsStega"
 import { getEventStartTimestamp, getEventTemporalStatus } from "@shared/cms/eventTemporalStatus"
@@ -40,7 +40,14 @@ export default function Events() {
   const eventsLoading =
     isSanityConfigured() &&
     (isCmsQueryLoading(eventsQuery) || isCmsListAwaitingData(eventsQuery))
-  useApplyCmsSeo(landing?.seo)
+  useApplyCmsSeo(
+    landing?.seo,
+    deriveHeroPageSeo({
+      pageTitle: "Events",
+      heroSubtitle: landing?.heroSubtitle,
+      pathname: "/events",
+    }),
+  )
 
   const allEvents = useMemo(() => {
     const cmsEvents = Array.isArray(data) ? data : []
@@ -194,9 +201,7 @@ export default function Events() {
                 </p>
               </div>
 
-              {eventsLoading ? (
-                <DirectoryGridSkeleton />
-              ) : shouldShowCmsEmptyState(eventsQuery) && visibleEvents.length === 0 ? (
+              {eventsLoading ? null : shouldShowCmsEmptyState(eventsQuery) && visibleEvents.length === 0 ? (
                 <FilteredListEmptyState
                   className="mt-12"
                   icon={CalendarDays}

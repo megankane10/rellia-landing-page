@@ -222,6 +222,7 @@ const ProgramPageLayout = ({
     description: (programDoc as { description?: string } | null | undefined)?.description,
     heroDescription: q.heroDescription || cms?.heroDescription,
     seo: programDoc?.seo,
+    imageSrc: programDoc?.imageSrc,
   })
   const programSocial = resolveProgramSocialMeta({
     title: programDoc?.title,

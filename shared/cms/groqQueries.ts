@@ -271,8 +271,7 @@ export const pageBySlugQuery = `*[_type == "page" && slug.current == $slug && sl
   title,
   "slug": slug.current,
   ${seoFragment},
-  sections[]{ _key, ${pageSectionFieldsFragment} },
-  pageBuilder[]{ _key, ${pageSectionFieldsFragment} }
+  sections[]{ _key, ${pageSectionFieldsFragment} }
 }`
 
 export const pagesPrerenderSnapshotQuery = `*[_type == "page" && defined(slug.current) && slug.current != "terms" && slug.current != "privacy" && !(_id in path("drafts.**"))]{
@@ -280,8 +279,7 @@ export const pagesPrerenderSnapshotQuery = `*[_type == "page" && defined(slug.cu
   "slug": slug.current,
   ${pageVisibilityFragment},
   ${seoFragment},
-  sections[]{ _key, ${pageSectionFieldsFragment} },
-  pageBuilder[]{ _key, ${pageSectionFieldsFragment} }
+  sections[]{ _key, ${pageSectionFieldsFragment} }
 }`
 
 const pageSectionsFragment = `sections[]{ _key, ${pageSectionFieldsFragment} }`
@@ -560,8 +558,6 @@ export const aboutPageQuery = `*[_id == "aboutPage"][0]{
   showValuesTag,
   valuesTag,
   valuesHeadlinePortable,
-  valuesTitle,
-  valuesSubtitle,
   values[]{ _key, iconKey, title, description },
   teamTitle,
   teamSubtitle,
@@ -929,7 +925,7 @@ export const openRolesQuery = `*[_type == "openRole" && !(_id in path("drafts.**
   title,
   location,
   employmentType,
-  description,
+  description${portableRichTextBlocksFragment},
   responsibilities,
   applyButtonLabel,
   applyButtonUrl,
@@ -944,11 +940,15 @@ export const careersPageQuery = `*[_id == "careersPage"][0]{
   heroTitleSuffix,
   ${networkWhyFragment},
   perksTitle,
+  perksTitlePortable,
   perksDescription,
   perksItems[]{ _key, title, body, iconKey },
   openRolesTitle,
+  openRolesTitlePortable,
+  openRolesSubtitle,
   ${networkCtaFragment},
   lifeAtRelliaHeading,
+  lifeAtRelliaHeadingPortable,
   lifeAtRelliaSubheading,
   lifeAtRelliaImages[]{ _key,
     "src": asset->url,

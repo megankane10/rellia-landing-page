@@ -1,4 +1,7 @@
 import { cn } from "@/lib/utils"
+import {
+  relliaProfilePrimaryTagCardClass,
+} from "@/lib/relliaMetaBadge"
 
 type DirectoryCardTagsProps = {
   tags: string[]
@@ -28,8 +31,9 @@ export const DirectoryCardTags = ({
       <span
         key={primary}
         className={cn(
-          "inline-flex rounded-full border px-2.5 py-[3px] font-host-grotesk text-[9px] font-extrabold uppercase tracking-[0.08em] backdrop-blur-sm shadow-sm",
-          "border-rellia-teal/35 bg-rellia-teal/85 text-rellia-mint",
+          variant === "onPhoto"
+            ? cn(relliaProfilePrimaryTagCardClass, "backdrop-blur-md")
+            : relliaProfilePrimaryTagCardClass,
         )}
       >
         {primary}

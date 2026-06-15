@@ -3,6 +3,7 @@ import {
   InstagramFilled,
   LinkedInFilled,
 } from "@/components/icons/SocialIcons"
+import { IconTooltipWrap } from "@/components/share/IconTooltipWrap"
 import { cn } from "@/lib/utils"
 import { emailToSocialLink, resolveSocialPlatform } from "@shared/cms/socialLinks"
 import { Mail } from "lucide-react"
@@ -22,6 +23,8 @@ type ProfileSocialLinksProps = {
   iconClassName?: string
   /** `onDark` for overlays and tinted backgrounds (e.g. team bio cards). */
   variant?: ProfileSocialLinksVariant
+  /** Hover tooltips on each icon. Off for compact founder rows where names are adjacent. */
+  showTooltips?: boolean
 }
 
 type SocialKind = "linkedin" | "website" | "instagram" | "x" | "youtube" | "email" | "generic"
@@ -37,9 +40,9 @@ const normalizeUrl = (url: string | undefined, platform: string): string | undef
 
 const BUTTON_CLASS: Record<ProfileSocialLinksVariant, string> = {
   light:
-    "inline-flex h-10 w-10 items-center justify-center rounded-full border border-black/10 bg-white text-black transition-colors hover:border-black/20 hover:bg-black/[0.07] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-teal focus-visible:ring-offset-2",
+    "inline-flex h-10 w-10 items-center justify-center rounded-full border border-black/10 bg-white text-black transition-all duration-300 hover:border-rellia-teal hover:bg-rellia-teal hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-teal focus-visible:ring-offset-2",
   onDark:
-    "inline-flex h-9 w-9 items-center justify-center rounded-xl border border-white/25 bg-white/10 text-white backdrop-blur-sm transition-[color,background-color,border-color] duration-200 ease-in-out visited:text-white hover:border-white/50 hover:bg-white/20 hover:text-rellia-mint visited:hover:text-rellia-mint focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-rellia-teal",
+    "inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/25 bg-white/10 text-white transition-all duration-300 hover:border-white hover:bg-white hover:text-rellia-teal focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-rellia-teal",
 }
 
 export const ProfileSocialLinks = ({
@@ -48,6 +51,7 @@ export const ProfileSocialLinks = ({
   className,
   iconClassName = "h-5 w-5",
   variant = "light",
+  showTooltips = true,
 }: ProfileSocialLinksProps) => {
   const items: { key: string; href: string; label: string; kind: SocialKind }[] = []
 
@@ -103,30 +107,39 @@ export const ProfileSocialLinks = ({
 
   const buttonClass = BUTTON_CLASS[variant]
 
+  const renderLink = (item: { key: string; href: string; label: string; kind: SocialKind }) => (
+    <a
+      href={item.href}
+      target={item.kind === "email" ? undefined : "_blank"}
+      rel={item.kind === "email" ? undefined : "noopener noreferrer"}
+      className={buttonClass}
+      aria-label={item.label}
+    >
+      {item.kind === "linkedin" ? (
+        <LinkedInFilled className={iconClassName} />
+      ) : item.kind === "instagram" ? (
+        <InstagramFilled className={iconClassName} />
+      ) : item.kind === "website" ? (
+        <GlobeFilled className={iconClassName} />
+      ) : item.kind === "email" ? (
+        <Mail className={iconClassName} />
+      ) : (
+        <GlobeFilled className={iconClassName} aria-hidden="true" />
+      )}
+    </a>
+  )
+
   return (
     <div className={cn("flex flex-wrap items-center gap-3", className)}>
-      {items.map((item) => (
-        <a
-          key={item.key}
-          href={item.href}
-          target={item.kind === "email" ? undefined : "_blank"}
-          rel={item.kind === "email" ? undefined : "noopener noreferrer"}
-          className={buttonClass}
-          aria-label={item.label}
-        >
-          {item.kind === "linkedin" ? (
-            <LinkedInFilled className={iconClassName} />
-          ) : item.kind === "instagram" ? (
-            <InstagramFilled className={iconClassName} />
-          ) : item.kind === "website" ? (
-            <GlobeFilled className={iconClassName} />
-          ) : item.kind === "email" ? (
-            <Mail className={iconClassName} />
-          ) : (
-            <GlobeFilled className={iconClassName} aria-hidden="true" />
-          )}
-        </a>
-      ))}
+      {items.map((item) =>
+        showTooltips ? (
+          <IconTooltipWrap key={item.key} label={item.label}>
+            {renderLink(item)}
+          </IconTooltipWrap>
+        ) : (
+          renderLink(item)
+        ),
+      )}
     </div>
   )
 }

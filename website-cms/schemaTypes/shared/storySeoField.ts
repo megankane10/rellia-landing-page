@@ -8,5 +8,5 @@ export const storySeoField = defineField({
   group: 'seo',
   fieldset: 'seo',
   description:
-    'Optional overrides for search and social previews. Title and description default from the story title, category, and excerpt. Published stories are always indexed publicly.',
+    'Optional overrides for search and social previews. Title and description default from the story title, category, and excerpt. Link preview images always use the header image above—not a separate SEO upload.',
 })

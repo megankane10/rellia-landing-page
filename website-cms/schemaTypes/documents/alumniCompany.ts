@@ -108,7 +108,7 @@ export const alumniCompany = defineType({
       title: 'About the company',
       type: 'portableRichText',
       description:
-        'Company overview — use headings, images, quote boxes, and CTA boxes.',
+        'Company overview for the profile page. Block styles: Normal, H2, H3, H4, Quote. Text highlights (select words, then toolbar): Bold, Italic, Underline, Mint. You can also insert images, carousels, quote boxes, videos, and CTA boxes. Publish when ready — only published content appears on the site.',
       group: 'founders',
     }),
     defineField({

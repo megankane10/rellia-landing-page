@@ -278,16 +278,14 @@ var pageBySlugQuery = `*[_type == "page" && slug.current == $slug && slug.curren
   title,
   "slug": slug.current,
   ${seoFragment},
-  sections[]{ _key, ${pageSectionFieldsFragment} },
-  pageBuilder[]{ _key, ${pageSectionFieldsFragment} }
+  sections[]{ _key, ${pageSectionFieldsFragment} }
 }`;
 var pagesPrerenderSnapshotQuery = `*[_type == "page" && defined(slug.current) && slug.current != "terms" && slug.current != "privacy" && !(_id in path("drafts.**"))]{
   title,
   "slug": slug.current,
   ${pageVisibilityFragment},
   ${seoFragment},
-  sections[]{ _key, ${pageSectionFieldsFragment} },
-  pageBuilder[]{ _key, ${pageSectionFieldsFragment} }
+  sections[]{ _key, ${pageSectionFieldsFragment} }
 }`;
 var pageSectionsFragment = `sections[]{ _key, ${pageSectionFieldsFragment} }`;
 var networkFoundersPageQuery = `*[_id == "networkFoundersPage"][0]{
@@ -552,8 +550,6 @@ var aboutPageQuery = `*[_id == "aboutPage"][0]{
   showValuesTag,
   valuesTag,
   valuesHeadlinePortable,
-  valuesTitle,
-  valuesSubtitle,
   values[]{ _key, iconKey, title, description },
   teamTitle,
   teamSubtitle,
@@ -906,7 +902,7 @@ var openRolesQuery = `*[_type == "openRole" && !(_id in path("drafts.**"))] | or
   title,
   location,
   employmentType,
-  description,
+  description${portableRichTextBlocksFragment},
   responsibilities,
   applyButtonLabel,
   applyButtonUrl,
@@ -920,11 +916,15 @@ var careersPageQuery = `*[_id == "careersPage"][0]{
   heroTitleSuffix,
   ${networkWhyFragment},
   perksTitle,
+  perksTitlePortable,
   perksDescription,
   perksItems[]{ _key, title, body, iconKey },
   openRolesTitle,
+  openRolesTitlePortable,
+  openRolesSubtitle,
   ${networkCtaFragment},
   lifeAtRelliaHeading,
+  lifeAtRelliaHeadingPortable,
   lifeAtRelliaSubheading,
   lifeAtRelliaImages[]{ _key,
     "src": asset->url,

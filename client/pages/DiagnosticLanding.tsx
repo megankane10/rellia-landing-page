@@ -6,6 +6,7 @@ import DiagnosticReportPreview from '@/components/DiagnosticReportPreview'
 import { CmsModularSingletonPage } from '@/components/cms/CmsModularSingletonPage'
 import { useDiagnosticLandingPage } from '@/hooks/useCmsDocuments'
 import { useApplyCmsSeo } from '@/hooks/useApplyCmsSeo'
+import { deriveHeroPageSeo } from '@/lib/cmsPageSeoDefaults'
 import { RoleHero } from "./network/_shared"
 import PillTag, { PILL_ON_IMAGE_BLUR_CLASS } from "@/components/PillTag"
 import type { DiagnosticLandingPageContent, HomeWhyFeature } from "@shared/cms/types"
@@ -167,11 +168,14 @@ export default function DiagnosticLanding() {
   const { data: cmsPage } = useDiagnosticLandingPage()
   const content = cmsPage ?? DEFAULT_DIAGNOSTIC_LANDING_PAGE
 
-  useApplyCmsSeo(content.seo, {
-    title: "Startup Diagnostic — Rellia Health",
-    description:
-      "Benchmark your health tech startup across 12 critical domains. Get an instant readiness score, personalized gap analysis, and advisory board matching.",
-  })
+  useApplyCmsSeo(
+    content.seo,
+    deriveHeroPageSeo({
+      pageTitle: "Startup Diagnostic",
+      heroSubtitle: content.heroSubtitle,
+      pathname: "/startup-diagnostic",
+    }),
+  )
 
   return (
     <CmsModularSingletonPage

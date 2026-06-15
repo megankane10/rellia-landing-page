@@ -38,45 +38,6 @@ Use **Presentation** in Studio to preview unpublished work. **Publish** when rea
 
 If production showed removed events (e.g. an old salon) or missing dates, typical causes were: CMS fetch failing/empty and the events page falling back to defaults, or outdated documents still **published** in the **production** dataset. Fix content in Studio on the **production** dataset, or unpublish/delete there.
 
-### Client handoff checklist
-
-Use this when transferring the site to the Rellia team. Items marked **editor** are safe for non-developers; **dev** need engineering access.
-
-#### Before handoff (developer)
-
-| # | Task | Why it matters |
-|---|------|----------------|
-| 1 | **Vercel production env** — `VITE_SANITY_DATASET=production`, `SANITY_API_DATASET=production`, `SANITY_API_READ_TOKEN`, `SANITY_ENFORCE_VERCEL_DATASET=true`, Supabase + Stripe keys from `.env.example` | Live site reads the correct CMS dataset and APIs work |
-| 2 | **Vercel production env** — `VITE_SANITY_DATASET=production`, `SANITY_STUDIO_PREVIEW_URL=https://www.relliahealth.com` | Live site + Studio Presentation |
-| 3 | **Sanity Studio** — deployed (`pnpm sanity:studio:deploy`); Looker embed URL in **Site settings → Analytics** | Editors use https://relliahealth.sanity.studio |
-| 4 | **Seed starter content** — `pnpm sanity:seed:starters` on **production** (terms, privacy, guide) if singletons are empty | Editors see legal pages in Studio |
-| 5 | **Production CMS audit** — events have `startsAt`/`endsAt`; publish only what should be on www | Prevents wrong dates or ghost events on live site |
-| 6 | **Supabase** — run `scripts/supabase_admin_policies.sql` for inbox status updates; run `scripts/supabase_revert_admin_role_policies.sql` if strict admin-role RLS was ever applied | Any invited user can sign in and read submissions |
-| 7 | **Admin access** — invite users in Supabase Auth; set `ADMIN_SIGNUP_ENABLED=false` on Vercel after onboarding | No public self-signup on `/admin/signup` |
-| 8 | **Smoke test** — www: home, contact submit, diagnostic submit, admin login → Overview + Inbox + Sanity drafts | Confirms end-to-end paths |
-| 9 | **Dependabot** — review or dismiss GitHub security alerts on the repo | Hygiene, not blocking launch |
-
-#### Editor onboarding (30–60 min)
-
-| Topic | Where |
-|-------|--------|
-| Edit marketing pages | Sanity Studio → Site / Pages groups |
-| SEO per page | Each document → **SEO** tab (ignore paid SEO Health Dashboard) |
-| Legal copy | Studio → **Terms of use**, **Privacy policy** |
-| Form leads | Admin → **Inbox** (Web forms + Startup diagnostic) |
-| Unpublished CMS work | Admin → **Sanity drafts** + Studio |
-| Analytics | Studio top bar → **Analytics** (Looker) |
-| Help & links | Admin → **Help** |
-
-#### Optional enhancements (not required for launch)
-
-| Area | Notes |
-|------|--------|
-| **More modular CMS pages** | Page builder + showcase sections are available; additional routes can adopt **Use modular CMS layout** when needed. |
-| **Stripe in admin** | Membership checkout works on the site; admin does not show payment history. |
-| **Email alerts on new submissions** | Optional Supabase webhook → email later. |
-| **Dependabot alerts** | Review GitHub security advisories periodically. |
-
 **Editor guide:** [website-management-guide.md](./docs/website-management-guide.md)
 
 ### Editing with Claude or another AI agent
@@ -298,7 +259,7 @@ If deploy fails with `Cannot find module ... studioWorkerLoader.worker.js`, your
 
 Hosted Studio: https://relliahealth.sanity.studio/
 
-### Visual Editing checklist (Presentation)
+### Visual Editing (Presentation)
 
 | Where | Variable | Purpose |
 |-------|----------|---------|
@@ -326,31 +287,17 @@ Static OG artwork lives in `public/images/` (1200×630 PNG, under 1 MB). Filenam
 | `/industry-partners` | `ROUTE_SEO` | `/images/ogimage-industrypartners.png` | index | Industry partners SEO |
 | `/membership` | `ROUTE_SEO` | `/images/ogimage-membership.png` | **noindex** (checkout) | Payment page → SEO tab |
 | `/about`, `/faq`, `/careers`, `/contact`, `/apply`, `/consulting`, `/programs`, `/events`, `/stories`, legal, diagnostic | `ROUTE_SEO` defaults | none (title + description only) | index unless noted | Matching singleton → SEO tab |
-| `/founders/alumni` (directory) | `ROUTE_SEO` | first alumni logo when available | index | — |
+| `/founders/alumni` (directory) | CMS directory title + subtitle | first alumni logo when available | index | Explore Alumni directory singleton; subtitle drives meta description |
+| `/advisors/directory` | CMS directory title + subtitle | — | index | Explore Advisors directory singleton |
 | `/events/:slug`, `/programs/:slug` | generated or CMS `seo` | event/program card image (square crop) | index | Event / Program → SEO |
 | `/stories/:slug` | story SEO or default title | story hero image (landscape) | index | Story → SEO |
 | `/founders/alumni/:id`, `/advisors/directory/:id` | profile name + section | profile / card image | index | Profile SEO fields |
 | `/admin/*`, `/accept-invite` | admin titles | none | **noindex** | — |
 | Legacy redirects (`/network`, `/partners`, old program slugs) | redirect copy | none | **noindex** | — |
 
-**Implementation:** `client/config/seo.ts` (`ROUTE_SEO`, `STATIC_OG_IMAGE_BY_ROUTE`), `client/components/RouteSeo.tsx`, build-time `client/prerender.tsx`. Dynamic OG uses `resolveSocialOgImage()` (Sanity CDN JPG crop or absolute `/public` URL).
+**Implementation:** `client/config/seo.ts` (`ROUTE_SEO`, `STATIC_OG_IMAGE_BY_ROUTE`), `client/lib/cmsPageSeoDefaults.ts` (visible page copy → meta defaults), `client/components/RouteSeo.tsx`, build-time `client/prerender.tsx`. Dynamic OG uses `resolveSocialOgImage()` (Sanity CDN JPG crop or absolute `/public` URL). On most marketing pages, **hero subtitle / directory intro text overrides stale SEO-tab descriptions** so social previews match what visitors see.
 
 **Regenerate sitemap after route changes:** `pnpm run generate:seo-files`
-
----
-
-## Verification checklist
-
-```bash
-pnpm install
-cd website-cms && pnpm install && cd ..
-pnpm typecheck
-pnpm test
-pnpm build
-pnpm dev   # smoke-test key routes and button hovers
-```
-
-In Sanity Studio: open **Presentation** → confirm iframe loads www → edit a field → confirm click-to-edit overlay inside Studio.
 
 ---
 
@@ -389,15 +336,17 @@ All **`/api/*`** routes are served by the serverless entry **`api/index.js`** (b
 
 ---
 
-## Security notes and fixes to prioritize
+## Security (operations)
 
-This is a codebase review checklist, not a penetration test. Address in order of risk for your threat model.
+**Already in place:** POST `/api/contact`, `/api/diagnostic-report`, and `/api/sanity/query` require CSRF by default (`REQUIRE_API_CSRF` is only an emergency off-switch). CMS reads use a **server-side query whitelist** — the browser never sends raw GROQ. Draft preview is gated by Sanity origin checks plus a scoped read token.
 
-1. **CORS defaults** — If **`ALLOWED_ORIGINS`** is empty in production, `server/index.ts` allows **any** browser `Origin` for the `cors()` middleware (with a console warning). **Fix:** set explicit comma-separated origins for www and Studio.
-2. **CSRF escape hatch** — **`REQUIRE_API_CSRF=false`** disables CSRF on POST APIs. **Fix:** never set in production except a documented break-glass; rotate tokens if it was ever used on a shared environment.
-3. **Sanity dataset exposure** — Public datasets are readable without your app; the app mitigates with a **query whitelist** and server proxy, but **secrets and embargoed copy do not belong** in public datasets. **Fix:** align with `.env.example` (private datasets + read tokens where the plan allows).
-4. **Preview / draft endpoints** — Draft-mode routes trust **Origin/Referer** heuristics and Sanity domains (`server/index.ts`). **Fix:** keep **`SANITY_API_READ_TOKEN`** scoped and rotated; restrict **`ALLOWED_ORIGINS`**; monitor abuse of `/api/draft-mode/*`.
-5. **CSP** — Global CSP in `vercel.json` only sets **`frame-ancestors`** (for Sanity framing). **Fix:** if you tighten `Content-Security-Policy` further, regression-test HubSpot, Fillout, Luma embeds, and Stripe checkout flows.
+**Still configure on Vercel production:**
+
+- **`ALLOWED_ORIGINS`** — comma-separated `https://www.relliahealth.com`, `https://relliahealth.com`, and your Studio host. If unset, the API logs a warning and allows any browser origin for CORS.
+- **`SANITY_API_READ_TOKEN`** — Viewer/read-only; rotate periodically. Never commit tokens.
+- **`ADMIN_SIGNUP_ENABLED=false`** after admin accounts are provisioned.
+
+Do not run `pnpm sanity:seed` or dataset sync scripts on production unless you intend to reset CMS content.
 
 ---
 

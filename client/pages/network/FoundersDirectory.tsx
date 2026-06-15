@@ -25,7 +25,6 @@ import { FOUNDER_DIRECTORY, type FounderCompany } from "@/data/founderDirectory"
 import { isSanityConfigured } from "@/lib/sanity"
 import { allowCmsSeedFallbacks } from "@/lib/deploymentEnv"
 import { isCmsQueryLoading } from "@/lib/cmsQueryState"
-import { DirectoryGridSkeleton } from "@/components/cms/CmsPageLoadingShell"
 import FounderDirectoryCard from "@/components/network/FounderDirectoryCard"
 import {
   filterFounderDirectoryGroups,
@@ -34,6 +33,7 @@ import {
 } from "@/lib/directoryFilterOptions"
 import { resolveSocialOgImageUrl } from "@/config/seo"
 import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo"
+import { deriveDirectoryPageSeo } from "@/lib/cmsPageSeoDefaults"
 import { cmsCleanText, cmsDisplayText } from "@/lib/cmsStega"
 
 const DIRECTORY_TITLE_CLASS =
@@ -136,9 +136,12 @@ export default function FoundersDirectory() {
     return logoSrc ? resolveSocialOgImageUrl(logoSrc) : undefined
   }, [companies])
 
-  useApplyCmsSeo(alumniDirectory.seo, {
-    ogImage: alumniDirectoryOgImage,
-  })
+  useApplyCmsSeo(
+    alumniDirectory.seo,
+    deriveDirectoryPageSeo(alumniDirectory, "/founders/alumni", {
+      ogImage: alumniDirectoryOgImage,
+    }),
+  )
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase()
@@ -292,9 +295,7 @@ export default function FoundersDirectory() {
               </p>
             </div>
 
-            {companiesListLoading ? (
-              <DirectoryGridSkeleton count={4} />
-            ) : companies.length === 0 ? (
+            {companiesListLoading ? null : companies.length === 0 ? (
               <FilteredListEmptyState
                 className="mt-10"
                 icon={Building2}

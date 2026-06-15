@@ -263,7 +263,7 @@ export default function Payment() {
                       </span>
                     ) : null}
                     <div className="space-y-4">
-                      <p className="font-urbanist text-lg text-black/70">
+                      <p className="font-urbanist text-lg font-medium leading-relaxed text-black md:text-xl">
                         {formatPromoMessage(
                           p.promoMessage?.trim() ||
                             p.discountBannerTitle?.trim() ||

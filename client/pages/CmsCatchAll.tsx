@@ -55,8 +55,8 @@ export default function CmsCatchAll() {
           <div className="mx-auto max-w-[900px] px-6 py-28 md:px-10 md:py-36">
             <h1 className="font-host-grotesk text-3xl font-semibold text-black">{page?.title ?? slug}</h1>
             <p className="mt-4 font-urbanist text-base text-black/65 leading-relaxed">
-              This page is published in Sanity but has no sections yet. Add at least one section under{" "}
-              <strong>Page sections</strong> (or <strong>Page builder</strong>) in Studio, then publish.
+              This page is published in Sanity but has no sections yet. Add at least one block under{" "}
+              <strong>Page sections</strong> in Studio (same library as pre-built pages’ Modular sections tab), then publish.
             </p>
           </div>
         )}

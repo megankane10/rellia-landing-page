@@ -10,6 +10,7 @@ import PageHeader, { PAGE_HEADER_TITLE_SIZE_CLASS } from "@/components/PageHeade
 import PillTag, { PILL_ON_IMAGE_BLUR_CLASS } from "@/components/PillTag"
 import { useAboutPage } from "@/hooks/useCmsDocuments";
 import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo";
+import { deriveHeroPageSeo } from "@/lib/cmsPageSeoDefaults";
 import { DEFAULT_ABOUT_PAGE } from "@shared/cms/defaults";
 import { HeroHeadlinePortable } from "@/components/HeroHeadlinePortable"
 import { relliaTealGlassCardClass } from "@/lib/relliaTealGlassCard";
@@ -21,7 +22,14 @@ import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion
 export default function About() {
   const { data } = useAboutPage();
   const about = data ?? DEFAULT_ABOUT_PAGE;
-  useApplyCmsSeo(about.seo);
+  useApplyCmsSeo(
+    about.seo,
+    deriveHeroPageSeo({
+      pageTitle: "About Us",
+      heroIntro: about.heroIntro,
+      pathname: "/about",
+    }),
+  );
   const [openTeamBioName, setOpenTeamBioName] = useState<string | null>(null);
   const reduceMotion = useReducedMotion();
   const [isMobile, setIsMobile] = useState(true);
@@ -158,9 +166,11 @@ export default function About() {
 
         <section className="py-20 md:py-32 bg-white">
           <div className="max-w-[1300px] mx-auto px-6 md:px-10">
-            <ScrollReveal className="text-center mb-12 md:mb-14">
-              <h2 className="text-black text-2xl md:text-[32px] font-semibold tracking-tight mb-4">{cmsDisplayText(about.teamTitle)}</h2>
-              <p className="text-black/60 text-base md:text-lg font-urbanist max-w-2xl mx-auto leading-relaxed">
+            <ScrollReveal className="mb-12 md:mb-14 text-left">
+              <h2 className="mb-4 text-2xl font-semibold tracking-tight text-black md:text-[32px]">
+                {cmsDisplayText(about.teamTitle)}
+              </h2>
+              <p className="max-w-2xl font-urbanist text-base leading-relaxed text-black/60 md:text-lg">
                 {cmsDisplayText(about.teamSubtitle)}
               </p>
             </ScrollReveal>

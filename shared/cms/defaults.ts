@@ -1391,12 +1391,12 @@ export const DEFAULT_HOME_PATHS_CARDS: HomePathsCard[] = [
   },
   {
     roleId: "partner",
-    tagLabel: "Partners",
+    tagLabel: "Industry partners",
     title: "Drive adoption",
     subtitle: "Partner pathways designed for pilots, integration, and trust.",
     imageSrc: "/images/paths-partner-pexels.jpg",
     imageAlt: "Two partners shaking hands after an agreement",
-    ctaLabel: "I'm a partner",
+    ctaLabel: "I'm an industry partner",
     ctaTo: "/industry-partners",
   },
 ]
@@ -1652,9 +1652,10 @@ export const DEFAULT_ABOUT_PAGE: AboutPageContent = {
   missionImageAlt: "Healthcare professionals meeting and collaborating together",
   valuesTag: "OUR VALUES",
   showValuesTag: true,
-  valuesHeadlinePortable: twoPartHeroHeadline(
+  valuesHeadlinePortable: threePartHeroHeadline(
     "These principles guide",
-    "every decision we make.",
+    "every decision",
+    " we make.",
   ),
   values: [
     {
@@ -3095,7 +3096,7 @@ export const DEFAULT_CONSULTING_PAGE: ConsultingPageContent = {
 
 export const DEFAULT_DIAGNOSTIC_LANDING_PAGE: DiagnosticLandingPageContent = {
   title: "Startup Diagnostic",
-  heroBadgeLabel: "LAUNCH READINESS",
+  heroBadgeLabel: "Startup Diagnostic",
   heroTitlePortable: twoPartHeroHeadline("Pressure-test your startup for", "healthcare reality."),
   heroSubtitle:
     "Get an instant readiness score, surface hidden blockers across 12 domains, and unlock advisor matching when you join Rellia.",

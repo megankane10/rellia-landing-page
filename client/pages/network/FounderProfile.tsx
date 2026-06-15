@@ -2,13 +2,13 @@ import { useEffect, useState } from "react";
 import { useParams, Link, useLocation } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { ArrowLeft, MapPin, Calendar, Copy, Check } from "lucide-react";
+import { ArrowLeft, MapPin, Calendar } from "lucide-react";
 import { ProfileSocialLinks } from "@/components/network/ProfileSocialLinks";
-import { ShareIconCopy } from "@/components/share/sharePageIcons";
+import { ShareCopyLinkButton } from "@/components/share/ShareCopyLinkButton";
+import { shareOutlineButtonClassName } from "@/components/share/sharePageIcons";
 import { FOUNDER_DIRECTORY } from "@/data/founderDirectory";
 import { allowCmsSeedFallbacks } from "@/lib/deploymentEnv";
 import NotFound from "../NotFound";
-import { cn } from "@/lib/utils";
 import {
   buildAlumniProfileSeoTitle,
   buildPageUrl,
@@ -25,7 +25,8 @@ import ImageExpandModal from "@/components/ImageExpandModal";
 import { PortableRichText } from "@/components/PortableRichText";
 import RelatedAlumniCompanies from "@/components/related/RelatedAlumniCompanies";
 import { getFounderPrimaryTag } from "@/data/founderDirectory";
-import type { SanityPortableText } from "@shared/cms/types";
+import { relliaProfilePrimaryTagClass } from "@/lib/relliaMetaBadge";
+import { normalizeToPortableText } from "@shared/cms/normalizePortableText";
 
 export default function FounderProfile() {
   const { id } = useParams<{ id: string }>();
@@ -46,7 +47,6 @@ export default function FounderProfile() {
         : undefined;
 
   const canonicalUrl = buildPageUrl(location.pathname);
-  const [copied, setCopied] = useState(false);
   const [activeImage, setActiveImage] = useState<{ src: string; alt: string } | null>(null);
   const [hasRelatedProfiles, setHasRelatedProfiles] = useState(false);
 
@@ -68,11 +68,15 @@ export default function FounderProfile() {
 
   if (!active) return <NotFound />;
 
-  const handleCopyLink = () => {
-    navigator.clipboard.writeText(canonicalUrl);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
+  const sidebarBlurb =
+    (typeof active.tagline === "string" && active.tagline.trim()) ||
+    (typeof (active as { shortDescription?: string }).shortDescription === "string" &&
+      (active as { shortDescription: string }).shortDescription.trim()) ||
+    "";
+
+  const profileBodyPortable = normalizeToPortableText(
+    (active as { profileBody?: unknown }).profileBody,
+  );
 
   return (
     <div className="min-h-screen overflow-x-clip bg-white font-host-grotesk">
@@ -114,11 +118,11 @@ export default function FounderProfile() {
                 <h1 className="font-host-grotesk text-3xl font-bold tracking-tight text-black mb-2">
                   {active.logoName}
                 </h1>
-                {active.tagline?.trim() && (
+                {sidebarBlurb ? (
                   <p className="font-urbanist text-base font-medium text-black/70 mb-6 leading-relaxed">
-                    {active.tagline}
+                    {sidebarBlurb}
                   </p>
-                )}
+                ) : null}
                 <div className="flex flex-wrap gap-2 mb-6">
                   {(Array.isArray((active as { specialtyTags?: string[] }).specialtyTags)
                     ? (active as { specialtyTags: string[] }).specialtyTags
@@ -126,7 +130,7 @@ export default function FounderProfile() {
                   ).map((s) => (
                     <span
                       key={s}
-                      className="inline-flex rounded-full border border-rellia-teal/20 bg-rellia-mint/20 px-3 py-1 font-urbanist text-xs font-semibold text-rellia-teal"
+                      className={relliaProfilePrimaryTagClass}
                     >
                       {s}
                     </span>
@@ -167,28 +171,12 @@ export default function FounderProfile() {
                     links={(active as { socialLinks?: Array<{ platform?: string; label?: string; url?: string }> }).socialLinks}
                     email={(active as { email?: string }).email}
                   />
-                  <button
-                    onClick={handleCopyLink}
-                    className={cn(
-                      "relative inline-flex h-10 w-10 items-center justify-center rounded-full border transition-all duration-300",
-                      copied
-                        ? "border-rellia-teal bg-rellia-mint/20 text-rellia-teal"
-                        : "border-black/10 bg-white text-black hover:bg-black/5"
-                    )}
-                    title={copied ? "Copied!" : "Copy profile link"}
-                    aria-label={copied ? "Copied!" : "Copy profile link"}
-                  >
-                    {copied ? (
-                      <Check className="h-4 w-4 animate-scale-in" />
-                    ) : (
-                      <ShareIconCopy className="h-4 w-4" />
-                    )}
-                    {copied && (
-                      <span className="absolute -top-10 left-1/2 -translate-x-1/2 rounded bg-black px-2 py-1 text-xs font-bold text-white shadow-md whitespace-nowrap transition-all duration-200">
-                        Copied!
-                      </span>
-                    )}
-                  </button>
+                  <ShareCopyLinkButton
+                    onCopy={() => navigator.clipboard.writeText(canonicalUrl)}
+                    className={shareOutlineButtonClassName}
+                    idleLabel="Copy profile link"
+                    copiedLabel="Link copied"
+                  />
                 </div>
               </div>
             </div>
@@ -200,56 +188,60 @@ export default function FounderProfile() {
 
               {/* 1. Meet the Founders */}
               <section className="not-prose scroll-mt-28">
-                <h3 className="mb-5 text-2xl font-host-grotesk font-semibold text-black flex items-center gap-2">
+                <h3 className="mb-4 text-2xl font-host-grotesk font-semibold text-black flex items-center gap-2">
                   Meet the founders
                 </h3>
-                <div className="grid gap-6 sm:grid-cols-2">
+                <div className="overflow-hidden rounded-2xl border border-black/8 bg-white divide-y divide-black/8">
                   {active.founders.map((f, i) => {
-                    const avatarUrl = f.imageSrc || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200&h=200&fit=crop";
+                    const avatarUrl = f.imageSrc || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200&h=200&fit=crop"
                     return (
                       <div
                         key={i}
-                        className="group flex flex-row gap-5 p-5 rounded-2xl border border-black/5 bg-black/[0.01] hover:bg-black/[0.02] hover:border-rellia-teal/20 transition-all duration-300 shadow-sm"
+                        className="group flex items-center gap-3.5 p-4 sm:gap-4"
                       >
                         <div
                           onClick={() => setActiveImage({ src: avatarUrl, alt: f.name })}
-                          className="relative shrink-0 w-24 h-24 sm:w-28 sm:h-28 overflow-hidden rounded-2xl border border-black/5 shadow-inner cursor-pointer"
+                          className="relative h-14 w-14 shrink-0 cursor-pointer overflow-hidden rounded-xl border border-black/8 bg-black/[0.02] sm:h-16 sm:w-16"
                         >
                           <img
                             src={avatarUrl}
                             alt={f.name}
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                           />
                         </div>
-                      <div className="flex-1 flex flex-col justify-between py-0.5">
-                        <div>
-                          <h4 className="font-host-grotesk text-lg font-bold text-black group-hover:text-rellia-teal transition-colors duration-300">
+                        <div className="min-w-0 flex-1">
+                          <h4 className="font-host-grotesk text-base font-bold text-black transition-colors duration-300 group-hover:text-rellia-teal sm:text-lg">
                             {f.name}
                           </h4>
-                          <p className="font-urbanist text-sm font-semibold text-rellia-teal mt-0.5">
+                          <p className="mt-0.5 font-urbanist text-sm font-medium text-rellia-teal">
                             {f.role}
                           </p>
+                          {typeof f.bio === "string" && f.bio.trim() ? (
+                            <p className="mt-1.5 line-clamp-3 font-urbanist text-sm leading-relaxed text-black/60 sm:line-clamp-none">
+                              {f.bio.trim()}
+                            </p>
+                          ) : null}
                         </div>
                         <ProfileSocialLinks
                           links={Array.isArray(f.socialLinks) ? f.socialLinks : []}
                           email={(f as { email?: string }).email}
                           iconClassName="h-3.5 w-3.5"
-                          className="mt-3 gap-2"
+                          className="shrink-0 gap-2"
+                          showTooltips={false}
                         />
                       </div>
-                    </div>
-                  )
-                })}
+                    )
+                  })}
                 </div>
               </section>
 
 
-              {(active as { profileBody?: unknown }).profileBody ? (
+              {profileBodyPortable ? (
                 <section className="scroll-mt-28">
                   <h3 className="mb-4 font-host-grotesk text-2xl font-semibold text-black not-prose">
                     About the company
                   </h3>
-                  <PortableRichText value={(active as { profileBody: SanityPortableText }).profileBody} />
+                  <PortableRichText value={profileBodyPortable} />
                 </section>
               ) : null}
 

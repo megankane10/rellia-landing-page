@@ -8,6 +8,7 @@ import ScrollReveal from "@/components/ScrollReveal"
 import ProgramTrustedMembersSection from "@/components/program/ProgramTrustedMembersSection"
 import { useConsultingPage } from "@/hooks/useCmsDocuments"
 import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo"
+import { deriveHeroPageSeo } from "@/lib/cmsPageSeoDefaults"
 import { CmsModularSingletonPage } from "@/components/cms/CmsModularSingletonPage"
 import { DEFAULT_CONSULTING_PAGE } from "@shared/cms/defaults"
 import { NetworkHeroTitle } from "@/components/NetworkHeroTitle"
@@ -255,11 +256,14 @@ export default function Consulting() {
   const { data: cmsPage } = useConsultingPage()
   const content = cmsPage ?? DEFAULT_CONSULTING_PAGE
 
-  useApplyCmsSeo(content.seo, {
-    title: "Founder consulting — Rellia Health",
-    description:
-      "One-to-one and scoped consulting for health tech founders—regulatory, clinical, commercial, and narrative depth beyond community rhythm.",
-  })
+  useApplyCmsSeo(
+    content.seo,
+    deriveHeroPageSeo({
+      pageTitle: "Founder consulting",
+      heroSubtitle: content.heroSubtitle,
+      pathname: "/consulting",
+    }),
+  )
 
   return (
     <CmsModularSingletonPage

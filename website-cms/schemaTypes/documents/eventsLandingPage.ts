@@ -1,5 +1,5 @@
 import {defineField, defineType} from 'sanity'
-import {pageSectionMembers} from '../shared/pageSectionMembers'
+import {MODULAR_PAGE_SECTIONS_DESCRIPTION, pageSectionMembers} from '../shared/pageSectionMembers'
 import {preparePortableHeadlinePreview} from '../shared/portableTextPreview'
 import {
   CONTENT_SEO_FIELDSETS,
@@ -46,8 +46,7 @@ export const eventsLandingPage = defineType({
       type: 'array',
       of: pageSectionMembers,
       group: 'sections',
-      description:
-        'Optional modular blocks rendered on /events after the event list and before the footer CTA band.',
+      description: `Optional modular blocks on /events after the event list and before the footer CTA. ${MODULAR_PAGE_SECTIONS_DESCRIPTION}`,
     }),
     singletonSeoField,
   ],

@@ -174,7 +174,7 @@ export function HorizontalCard(props: HorizontalCardProps) {
  
           {/* Mobile Image (Above Speaker) */}
           <div className="mt-5 md:hidden">
-            <div className="relative shrink-0 rounded-xl overflow-hidden bg-black/5 w-28 h-28 shadow-sm">
+            <div className="relative aspect-[5/4] w-full max-h-[min(72vw,320px)] overflow-hidden rounded-2xl bg-black/5 shadow-sm">
               <img
                 src={eventThumbSrc}
                 alt={cmsCleanText(event.title)}
@@ -208,7 +208,7 @@ export function HorizontalCard(props: HorizontalCardProps) {
         </div>
  
         {/* Desktop Image Thumbnail */}
-        <div className="hidden md:block relative shrink-0 rounded-2xl overflow-hidden bg-black/5 md:w-[150px] md:h-[150px] lg:w-[170px] lg:h-[170px] md:ml-auto shadow-sm">
+        <div className="relative hidden shrink-0 overflow-hidden rounded-2xl bg-black/5 shadow-sm md:ml-auto md:block md:h-[180px] md:w-[180px] lg:h-[210px] lg:w-[210px]">
           <img
             src={eventThumbSrc}
             alt={cmsCleanText(event.title)}
@@ -249,7 +249,7 @@ export function HorizontalCard(props: HorizontalCardProps) {
       ) : null}
 
       {/* Image */}
-      <div className="relative w-28 h-28 shrink-0 rounded-xl overflow-hidden bg-rellia-teal/5 md:w-[180px] md:h-[180px] lg:w-[220px] lg:h-[220px] aspect-square">
+      <div className="relative aspect-[5/4] w-full max-h-[min(72vw,320px)] shrink-0 overflow-hidden rounded-2xl bg-rellia-teal/5 md:aspect-square md:h-[210px] md:max-h-none md:w-[210px] lg:h-[250px] lg:w-[250px]">
         <img
           src={programImageSrc}
           alt={cmsCleanText(program.title)}

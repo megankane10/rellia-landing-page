@@ -7,5 +7,5 @@ export const NETWORK_PATH_ROLE_TAG: Record<NetworkPathRoleId, { label: string; i
   founder: { label: "Founders", icon: Rocket },
   advisor: { label: "Advisors", icon: GraduationCap },
   investor: { label: "Investors", icon: TrendingUp },
-  partner: { label: "Partners", icon: Building2 },
+  partner: { label: "Industry partners", icon: Building2 },
 }

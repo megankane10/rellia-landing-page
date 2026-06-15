@@ -5,6 +5,7 @@ import { useAuth } from "@/context/AuthContext"
 import { supabase } from "@/lib/supabase"
 import { isActiveSubmissionStatus } from "@/lib/adminSubmissionStatus"
 import AdminAccountMenu from "@/components/admin/AdminAccountMenu"
+import { AdminSidebarDateTime } from "@/components/admin/AdminSidebarDateTime"
 import {
   adminSidebarContentClass,
   adminSidebarFooterClass,
@@ -49,8 +50,8 @@ const AttentionBadgeCount = ({
   return (
     <span
       className={cn(
-        "attention-badge-count inline-flex shrink-0 items-center justify-center rounded-full bg-red-500",
-        "font-urbanist text-xs font-semibold leading-none !text-white tabular-nums",
+        "attention-badge-count inline-flex shrink-0 items-center justify-center rounded-full bg-rellia-mint",
+        "font-urbanist text-xs font-semibold leading-none text-rellia-teal tabular-nums",
         isCompact ? "size-6" : "h-6 min-w-6 px-1.5",
         className,
       )}
@@ -73,7 +74,7 @@ const AttentionBadgeDot = ({
   return (
     <span
       className={cn(
-        "absolute right-0.5 top-1 h-2.5 w-2.5 rounded-full bg-red-500 ring-2 ring-slate-950",
+        "absolute right-0.5 top-1 h-2.5 w-2.5 rounded-full bg-rellia-mint ring-2 ring-slate-950",
         className,
       )}
       aria-label={`${count} need attention`}
@@ -190,8 +191,8 @@ const AdminAppSidebar = () => {
         </div>
       </SidebarHeader>
 
-      <SidebarContent className={adminSidebarContentClass}>
-        <SidebarGroup className="!p-0">
+      <SidebarContent className={cn(adminSidebarContentClass, "flex min-h-0 flex-col")}>
+        <SidebarGroup className="!p-0 shrink-0">
           <SidebarGroupContent>
             <SidebarMenu className="gap-2">
               {MAIN_NAV.map((item) => {
@@ -239,6 +240,12 @@ const AdminAppSidebar = () => {
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
+
+        {isMobile ? (
+          <div className="mt-6 shrink-0">
+            <AdminSidebarDateTime variant="mobile" />
+          </div>
+        ) : null}
       </SidebarContent>
 
       <SidebarFooter className={adminSidebarFooterClass}>

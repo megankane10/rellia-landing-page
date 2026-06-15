@@ -319,7 +319,34 @@ export default function Footer() {
             </div>
           </div>
 
-          <div className="mb-4 flex flex-col items-center justify-center gap-4 md:hidden">
+          <div className="border-t border-white/10 pt-4 md:pt-5">
+            <div className="grid grid-cols-1 items-center gap-5 md:grid-cols-[1fr_auto_1fr] md:gap-6">
+              <p className="text-center font-urbanist text-[13px] leading-snug text-white/55 md:text-left md:text-sm order-2 md:order-none">
+                &copy; {new Date().getFullYear()} {g.copyrightLine} Ontario, Canada
+              </p>
+
+              <div className="flex justify-center overflow-visible md:px-4 order-1 md:order-none">
+                <BuiltByCredit />
+              </div>
+
+              <nav
+                className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 md:justify-end lg:gap-x-8 order-3 md:order-none"
+                aria-label="Legal"
+              >
+                <Link to="/terms" className={legalLinkClass}>
+                  Terms of Service
+                </Link>
+                <span className="text-white/25 select-none" aria-hidden>
+                  |
+                </span>
+                <Link to="/privacy" className={legalLinkClass}>
+                  Privacy Policy
+                </Link>
+              </nav>
+            </div>
+          </div>
+
+          <div className="mt-6 flex flex-col items-center justify-center gap-4 md:hidden">
             <div className="flex items-center justify-center gap-3">
               <a
                 href={g.linkedinUrl}
@@ -346,33 +373,6 @@ export default function Footer() {
               >
                 <MailFilled className="h-5 w-5 text-white/85 transition-colors duration-300 group-hover:text-rellia-teal" />
               </a>
-            </div>
-          </div>
-
-          <div className="border-t border-white/10 pt-4 md:pt-5">
-            <div className="grid grid-cols-1 items-center gap-5 md:grid-cols-[1fr_auto_1fr] md:gap-6">
-              <p className="text-center font-urbanist text-[13px] leading-snug text-white/55 md:text-left md:text-sm order-2 md:order-none">
-                &copy; {new Date().getFullYear()} {g.copyrightLine} Ontario, Canada
-              </p>
-
-              <div className="flex justify-center overflow-visible md:px-4 order-1 md:order-none">
-                <BuiltByCredit />
-              </div>
-
-              <nav
-                className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 md:justify-end lg:gap-x-8 order-3 md:order-none"
-                aria-label="Legal"
-              >
-                <Link to="/terms" className={legalLinkClass}>
-                  Terms of Service
-                </Link>
-                <span className="text-white/25 select-none" aria-hidden>
-                  |
-                </span>
-                <Link to="/privacy" className={legalLinkClass}>
-                  Privacy Policy
-                </Link>
-              </nav>
             </div>
           </div>
         </div>

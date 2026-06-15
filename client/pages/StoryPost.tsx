@@ -17,7 +17,9 @@ import {
 import StoryArticleJsonLd from "@/components/seo/StoryArticleJsonLd"
 import StoryBreadcrumbJsonLd from "@/components/seo/StoryBreadcrumbJsonLd"
 import PageSocialHelmet from "@/components/seo/PageSocialHelmet"
-import { ChevronLeft, Check } from "lucide-react"
+import { ChevronLeft } from "lucide-react"
+import { ShareCopyLinkButton } from "@/components/share/ShareCopyLinkButton"
+import { ShareToolbarIconLink } from "@/components/share/ShareToolbarIconLink"
 import { RichTextImageCarousel } from "@/components/RichTextImageCarousel"
 import { PortableRichText } from "@/components/PortableRichText"
 import { useStoryBySlug } from "@/hooks/useCmsDocuments"
@@ -25,11 +27,11 @@ import { isCmsQueryLoading, shouldShowCmsEmptyState } from "@/lib/cmsQueryState"
 import CmsPageLoadingShell from "@/components/cms/CmsPageLoadingShell"
 import { isSanityConfigured } from "@/lib/sanity"
 import {
-  ShareIconCopy,
   ShareIconFacebook,
   ShareIconLinkedIn,
   ShareIconMail,
   ShareIconX,
+  shareOutlineButtonClassNameOnDark,
 } from "@/components/share/sharePageIcons"
 import { buildMailtoHref } from "@/lib/mailto"
 import { DEFAULT_GLOBAL_SETTINGS } from "@shared/cms/defaults"
@@ -47,7 +49,6 @@ export default function StoryPost() {
   const storyQuery = useStoryBySlug(resolvedSlug)
   const { data: cmsStory } = storyQuery
   const story = slug && allowCmsSeedFallbacks() ? getStoryBySlug(slug) : undefined
-  const [copyState, setCopyState] = useState<"idle" | "copied">("idle")
   const [activeImage, setActiveImage] = useState<{ src: string; alt: string } | null>(null)
   const [hasRelatedStories, setHasRelatedStories] = useState(false)
 
@@ -94,7 +95,7 @@ export default function StoryPost() {
   const headerCoverSrc = cmsStory?.coverImageSrc?.trim() || story?.coverImageSrc?.trim()
   const headerCoverAlt = cmsStory?.coverImageAlt?.trim() || story?.coverImageAlt?.trim() || cmsStory?.title || story?.title || ""
   const headerLayout = cmsStory?.headerLayout === "background" ? "background" : "block"
-  const seoOgImageSrc = storySeo.ogImageUrl || headerCoverSrc
+  const seoOgImageSrc = headerCoverSrc
   const resolvedOgImage = seoOgImageSrc
     ? resolveSocialOgImage(seoOgImageSrc, undefined, { landscape: true }) ?? {
         url: toAbsoluteImageUrl(seoOgImageSrc),
@@ -115,78 +116,52 @@ export default function StoryPost() {
   const activeStorySlug = cmsStory?.slug ?? story?.slug ?? resolvedSlug
   const activeStoryTag = cmsStory?.tag ?? story?.tag
 
-  const handleCopyLink = async () => {
-    try {
-      await navigator.clipboard.writeText(canonical)
-      setCopyState("copied")
-      window.setTimeout(() => setCopyState("idle"), 2000)
-    } catch {
-      setCopyState("idle")
-    }
-  }
-
-  const shareToolbarButtonClassNameDark =
-    "inline-flex h-12 w-12 items-center justify-center rounded-full bg-white text-rellia-teal transition-transform transition-colors hover:-translate-y-0.5 hover:bg-rellia-mint focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-rellia-teal"
-
   const shareBlock = (
     <div
       className="flex flex-wrap items-center gap-3 md:flex-col md:items-center md:gap-2.5"
       role="group"
       aria-label="Share this story"
     >
-      <a
+      <ShareToolbarIconLink
         href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(canonical)}&text=${encodeURIComponent(shareTitle)}`}
-        target="_blank"
-        rel="noopener noreferrer"
-        className={shareToolbarButtonClassNameDark}
-        aria-label="Share on X"
+        label="Share on X"
+        className={shareOutlineButtonClassNameOnDark}
       >
         <ShareIconX />
-      </a>
-      <a
+      </ShareToolbarIconLink>
+      <ShareToolbarIconLink
         href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(canonical)}`}
-        target="_blank"
-        rel="noopener noreferrer"
-        className={shareToolbarButtonClassNameDark}
-        aria-label="Share on LinkedIn"
+        label="Share on LinkedIn"
+        className={shareOutlineButtonClassNameOnDark}
       >
         <ShareIconLinkedIn />
-      </a>
-      <a
+      </ShareToolbarIconLink>
+      <ShareToolbarIconLink
         href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(canonical)}`}
-        target="_blank"
-        rel="noopener noreferrer"
-        className={shareToolbarButtonClassNameDark}
-        aria-label="Share on Facebook"
+        label="Share on Facebook"
+        className={shareOutlineButtonClassNameOnDark}
       >
         <ShareIconFacebook />
-      </a>
-      <a
+      </ShareToolbarIconLink>
+      <ShareToolbarIconLink
         href={buildMailtoHref(DEFAULT_GLOBAL_SETTINGS.supportEmail, {
           subject: shareTitle,
           body: `${shareTitle}\n\n${canonical}`,
         })}
-        className={shareToolbarButtonClassNameDark}
-        aria-label="Share by email"
+        label="Share by email"
+        className={shareOutlineButtonClassNameOnDark}
+        external={false}
       >
         <ShareIconMail />
-      </a>
+      </ShareToolbarIconLink>
 
-      <button
-        type="button"
-        onClick={handleCopyLink}
-        className={cn(
-          shareToolbarButtonClassNameDark,
-          copyState === "copied" && "border border-rellia-teal bg-rellia-mint text-rellia-teal shadow-md",
-        )}
-        aria-label={copyState === "copied" ? "Link copied" : "Copy story link"}
-      >
-        {copyState === "copied" ? (
-          <Check className="h-5 w-5 shrink-0 animate-scale-in" />
-        ) : (
-          <ShareIconCopy />
-        )}
-      </button>
+      <ShareCopyLinkButton
+        onCopy={() => navigator.clipboard.writeText(canonical)}
+        className={shareOutlineButtonClassNameOnDark}
+        copiedClassName="border-white bg-white text-rellia-teal"
+        idleLabel="Copy story link"
+        copiedLabel="Link copied"
+      />
     </div>
   )
 

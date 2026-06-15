@@ -10,6 +10,7 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { usePrograms, useProgramsLandingPage } from "@/hooks/useCmsDocuments"
 import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo"
 import { clampMetaDescription, clampMetaTitle, getSeoForPathname } from "@/config/seo"
+import { deriveHeroPageSeo } from "@/lib/cmsPageSeoDefaults"
 import { cn } from "@/lib/utils"
 import { DEFAULT_PROGRAMS_LANDING } from "@shared/cms/defaults"
 import { HeroHeadlinePortable } from "@/components/HeroHeadlinePortable"
@@ -27,14 +28,17 @@ const PAGE_SIZE = 12
 export default function Programs() {
   const { data } = useProgramsLandingPage()
   const pl = data ?? DEFAULT_PROGRAMS_LANDING
-  const programsRouteSeo = getSeoForPathname("/programs")
   const cmsSeoWithoutLegacyTitle = pl.seo
     ? { ...pl.seo, metaTitle: undefined, ogTitle: undefined }
     : pl.seo
-  useApplyCmsSeo(cmsSeoWithoutLegacyTitle, {
-    title: clampMetaTitle(programsRouteSeo.title),
-    description: clampMetaDescription(programsRouteSeo.description),
-  })
+  useApplyCmsSeo(
+    cmsSeoWithoutLegacyTitle,
+    deriveHeroPageSeo({
+      pageTitle: "Programs",
+      heroSubtitle: pl.heroSubtitle,
+      pathname: "/programs",
+    }),
+  )
   const { data: programsData } = usePrograms()
   const [programFilter, setProgramFilter] = useState<ProgramFilter>("all")
   const [page, setPage] = useState(1)

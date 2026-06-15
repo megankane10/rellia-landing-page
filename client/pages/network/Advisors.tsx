@@ -15,6 +15,7 @@ import LogoMarquee from "@/components/LogoMarquee"
 import { CreamSection, GlassCardLight, LightSection, Reveal, RoleHero } from "./_shared"
 import { useNetworkAdvisorsPage } from "@/hooks/useCmsDocuments"
 import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo"
+import { deriveHeroPageSeo } from "@/lib/cmsPageSeoDefaults"
 import { mergeNetworkAdvisorsPage, DEFAULT_NETWORK_ADVISORS_PAGE } from "@shared/cms/networkPageDefaults"
 import { NetworkHeroTitle } from "@/components/NetworkHeroTitle"
 import { cmsDisplayText } from "@/lib/cmsStega"
@@ -234,8 +235,15 @@ function ScheduleSplit({ content }: { content: NetworkAdvisorsPageContent }) {
 export default function Advisors() {
   const advisorsPageQuery = useNetworkAdvisorsPage()
   const { data: page } = advisorsPageQuery
-  useApplyCmsSeo(page?.seo)
   const content = mergeNetworkAdvisorsPage(page)
+  useApplyCmsSeo(
+    page?.seo,
+    deriveHeroPageSeo({
+      pageTitle: content.title ?? "Advisors",
+      heroSubtitle: content.heroSubtitle,
+      pathname: "/advisors",
+    }),
+  )
 
   return (
     <div className="min-h-screen overflow-x-hidden bg-white font-host-grotesk">

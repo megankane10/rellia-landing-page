@@ -25,7 +25,7 @@ const CTA_PHRASE: Record<NetworkPathRoleId, string> = {
   founder: "I'm a founder",
   advisor: "I'm an advisor",
   investor: "I'm an investor",
-  partner: "I'm a partner",
+  partner: "I'm an industry partner",
 }
 
 type ResolvedCard = {
@@ -258,8 +258,12 @@ export default function PathsSection() {
                       aria-hidden
                       className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/95 via-black/60 via-40% to-transparent"
                     />
-                    <div className={cn("absolute right-3 top-3 inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-white/95 sm:right-4 sm:top-4", PILL_ON_IMAGE_BLUR_CLASS)}>
-                      <Icon className="h-3.5 w-3.5 shrink-0" aria-hidden />
+                    <div
+                      aria-hidden
+                      className="pointer-events-none absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-black/35 to-transparent"
+                    />
+                    <div className={cn("absolute right-3 top-3 inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-white sm:right-4 sm:top-4", PILL_ON_IMAGE_BLUR_CLASS)}>
+                      <Icon className="h-3.5 w-3.5 shrink-0 text-white" aria-hidden />
                       {displayCardField(cmsCard?.tagLabel, card.tagLabel)}
                     </div>
 

@@ -30,6 +30,7 @@ import { CreamSection, GlassCard, GlassCardLight, LightSection, Reveal, RoleHero
 import { cn } from "@/lib/utils"
 import { useNetworkInvestorsPage } from "@/hooks/useCmsDocuments"
 import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo"
+import { deriveHeroPageSeo } from "@/lib/cmsPageSeoDefaults"
 import { mergeNetworkInvestorsPage, DEFAULT_NETWORK_INVESTORS_PAGE } from "@shared/cms/networkPageDefaults"
 import { NetworkHeroTitle } from "@/components/NetworkHeroTitle"
 import { cmsDisplayText } from "@/lib/cmsStega"
@@ -386,8 +387,15 @@ function buildInvestorCharts(page: NetworkInvestorsPageContent | null | undefine
 export default function Investors() {
   const investorsPageQuery = useNetworkInvestorsPage()
   const { data: page } = investorsPageQuery
-  useApplyCmsSeo(page?.seo)
   const content = mergeNetworkInvestorsPage(page)
+  useApplyCmsSeo(
+    page?.seo,
+    deriveHeroPageSeo({
+      pageTitle: content.title ?? "Investors",
+      heroSubtitle: content.heroSubtitle,
+      pathname: "/investors",
+    }),
+  )
 
   const [showNotifyForm, setShowNotifyForm] = useState(false)
 

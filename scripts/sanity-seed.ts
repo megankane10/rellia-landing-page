@@ -988,6 +988,13 @@ async function main() {
     process.env.SANITY_API_DATASET?.trim() ||
     process.env.VITE_SANITY_DATASET?.trim() ||
     "preview"
+  if (dataset === "production" && process.env.SANITY_SEED_ALLOW_PRODUCTION !== "true") {
+    console.error(
+      "Refusing to seed the production dataset — full seed uses createOrReplace and overwrites editor content.",
+    )
+    console.error("Use preview for local seeding, or set SANITY_SEED_ALLOW_PRODUCTION=true to override.")
+    process.exit(1)
+  }
   const token = requireEnv("SANITY_API_WRITE_TOKEN")
 
   const client = createClient({
@@ -1248,16 +1255,17 @@ async function main() {
       whyTitle: DEFAULT_CAREERS_PAGE.whyTitle,
       whyDescription: DEFAULT_CAREERS_PAGE.whyDescription,
       whyFeatures: DEFAULT_CAREERS_PAGE.whyFeatures,
-      perksTitle: DEFAULT_CAREERS_PAGE.perksTitle,
+      perksTitlePortable: DEFAULT_CAREERS_PAGE.perksTitlePortable,
       perksDescription: DEFAULT_CAREERS_PAGE.perksDescription,
       perksItems: DEFAULT_CAREERS_PAGE.perksItems,
-      openRolesTitle: DEFAULT_CAREERS_PAGE.openRolesTitle,
+      openRolesTitlePortable: DEFAULT_CAREERS_PAGE.openRolesTitlePortable,
+      openRolesSubtitle: DEFAULT_CAREERS_PAGE.openRolesSubtitle,
       ctaTitle: DEFAULT_CAREERS_PAGE.ctaTitle,
       ctaBody: DEFAULT_CAREERS_PAGE.ctaBody,
       ctaPrimaryLabel: DEFAULT_CAREERS_PAGE.ctaPrimaryLabel,
       ctaPrimaryHref: DEFAULT_CAREERS_PAGE.ctaPrimaryHref,
-      lifeAtRelliaHeading: "Built by healthtech insiders, for builders",
-      lifeAtRelliaSubheading: "We are a remote-first, high-standards team of builders, clinicians, and operators dedicated to supporting healthtech founders. We cultivate an environment of high autonomy, rapid iteration, and deep clinical empathy to build the future of care.",
+      lifeAtRelliaHeadingPortable: DEFAULT_CAREERS_PAGE.lifeAtRelliaHeadingPortable,
+      lifeAtRelliaSubheading: DEFAULT_CAREERS_PAGE.lifeAtRelliaSubheading,
       lifeAtRelliaImages:
         careersLifeAtRelliaImages.length > 0 ? careersLifeAtRelliaImages : undefined,
       lifeAtRelliaLinks: [
@@ -1687,6 +1695,23 @@ async function main() {
             "https://images.pexels.com/photos/3182761/pexels-photo-3182761.jpeg?auto=compress&cs=tinysrgb&w=1600",
           primaryCta: { label: "Apply to join", href: "/apply" },
           secondaryCta: { label: "Take the diagnostic", href: "/startup-diagnostic" },
+        },
+        {
+          _type: "sectionHero",
+          _key: "shf-hero-band",
+          internalLabel: "Hero (teal band)",
+          badge: "Section: Hero",
+          headline: ptBlock("shf-hero-band-h", "Teal hero band with eyebrow badge"),
+          subheadline: ptBlock(
+            "shf-hero-band-sub",
+            "Centered headline on a teal gradient with optional background image and primary/secondary CTAs. Use Marketing hero above for the full RoleHero layout with side image.",
+            "normal",
+          ),
+          imageUrl:
+            "https://images.pexels.com/photos/3184292/pexels-photo-3184292.jpeg?auto=compress&cs=tinysrgb&w=1600",
+          imageAlt: "Health tech founders collaborating",
+          primaryCta: { label: "Apply now", href: "/apply" },
+          secondaryCta: { label: "Browse programs", href: "/programs" },
         },
         {
           _type: "sectionRichText",

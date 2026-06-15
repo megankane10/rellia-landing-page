@@ -16,8 +16,9 @@ export const mergePageSeo = (
   const ogImageUrl = cmsSeo?.ogImageUrl?.trim()
 
   const next: PageSeoOverrides = {}
-  const title = metaTitle || ogTitle || defaults.title
-  const description = metaDescription || ogDescription || defaults.description
+  const title = defaults.title?.trim() || metaTitle || ogTitle
+  const description =
+    defaults.description?.trim() || metaDescription || ogDescription
   const ogImage = ogImageUrl || defaults.ogImage
   const noIndex =
     typeof cmsSeo?.noIndex === "boolean" ? cmsSeo.noIndex : defaults.noIndex
@@ -31,8 +32,9 @@ export const mergePageSeo = (
 
 /**
  * Pulls a Sanity `seo` block into RouteSeo via PageSeoContext.
- * Pass `defaults` on directory/item pages so event/program title and image
- * stay correct while CMS data loads.
+ * Pass `defaults` from visible page copy (hero subtitle, directory intro, etc.) so
+ * meta title/description track CMS body fields. SEO tab values apply only when a
+ * default is not provided for that field.
  */
 export const useApplyCmsSeo = (
   seo: SeoContent | null | undefined,

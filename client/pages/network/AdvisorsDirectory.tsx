@@ -14,6 +14,7 @@ import FilteredListEmptyState from "@/components/FilteredListEmptyState";
 import { useAdvisors, useDirectoryFilterGroups, useNetworkAdvisorsDirectoryPage } from "@/hooks/useCmsDocuments";
 import { mergeNetworkAdvisorsDirectoryPage } from "@shared/cms/directoryPageDefaults"
 import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo"
+import { deriveDirectoryPageSeo } from "@/lib/cmsPageSeoDefaults"
 import {
   ADVISOR_DIRECTORY_SEED,
   ADVISOR_FILTER_OPTIONS,
@@ -24,7 +25,6 @@ import { NETWORK_PATH_ROLE_TAG } from "@/lib/networkPathRoles";
 import { isSanityConfigured } from "@/lib/sanity";
 import { allowCmsSeedFallbacks } from "@/lib/deploymentEnv";
 import { isCmsQueryLoading } from "@/lib/cmsQueryState";
-import { DirectoryGridSkeleton } from "@/components/cms/CmsPageLoadingShell";
 import AdvisorDirectoryCard from "@/components/network/AdvisorDirectoryCard";
 import {
   filterAdvisorDirectoryGroups,
@@ -47,7 +47,10 @@ const formatAdvisorLocation = (advisor: AdvisorDirectoryEntry): string => {
 export default function AdvisorsDirectory() {
   const { data: advisorsDirectoryRaw } = useNetworkAdvisorsDirectoryPage()
   const advisorsDirectory = mergeNetworkAdvisorsDirectoryPage(advisorsDirectoryRaw ?? undefined)
-  useApplyCmsSeo(advisorsDirectory.seo)
+  useApplyCmsSeo(
+    advisorsDirectory.seo,
+    deriveDirectoryPageSeo(advisorsDirectory, "/advisors/directory"),
+  )
   const reduceMotion = useReducedMotion();
   const advisorsQuery = useAdvisors();
   const { data: cmsAdvisors } = advisorsQuery;
@@ -273,9 +276,7 @@ export default function AdvisorsDirectory() {
             </div>
             ) : null}
 
-            {advisorsListLoading ? (
-              <DirectoryGridSkeleton className="mt-0" />
-            ) : advisors.length === 0 ? (
+            {advisorsListLoading ? null : advisors.length === 0 ? (
               <FilteredListEmptyState
                 className="mt-10"
                 icon={UserSearch}

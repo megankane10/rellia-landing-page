@@ -2,7 +2,21 @@ import { createClient, type SanityClient } from "@sanity/client"
 import {
   advisorsQuery,
   alumniCompaniesQuery,
+  aboutPageQuery,
   directoryFilterGroupsQuery,
+  eventsLandingQuery,
+  featuredStoriesQuery,
+  globalSettingsQuery,
+  homePageQuery,
+  navigationQuery,
+  networkAdvisorsDirectoryPageQuery,
+  networkAdvisorsPageQuery,
+  networkAlumniDirectoryPageQuery,
+  networkFoundersPageQuery,
+  networkInvestorsPageQuery,
+  networkPartnersPageQuery,
+  siteSettingsQuery,
+  storiesPageQuery,
   eventBySlugQuery,
   eventsQuery,
   careersPageQuery,
@@ -203,6 +217,36 @@ export const fetchDirectoryFilterGroupsForPrerender = async (): Promise<
     return Array.isArray(rows) ? rows : []
   } catch {
     return []
+  }
+}
+
+export const fetchNetworkAlumniDirectoryPageForPrerender = async (): Promise<
+  Record<string, unknown> | null
+> => {
+  const client = getPrerenderSanityClient()
+  if (!client) return null
+  try {
+    const row = await client.fetch<Record<string, unknown> | null>(
+      networkAlumniDirectoryPageQuery,
+    )
+    return row ?? null
+  } catch {
+    return null
+  }
+}
+
+export const fetchNetworkAdvisorsDirectoryPageForPrerender = async (): Promise<
+  Record<string, unknown> | null
+> => {
+  const client = getPrerenderSanityClient()
+  if (!client) return null
+  try {
+    const row = await client.fetch<Record<string, unknown> | null>(
+      networkAdvisorsDirectoryPageQuery,
+    )
+    return row ?? null
+  } catch {
+    return null
   }
 }
 
@@ -420,4 +464,72 @@ export const fetchProgramsForPrerender = async (): Promise<Record<string, unknow
   } catch {
     return []
   }
+}
+
+const fetchSingleton = async (query: string): Promise<Record<string, unknown> | null> => {
+  const client = getPrerenderSanityClient()
+  if (!client) return null
+  try {
+    const doc = await client.fetch<Record<string, unknown> | null>(query)
+    return doc ?? null
+  } catch {
+    return null
+  }
+}
+
+export const fetchHomePageForPrerender = async (): Promise<Record<string, unknown> | null> =>
+  fetchSingleton(homePageQuery)
+
+export const fetchGlobalSettingsForPrerender = async (): Promise<Record<string, unknown> | null> =>
+  fetchSingleton(globalSettingsQuery)
+
+export const fetchNavigationForPrerender = async (): Promise<Record<string, unknown> | null> =>
+  fetchSingleton(navigationQuery)
+
+export const fetchSiteSettingsForPrerender = async (): Promise<Record<string, unknown> | null> =>
+  fetchSingleton(siteSettingsQuery)
+
+export const fetchAboutPageForPrerender = async (): Promise<Record<string, unknown> | null> =>
+  fetchSingleton(aboutPageQuery)
+
+export const fetchStoriesPageForPrerender = async (): Promise<Record<string, unknown> | null> =>
+  fetchSingleton(storiesPageQuery)
+
+export const fetchEventsLandingPageForPrerender = async (): Promise<Record<string, unknown> | null> =>
+  fetchSingleton(eventsLandingQuery)
+
+export const fetchNetworkFoundersPageForPrerender = async (): Promise<Record<string, unknown> | null> =>
+  fetchSingleton(networkFoundersPageQuery)
+
+export const fetchNetworkAdvisorsPageForPrerender = async (): Promise<Record<string, unknown> | null> =>
+  fetchSingleton(networkAdvisorsPageQuery)
+
+export const fetchNetworkInvestorsPageForPrerender = async (): Promise<Record<string, unknown> | null> =>
+  fetchSingleton(networkInvestorsPageQuery)
+
+export const fetchNetworkPartnersPageForPrerender = async (): Promise<Record<string, unknown> | null> =>
+  fetchSingleton(networkPartnersPageQuery)
+
+export const fetchFeaturedStoriesForPrerender = async (): Promise<Record<string, unknown>[]> => {
+  const client = getPrerenderSanityClient()
+  if (!client) return []
+  try {
+    const rows = await client.fetch<Record<string, unknown>[]>(featuredStoriesQuery)
+    return Array.isArray(rows) ? rows : []
+  } catch {
+    return []
+  }
+}
+
+export const fetchStoriesForPrerender = async (): Promise<Record<string, unknown>[]> => {
+  const client = getPrerenderSanityClient()
+  if (client) {
+    try {
+      const rows = await client.fetch<Record<string, unknown>[]>(storiesQuery)
+      if (Array.isArray(rows) && rows.length > 0) return rows
+    } catch {
+      // fall through to build snapshot
+    }
+  }
+  return snapshotStories()
 }

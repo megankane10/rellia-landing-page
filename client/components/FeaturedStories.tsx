@@ -11,7 +11,6 @@ import PillTag, { PILL_ON_IMAGE_BLUR_CLASS } from "@/components/PillTag"
 import { useFeaturedStories } from "@/hooks/useCmsDocuments"
 import { allowCmsSeedFallbacks } from "@/lib/deploymentEnv"
 import { isSanityConfigured } from "@/lib/sanity"
-import { CmsTextSkeleton } from "@/components/cms/CmsTextSkeleton"
 import { cmsCleanText, cmsDisplayText } from "@/lib/cmsStega"
 
 /** Auto-advance interval (progress bar uses same duration) */
@@ -133,22 +132,7 @@ export default function FeaturedStories({
   const storyHref = useMemo(() => (activeStory ? `/stories/${activeStory.slug}` : "/stories"), [activeStory])
 
   if (featuredLoading) {
-    return (
-      <section
-        className={cn(
-          "w-full overflow-x-hidden bg-white",
-          compact ? "py-8 md:py-10" : sectionClassName ? sectionClassName : "py-10 md:py-14",
-        )}
-      >
-        <div className="mx-auto w-full max-w-[1300px] px-6 md:px-10">
-          <div className="overflow-hidden rounded-3xl bg-rellia-teal/10 p-8 md:rounded-[32px] md:p-12">
-            <CmsTextSkeleton className="h-8 w-48 rounded-full bg-rellia-teal/15" />
-            <CmsTextSkeleton className="mt-6 h-12 w-full max-w-2xl bg-rellia-teal/15" />
-            <CmsTextSkeleton className="mt-4 h-20 w-full max-w-xl bg-rellia-teal/10" />
-          </div>
-        </div>
-      </section>
-    )
+    return null
   }
 
   if (featured.length === 0) return null

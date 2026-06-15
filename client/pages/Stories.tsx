@@ -11,9 +11,9 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { AnimatePresence, motion } from "framer-motion"
 import { BookOpen, ChevronLeft, ChevronRight } from "lucide-react"
 import FilteredListEmptyState from "@/components/FilteredListEmptyState"
-import { DirectoryGridSkeleton } from "@/components/cms/CmsPageLoadingShell"
 import { useStories, useStoriesPage } from "@/hooks/useCmsDocuments"
 import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo"
+import { deriveSubheadlinePageSeo } from "@/lib/cmsPageSeoDefaults"
 import { HeroHeadlinePortable } from "@/components/HeroHeadlinePortable"
 import { DEFAULT_STORIES_PAGE_HEADLINE_PORTABLE } from "@shared/cms/inlineHeroHeadline"
 import { isSanityConfigured } from "@/lib/sanity"
@@ -30,11 +30,14 @@ const DEFAULT_STORIES_SUBTITLE =
 export default function Stories() {
   const { data: cmsStories, isPending: storiesPending } = useStories()
   const { data: storiesLanding } = useStoriesPage()
-  useApplyCmsSeo(storiesLanding?.seo, {
-    title: "Stories - Rellia Health",
-    description:
-      "The latest founder spotlights, industry insights, and program updates from Rellia Health.",
-  })
+  useApplyCmsSeo(
+    storiesLanding?.seo,
+    deriveSubheadlinePageSeo({
+      pathname: "/stories",
+      title: "Stories",
+      subheadline: storiesLanding?.subheadline?.trim() || DEFAULT_STORIES_SUBTITLE,
+    }),
+  )
 
   const heroSubtitle = storiesLanding?.subheadline?.trim() || DEFAULT_STORIES_SUBTITLE
 
@@ -186,9 +189,7 @@ export default function Stories() {
               </div>
             </ScrollReveal>
 
-            {storiesLoading ? (
-              <DirectoryGridSkeleton className="mt-6" count={6} />
-            ) : filtered.length === 0 ? (
+            {storiesLoading ? null : filtered.length === 0 ? (
               <FilteredListEmptyState
                 className="mt-6"
                 icon={BookOpen}

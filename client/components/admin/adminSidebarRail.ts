@@ -70,6 +70,17 @@ export const adminSidebarAccountButtonClass = cn(
   "active:scale-[0.97] active:!bg-white/[0.12] active:!text-white active:duration-75",
   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/20 focus-visible:ring-offset-0",
   "group-data-[collapsible=icon]:!size-11 group-data-[collapsible=icon]:!min-h-11 group-data-[collapsible=icon]:!max-h-11 group-data-[collapsible=icon]:!w-full group-data-[collapsible=icon]:!p-0",
+  "group-data-[collapsible=icon]:overflow-visible",
+  "group-data-[collapsible=icon]:hover:!bg-transparent group-data-[collapsible=icon]:active:!bg-transparent",
+  "group-data-[collapsible=icon]:[&>span:first-child]:relative group-data-[collapsible=icon]:[&>span:first-child]:z-0",
+  "group-data-[collapsible=icon]:[&>span:first-child]:before:pointer-events-none",
+  "group-data-[collapsible=icon]:[&>span:first-child]:before:absolute group-data-[collapsible=icon]:[&>span:first-child]:before:inset-0",
+  "group-data-[collapsible=icon]:[&>span:first-child]:before:-m-2 group-data-[collapsible=icon]:[&>span:first-child]:before:rounded-xl",
+  "group-data-[collapsible=icon]:[&>span:first-child]:before:content-['']",
+  "group-data-[collapsible=icon]:[&>span:first-child]:before:transition-[background-color] group-data-[collapsible=icon]:[&>span:first-child]:before:duration-150",
+  "group-data-[collapsible=icon]:hover:[&>span:first-child]:before:bg-white/[0.07]",
+  "group-data-[collapsible=icon]:active:[&>span:first-child]:before:bg-white/[0.12]",
+  "group-data-[collapsible=icon]:[&>span:first-child>*]:relative group-data-[collapsible=icon]:[&>span:first-child>*]:z-[1]",
 )
 
 export const adminSidebarAccountTextClass = cn(
@@ -88,6 +99,7 @@ export const adminSidebarHeaderClass = cn(
 export const adminSidebarFooterClass = cn(
   "!gap-0 !py-0",
   "shrink-0 overflow-hidden border-t border-slate-800 !pb-3 !pt-3",
+  "group-data-[collapsible=icon]:overflow-visible",
   adminSidebarRailPx,
 )
 

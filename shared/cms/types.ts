@@ -84,14 +84,18 @@ export type CareersPageContent = NetworkHeroContent & {
   whyDescription?: string
   whyFeatures?: NetworkFeatureItem[]
   perksTitle?: string
+  perksTitlePortable?: SanityPortableText
   perksDescription?: string
   perksItems?: NetworkFeatureItem[]
   openRolesTitle?: string
+  openRolesTitlePortable?: SanityPortableText
+  openRolesSubtitle?: string
   ctaTitle?: string
   ctaBody?: string
   ctaPrimaryLabel?: string
   ctaPrimaryHref?: string
   lifeAtRelliaHeading?: string
+  lifeAtRelliaHeadingPortable?: SanityPortableText
   lifeAtRelliaSubheading?: string
   lifeAtRelliaImages?: CareersLifeAtRelliaImage[]
   lifeAtRelliaLinks?: CareersLifeAtRelliaLink[]
@@ -426,7 +430,6 @@ export type CmsPageContent = {
   slug: string
   seo?: SeoContent
   sections?: CmsPageSection[]
-  pageBuilder?: CmsPageSection[]
 }
 
 export type ClusterChartSegment = {

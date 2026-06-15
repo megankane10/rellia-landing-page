@@ -53,14 +53,6 @@ import {ctaButton} from './objects/ctaButton'
 import {builderCtaAction} from './objects/builderCtaAction'
 import {customLinkButton} from './objects/customLinkButton'
 import {inlineHeroHeadline} from './objects/inlineHeroHeadline'
-import {
-  pageBuilder,
-  heroSection,
-  featuresSection,
-  contentSection,
-  carouselSection,
-  testimonialSection,
-} from './objects/pageBuilder'
 import {sectionHero} from './objects/sectionHero'
 import {sectionRichText} from './objects/sectionRichText'
 import {sectionCardsGrid} from './objects/sectionCardsGrid'
@@ -136,12 +128,6 @@ export const schemaTypes = [
   membershipPanelPortableText,
   portableRichText,
   inlineHeroHeadline,
-  heroSection,
-  featuresSection,
-  contentSection,
-  carouselSection,
-  testimonialSection,
-  pageBuilder,
   sectionHero,
   sectionRichText,
   sectionCardsGrid,

@@ -433,7 +433,7 @@ export const DEFAULT_NETWORK_INVESTORS_PAGE: NetworkInvestorsPageContent = {
 
 export const DEFAULT_NETWORK_PARTNERS_PAGE: NetworkPartnersPageContent = {
   title: "Industry Partners",
-  heroEyebrow: "Industry Partners",
+  heroEyebrow: "Industry partners",
   heroTitlePortable: twoPartHeroHeadline("Reach the health tech founders", "who need you."),
   heroTitle: "Reach the health tech founders",
   heroAccentPhrase: "who need you.",

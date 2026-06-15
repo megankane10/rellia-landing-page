@@ -21,6 +21,7 @@ export const portableTextBlockMember = defineArrayMember({
       {title: 'Italic', value: 'em'},
       {title: 'Underline', value: 'underline'},
       {title: 'Mint highlight', value: 'mint'},
+      {title: 'Teal highlight', value: 'teal'},
     ],
     annotations: [{type: 'link'}],
   },

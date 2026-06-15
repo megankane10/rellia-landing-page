@@ -14,6 +14,11 @@ export const RELATED_COMPACT_CARD_INSET_CLASS = "p-3 sm:p-4"
 
 export const RELATED_COMPACT_CONTENT_CLASS = "flex min-h-0 flex-1 flex-col pt-3"
 
+/** Event cards — content height follows copy (no flex grow in equal-height grid rows). */
+export const RELATED_COMPACT_EVENT_CONTENT_CLASS = "flex flex-col pt-3"
+
+export const RELATED_COMPACT_EVENTS_GRID_CLASS = `${RELATED_COMPACT_GRID_CLASS} items-start`
+
 export const RELATED_COMPACT_BADGE_ROW_CLASS = "flex flex-wrap items-center gap-x-2 gap-y-1.5"
 
 export const RELATED_COMPACT_BADGE_CLASS =

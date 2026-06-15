@@ -46,7 +46,7 @@ export const diagnosticLandingPage = defineType({
       name: 'heroBadgeLabel',
       title: 'Hero badge',
       type: 'string',
-      initialValue: 'LAUNCH READINESS',
+      initialValue: 'Startup Diagnostic',
       group: 'hero',
       fieldset: 'heroDivider',
     }),

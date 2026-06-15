@@ -860,26 +860,26 @@ export default function Navbar({
                     href={globalSettings.linkedinUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="rounded-full border border-white/15 bg-white/5 p-2 transition-colors hover:bg-white/10"
+                    className="group rounded-full bg-white/5 p-3 transition-all duration-300 hover:bg-rellia-mint focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-rellia-teal"
                     aria-label="Rellia Health on LinkedIn"
                   >
-                    <LinkedInFilled className="h-5 w-5 text-white/85" />
+                    <LinkedInFilled className="h-6 w-6 text-white/85 transition-colors duration-300 group-hover:text-rellia-teal" />
                   </a>
                   <a
                     href={globalSettings.instagramUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="rounded-full border border-white/15 bg-white/5 p-2 transition-colors hover:bg-white/10"
+                    className="group rounded-full bg-white/5 p-3 transition-all duration-300 hover:bg-rellia-mint focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-rellia-teal"
                     aria-label="Rellia Health on Instagram"
                   >
-                    <InstagramFilled className="h-5 w-5 text-white/85" />
+                    <InstagramFilled className="h-6 w-6 text-white/85 transition-colors duration-300 group-hover:text-rellia-teal" />
                   </a>
                   <a
                     href={`mailto:${globalSettings.supportEmail}`}
-                    className="rounded-full border border-white/15 bg-white/5 p-2 transition-colors hover:bg-white/10"
+                    className="group rounded-full bg-white/5 p-3 transition-all duration-300 hover:bg-rellia-mint focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-rellia-teal"
                     aria-label={`Email ${globalSettings.supportEmail}`}
                   >
-                    <MailFilled className="h-5 w-5 text-white/85" />
+                    <MailFilled className="h-6 w-6 text-white/85 transition-colors duration-300 group-hover:text-rellia-teal" />
                   </a>
                 </div>
               </div>
