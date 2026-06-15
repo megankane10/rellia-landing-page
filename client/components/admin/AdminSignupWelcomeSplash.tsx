@@ -12,18 +12,18 @@ export type AdminSignupWelcomeSplashProps = {
 
 type SplashPhase = "enter" | "exit" | "done"
 
-const HEADING_STAGGER_S = 0.2
-const HEADING_WORD_DURATION_S = 0.95
-const HEADING_DELAY_CHILDREN_S = 0.35
-const CONTENT_REVEAL_DELAY_S = 0.55
-const CONTENT_REVEAL_S = 0.65
-const ANIM_EXIT_MS = 720
+const HEADING_STAGGER_S = 0.12
+const HEADING_WORD_DURATION_S = 0.75
+const HEADING_DELAY_CHILDREN_S = 0.2
+const CONTENT_REVEAL_DELAY_S = 0.32
+const CONTENT_REVEAL_S = 0.52
+const ANIM_EXIT_MS = 640
 const SLIDE_EASE = [0.4, 0, 0.2, 1] as const
 const REVEAL_EASE = [0.33, 1, 0.68, 1] as const
 const HEADING_WORD_EASE = [0.22, 0.03, 0.26, 1] as const
 
 const HOLOGRAM_LOGO_SRC = "/images/hologram-logo.png"
-const BRAND_IMAGE_SRC = "/health_tech_collaboration_1778023064936.png"
+const SPLASH_BACKGROUND_SRC = "/images/TabletMeeting.png"
 
 const RESOURCE_LINKS = [
   {
@@ -55,8 +55,8 @@ const splashViewportStyle = {
 const headingWordVariants = {
   hidden: {
     opacity: 0,
-    y: 18,
-    filter: "blur(8px)",
+    y: 14,
+    filter: "blur(6px)",
   },
   visible: {
     opacity: 1,
@@ -105,7 +105,7 @@ const AdminSignupWelcomeSplash = ({ firstName, onComplete }: AdminSignupWelcomeS
       { text: "You're", tone: "mint" as const },
       { text: "all", tone: "mint" as const },
       { text: "set,", tone: "mint" as const },
-      { text: `${displayName}.`, tone: "mint" as const },
+      { text: `${displayName}!`, tone: "mint" as const },
     ],
     [displayName],
   )
@@ -138,7 +138,7 @@ const AdminSignupWelcomeSplash = ({ firstName, onComplete }: AdminSignupWelcomeS
       HEADING_DELAY_CHILDREN_S +
       (firstSentenceWords.length - 1) * HEADING_STAGGER_S +
       HEADING_WORD_DURATION_S +
-      HEADING_STAGGER_S * 0.35
+      HEADING_STAGGER_S * 0.25
     )
   }, [firstSentenceWords.length, reduceMotion])
 
@@ -223,26 +223,44 @@ const AdminSignupWelcomeSplash = ({ firstName, onComplete }: AdminSignupWelcomeS
       aria-label="Admin welcome"
     >
       <div className="relative flex h-full min-h-full w-full flex-col">
-        <div className="absolute inset-0 bg-rellia-teal">
+        <div className="absolute inset-0 bg-[#071f26]">
           <img
-            src={BRAND_IMAGE_SRC}
+            src={SPLASH_BACKGROUND_SRC}
             alt=""
             aria-hidden
-            className="h-full w-full object-cover opacity-35 mix-blend-luminosity"
+            loading="eager"
+            decoding="async"
+            className="h-full w-full scale-105 object-cover object-[center_42%]"
           />
-          <div className="absolute inset-0 bg-gradient-to-br from-rellia-teal via-[#0f5c5c] to-rellia-teal/90" />
-          <div className="absolute top-[-10%] left-[-10%] h-[60%] w-[60%] rounded-full bg-rellia-mint/25 blur-[120px]" />
-          <div className="absolute bottom-[-5%] right-[-5%] h-[40%] w-[40%] rounded-full bg-rellia-mint/15 blur-[100px]" />
-          <div className="absolute inset-y-0 left-0 w-full max-w-4xl bg-gradient-to-r from-black/35 via-black/10 to-transparent lg:max-w-5xl" />
+          <div
+            className="absolute inset-0 bg-gradient-to-br from-[#071f26]/50 via-rellia-teal/42 to-[#0a3238]/58 md:from-[#071f26]/58 md:via-rellia-teal/48 md:to-[#0a3238]/65"
+            aria-hidden
+          />
+          <div
+            className="absolute inset-0 bg-gradient-to-t from-[#071f26]/72 via-[#071f26]/28 to-black/15 md:from-[#071f26]/78 md:via-[#071f26]/32 md:to-black/20"
+            aria-hidden
+          />
+          <div
+            className="absolute inset-y-0 left-0 w-full max-w-5xl bg-gradient-to-r from-black/42 via-black/18 to-transparent md:from-black/48 md:via-black/22"
+            aria-hidden
+          />
+          <div
+            className="absolute top-[-12%] left-[-8%] h-[58%] w-[58%] rounded-full bg-rellia-mint/18 blur-[120px]"
+            aria-hidden
+          />
+          <div
+            className="absolute bottom-[-8%] right-[-6%] h-[42%] w-[42%] rounded-full bg-rellia-teal/22 blur-[100px]"
+            aria-hidden
+          />
         </div>
 
         <div className="relative z-10 flex min-h-full flex-1 items-center px-6 py-20 md:px-12 lg:px-16">
-          <div className="mx-auto w-full max-w-3xl text-left">
+          <div className="mx-auto w-full max-w-5xl text-left">
             <motion.div
               className="mb-10 md:mb-14"
-              initial={reduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: -48 }}
+              initial={reduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: -36 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1, ease: REVEAL_EASE }}
+              transition={{ duration: 0.75, ease: REVEAL_EASE }}
             >
               <motion.img
                 src={HOLOGRAM_LOGO_SRC}
@@ -302,7 +320,7 @@ const AdminSignupWelcomeSplash = ({ firstName, onComplete }: AdminSignupWelcomeS
               initial={
                 reduceMotion
                   ? { opacity: 1, y: 0, filter: "blur(0px)" }
-                  : { opacity: 0, y: 28, filter: "blur(10px)" }
+                  : { opacity: 0, y: 20, filter: "blur(8px)" }
               }
               animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
               transition={{
@@ -322,11 +340,11 @@ const AdminSignupWelcomeSplash = ({ firstName, onComplete }: AdminSignupWelcomeS
                 Enter dashboard
               </RelliaAction>
 
-              <div className="mt-16 w-full max-w-4xl md:mt-20">
-                <p className="mb-4 text-left font-urbanist text-sm font-semibold uppercase tracking-[0.14em] text-white/75">
-                  More ways to manage
+              <div className="mt-16 w-full md:mt-20">
+                <p className="mb-4 text-left font-urbanist text-sm font-semibold uppercase tracking-[0.14em] text-white/85">
+                  More ways to get started
                 </p>
-                <div className="grid w-full grid-cols-1 gap-4 sm:grid-cols-3">
+                <div className="grid w-full grid-cols-1 gap-4 sm:grid-cols-3 sm:gap-5">
                 {RESOURCE_LINKS.map((link) => {
                   const Icon = link.icon
                   return (
