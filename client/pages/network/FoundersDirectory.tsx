@@ -25,8 +25,7 @@ import { FOUNDER_DIRECTORY, type FounderCompany } from "@/data/founderDirectory"
 import { isSanityConfigured } from "@/lib/sanity"
 import { allowCmsSeedFallbacks } from "@/lib/deploymentEnv"
 import { isCmsQueryLoading } from "@/lib/cmsQueryState"
-import { DirectoryGridSkeleton } from "@/components/cms/CmsPageLoadingShell"
-import { DirectoryCardTags } from "@/components/network/DirectoryCardTags"
+import FounderDirectoryCard from "@/components/network/FounderDirectoryCard"
 import {
   filterFounderDirectoryGroups,
   getDirectoryGroupOptionLabels,
@@ -34,6 +33,7 @@ import {
 } from "@/lib/directoryFilterOptions"
 import { resolveSocialOgImageUrl } from "@/config/seo"
 import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo"
+import { deriveDirectoryPageSeo } from "@/lib/cmsPageSeoDefaults"
 import { cmsCleanText, cmsDisplayText } from "@/lib/cmsStega"
 
 const DIRECTORY_TITLE_CLASS =
@@ -75,61 +75,6 @@ const mapCmsCompany = (c: Record<string, unknown>): FounderCompany => ({
   socialLinks: Array.isArray(c.socialLinks) ? c.socialLinks : [],
   email: typeof c.email === "string" ? c.email : undefined,
 })
-
-function FounderDirectoryCard({
-  company,
-  onOpen,
-}: {
-  company: FounderCompany
-  onOpen: () => void
-}) {
-  const cardTags = [...company.specialtyTags, ...company.businessModels]
-
-  return (
-    <motion.article
-      layout
-      className={cn(
-        "group flex h-full flex-col overflow-hidden rounded-2xl border border-black/10 bg-white",
-        "shadow-sm transition-[box-shadow,transform] duration-300 motion-reduce:transition-none",
-        "cursor-pointer hover:shadow-md hover:-translate-y-[1px]",
-      )}
-      onClick={onOpen}
-      onKeyDown={(e) => {
-        if (e.key === "Enter" || e.key === " ") {
-          e.preventDefault()
-          onOpen()
-        }
-      }}
-      role="button"
-      tabIndex={0}
-      aria-label={`Open details for ${cmsCleanText(company.logoName)}`}
-    >
-      <div className="relative flex aspect-video w-full items-center justify-center bg-white border-b border-black/[0.05] shrink-0">
-        <img
-          src={company.logoSrc}
-          alt=""
-          className="max-h-[72%] w-auto max-w-[72%] object-contain object-center transition duration-500 ease-out group-hover:scale-[1.02]"
-        />
-        <DirectoryCardTags tags={cardTags} variant="onLight" />
-      </div>
-      <div className="flex flex-1 flex-col p-6 md:p-7">
-        <h3 className="font-host-grotesk text-lg font-bold tracking-tight text-black group-hover:underline decoration-2 underline-offset-4">
-          {cmsDisplayText(company.logoName)}
-        </h3>
-        {(company.shortDescription?.trim() || company.tagline?.trim()) && (
-          <p className="mt-1 font-urbanist text-sm font-medium text-black/77 leading-relaxed line-clamp-3">
-            {cmsDisplayText(company.shortDescription?.trim() || company.tagline)}
-          </p>
-        )}
-        {company.countries.length > 0 && (
-          <p className="mt-2 font-urbanist text-sm text-black/55 leading-relaxed">
-            {company.countries.join(", ")}
-          </p>
-        )}
-      </div>
-    </motion.article>
-  )
-}
 
 export default function FoundersDirectory() {
   const { data: alumniDirectoryRaw } = useNetworkAlumniDirectoryPage()
@@ -191,9 +136,12 @@ export default function FoundersDirectory() {
     return logoSrc ? resolveSocialOgImageUrl(logoSrc) : undefined
   }, [companies])
 
-  useApplyCmsSeo(alumniDirectory.seo, {
-    ogImage: alumniDirectoryOgImage,
-  })
+  useApplyCmsSeo(
+    alumniDirectory.seo,
+    deriveDirectoryPageSeo(alumniDirectory, "/founders/alumni", {
+      ogImage: alumniDirectoryOgImage,
+    }),
+  )
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase()
@@ -347,9 +295,7 @@ export default function FoundersDirectory() {
               </p>
             </div>
 
-            {companiesListLoading ? (
-              <DirectoryGridSkeleton count={4} />
-            ) : companies.length === 0 ? (
+            {companiesListLoading ? null : companies.length === 0 ? (
               <FilteredListEmptyState
                 className="mt-10"
                 icon={Building2}
@@ -376,6 +322,7 @@ export default function FoundersDirectory() {
                       <motion.div key={c.id} variants={item} layout>
                         <FounderDirectoryCard
                           company={c}
+                          layout
                           onOpen={() => navigate(`/founders/alumni/${c.id}`)}
                         />
                       </motion.div>

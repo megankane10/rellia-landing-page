@@ -1,86 +1,28 @@
 import { useEffect, useMemo, useState } from "react"
-import { Link } from "react-router-dom"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
 import ScrollReveal from "@/components/ScrollReveal"
 import PageHeader from "@/components/PageHeader"
 import { cn } from "@/lib/utils"
-import { STORIES } from "@/content/stories"
+import { mergeCmsStoriesWithDevSeed } from "@/content/stories"
 import { CONFIRMED_STORY_TAGS, type StoryTag } from "@shared/cms/storyFilters"
 import FeaturedStories from "@/components/FeaturedStories"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { AnimatePresence, motion } from "framer-motion"
 import { BookOpen, ChevronLeft, ChevronRight } from "lucide-react"
 import FilteredListEmptyState from "@/components/FilteredListEmptyState"
-import { DirectoryGridSkeleton } from "@/components/cms/CmsPageLoadingShell"
 import { useStories, useStoriesPage } from "@/hooks/useCmsDocuments"
 import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo"
+import { deriveSubheadlinePageSeo } from "@/lib/cmsPageSeoDefaults"
 import { HeroHeadlinePortable } from "@/components/HeroHeadlinePortable"
 import { DEFAULT_STORIES_PAGE_HEADLINE_PORTABLE } from "@shared/cms/inlineHeroHeadline"
 import { isSanityConfigured } from "@/lib/sanity"
 import { allowCmsSeedFallbacks } from "@/lib/deploymentEnv"
-import { cmsCleanText, cmsDisplayStoryTitle, cmsDisplayText } from "@/lib/cmsStega"
+import StoryGridCard from "@/components/StoryGridCard"
 
 const tags: Array<StoryTag | "All"> = ["All", ...CONFIRMED_STORY_TAGS]
 
 const PAGE_SIZE = 12
-
-const StoryGridCard = ({
-  story,
-}: {
-  story: {
-    slug: string
-    title: string
-    excerpt: string
-    coverImageSrc: string
-    coverImageAlt: string
-    tag: string
-    publishedAt: string
-  }
-}) => {
-  return (
-    <article className="h-full w-full">
-      <Link
-        to={`/stories/${story.slug}`}
-        className={cn(
-          "group flex h-auto w-full flex-col overflow-hidden rounded-2xl",
-          "transition-all duration-500 ease-in hover:-translate-y-0.5",
-          "outline outline-2 outline-offset-[10px] outline-transparent hover:outline-rellia-teal",
-          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-white",
-        )}
-        aria-label={`Read ${cmsCleanText(story.title)}`}
-      >
-        <div className="relative aspect-video w-full shrink-0 overflow-hidden rounded-2xl bg-rellia-teal/5">
-          <img
-            src={story.coverImageSrc}
-            alt={story.coverImageAlt}
-            className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
-            loading="lazy"
-          />
-        </div>
-
-        <div className="flex min-h-0 flex-1 flex-col overflow-hidden px-1.5 pt-3 pb-1 md:h-[160px]">
-          <div className="inline-flex items-center gap-2 w-fit">
-            <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-rellia-teal" aria-hidden />
-            <span className="font-host-grotesk text-[11px] font-semibold uppercase tracking-[0.14em] text-rellia-teal">
-              {cmsDisplayText(story.tag)}
-            </span>
-          </div>
-
-          <h3
-            className="mt-1 line-clamp-2 h-auto font-host-grotesk text-[16px] font-semibold leading-snug text-black group-hover:underline group-hover:underline-offset-4 md:text-lg"
-          >
-            {cmsDisplayStoryTitle(story.title)}
-          </h3>
-
-          <p className="mt-3 line-clamp-4 h-auto overflow-hidden break-words font-urbanist text-sm leading-relaxed text-black/70 md:text-base">
-            {cmsDisplayText(story.excerpt)}
-          </p>
-        </div>
-      </Link>
-    </article>
-  )
-}
 
 const DEFAULT_STORIES_SUBTITLE =
   "The latest founder spotlights, industry insights, & program updates. Stay current with the people and ideas shaping the future of health."
@@ -88,11 +30,14 @@ const DEFAULT_STORIES_SUBTITLE =
 export default function Stories() {
   const { data: cmsStories, isPending: storiesPending } = useStories()
   const { data: storiesLanding } = useStoriesPage()
-  useApplyCmsSeo(storiesLanding?.seo, {
-    title: "Stories - Rellia Health",
-    description:
-      "The latest founder spotlights, industry insights, and program updates from Rellia Health.",
-  })
+  useApplyCmsSeo(
+    storiesLanding?.seo,
+    deriveSubheadlinePageSeo({
+      pathname: "/stories",
+      title: "Stories",
+      subheadline: storiesLanding?.subheadline?.trim() || DEFAULT_STORIES_SUBTITLE,
+    }),
+  )
 
   const heroSubtitle = storiesLanding?.subheadline?.trim() || DEFAULT_STORIES_SUBTITLE
 
@@ -104,20 +49,23 @@ export default function Stories() {
   const stories = useMemo(() => {
     if (!isSanityConfigured()) return []
 
-    const normalized = (cmsStories ?? [])
-      .map((s) => ({
-        slug: s.slug,
-        title: s.title,
-        excerpt: s.excerpt ?? "",
-        coverImageSrc: s.coverImageSrc ?? "",
-        coverImageAlt: (s.coverImageAlt ?? "Story cover").trim() || "Story cover",
-        tag: (s.tag ?? "Story").trim() || "Story",
-        publishedAt: typeof s.publishedAt === "string" ? s.publishedAt : "",
-      }))
-      .filter((s) => s.slug && s.title && s.coverImageSrc)
+    const normalized = mergeCmsStoriesWithDevSeed(
+      (cmsStories ?? [])
+        .map((s) => ({
+          slug: s.slug,
+          title: s.title,
+          excerpt: s.excerpt ?? "",
+          coverImageSrc: s.coverImageSrc ?? "",
+          coverImageAlt: (s.coverImageAlt ?? "Story cover").trim() || "Story cover",
+          tag: (s.tag ?? "Story").trim() || "Story",
+          publishedAt: typeof s.publishedAt === "string" ? s.publishedAt : "",
+        }))
+        .filter((s) => s.slug && s.title && s.coverImageSrc),
+      allowCmsSeedFallbacks(),
+    )
 
     if (normalized.length > 0) return normalized
-    return allowCmsSeedFallbacks() ? STORIES : []
+    return []
   }, [cmsStories])
 
   const filtered = useMemo(() => {
@@ -241,9 +189,7 @@ export default function Stories() {
               </div>
             </ScrollReveal>
 
-            {storiesLoading ? (
-              <DirectoryGridSkeleton className="mt-6" count={6} />
-            ) : filtered.length === 0 ? (
+            {storiesLoading ? null : filtered.length === 0 ? (
               <FilteredListEmptyState
                 className="mt-6"
                 icon={BookOpen}

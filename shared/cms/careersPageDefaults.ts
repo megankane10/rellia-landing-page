@@ -1,6 +1,8 @@
 import { mergeNetworkWhyFeatures } from "./networkPageDefaults"
-import { threePartHeroHeadline } from "./inlineHeroHeadline"
+import { threePartHeroHeadline, twoPartHeroHeadline } from "./inlineHeroHeadline"
+import { normalizeToPortableText } from "./normalizePortableText"
 import { resolveHeroTitlePortable } from "./resolveHeroHeadline"
+import { resolveSectionHeadlinePortable } from "./resolveSectionHeadline"
 import type { CareersPageContent, NetworkFeatureItem } from "./types"
 
 export const DEFAULT_CAREERS_WHY_FEATURES: NetworkFeatureItem[] = [
@@ -79,14 +81,25 @@ export const DEFAULT_CAREERS_PAGE: CareersPageContent = {
     "What it feels like to build here: pace without panic, depth without gatekeeping, and a team that sweats the small stuff so members do not have to.",
   whyFeatures: DEFAULT_CAREERS_WHY_FEATURES,
   perksTitle: "How we work",
+  perksTitlePortable: normalizeToPortableText("How we work"),
   perksDescription:
     "A lean health-tech team: industry proximity, intentional office time, and the pace of a startup—not a corporate perks sheet.",
   perksItems: DEFAULT_CAREERS_PERKS,
   openRolesTitle: "Open Roles",
+  openRolesTitlePortable: twoPartHeroHeadline("Open", "Roles", "teal"),
+  openRolesSubtitle: "Join a remote-first team building what matters in healthtech.",
   ctaTitle: "Questions before you apply?",
   ctaBody: "Tell us what you are looking for—we are happy to point you to the right conversation.",
   ctaPrimaryLabel: "Get in touch",
   ctaPrimaryHref: "/contact",
+  lifeAtRelliaHeading: "Built by healthtech insiders, for builders",
+  lifeAtRelliaHeadingPortable: twoPartHeroHeadline(
+    "Built by healthtech insiders,",
+    "for builders",
+    "teal",
+  ),
+  lifeAtRelliaSubheading:
+    "We are a remote-first, high-standards team of builders, clinicians, and operators dedicated to supporting healthtech founders. We cultivate an environment of high autonomy, rapid iteration, and deep clinical empathy to build the future of care.",
 }
 
 const mergePerksItems = (
@@ -121,11 +134,31 @@ export const mergeCareersPage = (
   whyDescription: cms?.whyDescription?.trim() || DEFAULT_CAREERS_PAGE.whyDescription,
   whyFeatures: mergeNetworkWhyFeatures(cms?.whyFeatures, DEFAULT_CAREERS_WHY_FEATURES),
   perksTitle: cms?.perksTitle?.trim() || DEFAULT_CAREERS_PAGE.perksTitle,
+  perksTitlePortable: resolveSectionHeadlinePortable(
+    { headlinePortable: cms?.perksTitlePortable, title: cms?.perksTitle },
+    DEFAULT_CAREERS_PAGE.perksTitlePortable!,
+  )!,
   perksDescription: cms?.perksDescription?.trim() || DEFAULT_CAREERS_PAGE.perksDescription,
   perksItems: mergePerksItems(cms?.perksItems, DEFAULT_CAREERS_PERKS),
   openRolesTitle: cms?.openRolesTitle?.trim() || DEFAULT_CAREERS_PAGE.openRolesTitle,
+  openRolesTitlePortable: resolveSectionHeadlinePortable(
+    { headlinePortable: cms?.openRolesTitlePortable, title: cms?.openRolesTitle },
+    DEFAULT_CAREERS_PAGE.openRolesTitlePortable!,
+  )!,
+  openRolesSubtitle: cms?.openRolesSubtitle?.trim() || DEFAULT_CAREERS_PAGE.openRolesSubtitle,
   ctaTitle: cms?.ctaTitle?.trim() || DEFAULT_CAREERS_PAGE.ctaTitle,
   ctaBody: cms?.ctaBody?.trim() || DEFAULT_CAREERS_PAGE.ctaBody,
   ctaPrimaryLabel: cms?.ctaPrimaryLabel?.trim() || DEFAULT_CAREERS_PAGE.ctaPrimaryLabel,
   ctaPrimaryHref: cms?.ctaPrimaryHref?.trim() || DEFAULT_CAREERS_PAGE.ctaPrimaryHref,
+  lifeAtRelliaHeading:
+    cms?.lifeAtRelliaHeading?.trim() || DEFAULT_CAREERS_PAGE.lifeAtRelliaHeading,
+  lifeAtRelliaHeadingPortable: resolveSectionHeadlinePortable(
+    {
+      headlinePortable: cms?.lifeAtRelliaHeadingPortable,
+      title: cms?.lifeAtRelliaHeading,
+    },
+    DEFAULT_CAREERS_PAGE.lifeAtRelliaHeadingPortable!,
+  )!,
+  lifeAtRelliaSubheading:
+    cms?.lifeAtRelliaSubheading?.trim() || DEFAULT_CAREERS_PAGE.lifeAtRelliaSubheading,
 })

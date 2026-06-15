@@ -7,18 +7,16 @@ import PillTag from "@/components/PillTag"
 import WhyRellia from "@/components/WhyRellia"
 import { FilloutStandardEmbed } from "@fillout/react"
 import { FILLOUT_APPLY_FORM_ID, FILLOUT_EMBED_VIEWPORT_MIN_CLASS } from "@/lib/filloutApplyForm"
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
+import { CareersOpenRolesSection } from "@/components/careers/CareersOpenRolesSection"
 import { motion, useReducedMotion, AnimatePresence } from "framer-motion"
 import { LinkedInFilled, InstagramFilled, GlobeFilled } from "@/components/icons/SocialIcons"
 import {
-  BriefcaseBusiness,
   Building2,
   ExternalLink,
   Laptop,
   MapPin,
   Users,
   UserRound,
-  Check,
   ArrowRight,
   Linkedin,
   Instagram,
@@ -35,11 +33,9 @@ import { DEFAULT_GLOBAL_SETTINGS } from "@shared/cms/defaults"
 import { CAREERS_VOLUNTEER_ENABLED, careersHasPublishedOpenRoles } from "@shared/careersPageConfig"
 import { CAREERS_OPEN_ROLES } from "@shared/careersOpenRoles"
 import { hasOpenRoleApplyButton } from "@shared/careersOpenRolesVisibility"
-import { PortableRichText } from "@/components/PortableRichText"
 import { cn } from "@/lib/utils"
 import { buildCareersRoleShareUrl } from "@/config/seo"
-import FilteredListEmptyState from "@/components/FilteredListEmptyState"
-import { ShareIconCopy } from "@/components/share/sharePageIcons"
+import { DEFAULT_CAREERS_PAGE } from "@shared/cms/careersPageDefaults"
 import { RoleHero } from "./network/_shared"
 
 const g = DEFAULT_GLOBAL_SETTINGS
@@ -196,8 +192,8 @@ function LifeAtRelliaSocialButton({
         target="_blank"
         rel="noopener noreferrer"
         className={cn(
-          "flex h-14 w-14 items-center justify-center rounded-full border border-black/10 text-black/60",
-          "transition-all duration-300 hover:border-rellia-teal hover:bg-rellia-teal/[0.03] hover:text-rellia-teal"
+          "flex h-14 w-14 items-center justify-center rounded-full border border-rellia-teal bg-white text-rellia-teal",
+          "transition-all duration-300 hover:border-rellia-teal hover:bg-rellia-teal hover:text-white",
         )}
         aria-label={tooltip}
       >
@@ -217,14 +213,11 @@ export default function Careers() {
   const hiring = careersHasPublishedOpenRoles()
   const volunteer = CAREERS_VOLUNTEER_ENABLED
 
-  const [copiedRoleId, setCopiedRoleId] = useState<string | null>(null)
   const [showForm, setShowForm] = useState(false)
 
   const handleCopyRoleLink = (roleId: string) => {
     const roleUrl = buildCareersRoleShareUrl(roleId)
     navigator.clipboard.writeText(roleUrl)
-    setCopiedRoleId(roleId)
-    setTimeout(() => setCopiedRoleId(null), 2000)
   }
 
   const joinTeamPrimaryCta = hiring
@@ -340,7 +333,7 @@ export default function Careers() {
           sectionClassName="bg-white pt-28 md:pt-32"
         />
 
-        <section className="bg-white py-24 md:py-32 border-t border-black/10">
+        <section className="bg-white pb-16 pt-10 md:pb-20 md:pt-12">
           <div className="mx-auto max-w-[1300px] px-6 md:px-10">
             <ScrollReveal className="max-w-3xl mb-16">
               <h2 className="font-host-grotesk text-2xl font-semibold tracking-tight text-black md:text-[32px]">
@@ -372,122 +365,28 @@ export default function Careers() {
           </div>
         </section>
 
-        <section id="open-roles" className="scroll-mt-28 px-0 py-16 md:py-20">
-          <div className="flex min-h-[max(46rem,92svh)] w-full flex-col rounded-[2.5rem] md:rounded-[3.5rem] bg-rellia-cream/60 py-16 md:py-20">
-            <div className="mx-auto w-full max-w-[1300px] px-6 md:px-10 flex flex-col">
-              <ScrollReveal className="flex min-w-0 flex-col">
-                <h2 className="font-host-grotesk text-2xl font-semibold tracking-tight text-black md:text-[32px]">
-                  Open Roles
-                </h2>
-
-                <div className="mt-10 w-full shrink-0">
-                {CAREERS_OPEN_ROLES.length > 0 ? (
-                <div className="overflow-hidden rounded-[28px] border border-black/10 bg-white px-0 shadow-sm md:px-2">
-                  <Accordion type="single" collapsible className="w-full">
-                    {CAREERS_OPEN_ROLES.map((role, index) => (
-                      <AccordionItem
-                        key={role.id}
-                        value={role.id}
-                        className={
-                          index === CAREERS_OPEN_ROLES.length - 1
-                            ? "border-b-0 px-6 md:px-8"
-                            : "border-b border-black/10 px-6 md:px-8"
-                        }
-                      >
-                        <AccordionTrigger
-                          className={[
-                            "items-start gap-3 py-5 hover:no-underline md:gap-4 md:py-6",
-                            "[&>svg]:mt-1 [&>svg]:shrink-0 [&>svg]:text-rellia-teal",
-                          ].join(" ")}
-                        >
-                          <span className="flex min-w-0 flex-1 flex-col gap-1.5 text-left sm:flex-row sm:items-start sm:justify-between sm:gap-6">
-                            <span className="min-w-0 text-lg font-medium text-black md:text-xl">
-                              {role.title}
-                            </span>
-                            <span className="shrink-0 font-urbanist text-sm font-normal leading-snug text-black/55 sm:max-w-[min(280px,42%)] sm:pt-0.5 sm:text-right md:text-base">
-                              {role.location}
-                            </span>
-                          </span>
-                        </AccordionTrigger>
-                        <AccordionContent className="pb-6 pt-0 md:pb-8">
-                          <span className="inline-flex rounded-full bg-rellia-teal/10 px-3 py-1 font-urbanist text-sm font-medium text-rellia-teal">
-                            {role.employmentType}
-                          </span>
-
-                          <PortableRichText
-                            value={role.description}
-                            className="mt-5 text-sm leading-relaxed text-black/75 md:text-base prose-p:my-3 prose-p:font-urbanist prose-p:text-black/75"
-                          />
-
-                          <div className="mt-6">
-                            <h3 className="font-host-grotesk text-sm font-semibold uppercase tracking-wider text-black/80">
-                              Role highlights
-                            </h3>
-                            <ul className="mt-3 list-disc space-y-2 pl-5 font-urbanist text-sm leading-relaxed text-black/70 md:text-base">
-                              {role.responsibilities.map((line) => (
-                                <li key={line}>{line}</li>
-                              ))}
-                            </ul>
-                          </div>
-
-                          <div className="mt-8 flex items-center gap-3">
-                            {hasOpenRoleApplyButton(role) ? (
-                              <a
-                                href={role.applyButtonUrl}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="group inline-flex h-12 cursor-pointer items-center justify-center rounded-full bg-rellia-teal border-2 border-rellia-teal px-8 font-host-grotesk text-base font-bold text-white shadow-sm outline-none transition-all duration-300 hover:bg-[#07242a] hover:border-[#07242a]"
-                                aria-label={`${role.applyButtonLabel} for ${role.title} (opens in new tab)`}
-                              >
-                                <span className="relative z-10 inline-flex items-center gap-2">
-                                  {role.applyButtonLabel}
-                                  <ExternalLink className="h-4.5 w-4.5" aria-hidden />
-                                </span>
-                              </a>
-                            ) : null}
-
-                            <button
-                              type="button"
-                              onClick={() => handleCopyRoleLink(role.id)}
-                              className={cn(
-                                "relative inline-flex h-14 w-14 shrink-0 items-center justify-center rounded-full border transition-all duration-300",
-                                copiedRoleId === role.id
-                                  ? "border-rellia-teal bg-rellia-mint/20 text-rellia-teal"
-                                  : "border-black/10 bg-white text-black hover:bg-black/5",
-                              )}
-                              title={copiedRoleId === role.id ? "Copied!" : "Copy link to role"}
-                              aria-label={copiedRoleId === role.id ? "Copied!" : "Copy link to role"}
-                            >
-                              {copiedRoleId === role.id ? (
-                                <Check className="h-5 w-5 shrink-0 animate-scale-in" />
-                              ) : (
-                                <ShareIconCopy className="h-5 w-5" />
-                              )}
-                              {copiedRoleId === role.id ? (
-                                <span className="pointer-events-none absolute -top-10 left-1/2 z-50 -translate-x-1/2 whitespace-nowrap rounded bg-black px-2 py-1 text-xs font-bold text-white shadow-md">
-                                  Copied!
-                                </span>
-                              ) : null}
-                            </button>
-                          </div>
-                        </AccordionContent>
-                      </AccordionItem>
-                    ))}
-                  </Accordion>
-                </div>
-                ) : (
-                  <FilteredListEmptyState
-                    className="mt-12"
-                    icon={BriefcaseBusiness}
-                    title="No open roles"
-                    description="No vacant roles are available at the moment. Check back later or follow us on LinkedIn for updates."
-                  />
-                )}
-              </div>
-            </ScrollReveal>
-            </div>
-          </div>
-        </section>
+        <CareersOpenRolesSection
+          titlePortable={DEFAULT_CAREERS_PAGE.openRolesTitlePortable}
+          subtitle={DEFAULT_CAREERS_PAGE.openRolesSubtitle}
+          roles={CAREERS_OPEN_ROLES}
+          onCopyRoleLink={handleCopyRoleLink}
+          renderApplyButton={(role) =>
+            hasOpenRoleApplyButton(role) ? (
+              <a
+                href={role.applyButtonUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group inline-flex h-12 w-full cursor-pointer items-center justify-center rounded-full border-2 border-rellia-teal bg-rellia-teal px-8 font-host-grotesk text-base font-bold text-white shadow-sm outline-none transition-all duration-300 hover:border-[#07242a] hover:bg-[#07242a] sm:min-w-[12.5rem] sm:w-auto"
+                aria-label={`${role.applyButtonLabel} for ${role.title} (opens in new tab)`}
+              >
+                <span className="relative z-10 inline-flex items-center gap-2">
+                  {role.applyButtonLabel}
+                  <ExternalLink className="h-4.5 w-4.5" aria-hidden />
+                </span>
+              </a>
+            ) : null
+          }
+        />
 
         {/* Life at Rellia Section */}
         <section id="life-at-rellia" className="bg-white py-24 border-t border-black/10">

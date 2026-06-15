@@ -1,7 +1,7 @@
 import { renderToString } from "react-dom/server"
 import { StaticRouter } from "react-router-dom/server"
 import { HelmetProvider, type HelmetServerState } from "react-helmet-async"
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
+import { QueryClient, QueryClientProvider, dehydrate } from "@tanstack/react-query"
 import { Toaster } from "@/components/ui/toaster"
 import { Toaster as Sonner } from "@/components/ui/sonner"
 import { TooltipProvider } from "@/components/ui/tooltip"
@@ -10,8 +10,8 @@ import {
   clampMetaDescription,
   clampMetaTitle,
   getSeoForPathname,
+  getAdminOgImage,
   getDefaultOgImageUrl,
-  RELLIA_SOCIAL_THEME_COLOR,
   getSiteUrl,
   isClientOnlyAuthPath,
   isItemDetailPath,
@@ -21,19 +21,19 @@ import {
   buildAdvisorProfileSeoTitle,
   buildAlumniProfileSeoTitle,
   resolveProgramSocialMeta,
+  RELLIA_SOCIAL_THEME_COLOR,
 } from "@/config/seo"
 import { ADVISOR_DIRECTORY_SEED } from "@/data/advisorDirectory"
 import { FOUNDER_DIRECTORY } from "@/data/founderDirectory"
 import { AppRoutes, RouterShell } from "./AppRoutes"
 import { DEFAULT_PROGRAMS_LANDING, DEFAULT_QMS_PROGRAM, mergeQmsProgram } from "@shared/cms/defaults"
 import {
-  resolveCareersRoleSeo,
   resolveEventCollectionSeo,
   resolveProgramCollectionSeo,
   resolveStoryCollectionSeo,
 } from "@shared/cms/collectionSeo"
-import { parseCareersRoleIdFromPathname } from "@shared/cms/careersRoleShare"
-import type { SeoContent } from "@shared/cms/types"
+import { buildCareersRoleShareMeta, parseCareersRoleIdFromPathname } from "@shared/cms/careersRoleShare"
+import type { CareersOpenRole, SeoContent } from "@shared/cms/types"
 import { mergeCmsPageContent } from "@shared/cms/mergeCmsPageContent"
 import { mergePageSeo } from "@/hooks/useApplyCmsSeo"
 import type { PageSeoOverrides } from "@/context/PageSeoContext"
@@ -44,19 +44,13 @@ import {
   resolveEventCardImageSrc,
 } from "@shared/cms/itemCardImage"
 import {
-  fetchAdvisorsForPrerender,
-  fetchAlumniCompaniesForPrerender,
-  fetchDirectoryFilterGroupsForPrerender,
-  fetchEventBySlugForPrerender,
-  fetchEventsForPrerender,
   fetchPageBySlugForPrerender,
-  fetchProgramBySlugForPrerender,
-  fetchStoryBySlugForPrerender,
-  prefetchCareersPageContent,
-  fetchPaymentPageForPrerender,
-  fetchProgramsLandingForPrerender,
-  fetchProgramsForPrerender,
 } from "@shared/cms/prerenderSanity"
+import { prefetchCmsQueriesForPathname } from "@shared/cms/prerenderPrefetch"
+import {
+  CMS_QUERY_STATE_SCRIPT_ID,
+  serializeDehydratedCmsQueryState,
+} from "@/lib/cmsQueryHydration"
 
 const RESERVED_FIRST_SEGMENTS = new Set([
   "about",
@@ -143,7 +137,7 @@ const buildEventSeo = (
     seo: (event.seo as SeoContent | null | undefined) ?? null,
     imageSrc,
   })
-  const ogSrc = resolved.ogImageUrl || imageSrc
+  const ogSrc = imageSrc
   const ogImage = ogSrc ? resolveSocialOgImage(ogSrc, siteOrigin, { square: true }) : undefined
   return {
     title: clampMetaTitle(resolved.title),
@@ -169,6 +163,7 @@ const buildProgramSeo = (
     heroDescription:
       typeof program.heroDescription === "string" ? program.heroDescription : undefined,
     seo: (program.seo as SeoContent | null | undefined) ?? null,
+    imageSrc: typeof program.imageSrc === "string" ? program.imageSrc : undefined,
   })
   const social = resolveProgramSocialMeta(
     {
@@ -201,16 +196,22 @@ const buildCareersRoleSeo = (
     location?: string
     employmentType?: string
     description?: unknown
+    responsibilities?: string[]
   },
   heroImageSrc?: string,
 ): ItemPrerenderSeo => {
-  const resolved = resolveCareersRoleSeo({
+  const shareRole: CareersOpenRole = {
+    id: "",
     title: typeof role.title === "string" ? role.title : "Open role",
-    location: typeof role.location === "string" ? role.location : undefined,
-    employmentType: typeof role.employmentType === "string" ? role.employmentType : undefined,
-    description: role.description,
-  })
-  const ogSrc = heroImageSrc?.trim() || "/images/careers-img.jpg"
+    location: typeof role.location === "string" ? role.location : "",
+    employmentType: typeof role.employmentType === "string" ? role.employmentType : "",
+    description: Array.isArray(role.description) ? role.description : null,
+    responsibilities: Array.isArray(role.responsibilities)
+      ? role.responsibilities.filter((line): line is string => typeof line === "string")
+      : [],
+  }
+  const resolved = buildCareersRoleShareMeta(shareRole, { heroImageSrc })
+  const ogSrc = resolved.ogImageUrl?.trim() || "/images/careers-img.jpg"
   const ogImage = resolveSocialOgImage(ogSrc, getSiteUrl(), { landscape: true })
   return {
     title: clampMetaTitle(resolved.title),
@@ -238,7 +239,7 @@ const buildStorySeo = (
     seo: story.seo,
     coverImageSrc: story.coverImageSrc,
   })
-  const ogSrc = resolved.ogImageUrl || story.coverImageSrc?.trim()
+  const ogSrc = story.coverImageSrc?.trim()
   const ogImage = ogSrc
     ? resolveSocialOgImage(ogSrc, siteOrigin, { landscape: true }) ??
       resolveShareOgImage(undefined, { landscape: true })
@@ -458,22 +459,39 @@ export const prerender = async (data: { url: string }) => {
 
   if (isClientOnlyAuthPath(pathname)) {
     const routeSeo = getSeoForPathname(pathname)
+    const adminOg = getAdminOgImage()
+    const pageUrl = `${getSiteUrl()}${pathname === "/" ? "" : pathname}`
+    const headElements = new Set<string>([
+      `<meta name="robots" content="noindex, nofollow" />`,
+    ])
+    appendSocialMeta(
+      headElements,
+      {
+        title: routeSeo.title,
+        description: routeSeo.description,
+        ogImage: adminOg?.url,
+        ogImageWidth: adminOg?.width,
+        ogImageHeight: adminOg?.height,
+      },
+      pageUrl,
+    )
     return {
       html: "",
       links: new Set<string>(),
       head: {
         lang: "en",
         title: routeSeo.title,
-        elements: new Set([
-          `<meta name="description" content="${escapeMetaAttr(routeSeo.description)}" />`,
-          `<meta name="robots" content="noindex, nofollow" />`,
-        ]),
+        elements: headElements,
       },
     }
   }
 
   const siteOrigin = getSiteUrl()
   const pageUrl = `${siteOrigin}${pathname === "/" ? "" : pathname}`
+
+  prerenderQueryClient.clear()
+
+  const prefetchMeta = await prefetchCmsQueriesForPathname(prerenderQueryClient, pathname)
 
   const prefetched: {
     event?: Record<string, unknown> | null
@@ -483,156 +501,56 @@ export const prerender = async (data: { url: string }) => {
     alumni?: Record<string, unknown> | null
     careersRole?: Record<string, unknown> | null
     careersPageHeroImageSrc?: string | null
-  } = {}
-
-  if (pathname === "/careers" || pathname.startsWith("/careers/roles/")) {
-    const careersPage = await prefetchCareersPageContent()
-    prefetched.careersPageHeroImageSrc =
-      typeof careersPage.heroImageSrc === "string" ? careersPage.heroImageSrc : null
-    await prerenderQueryClient.prefetchQuery({
-      queryKey: ["cms", "careersPage"],
-      queryFn: async () => careersPage,
-    })
-
-    if (pathname.startsWith("/careers/roles/")) {
-      const roleId = parseCareersRoleIdFromPathname(pathname)
-      if (roleId) {
-        prefetched.careersRole =
-          careersPage.openRoles?.find((row) => row.id.trim() === roleId) ?? null
-      }
-    }
+  } = {
+    careersRole: prefetchMeta.careersRole ?? null,
+    careersPageHeroImageSrc: prefetchMeta.careersPageHeroImageSrc ?? null,
   }
 
   if (pathname.startsWith("/events/") && pathname !== "/events") {
     const slug = pathname.slice("/events/".length)
-    prefetched.event = await fetchEventBySlugForPrerender(slug)
-    if (prefetched.event) {
-      await prerenderQueryClient.prefetchQuery({
-        queryKey: ["cms", "event", slug],
-        queryFn: async () => prefetched.event,
-      })
-    }
+    prefetched.event =
+      (prerenderQueryClient.getQueryData(["cms", "event", slug]) as
+        | Record<string, unknown>
+        | undefined) ?? null
   }
 
   if (pathname.startsWith("/programs/") && pathname !== "/programs") {
     const slug = pathname.slice("/programs/".length)
-    prefetched.program = await fetchProgramBySlugForPrerender(slug)
-    if (prefetched.program) {
-      const programDoc = prefetched.program
-      await prerenderQueryClient.prefetchQuery({
-        queryKey: ["cms", "program", slug],
-        queryFn: async () => programDoc,
-      })
-      await prerenderQueryClient.prefetchQuery({
-        queryKey: ["cms", "programBySlug", slug],
-        queryFn: async () => {
-          const raw = programDoc
-          const content = mergeQmsProgram(raw ?? undefined, DEFAULT_QMS_PROGRAM)
-          return {
-            content,
-            sections: Array.isArray(raw.sections) ? raw.sections : [],
-          }
-        },
-      })
-    }
+    prefetched.program =
+      (prerenderQueryClient.getQueryData(["cms", "program", slug]) as
+        | Record<string, unknown>
+        | undefined) ?? null
   }
 
   if (pathname.startsWith("/stories/") && pathname !== "/stories") {
     const slug = pathname.slice("/stories/".length)
-    prefetched.story = await fetchStoryBySlugForPrerender(slug)
-    if (prefetched.story) {
-      await prerenderQueryClient.prefetchQuery({
-        queryKey: ["cms", "story", slug],
-        queryFn: async () => prefetched.story,
-      })
-    }
+    prefetched.story =
+      (prerenderQueryClient.getQueryData(["cms", "story", slug]) as
+        | Record<string, unknown>
+        | undefined) ?? null
   }
 
   if (pathname.startsWith("/advisors/directory/") && pathname !== "/advisors/directory") {
     const id = pathname.slice("/advisors/directory/".length)
-    const advisors = await fetchAdvisorsForPrerender()
+    const advisors =
+      (prerenderQueryClient.getQueryData(["cms", "advisors"]) as Record<string, unknown>[]) ?? []
     prefetched.advisor =
       advisors.find((entry) => String(entry.id ?? "") === id) ??
-      (ADVISOR_DIRECTORY_SEED.find((entry) => entry.id === id) as Record<string, unknown> | undefined) ??
+      (ADVISOR_DIRECTORY_SEED.find((entry) => entry.id === id) as
+        | Record<string, unknown>
+        | undefined) ??
       null
-    await prerenderQueryClient.prefetchQuery({
-      queryKey: ["cms", "advisors"],
-      queryFn: async () => advisors,
-    })
   }
 
   if (pathname.startsWith("/founders/alumni/") && pathname !== "/founders/alumni") {
     const id = pathname.slice("/founders/alumni/".length)
-    const companies = await fetchAlumniCompaniesForPrerender()
+    const companies =
+      (prerenderQueryClient.getQueryData(["cms", "alumniCompanies"]) as Record<string, unknown>[]) ??
+      []
     prefetched.alumni =
       companies.find((entry) => String(entry.id ?? "") === id) ??
       (FOUNDER_DIRECTORY.find((entry) => entry.id === id) as Record<string, unknown> | undefined) ??
       null
-    await prerenderQueryClient.prefetchQuery({
-      queryKey: ["cms", "alumniCompanies"],
-      queryFn: async () => companies,
-    })
-  }
-
-  if (pathname === "/events") {
-    const events = await fetchEventsForPrerender()
-    await prerenderQueryClient.prefetchQuery({
-      queryKey: ["cms", "events"],
-      queryFn: async () => events,
-    })
-  }
-
-  if (pathname === "/advisors/directory") {
-    const [advisors, filterGroups] = await Promise.all([
-      fetchAdvisorsForPrerender(),
-      fetchDirectoryFilterGroupsForPrerender(),
-    ])
-    await prerenderQueryClient.prefetchQuery({
-      queryKey: ["cms", "advisors"],
-      queryFn: async () => advisors,
-    })
-    await prerenderQueryClient.prefetchQuery({
-      queryKey: ["cms", "directoryFilterGroups"],
-      queryFn: async () => filterGroups,
-    })
-  }
-
-  if (pathname === "/founders/alumni") {
-    const [companies, filterGroups] = await Promise.all([
-      fetchAlumniCompaniesForPrerender(),
-      fetchDirectoryFilterGroupsForPrerender(),
-    ])
-    await prerenderQueryClient.prefetchQuery({
-      queryKey: ["cms", "alumniCompanies"],
-      queryFn: async () => companies,
-    })
-    await prerenderQueryClient.prefetchQuery({
-      queryKey: ["cms", "directoryFilterGroups"],
-      queryFn: async () => filterGroups,
-    })
-  }
-
-  if (pathname === "/membership") {
-    const paymentPage = await fetchPaymentPageForPrerender()
-    await prerenderQueryClient.prefetchQuery({
-      queryKey: ["cms", "paymentPage"],
-      queryFn: async () => paymentPage,
-    })
-  }
-
-  if (pathname === "/programs") {
-    const [landing, list] = await Promise.all([
-      fetchProgramsLandingForPrerender(),
-      fetchProgramsForPrerender(),
-    ])
-    await prerenderQueryClient.prefetchQuery({
-      queryKey: ["cms", "programsLanding"],
-      queryFn: async () => landing,
-    })
-    await prerenderQueryClient.prefetchQuery({
-      queryKey: ["cms", "programs"],
-      queryFn: async () => list,
-    })
   }
 
   let cmsPageInitialSeo: PageSeoOverrides | undefined
@@ -678,8 +596,14 @@ export const prerender = async (data: { url: string }) => {
   const html = renderToString(app)
   const links = filterDiscoveredLinks(parseLinks(html))
 
+  const dehydratedCmsState = dehydrate(prerenderQueryClient)
+
   const headElements = new Set<string>()
   const helmet = helmetContext.helmet
+
+  headElements.add(
+    `<script id="${CMS_QUERY_STATE_SCRIPT_ID}" type="application/json">${serializeDehydratedCmsQueryState(dehydratedCmsState)}</script>`,
+  )
 
   if (itemSeo) {
     appendSocialMeta(headElements, itemSeo, pageUrl)

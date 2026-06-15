@@ -162,12 +162,16 @@ export const storiesQuery = `*[_type == "story" && !(_id in path("drafts.**"))]
   "coverImageAlt": headerImageAlt,
   "tag": filters[0]->title,
   publishedAt,
-  featured
+  featured,
+  ${seoFragment}
 }`
 
 export const storiesPageQuery = `*[_id == "storiesPage"][0]{
   headlinePortable,
   subheadline,
+  relatedSectionTitle,
+  relatedSectionSubheadline,
+  relatedSectionEnabled,
   ${seoFragment}
 }`
 
@@ -267,16 +271,15 @@ export const pageBySlugQuery = `*[_type == "page" && slug.current == $slug && sl
   title,
   "slug": slug.current,
   ${seoFragment},
-  sections[]{ _key, ${pageSectionFieldsFragment} },
-  pageBuilder[]{ _key, ${pageSectionFieldsFragment} }
+  sections[]{ _key, ${pageSectionFieldsFragment} }
 }`
 
 export const pagesPrerenderSnapshotQuery = `*[_type == "page" && defined(slug.current) && slug.current != "terms" && slug.current != "privacy" && !(_id in path("drafts.**"))]{
   title,
   "slug": slug.current,
+  ${pageVisibilityFragment},
   ${seoFragment},
-  sections[]{ _key, ${pageSectionFieldsFragment} },
-  pageBuilder[]{ _key, ${pageSectionFieldsFragment} }
+  sections[]{ _key, ${pageSectionFieldsFragment} }
 }`
 
 const pageSectionsFragment = `sections[]{ _key, ${pageSectionFieldsFragment} }`
@@ -311,6 +314,9 @@ export const networkFoundersPageQuery = `*[_id == "networkFoundersPage"][0]{
 export const networkAlumniDirectoryPageQuery = `*[_id == "networkAlumniDirectoryPage"][0]{
   directoryTitle,
   directorySubtitle,
+  relatedSectionTitle,
+  relatedSectionSubheadline,
+  relatedSectionEnabled,
   directoryCtaTitle,
   directoryCtaBody,
   directoryCtaPrimaryLabel,
@@ -322,6 +328,9 @@ export const networkAlumniDirectoryPageQuery = `*[_id == "networkAlumniDirectory
 export const networkAdvisorsDirectoryPageQuery = `*[_id == "networkAdvisorsDirectoryPage"][0]{
   directoryTitle,
   directorySubtitle,
+  relatedSectionTitle,
+  relatedSectionSubheadline,
+  relatedSectionEnabled,
   directoryCtaTitle,
   directoryCtaBody,
   directoryCtaPrimaryLabel,
@@ -549,8 +558,6 @@ export const aboutPageQuery = `*[_id == "aboutPage"][0]{
   showValuesTag,
   valuesTag,
   valuesHeadlinePortable,
-  valuesTitle,
-  valuesSubtitle,
   values[]{ _key, iconKey, title, description },
   teamTitle,
   teamSubtitle,
@@ -608,12 +615,18 @@ export const programsLayoutPageQuery = `*[_id == "programsLayoutPage"][0]{
   timelineTitle,
   timelineSubtitle,
   timelineWeekLabelPrefix,
+  relatedSectionTitle,
+  relatedSectionSubheadline,
+  relatedSectionEnabled,
   ${seoFragment}
 }`
 
 export const eventsLandingQuery = `*[_id == "eventsLandingPage"][0]{
   heroTitlePortable,
   heroSubtitle,
+  relatedSectionTitle,
+  relatedSectionSubheadline,
+  relatedSectionEnabled,
   ctaTitle,
   ctaBody,
   ctaPrimaryLabel,
@@ -677,7 +690,6 @@ export const programsQuery = `*[_type == "program" && status != "hidden" && !(_i
   "imageSrc": image.asset->url,
   href,
   buttonText,
-  waitlistHref,
   status,
   sortOrder,
   ${seoFragment}
@@ -691,7 +703,6 @@ export const programBySlugQuery = `*[_type == "program" && slug.current == $slug
   "imageSrc": image.asset->url,
   href,
   buttonText,
-  waitlistHref,
   status,
   sortOrder,
   ${programDetailFields},
@@ -719,7 +730,8 @@ export const eventsQuery = `*[_type == "event" && status != "hidden" && !(_id in
   embedLumaOnDetailPage,
   addToCalendarEnabled,
   status,
-  sortOrder
+  sortOrder,
+  ${seoFragment}
 }`
 
 export const eventBySlugQuery = `*[_type == "event" && slug.current == $slug && !(_id in path("drafts.**"))][0]{
@@ -828,6 +840,10 @@ export const diagnosticSurveyContentQuery = `*[_id == "diagnosticSurveyContent"]
   reportMembershipCtaBody,
   reportMembershipCtaButton,
   "reportMembershipCtaImageSrc": reportMembershipCtaImage.asset->url,
+  "reportMembershipCtaImageDisplayMode": reportMembershipCtaImage.displayMode,
+  "reportMembershipCtaImageWidth": reportMembershipCtaImage.asset->metadata.dimensions.width,
+  "reportMembershipCtaImageHeight": reportMembershipCtaImage.asset->metadata.dimensions.height,
+  "reportMembershipCtaImageHotspot": reportMembershipCtaImage.hotspot,
   sections[]{ _key,
     id,
     icon,
@@ -909,7 +925,7 @@ export const openRolesQuery = `*[_type == "openRole" && !(_id in path("drafts.**
   title,
   location,
   employmentType,
-  description,
+  description${portableRichTextBlocksFragment},
   responsibilities,
   applyButtonLabel,
   applyButtonUrl,
@@ -924,11 +940,15 @@ export const careersPageQuery = `*[_id == "careersPage"][0]{
   heroTitleSuffix,
   ${networkWhyFragment},
   perksTitle,
+  perksTitlePortable,
   perksDescription,
   perksItems[]{ _key, title, body, iconKey },
   openRolesTitle,
+  openRolesTitlePortable,
+  openRolesSubtitle,
   ${networkCtaFragment},
   lifeAtRelliaHeading,
+  lifeAtRelliaHeadingPortable,
   lifeAtRelliaSubheading,
   lifeAtRelliaImages[]{ _key,
     "src": asset->url,

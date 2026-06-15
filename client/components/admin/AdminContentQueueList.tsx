@@ -104,7 +104,7 @@ const ContentTypeSection = ({ type, items, defaultOpen = false }: ContentTypeSec
   const label = formatCmsDocumentTypeLabel(type)
 
   return (
-    <Collapsible open={open} onOpenChange={setOpen} className="rounded-3xl border border-black/[0.06] bg-rellia-greyTeal/30">
+    <Collapsible open={open} onOpenChange={setOpen} className="rounded-2xl border border-black/[0.06] bg-rellia-greyTeal/30">
       <CollapsibleTrigger
         type="button"
         className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left transition-colors hover:bg-white/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 rounded-2xl"

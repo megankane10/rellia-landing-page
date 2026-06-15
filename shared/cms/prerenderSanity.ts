@@ -2,7 +2,21 @@ import { createClient, type SanityClient } from "@sanity/client"
 import {
   advisorsQuery,
   alumniCompaniesQuery,
+  aboutPageQuery,
   directoryFilterGroupsQuery,
+  eventsLandingQuery,
+  featuredStoriesQuery,
+  globalSettingsQuery,
+  homePageQuery,
+  navigationQuery,
+  networkAdvisorsDirectoryPageQuery,
+  networkAdvisorsPageQuery,
+  networkAlumniDirectoryPageQuery,
+  networkFoundersPageQuery,
+  networkInvestorsPageQuery,
+  networkPartnersPageQuery,
+  siteSettingsQuery,
+  storiesPageQuery,
   eventBySlugQuery,
   eventsQuery,
   careersPageQuery,
@@ -19,13 +33,19 @@ import {
 import { filterValidOpenRoles } from "../careersOpenRolesVisibility"
 import { mergeCareersPage } from "./careersPageDefaults"
 import { careersRoleDetailPath } from "./careersRoleShare"
-import type { CareersPageContent } from "./types"
+import type { CareersOpenRole, CareersPageContent } from "./types"
 import eventsBuildSnapshot from "./build-snapshots/events.json"
 import openRolesBuildSnapshot from "./build-snapshots/openRoles.json"
 import pagesBuildSnapshot from "./build-snapshots/pages.json"
 import storiesBuildSnapshot from "./build-snapshots/stories.json"
 import { defaultProgramRecordForSlug } from "./itemCardImage"
 import { trySanityApiConfig } from "./sanityEnv"
+import {
+  isCmsPageSitemapEligible,
+  isCmsSeoIndexable,
+  rowId,
+  rowSlug,
+} from "./sitemapIndexability"
 
 const snapshotEvents = (): Record<string, unknown>[] =>
   Array.isArray(eventsBuildSnapshot)
@@ -37,21 +57,11 @@ const snapshotStories = (): Record<string, unknown>[] =>
     ? (storiesBuildSnapshot as Record<string, unknown>[])
     : []
 
-const snapshotOpenRoles = (): Array<{
-  id?: string
-  title?: string
-  location?: string
-  employmentType?: string
-  description?: string
-}> =>
+const snapshotOpenRoles = (): Array<Partial<CareersOpenRole> & { id?: string; roleId?: string }> =>
   Array.isArray(openRolesBuildSnapshot)
-    ? (openRolesBuildSnapshot as Array<{
-        id?: string
-        title?: string
-        location?: string
-        employmentType?: string
-        description?: string
-      }>)
+    ? (openRolesBuildSnapshot as unknown as Array<
+        Partial<CareersOpenRole> & { id?: string; roleId?: string }
+      >)
     : []
 
 const snapshotPages = (): Record<string, unknown>[] =>
@@ -210,6 +220,36 @@ export const fetchDirectoryFilterGroupsForPrerender = async (): Promise<
   }
 }
 
+export const fetchNetworkAlumniDirectoryPageForPrerender = async (): Promise<
+  Record<string, unknown> | null
+> => {
+  const client = getPrerenderSanityClient()
+  if (!client) return null
+  try {
+    const row = await client.fetch<Record<string, unknown> | null>(
+      networkAlumniDirectoryPageQuery,
+    )
+    return row ?? null
+  } catch {
+    return null
+  }
+}
+
+export const fetchNetworkAdvisorsDirectoryPageForPrerender = async (): Promise<
+  Record<string, unknown> | null
+> => {
+  const client = getPrerenderSanityClient()
+  if (!client) return null
+  try {
+    const row = await client.fetch<Record<string, unknown> | null>(
+      networkAdvisorsDirectoryPageQuery,
+    )
+    return row ?? null
+  } catch {
+    return null
+  }
+}
+
 export const fetchAdvisorProfilePathsForPrerender = async (): Promise<string[]> => {
   const rows = await fetchAdvisorsForPrerender()
   return rows
@@ -247,13 +287,13 @@ export const prefetchCareersPageContent = async (): Promise<CareersPageContent> 
 }
 
 export const fetchOpenRolesForPrerender = async (): Promise<
-  Array<{ id?: string; title?: string; location?: string; employmentType?: string; description?: string }>
+  Array<Partial<CareersOpenRole> & { id?: string; roleId?: string }>
 > => {
   const client = getPrerenderSanityClient()
   if (client) {
     try {
       const rows = await client.fetch<
-        Array<{ id?: string; title?: string; location?: string; employmentType?: string; description?: string }>
+        Array<Partial<CareersOpenRole> & { id?: string; roleId?: string }>
       >(openRolesQuery)
       if (Array.isArray(rows) && rows.length > 0) return rows
     } catch {
@@ -295,8 +335,102 @@ export const fetchEventSlugsForPrerender = async (): Promise<string[]> => {
 export const fetchCmsPageSlugsForPrerender = async (): Promise<string[]> => {
   const pages = await fetchPagesForPrerender()
   return pages
-    .map((row) => (typeof row.slug === "string" ? row.slug.trim() : ""))
+    .map((row) => rowSlug(row))
     .filter(Boolean)
+}
+
+/** Indexable custom CMS pages for sitemap (live visibility + SEO index on). */
+export const fetchIndexableCmsPagePathsForSitemap = async (): Promise<string[]> => {
+  const pages = await fetchPagesForPrerender()
+  return pages
+    .filter(isCmsPageSitemapEligible)
+    .map((row) => rowSlug(row))
+    .filter(Boolean)
+    .map((slug) => `/${slug}`)
+}
+
+/** Indexable published stories for sitemap. Story detail pages are always indexed publicly. */
+export const fetchIndexableStoryPathsForSitemap = async (): Promise<string[]> => {
+  const client = getPrerenderSanityClient()
+  if (client) {
+    try {
+      const rows = await client.fetch<Record<string, unknown>[]>(storiesQuery)
+      if (Array.isArray(rows) && rows.length > 0) {
+        return rows
+          .map((row) => rowSlug(row))
+          .filter(Boolean)
+          .map((slug) => `/stories/${slug}`)
+      }
+    } catch {
+      // fall through to build snapshot
+    }
+  }
+
+  return snapshotStories()
+    .map((row) => rowSlug(row))
+    .filter(Boolean)
+    .map((slug) => `/stories/${slug}`)
+}
+
+/** Indexable published events for sitemap (excludes hidden + noIndex). */
+export const fetchIndexableEventPathsForSitemap = async (): Promise<string[]> => {
+  const rows = await fetchEventsForPrerender()
+  return rows
+    .filter(isCmsSeoIndexable)
+    .map((row) => rowSlug(row))
+    .filter(Boolean)
+    .map((slug) => `/events/${slug}`)
+}
+
+/** Indexable published programs for sitemap (excludes hidden + noIndex). */
+export const fetchIndexableProgramPathsForSitemap = async (): Promise<string[]> => {
+  const rows = await fetchProgramsForPrerender()
+  return rows
+    .filter(isCmsSeoIndexable)
+    .map((row) => rowSlug(row))
+    .filter(Boolean)
+    .map((slug) => `/programs/${slug}`)
+}
+
+/** Published alumni profile paths for sitemap. */
+export const fetchAlumniPathsForSitemap = async (): Promise<string[]> => {
+  return fetchAlumniProfilePathsForPrerender()
+}
+
+/** Published advisor profile paths for sitemap. */
+export const fetchAdvisorPathsForSitemap = async (): Promise<string[]> => {
+  return fetchAdvisorProfilePathsForPrerender()
+}
+
+/** Paths CMS marks as noindex — used to drop matching static ROUTE_SEO entries. */
+export const fetchCmsNoIndexPathsForSitemap = async (): Promise<string[]> => {
+  const [events, programs, pages] = await Promise.all([
+    fetchEventsForPrerender(),
+    fetchProgramsForPrerender(),
+    fetchPagesForPrerender(),
+  ])
+
+  const excluded = new Set<string>()
+
+  for (const row of events) {
+    if (isCmsSeoIndexable(row)) continue
+    const slug = rowSlug(row)
+    if (slug) excluded.add(`/events/${slug}`)
+  }
+
+  for (const row of programs) {
+    if (isCmsSeoIndexable(row)) continue
+    const slug = rowSlug(row)
+    if (slug) excluded.add(`/programs/${slug}`)
+  }
+
+  for (const row of pages) {
+    if (isCmsPageSitemapEligible(row)) continue
+    const slug = rowSlug(row)
+    if (slug) excluded.add(`/${slug}`)
+  }
+
+  return [...excluded]
 }
 
 export const fetchPaymentPageForPrerender = async (): Promise<Record<string, unknown> | null> => {
@@ -330,4 +464,72 @@ export const fetchProgramsForPrerender = async (): Promise<Record<string, unknow
   } catch {
     return []
   }
+}
+
+const fetchSingleton = async (query: string): Promise<Record<string, unknown> | null> => {
+  const client = getPrerenderSanityClient()
+  if (!client) return null
+  try {
+    const doc = await client.fetch<Record<string, unknown> | null>(query)
+    return doc ?? null
+  } catch {
+    return null
+  }
+}
+
+export const fetchHomePageForPrerender = async (): Promise<Record<string, unknown> | null> =>
+  fetchSingleton(homePageQuery)
+
+export const fetchGlobalSettingsForPrerender = async (): Promise<Record<string, unknown> | null> =>
+  fetchSingleton(globalSettingsQuery)
+
+export const fetchNavigationForPrerender = async (): Promise<Record<string, unknown> | null> =>
+  fetchSingleton(navigationQuery)
+
+export const fetchSiteSettingsForPrerender = async (): Promise<Record<string, unknown> | null> =>
+  fetchSingleton(siteSettingsQuery)
+
+export const fetchAboutPageForPrerender = async (): Promise<Record<string, unknown> | null> =>
+  fetchSingleton(aboutPageQuery)
+
+export const fetchStoriesPageForPrerender = async (): Promise<Record<string, unknown> | null> =>
+  fetchSingleton(storiesPageQuery)
+
+export const fetchEventsLandingPageForPrerender = async (): Promise<Record<string, unknown> | null> =>
+  fetchSingleton(eventsLandingQuery)
+
+export const fetchNetworkFoundersPageForPrerender = async (): Promise<Record<string, unknown> | null> =>
+  fetchSingleton(networkFoundersPageQuery)
+
+export const fetchNetworkAdvisorsPageForPrerender = async (): Promise<Record<string, unknown> | null> =>
+  fetchSingleton(networkAdvisorsPageQuery)
+
+export const fetchNetworkInvestorsPageForPrerender = async (): Promise<Record<string, unknown> | null> =>
+  fetchSingleton(networkInvestorsPageQuery)
+
+export const fetchNetworkPartnersPageForPrerender = async (): Promise<Record<string, unknown> | null> =>
+  fetchSingleton(networkPartnersPageQuery)
+
+export const fetchFeaturedStoriesForPrerender = async (): Promise<Record<string, unknown>[]> => {
+  const client = getPrerenderSanityClient()
+  if (!client) return []
+  try {
+    const rows = await client.fetch<Record<string, unknown>[]>(featuredStoriesQuery)
+    return Array.isArray(rows) ? rows : []
+  } catch {
+    return []
+  }
+}
+
+export const fetchStoriesForPrerender = async (): Promise<Record<string, unknown>[]> => {
+  const client = getPrerenderSanityClient()
+  if (client) {
+    try {
+      const rows = await client.fetch<Record<string, unknown>[]>(storiesQuery)
+      if (Array.isArray(rows) && rows.length > 0) return rows
+    } catch {
+      // fall through to build snapshot
+    }
+  }
+  return snapshotStories()
 }

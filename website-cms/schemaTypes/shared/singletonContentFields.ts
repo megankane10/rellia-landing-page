@@ -1,6 +1,6 @@
 import {defineField, type FieldDefinition} from 'sanity'
 import {FIELDSET_SEO, GROUP_CONTENT, GROUP_SEO} from './fieldGroups'
-import {pageSectionMembers} from './pageSectionMembers'
+import {MODULAR_PAGE_SECTIONS_DESCRIPTION, pageSectionMembers} from './pageSectionMembers'
 import {seoField} from './seoField'
 
 export const CONTENT_SEO_GROUPS = [GROUP_CONTENT, GROUP_SEO]
@@ -29,9 +29,7 @@ export const modularSectionsField = (options?: ModularSectionsFieldOptions): Fie
     type: 'array',
     of: pageSectionMembers,
     group: options?.group ?? GROUP_MODULAR_SECTIONS.name,
-    description:
-      options?.description ??
-      'Optional modular blocks rendered above the footer CTA band. Drag to reorder.',
+    description: options?.description ?? MODULAR_PAGE_SECTIONS_DESCRIPTION,
   })
 
 export const sectionDividerFieldset = (name: string, title: string) => ({

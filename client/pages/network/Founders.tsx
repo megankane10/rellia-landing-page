@@ -50,6 +50,7 @@ import { useNetworkFoundersPage } from "@/hooks/useCmsDocuments";
 import { PORTFOLIO_LOGO_MARKS } from "@/data/portfolioLogos";
 import { resolveLogoMarqueeMarks } from "@/lib/resolveLogoMarqueeMarks";
 import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo";
+import { deriveHeroPageSeo } from "@/lib/cmsPageSeoDefaults";
 import { mergeNetworkFoundersPage, DEFAULT_NETWORK_FOUNDERS_PAGE } from "@shared/cms/networkPageDefaults"
 import { NetworkHeroTitle } from "@/components/NetworkHeroTitle";
 import type { NetworkFoundersPageContent } from "@shared/cms/types";
@@ -654,7 +655,7 @@ function JourneySplitSection({ content }: { content: NetworkFoundersPageContent 
     launch: Rocket,
   } satisfies Record<JourneyStep["id"], typeof Lightbulb>
 
-  const resolveJourneyIcon = (step: JourneyStep) =>
+  const resolveJourneyIcon = (step: Pick<JourneyStep, "id" | "iconKey">) =>
     resolveNetworkIcon(
       step.iconKey,
       journeyIconById[step.id as keyof typeof journeyIconById] ?? Lightbulb,
@@ -835,8 +836,12 @@ function ExploreNetworkSection({ content }: { content: NetworkFoundersPageConten
                       aria-hidden
                       className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 via-40% to-transparent"
                     />
-                    <div className={cn("absolute right-4 top-4 inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-white/90", PILL_ON_IMAGE_BLUR_CLASS)}>
-                      <TagIcon className="h-3.5 w-3.5 shrink-0" aria-hidden />
+                    <div
+                      aria-hidden
+                      className="pointer-events-none absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-black/35 to-transparent"
+                    />
+                    <div className={cn("absolute right-4 top-4 inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-white", PILL_ON_IMAGE_BLUR_CLASS)}>
+                      <TagIcon className="h-3.5 w-3.5 shrink-0 text-white" aria-hidden />
                       {card.badge ?? (card.roleId === "founder" ? "Alumni" : tag.label)}
                     </div>
 
@@ -874,9 +879,16 @@ function ExploreNetworkSection({ content }: { content: NetworkFoundersPageConten
 export default function Founders() {
   const foundersPageQuery = useNetworkFoundersPage();
   const { data: page } = foundersPageQuery;
-  useApplyCmsSeo(page?.seo);
-
   const content = useMemo(() => mergeNetworkFoundersPage(page), [page]);
+
+  useApplyCmsSeo(
+    page?.seo,
+    deriveHeroPageSeo({
+      pageTitle: content.title ?? "Founders",
+      heroSubtitle: content.heroSubtitle,
+      pathname: "/founders",
+    }),
+  );
 
   const logoMarks = useMemo(
     () => resolveLogoMarqueeMarks(content.logoMarquee, PORTFOLIO_LOGO_MARKS),
@@ -891,10 +903,10 @@ export default function Founders() {
           <div className="lg:flex lg:min-h-screen lg:flex-col">
             <FoundersHero content={content} />
             <LogoMarquee
-              showHeading={false}
-              density="compact"
               marks={logoMarks}
-              sectionClassName="border-b border-black/[0.06] bg-white py-6 md:py-8 lg:flex lg:h-[18vh] lg:min-h-[140px] lg:items-center lg:py-0"
+              showHeading={false}
+              density="default"
+              sectionClassName="border-b border-black/[0.06] bg-white py-4"
             />
           </div>
           <EligibilitySection content={content} />

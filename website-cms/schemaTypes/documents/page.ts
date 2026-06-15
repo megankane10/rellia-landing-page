@@ -1,5 +1,5 @@
 import {defineField, defineType} from 'sanity'
-import {pageSectionMembers} from '../shared/pageSectionMembers'
+import {MODULAR_PAGE_SECTIONS_DESCRIPTION, pageSectionMembers} from '../shared/pageSectionMembers'
 import {pageVisibilityFields, publishingGroup} from '../shared/pageVisibilityFields'
 
 const RESERVED_PAGE_SLUGS = [
@@ -70,6 +70,7 @@ export const page = defineType({
       title: 'Page sections',
       type: 'array',
       of: pageSectionMembers,
+      description: MODULAR_PAGE_SECTIONS_DESCRIPTION,
       group: 'content',
     }),
     defineField({

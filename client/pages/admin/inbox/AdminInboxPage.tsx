@@ -1,9 +1,10 @@
-import { useMemo, useState, type ReactNode } from "react"
+import { useMemo, useState, useEffect, type ReactNode } from "react"
 import { Link, useSearchParams } from "react-router-dom"
 import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { Inbox, Search, Stethoscope } from "lucide-react"
 import { supabase } from "@/lib/supabase"
 import AdminPageHeader from "@/components/admin/AdminPageHeader"
+import AdminPageReveal from "@/components/admin/AdminPageReveal"
 import AdminDownloadCsvButton from "@/components/admin/AdminDownloadCsvButton"
 import AdminRecordList from "@/components/admin/AdminRecordList"
 import AdminSubmissionStatusFilter from "@/components/admin/AdminSubmissionStatusFilter"
@@ -65,10 +66,15 @@ const AdminInboxPage = () => {
           ? "modal"
           : "all"
   const [statusFilter, setStatusFilter] = useState<StatusFilterValue>("all")
-  const [searchQuery, setSearchQuery] = useState("")
+  const [searchQuery, setSearchQuery] = useState(() => searchParams.get("q") ?? "")
   const [levelFilter, setLevelFilter] = useState<string>("all")
   const [updatingId, setUpdatingId] = useState<string | null>(null)
   const [statusWritesEnabled, setStatusWritesEnabled] = useState(true)
+
+  useEffect(() => {
+    const q = searchParams.get("q") ?? ""
+    setSearchQuery((current) => (current === q ? current : q))
+  }, [searchParams])
 
   const setTab = (next: SubmissionTab) => {
     setSearchParams((prev) => {
@@ -497,6 +503,7 @@ const AdminInboxPage = () => {
 
   return (
     <div>
+      <AdminPageReveal>
       <AdminPageHeader
         title="Inbox"
         actions={
@@ -531,7 +538,9 @@ const AdminInboxPage = () => {
           )
         }
       />
+      </AdminPageReveal>
 
+      <AdminPageReveal delay={0.06}>
       {!statusWritesEnabled ? (
         <p className="mb-4 rounded-lg border border-amber-200/80 bg-amber-50 px-4 py-3 font-urbanist text-sm text-amber-900">
           Status updates need Supabase policies. Run{" "}
@@ -642,6 +651,7 @@ const AdminInboxPage = () => {
           {renderList()}
         </TabsContent>
       </Tabs>
+      </AdminPageReveal>
     </div>
   )
 }

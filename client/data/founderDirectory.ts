@@ -1,10 +1,11 @@
 import type { SanityPortableText } from "@shared/cms/types"
 import type { DirectoryFilterAssignment } from "@/lib/directoryFilterValues"
+import { POWER_OF_PLAY_PROFILE_BODY } from "../../shared/cms/powerOfPlayProfileBody"
 
 export type FounderPerson = {
   name: string
-  role: string
-  bio: string
+  role?: string
+  bio?: string
   socialLinks?: Array<{ platform?: string; label?: string; url?: string }>
   imageSrc?: string
   email?: string
@@ -77,7 +78,6 @@ export const FOUNDER_DIRECTORY: FounderCompany[] = [
       {
         name: "Deena Al-Sammak",
         role: "Health Sciences Graduate",
-        bio: "Co-founder focused on clinical validation and program development for pediatric rehab tooling.",
         socialLinks: [
           { platform: "linkedin", label: "LinkedIn", url: "https://www.linkedin.com/in/deena-al-sammak/" },
         ],
@@ -86,7 +86,6 @@ export const FOUNDER_DIRECTORY: FounderCompany[] = [
       {
         name: "Rooaa Shanshal",
         role: "Software & Biomedical Engineer",
-        bio: "Co-founder leading product engineering for play-based strength measurement.",
         socialLinks: [
           { platform: "linkedin", label: "LinkedIn", url: "https://www.linkedin.com/in/rooaashanshal/" },
         ],
@@ -94,5 +93,9 @@ export const FOUNDER_DIRECTORY: FounderCompany[] = [
       },
     ],
     programs: [],
+    profileBody: POWER_OF_PLAY_PROFILE_BODY,
   },
 ]
+
+export const getFounderPrimaryTag = (company: Pick<FounderCompany, "specialtyTags">): string | undefined =>
+  company.specialtyTags?.[0]?.trim() || undefined

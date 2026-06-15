@@ -1391,12 +1391,12 @@ export const DEFAULT_HOME_PATHS_CARDS: HomePathsCard[] = [
   },
   {
     roleId: "partner",
-    tagLabel: "Partners",
+    tagLabel: "Industry partners",
     title: "Drive adoption",
     subtitle: "Partner pathways designed for pilots, integration, and trust.",
     imageSrc: "/images/paths-partner-pexels.jpg",
     imageAlt: "Two partners shaking hands after an agreement",
-    ctaLabel: "I'm a partner",
+    ctaLabel: "I'm an industry partner",
     ctaTo: "/industry-partners",
   },
 ]
@@ -1652,9 +1652,10 @@ export const DEFAULT_ABOUT_PAGE: AboutPageContent = {
   missionImageAlt: "Healthcare professionals meeting and collaborating together",
   valuesTag: "OUR VALUES",
   showValuesTag: true,
-  valuesHeadlinePortable: twoPartHeroHeadline(
+  valuesHeadlinePortable: threePartHeroHeadline(
     "These principles guide",
-    "every decision we make.",
+    "every decision",
+    " we make.",
   ),
   values: [
     {
@@ -1985,6 +1986,7 @@ export const DEFAULT_PROGRAMS_LANDING: ProgramsLandingContent = {
       imageSrc: "/images/programs-buildYourQMS.png",
       href: "/programs/build-your-quality-management-system",
       buttonText: "Learn more",
+      status: "available",
     },
     {
       title: "Ignite: Pitch Foundations",
@@ -1993,7 +1995,7 @@ export const DEFAULT_PROGRAMS_LANDING: ProgramsLandingContent = {
       imageSrc: "/images/programs-IgnitepItch.png",
       href: "/programs/ignite-pitch-foundations",
       buttonText: "Learn more",
-      waitlistHref: "https://forms.fillout.com/t/bLGtn6S2jtus",
+      status: "waitlist",
     },
     {
       title: "Advance: Data Room Deep Dive",
@@ -2002,7 +2004,7 @@ export const DEFAULT_PROGRAMS_LANDING: ProgramsLandingContent = {
       imageSrc: "/images/programs-DataRoom.png",
       href: "/programs/advance-data-room-deep-dive",
       buttonText: "Learn more",
-      waitlistHref: "https://forms.fillout.com/t/bLGtn6S2jtus",
+      status: "waitlist",
     },
     {
       title: "Elevate: Healthcare Capital",
@@ -2011,7 +2013,7 @@ export const DEFAULT_PROGRAMS_LANDING: ProgramsLandingContent = {
       imageSrc: "/images/programs-HealthcareCapital.png",
       href: "/programs/elevate-healthcare-capital",
       buttonText: "Learn more",
-      waitlistHref: "https://forms.fillout.com/t/bLGtn6S2jtus",
+      status: "waitlist",
     },
     {
       title: "First 50 Users: A Clinical Feedback Intensive",
@@ -2020,7 +2022,7 @@ export const DEFAULT_PROGRAMS_LANDING: ProgramsLandingContent = {
       imageSrc: "/images/programs-first50Users.png",
       href: "/programs/first-50-users-clinical-feedback-intensive",
       buttonText: "Learn more",
-      waitlistHref: "https://forms.fillout.com/t/bLGtn6S2jtus",
+      status: "waitlist",
     },
     {
       title: "A Low-Fidelity Prototype Lab",
@@ -2029,7 +2031,7 @@ export const DEFAULT_PROGRAMS_LANDING: ProgramsLandingContent = {
       imageSrc: "/images/programs-PrototypeLab.png",
       href: "/programs/low-fidelity-prototype-lab",
       buttonText: "Learn more",
-      waitlistHref: "https://forms.fillout.com/t/bLGtn6S2jtus",
+      status: "waitlist",
     },
     {
       title: "Advisory Board Match",
@@ -2038,7 +2040,7 @@ export const DEFAULT_PROGRAMS_LANDING: ProgramsLandingContent = {
       imageSrc: "/images/programs-AdvisoryBoard.png",
       href: "/programs/advisory-board-match",
       buttonText: "Learn more",
-      waitlistHref: "https://forms.fillout.com/t/bLGtn6S2jtus",
+      status: "waitlist",
     },
     {
       title: "Design Your Brand Strategy",
@@ -2047,7 +2049,7 @@ export const DEFAULT_PROGRAMS_LANDING: ProgramsLandingContent = {
       imageSrc: "/images/programs-brandStrategy.png",
       href: "/programs/design-your-brand-strategy",
       buttonText: "Learn more",
-      waitlistHref: "https://forms.fillout.com/t/bLGtn6S2jtus",
+      status: "waitlist",
     },
     {
       title: "Regulatory Strategy Sprint",
@@ -2056,7 +2058,7 @@ export const DEFAULT_PROGRAMS_LANDING: ProgramsLandingContent = {
       imageSrc: "/images/programs-regulatoryRoadmap.png",
       href: "/programs/regulatory-strategy-sprint",
       buttonText: "Learn more",
-      waitlistHref: "https://forms.fillout.com/t/bLGtn6S2jtus",
+      status: "available",
     },
   ],
   upcomingEvents: [
@@ -2271,7 +2273,7 @@ export const DEFAULT_CONTACT_PAGE: ContactPageContent = {
   sideImageSrc: "/health_tech_collaboration_1778023064936.png",
   sideImageAlt: "Rellia contact — team and collaboration",
   leftLogoImageSrc: "/images/hologram-logo.png",
-  quotePersonImageSrc: "/images/megan-headshot.jpeg",
+  quotePersonImageSrc: "/images/team-megankane.jpg",
   quoteText:
     "We meet health tech founders where they’re at, surrounding them with people who get it and get them",
   quoteAttributionName: "Megan Kane",
@@ -2442,7 +2444,6 @@ export const DEFAULT_PAYMENT_PAGE: PaymentPageContent = {
   benefitsPanelImageEnabled: true,
   benefitsPanelImageSrc: "/images/membership-splash.jpg",
   choosePlanHeadline: "Choose your plan",
-  promoPillEnabled: true,
   promoMessage:
     "Founding members get 50% off first purchase using code {code}",
   pricingPerSuffix: "",
@@ -2919,9 +2920,6 @@ export function mergePaymentPage(
   if (typeof base.pricingAnnualDiscountEnabled !== "boolean") {
     base.pricingAnnualDiscountEnabled = DEFAULT_PAYMENT_PAGE.pricingAnnualDiscountEnabled
   }
-  if (typeof base.promoPillEnabled !== "boolean") {
-    base.promoPillEnabled = DEFAULT_PAYMENT_PAGE.promoPillEnabled
-  }
   fill("benefitsPanelHeadline", DEFAULT_PAYMENT_PAGE.benefitsPanelHeadline ?? "")
   fill("benefitsPanelDescription", DEFAULT_PAYMENT_PAGE.benefitsPanelDescription ?? "")
   base.benefitsPanelDescriptionPortable = resolveBenefitsPanelDescriptionPortable(
@@ -3098,7 +3096,7 @@ export const DEFAULT_CONSULTING_PAGE: ConsultingPageContent = {
 
 export const DEFAULT_DIAGNOSTIC_LANDING_PAGE: DiagnosticLandingPageContent = {
   title: "Startup Diagnostic",
-  heroBadgeLabel: "LAUNCH READINESS",
+  heroBadgeLabel: "Startup Diagnostic",
   heroTitlePortable: twoPartHeroHeadline("Pressure-test your startup for", "healthcare reality."),
   heroSubtitle:
     "Get an instant readiness score, surface hidden blockers across 12 domains, and unlock advisor matching when you join Rellia.",

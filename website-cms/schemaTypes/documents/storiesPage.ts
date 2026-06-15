@@ -6,6 +6,7 @@ import {
   singletonSeoField,
 } from '../shared/singletonContentFields'
 import {portableHeadlineField} from '../shared/inlineHeroHeadlineField'
+import {relatedContentSectionFields} from '../shared/relatedContentSectionFields'
 import {studioListMedia} from '../shared/studioListMedia'
 
 export const storiesPage = defineType({
@@ -17,6 +18,7 @@ export const storiesPage = defineType({
   fields: [
     portableHeadlineField({name: 'headlinePortable', title: 'Page headline', group: 'content', required: true}),
     defineField({name: 'subheadline', title: 'Subtitle', type: 'text', rows: 2, group: 'content'}),
+    ...relatedContentSectionFields,
     singletonSeoField,
   ],
   preview: {

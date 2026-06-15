@@ -2,17 +2,19 @@ import {defineArrayMember, defineField, defineType} from 'sanity'
 import {iconKeyField} from '../shared/iconKeyField'
 import {CONTENT_SEO_FIELDSETS, singletonSeoField} from '../shared/singletonContentFields'
 import {GROUP_SEO} from '../shared/fieldGroups'
+import {relatedContentSectionFields} from '../shared/relatedContentSectionFields'
 import {studioListMedia} from '../shared/studioListMedia'
 
 const GROUP_HOW_IT_WORKS = {name: 'howItWorks', title: 'How it works', default: true}
 const GROUP_PILLARS = {name: 'pillars', title: 'Pillars'}
 const GROUP_TIMELINE = {name: 'timeline', title: 'Timeline defaults'}
+const GROUP_RELATED = {name: 'related', title: 'Related programs'}
 
 export const programsLayoutPage = defineType({
   name: 'programsLayoutPage',
   title: 'Programs layout (shared copy)',
   type: 'document',
-  groups: [GROUP_HOW_IT_WORKS, GROUP_PILLARS, GROUP_TIMELINE, GROUP_SEO],
+  groups: [GROUP_HOW_IT_WORKS, GROUP_PILLARS, GROUP_TIMELINE, GROUP_RELATED, GROUP_SEO],
   fieldsets: CONTENT_SEO_FIELDSETS,
   fields: [
     defineField({
@@ -77,6 +79,14 @@ export const programsLayoutPage = defineType({
       initialValue: 'Week',
       group: 'timeline',
     }),
+    ...relatedContentSectionFields.map((field) => ({
+      ...field,
+      group: 'related',
+      description:
+        field.name === 'relatedSectionTitle'
+          ? 'Shown at the bottom of program detail pages when other available programs appear (e.g. “More available programs”).'
+          : field.description,
+    })),
     singletonSeoField,
   ],
   preview: {

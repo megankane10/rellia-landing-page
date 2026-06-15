@@ -1,5 +1,5 @@
 import {defineField, defineType} from 'sanity'
-import {pageSectionMembers} from '../shared/pageSectionMembers'
+import {MODULAR_PAGE_SECTIONS_DESCRIPTION, pageSectionMembers} from '../shared/pageSectionMembers'
 import {preparePortableHeadlinePreview} from '../shared/portableTextPreview'
 import {
   CONTENT_SEO_FIELDSETS,
@@ -7,6 +7,7 @@ import {
   singletonSeoField,
 } from '../shared/singletonContentFields'
 import {portableHeadlineField} from '../shared/inlineHeroHeadlineField'
+import {relatedContentSectionFields} from '../shared/relatedContentSectionFields'
 import {studioListMedia} from '../shared/studioListMedia'
 
 export const eventsLandingPage = defineType({
@@ -29,6 +30,10 @@ export const eventsLandingPage = defineType({
       rows: 2,
       group: 'hero',
     }),
+    ...relatedContentSectionFields.map((field) => ({
+      ...field,
+      group: 'hero',
+    })),
     defineField({name: 'ctaTitle', title: 'CTA title', type: 'string', group: 'cta'}),
     defineField({name: 'ctaBody', title: 'CTA body', type: 'text', rows: 3, group: 'cta'}),
     defineField({name: 'ctaPrimaryLabel', title: 'Primary button label', type: 'string', group: 'cta'}),
@@ -41,8 +46,7 @@ export const eventsLandingPage = defineType({
       type: 'array',
       of: pageSectionMembers,
       group: 'sections',
-      description:
-        'Optional modular blocks rendered on /events after the event list and before the footer CTA band.',
+      description: `Optional modular blocks on /events after the event list and before the footer CTA. ${MODULAR_PAGE_SECTIONS_DESCRIPTION}`,
     }),
     singletonSeoField,
   ],

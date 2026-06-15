@@ -11,6 +11,7 @@ import AdminDeleteSubmissionButton from "@/components/admin/AdminDeleteSubmissio
 import AdminMailtoButton from "@/components/admin/AdminMailtoButton"
 import AdminSubmissionNoteEditor from "@/components/admin/AdminSubmissionNoteEditor"
 import AdminDiagnosticAnswers from "@/components/admin/AdminDiagnosticAnswers"
+import AdminPageReveal from "@/components/admin/AdminPageReveal"
 import {
   Accordion,
   AccordionContent,
@@ -148,6 +149,7 @@ const AdminCompany = () => {
 
   return (
     <div className="space-y-6">
+      <AdminPageReveal>
       <Link
         to="/admin/inbox?tab=diagnostic"
         className="inline-flex items-center gap-1.5 font-urbanist text-sm text-rellia-teal/70 transition-colors hover:text-rellia-teal"
@@ -155,7 +157,9 @@ const AdminCompany = () => {
         <ArrowLeft className="h-4 w-4" aria-hidden />
         All diagnostic submissions
       </Link>
+      </AdminPageReveal>
 
+      <AdminPageReveal delay={0.06}>
       <article className="overflow-hidden rounded-2xl border border-black/[0.07] bg-white/90 shadow-sm">
         <div className="border-b border-black/[0.06] bg-gradient-to-r from-rellia-mint/12 to-white px-5 py-5 md:px-6">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
@@ -393,6 +397,7 @@ const AdminCompany = () => {
 
         </>
       )}
+      </AdminPageReveal>
     </div>
   )
 }

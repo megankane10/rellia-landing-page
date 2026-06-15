@@ -6,15 +6,18 @@ import RelliaAction from "@/components/RelliaAction"
 import { cn } from "@/lib/utils"
 import FilloutPopupDialog from "@/components/FilloutPopupDialog"
 import { cmsCleanText, cmsDisplayText } from "@/lib/cmsStega"
+import { isProgramWaitlist } from "@shared/cms/programStatus"
 
 export type ProgramCardProps = {
   tag?: string
+  status?: string
   title: string
   description: string
   imageSrc: string
   href?: string
   buttonText: string
-  waitlistHref?: string
+  /** Registration or waitlist form URL (Fillout, etc.) for inline waitlist popup. */
+  registrationUrl?: string
   priceLabel?: string
   priceAmount?: string
   priceSuffix?: string
@@ -24,12 +27,13 @@ export type ProgramCardProps = {
 
 export const ProgramCard = ({
   tag,
+  status,
   title,
   description,
   imageSrc,
   href,
   buttonText,
-  waitlistHref,
+  registrationUrl,
   priceLabel: _priceLabel,
   priceAmount: _priceAmount,
   priceSuffix: _priceSuffix,
@@ -37,10 +41,12 @@ export const ProgramCard = ({
   className,
 }: ProgramCardProps) => {
   const hasHref = Boolean(cmsCleanText(href))
-  const hasWaitlistHref = Boolean(cmsCleanText(waitlistHref))
+  const hasRegistrationUrl = Boolean(cmsCleanText(registrationUrl))
   const rawTag = cmsCleanText(tag)
-  const isWaitlistStatus = rawTag.toLowerCase() === "waitlist"
-  const isWaitlistCard = hasWaitlistHref || isWaitlistStatus
+  const isWaitlistCard =
+    status !== undefined
+      ? isProgramWaitlist({ status })
+      : rawTag.toLowerCase() === "waitlist"
   const [waitlistOpen, setWaitlistOpen] = useState(false)
   const displayTag = (rawTag.toLowerCase() === "available" || rawTag.toLowerCase() === "registration open") 
     ? "Applications Open" 
@@ -94,7 +100,7 @@ export const ProgramCard = ({
           </div>
 
           {/* Text and Button Container */}
-          <div className="flex flex-1 flex-col p-4 sm:p-5">
+          <div className="flex flex-1 flex-col p-4 pb-5 sm:p-5 sm:pb-6">
             {/* Mobile badge (below image, above title) */}
             {showMobileBadge ? (
               <div className="mb-3 sm:hidden">
@@ -143,15 +149,15 @@ export const ProgramCard = ({
                   type="button"
                   variant="mintCardTealFill"
                   className="w-full h-[48px] text-base disabled:opacity-60 disabled:cursor-not-allowed"
-                  disabled={!hasWaitlistHref}
+                  disabled={!hasRegistrationUrl}
                   onClick={() => {
-                    if (!hasWaitlistHref) return
+                    if (!hasRegistrationUrl) return
                     setWaitlistOpen(true)
                   }}
                   onKeyDown={(e) => {
                     if (e.key === "Enter" || e.key === " ") {
                       e.preventDefault()
-                      if (!hasWaitlistHref) return
+                      if (!hasRegistrationUrl) return
                       setWaitlistOpen(true)
                     }
                   }}
@@ -167,11 +173,11 @@ export const ProgramCard = ({
         </div>
       </div>
 
-      {hasWaitlistHref ? (
+      {hasRegistrationUrl ? (
         <FilloutPopupDialog
           open={waitlistOpen}
           onOpenChange={setWaitlistOpen}
-          formUrl={waitlistHref as string}
+          formUrl={registrationUrl as string}
           title="Join the program waitlist"
           description="Share a few details and we'll reach out when this program opens."
         />

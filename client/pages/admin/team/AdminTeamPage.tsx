@@ -1,18 +1,21 @@
 import { useMemo } from "react"
 import { Link } from "react-router-dom"
 import { useQuery } from "@tanstack/react-query"
-import { ExternalLink, Key, ShieldCheck, UserPlus, Users } from "lucide-react"
+import { ExternalLink, Key, UserPlus, Users } from "lucide-react"
 import { useAuth } from "@/context/AuthContext"
 import { fetchAdminTeam } from "@/lib/adminApi"
 import AdminPageHeader from "@/components/admin/AdminPageHeader"
+import AdminPageReveal from "@/components/admin/AdminPageReveal"
 import AdminDownloadCsvButton from "@/components/admin/AdminDownloadCsvButton"
 import AdminRecordList from "@/components/admin/AdminRecordList"
 import AdminCompactEmptyState from "@/components/admin/AdminCompactEmptyState"
+import AdminRecentSignInsCard from "@/components/admin/AdminRecentSignInsCard"
+import AdminTeamQuickNoteCard from "@/components/admin/AdminTeamQuickNoteCard"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
 import { formatAdminDate } from "@/lib/adminSubmissionStatus"
+import { resolveAdminMemberAvatarUrl } from "@/lib/adminUserProfile"
 import type { AdminTableColumn } from "@/components/admin/AdminDataTable"
 import type { AdminTeamUser } from "@/lib/adminApi"
 
@@ -46,21 +49,13 @@ const memberInitials = (member: AdminTeamUser) => {
 }
 
 const memberAvatar = (member: AdminTeamUser) => {
-  const email = member.email?.trim().toLowerCase()
-  const name = (member.fullName ?? "").trim().toLowerCase()
-  const hasRemoved = member.avatarUrl === "removed"
-  
-  const resolvedAvatarUrl = hasRemoved
-    ? ""
-    : member.avatarUrl || (
-        (email === "megan@relliahealth.com" || name.includes("megan"))
-          ? "/images/megan-headshot.jpeg"
-          : ""
-      )
+  const resolvedAvatarUrl = resolveAdminMemberAvatarUrl(member)
 
   return (
     <Avatar className="h-9 w-9 shrink-0">
-      {resolvedAvatarUrl ? <AvatarImage src={resolvedAvatarUrl} alt="" /> : null}
+      {resolvedAvatarUrl ? (
+        <AvatarImage src={resolvedAvatarUrl} alt="" />
+      ) : null}
       <AvatarFallback className="bg-rellia-mint/25 font-urbanist text-xs font-medium text-rellia-teal">
         {memberInitials(member)}
       </AvatarFallback>
@@ -118,6 +113,7 @@ const AdminTeamPage = () => {
 
   return (
     <div className="space-y-6">
+      <AdminPageReveal>
       <AdminTipBox
         title="Invite your team members"
         icon={UserPlus}
@@ -168,7 +164,9 @@ const AdminTeamPage = () => {
           </a>
         </div>
       </AdminTipBox>
+      </AdminPageReveal>
 
+      <AdminPageReveal delay={0.06}>
       <AdminPageHeader
         title="Team"
         actions={
@@ -199,79 +197,65 @@ const AdminTeamPage = () => {
           </>
         }
       />
+      </AdminPageReveal>
 
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="font-host-grotesk text-lg">Members</CardTitle>
-          <CardDescription className="font-urbanist">Newest members first.</CardDescription>
-        </CardHeader>
-        <CardContent>
-          {isLoading ? (
-            <div className="space-y-3">
-              {Array.from({ length: 4 }).map((_, i) => (
-                <Skeleton key={i} className="h-14 rounded-xl" />
-              ))}
-            </div>
-          ) : null}
-
-          {error ? (
-            <p className="font-urbanist text-sm text-destructive">
-              {error instanceof Error ? error.message : "Could not load team members."}
-            </p>
-          ) : null}
-
-          {!isLoading && !error && users.length === 0 ? (
-            <AdminCompactEmptyState
-              icon={Users}
-              title="No team members found"
-              description="Invite colleagues from Supabase Auth to grant dashboard access."
-            />
-          ) : null}
-
-          {!isLoading && !error && users.length > 0 ? (
-            <AdminRecordList
-              rows={users}
-              getRowKey={(member) => member.id}
-              columns={columns}
-              mobileFields={[
-                {
-                  label: "Member",
-                  value: (member) => (
-                    <div className="flex items-center gap-2">
-                      {memberAvatar(member)}
-                      <span>{member.fullName?.trim() || member.email}</span>
-                    </div>
-                  ),
-                },
-                { label: "Email", value: (member) => member.email },
-                { label: "Status", value: (member) => memberStatus(member) },
-              ]}
-            />
-          ) : null}
-        </CardContent>
-      </Card>
-
-      {recentActivity.length > 0 ? (
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="font-host-grotesk text-lg">Recent sign-ins</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ul className="divide-y divide-border">
-              {recentActivity.map((member) => (
-                <li key={member.id} className="flex flex-col gap-0.5 py-3 first:pt-0 last:pb-0 sm:flex-row sm:items-center sm:justify-between">
-                  <span className="font-urbanist text-sm font-medium">
-                    {member.fullName?.trim() || member.email}
-                  </span>
-                  <span className="font-urbanist text-xs text-muted-foreground">
-                    {formatAdminDate(member.lastSignInAt!)}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          </CardContent>
-        </Card>
+      <AdminPageReveal delay={0.1}>
+      {isLoading ? (
+        <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+          <div className="space-y-3 p-4">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <Skeleton key={i} className="h-14 rounded-xl" />
+            ))}
+          </div>
+        </div>
       ) : null}
+
+      {error ? (
+        <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm p-4">
+          <p className="font-urbanist text-sm text-destructive">
+            {error instanceof Error ? error.message : "Could not load team members."}
+          </p>
+        </div>
+      ) : null}
+
+      {!isLoading && !error && users.length === 0 ? (
+        <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm p-4">
+          <AdminCompactEmptyState
+            icon={Users}
+            title="No team members found"
+            description="Invite colleagues from Supabase Auth to grant dashboard access."
+          />
+        </div>
+      ) : null}
+
+      {!isLoading && !error && users.length > 0 ? (
+        <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm [&_ul]:p-3 [&_ul]:md:p-0">
+          <AdminRecordList
+            rows={users}
+            getRowKey={(member) => member.id}
+            columns={columns}
+            mobileFields={[
+              {
+                label: "Member",
+                value: (member) => (
+                  <div className="flex items-center gap-2">
+                    {memberAvatar(member)}
+                    <span>{member.fullName?.trim() || member.email}</span>
+                  </div>
+                ),
+              },
+              { label: "Email", value: (member) => member.email },
+              { label: "Status", value: (member) => memberStatus(member) },
+            ]}
+          />
+        </div>
+      ) : null}
+
+      <div className="mt-6 grid min-w-0 gap-4 lg:grid-cols-2">
+        <AdminRecentSignInsCard members={recentActivity} loading={isLoading} />
+        <AdminTeamQuickNoteCard members={users} />
+      </div>
+      </AdminPageReveal>
     </div>
   )
 }

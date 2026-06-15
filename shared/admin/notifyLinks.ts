@@ -44,15 +44,31 @@ export const adminInboxUrl = (tab: "contact" | "diagnostic" = "contact"): string
 export const adminContentUrl = (): string => `${resolveSiteOrigin()}/admin/drafts`
 
 export const resolveSanityStudioOrigin = (): string => {
+  const fromVite =
+    typeof import.meta !== "undefined" &&
+    import.meta.env &&
+    typeof (import.meta.env as Record<string, string>).VITE_SANITY_STUDIO_URL === "string"
+      ? (import.meta.env as Record<string, string>).VITE_SANITY_STUDIO_URL.trim()
+      : ""
+
   const fromNode =
-    typeof process !== "undefined" ? process.env.SANITY_STUDIO_URL?.trim() || "" : ""
-  return trimTrailingSlash(fromNode || "https://relliahealth.sanity.studio")
+    typeof process !== "undefined"
+      ? (
+          process.env.SANITY_STUDIO_URL?.trim() ||
+          process.env.VITE_SANITY_STUDIO_URL?.trim() ||
+          ""
+        )
+      : ""
+
+  return trimTrailingSlash(fromVite || fromNode || "https://relliahealth.sanity.studio")
 }
 
 export const studioDeskUrl = (documentType: string, documentId: string): string => {
   const studioBase = resolveSanityStudioOrigin()
-  const rawId = typeof documentId === "string" ? documentId : ""
-  const docId = rawId.replace(/^drafts\./, "")
-  if (!docId || !documentType) return studioBase
-  return `${studioBase}/desk/${documentType};${docId}`
+  const docId = typeof documentId === "string" ? documentId.trim() : ""
+  const docType = typeof documentType === "string" ? documentType.trim() : ""
+  if (!docId || !docType) return studioBase
+
+  const params = new URLSearchParams({ id: docId, type: docType })
+  return `${studioBase}/intent/edit?${params.toString()}`
 }

@@ -45,7 +45,9 @@ export const seo = defineType({
       type: 'image',
       options: {hotspot: true},
       fieldset: 'social',
-      description: '1200×630 recommended. Falls back to site default when empty.',
+      hidden: true,
+      readOnly: true,
+      description: 'Deprecated — collection documents use their main content image for link previews.',
     }),
     defineField({
       name: 'ogTitle',

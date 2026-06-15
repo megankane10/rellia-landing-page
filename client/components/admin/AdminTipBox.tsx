@@ -75,7 +75,7 @@ export default function AdminTipBox({
   return (
     <div
       className={cn(
-        "rounded-[1.75rem] border border-rellia-teal/15 shadow-sm relative transition-all duration-300",
+        "rounded-2xl border border-rellia-teal/15 shadow-sm relative transition-all duration-300",
         "bg-gradient-to-r from-rellia-mint/15 via-rellia-cream/40 to-rellia-greyTeal/20",
         collapsed ? "py-3 px-5" : "p-5",
         className

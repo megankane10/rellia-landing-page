@@ -15,8 +15,11 @@ import {
   resolveSocialOgImage,
 } from "@/config/seo"
 import StoryArticleJsonLd from "@/components/seo/StoryArticleJsonLd"
+import StoryBreadcrumbJsonLd from "@/components/seo/StoryBreadcrumbJsonLd"
 import PageSocialHelmet from "@/components/seo/PageSocialHelmet"
-import { ChevronLeft, Check } from "lucide-react"
+import { ChevronLeft } from "lucide-react"
+import { ShareCopyLinkButton } from "@/components/share/ShareCopyLinkButton"
+import { ShareToolbarIconLink } from "@/components/share/ShareToolbarIconLink"
 import { RichTextImageCarousel } from "@/components/RichTextImageCarousel"
 import { PortableRichText } from "@/components/PortableRichText"
 import { useStoryBySlug } from "@/hooks/useCmsDocuments"
@@ -24,11 +27,11 @@ import { isCmsQueryLoading, shouldShowCmsEmptyState } from "@/lib/cmsQueryState"
 import CmsPageLoadingShell from "@/components/cms/CmsPageLoadingShell"
 import { isSanityConfigured } from "@/lib/sanity"
 import {
-  ShareIconCopy,
   ShareIconFacebook,
   ShareIconLinkedIn,
   ShareIconMail,
   ShareIconX,
+  shareOutlineButtonClassNameOnDark,
 } from "@/components/share/sharePageIcons"
 import { buildMailtoHref } from "@/lib/mailto"
 import { DEFAULT_GLOBAL_SETTINGS } from "@shared/cms/defaults"
@@ -37,6 +40,7 @@ import { resolveStorySlugRedirect } from "@shared/cms/storySlugRedirects"
 import { StoryPostHero } from "@/components/StoryPostHero"
 import { RichTextQuoteFigure } from "@/components/RichTextQuoteFigure"
 import ImageExpandModal from "@/components/ImageExpandModal"
+import RelatedStories from "@/components/RelatedStories"
 
 export default function StoryPost() {
   const { slug } = useParams()
@@ -45,8 +49,8 @@ export default function StoryPost() {
   const storyQuery = useStoryBySlug(resolvedSlug)
   const { data: cmsStory } = storyQuery
   const story = slug && allowCmsSeedFallbacks() ? getStoryBySlug(slug) : undefined
-  const [copyState, setCopyState] = useState<"idle" | "copied">("idle")
   const [activeImage, setActiveImage] = useState<{ src: string; alt: string } | null>(null)
+  const [hasRelatedStories, setHasRelatedStories] = useState(false)
 
   const canonical = cmsStory?.slug
     ? buildPageUrl(`/stories/${cmsStory.slug}`)
@@ -91,7 +95,7 @@ export default function StoryPost() {
   const headerCoverSrc = cmsStory?.coverImageSrc?.trim() || story?.coverImageSrc?.trim()
   const headerCoverAlt = cmsStory?.coverImageAlt?.trim() || story?.coverImageAlt?.trim() || cmsStory?.title || story?.title || ""
   const headerLayout = cmsStory?.headerLayout === "background" ? "background" : "block"
-  const seoOgImageSrc = storySeo.ogImageUrl || headerCoverSrc
+  const seoOgImageSrc = headerCoverSrc
   const resolvedOgImage = seoOgImageSrc
     ? resolveSocialOgImage(seoOgImageSrc, undefined, { landscape: true }) ?? {
         url: toAbsoluteImageUrl(seoOgImageSrc),
@@ -100,18 +104,17 @@ export default function StoryPost() {
   const imageUrl = resolvedOgImage.url
   const shareTitle = resolvedTitle
 
-  const handleCopyLink = async () => {
-    try {
-      await navigator.clipboard.writeText(canonical)
-      setCopyState("copied")
-      window.setTimeout(() => setCopyState("idle"), 2000)
-    } catch {
-      setCopyState("idle")
-    }
-  }
+  const storyDatePublished = (() => {
+    const raw = cmsStory?.publishedAt ?? story?.publishedAt
+    if (typeof raw !== "string" || !raw.trim()) return undefined
+    const parsed = new Date(raw)
+    if (Number.isNaN(parsed.getTime())) return undefined
+    return parsed.toISOString()
+  })()
 
-  const shareToolbarButtonClassNameDark =
-    "inline-flex h-12 w-12 items-center justify-center rounded-full bg-white text-rellia-teal transition-transform transition-colors hover:-translate-y-0.5 hover:bg-rellia-mint focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-rellia-teal"
+  const storyJsonLdHeadline = cmsStory?.title ?? story?.title ?? "Rellia Health story"
+  const activeStorySlug = cmsStory?.slug ?? story?.slug ?? resolvedSlug
+  const activeStoryTag = cmsStory?.tag ?? story?.tag
 
   const shareBlock = (
     <div
@@ -119,59 +122,51 @@ export default function StoryPost() {
       role="group"
       aria-label="Share this story"
     >
-      <a
+      <ShareToolbarIconLink
         href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(canonical)}&text=${encodeURIComponent(shareTitle)}`}
-        target="_blank"
-        rel="noopener noreferrer"
-        className={shareToolbarButtonClassNameDark}
-        aria-label="Share on X"
+        label="Share on X"
+        className={shareOutlineButtonClassNameOnDark}
+        tooltipPosition="left"
       >
         <ShareIconX />
-      </a>
-      <a
+      </ShareToolbarIconLink>
+      <ShareToolbarIconLink
         href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(canonical)}`}
-        target="_blank"
-        rel="noopener noreferrer"
-        className={shareToolbarButtonClassNameDark}
-        aria-label="Share on LinkedIn"
+        label="Share on LinkedIn"
+        className={shareOutlineButtonClassNameOnDark}
+        tooltipPosition="left"
       >
         <ShareIconLinkedIn />
-      </a>
-      <a
+      </ShareToolbarIconLink>
+      <ShareToolbarIconLink
         href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(canonical)}`}
-        target="_blank"
-        rel="noopener noreferrer"
-        className={shareToolbarButtonClassNameDark}
-        aria-label="Share on Facebook"
+        label="Share on Facebook"
+        className={shareOutlineButtonClassNameOnDark}
+        tooltipPosition="left"
       >
         <ShareIconFacebook />
-      </a>
-      <a
+      </ShareToolbarIconLink>
+      <ShareToolbarIconLink
         href={buildMailtoHref(DEFAULT_GLOBAL_SETTINGS.supportEmail, {
           subject: shareTitle,
           body: `${shareTitle}\n\n${canonical}`,
         })}
-        className={shareToolbarButtonClassNameDark}
-        aria-label="Share by email"
+        label="Share by email"
+        className={shareOutlineButtonClassNameOnDark}
+        external={false}
+        tooltipPosition="left"
       >
         <ShareIconMail />
-      </a>
+      </ShareToolbarIconLink>
 
-      <button
-        type="button"
-        onClick={handleCopyLink}
-        className={cn(
-          shareToolbarButtonClassNameDark,
-          copyState === "copied" && "border border-rellia-teal bg-rellia-mint text-rellia-teal shadow-md",
-        )}
-        aria-label={copyState === "copied" ? "Link copied" : "Copy story link"}
-      >
-        {copyState === "copied" ? (
-          <Check className="h-5 w-5 shrink-0 animate-scale-in" />
-        ) : (
-          <ShareIconCopy />
-        )}
-      </button>
+      <ShareCopyLinkButton
+        onCopy={() => navigator.clipboard.writeText(canonical)}
+        className={shareOutlineButtonClassNameOnDark}
+        copiedClassName="border-white bg-white text-rellia-teal"
+        idleLabel="Copy story link"
+        copiedLabel="Link copied"
+        tooltipPosition="left"
+      />
     </div>
   )
 
@@ -230,6 +225,14 @@ export default function StoryPost() {
           ogImageWidth={resolvedOgImage.width}
           ogImageHeight={resolvedOgImage.height}
         />
+        <StoryArticleJsonLd
+          headline={storyJsonLdHeadline}
+          description={resolvedDescription}
+          url={canonical}
+          imageUrl={imageUrl}
+          datePublished={storyDatePublished}
+        />
+        <StoryBreadcrumbJsonLd storyTitle={storyJsonLdHeadline} storyUrl={canonical} />
 
         <Navbar />
 
@@ -260,18 +263,25 @@ export default function StoryPost() {
 
               <PortableRichText value={cmsStory.body} />
 
-              <div className="mt-12 border-t border-black/10 pt-8">
-                <Link
-                  to="/stories"
-                  className="inline-flex items-center gap-2 font-host-grotesk text-sm font-semibold text-rellia-teal hover:underline hover:underline-offset-4"
-                  aria-label="Back to stories"
-                >
-                  <ChevronLeft className="h-4 w-4" aria-hidden />
-                  Back to stories
-                </Link>
-              </div>
+              {!hasRelatedStories ? (
+                <div className="mt-12 border-t border-black/10 pt-8">
+                  <Link
+                    to="/stories"
+                    className="inline-flex items-center gap-2 font-host-grotesk text-sm font-semibold text-rellia-teal hover:underline hover:underline-offset-4"
+                    aria-label="Back to stories"
+                  >
+                    <ChevronLeft className="h-4 w-4" aria-hidden />
+                    Back to stories
+                  </Link>
+                </div>
+              ) : null}
             </div>
           </section>
+          <RelatedStories
+            currentSlug={activeStorySlug}
+            currentTag={activeStoryTag}
+            onHasRelatedChange={setHasRelatedStories}
+          />
         </main>
         <Footer />
         <ImageExpandModal
@@ -296,11 +306,13 @@ export default function StoryPost() {
         ogImageHeight={resolvedOgImage.height}
       />
       <StoryArticleJsonLd
-        headline={cmsStory?.title ?? story?.title ?? "Rellia Health story"}
+        headline={storyJsonLdHeadline}
         description={resolvedDescription}
         url={canonical}
         imageUrl={imageUrl}
+        datePublished={storyDatePublished}
       />
+      <StoryBreadcrumbJsonLd storyTitle={storyJsonLdHeadline} storyUrl={canonical} />
 
       <Navbar />
 
@@ -422,18 +434,25 @@ export default function StoryPost() {
               </div>
             </div>
 
-            <div className="mt-12 border-t border-black/10 pt-8">
-              <Link
-                to="/stories"
-                className="inline-flex items-center gap-2 font-host-grotesk text-sm font-semibold text-rellia-teal hover:underline hover:underline-offset-4"
-                aria-label="Back to stories"
-              >
-                <ChevronLeft className="h-4 w-4" aria-hidden />
-                Back to stories
-              </Link>
-            </div>
+            {!hasRelatedStories ? (
+              <div className="mt-12 border-t border-black/10 pt-8">
+                <Link
+                  to="/stories"
+                  className="inline-flex items-center gap-2 font-host-grotesk text-sm font-semibold text-rellia-teal hover:underline hover:underline-offset-4"
+                  aria-label="Back to stories"
+                >
+                  <ChevronLeft className="h-4 w-4" aria-hidden />
+                  Back to stories
+                </Link>
+              </div>
+            ) : null}
           </div>
         </section>
+        <RelatedStories
+          currentSlug={activeStorySlug}
+          currentTag={activeStoryTag}
+          onHasRelatedChange={setHasRelatedStories}
+        />
       </main>
       <Footer />
       <ImageExpandModal

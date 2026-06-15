@@ -10,6 +10,7 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { usePrograms, useProgramsLandingPage } from "@/hooks/useCmsDocuments"
 import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo"
 import { clampMetaDescription, clampMetaTitle, getSeoForPathname } from "@/config/seo"
+import { deriveHeroPageSeo } from "@/lib/cmsPageSeoDefaults"
 import { cn } from "@/lib/utils"
 import { DEFAULT_PROGRAMS_LANDING } from "@shared/cms/defaults"
 import { HeroHeadlinePortable } from "@/components/HeroHeadlinePortable"
@@ -19,6 +20,7 @@ import { AnimatePresence, motion } from "framer-motion"
 import { ChevronLeft, ChevronRight, LayoutGrid } from "lucide-react"
 import FilteredListEmptyState from "@/components/FilteredListEmptyState"
 import { cmsDisplayText } from "@/lib/cmsStega"
+import { isProgramAvailable, isProgramUpcoming, isProgramWaitlist } from "@shared/cms/programStatus"
 
 type ProgramFilter = "all" | "available" | "waitlist"
 const PAGE_SIZE = 12
@@ -26,14 +28,17 @@ const PAGE_SIZE = 12
 export default function Programs() {
   const { data } = useProgramsLandingPage()
   const pl = data ?? DEFAULT_PROGRAMS_LANDING
-  const programsRouteSeo = getSeoForPathname("/programs")
   const cmsSeoWithoutLegacyTitle = pl.seo
     ? { ...pl.seo, metaTitle: undefined, ogTitle: undefined }
     : pl.seo
-  useApplyCmsSeo(cmsSeoWithoutLegacyTitle, {
-    title: clampMetaTitle(programsRouteSeo.title),
-    description: clampMetaDescription(programsRouteSeo.description),
-  })
+  useApplyCmsSeo(
+    cmsSeoWithoutLegacyTitle,
+    deriveHeroPageSeo({
+      pageTitle: "Programs",
+      heroSubtitle: pl.heroSubtitle,
+      pathname: "/programs",
+    }),
+  )
   const { data: programsData } = usePrograms()
   const [programFilter, setProgramFilter] = useState<ProgramFilter>("all")
   const [page, setPage] = useState(1)
@@ -65,13 +70,13 @@ export default function Programs() {
       if (isQmsA && !isQmsB) return -1
       if (!isQmsA && isQmsB) return 1
 
-      const isUpcomingA = a.status === "upcoming"
-      const isUpcomingB = b.status === "upcoming"
+      const isUpcomingA = isProgramUpcoming(a)
+      const isUpcomingB = isProgramUpcoming(b)
       if (isUpcomingA && !isUpcomingB) return -1
       if (!isUpcomingA && isUpcomingB) return 1
 
-      const isWaitlistA = a.status === "waitlist" || Boolean(a.waitlistHref)
-      const isWaitlistB = b.status === "waitlist" || Boolean(b.waitlistHref)
+      const isWaitlistA = isProgramWaitlist(a)
+      const isWaitlistB = isProgramWaitlist(b)
       if (!isWaitlistA && isWaitlistB) return -1
       if (isWaitlistA && !isWaitlistB) return 1
 
@@ -80,12 +85,8 @@ export default function Programs() {
   }, [programsData, pl.programs])
 
   const { availablePrograms, waitlistPrograms } = useMemo(() => {
-    const available = programs.filter(
-      (p: any) =>
-        Boolean(p.href && p.href.trim().length > 0) &&
-        p.status !== "waitlist" && !(p.waitlistHref && p.waitlistHref.trim().length > 0),
-    )
-    const waitlist = programs.filter((p: any) => p.status === "waitlist" || Boolean(p.waitlistHref && p.waitlistHref.trim().length > 0))
+    const available = programs.filter((p: any) => isProgramAvailable(p))
+    const waitlist = programs.filter((p: any) => isProgramWaitlist(p))
     return { availablePrograms: available, waitlistPrograms: waitlist }
   }, [programs])
 

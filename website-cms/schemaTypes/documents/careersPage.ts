@@ -11,6 +11,7 @@ import {
   networkHeroFields,
   networkWhyRelliaFields,
 } from '../shared/networkPageFields'
+import {portableHeadlineField, DUAL_TONE_HEADLINE_DESCRIPTION} from '../shared/inlineHeroHeadlineField'
 import {iconKeyField} from '../shared/iconKeyField'
 
 const GROUP_HERO = {name: 'hero' as const, title: 'Hero', default: true}
@@ -116,11 +117,18 @@ export const careersPage = defineType({
       group: 'content',
       fieldset: 'whyRelliaDivider',
     }),
+    portableHeadlineField({
+      name: 'perksTitlePortable',
+      title: 'How we work — section title',
+      group: 'content',
+      fieldset: 'howWeWorkDivider',
+    }),
     defineField({
       name: 'perksTitle',
-      title: 'How we work — section title',
+      title: 'How we work — section title (legacy)',
       type: 'string',
-      initialValue: 'How we work',
+      hidden: true,
+      readOnly: true,
       group: 'content',
       fieldset: 'howWeWorkDivider',
     }),
@@ -141,10 +149,29 @@ export const careersPage = defineType({
       fieldset: 'howWeWorkDivider',
     }),
     defineField({
-      name: 'openRolesTitle',
+      name: 'openRolesTitlePortable',
       title: 'Open roles section title',
+      type: 'inlineHeroHeadline',
+      description: DUAL_TONE_HEADLINE_DESCRIPTION,
+      initialValue: undefined,
+      group: 'content',
+      fieldset: 'contentDivider',
+    }),
+    defineField({
+      name: 'openRolesSubtitle',
+      title: 'Open roles section subtitle',
+      type: 'text',
+      rows: 2,
+      description: 'Short line under the Open roles heading.',
+      group: 'content',
+      fieldset: 'contentDivider',
+    }),
+    defineField({
+      name: 'openRolesTitle',
+      title: 'Open roles section title (legacy)',
       type: 'string',
-      initialValue: 'Open Roles',
+      hidden: true,
+      readOnly: true,
       group: 'content',
       fieldset: 'contentDivider',
     }),
@@ -152,11 +179,18 @@ export const careersPage = defineType({
       ...field,
       fieldset: 'contentDivider' as const,
     })),
+    portableHeadlineField({
+      name: 'lifeAtRelliaHeadingPortable',
+      title: 'Life at Rellia — Heading',
+      group: 'lifeAtRellia',
+      fieldset: 'lifeAtRelliaDivider',
+    }),
     defineField({
       name: 'lifeAtRelliaHeading',
-      title: 'Life at Rellia — Heading',
+      title: 'Life at Rellia — Heading (legacy)',
       type: 'string',
-      initialValue: 'Life at Rellia',
+      hidden: true,
+      readOnly: true,
       group: 'lifeAtRellia',
       fieldset: 'lifeAtRelliaDivider',
     }),

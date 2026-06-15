@@ -278,21 +278,25 @@ const main = async () => {
   }
 
   const openRolesWithStringDescription = await client.fetch<
-    Array<{_id: string; description?: string}>
-  >(`*[_type == "openRole" && defined(description) && !is(description, "array")]{ _id, description }`)
+    Array<{_id: string; description?: unknown}>
+  >(`*[_type == "openRole" && defined(description)]{ _id, description }`)
 
-  if (openRolesWithStringDescription.length) {
+  const openRolesNeedingMigration = openRolesWithStringDescription.filter(
+    (doc) => typeof doc.description === 'string',
+  )
+
+  if (openRolesNeedingMigration.length) {
     const {plainStringToPortableTextBlocks} = await import(
       '../shared/cms/normalizePortableText'
     )
-    for (const doc of openRolesWithStringDescription) {
+    for (const doc of openRolesNeedingMigration) {
       if (typeof doc.description !== 'string') continue
       const blocks = plainStringToPortableTextBlocks(doc.description)
       if (blocks.length === 0) continue
       await client.patch(doc._id).set({description: blocks}).commit()
     }
     console.log(
-      `Migrated ${openRolesWithStringDescription.length} openRole description(s) from string to portable text.`,
+      `Migrated ${openRolesNeedingMigration.length} openRole description(s) from string to portable text.`,
     )
   }
 

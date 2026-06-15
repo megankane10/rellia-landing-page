@@ -107,11 +107,11 @@ export const StoryPostHero = ({
               {!useBackgroundLayout && coverSrc ? (
                 <div className="mt-8 md:mt-10">
                   <div className="relative">
-                    <figure className="relative aspect-[16/10] w-full max-w-3xl overflow-hidden rounded-2xl border border-white/15 bg-black/20 shadow-[0_24px_56px_-28px_rgba(0,0,0,0.55)]">
+                    <figure className="relative w-full max-w-3xl overflow-hidden rounded-2xl border border-white/15 bg-black/20 shadow-[0_24px_56px_-28px_rgba(0,0,0,0.55)]">
                       <img
                         src={toAbsoluteImageUrl(coverSrc)}
                         alt={coverAlt}
-                        className="h-full w-full object-cover"
+                        className="block h-auto w-full"
                         loading="eager"
                         fetchPriority="high"
                       />

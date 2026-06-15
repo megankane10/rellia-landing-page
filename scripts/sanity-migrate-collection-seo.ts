@@ -7,7 +7,7 @@
  */
 import { createClient } from "@sanity/client"
 import "./loadEnv"
-import { COLLECTION_SEO_TEXT_UNSET_PATHS } from "../shared/cms/collectionSeo"
+import { COLLECTION_SEO_IMAGE_UNSET_PATHS, COLLECTION_SEO_TEXT_UNSET_PATHS } from "../shared/cms/collectionSeo"
 
 const requireEnv = (name: string): string => {
   const value = process.env[name]?.trim()
@@ -47,14 +47,16 @@ async function main() {
   }
 
   console.log(
-    `Clearing collection SEO text overrides on ${projectId}/${dataset} (${docs.length} documents)…`,
+    `Clearing collection SEO overrides on ${projectId}/${dataset} (${docs.length} documents)…`,
   )
+
+  const unsetPaths = [...COLLECTION_SEO_TEXT_UNSET_PATHS, ...COLLECTION_SEO_IMAGE_UNSET_PATHS]
 
   let tx = client.transaction()
   let batch = 0
 
   for (const doc of docs) {
-    tx = tx.patch(doc._id, (patch) => patch.unset([...COLLECTION_SEO_TEXT_UNSET_PATHS]))
+    tx = tx.patch(doc._id, (patch) => patch.unset([...unsetPaths]))
     batch += 1
 
     if (batch >= 50) {
@@ -66,7 +68,7 @@ async function main() {
 
   if (batch > 0) await tx.commit()
 
-  console.log("Done: collection SEO text fields cleared (images, robots, and noIndex preserved)")
+  console.log("Done: collection SEO text and image overrides cleared")
 }
 
 main().catch((err) => {

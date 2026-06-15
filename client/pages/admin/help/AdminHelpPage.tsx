@@ -2,6 +2,7 @@ import { ExternalLink } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import AdminPageHeader from "@/components/admin/AdminPageHeader"
+import AdminPageReveal from "@/components/admin/AdminPageReveal"
 import { cn } from "@/lib/utils"
 import {
   OPERATIONS_DOC_EDIT_URL,
@@ -17,6 +18,11 @@ const WEBSITE_TOOLS = [
     description: "Operations guide for the dashboard and marketing site.",
   },
   {
+    href: "https://vercel.com/relliahealth",
+    label: "Vercel",
+    description: "Hosting and environment variables (production deploy).",
+  },
+  {
     href: "https://relliahealth.sanity.studio",
     label: "Sanity Studio",
     description: "Edit pages, stories, events, and program content.",
@@ -25,11 +31,6 @@ const WEBSITE_TOOLS = [
     href: "https://supabase.com/dashboard/project/agsvypnmlrvpbgrsxtqy",
     label: "Supabase",
     description: "Auth users, database tables, and invitation emails.",
-  },
-  {
-    href: "https://vercel.com/relliahealth",
-    label: "Vercel",
-    description: "Hosting and environment variables (production deploy).",
   },
   {
     href: "https://github.com/Agrolax/rellia-landing-page",
@@ -55,12 +56,15 @@ const WEBSITE_TOOLS = [
 
 const AdminHelpPage = () => (
   <div className="space-y-6">
+    <AdminPageReveal>
     <AdminPageHeader
       title="Help"
     />
+    </AdminPageReveal>
 
+    <AdminPageReveal delay={0.06}>
     <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-      <Card className="rounded-3xl border border-black/[0.06] bg-white">
+      <Card className="rounded-2xl border border-black/[0.06] bg-white">
         <CardHeader>
           <CardTitle className="font-host-grotesk text-lg">
             Managing Dashboard Items
@@ -96,7 +100,7 @@ const AdminHelpPage = () => (
         </CardContent>
       </Card>
 
-      <Card className="rounded-3xl border border-black/[0.06] bg-white">
+      <Card className="rounded-2xl border border-black/[0.06] bg-white">
         <CardHeader>
           <CardTitle className="font-host-grotesk text-lg">
             Slack Integration & Alerts
@@ -127,7 +131,9 @@ const AdminHelpPage = () => (
         </CardContent>
       </Card>
     </div>
+    </AdminPageReveal>
 
+    <AdminPageReveal delay={0.1}>
     <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(260px,320px)]">
       <Card className="rounded-2xl">
         <CardHeader className="flex flex-row flex-wrap items-start justify-between gap-3">
@@ -184,6 +190,7 @@ const AdminHelpPage = () => (
         </CardContent>
       </Card>
     </div>
+    </AdminPageReveal>
   </div>
 )
 

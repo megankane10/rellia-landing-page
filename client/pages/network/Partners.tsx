@@ -16,6 +16,7 @@ import { SectionsRenderer } from "@/components/cms/PageRenderer"
 import { CreamSection, GlassCardLight, LightSection, Reveal, RoleHero } from "./_shared"
 import { useNetworkPartnersPage } from "@/hooks/useCmsDocuments"
 import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo"
+import { deriveHeroPageSeo } from "@/lib/cmsPageSeoDefaults"
 import { mergeNetworkPartnersPage, DEFAULT_NETWORK_PARTNERS_PAGE } from "@shared/cms/networkPageDefaults"
 import { NetworkHeroTitle } from "@/components/NetworkHeroTitle"
 import { cmsDisplayText } from "@/lib/cmsStega"
@@ -272,8 +273,15 @@ function ExclusiveDirectorySplit({ content }: { content: NetworkPartnersPageCont
 export default function Partners() {
   const partnersPageQuery = useNetworkPartnersPage()
   const { data: page } = partnersPageQuery
-  useApplyCmsSeo(page?.seo)
   const content = mergeNetworkPartnersPage(page)
+  useApplyCmsSeo(
+    page?.seo,
+    deriveHeroPageSeo({
+      pageTitle: content.title ?? "Industry Partners",
+      heroSubtitle: content.heroSubtitle,
+      pathname: "/industry-partners",
+    }),
+  )
 
   return (
     <div className="min-h-screen overflow-x-hidden bg-white font-host-grotesk">
@@ -283,6 +291,7 @@ export default function Partners() {
         <div className="lg:flex lg:h-[82vh] lg:flex-col">
           <RoleHero
             roleId="partner"
+            eyebrowLabel={cmsDisplayText(content.heroEyebrow ?? "Industry partners")}
             imageSrc={content.heroImageSrc ?? "/images/industrypartners.jpg"}
             className="lg:flex-1"
           title={

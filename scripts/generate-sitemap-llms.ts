@@ -9,11 +9,13 @@ import { getIndexableStaticPaths, getSeoForPathname, normalizePathname } from ".
 import { DEFAULT_PROGRAMS_LANDING } from "../shared/cms/defaults"
 import { programsEventDetailPath } from "../shared/cms/eventSlug"
 import {
-  fetchAlumniCompaniesForPrerender,
-  fetchAdvisorsForPrerender,
-  fetchCmsPageSlugsForPrerender,
-  fetchEventSlugsForPrerender,
-  fetchStorySlugsForPrerender,
+  fetchAdvisorPathsForSitemap,
+  fetchAlumniPathsForSitemap,
+  fetchCmsNoIndexPathsForSitemap,
+  fetchIndexableCmsPagePathsForSitemap,
+  fetchIndexableEventPathsForSitemap,
+  fetchIndexableProgramPathsForSitemap,
+  fetchIndexableStoryPathsForSitemap,
 } from "../shared/cms/prerenderSanity"
 import { STORIES } from "../client/content/stories"
 import { FOUNDER_DIRECTORY } from "../client/data/founderDirectory"
@@ -52,7 +54,7 @@ const priorityForPath = (path: string): number => {
   if (path.startsWith("/stories/") || path === "/stories") return 0.75
   if (path.startsWith("/founders/alumni/") || path.startsWith("/advisors/directory/")) return 0.65
   if (path === "/terms" || path === "/privacy") return 0.4
-  if (path === "/diagnostics" || path === "/diagnostic-survey") return 0.85
+  if (path === "/startup-diagnostic" || path === "/diagnostic-survey") return 0.85
   return 0.8
 }
 
@@ -85,34 +87,37 @@ const collectDynamicPaths = async (): Promise<string[]> => {
   const seedAlumniPaths = FOUNDER_DIRECTORY.map((f) => `/founders/alumni/${f.id}`)
   const seedAdvisorPaths = ADVISOR_DIRECTORY_SEED.map((a) => `/advisors/directory/${a.id}`)
 
-  const [cmsEventSlugs, cmsStorySlugs, cmsAlumni, cmsAdvisors, cmsPages] = await Promise.all([
-    fetchEventSlugsForPrerender(),
-    fetchStorySlugsForPrerender(),
-    fetchAlumniCompaniesForPrerender(),
-    fetchAdvisorsForPrerender(),
-    fetchCmsPageSlugsForPrerender(),
+  const [
+    cmsEventPaths,
+    cmsStoryPaths,
+    cmsProgramPaths,
+    cmsAlumniPaths,
+    cmsAdvisorPaths,
+    cmsPagePaths,
+  ] = await Promise.all([
+    fetchIndexableEventPathsForSitemap(),
+    fetchIndexableStoryPathsForSitemap(),
+    fetchIndexableProgramPathsForSitemap(),
+    fetchAlumniPathsForSitemap(),
+    fetchAdvisorPathsForSitemap(),
+    fetchIndexableCmsPagePathsForSitemap(),
   ])
-
-  const cmsEventPaths = cmsEventSlugs.map((slug) => `/events/${slug}`)
-  const cmsStoryPaths = cmsStorySlugs.map((slug) => `/stories/${slug}`)
-  const cmsAlumniPaths = cmsAlumni
-    .map((row) => (typeof row.id === "string" ? row.id.trim() : ""))
-    .filter(Boolean)
-    .map((id) => `/founders/alumni/${id}`)
-  const cmsAdvisorPaths = cmsAdvisors
-    .map((row) => (typeof row.id === "string" ? row.id.trim() : ""))
-    .filter(Boolean)
-    .map((id) => `/advisors/directory/${id}`)
-  const cmsPagePaths = cmsPages
-    .map((slug) => `/${slug}`)
-    .filter((path) => !staticReserved.has(path))
 
   const eventPaths = cmsEventPaths.length > 0 ? cmsEventPaths : defaultEventPaths
   const storyPaths = cmsStoryPaths.length > 0 ? cmsStoryPaths : seedStoryPaths
+  const programPaths = cmsProgramPaths
   const alumniPaths = cmsAlumniPaths.length > 0 ? cmsAlumniPaths : seedAlumniPaths
   const advisorPaths = cmsAdvisorPaths.length > 0 ? cmsAdvisorPaths : seedAdvisorPaths
+  const cmsPagePathsFiltered = cmsPagePaths.filter((path) => !staticReserved.has(path))
 
-  return mergeUniquePaths(eventPaths, storyPaths, alumniPaths, advisorPaths, cmsPagePaths)
+  return mergeUniquePaths(
+    eventPaths,
+    storyPaths,
+    programPaths,
+    alumniPaths,
+    advisorPaths,
+    cmsPagePathsFiltered,
+  )
 }
 
 const buildSitemapXml = (paths: string[]): string => {
@@ -239,7 +244,10 @@ const buildLlmsTxt = (paths: string[]): string => {
 const main = async () => {
   const staticPaths = getIndexableStaticPaths()
   const dynamicPaths = await collectDynamicPaths()
-  const allPaths = mergeUniquePaths(staticPaths, dynamicPaths)
+  const cmsNoIndexPaths = new Set(await fetchCmsNoIndexPathsForSitemap())
+  const allPaths = mergeUniquePaths(staticPaths, dynamicPaths).filter(
+    (path) => !cmsNoIndexPaths.has(path),
+  )
 
   const sitemapPath = resolve(OUT_DIR, "sitemap.xml")
   const llmsPath = resolve(OUT_DIR, "llms.txt")

@@ -14,6 +14,7 @@ import FilteredListEmptyState from "@/components/FilteredListEmptyState";
 import { useAdvisors, useDirectoryFilterGroups, useNetworkAdvisorsDirectoryPage } from "@/hooks/useCmsDocuments";
 import { mergeNetworkAdvisorsDirectoryPage } from "@shared/cms/directoryPageDefaults"
 import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo"
+import { deriveDirectoryPageSeo } from "@/lib/cmsPageSeoDefaults"
 import {
   ADVISOR_DIRECTORY_SEED,
   ADVISOR_FILTER_OPTIONS,
@@ -24,16 +25,14 @@ import { NETWORK_PATH_ROLE_TAG } from "@/lib/networkPathRoles";
 import { isSanityConfigured } from "@/lib/sanity";
 import { allowCmsSeedFallbacks } from "@/lib/deploymentEnv";
 import { isCmsQueryLoading } from "@/lib/cmsQueryState";
-import { DirectoryGridSkeleton } from "@/components/cms/CmsPageLoadingShell";
-import { DirectoryCardTags } from "@/components/network/DirectoryCardTags";
+import AdvisorDirectoryCard from "@/components/network/AdvisorDirectoryCard";
 import {
   filterAdvisorDirectoryGroups,
   findExpertiseGroup,
   getDirectoryGroupOptionLabels,
   matchesDirectoryFilterSelection,
 } from "@/lib/directoryFilterOptions";
-import { resolveAdvisorPrimaryTag } from "@/lib/resolveAdvisorPrimaryTag";
-import { cmsCleanText, cmsDisplayText } from "@/lib/cmsStega"
+import { cmsDisplayText } from "@/lib/cmsStega"
 
 const DIRECTORY_TITLE_CLASS =
   "font-host-grotesk text-4xl font-extrabold tracking-tight text-black md:text-5xl";
@@ -45,68 +44,13 @@ const formatAdvisorLocation = (advisor: AdvisorDirectoryEntry): string => {
   return city || country
 }
 
-function AdvisorCard({
-  advisor,
-  onDetails,
-}: {
-  advisor: AdvisorDirectoryEntry;
-  onDetails: () => void;
-}) {
-  const cardTags = useMemo(() => {
-    const primary = resolveAdvisorPrimaryTag(advisor)
-    const industries = Array.isArray(advisor.industries)
-      ? advisor.industries.map((tag) => tag.trim()).filter(Boolean)
-      : []
-    return primary ? [primary, ...industries] : industries
-  }, [advisor])
-
-  return (
-    <motion.article
-      layout
-      className={cn(
-        "group flex h-full flex-col overflow-hidden rounded-2xl border border-black/10 bg-white",
-        "shadow-sm transition-[box-shadow,transform] duration-300 motion-reduce:transition-none",
-        "cursor-pointer hover:shadow-md hover:-translate-y-[1px]",
-      )}
-      onClick={onDetails}
-      onKeyDown={(e) => {
-        if (e.key === "Enter" || e.key === " ") {
-          e.preventDefault();
-          onDetails();
-        }
-      }}
-      role="button"
-      tabIndex={0}
-      aria-label={`Open profile for ${cmsCleanText(advisor.name)}`}
-    >
-      <div className="relative aspect-[5/4] w-full overflow-hidden bg-white border-b border-black/[0.05] shrink-0">
-        <img
-          src={advisor.photoSrc}
-          alt=""
-          className="absolute inset-x-0 top-0 h-[calc(100%/0.72)] w-full object-cover object-top transition duration-500 ease-out group-hover:scale-[1.03] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
-          loading="lazy"
-        />
-        <DirectoryCardTags tags={cardTags} variant="onLight" />
-      </div>
-      <div className="flex flex-1 flex-col p-6 md:p-7">
-        <h3 className="font-host-grotesk text-lg font-bold tracking-tight text-black group-hover:underline decoration-2 underline-offset-4">
-          {cmsDisplayText(advisor.name)}
-        </h3>
-        <p className="mt-1 font-urbanist text-sm font-medium text-black/77">
-          {cmsDisplayText(advisor.organization)}
-        </p>
-        <p className="mt-2 font-urbanist text-sm text-black/55 leading-relaxed">
-          {cmsDisplayText(advisor.role)}
-        </p>
-      </div>
-    </motion.article>
-  );
-}
-
 export default function AdvisorsDirectory() {
   const { data: advisorsDirectoryRaw } = useNetworkAdvisorsDirectoryPage()
   const advisorsDirectory = mergeNetworkAdvisorsDirectoryPage(advisorsDirectoryRaw ?? undefined)
-  useApplyCmsSeo(advisorsDirectory.seo)
+  useApplyCmsSeo(
+    advisorsDirectory.seo,
+    deriveDirectoryPageSeo(advisorsDirectory, "/advisors/directory"),
+  )
   const reduceMotion = useReducedMotion();
   const advisorsQuery = useAdvisors();
   const { data: cmsAdvisors } = advisorsQuery;
@@ -332,9 +276,7 @@ export default function AdvisorsDirectory() {
             </div>
             ) : null}
 
-            {advisorsListLoading ? (
-              <DirectoryGridSkeleton className="mt-0" />
-            ) : advisors.length === 0 ? (
+            {advisorsListLoading ? null : advisors.length === 0 ? (
               <FilteredListEmptyState
                 className="mt-10"
                 icon={UserSearch}
@@ -358,12 +300,10 @@ export default function AdvisorsDirectory() {
                 >
                   <AnimatePresence mode="popLayout">
                     {paginated.map((a) => (
-                      <motion.div key={a.id} variants={item} layout>
-                        <AdvisorCard
+                      <motion.div key={a.id} variants={item} layout className="h-full">
+                        <AdvisorDirectoryCard
                           advisor={a}
-                          onDetails={() =>
-                            navigate(`/advisors/directory/${a.id}`)
-                          }
+                          onOpen={() => navigate(`/advisors/directory/${a.id}`)}
                         />
                       </motion.div>
                     ))}

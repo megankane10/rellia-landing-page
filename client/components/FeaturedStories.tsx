@@ -5,13 +5,12 @@ import { cn } from "@/lib/utils"
 import RelliaAction from "@/components/RelliaAction"
 import { getFeaturedStories } from "@/content/stories"
 import { AnimatePresence, motion } from "framer-motion"
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react"
 import SectionHeading from "@/components/SectionHeading"
 import PillTag, { PILL_ON_IMAGE_BLUR_CLASS } from "@/components/PillTag"
 import { useFeaturedStories } from "@/hooks/useCmsDocuments"
 import { allowCmsSeedFallbacks } from "@/lib/deploymentEnv"
 import { isSanityConfigured } from "@/lib/sanity"
-import { CmsTextSkeleton } from "@/components/cms/CmsTextSkeleton"
 import { cmsCleanText, cmsDisplayText } from "@/lib/cmsStega"
 
 /** Auto-advance interval (progress bar uses same duration) */
@@ -20,6 +19,42 @@ const ROTATE_MS = 6500
 const START_DELAY_MS = 1000
 /** Crossfade duration — longer overlap reads smoother (keep ≪ ROTATE_MS) */
 const CROSSFADE_S = 1.05
+
+const FeaturedStoryExcerpt = ({ text }: { text: string }) => {
+  const excerptRef = useRef<HTMLParagraphElement>(null)
+  const [lineClamp, setLineClamp] = useState(12)
+
+  useLayoutEffect(() => {
+    const el = excerptRef.current
+    if (!el) return
+
+    const updateLineClamp = () => {
+      const lineHeight = Number.parseFloat(getComputedStyle(el).lineHeight)
+      if (!lineHeight || !el.clientHeight) return
+      const lines = Math.floor(el.clientHeight / lineHeight)
+      setLineClamp(Math.max(1, lines))
+    }
+
+    updateLineClamp()
+    const observer = new ResizeObserver(updateLineClamp)
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [text])
+
+  return (
+    <p
+      ref={excerptRef}
+      className="mt-4 min-h-0 flex-1 max-w-[780px] overflow-hidden text-pretty font-urbanist text-sm leading-relaxed text-white/90 [text-shadow:0_1px_3px_rgba(0,0,0,0.38)] md:mt-5 md:text-base"
+      style={{
+        display: "-webkit-box",
+        WebkitBoxOrient: "vertical",
+        WebkitLineClamp: lineClamp,
+      }}
+    >
+      {text}
+    </p>
+  )
+}
 
 export default function FeaturedStories({
   showHeading = true,
@@ -97,22 +132,7 @@ export default function FeaturedStories({
   const storyHref = useMemo(() => (activeStory ? `/stories/${activeStory.slug}` : "/stories"), [activeStory])
 
   if (featuredLoading) {
-    return (
-      <section
-        className={cn(
-          "w-full overflow-x-hidden bg-white",
-          compact ? "py-8 md:py-10" : sectionClassName ? sectionClassName : "py-10 md:py-14",
-        )}
-      >
-        <div className="mx-auto w-full max-w-[1300px] px-6 md:px-10">
-          <div className="overflow-hidden rounded-3xl bg-rellia-teal/10 p-8 md:rounded-[32px] md:p-12">
-            <CmsTextSkeleton className="h-8 w-48 rounded-full bg-rellia-teal/15" />
-            <CmsTextSkeleton className="mt-6 h-12 w-full max-w-2xl bg-rellia-teal/15" />
-            <CmsTextSkeleton className="mt-4 h-20 w-full max-w-xl bg-rellia-teal/10" />
-          </div>
-        </div>
-      </section>
-    )
+    return null
   }
 
   if (featured.length === 0) return null
@@ -169,7 +189,7 @@ export default function FeaturedStories({
                   {activeStory ? (
                     <>
                       <div className="flex min-h-0 flex-1 w-full flex-col items-start text-left overflow-hidden">
-                        <div className="mb-5">
+                        <div className="mb-5 shrink-0">
                           <PillTag
                             label={cmsDisplayText(activeStory.tag)}
                             className={PILL_ON_IMAGE_BLUR_CLASS}
@@ -177,16 +197,14 @@ export default function FeaturedStories({
                           />
                         </div>
 
-                        <h3 className="max-w-[1100px] font-host-grotesk font-medium text-white text-3xl tracking-tight leading-[1.05] sm:text-4xl md:text-5xl lg:text-[52px] line-clamp-3 md:line-clamp-none">
+                        <h3 className="max-w-[1100px] shrink-0 font-host-grotesk font-medium text-white text-3xl tracking-tight leading-[1.05] sm:text-4xl md:text-5xl lg:text-[52px] line-clamp-3 md:line-clamp-none">
                           {cmsDisplayText(activeStory.title)}
                         </h3>
 
-                        <p className="mt-4 max-w-[780px] text-pretty text-white/85 text-sm font-urbanist leading-relaxed md:mt-5 md:text-base line-clamp-3">
-                          {cmsDisplayText(activeStory.excerpt)}
-                        </p>
+                        <FeaturedStoryExcerpt text={cmsDisplayText(activeStory.excerpt)} />
                       </div>
 
-                      <div className="mt-7 md:mt-9 hidden md:flex items-center gap-4 pb-5">
+                      <div className="mt-7 md:mt-9 hidden shrink-0 md:flex items-center gap-4 pb-5">
                         <RelliaAction
                           asChild
                           variant="heroSolidOnTeal"
@@ -212,7 +230,7 @@ export default function FeaturedStories({
                         ) : null}
                       </div>
 
-                      <div className="mt-6 w-full md:hidden pb-4">
+                      <div className="mt-6 w-full shrink-0 md:hidden pb-4">
                         <div className="flex items-center justify-between gap-4">
                           <Link
                             to={storyHref}
@@ -234,7 +252,7 @@ export default function FeaturedStories({
                         </div>
                       </div>
 
-                      <div aria-hidden className="pointer-events-none z-[15] mt-8 w-full">
+                      <div aria-hidden className="pointer-events-none z-[15] mt-8 w-full shrink-0">
                         <div className="flex w-full items-center gap-2">
                           {featured.map((story, idx) => {
                             const isPast = idx < activeIndex
@@ -272,7 +290,7 @@ export default function FeaturedStories({
 
                       <div
                         className={cn(
-                          "mt-3 flex w-full min-w-0 items-center gap-4",
+                          "mt-3 flex w-full min-w-0 shrink-0 items-center gap-4",
                           featured.length > 0 ? "justify-between" : "justify-end",
                         )}
                       >

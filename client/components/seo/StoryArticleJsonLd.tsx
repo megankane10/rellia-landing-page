@@ -1,5 +1,5 @@
 import { Helmet } from "react-helmet-async"
-import { getSiteUrl } from "@/config/seo"
+import { getSiteUrl, getRelliaPublisherLogoUrl } from "@/config/seo"
 
 type StoryArticleJsonLdProps = {
   headline: string
@@ -28,6 +28,10 @@ const StoryArticleJsonLd = ({
       "@type": "Organization",
       name: "Rellia Health",
       url: base,
+      logo: {
+        "@type": "ImageObject",
+        url: getRelliaPublisherLogoUrl(),
+      },
     },
   }
   if (imageUrl) payload.image = imageUrl

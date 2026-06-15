@@ -2,13 +2,13 @@ import { useEffect, useState } from "react";
 import { useParams, Link, useLocation } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { ArrowLeft, MapPin, Calendar, Copy, Check } from "lucide-react";
+import { ArrowLeft, MapPin, Calendar } from "lucide-react";
 import { ProfileSocialLinks } from "@/components/network/ProfileSocialLinks";
-import { ShareIconCopy } from "@/components/share/sharePageIcons";
+import { ShareCopyLinkButton } from "@/components/share/ShareCopyLinkButton";
+import { shareOutlineButtonClassName } from "@/components/share/sharePageIcons";
 import { ADVISOR_DIRECTORY_SEED } from "@/data/advisorDirectory";
 import { allowCmsSeedFallbacks } from "@/lib/deploymentEnv";
 import NotFound from "../NotFound";
-import { cn } from "@/lib/utils";
 import {
   buildAdvisorProfileSeoTitle,
   buildPageUrl,
@@ -23,10 +23,12 @@ import CmsPageLoadingShell from "@/components/cms/CmsPageLoadingShell";
 import { isSanityConfigured } from "@/lib/sanity";
 import ImageExpandModal from "@/components/ImageExpandModal";
 import { PortableRichText } from "@/components/PortableRichText";
+import RelatedAdvisors from "@/components/related/RelatedAdvisors";
 import { normalizeToPortableText } from "@shared/cms/normalizePortableText";
 import type { SanityPortableText } from "@shared/cms/types";
 import { resolveAdvisorPrimaryTag } from "@/lib/resolveAdvisorPrimaryTag";
-import { portableTextToPlainText } from "@shared/cms/portableTextPlain";
+import { portableTextToPlainText } from "@shared/cms/portableTextPlain"
+import { relliaProfilePrimaryTagClass } from "@/lib/relliaMetaBadge"
 
 const resolveAdvisorProfileDescription = (
   snapshot?: string,
@@ -48,12 +50,12 @@ export default function AdvisorProfile() {
       : allowCmsSeedFallbacks()
         ? ADVISOR_DIRECTORY_SEED
         : []
-  ) as any[];
+  ) as typeof ADVISOR_DIRECTORY_SEED;
   const active = advisors.find((a) => a.id === id);
 
   const canonicalUrl = buildPageUrl(location.pathname);
-  const [copied, setCopied] = useState(false);
   const [activeImage, setActiveImage] = useState<{ src: string; alt: string } | null>(null);
+  const [hasRelatedProfiles, setHasRelatedProfiles] = useState(false);
 
   const snapshotText =
     typeof active?.snapshot === "string" && active.snapshot.trim()
@@ -88,12 +90,6 @@ export default function AdvisorProfile() {
 
   if (!active) return <NotFound />;
 
-  const handleCopyLink = () => {
-    navigator.clipboard.writeText(canonicalUrl);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
-
   const bioPortable: SanityPortableText | null = Array.isArray(active.bio)
     ? active.bio
     : typeof active.bio === "string" && active.bio.trim()
@@ -119,7 +115,7 @@ export default function AdvisorProfile() {
       />
       <Navbar forceSolid />
 
-      <main id="main-content" className="pt-24 pb-16 md:pt-28">
+      <main id="main-content" className="pt-24 md:pt-28">
         <div className="mx-auto max-w-[1300px] px-6 md:px-10">
           <div className="mb-8">
             <Link
@@ -130,9 +126,9 @@ export default function AdvisorProfile() {
               <ArrowLeft className="h-4 w-4" /> Back to Advisors Directory
             </Link>
           </div>
-          <article className="grid items-start gap-10 lg:grid-cols-[minmax(280px,360px)_minmax(0,1fr)] lg:gap-x-14 xl:grid-cols-[400px_1fr]">
+          <article className="grid items-start gap-10 pb-8 lg:grid-cols-[minmax(280px,360px)_minmax(0,1fr)] lg:gap-x-14 lg:pb-12 xl:grid-cols-[400px_1fr]">
             {/* Left Sidebar - Sticky */}
-            <div className="flex flex-col gap-6 lg:sticky lg:top-28 lg:self-start">
+            <div className="flex flex-col gap-6 pb-4 lg:sticky lg:top-28 lg:self-start lg:pb-10">
               <div 
                 onClick={() => setActiveImage({ src: active.photoSrc, alt: `Portrait of ${active.name}` })}
                 className="overflow-hidden rounded-2xl aspect-[4/5] w-full max-h-[min(42vh,440px)] cursor-pointer"
@@ -162,7 +158,7 @@ export default function AdvisorProfile() {
                 {primaryTag || industryTags.length > 0 ? (
                   <div className="flex flex-wrap gap-2 mb-6">
                     {primaryTag ? (
-                      <span className="inline-flex rounded-full border border-rellia-teal/20 bg-rellia-mint/20 px-3 py-1 font-urbanist text-xs font-semibold text-rellia-teal">
+                      <span className={relliaProfilePrimaryTagClass}>
                         {primaryTag}
                       </span>
                     ) : null}
@@ -198,29 +194,14 @@ export default function AdvisorProfile() {
                   <ProfileSocialLinks
                     links={active.socialLinks}
                     email={(active as { email?: string }).email}
+                    comfortableTouch
                   />
-                  <button
-                    onClick={handleCopyLink}
-                    className={cn(
-                      "relative inline-flex h-10 w-10 items-center justify-center rounded-full border transition-all duration-300",
-                      copied
-                        ? "border-rellia-teal bg-rellia-mint/20 text-rellia-teal"
-                        : "border-black/10 bg-white text-black hover:bg-black/5"
-                    )}
-                    title={copied ? "Copied!" : "Copy profile link"}
-                    aria-label={copied ? "Copied!" : "Copy profile link"}
-                  >
-                    {copied ? (
-                      <Check className="h-4 w-4 animate-scale-in" />
-                    ) : (
-                      <ShareIconCopy className="h-4 w-4" />
-                    )}
-                    {copied && (
-                      <span className="absolute -top-10 left-1/2 -translate-x-1/2 rounded bg-black px-2 py-1 text-xs font-bold text-white shadow-md whitespace-nowrap transition-all duration-200">
-                        Copied!
-                      </span>
-                    )}
-                  </button>
+                  <ShareCopyLinkButton
+                    onCopy={() => navigator.clipboard.writeText(canonicalUrl)}
+                    className={shareOutlineButtonClassName}
+                    idleLabel="Copy profile link"
+                    copiedLabel="Link copied"
+                  />
                 </div>
               </div>
             </div>
@@ -251,16 +232,24 @@ export default function AdvisorProfile() {
             </div>
           </article>
 
-          <div className="mt-16 pt-8 border-t border-black/10">
-            <Link
-              to="/advisors/directory"
-              replace
-              className="inline-flex items-center gap-2 font-host-grotesk text-sm font-bold text-rellia-teal hover:underline hover:underline-offset-4"
-            >
-              <ArrowLeft className="h-4 w-4" /> Back to Advisors Directory
-            </Link>
-          </div>
+          {!hasRelatedProfiles ? (
+            <div className="mt-16 border-t border-black/10 pt-8 pb-16 md:pb-16">
+              <Link
+                to="/advisors/directory"
+                replace
+                className="inline-flex items-center gap-2 font-host-grotesk text-sm font-bold text-rellia-teal hover:underline hover:underline-offset-4"
+              >
+                <ArrowLeft className="h-4 w-4" /> Back to Advisors Directory
+              </Link>
+            </div>
+          ) : null}
         </div>
+
+        <RelatedAdvisors
+          currentAdvisorId={active.id}
+          primaryTag={primaryTag}
+          onHasRelatedChange={setHasRelatedProfiles}
+        />
       </main>
 
       <Footer />

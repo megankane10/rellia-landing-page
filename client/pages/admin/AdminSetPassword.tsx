@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { Link, useNavigate } from "react-router-dom"
+import { Link, useLocation, useNavigate } from "react-router-dom"
 import { supabase } from "@/lib/supabase"
 import { useAuth } from "@/context/AuthContext"
 import AdminAuthLayout from "@/components/admin/AdminAuthLayout"
@@ -10,11 +10,20 @@ import {
   adminUserNeedsDisplayName,
   buildAdminUserMetadata,
   getAdminDisplayName,
+  getAdminFirstName,
 } from "@/lib/adminUserProfile"
+import { ADMIN_AUTH_LEFT_DESCRIPTION, AdminAuthBrandHeading } from "@/components/admin/adminAuthBrandCopy"
+
+type SetPasswordLocationState = {
+  showWelcome?: boolean
+}
 
 const AdminSetPassword = () => {
   const { session, loading, user } = useAuth()
   const navigate = useNavigate()
+  const location = useLocation()
+  const welcomeAfterComplete =
+    ((location.state as SetPasswordLocationState | null) ?? null)?.showWelcome === true
   const [fullName, setFullName] = useState("")
   const [password, setPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
@@ -63,14 +72,23 @@ const AdminSetPassword = () => {
       return
     }
 
-    navigate("/admin/overview", { replace: true })
+    const resolvedName = needsName ? fullName.trim() : getAdminDisplayName(user)
+    navigate("/admin/overview", {
+      replace: true,
+      state: welcomeAfterComplete
+        ? {
+            showWelcome: true,
+            firstName: getAdminFirstName(resolvedName, user?.email),
+          }
+        : null,
+    })
   }
 
   if (loading) {
     return (
       <AdminAuthLayout
-        leftHeading="Hello! Ready to see what's new today?"
-        leftDescription="Log in to review the latest form submissions, coordinate inquiries, and easily track your website content drafts."
+        leftHeading={<AdminAuthBrandHeading />}
+        leftDescription={ADMIN_AUTH_LEFT_DESCRIPTION}
         title="Loading"
         description="Preparing your account…"
         leftTextTone="mint"
@@ -84,8 +102,8 @@ const AdminSetPassword = () => {
 
   return (
     <AdminAuthLayout
-      leftHeading="Hello! Ready to see what's new today?"
-      leftDescription="Log in to review the latest form submissions, coordinate inquiries, and easily track your website content drafts."
+      leftHeading={<AdminAuthBrandHeading />}
+      leftDescription={ADMIN_AUTH_LEFT_DESCRIPTION}
       title={needsName ? "Complete your profile" : "Set your password"}
       description={
         needsName

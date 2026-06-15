@@ -52,7 +52,7 @@ export const resolveStoryCollectionSeo = (input: {
     input.fallbackDescription?.trim() ||
     "Stories and insights from Rellia Health."
 
-  const ogImageUrl = input.seo?.ogImageUrl?.trim() || input.coverImageSrc?.trim() || undefined
+  const ogImageUrl = input.coverImageSrc?.trim() || undefined
 
   return { title, description, ogImageUrl }
 }
@@ -85,7 +85,7 @@ export const resolveEventCollectionSeo = (input: {
 
   const title = pickSeoTitle(input.seo) || buildDefaultEventSeoTitle(input.title)
   const description = pickSeoDescription(input.seo) || defaultDescription
-  const ogImageUrl = input.seo?.ogImageUrl?.trim() || input.imageSrc?.trim() || undefined
+  const ogImageUrl = input.imageSrc?.trim() || undefined
 
   return { title, description, ogImageUrl }
 }
@@ -96,6 +96,7 @@ export const resolveProgramCollectionSeo = (input: {
   description?: string | null
   heroDescription?: string | null
   seo?: SeoContent | null
+  imageSrc?: string | null
   fallbackDescription?: string
 }): ResolvedCollectionSeo => {
   const programName = (input.title?.trim() || input.heroTitle?.trim() || "Program").trim()
@@ -107,14 +108,15 @@ export const resolveProgramCollectionSeo = (input: {
 
   const title = pickSeoTitle(input.seo) || buildDefaultProgramSeoTitle(programName)
   const description = pickSeoDescription(input.seo) || defaultDescription
+  const ogImageUrl = input.imageSrc?.trim() || undefined
 
-  return { title, description, ogImageUrl: input.seo?.ogImageUrl?.trim() || undefined }
+  return { title, description, ogImageUrl }
 }
 
 export const buildDefaultCareersRoleSeoTitle = (roleTitle: string): string => {
   const title = roleTitle.trim()
-  if (!title) return "Careers — Rellia Health"
-  return `${title} — Rellia Health Careers`
+  if (!title) return "Careers"
+  return `${title} — Careers`
 }
 
 const careersRoleDescriptionSnippet = (description: unknown): string => {
@@ -132,23 +134,27 @@ export const resolveCareersRoleSeo = (input: {
   location?: string
   employmentType?: string
   description?: unknown
+  responsibilities?: string[]
 }): ResolvedCollectionSeo => {
   const roleTitle = input.title.trim() || "Open role"
   const location = input.location?.trim()
   const employmentType = input.employmentType?.trim()
-  const snippet = careersRoleDescriptionSnippet(input.description)
-
-  const metaParts = [roleTitle]
-  if (location) metaParts.push(location)
-  if (employmentType) metaParts.push(employmentType)
-
   const roleContext = [location, employmentType].filter(Boolean).join(" · ")
+  const highlights = (input.responsibilities ?? []).map((line) => line.trim()).filter(Boolean)
 
-  const description = snippet
-    ? roleContext
-      ? `${roleContext}. ${snippet}`
-      : snippet
-    : `Join Rellia Health as ${metaParts.join(" · ")}. View responsibilities and apply on our careers page.`
+  let description: string
+  if (roleContext && highlights.length > 0) {
+    description = `${roleContext}\n${highlights.join(" · ")}`
+  } else if (roleContext) {
+    description = roleContext
+  } else if (highlights.length > 0) {
+    description = highlights.join(" · ")
+  } else {
+    const snippet = careersRoleDescriptionSnippet(input.description)
+    description =
+      snippet ||
+      `Join Rellia Health as ${roleTitle}. View responsibilities and apply on our careers page.`
+  }
 
   return {
     title: buildDefaultCareersRoleSeoTitle(roleTitle),
@@ -168,4 +174,14 @@ export const COLLECTION_SEO_TEXT_UNSET_PATHS = [
   "seo.openGraph.description",
   "seo.twitter.title",
   "seo.twitter.description",
+] as const
+
+/** Cleared on story/event/program so link previews always use the document's main image field. */
+export const COLLECTION_SEO_IMAGE_UNSET_PATHS = [
+  "seo.metaImage",
+  "seo.ogImage",
+  "seo.openGraph.image",
+  "seo.openGraph.imageUrl",
+  "seo.twitter.image",
+  "seo.twitter.imageUrl",
 ] as const

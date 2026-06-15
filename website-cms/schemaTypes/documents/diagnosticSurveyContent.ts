@@ -362,8 +362,13 @@ export const diagnosticSurveyContent = defineType({
       title: 'Membership CTA Background Image',
       type: 'image',
       group: 'report',
+      description:
+        'Crop to a square for the on-site report card. Choose “Use full image” in the upload dialog to show the full photo in PDF (wide) or beside the copy (square).',
       options: {
         hotspot: true,
+        cropAllowFullImage: true,
+        cropAspect: 1,
+        cropAspectPreset: 'square',
       },
     }),
   ],

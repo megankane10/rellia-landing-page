@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query"
 import { ExternalLink, FileEdit } from "lucide-react"
 import { useAuth } from "@/context/AuthContext"
 import AdminPageHeader from "@/components/admin/AdminPageHeader"
+import AdminPageReveal from "@/components/admin/AdminPageReveal"
 import AdminDownloadCsvButton from "@/components/admin/AdminDownloadCsvButton"
 import AdminContentQueueList from "@/components/admin/AdminContentQueueList"
 import AdminCompactEmptyState from "@/components/admin/AdminCompactEmptyState"
@@ -46,6 +47,7 @@ const AdminDraftsPage = () => {
 
   return (
     <div>
+      <AdminPageReveal>
       <AdminPageHeader
         title="Sanity Drafts"
         actions={
@@ -70,7 +72,9 @@ const AdminDraftsPage = () => {
           </>
         }
       />
+      </AdminPageReveal>
 
+      <AdminPageReveal delay={0.06}>
       {!cmsConfigured ? (
         <Card>
           <CardContent className="pt-6">
@@ -158,6 +162,7 @@ const AdminDraftsPage = () => {
           )}
         </>
       )}
+      </AdminPageReveal>
     </div>
   )
 }

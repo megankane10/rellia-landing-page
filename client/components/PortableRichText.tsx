@@ -221,6 +221,9 @@ const components: PortableTextComponents = {
     h3: ({ children }) => (
       <h3 className="font-host-grotesk text-xl font-semibold text-rellia-teal mt-6 mb-3">{children}</h3>
     ),
+    h4: ({ children }) => (
+      <h4 className="font-host-grotesk text-lg font-semibold text-black mt-5 mb-2">{children}</h4>
+    ),
     blockquote: ({ children }) => {
       const { quote, attribution } = parseBlockquoteAttribution(children)
       return <RichTextQuoteFigure quote={quote} attribution={attribution} />
@@ -232,7 +235,9 @@ const components: PortableTextComponents = {
   marks: {
     strong: ({ children }) => <strong className="font-semibold text-inherit">{children}</strong>,
     em: ({ children }) => <em className="italic">{children}</em>,
+    underline: ({ children }) => <span className="underline underline-offset-2">{children}</span>,
     mint: ({ children }) => <span className="text-rellia-mint">{children}</span>,
+    teal: ({ children }) => <span className="text-rellia-teal">{children}</span>,
     link: ({ value, children }) => {
       const href = typeof value?.href === "string" ? value.href : "#"
       const isExternal = /^https?:\/\//.test(href)

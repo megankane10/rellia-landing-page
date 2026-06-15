@@ -1,10 +1,18 @@
 import { LinkedInFilled, MailFilled } from "@/components/icons/SocialIcons"
 import { cn } from "@/lib/utils"
 
-const shareIconSize = "h-6 w-6 shrink-0"
+export const shareIconSize = "h-6 w-6 shrink-0 md:h-6 md:w-6"
 
-export const shareToolbarButtonClassName =
-  "inline-flex h-12 w-12 items-center justify-center rounded-full bg-white text-rellia-teal transition-transform transition-colors hover:-translate-y-0.5 hover:bg-rellia-mint focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-rellia-cream"
+/** Outline share control on light backgrounds — black icon, inverts on hover. */
+export const shareOutlineButtonClassName =
+  "inline-flex h-11 w-11 md:h-12 md:w-12 items-center justify-center rounded-full border border-black/10 bg-white text-black transition-all duration-300 hover:border-rellia-teal hover:bg-rellia-teal hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-teal focus-visible:ring-offset-2"
+
+/** Outline share control on teal/dark hero backgrounds — inverts on hover. */
+export const shareOutlineButtonClassNameOnDark =
+  "inline-flex h-11 w-11 md:h-12 md:w-12 items-center justify-center rounded-full border border-white/25 bg-white/10 text-white transition-all duration-300 hover:border-white hover:bg-white hover:text-rellia-teal focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-rellia-teal"
+
+/** @deprecated Use shareOutlineButtonClassName */
+export const shareToolbarButtonClassName = shareOutlineButtonClassName
 
 export const ShareIconX = ({ className }: { className?: string }) => (
   <svg viewBox="0 0 24 24" aria-hidden className={cn(shareIconSize, className)} fill="currentColor">

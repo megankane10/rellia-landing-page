@@ -1020,8 +1020,7 @@ export const POWER_OF_PLAY_ALUMNI = {
   founders: [
     {
       name: "Deena Al-Sammak",
-      role: "Co-founder, Health Sciences Graduate",
-      bio: "Co-founder focused on clinical validation and program development for pediatric rehab tooling.",
+      role: "Health Sciences Graduate",
       imageSrc: "/images/deenasammak-team.png",
       socialLinks: [
         {
@@ -1035,8 +1034,7 @@ export const POWER_OF_PLAY_ALUMNI = {
     },
     {
       name: "Rooaa Shanshal",
-      role: "Co-founder, Software & Biomedical Engineer",
-      bio: "Co-founder leading product engineering for play-based strength measurement.",
+      role: "Software & Biomedical Engineer",
       imageSrc: "/images/testimonials-rooaaS.jpeg",
       socialLinks: [
         {

@@ -70,8 +70,19 @@ export const alumniCompany = defineType({
           name: 'founderPerson',
           fields: [
             defineField({name: 'name', type: 'string', validation: (Rule) => Rule.required()}),
-            defineField({name: 'role', type: 'string'}),
-            defineField({name: 'bio', type: 'text', rows: 3}),
+            defineField({
+              name: 'role',
+              title: 'Subheading',
+              type: 'string',
+              description: 'Optional line under the founder name (e.g. title or discipline). Leave blank to hide.',
+            }),
+            defineField({
+              name: 'bio',
+              title: 'Bio',
+              type: 'text',
+              rows: 3,
+              description: 'Optional short blurb under the founder subheading. Leave blank to hide.',
+            }),
             defineField({
               name: 'socialLinks',
               title: 'Social & professional links',
@@ -108,7 +119,7 @@ export const alumniCompany = defineType({
       title: 'About the company',
       type: 'portableRichText',
       description:
-        'Company overview — use headings, images, quote boxes, and CTA boxes.',
+        'Company overview for the profile page. Block styles: Normal, H2, H3, H4, Quote. Text highlights (select words, then toolbar): Bold, Italic, Underline, Mint. You can also insert images, carousels, quote boxes, videos, and CTA boxes. Publish when ready — only published content appears on the site.',
       group: 'founders',
     }),
     defineField({

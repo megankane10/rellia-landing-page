@@ -1,5 +1,6 @@
 import type { CareersOpenRole } from "./types"
 import { resolveCareersRoleSeo } from "./collectionSeo"
+import { extractFirstPortableTextImageUrl } from "./portableTextImages"
 
 export const CAREERS_ROLE_QUERY_PARAM = "role"
 
@@ -77,6 +78,15 @@ export const buildCareersRoleShareMeta = (
   role: CareersOpenRole,
   options?: { heroImageSrc?: string },
 ) => ({
-  ...resolveCareersRoleSeo(role),
-  ogImageUrl: options?.heroImageSrc?.trim() || CAREERS_ROLE_SHARE_OG_FALLBACK,
+  ...resolveCareersRoleSeo({
+    title: role.title,
+    location: role.location,
+    employmentType: role.employmentType,
+    description: role.description,
+    responsibilities: role.responsibilities,
+  }),
+  ogImageUrl:
+    extractFirstPortableTextImageUrl(role.description)?.trim() ||
+    options?.heroImageSrc?.trim() ||
+    CAREERS_ROLE_SHARE_OG_FALLBACK,
 })

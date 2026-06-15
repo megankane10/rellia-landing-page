@@ -66,6 +66,40 @@ export const STORIES: Story[] = [
   },
 ]
 
+export type StoryListItem = {
+  slug: string
+  title: string
+  excerpt: string
+  coverImageSrc: string
+  coverImageAlt: string
+  tag: string
+  publishedAt: string
+}
+
+export const storyToListItem = (story: Story): StoryListItem => ({
+  slug: story.slug,
+  title: story.title,
+  excerpt: story.excerpt,
+  coverImageSrc: story.coverImageSrc,
+  coverImageAlt: story.coverImageAlt,
+  tag: story.tag,
+  publishedAt: story.publishedAt,
+})
+
+/** On localhost/preview, append code-only seed stories so dev UI (e.g. related stories) is testable alongside CMS rows. */
+export const mergeCmsStoriesWithDevSeed = (
+  cmsStories: StoryListItem[],
+  allowSeed: boolean,
+): StoryListItem[] => {
+  if (!allowSeed) return cmsStories
+
+  const seedStories = STORIES.map(storyToListItem)
+  if (cmsStories.length === 0) return seedStories
+
+  const cmsSlugs = new Set(cmsStories.map((story) => story.slug.trim()))
+  return [...cmsStories, ...seedStories.filter((story) => !cmsSlugs.has(story.slug.trim()))]
+}
+
 export const getStoryBySlug = (slug: string): Story | undefined =>
   STORIES.find((s) => s.slug === slug)
 

@@ -94,27 +94,29 @@ function LeftPanel({ copy }: { copy: typeof DEFAULT_CONTACT_PAGE }) {
             transition={{ duration: 0.8 }}
             className="flex flex-1 flex-col justify-center px-2 py-6"
           >
-            <p className="w-full font-urbanist text-2xl font-medium leading-snug text-white md:text-4xl lg:text-5xl">
+            <p className="w-full font-urbanist text-2xl font-medium leading-relaxed text-white md:text-4xl md:leading-[1.45] lg:text-5xl lg:leading-[1.4]">
               &ldquo;{cmsDisplayText(copy.quoteText)}&rdquo;
             </p>
 
             <div className="mt-8 flex items-center gap-4 md:gap-5">
               <div className="h-[62px] w-[62px] md:h-[78px] md:w-[78px] shrink-0 overflow-hidden rounded-2xl border-2 border-white/20 shadow-xl">
                 <img
-                  src={copy.quotePersonImageSrc || "/images/megan-headshot.jpeg"}
+                  src={copy.quotePersonImageSrc || "/images/team-megankane.jpg"}
                   alt={`${copy.quoteAttributionName}, ${copy.quoteAttributionRole}`}
                   width={78}
                   height={78}
                   loading="lazy"
                   decoding="async"
-                  className="h-full w-full object-cover object-top"
+                  className="h-full w-full object-cover object-[50%_0%]"
                 />
               </div>
               <div>
                 <p className="font-host-grotesk text-[18px] md:text-[21px] font-medium tracking-wide text-rellia-mint">
                   {cmsDisplayText(copy.quoteAttributionName)}
                 </p>
-                <p className="font-urbanist text-[15px] md:text-[18px] font-medium text-white/60">{cmsDisplayText(copy.quoteAttributionRole)}</p>
+                <p className="font-urbanist text-[15px] font-medium leading-relaxed text-white/60 md:text-[18px] md:leading-loose">
+                  {cmsDisplayText(copy.quoteAttributionRole)}
+                </p>
               </div>
             </div>
           </motion.div>

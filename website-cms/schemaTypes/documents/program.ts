@@ -68,16 +68,11 @@ export const program = defineType({
       group: 'card',
     }),
     defineField({
-      name: 'waitlistHref',
-      title: 'Waitlist / registration URL',
-      type: 'string',
-      group: 'card',
-    }),
-    defineField({
       name: 'paymentUrl',
       type: 'url',
-      title: 'Payment / registration URL',
-      description: 'Fillout or Stripe link for the detail page CTA.',
+      title: 'Registration / waitlist form URL',
+      description:
+        'Fillout, Stripe, or other link for the main button on the program detail page — used for open enrollment and waitlist sign-up.',
       group: 'detail',
     }),
     defineField({name: 'heroTitle', type: 'string', group: 'detail'}),

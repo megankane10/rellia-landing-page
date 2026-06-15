@@ -1,7 +1,9 @@
 import { useMemo, useState } from "react"
 import { Link, useLocation, useParams } from "react-router-dom"
 import { AnimatePresence, motion } from "framer-motion"
-import { Calendar, CalendarOff, ChevronLeft, ArrowLeft, History, MapPin, Ticket, Video, Check } from "lucide-react"
+import { Calendar, CalendarOff, ChevronLeft, ArrowLeft, History, MapPin, Ticket, Video } from "lucide-react"
+import { ShareCopyLinkButton } from "@/components/share/ShareCopyLinkButton"
+import { ShareToolbarIconLink } from "@/components/share/ShareToolbarIconLink"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
 import ScrollReveal from "@/components/ScrollReveal"
@@ -37,12 +39,11 @@ import {
   shortenProgramsEventDateTime,
 } from "@shared/cms/programsEventDisplay"
 import {
-  ShareIconCopy,
   ShareIconFacebook,
   ShareIconLinkedIn,
   ShareIconMail,
   ShareIconX,
-  shareToolbarButtonClassName,
+  shareOutlineButtonClassName,
 } from "@/components/share/sharePageIcons"
 import { buildMailtoHref } from "@/lib/mailto"
 import { DEFAULT_GLOBAL_SETTINGS } from "@shared/cms/defaults"
@@ -56,6 +57,7 @@ import { allowCmsSeedFallbacks } from "@/lib/deploymentEnv"
 import { isCmsQueryLoading, shouldShowCmsEmptyState } from "@/lib/cmsQueryState"
 import CmsPageLoadingShell from "@/components/cms/CmsPageLoadingShell"
 import { isSanityConfigured } from "@/lib/sanity"
+import RelatedEvents from "@/components/related/RelatedEvents"
 
 const eventDetailBackToEventsLinkClassName =
   "inline-flex items-center gap-2 font-host-grotesk text-sm font-semibold text-rellia-teal hover:underline hover:underline-offset-4"
@@ -131,8 +133,8 @@ export default function EventDetail() {
     if (!fallbackMatch) return null
     return cardImageSrc ? { ...fallbackMatch, imageSrc: cardImageSrc } : fallbackMatch
   })()
-  const [copyState, setCopyState] = useState<"idle" | "copied">("idle")
   const [showForm, setShowForm] = useState(false)
+  const [hasRelatedEvents, setHasRelatedEvents] = useState(false)
 
   const eventMeta = useMemo(() => {
     if (!match) return null
@@ -153,9 +155,9 @@ export default function EventDetail() {
     const eventDescription = clampMetaDescription(resolvedSeo.description)
     const eventSlugPath = getProgramsEventSlug(event)
     const pagePath = `/events/${eventSlugPath}`
-    const resolvedOg = resolvedSeo.ogImageUrl
-      ? resolveSocialOgImage(resolvedSeo.ogImageUrl, undefined, { square: true })
-      : resolveSocialOgImage(event.imageSrc, undefined, { square: true })
+    const resolvedOg = event.imageSrc
+      ? resolveSocialOgImage(event.imageSrc, undefined, { square: true })
+      : undefined
     return {
       pageTitle,
       eventDescription,
@@ -258,16 +260,6 @@ export default function EventDetail() {
   const ogImage = eventMeta!.ogImage
   const ogImageWidth = eventMeta!.ogImageWidth
   const ogImageHeight = eventMeta!.ogImageHeight
-
-  const handleCopyLink = async () => {
-    try {
-      await navigator.clipboard.writeText(canonical)
-      setCopyState("copied")
-      window.setTimeout(() => setCopyState("idle"), 2000)
-    } catch {
-      setCopyState("idle")
-    }
-  }
 
   const handleHeroCtaClick = () => {
     if (!showHeroEventCta || addToCalendarEnabled) return
@@ -514,74 +506,46 @@ export default function EventDetail() {
                   <div className="h-px w-full bg-black/10" aria-hidden />
 
                   <div className="flex flex-wrap items-center gap-3">
-                    <a
+                    <ShareToolbarIconLink
                       href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(canonical)}&text=${encodeURIComponent(shareTitle)}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={shareToolbarButtonClassName}
-                      aria-label="Share on X"
+                      label="Share on X"
+                      className={shareOutlineButtonClassName}
                     >
                       <ShareIconX />
-                    </a>
-                    <a
+                    </ShareToolbarIconLink>
+                    <ShareToolbarIconLink
                       href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(canonical)}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={shareToolbarButtonClassName}
-                      aria-label="Share on LinkedIn"
+                      label="Share on LinkedIn"
+                      className={shareOutlineButtonClassName}
                     >
                       <ShareIconLinkedIn />
-                    </a>
-                    <a
+                    </ShareToolbarIconLink>
+                    <ShareToolbarIconLink
                       href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(canonical)}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={shareToolbarButtonClassName}
-                      aria-label="Share on Facebook"
+                      label="Share on Facebook"
+                      className={shareOutlineButtonClassName}
                     >
                       <ShareIconFacebook />
-                    </a>
-                    <a
+                    </ShareToolbarIconLink>
+                    <ShareToolbarIconLink
                       href={buildMailtoHref(DEFAULT_GLOBAL_SETTINGS.supportEmail, {
                         subject: shareTitle,
                         body: `${shareTitle}\n\n${canonical}`,
                       })}
-                      className={shareToolbarButtonClassName}
-                      aria-label="Share by email"
+                      label="Share by email"
+                      className={shareOutlineButtonClassName}
+                      external={false}
                     >
                       <ShareIconMail />
-                    </a>
+                    </ShareToolbarIconLink>
 
-                    <button
-                      type="button"
-                      onClick={handleCopyLink}
-                      className={cn(
-                        shareToolbarButtonClassName,
-                        copyState === "copied" && "bg-rellia-mint text-rellia-teal border-rellia-teal shadow-md"
-                      )}
-                      aria-label={copyState === "copied" ? "Link copied" : "Copy event link"}
-                    >
-                      {copyState === "copied" ? (
-                        <Check className="h-5 w-5 shrink-0 animate-scale-in" />
-                      ) : (
-                        <ShareIconCopy />
-                      )}
-                    </button>
-
-                    <AnimatePresence mode="wait" initial={false}>
-                      {copyState === "copied" ? (
-                        <motion.span
-                          key="copied-feedback"
-                          className="font-host-grotesk text-sm font-semibold text-rellia-teal"
-                          initial={{ opacity: 0, y: 4, scale: 0.98 }}
-                          animate={{ opacity: 1, y: 0, scale: 1 }}
-                          exit={{ opacity: 0, y: -4, scale: 0.98 }}
-                          transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
-                        >
-                          Copied!
-                        </motion.span>
-                      ) : null}
-                    </AnimatePresence>
+                    <ShareCopyLinkButton
+                      onCopy={() => navigator.clipboard.writeText(canonical)}
+                      className={shareOutlineButtonClassName}
+                      copiedClassName="border-rellia-teal bg-rellia-mint/20 text-rellia-teal"
+                      idleLabel="Copy event link"
+                      copiedLabel="Link copied"
+                    />
                   </div>
                 </div>
               </ScrollReveal>
@@ -647,7 +611,7 @@ export default function EventDetail() {
                   </div>
                 </div>
               </ScrollReveal>
-                    <EventDetailBackToEventsLink variant="footer" />
+                    {!hasRelatedEvents ? <EventDetailBackToEventsLink variant="footer" /> : null}
                   </div>
                 ) : (
                   <div className="mx-auto w-full max-w-[1300px] px-6 py-10 md:px-10 md:py-14">
@@ -699,7 +663,7 @@ export default function EventDetail() {
                     </div>
                   </ScrollReveal>
                 ) : null}
-                <EventDetailBackToEventsLink variant="footer" />
+                {!hasRelatedEvents ? <EventDetailBackToEventsLink variant="footer" /> : null}
               </div>
             </div>
           )}
@@ -754,6 +718,13 @@ export default function EventDetail() {
           </AnimatePresence>
         </section>
       </main>
+
+      {match ? (
+        <RelatedEvents
+          currentSlug={getProgramsEventSlug(match)}
+          onHasRelatedChange={setHasRelatedEvents}
+        />
+      ) : null}
 
       <Footer />
     </div>
