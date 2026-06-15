@@ -82,7 +82,7 @@ export const EventCard = ({
         </div>
       )}
 
-      <div className="flex flex-1 flex-col p-5 md:p-6">
+      <div className="flex flex-1 flex-col p-5 pb-6 md:p-6 md:pb-7">
         <div className="flex-1 flex flex-col gap-4">
           <div className="space-y-2">
             <div className="flex flex-wrap items-center gap-2">

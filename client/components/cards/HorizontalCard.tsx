@@ -102,7 +102,7 @@ export function HorizontalCard(props: HorizontalCardProps) {
     return (
       <article
         className={cn(
-          "group relative flex flex-col md:flex-row items-start md:items-center w-full bg-white transition-all duration-300 py-4 md:py-6 px-4 md:px-8 border-b border-black/[0.06] hover:bg-black/[0.03] gap-6 md:gap-0",
+          "group relative flex flex-col md:flex-row items-start md:items-center w-full bg-white transition-all duration-300 pt-4 pb-5 md:pt-6 md:pb-7 px-4 md:px-8 border-b border-black/[0.06] hover:bg-black/[0.03] gap-6 md:gap-0",
           "hover:rounded-2xl hover:border-black/10 hover:shadow-[0_24px_60px_-20px_rgba(0,0,0,0.12)] hover:z-20 ring-2 ring-transparent hover:ring-rellia-teal",
           className
         )}
@@ -293,7 +293,7 @@ export function HorizontalCard(props: HorizontalCardProps) {
         </p>
 
         {!isWaitlistCard ? (
-          <div className="mt-auto pt-5 md:pt-6 pb-3">
+          <div className="mt-auto pt-5 md:pt-6 pb-5 md:pb-6">
             <div className="flex items-end gap-3 text-black/70">
               <CalendarDays className="h-7 w-7 text-rellia-teal" strokeWidth={2.25} aria-hidden />
               <span className="font-host-grotesk text-[12px] font-bold uppercase tracking-[0.18em] text-black/80">

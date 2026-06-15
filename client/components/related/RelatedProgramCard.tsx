@@ -9,6 +9,7 @@ import {
   RELATED_COMPACT_BADGE_CLASS,
   RELATED_COMPACT_BADGE_ROW_CLASS,
   RELATED_COMPACT_CARD_HOVER_CLASS,
+  RELATED_COMPACT_CARD_INSET_CLASS,
   RELATED_COMPACT_CONTENT_CLASS,
   RELATED_COMPACT_DEADLINE_CLASS,
   RELATED_COMPACT_DEADLINE_TEXT_CLASS,
@@ -78,7 +79,7 @@ const RelatedProgramCard = ({ program }: RelatedProgramCardProps) => {
   if (!href) {
     return (
       <article className="h-full w-full">
-        <div className={cn("group flex h-full w-full flex-col rounded-2xl", RELATED_COMPACT_CARD_HOVER_CLASS)}>
+        <div className={cn("group flex h-full w-full flex-col rounded-2xl", RELATED_COMPACT_CARD_INSET_CLASS, RELATED_COMPACT_CARD_HOVER_CLASS)}>
           {inner}
         </div>
       </article>
@@ -90,7 +91,8 @@ const RelatedProgramCard = ({ program }: RelatedProgramCardProps) => {
       <Link
         to={href}
         className={cn(
-          "group flex h-full w-full flex-col overflow-hidden rounded-2xl",
+          "group flex h-full w-full flex-col rounded-2xl",
+          RELATED_COMPACT_CARD_INSET_CLASS,
           RELATED_COMPACT_CARD_HOVER_CLASS,
           "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2",
         )}

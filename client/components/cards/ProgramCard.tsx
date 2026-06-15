@@ -100,7 +100,7 @@ export const ProgramCard = ({
           </div>
 
           {/* Text and Button Container */}
-          <div className="flex flex-1 flex-col p-4 sm:p-5">
+          <div className="flex flex-1 flex-col p-4 pb-5 sm:p-5 sm:pb-6">
             {/* Mobile badge (below image, above title) */}
             {showMobileBadge ? (
               <div className="mb-3 sm:hidden">

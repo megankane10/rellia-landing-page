@@ -8,9 +8,11 @@ import {
   RELATED_COMPACT_BADGE_CLASS,
   RELATED_COMPACT_BADGE_ROW_CLASS,
   RELATED_COMPACT_CARD_HOVER_CLASS,
+  RELATED_COMPACT_CARD_INSET_CLASS,
   RELATED_COMPACT_CONTENT_CLASS,
   RELATED_COMPACT_IMAGE_CLASS,
   RELATED_COMPACT_META_CLASS,
+  RELATED_COMPACT_EVENT_SCHEDULE_CLASS,
   RELATED_COMPACT_TITLE_CLASS,
 } from "@/components/related/relatedCompactGrid"
 import { programsEventDetailPath } from "@shared/cms/eventSlug"
@@ -24,7 +26,7 @@ type RelatedEventCardProps = {
 const RelatedEventCard = ({ event, variant = "upcoming" }: RelatedEventCardProps) => {
   const detailHref = programsEventDetailPath(event)
   const { schedule, location } = getProgramsEventRelatedCardMeta(event)
-  const metaBesideBadge = [schedule, location].filter(Boolean).join(" · ")
+  const hasEventMeta = Boolean(schedule || location)
   const imageSrc = event.imageSrc?.trim()
     ? event.imageSrc
     : placeholderImageFromSeed(cmsCleanText(event.slug || event.title), 720, 720)
@@ -35,7 +37,8 @@ const RelatedEventCard = ({ event, variant = "upcoming" }: RelatedEventCardProps
       <Link
         to={detailHref}
         className={cn(
-          "group flex h-full w-full flex-col overflow-hidden rounded-2xl",
+          "group flex h-full w-full flex-col rounded-2xl",
+          RELATED_COMPACT_CARD_INSET_CLASS,
           RELATED_COMPACT_CARD_HOVER_CLASS,
           "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2",
         )}
@@ -68,8 +71,18 @@ const RelatedEventCard = ({ event, variant = "upcoming" }: RelatedEventCardProps
               )}
               {isPast ? "Past" : "Upcoming"}
             </span>
-            {metaBesideBadge ? (
-              <span className={RELATED_COMPACT_META_CLASS}>{metaBesideBadge}</span>
+            {hasEventMeta ? (
+              <span className="inline-flex min-w-0 flex-wrap items-center gap-x-1.5 gap-y-0.5">
+                {schedule ? (
+                  <span className={RELATED_COMPACT_EVENT_SCHEDULE_CLASS}>{schedule}</span>
+                ) : null}
+                {schedule && location ? (
+                  <span className="text-black/35" aria-hidden>
+                    ·
+                  </span>
+                ) : null}
+                {location ? <span className={RELATED_COMPACT_META_CLASS}>{location}</span> : null}
+              </span>
             ) : null}
           </div>
 

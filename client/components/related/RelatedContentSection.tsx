@@ -34,6 +34,9 @@ const RelatedContentSection = ({
   layout = "default",
   gridClassName = "mt-8 grid grid-cols-1 gap-12 md:mt-10 md:grid-cols-2 md:gap-8 xl:grid-cols-3",
 }: RelatedContentSectionProps) => {
+  const viewAllLinkClass =
+    "inline-flex w-fit shrink-0 items-center gap-1.5 font-host-grotesk text-sm font-semibold text-rellia-teal hover:underline hover:underline-offset-4"
+
   const headerBlock = (
     <div>
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
@@ -45,7 +48,7 @@ const RelatedContentSection = ({
         </h2>
         <Link
           to={viewAllHref}
-          className="inline-flex w-fit shrink-0 items-center gap-1.5 font-host-grotesk text-sm font-semibold text-rellia-teal hover:underline hover:underline-offset-4"
+          className={cn(viewAllLinkClass, "hidden sm:inline-flex")}
           aria-label={viewAllLabel}
         >
           {viewAllLabel}
@@ -57,6 +60,14 @@ const RelatedContentSection = ({
           {cmsDisplayText(subheadline)}
         </p>
       ) : null}
+      <Link
+        to={viewAllHref}
+        className={cn(viewAllLinkClass, "mt-3 sm:hidden")}
+        aria-label={viewAllLabel}
+      >
+        {viewAllLabel}
+        <ChevronRight className="h-4 w-4 shrink-0" aria-hidden />
+      </Link>
     </div>
   )
 
