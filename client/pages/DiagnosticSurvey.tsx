@@ -664,6 +664,11 @@ const css = `
     line-height: 1.35;
   }
 
+  .diagnostic-report .diagnostic-print-programs a {
+    color: #0d3540 !important;
+    text-decoration: underline !important;
+  }
+
   .diagnostic-report .diagnostic-print-footer {
     border-top: 1px solid #ccc;
     margin-top: 0.75rem;
@@ -2191,9 +2196,13 @@ export default function DiagnosticSurvey() {
                         {recommendedPrograms.map((prog, i) => {
                           const href = prog?.programHref || "/programs"
                           const meta = PROGRAM_META_BY_HREF[href]
+                          const programLabel = meta?.title || prog?.program || "Program"
+                          const programLinkLabel = `relliahealth.com${href}`
+                          const programUrl = `https://www.relliahealth.com${href}`
                           return (
                             <li key={i}>
-                              {meta?.title || prog?.program || "Program"} — relliahealth.com{href}
+                              {programLabel} —{" "}
+                              <a href={programUrl}>{programLinkLabel}</a>
                             </li>
                           )
                         })}
