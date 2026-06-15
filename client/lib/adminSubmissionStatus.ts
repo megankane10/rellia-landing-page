@@ -35,6 +35,35 @@ export const formatAdminDateLong = (iso: string) =>
     day: "numeric",
   })
 
+/** Human-readable relative time for admin activity (e.g. "Today", "3 days ago"). */
+export const formatAdminRelativeAgo = (iso: string): string => {
+  const date = new Date(iso)
+  if (Number.isNaN(date.getTime())) return ""
+
+  const now = new Date()
+  const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+  const startOfDate = new Date(date.getFullYear(), date.getMonth(), date.getDate())
+  const dayDiff = Math.round((startOfToday.getTime() - startOfDate.getTime()) / (24 * 60 * 60 * 1000))
+
+  if (dayDiff <= 0) return "Today"
+  if (dayDiff === 1) return "Yesterday"
+  if (dayDiff < 7) return `${dayDiff} days ago`
+  if (dayDiff < 30) {
+    const weeks = Math.floor(dayDiff / 7)
+    return weeks === 1 ? "1 week ago" : `${weeks} weeks ago`
+  }
+  const months = Math.floor(dayDiff / 30)
+  return months === 1 ? "1 month ago" : `${months} months ago`
+}
+
+export const formatAdminDateWithWeekday = (iso: string) =>
+  new Date(iso).toLocaleDateString("en-US", {
+    weekday: "short",
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  })
+
 export const countRecentSubmissions = <T extends { created_at: string }>(
   rows: T[],
   withinDays = 7,

@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from "react"
 import { BarChart3, ExternalLink, FileText, PenLine } from "lucide-react"
 import { motion, useAnimationControls, useReducedMotion } from "framer-motion"
 import RelliaAction from "@/components/RelliaAction"
+import { ADMIN_DASHBOARD_OG_IMAGE_SRC } from "@/config/seo"
 import { cn } from "@/lib/utils"
 import { OPERATIONS_DOC_EDIT_URL } from "@shared/cms/operationsDocUrl"
 
@@ -23,7 +24,7 @@ const REVEAL_EASE = [0.33, 1, 0.68, 1] as const
 const HEADING_WORD_EASE = [0.22, 0.03, 0.26, 1] as const
 
 const HOLOGRAM_LOGO_SRC = "/images/hologram-logo.png"
-const SPLASH_BACKGROUND_SRC = "/images/TabletMeeting.png"
+const SPLASH_BACKGROUND_SRC = ADMIN_DASHBOARD_OG_IMAGE_SRC
 
 const RESOURCE_LINKS = [
   {

@@ -194,6 +194,7 @@ export default function AdvisorProfile() {
                   <ProfileSocialLinks
                     links={active.socialLinks}
                     email={(active as { email?: string }).email}
+                    comfortableTouch
                   />
                   <ShareCopyLinkButton
                     onCopy={() => navigator.clipboard.writeText(canonicalUrl)}

@@ -170,6 +170,7 @@ export default function FounderProfile() {
                   <ProfileSocialLinks
                     links={(active as { socialLinks?: Array<{ platform?: string; label?: string; url?: string }> }).socialLinks}
                     email={(active as { email?: string }).email}
+                    comfortableTouch
                   />
                   <ShareCopyLinkButton
                     onCopy={() => navigator.clipboard.writeText(canonicalUrl)}
@@ -201,7 +202,7 @@ export default function FounderProfile() {
                       >
                         <div
                           onClick={() => setActiveImage({ src: avatarUrl, alt: f.name })}
-                          className="relative h-14 w-14 shrink-0 cursor-pointer overflow-hidden rounded-xl border border-black/8 bg-black/[0.02] sm:h-16 sm:w-16"
+                          className="relative h-16 w-16 shrink-0 cursor-pointer overflow-hidden rounded-xl border border-black/8 bg-black/[0.02] sm:h-20 sm:w-20"
                         >
                           <img
                             src={avatarUrl}
@@ -213,9 +214,11 @@ export default function FounderProfile() {
                           <h4 className="font-host-grotesk text-base font-bold text-black transition-colors duration-300 group-hover:text-rellia-teal sm:text-lg">
                             {f.name}
                           </h4>
-                          <p className="mt-0.5 font-urbanist text-sm font-medium text-rellia-teal">
-                            {f.role}
-                          </p>
+                          {typeof f.role === "string" && f.role.trim() ? (
+                            <p className="mt-0.5 font-urbanist text-sm font-medium text-rellia-teal">
+                              {f.role.trim()}
+                            </p>
+                          ) : null}
                           {typeof f.bio === "string" && f.bio.trim() ? (
                             <p className="mt-1.5 line-clamp-3 font-urbanist text-sm leading-relaxed text-black/60 sm:line-clamp-none">
                               {f.bio.trim()}
@@ -225,9 +228,10 @@ export default function FounderProfile() {
                         <ProfileSocialLinks
                           links={Array.isArray(f.socialLinks) ? f.socialLinks : []}
                           email={(f as { email?: string }).email}
-                          iconClassName="h-3.5 w-3.5"
+                          iconClassName="h-4 w-4 md:h-3.5 md:w-3.5"
                           className="shrink-0 gap-2"
                           showTooltips={false}
+                          comfortableTouch
                         />
                       </div>
                     )

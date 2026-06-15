@@ -320,17 +320,17 @@ export default function Footer() {
           </div>
 
           <div className="border-t border-white/10 pt-4 md:pt-5">
-            <div className="grid grid-cols-1 items-center gap-5 md:grid-cols-[1fr_auto_1fr] md:gap-6">
-              <p className="text-center font-urbanist text-[13px] leading-snug text-white/55 md:text-left md:text-sm order-2 md:order-none">
+            <div className="hidden grid-cols-[1fr_auto_1fr] items-center gap-6 md:grid">
+              <p className="text-left font-urbanist text-sm leading-snug text-white/55">
                 &copy; {new Date().getFullYear()} {g.copyrightLine} Ontario, Canada
               </p>
 
-              <div className="flex justify-center overflow-visible md:px-4 order-1 md:order-none">
+              <div className="flex justify-center overflow-visible px-4">
                 <BuiltByCredit />
               </div>
 
               <nav
-                className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 md:justify-end lg:gap-x-8 order-3 md:order-none"
+                className="flex flex-wrap items-center justify-end gap-x-5 gap-y-2 lg:gap-x-8"
                 aria-label="Legal"
               >
                 <Link to="/terms" className={legalLinkClass}>
@@ -344,35 +344,58 @@ export default function Footer() {
                 </Link>
               </nav>
             </div>
-          </div>
 
-          <div className="mt-6 flex flex-col items-center justify-center gap-4 md:hidden">
-            <div className="flex items-center justify-center gap-3">
-              <a
-                href={g.linkedinUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group rounded-full bg-white/5 p-2 transition-all duration-300 hover:bg-rellia-mint"
-                aria-label="Rellia Health on LinkedIn"
+            <div className="flex flex-col items-center gap-5 md:hidden">
+              <p className="text-center font-urbanist text-[13px] leading-snug text-white/55">
+                &copy; {new Date().getFullYear()} {g.copyrightLine} Ontario, Canada
+              </p>
+
+              <nav
+                className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2"
+                aria-label="Legal"
               >
-                <LinkedInFilled className="h-5 w-5 text-white/85 transition-colors duration-300 group-hover:text-rellia-teal" />
-              </a>
-              <a
-                href={g.instagramUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group rounded-full bg-white/5 p-2 transition-all duration-300 hover:bg-rellia-mint"
-                aria-label="Rellia Health on Instagram"
-              >
-                <InstagramFilled className="h-5 w-5 text-white/85 transition-colors duration-300 group-hover:text-rellia-teal" />
-              </a>
-              <a
-                href={`mailto:${g.supportEmail}`}
-                className="group rounded-full bg-white/5 p-2 transition-all duration-300 hover:bg-rellia-mint"
-                aria-label={`Email ${g.supportEmail}`}
-              >
-                <MailFilled className="h-5 w-5 text-white/85 transition-colors duration-300 group-hover:text-rellia-teal" />
-              </a>
+                <Link to="/terms" className={legalLinkClass}>
+                  Terms of Service
+                </Link>
+                <span className="text-white/25 select-none" aria-hidden>
+                  |
+                </span>
+                <Link to="/privacy" className={legalLinkClass}>
+                  Privacy Policy
+                </Link>
+              </nav>
+
+              <div className="flex items-center justify-center gap-3">
+                <a
+                  href={g.linkedinUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group rounded-full bg-white/5 p-2 transition-all duration-300 hover:bg-rellia-mint"
+                  aria-label="Rellia Health on LinkedIn"
+                >
+                  <LinkedInFilled className="h-5 w-5 text-white/85 transition-colors duration-300 group-hover:text-rellia-teal" />
+                </a>
+                <a
+                  href={g.instagramUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group rounded-full bg-white/5 p-2 transition-all duration-300 hover:bg-rellia-mint"
+                  aria-label="Rellia Health on Instagram"
+                >
+                  <InstagramFilled className="h-5 w-5 text-white/85 transition-colors duration-300 group-hover:text-rellia-teal" />
+                </a>
+                <a
+                  href={`mailto:${g.supportEmail}`}
+                  className="group rounded-full bg-white/5 p-2 transition-all duration-300 hover:bg-rellia-mint"
+                  aria-label={`Email ${g.supportEmail}`}
+                >
+                  <MailFilled className="h-5 w-5 text-white/85 transition-colors duration-300 group-hover:text-rellia-teal" />
+                </a>
+              </div>
+
+              <div className="flex justify-center overflow-visible pt-1">
+                <BuiltByCredit />
+              </div>
             </div>
           </div>
         </div>

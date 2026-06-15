@@ -3,12 +3,14 @@ import { useLocation } from "react-router-dom"
 import {
   clampMetaDescription,
   clampMetaTitle,
+  getAdminOgImageUrl,
   getDefaultOgImageUrl,
   getDefaultOgImageAlt,
   RELLIA_SOCIAL_THEME_COLOR,
   getStaticOgImageForPathname,
   getSeoForPathname,
   getSiteUrl,
+  isAdminAreaPath,
   isItemDetailPath,
   allowsRouteSeoOgImage,
   normalizePathname,
@@ -61,10 +63,12 @@ const RouteSeo = ({
     ? (ogImageOverride || overrides.ogImage)?.trim()
     : undefined
   const staticOg = getStaticOgImageForPathname(normalizedPathname)
+  const adminOg = isAdminAreaPath(normalizedPathname) ? getAdminOgImageUrl() : undefined
   const useHomeDefaultOg = shouldUseDefaultOgImage(normalizedPathname)
   const imageUrl =
     explicitOgImage ||
     staticOg ||
+    adminOg ||
     (useHomeDefaultOg ? cmsDefaultOg || getDefaultOgImageUrl() : undefined)
   const imageAlt = getDefaultOgImageAlt()
   const includeOgImage = Boolean(imageUrl)

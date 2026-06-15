@@ -2273,7 +2273,7 @@ export const DEFAULT_CONTACT_PAGE: ContactPageContent = {
   sideImageSrc: "/health_tech_collaboration_1778023064936.png",
   sideImageAlt: "Rellia contact — team and collaboration",
   leftLogoImageSrc: "/images/hologram-logo.png",
-  quotePersonImageSrc: "/images/megan-headshot.jpeg",
+  quotePersonImageSrc: "/images/team-megankane.jpg",
   quoteText:
     "We meet health tech founders where they’re at, surrounding them with people who get it and get them",
   quoteAttributionName: "Megan Kane",

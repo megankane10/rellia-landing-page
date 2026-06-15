@@ -101,13 +101,13 @@ function LeftPanel({ copy }: { copy: typeof DEFAULT_CONTACT_PAGE }) {
             <div className="mt-8 flex items-center gap-4 md:gap-5">
               <div className="h-[62px] w-[62px] md:h-[78px] md:w-[78px] shrink-0 overflow-hidden rounded-2xl border-2 border-white/20 shadow-xl">
                 <img
-                  src={copy.quotePersonImageSrc || "/images/megan-headshot.jpeg"}
+                  src={copy.quotePersonImageSrc || "/images/team-megankane.jpg"}
                   alt={`${copy.quoteAttributionName}, ${copy.quoteAttributionRole}`}
                   width={78}
                   height={78}
                   loading="lazy"
                   decoding="async"
-                  className="h-full w-full object-cover object-top"
+                  className="h-full w-full object-cover object-[50%_0%]"
                 />
               </div>
               <div>

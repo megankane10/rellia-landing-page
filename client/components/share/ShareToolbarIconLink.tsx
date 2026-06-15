@@ -1,5 +1,5 @@
 import type { ReactNode } from "react"
-import { IconTooltipWrap } from "@/components/share/IconTooltipWrap"
+import { IconTooltipWrap, type IconTooltipPosition } from "@/components/share/IconTooltipWrap"
 import { cn } from "@/lib/utils"
 
 type ShareToolbarIconLinkProps = {
@@ -8,6 +8,7 @@ type ShareToolbarIconLinkProps = {
   className?: string
   children: ReactNode
   external?: boolean
+  tooltipPosition?: IconTooltipPosition
 }
 
 export const ShareToolbarIconLink = ({
@@ -16,8 +17,9 @@ export const ShareToolbarIconLink = ({
   className,
   children,
   external = true,
+  tooltipPosition,
 }: ShareToolbarIconLinkProps) => (
-  <IconTooltipWrap label={label}>
+  <IconTooltipWrap label={label} position={tooltipPosition}>
     <a
       href={href}
       target={external ? "_blank" : undefined}

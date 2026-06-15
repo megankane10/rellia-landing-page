@@ -10,8 +10,8 @@ import {
   clampMetaDescription,
   clampMetaTitle,
   getSeoForPathname,
+  getAdminOgImage,
   getDefaultOgImageUrl,
-  RELLIA_SOCIAL_THEME_COLOR,
   getSiteUrl,
   isClientOnlyAuthPath,
   isItemDetailPath,
@@ -21,6 +21,7 @@ import {
   buildAdvisorProfileSeoTitle,
   buildAlumniProfileSeoTitle,
   resolveProgramSocialMeta,
+  RELLIA_SOCIAL_THEME_COLOR,
 } from "@/config/seo"
 import { ADVISOR_DIRECTORY_SEED } from "@/data/advisorDirectory"
 import { FOUNDER_DIRECTORY } from "@/data/founderDirectory"
@@ -458,16 +459,29 @@ export const prerender = async (data: { url: string }) => {
 
   if (isClientOnlyAuthPath(pathname)) {
     const routeSeo = getSeoForPathname(pathname)
+    const adminOg = getAdminOgImage()
+    const pageUrl = `${getSiteUrl()}${pathname === "/" ? "" : pathname}`
+    const headElements = new Set<string>([
+      `<meta name="robots" content="noindex, nofollow" />`,
+    ])
+    appendSocialMeta(
+      headElements,
+      {
+        title: routeSeo.title,
+        description: routeSeo.description,
+        ogImage: adminOg?.url,
+        ogImageWidth: adminOg?.width,
+        ogImageHeight: adminOg?.height,
+      },
+      pageUrl,
+    )
     return {
       html: "",
       links: new Set<string>(),
       head: {
         lang: "en",
         title: routeSeo.title,
-        elements: new Set([
-          `<meta name="description" content="${escapeMetaAttr(routeSeo.description)}" />`,
-          `<meta name="robots" content="noindex, nofollow" />`,
-        ]),
+        elements: headElements,
       },
     }
   }

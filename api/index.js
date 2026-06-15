@@ -1313,15 +1313,17 @@ var resolveSiteOrigin = () => {
 };
 var adminContentUrl = () => `${resolveSiteOrigin()}/admin/drafts`;
 var resolveSanityStudioOrigin = () => {
-  const fromNode = typeof process !== "undefined" ? process.env.SANITY_STUDIO_URL?.trim() || "" : "";
-  return trimTrailingSlash(fromNode || "https://relliahealth.sanity.studio");
+  const fromVite = typeof import.meta !== "undefined" && import.meta.env && typeof import.meta.env.VITE_SANITY_STUDIO_URL === "string" ? import.meta.env.VITE_SANITY_STUDIO_URL.trim() : "";
+  const fromNode = typeof process !== "undefined" ? process.env.SANITY_STUDIO_URL?.trim() || process.env.VITE_SANITY_STUDIO_URL?.trim() || "" : "";
+  return trimTrailingSlash(fromVite || fromNode || "https://relliahealth.sanity.studio");
 };
 var studioDeskUrl = (documentType, documentId) => {
   const studioBase = resolveSanityStudioOrigin();
-  const rawId = typeof documentId === "string" ? documentId : "";
-  const docId = rawId.replace(/^drafts\./, "");
-  if (!docId || !documentType) return studioBase;
-  return `${studioBase}/desk/${documentType};${docId}`;
+  const docId = typeof documentId === "string" ? documentId.trim() : "";
+  const docType = typeof documentType === "string" ? documentType.trim() : "";
+  if (!docId || !docType) return studioBase;
+  const params = new URLSearchParams({ id: docId, type: docType });
+  return `${studioBase}/intent/edit?${params.toString()}`;
 };
 
 // server/slackNotify.ts
@@ -2931,6 +2933,261 @@ function createServer() {
         res.json({ users });
       } catch (err) {
         console.error("Admin team error:", err);
+        res.status(500).json({ error: "Unexpected server error." });
+      }
+    }
+  );
+  const adminTeamNoteRate = /* @__PURE__ */ new Map();
+  const ADMIN_TEAM_NOTE_MAX_PER_MIN = 40;
+  const adminTeamNoteReactionRate = /* @__PURE__ */ new Map();
+  const ADMIN_TEAM_NOTE_REACTION_MAX_PER_MIN = 120;
+  const sanitizeTeamNoteBlocks = (raw) => {
+    if (!Array.isArray(raw)) return [];
+    const blocks = [];
+    for (const item of raw.slice(0, 24)) {
+      if (!item || typeof item !== "object") continue;
+      const row = item;
+      if (row.type === "text" && typeof row.text === "string") {
+        const text = row.text.trim().slice(0, 600);
+        if (text) blocks.push({ type: "text", text });
+        continue;
+      }
+      if (row.type === "sticker" && typeof row.emoji === "string") {
+        const emoji = row.emoji.trim().slice(0, 8);
+        if (emoji) blocks.push({ type: "sticker", emoji });
+        continue;
+      }
+      if (row.type === "image" && typeof row.url === "string") {
+        const url = row.url.trim().slice(0, 500);
+        if (url.startsWith("https://") || url.startsWith("/")) {
+          blocks.push({
+            type: "image",
+            url,
+            alt: typeof row.alt === "string" ? row.alt.trim().slice(0, 120) : void 0
+          });
+        }
+      }
+    }
+    return blocks;
+  };
+  const resolveAdminBearer = (req) => {
+    const authHeader = typeof req.headers.authorization === "string" ? req.headers.authorization : "";
+    return authHeader.startsWith("Bearer ") ? authHeader.slice(7).trim() : "";
+  };
+  app2.get(
+    "/api/admin/team-note",
+    rateLimitJson(adminTeamNoteRate, ADMIN_TEAM_NOTE_MAX_PER_MIN),
+    async (req, res) => {
+      if (!allowBrowserOrigin(req)) {
+        res.status(403).json({ error: "Forbidden" });
+        return;
+      }
+      const token = resolveAdminBearer(req);
+      if (!token) {
+        res.status(401).json({ error: "Sign in required." });
+        return;
+      }
+      const supabaseUrl = (process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || "").trim().replace(/\/$/, "");
+      const serviceRoleKey = (process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_KEY || "").trim();
+      const anonKey = (process.env.VITE_SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_PUBLISHABLE_KEY || process.env.SUPABASE_ANON_KEY || "").trim();
+      if (!supabaseUrl || !serviceRoleKey || !anonKey) {
+        res.status(501).json({ error: "Supabase admin credentials are not configured on the server." });
+        return;
+      }
+      try {
+        const { createClient: createClient4 } = await import("@supabase/supabase-js");
+        const sessionClient = createClient4(supabaseUrl, anonKey, {
+          auth: { autoRefreshToken: false, persistSession: false }
+        });
+        const { data: userData, error: userError } = await sessionClient.auth.getUser(token);
+        if (userError || !userData.user) {
+          res.status(401).json({ error: "Invalid or expired session." });
+          return;
+        }
+        const adminClient = createClient4(supabaseUrl, serviceRoleKey, {
+          auth: { autoRefreshToken: false, persistSession: false }
+        });
+        const { data: board, error: boardError } = await adminClient.from("admin_team_board").select("blocks, published_by_id, published_by_name, published_at, updated_at").eq("id", "default").maybeSingle();
+        if (boardError) {
+          if (boardError.code === "42P01") {
+            res.setHeader("content-type", "application/json");
+            res.json({ note: null, reactions: [], configured: false });
+            return;
+          }
+          console.error("Admin team note fetch error:", boardError.message);
+          res.status(500).json({ error: "Could not load team note." });
+          return;
+        }
+        const { data: reactions, error: reactionsError } = await adminClient.from("admin_team_note_reactions").select("emoji, user_id, user_name, created_at").eq("board_id", "default");
+        if (reactionsError && reactionsError.code !== "42P01") {
+          console.error("Admin team reactions fetch error:", reactionsError.message);
+          res.status(500).json({ error: "Could not load team note reactions." });
+          return;
+        }
+        res.setHeader("content-type", "application/json");
+        res.json({
+          configured: true,
+          note: board ? {
+            blocks: sanitizeTeamNoteBlocks(board.blocks),
+            publishedById: board.published_by_id,
+            publishedByName: board.published_by_name,
+            publishedAt: board.published_at,
+            updatedAt: board.updated_at
+          } : null,
+          reactions: (reactions ?? []).map((row) => ({
+            emoji: row.emoji,
+            userId: row.user_id,
+            userName: row.user_name,
+            createdAt: row.created_at
+          }))
+        });
+      } catch (err) {
+        console.error("Admin team note error:", err);
+        res.status(500).json({ error: "Unexpected server error." });
+      }
+    }
+  );
+  app2.put(
+    "/api/admin/team-note",
+    rateLimitJson(adminTeamNoteRate, ADMIN_TEAM_NOTE_MAX_PER_MIN),
+    async (req, res) => {
+      if (!allowBrowserOrigin(req)) {
+        res.status(403).json({ error: "Forbidden" });
+        return;
+      }
+      const token = resolveAdminBearer(req);
+      if (!token) {
+        res.status(401).json({ error: "Sign in required." });
+        return;
+      }
+      const supabaseUrl = (process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || "").trim().replace(/\/$/, "");
+      const serviceRoleKey = (process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_KEY || "").trim();
+      const anonKey = (process.env.VITE_SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_PUBLISHABLE_KEY || process.env.SUPABASE_ANON_KEY || "").trim();
+      if (!supabaseUrl || !serviceRoleKey || !anonKey) {
+        res.status(501).json({ error: "Supabase admin credentials are not configured on the server." });
+        return;
+      }
+      const blocks = sanitizeTeamNoteBlocks(req.body?.blocks);
+      if (blocks.length === 0) {
+        res.status(400).json({ error: "Add at least one sticker, message, or image." });
+        return;
+      }
+      try {
+        const { createClient: createClient4 } = await import("@supabase/supabase-js");
+        const sessionClient = createClient4(supabaseUrl, anonKey, {
+          auth: { autoRefreshToken: false, persistSession: false }
+        });
+        const { data: userData, error: userError } = await sessionClient.auth.getUser(token);
+        if (userError || !userData.user) {
+          res.status(401).json({ error: "Invalid or expired session." });
+          return;
+        }
+        const meta = userData.user.user_metadata ?? {};
+        const fullNameRaw = typeof meta.full_name === "string" ? meta.full_name : typeof meta.name === "string" ? meta.name : "";
+        const publisherName = fullNameRaw.trim() || userData.user.email || "Team member";
+        const nowIso = (/* @__PURE__ */ new Date()).toISOString();
+        const adminClient = createClient4(supabaseUrl, serviceRoleKey, {
+          auth: { autoRefreshToken: false, persistSession: false }
+        });
+        const { data: board, error: upsertError } = await adminClient.from("admin_team_board").upsert(
+          {
+            id: "default",
+            blocks,
+            published_by_id: userData.user.id,
+            published_by_name: publisherName,
+            published_at: nowIso,
+            updated_at: nowIso
+          },
+          { onConflict: "id" }
+        ).select("blocks, published_by_id, published_by_name, published_at, updated_at").single();
+        if (upsertError) {
+          console.error("Admin team note publish error:", upsertError.message);
+          res.status(500).json({ error: "Could not publish team note." });
+          return;
+        }
+        res.setHeader("content-type", "application/json");
+        res.json({
+          note: {
+            blocks: sanitizeTeamNoteBlocks(board.blocks),
+            publishedById: board.published_by_id,
+            publishedByName: board.published_by_name,
+            publishedAt: board.published_at,
+            updatedAt: board.updated_at
+          }
+        });
+      } catch (err) {
+        console.error("Admin team note publish error:", err);
+        res.status(500).json({ error: "Unexpected server error." });
+      }
+    }
+  );
+  app2.post(
+    "/api/admin/team-note/reactions",
+    rateLimitJson(adminTeamNoteReactionRate, ADMIN_TEAM_NOTE_REACTION_MAX_PER_MIN),
+    async (req, res) => {
+      if (!allowBrowserOrigin(req)) {
+        res.status(403).json({ error: "Forbidden" });
+        return;
+      }
+      const token = resolveAdminBearer(req);
+      if (!token) {
+        res.status(401).json({ error: "Sign in required." });
+        return;
+      }
+      const emoji = typeof req.body?.emoji === "string" ? req.body.emoji.trim().slice(0, 8) : "";
+      if (!emoji) {
+        res.status(400).json({ error: "Reaction emoji is required." });
+        return;
+      }
+      const supabaseUrl = (process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || "").trim().replace(/\/$/, "");
+      const serviceRoleKey = (process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_KEY || "").trim();
+      const anonKey = (process.env.VITE_SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_PUBLISHABLE_KEY || process.env.SUPABASE_ANON_KEY || "").trim();
+      if (!supabaseUrl || !serviceRoleKey || !anonKey) {
+        res.status(501).json({ error: "Supabase admin credentials are not configured on the server." });
+        return;
+      }
+      try {
+        const { createClient: createClient4 } = await import("@supabase/supabase-js");
+        const sessionClient = createClient4(supabaseUrl, anonKey, {
+          auth: { autoRefreshToken: false, persistSession: false }
+        });
+        const { data: userData, error: userError } = await sessionClient.auth.getUser(token);
+        if (userError || !userData.user) {
+          res.status(401).json({ error: "Invalid or expired session." });
+          return;
+        }
+        const meta = userData.user.user_metadata ?? {};
+        const fullNameRaw = typeof meta.full_name === "string" ? meta.full_name : typeof meta.name === "string" ? meta.name : "";
+        const userName = fullNameRaw.trim() || userData.user.email || "Team member";
+        const adminClient = createClient4(supabaseUrl, serviceRoleKey, {
+          auth: { autoRefreshToken: false, persistSession: false }
+        });
+        const { data: existing } = await adminClient.from("admin_team_note_reactions").select("id").eq("board_id", "default").eq("user_id", userData.user.id).eq("emoji", emoji).maybeSingle();
+        if (existing?.id) {
+          const { error: deleteError } = await adminClient.from("admin_team_note_reactions").delete().eq("id", existing.id);
+          if (deleteError) {
+            res.status(500).json({ error: "Could not update reaction." });
+            return;
+          }
+          res.setHeader("content-type", "application/json");
+          res.json({ active: false });
+          return;
+        }
+        const { error: insertError } = await adminClient.from("admin_team_note_reactions").insert({
+          board_id: "default",
+          user_id: userData.user.id,
+          user_name: userName,
+          emoji
+        });
+        if (insertError) {
+          console.error("Admin team reaction error:", insertError.message);
+          res.status(500).json({ error: "Could not add reaction." });
+          return;
+        }
+        res.setHeader("content-type", "application/json");
+        res.json({ active: true });
+      } catch (err) {
+        console.error("Admin team reaction error:", err);
         res.status(500).json({ error: "Unexpected server error." });
       }
     }

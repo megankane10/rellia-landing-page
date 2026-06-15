@@ -46,7 +46,7 @@ const AdminShell = () => {
                 <AdminGlobalSearch className="w-full" />
               </div>
             </div>
-            <div className="pointer-events-none absolute inset-y-0 left-1/2 hidden -translate-x-1/2 items-center md:flex">
+            <div className="pointer-events-none absolute inset-y-0 left-1/2 z-20 hidden -translate-x-1/2 items-center md:flex">
               <AdminHeaderClock className="pointer-events-auto" />
             </div>
             <div className="relative z-10 ml-auto shrink-0">

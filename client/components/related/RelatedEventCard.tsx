@@ -99,22 +99,22 @@ const RelatedEventCard = ({ event, variant = "upcoming" }: RelatedEventCardProps
           <h3 className={RELATED_COMPACT_TITLE_CLASS}>{cmsDisplayText(event.title)}</h3>
 
           {hasSpeakerBlock ? (
-            <div className="mt-2.5 flex items-center gap-2.5 md:mt-3">
+            <div className="mt-2.5 flex items-center gap-3 md:mt-3">
               <img
                 src={avatarSrc}
                 alt=""
                 className={cn(
-                  "h-8 w-8 shrink-0 rounded-full border border-black/10 object-cover object-center",
+                  "h-9 w-9 shrink-0 rounded-full border border-black/10 object-cover object-center sm:h-10 sm:w-10",
                   isPast && "opacity-90 saturate-[0.9]",
                 )}
                 aria-hidden
               />
               <div className="min-w-0 flex-1">
-                <p className="truncate font-host-grotesk text-xs font-medium leading-tight text-black md:text-sm">
+                <p className="truncate font-host-grotesk text-sm font-medium leading-tight text-black sm:text-[15px]">
                   {cmsDisplayText(speakerName)}
                 </p>
                 {speakerCompany ? (
-                  <p className="mt-0.5 truncate font-urbanist text-[11px] font-normal leading-tight text-black/45 md:text-xs">
+                  <p className="mt-0.5 truncate font-urbanist text-xs font-normal leading-tight text-black/45 sm:text-sm">
                     {cmsDisplayText(speakerCompany)}
                   </p>
                 ) : null}

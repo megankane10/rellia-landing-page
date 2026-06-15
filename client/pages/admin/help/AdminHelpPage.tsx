@@ -18,6 +18,11 @@ const WEBSITE_TOOLS = [
     description: "Operations guide for the dashboard and marketing site.",
   },
   {
+    href: "https://vercel.com/relliahealth",
+    label: "Vercel",
+    description: "Hosting and environment variables (production deploy).",
+  },
+  {
     href: "https://relliahealth.sanity.studio",
     label: "Sanity Studio",
     description: "Edit pages, stories, events, and program content.",
@@ -26,11 +31,6 @@ const WEBSITE_TOOLS = [
     href: "https://supabase.com/dashboard/project/agsvypnmlrvpbgrsxtqy",
     label: "Supabase",
     description: "Auth users, database tables, and invitation emails.",
-  },
-  {
-    href: "https://vercel.com/relliahealth",
-    label: "Vercel",
-    description: "Hosting and environment variables (production deploy).",
   },
   {
     href: "https://github.com/Agrolax/rellia-landing-page",

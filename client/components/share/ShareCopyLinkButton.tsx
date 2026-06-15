@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { Check } from "lucide-react"
-import { ShareIconCopy } from "@/components/share/sharePageIcons"
-import { IconTooltipWrap } from "@/components/share/IconTooltipWrap"
+import { ShareIconCopy, shareIconSize } from "@/components/share/sharePageIcons"
+import { IconTooltipWrap, type IconTooltipPosition } from "@/components/share/IconTooltipWrap"
 import { cn } from "@/lib/utils"
 
 export type ShareCopyLinkButtonProps = {
@@ -12,16 +12,18 @@ export type ShareCopyLinkButtonProps = {
   idleLabel?: string
   copiedLabel?: string
   showMobileLabel?: boolean
+  tooltipPosition?: IconTooltipPosition
 }
 
 export const ShareCopyLinkButton = ({
   onCopy,
   className,
   copiedClassName,
-  iconClassName = "h-5 w-5",
+  iconClassName = shareIconSize,
   idleLabel = "Copy link",
   copiedLabel = "Copied!",
   showMobileLabel = false,
+  tooltipPosition,
 }: ShareCopyLinkButtonProps) => {
   const [copied, setCopied] = useState(false)
 
@@ -38,7 +40,7 @@ export const ShareCopyLinkButton = ({
   const hasCustomShell = Boolean(className)
 
   return (
-    <IconTooltipWrap label={copied ? copiedLabel : idleLabel}>
+    <IconTooltipWrap label={copied ? copiedLabel : idleLabel} position={tooltipPosition}>
       <button
         type="button"
         onClick={handleClick}

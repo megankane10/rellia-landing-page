@@ -9,38 +9,39 @@ import { cmsCleanText, cmsDisplayText, isVisualEditingPreview } from "@/lib/cmsS
 import type { SanityPortableText } from "@shared/cms/types"
 
 function useCountUp(target: number, enabled: boolean, durationMs = 1200) {
-  const [value, setValue] = useState(0);
+  const [value, setValue] = useState(target)
 
   useEffect(() => {
     if (!enabled) {
-      setValue(0);
-      return;
+      setValue(target)
+      return
     }
 
     const reduceMotion =
       typeof window !== "undefined" &&
-      window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
+      window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches
 
     if (reduceMotion) {
-      setValue(target);
-      return;
+      setValue(target)
+      return
     }
 
-    let raf = 0;
-    const start = performance.now();
+    setValue(0)
+    let raf = 0
+    const start = performance.now()
 
     const tick = (now: number) => {
-      const t = Math.min(1, (now - start) / durationMs);
-      const eased = 1 - Math.pow(1 - t, 3);
-      setValue(Math.round(eased * target));
-      if (t < 1) raf = requestAnimationFrame(tick);
-    };
+      const t = Math.min(1, (now - start) / durationMs)
+      const eased = 1 - Math.pow(1 - t, 3)
+      setValue(Math.round(eased * target))
+      if (t < 1) raf = requestAnimationFrame(tick)
+    }
 
-    raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
-  }, [enabled, target, durationMs]);
+    raf = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(raf)
+  }, [enabled, target, durationMs])
 
-  return value;
+  return value
 }
 
 export type NetworkMetric = {
@@ -89,15 +90,21 @@ function MetricValue({
 }) {
   const valueRaw = metric.valueText ?? String(metric.value)
   const numericTarget = Number(cmsCleanText(valueRaw)) || 0
-  const count = useCountUp(numericTarget, entered && !previewMode, 1200 + index * 150);
+  const shouldAnimate = entered && !previewMode
+  const count = useCountUp(numericTarget, shouldAnimate, 1200 + index * 150)
   const Icon = METRIC_ROW_ICONS[index] ?? Users
   const displaySuffix = cmsDisplayText(metric.suffix)
+  const displayValue = previewMode
+    ? cmsDisplayText(valueRaw)
+    : shouldAnimate
+      ? count
+      : numericTarget
 
   return (
     <div className="inline-flex max-w-full flex-col items-start">
       <Icon className="h-10 w-10 text-rellia-mint md:h-11 md:w-11" strokeWidth={1.35} aria-hidden />
       <div className="mt-4 font-host-grotesk text-5xl font-semibold leading-none tracking-tight text-white md:text-6xl">
-        {previewMode ? cmsDisplayText(valueRaw) : count}
+        {displayValue}
         {displaySuffix}
       </div>
       <p className="mt-3 font-urbanist text-lg font-medium leading-snug text-white/80 md:text-xl">

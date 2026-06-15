@@ -70,8 +70,19 @@ export const alumniCompany = defineType({
           name: 'founderPerson',
           fields: [
             defineField({name: 'name', type: 'string', validation: (Rule) => Rule.required()}),
-            defineField({name: 'role', type: 'string'}),
-            defineField({name: 'bio', type: 'text', rows: 3}),
+            defineField({
+              name: 'role',
+              title: 'Subheading',
+              type: 'string',
+              description: 'Optional line under the founder name (e.g. title or discipline). Leave blank to hide.',
+            }),
+            defineField({
+              name: 'bio',
+              title: 'Bio',
+              type: 'text',
+              rows: 3,
+              description: 'Optional short blurb under the founder subheading. Leave blank to hide.',
+            }),
             defineField({
               name: 'socialLinks',
               title: 'Social & professional links',

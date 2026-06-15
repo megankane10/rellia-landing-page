@@ -208,6 +208,7 @@ export function TeamMemberCard({
                         className="gap-2"
                         iconClassName="h-4 w-4"
                         variant="onDark"
+                        showTooltips={false}
                       />
                     </>
                   ) : null}

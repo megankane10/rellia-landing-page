@@ -184,7 +184,9 @@ const AdminAccountMenu = () => {
         <div className="space-y-4 font-urbanist">
           <div className="flex items-center gap-4">
             <Avatar className="h-16 w-16 border border-border">
-              {avatarSrc ? <AvatarImage src={avatarSrc} alt="" /> : null}
+              {avatarSrc ? (
+                <AvatarImage src={avatarSrc} alt="" />
+              ) : null}
               <AvatarFallback className="bg-rellia-mint/40 text-lg text-rellia-teal">{initials}</AvatarFallback>
             </Avatar>
             <div className="space-y-2">
@@ -272,7 +274,9 @@ const AdminAccountMenu = () => {
         <div className="space-y-3 px-1">
           <div className="flex items-center gap-3 rounded-lg px-2 py-2">
             <Avatar className="h-10 w-10 border border-slate-700">
-              {avatarSrc ? <AvatarImage src={avatarSrc} alt="" /> : null}
+              {avatarSrc ? (
+                <AvatarImage src={avatarSrc} alt="" />
+              ) : null}
               <AvatarFallback className="bg-slate-800 font-urbanist text-xs text-slate-200">{initials}</AvatarFallback>
             </Avatar>
             <div className="min-w-0 flex-1">

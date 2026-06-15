@@ -126,6 +126,7 @@ export default function StoryPost() {
         href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(canonical)}&text=${encodeURIComponent(shareTitle)}`}
         label="Share on X"
         className={shareOutlineButtonClassNameOnDark}
+        tooltipPosition="left"
       >
         <ShareIconX />
       </ShareToolbarIconLink>
@@ -133,6 +134,7 @@ export default function StoryPost() {
         href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(canonical)}`}
         label="Share on LinkedIn"
         className={shareOutlineButtonClassNameOnDark}
+        tooltipPosition="left"
       >
         <ShareIconLinkedIn />
       </ShareToolbarIconLink>
@@ -140,6 +142,7 @@ export default function StoryPost() {
         href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(canonical)}`}
         label="Share on Facebook"
         className={shareOutlineButtonClassNameOnDark}
+        tooltipPosition="left"
       >
         <ShareIconFacebook />
       </ShareToolbarIconLink>
@@ -151,6 +154,7 @@ export default function StoryPost() {
         label="Share by email"
         className={shareOutlineButtonClassNameOnDark}
         external={false}
+        tooltipPosition="left"
       >
         <ShareIconMail />
       </ShareToolbarIconLink>
@@ -161,6 +165,7 @@ export default function StoryPost() {
         copiedClassName="border-white bg-white text-rellia-teal"
         idleLabel="Copy story link"
         copiedLabel="Link copied"
+        tooltipPosition="left"
       />
     </div>
   )

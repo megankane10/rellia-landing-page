@@ -5,6 +5,26 @@ const FULL_NAME_KEY = "full_name"
 const AVATAR_URL_KEY = "avatar_url"
 export const WELCOME_SPLASH_SEEN_KEY = "welcome_splash_seen"
 
+/** Same portrait as About → Team (Megan Kane). */
+export const MEGAN_AVATAR_FALLBACK_SRC = "/images/team-megankane.jpg"
+
+const isMeganUser = (email: string | undefined, name: string): boolean => {
+  const normalizedEmail = email?.trim().toLowerCase() ?? ""
+  const normalizedName = name.trim().toLowerCase()
+  return normalizedEmail === "megan@relliahealth.com" || normalizedName.includes("megan")
+}
+
+export const resolveAdminMemberAvatarUrl = (member: {
+  email: string
+  fullName: string | null
+  avatarUrl: string | null
+}): string => {
+  if (member.avatarUrl === "removed") return ""
+  if (member.avatarUrl?.trim()) return member.avatarUrl.trim()
+  if (isMeganUser(member.email, member.fullName ?? "")) return MEGAN_AVATAR_FALLBACK_SRC
+  return ""
+}
+
 export const getAdminFirstName = (fullName: string, fallbackEmail?: string | null): string => {
   const trimmed = fullName.trim()
   if (trimmed) {
@@ -35,11 +55,8 @@ export const getAdminAvatarUrl = (user: User | null | undefined): string => {
   if (val === "removed") return ""
   if (val) return val
 
-  // Fallback for Megan Kane if no avatar is explicitly uploaded
-  const email = user?.email?.trim().toLowerCase()
-  const name = getAdminDisplayName(user).toLowerCase()
-  if (email === "megan@relliahealth.com" || name.includes("megan")) {
-    return "/images/megan-headshot.jpeg"
+  if (isMeganUser(user?.email, getAdminDisplayName(user))) {
+    return MEGAN_AVATAR_FALLBACK_SRC
   }
 
   return ""

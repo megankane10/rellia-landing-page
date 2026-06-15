@@ -460,13 +460,26 @@ const STATIC_OG_IMAGE_BY_ROUTE: Record<string, string> = {
 export const allowsPageContextOgImage = (pathname: string): boolean =>
   normalizePathname(pathname) === "/founders/alumni"
 
+/** Same background as admin welcome splash (`AdminSignupWelcomeSplash`). */
+export const ADMIN_DASHBOARD_OG_IMAGE_SRC = "/images/TabletMeeting.png"
+
+export const isAdminAreaPath = (pathname: string): boolean => {
+  const key = normalizePathname(pathname)
+  return key.startsWith("/admin") || key === "/accept-invite"
+}
+
+export const getAdminOgImage = (): ResolvedSocialOgImage | undefined =>
+  resolveSocialOgImage(ADMIN_DASHBOARD_OG_IMAGE_SRC, getSiteUrl(), { landscape: true })
+
+export const getAdminOgImageUrl = (): string | undefined => getAdminOgImage()?.url
+
 export const isStaticOgImageRoute = (pathname: string): boolean => {
   const key = normalizePathname(pathname)
   return key in STATIC_OG_IMAGE_BY_ROUTE || shouldUseDefaultOgImage(key)
 }
 
 export const allowsRouteSeoOgImage = (pathname: string): boolean =>
-  isStaticOgImageRoute(pathname) || allowsPageContextOgImage(pathname)
+  isStaticOgImageRoute(pathname) || allowsPageContextOgImage(pathname) || isAdminAreaPath(pathname)
 
 export const getStaticOgImageForPathname = (pathname: string): string | undefined => {
   const key = normalizePathname(pathname)

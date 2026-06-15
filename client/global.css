@@ -325,3 +325,23 @@
 .animate-priority-modal-out {
   animation: priority-modal-out 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
+
+@keyframes team-reaction-count-pop {
+  0% {
+    transform: scale(0.55);
+    opacity: 0.45;
+  }
+  58% {
+    transform: scale(1.26);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.team-reaction-count-pop {
+  display: inline-block;
+  animation: team-reaction-count-pop 0.34s cubic-bezier(0.22, 1, 0.36, 1);
+}

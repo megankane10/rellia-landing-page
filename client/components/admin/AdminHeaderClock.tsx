@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 import { Clock3 } from "lucide-react"
 import { motion, useReducedMotion } from "framer-motion"
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 import { cn } from "@/lib/utils"
 
 const STORAGE_KEY = "admin:header-clock-expanded"
@@ -52,28 +53,34 @@ const AdminHeaderClock = ({ className }: AdminHeaderClockProps) => {
     ? { duration: 0 }
     : { duration: 0.28, ease: [0.4, 0, 0.2, 1] as const }
 
+  const toggleLabel = expanded ? "Hide date and time" : "Show date and time"
+
   return (
-    <button
-      type="button"
-      onClick={handleToggle}
-      className={cn(
-        "hidden items-center gap-2.5 rounded-lg px-0.5 py-1 font-urbanist sm:flex",
-        "text-left transition-colors hover:text-foreground",
-        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-teal/40",
-        className,
-      )}
-      aria-expanded={expanded}
-      aria-label={
-        expanded
-          ? `Hide date and time. Currently ${formatDate(now)} ${formatTime(now)}`
-          : "Show date and time"
-      }
+    <div
+      className={cn("hidden items-center gap-2.5 font-urbanist sm:flex", className)}
+      aria-live="polite"
     >
-      <Clock3
-        className="h-5 w-5 shrink-0 text-rellia-teal"
-        strokeWidth={1.75}
-        aria-hidden
-      />
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <button
+            type="button"
+            onClick={handleToggle}
+            className={cn(
+              "inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-transparent",
+              "text-rellia-teal transition-[background-color,border-color,box-shadow]",
+              "hover:border-rellia-teal/25 hover:bg-rellia-mint/15",
+              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-teal/40",
+            )}
+            aria-expanded={expanded}
+            aria-label={toggleLabel}
+          >
+            <Clock3 className="h-5 w-5" strokeWidth={1.75} aria-hidden />
+          </button>
+        </TooltipTrigger>
+        <TooltipContent side="bottom" align="center">
+          {toggleLabel}
+        </TooltipContent>
+      </Tooltip>
 
       <motion.div
         className="flex min-w-0 items-center overflow-hidden"
@@ -98,10 +105,10 @@ const AdminHeaderClock = ({ className }: AdminHeaderClockProps) => {
         </div>
       </motion.div>
 
-      <span className="sr-only" aria-live="polite">
+      <span className="sr-only">
         {formatDate(now)} {formatTime(now)}
       </span>
-    </button>
+    </div>
   )
 }
 

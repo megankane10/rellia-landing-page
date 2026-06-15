@@ -1,7 +1,7 @@
 import { useState, useMemo, useCallback, useEffect } from "react"
 import { Link, useLocation, useNavigate, useSearchParams } from "react-router-dom"
 import { useQuery } from "@tanstack/react-query"
-import { ArrowRight, ChevronLeft, ChevronRight, AlertCircle, CalendarDays, CircleHelp, FileEdit, Inbox, Stethoscope, Users, TrendingUp, type LucideIcon } from "lucide-react"
+import { ArrowRight, ChevronDown, ChevronLeft, ChevronRight, AlertCircle, CalendarDays, CircleHelp, FileEdit, Inbox, Stethoscope, Users, TrendingUp, type LucideIcon } from "lucide-react"
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis, PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from "recharts"
 import { useAuth } from "@/context/AuthContext"
 import { fetchAdminTeam } from "@/lib/adminApi"
@@ -36,7 +36,7 @@ import {
   getAdminFirstName,
   markAdminWelcomeSplashSeen,
 } from "@/lib/adminUserProfile"
-import { cmsContentQueryKey, fetchCmsContentQueue, isCmsContentEnabled } from "@/lib/adminSanityContent"
+import { cmsContentQueryKey, fetchCmsContentQueueForDataset, isCmsContentEnabled, ADMIN_SANITY_PRODUCTION_DATASET } from "@/lib/adminSanityContent"
 import { formatAdminDate, isActiveSubmissionStatus, statusBadgeClass } from "@/lib/adminSubmissionStatus"
 import { Badge } from "@/components/ui/badge"
 import { cn } from "@/lib/utils"
@@ -366,9 +366,9 @@ const AdminOverviewPage = () => {
     },
   })
   const draftsQuery = useQuery({
-    queryKey: cmsContentQueryKey(),
-    queryFn: fetchCmsContentQueue,
-    enabled: isCmsContentEnabled(),
+    queryKey: cmsContentQueryKey(ADMIN_SANITY_PRODUCTION_DATASET),
+    queryFn: () => fetchCmsContentQueueForDataset(token, ADMIN_SANITY_PRODUCTION_DATASET),
+    enabled: isCmsContentEnabled() && Boolean(token),
     staleTime: 60_000,
   })
   const teamQuery = useQuery({
@@ -750,16 +750,23 @@ const AdminOverviewPage = () => {
               <CardTitle className={adminOverviewCardTitleClass}>Level Distribution</CardTitle>
               <CardDescription className={adminOverviewCardDescriptionClass}>Diagnostic survey stages</CardDescription>
             </div>
-            <select
-              value={selectedStage}
-              onChange={(e) => setSelectedStage(e.target.value)}
-              className="h-10 min-w-[9rem] rounded-xl border border-slate-200 bg-white px-3.5 font-urbanist text-sm font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-rellia-teal w-full sm:w-auto"
-            >
-              <option value="all">All Levels</option>
-              {allStages.map((stage) => (
-                <option key={stage} value={stage}>{stage}</option>
-              ))}
-            </select>
+            <div className="relative w-full sm:w-auto">
+              <select
+                value={selectedStage}
+                onChange={(e) => setSelectedStage(e.target.value)}
+                className="h-10 min-w-[9rem] w-full appearance-none rounded-xl border border-slate-200 bg-white pl-3.5 pr-11 font-urbanist text-sm font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-rellia-teal sm:w-auto"
+                aria-label="Filter by startup level"
+              >
+                <option value="all">All Levels</option>
+                {allStages.map((stage) => (
+                  <option key={stage} value={stage}>{stage}</option>
+                ))}
+              </select>
+              <ChevronDown
+                className="pointer-events-none absolute right-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400"
+                aria-hidden
+              />
+            </div>
           </CardHeader>
           <CardContent className="flex min-h-[260px] flex-1 flex-col justify-center pb-6">
             {loading ? (
