@@ -31,6 +31,13 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
+import { useSidebar } from "@/components/ui/sidebar"
+import {
+  adminSidebarAccountButtonClass,
+  adminSidebarAccountTextClass,
+  adminSidebarIconSlot,
+} from "@/components/admin/adminSidebarRail"
 import { cn } from "@/lib/utils"
 
 const AVATAR_URL_KEY = "avatar_url"
@@ -39,6 +46,8 @@ const AdminAccountMenu = () => {
   const { user, signOut } = useAuth()
   const navigate = useNavigate()
   const isMobile = useIsMobile()
+  const { state: sidebarState } = useSidebar()
+  const isCollapsed = sidebarState === "collapsed" && !isMobile
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [profileOpen, setProfileOpen] = useState(false)
   const [fullName, setFullName] = useState("")
@@ -169,7 +178,7 @@ const AdminAccountMenu = () => {
             Your profile
           </DialogTitle>
           <DialogDescription className="font-urbanist text-left">
-            Update your display name and upload a profile photo for the admin dashboard.
+            Update your display name and upload a profile photo
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-4 font-urbanist">
@@ -307,28 +316,43 @@ const AdminAccountMenu = () => {
     )
   }
 
+  const accountTrigger = (
+    <button
+      type="button"
+      className={adminSidebarAccountButtonClass}
+      aria-label="Account menu"
+      aria-haspopup="menu"
+    >
+      <span className={adminSidebarIconSlot}>
+        <Avatar className="h-9 w-9 border border-slate-700">
+          {avatarSrc ? <AvatarImage src={avatarSrc} alt="" /> : null}
+          <AvatarFallback className="bg-slate-800 font-urbanist text-xs text-slate-200">{initials}</AvatarFallback>
+        </Avatar>
+      </span>
+      <div className={adminSidebarAccountTextClass}>
+        <p className="truncate font-urbanist text-[15px] font-medium leading-tight text-white">{displayName}</p>
+        {user?.email ? (
+          <p className="truncate font-urbanist text-sm leading-tight text-slate-400">{user.email}</p>
+        ) : null}
+      </div>
+    </button>
+  )
+
   return (
     <>
       <DropdownMenu modal={false}>
-        <DropdownMenuTrigger asChild>
-          <button
-            type="button"
-            className="flex w-full items-center gap-3 rounded-lg px-2 py-2 text-left transition-all hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-            aria-label="Account menu"
-            aria-haspopup="menu"
-          >
-            <Avatar className="h-9 w-9 border border-slate-700">
-              {avatarSrc ? <AvatarImage src={avatarSrc} alt="" /> : null}
-              <AvatarFallback className="bg-slate-800 font-urbanist text-xs text-slate-200">{initials}</AvatarFallback>
-            </Avatar>
-            <div className="min-w-0 flex-1">
-              <p className="truncate font-urbanist text-sm font-medium text-white">{displayName}</p>
-              {user?.email ? (
-                <p className="truncate font-urbanist text-xs text-slate-400">{user.email}</p>
-              ) : null}
-            </div>
-          </button>
-        </DropdownMenuTrigger>
+        {isCollapsed ? (
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <DropdownMenuTrigger asChild>{accountTrigger}</DropdownMenuTrigger>
+            </TooltipTrigger>
+            <TooltipContent side="right" align="center">
+              {displayName}
+            </TooltipContent>
+          </Tooltip>
+        ) : (
+          <DropdownMenuTrigger asChild>{accountTrigger}</DropdownMenuTrigger>
+        )}
         <DropdownMenuContent side="top" align="start" className="z-[10002] w-56 font-urbanist">
           <DropdownMenuItem onSelect={() => setProfileOpen(true)}>
             <UserRound className="mr-2 h-4 w-4" aria-hidden />

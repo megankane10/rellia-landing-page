@@ -23,10 +23,11 @@ const stateLabel = (state: ServiceState): string => {
   return "Offline"
 }
 
-const StatusPill = ({ service }: { service: ServiceStatus }) => (
+const StatusPill = ({ service, compact }: { service: ServiceStatus; compact?: boolean }) => (
   <li
     className={cn(
-      "inline-flex items-center gap-2 rounded-full border px-3 py-1.5 font-urbanist text-sm",
+      "inline-flex items-center gap-2 rounded-full border font-urbanist",
+      compact ? "h-10 px-3.5 text-sm" : "px-3 py-1.5 text-sm",
       service.state === "online" && "border-emerald-200/80 bg-emerald-50/90 text-emerald-900",
       service.state === "checking" && "border-black/10 bg-white/90 text-black/60",
       service.state === "offline" && "border-red-200/80 bg-red-50/90 text-red-800",
@@ -36,7 +37,7 @@ const StatusPill = ({ service }: { service: ServiceStatus }) => (
   >
     <span
       className={cn(
-        "h-1.5 w-1.5 shrink-0 rounded-full",
+        "h-2 w-2 shrink-0 rounded-full",
         service.state === "checking" && "animate-pulse bg-black/30",
         service.state === "online" && "bg-emerald-500",
         service.state === "offline" && "bg-red-500",
@@ -75,7 +76,7 @@ const pingSanityDrafts = async (): Promise<"online" | "offline" | "unconfigured"
   return "online"
 }
 
-const AdminSystemStatus = () => {
+const AdminSystemStatus = ({ compact = false }: { compact?: boolean }) => {
   const [services, setServices] = useState<ServiceStatus[]>([
     { label: "Database", state: "checking" },
     { label: "CMS", state: "checking" },
@@ -111,12 +112,14 @@ const AdminSystemStatus = () => {
 
   return (
     <div className="flex flex-wrap items-center gap-2" aria-label="System status">
-      <span className="font-urbanist text-[10px] uppercase tracking-[0.12em] text-black/45">
-        Status
-      </span>
+      {!compact ? (
+        <span className="font-urbanist text-[10px] uppercase tracking-[0.12em] text-black/45">
+          Status
+        </span>
+      ) : null}
       <ul className="flex flex-wrap items-center gap-2">
         {services.map((service) => (
-          <StatusPill key={service.label} service={service} />
+          <StatusPill key={service.label} service={service} compact={compact} />
         ))}
       </ul>
     </div>

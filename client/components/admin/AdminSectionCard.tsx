@@ -1,7 +1,7 @@
 import type { ReactNode } from "react"
 import { cn } from "@/lib/utils"
 
-export const ADMIN_CARD = "rounded-3xl border border-black/[0.06] bg-white"
+export const ADMIN_CARD = "rounded-2xl border border-black/[0.06] bg-white"
 
 type AdminSectionCardProps = {
   title: string

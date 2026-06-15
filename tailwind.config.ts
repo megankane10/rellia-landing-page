@@ -127,7 +127,7 @@ export default {
         marquee: "marquee 22s linear infinite",
         marqueeFast: "marquee 14s linear infinite",
         "fade-up": "fade-up 0.75s ease-out both",
-        "cta-reveal": "cta-reveal 0.95s cubic-bezier(0.22, 1, 0.36, 1) both",
+        "cta-reveal": "cta-reveal 0.72s cubic-bezier(0.22, 1, 0.36, 1) both",
         "line-reveal": "line-reveal 0.85s cubic-bezier(0.22, 1, 0.36, 1) both",
         /** `both` = start state during delay (stays clipped), `forwards` = stay filled at end */
         "healthcare-fill":

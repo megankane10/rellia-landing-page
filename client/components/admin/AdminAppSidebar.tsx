@@ -6,12 +6,23 @@ import { supabase } from "@/lib/supabase"
 import { isActiveSubmissionStatus } from "@/lib/adminSubmissionStatus"
 import AdminAccountMenu from "@/components/admin/AdminAccountMenu"
 import {
+  adminSidebarContentClass,
+  adminSidebarFooterClass,
+  adminSidebarHeaderClass,
+  adminSidebarHeaderRowClass,
+  adminSidebarHeaderTextClass,
+  adminSidebarIconSlot,
+  adminSidebarLabelWrapClass,
+  adminSidebarNavButtonClass,
+  adminSidebarNavLinkClass,
+  adminSidebarRowClass,
+} from "@/components/admin/adminSidebarRail"
+import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
-  SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
@@ -21,7 +32,54 @@ import {
 import { cn } from "@/lib/utils"
 import { useIsMobile } from "@/hooks/use-mobile"
 
-const FAVICON_SRC = "/favicon.ico"
+const FAVICON_SRC = "/favicon_512.png"
+
+const AttentionBadgeCount = ({
+  count,
+  className,
+}: {
+  count: number
+  className?: string
+}) => {
+  if (count <= 0) return null
+  const label = count > 99 ? "99+" : String(count)
+
+  const isCompact = label.length === 1
+
+  return (
+    <span
+      className={cn(
+        "attention-badge-count inline-flex shrink-0 items-center justify-center rounded-full bg-red-500",
+        "font-urbanist text-xs font-semibold leading-none !text-white tabular-nums",
+        isCompact ? "size-6" : "h-6 min-w-6 px-1.5",
+        className,
+      )}
+      aria-label={`${count} need attention`}
+    >
+      {label}
+    </span>
+  )
+}
+
+const AttentionBadgeDot = ({
+  count,
+  className,
+}: {
+  count: number
+  className?: string
+}) => {
+  if (count <= 0) return null
+
+  return (
+    <span
+      className={cn(
+        "absolute right-0.5 top-1 h-2.5 w-2.5 rounded-full bg-red-500 ring-2 ring-slate-950",
+        className,
+      )}
+      aria-label={`${count} need attention`}
+    />
+  )
+}
 
 type NavItem = {
   to: string
@@ -91,24 +149,37 @@ const AdminAppSidebar = () => {
 
   return (
     <Sidebar
-      collapsible="offcanvas"
-      className="flex flex-col bg-slate-950 text-slate-200 border-r border-slate-800/60"
+      collapsible="icon"
+      className={cn(
+        "flex flex-col overflow-hidden border-r border-slate-800/60 bg-slate-950 text-slate-200",
+        "duration-300 ease-in-out",
+      )}
     >
-      <SidebarHeader className="border-b border-slate-800/60 px-4 py-4">
-        <div className="flex items-center gap-3">
-          <img src={FAVICON_SRC} alt="" width={32} height={32} className="h-8 w-8 rounded-lg" aria-hidden />
-          <div className="min-w-0 flex-1">
-            <p className="truncate font-host-grotesk text-sm font-semibold text-white">Admin Dashboard</p>
-            <p className="truncate font-urbanist text-xs text-slate-300/80">Internal workspace</p>
-          </div>
+      <SidebarHeader className={adminSidebarHeaderClass}>
+        <div className={adminSidebarHeaderRowClass}>
+          <span className={adminSidebarIconSlot}>
+            <img
+              src={FAVICON_SRC}
+              alt=""
+              width={36}
+              height={36}
+              className="h-9 w-9 shrink-0 rounded-lg"
+              aria-hidden
+            />
+          </span>
+          <span className={adminSidebarHeaderTextClass}>
+            <span className="truncate font-host-grotesk text-[15px] font-semibold leading-none text-white">
+              Admin Dashboard
+            </span>
+          </span>
           {isMobile ? (
             <button
               type="button"
               onClick={() => setOpenMobile(false)}
               className={cn(
-                "inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full",
+                "ml-auto inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full",
                 "border border-slate-700/80 bg-slate-900 text-slate-100",
-                "transition-all hover:bg-white/10 hover:text-white",
+                "transition-colors hover:bg-white/10 hover:text-white",
                 "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
               )}
               aria-label="Close navigation menu"
@@ -119,13 +190,10 @@ const AdminAppSidebar = () => {
         </div>
       </SidebarHeader>
 
-      <SidebarContent className="flex-1">
-        <SidebarGroup>
-          <SidebarGroupLabel className="font-urbanist text-[11px] uppercase tracking-wider text-slate-300/60">
-            Workspace
-          </SidebarGroupLabel>
+      <SidebarContent className={adminSidebarContentClass}>
+        <SidebarGroup className="!p-0">
           <SidebarGroupContent>
-            <SidebarMenu>
+            <SidebarMenu className="gap-2">
               {MAIN_NAV.map((item) => {
                 const active = item.isActiveMatch ? item.isActiveMatch(pathname) : pathname === item.to
                 const badge =
@@ -137,27 +205,30 @@ const AdminAppSidebar = () => {
                       asChild
                       isActive={active}
                       tooltip={item.label}
-                      className={cn(
-                        "rounded-xl text-slate-200/80 transition-all",
-                        "hover:bg-rellia-teal/15 hover:text-white",
-                        "data-[active=true]:bg-rellia-teal/20 data-[active=true]:text-white data-[active=true]:font-semibold",
-                      )}
+                      className={adminSidebarNavButtonClass}
                     >
-                      <NavLink to={item.to} end={item.end} className="flex w-full items-center" onClick={handleNavClick}>
-                        <item.icon aria-hidden />
-                        <span className="flex min-w-0 flex-1 items-center gap-2">
-                          <span>{item.label}</span>
+                      <NavLink
+                        to={item.to}
+                        end={item.end}
+                        className={adminSidebarNavLinkClass}
+                        onClick={handleNavClick}
+                      >
+                        <span className={adminSidebarIconSlot}>
+                          <item.icon aria-hidden strokeWidth={active ? 2.25 : 1.75} />
                           {badge !== undefined && badge > 0 ? (
-                            <span
-                              className={cn(
-                                "inline-flex h-5 min-w-5 shrink-0 items-center justify-center rounded-full px-1.5",
-                                "bg-rellia-teal text-[10px] font-semibold text-white tabular-nums",
-                                "group-data-[collapsible=icon]:hidden",
-                              )}
-                              aria-label={`${badge} need attention`}
-                            >
-                              {badge > 99 ? "99+" : badge}
-                            </span>
+                            <AttentionBadgeDot
+                              count={badge}
+                              className="hidden group-data-[collapsible=icon]:block"
+                            />
+                          ) : null}
+                        </span>
+                        <span className={adminSidebarLabelWrapClass}>
+                          <span className="truncate">{item.label}</span>
+                          {badge !== undefined && badge > 0 ? (
+                            <AttentionBadgeCount
+                              count={badge}
+                              className="group-data-[collapsible=icon]:hidden"
+                            />
                           ) : null}
                         </span>
                       </NavLink>
@@ -170,7 +241,7 @@ const AdminAppSidebar = () => {
         </SidebarGroup>
       </SidebarContent>
 
-      <SidebarFooter className="mt-auto border-t border-slate-800 p-3">
+      <SidebarFooter className={adminSidebarFooterClass}>
         <AdminAccountMenu />
       </SidebarFooter>
     </Sidebar>

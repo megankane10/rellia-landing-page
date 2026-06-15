@@ -19,7 +19,7 @@ const AdminSubmissionHubCard = ({
   <Link
     to={to}
     className={cn(
-      "group flex min-h-[120px] flex-col rounded-3xl border border-black/[0.06] bg-white p-4 transition-all",
+      "group flex min-h-[120px] flex-col rounded-2xl border border-black/[0.06] bg-white p-4 transition-all",
       "hover:-translate-y-0.5 hover:border-rellia-teal/20 hover:shadow-[0_8px_30px_-20px_rgba(13,53,64,0.25)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint",
     )}
     aria-label={`${title}, ${recentHint}`}

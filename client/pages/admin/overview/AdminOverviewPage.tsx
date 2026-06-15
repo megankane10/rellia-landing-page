@@ -1,14 +1,14 @@
 import { useState, useMemo, useCallback, useEffect } from "react"
 import { Link, useLocation, useNavigate, useSearchParams } from "react-router-dom"
 import { useQuery } from "@tanstack/react-query"
-import { ArrowRight, ChevronLeft, ChevronRight, FileEdit, Inbox, Stethoscope, Users, TrendingUp, AlertCircle } from "lucide-react"
+import { ArrowRight, ChevronLeft, ChevronRight, AlertCircle, CalendarDays, CircleHelp, FileEdit, Inbox, Stethoscope, Users, TrendingUp, type LucideIcon } from "lucide-react"
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis, PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from "recharts"
 import { useAuth } from "@/context/AuthContext"
 import { fetchAdminTeam } from "@/lib/adminApi"
 import { supabase } from "@/lib/supabase"
 import AdminPageHeader from "@/components/admin/AdminPageHeader"
+import { adminSelectedItemSurfaceOnLightClass } from "@/components/admin/adminSidebarRail"
 import AdminSignupWelcomeSplash from "@/components/admin/AdminSignupWelcomeSplash"
-import AdminSystemStatus from "@/components/admin/AdminSystemStatus"
 import ScrollReveal from "@/components/ScrollReveal"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
@@ -79,7 +79,7 @@ const CHART_X_AXIS_PROPS = {
   height: 48,
 }
 
-const CHART_MARGIN = { top: 8, right: 4, left: 0, bottom: 32 }
+const CHART_MARGIN = { top: 8, right: 4, left: 0, bottom: 40 }
 
 const PIE_TOOLTIP_STYLE = {
   borderRadius: "12px",
@@ -92,21 +92,56 @@ const PIE_TOOLTIP_STYLE = {
 
 type PieSliceRow = { name: string; value: number; pct: number; fill: string }
 
+const DONUT_CHART_SIZES = {
+  default: { height: 200, innerRadius: 58, outerRadius: 78 },
+  large: { height: 230, innerRadius: 68, outerRadius: 92 },
+} as const
+
+const toTopPieSlices = (
+  rows: Array<{ name: string; value: number; fill: string }>,
+  limit = 3,
+): PieSliceRow[] => {
+  const top = rows.slice(0, limit)
+  const total = top.reduce((sum, row) => sum + row.value, 0)
+  return top.map((row) => ({
+    ...row,
+    pct: total > 0 ? Math.round((row.value / total) * 100) : 0,
+  }))
+}
+
+const PieLegend = ({ rows }: { rows: PieSliceRow[] }) => (
+  <div className="flex flex-wrap justify-center gap-x-4 gap-y-1.5 font-urbanist text-xs">
+    {rows.filter((row) => row.value > 0).map((row) => (
+      <div key={row.name} className="flex max-w-full items-center gap-1.5">
+        <span className="h-2 w-2 shrink-0 rounded-full" style={{ backgroundColor: row.fill }} />
+        <span className="truncate font-semibold text-slate-700">{row.name}</span>
+        <span className="shrink-0 text-slate-400">({row.value})</span>
+      </div>
+    ))}
+  </div>
+)
+
 const DonutChartWithCenter = ({
   data,
   centerLabel,
   centerValue,
   tooltipRows,
+  size = "default",
 }: {
   data: PieSliceRow[]
   centerLabel: string
   centerValue: number | string
   tooltipRows: PieSliceRow[]
+  size?: keyof typeof DONUT_CHART_SIZES
 }) => {
   const slices = data.filter((row) => row.value > 0)
+  const chartSize = DONUT_CHART_SIZES[size]
 
   return (
-    <div className="relative flex h-[150px] w-full items-center justify-center">
+    <div
+      className="relative flex w-full items-center justify-center"
+      style={{ height: chartSize.height }}
+    >
       <div className="absolute inset-0 z-10">
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
@@ -114,8 +149,8 @@ const DonutChartWithCenter = ({
               data={slices}
               cx="50%"
               cy="50%"
-              innerRadius={45}
-              outerRadius={60}
+              innerRadius={chartSize.innerRadius}
+              outerRadius={chartSize.outerRadius}
               paddingAngle={3}
               dataKey="value"
             >
@@ -149,50 +184,77 @@ const DonutChartWithCenter = ({
 type StatCardProps = {
   label: string
   value: number | string
+  icon: LucideIcon
   changePct?: number | null
   changeCompare?: string
   href?: string
   loading?: boolean
 }
 
-const StatCard = ({ label, value, changePct, changeCompare, href, loading }: StatCardProps) => {
+const adminStatCardSurfaceClass = cn(
+  "overflow-hidden rounded-xl",
+  adminSelectedItemSurfaceOnLightClass,
+)
+
+const adminOverviewLinkBoxClass = cn(
+  "flex min-h-[5.75rem] min-w-0 w-full items-center gap-4 rounded-2xl border border-border bg-card p-5 transition-colors",
+  "hover:border-rellia-teal/25 hover:bg-rellia-mint/5",
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+)
+
+const adminOverviewCardTitleClass = "font-host-grotesk text-xl"
+const adminOverviewCardTitleWithIconClass = "flex items-center gap-2.5 font-host-grotesk text-xl"
+const adminOverviewCardTitleIconClass = "h-5 w-5 shrink-0 text-rellia-teal"
+const adminOverviewCardDescriptionClass = "font-urbanist text-sm"
+const adminOverviewPieSectionTitleClass = "font-host-grotesk text-sm font-bold"
+const adminOverviewPieSectionIconClass = "h-5 w-5 shrink-0"
+
+const StatCard = ({ label, value, icon: Icon, changePct, changeCompare, href, loading }: StatCardProps) => {
   const changeLabel = formatPercentChange(changePct ?? null)
   const changeTone =
     changePct === null || changePct === 0
-      ? "text-muted-foreground"
+      ? "text-rellia-teal/80"
       : changePct > 0
-        ? "text-emerald-600"
-        : "text-amber-700"
+        ? "text-emerald-800"
+        : "text-amber-800"
 
   const body = (
     <Card
       className={cn(
-        "flex h-full min-w-0 flex-col rounded-2xl",
-        href && "transition-colors hover:border-rellia-teal/25 hover:bg-rellia-mint/5",
+        "flex h-full min-w-0 flex-row items-stretch bg-transparent text-card-foreground",
+        adminStatCardSurfaceClass,
+        href && "transition-[background-color,border-color] duration-150 hover:!bg-rellia-mint/25 hover:!border-rellia-teal/50",
       )}
     >
-      <CardHeader className="flex flex-1 flex-col p-4 pb-4 sm:p-6">
-        <p className="font-urbanist text-sm font-normal text-foreground/85">{label}</p>
-        {loading ? (
-          <Skeleton className="mt-3 h-9 w-24 rounded-xl" />
-        ) : (
-          <div className="mt-3 flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between sm:gap-3">
-            <CardTitle className="font-host-grotesk text-2xl tabular-nums leading-none sm:text-3xl">{value}</CardTitle>
-            {changePct !== undefined ? (
-              <div className="sm:shrink-0 sm:text-right">
-                <span className={cn("font-urbanist text-sm font-semibold tabular-nums", changeTone)}>
-                  {changeLabel}
-                </span>
-                {changeCompare ? (
-                  <p className="mt-0.5 font-urbanist text-[11px] leading-tight text-muted-foreground">
-                    {changeCompare}
-                  </p>
-                ) : null}
-              </div>
+      <div className="flex shrink-0 items-center self-stretch py-5 pl-5 pr-8">
+        <Icon className="h-14 w-14 text-rellia-teal" strokeWidth={1.5} aria-hidden />
+      </div>
+      <div className="flex min-w-0 flex-1 items-center justify-between gap-3 py-5 pr-5">
+        <div className="min-w-0">
+          {loading ? (
+            <Skeleton className="h-10 w-20 rounded-lg bg-rellia-mint/25" />
+          ) : (
+            <>
+              <p className="font-host-grotesk text-4xl font-bold tabular-nums leading-none text-rellia-teal sm:text-[2.75rem]">
+                {value}
+              </p>
+              <p className="mt-2 font-urbanist text-base font-medium text-rellia-teal">{label}</p>
+            </>
+          )}
+        </div>
+        {!loading && changePct !== undefined ? (
+          <div className="shrink-0 text-right">
+            <span className={cn("font-urbanist text-base font-semibold tabular-nums", changeTone)}>
+              {changeLabel}
+            </span>
+            {changeCompare ? (
+              <p className="mt-0.5 font-urbanist text-sm leading-tight text-rellia-teal/70">
+                {changeCompare}
+              </p>
             ) : null}
           </div>
-        )}
-      </CardHeader>
+        ) : null}
+      </div>
     </Card>
   )
 
@@ -200,7 +262,7 @@ const StatCard = ({ label, value, changePct, changeCompare, href, loading }: Sta
   return (
     <Link
       to={href}
-      className="block min-w-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-2xl"
+      className="group block min-w-0 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-teal/30"
     >
       {body}
     </Link>
@@ -402,58 +464,6 @@ const AdminOverviewPage = () => {
     }))
   }, [diagnostics])
 
-  const textStats = useMemo(() => {
-    const strengthsCount: Record<string, number> = {}
-    const weaknessesCount: Record<string, number> = {}
-
-    const responses = responsesQuery.data ?? []
-    const filteredResponses = responses.filter((resp) => {
-      const stage = profileStageMap.get(resp.company_profile_id)
-      return selectedStage === "all" || stage === selectedStage
-    })
-    const totalResponses = filteredResponses.length
-
-    filteredResponses.forEach((resp) => {
-      const strengths = resp.top3_strengths as any[] | null
-      const weaknesses = resp.top3_weaknesses as any[] | null
-
-      if (Array.isArray(strengths)) {
-        strengths.forEach((s) => {
-          if (s?.category) {
-            strengthsCount[s.category] = (strengthsCount[s.category] || 0) + 1
-          }
-        })
-      }
-      if (Array.isArray(weaknesses)) {
-        weaknesses.forEach((w) => {
-          if (w?.category) {
-            weaknessesCount[w.category] = (weaknessesCount[w.category] || 0) + 1
-          }
-        })
-      }
-    })
-
-    const topStrengths = Object.entries(strengthsCount)
-      .sort((a, b) => b[1] - a[1])
-      .slice(0, 3)
-      .map(([category, count]) => ({
-        category,
-        count,
-        pct: totalResponses > 0 ? Math.round((count / totalResponses) * 100) : 0,
-      }))
-
-    const topWeaknesses = Object.entries(weaknessesCount)
-      .sort((a, b) => b[1] - a[1])
-      .slice(0, 3)
-      .map(([category, count]) => ({
-        category,
-        count,
-        pct: totalResponses > 0 ? Math.round((count / totalResponses) * 100) : 0,
-      }))
-
-    return { topStrengths, topWeaknesses }
-  }, [responsesQuery.data, profileStageMap, selectedStage])
-
   // Strengths and Gaps Pie Chart data
   const strengthsPieData = useMemo(() => {
     const counts: Record<string, number> = {}
@@ -529,6 +539,26 @@ const AdminOverviewPage = () => {
       }))
   }, [responsesQuery.data, profileStageMap, selectedStage])
 
+  const topStrengthsPieRows = useMemo(
+    () => toTopPieSlices(strengthsPieData, 3),
+    [strengthsPieData],
+  )
+
+  const topGapsPieRows = useMemo(
+    () => toTopPieSlices(gapsPieData, 3),
+    [gapsPieData],
+  )
+
+  const topStrengthsTotal = useMemo(
+    () => topStrengthsPieRows.reduce((sum, row) => sum + row.value, 0),
+    [topStrengthsPieRows],
+  )
+
+  const topGapsTotal = useMemo(
+    () => topGapsPieRows.reduce((sum, row) => sum + row.value, 0),
+    [topGapsPieRows],
+  )
+
   const getWeekRangeLabel = (offset: number) => {
     const now = new Date()
     now.setHours(0, 0, 0, 0)
@@ -569,14 +599,16 @@ const AdminOverviewPage = () => {
       <ScrollReveal variant="ctaReveal" hold={showSplash}>
       <AdminPageHeader
         title={pageTitle}
-        actions={<AdminSystemStatus />}
+        showDivider={false}
+        titleClassName="text-3xl font-semibold leading-tight md:text-4xl md:leading-tight"
       />
       </ScrollReveal>
 
-      <ScrollReveal variant="ctaReveal" delay={0.06} hold={showSplash}>
-      <div className="grid min-w-0 grid-cols-1 items-stretch gap-4 sm:grid-cols-2">
+      <ScrollReveal variant="ctaReveal" delay={0.05} hold={showSplash}>
+      <div className="grid min-w-0 grid-cols-1 items-stretch gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <StatCard
           label="Needs attention"
+          icon={AlertCircle}
           value={unresolved}
           changePct={unresolvedChangePct}
           changeCompare="vs prior 7 days"
@@ -585,49 +617,57 @@ const AdminOverviewPage = () => {
         />
         <StatCard
           label="Submissions this week"
+          icon={CalendarDays}
           value={weekCount}
           changePct={weekChangePct}
           changeCompare="vs prior 7 days"
           loading={loading}
         />
+        <StatCard
+          label="Unpublished drafts"
+          icon={FileEdit}
+          value={isCmsContentEnabled() ? draftCount : "—"}
+          href="/admin/drafts"
+          loading={isCmsContentEnabled() && draftsQuery.isLoading}
+        />
       </div>
       </ScrollReveal>
 
-      <ScrollReveal variant="ctaReveal" delay={0.1} hold={showSplash}>
+      <ScrollReveal variant="ctaReveal" delay={0.08} hold={showSplash}>
       <div className="grid min-w-0 gap-4 lg:grid-cols-3">
         {/* Submissions by week */}
         <Card className="min-w-0 overflow-hidden lg:col-span-2 rounded-2xl">
           <CardHeader className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div className="min-w-0">
-              <CardTitle className="font-host-grotesk text-lg">Submissions by week</CardTitle>
-              <CardDescription className="font-urbanist text-xs">Daily web forms and startup diagnostics</CardDescription>
+              <CardTitle className={adminOverviewCardTitleClass}>Submissions by week</CardTitle>
+              <CardDescription className={adminOverviewCardDescriptionClass}>Daily web forms and startup diagnostics</CardDescription>
             </div>
             <div className="flex w-full min-w-0 flex-wrap items-center justify-start gap-2 sm:w-auto sm:justify-end">
               <button
                 onClick={() => setWeekOffset((prev) => prev + 1)}
-                className="flex h-8 w-8 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-700 transition-colors hover:bg-slate-50 active:bg-slate-100 disabled:opacity-50"
+                className="flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-700 transition-colors hover:bg-slate-50 active:bg-slate-100 disabled:opacity-50"
                 aria-label="Previous week"
               >
-                <ChevronLeft className="h-4 w-4" />
+                <ChevronLeft className="h-5 w-5" />
               </button>
-              <span className="min-w-0 flex-1 text-center font-urbanist text-xs font-semibold text-slate-700 sm:min-w-[130px] sm:flex-none">
+              <span className="min-w-0 flex-1 text-center font-urbanist text-sm font-semibold text-slate-700 sm:min-w-[10rem] sm:flex-none">
                 {getWeekRangeLabel(weekOffset)}
               </span>
               <button
                 onClick={() => setWeekOffset((prev) => Math.max(0, prev - 1))}
                 disabled={weekOffset === 0}
-                className="flex h-8 w-8 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-700 transition-colors hover:bg-slate-50 active:bg-slate-100 disabled:opacity-50"
+                className="flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-700 transition-colors hover:bg-slate-50 active:bg-slate-100 disabled:opacity-50"
                 aria-label="Next week"
               >
-                <ChevronRight className="h-4 w-4" />
+                <ChevronRight className="h-5 w-5" />
               </button>
             </div>
           </CardHeader>
           <CardContent className="min-w-0 overflow-x-auto">
             {loading ? (
-              <Skeleton className="h-[280px] w-full min-w-0 rounded-lg" />
+              <Skeleton className="h-[320px] w-full min-w-0 rounded-lg" />
             ) : (
-              <ChartContainer config={trendChartConfig} className="h-[240px] w-full min-w-[280px] sm:h-[280px]">
+              <ChartContainer config={trendChartConfig} className="h-[280px] w-full min-w-[280px] sm:h-[340px]">
                 <BarChart data={trend} margin={CHART_MARGIN}>
                   <CartesianGrid vertical={false} strokeDasharray="3 3" />
                   <XAxis dataKey="label" {...CHART_X_AXIS_PROPS} />
@@ -645,20 +685,20 @@ const AdminOverviewPage = () => {
         <Card className="min-w-0 overflow-hidden lg:col-span-1 rounded-2xl flex flex-col h-full">
           <CardHeader className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between pb-2">
             <div>
-              <CardTitle className="font-host-grotesk text-base">Submission Status</CardTitle>
-              <CardDescription className="font-urbanist text-xs">Distribution of submissions</CardDescription>
+              <CardTitle className={adminOverviewCardTitleClass}>Submission Status</CardTitle>
+              <CardDescription className={adminOverviewCardDescriptionClass}>Distribution of submissions</CardDescription>
             </div>
-            <div className="flex gap-1 border border-slate-100 bg-slate-50/50 p-0.5 rounded-lg w-fit">
+            <div className="flex gap-1 rounded-xl border border-slate-200 bg-slate-50/80 p-1 w-fit">
               {(["all", "web", "survey"] as const).map((mode) => (
                 <button
                   key={mode}
                   type="button"
                   onClick={() => setStatusFilter(mode)}
                   className={cn(
-                    "px-2 py-0.5 font-urbanist text-[10px] font-bold rounded transition-all",
+                    "rounded-lg px-3.5 py-2 font-urbanist text-sm font-semibold transition-all",
                     statusFilter === mode
                       ? "bg-rellia-teal text-white shadow-sm"
-                      : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
+                      : "text-slate-600 hover:bg-slate-100 hover:text-slate-900",
                   )}
                 >
                   {mode === "all" ? "All" : mode === "web" ? "Web" : "Survey"}
@@ -666,11 +706,11 @@ const AdminOverviewPage = () => {
               ))}
             </div>
           </CardHeader>
-          <CardContent className="flex-1 flex flex-col justify-center min-h-[180px] pb-6">
+          <CardContent className="flex min-h-[260px] flex-1 flex-col justify-center pb-6">
             {loading ? (
-              <Skeleton className="h-[150px] w-full rounded-xl" />
+              <Skeleton className="h-[200px] w-full rounded-xl" />
             ) : totalStatusCount === 0 ? (
-              <div className="flex h-[150px] flex-col items-center justify-center text-center">
+              <div className="flex h-[200px] flex-col items-center justify-center text-center">
                 <p className="font-urbanist text-xs text-muted-foreground">No submissions found.</p>
               </div>
             ) : (
@@ -682,15 +722,7 @@ const AdminOverviewPage = () => {
                   tooltipRows={statusRows}
                 />
 
-                <div className="flex flex-wrap justify-center gap-x-4 gap-y-1.5 font-urbanist text-xs">
-                  {statusRows.filter((r) => r.value > 0).map((row) => (
-                    <div key={row.name} className="flex items-center gap-1.5">
-                      <span className="h-2 w-2 rounded-full shrink-0" style={{ backgroundColor: row.fill }} />
-                      <span className="font-semibold text-slate-700">{row.name}</span>
-                      <span className="text-slate-400">({row.value})</span>
-                    </div>
-                  ))}
-                </div>
+                <PieLegend rows={statusRows} />
               </div>
             )}
           </CardContent>
@@ -698,19 +730,19 @@ const AdminOverviewPage = () => {
       </div>
       </ScrollReveal>
 
-      <ScrollReveal variant="ctaReveal" delay={0.14} hold={showSplash}>
+      <ScrollReveal variant="ctaReveal" delay={0.11} hold={showSplash}>
       <div className="grid min-w-0 gap-4 lg:grid-cols-3">
         {/* Card 2: Startup Level Distribution */}
         <Card className="min-w-0 overflow-hidden lg:col-span-1 rounded-2xl flex flex-col h-full">
           <CardHeader className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between pb-2">
             <div>
-              <CardTitle className="font-host-grotesk text-base">Level Distribution</CardTitle>
-              <CardDescription className="font-urbanist text-xs">Diagnostic survey stages</CardDescription>
+              <CardTitle className={adminOverviewCardTitleClass}>Level Distribution</CardTitle>
+              <CardDescription className={adminOverviewCardDescriptionClass}>Diagnostic survey stages</CardDescription>
             </div>
             <select
               value={selectedStage}
               onChange={(e) => setSelectedStage(e.target.value)}
-              className="bg-white border border-slate-200 rounded-xl px-2.5 py-1 font-urbanist text-xs font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-rellia-teal w-full sm:w-auto"
+              className="h-10 min-w-[9rem] rounded-xl border border-slate-200 bg-white px-3.5 font-urbanist text-sm font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-rellia-teal w-full sm:w-auto"
             >
               <option value="all">All Levels</option>
               {allStages.map((stage) => (
@@ -718,11 +750,11 @@ const AdminOverviewPage = () => {
               ))}
             </select>
           </CardHeader>
-          <CardContent className="flex-1 flex flex-col justify-center min-h-[180px] pb-6">
+          <CardContent className="flex min-h-[260px] flex-1 flex-col justify-center pb-6">
             {loading ? (
-              <Skeleton className="h-[150px] w-full rounded-xl" />
+              <Skeleton className="h-[200px] w-full rounded-xl" />
             ) : stageChartData.length === 0 ? (
-              <div className="flex h-[150px] flex-col items-center justify-center text-center">
+              <div className="flex h-[200px] flex-col items-center justify-center text-center">
                 <p className="font-urbanist text-xs text-muted-foreground">No stage data found.</p>
               </div>
             ) : (
@@ -734,15 +766,7 @@ const AdminOverviewPage = () => {
                   tooltipRows={stageChartData}
                 />
 
-                <div className="flex flex-wrap justify-center gap-x-4 gap-y-1.5 font-urbanist text-xs">
-                  {stageChartData.filter((r) => r.value > 0).map((row) => (
-                    <div key={row.name} className="flex items-center gap-1.5">
-                      <span className="h-2 w-2 rounded-full shrink-0" style={{ backgroundColor: row.fill }} />
-                      <span className="font-semibold text-slate-700">{row.name}</span>
-                      <span className="text-slate-400">({row.value})</span>
-                    </div>
-                  ))}
-                </div>
+                <PieLegend rows={stageChartData} />
               </div>
             )}
           </CardContent>
@@ -751,68 +775,56 @@ const AdminOverviewPage = () => {
         {/* Card 3: Top Strengths & Growth Gaps */}
         <Card className="min-w-0 overflow-hidden lg:col-span-2 rounded-2xl h-full flex flex-col">
           <CardHeader className="pb-2">
-            <CardTitle className="font-host-grotesk text-base">Strengths & Weaknesses</CardTitle>
-            <CardDescription className="font-urbanist text-xs">Top capabilities and growth gaps based on diagnostic responses</CardDescription>
+            <CardTitle className={adminOverviewCardTitleClass}>Strengths & Weaknesses</CardTitle>
+            <CardDescription className={adminOverviewCardDescriptionClass}>Top capabilities and growth gaps based on diagnostic responses</CardDescription>
           </CardHeader>
-          <CardContent className="flex min-w-0 flex-1 flex-col gap-4 pt-2 md:flex-row">
-            <div className="min-w-0 flex-1 rounded-xl bg-emerald-50/20 border border-emerald-100/40 p-4 flex flex-col justify-center">
-              <div className="flex items-center gap-1.5 mb-3">
-                <TrendingUp className="h-4 w-4 text-emerald-600" />
-                <p className="font-host-grotesk text-xs font-bold text-emerald-950">Key Strengths</p>
+          <CardContent className="flex min-h-[360px] min-w-0 flex-1 flex-col gap-4 pt-2 pb-6 md:flex-row">
+            <div className="flex min-w-0 flex-1 flex-col rounded-xl border border-emerald-100/40 bg-emerald-50/20 p-4">
+              <div className="mb-3 flex items-center gap-2">
+                <TrendingUp className={cn(adminOverviewPieSectionIconClass, "text-emerald-600")} aria-hidden />
+                <p className={cn(adminOverviewPieSectionTitleClass, "text-emerald-950")}>Top Strengths</p>
               </div>
               {responsesQuery.isLoading ? (
-                <Skeleton className="h-24 w-full" />
-              ) : textStats.topStrengths.length === 0 ? (
-                <p className="font-urbanist text-xs text-muted-foreground">No data reported.</p>
+                <Skeleton className="h-[230px] w-full rounded-xl" />
+              ) : topStrengthsPieRows.length === 0 ? (
+                <div className="flex flex-1 flex-col items-center justify-center py-8 text-center">
+                  <p className="font-urbanist text-xs text-muted-foreground">No data reported.</p>
+                </div>
               ) : (
-                <div className="flex flex-col gap-3">
-                  {textStats.topStrengths.map((s) => (
-                    <div key={s.category} className="space-y-1">
-                      <div className="flex justify-between items-center text-xs font-urbanist">
-                        <span className="font-bold text-emerald-900 truncate max-w-[70%]">{s.category}</span>
-                        <span className="text-emerald-700 font-semibold shrink-0">
-                          {s.count} {s.count === 1 ? 'startup' : 'startups'} ({s.pct}%)
-                        </span>
-                      </div>
-                      <div className="h-2 w-full bg-slate-100/80 rounded-full overflow-hidden">
-                        <div 
-                          className="h-full bg-emerald-500 rounded-full transition-all duration-500" 
-                          style={{ width: `${s.pct}%` }} 
-                        />
-                      </div>
-                    </div>
-                  ))}
+                <div className="flex flex-1 flex-col justify-center gap-4">
+                  <DonutChartWithCenter
+                    size="large"
+                    data={topStrengthsPieRows}
+                    centerLabel="Total"
+                    centerValue={topStrengthsTotal}
+                    tooltipRows={topStrengthsPieRows}
+                  />
+                  <PieLegend rows={topStrengthsPieRows} />
                 </div>
               )}
             </div>
 
-            <div className="min-w-0 flex-1 rounded-xl bg-amber-50/20 border border-amber-100/40 p-4 flex flex-col justify-center">
-              <div className="flex items-center gap-1.5 mb-3">
-                <AlertCircle className="h-4 w-4 text-amber-600" />
-                <p className="font-host-grotesk text-xs font-bold text-amber-950">Top Growth Gaps</p>
+            <div className="flex min-w-0 flex-1 flex-col rounded-xl border border-amber-100/40 bg-amber-50/20 p-4">
+              <div className="mb-3 flex items-center gap-2">
+                <AlertCircle className={cn(adminOverviewPieSectionIconClass, "text-amber-600")} aria-hidden />
+                <p className={cn(adminOverviewPieSectionTitleClass, "text-amber-950")}>Top Weaknesses</p>
               </div>
               {responsesQuery.isLoading ? (
-                <Skeleton className="h-24 w-full" />
-              ) : textStats.topWeaknesses.length === 0 ? (
-                <p className="font-urbanist text-xs text-muted-foreground">No data reported.</p>
+                <Skeleton className="h-[230px] w-full rounded-xl" />
+              ) : topGapsPieRows.length === 0 ? (
+                <div className="flex flex-1 flex-col items-center justify-center py-8 text-center">
+                  <p className="font-urbanist text-xs text-muted-foreground">No data reported.</p>
+                </div>
               ) : (
-                <div className="flex flex-col gap-3">
-                  {textStats.topWeaknesses.map((w) => (
-                    <div key={w.category} className="space-y-1">
-                      <div className="flex justify-between items-center text-xs font-urbanist">
-                        <span className="font-bold text-amber-950 truncate max-w-[70%]">{w.category}</span>
-                        <span className="text-amber-700 font-semibold shrink-0">
-                          {w.count} {w.count === 1 ? 'startup' : 'startups'} ({w.pct}%)
-                        </span>
-                      </div>
-                      <div className="h-2 w-full bg-slate-100/80 rounded-full overflow-hidden">
-                        <div 
-                          className="h-full bg-amber-500 rounded-full transition-all duration-500" 
-                          style={{ width: `${w.pct}%` }} 
-                        />
-                      </div>
-                    </div>
-                  ))}
+                <div className="flex flex-1 flex-col justify-center gap-4">
+                  <DonutChartWithCenter
+                    size="large"
+                    data={topGapsPieRows}
+                    centerLabel="Total"
+                    centerValue={topGapsTotal}
+                    tooltipRows={topGapsPieRows}
+                  />
+                  <PieLegend rows={topGapsPieRows} />
                 </div>
               )}
             </div>
@@ -821,13 +833,13 @@ const AdminOverviewPage = () => {
       </div>
       </ScrollReveal>
 
-      <ScrollReveal variant="ctaReveal" delay={0.18} hold={showSplash}>
+      <ScrollReveal variant="ctaReveal" delay={0.14} hold={showSplash}>
       <div className="grid min-w-0 gap-6 lg:grid-cols-2">
         <Card className="min-w-0 overflow-hidden rounded-2xl">
           <CardHeader className="flex flex-row items-center justify-between gap-2">
             <div>
-              <CardTitle className="flex items-center gap-2 font-host-grotesk text-lg">
-                <Inbox className="h-4 w-4 text-rellia-teal" aria-hidden />
+              <CardTitle className={adminOverviewCardTitleWithIconClass}>
+                <Inbox className={adminOverviewCardTitleIconClass} aria-hidden />
                 Recent web forms
               </CardTitle>
             </div>
@@ -876,8 +888,8 @@ const AdminOverviewPage = () => {
         <Card className="min-w-0 overflow-hidden rounded-2xl">
           <CardHeader className="flex flex-row items-center justify-between gap-2">
             <div>
-              <CardTitle className="flex items-center gap-2 font-host-grotesk text-lg">
-                <Stethoscope className="h-4 w-4 text-rellia-teal" aria-hidden />
+              <CardTitle className={adminOverviewCardTitleWithIconClass}>
+                <Stethoscope className={adminOverviewCardTitleIconClass} aria-hidden />
                 Recent diagnostics
               </CardTitle>
             </div>
@@ -925,31 +937,28 @@ const AdminOverviewPage = () => {
       </div>
       </ScrollReveal>
 
-      <ScrollReveal variant="ctaReveal" delay={0.22} hold={showSplash}>
-      <div className="grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-2">
-        <Link
-          to="/admin/drafts"
-          className="flex min-w-0 w-full items-center gap-3 rounded-2xl border border-border bg-card p-4 transition-colors hover:border-rellia-teal/25 hover:bg-rellia-mint/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-        >
-          <FileEdit className="h-8 w-8 shrink-0 text-rellia-teal" aria-hidden />
+      <ScrollReveal variant="ctaReveal" delay={0.17} hold={showSplash}>
+      <div className="grid min-w-0 gap-6 lg:grid-cols-2">
+        <Link to="/admin/team" className={adminOverviewLinkBoxClass}>
+          <Users className="h-9 w-9 shrink-0 text-rellia-teal" aria-hidden />
           <div className="min-w-0 flex-1">
-            <p className="font-host-grotesk font-semibold">Sanity Drafts</p>
-            <p className="font-urbanist text-sm text-muted-foreground">
-              {draftCount} unpublished {draftCount === 1 ? "document" : "documents"} waiting in CMS
+            <p className="font-host-grotesk text-lg font-semibold">Team</p>
+            <p className="mt-0.5 font-urbanist text-base text-muted-foreground">
+              {teamQuery.isLoading ? "Loading…" : `${teamCount} dashboard ${teamCount === 1 ? "account" : "accounts"}`}
             </p>
           </div>
-          <ArrowRight className="ml-auto h-4 w-4 shrink-0 text-muted-foreground" aria-hidden />
+          <ArrowRight className="ml-auto h-5 w-5 shrink-0 text-muted-foreground" aria-hidden />
         </Link>
-        <Link
-          to="/admin/team"
-          className="flex min-w-0 w-full items-center gap-3 rounded-2xl border border-border bg-card p-4 transition-colors hover:border-rellia-teal/25 hover:bg-rellia-mint/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-        >
-          <Users className="h-8 w-8 shrink-0 text-rellia-teal" aria-hidden />
+
+        <Link to="/admin/help" className={adminOverviewLinkBoxClass}>
+          <CircleHelp className="h-9 w-9 shrink-0 text-rellia-teal" aria-hidden />
           <div className="min-w-0 flex-1">
-            <p className="font-host-grotesk font-semibold">Team</p>
-            <p className="font-urbanist text-sm text-muted-foreground">{teamCount} dashboard accounts</p>
+            <p className="font-host-grotesk text-lg font-semibold">Help</p>
+            <p className="mt-0.5 font-urbanist text-base text-muted-foreground">
+              Documentation, tools, and dashboard guides
+            </p>
           </div>
-          <ArrowRight className="ml-auto h-4 w-4 shrink-0 text-muted-foreground" aria-hidden />
+          <ArrowRight className="ml-auto h-5 w-5 shrink-0 text-muted-foreground" aria-hidden />
         </Link>
       </div>
       </ScrollReveal>

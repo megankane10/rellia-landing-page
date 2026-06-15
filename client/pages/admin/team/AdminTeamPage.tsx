@@ -5,6 +5,7 @@ import { ExternalLink, Key, ShieldCheck, UserPlus, Users } from "lucide-react"
 import { useAuth } from "@/context/AuthContext"
 import { fetchAdminTeam } from "@/lib/adminApi"
 import AdminPageHeader from "@/components/admin/AdminPageHeader"
+import AdminPageReveal from "@/components/admin/AdminPageReveal"
 import AdminDownloadCsvButton from "@/components/admin/AdminDownloadCsvButton"
 import AdminRecordList from "@/components/admin/AdminRecordList"
 import AdminCompactEmptyState from "@/components/admin/AdminCompactEmptyState"
@@ -118,6 +119,7 @@ const AdminTeamPage = () => {
 
   return (
     <div className="space-y-6">
+      <AdminPageReveal>
       <AdminTipBox
         title="Invite your team members"
         icon={UserPlus}
@@ -168,7 +170,9 @@ const AdminTeamPage = () => {
           </a>
         </div>
       </AdminTipBox>
+      </AdminPageReveal>
 
+      <AdminPageReveal delay={0.06}>
       <AdminPageHeader
         title="Team"
         actions={
@@ -199,7 +203,9 @@ const AdminTeamPage = () => {
           </>
         }
       />
+      </AdminPageReveal>
 
+      <AdminPageReveal delay={0.1}>
       <Card>
         <CardHeader className="pb-3">
           <CardTitle className="font-host-grotesk text-lg">Members</CardTitle>
@@ -272,6 +278,7 @@ const AdminTeamPage = () => {
           </CardContent>
         </Card>
       ) : null}
+      </AdminPageReveal>
     </div>
   )
 }
