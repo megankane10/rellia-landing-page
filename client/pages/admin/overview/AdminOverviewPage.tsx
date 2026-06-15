@@ -196,8 +196,12 @@ const adminStatCardSurfaceClass = cn(
   adminSelectedItemSurfaceOnLightClass,
 )
 
+const adminOverviewClickableShadowClass =
+  "shadow-[0_4px_20px_-12px_rgba(13,53,64,0.18)] transition-[background-color,border-color,box-shadow] duration-150 hover:shadow-[0_8px_28px_-14px_rgba(13,53,64,0.26)]"
+
 const adminOverviewLinkBoxClass = cn(
-  "flex min-h-[5.75rem] min-w-0 w-full items-center gap-4 rounded-2xl border border-border bg-card p-5 transition-colors",
+  "flex min-h-[5.75rem] min-w-0 w-full items-center gap-4 rounded-2xl border border-border bg-card p-5",
+  adminOverviewClickableShadowClass,
   "hover:border-rellia-teal/25 hover:bg-rellia-mint/5",
   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
 )
@@ -223,11 +227,18 @@ const StatCard = ({ label, value, icon: Icon, changePct, changeCompare, href, lo
       className={cn(
         "flex h-full min-w-0 flex-row items-stretch bg-transparent text-card-foreground",
         adminStatCardSurfaceClass,
-        href && "transition-[background-color,border-color] duration-150 hover:!bg-rellia-mint/25 hover:!border-rellia-teal/50",
+        href
+          ? cn(
+              adminOverviewClickableShadowClass,
+              "hover:!bg-rellia-mint/25 hover:!border-rellia-teal/28",
+            )
+          : "shadow-none",
       )}
     >
-      <div className="flex shrink-0 items-center self-stretch py-5 pl-5 pr-8">
-        <Icon className="h-14 w-14 text-rellia-teal" strokeWidth={1.5} aria-hidden />
+      <div className="flex shrink-0 items-center self-stretch py-4 pl-4 pr-5 sm:py-5 sm:pl-5">
+        <div className="flex size-[4.5rem] shrink-0 items-center justify-center rounded-2xl border border-rellia-teal/12 bg-gradient-to-br from-white via-white to-rellia-mint/30 shadow-[inset_0_1px_0_rgba(255,255,255,0.9)] sm:size-[4.75rem]">
+          <Icon className="size-8 text-rellia-teal sm:size-9" strokeWidth={1.5} aria-hidden />
+        </div>
       </div>
       <div className="flex min-w-0 flex-1 items-center justify-between gap-3 py-5 pr-5">
         <div className="min-w-0">

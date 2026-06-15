@@ -41,10 +41,10 @@ export const adminSelectedItemSurfaceClass = cn(
   "!shadow-[inset_0_0_0_1px_rgba(134,239,172,0.14)]",
 )
 
-/** Light mint fill + teal outline — overview stat cards on white */
+/** Light mint fill + soft teal outline — overview stat cards on white */
 export const adminSelectedItemSurfaceOnLightClass = cn(
   "!bg-rellia-mint/15",
-  "!border-2 !border-rellia-teal/35",
+  "!border !border-rellia-teal/18",
 )
 
 export const adminSidebarNavButtonClass = cn(
