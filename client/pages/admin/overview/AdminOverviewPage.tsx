@@ -303,8 +303,9 @@ const AdminOverviewPage = () => {
     forceWelcome: welcomeState?.showWelcome === true,
     previewWelcome,
   })
-  const [splashComplete, setSplashComplete] = useState(!wantsWelcome)
-  const showSplash = wantsWelcome && !splashComplete
+  // Start false so a brief null user on first paint cannot permanently skip the splash.
+  const [splashDismissed, setSplashDismissed] = useState(false)
+  const showSplash = wantsWelcome && !splashDismissed
   const token = session?.access_token ?? ""
   const displayName = getAdminDisplayName(user)
   const pageTitle = welcomeBackTitle(displayName, user?.email)
@@ -314,7 +315,7 @@ const AdminOverviewPage = () => {
     getAdminFirstName(displayName, user?.email)
 
   const handleSplashComplete = useCallback(() => {
-    setSplashComplete(true)
+    setSplashDismissed(true)
     if (previewWelcome) {
       const nextParams = new URLSearchParams(searchParams)
       nextParams.delete("previewWelcome")

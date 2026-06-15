@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 import { useNavigate, useSearchParams } from "react-router-dom"
 import { useAuth } from "@/context/AuthContext"
+import { supabase } from "@/lib/supabase"
 import RelliaAction from "@/components/RelliaAction"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -28,11 +29,19 @@ const AdminLogin = () => {
     setError(null)
     setLoading(true)
     const { error: authError } = await signIn(email.trim(), password)
-    setLoading(false)
     if (authError) {
+      setLoading(false)
       setError(authError)
       return
     }
+
+    const { data: sessionData } = await supabase.auth.getSession()
+    setLoading(false)
+    if (!sessionData.session) {
+      setError("Signed in, but the session was not ready. Please try again.")
+      return
+    }
+
     navigate("/admin/overview", { replace: true })
   }
 
