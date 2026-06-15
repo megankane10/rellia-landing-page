@@ -96,3 +96,6 @@ export const FOUNDER_DIRECTORY: FounderCompany[] = [
     programs: [],
   },
 ]
+
+export const getFounderPrimaryTag = (company: Pick<FounderCompany, "specialtyTags">): string | undefined =>
+  company.specialtyTags?.[0]?.trim() || undefined

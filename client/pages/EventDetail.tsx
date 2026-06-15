@@ -56,6 +56,7 @@ import { allowCmsSeedFallbacks } from "@/lib/deploymentEnv"
 import { isCmsQueryLoading, shouldShowCmsEmptyState } from "@/lib/cmsQueryState"
 import CmsPageLoadingShell from "@/components/cms/CmsPageLoadingShell"
 import { isSanityConfigured } from "@/lib/sanity"
+import RelatedEvents from "@/components/related/RelatedEvents"
 
 const eventDetailBackToEventsLinkClassName =
   "inline-flex items-center gap-2 font-host-grotesk text-sm font-semibold text-rellia-teal hover:underline hover:underline-offset-4"
@@ -133,6 +134,7 @@ export default function EventDetail() {
   })()
   const [copyState, setCopyState] = useState<"idle" | "copied">("idle")
   const [showForm, setShowForm] = useState(false)
+  const [hasRelatedEvents, setHasRelatedEvents] = useState(false)
 
   const eventMeta = useMemo(() => {
     if (!match) return null
@@ -647,7 +649,7 @@ export default function EventDetail() {
                   </div>
                 </div>
               </ScrollReveal>
-                    <EventDetailBackToEventsLink variant="footer" />
+                    {!hasRelatedEvents ? <EventDetailBackToEventsLink variant="footer" /> : null}
                   </div>
                 ) : (
                   <div className="mx-auto w-full max-w-[1300px] px-6 py-10 md:px-10 md:py-14">
@@ -699,7 +701,7 @@ export default function EventDetail() {
                     </div>
                   </ScrollReveal>
                 ) : null}
-                <EventDetailBackToEventsLink variant="footer" />
+                {!hasRelatedEvents ? <EventDetailBackToEventsLink variant="footer" /> : null}
               </div>
             </div>
           )}
@@ -754,6 +756,13 @@ export default function EventDetail() {
           </AnimatePresence>
         </section>
       </main>
+
+      {match ? (
+        <RelatedEvents
+          currentSlug={getProgramsEventSlug(match)}
+          onHasRelatedChange={setHasRelatedEvents}
+        />
+      ) : null}
 
       <Footer />
     </div>

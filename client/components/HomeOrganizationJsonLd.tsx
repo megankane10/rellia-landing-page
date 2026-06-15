@@ -1,9 +1,9 @@
 import { Helmet } from "react-helmet-async"
-import { getSiteUrl } from "@/config/seo"
+import { getSiteUrl, getRelliaPublisherLogoUrl } from "@/config/seo"
 
 const HomeOrganizationJsonLd = () => {
   const base = getSiteUrl()
-  const logoUrl = `${base}/images/logo-rellia-filled.webp`
+  const logoUrl = getRelliaPublisherLogoUrl()
   const socials = [
     "https://www.linkedin.com/company/relliahealth",
     "https://www.instagram.com/relliahealth/",

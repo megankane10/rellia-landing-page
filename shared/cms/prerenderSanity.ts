@@ -305,7 +305,7 @@ export const fetchIndexableCmsPagePathsForSitemap = async (): Promise<string[]> 
     .map((slug) => `/${slug}`)
 }
 
-/** Indexable published stories for sitemap. */
+/** Indexable published stories for sitemap. Story detail pages are always indexed publicly. */
 export const fetchIndexableStoryPathsForSitemap = async (): Promise<string[]> => {
   const client = getPrerenderSanityClient()
   if (client) {
@@ -313,7 +313,6 @@ export const fetchIndexableStoryPathsForSitemap = async (): Promise<string[]> =>
       const rows = await client.fetch<Record<string, unknown>[]>(storiesQuery)
       if (Array.isArray(rows) && rows.length > 0) {
         return rows
-          .filter(isCmsSeoIndexable)
           .map((row) => rowSlug(row))
           .filter(Boolean)
           .map((slug) => `/stories/${slug}`)
@@ -324,7 +323,6 @@ export const fetchIndexableStoryPathsForSitemap = async (): Promise<string[]> =>
   }
 
   return snapshotStories()
-    .filter(isCmsSeoIndexable)
     .map((row) => rowSlug(row))
     .filter(Boolean)
     .map((slug) => `/stories/${slug}`)
@@ -362,18 +360,8 @@ export const fetchAdvisorPathsForSitemap = async (): Promise<string[]> => {
 
 /** Paths CMS marks as noindex — used to drop matching static ROUTE_SEO entries. */
 export const fetchCmsNoIndexPathsForSitemap = async (): Promise<string[]> => {
-  const [events, stories, programs, pages] = await Promise.all([
+  const [events, programs, pages] = await Promise.all([
     fetchEventsForPrerender(),
-    (async () => {
-      const client = getPrerenderSanityClient()
-      if (!client) return snapshotStories()
-      try {
-        const rows = await client.fetch<Record<string, unknown>[]>(storiesQuery)
-        return Array.isArray(rows) && rows.length > 0 ? rows : snapshotStories()
-      } catch {
-        return snapshotStories()
-      }
-    })(),
     fetchProgramsForPrerender(),
     fetchPagesForPrerender(),
   ])
@@ -384,12 +372,6 @@ export const fetchCmsNoIndexPathsForSitemap = async (): Promise<string[]> => {
     if (isCmsSeoIndexable(row)) continue
     const slug = rowSlug(row)
     if (slug) excluded.add(`/events/${slug}`)
-  }
-
-  for (const row of stories) {
-    if (isCmsSeoIndexable(row)) continue
-    const slug = rowSlug(row)
-    if (slug) excluded.add(`/stories/${slug}`)
   }
 
   for (const row of programs) {

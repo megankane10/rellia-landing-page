@@ -1,6 +1,7 @@
 import { Calendar, History, MapPin, Video, Bell, CalendarDays } from "lucide-react"
 import { Link } from "react-router-dom"
 import type { ProgramsEventCard, ProgramsProgramCard } from "@shared/cms/types"
+import { isProgramUpcoming, isProgramWaitlist } from "@shared/cms/programStatus"
 import {
   formatProgramsEventCardDateTime,
   getProgramsEventDisplayDateTime,
@@ -225,10 +226,8 @@ export function HorizontalCard(props: HorizontalCardProps) {
   // Program Card
   const program = item as Program
   const hasHref = Boolean(cmsCleanText(program.href))
-  const hasWaitlistHref = Boolean(cmsCleanText(program.waitlistHref))
-  const isWaitlistStatus = (program as any)?.status === "waitlist"
-  const isUpcomingStatus = (program as any)?.status === "upcoming"
-  const isWaitlistCard = (hasWaitlistHref || isWaitlistStatus) && !isUpcomingStatus
+  const isUpcomingStatus = isProgramUpcoming(program)
+  const isWaitlistCard = isProgramWaitlist(program) && !isUpcomingStatus
   const programImageSrc = program.imageSrc?.trim()
     ? program.imageSrc
     : placeholderImageFromSeed(cmsCleanText(program.title), 1200, 900)

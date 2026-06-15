@@ -57,6 +57,9 @@ export type CareersContentMode = "both" | "hiring_only" | "volunteer_only"
 export type NetworkDirectoryChrome = {
   directoryTitle?: string
   directorySubtitle?: string
+  relatedSectionTitle?: string
+  relatedSectionSubheadline?: string
+  relatedSectionEnabled?: boolean
   directoryCtaTitle?: string
   directoryCtaBody?: string
   directoryCtaPrimaryLabel?: string
@@ -459,6 +462,9 @@ export type ProgramsLayoutPageContent = {
   timelineTitle?: string
   timelineSubtitle?: string
   timelineWeekLabelPrefix?: string
+  relatedSectionTitle?: string
+  relatedSectionSubheadline?: string
+  relatedSectionEnabled?: boolean
   seo?: SeoContent
 }
 
@@ -927,8 +933,8 @@ export type ProgramsProgramCard = {
   /** Route for program details (optional for waitlist/coming soon programs). */
   href?: string
   buttonText: string
-  /** Optional: external waitlist form URL. If omitted, button can be shown disabled. */
-  waitlistHref?: string
+  /** CMS publishing toggle for card badge, sorting, and filters. */
+  status?: "available" | "waitlist" | "hidden" | "upcoming" | string
   /** Optional; can be derived from the program detail page pricing for known programs. */
   priceLabel?: string
   priceAmount?: string

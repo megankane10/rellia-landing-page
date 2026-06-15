@@ -19,6 +19,7 @@ import { AnimatePresence, motion } from "framer-motion"
 import { ChevronLeft, ChevronRight, LayoutGrid } from "lucide-react"
 import FilteredListEmptyState from "@/components/FilteredListEmptyState"
 import { cmsDisplayText } from "@/lib/cmsStega"
+import { isProgramAvailable, isProgramUpcoming, isProgramWaitlist } from "@shared/cms/programStatus"
 
 type ProgramFilter = "all" | "available" | "waitlist"
 const PAGE_SIZE = 12
@@ -65,13 +66,13 @@ export default function Programs() {
       if (isQmsA && !isQmsB) return -1
       if (!isQmsA && isQmsB) return 1
 
-      const isUpcomingA = a.status === "upcoming"
-      const isUpcomingB = b.status === "upcoming"
+      const isUpcomingA = isProgramUpcoming(a)
+      const isUpcomingB = isProgramUpcoming(b)
       if (isUpcomingA && !isUpcomingB) return -1
       if (!isUpcomingA && isUpcomingB) return 1
 
-      const isWaitlistA = a.status === "waitlist" || Boolean(a.waitlistHref)
-      const isWaitlistB = b.status === "waitlist" || Boolean(b.waitlistHref)
+      const isWaitlistA = isProgramWaitlist(a)
+      const isWaitlistB = isProgramWaitlist(b)
       if (!isWaitlistA && isWaitlistB) return -1
       if (isWaitlistA && !isWaitlistB) return 1
 
@@ -80,12 +81,8 @@ export default function Programs() {
   }, [programsData, pl.programs])
 
   const { availablePrograms, waitlistPrograms } = useMemo(() => {
-    const available = programs.filter(
-      (p: any) =>
-        Boolean(p.href && p.href.trim().length > 0) &&
-        p.status !== "waitlist" && !(p.waitlistHref && p.waitlistHref.trim().length > 0),
-    )
-    const waitlist = programs.filter((p: any) => p.status === "waitlist" || Boolean(p.waitlistHref && p.waitlistHref.trim().length > 0))
+    const available = programs.filter((p: any) => isProgramAvailable(p))
+    const waitlist = programs.filter((p: any) => isProgramWaitlist(p))
     return { availablePrograms: available, waitlistPrograms: waitlist }
   }, [programs])
 

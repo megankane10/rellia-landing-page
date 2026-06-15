@@ -169,6 +169,9 @@ export const storiesQuery = `*[_type == "story" && !(_id in path("drafts.**"))]
 export const storiesPageQuery = `*[_id == "storiesPage"][0]{
   headlinePortable,
   subheadline,
+  relatedSectionTitle,
+  relatedSectionSubheadline,
+  relatedSectionEnabled,
   ${seoFragment}
 }`
 
@@ -313,6 +316,9 @@ export const networkFoundersPageQuery = `*[_id == "networkFoundersPage"][0]{
 export const networkAlumniDirectoryPageQuery = `*[_id == "networkAlumniDirectoryPage"][0]{
   directoryTitle,
   directorySubtitle,
+  relatedSectionTitle,
+  relatedSectionSubheadline,
+  relatedSectionEnabled,
   directoryCtaTitle,
   directoryCtaBody,
   directoryCtaPrimaryLabel,
@@ -324,6 +330,9 @@ export const networkAlumniDirectoryPageQuery = `*[_id == "networkAlumniDirectory
 export const networkAdvisorsDirectoryPageQuery = `*[_id == "networkAdvisorsDirectoryPage"][0]{
   directoryTitle,
   directorySubtitle,
+  relatedSectionTitle,
+  relatedSectionSubheadline,
+  relatedSectionEnabled,
   directoryCtaTitle,
   directoryCtaBody,
   directoryCtaPrimaryLabel,
@@ -610,12 +619,18 @@ export const programsLayoutPageQuery = `*[_id == "programsLayoutPage"][0]{
   timelineTitle,
   timelineSubtitle,
   timelineWeekLabelPrefix,
+  relatedSectionTitle,
+  relatedSectionSubheadline,
+  relatedSectionEnabled,
   ${seoFragment}
 }`
 
 export const eventsLandingQuery = `*[_id == "eventsLandingPage"][0]{
   heroTitlePortable,
   heroSubtitle,
+  relatedSectionTitle,
+  relatedSectionSubheadline,
+  relatedSectionEnabled,
   ctaTitle,
   ctaBody,
   ctaPrimaryLabel,
@@ -679,7 +694,6 @@ export const programsQuery = `*[_type == "program" && status != "hidden" && !(_i
   "imageSrc": image.asset->url,
   href,
   buttonText,
-  waitlistHref,
   status,
   sortOrder,
   ${seoFragment}
@@ -693,7 +707,6 @@ export const programBySlugQuery = `*[_type == "program" && slug.current == $slug
   "imageSrc": image.asset->url,
   href,
   buttonText,
-  waitlistHref,
   status,
   sortOrder,
   ${programDetailFields},

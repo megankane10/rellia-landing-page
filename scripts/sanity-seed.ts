@@ -24,6 +24,10 @@ import {
   DEFAULT_EVENTS_LANDING_HERO_PORTABLE,
   DEFAULT_STORIES_PAGE_HEADLINE_PORTABLE,
 } from "../shared/cms/inlineHeroHeadline"
+import {
+  DEFAULT_EVENTS_RELATED_COPY,
+  DEFAULT_STORIES_RELATED_COPY,
+} from "../shared/cms/relatedContentCopy"
 import { ADVISOR_FILTER_OPTIONS } from "../client/data/advisorDirectory"
 
 const FOUNDER_SPECIALTY_OPTIONS = [
@@ -1057,6 +1061,7 @@ async function main() {
       ctaPrimaryHref: "/contact",
       ctaSecondaryLabel: "Apply to join",
       ctaSecondaryHref: "/apply",
+      ...DEFAULT_EVENTS_RELATED_COPY,
       seo: seoForRoute("/events"),
     },
   })
@@ -1067,6 +1072,7 @@ async function main() {
       headlinePortable: DEFAULT_STORIES_PAGE_HEADLINE_PORTABLE,
       subheadline:
         "The latest founder spotlights, industry insights, & program updates. Stay current with the people and ideas shaping the future of health.",
+      ...DEFAULT_STORIES_RELATED_COPY,
       seo: seoForRoute("/stories"),
     },
   })
@@ -1354,8 +1360,10 @@ async function main() {
         image: toSanityImageFieldValue(programAssetId),
         href: program.href,
         buttonText: program.buttonText,
-        waitlistHref: (program as any).waitlistHref,
-        status: (program as any).waitlistHref ? "waitlist" : "available",
+        status:
+          slug === "build-your-quality-management-system" || slug === "regulatory-strategy-sprint"
+            ? "available"
+            : "waitlist",
         sortOrder: index,
         pricingDiscountEnabled: false,
         ...programDetailBlocks,

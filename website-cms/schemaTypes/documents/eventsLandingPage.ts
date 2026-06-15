@@ -7,6 +7,7 @@ import {
   singletonSeoField,
 } from '../shared/singletonContentFields'
 import {portableHeadlineField} from '../shared/inlineHeroHeadlineField'
+import {relatedContentSectionFields} from '../shared/relatedContentSectionFields'
 import {studioListMedia} from '../shared/studioListMedia'
 
 export const eventsLandingPage = defineType({
@@ -29,6 +30,10 @@ export const eventsLandingPage = defineType({
       rows: 2,
       group: 'hero',
     }),
+    ...relatedContentSectionFields.map((field) => ({
+      ...field,
+      group: 'hero',
+    })),
     defineField({name: 'ctaTitle', title: 'CTA title', type: 'string', group: 'cta'}),
     defineField({name: 'ctaBody', title: 'CTA body', type: 'text', rows: 3, group: 'cta'}),
     defineField({name: 'ctaPrimaryLabel', title: 'Primary button label', type: 'string', group: 'cta'}),

@@ -23,6 +23,7 @@ import CmsPageLoadingShell from "@/components/cms/CmsPageLoadingShell";
 import { isSanityConfigured } from "@/lib/sanity";
 import ImageExpandModal from "@/components/ImageExpandModal";
 import { PortableRichText } from "@/components/PortableRichText";
+import RelatedAdvisors from "@/components/related/RelatedAdvisors";
 import { normalizeToPortableText } from "@shared/cms/normalizePortableText";
 import type { SanityPortableText } from "@shared/cms/types";
 import { resolveAdvisorPrimaryTag } from "@/lib/resolveAdvisorPrimaryTag";
@@ -48,12 +49,13 @@ export default function AdvisorProfile() {
       : allowCmsSeedFallbacks()
         ? ADVISOR_DIRECTORY_SEED
         : []
-  ) as any[];
+  ) as typeof ADVISOR_DIRECTORY_SEED;
   const active = advisors.find((a) => a.id === id);
 
   const canonicalUrl = buildPageUrl(location.pathname);
   const [copied, setCopied] = useState(false);
   const [activeImage, setActiveImage] = useState<{ src: string; alt: string } | null>(null);
+  const [hasRelatedProfiles, setHasRelatedProfiles] = useState(false);
 
   const snapshotText =
     typeof active?.snapshot === "string" && active.snapshot.trim()
@@ -119,7 +121,7 @@ export default function AdvisorProfile() {
       />
       <Navbar forceSolid />
 
-      <main id="main-content" className="pt-24 pb-16 md:pt-28">
+      <main id="main-content" className="pt-24 md:pt-28">
         <div className="mx-auto max-w-[1300px] px-6 md:px-10">
           <div className="mb-8">
             <Link
@@ -130,9 +132,9 @@ export default function AdvisorProfile() {
               <ArrowLeft className="h-4 w-4" /> Back to Advisors Directory
             </Link>
           </div>
-          <article className="grid items-start gap-10 lg:grid-cols-[minmax(280px,360px)_minmax(0,1fr)] lg:gap-x-14 xl:grid-cols-[400px_1fr]">
+          <article className="grid items-start gap-10 pb-8 lg:grid-cols-[minmax(280px,360px)_minmax(0,1fr)] lg:gap-x-14 lg:pb-12 xl:grid-cols-[400px_1fr]">
             {/* Left Sidebar - Sticky */}
-            <div className="flex flex-col gap-6 lg:sticky lg:top-28 lg:self-start">
+            <div className="flex flex-col gap-6 pb-4 lg:sticky lg:top-28 lg:self-start lg:pb-10">
               <div 
                 onClick={() => setActiveImage({ src: active.photoSrc, alt: `Portrait of ${active.name}` })}
                 className="overflow-hidden rounded-2xl aspect-[4/5] w-full max-h-[min(42vh,440px)] cursor-pointer"
@@ -251,16 +253,24 @@ export default function AdvisorProfile() {
             </div>
           </article>
 
-          <div className="mt-16 pt-8 border-t border-black/10">
-            <Link
-              to="/advisors/directory"
-              replace
-              className="inline-flex items-center gap-2 font-host-grotesk text-sm font-bold text-rellia-teal hover:underline hover:underline-offset-4"
-            >
-              <ArrowLeft className="h-4 w-4" /> Back to Advisors Directory
-            </Link>
-          </div>
+          {!hasRelatedProfiles ? (
+            <div className="mt-16 border-t border-black/10 pt-8 pb-16 md:pb-16">
+              <Link
+                to="/advisors/directory"
+                replace
+                className="inline-flex items-center gap-2 font-host-grotesk text-sm font-bold text-rellia-teal hover:underline hover:underline-offset-4"
+              >
+                <ArrowLeft className="h-4 w-4" /> Back to Advisors Directory
+              </Link>
+            </div>
+          ) : null}
         </div>
+
+        <RelatedAdvisors
+          currentAdvisorId={active.id}
+          primaryTag={primaryTag}
+          onHasRelatedChange={setHasRelatedProfiles}
+        />
       </main>
 
       <Footer />

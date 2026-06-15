@@ -260,6 +260,34 @@ export const formatProgramsEventCardDateTime = (raw: string): string => {
   return date
 }
 
+/** Compact date for related-event cards: `Dec 27` (month abbreviated, day only). */
+export const formatProgramsEventRelatedCardDate = (raw: string): string => {
+  const badge = getProgramsEventCardImageDateBadge(raw)
+  if (badge) {
+    const month =
+      badge.month.charAt(0) + badge.month.slice(1).toLowerCase()
+    return `${month} ${parseInt(badge.day, 10)}`
+  }
+
+  const { date } = parseProgramsEventDateTimeParts(raw)
+  if (!date) return ""
+
+  const abbreviated = applyWeekdayMonthAbbreviations(date)
+  const withWeekday = abbreviated.match(
+    /^(?:Mon|Tue|Wed|Thu|Fri|Sat|Sun),?\s+([A-Za-z]+)\s+(\d{1,2})\b/,
+  )
+  if (withWeekday?.[1] && withWeekday[2]) {
+    return `${withWeekday[1]} ${parseInt(withWeekday[2], 10)}`
+  }
+
+  const monthDay = abbreviated.match(/^([A-Za-z]+)\s+(\d{1,2})\b/)
+  if (monthDay?.[1] && monthDay[2]) {
+    return `${monthDay[1]} ${parseInt(monthDay[2], 10)}`
+  }
+
+  return abbreviated.split(",")[0]?.trim() ?? abbreviated
+}
+
 /** Compact one-line for meta / subtitles (same canonical formatting as cards). */
 export const shortenProgramsEventDateTime = (raw: string): string => {
   const { date, time } = parseProgramsEventDateTimeParts(raw)
@@ -356,6 +384,41 @@ export const getProgramsEventAttendanceMode = (event: ProgramsEventCard): "virtu
     return "virtual"
   }
   return "inPerson"
+}
+
+/** Related-event card meta — date/time combined, location separate (avoids stacked middle dots). */
+export type ProgramsEventRelatedCardMeta = {
+  schedule: string
+  location: string
+}
+
+export const getProgramsEventRelatedCardMeta = (
+  event: ProgramsEventCard,
+): ProgramsEventRelatedCardMeta => {
+  const raw = getProgramsEventDisplayDateTime(event)
+  const shortDate = formatProgramsEventRelatedCardDate(raw)
+  let time = parseProgramsEventDateTimeParts(raw).time
+  if (!time && event.startsAt?.trim()) {
+    const eastern = formatEasternTimeFromIso(event.startsAt.trim())
+    if (eastern) time = normalizeProgramsEventTime(eastern)
+  }
+
+  const schedule =
+    shortDate && time ? `${shortDate}, ${time}` : shortDate || time || ""
+
+  const attendance = getProgramsEventAttendanceMode(event)
+  const location =
+    attendance === "virtual"
+      ? PROGRAMS_EVENT_LOCATION_FALLBACK
+      : getProgramsEventLocationDetailLines(event).line1 || getProgramsEventLocationLabel(event)
+
+  return { schedule, location }
+}
+
+/** @deprecated Use `getProgramsEventRelatedCardMeta` for structured schedule + location. */
+export const formatProgramsEventRelatedCardMeta = (event: ProgramsEventCard): string => {
+  const { schedule, location } = getProgramsEventRelatedCardMeta(event)
+  return [schedule, location].filter(Boolean).join(MIDDLE_DOT_SEP)
 }
 
 /**

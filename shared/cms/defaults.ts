@@ -1985,6 +1985,7 @@ export const DEFAULT_PROGRAMS_LANDING: ProgramsLandingContent = {
       imageSrc: "/images/programs-buildYourQMS.png",
       href: "/programs/build-your-quality-management-system",
       buttonText: "Learn more",
+      status: "available",
     },
     {
       title: "Ignite: Pitch Foundations",
@@ -1993,7 +1994,7 @@ export const DEFAULT_PROGRAMS_LANDING: ProgramsLandingContent = {
       imageSrc: "/images/programs-IgnitepItch.png",
       href: "/programs/ignite-pitch-foundations",
       buttonText: "Learn more",
-      waitlistHref: "https://forms.fillout.com/t/bLGtn6S2jtus",
+      status: "waitlist",
     },
     {
       title: "Advance: Data Room Deep Dive",
@@ -2002,7 +2003,7 @@ export const DEFAULT_PROGRAMS_LANDING: ProgramsLandingContent = {
       imageSrc: "/images/programs-DataRoom.png",
       href: "/programs/advance-data-room-deep-dive",
       buttonText: "Learn more",
-      waitlistHref: "https://forms.fillout.com/t/bLGtn6S2jtus",
+      status: "waitlist",
     },
     {
       title: "Elevate: Healthcare Capital",
@@ -2011,7 +2012,7 @@ export const DEFAULT_PROGRAMS_LANDING: ProgramsLandingContent = {
       imageSrc: "/images/programs-HealthcareCapital.png",
       href: "/programs/elevate-healthcare-capital",
       buttonText: "Learn more",
-      waitlistHref: "https://forms.fillout.com/t/bLGtn6S2jtus",
+      status: "waitlist",
     },
     {
       title: "First 50 Users: A Clinical Feedback Intensive",
@@ -2020,7 +2021,7 @@ export const DEFAULT_PROGRAMS_LANDING: ProgramsLandingContent = {
       imageSrc: "/images/programs-first50Users.png",
       href: "/programs/first-50-users-clinical-feedback-intensive",
       buttonText: "Learn more",
-      waitlistHref: "https://forms.fillout.com/t/bLGtn6S2jtus",
+      status: "waitlist",
     },
     {
       title: "A Low-Fidelity Prototype Lab",
@@ -2029,7 +2030,7 @@ export const DEFAULT_PROGRAMS_LANDING: ProgramsLandingContent = {
       imageSrc: "/images/programs-PrototypeLab.png",
       href: "/programs/low-fidelity-prototype-lab",
       buttonText: "Learn more",
-      waitlistHref: "https://forms.fillout.com/t/bLGtn6S2jtus",
+      status: "waitlist",
     },
     {
       title: "Advisory Board Match",
@@ -2038,7 +2039,7 @@ export const DEFAULT_PROGRAMS_LANDING: ProgramsLandingContent = {
       imageSrc: "/images/programs-AdvisoryBoard.png",
       href: "/programs/advisory-board-match",
       buttonText: "Learn more",
-      waitlistHref: "https://forms.fillout.com/t/bLGtn6S2jtus",
+      status: "waitlist",
     },
     {
       title: "Design Your Brand Strategy",
@@ -2047,7 +2048,7 @@ export const DEFAULT_PROGRAMS_LANDING: ProgramsLandingContent = {
       imageSrc: "/images/programs-brandStrategy.png",
       href: "/programs/design-your-brand-strategy",
       buttonText: "Learn more",
-      waitlistHref: "https://forms.fillout.com/t/bLGtn6S2jtus",
+      status: "waitlist",
     },
     {
       title: "Regulatory Strategy Sprint",
@@ -2056,7 +2057,7 @@ export const DEFAULT_PROGRAMS_LANDING: ProgramsLandingContent = {
       imageSrc: "/images/programs-regulatoryRoadmap.png",
       href: "/programs/regulatory-strategy-sprint",
       buttonText: "Learn more",
-      waitlistHref: "https://forms.fillout.com/t/bLGtn6S2jtus",
+      status: "available",
     },
   ],
   upcomingEvents: [

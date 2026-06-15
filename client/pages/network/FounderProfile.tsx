@@ -23,6 +23,8 @@ import CmsPageLoadingShell from "@/components/cms/CmsPageLoadingShell";
 import { isSanityConfigured } from "@/lib/sanity";
 import ImageExpandModal from "@/components/ImageExpandModal";
 import { PortableRichText } from "@/components/PortableRichText";
+import RelatedAlumniCompanies from "@/components/related/RelatedAlumniCompanies";
+import { getFounderPrimaryTag } from "@/data/founderDirectory";
 import type { SanityPortableText } from "@shared/cms/types";
 
 export default function FounderProfile() {
@@ -46,6 +48,7 @@ export default function FounderProfile() {
   const canonicalUrl = buildPageUrl(location.pathname);
   const [copied, setCopied] = useState(false);
   const [activeImage, setActiveImage] = useState<{ src: string; alt: string } | null>(null);
+  const [hasRelatedProfiles, setHasRelatedProfiles] = useState(false);
 
   useApplyCmsSeo(null, active ? {
     title: buildAlumniProfileSeoTitle(active.logoName),
@@ -81,7 +84,7 @@ export default function FounderProfile() {
       />
       <Navbar forceSolid />
 
-      <main id="main-content" className="pt-24 pb-16 md:pt-28">
+      <main id="main-content" className="pt-24 md:pt-28">
         <div className="mx-auto max-w-[1300px] px-6 md:px-10">
           <div className="mb-8">
             <Link
@@ -92,9 +95,9 @@ export default function FounderProfile() {
               <ArrowLeft className="h-4 w-4" /> Back to Alumni List
             </Link>
           </div>
-          <article className="grid items-start gap-10 lg:grid-cols-[minmax(280px,360px)_minmax(0,1fr)] lg:gap-x-14 xl:grid-cols-[400px_1fr]">
+          <article className="grid items-start gap-10 pb-8 lg:grid-cols-[minmax(280px,360px)_minmax(0,1fr)] lg:gap-x-14 lg:pb-12 xl:grid-cols-[400px_1fr]">
             {/* Left Sidebar - Sticky */}
-            <div className="flex flex-col gap-6 lg:sticky lg:top-28 lg:self-start">
+            <div className="flex flex-col gap-6 pb-4 lg:sticky lg:top-28 lg:self-start lg:pb-10">
               <div className="flex min-h-[120px] items-center justify-start md:min-h-[140px]">
                 <img
                   src={active.logoSrc}
@@ -253,16 +256,24 @@ export default function FounderProfile() {
             </div>
           </article>
 
-          <div className="mt-16 pt-8 border-t border-black/10">
-            <Link
-              to="/founders/alumni"
-              replace
-              className="inline-flex items-center gap-2 font-host-grotesk text-sm font-bold text-rellia-teal hover:underline hover:underline-offset-4"
-            >
-              <ArrowLeft className="h-4 w-4" /> Back to Alumni List
-            </Link>
-          </div>
+          {!hasRelatedProfiles ? (
+            <div className="mt-16 border-t border-black/10 pt-8 pb-16 md:pb-16">
+              <Link
+                to="/founders/alumni"
+                replace
+                className="inline-flex items-center gap-2 font-host-grotesk text-sm font-bold text-rellia-teal hover:underline hover:underline-offset-4"
+              >
+                <ArrowLeft className="h-4 w-4" /> Back to Alumni List
+              </Link>
+            </div>
+          ) : null}
         </div>
+
+        <RelatedAlumniCompanies
+          currentCompanyId={active.id}
+          primaryTag={getFounderPrimaryTag(active)}
+          onHasRelatedChange={setHasRelatedProfiles}
+        />
       </main>
 
       <Footer />

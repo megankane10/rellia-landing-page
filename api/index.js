@@ -183,6 +183,9 @@ var storiesQuery = `*[_type == "story" && !(_id in path("drafts.**"))]
 var storiesPageQuery = `*[_id == "storiesPage"][0]{
   headlinePortable,
   subheadline,
+  relatedSectionTitle,
+  relatedSectionSubheadline,
+  relatedSectionEnabled,
   ${seoFragment}
 }`;
 var portableRichTextBlocksFragment = `[]{
@@ -316,6 +319,9 @@ var networkFoundersPageQuery = `*[_id == "networkFoundersPage"][0]{
 var networkAlumniDirectoryPageQuery = `*[_id == "networkAlumniDirectoryPage"][0]{
   directoryTitle,
   directorySubtitle,
+  relatedSectionTitle,
+  relatedSectionSubheadline,
+  relatedSectionEnabled,
   directoryCtaTitle,
   directoryCtaBody,
   directoryCtaPrimaryLabel,
@@ -326,6 +332,9 @@ var networkAlumniDirectoryPageQuery = `*[_id == "networkAlumniDirectoryPage"][0]
 var networkAdvisorsDirectoryPageQuery = `*[_id == "networkAdvisorsDirectoryPage"][0]{
   directoryTitle,
   directorySubtitle,
+  relatedSectionTitle,
+  relatedSectionSubheadline,
+  relatedSectionEnabled,
   directoryCtaTitle,
   directoryCtaBody,
   directoryCtaPrimaryLabel,
@@ -599,11 +608,17 @@ var programsLayoutPageQuery = `*[_id == "programsLayoutPage"][0]{
   timelineTitle,
   timelineSubtitle,
   timelineWeekLabelPrefix,
+  relatedSectionTitle,
+  relatedSectionSubheadline,
+  relatedSectionEnabled,
   ${seoFragment}
 }`;
 var eventsLandingQuery = `*[_id == "eventsLandingPage"][0]{
   heroTitlePortable,
   heroSubtitle,
+  relatedSectionTitle,
+  relatedSectionSubheadline,
+  relatedSectionEnabled,
   ctaTitle,
   ctaBody,
   ctaPrimaryLabel,
@@ -665,7 +680,6 @@ var programsQuery = `*[_type == "program" && status != "hidden" && !(_id in path
   "imageSrc": image.asset->url,
   href,
   buttonText,
-  waitlistHref,
   status,
   sortOrder,
   ${seoFragment}
@@ -678,7 +692,6 @@ var programBySlugQuery = `*[_type == "program" && slug.current == $slug && !(_id
   "imageSrc": image.asset->url,
   href,
   buttonText,
-  waitlistHref,
   status,
   sortOrder,
   ${programDetailFields},

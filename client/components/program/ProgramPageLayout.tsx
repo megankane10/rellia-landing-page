@@ -16,7 +16,8 @@ import {
   extractFilloutId,
   PROGRAM_FILLOUT_EMBED_MIN_CLASS,
 } from "@/lib/filloutApplyForm"
-import { useLocation, Link } from "react-router-dom";
+import RelatedPrograms from "@/components/related/RelatedPrograms"
+import { useLocation, Link } from "react-router-dom"
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import ScrollReveal from "@/components/ScrollReveal";
@@ -176,6 +177,7 @@ const ProgramPageLayout = ({
 }: ProgramPageLayoutProps) => {
   const [timelineOpen, setTimelineOpen] = useState<string>("");
   const [showForm, setShowForm] = useState(false);
+  const [hasRelatedPrograms, setHasRelatedPrograms] = useState(false);
   const [cardImages, setCardImages] = useState<string[]>([]);
   const location = useLocation();
   const programPageQuery = useProgramPageBySlug(cmsSlug ?? "", cms ?? {})
@@ -717,13 +719,20 @@ const ProgramPageLayout = ({
         </section>
 
         {/* Back to Programs — bottom */}
-        <div className="max-w-[1300px] mx-auto px-6 md:px-10 py-8">
-          <BackToPrograms />
-        </div>
+        {!hasRelatedPrograms ? (
+          <div className="max-w-[1300px] mx-auto px-6 md:px-10 py-8">
+            <BackToPrograms />
+          </div>
+        ) : null}
 
         {extraSections.length > 0 ? (
           <SectionsRenderer sections={extraSections} />
         ) : null}
+
+        <RelatedPrograms
+          currentSlug={cmsSlug ?? ""}
+          onHasRelatedChange={setHasRelatedPrograms}
+        />
 
         <RelliaCta
           title={q.bottomCtaTitle}

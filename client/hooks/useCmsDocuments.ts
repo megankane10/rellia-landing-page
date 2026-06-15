@@ -152,6 +152,9 @@ export const useStories = () =>
 export type StoriesLandingContent = {
   headlinePortable?: SanityPortableText | null
   subheadline?: string | null
+  relatedSectionEnabled?: boolean | null
+  relatedSectionTitle?: string | null
+  relatedSectionSubheadline?: string | null
   seo?: SeoContent
 }
 
@@ -224,6 +227,9 @@ export const useProgramsLandingPage = () =>
 export type EventsLandingContent = {
   heroTitlePortable?: SanityPortableText | null
   heroSubtitle?: string
+  relatedSectionEnabled?: boolean
+  relatedSectionTitle?: string
+  relatedSectionSubheadline?: string
   ctaTitle?: string
   ctaBody?: string
   ctaPrimaryLabel?: string
@@ -272,7 +278,6 @@ export type CmsProgram = {
   imageSrc?: string
   href?: string
   buttonText?: string
-  waitlistHref?: string
   status?: "available" | "waitlist" | "hidden" | string
   sortOrder?: number
   seo?: SeoContent

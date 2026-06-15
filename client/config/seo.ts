@@ -37,6 +37,10 @@ export const getSiteUrl = (): string => {
   return "https://www.relliahealth.com"
 }
 
+/** Organization logo for JSON-LD publisher blocks (Article, etc.). Prefer over favicon — Google expects a proper logo image. */
+export const getRelliaPublisherLogoUrl = (): string =>
+  `${getSiteUrl()}/images/logo-rellia-filled.webp`
+
 /** Origin for share/copy URLs: current browser host in the client, configured site URL on the server. */
 export const getShareOrigin = (): string => {
   if (typeof window !== "undefined") {

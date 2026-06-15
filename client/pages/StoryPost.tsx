@@ -15,6 +15,7 @@ import {
   resolveSocialOgImage,
 } from "@/config/seo"
 import StoryArticleJsonLd from "@/components/seo/StoryArticleJsonLd"
+import StoryBreadcrumbJsonLd from "@/components/seo/StoryBreadcrumbJsonLd"
 import PageSocialHelmet from "@/components/seo/PageSocialHelmet"
 import { ChevronLeft, Check } from "lucide-react"
 import { RichTextImageCarousel } from "@/components/RichTextImageCarousel"
@@ -37,6 +38,7 @@ import { resolveStorySlugRedirect } from "@shared/cms/storySlugRedirects"
 import { StoryPostHero } from "@/components/StoryPostHero"
 import { RichTextQuoteFigure } from "@/components/RichTextQuoteFigure"
 import ImageExpandModal from "@/components/ImageExpandModal"
+import RelatedStories from "@/components/RelatedStories"
 
 export default function StoryPost() {
   const { slug } = useParams()
@@ -47,6 +49,7 @@ export default function StoryPost() {
   const story = slug && allowCmsSeedFallbacks() ? getStoryBySlug(slug) : undefined
   const [copyState, setCopyState] = useState<"idle" | "copied">("idle")
   const [activeImage, setActiveImage] = useState<{ src: string; alt: string } | null>(null)
+  const [hasRelatedStories, setHasRelatedStories] = useState(false)
 
   const canonical = cmsStory?.slug
     ? buildPageUrl(`/stories/${cmsStory.slug}`)
@@ -99,6 +102,18 @@ export default function StoryPost() {
     : resolveShareOgImage(undefined, { landscape: true })
   const imageUrl = resolvedOgImage.url
   const shareTitle = resolvedTitle
+
+  const storyDatePublished = (() => {
+    const raw = cmsStory?.publishedAt ?? story?.publishedAt
+    if (typeof raw !== "string" || !raw.trim()) return undefined
+    const parsed = new Date(raw)
+    if (Number.isNaN(parsed.getTime())) return undefined
+    return parsed.toISOString()
+  })()
+
+  const storyJsonLdHeadline = cmsStory?.title ?? story?.title ?? "Rellia Health story"
+  const activeStorySlug = cmsStory?.slug ?? story?.slug ?? resolvedSlug
+  const activeStoryTag = cmsStory?.tag ?? story?.tag
 
   const handleCopyLink = async () => {
     try {
@@ -230,6 +245,14 @@ export default function StoryPost() {
           ogImageWidth={resolvedOgImage.width}
           ogImageHeight={resolvedOgImage.height}
         />
+        <StoryArticleJsonLd
+          headline={storyJsonLdHeadline}
+          description={resolvedDescription}
+          url={canonical}
+          imageUrl={imageUrl}
+          datePublished={storyDatePublished}
+        />
+        <StoryBreadcrumbJsonLd storyTitle={storyJsonLdHeadline} storyUrl={canonical} />
 
         <Navbar />
 
@@ -260,18 +283,25 @@ export default function StoryPost() {
 
               <PortableRichText value={cmsStory.body} />
 
-              <div className="mt-12 border-t border-black/10 pt-8">
-                <Link
-                  to="/stories"
-                  className="inline-flex items-center gap-2 font-host-grotesk text-sm font-semibold text-rellia-teal hover:underline hover:underline-offset-4"
-                  aria-label="Back to stories"
-                >
-                  <ChevronLeft className="h-4 w-4" aria-hidden />
-                  Back to stories
-                </Link>
-              </div>
+              {!hasRelatedStories ? (
+                <div className="mt-12 border-t border-black/10 pt-8">
+                  <Link
+                    to="/stories"
+                    className="inline-flex items-center gap-2 font-host-grotesk text-sm font-semibold text-rellia-teal hover:underline hover:underline-offset-4"
+                    aria-label="Back to stories"
+                  >
+                    <ChevronLeft className="h-4 w-4" aria-hidden />
+                    Back to stories
+                  </Link>
+                </div>
+              ) : null}
             </div>
           </section>
+          <RelatedStories
+            currentSlug={activeStorySlug}
+            currentTag={activeStoryTag}
+            onHasRelatedChange={setHasRelatedStories}
+          />
         </main>
         <Footer />
         <ImageExpandModal
@@ -296,11 +326,13 @@ export default function StoryPost() {
         ogImageHeight={resolvedOgImage.height}
       />
       <StoryArticleJsonLd
-        headline={cmsStory?.title ?? story?.title ?? "Rellia Health story"}
+        headline={storyJsonLdHeadline}
         description={resolvedDescription}
         url={canonical}
         imageUrl={imageUrl}
+        datePublished={storyDatePublished}
       />
+      <StoryBreadcrumbJsonLd storyTitle={storyJsonLdHeadline} storyUrl={canonical} />
 
       <Navbar />
 
@@ -422,18 +454,25 @@ export default function StoryPost() {
               </div>
             </div>
 
-            <div className="mt-12 border-t border-black/10 pt-8">
-              <Link
-                to="/stories"
-                className="inline-flex items-center gap-2 font-host-grotesk text-sm font-semibold text-rellia-teal hover:underline hover:underline-offset-4"
-                aria-label="Back to stories"
-              >
-                <ChevronLeft className="h-4 w-4" aria-hidden />
-                Back to stories
-              </Link>
-            </div>
+            {!hasRelatedStories ? (
+              <div className="mt-12 border-t border-black/10 pt-8">
+                <Link
+                  to="/stories"
+                  className="inline-flex items-center gap-2 font-host-grotesk text-sm font-semibold text-rellia-teal hover:underline hover:underline-offset-4"
+                  aria-label="Back to stories"
+                >
+                  <ChevronLeft className="h-4 w-4" aria-hidden />
+                  Back to stories
+                </Link>
+              </div>
+            ) : null}
           </div>
         </section>
+        <RelatedStories
+          currentSlug={activeStorySlug}
+          currentTag={activeStoryTag}
+          onHasRelatedChange={setHasRelatedStories}
+        />
       </main>
       <Footer />
       <ImageExpandModal

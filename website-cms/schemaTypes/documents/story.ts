@@ -1,5 +1,6 @@
 import {defineField, defineType} from 'sanity'
-import {CONTENT_SEO_FIELDSETS, singletonSeoField} from '../shared/singletonContentFields'
+import {CONTENT_SEO_FIELDSETS} from '../shared/singletonContentFields'
+import {storySeoField} from '../shared/storySeoField'
 import {GROUP_SEO} from '../shared/fieldGroups'
 
 export const story = defineType({
@@ -8,7 +9,6 @@ export const story = defineType({
   type: 'document',
   groups: [
     {name: 'content', title: 'Content', default: true},
-    {name: 'metrics', title: 'Reading metrics'},
     GROUP_SEO,
   ],
   fieldsets: CONTENT_SEO_FIELDSETS,
@@ -100,22 +100,7 @@ export const story = defineType({
       validation: (Rule) => Rule.required(),
       group: 'content',
     }),
-    defineField({
-      name: 'readingTimeMinutes',
-      title: 'Reading time (minutes)',
-      type: 'number',
-      description: 'Estimated reading time shown on the story card and detail page.',
-      validation: (Rule) => Rule.min(1).max(120),
-      group: 'metrics',
-    }),
-    defineField({
-      name: 'viewCount',
-      title: 'View count (editorial)',
-      type: 'number',
-      description: 'Optional editorial metric for sorting or social proof — not live analytics.',
-      group: 'metrics',
-    }),
-    singletonSeoField,
+    storySeoField,
   ],
   preview: {
     select: {
