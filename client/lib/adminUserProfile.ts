@@ -1,7 +1,9 @@
 import type { User } from "@supabase/supabase-js"
+import { supabase } from "@/lib/supabase"
 
 const FULL_NAME_KEY = "full_name"
 const AVATAR_URL_KEY = "avatar_url"
+export const WELCOME_SPLASH_SEEN_KEY = "welcome_splash_seen"
 
 export const getAdminFirstName = (fullName: string, fallbackEmail?: string | null): string => {
   const trimmed = fullName.trim()
@@ -62,3 +64,27 @@ export const adminUserNeedsDisplayName = (user: User | null | undefined): boolea
 export const buildAdminUserMetadata = (fullName: string) => ({
   [FULL_NAME_KEY]: fullName.trim(),
 })
+
+export const adminUserHasSeenWelcomeSplash = (user: User | null | undefined): boolean =>
+  user?.user_metadata?.[WELCOME_SPLASH_SEEN_KEY] === true
+
+type AdminWelcomeSplashOptions = {
+  forceWelcome?: boolean
+  previewWelcome?: boolean
+}
+
+export const adminUserShouldSeeWelcomeSplash = (
+  user: User | null | undefined,
+  options?: AdminWelcomeSplashOptions,
+): boolean => {
+  if (options?.previewWelcome || options?.forceWelcome) return true
+  if (!user || adminUserHasSeenWelcomeSplash(user)) return false
+  return true
+}
+
+export const markAdminWelcomeSplashSeen = async (): Promise<{ error: string | null }> => {
+  const { error } = await supabase.auth.updateUser({
+    data: { [WELCOME_SPLASH_SEEN_KEY]: true },
+  })
+  return { error: error?.message ?? null }
+}

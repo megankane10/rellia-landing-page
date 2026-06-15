@@ -29,7 +29,13 @@ import {
   percentChange,
   welcomeBackTitle,
 } from "@/lib/adminOverview"
-import { getAdminDisplayName, getAdminFirstName } from "@/lib/adminUserProfile"
+import {
+  adminUserHasSeenWelcomeSplash,
+  adminUserShouldSeeWelcomeSplash,
+  getAdminDisplayName,
+  getAdminFirstName,
+  markAdminWelcomeSplashSeen,
+} from "@/lib/adminUserProfile"
 import { cmsContentQueryKey, fetchCmsContentQueue, isCmsContentEnabled } from "@/lib/adminSanityContent"
 import { formatAdminDate, isActiveSubmissionStatus, statusBadgeClass } from "@/lib/adminSubmissionStatus"
 import { Badge } from "@/components/ui/badge"
@@ -220,7 +226,10 @@ const AdminOverviewPage = () => {
   const welcomeState = (location.state as AdminWelcomeLocationState | null) ?? null
   const previewWelcome = searchParams.get("previewWelcome") === "1"
   const previewName = searchParams.get("name")?.trim() ?? ""
-  const wantsWelcome = welcomeState?.showWelcome === true || previewWelcome
+  const wantsWelcome = adminUserShouldSeeWelcomeSplash(user, {
+    forceWelcome: welcomeState?.showWelcome === true,
+    previewWelcome,
+  })
   const [splashComplete, setSplashComplete] = useState(!wantsWelcome)
   const showSplash = wantsWelcome && !splashComplete
   const token = session?.access_token ?? ""
@@ -233,16 +242,30 @@ const AdminOverviewPage = () => {
 
   const handleSplashComplete = useCallback(() => {
     setSplashComplete(true)
-    if (!previewWelcome) return
-    const nextParams = new URLSearchParams(searchParams)
-    nextParams.delete("previewWelcome")
-    nextParams.delete("name")
-    const nextSearch = nextParams.toString()
-    navigate(
-      { pathname: location.pathname, search: nextSearch ? `?${nextSearch}` : "" },
-      { replace: true, state: null },
-    )
-  }, [location.pathname, navigate, previewWelcome, searchParams])
+    if (previewWelcome) {
+      const nextParams = new URLSearchParams(searchParams)
+      nextParams.delete("previewWelcome")
+      nextParams.delete("name")
+      const nextSearch = nextParams.toString()
+      navigate(
+        { pathname: location.pathname, search: nextSearch ? `?${nextSearch}` : "" },
+        { replace: true, state: null },
+      )
+      return
+    }
+
+    if (!adminUserHasSeenWelcomeSplash(user)) {
+      void markAdminWelcomeSplashSeen()
+    }
+
+    if (welcomeState?.showWelcome) {
+      const nextSearch = searchParams.toString()
+      navigate(
+        { pathname: location.pathname, search: nextSearch ? `?${nextSearch}` : "" },
+        { replace: true, state: null },
+      )
+    }
+  }, [location.pathname, navigate, previewWelcome, searchParams, user, welcomeState?.showWelcome])
 
   useEffect(() => {
     if (!showSplash) return
