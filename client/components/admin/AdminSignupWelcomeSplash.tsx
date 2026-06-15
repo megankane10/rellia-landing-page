@@ -46,6 +46,22 @@ const RESOURCE_LINKS = [
   },
 ] as const
 
+const RESOURCE_CARD_SHELL_CLASS = cn(
+  "group relative isolate flex min-h-[8.75rem] flex-col overflow-hidden rounded-2xl border border-white/15 px-4 py-4 transition-all duration-300",
+  "md:min-h-[10.5rem] md:bg-white/10 md:p-6 md:backdrop-blur-sm md:hover:bg-white/15",
+  "hover:border-rellia-mint/40",
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint",
+)
+
+/** Mobile readability scrim — same glass tint + hover as desktop, without relying on backdrop-filter. */
+const RESOURCE_CARD_MOBILE_SCRIM_CLASS =
+  "pointer-events-none absolute inset-0 bg-[#071f26]/50 transition-colors duration-300 group-hover:bg-[#071f26]/42 md:hidden"
+
+const RESOURCE_CARD_MOBILE_GLASS_CLASS =
+  "pointer-events-none absolute inset-0 bg-white/10 transition-colors duration-300 group-hover:bg-white/15 md:hidden"
+
+const RESOURCE_CARD_CONTENT_CLASS = "relative z-10 flex min-h-0 flex-1 flex-col"
+
 const splashViewportStyle = {
   height: "calc(100dvh + env(safe-area-inset-top, 0px))",
   minHeight: "calc(100dvh + env(safe-area-inset-top, 0px))",
@@ -254,10 +270,10 @@ const AdminSignupWelcomeSplash = ({ firstName, onComplete }: AdminSignupWelcomeS
           />
         </div>
 
-        <div className="relative z-10 flex min-h-full flex-1 items-center px-6 py-20 md:px-12 lg:px-16">
+        <div className="relative z-10 flex min-h-full flex-1 items-start overflow-y-auto px-6 pb-12 pt-[calc(env(safe-area-inset-top,0px)+6.75rem)] md:items-center md:overflow-visible md:px-12 md:py-20 md:pt-20 lg:px-16">
           <div className="mx-auto w-full max-w-5xl text-left">
             <motion.div
-              className="mb-10 md:mb-14"
+              className="mb-7 md:mb-14"
               initial={reduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: -36 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.75, ease: REVEAL_EASE }}
@@ -316,7 +332,7 @@ const AdminSignupWelcomeSplash = ({ firstName, onComplete }: AdminSignupWelcomeS
             </h1>
 
             <motion.div
-              className="mt-10 md:mt-12"
+              className="mt-7 md:mt-12"
               initial={
                 reduceMotion
                   ? { opacity: 1, y: 0, filter: "blur(0px)" }
@@ -340,11 +356,11 @@ const AdminSignupWelcomeSplash = ({ firstName, onComplete }: AdminSignupWelcomeS
                 Enter dashboard
               </RelliaAction>
 
-              <div className="mt-16 w-full md:mt-20">
-                <p className="mb-4 text-left font-urbanist text-sm font-semibold uppercase tracking-[0.14em] text-white/85">
+              <div className="mt-10 w-full md:mt-20">
+                <p className="mb-6 text-left font-urbanist text-sm font-semibold uppercase tracking-[0.14em] text-white/85 md:mb-4">
                   More ways to get started
                 </p>
-                <div className="grid w-full grid-cols-1 gap-4 sm:grid-cols-3 sm:gap-5">
+                <div className="grid w-full grid-cols-1 gap-3 sm:grid-cols-3 sm:gap-5">
                 {RESOURCE_LINKS.map((link) => {
                   const Icon = link.icon
                   return (
@@ -353,25 +369,25 @@ const AdminSignupWelcomeSplash = ({ firstName, onComplete }: AdminSignupWelcomeS
                       href={link.href}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className={cn(
-                        "group flex min-h-[9.5rem] flex-col rounded-2xl border border-white/15 bg-white/10 p-5 backdrop-blur-sm transition-all md:min-h-[10.5rem] md:p-6",
-                        "hover:border-rellia-mint/40 hover:bg-white/15",
-                        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint",
-                      )}
+                      className={RESOURCE_CARD_SHELL_CLASS}
                     >
-                      <div className="flex items-start justify-between gap-2">
-                        <Icon className="h-6 w-6 shrink-0 text-rellia-mint" aria-hidden />
-                        <ExternalLink
-                          className="h-4 w-4 shrink-0 text-white/45 transition-colors group-hover:text-rellia-mint"
-                          aria-hidden
-                        />
+                      <span aria-hidden className={RESOURCE_CARD_MOBILE_SCRIM_CLASS} />
+                      <span aria-hidden className={RESOURCE_CARD_MOBILE_GLASS_CLASS} />
+                      <div className={RESOURCE_CARD_CONTENT_CLASS}>
+                        <div className="flex items-start justify-between gap-2">
+                          <Icon className="h-6 w-6 shrink-0 text-rellia-mint" aria-hidden />
+                          <ExternalLink
+                            className="h-4 w-4 shrink-0 text-white/45 transition-colors group-hover:text-rellia-mint"
+                            aria-hidden
+                          />
+                        </div>
+                        <span className="mt-3.5 font-host-grotesk text-base font-semibold text-white md:mt-4">
+                          {link.label}
+                        </span>
+                        <span className="mt-1.5 font-urbanist text-sm leading-snug text-white/65 md:leading-relaxed">
+                          {link.description}
+                        </span>
                       </div>
-                      <span className="mt-4 font-host-grotesk text-base font-semibold text-white">
-                        {link.label}
-                      </span>
-                      <span className="mt-1.5 font-urbanist text-sm leading-relaxed text-white/65">
-                        {link.description}
-                      </span>
                     </a>
                   )
                 })}
