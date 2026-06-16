@@ -18,7 +18,13 @@ const NotFound = () => {
   useApplyCmsSeo(copy.seo)
 
   useEffect(() => {
-    console.error("404 Error: User attempted to access non-existent route:", location.pathname)
+    if (!import.meta.env.DEV) return
+
+    const key = `rellia:not-found-logged:${location.pathname}`
+    if (window.sessionStorage.getItem(key)) return
+    window.sessionStorage.setItem(key, "1")
+
+    console.warn("404 route:", location.pathname)
   }, [location.pathname])
 
   const iconKey = copy.iconKey?.trim() || DEFAULT_NOT_FOUND.iconKey || "search-alert"
