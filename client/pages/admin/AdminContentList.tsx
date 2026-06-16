@@ -10,7 +10,7 @@ import {
   isCmsContentEnabled,
 } from "@/lib/adminSanityContent"
 import AdminTipBox from "@/components/admin/AdminTipBox"
-import { adminPageTitleClass } from "@/components/admin/adminThemeClasses"
+import { adminBackLinkClass, adminOutlineActionButtonClass, adminPageTitleClass } from "@/components/admin/adminThemeClasses"
 import { cn } from "@/lib/utils"
 import { getSanityDataset } from "@/lib/sanity"
 import { FileEdit } from "lucide-react"
@@ -41,7 +41,7 @@ const AdminContentList = () => {
     <div className="space-y-8">
       <Link
         to="/admin/dashboard"
-        className="inline-flex items-center gap-1.5 font-urbanist text-sm text-rellia-teal/80 transition-colors hover:text-rellia-teal"
+        className={adminBackLinkClass}
       >
         <ArrowLeft className="h-4 w-4" aria-hidden />
         Dashboard
@@ -67,7 +67,7 @@ const AdminContentList = () => {
           variant="outline"
           size="sm"
           asChild
-          className="rounded-full border-rellia-teal/20 text-rellia-teal hover:bg-rellia-mint/15"
+          className={adminOutlineActionButtonClass}
         >
           <a href={STUDIO_HOME} target="_blank" rel="noopener noreferrer">
             Open Studio

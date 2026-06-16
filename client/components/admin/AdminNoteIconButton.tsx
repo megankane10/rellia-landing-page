@@ -5,7 +5,14 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
+import { Tooltip, TooltipTrigger } from "@/components/ui/tooltip"
 import AdminSubmissionNoteEditor from "@/components/admin/AdminSubmissionNoteEditor"
+import AdminTooltipContent from "@/components/admin/AdminTooltipContent"
+import {
+  adminNoteIconButtonActiveClass,
+  adminNoteIconButtonClass,
+} from "@/components/admin/adminThemeClasses"
+import { adminPopoverContentClass } from "@/components/admin/adminSidebarRail"
 import { cn } from "@/lib/utils"
 
 type SubmissionTable = "contact_responses" | "company_profiles"
@@ -19,26 +26,29 @@ type AdminNoteIconButtonProps = {
 
 const AdminNoteIconButton = ({ table, submissionId, note, onSaved }: AdminNoteIconButtonProps) => {
   const hasNote = Boolean(note?.trim())
+  const tooltip = hasNote ? "Edit note" : "Add note"
 
   return (
     <Popover>
-      <PopoverTrigger asChild>
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon"
-          className={cn(
-            "h-9 w-9 shrink-0 rounded-full",
-            hasNote
-              ? "text-rellia-teal hover:bg-rellia-mint/30 hover:text-rellia-teal"
-              : "text-muted-foreground hover:bg-rellia-mint/20 hover:text-rellia-teal",
-          )}
-          aria-label={hasNote ? "Edit submission note" : "Add submission note"}
-        >
-          <StickyNote className={cn("h-4 w-4", hasNote && "fill-rellia-teal/25")} aria-hidden />
-        </Button>
-      </PopoverTrigger>
-      <PopoverContent align="end" className="w-80 rounded-2xl p-4">
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <PopoverTrigger asChild>
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              className={cn(
+                hasNote ? adminNoteIconButtonActiveClass : adminNoteIconButtonClass,
+              )}
+              aria-label={tooltip}
+            >
+              <StickyNote className={cn("h-4 w-4", hasNote && "fill-rellia-teal/25 dark:fill-rellia-mint/30")} aria-hidden />
+            </Button>
+          </PopoverTrigger>
+        </TooltipTrigger>
+        <AdminTooltipContent side="top">{tooltip}</AdminTooltipContent>
+      </Tooltip>
+      <PopoverContent align="end" className={cn("w-80", adminPopoverContentClass)}>
         <AdminSubmissionNoteEditor
           table={table}
           submissionId={submissionId}

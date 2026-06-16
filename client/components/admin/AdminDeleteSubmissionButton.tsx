@@ -13,6 +13,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import { adminLightDialogShellClass } from "@/components/admin/adminSidebarRail"
+import { adminDestructiveOutlineButtonClass } from "@/components/admin/adminThemeClasses"
 
 type AdminDeleteSubmissionButtonProps = {
   label: string
@@ -43,7 +44,7 @@ const AdminDeleteSubmissionButton = ({
           type="button"
           variant="outline"
           size="sm"
-          className="rounded-full border-red-200/80 text-red-700 hover:bg-red-50"
+          className={adminDestructiveOutlineButtonClass}
           disabled={isDeleting}
         >
           <Trash2 className="mr-1.5 h-3.5 w-3.5" aria-hidden />

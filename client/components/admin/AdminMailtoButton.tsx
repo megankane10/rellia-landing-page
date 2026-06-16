@@ -1,5 +1,6 @@
 import { Mail } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { adminOutlineActionButtonClass } from "@/components/admin/adminThemeClasses"
 import { buildMailtoHref } from "@/lib/mailto"
 
 type AdminMailtoButtonProps = {
@@ -24,7 +25,7 @@ const AdminMailtoButton = ({
         type="button"
         variant="outline"
         disabled
-        className="rounded-full border-rellia-teal/25 text-rellia-teal"
+        className={adminOutlineActionButtonClass}
         aria-label={label}
       >
         <Mail className="mr-2 h-4 w-4" aria-hidden />
@@ -37,7 +38,7 @@ const AdminMailtoButton = ({
     <Button
       asChild
       variant="outline"
-      className="rounded-full border-rellia-teal/25 text-rellia-teal hover:bg-rellia-mint/20"
+      className={adminOutlineActionButtonClass}
     >
       <a href={href} aria-label={`${label}: ${trimmedEmail}`} target="_self" rel="noopener noreferrer">
         <Mail className="mr-2 h-4 w-4" aria-hidden />

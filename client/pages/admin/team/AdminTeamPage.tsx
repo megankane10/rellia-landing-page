@@ -21,7 +21,7 @@ import type { AdminTeamUser } from "@/lib/adminApi"
 import { cn } from "@/lib/utils"
 
 import AdminTipBox from "@/components/admin/AdminTipBox"
-import { adminInteractiveBoxClass, adminOutlineActionButtonClass } from "@/components/admin/adminThemeClasses"
+import { adminInteractiveBoxClass, adminOutlineActionButtonClass, adminPendingSurfaceClass } from "@/components/admin/adminThemeClasses"
 
 const SUPABASE_AUTH_USERS_URL =
   "https://supabase.com/dashboard/project/agsvypnmlrvpbgrsxtqy/auth/users"
@@ -32,7 +32,7 @@ const memberStatus = (member: AdminTeamUser) => {
       Active
     </span>
   ) : (
-    <span className="inline-flex rounded-full bg-amber-50 px-2.5 py-0.5 text-xs font-medium text-amber-900">
+    <span className={cn("inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium", adminPendingSurfaceClass)}>
       Invite pending
     </span>
   )

@@ -16,6 +16,7 @@ type AdminRecordListProps<T> = {
   mobileActions?: (row: T) => ReactNode
   emptyMessage?: string
   className?: string
+  tableClassName?: string
 }
 
 const AdminRecordList = <T,>({
@@ -26,6 +27,7 @@ const AdminRecordList = <T,>({
   mobileActions,
   emptyMessage = "No items to show.",
   className,
+  tableClassName,
 }: AdminRecordListProps<T>) => {
   if (rows.length === 0) {
     return (
@@ -57,7 +59,13 @@ const AdminRecordList = <T,>({
       </ul>
 
       <div className="hidden md:block">
-        <AdminDataTable columns={columns} rows={rows} getRowKey={getRowKey} emptyMessage={emptyMessage} />
+        <AdminDataTable
+          columns={columns}
+          rows={rows}
+          getRowKey={getRowKey}
+          emptyMessage={emptyMessage}
+          tableClassName={tableClassName}
+        />
       </div>
     </div>
   )

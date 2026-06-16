@@ -12,7 +12,7 @@ import AdminMailtoButton from "@/components/admin/AdminMailtoButton"
 import AdminSubmissionNoteEditor from "@/components/admin/AdminSubmissionNoteEditor"
 import AdminDiagnosticAnswers from "@/components/admin/AdminDiagnosticAnswers"
 import AdminPageReveal from "@/components/admin/AdminPageReveal"
-import { adminPageHeaderDividerClass, adminPageTitleClass } from "@/components/admin/adminThemeClasses"
+import { adminBackLinkClass, adminErrorBannerClass, adminInternalNotePanelClass, adminPageHeaderDividerClass, adminPageTitleClass } from "@/components/admin/adminThemeClasses"
 import { cn } from "@/lib/utils"
 import {
   Accordion,
@@ -75,15 +75,15 @@ const fetchCompanyData = async (id: string) => {
 }
 
 const scoreColor = (score: number) => {
-  if (score >= 70) return "text-rellia-teal"
-  if (score >= 40) return "text-amber-600"
-  return "text-red-600"
+  if (score >= 70) return "text-rellia-teal dark:text-rellia-mint"
+  if (score >= 40) return "text-amber-600 dark:text-amber-400"
+  return "text-red-600 dark:text-red-400"
 }
 
 const priorityLabel = (priority: string) => {
-  if (priority === "Critical") return "bg-red-100 text-red-700"
-  if (priority === "High") return "bg-amber-100 text-amber-700"
-  return "bg-rellia-mint/20 text-rellia-teal"
+  if (priority === "Critical") return "bg-red-100 text-red-700 dark:bg-red-500/15 dark:text-red-300"
+  if (priority === "High") return "bg-amber-100 text-amber-700 dark:bg-amber-500/15 dark:text-amber-300"
+  return "bg-rellia-mint/20 text-rellia-teal dark:bg-rellia-mint/15 dark:text-rellia-mint"
 }
 
 const AdminCompany = () => {
@@ -139,7 +139,7 @@ const AdminCompany = () => {
 
   if (error || !data) {
     return (
-      <div className="rounded-[20px] border border-red-200 bg-red-50 p-4 font-urbanist text-sm text-red-700">
+      <div className={adminErrorBannerClass}>
         Failed to load: {error instanceof Error ? error.message : "Unknown error"}
       </div>
     )
@@ -154,7 +154,7 @@ const AdminCompany = () => {
       <AdminPageReveal>
       <Link
         to="/admin/inbox?tab=diagnostic"
-        className="inline-flex items-center gap-1.5 font-urbanist text-sm text-rellia-teal/70 transition-colors hover:text-rellia-teal"
+        className={adminBackLinkClass}
       >
         <ArrowLeft className="h-4 w-4" aria-hidden />
         All diagnostic submissions
@@ -162,6 +162,7 @@ const AdminCompany = () => {
       </AdminPageReveal>
 
       <AdminPageReveal delay={0.06}>
+      <div className="space-y-6">
       <article className="overflow-hidden rounded-2xl border border-border bg-card/90 shadow-sm">
         <div className={cn("bg-gradient-to-r from-rellia-mint/12 to-white px-5 py-5 md:px-6 dark:to-card/90", adminPageHeaderDividerClass)}>
           <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
@@ -227,7 +228,7 @@ const AdminCompany = () => {
         </div>
       </article>
 
-      <article className="overflow-hidden rounded-2xl border border-rellia-mint/40 bg-rellia-mint/15 shadow-sm">
+      <article className={adminInternalNotePanelClass}>
         <div className="px-5 py-5 md:px-6">
           <AdminSubmissionNoteEditor
             table="company_profiles"
@@ -305,17 +306,17 @@ const AdminCompany = () => {
                   {response.top3_strengths.map((s) => (
                     <div
                       key={s.category}
-                      className="rounded-xl border border-rellia-mint/30 bg-rellia-mint/20 p-3"
+                      className="rounded-xl border border-rellia-mint/30 bg-rellia-mint/20 p-3 dark:border-rellia-mint/25 dark:bg-rellia-mint/10"
                     >
                       <div className="flex items-center justify-between">
-                        <span className="font-host-grotesk text-sm font-semibold text-rellia-teal">
+                        <span className="font-host-grotesk text-sm font-semibold text-rellia-teal dark:text-rellia-mint">
                           {s.category}
                         </span>
-                        <span className="font-host-grotesk text-sm font-bold text-rellia-teal">
+                        <span className="font-host-grotesk text-sm font-bold text-rellia-teal dark:text-rellia-mint">
                           {s.score}%
                         </span>
                       </div>
-                      <p className="mt-1 font-urbanist text-xs text-rellia-teal/70">{s.note}</p>
+                      <p className="mt-1 font-urbanist text-xs text-rellia-teal/70 dark:text-rellia-mint/75">{s.note}</p>
                     </div>
                   ))}
                 </CardContent>
@@ -331,9 +332,9 @@ const AdminCompany = () => {
                 </CardHeader>
                 <CardContent className="space-y-3">
                   {response.top3_weaknesses.map((w) => (
-                    <div key={w.category} className="rounded-xl border border-red-100 bg-red-50 p-3">
+                    <div key={w.category} className="rounded-xl border border-red-100 bg-red-50 p-3 dark:border-red-500/30 dark:bg-red-500/10">
                       <div className="flex items-center justify-between gap-2">
-                        <span className="font-host-grotesk text-sm font-semibold text-rellia-teal">
+                        <span className="font-host-grotesk text-sm font-semibold text-rellia-teal dark:text-rellia-mint">
                           {w.category}
                         </span>
                         <div className="flex shrink-0 items-center gap-2">
@@ -342,7 +343,7 @@ const AdminCompany = () => {
                           >
                             {w.priority}
                           </span>
-                          <span className="font-host-grotesk text-sm font-bold text-red-600">
+                          <span className="font-host-grotesk text-sm font-bold text-red-600 dark:text-red-400">
                             {w.score}%
                           </span>
                         </div>
@@ -367,7 +368,7 @@ const AdminCompany = () => {
                 <ul className="space-y-2">
                   {response.recommendations.map((r, i) => (
                     <li key={i} className="flex gap-2 font-urbanist text-sm text-muted-foreground">
-                      <span className="mt-0.5 shrink-0 font-semibold text-rellia-teal">{i + 1}.</span>
+                      <span className="mt-0.5 shrink-0 font-semibold text-rellia-teal dark:text-rellia-mint">{i + 1}.</span>
                       <span>{r}</span>
                     </li>
                   ))}
@@ -388,7 +389,7 @@ const AdminCompany = () => {
                 {response.mentor_areas_needed.map((area) => (
                   <Badge
                     key={area}
-                    className="rounded-full bg-rellia-mint/90 font-urbanist text-rellia-teal hover:bg-rellia-mint"
+                    className="rounded-full bg-rellia-mint/90 font-urbanist text-rellia-teal hover:bg-rellia-mint dark:bg-rellia-mint/20 dark:text-rellia-mint dark:hover:bg-rellia-mint/30"
                   >
                     {area}
                   </Badge>
@@ -399,6 +400,7 @@ const AdminCompany = () => {
 
         </>
       )}
+      </div>
       </AdminPageReveal>
     </div>
   )

@@ -7,7 +7,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 import AdminSubmissionStatusSelect from "@/components/admin/AdminSubmissionStatusSelect"
 import AdminSubmissionStatusFilter from "@/components/admin/AdminSubmissionStatusFilter"
 import AdminDeleteSubmissionButton from "@/components/admin/AdminDeleteSubmissionButton"
-import { adminPageTitleClass } from "@/components/admin/adminThemeClasses"
+import { adminBackLinkClass, adminInteractiveLinkTitleClass, adminPageTitleClass, adminWarningBannerClass } from "@/components/admin/adminThemeClasses"
 import { cn } from "@/lib/utils"
 import {
   countByStatusFilter,
@@ -94,7 +94,7 @@ const AdminDiagnosticList = () => {
     <div className="space-y-6">
       <Link
         to="/admin/dashboard"
-        className="inline-flex items-center gap-1.5 font-urbanist text-sm text-rellia-teal/80 transition-colors hover:text-rellia-teal"
+        className={adminBackLinkClass}
       >
         <ArrowLeft className="h-4 w-4" aria-hidden />
         Dashboard
@@ -116,7 +116,7 @@ const AdminDiagnosticList = () => {
       />
 
       {!statusWritesEnabled && (
-        <p className="rounded-xl border border-amber-200/80 bg-amber-50 px-4 py-3 font-urbanist text-sm text-amber-900">
+        <p className={adminWarningBannerClass}>
           Status updates need the <code className="text-xs">status</code> column and RLS policies from{" "}
           <code className="text-xs">scripts/supabase_admin_policies.sql</code>.
         </p>
@@ -158,7 +158,7 @@ const AdminDiagnosticList = () => {
             >
               <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
                 <Link to={`/admin/companies/${row.id}`} className="min-w-0 flex-1 group">
-                  <p className="font-host-grotesk text-base font-semibold text-foreground group-hover:text-rellia-teal">
+                  <p className={cn("font-host-grotesk text-base font-semibold text-foreground", adminInteractiveLinkTitleClass)}>
                     {row.company_name}
                   </p>
                   <p className="mt-1 font-urbanist text-sm text-muted-foreground">

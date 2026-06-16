@@ -39,7 +39,7 @@ import {
 import { cmsContentQueryKey, fetchCmsContentQueueForDataset, isCmsContentEnabled, ADMIN_SANITY_PRODUCTION_DATASET } from "@/lib/adminSanityContent"
 import { formatAdminDate, isActiveSubmissionStatus, statusBadgeClass } from "@/lib/adminSubmissionStatus"
 import { Badge } from "@/components/ui/badge"
-import { adminChartTooltipClass, adminOverviewArrowChipClass } from "@/components/admin/adminThemeClasses"
+import { adminChartTooltipClass, adminInteractiveLinkArrowClass, adminInteractiveLinkTitleClass, adminOverviewArrowChipClass, adminUnresolvedAccentTextClass, adminUnresolvedStatusCircleClass } from "@/components/admin/adminThemeClasses"
 import AdminTooltipContent from "@/components/admin/AdminTooltipContent"
 import { Tooltip, TooltipTrigger } from "@/components/ui/tooltip"
 import { cn } from "@/lib/utils"
@@ -48,7 +48,7 @@ const CHART_COLORS = {
   contacts: "hsl(174 42% 35%)",
   diagnostics: "hsl(174 55% 72%)",
   new: "hsl(199 89% 48%)",
-  progress: "hsl(38 92% 50%)",
+  progress: "hsl(25 95% 53%)",
   resolved: "hsl(142 76% 36%)",
 }
 
@@ -207,9 +207,9 @@ const adminOverviewClickableShadowClass =
   "shadow-[0_4px_20px_-12px_rgba(13,53,64,0.18)] transition-[background-color,border-color,box-shadow] duration-150 hover:shadow-[0_8px_28px_-14px_rgba(13,53,64,0.26)]"
 
 const adminOverviewLinkBoxClass = cn(
-  "flex min-h-[5.75rem] min-w-0 w-full items-center gap-4 rounded-2xl border border-border bg-card p-5",
+  "group flex min-h-[5.75rem] min-w-0 w-full items-center gap-4 rounded-2xl border border-border bg-card p-5",
   adminOverviewClickableShadowClass,
-  "hover:border-rellia-teal/25 hover:bg-rellia-mint/5",
+  "hover:border-rellia-teal/25 hover:bg-rellia-mint/5 dark:hover:border-rellia-mint/30 dark:hover:bg-rellia-mint/10",
   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
 )
 
@@ -228,7 +228,7 @@ const overviewTopCardShellClass = cn(
   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-teal/30",
 )
 
-const CAUGHT_UP_MESSAGE = "You're all caught up!"
+const CAUGHT_UP_MESSAGE = "All clear"
 
 const OverviewTopLinkCard = ({
   title,
@@ -260,14 +260,14 @@ const OverviewTopLinkCard = ({
     statusTone === "good"
       ? "text-emerald-700 dark:text-emerald-400"
       : statusTone === "warn"
-        ? "text-amber-800 dark:text-amber-400"
+        ? adminUnresolvedAccentTextClass
         : "text-slate-600 dark:text-slate-300"
 
   const statusCircleClass =
     statusTone === "good"
       ? "border-emerald-200/70 bg-emerald-50 text-emerald-700 dark:border-emerald-500/70 dark:bg-emerald-500/10 dark:text-emerald-400"
       : statusTone === "warn"
-        ? "border-amber-200/70 bg-amber-50 text-amber-800 dark:border-amber-500/70 dark:bg-amber-500/10 dark:text-amber-400"
+        ? adminUnresolvedStatusCircleClass
         : "border-slate-200/70 bg-slate-50 text-slate-600 dark:border-slate-500/70 dark:bg-slate-500/10 dark:text-slate-300"
 
   return (
@@ -299,34 +299,33 @@ const OverviewTopLinkCard = ({
           {loading ? (
             <Skeleton className="mt-3 h-10 w-20 rounded-lg bg-rellia-mint/25" />
           ) : (
-            <div className={cn("mt-2 flex min-w-0 gap-3", isCaughtUpMessage ? "items-start" : "items-center")}>
+            <div className="mt-2 flex min-w-0 items-center gap-3">
               <Tooltip>
                 <TooltipTrigger asChild>
                   <span
                     className={cn(
-                      "inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full border",
+                      "inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-full border sm:h-[3.25rem] sm:w-[3.25rem]",
                       statusCircleClass,
-                      isCaughtUpMessage && "mt-0.5",
                     )}
                     onClick={(e) => e.preventDefault()}
                     onPointerDown={(e) => e.stopPropagation()}
                     tabIndex={0}
                     aria-label={statusTooltip}
                   >
-                    <StatusIcon className="h-5 w-5 sm:h-[1.35rem] sm:w-[1.35rem]" strokeWidth={2.25} aria-hidden />
+                    <StatusIcon className="h-[1.35rem] w-[1.35rem] sm:h-6 sm:w-6" strokeWidth={2.25} aria-hidden />
                   </span>
                 </TooltipTrigger>
-                <AdminTooltipContent>{statusTooltip}</AdminTooltipContent>
+                <AdminTooltipContent side="top" align="start" collisionPadding={16} className="max-w-[min(20rem,calc(100vw-2rem))]">
+                  {statusTooltip}
+                </AdminTooltipContent>
               </Tooltip>
               <p
                 className={cn(
                   "min-w-0 font-host-grotesk font-semibold",
                   statusAccentClass,
-                  isCaughtUpMessage
-                    ? "text-base leading-snug sm:text-lg"
-                    : isCompactValue
-                      ? "text-2xl leading-none sm:text-[1.75rem]"
-                      : "text-[2.5rem] leading-none tabular-nums sm:text-[2.75rem]",
+                  isCompactValue
+                    ? "text-2xl leading-none sm:text-[1.75rem]"
+                    : "text-[2.5rem] leading-none tabular-nums sm:text-[2.75rem]",
                 )}
               >
                 {value}
@@ -398,7 +397,7 @@ const StatCard = ({ label, value, icon: Icon, changePct, href, loading }: StatCa
         href
           ? cn(
               adminOverviewClickableShadowClass,
-              "hover:!bg-rellia-mint/25 hover:!border-rellia-teal/28",
+              "hover:!bg-rellia-mint/25 hover:!border-rellia-teal/28 dark:hover:!bg-rellia-mint/10 dark:hover:!border-rellia-mint/30",
             )
           : "shadow-none",
       )}
@@ -800,7 +799,7 @@ const AdminOverviewPage = () => {
           statusTone={unresolvedDiagnostics === 0 && !loading ? "good" : "warn"}
         />
         <OverviewTopLinkCard
-          title="Sanity drafts"
+          title="Content drafts"
           href="/admin/drafts"
           loading={isCmsContentEnabled() && draftsQuery.isLoading}
           value={
@@ -810,7 +809,7 @@ const AdminOverviewPage = () => {
                 ? CAUGHT_UP_MESSAGE
                 : draftCount
           }
-          caughtUpTooltip="No unpublished Sanity drafts are waiting to go live."
+          caughtUpTooltip="No unpublished content drafts are waiting to go live."
           statusLabel={
             !isCmsContentEnabled()
               ? "Unavailable"
@@ -1143,10 +1142,10 @@ const AdminOverviewPage = () => {
       <ScrollReveal variant="ctaReveal" delay={0.17} hold={showSplash}>
       <div className="grid min-w-0 gap-6 lg:grid-cols-2">
         <Link to="/admin/team" className={adminOverviewLinkBoxClass}>
-          <Users className="h-9 w-9 shrink-0 text-rellia-teal" aria-hidden />
+          <Users className="h-9 w-9 shrink-0 text-rellia-teal dark:text-rellia-mint" aria-hidden />
           <div className="min-w-0 flex-1">
             <div className="flex flex-wrap items-center gap-2">
-              <p className="font-host-grotesk text-lg font-semibold text-foreground dark:text-white">Team</p>
+              <p className={cn("font-host-grotesk text-lg font-semibold text-foreground dark:text-white", adminInteractiveLinkTitleClass)}>Team</p>
               {!teamQuery.isLoading && onlineNowCount > 0 ? (
                 <span className={adminOnlineBadgeClass}>
                   <span className="h-2 w-2 rounded-full bg-emerald-500" aria-hidden />
@@ -1158,18 +1157,18 @@ const AdminOverviewPage = () => {
               {teamQuery.isLoading ? "Loading…" : `${teamCount} dashboard ${teamCount === 1 ? "account" : "accounts"}`}
             </p>
           </div>
-          <ArrowRight className="ml-auto h-5 w-5 shrink-0 text-muted-foreground" aria-hidden />
+          <ArrowRight className={cn("ml-auto h-5 w-5 shrink-0 text-muted-foreground", adminInteractiveLinkArrowClass)} aria-hidden />
         </Link>
 
         <Link to="/admin/help" className={adminOverviewLinkBoxClass}>
-          <CircleHelp className="h-9 w-9 shrink-0 text-rellia-teal" aria-hidden />
+          <CircleHelp className="h-9 w-9 shrink-0 text-rellia-teal dark:text-rellia-mint" aria-hidden />
           <div className="min-w-0 flex-1">
-            <p className="font-host-grotesk text-lg font-semibold text-foreground dark:text-white">Help</p>
+            <p className={cn("font-host-grotesk text-lg font-semibold text-foreground dark:text-white", adminInteractiveLinkTitleClass)}>Help</p>
             <p className="mt-0.5 font-urbanist text-base text-muted-foreground">
               Documentation, tools, and dashboard guides
             </p>
           </div>
-          <ArrowRight className="ml-auto h-5 w-5 shrink-0 text-muted-foreground" aria-hidden />
+          <ArrowRight className={cn("ml-auto h-5 w-5 shrink-0 text-muted-foreground", adminInteractiveLinkArrowClass)} aria-hidden />
         </Link>
       </div>
       </ScrollReveal>

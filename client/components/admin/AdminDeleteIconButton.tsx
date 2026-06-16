@@ -12,15 +12,24 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
+import { Tooltip, TooltipTrigger } from "@/components/ui/tooltip"
+import AdminTooltipContent from "@/components/admin/AdminTooltipContent"
 import { adminLightDialogShellClass } from "@/components/admin/adminSidebarRail"
+import { adminDestructiveIconButtonClass } from "@/components/admin/adminThemeClasses"
 
 type AdminDeleteIconButtonProps = {
   label: string
   description: string
+  tooltip?: string
   onConfirm: () => Promise<void>
 }
 
-const AdminDeleteIconButton = ({ label, description, onConfirm }: AdminDeleteIconButtonProps) => {
+const AdminDeleteIconButton = ({
+  label,
+  description,
+  tooltip = "Delete submission",
+  onConfirm,
+}: AdminDeleteIconButtonProps) => {
   const [isDeleting, setIsDeleting] = useState(false)
 
   const handleConfirm = async () => {
@@ -34,18 +43,23 @@ const AdminDeleteIconButton = ({ label, description, onConfirm }: AdminDeleteIco
 
   return (
     <AlertDialog>
-      <AlertDialogTrigger asChild>
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon"
-          className="h-9 w-9 shrink-0 rounded-full text-muted-foreground hover:bg-red-50 hover:text-red-700"
-          disabled={isDeleting}
-          aria-label="Delete submission"
-        >
-          <Trash2 className="h-4 w-4" aria-hidden />
-        </Button>
-      </AlertDialogTrigger>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <AlertDialogTrigger asChild>
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              className={adminDestructiveIconButtonClass}
+              disabled={isDeleting}
+              aria-label={tooltip}
+            >
+              <Trash2 className="h-4 w-4" aria-hidden />
+            </Button>
+          </AlertDialogTrigger>
+        </TooltipTrigger>
+        <AdminTooltipContent side="top">{tooltip}</AdminTooltipContent>
+      </Tooltip>
       <AlertDialogContent className={adminLightDialogShellClass}>
         <AlertDialogHeader>
           <AlertDialogTitle className="font-host-grotesk">{label}</AlertDialogTitle>

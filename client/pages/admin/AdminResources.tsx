@@ -1,6 +1,7 @@
 import { ExternalLink } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import AdminSectionCard from "@/components/admin/AdminSectionCard"
+import { adminInteractiveLinkTitleClass, adminOutlineActionButtonClass } from "@/components/admin/adminThemeClasses"
 import { cn } from "@/lib/utils"
 import {
   OPERATIONS_DOC_EDIT_URL,
@@ -61,7 +62,7 @@ const AdminResources = () => (
             variant="outline"
             size="sm"
             asChild
-            className="rounded-full border-rellia-teal/20 text-rellia-teal hover:bg-rellia-mint/15"
+            className={adminOutlineActionButtonClass}
           >
             <a href={VERCEL_ENV_URL} target="_blank" rel="noopener noreferrer">
               Edit on Vercel
@@ -97,7 +98,7 @@ const AdminResources = () => (
             variant="outline"
             size="sm"
             asChild
-            className="rounded-full border-rellia-teal/20 text-rellia-teal hover:bg-rellia-mint/15"
+            className={adminOutlineActionButtonClass}
           >
             <a href={OPERATIONS_DOC_EDIT_URL} target="_blank" rel="noopener noreferrer">
               View on Google Doc
@@ -133,10 +134,10 @@ const AdminResources = () => (
                 )}
               >
                 <span className="flex items-center justify-between gap-2">
-                  <span className="font-urbanist text-sm font-medium text-foreground group-hover:text-rellia-teal">
+                  <span className={cn("font-urbanist text-sm font-medium text-foreground", adminInteractiveLinkTitleClass)}>
                     {tool.label}
                   </span>
-                  <ExternalLink className="h-4 w-4 shrink-0 text-black/30" aria-hidden />
+                  <ExternalLink className="h-4 w-4 shrink-0 text-muted-foreground" aria-hidden />
                 </span>
                 <span className="mt-1 block font-urbanist text-xs leading-snug text-muted-foreground">{tool.description}</span>
               </a>

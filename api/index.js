@@ -3461,7 +3461,7 @@ function createServer() {
         });
       } catch (err) {
         console.error("Admin sanity drafts error:", err);
-        res.status(502).json({ error: "Could not load Sanity drafts." });
+        res.status(502).json({ error: "Could not load content drafts." });
       }
     }
   );

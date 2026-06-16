@@ -9,6 +9,8 @@ import {
   SUBMISSION_STATUS_OPTIONS,
   type SubmissionStatus,
 } from "@/lib/adminSubmissionStatus"
+import { adminSubmissionStatusSelectTriggerClass } from "@/components/admin/adminThemeClasses"
+import { adminSelectContentClass } from "@/components/admin/adminSidebarRail"
 
 type AdminSubmissionStatusSelectProps = {
   value: SubmissionStatus
@@ -25,12 +27,12 @@ const AdminSubmissionStatusSelect = ({
 }: AdminSubmissionStatusSelectProps) => (
   <Select value={value} disabled={disabled} onValueChange={(v) => onValueChange(v as SubmissionStatus)}>
     <SelectTrigger
-      className="h-9 w-[160px] rounded-full border border-border bg-card font-urbanist text-sm"
+      className={adminSubmissionStatusSelectTriggerClass}
       aria-label={ariaLabel}
     >
       <SelectValue />
     </SelectTrigger>
-    <SelectContent>
+    <SelectContent className={adminSelectContentClass}>
       {SUBMISSION_STATUS_OPTIONS.map((opt) => (
         <SelectItem key={opt} value={opt}>
           {opt}

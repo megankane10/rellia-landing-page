@@ -374,6 +374,11 @@
   color: hsl(175 42% 73%);
 }
 
+/* group-hover:text-rellia-teal beats .text-rellia-teal remap — keep mint on mint-wash hovers */
+.admin-shell.dark .group:hover .group-hover\:text-rellia-teal {
+  color: hsl(175 42% 73%);
+}
+
 @media (prefers-reduced-motion: reduce) {
   .admin-shell.admin-theme-transitioning,
   .admin-shell.admin-theme-transitioning * {
