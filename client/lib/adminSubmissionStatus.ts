@@ -11,13 +11,7 @@ export const isActiveSubmissionStatus = (status: SubmissionStatus | null | undef
   return value === "New" || value === "In Progress"
 }
 
-const OVERVIEW_RECENT_STATUS_ORDER: Record<SubmissionStatus, number> = {
-  New: 0,
-  "In Progress": 1,
-  Resolved: 2,
-}
-
-/** Overview recent lists: New → In progress → Resolved, then newest first within each group. */
+/** Overview recent lists: newest submissions first. */
 export const sortOverviewRecentSubmissions = <
   T extends { created_at: string; status?: SubmissionStatus | null },
 >(
@@ -25,13 +19,7 @@ export const sortOverviewRecentSubmissions = <
   limit = 5,
 ): T[] =>
   [...rows]
-    .sort((a, b) => {
-      const statusA = (a.status ?? "New") as SubmissionStatus
-      const statusB = (b.status ?? "New") as SubmissionStatus
-      const byStatus = OVERVIEW_RECENT_STATUS_ORDER[statusA] - OVERVIEW_RECENT_STATUS_ORDER[statusB]
-      if (byStatus !== 0) return byStatus
-      return new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-    })
+    .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
     .slice(0, limit)
 
 /** Persist status change time for pending-over-time charts */
