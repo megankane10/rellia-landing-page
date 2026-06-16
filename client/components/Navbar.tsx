@@ -78,7 +78,7 @@ const mergePrimaryNav = (primary: NavItem[] | undefined): NavItem[] => {
 }
 
 const navItemBase =
-  "group relative flex cursor-pointer items-center rounded-full px-3.5 py-2 font-host-grotesk text-[13px] font-semibold uppercase tracking-[0.16em] outline-none transition-[color,background-color,transform] duration-200 motion-reduce:transition-none focus-visible:ring-2 focus-visible:ring-offset-2 motion-safe:hover:-translate-y-[1px]"
+  "group relative flex cursor-pointer items-center rounded-full px-2 py-1.5 font-host-grotesk text-[10px] font-semibold uppercase tracking-[0.11em] outline-none transition-[color,background-color,transform] duration-200 motion-reduce:transition-none focus-visible:ring-2 focus-visible:ring-offset-2 motion-safe:hover:-translate-y-[1px] md:px-2.5 md:py-1.5 md:text-[11px] md:tracking-[0.13em] lg:px-3.5 lg:py-2 lg:text-[13px] lg:tracking-[0.16em]"
 
 const getNavItemClass = (active: boolean, tone: "light" | "dark") =>
   cn(
@@ -158,7 +158,7 @@ const DesktopNavDropdown = ({ label, items, active, tone, open, onToggle, onClos
           <ChevronDown
             aria-hidden
             className={cn(
-              "ml-2 h-4 w-4 opacity-80 transition-transform duration-200 motion-reduce:transition-none",
+              "ml-1 h-3.5 w-3.5 opacity-80 transition-transform duration-200 motion-reduce:transition-none lg:ml-2 lg:h-4 lg:w-4",
               open ? "rotate-180" : "rotate-0",
               tone === "dark" ? "text-white/80" : "text-black/60",
             )}
@@ -484,12 +484,15 @@ export default function Navbar({
   }, [isHrefActive, navPrimary, normalizeInternalHref])
 
   const shellCls = cn(
-    "mx-auto grid w-full max-w-[1300px] grid-cols-[1fr_auto] items-center gap-3",
-    "h-[72px] md:h-[86px] px-6 md:px-10",
-    "md:grid-cols-[1fr_auto_1fr] md:gap-4",
+    "mx-auto grid w-full max-w-[1300px] grid-cols-[minmax(0,1fr)_auto] items-center gap-2",
+    "h-[72px] px-4",
+    "md:grid-cols-[auto_minmax(0,1fr)_auto] md:gap-2 md:px-5",
+    "lg:h-[86px] lg:gap-4 lg:px-10",
   )
 
-  const desktopRailCls = cn("hidden items-center md:flex gap-1")
+  const desktopRailCls = cn(
+    "hidden min-w-0 items-center justify-center md:flex md:gap-0.5 lg:gap-1",
+  )
 
   const navCtaVariant = "heroSolidOnTeal" as const
 
@@ -623,13 +626,13 @@ export default function Navbar({
               src={logoSrc}
               alt="Rellia"
               className={cn(
-                "h-11 w-auto object-contain transition-[filter] duration-300 motion-reduce:transition-none md:h-11",
+                "h-9 w-auto object-contain transition-[filter] duration-300 motion-reduce:transition-none sm:h-10 lg:h-11",
                 logoSrc === LOGO_DEFAULT && "brightness-100",
               )}
             />
           </Link>
 
-          <div className={desktopRailCls}>
+          <div className={cn(desktopRailCls, "justify-self-center")}>
             {primaryLinks.map((item) => {
               if (!item.hasChildren) {
                 if (isExternalHref(item.href)) {
@@ -687,7 +690,10 @@ export default function Navbar({
               asChild
               variant={navCtaVariant}
               size="compact"
-              className={cn("px-6 py-3 text-[14px] lg:text-[15px]", ctaRadiusClassName)}
+              className={cn(
+                "px-4 py-2.5 text-[12px] md:px-5 md:py-2.5 md:text-[13px] lg:px-6 lg:py-3 lg:text-[15px]",
+                ctaRadiusClassName,
+              )}
             >
               {ctaUsesAnchor ? (
                 <a

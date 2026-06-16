@@ -28,6 +28,9 @@ type AdminDeleteIconButtonProps = {
   label: string
   description: string
   tooltip?: string
+  confirmLabel?: string
+  triggerVariant?: "ghost" | "outline"
+  triggerClassName?: string
   onConfirm: () => Promise<void>
 }
 
@@ -35,6 +38,9 @@ const AdminDeleteIconButton = ({
   label,
   description,
   tooltip = "Delete submission",
+  confirmLabel = "Delete submission",
+  triggerVariant = "ghost",
+  triggerClassName,
   onConfirm,
 }: AdminDeleteIconButtonProps) => {
   const { resolvedTheme } = useAdminTheme()
@@ -56,9 +62,14 @@ const AdminDeleteIconButton = ({
           <AlertDialogTrigger asChild>
             <Button
               type="button"
-              variant="ghost"
+              variant={triggerVariant}
               size="icon"
-              className={adminDestructiveIconButtonClass}
+              className={cn(
+                triggerVariant === "ghost" && adminDestructiveIconButtonClass,
+                triggerVariant === "outline" &&
+                  "h-8 w-8 shrink-0 rounded-full border-rellia-teal/25 text-muted-foreground hover:border-red-200 hover:bg-red-50 hover:text-red-700 dark:border-rellia-mint/25 dark:text-slate-400 dark:hover:border-red-500/40 dark:hover:bg-red-500/15 dark:hover:text-red-300",
+                triggerClassName,
+              )}
               disabled={isDeleting}
               aria-label={tooltip}
             >
@@ -84,7 +95,7 @@ const AdminDeleteIconButton = ({
             onClick={() => void handleConfirm()}
             disabled={isDeleting}
           >
-            {isDeleting ? "Deleting…" : "Delete submission"}
+            {isDeleting ? "Deleting…" : confirmLabel}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

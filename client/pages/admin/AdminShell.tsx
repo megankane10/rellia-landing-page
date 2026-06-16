@@ -72,11 +72,11 @@ const AdminShellContent = () => {
       <SidebarInset className={cn("min-w-0 !bg-admin-canvas")}>
         <header
           className={cn(
-            "sticky top-0 z-30 grid h-[4.25rem] shrink-0 grid-cols-[1fr_auto_1fr] items-center gap-3 px-4 md:gap-4",
+            "sticky top-0 z-30 grid h-[3.75rem] shrink-0 grid-cols-[minmax(0,1fr)_auto] items-center gap-2 px-3 sm:h-[4.25rem] sm:px-4 md:grid-cols-[1fr_auto_1fr] md:gap-4",
             adminHeaderClass,
           )}
         >
-          <div className="flex min-w-0 items-center gap-3 justify-self-start">
+          <div className="flex min-w-0 items-center gap-2 sm:gap-3 justify-self-start">
             <AdminSidebarTrigger />
             <AdminHeaderPageTitle />
           </div>

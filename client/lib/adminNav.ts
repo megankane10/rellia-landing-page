@@ -30,9 +30,9 @@ export const ADMIN_MAIN_NAV: AdminNavItem[] = [
       path.startsWith("/admin/companies"),
   },
   {
-    to: "/admin/drafts",
-    label: "Content drafts",
-    isActiveMatch: (path) => path.startsWith("/admin/drafts") || path.startsWith("/admin/content"),
+    to: "/admin/content",
+    label: "Content",
+    isActiveMatch: (path) => path.startsWith("/admin/content") || path.startsWith("/admin/drafts"),
   },
   { to: "/admin/team", label: "Team", end: true },
   { to: "/admin/help", label: "Help", end: true },

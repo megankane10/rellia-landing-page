@@ -25,7 +25,13 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Slider } from "@/components/ui/slider"
-import { adminDarkDialogContentClass, adminDarkDialogShellClass, adminLightDialogShellClass } from "@/components/admin/adminSidebarRail"
+import {
+  adminDialogCancelForTheme,
+  adminDialogDescriptionForTheme,
+  adminDialogPrimaryActionForTheme,
+  adminDialogShellForTheme,
+  adminDialogTitleForTheme,
+} from "@/components/admin/adminSidebarRail"
 import { cn } from "@/lib/utils"
 
 type ImageCropDialogProps = {
@@ -64,7 +70,8 @@ const ImageCropDialog = ({
   onConfirm,
   onCancel,
 }: ImageCropDialogProps) => {
-  const isDark = variant === "dark"
+  const theme = variant === "dark" ? "dark" : "light"
+  const isDark = theme === "dark"
   const [imageSrc, setImageSrc] = useState<string | null>(null)
   const [crop, setCrop] = useState({ x: 0, y: 0 })
   const [zoom, setZoom] = useState(1)
@@ -165,20 +172,19 @@ const ImageCropDialog = ({
       <DialogContent
         className={cn(
           "z-[10004] w-[calc(100vw-2rem)] max-w-lg font-host-grotesk",
-          isDark ? adminDarkDialogShellClass : adminLightDialogShellClass,
-          isDark && adminDarkDialogContentClass,
+          adminDialogShellForTheme(theme),
         )}
       >
         <DialogHeader className="text-left">
-          <DialogTitle className={cn(isDark && "text-white")}>{title}</DialogTitle>
-          <DialogDescription className={cn("font-urbanist", isDark && "text-slate-400")}>
+          <DialogTitle className={adminDialogTitleForTheme(theme)}>{title}</DialogTitle>
+          <DialogDescription className={cn("font-urbanist", adminDialogDescriptionForTheme(theme))}>
             {description}
           </DialogDescription>
         </DialogHeader>
 
         {allowAspectChange && !fixedAspect ? (
           <div className="space-y-1">
-            <Label htmlFor="crop-aspect-preset" className={cn(isDark && "text-slate-300")}>
+            <Label htmlFor="crop-aspect-preset" className={isDark ? "text-slate-300" : undefined}>
               Aspect ratio
             </Label>
             <Select
@@ -224,7 +230,7 @@ const ImageCropDialog = ({
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="crop-zoom" className={cn(isDark && "text-slate-300")}>
+          <Label htmlFor="crop-zoom" className={isDark ? "text-slate-300" : undefined}>
             Zoom
           </Label>
           <Slider
@@ -244,17 +250,14 @@ const ImageCropDialog = ({
           <Button
             type="button"
             variant="outline"
-            className={cn(
-              "rounded-full",
-              isDark && "border-slate-700 bg-slate-900 text-slate-200 hover:bg-slate-800 hover:text-white",
-            )}
+            className={adminDialogCancelForTheme(theme)}
             onClick={handleClose}
           >
             Cancel
           </Button>
           <Button
             type="button"
-            className={cn("rounded-full", isDark && "bg-rellia-teal text-white hover:bg-rellia-teal/90")}
+            className={adminDialogPrimaryActionForTheme(theme)}
             onClick={() => void handleConfirm()}
             disabled={!file || !croppedAreaPixels || saving}
           >

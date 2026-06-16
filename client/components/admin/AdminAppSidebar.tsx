@@ -100,7 +100,7 @@ const NAV_ICONS: Record<string, typeof Inbox> = {
   "/admin/overview": LayoutDashboard,
   "/admin/inbox": Inbox,
   "/admin/team": Users,
-  "/admin/drafts": FileEdit,
+  "/admin/content": FileEdit,
   "/admin/help": CircleHelp,
 }
 

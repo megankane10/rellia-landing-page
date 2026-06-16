@@ -99,6 +99,19 @@ export const publishAdminTeamNote = async (
   return (await res.json()) as { note: AdminTeamNote }
 }
 
+export const removeAdminTeamNote = async (accessToken: string): Promise<void> => {
+  const res = await fetch("/api/admin/team-note", {
+    method: "DELETE",
+    headers: { Authorization: `Bearer ${accessToken}` },
+    credentials: "same-origin",
+  })
+
+  if (!res.ok) {
+    const body = (await res.json().catch(() => ({}))) as { error?: string }
+    throw new Error(body.error ?? `Could not remove team bulletin (${res.status})`)
+  }
+}
+
 export const toggleAdminTeamNoteReaction = async (
   accessToken: string,
   emoji: string,
@@ -145,6 +158,25 @@ export const fetchAdminSanityDrafts = async (
 
   const data = (await res.json()) as { drafts?: AdminSanityDraftRow[] }
   return data.drafts ?? []
+}
+
+export const fetchAdminSanityRecentEdits = async (
+  accessToken: string,
+  dataset: "production" | "preview",
+): Promise<AdminSanityDraftRow[]> => {
+  const params = new URLSearchParams({ dataset })
+  const res = await fetch(`/api/admin/sanity-recent-edits?${params.toString()}`, {
+    headers: { Authorization: `Bearer ${accessToken}` },
+    credentials: "same-origin",
+  })
+
+  if (!res.ok) {
+    const body = (await res.json().catch(() => ({}))) as { error?: string }
+    throw new Error(body.error ?? `Could not load recent publishes (${res.status})`)
+  }
+
+  const data = (await res.json()) as { recentEdits?: AdminSanityDraftRow[] }
+  return data.recentEdits ?? []
 }
 
 export type AdminStripeMetrics = {

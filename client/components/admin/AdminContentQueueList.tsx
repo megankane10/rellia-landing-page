@@ -18,7 +18,7 @@ import {
   studioUrlForRow,
   type SanityContentRow,
 } from "@/lib/adminSanityContent"
-import { adminCompactOutlineActionButtonClass, adminPendingSurfaceClass } from "@/components/admin/adminThemeClasses"
+import { adminOutlineActionButtonClass, adminPendingSurfaceClass, adminStatusBadgeShellClass } from "@/components/admin/adminThemeClasses"
 import { cn } from "@/lib/utils"
 
 type AdminContentQueueListProps = {
@@ -28,6 +28,7 @@ type AdminContentQueueListProps = {
   dataset: string
   emptyTitle?: string
   groupByType?: boolean
+  updatedColumnLabel?: string
 }
 
 const groupRowsByType = (rows: SanityContentRow[]) => {
@@ -63,9 +64,8 @@ const StudioLinkButton = ({ row }: { row: SanityContentRow }) => (
   <Button
     type="button"
     variant="outline"
-    size="sm"
     asChild
-    className={adminCompactOutlineActionButtonClass}
+    className={cn(adminOutlineActionButtonClass, "h-10 px-4 text-sm")}
   >
     <a
       href={studioUrlForRow(row)}
@@ -74,7 +74,7 @@ const StudioLinkButton = ({ row }: { row: SanityContentRow }) => (
       aria-label={`Open ${row.title ?? row._type} in Sanity Studio`}
     >
       Review in Studio
-      <ExternalLink className="ml-1.5 h-3.5 w-3.5" aria-hidden />
+      <ExternalLink className="ml-2 h-4 w-4" aria-hidden />
     </a>
   </Button>
 )
@@ -83,15 +83,19 @@ const StatusBadge = ({ status }: { status: SanityContentRow["status"] }) => {
   const badge = statusBadge(status)
   return (
     <Badge
+      variant="outline"
       title={badge.title}
-      className={cn("shrink-0 rounded-full font-urbanist text-[10px] font-medium", badge.className)}
+      className={cn(
+        adminStatusBadgeShellClass,
+        badge.className,
+      )}
     >
       {badge.label}
     </Badge>
   )
 }
 
-const draftTableColumns: AdminTableColumn<SanityContentRow>[] = [
+const draftTableColumns = (updatedColumnLabel: string): AdminTableColumn<SanityContentRow>[] => [
   {
     key: "title",
     header: "Title",
@@ -108,7 +112,7 @@ const draftTableColumns: AdminTableColumn<SanityContentRow>[] = [
   },
   {
     key: "updated",
-    header: "Updated",
+    header: updatedColumnLabel,
     className: "min-w-[6.5rem] whitespace-nowrap",
     cell: (row) => (
       <span className="text-muted-foreground">{formatCmsContentRelative(row._updatedAt)}</span>
@@ -123,7 +127,7 @@ const draftTableColumns: AdminTableColumn<SanityContentRow>[] = [
   {
     key: "action",
     header: "",
-    className: "w-[9.5rem] shrink-0 whitespace-nowrap text-right",
+    className: "min-w-[11.5rem] shrink-0 whitespace-nowrap text-right",
     cell: (row) => <StudioLinkButton row={row} />,
   },
 ]
@@ -198,6 +202,7 @@ const AdminContentQueueList = ({
   dataset,
   emptyTitle = "No content in queue",
   groupByType = true,
+  updatedColumnLabel = "Updated",
 }: AdminContentQueueListProps) => {
   if (isLoading) {
     if (!groupByType) {
@@ -253,7 +258,7 @@ const AdminContentQueueList = ({
         <AdminRecordList
           rows={rows}
           getRowKey={(row) => `${row.status}-${row._id}`}
-          columns={draftTableColumns}
+          columns={draftTableColumns(updatedColumnLabel)}
           mobileFields={[
             {
               label: "Title",
@@ -264,7 +269,7 @@ const AdminContentQueueList = ({
               value: (row) => formatCmsDocumentTypeLabel(row._type),
             },
             {
-              label: "Updated",
+              label: updatedColumnLabel,
               value: (row) => formatCmsContentRelative(row._updatedAt),
             },
             {

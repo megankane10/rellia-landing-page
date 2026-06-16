@@ -2,7 +2,7 @@ import { useState } from "react"
 import { Link, useNavigate, useParams } from "react-router-dom"
 import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { supabase } from "@/lib/supabase"
-import { Badge } from "@/components/ui/badge"
+import AdminSubmissionStatusBadge from "@/components/admin/AdminSubmissionStatusBadge"
 import { Skeleton } from "@/components/ui/skeleton"
 import AdminSubmissionStatusSelect from "@/components/admin/AdminSubmissionStatusSelect"
 import AdminPageReveal from "@/components/admin/AdminPageReveal"
@@ -13,7 +13,6 @@ import { adminBackLinkClass, adminErrorBannerClass, adminInternalNotePanelClass,
 import { cn } from "@/lib/utils"
 import {
   formatAdminDateLong,
-  statusBadgeClass,
   submissionStatusUpdatePayload,
   type SubmissionStatus,
 } from "@/lib/adminSubmissionStatus"
@@ -156,12 +155,7 @@ const AdminContactDetail = () => {
                   onValueChange={(value) => void handleStatusChange(value)}
                 />
               ) : (
-                <Badge
-                  variant="outline"
-                  className={`rounded-full font-urbanist text-sm ${statusBadgeClass(status)}`}
-                >
-                  {status}
-                </Badge>
+                <AdminSubmissionStatusBadge status={status} />
               )}
               <AdminDeleteSubmissionButton
                 label="Delete contact submission?"

@@ -13,7 +13,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Skeleton } from "@/components/ui/skeleton"
 import { formatAdminDate } from "@/lib/adminSubmissionStatus"
 import { resolveAdminMemberAvatarUrl } from "@/lib/adminUserProfile"
-import { isAdminMemberOnlineNow, adminOnlineBadgeClass } from "@/lib/adminPresence"
+import { isAdminMemberOnlineNow } from "@/lib/adminPresence"
 import type { AdminTableColumn } from "@/components/admin/AdminDataTable"
 import type { AdminTeamUser } from "@/lib/adminApi"
 import { cn } from "@/lib/utils"
@@ -23,11 +23,11 @@ import { adminInteractiveBoxClass, adminPendingSurfaceClass, adminTableCellConte
 
 const memberStatus = (member: AdminTeamUser) => {
   return member.confirmedAt ? (
-    <span className="inline-flex rounded-full bg-rellia-mint/30 px-2.5 py-0.5 text-xs font-medium text-rellia-teal">
+    <span className="inline-flex rounded-full bg-rellia-mint/30 px-2.5 py-0.5 text-sm font-medium text-rellia-teal">
       Active
     </span>
   ) : (
-    <span className={cn("inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium", adminPendingSurfaceClass)}>
+    <span className={cn("inline-flex rounded-full px-2.5 py-0.5 text-sm font-medium", adminPendingSurfaceClass)}>
       Invite pending
     </span>
   )
@@ -86,26 +86,14 @@ const AdminTeamPage = () => {
     {
       key: "name",
       header: "Name",
-      cell: (member) => {
-        const isOnlineNow = isAdminMemberOnlineNow(member)
-
-        return (
-          <div className="flex items-center gap-3">
-            {memberAvatar(member)}
-            <div className="min-w-0">
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="font-medium text-foreground">{member.fullName?.trim() || "—"}</span>
-                {isOnlineNow ? (
-                  <span className={adminOnlineBadgeClass}>
-                    <span className="h-2 w-2 rounded-full bg-emerald-500" aria-hidden />
-                    Online
-                  </span>
-                ) : null}
-              </div>
-            </div>
+      cell: (member) => (
+        <div className="flex items-center gap-3">
+          {memberAvatar(member)}
+          <div className="min-w-0">
+            <span className="font-medium text-foreground">{member.fullName?.trim() || "—"}</span>
           </div>
-        )
-      },
+        </div>
+      ),
     },
     {
       key: "email",
@@ -247,23 +235,12 @@ const AdminTeamPage = () => {
             mobileFields={[
               {
                 label: "Member",
-                value: (member) => {
-                  const isOnlineNow = isAdminMemberOnlineNow(member)
-                  return (
+                value: (member) => (
                   <div className="flex items-center gap-2">
                     {memberAvatar(member)}
-                    <div className="flex flex-wrap items-center gap-2">
-                      <span>{member.fullName?.trim() || member.email}</span>
-                      {isOnlineNow ? (
-                        <span className={adminOnlineBadgeClass}>
-                          <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" aria-hidden />
-                          Online
-                        </span>
-                      ) : null}
-                    </div>
+                    <span>{member.fullName?.trim() || member.email}</span>
                   </div>
-                  )
-                },
+                ),
               },
               { label: "Email", value: (member) => member.email },
               { label: "Status", value: (member) => memberStatus(member) },

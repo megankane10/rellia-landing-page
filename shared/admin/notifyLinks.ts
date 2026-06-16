@@ -52,7 +52,7 @@ export const adminInboxUrl = (tab: "contact" | "diagnostic" = "contact"): string
   return `${base}${path}?tab=${tab}`
 }
 
-export const adminContentUrl = (): string => `${resolveSiteOrigin()}/admin/drafts`
+export const adminContentUrl = (): string => `${resolveSiteOrigin()}/admin/content`
 
 export const resolveSanityStudioOrigin = (): string => {
   const fromVite =

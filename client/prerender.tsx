@@ -9,6 +9,7 @@ import {
   clampMetaDescription,
   clampMetaTitle,
   getSeoForPathname,
+  getLinkPreviewDescriptionForPathname,
   getDefaultOgImageUrl,
   getSiteUrl,
   isClientOnlyAuthPath,
@@ -409,20 +410,22 @@ const appendSocialMeta = (
   headElements: Set<string>,
   seo: ItemPrerenderSeo,
   pageUrl: string,
+  linkPreviewDescription?: string,
 ) => {
+  const socialDescription = linkPreviewDescription ?? seo.description
   headElements.add(`<meta name="theme-color" content="${RELLIA_SOCIAL_THEME_COLOR}" />`)
   headElements.add(`<meta property="og:type" content="website" />`)
   headElements.add(`<meta property="og:site_name" content="Rellia Health" />`)
   headElements.add(`<meta property="og:locale" content="en_US" />`)
   headElements.add(`<meta property="og:title" content="${escapeMetaAttr(seo.title)}" />`)
   headElements.add(
-    `<meta property="og:description" content="${escapeMetaAttr(seo.description)}" />`,
+    `<meta property="og:description" content="${escapeMetaAttr(socialDescription)}" />`,
   )
   headElements.add(`<meta property="og:url" content="${escapeMetaAttr(pageUrl)}" />`)
   headElements.add(`<meta name="description" content="${escapeMetaAttr(seo.description)}" />`)
   headElements.add(`<meta name="twitter:title" content="${escapeMetaAttr(seo.title)}" />`)
   headElements.add(
-    `<meta name="twitter:description" content="${escapeMetaAttr(seo.description)}" />`,
+    `<meta name="twitter:description" content="${escapeMetaAttr(socialDescription)}" />`,
   )
   if (seo.ogImage) {
     headElements.add(`<meta property="og:image" content="${escapeMetaAttr(seo.ogImage)}" />`)
@@ -476,6 +479,7 @@ export const prerender = async (data: { url: string }) => {
         description: routeSeo.description,
       },
       pageUrl,
+      getLinkPreviewDescriptionForPathname(pathname, routeSeo.description),
     )
     return {
       html: "",

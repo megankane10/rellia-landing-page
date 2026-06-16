@@ -12,6 +12,15 @@ export const adminHeaderClass = cn(
 /** Standard elevated card surface */
 export const adminCardClass = "rounded-2xl border border-border bg-card text-card-foreground"
 
+/** Team page paired cards — shared header/body alignment */
+export const adminTeamCardHeaderClass = "space-y-0 p-6 pb-2"
+export const adminTeamCardHeaderRowClass =
+  "flex min-h-10 min-w-0 items-center justify-between gap-3"
+export const adminTeamCardTitleClass =
+  "flex min-h-10 min-w-0 items-center gap-2.5 font-host-grotesk text-lg font-semibold leading-none text-foreground dark:text-white"
+export const adminTeamCardTitleIconClass = "h-5 w-5 shrink-0 text-rellia-teal dark:text-rellia-mint"
+export const adminTeamCardContentClass = "flex flex-1 flex-col px-6 pb-6 pt-0"
+
 /** Card section divider */
 export const adminCardDividerClass = "border-black/10 dark:border-border"
 
@@ -161,11 +170,11 @@ export const adminNoteIconButtonActiveClass = cn(
   "dark:text-rellia-mint dark:hover:bg-rellia-mint/20 dark:hover:text-rellia-mint",
 )
 
-/** Segmented tab bar (inbox Web forms / Diagnostic Surveys) */
+/** Segmented tab bar (inbox Web forms / Diagnostic Surveys, content Drafts / Published) */
 export const adminSegmentedTabsListClass = cn(
   "h-[48px] w-full max-w-none rounded-2xl border p-1 shadow-sm",
-  "border-border bg-muted/50",
-  "dark:border-slate-700/60 dark:bg-slate-900/55",
+  "border-border/80 bg-card",
+  "dark:border-border dark:bg-[hsl(var(--secondary))]",
 )
 
 /** Segmented tab trigger */
@@ -174,8 +183,8 @@ export const adminSegmentedTabTriggerClass = cn(
   "data-[state=active]:border data-[state=active]:border-transparent data-[state=active]:bg-rellia-teal data-[state=active]:text-white",
   "data-[state=active]:shadow-[0_4px_12px_rgba(13,53,64,0.18)]",
   "data-[state=inactive]:border-transparent data-[state=inactive]:bg-transparent data-[state=inactive]:text-muted-foreground data-[state=inactive]:hover:text-foreground",
-  "dark:data-[state=active]:border-rellia-mint/30 dark:data-[state=active]:bg-rellia-mint/22 dark:data-[state=active]:text-rellia-mint",
-  "dark:data-[state=active]:shadow-[inset_0_0_0_1px_rgba(134,239,172,0.18),0_4px_16px_rgba(0,0,0,0.28)]",
+  "dark:data-[state=active]:border-transparent dark:data-[state=active]:bg-rellia-teal dark:data-[state=active]:text-white",
+  "dark:data-[state=active]:shadow-[0_4px_14px_rgba(0,0,0,0.42)]",
   "dark:data-[state=inactive]:bg-transparent dark:data-[state=inactive]:text-slate-400 dark:data-[state=inactive]:hover:text-slate-100",
 )
 
@@ -184,13 +193,23 @@ export const adminSegmentedTabCountClass = cn(
   "rounded-full bg-foreground/5 px-1.5 py-0.5 text-xs font-semibold tabular-nums text-muted-foreground",
   "group-data-[state=active]/trigger:bg-white/20 group-data-[state=active]/trigger:text-white",
   "dark:bg-white/8 dark:text-slate-400",
-  "dark:group-data-[state=active]/trigger:bg-rellia-mint/18 dark:group-data-[state=active]/trigger:text-rellia-mint",
+  "dark:group-data-[state=active]/trigger:bg-white/20 dark:group-data-[state=active]/trigger:text-white",
+)
+
+/** Inbox / toolbar search — border only, no fill (matches canvas in light & dark) */
+export const adminToolbarSearchInputClass = cn(
+  "bg-transparent shadow-none",
+  "border-border/80 focus-visible:ring-2 focus-visible:ring-rellia-teal/25 focus-visible:ring-offset-0",
+  "dark:bg-transparent dark:border-border dark:focus-visible:ring-rellia-mint/30",
 )
 
 /** Overview chart cards + inbox toolbar — native select filter trigger */
 export const adminFilterSelectTriggerClass = cn(
-  "h-10 w-auto appearance-none rounded-xl border border-border bg-card pl-3.5 pr-11 font-urbanist text-sm font-semibold text-muted-foreground",
+  "h-9 w-full max-w-[8.25rem] appearance-none rounded-xl border pl-2.5 pr-9 font-urbanist text-xs font-semibold text-muted-foreground sm:h-10 sm:max-w-none sm:pl-3.5 sm:pr-11 sm:text-sm",
+  "border-border/80 bg-muted/70 hover:bg-muted/90",
   "focus:outline-none focus:ring-2 focus:ring-rellia-teal",
+  "dark:border-border dark:bg-secondary/80 dark:hover:bg-secondary",
+  "dark:focus:ring-rellia-mint/35",
 )
 
 /** Shared admin data table layout */
@@ -198,13 +217,13 @@ export const adminDataTableClass = "w-full min-w-[32rem]"
 
 /** Admin data table header cell padding */
 export const adminTableHeaderCellClass = cn(
-  "px-5 py-3 font-urbanist text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground",
+  "px-5 py-3 font-urbanist text-xs font-semibold uppercase tracking-[0.1em] text-muted-foreground",
   "first:pl-6 last:pr-6",
 )
 
 /** Admin data table body cell padding */
 export const adminTableBodyCellClass = cn(
-  "px-5 py-4 align-middle font-urbanist text-sm text-foreground",
+  "px-5 py-4 align-middle font-urbanist text-base text-foreground",
   "first:pl-6 last:pr-6",
 )
 
@@ -217,7 +236,7 @@ export const adminTableCellContentClass = "flex min-h-10 items-center"
 
 /** Multi-line clamped text in admin table cells (e.g. submission message) */
 export const adminTableMessageCellClass = cn(
-  "whitespace-normal break-words text-sm leading-snug text-muted-foreground line-clamp-4",
+  "whitespace-normal break-words text-base leading-snug text-muted-foreground line-clamp-4",
 )
 
 /** Amber warning / policy banners in admin */
@@ -225,6 +244,12 @@ export const adminWarningBannerClass = cn(
   "rounded-lg border px-4 py-3 font-urbanist text-sm",
   "border-amber-200/80 bg-amber-50 text-amber-900",
   "dark:border-amber-500/40 dark:bg-amber-500/10 dark:text-amber-200",
+)
+
+/** Shared status chip sizing across admin dashboard lists and detail views */
+export const adminStatusBadgeShellClass = cn(
+  "inline-flex shrink-0 items-center rounded-full border px-3 py-1",
+  "font-urbanist text-sm font-semibold",
 )
 
 /** Pending / in-progress status — orange (submissions, overview counts, drafts) */

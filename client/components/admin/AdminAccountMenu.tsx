@@ -33,12 +33,16 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 import { useSidebar } from "@/components/ui/sidebar"
+import { useAdminTheme } from "@/context/AdminThemeContext"
 import {
-  adminDarkDialogContentClass,
-  adminDarkDialogShellClass,
-  adminDarkMenuContentClass,
-  adminDarkMenuItemClass,
-  adminDarkMenuSeparatorClass,
+  adminDialogCancelForTheme,
+  adminDialogDescriptionForTheme,
+  adminDialogPrimaryActionForTheme,
+  adminDialogShellForTheme,
+  adminDialogTitleForTheme,
+  adminMenuContentForTheme,
+  adminMenuItemForTheme,
+  adminMenuSeparatorForTheme,
   adminSidebarAccountButtonClass,
   adminSidebarAccountTextClass,
   adminSidebarIconSlot,
@@ -48,6 +52,8 @@ import { cn } from "@/lib/utils"
 const AVATAR_URL_KEY = "avatar_url"
 
 const AdminAccountMenu = () => {
+  const { resolvedTheme } = useAdminTheme()
+  const isDark = resolvedTheme === "dark"
   const { user, signOut } = useAuth()
   const navigate = useNavigate()
   const isMobile = useIsMobile()
@@ -200,26 +206,39 @@ const AdminAccountMenu = () => {
       <DialogContent
         className={cn(
           "z-[10003] w-[calc(100vw-2rem)] max-w-[calc(100vw-2rem)] font-host-grotesk sm:max-w-md",
-          adminDarkDialogShellClass,
-          adminDarkDialogContentClass,
+          adminDialogShellForTheme(resolvedTheme),
         )}
       >
         <DialogHeader className="text-left">
-          <DialogTitle className="flex items-center gap-2 text-left text-white">
-            <UserRound className="h-5 w-5 text-rellia-mint" aria-hidden />
+          <DialogTitle
+            className={cn(
+              "flex items-center gap-2 text-left",
+              adminDialogTitleForTheme(resolvedTheme),
+            )}
+          >
+            <UserRound className="h-5 w-5 text-rellia-teal dark:text-rellia-mint" aria-hidden />
             Your profile
           </DialogTitle>
-          <DialogDescription className="font-urbanist text-left text-slate-400">
+          <DialogDescription
+            className={cn("font-urbanist text-left", adminDialogDescriptionForTheme(resolvedTheme))}
+          >
             Update your display name and upload a profile photo
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-4 font-urbanist">
           <div className="flex items-center gap-4">
-            <Avatar className="h-16 w-16 border border-slate-700">
+            <Avatar className={cn("h-16 w-16 border", isDark ? "border-slate-700" : "border-border")}>
               {avatarSrc ? (
                 <AvatarImage src={avatarSrc} alt="" />
               ) : null}
-              <AvatarFallback className="bg-slate-800 text-lg text-slate-200">{initials}</AvatarFallback>
+              <AvatarFallback
+                className={cn(
+                  "text-lg",
+                  isDark ? "bg-slate-800 text-slate-200" : "bg-muted text-foreground",
+                )}
+              >
+                {initials}
+              </AvatarFallback>
             </Avatar>
             <div className="space-y-2">
               <input
@@ -233,7 +252,7 @@ const AdminAccountMenu = () => {
                 <Button
                   type="button"
                   variant="outline"
-                  className="rounded-full border-slate-700 bg-slate-900 text-slate-200 hover:bg-slate-800 hover:text-white"
+                  className={adminDialogCancelForTheme(resolvedTheme)}
                   onClick={() => fileInputRef.current?.click()}
                   disabled={saving || uploading}
                 >
@@ -244,7 +263,12 @@ const AdminAccountMenu = () => {
                   <Button
                     type="button"
                     variant="ghost"
-                    className="rounded-full text-red-400 hover:bg-red-500/10 hover:text-red-300"
+                    className={cn(
+                      "rounded-full",
+                      isDark
+                        ? "text-red-400 hover:bg-red-500/10 hover:text-red-300"
+                        : "text-red-600 hover:bg-red-50 hover:text-red-700",
+                    )}
                     onClick={handleRemoveAvatar}
                     disabled={saving || uploading}
                   >
@@ -281,20 +305,22 @@ const AdminAccountMenu = () => {
               Upload is preferred. URL works as a fallback if storage is unavailable.
             </p>
           </div>
-          {error ? <p className="text-sm text-red-400">{error}</p> : null}
+          {error ? (
+            <p className={cn("text-sm", isDark ? "text-red-400" : "text-destructive")}>{error}</p>
+          ) : null}
         </div>
         <DialogFooter className="gap-2 sm:gap-0">
           <Button
             type="button"
             variant="outline"
-            className="rounded-full border-slate-700 bg-slate-900 text-slate-200 hover:bg-slate-800 hover:text-white"
+            className={adminDialogCancelForTheme(resolvedTheme)}
             onClick={() => setProfileOpen(false)}
           >
             Cancel
           </Button>
           <Button
             type="button"
-            className="rounded-full bg-rellia-mint text-black hover:bg-rellia-mint/90"
+            className={adminDialogPrimaryActionForTheme(resolvedTheme)}
             onClick={() => void handleSaveProfile()}
             disabled={saving || uploading}
           >
@@ -352,18 +378,24 @@ const AdminAccountMenu = () => {
         align={isMobile ? "end" : "start"}
         sideOffset={8}
         alignOffset={isMobile ? 8 : 0}
-        className={cn(adminDarkMenuContentClass, isMobile ? "w-64 font-urbanist" : "w-56 font-urbanist")}
+        className={cn(adminMenuContentForTheme(resolvedTheme), isMobile ? "w-64 font-urbanist" : "w-56 font-urbanist")}
       >
         <DropdownMenuItem
-          className={adminDarkMenuItemClass}
+          className={adminMenuItemForTheme(resolvedTheme)}
           onSelect={() => setProfileOpen(true)}
         >
-          <UserRound className="mr-2 h-4 w-4 text-slate-400" aria-hidden />
+          <UserRound
+            className={cn("mr-2 h-4 w-4", isDark ? "text-slate-400" : "text-muted-foreground")}
+            aria-hidden
+          />
           Edit Profile
         </DropdownMenuItem>
-        <DropdownMenuSeparator className={adminDarkMenuSeparatorClass} />
+        <DropdownMenuSeparator className={adminMenuSeparatorForTheme(resolvedTheme)} />
         <DropdownMenuItem
-          className={cn(adminDarkMenuItemClass, "text-red-400 focus:text-red-300")}
+          className={cn(
+            adminMenuItemForTheme(resolvedTheme),
+            isDark ? "text-red-400 focus:text-red-300" : "text-red-600 focus:text-red-700",
+          )}
           onSelect={() => void handleSignOut()}
         >
           <LogOut className="mr-2 h-4 w-4" aria-hidden />
@@ -385,7 +417,7 @@ const AdminAccountMenu = () => {
         description="Crop to a square from the top of the image so it displays correctly in the dashboard."
         aspect={1}
         maxOutputSize={512}
-        variant="dark"
+        variant={isDark ? "dark" : "light"}
         onOpenChange={setCropDialogOpen}
         onConfirm={handleAvatarCropConfirm}
         onCancel={handleAvatarCropCancel}

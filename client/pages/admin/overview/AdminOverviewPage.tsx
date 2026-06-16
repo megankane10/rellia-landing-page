@@ -1,7 +1,7 @@
 import { useState, useMemo, useCallback, useEffect, useId, useRef, type ComponentProps, type ReactNode } from "react"
 import { Link, useLocation, useNavigate, useSearchParams } from "react-router-dom"
 import { useQuery } from "@tanstack/react-query"
-import { ArrowDown, ArrowRight, ArrowUp, ArrowUpRight, Bell, ChevronLeft, ChevronRight, AlertCircle, CircleHelp, Inbox, Stethoscope, Users, TrendingUp, type LucideIcon } from "lucide-react"
+import { ArrowDown, ArrowRight, ArrowUp, ArrowUpRight, Bell, ChartPie, ChevronLeft, ChevronRight, AlertCircle, CircleHelp, Inbox, Stethoscope, Users, TrendingUp, type LucideIcon } from "lucide-react"
 import {
   Area,
   AreaChart,
@@ -65,22 +65,32 @@ import {
   getAdminFirstName,
   markAdminWelcomeSplashSeen,
 } from "@/lib/adminUserProfile"
-import { cmsContentQueryKey, fetchCmsContentQueueForDataset, isCmsContentEnabled, ADMIN_SANITY_PRODUCTION_DATASET } from "@/lib/adminSanityContent"
+import {
+  buildCmsEditsSparkline,
+  cmsRecentEditsQueryKey,
+  fetchCmsRecentEdits,
+  formatCmsLastPublishHeadline,
+  getCmsLastPublishSubtitle,
+  cmsLastPublishSubtitleAria,
+  type CmsLastPublishSubtitle,
+  isCmsContentEnabled,
+} from "@/lib/adminSanityContent"
 import {
   formatAdminDate,
   isActiveSubmissionStatus,
   matchesStatusFilter,
   sortOverviewRecentSubmissions,
-  statusBadgeClass,
   SUBMISSION_STATUS_OPTIONS,
+  type SubmissionStatus,
   type StatusFilterValue,
 } from "@/lib/adminSubmissionStatus"
-import { Badge } from "@/components/ui/badge"
+import AdminSubmissionStatusBadge from "@/components/admin/AdminSubmissionStatusBadge"
 import { adminChartTooltipClass, adminHighlightedSurfaceClass, adminInteractiveLinkArrowClass, adminInteractiveLinkTitleClass, adminOverviewArrowChipClass } from "@/components/admin/adminThemeClasses"
 import { prefersReducedThemeMotion } from "@/lib/adminThemeTransition"
 import { cn } from "@/lib/utils"
 import {
   OVERVIEW_PREVIEW_KPI,
+  OVERVIEW_PREVIEW_LAST_PUBLISH,
   OVERVIEW_PREVIEW_TODAY_SNAPSHOT,
   OVERVIEW_PREVIEW_ALL_DIAGNOSTICS,
   OVERVIEW_PREVIEW_RECENT_CONTACTS,
@@ -175,7 +185,7 @@ const trendChartConfig = {
 } satisfies import("@/components/ui/chart").ChartConfig
 
 const TREND_CHART_MARGIN = { top: 12, right: 8, left: 0, bottom: 4 }
-const TREND_CHART_HEIGHT_CLASS = "aspect-auto h-[268px] w-full min-w-[280px]"
+const TREND_CHART_HEIGHT_CLASS = "aspect-auto h-[220px] w-full min-w-0 sm:h-[268px] sm:min-w-[280px]"
 
 const adminOverviewChartLegendClass =
   "mt-2 flex shrink-0 flex-wrap justify-center gap-x-4 gap-y-1.5 pb-1 pt-3 font-urbanist text-sm"
@@ -585,20 +595,23 @@ const adminOverviewClickableShadowClass =
   "shadow-[0_4px_20px_-12px_rgba(13,53,64,0.18)] transition-[background-color,border-color,box-shadow] duration-150 hover:shadow-[0_8px_28px_-14px_rgba(13,53,64,0.26)]"
 
 const adminOverviewLinkBoxClass = cn(
-  "group flex min-h-[5.75rem] min-w-0 w-full items-center gap-4 rounded-2xl border border-border bg-card p-5",
+  "group flex min-w-0 w-full items-center gap-4 rounded-2xl border border-border bg-card p-5 sm:min-h-[5.75rem]",
   adminOverviewClickableShadowClass,
   "hover:border-rellia-teal/25 hover:bg-rellia-mint/5 dark:hover:border-rellia-mint/30 dark:hover:bg-rellia-mint/10",
   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
 )
 
 const adminOverviewCardTitleClass =
-  "flex min-h-10 min-w-0 items-center font-host-grotesk text-xl font-semibold leading-none tracking-tight text-foreground dark:text-white"
+  "flex min-h-10 min-w-0 items-center font-host-grotesk text-lg font-semibold leading-snug tracking-tight text-foreground dark:text-white sm:text-xl sm:leading-none"
 const adminOverviewCardTitleWithIconClass =
-  "flex min-h-10 min-w-0 items-center gap-2.5 font-host-grotesk text-xl font-semibold leading-none tracking-tight text-foreground dark:text-white"
+  "flex min-h-10 min-w-0 items-center gap-2.5 font-host-grotesk text-lg font-semibold leading-snug tracking-tight text-foreground dark:text-white sm:text-xl sm:leading-none"
 const adminOverviewCardTitleIconClass = "h-5 w-5 shrink-0 text-rellia-teal dark:text-rellia-mint"
 /** Shared header shell — title row matches Diagnostic applicant stages positioning */
 const adminOverviewCardHeaderClass = "space-y-0 p-6 pb-2"
-const adminOverviewCardHeaderRowClass = "flex min-w-0 items-center justify-between gap-3"
+const adminOverviewCardHeaderRowClass =
+  "flex min-w-0 flex-col items-stretch gap-3 sm:flex-row sm:items-center sm:justify-between"
+const adminOverviewRecentCardHeaderRowClass =
+  "flex min-w-0 flex-col items-stretch gap-3 min-[380px]:flex-row min-[380px]:items-center min-[380px]:justify-between"
 const adminOverviewChartCardClass = "flex h-full min-w-0 flex-col overflow-hidden rounded-2xl"
 const adminOverviewChartCardContentClass = "flex flex-1 flex-col pb-4 pt-0"
 const adminOverviewChartRowCardContentClass = cn(
@@ -606,7 +619,7 @@ const adminOverviewChartRowCardContentClass = cn(
   "min-h-[22rem] pt-5",
 )
 const adminOverviewCardFilterRowClass =
-  "flex min-h-10 max-w-full shrink-0 flex-nowrap items-center justify-end gap-2 overflow-x-auto sm:gap-3"
+  "flex min-h-10 w-full min-w-0 flex-wrap items-center justify-start gap-2 sm:w-auto sm:flex-nowrap sm:justify-end sm:gap-3"
 const adminOverviewPieSectionTitleClass = "font-host-grotesk text-sm font-bold text-foreground dark:text-white"
 const adminOverviewPieSectionIconClass = "h-5 w-5 shrink-0"
 
@@ -633,7 +646,7 @@ const AdminOverviewSegmentedControl = <T extends string>({
         type="button"
         onClick={() => onChange(option.value)}
         className={cn(
-          "rounded-lg px-3.5 py-2 font-urbanist text-sm font-semibold transition-all",
+          "rounded-lg px-2.5 py-1.5 font-urbanist text-xs font-semibold transition-all sm:px-3.5 sm:py-2 sm:text-sm",
           value === option.value
             ? "bg-rellia-teal text-white shadow-sm dark:bg-rellia-mint/20 dark:text-rellia-mint"
             : cn(adminOverviewFilterLabelClass, "hover:bg-slate-100 hover:text-foreground dark:hover:bg-slate-800/60 dark:hover:text-white"),
@@ -897,10 +910,128 @@ const toRadarChartRows = (rows: RadarRow[], limit = 6): RadarChartDatum[] =>
 
 const RADAR_CHART_MIN_HEIGHT_CLASS = "min-h-[320px]"
 
+type RadarLabelLayout = "compact" | "comfortable" | "spacious"
+
+const getRadarLabelLayout = (): RadarLabelLayout => {
+  if (typeof window === "undefined") return "comfortable"
+  const width = window.innerWidth
+  if (width < 768) return "compact"
+  if (width < 1024) return "comfortable"
+  return "spacious"
+}
+
+const useRadarLabelLayout = () => {
+  const [layout, setLayout] = useState<RadarLabelLayout>(getRadarLabelLayout)
+
+  useEffect(() => {
+    const onChange = () => setLayout(getRadarLabelLayout())
+    window.addEventListener("resize", onChange)
+    onChange()
+    return () => window.removeEventListener("resize", onChange)
+  }, [])
+
+  return layout
+}
+
+const RADAR_LABEL_WRAP: Record<
+  RadarLabelLayout,
+  { maxCharsPerLine: number; maxLines: number; fontSize: number; lineHeight: number }
+> = {
+  compact: { maxCharsPerLine: 10, maxLines: 3, fontSize: 11, lineHeight: 13 },
+  comfortable: { maxCharsPerLine: 12, maxLines: 3, fontSize: 12, lineHeight: 14 },
+  spacious: { maxCharsPerLine: 15, maxLines: 2, fontSize: 13, lineHeight: 16 },
+}
+
+const expandRadarLabelWords = (label: string, maxCharsPerLine: number) =>
+  label.split(/\s+/).flatMap((word) => {
+    if (word.length <= maxCharsPerLine) return [word]
+    if (!word.includes("-")) return [word]
+
+    const segments = word.split("-")
+    return segments.map((segment, index) =>
+      index < segments.length - 1 ? `${segment}-` : segment,
+    )
+  })
+
+const wrapRadarLabelLines = (label: string, maxCharsPerLine: number, maxLines: number) => {
+  const words = expandRadarLabelWords(label.trim(), maxCharsPerLine)
+  if (words.length === 0) return []
+
+  const lines: string[] = []
+  let current = ""
+
+  for (let index = 0; index < words.length; index += 1) {
+    const word = words[index]
+    const candidate = current ? `${current} ${word}` : word
+
+    if (candidate.length <= maxCharsPerLine) {
+      current = candidate
+      continue
+    }
+
+    if (current) {
+      lines.push(current)
+      current = ""
+    }
+
+    if (lines.length >= maxLines - 1) {
+      lines.push([word, ...words.slice(index + 1)].join(" "))
+      return lines.slice(0, maxLines)
+    }
+
+    if (word.length > maxCharsPerLine) {
+      let rest = word
+      while (rest.length > maxCharsPerLine && lines.length < maxLines - 1) {
+        lines.push(rest.slice(0, maxCharsPerLine))
+        rest = rest.slice(maxCharsPerLine)
+      }
+      current = rest
+      continue
+    }
+
+    current = word
+  }
+
+  if (current) lines.push(current)
+  return lines.slice(0, maxLines)
+}
+
+const ADMIN_OVERVIEW_CHART_EMPTY_MESSAGE = "No data found."
+
+const AdminOverviewChartEmptyState = ({ className }: { className?: string }) => (
+  <div
+    className={cn("flex flex-col items-center justify-center px-4 py-10 text-center", className)}
+    role="status"
+    aria-live="polite"
+  >
+    <span className="flex h-14 w-14 items-center justify-center rounded-full border border-border/80 bg-card text-muted-foreground">
+      <ChartPie className="h-7 w-7 text-rellia-teal dark:text-rellia-mint" aria-hidden />
+    </span>
+    <p className="mt-3 max-w-[16rem] font-urbanist text-base leading-snug text-muted-foreground">
+      {ADMIN_OVERVIEW_CHART_EMPTY_MESSAGE}
+    </p>
+  </div>
+)
+
 const RADAR_CHART_LAYOUT = {
-  outerRadius: "82%",
-  margin: { top: 36, right: 64, bottom: 36, left: 64 },
+  outerRadius: "78%",
+  margin: { top: 40, right: 72, bottom: 40, left: 72 },
 } as const
+
+const RADAR_CHART_LAYOUT_BY_LABEL: Record<
+  RadarLabelLayout,
+  { outerRadius: string; margin: { top: number; right: number; bottom: number; left: number } }
+> = {
+  compact: {
+    outerRadius: "58%",
+    margin: { top: 44, right: 62, bottom: 44, left: 62 },
+  },
+  comfortable: {
+    outerRadius: "70%",
+    margin: { top: 36, right: 64, bottom: 36, left: 64 },
+  },
+  spacious: RADAR_CHART_LAYOUT,
+}
 
 const getRadarDomainMax = (maxCount: number) => {
   if (maxCount <= 0) return 1
@@ -913,36 +1044,33 @@ const RadarCategoryTick = ({
   y = 0,
   payload,
   textAnchor,
+  layout = "comfortable",
 }: {
   x?: number
   y?: number
   payload?: { value?: string }
   textAnchor?: "start" | "middle" | "end" | "inherit"
+  layout?: RadarLabelLayout
 }) => {
   const label = payload?.value ?? ""
   if (!label) return null
 
-  const words = label.split(/\s+/)
-  const lines =
-    label.length > 22 && words.length > 2
-      ? [
-          words.slice(0, Math.ceil(words.length / 2)).join(" "),
-          words.slice(Math.ceil(words.length / 2)).join(" "),
-        ]
-      : [label]
+  const { maxCharsPerLine, maxLines, fontSize, lineHeight } = RADAR_LABEL_WRAP[layout]
+  const lines = wrapRadarLabelLines(label, maxCharsPerLine, maxLines)
+  const startY = y - ((lines.length - 1) * lineHeight) / 2
 
   return (
     <text
       x={x}
-      y={y}
+      y={startY}
       textAnchor={textAnchor}
       fill="hsl(var(--foreground))"
-      fontSize={13}
+      fontSize={fontSize}
       fontWeight={600}
       fontFamily="Urbanist, sans-serif"
     >
       {lines.map((line, index) => (
-        <tspan key={`${line}-${index}`} x={x} dy={index === 0 ? 0 : 16}>
+        <tspan key={`${line}-${index}`} x={x} dy={index === 0 ? 0 : lineHeight}>
           {line}
         </tspan>
       ))}
@@ -953,39 +1081,41 @@ const RadarCategoryTick = ({
 const CategoryRadarChart = ({
   rows,
   color,
-  emptyLabel,
   loading,
   className,
   chartKey,
 }: {
   rows: RadarRow[]
   color: string
-  emptyLabel: string
   loading?: boolean
   className?: string
   chartKey?: string
 }) => {
+  const labelLayout = useRadarLabelLayout()
+  const radarLayout = RADAR_CHART_LAYOUT_BY_LABEL[labelLayout]
   const { ref, inView, reduceMotion } = useOverviewChartInView()
   const dataAnimReady = useOverviewDataAnimReady(inView, loading)
-  const [entranceDone, setEntranceDone] = useState(reduceMotion)
+  const chartInstanceKey = chartKey ?? "default"
+  const [lastAnimatedKey, setLastAnimatedKey] = useState<string | null>(reduceMotion ? chartInstanceKey : null)
   const radarData = useMemo(() => toRadarChartRows(rows), [rows])
   const radarChartConfig = {
     count: { label: "Startups", color },
   }
-  const radarAnimation = entranceDone ? RADAR_FILTER_ANIMATION : RADAR_ENTRANCE_ANIMATION
+  const isFilterTransition = lastAnimatedKey !== null && lastAnimatedKey !== chartInstanceKey
+  const radarAnimation = isFilterTransition ? RADAR_FILTER_ANIMATION : RADAR_ENTRANCE_ANIMATION
+  const shouldAnimate =
+    dataAnimReady && !reduceMotion && !loading && radarData.length > 0 && lastAnimatedKey !== chartInstanceKey
 
   useEffect(() => {
-    if (!dataAnimReady || reduceMotion) return
-    const timer = window.setTimeout(() => setEntranceDone(true), RADAR_ENTRANCE_ANIMATION.duration)
+    if (!shouldAnimate) return
+    const timer = window.setTimeout(() => setLastAnimatedKey(chartInstanceKey), radarAnimation.duration)
     return () => window.clearTimeout(timer)
-  }, [dataAnimReady, reduceMotion])
+  }, [shouldAnimate, chartInstanceKey, radarAnimation.duration])
 
   const content = loading ? (
     <Skeleton className={cn("h-full w-full rounded-xl", RADAR_CHART_MIN_HEIGHT_CLASS)} />
   ) : radarData.length === 0 ? (
-    <div className={cn("flex flex-col items-center justify-center py-6 text-center", RADAR_CHART_MIN_HEIGHT_CLASS)}>
-      <p className="font-urbanist text-xs text-muted-foreground">{emptyLabel}</p>
-    </div>
+    <AdminOverviewChartEmptyState className={cn("h-full w-full", RADAR_CHART_MIN_HEIGHT_CLASS)} />
   ) : (
     <ChartContainer
       config={radarChartConfig}
@@ -996,13 +1126,13 @@ const CategoryRadarChart = ({
         data={radarData}
         cx="50%"
         cy="50%"
-        outerRadius={RADAR_CHART_LAYOUT.outerRadius}
-        margin={RADAR_CHART_LAYOUT.margin}
+        outerRadius={radarLayout.outerRadius}
+        margin={radarLayout.margin}
       >
         <PolarGrid stroke="hsl(var(--border))" />
         <PolarAngleAxis
           dataKey="category"
-          tick={RadarCategoryTick}
+          tick={(props) => <RadarCategoryTick {...props} layout={labelLayout} />}
           tickLine={false}
         />
         <PolarRadiusAxis
@@ -1018,7 +1148,7 @@ const CategoryRadarChart = ({
           fill="var(--color-count)"
           fillOpacity={0.28}
           strokeWidth={2}
-          isAnimationActive={dataAnimReady && !reduceMotion}
+          isAnimationActive={shouldAnimate}
           animationBegin={0}
           animationDuration={radarAnimation.duration}
           animationEasing={radarAnimation.easing}
@@ -1046,38 +1176,78 @@ const CategoryRadarChart = ({
 }
 
 const overviewTopCardSkeletonToneClass = {
-  default: {
-    value: "bg-rellia-mint/25 dark:bg-rellia-mint/15",
-    sub: "bg-rellia-mint/20 dark:bg-rellia-mint/12",
-    sparkline: "bg-rellia-mint/20 dark:bg-rellia-mint/10",
+  contacts: {
+    value: "bg-[hsl(196_67%_16%/0.28)] dark:bg-[hsl(175_42%_73%/0.22)]",
+    sub: "bg-[hsl(196_67%_16%/0.2)] dark:bg-[hsl(175_42%_73%/0.16)]",
+  },
+  diagnostics: {
+    value: "bg-[hsl(210_88%_46%/0.28)] dark:bg-[hsl(205_95%_68%/0.22)]",
+    sub: "bg-[hsl(210_88%_46%/0.2)] dark:bg-[hsl(205_95%_68%/0.16)]",
   },
   sanity: {
     value: "bg-[hsl(346_78%_52%/0.28)] dark:bg-[hsl(346_90%_78%/0.22)]",
     sub: "bg-[hsl(346_78%_52%/0.2)] dark:bg-[hsl(346_90%_78%/0.16)]",
-    sparkline: "bg-[hsl(346_78%_52%/0.16)] dark:bg-[hsl(346_90%_78%/0.12)]",
   },
 } as const
+
+const overviewTopCardSubtextClass =
+  "mt-2.5 font-urbanist text-sm font-semibold leading-snug"
+
+const OverviewTopCardSubtext = ({
+  children,
+  isUnavailable,
+  seriesAccentStyle,
+  isCleared,
+}: {
+  children: ReactNode
+  isUnavailable: boolean
+  seriesAccentStyle?: { color: string }
+  isCleared: boolean
+}) => (
+  <p
+    className={cn(overviewTopCardSubtextClass, isUnavailable && "text-muted-foreground")}
+    style={seriesAccentStyle ? { color: seriesAccentStyle.color, opacity: isCleared ? 0.75 : 0.85 } : undefined}
+  >
+    {children}
+  </p>
+)
+
+const CmsLastPublishSubtext = ({ subtitle }: { subtitle: CmsLastPublishSubtitle }) => {
+  if (subtitle.kind === "plain") return <>{subtitle.text}</>
+
+  return (
+    <span className="block truncate">
+      {subtitle.documentName}
+      {" · "}
+      {subtitle.typeLabel}
+    </span>
+  )
+}
 
 const OverviewTopLinkCard = ({
   title,
   value,
   statusLabel,
+  statusLabelAria,
   clearedStatusLabel,
   sparklineValues,
   sparklineSeries = "contacts",
   href,
   loading,
-  skeletonTone = "default",
+  skeletonTone = "contacts",
+  external = false,
 }: {
   title: string
   value: number | string
-  statusLabel: string
+  statusLabel: ReactNode
+  statusLabelAria?: string
   clearedStatusLabel?: string
   sparklineValues?: number[]
   sparklineSeries?: SparklineSeries
   href: string
   loading?: boolean
   skeletonTone?: keyof typeof overviewTopCardSkeletonToneClass
+  external?: boolean
 }) => {
   const { resolvedTheme } = useAdminTheme()
   const { ref, inView } = useOverviewChartInView()
@@ -1089,6 +1259,11 @@ const OverviewTopLinkCard = ({
   const displayStatusLabel = isCleared ? (clearedStatusLabel ?? statusLabel) : statusLabel
   const seriesColor = seriesColorFor(sparklineSeries, resolvedTheme)
   const seriesAccentStyle = !isUnavailable ? { color: seriesColor } : undefined
+  const isRelativeTimeValue = typeof value === "string" && value !== "—"
+  const valueSizeClass =
+    isRelativeTimeValue && value.length > 9
+      ? "text-3xl sm:text-4xl"
+      : "text-4xl sm:text-[2.75rem]"
 
   const sparklineBase =
     sparklineValues && sparklineValues.length > 0
@@ -1101,90 +1276,158 @@ const OverviewTopLinkCard = ({
       : sparklineBase
 
   const effectiveSparklineColor = seriesColor
+  const cardStatusAria =
+    statusLabelAria ??
+    (typeof displayStatusLabel === "string" ? displayStatusLabel : undefined)
+
+  const cardBody = (
+    <div ref={ref} className="flex min-h-[8rem] flex-col gap-3 sm:min-h-[8.5rem]">
+      <div className="flex items-start justify-between gap-2">
+        <p className="min-w-0 font-host-grotesk text-base font-semibold leading-snug text-foreground dark:text-white sm:text-lg">
+          {title}
+        </p>
+        <span
+          className={cn(adminOverviewArrowChipClass, "group-hover:-translate-y-[1px]")}
+          aria-hidden
+        >
+          <ArrowUpRight
+            className={cn(
+              "h-4 w-4 transition-transform duration-150",
+              "group-hover:translate-x-0.5 group-hover:-translate-y-0.5",
+            )}
+            strokeWidth={2.25}
+            aria-hidden
+          />
+        </span>
+      </div>
+
+      {loading ? (
+        <div className="min-w-0" aria-hidden>
+          <Skeleton
+            className={cn("h-10 w-24 rounded-2xl sm:h-11", skeletonToneClass.value)}
+          />
+          <Skeleton
+            className={cn("mt-2.5 h-4 w-36 max-w-[75%] rounded-xl", skeletonToneClass.sub)}
+          />
+        </div>
+      ) : (
+        <>
+          <div className="min-w-0">
+            {isUnavailable ? (
+              <p className="font-host-grotesk text-4xl font-semibold tabular-nums leading-none text-slate-500 dark:text-slate-400 sm:text-[2.75rem]">
+                —
+              </p>
+            ) : (
+              <p
+                className={cn(
+                  "font-host-grotesk font-semibold leading-none",
+                  valueSizeClass,
+                  isRelativeTimeValue && "tracking-tight",
+                )}
+                style={seriesAccentStyle}
+              >
+                {value}
+              </p>
+            )}
+            <OverviewTopCardSubtext
+              isUnavailable={isUnavailable}
+              seriesAccentStyle={seriesAccentStyle}
+              isCleared={isCleared}
+            >
+              {displayStatusLabel}
+            </OverviewTopCardSubtext>
+          </div>
+          {!isUnavailable ? (
+            <OverviewSparkline
+              values={sparkline}
+              color={effectiveSparklineColor}
+              startAnimation={dataAnimReady}
+            />
+          ) : null}
+        </>
+      )}
+    </div>
+  )
+
+  if (external) {
+    return (
+      <a
+        href={href}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={overviewTopCardShellClass}
+        aria-label={cardStatusAria ? `${title}: ${cardStatusAria}` : title}
+      >
+        {cardBody}
+      </a>
+    )
+  }
 
   return (
-    <Link to={href} className={overviewTopCardShellClass} aria-label={`${title}: ${displayStatusLabel}`}>
-      <div ref={ref} className="flex min-h-[8rem] flex-col gap-3 sm:min-h-[8.5rem]">
-        <div className="flex items-start justify-between gap-2">
-          <p className="min-w-0 font-host-grotesk text-base font-semibold leading-snug text-foreground dark:text-white sm:text-lg">
-            {title}
-          </p>
-          <span
-            className={cn(adminOverviewArrowChipClass, "group-hover:-translate-y-[1px]")}
-            aria-hidden
-          >
-            <ArrowUpRight
-              className={cn(
-                "h-4 w-4 transition-transform duration-150",
-                "group-hover:translate-x-0.5 group-hover:-translate-y-0.5",
-              )}
-              strokeWidth={2.25}
-              aria-hidden
-            />
-          </span>
-        </div>
-
-        {loading ? (
-          <div className="min-w-0" aria-hidden>
-            <Skeleton
-              className={cn(
-                "h-10 w-24 sm:h-11",
-                skeletonTone === "sanity" ? "rounded-2xl" : "rounded-lg",
-                skeletonToneClass.value,
-              )}
-            />
-            <Skeleton
-              className={cn(
-                "mt-1 h-4 w-36 max-w-[75%]",
-                skeletonTone === "sanity" ? "rounded-xl" : "rounded-md",
-                skeletonToneClass.sub,
-              )}
-            />
-            {skeletonTone !== "sanity" ? (
-              <Skeleton className={cn("mt-3 h-14 w-full rounded-lg", skeletonToneClass.sparkline)} />
-            ) : null}
-          </div>
-        ) : (
-          <>
-            <div className="min-w-0">
-              {isUnavailable ? (
-                <p className="font-host-grotesk text-4xl font-bold tabular-nums leading-none text-slate-500 dark:text-slate-400 sm:text-[2.75rem]">
-                  —
-                </p>
-              ) : (
-                <p
-                  className={cn(
-                    "font-host-grotesk text-4xl font-bold tabular-nums leading-none sm:text-[2.75rem]",
-                    isUnavailable && "text-slate-500 dark:text-slate-400",
-                  )}
-                  style={seriesAccentStyle}
-                >
-                  {value}
-                </p>
-              )}
-              <p
-                className={cn("mt-1 font-urbanist text-sm", isUnavailable && "text-muted-foreground")}
-                style={seriesAccentStyle ? { color: seriesAccentStyle.color, opacity: isCleared ? 0.75 : 0.85 } : undefined}
-              >
-                {displayStatusLabel}
-              </p>
-            </div>
-            {!isUnavailable ? (
-              <OverviewSparkline
-                values={sparkline}
-                color={effectiveSparklineColor}
-                startAnimation={dataAnimReady}
-              />
-            ) : null}
-          </>
-        )}
-      </div>
+    <Link to={href} className={overviewTopCardShellClass} aria-label={cardStatusAria ? `${title}: ${cardStatusAria}` : title}>
+      {cardBody}
     </Link>
   )
 }
 
 const RECENT_SUBMISSION_MAX = 5
 const RECENT_SUBMISSION_ROW_CLASS = "flex h-[3.75rem] shrink-0 items-center justify-between gap-3"
+const RECENT_SUBMISSION_ROW_HEIGHT_REM = 3.75
+
+type RecentSubmissionFillerLayout = "stacked" | "inline"
+
+const RecentSubmissionFiller = ({
+  titleIcon: TitleIcon,
+  message,
+  borderedTop,
+  missingRowCount,
+}: {
+  titleIcon: LucideIcon
+  message: string
+  borderedTop: boolean
+  /** Whole row slots below the list (always ≥ 1 when this renders). */
+  missingRowCount: number
+}) => {
+  const heightRem = missingRowCount * RECENT_SUBMISSION_ROW_HEIGHT_REM
+  const layout: RecentSubmissionFillerLayout = missingRowCount >= 2 ? "stacked" : "inline"
+
+  return (
+    <div
+      style={{ height: `${heightRem}rem` }}
+      className={cn(
+        "hidden shrink-0 flex-col items-center justify-center overflow-hidden lg:flex",
+        borderedTop
+          ? "border-t border-dashed border-border/80 bg-muted/15 dark:bg-muted/10"
+          : "rounded-xl border border-dashed border-border/80 bg-muted/15 dark:bg-muted/10",
+      )}
+    >
+      <div
+        className={cn(
+          "flex w-full items-center justify-center px-4",
+          layout === "stacked" && "flex-col gap-2.5 py-4 text-center",
+          layout === "inline" && "flex-row gap-3 py-3 text-center",
+        )}
+      >
+        <span
+          className={cn(
+            "flex shrink-0 items-center justify-center rounded-full border border-border/80 bg-card text-muted-foreground",
+            layout === "inline" ? "h-9 w-9" : "h-11 w-11",
+          )}
+        >
+          <TitleIcon className={cn(layout === "inline" ? "h-4 w-4" : "h-5 w-5")} aria-hidden />
+        </span>
+        <p
+          className={cn(
+            "font-urbanist text-sm leading-snug text-muted-foreground",
+            layout === "stacked" ? "max-w-[15rem]" : "max-w-[15rem] min-w-0",
+          )}
+        >
+          {message}
+        </p>
+      </div>
+    </div>
+  )
+}
 
 const AdminRecentSubmissionsCard = <T extends { id: string }>({
   title,
@@ -1192,6 +1435,7 @@ const AdminRecentSubmissionsCard = <T extends { id: string }>({
   viewAllHref,
   loading,
   rows,
+  pairedRowCount,
   emptyMessage,
   fillerMessage,
   renderRow,
@@ -1201,30 +1445,48 @@ const AdminRecentSubmissionsCard = <T extends { id: string }>({
   viewAllHref: string
   loading?: boolean
   rows: T[]
+  pairedRowCount: number
   emptyMessage: string
   fillerMessage: string
   renderRow: (row: T) => ReactNode
 }) => {
-  const showFiller = rows.length < RECENT_SUBMISSION_MAX
+  const missingRowCount = Math.max(0, pairedRowCount - rows.length)
+  const showFiller = missingRowCount > 0
+  const fillerHeightRem = missingRowCount * RECENT_SUBMISSION_ROW_HEIGHT_REM
+  const isFullyEmpty = pairedRowCount === 0 && rows.length === 0
+
+  const emptyState = (
+    <div
+      className="flex shrink-0 flex-col items-center justify-center rounded-xl border border-dashed border-border/80 bg-muted/15 px-4 py-8 text-center dark:bg-muted/10"
+      style={{ height: `${fillerHeightRem}rem` }}
+    >
+      <span className="flex h-11 w-11 items-center justify-center rounded-full border border-border/80 bg-card text-muted-foreground">
+        <TitleIcon className="h-5 w-5" aria-hidden />
+      </span>
+      <p className="mt-2.5 max-w-[15rem] font-urbanist text-sm leading-snug text-muted-foreground">
+        {emptyMessage}
+      </p>
+    </div>
+  )
 
   return (
     <Card className="flex h-full min-w-0 flex-col overflow-hidden rounded-2xl">
       <CardHeader className={adminOverviewCardHeaderClass}>
-        <div className={adminOverviewCardHeaderRowClass}>
-          <CardTitle className={adminOverviewCardTitleWithIconClass}>
+        <div className={adminOverviewRecentCardHeaderRowClass}>
+          <CardTitle className={cn(adminOverviewCardTitleWithIconClass, "min-[380px]:min-w-0 min-[380px]:flex-1")}>
             <TitleIcon className={adminOverviewCardTitleIconClass} aria-hidden />
             {title}
           </CardTitle>
           <Link
             to={viewAllHref}
-            className="inline-flex shrink-0 items-center gap-1 font-urbanist text-sm text-rellia-teal hover:underline"
+            className="inline-flex shrink-0 items-center gap-1 self-start font-urbanist text-sm text-rellia-teal hover:underline min-[380px]:self-center"
           >
             View all
             <ArrowRight className="h-3.5 w-3.5" aria-hidden />
           </Link>
         </div>
       </CardHeader>
-      <CardContent className="flex flex-1 flex-col pb-6">
+      <CardContent className="flex min-h-0 flex-1 flex-col pb-6">
         {loading ? (
           <div className="divide-y divide-border">
             {Array.from({ length: 4 }).map((_, index) => (
@@ -1232,7 +1494,7 @@ const AdminRecentSubmissionsCard = <T extends { id: string }>({
             ))}
           </div>
         ) : (
-          <div className="flex min-h-[16rem] flex-1 flex-col">
+          <div className="flex min-h-0 flex-1 flex-col">
             {rows.length > 0 ? (
               <ul className="shrink-0 divide-y divide-border">
                 {rows.map((row) => (
@@ -1242,23 +1504,26 @@ const AdminRecentSubmissionsCard = <T extends { id: string }>({
                 ))}
               </ul>
             ) : null}
-            {showFiller ? (
-              <div
-                className={cn(
-                  "flex flex-1 flex-col items-center justify-center gap-2.5 px-4 py-8 text-center",
-                  rows.length > 0
-                    ? "border-t border-dashed border-border/80 bg-muted/15 dark:bg-muted/10"
-                    : "rounded-xl border border-dashed border-border/80 bg-muted/15 dark:bg-muted/10",
-                )}
-              >
+            {isFullyEmpty ? (
+              <div className="flex shrink-0 flex-col items-center justify-center rounded-xl border border-dashed border-border/80 bg-muted/15 px-4 py-8 text-center dark:bg-muted/10">
                 <span className="flex h-11 w-11 items-center justify-center rounded-full border border-border/80 bg-card text-muted-foreground">
                   <TitleIcon className="h-5 w-5" aria-hidden />
                 </span>
-                <p className="max-w-[15rem] font-urbanist text-sm leading-snug text-muted-foreground">
-                  {rows.length === 0 ? emptyMessage : fillerMessage}
+                <p className="mt-2.5 max-w-[15rem] font-urbanist text-sm leading-snug text-muted-foreground">
+                  {emptyMessage}
                 </p>
               </div>
             ) : null}
+            {rows.length === 0 && showFiller ? emptyState : null}
+            {rows.length > 0 && showFiller ? (
+              <RecentSubmissionFiller
+                titleIcon={TitleIcon}
+                message={fillerMessage}
+                borderedTop
+                missingRowCount={missingRowCount}
+              />
+            ) : null}
+            <div className="min-h-0 flex-1" aria-hidden />
           </div>
         )}
       </CardContent>
@@ -1451,10 +1716,10 @@ const AdminOverviewPage = () => {
     queryKey: ["admin-company-profiles", "status-updated-at"],
     queryFn: fetchDiagnosticSubmissions,
   })
-  const draftsQuery = useQuery({
-    queryKey: cmsContentQueryKey(ADMIN_SANITY_PRODUCTION_DATASET),
-    queryFn: () => fetchCmsContentQueueForDataset(token, ADMIN_SANITY_PRODUCTION_DATASET),
-    enabled: isCmsContentEnabled() && Boolean(token),
+  const recentEditsQuery = useQuery({
+    queryKey: cmsRecentEditsQueryKey(),
+    queryFn: fetchCmsRecentEdits,
+    enabled: isCmsContentEnabled(),
     staleTime: 60_000,
   })
   const teamQuery = useQuery({
@@ -1545,6 +1810,7 @@ const AdminOverviewPage = () => {
   const recentDiagnostics = overviewPreview
     ? sortOverviewRecentSubmissions(OVERVIEW_PREVIEW_RECENT_DIAGNOSTICS, RECENT_SUBMISSION_MAX)
     : sortOverviewRecentSubmissions(diagnostics, RECENT_SUBMISSION_MAX)
+  const recentSubmissionPairCount = Math.max(recentContacts.length, recentDiagnostics.length)
 
   const unresolved = countUnresolved(contacts, diagnostics)
   const unresolvedWebForms = contacts.filter((row) =>
@@ -1560,7 +1826,12 @@ const AdminOverviewPage = () => {
     7,
   )
   const unresolvedChangePct = percentChange(unresolved, previousUnresolved)
-  const draftCount = draftsQuery.data?.length ?? 0
+  const lastPublishedEdit = recentEditsQuery.data?.[0]
+  const lastPublishedAt = lastPublishedEdit?._updatedAt
+  const cmsEditsSparkline = useMemo(
+    () => buildCmsEditsSparkline(recentEditsQuery.data ?? [], SPARKLINE_DAYS),
+    [recentEditsQuery.data],
+  )
   const teamCount = teamQuery.data?.length ?? 0
 
   const onlineNowCount = useMemo(() => {
@@ -1669,35 +1940,49 @@ const AdminOverviewPage = () => {
     [diagnostics],
   )
 
-  const draftsSparkline = useMemo(
-    () =>
-      buildLastNDaysPendingTrend(
-        (draftsQuery.data ?? []).map((row) => ({
-          created_at: row._updatedAt ?? new Date(0).toISOString(),
-          status: "New" as const,
-        })),
-        SPARKLINE_DAYS,
-      ),
-    [draftsQuery.data],
-  )
-
   const displayUnresolvedWebForms = overviewPreview
     ? OVERVIEW_PREVIEW_KPI.webForms
     : unresolvedWebForms
   const displayUnresolvedDiagnostics = overviewPreview
     ? OVERVIEW_PREVIEW_KPI.surveys
     : unresolvedDiagnostics
-  const displayDraftCount = overviewPreview ? OVERVIEW_PREVIEW_KPI.drafts : draftCount
-
   const displayWebFormsSparkline = overviewPreview
     ? buildPreviewPendingSparkline(OVERVIEW_PREVIEW_KPI.webForms)
     : webFormsSparkline
   const displayDiagnosticsSparkline = overviewPreview
     ? buildPreviewPendingSparkline(OVERVIEW_PREVIEW_KPI.surveys)
     : diagnosticsSparkline
-  const displayDraftsSparkline = overviewPreview
-    ? buildPreviewPendingSparkline(OVERVIEW_PREVIEW_KPI.drafts)
-    : draftsSparkline
+  const displayLastPublishHeadline = overviewPreview
+    ? OVERVIEW_PREVIEW_LAST_PUBLISH.headline
+    : !isCmsContentEnabled()
+      ? "—"
+      : lastPublishedAt
+        ? formatCmsLastPublishHeadline(lastPublishedAt)
+        : "None"
+  const displayLastPublishSubtitle = useMemo((): CmsLastPublishSubtitle => {
+    if (overviewPreview) {
+      return {
+        kind: "document",
+        documentName: OVERVIEW_PREVIEW_LAST_PUBLISH.documentName,
+        typeLabel: OVERVIEW_PREVIEW_LAST_PUBLISH.typeLabel,
+      }
+    }
+    if (!isCmsContentEnabled()) return { kind: "plain", text: "Unavailable" }
+    return getCmsLastPublishSubtitle(lastPublishedEdit, lastPublishedAt)
+  }, [lastPublishedAt, lastPublishedEdit, overviewPreview])
+
+  const displayLastPublishStatus = useMemo(
+    () => <CmsLastPublishSubtext subtitle={displayLastPublishSubtitle} />,
+    [displayLastPublishSubtitle],
+  )
+
+  const displayLastPublishStatusAria = useMemo(
+    () => cmsLastPublishSubtitleAria(displayLastPublishSubtitle),
+    [displayLastPublishSubtitle],
+  )
+  const displayCmsEditsSparkline = overviewPreview
+    ? buildPreviewPendingSparkline(1)
+    : cmsEditsSparkline
 
   const todaySnapshot = useMemo((): TodayInboxSnapshot => {
     if (overviewPreview) return OVERVIEW_PREVIEW_TODAY_SNAPSHOT
@@ -1705,10 +1990,8 @@ const AdminOverviewPage = () => {
   }, [contacts, diagnostics, overviewPreview])
 
   const topCardsLoading = overviewPreview ? false : loading
-  const draftsCardLoading =
-    overviewPreview
-      ? false
-      : isCmsContentEnabled() && Boolean(token) && draftsQuery.isPending
+  const siteContentCardLoading =
+    overviewPreview ? false : isCmsContentEnabled() && recentEditsQuery.isPending
   const chartSectionLoading = overviewPreview ? false : loading
   const radarSectionLoading = overviewPreview ? false : loading
 
@@ -1739,8 +2022,8 @@ const AdminOverviewPage = () => {
             </span>
           </>
         }
-        showDivider
-        titleClassName="text-2xl font-normal leading-tight md:text-4xl md:leading-tight"
+        showDivider={false}
+        titleClassName="text-2xl font-semibold leading-tight md:text-4xl md:leading-tight"
         actions={
           topCardsLoading ? (
             <Skeleton className="h-12 w-52 rounded-2xl" aria-hidden />
@@ -1757,6 +2040,7 @@ const AdminOverviewPage = () => {
           title="Web forms"
           href="/admin/inbox?tab=contact"
           loading={topCardsLoading}
+          skeletonTone="contacts"
           sparklineValues={displayWebFormsSparkline}
           sparklineSeries="contacts"
           value={displayUnresolvedWebForms}
@@ -1767,6 +2051,7 @@ const AdminOverviewPage = () => {
           title="Diagnostic surveys"
           href="/admin/inbox?tab=diagnostic"
           loading={topCardsLoading}
+          skeletonTone="diagnostics"
           sparklineValues={displayDiagnosticsSparkline}
           sparklineSeries="diagnostics"
           value={displayUnresolvedDiagnostics}
@@ -1774,15 +2059,15 @@ const AdminOverviewPage = () => {
           clearedStatusLabel="All caught up — queue clear"
         />
         <OverviewTopLinkCard
-          title="Content drafts"
-          href="/admin/drafts"
-          loading={draftsCardLoading}
+          title="Last content publish"
+          href="/admin/content?status=published"
+          loading={siteContentCardLoading}
           skeletonTone="sanity"
-          sparklineValues={isCmsContentEnabled() ? displayDraftsSparkline : undefined}
+          sparklineValues={isCmsContentEnabled() ? displayCmsEditsSparkline : undefined}
           sparklineSeries="drafts"
-          value={!isCmsContentEnabled() ? "—" : displayDraftCount}
-          statusLabel={!isCmsContentEnabled() ? "Unavailable" : "Pending publish"}
-          clearedStatusLabel="Nothing waiting to publish"
+          value={displayLastPublishHeadline}
+          statusLabel={displayLastPublishStatus}
+          statusLabelAria={displayLastPublishStatusAria}
         />
       </div>
       </ScrollReveal>
@@ -1794,11 +2079,11 @@ const AdminOverviewPage = () => {
           <AdminOverviewFilterCardHeader
             title={getSubmissionTrendTitle(trendPeriod)}
             filters={
-              <div className="flex flex-nowrap items-center justify-end gap-3 sm:gap-5">
-                <div className="flex min-w-0 items-center gap-1">
+              <div className="flex w-full min-w-0 flex-col items-stretch gap-2 sm:flex-row sm:flex-nowrap sm:items-center sm:justify-end sm:gap-3 lg:gap-5">
+                <div className="order-2 flex min-w-0 items-center justify-start gap-1 sm:order-1 sm:justify-center">
                   <button
                     onClick={() => setTrendOffset((prev) => prev + 1)}
-                    className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-border bg-card text-muted-foreground transition-colors hover:bg-muted/50 active:bg-slate-100 disabled:opacity-50"
+                    className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-border bg-card text-muted-foreground transition-colors hover:bg-muted/50 active:bg-slate-100 disabled:opacity-50 sm:h-10 sm:w-10"
                     aria-label={
                       trendPeriod === "week"
                         ? "Previous week"
@@ -1812,7 +2097,7 @@ const AdminOverviewPage = () => {
                   <span
                     className={cn(
                       adminOverviewFilterLabelClass,
-                      "whitespace-nowrap px-2 text-center sm:px-2.5",
+                      "min-w-0 flex-1 whitespace-nowrap px-1.5 text-center text-xs sm:flex-none sm:px-2.5 sm:text-sm",
                     )}
                   >
                     {getSubmissionTrendRangeLabel(trendPeriod, trendOffset)}
@@ -1820,7 +2105,7 @@ const AdminOverviewPage = () => {
                   <button
                     onClick={() => setTrendOffset((prev) => Math.max(0, prev - 1))}
                     disabled={trendOffset === 0}
-                    className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-border bg-card text-muted-foreground transition-colors hover:bg-muted/50 active:bg-slate-100 disabled:opacity-50"
+                    className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-border bg-card text-muted-foreground transition-colors hover:bg-muted/50 active:bg-slate-100 disabled:opacity-50 sm:h-10 sm:w-10"
                     aria-label={
                       trendPeriod === "week"
                         ? "Next week"
@@ -1832,8 +2117,8 @@ const AdminOverviewPage = () => {
                     <ChevronRight className="h-5 w-5" />
                   </button>
                 </div>
-                <Separator orientation="vertical" className="mx-1 hidden h-8 shrink-0 sm:mx-2 sm:block" />
-                <div className="shrink-0">
+                <Separator orientation="vertical" className="order-3 mx-1 hidden h-8 shrink-0 sm:mx-2 sm:block" />
+                <div className="order-1 w-full min-w-0 sm:order-2 sm:w-auto sm:shrink-0">
                   <AdminOverviewSegmentedControl<SubmissionTrendPeriod>
                     options={TREND_PERIOD_OPTIONS.map((option) => ({
                       value: option.id,
@@ -1847,7 +2132,7 @@ const AdminOverviewPage = () => {
               </div>
             }
           />
-          <CardContent className={cn(adminOverviewChartRowCardContentClass, "min-w-0 overflow-x-auto")}>
+          <CardContent className={cn(adminOverviewChartRowCardContentClass, "min-w-0 overflow-hidden sm:overflow-x-auto")}>
             {trendChartLoading ? (
               <div className="flex min-h-0 flex-1 flex-col">
                 <div className="flex min-h-0 flex-1 items-center justify-center">
@@ -1893,9 +2178,7 @@ const AdminOverviewPage = () => {
                 <Skeleton className="mx-auto mt-4 h-8 w-40 max-w-full rounded-lg" aria-hidden />
               </div>
             ) : totalStatusCount === 0 ? (
-              <div className="flex flex-1 flex-col items-center justify-center py-10 text-center">
-                <p className="font-urbanist text-xs text-muted-foreground">No submissions found.</p>
-              </div>
+              <AdminOverviewChartEmptyState className="flex-1" />
             ) : (
               <div className="flex min-h-0 flex-1 flex-col">
                 <div className="flex min-h-0 flex-1 items-center justify-center">
@@ -1927,7 +2210,6 @@ const AdminOverviewPage = () => {
                 onChange={(value) => setStageStatusFilter(value)}
                 options={STAGE_STATUS_FILTER_OPTIONS}
                 ariaLabel="Filter diagnostic applicant stages by survey status"
-                minWidthClass="min-w-[10.5rem]"
               />
             }
           />
@@ -1935,9 +2217,7 @@ const AdminOverviewPage = () => {
             {chartSectionLoading ? (
               <Skeleton className="h-[280px] w-full flex-1 rounded-xl" />
             ) : stageChartData.length === 0 ? (
-              <div className="flex flex-1 flex-col items-center justify-center py-10 text-center">
-                <p className="font-urbanist text-xs text-muted-foreground">No stage data found.</p>
-              </div>
+              <AdminOverviewChartEmptyState className="flex-1" />
             ) : (
               <div className="flex min-h-0 flex-1 flex-col">
                 <div className="flex min-h-0 flex-1 items-center justify-center">
@@ -1972,16 +2252,15 @@ const AdminOverviewPage = () => {
             }
           />
           <CardContent className={cn(adminOverviewChartCardContentClass, "min-w-0 gap-3 md:flex-row md:items-stretch")}>
-            <div className="flex h-full min-h-0 min-w-0 flex-1 flex-col rounded-xl border border-emerald-100/40 bg-emerald-50/20 p-3 dark:border-emerald-500/20 dark:bg-emerald-950/25">
+            <div className="flex min-h-[360px] min-w-0 flex-1 flex-col rounded-xl border border-emerald-100/40 bg-emerald-50/20 p-3 dark:border-emerald-500/20 dark:bg-emerald-950/25 md:min-h-0 md:h-full">
               <div className="mb-2 flex shrink-0 items-center gap-2">
                 <TrendingUp className={cn(adminOverviewPieSectionIconClass, "text-emerald-600 dark:text-emerald-400")} aria-hidden />
                 <p className={adminOverviewPieSectionTitleClass}>Top Strengths</p>
               </div>
-              <div className="min-h-0 flex-1 -mx-0.5 -mb-1">
+              <div className="min-h-[320px] w-full shrink-0 md:min-h-0 md:flex-1">
                 <CategoryRadarChart
                   rows={strengthsPieData}
                   color="hsl(142 76% 36%)"
-                  emptyLabel="No data reported."
                   loading={radarSectionLoading}
                   className="h-full"
                   chartKey={`strengths-${selectedStage}`}
@@ -1989,16 +2268,15 @@ const AdminOverviewPage = () => {
               </div>
             </div>
 
-            <div className="flex h-full min-h-0 min-w-0 flex-1 flex-col rounded-xl border border-amber-100/40 bg-amber-50/20 p-3 dark:border-amber-500/20 dark:bg-amber-950/25">
+            <div className="flex min-h-[360px] min-w-0 flex-1 flex-col rounded-xl border border-amber-100/40 bg-amber-50/20 p-3 dark:border-amber-500/20 dark:bg-amber-950/25 md:min-h-0 md:h-full">
               <div className="mb-2 flex shrink-0 items-center gap-2">
                 <AlertCircle className={cn(adminOverviewPieSectionIconClass, "text-amber-600 dark:text-amber-400")} aria-hidden />
                 <p className={adminOverviewPieSectionTitleClass}>Top Weaknesses</p>
               </div>
-              <div className="min-h-0 flex-1 -mx-0.5 -mb-1">
+              <div className="min-h-[320px] w-full shrink-0 md:min-h-0 md:flex-1">
                 <CategoryRadarChart
                   rows={gapsPieData}
                   color="hsl(38 92% 50%)"
-                  emptyLabel="No data reported."
                   loading={radarSectionLoading}
                   className="h-full"
                   chartKey={`gaps-${selectedStage}`}
@@ -2011,13 +2289,14 @@ const AdminOverviewPage = () => {
       </ScrollReveal>
 
       <ScrollReveal variant="ctaReveal" delay={0.14} hold={showSplash}>
-      <div className="grid min-w-0 gap-6 lg:grid-cols-2 lg:items-stretch">
+      <div className="grid min-w-0 gap-6 lg:grid-cols-2 lg:items-stretch [&>*]:h-full [&>*]:min-h-0">
         <AdminRecentSubmissionsCard
           title="Recent web forms"
           titleIcon={Inbox}
           viewAllHref="/admin/inbox?tab=contact"
           loading={chartSectionLoading}
           rows={recentContacts}
+          pairedRowCount={recentSubmissionPairCount}
           emptyMessage="No contact submissions yet."
           fillerMessage="No more recent web forms in this list."
           renderRow={(row) => (
@@ -2033,9 +2312,7 @@ const AdminOverviewPage = () => {
                   {contactTypeLabel(row)} · {formatAdminDate(row.created_at)}
                 </p>
               </div>
-              <Badge variant="outline" className={cn("shrink-0", statusBadgeClass(row.status ?? "New"))}>
-                {row.status ?? "New"}
-              </Badge>
+              <AdminSubmissionStatusBadge status={(row.status ?? "New") as SubmissionStatus} />
             </>
           )}
         />
@@ -2046,6 +2323,7 @@ const AdminOverviewPage = () => {
           viewAllHref="/admin/inbox?tab=diagnostic"
           loading={chartSectionLoading}
           rows={recentDiagnostics}
+          pairedRowCount={recentSubmissionPairCount}
           emptyMessage="No diagnostic submissions yet."
           fillerMessage="No more recent diagnostics in this list."
           renderRow={(row) => (
@@ -2061,9 +2339,7 @@ const AdminOverviewPage = () => {
                   {row.name} · {formatAdminDate(row.created_at)}
                 </p>
               </div>
-              <Badge variant="outline" className={cn("shrink-0", statusBadgeClass(row.status ?? "New"))}>
-                {row.status ?? "New"}
-              </Badge>
+              <AdminSubmissionStatusBadge status={(row.status ?? "New") as SubmissionStatus} />
             </>
           )}
         />

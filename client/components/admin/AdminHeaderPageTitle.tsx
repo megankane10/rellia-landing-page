@@ -10,7 +10,7 @@ const AdminHeaderPageTitle = () => {
   return (
     <h1
       className={cn(
-        "truncate font-host-grotesk text-lg font-medium leading-tight tracking-tight md:text-xl",
+        "truncate font-host-grotesk text-base font-medium leading-tight tracking-tight sm:text-lg md:text-xl",
         adminHeadingClass,
       )}
     >

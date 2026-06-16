@@ -153,6 +153,14 @@ export const adminDarkDialogContentClass = cn(
   "[&>button.absolute]:text-slate-400 [&>button.absolute]:hover:text-white",
 )
 
+/** Light admin modal surface — explicit white (portals sit outside `.admin-shell`) */
+export const adminLightDialogContentClass = cn(
+  "border-border/80 bg-white text-foreground",
+  "[&_label]:text-foreground",
+  "[&_input]:border-input [&_input]:bg-white [&_input]:text-foreground [&_input]:placeholder:text-muted-foreground",
+  "[&>button.absolute]:text-muted-foreground [&>button.absolute]:hover:text-foreground",
+)
+
 /** Light admin modal chrome — corner radius aligned with profile modals */
 export const adminLightDialogShellClass = cn(
   "rounded-[2rem] sm:rounded-[2rem]",
@@ -163,18 +171,44 @@ export const adminLightDialogShellClass = cn(
 export const adminDialogShellForTheme = (theme: "light" | "dark") =>
   theme === "dark"
     ? cn(adminDarkDialogShellClass, adminDarkDialogContentClass)
-    : adminLightDialogShellClass
+    : cn(adminLightDialogShellClass, adminLightDialogContentClass)
 
 export const adminDialogTitleForTheme = (theme: "light" | "dark") =>
-  theme === "dark" ? "text-white" : ""
+  theme === "dark" ? "text-white" : "text-foreground"
 
 export const adminDialogDescriptionForTheme = (theme: "light" | "dark") =>
-  theme === "dark" ? "text-slate-400" : ""
+  theme === "dark" ? "text-slate-400" : "text-muted-foreground"
 
 export const adminDialogCancelForTheme = (theme: "light" | "dark") =>
   theme === "dark"
     ? "rounded-full border-slate-700 bg-slate-900 text-slate-200 hover:bg-slate-800 hover:text-white"
+    : "rounded-full border-border bg-white text-foreground hover:bg-muted/50"
+
+export const adminDialogPrimaryActionForTheme = (theme: "light" | "dark") =>
+  theme === "dark"
+    ? "rounded-full bg-rellia-teal text-white hover:bg-rellia-teal/90"
     : "rounded-full"
+
+/** Light admin dropdown / menu surface */
+export const adminLightMenuContentClass = cn(
+  "z-[10002] overflow-hidden rounded-2xl border border-border/80 bg-white p-1.5 text-foreground shadow-xl shadow-black/12",
+)
+
+export const adminLightMenuItemClass = cn(
+  "cursor-pointer rounded-lg px-3 py-2.5 text-sm text-foreground",
+  "focus:bg-muted focus:text-foreground",
+)
+
+export const adminLightMenuSeparatorClass = "my-1 bg-border"
+
+export const adminMenuContentForTheme = (theme: "light" | "dark") =>
+  theme === "dark" ? adminDarkMenuContentClass : adminLightMenuContentClass
+
+export const adminMenuItemForTheme = (theme: "light" | "dark") =>
+  theme === "dark" ? adminDarkMenuItemClass : adminLightMenuItemClass
+
+export const adminMenuSeparatorForTheme = (theme: "light" | "dark") =>
+  theme === "dark" ? adminDarkMenuSeparatorClass : adminLightMenuSeparatorClass
 
 const adminPopoverContentBaseClass = "z-50 rounded-2xl border p-4 shadow-2xl shadow-black/45"
 
@@ -188,7 +222,11 @@ export const adminPopoverContentForTheme = (theme: "light" | "dark") =>
           "[&_.text-muted-foreground]:text-slate-400",
           "[&_textarea]:border-slate-700 [&_textarea]:bg-slate-950 [&_textarea]:text-white [&_textarea]:placeholder:text-slate-500",
         )
-      : "border-border bg-popover text-popover-foreground",
+      : cn(
+          "border-border/80 bg-white text-foreground",
+          "[&_.text-muted-foreground]:text-muted-foreground",
+          "[&_textarea]:border-input [&_textarea]:bg-white [&_textarea]:text-foreground [&_textarea]:placeholder:text-muted-foreground",
+        ),
   )
 
 /** @deprecated Use adminPopoverContentForTheme — kept for in-shell usage with dark: variants */

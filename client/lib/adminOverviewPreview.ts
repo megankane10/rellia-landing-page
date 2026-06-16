@@ -10,7 +10,12 @@ const daysAgoIso = (days: number) => {
 export const OVERVIEW_PREVIEW_KPI = {
   webForms: 24,
   surveys: 7,
-  drafts: 0,
+} as const
+
+export const OVERVIEW_PREVIEW_LAST_PUBLISH = {
+  headline: "2d ago",
+  documentName: "Building resilience in care teams",
+  typeLabel: "Story",
 } as const
 
 /** Mixed inbox activity for the header notification pill in preview mode */

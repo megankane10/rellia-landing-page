@@ -2,6 +2,7 @@ import { useState } from "react"
 import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { useParams, Link, useNavigate } from "react-router-dom"
 import { supabase } from "@/lib/supabase"
+import AdminSubmissionStatusBadge from "@/components/admin/AdminSubmissionStatusBadge"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -22,7 +23,6 @@ import {
 } from "@/components/ui/accordion"
 import {
   formatAdminDateLong,
-  statusBadgeClass,
   submissionStatusUpdatePayload,
   type SubmissionStatus,
 } from "@/lib/adminSubmissionStatus"
@@ -177,12 +177,7 @@ const AdminCompany = () => {
                   onValueChange={(value) => void handleStatusChange(value)}
                 />
               ) : (
-                <Badge
-                  variant="outline"
-                  className={`rounded-full font-urbanist text-sm ${statusBadgeClass(status)}`}
-                >
-                  {status}
-                </Badge>
+                <AdminSubmissionStatusBadge status={status} />
               )}
               <AdminDeleteSubmissionButton
                 label="Delete diagnostic submission?"

@@ -299,7 +299,7 @@ const AdminHelpPage = () => {
                 target="_blank"
                 rel="noopener noreferrer"
                 className={cn(
-                  "group relative flex min-h-[92px] min-w-0 items-start gap-3 rounded-2xl border border-border/70 bg-card px-4 py-3.5 shadow-sm transition",
+                  "group relative flex min-w-0 items-start gap-3 rounded-2xl border border-border/70 bg-card px-4 py-3.5 shadow-sm transition sm:min-h-[92px]",
                   "hover:-translate-y-px hover:border-rellia-teal/25 hover:bg-rellia-mint/10 hover:shadow-md dark:hover:border-rellia-mint/30 dark:hover:bg-rellia-mint/10",
                   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
                 )}

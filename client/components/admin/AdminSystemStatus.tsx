@@ -96,7 +96,7 @@ const StatusPill = ({ service, compact }: { service: ServiceStatus; compact?: bo
           className={cn(
             "inline-flex min-w-0 items-center gap-2 rounded-full border font-urbanist font-semibold",
             "shadow-[0_6px_18px_-14px_rgba(13,53,64,0.26)]",
-            compact ? "h-10 px-3 text-sm" : "px-3 py-1.5 text-sm",
+            compact ? "h-8 gap-1.5 px-2 text-[11px] sm:h-10 sm:gap-2 sm:px-3 sm:text-sm" : "px-3 py-1.5 text-sm",
             theme.pill,
             "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
           )}
@@ -104,13 +104,17 @@ const StatusPill = ({ service, compact }: { service: ServiceStatus; compact?: bo
         >
           <span
             className={cn(
-              "inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full",
+              "inline-flex shrink-0 items-center justify-center rounded-full",
+              compact ? "h-5 w-5 sm:h-6 sm:w-6" : "h-6 w-6",
               theme.iconWrap,
             )}
             aria-hidden
           >
             <Icon
-              className={cn("h-4 w-4", service.state === "checking" && "animate-spin")}
+              className={cn(
+                compact ? "h-3.5 w-3.5 sm:h-4 sm:w-4" : "h-4 w-4",
+                service.state === "checking" && "animate-spin",
+              )}
               strokeWidth={2.25}
               aria-hidden
             />
@@ -239,7 +243,7 @@ const AdminSystemStatus = ({ compact = false }: { compact?: boolean }) => {
           Status
         </span>
       ) : null}
-      <ul className="flex flex-wrap items-center gap-2">
+      <ul className="flex flex-wrap items-center justify-end gap-1.5 sm:gap-2">
         {services.map((service) => (
           <StatusPill key={service.label} service={service} compact={compact} />
         ))}

@@ -1,11 +1,12 @@
 import { LogIn } from "lucide-react"
 import AdminRecordList from "@/components/admin/AdminRecordList"
 import type { AdminTableColumn } from "@/components/admin/AdminDataTable"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
 import type { AdminTeamUser } from "@/lib/adminApi"
 import { formatAdminDate, formatAdminRelativeAgo } from "@/lib/adminSubmissionStatus"
 import { cn } from "@/lib/utils"
+import { adminTeamCardHeaderClass, adminTeamCardTitleClass, adminTeamCardTitleIconClass } from "@/components/admin/adminThemeClasses"
 
 const RECENT_SIGN_IN_MAX = 6
 
@@ -59,28 +60,28 @@ const AdminRecentSignInsCard = ({
 
   return (
     <Card className={cn("flex h-full min-w-0 flex-col overflow-hidden rounded-2xl", className)}>
-      <CardHeader className="shrink-0 pb-3">
-        <CardTitle className="flex items-center gap-2.5 font-host-grotesk text-lg text-foreground dark:text-white">
-          <LogIn className="h-5 w-5 shrink-0 text-rellia-teal" aria-hidden />
+      <CardHeader className={adminTeamCardHeaderClass}>
+        <CardTitle className={adminTeamCardTitleClass}>
+          <LogIn className={adminTeamCardTitleIconClass} aria-hidden />
           Recent sign-ins
         </CardTitle>
-        <CardDescription className="font-urbanist">Who has been active on the dashboard lately.</CardDescription>
       </CardHeader>
-      <CardContent className="flex flex-1 flex-col p-0">
+      <CardContent className="flex flex-1 flex-col px-0 pb-0 pt-0">
         {loading ? (
-          <div className="space-y-3 border-t border-border/80 p-4">
+          <div className="space-y-3 px-6 pb-6">
             {Array.from({ length: 4 }).map((_, i) => (
               <Skeleton key={i} className="h-14 rounded-xl" />
             ))}
           </div>
         ) : (
-          <div className="flex min-h-[16rem] flex-1 flex-col border-t border-border/80">
+          <div className="flex min-h-[16rem] flex-1 flex-col">
             {members.length > 0 ? (
-              <div className="shrink-0 overflow-hidden [&_ul]:p-3 [&_ul]:md:p-0">
+              <div className="shrink-0 overflow-hidden [&_ul]:space-y-3 [&_ul]:px-6 [&_ul]:pb-3 [&_ul]:pt-0 md:[&_ul]:hidden">
                 <AdminRecordList
                   rows={members}
                   getRowKey={(member) => member.id}
                   columns={signInColumns}
+                  tableClassName="w-full"
                   mobileFields={[
                     {
                       label: "Name",
@@ -109,10 +110,10 @@ const AdminRecentSignInsCard = ({
             {showFiller ? (
               <div
                 className={cn(
-                  "flex flex-1 flex-col items-center justify-center gap-2.5 px-4 py-8 text-center",
+                  "flex flex-1 flex-col items-center justify-center gap-2.5 py-8 text-center",
                   members.length > 0
-                    ? "border-t border-dashed border-border/80 bg-muted/15 dark:bg-muted/10"
-                    : "m-4 rounded-xl border border-dashed border-border/80 bg-muted/15 dark:bg-muted/10",
+                    ? "border-t border-dashed border-border/80 bg-muted/15 px-6 dark:bg-muted/10"
+                    : "mx-6 mb-6 rounded-xl border border-dashed border-border/80 bg-muted/15 px-4 dark:bg-muted/10",
                 )}
               >
                 <span className="flex h-11 w-11 items-center justify-center rounded-full border border-border/80 bg-card text-muted-foreground">
