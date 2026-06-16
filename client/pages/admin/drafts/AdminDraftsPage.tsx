@@ -50,11 +50,11 @@ const AdminDraftsPage = () => {
     <div>
       <AdminPageReveal>
       <AdminPageHeader
-        title="Sanity Drafts"
+        title="Content drafts"
         actions={
           <>
             <AdminDownloadCsvButton
-              filename={`rellia-sanity-drafts-${PRODUCTION_DATASET}`}
+              filename={`rellia-content-drafts-${PRODUCTION_DATASET}`}
               rows={filteredRows}
               columns={[
                 { header: "Title", value: (row) => row.title ?? row._id },
@@ -88,7 +88,7 @@ const AdminDraftsPage = () => {
       ) : (
         <>
           <AdminTipBox
-            title="Drafts guide"
+            title="Sanity Drafts"
             icon={FileEdit}
             storageKey="rellia-admin-drafts-tip-collapsed"
             className="mb-6"

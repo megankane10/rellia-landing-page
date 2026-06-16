@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils"
 import { cmsDisplayText, isVisualEditingPreview } from "@/lib/cmsStega"
 
 import { PORTFOLIO_LOGO_MARKS } from "@/data/portfolioLogos"
+import { MarketingImage } from "@/components/MarketingImage"
 
 export type LogoMark = { _key?: string; name: string; src: string; href?: string }
 
@@ -48,12 +49,12 @@ const LogoItem = ({
       previewMode ? "pointer-events-auto" : "pointer-events-none",
     )}
   >
-    <img
+    <MarketingImage
       src={cmsDisplayText(logo.src)}
       alt={cmsDisplayText(logo.name)}
+      preset="logoMarquee"
       title={previewMode ? cmsDisplayText(logo.name) : undefined}
       loading="eager"
-      decoding="async"
       draggable={false}
       className={cn(
         "w-auto max-w-[min(100%,18.5rem)] object-contain",

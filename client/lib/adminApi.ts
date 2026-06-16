@@ -140,7 +140,7 @@ export const fetchAdminSanityDrafts = async (
 
   if (!res.ok) {
     const body = (await res.json().catch(() => ({}))) as { error?: string }
-    throw new Error(body.error ?? `Could not load Sanity drafts (${res.status})`)
+    throw new Error(body.error ?? `Could not load content drafts (${res.status})`)
   }
 
   const data = (await res.json()) as { drafts?: AdminSanityDraftRow[] }

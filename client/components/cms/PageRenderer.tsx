@@ -18,6 +18,7 @@ import {
   PROGRAM_FILLOUT_EMBED_MIN_CLASS,
 } from "@/lib/filloutApplyForm"
 import { cn } from "@/lib/utils"
+import { MarketingImage } from "@/components/MarketingImage"
 import type {
   CmsPageContent,
   CmsPageSection,
@@ -529,9 +530,11 @@ const SectionEligibilityBento = ({ section }: { section: CmsSectionEligibilityBe
               key={item._key ?? idx}
               className="group relative flex h-[320px] md:h-[400px] flex-col overflow-hidden rounded-[22px] border border-black/10 shadow-[0_24px_60px_-42px_rgba(13,53,64,0.5)]"
             >
-              <img
+              <MarketingImage
                 src={item.imageUrl || bentoFallbackImage}
                 alt=""
+                decorative
+                preset="bentoCard"
                 className="absolute inset-0 h-full w-full object-cover transition duration-700 ease-out group-hover:scale-[1.04]"
                 loading="lazy"
               />

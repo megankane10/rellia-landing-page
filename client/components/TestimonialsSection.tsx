@@ -14,6 +14,7 @@ import type { HomeTestimonial, SanityPortableText } from "@shared/cms/types"
 import { cmsCleanText, cmsDisplayText } from "@/lib/cmsStega"
 import LogoMarquee, { type LogoMark } from "@/components/LogoMarquee"
 import { HeroHeadlinePortable } from "@/components/HeroHeadlinePortable"
+import { buildResponsiveImageProps } from "@shared/image/optimizeImageUrl"
 
 const carouselArrowClass =
   "inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-black/10 bg-white text-rellia-teal shadow-sm transition hover:bg-rellia-teal hover:text-white hover:border-rellia-teal disabled:pointer-events-none disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-white motion-reduce:transition-none"
@@ -72,6 +73,7 @@ function TestimonialCard({
   const cleanName = cmsCleanText(t.name)
   const isMelissa = cleanName.toLowerCase().includes("melissa")
   const imgSrc = isMelissa ? "/images/testimonials-melissaW.jpg" : t.imageSrc
+  const avatarImage = buildResponsiveImageProps(imgSrc, "avatar")
   const role = isMelissa ? "Founder" : t.role
   const quoteRef = useRef<HTMLParagraphElement | null>(null)
   const initials = useMemo(
@@ -181,7 +183,9 @@ function TestimonialCard({
         <div className="flex items-start gap-3 md:gap-3.5">
           <Avatar className="h-12 w-12 shrink-0 rounded-lg border border-black/10">
             <AvatarImage
-              src={imgSrc}
+              src={avatarImage.src}
+              srcSet={avatarImage.srcSet}
+              sizes={avatarImage.sizes}
               alt={cleanName}
               className={cn("object-cover", isMelissa && "object-[38%_50%]")}
             />

@@ -6,7 +6,6 @@ import { useAuth } from "@/context/AuthContext"
 import { fetchAdminTeam } from "@/lib/adminApi"
 import AdminPageHeader from "@/components/admin/AdminPageHeader"
 import AdminPageReveal from "@/components/admin/AdminPageReveal"
-import AdminDownloadCsvButton from "@/components/admin/AdminDownloadCsvButton"
 import AdminRecordList from "@/components/admin/AdminRecordList"
 import AdminCompactEmptyState from "@/components/admin/AdminCompactEmptyState"
 import AdminRecentSignInsCard from "@/components/admin/AdminRecentSignInsCard"
@@ -16,12 +15,13 @@ import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import { formatAdminDate } from "@/lib/adminSubmissionStatus"
 import { resolveAdminMemberAvatarUrl } from "@/lib/adminUserProfile"
+import { isAdminMemberOnlineNow, adminOnlineBadgeClass } from "@/lib/adminPresence"
 import type { AdminTableColumn } from "@/components/admin/AdminDataTable"
 import type { AdminTeamUser } from "@/lib/adminApi"
 import { cn } from "@/lib/utils"
 
 import AdminTipBox from "@/components/admin/AdminTipBox"
-import { adminInteractiveBoxClass, adminOutlineActionButtonClass } from "@/components/admin/adminThemeClasses"
+import { adminInteractiveBoxClass, adminOutlineActionButtonClass, adminPendingSurfaceClass } from "@/components/admin/adminThemeClasses"
 
 const SUPABASE_AUTH_USERS_URL =
   "https://supabase.com/dashboard/project/agsvypnmlrvpbgrsxtqy/auth/users"
@@ -32,7 +32,7 @@ const memberStatus = (member: AdminTeamUser) => {
       Active
     </span>
   ) : (
-    <span className="inline-flex rounded-full bg-amber-50 px-2.5 py-0.5 text-xs font-medium text-amber-900">
+    <span className={cn("inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium", adminPendingSurfaceClass)}>
       Invite pending
     </span>
   )
@@ -52,15 +52,7 @@ const memberInitials = (member: AdminTeamUser) => {
 
 const memberAvatar = (member: AdminTeamUser) => {
   const resolvedAvatarUrl = resolveAdminMemberAvatarUrl(member)
-
-  const isOnlineNow = (() => {
-    if (!member.confirmedAt) return false
-    const ts = member.lastActiveAt || member.lastSignInAt
-    if (!ts) return false
-    const t = new Date(ts).getTime()
-    if (Number.isNaN(t)) return false
-    return Date.now() - t <= 15 * 60 * 1000
-  })()
+  const isOnlineNow = isAdminMemberOnlineNow(member)
 
   return (
     <div className="relative shrink-0">
@@ -75,8 +67,8 @@ const memberAvatar = (member: AdminTeamUser) => {
       {isOnlineNow ? (
         <span
           className="absolute -bottom-0.5 -right-0.5 h-3.5 w-3.5 rounded-full border-2 border-card bg-emerald-500"
-          aria-label="Online now"
-          title="Online now"
+          aria-label="Online"
+          title="Online"
         />
       ) : null}
     </div>
@@ -91,7 +83,8 @@ const AdminTeamPage = () => {
     queryKey: ["admin-team", token],
     queryFn: () => fetchAdminTeam(token),
     enabled: Boolean(token),
-    staleTime: 60_000,
+    staleTime: 30_000,
+    refetchInterval: 60_000,
   })
 
   const columns: AdminTableColumn<AdminTeamUser>[] = [
@@ -99,14 +92,7 @@ const AdminTeamPage = () => {
       key: "name",
       header: "Name",
       cell: (member) => {
-        const isOnlineNow = (() => {
-          if (!member.confirmedAt) return false
-          const ts = member.lastActiveAt || member.lastSignInAt
-          if (!ts) return false
-          const t = new Date(ts).getTime()
-          if (Number.isNaN(t)) return false
-          return Date.now() - t <= 15 * 60 * 1000
-        })()
+        const isOnlineNow = isAdminMemberOnlineNow(member)
 
         return (
           <div className="flex items-center gap-3">
@@ -115,9 +101,9 @@ const AdminTeamPage = () => {
               <div className="flex flex-wrap items-center gap-2">
                 <span className="font-medium text-foreground">{member.fullName?.trim() || "—"}</span>
                 {isOnlineNow ? (
-                  <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-200/70 bg-emerald-50 px-2.5 py-0.5 font-urbanist text-xs font-semibold text-emerald-800 dark:border-emerald-500/70 dark:bg-emerald-500/15 dark:text-emerald-100">
+                  <span className={adminOnlineBadgeClass}>
                     <span className="h-2 w-2 rounded-full bg-emerald-500" aria-hidden />
-                    Online now
+                    Online
                   </span>
                 ) : null}
               </div>
@@ -158,31 +144,12 @@ const AdminTeamPage = () => {
         <AdminPageHeader
           title="Team"
           actions={
-            <>
-              <AdminDownloadCsvButton
-                filename="rellia-admin-team"
-                rows={users}
-                columns={[
-                  { header: "Name", value: (member) => member.fullName?.trim() || "" },
-                  { header: "Email", value: (member) => member.email },
-                  { header: "Joined", value: (member) => formatAdminDate(member.createdAt) },
-                  {
-                    header: "Status",
-                    value: (member) => (member.confirmedAt ? "Active" : "Invite pending"),
-                  },
-                  {
-                    header: "Last sign-in",
-                    value: (member) => (member.lastSignInAt ? formatAdminDate(member.lastSignInAt) : ""),
-                  },
-                ]}
-              />
-              <Button type="button" variant="outline" size="sm" asChild className={adminOutlineActionButtonClass}>
-                <a href={SUPABASE_AUTH_USERS_URL} target="_blank" rel="noopener noreferrer">
-                  Invite in Supabase
-                  <ExternalLink className="ml-1.5 h-3.5 w-3.5" aria-hidden />
-                </a>
-              </Button>
-            </>
+            <Button type="button" variant="outline" size="sm" asChild className={adminOutlineActionButtonClass}>
+              <a href={SUPABASE_AUTH_USERS_URL} target="_blank" rel="noopener noreferrer">
+                Supabase Auth
+                <ExternalLink className="ml-1.5 h-3.5 w-3.5" aria-hidden />
+              </a>
+            </Button>
           }
         />
 
@@ -289,12 +256,23 @@ const AdminTeamPage = () => {
             mobileFields={[
               {
                 label: "Member",
-                value: (member) => (
+                value: (member) => {
+                  const isOnlineNow = isAdminMemberOnlineNow(member)
+                  return (
                   <div className="flex items-center gap-2">
                     {memberAvatar(member)}
-                    <span>{member.fullName?.trim() || member.email}</span>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span>{member.fullName?.trim() || member.email}</span>
+                      {isOnlineNow ? (
+                        <span className={adminOnlineBadgeClass}>
+                          <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" aria-hidden />
+                          Online
+                        </span>
+                      ) : null}
+                    </div>
                   </div>
-                ),
+                  )
+                },
               },
               { label: "Email", value: (member) => member.email },
               { label: "Status", value: (member) => memberStatus(member) },

@@ -15,6 +15,7 @@ import { cn } from "@/lib/utils"
 import { getCurrentMonthDeadline } from "@/lib/dateUtils"
 import { placeholderImageFromSeed } from "@/lib/placeholderImages"
 import { cmsCleanText, cmsDisplayText } from "@/lib/cmsStega"
+import { MarketingImage } from "@/components/MarketingImage"
 
 const shortenMonth = (dateStr: string) => {
   const months: Record<string, string> = {
@@ -175,9 +176,10 @@ export function HorizontalCard(props: HorizontalCardProps) {
           {/* Mobile Image (Above Speaker) */}
           <div className="mt-5 md:hidden">
             <div className="relative aspect-[5/4] w-full max-h-[min(72vw,320px)] overflow-hidden rounded-2xl bg-black/5 shadow-sm">
-              <img
+              <MarketingImage
                 src={eventThumbSrc}
                 alt={cmsCleanText(event.title)}
+                preset="contentCard"
                 className={cn(
                   "absolute inset-0 h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105",
                   variant === "past" && "opacity-90 saturate-[0.9]"
@@ -190,11 +192,12 @@ export function HorizontalCard(props: HorizontalCardProps) {
           <div className="mt-6 flex flex-wrap items-center gap-y-3 gap-x-6">
             {hasSpeakerBlock && (
               <div className="flex items-center gap-3">
-                <img
+                <MarketingImage
                   src={avatarSrc}
                   alt=""
+                  decorative
+                  preset="avatar"
                   className="h-9 w-9 rounded-full border border-black/10 object-cover"
-                  aria-hidden
                 />
                 <span className="font-urbanist text-[15px] md:text-base font-semibold text-black/80 leading-none truncate">
                   {cmsDisplayText(speakerName)}
@@ -209,9 +212,10 @@ export function HorizontalCard(props: HorizontalCardProps) {
  
         {/* Desktop Image Thumbnail */}
         <div className="relative hidden shrink-0 overflow-hidden rounded-2xl bg-black/5 shadow-sm md:ml-auto md:block md:h-[180px] md:w-[180px] lg:h-[210px] lg:w-[210px]">
-          <img
+          <MarketingImage
             src={eventThumbSrc}
             alt={cmsCleanText(event.title)}
+            preset="contentCard"
             className={cn(
               "absolute inset-0 h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105",
               variant === "past" && "opacity-90 saturate-[0.9]"
@@ -250,9 +254,10 @@ export function HorizontalCard(props: HorizontalCardProps) {
 
       {/* Image */}
       <div className="relative aspect-[5/4] w-full max-h-[min(72vw,320px)] shrink-0 overflow-hidden rounded-2xl bg-rellia-teal/5 md:aspect-square md:h-[210px] md:max-h-none md:w-[210px] lg:h-[250px] lg:w-[250px]">
-        <img
+        <MarketingImage
           src={programImageSrc}
           alt={cmsCleanText(program.title)}
+          preset="contentCard"
           className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
           loading="lazy"
         />

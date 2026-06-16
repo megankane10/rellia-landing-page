@@ -95,9 +95,9 @@ const studioGuideDoc = {
     {
       _type: "guideSection",
       _key: "admin_drafts",
-      heading: "Admin dashboard — Sanity drafts",
+      heading: "Admin dashboard — Content drafts",
       body:
-        "Admin → Sanity drafts lists unpublished documents in the production dataset. Open Studio from that page to review and publish. The overview home card shows the same draft count.",
+        "Admin → Content drafts lists unpublished documents in the production dataset. Open Studio from that page to review and publish. The overview home card shows the same draft count.",
     },
     {
       _type: "guideSection",

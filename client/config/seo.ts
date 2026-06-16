@@ -325,13 +325,13 @@ export const ROUTE_SEO: Record<string, RouteSeoConfig> = {
     indexable: false,
   },
   "/admin/drafts": {
-    title: "Sanity Drafts — Admin",
-    description: "Unpublished Sanity CMS drafts awaiting review in the Rellia Health admin dashboard.",
+    title: "Content drafts — Admin",
+    description: "Unpublished CMS content drafts awaiting review in the Rellia Health admin dashboard.",
     indexable: false,
   },
   "/admin/content": {
-    title: "Sanity Drafts — Admin",
-    description: "Unpublished Sanity CMS drafts awaiting review in the Rellia Health admin dashboard.",
+    title: "Content drafts — Admin",
+    description: "Unpublished CMS content drafts awaiting review in the Rellia Health admin dashboard.",
     indexable: false,
   },
   "/admin/help": {

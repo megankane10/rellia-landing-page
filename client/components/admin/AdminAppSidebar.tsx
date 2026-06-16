@@ -127,7 +127,7 @@ const MAIN_NAV: NavItem[] = [
   { to: "/admin/team", label: "Team", icon: Users, end: true },
   {
     to: "/admin/drafts",
-    label: "Sanity Drafts",
+    label: "Content drafts",
     icon: FileEdit,
     isActiveMatch: (path) => path.startsWith("/admin/drafts") || path.startsWith("/admin/content"),
   },

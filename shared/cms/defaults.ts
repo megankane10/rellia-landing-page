@@ -1346,7 +1346,7 @@ export const DEFAULT_GLOBAL_SETTINGS: GlobalSettingsContent = {
   announcementPillText: "LIVE",
   priorityModalEnabled: false,
   priorityModalHeading: "Welcome to the Preview Environment",
-  priorityModalBody: "This preview environment displays unpublished changes. You can review all current drafts on the drafts dashboard, or edit content in the Sanity Studio.",
+  priorityModalBody: "This preview environment displays unpublished changes. You can review all current content drafts on the content drafts page, or edit content in Sanity Studio.",
   priorityModalPillText: "PREVIEW",
   priorityModalButtonLabel: "View Drafts Dashboard",
   priorityModalButtonLink: "/admin/drafts",

@@ -2,6 +2,7 @@ import * as React from "react"
 import { Link } from "react-router-dom"
 import { DEFAULT_GLOBAL_SETTINGS } from "@shared/cms/defaults"
 import { CareersHiringBadge } from "@/components/CareersHiringBadge"
+import { MarketingImage } from "@/components/MarketingImage"
 import { InstagramFilled, LinkedInFilled, MailFilled } from "@/components/icons/SocialIcons"
 import { useGlobalSettings, useNavigation } from "@/hooks/useCmsDocuments"
 import type { NavItem } from "@shared/cms/types"
@@ -222,7 +223,12 @@ export default function Footer() {
           {/* Mobile header (logo + tagline first) */}
           <div className="mb-10 flex flex-col items-start gap-4 text-left md:hidden">
             <Link to="/" className="flex items-center justify-start">
-              <img src="/images/hologram-logo.png" alt="Rellia" className="h-9 w-auto md:h-10" />
+              <MarketingImage
+                src="/images/hologram-logo.png"
+                alt="Rellia"
+                preset="footerLogo"
+                className="h-9 w-auto md:h-10"
+              />
             </Link>
             <p className="font-urbanist text-[14px] leading-snug text-white md:text-[15px] md:leading-relaxed">
               {g.footerTagline}
@@ -232,7 +238,12 @@ export default function Footer() {
           <div className="mb-8 flex flex-col gap-10 md:mb-10 md:flex-row md:items-start md:gap-16 lg:gap-24 xl:gap-28">
             <div className="hidden min-w-0 flex-col gap-6 md:flex md:max-w-[280px] md:shrink-0">
               <Link to="/" className="flex items-center">
-                <img src="/images/hologram-logo.png" alt="Rellia" className="h-10 w-auto" />
+                <MarketingImage
+                  src="/images/hologram-logo.png"
+                  alt="Rellia"
+                  preset="footerLogo"
+                  className="h-10 w-auto"
+                />
               </Link>
               <p className="max-w-[280px] font-urbanist text-[15px] leading-relaxed text-white">{g.footerTagline}</p>
               <div className="flex gap-4">

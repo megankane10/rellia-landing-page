@@ -1,5 +1,9 @@
 import type { ReactNode } from "react"
-import { adminMutedTextClass } from "@/components/admin/adminThemeClasses"
+import {
+  adminMutedTextClass,
+  adminTableBodyCellClass,
+  adminTableHeaderCellClass,
+} from "@/components/admin/adminThemeClasses"
 import { cn } from "@/lib/utils"
 
 export type AdminTableColumn<T> = {
@@ -15,6 +19,7 @@ type AdminDataTableProps<T> = {
   getRowKey: (row: T) => string
   emptyMessage?: string
   className?: string
+  tableClassName?: string
 }
 
 const AdminDataTable = <T,>({
@@ -23,6 +28,7 @@ const AdminDataTable = <T,>({
   getRowKey,
   emptyMessage = "No items to show.",
   className,
+  tableClassName,
 }: AdminDataTableProps<T>) => {
   if (rows.length === 0) {
     return (
@@ -34,17 +40,14 @@ const AdminDataTable = <T,>({
 
   return (
     <div className={cn("overflow-x-auto", className)}>
-      <table className="w-full min-w-[520px] border-collapse text-left">
+      <table className={cn("w-full min-w-[32rem] border-collapse text-left", tableClassName)}>
         <thead>
           <tr className="border-b border-border bg-muted/50">
             {columns.map((col) => (
               <th
                 key={col.key}
                 scope="col"
-                className={cn(
-                  "px-5 py-3 font-urbanist text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground first:pl-5 last:pr-5",
-                  col.className,
-                )}
+                className={cn(adminTableHeaderCellClass, col.className)}
               >
                 {col.header}
               </th>
@@ -60,10 +63,7 @@ const AdminDataTable = <T,>({
               {columns.map((col) => (
                 <td
                   key={col.key}
-                  className={cn(
-                    "px-5 py-3.5 align-middle font-urbanist text-sm text-foreground first:pl-5 last:pr-5",
-                    col.className,
-                  )}
+                  className={cn(adminTableBodyCellClass, col.className)}
                 >
                   {col.cell(row)}
                 </td>

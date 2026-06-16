@@ -4,6 +4,7 @@ import { ProfileSocialLinks, type ProfileSocialLink } from "@/components/network
 import { personImageByFirstName } from "@/lib/person-image";
 import { cn } from "@/lib/utils";
 import { cmsCleanText, cmsDisplayText } from "@/lib/cmsStega";
+import { MarketingImage } from "@/components/MarketingImage";
 
 export type TeamMemberCardProps = {
   name: string;
@@ -102,9 +103,10 @@ export function TeamMemberCard({
           }
         }}
       >
-        <img
+        <MarketingImage
           src={src}
           alt={name}
+          preset="teamCard"
           onError={() => {
             setCandidateIndex((i) => Math.min(i + 1, candidates.length - 1));
           }}

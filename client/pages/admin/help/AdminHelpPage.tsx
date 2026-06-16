@@ -19,7 +19,15 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import AdminPageHeader from "@/components/admin/AdminPageHeader"
 import AdminPageReveal from "@/components/admin/AdminPageReveal"
 import { Dialog, DialogClose, DialogContent, DialogTrigger } from "@/components/ui/dialog"
-import { adminCardClass, adminCardTitleClass, adminIconTileClass, adminInteractiveBoxClass, adminOutlineActionButtonClass } from "@/components/admin/adminThemeClasses"
+import {
+  adminCardClass,
+  adminCardTitleClass,
+  adminIconTileClass,
+  adminInteractiveBoxClass,
+  adminInteractiveLinkArrowClass,
+  adminInteractiveLinkTitleClass,
+  adminOutlineActionButtonClass,
+} from "@/components/admin/adminThemeClasses"
 import { cn } from "@/lib/utils"
 import {
   OPERATIONS_DOC_EDIT_URL,
@@ -199,7 +207,7 @@ const AdminHelpPage = () => {
             <h4 className="font-bold text-foreground">What’s inside</h4>
             <ul className="list-disc pl-5 space-y-1">
               <li>How to process web forms + diagnostic surveys</li>
-              <li>Publishing flow for Sanity content and drafts</li>
+              <li>Publishing flow for CMS content drafts</li>
               <li>Where key tools live (Vercel, Supabase, Sanity)</li>
             </ul>
           </div>
@@ -299,15 +307,15 @@ const AdminHelpPage = () => {
                 rel="noopener noreferrer"
                 className={cn(
                   "group relative flex min-h-[92px] min-w-0 items-start gap-3 rounded-2xl border border-border/70 bg-card px-4 py-3.5 shadow-sm transition",
-                  "hover:-translate-y-px hover:border-rellia-teal/25 hover:bg-rellia-mint/10 hover:shadow-md",
+                  "hover:-translate-y-px hover:border-rellia-teal/25 hover:bg-rellia-mint/10 hover:shadow-md dark:hover:border-rellia-mint/30 dark:hover:bg-rellia-mint/10",
                   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
                 )}
               >
-                <span className="mt-0.5 inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-border bg-rellia-mint/20 text-rellia-teal">
+                <span className="mt-0.5 inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-border bg-rellia-mint/20 text-rellia-teal dark:border-rellia-mint/20 dark:bg-rellia-mint/15 dark:text-rellia-mint">
                   <tool.icon className="h-5 w-5" aria-hidden />
                 </span>
                 <div className="min-w-0 flex-1">
-                  <div className="truncate font-urbanist text-sm font-semibold text-foreground transition-colors group-hover:text-rellia-teal">
+                  <div className={cn("truncate font-urbanist text-sm font-semibold text-foreground", adminInteractiveLinkTitleClass)}>
                     {tool.label}
                   </div>
                   <div className="mt-0.5 line-clamp-2 font-urbanist text-xs leading-relaxed text-muted-foreground">
@@ -315,7 +323,7 @@ const AdminHelpPage = () => {
                   </div>
                 </div>
                 <ArrowRight
-                  className="mt-1 h-4 w-4 shrink-0 text-muted-foreground transition group-hover:text-rellia-teal"
+                  className={cn("mt-1 h-4 w-4 shrink-0 text-muted-foreground", adminInteractiveLinkArrowClass)}
                   aria-hidden
                 />
               </a>

@@ -49,7 +49,7 @@ const AdminDiagnosticAnswers = ({ rawAnswers }: AdminDiagnosticAnswersProps) => 
           <AccordionItem
             key={group.sectionId}
             value={group.sectionId}
-            className="overflow-hidden rounded-xl border border-border bg-rellia-cream/25 px-4"
+            className="overflow-hidden rounded-xl border border-border bg-rellia-cream/25 px-4 dark:border-rellia-mint/15 dark:bg-rellia-mint/5"
           >
             <AccordionTrigger className="gap-3 py-3 hover:no-underline [&>svg]:shrink-0">
               <span className="flex min-w-0 flex-1 flex-wrap items-center gap-x-2 gap-y-1 text-left">
@@ -83,7 +83,7 @@ const AdminDiagnosticAnswers = ({ rawAnswers }: AdminDiagnosticAnswersProps) => 
                       <span className="text-muted-foreground">Q{item.questionIndex + 1}. </span>
                       {item.questionText}
                     </p>
-                    <p className="mt-2 font-host-grotesk text-sm font-semibold text-rellia-teal">
+                    <p className="mt-2 font-host-grotesk text-sm font-semibold text-rellia-teal dark:text-rellia-mint">
                       {item.selectedLabel}
                       <span className="ml-2 font-urbanist text-xs font-normal text-muted-foreground">
                         ({item.score}%)

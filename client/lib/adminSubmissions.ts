@@ -1,6 +1,26 @@
 import { supabase } from "@/lib/supabase"
 import type { SubmissionStatus } from "@/lib/adminSubmissionStatus"
 
+export type DiagnosticSectionScore = { category: string; score: number }
+
+export type DiagnosticStrength = { category: string; score: number; note: string }
+
+export type DiagnosticWeakness = {
+  category: string
+  score: number
+  note: string
+  priority: string
+}
+
+export type DiagnosticResponseSummary = {
+  section_scores: DiagnosticSectionScore[] | null
+  summary: string | null
+  top3_strengths: DiagnosticStrength[] | null
+  top3_weaknesses: DiagnosticWeakness[] | null
+  recommendations: string[] | null
+  mentor_areas_needed: string[] | null
+}
+
 export type CompanyProfileRow = {
   id: string
   created_at: string
@@ -11,6 +31,7 @@ export type CompanyProfileRow = {
   description: string | null
   status?: SubmissionStatus | null
   admin_note?: string | null
+  diagnostic_response?: DiagnosticResponseSummary | null
 }
 
 export type ContactRow = {
@@ -34,9 +55,58 @@ export const fetchContactSubmissions = async (): Promise<ContactRow[]> => {
 }
 
 export const fetchDiagnosticSubmissions = async (): Promise<CompanyProfileRow[]> => {
-  const { data, error } = await supabase.from("company_profiles").select("*").order("created_at", { ascending: false })
+  const { data, error } = await supabase
+    .from("company_profiles")
+    .select(
+      `
+      *,
+      diagnostic_responses (
+        created_at,
+        section_scores,
+        summary,
+        top3_strengths,
+        top3_weaknesses,
+        recommendations,
+        mentor_areas_needed
+      )
+    `,
+    )
+    .order("created_at", { ascending: false })
+
   if (error) throw error
-  return (data ?? []) as CompanyProfileRow[]
+
+  return (data ?? []).map((row) => {
+    const {
+      diagnostic_responses: responses,
+      ...profile
+    } = row as CompanyProfileRow & {
+      diagnostic_responses?: Array<
+        DiagnosticResponseSummary & {
+          created_at: string
+        }
+      >
+    }
+
+    const latestResponse = Array.isArray(responses)
+      ? [...responses].sort(
+          (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
+        )[0]
+      : null
+
+    return {
+      ...profile,
+      diagnostic_response: latestResponse
+        ? {
+            section_scores: latestResponse.section_scores,
+            summary: latestResponse.summary,
+            top3_strengths: latestResponse.top3_strengths,
+            top3_weaknesses: latestResponse.top3_weaknesses,
+            recommendations: latestResponse.recommendations,
+            mentor_areas_needed: latestResponse.mentor_areas_needed,
+          }
+        : null,
+    }
+  })
 }
 
 export const contactDisplayName = (row: ContactRow) =>

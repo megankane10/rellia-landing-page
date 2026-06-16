@@ -140,4 +140,22 @@ export const adminDarkDialogContentClass = cn(
 export const adminLightDialogShellClass = cn(
   "rounded-[2rem] sm:rounded-[2rem]",
   "border-border/80 shadow-xl shadow-black/12",
+  "dark:border-slate-700/65 dark:bg-slate-900 dark:text-slate-200",
+  "[&_button]:dark:text-slate-200",
+)
+
+/** Admin popovers / floating panels (note editor, etc.) — dark surface in admin dark mode */
+export const adminPopoverContentClass = cn(
+  "z-50 rounded-2xl border p-4 shadow-2xl shadow-black/45",
+  "border-border bg-popover text-popover-foreground",
+  "dark:border-slate-700/65 dark:bg-slate-900 dark:text-slate-200",
+  "[&_.text-muted-foreground]:dark:text-slate-400",
+  "[&_textarea]:dark:border-slate-700 [&_textarea]:dark:bg-slate-950 [&_textarea]:dark:text-white [&_textarea]:dark:placeholder:text-slate-500",
+)
+
+/** Admin select dropdown surface */
+export const adminSelectContentClass = cn(
+  "rounded-xl",
+  "dark:border-slate-700/65 dark:bg-slate-900 dark:text-slate-200",
+  "[&_[data-highlighted]]:dark:bg-white/10 [&_[data-highlighted]]:dark:text-white",
 )

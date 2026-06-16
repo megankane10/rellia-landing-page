@@ -12,6 +12,7 @@ import type { LucideIcon } from "lucide-react"
 import ScrollReveal from "./ScrollReveal"
 import { cn } from "@/lib/utils"
 import { cmsDisplayText, cmsDisplayTextOr, cmsCleanText } from "@/lib/cmsStega"
+import { MarketingImage } from "@/components/MarketingImage"
 
 export type HowItWorksStep = {
   _key?: string
@@ -111,10 +112,11 @@ export default function HowItWorks(props?: HowItWorksProps) {
 
   return (
     <section className="relative flex w-full flex-col justify-center bg-rellia-teal py-16 md:py-20 overflow-hidden rounded-[2.5rem] md:rounded-[3.5rem]">
-      <img
+      <MarketingImage
         src="/images/hologram-logo.png"
         alt=""
-        aria-hidden="true"
+        decorative
+        preset="decorativeLogo"
         className="pointer-events-none absolute -right-20 top-8 w-[360px] max-w-[55vw] opacity-[0.06] md:right-0 md:top-0 md:w-[460px]"
       />
       <div aria-hidden className="pointer-events-none absolute inset-0">

@@ -1,6 +1,8 @@
 import type { ReactNode } from "react"
 import ScrollReveal from "@/components/ScrollReveal"
 import { cn } from "@/lib/utils"
+import { MarketingImage } from "@/components/MarketingImage"
+import { buildResponsiveImageProps } from "@shared/image/optimizeImageUrl"
 
 export type StoryPostHeroLayout = "background" | "block"
 
@@ -28,6 +30,12 @@ export const StoryPostHero = ({
   const coverSrc = coverImageSrc?.trim() || null
   const coverAlt = (coverImageAlt?.trim() || title).trim()
   const useBackgroundLayout = layout === "background" && Boolean(coverSrc)
+  const heroImage = coverSrc
+    ? buildResponsiveImageProps(toAbsoluteImageUrl(coverSrc), "storyHero")
+    : null
+  const inlineImage = coverSrc
+    ? buildResponsiveImageProps(toAbsoluteImageUrl(coverSrc), "storyInline")
+    : null
 
   return (
     <section
@@ -42,14 +50,16 @@ export const StoryPostHero = ({
             ),
       )}
     >
-      {useBackgroundLayout ? (
+      {useBackgroundLayout && heroImage ? (
         <div aria-hidden className="pointer-events-none absolute inset-0">
-          <img
+          <MarketingImage
             src={toAbsoluteImageUrl(coverSrc!)}
+            responsive={heroImage}
             alt=""
+            decorative
             className="h-full w-full object-cover"
             loading="eager"
-            fetchpriority="high"
+            fetchPriority="high"
           />
           <div className="absolute inset-0 bg-gradient-to-b from-black/65 via-black/45 to-[#0d3540]/92" />
           <div className="absolute inset-0 bg-gradient-to-tr from-rellia-teal/35 via-transparent to-black/20" />
@@ -104,16 +114,17 @@ export const StoryPostHero = ({
                 </p>
               ) : null}
 
-              {!useBackgroundLayout && coverSrc ? (
+              {!useBackgroundLayout && coverSrc && inlineImage ? (
                 <div className="mt-8 md:mt-10">
                   <div className="relative">
                     <figure className="relative w-full max-w-3xl overflow-hidden rounded-2xl border border-white/15 bg-black/20 shadow-[0_24px_56px_-28px_rgba(0,0,0,0.55)]">
-                      <img
+                      <MarketingImage
                         src={toAbsoluteImageUrl(coverSrc)}
+                        responsive={inlineImage}
                         alt={coverAlt}
                         className="block h-auto w-full"
                         loading="eager"
-                        fetchpriority="high"
+                        fetchPriority="high"
                       />
                     </figure>
                     <aside

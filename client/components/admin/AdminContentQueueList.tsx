@@ -9,6 +9,8 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible"
 import AdminCompactEmptyState from "@/components/admin/AdminCompactEmptyState"
+import AdminRecordList from "@/components/admin/AdminRecordList"
+import type { AdminTableColumn } from "@/components/admin/AdminDataTable"
 import { FileEdit } from "lucide-react"
 import {
   formatCmsContentRelative,
@@ -16,6 +18,7 @@ import {
   studioUrlForRow,
   type SanityContentRow,
 } from "@/lib/adminSanityContent"
+import { adminCompactOutlineActionButtonClass, adminPendingSurfaceClass } from "@/components/admin/adminThemeClasses"
 import { cn } from "@/lib/utils"
 
 type AdminContentQueueListProps = {
@@ -42,8 +45,10 @@ const statusBadge = (status: SanityContentRow["status"]) => {
     return {
       label: "Draft",
       title: "Saved in Studio but not published — not visible on the live site",
-      className:
-        "border border-amber-200/70 bg-amber-50 text-amber-800 hover:bg-amber-50 dark:border-amber-500/70 dark:bg-amber-500/10 dark:text-amber-400 dark:hover:bg-amber-500/10",
+      className: cn(
+        "border hover:bg-orange-50 dark:hover:bg-orange-500/10",
+        adminPendingSurfaceClass,
+      ),
     }
   }
   return {
@@ -54,8 +59,76 @@ const statusBadge = (status: SanityContentRow["status"]) => {
   }
 }
 
+const StudioLinkButton = ({ row }: { row: SanityContentRow }) => (
+  <Button
+    type="button"
+    variant="outline"
+    size="sm"
+    asChild
+    className={adminCompactOutlineActionButtonClass}
+  >
+    <a
+      href={studioUrlForRow(row)}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label={`Open ${row.title ?? row._type} in Sanity Studio`}
+    >
+      Review in Studio
+      <ExternalLink className="ml-1.5 h-3.5 w-3.5" aria-hidden />
+    </a>
+  </Button>
+)
+
+const StatusBadge = ({ status }: { status: SanityContentRow["status"] }) => {
+  const badge = statusBadge(status)
+  return (
+    <Badge
+      title={badge.title}
+      className={cn("shrink-0 rounded-full font-urbanist text-[10px] font-medium", badge.className)}
+    >
+      {badge.label}
+    </Badge>
+  )
+}
+
+const draftTableColumns: AdminTableColumn<SanityContentRow>[] = [
+  {
+    key: "title",
+    header: "Title",
+    className: "min-w-[12rem]",
+    cell: (row) => (
+      <span className="font-host-grotesk font-medium text-foreground">{row.title || row._id}</span>
+    ),
+  },
+  {
+    key: "type",
+    header: "Type",
+    className: "min-w-[6rem] whitespace-nowrap",
+    cell: (row) => formatCmsDocumentTypeLabel(row._type),
+  },
+  {
+    key: "updated",
+    header: "Updated",
+    className: "min-w-[6.5rem] whitespace-nowrap",
+    cell: (row) => (
+      <span className="text-muted-foreground">{formatCmsContentRelative(row._updatedAt)}</span>
+    ),
+  },
+  {
+    key: "status",
+    header: "Status",
+    className: "min-w-[6rem] whitespace-nowrap",
+    cell: (row) => <StatusBadge status={row.status} />,
+  },
+  {
+    key: "action",
+    header: "",
+    className: "w-[9.5rem] shrink-0 whitespace-nowrap text-right",
+    cell: (row) => <StudioLinkButton row={row} />,
+  },
+]
+
 const ContentCard = ({ row }: { row: SanityContentRow }) => {
-  const badge = statusBadge(row.status)
   return (
     <li className="flex flex-col gap-3 rounded-2xl border border-border bg-card p-3.5 transition-shadow hover:shadow-[0_6px_24px_-18px_rgba(13,53,64,0.22)]">
       <div className="min-w-0">
@@ -63,34 +136,13 @@ const ContentCard = ({ row }: { row: SanityContentRow }) => {
           <p className="min-w-0 flex-1 font-host-grotesk text-sm text-foreground">
             {row.title || row._id}
           </p>
-          <Badge
-            title={badge.title}
-            className={cn("shrink-0 rounded-full font-urbanist text-[10px] font-medium", badge.className)}
-          >
-            {badge.label}
-          </Badge>
+          <StatusBadge status={row.status} />
         </div>
         <p className="mt-1 font-urbanist text-xs text-muted-foreground">
           {formatCmsDocumentTypeLabel(row._type)} · {formatCmsContentRelative(row._updatedAt)}
         </p>
       </div>
-      <Button
-        type="button"
-        variant="outline"
-        size="sm"
-        asChild
-        className="h-8 w-fit rounded-full border-rellia-teal/20 px-3 text-xs text-rellia-teal hover:bg-rellia-mint/15"
-      >
-        <a
-          href={studioUrlForRow(row)}
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label={`Open ${row.title ?? row._type} in Sanity Studio`}
-        >
-          Review in Studio
-          <ExternalLink className="ml-1.5 h-3.5 w-3.5" aria-hidden />
-        </a>
-      </Button>
+      <StudioLinkButton row={row} />
     </li>
   )
 }
@@ -148,6 +200,25 @@ const AdminContentQueueList = ({
   groupByType = true,
 }: AdminContentQueueListProps) => {
   if (isLoading) {
+    if (!groupByType) {
+      return (
+        <div className="overflow-hidden rounded-xl border border-border bg-card shadow-sm">
+          <div className="hidden space-y-0 md:block">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <Skeleton key={i} className="h-14 w-full rounded-none border-b border-border/60 last:border-0" />
+            ))}
+          </div>
+          <ul className="space-y-3 p-3 md:hidden">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <li key={i}>
+                <Skeleton className="h-28 rounded-xl" />
+              </li>
+            ))}
+          </ul>
+        </div>
+      )
+    }
+
     return (
       <div className="space-y-3">
         {Array.from({ length: 4 }).map((_, i) => (
@@ -178,11 +249,32 @@ const AdminContentQueueList = ({
 
   if (!groupByType) {
     return (
-      <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-        {rows.map((row) => (
-          <ContentCard key={`${row.status}-${row._id}`} row={row} />
-        ))}
-      </ul>
+      <div className="overflow-hidden rounded-xl border border-border bg-card shadow-sm [&_ul]:p-3 [&_ul]:md:p-0">
+        <AdminRecordList
+          rows={rows}
+          getRowKey={(row) => `${row.status}-${row._id}`}
+          columns={draftTableColumns}
+          mobileFields={[
+            {
+              label: "Title",
+              value: (row) => row.title || row._id,
+            },
+            {
+              label: "Type",
+              value: (row) => formatCmsDocumentTypeLabel(row._type),
+            },
+            {
+              label: "Updated",
+              value: (row) => formatCmsContentRelative(row._updatedAt),
+            },
+            {
+              label: "Status",
+              value: (row) => <StatusBadge status={row.status} />,
+            },
+          ]}
+          mobileActions={(row) => <StudioLinkButton row={row} />}
+        />
+      </div>
     )
   }
 

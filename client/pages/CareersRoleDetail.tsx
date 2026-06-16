@@ -8,7 +8,7 @@ import RelliaAction from "@/components/RelliaAction"
 import RelliaCta, { optionalCtaAction } from "@/components/RelliaCta"
 import { PortableRichText } from "@/components/PortableRichText"
 import { ShareCopyLinkButton } from "@/components/share/ShareCopyLinkButton"
-import { shareComfortableControlSizeClass, shareIconSize } from "@/components/share/sharePageIcons"
+import { shareIconSize } from "@/components/share/sharePageIcons"
 import PageSocialHelmet from "@/components/seo/PageSocialHelmet"
 import { CmsCareersRoleBodySkeleton } from "@/components/cms/CmsPageSkeletons"
 import { useCareersPage } from "@/hooks/useCmsDocuments"
@@ -46,11 +46,14 @@ const roleLocationBadgeClass =
 const roleHighlightsBoxClass =
   "rounded-2xl border border-black/[0.06] bg-rellia-cream/30 px-3 py-4 md:px-5 md:py-5"
 
+const roleHeaderActionHeightClass = "h-[3.75rem]"
+
 const roleShareCopyButtonClassName = cn(
   "border-black/10 bg-white text-black hover:border-rellia-teal hover:bg-rellia-teal hover:text-white",
   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-teal focus-visible:ring-offset-2",
-  shareComfortableControlSizeClass,
 )
+
+const roleShareCopyButtonSizeClassName = cn(roleHeaderActionHeightClass, "w-[3.75rem] shrink-0")
 
 export default function CareersRoleDetail() {
   const { roleId: roleIdParam } = useParams<{ roleId: string }>()
@@ -73,17 +76,17 @@ export default function CareersRoleDetail() {
     [openRoles, linkedRoleId],
   )
 
-  const careersHeroImageSrc =
-    careersCms.heroImageSrc?.trim() || DEFAULT_CAREERS_PAGE.heroImageSrc
-
   const roleShareSeo = useMemo(
-    () => (role ? buildCareersRoleShareMeta(role, { heroImageSrc: careersHeroImageSrc }) : null),
-    [role, careersHeroImageSrc],
+    () => (role ? buildCareersRoleShareMeta(role) : null),
+    [role],
   )
 
   const roleShareMeta = useMemo(() => {
     if (!role || !roleShareSeo) return null
-    const ogImage = resolveShareOgImage(roleShareSeo.ogImageUrl, { landscape: true })
+    const descriptionOgImageUrl = roleShareSeo.ogImageUrl?.trim()
+    const ogImage = descriptionOgImageUrl
+      ? resolveShareOgImage(descriptionOgImageUrl, { landscape: true })
+      : undefined
     return {
       title: clampMetaTitle(roleShareSeo.title),
       description: clampMetaDescription(roleShareSeo.description),
@@ -185,34 +188,39 @@ export default function CareersRoleDetail() {
                   </span>
                 </div>
 
-                <div className="mt-7 flex w-full flex-nowrap items-center gap-3 border-t border-black/10 pt-5">
+                <div className="mt-7 flex w-full min-w-0 flex-nowrap items-stretch gap-3 border-t border-black/10 pt-5">
                   {hasOpenRoleApplyButton(role) ? (
                     <RelliaAction
                       asChild
                       variant="creamHeaderPrimary"
                       size="compact"
-                      className="h-[3.75rem] flex-1 min-w-0 cursor-pointer justify-center px-5 py-4 text-sm sm:flex-none sm:min-w-[11.25rem] sm:px-7"
+                      className={cn(
+                        roleHeaderActionHeightClass,
+                        "min-w-0 flex-1 cursor-pointer justify-center whitespace-normal px-4 py-0 text-sm sm:flex-none sm:min-w-[11.25rem] sm:px-7",
+                      )}
                     >
                       <a
                         href={resolveOpenRoleApplyHref(role)}
                         {...(isOpenRoleMailtoApplyUrl(role.applyButtonUrl)
                           ? {}
                           : { target: "_blank", rel: "noopener noreferrer" })}
-                        className="inline-flex items-center justify-center gap-2"
+                        className="inline-flex min-w-0 max-w-full items-center justify-center gap-2"
                         aria-label={`${cmsCleanText(role.applyButtonLabel)} for ${cmsCleanText(role.title)}${
                           isOpenRoleMailtoApplyUrl(role.applyButtonUrl)
                             ? " (opens email)"
                             : " (opens in new tab)"
                         }`}
                       >
-                        {cmsDisplayText(role.applyButtonLabel)}
-                        <ArrowRight className="h-5 w-5" aria-hidden />
+                        <span className="truncate">{cmsDisplayText(role.applyButtonLabel)}</span>
+                        <ArrowRight className="h-5 w-5 shrink-0" aria-hidden />
                       </a>
                     </RelliaAction>
                   ) : null}
 
                   <ShareCopyLinkButton
                     onCopy={handleCopyRoleLink}
+                    sizeClassName={roleShareCopyButtonSizeClassName}
+                    wrapperClassName="shrink-0"
                     className={roleShareCopyButtonClassName}
                     iconClassName={shareIconSize}
                     idleLabel="Copy role link"

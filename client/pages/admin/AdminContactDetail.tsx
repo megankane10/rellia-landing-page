@@ -9,7 +9,7 @@ import AdminPageReveal from "@/components/admin/AdminPageReveal"
 import AdminDeleteSubmissionButton from "@/components/admin/AdminDeleteSubmissionButton"
 import AdminMailtoButton from "@/components/admin/AdminMailtoButton"
 import AdminSubmissionNoteEditor from "@/components/admin/AdminSubmissionNoteEditor"
-import { adminPageHeaderDividerClass, adminPageTitleClass } from "@/components/admin/adminThemeClasses"
+import { adminBackLinkClass, adminErrorBannerClass, adminInternalNotePanelClass, adminPageHeaderDividerClass, adminPageTitleClass, adminSubmissionTypeChipClass } from "@/components/admin/adminThemeClasses"
 import { cn } from "@/lib/utils"
 import {
   formatAdminDateLong,
@@ -85,12 +85,12 @@ const AdminContactDetail = () => {
       <div className="space-y-4">
         <Link
           to="/admin/inbox?tab=contact"
-          className="inline-flex items-center gap-1.5 font-urbanist text-sm text-rellia-teal/80 hover:text-rellia-teal"
+          className={adminBackLinkClass}
         >
           <ArrowLeft className="h-4 w-4" aria-hidden />
           All contact submissions
         </Link>
-        <p className="rounded-2xl border border-red-200 bg-red-50 p-4 font-urbanist text-sm text-red-700">
+        <p className={adminErrorBannerClass}>
           Failed to load submission.
         </p>
       </div>
@@ -117,7 +117,7 @@ const AdminContactDetail = () => {
       <AdminPageReveal>
       <Link
         to="/admin/inbox?tab=contact"
-        className="inline-flex items-center gap-1.5 font-urbanist text-sm text-rellia-teal/80 transition-colors hover:text-rellia-teal"
+        className={adminBackLinkClass}
       >
         <ArrowLeft className="h-4 w-4" aria-hidden />
         All contact submissions
@@ -125,6 +125,7 @@ const AdminContactDetail = () => {
       </AdminPageReveal>
 
       <AdminPageReveal delay={0.06}>
+      <div className="space-y-6">
       <article className="overflow-hidden rounded-2xl border border-border bg-card/90 shadow-sm">
         <div className={cn("bg-gradient-to-r from-rellia-mint/12 to-white px-5 py-5 md:px-6 dark:to-card/90", adminPageHeaderDividerClass)}>
           <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
@@ -132,12 +133,12 @@ const AdminContactDetail = () => {
               <h1 className={cn("font-host-grotesk text-xl font-bold md:text-2xl", adminPageTitleClass)}>
                 {displayName}
                 {isInvestor ? (
-                  <span className="ml-2 inline-flex rounded-full bg-rellia-mint/30 px-2 py-0.5 align-middle font-urbanist text-xs font-medium text-rellia-teal">
+                  <span className={cn("ml-2", adminSubmissionTypeChipClass)}>
                     Investor
                   </span>
                 ) : null}
                 {isModal ? (
-                  <span className="ml-2 inline-flex rounded-full bg-rellia-mint/30 px-2 py-0.5 align-middle font-urbanist text-xs font-medium text-rellia-teal">
+                  <span className={cn("ml-2", adminSubmissionTypeChipClass)}>
                     Priority modal
                   </span>
                 ) : null}
@@ -208,7 +209,7 @@ const AdminContactDetail = () => {
         </div>
       </article>
 
-      <article className="overflow-hidden rounded-2xl border border-rellia-mint/40 bg-rellia-mint/15 shadow-sm">
+      <article className={adminInternalNotePanelClass}>
         <div className="px-5 py-5 md:px-6">
           <AdminSubmissionNoteEditor
             table="contact_responses"
@@ -218,6 +219,7 @@ const AdminContactDetail = () => {
           />
         </div>
       </article>
+      </div>
       </AdminPageReveal>
     </div>
   )

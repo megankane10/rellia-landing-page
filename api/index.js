@@ -2916,10 +2916,97 @@ function createServer() {
             confirmedAt: u.email_confirmed_at ?? null
           };
         }).filter((u) => u.email).sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+        const presenceByUserId = /* @__PURE__ */ new Map();
+        if (users.length > 0) {
+          const { data: presenceRows, error: presenceError } = await adminClient.from("admin_presence").select("user_id, last_active_at").in(
+            "user_id",
+            users.map((u) => u.id)
+          );
+          if (presenceError) {
+            if (presenceError.code !== "42P01") {
+              console.error("Admin presence fetch error:", presenceError.message);
+            }
+          } else {
+            for (const row of presenceRows ?? []) {
+              if (row.user_id && row.last_active_at) {
+                presenceByUserId.set(row.user_id, row.last_active_at);
+              }
+            }
+          }
+        }
         res.setHeader("content-type", "application/json");
-        res.json({ users });
+        res.json({
+          users: users.map((user) => ({
+            ...user,
+            lastActiveAt: presenceByUserId.get(user.id) ?? null
+          }))
+        });
       } catch (err) {
         console.error("Admin team error:", err);
+        res.status(500).json({ error: "Unexpected server error." });
+      }
+    }
+  );
+  const adminPresenceRate = /* @__PURE__ */ new Map();
+  const ADMIN_PRESENCE_MAX_PER_MIN = 60;
+  app2.post(
+    "/api/admin/presence/heartbeat",
+    rateLimitJson(adminPresenceRate, ADMIN_PRESENCE_MAX_PER_MIN),
+    async (req, res) => {
+      if (!allowBrowserOrigin(req)) {
+        res.status(403).json({ error: "Forbidden" });
+        return;
+      }
+      const authHeader = typeof req.headers.authorization === "string" ? req.headers.authorization : "";
+      const token = authHeader.startsWith("Bearer ") ? authHeader.slice(7).trim() : "";
+      if (!token) {
+        res.status(401).json({ error: "Sign in required." });
+        return;
+      }
+      const supabaseUrl = (process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || "").trim().replace(/\/$/, "");
+      const serviceRoleKey = (process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_KEY || "").trim();
+      const anonKey = (process.env.VITE_SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_PUBLISHABLE_KEY || process.env.SUPABASE_ANON_KEY || "").trim();
+      if (!supabaseUrl || !serviceRoleKey || !anonKey) {
+        res.status(501).json({ error: "Supabase admin credentials are not configured on the server." });
+        return;
+      }
+      try {
+        const { createClient: createClient4 } = await import("@supabase/supabase-js");
+        const sessionClient = createClient4(supabaseUrl, anonKey, {
+          auth: { autoRefreshToken: false, persistSession: false }
+        });
+        const { data: userData, error: userError } = await sessionClient.auth.getUser(token);
+        if (userError || !userData.user) {
+          res.status(401).json({ error: "Invalid or expired session." });
+          return;
+        }
+        const adminClient = createClient4(supabaseUrl, serviceRoleKey, {
+          auth: { autoRefreshToken: false, persistSession: false }
+        });
+        const now = (/* @__PURE__ */ new Date()).toISOString();
+        const { error: upsertError } = await adminClient.from("admin_presence").upsert(
+          {
+            user_id: userData.user.id,
+            last_active_at: now,
+            updated_at: now
+          },
+          { onConflict: "user_id" }
+        );
+        if (upsertError) {
+          if (upsertError.code === "42P01") {
+            res.status(501).json({
+              error: "Admin presence is not configured. Run scripts/supabase_admin_presence.sql in Supabase."
+            });
+            return;
+          }
+          console.error("Admin presence heartbeat error:", upsertError.message);
+          res.status(500).json({ error: "Could not update presence." });
+          return;
+        }
+        res.setHeader("content-type", "application/json");
+        res.json({ ok: true });
+      } catch (err) {
+        console.error("Admin presence heartbeat error:", err);
         res.status(500).json({ error: "Unexpected server error." });
       }
     }
@@ -3374,7 +3461,7 @@ function createServer() {
         });
       } catch (err) {
         console.error("Admin sanity drafts error:", err);
-        res.status(502).json({ error: "Could not load Sanity drafts." });
+        res.status(502).json({ error: "Could not load content drafts." });
       }
     }
   );
