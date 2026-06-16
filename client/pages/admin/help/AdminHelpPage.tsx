@@ -19,7 +19,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import AdminPageHeader from "@/components/admin/AdminPageHeader"
 import AdminPageReveal from "@/components/admin/AdminPageReveal"
 import { Dialog, DialogClose, DialogContent, DialogTrigger } from "@/components/ui/dialog"
-import { adminCardClass, adminCardTitleClass, adminIconTileClass, adminInteractiveBoxClass } from "@/components/admin/adminThemeClasses"
+import { adminCardClass, adminCardTitleClass, adminIconTileClass, adminInteractiveBoxClass, adminOutlineActionButtonClass } from "@/components/admin/adminThemeClasses"
 import { cn } from "@/lib/utils"
 import {
   OPERATIONS_DOC_EDIT_URL,
@@ -169,12 +169,27 @@ const AdminHelpPage = () => {
 
       <Card className={cn(cardShellClass, "flex flex-col")}>
         <CardHeader>
-          <CardTitle className={cn("flex items-center gap-2.5 text-lg", adminCardTitleClass)}>
-            <span className={cn("h-9 w-9", adminIconTileClass)}>
-              <FileText className="h-5 w-5" aria-hidden />
-            </span>
-            Operations guide
-          </CardTitle>
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <CardTitle className={cn("flex items-center gap-2.5 text-lg", adminCardTitleClass)}>
+              <span className={cn("h-9 w-9", adminIconTileClass)}>
+                <FileText className="h-5 w-5" aria-hidden />
+              </span>
+              Operations guide
+            </CardTitle>
+            <a
+              href={OPERATIONS_DOC_EDIT_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={cn(
+                adminOutlineActionButtonClass,
+                "inline-flex items-center gap-2 px-3 py-1.5",
+                "font-urbanist text-xs font-semibold shadow-sm",
+              )}
+            >
+              Open in Google Doc
+              <ExternalLink className="h-3.5 w-3.5" aria-hidden />
+            </a>
+          </div>
           <CardDescription className="font-urbanist">
             The official runbook for inbox workflows, publishing, and day‑to‑day operations.
           </CardDescription>
@@ -200,8 +215,8 @@ const AdminHelpPage = () => {
                 aria-label="Preview operations guide"
               >
                 <Maximize2 className="mb-3 h-11 w-11 text-rellia-teal dark:text-rellia-mint" aria-hidden />
-                <span className="font-host-grotesk text-base font-bold text-foreground dark:text-white">Preview</span>
-                <span className="mt-1 font-urbanist text-xs font-medium text-muted-foreground">
+                <span className="font-host-grotesk text-lg font-bold text-foreground dark:text-white">Preview</span>
+                <span className="mt-1.5 font-urbanist text-sm font-medium text-muted-foreground">
                   Open full-screen preview
                 </span>
               </button>
@@ -231,37 +246,21 @@ const AdminHelpPage = () => {
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-2">
-                    <a
-                      href={OPERATIONS_DOC_EDIT_URL}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                  <DialogClose asChild>
+                    <button
+                      type="button"
                       className={cn(
-                        "inline-flex h-11 items-center gap-2 rounded-full border border-border bg-card px-4",
-                        "font-urbanist text-sm font-semibold text-foreground shadow-sm transition-colors",
-                        "hover:bg-rellia-mint/10 hover:text-rellia-teal",
+                        "inline-flex h-11 w-11 items-center justify-center rounded-full border border-border bg-card text-muted-foreground shadow-sm",
+                        "transition-colors hover:bg-muted/50 hover:text-foreground",
                         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-teal/30",
                       )}
+                      aria-label="Close preview"
                     >
-                      Open in new tab
-                      <ExternalLink className="h-4 w-4" aria-hidden />
-                    </a>
-                    <DialogClose asChild>
-                      <button
-                        type="button"
-                        className={cn(
-                          "inline-flex h-11 w-11 items-center justify-center rounded-full border border-border bg-card text-muted-foreground shadow-sm",
-                          "transition-colors hover:bg-muted/50 hover:text-foreground",
-                          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-teal/30",
-                        )}
-                        aria-label="Close preview"
-                      >
-                        <span className="text-xl leading-none" aria-hidden>
-                          ×
-                        </span>
-                      </button>
-                    </DialogClose>
-                  </div>
+                      <span className="text-xl leading-none" aria-hidden>
+                        ×
+                      </span>
+                    </button>
+                  </DialogClose>
                 </div>
 
                 <div className="min-h-0 flex-1 bg-white">
