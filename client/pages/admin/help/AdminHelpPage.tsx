@@ -54,7 +54,7 @@ const WEBSITE_TOOLS = [
     icon: DatabaseZap,
   },
   {
-    href: "https://github.com/Agrolax/rellia-landing-page",
+    href: "https://github.com/megankane10/rellia-landing-page",
     label: "GitHub",
     description: "Source code and pull requests.",
     icon: Github,
