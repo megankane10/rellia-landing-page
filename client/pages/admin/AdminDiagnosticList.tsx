@@ -7,6 +7,8 @@ import { Skeleton } from "@/components/ui/skeleton"
 import AdminSubmissionStatusSelect from "@/components/admin/AdminSubmissionStatusSelect"
 import AdminSubmissionStatusFilter from "@/components/admin/AdminSubmissionStatusFilter"
 import AdminDeleteSubmissionButton from "@/components/admin/AdminDeleteSubmissionButton"
+import { adminPageTitleClass } from "@/components/admin/adminThemeClasses"
+import { cn } from "@/lib/utils"
 import {
   countByStatusFilter,
   formatAdminDate,
@@ -99,7 +101,7 @@ const AdminDiagnosticList = () => {
       </Link>
 
       <div>
-        <h1 className="font-host-grotesk text-2xl font-bold text-foreground md:text-3xl">
+        <h1 className={cn("font-host-grotesk text-2xl font-bold md:text-3xl", adminPageTitleClass)}>
           Startup Diagnostic
         </h1>
         <p className="mt-2 font-urbanist text-base text-muted-foreground">

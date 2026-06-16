@@ -9,6 +9,8 @@ import AdminPageReveal from "@/components/admin/AdminPageReveal"
 import AdminDeleteSubmissionButton from "@/components/admin/AdminDeleteSubmissionButton"
 import AdminMailtoButton from "@/components/admin/AdminMailtoButton"
 import AdminSubmissionNoteEditor from "@/components/admin/AdminSubmissionNoteEditor"
+import { adminPageHeaderDividerClass, adminPageTitleClass } from "@/components/admin/adminThemeClasses"
+import { cn } from "@/lib/utils"
 import {
   formatAdminDateLong,
   statusBadgeClass,
@@ -124,10 +126,10 @@ const AdminContactDetail = () => {
 
       <AdminPageReveal delay={0.06}>
       <article className="overflow-hidden rounded-2xl border border-border bg-card/90 shadow-sm">
-        <div className="border-b border-border bg-gradient-to-r from-rellia-mint/12 to-white px-5 py-5 md:px-6">
+        <div className={cn("bg-gradient-to-r from-rellia-mint/12 to-white px-5 py-5 md:px-6 dark:to-card/90", adminPageHeaderDividerClass)}>
           <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
             <div>
-              <h1 className="font-host-grotesk text-xl font-bold text-foreground md:text-2xl">
+              <h1 className={cn("font-host-grotesk text-xl font-bold md:text-2xl", adminPageTitleClass)}>
                 {displayName}
                 {isInvestor ? (
                   <span className="ml-2 inline-flex rounded-full bg-rellia-mint/30 px-2 py-0.5 align-middle font-urbanist text-xs font-medium text-rellia-teal">

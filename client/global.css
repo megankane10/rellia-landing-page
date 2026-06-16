@@ -341,7 +341,10 @@
 .admin-shell.dark h3.text-rellia-teal,
 .admin-shell.dark h4.text-rellia-teal,
 .admin-shell.dark h5.text-rellia-teal,
-.admin-shell.dark h6.text-rellia-teal,
+.admin-shell.dark h6.text-rellia-teal {
+  color: hsl(175 42% 73%);
+}
+
 .admin-shell.dark h1.text-foreground,
 .admin-shell.dark h2.text-foreground,
 .admin-shell.dark h3.text-foreground,
@@ -349,6 +352,15 @@
 .admin-shell.dark h5.text-foreground,
 .admin-shell.dark h6.text-foreground {
   color: hsl(0 0% 100%);
+}
+
+.admin-shell.dark h1.text-rellia-mint,
+.admin-shell.dark h2.text-rellia-mint,
+.admin-shell.dark h3.text-rellia-mint,
+.admin-shell.dark h4.text-rellia-mint,
+.admin-shell.dark h5.text-rellia-mint,
+.admin-shell.dark h6.text-rellia-mint {
+  color: hsl(175 42% 73%);
 }
 
 .admin-shell.dark a.text-rellia-teal,

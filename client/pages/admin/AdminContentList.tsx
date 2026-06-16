@@ -10,6 +10,8 @@ import {
   isCmsContentEnabled,
 } from "@/lib/adminSanityContent"
 import AdminTipBox from "@/components/admin/AdminTipBox"
+import { adminPageTitleClass } from "@/components/admin/adminThemeClasses"
+import { cn } from "@/lib/utils"
 import { getSanityDataset } from "@/lib/sanity"
 import { FileEdit } from "lucide-react"
 
@@ -47,7 +49,7 @@ const AdminContentList = () => {
 
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="font-host-grotesk text-2xl font-bold text-foreground md:text-3xl">
+          <h1 className={cn("font-host-grotesk text-2xl font-bold md:text-3xl", adminPageTitleClass)}>
             Content drafts
           </h1>
           <p className="mt-2 font-urbanist text-sm text-muted-foreground">

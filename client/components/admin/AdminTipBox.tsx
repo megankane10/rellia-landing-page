@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react"
 import { ChevronDown, ChevronUp, type LucideIcon } from "lucide-react"
-import { adminHighlightedSurfaceClass, adminIconTileClass, adminMutedTextClass } from "@/components/admin/adminThemeClasses"
+import { adminHighlightedSurfaceClass, adminIconTileClass, adminMutedTextClass, adminTipBoxTitleClass } from "@/components/admin/adminThemeClasses"
 import { cn } from "@/lib/utils"
 
 /**
@@ -86,7 +86,7 @@ export default function AdminTipBox({
           <div className={cn("flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl shadow-sm", adminIconTileClass)}>
             <IconComponent className="h-5.5 w-5.5" />
           </div>
-          <h3 className="font-host-grotesk text-base font-bold text-rellia-teal dark:text-white tracking-tight truncate">
+          <h3 className={cn("truncate font-host-grotesk text-base font-bold tracking-tight", adminTipBoxTitleClass)}>
             {title}
           </h3>
         </div>

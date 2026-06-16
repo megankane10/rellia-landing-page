@@ -19,7 +19,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import AdminPageHeader from "@/components/admin/AdminPageHeader"
 import AdminPageReveal from "@/components/admin/AdminPageReveal"
 import { Dialog, DialogClose, DialogContent, DialogTrigger } from "@/components/ui/dialog"
-import { adminCardClass, adminCardTitleClass, adminIconTileClass, adminInteractiveBoxClass, adminOutlineActionButtonClass } from "@/components/admin/adminThemeClasses"
+import { adminCardClass, adminCardTitleClass, adminIconTileClass, adminInteractiveBoxClass } from "@/components/admin/adminThemeClasses"
 import { cn } from "@/lib/utils"
 import {
   OPERATIONS_DOC_EDIT_URL,
@@ -31,7 +31,7 @@ const VERCEL_ENV_URL = "https://vercel.com/relliahealth/settings/environment-var
 const WEBSITE_TOOLS = [
   {
     href: OPERATIONS_DOC_EDIT_URL,
-    label: "Documentation",
+    label: "Operations guide doc",
     description: "Operations guide for the dashboard and marketing site.",
     icon: BookOpen,
   },
@@ -169,27 +169,12 @@ const AdminHelpPage = () => {
 
       <Card className={cn(cardShellClass, "flex flex-col")}>
         <CardHeader>
-          <div className="flex flex-wrap items-start justify-between gap-3">
-            <CardTitle className={cn("flex items-center gap-2.5 text-lg", adminCardTitleClass)}>
-              <span className={cn("h-9 w-9", adminIconTileClass)}>
-                <FileText className="h-5 w-5" aria-hidden />
-              </span>
-              Operations guide
-            </CardTitle>
-            <a
-              href={OPERATIONS_DOC_EDIT_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={cn(
-                adminOutlineActionButtonClass,
-                "inline-flex items-center gap-2 px-3 py-1.5",
-                "font-urbanist text-xs font-semibold shadow-sm",
-              )}
-            >
-              Open in Google Doc
-              <ExternalLink className="h-3.5 w-3.5" aria-hidden />
-            </a>
-          </div>
+          <CardTitle className={cn("flex items-center gap-2.5 text-lg", adminCardTitleClass)}>
+            <span className={cn("h-9 w-9", adminIconTileClass)}>
+              <FileText className="h-5 w-5" aria-hidden />
+            </span>
+            Operations guide
+          </CardTitle>
           <CardDescription className="font-urbanist">
             The official runbook for inbox workflows, publishing, and day‑to‑day operations.
           </CardDescription>

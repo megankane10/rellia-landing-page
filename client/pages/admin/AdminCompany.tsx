@@ -12,6 +12,8 @@ import AdminMailtoButton from "@/components/admin/AdminMailtoButton"
 import AdminSubmissionNoteEditor from "@/components/admin/AdminSubmissionNoteEditor"
 import AdminDiagnosticAnswers from "@/components/admin/AdminDiagnosticAnswers"
 import AdminPageReveal from "@/components/admin/AdminPageReveal"
+import { adminPageHeaderDividerClass, adminPageTitleClass } from "@/components/admin/adminThemeClasses"
+import { cn } from "@/lib/utils"
 import {
   Accordion,
   AccordionContent,
@@ -161,10 +163,10 @@ const AdminCompany = () => {
 
       <AdminPageReveal delay={0.06}>
       <article className="overflow-hidden rounded-2xl border border-border bg-card/90 shadow-sm">
-        <div className="border-b border-border bg-gradient-to-r from-rellia-mint/12 to-white px-5 py-5 md:px-6">
+        <div className={cn("bg-gradient-to-r from-rellia-mint/12 to-white px-5 py-5 md:px-6 dark:to-card/90", adminPageHeaderDividerClass)}>
           <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
             <div>
-              <h1 className="font-host-grotesk text-xl font-bold text-foreground md:text-2xl">{profile.name}</h1>
+              <h1 className={cn("font-host-grotesk text-xl font-bold md:text-2xl", adminPageTitleClass)}>{profile.name}</h1>
               <p className="mt-1 font-urbanist text-sm text-muted-foreground">{profile.work_email}</p>
               <p className="font-urbanist text-sm text-muted-foreground">{formatAdminDateLong(profile.created_at)}</p>
             </div>
