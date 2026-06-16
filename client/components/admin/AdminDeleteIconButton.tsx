@@ -14,8 +14,15 @@ import {
 } from "@/components/ui/alert-dialog"
 import { Tooltip, TooltipTrigger } from "@/components/ui/tooltip"
 import AdminTooltipContent from "@/components/admin/AdminTooltipContent"
-import { adminLightDialogShellClass } from "@/components/admin/adminSidebarRail"
+import {
+  adminDialogCancelForTheme,
+  adminDialogDescriptionForTheme,
+  adminDialogShellForTheme,
+  adminDialogTitleForTheme,
+} from "@/components/admin/adminSidebarRail"
 import { adminDestructiveIconButtonClass } from "@/components/admin/adminThemeClasses"
+import { useAdminTheme } from "@/context/AdminThemeContext"
+import { cn } from "@/lib/utils"
 
 type AdminDeleteIconButtonProps = {
   label: string
@@ -30,6 +37,7 @@ const AdminDeleteIconButton = ({
   tooltip = "Delete submission",
   onConfirm,
 }: AdminDeleteIconButtonProps) => {
+  const { resolvedTheme } = useAdminTheme()
   const [isDeleting, setIsDeleting] = useState(false)
 
   const handleConfirm = async () => {
@@ -60,13 +68,17 @@ const AdminDeleteIconButton = ({
         </TooltipTrigger>
         <AdminTooltipContent side="top">{tooltip}</AdminTooltipContent>
       </Tooltip>
-      <AlertDialogContent className={adminLightDialogShellClass}>
+      <AlertDialogContent className={adminDialogShellForTheme(resolvedTheme)}>
         <AlertDialogHeader>
-          <AlertDialogTitle className="font-host-grotesk">{label}</AlertDialogTitle>
-          <AlertDialogDescription className="font-urbanist">{description}</AlertDialogDescription>
+          <AlertDialogTitle className={cn("font-host-grotesk", adminDialogTitleForTheme(resolvedTheme))}>
+            {label}
+          </AlertDialogTitle>
+          <AlertDialogDescription className={cn("font-urbanist", adminDialogDescriptionForTheme(resolvedTheme))}>
+            {description}
+          </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel className="rounded-full">Cancel</AlertDialogCancel>
+          <AlertDialogCancel className={adminDialogCancelForTheme(resolvedTheme)}>Cancel</AlertDialogCancel>
           <AlertDialogAction
             className="rounded-full bg-red-600 hover:bg-red-700"
             onClick={() => void handleConfirm()}

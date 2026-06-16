@@ -157,13 +157,43 @@ export const adminDarkDialogContentClass = cn(
 export const adminLightDialogShellClass = cn(
   "rounded-[2rem] sm:rounded-[2rem]",
   "border-border/80 shadow-xl shadow-black/12",
-  "dark:border-slate-700/65 dark:bg-slate-900 dark:text-slate-200",
-  "[&_button]:dark:text-slate-200",
 )
 
-/** Admin popovers / floating panels (note editor, etc.) — dark surface in admin dark mode */
+/** Portaled admin dialogs — explicit theme (Radix portals sit outside `.admin-shell.dark`) */
+export const adminDialogShellForTheme = (theme: "light" | "dark") =>
+  theme === "dark"
+    ? cn(adminDarkDialogShellClass, adminDarkDialogContentClass)
+    : adminLightDialogShellClass
+
+export const adminDialogTitleForTheme = (theme: "light" | "dark") =>
+  theme === "dark" ? "text-white" : ""
+
+export const adminDialogDescriptionForTheme = (theme: "light" | "dark") =>
+  theme === "dark" ? "text-slate-400" : ""
+
+export const adminDialogCancelForTheme = (theme: "light" | "dark") =>
+  theme === "dark"
+    ? "rounded-full border-slate-700 bg-slate-900 text-slate-200 hover:bg-slate-800 hover:text-white"
+    : "rounded-full"
+
+const adminPopoverContentBaseClass = "z-50 rounded-2xl border p-4 shadow-2xl shadow-black/45"
+
+/** Portaled admin popovers — explicit theme (Radix portals sit outside `.admin-shell.dark`) */
+export const adminPopoverContentForTheme = (theme: "light" | "dark") =>
+  cn(
+    adminPopoverContentBaseClass,
+    theme === "dark"
+      ? cn(
+          "border-slate-700/65 bg-slate-900 text-slate-200",
+          "[&_.text-muted-foreground]:text-slate-400",
+          "[&_textarea]:border-slate-700 [&_textarea]:bg-slate-950 [&_textarea]:text-white [&_textarea]:placeholder:text-slate-500",
+        )
+      : "border-border bg-popover text-popover-foreground",
+  )
+
+/** @deprecated Use adminPopoverContentForTheme — kept for in-shell usage with dark: variants */
 export const adminPopoverContentClass = cn(
-  "z-50 rounded-2xl border p-4 shadow-2xl shadow-black/45",
+  adminPopoverContentBaseClass,
   "border-border bg-popover text-popover-foreground",
   "dark:border-slate-700/65 dark:bg-slate-900 dark:text-slate-200",
   "[&_.text-muted-foreground]:dark:text-slate-400",
