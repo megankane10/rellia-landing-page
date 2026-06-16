@@ -479,7 +479,7 @@ export const isStaticOgImageRoute = (pathname: string): boolean => {
 }
 
 export const allowsRouteSeoOgImage = (pathname: string): boolean =>
-  isStaticOgImageRoute(pathname) || allowsPageContextOgImage(pathname) || isAdminAreaPath(pathname)
+  isStaticOgImageRoute(pathname) || allowsPageContextOgImage(pathname)
 
 export const getStaticOgImageForPathname = (pathname: string): string | undefined => {
   const key = normalizePathname(pathname)

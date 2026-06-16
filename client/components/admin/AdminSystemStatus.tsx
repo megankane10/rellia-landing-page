@@ -227,7 +227,13 @@ const AdminSystemStatus = ({ compact = false }: { compact?: boolean }) => {
 
   return (
     <TooltipProvider delayDuration={120}>
-      <div className="flex flex-wrap items-center gap-2" aria-label="System status">
+      <div
+        className={cn(
+          "flex flex-wrap items-center gap-2",
+          compact && "justify-end",
+        )}
+        aria-label="System status"
+      >
       {!compact ? (
         <span className="font-urbanist text-[10px] uppercase tracking-[0.12em] text-muted-foreground">
           Status

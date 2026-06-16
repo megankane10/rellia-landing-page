@@ -35,7 +35,7 @@ const AdminSubmissionStatusFilter = ({
           type="button"
           onClick={() => onChange(option.value)}
           className={cn(
-            "inline-flex items-center gap-2 rounded-full border px-3.5 py-1.5 font-urbanist text-sm transition-colors",
+            "inline-flex h-10 w-auto shrink-0 items-center gap-1.5 rounded-full border px-3 font-urbanist text-sm transition-colors",
             "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint",
             isActive
               ? "border-rellia-teal/30 bg-rellia-teal text-white dark:border-rellia-mint/30 dark:bg-rellia-mint/20 dark:text-rellia-mint"

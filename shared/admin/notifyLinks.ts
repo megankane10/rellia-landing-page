@@ -19,6 +19,17 @@ export const resolveSiteOrigin = (): string => {
   return trimTrailingSlash(fromVite || fromNode || "https://www.relliahealth.com")
 }
 
+/** Public marketing site URL for admin “Website” links — prod uses configured origin, not localhost. */
+export const resolvePublicWebsiteUrl = (): string => {
+  if (typeof window !== "undefined") {
+    const { hostname, origin } = window.location
+    if (hostname === "localhost" || hostname === "127.0.0.1") {
+      return trimTrailingSlash(origin)
+    }
+  }
+  return resolveSiteOrigin()
+}
+
 export const resolveAdminInboxPath = (): string => {
   const fromVite =
     typeof import.meta !== "undefined" &&

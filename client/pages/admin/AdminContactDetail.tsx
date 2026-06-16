@@ -14,6 +14,7 @@ import { cn } from "@/lib/utils"
 import {
   formatAdminDateLong,
   statusBadgeClass,
+  submissionStatusUpdatePayload,
   type SubmissionStatus,
 } from "@/lib/adminSubmissionStatus"
 import type { ContactSubmission } from "@/pages/admin/AdminContactList"
@@ -48,7 +49,7 @@ const AdminContactDetail = () => {
     setUpdating(true)
     const { error: updateError } = await supabase
       .from("contact_responses")
-      .update({ status: newStatus })
+      .update(submissionStatusUpdatePayload(newStatus))
       .eq("id", id)
     setUpdating(false)
     if (updateError) {

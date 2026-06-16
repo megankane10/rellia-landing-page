@@ -414,6 +414,10 @@ export const DEFAULT_NETWORK_INVESTORS_PAGE: NetworkInvestorsPageContent = {
   pitchTitle: "Exclusive connections and pitch events",
   pitchSubtitle:
     "Host a focused virtual session aligned to your mandate—or join a larger showcase to compare teams alongside fellow investors.",
+  foundersClusterTitle: "How founders cluster",
+  foundersClusterSubtitle:
+    "Illustrative distributions based on active introductions—useful for thesis alignment.",
+  foundersClusterDisclaimer: "Illustrative mix for thesis fit—not a fund mandate.",
   pitchCards: [
     {
       title: "Individual pitch session",
@@ -616,6 +620,18 @@ export const mergeNetworkInvestorsPage = (
     DEFAULT_NETWORK_INVESTORS_PAGE.whyFeatures ?? [],
   ),
   pitchCards: pickList(cms?.pitchCards, DEFAULT_NETWORK_INVESTORS_PAGE.pitchCards ?? []),
+  foundersClusterTitle: pickCmsString(
+    cms?.foundersClusterTitle,
+    DEFAULT_NETWORK_INVESTORS_PAGE.foundersClusterTitle ?? "",
+  ),
+  foundersClusterSubtitle: pickCmsString(
+    cms?.foundersClusterSubtitle,
+    DEFAULT_NETWORK_INVESTORS_PAGE.foundersClusterSubtitle ?? "",
+  ),
+  foundersClusterDisclaimer: pickCmsString(
+    cms?.foundersClusterDisclaimer,
+    DEFAULT_NETWORK_INVESTORS_PAGE.foundersClusterDisclaimer ?? "",
+  ),
   foundersCluster: pickList(cms?.foundersCluster, DEFAULT_NETWORK_INVESTORS_PAGE.foundersCluster ?? []),
   logoMarquee: pickList(cms?.logoMarquee, DEFAULT_NETWORK_INVESTORS_PAGE.logoMarquee ?? []),
 })

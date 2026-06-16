@@ -14,6 +14,7 @@ import {
   formatAdminDate,
   matchesStatusFilter,
   statusBadgeClass,
+  submissionStatusUpdatePayload,
   type StatusFilterValue,
   type SubmissionStatus,
 } from "@/lib/adminSubmissionStatus"
@@ -70,7 +71,7 @@ const AdminContactList = () => {
     setUpdatingId(contactId)
     const { error: updateError } = await supabase
       .from("contact_responses")
-      .update({ status: newStatus })
+      .update(submissionStatusUpdatePayload(newStatus))
       .eq("id", contactId)
 
     setUpdatingId(null)

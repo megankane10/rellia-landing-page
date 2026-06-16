@@ -23,6 +23,7 @@ import {
 import {
   formatAdminDateLong,
   statusBadgeClass,
+  submissionStatusUpdatePayload,
   type SubmissionStatus,
 } from "@/lib/adminSubmissionStatus"
 import { ArrowLeft } from "lucide-react"
@@ -104,7 +105,7 @@ const AdminCompany = () => {
     setUpdatingStatus(true)
     const { error: updateError } = await supabase
       .from("company_profiles")
-      .update({ status: newStatus })
+      .update(submissionStatusUpdatePayload(newStatus))
       .eq("id", id)
     setUpdatingStatus(false)
     if (updateError) {

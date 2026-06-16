@@ -1,17 +1,15 @@
 import { useMemo } from "react"
 import { Link } from "react-router-dom"
 import { useQuery } from "@tanstack/react-query"
-import { ExternalLink, Key, UserPlus, Users } from "lucide-react"
+import { Key, UserPlus, Users } from "lucide-react"
 import { useAuth } from "@/context/AuthContext"
 import { fetchAdminTeam } from "@/lib/adminApi"
-import AdminPageHeader from "@/components/admin/AdminPageHeader"
 import AdminPageReveal from "@/components/admin/AdminPageReveal"
 import AdminRecordList from "@/components/admin/AdminRecordList"
 import AdminCompactEmptyState from "@/components/admin/AdminCompactEmptyState"
 import AdminRecentSignInsCard from "@/components/admin/AdminRecentSignInsCard"
 import AdminTeamQuickNoteCard from "@/components/admin/AdminTeamQuickNoteCard"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import { formatAdminDate } from "@/lib/adminSubmissionStatus"
 import { resolveAdminMemberAvatarUrl } from "@/lib/adminUserProfile"
@@ -21,10 +19,7 @@ import type { AdminTeamUser } from "@/lib/adminApi"
 import { cn } from "@/lib/utils"
 
 import AdminTipBox from "@/components/admin/AdminTipBox"
-import { adminInteractiveBoxClass, adminOutlineActionButtonClass, adminPendingSurfaceClass } from "@/components/admin/adminThemeClasses"
-
-const SUPABASE_AUTH_USERS_URL =
-  "https://supabase.com/dashboard/project/agsvypnmlrvpbgrsxtqy/auth/users"
+import { adminInteractiveBoxClass, adminPendingSurfaceClass, adminTableCellContentClass } from "@/components/admin/adminThemeClasses"
 
 const memberStatus = (member: AdminTeamUser) => {
   return member.confirmedAt ? (
@@ -115,17 +110,25 @@ const AdminTeamPage = () => {
     {
       key: "email",
       header: "Email",
-      cell: (member) => <span>{member.email}</span>,
+      cell: (member) => (
+        <div className={adminTableCellContentClass}>
+          <span>{member.email}</span>
+        </div>
+      ),
     },
     {
       key: "joined",
       header: "Joined",
-      cell: (member) => <span className="text-muted-foreground">{formatAdminDate(member.createdAt)}</span>,
+      cell: (member) => (
+        <div className={adminTableCellContentClass}>
+          <span className="text-muted-foreground">{formatAdminDate(member.createdAt)}</span>
+        </div>
+      ),
     },
     {
       key: "status",
       header: "Status",
-      cell: (member) => memberStatus(member),
+      cell: (member) => <div className={adminTableCellContentClass}>{memberStatus(member)}</div>,
     },
   ]
 
@@ -141,18 +144,6 @@ const AdminTeamPage = () => {
   return (
     <div className="space-y-6">
       <AdminPageReveal>
-        <AdminPageHeader
-          title="Team"
-          actions={
-            <Button type="button" variant="outline" size="sm" asChild className={adminOutlineActionButtonClass}>
-              <a href={SUPABASE_AUTH_USERS_URL} target="_blank" rel="noopener noreferrer">
-                Supabase Auth
-                <ExternalLink className="ml-1.5 h-3.5 w-3.5" aria-hidden />
-              </a>
-            </Button>
-          }
-        />
-
         <AdminTipBox
           title="Invite your team members"
           icon={UserPlus}
@@ -281,8 +272,13 @@ const AdminTeamPage = () => {
         </div>
       ) : null}
 
-      <div className="mt-6 grid min-w-0 gap-4 lg:grid-cols-2">
-        <AdminRecentSignInsCard members={recentActivity} loading={isLoading} />
+      <div className="mt-6 grid min-w-0 gap-4 lg:grid-cols-2 lg:items-stretch">
+        <AdminRecentSignInsCard
+          members={recentActivity}
+          loading={isLoading}
+          emptyMessage="When team members sign in to the dashboard, their recent activity will show here."
+          fillerMessage="No more recent sign-ins in this list."
+        />
         <AdminTeamQuickNoteCard members={users} />
       </div>
       </AdminPageReveal>

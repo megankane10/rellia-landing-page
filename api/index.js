@@ -353,7 +353,21 @@ var networkInvestorsPageQuery = `*[_id == "networkInvestorsPage"][0]{
   benefitsDescription,
   benefitsBullets,
   ${networkWhyFragment},
+  pitchTitle,
+  pitchSubtitle,
+  pitchCards[]{ _key, title, body, imageUrl },
+  foundersClusterTitle,
+  foundersClusterSubtitle,
+  foundersClusterDisclaimer,
+  foundersCluster[]{ _key,
+    title,
+    segments[]{ _key,
+      name,
+      value
+    }
+  },
   ${networkCtaFragment},
+  ${logoMarqueeFragment},
   ${pageSectionsFragment},
   ${seoFragment}
 }`;

@@ -1122,6 +1122,9 @@ async function main() {
       ...DEFAULT_NETWORK_INVESTORS_PAGE,
       logoMarquee: investorsLogoMarquee.length > 0 ? investorsLogoMarquee : undefined,
       seo: seoForRoute("/investors"),
+      foundersClusterTitle: DEFAULT_NETWORK_INVESTORS_PAGE.foundersClusterTitle,
+      foundersClusterSubtitle: DEFAULT_NETWORK_INVESTORS_PAGE.foundersClusterSubtitle,
+      foundersClusterDisclaimer: DEFAULT_NETWORK_INVESTORS_PAGE.foundersClusterDisclaimer,
       foundersCluster: [
         {
           _key: "chart-b2b",

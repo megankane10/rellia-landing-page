@@ -9,7 +9,6 @@ import {
   clampMetaDescription,
   clampMetaTitle,
   getSeoForPathname,
-  getAdminOgImage,
   getDefaultOgImageUrl,
   getSiteUrl,
   isClientOnlyAuthPath,
@@ -466,7 +465,6 @@ export const prerender = async (data: { url: string }) => {
 
   if (isClientOnlyAuthPath(pathname)) {
     const routeSeo = getSeoForPathname(pathname)
-    const adminOg = getAdminOgImage()
     const pageUrl = `${getSiteUrl()}${pathname === "/" ? "" : pathname}`
     const headElements = new Set<string>([
       `<meta name="robots" content="noindex, nofollow" />`,
@@ -476,9 +474,6 @@ export const prerender = async (data: { url: string }) => {
       {
         title: routeSeo.title,
         description: routeSeo.description,
-        ogImage: adminOg?.url,
-        ogImageWidth: adminOg?.width,
-        ogImageHeight: adminOg?.height,
       },
       pageUrl,
     )

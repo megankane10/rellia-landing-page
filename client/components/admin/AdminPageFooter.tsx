@@ -1,11 +1,11 @@
 import { adminCardDividerClass, adminMutedTextClass } from "@/components/admin/adminThemeClasses"
 import { Link } from "react-router-dom"
 import { ArrowUpRight } from "lucide-react"
-import { resolveSanityStudioOrigin } from "@shared/admin/notifyLinks"
+import { resolvePublicWebsiteUrl } from "@shared/admin/notifyLinks"
 import { cn } from "@/lib/utils"
 
 const AdminPageFooter = () => {
-  const studioUrl = resolveSanityStudioOrigin()
+  const publicWebsiteUrl = resolvePublicWebsiteUrl()
   const year = new Date().getFullYear()
 
   return (
@@ -22,12 +22,14 @@ const AdminPageFooter = () => {
           >
             Need help?
           </Link>
-          <Link
-            to="/"
+          <a
+            href={publicWebsiteUrl}
+            target="_blank"
+            rel="noopener noreferrer"
             className="inline-flex items-center gap-1 transition-colors hover:text-rellia-teal focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded"
           >
             Website <ArrowUpRight className="h-3.5 w-3.5 shrink-0" />
-          </Link>
+          </a>
         </div>
       </div>
     </footer>

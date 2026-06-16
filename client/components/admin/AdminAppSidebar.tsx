@@ -4,6 +4,7 @@ import { CircleHelp, FileEdit, Inbox, LayoutDashboard, Users, X } from "lucide-r
 import { useAuth } from "@/context/AuthContext"
 import { supabase } from "@/lib/supabase"
 import { isActiveSubmissionStatus } from "@/lib/adminSubmissionStatus"
+import { ADMIN_MAIN_NAV } from "@/lib/adminNav"
 import AdminAccountMenu from "@/components/admin/AdminAccountMenu"
 import AdminMobileThemePicker from "@/components/admin/AdminMobileThemePicker"
 import AdminSidebarThemeCycle from "@/components/admin/AdminSidebarThemeCycle"
@@ -17,6 +18,7 @@ import {
   adminSidebarHeaderTextClass,
   adminSidebarIconSlot,
   adminSidebarLabelWrapClass,
+  adminSidebarMotionEase,
   adminSidebarNavButtonClass,
   adminSidebarNavLinkClass,
   adminSidebarRowClass,
@@ -94,6 +96,19 @@ type NavItem = {
   isActiveMatch?: (pathname: string) => boolean
 }
 
+const NAV_ICONS: Record<string, typeof Inbox> = {
+  "/admin/overview": LayoutDashboard,
+  "/admin/inbox": Inbox,
+  "/admin/team": Users,
+  "/admin/drafts": FileEdit,
+  "/admin/help": CircleHelp,
+}
+
+const MAIN_NAV: NavItem[] = ADMIN_MAIN_NAV.map((item) => ({
+  ...item,
+  icon: NAV_ICONS[item.to] ?? LayoutDashboard,
+}))
+
 const fetchUnresolvedCount = async (): Promise<number> => {
   const [contactsRes, profilesRes] = await Promise.all([
     supabase.from("contact_responses").select("status"),
@@ -111,28 +126,6 @@ const fetchUnresolvedCount = async (): Promise<number> => {
 
   return contactCount + diagnosticCount
 }
-
-const MAIN_NAV: NavItem[] = [
-  { to: "/admin/overview", label: "Overview", icon: LayoutDashboard, end: true },
-  {
-    to: "/admin/inbox",
-    label: "Inbox",
-    icon: Inbox,
-    isActiveMatch: (path) =>
-      path.startsWith("/admin/inbox") ||
-      path.startsWith("/admin/submissions") ||
-      path.startsWith("/admin/contacts") ||
-      path.startsWith("/admin/companies"),
-  },
-  { to: "/admin/team", label: "Team", icon: Users, end: true },
-  {
-    to: "/admin/drafts",
-    label: "Content drafts",
-    icon: FileEdit,
-    isActiveMatch: (path) => path.startsWith("/admin/drafts") || path.startsWith("/admin/content"),
-  },
-  { to: "/admin/help", label: "Help", icon: CircleHelp, end: true },
-]
 
 const AdminAppSidebar = () => {
   const { session } = useAuth()
@@ -157,7 +150,8 @@ const AdminAppSidebar = () => {
       collapsible="icon"
       className={cn(
         "flex flex-col overflow-hidden border-r border-slate-800/60 bg-slate-950 text-slate-200",
-        "duration-300 ease-in-out",
+        "duration-300",
+        adminSidebarMotionEase,
       )}
     >
       <SidebarHeader className={adminSidebarHeaderClass}>
@@ -173,7 +167,7 @@ const AdminAppSidebar = () => {
             />
           </span>
           <span className={adminSidebarHeaderTextClass}>
-            <span className="truncate font-host-grotesk text-[15px] font-semibold leading-none text-white">
+            <span className="truncate font-host-grotesk text-[15px] font-normal leading-none text-white">
               Admin Dashboard
             </span>
           </span>
@@ -229,7 +223,7 @@ const AdminAppSidebar = () => {
                           {badge !== undefined && badge > 0 ? (
                             <AttentionBadgeDot
                               count={badge}
-                              className="hidden group-data-[collapsible=icon]:block"
+                              className="hidden group-data-[state=collapsed]:block"
                             />
                           ) : null}
                         </span>
@@ -238,7 +232,7 @@ const AdminAppSidebar = () => {
                           {badge !== undefined && badge > 0 ? (
                             <AttentionBadgeCount
                               count={badge}
-                              className="group-data-[collapsible=icon]:hidden"
+                              className="group-data-[state=collapsed]:hidden"
                             />
                           ) : null}
                         </span>
@@ -252,12 +246,37 @@ const AdminAppSidebar = () => {
         </SidebarGroup>
 
         <div className={cn("mt-auto shrink-0", adminSidebarDividerGapClass)}>
-          {isCollapsed ? (
-            <SidebarMenu className="!gap-0 !p-0">
-              <AdminSidebarThemeCycle />
-            </SidebarMenu>
-          ) : (
+          {isMobile ? (
             <AdminMobileThemePicker />
+          ) : (
+            <div className="relative min-h-12 w-full">
+              <div
+                aria-hidden={isCollapsed}
+                className={cn(
+                  "transition-[opacity,transform] duration-300",
+                  adminSidebarMotionEase,
+                  isCollapsed
+                    ? "pointer-events-none absolute inset-0 opacity-0 scale-[0.98]"
+                    : "relative opacity-100",
+                )}
+              >
+                <AdminMobileThemePicker />
+              </div>
+              <div
+                aria-hidden={!isCollapsed}
+                className={cn(
+                  "transition-[opacity,transform] duration-300",
+                  adminSidebarMotionEase,
+                  isCollapsed
+                    ? "relative flex justify-center opacity-100"
+                    : "pointer-events-none absolute inset-0 flex justify-center opacity-0 scale-[0.98]",
+                )}
+              >
+                <SidebarMenu className="!gap-0 !p-0">
+                  <AdminSidebarThemeCycle />
+                </SidebarMenu>
+              </div>
+            </div>
           )}
         </div>
       </SidebarContent>

@@ -1,14 +1,11 @@
 import { useMemo, useState } from "react"
 import { useQuery } from "@tanstack/react-query"
-import { ExternalLink, FileEdit } from "lucide-react"
+import { FileEdit } from "lucide-react"
 import { useAuth } from "@/context/AuthContext"
-import AdminPageHeader from "@/components/admin/AdminPageHeader"
 import AdminPageReveal from "@/components/admin/AdminPageReveal"
-import AdminDownloadCsvButton from "@/components/admin/AdminDownloadCsvButton"
 import AdminContentQueueList from "@/components/admin/AdminContentQueueList"
 import AdminCompactEmptyState from "@/components/admin/AdminCompactEmptyState"
 import AdminFilterPill from "@/components/admin/AdminFilterPill"
-import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import {
   cmsContentQueryKey,
@@ -17,7 +14,6 @@ import {
   isCmsContentEnabled,
 } from "@/lib/adminSanityContent"
 import AdminTipBox from "@/components/admin/AdminTipBox"
-import { adminOutlineActionButtonClass } from "@/components/admin/adminThemeClasses"
 
 const PRODUCTION_DATASET = "production" as const
 
@@ -49,33 +45,6 @@ const AdminDraftsPage = () => {
   return (
     <div>
       <AdminPageReveal>
-      <AdminPageHeader
-        title="Content drafts"
-        actions={
-          <>
-            <AdminDownloadCsvButton
-              filename={`rellia-content-drafts-${PRODUCTION_DATASET}`}
-              rows={filteredRows}
-              columns={[
-                { header: "Title", value: (row) => row.title ?? row._id },
-                { header: "Type", value: (row) => formatCmsDocumentTypeLabel(row._type) },
-                { header: "Document ID", value: (row) => row._id },
-                { header: "Updated", value: (row) => row._updatedAt ?? "" },
-                { header: "Status", value: (row) => row.status },
-              ]}
-            />
-            <Button type="button" variant="outline" size="sm" asChild className={adminOutlineActionButtonClass}>
-              <a href="https://relliahealth.sanity.studio" target="_blank" rel="noopener noreferrer">
-                Open Studio
-                <ExternalLink className="ml-1.5 h-3.5 w-3.5" aria-hidden />
-              </a>
-            </Button>
-          </>
-        }
-      />
-      </AdminPageReveal>
-
-      <AdminPageReveal delay={0.06}>
       {!cmsConfigured ? (
         <Card>
           <CardContent className="pt-6">
@@ -104,8 +73,8 @@ const AdminDraftsPage = () => {
                 (it loads www inside Studio only — drafts do not appear on the public site).
               </p>
               <p>
-                When you are ready to go live, click <strong>Open Studio</strong>, open the document, and click{" "}
-                <strong>Publish</strong>. Changes usually appear on www within about 30 seconds.
+                When you are ready to go live, open the document in Sanity Studio and click <strong>Publish</strong>.
+                Changes usually appear on www within about 30 seconds.
               </p>
             </div>
           </AdminTipBox>

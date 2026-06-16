@@ -141,10 +141,12 @@ const renderSlicePercentLabel = ({
 
 function IllustrativePie({
   title,
+  disclaimer,
   data,
   ariaLabel,
 }: {
   title: string
+  disclaimer: string
   data: Array<{ name: string; value: number; fill: string }>
   ariaLabel: string
 }) {
@@ -172,7 +174,7 @@ function IllustrativePie({
   return (
     <GlassCardLight className="flex h-full flex-col p-6 md:p-8">
       <p className="font-host-grotesk text-lg font-semibold text-rellia-teal">{title}</p>
-      <p className="mt-1 font-urbanist text-xs text-black/50">Illustrative mix for thesis fit—not a fund mandate.</p>
+      <p className="mt-1 font-urbanist text-xs text-black/50">{disclaimer}</p>
       <div
         ref={chartRef}
         className="mt-4 h-[260px] w-full min-h-[260px]"
@@ -180,13 +182,13 @@ function IllustrativePie({
         aria-label={ariaLabel}
       >
         <ResponsiveContainer width="100%" height="100%">
-          <PieChart margin={{ top: 20, right: 32, bottom: 4, left: 32 }}>
+          <PieChart margin={{ top: 20, right: 32, bottom: 0, left: 32 }}>
             <Pie
               data={data}
               dataKey="value"
               nameKey="name"
               cx="50%"
-              cy="50%"
+              cy="47%"
               innerRadius={48}
               outerRadius={72}
               paddingAngle={2}
@@ -218,6 +220,7 @@ function IllustrativePie({
             />
             <Legend
               verticalAlign="bottom"
+              wrapperStyle={{ paddingTop: 4, paddingBottom: 0, transform: "translateY(10px)" }}
               formatter={(value) => <span className="font-urbanist text-xs text-black/75">{value}</span>}
             />
           </PieChart>
@@ -318,8 +321,14 @@ function PortfolioSplit() {
 }
 
 function FoundersClusterSection({
+  title,
+  subtitle,
+  disclaimer,
   charts,
 }: {
+  title: string
+  subtitle: string
+  disclaimer: string
   charts: Array<{ title: string; data: Array<{ name: string; value: number; fill: string }>; ariaLabel: string }>
 }) {
   if (charts.length === 0) return null
@@ -329,10 +338,10 @@ function FoundersClusterSection({
       <PipelinePhotoSection roundedTop roundedBottom={false}>
         <ScrollReveal>
           <h2 className="mt-5 font-host-grotesk text-2xl font-semibold leading-tight tracking-tight text-white md:text-[40px]">
-            How founders cluster
+            {cmsDisplayText(title)}
           </h2>
           <p className="mt-4 max-w-2xl font-urbanist text-lg leading-relaxed text-white/85">
-            Illustrative distributions based on active introductions—useful for thesis alignment.
+            {cmsDisplayText(subtitle)}
           </p>
         </ScrollReveal>
         <div className="mt-12 grid grid-cols-1 gap-6 lg:grid-cols-3">
@@ -340,6 +349,7 @@ function FoundersClusterSection({
             <Reveal key={chart.title || idx} delay={0.05 + idx * 0.03}>
               <IllustrativePie
                 title={chart.title}
+                disclaimer={disclaimer}
                 data={chart.data}
                 ariaLabel={chart.ariaLabel}
               />
@@ -486,7 +496,12 @@ export default function Investors() {
                 sectionClassName="bg-rellia-cream/20"
               />
 
-              <FoundersClusterSection charts={charts} />
+              <FoundersClusterSection
+                title={content.foundersClusterTitle ?? DEFAULT_NETWORK_INVESTORS_PAGE.foundersClusterTitle!}
+                subtitle={content.foundersClusterSubtitle ?? DEFAULT_NETWORK_INVESTORS_PAGE.foundersClusterSubtitle!}
+                disclaimer={content.foundersClusterDisclaimer ?? DEFAULT_NETWORK_INVESTORS_PAGE.foundersClusterDisclaimer!}
+                charts={charts}
+              />
 
               <section className="relative overflow-hidden bg-[#071018] px-6 py-16 text-white md:px-10 md:py-24">
                 <div aria-hidden className="pointer-events-none absolute inset-0">

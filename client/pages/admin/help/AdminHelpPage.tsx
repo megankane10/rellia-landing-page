@@ -3,7 +3,6 @@ import {
   ArrowRight,
   BarChart3,
   BellRing,
-  BookOpen,
   Cloud,
   ExternalLink,
   FileText,
@@ -14,9 +13,9 @@ import {
   Search,
   DatabaseZap,
   Maximize2,
+  Tags,
 } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import AdminPageHeader from "@/components/admin/AdminPageHeader"
 import AdminPageReveal from "@/components/admin/AdminPageReveal"
 import { Dialog, DialogClose, DialogContent, DialogTrigger } from "@/components/ui/dialog"
 import {
@@ -37,12 +36,6 @@ import {
 const VERCEL_ENV_URL = "https://vercel.com/relliahealth/settings/environment-variables"
 
 const WEBSITE_TOOLS = [
-  {
-    href: OPERATIONS_DOC_EDIT_URL,
-    label: "Operations guide doc",
-    description: "Operations guide for the dashboard and marketing site.",
-    icon: BookOpen,
-  },
   {
     href: "https://vercel.com/relliahealth",
     label: "Vercel",
@@ -68,13 +61,19 @@ const WEBSITE_TOOLS = [
     icon: Github,
   },
   {
-    href: "https://analytics.google.com/analytics/",
+    href: "https://tagmanager.google.com/#/container/accounts/6357523633/containers/253642837/workspaces/4",
+    label: "Google Tag Manager",
+    description: "Install and manage marketing tags, triggers, and conversion tracking on the public site.",
+    icon: Tags,
+  },
+  {
+    href: "https://analytics.google.com/analytics/web/#/a396061604p539275076/reports/intelligenthome",
     label: "Google Analytics 4",
     description: "Monitor website traffic, visitor behavior, and conversion events.",
     icon: BarChart3,
   },
   {
-    href: "https://search.google.com/search-console/performance",
+    href: "https://search.google.com/search-console/performance/search-analytics?resource_id=https%3A%2F%2Frelliahealth.com%2F",
     label: "Google Search Console",
     description: "Track search traffic, indexation status, and search visibility.",
     icon: Search,
@@ -95,12 +94,6 @@ const AdminHelpPage = () => {
   return (
     <div className="space-y-6">
     <AdminPageReveal>
-    <AdminPageHeader
-      title="Help"
-    />
-    </AdminPageReveal>
-
-    <AdminPageReveal delay={0.06}>
     <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
       <Card className={cardShellClass}>
         <CardHeader>

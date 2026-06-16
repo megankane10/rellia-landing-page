@@ -7,6 +7,7 @@ import { PageSeoProvider, type PageSeoOverrides } from "@/context/PageSeoContext
 import PageTransition from "@/components/PageTransition"
 import PageRevealOverlay from "@/components/PageRevealOverlay"
 import AdminAuthHashRedirect from "@/components/admin/AdminAuthHashRedirect"
+import GoogleTagManagerPageViews from "@/components/GoogleTagManagerPageViews"
 
 const ensurePreconnect = (href: string) => {
   const existing = document.querySelector<HTMLLinkElement>(`link[rel="preconnect"][href="${href}"]`)
@@ -67,6 +68,7 @@ export const RouterShell = ({
     <PageTransition />
     <PageRevealOverlay />
     <VercelObservability />
+    <GoogleTagManagerPageViews />
     <ThirdPartyPreloads />
     <AdminAuthHashRedirect />
     <ScrollToTop />

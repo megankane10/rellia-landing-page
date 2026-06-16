@@ -616,6 +616,9 @@ export type NetworkInvestorsPageContent = CmsSingletonPageContent &
     pitchTitle?: string
     pitchSubtitle?: string
     pitchCards?: NetworkPitchCard[]
+    foundersClusterTitle?: string
+    foundersClusterSubtitle?: string
+    foundersClusterDisclaimer?: string
     ctaTitle?: string
     ctaBody?: string
     ctaPrimaryLabel?: string

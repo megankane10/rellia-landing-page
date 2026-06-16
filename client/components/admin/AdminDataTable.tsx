@@ -1,5 +1,6 @@
 import type { ReactNode } from "react"
 import {
+  adminDataTableClass,
   adminMutedTextClass,
   adminTableBodyCellClass,
   adminTableHeaderCellClass,
@@ -40,7 +41,7 @@ const AdminDataTable = <T,>({
 
   return (
     <div className={cn("overflow-x-auto", className)}>
-      <table className={cn("w-full min-w-[32rem] border-collapse text-left", tableClassName)}>
+      <table className={cn(adminDataTableClass, "border-collapse text-left", tableClassName)}>
         <thead>
           <tr className="border-b border-border bg-muted/50">
             {columns.map((col) => (

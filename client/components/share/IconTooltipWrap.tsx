@@ -42,7 +42,7 @@ const TooltipBubble = ({
     )}
     role="tooltip"
   >
-    <div className="relative whitespace-nowrap rounded-xl bg-black px-2.5 py-1.5 text-xs font-bold text-white shadow-md">
+    <div className="relative whitespace-nowrap rounded-xl bg-black px-3 py-2 text-sm font-bold text-white shadow-md">
       {label}
       <div
         className={cn("absolute border-4 border-transparent", tooltipArrowClass[position])}

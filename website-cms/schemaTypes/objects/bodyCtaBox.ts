@@ -1,4 +1,5 @@
 import {defineField, defineType} from 'sanity'
+import {iconKeyField} from '../shared/iconKeyField'
 
 /** Insert in article-style portable text (events, marketing pages, future story CMS). */
 export const bodyCtaBox = defineType({
@@ -6,6 +7,10 @@ export const bodyCtaBox = defineType({
   title: 'CTA box',
   type: 'object',
   fields: [
+    iconKeyField({
+      description:
+        'Optional Lucide icon name (free text, PascalCase). Any icon from lucide.dev/icons works — e.g. Rocket, TrendingUp, ClipboardCheck.',
+    }),
     defineField({
       name: 'title',
       type: 'string',

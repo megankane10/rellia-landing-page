@@ -1,10 +1,11 @@
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect, useRef, useMemo } from "react"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
 import ScrollReveal from "@/components/ScrollReveal"
 import RelliaCta from "@/components/RelliaCta"
 import PillTag from "@/components/PillTag"
 import WhyRellia from "@/components/WhyRellia"
+import HowItWorks from "@/components/HowItWorks"
 import { FilloutStandardEmbed } from "@fillout/react"
 import { FILLOUT_APPLY_FORM_ID, FILLOUT_EMBED_VIEWPORT_MIN_CLASS } from "@/lib/filloutApplyForm"
 import { CareersOpenRolesSection } from "@/components/careers/CareersOpenRolesSection"
@@ -197,7 +198,7 @@ function LifeAtRelliaSocialButton({
         <IconComponent className="h-6 w-6" />
       </a>
       <div className="absolute bottom-full left-1/2 mb-3 -translate-x-1/2 scale-95 opacity-0 pointer-events-none group-hover:scale-100 group-hover:opacity-100 transition-all duration-200 z-20">
-        <div className="relative bg-black text-white text-xs font-bold py-1.5 px-3 rounded-xl whitespace-nowrap shadow-md">
+        <div className="relative bg-black text-white text-sm font-bold py-2 px-3.5 rounded-xl whitespace-nowrap shadow-md">
           {tooltip}
           <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-black" />
         </div>
@@ -234,6 +235,16 @@ export default function Careers() {
           ariaLabel: "Volunteer with us — jump to form",
         }
       : null
+
+  const careersHowWeWorkSteps = useMemo(
+    () =>
+      CAREERS_PERKS.map((perk) => ({
+        icon: resolveLucideIcon(perk.iconKey, Users),
+        title: perk.title,
+        description: perk.description ?? "",
+      })),
+    [],
+  )
 
   return (
     <div className="min-h-screen overflow-x-hidden bg-white font-host-grotesk">
@@ -325,37 +336,14 @@ export default function Careers() {
           sectionClassName="bg-white pt-28 md:pt-32"
         />
 
-        <section className="bg-white pb-16 pt-10 md:pb-20 md:pt-12">
-          <div className="mx-auto max-w-[1300px] px-6 md:px-10">
-            <ScrollReveal className="max-w-3xl mb-16">
-              <h2 className="font-host-grotesk text-2xl font-semibold tracking-tight text-black md:text-[32px] lg:text-[36px]">
-                How we work
-              </h2>
-              <p className="mt-4 font-urbanist text-lg md:text-xl text-black/60 leading-relaxed">
-                A lean health-tech team: industry proximity, intentional office time, and the pace of a startup—not a corporate perks sheet.
-              </p>
-            </ScrollReveal>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10 lg:gap-x-16 lg:gap-y-12">
-              {CAREERS_PERKS.map((perk) => {
-                const IconComponent = resolveLucideIcon(perk.iconKey, Users)
-                return (
-                  <ScrollReveal key={perk.title} className="flex flex-col items-start text-left">
-                    <IconComponent className="h-8 w-8 text-rellia-teal mb-4" aria-hidden />
-                    <div>
-                      <h3 className="font-host-grotesk text-xl font-bold tracking-tight text-black mb-2">
-                        {perk.title}
-                      </h3>
-                      <p className="font-urbanist text-base leading-relaxed text-black/70">
-                        {perk.description}
-                      </p>
-                    </div>
-                  </ScrollReveal>
-                )
-              })}
-            </div>
-          </div>
-        </section>
+        <div className="bg-white py-10 md:py-12">
+          <HowItWorks
+            heading="How we work"
+            subheading="A lean health-tech team: industry proximity, intentional office time, and the pace of a startup—not a corporate perks sheet."
+            steps={careersHowWeWorkSteps}
+            columns={2}
+          />
+        </div>
 
         <CareersOpenRolesSection
           titlePortable={DEFAULT_CAREERS_PAGE.openRolesTitlePortable}

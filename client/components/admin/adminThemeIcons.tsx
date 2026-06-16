@@ -1,4 +1,4 @@
-import { Moon, Sun } from "lucide-react"
+import { Monitor, Moon, Sun, type LucideIcon } from "lucide-react"
 import type { AdminThemePreference } from "@/context/AdminThemeContext"
 import { cn } from "@/lib/utils"
 
@@ -18,31 +18,39 @@ export const getThemeCycleTooltip = (current: AdminThemePreference): string => {
 
 const headerIconColorClass = "text-rellia-teal dark:text-rellia-mint"
 
-export const SystemAdaptiveIcon = ({
+const THEME_PREFERENCE_ICONS: Record<AdminThemePreference, LucideIcon> = {
+  system: Monitor,
+  light: Sun,
+  dark: Moon,
+}
+
+/** Sun/Moon fill cleanly; Monitor reads better as outline vs bold stroke. */
+const THEME_ICON_FILLS_WHEN_SELECTED: Record<AdminThemePreference, boolean> = {
+  system: false,
+  light: true,
+  dark: true,
+}
+
+const ThemeGlyph = ({
+  Icon,
   className,
-  size = 20,
-  colorClass = headerIconColorClass,
-  filled = false,
+  size,
+  filled,
+  fillable,
 }: {
+  Icon: LucideIcon
   className?: string
-  size?: number
-  colorClass?: string
-  filled?: boolean
+  size: number
+  filled: boolean
+  fillable: boolean
 }) => (
-  <span className={cn("relative inline-flex shrink-0", className)} style={{ width: size, height: size }} aria-hidden>
-    <Sun
-      className={cn("absolute inset-0", colorClass, filled && "fill-current")}
-      style={{ clipPath: "inset(0 50% 0 0)", width: size, height: size }}
-      strokeWidth={1.75}
-      fill={filled ? "currentColor" : "none"}
-    />
-    <Moon
-      className={cn("absolute inset-0", colorClass, filled && "fill-current")}
-      style={{ clipPath: "inset(0 0 0 50%)", width: size, height: size }}
-      strokeWidth={1.75}
-      fill={filled ? "currentColor" : "none"}
-    />
-  </span>
+  <Icon
+    className={cn(className, filled && fillable && "fill-current")}
+    style={{ width: size, height: size }}
+    strokeWidth={filled ? (fillable ? 1.5 : 2.25) : 1.75}
+    fill={filled && fillable ? "currentColor" : "none"}
+    aria-hidden
+  />
 )
 
 export const ThemePreferenceIcon = ({
@@ -66,34 +74,13 @@ export const ThemePreferenceIcon = ({
         : "text-slate-400"
       : headerIconColorClass
 
-  if (preference === "system") {
-    return (
-      <SystemAdaptiveIcon
-        className={className}
-        size={size}
-        colorClass={colorClass}
-        filled={filled}
-      />
-    )
-  }
-  if (preference === "light") {
-    return (
-      <Sun
-        className={cn(colorClass, className, filled && "fill-current")}
-        style={{ width: size, height: size }}
-        strokeWidth={1.75}
-        fill={filled ? "currentColor" : "none"}
-        aria-hidden
-      />
-    )
-  }
   return (
-    <Moon
-      className={cn(colorClass, className, filled && "fill-current")}
-      style={{ width: size, height: size }}
-      strokeWidth={1.75}
-      fill={filled ? "currentColor" : "none"}
-      aria-hidden
+    <ThemeGlyph
+      Icon={THEME_PREFERENCE_ICONS[preference]}
+      className={cn(colorClass, className)}
+      size={size}
+      filled={filled}
+      fillable={THEME_ICON_FILLS_WHEN_SELECTED[preference]}
     />
   )
 }

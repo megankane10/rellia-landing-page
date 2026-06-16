@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react"
 import { ChevronDown, ChevronUp, type LucideIcon } from "lucide-react"
-import { adminHighlightedSurfaceClass, adminIconTileClass, adminMutedTextClass, adminTipBoxTitleClass } from "@/components/admin/adminThemeClasses"
+import { adminIconTileClass, adminMutedTextClass, adminTipBoxSurfaceClass, adminTipBoxTitleClass } from "@/components/admin/adminThemeClasses"
 import { cn } from "@/lib/utils"
 
 /**
@@ -76,7 +76,7 @@ export default function AdminTipBox({
     <div
       className={cn(
         "relative rounded-2xl shadow-sm transition-all duration-300",
-        adminHighlightedSurfaceClass,
+        adminTipBoxSurfaceClass,
         collapsed ? "px-5 py-3" : "p-5",
         className,
       )}

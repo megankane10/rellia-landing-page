@@ -23,7 +23,7 @@ export const CareersOpenRolesSection = ({
   formatText,
   rolesLoading = false,
 }: CareersOpenRolesSectionProps) => (
-  <section id="open-roles" className="scroll-mt-28 mt-16 border-t border-black/10 bg-white pb-16 pt-16 md:mt-20 md:pb-24 md:pt-20">
+  <section id="open-roles" className="scroll-mt-28 bg-white pb-16 pt-10 md:pb-24 md:pt-12">
     <div className="mx-auto w-full max-w-[1300px] px-6 md:px-10">
       <ScrollReveal className="flex min-w-0 flex-col">
         <div className="max-w-2xl">

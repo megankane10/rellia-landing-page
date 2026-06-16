@@ -26,6 +26,7 @@
     "sanity:seed:starters": "tsx scripts/sanity-seed-starters.ts",
     "sanity:seed:story-filters": "tsx scripts/sanity-seed-story-filters.ts",
     "sanity:migrate:story-seo": "tsx scripts/sanity-migrate-story-seo.ts",
+    "sanity:migrate:story-cta-icons": "tsx scripts/sanity-migrate-story-cta-icons.ts",
     "sanity:migrate:collection-seo": "tsx scripts/sanity-migrate-collection-seo.ts",
     "sanity:migrate:open-role-descriptions": "tsx scripts/sanity-migrate-open-role-descriptions.ts",
     "fix:story-slug": "tsx scripts/fix-story-slug.ts",

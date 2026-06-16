@@ -1,6 +1,7 @@
 import { lazy, Suspense } from "react"
 import { Routes, Route, Navigate, useParams, useLocation } from "react-router-dom"
 import { ProtectedRoute } from "@/components/admin/ProtectedRoute"
+import { isAdminShellRoute } from "@/lib/adminNav"
 
 const Index = lazy(() => import("./pages/Index"))
 const About = lazy(() => import("./pages/About"))
@@ -59,10 +60,11 @@ const RedirectFoundersDirectoryId = () => {
 
 export const AppRoutesClient = () => {
   const location = useLocation()
+  const routesKey = isAdminShellRoute(location.pathname) ? "/admin" : location.pathname
 
   return (
     <Suspense fallback={null}>
-      <Routes location={location} key={location.pathname}>
+      <Routes location={location} key={routesKey}>
         <Route path="/" element={<Index />} />
 
         <Route path="/about" element={<About />} />

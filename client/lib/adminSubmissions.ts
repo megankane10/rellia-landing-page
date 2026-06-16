@@ -30,6 +30,7 @@ export type CompanyProfileRow = {
   stage: string | null
   description: string | null
   status?: SubmissionStatus | null
+  status_updated_at?: string | null
   admin_note?: string | null
   diagnostic_response?: DiagnosticResponseSummary | null
 }
@@ -44,6 +45,7 @@ export type ContactRow = {
   job_title: string | null
   message: string
   status?: SubmissionStatus | null
+  status_updated_at?: string | null
   submission_type?: string | null
   admin_note?: string | null
 }

@@ -3,16 +3,13 @@ import { Link, useSearchParams } from "react-router-dom"
 import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { Inbox, Search, Stethoscope } from "lucide-react"
 import { supabase } from "@/lib/supabase"
-import AdminPageHeader from "@/components/admin/AdminPageHeader"
 import AdminPageReveal from "@/components/admin/AdminPageReveal"
-import AdminDownloadCsvButton from "@/components/admin/AdminDownloadCsvButton"
 import AdminRecordList from "@/components/admin/AdminRecordList"
-import AdminSubmissionStatusFilter from "@/components/admin/AdminSubmissionStatusFilter"
+import AdminSelectFilter from "@/components/admin/AdminSelectFilter"
 import AdminSubmissionStatusSelect from "@/components/admin/AdminSubmissionStatusSelect"
 import AdminDeleteIconButton from "@/components/admin/AdminDeleteIconButton"
 import AdminNoteIconButton from "@/components/admin/AdminNoteIconButton"
 import AdminCompactEmptyState from "@/components/admin/AdminCompactEmptyState"
-import AdminFilterPill from "@/components/admin/AdminFilterPill"
 import { Badge } from "@/components/ui/badge"
 import AdminTableMultilineText from "@/components/admin/AdminTableMultilineText"
 import { Input } from "@/components/ui/input"
@@ -23,6 +20,8 @@ import {
   formatAdminDate,
   matchesStatusFilter,
   statusBadgeClass,
+  submissionStatusUpdatePayload,
+  SUBMISSION_STATUS_OPTIONS,
   type StatusFilterValue,
   type SubmissionStatus,
 } from "@/lib/adminSubmissionStatus"
@@ -36,12 +35,25 @@ import {
   type CompanyProfileRow,
   type ContactRow,
 } from "@/lib/adminSubmissions"
-import { diagnosticCsvColumns } from "@/lib/adminDiagnosticCsv"
 import { cn } from "@/lib/utils"
 import type { AdminTableColumn } from "@/components/admin/AdminDataTable"
-import { adminWarningBannerClass, adminSegmentedTabCountClass, adminSegmentedTabsListClass, adminSegmentedTabTriggerClass } from "@/components/admin/adminThemeClasses"
+import { adminWarningBannerClass, adminSegmentedTabCountClass, adminSegmentedTabsListClass, adminSegmentedTabTriggerClass, adminInboxContactTableClass, adminInboxDiagnosticTableClass } from "@/components/admin/adminThemeClasses"
 
 type SubmissionTab = "contact" | "diagnostic"
+
+type ContactSourceFilter = "all" | "contact" | "investor" | "modal"
+
+const CONTACT_SOURCE_OPTIONS: { value: ContactSourceFilter; label: string }[] = [
+  { value: "all", label: "All types" },
+  { value: "contact", label: "Contact" },
+  { value: "investor", label: "Investor" },
+  { value: "modal", label: "Priority modal" },
+]
+
+const STATUS_FILTER_OPTIONS: { value: StatusFilterValue; label: string }[] = [
+  { value: "all", label: "All statuses" },
+  ...SUBMISSION_STATUS_OPTIONS.map((status) => ({ value: status, label: status })),
+]
 
 const UNRESOLVED_COUNT_KEY = ["admin-unresolved-submissions-count"] as const
 
@@ -222,7 +234,7 @@ const AdminInboxPage = () => {
     setUpdatingId(contactId)
     const { error: updateError } = await supabase
       .from("contact_responses")
-      .update({ status: newStatus })
+      .update(submissionStatusUpdatePayload(newStatus))
       .eq("id", contactId)
     setUpdatingId(null)
     if (updateError) {
@@ -240,7 +252,7 @@ const AdminInboxPage = () => {
     setUpdatingId(profileId)
     const { error: updateError } = await supabase
       .from("company_profiles")
-      .update({ status: newStatus })
+      .update(submissionStatusUpdatePayload(newStatus))
       .eq("id", profileId)
     setUpdatingId(null)
     if (updateError) {
@@ -271,7 +283,7 @@ const AdminInboxPage = () => {
     {
       key: "name",
       header: "Name",
-      className: "min-w-[8.5rem]",
+      className: "w-[12%]",
       cell: (row) => (
         <Link to={`/admin/contacts/${row.id}`} className="font-medium text-rellia-teal hover:underline dark:text-rellia-mint">
           {contactDisplayName(row)}
@@ -281,37 +293,39 @@ const AdminInboxPage = () => {
     {
       key: "type",
       header: "Type",
-      className: "min-w-[5.5rem] whitespace-nowrap",
+      className: "w-[8%] whitespace-nowrap",
       cell: (row) => <span className="text-muted-foreground">{contactTypeLabel(row)}</span>,
     },
     {
       key: "email",
       header: "Email",
-      className: "min-w-[10rem]",
+      className: "w-[14%]",
       cell: (row) => <span className="break-all">{row.email}</span>,
     },
     {
       key: "company",
       header: "Company",
-      className: "min-w-[8rem]",
-      cell: (row) => <span className="text-muted-foreground">{row.company || "—"}</span>,
+      className: "w-[10%]",
+      cell: (row) => <span className="block truncate text-muted-foreground">{row.company || "—"}</span>,
     },
     {
       key: "message",
       header: "Message",
-      className: "min-w-[12rem] max-w-[18rem]",
-      cell: (row) => <AdminTableMultilineText value={contactMessagePreview(row)} />,
+      className: "w-[26%]",
+      cell: (row) => (
+        <AdminTableMultilineText value={contactMessagePreview(row)} className="w-full" />
+      ),
     },
     {
       key: "date",
       header: "Received",
-      className: "min-w-[6.5rem] whitespace-nowrap",
+      className: "w-[10%] whitespace-nowrap",
       cell: (row) => <span className="text-muted-foreground">{formatAdminDate(row.created_at)}</span>,
     },
     {
       key: "status",
       header: "Status",
-      className: "min-w-[10rem] whitespace-nowrap",
+      className: "w-[9%] whitespace-nowrap",
       cell: (row) => {
         const status = (row.status ?? "New") as SubmissionStatus
         return statusWritesEnabled ? (
@@ -329,7 +343,7 @@ const AdminInboxPage = () => {
     {
       key: "actions",
       header: "",
-      className: "w-24 shrink-0 whitespace-nowrap",
+      className: "w-[11%] whitespace-nowrap",
       cell: (row) => (
         <div className="flex items-center justify-end gap-0.5">
           <AdminNoteIconButton
@@ -352,7 +366,7 @@ const AdminInboxPage = () => {
     {
       key: "name",
       header: "Founder",
-      className: "min-w-[8.5rem]",
+      className: "w-[11%]",
       cell: (row) => (
         <Link to={`/admin/companies/${row.id}`} className="font-medium text-rellia-teal hover:underline dark:text-rellia-mint">
           {row.name}
@@ -362,37 +376,39 @@ const AdminInboxPage = () => {
     {
       key: "company",
       header: "Company",
-      className: "min-w-[8rem]",
-      cell: (row) => <span>{row.company_name}</span>,
+      className: "w-[10%]",
+      cell: (row) => <span className="block truncate">{row.company_name}</span>,
     },
     {
       key: "email",
       header: "Email",
-      className: "min-w-[10rem]",
+      className: "w-[14%]",
       cell: (row) => <span className="break-all text-muted-foreground">{row.work_email}</span>,
     },
     {
       key: "stage",
       header: "Stage",
-      className: "min-w-[7rem]",
-      cell: (row) => <span className="text-muted-foreground">{row.stage || "—"}</span>,
+      className: "w-[9%]",
+      cell: (row) => <span className="block truncate text-muted-foreground">{row.stage || "—"}</span>,
     },
     {
       key: "message",
       header: "Message",
-      className: "min-w-[12rem] max-w-[18rem]",
-      cell: (row) => <AdminTableMultilineText value={diagnosticMessagePreview(row)} />,
+      className: "w-[26%]",
+      cell: (row) => (
+        <AdminTableMultilineText value={diagnosticMessagePreview(row)} className="w-full" />
+      ),
     },
     {
       key: "date",
       header: "Received",
-      className: "min-w-[6.5rem] whitespace-nowrap",
+      className: "w-[10%] whitespace-nowrap",
       cell: (row) => <span className="text-muted-foreground">{formatAdminDate(row.created_at)}</span>,
     },
     {
       key: "status",
       header: "Status",
-      className: "min-w-[10rem] whitespace-nowrap",
+      className: "w-[9%] whitespace-nowrap",
       cell: (row) => {
         const status = (row.status ?? "New") as SubmissionStatus
         return statusWritesEnabled ? (
@@ -410,7 +426,7 @@ const AdminInboxPage = () => {
     {
       key: "actions",
       header: "",
-      className: "w-24 shrink-0 whitespace-nowrap",
+      className: "w-[11%] whitespace-nowrap",
       cell: (row) => (
         <div className="flex items-center justify-end gap-0.5">
           <AdminNoteIconButton
@@ -479,7 +495,7 @@ const AdminInboxPage = () => {
           rows={filteredContactRows}
           getRowKey={(row) => row.id}
           columns={contactColumns}
-          tableClassName="min-w-[72rem]"
+          tableClassName={adminInboxContactTableClass}
           mobileFields={[
             {
               label: "Name",
@@ -533,7 +549,7 @@ const AdminInboxPage = () => {
         rows={filteredDiagnosticRows}
         getRowKey={(row) => row.id}
         columns={diagnosticColumns}
-        tableClassName="min-w-[76rem]"
+        tableClassName={adminInboxDiagnosticTableClass}
         mobileFields={[
           {
             label: "Founder",
@@ -585,36 +601,6 @@ const AdminInboxPage = () => {
   return (
     <div>
       <AdminPageReveal>
-      <AdminPageHeader
-        title="Inbox"
-        actions={
-          tab === "contact" ? (
-            <AdminDownloadCsvButton
-              filename="rellia-contact-submissions"
-              rows={filteredContactRows}
-              columns={[
-                { header: "Name", value: (row) => contactDisplayName(row) },
-                { header: "Type", value: (row) => contactTypeLabel(row) },
-                { header: "Email", value: (row) => row.email },
-                { header: "Company", value: (row) => row.company ?? "" },
-                { header: "Message", value: (row) => contactMessagePreview(row) },
-                { header: "Note", value: (row) => row.admin_note ?? "" },
-                { header: "Received", value: (row) => formatAdminDate(row.created_at) },
-                { header: "Status", value: (row) => row.status ?? "New" },
-              ]}
-            />
-          ) : (
-            <AdminDownloadCsvButton
-              filename="rellia-diagnostic-submissions"
-              rows={filteredDiagnosticRows}
-              columns={diagnosticCsvColumns()}
-            />
-          )
-        }
-      />
-      </AdminPageReveal>
-
-      <AdminPageReveal delay={0.06}>
       {!statusWritesEnabled ? (
         <p className={cn("mb-4", adminWarningBannerClass)}>
           Status updates need Supabase policies. Run{" "}
@@ -643,57 +629,54 @@ const AdminInboxPage = () => {
           </div>
         </TabsList>
 
-        {tab === "contact" ? (
-          <div className="flex flex-wrap gap-2" role="group" aria-label="Contact submission type">
-            {([
-              { id: "all", label: "All" },
-              { id: "contact", label: "Contact" },
-              { id: "investor", label: "Investor" },
-              { id: "modal", label: "Priority Modal" },
-            ] as const).map((pill) => (
-              <AdminFilterPill
-                key={pill.id}
-                label={pill.label}
-                count={contactSourceCounts[pill.id]}
-                isActive={contactSource === pill.id}
-                onClick={() => setContactSource(pill.id)}
-              />
-            ))}
-          </div>
-        ) : null}
-
-        {tab === "diagnostic" ? (
-          <div className="flex flex-wrap gap-2" role="group" aria-label="Diagnostic levels filter">
-            {diagnosticLevels.map((lvl) => (
-              <AdminFilterPill
-                key={lvl}
-                label={lvl === "all" ? "All Levels" : lvl}
-                count={countDiagnosticLevel(lvl)}
-                isActive={levelFilter === lvl}
-                onClick={() => setLevelFilter(lvl)}
-              />
-            ))}
-          </div>
-        ) : null}
-
-        <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-          <div className="relative w-full max-w-md flex-1">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
+          <div className="relative min-w-0 w-full flex-1">
             <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" aria-hidden />
             <Input
               type="search"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder={tab === "contact" ? "Search name, email, company…" : "Search founder, company, email…"}
-              className="pl-9"
+              className="h-10 w-full pl-9"
               aria-label="Search submissions"
             />
           </div>
-          <AdminSubmissionStatusFilter
-            value={statusFilter}
-            onChange={setStatusFilter}
-            counts={statusCounts}
-            className="lg:justify-end"
-          />
+          <div className="flex w-full shrink-0 items-center gap-2 sm:w-auto">
+            {tab === "contact" ? (
+              <AdminSelectFilter
+                value={contactSource}
+                onChange={setContactSource}
+                options={CONTACT_SOURCE_OPTIONS.map((option) => ({
+                  ...option,
+                  count: contactSourceCounts[option.value],
+                }))}
+                ariaLabel="Filter by submission type"
+                minWidthClass="min-w-[9.5rem]"
+              />
+            ) : (
+              <AdminSelectFilter
+                value={levelFilter}
+                onChange={setLevelFilter}
+                options={diagnosticLevels.map((lvl) => ({
+                  value: lvl,
+                  label: lvl === "all" ? "All levels" : lvl,
+                  count: countDiagnosticLevel(lvl),
+                }))}
+                ariaLabel="Filter by diagnostic level"
+                minWidthClass="min-w-[10rem]"
+              />
+            )}
+            <AdminSelectFilter
+              value={statusFilter}
+              onChange={(value) => setStatusFilter(value as StatusFilterValue)}
+              options={STATUS_FILTER_OPTIONS.map((option) => ({
+                ...option,
+                count: statusCounts[option.value],
+              }))}
+              ariaLabel="Filter by status"
+              minWidthClass="min-w-[9.5rem]"
+            />
+          </div>
         </div>
 
         <TabsContent value="contact" className="mt-0">
