@@ -1,5 +1,5 @@
 import { ChevronDown, X } from "lucide-react"
-import { adminFilterSelectTriggerClass } from "@/components/admin/adminThemeClasses"
+import { adminFilterSelectTriggerClass, adminToolbarFieldBorderClass } from "@/components/admin/adminThemeClasses"
 import { cn } from "@/lib/utils"
 
 export type AdminSelectFilterOption<T extends string> = {
@@ -71,7 +71,8 @@ const AdminSelectFilter = <T extends string>({
           type="button"
           onClick={handleClear}
           className={cn(
-            "inline-flex h-9 shrink-0 items-center gap-1 rounded-xl border border-border/80 px-2 sm:h-10 sm:gap-1.5 sm:px-3",
+            "inline-flex h-9 shrink-0 items-center gap-1 rounded-xl border px-2 sm:h-10 sm:gap-1.5 sm:px-3",
+            adminToolbarFieldBorderClass,
             "font-urbanist text-sm font-semibold text-muted-foreground transition-colors",
             "hover:border-rellia-teal/25 hover:bg-rellia-mint/10 hover:text-rellia-teal",
             "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-teal/30",

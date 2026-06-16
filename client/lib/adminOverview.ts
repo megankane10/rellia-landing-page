@@ -189,45 +189,6 @@ export const buildSubmissionTrend = (
   return buckets
 }
 
-export const buildPreviewSubmissionTrend = (
-  period: SubmissionTrendPeriod,
-  offset = 0,
-  sourceFilter: SubmissionSourceFilter = "all",
-): DaySubmissionCount[] => {
-  const contactSeeds = [
-    12, 18, 14, 22, 19, 24, 17, 21, 16, 23, 20, 18, 25, 15, 19, 22, 17, 24, 21, 16, 20, 23, 18, 22,
-    19, 25, 17, 21, 20, 24, 18,
-  ]
-  const diagnosticSeeds = [
-    7, 11, 9, 14, 12, 16, 10, 13, 8, 15, 11, 14, 16, 9, 12, 15, 10, 14, 13, 11, 12, 16, 10, 14, 12, 15,
-    9, 13, 11, 14, 12,
-  ]
-
-  return buildSubmissionTrend([], [], period, offset).map((bucket, index) => {
-    const phase = index + offset * 2
-    const wave = 0.5 + 0.5 * Math.sin(phase * 0.95)
-    const wave2 = 0.5 + 0.5 * Math.cos(phase * 0.75 + 0.6)
-    let contacts = Math.max(
-      0,
-      Math.round(contactSeeds[index % contactSeeds.length] * (0.55 + wave * 0.9)),
-    )
-    let diagnostics = Math.max(
-      0,
-      Math.round(diagnosticSeeds[(index + 3) % diagnosticSeeds.length] * (0.55 + wave2 * 0.9)),
-    )
-
-    if (sourceFilter === "web") diagnostics = 0
-    if (sourceFilter === "survey") contacts = 0
-
-    return {
-      ...bucket,
-      contacts,
-      diagnostics,
-      total: contacts + diagnostics,
-    }
-  })
-}
-
 export const buildLastNDaysCountByDay = (
   timestamps: Array<string | null | undefined>,
   days = 7,
@@ -303,19 +264,14 @@ const wasPendingAtDayEnd = (
   return leftQueueAtMs(row.status_updated_at) >= dayEnd
 }
 
-/** Demo sparkline ending at `currentPending` — wavy, not a smooth ramp. */
-export const buildPreviewPendingSparkline = (currentPending: number, days = 7): number[] => {
-  if (currentPending <= 0) {
-    const cleared = [4, 5, 6, 5, 4, 2, 0]
-    return cleared.slice(-days)
-  }
-
-  const wave = [0.62, 0.88, 0.72, 0.95, 0.78, 0.9, 1].slice(-days)
-
-  return wave.map((factor, index) => {
-    if (index === wave.length - 1) return currentPending
-    return Math.max(1, Math.round(currentPending * factor))
-  })
+/** Y-axis max for pending sparklines — scales to the data range, not a fixed pixel floor. */
+export const getPendingSparklineYMax = (values: number[]): number => {
+  if (values.length === 0) return 1
+  const max = Math.max(...values)
+  const min = Math.min(...values)
+  if (max === 0) return 1
+  if (min === max) return max + 1
+  return max
 }
 
 export const buildLastNDaysTrend = (

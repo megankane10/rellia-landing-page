@@ -635,10 +635,11 @@ const AdminTeamQuickNoteCard = ({ className, members = [] }: AdminTeamQuickNoteC
               icon={MoonStar}
               title="It's quiet in here"
               description="Be the first to post a bulletin note!"
+              descriptionClassName="text-base leading-relaxed"
               action={
                 <Button
                   type="button"
-                  className="h-10 rounded-full bg-rellia-mint px-6 font-urbanist text-sm font-semibold text-rellia-teal hover:bg-rellia-mint/90 dark:bg-rellia-mint/25 dark:text-rellia-teal dark:hover:bg-rellia-mint/35"
+                  className="h-11 rounded-full bg-rellia-mint px-7 font-urbanist text-base font-semibold text-rellia-teal hover:bg-rellia-mint/90 dark:bg-rellia-mint/25 dark:text-rellia-teal dark:hover:bg-rellia-mint/35"
                   onClick={handleStartEdit}
                 >
                   Post bulletin

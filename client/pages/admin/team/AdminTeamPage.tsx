@@ -135,7 +135,8 @@ const AdminTeamPage = () => {
         <AdminTipBox
           title="Invite your team members"
           icon={UserPlus}
-          storageKey="rellia-admin-team-tip-collapsed"
+          storageKey="rellia-admin-team-tip-collapsed-v2"
+          defaultExpanded
           className="w-full"
         >
           <div className="mb-5 space-y-3 font-urbanist text-sm text-muted-foreground leading-relaxed">

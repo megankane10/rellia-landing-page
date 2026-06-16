@@ -63,6 +63,8 @@ export type RelliaCtaProps = {
   icon?: ReactNode
   /** Override the outer section rounding (defaults to rounded top corners). */
   roundedClassName?: string
+  /** Optional override for supporting paragraph typography. */
+  bodyClassName?: string
 }
 
 function CtaActionButton({
@@ -150,6 +152,7 @@ export default function RelliaCta({
   icon,
   aboveSectionTone,
   roundedClassName = "rounded-t-[48px] md:rounded-t-[80px]",
+  bodyClassName,
 }: RelliaCtaProps) {
   const displayTitle = useMemo(() => {
     if (isVisualEditingPreview()) return cmsDisplayText(title)
@@ -215,6 +218,7 @@ export default function RelliaCta({
                 className={cn(
                   "mt-5 max-w-2xl font-urbanist leading-relaxed text-black",
                   size === "compact" ? "text-base md:text-lg" : "text-lg md:text-xl lg:text-2xl",
+                  bodyClassName,
                 )}
               >
                 {cmsDisplayText(body)}

@@ -196,19 +196,27 @@ export const adminSegmentedTabCountClass = cn(
   "dark:group-data-[state=active]/trigger:bg-white/20 dark:group-data-[state=active]/trigger:text-white",
 )
 
+/** Toolbar search / filter outlines — clearer in light mode, unchanged in dark */
+export const adminToolbarFieldBorderClass = cn(
+  "border-slate-300",
+  "dark:border-border",
+)
+
 /** Inbox / toolbar search — border only, no fill (matches canvas in light & dark) */
 export const adminToolbarSearchInputClass = cn(
   "bg-transparent shadow-none",
-  "border-border/80 focus-visible:ring-2 focus-visible:ring-rellia-teal/25 focus-visible:ring-offset-0",
-  "dark:bg-transparent dark:border-border dark:focus-visible:ring-rellia-mint/30",
+  adminToolbarFieldBorderClass,
+  "focus-visible:ring-2 focus-visible:ring-rellia-teal/25 focus-visible:ring-offset-0",
+  "dark:bg-transparent dark:focus-visible:ring-rellia-mint/30",
 )
 
 /** Overview chart cards + inbox toolbar — native select filter trigger */
 export const adminFilterSelectTriggerClass = cn(
   "h-9 w-full max-w-[8.25rem] appearance-none rounded-xl border pl-2.5 pr-9 font-urbanist text-xs font-semibold text-muted-foreground sm:h-10 sm:max-w-none sm:pl-3.5 sm:pr-11 sm:text-sm",
-  "border-border/80 bg-muted/70 hover:bg-muted/90",
+  adminToolbarFieldBorderClass,
+  "bg-muted/70 hover:border-slate-400 hover:bg-muted/90",
   "focus:outline-none focus:ring-2 focus:ring-rellia-teal",
-  "dark:border-border dark:bg-secondary/80 dark:hover:bg-secondary",
+  "dark:bg-secondary/80 dark:hover:border-border dark:hover:bg-secondary",
   "dark:focus:ring-rellia-mint/35",
 )
 
@@ -305,9 +313,40 @@ export const adminTooltipContentClass = cn(
   "animate-in fade-in-0 zoom-in-95",
 )
 
-/** Chart tooltips — same shell with readable value colours */
+/** Chart tooltips — white shell in light mode, dark sidebar shell in dark mode */
 export const adminChartTooltipClass = cn(
-  adminTooltipContentClass,
-  "min-w-[8rem] text-white",
-  "[&_.text-muted-foreground]:text-slate-300 [&_.text-foreground]:text-white",
+  "z-50 min-w-[8rem] overflow-hidden rounded-xl px-3 py-1.5 font-urbanist text-xs font-semibold shadow-lg animate-in fade-in-0 zoom-in-95",
+  "border border-slate-200/90 bg-white text-slate-900 shadow-black/10",
+  "[&_.text-muted-foreground]:text-slate-500 [&_.text-foreground]:text-slate-900",
+  "dark:border-slate-700/70 dark:bg-slate-950 dark:text-white dark:shadow-black/40",
+  "dark:[&_.text-muted-foreground]:text-slate-300 dark:[&_.text-foreground]:text-white",
 )
+
+const adminPieTooltipSharedStyle = {
+  borderRadius: "12px",
+  fontFamily: "Urbanist, sans-serif",
+  fontSize: "13px",
+  fontWeight: 600,
+  zIndex: 50,
+} as const
+
+export const getAdminPieTooltipStyles = (resolvedTheme: "light" | "dark") => {
+  const isDark = resolvedTheme === "dark"
+
+  return {
+    contentStyle: {
+      ...adminPieTooltipSharedStyle,
+      border: isDark ? "1px solid rgba(51, 65, 85, 0.7)" : "1px solid rgba(226, 232, 240, 0.9)",
+      backgroundColor: isDark ? "hsl(222 47% 11%)" : "#ffffff",
+      color: isDark ? "#ffffff" : "#0f172a",
+      boxShadow: isDark ? "0 12px 32px rgba(0,0,0,0.38)" : "0 12px 32px rgba(15, 23, 42, 0.12)",
+    },
+    labelStyle: {
+      color: isDark ? "#ffffff" : "#0f172a",
+      fontWeight: 600,
+    },
+    itemStyle: {
+      color: isDark ? "#e2e8f0" : "#475569",
+    },
+  }
+}

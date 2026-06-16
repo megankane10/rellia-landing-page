@@ -157,7 +157,7 @@ type ContentTypeSectionProps = {
   defaultOpen?: boolean
 }
 
-const ContentTypeSection = ({ type, items, defaultOpen = false }: ContentTypeSectionProps) => {
+const ContentTypeSection = ({ type, items, defaultOpen = true }: ContentTypeSectionProps) => {
   const [open, setOpen] = useState(defaultOpen)
   const label = formatCmsDocumentTypeLabel(type)
 

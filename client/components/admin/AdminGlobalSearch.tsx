@@ -8,6 +8,7 @@ import {
   fetchDiagnosticSubmissions,
 } from "@/lib/adminSubmissions"
 import { buildAdminSearchResults } from "@/lib/adminSearch"
+import { adminToolbarFieldBorderClass } from "@/components/admin/adminThemeClasses"
 import { cn } from "@/lib/utils"
 
 type AdminGlobalSearchProps = {
@@ -83,7 +84,7 @@ const AdminGlobalSearch = ({ className }: AdminGlobalSearchProps) => {
           }}
           onFocus={() => setOpen(true)}
           placeholder="Search all submissions…"
-          className="h-10 rounded-full border-border/80 bg-background pl-9 font-urbanist text-sm"
+          className={cn("h-10 rounded-full bg-background pl-9 font-urbanist text-sm shadow-none", adminToolbarFieldBorderClass)}
           aria-label="Search all submissions across contacts and diagnostics"
           aria-expanded={showPanel}
           aria-controls="admin-global-search-results"
@@ -95,7 +96,10 @@ const AdminGlobalSearch = ({ className }: AdminGlobalSearchProps) => {
         <div
           id="admin-global-search-results"
           role="listbox"
-          className="absolute left-0 right-0 top-[calc(100%+0.5rem)] z-50 overflow-hidden rounded-2xl border border-border/80 bg-background shadow-lg"
+          className={cn(
+            "absolute left-0 right-0 top-[calc(100%+0.5rem)] z-50 overflow-hidden rounded-2xl border bg-background shadow-lg",
+            adminToolbarFieldBorderClass,
+          )}
         >
           {contactsQuery.isLoading || diagnosticsQuery.isLoading ? (
             <p className="px-4 py-3 font-urbanist text-sm text-muted-foreground">Loading…</p>

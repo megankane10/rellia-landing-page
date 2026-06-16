@@ -37,11 +37,10 @@ import {
   fetchContactSubmissions,
   fetchDiagnosticSubmissions,
   type CompanyProfileRow,
+  type ContactRow,
 } from "@/lib/adminSubmissions"
 import {
   buildLastNDaysPendingTrend,
-  buildPreviewPendingSparkline,
-  buildPreviewSubmissionTrend,
   buildSubmissionTrend,
   buildStageChartFromDiagnostics,
   buildStatusBreakdown,
@@ -49,6 +48,7 @@ import {
   countSubmissionsBetweenDays,
   countUnresolved,
   formatTodaySnapshotMessage,
+  getPendingSparklineYMax,
   getSubmissionTrendRangeLabel,
   getSubmissionTrendTitle,
   percentChange,
@@ -84,20 +84,11 @@ import {
   type StatusFilterValue,
 } from "@/lib/adminSubmissionStatus"
 import AdminSubmissionStatusBadge from "@/components/admin/AdminSubmissionStatusBadge"
-import { adminChartTooltipClass, adminHighlightedSurfaceClass, adminInteractiveLinkArrowClass, adminInteractiveLinkTitleClass, adminOverviewArrowChipClass } from "@/components/admin/adminThemeClasses"
+import AdminRecordList, { type AdminRecordField } from "@/components/admin/AdminRecordList"
+import { type AdminTableColumn } from "@/components/admin/AdminDataTable"
+import { adminChartTooltipClass, adminHighlightedSurfaceClass, adminInteractiveLinkArrowClass, adminInteractiveLinkTitleClass, adminOverviewArrowChipClass, getAdminPieTooltipStyles } from "@/components/admin/adminThemeClasses"
 import { prefersReducedThemeMotion } from "@/lib/adminThemeTransition"
 import { cn } from "@/lib/utils"
-import {
-  OVERVIEW_PREVIEW_KPI,
-  OVERVIEW_PREVIEW_LAST_PUBLISH,
-  OVERVIEW_PREVIEW_TODAY_SNAPSHOT,
-  OVERVIEW_PREVIEW_ALL_DIAGNOSTICS,
-  OVERVIEW_PREVIEW_RECENT_CONTACTS,
-  OVERVIEW_PREVIEW_RECENT_DIAGNOSTICS,
-  OVERVIEW_PREVIEW_STAGE_NAMES,
-  OVERVIEW_PREVIEW_STRENGTHS,
-  OVERVIEW_PREVIEW_WEAKNESSES,
-} from "@/lib/adminOverviewPreview"
 
 const CHART_COLORS = {
   new: "hsl(199 89% 48%)",
@@ -221,18 +212,6 @@ const CHART_X_AXIS_PROPS = {
   textAnchor: "end" as const,
   height: 40,
 }
-
-const PIE_TOOLTIP_STYLE = {
-  borderRadius: "12px",
-  border: "1px solid rgba(51, 65, 85, 0.7)",
-  backgroundColor: "hsl(222 47% 11%)",
-  color: "#ffffff",
-  boxShadow: "0 12px 32px rgba(0,0,0,0.38)",
-  fontFamily: "Urbanist, sans-serif",
-  fontSize: "13px",
-  fontWeight: 600,
-  zIndex: 50,
-} as const
 
 type PieSliceRow = { name: string; value: number; pct: number; fill: string }
 
@@ -507,6 +486,8 @@ const DonutChartWithCenter = ({
   size?: keyof typeof DONUT_CHART_SIZES
 }) => {
   const chartSize = DONUT_CHART_SIZES[size]
+  const { resolvedTheme } = useAdminTheme()
+  const pieTooltipStyles = getAdminPieTooltipStyles(resolvedTheme)
   const { ref, inView, reduceMotion } = useOverviewChartInView()
   const dataAnimReady = useOverviewDataAnimReady(inView)
   const [entranceDone, setEntranceDone] = useState(reduceMotion)
@@ -566,10 +547,10 @@ const DonutChartWithCenter = ({
                 `${value} (${tooltipRows.find((row) => row.name === name)?.pct ?? 0}%)`,
                 name,
               ]}
-              labelStyle={{ color: "#ffffff", fontWeight: 600 }}
-              itemStyle={{ color: "#e2e8f0" }}
+              labelStyle={pieTooltipStyles.labelStyle}
+              itemStyle={pieTooltipStyles.itemStyle}
               wrapperStyle={{ zIndex: 50 }}
-              contentStyle={PIE_TOOLTIP_STYLE}
+              contentStyle={pieTooltipStyles.contentStyle}
             />
           </PieChart>
         </ResponsiveContainer>
@@ -759,32 +740,6 @@ const matchesOverviewStageFilter = (stage: string | null | undefined, filter: st
   return String(stage ?? "").trim().toLowerCase() === filter.trim().toLowerCase()
 }
 
-const getOverviewPreviewStageScale = (selectedStage: string) => {
-  if (selectedStage === "all") return 1
-  const filteredCount = OVERVIEW_PREVIEW_ALL_DIAGNOSTICS.filter((profile) =>
-    matchesOverviewStageFilter(profile.stage, selectedStage),
-  ).length
-  if (filteredCount === 0) return 0
-  return filteredCount / OVERVIEW_PREVIEW_ALL_DIAGNOSTICS.length
-}
-
-const scalePreviewRadarRows = (
-  rows: ReadonlyArray<{ name: string; value: number }>,
-  palette: string[],
-  selectedStage: string,
-) => {
-  const scale = getOverviewPreviewStageScale(selectedStage)
-  if (scale === 0) return []
-
-  return rows
-    .map((row, idx) => ({
-      name: row.name,
-      value: scale === 1 ? row.value : Math.max(1, Math.round(row.value * scale)),
-      fill: palette[idx % palette.length],
-    }))
-    .filter((row) => row.value > 0)
-}
-
 const aggregateDiagnosticCategoryCounts = (
   profiles: CompanyProfileRow[],
   selectedStage: string,
@@ -835,8 +790,7 @@ const OverviewSparkline = ({
   const gradientId = useId().replace(/:/g, "")
   const { revealStyle } = useOverviewClipReveal(startAnimation)
   const chartData = values.map((value, index) => ({ index, value }))
-  const maxValue = Math.max(...values, 0)
-  const yMax = maxValue === 0 ? 1 : Math.max(maxValue, 1)
+  const yMax = getPendingSparklineYMax(values)
 
   return (
     <div className="h-14 w-full min-w-0 overflow-hidden" aria-hidden>
@@ -1232,20 +1186,26 @@ const overviewTopCardSkeletonToneClass = {
 const overviewTopCardSubtextClass =
   "mt-2.5 font-urbanist text-sm font-semibold leading-snug"
 
+const getOverviewTopCardValueClass = (display: number | string) => {
+  const label = String(display)
+  if (label.length > 9) {
+    return "text-3xl font-semibold leading-none sm:text-4xl"
+  }
+  return "text-[2.75rem] font-semibold leading-none"
+}
+
 const OverviewTopCardSubtext = ({
   children,
   isUnavailable,
   seriesAccentStyle,
-  isCleared,
 }: {
   children: ReactNode
   isUnavailable: boolean
   seriesAccentStyle?: { color: string }
-  isCleared: boolean
 }) => (
   <p
     className={cn(overviewTopCardSubtextClass, isUnavailable && "text-muted-foreground")}
-    style={seriesAccentStyle ? { color: seriesAccentStyle.color, opacity: isCleared ? 0.75 : 0.85 } : undefined}
+    style={seriesAccentStyle ? { color: seriesAccentStyle.color, opacity: 0.85 } : undefined}
   >
     {children}
   </p>
@@ -1271,6 +1231,7 @@ const OverviewTopLinkCard = ({
   statusLabel,
   statusLabelAria,
   clearedStatusLabel,
+  clearedValueLabel,
   sparklineValues,
   sparklineSeries = "contacts",
   href,
@@ -1283,6 +1244,8 @@ const OverviewTopLinkCard = ({
   statusLabel: ReactNode
   statusLabelAria?: string
   clearedStatusLabel?: string
+  /** Replaces the big pending count when the queue is clear (pending = 0). */
+  clearedValueLabel?: string
   sparklineValues?: number[]
   sparklineSeries?: SparklineSeries
   href: string
@@ -1297,29 +1260,24 @@ const OverviewTopLinkCard = ({
   const isUnavailable = value === "—"
   const numericValue = typeof value === "number" ? value : null
   const isCleared = numericValue === 0 && !isUnavailable
+  const showClearedCopy = isCleared && Boolean(clearedValueLabel)
+  const displayValue = showClearedCopy ? clearedValueLabel : value
   const displayStatusLabel = isCleared ? (clearedStatusLabel ?? statusLabel) : statusLabel
   const seriesColor = seriesColorFor(sparklineSeries, resolvedTheme)
   const seriesAccentStyle = !isUnavailable ? { color: seriesColor } : undefined
-  const isRelativeTimeValue = typeof value === "string" && value !== "—"
-  const valueSizeClass =
-    isRelativeTimeValue && value.length > 9
-      ? "text-3xl sm:text-4xl"
-      : "text-4xl sm:text-[2.75rem]"
+  const valueSizeClass = getOverviewTopCardValueClass(displayValue)
+  const isNumericHeadline = typeof displayValue === "number"
 
   const sparklineBase =
     sparklineValues && sparklineValues.length > 0
       ? sparklineValues
       : Array.from({ length: SPARKLINE_DAYS }, () => 0)
 
-  const sparkline =
-    numericValue !== null && sparklineBase.length > 0
-      ? [...sparklineBase.slice(0, -1), numericValue]
-      : sparklineBase
-
   const effectiveSparklineColor = seriesColor
-  const cardStatusAria =
-    statusLabelAria ??
-    (typeof displayStatusLabel === "string" ? displayStatusLabel : undefined)
+  const cardStatusAria = showClearedCopy
+    ? `${title}: ${clearedValueLabel}. ${typeof displayStatusLabel === "string" ? displayStatusLabel : statusLabelAria ?? ""}`.trim()
+    : statusLabelAria ??
+      (typeof displayStatusLabel === "string" ? displayStatusLabel : undefined)
 
   const cardBody = (
     <div ref={ref} className="flex min-h-[8rem] flex-col gap-3 sm:min-h-[8.5rem]">
@@ -1355,32 +1313,31 @@ const OverviewTopLinkCard = ({
         <>
           <div className="min-w-0">
             {isUnavailable ? (
-              <p className="font-host-grotesk text-4xl font-semibold tabular-nums leading-none text-slate-500 dark:text-slate-400 sm:text-[2.75rem]">
+              <p className="font-host-grotesk text-[2.75rem] font-semibold tabular-nums leading-none text-slate-500 dark:text-slate-400">
                 —
               </p>
             ) : (
               <p
                 className={cn(
-                  "font-host-grotesk font-semibold leading-none",
+                  "font-host-grotesk",
                   valueSizeClass,
-                  isRelativeTimeValue && "tracking-tight",
+                  isNumericHeadline && "tabular-nums",
                 )}
                 style={seriesAccentStyle}
               >
-                {value}
+                {displayValue}
               </p>
             )}
             <OverviewTopCardSubtext
               isUnavailable={isUnavailable}
               seriesAccentStyle={seriesAccentStyle}
-              isCleared={isCleared}
             >
               {displayStatusLabel}
             </OverviewTopCardSubtext>
           </div>
           {!isUnavailable ? (
             <OverviewSparkline
-              values={sparkline}
+              values={sparklineBase}
               color={effectiveSparklineColor}
               startAnimation={dataAnimReady}
             />
@@ -1412,63 +1369,100 @@ const OverviewTopLinkCard = ({
 }
 
 const RECENT_SUBMISSION_MAX = 5
-const RECENT_SUBMISSION_ROW_CLASS = "flex h-[3.75rem] shrink-0 items-center justify-between gap-3"
-const RECENT_SUBMISSION_ROW_HEIGHT_REM = 3.75
+const RECENT_SUBMISSION_ROW_HEIGHT_REM = 4.25
 
-type RecentSubmissionFillerLayout = "stacked" | "inline"
+const recentContactLinkClass =
+  "font-urbanist text-base font-semibold text-rellia-teal hover:underline dark:text-rellia-mint"
 
-const RecentSubmissionFiller = ({
-  titleIcon: TitleIcon,
-  message,
-  borderedTop,
-  missingRowCount,
-}: {
-  titleIcon: LucideIcon
-  message: string
-  borderedTop: boolean
-  /** Whole row slots below the list (always ≥ 1 when this renders). */
-  missingRowCount: number
-}) => {
-  const heightRem = missingRowCount * RECENT_SUBMISSION_ROW_HEIGHT_REM
-  const layout: RecentSubmissionFillerLayout = missingRowCount >= 2 ? "stacked" : "inline"
+const recentContactColumns: AdminTableColumn<ContactRow>[] = [
+  {
+    key: "name",
+    header: "Name",
+    cell: (row) => (
+      <Link to={`/admin/contacts/${row.id}`} className={recentContactLinkClass}>
+        {contactDisplayName(row)}
+      </Link>
+    ),
+  },
+  {
+    key: "type",
+    header: "Type",
+    cell: (row) => <span className="text-muted-foreground">{contactTypeLabel(row)}</span>,
+  },
+  {
+    key: "date",
+    header: "Received",
+    className: "whitespace-nowrap",
+    cell: (row) => <span className="text-muted-foreground">{formatAdminDate(row.created_at)}</span>,
+  },
+  {
+    key: "status",
+    header: "Status",
+    cell: (row) => <AdminSubmissionStatusBadge status={(row.status ?? "New") as SubmissionStatus} />,
+  },
+]
 
-  return (
-    <div
-      style={{ height: `${heightRem}rem` }}
-      className={cn(
-        "hidden shrink-0 flex-col items-center justify-center overflow-hidden lg:flex",
-        borderedTop
-          ? "border-t border-dashed border-border/80 bg-muted/15 dark:bg-muted/10"
-          : "rounded-xl border border-dashed border-border/80 bg-muted/15 dark:bg-muted/10",
-      )}
-    >
-      <div
-        className={cn(
-          "flex w-full items-center justify-center px-4",
-          layout === "stacked" && "flex-col gap-2.5 py-4 text-center",
-          layout === "inline" && "flex-row gap-3 py-3 text-center",
-        )}
-      >
-        <span
-          className={cn(
-            "flex shrink-0 items-center justify-center rounded-full border border-border/80 bg-card text-muted-foreground",
-            layout === "inline" ? "h-9 w-9" : "h-11 w-11",
-          )}
-        >
-          <TitleIcon className={cn(layout === "inline" ? "h-4 w-4" : "h-5 w-5")} aria-hidden />
-        </span>
-        <p
-          className={cn(
-            "font-urbanist text-sm leading-snug text-muted-foreground",
-            layout === "stacked" ? "max-w-[15rem]" : "max-w-[15rem] min-w-0",
-          )}
-        >
-          {message}
-        </p>
-      </div>
-    </div>
-  )
-}
+const recentContactMobileFields: AdminRecordField<ContactRow>[] = [
+  {
+    label: "Name",
+    value: (row) => (
+      <Link to={`/admin/contacts/${row.id}`} className={recentContactLinkClass}>
+        {contactDisplayName(row)}
+      </Link>
+    ),
+  },
+  { label: "Type", value: (row) => contactTypeLabel(row) },
+  { label: "Received", value: (row) => formatAdminDate(row.created_at) },
+  {
+    label: "Status",
+    value: (row) => <AdminSubmissionStatusBadge status={(row.status ?? "New") as SubmissionStatus} />,
+  },
+]
+
+const recentDiagnosticColumns: AdminTableColumn<CompanyProfileRow>[] = [
+  {
+    key: "company",
+    header: "Company",
+    cell: (row) => (
+      <Link to={`/admin/companies/${row.id}`} className={recentContactLinkClass}>
+        {row.company_name}
+      </Link>
+    ),
+  },
+  {
+    key: "contact",
+    header: "Contact",
+    cell: (row) => <span className="text-muted-foreground">{row.name}</span>,
+  },
+  {
+    key: "date",
+    header: "Received",
+    className: "whitespace-nowrap",
+    cell: (row) => <span className="text-muted-foreground">{formatAdminDate(row.created_at)}</span>,
+  },
+  {
+    key: "status",
+    header: "Status",
+    cell: (row) => <AdminSubmissionStatusBadge status={(row.status ?? "New") as SubmissionStatus} />,
+  },
+]
+
+const recentDiagnosticMobileFields: AdminRecordField<CompanyProfileRow>[] = [
+  {
+    label: "Company",
+    value: (row) => (
+      <Link to={`/admin/companies/${row.id}`} className={recentContactLinkClass}>
+        {row.company_name}
+      </Link>
+    ),
+  },
+  { label: "Contact", value: (row) => row.name },
+  { label: "Received", value: (row) => formatAdminDate(row.created_at) },
+  {
+    label: "Status",
+    value: (row) => <AdminSubmissionStatusBadge status={(row.status ?? "New") as SubmissionStatus} />,
+  },
+]
 
 const AdminRecentSubmissionsCard = <T extends { id: string }>({
   title,
@@ -1479,36 +1473,25 @@ const AdminRecentSubmissionsCard = <T extends { id: string }>({
   pairedRowCount,
   emptyMessage,
   fillerMessage,
-  renderRow,
+  columns,
+  mobileFields,
 }: {
   title: string
   titleIcon: LucideIcon
   viewAllHref: string
   loading?: boolean
   rows: T[]
+  /** Match the taller sibling card so filler only appears when heights diverge. */
   pairedRowCount: number
   emptyMessage: string
   fillerMessage: string
-  renderRow: (row: T) => ReactNode
+  columns: AdminTableColumn<T>[]
+  mobileFields: AdminRecordField<T>[]
 }) => {
   const missingRowCount = Math.max(0, pairedRowCount - rows.length)
   const showFiller = missingRowCount > 0
   const fillerHeightRem = missingRowCount * RECENT_SUBMISSION_ROW_HEIGHT_REM
   const isFullyEmpty = pairedRowCount === 0 && rows.length === 0
-
-  const emptyState = (
-    <div
-      className="flex shrink-0 flex-col items-center justify-center rounded-xl border border-dashed border-border/80 bg-muted/15 px-4 py-8 text-center dark:bg-muted/10"
-      style={{ height: `${fillerHeightRem}rem` }}
-    >
-      <span className="flex h-11 w-11 items-center justify-center rounded-full border border-border/80 bg-card text-muted-foreground">
-        <TitleIcon className="h-5 w-5" aria-hidden />
-      </span>
-      <p className="mt-2.5 max-w-[15rem] font-urbanist text-sm leading-snug text-muted-foreground">
-        {emptyMessage}
-      </p>
-    </div>
-  )
 
   return (
     <Card className="flex h-full min-w-0 flex-col overflow-hidden rounded-2xl">
@@ -1527,44 +1510,59 @@ const AdminRecentSubmissionsCard = <T extends { id: string }>({
           </Link>
         </div>
       </CardHeader>
-      <CardContent className="flex min-h-0 flex-1 flex-col pb-6">
+      <CardContent className="flex flex-col px-0 pb-0 pt-0">
         {loading ? (
-          <div className="divide-y divide-border">
+          <div className="space-y-3 px-6 pb-6">
             {Array.from({ length: 4 }).map((_, index) => (
-              <Skeleton key={index} className="h-[3.75rem] w-full rounded-none" />
+              <Skeleton key={index} className="h-14 rounded-xl" />
             ))}
           </div>
         ) : (
-          <div className="flex min-h-0 flex-1 flex-col">
+          <div className="flex flex-col">
             {rows.length > 0 ? (
-              <ul className="shrink-0 divide-y divide-border">
-                {rows.map((row) => (
-                  <li key={row.id} className={RECENT_SUBMISSION_ROW_CLASS}>
-                    {renderRow(row)}
-                  </li>
-                ))}
-              </ul>
+              <div className="shrink-0 overflow-hidden [&_tbody_tr]:h-[4.25rem] [&_ul]:space-y-3 [&_ul]:px-6 [&_ul]:pb-3 [&_ul]:pt-0 md:[&_ul]:hidden">
+                <AdminRecordList
+                  rows={rows}
+                  getRowKey={(row) => row.id}
+                  columns={columns}
+                  mobileFields={mobileFields}
+                  tableClassName="w-full"
+                />
+              </div>
             ) : null}
             {isFullyEmpty ? (
-              <div className="flex shrink-0 flex-col items-center justify-center rounded-xl border border-dashed border-border/80 bg-muted/15 px-4 py-8 text-center dark:bg-muted/10">
-                <span className="flex h-11 w-11 items-center justify-center rounded-full border border-border/80 bg-card text-muted-foreground">
-                  <TitleIcon className="h-5 w-5" aria-hidden />
+              <div className="mx-6 mb-6 flex flex-col items-center justify-center gap-2.5 rounded-xl border border-dashed border-border/80 bg-muted/15 px-4 py-8 text-center dark:bg-muted/10">
+                <span className="flex h-14 w-14 items-center justify-center rounded-full border border-border/80 bg-card">
+                  <TitleIcon className="h-7 w-7 text-rellia-teal dark:text-rellia-mint" aria-hidden strokeWidth={1.75} />
                 </span>
-                <p className="mt-2.5 max-w-[15rem] font-urbanist text-sm leading-snug text-muted-foreground">
-                  {emptyMessage}
+                <p className="max-w-[16rem] font-urbanist text-base leading-snug text-muted-foreground">{emptyMessage}</p>
+              </div>
+            ) : null}
+            {showFiller ? (
+              <div
+                style={{ height: `${fillerHeightRem}rem` }}
+                className={cn(
+                  "box-border flex w-full shrink-0 items-center justify-center gap-3 px-4 text-center",
+                  rows.length > 0 && "hidden md:flex",
+                  "flex-col md:flex-row md:px-6",
+                  rows.length > 0
+                    ? "border-t border-dashed border-border/80 bg-muted/15 dark:bg-muted/10"
+                    : "mx-6 mb-6 rounded-xl border border-dashed border-border/80 bg-muted/15 dark:bg-muted/10",
+                )}
+              >
+                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-border/80 bg-card text-muted-foreground">
+                  <TitleIcon className="h-5 w-5 text-rellia-teal dark:text-rellia-mint" aria-hidden strokeWidth={1.75} />
+                </span>
+                <p
+                  className={cn(
+                    "font-urbanist text-base leading-snug text-muted-foreground",
+                    rows.length === 0 ? "max-w-[16rem]" : "max-w-[16rem] md:max-w-none md:flex-1 md:whitespace-nowrap md:text-left",
+                  )}
+                >
+                  {rows.length === 0 ? emptyMessage : fillerMessage}
                 </p>
               </div>
             ) : null}
-            {rows.length === 0 && showFiller ? emptyState : null}
-            {rows.length > 0 && showFiller ? (
-              <RecentSubmissionFiller
-                titleIcon={TitleIcon}
-                message={fillerMessage}
-                borderedTop
-                missingRowCount={missingRowCount}
-              />
-            ) : null}
-            <div className="min-h-0 flex-1" aria-hidden />
           </div>
         )}
       </CardContent>
@@ -1690,8 +1688,6 @@ const AdminOverviewPage = () => {
   const [searchParams] = useSearchParams()
   const welcomeState = (location.state as AdminWelcomeLocationState | null) ?? null
   const previewWelcome = searchParams.get("previewWelcome") === "1"
-  const previewOverviewParam = searchParams.get("previewOverview")
-  const overviewPreview = previewOverviewParam === "1"
   const previewName = searchParams.get("name")?.trim() ?? ""
   const wantsWelcome = adminUserShouldSeeWelcomeSplash(user, {
     forceWelcome: welcomeState?.showWelcome === true,
@@ -1773,29 +1769,20 @@ const AdminOverviewPage = () => {
   const loading = contactsQuery.isLoading || diagnosticsQuery.isLoading
   const contacts = contactsQuery.data ?? []
   const diagnostics = diagnosticsQuery.data ?? []
-  const trendUsesPreview = overviewPreview
   const trend = useMemo(
     () => buildSubmissionTrend(contacts, diagnostics, trendPeriod, trendOffset),
     [contacts, diagnostics, trendPeriod, trendOffset],
   )
 
-  const displayTrend = useMemo(
-    () =>
-      trendUsesPreview
-        ? buildPreviewSubmissionTrend(trendPeriod, trendOffset)
-        : trend,
-    [trendUsesPreview, trend, trendPeriod, trendOffset],
-  )
-
   const trendChartMax = useMemo(() => {
     let max = 0
-    for (const row of displayTrend) {
+    for (const row of trend) {
       max = Math.max(max, row.contacts, row.diagnostics)
     }
     return Math.max(max, 1)
-  }, [displayTrend])
+  }, [trend])
 
-  const trendChartLoading = trendUsesPreview ? false : loading
+  const trendChartLoading = loading
 
   const trendXAxisProps = useMemo(() => {
     if (trendPeriod === "year") {
@@ -1831,26 +1818,12 @@ const AdminOverviewPage = () => {
     return diagnostics
   }, [diagnostics, statusDonutSourceFilter])
 
-  const liveStatusBreakdown = useMemo(() => {
+  const statusBreakdown = useMemo(() => {
     return buildStatusBreakdown(filteredContacts, filteredDiagnostics)
   }, [filteredContacts, filteredDiagnostics])
 
-  const statusBreakdown = useMemo(() => {
-    if (!overviewPreview) return liveStatusBreakdown
-
-    const previewContacts =
-      statusDonutSourceFilter === "survey" ? [] : OVERVIEW_PREVIEW_RECENT_CONTACTS
-    const previewDiagnostics =
-      statusDonutSourceFilter === "web" ? [] : OVERVIEW_PREVIEW_RECENT_DIAGNOSTICS
-    return buildStatusBreakdown(previewContacts, previewDiagnostics)
-  }, [liveStatusBreakdown, overviewPreview, statusDonutSourceFilter])
-
-  const recentContacts = overviewPreview
-    ? sortOverviewRecentSubmissions(OVERVIEW_PREVIEW_RECENT_CONTACTS, RECENT_SUBMISSION_MAX)
-    : sortOverviewRecentSubmissions(contacts, RECENT_SUBMISSION_MAX)
-  const recentDiagnostics = overviewPreview
-    ? sortOverviewRecentSubmissions(OVERVIEW_PREVIEW_RECENT_DIAGNOSTICS, RECENT_SUBMISSION_MAX)
-    : sortOverviewRecentSubmissions(diagnostics, RECENT_SUBMISSION_MAX)
+  const recentContacts = sortOverviewRecentSubmissions(contacts, RECENT_SUBMISSION_MAX)
+  const recentDiagnostics = sortOverviewRecentSubmissions(diagnostics, RECENT_SUBMISSION_MAX)
   const recentSubmissionPairCount = Math.max(recentContacts.length, recentDiagnostics.length)
 
   const unresolved = countUnresolved(contacts, diagnostics)
@@ -1899,22 +1872,16 @@ const AdminOverviewPage = () => {
   }, [statusBreakdown, totalStatusCount])
 
   const allStages = useMemo(() => {
-    if (overviewPreview) return [...OVERVIEW_PREVIEW_STAGE_NAMES]
     const stages = new Set<string>()
     diagnostics.forEach((row) => {
       if (row.stage) stages.add(row.stage)
     })
     return Array.from(stages).sort()
-  }, [diagnostics, overviewPreview])
-
-  const stageDiagnosticsSource = useMemo(
-    () => (overviewPreview ? OVERVIEW_PREVIEW_ALL_DIAGNOSTICS : diagnostics),
-    [overviewPreview, diagnostics],
-  )
+  }, [diagnostics])
 
   const filteredStageDiagnostics = useMemo(
-    () => stageDiagnosticsSource.filter((row) => matchesStatusFilter(row, stageStatusFilter)),
-    [stageDiagnosticsSource, stageStatusFilter],
+    () => diagnostics.filter((row) => matchesStatusFilter(row, stageStatusFilter)),
+    [diagnostics, stageStatusFilter],
   )
 
   const stageChartData = useMemo(
@@ -1939,15 +1906,11 @@ const AdminOverviewPage = () => {
       "hsl(28 80% 52%)",
     ]
 
-    if (overviewPreview) {
-      return scalePreviewRadarRows(OVERVIEW_PREVIEW_STRENGTHS, palette, selectedStage)
-    }
-
     return mapCategoryCountsToRadarRows(
       aggregateDiagnosticCategoryCounts(diagnostics, selectedStage, "top3_strengths"),
       palette,
     )
-  }, [overviewPreview, diagnostics, selectedStage])
+  }, [diagnostics, selectedStage])
 
   const gapsPieData = useMemo(() => {
     const palette = [
@@ -1961,15 +1924,11 @@ const AdminOverviewPage = () => {
       "hsl(175 42% 73%)",
     ]
 
-    if (overviewPreview) {
-      return scalePreviewRadarRows(OVERVIEW_PREVIEW_WEAKNESSES, palette, selectedStage)
-    }
-
     return mapCategoryCountsToRadarRows(
       aggregateDiagnosticCategoryCounts(diagnostics, selectedStage, "top3_weaknesses"),
       palette,
     )
-  }, [overviewPreview, diagnostics, selectedStage])
+  }, [diagnostics, selectedStage])
 
   const webFormsSparkline = useMemo(
     () => buildLastNDaysPendingTrend(contacts, SPARKLINE_DAYS),
@@ -1981,36 +1940,15 @@ const AdminOverviewPage = () => {
     [diagnostics],
   )
 
-  const displayUnresolvedWebForms = overviewPreview
-    ? OVERVIEW_PREVIEW_KPI.webForms
-    : unresolvedWebForms
-  const displayUnresolvedDiagnostics = overviewPreview
-    ? OVERVIEW_PREVIEW_KPI.surveys
-    : unresolvedDiagnostics
-  const displayWebFormsSparkline = overviewPreview
-    ? buildPreviewPendingSparkline(OVERVIEW_PREVIEW_KPI.webForms)
-    : webFormsSparkline
-  const displayDiagnosticsSparkline = overviewPreview
-    ? buildPreviewPendingSparkline(OVERVIEW_PREVIEW_KPI.surveys)
-    : diagnosticsSparkline
-  const displayLastPublishHeadline = overviewPreview
-    ? OVERVIEW_PREVIEW_LAST_PUBLISH.headline
-    : !isCmsContentEnabled()
-      ? "—"
-      : lastPublishedAt
-        ? formatCmsLastPublishHeadline(lastPublishedAt)
-        : "None"
+  const displayLastPublishHeadline = !isCmsContentEnabled()
+    ? "—"
+    : lastPublishedAt
+      ? formatCmsLastPublishHeadline(lastPublishedAt)
+      : "None"
   const displayLastPublishSubtitle = useMemo((): CmsLastPublishSubtitle => {
-    if (overviewPreview) {
-      return {
-        kind: "document",
-        documentName: OVERVIEW_PREVIEW_LAST_PUBLISH.documentName,
-        typeLabel: OVERVIEW_PREVIEW_LAST_PUBLISH.typeLabel,
-      }
-    }
     if (!isCmsContentEnabled()) return { kind: "plain", text: "Unavailable" }
     return getCmsLastPublishSubtitle(lastPublishedEdit, lastPublishedAt)
-  }, [lastPublishedAt, lastPublishedEdit, overviewPreview])
+  }, [lastPublishedAt, lastPublishedEdit])
 
   const displayLastPublishStatus = useMemo(
     () => <CmsLastPublishSubtext subtitle={displayLastPublishSubtitle} />,
@@ -2021,20 +1959,16 @@ const AdminOverviewPage = () => {
     () => cmsLastPublishSubtitleAria(displayLastPublishSubtitle),
     [displayLastPublishSubtitle],
   )
-  const displayCmsEditsSparkline = overviewPreview
-    ? buildPreviewPendingSparkline(1)
-    : cmsEditsSparkline
 
-  const todaySnapshot = useMemo((): TodayInboxSnapshot => {
-    if (overviewPreview) return OVERVIEW_PREVIEW_TODAY_SNAPSHOT
-    return countInboxSubmissionsToday(contacts, diagnostics)
-  }, [contacts, diagnostics, overviewPreview])
+  const todaySnapshot = useMemo(
+    (): TodayInboxSnapshot => countInboxSubmissionsToday(contacts, diagnostics),
+    [contacts, diagnostics],
+  )
 
-  const topCardsLoading = overviewPreview ? false : loading
-  const siteContentCardLoading =
-    overviewPreview ? false : isCmsContentEnabled() && recentEditsQuery.isPending
-  const chartSectionLoading = overviewPreview ? false : loading
-  const radarSectionLoading = overviewPreview ? false : loading
+  const topCardsLoading = loading
+  const siteContentCardLoading = isCmsContentEnabled() && recentEditsQuery.isPending
+  const chartSectionLoading = loading
+  const radarSectionLoading = loading
 
   return (
     <div className="min-w-0 space-y-6">
@@ -2082,29 +2016,31 @@ const AdminOverviewPage = () => {
           href="/admin/inbox?tab=contact"
           loading={topCardsLoading}
           skeletonTone="contacts"
-          sparklineValues={displayWebFormsSparkline}
+          sparklineValues={webFormsSparkline}
           sparklineSeries="contacts"
-          value={displayUnresolvedWebForms}
+          value={unresolvedWebForms}
           statusLabel="Pending review"
-          clearedStatusLabel="All caught up — inbox clear"
+          clearedValueLabel="All clear"
+          clearedStatusLabel="No forms pending review"
         />
         <OverviewTopLinkCard
           title="Diagnostic surveys"
           href="/admin/inbox?tab=diagnostic"
           loading={topCardsLoading}
           skeletonTone="diagnostics"
-          sparklineValues={displayDiagnosticsSparkline}
+          sparklineValues={diagnosticsSparkline}
           sparklineSeries="diagnostics"
-          value={displayUnresolvedDiagnostics}
+          value={unresolvedDiagnostics}
           statusLabel="Pending review"
-          clearedStatusLabel="All caught up — queue clear"
+          clearedValueLabel="All clear"
+          clearedStatusLabel="No surveys pending review"
         />
         <OverviewTopLinkCard
           title="Last content publish"
           href="/admin/content?status=published"
           loading={siteContentCardLoading}
           skeletonTone="sanity"
-          sparklineValues={isCmsContentEnabled() ? displayCmsEditsSparkline : undefined}
+          sparklineValues={isCmsContentEnabled() ? cmsEditsSparkline : undefined}
           sparklineSeries="drafts"
           value={displayLastPublishHeadline}
           statusLabel={displayLastPublishStatus}
@@ -2183,7 +2119,7 @@ const AdminOverviewPage = () => {
                 <div className="flex min-h-0 flex-1 items-center justify-center">
                   <OverviewTrendAreaChart
                     key={`${trendPeriod}-${trendOffset}`}
-                    data={displayTrend}
+                    data={trend}
                     yMax={trendChartMax}
                     xAxisProps={trendXAxisProps}
                   />
@@ -2327,7 +2263,7 @@ const AdminOverviewPage = () => {
       </ScrollReveal>
 
       <ScrollReveal variant="ctaReveal" delay={0.14} hold={showSplash}>
-      <div className="grid min-w-0 gap-6 lg:grid-cols-2 lg:items-stretch [&>*]:h-full [&>*]:min-h-0">
+      <div className="grid min-w-0 gap-6 lg:grid-cols-2 lg:items-stretch">
         <AdminRecentSubmissionsCard
           title="Recent web forms"
           titleIcon={Inbox}
@@ -2337,22 +2273,8 @@ const AdminOverviewPage = () => {
           pairedRowCount={recentSubmissionPairCount}
           emptyMessage="No contact submissions yet."
           fillerMessage="No more recent web forms in this list."
-          renderRow={(row) => (
-            <>
-              <div className="min-w-0">
-                <Link
-                  to={`/admin/contacts/${row.id}`}
-                  className="truncate font-urbanist text-sm font-medium text-rellia-teal hover:underline"
-                >
-                  {contactDisplayName(row)}
-                </Link>
-                <p className="truncate font-urbanist text-xs text-muted-foreground">
-                  {contactTypeLabel(row)} · {formatAdminDate(row.created_at)}
-                </p>
-              </div>
-              <AdminSubmissionStatusBadge status={(row.status ?? "New") as SubmissionStatus} />
-            </>
-          )}
+          columns={recentContactColumns}
+          mobileFields={recentContactMobileFields}
         />
 
         <AdminRecentSubmissionsCard
@@ -2364,22 +2286,8 @@ const AdminOverviewPage = () => {
           pairedRowCount={recentSubmissionPairCount}
           emptyMessage="No diagnostic submissions yet."
           fillerMessage="No more recent diagnostics in this list."
-          renderRow={(row) => (
-            <>
-              <div className="min-w-0">
-                <Link
-                  to={`/admin/companies/${row.id}`}
-                  className="truncate font-urbanist text-sm font-medium text-rellia-teal hover:underline"
-                >
-                  {row.company_name}
-                </Link>
-                <p className="truncate font-urbanist text-xs text-muted-foreground">
-                  {row.name} · {formatAdminDate(row.created_at)}
-                </p>
-              </div>
-              <AdminSubmissionStatusBadge status={(row.status ?? "New") as SubmissionStatus} />
-            </>
-          )}
+          columns={recentDiagnosticColumns}
+          mobileFields={recentDiagnosticMobileFields}
         />
       </div>
       </ScrollReveal>

@@ -173,7 +173,8 @@ const AdminContentPage = () => {
           <AdminTipBox
             title="Sanity content"
             icon={FileEdit}
-            storageKey="rellia-admin-content-tip-collapsed"
+            storageKey="rellia-admin-content-tip-collapsed-v2"
+            defaultExpanded
             className="mb-6"
           >
             <div className="space-y-3 font-urbanist text-sm text-muted-foreground">

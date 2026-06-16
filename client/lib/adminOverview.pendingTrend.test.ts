@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest"
 
-import { buildLastNDaysPendingTrend, buildPreviewPendingSparkline } from "@/lib/adminOverview"
+import { buildLastNDaysPendingTrend, getPendingSparklineYMax } from "@/lib/adminOverview"
 
 const dayStartIso = (daysAgo: number) => {
   const d = new Date()
@@ -63,10 +63,16 @@ describe("buildLastNDaysPendingTrend", () => {
   })
 })
 
-describe("buildPreviewPendingSparkline", () => {
-  it("is not flat when current pending is zero", () => {
-    const trend = buildPreviewPendingSparkline(0)
-    expect(new Set(trend).size).toBeGreaterThan(1)
-    expect(trend[trend.length - 1]).toBe(0)
+describe("getPendingSparklineYMax", () => {
+  it("uses a floor of 1 when the queue is cleared", () => {
+    expect(getPendingSparklineYMax([0, 0, 0, 0, 0, 0, 0])).toBe(1)
+  })
+
+  it("adds headroom when pending is steady so the line is not pinned to the chart floor", () => {
+    expect(getPendingSparklineYMax([1, 1, 1, 1, 1, 1, 1])).toBe(2)
+  })
+
+  it("scales to the max pending count when the queue changes over time", () => {
+    expect(getPendingSparklineYMax([0, 0, 1, 2, 1, 3, 1])).toBe(3)
   })
 })
