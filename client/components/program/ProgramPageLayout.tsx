@@ -330,7 +330,7 @@ const ProgramPageLayout = ({
                   <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
                     <RelliaAction
                       type="button"
-                      variant="mintTealFill"
+                      variant="creamHeaderPrimary"
                       size="comfortable"
                       onClick={() => scrollTo(paymentSectionId)}
                       onKeyDown={onKey(() => scrollTo(paymentSectionId))}
@@ -341,11 +341,11 @@ const ProgramPageLayout = ({
                     </RelliaAction>
                     <RelliaAction
                       type="button"
-                      variant="outlineOnWhite"
+                      variant="creamHeaderGhost"
                       size="comfortable"
                       onClick={() => scrollTo(outcomesSectionId)}
                       onKeyDown={onKey(() => scrollTo(outcomesSectionId))}
-                      className="flex w-full sm:w-fit justify-center bg-transparent hover:bg-rellia-teal hover:text-white"
+                      className="flex w-full sm:w-fit justify-center"
                     >
                       Learn More
                     </RelliaAction>

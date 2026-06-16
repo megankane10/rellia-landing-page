@@ -41,7 +41,7 @@ type SubmissionTab = "contact" | "diagnostic"
 const UNRESOLVED_COUNT_KEY = ["admin-unresolved-submissions-count"] as const
 
 const StatusTag = ({ status }: { status: SubmissionStatus }) => (
-  <Badge variant="outline" className={cn("border-0 font-urbanist", statusBadgeClass(status))}>
+  <Badge variant="outline" className={statusBadgeClass(status)}>
     {status}
   </Badge>
 )

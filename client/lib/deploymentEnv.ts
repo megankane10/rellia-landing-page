@@ -1,9 +1,5 @@
 /** Production marketing site (www) — no draft/seed fallbacks. */
 export const isStrictProductionSite = (): boolean => {
-  if (typeof window !== "undefined") {
-    const host = window.location.hostname.toLowerCase()
-    return host === "relliahealth.com" || host === "www.relliahealth.com"
-  }
   return isProductionDataset()
 }
 
@@ -16,8 +12,5 @@ const isProductionDataset = (): boolean =>
  */
 export const allowCmsSeedFallbacks = (): boolean => {
   if (isProductionDataset()) return false
-  if (typeof window !== "undefined") {
-    return !isStrictProductionSite()
-  }
   return true
 }

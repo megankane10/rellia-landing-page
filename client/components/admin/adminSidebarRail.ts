@@ -63,7 +63,7 @@ export const adminSidebarNavButtonClass = cn(
 
 export const adminSidebarAccountButtonClass = cn(
   adminSidebarRowClass,
-  "relative min-h-11 w-full rounded-xl px-0 py-2.5 text-left font-urbanist",
+  "relative min-h-11 w-full rounded-xl px-0 py-1 text-left font-urbanist",
   "transition-[color,background-color,transform] duration-150 ease-out",
   "hover:!bg-white/[0.07] hover:!text-white",
   "active:scale-[0.97] active:!bg-white/[0.12] active:!text-white active:duration-75",
@@ -97,13 +97,16 @@ export const adminSidebarHeaderClass = cn(
 
 export const adminSidebarFooterClass = cn(
   "!gap-0 !py-0",
-  "shrink-0 overflow-hidden border-t border-slate-800 !pb-3 !pt-3",
+  "shrink-0 overflow-hidden border-t border-slate-800 !pb-5 !pt-3",
   "group-data-[collapsible=icon]:overflow-visible",
   adminSidebarRailPx,
 )
 
+/** Padding between the divider and footer controls (theme above, profile below). */
+export const adminSidebarDividerGapClass = "pb-3"
+
 export const adminSidebarContentClass = cn(
-  "flex-1 overflow-x-hidden pb-6 pt-6",
+  "flex-1 overflow-x-hidden pb-0 pt-6",
   adminSidebarRailPx,
 )
 

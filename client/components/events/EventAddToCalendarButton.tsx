@@ -26,8 +26,8 @@ type EventAddToCalendarButtonProps = {
 }
 
 const triggerClassName = cn(
-  "inline-flex h-12 w-fit cursor-pointer items-center justify-center gap-2 rounded-full border-2 border-rellia-teal bg-rellia-teal",
-  "px-6 font-host-grotesk text-sm font-semibold text-white sm:text-[15px]",
+  "inline-flex h-[3.75rem] w-fit cursor-pointer items-center justify-center gap-2 rounded-full border-2 border-rellia-teal bg-rellia-teal",
+  "px-5 font-host-grotesk text-sm font-semibold text-white sm:px-7 sm:text-[15px]",
   "transition-[background-color,border-color,color,box-shadow] duration-500 ease-out",
   "hover:border-rellia-mint hover:bg-rellia-mint hover:text-rellia-teal",
   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-teal focus-visible:ring-offset-2",

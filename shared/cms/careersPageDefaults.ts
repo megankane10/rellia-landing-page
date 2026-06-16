@@ -135,14 +135,14 @@ export const mergeCareersPage = (
   whyFeatures: mergeNetworkWhyFeatures(cms?.whyFeatures, DEFAULT_CAREERS_WHY_FEATURES),
   perksTitle: cms?.perksTitle?.trim() || DEFAULT_CAREERS_PAGE.perksTitle,
   perksTitlePortable: resolveSectionHeadlinePortable(
-    { headlinePortable: cms?.perksTitlePortable, title: cms?.perksTitle },
+    { headlinePortable: cms?.perksTitlePortable },
     DEFAULT_CAREERS_PAGE.perksTitlePortable!,
   )!,
   perksDescription: cms?.perksDescription?.trim() || DEFAULT_CAREERS_PAGE.perksDescription,
   perksItems: mergePerksItems(cms?.perksItems, DEFAULT_CAREERS_PERKS),
   openRolesTitle: cms?.openRolesTitle?.trim() || DEFAULT_CAREERS_PAGE.openRolesTitle,
   openRolesTitlePortable: resolveSectionHeadlinePortable(
-    { headlinePortable: cms?.openRolesTitlePortable, title: cms?.openRolesTitle },
+    { headlinePortable: cms?.openRolesTitlePortable },
     DEFAULT_CAREERS_PAGE.openRolesTitlePortable!,
   )!,
   openRolesSubtitle: cms?.openRolesSubtitle?.trim() || DEFAULT_CAREERS_PAGE.openRolesSubtitle,
@@ -153,10 +153,7 @@ export const mergeCareersPage = (
   lifeAtRelliaHeading:
     cms?.lifeAtRelliaHeading?.trim() || DEFAULT_CAREERS_PAGE.lifeAtRelliaHeading,
   lifeAtRelliaHeadingPortable: resolveSectionHeadlinePortable(
-    {
-      headlinePortable: cms?.lifeAtRelliaHeadingPortable,
-      title: cms?.lifeAtRelliaHeading,
-    },
+    { headlinePortable: cms?.lifeAtRelliaHeadingPortable },
     DEFAULT_CAREERS_PAGE.lifeAtRelliaHeadingPortable!,
   )!,
   lifeAtRelliaSubheading:

@@ -512,7 +512,7 @@ export default function CareersCms() {
                         key={link.platformName + link.url}
                         href={link.url}
                         iconKey={link.iconKey}
-                        tooltip={link.tooltip}
+                        tooltip={cmsDisplayText(link.tooltip)}
                       />
                     ))}
                   </div>

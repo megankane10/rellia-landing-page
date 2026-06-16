@@ -6,8 +6,7 @@ import NotFound from "@/pages/NotFound"
 import { useCmsPageBySlug } from "@/hooks/useCmsDocuments"
 import { PageRenderer } from "@/components/cms/PageRenderer"
 import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo"
-import { CmsModularSectionsSkeleton } from "@/components/cms/CmsPageSkeletons"
-import { isCmsQueryLoading, shouldShowCmsEmptyState } from "@/lib/cmsQueryState"
+import { isCmsQueryLoading } from "@/lib/cmsQueryState"
 
 const getSingleSegmentSlug = (pathname: string) => {
   const clean = pathname.trim().replace(/\/+$/, "")
@@ -36,21 +35,7 @@ export default function CmsCatchAll() {
       : undefined,
   )
 
-  if (!slug) return <NotFound />
-
-  if (isCmsQueryLoading(pageQuery)) {
-    return (
-      <div className="min-h-screen overflow-x-hidden bg-white font-host-grotesk">
-        <Navbar forceSolid />
-        <main id="main-content" className="pt-[72px] md:pt-[86px]">
-          <CmsModularSectionsSkeleton />
-        </main>
-        <Footer />
-      </div>
-    )
-  }
-
-  if (shouldShowCmsEmptyState(pageQuery) && !page) return <NotFound />
+  if (!slug || isCmsQueryLoading(pageQuery) || !page) return <NotFound />
 
   const sections = page?.sections ?? []
   const hasRenderableSections = sections.some((section) => Boolean(section?._type))

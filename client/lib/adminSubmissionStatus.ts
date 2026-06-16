@@ -12,13 +12,16 @@ export const isActiveSubmissionStatus = (status: SubmissionStatus | null | undef
 }
 
 export const statusBadgeClass = (status: SubmissionStatus) => {
+  const base =
+    "font-medium px-2.5 py-1 text-xs rounded-full border font-urbanist"
+
   if (status === "Resolved") {
-    return "bg-emerald-50 text-emerald-700 font-medium px-2.5 py-1 text-xs rounded-full border border-emerald-100"
+    return `${base} bg-emerald-50 text-emerald-700 border-emerald-200/70 hover:bg-emerald-50 dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-emerald-500/70 dark:hover:bg-emerald-500/10`
   }
   if (status === "In Progress") {
-    return "bg-amber-50 text-amber-700 font-medium px-2.5 py-1 text-xs rounded-full border border-amber-100"
+    return `${base} bg-amber-50 text-amber-700 border-amber-200/70 hover:bg-amber-50 dark:bg-amber-500/10 dark:text-amber-400 dark:border-amber-500/70 dark:hover:bg-amber-500/10`
   }
-  return "bg-blue-50 text-blue-700 font-medium px-2.5 py-1 text-xs rounded-full border border-blue-100"
+  return `${base} bg-blue-50 text-blue-700 border-blue-200/70 hover:bg-blue-50 dark:bg-blue-500/10 dark:text-blue-400 dark:border-blue-500/70 dark:hover:bg-blue-500/10`
 }
 
 export const formatAdminDate = (iso: string) =>

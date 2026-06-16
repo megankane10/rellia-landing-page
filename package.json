@@ -31,6 +31,8 @@
     "sanity:migrate:careers-section-headlines": "tsx scripts/sanity-migrate-careers-section-headlines.ts",
     "sanity:migrate:about-values-headline": "tsx scripts/sanity-migrate-about-values-headline.ts",
     "sanity:migrate:cms-text-copy": "tsx scripts/sanity-migrate-cms-text-copy.ts",
+    "sanity:migrate:programs-section-title": "tsx scripts/sanity-migrate-programs-section-title.ts",
+    "sanity:migrate:cms-cleanup": "tsx scripts/sanity-migrate-cms-cleanup.ts",
     "sanity:restore:home-paths-cards": "tsx scripts/sanity-restore-home-paths-cards.ts",
     "sanity:seed:open-role-image": "tsx scripts/sanity-seed-open-role-image.ts",
     "sanity:patch:not-found": "tsx scripts/patch-not-found-page.ts",

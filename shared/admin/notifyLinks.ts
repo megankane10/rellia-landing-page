@@ -63,12 +63,23 @@ export const resolveSanityStudioOrigin = (): string => {
   return trimTrailingSlash(fromVite || fromNode || "https://relliahealth.sanity.studio")
 }
 
+const encodeIntentParams = (params: Record<string, string>): string =>
+  Object.entries(params)
+    .filter(([, value]) => value.length > 0)
+    .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
+    .join(";")
+
+/** Strip drafts. prefix — Studio intent URLs use the published document id. */
+const normalizeStudioDocumentId = (documentId: string): string =>
+  documentId.replace(/^drafts\./, "").trim()
+
 export const studioDeskUrl = (documentType: string, documentId: string): string => {
   const studioBase = resolveSanityStudioOrigin()
-  const docId = typeof documentId === "string" ? documentId.trim() : ""
+  const docId = typeof documentId === "string" ? normalizeStudioDocumentId(documentId) : ""
   const docType = typeof documentType === "string" ? documentType.trim() : ""
   if (!docId || !docType) return studioBase
 
-  const params = new URLSearchParams({ id: docId, type: docType })
-  return `${studioBase}/intent/edit?${params.toString()}`
+  // Studio 5.x router expects path-segment params (`/intent/edit/id=…;type=…`), not `?id=…&type=…`.
+  const params = encodeIntentParams({ id: docId, type: docType })
+  return `${studioBase}/intent/edit/${params}`
 }

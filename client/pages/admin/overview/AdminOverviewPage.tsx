@@ -227,11 +227,14 @@ const overviewTopCardShellClass = cn(
   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-teal/30",
 )
 
+const CAUGHT_UP_MESSAGE = "You're all caught up!"
+
 const OverviewTopLinkCard = ({
   title,
   value,
   statusLabel,
   statusTone,
+  caughtUpTooltip,
   href,
   loading,
 }: {
@@ -239,20 +242,25 @@ const OverviewTopLinkCard = ({
   value: number | string
   statusLabel: string
   statusTone: "good" | "warn" | "muted"
+  caughtUpTooltip?: string
   href: string
   loading?: boolean
 }) => {
   const StatusIcon = statusTone === "good" ? PartyPopper : statusTone === "muted" ? XCircle : AlertCircle
-  const isCompactValue = typeof value !== "number"
+  const isCaughtUpMessage = value === CAUGHT_UP_MESSAGE
+  const isCompactValue = typeof value !== "number" && !isCaughtUpMessage
 
-  const statusTooltip = statusTone === "good" ? "All caught up" : statusLabel
+  const statusTooltip =
+    statusTone === "good"
+      ? (caughtUpTooltip ?? "Nothing here needs your attention right now.")
+      : statusLabel
 
   const statusCircleClass =
     statusTone === "good"
-      ? "border-emerald-200/80 bg-emerald-50 text-emerald-700 dark:border-emerald-500/30 dark:bg-emerald-500/15 dark:text-emerald-200"
+      ? "border-emerald-200/70 bg-emerald-50 text-emerald-700 dark:border-emerald-500/70 dark:bg-emerald-500/10 dark:text-emerald-400"
       : statusTone === "warn"
-        ? "border-amber-200/90 bg-amber-50 text-amber-800 dark:border-amber-500/30 dark:bg-amber-500/15 dark:text-amber-200"
-        : "border-slate-200 bg-slate-50 text-slate-600 dark:border-slate-600/50 dark:bg-slate-800/60 dark:text-slate-300"
+        ? "border-amber-200/70 bg-amber-50 text-amber-800 dark:border-amber-500/70 dark:bg-amber-500/10 dark:text-amber-400"
+        : "border-slate-200/70 bg-slate-50 text-slate-600 dark:border-slate-500/70 dark:bg-slate-500/10 dark:text-slate-300"
 
   return (
     <Link to={href} className={overviewTopCardShellClass} aria-label={title}>
@@ -283,13 +291,14 @@ const OverviewTopLinkCard = ({
           {loading ? (
             <Skeleton className="mt-3 h-10 w-20 rounded-lg bg-rellia-mint/25" />
           ) : (
-            <div className="mt-2 flex min-w-0 items-center gap-3">
+            <div className={cn("mt-2 flex min-w-0 gap-3", isCaughtUpMessage ? "items-start" : "items-center")}>
               <Tooltip>
                 <TooltipTrigger asChild>
                   <span
                     className={cn(
                       "inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full border",
                       statusCircleClass,
+                      isCaughtUpMessage && "mt-0.5",
                     )}
                     onClick={(e) => e.preventDefault()}
                     onPointerDown={(e) => e.stopPropagation()}
@@ -303,10 +312,12 @@ const OverviewTopLinkCard = ({
               </Tooltip>
               <p
                 className={cn(
-                  "font-host-grotesk font-semibold leading-none text-foreground dark:text-white",
-                  isCompactValue
-                    ? "text-2xl sm:text-[1.75rem]"
-                    : "text-[2.5rem] tabular-nums sm:text-[2.75rem]",
+                  "min-w-0 font-host-grotesk font-semibold text-foreground dark:text-white",
+                  isCaughtUpMessage
+                    ? "text-base leading-snug sm:text-lg"
+                    : isCompactValue
+                      ? "text-2xl leading-none sm:text-[1.75rem]"
+                      : "text-[2.5rem] leading-none tabular-nums sm:text-[2.75rem]",
                 )}
               >
                 {value}
@@ -571,8 +582,9 @@ const AdminOverviewPage = () => {
     const WINDOW_MS = 15 * 60 * 1000
     return rows.filter((member) => {
       if (!member.confirmedAt) return false
-      if (!member.lastSignInAt) return false
-      const t = new Date(member.lastSignInAt).getTime()
+      const ts = member.lastActiveAt || member.lastSignInAt
+      if (!ts) return false
+      const t = new Date(ts).getTime()
       if (Number.isNaN(t)) return false
       return now - t <= WINDOW_MS
     }).length
@@ -773,7 +785,8 @@ const AdminOverviewPage = () => {
           title="Web forms"
           href="/admin/inbox?tab=contact"
           loading={loading}
-          value={unresolvedWebForms === 0 && !loading ? "Clear" : unresolvedWebForms}
+          value={unresolvedWebForms === 0 && !loading ? CAUGHT_UP_MESSAGE : unresolvedWebForms}
+          caughtUpTooltip="No contact or investor form submissions are waiting for review."
           statusLabel="Needs attention"
           statusTone={unresolvedWebForms === 0 && !loading ? "good" : "warn"}
         />
@@ -781,7 +794,8 @@ const AdminOverviewPage = () => {
           title="Diagnostic surveys"
           href="/admin/inbox?tab=diagnostic"
           loading={loading}
-          value={unresolvedDiagnostics === 0 && !loading ? "Clear" : unresolvedDiagnostics}
+          value={unresolvedDiagnostics === 0 && !loading ? CAUGHT_UP_MESSAGE : unresolvedDiagnostics}
+          caughtUpTooltip="No startup diagnostic submissions are waiting for review."
           statusLabel="Needs attention"
           statusTone={unresolvedDiagnostics === 0 && !loading ? "good" : "warn"}
         />
@@ -793,9 +807,10 @@ const AdminOverviewPage = () => {
             !isCmsContentEnabled()
               ? "—"
               : draftCount === 0 && !draftsQuery.isLoading
-                ? "Clear"
+                ? CAUGHT_UP_MESSAGE
                 : draftCount
           }
+          caughtUpTooltip="No unpublished Sanity drafts are waiting to go live."
           statusLabel={
             !isCmsContentEnabled()
               ? "Unavailable"
@@ -1063,7 +1078,7 @@ const AdminOverviewPage = () => {
                         {contactTypeLabel(row)} · {formatAdminDate(row.created_at)}
                       </p>
                     </div>
-                    <Badge variant="outline" className={cn("shrink-0 border-0", statusBadgeClass(row.status ?? "New"))}>
+                    <Badge variant="outline" className={cn("shrink-0", statusBadgeClass(row.status ?? "New"))}>
                       {row.status ?? "New"}
                     </Badge>
                   </li>
@@ -1113,7 +1128,7 @@ const AdminOverviewPage = () => {
                         {row.name} · {formatAdminDate(row.created_at)}
                       </p>
                     </div>
-                    <Badge variant="outline" className={cn("shrink-0 border-0", statusBadgeClass(row.status ?? "New"))}>
+                    <Badge variant="outline" className={cn("shrink-0", statusBadgeClass(row.status ?? "New"))}>
                       {row.status ?? "New"}
                     </Badge>
                   </li>
@@ -1141,7 +1156,7 @@ const AdminOverviewPage = () => {
             <div className="flex flex-wrap items-center gap-2">
               <p className="font-host-grotesk text-lg font-semibold text-foreground dark:text-white">Team</p>
               {!teamQuery.isLoading && onlineNowCount > 0 ? (
-                <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-200/80 bg-emerald-50 px-2.5 py-1 font-urbanist text-xs font-semibold text-emerald-800">
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-200/70 bg-emerald-50 px-2.5 py-1 font-urbanist text-xs font-semibold text-emerald-800">
                   <span className="h-2 w-2 rounded-full bg-emerald-500" aria-hidden />
                   {onlineNowCount} Online now
                 </span>

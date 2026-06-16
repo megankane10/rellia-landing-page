@@ -1,4 +1,5 @@
 import { stegaClean } from "@sanity/client/stega"
+import { cmsTextToPlain } from "@shared/cms/cmsFieldUtils"
 import { isSanityPresentationIframe } from "@/lib/sanityPresentation"
 
 /** True when Presentation iframe or draft-mode preview should preserve stega encoding. */
@@ -20,7 +21,7 @@ export const cmsDisplayText = (value: string | null | undefined): string => {
 
 /** Safe trim for logic (filters, href checks) — always uses clean text. */
 export const cmsCleanText = (value: string | null | undefined): string =>
-  stegaClean(value ?? "").trim()
+  cmsTextToPlain(value)
 
 /**
  * Splits a stega-encoded string into cleaned text and its encoded stega metadata.

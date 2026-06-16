@@ -6,9 +6,11 @@ import { supabase } from "@/lib/supabase"
 import { isActiveSubmissionStatus } from "@/lib/adminSubmissionStatus"
 import AdminAccountMenu from "@/components/admin/AdminAccountMenu"
 import AdminMobileThemePicker from "@/components/admin/AdminMobileThemePicker"
+import AdminSidebarThemeCycle from "@/components/admin/AdminSidebarThemeCycle"
 import { AdminSidebarDateTime } from "@/components/admin/AdminSidebarDateTime"
 import {
   adminSidebarContentClass,
+  adminSidebarDividerGapClass,
   adminSidebarFooterClass,
   adminSidebarHeaderClass,
   adminSidebarHeaderRowClass,
@@ -136,7 +138,8 @@ const AdminAppSidebar = () => {
   const { session } = useAuth()
   const { pathname } = useLocation()
   const isMobile = useIsMobile()
-  const { setOpenMobile } = useSidebar()
+  const { setOpenMobile, state: sidebarState } = useSidebar()
+  const isCollapsed = sidebarState === "collapsed" && !isMobile
 
   const { data: unresolvedCount = 0 } = useQuery({
     queryKey: ["admin-unresolved-submissions-count"],
@@ -248,11 +251,15 @@ const AdminAppSidebar = () => {
           </SidebarGroupContent>
         </SidebarGroup>
 
-        {isMobile ? (
-          <div className="mt-auto shrink-0 pt-6">
+        <div className={cn("mt-auto shrink-0", adminSidebarDividerGapClass)}>
+          {isCollapsed ? (
+            <SidebarMenu className="!gap-0 !p-0">
+              <AdminSidebarThemeCycle />
+            </SidebarMenu>
+          ) : (
             <AdminMobileThemePicker />
-          </div>
-        ) : null}
+          )}
+        </div>
       </SidebarContent>
 
       <SidebarFooter className={adminSidebarFooterClass}>

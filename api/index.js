@@ -844,65 +844,36 @@ var diagnosticSurveyContentQuery = `*[_id == "diagnosticSurveyContent"][0]{
   }
 }`;
 var paymentPageQuery = `*[_id == "paymentPage"][0]{
-  ${pageVisibilityFragment},
-  badge,
-  headline,
-  introCheckout,
-  introFallback,
-  introFallbackError,
+  welcomeSplashEnabled,
+  welcomeSplashHeadingPortable,
+  welcomeSplashSubheading,
+  "welcomeSplashBackgroundSrc": coalesce(welcomeSplashBackground.asset->url, welcomeSplashBackgroundSrc),
+  "welcomeSplashLogoSrc": coalesce(welcomeSplashLogo.asset->url, welcomeSplashLogoSrc),
+  welcomeSplashDurationSeconds,
+  benefitsPanelHeadline,
   benefitsTitle,
-  benefits,
-  successTitle,
-  successBody,
-  discountBannerEnabled,
-  discountBannerBadge,
-  discountBannerTitle,
-  discountBannerSubtitle,
-  discountBannerApplyLabel,
-  discountBannerApplyHref,
-  "heroTitlePortable": coalesce(heroTitlePortable, heroHeadlinePortable),
-  heroSubheadline,
-  imageCardBadge,
-  imageCardHeadlinePortable,
-  "imageCardSrc": coalesce(imageCardImage.asset->url, imageCardSrc),
-  imageCardAlt,
-  highlightBenefits,
-  pricingMonthlyBadge,
-  pricingAnnualBadge,
+  benefitsPanelDescriptionPortable,
+  benefitsPanelImageEnabled,
+  "benefitsPanelImageSrc": coalesce(benefitsPanelImage.asset->url, benefitsPanelImageSrc),
+  choosePlanHeadline,
   pricingMonthlyAmount,
   pricingAnnualAmount,
   pricingMonthlyDiscountEnabled,
   pricingMonthlyCompareAmount,
   pricingAnnualDiscountEnabled,
   pricingAnnualCompareAmount,
-  benefitsPanelHeadline,
-  benefitsPanelDescriptionPortable,
-  benefitsPanelDescription,
-  benefitsPanelBullet1,
-  benefitsPanelBullet2,
-  benefitsPanelBullet3,
-  benefitsPanelBullet4,
-  benefitsPanelImageEnabled,
-  "benefitsPanelImageSrc": coalesce(benefitsPanelImage.asset->url, benefitsPanelImageSrc),
-  choosePlanHeadline,
-  promoMessage,
-  pricingPerSuffix,
-  popularLabel,
   monthlyProceedLabel,
   annualProceedLabel,
+  discountBannerEnabled,
+  discountBannerBadge,
+  discountBannerSubtitle,
+  promoMessage,
   questionsTitle,
   questionsBody,
-  questionsFaqLabel,
-  questionsFaqPath,
   questionsContactLabel,
   questionsContactPath,
-  welcomeSplashEnabled,
-  welcomeSplashHeadingPortable,
-  welcomeSplashHeading,
-  welcomeSplashSubheading,
-  "welcomeSplashBackgroundSrc": coalesce(welcomeSplashBackground.asset->url, welcomeSplashBackgroundSrc),
-  "welcomeSplashLogoSrc": coalesce(welcomeSplashLogo.asset->url, welcomeSplashLogoSrc),
-  welcomeSplashDurationSeconds,
+  questionsFaqLabel,
+  questionsFaqPath,
   ${pageSectionsFragment},
   ${seoFragment}
 }`;
@@ -931,15 +902,12 @@ var careersPageQuery = `*[_id == "careersPage"][0]{
   ${networkHeroFragment},
   heroTitleSuffix,
   ${networkWhyFragment},
-  perksTitle,
   perksTitlePortable,
   perksDescription,
   perksItems[]{ _key, title, body, iconKey },
-  openRolesTitle,
   openRolesTitlePortable,
   openRolesSubtitle,
   ${networkCtaFragment},
-  lifeAtRelliaHeading,
   lifeAtRelliaHeadingPortable,
   lifeAtRelliaSubheading,
   lifeAtRelliaImages[]{ _key,
@@ -1334,13 +1302,15 @@ var resolveSanityStudioOrigin = () => {
   const fromNode = typeof process !== "undefined" ? process.env.SANITY_STUDIO_URL?.trim() || process.env.VITE_SANITY_STUDIO_URL?.trim() || "" : "";
   return trimTrailingSlash(fromVite || fromNode || "https://relliahealth.sanity.studio");
 };
+var encodeIntentParams = (params) => Object.entries(params).filter(([, value]) => value.length > 0).map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`).join(";");
+var normalizeStudioDocumentId = (documentId) => documentId.replace(/^drafts\./, "").trim();
 var studioDeskUrl = (documentType, documentId) => {
   const studioBase = resolveSanityStudioOrigin();
-  const docId = typeof documentId === "string" ? documentId.trim() : "";
+  const docId = typeof documentId === "string" ? normalizeStudioDocumentId(documentId) : "";
   const docType = typeof documentType === "string" ? documentType.trim() : "";
   if (!docId || !docType) return studioBase;
-  const params = new URLSearchParams({ id: docId, type: docType });
-  return `${studioBase}/intent/edit?${params.toString()}`;
+  const params = encodeIntentParams({ id: docId, type: docType });
+  return `${studioBase}/intent/edit/${params}`;
 };
 
 // server/slackNotify.ts

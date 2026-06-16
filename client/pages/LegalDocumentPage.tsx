@@ -2,7 +2,6 @@ import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
 import ScrollReveal from "@/components/ScrollReveal"
 import PageHeader from "@/components/PageHeader"
-import { LegalEffectiveDate } from "@/components/LegalEffectiveDate"
 import { PortableRichText } from "@/components/PortableRichText"
 import { CmsLegalBodySkeleton } from "@/components/cms/CmsTextSkeleton"
 import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo"
@@ -49,7 +48,13 @@ export const LegalDocumentPage = ({
       <Navbar />
 
       <main id="main-content">
-        <PageHeader variant="dark" title={title} subtitle={intro} />
+        <PageHeader
+          variant="dark"
+          title={title}
+          subtitle={intro}
+          effectiveDate={effectiveDate}
+          effectiveDatePlacement="top"
+        />
 
         <section className="bg-white py-16 md:py-24">
           <div className="mx-auto max-w-[860px] px-6 md:px-10">
@@ -58,7 +63,6 @@ export const LegalDocumentPage = ({
                 <CmsLegalBodySkeleton />
               ) : (
                 <>
-                  <LegalEffectiveDate date={effectiveDate} />
                   {legalNotice ? (
                     <p className="mb-10 font-urbanist text-lg italic leading-relaxed text-black/65 md:mb-12 md:text-xl">
                       {legalNotice}

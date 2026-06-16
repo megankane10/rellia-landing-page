@@ -5,6 +5,7 @@ export type AdminTeamUser = {
   avatarUrl: string | null
   createdAt: string
   lastSignInAt: string | null
+  lastActiveAt: string | null
   confirmedAt: string | null
 }
 
@@ -47,6 +48,19 @@ export const fetchAdminTeam = async (accessToken: string): Promise<AdminTeamUser
 
   const data = (await res.json()) as { users?: AdminTeamUser[] }
   return data.users ?? []
+}
+
+export const postAdminPresenceHeartbeat = async (accessToken: string): Promise<void> => {
+  const res = await fetch("/api/admin/presence/heartbeat", {
+    method: "POST",
+    headers: { Authorization: `Bearer ${accessToken}` },
+    credentials: "same-origin",
+  })
+
+  if (!res.ok) {
+    const body = (await res.json().catch(() => ({}))) as { error?: string }
+    throw new Error(body.error ?? `Could not update presence (${res.status})`)
+  }
 }
 
 export const fetchAdminTeamNote = async (accessToken: string): Promise<AdminTeamNotePayload> => {

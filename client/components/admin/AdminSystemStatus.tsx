@@ -30,21 +30,21 @@ const stateLabel = (state: ServiceState): string => {
 const statusTheme = (state: ServiceState) => {
   if (state === "online") {
     return {
-      pill: "border-emerald-200/80 bg-emerald-50/90 text-emerald-950 dark:border-emerald-500/30 dark:bg-emerald-500/15 dark:text-emerald-100",
+      pill: "border-emerald-200/70 bg-emerald-50/90 text-emerald-950 dark:border-emerald-500/70 dark:bg-emerald-500/15 dark:text-emerald-100",
       iconWrap: "bg-emerald-500/15 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-300",
       icon: CheckCircle2,
     }
   }
   if (state === "offline") {
     return {
-      pill: "border-red-200/80 bg-red-50/90 text-red-950 dark:border-red-500/30 dark:bg-red-500/15 dark:text-red-100",
+      pill: "border-red-200/70 bg-red-50/90 text-red-950 dark:border-red-500/70 dark:bg-red-500/15 dark:text-red-100",
       iconWrap: "bg-red-500/15 text-red-700 dark:bg-red-500/20 dark:text-red-300",
       icon: XCircle,
     }
   }
   if (state === "unconfigured") {
     return {
-      pill: "border-amber-200/80 bg-amber-50/90 text-amber-950 dark:border-amber-500/30 dark:bg-amber-500/15 dark:text-amber-100",
+      pill: "border-amber-200/70 bg-amber-50/90 text-amber-950 dark:border-amber-500/70 dark:bg-amber-500/15 dark:text-amber-100",
       iconWrap: "bg-amber-500/15 text-amber-700 dark:bg-amber-500/20 dark:text-amber-300",
       icon: AlertTriangle,
     }
@@ -247,7 +247,7 @@ const AdminSystemStatus = ({ compact = false }: { compact?: boolean }) => {
                     "inline-flex h-9 w-9 items-center justify-center rounded-full border",
                     "bg-card/70 text-muted-foreground shadow-sm transition-colors",
                     "hover:bg-card hover:text-foreground",
-                    (hasAnyOffline || hasAnyUnconfigured) && "border-amber-200/70 bg-amber-50/60 text-amber-900 dark:border-amber-500/30 dark:bg-amber-500/15 dark:text-amber-100",
+                    (hasAnyOffline || hasAnyUnconfigured) && "border-amber-200/70 bg-amber-50/60 text-amber-900 dark:border-amber-500/70 dark:bg-amber-500/15 dark:text-amber-100",
                     "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
                   )}
                   aria-label="What do these statuses mean?"

@@ -1,9 +1,23 @@
 import { stegaClean } from "@sanity/client/stega"
+import { portableTextToPlainText } from "./portableTextPlain"
 import type { SanityPortableText } from "./types"
 
+/** Coerce CMS string or legacy portable-text value to plain text (stega stripped). */
+export const cmsTextToPlain = (value: unknown): string => {
+  if (value == null) return ""
+
+  if (typeof value === "string") {
+    const cleaned = stegaClean(value)
+    return typeof cleaned === "string" ? cleaned.trim() : ""
+  }
+
+  if (Array.isArray(value)) return portableTextToPlainText(value)
+
+  return ""
+}
+
 /** True when a CMS string has visible content (ignores stega metadata). */
-export const hasCmsString = (value: string | null | undefined): boolean =>
-  Boolean(stegaClean(value ?? "").trim())
+export const hasCmsString = (value: unknown): boolean => Boolean(cmsTextToPlain(value))
 
 /** Keep the raw CMS string (with stega) when populated; otherwise use fallback. */
 export const pickCmsString = (

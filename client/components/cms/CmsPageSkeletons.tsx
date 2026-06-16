@@ -574,7 +574,7 @@ export const CmsModularPageSkeleton = () => (
 
 export const CmsNotFoundPageSkeleton = () => (
   <section
-    className="relative flex w-full flex-1 flex-col justify-center overflow-hidden bg-rellia-greyTeal px-[30px] pt-20 pb-[7.5rem] md:pt-32 md:pb-[10.5rem] lg:pt-40 lg:pb-[13.5rem]"
+    className="relative flex min-h-[calc(100svh-72px)] w-full flex-1 flex-col items-center justify-center overflow-hidden bg-rellia-greyTeal px-[30px] py-0 md:min-h-[calc(100svh-86px)]"
     aria-busy="true"
     aria-label="Loading page"
   >

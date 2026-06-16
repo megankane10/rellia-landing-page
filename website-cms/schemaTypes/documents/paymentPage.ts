@@ -161,17 +161,6 @@ export const paymentPage = defineType({
       fieldset: 'benefitsDivider',
     }),
     defineField({
-      name: 'benefitsPanelDescription',
-      type: 'text',
-      rows: 10,
-      title: 'Left panel description (legacy)',
-      description: 'Deprecated — migrated to rich text. Kept for legacy reads only.',
-      group: 'content',
-      fieldset: 'benefitsDivider',
-      hidden: true,
-      readOnly: true,
-    }),
-    defineField({
       name: 'choosePlanHeadline',
       type: 'string',
       title: 'Plan picker headline',

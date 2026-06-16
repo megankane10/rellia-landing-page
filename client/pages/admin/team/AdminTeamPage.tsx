@@ -53,8 +53,18 @@ const memberInitials = (member: AdminTeamUser) => {
 const memberAvatar = (member: AdminTeamUser) => {
   const resolvedAvatarUrl = resolveAdminMemberAvatarUrl(member)
 
+  const isOnlineNow = (() => {
+    if (!member.confirmedAt) return false
+    const ts = member.lastActiveAt || member.lastSignInAt
+    if (!ts) return false
+    const t = new Date(ts).getTime()
+    if (Number.isNaN(t)) return false
+    return Date.now() - t <= 15 * 60 * 1000
+  })()
+
   return (
-    <Avatar className="h-9 w-9 shrink-0">
+    <div className="relative shrink-0">
+      <Avatar className="h-9 w-9">
       {resolvedAvatarUrl ? (
         <AvatarImage src={resolvedAvatarUrl} alt="" />
       ) : null}
@@ -62,6 +72,14 @@ const memberAvatar = (member: AdminTeamUser) => {
         {memberInitials(member)}
       </AvatarFallback>
     </Avatar>
+      {isOnlineNow ? (
+        <span
+          className="absolute -bottom-0.5 -right-0.5 h-3.5 w-3.5 rounded-full border-2 border-card bg-emerald-500"
+          aria-label="Online now"
+          title="Online now"
+        />
+      ) : null}
+    </div>
   )
 }
 
@@ -80,12 +98,33 @@ const AdminTeamPage = () => {
     {
       key: "name",
       header: "Name",
-      cell: (member) => (
-        <div className="flex items-center gap-3">
-          {memberAvatar(member)}
-          <span className="font-medium text-foreground">{member.fullName?.trim() || "—"}</span>
-        </div>
-      ),
+      cell: (member) => {
+        const isOnlineNow = (() => {
+          if (!member.confirmedAt) return false
+          const ts = member.lastActiveAt || member.lastSignInAt
+          if (!ts) return false
+          const t = new Date(ts).getTime()
+          if (Number.isNaN(t)) return false
+          return Date.now() - t <= 15 * 60 * 1000
+        })()
+
+        return (
+          <div className="flex items-center gap-3">
+            {memberAvatar(member)}
+            <div className="min-w-0">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="font-medium text-foreground">{member.fullName?.trim() || "—"}</span>
+                {isOnlineNow ? (
+                  <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-200/70 bg-emerald-50 px-2.5 py-0.5 font-urbanist text-xs font-semibold text-emerald-800 dark:border-emerald-500/70 dark:bg-emerald-500/15 dark:text-emerald-100">
+                    <span className="h-2 w-2 rounded-full bg-emerald-500" aria-hidden />
+                    Online now
+                  </span>
+                ) : null}
+              </div>
+            </div>
+          </div>
+        )
+      },
     },
     {
       key: "email",

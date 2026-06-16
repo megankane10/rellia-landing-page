@@ -126,7 +126,13 @@ export default function Programs() {
   const handlePrevPage = () => setPage((p) => Math.max(1, p - 1))
   const handleNextPage = () => setPage((p) => Math.min(totalPages, p + 1))
 
-  const cmsProgramsLoading = isSanityConfigured() && isCmsQueryLoading(programsQuery)
+  // SSR hydration fix:
+  // On the server, react-query queries can report "not loading" (isFetching=false) even though no data exists yet.
+  // On the client, those same queries start as loading. If we render defaults on the server but a skeleton on
+  // the client, React will throw a hydration mismatch. Treat "unfetched + undefined data" as loading too.
+  const cmsProgramsLoading =
+    isSanityConfigured() &&
+    (isCmsQueryLoading(programsQuery) || (programsQuery.data === undefined && !programsQuery.isFetched))
 
   return (
     <div className="min-h-screen bg-white font-host-grotesk overflow-x-hidden">
