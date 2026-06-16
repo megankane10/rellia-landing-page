@@ -27,11 +27,11 @@ const RelatedOpenRoles = ({ roles, currentRoleId }: RelatedOpenRolesProps) => {
       subheadline="Explore other opportunities on the Rellia team."
       viewAllHref="/careers#open-roles"
       viewAllLabel="View all roles"
-      gridClassName="mx-auto mt-8 grid w-full max-w-[900px] grid-cols-1 gap-4 md:mt-10 md:grid-cols-2 md:gap-5"
+      gridClassName="mt-10 grid w-full max-w-[1100px] grid-cols-1 gap-5 md:grid-cols-2 md:gap-6"
     >
       {related.map((role, index) => (
         <ScrollReveal key={role.id} delay={index * 0.05}>
-          <CareersOpenRoleCard role={role} formatText={cmsDisplayText} compact />
+          <CareersOpenRoleCard role={role} formatText={cmsDisplayText} />
         </ScrollReveal>
       ))}
     </RelatedContentSection>

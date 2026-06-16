@@ -112,7 +112,7 @@ const RelatedContentSection = ({
 
   return (
     <section
-      className="border-t border-black/10 bg-white py-12 md:py-16"
+      className="mt-12 border-t border-black/10 bg-white py-12 md:mt-16 md:py-16"
       aria-labelledby={headingId}
     >
       <div className={MARKETING_PAGE_SHELL_CLASS}>

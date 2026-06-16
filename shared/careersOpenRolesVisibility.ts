@@ -33,8 +33,23 @@ export const normalizeOpenRole = (role: Partial<CareersOpenRole> & { id?: string
       : [],
     applyButtonLabel: label || undefined,
     applyButtonUrl: url || undefined,
+    roleCtaTitle: typeof role.roleCtaTitle === "string" ? role.roleCtaTitle.trim() || undefined : undefined,
+    roleCtaBody: typeof role.roleCtaBody === "string" ? role.roleCtaBody.trim() || undefined : undefined,
+    roleCtaPrimaryLabel:
+      typeof role.roleCtaPrimaryLabel === "string" ? role.roleCtaPrimaryLabel.trim() || undefined : undefined,
+    roleCtaPrimaryHref:
+      typeof role.roleCtaPrimaryHref === "string" ? role.roleCtaPrimaryHref.trim() || undefined : undefined,
+    roleCtaSecondaryLabel:
+      typeof role.roleCtaSecondaryLabel === "string" ? role.roleCtaSecondaryLabel.trim() || undefined : undefined,
+    roleCtaSecondaryHref:
+      typeof role.roleCtaSecondaryHref === "string" ? role.roleCtaSecondaryHref.trim() || undefined : undefined,
   }
 }
+
+export const hasOpenRoleCtaBand = (
+  role: Pick<CareersOpenRole, "roleCtaTitle" | "roleCtaPrimaryLabel" | "roleCtaPrimaryHref">,
+): boolean =>
+  Boolean(role.roleCtaTitle?.trim() && role.roleCtaPrimaryLabel?.trim() && role.roleCtaPrimaryHref?.trim())
 
 export const hasOpenRoleDescription = (description: CareersOpenRole["description"]): boolean =>
   Boolean(portableTextToPlainText(description))

@@ -324,6 +324,8 @@ var networkAlumniDirectoryPageQuery = `*[_id == "networkAlumniDirectoryPage"][0]
   directoryCtaBody,
   directoryCtaPrimaryLabel,
   directoryCtaPrimaryHref,
+  directoryCtaSecondaryLabel,
+  directoryCtaSecondaryHref,
   ${pageSectionsFragment},
   ${seoFragment}
 }`;
@@ -337,6 +339,8 @@ var networkAdvisorsDirectoryPageQuery = `*[_id == "networkAdvisorsDirectoryPage"
   directoryCtaBody,
   directoryCtaPrimaryLabel,
   directoryCtaPrimaryHref,
+  directoryCtaSecondaryLabel,
+  directoryCtaSecondaryHref,
   ${seoFragment}
 }`;
 var networkInvestorsPageQuery = `*[_id == "networkInvestorsPage"][0]{
@@ -350,6 +354,7 @@ var networkInvestorsPageQuery = `*[_id == "networkInvestorsPage"][0]{
   benefitsBullets,
   ${networkWhyFragment},
   ${networkCtaFragment},
+  ${pageSectionsFragment},
   ${seoFragment}
 }`;
 var networkAdvisorsPageQuery = `*[_id == "networkAdvisorsPage"][0]{
@@ -566,6 +571,7 @@ var aboutPageQuery = `*[_id == "aboutPage"][0]{
   ctaFounderHref,
   ctaTeamLabel,
   ctaTeamHref,
+  ${pageSectionsFragment},
   ${seoFragment}
 }`;
 var faqPageQuery = `*[_id == "faqPage"][0]{
@@ -580,6 +586,7 @@ var faqPageQuery = `*[_id == "faqPage"][0]{
   bottomBody,
   bottomCtaLabel,
   bottomCtaPath,
+  ${pageSectionsFragment},
   ${seoFragment}
 }`;
 var programsLandingQuery = `*[_id == "programsLandingPage"][0]{
@@ -766,6 +773,7 @@ var notFoundQuery = `*[_id == "notFoundPage"][0]{
   title,
   message,
   ctaLabel,
+  iconKey,
   ${seoFragment}
 }`;
 var applyPageQuery = `*[_id == "applyPage"][0]{
@@ -895,6 +903,7 @@ var paymentPageQuery = `*[_id == "paymentPage"][0]{
   "welcomeSplashBackgroundSrc": coalesce(welcomeSplashBackground.asset->url, welcomeSplashBackgroundSrc),
   "welcomeSplashLogoSrc": coalesce(welcomeSplashLogo.asset->url, welcomeSplashLogoSrc),
   welcomeSplashDurationSeconds,
+  ${pageSectionsFragment},
   ${seoFragment}
 }`;
 var openRolesQuery = `*[_type == "openRole" && !(_id in path("drafts.**"))] | order(sortOrder asc, title asc){
@@ -902,10 +911,17 @@ var openRolesQuery = `*[_type == "openRole" && !(_id in path("drafts.**"))] | or
   title,
   location,
   employmentType,
+  excerpt,
   description${portableRichTextBlocksFragment},
   responsibilities,
   applyButtonLabel,
   applyButtonUrl,
+  roleCtaTitle,
+  roleCtaBody,
+  roleCtaPrimaryLabel,
+  roleCtaPrimaryHref,
+  roleCtaSecondaryLabel,
+  roleCtaSecondaryHref,
   "linkedInApplyUrl": coalesce(applyButtonUrl, linkedInApplyUrl)
 }`;
 var careersPageQuery = `*[_id == "careersPage"][0]{
@@ -936,6 +952,7 @@ var careersPageQuery = `*[_id == "careersPage"][0]{
     iconKey,
     tooltip
   },
+  ${pageSectionsFragment},
   ${seoFragment}
 }`;
 var advisorsQuery = `*[_type == "advisor" && !(_id in path("drafts.**"))]{

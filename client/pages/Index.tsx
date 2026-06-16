@@ -8,7 +8,7 @@ import WhyRellia from "@/components/WhyRellia";
 import HowItWorks from "@/components/HowItWorks";
 import TestimonialsSection from "@/components/TestimonialsSection";
 import FeaturedStories from "@/components/FeaturedStories";
-import RelliaCta from "@/components/RelliaCta";
+import RelliaCta, { optionalCtaAction } from "@/components/RelliaCta";
 import { SectionsRenderer } from "@/components/cms/PageRenderer";
 import Footer from "@/components/Footer";
 import { useHomePage } from "@/hooks/useCmsDocuments";
@@ -75,14 +75,7 @@ export default function Index() {
           aboveSectionTone="white"
           title={home.ctaTitle}
           primary={{ label: home.ctaButtonLabel, to: home.ctaButtonPath }}
-          secondary={
-            home.ctaSecondaryButtonLabel?.trim() && home.ctaSecondaryButtonPath?.trim()
-              ? {
-                  label: home.ctaSecondaryButtonLabel,
-                  to: home.ctaSecondaryButtonPath,
-                }
-              : undefined
-          }
+          secondary={optionalCtaAction(home.ctaSecondaryButtonLabel, home.ctaSecondaryButtonPath)}
         />
       </main>
       <Footer />

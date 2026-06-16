@@ -276,9 +276,16 @@ const ProgramPageLayout = ({
       />
       <Navbar />
       <main id="main-content">
-        {/* ─── Hero — text left, square image right ─── */}
-        <section className="bg-white pt-[100px] pb-10 md:pt-[130px] md:pb-16 lg:pt-[160px] lg:pb-24">
-          <div className="mx-auto max-w-[1300px] px-6 md:px-10">
+        {/* ─── Hero — mint/gray header shell (matches events) ─── */}
+        <section className="relative overflow-hidden bg-rellia-cream pb-10 pt-[100px] md:pb-16 md:pt-[130px] lg:pb-24 lg:pt-[160px] rounded-b-[2.5rem] md:rounded-b-[3.5rem]">
+          <div aria-hidden className="pointer-events-none absolute inset-0">
+            <div className="absolute -left-28 -top-32 h-[520px] w-[520px] rounded-full bg-rellia-mint/20 blur-3xl" />
+            <div className="absolute -right-40 top-1/3 h-[560px] w-[560px] -translate-y-1/2 rounded-full bg-rellia-teal/10 blur-3xl" />
+            <div className="absolute bottom-[-220px] left-1/3 h-[620px] w-[620px] -translate-x-1/2 rounded-full bg-rellia-mint/15 blur-3xl" />
+            <div className="absolute inset-0 opacity-[0.18] mix-blend-multiply [background-image:radial-gradient(circle_at_20%_10%,rgba(13,53,64,0.10),transparent_55%),radial-gradient(circle_at_80%_35%,rgba(13,53,64,0.08),transparent_52%),radial-gradient(circle_at_40%_95%,rgba(13,53,64,0.09),transparent_55%)]" />
+          </div>
+
+          <div className="relative z-10 mx-auto max-w-[1300px] px-6 md:px-10">
             <div className="mb-8 md:mb-12">
               <BackToPrograms />
             </div>
@@ -338,7 +345,7 @@ const ProgramPageLayout = ({
                       size="comfortable"
                       onClick={() => scrollTo(outcomesSectionId)}
                       onKeyDown={onKey(() => scrollTo(outcomesSectionId))}
-                      className="flex w-full sm:w-fit justify-center"
+                      className="flex w-full sm:w-fit justify-center bg-transparent hover:bg-rellia-teal hover:text-white"
                     >
                       Learn More
                     </RelliaAction>

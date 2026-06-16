@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
-import RelliaCta from "@/components/RelliaCta"
+import RelliaCta, { optionalCtaAction } from "@/components/RelliaCta"
 import { SectionsRenderer } from "@/components/cms/PageRenderer"
 import { cn } from "@/lib/utils"
 import {
@@ -397,6 +397,10 @@ export default function FoundersDirectory() {
             label: alumniDirectory.directoryCtaPrimaryLabel ?? "Apply for Membership",
             to: alumniDirectory.directoryCtaPrimaryHref ?? "/apply",
           }}
+          secondary={optionalCtaAction(
+            alumniDirectory.directoryCtaSecondaryLabel,
+            alumniDirectory.directoryCtaSecondaryHref,
+          )}
         />
       </main>
 

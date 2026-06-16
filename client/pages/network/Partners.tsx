@@ -11,7 +11,7 @@ import { GETPROVEN_VENDORS_GRID_URL } from "@/config/partnerLinks"
 import { ArrowRight, ArrowUpRight, Check, ExternalLink, Handshake, LayoutGrid, Megaphone } from "lucide-react"
 import { Link } from "react-router-dom"
 import LogoMarquee from "@/components/LogoMarquee"
-import RelliaCta from "@/components/RelliaCta"
+import RelliaCta, { optionalCtaAction } from "@/components/RelliaCta"
 import { SectionsRenderer } from "@/components/cms/PageRenderer"
 import { CreamSection, GlassCardLight, LightSection, Reveal, RoleHero } from "./_shared"
 import { useNetworkPartnersPage } from "@/hooks/useCmsDocuments"
@@ -349,6 +349,7 @@ export default function Partners() {
               "Tell us about your organization, integration surface area, and the founder profiles you want to see more of. We'll route you to the right partner lead."
             }
             primary={{ label: content.ctaPrimaryLabel ?? "Apply", to: content.ctaPrimaryHref ?? "/apply" }}
+            secondary={optionalCtaAction(content.ctaSecondaryLabel, content.ctaSecondaryHref)}
           />
         </div>
       </main>

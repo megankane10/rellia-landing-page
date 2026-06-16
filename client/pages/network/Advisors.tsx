@@ -5,7 +5,7 @@ import { mapNetworkWhyFeatures } from "@/lib/whyRelliaFeatures"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
 import RelliaAction from "@/components/RelliaAction"
-import RelliaCta from "@/components/RelliaCta"
+import RelliaCta, { optionalCtaAction } from "@/components/RelliaCta"
 import { SectionsRenderer } from "@/components/cms/PageRenderer"
 import ScrollReveal from "@/components/ScrollReveal"
 import { cn } from "@/lib/utils"
@@ -290,7 +290,7 @@ export default function Advisors() {
           title={content.ctaTitle ?? "Apply as an advisor"}
           body={content.ctaBody ?? "Share your background—we'll follow up with fit, expectations, and onboarding paths."}
           primary={{ label: content.ctaPrimaryLabel ?? "Apply to join", to: content.ctaPrimaryHref ?? "/apply" }}
-          secondary={{ label: content.ctaSecondaryLabel ?? "Contact", to: content.ctaSecondaryHref ?? "/contact" }}
+          secondary={optionalCtaAction(content.ctaSecondaryLabel, content.ctaSecondaryHref)}
         />
       </main>
 

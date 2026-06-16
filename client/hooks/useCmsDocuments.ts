@@ -434,6 +434,9 @@ export const useCareersPage = () =>
         sanityFetch<Partial<CareersPageContent>>("careersPage"),
         sanityFetch<Array<Partial<CareersOpenRole> & { roleId?: string }>>("openRoles"),
       ])
+      if (raw === null && rolesRaw === null) {
+        throw new Error("Sanity CMS did not respond for careers content.")
+      }
       const openRoles = filterValidOpenRoles(
         rolesRaw?.length ? rolesRaw : raw?.openRoles,
       )
@@ -441,6 +444,7 @@ export const useCareersPage = () =>
       return { ...merged, openRoles }
     },
     staleTime: staleTimeMs,
+    retry: 3,
   });
 
 export const useDiagnosticSurveyContent = () =>

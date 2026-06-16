@@ -35,6 +35,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip
 import { useSidebar } from "@/components/ui/sidebar"
 import {
   adminDarkDialogContentClass,
+  adminDarkDialogShellClass,
   adminDarkMenuContentClass,
   adminDarkMenuItemClass,
   adminDarkMenuSeparatorClass,
@@ -177,7 +178,8 @@ const AdminAccountMenu = () => {
     <Dialog open={profileOpen} onOpenChange={setProfileOpen}>
       <DialogContent
         className={cn(
-          "z-[10003] w-[calc(100vw-2rem)] max-w-[calc(100vw-2rem)] font-host-grotesk sm:max-w-md rounded-3xl sm:rounded-3xl",
+          "z-[10003] w-[calc(100vw-2rem)] max-w-[calc(100vw-2rem)] font-host-grotesk sm:max-w-md",
+          adminDarkDialogShellClass,
           adminDarkDialogContentClass,
         )}
       >
@@ -326,8 +328,10 @@ const AdminAccountMenu = () => {
       )}
       <DropdownMenuContent
         side="top"
-        align="start"
-        className={cn(adminDarkMenuContentClass, "w-56 font-urbanist")}
+        align={isMobile ? "end" : "start"}
+        sideOffset={8}
+        alignOffset={isMobile ? 8 : 0}
+        className={cn(adminDarkMenuContentClass, isMobile ? "w-64 font-urbanist" : "w-56 font-urbanist")}
       >
         <DropdownMenuItem
           className={adminDarkMenuItemClass}

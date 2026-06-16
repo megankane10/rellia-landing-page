@@ -25,15 +25,11 @@ Rellia offers founder programs (QMS, fundraising, regulatory, clinical validatio
 
 ## Programs
 
-- [/programs/advance-data-room](https://www.relliahealth.com/programs/advance-data-room): Public page on relliahealth.com.
 - [/programs/advance-data-room-deep-dive](https://www.relliahealth.com/programs/advance-data-room-deep-dive): Navigate due diligence and data room management. Practical tools and tips for early-stage founders raising capital.
 - [/programs/advisory-board-match](https://www.relliahealth.com/programs/advisory-board-match): Recruit ideal experts for your startup. Rellia provides matchmaking, equity benchmarking, and legal frameworks for productive advisory relationships.
-- [/programs/build-your-qms](https://www.relliahealth.com/programs/build-your-qms): Public page on relliahealth.com.
 - [/programs/build-your-quality-management-system](https://www.relliahealth.com/programs/build-your-quality-management-system): Build a lean, scalable QMS for ISO 13485, MDSAP, and FDA compliance. Expert guidance for medtech and digital health founders.
-- [/programs/design-your-brand](https://www.relliahealth.com/programs/design-your-brand): Public page on relliahealth.com.
 - [/programs/design-your-brand-strategy](https://www.relliahealth.com/programs/design-your-brand-strategy): Develop a professional brand identity that earns trust from clinicians and investors. Includes sprints for website, UI, and sales collateral.
 - [/programs/elevate-healthcare-capital](https://www.relliahealth.com/programs/elevate-healthcare-capital): Refine your fundraising strategy for health tech. Upgrade your pitch to meet the technical and clinical expectations of healthcare investors.
-- [/programs/first-50-users](https://www.relliahealth.com/programs/first-50-users): Public page on relliahealth.com.
 - [/programs/first-50-users-clinical-feedback-intensive](https://www.relliahealth.com/programs/first-50-users-clinical-feedback-intensive): Validate your product with Rellia's clinician network. Gain IRB guidance and professional feedback to bridge the gap from prototype to clinical use.
 - [/programs/ignite-pitch-foundations](https://www.relliahealth.com/programs/ignite-pitch-foundations): Master fundraising essentials. Craft your first pitch deck and presentation with expert feedback to build investor confidence.
 - [/programs/low-fidelity-prototype-lab](https://www.relliahealth.com/programs/low-fidelity-prototype-lab): Transform your vision into a functional prototype. Connect with vetted development firms and testing experts to build your proof of concept.
@@ -49,9 +45,9 @@ Rellia offers founder programs (QMS, fundraising, regulatory, clinical validatio
 - [/events/clinician-connect-primary-care](https://www.relliahealth.com/events/clinician-connect-primary-care): Event details, location, and registration for Rellia Health sessions. Explore upcoming and past programs.
 - [/events/clinician-connect-womens-health](https://www.relliahealth.com/events/clinician-connect-womens-health): Event details, location, and registration for Rellia Health sessions. Explore upcoming and past programs.
 - [/events/ethics-in-ai-less-about-tech-more-about-humans](https://www.relliahealth.com/events/ethics-in-ai-less-about-tech-more-about-humans): Event details, location, and registration for Rellia Health sessions. Explore upcoming and past programs.
-- [/events/health-system-adoption-for-startups](https://www.relliahealth.com/events/health-system-adoption-for-startups): Event details, location, and registration for Rellia Health sessions. Explore upcoming and past programs.
 - [/events/investor-readiness-how-vcs-evaluate-startups](https://www.relliahealth.com/events/investor-readiness-how-vcs-evaluate-startups): Event details, location, and registration for Rellia Health sessions. Explore upcoming and past programs.
 - [/events/leadership-under-pressure](https://www.relliahealth.com/events/leadership-under-pressure): Event details, location, and registration for Rellia Health sessions. Explore upcoming and past programs.
+- [/events/rellia-pitch-event](https://www.relliahealth.com/events/rellia-pitch-event): Event details, location, and registration for Rellia Health sessions. Explore upcoming and past programs.
 - [/events/rellia-pitch-event-forum-ventures](https://www.relliahealth.com/events/rellia-pitch-event-forum-ventures): Event details, location, and registration for Rellia Health sessions. Explore upcoming and past programs.
 - [/events/scaling-with-purpose-from-prototype-to-customer-in-health-startups](https://www.relliahealth.com/events/scaling-with-purpose-from-prototype-to-customer-in-health-startups): Event details, location, and registration for Rellia Health sessions. Explore upcoming and past programs.
 - [/events/second-opinion-when-healthcare-startups-need-user-research](https://www.relliahealth.com/events/second-opinion-when-healthcare-startups-need-user-research): Event details, location, and registration for Rellia Health sessions. Explore upcoming and past programs.
@@ -79,7 +75,6 @@ Rellia offers founder programs (QMS, fundraising, regulatory, clinical validatio
 ## CMS pages
 
 - [/supporting-health-founders](https://www.relliahealth.com/supporting-health-founders): Public page on relliahealth.com.
-- [/test](https://www.relliahealth.com/test): Public page on relliahealth.com.
 
 
 ## Legal

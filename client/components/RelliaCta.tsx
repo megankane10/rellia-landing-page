@@ -29,6 +29,17 @@ export const ctaActionFromHref = (label: string, href: string): RelliaCtaAction 
   return { label, href }
 }
 
+/** Secondary (or optional) CTA — omitted unless both label and link are non-empty. */
+export const optionalCtaAction = (
+  label?: string | null,
+  href?: string | null,
+): RelliaCtaAction | undefined => {
+  const trimmedLabel = cmsCleanText(label)
+  const trimmedHref = typeof href === "string" ? href.trim() : ""
+  if (!trimmedLabel || !trimmedHref) return undefined
+  return ctaActionFromHref(trimmedLabel, trimmedHref)
+}
+
 const stripCtaTitleMarkers = (title: string) => title.replace(/\*\*/g, "")
 
 export type RelliaCtaProps = {

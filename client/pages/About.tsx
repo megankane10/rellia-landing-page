@@ -1,7 +1,7 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import ScrollReveal from "@/components/ScrollReveal";
-import RelliaCta from "@/components/RelliaCta";
+import RelliaCta, { optionalCtaAction } from "@/components/RelliaCta";
 import { Heart } from "lucide-react"
 import { resolveLucideIcon } from "@/lib/resolveLucideIcon"
 import { IconFeatureCard } from "@/components/cards/IconFeatureCard";
@@ -117,7 +117,7 @@ export default function About() {
           className="relative w-full overflow-hidden bg-white py-4 md:py-6"
         >
           <div className="relative w-full overflow-hidden rounded-[2.5rem] md:rounded-[3.5rem] shadow-lg">
-            <div className="relative flex min-h-[880px] w-full flex-col overflow-hidden sm:min-h-[900px] md:min-h-[880px] lg:min-h-[960px]">
+            <div className="relative flex min-h-[780px] w-full flex-col overflow-hidden sm:min-h-[800px] md:min-h-[780px] lg:min-h-[860px]">
             <div className="absolute inset-0 overflow-hidden" aria-hidden>
               {parallaxReady && !reduceMotion ? (
                 <ValuesParallaxImage
@@ -222,7 +222,7 @@ export default function About() {
           title={about.ctaTitle}
           body={about.ctaBody}
           primary={{ label: about.ctaFounderLabel, to: about.ctaFounderHref || "/apply" }}
-          secondary={{ label: about.ctaTeamLabel, to: about.ctaTeamHref || "/careers" }}
+          secondary={optionalCtaAction(about.ctaTeamLabel, about.ctaTeamHref)}
         />
       </main>
 

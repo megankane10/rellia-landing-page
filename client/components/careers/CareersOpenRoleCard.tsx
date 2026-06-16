@@ -66,6 +66,12 @@ export const CareersOpenRoleCard = ({
             <span className="truncate">{formatText(role.location)}</span>
           </span>
         </span>
+
+        {role.excerpt?.trim() ? (
+          <span className="line-clamp-2 font-urbanist text-sm leading-relaxed text-black/65">
+            {formatText(role.excerpt)}
+          </span>
+        ) : null}
       </span>
 
       <ChevronRight

@@ -321,6 +321,8 @@ export const networkAlumniDirectoryPageQuery = `*[_id == "networkAlumniDirectory
   directoryCtaBody,
   directoryCtaPrimaryLabel,
   directoryCtaPrimaryHref,
+  directoryCtaSecondaryLabel,
+  directoryCtaSecondaryHref,
   ${pageSectionsFragment},
   ${seoFragment}
 }`
@@ -335,6 +337,8 @@ export const networkAdvisorsDirectoryPageQuery = `*[_id == "networkAdvisorsDirec
   directoryCtaBody,
   directoryCtaPrimaryLabel,
   directoryCtaPrimaryHref,
+  directoryCtaSecondaryLabel,
+  directoryCtaSecondaryHref,
   ${seoFragment}
 }`
 
@@ -788,6 +792,7 @@ export const notFoundQuery = `*[_id == "notFoundPage"][0]{
   title,
   message,
   ctaLabel,
+  iconKey,
   ${seoFragment}
 }`;
 
@@ -934,6 +939,12 @@ export const openRolesQuery = `*[_type == "openRole" && !(_id in path("drafts.**
   responsibilities,
   applyButtonLabel,
   applyButtonUrl,
+  roleCtaTitle,
+  roleCtaBody,
+  roleCtaPrimaryLabel,
+  roleCtaPrimaryHref,
+  roleCtaSecondaryLabel,
+  roleCtaSecondaryHref,
   "linkedInApplyUrl": coalesce(applyButtonUrl, linkedInApplyUrl)
 }`
 

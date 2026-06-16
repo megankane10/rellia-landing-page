@@ -64,9 +64,9 @@ const eventDetailBackToEventsLinkClassName =
 
 const EventDetailBackToEventsLink = ({ variant = "footer" }: { variant?: "top" | "footer" }) => {
   const link = (
-    <Link to="/events" className={eventDetailBackToEventsLinkClassName} aria-label="Back to all events">
+    <Link to="/events" className={eventDetailBackToEventsLinkClassName} aria-label="Back to events">
       <ChevronLeft className="h-4 w-4 shrink-0" aria-hidden />
-      All events
+      Back to events
     </Link>
   )
   if (variant === "top") {
@@ -340,6 +340,9 @@ export default function EventDetail() {
           <div className="relative z-10 mx-auto max-w-[1300px] px-6 md:px-10">
             <div className="mx-auto w-full max-w-[1100px]">
               <ScrollReveal>
+                <div className="mb-8">
+                  <EventDetailBackToEventsLink variant="top" />
+                </div>
                 <div className="flex flex-col gap-8 lg:flex-row lg:items-start lg:gap-10">
                   <div className="w-full max-w-[320px] shrink-0 self-start sm:max-w-[288px] md:max-w-[340px] lg:max-w-[380px]">
                     <div
@@ -512,9 +515,9 @@ export default function EventDetail() {
                   </div>
                 </div>
 
-                <div className="h-8 md:h-10" aria-hidden />
+                <div className="h-4 md:h-5" aria-hidden />
 
-                <div className="mt-8 flex w-full flex-col items-stretch gap-4">
+                <div className="mt-5 flex w-full flex-col items-stretch gap-3 md:mt-6">
                   <p className="font-host-grotesk text-[12px] font-semibold uppercase tracking-[0.14em] text-black/55">
                     Share this event
                   </p>
@@ -574,7 +577,6 @@ export default function EventDetail() {
               <motion.div key="content-view" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.3 }}>
                 {isPast ? (
                   <div className="mx-auto flex w-full max-w-[1300px] flex-col gap-8 px-6 py-10 md:px-10 md:py-14 md:gap-10">
-                    <EventDetailBackToEventsLink variant="top" />
               {hasDetailBodyContent ? (
                 <ScrollReveal>
                   <div className="mx-auto w-full max-w-[900px]">
@@ -631,7 +633,6 @@ export default function EventDetail() {
                 ) : (
                   <div className="mx-auto w-full max-w-[1300px] px-6 py-10 md:px-10 md:py-14">
                     <div className="mx-auto flex w-full max-w-[900px] flex-col gap-8 md:gap-10">
-                      <EventDetailBackToEventsLink variant="top" />
                 {hasDetailBodyContent ? (
                   <ScrollReveal>
                     <div className="w-full">

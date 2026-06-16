@@ -25,7 +25,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Slider } from "@/components/ui/slider"
-import { adminDarkDialogContentClass } from "@/components/admin/adminSidebarRail"
+import { adminDarkDialogContentClass, adminDarkDialogShellClass, adminLightDialogShellClass } from "@/components/admin/adminSidebarRail"
 import { cn } from "@/lib/utils"
 
 type ImageCropDialogProps = {
@@ -144,7 +144,8 @@ const ImageCropDialog = ({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
         className={cn(
-          "z-[10004] w-[calc(100vw-2rem)] max-w-lg rounded-3xl font-host-grotesk",
+          "z-[10004] w-[calc(100vw-2rem)] max-w-lg font-host-grotesk",
+          isDark ? adminDarkDialogShellClass : adminLightDialogShellClass,
           isDark && adminDarkDialogContentClass,
         )}
       >

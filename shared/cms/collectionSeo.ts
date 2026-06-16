@@ -133,25 +133,23 @@ export const resolveCareersRoleSeo = (input: {
   title: string
   location?: string
   employmentType?: string
+  excerpt?: string
   description?: unknown
   responsibilities?: string[]
 }): ResolvedCollectionSeo => {
   const roleTitle = input.title.trim() || "Open role"
   const location = input.location?.trim()
   const employmentType = input.employmentType?.trim()
-  const roleContext = [location, employmentType].filter(Boolean).join(" · ")
-  const highlights = (input.responsibilities ?? []).map((line) => line.trim()).filter(Boolean)
+  const roleContext = [employmentType, location].filter(Boolean).join(" · ")
+  const excerpt = input.excerpt?.trim()
 
   let description: string
-  if (roleContext && highlights.length > 0) {
-    description = `${roleContext}\n${highlights.join(" · ")}`
-  } else if (roleContext) {
-    description = roleContext
-  } else if (highlights.length > 0) {
-    description = highlights.join(" · ")
+  if (roleContext) {
+    description = excerpt ? `${roleContext}\n\n${excerpt}` : roleContext
   } else {
     const snippet = careersRoleDescriptionSnippet(input.description)
     description =
+      excerpt ||
       snippet ||
       `Join Rellia Health as ${roleTitle}. View responsibilities and apply on our careers page.`
   }

@@ -2,7 +2,7 @@ import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
 import SectionHeading from "@/components/SectionHeading"
 import RelliaAction from "@/components/RelliaAction"
-import RelliaCta from "@/components/RelliaCta"
+import RelliaCta, { optionalCtaAction } from "@/components/RelliaCta"
 import { SectionsRenderer } from "@/components/cms/PageRenderer"
 import ScrollReveal from "@/components/ScrollReveal"
 import ProgramTrustedMembersSection from "@/components/program/ProgramTrustedMembersSection"
@@ -25,6 +25,8 @@ import { resolveLucideIcon } from "@/lib/resolveLucideIcon"
 import { Link } from "react-router-dom"
 import { cmsDisplayText } from "@/lib/cmsStega"
 import { LightSection, Reveal, RoleHero } from "./network/_shared"
+import { cn } from "@/lib/utils"
+import { relliaLightFrostCardClass } from "@/lib/relliaTealGlassCard"
 
 function FitSectionSplit({ content }: { content: ConsultingPageContent }) {
   return (
@@ -99,12 +101,16 @@ function ServicesGridSection({ content }: { content: ConsultingPageContent }) {
                 <Link
                   key={card.title}
                   to="/contact"
-                  className="group flex min-h-[240px] cursor-pointer flex-col rounded-2xl border border-black/10 bg-gradient-to-br from-rellia-teal to-[#144853] p-8 transition duration-300 hover:from-[#113f4a] hover:to-[#0f3842] hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-teal focus-visible:ring-offset-2 focus-visible:ring-offset-white"
+                  className={cn(
+                    "group flex min-h-[240px] cursor-pointer flex-col p-8 transition duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-teal focus-visible:ring-offset-2 focus-visible:ring-offset-white",
+                    relliaLightFrostCardClass,
+                    "hover:bg-white/80 hover:shadow-md",
+                  )}
                 >
-                  <Icon className="h-8 w-8 text-rellia-mint transition-transform duration-300 group-hover:scale-105" aria-hidden />
-                  <h3 className="mt-5 font-host-grotesk text-xl font-semibold tracking-tight text-white">{cmsDisplayText(card.title)}</h3>
-                  <p className="mt-4 flex-1 font-urbanist text-sm leading-relaxed text-white/80">{cmsDisplayText(card.body)}</p>
-                  <span className="mt-6 inline-flex items-center gap-2 font-host-grotesk text-sm font-semibold text-rellia-mint">
+                  <Icon className="h-8 w-8 text-rellia-teal transition-transform duration-300 group-hover:scale-105" aria-hidden />
+                  <h3 className="mt-5 font-host-grotesk text-xl font-semibold tracking-tight text-black">{cmsDisplayText(card.title)}</h3>
+                  <p className="mt-4 flex-1 font-urbanist text-sm leading-relaxed text-black/70">{cmsDisplayText(card.body)}</p>
+                  <span className="mt-6 inline-flex items-center gap-2 font-host-grotesk text-sm font-semibold text-rellia-teal">
                     {cmsDisplayText(card.ctaLabel ?? "Learn more")}
                     <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" aria-hidden />
                   </span>
@@ -235,14 +241,7 @@ function ConsultingFallback({ content }: { content: ConsultingPageContent }) {
               label: cmsDisplayText(content.ctaPrimaryLabel ?? DEFAULT_CONSULTING_PAGE.ctaPrimaryLabel!),
               to: content.ctaPrimaryHref ?? DEFAULT_CONSULTING_PAGE.ctaPrimaryHref!,
             }}
-            secondary={
-              content.ctaSecondaryLabel && content.ctaSecondaryHref
-                ? {
-                    label: cmsDisplayText(content.ctaSecondaryLabel),
-                    to: content.ctaSecondaryHref,
-                  }
-                : undefined
-            }
+            secondary={optionalCtaAction(content.ctaSecondaryLabel, content.ctaSecondaryHref)}
           />
         </div>
       </main>

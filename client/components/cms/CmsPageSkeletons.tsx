@@ -571,3 +571,26 @@ export const CmsModularPageSkeleton = () => (
     <CmsModularSectionsSkeleton />
   </CmsPageShell>
 )
+
+export const CmsNotFoundPageSkeleton = () => (
+  <section
+    className="relative flex w-full flex-1 flex-col justify-center overflow-hidden bg-rellia-greyTeal px-[30px] pt-20 pb-[7.5rem] md:pt-32 md:pb-[10.5rem] lg:pt-40 lg:pb-[13.5rem]"
+    aria-busy="true"
+    aria-label="Loading page"
+  >
+    <div
+      className="pointer-events-none absolute left-1/2 top-[18%] h-[min(92vw,520px)] w-[min(92vw,520px)] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-100 blur-[20px] sm:top-[22%] sm:h-[min(82vw,600px)] sm:w-[min(82vw,600px)] md:top-[26%] md:h-[min(60vw,720px)] md:w-[min(60vw,720px)] lg:top-[28%] lg:h-[min(52vw,760px)] lg:w-[min(52vw,760px)]"
+      style={{
+        background: "linear-gradient(180deg, #C5D8D5 0%, #9DD6D0 52%, #EEF2F2 100%)",
+      }}
+      aria-hidden
+    />
+    <div className="relative z-10 mx-auto flex w-full max-w-[1300px] flex-col items-center text-center" aria-hidden>
+      <CmsPulseBlock className="mb-8 h-20 w-20 rounded-full bg-rellia-teal/15" />
+      <CmsPulseBlock className="h-12 w-full max-w-lg md:h-14" />
+      <CmsPulseBlock className="mt-5 h-6 w-full max-w-md" />
+      <CmsPulseBlock className="mt-12 h-12 w-44 rounded-full" />
+    </div>
+    <div className="pointer-events-none absolute inset-0 z-[1] bg-noise opacity-[0.03] mix-blend-overlay" aria-hidden />
+  </section>
+)

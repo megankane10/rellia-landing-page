@@ -296,7 +296,7 @@ export const homePage = defineType({
       title: 'Secondary button label',
       type: 'string',
       group: 'cta',
-      description: 'Optional second button in the bottom CTA band.',
+      description: 'Optional. Secondary button is hidden unless both label and link are filled in.',
     }),
     defineField({
       name: 'ctaSecondaryButtonPath',

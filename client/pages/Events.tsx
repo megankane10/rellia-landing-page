@@ -1,7 +1,7 @@
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
 import ScrollReveal from "@/components/ScrollReveal"
-import RelliaCta, { ctaActionFromHref } from "@/components/RelliaCta"
+import RelliaCta, { ctaActionFromHref, optionalCtaAction } from "@/components/RelliaCta"
 import { HorizontalCard } from "@/components/cards/HorizontalCard"
 import { SectionsRenderer } from "@/components/cms/PageRenderer"
 import PageHeader from "@/components/PageHeader"
@@ -300,11 +300,7 @@ export default function Events() {
             "If you have a practical playbook for founders building in health tech, we’d love to hear from you."
           }
           primary={ctaActionFromHref(landing?.ctaPrimaryLabel || "Contact", landing?.ctaPrimaryHref || "/contact")}
-          secondary={
-            landing?.ctaSecondaryLabel && landing?.ctaSecondaryHref
-              ? ctaActionFromHref(landing.ctaSecondaryLabel, landing.ctaSecondaryHref)
-              : ctaActionFromHref("Apply to join", "/apply")
-          }
+          secondary={optionalCtaAction(landing?.ctaSecondaryLabel, landing?.ctaSecondaryHref)}
         />
       </main>
 

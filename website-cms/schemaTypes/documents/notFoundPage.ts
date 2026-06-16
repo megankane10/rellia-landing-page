@@ -12,9 +12,35 @@ export const notFoundPage = defineType({
   groups: CONTENT_SEO_GROUPS,
   fieldsets: CONTENT_SEO_FIELDSETS,
   fields: [
-    defineField({name: 'title', type: 'string', group: 'content'}),
-    defineField({name: 'message', type: 'text', rows: 2, group: 'content'}),
-    defineField({name: 'ctaLabel', type: 'string', group: 'content'}),
+    defineField({
+      name: 'title',
+      title: 'Heading',
+      type: 'string',
+      description: 'Main headline on the 404 page.',
+      group: 'content',
+    }),
+    defineField({
+      name: 'message',
+      title: 'Subheading',
+      type: 'text',
+      rows: 2,
+      description: 'Supporting line under the heading.',
+      group: 'content',
+    }),
+    defineField({
+      name: 'iconKey',
+      title: 'Icon',
+      type: 'string',
+      description: 'Lucide icon name (e.g. search-alert).',
+      initialValue: 'search-alert',
+      group: 'content',
+    }),
+    defineField({
+      name: 'ctaLabel',
+      title: 'Primary button label',
+      type: 'string',
+      group: 'content',
+    }),
     singletonSeoField,
   ],
 })

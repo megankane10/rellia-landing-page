@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import RelliaCta from "@/components/RelliaCta";
+import RelliaCta, { optionalCtaAction } from "@/components/RelliaCta";
 import { cn } from "@/lib/utils";
 import {
   motion,
@@ -375,7 +375,10 @@ export default function AdvisorsDirectory() {
             label: advisorsDirectory.directoryCtaPrimaryLabel ?? "Apply for Membership",
             to: advisorsDirectory.directoryCtaPrimaryHref ?? "/apply",
           }}
-          secondary={{ label: "Learn about Advisors", to: "/advisors" }}
+          secondary={optionalCtaAction(
+            advisorsDirectory.directoryCtaSecondaryLabel,
+            advisorsDirectory.directoryCtaSecondaryHref,
+          )}
         />
       </main>
 

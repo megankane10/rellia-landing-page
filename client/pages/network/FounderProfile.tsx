@@ -194,7 +194,7 @@ export default function FounderProfile() {
                   <ProfileSocialLinks
                     links={(active as { socialLinks?: Array<{ platform?: string; label?: string; url?: string }> }).socialLinks}
                     email={(active as { email?: string }).email}
-                    comfortableTouch
+                    size="comfortable"
                   />
                   <ShareCopyLinkButton
                     onCopy={() => navigator.clipboard.writeText(canonicalUrl)}
@@ -252,10 +252,9 @@ export default function FounderProfile() {
                         <ProfileSocialLinks
                           links={Array.isArray(f.socialLinks) ? f.socialLinks : []}
                           email={(f as { email?: string }).email}
-                          iconClassName="h-4 w-4 md:h-3.5 md:w-3.5"
                           className="shrink-0 gap-2"
                           showTooltips={false}
-                          comfortableTouch
+                          size="compact"
                         />
                       </div>
                     )

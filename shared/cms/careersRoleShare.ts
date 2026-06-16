@@ -82,6 +82,7 @@ export const buildCareersRoleShareMeta = (
     title: role.title,
     location: role.location,
     employmentType: role.employmentType,
+    excerpt: role.excerpt,
     description: role.description,
     responsibilities: role.responsibilities,
   }),

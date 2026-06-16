@@ -6,6 +6,13 @@ import { cmsDisplayText, isVisualEditingPreview } from "@/lib/cmsStega"
 export const PILL_ON_IMAGE_BLUR_CLASS =
   "border border-white/40 bg-white/14 text-white shadow-[0_2px_12px_rgba(0,0,0,0.08)] backdrop-blur-xl"
 
+/**
+ * Darker frosted pill on path / directory image cards (homepage Paths, founders Explore network).
+ * Slightly heavier tint than {@link PILL_ON_IMAGE_BLUR_CLASS} for legibility on busy photos.
+ */
+export const PILL_ON_PATH_CARD_BLUR_CLASS =
+  "bg-black/30 text-white shadow-[0_2px_14px_rgba(0,0,0,0.22)] backdrop-blur-md"
+
 type PillTagProps = {
   /** Raw CMS string — stega preserved for Presentation click-to-edit. */
   label: string

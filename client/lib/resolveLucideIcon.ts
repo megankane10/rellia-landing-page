@@ -20,6 +20,7 @@ import {
   UserPlus,
   Video,
 } from "lucide-react"
+import { SearchAlertIcon } from "@/components/icons/SearchAlertIcon"
 import { cmsCleanText } from "@/lib/cmsStega"
 
 const ICON_ALIASES: Record<string, LucideIcon> = {
@@ -41,6 +42,8 @@ const ICON_ALIASES: Record<string, LucideIcon> = {
   Video,
   Activity,
   BadgeCheck,
+  "search-alert": SearchAlertIcon as LucideIcon,
+  SearchAlert: SearchAlertIcon as LucideIcon,
   heart: Heart,
   stethoscope: LucideIcons.Stethoscope,
   globe: LucideIcons.Globe,

@@ -1,4 +1,4 @@
-import { ExternalLink } from "lucide-react"
+import { ArrowRight, ExternalLink } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import AdminPageHeader from "@/components/admin/AdminPageHeader"
@@ -165,28 +165,36 @@ const AdminHelpPage = () => (
           <CardTitle className="font-host-grotesk text-lg">Quick links</CardTitle>
         </CardHeader>
         <CardContent>
-          <ul className="space-y-3">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-1">
             {WEBSITE_TOOLS.map((tool) => (
-              <li key={tool.href}>
-                <a
-                  href={tool.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={cn(
-                    "group block rounded-lg border border-border px-3 py-2.5 transition-colors",
-                    "hover:border-rellia-teal/25 hover:bg-rellia-mint/10",
-                    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-                  )}
-                >
-                  <span className="flex items-center justify-between gap-2">
-                    <span className="font-urbanist text-sm font-medium group-hover:text-rellia-teal">{tool.label}</span>
-                    <ExternalLink className="h-4 w-4 shrink-0 text-muted-foreground" aria-hidden />
-                  </span>
-                  <span className="mt-0.5 block font-urbanist text-xs text-muted-foreground">{tool.description}</span>
-                </a>
-              </li>
+              <a
+                key={tool.href}
+                href={tool.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={cn(
+                  "group relative flex min-h-[88px] flex-col justify-center gap-2 rounded-2xl border border-border/70 bg-white px-4 py-3.5 shadow-sm transition",
+                  "hover:-translate-y-px hover:border-rellia-teal/25 hover:bg-rellia-mint/10 hover:shadow-md",
+                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                )}
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <div className="truncate font-urbanist text-sm font-semibold text-foreground transition-colors group-hover:text-rellia-teal">
+                      {tool.label}
+                    </div>
+                    <div className="mt-0.5 line-clamp-2 font-urbanist text-xs leading-relaxed text-muted-foreground">
+                      {tool.description}
+                    </div>
+                  </div>
+                  <ArrowRight
+                    className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground transition group-hover:text-rellia-teal"
+                    aria-hidden
+                  />
+                </div>
+              </a>
             ))}
-          </ul>
+          </div>
         </CardContent>
       </Card>
     </div>

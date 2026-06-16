@@ -12,7 +12,7 @@ import PillTag, { PILL_ON_IMAGE_BLUR_CLASS } from "@/components/PillTag"
 import type { DiagnosticLandingPageContent, HomeWhyFeature } from "@shared/cms/types"
 import WhyRellia from '@/components/WhyRellia'
 import MembershipPathTimeline from '@/components/MembershipPathTimeline'
-import RelliaCta from '@/components/RelliaCta'
+import RelliaCta, { optionalCtaAction } from '@/components/RelliaCta'
 import { SectionsRenderer } from '@/components/cms/PageRenderer'
 import { DEFAULT_DIAGNOSTIC_LANDING_PAGE } from '@shared/cms/defaults'
 import { NetworkHeroTitle } from "@/components/NetworkHeroTitle"
@@ -152,10 +152,7 @@ function DiagnosticFallback({ content }: { content: DiagnosticLandingPageContent
             label: cmsDisplayText(content.ctaPrimaryLabel ?? DEFAULT_DIAGNOSTIC_LANDING_PAGE.ctaPrimaryLabel!),
             to: content.ctaPrimaryHref ?? DEFAULT_DIAGNOSTIC_LANDING_PAGE.ctaPrimaryHref!,
           }}
-          secondary={{
-            label: cmsDisplayText(content.ctaSecondaryLabel ?? DEFAULT_DIAGNOSTIC_LANDING_PAGE.ctaSecondaryLabel!),
-            to: content.ctaSecondaryHref ?? DEFAULT_DIAGNOSTIC_LANDING_PAGE.ctaSecondaryHref!,
-          }}
+          secondary={optionalCtaAction(content.ctaSecondaryLabel, content.ctaSecondaryHref)}
         />
       </div>
 

@@ -114,92 +114,103 @@ const AdminTeamPage = () => {
   return (
     <div className="space-y-6">
       <AdminPageReveal>
-      <AdminTipBox
-        title="Invite your team members"
-        icon={UserPlus}
-        storageKey="rellia-admin-team-tip-collapsed"
-        className="w-full"
-      >
-        <div className="font-urbanist text-sm text-black/70 leading-relaxed space-y-3 mb-5">
-          <div className="flex items-start gap-2">
-            <span className="font-bold text-rellia-teal shrink-0 mt-0.5">•</span>
-            <p>
-              <strong>Invite Admin User:</strong> Invite colleagues directly via Supabase Auth to grant dashboard access. <em>Note: Supabase Auth has a default limit of 3 email invitations per day.</em>
-            </p>
-          </div>
-          <div className="flex items-start gap-2">
-            <span className="font-bold text-rellia-teal shrink-0 mt-0.5">•</span>
-            <p>
-              <strong>Add Admin Directly:</strong> You can add users directly to the dashboard from Supabase Auth by entering the admin account's name, email, and password.
-            </p>
-          </div>
-          <div className="flex items-start gap-2">
-            <span className="font-bold text-rellia-teal shrink-0 mt-0.5">•</span>
-            <p>
-              <strong>Enable Signup:</strong> Alternatively, users can register themselves via <Link to="/admin/signup" className="text-rellia-teal font-semibold hover:underline">the signup page</Link>. To allow this, toggle the <code className="text-xs font-semibold text-rellia-teal bg-rellia-mint/10 px-1 py-0.5 rounded">ADMIN_SIGNUP_ENABLED</code> environment variable to <code className="text-xs font-semibold text-rellia-teal bg-rellia-mint/10 px-1 py-0.5 rounded">true</code> in Vercel settings and remember to disable it after use.
-            </p>
-          </div>
-        </div>
-        <div className="grid gap-4 sm:grid-cols-2 mt-4">
-          <a
-            href="https://supabase.com/dashboard/project/agsvypnmlrvpbgrsxtqy/auth/users"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex flex-col items-center justify-center rounded-2xl border border-rellia-teal/15 bg-white p-5 text-center transition-all hover:border-rellia-teal/30 hover:bg-rellia-mint/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-teal"
-          >
-            <UserPlus className="h-8 w-8 text-rellia-teal mb-2" aria-hidden />
-            <span className="font-host-grotesk font-bold text-sm text-foreground">Invite or Add Admin</span>
-            <span className="mt-0.5 font-urbanist text-[11px] text-muted-foreground">Go to Supabase Auth</span>
-          </a>
+        <AdminPageHeader
+          title="Team"
+          actions={
+            <>
+              <AdminDownloadCsvButton
+                filename="rellia-admin-team"
+                rows={users}
+                columns={[
+                  { header: "Name", value: (member) => member.fullName?.trim() || "" },
+                  { header: "Email", value: (member) => member.email },
+                  { header: "Joined", value: (member) => formatAdminDate(member.createdAt) },
+                  {
+                    header: "Status",
+                    value: (member) => (member.confirmedAt ? "Active" : "Invite pending"),
+                  },
+                  {
+                    header: "Last sign-in",
+                    value: (member) => (member.lastSignInAt ? formatAdminDate(member.lastSignInAt) : ""),
+                  },
+                ]}
+              />
+              <Button type="button" variant="outline" size="sm" asChild className="rounded-full">
+                <a href={SUPABASE_AUTH_USERS_URL} target="_blank" rel="noopener noreferrer">
+                  Invite in Supabase
+                  <ExternalLink className="ml-1.5 h-3.5 w-3.5" aria-hidden />
+                </a>
+              </Button>
+            </>
+          }
+        />
 
-          <a
-            href="https://vercel.com/relliahealth/~/settings/environment-variables"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex flex-col items-center justify-center rounded-2xl border border-rellia-teal/15 bg-white p-5 text-center transition-all hover:border-rellia-teal/30 hover:bg-rellia-mint/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-teal"
-          >
-            <Key className="h-8 w-8 text-rellia-teal mb-2" aria-hidden />
-            <span className="font-host-grotesk font-bold text-sm text-foreground">Enable Signup</span>
-            <span className="mt-0.5 font-urbanist text-[11px] text-muted-foreground">Go to Vercel Settings</span>
-          </a>
-        </div>
-      </AdminTipBox>
+        <AdminTipBox
+          title="Invite your team members"
+          icon={UserPlus}
+          storageKey="rellia-admin-team-tip-collapsed"
+          className="w-full"
+        >
+          <div className="mb-5 space-y-3 font-urbanist text-sm text-black/70 leading-relaxed">
+            <div className="flex items-start gap-2">
+              <span className="mt-0.5 shrink-0 font-bold text-rellia-teal">•</span>
+              <p>
+                <strong>Invite Admin User:</strong> Invite colleagues directly via Supabase Auth to grant dashboard access.{" "}
+                <em>Note: Supabase Auth has a default limit of 3 email invitations per day.</em>
+              </p>
+            </div>
+            <div className="flex items-start gap-2">
+              <span className="mt-0.5 shrink-0 font-bold text-rellia-teal">•</span>
+              <p>
+                <strong>Add Admin Directly:</strong> You can add users directly to the dashboard from Supabase Auth by entering the admin account's name, email, and password.
+              </p>
+            </div>
+            <div className="flex items-start gap-2">
+              <span className="mt-0.5 shrink-0 font-bold text-rellia-teal">•</span>
+              <p>
+                <strong>Enable Signup:</strong> Alternatively, users can register themselves via{" "}
+                <Link to="/admin/signup" className="font-semibold text-rellia-teal hover:underline">
+                  the signup page
+                </Link>
+                . To allow this, toggle the{" "}
+                <code className="rounded bg-rellia-mint/10 px-1 py-0.5 text-xs font-semibold text-rellia-teal">
+                  ADMIN_SIGNUP_ENABLED
+                </code>{" "}
+                environment variable to{" "}
+                <code className="rounded bg-rellia-mint/10 px-1 py-0.5 text-xs font-semibold text-rellia-teal">
+                  true
+                </code>{" "}
+                in Vercel settings and remember to disable it after use.
+              </p>
+            </div>
+          </div>
+          <div className="mt-4 grid gap-4 sm:grid-cols-2">
+            <a
+              href="https://supabase.com/dashboard/project/agsvypnmlrvpbgrsxtqy/auth/users"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex flex-col items-center justify-center rounded-2xl border border-rellia-teal/15 bg-white p-5 text-center transition-all hover:border-rellia-teal/30 hover:bg-rellia-mint/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-teal"
+            >
+              <UserPlus className="mb-2 h-8 w-8 text-rellia-teal" aria-hidden />
+              <span className="font-host-grotesk text-sm font-bold text-foreground">Invite or Add Admin</span>
+              <span className="mt-0.5 font-urbanist text-[11px] text-muted-foreground">Go to Supabase Auth</span>
+            </a>
+
+            <a
+              href="https://vercel.com/relliahealth/~/settings/environment-variables"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex flex-col items-center justify-center rounded-2xl border border-rellia-teal/15 bg-white p-5 text-center transition-all hover:border-rellia-teal/30 hover:bg-rellia-mint/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-teal"
+            >
+              <Key className="mb-2 h-8 w-8 text-rellia-teal" aria-hidden />
+              <span className="font-host-grotesk text-sm font-bold text-foreground">Enable Signup</span>
+              <span className="mt-0.5 font-urbanist text-[11px] text-muted-foreground">Go to Vercel Settings</span>
+            </a>
+          </div>
+        </AdminTipBox>
       </AdminPageReveal>
 
       <AdminPageReveal delay={0.06}>
-      <AdminPageHeader
-        title="Team"
-        actions={
-          <>
-            <AdminDownloadCsvButton
-              filename="rellia-admin-team"
-              rows={users}
-              columns={[
-                { header: "Name", value: (member) => member.fullName?.trim() || "" },
-                { header: "Email", value: (member) => member.email },
-                { header: "Joined", value: (member) => formatAdminDate(member.createdAt) },
-                {
-                  header: "Status",
-                  value: (member) => (member.confirmedAt ? "Active" : "Invite pending"),
-                },
-                {
-                  header: "Last sign-in",
-                  value: (member) => (member.lastSignInAt ? formatAdminDate(member.lastSignInAt) : ""),
-                },
-              ]}
-            />
-            <Button type="button" variant="outline" size="sm" asChild className="rounded-full">
-              <a href={SUPABASE_AUTH_USERS_URL} target="_blank" rel="noopener noreferrer">
-                Invite in Supabase
-                <ExternalLink className="ml-1.5 h-3.5 w-3.5" aria-hidden />
-              </a>
-            </Button>
-          </>
-        }
-      />
-      </AdminPageReveal>
-
-      <AdminPageReveal delay={0.1}>
       {isLoading ? (
         <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
           <div className="space-y-3 p-4">

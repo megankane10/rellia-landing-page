@@ -12,7 +12,7 @@ import { INVESTOR_LOGO_MARKS, PORTFOLIO_LOGO_MARKS } from "@/data/portfolioLogos
 import { resolveLogoMarqueeMarks } from "@/lib/resolveLogoMarqueeMarks"
 import InvestorNotifyForm from "@/components/network/InvestorNotifyForm"
 import RelliaAction from "@/components/RelliaAction"
-import RelliaCta from "@/components/RelliaCta"
+import RelliaCta, { optionalCtaAction } from "@/components/RelliaCta"
 import { SectionsRenderer } from "@/components/cms/PageRenderer"
 import ScrollReveal from "@/components/ScrollReveal"
 import { ArrowRight, BarChart3, ShieldCheck, Sparkles, Users, Check } from "lucide-react"
@@ -565,6 +565,7 @@ export default function Investors() {
                     label: content.ctaPrimaryLabel ?? "Explore the Alumni Directory",
                     to: content.ctaPrimaryHref ?? "/founders/alumni",
                   }}
+                  secondary={optionalCtaAction(content.ctaSecondaryLabel, content.ctaSecondaryHref)}
                 />
               </div>
             </motion.div>

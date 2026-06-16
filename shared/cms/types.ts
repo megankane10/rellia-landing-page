@@ -38,6 +38,12 @@ export type CareersOpenRole = {
   responsibilities: string[]
   applyButtonLabel?: string
   applyButtonUrl?: string
+  roleCtaTitle?: string
+  roleCtaBody?: string
+  roleCtaPrimaryLabel?: string
+  roleCtaPrimaryHref?: string
+  roleCtaSecondaryLabel?: string
+  roleCtaSecondaryHref?: string
 }
 
 
@@ -66,6 +72,8 @@ export type NetworkDirectoryChrome = {
   directoryCtaBody?: string
   directoryCtaPrimaryLabel?: string
   directoryCtaPrimaryHref?: string
+  directoryCtaSecondaryLabel?: string
+  directoryCtaSecondaryHref?: string
 }
 
 export type NetworkDirectoryPageContent = NetworkDirectoryChrome & {
@@ -96,6 +104,8 @@ export type CareersPageContent = NetworkHeroContent & {
   ctaBody?: string
   ctaPrimaryLabel?: string
   ctaPrimaryHref?: string
+  ctaSecondaryLabel?: string
+  ctaSecondaryHref?: string
   lifeAtRelliaHeading?: string
   lifeAtRelliaHeadingPortable?: SanityPortableText
   lifeAtRelliaSubheading?: string
@@ -632,6 +642,8 @@ export type NetworkPartnersPageContent = CmsSingletonPageContent &
     ctaBody?: string
     ctaPrimaryLabel?: string
     ctaPrimaryHref?: string
+    ctaSecondaryLabel?: string
+    ctaSecondaryHref?: string
   }
 
 export type ConsultingPageContent = CmsSingletonPageContent & {
@@ -1160,6 +1172,7 @@ export type NotFoundContent = {
   title: string
   message: string
   ctaLabel: string
+  iconKey?: string
   seo?: SeoContent
 }
 

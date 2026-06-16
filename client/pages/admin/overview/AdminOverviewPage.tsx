@@ -85,7 +85,7 @@ const PIE_TOOLTIP_STYLE = {
   border: "1px solid rgba(0,0,0,0.08)",
   boxShadow: "0 10px 30px rgba(0,0,0,0.06)",
   fontFamily: "Urbanist",
-  fontSize: "11px",
+  fontSize: "13px",
   zIndex: 50,
 } as const
 
@@ -109,7 +109,7 @@ const toTopPieSlices = (
 }
 
 const PieLegend = ({ rows }: { rows: PieSliceRow[] }) => (
-  <div className="flex flex-wrap justify-center gap-x-4 gap-y-1.5 font-urbanist text-xs">
+  <div className="flex flex-wrap justify-center gap-x-4 gap-y-1.5 font-urbanist text-sm">
     {rows.filter((row) => row.value > 0).map((row) => (
       <div key={row.name} className="flex max-w-full items-center gap-1.5">
         <span className="h-2 w-2 shrink-0 rounded-full" style={{ backgroundColor: row.fill }} />

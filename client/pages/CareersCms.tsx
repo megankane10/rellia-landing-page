@@ -1,7 +1,7 @@
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
 import ScrollReveal from "@/components/ScrollReveal"
-import RelliaCta from "@/components/RelliaCta"
+import RelliaCta, { optionalCtaAction } from "@/components/RelliaCta"
 import PillTag from "@/components/PillTag"
 import WhyRellia from "@/components/WhyRellia"
 import { FilloutStandardEmbed } from "@fillout/react"
@@ -272,7 +272,9 @@ export default function CareersCms() {
 
   const careersPageQuery = useCareersPage()
   const { data: careersCmsRaw } = careersPageQuery
-  const careersPageLoading = isSanityConfigured() && isCmsQueryLoading(careersPageQuery)
+  const careersPageLoading =
+    isSanityConfigured() &&
+    (isCmsQueryLoading(careersPageQuery) || careersPageQuery.isError)
 
   const careersCms = useMemo(
     () => ({ ...DEFAULT_CAREERS_PAGE, ...normalizeCms(careersCmsRaw) }),
@@ -544,6 +546,7 @@ export default function CareersCms() {
           label: cmsDisplayText(careersCms.ctaPrimaryLabel ?? "Get in touch"),
           to: careersCms.ctaPrimaryHref ?? "/contact",
         }}
+        secondary={optionalCtaAction(careersCms.ctaSecondaryLabel, careersCms.ctaSecondaryHref)}
       />
       </main>
 
