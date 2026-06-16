@@ -1,7 +1,7 @@
 import { useState, useMemo, useCallback, useEffect } from "react"
 import { Link, useLocation, useNavigate, useSearchParams } from "react-router-dom"
 import { useQuery } from "@tanstack/react-query"
-import { ArrowDown, ArrowRight, ArrowUp, ArrowUpRight, ChevronDown, ChevronLeft, ChevronRight, AlertCircle, CalendarDays, CircleHelp, FileEdit, Inbox, PartyPopper, Stethoscope, Users, TrendingUp, XCircle, type LucideIcon } from "lucide-react"
+import { ArrowDown, ArrowRight, ArrowUp, ArrowUpRight, ChevronDown, ChevronLeft, ChevronRight, AlertCircle, CalendarDays, CircleHelp, ClockFading, FileEdit, Inbox, PartyPopper, Stethoscope, Users, TrendingUp, XCircle, type LucideIcon } from "lucide-react"
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis, PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip as RechartsTooltip } from "recharts"
 import { useAuth } from "@/context/AuthContext"
 import { fetchAdminTeam } from "@/lib/adminApi"
@@ -247,7 +247,7 @@ const OverviewTopLinkCard = ({
   href: string
   loading?: boolean
 }) => {
-  const StatusIcon = statusTone === "good" ? PartyPopper : statusTone === "muted" ? XCircle : AlertCircle
+  const StatusIcon = statusTone === "good" ? PartyPopper : statusTone === "muted" ? XCircle : ClockFading
   const isCaughtUpMessage = value === CAUGHT_UP_MESSAGE
   const isCompactValue = typeof value !== "number" && !isCaughtUpMessage
 
@@ -255,6 +255,13 @@ const OverviewTopLinkCard = ({
     statusTone === "good"
       ? (caughtUpTooltip ?? "Nothing here needs your attention right now.")
       : statusLabel
+
+  const statusAccentClass =
+    statusTone === "good"
+      ? "text-emerald-700 dark:text-emerald-400"
+      : statusTone === "warn"
+        ? "text-amber-800 dark:text-amber-400"
+        : "text-slate-600 dark:text-slate-300"
 
   const statusCircleClass =
     statusTone === "good"
@@ -313,7 +320,8 @@ const OverviewTopLinkCard = ({
               </Tooltip>
               <p
                 className={cn(
-                  "min-w-0 font-host-grotesk font-semibold text-foreground dark:text-white",
+                  "min-w-0 font-host-grotesk font-semibold",
+                  statusAccentClass,
                   isCaughtUpMessage
                     ? "text-base leading-snug sm:text-lg"
                     : isCompactValue
