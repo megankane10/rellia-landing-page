@@ -1028,7 +1028,14 @@ export type ContactPageContent = {
 
 export type ProgramTimelineWeekCms = {
   heading?: string
-  points: Array<string | { _type?: "programTimelineHeading"; text?: string }>
+  points: Array<
+    | string
+    | {
+        _type?: "programTimelinePoint" | "programTimelineHeading"
+        kind?: "bullet" | "heading"
+        text?: string
+      }
+  >
 }
 
 export type ProgramTimelineStepCms = {

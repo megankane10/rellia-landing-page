@@ -2,7 +2,14 @@ import type { ProgramPageIconCard, ProgramTimelineMonth } from "./types"
 
 export type ProgramCmsTimelineWeek = {
   heading?: string
-  points?: Array<string | { _type?: "programTimelineHeading"; text?: string }>
+  points?: Array<
+    | string
+    | {
+        _type?: "programTimelinePoint" | "programTimelineHeading"
+        kind?: "bullet" | "heading"
+        text?: string
+      }
+  >
 }
 
 export type ProgramCmsTimelineStep = {
@@ -82,7 +89,13 @@ const parseLegacyDescription = (description?: string): string[] =>
     .filter(Boolean)
 
 const normalizeTimelinePoint = (
-  point: string | { _type?: "programTimelineHeading"; text?: string },
+  point:
+    | string
+    | {
+        _type?: "programTimelinePoint" | "programTimelineHeading"
+        kind?: "bullet" | "heading"
+        text?: string
+      },
 ) => {
   if (typeof point === "string") {
     const text = point.trim()
@@ -91,11 +104,24 @@ const normalizeTimelinePoint = (
 
   const text = point.text?.trim()
   if (!text) return null
-  return { _type: "programTimelineHeading" as const, text }
+  if (point._type === "programTimelineHeading") {
+    return { _type: "programTimelinePoint" as const, kind: "heading" as const, text }
+  }
+  if (point._type === "programTimelinePoint") {
+    const kind = point.kind === "heading" ? ("heading" as const) : ("bullet" as const)
+    return { _type: "programTimelinePoint" as const, kind, text }
+  }
+  return { _type: "programTimelinePoint" as const, kind: "bullet" as const, text }
 }
 
 const timelinePointHasText = (
-  point: string | { _type?: "programTimelineHeading"; text?: string },
+  point:
+    | string
+    | {
+        _type?: "programTimelinePoint" | "programTimelineHeading"
+        kind?: "bullet" | "heading"
+        text?: string
+      },
 ) => {
   if (typeof point === "string") return Boolean(point.trim())
   return Boolean(point.text?.trim())

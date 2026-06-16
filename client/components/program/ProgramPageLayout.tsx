@@ -590,9 +590,16 @@ const ProgramPageLayout = ({
                                             {cmsDisplayText(pt)}
                                           </span>
                                         </div>
-                                      ) : (
+                                      ) : pt.kind === "heading" ? (
                                         <div key={ptIdx} className="pt-2">
                                           <span className="font-host-grotesk text-[11px] font-semibold tracking-tight text-black/70">
+                                            {cmsDisplayText(pt.text)}
+                                          </span>
+                                        </div>
+                                      ) : (
+                                        <div key={ptIdx} className="flex items-start gap-2">
+                                          <CheckCircle2 className="w-4 h-4 text-rellia-teal shrink-0 mt-0.5" />
+                                          <span className="font-urbanist text-black text-base leading-relaxed">
                                             {cmsDisplayText(pt.text)}
                                           </span>
                                         </div>
