@@ -5,19 +5,13 @@ import type { AdminTableColumn } from "@/components/admin/AdminDataTable"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
 import type { AdminTeamUser } from "@/lib/adminApi"
-import { formatAdminRelativeAgo } from "@/lib/adminSubmissionStatus"
+import { formatAdminDate, formatAdminRelativeAgo } from "@/lib/adminSubmissionStatus"
 import { cn } from "@/lib/utils"
 
 type AdminRecentSignInsCardProps = {
   members: AdminTeamUser[]
   loading?: boolean
   className?: string
-}
-
-const formatAdminTimeOnly = (iso: string) => {
-  const date = new Date(iso)
-  if (Number.isNaN(date.getTime())) return ""
-  return date.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })
 }
 
 const signInColumns: AdminTableColumn<AdminTeamUser>[] = [
@@ -35,7 +29,7 @@ const signInColumns: AdminTableColumn<AdminTeamUser>[] = [
       const signedInAt = member.lastSignInAt!
       return (
         <time dateTime={signedInAt} className="text-muted-foreground">
-          {formatAdminTimeOnly(signedInAt)}
+          {formatAdminDate(signedInAt)}
         </time>
       )
     },
@@ -90,7 +84,7 @@ const AdminRecentSignInsCard = ({ members, loading, className }: AdminRecentSign
                 label: "Signed in",
                 value: (member) => (
                   <time dateTime={member.lastSignInAt!} className="text-foreground">
-                    {formatAdminTimeOnly(member.lastSignInAt!)}
+                    {formatAdminDate(member.lastSignInAt!)}
                   </time>
                 ),
               },
