@@ -111,7 +111,7 @@ export default function PageHeader({
             <div
               className={cn(
                 "mb-6 flex w-fit items-center gap-3 md:mb-7 md:gap-3.5",
-                isDark ? "text-white" : "text-black",
+                isDark ? "text-black" : "text-white",
               )}
               role="note"
               aria-label={`Effective date ${effectiveDateTrimmed}`}
@@ -120,16 +120,16 @@ export default function PageHeader({
                 className={cn(
                   "flex h-10 w-10 shrink-0 items-center justify-center rounded-full border",
                   isDark
-                    ? "border-white/20 bg-white/10 text-rellia-mint"
-                    : "border-black/10 bg-white/80 text-rellia-teal shadow-sm",
+                    ? "border-black/20 bg-black/10 text-rellia-teal"
+                    : "border-white/20 bg-black/80 text-rellia-mint shadow-sm",
                 )}
                 aria-hidden
               >
                 <CalendarDays className="h-[18px] w-[18px]" aria-hidden strokeWidth={2.25} />
               </span>
               <p className={cn("font-urbanist text-base leading-snug md:text-lg")}>
-                <span className={cn(isDark ? "text-white/75" : "text-black/55")}>Effective date</span>{" "}
-                <span className={cn("font-bold", isDark ? "text-white" : "text-rellia-teal")}>
+                <span className={cn(isDark ? "text-black/75" : "text-white/75")}>Effective date</span>{" "}
+                <span className={cn("font-bold", isDark ? "text-black" : "text-rellia-mint")}>
                   {effectiveDateTrimmed}
                 </span>
               </p>
@@ -165,26 +165,28 @@ export default function PageHeader({
           ) : null}
 
           {effectiveDateTrimmed && effectiveDatePlacement === "bottom" ? (
-            <div className="mt-7 flex items-center gap-3">
+            <div
+              className={cn(
+                "mt-7 flex w-fit items-center gap-3 md:mt-8 md:gap-3.5",
+                isDark ? "text-black" : "text-white",
+              )}
+              role="note"
+              aria-label={`Effective date ${effectiveDateTrimmed}`}
+            >
               <span
                 className={cn(
-                  "flex h-9 w-9 shrink-0 items-center justify-center rounded-full border",
-                  isDark ? "border-white/20 bg-white/10 text-rellia-mint" : "border-black/10 bg-white/80 text-rellia-teal",
+                  "flex h-10 w-10 shrink-0 items-center justify-center rounded-full border",
+                  isDark
+                    ? "border-black/20 bg-black/10 text-rellia-teal"
+                    : "border-white/20 bg-black/80 text-rellia-mint shadow-sm",
                 )}
                 aria-hidden
               >
-                <CalendarDays className="h-4 w-4" aria-hidden strokeWidth={2.25} />
+                <CalendarDays className="h-[18px] w-[18px]" aria-hidden strokeWidth={2.25} />
               </span>
-              <p
-                className={cn(
-                  "font-urbanist text-sm leading-snug",
-                  isDark ? "text-white/85" : "text-black/70",
-                )}
-                role="note"
-                aria-label={`Effective date ${effectiveDateTrimmed}`}
-              >
-                <span className={cn(isDark ? "text-white" : "text-black/70")}>Effective date </span>
-                <span className={cn("font-semibold", isDark ? "text-rellia-mint" : "text-rellia-teal")}>
+              <p className={cn("font-urbanist text-base leading-snug md:text-lg")}>
+                <span className={cn(isDark ? "text-black/75" : "text-white/75")}>Effective date</span>{" "}
+                <span className={cn("font-bold", isDark ? "text-rellia-teal" : "text-rellia-mint")}>
                   {effectiveDateTrimmed}
                 </span>
               </p>
