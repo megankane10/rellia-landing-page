@@ -7,7 +7,7 @@ export const shareIconSize = "h-6 w-6 shrink-0"
 export const shareComfortableControlSizeClass = "h-[3.75rem] w-[3.75rem] shrink-0"
 
 const shareOutlineButtonBaseClass =
-  "inline-flex items-center justify-center rounded-full border-2 transition-all duration-300 focus-visible:outline-none"
+  "inline-flex items-center justify-center rounded-full border transition-all duration-300 focus-visible:outline-none"
 
 /** Outline share control on light backgrounds — black icon, inverts on hover. */
 export const shareOutlineButtonClassName = cn(

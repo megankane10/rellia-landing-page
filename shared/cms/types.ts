@@ -1028,7 +1028,7 @@ export type ContactPageContent = {
 
 export type ProgramTimelineWeekCms = {
   heading?: string
-  points: string[]
+  points: Array<string | { _type?: "programTimelineHeading"; text?: string }>
 }
 
 export type ProgramTimelineStepCms = {

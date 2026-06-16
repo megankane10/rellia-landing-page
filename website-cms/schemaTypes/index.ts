@@ -69,7 +69,7 @@ import {sectionRelliaCta} from './objects/sectionRelliaCta'
 import {sectionTestimonials} from './objects/sectionTestimonials'
 import {landingTestimonialItem} from './objects/landingTestimonialItem'
 import {aboutTeamMember} from './objects/aboutTeamMember'
-import {programTimelineStep, programTimelineWeek} from './objects/programTimelineStep'
+import {programTimelineHeading, programTimelineStep, programTimelineWeek} from './objects/programTimelineStep'
 
 export const schemaTypes = [
   // Singletons & globals
@@ -144,6 +144,7 @@ export const schemaTypes = [
   sectionTestimonials,
   landingTestimonialItem,
   aboutTeamMember,
+  programTimelineHeading,
   programTimelineWeek,
   programTimelineStep,
 ]

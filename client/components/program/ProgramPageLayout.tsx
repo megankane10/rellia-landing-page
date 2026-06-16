@@ -544,7 +544,7 @@ const ProgramPageLayout = ({
                           className={cn(
                             "absolute left-0 top-[26px] -translate-x-1/2 w-3.5 h-3.5 rounded-full border-2 transition-colors duration-300",
                             timelineOpen === month.month
-                              ? "border-rellia-teal bg-rellia-mint"
+                              ? "border-rellia-teal bg-rellia-teal"
                               : "border-black/20 bg-white",
                           )}
                         />
@@ -567,7 +567,7 @@ const ProgramPageLayout = ({
                               if (typeof w === "string") {
                                 return (
                                   <li key={wIdx} className="flex items-start gap-2">
-                                    <CheckCircle2 className="w-4 h-4 text-rellia-mint shrink-0 mt-0.5" />
+                                    <CheckCircle2 className="w-4 h-4 text-rellia-teal shrink-0 mt-0.5" />
                                     <span className="font-urbanist text-black text-base leading-relaxed">
                                       {cmsDisplayText(w)}
                                     </span>
@@ -583,12 +583,20 @@ const ProgramPageLayout = ({
                                   )}
                                   <div className="flex flex-col gap-4">
                                     {w.points.map((pt, ptIdx) => (
-                                      <div key={ptIdx} className="flex items-start gap-2">
-                                        <CheckCircle2 className="w-4 h-4 text-rellia-mint shrink-0 mt-0.5" />
-                                        <span className="font-urbanist text-black text-base leading-relaxed">
-                                          {cmsDisplayText(pt)}
-                                        </span>
-                                      </div>
+                                      typeof pt === "string" ? (
+                                        <div key={ptIdx} className="flex items-start gap-2">
+                                          <CheckCircle2 className="w-4 h-4 text-rellia-teal shrink-0 mt-0.5" />
+                                          <span className="font-urbanist text-black text-base leading-relaxed">
+                                            {cmsDisplayText(pt)}
+                                          </span>
+                                        </div>
+                                      ) : (
+                                        <div key={ptIdx} className="pt-2">
+                                          <span className="font-host-grotesk text-[11px] font-semibold tracking-tight text-black/70">
+                                            {cmsDisplayText(pt.text)}
+                                          </span>
+                                        </div>
+                                      )
                                     ))}
                                   </div>
                                 </li>

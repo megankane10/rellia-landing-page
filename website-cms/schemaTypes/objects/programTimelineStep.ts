@@ -1,5 +1,25 @@
 import {defineArrayMember, defineField, defineType} from 'sanity'
 
+export const programTimelineHeading = defineType({
+  name: 'programTimelineHeading',
+  title: 'Timeline heading',
+  type: 'object',
+  fields: [
+    defineField({
+      name: 'text',
+      title: 'Heading',
+      type: 'string',
+      validation: (Rule) => Rule.required(),
+    }),
+  ],
+  preview: {
+    select: {title: 'text'},
+    prepare({title}) {
+      return {title: title?.trim() || 'Heading'}
+    },
+  },
+})
+
 export const programTimelineWeek = defineType({
   name: 'programTimelineWeek',
   title: 'Timeline week group',
@@ -15,7 +35,12 @@ export const programTimelineWeek = defineType({
       name: 'points',
       title: 'Bullet points',
       type: 'array',
-      of: [{type: 'string'}],
+      description:
+        'Add bullet points and optional headings between them (headings render without an icon).',
+      of: [
+        {type: 'string'},
+        defineArrayMember({type: 'programTimelineHeading'}),
+      ],
       validation: (Rule) => Rule.min(1),
     }),
   ],

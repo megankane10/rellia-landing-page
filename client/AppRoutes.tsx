@@ -5,6 +5,7 @@ import ScrollToTop from "@/components/ScrollToTop"
 import RouteSeo from "@/components/RouteSeo"
 import { PageSeoProvider, type PageSeoOverrides } from "@/context/PageSeoContext"
 import PageTransition from "@/components/PageTransition"
+import PageRevealOverlay from "@/components/PageRevealOverlay"
 import Index from "./pages/Index"
 import About from "./pages/About"
 import FAQ from "./pages/FAQ"
@@ -97,6 +98,7 @@ export const RouterShell = ({
 }) => (
   <PageSeoProvider initialOverrides={initialPageSeo}>
     <PageTransition />
+    <PageRevealOverlay />
     <VercelObservability />
     <ThirdPartyPreloads />
     <AdminAuthHashRedirect />

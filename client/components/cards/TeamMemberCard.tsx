@@ -206,7 +206,7 @@ export function TeamMemberCard({
                       <ProfileSocialLinks
                         links={socialLinks}
                         className="gap-2"
-                        iconClassName="h-5 w-5"
+                        iconClassName="h-6 w-6"
                         variant="onDark"
                         showTooltips={false}
                       />

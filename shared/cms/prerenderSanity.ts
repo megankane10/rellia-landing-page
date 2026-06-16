@@ -3,6 +3,7 @@ import {
   advisorsQuery,
   alumniCompaniesQuery,
   aboutPageQuery,
+  applyPageQuery,
   directoryFilterGroupsQuery,
   eventsLandingQuery,
   featuredStoriesQuery,
@@ -37,7 +38,20 @@ import type { CareersOpenRole, CareersPageContent } from "./types"
 import eventsBuildSnapshot from "./build-snapshots/events.json"
 import openRolesBuildSnapshot from "./build-snapshots/openRoles.json"
 import pagesBuildSnapshot from "./build-snapshots/pages.json"
+import programsBuildSnapshot from "./build-snapshots/programs.json"
 import storiesBuildSnapshot from "./build-snapshots/stories.json"
+import aboutPageBuildSnapshot from "./build-snapshots/aboutPage.json"
+import applyPageBuildSnapshot from "./build-snapshots/applyPage.json"
+import careersPageBuildSnapshot from "./build-snapshots/careersPage.json"
+import eventsLandingPageBuildSnapshot from "./build-snapshots/eventsLandingPage.json"
+import globalSettingsBuildSnapshot from "./build-snapshots/globalSettings.json"
+import homePageBuildSnapshot from "./build-snapshots/homePage.json"
+import navigationBuildSnapshot from "./build-snapshots/navigation.json"
+import paymentPageBuildSnapshot from "./build-snapshots/paymentPage.json"
+import programsLandingPageBuildSnapshot from "./build-snapshots/programsLandingPage.json"
+import programsLayoutPageBuildSnapshot from "./build-snapshots/programsLayoutPage.json"
+import siteSettingsBuildSnapshot from "./build-snapshots/siteSettings.json"
+import storiesPageBuildSnapshot from "./build-snapshots/storiesPage.json"
 import { defaultProgramRecordForSlug } from "./itemCardImage"
 import { trySanityApiConfig } from "./sanityEnv"
 import {
@@ -57,6 +71,11 @@ const snapshotStories = (): Record<string, unknown>[] =>
     ? (storiesBuildSnapshot as Record<string, unknown>[])
     : []
 
+const snapshotPrograms = (): Record<string, unknown>[] =>
+  Array.isArray(programsBuildSnapshot)
+    ? (programsBuildSnapshot as Record<string, unknown>[])
+    : []
+
 const snapshotOpenRoles = (): Array<Partial<CareersOpenRole> & { id?: string; roleId?: string }> =>
   Array.isArray(openRolesBuildSnapshot)
     ? (openRolesBuildSnapshot as unknown as Array<
@@ -68,6 +87,14 @@ const snapshotPages = (): Record<string, unknown>[] =>
   Array.isArray(pagesBuildSnapshot)
     ? (pagesBuildSnapshot as Record<string, unknown>[])
     : []
+
+const snapshotSingleton = (
+  value: unknown,
+): Record<string, unknown> | null => {
+  if (!value || typeof value !== "object") return null
+  if (Array.isArray(value)) return null
+  return value as Record<string, unknown>
+}
 
 let prerenderClient: SanityClient | null = null
 
@@ -268,12 +295,17 @@ export const fetchAlumniProfilePathsForPrerender = async (): Promise<string[]> =
 
 export const fetchCareersPageForPrerender = async (): Promise<Partial<CareersPageContent> | null> => {
   const client = getPrerenderSanityClient()
-  if (!client) return null
+  if (!client) {
+    return snapshotSingleton(careersPageBuildSnapshot) as Partial<CareersPageContent> | null
+  }
   try {
     const row = await client.fetch<Partial<CareersPageContent>>(careersPageQuery)
-    return row ?? null
+    return (
+      row ??
+      (snapshotSingleton(careersPageBuildSnapshot) as Partial<CareersPageContent> | null)
+    )
   } catch {
-    return null
+    return snapshotSingleton(careersPageBuildSnapshot) as Partial<CareersPageContent> | null
   }
 }
 
@@ -435,34 +467,34 @@ export const fetchCmsNoIndexPathsForSitemap = async (): Promise<string[]> => {
 
 export const fetchPaymentPageForPrerender = async (): Promise<Record<string, unknown> | null> => {
   const client = getPrerenderSanityClient()
-  if (!client) return null
+  if (!client) return snapshotSingleton(paymentPageBuildSnapshot)
   try {
     const doc = await client.fetch<Record<string, unknown> | null>(paymentPageQuery)
-    return doc ?? null
+    return doc ?? snapshotSingleton(paymentPageBuildSnapshot)
   } catch {
-    return null
+    return snapshotSingleton(paymentPageBuildSnapshot)
   }
 }
 
 export const fetchProgramsLandingForPrerender = async (): Promise<Record<string, unknown> | null> => {
   const client = getPrerenderSanityClient()
-  if (!client) return null
+  if (!client) return snapshotSingleton(programsLandingPageBuildSnapshot)
   try {
     const doc = await client.fetch<Record<string, unknown> | null>(programsLandingQuery)
-    return doc ?? null
+    return doc ?? snapshotSingleton(programsLandingPageBuildSnapshot)
   } catch {
-    return null
+    return snapshotSingleton(programsLandingPageBuildSnapshot)
   }
 }
 
 export const fetchProgramsForPrerender = async (): Promise<Record<string, unknown>[]> => {
   const client = getPrerenderSanityClient()
-  if (!client) return []
+  if (!client) return snapshotPrograms()
   try {
     const rows = await client.fetch<Record<string, unknown>[]>(programsQuery)
     return Array.isArray(rows) ? rows : []
   } catch {
-    return []
+    return snapshotPrograms()
   }
 }
 
@@ -478,25 +510,38 @@ const fetchSingleton = async (query: string): Promise<Record<string, unknown> | 
 }
 
 export const fetchHomePageForPrerender = async (): Promise<Record<string, unknown> | null> =>
-  fetchSingleton(homePageQuery)
+  (await fetchSingleton(homePageQuery)) ?? snapshotSingleton(homePageBuildSnapshot)
 
 export const fetchGlobalSettingsForPrerender = async (): Promise<Record<string, unknown> | null> =>
-  fetchSingleton(globalSettingsQuery)
+  (await fetchSingleton(globalSettingsQuery)) ??
+  snapshotSingleton(globalSettingsBuildSnapshot)
 
 export const fetchNavigationForPrerender = async (): Promise<Record<string, unknown> | null> =>
-  fetchSingleton(navigationQuery)
+  (await fetchSingleton(navigationQuery)) ?? snapshotSingleton(navigationBuildSnapshot)
 
 export const fetchSiteSettingsForPrerender = async (): Promise<Record<string, unknown> | null> =>
-  fetchSingleton(siteSettingsQuery)
+  (await fetchSingleton(siteSettingsQuery)) ?? snapshotSingleton(siteSettingsBuildSnapshot)
 
 export const fetchAboutPageForPrerender = async (): Promise<Record<string, unknown> | null> =>
-  fetchSingleton(aboutPageQuery)
+  (await fetchSingleton(aboutPageQuery)) ?? snapshotSingleton(aboutPageBuildSnapshot)
 
 export const fetchStoriesPageForPrerender = async (): Promise<Record<string, unknown> | null> =>
-  fetchSingleton(storiesPageQuery)
+  (await fetchSingleton(storiesPageQuery)) ?? snapshotSingleton(storiesPageBuildSnapshot)
 
 export const fetchEventsLandingPageForPrerender = async (): Promise<Record<string, unknown> | null> =>
-  fetchSingleton(eventsLandingQuery)
+  (await fetchSingleton(eventsLandingQuery)) ??
+  snapshotSingleton(eventsLandingPageBuildSnapshot)
+
+export const fetchApplyPageForPrerender = async (): Promise<Record<string, unknown> | null> => {
+  const client = getPrerenderSanityClient()
+  if (!client) return snapshotSingleton(applyPageBuildSnapshot)
+  try {
+    const doc = await client.fetch<Record<string, unknown> | null>(applyPageQuery)
+    return doc ?? snapshotSingleton(applyPageBuildSnapshot)
+  } catch {
+    return snapshotSingleton(applyPageBuildSnapshot)
+  }
+}
 
 export const fetchNetworkFoundersPageForPrerender = async (): Promise<Record<string, unknown> | null> =>
   fetchSingleton(networkFoundersPageQuery)

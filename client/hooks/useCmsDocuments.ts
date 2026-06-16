@@ -20,6 +20,21 @@ import {
 } from "@shared/cms/defaults";
 import { mergeCareersPage } from "@shared/cms/careersPageDefaults";
 import { mergeCmsPageContent } from "@shared/cms/mergeCmsPageContent";
+import aboutPageBuildSnapshot from "@shared/cms/build-snapshots/aboutPage.json"
+import applyPageBuildSnapshot from "@shared/cms/build-snapshots/applyPage.json"
+import careersPageBuildSnapshot from "@shared/cms/build-snapshots/careersPage.json"
+import eventsLandingPageBuildSnapshot from "@shared/cms/build-snapshots/eventsLandingPage.json"
+import globalSettingsBuildSnapshot from "@shared/cms/build-snapshots/globalSettings.json"
+import homePageBuildSnapshot from "@shared/cms/build-snapshots/homePage.json"
+import navigationBuildSnapshot from "@shared/cms/build-snapshots/navigation.json"
+import openRolesBuildSnapshot from "@shared/cms/build-snapshots/openRoles.json"
+import paymentPageBuildSnapshot from "@shared/cms/build-snapshots/paymentPage.json"
+import consultingPageBuildSnapshot from "@shared/cms/build-snapshots/consultingPage.json"
+import programsBuildSnapshot from "@shared/cms/build-snapshots/programs.json"
+import programsLandingPageBuildSnapshot from "@shared/cms/build-snapshots/programsLandingPage.json"
+import programsLayoutPageBuildSnapshot from "@shared/cms/build-snapshots/programsLayoutPage.json"
+import siteSettingsBuildSnapshot from "@shared/cms/build-snapshots/siteSettings.json"
+import storiesPageBuildSnapshot from "@shared/cms/build-snapshots/storiesPage.json"
 import type {
   AboutPageContent,
   ContactPageContent,
@@ -56,6 +71,15 @@ import { filterValidOpenRoles } from "@shared/careersOpenRolesVisibility";
 // Keep Sanity-published changes feeling “instant” on the live site.
 const staleTimeMs = 15 * 1000
 
+const snapshotSingleton = (value: unknown): Record<string, unknown> | null => {
+  if (!value || typeof value !== "object") return null
+  if (Array.isArray(value)) return null
+  return value as Record<string, unknown>
+}
+
+// Force a background revalidation on mount while still rendering instantly.
+const snapshotInitialDataUpdatedAt = 0
+
 export const useGlobalSettings = () =>
   useQuery({
     queryKey: ["cms", "globalSettings"],
@@ -64,6 +88,12 @@ export const useGlobalSettings = () =>
         await sanityFetch<Partial<GlobalSettingsContent>>("globalSettings");
       return mergeGlobalSettings(raw ?? undefined);
     },
+    initialData: () =>
+      mergeGlobalSettings(
+        (snapshotSingleton(globalSettingsBuildSnapshot) as Partial<GlobalSettingsContent>) ??
+          undefined,
+      ),
+    initialDataUpdatedAt: snapshotInitialDataUpdatedAt,
     staleTime: staleTimeMs,
   });
 
@@ -77,6 +107,14 @@ export const useNavigation = () =>
         footer: Array.isArray(raw?.footer) ? (raw?.footer as NavigationContent["footer"]) : [],
       } satisfies NavigationContent
     },
+    initialData: () => {
+      const raw = snapshotSingleton(navigationBuildSnapshot) as Partial<NavigationContent> | null
+      return {
+        primary: Array.isArray(raw?.primary) ? (raw?.primary as NavigationContent["primary"]) : [],
+        footer: Array.isArray(raw?.footer) ? (raw?.footer as NavigationContent["footer"]) : [],
+      } satisfies NavigationContent
+    },
+    initialDataUpdatedAt: snapshotInitialDataUpdatedAt,
     staleTime: staleTimeMs,
   })
 
@@ -91,6 +129,15 @@ export const useSiteSettings = () =>
         defaultSeo: raw?.defaultSeo ?? undefined,
       } satisfies SiteSettingsContent
     },
+    initialData: () => {
+      const raw = snapshotSingleton(siteSettingsBuildSnapshot) as Partial<SiteSettingsContent> | null
+      return {
+        siteName: typeof raw?.siteName === "string" ? raw.siteName : undefined,
+        logoUrl: typeof raw?.logoUrl === "string" ? raw.logoUrl : undefined,
+        defaultSeo: raw?.defaultSeo ?? undefined,
+      } satisfies SiteSettingsContent
+    },
+    initialDataUpdatedAt: snapshotInitialDataUpdatedAt,
     staleTime: staleTimeMs,
   })
 
@@ -109,6 +156,14 @@ export const useHomePage = () =>
         merged: mergeHomePage(raw ?? undefined),
       } satisfies HomePageQueryData
     },
+    initialData: () => {
+      const raw = snapshotSingleton(homePageBuildSnapshot) as Partial<HomePageContent> | null
+      return {
+        raw,
+        merged: mergeHomePage(raw ?? undefined),
+      } satisfies HomePageQueryData
+    },
+    initialDataUpdatedAt: snapshotInitialDataUpdatedAt,
     staleTime: staleTimeMs,
   });
 
@@ -165,6 +220,8 @@ export const useStoriesPage = () =>
       const raw = await sanityFetch<StoriesLandingContent>("storiesPage")
       return raw ?? null
     },
+    initialData: () => snapshotSingleton(storiesPageBuildSnapshot) as StoriesLandingContent | null,
+    initialDataUpdatedAt: snapshotInitialDataUpdatedAt,
     staleTime: staleTimeMs,
   })
 
@@ -200,6 +257,11 @@ export const useAboutPage = () =>
       const raw = await sanityFetch<Partial<AboutPageContent>>("aboutPage");
       return mergeAboutPage(raw ?? undefined);
     },
+    initialData: () =>
+      mergeAboutPage(
+        (snapshotSingleton(aboutPageBuildSnapshot) as Partial<AboutPageContent>) ?? undefined,
+      ),
+    initialDataUpdatedAt: snapshotInitialDataUpdatedAt,
     staleTime: staleTimeMs,
   });
 
@@ -221,6 +283,12 @@ export const useProgramsLandingPage = () =>
         await sanityFetch<Partial<ProgramsLandingContent>>("programsLanding");
       return mergeProgramsLanding(raw ?? undefined);
     },
+    initialData: () =>
+      mergeProgramsLanding(
+        (snapshotSingleton(programsLandingPageBuildSnapshot) as Partial<ProgramsLandingContent>) ??
+          undefined,
+      ),
+    initialDataUpdatedAt: snapshotInitialDataUpdatedAt,
     staleTime: staleTimeMs,
   });
 
@@ -247,6 +315,9 @@ export const useEventsLandingPage = () =>
       const raw = await sanityFetch<EventsLandingContent>("eventsLanding")
       return raw ?? null
     },
+    initialData: () =>
+      snapshotSingleton(eventsLandingPageBuildSnapshot) as EventsLandingContent | null,
+    initialDataUpdatedAt: snapshotInitialDataUpdatedAt,
     staleTime: staleTimeMs,
   })
 
@@ -257,6 +328,8 @@ export const usePrograms = () =>
       const raw = await sanityFetch<any[]>("programs")
       return raw ?? []
     },
+    initialData: () => (Array.isArray(programsBuildSnapshot) ? (programsBuildSnapshot as any[]) : []),
+    initialDataUpdatedAt: snapshotInitialDataUpdatedAt,
     staleTime: staleTimeMs,
   })
 
@@ -267,6 +340,9 @@ export const useProgramsLayoutPage = () =>
       const raw = await sanityFetch<ProgramsLayoutPageContent | null>("programsLayoutPage")
       return raw ?? null
     },
+    initialData: () =>
+      snapshotSingleton(programsLayoutPageBuildSnapshot) as ProgramsLayoutPageContent | null,
+    initialDataUpdatedAt: snapshotInitialDataUpdatedAt,
     staleTime: staleTimeMs,
   })
 
@@ -413,6 +489,11 @@ export const usePaymentPage = () =>
         await sanityFetch<Partial<PaymentPageContent>>("paymentPage");
       return mergePaymentPage(raw ?? undefined);
     },
+    initialData: () =>
+      mergePaymentPage(
+        (snapshotSingleton(paymentPageBuildSnapshot) as Partial<PaymentPageContent>) ?? undefined,
+      ),
+    initialDataUpdatedAt: snapshotInitialDataUpdatedAt,
     staleTime: staleTimeMs,
   });
 
@@ -423,6 +504,11 @@ export const useApplyPage = () =>
       const raw = await sanityFetch<Partial<ApplyPageContent>>("applyPage");
       return mergeApplyPage(raw ?? undefined);
     },
+    initialData: () =>
+      mergeApplyPage(
+        (snapshotSingleton(applyPageBuildSnapshot) as Partial<ApplyPageContent>) ?? undefined,
+      ),
+    initialDataUpdatedAt: snapshotInitialDataUpdatedAt,
     staleTime: staleTimeMs,
   });
 
@@ -443,6 +529,18 @@ export const useCareersPage = () =>
       const merged = mergeCareersPage(raw ?? undefined)
       return { ...merged, openRoles }
     },
+    initialData: () => {
+      const careersRaw = snapshotSingleton(careersPageBuildSnapshot) as Partial<CareersPageContent> | null
+      const rolesRaw = Array.isArray(openRolesBuildSnapshot)
+        ? (openRolesBuildSnapshot as Array<Partial<CareersOpenRole> & { roleId?: string }>)
+        : []
+      const openRoles = filterValidOpenRoles(
+        rolesRaw.length ? rolesRaw : careersRaw?.openRoles,
+      )
+      const merged = mergeCareersPage(careersRaw ?? undefined)
+      return { ...merged, openRoles }
+    },
+    initialDataUpdatedAt: snapshotInitialDataUpdatedAt,
     staleTime: staleTimeMs,
     retry: 3,
   });
@@ -519,6 +617,12 @@ export const useConsultingPage = () =>
       const raw = await sanityFetch<Partial<ConsultingPageContent>>("consultingPage")
       return mergeConsultingPage(raw ?? undefined)
     },
+    initialData: () =>
+      mergeConsultingPage(
+        (snapshotSingleton(consultingPageBuildSnapshot) as Partial<ConsultingPageContent>) ??
+          undefined,
+      ),
+    initialDataUpdatedAt: snapshotInitialDataUpdatedAt,
     staleTime: staleTimeMs,
   })
 
