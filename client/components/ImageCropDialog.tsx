@@ -78,20 +78,33 @@ const ImageCropDialog = ({
 
   useEffect(() => {
     if (!open || !file) {
-      setImageSrc(null)
-      setCrop({ x: 0, y: 0 })
-      setZoom(1)
-      setCroppedAreaPixels(null)
-      setMediaSize(null)
-      setError(null)
-      return
+      let cancelled = false
+      queueMicrotask(() => {
+        if (cancelled) return
+        setImageSrc(null)
+        setCrop({ x: 0, y: 0 })
+        setZoom(1)
+        setCroppedAreaPixels(null)
+        setMediaSize(null)
+        setError(null)
+      })
+      return () => {
+        cancelled = true
+      }
     }
 
     const objectUrl = URL.createObjectURL(file)
-    setImageSrc(objectUrl)
-    setAspectPreset(defaultAspectPreset)
+    let cancelled = false
+    queueMicrotask(() => {
+      if (cancelled) return
+      setImageSrc(objectUrl)
+      setAspectPreset(defaultAspectPreset)
+    })
 
-    return () => URL.revokeObjectURL(objectUrl)
+    return () => {
+      cancelled = true
+      URL.revokeObjectURL(objectUrl)
+    }
   }, [open, file, defaultAspectPreset])
 
   const handleMediaLoaded = useCallback(
@@ -108,7 +121,14 @@ const ImageCropDialog = ({
   useEffect(() => {
     if (!mediaSize) return
     const topCrop = getTopCenterCropPercent(mediaSize.width, mediaSize.height, aspect)
-    setCroppedAreaPixels(percentCropToPixels(mediaSize.width, mediaSize.height, topCrop))
+    let cancelled = false
+    queueMicrotask(() => {
+      if (cancelled) return
+      setCroppedAreaPixels(percentCropToPixels(mediaSize.width, mediaSize.height, topCrop))
+    })
+    return () => {
+      cancelled = true
+    }
   }, [aspect, mediaSize])
 
   const handleCropComplete = useCallback((_area: Area, areaPixels: Area) => {

@@ -38,8 +38,8 @@ const AdminSubmissionStatusFilter = ({
             "inline-flex items-center gap-2 rounded-full border px-3.5 py-1.5 font-urbanist text-sm transition-colors",
             "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint",
             isActive
-              ? "border-rellia-teal/30 bg-rellia-teal text-white"
-              : "border-black/10 bg-white text-black/70 hover:border-rellia-teal/20 hover:text-rellia-teal",
+              ? "border-rellia-teal/30 bg-rellia-teal text-white dark:border-rellia-mint/30 dark:bg-rellia-mint/20 dark:text-rellia-mint"
+              : "border-border bg-card text-muted-foreground hover:border-rellia-teal/20 hover:text-rellia-teal dark:border-rellia-mint/15 dark:bg-slate-800/50 dark:text-slate-300 dark:hover:border-rellia-mint/30 dark:hover:text-rellia-mint",
           )}
           aria-pressed={isActive}
         >
@@ -47,7 +47,7 @@ const AdminSubmissionStatusFilter = ({
           <span
             className={cn(
               "rounded-full px-1.5 py-0.5 text-xs font-medium",
-              isActive ? "bg-white/20 text-white" : "bg-black/5 text-black/55",
+              isActive ? "bg-card/20 text-white dark:bg-rellia-mint/15 dark:text-rellia-mint" : "bg-black/5 text-muted-foreground dark:bg-white/8 dark:text-slate-400",
             )}
           >
             {counts[option.value] ?? 0}

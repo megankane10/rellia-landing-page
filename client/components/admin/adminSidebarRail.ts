@@ -59,7 +59,6 @@ export const adminSidebarNavButtonClass = cn(
   "group-data-[collapsible=icon]:!size-11 group-data-[collapsible=icon]:!min-h-11 group-data-[collapsible=icon]:!max-h-11 group-data-[collapsible=icon]:!w-full group-data-[collapsible=icon]:!p-0",
   "[&_svg]:size-[1.125rem] [&_svg]:transition-transform [&_svg]:duration-150",
   "active:[&_svg]:scale-95 data-[active=true]:[&_svg]:text-rellia-mint",
-  "data-[active=true]:[&_.attention-badge-count]:!text-white",
 )
 
 export const adminSidebarAccountButtonClass = cn(

@@ -61,6 +61,8 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+        "admin-canvas": "hsl(var(--admin-canvas))",
+        "admin-header": "hsl(var(--admin-header) / <alpha-value>)",
         rellia: {
           teal: "#0D3540",
           mint: "#9DD6D0",

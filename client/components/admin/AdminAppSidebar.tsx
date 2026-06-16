@@ -5,6 +5,7 @@ import { useAuth } from "@/context/AuthContext"
 import { supabase } from "@/lib/supabase"
 import { isActiveSubmissionStatus } from "@/lib/adminSubmissionStatus"
 import AdminAccountMenu from "@/components/admin/AdminAccountMenu"
+import AdminMobileThemePicker from "@/components/admin/AdminMobileThemePicker"
 import { AdminSidebarDateTime } from "@/components/admin/AdminSidebarDateTime"
 import {
   adminSidebarContentClass,
@@ -180,7 +181,7 @@ const AdminAppSidebar = () => {
               className={cn(
                 "ml-auto inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full",
                 "border border-slate-700/80 bg-slate-900 text-slate-100",
-                "transition-colors hover:bg-white/10 hover:text-white",
+                "transition-colors hover:bg-card/10 hover:text-white",
                 "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
               )}
               aria-label="Close navigation menu"
@@ -192,6 +193,12 @@ const AdminAppSidebar = () => {
       </SidebarHeader>
 
       <SidebarContent className={cn(adminSidebarContentClass, "flex min-h-0 flex-col")}>
+        {isMobile ? (
+          <div className="mb-6 shrink-0">
+            <AdminSidebarDateTime variant="mobile" />
+          </div>
+        ) : null}
+
         <SidebarGroup className="!p-0 shrink-0">
           <SidebarGroupContent>
             <SidebarMenu className="gap-2">
@@ -242,8 +249,8 @@ const AdminAppSidebar = () => {
         </SidebarGroup>
 
         {isMobile ? (
-          <div className="mt-6 shrink-0">
-            <AdminSidebarDateTime variant="mobile" />
+          <div className="mt-auto shrink-0 pt-6">
+            <AdminMobileThemePicker />
           </div>
         ) : null}
       </SidebarContent>

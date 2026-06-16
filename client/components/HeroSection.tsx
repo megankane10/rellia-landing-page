@@ -72,8 +72,8 @@ export default function HeroSection({ content }: HeroSectionProps) {
 
   useEffect(() => {
     if (reduceMotion || isPreview) {
-      setShowBelowFold(true)
-      return
+      const t = window.setTimeout(() => setShowBelowFold(true), 0)
+      return () => window.clearTimeout(t)
     }
     const ms = headlineBelowFoldDelayMs(headlineLines.length)
     const t = window.setTimeout(() => setShowBelowFold(true), ms)

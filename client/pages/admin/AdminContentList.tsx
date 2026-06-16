@@ -47,15 +47,15 @@ const AdminContentList = () => {
 
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="font-host-grotesk text-2xl font-bold text-black md:text-3xl">
+          <h1 className="font-host-grotesk text-2xl font-bold text-foreground md:text-3xl">
             Content drafts
           </h1>
-          <p className="mt-2 font-urbanist text-sm text-black/60">
+          <p className="mt-2 font-urbanist text-sm text-muted-foreground">
             Dataset: <span className="font-medium text-rellia-teal">{dataset}</span>
             {counts.drafts > 0 ? (
               <>
                 {" "}
-                · <span className="font-medium text-black/70">{counts.drafts} unpublished</span>
+                · <span className="font-medium text-muted-foreground">{counts.drafts} unpublished</span>
               </>
             ) : null}
           </p>

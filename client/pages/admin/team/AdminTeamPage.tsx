@@ -18,8 +18,10 @@ import { formatAdminDate } from "@/lib/adminSubmissionStatus"
 import { resolveAdminMemberAvatarUrl } from "@/lib/adminUserProfile"
 import type { AdminTableColumn } from "@/components/admin/AdminDataTable"
 import type { AdminTeamUser } from "@/lib/adminApi"
+import { cn } from "@/lib/utils"
 
 import AdminTipBox from "@/components/admin/AdminTipBox"
+import { adminInteractiveBoxClass, adminOutlineActionButtonClass } from "@/components/admin/adminThemeClasses"
 
 const SUPABASE_AUTH_USERS_URL =
   "https://supabase.com/dashboard/project/agsvypnmlrvpbgrsxtqy/auth/users"
@@ -135,7 +137,7 @@ const AdminTeamPage = () => {
                   },
                 ]}
               />
-              <Button type="button" variant="outline" size="sm" asChild className="rounded-full">
+              <Button type="button" variant="outline" size="sm" asChild className={adminOutlineActionButtonClass}>
                 <a href={SUPABASE_AUTH_USERS_URL} target="_blank" rel="noopener noreferrer">
                   Invite in Supabase
                   <ExternalLink className="ml-1.5 h-3.5 w-3.5" aria-hidden />
@@ -151,7 +153,7 @@ const AdminTeamPage = () => {
           storageKey="rellia-admin-team-tip-collapsed"
           className="w-full"
         >
-          <div className="mb-5 space-y-3 font-urbanist text-sm text-black/70 leading-relaxed">
+          <div className="mb-5 space-y-3 font-urbanist text-sm text-muted-foreground leading-relaxed">
             <div className="flex items-start gap-2">
               <span className="mt-0.5 shrink-0 font-bold text-rellia-teal">•</span>
               <p>
@@ -189,10 +191,10 @@ const AdminTeamPage = () => {
               href="https://supabase.com/dashboard/project/agsvypnmlrvpbgrsxtqy/auth/users"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex flex-col items-center justify-center rounded-2xl border border-rellia-teal/15 bg-white p-5 text-center transition-all hover:border-rellia-teal/30 hover:bg-rellia-mint/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-teal"
+              className={cn(adminInteractiveBoxClass, "flex flex-col items-center justify-center p-5")}
             >
-              <UserPlus className="mb-2 h-8 w-8 text-rellia-teal" aria-hidden />
-              <span className="font-host-grotesk text-sm font-bold text-foreground">Invite or Add Admin</span>
+              <UserPlus className="mb-2 h-8 w-8 text-rellia-teal dark:text-rellia-mint" aria-hidden />
+              <span className="font-host-grotesk text-sm font-bold text-foreground dark:text-white">Invite or Add Admin</span>
               <span className="mt-0.5 font-urbanist text-[11px] text-muted-foreground">Go to Supabase Auth</span>
             </a>
 
@@ -200,10 +202,10 @@ const AdminTeamPage = () => {
               href="https://vercel.com/relliahealth/~/settings/environment-variables"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex flex-col items-center justify-center rounded-2xl border border-rellia-teal/15 bg-white p-5 text-center transition-all hover:border-rellia-teal/30 hover:bg-rellia-mint/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-teal"
+              className={cn(adminInteractiveBoxClass, "flex flex-col items-center justify-center p-5")}
             >
-              <Key className="mb-2 h-8 w-8 text-rellia-teal" aria-hidden />
-              <span className="font-host-grotesk text-sm font-bold text-foreground">Enable Signup</span>
+              <Key className="mb-2 h-8 w-8 text-rellia-teal dark:text-rellia-mint" aria-hidden />
+              <span className="font-host-grotesk text-sm font-bold text-foreground dark:text-white">Enable Signup</span>
               <span className="mt-0.5 font-urbanist text-[11px] text-muted-foreground">Go to Vercel Settings</span>
             </a>
           </div>
@@ -212,7 +214,7 @@ const AdminTeamPage = () => {
 
       <AdminPageReveal delay={0.06}>
       {isLoading ? (
-        <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+        <div className="overflow-hidden rounded-xl border border-border bg-card shadow-sm">
           <div className="space-y-3 p-4">
             {Array.from({ length: 4 }).map((_, i) => (
               <Skeleton key={i} className="h-14 rounded-xl" />
@@ -222,7 +224,7 @@ const AdminTeamPage = () => {
       ) : null}
 
       {error ? (
-        <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm p-4">
+        <div className="overflow-hidden rounded-xl border border-border bg-card shadow-sm p-4">
           <p className="font-urbanist text-sm text-destructive">
             {error instanceof Error ? error.message : "Could not load team members."}
           </p>
@@ -230,7 +232,7 @@ const AdminTeamPage = () => {
       ) : null}
 
       {!isLoading && !error && users.length === 0 ? (
-        <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm p-4">
+        <div className="overflow-hidden rounded-xl border border-border bg-card shadow-sm p-4">
           <AdminCompactEmptyState
             icon={Users}
             title="No team members found"
@@ -240,7 +242,7 @@ const AdminTeamPage = () => {
       ) : null}
 
       {!isLoading && !error && users.length > 0 ? (
-        <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm [&_ul]:p-3 [&_ul]:md:p-0">
+        <div className="overflow-hidden rounded-xl border border-border bg-card shadow-sm [&_ul]:p-3 [&_ul]:md:p-0">
           <AdminRecordList
             rows={users}
             getRowKey={(member) => member.id}

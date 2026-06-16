@@ -17,6 +17,7 @@ import {
   isCmsContentEnabled,
 } from "@/lib/adminSanityContent"
 import AdminTipBox from "@/components/admin/AdminTipBox"
+import { adminOutlineActionButtonClass } from "@/components/admin/adminThemeClasses"
 
 const PRODUCTION_DATASET = "production" as const
 
@@ -63,7 +64,7 @@ const AdminDraftsPage = () => {
                 { header: "Status", value: (row) => row.status },
               ]}
             />
-            <Button type="button" variant="outline" size="sm" asChild className="rounded-full">
+            <Button type="button" variant="outline" size="sm" asChild className={adminOutlineActionButtonClass}>
               <a href="https://relliahealth.sanity.studio" target="_blank" rel="noopener noreferrer">
                 Open Studio
                 <ExternalLink className="ml-1.5 h-3.5 w-3.5" aria-hidden />
@@ -92,7 +93,7 @@ const AdminDraftsPage = () => {
             storageKey="rellia-admin-drafts-tip-collapsed"
             className="mb-6"
           >
-            <div className="space-y-3 font-urbanist text-sm text-black/75">
+            <div className="space-y-3 font-urbanist text-sm text-muted-foreground">
               <p>
                 This page lists unpublished edits in the <strong>production</strong> Sanity dataset — the same
                 database that powers <strong>www.relliahealth.com</strong>. Saved drafts here are not visible to

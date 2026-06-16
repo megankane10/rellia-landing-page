@@ -39,7 +39,7 @@ const AdminDeleteIconButton = ({ label, description, onConfirm }: AdminDeleteIco
           type="button"
           variant="ghost"
           size="icon"
-          className="h-9 w-9 shrink-0 rounded-full text-black/40 hover:bg-red-50 hover:text-red-700"
+          className="h-9 w-9 shrink-0 rounded-full text-muted-foreground hover:bg-red-50 hover:text-red-700"
           disabled={isDeleting}
           aria-label="Delete submission"
         >

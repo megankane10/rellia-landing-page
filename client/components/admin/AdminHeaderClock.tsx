@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react"
 import { Clock3 } from "lucide-react"
 import { motion, useReducedMotion } from "framer-motion"
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
+import { Tooltip, TooltipTrigger } from "@/components/ui/tooltip"
+import AdminTooltipContent from "@/components/admin/AdminTooltipContent"
 import { cn } from "@/lib/utils"
 
 const STORAGE_KEY = "admin:header-clock-expanded"
@@ -57,7 +58,7 @@ const AdminHeaderClock = ({ className }: AdminHeaderClockProps) => {
 
   return (
     <div
-      className={cn("hidden items-center gap-2.5 font-urbanist sm:flex", className)}
+      className={cn("hidden items-center gap-2.5 font-urbanist md:flex", className)}
       aria-live="polite"
     >
       <Tooltip>
@@ -68,7 +69,8 @@ const AdminHeaderClock = ({ className }: AdminHeaderClockProps) => {
             className={cn(
               "inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-transparent",
               "text-rellia-teal transition-[background-color,border-color,box-shadow]",
-              "hover:border-rellia-teal/25 hover:bg-rellia-mint/15",
+              "hover:border-rellia-teal/25 hover:bg-rellia-mint/15 dark:text-rellia-mint",
+              "dark:hover:border-rellia-mint/25 dark:hover:bg-rellia-mint/10",
               "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-teal/40",
             )}
             aria-expanded={expanded}
@@ -77,9 +79,9 @@ const AdminHeaderClock = ({ className }: AdminHeaderClockProps) => {
             <Clock3 className="h-5 w-5" strokeWidth={1.75} aria-hidden />
           </button>
         </TooltipTrigger>
-        <TooltipContent side="bottom" align="center">
+        <AdminTooltipContent side="bottom" align="center">
           {toggleLabel}
-        </TooltipContent>
+        </AdminTooltipContent>
       </Tooltip>
 
       <motion.div

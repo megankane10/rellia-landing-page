@@ -410,7 +410,7 @@ const AdminInboxPage = () => {
     }
 
     const listShell = (content: ReactNode) => (
-      <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm [&_ul]:p-3 [&_ul]:md:p-0">
+      <div className="overflow-hidden rounded-xl border border-border bg-card shadow-sm [&_ul]:p-3 [&_ul]:md:p-0">
         {content}
       </div>
     )
@@ -571,19 +571,20 @@ const AdminInboxPage = () => {
       ) : null}
 
       <Tabs value={tab} onValueChange={(value) => setTab(value as SubmissionTab)} className="space-y-4">
-        <TabsList className="h-[48px] w-full bg-slate-100/80 p-1 rounded-2xl border border-black/5 shadow-sm max-w-none">
-          <div className="grid w-full grid-cols-2 h-full items-center">
+        <TabsList className="h-[48px] w-full max-w-none rounded-2xl border border-border bg-muted/50 p-1 shadow-sm">
+          <div className="grid h-full w-full grid-cols-2 items-center">
             <TabsTrigger
               value="contact"
               className={cn(
-                "w-full h-full rounded-xl px-4 py-2 font-urbanist text-sm font-bold transition-all duration-200",
-                "data-[state=active]:bg-white data-[state=active]:text-rellia-teal data-[state=active]:shadow-[0_4px_12px_rgba(0,0,0,0.06)] data-[state=active]:border data-[state=active]:border-black/5",
-                "data-[state=inactive]:text-slate-600 data-[state=inactive]:hover:text-slate-900 data-[state=inactive]:bg-transparent",
+                "h-full w-full rounded-xl px-4 py-2 font-urbanist text-sm font-bold transition-all duration-200",
+                "data-[state=active]:border data-[state=active]:border-border data-[state=active]:bg-card data-[state=active]:text-rellia-teal data-[state=active]:shadow-[0_4px_12px_rgba(0,0,0,0.06)] dark:data-[state=active]:text-rellia-mint",
+                "data-[state=inactive]:bg-transparent data-[state=inactive]:text-muted-foreground data-[state=inactive]:hover:text-foreground",
+                "dark:data-[state=inactive]:text-slate-300 dark:data-[state=inactive]:hover:text-white",
               )}
             >
               <span className="inline-flex items-center gap-2">
                 Web forms
-                <span className="rounded-full bg-black/5 px-1.5 py-0.5 text-xs font-semibold tabular-nums text-slate-500">
+                <span className="rounded-full bg-foreground/5 px-1.5 py-0.5 text-xs font-semibold tabular-nums text-muted-foreground dark:bg-white/8 dark:text-slate-300">
                   {contactRows.length}
                 </span>
               </span>
@@ -591,14 +592,15 @@ const AdminInboxPage = () => {
             <TabsTrigger
               value="diagnostic"
               className={cn(
-                "w-full h-full rounded-xl px-4 py-2 font-urbanist text-sm font-bold transition-all duration-200",
-                "data-[state=active]:bg-white data-[state=active]:text-rellia-teal data-[state=active]:shadow-[0_4px_12px_rgba(0,0,0,0.06)] data-[state=active]:border data-[state=active]:border-black/5",
-                "data-[state=inactive]:text-slate-600 data-[state=inactive]:hover:text-slate-900 data-[state=inactive]:bg-transparent",
+                "h-full w-full rounded-xl px-4 py-2 font-urbanist text-sm font-bold transition-all duration-200",
+                "data-[state=active]:border data-[state=active]:border-border data-[state=active]:bg-card data-[state=active]:text-rellia-teal data-[state=active]:shadow-[0_4px_12px_rgba(0,0,0,0.06)] dark:data-[state=active]:text-rellia-mint",
+                "data-[state=inactive]:bg-transparent data-[state=inactive]:text-muted-foreground data-[state=inactive]:hover:text-foreground",
+                "dark:data-[state=inactive]:text-slate-300 dark:data-[state=inactive]:hover:text-white",
               )}
             >
               <span className="inline-flex items-center gap-2">
                 Diagnostic Surveys
-                <span className="rounded-full bg-black/5 px-1.5 py-0.5 text-xs font-semibold tabular-nums text-slate-500">
+                <span className="rounded-full bg-foreground/5 px-1.5 py-0.5 text-xs font-semibold tabular-nums text-muted-foreground dark:bg-white/8 dark:text-slate-300">
                   {diagnosticRows.length}
                 </span>
               </span>

@@ -49,9 +49,9 @@ const AdminResources = () => (
         title="Admin access"
         subtitle="How signup and environment settings affect who can use this dashboard."
       >
-        <div className="space-y-4 font-urbanist text-sm leading-relaxed text-black/70">
+        <div className="space-y-4 font-urbanist text-sm leading-relaxed text-muted-foreground">
           <p>
-            <strong className="font-medium text-black/85">Disabling or enabling signup:</strong> Set{" "}
+            <strong className="font-medium text-foreground">Disabling or enabling signup:</strong> Set{" "}
             <code className="rounded bg-black/[0.04] px-1.5 py-0.5 text-xs">ADMIN_SIGNUP_ENABLED</code> on the
             server (Vercel environment variables, not <code className="text-xs">VITE_</code>). When disabled, new
             accounts must be invited through Supabase Auth instead of the public signup page.
@@ -72,17 +72,17 @@ const AdminResources = () => (
       </AdminSectionCard>
 
       <AdminSectionCard title="Dashboard & CMS" subtitle="Where day-to-day content and submissions live.">
-        <ul className="space-y-3 font-urbanist text-sm leading-relaxed text-black/70">
+        <ul className="space-y-3 font-urbanist text-sm leading-relaxed text-muted-foreground">
           <li>
-            <strong className="text-black/85">Submissions:</strong> Contact form, investor notifications, and
+            <strong className="text-foreground">Submissions:</strong> Contact form, investor notifications, and
             startup diagnostic results. Update status as you work through each inquiry.
           </li>
           <li>
-            <strong className="text-black/85">Content drafts:</strong> Unpublished Sanity documents — open Studio
+            <strong className="text-foreground">Content drafts:</strong> Unpublished Sanity documents — open Studio
             to review and publish when ready.
           </li>
           <li>
-            <strong className="text-black/85">Team:</strong> Admin users with dashboard access. Invite colleagues
+            <strong className="text-foreground">Team:</strong> Admin users with dashboard access. Invite colleagues
             from Supabase Auth; they will set a password via email.
           </li>
         </ul>
@@ -106,11 +106,11 @@ const AdminResources = () => (
           </Button>
         }
       >
-        <div className="overflow-hidden rounded-2xl border border-black/[0.06] bg-black/[0.02]">
+        <div className="overflow-hidden rounded-2xl border border-border bg-black/[0.02]">
           <iframe
             src={OPERATIONS_DOC_EMBED_URL}
             title="Rellia admin operations guide"
-            className="h-[min(70vh,640px)] w-full border-0 bg-white"
+            className="h-[min(70vh,640px)] w-full border-0 bg-card"
             loading="lazy"
           />
         </div>
@@ -127,18 +127,18 @@ const AdminResources = () => (
                 target="_blank"
                 rel="noopener noreferrer"
                 className={cn(
-                  "group block rounded-2xl border border-black/[0.06] px-4 py-3 transition-colors",
+                  "group block rounded-2xl border border-border px-4 py-3 transition-colors",
                   "hover:border-rellia-teal/20 hover:bg-rellia-mint/10",
                   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint",
                 )}
               >
                 <span className="flex items-center justify-between gap-2">
-                  <span className="font-urbanist text-sm font-medium text-black/85 group-hover:text-rellia-teal">
+                  <span className="font-urbanist text-sm font-medium text-foreground group-hover:text-rellia-teal">
                     {tool.label}
                   </span>
                   <ExternalLink className="h-4 w-4 shrink-0 text-black/30" aria-hidden />
                 </span>
-                <span className="mt-1 block font-urbanist text-xs leading-snug text-black/50">{tool.description}</span>
+                <span className="mt-1 block font-urbanist text-xs leading-snug text-muted-foreground">{tool.description}</span>
               </a>
             </li>
           ))}

@@ -13,7 +13,14 @@ function useCountUp(target: number, enabled: boolean, durationMs = 1200) {
 
   useEffect(() => {
     if (!enabled) {
-      setValue(target)
+      let cancelled = false
+      queueMicrotask(() => {
+        if (cancelled) return
+        setValue(target)
+      })
+      return () => {
+        cancelled = true
+      }
       return
     }
 
@@ -22,11 +29,22 @@ function useCountUp(target: number, enabled: boolean, durationMs = 1200) {
       window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches
 
     if (reduceMotion) {
-      setValue(target)
+      let cancelled = false
+      queueMicrotask(() => {
+        if (cancelled) return
+        setValue(target)
+      })
+      return () => {
+        cancelled = true
+      }
       return
     }
 
-    setValue(0)
+    let cancelled = false
+    queueMicrotask(() => {
+      if (cancelled) return
+      setValue(0)
+    })
     let raf = 0
     const start = performance.now()
 
@@ -38,7 +56,10 @@ function useCountUp(target: number, enabled: boolean, durationMs = 1200) {
     }
 
     raf = requestAnimationFrame(tick)
-    return () => cancelAnimationFrame(raf)
+    return () => {
+      cancelled = true
+      cancelAnimationFrame(raf)
+    }
   }, [enabled, target, durationMs])
 
   return value
@@ -132,9 +153,12 @@ export default function NetworkMetricsSection({
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768)
-    checkMobile()
+    const t = window.setTimeout(() => checkMobile(), 0)
     window.addEventListener("resize", checkMobile)
-    return () => window.removeEventListener("resize", checkMobile)
+    return () => {
+      window.clearTimeout(t)
+      window.removeEventListener("resize", checkMobile)
+    }
   }, [])
 
   const metricList = useMemo(() => metrics, [metrics]);
@@ -148,8 +172,15 @@ export default function NetworkMetricsSection({
 
   useEffect(() => {
     if (previewMode) {
-      setEntered(true)
-      setCountReady(true)
+      let cancelled = false
+      queueMicrotask(() => {
+        if (cancelled) return
+        setEntered(true)
+        setCountReady(true)
+      })
+      return () => {
+        cancelled = true
+      }
       return
     }
 
@@ -175,7 +206,14 @@ export default function NetworkMetricsSection({
   useEffect(() => {
     if (!entered) return
     if (previewMode || reduceMotion) {
-      setCountReady(true)
+      let cancelled = false
+      queueMicrotask(() => {
+        if (cancelled) return
+        setCountReady(true)
+      })
+      return () => {
+        cancelled = true
+      }
       return
     }
 

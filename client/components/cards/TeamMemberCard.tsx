@@ -58,7 +58,7 @@ export function TeamMemberCard({
   const src = candidates[Math.min(candidateIndex, candidates.length - 1)];
 
   useEffect(() => {
-    setCandidateIndex(0);
+    queueMicrotask(() => setCandidateIndex(0))
   }, [name, imageSrc]);
 
   useEffect(() => {

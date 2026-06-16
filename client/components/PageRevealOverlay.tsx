@@ -22,10 +22,11 @@ export default function PageRevealOverlay() {
     if (reduceMotion) return
     if (timeoutRef.current) window.clearTimeout(timeoutRef.current)
 
-    setPhase("revealing")
+    const start = window.setTimeout(() => setPhase("revealing"), 0)
     timeoutRef.current = window.setTimeout(() => setPhase("idle"), REVEAL_MS)
 
     return () => {
+      window.clearTimeout(start)
       if (timeoutRef.current) window.clearTimeout(timeoutRef.current)
     }
   }, [location.pathname, reduceMotion])

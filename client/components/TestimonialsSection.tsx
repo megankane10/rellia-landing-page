@@ -76,13 +76,13 @@ function TestimonialCard({
   const quoteRef = useRef<HTMLParagraphElement | null>(null)
   const initials = useMemo(
     () =>
-      cleanName
+      cmsCleanText(t.name)
         .replace(/^(dr|mr|mrs|ms|prof)\.?\s+/i, "")
         .split(" ")
         .map((n) => n[0])
         .join("")
         .slice(0, 3),
-    [cleanName],
+    [t.name],
   )
 
   const [showExpand, setShowExpand] = useState(false)

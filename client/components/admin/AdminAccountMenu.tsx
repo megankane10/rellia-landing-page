@@ -78,23 +78,44 @@ const AdminAccountMenu = () => {
 
   useEffect(() => {
     if (!profileOpen) return
-    setFullName(getAdminDisplayName(user))
-    setAvatarUrl(user?.user_metadata?.[AVATAR_URL_KEY] ?? "")
-    setPendingAvatarFile(null)
-    setCropSourceFile(null)
-    setCropDialogOpen(false)
-    setAvatarPreviewUrl(null)
-    setError(null)
+    let cancelled = false
+    queueMicrotask(() => {
+      if (cancelled) return
+      setFullName(getAdminDisplayName(user))
+      setAvatarUrl(user?.user_metadata?.[AVATAR_URL_KEY] ?? "")
+      setPendingAvatarFile(null)
+      setCropSourceFile(null)
+      setCropDialogOpen(false)
+      setAvatarPreviewUrl(null)
+      setError(null)
+    })
+    return () => {
+      cancelled = true
+    }
   }, [profileOpen, user])
 
   useEffect(() => {
     if (!pendingAvatarFile) {
-      setAvatarPreviewUrl(null)
+      let cancelled = false
+      queueMicrotask(() => {
+        if (cancelled) return
+        setAvatarPreviewUrl(null)
+      })
+      return () => {
+        cancelled = true
+      }
       return
     }
     const objectUrl = URL.createObjectURL(pendingAvatarFile)
-    setAvatarPreviewUrl(objectUrl)
-    return () => URL.revokeObjectURL(objectUrl)
+    let cancelled = false
+    queueMicrotask(() => {
+      if (cancelled) return
+      setAvatarPreviewUrl(objectUrl)
+    })
+    return () => {
+      cancelled = true
+      URL.revokeObjectURL(objectUrl)
+    }
   }, [pendingAvatarFile])
 
   const handleSignOut = async () => {
@@ -232,7 +253,7 @@ const AdminAccountMenu = () => {
                 )}
               </div>
               {pendingAvatarFile ? (
-                <p className="text-xs text-slate-500">{pendingAvatarFile.name}</p>
+                <p className="text-xs text-muted-foreground">{pendingAvatarFile.name}</p>
               ) : null}
             </div>
           </div>
@@ -256,7 +277,7 @@ const AdminAccountMenu = () => {
               placeholder="https://…"
               disabled={Boolean(pendingAvatarFile)}
             />
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-muted-foreground">
               Upload is preferred. URL works as a fallback if storage is unavailable.
             </p>
           </div>
@@ -289,7 +310,7 @@ const AdminAccountMenu = () => {
       type="button"
       className={cn(
         adminSidebarAccountButtonClass,
-        isMobile && "rounded-xl hover:!bg-white/[0.07]",
+        isMobile && "rounded-xl hover:!bg-card/[0.07]",
       )}
       aria-label="Account menu"
       aria-haspopup="menu"
@@ -307,7 +328,7 @@ const AdminAccountMenu = () => {
         ) : null}
       </div>
       {isMobile ? (
-        <ChevronUp className="ml-auto mr-1 h-4 w-4 shrink-0 text-slate-500" aria-hidden />
+        <ChevronUp className="ml-auto mr-1 h-4 w-4 shrink-0 text-muted-foreground" aria-hidden />
       ) : null}
     </button>
   )

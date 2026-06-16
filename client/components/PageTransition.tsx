@@ -18,10 +18,11 @@ export default function PageTransition() {
     if (!PAGE_TRANSITION_ENABLED) return
     if (timeoutRef.current) window.clearTimeout(timeoutRef.current)
 
-    setPhase("enter")
+    const start = window.setTimeout(() => setPhase("enter"), 0)
     timeoutRef.current = window.setTimeout(() => setPhase("idle"), OVERLAY_MS)
 
     return () => {
+      window.clearTimeout(start)
       if (timeoutRef.current) window.clearTimeout(timeoutRef.current)
     }
   }, [location.pathname])

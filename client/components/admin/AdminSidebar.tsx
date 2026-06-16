@@ -41,11 +41,11 @@ const navLinkClass = (isActive: boolean) =>
     "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint",
     isActive
       ? "bg-rellia-mint/35 text-rellia-teal"
-      : "text-black/45 hover:bg-black/[0.06] hover:text-black/70",
+      : "text-muted-foreground hover:bg-black/[0.06] hover:text-muted-foreground",
   )
 
 const navIconClass = (isActive: boolean) =>
-  cn("h-[18px] w-[18px] shrink-0", isActive ? "text-rellia-teal" : "text-black/40")
+  cn("h-[18px] w-[18px] shrink-0", isActive ? "text-rellia-teal" : "text-muted-foreground")
 
 type AdminSidebarProps = {
   mobileOpen: boolean
@@ -89,7 +89,7 @@ const AdminSidebar = ({ mobileOpen, onMobileClose }: AdminSidebarProps) => {
   const emailInitial = user?.email?.trim().charAt(0).toUpperCase() ?? "?"
 
   const panel = (
-    <aside className="flex h-full min-h-0 w-full shrink-0 flex-col border-r border-black/[0.06] bg-white/95 px-4 py-6 backdrop-blur-sm lg:w-[260px]">
+    <aside className="flex h-full min-h-0 w-full shrink-0 flex-col border-r border-border bg-card/95 px-4 py-6 backdrop-blur-sm lg:w-[260px]">
       <div className="flex items-center justify-between gap-2 px-2">
         <div className="flex min-w-0 items-center gap-3">
           <img
@@ -102,12 +102,12 @@ const AdminSidebar = ({ mobileOpen, onMobileClose }: AdminSidebarProps) => {
           />
           <div className="min-w-0">
             <p className="font-host-grotesk text-[15px] leading-tight text-black/90">Admin Dashboard</p>
-            <p className="font-urbanist text-xs text-black/50">Rellia Health</p>
+            <p className="font-urbanist text-xs text-muted-foreground">Rellia Health</p>
           </div>
         </div>
         <button
           type="button"
-          className="flex h-9 w-9 items-center justify-center rounded-full text-black/50 hover:bg-black/[0.06] lg:hidden"
+          className="flex h-9 w-9 items-center justify-center rounded-full text-muted-foreground hover:bg-black/[0.06] lg:hidden"
           onClick={onMobileClose}
           aria-label="Close menu"
         >
@@ -144,7 +144,7 @@ const AdminSidebar = ({ mobileOpen, onMobileClose }: AdminSidebarProps) => {
         </ul>
       </nav>
 
-      <div className="mt-auto shrink-0 border-t border-black/[0.06] pt-4">
+      <div className="mt-auto shrink-0 border-t border-border pt-4">
         <div className="flex items-start gap-3 px-2">
           <span
             className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-rellia-mint/30 font-urbanist text-sm text-rellia-teal"
@@ -153,7 +153,7 @@ const AdminSidebar = ({ mobileOpen, onMobileClose }: AdminSidebarProps) => {
             {emailInitial}
           </span>
           <div className="min-w-0 flex-1">
-            <p className="truncate font-urbanist text-sm text-black/75">{user?.email ?? "Signed in"}</p>
+            <p className="truncate font-urbanist text-sm text-muted-foreground">{user?.email ?? "Signed in"}</p>
             <button
               type="button"
               onClick={() => void handleSignOut()}

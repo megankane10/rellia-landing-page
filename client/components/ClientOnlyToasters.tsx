@@ -7,7 +7,8 @@ export const ClientOnlyToasters = () => {
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
-    setMounted(true)
+    const t = window.setTimeout(() => setMounted(true), 0)
+    return () => window.clearTimeout(t)
   }, [])
 
   if (!mounted) return null

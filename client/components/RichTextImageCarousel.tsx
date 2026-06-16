@@ -36,7 +36,7 @@ export const RichTextImageCarousel = ({ title, slides, className }: RichTextImag
 
   useEffect(() => {
     if (!emblaApi) return
-    onSelect()
+    queueMicrotask(() => onSelect())
     emblaApi.on("reInit", onSelect)
     emblaApi.on("select", onSelect)
     return () => {

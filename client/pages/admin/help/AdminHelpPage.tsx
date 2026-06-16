@@ -1,8 +1,25 @@
-import { ArrowRight, ExternalLink } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { useState } from "react"
+import {
+  ArrowRight,
+  BarChart3,
+  BellRing,
+  BookOpen,
+  Cloud,
+  ExternalLink,
+  FileText,
+  FolderKanban,
+  Github,
+  Globe,
+  PenLine,
+  Search,
+  DatabaseZap,
+  Maximize2,
+} from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import AdminPageHeader from "@/components/admin/AdminPageHeader"
 import AdminPageReveal from "@/components/admin/AdminPageReveal"
+import { Dialog, DialogClose, DialogContent, DialogTrigger } from "@/components/ui/dialog"
+import { adminCardClass, adminCardTitleClass, adminIconTileClass, adminInteractiveBoxClass, adminOutlineActionButtonClass } from "@/components/admin/adminThemeClasses"
 import { cn } from "@/lib/utils"
 import {
   OPERATIONS_DOC_EDIT_URL,
@@ -16,46 +33,59 @@ const WEBSITE_TOOLS = [
     href: OPERATIONS_DOC_EDIT_URL,
     label: "Documentation",
     description: "Operations guide for the dashboard and marketing site.",
+    icon: BookOpen,
   },
   {
     href: "https://vercel.com/relliahealth",
     label: "Vercel",
     description: "Hosting and environment variables (production deploy).",
+    icon: Cloud,
   },
   {
     href: "https://relliahealth.sanity.studio",
     label: "Sanity Studio",
     description: "Edit pages, stories, events, and program content.",
+    icon: PenLine,
   },
   {
     href: "https://supabase.com/dashboard/project/agsvypnmlrvpbgrsxtqy",
     label: "Supabase",
     description: "Auth users, database tables, and invitation emails.",
+    icon: DatabaseZap,
   },
   {
     href: "https://github.com/Agrolax/rellia-landing-page",
     label: "GitHub",
     description: "Source code and pull requests.",
+    icon: Github,
   },
   {
     href: "https://analytics.google.com/analytics/",
     label: "Google Analytics 4",
     description: "Monitor website traffic, visitor behavior, and conversion events.",
+    icon: BarChart3,
   },
   {
     href: "https://search.google.com/search-console/performance",
     label: "Google Search Console",
     description: "Track search traffic, indexation status, and search visibility.",
+    icon: Search,
   },
   {
     href: "https://relliahealth.com",
     label: "Public website",
     description: "Open the live marketing site.",
+    icon: Globe,
   },
 ] as const
 
-const AdminHelpPage = () => (
-  <div className="space-y-6">
+const cardShellClass = adminCardClass
+
+const AdminHelpPage = () => {
+  const [guideOpen, setGuideOpen] = useState(false)
+
+  return (
+    <div className="space-y-6">
     <AdminPageReveal>
     <AdminPageHeader
       title="Help"
@@ -64,9 +94,12 @@ const AdminHelpPage = () => (
 
     <AdminPageReveal delay={0.06}>
     <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-      <Card className="rounded-2xl border border-black/[0.06] bg-white">
+      <Card className={cardShellClass}>
         <CardHeader>
-          <CardTitle className="font-host-grotesk text-lg">
+          <CardTitle className={cn("flex items-center gap-2.5 text-lg", adminCardTitleClass)}>
+            <span className={cn("h-9 w-9", adminIconTileClass)}>
+              <FolderKanban className="h-5 w-5" aria-hidden />
+            </span>
             Managing Dashboard Items
           </CardTitle>
           <CardDescription className="font-urbanist">
@@ -100,9 +133,12 @@ const AdminHelpPage = () => (
         </CardContent>
       </Card>
 
-      <Card className="rounded-2xl border border-black/[0.06] bg-white">
+      <Card className={cardShellClass}>
         <CardHeader>
-          <CardTitle className="font-host-grotesk text-lg">
+          <CardTitle className={cn("flex items-center gap-2.5 text-lg", adminCardTitleClass)}>
+            <span className={cn("h-9 w-9", adminIconTileClass)}>
+              <BellRing className="h-5 w-5" aria-hidden />
+            </span>
             Slack Integration & Alerts
           </CardTitle>
           <CardDescription className="font-urbanist">
@@ -130,42 +166,147 @@ const AdminHelpPage = () => (
           </div>
         </CardContent>
       </Card>
-    </div>
-    </AdminPageReveal>
 
-    <AdminPageReveal delay={0.1}>
-    <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(260px,320px)]">
-      <Card className="rounded-2xl">
-        <CardHeader className="flex flex-row flex-wrap items-start justify-between gap-3">
-          <div>
-            <CardTitle className="font-host-grotesk text-lg">Operations guide</CardTitle>
-            <CardDescription className="font-urbanist">Shared runbook for marketing and submissions.</CardDescription>
-          </div>
-          <Button type="button" variant="outline" size="sm" asChild className="shrink-0 rounded-full">
-            <a href={OPERATIONS_DOC_EDIT_URL} target="_blank" rel="noopener noreferrer">
-              Open doc
-              <ExternalLink className="ml-1.5 h-3.5 w-3.5" aria-hidden />
+      <Card className={cn(cardShellClass, "flex flex-col")}>
+        <CardHeader>
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <CardTitle className={cn("flex items-center gap-2.5 text-lg", adminCardTitleClass)}>
+              <span className={cn("h-9 w-9", adminIconTileClass)}>
+                <FileText className="h-5 w-5" aria-hidden />
+              </span>
+              Operations guide
+            </CardTitle>
+            <a
+              href={OPERATIONS_DOC_EDIT_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={cn(
+                adminOutlineActionButtonClass,
+                "inline-flex items-center gap-2 px-3 py-1.5",
+                "font-urbanist text-xs font-semibold shadow-sm",
+              )}
+            >
+              Open in Google Doc
+              <ExternalLink className="h-3.5 w-3.5" aria-hidden />
             </a>
-          </Button>
-        </CardHeader>
-        <CardContent className="p-2 sm:p-6">
-          <div className="overflow-hidden rounded-lg border border-border bg-white">
-            <iframe
-              src={OPERATIONS_DOC_EMBED_URL}
-              title="Rellia admin operations guide"
-              className="h-[min(60vh,520px)] w-full border-0 bg-white sm:h-[min(70vh,640px)] max-sm:w-[125%] max-sm:h-[650px] max-sm:scale-[0.8] max-sm:origin-top-left"
-              loading="lazy"
-            />
           </div>
+          <CardDescription className="font-urbanist">
+            The official runbook for inbox workflows, publishing, and day‑to‑day operations.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="flex flex-1 flex-col font-urbanist text-sm leading-relaxed text-muted-foreground">
+          <div className="space-y-2">
+            <h4 className="font-bold text-foreground">What’s inside</h4>
+            <ul className="list-disc pl-5 space-y-1">
+              <li>How to process web forms + diagnostic surveys</li>
+              <li>Publishing flow for Sanity content and drafts</li>
+              <li>Where key tools live (Vercel, Supabase, Sanity)</li>
+            </ul>
+          </div>
+
+          <Dialog open={guideOpen} onOpenChange={setGuideOpen}>
+            <DialogTrigger asChild>
+              <button
+                type="button"
+                className={cn(
+                  adminInteractiveBoxClass,
+                  "mt-4 flex w-full flex-1 flex-col items-center justify-center p-6",
+                )}
+                aria-label="Preview operations guide"
+              >
+                <Maximize2 className="mb-3 h-11 w-11 text-rellia-teal dark:text-rellia-mint" aria-hidden />
+                <span className="font-host-grotesk text-base font-bold text-foreground dark:text-white">Preview</span>
+                <span className="mt-1 font-urbanist text-xs font-medium text-muted-foreground">
+                  Open full-screen preview
+                </span>
+              </button>
+            </DialogTrigger>
+
+            <DialogContent
+              className={cn(
+                "max-w-none w-[calc(100vw-1.25rem)] h-[calc(100vh-1.25rem)] p-0",
+                "rounded-3xl overflow-hidden border border-border bg-card",
+              )}
+              overlayClassName="bg-black/70"
+              hideClose
+            >
+              <div className="flex h-full flex-col">
+                <div className="flex shrink-0 flex-wrap items-center justify-between gap-3 border-b border-border bg-card/90 px-5 py-4 backdrop-blur">
+                  <div className="flex min-w-0 items-center gap-3">
+                    <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-border bg-rellia-mint/20 text-rellia-teal">
+                      <FileText className="h-5 w-5" aria-hidden />
+                    </span>
+                    <div className="min-w-0">
+                      <div className="truncate font-host-grotesk text-lg font-semibold text-foreground">
+                        Operations guide
+                      </div>
+                      <div className="font-urbanist text-xs text-muted-foreground">
+                        Full-screen preview
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <a
+                      href={OPERATIONS_DOC_EDIT_URL}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={cn(
+                        "inline-flex h-11 items-center gap-2 rounded-full border border-border bg-card px-4",
+                        "font-urbanist text-sm font-semibold text-foreground shadow-sm transition-colors",
+                        "hover:bg-rellia-mint/10 hover:text-rellia-teal",
+                        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-teal/30",
+                      )}
+                    >
+                      Open in new tab
+                      <ExternalLink className="h-4 w-4" aria-hidden />
+                    </a>
+                    <DialogClose asChild>
+                      <button
+                        type="button"
+                        className={cn(
+                          "inline-flex h-11 w-11 items-center justify-center rounded-full border border-border bg-card text-muted-foreground shadow-sm",
+                          "transition-colors hover:bg-muted/50 hover:text-foreground",
+                          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-teal/30",
+                        )}
+                        aria-label="Close preview"
+                      >
+                        <span className="text-xl leading-none" aria-hidden>
+                          ×
+                        </span>
+                      </button>
+                    </DialogClose>
+                  </div>
+                </div>
+
+                <div className="min-h-0 flex-1 bg-white">
+                  <iframe
+                    src={OPERATIONS_DOC_EMBED_URL}
+                    title="Rellia admin operations guide"
+                    className="h-full w-full border-0 bg-white"
+                    loading="lazy"
+                  />
+                </div>
+              </div>
+            </DialogContent>
+          </Dialog>
         </CardContent>
       </Card>
 
-      <Card className="rounded-2xl">
+      <Card className={cardShellClass}>
         <CardHeader>
-          <CardTitle className="font-host-grotesk text-lg">Quick links</CardTitle>
+          <CardTitle className={cn("flex items-center gap-2.5 text-lg", adminCardTitleClass)}>
+            <span className={cn("h-9 w-9", adminIconTileClass)}>
+              <Globe className="h-5 w-5" aria-hidden />
+            </span>
+            Quick links
+          </CardTitle>
+          <CardDescription className="font-urbanist">
+            Shortcuts to the tools you’ll use most.
+          </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-1">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             {WEBSITE_TOOLS.map((tool) => (
               <a
                 key={tool.href}
@@ -173,25 +314,26 @@ const AdminHelpPage = () => (
                 target="_blank"
                 rel="noopener noreferrer"
                 className={cn(
-                  "group relative flex min-h-[88px] flex-col justify-center gap-2 rounded-2xl border border-border/70 bg-white px-4 py-3.5 shadow-sm transition",
+                  "group relative flex min-h-[92px] min-w-0 items-start gap-3 rounded-2xl border border-border/70 bg-card px-4 py-3.5 shadow-sm transition",
                   "hover:-translate-y-px hover:border-rellia-teal/25 hover:bg-rellia-mint/10 hover:shadow-md",
                   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
                 )}
               >
-                <div className="flex items-start justify-between gap-3">
-                  <div className="min-w-0">
-                    <div className="truncate font-urbanist text-sm font-semibold text-foreground transition-colors group-hover:text-rellia-teal">
-                      {tool.label}
-                    </div>
-                    <div className="mt-0.5 line-clamp-2 font-urbanist text-xs leading-relaxed text-muted-foreground">
-                      {tool.description}
-                    </div>
+                <span className="mt-0.5 inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-border bg-rellia-mint/20 text-rellia-teal">
+                  <tool.icon className="h-5 w-5" aria-hidden />
+                </span>
+                <div className="min-w-0 flex-1">
+                  <div className="truncate font-urbanist text-sm font-semibold text-foreground transition-colors group-hover:text-rellia-teal">
+                    {tool.label}
                   </div>
-                  <ArrowRight
-                    className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground transition group-hover:text-rellia-teal"
-                    aria-hidden
-                  />
+                  <div className="mt-0.5 line-clamp-2 font-urbanist text-xs leading-relaxed text-muted-foreground">
+                    {tool.description}
+                  </div>
                 </div>
+                <ArrowRight
+                  className="mt-1 h-4 w-4 shrink-0 text-muted-foreground transition group-hover:text-rellia-teal"
+                  aria-hidden
+                />
               </a>
             ))}
           </div>
@@ -200,6 +342,7 @@ const AdminHelpPage = () => (
     </div>
     </AdminPageReveal>
   </div>
-)
+  )
+}
 
 export default AdminHelpPage
