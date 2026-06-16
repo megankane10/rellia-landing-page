@@ -81,11 +81,7 @@ const scoreColor = (score: number) => {
   return "text-red-600 dark:text-red-400"
 }
 
-const priorityLabel = (priority: string) => {
-  if (priority === "Critical") return "bg-red-100 text-red-700 dark:bg-red-500/15 dark:text-red-300"
-  if (priority === "High") return "bg-amber-100 text-amber-700 dark:bg-amber-500/15 dark:text-amber-300"
-  return "bg-rellia-mint/20 text-rellia-teal dark:bg-rellia-mint/15 dark:text-rellia-mint"
-}
+const weaknessTextClass = "text-red-600 dark:text-red-400"
 
 const AdminCompany = () => {
   const { id } = useParams<{ id: string }>()
@@ -307,17 +303,16 @@ const AdminCompany = () => {
                   {response.top3_strengths.map((s) => (
                     <div
                       key={s.category}
-                      className="rounded-xl border border-rellia-mint/30 bg-rellia-mint/20 p-3 dark:border-rellia-mint/25 dark:bg-rellia-mint/10"
+                      className="rounded-xl border border-rellia-mint/30 bg-rellia-mint/20 p-4 dark:border-rellia-mint/25 dark:bg-rellia-mint/10"
                     >
-                      <div className="flex items-center justify-between">
-                        <span className="font-host-grotesk text-sm font-semibold text-rellia-teal dark:text-rellia-mint">
+                      <div className="flex items-baseline justify-between gap-3">
+                        <span className="min-w-0 font-host-grotesk text-base font-semibold leading-snug text-rellia-teal dark:text-rellia-mint">
                           {s.category}
                         </span>
-                        <span className="font-host-grotesk text-sm font-bold text-rellia-teal dark:text-rellia-mint">
+                        <span className="shrink-0 font-host-grotesk text-base font-bold tabular-nums leading-none text-rellia-teal dark:text-rellia-mint">
                           {s.score}%
                         </span>
                       </div>
-                      <p className="mt-1 font-urbanist text-xs text-rellia-teal/70 dark:text-rellia-mint/75">{s.note}</p>
                     </div>
                   ))}
                 </CardContent>
@@ -333,23 +328,15 @@ const AdminCompany = () => {
                 </CardHeader>
                 <CardContent className="space-y-3">
                   {response.top3_weaknesses.map((w) => (
-                    <div key={w.category} className="rounded-xl border border-red-100 bg-red-50 p-3 dark:border-red-500/30 dark:bg-red-500/10">
-                      <div className="flex items-center justify-between gap-2">
-                        <span className="font-host-grotesk text-sm font-semibold text-rellia-teal dark:text-rellia-mint">
+                    <div key={w.category} className="rounded-xl border border-red-100 bg-red-50 p-4 dark:border-red-500/30 dark:bg-red-500/10">
+                      <div className="flex items-baseline justify-between gap-3">
+                        <span className={cn("min-w-0 font-host-grotesk text-base font-semibold leading-snug", weaknessTextClass)}>
                           {w.category}
                         </span>
-                        <div className="flex shrink-0 items-center gap-2">
-                          <span
-                            className={`rounded-full px-2 py-0.5 font-urbanist text-xs font-medium ${priorityLabel(w.priority)}`}
-                          >
-                            {w.priority}
-                          </span>
-                          <span className="font-host-grotesk text-sm font-bold text-red-600 dark:text-red-400">
-                            {w.score}%
-                          </span>
-                        </div>
+                        <span className={cn("shrink-0 font-host-grotesk text-base font-bold tabular-nums leading-none", weaknessTextClass)}>
+                          {w.score}%
+                        </span>
                       </div>
-                      <p className="mt-1 font-urbanist text-xs text-muted-foreground">{w.note}</p>
                     </div>
                   ))}
                 </CardContent>

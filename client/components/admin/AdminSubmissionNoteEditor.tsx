@@ -75,7 +75,7 @@ const AdminSubmissionNoteEditor = ({
         <Button
           type="button"
           size="sm"
-          className="rounded-full bg-rellia-mint font-urbanist text-rellia-teal hover:bg-rellia-mint/90 dark:bg-rellia-mint dark:text-rellia-teal dark:hover:bg-rellia-mint/90"
+          className="rounded-full bg-rellia-mint font-urbanist text-rellia-teal hover:bg-rellia-mint/90 dark:bg-rellia-mint/20 dark:!text-rellia-mint dark:hover:bg-rellia-mint/30"
           disabled={saving}
           onClick={() => void handleSave()}
         >
