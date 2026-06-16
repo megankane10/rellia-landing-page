@@ -2,6 +2,8 @@ import {defineArrayMember, defineField, defineType} from 'sanity'
 import {
   CONTENT_SEO_FIELDSETS,
   CONTENT_SEO_GROUPS,
+  GROUP_MODULAR_SECTIONS,
+  modularSectionsField,
   singletonSeoField,
 } from '../shared/singletonContentFields'
 import {portableHeadlineField} from '../shared/inlineHeroHeadlineField'
@@ -11,7 +13,7 @@ export const aboutPage = defineType({
   name: 'aboutPage',
   title: 'About page',
   type: 'document',
-  groups: CONTENT_SEO_GROUPS,
+  groups: [...CONTENT_SEO_GROUPS, GROUP_MODULAR_SECTIONS],
   fieldsets: CONTENT_SEO_FIELDSETS,
   fields: [
     portableHeadlineField({group: 'content', required: true}),
@@ -85,6 +87,10 @@ export const aboutPage = defineType({
       type: 'string',
       initialValue: '/careers',
       group: 'content',
+    }),
+    modularSectionsField({
+      description:
+        'Optional modular blocks rendered on /about after the team section and before the footer CTA band.',
     }),
     singletonSeoField,
   ],

@@ -572,7 +572,7 @@ function EngageTealBand({ content }: { content: NetworkFoundersPageContent }) {
       <div className="relative z-10 mx-auto max-w-[1300px]">
         <ScrollReveal>
           <div className="mb-8 md:mb-10">
-            <h2 className="mt-5 font-host-grotesk text-2xl font-semibold leading-tight tracking-tight text-rellia-teal md:text-[32px]">
+            <h2 className="mt-5 font-host-grotesk text-2xl font-semibold leading-tight tracking-tight text-rellia-teal md:text-[32px] lg:text-[36px]">
               {content.engageTitle ?? "How to plug in this week"}
             </h2>
             <p className="mt-4 max-w-2xl font-urbanist text-base font-medium leading-relaxed text-black/80 md:text-lg">
@@ -672,7 +672,7 @@ function JourneySplitSection({ content }: { content: NetworkFoundersPageContent 
     <section className="w-full overflow-hidden border-t border-black/[0.06] bg-white px-6 py-16 md:px-10 md:py-24">
       <div className="mx-auto max-w-[1300px]">
         <ScrollReveal variant="ctaReveal">
-          <h2 className="w-full font-host-grotesk text-2xl font-semibold leading-tight tracking-tight text-rellia-teal md:text-[32px]">
+          <h2 className="w-full font-host-grotesk text-2xl font-semibold leading-tight tracking-tight text-rellia-teal md:text-[32px] lg:text-[36px]">
             {cmsDisplayTextOr(content.journeyTitle, "Where Rellia meets your trajectory")}
           </h2>
         </ScrollReveal>

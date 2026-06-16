@@ -13,6 +13,7 @@ import {
   getShareOrigin,
   resolveShareOgImage,
   resolveSocialOgImage,
+  OG_IMAGE_LANDSCAPE,
 } from "@/config/seo"
 import StoryArticleJsonLd from "@/components/seo/StoryArticleJsonLd"
 import StoryBreadcrumbJsonLd from "@/components/seo/StoryBreadcrumbJsonLd"
@@ -24,7 +25,7 @@ import { RichTextImageCarousel } from "@/components/RichTextImageCarousel"
 import { PortableRichText } from "@/components/PortableRichText"
 import { useStoryBySlug } from "@/hooks/useCmsDocuments"
 import { isCmsQueryLoading, shouldShowCmsEmptyState } from "@/lib/cmsQueryState"
-import CmsPageLoadingShell from "@/components/cms/CmsPageLoadingShell"
+import { CmsStoryPostArticleSkeleton } from "@/components/cms/CmsPageSkeletons"
 import { isSanityConfigured } from "@/lib/sanity"
 import {
   ShareIconFacebook,
@@ -99,6 +100,7 @@ export default function StoryPost() {
   const resolvedOgImage = seoOgImageSrc
     ? resolveSocialOgImage(seoOgImageSrc, undefined, { landscape: true }) ?? {
         url: toAbsoluteImageUrl(seoOgImageSrc),
+        ...OG_IMAGE_LANDSCAPE,
       }
     : resolveShareOgImage(undefined, { landscape: true })
   const imageUrl = resolvedOgImage.url
@@ -127,6 +129,7 @@ export default function StoryPost() {
         label="Share on X"
         className={shareOutlineButtonClassNameOnDark}
         tooltipPosition="left"
+        tooltipMobilePosition="top"
       >
         <ShareIconX />
       </ShareToolbarIconLink>
@@ -135,6 +138,7 @@ export default function StoryPost() {
         label="Share on LinkedIn"
         className={shareOutlineButtonClassNameOnDark}
         tooltipPosition="left"
+        tooltipMobilePosition="top"
       >
         <ShareIconLinkedIn />
       </ShareToolbarIconLink>
@@ -143,6 +147,7 @@ export default function StoryPost() {
         label="Share on Facebook"
         className={shareOutlineButtonClassNameOnDark}
         tooltipPosition="left"
+        tooltipMobilePosition="top"
       >
         <ShareIconFacebook />
       </ShareToolbarIconLink>
@@ -155,6 +160,7 @@ export default function StoryPost() {
         className={shareOutlineButtonClassNameOnDark}
         external={false}
         tooltipPosition="left"
+        tooltipMobilePosition="top"
       >
         <ShareIconMail />
       </ShareToolbarIconLink>
@@ -166,6 +172,7 @@ export default function StoryPost() {
         idleLabel="Copy story link"
         copiedLabel="Link copied"
         tooltipPosition="left"
+        tooltipMobilePosition="top"
       />
     </div>
   )
@@ -183,7 +190,15 @@ export default function StoryPost() {
   }
 
   if (resolvedSlug && isSanityConfigured() && isCmsQueryLoading(storyQuery)) {
-    return <CmsPageLoadingShell />
+    return (
+      <div className="min-h-screen bg-white font-host-grotesk overflow-x-hidden">
+        <Navbar darkHeroNav />
+        <main id="main-content">
+          <CmsStoryPostArticleSkeleton />
+        </main>
+        <Footer />
+      </div>
+    )
   }
 
   if (!cmsStory && !story && (!resolvedSlug || shouldShowCmsEmptyState(storyQuery))) {
@@ -347,7 +362,7 @@ export default function StoryPost() {
 
                   if (b.type === "h2") {
                     return (
-                      <h2 key={key} className="mt-10 font-host-grotesk text-2xl md:text-3xl font-semibold tracking-tight text-black">
+                      <h2 key={key} className="mt-10 font-host-grotesk text-2xl md:text-[32px] lg:text-[36px] font-semibold tracking-tight text-black">
                         {b.text}
                       </h2>
                     )

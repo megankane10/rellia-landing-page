@@ -86,7 +86,7 @@ function DiagnosticFallback({ content }: { content: DiagnosticLandingPageContent
         <div className="mx-auto w-full max-w-[1400px] overflow-hidden rounded-[2rem] border border-black/5 bg-[#fbfcf8] px-6 py-14 md:rounded-[2.5rem] md:px-10 md:py-20 lg:px-14">
           <div className="mx-auto flex w-full max-w-[1200px] flex-col gap-12 lg:flex-row lg:items-start">
             <div className="flex-1">
-              <h2 className="mb-6 font-host-grotesk text-2xl font-semibold leading-tight text-black md:text-[32px]">
+              <h2 className="mb-6 font-host-grotesk text-2xl font-semibold leading-tight text-black md:text-[32px] lg:text-[36px]">
                 {cmsDisplayText(content.infographicTitle ?? DEFAULT_DIAGNOSTIC_LANDING_PAGE.infographicTitle)}
               </h2>
               <p className="max-w-xl font-urbanist text-lg leading-relaxed text-black/60">

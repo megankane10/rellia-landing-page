@@ -1,6 +1,5 @@
 import { useEffect, useMemo } from "react"
-import { Toaster } from "@/components/ui/toaster"
-import { Toaster as Sonner } from "@/components/ui/sonner"
+import { ClientOnlyToasters } from "@/components/ClientOnlyToasters"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import { HydrationBoundary, QueryClientProvider } from "@tanstack/react-query"
 import { HelmetProvider } from "react-helmet-async"
@@ -61,8 +60,7 @@ const App = () => (
     <QueryClientProvider client={queryClient}>
       <HydrationBoundary state={dehydratedCmsState}>
         <TooltipProvider>
-          <Toaster />
-          <Sonner />
+          <ClientOnlyToasters />
           <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
             <AuthProvider>
               <RouterShell>

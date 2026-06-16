@@ -1,7 +1,6 @@
 import { type CSSProperties, useCallback, useState } from "react"
 import { Outlet } from "react-router-dom"
 import AdminAppSidebar from "@/components/admin/AdminAppSidebar"
-import AdminGlobalSearch from "@/components/admin/AdminGlobalSearch"
 import AdminHeaderClock from "@/components/admin/AdminHeaderClock"
 import AdminSidebarTrigger from "@/components/admin/AdminSidebarTrigger"
 import AdminPageFooter from "@/components/admin/AdminPageFooter"
@@ -42,9 +41,6 @@ const AdminShell = () => {
           <header className="relative sticky top-0 z-30 flex h-[4.25rem] shrink-0 items-center gap-3 border-b border-border/80 bg-background/95 px-4 backdrop-blur supports-[backdrop-filter]:bg-background/80 md:gap-4">
             <div className="relative z-10 flex min-w-0 flex-1 items-center gap-3">
               <AdminSidebarTrigger />
-              <div className="hidden min-w-0 flex-1 md:block md:max-w-xl">
-                <AdminGlobalSearch className="w-full" />
-              </div>
             </div>
             <div className="pointer-events-none absolute inset-y-0 left-1/2 z-20 hidden -translate-x-1/2 items-center md:flex">
               <AdminHeaderClock className="pointer-events-auto" />
@@ -54,9 +50,6 @@ const AdminShell = () => {
             </div>
           </header>
           <main id="main-content" className="flex-1 overflow-x-hidden overflow-y-auto p-4 md:p-6 lg:p-8">
-            <div className="mb-4 md:hidden">
-              <AdminGlobalSearch />
-            </div>
             <Outlet />
             <AdminPageFooter />
           </main>

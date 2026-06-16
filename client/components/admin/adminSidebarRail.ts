@@ -107,3 +107,23 @@ export const adminSidebarContentClass = cn(
   "flex-1 overflow-x-hidden pb-6 pt-6",
   adminSidebarRailPx,
 )
+
+/** Dark popover / dropdown surface — matches admin sidebar */
+export const adminDarkMenuContentClass = cn(
+  "z-[10002] overflow-hidden rounded-xl border border-slate-800/60 bg-slate-950 p-1.5 text-slate-200 shadow-lg",
+)
+
+export const adminDarkMenuItemClass = cn(
+  "cursor-pointer rounded-lg px-3 py-2.5 text-sm text-slate-300",
+  "focus:bg-white/10 focus:text-white",
+)
+
+export const adminDarkMenuSeparatorClass = "my-1 bg-slate-800"
+
+/** Dark modal surface — matches admin sidebar */
+export const adminDarkDialogContentClass = cn(
+  "border-slate-800/60 bg-slate-950 text-slate-200",
+  "[&_label]:text-slate-300",
+  "[&_input]:border-slate-700 [&_input]:bg-slate-900 [&_input]:text-white [&_input]:placeholder:text-slate-500",
+  "[&>button.absolute]:text-slate-400 [&>button.absolute]:hover:text-white",
+)

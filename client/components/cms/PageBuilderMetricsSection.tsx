@@ -143,7 +143,7 @@ export default function PageBuilderMetricsSection({
           ) : null}
           <h2
             className={cn(
-              "font-host-grotesk text-3xl font-semibold leading-tight tracking-tight text-black md:text-[40px]",
+              "font-host-grotesk text-2xl font-semibold leading-tight tracking-tight text-black md:text-[32px] lg:text-[36px]",
               showBadge && "mt-5",
             )}
           >

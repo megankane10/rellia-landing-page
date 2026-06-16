@@ -9,6 +9,7 @@ import Index from "./pages/Index"
 import About from "./pages/About"
 import FAQ from "./pages/FAQ"
 import Careers from "./pages/CareersCms"
+import CareersRoleDetail from "./pages/CareersRoleDetail"
 import Programs from "./pages/Programs"
 import ProgramsQms from "./pages/ProgramsQms"
 import ProgramsIgnitePitch from "./pages/programs/ProgramsIgnitePitch"
@@ -115,7 +116,7 @@ export const AppRoutes = () => {
     <Route path="/about" element={<About />} />
     <Route path="/faq" element={<FAQ />} />
     <Route path="/careers" element={<Careers />} />
-    <Route path="/careers/roles/:roleId" element={<Careers />} />
+    <Route path="/careers/roles/:roleId" element={<CareersRoleDetail />} />
     <Route path="/events" element={<Events />} />
     <Route path="/events/:slug" element={<EventDetail />} />
     <Route path="/programs" element={<ProgramsLayout />}>

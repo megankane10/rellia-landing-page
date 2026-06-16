@@ -9,6 +9,7 @@ type ShareToolbarIconLinkProps = {
   children: ReactNode
   external?: boolean
   tooltipPosition?: IconTooltipPosition
+  tooltipMobilePosition?: IconTooltipPosition
 }
 
 export const ShareToolbarIconLink = ({
@@ -18,8 +19,13 @@ export const ShareToolbarIconLink = ({
   children,
   external = true,
   tooltipPosition,
+  tooltipMobilePosition,
 }: ShareToolbarIconLinkProps) => (
-  <IconTooltipWrap label={label} position={tooltipPosition}>
+  <IconTooltipWrap
+    label={label}
+    position={tooltipPosition}
+    mobilePosition={tooltipMobilePosition}
+  >
     <a
       href={href}
       target={external ? "_blank" : undefined}

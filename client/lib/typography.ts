@@ -7,7 +7,7 @@ export const HEADING_PAGE = "text-4xl md:text-5xl lg:text-6xl"
 export const HEADING_PAGE_SUBTITLE = "text-base md:text-lg"
 
 /** Section titles (`SectionHeading`, in-page sections). */
-export const HEADING_SECTION = "text-2xl md:text-[32px]"
+export const HEADING_SECTION = "text-2xl md:text-[32px] lg:text-[36px]"
 
 /** Card / bento item titles. */
 export const HEADING_CARD = "text-xl md:text-2xl"

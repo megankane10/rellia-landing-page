@@ -1,15 +1,27 @@
 import { LinkedInFilled, MailFilled } from "@/components/icons/SocialIcons"
 import { cn } from "@/lib/utils"
 
-export const shareIconSize = "h-6 w-6 shrink-0 md:h-6 md:w-6"
+export const shareIconSize = "h-6 w-6 shrink-0"
+
+/** Matches RelliaAction `size="comfortable"` (py-4, text-base, border-2). */
+export const shareComfortableControlSizeClass = "h-[3.75rem] w-[3.75rem] shrink-0"
+
+const shareOutlineButtonBaseClass =
+  "inline-flex items-center justify-center rounded-full border-2 transition-all duration-300 focus-visible:outline-none"
 
 /** Outline share control on light backgrounds — black icon, inverts on hover. */
-export const shareOutlineButtonClassName =
-  "inline-flex h-11 w-11 md:h-12 md:w-12 items-center justify-center rounded-full border border-black/10 bg-white text-black transition-all duration-300 hover:border-rellia-teal hover:bg-rellia-teal hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-teal focus-visible:ring-offset-2"
+export const shareOutlineButtonClassName = cn(
+  shareOutlineButtonBaseClass,
+  shareComfortableControlSizeClass,
+  "border-black/10 bg-white text-black hover:border-rellia-teal hover:bg-rellia-teal hover:text-white focus-visible:ring-2 focus-visible:ring-rellia-teal focus-visible:ring-offset-2",
+)
 
 /** Outline share control on teal/dark hero backgrounds — inverts on hover. */
-export const shareOutlineButtonClassNameOnDark =
-  "inline-flex h-11 w-11 md:h-12 md:w-12 items-center justify-center rounded-full border border-white/25 bg-white/10 text-white transition-all duration-300 hover:border-white hover:bg-white hover:text-rellia-teal focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-rellia-teal"
+export const shareOutlineButtonClassNameOnDark = cn(
+  shareOutlineButtonBaseClass,
+  shareComfortableControlSizeClass,
+  "border-white/25 bg-white/10 text-white hover:border-white hover:bg-white hover:text-rellia-teal focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-rellia-teal",
+)
 
 /** @deprecated Use shareOutlineButtonClassName */
 export const shareToolbarButtonClassName = shareOutlineButtonClassName

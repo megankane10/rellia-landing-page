@@ -235,7 +235,7 @@ const ProgramPageLayout = ({
   const programPageTitle = clampMetaTitle(programSeoText.title)
   const programPageDescription = clampMetaDescription(programSeoText.description)
   const programOgFromSeo = programSeoText.ogImageUrl
-    ? resolveSocialOgImage(programSeoText.ogImageUrl, undefined, { square: true })
+    ? resolveSocialOgImage(programSeoText.ogImageUrl, undefined, { landscape: true })
     : undefined
   const programOgImage = programOgFromSeo ?? programSocial.ogImage
 
@@ -377,7 +377,7 @@ const ProgramPageLayout = ({
           <div className="relative z-10 max-w-[1300px] mx-auto">
             <ScrollReveal delay={0.1}>
               <div className="mb-6 md:mb-8">
-                <h2 className="font-host-grotesk text-2xl font-semibold leading-tight tracking-tight text-black md:text-[32px]">
+                <h2 className="font-host-grotesk text-2xl font-semibold leading-tight tracking-tight text-black md:text-[32px] lg:text-[36px]">
                   {cmsDisplayText(q.outcomesTitle)}
                 </h2>
                 <p className="mt-4 font-urbanist text-base font-medium leading-relaxed tracking-tight text-black/65 md:text-lg">
@@ -402,7 +402,7 @@ const ProgramPageLayout = ({
           <div className="max-w-[1300px] mx-auto px-6 md:px-10">
             <ScrollReveal>
               <div className="mb-10 md:mb-14">
-                <h2 className="font-host-grotesk text-2xl font-semibold leading-tight tracking-tight text-black md:text-[32px]">
+                <h2 className="font-host-grotesk text-2xl font-semibold leading-tight tracking-tight text-black md:text-[32px] lg:text-[36px]">
                   {cmsDisplayText(q.howItWorksTitle)}
                 </h2>
                 <p className="mt-4 font-urbanist text-base font-medium leading-relaxed text-black/60 md:text-lg">
@@ -462,7 +462,7 @@ const ProgramPageLayout = ({
             <div className="relative z-10 w-full flex flex-col h-full">
               <ScrollReveal delay={0.1}>
                 <div className="mb-12 md:mb-16">
-                  <h2 className="font-host-grotesk text-2xl font-semibold leading-tight tracking-tight text-white md:text-[32px]">
+                  <h2 className="font-host-grotesk text-2xl font-semibold leading-tight tracking-tight text-white md:text-[32px] lg:text-[36px]">
                     {cmsDisplayText(q.pillarsTitle)}
                   </h2>
                 </div>
@@ -503,7 +503,7 @@ const ProgramPageLayout = ({
             <div className="flex flex-col lg:flex-row lg:gap-12">
               <div className="lg:w-[50%] shrink-0 mb-10 lg:mb-0 lg:sticky lg:top-32 lg:self-start">
                 <ScrollReveal>
-                  <h2 className="font-host-grotesk text-2xl font-semibold leading-tight tracking-tight text-black md:text-[32px]">
+                  <h2 className="font-host-grotesk text-2xl font-semibold leading-tight tracking-tight text-black md:text-[32px] lg:text-[36px]">
                     {cmsDisplayText(q.timelineTitle)}
                   </h2>
                   {q.timelineSubtitle?.trim() ? (

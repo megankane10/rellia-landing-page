@@ -214,7 +214,7 @@ export default function NetworkMetricsSection({
             style={previewMode || reduceMotion || isMobile ? undefined : { y: bgY }}
           />
           <div className="absolute inset-0 bg-rellia-teal/35" />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/55 via-black/25 to-black/55" />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/30 to-black/60" />
         </div>
 
         <div className="relative z-10 mx-auto flex min-h-0 w-full max-w-[1300px] flex-1 flex-col px-6 pb-10 pt-8 md:px-10 md:pb-8 md:pt-12 lg:pb-6">

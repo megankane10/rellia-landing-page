@@ -6,7 +6,7 @@ import NotFound from "@/pages/NotFound"
 import { useCmsPageBySlug } from "@/hooks/useCmsDocuments"
 import { PageRenderer } from "@/components/cms/PageRenderer"
 import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo"
-import CmsPageLoadingShell from "@/components/cms/CmsPageLoadingShell"
+import { CmsModularSectionsSkeleton } from "@/components/cms/CmsPageSkeletons"
 import { isCmsQueryLoading, shouldShowCmsEmptyState } from "@/lib/cmsQueryState"
 
 const getSingleSegmentSlug = (pathname: string) => {
@@ -38,7 +38,17 @@ export default function CmsCatchAll() {
 
   if (!slug) return <NotFound />
 
-  if (isCmsQueryLoading(pageQuery)) return <CmsPageLoadingShell />
+  if (isCmsQueryLoading(pageQuery)) {
+    return (
+      <div className="min-h-screen overflow-x-hidden bg-white font-host-grotesk">
+        <Navbar forceSolid />
+        <main id="main-content" className="pt-[72px] md:pt-[86px]">
+          <CmsModularSectionsSkeleton />
+        </main>
+        <Footer />
+      </div>
+    )
+  }
 
   if (shouldShowCmsEmptyState(pageQuery) && !page) return <NotFound />
 
@@ -53,7 +63,7 @@ export default function CmsCatchAll() {
           <PageRenderer page={page!} />
         ) : (
           <div className="mx-auto max-w-[900px] px-6 py-28 md:px-10 md:py-36">
-            <h1 className="font-host-grotesk text-3xl font-semibold text-black">{page?.title ?? slug}</h1>
+            <h1 className="font-host-grotesk text-2xl font-semibold text-black">{page?.title ?? slug}</h1>
             <p className="mt-4 font-urbanist text-base text-black/65 leading-relaxed">
               This page is published in Sanity but has no sections yet. Add at least one block under{" "}
               <strong>Page sections</strong> in Studio (same library as pre-built pages’ Modular sections tab), then publish.

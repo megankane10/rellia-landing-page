@@ -32,6 +32,8 @@ export type CareersOpenRole = {
   title: string
   location: string
   employmentType: string
+  /** Short summary on the /careers open roles list; falls back to trimmed description text. */
+  excerpt?: string
   description: SanityPortableText | null
   responsibilities: string[]
   applyButtonLabel?: string
@@ -99,6 +101,7 @@ export type CareersPageContent = NetworkHeroContent & {
   lifeAtRelliaSubheading?: string
   lifeAtRelliaImages?: CareersLifeAtRelliaImage[]
   lifeAtRelliaLinks?: CareersLifeAtRelliaLink[]
+  sections?: CmsPageSection[]
 }
 
 export type SeoContent = {
@@ -860,6 +863,7 @@ export type AboutPageContent = {
   ctaFounderHref: string
   ctaTeamLabel: string
   ctaTeamHref: string
+  sections?: CmsPageSection[]
   seo?: SeoContent
 }
 
@@ -881,6 +885,7 @@ export type FaqPageContent = {
   bottomBody: string
   bottomCtaLabel: string
   bottomCtaPath: string
+  sections?: CmsPageSection[]
   seo?: SeoContent
 }
 
@@ -1224,5 +1229,6 @@ export type PaymentPageContent = CmsPageVisibility & {
   welcomeSplashLogoSrc?: string
   /** Seconds to hold after headline + subheading finish revealing. */
   welcomeSplashDurationSeconds?: number
+  sections?: CmsPageSection[]
   seo?: SeoContent
 }

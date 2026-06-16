@@ -53,7 +53,7 @@ export const LegalDocumentPage = ({
         <section className="bg-white py-16 md:py-24">
           <div className="mx-auto max-w-[860px] px-6 md:px-10">
             <ScrollReveal>
-              {cmsLoading ? (
+              {cmsLoading && !page ? (
                 <CmsLegalBodySkeleton />
               ) : (
                 <>

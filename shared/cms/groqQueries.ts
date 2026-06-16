@@ -349,6 +349,7 @@ export const networkInvestorsPageQuery = `*[_id == "networkInvestorsPage"][0]{
   benefitsBullets,
   ${networkWhyFragment},
   ${networkCtaFragment},
+  ${pageSectionsFragment},
   ${seoFragment}
 }`
 
@@ -574,6 +575,7 @@ export const aboutPageQuery = `*[_id == "aboutPage"][0]{
   ctaFounderHref,
   ctaTeamLabel,
   ctaTeamHref,
+  ${pageSectionsFragment},
   ${seoFragment}
 }`;
 
@@ -589,6 +591,7 @@ export const faqPageQuery = `*[_id == "faqPage"][0]{
   bottomBody,
   bottomCtaLabel,
   bottomCtaPath,
+  ${pageSectionsFragment},
   ${seoFragment}
 }`;
 
@@ -917,6 +920,7 @@ export const paymentPageQuery = `*[_id == "paymentPage"][0]{
   "welcomeSplashBackgroundSrc": coalesce(welcomeSplashBackground.asset->url, welcomeSplashBackgroundSrc),
   "welcomeSplashLogoSrc": coalesce(welcomeSplashLogo.asset->url, welcomeSplashLogoSrc),
   welcomeSplashDurationSeconds,
+  ${pageSectionsFragment},
   ${seoFragment}
 }`;
 
@@ -925,6 +929,7 @@ export const openRolesQuery = `*[_type == "openRole" && !(_id in path("drafts.**
   title,
   location,
   employmentType,
+  excerpt,
   description${portableRichTextBlocksFragment},
   responsibilities,
   applyButtonLabel,
@@ -960,6 +965,7 @@ export const careersPageQuery = `*[_id == "careersPage"][0]{
     iconKey,
     tooltip
   },
+  ${pageSectionsFragment},
   ${seoFragment}
 }`
 

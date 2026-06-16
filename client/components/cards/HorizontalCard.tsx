@@ -168,7 +168,7 @@ export function HorizontalCard(props: HorizontalCardProps) {
             </span>
           </div>
  
-          <h3 className="font-host-grotesk text-2xl md:text-3xl font-medium leading-tight tracking-tight text-black group-hover:text-rellia-teal transition-colors duration-300 group-hover:underline decoration-2 underline-offset-4">
+          <h3 className="font-host-grotesk text-2xl md:text-[32px] lg:text-[36px] font-medium leading-tight tracking-tight text-black group-hover:text-rellia-teal transition-colors duration-300 group-hover:underline decoration-2 underline-offset-4">
             {cmsDisplayText(event.title)}
           </h3>
  

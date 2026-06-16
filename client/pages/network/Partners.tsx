@@ -112,7 +112,7 @@ function PartnerEngageTealBand({ content }: { content: NetworkPartnersPageConten
 
       <div className="relative z-10 mx-auto max-w-[1300px]">
         <ScrollReveal>
-          <h2 className="mt-5 font-host-grotesk text-2xl font-semibold leading-tight tracking-tight text-rellia-teal md:text-[32px]">
+          <h2 className="mt-5 font-host-grotesk text-2xl font-semibold leading-tight tracking-tight text-rellia-teal md:text-[32px] lg:text-[36px]">
             {cmsDisplayText(content.engageTitle ?? "Three ways to work with Rellia")}
           </h2>
           <p className="mt-4 max-w-2xl font-urbanist text-base font-medium leading-relaxed text-black/80 md:text-lg">
@@ -235,7 +235,7 @@ function ExclusiveDirectorySplit({ content }: { content: NetworkPartnersPageCont
 
         <Reveal className="order-1 lg:order-2">
           <div className="max-w-xl">
-            <h2 className="mt-6 font-host-grotesk text-2xl font-semibold leading-tight tracking-tight text-black md:mt-8 md:text-[32px]">
+            <h2 className="mt-6 font-host-grotesk text-2xl font-semibold leading-tight tracking-tight text-black md:mt-8 md:text-[32px] lg:text-[36px]">
               {content.directoryTitle ? (
                 cmsDisplayText(content.directoryTitle)
               ) : (

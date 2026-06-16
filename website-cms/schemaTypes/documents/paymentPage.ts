@@ -3,6 +3,8 @@ import {portableHeadlineField} from '../shared/inlineHeroHeadlineField'
 import {
   CONTENT_SEO_FIELDSETS,
   CONTENT_SEO_GROUPS,
+  GROUP_MODULAR_SECTIONS,
+  modularSectionsField,
   sectionDividerFieldset,
   singletonSeoField,
 } from '../shared/singletonContentFields'
@@ -12,7 +14,7 @@ export const paymentPage = defineType({
   name: 'paymentPage',
   title: 'Payment page (/membership)',
   type: 'document',
-  groups: CONTENT_SEO_GROUPS,
+  groups: [...CONTENT_SEO_GROUPS, GROUP_MODULAR_SECTIONS],
   fieldsets: [
     sectionDividerFieldset('welcomeSplashDivider', 'Welcome splash'),
     sectionDividerFieldset('benefitsDivider', 'Benefits panel'),
@@ -322,6 +324,10 @@ export const paymentPage = defineType({
       initialValue: '/faq',
       group: 'content',
       fieldset: 'ctaDivider',
+    }),
+    modularSectionsField({
+      description:
+        'Optional modular blocks rendered on /membership after the plan picker and before the footer CTA band.',
     }),
     singletonSeoField,
   ],

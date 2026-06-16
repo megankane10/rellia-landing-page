@@ -13,6 +13,7 @@ import { resolveLogoMarqueeMarks } from "@/lib/resolveLogoMarqueeMarks"
 import InvestorNotifyForm from "@/components/network/InvestorNotifyForm"
 import RelliaAction from "@/components/RelliaAction"
 import RelliaCta from "@/components/RelliaCta"
+import { SectionsRenderer } from "@/components/cms/PageRenderer"
 import ScrollReveal from "@/components/ScrollReveal"
 import { ArrowRight, BarChart3, ShieldCheck, Sparkles, Users, Check } from "lucide-react"
 import { Link } from "react-router-dom"
@@ -260,7 +261,7 @@ function PortfolioSplit() {
     <CreamSection>
       <div className="grid gap-12 md:grid-cols-[1fr_1.05fr] md:items-center md:gap-16">
         <Reveal>
-          <h2 className="mt-5 font-host-grotesk text-2xl font-semibold leading-tight tracking-tight text-rellia-teal md:text-[32px]">
+          <h2 className="mt-5 font-host-grotesk text-2xl font-semibold leading-tight tracking-tight text-rellia-teal md:text-[32px] lg:text-[36px]">
             Offer Rellia to your portfolio
           </h2>
           <p className="mt-4 font-urbanist text-base font-medium leading-relaxed text-black/70 md:text-lg">
@@ -327,7 +328,7 @@ function FoundersClusterSection({
     <div className="bg-rellia-cream/20 pt-10 md:pt-16">
       <PipelinePhotoSection roundedTop roundedBottom={false}>
         <ScrollReveal>
-          <h2 className="mt-5 font-host-grotesk text-3xl font-semibold leading-tight tracking-tight text-white md:text-[40px]">
+          <h2 className="mt-5 font-host-grotesk text-2xl font-semibold leading-tight tracking-tight text-white md:text-[40px]">
             How founders cluster
           </h2>
           <p className="mt-4 max-w-2xl font-urbanist text-lg leading-relaxed text-white/85">
@@ -494,7 +495,7 @@ export default function Investors() {
                 </div>
                 <div className="relative mx-auto flex min-h-[min(72vh,760px)] max-w-[1300px] flex-col justify-center overflow-hidden rounded-b-[2.5rem] md:rounded-b-[3.5rem]">
                   <ScrollReveal>
-                    <h2 className="font-host-grotesk text-2xl font-semibold leading-tight tracking-tight text-rellia-mint md:text-[32px]">
+                    <h2 className="font-host-grotesk text-2xl font-semibold leading-tight tracking-tight text-rellia-mint md:text-[32px] lg:text-[36px]">
                       {cmsDisplayText(content.pitchTitle ?? "Exclusive connections and pitch events")}
                     </h2>
                     <p className="mt-6 max-w-2xl font-urbanist text-lg leading-relaxed text-white/80">
@@ -550,6 +551,8 @@ export default function Investors() {
               </LightSection>
 
               <PortfolioSplit />
+
+              {content.sections?.length ? <SectionsRenderer sections={content.sections} /> : null}
 
               <div className="bg-rellia-cream/35">
                 <RelliaCta

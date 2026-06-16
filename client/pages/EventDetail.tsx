@@ -55,7 +55,7 @@ import { useEventBySlug } from "@/hooks/useCmsDocuments"
 import { resolveEventCardImageSrc } from "@shared/cms/itemCardImage"
 import { allowCmsSeedFallbacks } from "@/lib/deploymentEnv"
 import { isCmsQueryLoading, shouldShowCmsEmptyState } from "@/lib/cmsQueryState"
-import CmsPageLoadingShell from "@/components/cms/CmsPageLoadingShell"
+import { CmsEventDetailBodySkeleton } from "@/components/cms/CmsPageSkeletons"
 import { isSanityConfigured } from "@/lib/sanity"
 import RelatedEvents from "@/components/related/RelatedEvents"
 
@@ -156,7 +156,7 @@ export default function EventDetail() {
     const eventSlugPath = getProgramsEventSlug(event)
     const pagePath = `/events/${eventSlugPath}`
     const resolvedOg = event.imageSrc
-      ? resolveSocialOgImage(event.imageSrc, undefined, { square: true })
+      ? resolveSocialOgImage(event.imageSrc, undefined, { landscape: true })
       : undefined
     return {
       pageTitle,
@@ -189,7 +189,22 @@ export default function EventDetail() {
   }
 
   if (isSanityConfigured() && isCmsQueryLoading(eventQuery)) {
-    return <CmsPageLoadingShell />
+    return (
+      <div className="flex min-h-screen flex-col bg-white font-host-grotesk overflow-x-hidden">
+        <Navbar />
+        <main id="main-content" className="flex-1">
+          <div className="px-6 pt-24 md:px-10 md:pt-28">
+            <div className="mx-auto max-w-[1300px]">
+              <ScrollReveal>
+                <EventDetailBackToEventsLink variant="top" />
+              </ScrollReveal>
+            </div>
+          </div>
+          <CmsEventDetailBodySkeleton withTopOffset={false} />
+        </main>
+        <Footer />
+      </div>
+    )
   }
 
   if (!match) {
@@ -564,7 +579,7 @@ export default function EventDetail() {
                 <ScrollReveal>
                   <div className="mx-auto w-full max-w-[900px]">
                     {detailSectionHeading ? (
-                      <h2 className="mb-6 font-host-grotesk text-2xl font-semibold tracking-tight text-black md:mb-8 md:text-[32px]">
+                      <h2 className="mb-6 font-host-grotesk text-2xl font-semibold tracking-tight text-black md:mb-8 md:text-[32px] lg:text-[36px]">
                         {detailSectionHeading}
                       </h2>
                     ) : null}
@@ -621,7 +636,7 @@ export default function EventDetail() {
                   <ScrollReveal>
                     <div className="w-full">
                       {detailSectionHeading ? (
-                        <h2 className="mb-6 font-host-grotesk text-2xl font-semibold tracking-tight text-black md:mb-8 md:text-[32px]">
+                        <h2 className="mb-6 font-host-grotesk text-2xl font-semibold tracking-tight text-black md:mb-8 md:text-[32px] lg:text-[36px]">
                           {detailSectionHeading}
                         </h2>
                       ) : null}

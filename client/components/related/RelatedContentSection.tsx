@@ -3,6 +3,7 @@ import { Link } from "react-router-dom"
 import { ChevronRight } from "lucide-react"
 import ScrollReveal from "@/components/ScrollReveal"
 import { PROFILE_PAGE_GRID_CLASS } from "@/components/network/profilePageGrid"
+import { HEADING_SECTION } from "@/lib/typography"
 import { cn } from "@/lib/utils"
 import { cmsDisplayText } from "@/lib/cmsStega"
 
@@ -42,7 +43,10 @@ const RelatedContentSection = ({
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <h2
           id={headingId}
-          className="min-w-0 font-host-grotesk text-2xl font-semibold leading-tight tracking-tight text-black md:text-3xl"
+          className={cn(
+            "min-w-0 font-host-grotesk font-semibold leading-tight tracking-tight text-black",
+            HEADING_SECTION,
+          )}
         >
           {cmsDisplayText(title)}
         </h2>
@@ -56,7 +60,7 @@ const RelatedContentSection = ({
         </Link>
       </div>
       {subheadline?.trim() ? (
-        <p className="mt-2 max-w-2xl font-urbanist text-sm leading-relaxed text-black/60 md:text-base">
+        <p className="mt-3 max-w-2xl font-urbanist text-base leading-relaxed text-black/60 md:mt-4 md:text-lg">
           {cmsDisplayText(subheadline)}
         </p>
       ) : null}

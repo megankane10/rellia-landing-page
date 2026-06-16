@@ -23,6 +23,7 @@ import { DEFAULT_EVENTS_LANDING_HERO_PORTABLE } from "@shared/cms/inlineHeroHead
 import { allowCmsSeedFallbacks } from "@/lib/deploymentEnv"
 import { normalizeCmsEventForCard } from "@/lib/cmsEventList"
 import { isCmsListAwaitingData, isCmsQueryLoading, shouldShowCmsEmptyState } from "@/lib/cmsQueryState"
+import { CmsHorizontalCardListSkeleton } from "@/components/cms/CmsPageSkeletons"
 import { isSanityConfigured } from "@/lib/sanity"
 import { cmsDisplayText } from "@/lib/cmsStega"
 import { getEventStartTimestamp, getEventTemporalStatus } from "@shared/cms/eventTemporalStatus"
@@ -36,7 +37,8 @@ const getEventStatus = (event: Parameters<typeof getEventTemporalStatus>[0]): "u
 export default function Events() {
   const eventsQuery = useEvents()
   const { data } = eventsQuery
-  const { data: landing } = useEventsLandingPage()
+  const eventsLandingQuery = useEventsLandingPage()
+  const { data: landing } = eventsLandingQuery
   const eventsLoading =
     isSanityConfigured() &&
     (isCmsQueryLoading(eventsQuery) || isCmsListAwaitingData(eventsQuery))
@@ -156,7 +158,7 @@ export default function Events() {
           <div className="max-w-[1300px] mx-auto px-6 md:px-10">
             <ScrollReveal>
               <div className="mb-4">
-                <h2 className="font-host-grotesk text-2xl md:text-[32px] font-semibold leading-tight tracking-tight text-black">
+                <h2 className="font-host-grotesk text-2xl md:text-[32px] lg:text-[36px] font-semibold leading-tight tracking-tight text-black">
                   Browse Events
                 </h2>
               </div>
@@ -201,7 +203,9 @@ export default function Events() {
                 </p>
               </div>
 
-              {eventsLoading ? null : shouldShowCmsEmptyState(eventsQuery) && visibleEvents.length === 0 ? (
+              {eventsLoading ? (
+                <CmsHorizontalCardListSkeleton className="mt-12" count={4} />
+              ) : shouldShowCmsEmptyState(eventsQuery) && visibleEvents.length === 0 ? (
                 <FilteredListEmptyState
                   className="mt-12"
                   icon={CalendarDays}

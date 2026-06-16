@@ -27,7 +27,7 @@ export default function PagePlaceholder({
         id="main-content"
         className="mx-auto flex min-h-[60vh] max-w-[720px] flex-col items-center justify-center px-6 py-24 text-center"
       >
-        <h1 className="font-urbanist text-3xl font-semibold tracking-tight text-black md:text-4xl">
+        <h1 className="font-urbanist text-2xl font-semibold tracking-tight text-black md:text-4xl">
           {title}
         </h1>
         {message ? (

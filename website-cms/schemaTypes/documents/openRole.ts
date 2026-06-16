@@ -22,11 +22,20 @@ export const openRole = defineType({
       validation: (Rule) => Rule.required(),
     }),
     defineField({
+      name: 'excerpt',
+      title: 'Card summary',
+      type: 'text',
+      rows: 3,
+      description:
+        'Short preview under the job title on /careers. If empty, the site uses the start of the role description.',
+      validation: (Rule) => Rule.max(280),
+    }),
+    defineField({
       name: 'description',
       title: 'Role description',
       type: 'openRoleDescription',
       description:
-        'Rich text shown in the open role accordion on /careers. Use paragraph breaks, bold, and bullet lists — formatting appears on the live site.',
+        'Full role copy on the role detail page. Use paragraph breaks, bold, and bullet lists — images are not shown on the site.',
       validation: (Rule) => Rule.required(),
     }),
     defineField({

@@ -2,8 +2,6 @@ import { renderToString } from "react-dom/server"
 import { StaticRouter } from "react-router-dom/server"
 import { HelmetProvider, type HelmetServerState } from "react-helmet-async"
 import { QueryClient, QueryClientProvider, dehydrate } from "@tanstack/react-query"
-import { Toaster } from "@/components/ui/toaster"
-import { Toaster as Sonner } from "@/components/ui/sonner"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import { getStoryBySlug } from "@/content/stories"
 import {
@@ -138,7 +136,7 @@ const buildEventSeo = (
     imageSrc,
   })
   const ogSrc = imageSrc
-  const ogImage = ogSrc ? resolveSocialOgImage(ogSrc, siteOrigin, { square: true }) : undefined
+  const ogImage = ogSrc ? resolveSocialOgImage(ogSrc, siteOrigin, { landscape: true }) : undefined
   return {
     title: clampMetaTitle(resolved.title),
     description: clampMetaDescription(resolved.description),
@@ -179,7 +177,7 @@ const buildProgramSeo = (
   )
   const ogSrc = resolved.ogImageUrl || social.ogImage?.url
   const ogImage = ogSrc
-    ? resolveSocialOgImage(ogSrc, siteOrigin, { square: true }) ?? social.ogImage
+    ? resolveSocialOgImage(ogSrc, siteOrigin, { landscape: true }) ?? social.ogImage
     : social.ogImage
   return {
     title: clampMetaTitle(resolved.title),
@@ -264,7 +262,7 @@ const buildAdvisorProfileSeo = (
     "Advisor profile in the Rellia Health mentor directory."
   const photoSrc = typeof advisor.photoSrc === "string" ? advisor.photoSrc : undefined
 
-  const ogImage = resolveShareOgImage(photoSrc, { square: true })
+  const ogImage = resolveShareOgImage(photoSrc, { landscape: true })
   return {
     title: buildAdvisorProfileSeoTitle(name),
     description: clampMetaDescription(description),
@@ -286,7 +284,7 @@ const buildAlumniProfileSeo = (
     "Alumni company profile in the Rellia Health founder network."
   const logoSrc = typeof company.logoSrc === "string" ? company.logoSrc : undefined
 
-  const ogImage = resolveShareOgImage(logoSrc)
+  const ogImage = resolveShareOgImage(logoSrc, { landscape: true, contain: true })
   return {
     title: buildAlumniProfileSeoTitle(name),
     description: clampMetaDescription(description),
@@ -581,8 +579,6 @@ export const prerender = async (data: { url: string }) => {
     <HelmetProvider context={helmetContext}>
       <QueryClientProvider client={prerenderQueryClient}>
         <TooltipProvider>
-          <Toaster />
-          <Sonner />
           <StaticRouter location={data.url}>
             <RouterShell initialPageSeo={cmsPageInitialSeo}>
               <AppRoutes />

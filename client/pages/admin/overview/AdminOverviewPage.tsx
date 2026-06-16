@@ -1,7 +1,7 @@
 import { useState, useMemo, useCallback, useEffect } from "react"
 import { Link, useLocation, useNavigate, useSearchParams } from "react-router-dom"
 import { useQuery } from "@tanstack/react-query"
-import { ArrowRight, ChevronDown, ChevronLeft, ChevronRight, AlertCircle, CalendarDays, CircleHelp, FileEdit, Inbox, Stethoscope, Users, TrendingUp, type LucideIcon } from "lucide-react"
+import { ArrowDown, ArrowRight, ArrowUp, ChevronDown, ChevronLeft, ChevronRight, AlertCircle, CalendarDays, CircleHelp, FileEdit, Inbox, Stethoscope, Users, TrendingUp, type LucideIcon } from "lucide-react"
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis, PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from "recharts"
 import { useAuth } from "@/context/AuthContext"
 import { fetchAdminTeam } from "@/lib/adminApi"
@@ -25,7 +25,6 @@ import {
   countRecentAll,
   countSubmissionsBetweenDays,
   countUnresolved,
-  formatPercentChange,
   percentChange,
   welcomeBackTitle,
 } from "@/lib/adminOverview"
@@ -186,7 +185,6 @@ type StatCardProps = {
   value: number | string
   icon: LucideIcon
   changePct?: number | null
-  changeCompare?: string
   href?: string
   loading?: boolean
 }
@@ -213,14 +211,56 @@ const adminOverviewCardDescriptionClass = "font-urbanist text-sm"
 const adminOverviewPieSectionTitleClass = "font-host-grotesk text-sm font-bold"
 const adminOverviewPieSectionIconClass = "h-5 w-5 shrink-0"
 
-const StatCard = ({ label, value, icon: Icon, changePct, changeCompare, href, loading }: StatCardProps) => {
-  const changeLabel = formatPercentChange(changePct ?? null)
-  const changeTone =
+const StatCard = ({ label, value, icon: Icon, changePct, href, loading }: StatCardProps) => {
+  const changeTagClass =
     changePct === null || changePct === 0
-      ? "text-rellia-teal/80"
+      ? "bg-rellia-mint/30 text-rellia-teal"
       : changePct > 0
-        ? "text-emerald-800"
-        : "text-amber-800"
+        ? "bg-emerald-100 text-emerald-800"
+        : "bg-red-100 text-red-700"
+
+  const renderChangeTag = () => {
+    if (changePct === undefined) return null
+    if (changePct === null) {
+      return (
+        <span
+          className={cn(
+            "inline-flex shrink-0 items-center rounded-full px-3 py-1 font-urbanist text-sm font-semibold",
+            changeTagClass,
+          )}
+        >
+          —
+        </span>
+      )
+    }
+    if (changePct === 0) {
+      return (
+        <span
+          className={cn(
+            "inline-flex shrink-0 items-center rounded-full px-3 py-1 font-urbanist text-sm font-semibold tabular-nums",
+            changeTagClass,
+          )}
+        >
+          0%
+        </span>
+      )
+    }
+
+    const isUp = changePct > 0
+    const ChangeIcon = isUp ? ArrowUp : ArrowDown
+
+    return (
+      <span
+        className={cn(
+          "inline-flex shrink-0 items-center gap-1 rounded-full px-3 py-1 font-urbanist text-sm font-semibold tabular-nums",
+          changeTagClass,
+        )}
+      >
+        <ChangeIcon className="h-4 w-4 shrink-0" strokeWidth={2.5} aria-hidden />
+        {Math.abs(changePct)}%
+      </span>
+    )
+  }
 
   const body = (
     <Card
@@ -240,31 +280,22 @@ const StatCard = ({ label, value, icon: Icon, changePct, changeCompare, href, lo
           <Icon className="size-8 text-rellia-teal sm:size-9" strokeWidth={1.5} aria-hidden />
         </div>
       </div>
-      <div className="flex min-w-0 flex-1 items-center justify-between gap-3 py-5 pr-5">
+      <div className="flex min-w-0 flex-1 items-center py-5 pr-5">
         <div className="min-w-0">
           {loading ? (
             <Skeleton className="h-10 w-20 rounded-lg bg-rellia-mint/25" />
           ) : (
             <>
-              <p className="font-host-grotesk text-4xl font-bold tabular-nums leading-none text-rellia-teal sm:text-[2.75rem]">
-                {value}
-              </p>
+              <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
+                <p className="font-host-grotesk text-4xl font-bold tabular-nums leading-none text-rellia-teal sm:text-[2.75rem]">
+                  {value}
+                </p>
+                {renderChangeTag()}
+              </div>
               <p className="mt-2 font-urbanist text-base font-medium text-rellia-teal">{label}</p>
             </>
           )}
         </div>
-        {!loading && changePct !== undefined ? (
-          <div className="shrink-0 text-right">
-            <span className={cn("font-urbanist text-base font-semibold tabular-nums", changeTone)}>
-              {changeLabel}
-            </span>
-            {changeCompare ? (
-              <p className="mt-0.5 font-urbanist text-sm leading-tight text-rellia-teal/70">
-                {changeCompare}
-              </p>
-            ) : null}
-          </div>
-        ) : null}
       </div>
     </Card>
   )
@@ -383,21 +414,16 @@ const AdminOverviewPage = () => {
   const diagnostics = diagnosticsQuery.data ?? []
   const trend = buildLastNDaysTrend(contacts, diagnostics, 7, weekOffset)
 
-  // Filtered status breakdown logic
+  // Filtered status breakdown logic — only by submission type, not startup level
   const filteredContacts = useMemo(() => {
     if (statusFilter === "survey") return []
-    if (selectedStage !== "all") return [] // Exclude contacts when filtering by startup level
     return contacts
-  }, [contacts, statusFilter, selectedStage])
+  }, [contacts, statusFilter])
 
   const filteredDiagnostics = useMemo(() => {
     if (statusFilter === "web") return []
-    let list = diagnostics
-    if (selectedStage !== "all") {
-      list = list.filter((d) => d.stage === selectedStage)
-    }
-    return list
-  }, [diagnostics, statusFilter, selectedStage])
+    return diagnostics
+  }, [diagnostics, statusFilter])
 
   const statusBreakdown = useMemo(() => {
     return buildStatusBreakdown(filteredContacts, filteredDiagnostics)
@@ -441,9 +467,6 @@ const AdminOverviewPage = () => {
             : CHART_COLORS.resolved,
     }))
   }, [statusBreakdown, totalStatusCount])
-
-  const newCount = useMemo(() => statusBreakdown.find((r) => r.status === "New")?.count ?? 0, [statusBreakdown])
-  const resolvedCount = useMemo(() => statusBreakdown.find((r) => r.status === "Resolved")?.count ?? 0, [statusBreakdown])
 
   const allStages = useMemo(() => {
     const stages = new Set<string>()
@@ -612,7 +635,7 @@ const AdminOverviewPage = () => {
       <AdminPageHeader
         title={pageTitle}
         showDivider={false}
-        titleClassName="text-3xl font-semibold leading-tight md:text-4xl md:leading-tight"
+        titleClassName="text-2xl font-semibold leading-tight md:text-4xl md:leading-tight"
       />
       </ScrollReveal>
 
@@ -623,7 +646,6 @@ const AdminOverviewPage = () => {
           icon={AlertCircle}
           value={unresolved}
           changePct={unresolvedChangePct}
-          changeCompare="vs prior 7 days"
           href="/admin/inbox"
           loading={loading}
         />
@@ -632,7 +654,6 @@ const AdminOverviewPage = () => {
           icon={CalendarDays}
           value={weekCount}
           changePct={weekChangePct}
-          changeCompare="vs prior 7 days"
           loading={loading}
         />
         <StatCard
@@ -746,27 +767,10 @@ const AdminOverviewPage = () => {
       <div className="grid min-w-0 gap-4 lg:grid-cols-3">
         {/* Card 2: Startup Level Distribution */}
         <Card className="min-w-0 overflow-hidden lg:col-span-1 rounded-2xl flex flex-col h-full">
-          <CardHeader className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between pb-2">
+          <CardHeader className="pb-2">
             <div>
               <CardTitle className={adminOverviewCardTitleClass}>Level Distribution</CardTitle>
               <CardDescription className={adminOverviewCardDescriptionClass}>Diagnostic survey stages</CardDescription>
-            </div>
-            <div className="relative w-full sm:w-auto">
-              <select
-                value={selectedStage}
-                onChange={(e) => setSelectedStage(e.target.value)}
-                className="h-10 min-w-[9rem] w-full appearance-none rounded-xl border border-slate-200 bg-white pl-3.5 pr-11 font-urbanist text-sm font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-rellia-teal sm:w-auto"
-                aria-label="Filter by startup level"
-              >
-                <option value="all">All Levels</option>
-                {allStages.map((stage) => (
-                  <option key={stage} value={stage}>{stage}</option>
-                ))}
-              </select>
-              <ChevronDown
-                className="pointer-events-none absolute right-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400"
-                aria-hidden
-              />
             </div>
           </CardHeader>
           <CardContent className="flex min-h-[260px] flex-1 flex-col justify-center pb-6">
@@ -793,9 +797,28 @@ const AdminOverviewPage = () => {
 
         {/* Card 3: Top Strengths & Growth Gaps */}
         <Card className="min-w-0 overflow-hidden lg:col-span-2 rounded-2xl h-full flex flex-col">
-          <CardHeader className="pb-2">
-            <CardTitle className={adminOverviewCardTitleClass}>Strengths & Weaknesses</CardTitle>
-            <CardDescription className={adminOverviewCardDescriptionClass}>Top capabilities and growth gaps based on diagnostic responses</CardDescription>
+          <CardHeader className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between pb-2">
+            <div>
+              <CardTitle className={adminOverviewCardTitleClass}>Strengths & Weaknesses</CardTitle>
+              <CardDescription className={adminOverviewCardDescriptionClass}>Top capabilities and growth gaps based on diagnostic responses</CardDescription>
+            </div>
+            <div className="relative w-full sm:w-auto">
+              <select
+                value={selectedStage}
+                onChange={(e) => setSelectedStage(e.target.value)}
+                className="h-10 min-w-[9rem] w-full appearance-none rounded-xl border border-slate-200 bg-white pl-3.5 pr-11 font-urbanist text-sm font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-rellia-teal sm:w-auto"
+                aria-label="Filter strengths and weaknesses by startup level"
+              >
+                <option value="all">All Levels</option>
+                {allStages.map((stage) => (
+                  <option key={stage} value={stage}>{stage}</option>
+                ))}
+              </select>
+              <ChevronDown
+                className="pointer-events-none absolute right-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400"
+                aria-hidden
+              />
+            </div>
           </CardHeader>
           <CardContent className="flex min-h-[360px] min-w-0 flex-1 flex-col gap-4 pt-2 pb-6 md:flex-row">
             <div className="flex min-w-0 flex-1 flex-col rounded-xl border border-emerald-100/40 bg-emerald-50/20 p-4">

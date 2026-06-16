@@ -19,7 +19,8 @@ import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo";
 import PageSocialHelmet from "@/components/seo/PageSocialHelmet";
 import { useAdvisors } from "@/hooks/useCmsDocuments";
 import { isCmsQueryLoading } from "@/lib/cmsQueryState";
-import CmsPageLoadingShell from "@/components/cms/CmsPageLoadingShell";
+import ScrollReveal from "@/components/ScrollReveal"
+import { CmsProfileBodySkeleton } from "@/components/cms/CmsPageSkeletons"
 import { isSanityConfigured } from "@/lib/sanity";
 import ImageExpandModal from "@/components/ImageExpandModal";
 import { PortableRichText } from "@/components/PortableRichText";
@@ -67,7 +68,7 @@ export default function AdvisorProfile() {
     : "";
 
   const advisorOgImage = active
-    ? resolveShareOgImage(active.photoSrc, { square: true })
+    ? resolveShareOgImage(active.photoSrc, { landscape: true })
     : undefined
 
   useApplyCmsSeo(null, active ? {
@@ -85,7 +86,26 @@ export default function AdvisorProfile() {
   }, [id]);
 
   if (isSanityConfigured() && isCmsQueryLoading(advisorsQuery)) {
-    return <CmsPageLoadingShell />;
+    return (
+      <div className="min-h-screen overflow-x-clip bg-white font-host-grotesk">
+        <Navbar forceSolid />
+        <main id="main-content" className="pt-24 md:pt-28">
+          <div className="mx-auto max-w-[1300px] px-6 md:px-10">
+            <ScrollReveal className="mb-8">
+              <Link
+                to="/advisors/directory"
+                replace
+                className="inline-flex items-center gap-2 font-host-grotesk text-sm font-bold text-rellia-teal hover:underline hover:underline-offset-4"
+              >
+                <ArrowLeft className="h-4 w-4" /> Back to Advisors Directory
+              </Link>
+            </ScrollReveal>
+            <CmsProfileBodySkeleton variant="advisor" />
+          </div>
+        </main>
+        <Footer />
+      </div>
+    )
   }
 
   if (!active) return <NotFound />;

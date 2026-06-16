@@ -923,22 +923,6 @@ export const createCareersSections = (ptBlock: PtBlockFn) => [
   },
 ]
 
-export const DUMMY_OPEN_ROLE = {
-  id: "dummy-placeholder-role",
-  title: "[DUMMY] Placeholder Role — Not a Real Opening",
-  location: "Remote (example location only)",
-  employmentType: "Part-time (sample)",
-  description:
-    "This is dummy seed text for editors and engineering to verify the open roles accordion. Replace this document with a real role before promoting careers content to production.",
-  responsibilities: [
-    "[DUMMY] Example responsibility — delete before publishing",
-    "[DUMMY] Second placeholder bullet for layout testing",
-    "[DUMMY] Third bullet to confirm list rendering",
-  ],
-  applyButtonLabel: "Apply",
-  applyButtonUrl: "https://www.linkedin.com/company/relliahealth/jobs/",
-}
-
 export const createDummyAdvisorBio = (
   ptBlock: PtBlockFn,
   bullet: BulletFn,

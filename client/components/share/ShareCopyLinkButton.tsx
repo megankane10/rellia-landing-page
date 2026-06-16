@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { Check } from "lucide-react"
-import { ShareIconCopy, shareIconSize } from "@/components/share/sharePageIcons"
+import { ShareIconCopy, shareComfortableControlSizeClass, shareIconSize } from "@/components/share/sharePageIcons"
 import { IconTooltipWrap, type IconTooltipPosition } from "@/components/share/IconTooltipWrap"
 import { cn } from "@/lib/utils"
 
@@ -13,6 +13,7 @@ export type ShareCopyLinkButtonProps = {
   copiedLabel?: string
   showMobileLabel?: boolean
   tooltipPosition?: IconTooltipPosition
+  tooltipMobilePosition?: IconTooltipPosition
 }
 
 export const ShareCopyLinkButton = ({
@@ -24,6 +25,7 @@ export const ShareCopyLinkButton = ({
   copiedLabel = "Copied!",
   showMobileLabel = false,
   tooltipPosition,
+  tooltipMobilePosition,
 }: ShareCopyLinkButtonProps) => {
   const [copied, setCopied] = useState(false)
 
@@ -40,12 +42,17 @@ export const ShareCopyLinkButton = ({
   const hasCustomShell = Boolean(className)
 
   return (
-    <IconTooltipWrap label={copied ? copiedLabel : idleLabel} position={tooltipPosition}>
+    <IconTooltipWrap
+      label={copied ? copiedLabel : idleLabel}
+      position={tooltipPosition}
+      mobilePosition={tooltipMobilePosition}
+    >
       <button
         type="button"
         onClick={handleClick}
         className={cn(
-          "relative inline-flex shrink-0 cursor-pointer items-center justify-center rounded-full border transition-all duration-300",
+          "relative inline-flex cursor-pointer items-center justify-center rounded-full border-2 transition-all duration-300",
+          shareComfortableControlSizeClass,
           copied
             ? copiedClassName ?? "border-rellia-teal bg-rellia-mint/20 text-rellia-teal"
             : !hasCustomShell &&

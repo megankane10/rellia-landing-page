@@ -44,7 +44,7 @@ export default function NetworkEyebrow({
       className={cn(
         tone === "onDark"
           ? PILL_ON_IMAGE_BLUR_CLASS
-          : "border-rellia-teal/20 bg-white/70 shadow-sm backdrop-blur-lg",
+          : "border-rellia-teal/15 bg-white/42 shadow-sm backdrop-blur-xl",
         className,
       )}
       labelClassName={tone === "onLight" ? "text-rellia-teal font-semibold" : undefined}

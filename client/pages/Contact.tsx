@@ -19,8 +19,8 @@ import { cmsDisplayText } from "@/lib/cmsStega"
 
 
 export default function Contact() {
-  const { data } = useContactPage()
-  const copy = data ?? DEFAULT_CONTACT_PAGE
+  const contactQuery = useContactPage()
+  const copy = contactQuery.data ?? DEFAULT_CONTACT_PAGE
   useApplyCmsSeo(copy.seo)
 
   return (

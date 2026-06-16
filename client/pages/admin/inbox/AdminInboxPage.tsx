@@ -12,6 +12,7 @@ import AdminSubmissionStatusSelect from "@/components/admin/AdminSubmissionStatu
 import AdminDeleteIconButton from "@/components/admin/AdminDeleteIconButton"
 import AdminNoteIconButton from "@/components/admin/AdminNoteIconButton"
 import AdminCompactEmptyState from "@/components/admin/AdminCompactEmptyState"
+import AdminFilterPill from "@/components/admin/AdminFilterPill"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -110,6 +111,24 @@ const AdminInboxPage = () => {
     () => (tab === "contact" ? countByStatusFilter(contactRows) : countByStatusFilter(diagnosticRows)),
     [tab, contactRows, diagnosticRows],
   )
+
+  const contactSourceCounts = useMemo(() => {
+    const counts = { all: contactRows.length, contact: 0, investor: 0, modal: 0 }
+    contactRows.forEach((row) => {
+      const type = String(row.submission_type ?? "").trim().toLowerCase()
+      if (type === "investor") counts.investor += 1
+      else if (type === "modal") counts.modal += 1
+      else counts.contact += 1
+    })
+    return counts
+  }, [contactRows])
+
+  const countDiagnosticLevel = (lvl: string) => {
+    if (lvl === "all") return diagnosticRows.length
+    return diagnosticRows.filter(
+      (row) => String(row.stage ?? "").trim().toLowerCase() === lvl.trim().toLowerCase(),
+    ).length
+  }
 
   const filteredContactRows = useMemo(
     () =>
@@ -562,7 +581,12 @@ const AdminInboxPage = () => {
                 "data-[state=inactive]:text-slate-600 data-[state=inactive]:hover:text-slate-900 data-[state=inactive]:bg-transparent",
               )}
             >
-              Web forms
+              <span className="inline-flex items-center gap-2">
+                Web forms
+                <span className="rounded-full bg-black/5 px-1.5 py-0.5 text-xs font-semibold tabular-nums text-slate-500">
+                  {contactRows.length}
+                </span>
+              </span>
             </TabsTrigger>
             <TabsTrigger
               value="diagnostic"
@@ -572,7 +596,12 @@ const AdminInboxPage = () => {
                 "data-[state=inactive]:text-slate-600 data-[state=inactive]:hover:text-slate-900 data-[state=inactive]:bg-transparent",
               )}
             >
-              Diagnostic Surveys
+              <span className="inline-flex items-center gap-2">
+                Diagnostic Surveys
+                <span className="rounded-full bg-black/5 px-1.5 py-0.5 text-xs font-semibold tabular-nums text-slate-500">
+                  {diagnosticRows.length}
+                </span>
+              </span>
             </TabsTrigger>
           </div>
         </TabsList>
@@ -585,20 +614,13 @@ const AdminInboxPage = () => {
               { id: "investor", label: "Investor" },
               { id: "modal", label: "Priority Modal" },
             ] as const).map((pill) => (
-              <button
+              <AdminFilterPill
                 key={pill.id}
-                type="button"
+                label={pill.label}
+                count={contactSourceCounts[pill.id]}
+                isActive={contactSource === pill.id}
                 onClick={() => setContactSource(pill.id)}
-                className={cn(
-                  "rounded-full px-3 py-1.5 font-urbanist text-xs font-semibold transition-colors",
-                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-                  contactSource === pill.id
-                    ? "bg-rellia-mint/35 text-rellia-teal"
-                    : "bg-muted text-muted-foreground hover:bg-muted/80",
-                )}
-              >
-                {pill.label}
-              </button>
+              />
             ))}
           </div>
         ) : null}
@@ -606,20 +628,13 @@ const AdminInboxPage = () => {
         {tab === "diagnostic" ? (
           <div className="flex flex-wrap gap-2" role="group" aria-label="Diagnostic levels filter">
             {diagnosticLevels.map((lvl) => (
-              <button
+              <AdminFilterPill
                 key={lvl}
-                type="button"
+                label={lvl === "all" ? "All Levels" : lvl}
+                count={countDiagnosticLevel(lvl)}
+                isActive={levelFilter === lvl}
                 onClick={() => setLevelFilter(lvl)}
-                className={cn(
-                  "rounded-full px-3 py-1.5 font-urbanist text-xs font-semibold transition-colors",
-                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-                  levelFilter === lvl
-                    ? "bg-rellia-mint/35 text-rellia-teal"
-                    : "bg-muted text-muted-foreground hover:bg-muted/80",
-                )}
-              >
-                {lvl === "all" ? "All Levels" : lvl}
-              </button>
+              />
             ))}
           </div>
         ) : null}

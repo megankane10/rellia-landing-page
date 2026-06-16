@@ -193,7 +193,7 @@ export default function PathsSection() {
             variants={headingContainerVariants}
             initial="hidden"
             animate={isInView ? "visible" : "hidden"}
-            className="relative z-10 flex flex-wrap justify-center gap-x-[0.22em] gap-y-2 text-balance font-host-grotesk text-3xl font-semibold leading-tight tracking-tight text-rellia-teal md:text-[44px] md:leading-[1.15]"
+            className="relative z-10 flex flex-wrap justify-center gap-x-[0.22em] gap-y-2 text-balance font-host-grotesk text-2xl font-semibold leading-tight tracking-tight text-rellia-teal md:text-[44px] md:leading-[1.15]"
           >
             {previewMode ? (
               cmsDisplayText(pathsTitleRaw)

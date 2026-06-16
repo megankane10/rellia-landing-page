@@ -302,7 +302,7 @@ export default function TestimonialsSection({
                   aria-hidden
                 />
               ) : null}
-              <h2 className="font-host-grotesk font-semibold text-rellia-teal [&_span]:text-rellia-teal [&_span]:!text-rellia-teal text-2xl md:text-[32px] leading-tight tracking-tight max-w-3xl text-balance">
+              <h2 className="font-host-grotesk font-semibold text-rellia-teal [&_span]:text-rellia-teal [&_span]:!text-rellia-teal text-2xl md:text-[32px] lg:text-[36px] leading-tight tracking-tight max-w-3xl text-balance">
                 <HeroHeadlinePortable value={titlePortable} />
               </h2>
             </div>

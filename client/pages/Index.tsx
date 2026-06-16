@@ -21,8 +21,8 @@ import { PORTFOLIO_LOGO_MARKS } from "@/data/portfolioLogos"
 import { cmsDisplayText } from "@/lib/cmsStega"
 
 export default function Index() {
-  const { data } = useHomePage();
-  const home = data?.merged ?? DEFAULT_HOME_PAGE;
+  const homeQuery = useHomePage();
+  const home = homeQuery.data?.merged ?? DEFAULT_HOME_PAGE;
   const howItWorksSteps = useMemo(
     () =>
       (home.howItWorksSteps ?? DEFAULT_HOME_PAGE.howItWorksSteps ?? []).map((step) => ({

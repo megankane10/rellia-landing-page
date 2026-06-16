@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react"
-import { Link, useNavigate } from "react-router-dom"
-import { LogOut, Settings, Upload, UserRound } from "lucide-react"
+import { useNavigate } from "react-router-dom"
+import { ChevronUp, LogOut, Upload, UserRound } from "lucide-react"
 import { useAuth } from "@/context/AuthContext"
 import { supabase } from "@/lib/supabase"
 import { uploadAdminAvatar } from "@/lib/adminAvatarUpload"
@@ -34,6 +34,10 @@ import { Label } from "@/components/ui/label"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 import { useSidebar } from "@/components/ui/sidebar"
 import {
+  adminDarkDialogContentClass,
+  adminDarkMenuContentClass,
+  adminDarkMenuItemClass,
+  adminDarkMenuSeparatorClass,
   adminSidebarAccountButtonClass,
   adminSidebarAccountTextClass,
   adminSidebarIconSlot,
@@ -62,7 +66,7 @@ const AdminAccountMenu = () => {
 
   const displayName = getAdminDisplayName(user) || user?.email || "Admin"
   const initials = getAdminInitials(user)
-  
+
   const avatarSrc = avatarPreviewUrl
     ? avatarPreviewUrl
     : avatarUrl === "removed"
@@ -171,23 +175,28 @@ const AdminAccountMenu = () => {
 
   const profileDialog = (
     <Dialog open={profileOpen} onOpenChange={setProfileOpen}>
-      <DialogContent className="z-[10003] w-[calc(100vw-2rem)] max-w-[calc(100vw-2rem)] font-host-grotesk sm:max-w-md rounded-3xl sm:rounded-3xl">
+      <DialogContent
+        className={cn(
+          "z-[10003] w-[calc(100vw-2rem)] max-w-[calc(100vw-2rem)] font-host-grotesk sm:max-w-md rounded-3xl sm:rounded-3xl",
+          adminDarkDialogContentClass,
+        )}
+      >
         <DialogHeader className="text-left">
-          <DialogTitle className="flex items-center gap-2 text-left">
-            <UserRound className="h-5 w-5 text-rellia-teal" aria-hidden />
+          <DialogTitle className="flex items-center gap-2 text-left text-white">
+            <UserRound className="h-5 w-5 text-rellia-mint" aria-hidden />
             Your profile
           </DialogTitle>
-          <DialogDescription className="font-urbanist text-left">
+          <DialogDescription className="font-urbanist text-left text-slate-400">
             Update your display name and upload a profile photo
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-4 font-urbanist">
           <div className="flex items-center gap-4">
-            <Avatar className="h-16 w-16 border border-border">
+            <Avatar className="h-16 w-16 border border-slate-700">
               {avatarSrc ? (
                 <AvatarImage src={avatarSrc} alt="" />
               ) : null}
-              <AvatarFallback className="bg-rellia-mint/40 text-lg text-rellia-teal">{initials}</AvatarFallback>
+              <AvatarFallback className="bg-slate-800 text-lg text-slate-200">{initials}</AvatarFallback>
             </Avatar>
             <div className="space-y-2">
               <input
@@ -197,11 +206,11 @@ const AdminAccountMenu = () => {
                 className="sr-only"
                 onChange={handleAvatarFileChange}
               />
-              <div className="flex flex-wrap gap-2 items-center">
+              <div className="flex flex-wrap items-center gap-2">
                 <Button
                   type="button"
                   variant="outline"
-                  className="rounded-full"
+                  className="rounded-full border-slate-700 bg-slate-900 text-slate-200 hover:bg-slate-800 hover:text-white"
                   onClick={() => fileInputRef.current?.click()}
                   disabled={saving || uploading}
                 >
@@ -212,7 +221,7 @@ const AdminAccountMenu = () => {
                   <Button
                     type="button"
                     variant="ghost"
-                    className="rounded-full text-destructive hover:bg-destructive/10"
+                    className="rounded-full text-red-400 hover:bg-red-500/10 hover:text-red-300"
                     onClick={handleRemoveAvatar}
                     disabled={saving || uploading}
                   >
@@ -221,7 +230,7 @@ const AdminAccountMenu = () => {
                 )}
               </div>
               {pendingAvatarFile ? (
-                <p className="text-xs text-muted-foreground">{pendingAvatarFile.name}</p>
+                <p className="text-xs text-slate-500">{pendingAvatarFile.name}</p>
               ) : null}
             </div>
           </div>
@@ -245,19 +254,24 @@ const AdminAccountMenu = () => {
               placeholder="https://…"
               disabled={Boolean(pendingAvatarFile)}
             />
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-slate-500">
               Upload is preferred. URL works as a fallback if storage is unavailable.
             </p>
           </div>
-          {error ? <p className="text-sm text-destructive">{error}</p> : null}
+          {error ? <p className="text-sm text-red-400">{error}</p> : null}
         </div>
         <DialogFooter className="gap-2 sm:gap-0">
-          <Button type="button" variant="outline" className="rounded-full" onClick={() => setProfileOpen(false)}>
+          <Button
+            type="button"
+            variant="outline"
+            className="rounded-full border-slate-700 bg-slate-900 text-slate-200 hover:bg-slate-800 hover:text-white"
+            onClick={() => setProfileOpen(false)}
+          >
             Cancel
           </Button>
           <Button
             type="button"
-            className="rounded-full"
+            className="rounded-full bg-rellia-mint text-black hover:bg-rellia-mint/90"
             onClick={() => void handleSaveProfile()}
             disabled={saving || uploading}
           >
@@ -268,62 +282,13 @@ const AdminAccountMenu = () => {
     </Dialog>
   )
 
-  if (isMobile) {
-    return (
-      <>
-        <div className="space-y-3 px-1">
-          <div className="flex items-center gap-3 rounded-lg px-2 py-2">
-            <Avatar className="h-10 w-10 border border-slate-700">
-              {avatarSrc ? (
-                <AvatarImage src={avatarSrc} alt="" />
-              ) : null}
-              <AvatarFallback className="bg-slate-800 font-urbanist text-xs text-slate-200">{initials}</AvatarFallback>
-            </Avatar>
-            <div className="min-w-0 flex-1">
-              <p className="truncate font-urbanist text-sm font-medium text-white">{displayName}</p>
-              {user?.email ? (
-                <p className="truncate font-urbanist text-xs text-slate-400">{user.email}</p>
-              ) : null}
-            </div>
-          </div>
-          <div className="flex flex-col gap-1">
-            <button
-              type="button"
-              className="rounded-lg px-3 py-2 text-left font-urbanist text-sm text-slate-300 transition-all hover:bg-white/10 hover:text-white"
-              onClick={() => setProfileOpen(true)}
-            >
-              Edit Profile
-            </button>
-            <button
-              type="button"
-              className="rounded-lg px-3 py-2 text-left font-urbanist text-sm text-red-300 transition-all hover:bg-white/10 hover:text-white"
-              onClick={() => void handleSignOut()}
-            >
-              Logout
-            </button>
-          </div>
-        </div>
-        {profileDialog}
-
-        <ImageCropDialog
-          open={cropDialogOpen}
-          file={cropSourceFile}
-          title="Crop profile photo"
-          description="Crop to a square from the top of the image so it displays correctly in the dashboard."
-          aspect={1}
-          maxOutputSize={512}
-          onOpenChange={setCropDialogOpen}
-          onConfirm={handleAvatarCropConfirm}
-          onCancel={handleAvatarCropCancel}
-        />
-      </>
-    )
-  }
-
   const accountTrigger = (
     <button
       type="button"
-      className={adminSidebarAccountButtonClass}
+      className={cn(
+        adminSidebarAccountButtonClass,
+        isMobile && "rounded-xl hover:!bg-white/[0.07]",
+      )}
       aria-label="Account menu"
       aria-haspopup="menu"
     >
@@ -339,40 +304,53 @@ const AdminAccountMenu = () => {
           <p className="truncate font-urbanist text-sm leading-tight text-slate-400">{user.email}</p>
         ) : null}
       </div>
+      {isMobile ? (
+        <ChevronUp className="ml-auto mr-1 h-4 w-4 shrink-0 text-slate-500" aria-hidden />
+      ) : null}
     </button>
+  )
+
+  const accountMenu = (
+    <DropdownMenu modal={false}>
+      {isCollapsed ? (
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <DropdownMenuTrigger asChild>{accountTrigger}</DropdownMenuTrigger>
+          </TooltipTrigger>
+          <TooltipContent side="right" align="center">
+            {displayName}
+          </TooltipContent>
+        </Tooltip>
+      ) : (
+        <DropdownMenuTrigger asChild>{accountTrigger}</DropdownMenuTrigger>
+      )}
+      <DropdownMenuContent
+        side="top"
+        align="start"
+        className={cn(adminDarkMenuContentClass, "w-56 font-urbanist")}
+      >
+        <DropdownMenuItem
+          className={adminDarkMenuItemClass}
+          onSelect={() => setProfileOpen(true)}
+        >
+          <UserRound className="mr-2 h-4 w-4 text-slate-400" aria-hidden />
+          Edit Profile
+        </DropdownMenuItem>
+        <DropdownMenuSeparator className={adminDarkMenuSeparatorClass} />
+        <DropdownMenuItem
+          className={cn(adminDarkMenuItemClass, "text-red-400 focus:text-red-300")}
+          onSelect={() => void handleSignOut()}
+        >
+          <LogOut className="mr-2 h-4 w-4" aria-hidden />
+          Logout
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   )
 
   return (
     <>
-      <DropdownMenu modal={false}>
-        {isCollapsed ? (
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <DropdownMenuTrigger asChild>{accountTrigger}</DropdownMenuTrigger>
-            </TooltipTrigger>
-            <TooltipContent side="right" align="center">
-              {displayName}
-            </TooltipContent>
-          </Tooltip>
-        ) : (
-          <DropdownMenuTrigger asChild>{accountTrigger}</DropdownMenuTrigger>
-        )}
-        <DropdownMenuContent side="top" align="start" className="z-[10002] w-56 font-urbanist">
-          <DropdownMenuItem onSelect={() => setProfileOpen(true)}>
-            <UserRound className="mr-2 h-4 w-4" aria-hidden />
-            Edit Profile
-          </DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem
-            className="text-destructive focus:text-destructive"
-            onSelect={() => void handleSignOut()}
-          >
-            <LogOut className="mr-2 h-4 w-4" aria-hidden />
-            Logout
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-
+      {accountMenu}
       {profileDialog}
 
       <ImageCropDialog
@@ -382,6 +360,7 @@ const AdminAccountMenu = () => {
         description="Crop to a square from the top of the image so it displays correctly in the dashboard."
         aspect={1}
         maxOutputSize={512}
+        variant="dark"
         onOpenChange={setCropDialogOpen}
         onConfirm={handleAvatarCropConfirm}
         onCancel={handleAvatarCropCancel}

@@ -8,6 +8,9 @@ import { HorizontalCard } from "@/components/cards"
 import PageHeader from "@/components/PageHeader"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { usePrograms, useProgramsLandingPage } from "@/hooks/useCmsDocuments"
+import { isCmsQueryLoading } from "@/lib/cmsQueryState"
+import { isSanityConfigured } from "@/lib/sanity"
+import { CmsHorizontalCardListSkeleton } from "@/components/cms/CmsPageSkeletons"
 import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo"
 import { clampMetaDescription, clampMetaTitle, getSeoForPathname } from "@/config/seo"
 import { deriveHeroPageSeo } from "@/lib/cmsPageSeoDefaults"
@@ -26,8 +29,8 @@ type ProgramFilter = "all" | "available" | "waitlist"
 const PAGE_SIZE = 12
 
 export default function Programs() {
-  const { data } = useProgramsLandingPage()
-  const pl = data ?? DEFAULT_PROGRAMS_LANDING
+  const programsLandingQuery = useProgramsLandingPage()
+  const pl = programsLandingQuery.data ?? DEFAULT_PROGRAMS_LANDING
   const cmsSeoWithoutLegacyTitle = pl.seo
     ? { ...pl.seo, metaTitle: undefined, ogTitle: undefined }
     : pl.seo
@@ -39,13 +42,13 @@ export default function Programs() {
       pathname: "/programs",
     }),
   )
-  const { data: programsData } = usePrograms()
+  const programsQuery = usePrograms()
   const [programFilter, setProgramFilter] = useState<ProgramFilter>("all")
   const [page, setPage] = useState(1)
 
   const programs = useMemo(() => {
     // Favor the standalone program collection, fallback to the landing page array, finally the hardcoded defaults.
-    const rawList = (programsData && programsData.length > 0) ? programsData : (pl.programs ?? [])
+    const rawList = (programsQuery.data && programsQuery.data.length > 0) ? programsQuery.data : (pl.programs ?? [])
 
     const seenTitles = new Set<string>()
     const processed = rawList.filter((p: any) => {
@@ -82,7 +85,7 @@ export default function Programs() {
 
       return 0
     })
-  }, [programsData, pl.programs])
+  }, [programsQuery.data, pl.programs])
 
   const { availablePrograms, waitlistPrograms } = useMemo(() => {
     const available = programs.filter((p: any) => isProgramAvailable(p))
@@ -123,6 +126,8 @@ export default function Programs() {
   const handlePrevPage = () => setPage((p) => Math.max(1, p - 1))
   const handleNextPage = () => setPage((p) => Math.min(totalPages, p + 1))
 
+  const cmsProgramsLoading = isSanityConfigured() && isCmsQueryLoading(programsQuery)
+
   return (
     <div className="min-h-screen bg-white font-host-grotesk overflow-x-hidden">
       <Navbar />
@@ -145,7 +150,7 @@ export default function Programs() {
         <section id="view-programs" className="pt-8 pb-12 md:pt-10 md:pb-16 bg-white">
           <div className="max-w-[1300px] mx-auto px-6 md:px-10">
             <ScrollReveal>
-              <h2 className="mb-6 font-host-grotesk text-2xl md:text-3xl font-semibold leading-tight tracking-tight text-black">
+              <h2 className="mb-6 font-host-grotesk text-2xl md:text-[32px] lg:text-[36px] font-semibold leading-tight tracking-tight text-black">
                 {cmsDisplayText(pl.programsSectionTitle ?? "Explore programs")}
               </h2>
               {pl.programsSectionSubtitle?.trim() ? (
@@ -195,7 +200,9 @@ export default function Programs() {
                 </p>
               </div>
 
-              {visiblePrograms.length === 0 ? (
+              {cmsProgramsLoading ? (
+                <CmsHorizontalCardListSkeleton className="mt-6" count={4} />
+              ) : visiblePrograms.length === 0 ? (
                 <FilteredListEmptyState
                   className="mt-6"
                   icon={LayoutGrid}

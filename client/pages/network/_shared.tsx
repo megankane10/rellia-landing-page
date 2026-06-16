@@ -264,7 +264,7 @@ export function MultiStepSignupForm({
       <div className="flex items-start justify-between gap-6">
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-white/60">High-conversion signup</p>
-          <p className="mt-2 font-host-grotesk text-2xl md:text-3xl font-semibold tracking-tight text-white">
+          <p className="mt-2 font-host-grotesk text-2xl md:text-[32px] lg:text-[36px] font-semibold tracking-tight text-white">
             Tell us who you are
           </p>
           <p className="mt-3 font-urbanist text-white/75 leading-relaxed max-w-2xl">

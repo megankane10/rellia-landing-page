@@ -9,6 +9,7 @@ import { TeamMemberCard } from "@/components/cards/TeamMemberCard";
 import PageHeader, { PAGE_HEADER_TITLE_SIZE_CLASS } from "@/components/PageHeader"
 import PillTag, { PILL_ON_IMAGE_BLUR_CLASS } from "@/components/PillTag"
 import { useAboutPage } from "@/hooks/useCmsDocuments";
+import { SectionsRenderer } from "@/components/cms/PageRenderer";
 import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo";
 import { deriveHeroPageSeo } from "@/lib/cmsPageSeoDefaults";
 import { DEFAULT_ABOUT_PAGE } from "@shared/cms/defaults";
@@ -16,12 +17,35 @@ import { HeroHeadlinePortable } from "@/components/HeroHeadlinePortable"
 import { relliaTealGlassCardClass } from "@/lib/relliaTealGlassCard";
 import { cn } from "@/lib/utils";
 import { cmsCleanText, cmsDisplayText } from "@/lib/cmsStega";
-import { useRef, useState, useEffect } from "react";
+import { useEffect, useRef, useState, type RefObject } from "react";
 import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
 
+type ValuesParallaxImageProps = {
+  containerRef: RefObject<HTMLElement | null>;
+  src: string;
+  reduceMotion: boolean | null;
+};
+
+const ValuesParallaxImage = ({ containerRef, src, reduceMotion }: ValuesParallaxImageProps) => {
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start 95%", "end 5%"],
+  });
+  const y = useTransform(scrollYProgress, [0, 1], ["-18%", "18%"]);
+
+  return (
+    <motion.img
+      src={src}
+      alt=""
+      className="h-full w-full object-cover scale-[1.12] object-[55%_50%]"
+      style={reduceMotion ? undefined : { y }}
+    />
+  );
+};
+
 export default function About() {
-  const { data } = useAboutPage();
-  const about = data ?? DEFAULT_ABOUT_PAGE;
+  const aboutQuery = useAboutPage();
+  const about = aboutQuery.data ?? DEFAULT_ABOUT_PAGE;
   useApplyCmsSeo(
     about.seo,
     deriveHeroPageSeo({
@@ -32,21 +56,13 @@ export default function About() {
   );
   const [openTeamBioName, setOpenTeamBioName] = useState<string | null>(null);
   const reduceMotion = useReducedMotion();
-  const [isMobile, setIsMobile] = useState(true);
+  const [parallaxReady, setParallaxReady] = useState(false);
 
   useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth < 768);
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-    return () => window.removeEventListener("resize", checkMobile);
+    setParallaxReady(true);
   }, []);
 
   const valuesSectionRef = useRef<HTMLElement | null>(null);
-  const { scrollYProgress: valuesScrollYProgress } = useScroll({
-    target: valuesSectionRef,
-    offset: ["start 95%", "end 5%"],
-  });
-  const valuesBgY = useTransform(valuesScrollYProgress, [0, 1], ["-18%", "18%"]);
 
   // Pexels image (hotlinked) for values section parallax background
   const valuesBgImage =
@@ -70,7 +86,7 @@ export default function About() {
               <div className="grid grid-cols-1 gap-12 md:gap-16 lg:grid-cols-2 lg:items-stretch lg:gap-10 xl:gap-12">
                 <div className="relative min-h-0 w-full min-w-0 lg:pr-2 xl:pr-4">
                   <div className="absolute -top-4 -left-4 h-24 w-24 rounded-full bg-rellia-mint/20 blur-2xl pointer-events-none" />
-                  <h2 className="relative text-black text-2xl md:text-[32px] font-semibold tracking-tight mb-6">
+                  <h2 className="relative text-black text-2xl md:text-[32px] lg:text-[36px] font-semibold tracking-tight mb-6">
                     {cmsDisplayText(about.missionTitle)}
                   </h2>
                   <div className="relative space-y-5 text-black/70 text-base md:text-lg font-urbanist leading-relaxed">
@@ -103,12 +119,19 @@ export default function About() {
           <div className="relative w-full overflow-hidden rounded-[2.5rem] md:rounded-[3.5rem] shadow-lg">
             <div className="relative flex min-h-[880px] w-full flex-col overflow-hidden sm:min-h-[900px] md:min-h-[880px] lg:min-h-[960px]">
             <div className="absolute inset-0 overflow-hidden" aria-hidden>
-              <motion.img
-                src={valuesBgImage}
-                alt=""
-                className="h-full w-full object-cover scale-[1.12] object-[55%_50%]"
-                style={reduceMotion ? undefined : { y: valuesBgY }}
-              />
+              {parallaxReady && !reduceMotion ? (
+                <ValuesParallaxImage
+                  containerRef={valuesSectionRef}
+                  src={valuesBgImage}
+                  reduceMotion={reduceMotion}
+                />
+              ) : (
+                <img
+                  src={valuesBgImage}
+                  alt=""
+                  className="h-full w-full object-cover scale-[1.12] object-[55%_50%]"
+                />
+              )}
               <div className="absolute inset-0 bg-rellia-teal/35" />
               <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/30 to-black/60" />
             </div>
@@ -167,7 +190,7 @@ export default function About() {
         <section className="py-20 md:py-32 bg-white">
           <div className="max-w-[1300px] mx-auto px-6 md:px-10">
             <ScrollReveal className="mb-12 md:mb-14 text-left">
-              <h2 className="mb-4 text-2xl font-semibold tracking-tight text-black md:text-[32px]">
+              <h2 className="mb-4 text-2xl font-semibold tracking-tight text-black md:text-[32px] lg:text-[36px]">
                 {cmsDisplayText(about.teamTitle)}
               </h2>
               <p className="max-w-2xl font-urbanist text-base leading-relaxed text-black/60 md:text-lg">
@@ -192,6 +215,8 @@ export default function About() {
             </div>
           </div>
         </section>
+
+        {about.sections?.length ? <SectionsRenderer sections={about.sections} /> : null}
 
         <RelliaCta
           title={about.ctaTitle}

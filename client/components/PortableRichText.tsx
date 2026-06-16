@@ -216,7 +216,7 @@ const components: PortableTextComponents = {
   },
   block: {
     h2: ({ children }) => (
-      <h2 className="font-host-grotesk text-2xl md:text-3xl font-bold text-black mt-8 mb-4">{children}</h2>
+      <h2 className="font-host-grotesk text-2xl md:text-[32px] lg:text-[36px] font-bold text-black mt-8 mb-4">{children}</h2>
     ),
     h3: ({ children }) => (
       <h3 className="font-host-grotesk text-xl font-semibold text-rellia-teal mt-6 mb-3">{children}</h3>
