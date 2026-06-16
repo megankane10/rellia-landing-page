@@ -31,10 +31,7 @@ import { resolveLucideIcon } from "@/lib/resolveLucideIcon"
 import type { HomeWhyFeature } from "@shared/cms/types"
 import { DEFAULT_GLOBAL_SETTINGS } from "@shared/cms/defaults"
 import { CAREERS_VOLUNTEER_ENABLED, careersHasPublishedOpenRoles } from "@shared/careersPageConfig"
-import { CAREERS_OPEN_ROLES } from "@shared/careersOpenRoles"
-import { hasOpenRoleApplyButton } from "@shared/careersOpenRolesVisibility"
 import { cn } from "@/lib/utils"
-import { buildCareersRoleShareUrl } from "@/config/seo"
 import { DEFAULT_CAREERS_PAGE } from "@shared/cms/careersPageDefaults"
 import { RoleHero } from "./network/_shared"
 
@@ -215,11 +212,6 @@ export default function Careers() {
 
   const [showForm, setShowForm] = useState(false)
 
-  const handleCopyRoleLink = (roleId: string) => {
-    const roleUrl = buildCareersRoleShareUrl(roleId)
-    navigator.clipboard.writeText(roleUrl)
-  }
-
   const joinTeamPrimaryCta = hiring
     ? {
         href: "#open-roles",
@@ -336,7 +328,7 @@ export default function Careers() {
         <section className="bg-white pb-16 pt-10 md:pb-20 md:pt-12">
           <div className="mx-auto max-w-[1300px] px-6 md:px-10">
             <ScrollReveal className="max-w-3xl mb-16">
-              <h2 className="font-host-grotesk text-2xl font-semibold tracking-tight text-black md:text-[32px]">
+              <h2 className="font-host-grotesk text-2xl font-semibold tracking-tight text-black md:text-[32px] lg:text-[36px]">
                 How we work
               </h2>
               <p className="mt-4 font-urbanist text-lg md:text-xl text-black/60 leading-relaxed">
@@ -368,24 +360,7 @@ export default function Careers() {
         <CareersOpenRolesSection
           titlePortable={DEFAULT_CAREERS_PAGE.openRolesTitlePortable}
           subtitle={DEFAULT_CAREERS_PAGE.openRolesSubtitle}
-          roles={CAREERS_OPEN_ROLES}
-          onCopyRoleLink={handleCopyRoleLink}
-          renderApplyButton={(role) =>
-            hasOpenRoleApplyButton(role) ? (
-              <a
-                href={role.applyButtonUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group inline-flex h-12 w-full cursor-pointer items-center justify-center rounded-full border-2 border-rellia-teal bg-rellia-teal px-8 font-host-grotesk text-base font-bold text-white shadow-sm outline-none transition-all duration-300 hover:border-[#07242a] hover:bg-[#07242a] sm:min-w-[12.5rem] sm:w-auto"
-                aria-label={`${role.applyButtonLabel} for ${role.title} (opens in new tab)`}
-              >
-                <span className="relative z-10 inline-flex items-center gap-2">
-                  {role.applyButtonLabel}
-                  <ExternalLink className="h-4.5 w-4.5" aria-hidden />
-                </span>
-              </a>
-            ) : null
-          }
+          roles={[]}
         />
 
         {/* Life at Rellia Section */}

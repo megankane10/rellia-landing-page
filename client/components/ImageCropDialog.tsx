@@ -25,6 +25,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Slider } from "@/components/ui/slider"
+import { adminDarkDialogContentClass, adminDarkDialogShellClass, adminLightDialogShellClass } from "@/components/admin/adminSidebarRail"
 import { cn } from "@/lib/utils"
 
 type ImageCropDialogProps = {
@@ -36,6 +37,7 @@ type ImageCropDialogProps = {
   allowAspectChange?: boolean
   defaultAspectPreset?: CropAspectPreset
   maxOutputSize?: number
+  variant?: "light" | "dark"
   onOpenChange: (open: boolean) => void
   onConfirm: (file: File) => void
   onCancel?: () => void
@@ -57,10 +59,12 @@ const ImageCropDialog = ({
   allowAspectChange = false,
   defaultAspectPreset = "square",
   maxOutputSize = 1200,
+  variant = "light",
   onOpenChange,
   onConfirm,
   onCancel,
 }: ImageCropDialogProps) => {
+  const isDark = variant === "dark"
   const [imageSrc, setImageSrc] = useState<string | null>(null)
   const [crop, setCrop] = useState({ x: 0, y: 0 })
   const [zoom, setZoom] = useState(1)
@@ -74,20 +78,33 @@ const ImageCropDialog = ({
 
   useEffect(() => {
     if (!open || !file) {
-      setImageSrc(null)
-      setCrop({ x: 0, y: 0 })
-      setZoom(1)
-      setCroppedAreaPixels(null)
-      setMediaSize(null)
-      setError(null)
-      return
+      let cancelled = false
+      queueMicrotask(() => {
+        if (cancelled) return
+        setImageSrc(null)
+        setCrop({ x: 0, y: 0 })
+        setZoom(1)
+        setCroppedAreaPixels(null)
+        setMediaSize(null)
+        setError(null)
+      })
+      return () => {
+        cancelled = true
+      }
     }
 
     const objectUrl = URL.createObjectURL(file)
-    setImageSrc(objectUrl)
-    setAspectPreset(defaultAspectPreset)
+    let cancelled = false
+    queueMicrotask(() => {
+      if (cancelled) return
+      setImageSrc(objectUrl)
+      setAspectPreset(defaultAspectPreset)
+    })
 
-    return () => URL.revokeObjectURL(objectUrl)
+    return () => {
+      cancelled = true
+      URL.revokeObjectURL(objectUrl)
+    }
   }, [open, file, defaultAspectPreset])
 
   const handleMediaLoaded = useCallback(
@@ -104,7 +121,14 @@ const ImageCropDialog = ({
   useEffect(() => {
     if (!mediaSize) return
     const topCrop = getTopCenterCropPercent(mediaSize.width, mediaSize.height, aspect)
-    setCroppedAreaPixels(percentCropToPixels(mediaSize.width, mediaSize.height, topCrop))
+    let cancelled = false
+    queueMicrotask(() => {
+      if (cancelled) return
+      setCroppedAreaPixels(percentCropToPixels(mediaSize.width, mediaSize.height, topCrop))
+    })
+    return () => {
+      cancelled = true
+    }
   }, [aspect, mediaSize])
 
   const handleCropComplete = useCallback((_area: Area, areaPixels: Area) => {
@@ -138,15 +162,25 @@ const ImageCropDialog = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="z-[10004] w-[calc(100vw-2rem)] max-w-lg rounded-3xl font-host-grotesk">
+      <DialogContent
+        className={cn(
+          "z-[10004] w-[calc(100vw-2rem)] max-w-lg font-host-grotesk",
+          isDark ? adminDarkDialogShellClass : adminLightDialogShellClass,
+          isDark && adminDarkDialogContentClass,
+        )}
+      >
         <DialogHeader className="text-left">
-          <DialogTitle>{title}</DialogTitle>
-          <DialogDescription className="font-urbanist">{description}</DialogDescription>
+          <DialogTitle className={cn(isDark && "text-white")}>{title}</DialogTitle>
+          <DialogDescription className={cn("font-urbanist", isDark && "text-slate-400")}>
+            {description}
+          </DialogDescription>
         </DialogHeader>
 
         {allowAspectChange && !fixedAspect ? (
           <div className="space-y-1">
-            <Label htmlFor="crop-aspect-preset">Aspect ratio</Label>
+            <Label htmlFor="crop-aspect-preset" className={cn(isDark && "text-slate-300")}>
+              Aspect ratio
+            </Label>
             <Select
               value={aspectPreset}
               onValueChange={(value) => setAspectPreset(value as CropAspectPreset)}
@@ -190,7 +224,9 @@ const ImageCropDialog = ({
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="crop-zoom">Zoom</Label>
+          <Label htmlFor="crop-zoom" className={cn(isDark && "text-slate-300")}>
+            Zoom
+          </Label>
           <Slider
             id="crop-zoom"
             min={1}
@@ -202,15 +238,23 @@ const ImageCropDialog = ({
           />
         </div>
 
-        {error ? <p className="text-sm text-destructive">{error}</p> : null}
+        {error ? <p className={cn("text-sm text-destructive", isDark && "text-red-400")}>{error}</p> : null}
 
         <DialogFooter className="gap-2 sm:gap-0">
-          <Button type="button" variant="outline" className="rounded-full" onClick={handleClose}>
+          <Button
+            type="button"
+            variant="outline"
+            className={cn(
+              "rounded-full",
+              isDark && "border-slate-700 bg-slate-900 text-slate-200 hover:bg-slate-800 hover:text-white",
+            )}
+            onClick={handleClose}
+          >
             Cancel
           </Button>
           <Button
             type="button"
-            className="rounded-full"
+            className={cn("rounded-full", isDark && "bg-rellia-teal text-white hover:bg-rellia-teal/90")}
             onClick={() => void handleConfirm()}
             disabled={!file || !croppedAreaPixels || saving}
           >

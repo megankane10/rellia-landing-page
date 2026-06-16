@@ -19,7 +19,7 @@ type TeamNoteMessageFieldProps = {
 
 const formatButtonClass = (active: boolean) =>
   cn(
-    "inline-flex h-9 items-center justify-center rounded-xl border bg-white px-3 font-urbanist text-xs transition-colors",
+    "inline-flex h-9 items-center justify-center rounded-xl border bg-card px-3 font-urbanist text-xs transition-colors",
     "hover:border-rellia-teal/30 hover:bg-rellia-mint/15",
     "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-teal/40",
     active

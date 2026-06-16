@@ -321,6 +321,8 @@ export const networkAlumniDirectoryPageQuery = `*[_id == "networkAlumniDirectory
   directoryCtaBody,
   directoryCtaPrimaryLabel,
   directoryCtaPrimaryHref,
+  directoryCtaSecondaryLabel,
+  directoryCtaSecondaryHref,
   ${pageSectionsFragment},
   ${seoFragment}
 }`
@@ -335,6 +337,8 @@ export const networkAdvisorsDirectoryPageQuery = `*[_id == "networkAdvisorsDirec
   directoryCtaBody,
   directoryCtaPrimaryLabel,
   directoryCtaPrimaryHref,
+  directoryCtaSecondaryLabel,
+  directoryCtaSecondaryHref,
   ${seoFragment}
 }`
 
@@ -349,6 +353,7 @@ export const networkInvestorsPageQuery = `*[_id == "networkInvestorsPage"][0]{
   benefitsBullets,
   ${networkWhyFragment},
   ${networkCtaFragment},
+  ${pageSectionsFragment},
   ${seoFragment}
 }`
 
@@ -574,6 +579,7 @@ export const aboutPageQuery = `*[_id == "aboutPage"][0]{
   ctaFounderHref,
   ctaTeamLabel,
   ctaTeamHref,
+  ${pageSectionsFragment},
   ${seoFragment}
 }`;
 
@@ -589,6 +595,7 @@ export const faqPageQuery = `*[_id == "faqPage"][0]{
   bottomBody,
   bottomCtaLabel,
   bottomCtaPath,
+  ${pageSectionsFragment},
   ${seoFragment}
 }`;
 
@@ -785,6 +792,7 @@ export const notFoundQuery = `*[_id == "notFoundPage"][0]{
   title,
   message,
   ctaLabel,
+  iconKey,
   ${seoFragment}
 }`;
 
@@ -917,6 +925,7 @@ export const paymentPageQuery = `*[_id == "paymentPage"][0]{
   "welcomeSplashBackgroundSrc": coalesce(welcomeSplashBackground.asset->url, welcomeSplashBackgroundSrc),
   "welcomeSplashLogoSrc": coalesce(welcomeSplashLogo.asset->url, welcomeSplashLogoSrc),
   welcomeSplashDurationSeconds,
+  ${pageSectionsFragment},
   ${seoFragment}
 }`;
 
@@ -925,10 +934,17 @@ export const openRolesQuery = `*[_type == "openRole" && !(_id in path("drafts.**
   title,
   location,
   employmentType,
+  excerpt,
   description${portableRichTextBlocksFragment},
   responsibilities,
   applyButtonLabel,
   applyButtonUrl,
+  roleCtaTitle,
+  roleCtaBody,
+  roleCtaPrimaryLabel,
+  roleCtaPrimaryHref,
+  roleCtaSecondaryLabel,
+  roleCtaSecondaryHref,
   "linkedInApplyUrl": coalesce(applyButtonUrl, linkedInApplyUrl)
 }`
 
@@ -960,6 +976,7 @@ export const careersPageQuery = `*[_id == "careersPage"][0]{
     iconKey,
     tooltip
   },
+  ${pageSectionsFragment},
   ${seoFragment}
 }`
 

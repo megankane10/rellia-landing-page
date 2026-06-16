@@ -13,7 +13,7 @@ import { DEFAULT_HOME_PAGE } from "@shared/cms/defaults"
 import type { HomePathsCard } from "@shared/cms/types"
 import { hasCmsString, pickCmsPortableText, pickRawOrMergedString } from "@shared/cms/cmsFieldUtils"
 import NetworkMetricsSection from "@/components/NetworkMetricsSection"
-import { PILL_ON_IMAGE_BLUR_CLASS } from "@/components/PillTag"
+import { PILL_ON_PATH_CARD_BLUR_CLASS } from "@/components/PillTag"
 import { cmsCleanText, cmsDisplayText, isVisualEditingPreview } from "@/lib/cmsStega"
 
 /** Layered soft blurs — disabled for solid white section background */
@@ -193,7 +193,7 @@ export default function PathsSection() {
             variants={headingContainerVariants}
             initial="hidden"
             animate={isInView ? "visible" : "hidden"}
-            className="relative z-10 flex flex-wrap justify-center gap-x-[0.22em] gap-y-2 text-balance font-host-grotesk text-3xl font-semibold leading-tight tracking-tight text-rellia-teal md:text-[44px] md:leading-[1.15]"
+            className="relative z-10 flex flex-wrap justify-center gap-x-[0.22em] gap-y-2 text-balance font-host-grotesk text-2xl font-semibold leading-tight tracking-tight text-rellia-teal md:text-[44px] md:leading-[1.15]"
           >
             {previewMode ? (
               cmsDisplayText(pathsTitleRaw)
@@ -262,7 +262,7 @@ export default function PathsSection() {
                       aria-hidden
                       className="pointer-events-none absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-black/35 to-transparent"
                     />
-                    <div className={cn("absolute right-3 top-3 inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-white sm:right-4 sm:top-4", PILL_ON_IMAGE_BLUR_CLASS)}>
+                    <div className={cn("absolute right-3 top-3 inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-white sm:right-4 sm:top-4", PILL_ON_PATH_CARD_BLUR_CLASS)}>
                       <Icon className="h-3.5 w-3.5 shrink-0 text-white" aria-hidden />
                       {displayCardField(cmsCard?.tagLabel, card.tagLabel)}
                     </div>

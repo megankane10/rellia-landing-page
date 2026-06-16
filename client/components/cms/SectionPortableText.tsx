@@ -19,8 +19,8 @@ export const SectionPortableText = ({ value, variant, tone, className }: Section
 
   const headingClass =
     tone === "light"
-      ? "font-host-grotesk text-3xl font-semibold leading-tight tracking-tight text-white md:text-[40px]"
-      : "font-host-grotesk text-3xl font-bold leading-tight tracking-tight text-black md:text-4xl"
+      ? "font-host-grotesk text-2xl font-semibold leading-tight tracking-tight text-white md:text-[32px] lg:text-[36px]"
+      : "font-host-grotesk text-2xl font-bold leading-tight tracking-tight text-black md:text-[32px] lg:text-[36px]"
 
   const subheadingClass =
     tone === "light"

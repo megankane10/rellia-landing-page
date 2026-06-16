@@ -13,13 +13,14 @@ import {
   buildAlumniProfileSeoTitle,
   buildPageUrl,
   clampMetaDescription,
-  resolveShareOgImageUrl,
+  resolveShareOgImage,
 } from "@/config/seo";
 import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo";
 import PageSocialHelmet from "@/components/seo/PageSocialHelmet";
 import { useAlumniCompanies } from "@/hooks/useCmsDocuments";
 import { isCmsQueryLoading } from "@/lib/cmsQueryState";
-import CmsPageLoadingShell from "@/components/cms/CmsPageLoadingShell";
+import ScrollReveal from "@/components/ScrollReveal"
+import { CmsProfileBodySkeleton } from "@/components/cms/CmsPageSkeletons"
 import { isSanityConfigured } from "@/lib/sanity";
 import ImageExpandModal from "@/components/ImageExpandModal";
 import { PortableRichText } from "@/components/PortableRichText";
@@ -50,10 +51,12 @@ export default function FounderProfile() {
   const [activeImage, setActiveImage] = useState<{ src: string; alt: string } | null>(null);
   const [hasRelatedProfiles, setHasRelatedProfiles] = useState(false);
 
+  const founderOgImage = active ? resolveShareOgImage(active.logoSrc, { landscape: true, contain: true }) : undefined
+
   useApplyCmsSeo(null, active ? {
     title: buildAlumniProfileSeoTitle(active.logoName),
     description: clampMetaDescription(active.shortDescription),
-    ogImage: resolveShareOgImageUrl(active.logoSrc),
+    ogImage: founderOgImage?.url,
   } : undefined);
 
   useEffect(() => {
@@ -63,7 +66,26 @@ export default function FounderProfile() {
   }, [id]);
 
   if (isSanityConfigured() && isCmsQueryLoading(companiesQuery)) {
-    return <CmsPageLoadingShell />;
+    return (
+      <div className="min-h-screen overflow-x-clip bg-white font-host-grotesk">
+        <Navbar forceSolid />
+        <main id="main-content" className="pt-24 md:pt-28">
+          <div className="mx-auto max-w-[1300px] px-6 md:px-10">
+            <ScrollReveal className="mb-8">
+              <Link
+                to="/founders/alumni"
+                replace
+                className="inline-flex items-center gap-2 font-host-grotesk text-sm font-bold text-rellia-teal hover:underline hover:underline-offset-4"
+              >
+                <ArrowLeft className="h-4 w-4" /> Back to Alumni List
+              </Link>
+            </ScrollReveal>
+            <CmsProfileBodySkeleton variant="founder" />
+          </div>
+        </main>
+        <Footer />
+      </div>
+    )
   }
 
   if (!active) return <NotFound />;
@@ -84,7 +106,9 @@ export default function FounderProfile() {
         title={buildAlumniProfileSeoTitle(active.logoName)}
         description={clampMetaDescription(active.shortDescription)}
         canonical={canonicalUrl}
-        ogImage={resolveShareOgImageUrl(active.logoSrc)}
+        ogImage={founderOgImage?.url}
+        ogImageWidth={founderOgImage?.width}
+        ogImageHeight={founderOgImage?.height}
       />
       <Navbar forceSolid />
 
@@ -170,7 +194,7 @@ export default function FounderProfile() {
                   <ProfileSocialLinks
                     links={(active as { socialLinks?: Array<{ platform?: string; label?: string; url?: string }> }).socialLinks}
                     email={(active as { email?: string }).email}
-                    comfortableTouch
+                    size="comfortable"
                   />
                   <ShareCopyLinkButton
                     onCopy={() => navigator.clipboard.writeText(canonicalUrl)}
@@ -228,10 +252,9 @@ export default function FounderProfile() {
                         <ProfileSocialLinks
                           links={Array.isArray(f.socialLinks) ? f.socialLinks : []}
                           email={(f as { email?: string }).email}
-                          iconClassName="h-4 w-4 md:h-3.5 md:w-3.5"
                           className="shrink-0 gap-2"
                           showTooltips={false}
-                          comfortableTouch
+                          size="compact"
                         />
                       </div>
                     )

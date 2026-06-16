@@ -130,7 +130,13 @@ export const networkCtaFields = [
   defineField({name: 'ctaBody', title: 'CTA body', type: 'text', rows: 2, group: 'content'}),
   defineField({name: 'ctaPrimaryLabel', title: 'Primary button label', type: 'string', group: 'content'}),
   defineField({name: 'ctaPrimaryHref', title: 'Primary button link', type: 'string', group: 'content'}),
-  defineField({name: 'ctaSecondaryLabel', title: 'Secondary button label', type: 'string', group: 'content'}),
+  defineField({
+    name: 'ctaSecondaryLabel',
+    title: 'Secondary button label',
+    type: 'string',
+    description: 'Optional. Secondary button is hidden unless both label and link are filled in.',
+    group: 'content',
+  }),
   defineField({name: 'ctaSecondaryHref', title: 'Secondary button link', type: 'string', group: 'content'}),
 ]
 

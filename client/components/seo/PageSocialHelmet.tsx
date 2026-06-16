@@ -1,5 +1,9 @@
 import { Helmet } from "react-helmet-async"
-import { RELLIA_SOCIAL_THEME_COLOR } from "@/config/seo"
+import {
+  OG_IMAGE_LANDSCAPE,
+  RELLIA_SOCIAL_THEME_COLOR,
+  SOCIAL_EMBED_ICON_FALLBACK_SRC,
+} from "@/config/seo"
 
 export type PageSocialHelmetProps = {
   title: string
@@ -22,8 +26,18 @@ const PageSocialHelmet = ({
   ogImageHeight,
 }: PageSocialHelmetProps) => {
   const includeImage = Boolean(ogImage?.trim())
-  const width = ogImageWidth
-  const height = ogImageHeight
+  const resolvedDimensions = (() => {
+    if (typeof ogImageWidth === "number" && typeof ogImageHeight === "number") {
+      return { width: ogImageWidth, height: ogImageHeight }
+    }
+    if (!includeImage) return { width: undefined, height: undefined }
+    if (ogImage?.includes(SOCIAL_EMBED_ICON_FALLBACK_SRC)) {
+      return { width: 512, height: 512 }
+    }
+    return OG_IMAGE_LANDSCAPE
+  })()
+  const width = resolvedDimensions.width
+  const height = resolvedDimensions.height
   const includeDimensions = typeof width === "number" && typeof height === "number"
 
   return (

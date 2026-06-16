@@ -43,7 +43,6 @@ import {
   createPowerOfPlayProfileBody,
   createWebsiteLaunchStoryBody,
   DUMMY_ADVISOR,
-  DUMMY_OPEN_ROLE,
   POWER_OF_PLAY_ALUMNI,
   PRIORITY_MODAL_SEED,
   PROGRAM_STATIC_BLOCKS_BY_SLUG,
@@ -1216,28 +1215,15 @@ async function main() {
       seo: seoForRoute("/about"),
     },
   })
-  const existingOpenRoleIds = await client.fetch<string[]>(`*[_type == "openRole"]._id`)
-  for (const id of existingOpenRoleIds) {
+  const dummyOpenRoleIds = [
+    "openRole.dummy-placeholder-role",
+    "openRole.dummy-community-lead",
+    "openRole.dummy-operations-coordinator",
+  ]
+  for (const id of dummyOpenRoleIds) {
     mutations.push({ delete: { id } })
-    if (id.startsWith("drafts.")) continue
     mutations.push({ delete: { id: `drafts.${id}` } })
   }
-
-  mutations.push({
-    createOrReplace: {
-      _id: `openRole.${DUMMY_OPEN_ROLE.id}`,
-      _type: "openRole",
-      roleId: { _type: "slug", current: DUMMY_OPEN_ROLE.id },
-      title: DUMMY_OPEN_ROLE.title,
-      location: DUMMY_OPEN_ROLE.location,
-      employmentType: DUMMY_OPEN_ROLE.employmentType,
-      description: DUMMY_OPEN_ROLE.description,
-      responsibilities: DUMMY_OPEN_ROLE.responsibilities,
-      applyButtonLabel: DUMMY_OPEN_ROLE.applyButtonLabel,
-      applyButtonUrl: DUMMY_OPEN_ROLE.applyButtonUrl,
-      sortOrder: 0,
-    },
-  })
 
   mutations.push({
     createOrReplace: {

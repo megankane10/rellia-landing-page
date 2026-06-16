@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { PAGE_HEADER_TITLE_SIZE_CLASS } from "@/components/PageHeader";
 import NetworkEyebrow from "@/components/network/NetworkEyebrow";
-import { PILL_ON_IMAGE_BLUR_CLASS } from "@/components/PillTag";
+import { PILL_ON_PATH_CARD_BLUR_CLASS } from "@/components/PillTag";
 import SectionHeading from "@/components/SectionHeading";
 import { cmsDisplayText, cmsDisplayTextOr } from "@/lib/cmsStega";
 import MembershipPathTimeline from "@/components/MembershipPathTimeline";
@@ -9,7 +9,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import LogoMarquee from "@/components/LogoMarquee";
 import RelliaAction from "@/components/RelliaAction";
-import RelliaCta from "@/components/RelliaCta";
+import RelliaCta, { optionalCtaAction } from "@/components/RelliaCta";
 import { SectionsRenderer } from "@/components/cms/PageRenderer";
 import { relliaTealGlassCardClass } from "@/lib/relliaTealGlassCard";
 import { cn } from "@/lib/utils";
@@ -572,7 +572,7 @@ function EngageTealBand({ content }: { content: NetworkFoundersPageContent }) {
       <div className="relative z-10 mx-auto max-w-[1300px]">
         <ScrollReveal>
           <div className="mb-8 md:mb-10">
-            <h2 className="mt-5 font-host-grotesk text-2xl font-semibold leading-tight tracking-tight text-rellia-teal md:text-[32px]">
+            <h2 className="mt-5 font-host-grotesk text-2xl font-semibold leading-tight tracking-tight text-rellia-teal md:text-[32px] lg:text-[36px]">
               {content.engageTitle ?? "How to plug in this week"}
             </h2>
             <p className="mt-4 max-w-2xl font-urbanist text-base font-medium leading-relaxed text-black/80 md:text-lg">
@@ -672,12 +672,12 @@ function JourneySplitSection({ content }: { content: NetworkFoundersPageContent 
     <section className="w-full overflow-hidden border-t border-black/[0.06] bg-white px-6 py-16 md:px-10 md:py-24">
       <div className="mx-auto max-w-[1300px]">
         <ScrollReveal variant="ctaReveal">
-          <h2 className="w-full font-host-grotesk text-2xl font-semibold leading-tight tracking-tight text-rellia-teal md:text-[32px]">
+          <h2 className="w-full font-host-grotesk text-2xl font-semibold leading-tight tracking-tight text-rellia-teal md:text-[32px] lg:text-[36px]">
             {cmsDisplayTextOr(content.journeyTitle, "Where Rellia meets your trajectory")}
           </h2>
         </ScrollReveal>
 
-        <div className="mt-6 grid w-full grid-cols-1 items-center gap-4 md:grid-cols-3">
+        <div className="mt-10 grid w-full grid-cols-1 items-center gap-4 md:mt-12 md:grid-cols-3">
           {outsideSteps.map((m, idx) => {
             const Icon = resolveJourneyIcon(m)
             return (
@@ -755,7 +755,7 @@ function JourneySplitSection({ content }: { content: NetworkFoundersPageContent 
               >
                 <article
                   className={cn(
-                    "flex h-full min-h-[220px] flex-col items-start rounded-2xl border border-rellia-teal/80 bg-rellia-teal p-6 text-left transition duration-300 hover:border-rellia-mint/55 hover:shadow-md md:min-h-[260px]",
+                    "flex h-full flex-col items-start rounded-2xl border border-rellia-teal/80 bg-rellia-teal p-6 text-left transition duration-300 hover:border-rellia-mint/55 hover:shadow-md",
                   )}
                 >
                   <span className="mb-4 inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-rellia-mint text-rellia-teal shadow-sm">
@@ -764,7 +764,7 @@ function JourneySplitSection({ content }: { content: NetworkFoundersPageContent 
                   <h4 className="font-host-grotesk text-base font-semibold leading-snug text-white">
                     {cmsDisplayText(m.label)}
                   </h4>
-                  <p className="mt-2 flex-1 font-urbanist text-sm leading-relaxed text-white/80">
+                  <p className="mt-2 font-urbanist text-sm leading-relaxed text-white/80">
                     {cmsDisplayText(m.detail)}
                   </p>
                 </article>
@@ -840,8 +840,13 @@ function ExploreNetworkSection({ content }: { content: NetworkFoundersPageConten
                       aria-hidden
                       className="pointer-events-none absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-black/35 to-transparent"
                     />
-                    <div className={cn("absolute right-4 top-4 inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-white", PILL_ON_IMAGE_BLUR_CLASS)}>
-                      <TagIcon className="h-3.5 w-3.5 shrink-0 text-white" aria-hidden />
+                    <div
+                      className={cn(
+                        "absolute right-4 top-4 inline-flex items-center gap-2.5 rounded-full px-4 py-2 text-sm font-semibold uppercase tracking-wide text-white",
+                        PILL_ON_PATH_CARD_BLUR_CLASS,
+                      )}
+                    >
+                      <TagIcon className="h-4 w-4 shrink-0 text-white" aria-hidden />
                       {card.badge ?? (card.roleId === "founder" ? "Alumni" : tag.label)}
                     </div>
 
@@ -938,7 +943,7 @@ export default function Founders() {
               "Apply once—we'll follow up with fit, onboarding, and the fastest path into programs and intros."
             }
             primary={{ label: content.ctaPrimaryLabel ?? "Apply to join", to: content.ctaPrimaryHref ?? "/apply" }}
-            secondary={{ label: content.ctaSecondaryLabel ?? "View programs", to: content.ctaSecondaryHref ?? "/programs" }}
+            secondary={optionalCtaAction(content.ctaSecondaryLabel, content.ctaSecondaryHref)}
           />
         </main>
 

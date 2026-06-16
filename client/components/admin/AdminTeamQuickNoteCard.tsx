@@ -19,6 +19,7 @@ import {
 } from "@/lib/adminUserProfile"
 import { formatAdminRelativeAgo } from "@/lib/adminSubmissionStatus"
 import AdminCompactEmptyState from "@/components/admin/AdminCompactEmptyState"
+import { adminHighlightedSurfaceClass } from "@/components/admin/adminThemeClasses"
 import TeamNoteBlocksView from "@/components/admin/TeamNoteBlocksView"
 import TeamNoteMessageField from "@/components/admin/TeamNoteMessageField"
 import TeamNoteReactionButton from "@/components/admin/TeamNoteReactionButton"
@@ -327,7 +328,7 @@ const AdminTeamQuickNoteCard = ({ className, members = [] }: AdminTeamQuickNoteC
         <CardHeader className="pb-3">
           <div className="space-y-1.5">
             <div className="flex items-center justify-between gap-3">
-              <CardTitle className="flex min-w-0 items-center gap-2.5 font-host-grotesk text-lg">
+              <CardTitle className="flex min-w-0 items-center gap-2.5 font-host-grotesk text-lg text-foreground dark:text-white">
                 <Megaphone className="h-5 w-5 shrink-0 text-rellia-teal" aria-hidden />
                 Team bulletin
               </CardTitle>
@@ -336,7 +337,7 @@ const AdminTeamQuickNoteCard = ({ className, members = [] }: AdminTeamQuickNoteC
                   type="button"
                   variant="outline"
                   size="sm"
-                  className="h-8 shrink-0 rounded-full border-rellia-teal/25 px-3 text-rellia-teal hover:bg-rellia-mint/10"
+                  className="h-8 shrink-0 rounded-full border-rellia-teal/25 px-3 text-rellia-teal hover:bg-rellia-mint/10 dark:border-rellia-mint/25 dark:text-rellia-mint dark:hover:bg-rellia-mint/10"
                   onClick={handleStartEdit}
                 >
                   <Pencil className="mr-1.5 h-3.5 w-3.5" aria-hidden />
@@ -359,7 +360,7 @@ const AdminTeamQuickNoteCard = ({ className, members = [] }: AdminTeamQuickNoteC
               Supabase to enable the team bulletin board.
             </p>
           ) : editing ? (
-            <div className="space-y-4 rounded-2xl border border-rellia-teal/15 bg-rellia-mint/5 p-4">
+            <div className={cn("space-y-4 rounded-2xl p-4", adminHighlightedSurfaceClass)}>
               <div>
                 <p className="mb-2 flex items-center gap-1.5 font-urbanist text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                   <Sticker className="h-3.5 w-3.5" aria-hidden />
@@ -374,7 +375,7 @@ const AdminTeamQuickNoteCard = ({ className, members = [] }: AdminTeamQuickNoteC
                         type="button"
                         onClick={() => handleToggleSticker(emoji)}
                         className={cn(
-                          "inline-flex h-9 w-9 items-center justify-center rounded-xl border bg-white text-lg transition-colors",
+                          "inline-flex h-9 w-9 items-center justify-center rounded-xl border bg-card text-lg transition-colors",
                           "hover:border-rellia-teal/30 hover:bg-rellia-mint/15",
                           "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-teal/40",
                           selected
@@ -483,7 +484,7 @@ const AdminTeamQuickNoteCard = ({ className, members = [] }: AdminTeamQuickNoteC
                 <Collapsible open={previewOpen} onOpenChange={setPreviewOpen}>
                   <CollapsibleTrigger
                     type="button"
-                    className="flex w-full items-center justify-between gap-2 rounded-xl border border-rellia-teal/15 bg-rellia-mint/10 px-3 py-2.5 font-urbanist text-sm font-semibold text-rellia-teal transition-colors hover:bg-rellia-mint/15 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-teal/40"
+                    className="flex w-full items-center justify-between gap-2 rounded-xl border border-rellia-teal/15 bg-rellia-mint/10 px-3 py-2.5 font-urbanist text-sm font-semibold text-rellia-teal transition-colors hover:bg-rellia-mint/15 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-teal/40 dark:border-rellia-mint/25 dark:bg-rellia-mint/10 dark:text-rellia-mint dark:hover:bg-rellia-mint/15"
                     aria-expanded={previewOpen}
                   >
                     Preview note
@@ -493,7 +494,7 @@ const AdminTeamQuickNoteCard = ({ className, members = [] }: AdminTeamQuickNoteC
                     />
                   </CollapsibleTrigger>
                   <CollapsibleContent className="pt-3">
-                    <div className="rounded-xl border border-rellia-teal/15 bg-gradient-to-br from-rellia-greyTeal/45 via-rellia-mint/10 to-white p-4 shadow-sm ring-1 ring-rellia-teal/8">
+                    <div className={cn("rounded-xl p-4", adminHighlightedSurfaceClass)}>
                       <TeamNoteBlocksView blocks={previewBlocks} preview />
                     </div>
                   </CollapsibleContent>
@@ -528,17 +529,17 @@ const AdminTeamQuickNoteCard = ({ className, members = [] }: AdminTeamQuickNoteC
                 className="pointer-events-none absolute inset-0 z-30 overflow-visible"
                 aria-hidden
               />
-              <div className="rounded-2xl border border-rellia-teal/18 bg-gradient-to-br from-rellia-greyTeal/50 via-rellia-mint/15 to-white p-4 shadow-[0_8px_28px_-18px_rgba(13,53,64,0.28)] ring-1 ring-rellia-teal/10">
+              <div className={cn("rounded-2xl p-4", adminHighlightedSurfaceClass)}>
                 <TeamNoteBlocksView blocks={note.blocks} />
                 <div className="mt-4 flex items-center gap-3">
-                  <Avatar className="h-10 w-10 shrink-0 border border-border/60">
+                  <Avatar className="h-10 w-10 shrink-0 border border-border/60 dark:border-rellia-mint/20">
                     {publisherAvatarUrl ? <AvatarImage src={publisherAvatarUrl} alt="" /> : null}
-                    <AvatarFallback className="bg-rellia-mint/25 font-urbanist text-xs font-semibold text-rellia-teal">
+                    <AvatarFallback className="bg-rellia-mint/25 font-urbanist text-xs font-semibold text-rellia-teal dark:text-rellia-mint">
                       {publisherInitialsLabel}
                     </AvatarFallback>
                   </Avatar>
-                  <p className="min-w-0 font-urbanist text-sm text-muted-foreground">
-                    <span className="font-semibold text-foreground/85">{publisherName}</span>
+                  <p className="min-w-0 font-urbanist text-sm text-muted-foreground dark:text-slate-300">
+                    <span className="font-semibold text-foreground/85 dark:text-white">{publisherName}</span>
                     {note.publishedAt ? (
                       <>
                         <span className="mx-1.5">·</span>
@@ -571,7 +572,7 @@ const AdminTeamQuickNoteCard = ({ className, members = [] }: AdminTeamQuickNoteC
                           "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-teal/40",
                           active
                             ? "border-rellia-teal/35 bg-rellia-mint/25 text-rellia-teal"
-                            : "border-border bg-white text-foreground hover:border-rellia-teal/25 hover:bg-rellia-mint/10",
+                            : "border-border bg-card text-foreground hover:border-rellia-teal/25 hover:bg-rellia-mint/10",
                         )}
                       />
                     )

@@ -5,7 +5,7 @@ import NotFound from "@/pages/NotFound"
 import { SectionsRenderer } from "@/components/cms/PageRenderer"
 import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo"
 import type { CmsPageSection, CmsSingletonPageContent } from "@shared/cms/types"
-import CmsPageLoadingShell from "@/components/cms/CmsPageLoadingShell"
+import { CmsModularSectionsSkeleton } from "@/components/cms/CmsPageSkeletons"
 import { isCmsQueryLoading, shouldShowCmsEmptyState } from "@/lib/cmsQueryState"
 import type { UseQueryResult } from "@tanstack/react-query"
 
@@ -32,7 +32,17 @@ export default function NetworkCmsPage({
 }: NetworkCmsPageProps) {
   useApplyCmsSeo(page?.seo)
 
-  if (isCmsQueryLoading(query)) return <CmsPageLoadingShell />
+  if (isCmsQueryLoading(query)) {
+    return (
+      <div className="min-h-screen overflow-x-hidden bg-white font-host-grotesk">
+        <Navbar forceSolid />
+        <main id="main-content" className="pt-[72px] md:pt-[86px]">
+          <CmsModularSectionsSkeleton />
+        </main>
+        <Footer />
+      </div>
+    )
+  }
 
   if (
     shouldShowCmsEmptyState(query) &&
@@ -41,7 +51,17 @@ export default function NetworkCmsPage({
     return <NotFound />
   }
 
-  if (!page) return <CmsPageLoadingShell />
+  if (!page) {
+    return (
+      <div className="min-h-screen overflow-x-hidden bg-white font-host-grotesk">
+        <Navbar forceSolid />
+        <main id="main-content" className="pt-[72px] md:pt-[86px]">
+          <CmsModularSectionsSkeleton />
+        </main>
+        <Footer />
+      </div>
+    )
+  }
 
   const sections = page.sections ?? []
   const afterFirstHero = renderExtras?.(page) ?? children

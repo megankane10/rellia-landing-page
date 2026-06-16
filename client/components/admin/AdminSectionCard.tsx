@@ -1,7 +1,8 @@
 import type { ReactNode } from "react"
+import { adminCardClass, adminCardDividerClass, adminCardTitleClass, adminMutedTextClass } from "@/components/admin/adminThemeClasses"
 import { cn } from "@/lib/utils"
 
-export const ADMIN_CARD = "rounded-2xl border border-black/[0.06] bg-white"
+export const ADMIN_CARD = adminCardClass
 
 type AdminSectionCardProps = {
   title: string
@@ -19,11 +20,15 @@ const AdminSectionCard = ({
   headerActions,
 }: AdminSectionCardProps) => (
   <section className={cn(ADMIN_CARD, "overflow-hidden", className)}>
-    <div className="border-b border-black/[0.06] px-5 py-4 md:px-6">
+    <div className={cn("border-b px-5 py-4 md:px-6", adminCardDividerClass)}>
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h2 className="font-host-grotesk text-lg font-semibold tracking-tight text-black">{title}</h2>
-          {subtitle ? <p className="mt-1 font-urbanist text-sm text-black/55">{subtitle}</p> : null}
+          <h2 className={cn("text-lg tracking-tight", adminCardTitleClass)}>
+            {title}
+          </h2>
+          {subtitle ? (
+            <p className={cn("mt-1 font-urbanist text-sm", adminMutedTextClass)}>{subtitle}</p>
+          ) : null}
         </div>
         {headerActions ? <div className="shrink-0">{headerActions}</div> : null}
       </div>

@@ -55,7 +55,7 @@ import { useEventBySlug } from "@/hooks/useCmsDocuments"
 import { resolveEventCardImageSrc } from "@shared/cms/itemCardImage"
 import { allowCmsSeedFallbacks } from "@/lib/deploymentEnv"
 import { isCmsQueryLoading, shouldShowCmsEmptyState } from "@/lib/cmsQueryState"
-import CmsPageLoadingShell from "@/components/cms/CmsPageLoadingShell"
+import { CmsEventDetailBodySkeleton } from "@/components/cms/CmsPageSkeletons"
 import { isSanityConfigured } from "@/lib/sanity"
 import RelatedEvents from "@/components/related/RelatedEvents"
 
@@ -64,9 +64,9 @@ const eventDetailBackToEventsLinkClassName =
 
 const EventDetailBackToEventsLink = ({ variant = "footer" }: { variant?: "top" | "footer" }) => {
   const link = (
-    <Link to="/events" className={eventDetailBackToEventsLinkClassName} aria-label="Back to all events">
+    <Link to="/events" className={eventDetailBackToEventsLinkClassName} aria-label="Back to events">
       <ChevronLeft className="h-4 w-4 shrink-0" aria-hidden />
-      All events
+      Back to events
     </Link>
   )
   if (variant === "top") {
@@ -156,7 +156,7 @@ export default function EventDetail() {
     const eventSlugPath = getProgramsEventSlug(event)
     const pagePath = `/events/${eventSlugPath}`
     const resolvedOg = event.imageSrc
-      ? resolveSocialOgImage(event.imageSrc, undefined, { square: true })
+      ? resolveSocialOgImage(event.imageSrc, undefined, { landscape: true })
       : undefined
     return {
       pageTitle,
@@ -189,7 +189,22 @@ export default function EventDetail() {
   }
 
   if (isSanityConfigured() && isCmsQueryLoading(eventQuery)) {
-    return <CmsPageLoadingShell />
+    return (
+      <div className="flex min-h-screen flex-col bg-white font-host-grotesk overflow-x-hidden">
+        <Navbar />
+        <main id="main-content" className="flex-1">
+          <div className="px-6 pt-24 md:px-10 md:pt-28">
+            <div className="mx-auto max-w-[1300px]">
+              <ScrollReveal>
+                <EventDetailBackToEventsLink variant="top" />
+              </ScrollReveal>
+            </div>
+          </div>
+          <CmsEventDetailBodySkeleton withTopOffset={false} />
+        </main>
+        <Footer />
+      </div>
+    )
   }
 
   if (!match) {
@@ -325,6 +340,9 @@ export default function EventDetail() {
           <div className="relative z-10 mx-auto max-w-[1300px] px-6 md:px-10">
             <div className="mx-auto w-full max-w-[1100px]">
               <ScrollReveal>
+                <div className="mb-8">
+                  <EventDetailBackToEventsLink variant="top" />
+                </div>
                 <div className="flex flex-col gap-8 lg:flex-row lg:items-start lg:gap-10">
                   <div className="w-full max-w-[320px] shrink-0 self-start sm:max-w-[288px] md:max-w-[340px] lg:max-w-[380px]">
                     <div
@@ -497,9 +515,9 @@ export default function EventDetail() {
                   </div>
                 </div>
 
-                <div className="h-8 md:h-10" aria-hidden />
+                <div className="h-4 md:h-5" aria-hidden />
 
-                <div className="mt-8 flex w-full flex-col items-stretch gap-4">
+                <div className="mt-5 flex w-full flex-col items-stretch gap-3 md:mt-6">
                   <p className="font-host-grotesk text-[12px] font-semibold uppercase tracking-[0.14em] text-black/55">
                     Share this event
                   </p>
@@ -559,12 +577,11 @@ export default function EventDetail() {
               <motion.div key="content-view" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.3 }}>
                 {isPast ? (
                   <div className="mx-auto flex w-full max-w-[1300px] flex-col gap-8 px-6 py-10 md:px-10 md:py-14 md:gap-10">
-                    <EventDetailBackToEventsLink variant="top" />
               {hasDetailBodyContent ? (
                 <ScrollReveal>
                   <div className="mx-auto w-full max-w-[900px]">
                     {detailSectionHeading ? (
-                      <h2 className="mb-6 font-host-grotesk text-2xl font-semibold tracking-tight text-black md:mb-8 md:text-[32px]">
+                      <h2 className="mb-6 font-host-grotesk text-2xl font-semibold tracking-tight text-black md:mb-8 md:text-[32px] lg:text-[36px]">
                         {detailSectionHeading}
                       </h2>
                     ) : null}
@@ -616,12 +633,11 @@ export default function EventDetail() {
                 ) : (
                   <div className="mx-auto w-full max-w-[1300px] px-6 py-10 md:px-10 md:py-14">
                     <div className="mx-auto flex w-full max-w-[900px] flex-col gap-8 md:gap-10">
-                      <EventDetailBackToEventsLink variant="top" />
                 {hasDetailBodyContent ? (
                   <ScrollReveal>
                     <div className="w-full">
                       {detailSectionHeading ? (
-                        <h2 className="mb-6 font-host-grotesk text-2xl font-semibold tracking-tight text-black md:mb-8 md:text-[32px]">
+                        <h2 className="mb-6 font-host-grotesk text-2xl font-semibold tracking-tight text-black md:mb-8 md:text-[32px] lg:text-[36px]">
                           {detailSectionHeading}
                         </h2>
                       ) : null}

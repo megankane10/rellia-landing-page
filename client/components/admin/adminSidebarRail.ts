@@ -59,7 +59,6 @@ export const adminSidebarNavButtonClass = cn(
   "group-data-[collapsible=icon]:!size-11 group-data-[collapsible=icon]:!min-h-11 group-data-[collapsible=icon]:!max-h-11 group-data-[collapsible=icon]:!w-full group-data-[collapsible=icon]:!p-0",
   "[&_svg]:size-[1.125rem] [&_svg]:transition-transform [&_svg]:duration-150",
   "active:[&_svg]:scale-95 data-[active=true]:[&_svg]:text-rellia-mint",
-  "data-[active=true]:[&_.attention-badge-count]:!text-white",
 )
 
 export const adminSidebarAccountButtonClass = cn(
@@ -106,4 +105,36 @@ export const adminSidebarFooterClass = cn(
 export const adminSidebarContentClass = cn(
   "flex-1 overflow-x-hidden pb-6 pt-6",
   adminSidebarRailPx,
+)
+
+/** Dark popover / dropdown surface — slightly elevated from sidebar */
+export const adminDarkMenuContentClass = cn(
+  "z-[10002] overflow-hidden rounded-2xl border border-slate-700/65 bg-slate-900 p-1.5 text-slate-200 shadow-2xl shadow-black/45",
+)
+
+export const adminDarkMenuItemClass = cn(
+  "cursor-pointer rounded-lg px-3 py-2.5 text-sm text-slate-300",
+  "focus:bg-white/10 focus:text-white",
+)
+
+export const adminDarkMenuSeparatorClass = "my-1 bg-slate-800"
+
+/** Dark admin modal chrome — larger radius + lift above the overlay */
+export const adminDarkDialogShellClass = cn(
+  "rounded-[2rem] sm:rounded-[2rem]",
+  "shadow-2xl shadow-black/50",
+)
+
+/** Dark modal surface — slightly lighter than sidebar (slate-950) for contrast */
+export const adminDarkDialogContentClass = cn(
+  "border-slate-700/65 bg-slate-900 text-slate-200",
+  "[&_label]:text-slate-300",
+  "[&_input]:border-slate-700 [&_input]:bg-slate-900 [&_input]:text-white [&_input]:placeholder:text-slate-500",
+  "[&>button.absolute]:text-slate-400 [&>button.absolute]:hover:text-white",
+)
+
+/** Light admin modal chrome — corner radius aligned with profile modals */
+export const adminLightDialogShellClass = cn(
+  "rounded-[2rem] sm:rounded-[2rem]",
+  "border-border/80 shadow-xl shadow-black/12",
 )

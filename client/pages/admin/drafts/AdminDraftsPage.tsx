@@ -7,6 +7,7 @@ import AdminPageReveal from "@/components/admin/AdminPageReveal"
 import AdminDownloadCsvButton from "@/components/admin/AdminDownloadCsvButton"
 import AdminContentQueueList from "@/components/admin/AdminContentQueueList"
 import AdminCompactEmptyState from "@/components/admin/AdminCompactEmptyState"
+import AdminFilterPill from "@/components/admin/AdminFilterPill"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import {
@@ -16,7 +17,7 @@ import {
   isCmsContentEnabled,
 } from "@/lib/adminSanityContent"
 import AdminTipBox from "@/components/admin/AdminTipBox"
-import { cn } from "@/lib/utils"
+import { adminOutlineActionButtonClass } from "@/components/admin/adminThemeClasses"
 
 const PRODUCTION_DATASET = "production" as const
 
@@ -63,7 +64,7 @@ const AdminDraftsPage = () => {
                 { header: "Status", value: (row) => row.status },
               ]}
             />
-            <Button type="button" variant="outline" size="sm" asChild className="rounded-full">
+            <Button type="button" variant="outline" size="sm" asChild className={adminOutlineActionButtonClass}>
               <a href="https://relliahealth.sanity.studio" target="_blank" rel="noopener noreferrer">
                 Open Studio
                 <ExternalLink className="ml-1.5 h-3.5 w-3.5" aria-hidden />
@@ -92,7 +93,7 @@ const AdminDraftsPage = () => {
             storageKey="rellia-admin-drafts-tip-collapsed"
             className="mb-6"
           >
-            <div className="space-y-3 font-urbanist text-sm text-black/75">
+            <div className="space-y-3 font-urbanist text-sm text-muted-foreground">
               <p>
                 This page lists unpublished edits in the <strong>production</strong> Sanity dataset — the same
                 database that powers <strong>www.relliahealth.com</strong>. Saved drafts here are not visible to
@@ -111,34 +112,22 @@ const AdminDraftsPage = () => {
 
           {typeOptions.length > 0 ? (
             <div className="mb-4 flex flex-wrap gap-2" role="group" aria-label="Filter by document type">
-              <button
-                type="button"
+              <AdminFilterPill
+                label="All"
+                count={draftRows.length}
+                isActive={typeFilter === "all"}
                 onClick={() => setTypeFilter("all")}
-                className={cn(
-                  "rounded-full px-3 py-1.5 font-urbanist text-xs transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-                  typeFilter === "all"
-                    ? "bg-rellia-mint/35 text-rellia-teal"
-                    : "bg-muted text-muted-foreground hover:bg-muted/80",
-                )}
-              >
-                All ({draftRows.length})
-              </button>
+              />
               {typeOptions.map((type) => {
                 const count = draftRows.filter((row) => row._type === type).length
                 return (
-                  <button
+                  <AdminFilterPill
                     key={type}
-                    type="button"
+                    label={formatCmsDocumentTypeLabel(type)}
+                    count={count}
+                    isActive={typeFilter === type}
                     onClick={() => setTypeFilter(type)}
-                    className={cn(
-                      "rounded-full px-3 py-1.5 font-urbanist text-xs transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-                      typeFilter === type
-                        ? "bg-rellia-mint/35 text-rellia-teal"
-                        : "bg-muted text-muted-foreground hover:bg-muted/80",
-                    )}
-                  >
-                    {formatCmsDocumentTypeLabel(type)} ({count})
-                  </button>
+                  />
                 )
               })}
             </div>

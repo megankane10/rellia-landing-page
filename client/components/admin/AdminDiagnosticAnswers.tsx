@@ -33,7 +33,7 @@ const AdminDiagnosticAnswers = ({ rawAnswers }: AdminDiagnosticAnswersProps) => 
 
   if (groups.length === 0) {
     return (
-      <p className="font-urbanist text-sm text-black/60">
+      <p className="font-urbanist text-sm text-muted-foreground">
         No per-question responses were saved for this submission.
       </p>
     )
@@ -49,17 +49,17 @@ const AdminDiagnosticAnswers = ({ rawAnswers }: AdminDiagnosticAnswersProps) => 
           <AccordionItem
             key={group.sectionId}
             value={group.sectionId}
-            className="overflow-hidden rounded-xl border border-black/[0.06] bg-rellia-cream/25 px-4"
+            className="overflow-hidden rounded-xl border border-border bg-rellia-cream/25 px-4"
           >
             <AccordionTrigger className="gap-3 py-3 hover:no-underline [&>svg]:shrink-0">
               <span className="flex min-w-0 flex-1 flex-wrap items-center gap-x-2 gap-y-1 text-left">
-                <span className="font-host-grotesk text-sm font-semibold text-black">
+                <span className="font-host-grotesk text-sm font-semibold text-foreground">
                   {group.sectionTitle}
                 </span>
-                <span className="font-urbanist text-xs font-normal text-black/45">
+                <span className="font-urbanist text-xs font-normal text-muted-foreground">
                   ({questionLabel})
                 </span>
-                <span className="font-urbanist text-xs text-black/35" aria-hidden>
+                <span className="font-urbanist text-xs text-muted-foreground/70" aria-hidden>
                   ·
                 </span>
                 <span
@@ -77,20 +77,20 @@ const AdminDiagnosticAnswers = ({ rawAnswers }: AdminDiagnosticAnswersProps) => 
                 {group.items.map((item) => (
                   <li
                     key={`${group.sectionId}-${item.questionIndex}`}
-                    className="rounded-lg border border-black/[0.05] bg-white px-3 py-3"
+                    className="rounded-lg border border-border/60 bg-card px-3 py-3"
                   >
-                    <p className="font-urbanist text-sm font-medium text-black/80">
-                      <span className="text-black/45">Q{item.questionIndex + 1}. </span>
+                    <p className="font-urbanist text-sm font-medium text-foreground">
+                      <span className="text-muted-foreground">Q{item.questionIndex + 1}. </span>
                       {item.questionText}
                     </p>
                     <p className="mt-2 font-host-grotesk text-sm font-semibold text-rellia-teal">
                       {item.selectedLabel}
-                      <span className="ml-2 font-urbanist text-xs font-normal text-black/45">
+                      <span className="ml-2 font-urbanist text-xs font-normal text-muted-foreground">
                         ({item.score}%)
                       </span>
                     </p>
                     {item.selectedDescription ? (
-                      <p className="mt-1 font-urbanist text-sm text-black/60">
+                      <p className="mt-1 font-urbanist text-sm text-muted-foreground">
                         {item.selectedDescription}
                       </p>
                     ) : null}

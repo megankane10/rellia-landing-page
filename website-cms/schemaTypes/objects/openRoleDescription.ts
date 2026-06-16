@@ -1,14 +1,10 @@
-import {defineType} from 'sanity'
-import {
-  portableTextBlockMember,
-  portableTextInlineImageMember,
-  portableTextInlineUrlImageMember,
-} from '../shared/portableTextMembers'
+import {defineArrayMember, defineType} from 'sanity'
+import {portableTextBlockMember} from '../shared/portableTextMembers'
 
-/** Job posting copy — paragraphs, bold, lists, and inline images. */
+/** Job posting copy — paragraphs, lists, block quotes, and quote boxes (no inline images on the live site). */
 export const openRoleDescription = defineType({
   name: 'openRoleDescription',
   title: 'Role description',
   type: 'array',
-  of: [portableTextBlockMember, portableTextInlineImageMember, portableTextInlineUrlImageMember],
+  of: [portableTextBlockMember, defineArrayMember({type: 'portableQuoteBox'})],
 })

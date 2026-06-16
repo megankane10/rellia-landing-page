@@ -1,5 +1,6 @@
 import { Download } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { adminOutlineActionButtonClass } from "@/components/admin/adminThemeClasses"
 import { downloadCsv, type CsvColumn } from "@/lib/downloadCsv"
 import { cn } from "@/lib/utils"
 
@@ -29,7 +30,7 @@ const AdminDownloadCsvButton = <T,>({
       type="button"
       variant="outline"
       size="sm"
-      className={cn("rounded-full font-urbanist", className)}
+      className={cn(adminOutlineActionButtonClass, className)}
       disabled={disabled || rows.length === 0}
       aria-label={label}
       onClick={handleDownload}

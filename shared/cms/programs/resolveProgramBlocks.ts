@@ -2,7 +2,14 @@ import type { ProgramPageIconCard, ProgramTimelineMonth } from "./types"
 
 export type ProgramCmsTimelineWeek = {
   heading?: string
-  points?: string[]
+  points?: Array<
+    | string
+    | {
+        _type?: "programTimelinePoint" | "programTimelineHeading"
+        kind?: "bullet" | "heading"
+        text?: string
+      }
+  >
 }
 
 export type ProgramCmsTimelineStep = {
@@ -81,24 +88,67 @@ const parseLegacyDescription = (description?: string): string[] =>
     .map((line) => line.trim())
     .filter(Boolean)
 
+const normalizeTimelinePoint = (
+  point:
+    | string
+    | {
+        _type?: "programTimelinePoint" | "programTimelineHeading"
+        kind?: "bullet" | "heading"
+        text?: string
+      },
+) => {
+  if (typeof point === "string") {
+    const text = point.trim()
+    return text ? text : null
+  }
+
+  const text = point.text?.trim()
+  if (!text) return null
+  if (point._type === "programTimelineHeading") {
+    return { _type: "programTimelinePoint" as const, kind: "heading" as const, text }
+  }
+  if (point._type === "programTimelinePoint") {
+    const kind = point.kind === "heading" ? ("heading" as const) : ("bullet" as const)
+    return { _type: "programTimelinePoint" as const, kind, text }
+  }
+  return { _type: "programTimelinePoint" as const, kind: "bullet" as const, text }
+}
+
+const timelinePointHasText = (
+  point:
+    | string
+    | {
+        _type?: "programTimelinePoint" | "programTimelineHeading"
+        kind?: "bullet" | "heading"
+        text?: string
+      },
+) => {
+  if (typeof point === "string") return Boolean(point.trim())
+  return Boolean(point.text?.trim())
+}
+
 const normalizeCmsWeeks = (
   weeks: ProgramCmsTimelineWeek[] | undefined,
 ): ProgramTimelineMonth["weeks"] =>
   (weeks ?? [])
     .map((week) => {
-      const points = (week.points ?? []).map((point) => point.trim()).filter(Boolean)
+      const points = (week.points ?? [])
+        .map(normalizeTimelinePoint)
+        .filter((point): point is NonNullable<typeof point> => point !== null)
       if (points.length === 0) return null
 
       const heading = week.heading?.trim()
       if (heading) return { heading, points }
-      if (points.length === 1) return points[0]
+      if (points.length === 1 && typeof points[0] === "string") return points[0]
       return { points }
     })
     .filter((week): week is NonNullable<typeof week> => week !== null)
 
 const hasStructuredTimeline = (steps: ProgramCmsTimelineStep[]) =>
   steps.some((step) =>
-    (step.weeks ?? []).some((week) => (week.points ?? []).some((point) => point.trim())),
+    (step.weeks ?? []).some((week) =>
+      (week.points ?? []).some((point) => timelinePointHasText(point)),
+    ),
   )
 
 const isLegacyTimeline = (steps: ProgramCmsTimelineStep[]) =>

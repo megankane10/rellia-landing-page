@@ -18,7 +18,7 @@ type AdminRecentSignInsCardProps = {
 const AdminRecentSignInsCard = ({ members, loading, className }: AdminRecentSignInsCardProps) => (
   <Card className={cn("min-w-0 overflow-hidden rounded-2xl", className)}>
     <CardHeader className="pb-3">
-      <CardTitle className="flex items-center gap-2.5 font-host-grotesk text-lg">
+      <CardTitle className="flex items-center gap-2.5 font-host-grotesk text-lg text-foreground dark:text-white">
         <LogIn className="h-5 w-5 shrink-0 text-rellia-teal" aria-hidden />
         Recent sign-ins
       </CardTitle>
@@ -54,7 +54,7 @@ const AdminRecentSignInsCard = ({ members, loading, className }: AdminRecentSign
                     {formatAdminDateWithWeekday(signedInAt)}
                   </time>
                   <span className="mx-1.5 text-border">·</span>
-                  <span className="font-medium text-rellia-teal/90">
+                  <span className="font-medium text-rellia-teal/90 dark:text-rellia-mint">
                     {formatAdminRelativeAgo(signedInAt)}
                   </span>
                 </p>

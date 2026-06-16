@@ -1,13 +1,16 @@
 import type { CareersOpenRole, CareersPageContent } from "./cms/types"
 import { normalizeToPortableText } from "./cms/normalizePortableText"
 import { portableTextToPlainText } from "./cms/portableTextPlain"
-import { CAREERS_OPEN_ROLES } from "./careersOpenRoles"
+import { stripPortableTextImages } from "./cms/stripPortableTextImages"
 import { buildMailtoHref, parseMailtoHref } from "./mailto"
 
 /** Legacy seeded role IDs — hidden on production if they still exist in an old dataset. */
 export const PLACEHOLDER_OPEN_ROLE_IDS = new Set([
   "program-operations-manager",
   "community-events-coordinator",
+  "dummy-placeholder-role",
+  "dummy-community-lead",
+  "dummy-operations-coordinator",
 ])
 
 export const normalizeOpenRole = (role: Partial<CareersOpenRole> & { id?: string; roleId?: string }) => {
@@ -16,19 +19,37 @@ export const normalizeOpenRole = (role: Partial<CareersOpenRole> & { id?: string
   const label = typeof role.applyButtonLabel === "string" ? role.applyButtonLabel.trim() : ""
   const url = typeof role.applyButtonUrl === "string" ? role.applyButtonUrl.trim() : ""
 
+  const excerpt = typeof role.excerpt === "string" ? role.excerpt.trim() : ""
+
   return {
     id,
     title: typeof role.title === "string" ? role.title.trim() : "",
     location: typeof role.location === "string" ? role.location.trim() : "",
     employmentType: typeof role.employmentType === "string" ? role.employmentType.trim() : "",
-    description: normalizeToPortableText(role.description),
+    excerpt: excerpt || undefined,
+    description: normalizeToPortableText(stripPortableTextImages(role.description)),
     responsibilities: Array.isArray(role.responsibilities)
       ? role.responsibilities.filter((r): r is string => typeof r === "string" && r.trim() !== "")
       : [],
     applyButtonLabel: label || undefined,
     applyButtonUrl: url || undefined,
+    roleCtaTitle: typeof role.roleCtaTitle === "string" ? role.roleCtaTitle.trim() || undefined : undefined,
+    roleCtaBody: typeof role.roleCtaBody === "string" ? role.roleCtaBody.trim() || undefined : undefined,
+    roleCtaPrimaryLabel:
+      typeof role.roleCtaPrimaryLabel === "string" ? role.roleCtaPrimaryLabel.trim() || undefined : undefined,
+    roleCtaPrimaryHref:
+      typeof role.roleCtaPrimaryHref === "string" ? role.roleCtaPrimaryHref.trim() || undefined : undefined,
+    roleCtaSecondaryLabel:
+      typeof role.roleCtaSecondaryLabel === "string" ? role.roleCtaSecondaryLabel.trim() || undefined : undefined,
+    roleCtaSecondaryHref:
+      typeof role.roleCtaSecondaryHref === "string" ? role.roleCtaSecondaryHref.trim() || undefined : undefined,
   }
 }
+
+export const hasOpenRoleCtaBand = (
+  role: Pick<CareersOpenRole, "roleCtaTitle" | "roleCtaPrimaryLabel" | "roleCtaPrimaryHref">,
+): boolean =>
+  Boolean(role.roleCtaTitle?.trim() && role.roleCtaPrimaryLabel?.trim() && role.roleCtaPrimaryHref?.trim())
 
 export const hasOpenRoleDescription = (description: CareersOpenRole["description"]): boolean =>
   Boolean(portableTextToPlainText(description))
@@ -71,7 +92,8 @@ export const filterValidOpenRoles = (
         role.title &&
         role.location &&
         role.employmentType &&
-        hasOpenRoleDescription(role.description),
+        hasOpenRoleDescription(role.description) &&
+        !PLACEHOLDER_OPEN_ROLE_IDS.has(role.id),
     )
 
 export type ResolveOpenRolesOptions = {
@@ -80,23 +102,11 @@ export type ResolveOpenRolesOptions = {
   isSanityConfigured: boolean
 }
 
-/** Open roles on /careers — production hides seeded placeholder roles only. */
+/** Open roles on /careers — sourced from CMS `openRole` documents only. */
 export const resolveCareersOpenRoles = (
-  _page: Partial<CareersPageContent> | null | undefined,
-  opts: ResolveOpenRolesOptions,
-): CareersOpenRole[] => {
-  let fromCms = filterValidOpenRoles(_page?.openRoles)
-
-  if (opts.isProductionSite) {
-    fromCms = fromCms.filter((role) => !PLACEHOLDER_OPEN_ROLE_IDS.has(role.id))
-    return fromCms
-  }
-
-  if (fromCms.length > 0) return fromCms
-  if (opts.isSanityConfigured && !opts.allowSeedFallbacks) return []
-  if (!opts.allowSeedFallbacks) return []
-  return [...CAREERS_OPEN_ROLES]
-}
+  page: Partial<CareersPageContent> | null | undefined,
+  _opts: ResolveOpenRolesOptions,
+): CareersOpenRole[] => filterValidOpenRoles(page?.openRoles)
 
 export const careersHasVisibleOpenRoles = (
   page: Partial<CareersPageContent> | null | undefined,

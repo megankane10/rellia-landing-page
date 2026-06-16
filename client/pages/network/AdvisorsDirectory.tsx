@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import RelliaCta from "@/components/RelliaCta";
+import RelliaCta, { optionalCtaAction } from "@/components/RelliaCta";
 import { cn } from "@/lib/utils";
 import {
   motion,
@@ -25,6 +25,7 @@ import { NETWORK_PATH_ROLE_TAG } from "@/lib/networkPathRoles";
 import { isSanityConfigured } from "@/lib/sanity";
 import { allowCmsSeedFallbacks } from "@/lib/deploymentEnv";
 import { isCmsQueryLoading } from "@/lib/cmsQueryState";
+import { DirectoryGridSkeleton } from "@/components/cms/CmsPageLoadingShell";
 import AdvisorDirectoryCard from "@/components/network/AdvisorDirectoryCard";
 import {
   filterAdvisorDirectoryGroups,
@@ -276,7 +277,9 @@ export default function AdvisorsDirectory() {
             </div>
             ) : null}
 
-            {advisorsListLoading ? null : advisors.length === 0 ? (
+            {advisorsListLoading ? (
+              <DirectoryGridSkeleton className="mt-10" count={6} />
+            ) : advisors.length === 0 ? (
               <FilteredListEmptyState
                 className="mt-10"
                 icon={UserSearch}
@@ -372,7 +375,10 @@ export default function AdvisorsDirectory() {
             label: advisorsDirectory.directoryCtaPrimaryLabel ?? "Apply for Membership",
             to: advisorsDirectory.directoryCtaPrimaryHref ?? "/apply",
           }}
-          secondary={{ label: "Learn about Advisors", to: "/advisors" }}
+          secondary={optionalCtaAction(
+            advisorsDirectory.directoryCtaSecondaryLabel,
+            advisorsDirectory.directoryCtaSecondaryHref,
+          )}
         />
       </main>
 

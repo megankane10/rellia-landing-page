@@ -18,6 +18,8 @@ import { HeroHeadlinePortable } from "@/components/HeroHeadlinePortable"
 import { DEFAULT_STORIES_PAGE_HEADLINE_PORTABLE } from "@shared/cms/inlineHeroHeadline"
 import { isSanityConfigured } from "@/lib/sanity"
 import { allowCmsSeedFallbacks } from "@/lib/deploymentEnv"
+import { isCmsListAwaitingData, isCmsQueryLoading } from "@/lib/cmsQueryState"
+import { CmsStoryGridSkeleton } from "@/components/cms/CmsPageSkeletons"
 import StoryGridCard from "@/components/StoryGridCard"
 
 const tags: Array<StoryTag | "All"> = ["All", ...CONFIRMED_STORY_TAGS]
@@ -28,8 +30,10 @@ const DEFAULT_STORIES_SUBTITLE =
   "The latest founder spotlights, industry insights, & program updates. Stay current with the people and ideas shaping the future of health."
 
 export default function Stories() {
-  const { data: cmsStories, isPending: storiesPending } = useStories()
-  const { data: storiesLanding } = useStoriesPage()
+  const storiesQuery = useStories()
+  const { data: cmsStories } = storiesQuery
+  const storiesLandingQuery = useStoriesPage()
+  const { data: storiesLanding } = storiesLandingQuery
   useApplyCmsSeo(
     storiesLanding?.seo,
     deriveSubheadlinePageSeo({
@@ -44,7 +48,9 @@ export default function Stories() {
   const [activeTag, setActiveTag] = useState<(typeof tags)[number]>("All")
   const [page, setPage] = useState(1)
 
-  const storiesLoading = isSanityConfigured() && storiesPending && cmsStories === undefined
+  const storiesLoading =
+    isSanityConfigured() &&
+    (isCmsQueryLoading(storiesQuery) || isCmsListAwaitingData(storiesQuery))
 
   const stories = useMemo(() => {
     if (!isSanityConfigured()) return []
@@ -113,7 +119,7 @@ export default function Stories() {
           <div className="max-w-[1300px] mx-auto">
             <ScrollReveal>
               <div className="mb-4">
-                <h2 className="font-host-grotesk text-2xl md:text-3xl font-semibold leading-tight tracking-tight text-black">
+                <h2 className="font-host-grotesk text-2xl md:text-[32px] lg:text-[36px] font-semibold leading-tight tracking-tight text-black">
                   Browse stories
                 </h2>
               </div>
@@ -189,7 +195,9 @@ export default function Stories() {
               </div>
             </ScrollReveal>
 
-            {storiesLoading ? null : filtered.length === 0 ? (
+            {storiesLoading ? (
+              <CmsStoryGridSkeleton className="mt-6" count={6} />
+            ) : filtered.length === 0 ? (
               <FilteredListEmptyState
                 className="mt-6"
                 icon={BookOpen}

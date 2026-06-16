@@ -86,17 +86,17 @@
     <priority>0.80</priority>
   </url>
   <url>
-    <loc>https://www.relliahealth.com/events/health-system-adoption-for-startups</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.80</priority>
-  </url>
-  <url>
     <loc>https://www.relliahealth.com/events/investor-readiness-how-vcs-evaluate-startups</loc>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
     <loc>https://www.relliahealth.com/events/leadership-under-pressure</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://www.relliahealth.com/events/rellia-pitch-event</loc>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>
@@ -166,11 +166,6 @@
     <priority>0.90</priority>
   </url>
   <url>
-    <loc>https://www.relliahealth.com/programs/advance-data-room</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
     <loc>https://www.relliahealth.com/programs/advance-data-room-deep-dive</loc>
     <changefreq>monthly</changefreq>
     <priority>0.85</priority>
@@ -181,17 +176,7 @@
     <priority>0.85</priority>
   </url>
   <url>
-    <loc>https://www.relliahealth.com/programs/build-your-qms</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
     <loc>https://www.relliahealth.com/programs/build-your-quality-management-system</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
-    <loc>https://www.relliahealth.com/programs/design-your-brand</loc>
     <changefreq>monthly</changefreq>
     <priority>0.85</priority>
   </url>
@@ -202,11 +187,6 @@
   </url>
   <url>
     <loc>https://www.relliahealth.com/programs/elevate-healthcare-capital</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
-    <loc>https://www.relliahealth.com/programs/first-50-users</loc>
     <changefreq>monthly</changefreq>
     <priority>0.85</priority>
   </url>
@@ -254,10 +234,5 @@
     <loc>https://www.relliahealth.com/terms</loc>
     <changefreq>yearly</changefreq>
     <priority>0.40</priority>
-  </url>
-  <url>
-    <loc>https://www.relliahealth.com/test</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.80</priority>
   </url>
 </urlset>

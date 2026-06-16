@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
-import RelliaCta from "@/components/RelliaCta"
+import RelliaCta, { optionalCtaAction } from "@/components/RelliaCta"
 import { SectionsRenderer } from "@/components/cms/PageRenderer"
 import { cn } from "@/lib/utils"
 import {
@@ -25,6 +25,7 @@ import { FOUNDER_DIRECTORY, type FounderCompany } from "@/data/founderDirectory"
 import { isSanityConfigured } from "@/lib/sanity"
 import { allowCmsSeedFallbacks } from "@/lib/deploymentEnv"
 import { isCmsQueryLoading } from "@/lib/cmsQueryState"
+import { DirectoryGridSkeleton } from "@/components/cms/CmsPageLoadingShell"
 import FounderDirectoryCard from "@/components/network/FounderDirectoryCard"
 import {
   filterFounderDirectoryGroups,
@@ -295,7 +296,9 @@ export default function FoundersDirectory() {
               </p>
             </div>
 
-            {companiesListLoading ? null : companies.length === 0 ? (
+            {companiesListLoading ? (
+              <DirectoryGridSkeleton className="mt-10" count={6} />
+            ) : companies.length === 0 ? (
               <FilteredListEmptyState
                 className="mt-10"
                 icon={Building2}
@@ -394,6 +397,10 @@ export default function FoundersDirectory() {
             label: alumniDirectory.directoryCtaPrimaryLabel ?? "Apply for Membership",
             to: alumniDirectory.directoryCtaPrimaryHref ?? "/apply",
           }}
+          secondary={optionalCtaAction(
+            alumniDirectory.directoryCtaSecondaryLabel,
+            alumniDirectory.directoryCtaSecondaryHref,
+          )}
         />
       </main>
 

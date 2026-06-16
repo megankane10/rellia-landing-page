@@ -193,8 +193,15 @@ export default function MembershipWelcomeSplash({
 
   useEffect(() => {
     if (!enabled) {
-      setPhase("done")
-      onComplete()
+      let cancelled = false
+      queueMicrotask(() => {
+        if (cancelled) return
+        setPhase("done")
+        onComplete()
+      })
+      return () => {
+        cancelled = true
+      }
       return
     }
 
@@ -206,7 +213,8 @@ export default function MembershipWelcomeSplash({
       return () => window.clearTimeout(brief)
     }
 
-    setPhase("enter")
+    const t = window.setTimeout(() => setPhase("enter"), 0)
+    return () => window.clearTimeout(t)
   }, [enabled, onComplete, preExitDurationMs, reduceMotion])
 
   useEffect(() => {

@@ -32,10 +32,18 @@ export type CareersOpenRole = {
   title: string
   location: string
   employmentType: string
+  /** Short summary on the /careers open roles list; falls back to trimmed description text. */
+  excerpt?: string
   description: SanityPortableText | null
   responsibilities: string[]
   applyButtonLabel?: string
   applyButtonUrl?: string
+  roleCtaTitle?: string
+  roleCtaBody?: string
+  roleCtaPrimaryLabel?: string
+  roleCtaPrimaryHref?: string
+  roleCtaSecondaryLabel?: string
+  roleCtaSecondaryHref?: string
 }
 
 
@@ -64,6 +72,8 @@ export type NetworkDirectoryChrome = {
   directoryCtaBody?: string
   directoryCtaPrimaryLabel?: string
   directoryCtaPrimaryHref?: string
+  directoryCtaSecondaryLabel?: string
+  directoryCtaSecondaryHref?: string
 }
 
 export type NetworkDirectoryPageContent = NetworkDirectoryChrome & {
@@ -94,11 +104,14 @@ export type CareersPageContent = NetworkHeroContent & {
   ctaBody?: string
   ctaPrimaryLabel?: string
   ctaPrimaryHref?: string
+  ctaSecondaryLabel?: string
+  ctaSecondaryHref?: string
   lifeAtRelliaHeading?: string
   lifeAtRelliaHeadingPortable?: SanityPortableText
   lifeAtRelliaSubheading?: string
   lifeAtRelliaImages?: CareersLifeAtRelliaImage[]
   lifeAtRelliaLinks?: CareersLifeAtRelliaLink[]
+  sections?: CmsPageSection[]
 }
 
 export type SeoContent = {
@@ -629,6 +642,8 @@ export type NetworkPartnersPageContent = CmsSingletonPageContent &
     ctaBody?: string
     ctaPrimaryLabel?: string
     ctaPrimaryHref?: string
+    ctaSecondaryLabel?: string
+    ctaSecondaryHref?: string
   }
 
 export type ConsultingPageContent = CmsSingletonPageContent & {
@@ -860,6 +875,7 @@ export type AboutPageContent = {
   ctaFounderHref: string
   ctaTeamLabel: string
   ctaTeamHref: string
+  sections?: CmsPageSection[]
   seo?: SeoContent
 }
 
@@ -881,6 +897,7 @@ export type FaqPageContent = {
   bottomBody: string
   bottomCtaLabel: string
   bottomCtaPath: string
+  sections?: CmsPageSection[]
   seo?: SeoContent
 }
 
@@ -1011,7 +1028,14 @@ export type ContactPageContent = {
 
 export type ProgramTimelineWeekCms = {
   heading?: string
-  points: string[]
+  points: Array<
+    | string
+    | {
+        _type?: "programTimelinePoint" | "programTimelineHeading"
+        kind?: "bullet" | "heading"
+        text?: string
+      }
+  >
 }
 
 export type ProgramTimelineStepCms = {
@@ -1155,6 +1179,7 @@ export type NotFoundContent = {
   title: string
   message: string
   ctaLabel: string
+  iconKey?: string
   seo?: SeoContent
 }
 
@@ -1224,5 +1249,6 @@ export type PaymentPageContent = CmsPageVisibility & {
   welcomeSplashLogoSrc?: string
   /** Seconds to hold after headline + subheading finish revealing. */
   welcomeSplashDurationSeconds?: number
+  sections?: CmsPageSection[]
   seo?: SeoContent
 }

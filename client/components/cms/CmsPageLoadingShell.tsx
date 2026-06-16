@@ -1,31 +1,66 @@
-import Navbar from "@/components/Navbar"
-import Footer from "@/components/Footer"
 import { cn } from "@/lib/utils"
+import {
+  CmsAboutPageSkeleton,
+  CmsCareersPageSkeleton,
+  CmsCareersRoleSkeleton,
+  CmsCollectionPageSkeleton,
+  CmsEventDetailSkeleton,
+  CmsHomePageSkeleton,
+  CmsModularPageSkeleton,
+  CmsNetworkLandingSkeleton,
+  CmsProfilePageSkeleton,
+  CmsStoryPostSkeleton,
+} from "@/components/cms/CmsPageSkeletons"
+
+export type CmsPageLoadingVariant =
+  | "default"
+  | "home"
+  | "network"
+  | "about"
+  | "careers"
+  | "careers-role"
+  | "collection"
+  | "profile-founder"
+  | "profile-advisor"
+  | "story"
+  | "event"
+  | "modular"
 
 type CmsPageLoadingShellProps = {
   className?: string
+  variant?: CmsPageLoadingVariant
 }
 
-export default function CmsPageLoadingShell({ className }: CmsPageLoadingShellProps) {
-  return (
-    <div
-      className={cn(
-        "min-h-screen overflow-x-hidden bg-white font-host-grotesk",
-        className,
-      )}
-    >
-      <Navbar />
-      <main id="main-content" className="pt-28 md:pt-36">
-        <div className="mx-auto max-w-[900px] px-6 md:px-10">
-          <div className="h-10 w-2/3 animate-pulse rounded-xl bg-black/5" />
-          <div className="mt-6 h-5 w-full animate-pulse rounded-lg bg-black/5" />
-          <div className="mt-3 h-5 w-11/12 animate-pulse rounded-lg bg-black/5" />
-          <div className="mt-10 h-40 w-full animate-pulse rounded-2xl bg-black/5" />
-        </div>
-      </main>
-      <Footer />
-    </div>
-  )
+export default function CmsPageLoadingShell({
+  className,
+  variant = "default",
+}: CmsPageLoadingShellProps) {
+  switch (variant) {
+    case "home":
+      return <CmsHomePageSkeleton />
+    case "network":
+      return <CmsNetworkLandingSkeleton />
+    case "about":
+      return <CmsAboutPageSkeleton />
+    case "careers":
+      return <CmsCareersPageSkeleton />
+    case "careers-role":
+      return <CmsCareersRoleSkeleton />
+    case "collection":
+      return <CmsCollectionPageSkeleton />
+    case "profile-founder":
+      return <CmsProfilePageSkeleton variant="founder" />
+    case "profile-advisor":
+      return <CmsProfilePageSkeleton variant="advisor" />
+    case "story":
+      return <CmsStoryPostSkeleton />
+    case "event":
+      return <CmsEventDetailSkeleton />
+    case "modular":
+      return <CmsModularPageSkeleton />
+    default:
+      return <CmsModularPageSkeleton />
+  }
 }
 
 export const DirectoryFilterSelectSkeleton = () => (

@@ -1,8 +1,8 @@
 import { useState, useMemo, useCallback, useEffect } from "react"
 import { Link, useLocation, useNavigate, useSearchParams } from "react-router-dom"
 import { useQuery } from "@tanstack/react-query"
-import { ArrowRight, ChevronDown, ChevronLeft, ChevronRight, AlertCircle, CalendarDays, CircleHelp, FileEdit, Inbox, Stethoscope, Users, TrendingUp, type LucideIcon } from "lucide-react"
-import { Bar, BarChart, CartesianGrid, XAxis, YAxis, PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from "recharts"
+import { ArrowDown, ArrowRight, ArrowUp, ArrowUpRight, ChevronDown, ChevronLeft, ChevronRight, AlertCircle, CalendarDays, CircleHelp, FileEdit, Inbox, PartyPopper, Stethoscope, Users, TrendingUp, XCircle, type LucideIcon } from "lucide-react"
+import { Bar, BarChart, CartesianGrid, XAxis, YAxis, PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip as RechartsTooltip } from "recharts"
 import { useAuth } from "@/context/AuthContext"
 import { fetchAdminTeam } from "@/lib/adminApi"
 import { supabase } from "@/lib/supabase"
@@ -25,7 +25,6 @@ import {
   countRecentAll,
   countSubmissionsBetweenDays,
   countUnresolved,
-  formatPercentChange,
   percentChange,
   welcomeBackTitle,
 } from "@/lib/adminOverview"
@@ -39,6 +38,9 @@ import {
 import { cmsContentQueryKey, fetchCmsContentQueueForDataset, isCmsContentEnabled, ADMIN_SANITY_PRODUCTION_DATASET } from "@/lib/adminSanityContent"
 import { formatAdminDate, isActiveSubmissionStatus, statusBadgeClass } from "@/lib/adminSubmissionStatus"
 import { Badge } from "@/components/ui/badge"
+import { adminChartTooltipClass, adminOverviewArrowChipClass } from "@/components/admin/adminThemeClasses"
+import AdminTooltipContent from "@/components/admin/AdminTooltipContent"
+import { Tooltip, TooltipTrigger } from "@/components/ui/tooltip"
 import { cn } from "@/lib/utils"
 
 const CHART_COLORS = {
@@ -83,10 +85,13 @@ const CHART_MARGIN = { top: 8, right: 4, left: 0, bottom: 40 }
 
 const PIE_TOOLTIP_STYLE = {
   borderRadius: "12px",
-  border: "1px solid rgba(0,0,0,0.08)",
-  boxShadow: "0 10px 30px rgba(0,0,0,0.06)",
-  fontFamily: "Urbanist",
-  fontSize: "11px",
+  border: "1px solid rgba(51, 65, 85, 0.7)",
+  backgroundColor: "hsl(222 47% 11%)",
+  color: "#ffffff",
+  boxShadow: "0 12px 32px rgba(0,0,0,0.38)",
+  fontFamily: "Urbanist, sans-serif",
+  fontSize: "13px",
+  fontWeight: 600,
   zIndex: 50,
 } as const
 
@@ -110,12 +115,12 @@ const toTopPieSlices = (
 }
 
 const PieLegend = ({ rows }: { rows: PieSliceRow[] }) => (
-  <div className="flex flex-wrap justify-center gap-x-4 gap-y-1.5 font-urbanist text-xs">
+  <div className="flex flex-wrap justify-center gap-x-4 gap-y-1.5 font-urbanist text-sm">
     {rows.filter((row) => row.value > 0).map((row) => (
       <div key={row.name} className="flex max-w-full items-center gap-1.5">
         <span className="h-2 w-2 shrink-0 rounded-full" style={{ backgroundColor: row.fill }} />
-        <span className="truncate font-semibold text-slate-700">{row.name}</span>
-        <span className="shrink-0 text-slate-400">({row.value})</span>
+        <span className="truncate font-semibold text-foreground/80 dark:text-slate-100">{row.name}</span>
+        <span className="shrink-0 text-muted-foreground dark:text-slate-300">({row.value})</span>
       </div>
     ))}
   </div>
@@ -158,11 +163,13 @@ const DonutChartWithCenter = ({
                 <Cell key={`cell-${index}`} fill={entry.fill} />
               ))}
             </Pie>
-            <Tooltip
+            <RechartsTooltip
               formatter={(value: number | string, name: string) => [
                 `${value} (${tooltipRows.find((row) => row.name === name)?.pct ?? 0}%)`,
                 name,
               ]}
+              labelStyle={{ color: "#ffffff", fontWeight: 600 }}
+              itemStyle={{ color: "#e2e8f0" }}
               wrapperStyle={{ zIndex: 50 }}
               contentStyle={PIE_TOOLTIP_STYLE}
             />
@@ -170,10 +177,10 @@ const DonutChartWithCenter = ({
         </ResponsiveContainer>
       </div>
       <div className="pointer-events-none absolute z-0 flex flex-col items-center justify-center text-center">
-        <span className="font-urbanist text-[9px] font-semibold uppercase tracking-wider text-slate-500">
+        <span className="font-urbanist text-[9px] font-semibold uppercase tracking-wider text-muted-foreground">
           {centerLabel}
         </span>
-        <span className="mt-0.5 font-host-grotesk text-xl font-bold leading-none text-slate-800">
+        <span className="mt-0.5 font-host-grotesk text-xl font-bold leading-none text-foreground">
           {centerValue}
         </span>
       </div>
@@ -186,7 +193,6 @@ type StatCardProps = {
   value: number | string
   icon: LucideIcon
   changePct?: number | null
-  changeCompare?: string
   href?: string
   loading?: boolean
 }
@@ -206,21 +212,163 @@ const adminOverviewLinkBoxClass = cn(
   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
 )
 
-const adminOverviewCardTitleClass = "font-host-grotesk text-xl"
-const adminOverviewCardTitleWithIconClass = "flex items-center gap-2.5 font-host-grotesk text-xl"
-const adminOverviewCardTitleIconClass = "h-5 w-5 shrink-0 text-rellia-teal"
+const adminOverviewCardTitleClass = "font-host-grotesk text-xl text-foreground dark:text-white"
+const adminOverviewCardTitleWithIconClass = "flex items-center gap-2.5 font-host-grotesk text-xl text-foreground dark:text-white"
+const adminOverviewCardTitleIconClass = "h-5 w-5 shrink-0 text-rellia-teal dark:text-rellia-mint"
 const adminOverviewCardDescriptionClass = "font-urbanist text-sm"
-const adminOverviewPieSectionTitleClass = "font-host-grotesk text-sm font-bold"
+const adminOverviewPieSectionTitleClass = "font-host-grotesk text-sm font-bold text-foreground dark:text-white"
 const adminOverviewPieSectionIconClass = "h-5 w-5 shrink-0"
 
-const StatCard = ({ label, value, icon: Icon, changePct, changeCompare, href, loading }: StatCardProps) => {
-  const changeLabel = formatPercentChange(changePct ?? null)
-  const changeTone =
+const overviewTopCardShellClass = cn(
+  "group relative min-w-0 overflow-hidden rounded-2xl border bg-card p-5",
+  "min-h-[132px]",
+  "shadow-[0_4px_20px_-12px_rgba(13,53,64,0.18)] transition-[background-color,border-color,box-shadow,transform] duration-150",
+  "border-rellia-teal/22 hover:border-rellia-teal/35 hover:bg-rellia-mint/5 hover:shadow-[0_8px_28px_-14px_rgba(13,53,64,0.26)]",
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-teal/30",
+)
+
+const OverviewTopLinkCard = ({
+  title,
+  value,
+  statusLabel,
+  statusTone,
+  href,
+  loading,
+}: {
+  title: string
+  value: number | string
+  statusLabel: string
+  statusTone: "good" | "warn" | "muted"
+  href: string
+  loading?: boolean
+}) => {
+  const StatusIcon = statusTone === "good" ? PartyPopper : statusTone === "muted" ? XCircle : AlertCircle
+  const isCompactValue = typeof value !== "number"
+
+  const statusTooltip = statusTone === "good" ? "All caught up" : statusLabel
+
+  const statusCircleClass =
+    statusTone === "good"
+      ? "border-emerald-200/80 bg-emerald-50 text-emerald-700 dark:border-emerald-500/30 dark:bg-emerald-500/15 dark:text-emerald-200"
+      : statusTone === "warn"
+        ? "border-amber-200/90 bg-amber-50 text-amber-800 dark:border-amber-500/30 dark:bg-amber-500/15 dark:text-amber-200"
+        : "border-slate-200 bg-slate-50 text-slate-600 dark:border-slate-600/50 dark:bg-slate-800/60 dark:text-slate-300"
+
+  return (
+    <Link to={href} className={overviewTopCardShellClass} aria-label={title}>
+      <div className="flex min-h-[5.5rem] items-center sm:min-h-[6rem]">
+        <div className="min-w-0 flex-1">
+          <div className="flex items-start justify-between gap-2">
+            <p className="min-w-0 truncate font-host-grotesk text-base font-semibold text-foreground dark:text-white sm:text-lg">
+              {title}
+            </p>
+            <span
+              className={cn(
+                adminOverviewArrowChipClass,
+                "group-hover:-translate-y-[1px]",
+              )}
+              aria-hidden
+            >
+              <ArrowUpRight
+                className={cn(
+                  "h-4 w-4 transition-transform duration-150",
+                  "group-hover:translate-x-0.5 group-hover:-translate-y-0.5",
+                )}
+                strokeWidth={2.25}
+                aria-hidden
+              />
+            </span>
+          </div>
+
+          {loading ? (
+            <Skeleton className="mt-3 h-10 w-20 rounded-lg bg-rellia-mint/25" />
+          ) : (
+            <div className="mt-2 flex min-w-0 items-center gap-3">
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <span
+                    className={cn(
+                      "inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full border",
+                      statusCircleClass,
+                    )}
+                    onClick={(e) => e.preventDefault()}
+                    onPointerDown={(e) => e.stopPropagation()}
+                    tabIndex={0}
+                    aria-label={statusTooltip}
+                  >
+                    <StatusIcon className="h-5 w-5 sm:h-[1.35rem] sm:w-[1.35rem]" strokeWidth={2.25} aria-hidden />
+                  </span>
+                </TooltipTrigger>
+                <AdminTooltipContent>{statusTooltip}</AdminTooltipContent>
+              </Tooltip>
+              <p
+                className={cn(
+                  "font-host-grotesk font-semibold leading-none text-foreground dark:text-white",
+                  isCompactValue
+                    ? "text-2xl sm:text-[1.75rem]"
+                    : "text-[2.5rem] tabular-nums sm:text-[2.75rem]",
+                )}
+              >
+                {value}
+              </p>
+            </div>
+          )}
+        </div>
+      </div>
+    </Link>
+  )
+}
+
+const StatCard = ({ label, value, icon: Icon, changePct, href, loading }: StatCardProps) => {
+  const changeTagClass =
     changePct === null || changePct === 0
-      ? "text-rellia-teal/80"
+      ? "bg-rellia-mint/30 text-rellia-teal dark:text-rellia-mint"
       : changePct > 0
-        ? "text-emerald-800"
-        : "text-amber-800"
+        ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-500/20 dark:text-emerald-200"
+        : "bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-200"
+
+  const renderChangeTag = () => {
+    if (changePct === undefined) return null
+    if (changePct === null) {
+      return (
+        <span
+          className={cn(
+            "inline-flex shrink-0 items-center rounded-full px-3 py-1 font-urbanist text-sm font-semibold",
+            changeTagClass,
+          )}
+        >
+          —
+        </span>
+      )
+    }
+    if (changePct === 0) {
+      return (
+        <span
+          className={cn(
+            "inline-flex shrink-0 items-center rounded-full px-3 py-1 font-urbanist text-sm font-semibold tabular-nums",
+            changeTagClass,
+          )}
+        >
+          0%
+        </span>
+      )
+    }
+
+    const isUp = changePct > 0
+    const ChangeIcon = isUp ? ArrowUp : ArrowDown
+
+    return (
+      <span
+        className={cn(
+          "inline-flex shrink-0 items-center gap-1 rounded-full px-3 py-1 font-urbanist text-sm font-semibold tabular-nums",
+          changeTagClass,
+        )}
+      >
+        <ChangeIcon className="h-4 w-4 shrink-0" strokeWidth={2.5} aria-hidden />
+        {Math.abs(changePct)}%
+      </span>
+    )
+  }
 
   const body = (
     <Card
@@ -240,31 +388,22 @@ const StatCard = ({ label, value, icon: Icon, changePct, changeCompare, href, lo
           <Icon className="size-8 text-rellia-teal sm:size-9" strokeWidth={1.5} aria-hidden />
         </div>
       </div>
-      <div className="flex min-w-0 flex-1 items-center justify-between gap-3 py-5 pr-5">
+      <div className="flex min-w-0 flex-1 items-center py-5 pr-5">
         <div className="min-w-0">
           {loading ? (
             <Skeleton className="h-10 w-20 rounded-lg bg-rellia-mint/25" />
           ) : (
             <>
-              <p className="font-host-grotesk text-4xl font-bold tabular-nums leading-none text-rellia-teal sm:text-[2.75rem]">
-                {value}
-              </p>
+              <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
+                <p className="font-host-grotesk text-4xl font-bold tabular-nums leading-none text-rellia-teal sm:text-[2.75rem]">
+                  {value}
+                </p>
+                {renderChangeTag()}
+              </div>
               <p className="mt-2 font-urbanist text-base font-medium text-rellia-teal">{label}</p>
             </>
           )}
         </div>
-        {!loading && changePct !== undefined ? (
-          <div className="shrink-0 text-right">
-            <span className={cn("font-urbanist text-base font-semibold tabular-nums", changeTone)}>
-              {changeLabel}
-            </span>
-            {changeCompare ? (
-              <p className="mt-0.5 font-urbanist text-sm leading-tight text-rellia-teal/70">
-                {changeCompare}
-              </p>
-            ) : null}
-          </div>
-        ) : null}
       </div>
     </Card>
   )
@@ -303,8 +442,9 @@ const AdminOverviewPage = () => {
     forceWelcome: welcomeState?.showWelcome === true,
     previewWelcome,
   })
-  const [splashComplete, setSplashComplete] = useState(!wantsWelcome)
-  const showSplash = wantsWelcome && !splashComplete
+  // Start false so a brief null user on first paint cannot permanently skip the splash.
+  const [splashDismissed, setSplashDismissed] = useState(false)
+  const showSplash = wantsWelcome && !splashDismissed
   const token = session?.access_token ?? ""
   const displayName = getAdminDisplayName(user)
   const pageTitle = welcomeBackTitle(displayName, user?.email)
@@ -314,7 +454,7 @@ const AdminOverviewPage = () => {
     getAdminFirstName(displayName, user?.email)
 
   const handleSplashComplete = useCallback(() => {
-    setSplashComplete(true)
+    setSplashDismissed(true)
     if (previewWelcome) {
       const nextParams = new URLSearchParams(searchParams)
       nextParams.delete("previewWelcome")
@@ -382,21 +522,16 @@ const AdminOverviewPage = () => {
   const diagnostics = diagnosticsQuery.data ?? []
   const trend = buildLastNDaysTrend(contacts, diagnostics, 7, weekOffset)
 
-  // Filtered status breakdown logic
+  // Filtered status breakdown logic — only by submission type, not startup level
   const filteredContacts = useMemo(() => {
     if (statusFilter === "survey") return []
-    if (selectedStage !== "all") return [] // Exclude contacts when filtering by startup level
     return contacts
-  }, [contacts, statusFilter, selectedStage])
+  }, [contacts, statusFilter])
 
   const filteredDiagnostics = useMemo(() => {
     if (statusFilter === "web") return []
-    let list = diagnostics
-    if (selectedStage !== "all") {
-      list = list.filter((d) => d.stage === selectedStage)
-    }
-    return list
-  }, [diagnostics, statusFilter, selectedStage])
+    return diagnostics
+  }, [diagnostics, statusFilter])
 
   const statusBreakdown = useMemo(() => {
     return buildStatusBreakdown(filteredContacts, filteredDiagnostics)
@@ -410,6 +545,12 @@ const AdminOverviewPage = () => {
     .slice(0, 5)
 
   const unresolved = countUnresolved(contacts, diagnostics)
+  const unresolvedWebForms = contacts.filter((row) =>
+    isActiveSubmissionStatus(row.status as "New" | "In Progress" | "Resolved" | null),
+  ).length
+  const unresolvedDiagnostics = diagnostics.filter((row) =>
+    isActiveSubmissionStatus(row.status as "New" | "In Progress" | "Resolved" | null),
+  ).length
   const weekCount = countSubmissionsBetweenDays(contacts, diagnostics, (weekOffset + 1) * 7, weekOffset * 7)
   const previousWeekCount = countSubmissionsBetweenDays(contacts, diagnostics, (weekOffset + 2) * 7, (weekOffset + 1) * 7)
   const weekChangePct = percentChange(weekCount, previousWeekCount)
@@ -422,6 +563,20 @@ const AdminOverviewPage = () => {
   const unresolvedChangePct = percentChange(unresolved, previousUnresolved)
   const draftCount = draftsQuery.data?.length ?? 0
   const teamCount = teamQuery.data?.length ?? 0
+
+  const onlineNowCount = useMemo(() => {
+    const rows = teamQuery.data ?? []
+    if (rows.length === 0) return 0
+    const now = Date.now()
+    const WINDOW_MS = 15 * 60 * 1000
+    return rows.filter((member) => {
+      if (!member.confirmedAt) return false
+      if (!member.lastSignInAt) return false
+      const t = new Date(member.lastSignInAt).getTime()
+      if (Number.isNaN(t)) return false
+      return now - t <= WINDOW_MS
+    }).length
+  }, [teamQuery.data])
 
   const totalStatusCount = useMemo(() => {
     return statusBreakdown.reduce((sum, row) => sum + row.count, 0)
@@ -440,9 +595,6 @@ const AdminOverviewPage = () => {
             : CHART_COLORS.resolved,
     }))
   }, [statusBreakdown, totalStatusCount])
-
-  const newCount = useMemo(() => statusBreakdown.find((r) => r.status === "New")?.count ?? 0, [statusBreakdown])
-  const resolvedCount = useMemo(() => statusBreakdown.find((r) => r.status === "Resolved")?.count ?? 0, [statusBreakdown])
 
   const allStages = useMemo(() => {
     const stages = new Set<string>()
@@ -611,35 +763,51 @@ const AdminOverviewPage = () => {
       <AdminPageHeader
         title={pageTitle}
         showDivider={false}
-        titleClassName="text-3xl font-semibold leading-tight md:text-4xl md:leading-tight"
+        titleClassName="text-2xl font-semibold leading-tight md:text-4xl md:leading-tight"
       />
       </ScrollReveal>
 
       <ScrollReveal variant="ctaReveal" delay={0.05} hold={showSplash}>
       <div className="grid min-w-0 grid-cols-1 items-stretch gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        <StatCard
-          label="Needs attention"
-          icon={AlertCircle}
-          value={unresolved}
-          changePct={unresolvedChangePct}
-          changeCompare="vs prior 7 days"
-          href="/admin/inbox"
+        <OverviewTopLinkCard
+          title="Web forms"
+          href="/admin/inbox?tab=contact"
           loading={loading}
+          value={unresolvedWebForms === 0 && !loading ? "Clear" : unresolvedWebForms}
+          statusLabel="Needs attention"
+          statusTone={unresolvedWebForms === 0 && !loading ? "good" : "warn"}
         />
-        <StatCard
-          label="Submissions this week"
-          icon={CalendarDays}
-          value={weekCount}
-          changePct={weekChangePct}
-          changeCompare="vs prior 7 days"
+        <OverviewTopLinkCard
+          title="Diagnostic surveys"
+          href="/admin/inbox?tab=diagnostic"
           loading={loading}
+          value={unresolvedDiagnostics === 0 && !loading ? "Clear" : unresolvedDiagnostics}
+          statusLabel="Needs attention"
+          statusTone={unresolvedDiagnostics === 0 && !loading ? "good" : "warn"}
         />
-        <StatCard
-          label="Unpublished drafts"
-          icon={FileEdit}
-          value={isCmsContentEnabled() ? draftCount : "—"}
+        <OverviewTopLinkCard
+          title="Sanity drafts"
           href="/admin/drafts"
           loading={isCmsContentEnabled() && draftsQuery.isLoading}
+          value={
+            !isCmsContentEnabled()
+              ? "—"
+              : draftCount === 0 && !draftsQuery.isLoading
+                ? "Clear"
+                : draftCount
+          }
+          statusLabel={
+            !isCmsContentEnabled()
+              ? "Unavailable"
+              : "Needs attention"
+          }
+          statusTone={
+            !isCmsContentEnabled()
+              ? "muted"
+              : draftCount === 0 && !draftsQuery.isLoading
+                ? "good"
+                : "warn"
+          }
         />
       </div>
       </ScrollReveal>
@@ -656,18 +824,18 @@ const AdminOverviewPage = () => {
             <div className="flex w-full min-w-0 flex-wrap items-center justify-start gap-2 sm:w-auto sm:justify-end">
               <button
                 onClick={() => setWeekOffset((prev) => prev + 1)}
-                className="flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-700 transition-colors hover:bg-slate-50 active:bg-slate-100 disabled:opacity-50"
+                className="flex h-10 w-10 items-center justify-center rounded-full border border-border bg-card text-muted-foreground transition-colors hover:bg-muted/50 active:bg-slate-100 disabled:opacity-50"
                 aria-label="Previous week"
               >
                 <ChevronLeft className="h-5 w-5" />
               </button>
-              <span className="min-w-0 flex-1 text-center font-urbanist text-sm font-semibold text-slate-700 sm:min-w-[10rem] sm:flex-none">
+              <span className="min-w-0 flex-1 text-center font-urbanist text-sm font-semibold text-muted-foreground sm:min-w-[10rem] sm:flex-none">
                 {getWeekRangeLabel(weekOffset)}
               </span>
               <button
                 onClick={() => setWeekOffset((prev) => Math.max(0, prev - 1))}
                 disabled={weekOffset === 0}
-                className="flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-700 transition-colors hover:bg-slate-50 active:bg-slate-100 disabled:opacity-50"
+                className="flex h-10 w-10 items-center justify-center rounded-full border border-border bg-card text-muted-foreground transition-colors hover:bg-muted/50 active:bg-slate-100 disabled:opacity-50"
                 aria-label="Next week"
               >
                 <ChevronRight className="h-5 w-5" />
@@ -683,7 +851,7 @@ const AdminOverviewPage = () => {
                   <CartesianGrid vertical={false} strokeDasharray="3 3" />
                   <XAxis dataKey="label" {...CHART_X_AXIS_PROPS} />
                   <YAxis allowDecimals={false} tickLine={false} axisLine={false} width={28} fontSize={11} />
-                  <ChartTooltip content={<ChartTooltipContent />} />
+                  <ChartTooltip content={<ChartTooltipContent className={adminChartTooltipClass} />} />
                   <Bar dataKey="contacts" stackId="a" fill="var(--color-contacts)" radius={[0, 0, 0, 0]} />
                   <Bar dataKey="diagnostics" stackId="a" fill="var(--color-diagnostics)" radius={[4, 4, 0, 0]} />
                 </BarChart>
@@ -699,7 +867,7 @@ const AdminOverviewPage = () => {
               <CardTitle className={adminOverviewCardTitleClass}>Submission Status</CardTitle>
               <CardDescription className={adminOverviewCardDescriptionClass}>Distribution of submissions</CardDescription>
             </div>
-            <div className="flex gap-1 rounded-xl border border-slate-200 bg-slate-50/80 p-1 w-fit">
+            <div className="flex gap-1 rounded-xl border border-border bg-muted/50 p-1 w-fit">
               {(["all", "web", "survey"] as const).map((mode) => (
                 <button
                   key={mode}
@@ -708,8 +876,8 @@ const AdminOverviewPage = () => {
                   className={cn(
                     "rounded-lg px-3.5 py-2 font-urbanist text-sm font-semibold transition-all",
                     statusFilter === mode
-                      ? "bg-rellia-teal text-white shadow-sm"
-                      : "text-slate-600 hover:bg-slate-100 hover:text-slate-900",
+                      ? "bg-rellia-teal text-white shadow-sm dark:bg-rellia-mint/20 dark:text-rellia-mint"
+                      : "text-muted-foreground hover:bg-slate-100 hover:text-foreground dark:text-slate-300 dark:hover:bg-slate-800/60 dark:hover:text-white",
                   )}
                 >
                   {mode === "all" ? "All" : mode === "web" ? "Web" : "Survey"}
@@ -745,27 +913,10 @@ const AdminOverviewPage = () => {
       <div className="grid min-w-0 gap-4 lg:grid-cols-3">
         {/* Card 2: Startup Level Distribution */}
         <Card className="min-w-0 overflow-hidden lg:col-span-1 rounded-2xl flex flex-col h-full">
-          <CardHeader className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between pb-2">
+          <CardHeader className="pb-2">
             <div>
               <CardTitle className={adminOverviewCardTitleClass}>Level Distribution</CardTitle>
               <CardDescription className={adminOverviewCardDescriptionClass}>Diagnostic survey stages</CardDescription>
-            </div>
-            <div className="relative w-full sm:w-auto">
-              <select
-                value={selectedStage}
-                onChange={(e) => setSelectedStage(e.target.value)}
-                className="h-10 min-w-[9rem] w-full appearance-none rounded-xl border border-slate-200 bg-white pl-3.5 pr-11 font-urbanist text-sm font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-rellia-teal sm:w-auto"
-                aria-label="Filter by startup level"
-              >
-                <option value="all">All Levels</option>
-                {allStages.map((stage) => (
-                  <option key={stage} value={stage}>{stage}</option>
-                ))}
-              </select>
-              <ChevronDown
-                className="pointer-events-none absolute right-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400"
-                aria-hidden
-              />
             </div>
           </CardHeader>
           <CardContent className="flex min-h-[260px] flex-1 flex-col justify-center pb-6">
@@ -792,15 +943,34 @@ const AdminOverviewPage = () => {
 
         {/* Card 3: Top Strengths & Growth Gaps */}
         <Card className="min-w-0 overflow-hidden lg:col-span-2 rounded-2xl h-full flex flex-col">
-          <CardHeader className="pb-2">
-            <CardTitle className={adminOverviewCardTitleClass}>Strengths & Weaknesses</CardTitle>
-            <CardDescription className={adminOverviewCardDescriptionClass}>Top capabilities and growth gaps based on diagnostic responses</CardDescription>
+          <CardHeader className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between pb-2">
+            <div>
+              <CardTitle className={adminOverviewCardTitleClass}>Strengths & Weaknesses</CardTitle>
+              <CardDescription className={adminOverviewCardDescriptionClass}>Top capabilities and growth gaps based on diagnostic responses</CardDescription>
+            </div>
+            <div className="relative w-full sm:w-auto">
+              <select
+                value={selectedStage}
+                onChange={(e) => setSelectedStage(e.target.value)}
+                className="h-10 min-w-[9rem] w-full appearance-none rounded-xl border border-border bg-card pl-3.5 pr-11 font-urbanist text-sm font-semibold text-muted-foreground focus:outline-none focus:ring-2 focus:ring-rellia-teal sm:w-auto"
+                aria-label="Filter strengths and weaknesses by startup level"
+              >
+                <option value="all">All Levels</option>
+                {allStages.map((stage) => (
+                  <option key={stage} value={stage}>{stage}</option>
+                ))}
+              </select>
+              <ChevronDown
+                className="pointer-events-none absolute right-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400"
+                aria-hidden
+              />
+            </div>
           </CardHeader>
           <CardContent className="flex min-h-[360px] min-w-0 flex-1 flex-col gap-4 pt-2 pb-6 md:flex-row">
-            <div className="flex min-w-0 flex-1 flex-col rounded-xl border border-emerald-100/40 bg-emerald-50/20 p-4">
+            <div className="flex min-w-0 flex-1 flex-col rounded-xl border border-emerald-100/40 bg-emerald-50/20 p-4 dark:border-emerald-500/20 dark:bg-emerald-950/25">
               <div className="mb-3 flex items-center gap-2">
-                <TrendingUp className={cn(adminOverviewPieSectionIconClass, "text-emerald-600")} aria-hidden />
-                <p className={cn(adminOverviewPieSectionTitleClass, "text-emerald-950")}>Top Strengths</p>
+                <TrendingUp className={cn(adminOverviewPieSectionIconClass, "text-emerald-600 dark:text-emerald-400")} aria-hidden />
+                <p className={adminOverviewPieSectionTitleClass}>Top Strengths</p>
               </div>
               {responsesQuery.isLoading ? (
                 <Skeleton className="h-[230px] w-full rounded-xl" />
@@ -822,10 +992,10 @@ const AdminOverviewPage = () => {
               )}
             </div>
 
-            <div className="flex min-w-0 flex-1 flex-col rounded-xl border border-amber-100/40 bg-amber-50/20 p-4">
+            <div className="flex min-w-0 flex-1 flex-col rounded-xl border border-amber-100/40 bg-amber-50/20 p-4 dark:border-amber-500/20 dark:bg-amber-950/25">
               <div className="mb-3 flex items-center gap-2">
-                <AlertCircle className={cn(adminOverviewPieSectionIconClass, "text-amber-600")} aria-hidden />
-                <p className={cn(adminOverviewPieSectionTitleClass, "text-amber-950")}>Top Weaknesses</p>
+                <AlertCircle className={cn(adminOverviewPieSectionIconClass, "text-amber-600 dark:text-amber-400")} aria-hidden />
+                <p className={adminOverviewPieSectionTitleClass}>Top Weaknesses</p>
               </div>
               {responsesQuery.isLoading ? (
                 <Skeleton className="h-[230px] w-full rounded-xl" />
@@ -958,9 +1128,25 @@ const AdminOverviewPage = () => {
       <ScrollReveal variant="ctaReveal" delay={0.17} hold={showSplash}>
       <div className="grid min-w-0 gap-6 lg:grid-cols-2">
         <Link to="/admin/team" className={adminOverviewLinkBoxClass}>
-          <Users className="h-9 w-9 shrink-0 text-rellia-teal" aria-hidden />
+          <span className="relative shrink-0">
+            <Users className="h-9 w-9 text-rellia-teal" aria-hidden />
+            {!teamQuery.isLoading && onlineNowCount > 0 ? (
+              <span
+                className="absolute -right-0.5 -top-0.5 h-3 w-3 rounded-full bg-emerald-500 ring-2 ring-white"
+                aria-label={`${onlineNowCount} online now`}
+              />
+            ) : null}
+          </span>
           <div className="min-w-0 flex-1">
-            <p className="font-host-grotesk text-lg font-semibold">Team</p>
+            <div className="flex flex-wrap items-center gap-2">
+              <p className="font-host-grotesk text-lg font-semibold text-foreground dark:text-white">Team</p>
+              {!teamQuery.isLoading && onlineNowCount > 0 ? (
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-200/80 bg-emerald-50 px-2.5 py-1 font-urbanist text-xs font-semibold text-emerald-800">
+                  <span className="h-2 w-2 rounded-full bg-emerald-500" aria-hidden />
+                  {onlineNowCount} Online now
+                </span>
+              ) : null}
+            </div>
             <p className="mt-0.5 font-urbanist text-base text-muted-foreground">
               {teamQuery.isLoading ? "Loading…" : `${teamCount} dashboard ${teamCount === 1 ? "account" : "accounts"}`}
             </p>
@@ -971,7 +1157,7 @@ const AdminOverviewPage = () => {
         <Link to="/admin/help" className={adminOverviewLinkBoxClass}>
           <CircleHelp className="h-9 w-9 shrink-0 text-rellia-teal" aria-hidden />
           <div className="min-w-0 flex-1">
-            <p className="font-host-grotesk text-lg font-semibold">Help</p>
+            <p className="font-host-grotesk text-lg font-semibold text-foreground dark:text-white">Help</p>
             <p className="mt-0.5 font-urbanist text-base text-muted-foreground">
               Documentation, tools, and dashboard guides
             </p>

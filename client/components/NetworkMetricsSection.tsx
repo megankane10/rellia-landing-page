@@ -13,7 +13,14 @@ function useCountUp(target: number, enabled: boolean, durationMs = 1200) {
 
   useEffect(() => {
     if (!enabled) {
-      setValue(target)
+      let cancelled = false
+      queueMicrotask(() => {
+        if (cancelled) return
+        setValue(target)
+      })
+      return () => {
+        cancelled = true
+      }
       return
     }
 
@@ -22,11 +29,22 @@ function useCountUp(target: number, enabled: boolean, durationMs = 1200) {
       window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches
 
     if (reduceMotion) {
-      setValue(target)
+      let cancelled = false
+      queueMicrotask(() => {
+        if (cancelled) return
+        setValue(target)
+      })
+      return () => {
+        cancelled = true
+      }
       return
     }
 
-    setValue(0)
+    let cancelled = false
+    queueMicrotask(() => {
+      if (cancelled) return
+      setValue(0)
+    })
     let raf = 0
     const start = performance.now()
 
@@ -38,7 +56,10 @@ function useCountUp(target: number, enabled: boolean, durationMs = 1200) {
     }
 
     raf = requestAnimationFrame(tick)
-    return () => cancelAnimationFrame(raf)
+    return () => {
+      cancelled = true
+      cancelAnimationFrame(raf)
+    }
   }, [enabled, target, durationMs])
 
   return value
@@ -132,9 +153,12 @@ export default function NetworkMetricsSection({
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768)
-    checkMobile()
+    const t = window.setTimeout(() => checkMobile(), 0)
     window.addEventListener("resize", checkMobile)
-    return () => window.removeEventListener("resize", checkMobile)
+    return () => {
+      window.clearTimeout(t)
+      window.removeEventListener("resize", checkMobile)
+    }
   }, [])
 
   const metricList = useMemo(() => metrics, [metrics]);
@@ -148,8 +172,15 @@ export default function NetworkMetricsSection({
 
   useEffect(() => {
     if (previewMode) {
-      setEntered(true)
-      setCountReady(true)
+      let cancelled = false
+      queueMicrotask(() => {
+        if (cancelled) return
+        setEntered(true)
+        setCountReady(true)
+      })
+      return () => {
+        cancelled = true
+      }
       return
     }
 
@@ -175,7 +206,14 @@ export default function NetworkMetricsSection({
   useEffect(() => {
     if (!entered) return
     if (previewMode || reduceMotion) {
-      setCountReady(true)
+      let cancelled = false
+      queueMicrotask(() => {
+        if (cancelled) return
+        setCountReady(true)
+      })
+      return () => {
+        cancelled = true
+      }
       return
     }
 
@@ -214,7 +252,7 @@ export default function NetworkMetricsSection({
             style={previewMode || reduceMotion || isMobile ? undefined : { y: bgY }}
           />
           <div className="absolute inset-0 bg-rellia-teal/35" />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/55 via-black/25 to-black/55" />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/30 to-black/60" />
         </div>
 
         <div className="relative z-10 mx-auto flex min-h-0 w-full max-w-[1300px] flex-1 flex-col px-6 pb-10 pt-8 md:px-10 md:pb-8 md:pt-12 lg:pb-6">

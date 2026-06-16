@@ -12,6 +12,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
+import { adminLightDialogShellClass } from "@/components/admin/adminSidebarRail"
 
 type AdminDeleteIconButtonProps = {
   label: string
@@ -38,14 +39,14 @@ const AdminDeleteIconButton = ({ label, description, onConfirm }: AdminDeleteIco
           type="button"
           variant="ghost"
           size="icon"
-          className="h-9 w-9 shrink-0 rounded-full text-black/40 hover:bg-red-50 hover:text-red-700"
+          className="h-9 w-9 shrink-0 rounded-full text-muted-foreground hover:bg-red-50 hover:text-red-700"
           disabled={isDeleting}
           aria-label="Delete submission"
         >
           <Trash2 className="h-4 w-4" aria-hidden />
         </Button>
       </AlertDialogTrigger>
-      <AlertDialogContent className="rounded-2xl">
+      <AlertDialogContent className={adminLightDialogShellClass}>
         <AlertDialogHeader>
           <AlertDialogTitle className="font-host-grotesk">{label}</AlertDialogTitle>
           <AlertDialogDescription className="font-urbanist">{description}</AlertDialogDescription>

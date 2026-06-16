@@ -9,6 +9,7 @@ import { DEFAULT_FAQ_PAGE } from "@shared/cms/defaults";
 import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo";
 import PageHeader from "@/components/PageHeader"
 import FaqPageJsonLd from "@/components/seo/FaqPageJsonLd"
+import { SectionsRenderer } from "@/components/cms/PageRenderer"
 import { ArrowRight } from "lucide-react"
 import { cmsDisplayText, isVisualEditingPreview } from "@/lib/cmsStega"
 
@@ -57,7 +58,7 @@ export default function FAQ() {
             <div className="flex flex-col lg:flex-row lg:items-start gap-12 lg:gap-20">
               <div className="flex-1 min-w-0 order-1 lg:order-2">
                 <ScrollReveal>
-                  <h2 className="font-host-grotesk text-2xl md:text-[32px] font-semibold leading-tight tracking-tight text-black mb-6 md:mb-8 text-left">
+                  <h2 className="font-host-grotesk text-2xl md:text-[32px] lg:text-[36px] font-semibold leading-tight tracking-tight text-black mb-6 md:mb-8 text-left">
                     Frequently Asked Questions
                   </h2>
                   <div className="rounded-3xl border border-black/10 bg-white px-7 py-0 shadow-sm">
@@ -115,6 +116,8 @@ export default function FAQ() {
             </div>
           </div>
         </section>
+
+        {faq.sections?.length ? <SectionsRenderer sections={faq.sections} /> : null}
 
         <RelliaCta
           title={faq.bottomTitle}

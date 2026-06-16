@@ -2,6 +2,8 @@ import {defineField, defineType} from 'sanity'
 import {
   CONTENT_SEO_FIELDSETS,
   CONTENT_SEO_GROUPS,
+  GROUP_MODULAR_SECTIONS,
+  modularSectionsField,
   singletonSeoField,
 } from '../shared/singletonContentFields'
 
@@ -9,7 +11,7 @@ export const faqPage = defineType({
   name: 'faqPage',
   title: 'FAQ page',
   type: 'document',
-  groups: CONTENT_SEO_GROUPS,
+  groups: [...CONTENT_SEO_GROUPS, GROUP_MODULAR_SECTIONS],
   fieldsets: CONTENT_SEO_FIELDSETS,
   fields: [
     defineField({name: 'title', type: 'string', group: 'content'}),
@@ -38,6 +40,10 @@ export const faqPage = defineType({
     defineField({name: 'bottomBody', type: 'text', rows: 4, group: 'content'}),
     defineField({name: 'bottomCtaLabel', type: 'string', group: 'content'}),
     defineField({name: 'bottomCtaPath', type: 'string', group: 'content'}),
+    modularSectionsField({
+      description:
+        'Optional modular blocks rendered on /faq after the FAQ content and before the footer CTA band.',
+    }),
     singletonSeoField,
   ],
 })

@@ -29,4 +29,17 @@ export const networkDirectoryChromeFields = [
     type: 'string',
     group: 'content',
   }),
+  defineField({
+    name: 'directoryCtaSecondaryLabel',
+    title: 'Directory bottom CTA secondary label',
+    type: 'string',
+    description: 'Optional. Secondary button is hidden unless both label and link are filled in.',
+    group: 'content',
+  }),
+  defineField({
+    name: 'directoryCtaSecondaryHref',
+    title: 'Directory bottom CTA secondary link',
+    type: 'string',
+    group: 'content',
+  }),
 ]

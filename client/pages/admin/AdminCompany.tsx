@@ -12,6 +12,8 @@ import AdminMailtoButton from "@/components/admin/AdminMailtoButton"
 import AdminSubmissionNoteEditor from "@/components/admin/AdminSubmissionNoteEditor"
 import AdminDiagnosticAnswers from "@/components/admin/AdminDiagnosticAnswers"
 import AdminPageReveal from "@/components/admin/AdminPageReveal"
+import { adminPageHeaderDividerClass, adminPageTitleClass } from "@/components/admin/adminThemeClasses"
+import { cn } from "@/lib/utils"
 import {
   Accordion,
   AccordionContent,
@@ -160,13 +162,13 @@ const AdminCompany = () => {
       </AdminPageReveal>
 
       <AdminPageReveal delay={0.06}>
-      <article className="overflow-hidden rounded-2xl border border-black/[0.07] bg-white/90 shadow-sm">
-        <div className="border-b border-black/[0.06] bg-gradient-to-r from-rellia-mint/12 to-white px-5 py-5 md:px-6">
+      <article className="overflow-hidden rounded-2xl border border-border bg-card/90 shadow-sm">
+        <div className={cn("bg-gradient-to-r from-rellia-mint/12 to-white px-5 py-5 md:px-6 dark:to-card/90", adminPageHeaderDividerClass)}>
           <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
             <div>
-              <h1 className="font-host-grotesk text-xl font-bold text-black md:text-2xl">{profile.name}</h1>
-              <p className="mt-1 font-urbanist text-sm text-black/65">{profile.work_email}</p>
-              <p className="font-urbanist text-sm text-black/50">{formatAdminDateLong(profile.created_at)}</p>
+              <h1 className={cn("font-host-grotesk text-xl font-bold md:text-2xl", adminPageTitleClass)}>{profile.name}</h1>
+              <p className="mt-1 font-urbanist text-sm text-muted-foreground">{profile.work_email}</p>
+              <p className="font-urbanist text-sm text-muted-foreground">{formatAdminDateLong(profile.created_at)}</p>
             </div>
             <div className="flex flex-wrap items-center gap-2">
               {hasStatusField && statusWritesEnabled ? (
@@ -196,25 +198,25 @@ const AdminCompany = () => {
         <div className="space-y-5 px-5 py-5 md:px-6">
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
-              <p className="font-urbanist text-sm font-medium text-black/50">Company name</p>
-              <p className="mt-1 font-urbanist text-base text-black/80">{profile.company_name}</p>
+              <p className="font-urbanist text-sm font-medium text-muted-foreground">Company name</p>
+              <p className="mt-1 font-urbanist text-base text-foreground">{profile.company_name}</p>
             </div>
             {profile.stage ? (
               <div>
-                <p className="font-urbanist text-sm font-medium text-black/50">Current stage</p>
-                <p className="mt-1 font-urbanist text-base text-black/80">{profile.stage}</p>
+                <p className="font-urbanist text-sm font-medium text-muted-foreground">Current stage</p>
+                <p className="mt-1 font-urbanist text-base text-foreground">{profile.stage}</p>
               </div>
             ) : null}
           </div>
           {profile.description ? (
             <div>
-              <p className="font-urbanist text-sm font-medium text-black/50">Mission / description</p>
-              <p className="mt-2 whitespace-pre-wrap font-urbanist text-base leading-relaxed text-black/80">
+              <p className="font-urbanist text-sm font-medium text-muted-foreground">Mission / description</p>
+              <p className="mt-2 whitespace-pre-wrap font-urbanist text-base leading-relaxed text-foreground">
                 {profile.description}
               </p>
             </div>
           ) : null}
-          <div className="border-t border-black/[0.06] pt-5">
+          <div className="border-t border-border pt-5">
             <AdminMailtoButton
               email={profile.work_email}
               subject={`Re: ${profile.company_name} diagnostic submission`}
@@ -237,16 +239,16 @@ const AdminCompany = () => {
       </article>
 
       {!response && (
-        <p className="font-urbanist text-black/60">No diagnostic response found for this company.</p>
+        <p className="font-urbanist text-muted-foreground">No diagnostic response found for this company.</p>
       )}
 
       {response && (
         <>
           {/* Section scores */}
           {response.section_scores && response.section_scores.length > 0 && (
-            <Card className="rounded-[20px] border border-black/10 bg-white shadow-sm">
+            <Card className="rounded-[20px] border border-border bg-card shadow-sm">
               <CardHeader>
-                <CardTitle className="font-host-grotesk text-base font-semibold text-black">Section Scores</CardTitle>
+                <CardTitle className="font-host-grotesk text-base font-semibold text-foreground">Section Scores</CardTitle>
               </CardHeader>
               <CardContent className="p-0">
                 <Table>
@@ -277,10 +279,10 @@ const AdminCompany = () => {
             <Accordion
               type="single"
               collapsible
-              className="rounded-2xl border border-black/[0.07] bg-white/90 px-4 shadow-sm md:px-6"
+              className="rounded-2xl border border-border bg-card/90 px-4 shadow-sm md:px-6"
             >
               <AccordionItem value="survey-responses" className="border-none">
-                <AccordionTrigger className="py-4 font-host-grotesk text-base font-semibold text-black hover:no-underline">
+                <AccordionTrigger className="py-4 font-host-grotesk text-base font-semibold text-foreground hover:no-underline">
                   Survey responses
                 </AccordionTrigger>
                 <AccordionContent className="pb-4">
@@ -293,9 +295,9 @@ const AdminCompany = () => {
           {/* Strengths & Weaknesses */}
           <div className="grid gap-4 sm:grid-cols-2">
             {response.top3_strengths && response.top3_strengths.length > 0 && (
-              <Card className="rounded-[20px] border border-black/10 bg-white shadow-sm">
+              <Card className="rounded-[20px] border border-border bg-card shadow-sm">
                 <CardHeader>
-                  <CardTitle className="font-host-grotesk text-base font-semibold text-black">
+                  <CardTitle className="font-host-grotesk text-base font-semibold text-foreground">
                     Top Strengths
                   </CardTitle>
                 </CardHeader>
@@ -321,9 +323,9 @@ const AdminCompany = () => {
             )}
 
             {response.top3_weaknesses && response.top3_weaknesses.length > 0 && (
-              <Card className="rounded-[20px] border border-black/10 bg-white shadow-sm">
+              <Card className="rounded-[20px] border border-border bg-card shadow-sm">
                 <CardHeader>
-                  <CardTitle className="font-host-grotesk text-base font-semibold text-black">
+                  <CardTitle className="font-host-grotesk text-base font-semibold text-foreground">
                     Top Weaknesses
                   </CardTitle>
                 </CardHeader>
@@ -345,7 +347,7 @@ const AdminCompany = () => {
                           </span>
                         </div>
                       </div>
-                      <p className="mt-1 font-urbanist text-xs text-black/60">{w.note}</p>
+                      <p className="mt-1 font-urbanist text-xs text-muted-foreground">{w.note}</p>
                     </div>
                   ))}
                 </CardContent>
@@ -355,16 +357,16 @@ const AdminCompany = () => {
 
           {/* Recommendations */}
           {response.recommendations && response.recommendations.length > 0 && (
-            <Card className="rounded-[20px] border border-black/10 bg-white shadow-sm">
+            <Card className="rounded-[20px] border border-border bg-card shadow-sm">
               <CardHeader>
-                <CardTitle className="font-host-grotesk text-base font-semibold text-black">
+                <CardTitle className="font-host-grotesk text-base font-semibold text-foreground">
                   Recommendations
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <ul className="space-y-2">
                   {response.recommendations.map((r, i) => (
-                    <li key={i} className="flex gap-2 font-urbanist text-sm text-black/70">
+                    <li key={i} className="flex gap-2 font-urbanist text-sm text-muted-foreground">
                       <span className="mt-0.5 shrink-0 font-semibold text-rellia-teal">{i + 1}.</span>
                       <span>{r}</span>
                     </li>
@@ -376,9 +378,9 @@ const AdminCompany = () => {
 
           {/* Mentor areas */}
           {response.mentor_areas_needed && response.mentor_areas_needed.length > 0 && (
-            <Card className="rounded-[20px] border border-black/10 bg-white shadow-sm">
+            <Card className="rounded-[20px] border border-border bg-card shadow-sm">
               <CardHeader>
-                <CardTitle className="font-host-grotesk text-base font-semibold text-black">
+                <CardTitle className="font-host-grotesk text-base font-semibold text-foreground">
                   Mentor Areas Needed
                 </CardTitle>
               </CardHeader>

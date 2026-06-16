@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react"
 import { ChevronDown, ChevronUp, type LucideIcon } from "lucide-react"
+import { adminHighlightedSurfaceClass, adminIconTileClass, adminMutedTextClass, adminTipBoxTitleClass } from "@/components/admin/adminThemeClasses"
 import { cn } from "@/lib/utils"
 
 /**
@@ -49,12 +50,11 @@ export default function AdminTipBox({
     if (storageKey) {
       try {
         const value = localStorage.getItem(storageKey)
-        if (value === "true") {
-          setCollapsed(true)
-        } else if (value === "false") {
-          setCollapsed(false)
-        }
-      } catch (e) {
+        const next =
+          value === "true" ? true : value === "false" ? false : null
+        if (next === null) return
+        queueMicrotask(() => setCollapsed(next))
+      } catch {
         // Ignore storage access errors
       }
     }
@@ -66,7 +66,7 @@ export default function AdminTipBox({
     if (storageKey) {
       try {
         localStorage.setItem(storageKey, nextCollapsed ? "true" : "false")
-      } catch (e) {
+      } catch {
         // Ignore storage errors
       }
     }
@@ -75,18 +75,18 @@ export default function AdminTipBox({
   return (
     <div
       className={cn(
-        "rounded-2xl border border-rellia-teal/15 shadow-sm relative transition-all duration-300",
-        "bg-gradient-to-r from-rellia-mint/15 via-rellia-cream/40 to-rellia-greyTeal/20",
-        collapsed ? "py-3 px-5" : "p-5",
-        className
+        "relative rounded-2xl shadow-sm transition-all duration-300",
+        adminHighlightedSurfaceClass,
+        collapsed ? "px-5 py-3" : "p-5",
+        className,
       )}
     >
       <div className="flex items-center justify-between gap-4">
         <div className="flex items-center gap-3.5 min-w-0">
-          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-white/95 border border-rellia-teal/10 shadow-sm text-rellia-teal">
+          <div className={cn("flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl shadow-sm", adminIconTileClass)}>
             <IconComponent className="h-5.5 w-5.5" />
           </div>
-          <h3 className="font-host-grotesk text-base font-bold text-rellia-teal tracking-tight truncate">
+          <h3 className={cn("truncate font-host-grotesk text-base font-bold tracking-tight", adminTipBoxTitleClass)}>
             {title}
           </h3>
         </div>
@@ -94,7 +94,7 @@ export default function AdminTipBox({
         <button
           type="button"
           onClick={handleToggle}
-          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-rellia-teal/10 bg-white/90 text-rellia-teal/80 transition-colors hover:bg-white hover:text-rellia-teal focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-teal/40"
+          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-border bg-card text-rellia-teal/80 transition-colors hover:bg-card hover:text-rellia-teal dark:text-rellia-mint focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-teal/40"
           aria-expanded={!collapsed}
           aria-label={collapsed ? "Expand tip" : "Collapse tip"}
         >
@@ -107,7 +107,7 @@ export default function AdminTipBox({
       </div>
 
       {!collapsed && children && (
-        <div className="mt-4 border-t border-rellia-teal/10 pt-4 font-urbanist text-sm leading-relaxed text-black/75">
+        <div className={cn("mt-4 border-t border-rellia-teal/15 pt-4 font-urbanist text-sm leading-relaxed dark:border-rellia-mint/20", adminMutedTextClass)}>
           {children}
         </div>
       )}

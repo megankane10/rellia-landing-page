@@ -1,6 +1,7 @@
 import { PanelLeftClose, PanelLeftOpen } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
+import { Tooltip, TooltipTrigger } from "@/components/ui/tooltip"
+import AdminTooltipContent from "@/components/admin/AdminTooltipContent"
 import { useSidebar } from "@/components/ui/sidebar"
 import { cn } from "@/lib/utils"
 
@@ -27,9 +28,9 @@ const AdminSidebarTrigger = () => {
           <Icon className="h-[1.125rem] w-[1.125rem]" aria-hidden />
         </Button>
       </TooltipTrigger>
-      <TooltipContent side="bottom" align="start">
+      <AdminTooltipContent side="bottom" align="start">
         {label}
-      </TooltipContent>
+      </AdminTooltipContent>
     </Tooltip>
   )
 }

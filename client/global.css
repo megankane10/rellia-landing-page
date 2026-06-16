@@ -9,6 +9,13 @@
     scroll-behavior: smooth;
   }
 
+  /* Radix/react-remove-scroll adds padding when locking body — fights scrollbar-gutter and jerks the page */
+  body[data-scroll-locked] {
+    --removed-body-scroll-bar-size: 0px !important;
+    margin-right: 0 !important;
+    padding-right: 0 !important;
+  }
+
   /* Fallback for browsers that don't support scrollbar-gutter */
   @supports not (scrollbar-gutter: stable) {
     html {
@@ -61,6 +68,36 @@
     --sidebar-accent-foreground: 196 67% 16%;
     --sidebar-border: 186 12% 90%;
     --sidebar-ring: 175 42% 73%;
+
+    /* Admin content area (right panel) — warm off-white for card contrast */
+    --admin-canvas: 186 14% 96%;
+    --admin-header: 186 12% 98%;
+  }
+
+  /* Admin dashboard dark mode — scoped to .admin-shell.dark (not site-wide) */
+  .admin-shell.dark {
+    --background: 196 32% 10%;
+    --foreground: 210 20% 98%;
+    --card: 196 26% 14%;
+    --card-foreground: 210 20% 98%;
+    --popover: 196 26% 14%;
+    --popover-foreground: 210 20% 98%;
+    --primary: 175 42% 73%;
+    --primary-foreground: 196 67% 10%;
+    --secondary: 196 20% 18%;
+    --secondary-foreground: 186 12% 90%;
+    --muted: 196 20% 18%;
+    --muted-foreground: 210 14% 72%;
+    --accent: 196 22% 20%;
+    --accent-foreground: 175 42% 73%;
+    --destructive: 0 62% 50%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 196 16% 26%;
+    --input: 196 16% 26%;
+    --ring: 175 42% 73%;
+    --admin-canvas: 196 32% 10%;
+    --admin-header: 196 26% 13%;
+    color-scheme: dark;
   }
 }
 
@@ -265,6 +302,127 @@
     max-width: 100% !important;
   }
 
+}
+
+/* Admin dashboard theme — kept outside Tailwind layers to avoid selector corruption at build time */
+.admin-shell {
+  view-transition-name: admin-shell-theme;
+  --admin-theme-origin-x: 50%;
+  --admin-theme-origin-y: 8%;
+}
+
+.admin-shell.admin-theme-transitioning {
+  transition-property: background-color, border-color, color, fill, stroke, outline-color, box-shadow;
+  transition-duration: 0.92s;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.admin-shell.admin-theme-transitioning * {
+  transition-property: background-color, border-color, color, fill, stroke, outline-color, box-shadow;
+  transition-duration: 0.92s;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.admin-shell.dark h1,
+.admin-shell.dark h2,
+.admin-shell.dark h3,
+.admin-shell.dark h4,
+.admin-shell.dark h5,
+.admin-shell.dark h6 {
+  color: hsl(0 0% 100%);
+}
+
+.admin-shell.dark .text-rellia-teal {
+  color: hsl(175 42% 73%);
+}
+
+.admin-shell.dark h1.text-rellia-teal,
+.admin-shell.dark h2.text-rellia-teal,
+.admin-shell.dark h3.text-rellia-teal,
+.admin-shell.dark h4.text-rellia-teal,
+.admin-shell.dark h5.text-rellia-teal,
+.admin-shell.dark h6.text-rellia-teal {
+  color: hsl(175 42% 73%);
+}
+
+.admin-shell.dark h1.text-foreground,
+.admin-shell.dark h2.text-foreground,
+.admin-shell.dark h3.text-foreground,
+.admin-shell.dark h4.text-foreground,
+.admin-shell.dark h5.text-foreground,
+.admin-shell.dark h6.text-foreground {
+  color: hsl(0 0% 100%);
+}
+
+.admin-shell.dark h1.text-rellia-mint,
+.admin-shell.dark h2.text-rellia-mint,
+.admin-shell.dark h3.text-rellia-mint,
+.admin-shell.dark h4.text-rellia-mint,
+.admin-shell.dark h5.text-rellia-mint,
+.admin-shell.dark h6.text-rellia-mint {
+  color: hsl(175 42% 73%);
+}
+
+.admin-shell.dark a.text-rellia-teal,
+.admin-shell.dark a[class*="hover:text-rellia-teal"]:hover {
+  color: hsl(175 42% 73%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .admin-shell.admin-theme-transitioning,
+  .admin-shell.admin-theme-transitioning * {
+    transition-duration: 0.01ms;
+  }
+}
+
+::view-transition-group(admin-shell-theme) {
+  animation-duration: 0.92s;
+  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+::view-transition-old(admin-shell-theme),
+::view-transition-new(admin-shell-theme) {
+  height: 100%;
+  inset: 0;
+  mix-blend-mode: normal;
+  animation-duration: 0.92s;
+  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+::view-transition-old(admin-shell-theme) {
+  animation-name: admin-theme-dissolve-out;
+  z-index: 1;
+}
+
+::view-transition-new(admin-shell-theme) {
+  animation-name: admin-theme-circle-in;
+  z-index: 2;
+}
+
+@keyframes admin-theme-circle-in {
+  from {
+    clip-path: circle(0% at var(--admin-theme-origin-x) var(--admin-theme-origin-y));
+  }
+  to {
+    clip-path: circle(150vmax at var(--admin-theme-origin-x) var(--admin-theme-origin-y));
+  }
+}
+
+@keyframes admin-theme-dissolve-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(admin-shell-theme),
+  ::view-transition-old(admin-shell-theme),
+  ::view-transition-new(admin-shell-theme) {
+    animation-duration: 0.01ms !important;
+  }
 }
 
 @keyframes glow-sweep {

@@ -5,7 +5,7 @@ import { mapNetworkWhyFeatures } from "@/lib/whyRelliaFeatures"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
 import RelliaAction from "@/components/RelliaAction"
-import RelliaCta from "@/components/RelliaCta"
+import RelliaCta, { optionalCtaAction } from "@/components/RelliaCta"
 import { SectionsRenderer } from "@/components/cms/PageRenderer"
 import ScrollReveal from "@/components/ScrollReveal"
 import { cn } from "@/lib/utils"
@@ -140,7 +140,7 @@ function SupportModelsSection({ content }: { content: NetworkAdvisorsPageContent
 
       <div className="relative z-10 mx-auto max-w-[1300px]">
         <ScrollReveal>
-          <h2 className="mt-5 font-host-grotesk text-2xl font-semibold leading-tight tracking-tight text-white md:text-[32px]">
+          <h2 className="mt-5 font-host-grotesk text-2xl font-semibold leading-tight tracking-tight text-white md:text-[32px] lg:text-[36px]">
             {content.engageTitle ? (
               cmsDisplayText(content.engageTitle)
             ) : (
@@ -198,7 +198,7 @@ function ScheduleSplit({ content }: { content: NetworkAdvisorsPageContent }) {
           <div className="absolute inset-0 bg-gradient-to-tr from-rellia-teal/30 to-transparent" aria-hidden />
         </div>
         <div className="pt-2">
-          <h2 className="mt-5 font-host-grotesk text-2xl font-semibold tracking-tight text-black md:text-[32px] leading-tight">
+          <h2 className="mt-5 font-host-grotesk text-2xl font-semibold tracking-tight text-black md:text-[32px] lg:text-[36px] leading-tight">
             {content.scheduleTitle ? (
               cmsDisplayText(content.scheduleTitle)
             ) : (
@@ -290,7 +290,7 @@ export default function Advisors() {
           title={content.ctaTitle ?? "Apply as an advisor"}
           body={content.ctaBody ?? "Share your background—we'll follow up with fit, expectations, and onboarding paths."}
           primary={{ label: content.ctaPrimaryLabel ?? "Apply to join", to: content.ctaPrimaryHref ?? "/apply" }}
-          secondary={{ label: content.ctaSecondaryLabel ?? "Contact", to: content.ctaSecondaryHref ?? "/contact" }}
+          secondary={optionalCtaAction(content.ctaSecondaryLabel, content.ctaSecondaryHref)}
         />
       </main>
 

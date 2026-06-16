@@ -1,12 +1,13 @@
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
 import ScrollReveal from "@/components/ScrollReveal"
-import RelliaCta from "@/components/RelliaCta"
+import RelliaCta, { optionalCtaAction } from "@/components/RelliaCta"
 import PillTag from "@/components/PillTag"
 import WhyRellia from "@/components/WhyRellia"
 import { FilloutStandardEmbed } from "@fillout/react"
 import { FILLOUT_APPLY_FORM_ID, FILLOUT_EMBED_VIEWPORT_MIN_CLASS } from "@/lib/filloutApplyForm"
 import { CareersOpenRolesSection } from "@/components/careers/CareersOpenRolesSection"
+import { SectionsRenderer } from "@/components/cms/PageRenderer"
 import { motion, useReducedMotion, AnimatePresence } from "framer-motion"
 import { LinkedInFilled, InstagramFilled, GlobeFilled } from "@/components/icons/SocialIcons"
 import {
@@ -30,41 +31,23 @@ import {
   Play,
 } from "lucide-react"
 import { resolveLucideIcon } from "@/lib/resolveLucideIcon"
-import type { CareersOpenRole, CareersContentMode, CareersPageContent } from "@shared/cms/types"
+import type { CareersContentMode, CareersPageContent } from "@shared/cms/types"
 import { mapNetworkWhyFeatures } from "@/lib/whyRelliaFeatures"
 import { DEFAULT_GLOBAL_SETTINGS } from "@shared/cms/defaults"
 import { CAREERS_VOLUNTEER_ENABLED } from "@shared/careersPageConfig"
-import {
-  hasOpenRoleApplyButton,
-  isOpenRoleMailtoApplyUrl,
-  resolveCareersOpenRoles,
-  resolveOpenRoleApplyHref,
-} from "@shared/careersOpenRolesVisibility"
+import { resolveCareersOpenRoles } from "@shared/careersOpenRolesVisibility"
 import { cn } from "@/lib/utils"
 import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo"
 import { deriveHeroPageSeo } from "@/lib/cmsPageSeoDefaults"
 import { useCareersPage } from "@/hooks/useCmsDocuments"
-import {
-  buildCareersRoleShareUrl,
-  clampMetaDescription,
-  clampMetaTitle,
-  getSiteUrl,
-  isCareersRoleDetailPath,
-  resolveShareOgImage,
-} from "@/config/seo"
-import PageSocialHelmet from "@/components/seo/PageSocialHelmet"
-import {
-  buildCareersRoleShareMeta,
-  careersRoleDetailPath,
-  findCareersOpenRoleById,
-  resolveLinkedCareersRoleId,
-} from "@shared/cms/careersRoleShare"
 import RelliaAction from "@/components/RelliaAction"
 import { isSanityConfigured } from "@/lib/sanity"
+import { isCmsQueryLoading } from "@/lib/cmsQueryState"
 import { allowCmsSeedFallbacks, isStrictProductionSite } from "@/lib/deploymentEnv"
-import { cmsCleanText, cmsDisplayText } from "@/lib/cmsStega"
+import { cmsDisplayText } from "@/lib/cmsStega"
 import { useMemo, useState, useEffect, useRef } from "react"
-import { useLocation, useNavigate, useParams } from "react-router-dom"
+import { useLocation, useNavigate } from "react-router-dom"
+import { careersRoleDetailPath, findCareersOpenRoleById, resolveLinkedCareersRoleId } from "@shared/cms/careersRoleShare"
 import { RoleHero } from "./network/_shared"
 import { SectionHeadlinePortable } from "@/components/cms/SectionHeadlinePortable"
 import { DEFAULT_CAREERS_PAGE } from "@shared/cms/careersPageDefaults"
@@ -285,116 +268,51 @@ const normalizeCms = (raw: unknown): CareersPageContent => {
 export default function CareersCms() {
   const location = useLocation()
   const navigate = useNavigate()
-  const { roleId: roleIdParam } = useParams<{ roleId?: string }>()
-  const [activeRole, setActiveRole] = useState<string | undefined>(
-    () => roleIdParam?.trim() || undefined,
-  )
   const [showApplyForm, setShowApplyForm] = useState(false)
 
-  const { data: careersCmsRaw, isPending: careersPagePending } = useCareersPage()
+  const careersPageQuery = useCareersPage()
+  const { data: careersCmsRaw } = careersPageQuery
+  const careersPageLoading =
+    isSanityConfigured() &&
+    (isCmsQueryLoading(careersPageQuery) || careersPageQuery.isError)
 
-  const careersCms = normalizeCms(careersCmsRaw)
-
-  const handleCopyRoleLink = (roleId: string) => {
-    const roleUrl = buildCareersRoleShareUrl(roleId)
-    navigator.clipboard.writeText(roleUrl)
-  }
-
-  const openRoles = useMemo(
-    (): CareersOpenRole[] =>
-      resolveCareersOpenRoles(careersCms, {
-        allowSeedFallbacks: allowCmsSeedFallbacks(),
-        isSanityConfigured: isSanityConfigured(),
-        isProductionSite: isStrictProductionSite(),
-      }),
-    [careersCms],
+  const careersCms = useMemo(
+    () => ({ ...DEFAULT_CAREERS_PAGE, ...normalizeCms(careersCmsRaw) }),
+    [careersCmsRaw],
   )
 
-  const linkedRoleId = useMemo(
-    () =>
-      resolveLinkedCareersRoleId({
-        roleIdParam,
-        search: location.search,
-        hash: location.hash,
-      }),
-    [roleIdParam, location.search, location.hash],
-  )
-
-  const sharedRole = useMemo(
-    () => findCareersOpenRoleById(openRoles, linkedRoleId),
-    [openRoles, linkedRoleId],
-  )
-
-  const isRoleSharePage = isCareersRoleDetailPath(location.pathname)
-
-  const careersHeroImageSrc =
-    careersCms.heroImageSrc?.trim() || DEFAULT_CAREERS_PAGE.heroImageSrc
-
-  const sharedRoleSeo = useMemo(
-    () =>
-      sharedRole
-        ? buildCareersRoleShareMeta(sharedRole, { heroImageSrc: careersHeroImageSrc })
-        : null,
-    [sharedRole, careersHeroImageSrc],
-  )
+  const openRoles = useMemo(() => {
+    if (careersPageLoading) return []
+    return resolveCareersOpenRoles(careersCms, {
+      allowSeedFallbacks: allowCmsSeedFallbacks(),
+      isSanityConfigured: isSanityConfigured(),
+      isProductionSite: isStrictProductionSite(),
+    })
+  }, [careersCms, careersPageLoading])
 
   useApplyCmsSeo(
-    isRoleSharePage ? undefined : careersCms.seo,
-    sharedRoleSeo && !isRoleSharePage
-      ? {
-          title: clampMetaTitle(sharedRoleSeo.title),
-          description: clampMetaDescription(sharedRoleSeo.description),
-        }
-      : !isRoleSharePage
-        ? deriveHeroPageSeo({
-            pageTitle: "Careers",
-            heroSubtitle: careersCms.heroSubtitle,
-            pathname: "/careers",
-          })
-        : undefined,
+    careersCms.seo,
+    deriveHeroPageSeo({
+      pageTitle: "Careers",
+      heroSubtitle: careersCms.heroSubtitle,
+      pathname: "/careers",
+    }),
   )
 
-  const roleShareMeta = useMemo(() => {
-    if (!sharedRole || !sharedRoleSeo || !isRoleSharePage) return null
-    const ogImage = resolveShareOgImage(sharedRoleSeo.ogImageUrl, {
-      landscape: true,
-    })
-    return {
-      title: clampMetaTitle(sharedRoleSeo.title),
-      description: clampMetaDescription(sharedRoleSeo.description),
-      canonical: buildCareersRoleShareUrl(sharedRole.id),
-      ogImage: ogImage?.url,
-      ogImageWidth: ogImage?.width,
-      ogImageHeight: ogImage?.height,
-    }
-  }, [sharedRole, sharedRoleSeo, isRoleSharePage])
-
-  const accordionValue =
-    activeRole ?? (isRoleSharePage && linkedRoleId ? linkedRoleId : undefined)
-
   useEffect(() => {
-    if (careersPagePending) return
+    if (isCmsQueryLoading(careersPageQuery)) return
 
-    if (isRoleSharePage && linkedRoleId && !sharedRole) {
-      navigate("/careers", { replace: true })
-      return
-    }
+    const linkedRoleId = resolveLinkedCareersRoleId({
+      search: location.search,
+      hash: location.hash,
+    })
+    if (!linkedRoleId) return
 
-    if (!linkedRoleId || !sharedRole) return
+    const role = findCareersOpenRoleById(openRoles, linkedRoleId)
+    if (!role) return
 
-    if (!isRoleSharePage) {
-      navigate(careersRoleDetailPath(linkedRoleId), { replace: true })
-      return
-    }
-
-    setActiveRole(linkedRoleId)
-    const scrollTimer = window.setTimeout(() => {
-      const el = document.getElementById(linkedRoleId)
-      el?.scrollIntoView({ behavior: "smooth", block: "center" })
-    }, 150)
-
-    return () => window.clearTimeout(scrollTimer)
-  }, [careersPagePending, linkedRoleId, sharedRole, isRoleSharePage, navigate])
+    navigate(careersRoleDetailPath(linkedRoleId), { replace: true })
+  }, [careersPageQuery, location.search, location.hash, navigate, openRoles])
 
   const volunteerAvailable = CAREERS_VOLUNTEER_ENABLED
 
@@ -429,20 +347,8 @@ export default function CareersCms() {
         }
       : null
 
-
-
   return (
     <div className="min-h-screen overflow-x-hidden bg-white font-host-grotesk">
-      {roleShareMeta ? (
-        <PageSocialHelmet
-          title={roleShareMeta.title}
-          description={roleShareMeta.description}
-          canonical={roleShareMeta.canonical}
-          ogImage={roleShareMeta.ogImage}
-          ogImageWidth={roleShareMeta.ogImageWidth}
-          ogImageHeight={roleShareMeta.ogImageHeight}
-        />
-      ) : null}
       <Navbar darkHeroNav forceSolid={showApplyForm} />
 
       <main id="main-content">
@@ -536,7 +442,7 @@ export default function CareersCms() {
             <ScrollReveal className="max-w-3xl mb-16">
               <SectionHeadlinePortable
                 value={careersCms.perksTitlePortable}
-                className="font-host-grotesk text-2xl font-semibold tracking-tight text-black md:text-[32px]"
+                className="font-host-grotesk text-2xl font-semibold tracking-tight text-black md:text-[32px] lg:text-[36px]"
               />
               <p className="mt-4 font-urbanist text-lg md:text-xl text-black/60 leading-relaxed">
                 {cmsDisplayText(careersCms.perksDescription)}
@@ -569,36 +475,8 @@ export default function CareersCms() {
             titlePortable={careersCms.openRolesTitlePortable}
             subtitle={cmsDisplayText(careersCms.openRolesSubtitle ?? DEFAULT_CAREERS_PAGE.openRolesSubtitle ?? "")}
             roles={openRoles}
-            onCopyRoleLink={handleCopyRoleLink}
-            accordionValue={accordionValue}
-            onAccordionValueChange={setActiveRole}
             formatText={cmsDisplayText}
-            renderApplyButton={(role) =>
-              hasOpenRoleApplyButton(role) ? (
-                <RelliaAction
-                  asChild
-                  variant="mintTealFill"
-                  size="comfortable"
-                  className="w-full min-w-0 cursor-pointer justify-center px-10 sm:min-w-[12.5rem] sm:w-auto"
-                >
-                  <a
-                    href={resolveOpenRoleApplyHref(role)}
-                    {...(isOpenRoleMailtoApplyUrl(role.applyButtonUrl)
-                      ? {}
-                      : { target: "_blank", rel: "noopener noreferrer" })}
-                    className="inline-flex items-center gap-2"
-                    aria-label={`${cmsCleanText(role.applyButtonLabel)} for ${cmsCleanText(role.title)}${
-                      isOpenRoleMailtoApplyUrl(role.applyButtonUrl)
-                        ? " (opens email)"
-                        : " (opens in new tab)"
-                    }`}
-                  >
-                    {cmsDisplayText(role.applyButtonLabel)}
-                    <ArrowRight className="h-5 w-5" aria-hidden />
-                  </a>
-                </RelliaAction>
-              ) : null
-            }
+            rolesLoading={careersPageLoading}
           />
         ) : null}
 
@@ -658,6 +536,8 @@ export default function CareersCms() {
         </div>
       </section>
 
+      {careersCms.sections?.length ? <SectionsRenderer sections={careersCms.sections} /> : null}
+
       <RelliaCta
         aboveSectionTone="white"
         title={cmsDisplayText(careersCms.ctaTitle ?? "Questions before you apply?")}
@@ -666,6 +546,7 @@ export default function CareersCms() {
           label: cmsDisplayText(careersCms.ctaPrimaryLabel ?? "Get in touch"),
           to: careersCms.ctaPrimaryHref ?? "/contact",
         }}
+        secondary={optionalCtaAction(careersCms.ctaSecondaryLabel, careersCms.ctaSecondaryHref)}
       />
       </main>
 

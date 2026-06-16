@@ -235,7 +235,7 @@ const ProgramPageLayout = ({
   const programPageTitle = clampMetaTitle(programSeoText.title)
   const programPageDescription = clampMetaDescription(programSeoText.description)
   const programOgFromSeo = programSeoText.ogImageUrl
-    ? resolveSocialOgImage(programSeoText.ogImageUrl, undefined, { square: true })
+    ? resolveSocialOgImage(programSeoText.ogImageUrl, undefined, { landscape: true })
     : undefined
   const programOgImage = programOgFromSeo ?? programSocial.ogImage
 
@@ -276,9 +276,16 @@ const ProgramPageLayout = ({
       />
       <Navbar />
       <main id="main-content">
-        {/* ─── Hero — text left, square image right ─── */}
-        <section className="bg-white pt-[100px] pb-10 md:pt-[130px] md:pb-16 lg:pt-[160px] lg:pb-24">
-          <div className="mx-auto max-w-[1300px] px-6 md:px-10">
+        {/* ─── Hero — mint/gray header shell (matches events) ─── */}
+        <section className="relative overflow-hidden bg-rellia-cream pb-10 pt-[100px] md:pb-16 md:pt-[130px] lg:pb-24 lg:pt-[160px] rounded-b-[2.5rem] md:rounded-b-[3.5rem]">
+          <div aria-hidden className="pointer-events-none absolute inset-0">
+            <div className="absolute -left-28 -top-32 h-[520px] w-[520px] rounded-full bg-rellia-mint/20 blur-3xl" />
+            <div className="absolute -right-40 top-1/3 h-[560px] w-[560px] -translate-y-1/2 rounded-full bg-rellia-teal/10 blur-3xl" />
+            <div className="absolute bottom-[-220px] left-1/3 h-[620px] w-[620px] -translate-x-1/2 rounded-full bg-rellia-mint/15 blur-3xl" />
+            <div className="absolute inset-0 opacity-[0.18] mix-blend-multiply [background-image:radial-gradient(circle_at_20%_10%,rgba(13,53,64,0.10),transparent_55%),radial-gradient(circle_at_80%_35%,rgba(13,53,64,0.08),transparent_52%),radial-gradient(circle_at_40%_95%,rgba(13,53,64,0.09),transparent_55%)]" />
+          </div>
+
+          <div className="relative z-10 mx-auto max-w-[1300px] px-6 md:px-10">
             <div className="mb-8 md:mb-12">
               <BackToPrograms />
             </div>
@@ -338,7 +345,7 @@ const ProgramPageLayout = ({
                       size="comfortable"
                       onClick={() => scrollTo(outcomesSectionId)}
                       onKeyDown={onKey(() => scrollTo(outcomesSectionId))}
-                      className="flex w-full sm:w-fit justify-center"
+                      className="flex w-full sm:w-fit justify-center bg-transparent hover:bg-rellia-teal hover:text-white"
                     >
                       Learn More
                     </RelliaAction>
@@ -377,7 +384,7 @@ const ProgramPageLayout = ({
           <div className="relative z-10 max-w-[1300px] mx-auto">
             <ScrollReveal delay={0.1}>
               <div className="mb-6 md:mb-8">
-                <h2 className="font-host-grotesk text-2xl font-semibold leading-tight tracking-tight text-black md:text-[32px]">
+                <h2 className="font-host-grotesk text-2xl font-semibold leading-tight tracking-tight text-black md:text-[32px] lg:text-[36px]">
                   {cmsDisplayText(q.outcomesTitle)}
                 </h2>
                 <p className="mt-4 font-urbanist text-base font-medium leading-relaxed tracking-tight text-black/65 md:text-lg">
@@ -402,7 +409,7 @@ const ProgramPageLayout = ({
           <div className="max-w-[1300px] mx-auto px-6 md:px-10">
             <ScrollReveal>
               <div className="mb-10 md:mb-14">
-                <h2 className="font-host-grotesk text-2xl font-semibold leading-tight tracking-tight text-black md:text-[32px]">
+                <h2 className="font-host-grotesk text-2xl font-semibold leading-tight tracking-tight text-black md:text-[32px] lg:text-[36px]">
                   {cmsDisplayText(q.howItWorksTitle)}
                 </h2>
                 <p className="mt-4 font-urbanist text-base font-medium leading-relaxed text-black/60 md:text-lg">
@@ -462,7 +469,7 @@ const ProgramPageLayout = ({
             <div className="relative z-10 w-full flex flex-col h-full">
               <ScrollReveal delay={0.1}>
                 <div className="mb-12 md:mb-16">
-                  <h2 className="font-host-grotesk text-2xl font-semibold leading-tight tracking-tight text-white md:text-[32px]">
+                  <h2 className="font-host-grotesk text-2xl font-semibold leading-tight tracking-tight text-white md:text-[32px] lg:text-[36px]">
                     {cmsDisplayText(q.pillarsTitle)}
                   </h2>
                 </div>
@@ -503,7 +510,7 @@ const ProgramPageLayout = ({
             <div className="flex flex-col lg:flex-row lg:gap-12">
               <div className="lg:w-[50%] shrink-0 mb-10 lg:mb-0 lg:sticky lg:top-32 lg:self-start">
                 <ScrollReveal>
-                  <h2 className="font-host-grotesk text-2xl font-semibold leading-tight tracking-tight text-black md:text-[32px]">
+                  <h2 className="font-host-grotesk text-2xl font-semibold leading-tight tracking-tight text-black md:text-[32px] lg:text-[36px]">
                     {cmsDisplayText(q.timelineTitle)}
                   </h2>
                   {q.timelineSubtitle?.trim() ? (
@@ -537,7 +544,7 @@ const ProgramPageLayout = ({
                           className={cn(
                             "absolute left-0 top-[26px] -translate-x-1/2 w-3.5 h-3.5 rounded-full border-2 transition-colors duration-300",
                             timelineOpen === month.month
-                              ? "border-rellia-teal bg-rellia-mint"
+                              ? "border-rellia-teal bg-rellia-teal"
                               : "border-black/20 bg-white",
                           )}
                         />
@@ -560,7 +567,7 @@ const ProgramPageLayout = ({
                               if (typeof w === "string") {
                                 return (
                                   <li key={wIdx} className="flex items-start gap-2">
-                                    <CheckCircle2 className="w-4 h-4 text-rellia-mint shrink-0 mt-0.5" />
+                                    <CheckCircle2 className="w-4 h-4 text-rellia-teal shrink-0 mt-0.5" />
                                     <span className="font-urbanist text-black text-base leading-relaxed">
                                       {cmsDisplayText(w)}
                                     </span>
@@ -576,12 +583,27 @@ const ProgramPageLayout = ({
                                   )}
                                   <div className="flex flex-col gap-4">
                                     {w.points.map((pt, ptIdx) => (
-                                      <div key={ptIdx} className="flex items-start gap-2">
-                                        <CheckCircle2 className="w-4 h-4 text-rellia-mint shrink-0 mt-0.5" />
-                                        <span className="font-urbanist text-black text-base leading-relaxed">
-                                          {cmsDisplayText(pt)}
-                                        </span>
-                                      </div>
+                                      typeof pt === "string" ? (
+                                        <div key={ptIdx} className="flex items-start gap-2">
+                                          <CheckCircle2 className="w-4 h-4 text-rellia-teal shrink-0 mt-0.5" />
+                                          <span className="font-urbanist text-black text-base leading-relaxed">
+                                            {cmsDisplayText(pt)}
+                                          </span>
+                                        </div>
+                                      ) : pt.kind === "heading" ? (
+                                        <div key={ptIdx} className="pt-2">
+                                          <span className="font-host-grotesk text-[11px] font-semibold tracking-tight text-black/70">
+                                            {cmsDisplayText(pt.text)}
+                                          </span>
+                                        </div>
+                                      ) : (
+                                        <div key={ptIdx} className="flex items-start gap-2">
+                                          <CheckCircle2 className="w-4 h-4 text-rellia-teal shrink-0 mt-0.5" />
+                                          <span className="font-urbanist text-black text-base leading-relaxed">
+                                            {cmsDisplayText(pt.text)}
+                                          </span>
+                                        </div>
+                                      )
                                     ))}
                                   </div>
                                 </li>

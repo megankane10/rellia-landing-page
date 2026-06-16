@@ -2,9 +2,16 @@ import type { ReactNode } from "react"
 import { cn } from "@/lib/utils"
 import { cmsDisplayText, isVisualEditingPreview } from "@/lib/cmsStega"
 
-/** Teal glass pill for badges over photography — translucent with blur for legibility without heavy darkening. */
+/** Frosted pill on photography — light glass so the background image stays visible. */
 export const PILL_ON_IMAGE_BLUR_CLASS =
-  "border border-white/25 bg-rellia-teal/45 text-white shadow-[0_2px_14px_rgba(0,0,0,0.22)] backdrop-blur-xl"
+  "border border-white/40 bg-white/14 text-white shadow-[0_2px_12px_rgba(0,0,0,0.08)] backdrop-blur-xl"
+
+/**
+ * Darker frosted pill on path / directory image cards (homepage Paths, founders Explore network).
+ * Slightly heavier tint than {@link PILL_ON_IMAGE_BLUR_CLASS} for legibility on busy photos.
+ */
+export const PILL_ON_PATH_CARD_BLUR_CLASS =
+  "bg-black/30 text-white shadow-[0_2px_14px_rgba(0,0,0,0.22)] backdrop-blur-md"
 
 type PillTagProps = {
   /** Raw CMS string — stega preserved for Presentation click-to-edit. */
@@ -20,8 +27,8 @@ export default function PillTag({ label, dot, className, labelClassName }: PillT
   return (
     <div
       className={cn(
-        "inline-flex w-fit items-center gap-2 rounded-full border border-white/25",
-        "bg-rellia-teal/45 px-4 py-2 shadow-[0_2px_14px_rgba(0,0,0,0.22)] backdrop-blur-xl",
+        "inline-flex w-fit items-center gap-2 rounded-full px-4 py-2",
+        PILL_ON_IMAGE_BLUR_CLASS,
         className,
       )}
     >

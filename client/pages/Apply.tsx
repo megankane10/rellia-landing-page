@@ -2,7 +2,7 @@ import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
 import MembershipPathTimeline from "@/components/MembershipPathTimeline"
 import RelliaAction from "@/components/RelliaAction"
-import RelliaCta from "@/components/RelliaCta"
+import RelliaCta, { optionalCtaAction } from "@/components/RelliaCta"
 import { FilloutStandardEmbed } from "@fillout/react"
 import { FILLOUT_APPLY_FORM_ID, FILLOUT_EMBED_VIEWPORT_MIN_CLASS } from "@/lib/filloutApplyForm"
 import { mergeApplyPage } from "@shared/cms/defaults"
@@ -98,10 +98,7 @@ export default function Apply() {
               label: apply.bottomCtaPrimaryLabel,
               to: apply.bottomCtaPrimaryHref,
             }}
-            secondary={{
-              label: apply.bottomCtaSecondaryLabel,
-              to: apply.bottomCtaSecondaryHref,
-            }}
+            secondary={optionalCtaAction(apply.bottomCtaSecondaryLabel, apply.bottomCtaSecondaryHref)}
           />
         </div>
       </main>

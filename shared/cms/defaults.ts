@@ -2544,9 +2544,10 @@ export const DEFAULT_APPLY_PAGE: ApplyPageContent = {
 }
 
 export const DEFAULT_NOT_FOUND: NotFoundContent = {
-  title: "Page not found",
-  message: "The page you're looking for doesn't exist or has been moved.",
+  title: "Well, this is awkward",
+  message: "The page you're looking for isn't here",
   ctaLabel: "Back to home",
+  iconKey: "search-alert",
 }
 
 export const DEFAULT_MARKETING_PLACEHOLDER: MarketingPageContent = {
@@ -3309,9 +3310,38 @@ export function mergeDiagnosticLandingPage(
   return base
 }
 
+const LEGACY_NOT_FOUND_TITLE = "Page not found"
+
+const LEGACY_NOT_FOUND_MESSAGES = [
+  "The page you're looking for doesn't exist or has been moved.",
+  "The page you are looking for does not exist or has moved.",
+]
+
+const isLegacyNotFoundMessage = (message: string) =>
+  LEGACY_NOT_FOUND_MESSAGES.some(
+    (legacy) => message === legacy || message.includes("doesn't exist or has been moved"),
+  )
+
 export function mergeNotFound(partial: Partial<NotFoundContent> | null | undefined): NotFoundContent {
   const p = omitNullish((partial ?? {}) as Record<string, unknown>) as Partial<NotFoundContent>
-  return { ...DEFAULT_NOT_FOUND, ...p }
+  const rawTitle = p.title?.trim()
+  const rawMessage = p.message?.trim()
+
+  const title =
+    !rawTitle || rawTitle === LEGACY_NOT_FOUND_TITLE ? DEFAULT_NOT_FOUND.title : rawTitle
+  const message =
+    !rawMessage || isLegacyNotFoundMessage(rawMessage) ? DEFAULT_NOT_FOUND.message : rawMessage
+  const iconKey = p.iconKey?.trim() || DEFAULT_NOT_FOUND.iconKey
+  const ctaLabel = p.ctaLabel?.trim() || DEFAULT_NOT_FOUND.ctaLabel
+
+  return {
+    ...DEFAULT_NOT_FOUND,
+    ...p,
+    title,
+    message,
+    iconKey,
+    ctaLabel,
+  }
 }
 
 export function mergeMarketingPage(

@@ -1,6 +1,8 @@
 import {defineArrayMember, defineField, defineType} from 'sanity'
 import {
   CONTENT_SEO_FIELDSETS,
+  GROUP_MODULAR_SECTIONS,
+  modularSectionsField,
   sectionDividerFieldset,
   singletonSeoField,
 } from '../shared/singletonContentFields'
@@ -38,6 +40,7 @@ export const careersPage = defineType({
     GROUP_HERO,
     GROUP_LIFE_AT_RELLIA,
     {name: 'content', title: 'Content'},
+    GROUP_MODULAR_SECTIONS,
     GROUP_SEO,
   ],
   fieldsets: [
@@ -285,6 +288,10 @@ export const careersPage = defineType({
           },
         }),
       ],
+    }),
+    modularSectionsField({
+      description:
+        'Optional modular blocks rendered on /careers after Life at Rellia and before the footer CTA band.',
     }),
     singletonSeoField,
   ],

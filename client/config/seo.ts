@@ -433,7 +433,7 @@ export const resolveProgramSocialMeta = (
     input.routeHeroImageSrc,
   )
   const ogImage = imageSrc
-    ? resolveSocialOgImage(imageSrc, siteOrigin, { square: true })
+    ? resolveSocialOgImage(imageSrc, siteOrigin, { landscape: true })
     : undefined
 
   return {
@@ -518,10 +518,12 @@ export const OG_IMAGE_LANDSCAPE = { width: 1200, height: 630 } as const
 export const OG_IMAGE_SQUARE = { width: 1200, height: 1200 } as const
 
 export type SocialOgImageOptions = {
-  /** Center-crop to 1200×1200 without stretching (events, programs, portraits). */
+  /** Center-crop to 1200×1200 without stretching. */
   square?: boolean
-  /** Center-crop to 1200×630 without stretching (stories, link previews). */
+  /** Crop or contain within 1200×630 (stories, link previews, Instagram embeds). */
   landscape?: boolean
+  /** Fit the full image inside landscape bounds without cropping (logos, wide artwork). */
+  contain?: boolean
 }
 
 export type ResolvedSocialOgImage = {
@@ -556,6 +558,13 @@ const applySanitySocialImageParams = (url: string, options: SocialOgImageOptions
     }
 
     if (options.landscape) {
+      if (options.contain) {
+        parsed.searchParams.set("w", String(OG_IMAGE_LANDSCAPE.width))
+        parsed.searchParams.set("fit", "max")
+        parsed.searchParams.delete("h")
+        parsed.searchParams.delete("crop")
+        return parsed.toString()
+      }
       parsed.searchParams.set("w", String(OG_IMAGE_LANDSCAPE.width))
       parsed.searchParams.set("h", String(OG_IMAGE_LANDSCAPE.height))
       parsed.searchParams.set("fit", "crop")
@@ -587,8 +596,8 @@ const transformSocialOgImageUrl = (
   return applyLocalSocialImageUrl(url)
 }
 
-const hasSanityOgCrop = (url: string, options: SocialOgImageOptions): boolean =>
-  url.includes("cdn.sanity.io") && Boolean(options.square || options.landscape)
+const hasStrictOgDimensions = (options: SocialOgImageOptions): boolean =>
+  Boolean(options.square || options.landscape)
 
 const resolveSocialOgSource = (src: string): string => {
   const trimmed = src.trim()
@@ -639,9 +648,7 @@ export const resolveSocialOgImage = (
   })()
 
   const url = transformSocialOgImageUrl(withVersion, origin, options)
-  const dimensions = hasSanityOgCrop(url, options)
-    ? getStrictOgDimensions(options)
-    : undefined
+  const dimensions = hasStrictOgDimensions(options) ? getStrictOgDimensions(options) : undefined
   return dimensions ? { url, ...dimensions } : { url }
 }
 
@@ -651,17 +658,45 @@ export const resolveSocialOgImageUrl = (
   options: SocialOgImageOptions = {},
 ): string | undefined => resolveSocialOgImage(src, origin, options)?.url
 
-/** Absolute OG image for share embeds; falls back to site default when source is missing. */
+/** Square icon fallback when a page has no suitable large OG artwork (Instagram, iMessage, etc.). */
+export const SOCIAL_EMBED_ICON_FALLBACK_SRC = "/favicon_512.png"
+
+export const getSocialEmbedIconFallbackOgImage = (
+  origin = getShareOrigin(),
+): ResolvedSocialOgImage => ({
+  url: toAbsoluteOgImageUrl(SOCIAL_EMBED_ICON_FALLBACK_SRC, origin),
+  width: 512,
+  height: 512,
+})
+
+/** Absolute OG image for share embeds; falls back to site default or icon when source is missing. */
 export const resolveShareOgImage = (
   src: string | undefined,
   options: SocialOgImageOptions = {},
 ): ResolvedSocialOgImage => {
-  const resolved = resolveSocialOgImage(src, getShareOrigin(), options)
-  if (resolved) return resolved
-  return {
-    url: getDefaultOgImageUrl(),
-    ...OG_IMAGE_LANDSCAPE,
+  const trimmed = src?.trim()
+  if (!trimmed) {
+    if (options.landscape) {
+      return {
+        url: getDefaultOgImageUrl(),
+        ...OG_IMAGE_LANDSCAPE,
+      }
+    }
+    return getSocialEmbedIconFallbackOgImage()
   }
+
+  const resolved = resolveSocialOgImage(trimmed, getShareOrigin(), {
+    landscape: true,
+    ...options,
+  })
+  if (resolved) {
+    return {
+      ...resolved,
+      width: resolved.width ?? OG_IMAGE_LANDSCAPE.width,
+      height: resolved.height ?? OG_IMAGE_LANDSCAPE.height,
+    }
+  }
+  return getSocialEmbedIconFallbackOgImage()
 }
 
 export const resolveShareOgImageUrl = (

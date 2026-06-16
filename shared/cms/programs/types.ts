@@ -12,7 +12,14 @@ export type ProgramPageIconCard = {
 
 export type ProgramTimelineStep = {
   heading?: string
-  points: string[]
+  points: Array<
+    | string
+    | {
+        _type?: "programTimelinePoint" | "programTimelineHeading"
+        kind?: "bullet" | "heading"
+        text?: string
+      }
+  >
 }
 
 export type ProgramTimelineMonth = {

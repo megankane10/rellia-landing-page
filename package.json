@@ -33,6 +33,7 @@
     "sanity:migrate:cms-text-copy": "tsx scripts/sanity-migrate-cms-text-copy.ts",
     "sanity:restore:home-paths-cards": "tsx scripts/sanity-restore-home-paths-cards.ts",
     "sanity:seed:open-role-image": "tsx scripts/sanity-seed-open-role-image.ts",
+    "sanity:patch:not-found": "tsx scripts/patch-not-found-page.ts",
     "sanity:cleanup": "tsx scripts/sanity-cleanup.ts",
     "sanity:promote:dry": "tsx scripts/promote-preview-to-production.ts",
     "sanity:promote": "tsx scripts/promote-preview-to-production.ts",

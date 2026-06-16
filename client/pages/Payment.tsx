@@ -9,9 +9,10 @@ import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
 import ScrollReveal from "@/components/ScrollReveal"
 import RelliaAction from "@/components/RelliaAction"
-import RelliaCta from "@/components/RelliaCta"
+import RelliaCta, { optionalCtaAction } from "@/components/RelliaCta"
 import MembershipWelcomeSplash from "@/components/MembershipWelcomeSplash"
 import MembershipBenefitsPanel from "@/components/MembershipBenefitsPanel"
+import { SectionsRenderer } from "@/components/cms/PageRenderer"
 import { usePaymentPage } from "@/hooks/useCmsDocuments"
 import {
   DEFAULT_PAYMENT_PAGE,
@@ -176,7 +177,7 @@ export default function Payment() {
               <div className="absolute bottom-10 -right-20 w-80 h-80 bg-rellia-mint/10 rounded-full blur-[120px] pointer-events-none" />
 
               <div className="relative z-10 w-full max-w-xl">
-                <h2 className="font-host-grotesk text-2xl md:text-[32px] font-semibold text-black mb-10 tracking-tight">
+                <h2 className="font-host-grotesk text-2xl md:text-[32px] lg:text-[36px] font-semibold text-black mb-10 tracking-tight">
                   {cmsDisplayText(p.choosePlanHeadline?.trim() || "Choose your plan")}
                 </h2>
 
@@ -291,12 +292,14 @@ export default function Payment() {
           </div>
         </section>
 
+        {p.sections?.length ? <SectionsRenderer sections={p.sections} /> : null}
+
         <ScrollReveal variant="ctaReveal" delay={0.08} hold={showSplash}>
           <RelliaCta
             title={p.questionsTitle || "Questions about membership?"}
             body={p.questionsBody || "Have questions about the membership, billing, or benefits? We're here to help you get the most out of the Rellia network."}
             primary={{ label: p.questionsContactLabel || "Contact us", to: p.questionsContactPath || "/contact" }}
-            secondary={{ label: p.questionsFaqLabel || "View FAQ", to: p.questionsFaqPath || "/faq" }}
+            secondary={optionalCtaAction(p.questionsFaqLabel, p.questionsFaqPath)}
             className="mt-20 md:mt-32"
           />
         </ScrollReveal>

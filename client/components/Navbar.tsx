@@ -292,7 +292,14 @@ export default function Navbar({
 
   useEffect(() => {
     if (deferModals) {
-      setPriorityModalDelayElapsed(false)
+      let cancelled = false
+      queueMicrotask(() => {
+        if (cancelled) return
+        setPriorityModalDelayElapsed(false)
+      })
+      return () => {
+        cancelled = true
+      }
       return
     }
     if (hideAnnouncement || priorityModalDismissed || !priorityModalEligible) return
@@ -302,11 +309,25 @@ export default function Navbar({
 
   useEffect(() => {
     if (deferModals) {
-      setAnnouncementDelayElapsed(false)
+      let cancelled = false
+      queueMicrotask(() => {
+        if (cancelled) return
+        setAnnouncementDelayElapsed(false)
+      })
+      return () => {
+        cancelled = true
+      }
       return
     }
     if (hideAnnouncement || announcementDismissed || !announcementEligible) {
-      setAnnouncementDelayElapsed(false)
+      let cancelled = false
+      queueMicrotask(() => {
+        if (cancelled) return
+        setAnnouncementDelayElapsed(false)
+      })
+      return () => {
+        cancelled = true
+      }
       return
     }
     const timer = window.setTimeout(() => setAnnouncementDelayElapsed(true), ANNOUNCEMENT_DELAY_MS)
@@ -331,12 +352,26 @@ export default function Navbar({
 
   useEffect(() => {
     if (!mobileOpen) {
-      setMobileOpenLabel(null)
+      let cancelled = false
+      queueMicrotask(() => {
+        if (cancelled) return
+        setMobileOpenLabel(null)
+      })
+      return () => {
+        cancelled = true
+      }
     }
   }, [mobileOpen])
 
   useEffect(() => {
-    setDesktopOpenLabel(null)
+    let cancelled = false
+    queueMicrotask(() => {
+      if (cancelled) return
+      setDesktopOpenLabel(null)
+    })
+    return () => {
+      cancelled = true
+    }
   }, [location.pathname])
 
   useEffect(() => {

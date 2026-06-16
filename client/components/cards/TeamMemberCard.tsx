@@ -58,7 +58,7 @@ export function TeamMemberCard({
   const src = candidates[Math.min(candidateIndex, candidates.length - 1)];
 
   useEffect(() => {
-    setCandidateIndex(0);
+    queueMicrotask(() => setCandidateIndex(0))
   }, [name, imageSrc]);
 
   useEffect(() => {
@@ -206,7 +206,7 @@ export function TeamMemberCard({
                       <ProfileSocialLinks
                         links={socialLinks}
                         className="gap-2"
-                        iconClassName="h-4 w-4"
+                        iconClassName="h-6 w-6"
                         variant="onDark"
                         showTooltips={false}
                       />

@@ -1,6 +1,6 @@
 import {defineArrayMember, defineField, defineType} from 'sanity'
 import {logoMarqueeField} from '../objects/logoMarqueeItem'
-import {CONTENT_SEO_FIELDSETS, singletonSeoField} from '../shared/singletonContentFields'
+import {CONTENT_SEO_FIELDSETS, modularSectionsField, singletonSeoField} from '../shared/singletonContentFields'
 import {
   NETWORK_PAGE_GROUPS,
   networkCtaFields,
@@ -88,6 +88,10 @@ export const networkInvestorsPage = defineType({
           ],
         }),
       ],
+    }),
+    modularSectionsField({
+      description:
+        'Optional modular blocks rendered on /investors after the main page sections and before the footer CTA band.',
     }),
     singletonSeoField,
   ],

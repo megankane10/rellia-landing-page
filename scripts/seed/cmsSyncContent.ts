@@ -923,22 +923,6 @@ export const createCareersSections = (ptBlock: PtBlockFn) => [
   },
 ]
 
-export const DUMMY_OPEN_ROLE = {
-  id: "dummy-placeholder-role",
-  title: "[DUMMY] Placeholder Role — Not a Real Opening",
-  location: "Remote (example location only)",
-  employmentType: "Part-time (sample)",
-  description:
-    "This is dummy seed text for editors and engineering to verify the open roles accordion. Replace this document with a real role before promoting careers content to production.",
-  responsibilities: [
-    "[DUMMY] Example responsibility — delete before publishing",
-    "[DUMMY] Second placeholder bullet for layout testing",
-    "[DUMMY] Third bullet to confirm list rendering",
-  ],
-  applyButtonLabel: "Apply",
-  applyButtonUrl: "https://www.linkedin.com/company/relliahealth/jobs/",
-}
-
 export const createDummyAdvisorBio = (
   ptBlock: PtBlockFn,
   bullet: BulletFn,
@@ -1315,21 +1299,51 @@ export const buildProgramTimelineStepsSeed = (blocks: ProgramPageStaticBlocks) =
       ? [
           {
             _key: "week-0",
-            points: month.weeks.filter((week): week is string => typeof week === "string"),
+            points: month.weeks
+              .filter((week): week is string => typeof week === "string")
+              .map((text, pointIndex) => ({
+                _type: "programTimelinePoint" as const,
+                _key: `point-${pointIndex}`,
+                kind: "bullet" as const,
+                text,
+              })),
           },
         ]
       : month.weeks.map((week, weekIndex) => {
           if (typeof week === "string") {
             return {
               _key: `week-${weekIndex}`,
-              points: [week],
+              points: [
+                {
+                  _type: "programTimelinePoint" as const,
+                  _key: "point-0",
+                  kind: "bullet" as const,
+                  text: week,
+                },
+              ],
             }
           }
 
           return {
             _key: `week-${weekIndex}`,
             heading: week.heading,
-            points: week.points,
+            points: week.points.map((point, pointIndex) => {
+              if (typeof point === "string") {
+                return {
+                  _type: "programTimelinePoint" as const,
+                  _key: `point-${pointIndex}`,
+                  kind: "bullet" as const,
+                  text: point,
+                }
+              }
+              const text = point.text ?? ""
+              return {
+                _type: "programTimelinePoint" as const,
+                _key: `point-${pointIndex}`,
+                kind: point.kind === "heading" ? ("heading" as const) : ("bullet" as const),
+                text,
+              }
+            }),
           }
         })
 

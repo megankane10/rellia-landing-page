@@ -58,7 +58,7 @@ import {
 } from "@/lib/cmsSectionAppearance"
 
 const sectionHeadingClass =
-  "font-host-grotesk text-3xl font-semibold leading-tight tracking-tight text-black md:text-[40px]"
+  "font-host-grotesk text-2xl font-semibold leading-tight tracking-tight text-black md:text-[32px] lg:text-[36px]"
 
 const sectionSubheadingClass =
   "mt-4 max-w-3xl font-urbanist text-base leading-relaxed text-black/65 md:text-lg"
@@ -229,7 +229,7 @@ const SectionFormEmbed = ({ section }: { section: CmsSectionFormEmbed }) => {
                 )}
                 <div className="relative z-10 mx-auto w-full max-w-[1300px] px-6 md:px-10 lg:px-14">
                   {section.panelHeadline ? (
-                    <h2 className="font-host-grotesk text-3xl font-semibold leading-tight tracking-tight text-rellia-mint md:text-[40px]">
+                    <h2 className="font-host-grotesk text-2xl font-semibold leading-tight tracking-tight text-rellia-mint md:text-[40px]">
                       {cmsDisplayText(section.panelHeadline)}
                     </h2>
                   ) : null}

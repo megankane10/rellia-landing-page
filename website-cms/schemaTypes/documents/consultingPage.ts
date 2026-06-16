@@ -161,7 +161,13 @@ export const consultingPage = defineType({
       initialValue: '/contact',
       group: 'cta',
     }),
-    defineField({name: 'ctaSecondaryLabel', title: 'Secondary CTA label', type: 'string', group: 'cta'}),
+    defineField({
+      name: 'ctaSecondaryLabel',
+      title: 'Secondary CTA label',
+      type: 'string',
+      description: 'Optional. Secondary button is hidden unless both label and link are filled in.',
+      group: 'cta',
+    }),
     defineField({name: 'ctaSecondaryHref', title: 'Secondary CTA link', type: 'string', group: 'cta'}),
     modularSectionsField({
       description:

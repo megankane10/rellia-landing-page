@@ -165,7 +165,7 @@ const MembershipPathTimeline = ({
             ) : null}
             <h1
               id={headingId}
-              className="font-host-grotesk text-3xl font-semibold leading-tight tracking-tight text-rellia-teal md:text-4xl lg:text-[2.75rem]"
+              className="font-host-grotesk text-2xl font-semibold leading-tight tracking-tight text-rellia-teal md:text-4xl lg:text-[2.75rem]"
             >
               {typeof headingTitle === "string" ? cmsDisplayText(headingTitle) : headingTitle}
             </h1>

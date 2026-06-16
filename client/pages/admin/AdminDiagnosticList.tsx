@@ -7,6 +7,8 @@ import { Skeleton } from "@/components/ui/skeleton"
 import AdminSubmissionStatusSelect from "@/components/admin/AdminSubmissionStatusSelect"
 import AdminSubmissionStatusFilter from "@/components/admin/AdminSubmissionStatusFilter"
 import AdminDeleteSubmissionButton from "@/components/admin/AdminDeleteSubmissionButton"
+import { adminPageTitleClass } from "@/components/admin/adminThemeClasses"
+import { cn } from "@/lib/utils"
 import {
   countByStatusFilter,
   formatAdminDate,
@@ -99,10 +101,10 @@ const AdminDiagnosticList = () => {
       </Link>
 
       <div>
-        <h1 className="font-host-grotesk text-2xl font-bold text-black md:text-3xl">
+        <h1 className={cn("font-host-grotesk text-2xl font-bold md:text-3xl", adminPageTitleClass)}>
           Startup Diagnostic
         </h1>
-        <p className="mt-2 font-urbanist text-base text-black/65">
+        <p className="mt-2 font-urbanist text-base text-muted-foreground">
           {rows.length} submission{rows.length === 1 ? "" : "s"}
         </p>
       </div>
@@ -152,14 +154,14 @@ const AdminDiagnosticList = () => {
           return (
             <li
               key={row.id}
-              className="rounded-2xl border border-black/[0.07] bg-white/90 p-4 shadow-sm transition-shadow hover:shadow-md"
+              className="rounded-2xl border border-border bg-card/90 p-4 shadow-sm transition-shadow hover:shadow-md"
             >
               <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
                 <Link to={`/admin/companies/${row.id}`} className="min-w-0 flex-1 group">
-                  <p className="font-host-grotesk text-base font-semibold text-black group-hover:text-rellia-teal">
+                  <p className="font-host-grotesk text-base font-semibold text-foreground group-hover:text-rellia-teal">
                     {row.company_name}
                   </p>
-                  <p className="mt-1 font-urbanist text-sm text-black/60">
+                  <p className="mt-1 font-urbanist text-sm text-muted-foreground">
                     {row.name} · {row.work_email} · {formatAdminDate(row.created_at)}
                   </p>
                   {row.stage ? (

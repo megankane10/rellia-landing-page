@@ -31,7 +31,7 @@ const AdminNoteIconButton = ({ table, submissionId, note, onSaved }: AdminNoteIc
             "h-9 w-9 shrink-0 rounded-full",
             hasNote
               ? "text-rellia-teal hover:bg-rellia-mint/30 hover:text-rellia-teal"
-              : "text-black/40 hover:bg-rellia-mint/20 hover:text-rellia-teal",
+              : "text-muted-foreground hover:bg-rellia-mint/20 hover:text-rellia-teal",
           )}
           aria-label={hasNote ? "Edit submission note" : "Add submission note"}
         >

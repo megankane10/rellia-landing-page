@@ -12,6 +12,7 @@ import AdminSubmissionStatusSelect from "@/components/admin/AdminSubmissionStatu
 import AdminDeleteIconButton from "@/components/admin/AdminDeleteIconButton"
 import AdminNoteIconButton from "@/components/admin/AdminNoteIconButton"
 import AdminCompactEmptyState from "@/components/admin/AdminCompactEmptyState"
+import AdminFilterPill from "@/components/admin/AdminFilterPill"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -110,6 +111,24 @@ const AdminInboxPage = () => {
     () => (tab === "contact" ? countByStatusFilter(contactRows) : countByStatusFilter(diagnosticRows)),
     [tab, contactRows, diagnosticRows],
   )
+
+  const contactSourceCounts = useMemo(() => {
+    const counts = { all: contactRows.length, contact: 0, investor: 0, modal: 0 }
+    contactRows.forEach((row) => {
+      const type = String(row.submission_type ?? "").trim().toLowerCase()
+      if (type === "investor") counts.investor += 1
+      else if (type === "modal") counts.modal += 1
+      else counts.contact += 1
+    })
+    return counts
+  }, [contactRows])
+
+  const countDiagnosticLevel = (lvl: string) => {
+    if (lvl === "all") return diagnosticRows.length
+    return diagnosticRows.filter(
+      (row) => String(row.stage ?? "").trim().toLowerCase() === lvl.trim().toLowerCase(),
+    ).length
+  }
 
   const filteredContactRows = useMemo(
     () =>
@@ -391,7 +410,7 @@ const AdminInboxPage = () => {
     }
 
     const listShell = (content: ReactNode) => (
-      <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm [&_ul]:p-3 [&_ul]:md:p-0">
+      <div className="overflow-hidden rounded-xl border border-border bg-card shadow-sm [&_ul]:p-3 [&_ul]:md:p-0">
         {content}
       </div>
     )
@@ -552,27 +571,39 @@ const AdminInboxPage = () => {
       ) : null}
 
       <Tabs value={tab} onValueChange={(value) => setTab(value as SubmissionTab)} className="space-y-4">
-        <TabsList className="h-[48px] w-full bg-slate-100/80 p-1 rounded-2xl border border-black/5 shadow-sm max-w-none">
-          <div className="grid w-full grid-cols-2 h-full items-center">
+        <TabsList className="h-[48px] w-full max-w-none rounded-2xl border border-border bg-muted/50 p-1 shadow-sm">
+          <div className="grid h-full w-full grid-cols-2 items-center">
             <TabsTrigger
               value="contact"
               className={cn(
-                "w-full h-full rounded-xl px-4 py-2 font-urbanist text-sm font-bold transition-all duration-200",
-                "data-[state=active]:bg-white data-[state=active]:text-rellia-teal data-[state=active]:shadow-[0_4px_12px_rgba(0,0,0,0.06)] data-[state=active]:border data-[state=active]:border-black/5",
-                "data-[state=inactive]:text-slate-600 data-[state=inactive]:hover:text-slate-900 data-[state=inactive]:bg-transparent",
+                "h-full w-full rounded-xl px-4 py-2 font-urbanist text-sm font-bold transition-all duration-200",
+                "data-[state=active]:border data-[state=active]:border-border data-[state=active]:bg-card data-[state=active]:text-rellia-teal data-[state=active]:shadow-[0_4px_12px_rgba(0,0,0,0.06)] dark:data-[state=active]:text-rellia-mint",
+                "data-[state=inactive]:bg-transparent data-[state=inactive]:text-muted-foreground data-[state=inactive]:hover:text-foreground",
+                "dark:data-[state=inactive]:text-slate-300 dark:data-[state=inactive]:hover:text-white",
               )}
             >
-              Web forms
+              <span className="inline-flex items-center gap-2">
+                Web forms
+                <span className="rounded-full bg-foreground/5 px-1.5 py-0.5 text-xs font-semibold tabular-nums text-muted-foreground dark:bg-white/8 dark:text-slate-300">
+                  {contactRows.length}
+                </span>
+              </span>
             </TabsTrigger>
             <TabsTrigger
               value="diagnostic"
               className={cn(
-                "w-full h-full rounded-xl px-4 py-2 font-urbanist text-sm font-bold transition-all duration-200",
-                "data-[state=active]:bg-white data-[state=active]:text-rellia-teal data-[state=active]:shadow-[0_4px_12px_rgba(0,0,0,0.06)] data-[state=active]:border data-[state=active]:border-black/5",
-                "data-[state=inactive]:text-slate-600 data-[state=inactive]:hover:text-slate-900 data-[state=inactive]:bg-transparent",
+                "h-full w-full rounded-xl px-4 py-2 font-urbanist text-sm font-bold transition-all duration-200",
+                "data-[state=active]:border data-[state=active]:border-border data-[state=active]:bg-card data-[state=active]:text-rellia-teal data-[state=active]:shadow-[0_4px_12px_rgba(0,0,0,0.06)] dark:data-[state=active]:text-rellia-mint",
+                "data-[state=inactive]:bg-transparent data-[state=inactive]:text-muted-foreground data-[state=inactive]:hover:text-foreground",
+                "dark:data-[state=inactive]:text-slate-300 dark:data-[state=inactive]:hover:text-white",
               )}
             >
-              Diagnostic Surveys
+              <span className="inline-flex items-center gap-2">
+                Diagnostic Surveys
+                <span className="rounded-full bg-foreground/5 px-1.5 py-0.5 text-xs font-semibold tabular-nums text-muted-foreground dark:bg-white/8 dark:text-slate-300">
+                  {diagnosticRows.length}
+                </span>
+              </span>
             </TabsTrigger>
           </div>
         </TabsList>
@@ -585,20 +616,13 @@ const AdminInboxPage = () => {
               { id: "investor", label: "Investor" },
               { id: "modal", label: "Priority Modal" },
             ] as const).map((pill) => (
-              <button
+              <AdminFilterPill
                 key={pill.id}
-                type="button"
+                label={pill.label}
+                count={contactSourceCounts[pill.id]}
+                isActive={contactSource === pill.id}
                 onClick={() => setContactSource(pill.id)}
-                className={cn(
-                  "rounded-full px-3 py-1.5 font-urbanist text-xs font-semibold transition-colors",
-                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-                  contactSource === pill.id
-                    ? "bg-rellia-mint/35 text-rellia-teal"
-                    : "bg-muted text-muted-foreground hover:bg-muted/80",
-                )}
-              >
-                {pill.label}
-              </button>
+              />
             ))}
           </div>
         ) : null}
@@ -606,20 +630,13 @@ const AdminInboxPage = () => {
         {tab === "diagnostic" ? (
           <div className="flex flex-wrap gap-2" role="group" aria-label="Diagnostic levels filter">
             {diagnosticLevels.map((lvl) => (
-              <button
+              <AdminFilterPill
                 key={lvl}
-                type="button"
+                label={lvl === "all" ? "All Levels" : lvl}
+                count={countDiagnosticLevel(lvl)}
+                isActive={levelFilter === lvl}
                 onClick={() => setLevelFilter(lvl)}
-                className={cn(
-                  "rounded-full px-3 py-1.5 font-urbanist text-xs font-semibold transition-colors",
-                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-                  levelFilter === lvl
-                    ? "bg-rellia-mint/35 text-rellia-teal"
-                    : "bg-muted text-muted-foreground hover:bg-muted/80",
-                )}
-              >
-                {lvl === "all" ? "All Levels" : lvl}
-              </button>
+              />
             ))}
           </div>
         ) : null}

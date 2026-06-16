@@ -12,6 +12,7 @@ import { useFeaturedStories } from "@/hooks/useCmsDocuments"
 import { allowCmsSeedFallbacks } from "@/lib/deploymentEnv"
 import { isSanityConfigured } from "@/lib/sanity"
 import { cmsCleanText, cmsDisplayText } from "@/lib/cmsStega"
+import { CmsFeaturedStoriesSkeleton } from "@/components/cms/CmsPageSkeletons"
 
 /** Auto-advance interval (progress bar uses same duration) */
 const ROTATE_MS = 6500
@@ -132,7 +133,7 @@ export default function FeaturedStories({
   const storyHref = useMemo(() => (activeStory ? `/stories/${activeStory.slug}` : "/stories"), [activeStory])
 
   if (featuredLoading) {
-    return null
+    return <CmsFeaturedStoriesSkeleton compact={compact} />
   }
 
   if (featured.length === 0) return null

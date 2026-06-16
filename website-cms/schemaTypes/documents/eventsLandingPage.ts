@@ -38,7 +38,13 @@ export const eventsLandingPage = defineType({
     defineField({name: 'ctaBody', title: 'CTA body', type: 'text', rows: 3, group: 'cta'}),
     defineField({name: 'ctaPrimaryLabel', title: 'Primary button label', type: 'string', group: 'cta'}),
     defineField({name: 'ctaPrimaryHref', title: 'Primary button link', type: 'string', group: 'cta'}),
-    defineField({name: 'ctaSecondaryLabel', title: 'Secondary button label', type: 'string', group: 'cta'}),
+    defineField({
+      name: 'ctaSecondaryLabel',
+      title: 'Secondary button label',
+      type: 'string',
+      description: 'Optional. Secondary button is hidden unless both label and link are filled in.',
+      group: 'cta',
+    }),
     defineField({name: 'ctaSecondaryHref', title: 'Secondary button link', type: 'string', group: 'cta'}),
     defineField({
       name: 'sections',

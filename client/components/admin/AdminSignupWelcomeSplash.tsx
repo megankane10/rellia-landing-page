@@ -49,7 +49,7 @@ const RESOURCE_LINKS = [
 
 const RESOURCE_CARD_SHELL_CLASS = cn(
   "group relative isolate flex min-h-[8.75rem] flex-col overflow-hidden rounded-2xl border border-white/15 px-4 py-4 transition-all duration-300",
-  "md:min-h-[10.5rem] md:bg-white/10 md:p-6 md:backdrop-blur-sm md:hover:bg-white/15",
+  "md:min-h-[10.5rem] md:bg-card/10 md:p-6 md:backdrop-blur-sm md:hover:bg-card/15",
   "hover:border-rellia-mint/40",
   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint",
 )
@@ -59,7 +59,7 @@ const RESOURCE_CARD_MOBILE_SCRIM_CLASS =
   "pointer-events-none absolute inset-0 bg-[#071f26]/50 transition-colors duration-300 group-hover:bg-[#071f26]/42 md:hidden"
 
 const RESOURCE_CARD_MOBILE_GLASS_CLASS =
-  "pointer-events-none absolute inset-0 bg-white/10 transition-colors duration-300 group-hover:bg-white/15 md:hidden"
+  "pointer-events-none absolute inset-0 bg-card/10 transition-colors duration-300 group-hover:bg-card/15 md:hidden"
 
 const RESOURCE_CARD_CONTENT_CLASS = "relative z-10 flex min-h-0 flex-1 flex-col"
 

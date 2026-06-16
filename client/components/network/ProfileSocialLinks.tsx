@@ -4,6 +4,7 @@ import {
   LinkedInFilled,
 } from "@/components/icons/SocialIcons"
 import { IconTooltipWrap } from "@/components/share/IconTooltipWrap"
+import { shareComfortableControlSizeClass } from "@/components/share/sharePageIcons"
 import { cn } from "@/lib/utils"
 import { emailToSocialLink, resolveSocialPlatform } from "@shared/cms/socialLinks"
 import { Mail } from "lucide-react"
@@ -15,6 +16,7 @@ export type ProfileSocialLink = {
 }
 
 type ProfileSocialLinksVariant = "light" | "onDark"
+type ProfileSocialLinksSize = "default" | "comfortable" | "compact"
 
 type ProfileSocialLinksProps = {
   links?: ProfileSocialLink[] | null
@@ -25,7 +27,9 @@ type ProfileSocialLinksProps = {
   variant?: ProfileSocialLinksVariant
   /** Hover tooltips on each icon. Off for compact founder rows where names are adjacent. */
   showTooltips?: boolean
-  /** Slightly larger tap targets on small screens (profile sidebars, founder rows). */
+  /** `comfortable` — profile sidebar; `compact` — founder rows in alumni profiles. */
+  size?: ProfileSocialLinksSize
+  /** @deprecated Use `size="comfortable"` instead. */
   comfortableTouch?: boolean
 }
 
@@ -44,14 +48,25 @@ const BUTTON_CLASS: Record<ProfileSocialLinksVariant, string> = {
   light:
     "inline-flex h-10 w-10 items-center justify-center rounded-full border border-black/10 bg-white text-black transition-all duration-300 hover:border-rellia-teal hover:bg-rellia-teal hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-teal focus-visible:ring-offset-2",
   onDark:
-    "inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/25 bg-white/10 text-white transition-all duration-300 hover:border-white hover:bg-white hover:text-rellia-teal focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-rellia-teal",
+    "inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/25 bg-white/10 text-white transition-all duration-300 hover:border-white hover:bg-white hover:text-rellia-teal focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-rellia-teal",
 }
 
 const COMFORTABLE_BUTTON_CLASS: Record<ProfileSocialLinksVariant, string> = {
+  light: cn(
+    "inline-flex items-center justify-center rounded-full border border-black/12 bg-white text-black transition-all duration-300 hover:border-rellia-teal hover:bg-rellia-teal hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-teal focus-visible:ring-offset-2",
+    shareComfortableControlSizeClass,
+  ),
+  onDark: cn(
+    "inline-flex items-center justify-center rounded-full border border-white/25 bg-white/10 text-white transition-all duration-300 hover:border-white hover:bg-white hover:text-rellia-teal focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-rellia-teal",
+    shareComfortableControlSizeClass,
+  ),
+}
+
+const COMPACT_BUTTON_CLASS: Record<ProfileSocialLinksVariant, string> = {
   light:
-    "inline-flex h-11 w-11 md:h-10 md:w-10 items-center justify-center rounded-full border border-black/10 bg-white text-black transition-all duration-300 hover:border-rellia-teal hover:bg-rellia-teal hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-teal focus-visible:ring-offset-2",
+    "inline-flex h-10 w-10 items-center justify-center rounded-full border border-black/10 bg-white text-black transition-all duration-300 hover:border-rellia-teal hover:bg-rellia-teal hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-teal focus-visible:ring-offset-2",
   onDark:
-    "inline-flex h-11 w-11 md:h-9 md:w-9 items-center justify-center rounded-full border border-white/25 bg-white/10 text-white transition-all duration-300 hover:border-white hover:bg-white hover:text-rellia-teal focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-rellia-teal",
+    "inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/25 bg-white/10 text-white transition-all duration-300 hover:border-white hover:bg-white hover:text-rellia-teal focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-rellia-teal",
 }
 
 export const ProfileSocialLinks = ({
@@ -61,6 +76,7 @@ export const ProfileSocialLinks = ({
   iconClassName,
   variant = "light",
   showTooltips = true,
+  size,
   comfortableTouch = false,
 }: ProfileSocialLinksProps) => {
   const items: { key: string; href: string; label: string; kind: SocialKind }[] = []
@@ -115,9 +131,23 @@ export const ProfileSocialLinks = ({
 
   if (items.length === 0) return null
 
-  const buttonClass = comfortableTouch ? COMFORTABLE_BUTTON_CLASS[variant] : BUTTON_CLASS[variant]
+  const resolvedSize: ProfileSocialLinksSize =
+    size ?? (comfortableTouch ? "comfortable" : "default")
+
+  const buttonClass =
+    resolvedSize === "compact"
+      ? COMPACT_BUTTON_CLASS[variant]
+      : resolvedSize === "comfortable"
+        ? COMFORTABLE_BUTTON_CLASS[variant]
+        : BUTTON_CLASS[variant]
+
   const resolvedIconClassName =
-    iconClassName ?? (comfortableTouch ? "h-6 w-6 md:h-5 md:w-5" : "h-5 w-5")
+    iconClassName ??
+    (resolvedSize === "compact"
+      ? "h-5 w-5"
+      : resolvedSize === "comfortable"
+        ? "h-6 w-6 md:h-5 md:w-5"
+        : "h-5 w-5")
 
   const renderLink = (item: { key: string; href: string; label: string; kind: SocialKind }) => (
     <a

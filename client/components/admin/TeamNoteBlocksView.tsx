@@ -28,7 +28,7 @@ const TeamNoteBlocksView = ({ blocks, className, preview = false }: TeamNoteBloc
             {stickers.map((block, index) => (
               <span
                 key={`sticker-${index}-${block.emoji}`}
-                className="inline-flex h-12 w-12 items-center justify-center rounded-2xl border border-white/50 bg-white/70 text-2xl shadow-sm"
+                className="inline-flex h-12 w-12 items-center justify-center rounded-2xl border border-border bg-card/80 text-2xl shadow-sm dark:border-rellia-mint/20 dark:bg-card/60"
               >
                 {block.emoji}
               </span>
@@ -39,7 +39,7 @@ const TeamNoteBlocksView = ({ blocks, className, preview = false }: TeamNoteBloc
         {textContent ? (
           <div
             className={cn(
-              "font-urbanist text-foreground",
+              "font-urbanist text-foreground dark:text-white",
               preview ? "text-base leading-relaxed" : "text-sm",
             )}
           >
@@ -56,7 +56,7 @@ const TeamNoteBlocksView = ({ blocks, className, preview = false }: TeamNoteBloc
                   key={`image-${index}-${block.url}`}
                   type="button"
                   onClick={() => setExpandedImage({ src: block.url, alt })}
-                  className="group w-fit max-w-full overflow-hidden rounded-xl border border-rellia-teal/15 bg-white/60 text-left shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-teal/40"
+                  className="group w-fit max-w-full overflow-hidden rounded-xl border border-rellia-teal/15 bg-card/60 text-left shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-teal/40 dark:border-rellia-mint/20 dark:bg-card/50"
                   aria-label={`View full size: ${alt}`}
                 >
                   <img
