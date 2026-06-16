@@ -1217,9 +1217,11 @@ const CmsLastPublishSubtext = ({ subtitle }: { subtitle: CmsLastPublishSubtitle 
 
   return (
     <span className="block truncate">
-      {subtitle.documentName}
-      {" · "}
-      {subtitle.typeLabel}
+      <span>{subtitle.documentName}</span>
+      <span className="opacity-50">
+        {" · "}
+        {subtitle.typeLabel}
+      </span>
     </span>
   )
 }

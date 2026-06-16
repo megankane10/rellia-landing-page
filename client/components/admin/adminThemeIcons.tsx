@@ -9,6 +9,14 @@ export const getNextThemePreference = (current: AdminThemePreference): AdminThem
   return THEME_CYCLE_ORDER[(index + 1) % THEME_CYCLE_ORDER.length]
 }
 
+/** Collapsed sidebar: toggle explicit light/dark only (system maps to current resolved). */
+export const getCollapsedNextThemePreference = (
+  resolvedTheme: "light" | "dark",
+): AdminThemePreference => (resolvedTheme === "dark" ? "light" : "dark")
+
+export const getCollapsedThemeToggleTooltip = (resolvedTheme: "light" | "dark"): string =>
+  resolvedTheme === "dark" ? "Switch to light mode" : "Switch to dark mode"
+
 export const getThemeCycleTooltip = (current: AdminThemePreference): string => {
   const next = getNextThemePreference(current)
   if (next === "light") return "Switch to light mode"

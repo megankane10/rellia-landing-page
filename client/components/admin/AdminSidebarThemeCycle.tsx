@@ -1,8 +1,8 @@
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion"
 import { useAdminTheme } from "@/context/AdminThemeContext"
 import {
-  getNextThemePreference,
-  getThemeCycleTooltip,
+  getCollapsedNextThemePreference,
+  getCollapsedThemeToggleTooltip,
   ThemePreferenceIcon,
 } from "@/components/admin/adminThemeIcons"
 import {
@@ -22,14 +22,15 @@ const iconTransition = {
 }
 
 const AdminSidebarThemeCycle = () => {
-  const { preference, setPreference } = useAdminTheme()
+  const { resolvedTheme, setPreference } = useAdminTheme()
   const prefersReducedMotion = useReducedMotion()
   const { isHovered, stickyHoverProps } = useStickyHover()
-  const tooltip = getThemeCycleTooltip(preference)
+  const nextPreference = getCollapsedNextThemePreference(resolvedTheme)
+  const tooltip = getCollapsedThemeToggleTooltip(resolvedTheme)
 
   const handleCycle = (event: React.MouseEvent<HTMLButtonElement>) => {
     const rect = event.currentTarget.getBoundingClientRect()
-    setPreference(getNextThemePreference(preference), {
+    setPreference(nextPreference, {
       origin: {
         x: rect.left + rect.width / 2,
         y: rect.top + rect.height / 2,
@@ -59,7 +60,7 @@ const AdminSidebarThemeCycle = () => {
                 <span className="relative inline-flex size-5 items-center justify-center overflow-hidden">
                   <AnimatePresence mode="wait" initial={false}>
                     <motion.span
-                      key={preference}
+                      key={nextPreference}
                       initial={
                         prefersReducedMotion
                           ? false
@@ -75,7 +76,7 @@ const AdminSidebarThemeCycle = () => {
                       className="absolute inset-0 inline-flex items-center justify-center"
                     >
                       <ThemePreferenceIcon
-                        preference={preference}
+                        preference={nextPreference}
                         size={20}
                         variant="sidebar-mobile"
                         selected
