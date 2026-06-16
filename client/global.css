@@ -7,6 +7,8 @@
   html {
     scrollbar-gutter: stable;
     scroll-behavior: smooth;
+    /* framer-motion useScroll({ target }) measures against document.scrollingElement */
+    position: relative;
   }
 
   /* Radix/react-remove-scroll adds padding when locking body — fights scrollbar-gutter and jerks the page */
