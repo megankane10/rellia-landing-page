@@ -49,7 +49,7 @@ export const StoryPostHero = ({
             alt=""
             className="h-full w-full object-cover"
             loading="eager"
-            fetchPriority="high"
+            fetchpriority="high"
           />
           <div className="absolute inset-0 bg-gradient-to-b from-black/65 via-black/45 to-[#0d3540]/92" />
           <div className="absolute inset-0 bg-gradient-to-tr from-rellia-teal/35 via-transparent to-black/20" />
@@ -113,7 +113,7 @@ export const StoryPostHero = ({
                         alt={coverAlt}
                         className="block h-auto w-full"
                         loading="eager"
-                        fetchPriority="high"
+                        fetchpriority="high"
                       />
                     </figure>
                     <aside

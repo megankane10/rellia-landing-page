@@ -3,8 +3,12 @@ import { cn } from "@/lib/utils"
 
 export const shareIconSize = "h-6 w-6 shrink-0"
 
-/** Matches RelliaAction `size="comfortable"` (py-4, text-base, border-2). */
-export const shareComfortableControlSizeClass = "h-[3.75rem] w-[3.75rem] shrink-0"
+/**
+ * Responsive circle size for share / social icon controls.
+ * Slightly smaller on very small screens, matching comfortable buttons from `RelliaAction` from `sm` up.
+ */
+export const shareComfortableControlSizeClass =
+  "h-12 w-12 shrink-0 sm:h-[3.25rem] sm:w-[3.25rem] md:h-[3.75rem] md:w-[3.75rem]"
 
 const shareOutlineButtonBaseClass =
   "inline-flex items-center justify-center rounded-full border transition-all duration-300 focus-visible:outline-none"

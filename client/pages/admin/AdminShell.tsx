@@ -1,13 +1,14 @@
-import { type CSSProperties, useCallback, useState } from "react"
+import { type CSSProperties, useCallback, useEffect, useMemo, useState } from "react"
 import { Outlet } from "react-router-dom"
 import AdminAppSidebar from "@/components/admin/AdminAppSidebar"
 import AdminHeaderClock from "@/components/admin/AdminHeaderClock"
-import AdminHeaderThemeCycle from "@/components/admin/AdminHeaderThemeCycle"
 import AdminSidebarTrigger from "@/components/admin/AdminSidebarTrigger"
 import AdminPageFooter from "@/components/admin/AdminPageFooter"
 import AdminSystemStatus from "@/components/admin/AdminSystemStatus"
 import { adminCanvasClass, adminHeaderClass } from "@/components/admin/adminThemeClasses"
 import { AdminThemeProvider, useAdminTheme } from "@/context/AdminThemeContext"
+import { useAuth } from "@/context/AuthContext"
+import { postAdminPresenceHeartbeat } from "@/lib/adminApi"
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
 import { cn } from "@/lib/utils"
 
@@ -22,6 +23,37 @@ const readInitialSidebarOpen = (): boolean => {
 
 const AdminShellContent = () => {
   const { resolvedTheme, isThemeTransitioning } = useAdminTheme()
+  const { session } = useAuth()
+  const token = session?.access_token ?? ""
+  const enabled = useMemo(() => Boolean(token), [token])
+
+  useEffect(() => {
+    if (!enabled) return
+
+    let cancelled = false
+    const sendHeartbeat = async () => {
+      if (cancelled) return
+      try {
+        await postAdminPresenceHeartbeat(token)
+      } catch {
+        // Presence is best-effort only
+      }
+    }
+
+    sendHeartbeat()
+    const id = window.setInterval(sendHeartbeat, 60_000)
+
+    const handleVisibility = () => {
+      if (document.visibilityState === "visible") sendHeartbeat()
+    }
+    document.addEventListener("visibilitychange", handleVisibility)
+
+    return () => {
+      cancelled = true
+      window.clearInterval(id)
+      document.removeEventListener("visibilitychange", handleVisibility)
+    }
+  }, [enabled, token])
 
   return (
     <div
@@ -36,20 +68,17 @@ const AdminShellContent = () => {
       <SidebarInset className="min-w-0 !bg-transparent">
         <header
           className={cn(
-            "relative sticky top-0 z-30 flex h-[4.25rem] shrink-0 items-center gap-3 px-4 md:gap-4",
+            "sticky top-0 z-30 grid h-[4.25rem] shrink-0 grid-cols-[1fr_auto_1fr] items-center gap-3 px-4 md:gap-4",
             adminHeaderClass,
           )}
         >
-          <div className="relative z-10 flex min-w-0 flex-1 items-center gap-3">
+          <div className="flex min-w-0 items-center gap-3 justify-self-start">
             <AdminSidebarTrigger />
           </div>
-          <div className="pointer-events-none absolute inset-y-0 left-1/2 z-20 hidden -translate-x-1/2 items-center md:flex">
-            <div className="pointer-events-auto flex items-center gap-2.5">
-              <AdminHeaderThemeCycle />
-              <AdminHeaderClock />
-            </div>
+          <div className="hidden justify-self-center md:flex">
+            <AdminHeaderClock />
           </div>
-          <div className="relative z-10 ml-auto shrink-0">
+          <div className="flex justify-self-end">
             <AdminSystemStatus compact />
           </div>
         </header>

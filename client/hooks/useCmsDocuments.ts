@@ -478,6 +478,7 @@ export const useNotFoundPage = () =>
       const raw = await sanityFetch<Partial<NotFoundContent>>("notFound");
       return mergeNotFound(raw ?? undefined);
     },
+    initialData: () => mergeNotFound(undefined),
     staleTime: staleTimeMs,
   });
 

@@ -6,18 +6,18 @@ import { cn } from "@/lib/utils"
 
 /** Employment type — teal on white (matches production / main). */
 export const roleEmploymentBadgeClass =
-  "inline-flex shrink-0 items-center rounded-full border border-rellia-teal/25 bg-rellia-teal/10 px-3 py-1 font-urbanist text-sm font-semibold text-rellia-teal"
+  "inline-flex shrink-0 items-center rounded-full border border-rellia-teal/35 bg-white/65 px-3 py-1 font-urbanist text-sm font-semibold text-rellia-teal shadow-[0_1px_0_rgba(0,0,0,0.03)]"
 
 /** Location — neutral grey with map pin. */
 export const roleLocationBadgeClass =
-  "inline-flex max-w-full items-center gap-1.5 rounded-full border border-black/10 bg-black/[0.02] px-3 py-1 font-urbanist text-sm text-black/65"
+  "inline-flex max-w-full items-center gap-1.5 rounded-full border border-rellia-teal/25 bg-white/55 px-3 py-1 font-urbanist text-sm text-rellia-teal/95 shadow-[0_1px_0_rgba(0,0,0,0.03)]"
 
 /** Mobile: card bleeds past section padding; inner px keeps title/chevron on the page margin (symmetric). */
 export const roleCardBleedClass = "-mx-3 md:mx-0"
 export const roleCardInnerPxClass = "px-3 md:px-7"
 
 export const roleCardLinkClass =
-  "group block overflow-hidden rounded-[22px] border border-black/10 bg-white shadow-sm transition-all duration-300 hover:border-black/15 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2"
+  "group block overflow-hidden rounded-[22px] border border-black/10 bg-rellia-greyTeal/30 shadow-sm transition-all duration-300 hover:border-black/15 hover:bg-rellia-greyTeal/40 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2"
 
 type CareersOpenRoleCardProps = {
   role: CareersOpenRole

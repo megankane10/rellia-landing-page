@@ -42,13 +42,15 @@ const statusBadge = (status: SanityContentRow["status"]) => {
     return {
       label: "Draft",
       title: "Saved in Studio but not published — not visible on the live site",
-      className: "bg-amber-100 text-amber-900 hover:bg-amber-100",
+      className:
+        "border border-amber-200/70 bg-amber-50 text-amber-800 hover:bg-amber-50 dark:border-amber-500/70 dark:bg-amber-500/10 dark:text-amber-400 dark:hover:bg-amber-500/10",
     }
   }
   return {
     label: "Published",
     title: "Published in this dataset; recently edited (no separate draft open)",
-    className: "bg-rellia-mint/40 text-rellia-teal hover:bg-rellia-mint/40",
+      className:
+        "border border-rellia-teal/70 bg-rellia-mint/20 text-rellia-teal hover:bg-rellia-mint/20 dark:border-rellia-mint/70 dark:bg-rellia-mint/10 dark:text-rellia-mint dark:hover:bg-rellia-mint/10",
   }
 }
 

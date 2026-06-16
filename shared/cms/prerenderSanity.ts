@@ -27,6 +27,7 @@ import {
   programBySlugQuery,
   storyBySlugQuery,
   storiesQuery,
+  notFoundQuery,
   paymentPageQuery,
   programsLandingQuery,
   programsQuery,
@@ -183,6 +184,9 @@ export const fetchEventsForPrerender = async (): Promise<Record<string, unknown>
 
   return snapshotEvents()
 }
+
+export const fetchNotFoundPageForPrerender = async (): Promise<Record<string, unknown> | null> =>
+  fetchSingleton(notFoundQuery)
 
 export const fetchPageBySlugForPrerender = async (slug: string) => {
   const fromSanity = await fetchBySlug(pageBySlugQuery, slug)

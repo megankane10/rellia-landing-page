@@ -189,7 +189,7 @@ export default function CareersRoleDetail() {
                   {hasOpenRoleApplyButton(role) ? (
                     <RelliaAction
                       asChild
-                      variant="mintTealFill"
+                      variant="creamHeaderPrimary"
                       size="compact"
                       className="h-[3.75rem] flex-1 min-w-0 cursor-pointer justify-center px-5 py-4 text-sm sm:flex-none sm:min-w-[11.25rem] sm:px-7"
                     >

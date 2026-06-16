@@ -40,7 +40,7 @@ export const AdminSidebarDateTime = ({
         className={cn(
           "relative overflow-hidden rounded-2xl border border-rellia-teal/20",
           "bg-gradient-to-br from-slate-900 via-slate-900 to-rellia-teal/[0.12]",
-          "px-5 py-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]",
+          "min-h-[5.25rem] px-4 py-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]",
           className,
         )}
         aria-live="polite"
@@ -50,21 +50,19 @@ export const AdminSidebarDateTime = ({
           aria-hidden
         />
 
-        <div className="relative flex flex-col items-start gap-3 text-left">
-          <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border border-rellia-teal/25 bg-rellia-mint/10 text-rellia-mint">
-            <CalendarDays className="h-7 w-7" aria-hidden strokeWidth={1.75} />
-          </span>
-          <div className="min-w-0">
+        <div className="relative flex flex-col items-start gap-2.5 text-left">
+          <div className="flex items-center gap-2.5">
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-rellia-teal/25 bg-rellia-mint/10 text-rellia-mint dark:bg-rellia-mint/15">
+              <CalendarDays className="h-4 w-4" aria-hidden strokeWidth={1.75} />
+            </span>
             <time
               dateTime={now.toISOString()}
-              className="block font-host-grotesk text-[2rem] font-semibold leading-none tracking-tight text-white tabular-nums"
+              className="font-host-grotesk text-[1.75rem] font-semibold leading-none tracking-tight text-white tabular-nums"
             >
               {formatTime(now)}
             </time>
-            <p className="mt-4 font-urbanist text-base leading-snug text-rellia-mint">
-              {formatDate(now)}
-            </p>
           </div>
+          <p className="font-urbanist text-sm leading-snug text-rellia-mint/90">{formatDate(now)}</p>
         </div>
       </div>
     )

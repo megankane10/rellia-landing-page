@@ -30,6 +30,7 @@ import {
   storiesPrerenderSnapshotQuery,
 } from "../shared/cms/groqQueries"
 import { resolveSanityApiConfig } from "../shared/cms/sanityEnv"
+import { cmsTextToPlain } from "../shared/cms/cmsFieldUtils"
 
 const snapshotsDir = resolve(dirname(fileURLToPath(import.meta.url)), "../shared/cms/build-snapshots")
 const eventsSnapshotPath = resolve(snapshotsDir, "events.json")
@@ -60,6 +61,22 @@ const writeJsonSnapshot = (path: string, rows: Record<string, unknown>[]): void 
 const writeJsonDocSnapshot = (path: string, doc: Record<string, unknown> | null): void => {
   mkdirSync(dirname(path), { recursive: true })
   writeFileSync(path, JSON.stringify(doc ?? null, null, 0), "utf8")
+}
+
+/** Normalize legacy portable-text string fields before writing build snapshots. */
+const normalizeProgramsLandingSnapshot = (
+  doc: Record<string, unknown> | null,
+): Record<string, unknown> | null => {
+  if (!doc) return null
+
+  const titlePlain = cmsTextToPlain(doc.programsSectionTitle)
+  const subtitlePlain = cmsTextToPlain(doc.programsSectionSubtitle)
+
+  return {
+    ...doc,
+    ...(titlePlain ? { programsSectionTitle: titlePlain } : {}),
+    ...(subtitlePlain ? { programsSectionSubtitle: subtitlePlain } : {}),
+  }
 }
 
 const resetSingletonSnapshots = () => {
@@ -175,7 +192,7 @@ const main = async () => {
     writeJsonDocSnapshot(applySnapshotPath, applyDoc ?? null)
     writeJsonDocSnapshot(paymentSnapshotPath, paymentDoc ?? null)
     writeJsonDocSnapshot(consultingSnapshotPath, consultingDoc ?? null)
-    writeJsonDocSnapshot(programsLandingSnapshotPath, programsLandingDoc ?? null)
+    writeJsonDocSnapshot(programsLandingSnapshotPath, normalizeProgramsLandingSnapshot(programsLandingDoc ?? null))
     writeJsonDocSnapshot(programsLayoutSnapshotPath, programsLayoutDoc ?? null)
     writeJsonDocSnapshot(eventsLandingSnapshotPath, eventsLandingDoc ?? null)
     writeJsonDocSnapshot(storiesPageSnapshotPath, storiesPageDoc ?? null)

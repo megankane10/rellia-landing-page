@@ -12,7 +12,7 @@ import {
   resolveWelcomeSplashHeadingPortable,
 } from "./resolveHeroHeadline"
 import { resolveSectionHeadlinePortable } from "./resolveSectionHeadline"
-import { hasCmsString, pickCmsString } from "./cmsFieldUtils"
+import { cmsTextToPlain, hasCmsString, pickCmsString } from "./cmsFieldUtils"
 import {
   getPaymentPagePanelDescriptionText,
   membershipPanelDescriptionStringToPortable,
@@ -2779,9 +2779,14 @@ export function mergeProgramsLanding(
   if (!Array.isArray(base.heroTitlePortable) || base.heroTitlePortable.length === 0) {
     base.heroTitlePortable = DEFAULT_PROGRAMS_LANDING.heroTitlePortable
   }
-  if (!base.programsSectionTitle?.trim()) {
-    base.programsSectionTitle = DEFAULT_PROGRAMS_LANDING.programsSectionTitle
-  }
+
+  const programsTitlePlain = cmsTextToPlain(p.programsSectionTitle ?? base.programsSectionTitle)
+  base.programsSectionTitle = programsTitlePlain || DEFAULT_PROGRAMS_LANDING.programsSectionTitle
+
+  const programsSubtitlePlain = cmsTextToPlain(p.programsSectionSubtitle ?? base.programsSectionSubtitle)
+  base.programsSectionSubtitle =
+    programsSubtitlePlain || DEFAULT_PROGRAMS_LANDING.programsSectionSubtitle
+
   return base
 }
 

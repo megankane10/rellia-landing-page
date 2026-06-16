@@ -110,9 +110,9 @@ export const presentationLocations = {
     }),
   }),
   paymentPage: defineLocations({
-    select: {headline: 'headline'},
+    select: { benefitsPanelHeadline: 'benefitsPanelHeadline' },
     resolve: (doc) => ({
-      locations: [{title: doc?.headline || 'Membership', href: '/membership'}],
+      locations: [{ title: doc?.benefitsPanelHeadline || 'Membership', href: '/membership'}],
     }),
   }),
   diagnosticSurveyContent: defineLocations({

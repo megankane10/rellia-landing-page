@@ -176,7 +176,7 @@ export default function FeaturedStories({
                       }}
                       loading="eager"
                       decoding="async"
-                      fetchPriority="high"
+                      fetchpriority="high"
                     />
                   ) : null}
                 </AnimatePresence>

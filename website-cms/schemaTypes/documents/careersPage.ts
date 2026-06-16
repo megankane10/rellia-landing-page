@@ -127,15 +127,6 @@ export const careersPage = defineType({
       fieldset: 'howWeWorkDivider',
     }),
     defineField({
-      name: 'perksTitle',
-      title: 'How we work — section title (legacy)',
-      type: 'string',
-      hidden: true,
-      readOnly: true,
-      group: 'content',
-      fieldset: 'howWeWorkDivider',
-    }),
-    defineField({
       name: 'perksDescription',
       title: 'How we work — section description',
       type: 'text',
@@ -169,15 +160,6 @@ export const careersPage = defineType({
       group: 'content',
       fieldset: 'contentDivider',
     }),
-    defineField({
-      name: 'openRolesTitle',
-      title: 'Open roles section title (legacy)',
-      type: 'string',
-      hidden: true,
-      readOnly: true,
-      group: 'content',
-      fieldset: 'contentDivider',
-    }),
     ...networkCtaFields.map((field) => ({
       ...field,
       fieldset: 'contentDivider' as const,
@@ -185,15 +167,6 @@ export const careersPage = defineType({
     portableHeadlineField({
       name: 'lifeAtRelliaHeadingPortable',
       title: 'Life at Rellia — Heading',
-      group: 'lifeAtRellia',
-      fieldset: 'lifeAtRelliaDivider',
-    }),
-    defineField({
-      name: 'lifeAtRelliaHeading',
-      title: 'Life at Rellia — Heading (legacy)',
-      type: 'string',
-      hidden: true,
-      readOnly: true,
       group: 'lifeAtRellia',
       fieldset: 'lifeAtRelliaDivider',
     }),

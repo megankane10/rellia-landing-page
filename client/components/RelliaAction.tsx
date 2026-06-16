@@ -40,6 +40,15 @@ export const relliaActionVariants = cva(
           "w-full rounded-full border-2 border-rellia-mint bg-rellia-mint text-sm text-rellia-teal hover:bg-rellia-teal hover:text-white hover:border-rellia-teal",
         mintTealFill:
           "rounded-full border-2 border-rellia-mint bg-rellia-mint text-rellia-teal hover:bg-rellia-teal hover:text-white hover:border-rellia-teal",
+        /** Primary on cream / grey-teal detail headers (events, programs, open roles). */
+        creamHeaderPrimary:
+          "rounded-full border-2 border-rellia-teal bg-rellia-teal text-white hover:bg-rellia-mint hover:text-rellia-teal hover:border-rellia-mint hover:shadow-[0_22px_60px_-34px_rgba(15,77,77,0.32)] focus-visible:ring-offset-rellia-cream",
+        /** Filled secondary on cream / grey-teal detail headers. */
+        creamHeaderSecondary:
+          "rounded-full border-2 border-rellia-teal bg-white text-rellia-teal hover:bg-rellia-mint hover:text-rellia-teal hover:border-rellia-mint hover:shadow-[0_18px_50px_-32px_rgba(15,77,77,0.18)] focus-visible:ring-offset-rellia-cream",
+        /** Ghost secondary on cream / grey-teal detail headers. */
+        creamHeaderGhost:
+          "rounded-full border-2 border-rellia-teal bg-transparent text-rellia-teal hover:bg-rellia-mint hover:text-rellia-teal hover:border-rellia-mint hover:shadow-[0_18px_50px_-32px_rgba(15,77,77,0.18)] focus-visible:ring-offset-rellia-cream",
         brandSolid:
           "rounded-full border-2 border-rellia-mint bg-rellia-mint text-rellia-teal hover:bg-rellia-teal hover:text-white hover:border-rellia-teal hover:shadow-[0_22px_60px_-34px_rgba(15,77,77,0.55)]",
         brandOutline:
@@ -48,8 +57,6 @@ export const relliaActionVariants = cva(
           "rounded-2xl border border-blue-600/15 bg-blue-600 text-white shadow-sm hover:bg-blue-700 hover:shadow-md focus-visible:ring-blue-600 focus-visible:ring-offset-slate-50",
         calmSecondary:
           "rounded-2xl border border-slate-900/10 bg-white text-slate-900 hover:bg-slate-50 focus-visible:ring-blue-600 focus-visible:ring-offset-slate-50",
-        creamCtaHeroFill:
-          "rounded-full border-2 border-rellia-teal bg-rellia-teal text-white hover:bg-rellia-mint hover:text-rellia-teal hover:border-rellia-mint hover:shadow-[0_22px_60px_-34px_rgba(15,77,77,0.32)] focus-visible:ring-offset-rellia-cream",
         relliaCtaPrimary:
           "rounded-full border-2 border-rellia-teal bg-rellia-teal text-white hover:bg-rellia-mint hover:text-rellia-teal hover:border-rellia-mint hover:shadow-[0_22px_60px_-34px_rgba(15,77,77,0.32)] focus-visible:ring-offset-rellia-greyTeal",
         relliaCtaSecondary:

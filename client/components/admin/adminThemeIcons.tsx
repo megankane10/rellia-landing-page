@@ -22,21 +22,25 @@ export const SystemAdaptiveIcon = ({
   className,
   size = 20,
   colorClass = headerIconColorClass,
+  filled = false,
 }: {
   className?: string
   size?: number
   colorClass?: string
+  filled?: boolean
 }) => (
   <span className={cn("relative inline-flex shrink-0", className)} style={{ width: size, height: size }} aria-hidden>
     <Sun
-      className={cn("absolute inset-0", colorClass)}
+      className={cn("absolute inset-0", colorClass, filled && "fill-current")}
       style={{ clipPath: "inset(0 50% 0 0)", width: size, height: size }}
       strokeWidth={1.75}
+      fill={filled ? "currentColor" : "none"}
     />
     <Moon
-      className={cn("absolute inset-0", colorClass)}
+      className={cn("absolute inset-0", colorClass, filled && "fill-current")}
       style={{ clipPath: "inset(0 0 0 50%)", width: size, height: size }}
       strokeWidth={1.75}
+      fill={filled ? "currentColor" : "none"}
     />
   </span>
 )
@@ -54,6 +58,7 @@ export const ThemePreferenceIcon = ({
   variant?: "header" | "sidebar-mobile"
   selected?: boolean
 }) => {
+  const filled = variant === "sidebar-mobile" && selected
   const colorClass =
     variant === "sidebar-mobile"
       ? selected
@@ -62,23 +67,32 @@ export const ThemePreferenceIcon = ({
       : headerIconColorClass
 
   if (preference === "system") {
-    return <SystemAdaptiveIcon className={className} size={size} colorClass={colorClass} />
+    return (
+      <SystemAdaptiveIcon
+        className={className}
+        size={size}
+        colorClass={colorClass}
+        filled={filled}
+      />
+    )
   }
   if (preference === "light") {
     return (
       <Sun
-        className={cn(colorClass, className)}
+        className={cn(colorClass, className, filled && "fill-current")}
         style={{ width: size, height: size }}
         strokeWidth={1.75}
+        fill={filled ? "currentColor" : "none"}
         aria-hidden
       />
     )
   }
   return (
     <Moon
-      className={cn(colorClass, className)}
+      className={cn(colorClass, className, filled && "fill-current")}
       style={{ width: size, height: size }}
       strokeWidth={1.75}
+      fill={filled ? "currentColor" : "none"}
       aria-hidden
     />
   )

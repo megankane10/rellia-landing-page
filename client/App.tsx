@@ -4,7 +4,6 @@ import { TooltipProvider } from "@/components/ui/tooltip"
 import { HydrationBoundary, QueryClientProvider } from "@tanstack/react-query"
 import { HelmetProvider } from "react-helmet-async"
 import { BrowserRouter } from "react-router-dom"
-import { Analytics } from "@vercel/analytics/react"
 import ScrollToTop from "@/components/ScrollToTop"
 import RouteSeo from "@/components/RouteSeo"
 import { AppRoutes, RouterShell } from "./AppRoutes"
@@ -47,13 +46,6 @@ const ThirdPartyPreloads = () => {
 
   return null
 }
-
-/** Auto-tracked SPA views; avoid manual route/path props (can mis-track or error on some paths). */
-const VercelObservability = () => (
-  <>
-    <Analytics />
-  </>
-)
 
 const App = () => (
   <HelmetProvider>

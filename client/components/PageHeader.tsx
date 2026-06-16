@@ -1,4 +1,5 @@
 import type { ReactNode } from "react"
+import { CalendarDays } from "lucide-react"
 import ScrollReveal from "@/components/ScrollReveal"
 import { cn } from "@/lib/utils"
 import { HEADING_PAGE, HEADING_PAGE_SUBTITLE } from "@/lib/typography"
@@ -29,6 +30,7 @@ export type PageHeaderProps = {
    * (legal / policy pages).
    */
   effectiveDate?: string
+  effectiveDatePlacement?: "top" | "bottom"
 }
 
 const DARK_BG = [
@@ -51,6 +53,7 @@ export default function PageHeader({
   titleClassName,
   subtitleClassName,
   effectiveDate,
+  effectiveDatePlacement = "top",
 }: PageHeaderProps) {
   const isDark = variant === "dark"
   const effectiveDateTrimmed = effectiveDate?.trim() ?? ""
@@ -104,17 +107,33 @@ export default function PageHeader({
 
       <div className="relative z-10 max-w-[1300px] mx-auto px-6 md:px-10">
         <ScrollReveal>
-          {effectiveDateTrimmed ? (
-            <p
+          {effectiveDateTrimmed && effectiveDatePlacement === "top" ? (
+            <div
               className={cn(
-                "mb-4 flex w-fit items-center rounded-full border px-4 py-1.5 font-host-grotesk text-[11px] font-semibold uppercase tracking-[0.14em] md:mb-5 md:text-xs",
-                isDark
-                  ? "border-white/25 bg-white/10 text-white/90"
-                  : "border-black/12 bg-white/80 text-black/70 shadow-sm",
+                "mb-6 flex w-fit items-center gap-3 md:mb-7 md:gap-3.5",
+                isDark ? "text-white" : "text-black",
               )}
+              role="note"
+              aria-label={`Effective date ${effectiveDateTrimmed}`}
             >
-              Effective {effectiveDateTrimmed}
-            </p>
+              <span
+                className={cn(
+                  "flex h-10 w-10 shrink-0 items-center justify-center rounded-full border",
+                  isDark
+                    ? "border-white/20 bg-white/10 text-rellia-mint"
+                    : "border-black/10 bg-white/80 text-rellia-teal shadow-sm",
+                )}
+                aria-hidden
+              >
+                <CalendarDays className="h-[18px] w-[18px]" aria-hidden strokeWidth={2.25} />
+              </span>
+              <p className={cn("font-urbanist text-base leading-snug md:text-lg")}>
+                <span className={cn(isDark ? "text-white/75" : "text-black/55")}>Effective date</span>{" "}
+                <span className={cn("font-bold", isDark ? "text-white" : "text-rellia-teal")}>
+                  {effectiveDateTrimmed}
+                </span>
+              </p>
+            </div>
           ) : null}
           <div className="relative w-fit">
             <h1
@@ -142,6 +161,33 @@ export default function PageHeader({
               )}
             >
               {renderedSubtitle}
+            </div>
+          ) : null}
+
+          {effectiveDateTrimmed && effectiveDatePlacement === "bottom" ? (
+            <div className="mt-7 flex items-center gap-3">
+              <span
+                className={cn(
+                  "flex h-9 w-9 shrink-0 items-center justify-center rounded-full border",
+                  isDark ? "border-white/20 bg-white/10 text-rellia-mint" : "border-black/10 bg-white/80 text-rellia-teal",
+                )}
+                aria-hidden
+              >
+                <CalendarDays className="h-4 w-4" aria-hidden strokeWidth={2.25} />
+              </span>
+              <p
+                className={cn(
+                  "font-urbanist text-sm leading-snug",
+                  isDark ? "text-white/85" : "text-black/70",
+                )}
+                role="note"
+                aria-label={`Effective date ${effectiveDateTrimmed}`}
+              >
+                <span className={cn(isDark ? "text-white" : "text-black/70")}>Effective date </span>
+                <span className={cn("font-semibold", isDark ? "text-rellia-mint" : "text-rellia-teal")}>
+                  {effectiveDateTrimmed}
+                </span>
+              </p>
             </div>
           ) : null}
         </ScrollReveal>

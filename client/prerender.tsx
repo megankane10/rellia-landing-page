@@ -24,7 +24,12 @@ import {
 import { ADVISOR_DIRECTORY_SEED } from "@/data/advisorDirectory"
 import { FOUNDER_DIRECTORY } from "@/data/founderDirectory"
 import { AppRoutes, RouterShell } from "./AppRoutes"
-import { DEFAULT_PROGRAMS_LANDING, DEFAULT_QMS_PROGRAM, mergeQmsProgram } from "@shared/cms/defaults"
+import {
+  DEFAULT_PROGRAMS_LANDING,
+  DEFAULT_QMS_PROGRAM,
+  mergeNotFound,
+  mergeQmsProgram,
+} from "@shared/cms/defaults"
 import {
   resolveEventCollectionSeo,
   resolveProgramCollectionSeo,
@@ -42,6 +47,7 @@ import {
   resolveEventCardImageSrc,
 } from "@shared/cms/itemCardImage"
 import {
+  fetchNotFoundPageForPrerender,
   fetchPageBySlugForPrerender,
 } from "@shared/cms/prerenderSanity"
 import { prefetchCmsQueriesForPathname } from "@shared/cms/prerenderPrefetch"
@@ -567,6 +573,11 @@ export const prerender = async (data: { url: string }) => {
       })
     } else {
       prerenderQueryClient.setQueryData(["cms", "page", cmsPageSlug], null)
+      const notFoundRaw = await fetchNotFoundPageForPrerender()
+      await prerenderQueryClient.prefetchQuery({
+        queryKey: ["cms", "notFoundPage"],
+        queryFn: async () => mergeNotFound(notFoundRaw ?? undefined),
+      })
     }
   }
 

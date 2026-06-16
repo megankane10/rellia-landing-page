@@ -120,7 +120,7 @@ export default function StoryPost() {
 
   const shareBlock = (
     <div
-      className="flex flex-wrap items-center gap-3 md:flex-col md:items-center md:gap-2.5"
+      className="flex flex-wrap items-center gap-2 sm:gap-3 md:flex-col md:items-center md:gap-2.5"
       role="group"
       aria-label="Share this story"
     >

@@ -1,5 +1,5 @@
 import type { ReactNode } from "react"
-import { adminPageHeaderDividerClass, adminPageTitleClass } from "@/components/admin/adminThemeClasses"
+import { adminHeadingClass, adminPageHeaderDividerClass } from "@/components/admin/adminThemeClasses"
 
 import { cn } from "@/lib/utils"
 
@@ -30,8 +30,8 @@ const AdminPageHeader = ({
     <div className="min-w-0">
       <h1
         className={cn(
-          "font-host-grotesk text-2xl font-semibold tracking-tight md:text-[1.75rem]",
-          adminPageTitleClass,
+          "font-host-grotesk text-3xl font-semibold leading-tight tracking-tight md:text-4xl md:leading-tight",
+          adminHeadingClass,
           titleClassName,
         )}
       >

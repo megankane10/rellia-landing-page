@@ -17,7 +17,7 @@ export const adminCardDividerClass = "border-black/10 dark:border-border"
 
 /** Page header bottom rule */
 export const adminPageHeaderDividerClass =
-  "border-b border-rellia-teal/35 pb-5 dark:border-rellia-mint/45"
+  "border-b border-black/10 pb-5 dark:border-white/10"
 
 /** Selected-item surface — bright outline + low-opacity fill (light & dark panels) */
 export const adminHighlightedSurfaceClass = cn(
@@ -79,7 +79,7 @@ export const adminCardTitleClass = cn(
 export const adminPageTitleClass = "text-rellia-teal dark:text-rellia-mint"
 
 /** Tip box title — matches page headings */
-export const adminTipBoxTitleClass = adminPageTitleClass
+export const adminTipBoxTitleClass = "text-rellia-teal dark:text-white"
 
 /** Accent text & icons (links, highlights) */
 export const adminAccentClass = "text-rellia-teal dark:text-rellia-mint"

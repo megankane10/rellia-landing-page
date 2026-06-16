@@ -85,7 +85,7 @@ const ThirdPartyPreloads = () => {
 
 const VercelObservability = () => (
   <>
-    <Analytics />
+    {import.meta.env.PROD ? <Analytics /> : null}
   </>
 )
 

@@ -483,9 +483,9 @@ export default function EventDetail() {
                         ) : (
                           <RelliaAction
                             type="button"
-                            variant="relliaCtaPrimary"
+                            variant="creamHeaderPrimary"
                             size="compact"
-                            className="inline-flex w-full cursor-pointer px-6 py-3 text-sm sm:w-auto sm:px-8 sm:text-[15px]"
+                            className="inline-flex h-[3.75rem] w-full cursor-pointer justify-center px-5 py-4 text-sm sm:w-auto sm:px-7 sm:text-[15px]"
                             onClick={handleHeroCtaClick}
                             aria-haspopup="dialog"
                             aria-label={event.buttonText?.trim() || "Register now"}
@@ -496,7 +496,7 @@ export default function EventDetail() {
                         {customLinkHref ? (
                           <RelliaAction
                             asChild
-                            variant="outlineOnWhite"
+                            variant="creamHeaderSecondary"
                             size="compact"
                             className="inline-flex w-full cursor-pointer px-6 py-3 text-sm sm:w-auto sm:px-8 sm:text-[15px]"
                           >
@@ -523,7 +523,7 @@ export default function EventDetail() {
                   </p>
                   <div className="h-px w-full bg-black/10" aria-hidden />
 
-                  <div className="flex flex-wrap items-center gap-3">
+                  <div className="flex flex-wrap items-center gap-2 sm:gap-3">
                     <ShareToolbarIconLink
                       href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(canonical)}&text=${encodeURIComponent(shareTitle)}`}
                       label="Share on X"
