@@ -31,7 +31,6 @@ import ScrollReveal from "@/components/ScrollReveal"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
 import { Skeleton } from "@/components/ui/skeleton"
-import { Separator } from "@/components/ui/separator"
 import {
   contactDisplayName,
   contactTypeLabel,
@@ -264,6 +263,21 @@ const PieLegend = ({ rows }: { rows: PieSliceRow[] }) => (
         <span className="shrink-0 text-muted-foreground dark:text-slate-300">({row.value})</span>
       </div>
     ))}
+  </div>
+)
+
+const RadarCategoryLegend = ({ rows, seriesColor }: { rows: RadarRow[]; seriesColor: string }) => (
+  <div className={adminOverviewChartLegendClass}>
+    {rows
+      .filter((row) => row.value > 0)
+      .slice(0, 6)
+      .map((row) => (
+        <div key={row.name} className="flex max-w-full items-center gap-1.5">
+          <span className="h-2 w-2 shrink-0 rounded-full" style={{ backgroundColor: seriesColor }} />
+          <span className="truncate font-semibold text-foreground/80 dark:text-slate-100">{row.name}</span>
+          <span className="shrink-0 text-muted-foreground dark:text-slate-300">({row.value})</span>
+        </div>
+      ))}
   </div>
 )
 
@@ -694,15 +708,39 @@ const OverviewTodaySnapshotPill = ({ snapshot }: { snapshot: TodayInboxSnapshot 
 const AdminOverviewFilterCardHeader = ({
   title,
   filters,
+  centerSlot,
 }: {
   title: string
   filters?: ReactNode
+  /** Desktop: title left, centerSlot centered in card, filters right — same row as heading */
+  centerSlot?: ReactNode
 }) => (
   <CardHeader className={adminOverviewCardHeaderClass}>
-    <div className={adminOverviewCardHeaderRowClass}>
-      <CardTitle className={adminOverviewCardTitleClass}>{title}</CardTitle>
-      {filters ? <div className={adminOverviewCardFilterRowClass}>{filters}</div> : null}
-    </div>
+    {centerSlot ? (
+      <>
+        <div className="flex min-w-0 flex-col gap-3 md:hidden">
+          <div className="flex min-w-0 items-center justify-between gap-3">
+            <CardTitle className={adminOverviewCardTitleClass}>{title}</CardTitle>
+            {filters ? <div className={adminOverviewCardFilterRowClass}>{filters}</div> : null}
+          </div>
+          <div className="flex min-h-10 w-full items-center justify-center">{centerSlot}</div>
+        </div>
+        <div className="hidden min-w-0 md:grid md:grid-cols-[1fr_auto_1fr] md:items-center md:gap-4">
+          <CardTitle className={cn(adminOverviewCardTitleClass, "justify-self-start")}>{title}</CardTitle>
+          <div className="flex min-h-10 items-center justify-center justify-self-center">{centerSlot}</div>
+          {filters ? (
+            <div className={cn(adminOverviewCardFilterRowClass, "justify-self-end")}>{filters}</div>
+          ) : (
+            <span aria-hidden />
+          )}
+        </div>
+      </>
+    ) : (
+      <div className={adminOverviewCardHeaderRowClass}>
+        <CardTitle className={adminOverviewCardTitleClass}>{title}</CardTitle>
+        {filters ? <div className={adminOverviewCardFilterRowClass}>{filters}</div> : null}
+      </div>
+    )}
   </CardHeader>
 )
 
@@ -1169,8 +1207,9 @@ const CategoryRadarChart = ({
   )
 
   return (
-    <div ref={ref} className={cn("h-full w-full min-w-0", className)}>
-      {content}
+    <div ref={ref} className={cn("flex h-full w-full min-w-0 flex-col", className)}>
+      <div className="min-h-0 flex-1">{content}</div>
+      {!loading && rows.length > 0 ? <RadarCategoryLegend rows={rows} seriesColor={color} /> : null}
     </div>
   )
 }
@@ -2080,58 +2119,55 @@ const AdminOverviewPage = () => {
         <Card className={cn(adminOverviewChartCardClass, "lg:col-span-2")}>
           <AdminOverviewFilterCardHeader
             title={getSubmissionTrendTitle(trendPeriod)}
-            filters={
-              <div className="flex w-full min-w-0 flex-col items-stretch gap-2 sm:flex-row sm:flex-nowrap sm:items-center sm:justify-end sm:gap-3 lg:gap-5">
-                <div className="order-2 flex min-w-0 items-center justify-start gap-1 sm:order-1 sm:justify-center">
-                  <button
-                    onClick={() => setTrendOffset((prev) => prev + 1)}
-                    className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-border bg-card text-muted-foreground transition-colors hover:bg-muted/50 active:bg-slate-100 disabled:opacity-50 sm:h-10 sm:w-10"
-                    aria-label={
-                      trendPeriod === "week"
-                        ? "Previous week"
-                        : trendPeriod === "month"
-                          ? "Previous month"
-                          : "Previous year"
-                    }
-                  >
-                    <ChevronLeft className="h-5 w-5" />
-                  </button>
-                  <span
-                    className={cn(
-                      adminOverviewFilterLabelClass,
-                      "min-w-0 flex-1 whitespace-nowrap px-1.5 text-center text-xs sm:flex-none sm:px-2.5 sm:text-sm",
-                    )}
-                  >
-                    {getSubmissionTrendRangeLabel(trendPeriod, trendOffset)}
-                  </span>
-                  <button
-                    onClick={() => setTrendOffset((prev) => Math.max(0, prev - 1))}
-                    disabled={trendOffset === 0}
-                    className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-border bg-card text-muted-foreground transition-colors hover:bg-muted/50 active:bg-slate-100 disabled:opacity-50 sm:h-10 sm:w-10"
-                    aria-label={
-                      trendPeriod === "week"
-                        ? "Next week"
-                        : trendPeriod === "month"
-                          ? "Next month"
-                          : "Next year"
-                    }
-                  >
-                    <ChevronRight className="h-5 w-5" />
-                  </button>
-                </div>
-                <Separator orientation="vertical" className="order-3 mx-1 hidden h-8 shrink-0 sm:mx-2 sm:block" />
-                <div className="order-1 w-full min-w-0 sm:order-2 sm:w-auto sm:shrink-0">
-                  <AdminOverviewSegmentedControl<SubmissionTrendPeriod>
-                    options={TREND_PERIOD_OPTIONS.map((option) => ({
-                      value: option.id,
-                      label: option.label,
-                    }))}
-                    value={trendPeriod}
-                    onChange={handleTrendPeriodChange}
-                    ariaLabel="Filter submissions by time period"
-                  />
-                </div>
+            centerSlot={
+              <div className="flex min-w-0 items-center justify-center gap-1">
+                <button
+                  onClick={() => setTrendOffset((prev) => prev + 1)}
+                  className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-border bg-card text-muted-foreground transition-colors hover:bg-muted/50 active:bg-slate-100 disabled:opacity-50 md:h-10 md:w-10"
+                  aria-label={
+                    trendPeriod === "week"
+                      ? "Previous week"
+                      : trendPeriod === "month"
+                        ? "Previous month"
+                        : "Previous year"
+                  }
+                >
+                  <ChevronLeft className="h-5 w-5" />
+                </button>
+                <span
+                  className={cn(
+                    adminOverviewFilterLabelClass,
+                    "min-w-0 whitespace-nowrap px-1.5 text-center text-xs md:px-2.5 md:text-sm",
+                  )}
+                >
+                  {getSubmissionTrendRangeLabel(trendPeriod, trendOffset)}
+                </span>
+                <button
+                  onClick={() => setTrendOffset((prev) => Math.max(0, prev - 1))}
+                  disabled={trendOffset === 0}
+                  className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-border bg-card text-muted-foreground transition-colors hover:bg-muted/50 active:bg-slate-100 disabled:opacity-50 md:h-10 md:w-10"
+                  aria-label={
+                    trendPeriod === "week"
+                      ? "Next week"
+                      : trendPeriod === "month"
+                        ? "Next month"
+                        : "Next year"
+                  }
+                >
+                  <ChevronRight className="h-5 w-5" />
+                </button>
               </div>
+            }
+            filters={
+              <AdminOverviewSegmentedControl<SubmissionTrendPeriod>
+                options={TREND_PERIOD_OPTIONS.map((option) => ({
+                  value: option.id,
+                  label: option.label,
+                }))}
+                value={trendPeriod}
+                onChange={handleTrendPeriodChange}
+                ariaLabel="Filter submissions by time period"
+              />
             }
           />
           <CardContent className={cn(adminOverviewChartRowCardContentClass, "min-w-0 overflow-hidden sm:overflow-x-auto")}>
