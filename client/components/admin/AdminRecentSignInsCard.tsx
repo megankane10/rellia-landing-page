@@ -54,7 +54,7 @@ const AdminRecentSignInsCard = ({ members, loading, className }: AdminRecentSign
                     {formatAdminDateWithWeekday(signedInAt)}
                   </time>
                   <span className="mx-1.5 text-border">·</span>
-                  <span className="font-medium text-rellia-teal/90">
+                  <span className="font-medium text-rellia-teal/90 dark:text-rellia-mint">
                     {formatAdminRelativeAgo(signedInAt)}
                   </span>
                 </p>

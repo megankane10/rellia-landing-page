@@ -24,3 +24,10 @@ export const prefersReducedThemeMotion = () =>
 
 export const supportsAdminViewTransition = () =>
   typeof document !== "undefined" && "startViewTransition" in document
+
+/** Mobile admin nav is portaled outside `.admin-shell`; skip shell view transitions while it is open. */
+export const isAdminMobileSidebarOpen = () =>
+  typeof document !== "undefined" &&
+  Boolean(
+    document.querySelector('[data-sidebar="sidebar"][data-mobile="true"][data-state="open"]'),
+  )

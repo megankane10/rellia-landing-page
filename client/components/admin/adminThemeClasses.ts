@@ -50,7 +50,7 @@ export const adminOverviewArrowChipClass = cn(
   "transition-[color,background-color,border-color,transform] duration-150",
   "group-hover:border-rellia-teal/25 group-hover:bg-rellia-mint/20 group-hover:text-rellia-teal",
   "dark:border-rellia-mint/25 dark:bg-rellia-mint/10 dark:text-rellia-mint",
-  "dark:group-hover:border-rellia-mint/40 dark:group-hover:bg-rellia-mint/15",
+  "dark:group-hover:border-rellia-mint/40 dark:group-hover:bg-rellia-mint/15 dark:group-hover:text-rellia-mint",
 )
 
 /** Dashed empty-state panel */

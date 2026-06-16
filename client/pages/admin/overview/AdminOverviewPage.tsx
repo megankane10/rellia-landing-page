@@ -230,7 +230,6 @@ const overviewTopCardShellClass = cn(
 const OverviewTopLinkCard = ({
   title,
   value,
-  icon: Icon,
   statusLabel,
   statusTone,
   href,
@@ -238,7 +237,6 @@ const OverviewTopLinkCard = ({
 }: {
   title: string
   value: number | string
-  icon: LucideIcon
   statusLabel: string
   statusTone: "good" | "warn" | "muted"
   href: string
@@ -258,11 +256,7 @@ const OverviewTopLinkCard = ({
 
   return (
     <Link to={href} className={overviewTopCardShellClass} aria-label={title}>
-      <div className="flex min-h-[5.5rem] items-center gap-4 sm:min-h-[6rem]">
-        <div className="flex size-[4.25rem] shrink-0 items-center justify-center rounded-2xl border border-rellia-teal/15 bg-gradient-to-br from-white via-white to-rellia-mint/35 shadow-[inset_0_1px_0_rgba(255,255,255,0.9)] dark:border-rellia-mint/20 dark:from-slate-900 dark:via-slate-900 dark:to-rellia-mint/15 sm:size-[4.75rem]">
-          <Icon className="size-8 text-rellia-teal dark:text-rellia-mint sm:size-9" strokeWidth={1.5} aria-hidden />
-        </div>
-
+      <div className="flex min-h-[5.5rem] items-center sm:min-h-[6rem]">
         <div className="min-w-0 flex-1">
           <div className="flex items-start justify-between gap-2">
             <p className="min-w-0 truncate font-host-grotesk text-base font-semibold text-foreground dark:text-white sm:text-lg">
@@ -289,7 +283,7 @@ const OverviewTopLinkCard = ({
           {loading ? (
             <Skeleton className="mt-3 h-10 w-20 rounded-lg bg-rellia-mint/25" />
           ) : (
-            <div className="mt-2 flex min-w-0 flex-wrap items-center gap-3">
+            <div className="mt-2 flex min-w-0 items-center gap-3">
               <Tooltip>
                 <TooltipTrigger asChild>
                   <span
@@ -777,7 +771,6 @@ const AdminOverviewPage = () => {
       <div className="grid min-w-0 grid-cols-1 items-stretch gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <OverviewTopLinkCard
           title="Web forms"
-          icon={Inbox}
           href="/admin/inbox?tab=contact"
           loading={loading}
           value={unresolvedWebForms === 0 && !loading ? "Clear" : unresolvedWebForms}
@@ -786,7 +779,6 @@ const AdminOverviewPage = () => {
         />
         <OverviewTopLinkCard
           title="Diagnostic surveys"
-          icon={Stethoscope}
           href="/admin/inbox?tab=diagnostic"
           loading={loading}
           value={unresolvedDiagnostics === 0 && !loading ? "Clear" : unresolvedDiagnostics}
@@ -795,7 +787,6 @@ const AdminOverviewPage = () => {
         />
         <OverviewTopLinkCard
           title="Sanity drafts"
-          icon={FileEdit}
           href="/admin/drafts"
           loading={isCmsContentEnabled() && draftsQuery.isLoading}
           value={

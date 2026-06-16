@@ -1,6 +1,8 @@
 import { motion, useReducedMotion } from "framer-motion"
 import { useAdminTheme, type AdminThemePreference } from "@/context/AdminThemeContext"
 import { ThemePreferenceIcon } from "@/components/admin/adminThemeIcons"
+import AdminTooltipContent from "@/components/admin/AdminTooltipContent"
+import { Tooltip, TooltipTrigger } from "@/components/ui/tooltip"
 import { cn } from "@/lib/utils"
 
 const MOBILE_OPTIONS: AdminThemePreference[] = ["system", "light", "dark"]
@@ -11,57 +13,69 @@ const THEME_ARIA_LABELS: Record<AdminThemePreference, string> = {
   dark: "Dark theme",
 }
 
+const selectionSpring = {
+  type: "spring" as const,
+  stiffness: 420,
+  damping: 34,
+  mass: 0.85,
+}
+
 const AdminMobileThemePicker = () => {
   const { preference, setPreference } = useAdminTheme()
   const prefersReducedMotion = useReducedMotion()
 
   return (
     <div
-      className="mb-4 flex items-center justify-center gap-3"
+      className="mb-4 flex w-full items-center gap-1 rounded-full border border-slate-700/80 bg-slate-900/50 p-1"
       role="radiogroup"
       aria-label="Theme"
     >
       {MOBILE_OPTIONS.map((option) => {
         const selected = preference === option
         return (
-          <motion.button
-            key={option}
-            type="button"
-            role="radio"
-            aria-checked={selected}
-            aria-label={THEME_ARIA_LABELS[option]}
-            onClick={(event) => {
-              const rect = event.currentTarget.getBoundingClientRect()
-              setPreference(option, {
-                origin: {
-                  x: rect.left + rect.width / 2,
-                  y: rect.top + rect.height / 2,
-                },
-              })
-            }}
-            whileTap={prefersReducedMotion ? undefined : { scale: 0.94 }}
-            className={cn(
-              "flex h-11 w-11 items-center justify-center rounded-full border transition-colors",
-              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint/45",
-              selected
-                ? "border-rellia-mint/35 bg-rellia-mint/15"
-                : "border-slate-700/80 bg-slate-900/50 hover:bg-white/[0.06]",
-            )}
-          >
-            <motion.span
-              key={selected ? `${option}-on` : `${option}-off`}
-              initial={prefersReducedMotion ? false : { scale: selected ? 0.85 : 1 }}
-              animate={{ scale: selected ? 1.08 : 1 }}
-              transition={{ type: "spring", stiffness: 500, damping: 30 }}
-            >
-              <ThemePreferenceIcon
-                preference={option}
-                size={20}
-                variant="sidebar-mobile"
-                selected={selected}
-              />
-            </motion.span>
-          </motion.button>
+          <Tooltip key={option}>
+            <TooltipTrigger asChild>
+              <button
+                type="button"
+                role="radio"
+                aria-checked={selected}
+                aria-label={THEME_ARIA_LABELS[option]}
+                onClick={(event) => {
+                  const rect = event.currentTarget.getBoundingClientRect()
+                  setPreference(option, {
+                    origin: {
+                      x: rect.left + rect.width / 2,
+                      y: rect.top + rect.height / 2,
+                    },
+                  })
+                }}
+                className={cn(
+                  "relative flex h-11 min-w-0 flex-1 items-center justify-center rounded-full",
+                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint/45",
+                )}
+              >
+                {selected ? (
+                  <motion.span
+                    layoutId="admin-mobile-theme-selection"
+                    className="absolute inset-0 rounded-full bg-rellia-mint/15"
+                    transition={prefersReducedMotion ? { duration: 0 } : selectionSpring}
+                    aria-hidden
+                  />
+                ) : null}
+                <span className="relative z-10 flex items-center justify-center">
+                  <ThemePreferenceIcon
+                    preference={option}
+                    size={20}
+                    variant="sidebar-mobile"
+                    selected={selected}
+                  />
+                </span>
+              </button>
+            </TooltipTrigger>
+            <AdminTooltipContent side="top" align="center">
+              {THEME_ARIA_LABELS[option]}
+            </AdminTooltipContent>
+          </Tooltip>
         )
       })}
     </div>

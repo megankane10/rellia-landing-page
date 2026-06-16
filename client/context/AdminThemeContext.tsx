@@ -12,6 +12,7 @@ import { flushSync } from "react-dom"
 import {
   type AdminThemeSetOptions,
   applyAdminThemeTransitionOrigin,
+  isAdminMobileSidebarOpen,
   prefersReducedThemeMotion,
   supportsAdminViewTransition,
 } from "@/lib/adminThemeTransition"
@@ -98,8 +99,13 @@ export const AdminThemeProvider = ({ children }: { children: ReactNode }) => {
         return
       }
 
-      if (supportsAdminViewTransition()) {
+      if (supportsAdminViewTransition() && !isAdminMobileSidebarOpen()) {
         document.startViewTransition(apply)
+        return
+      }
+
+      if (isAdminMobileSidebarOpen()) {
+        apply()
         return
       }
 

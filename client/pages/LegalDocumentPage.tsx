@@ -2,6 +2,7 @@ import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
 import ScrollReveal from "@/components/ScrollReveal"
 import PageHeader from "@/components/PageHeader"
+import { LegalEffectiveDate } from "@/components/LegalEffectiveDate"
 import { PortableRichText } from "@/components/PortableRichText"
 import { CmsLegalBodySkeleton } from "@/components/cms/CmsTextSkeleton"
 import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo"
@@ -57,9 +58,7 @@ export const LegalDocumentPage = ({
                 <CmsLegalBodySkeleton />
               ) : (
                 <>
-                  <p className="mb-10 font-urbanist text-lg font-medium leading-relaxed text-rellia-teal">
-                    Effective {effectiveDate}
-                  </p>
+                  <LegalEffectiveDate date={effectiveDate} />
                   {legalNotice ? (
                     <p className="mb-10 font-urbanist text-lg italic leading-relaxed text-black/65 md:mb-12 md:text-xl">
                       {legalNotice}

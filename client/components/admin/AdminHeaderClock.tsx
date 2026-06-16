@@ -100,7 +100,7 @@ const AdminHeaderClock = ({ className }: AdminHeaderClockProps) => {
           <div className="h-5 w-px shrink-0 bg-border/80" aria-hidden />
           <time
             dateTime={now.toISOString()}
-            className="text-lg font-normal tabular-nums text-muted-foreground"
+            className="text-lg font-normal tabular-nums text-rellia-teal dark:text-rellia-mint"
           >
             {formatTime(now)}
           </time>

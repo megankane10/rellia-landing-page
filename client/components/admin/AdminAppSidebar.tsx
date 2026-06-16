@@ -52,7 +52,7 @@ const AttentionBadgeCount = ({
     <span
       className={cn(
         "attention-badge-count inline-flex shrink-0 items-center justify-center rounded-full bg-rellia-mint",
-        "font-urbanist text-xs font-semibold leading-none text-rellia-teal tabular-nums",
+        "font-urbanist text-xs font-semibold leading-none !text-rellia-teal tabular-nums",
         isCompact ? "size-6" : "h-6 min-w-6 px-1.5",
         className,
       )}

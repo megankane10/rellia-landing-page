@@ -51,8 +51,8 @@ export const AdminSidebarDateTime = ({
         />
 
         <div className="relative flex flex-col items-start gap-3 text-left">
-          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-rellia-teal/25 bg-rellia-mint/10 text-rellia-mint">
-            <CalendarDays className="h-5 w-5" aria-hidden strokeWidth={1.75} />
+          <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border border-rellia-teal/25 bg-rellia-mint/10 text-rellia-mint">
+            <CalendarDays className="h-7 w-7" aria-hidden strokeWidth={1.75} />
           </span>
           <div className="min-w-0">
             <time
@@ -61,7 +61,7 @@ export const AdminSidebarDateTime = ({
             >
               {formatTime(now)}
             </time>
-            <p className="mt-2 font-urbanist text-sm leading-snug text-slate-400">
+            <p className="mt-4 font-urbanist text-base leading-snug text-rellia-mint">
               {formatDate(now)}
             </p>
           </div>
