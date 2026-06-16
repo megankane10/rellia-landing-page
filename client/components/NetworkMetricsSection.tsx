@@ -7,6 +7,7 @@ import { PAGE_HEADER_TITLE_SIZE_CLASS } from "@/components/PageHeader"
 import { HeroHeadlinePortable } from "@/components/HeroHeadlinePortable"
 import { cmsCleanText, cmsDisplayText, isVisualEditingPreview } from "@/lib/cmsStega"
 import type { SanityPortableText } from "@shared/cms/types"
+import { buildResponsiveImageProps } from "@shared/image/optimizeImageUrl"
 
 function useCountUp(target: number, enabled: boolean, durationMs = 1200) {
   const [value, setValue] = useState(target)
@@ -164,6 +165,10 @@ export default function NetworkMetricsSection({
   const metricList = useMemo(() => metrics, [metrics]);
   const metricsBackgroundSrc =
     cmsDisplayText(backgroundImageUrl) || DEFAULT_METRICS_BACKGROUND
+  const metricsBackgroundImage = buildResponsiveImageProps(
+    metricsBackgroundSrc,
+    "metricsBackground",
+  )
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ["start 95%", "end 5%"],
@@ -246,7 +251,9 @@ export default function NetworkMetricsSection({
       >
         <div className="absolute inset-0 overflow-hidden" aria-hidden>
           <motion.img
-            src={metricsBackgroundSrc}
+            src={metricsBackgroundImage.src}
+            srcSet={metricsBackgroundImage.srcSet}
+            sizes={metricsBackgroundImage.sizes}
             alt=""
             className="h-full w-full object-cover scale-[1.12] object-[62%_50%]"
             style={previewMode || reduceMotion || isMobile ? undefined : { y: bgY }}

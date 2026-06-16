@@ -1,4 +1,5 @@
-import { renderToString } from "react-dom/server"
+import { renderToReadableStream } from "react-dom/server"
+import type { ReactElement } from "react"
 import { StaticRouter } from "react-router-dom/server"
 import { HelmetProvider, type HelmetServerState } from "react-helmet-async"
 import { QueryClient, QueryClientProvider, dehydrate } from "@tanstack/react-query"
@@ -23,7 +24,8 @@ import {
 } from "@/config/seo"
 import { ADVISOR_DIRECTORY_SEED } from "@/data/advisorDirectory"
 import { FOUNDER_DIRECTORY } from "@/data/founderDirectory"
-import { AppRoutes, RouterShell } from "./AppRoutes"
+import { AppRoutesClient } from "./AppRoutesClient"
+import { RouterShell } from "./RouterShell"
 import {
   DEFAULT_PROGRAMS_LANDING,
   DEFAULT_QMS_PROGRAM,
@@ -202,7 +204,6 @@ const buildCareersRoleSeo = (
     description?: unknown
     responsibilities?: string[]
   },
-  heroImageSrc?: string,
 ): ItemPrerenderSeo => {
   const shareRole: CareersOpenRole = {
     id: "",
@@ -214,9 +215,9 @@ const buildCareersRoleSeo = (
       ? role.responsibilities.filter((line): line is string => typeof line === "string")
       : [],
   }
-  const resolved = buildCareersRoleShareMeta(shareRole, { heroImageSrc })
-  const ogSrc = resolved.ogImageUrl?.trim() || "/images/careers-img.jpg"
-  const ogImage = resolveSocialOgImage(ogSrc, getSiteUrl(), { landscape: true })
+  const resolved = buildCareersRoleShareMeta(shareRole)
+  const ogSrc = resolved.ogImageUrl?.trim()
+  const ogImage = ogSrc ? resolveSocialOgImage(ogSrc, getSiteUrl(), { landscape: true }) : undefined
   return {
     title: clampMetaTitle(resolved.title),
     description: clampMetaDescription(resolved.description),
@@ -319,11 +320,7 @@ const resolveItemPrerenderSeo = async (
     if (!roleId) return null
     const role = prefetched.careersRole
     if (!role || typeof role.title !== "string") return null
-    const careersHero =
-      typeof prefetched.careersPageHeroImageSrc === "string"
-        ? prefetched.careersPageHeroImageSrc
-        : undefined
-    return buildCareersRoleSeo(role, careersHero)
+    return buildCareersRoleSeo(role)
   }
 
   if (pathname.startsWith("/events/") && pathname !== "/events") {
@@ -439,6 +436,12 @@ const appendSocialMeta = (
   } else {
     headElements.add(`<meta name="twitter:card" content="summary" />`)
   }
+}
+
+const renderAppToHtml = async (app: ReactElement): Promise<string> => {
+  const stream = await renderToReadableStream(app)
+  await stream.allReady
+  return new Response(stream).text()
 }
 
 const filterDiscoveredLinks = (links: Set<string> | string[]): Set<string> => {
@@ -592,7 +595,7 @@ export const prerender = async (data: { url: string }) => {
         <TooltipProvider>
           <StaticRouter location={data.url}>
             <RouterShell initialPageSeo={cmsPageInitialSeo}>
-              <AppRoutes />
+              <AppRoutesClient />
             </RouterShell>
           </StaticRouter>
         </TooltipProvider>
@@ -600,7 +603,7 @@ export const prerender = async (data: { url: string }) => {
     </HelmetProvider>
   )
 
-  const html = renderToString(app)
+  const html = await renderAppToHtml(app)
   const links = filterDiscoveredLinks(parseLinks(html))
 
   const dehydratedCmsState = dehydrate(prerenderQueryClient)

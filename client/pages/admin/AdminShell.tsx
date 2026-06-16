@@ -1,5 +1,6 @@
 import { type CSSProperties, useCallback, useEffect, useMemo, useState } from "react"
 import { Outlet } from "react-router-dom"
+import { useQueryClient } from "@tanstack/react-query"
 import AdminAppSidebar from "@/components/admin/AdminAppSidebar"
 import AdminHeaderClock from "@/components/admin/AdminHeaderClock"
 import AdminSidebarTrigger from "@/components/admin/AdminSidebarTrigger"
@@ -24,6 +25,7 @@ const readInitialSidebarOpen = (): boolean => {
 const AdminShellContent = () => {
   const { resolvedTheme, isThemeTransitioning } = useAdminTheme()
   const { session } = useAuth()
+  const queryClient = useQueryClient()
   const token = session?.access_token ?? ""
   const enabled = useMemo(() => Boolean(token), [token])
 
@@ -35,6 +37,7 @@ const AdminShellContent = () => {
       if (cancelled) return
       try {
         await postAdminPresenceHeartbeat(token)
+        queryClient.invalidateQueries({ queryKey: ["admin-team", token] })
       } catch {
         // Presence is best-effort only
       }
@@ -53,7 +56,7 @@ const AdminShellContent = () => {
       window.clearInterval(id)
       document.removeEventListener("visibilitychange", handleVisibility)
     }
-  }, [enabled, token])
+  }, [enabled, queryClient, token])
 
   return (
     <div

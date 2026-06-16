@@ -72,22 +72,18 @@ export const findCareersOpenRoleById = (
   return roles.find((role) => role.id === id)
 }
 
-export const CAREERS_ROLE_SHARE_OG_FALLBACK = "/images/careers-img.jpg"
+export const buildCareersRoleShareMeta = (role: CareersOpenRole) => {
+  const ogImageUrl = extractFirstPortableTextImageUrl(role.description)?.trim() || undefined
 
-export const buildCareersRoleShareMeta = (
-  role: CareersOpenRole,
-  options?: { heroImageSrc?: string },
-) => ({
-  ...resolveCareersRoleSeo({
-    title: role.title,
-    location: role.location,
-    employmentType: role.employmentType,
-    excerpt: role.excerpt,
-    description: role.description,
-    responsibilities: role.responsibilities,
-  }),
-  ogImageUrl:
-    extractFirstPortableTextImageUrl(role.description)?.trim() ||
-    options?.heroImageSrc?.trim() ||
-    CAREERS_ROLE_SHARE_OG_FALLBACK,
-})
+  return {
+    ...resolveCareersRoleSeo({
+      title: role.title,
+      location: role.location,
+      employmentType: role.employmentType,
+      excerpt: role.excerpt,
+      description: role.description,
+      responsibilities: role.responsibilities,
+    }),
+    ogImageUrl,
+  }
+}

@@ -9,6 +9,8 @@ export type ShareCopyLinkButtonProps = {
   className?: string
   copiedClassName?: string
   iconClassName?: string
+  sizeClassName?: string
+  wrapperClassName?: string
   idleLabel?: string
   copiedLabel?: string
   showMobileLabel?: boolean
@@ -21,6 +23,8 @@ export const ShareCopyLinkButton = ({
   className,
   copiedClassName,
   iconClassName = shareIconSize,
+  sizeClassName = shareComfortableControlSizeClass,
+  wrapperClassName,
   idleLabel = "Copy link",
   copiedLabel = "Copied!",
   showMobileLabel = false,
@@ -46,13 +50,14 @@ export const ShareCopyLinkButton = ({
       label={copied ? copiedLabel : idleLabel}
       position={tooltipPosition}
       mobilePosition={tooltipMobilePosition}
+      className={wrapperClassName}
     >
       <button
         type="button"
         onClick={handleClick}
         className={cn(
           "relative inline-flex cursor-pointer items-center justify-center rounded-full border-2 transition-all duration-300",
-          shareComfortableControlSizeClass,
+          sizeClassName,
           copied
             ? copiedClassName ?? "border-rellia-teal bg-rellia-mint/20 text-rellia-teal"
             : !hasCustomShell &&

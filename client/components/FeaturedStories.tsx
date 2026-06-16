@@ -13,6 +13,7 @@ import { allowCmsSeedFallbacks } from "@/lib/deploymentEnv"
 import { isSanityConfigured } from "@/lib/sanity"
 import { cmsCleanText, cmsDisplayText } from "@/lib/cmsStega"
 import { CmsFeaturedStoriesSkeleton } from "@/components/cms/CmsPageSkeletons"
+import { buildResponsiveImageProps } from "@shared/image/optimizeImageUrl"
 
 /** Auto-advance interval (progress bar uses same duration) */
 const ROTATE_MS = 6500
@@ -100,6 +101,9 @@ export default function FeaturedStories({
   const [cycleKey, setCycleKey] = useState(0)
 
   const activeStory = featured[activeIndex]
+  const activeStoryImage = activeStory
+    ? buildResponsiveImageProps(cmsDisplayText(activeStory.coverImageSrc), "storyHero")
+    : null
 
   const canRotate = featured.length > 1
 
@@ -116,7 +120,9 @@ export default function FeaturedStories({
   useEffect(() => {
     featured.forEach((story) => {
       const img = new Image()
-      img.src = story.coverImageSrc
+      const optimized = buildResponsiveImageProps(story.coverImageSrc, "storyHero")
+      img.src = optimized.src
+      if (optimized.srcSet) img.srcset = optimized.srcSet
     })
   }, [featured])
 
@@ -159,10 +165,12 @@ export default function FeaturedStories({
                 )}
               >
                 <AnimatePresence mode="sync" initial={false}>
-                  {activeStory ? (
+                  {activeStory && activeStoryImage ? (
                     <motion.img
                       key={activeStory.slug}
-                      src={cmsDisplayText(activeStory.coverImageSrc)}
+                      src={activeStoryImage.src}
+                      srcSet={activeStoryImage.srcSet}
+                      sizes={activeStoryImage.sizes}
                       alt={cmsDisplayText(activeStory.coverImageAlt)}
                       className="absolute inset-0 z-0 h-full w-full object-cover"
                       initial={{ opacity: 0 }}
@@ -176,7 +184,6 @@ export default function FeaturedStories({
                       }}
                       loading="eager"
                       decoding="async"
-                      fetchpriority="high"
                     />
                   ) : null}
                 </AnimatePresence>

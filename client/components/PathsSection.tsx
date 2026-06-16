@@ -15,6 +15,7 @@ import { hasCmsString, pickCmsPortableText, pickRawOrMergedString } from "@share
 import NetworkMetricsSection from "@/components/NetworkMetricsSection"
 import { PILL_ON_PATH_CARD_BLUR_CLASS } from "@/components/PillTag"
 import { cmsCleanText, cmsDisplayText, isVisualEditingPreview } from "@/lib/cmsStega"
+import { MarketingImage } from "@/components/MarketingImage"
 
 /** Layered soft blurs — disabled for solid white section background */
 const BrandBlurField = () => null
@@ -247,12 +248,12 @@ export default function PathsSection() {
                     )}
                   >
                   <div className="relative aspect-[4/3] w-full overflow-hidden sm:aspect-[5/4] lg:aspect-[4/5]">
-                    <img
+                    <MarketingImage
                       src={hasCmsString(cmsCard?.imageSrc) ? cmsDisplayText(cmsCard!.imageSrc) : card.imageSrc}
                       alt={displayCardField(cmsCard?.imageAlt, card.imageAlt)}
+                      preset="pathCard"
                       className="h-full w-full object-cover transition duration-500 ease-out group-hover:scale-[1.03] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
                       loading="lazy"
-                      decoding="async"
                     />
                     <div
                       aria-hidden

@@ -5,6 +5,7 @@ import { ArrowDown, ArrowRight, ArrowUp, ArrowUpRight, ChevronDown, ChevronLeft,
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis, PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip as RechartsTooltip } from "recharts"
 import { useAuth } from "@/context/AuthContext"
 import { fetchAdminTeam } from "@/lib/adminApi"
+import { isAdminMemberOnlineNow, adminOnlineBadgeClass } from "@/lib/adminPresence"
 import { supabase } from "@/lib/supabase"
 import AdminPageHeader from "@/components/admin/AdminPageHeader"
 import { adminSelectedItemSurfaceOnLightClass } from "@/components/admin/adminSidebarRail"
@@ -526,7 +527,8 @@ const AdminOverviewPage = () => {
     queryKey: ["admin-team", token],
     queryFn: () => fetchAdminTeam(token),
     enabled: Boolean(token),
-    staleTime: 60_000,
+    staleTime: 30_000,
+    refetchInterval: 60_000,
   })
   const loading = contactsQuery.isLoading || diagnosticsQuery.isLoading
   const contacts = contactsQuery.data ?? []
@@ -577,17 +579,7 @@ const AdminOverviewPage = () => {
 
   const onlineNowCount = useMemo(() => {
     const rows = teamQuery.data ?? []
-    if (rows.length === 0) return 0
-    const now = Date.now()
-    const WINDOW_MS = 15 * 60 * 1000
-    return rows.filter((member) => {
-      if (!member.confirmedAt) return false
-      const ts = member.lastActiveAt || member.lastSignInAt
-      if (!ts) return false
-      const t = new Date(ts).getTime()
-      if (Number.isNaN(t)) return false
-      return now - t <= WINDOW_MS
-    }).length
+    return rows.filter((member) => isAdminMemberOnlineNow(member)).length
   }, [teamQuery.data])
 
   const totalStatusCount = useMemo(() => {
@@ -1143,22 +1135,14 @@ const AdminOverviewPage = () => {
       <ScrollReveal variant="ctaReveal" delay={0.17} hold={showSplash}>
       <div className="grid min-w-0 gap-6 lg:grid-cols-2">
         <Link to="/admin/team" className={adminOverviewLinkBoxClass}>
-          <span className="relative shrink-0">
-            <Users className="h-9 w-9 text-rellia-teal" aria-hidden />
-            {!teamQuery.isLoading && onlineNowCount > 0 ? (
-              <span
-                className="absolute -right-0.5 -top-0.5 h-3 w-3 rounded-full bg-emerald-500 ring-2 ring-white"
-                aria-label={`${onlineNowCount} online now`}
-              />
-            ) : null}
-          </span>
+          <Users className="h-9 w-9 shrink-0 text-rellia-teal" aria-hidden />
           <div className="min-w-0 flex-1">
             <div className="flex flex-wrap items-center gap-2">
               <p className="font-host-grotesk text-lg font-semibold text-foreground dark:text-white">Team</p>
               {!teamQuery.isLoading && onlineNowCount > 0 ? (
-                <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-200/70 bg-emerald-50 px-2.5 py-1 font-urbanist text-xs font-semibold text-emerald-800">
+                <span className={adminOnlineBadgeClass}>
                   <span className="h-2 w-2 rounded-full bg-emerald-500" aria-hidden />
-                  {onlineNowCount} Online now
+                  {onlineNowCount} Online
                 </span>
               ) : null}
             </div>

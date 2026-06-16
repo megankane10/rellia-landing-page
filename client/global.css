@@ -347,6 +347,10 @@
   color: hsl(175 42% 73%);
 }
 
+.admin-shell.dark h3.admin-tip-box-title {
+  color: hsl(0 0% 100%);
+}
+
 .admin-shell.dark h1.text-foreground,
 .admin-shell.dark h2.text-foreground,
 .admin-shell.dark h3.text-foreground,

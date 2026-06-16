@@ -78,8 +78,8 @@ export const adminCardTitleClass = cn(
 /** Page-level title accent (teal in light, mint in dark) */
 export const adminPageTitleClass = "text-rellia-teal dark:text-rellia-mint"
 
-/** Tip box title — matches page headings */
-export const adminTipBoxTitleClass = "text-rellia-teal dark:text-white"
+/** Tip box title — teal in light, white in dark (see .admin-tip-box-title in global.css) */
+export const adminTipBoxTitleClass = "admin-tip-box-title text-rellia-teal"
 
 /** Accent text & icons (links, highlights) */
 export const adminAccentClass = "text-rellia-teal dark:text-rellia-mint"

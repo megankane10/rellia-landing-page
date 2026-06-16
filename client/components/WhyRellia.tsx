@@ -6,6 +6,7 @@ import SectionHeading from "@/components/SectionHeading"
 import { cn } from "@/lib/utils"
 import type { HomeWhyFeature } from "@shared/cms/types"
 import { cmsDisplayText, isVisualEditingPreview } from "@/lib/cmsStega"
+import { MarketingImage } from "@/components/MarketingImage"
 
 const DEFAULT_SECTION_DESCRIPTION =
   "A curated network and practical support system to help you move through the moments that make or break a healthcare startup."
@@ -169,9 +170,11 @@ export default function WhyRellia({
                     />
 
                     <div aria-hidden className="absolute inset-0">
-                      <img
+                      <MarketingImage
                         src={img}
                         alt=""
+                        decorative
+                        preset="bentoCard"
                         className={cn(
                           "absolute inset-0 h-full w-full object-cover",
                           "transition-transform transition-duration-[1200ms] transition-timing-function-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:transition-none",
@@ -247,10 +250,11 @@ export default function WhyRellia({
                           "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-white",
                         )}
                       >
-                        <img
+                        <MarketingImage
                           src={img}
                           alt=""
-                          aria-hidden="true"
+                          decorative
+                          preset="bentoCard"
                           className="absolute inset-0 h-full w-full object-cover"
                         />
                         <div

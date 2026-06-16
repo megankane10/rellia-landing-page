@@ -1,7 +1,7 @@
 import { useMemo, useState, useEffect, type ReactNode } from "react"
 import { Link, useSearchParams } from "react-router-dom"
 import { useQuery, useQueryClient } from "@tanstack/react-query"
-import { Inbox, Search, Stethoscope } from "lucide-react"
+import { Inbox, Search, Stethoscope, Eye } from "lucide-react"
 import { supabase } from "@/lib/supabase"
 import AdminPageHeader from "@/components/admin/AdminPageHeader"
 import AdminPageReveal from "@/components/admin/AdminPageReveal"
@@ -14,6 +14,7 @@ import AdminNoteIconButton from "@/components/admin/AdminNoteIconButton"
 import AdminCompactEmptyState from "@/components/admin/AdminCompactEmptyState"
 import AdminFilterPill from "@/components/admin/AdminFilterPill"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -33,6 +34,7 @@ import {
   type CompanyProfileRow,
   type ContactRow,
 } from "@/lib/adminSubmissions"
+import { adminCompanyDetailPath, diagnosticCsvColumns } from "@/lib/adminDiagnosticCsv"
 import { cn } from "@/lib/utils"
 import type { AdminTableColumn } from "@/components/admin/AdminDataTable"
 
@@ -352,9 +354,20 @@ const AdminInboxPage = () => {
     {
       key: "actions",
       header: "",
-      className: "w-24",
+      className: "w-32",
       cell: (row) => (
         <div className="flex items-center justify-end gap-0.5">
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            className="h-9 w-9 shrink-0 rounded-full text-muted-foreground hover:bg-rellia-mint/15 hover:text-rellia-teal dark:hover:text-rellia-mint"
+            asChild
+          >
+            <Link to={adminCompanyDetailPath(row.id)} aria-label={`View ${row.company_name} submission`}>
+              <Eye className="h-4 w-4" aria-hidden />
+            </Link>
+          </Button>
           <AdminNoteIconButton
             table="company_profiles"
             submissionId={row.id}
@@ -503,6 +516,17 @@ const AdminInboxPage = () => {
         ]}
         mobileActions={(row) => (
           <div className="flex items-center gap-0.5">
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              className="h-9 w-9 shrink-0 rounded-full text-muted-foreground hover:bg-rellia-mint/15 hover:text-rellia-teal dark:hover:text-rellia-mint"
+              asChild
+            >
+              <Link to={adminCompanyDetailPath(row.id)} aria-label={`View ${row.company_name} submission`}>
+                <Eye className="h-4 w-4" aria-hidden />
+              </Link>
+            </Button>
             <AdminNoteIconButton
               table="company_profiles"
               submissionId={row.id}
@@ -544,15 +568,7 @@ const AdminInboxPage = () => {
             <AdminDownloadCsvButton
               filename="rellia-diagnostic-submissions"
               rows={filteredDiagnosticRows}
-              columns={[
-                { header: "Founder", value: (row) => row.name },
-                { header: "Company", value: (row) => row.company_name },
-                { header: "Email", value: (row) => row.work_email },
-                { header: "Stage", value: (row) => row.stage ?? "" },
-                { header: "Received", value: (row) => formatAdminDate(row.created_at) },
-                { header: "Status", value: (row) => row.status ?? "New" },
-                { header: "Note", value: (row) => row.admin_note ?? "" },
-              ]}
+              columns={diagnosticCsvColumns()}
             />
           )
         }
