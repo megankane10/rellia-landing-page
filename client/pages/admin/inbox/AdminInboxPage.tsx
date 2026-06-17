@@ -330,10 +330,10 @@ const AdminInboxPage = () => {
     },
     {
       key: "actions",
-      header: "",
+      header: "Actions",
       className: "w-[11%] whitespace-nowrap",
       cell: (row) => (
-        <div className="flex items-center justify-end gap-0.5">
+        <div className="flex items-start justify-start gap-0.5">
           <AdminNoteIconButton
             table="contact_responses"
             submissionId={row.id}
@@ -413,10 +413,10 @@ const AdminInboxPage = () => {
     },
     {
       key: "actions",
-      header: "",
+      header: "Actions",
       className: "w-[11%] whitespace-nowrap",
       cell: (row) => (
-        <div className="flex items-center justify-end gap-0.5">
+        <div className="flex items-start justify-start gap-0.5">
           <AdminNoteIconButton
             table="company_profiles"
             submissionId={row.id}

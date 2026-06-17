@@ -126,8 +126,8 @@ const draftTableColumns = (updatedColumnLabel: string): AdminTableColumn<SanityC
   },
   {
     key: "action",
-    header: "",
-    className: "min-w-[11.5rem] shrink-0 whitespace-nowrap text-right",
+    header: "Actions",
+    className: "min-w-[11.5rem] shrink-0 whitespace-nowrap",
     cell: (row) => <StudioLinkButton row={row} />,
   },
 ]

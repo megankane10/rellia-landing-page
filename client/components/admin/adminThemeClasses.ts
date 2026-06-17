@@ -231,7 +231,7 @@ export const adminTableHeaderCellClass = cn(
 
 /** Admin data table body cell padding */
 export const adminTableBodyCellClass = cn(
-  "px-5 py-4 align-middle font-urbanist text-base text-foreground",
+  "px-5 py-4 align-top font-urbanist text-base text-foreground",
   "first:pl-6 last:pr-6",
 )
 
