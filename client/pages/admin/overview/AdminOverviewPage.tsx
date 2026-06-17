@@ -67,7 +67,7 @@ import {
 import {
   buildCmsEditsSparkline,
   cmsRecentEditsQueryKey,
-  fetchCmsRecentEdits,
+  fetchCmsRecentEditsForOverview,
   formatCmsLastPublishHeadline,
   getCmsLastPublishSubtitle,
   cmsLastPublishSubtitleAria,
@@ -796,9 +796,9 @@ const OverviewSparkline = ({
     <div className="h-14 w-full min-w-0 overflow-hidden" aria-hidden>
       <div className="h-full w-full overflow-hidden" style={revealStyle}>
         <ResponsiveContainer width="100%" height="100%" minWidth={1}>
-          <AreaChart data={chartData} margin={{ top: 4, right: 2, left: 2, bottom: 0 }}>
+          <AreaChart data={chartData} margin={{ top: 4, right: 2, left: 2, bottom: 3 }}>
             <XAxis dataKey="index" type="number" domain={["dataMin", "dataMax"]} hide />
-            <YAxis hide domain={[0, yMax]} padding={{ top: 2, bottom: 0 }} />
+            <YAxis hide domain={[0, yMax]} padding={{ top: 2, bottom: 3 }} />
             <defs>
               <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
                 {areaFillGradientStops(color, AREA_FILL_OPACITY.sparkline)}
@@ -1755,9 +1755,10 @@ const AdminOverviewPage = () => {
   })
   const recentEditsQuery = useQuery({
     queryKey: cmsRecentEditsQueryKey(),
-    queryFn: fetchCmsRecentEdits,
-    enabled: isCmsContentEnabled(),
+    queryFn: () => fetchCmsRecentEditsForOverview(token),
+    enabled: isCmsContentEnabled() && Boolean(token),
     staleTime: 60_000,
+    refetchInterval: 60_000,
   })
   const teamQuery = useQuery({
     queryKey: ["admin-team", token],
@@ -1840,11 +1841,12 @@ const AdminOverviewPage = () => {
     7,
   )
   const unresolvedChangePct = percentChange(unresolved, previousUnresolved)
-  const lastPublishedEdit = recentEditsQuery.data?.[0]
-  const lastPublishedAt = lastPublishedEdit?._updatedAt
+  const recentPublishes = recentEditsQuery.data ?? []
+  const latestPublishedEdit = recentPublishes[0]
+  const lastPublishedAt = latestPublishedEdit?._updatedAt
   const cmsEditsSparkline = useMemo(
-    () => buildCmsEditsSparkline(recentEditsQuery.data ?? [], SPARKLINE_DAYS),
-    [recentEditsQuery.data],
+    () => buildCmsEditsSparkline(recentPublishes, SPARKLINE_DAYS),
+    [recentPublishes],
   )
   const teamCount = teamQuery.data?.length ?? 0
 
@@ -1947,8 +1949,8 @@ const AdminOverviewPage = () => {
       : "None"
   const displayLastPublishSubtitle = useMemo((): CmsLastPublishSubtitle => {
     if (!isCmsContentEnabled()) return { kind: "plain", text: "Unavailable" }
-    return getCmsLastPublishSubtitle(lastPublishedEdit, lastPublishedAt)
-  }, [lastPublishedAt, lastPublishedEdit])
+    return getCmsLastPublishSubtitle(latestPublishedEdit, lastPublishedAt)
+  }, [latestPublishedEdit, lastPublishedAt])
 
   const displayLastPublishStatus = useMemo(
     () => <CmsLastPublishSubtext subtitle={displayLastPublishSubtitle} />,
