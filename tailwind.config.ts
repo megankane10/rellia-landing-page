@@ -101,6 +101,11 @@ export default {
           "0%": { opacity: "0", transform: "translateY(36px)", filter: "blur(14px)" },
           "100%": { opacity: "1", transform: "translateY(0)", filter: "blur(0)" },
         },
+        /** Admin route changes — slide only, no opacity/blur flash */
+        "admin-page-enter": {
+          "0%": { transform: "translateY(10px)" },
+          "100%": { transform: "translateY(0)" },
+        },
         /** Horizontal rule: grow top→bottom with unblur */
         "line-reveal": {
           "0%": { opacity: "0", transform: "scaleY(0)", filter: "blur(10px)" },
@@ -130,6 +135,7 @@ export default {
         marqueeFast: "marquee 14s linear infinite",
         "fade-up": "fade-up 0.75s ease-out both",
         "cta-reveal": "cta-reveal 0.72s cubic-bezier(0.22, 1, 0.36, 1) both",
+        "admin-page-enter": "admin-page-enter 0.42s cubic-bezier(0.22, 1, 0.36, 1) both",
         "line-reveal": "line-reveal 0.85s cubic-bezier(0.22, 1, 0.36, 1) both",
         /** `both` = start state during delay (stays clipped), `forwards` = stay filled at end */
         "healthcare-fill":

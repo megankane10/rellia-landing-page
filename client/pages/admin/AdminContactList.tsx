@@ -2,7 +2,7 @@ import { useMemo, useState } from "react"
 import { Link } from "react-router-dom"
 import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { supabase } from "@/lib/supabase"
-import { Badge } from "@/components/ui/badge"
+import AdminSubmissionStatusBadge from "@/components/admin/AdminSubmissionStatusBadge"
 import { Skeleton } from "@/components/ui/skeleton"
 import AdminSubmissionStatusSelect from "@/components/admin/AdminSubmissionStatusSelect"
 import AdminSubmissionStatusFilter from "@/components/admin/AdminSubmissionStatusFilter"
@@ -13,7 +13,7 @@ import {
   countByStatusFilter,
   formatAdminDate,
   matchesStatusFilter,
-  statusBadgeClass,
+  submissionStatusUpdatePayload,
   type StatusFilterValue,
   type SubmissionStatus,
 } from "@/lib/adminSubmissionStatus"
@@ -70,7 +70,7 @@ const AdminContactList = () => {
     setUpdatingId(contactId)
     const { error: updateError } = await supabase
       .from("contact_responses")
-      .update({ status: newStatus })
+      .update(submissionStatusUpdatePayload(newStatus))
       .eq("id", contactId)
 
     setUpdatingId(null)
@@ -176,12 +176,7 @@ const AdminContactList = () => {
                       onValueChange={(value) => void handleStatusChange(row.id, value)}
                     />
                   ) : (
-                    <Badge
-                      variant="outline"
-                      className={`rounded-full font-urbanist text-sm ${statusBadgeClass(status)}`}
-                    >
-                      {status}
-                    </Badge>
+                    <AdminSubmissionStatusBadge status={status} />
                   )}
                   <AdminDeleteSubmissionButton
                     label="Delete contact submission?"

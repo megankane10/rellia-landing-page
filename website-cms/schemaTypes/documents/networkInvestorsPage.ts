@@ -42,6 +42,30 @@ export const networkInvestorsPage = defineType({
     ...networkCtaFields,
     {...logoMarqueeField, group: 'content'},
     defineField({
+      name: 'foundersClusterTitle',
+      title: 'Founders cluster section title',
+      type: 'string',
+      group: 'content',
+      initialValue: 'How founders cluster',
+    }),
+    defineField({
+      name: 'foundersClusterSubtitle',
+      title: 'Founders cluster section subtitle',
+      type: 'text',
+      rows: 2,
+      group: 'content',
+      initialValue:
+        'Illustrative distributions based on active introductions—useful for thesis alignment.',
+    }),
+    defineField({
+      name: 'foundersClusterDisclaimer',
+      title: 'Chart disclaimer',
+      description: 'Short line shown under each pie chart title.',
+      type: 'string',
+      group: 'content',
+      initialValue: 'Illustrative mix for thesis fit—not a fund mandate.',
+    }),
+    defineField({
       name: 'foundersCluster',
       title: 'Founders Cluster (Pie Charts)',
       description: 'Define the pie charts showing how founders cluster on the investors page.',

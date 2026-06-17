@@ -1,38 +1,33 @@
 import { useMemo } from "react"
 import { Link } from "react-router-dom"
 import { useQuery } from "@tanstack/react-query"
-import { ExternalLink, Key, UserPlus, Users } from "lucide-react"
+import { Key, UserPlus, Users } from "lucide-react"
 import { useAuth } from "@/context/AuthContext"
 import { fetchAdminTeam } from "@/lib/adminApi"
-import AdminPageHeader from "@/components/admin/AdminPageHeader"
 import AdminPageReveal from "@/components/admin/AdminPageReveal"
 import AdminRecordList from "@/components/admin/AdminRecordList"
 import AdminCompactEmptyState from "@/components/admin/AdminCompactEmptyState"
 import AdminRecentSignInsCard from "@/components/admin/AdminRecentSignInsCard"
 import AdminTeamQuickNoteCard from "@/components/admin/AdminTeamQuickNoteCard"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import { formatAdminDate } from "@/lib/adminSubmissionStatus"
 import { resolveAdminMemberAvatarUrl } from "@/lib/adminUserProfile"
-import { isAdminMemberOnlineNow, adminOnlineBadgeClass } from "@/lib/adminPresence"
+import { isAdminMemberOnlineNow } from "@/lib/adminPresence"
 import type { AdminTableColumn } from "@/components/admin/AdminDataTable"
 import type { AdminTeamUser } from "@/lib/adminApi"
 import { cn } from "@/lib/utils"
 
 import AdminTipBox from "@/components/admin/AdminTipBox"
-import { adminInteractiveBoxClass, adminOutlineActionButtonClass, adminPendingSurfaceClass } from "@/components/admin/adminThemeClasses"
-
-const SUPABASE_AUTH_USERS_URL =
-  "https://supabase.com/dashboard/project/agsvypnmlrvpbgrsxtqy/auth/users"
+import { adminInteractiveBoxClass, adminPendingSurfaceClass, adminTableCellContentClass } from "@/components/admin/adminThemeClasses"
 
 const memberStatus = (member: AdminTeamUser) => {
   return member.confirmedAt ? (
-    <span className="inline-flex rounded-full bg-rellia-mint/30 px-2.5 py-0.5 text-xs font-medium text-rellia-teal">
+    <span className="inline-flex rounded-full bg-rellia-mint/30 px-2.5 py-0.5 text-sm font-medium text-rellia-teal">
       Active
     </span>
   ) : (
-    <span className={cn("inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium", adminPendingSurfaceClass)}>
+    <span className={cn("inline-flex rounded-full px-2.5 py-0.5 text-sm font-medium", adminPendingSurfaceClass)}>
       Invite pending
     </span>
   )
@@ -91,41 +86,37 @@ const AdminTeamPage = () => {
     {
       key: "name",
       header: "Name",
-      cell: (member) => {
-        const isOnlineNow = isAdminMemberOnlineNow(member)
-
-        return (
-          <div className="flex items-center gap-3">
-            {memberAvatar(member)}
-            <div className="min-w-0">
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="font-medium text-foreground">{member.fullName?.trim() || "—"}</span>
-                {isOnlineNow ? (
-                  <span className={adminOnlineBadgeClass}>
-                    <span className="h-2 w-2 rounded-full bg-emerald-500" aria-hidden />
-                    Online
-                  </span>
-                ) : null}
-              </div>
-            </div>
+      cell: (member) => (
+        <div className="flex items-center gap-3">
+          {memberAvatar(member)}
+          <div className="min-w-0">
+            <span className="font-medium text-foreground">{member.fullName?.trim() || "—"}</span>
           </div>
-        )
-      },
+        </div>
+      ),
     },
     {
       key: "email",
       header: "Email",
-      cell: (member) => <span>{member.email}</span>,
+      cell: (member) => (
+        <div className={adminTableCellContentClass}>
+          <span>{member.email}</span>
+        </div>
+      ),
     },
     {
       key: "joined",
       header: "Joined",
-      cell: (member) => <span className="text-muted-foreground">{formatAdminDate(member.createdAt)}</span>,
+      cell: (member) => (
+        <div className={adminTableCellContentClass}>
+          <span className="text-muted-foreground">{formatAdminDate(member.createdAt)}</span>
+        </div>
+      ),
     },
     {
       key: "status",
       header: "Status",
-      cell: (member) => memberStatus(member),
+      cell: (member) => <div className={adminTableCellContentClass}>{memberStatus(member)}</div>,
     },
   ]
 
@@ -141,22 +132,11 @@ const AdminTeamPage = () => {
   return (
     <div className="space-y-6">
       <AdminPageReveal>
-        <AdminPageHeader
-          title="Team"
-          actions={
-            <Button type="button" variant="outline" size="sm" asChild className={adminOutlineActionButtonClass}>
-              <a href={SUPABASE_AUTH_USERS_URL} target="_blank" rel="noopener noreferrer">
-                Supabase Auth
-                <ExternalLink className="ml-1.5 h-3.5 w-3.5" aria-hidden />
-              </a>
-            </Button>
-          }
-        />
-
         <AdminTipBox
           title="Invite your team members"
           icon={UserPlus}
-          storageKey="rellia-admin-team-tip-collapsed"
+          storageKey="rellia-admin-team-tip-collapsed-v2"
+          defaultExpanded
           className="w-full"
         >
           <div className="mb-5 space-y-3 font-urbanist text-sm text-muted-foreground leading-relaxed">
@@ -256,23 +236,12 @@ const AdminTeamPage = () => {
             mobileFields={[
               {
                 label: "Member",
-                value: (member) => {
-                  const isOnlineNow = isAdminMemberOnlineNow(member)
-                  return (
+                value: (member) => (
                   <div className="flex items-center gap-2">
                     {memberAvatar(member)}
-                    <div className="flex flex-wrap items-center gap-2">
-                      <span>{member.fullName?.trim() || member.email}</span>
-                      {isOnlineNow ? (
-                        <span className={adminOnlineBadgeClass}>
-                          <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" aria-hidden />
-                          Online
-                        </span>
-                      ) : null}
-                    </div>
+                    <span>{member.fullName?.trim() || member.email}</span>
                   </div>
-                  )
-                },
+                ),
               },
               { label: "Email", value: (member) => member.email },
               { label: "Status", value: (member) => memberStatus(member) },
@@ -281,8 +250,13 @@ const AdminTeamPage = () => {
         </div>
       ) : null}
 
-      <div className="mt-6 grid min-w-0 gap-4 lg:grid-cols-2">
-        <AdminRecentSignInsCard members={recentActivity} loading={isLoading} />
+      <div className="mt-6 grid min-w-0 gap-4 lg:grid-cols-2 lg:items-stretch">
+        <AdminRecentSignInsCard
+          members={recentActivity}
+          loading={isLoading}
+          emptyMessage="When team members sign in to the dashboard, their recent activity will show here."
+          fillerMessage="No more recent sign-ins in this list."
+        />
         <AdminTeamQuickNoteCard members={users} />
       </div>
       </AdminPageReveal>

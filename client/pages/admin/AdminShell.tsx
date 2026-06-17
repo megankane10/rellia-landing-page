@@ -2,6 +2,7 @@ import { type CSSProperties, useCallback, useEffect, useMemo, useState } from "r
 import { Outlet } from "react-router-dom"
 import { useQueryClient } from "@tanstack/react-query"
 import AdminAppSidebar from "@/components/admin/AdminAppSidebar"
+import AdminHeaderPageTitle from "@/components/admin/AdminHeaderPageTitle"
 import AdminHeaderClock from "@/components/admin/AdminHeaderClock"
 import AdminSidebarTrigger from "@/components/admin/AdminSidebarTrigger"
 import AdminPageFooter from "@/components/admin/AdminPageFooter"
@@ -68,20 +69,21 @@ const AdminShellContent = () => {
       )}
     >
       <AdminAppSidebar />
-      <SidebarInset className="min-w-0 !bg-transparent">
+      <SidebarInset className={cn("min-w-0 !bg-admin-canvas")}>
         <header
           className={cn(
-            "sticky top-0 z-30 grid h-[4.25rem] shrink-0 grid-cols-[1fr_auto_1fr] items-center gap-3 px-4 md:gap-4",
+            "sticky top-0 z-30 grid h-[3.75rem] shrink-0 grid-cols-[minmax(0,1fr)_auto] items-center gap-2 px-3 sm:h-[4.25rem] sm:px-4 md:grid-cols-[1fr_auto_1fr] md:gap-4",
             adminHeaderClass,
           )}
         >
-          <div className="flex min-w-0 items-center gap-3 justify-self-start">
+          <div className="flex min-w-0 items-center gap-2 sm:gap-3 justify-self-start">
             <AdminSidebarTrigger />
+            <AdminHeaderPageTitle />
           </div>
           <div className="hidden justify-self-center md:flex">
             <AdminHeaderClock />
           </div>
-          <div className="flex justify-self-end">
+          <div className="flex w-full min-w-0 items-center justify-end justify-self-end">
             <AdminSystemStatus compact />
           </div>
         </header>

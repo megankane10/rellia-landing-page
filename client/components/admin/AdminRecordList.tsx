@@ -46,10 +46,10 @@ const AdminRecordList = <T,>({
             <dl className="space-y-2.5">
               {mobileFields.map((field) => (
                 <div key={field.label} className={field.className}>
-                  <dt className="font-urbanist text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+                  <dt className="font-urbanist text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                     {field.label}
                   </dt>
-                  <dd className="mt-0.5 font-urbanist text-sm text-foreground">{field.value(row)}</dd>
+                  <dd className="mt-0.5 font-urbanist text-base text-foreground">{field.value(row)}</dd>
                 </div>
               ))}
             </dl>

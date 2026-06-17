@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react"
 import { useLocation } from "react-router-dom"
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion"
+import { isAdminShellRoute } from "@/lib/adminNav"
 
 type RevealPhase = "idle" | "revealing"
 
@@ -19,7 +20,7 @@ export default function PageRevealOverlay() {
   const timeoutRef = useRef<number | null>(null)
 
   useEffect(() => {
-    if (reduceMotion) return
+    if (reduceMotion || isAdminShellRoute(location.pathname)) return
     if (timeoutRef.current) window.clearTimeout(timeoutRef.current)
 
     const start = window.setTimeout(() => setPhase("revealing"), 0)
@@ -31,7 +32,7 @@ export default function PageRevealOverlay() {
     }
   }, [location.pathname, reduceMotion])
 
-  if (reduceMotion) return null
+  if (reduceMotion || isAdminShellRoute(location.pathname)) return null
 
   return (
     <AnimatePresence>

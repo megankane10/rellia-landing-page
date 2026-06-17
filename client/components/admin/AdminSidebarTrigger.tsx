@@ -19,13 +19,13 @@ const AdminSidebarTrigger = () => {
           variant="ghost"
           size="icon"
           className={cn(
-            "h-10 w-10 shrink-0 rounded-xl text-rellia-teal",
+            "h-11 w-11 shrink-0 rounded-xl text-rellia-teal",
             "hover:bg-rellia-mint/15 hover:text-rellia-teal",
           )}
           onClick={toggleSidebar}
           aria-label={label}
         >
-          <Icon className="h-[1.125rem] w-[1.125rem]" aria-hidden />
+          <Icon className="h-5 w-5" aria-hidden />
         </Button>
       </TooltipTrigger>
       <AdminTooltipContent side="bottom" align="start">

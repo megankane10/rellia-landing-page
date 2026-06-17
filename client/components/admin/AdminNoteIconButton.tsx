@@ -12,7 +12,8 @@ import {
   adminNoteIconButtonActiveClass,
   adminNoteIconButtonClass,
 } from "@/components/admin/adminThemeClasses"
-import { adminPopoverContentClass } from "@/components/admin/adminSidebarRail"
+import { adminPopoverContentForTheme } from "@/components/admin/adminSidebarRail"
+import { useAdminTheme } from "@/context/AdminThemeContext"
 import { cn } from "@/lib/utils"
 
 type SubmissionTable = "contact_responses" | "company_profiles"
@@ -25,6 +26,7 @@ type AdminNoteIconButtonProps = {
 }
 
 const AdminNoteIconButton = ({ table, submissionId, note, onSaved }: AdminNoteIconButtonProps) => {
+  const { resolvedTheme } = useAdminTheme()
   const hasNote = Boolean(note?.trim())
   const tooltip = hasNote ? "Edit note" : "Add note"
 
@@ -48,7 +50,7 @@ const AdminNoteIconButton = ({ table, submissionId, note, onSaved }: AdminNoteIc
         </TooltipTrigger>
         <AdminTooltipContent side="top">{tooltip}</AdminTooltipContent>
       </Tooltip>
-      <PopoverContent align="end" className={cn("w-80", adminPopoverContentClass)}>
+      <PopoverContent align="end" className={cn("w-80", adminPopoverContentForTheme(resolvedTheme))}>
         <AdminSubmissionNoteEditor
           table={table}
           submissionId={submissionId}

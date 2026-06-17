@@ -4,6 +4,8 @@ import type { SanityPortableText } from "@shared/cms/types"
 import { normalizeToPortableText } from "@shared/cms/normalizePortableText"
 import { cn } from "@/lib/utils"
 import { BodyCtaBox } from "@/components/BodyCtaBox"
+import { mapPortableBodyCtaBox } from "@/lib/bodyCtaBoxPortable"
+import { cmsCleanText, cmsDisplayText, cmsHasDisplayText } from "@/lib/cmsStega"
 import { RichTextImageCarousel, type RichTextCarouselSlide } from "@/components/RichTextImageCarousel"
 import { parseBlockquoteAttribution, RichTextQuoteFigure } from "@/components/RichTextQuoteFigure"
 import ImageExpandModal from "@/components/ImageExpandModal"
@@ -47,8 +49,8 @@ const InlineImageFigure = ({
             decoding="async"
           />
         </div>
-        {caption ? (
-          <figcaption className="mt-3 font-urbanist text-sm text-black/55">{caption}</figcaption>
+        {cmsHasDisplayText(caption) ? (
+          <figcaption className="mt-3 font-urbanist text-sm text-black/55">{cmsDisplayText(caption)}</figcaption>
         ) : null}
       </figure>
       <ImageExpandModal open={open} onOpenChange={setOpen} src={src} alt={alt} />
@@ -57,7 +59,7 @@ const InlineImageFigure = ({
 }
 
 const resolveYoutubeEmbed = (url: string) => {
-  const trimmed = url.trim()
+  const trimmed = cmsCleanText(url)
   const short = trimmed.match(/youtu\.be\/([A-Za-z0-9_-]+)/)
   if (short?.[1]) return `https://www.youtube.com/embed/${short[1]}`
   const watch = trimmed.match(/[?&]v=([A-Za-z0-9_-]+)/)
@@ -66,7 +68,7 @@ const resolveYoutubeEmbed = (url: string) => {
 }
 
 const resolveVimeoEmbed = (url: string) => {
-  const match = url.trim().match(/vimeo\.com\/(?:video\/)?(\d+)/)
+  const match = cmsCleanText(url).match(/vimeo\.com\/(?:video\/)?(\d+)/)
   if (match?.[1]) return `https://player.vimeo.com/video/${match[1]}`
   return null
 }
@@ -89,7 +91,7 @@ const PortableVideoBlock = ({
         {youtube || vimeo ? (
           <iframe
             src={youtube ?? vimeo ?? ""}
-            title={caption?.trim() || "Embedded video"}
+            title={cmsDisplayText(caption) || "Embedded video"}
             className="h-full w-full"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             allowFullScreen
@@ -97,15 +99,15 @@ const PortableVideoBlock = ({
         ) : (
           <video
             src={videoUrl}
-            poster={posterUrl?.trim() || undefined}
+            poster={cmsCleanText(posterUrl) || undefined}
             controls
             playsInline
             className="h-full w-full object-cover"
           />
         )}
       </div>
-      {caption?.trim() ? (
-        <figcaption className="mt-3 font-urbanist text-sm text-black/55">{caption.trim()}</figcaption>
+      {cmsHasDisplayText(caption) ? (
+        <figcaption className="mt-3 font-urbanist text-sm text-black/55">{cmsDisplayText(caption)}</figcaption>
       ) : null}
     </figure>
   )
@@ -121,43 +123,44 @@ const components: PortableTextComponents = {
         displayMode?: string
         asset?: { url?: string }
       } | null
-      const src = (typeof v?.url === "string" ? v.url : v?.asset?.url)?.trim() ?? ""
-      const alt = typeof v?.alt === "string" ? v.alt.trim() : ""
-      const caption = typeof v?.caption === "string" ? v.caption.trim() : ""
-      if (!src || !alt) return null
+      const src = cmsCleanText(typeof v?.url === "string" ? v.url : v?.asset?.url)
+      const altRaw = typeof v?.alt === "string" ? v.alt : ""
+      const captionRaw = typeof v?.caption === "string" ? v.caption : ""
+      if (!src || !cmsHasDisplayText(altRaw)) return null
       return (
         <InlineImageFigure
           src={src}
-          alt={alt}
-          caption={caption || undefined}
+          alt={cmsDisplayText(altRaw)}
+          caption={cmsHasDisplayText(captionRaw) ? captionRaw : undefined}
           displayMode={normalizeRichTextImageDisplayMode(v?.displayMode)}
         />
       )
     },
     eventDetailInlineImage: ({ value }) => {
       const v = value as { imageSrc?: string; alt?: string; caption?: string; displayMode?: string } | null
-      const src = typeof v?.imageSrc === "string" ? v.imageSrc.trim() : ""
-      const alt = typeof v?.alt === "string" ? v.alt.trim() : ""
-      const caption = typeof v?.caption === "string" ? v.caption.trim() : ""
-      if (!src || !alt) return null
+      const src = cmsCleanText(v?.imageSrc)
+      const altRaw = typeof v?.alt === "string" ? v.alt : ""
+      const captionRaw = typeof v?.caption === "string" ? v.caption : ""
+      if (!src || !cmsHasDisplayText(altRaw)) return null
       return (
         <InlineImageFigure
           src={src}
-          alt={alt}
-          caption={caption || undefined}
+          alt={cmsDisplayText(altRaw)}
+          caption={cmsHasDisplayText(captionRaw) ? captionRaw : undefined}
           displayMode={normalizeRichTextImageDisplayMode(v?.displayMode)}
         />
       )
     },
     portableVideo: ({ value }) => {
       const v = value as { videoUrl?: string; posterUrl?: string; caption?: string } | null
-      const videoUrl = typeof v?.videoUrl === "string" ? v.videoUrl.trim() : ""
+      const videoUrl = cmsCleanText(v?.videoUrl)
       if (!videoUrl) return null
+      const captionRaw = typeof v?.caption === "string" ? v.caption : ""
       return (
         <PortableVideoBlock
           videoUrl={videoUrl}
           posterUrl={typeof v?.posterUrl === "string" ? v.posterUrl : undefined}
-          caption={typeof v?.caption === "string" ? v.caption : undefined}
+          caption={cmsHasDisplayText(captionRaw) ? captionRaw : undefined}
         />
       )
     },
@@ -186,32 +189,24 @@ const components: PortableTextComponents = {
       )
     },
     bodyCtaBox: ({ value }) => {
-      const v = value as {
-        title?: string
-        body?: string
-        buttonLabel?: string
-        buttonHref?: string
-        secondaryButtonLabel?: string
-        secondaryButtonHref?: string
-      } | null
-      if (!v?.title?.trim()) return null
-      return (
-        <BodyCtaBox
-          title={v.title.trim()}
-          body={v.body}
-          buttonLabel={(v.buttonLabel ?? "").trim() || "Learn more"}
-          buttonHref={(v.buttonHref ?? "").trim() || "/"}
-          secondaryButtonLabel={v.secondaryButtonLabel}
-          secondaryButtonHref={v.secondaryButtonHref}
-        />
+      const mapped = mapPortableBodyCtaBox(
+        value as Parameters<typeof mapPortableBodyCtaBox>[0],
       )
+      if (!mapped) return null
+      return <BodyCtaBox {...mapped} />
     },
     portableQuoteBox: ({ value }) => {
       const v = value as { quote?: string; attribution?: string } | null
-      const quote = typeof v?.quote === "string" ? v.quote.trim() : ""
-      if (!quote) return null
-      const attribution = typeof v?.attribution === "string" ? v.attribution.trim() : undefined
-      return <RichTextQuoteFigure quote={quote} attribution={attribution || null} />
+      if (!cmsHasDisplayText(v?.quote)) return null
+      const attribution = cmsHasDisplayText(v?.attribution)
+        ? cmsDisplayText(v?.attribution)
+        : undefined
+      return (
+        <RichTextQuoteFigure
+          quote={cmsDisplayText(v!.quote)}
+          attribution={attribution || null}
+        />
+      )
     },
   },
   block: {

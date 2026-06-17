@@ -2145,6 +2145,96 @@ export function createServer() {
     },
   );
 
+  app.delete(
+    "/api/admin/team-note",
+    rateLimitJson(adminTeamNoteRate, ADMIN_TEAM_NOTE_MAX_PER_MIN),
+    async (req, res) => {
+      if (!allowBrowserOrigin(req)) {
+        res.status(403).json({ error: "Forbidden" });
+        return;
+      }
+
+      const token = resolveAdminBearer(req);
+      if (!token) {
+        res.status(401).json({ error: "Sign in required." });
+        return;
+      }
+
+      const supabaseUrl = (process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || "").trim().replace(/\/$/, "");
+      const serviceRoleKey = (
+        process.env.SUPABASE_SERVICE_ROLE_KEY ||
+        process.env.SUPABASE_SECRET_KEY ||
+        process.env.SUPABASE_SERVICE_KEY ||
+        ""
+      ).trim();
+      const anonKey = (
+        process.env.VITE_SUPABASE_ANON_KEY ||
+        process.env.VITE_SUPABASE_PUBLISHABLE_KEY ||
+        process.env.SUPABASE_ANON_KEY ||
+        ""
+      ).trim();
+
+      if (!supabaseUrl || !serviceRoleKey || !anonKey) {
+        res.status(501).json({ error: "Supabase admin credentials are not configured on the server." });
+        return;
+      }
+
+      try {
+        const { createClient } = await import("@supabase/supabase-js");
+        const sessionClient = createClient(supabaseUrl, anonKey, {
+          auth: { autoRefreshToken: false, persistSession: false },
+        });
+        const { data: userData, error: userError } = await sessionClient.auth.getUser(token);
+        if (userError || !userData.user) {
+          res.status(401).json({ error: "Invalid or expired session." });
+          return;
+        }
+
+        const nowIso = new Date().toISOString();
+        const adminClient = createClient(supabaseUrl, serviceRoleKey, {
+          auth: { autoRefreshToken: false, persistSession: false },
+        });
+
+        const { error: boardError } = await adminClient
+          .from("admin_team_board")
+          .upsert(
+            {
+              id: "default",
+              blocks: [],
+              published_by_id: null,
+              published_by_name: null,
+              published_at: null,
+              updated_at: nowIso,
+            },
+            { onConflict: "id" },
+          );
+
+        if (boardError) {
+          console.error("Admin team note remove error:", boardError.message);
+          res.status(500).json({ error: "Could not remove team bulletin." });
+          return;
+        }
+
+        const { error: reactionsError } = await adminClient
+          .from("admin_team_note_reactions")
+          .delete()
+          .eq("board_id", "default");
+
+        if (reactionsError && reactionsError.code !== "42P01") {
+          console.error("Admin team note reactions remove error:", reactionsError.message);
+          res.status(500).json({ error: "Could not remove team bulletin reactions." });
+          return;
+        }
+
+        res.setHeader("content-type", "application/json");
+        res.json({ ok: true });
+      } catch (err) {
+        console.error("Admin team note remove error:", err);
+        res.status(500).json({ error: "Unexpected server error." });
+      }
+    },
+  );
+
   app.post(
     "/api/admin/team-note/reactions",
     rateLimitJson(adminTeamNoteReactionRate, ADMIN_TEAM_NOTE_REACTION_MAX_PER_MIN),
@@ -2505,6 +2595,95 @@ export function createServer() {
       } catch (err) {
         console.error("Admin sanity drafts error:", err);
         res.status(502).json({ error: "Could not load content drafts." });
+      }
+    },
+  );
+
+  app.get(
+    "/api/admin/sanity-recent-edits",
+    rateLimitJson(adminSanityDraftsRate, ADMIN_SANITY_DRAFTS_MAX_PER_MIN),
+    async (req, res) => {
+      if (!allowBrowserOrigin(req)) {
+        res.status(403).json({ error: "Forbidden" });
+        return;
+      }
+
+      const authHeader = typeof req.headers.authorization === "string" ? req.headers.authorization : "";
+      const token = authHeader.startsWith("Bearer ") ? authHeader.slice(7).trim() : "";
+      if (!token) {
+        res.status(401).json({ error: "Sign in required." });
+        return;
+      }
+
+      const datasetParam = typeof req.query.dataset === "string" ? req.query.dataset : undefined;
+      const dataset = resolveAdminSanityDataset(datasetParam);
+      if (!dataset) {
+        res.status(400).json({ error: "Invalid or disallowed Sanity dataset." });
+        return;
+      }
+
+      const supabaseUrl = (process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || "").trim().replace(/\/$/, "");
+      const serviceRoleKey = (
+        process.env.SUPABASE_SERVICE_ROLE_KEY ||
+        process.env.SUPABASE_SECRET_KEY ||
+        process.env.SUPABASE_SERVICE_KEY ||
+        ""
+      ).trim();
+      const anonKey = (
+        process.env.VITE_SUPABASE_ANON_KEY ||
+        process.env.VITE_SUPABASE_PUBLISHABLE_KEY ||
+        process.env.SUPABASE_ANON_KEY ||
+        ""
+      ).trim();
+
+      if (!supabaseUrl || !serviceRoleKey || !anonKey) {
+        res.status(501).json({ error: "Supabase admin credentials are not configured on the server." });
+        return;
+      }
+
+      const apiResolved = resolveSanityApiConfig();
+      if (apiResolved.status === "missing_project") {
+        res.status(503).json({ error: "Sanity API is not configured on the server." });
+        return;
+      }
+      if (apiResolved.status === "dataset_not_allowed") {
+        res.status(503).json({
+          error: `Sanity dataset "${apiResolved.attemptedDataset}" is not allowed for this deployment.`,
+        });
+        return;
+      }
+
+      const sanityToken = process.env.SANITY_API_READ_TOKEN?.trim() || "";
+      const projectId = apiResolved.projectId;
+
+      try {
+        const { createClient: createSupabaseClient } = await import("@supabase/supabase-js");
+        const sessionClient = createSupabaseClient(supabaseUrl, anonKey, {
+          auth: { autoRefreshToken: false, persistSession: false },
+        });
+        const { data: userData, error: userError } = await sessionClient.auth.getUser(token);
+        if (userError || !userData.user) {
+          res.status(401).json({ error: "Invalid or expired session." });
+          return;
+        }
+
+        const entry = SANITY_QUERY_WHITELIST.sanityRecentEdits;
+        const publicClient = createClient({
+          projectId,
+          dataset,
+          ...(sanityToken ? { token: sanityToken } : {}),
+          useCdn: false,
+          apiVersion: "2024-01-01",
+        });
+        const data = await publicClient.fetch(entry.query, {});
+        res.setHeader("content-type", "application/json");
+        res.json({
+          dataset,
+          recentEdits: stripSanityMetadata(data, "sanityRecentEdits"),
+        });
+      } catch (err) {
+        console.error("Admin sanity recent edits error:", err);
+        res.status(502).json({ error: "Could not load recent publishes." });
       }
     },
   );

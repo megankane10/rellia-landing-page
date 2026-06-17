@@ -2,6 +2,7 @@ import { useMemo, useState } from "react"
 import { Link } from "react-router-dom"
 import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { supabase } from "@/lib/supabase"
+import AdminSubmissionStatusBadge from "@/components/admin/AdminSubmissionStatusBadge"
 import { Badge } from "@/components/ui/badge"
 import { Skeleton } from "@/components/ui/skeleton"
 import AdminSubmissionStatusSelect from "@/components/admin/AdminSubmissionStatusSelect"
@@ -13,7 +14,7 @@ import {
   countByStatusFilter,
   formatAdminDate,
   matchesStatusFilter,
-  statusBadgeClass,
+  submissionStatusUpdatePayload,
   type StatusFilterValue,
   type SubmissionStatus,
 } from "@/lib/adminSubmissionStatus"
@@ -69,7 +70,7 @@ const AdminDiagnosticList = () => {
     setUpdatingId(profileId)
     const { error: updateError } = await supabase
       .from("company_profiles")
-      .update({ status: newStatus })
+      .update(submissionStatusUpdatePayload(newStatus))
       .eq("id", profileId)
 
     setUpdatingId(null)
@@ -180,12 +181,7 @@ const AdminDiagnosticList = () => {
                       onValueChange={(value) => void handleStatusChange(row.id, value)}
                     />
                   ) : (
-                    <Badge
-                      variant="outline"
-                      className={`rounded-full font-urbanist text-sm ${statusBadgeClass(status)}`}
-                    >
-                      {status}
-                    </Badge>
+                    <AdminSubmissionStatusBadge status={status} />
                   )}
                   <AdminDeleteSubmissionButton
                     label="Delete diagnostic submission?"

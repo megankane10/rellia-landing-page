@@ -88,7 +88,8 @@ const AdminContentList = () => {
           <AdminTipBox
             title="How this list works"
             icon={FileEdit}
-            storageKey="rellia-admin-content-tip-collapsed"
+            storageKey="rellia-admin-content-tip-collapsed-v2"
+            defaultExpanded
             className="mb-6"
           >
             <ul className="list-disc space-y-1.5 pl-5">

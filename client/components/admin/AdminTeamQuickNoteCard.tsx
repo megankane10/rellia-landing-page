@@ -1,11 +1,14 @@
 import { useMemo, useRef, useState } from "react"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import { ChevronDown, ImagePlus, Link2, Megaphone, Pencil, Sticker, Upload } from "lucide-react"
+import { ChevronDown, ImagePlus, Link2, Megaphone, MoonStar, Pencil, Sticker, Upload } from "lucide-react"
 import { useAuth } from "@/context/AuthContext"
+import { useAdminTheme } from "@/context/AdminThemeContext"
+import { adminPopoverContentForTheme } from "@/components/admin/adminSidebarRail"
 import ImageCropDialog from "@/components/ImageCropDialog"
 import {
   fetchAdminTeamNote,
   publishAdminTeamNote,
+  removeAdminTeamNote,
   toggleAdminTeamNoteReaction,
   type AdminTeamNoteBlock,
   type AdminTeamNoteReaction,
@@ -19,13 +22,14 @@ import {
 } from "@/lib/adminUserProfile"
 import { formatAdminRelativeAgo } from "@/lib/adminSubmissionStatus"
 import AdminCompactEmptyState from "@/components/admin/AdminCompactEmptyState"
-import { adminHighlightedSurfaceClass } from "@/components/admin/adminThemeClasses"
+import AdminDeleteIconButton from "@/components/admin/AdminDeleteIconButton"
+import { adminHighlightedSurfaceClass, adminTeamCardContentClass, adminTeamCardHeaderClass, adminTeamCardHeaderRowClass, adminTeamCardTitleClass, adminTeamCardTitleIconClass } from "@/components/admin/adminThemeClasses"
 import TeamNoteBlocksView from "@/components/admin/TeamNoteBlocksView"
 import TeamNoteMessageField from "@/components/admin/TeamNoteMessageField"
 import TeamNoteReactionButton from "@/components/admin/TeamNoteReactionButton"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 import { Input } from "@/components/ui/input"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
@@ -96,6 +100,8 @@ type AdminTeamQuickNoteCardProps = {
 
 const AdminTeamQuickNoteCard = ({ className, members = [] }: AdminTeamQuickNoteCardProps) => {
   const { user, session } = useAuth()
+  const { resolvedTheme } = useAdminTheme()
+  const isDark = resolvedTheme === "dark"
   const token = session?.access_token ?? ""
   const queryClient = useQueryClient()
   const imageInputRef = useRef<HTMLInputElement>(null)
@@ -126,6 +132,20 @@ const AdminTeamQuickNoteCard = ({ className, members = [] }: AdminTeamQuickNoteC
         prev
           ? { ...prev, note: data.note, configured: true }
           : { configured: true, note: data.note, reactions: [] },
+      )
+      setEditing(false)
+      setPublishError(null)
+    },
+    onError: (err: Error) => setPublishError(err.message),
+  })
+
+  const removeMutation = useMutation({
+    mutationFn: () => removeAdminTeamNote(token),
+    onSuccess: () => {
+      queryClient.setQueryData(teamNoteQueryKey(token), (prev: Awaited<ReturnType<typeof fetchAdminTeamNote>> | undefined) =>
+        prev
+          ? { ...prev, note: null, reactions: [] }
+          : { configured: true, note: null, reactions: [] },
       )
       setEditing(false)
       setPublishError(null)
@@ -324,15 +344,25 @@ const AdminTeamQuickNoteCard = ({ className, members = [] }: AdminTeamQuickNoteC
 
   return (
     <>
-      <Card className={cn("min-w-0 overflow-visible rounded-2xl", className)}>
-        <CardHeader className="pb-3">
-          <div className="space-y-1.5">
-            <div className="flex items-center justify-between gap-3">
-              <CardTitle className="flex min-w-0 items-center gap-2.5 font-host-grotesk text-lg text-foreground dark:text-white">
-                <Megaphone className="h-5 w-5 shrink-0 text-rellia-teal" aria-hidden />
-                Team bulletin
-              </CardTitle>
-              {!editing && configured ? (
+      <Card className={cn("flex h-full min-w-0 flex-col overflow-visible rounded-2xl", className)}>
+        <CardHeader className={adminTeamCardHeaderClass}>
+          <div className={adminTeamCardHeaderRowClass}>
+            <CardTitle className={adminTeamCardTitleClass}>
+              <Megaphone className={adminTeamCardTitleIconClass} aria-hidden />
+              Team bulletin
+            </CardTitle>
+            {!editing && configured && note?.blocks?.length ? (
+              <div className="flex shrink-0 items-center gap-2">
+                <AdminDeleteIconButton
+                  label="Remove bulletin?"
+                  description="This clears the team bulletin and all reactions. You can post a new note anytime."
+                  tooltip="Remove bulletin"
+                  confirmLabel="Remove bulletin"
+                  triggerVariant="outline"
+                  onConfirm={async () => {
+                    await removeMutation.mutateAsync()
+                  }}
+                />
                 <Button
                   type="button"
                   variant="outline"
@@ -341,17 +371,14 @@ const AdminTeamQuickNoteCard = ({ className, members = [] }: AdminTeamQuickNoteC
                   onClick={handleStartEdit}
                 >
                   <Pencil className="mr-1.5 h-3.5 w-3.5" aria-hidden />
-                  {note?.blocks?.length ? "Edit" : "Post"}
+                  Edit
                 </Button>
-              ) : null}
-            </div>
-            <CardDescription className="font-urbanist">
-              Share a fun update with stickers, text, or an image.
-            </CardDescription>
+              </div>
+            ) : null}
           </div>
         </CardHeader>
 
-        <CardContent className="space-y-4 overflow-visible">
+        <CardContent className={cn(adminTeamCardContentClass, "space-y-4 overflow-visible")}>
           {noteQuery.isLoading ? (
             <Skeleton className="h-36 w-full rounded-xl" />
           ) : !configured ? (
@@ -445,7 +472,10 @@ const AdminTeamQuickNoteCard = ({ className, members = [] }: AdminTeamQuickNoteC
                       </TooltipTrigger>
                       <TooltipContent side="top">Paste a URL instead</TooltipContent>
                     </Tooltip>
-                    <PopoverContent align="start" className="w-[min(100vw-2rem,20rem)] p-3">
+                    <PopoverContent
+                      align="start"
+                      className={cn("w-[min(100vw-2rem,20rem)] p-3", adminPopoverContentForTheme(resolvedTheme))}
+                    >
                       <p className="mb-2 font-urbanist text-xs font-semibold text-foreground">Image URL</p>
                       <div className="flex flex-col gap-2">
                         <Input
@@ -524,6 +554,11 @@ const AdminTeamQuickNoteCard = ({ className, members = [] }: AdminTeamQuickNoteC
             </div>
           ) : note?.blocks?.length ? (
             <div ref={reactionFlyBoundsRef} className="relative space-y-4 overflow-visible">
+              {publishError ? (
+                <p className="font-urbanist text-sm text-destructive" role="alert">
+                  {publishError}
+                </p>
+              ) : null}
               <div
                 ref={reactionFlyLayerRef}
                 className="pointer-events-none absolute inset-0 z-30 overflow-visible"
@@ -597,14 +632,14 @@ const AdminTeamQuickNoteCard = ({ className, members = [] }: AdminTeamQuickNoteC
             </div>
           ) : (
             <AdminCompactEmptyState
-              icon={Megaphone}
-              title="It's quiet in here."
+              icon={MoonStar}
+              title="It's quiet in here"
               description="Be the first to post a bulletin note!"
+              descriptionClassName="text-base leading-relaxed"
               action={
                 <Button
                   type="button"
-                  size="sm"
-                  className="rounded-full bg-rellia-teal text-white hover:bg-rellia-teal/90"
+                  className="h-11 rounded-full bg-rellia-mint px-7 font-urbanist text-base font-semibold text-rellia-teal hover:bg-rellia-mint/90 dark:bg-rellia-mint/25 dark:text-rellia-teal dark:hover:bg-rellia-mint/35"
                   onClick={handleStartEdit}
                 >
                   Post bulletin
@@ -623,6 +658,7 @@ const AdminTeamQuickNoteCard = ({ className, members = [] }: AdminTeamQuickNoteC
         allowAspectChange
         defaultAspectPreset="landscape"
         maxOutputSize={1600}
+        variant={isDark ? "dark" : "light"}
         onOpenChange={setCropDialogOpen}
         onConfirm={handleImageCropConfirm}
         onCancel={handleImageCropCancel}

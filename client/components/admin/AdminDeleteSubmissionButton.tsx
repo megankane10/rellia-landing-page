@@ -12,8 +12,15 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
-import { adminLightDialogShellClass } from "@/components/admin/adminSidebarRail"
+import {
+  adminDialogCancelForTheme,
+  adminDialogDescriptionForTheme,
+  adminDialogShellForTheme,
+  adminDialogTitleForTheme,
+} from "@/components/admin/adminSidebarRail"
 import { adminDestructiveOutlineButtonClass } from "@/components/admin/adminThemeClasses"
+import { useAdminTheme } from "@/context/AdminThemeContext"
+import { cn } from "@/lib/utils"
 
 type AdminDeleteSubmissionButtonProps = {
   label: string
@@ -26,6 +33,7 @@ const AdminDeleteSubmissionButton = ({
   description,
   onConfirm,
 }: AdminDeleteSubmissionButtonProps) => {
+  const { resolvedTheme } = useAdminTheme()
   const [isDeleting, setIsDeleting] = useState(false)
 
   const handleConfirm = async () => {
@@ -51,13 +59,17 @@ const AdminDeleteSubmissionButton = ({
           Delete
         </Button>
       </AlertDialogTrigger>
-      <AlertDialogContent className={adminLightDialogShellClass}>
+      <AlertDialogContent className={adminDialogShellForTheme(resolvedTheme)}>
         <AlertDialogHeader>
-          <AlertDialogTitle className="font-host-grotesk">{label}</AlertDialogTitle>
-          <AlertDialogDescription className="font-urbanist">{description}</AlertDialogDescription>
+          <AlertDialogTitle className={cn("font-host-grotesk", adminDialogTitleForTheme(resolvedTheme))}>
+            {label}
+          </AlertDialogTitle>
+          <AlertDialogDescription className={cn("font-urbanist", adminDialogDescriptionForTheme(resolvedTheme))}>
+            {description}
+          </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel className="rounded-full">Cancel</AlertDialogCancel>
+          <AlertDialogCancel className={adminDialogCancelForTheme(resolvedTheme)}>Cancel</AlertDialogCancel>
           <AlertDialogAction
             className="rounded-full bg-red-600 hover:bg-red-700"
             onClick={() => void handleConfirm()}

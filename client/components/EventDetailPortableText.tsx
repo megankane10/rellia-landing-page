@@ -3,6 +3,8 @@ import { PortableText, type PortableTextComponents } from "@portabletext/react"
 import type { SanityPortableText } from "@shared/cms/types"
 import { cn } from "@/lib/utils"
 import { BodyCtaBox } from "@/components/BodyCtaBox"
+import { mapPortableBodyCtaBox } from "@/lib/bodyCtaBoxPortable"
+import { cmsDisplayText, cmsHasDisplayText } from "@/lib/cmsStega"
 import { RichTextImageCarousel, type RichTextCarouselSlide } from "@/components/RichTextImageCarousel"
 import { parseBlockquoteAttribution, RichTextQuoteFigure } from "@/components/RichTextQuoteFigure"
 import ImageExpandModal from "@/components/ImageExpandModal"
@@ -102,32 +104,24 @@ const components: PortableTextComponents = {
       <hr className="mt-8 border-0 border-t border-black/15 md:mt-10" />
     ),
     bodyCtaBox: ({ value }) => {
-      const v = value as {
-        title?: string
-        body?: string
-        buttonLabel?: string
-        buttonHref?: string
-        secondaryButtonLabel?: string
-        secondaryButtonHref?: string
-      } | null
-      if (!v?.title?.trim()) return null
-      return (
-        <BodyCtaBox
-          title={v.title.trim()}
-          body={v.body}
-          buttonLabel={(v.buttonLabel ?? "").trim() || "Learn more"}
-          buttonHref={(v.buttonHref ?? "").trim() || "/"}
-          secondaryButtonLabel={v.secondaryButtonLabel}
-          secondaryButtonHref={v.secondaryButtonHref}
-        />
+      const mapped = mapPortableBodyCtaBox(
+        value as Parameters<typeof mapPortableBodyCtaBox>[0],
       )
+      if (!mapped) return null
+      return <BodyCtaBox {...mapped} />
     },
     portableQuoteBox: ({ value }) => {
       const v = value as { quote?: string; attribution?: string } | null
-      const quote = typeof v?.quote === "string" ? v.quote.trim() : ""
-      if (!quote) return null
-      const attribution = typeof v?.attribution === "string" ? v.attribution.trim() : undefined
-      return <RichTextQuoteFigure quote={quote} attribution={attribution || null} />
+      if (!cmsHasDisplayText(v?.quote)) return null
+      const attribution = cmsHasDisplayText(v?.attribution)
+        ? cmsDisplayText(v?.attribution)
+        : undefined
+      return (
+        <RichTextQuoteFigure
+          quote={cmsDisplayText(v!.quote)}
+          attribution={attribution || null}
+        />
+      )
     },
   },
   block: {

@@ -1,7 +1,19 @@
 import { cn } from "@/lib/utils"
 
+export const adminSidebarMotionEase = "ease-[cubic-bezier(0.4,0,0.2,1)]"
+export const adminSidebarMotionDuration = "duration-300"
+
+export const adminSidebarCollapseTransitionClass = cn(
+  "transition-[opacity,max-width,padding,margin,width,min-width] duration-300",
+  adminSidebarMotionEase,
+)
+
 /** Outer inset for header, nav, and footer — keeps the icon column aligned. */
-export const adminSidebarRailPx = "!px-5 group-data-[collapsible=icon]:!px-[1.125rem]"
+export const adminSidebarRailPx = cn(
+  "!px-5 transition-[padding] duration-300",
+  adminSidebarMotionEase,
+  "group-data-[state=collapsed]:!px-[1.125rem]",
+)
 
 /** Fixed icon column — logo, nav icons, and avatar share this slot. */
 export const adminSidebarIconSlot = "relative flex h-10 w-10 shrink-0 items-center justify-center"
@@ -13,21 +25,23 @@ export const adminSidebarLabelGap = "pl-4"
 export const adminSidebarLabelWrapClass = cn(
   "flex min-w-0 flex-1 items-center gap-3 overflow-hidden pr-2",
   adminSidebarLabelGap,
-  "opacity-100 transition-[opacity,max-width,padding] duration-200",
-  "group-data-[collapsible=icon]:max-w-0 group-data-[collapsible=icon]:flex-none group-data-[collapsible=icon]:overflow-hidden group-data-[collapsible=icon]:p-0 group-data-[collapsible=icon]:pl-0 group-data-[collapsible=icon]:pr-0 group-data-[collapsible=icon]:opacity-0",
+  "max-w-[13rem] opacity-100",
+  adminSidebarCollapseTransitionClass,
+  "group-data-[state=collapsed]:max-w-0 group-data-[state=collapsed]:flex-none group-data-[state=collapsed]:overflow-hidden group-data-[state=collapsed]:p-0 group-data-[state=collapsed]:pl-0 group-data-[state=collapsed]:pr-0 group-data-[state=collapsed]:opacity-0",
 )
 
 export const adminSidebarNavLinkClass = cn(
   adminSidebarRowClass,
   "min-h-11 w-full",
-  "group-data-[collapsible=icon]:h-11 group-data-[collapsible=icon]:min-h-11",
+  "group-data-[state=collapsed]:h-11 group-data-[state=collapsed]:min-h-11",
 )
 
 export const adminSidebarHeaderTextClass = cn(
   "flex min-w-0 flex-1 items-center overflow-hidden pr-2",
   adminSidebarLabelGap,
-  "whitespace-nowrap opacity-100 transition-[opacity,max-width,padding] duration-200",
-  "group-data-[collapsible=icon]:max-w-0 group-data-[collapsible=icon]:flex-none group-data-[collapsible=icon]:overflow-hidden group-data-[collapsible=icon]:p-0 group-data-[collapsible=icon]:pl-0 group-data-[collapsible=icon]:pr-0 group-data-[collapsible=icon]:opacity-0",
+  "max-w-[12rem] whitespace-nowrap opacity-100",
+  adminSidebarCollapseTransitionClass,
+  "group-data-[state=collapsed]:max-w-0 group-data-[state=collapsed]:flex-none group-data-[state=collapsed]:overflow-hidden group-data-[state=collapsed]:p-0 group-data-[state=collapsed]:pl-0 group-data-[state=collapsed]:pr-0 group-data-[state=collapsed]:opacity-0",
 )
 
 export const adminSidebarHeaderRowClass = cn(
@@ -49,44 +63,47 @@ export const adminSelectedItemSurfaceOnLightClass = cn(
 
 export const adminSidebarNavButtonClass = cn(
   "relative min-h-11 w-full overflow-hidden rounded-xl px-0 py-1 font-urbanist text-[15px]",
-  "transition-[color,background-color,transform,box-shadow] duration-150 ease-out",
+  "transition-[color,background-color,transform,box-shadow,width,height,min-height,max-height,padding] duration-300",
+  adminSidebarMotionEase,
   "text-slate-300/90",
   "hover:!bg-white/[0.07] hover:!text-white",
   "active:scale-[0.97] active:!bg-white/[0.12] active:!text-white active:duration-75",
   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/20 focus-visible:ring-offset-0",
   "data-[active=true]:!bg-rellia-mint/15 data-[active=true]:font-semibold data-[active=true]:!text-rellia-mint",
   "data-[active=true]:shadow-[inset_0_0_0_1px_rgba(134,239,172,0.14)]",
-  "group-data-[collapsible=icon]:!size-11 group-data-[collapsible=icon]:!min-h-11 group-data-[collapsible=icon]:!max-h-11 group-data-[collapsible=icon]:!w-full group-data-[collapsible=icon]:!p-0",
-  "[&_svg]:size-[1.125rem] [&_svg]:transition-transform [&_svg]:duration-150",
+  "group-data-[state=collapsed]:!size-11 group-data-[state=collapsed]:!min-h-11 group-data-[state=collapsed]:!max-h-11 group-data-[state=collapsed]:!w-full group-data-[state=collapsed]:!p-0",
+  "[&_svg]:size-[1.125rem] [&_svg]:transition-transform [&_svg]:duration-300 [&_svg]:ease-[cubic-bezier(0.4,0,0.2,1)]",
   "active:[&_svg]:scale-95 data-[active=true]:[&_svg]:text-rellia-mint",
 )
 
 export const adminSidebarAccountButtonClass = cn(
   adminSidebarRowClass,
   "relative min-h-11 w-full rounded-xl px-0 py-1 text-left font-urbanist",
-  "transition-[color,background-color,transform] duration-150 ease-out",
+  "transition-[color,background-color,transform,width,height,min-height,max-height,padding] duration-300",
+  adminSidebarMotionEase,
   "hover:!bg-white/[0.07] hover:!text-white",
   "active:scale-[0.97] active:!bg-white/[0.12] active:!text-white active:duration-75",
   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/20 focus-visible:ring-offset-0",
-  "group-data-[collapsible=icon]:!size-11 group-data-[collapsible=icon]:!min-h-11 group-data-[collapsible=icon]:!max-h-11 group-data-[collapsible=icon]:!w-full group-data-[collapsible=icon]:!p-0",
-  "group-data-[collapsible=icon]:overflow-visible",
-  "group-data-[collapsible=icon]:hover:!bg-transparent group-data-[collapsible=icon]:active:!bg-transparent",
-  "group-data-[collapsible=icon]:[&>span:first-child]:relative group-data-[collapsible=icon]:[&>span:first-child]:z-0",
-  "group-data-[collapsible=icon]:[&>span:first-child]:before:pointer-events-none",
-  "group-data-[collapsible=icon]:[&>span:first-child]:before:absolute group-data-[collapsible=icon]:[&>span:first-child]:before:inset-0",
-  "group-data-[collapsible=icon]:[&>span:first-child]:before:-m-2 group-data-[collapsible=icon]:[&>span:first-child]:before:rounded-xl",
-  "group-data-[collapsible=icon]:[&>span:first-child]:before:content-['']",
-  "group-data-[collapsible=icon]:[&>span:first-child]:before:transition-[background-color] group-data-[collapsible=icon]:[&>span:first-child]:before:duration-150",
-  "group-data-[collapsible=icon]:hover:[&>span:first-child]:before:bg-white/[0.07]",
-  "group-data-[collapsible=icon]:active:[&>span:first-child]:before:bg-white/[0.12]",
-  "group-data-[collapsible=icon]:[&>span:first-child>*]:relative group-data-[collapsible=icon]:[&>span:first-child>*]:z-[1]",
+  "group-data-[state=collapsed]:!size-11 group-data-[state=collapsed]:!min-h-11 group-data-[state=collapsed]:!max-h-11 group-data-[state=collapsed]:!w-full group-data-[state=collapsed]:!p-0",
+  "group-data-[state=collapsed]:overflow-visible",
+  "group-data-[state=collapsed]:hover:!bg-transparent group-data-[state=collapsed]:active:!bg-transparent",
+  "group-data-[state=collapsed]:[&>span:first-child]:relative group-data-[state=collapsed]:[&>span:first-child]:z-0",
+  "group-data-[state=collapsed]:[&>span:first-child]:before:pointer-events-none",
+  "group-data-[state=collapsed]:[&>span:first-child]:before:absolute group-data-[state=collapsed]:[&>span:first-child]:before:inset-0",
+  "group-data-[state=collapsed]:[&>span:first-child]:before:-m-2 group-data-[state=collapsed]:[&>span:first-child]:before:rounded-xl",
+  "group-data-[state=collapsed]:[&>span:first-child]:before:content-['']",
+  "group-data-[state=collapsed]:[&>span:first-child]:before:transition-[background-color] group-data-[state=collapsed]:[&>span:first-child]:before:duration-300",
+  "group-data-[state=collapsed]:hover:[&>span:first-child]:before:bg-white/[0.07]",
+  "group-data-[state=collapsed]:active:[&>span:first-child]:before:bg-white/[0.12]",
+  "group-data-[state=collapsed]:[&>span:first-child>*]:relative group-data-[state=collapsed]:[&>span:first-child>*]:z-[1]",
 )
 
 export const adminSidebarAccountTextClass = cn(
   "min-w-0 flex-1 space-y-1 overflow-hidden",
   adminSidebarLabelGap,
-  "transition-[opacity,max-width,padding] duration-200",
-  "group-data-[collapsible=icon]:max-w-0 group-data-[collapsible=icon]:flex-none group-data-[collapsible=icon]:overflow-hidden group-data-[collapsible=icon]:p-0 group-data-[collapsible=icon]:opacity-0",
+  "max-w-[12rem] opacity-100",
+  adminSidebarCollapseTransitionClass,
+  "group-data-[state=collapsed]:max-w-0 group-data-[state=collapsed]:flex-none group-data-[state=collapsed]:overflow-hidden group-data-[state=collapsed]:p-0 group-data-[state=collapsed]:opacity-0",
 )
 
 export const adminSidebarHeaderClass = cn(
@@ -98,7 +115,7 @@ export const adminSidebarHeaderClass = cn(
 export const adminSidebarFooterClass = cn(
   "!gap-0 !py-0",
   "shrink-0 overflow-hidden border-t border-slate-800 !pb-5 !pt-3",
-  "group-data-[collapsible=icon]:overflow-visible",
+  "group-data-[state=collapsed]:overflow-visible",
   adminSidebarRailPx,
 )
 
@@ -136,17 +153,85 @@ export const adminDarkDialogContentClass = cn(
   "[&>button.absolute]:text-slate-400 [&>button.absolute]:hover:text-white",
 )
 
+/** Light admin modal surface — explicit white (portals sit outside `.admin-shell`) */
+export const adminLightDialogContentClass = cn(
+  "border-border/80 bg-white text-foreground",
+  "[&_label]:text-foreground",
+  "[&_input]:border-input [&_input]:bg-white [&_input]:text-foreground [&_input]:placeholder:text-muted-foreground",
+  "[&>button.absolute]:text-muted-foreground [&>button.absolute]:hover:text-foreground",
+)
+
 /** Light admin modal chrome — corner radius aligned with profile modals */
 export const adminLightDialogShellClass = cn(
   "rounded-[2rem] sm:rounded-[2rem]",
   "border-border/80 shadow-xl shadow-black/12",
-  "dark:border-slate-700/65 dark:bg-slate-900 dark:text-slate-200",
-  "[&_button]:dark:text-slate-200",
 )
 
-/** Admin popovers / floating panels (note editor, etc.) — dark surface in admin dark mode */
+/** Portaled admin dialogs — explicit theme (Radix portals sit outside `.admin-shell.dark`) */
+export const adminDialogShellForTheme = (theme: "light" | "dark") =>
+  theme === "dark"
+    ? cn(adminDarkDialogShellClass, adminDarkDialogContentClass)
+    : cn(adminLightDialogShellClass, adminLightDialogContentClass)
+
+export const adminDialogTitleForTheme = (theme: "light" | "dark") =>
+  theme === "dark" ? "text-white" : "text-foreground"
+
+export const adminDialogDescriptionForTheme = (theme: "light" | "dark") =>
+  theme === "dark" ? "text-slate-400" : "text-muted-foreground"
+
+export const adminDialogCancelForTheme = (theme: "light" | "dark") =>
+  theme === "dark"
+    ? "rounded-full border-slate-700 bg-slate-900 text-slate-200 hover:bg-slate-800 hover:text-white"
+    : "rounded-full border-border bg-white text-foreground hover:bg-muted/50"
+
+export const adminDialogPrimaryActionForTheme = (theme: "light" | "dark") =>
+  theme === "dark"
+    ? "rounded-full bg-rellia-teal text-white hover:bg-rellia-teal/90"
+    : "rounded-full"
+
+/** Light admin dropdown / menu surface */
+export const adminLightMenuContentClass = cn(
+  "z-[10002] overflow-hidden rounded-2xl border border-border/80 bg-white p-1.5 text-foreground shadow-xl shadow-black/12",
+)
+
+export const adminLightMenuItemClass = cn(
+  "cursor-pointer rounded-lg px-3 py-2.5 text-sm text-foreground",
+  "focus:bg-muted focus:text-foreground",
+)
+
+export const adminLightMenuSeparatorClass = "my-1 bg-border"
+
+export const adminMenuContentForTheme = (theme: "light" | "dark") =>
+  theme === "dark" ? adminDarkMenuContentClass : adminLightMenuContentClass
+
+export const adminMenuItemForTheme = (theme: "light" | "dark") =>
+  theme === "dark" ? adminDarkMenuItemClass : adminLightMenuItemClass
+
+export const adminMenuSeparatorForTheme = (theme: "light" | "dark") =>
+  theme === "dark" ? adminDarkMenuSeparatorClass : adminLightMenuSeparatorClass
+
+const adminPopoverContentBaseClass = "z-50 rounded-2xl border p-4 shadow-2xl shadow-black/45"
+
+/** Portaled admin popovers — explicit theme (Radix portals sit outside `.admin-shell.dark`) */
+export const adminPopoverContentForTheme = (theme: "light" | "dark") =>
+  cn(
+    adminPopoverContentBaseClass,
+    theme === "dark"
+      ? cn(
+          "border-slate-700/65 bg-slate-900 text-slate-200",
+          "[&_.text-muted-foreground]:text-slate-400",
+          "[&_textarea]:border-slate-700 [&_textarea]:bg-slate-950 [&_textarea]:text-white [&_textarea]:placeholder:text-slate-500",
+        )
+      : cn(
+          "border-border/80 bg-white text-foreground",
+          "[&_.text-muted-foreground]:text-muted-foreground",
+          "[&_textarea]:border-input [&_textarea]:bg-white [&_textarea]:text-foreground [&_textarea]:placeholder:text-muted-foreground",
+        ),
+  )
+
+/** @deprecated Use adminPopoverContentForTheme — kept for in-shell usage with dark: variants */
 export const adminPopoverContentClass = cn(
-  "z-50 rounded-2xl border p-4 shadow-2xl shadow-black/45",
+  adminPopoverContentBaseClass,
   "border-border bg-popover text-popover-foreground",
   "dark:border-slate-700/65 dark:bg-slate-900 dark:text-slate-200",
   "[&_.text-muted-foreground]:dark:text-slate-400",

@@ -12,6 +12,15 @@ export const adminHeaderClass = cn(
 /** Standard elevated card surface */
 export const adminCardClass = "rounded-2xl border border-border bg-card text-card-foreground"
 
+/** Team page paired cards — shared header/body alignment */
+export const adminTeamCardHeaderClass = "space-y-0 p-6 pb-2"
+export const adminTeamCardHeaderRowClass =
+  "flex min-h-10 min-w-0 items-center justify-between gap-3"
+export const adminTeamCardTitleClass =
+  "flex min-h-10 min-w-0 items-center gap-2.5 font-host-grotesk text-lg font-semibold leading-none text-foreground dark:text-white"
+export const adminTeamCardTitleIconClass = "h-5 w-5 shrink-0 text-rellia-teal dark:text-rellia-mint"
+export const adminTeamCardContentClass = "flex flex-1 flex-col px-6 pb-6 pt-0"
+
 /** Card section divider */
 export const adminCardDividerClass = "border-black/10 dark:border-border"
 
@@ -27,7 +36,15 @@ export const adminHighlightedSurfaceClass = cn(
   "dark:shadow-[inset_0_0_0_1px_rgba(134,239,172,0.14)]",
 )
 
-/** Page header / toolbar outline buttons (Download CSV, Open Studio, etc.) */
+/** Tip box callout — stronger mint/teal wash in dark mode so boxes read clearly on the canvas */
+export const adminTipBoxSurfaceClass = cn(
+  "border border-rellia-teal/18 bg-rellia-mint/15",
+  "shadow-[inset_0_0_0_1px_rgba(134,239,172,0.08)]",
+  "dark:border-rellia-mint/35 dark:bg-rellia-teal/20",
+  "dark:shadow-[inset_0_0_0_1px_rgba(134,239,172,0.28)]",
+)
+
+/** Page header / toolbar outline buttons */
 export const adminOutlineActionButtonClass = cn(
   "rounded-full border font-urbanist shadow-sm transition-colors",
   "border-rellia-teal/25 bg-card text-rellia-teal",
@@ -113,9 +130,9 @@ export const adminBackLinkClass = cn(
   "dark:text-rellia-mint dark:hover:text-rellia-mint",
 )
 
-/** Status dropdown on submission rows and detail headers */
+/** Status dropdown on submission rows and detail headers — fits longest option ("In Progress") */
 export const adminSubmissionStatusSelectTriggerClass = cn(
-  "h-9 w-[160px] rounded-full border font-urbanist text-sm shadow-sm",
+  "h-9 w-[8.25rem] shrink-0 rounded-full border font-urbanist text-sm shadow-sm",
   "border-rellia-teal/25 bg-card text-foreground",
   "hover:border-rellia-teal/35 hover:bg-rellia-mint/8",
   "dark:border-rellia-mint/45 dark:bg-rellia-mint/12 dark:text-rellia-mint",
@@ -153,48 +170,87 @@ export const adminNoteIconButtonActiveClass = cn(
   "dark:text-rellia-mint dark:hover:bg-rellia-mint/20 dark:hover:text-rellia-mint",
 )
 
-/** Segmented tab bar (inbox Web forms / Diagnostic Surveys) */
+/** Segmented tab bar (inbox Web forms / Diagnostic Surveys, content Drafts / Published) */
 export const adminSegmentedTabsListClass = cn(
   "h-[48px] w-full max-w-none rounded-2xl border p-1 shadow-sm",
-  "border-border bg-muted/50",
-  "dark:border-slate-700/60 dark:bg-slate-900/55",
+  "border-border/80 bg-card",
+  "dark:border-border dark:bg-[hsl(var(--secondary))]",
 )
 
 /** Segmented tab trigger */
 export const adminSegmentedTabTriggerClass = cn(
   "group/trigger h-full w-full rounded-xl px-4 py-2 font-urbanist text-sm font-bold transition-all duration-200",
-  "data-[state=active]:border data-[state=active]:border-border data-[state=active]:bg-card",
-  "data-[state=active]:text-rellia-teal data-[state=active]:shadow-[0_4px_12px_rgba(0,0,0,0.06)]",
-  "data-[state=inactive]:bg-transparent data-[state=inactive]:text-muted-foreground data-[state=inactive]:hover:text-foreground",
-  "dark:data-[state=active]:border-rellia-mint/40 dark:data-[state=active]:bg-slate-800/95",
-  "dark:data-[state=active]:text-rellia-mint",
-  "dark:data-[state=active]:shadow-[inset_0_0_0_1px_rgba(134,239,172,0.14),0_4px_16px_rgba(0,0,0,0.28)]",
-  "dark:data-[state=inactive]:text-slate-400 dark:data-[state=inactive]:hover:text-slate-100",
+  "data-[state=active]:border data-[state=active]:border-transparent data-[state=active]:bg-rellia-teal data-[state=active]:text-white",
+  "data-[state=active]:shadow-[0_4px_12px_rgba(13,53,64,0.18)]",
+  "data-[state=inactive]:border-transparent data-[state=inactive]:bg-transparent data-[state=inactive]:text-muted-foreground data-[state=inactive]:hover:text-foreground",
+  "dark:data-[state=active]:border-transparent dark:data-[state=active]:bg-rellia-teal dark:data-[state=active]:text-white",
+  "dark:data-[state=active]:shadow-[0_4px_14px_rgba(0,0,0,0.42)]",
+  "dark:data-[state=inactive]:bg-transparent dark:data-[state=inactive]:text-slate-400 dark:data-[state=inactive]:hover:text-slate-100",
 )
 
 /** Count chip inside segmented tabs */
 export const adminSegmentedTabCountClass = cn(
   "rounded-full bg-foreground/5 px-1.5 py-0.5 text-xs font-semibold tabular-nums text-muted-foreground",
-  "group-data-[state=active]/trigger:bg-rellia-mint/15 group-data-[state=active]/trigger:text-rellia-teal",
+  "group-data-[state=active]/trigger:bg-white/20 group-data-[state=active]/trigger:text-white",
   "dark:bg-white/8 dark:text-slate-400",
-  "dark:group-data-[state=active]/trigger:bg-rellia-mint/20 dark:group-data-[state=active]/trigger:text-rellia-mint",
+  "dark:group-data-[state=active]/trigger:bg-white/20 dark:group-data-[state=active]/trigger:text-white",
 )
+
+/** Toolbar search / filter outlines — clearer in light mode, unchanged in dark */
+export const adminToolbarFieldBorderClass = cn(
+  "border-slate-300",
+  "dark:border-border",
+)
+
+/** Inbox / toolbar search — border only, no fill (matches canvas in light & dark) */
+export const adminToolbarSearchInputClass = cn(
+  "bg-transparent shadow-none",
+  adminToolbarFieldBorderClass,
+  "focus-visible:ring-2 focus-visible:ring-rellia-teal/25 focus-visible:ring-offset-0",
+  "dark:bg-transparent dark:focus-visible:ring-rellia-mint/30",
+)
+
+/** Overview chart cards + inbox toolbar — native select filter trigger */
+export const adminFilterSelectTriggerClass = cn(
+  "h-9 w-full max-w-[8.25rem] appearance-none rounded-xl border pl-2.5 pr-9 font-urbanist text-xs font-semibold text-muted-foreground sm:h-10 sm:max-w-none sm:pl-3.5 sm:pr-11 sm:text-sm",
+  adminToolbarFieldBorderClass,
+  "bg-muted/70 hover:border-slate-400 hover:bg-muted/90",
+  "focus:outline-none focus:ring-2 focus:ring-rellia-teal",
+  "dark:bg-secondary/80 dark:hover:border-border dark:hover:bg-secondary",
+  "dark:focus:ring-rellia-mint/35",
+)
+
+/** Shared admin data table layout */
+export const adminDataTableClass = "w-full min-w-[32rem]"
 
 /** Admin data table header cell padding */
 export const adminTableHeaderCellClass = cn(
-  "px-4 py-3 font-urbanist text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground",
-  "first:pl-5 last:pr-5",
+  "px-5 py-3 font-urbanist text-xs font-semibold uppercase tracking-[0.1em] text-muted-foreground",
+  "first:pl-6 last:pr-6",
 )
 
 /** Admin data table body cell padding */
 export const adminTableBodyCellClass = cn(
-  "px-4 py-4 align-top font-urbanist text-sm text-foreground",
-  "first:pl-5 last:pr-5",
+  "px-5 py-4 align-top font-urbanist text-base text-foreground",
+  "first:pl-6 last:pr-6",
 )
+
+/** Actions column — left-aligned header and controls */
+export const adminTableActionsColumnClass = "whitespace-nowrap"
+
+/** Icon/button group inside an actions table cell */
+export const adminTableActionsClusterClass = "flex items-start justify-start gap-0.5"
+
+/** Inbox submission tables — fixed layout keeps column gutters uniform */
+export const adminInboxContactTableClass = cn(adminDataTableClass, "min-w-[74rem] table-fixed")
+export const adminInboxDiagnosticTableClass = cn(adminDataTableClass, "min-w-[78rem] table-fixed")
+
+/** Vertically centers single-line cell content with avatar rows */
+export const adminTableCellContentClass = "flex min-h-10 items-center"
 
 /** Multi-line clamped text in admin table cells (e.g. submission message) */
 export const adminTableMessageCellClass = cn(
-  "whitespace-normal break-words text-sm leading-snug text-muted-foreground line-clamp-4",
+  "whitespace-normal break-words text-base leading-snug text-muted-foreground line-clamp-4",
 )
 
 /** Amber warning / policy banners in admin */
@@ -202,6 +258,12 @@ export const adminWarningBannerClass = cn(
   "rounded-lg border px-4 py-3 font-urbanist text-sm",
   "border-amber-200/80 bg-amber-50 text-amber-900",
   "dark:border-amber-500/40 dark:bg-amber-500/10 dark:text-amber-200",
+)
+
+/** Shared status chip sizing across admin dashboard lists and detail views */
+export const adminStatusBadgeShellClass = cn(
+  "inline-flex shrink-0 items-center rounded-full border px-3 py-1",
+  "font-urbanist text-sm font-semibold",
 )
 
 /** Pending / in-progress status — orange (submissions, overview counts, drafts) */
@@ -257,9 +319,40 @@ export const adminTooltipContentClass = cn(
   "animate-in fade-in-0 zoom-in-95",
 )
 
-/** Chart tooltips — same shell with readable value colours */
+/** Chart tooltips — white shell in light mode, dark sidebar shell in dark mode */
 export const adminChartTooltipClass = cn(
-  adminTooltipContentClass,
-  "min-w-[8rem] text-white",
-  "[&_.text-muted-foreground]:text-slate-300 [&_.text-foreground]:text-white",
+  "z-50 min-w-[8rem] overflow-hidden rounded-xl px-3 py-1.5 font-urbanist text-xs font-semibold shadow-lg animate-in fade-in-0 zoom-in-95",
+  "border border-slate-200/90 bg-white text-slate-900 shadow-black/10",
+  "[&_.text-muted-foreground]:text-slate-500 [&_.text-foreground]:text-slate-900",
+  "dark:border-slate-700/70 dark:bg-slate-950 dark:text-white dark:shadow-black/40",
+  "dark:[&_.text-muted-foreground]:text-slate-300 dark:[&_.text-foreground]:text-white",
 )
+
+const adminPieTooltipSharedStyle = {
+  borderRadius: "12px",
+  fontFamily: "Urbanist, sans-serif",
+  fontSize: "13px",
+  fontWeight: 600,
+  zIndex: 50,
+} as const
+
+export const getAdminPieTooltipStyles = (resolvedTheme: "light" | "dark") => {
+  const isDark = resolvedTheme === "dark"
+
+  return {
+    contentStyle: {
+      ...adminPieTooltipSharedStyle,
+      border: isDark ? "1px solid rgba(51, 65, 85, 0.7)" : "1px solid rgba(226, 232, 240, 0.9)",
+      backgroundColor: isDark ? "hsl(222 47% 11%)" : "#ffffff",
+      color: isDark ? "#ffffff" : "#0f172a",
+      boxShadow: isDark ? "0 12px 32px rgba(0,0,0,0.38)" : "0 12px 32px rgba(15, 23, 42, 0.12)",
+    },
+    labelStyle: {
+      color: isDark ? "#ffffff" : "#0f172a",
+      fontWeight: 600,
+    },
+    itemStyle: {
+      color: isDark ? "#e2e8f0" : "#475569",
+    },
+  }
+}

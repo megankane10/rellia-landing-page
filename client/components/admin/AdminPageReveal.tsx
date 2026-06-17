@@ -1,5 +1,6 @@
-import type { ReactNode } from "react"
-import ScrollReveal from "@/components/ScrollReveal"
+import type { CSSProperties, ReactNode } from "react"
+import { useReducedMotion } from "framer-motion"
+import { cn } from "@/lib/utils"
 
 type AdminPageRevealProps = {
   children: ReactNode
@@ -7,10 +8,22 @@ type AdminPageRevealProps = {
   className?: string
 }
 
-const AdminPageReveal = ({ children, delay = 0, className }: AdminPageRevealProps) => (
-  <ScrollReveal variant="ctaReveal" delay={delay} className={className}>
-    {children}
-  </ScrollReveal>
-)
+/** Route enter — translate only (no opacity/blur) so the canvas never flashes white between admin pages */
+const AdminPageReveal = ({ children, delay = 0, className }: AdminPageRevealProps) => {
+  const reduceMotion = useReducedMotion()
+
+  const motionStyle: CSSProperties | undefined = reduceMotion
+    ? undefined
+    : { animationDelay: `${delay}s` }
+
+  return (
+    <div
+      className={cn(!reduceMotion && "animate-admin-page-enter", className)}
+      style={motionStyle}
+    >
+      {children}
+    </div>
+  )
+}
 
 export default AdminPageReveal

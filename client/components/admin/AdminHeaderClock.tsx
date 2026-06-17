@@ -35,12 +35,12 @@ const AdminHeaderClock = ({ className }: AdminHeaderClockProps) => {
     >
       <span
         className={cn(
-          "inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-rellia-teal/25",
+          "inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-rellia-teal/25",
           "bg-rellia-mint/10 text-rellia-teal dark:border-rellia-mint/25 dark:bg-rellia-mint/10 dark:text-rellia-mint",
         )}
         aria-hidden
       >
-        <CalendarDays className="h-4 w-4" strokeWidth={1.75} />
+        <CalendarDays className="h-5 w-5" strokeWidth={1.75} />
       </span>
 
       <div className="flex min-w-0 items-center gap-3 whitespace-nowrap">

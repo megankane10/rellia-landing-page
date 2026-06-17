@@ -1,6 +1,7 @@
 import { studioDeskUrl } from "@shared/admin/notifyLinks"
 import type { AdminSanityDataset } from "@shared/cms/sanityEnv"
-import { fetchAdminSanityDrafts } from "@/lib/adminApi"
+import { fetchAdminSanityDrafts, fetchAdminSanityRecentEdits } from "@/lib/adminApi"
+import { buildLastNDaysCountByDay } from "@/lib/adminOverview"
 import { getSanityDataset, isSanityConfigured, sanityFetch } from "@/lib/sanity"
 
 export type SanityContentRow = {
@@ -9,6 +10,29 @@ export type SanityContentRow = {
   title?: string
   _updatedAt?: string
   status: "unpublished" | "published"
+}
+
+export type SanityRecentEditRow = {
+  _id: string
+  _type: string
+  title?: string
+  _updatedAt?: string
+}
+
+/** Production dataset only — Studio and www share one CMS database. */
+export const ADMIN_SANITY_PRODUCTION_DATASET: AdminSanityDataset = "production"
+
+const DAY_MS = 24 * 60 * 60 * 1000
+
+const startOfDay = (date: Date) =>
+  new Date(date.getFullYear(), date.getMonth(), date.getDate())
+
+const dayDiffFromToday = (iso: string): number | null => {
+  const date = new Date(iso)
+  if (Number.isNaN(date.getTime())) return null
+  const todayStart = startOfDay(new Date())
+  const dateStart = startOfDay(date)
+  return Math.round((todayStart.getTime() - dateStart.getTime()) / DAY_MS)
 }
 
 const isContentRow = (row: {
@@ -33,6 +57,11 @@ export const fetchCmsContentQueue = async (): Promise<SanityContentRow[]> => {
   return mapDraftRows(Array.isArray(draftRows) ? draftRows : [])
 }
 
+const mapPublishedRows = (
+  rows: Array<{ _id: string; _type: string; title?: string; _updatedAt?: string }>,
+): SanityContentRow[] =>
+  rows.filter(isContentRow).map((row) => ({ ...row, status: "published" as const }))
+
 /** Unpublished drafts for a specific dataset (production or preview). Requires admin session. */
 export const fetchCmsContentQueueForDataset = async (
   accessToken: string,
@@ -42,8 +71,102 @@ export const fetchCmsContentQueueForDataset = async (
   return mapDraftRows(draftRows)
 }
 
+/** Recently published documents for a specific dataset. Requires admin session. */
+export const fetchCmsPublishedQueueForDataset = async (
+  accessToken: string,
+  dataset: AdminSanityDataset,
+): Promise<SanityContentRow[]> => {
+  const publishedRows = await fetchAdminSanityRecentEdits(accessToken, dataset)
+  return mapPublishedRows(publishedRows)
+}
+
 export const cmsContentQueryKey = (dataset?: AdminSanityDataset) =>
   ["admin-sanity-content-queue", dataset ?? (getSanityDataset() || "none")] as const
+
+export const cmsPublishedQueryKey = (dataset?: AdminSanityDataset) =>
+  ["admin-sanity-published-queue", dataset ?? (getSanityDataset() || "none")] as const
+
+/** Published documents recently updated in the active Sanity dataset (public proxy). */
+export const fetchCmsRecentEdits = async (): Promise<SanityRecentEditRow[]> => {
+  const rows = await sanityFetch<SanityRecentEditRow[]>("sanityRecentEdits")
+  return Array.isArray(rows) ? rows : []
+}
+
+/** Production recent publishes for the overview card (authenticated admin API). */
+export const fetchCmsRecentEditsForOverview = async (
+  accessToken: string,
+): Promise<SanityRecentEditRow[]> => {
+  const rows = await fetchAdminSanityRecentEdits(accessToken, ADMIN_SANITY_PRODUCTION_DATASET)
+  return Array.isArray(rows) ? rows : []
+}
+
+export const cmsRecentEditsQueryKey = (dataset: AdminSanityDataset = ADMIN_SANITY_PRODUCTION_DATASET) =>
+  ["admin-sanity-recent-edits", dataset] as const
+
+/** Headline value for the overview site-content card (compact relative time). */
+export const formatCmsLastPublishHeadline = (iso?: string): string => {
+  if (!iso) return "—"
+  const dayDiff = dayDiffFromToday(iso)
+  if (dayDiff === null) return "—"
+  if (dayDiff <= 0) return "Today"
+  if (dayDiff === 1) return "Yesterday"
+  if (dayDiff < 7) return `${dayDiff}d ago`
+  if (dayDiff < 30) {
+    const weeks = Math.floor(dayDiff / 7)
+    return weeks === 1 ? "1w ago" : `${weeks}w ago`
+  }
+  const months = Math.floor(dayDiff / 30)
+  return months === 1 ? "1mo ago" : `${months}mo ago`
+}
+
+export const cmsLastPublishIsStale = (iso?: string): boolean => {
+  const dayDiff = iso ? dayDiffFromToday(iso) : null
+  return dayDiff !== null && dayDiff > 30
+}
+
+export type CmsLastPublishSubtitle =
+  | { kind: "plain"; text: string }
+  | { kind: "document"; documentName: string; typeLabel: string }
+
+export const getCmsLastPublishSubtitle = (
+  row: SanityRecentEditRow | undefined,
+  iso?: string,
+): CmsLastPublishSubtitle => {
+  if (!iso || !row) return { kind: "plain", text: "No published updates yet" }
+
+  const typeLabel = formatCmsDocumentTypeLabel(row._type)
+  const documentName = row.title?.trim() || typeLabel
+
+  return { kind: "document", documentName, typeLabel }
+}
+
+export const cmsLastPublishSubtitleAria = (subtitle: CmsLastPublishSubtitle): string =>
+  subtitle.kind === "plain" ? subtitle.text : `${subtitle.documentName}, ${subtitle.typeLabel}`
+
+/** Calendar-day publish counts (oldest → today); pre-window history rolls into the first bucket. */
+export const buildCmsEditsSparkline = (
+  rows: SanityRecentEditRow[],
+  bucketCount = 7,
+): number[] => {
+  const timestamps = rows
+    .map((row) => row._updatedAt)
+    .filter((value): value is string => Boolean(value))
+
+  const daily = buildLastNDaysCountByDay(timestamps, bucketCount)
+  if (timestamps.length === 0) return daily
+
+  const windowStart = new Date(startOfDay(new Date()).getTime() - (bucketCount - 1) * DAY_MS)
+  let olderCount = 0
+
+  for (const iso of timestamps) {
+    const dayStart = startOfDay(new Date(iso))
+    if (dayStart.getTime() < windowStart.getTime()) olderCount += 1
+  }
+
+  if (olderCount === 0) return daily
+
+  return daily.map((count, index) => (index === 0 ? count + olderCount : count))
+}
 
 export const formatCmsContentRelative = (iso?: string) => {
   if (!iso) return "Recently"
@@ -85,6 +208,3 @@ export const formatCmsDocumentTypeLabel = (type: string): string => {
     .replace(/^./, (c) => c.toUpperCase())
     .trim()
 }
-
-/** Production dataset only — Studio and www share one CMS database. */
-export const ADMIN_SANITY_PRODUCTION_DATASET: AdminSanityDataset = "production"

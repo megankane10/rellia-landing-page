@@ -1,17 +1,21 @@
 import { LogIn } from "lucide-react"
-import AdminCompactEmptyState from "@/components/admin/AdminCompactEmptyState"
 import AdminRecordList from "@/components/admin/AdminRecordList"
 import type { AdminTableColumn } from "@/components/admin/AdminDataTable"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
 import type { AdminTeamUser } from "@/lib/adminApi"
 import { formatAdminDate, formatAdminRelativeAgo } from "@/lib/adminSubmissionStatus"
 import { cn } from "@/lib/utils"
+import { adminTeamCardHeaderClass, adminTeamCardTitleClass, adminTeamCardTitleIconClass } from "@/components/admin/adminThemeClasses"
+
+const RECENT_SIGN_IN_MAX = 6
 
 type AdminRecentSignInsCardProps = {
   members: AdminTeamUser[]
   loading?: boolean
   className?: string
+  emptyMessage?: string
+  fillerMessage?: string
 }
 
 const signInColumns: AdminTableColumn<AdminTeamUser>[] = [
@@ -45,63 +49,86 @@ const signInColumns: AdminTableColumn<AdminTeamUser>[] = [
   },
 ]
 
-const AdminRecentSignInsCard = ({ members, loading, className }: AdminRecentSignInsCardProps) => (
-  <Card className={cn("min-w-0 overflow-hidden rounded-2xl", className)}>
-    <CardHeader className="pb-3">
-      <CardTitle className="flex items-center gap-2.5 font-host-grotesk text-lg text-foreground dark:text-white">
-        <LogIn className="h-5 w-5 shrink-0 text-rellia-teal" aria-hidden />
-        Recent sign-ins
-      </CardTitle>
-      <CardDescription className="font-urbanist">Who has been active on the dashboard lately.</CardDescription>
-    </CardHeader>
-    <CardContent className="p-0">
-      {loading ? (
-        <div className="space-y-3 border-t border-border/80 p-4">
-          {Array.from({ length: 4 }).map((_, i) => (
-            <Skeleton key={i} className="h-14 rounded-xl" />
-          ))}
-        </div>
-      ) : members.length === 0 ? (
-        <div className="border-t border-border/80 p-4">
-          <AdminCompactEmptyState
-            icon={LogIn}
-            title="No sign-in activity yet"
-            description="When team members sign in to the dashboard, their recent activity will show here."
-          />
-        </div>
-      ) : (
-        <div className="overflow-hidden border-t border-border/80 [&_ul]:p-3 [&_ul]:md:p-0">
-          <AdminRecordList
-            rows={members}
-            getRowKey={(member) => member.id}
-            columns={signInColumns}
-            mobileFields={[
-              {
-                label: "Name",
-                value: (member) => <span>{member.fullName?.trim() || member.email}</span>,
-              },
-              {
-                label: "Signed in",
-                value: (member) => (
-                  <time dateTime={member.lastSignInAt!} className="text-foreground">
-                    {formatAdminDate(member.lastSignInAt!)}
-                  </time>
-                ),
-              },
-              {
-                label: "When",
-                value: (member) => (
-                  <span className="font-medium text-rellia-teal/90 dark:text-rellia-mint">
-                    {formatAdminRelativeAgo(member.lastSignInAt!)}
-                  </span>
-                ),
-              },
-            ]}
-          />
-        </div>
-      )}
-    </CardContent>
-  </Card>
-)
+const AdminRecentSignInsCard = ({
+  members,
+  loading,
+  className,
+  emptyMessage = "No sign-in activity yet.",
+  fillerMessage = "No more recent sign-ins in this list.",
+}: AdminRecentSignInsCardProps) => {
+  const showFiller = members.length < RECENT_SIGN_IN_MAX
+
+  return (
+    <Card className={cn("flex h-full min-w-0 flex-col overflow-hidden rounded-2xl", className)}>
+      <CardHeader className={adminTeamCardHeaderClass}>
+        <CardTitle className={adminTeamCardTitleClass}>
+          <LogIn className={adminTeamCardTitleIconClass} aria-hidden />
+          Recent sign-ins
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="flex flex-1 flex-col px-0 pb-0 pt-0">
+        {loading ? (
+          <div className="space-y-3 px-6 pb-6">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <Skeleton key={i} className="h-14 rounded-xl" />
+            ))}
+          </div>
+        ) : (
+          <div className="flex min-h-[16rem] flex-1 flex-col">
+            {members.length > 0 ? (
+              <div className="shrink-0 overflow-hidden [&_ul]:space-y-3 [&_ul]:px-6 [&_ul]:pb-3 [&_ul]:pt-0 md:[&_ul]:hidden">
+                <AdminRecordList
+                  rows={members}
+                  getRowKey={(member) => member.id}
+                  columns={signInColumns}
+                  tableClassName="w-full"
+                  mobileFields={[
+                    {
+                      label: "Name",
+                      value: (member) => <span>{member.fullName?.trim() || member.email}</span>,
+                    },
+                    {
+                      label: "Signed in",
+                      value: (member) => (
+                        <time dateTime={member.lastSignInAt!} className="text-foreground">
+                          {formatAdminDate(member.lastSignInAt!)}
+                        </time>
+                      ),
+                    },
+                    {
+                      label: "When",
+                      value: (member) => (
+                        <span className="font-medium text-rellia-teal/90 dark:text-rellia-mint">
+                          {formatAdminRelativeAgo(member.lastSignInAt!)}
+                        </span>
+                      ),
+                    },
+                  ]}
+                />
+              </div>
+            ) : null}
+            {showFiller ? (
+              <div
+                className={cn(
+                  "flex flex-1 flex-col items-center justify-center gap-2.5 py-8 text-center",
+                  members.length > 0
+                    ? "border-t border-dashed border-border/80 bg-muted/15 px-6 dark:bg-muted/10"
+                    : "mx-6 mb-6 rounded-xl border border-dashed border-border/80 bg-muted/15 px-4 dark:bg-muted/10",
+                )}
+              >
+                <span className="flex h-11 w-11 items-center justify-center rounded-full border border-border/80 bg-card text-muted-foreground">
+                  <LogIn className="h-5 w-5" aria-hidden />
+                </span>
+                <p className="max-w-[15rem] font-urbanist text-sm leading-snug text-muted-foreground">
+                  {members.length === 0 ? emptyMessage : fillerMessage}
+                </p>
+              </div>
+            ) : null}
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  )
+}
 
 export default AdminRecentSignInsCard

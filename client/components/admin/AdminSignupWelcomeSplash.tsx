@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react"
-import { BarChart3, ExternalLink, FileText, PenLine } from "lucide-react"
+import { ExternalLink, FileText, Inbox, PenLine } from "lucide-react"
+import { Link } from "react-router-dom"
 import { motion, useAnimationControls, useReducedMotion } from "framer-motion"
 import RelliaAction from "@/components/RelliaAction"
 import { ADMIN_DASHBOARD_OG_IMAGE_SRC } from "@/config/seo"
@@ -32,18 +33,21 @@ const RESOURCE_LINKS = [
     label: "Management guide",
     description: "Operations runbook for the dashboard and site",
     icon: FileText,
+    external: true,
   },
   {
     href: "https://relliahealth.sanity.studio",
     label: "Sanity Studio",
     description: "Edit pages, stories, events, and program content",
     icon: PenLine,
+    external: true,
   },
   {
-    href: "https://analytics.google.com/analytics/",
-    label: "Google Analytics",
-    description: "Monitor traffic, behavior, and conversion events",
-    icon: BarChart3,
+    href: "/admin/inbox",
+    label: "Website inbox",
+    description: "Review contact forms, investor requests, and diagnostic submissions on the dashboard",
+    icon: Inbox,
+    external: false,
   },
 ] as const
 
@@ -350,7 +354,7 @@ const AdminSignupWelcomeSplash = ({ firstName, onComplete }: AdminSignupWelcomeS
                 type="button"
                 variant="heroSolidOnTeal"
                 size="comfortable"
-                className="min-w-[12rem]"
+                className="min-w-[12rem] !text-rellia-teal"
                 disabled={isExiting}
                 onClick={handleEnterDashboard}
               >
@@ -364,23 +368,19 @@ const AdminSignupWelcomeSplash = ({ firstName, onComplete }: AdminSignupWelcomeS
                 <div className="grid w-full grid-cols-1 gap-3 sm:grid-cols-3 sm:gap-5">
                 {RESOURCE_LINKS.map((link) => {
                   const Icon = link.icon
-                  return (
-                    <a
-                      key={link.href}
-                      href={link.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={RESOURCE_CARD_SHELL_CLASS}
-                    >
+                  const cardContent = (
+                    <>
                       <span aria-hidden className={RESOURCE_CARD_MOBILE_SCRIM_CLASS} />
                       <span aria-hidden className={RESOURCE_CARD_MOBILE_GLASS_CLASS} />
                       <div className={RESOURCE_CARD_CONTENT_CLASS}>
                         <div className="flex items-start justify-between gap-2">
                           <Icon className="h-6 w-6 shrink-0 text-rellia-mint" aria-hidden />
-                          <ExternalLink
-                            className="h-4 w-4 shrink-0 text-white/45 transition-colors group-hover:text-rellia-mint"
-                            aria-hidden
-                          />
+                          {link.external ? (
+                            <ExternalLink
+                              className="h-4 w-4 shrink-0 text-white/45 transition-colors group-hover:text-rellia-mint"
+                              aria-hidden
+                            />
+                          ) : null}
                         </div>
                         <span className="mt-3.5 font-host-grotesk text-base font-semibold text-white md:mt-4">
                           {link.label}
@@ -389,7 +389,27 @@ const AdminSignupWelcomeSplash = ({ firstName, onComplete }: AdminSignupWelcomeS
                           {link.description}
                         </span>
                       </div>
-                    </a>
+                    </>
+                  )
+
+                  if (link.external) {
+                    return (
+                      <a
+                        key={link.href}
+                        href={link.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={RESOURCE_CARD_SHELL_CLASS}
+                      >
+                        {cardContent}
+                      </a>
+                    )
+                  }
+
+                  return (
+                    <Link key={link.href} to={link.href} className={RESOURCE_CARD_SHELL_CLASS}>
+                      {cardContent}
+                    </Link>
                   )
                 })}
                 </div>

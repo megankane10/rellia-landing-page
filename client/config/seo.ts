@@ -277,77 +277,105 @@ export const ROUTE_SEO: Record<string, RouteSeoConfig> = {
     indexable: true,
   },
   "/admin/login": {
-    title: "Sign In — Admin",
+    title: "Sign in — Admin",
     description:
-      "Sign in to the Rellia Health admin portal to review diagnostic survey submissions and internal reports.",
+      "Sign in to the Rellia Health admin dashboard to review inbox submissions, manage site content, and coordinate with your team.",
     indexable: false,
   },
   "/admin/signup": {
-    title: "Create account — admin",
+    title: "Create account — Admin",
     description:
-      "Create a Rellia Health admin account when signup is enabled. Internal access for diagnostic submission review.",
+      "Create a Rellia Health admin account when signup is enabled for your organization.",
     indexable: false,
   },
   "/accept-invite": {
-    title: "Accept Invitation — Admin",
+    title: "Accept invitation — Admin",
     description:
-      "Accept your Rellia Health admin invitation and set a password to access the internal dashboard.",
+      "Accept your Rellia Health admin invitation and choose a password to access the internal dashboard.",
     indexable: false,
   },
   "/admin/auth/callback": {
-    title: "Authentication — Admin",
-    description: "Completing admin authentication for the Rellia Health dashboard.",
+    title: "Signing in — Admin",
+    description:
+      "Completing secure authentication for the Rellia Health admin dashboard.",
     indexable: false,
   },
   "/admin/set-password": {
-    title: "Set Password — Admin",
-    description: "Choose a password to finish setting up your Rellia Health admin account.",
+    title: "Set password — Admin",
+    description:
+      "Choose a password to finish setting up or recovering your Rellia Health admin account.",
     indexable: false,
   },
-  "/admin/inbox": {
-    title: "Inbox — Admin",
-    description: "Review contact form, investor, and diagnostic submissions in the Rellia Health admin dashboard.",
+  "/admin": {
+    title: "Overview — Admin",
+    description:
+      "Admin home with open inbox counts, submission trends, diagnostic insights, and your latest Sanity publish.",
     indexable: false,
   },
   "/admin/overview": {
     title: "Overview — Admin",
-    description: "Review contact form, investor, and diagnostic submissions in the Rellia Health admin dashboard.",
+    description:
+      "Admin home with open inbox counts, submission trends, diagnostic insights, and your latest Sanity publish.",
+    indexable: false,
+  },
+  "/admin/inbox": {
+    title: "Inbox — Admin",
+    description:
+      "Triage web forms, investor inquiries, priority modal submissions, and startup diagnostic surveys in one place.",
     indexable: false,
   },
   "/admin/submissions": {
     title: "Inbox — Admin",
-    description: "Review contact form, investor, and diagnostic submissions in the Rellia Health admin dashboard.",
+    description:
+      "Triage web forms, investor inquiries, priority modal submissions, and startup diagnostic surveys in one place.",
     indexable: false,
   },
   "/admin/team": {
     title: "Team — Admin",
-    description: "Manage admin users with access to the Rellia Health internal dashboard.",
+    description:
+      "See who has dashboard access, who is online, share team notes, and manage admin invitations.",
     indexable: false,
   },
   "/admin/drafts": {
-    title: "Content drafts — Admin",
-    description: "Unpublished CMS content drafts awaiting review in the Rellia Health admin dashboard.",
+    title: "Content — Admin",
+    description:
+      "Review unpublished Sanity drafts and recently published pages, stories, events, and programs before and after they go live.",
     indexable: false,
   },
   "/admin/content": {
-    title: "Content drafts — Admin",
-    description: "Unpublished CMS content drafts awaiting review in the Rellia Health admin dashboard.",
+    title: "Content — Admin",
+    description:
+      "Review unpublished Sanity drafts and recently published pages, stories, events, and programs before and after they go live.",
     indexable: false,
   },
   "/admin/help": {
     title: "Help — Admin",
-    description: "Tools, documentation, and environment guidance for Rellia Health dashboard administrators.",
+    description:
+      "Admin guides, CMS publishing tips, environment and integration status, and quick links to Sanity Studio.",
     indexable: false,
   },
   "/admin/resources": {
     title: "Help — Admin",
-    description: "Tools, documentation, and environment guidance for Rellia Health dashboard administrators.",
+    description:
+      "Admin guides, CMS publishing tips, environment and integration status, and quick links to Sanity Studio.",
     indexable: false,
   },
   "/admin/dashboard": {
-    title: "Dashboard — Admin",
+    title: "Overview — Admin",
     description:
-      "Rellia Health admin dashboard for diagnostic submissions, company profiles, and operational review.",
+      "Admin home with open inbox counts, submission trends, diagnostic insights, and your latest Sanity publish.",
+    indexable: false,
+  },
+  "/admin/contacts/detail": {
+    title: "Contact submission — Admin",
+    description:
+      "Review one contact or investor web form submission, update its status, and add internal notes for your team.",
+    indexable: false,
+  },
+  "/admin/companies/detail": {
+    title: "Diagnostic submission — Admin",
+    description:
+      "Review one startup diagnostic survey, including company profile, stage, readiness responses, and internal notes.",
     indexable: false,
   },
 }
@@ -460,13 +488,22 @@ const STATIC_OG_IMAGE_BY_ROUTE: Record<string, string> = {
 export const allowsPageContextOgImage = (pathname: string): boolean =>
   normalizePathname(pathname) === "/founders/alumni"
 
-/** Same background as admin welcome splash (`AdminSignupWelcomeSplash`). */
+/** Same background as admin welcome splash (`AdminSignupWelcomeSplash`) — UI only, not link-preview art. */
 export const ADMIN_DASHBOARD_OG_IMAGE_SRC = "/images/TabletMeeting.png"
 
 export const isAdminAreaPath = (pathname: string): boolean => {
   const key = normalizePathname(pathname)
   return key.startsWith("/admin") || key === "/accept-invite"
 }
+
+/** og:description / twitter:description when an admin URL is shared as a link preview */
+export const ADMIN_LINK_OG_DESCRIPTION =
+  "Access administrative tools, manage content, and monitor platform metrics for Rellia Health."
+
+export const getLinkPreviewDescriptionForPathname = (
+  pathname: string,
+  pageDescription: string,
+): string => (isAdminAreaPath(pathname) ? ADMIN_LINK_OG_DESCRIPTION : pageDescription)
 
 export const getAdminOgImage = (): ResolvedSocialOgImage | undefined =>
   resolveSocialOgImage(ADMIN_DASHBOARD_OG_IMAGE_SRC, getSiteUrl(), { landscape: true })
@@ -479,7 +516,7 @@ export const isStaticOgImageRoute = (pathname: string): boolean => {
 }
 
 export const allowsRouteSeoOgImage = (pathname: string): boolean =>
-  isStaticOgImageRoute(pathname) || allowsPageContextOgImage(pathname) || isAdminAreaPath(pathname)
+  isStaticOgImageRoute(pathname) || allowsPageContextOgImage(pathname)
 
 export const getStaticOgImageForPathname = (pathname: string): string | undefined => {
   const key = normalizePathname(pathname)
@@ -714,8 +751,19 @@ const EVENT_DETAIL_SEO: RouteSeoConfig = {
 const ADMIN_AREA_SEO: RouteSeoConfig = {
   title: "Admin — Rellia Health",
   description:
-    "Rellia Health internal admin area for diagnostic and operational review. Not indexed for search.",
+    "Internal Rellia Health admin area for inbox review, team coordination, and CMS publishing.",
   indexable: false,
+}
+
+const resolveAdminRouteSeo = (pathname: string): RouteSeoConfig | null => {
+  const key = normalizePathname(pathname)
+  const direct = ROUTE_SEO[key]
+  if (direct) return direct
+
+  if (key.startsWith("/admin/contacts/")) return ROUTE_SEO["/admin/contacts/detail"]
+  if (key.startsWith("/admin/companies/")) return ROUTE_SEO["/admin/companies/detail"]
+
+  return null
 }
 
 /** Static app routes that should appear in sitemap.xml (indexable only). */
@@ -734,7 +782,7 @@ export const getSeoForPathname = (pathname: string): RouteSeoConfig => {
     return ROUTE_SEO["/careers"] ?? NOT_FOUND_SEO
   }
   if (key.startsWith("/admin") || key === "/accept-invite") {
-    return ROUTE_SEO[key] ?? ADMIN_AREA_SEO
+    return resolveAdminRouteSeo(key) ?? ADMIN_AREA_SEO
   }
   return ROUTE_SEO[key] ?? NOT_FOUND_SEO
 }

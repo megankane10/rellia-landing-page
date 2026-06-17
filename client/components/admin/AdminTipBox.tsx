@@ -1,7 +1,22 @@
-import React, { useState, useEffect } from "react"
+import React, { useState } from "react"
 import { ChevronDown, ChevronUp, type LucideIcon } from "lucide-react"
-import { adminHighlightedSurfaceClass, adminIconTileClass, adminMutedTextClass, adminTipBoxTitleClass } from "@/components/admin/adminThemeClasses"
+import { adminIconTileClass, adminMutedTextClass, adminTipBoxSurfaceClass, adminTipBoxTitleClass } from "@/components/admin/adminThemeClasses"
 import { cn } from "@/lib/utils"
+
+const readStoredCollapsed = (
+  storageKey: string | undefined,
+  defaultExpanded: boolean,
+): boolean => {
+  if (!storageKey || typeof window === "undefined") return !defaultExpanded
+  try {
+    const value = localStorage.getItem(storageKey)
+    if (value === "true") return true
+    if (value === "false") return false
+  } catch {
+    // Ignore storage access errors
+  }
+  return !defaultExpanded
+}
 
 /**
  * Developer Guide: How to Edit or Add Tip Boxes
@@ -18,6 +33,7 @@ import { cn } from "@/lib/utils"
  *        title="Your Title"
  *        icon={YourIcon}
  *        storageKey="unique-key-for-localstorage-state"
+ *        defaultExpanded
  *      >
  *        <p>Your content goes here...</p>
  *      </AdminTipBox>
@@ -34,6 +50,8 @@ type AdminTipBoxProps = {
   children?: React.ReactNode
   className?: string
   storageKey?: string
+  /** When no saved preference exists, show expanded content (default: true). */
+  defaultExpanded?: boolean
 }
 
 export default function AdminTipBox({
@@ -42,23 +60,11 @@ export default function AdminTipBox({
   children,
   className,
   storageKey,
+  defaultExpanded = true,
 }: AdminTipBoxProps) {
-  const [collapsed, setCollapsed] = useState(false)
-
-  // Load initial state from storage if key provided
-  useEffect(() => {
-    if (storageKey) {
-      try {
-        const value = localStorage.getItem(storageKey)
-        const next =
-          value === "true" ? true : value === "false" ? false : null
-        if (next === null) return
-        queueMicrotask(() => setCollapsed(next))
-      } catch {
-        // Ignore storage access errors
-      }
-    }
-  }, [storageKey])
+  const [collapsed, setCollapsed] = useState(() =>
+    readStoredCollapsed(storageKey, defaultExpanded),
+  )
 
   const handleToggle = () => {
     const nextCollapsed = !collapsed
@@ -76,7 +82,7 @@ export default function AdminTipBox({
     <div
       className={cn(
         "relative rounded-2xl shadow-sm transition-all duration-300",
-        adminHighlightedSurfaceClass,
+        adminTipBoxSurfaceClass,
         collapsed ? "px-5 py-3" : "p-5",
         className,
       )}

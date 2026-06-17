@@ -4,8 +4,8 @@ import NetworkEyebrow from "@/components/network/NetworkEyebrow"
 import {
   cmsCleanText,
   cmsDisplayText,
+  cmsHasDisplayText,
   isVisualEditingPreview,
-  splitStega,
 } from "@/lib/cmsStega"
 
 function useCountUp(target: number, enabled: boolean, durationMs = 1200) {
@@ -73,21 +73,13 @@ function MetricStat({
   previewMode: boolean
 }) {
   const valueRaw = metric.valueText ?? String(metric.value)
-  const { cleaned: cleanValue, encoded: valueStega } = splitStega(valueRaw)
-  const numericTarget = Number(cmsCleanText(cleanValue)) || 0
+  const numericTarget = Number(cmsCleanText(valueRaw)) || 0
   const count = useCountUp(numericTarget, entered && !previewMode, 1200 + index * 150)
 
   return (
     <div className="flex flex-col items-start">
       <div className="font-host-grotesk text-4xl font-semibold leading-none tracking-tight text-rellia-teal md:text-5xl">
-        {previewMode ? (
-          <>
-            {cleanValue}
-            {valueStega ? <span className="hidden" aria-hidden="true">{valueStega}</span> : null}
-          </>
-        ) : (
-          count
-        )}
+        {previewMode ? cmsDisplayText(valueRaw) : count}
         {cmsDisplayText(metric.suffix)}
       </div>
       <p className="mt-2 font-urbanist text-sm font-medium leading-snug text-black/70 md:text-base">
@@ -149,7 +141,7 @@ export default function PageBuilderMetricsSection({
           >
             {heading}
           </h2>
-          {subheading?.trim() ? (
+          {cmsHasDisplayText(subheading) ? (
             <p className="mt-4 max-w-2xl font-urbanist text-base leading-relaxed text-black/70 md:text-lg">
               {cmsDisplayText(subheading)}
             </p>

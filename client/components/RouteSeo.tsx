@@ -3,12 +3,12 @@ import { useLocation } from "react-router-dom"
 import {
   clampMetaDescription,
   clampMetaTitle,
-  getAdminOgImageUrl,
   getDefaultOgImageUrl,
   getDefaultOgImageAlt,
   RELLIA_SOCIAL_THEME_COLOR,
   getStaticOgImageForPathname,
   getSeoForPathname,
+  getLinkPreviewDescriptionForPathname,
   getSiteUrl,
   isAdminAreaPath,
   isItemDetailPath,
@@ -51,6 +51,9 @@ const RouteSeo = ({
   const description = clampMetaDescription(
     descriptionOverride || overrides.description || defaultDescription,
   )
+  const linkPreviewDescription = clampMetaDescription(
+    getLinkPreviewDescriptionForPathname(normalizedPathname, description),
+  )
   const noIndex = noIndexOverride ?? overrides.noIndex ?? !indexable
 
   const canonicalUrl = noIndex
@@ -58,17 +61,16 @@ const RouteSeo = ({
     : `${base}${normalizedPathname === "/" ? "" : normalizedPathname}`
   const ogUrl = `${base}${normalizedPathname === "/" ? "" : normalizedPathname}`
   const cmsDefaultOg = siteSettingsData?.defaultSeo?.ogImageUrl?.trim()
-  const allowOgImage = allowsRouteSeoOgImage(normalizedPathname)
+  const allowOgImage =
+    allowsRouteSeoOgImage(normalizedPathname) && !isAdminAreaPath(normalizedPathname)
   const explicitOgImage = allowOgImage
     ? (ogImageOverride || overrides.ogImage)?.trim()
     : undefined
   const staticOg = getStaticOgImageForPathname(normalizedPathname)
-  const adminOg = isAdminAreaPath(normalizedPathname) ? getAdminOgImageUrl() : undefined
   const useHomeDefaultOg = shouldUseDefaultOgImage(normalizedPathname)
   const imageUrl =
     explicitOgImage ||
     staticOg ||
-    adminOg ||
     (useHomeDefaultOg ? cmsDefaultOg || getDefaultOgImageUrl() : undefined)
   const imageAlt = getDefaultOgImageAlt()
   const includeOgImage = Boolean(imageUrl)
@@ -90,7 +92,7 @@ const RouteSeo = ({
       <meta property="og:site_name" content="Rellia Health" />
       <meta property="og:url" content={ogUrl} />
       <meta property="og:title" content={title} />
-      <meta property="og:description" content={description} />
+      <meta property="og:description" content={linkPreviewDescription} />
       {includeOgImage ? (
         <>
           <meta property="og:image" content={imageUrl} />
@@ -105,7 +107,7 @@ const RouteSeo = ({
         content={includeOgImage ? "summary_large_image" : "summary"}
       />
       <meta name="twitter:title" content={title} />
-      <meta name="twitter:description" content={description} />
+      <meta name="twitter:description" content={linkPreviewDescription} />
       {includeOgImage ? <meta name="twitter:image" content={imageUrl} /> : null}
     </Helmet>
   )

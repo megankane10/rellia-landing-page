@@ -94,9 +94,11 @@ const StatusPill = ({ service, compact }: { service: ServiceStatus; compact?: bo
       <TooltipTrigger asChild>
         <li
           className={cn(
-            "inline-flex min-w-0 items-center gap-2 rounded-full border font-urbanist font-semibold",
+            "min-w-0 items-center gap-2 rounded-full border font-urbanist font-semibold",
             "shadow-[0_6px_18px_-14px_rgba(13,53,64,0.26)]",
-            compact ? "h-10 px-3 text-sm" : "px-3 py-1.5 text-sm",
+            compact
+              ? "flex h-8 gap-1.5 px-2 text-[11px] leading-none sm:h-10 sm:gap-2 sm:px-3 sm:text-sm"
+              : "inline-flex px-3 py-1.5 text-sm",
             theme.pill,
             "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
           )}
@@ -104,58 +106,58 @@ const StatusPill = ({ service, compact }: { service: ServiceStatus; compact?: bo
         >
           <span
             className={cn(
-              "inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full",
+              "flex shrink-0 items-center justify-center rounded-full [&_svg]:block",
+              compact ? "h-4 w-4 sm:h-6 sm:w-6" : "h-6 w-6",
               theme.iconWrap,
             )}
             aria-hidden
           >
             <Icon
-              className={cn("h-4 w-4", service.state === "checking" && "animate-spin")}
+              className={cn(
+                compact ? "h-3 w-3 sm:h-4 sm:w-4" : "h-4 w-4",
+                service.state === "checking" && "animate-spin",
+              )}
               strokeWidth={2.25}
               aria-hidden
             />
           </span>
-          <span className="truncate">{service.label}</span>
+          <span className="inline-flex min-w-0 items-center truncate leading-none">{service.label}</span>
         </li>
       </TooltipTrigger>
       <TooltipContent
         className={cn(
-          "max-w-[280px] rounded-2xl border border-border bg-popover px-3.5 py-3 shadow-xl",
+          "max-w-[320px] rounded-2xl border border-border bg-popover px-4 py-3.5 shadow-xl",
           "overflow-visible",
-          "font-urbanist text-xs leading-relaxed text-popover-foreground",
+          "font-urbanist text-sm leading-relaxed text-popover-foreground",
         )}
       >
-        <div className="flex items-start gap-2.5">
+        <div className="flex items-center gap-3">
           <span
             className={cn(
-              "mt-0.5 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full border",
+              "inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border",
               "border-border bg-muted text-foreground",
             )}
             aria-hidden
           >
             <Icon
-              className={cn("h-4 w-4", service.state === "checking" && "animate-spin")}
+              className={cn("h-5 w-5", service.state === "checking" && "animate-spin")}
               strokeWidth={2.25}
               aria-hidden
             />
           </span>
-          <div className="min-w-0">
-            <div className="flex flex-wrap items-center gap-2">
-              <p className="min-w-0 truncate text-[13px] font-semibold text-foreground">
-                {tooltipTitle}
-              </p>
-              <span
-                className={cn(
-                  "inline-flex shrink-0 items-center rounded-full px-2 py-0.5 text-[10px] font-semibold leading-none",
-                  statusChipClass,
-                )}
-              >
-                {statusText}
-              </span>
-            </div>
-            <p className="mt-2 text-[11px] font-semibold text-muted-foreground">{oneLiner}</p>
-          </div>
+          <p className="min-w-0 flex-1 truncate text-base font-semibold text-foreground">
+            {tooltipTitle}
+          </p>
+          <span
+            className={cn(
+              "inline-flex shrink-0 items-center rounded-full px-2.5 py-1 text-xs font-semibold leading-none",
+              statusChipClass,
+            )}
+          >
+            {statusText}
+          </span>
         </div>
+        <p className="mt-2.5 text-sm font-medium leading-snug text-muted-foreground">{oneLiner}</p>
       </TooltipContent>
     </Tooltip>
   )
@@ -227,13 +229,19 @@ const AdminSystemStatus = ({ compact = false }: { compact?: boolean }) => {
 
   return (
     <TooltipProvider delayDuration={120}>
-      <div className="flex flex-wrap items-center gap-2" aria-label="System status">
+      <div
+        className={cn(
+          "flex flex-wrap items-center gap-2",
+          compact && "justify-end",
+        )}
+        aria-label="System status"
+      >
       {!compact ? (
         <span className="font-urbanist text-[10px] uppercase tracking-[0.12em] text-muted-foreground">
           Status
         </span>
       ) : null}
-      <ul className="flex flex-wrap items-center gap-2">
+      <ul className="flex flex-wrap items-center justify-end gap-1.5 sm:gap-2">
         {services.map((service) => (
           <StatusPill key={service.label} service={service} compact={compact} />
         ))}
