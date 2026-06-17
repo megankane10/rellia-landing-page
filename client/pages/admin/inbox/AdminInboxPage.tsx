@@ -8,7 +8,7 @@ import AdminRecordList from "@/components/admin/AdminRecordList"
 import AdminSelectFilter from "@/components/admin/AdminSelectFilter"
 import AdminSubmissionStatusSelect from "@/components/admin/AdminSubmissionStatusSelect"
 import AdminSubmissionStatusFilter from "@/components/admin/AdminSubmissionStatusFilter"
-import { adminWarningBannerClass, adminSegmentedTabCountClass, adminSegmentedTabsListClass, adminSegmentedTabTriggerClass, adminInboxContactTableClass, adminInboxDiagnosticTableClass, adminToolbarSearchInputClass } from "@/components/admin/adminThemeClasses"
+import { adminWarningBannerClass, adminSegmentedTabCountClass, adminSegmentedTabsListClass, adminSegmentedTabTriggerClass, adminInboxContactTableClass, adminInboxDiagnosticTableClass, adminToolbarSearchInputClass, adminTableActionsClusterClass, adminTableActionsColumnClass } from "@/components/admin/adminThemeClasses"
 import AdminNoteIconButton from "@/components/admin/AdminNoteIconButton"
 import AdminDeleteIconButton from "@/components/admin/AdminDeleteIconButton"
 import AdminCompactEmptyState from "@/components/admin/AdminCompactEmptyState"
@@ -331,9 +331,9 @@ const AdminInboxPage = () => {
     {
       key: "actions",
       header: "Actions",
-      className: "w-[11%] whitespace-nowrap",
+      className: cn("w-[8%]", adminTableActionsColumnClass),
       cell: (row) => (
-        <div className="flex items-start justify-start gap-0.5">
+        <div className={adminTableActionsClusterClass}>
           <AdminNoteIconButton
             table="contact_responses"
             submissionId={row.id}
@@ -414,9 +414,9 @@ const AdminInboxPage = () => {
     {
       key: "actions",
       header: "Actions",
-      className: "w-[11%] whitespace-nowrap",
+      className: cn("w-[8%]", adminTableActionsColumnClass),
       cell: (row) => (
-        <div className="flex items-start justify-start gap-0.5">
+        <div className={adminTableActionsClusterClass}>
           <AdminNoteIconButton
             table="company_profiles"
             submissionId={row.id}

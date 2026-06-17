@@ -18,7 +18,7 @@ import {
   studioUrlForRow,
   type SanityContentRow,
 } from "@/lib/adminSanityContent"
-import { adminOutlineActionButtonClass, adminPendingSurfaceClass, adminStatusBadgeShellClass } from "@/components/admin/adminThemeClasses"
+import { adminOutlineActionButtonClass, adminPendingSurfaceClass, adminStatusBadgeShellClass, adminTableActionsClusterClass, adminTableActionsColumnClass } from "@/components/admin/adminThemeClasses"
 import { cn } from "@/lib/utils"
 
 type AdminContentQueueListProps = {
@@ -127,8 +127,12 @@ const draftTableColumns = (updatedColumnLabel: string): AdminTableColumn<SanityC
   {
     key: "action",
     header: "Actions",
-    className: "min-w-[11.5rem] shrink-0 whitespace-nowrap",
-    cell: (row) => <StudioLinkButton row={row} />,
+    className: cn("min-w-[11.5rem] shrink-0", adminTableActionsColumnClass),
+    cell: (row) => (
+      <div className={adminTableActionsClusterClass}>
+        <StudioLinkButton row={row} />
+      </div>
+    ),
   },
 ]
 

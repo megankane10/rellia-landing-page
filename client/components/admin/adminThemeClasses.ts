@@ -235,6 +235,12 @@ export const adminTableBodyCellClass = cn(
   "first:pl-6 last:pr-6",
 )
 
+/** Actions column — left-aligned header and controls */
+export const adminTableActionsColumnClass = "whitespace-nowrap"
+
+/** Icon/button group inside an actions table cell */
+export const adminTableActionsClusterClass = "flex items-start justify-start gap-0.5"
+
 /** Inbox submission tables — fixed layout keeps column gutters uniform */
 export const adminInboxContactTableClass = cn(adminDataTableClass, "min-w-[74rem] table-fixed")
 export const adminInboxDiagnosticTableClass = cn(adminDataTableClass, "min-w-[78rem] table-fixed")
