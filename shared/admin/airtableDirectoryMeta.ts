@@ -62,7 +62,7 @@ export const AIRTABLE_ADVISOR_FIELD_REGISTRY: AirtableFieldDefinition[] = [
   { airtableField: "Name", airtableType: "singleLineText", sanityTarget: "advisor.name + slug", syncStatus: "mapped" },
   { airtableField: "Job Title", airtableType: "singleLineText", sanityTarget: "advisor.role", syncStatus: "mapped" },
   { airtableField: "Company", airtableType: "singleLineText", sanityTarget: "advisor.organization", syncStatus: "mapped" },
-  { airtableField: "Short Bio", airtableType: "multilineText", sanityTarget: "advisor.snapshot", syncStatus: "mapped" },
+  { airtableField: "Short Bio", airtableType: "multilineText", sanityTarget: "advisor.snapshot OR advisor.industries (when comma-separated tags)", syncStatus: "mapped", notes: "Many rows use Short Bio as topic tags — not narrative copy." },
   { airtableField: "Long Bio", airtableType: "multilineText", sanityTarget: "advisor.bio (portable text)", syncStatus: "mapped" },
   { airtableField: "Headshot", airtableType: "multipleAttachments", sanityTarget: "advisor.photo", syncStatus: "mapped" },
   { airtableField: "Industry Tags", airtableType: "multipleSelects", sanityTarget: "advisor.industries + secondary card tags", syncStatus: "mapped" },

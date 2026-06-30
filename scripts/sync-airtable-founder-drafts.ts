@@ -1,8 +1,8 @@
 /**
- * Re-sync advisor Airtable rows into Sanity drafts with corrected field mapping.
+ * Import founder / alumni Airtable rows into Sanity as drafts.
  *
  * Requires: AIRTABLE_API_KEY, SANITY_API_WRITE_TOKEN
- * Run: pnpm sync:airtable-advisor-drafts
+ * Run: pnpm sync:airtable-founder-drafts
  */
 
 import { createClient } from "@sanity/client"
@@ -12,19 +12,20 @@ import { fileURLToPath } from "node:url"
 import "./loadEnv"
 import { resolveAirtableBaseId, resolveAirtableTableId } from "../shared/admin/airtableConfig"
 import { slugifyDirectoryName } from "../shared/admin/airtableDirectoryMeta"
-import { buildAdvisorDocFromAirtable } from "../shared/admin/airtableProfileMapping"
+import { buildFounderDocFromAirtable } from "../shared/admin/airtableProfileMapping"
 
-const TARGET_NAMES = [
-  "Paola Santiago",
-  "Mike Konwiak",
-  "Serina Ahmad",
-  "Holly Mowbray",
-  "Suzana Vukovic",
+/** Companies with solid Airtable data — skip ones already published manually in Sanity. */
+const TARGET_COMPANIES = [
+  "HealCycle",
+  "Miraei",
+  "Deep Interaction Lab",
+  "Clouds of Care",
+  "Lanyard Health",
 ]
 
 const scriptsDir = path.dirname(fileURLToPath(import.meta.url))
 const root = path.resolve(scriptsDir, "..")
-const imagesDir = path.join(root, "public", "images", "advisors")
+const imagesDir = path.join(root, "public", "images", "alumni")
 
 type AirtableAttachment = { url?: string; filename?: string }
 type AirtableRecord = { id: string; fields: Record<string, unknown> }
@@ -35,11 +36,11 @@ const requireEnv = (key: string): string => {
   return value
 }
 
-const fetchAdvisorRecords = async (apiKey: string): Promise<AirtableRecord[]> => {
+const fetchFounderRecords = async (apiKey: string): Promise<AirtableRecord[]> => {
   const records: AirtableRecord[] = []
   let offset: string | undefined
   const baseId = resolveAirtableBaseId()
-  const tableId = resolveAirtableTableId("advisors")
+  const tableId = resolveAirtableTableId("founders")
 
   do {
     const url = new URL(`https://api.airtable.com/v0/${baseId}/${tableId}`)
@@ -57,21 +58,24 @@ const fetchAdvisorRecords = async (apiKey: string): Promise<AirtableRecord[]> =>
   return records
 }
 
-const downloadHeadshot = async (attachments: unknown, slug: string): Promise<string | null> => {
+const downloadAttachment = async (
+  attachments: unknown,
+  filenameStem: string,
+): Promise<string | null> => {
   if (!Array.isArray(attachments) || attachments.length === 0) return null
   const first = attachments[0] as AirtableAttachment
   if (!first?.url) return null
 
   await fs.mkdir(imagesDir, { recursive: true })
   const ext = path.extname(first.filename ?? "") || ".jpg"
-  const filename = `advisor-${slug}${ext}`
+  const filename = `${filenameStem}${ext}`
   const dest = path.join(imagesDir, filename)
 
   const response = await fetch(first.url)
   if (!response.ok) return null
   const buffer = Buffer.from(await response.arrayBuffer())
   await fs.writeFile(dest, buffer)
-  return `/images/advisors/${filename}`
+  return `/images/alumni/${filename}`
 }
 
 async function main() {
@@ -94,27 +98,33 @@ async function main() {
     useCdn: false,
   })
 
-  const records = await fetchAdvisorRecords(airtableKey)
+  const records = await fetchFounderRecords(airtableKey)
   const selected = records.filter((record) => {
-    const name = String(record.fields.Name ?? "").trim()
-    return TARGET_NAMES.includes(name)
+    const company = String(record.fields["Company Name"] ?? "").trim()
+    return TARGET_COMPANIES.some((target) => company.toLowerCase().includes(target.toLowerCase()))
   })
 
   if (selected.length === 0) {
-    throw new Error("No matching advisor records found in Airtable.")
+    throw new Error("No matching founder records found in Airtable.")
   }
 
-  console.log(`Syncing ${selected.length} advisors as Sanity drafts → ${projectId}/${dataset}`)
+  console.log(`Syncing ${selected.length} alumni companies as Sanity drafts → ${projectId}/${dataset}`)
 
   for (const record of selected) {
-    const name = String(record.fields.Name ?? "").trim()
-    const slug = slugifyDirectoryName(name)
-    const headshotPath =
-      (await downloadHeadshot(record.fields.Headshot, slug)) ?? "/images/nopicture-male.jpg"
+    const companyName = String(record.fields["Company Name"] ?? "").trim()
+    const slug = slugifyDirectoryName(companyName)
+    const logoSrc = await downloadAttachment(record.fields["Company Logo"], `logo-${slug}`)
+    const founderImageSrc = await downloadAttachment(
+      record.fields["Founder Headshots"],
+      `founder-${slug}`,
+    )
 
-    const doc = buildAdvisorDocFromAirtable(record.id, record.fields, { photoSrc: headshotPath })
+    const doc = buildFounderDocFromAirtable(record.id, record.fields, {
+      logoSrc: logoSrc ?? undefined,
+      founderImageSrc: founderImageSrc ?? undefined,
+    })
     await client.createOrReplace(doc as Parameters<typeof client.createOrReplace>[0])
-    console.log(`  ✓ ${doc._id} (${name}) — industries: ${(doc.industries ?? []).join(", ") || "—"}`)
+    console.log(`  ✓ ${doc._id} (${companyName})`)
   }
 
   console.log("Done.")
