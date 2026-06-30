@@ -7,6 +7,7 @@ import { useAuth } from "@/context/AuthContext"
 import { fetchAdminTeam } from "@/lib/adminApi"
 import { supabase } from "@/lib/supabase"
 import AdminPageHeader from "@/components/admin/AdminPageHeader"
+import { AdminAttentionNameLink } from "@/components/admin/AdminAttentionName"
 import AdminSystemStatus from "@/components/admin/AdminSystemStatus"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
@@ -765,12 +766,13 @@ const AdminOverviewPage = () => {
                 {recentContacts.map((row) => (
                   <li key={row.id} className="flex items-center justify-between gap-3 py-3 first:pt-0">
                     <div className="min-w-0">
-                      <Link
+                      <AdminAttentionNameLink
                         to={`/admin/contacts/${row.id}`}
-                        className="truncate font-urbanist text-sm font-medium text-rellia-teal hover:underline"
+                        needsAttention={(row.status ?? "New") === "New"}
+                        linkClassName="truncate font-urbanist text-sm font-medium"
                       >
                         {contactDisplayName(row)}
-                      </Link>
+                      </AdminAttentionNameLink>
                       <p className="truncate font-urbanist text-xs text-muted-foreground">
                         {contactTypeLabel(row)} · {formatAdminDate(row.created_at)}
                       </p>
@@ -815,12 +817,13 @@ const AdminOverviewPage = () => {
                 {recentDiagnostics.map((row) => (
                   <li key={row.id} className="flex items-center justify-between gap-3 py-3 first:pt-0">
                     <div className="min-w-0">
-                      <Link
+                      <AdminAttentionNameLink
                         to={`/admin/companies/${row.id}`}
-                        className="truncate font-urbanist text-sm font-medium text-rellia-teal hover:underline"
+                        needsAttention={(row.status ?? "New") === "New"}
+                        linkClassName="truncate font-urbanist text-sm font-medium"
                       >
                         {row.company_name}
-                      </Link>
+                      </AdminAttentionNameLink>
                       <p className="truncate font-urbanist text-xs text-muted-foreground">
                         {row.name} · {formatAdminDate(row.created_at)}
                       </p>
@@ -838,7 +841,7 @@ const AdminOverviewPage = () => {
 
       <div className="grid gap-4 sm:grid-cols-2">
         <Link
-          to="/admin/drafts"
+          to="/admin/content"
           className="flex items-center gap-3 rounded-2xl border border-border bg-card p-4 transition-colors hover:border-rellia-teal/25 hover:bg-rellia-mint/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         >
           <FileEdit className="h-8 w-8 text-rellia-teal" aria-hidden />

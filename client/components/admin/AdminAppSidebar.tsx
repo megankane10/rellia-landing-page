@@ -64,10 +64,10 @@ const MAIN_NAV: NavItem[] = [
   },
   { to: "/admin/team", label: "Team", icon: Users, end: true },
   {
-    to: "/admin/drafts",
-    label: "Sanity Drafts",
+    to: "/admin/content",
+    label: "Content",
     icon: FileEdit,
-    isActiveMatch: (path) => path.startsWith("/admin/drafts") || path.startsWith("/admin/content"),
+    isActiveMatch: (path) => path.startsWith("/admin/content") || path.startsWith("/admin/drafts"),
   },
   { to: "/admin/help", label: "Help", icon: CircleHelp, end: true },
 ]

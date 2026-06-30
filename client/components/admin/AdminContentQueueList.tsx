@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { ChevronDown, ExternalLink } from "lucide-react"
+import { ArrowUpRight, ChevronDown, ExternalLink } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -9,13 +9,17 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible"
 import AdminCompactEmptyState from "@/components/admin/AdminCompactEmptyState"
+import AdminRecordList from "@/components/admin/AdminRecordList"
+import type { AdminTableColumn } from "@/components/admin/AdminDataTable"
 import { FileEdit } from "lucide-react"
 import {
   formatCmsContentRelative,
   formatCmsDocumentTypeLabel,
+  publicWebsiteUrlForRow,
   studioUrlForRow,
   type SanityContentRow,
 } from "@/lib/adminSanityContent"
+import { adminOutlineActionButtonClass, adminPendingSurfaceClass, adminStatusBadgeShellClass, adminTableActionsClusterClass, adminTableActionsColumnClass } from "@/components/admin/adminThemeClasses"
 import { cn } from "@/lib/utils"
 
 type AdminContentQueueListProps = {
@@ -25,6 +29,7 @@ type AdminContentQueueListProps = {
   dataset: string
   emptyTitle?: string
   groupByType?: boolean
+  updatedColumnLabel?: string
 }
 
 const groupRowsByType = (rows: SanityContentRow[]) => {
@@ -42,53 +47,131 @@ const statusBadge = (status: SanityContentRow["status"]) => {
     return {
       label: "Draft",
       title: "Saved in Studio but not published — not visible on the live site",
-      className: "bg-amber-100 text-amber-900 hover:bg-amber-100",
+      className: cn(
+        "border hover:bg-orange-50 dark:hover:bg-orange-500/10",
+        adminPendingSurfaceClass,
+      ),
     }
   }
   return {
     label: "Published",
     title: "Published in this dataset; recently edited (no separate draft open)",
-    className: "bg-rellia-mint/40 text-rellia-teal hover:bg-rellia-mint/40",
+      className:
+        "border border-rellia-teal/70 bg-rellia-mint/20 text-rellia-teal hover:bg-rellia-mint/20 dark:border-rellia-mint/70 dark:bg-rellia-mint/10 dark:text-rellia-mint dark:hover:bg-rellia-mint/10",
   }
 }
 
-const ContentCard = ({ row }: { row: SanityContentRow }) => {
-  const badge = statusBadge(row.status)
+const ContentTitle = ({ row }: { row: SanityContentRow }) => {
+  const label = row.title || row._id
+  const publicUrl = publicWebsiteUrlForRow(row)
+
+  if (!publicUrl) {
+    return <span className="font-host-grotesk font-medium text-foreground">{label}</span>
+  }
+
   return (
-    <li className="flex flex-col gap-3 rounded-2xl border border-black/[0.07] bg-white p-3.5 transition-shadow hover:shadow-[0_6px_24px_-18px_rgba(13,53,64,0.22)]">
+    <a
+      href={publicUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="inline-flex items-center gap-1 font-host-grotesk font-medium text-rellia-teal underline-offset-4 hover:underline"
+      aria-label={`View ${label} on the website`}
+    >
+      <span>{label}</span>
+      <ArrowUpRight className="h-3.5 w-3.5 shrink-0" aria-hidden />
+    </a>
+  )
+}
+
+const StudioLinkButton = ({ row }: { row: SanityContentRow }) => (
+  <Button
+    type="button"
+    variant="outline"
+    asChild
+    className={cn(adminOutlineActionButtonClass, "h-10 px-4 text-sm")}
+  >
+    <a
+      href={studioUrlForRow(row)}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label={`View ${row.title ?? row._type} in Sanity Studio`}
+    >
+      View in Studio
+      <ExternalLink className="ml-2 h-4 w-4" aria-hidden />
+    </a>
+  </Button>
+)
+
+const StatusBadge = ({ status }: { status: SanityContentRow["status"] }) => {
+  const badge = statusBadge(status)
+  return (
+    <Badge
+      variant="outline"
+      title={badge.title}
+      className={cn(
+        adminStatusBadgeShellClass,
+        badge.className,
+      )}
+    >
+      {badge.label}
+    </Badge>
+  )
+}
+
+const draftTableColumns = (updatedColumnLabel: string): AdminTableColumn<SanityContentRow>[] => [
+  {
+    key: "title",
+    header: "Title",
+    className: "min-w-[12rem]",
+    cell: (row) => <ContentTitle row={row} />,
+  },
+  {
+    key: "type",
+    header: "Type",
+    className: "min-w-[6rem] whitespace-nowrap",
+    cell: (row) => formatCmsDocumentTypeLabel(row._type),
+  },
+  {
+    key: "updated",
+    header: updatedColumnLabel,
+    className: "min-w-[6.5rem] whitespace-nowrap",
+    cell: (row) => (
+      <span className="text-muted-foreground">{formatCmsContentRelative(row._updatedAt)}</span>
+    ),
+  },
+  {
+    key: "status",
+    header: "Status",
+    className: "min-w-[6rem] whitespace-nowrap",
+    cell: (row) => <StatusBadge status={row.status} />,
+  },
+  {
+    key: "action",
+    header: "Actions",
+    className: cn("min-w-[11.5rem] shrink-0", adminTableActionsColumnClass),
+    cell: (row) => (
+      <div className={adminTableActionsClusterClass}>
+        <StudioLinkButton row={row} />
+      </div>
+    ),
+  },
+]
+
+const ContentCard = ({ row }: { row: SanityContentRow }) => {
+  return (
+    <li className="flex flex-col gap-3 rounded-2xl border border-border bg-card p-3.5 transition-shadow hover:shadow-[0_6px_24px_-18px_rgba(13,53,64,0.22)]">
       <div className="min-w-0">
         <div className="flex flex-wrap items-start justify-between gap-2">
-          <p className="min-w-0 flex-1 font-host-grotesk text-sm text-black/90">
-            {row.title || row._id}
-          </p>
-          <Badge
-            title={badge.title}
-            className={cn("shrink-0 rounded-full font-urbanist text-[10px] font-medium", badge.className)}
-          >
-            {badge.label}
-          </Badge>
+          <div className="min-w-0 flex-1">
+            <ContentTitle row={row} />
+          </div>
+          <StatusBadge status={row.status} />
         </div>
-        <p className="mt-1 font-urbanist text-xs text-black/50">
+        <p className="mt-1 font-urbanist text-xs text-muted-foreground">
           {formatCmsDocumentTypeLabel(row._type)} · {formatCmsContentRelative(row._updatedAt)}
         </p>
       </div>
-      <Button
-        type="button"
-        variant="outline"
-        size="sm"
-        asChild
-        className="h-8 w-fit rounded-full border-rellia-teal/20 px-3 text-xs text-rellia-teal hover:bg-rellia-mint/15"
-      >
-        <a
-          href={studioUrlForRow(row)}
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label={`Open ${row.title ?? row._type} in Sanity Studio`}
-        >
-          Review in Studio
-          <ExternalLink className="ml-1.5 h-3.5 w-3.5" aria-hidden />
-        </a>
-      </Button>
+      <StudioLinkButton row={row} />
     </li>
   )
 }
@@ -99,21 +182,21 @@ type ContentTypeSectionProps = {
   defaultOpen?: boolean
 }
 
-const ContentTypeSection = ({ type, items, defaultOpen = false }: ContentTypeSectionProps) => {
+const ContentTypeSection = ({ type, items, defaultOpen = true }: ContentTypeSectionProps) => {
   const [open, setOpen] = useState(defaultOpen)
   const label = formatCmsDocumentTypeLabel(type)
 
   return (
-    <Collapsible open={open} onOpenChange={setOpen} className="rounded-3xl border border-black/[0.06] bg-rellia-greyTeal/30">
+    <Collapsible open={open} onOpenChange={setOpen} className="rounded-2xl border border-border bg-rellia-greyTeal/30">
       <CollapsibleTrigger
         type="button"
-        className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left transition-colors hover:bg-white/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 rounded-2xl"
+        className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left transition-colors hover:bg-card/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 rounded-2xl"
         aria-expanded={open}
       >
         <div className="min-w-0">
           <p className="font-host-grotesk text-lg text-rellia-teal md:text-xl">{label}</p>
-          <p className="mt-0.5 font-urbanist text-xs text-black/50">
-            Sanity schema: <span className="font-mono text-black/60">{type}</span>
+          <p className="mt-0.5 font-urbanist text-xs text-muted-foreground">
+            Sanity schema: <span className="font-mono text-muted-foreground">{type}</span>
           </p>
         </div>
         <div className="flex shrink-0 items-center gap-3">
@@ -127,7 +210,7 @@ const ContentTypeSection = ({ type, items, defaultOpen = false }: ContentTypeSec
         </div>
       </CollapsibleTrigger>
       <CollapsibleContent>
-        <ul className="grid gap-3 border-t border-black/[0.06] px-5 pb-5 pt-4 sm:grid-cols-2 lg:grid-cols-3">
+        <ul className="grid gap-3 border-t border-border px-5 pb-5 pt-4 sm:grid-cols-2 lg:grid-cols-3">
           {items.map((row) => (
             <ContentCard key={`${row.status}-${row._id}`} row={row} />
           ))}
@@ -144,8 +227,28 @@ const AdminContentQueueList = ({
   dataset,
   emptyTitle = "No content in queue",
   groupByType = true,
+  updatedColumnLabel = "Updated",
 }: AdminContentQueueListProps) => {
   if (isLoading) {
+    if (!groupByType) {
+      return (
+        <div className="overflow-hidden rounded-xl border border-border bg-card shadow-sm">
+          <div className="hidden space-y-0 md:block">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <Skeleton key={i} className="h-14 w-full rounded-none border-b border-border/60 last:border-0" />
+            ))}
+          </div>
+          <ul className="space-y-3 p-3 md:hidden">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <li key={i}>
+                <Skeleton className="h-28 rounded-xl" />
+              </li>
+            ))}
+          </ul>
+        </div>
+      )
+    }
+
     return (
       <div className="space-y-3">
         {Array.from({ length: 4 }).map((_, i) => (
@@ -176,11 +279,32 @@ const AdminContentQueueList = ({
 
   if (!groupByType) {
     return (
-      <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-        {rows.map((row) => (
-          <ContentCard key={`${row.status}-${row._id}`} row={row} />
-        ))}
-      </ul>
+      <div className="overflow-hidden rounded-xl border border-border bg-card shadow-sm [&_ul]:p-3 [&_ul]:md:p-0">
+        <AdminRecordList
+          rows={rows}
+          getRowKey={(row) => `${row.status}-${row._id}`}
+          columns={draftTableColumns(updatedColumnLabel)}
+          mobileFields={[
+            {
+              label: "Title",
+              value: (row) => <ContentTitle row={row} />,
+            },
+            {
+              label: "Type",
+              value: (row) => formatCmsDocumentTypeLabel(row._type),
+            },
+            {
+              label: updatedColumnLabel,
+              value: (row) => formatCmsContentRelative(row._updatedAt),
+            },
+            {
+              label: "Status",
+              value: (row) => <StatusBadge status={row.status} />,
+            },
+          ]}
+          mobileActions={(row) => <StudioLinkButton row={row} />}
+        />
+      </div>
     )
   }
 

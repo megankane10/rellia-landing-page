@@ -15,6 +15,34 @@ export type DaySubmissionCount = {
 
 const DAY_MS = 24 * 60 * 60 * 1000
 
+const startOfDay = (date: Date) =>
+  new Date(date.getFullYear(), date.getMonth(), date.getDate())
+
+export const buildLastNDaysCountByDay = (
+  timestamps: Array<string | null | undefined>,
+  days = 7,
+  offsetWeeks = 0,
+): number[] => {
+  const validTimestamps = timestamps.filter((value): value is string => Boolean(value))
+  const buckets: number[] = []
+  const now = startOfDay(new Date())
+  const startOffset = offsetWeeks * 7 * DAY_MS
+
+  for (let i = days - 1; i >= 0; i -= 1) {
+    const dayStart = new Date(now.getTime() - i * DAY_MS - startOffset)
+    const dayEnd = new Date(dayStart.getTime() + DAY_MS)
+
+    const inRange = (iso: string) => {
+      const t = new Date(iso).getTime()
+      return t >= dayStart.getTime() && t < dayEnd.getTime()
+    }
+
+    buckets.push(validTimestamps.filter(inRange).length)
+  }
+
+  return buckets
+}
+
 export const buildLastNDaysTrend = (
   contacts: ContactRow[],
   diagnostics: CompanyProfileRow[],

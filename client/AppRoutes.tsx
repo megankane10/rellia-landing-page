@@ -177,7 +177,7 @@ export const AppRoutes = () => {
     <Route path="/admin/submissions" element={<Navigate to="/admin/inbox" replace />} />
     <Route path="/admin/contacts" element={<Navigate to="/admin/inbox?tab=contact" replace />} />
     <Route path="/admin/diagnostics" element={<Navigate to="/admin/inbox?tab=diagnostic" replace />} />
-    <Route path="/admin/content" element={<Navigate to="/admin/drafts" replace />} />
+    <Route path="/admin/drafts" element={<Navigate to="/admin/content" replace />} />
     <Route path="/admin/resources" element={<Navigate to="/admin/help" replace />} />
 
     <Route path="/admin" element={<ProtectedRoute><AdminShell /></ProtectedRoute>}>

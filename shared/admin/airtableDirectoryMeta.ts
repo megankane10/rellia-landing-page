@@ -127,6 +127,16 @@ export const AIRTABLE_ADVISOR_FIELD_REGISTRY: AirtableFieldDefinition[] = [
 
 export type AirtableDirectoryRowStatus = "not_on_site" | "draft" | "published"
 
+/** Admin-facing labels for site status (Airtable queue + detail). */
+export const AIRTABLE_SITE_STATUS_LABELS: Record<AirtableDirectoryRowStatus, string> = {
+  not_on_site: "No CMS draft",
+  draft: "Draft in CMS",
+  published: "Live",
+}
+
+export const airtableProfileNeedsAttention = (status: AirtableDirectoryRowStatus) =>
+  status === "not_on_site"
+
 export type AirtableDirectoryFieldCoverage = {
   airtableField: string
   filled: boolean

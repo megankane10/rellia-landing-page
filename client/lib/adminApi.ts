@@ -49,6 +49,25 @@ export const fetchAdminSanityDrafts = async (
   return data.drafts ?? []
 }
 
+export const fetchAdminSanityRecentEdits = async (
+  accessToken: string,
+  dataset: "production" | "preview",
+): Promise<AdminSanityDraftRow[]> => {
+  const params = new URLSearchParams({ dataset })
+  const res = await fetch(`/api/admin/sanity-recent-edits?${params.toString()}`, {
+    headers: { Authorization: `Bearer ${accessToken}` },
+    credentials: "same-origin",
+  })
+
+  if (!res.ok) {
+    const body = (await res.json().catch(() => ({}))) as { error?: string }
+    throw new Error(body.error ?? `Could not load recent publishes (${res.status})`)
+  }
+
+  const data = (await res.json()) as { recentEdits?: AdminSanityDraftRow[] }
+  return data.recentEdits ?? []
+}
+
 export type AdminStripeMetrics = {
   configured: boolean
   currency?: string

@@ -11,6 +11,7 @@ import AdminSubmissionStatusSelect from "@/components/admin/AdminSubmissionStatu
 import AdminDeleteIconButton from "@/components/admin/AdminDeleteIconButton"
 import AdminNoteIconButton from "@/components/admin/AdminNoteIconButton"
 import AdminCompactEmptyState from "@/components/admin/AdminCompactEmptyState"
+import { AdminAttentionNameLink } from "@/components/admin/AdminAttentionName"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -212,11 +213,18 @@ const AdminInboxPage = () => {
     {
       key: "name",
       header: "Name",
-      cell: (row) => (
-        <Link to={`/admin/contacts/${row.id}`} className="font-medium text-rellia-teal hover:underline">
-          {contactDisplayName(row)}
-        </Link>
-      ),
+      cell: (row) => {
+        const status = (row.status ?? "New") as SubmissionStatus
+        return (
+          <AdminAttentionNameLink
+            to={`/admin/contacts/${row.id}`}
+            needsAttention={status === "New"}
+            linkClassName="font-medium"
+          >
+            {contactDisplayName(row)}
+          </AdminAttentionNameLink>
+        )
+      },
     },
     {
       key: "type",
@@ -281,11 +289,18 @@ const AdminInboxPage = () => {
     {
       key: "name",
       header: "Founder",
-      cell: (row) => (
-        <Link to={`/admin/companies/${row.id}`} className="font-medium text-rellia-teal hover:underline">
-          {row.name}
-        </Link>
-      ),
+      cell: (row) => {
+        const status = (row.status ?? "New") as SubmissionStatus
+        return (
+          <AdminAttentionNameLink
+            to={`/admin/companies/${row.id}`}
+            needsAttention={status === "New"}
+            linkClassName="font-medium"
+          >
+            {row.name}
+          </AdminAttentionNameLink>
+        )
+      },
     },
     {
       key: "company",
@@ -399,11 +414,18 @@ const AdminInboxPage = () => {
           mobileFields={[
             {
               label: "Name",
-              value: (row) => (
-                <Link to={`/admin/contacts/${row.id}`} className="font-medium text-rellia-teal hover:underline">
-                  {contactDisplayName(row)}
-                </Link>
-              ),
+              value: (row) => {
+                const status = (row.status ?? "New") as SubmissionStatus
+                return (
+                  <AdminAttentionNameLink
+                    to={`/admin/contacts/${row.id}`}
+                    needsAttention={status === "New"}
+                    linkClassName="font-medium"
+                  >
+                    {contactDisplayName(row)}
+                  </AdminAttentionNameLink>
+                )
+              },
             },
             { label: "Type", value: (row) => contactTypeLabel(row) },
             { label: "Email", value: (row) => row.email },
@@ -451,11 +473,18 @@ const AdminInboxPage = () => {
         mobileFields={[
           {
             label: "Founder",
-            value: (row) => (
-              <Link to={`/admin/companies/${row.id}`} className="font-medium text-rellia-teal hover:underline">
-                {row.name}
-              </Link>
-            ),
+            value: (row) => {
+              const status = (row.status ?? "New") as SubmissionStatus
+              return (
+                <AdminAttentionNameLink
+                  to={`/admin/companies/${row.id}`}
+                  needsAttention={status === "New"}
+                  linkClassName="font-medium"
+                >
+                  {row.name}
+                </AdminAttentionNameLink>
+              )
+            },
           },
           { label: "Company", value: (row) => row.company_name },
           { label: "Email", value: (row) => row.work_email },

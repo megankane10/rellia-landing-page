@@ -33,6 +33,7 @@ type AdminTipBoxProps = {
   children?: React.ReactNode
   className?: string
   storageKey?: string
+  defaultExpanded?: boolean
 }
 
 export default function AdminTipBox({
@@ -41,8 +42,9 @@ export default function AdminTipBox({
   children,
   className,
   storageKey,
+  defaultExpanded = false,
 }: AdminTipBoxProps) {
-  const [collapsed, setCollapsed] = useState(false)
+  const [collapsed, setCollapsed] = useState(!defaultExpanded)
 
   // Load initial state from storage if key provided
   useEffect(() => {
@@ -53,12 +55,16 @@ export default function AdminTipBox({
           setCollapsed(true)
         } else if (value === "false") {
           setCollapsed(false)
+        } else if (defaultExpanded) {
+          setCollapsed(false)
         }
       } catch (e) {
         // Ignore storage access errors
       }
+      return
     }
-  }, [storageKey])
+    if (defaultExpanded) setCollapsed(false)
+  }, [storageKey, defaultExpanded])
 
   const handleToggle = () => {
     const nextCollapsed = !collapsed

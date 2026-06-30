@@ -40,6 +40,14 @@ import {
   syncPublishedDocsToProduction,
 } from "./sanityPublishSync";
 import { cmsHealthHandler } from "./cmsHealth";
+import { fetchAirtableDirectoryQueue, fetchAirtableDirectoryDetail } from "./airtableDirectoryQueue";
+import {
+  getAirtableQueueCacheKey,
+  getCachedAirtableQueue,
+  invalidateAirtableQueueCache,
+} from "./airtableDirectoryCache";
+import { resolveAirtableBaseId } from "../shared/admin/airtableConfig";
+import { syncAirtableProfileToSanityDraft } from "./airtableProfileSync";
 
 type RequestLike = {
   headers?: Record<string, unknown>;
@@ -2029,6 +2037,380 @@ export function createServer() {
       } catch (err) {
         console.error("Admin sanity drafts error:", err);
         res.status(502).json({ error: "Could not load Sanity drafts." });
+      }
+    },
+  );
+
+  app.get(
+    "/api/admin/sanity-recent-edits",
+    rateLimitJson(adminSanityDraftsRate, ADMIN_SANITY_DRAFTS_MAX_PER_MIN),
+    async (req, res) => {
+      if (!allowBrowserOrigin(req)) {
+        res.status(403).json({ error: "Forbidden" });
+        return;
+      }
+
+      const authHeader = typeof req.headers.authorization === "string" ? req.headers.authorization : "";
+      const token = authHeader.startsWith("Bearer ") ? authHeader.slice(7).trim() : "";
+      if (!token) {
+        res.status(401).json({ error: "Sign in required." });
+        return;
+      }
+
+      const datasetParam = typeof req.query.dataset === "string" ? req.query.dataset : undefined;
+      const dataset = resolveAdminSanityDataset(datasetParam);
+      if (!dataset) {
+        res.status(400).json({ error: "Invalid or disallowed Sanity dataset." });
+        return;
+      }
+
+      const supabaseUrl = (process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || "").trim().replace(/\/$/, "");
+      const serviceRoleKey = (
+        process.env.SUPABASE_SERVICE_ROLE_KEY ||
+        process.env.SUPABASE_SECRET_KEY ||
+        process.env.SUPABASE_SERVICE_KEY ||
+        ""
+      ).trim();
+      const anonKey = (
+        process.env.VITE_SUPABASE_ANON_KEY ||
+        process.env.VITE_SUPABASE_PUBLISHABLE_KEY ||
+        process.env.SUPABASE_ANON_KEY ||
+        ""
+      ).trim();
+
+      if (!supabaseUrl || !serviceRoleKey || !anonKey) {
+        res.status(501).json({ error: "Supabase admin credentials are not configured on the server." });
+        return;
+      }
+
+      const apiResolved = resolveSanityApiConfig();
+      if (apiResolved.status === "missing_project") {
+        res.status(503).json({ error: "Sanity API is not configured on the server." });
+        return;
+      }
+      if (apiResolved.status === "dataset_not_allowed") {
+        res.status(503).json({
+          error: `Sanity dataset "${apiResolved.attemptedDataset}" is not allowed for this deployment.`,
+        });
+        return;
+      }
+
+      const sanityToken = process.env.SANITY_API_READ_TOKEN?.trim() || "";
+      const projectId = apiResolved.projectId;
+
+      try {
+        const { createClient: createSupabaseClient } = await import("@supabase/supabase-js");
+        const sessionClient = createSupabaseClient(supabaseUrl, anonKey, {
+          auth: { autoRefreshToken: false, persistSession: false },
+        });
+        const { data: userData, error: userError } = await sessionClient.auth.getUser(token);
+        if (userError || !userData.user) {
+          res.status(401).json({ error: "Invalid or expired session." });
+          return;
+        }
+
+        const entry = SANITY_QUERY_WHITELIST.sanityRecentEdits;
+        const publicClient = createClient({
+          projectId,
+          dataset,
+          ...(sanityToken ? { token: sanityToken } : {}),
+          useCdn: false,
+          apiVersion: "2024-01-01",
+        });
+        const data = await publicClient.fetch(entry.query, {});
+        res.setHeader("content-type", "application/json");
+        res.json({
+          dataset,
+          recentEdits: stripSanityMetadata(data, "sanityRecentEdits"),
+        });
+      } catch (err) {
+        console.error("Admin sanity recent edits error:", err);
+        res.status(502).json({ error: "Could not load recent publishes." });
+      }
+    },
+  );
+
+  const adminAirtableQueueRate = new Map<string, RateState>();
+  const ADMIN_AIRTABLE_QUEUE_MAX_PER_MIN = 30;
+
+  app.get(
+    "/api/admin/airtable-directory-queue",
+    rateLimitJson(adminAirtableQueueRate, ADMIN_AIRTABLE_QUEUE_MAX_PER_MIN),
+    async (req, res) => {
+      if (!allowBrowserOrigin(req)) {
+        res.status(403).json({ error: "Forbidden" });
+        return;
+      }
+
+      const authHeader = typeof req.headers.authorization === "string" ? req.headers.authorization : "";
+      const token = authHeader.startsWith("Bearer ") ? authHeader.slice(7).trim() : "";
+      if (!token) {
+        res.status(401).json({ error: "Sign in required." });
+        return;
+      }
+
+      const airtableApiKey = process.env.AIRTABLE_API_KEY?.trim() || "";
+      if (!airtableApiKey) {
+        res.status(503).json({ error: "AIRTABLE_API_KEY is not configured on the server." });
+        return;
+      }
+
+      const supabaseUrl = (process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || "").trim().replace(/\/$/, "");
+      const serviceRoleKey = (
+        process.env.SUPABASE_SERVICE_ROLE_KEY ||
+        process.env.SUPABASE_SECRET_KEY ||
+        process.env.SUPABASE_SERVICE_KEY ||
+        ""
+      ).trim();
+      const anonKey = (
+        process.env.VITE_SUPABASE_ANON_KEY ||
+        process.env.VITE_SUPABASE_PUBLISHABLE_KEY ||
+        process.env.SUPABASE_ANON_KEY ||
+        ""
+      ).trim();
+
+      if (!supabaseUrl || !serviceRoleKey || !anonKey) {
+        res.status(501).json({ error: "Supabase admin credentials are not configured on the server." });
+        return;
+      }
+
+      const apiResolved = resolveSanityApiConfig();
+      if (apiResolved.status !== "ok") {
+        res.status(503).json({ error: "Sanity API is not configured on the server." });
+        return;
+      }
+
+      const sanityReadToken = process.env.SANITY_API_READ_TOKEN?.trim() || "";
+
+      try {
+        const { createClient: createSupabaseClient } = await import("@supabase/supabase-js");
+        const sessionClient = createSupabaseClient(supabaseUrl, anonKey, {
+          auth: { autoRefreshToken: false, persistSession: false },
+        });
+        const { data: userData, error: userError } = await sessionClient.auth.getUser(token);
+        if (userError || !userData.user) {
+          res.status(401).json({ error: "Invalid or expired session." });
+          return;
+        }
+
+        const bypassCache = req.query.refresh === "1" || req.query.refresh === "true";
+        const cacheKey = getAirtableQueueCacheKey(resolveAirtableBaseId(), "production");
+
+        const queue = await getCachedAirtableQueue(
+          cacheKey,
+          () =>
+            fetchAirtableDirectoryQueue({
+              airtableApiKey,
+              sanityProjectId: apiResolved.projectId,
+              sanityDataset: "production",
+              sanityReadToken: sanityReadToken || undefined,
+              studioBaseUrl: resolveSanityStudioUrl(),
+              publicSiteOrigin: buildSiteOrigins()[0],
+            }),
+          bypassCache,
+        );
+
+        res.setHeader("content-type", "application/json");
+        res.json(queue);
+      } catch (err) {
+        console.error("Admin Airtable directory queue error:", err);
+        res.status(502).json({ error: "Could not load Airtable directory queue." });
+      }
+    },
+  );
+
+  app.get(
+    "/api/admin/airtable-directory/:kind/:recordId",
+    rateLimitJson(adminAirtableQueueRate, ADMIN_AIRTABLE_QUEUE_MAX_PER_MIN),
+    async (req, res) => {
+      if (!allowBrowserOrigin(req)) {
+        res.status(403).json({ error: "Forbidden" });
+        return;
+      }
+
+      const authHeader = typeof req.headers.authorization === "string" ? req.headers.authorization : "";
+      const token = authHeader.startsWith("Bearer ") ? authHeader.slice(7).trim() : "";
+      if (!token) {
+        res.status(401).json({ error: "Sign in required." });
+        return;
+      }
+
+      const kindParam = typeof req.params.kind === "string" ? req.params.kind : "";
+      const recordId = typeof req.params.recordId === "string" ? req.params.recordId.trim() : "";
+      const kind = kindParam === "founder" || kindParam === "advisor" ? kindParam : null;
+      if (!kind || !recordId) {
+        res.status(400).json({ error: "Invalid profile kind or record id." });
+        return;
+      }
+
+      const airtableApiKey = process.env.AIRTABLE_API_KEY?.trim() || "";
+      if (!airtableApiKey) {
+        res.status(503).json({ error: "AIRTABLE_API_KEY is not configured on the server." });
+        return;
+      }
+
+      const supabaseUrl = (process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || "").trim().replace(/\/$/, "");
+      const serviceRoleKey = (
+        process.env.SUPABASE_SERVICE_ROLE_KEY ||
+        process.env.SUPABASE_SECRET_KEY ||
+        process.env.SUPABASE_SERVICE_KEY ||
+        ""
+      ).trim();
+      const anonKey = (
+        process.env.VITE_SUPABASE_ANON_KEY ||
+        process.env.VITE_SUPABASE_PUBLISHABLE_KEY ||
+        process.env.SUPABASE_ANON_KEY ||
+        ""
+      ).trim();
+
+      if (!supabaseUrl || !serviceRoleKey || !anonKey) {
+        res.status(501).json({ error: "Supabase admin credentials are not configured on the server." });
+        return;
+      }
+
+      const apiResolved = resolveSanityApiConfig();
+      if (apiResolved.status !== "ok") {
+        res.status(503).json({ error: "Sanity API is not configured on the server." });
+        return;
+      }
+
+      try {
+        const { createClient: createSupabaseClient } = await import("@supabase/supabase-js");
+        const sessionClient = createSupabaseClient(supabaseUrl, anonKey, {
+          auth: { autoRefreshToken: false, persistSession: false },
+        });
+        const { data: userData, error: userError } = await sessionClient.auth.getUser(token);
+        if (userError || !userData.user) {
+          res.status(401).json({ error: "Invalid or expired session." });
+          return;
+        }
+
+        const detail = await fetchAirtableDirectoryDetail({
+          airtableApiKey,
+          kind,
+          recordId,
+          sanityProjectId: apiResolved.projectId,
+          sanityDataset: "production",
+          sanityReadToken: process.env.SANITY_API_READ_TOKEN?.trim() || undefined,
+          studioBaseUrl: resolveSanityStudioUrl(),
+          publicSiteOrigin: buildSiteOrigins()[0],
+        });
+
+        if (!detail) {
+          res.status(404).json({ error: "Profile not found in Airtable." });
+          return;
+        }
+
+        res.setHeader("content-type", "application/json");
+        res.json(detail);
+      } catch (err) {
+        console.error("Admin Airtable directory detail error:", err);
+        res.status(502).json({ error: "Could not load network profile." });
+      }
+    },
+  );
+
+  app.post(
+    "/api/admin/airtable-sync/:kind/:recordId",
+    rateLimitJson(adminAirtableQueueRate, ADMIN_AIRTABLE_QUEUE_MAX_PER_MIN),
+    async (req, res) => {
+      if (!allowBrowserOrigin(req)) {
+        res.status(403).json({ error: "Forbidden" });
+        return;
+      }
+
+      const authHeader = typeof req.headers.authorization === "string" ? req.headers.authorization : "";
+      const token = authHeader.startsWith("Bearer ") ? authHeader.slice(7).trim() : "";
+      if (!token) {
+        res.status(401).json({ error: "Sign in required." });
+        return;
+      }
+
+      const kindParam = typeof req.params.kind === "string" ? req.params.kind : "";
+      const recordId = typeof req.params.recordId === "string" ? req.params.recordId.trim() : "";
+      const kind = kindParam === "founder" || kindParam === "advisor" ? kindParam : null;
+      if (!kind || !recordId) {
+        res.status(400).json({ error: "Invalid profile kind or record id." });
+        return;
+      }
+
+      const airtableApiKey = process.env.AIRTABLE_API_KEY?.trim() || "";
+      const sanityWriteToken = process.env.SANITY_API_WRITE_TOKEN?.trim() || "";
+      if (!airtableApiKey) {
+        res.status(503).json({ error: "AIRTABLE_API_KEY is not configured on the server." });
+        return;
+      }
+      if (!sanityWriteToken) {
+        res.status(503).json({ error: "SANITY_API_WRITE_TOKEN is not configured on the server." });
+        return;
+      }
+
+      const supabaseUrl = (process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || "").trim().replace(/\/$/, "");
+      const anonKey = (
+        process.env.VITE_SUPABASE_ANON_KEY ||
+        process.env.VITE_SUPABASE_PUBLISHABLE_KEY ||
+        process.env.SUPABASE_ANON_KEY ||
+        ""
+      ).trim();
+
+      if (!supabaseUrl || !anonKey) {
+        res.status(501).json({ error: "Supabase admin credentials are not configured on the server." });
+        return;
+      }
+
+      const apiResolved = resolveSanityApiConfig();
+      if (apiResolved.status !== "ok") {
+        res.status(503).json({ error: "Sanity API is not configured on the server." });
+        return;
+      }
+
+      try {
+        const { createClient: createSupabaseClient } = await import("@supabase/supabase-js");
+        const sessionClient = createSupabaseClient(supabaseUrl, anonKey, {
+          auth: { autoRefreshToken: false, persistSession: false },
+        });
+        const { data: userData, error: userError } = await sessionClient.auth.getUser(token);
+        if (userError || !userData.user) {
+          res.status(401).json({ error: "Invalid or expired session." });
+          return;
+        }
+
+        const result = await syncAirtableProfileToSanityDraft({
+          airtableApiKey,
+          sanityProjectId: apiResolved.projectId,
+          sanityDataset: "production",
+          sanityWriteToken,
+          kind,
+          recordId,
+        });
+
+        invalidateAirtableQueueCache();
+
+        const studioOrigin = resolveSanityStudioUrl().replace(/\/$/, "");
+        const studioUrl = `${studioOrigin}${result.studioPath}`;
+
+        const detail = await fetchAirtableDirectoryDetail({
+          airtableApiKey,
+          kind,
+          recordId,
+          sanityProjectId: apiResolved.projectId,
+          sanityDataset: "production",
+          sanityReadToken: process.env.SANITY_API_READ_TOKEN?.trim() || undefined,
+          studioBaseUrl: resolveSanityStudioUrl(),
+          publicSiteOrigin: buildSiteOrigins()[0],
+        });
+
+        await notifySanityDraftToSlack({
+          _id: result.documentId,
+          _type: kind === "founder" ? "alumniCompany" : "advisor",
+          title: detail?.displayName,
+        });
+
+        res.setHeader("content-type", "application/json");
+        res.json({ ok: true, ...result, studioUrl });
+      } catch (err) {
+        console.error("Admin Airtable sync error:", err);
+        res.status(502).json({ error: "Could not sync profile to Sanity." });
       }
     },
   );
