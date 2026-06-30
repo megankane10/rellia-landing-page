@@ -2,8 +2,10 @@ import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion
 import { Globe, Rocket, Users, type LucideIcon } from "lucide-react"
 import { useEffect, useMemo, useRef, useState } from "react"
 import { cn } from "@/lib/utils"
+import { lookupLucideIcon } from "@/lib/resolveLucideIcon"
 import PillTag, { PILL_ON_IMAGE_BLUR_CLASS } from "@/components/PillTag"
 import { PAGE_HEADER_TITLE_SIZE_CLASS } from "@/components/PageHeader"
+import { HEADING_SECTION_SUBTITLE } from "@/lib/typography"
 import { HeroHeadlinePortable } from "@/components/HeroHeadlinePortable"
 import { cmsCleanText, cmsDisplayText, isVisualEditingPreview } from "@/lib/cmsStega"
 import type { SanityPortableText } from "@shared/cms/types"
@@ -72,6 +74,7 @@ export type NetworkMetric = {
   value: number;
   valueText?: string;
   suffix?: string;
+  iconKey?: string;
 };
 
 type NetworkMetricsSectionProps = {
@@ -114,7 +117,7 @@ function MetricValue({
   const numericTarget = Number(cmsCleanText(valueRaw)) || 0
   const shouldAnimate = entered && !previewMode
   const count = useCountUp(numericTarget, shouldAnimate, 1200 + index * 150)
-  const Icon = METRIC_ROW_ICONS[index] ?? Users
+  const Icon = lookupLucideIcon(metric.iconKey) ?? METRIC_ROW_ICONS[index] ?? Users
   const displaySuffix = cmsDisplayText(metric.suffix)
   const displayValue = previewMode
     ? cmsDisplayText(valueRaw)
@@ -293,7 +296,7 @@ export default function NetworkMetricsSection({
                 <HeroHeadlinePortable value={heading} />
               </h2>
               {cmsCleanText(subheading) ? (
-                <p className="mt-4 max-w-2xl font-urbanist text-base font-medium leading-relaxed text-white/80 md:text-lg">
+                <p className={cn("mt-4 max-w-2xl font-urbanist font-medium leading-relaxed text-white/80", HEADING_SECTION_SUBTITLE)}>
                   {cmsDisplayText(subheading)}
                 </p>
               ) : null}

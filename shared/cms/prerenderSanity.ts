@@ -4,6 +4,7 @@ import {
   alumniCompaniesQuery,
   aboutPageQuery,
   applyPageQuery,
+  faqPageQuery,
   directoryFilterGroupsQuery,
   eventsLandingQuery,
   featuredStoriesQuery,
@@ -53,6 +54,7 @@ import programsLandingPageBuildSnapshot from "./build-snapshots/programsLandingP
 import programsLayoutPageBuildSnapshot from "./build-snapshots/programsLayoutPage.json"
 import siteSettingsBuildSnapshot from "./build-snapshots/siteSettings.json"
 import storiesPageBuildSnapshot from "./build-snapshots/storiesPage.json"
+import faqPageBuildSnapshot from "./build-snapshots/faqPage.json"
 import { defaultProgramRecordForSlug } from "./itemCardImage"
 import { trySanityApiConfig } from "./sanityEnv"
 import {
@@ -582,3 +584,6 @@ export const fetchStoriesForPrerender = async (): Promise<Record<string, unknown
   }
   return snapshotStories()
 }
+
+export const fetchFaqPageForPrerender = async (): Promise<Record<string, unknown> | null> =>
+  (await fetchSingleton(faqPageQuery)) ?? snapshotSingleton(faqPageBuildSnapshot)

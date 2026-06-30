@@ -1,5 +1,11 @@
 import type { ReactNode } from "react"
 import { cn } from "@/lib/utils"
+import {
+  RichTextTealPanel,
+  richTextTealPanelImageClassName,
+  richTextTealPanelPaddingClassName,
+  richTextTealPanelQuoteClassName,
+} from "@/components/RichTextTealPanel"
 
 export const parseBlockquoteAttribution = (
   children: ReactNode,
@@ -49,46 +55,68 @@ export const parseBlockquoteAttribution = (
 export type RichTextQuoteFigureProps = {
   quote: ReactNode
   attribution?: string | null
+  imageSrc?: string | null
+  imageAlt?: string | null
   className?: string
 }
 
-export const RichTextQuoteFigure = ({ quote, attribution, className }: RichTextQuoteFigureProps) => {
+export const RichTextQuoteFigure = ({
+  quote,
+  attribution,
+  imageSrc,
+  imageAlt,
+  className,
+}: RichTextQuoteFigureProps) => {
   const attributionTrimmed = attribution?.trim() || null
+  const imageUrl = typeof imageSrc === "string" ? imageSrc.trim() : ""
+  const hasImage = Boolean(imageUrl)
 
   return (
-    <figure
-      className={cn(
-        "relative my-10 overflow-hidden rounded-[1.75rem] bg-gradient-to-br from-[#0d3540] via-[#104856] to-[#196b7f] border border-white/10 px-6 py-8 md:px-8 md:py-10",
-        className,
-      )}
+    <RichTextTealPanel
+      as="figure"
+      decoration={hasImage ? "withSideImage" : "default"}
+      className={cn("my-10", richTextTealPanelPaddingClassName, className)}
     >
       <div
-        className="pointer-events-none absolute inset-y-0 right-0 w-[45%] bg-gradient-to-l from-rellia-teal via-rellia-teal/90 to-transparent"
-        aria-hidden
-      />
-      <div
-        className="pointer-events-none absolute -right-6 top-[-15%] h-44 w-44 rounded-full bg-rellia-mint/20 blur-[72px]"
-        aria-hidden
-      />
-      <blockquote className="relative font-urbanist text-xl font-normal leading-snug text-white md:text-2xl">
-        {quote}
-      </blockquote>
-      {attributionTrimmed ? (
-        <figcaption className="relative mt-5 font-host-grotesk text-xs font-semibold uppercase tracking-[0.15em] text-rellia-mint md:text-sm">
-          {attributionTrimmed.toLowerCase().includes("torontotechweek") ? (
-            <a
-              href="https://torontotechweek.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:underline"
-            >
-              {attributionTrimmed}
-            </a>
-          ) : (
-            <>— {attributionTrimmed}</>
-          )}
-        </figcaption>
-      ) : null}
-    </figure>
+        className={cn(
+          "relative z-10 flex flex-col gap-6",
+          hasImage && "lg:flex-row lg:items-start lg:gap-8",
+        )}
+      >
+        {hasImage ? (
+          <div className="shrink-0 lg:w-[min(42%,240px)] xl:w-[min(38%,280px)]">
+            <div className="aspect-[4/3] overflow-hidden lg:min-h-[180px]">
+              <img
+                src={imageUrl}
+                alt={imageAlt?.trim() || ""}
+                loading="lazy"
+                decoding="async"
+                className={richTextTealPanelImageClassName}
+              />
+            </div>
+          </div>
+        ) : null}
+
+        <div className="relative min-w-0 flex-1">
+          <blockquote className={richTextTealPanelQuoteClassName}>{quote}</blockquote>
+          {attributionTrimmed ? (
+            <figcaption className="relative mt-5 font-host-grotesk text-xs font-semibold uppercase tracking-[0.15em] text-rellia-mint md:text-sm">
+              {attributionTrimmed.toLowerCase().includes("torontotechweek") ? (
+                <a
+                  href="https://torontotechweek.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:underline"
+                >
+                  {attributionTrimmed}
+                </a>
+              ) : (
+                attributionTrimmed
+              )}
+            </figcaption>
+          ) : null}
+        </div>
+      </div>
+    </RichTextTealPanel>
   )
 }

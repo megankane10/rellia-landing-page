@@ -19,29 +19,20 @@ import StoryArticleJsonLd from "@/components/seo/StoryArticleJsonLd"
 import StoryBreadcrumbJsonLd from "@/components/seo/StoryBreadcrumbJsonLd"
 import PageSocialHelmet from "@/components/seo/PageSocialHelmet"
 import { ChevronLeft } from "lucide-react"
-import { ShareCopyLinkButton } from "@/components/share/ShareCopyLinkButton"
-import { ShareToolbarIconLink } from "@/components/share/ShareToolbarIconLink"
 import { RichTextImageCarousel } from "@/components/RichTextImageCarousel"
 import { PortableRichText } from "@/components/PortableRichText"
 import { useStoryBySlug } from "@/hooks/useCmsDocuments"
 import { isCmsQueryLoading, shouldShowCmsEmptyState } from "@/lib/cmsQueryState"
 import { CmsStoryPostArticleSkeleton } from "@/components/cms/CmsPageSkeletons"
 import { isSanityConfigured } from "@/lib/sanity"
-import {
-  ShareIconFacebook,
-  ShareIconLinkedIn,
-  ShareIconMail,
-  ShareIconX,
-  shareOutlineButtonClassNameOnDark,
-} from "@/components/share/sharePageIcons"
-import { buildMailtoHref } from "@/lib/mailto"
-import { DEFAULT_GLOBAL_SETTINGS } from "@shared/cms/defaults"
 import { resolveStoryCollectionSeo } from "@shared/cms/collectionSeo"
 import { resolveStorySlugRedirect } from "@shared/cms/storySlugRedirects"
 import { StoryPostHero } from "@/components/StoryPostHero"
 import { RichTextQuoteFigure } from "@/components/RichTextQuoteFigure"
 import ImageExpandModal from "@/components/ImageExpandModal"
 import RelatedStories from "@/components/RelatedStories"
+import { placeholderImageFromSeed } from "@/lib/placeholderImages"
+import { cmsCleanText } from "@/lib/cmsStega"
 
 export default function StoryPost() {
   const { slug } = useParams()
@@ -93,7 +84,15 @@ export default function StoryPost() {
     return `${origin}${src}`
   }
 
-  const headerCoverSrc = cmsStory?.coverImageSrc?.trim() || story?.coverImageSrc?.trim()
+  const headerCoverSrc = (() => {
+    const fromCms = cmsStory?.coverImageSrc?.trim()
+    if (fromCms) return fromCms
+    const fromSeed = story?.coverImageSrc?.trim()
+    if (fromSeed) return fromSeed
+    const seed = cmsStory?.slug ?? story?.slug ?? resolvedSlug
+    if (!seed) return undefined
+    return placeholderImageFromSeed(cmsCleanText(seed), 1200, 675)
+  })()
   const headerCoverAlt = cmsStory?.coverImageAlt?.trim() || story?.coverImageAlt?.trim() || cmsStory?.title || story?.title || ""
   const headerLayout = cmsStory?.headerLayout === "background" ? "background" : "block"
   const seoOgImageSrc = headerCoverSrc
@@ -117,65 +116,6 @@ export default function StoryPost() {
   const storyJsonLdHeadline = cmsStory?.title ?? story?.title ?? "Rellia Health story"
   const activeStorySlug = cmsStory?.slug ?? story?.slug ?? resolvedSlug
   const activeStoryTag = cmsStory?.tag ?? story?.tag
-
-  const shareBlock = (
-    <div
-      className="flex flex-wrap items-center gap-2 sm:gap-3 md:flex-col md:items-center md:gap-2.5"
-      role="group"
-      aria-label="Share this story"
-    >
-      <ShareToolbarIconLink
-        href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(canonical)}&text=${encodeURIComponent(shareTitle)}`}
-        label="Share on X"
-        className={shareOutlineButtonClassNameOnDark}
-        tooltipPosition="left"
-        tooltipMobilePosition="top"
-      >
-        <ShareIconX />
-      </ShareToolbarIconLink>
-      <ShareToolbarIconLink
-        href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(canonical)}`}
-        label="Share on LinkedIn"
-        className={shareOutlineButtonClassNameOnDark}
-        tooltipPosition="left"
-        tooltipMobilePosition="top"
-      >
-        <ShareIconLinkedIn />
-      </ShareToolbarIconLink>
-      <ShareToolbarIconLink
-        href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(canonical)}`}
-        label="Share on Facebook"
-        className={shareOutlineButtonClassNameOnDark}
-        tooltipPosition="left"
-        tooltipMobilePosition="top"
-      >
-        <ShareIconFacebook />
-      </ShareToolbarIconLink>
-      <ShareToolbarIconLink
-        href={buildMailtoHref(DEFAULT_GLOBAL_SETTINGS.supportEmail, {
-          subject: shareTitle,
-          body: `${shareTitle}\n\n${canonical}`,
-        })}
-        label="Share by email"
-        className={shareOutlineButtonClassNameOnDark}
-        external={false}
-        tooltipPosition="left"
-        tooltipMobilePosition="top"
-      >
-        <ShareIconMail />
-      </ShareToolbarIconLink>
-
-      <ShareCopyLinkButton
-        onCopy={() => navigator.clipboard.writeText(canonical)}
-        className={shareOutlineButtonClassNameOnDark}
-        copiedClassName="border-white bg-white text-rellia-teal"
-        idleLabel="Copy story link"
-        copiedLabel="Link copied"
-        tooltipPosition="left"
-        tooltipMobilePosition="top"
-      />
-    </div>
-  )
 
   if (legacyRedirectSlug && legacyRedirectSlug !== resolvedSlug) {
     return <Navigate to={`/stories/${legacyRedirectSlug}`} replace />
@@ -259,8 +199,9 @@ export default function StoryPost() {
             coverImageSrc={headerCoverSrc}
             coverImageAlt={headerCoverAlt}
             layout={headerLayout}
+            shareUrl={canonical}
+            shareTitle={shareTitle}
             toAbsoluteImageUrl={toAbsoluteImageUrl}
-            shareBlock={shareBlock}
           />
 
           <section className="px-6 md:px-10 py-10 md:py-14">
@@ -338,8 +279,9 @@ export default function StoryPost() {
           excerpt={story.excerpt}
           coverImageSrc={headerCoverSrc}
           coverImageAlt={headerCoverAlt}
+          shareUrl={canonical}
+          shareTitle={shareTitle}
           toAbsoluteImageUrl={toAbsoluteImageUrl}
-          shareBlock={shareBlock}
         />
 
         <section className="px-6 md:px-10 py-10 md:py-14">

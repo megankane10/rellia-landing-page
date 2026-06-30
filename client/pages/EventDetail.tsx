@@ -2,8 +2,7 @@ import { useMemo, useState } from "react"
 import { Link, useLocation, useParams } from "react-router-dom"
 import { AnimatePresence, motion } from "framer-motion"
 import { Calendar, CalendarOff, ChevronLeft, ArrowLeft, History, MapPin, Ticket, Video } from "lucide-react"
-import { ShareCopyLinkButton } from "@/components/share/ShareCopyLinkButton"
-import { ShareToolbarIconLink } from "@/components/share/ShareToolbarIconLink"
+import { SharePageButton } from "@/components/share/SharePageButton"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
 import ScrollReveal from "@/components/ScrollReveal"
@@ -38,15 +37,6 @@ import {
   getProgramsEventDisplayDateTime,
   shortenProgramsEventDateTime,
 } from "@shared/cms/programsEventDisplay"
-import {
-  ShareIconFacebook,
-  ShareIconLinkedIn,
-  ShareIconMail,
-  ShareIconX,
-  shareOutlineButtonClassName,
-} from "@/components/share/sharePageIcons"
-import { buildMailtoHref } from "@/lib/mailto"
-import { DEFAULT_GLOBAL_SETTINGS } from "@shared/cms/defaults"
 import { EventDetailPortableText } from "@/components/EventDetailPortableText"
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet"
 import type { SanityPortableText, SeoContent } from "@shared/cms/types"
@@ -518,50 +508,15 @@ export default function EventDetail() {
                 <div className="h-4 md:h-5" aria-hidden />
 
                 <div className="mt-5 flex w-full flex-col items-stretch gap-3 md:mt-6">
-                  <p className="font-host-grotesk text-[12px] font-semibold uppercase tracking-[0.14em] text-black/55">
-                    Share this event
-                  </p>
-                  <div className="h-px w-full bg-black/10" aria-hidden />
-
-                  <div className="flex flex-wrap items-center gap-2 sm:gap-3">
-                    <ShareToolbarIconLink
-                      href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(canonical)}&text=${encodeURIComponent(shareTitle)}`}
-                      label="Share on X"
-                      className={shareOutlineButtonClassName}
-                    >
-                      <ShareIconX />
-                    </ShareToolbarIconLink>
-                    <ShareToolbarIconLink
-                      href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(canonical)}`}
-                      label="Share on LinkedIn"
-                      className={shareOutlineButtonClassName}
-                    >
-                      <ShareIconLinkedIn />
-                    </ShareToolbarIconLink>
-                    <ShareToolbarIconLink
-                      href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(canonical)}`}
-                      label="Share on Facebook"
-                      className={shareOutlineButtonClassName}
-                    >
-                      <ShareIconFacebook />
-                    </ShareToolbarIconLink>
-                    <ShareToolbarIconLink
-                      href={buildMailtoHref(DEFAULT_GLOBAL_SETTINGS.supportEmail, {
-                        subject: shareTitle,
-                        body: `${shareTitle}\n\n${canonical}`,
-                      })}
-                      label="Share by email"
-                      className={shareOutlineButtonClassName}
-                      external={false}
-                    >
-                      <ShareIconMail />
-                    </ShareToolbarIconLink>
-
-                    <ShareCopyLinkButton
-                      onCopy={() => navigator.clipboard.writeText(canonical)}
-                      className={shareOutlineButtonClassName}
-                      copiedClassName="border-rellia-teal bg-rellia-mint/20 text-rellia-teal"
-                      idleLabel="Copy event link"
+                  <div className="flex w-full items-center gap-3 border-t border-black/10 pt-5">
+                    <p className="font-host-grotesk text-[12px] font-semibold uppercase tracking-[0.14em] text-black/55">
+                      Share this event
+                    </p>
+                    <SharePageButton
+                      url={canonical}
+                      title={shareTitle}
+                      variant="light"
+                      idleLabel="Share this event"
                       copiedLabel="Link copied"
                     />
                   </div>

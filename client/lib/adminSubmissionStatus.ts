@@ -168,6 +168,24 @@ export const formatAdminRelativeAgo = (iso: string): string => {
   return months === 1 ? "1 month ago" : `${months} months ago`
 }
 
+/** Minute-level relative time for dashboard presence (e.g. "Just now", "12 min ago"). */
+export const formatAdminActivityAgo = (iso: string): string => {
+  const date = new Date(iso)
+  if (Number.isNaN(date.getTime())) return ""
+
+  const diffMs = Date.now() - date.getTime()
+  if (diffMs < 0) return "Just now"
+
+  const minutes = Math.floor(diffMs / (60 * 1000))
+  if (minutes < 1) return "Just now"
+  if (minutes < 60) return minutes === 1 ? "1 min ago" : `${minutes} min ago`
+
+  const hours = Math.floor(minutes / 60)
+  if (hours < 24) return hours === 1 ? "1 hr ago" : `${hours} hr ago`
+
+  return formatAdminRelativeAgo(iso)
+}
+
 export const formatAdminDateWithWeekday = (iso: string) =>
   new Date(iso).toLocaleDateString("en-US", {
     weekday: "short",

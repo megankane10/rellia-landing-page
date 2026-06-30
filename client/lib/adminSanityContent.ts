@@ -1,4 +1,5 @@
 import { studioDeskUrl } from "@shared/admin/notifyLinks"
+import { publicWebsiteUrlForCmsContent } from "@shared/admin/cmsContentLinks"
 import type { AdminSanityDataset } from "@shared/cms/sanityEnv"
 import { fetchAdminSanityDrafts, fetchAdminSanityRecentEdits } from "@/lib/adminApi"
 import { buildLastNDaysCountByDay } from "@/lib/adminOverview"
@@ -8,6 +9,8 @@ export type SanityContentRow = {
   _id: string
   _type: string
   title?: string
+  slug?: string
+  roleId?: string
   _updatedAt?: string
   status: "unpublished" | "published"
 }
@@ -16,6 +19,8 @@ export type SanityRecentEditRow = {
   _id: string
   _type: string
   title?: string
+  slug?: string
+  roleId?: string
   _updatedAt?: string
 }
 
@@ -38,14 +43,28 @@ const dayDiffFromToday = (iso: string): number | null => {
 const isContentRow = (row: {
   _id?: string
   _type?: string
-}): row is { _id: string; _type: string; title?: string; _updatedAt?: string } =>
+}): row is {
+  _id: string
+  _type: string
+  title?: string
+  slug?: string
+  roleId?: string
+  _updatedAt?: string
+} =>
   typeof row?._id === "string" &&
   typeof row?._type === "string" &&
   !row._type.startsWith("sanity.") &&
   row._type !== "system.schema"
 
 const mapDraftRows = (
-  rows: Array<{ _id: string; _type: string; title?: string; _updatedAt?: string }>,
+  rows: Array<{
+    _id: string
+    _type: string
+    title?: string
+    slug?: string
+    roleId?: string
+    _updatedAt?: string
+  }>,
 ): SanityContentRow[] =>
   rows.filter(isContentRow).map((row) => ({ ...row, status: "unpublished" as const }))
 
@@ -58,7 +77,14 @@ export const fetchCmsContentQueue = async (): Promise<SanityContentRow[]> => {
 }
 
 const mapPublishedRows = (
-  rows: Array<{ _id: string; _type: string; title?: string; _updatedAt?: string }>,
+  rows: Array<{
+    _id: string
+    _type: string
+    title?: string
+    slug?: string
+    roleId?: string
+    _updatedAt?: string
+  }>,
 ): SanityContentRow[] =>
   rows.filter(isContentRow).map((row) => ({ ...row, status: "published" as const }))
 
@@ -179,7 +205,11 @@ export const formatCmsContentRelative = (iso?: string) => {
   return `${days}d ago`
 }
 
-export const studioUrlForRow = (row: SanityContentRow) => studioDeskUrl(row._type, row._id)
+export const studioUrlForRow = (row: SanityContentRow) =>
+  studioDeskUrl(row._type, row._id, { editDraft: row.status === "unpublished" })
+
+export const publicWebsiteUrlForRow = (row: SanityContentRow): string | null =>
+  row.status === "published" ? publicWebsiteUrlForCmsContent(row) : null
 
 export const isCmsContentEnabled = () => isSanityConfigured()
 

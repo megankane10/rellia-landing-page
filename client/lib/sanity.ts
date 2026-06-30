@@ -37,40 +37,38 @@ export const sanityFetch = async <T>(
   queryId: SanityQueryId,
   params?: Record<string, unknown>,
 ): Promise<T | null> => {
-  try {
-    if (!allowSanityProxyFetch()) return null
+  if (!allowSanityProxyFetch()) return null
 
-    const run = async () => {
-      const csrf = await getApiCsrfHeaders()
-      const presentationHeaders: Record<string, string> = {}
-      if (isSanityPresentationIframe()) {
-        presentationHeaders["x-sanity-presentation"] = "1"
-      }
-
-      return fetch("/api/sanity/query", {
-        method: "POST",
-        credentials: "same-origin",
-        headers: {
-          "content-type": "application/json",
-          ...presentationHeaders,
-          ...csrf,
-        },
-        body: JSON.stringify({ queryId, params: params ?? {} }),
-      })
+  const run = async () => {
+    const csrf = await getApiCsrfHeaders()
+    const presentationHeaders: Record<string, string> = {}
+    if (isSanityPresentationIframe()) {
+      presentationHeaders["x-sanity-presentation"] = "1"
     }
 
-    let res = await run()
-    if (res.status === 403) {
-      const errBody = (await res.json().catch(() => ({}))) as { code?: string }
-      if (errBody.code === "CSRF") {
-        clearApiCsrfCache()
-        res = await run()
-      }
-    }
-    if (!res.ok) return null
-    const json = (await res.json()) as { data?: T }
-    return json.data ?? null
-  } catch {
-    return null
+    return fetch("/api/sanity/query", {
+      method: "POST",
+      credentials: "same-origin",
+      headers: {
+        "content-type": "application/json",
+        ...presentationHeaders,
+        ...csrf,
+      },
+      body: JSON.stringify({ queryId, params: params ?? {} }),
+    })
   }
+
+  let res = await run()
+  if (res.status === 403) {
+    const errBody = (await res.json().catch(() => ({}))) as { code?: string }
+    if (errBody.code === "CSRF") {
+      clearApiCsrfCache()
+      res = await run()
+    }
+  }
+  if (!res.ok) {
+    throw new Error(`Sanity fetch failed: ${res.status} ${res.statusText}`)
+  }
+  const json = (await res.json()) as { data?: T }
+  return json.data ?? null
 }

@@ -2,6 +2,7 @@ import type { SanityPortableText } from "@shared/cms/types"
 import { normalizeToPortableText } from "@shared/cms/normalizePortableText"
 import { cn } from "@/lib/utils"
 import { renderPtSpans, type PtBlock } from "@/lib/renderCmsPortableText"
+import { HEADING_SECTION_SUBTITLE } from "@/lib/typography"
 
 type SectionPortableTextProps = {
   value: SanityPortableText | string | null | undefined
@@ -24,8 +25,8 @@ export const SectionPortableText = ({ value, variant, tone, className }: Section
 
   const subheadingClass =
     tone === "light"
-      ? "font-urbanist text-base font-medium leading-relaxed text-white/80 md:text-lg"
-      : "font-urbanist text-base leading-relaxed text-black/65 md:text-lg"
+      ? cn("font-urbanist font-medium leading-relaxed text-white/80", HEADING_SECTION_SUBTITLE)
+      : cn("font-urbanist leading-relaxed text-black/65", HEADING_SECTION_SUBTITLE)
 
   return (
     <div className={className}>

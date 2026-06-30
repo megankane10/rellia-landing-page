@@ -69,6 +69,7 @@ Rellia offers founder programs (QMS, fundraising, regulatory, clinical validatio
 ## Directory profiles
 
 - [/advisors/directory/dummy-showcase-advisor](https://www.relliahealth.com/advisors/directory/dummy-showcase-advisor): Advisor profile in the Rellia Health mentor directory.
+- [/founders/alumni/novustex-corp](https://www.relliahealth.com/founders/alumni/novustex-corp): Alumni company profile in the Rellia Health founder network.
 - [/founders/alumni/power-of-play](https://www.relliahealth.com/founders/alumni/power-of-play): Alumni company profile in the Rellia Health founder network.
 
 

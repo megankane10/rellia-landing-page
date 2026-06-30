@@ -102,6 +102,12 @@ export const homePage = defineType({
               validation: (Rule) => Rule.required(),
             }),
             defineField({ name: 'tagLabel', title: 'Tag pill label', type: 'string' }),
+            defineField({
+              name: 'showBadge',
+              title: 'Show tag pill',
+              type: 'boolean',
+              initialValue: true,
+            }),
             defineField({ name: 'title', title: 'Card headline', type: 'string' }),
             defineField({ name: 'subtitle', title: 'Card subtitle', type: 'text', rows: 2 }),
             imageUploadField('image', 'Card image'),
@@ -149,6 +155,9 @@ export const homePage = defineType({
           name: 'metric',
           type: 'object',
           fields: [
+            iconKeyField({
+              description: 'Optional Lucide icon name.',
+            }),
             { name: 'label', title: 'Label', type: 'string' },
             { name: 'value', title: 'Value', type: 'number' },
             { name: 'suffix', title: 'Suffix', type: 'string', description: 'Example: %, , x' },

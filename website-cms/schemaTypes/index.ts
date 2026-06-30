@@ -37,6 +37,7 @@ import {termsPage} from './documents/termsPage'
 import {privacyPage} from './documents/privacyPage'
 import {bodyCtaBox} from './objects/bodyCtaBox'
 import {portableQuoteBox} from './objects/portableQuoteBox'
+import {portableTable} from './objects/portableTable'
 import {portableImageCarousel} from './objects/portableImageCarousel'
 import {logoMarqueeItem} from './objects/logoMarqueeItem'
 import {siteDefaultSeo} from './objects/siteDefaultSeo'
@@ -112,6 +113,7 @@ export const schemaTypes = [
   directoryFilterGroup,
   // Objects & sections
   bodyCtaBox,
+  portableTable,
   portableQuoteBox,
   portableImageCarousel,
   logoMarqueeItem,

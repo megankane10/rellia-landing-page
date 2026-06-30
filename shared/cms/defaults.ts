@@ -2547,6 +2547,7 @@ export const DEFAULT_NOT_FOUND: NotFoundContent = {
   title: "Well, this is awkward",
   message: "The page you're looking for isn't here",
   ctaLabel: "Back to home",
+  ctaPath: "/",
   iconKey: "search-alert",
 }
 

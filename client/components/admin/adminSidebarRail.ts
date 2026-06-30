@@ -186,7 +186,7 @@ export const adminDialogCancelForTheme = (theme: "light" | "dark") =>
 
 export const adminDialogPrimaryActionForTheme = (theme: "light" | "dark") =>
   theme === "dark"
-    ? "rounded-full bg-rellia-teal text-white hover:bg-rellia-teal/90"
+    ? "rounded-full bg-rellia-mint text-rellia-teal hover:bg-rellia-mint/90"
     : "rounded-full"
 
 /** Light admin dropdown / menu surface */

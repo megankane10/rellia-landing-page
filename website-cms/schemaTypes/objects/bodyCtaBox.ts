@@ -20,8 +20,9 @@ export const bodyCtaBox = defineType({
     defineField({
       name: 'body',
       type: 'text',
-      title: 'Body',
+      title: 'Description',
       rows: 4,
+      description: 'Optional supporting copy under the title (low-opacity white on the site).',
     }),
     defineField({
       name: 'buttonLabel',

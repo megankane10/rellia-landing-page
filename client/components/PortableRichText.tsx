@@ -6,8 +6,10 @@ import { cn } from "@/lib/utils"
 import { BodyCtaBox } from "@/components/BodyCtaBox"
 import { mapPortableBodyCtaBox } from "@/lib/bodyCtaBoxPortable"
 import { cmsCleanText, cmsDisplayText, cmsHasDisplayText } from "@/lib/cmsStega"
+import { RichTextTable } from "@/components/RichTextTable"
 import { RichTextImageCarousel, type RichTextCarouselSlide } from "@/components/RichTextImageCarousel"
 import { parseBlockquoteAttribution, RichTextQuoteFigure } from "@/components/RichTextQuoteFigure"
+import { resolvePortableQuoteBoxImage } from "@/lib/portableQuoteBox"
 import ImageExpandModal from "@/components/ImageExpandModal"
 import {
   normalizeRichTextImageDisplayMode,
@@ -33,7 +35,7 @@ const InlineImageFigure = ({
 
   return (
     <>
-      <figure className="my-8 md:my-10 [&:first-child]:mt-0">
+      <figure className="my-10 md:my-12 [&:first-child]:mt-0">
         <div
           className={cn(
             isFull ? undefined : richTextCroppedFrameClassName,
@@ -86,7 +88,7 @@ const PortableVideoBlock = ({
   const vimeo = resolveVimeoEmbed(videoUrl)
 
   return (
-    <figure className="my-8 md:my-10 [&:first-child]:mt-0">
+    <figure className="my-10 md:my-12 [&:first-child]:mt-0">
       <div className="overflow-hidden rounded-2xl border border-black/10 bg-black/5 aspect-video">
         {youtube || vimeo ? (
           <iframe
@@ -184,7 +186,7 @@ const components: PortableTextComponents = {
         <RichTextImageCarousel
           title={typeof v?.title === "string" ? v.title : undefined}
           slides={slides}
-          className="my-8 md:my-10"
+          className="my-10 md:my-12"
         />
       )
     },
@@ -196,35 +198,68 @@ const components: PortableTextComponents = {
       return <BodyCtaBox {...mapped} />
     },
     portableQuoteBox: ({ value }) => {
-      const v = value as { quote?: string; attribution?: string } | null
+      const v = value as Parameters<typeof resolvePortableQuoteBoxImage>[0] & { quote?: string; attribution?: string } | null
       if (!cmsHasDisplayText(v?.quote)) return null
       const attribution = cmsHasDisplayText(v?.attribution)
         ? cmsDisplayText(v?.attribution)
         : undefined
+      const image = resolvePortableQuoteBoxImage(v)
       return (
         <RichTextQuoteFigure
           quote={cmsDisplayText(v!.quote)}
           attribution={attribution || null}
+          imageSrc={image?.imageSrc}
+          imageAlt={image?.imageAlt}
+        />
+      )
+    },
+    portableTable: ({ value }) => {
+      const v = value as {
+        caption?: string
+        hasHeaderRow?: boolean
+        highlightedColumn?: number
+        highlightedRow?: number
+        rows?: Array<{ cells?: string[] }>
+      } | null
+      return (
+        <RichTextTable
+          caption={typeof v?.caption === "string" ? v.caption : undefined}
+          hasHeaderRow={v?.hasHeaderRow !== false}
+          highlightedColumn={
+            typeof v?.highlightedColumn === "number" ? v.highlightedColumn : undefined
+          }
+          highlightedRow={
+            typeof v?.highlightedRow === "number" ? v.highlightedRow : undefined
+          }
+          rows={v?.rows}
         />
       )
     },
   },
   block: {
     h2: ({ children }) => (
-      <h2 className="font-host-grotesk text-2xl md:text-[32px] lg:text-[36px] font-bold text-black mt-8 mb-4">{children}</h2>
+      <h2 className="mt-10 font-host-grotesk text-2xl font-bold leading-snug text-black first:mt-0 md:mt-12 md:text-[32px] lg:text-[36px]">
+        {children}
+      </h2>
     ),
     h3: ({ children }) => (
-      <h3 className="font-host-grotesk text-xl font-semibold text-rellia-teal mt-6 mb-3">{children}</h3>
+      <h3 className="mt-8 font-host-grotesk text-xl font-semibold leading-snug text-rellia-teal first:mt-0 md:mt-10 md:text-2xl">
+        {children}
+      </h3>
     ),
     h4: ({ children }) => (
-      <h4 className="font-host-grotesk text-lg font-semibold text-black mt-5 mb-2">{children}</h4>
+      <h4 className="mt-7 font-host-grotesk text-lg font-semibold text-black first:mt-0 md:mt-8">
+        {children}
+      </h4>
     ),
     blockquote: ({ children }) => {
       const { quote, attribution } = parseBlockquoteAttribution(children)
       return <RichTextQuoteFigure quote={quote} attribution={attribution} />
     },
     normal: ({ children }) => (
-      <p className="font-urbanist text-black/70 text-base md:text-lg leading-relaxed mb-4">{children}</p>
+      <p className="font-urbanist text-base leading-relaxed text-black/75 md:text-lg md:leading-relaxed [&:not(:first-child)]:mt-5 [&:not(:first-child)]:md:mt-6">
+        {children}
+      </p>
     ),
   },
   marks: {
@@ -249,9 +284,15 @@ const components: PortableTextComponents = {
     },
   },
   list: {
-    bullet: ({ children }) => <ul className="list-disc pl-6 space-y-2 mb-4 font-urbanist text-black/70">{children}</ul>,
+    bullet: ({ children }) => (
+      <ul className="mt-5 list-disc space-y-2.5 pl-6 font-urbanist text-base leading-relaxed text-black/75 md:mt-6 md:text-lg [&:not(:first-child)]:mt-5 [&:not(:first-child)]:md:mt-6">
+        {children}
+      </ul>
+    ),
     number: ({ children }) => (
-      <ol className="list-decimal pl-6 space-y-2 mb-4 font-urbanist text-black/70">{children}</ol>
+      <ol className="mt-5 list-decimal space-y-2.5 pl-6 font-urbanist text-base leading-relaxed text-black/75 md:mt-6 md:text-lg [&:not(:first-child)]:mt-5 [&:not(:first-child)]:md:mt-6">
+        {children}
+      </ol>
     ),
   },
   listItem: {
@@ -269,7 +310,13 @@ export const PortableRichText = ({ value, className }: PortableRichTextProps) =>
   const normalized = normalizeToPortableText(value)
   if (!normalized) return null
   return (
-    <div className={cn("prose prose-neutral max-w-none", className)}>
+    <div
+      className={cn(
+        "prose prose-neutral max-w-none",
+        "[&_h2+_*]:mt-0 [&_h3+_*]:mt-0 [&_h4+_*]:mt-0",
+        className,
+      )}
+    >
       <PortableText value={normalized} components={components} />
     </div>
   )

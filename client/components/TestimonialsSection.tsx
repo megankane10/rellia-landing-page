@@ -10,6 +10,7 @@ import {
   CarouselItem,
 } from "@/components/ui/carousel"
 import { cn } from "@/lib/utils"
+import { HEADING_SECTION } from "@/lib/typography"
 import type { HomeTestimonial, SanityPortableText } from "@shared/cms/types"
 import { cmsCleanText, cmsDisplayText } from "@/lib/cmsStega"
 import LogoMarquee, { type LogoMark } from "@/components/LogoMarquee"
@@ -306,7 +307,7 @@ export default function TestimonialsSection({
                   aria-hidden
                 />
               ) : null}
-              <h2 className="font-host-grotesk font-semibold text-rellia-teal [&_span]:text-rellia-teal [&_span]:!text-rellia-teal text-2xl md:text-[32px] lg:text-[36px] leading-tight tracking-tight max-w-3xl text-balance">
+              <h2 className={cn("font-host-grotesk font-semibold text-rellia-teal [&_span]:text-rellia-teal [&_span]:!text-rellia-teal leading-tight tracking-tight max-w-3xl text-balance", HEADING_SECTION)}>
                 <HeroHeadlinePortable value={titlePortable} />
               </h2>
             </div>

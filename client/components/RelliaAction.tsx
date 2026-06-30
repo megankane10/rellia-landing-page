@@ -63,8 +63,10 @@ export const relliaActionVariants = cva(
           "rounded-full border-2 border-white/80 bg-white text-rellia-teal hover:bg-rellia-mint hover:text-rellia-teal hover:border-rellia-mint hover:shadow-[0_22px_60px_-34px_rgba(15,77,77,0.22)] focus-visible:ring-offset-rellia-greyTeal",
       },
       size: {
-        comfortable: "px-8 py-4 text-base",
-        compact: "py-2.5 text-sm",
+        comfortable: "text-base px-6 py-3",
+        compact: "text-sm px-4 py-2",
+        md: "text-base px-6 py-3",
+        lg: "text-base md:text-lg px-8 py-3.5",
       },
     },
     defaultVariants: {

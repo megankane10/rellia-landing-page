@@ -52,6 +52,7 @@ import { FilloutStandardEmbed } from "@fillout/react"
 import RelliaCta, { ctaActionFromHref } from "@/components/RelliaCta"
 import ProgramTrustedMembersSection from "@/components/program/ProgramTrustedMembersSection"
 import { SectionPortableText } from "@/components/cms/SectionPortableText"
+import { HEADING_SECTION_SUBTITLE } from "@/lib/typography"
 import {
   defaultHeadingToneForBackground,
   resolveHeadingTone,
@@ -62,7 +63,7 @@ const sectionHeadingClass =
   "font-host-grotesk text-2xl font-semibold leading-tight tracking-tight text-black md:text-[32px] lg:text-[36px]"
 
 const sectionSubheadingClass =
-  "mt-4 max-w-3xl font-urbanist text-base leading-relaxed text-black/65 md:text-lg"
+  cn("mt-4 max-w-3xl font-urbanist leading-relaxed text-black/65", HEADING_SECTION_SUBTITLE)
 
 const sectionTagEyebrowClass = "mb-5 md:mb-6"
 
@@ -166,6 +167,7 @@ const SectionMetrics = ({ section }: { section: CmsSectionMetrics }) => {
       value: Number(cmsCleanText(String(m.value))) || 0,
       valueText: String(m.value ?? ""),
       suffix: m.suffix,
+      iconKey: m.iconKey,
     })) ?? []
 
   if (metrics.length === 0) return null

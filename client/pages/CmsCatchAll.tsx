@@ -7,6 +7,7 @@ import { useCmsPageBySlug } from "@/hooks/useCmsDocuments"
 import { PageRenderer } from "@/components/cms/PageRenderer"
 import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo"
 import { isCmsQueryLoading } from "@/lib/cmsQueryState"
+import { CmsModularPageSkeleton } from "@/components/cms/CmsPageSkeletons"
 
 const getSingleSegmentSlug = (pathname: string) => {
   const clean = pathname.trim().replace(/\/+$/, "")
@@ -35,7 +36,11 @@ export default function CmsCatchAll() {
       : undefined,
   )
 
-  if (!slug || isCmsQueryLoading(pageQuery) || !page) return <NotFound />
+  if (!slug) return <NotFound />
+  if (isCmsQueryLoading(pageQuery)) {
+    return <CmsModularPageSkeleton />
+  }
+  if (!page) return <NotFound />
 
   const sections = page?.sections ?? []
   const hasRenderableSections = sections.some((section) => Boolean(section?._type))

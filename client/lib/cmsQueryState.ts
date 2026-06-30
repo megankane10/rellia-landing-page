@@ -1,4 +1,5 @@
 import type { UseQueryResult } from "@tanstack/react-query"
+import { isSanityConfigured } from "@/lib/sanity"
 
 type CmsQuerySnapshot = Pick<
   UseQueryResult<unknown>,
@@ -25,3 +26,8 @@ export const isAnyCmsQueryLoading = (...queries: CmsQuerySnapshot[]): boolean =>
 export const isCmsListAwaitingData = (
   query: Pick<UseQueryResult<unknown[]>, "isFetching" | "data">,
 ): boolean => query.isFetching && (Array.isArray(query.data) ? query.data.length === 0 : true)
+
+/** Wait for the first Sanity fetch before rendering hardcoded merge defaults. */
+export const isCmsPageContentReady = (
+  query: Pick<UseQueryResult<unknown>, "isFetched">,
+): boolean => !isSanityConfigured() || query.isFetched

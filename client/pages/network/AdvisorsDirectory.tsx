@@ -24,7 +24,7 @@ import { useNavigate, useLocation, Link } from "react-router-dom";
 import { NETWORK_PATH_ROLE_TAG } from "@/lib/networkPathRoles";
 import { isSanityConfigured } from "@/lib/sanity";
 import { allowCmsSeedFallbacks } from "@/lib/deploymentEnv";
-import { isCmsQueryLoading } from "@/lib/cmsQueryState";
+import { isCmsQueryLoading, isCmsPageContentReady } from "@/lib/cmsQueryState";
 import { DirectoryGridSkeleton } from "@/components/cms/CmsPageLoadingShell";
 import AdvisorDirectoryCard from "@/components/network/AdvisorDirectoryCard";
 import {
@@ -46,11 +46,20 @@ const formatAdvisorLocation = (advisor: AdvisorDirectoryEntry): string => {
 }
 
 export default function AdvisorsDirectory() {
-  const { data: advisorsDirectoryRaw } = useNetworkAdvisorsDirectoryPage()
-  const advisorsDirectory = mergeNetworkAdvisorsDirectoryPage(advisorsDirectoryRaw ?? undefined)
+  const advisorsDirectoryQuery = useNetworkAdvisorsDirectoryPage()
+  const directoryReady = isCmsPageContentReady(advisorsDirectoryQuery)
+  const advisorsDirectory = useMemo(
+    () =>
+      directoryReady
+        ? mergeNetworkAdvisorsDirectoryPage(advisorsDirectoryQuery.data ?? undefined)
+        : null,
+    [advisorsDirectoryQuery.data, directoryReady],
+  )
   useApplyCmsSeo(
-    advisorsDirectory.seo,
-    deriveDirectoryPageSeo(advisorsDirectory, "/advisors/directory"),
+    advisorsDirectory?.seo,
+    advisorsDirectory
+      ? deriveDirectoryPageSeo(advisorsDirectory, "/advisors/directory")
+      : undefined,
   )
   const reduceMotion = useReducedMotion();
   const advisorsQuery = useAdvisors();
@@ -193,9 +202,17 @@ export default function AdvisorsDirectory() {
               <TagIcon className="h-3.5 w-3.5 shrink-0" aria-hidden />
               {tag.label}
             </div>
-            <h1 className={DIRECTORY_TITLE_CLASS}>{advisorsDirectory.directoryTitle ?? "Explore Advisors"}</h1>
+            <h1 className={DIRECTORY_TITLE_CLASS}>
+              {directoryReady && advisorsDirectory
+                ? (advisorsDirectory.directoryTitle ?? "Explore Advisors")
+                : <span className="inline-block h-12 w-72 max-w-full animate-pulse rounded-lg bg-black/10" aria-hidden />}
+            </h1>
             <p className="mt-4 max-w-2xl font-urbanist text-lg leading-relaxed text-black/70">
-              {advisorsDirectory.directorySubtitle}
+              {directoryReady && advisorsDirectory ? (
+                advisorsDirectory.directorySubtitle
+              ) : (
+                <span className="block h-6 w-full max-w-xl animate-pulse rounded bg-black/10" aria-hidden />
+              )}
             </p>
           </div>
         </section>
@@ -299,7 +316,7 @@ export default function AdvisorsDirectory() {
                   variants={container}
                   initial="hidden"
                   animate="show"
-                  className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"
+                  className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"
                 >
                   <AnimatePresence mode="popLayout">
                     {paginated.map((a) => (
@@ -368,6 +385,7 @@ export default function AdvisorsDirectory() {
           </div>
         </section>
 
+        {advisorsDirectory ? (
         <RelliaCta
           title={advisorsDirectory.directoryCtaTitle ?? "Looking for specialized advice?"}
           body={advisorsDirectory.directoryCtaBody}
@@ -380,6 +398,7 @@ export default function AdvisorsDirectory() {
             advisorsDirectory.directoryCtaSecondaryHref,
           )}
         />
+        ) : null}
       </main>
 
       <Footer />

@@ -4,17 +4,16 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { ArrowLeft, MapPin, Calendar } from "lucide-react";
 import { ProfileSocialLinks } from "@/components/network/ProfileSocialLinks";
-import { ShareCopyLinkButton } from "@/components/share/ShareCopyLinkButton";
-import { shareOutlineButtonClassName } from "@/components/share/sharePageIcons";
+import { SharePageButton } from "@/components/share/SharePageButton";
 import { ADVISOR_DIRECTORY_SEED } from "@/data/advisorDirectory";
 import { allowCmsSeedFallbacks } from "@/lib/deploymentEnv";
 import NotFound from "../NotFound";
 import {
-  buildAdvisorProfileSeoTitle,
   buildPageUrl,
   clampMetaDescription,
   resolveShareOgImage,
 } from "@/config/seo";
+import { resolveAdvisorProfileSeo } from "@shared/cms/itemDetailSeo";
 import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo";
 import PageSocialHelmet from "@/components/seo/PageSocialHelmet";
 import { useAdvisors } from "@/hooks/useCmsDocuments";
@@ -67,15 +66,23 @@ export default function AdvisorProfile() {
     ? resolveAdvisorProfileDescription(snapshotText, active.bio)
     : "";
 
-  const advisorOgImage = active
-    ? resolveShareOgImage(active.photoSrc, { landscape: true })
-    : undefined
+  const advisorSeo = active
+    ? resolveAdvisorProfileSeo({
+        name: active.name,
+        snapshot: snapshotText,
+        bio: active.bio,
+        photoSrc: active.photoSrc,
+        seo: (active as { seo?: import("@shared/cms/types").SeoContent }).seo,
+      })
+    : null
 
-  useApplyCmsSeo(null, active ? {
-    title: buildAdvisorProfileSeoTitle(active.name),
-    description: clampMetaDescription(
-      profileDescription || "Advisor profile in the Rellia Health mentor directory.",
-    ),
+  const advisorOgImage = advisorSeo?.ogImageSrc
+    ? resolveShareOgImage(advisorSeo.ogImageSrc, { landscape: true })
+    : resolveShareOgImage(undefined, { landscape: true })
+
+  useApplyCmsSeo(null, advisorSeo ? {
+    title: advisorSeo.title,
+    description: advisorSeo.description,
     ogImage: advisorOgImage?.url,
   } : undefined);
 
@@ -124,8 +131,8 @@ export default function AdvisorProfile() {
   return (
     <div className="min-h-screen overflow-x-clip bg-white font-host-grotesk">
       <PageSocialHelmet
-        title={buildAdvisorProfileSeoTitle(active.name)}
-        description={clampMetaDescription(
+        title={advisorSeo?.title ?? active.name}
+        description={advisorSeo?.description ?? clampMetaDescription(
           profileDescription || "Advisor profile in the Rellia Health mentor directory.",
         )}
         canonical={canonicalUrl}
@@ -148,10 +155,11 @@ export default function AdvisorProfile() {
           </div>
           <article className="grid items-start gap-10 pb-8 lg:grid-cols-[minmax(280px,360px)_minmax(0,1fr)] lg:gap-x-14 lg:pb-12 xl:grid-cols-[400px_1fr]">
             {/* Left Sidebar - Sticky */}
-            <div className="flex flex-col gap-6 pb-4 lg:sticky lg:top-28 lg:self-start lg:pb-10">
+            <div className="space-y-4 lg:sticky lg:top-28 lg:self-start">
+              <div className="rounded-3xl border border-black/10 bg-white p-6 md:p-7">
               <div 
                 onClick={() => setActiveImage({ src: active.photoSrc, alt: `Portrait of ${active.name}` })}
-                className="overflow-hidden rounded-2xl aspect-[4/5] w-full max-h-[min(42vh,440px)] cursor-pointer"
+                className="overflow-hidden rounded-xl aspect-[4/5] w-full max-h-[min(42vh,440px)] cursor-pointer bg-black/[0.02]"
               >
                 <img
                   src={active.photoSrc}
@@ -209,20 +217,20 @@ export default function AdvisorProfile() {
                     </span>
                   </div>
                 </div>
+              </div>
+            </div>
 
-                <div className="mt-6 pt-6 border-t border-black/10 flex items-center gap-3">
-                  <ProfileSocialLinks
-                    links={active.socialLinks}
-                    email={(active as { email?: string }).email}
-                    comfortableTouch
-                  />
-                  <ShareCopyLinkButton
-                    onCopy={() => navigator.clipboard.writeText(canonicalUrl)}
-                    className={shareOutlineButtonClassName}
-                    idleLabel="Copy profile link"
-                    copiedLabel="Link copied"
-                  />
-                </div>
+              <div className="flex items-center gap-3 px-1">
+                <ProfileSocialLinks
+                  links={active.socialLinks}
+                  email={(active as { email?: string }).email}
+                  size="comfortable"
+                />
+                <SharePageButton
+                  url={canonicalUrl}
+                  title={advisorSeo?.title}
+                  variant="light"
+                />
               </div>
             </div>
 

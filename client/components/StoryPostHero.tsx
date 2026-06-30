@@ -1,8 +1,8 @@
-import type { ReactNode } from "react"
 import ScrollReveal from "@/components/ScrollReveal"
 import { cn } from "@/lib/utils"
 import { MarketingImage } from "@/components/MarketingImage"
 import { buildResponsiveImageProps } from "@shared/image/optimizeImageUrl"
+import { StoryArticleShare } from "@/components/StoryArticleShare"
 
 export type StoryPostHeroLayout = "background" | "block"
 
@@ -13,8 +13,9 @@ export type StoryPostHeroProps = {
   coverImageSrc?: string | null
   coverImageAlt?: string | null
   layout?: StoryPostHeroLayout
+  shareUrl?: string | null
+  shareTitle?: string | null
   toAbsoluteImageUrl: (src: string) => string
-  shareBlock: ReactNode
 }
 
 export const StoryPostHero = ({
@@ -24,8 +25,9 @@ export const StoryPostHero = ({
   coverImageSrc,
   coverImageAlt,
   layout = "block",
+  shareUrl,
+  shareTitle,
   toAbsoluteImageUrl,
-  shareBlock,
 }: StoryPostHeroProps) => {
   const coverSrc = coverImageSrc?.trim() || null
   const coverAlt = (coverImageAlt?.trim() || title).trim()
@@ -36,6 +38,9 @@ export const StoryPostHero = ({
   const inlineImage = coverSrc
     ? buildResponsiveImageProps(toAbsoluteImageUrl(coverSrc), "storyInline")
     : null
+
+  const tagLabelClassName =
+    "font-host-grotesk text-[11px] font-semibold uppercase tracking-[0.14em]"
 
   return (
     <section
@@ -88,16 +93,17 @@ export const StoryPostHero = ({
               className={cn(
                 "flex min-w-0 flex-col",
                 useBackgroundLayout && "min-h-[inherit] flex-1",
-                !useBackgroundLayout && "md:relative",
               )}
             >
-              <div className="flex flex-wrap items-center gap-3">
-                <div className="inline-flex w-fit shrink-0 items-center gap-2 rounded-full bg-rellia-mint px-3 py-1.5">
-                  <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-rellia-teal" aria-hidden />
-                  <span className="font-host-grotesk text-[11px] font-semibold uppercase tracking-[0.14em] text-rellia-teal">
-                    {tag}
-                  </span>
-                </div>
+              <div
+                className={cn(
+                  "inline-flex w-fit shrink-0 items-center gap-2 rounded-full bg-rellia-mint px-3 py-1.5",
+                  tagLabelClassName,
+                  "text-rellia-teal",
+                )}
+              >
+                <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-rellia-teal" aria-hidden />
+                <span>{tag}</span>
               </div>
 
               <h1 className="mt-6 font-host-grotesk text-3xl font-medium leading-tight tracking-tight text-white md:text-4xl lg:text-5xl">
@@ -116,40 +122,26 @@ export const StoryPostHero = ({
 
               {!useBackgroundLayout && coverSrc && inlineImage ? (
                 <div className="mt-8 md:mt-10">
-                  <div className="relative">
-                    <figure className="relative w-full max-w-3xl overflow-hidden rounded-2xl border border-white/15 bg-black/20 shadow-[0_24px_56px_-28px_rgba(0,0,0,0.55)]">
-                      <MarketingImage
-                        src={toAbsoluteImageUrl(coverSrc)}
-                        responsive={inlineImage}
-                        alt={coverAlt}
-                        className="block h-auto w-full"
-                        loading="eager"
-                        fetchPriority="high"
-                      />
-                    </figure>
-                    <aside
-                      className="hidden md:flex md:absolute md:right-0 md:top-1/2 md:-translate-y-1/2"
-                      aria-label="Share this story"
-                    >
-                      {shareBlock}
-                    </aside>
-                  </div>
-                  <div className="mt-8 md:hidden">{shareBlock}</div>
+                  <figure className="relative w-full max-w-3xl overflow-hidden rounded-2xl border border-white/15 bg-black/20 shadow-[0_24px_56px_-28px_rgba(0,0,0,0.55)]">
+                    <MarketingImage
+                      src={toAbsoluteImageUrl(coverSrc)}
+                      responsive={inlineImage}
+                      alt={coverAlt}
+                      className="block h-auto w-full"
+                      loading="eager"
+                      fetchPriority="high"
+                    />
+                  </figure>
                 </div>
               ) : null}
 
-              {useBackgroundLayout ? (
-                <div className="mt-auto pt-10 pb-2 md:pt-14 md:pb-4">{shareBlock}</div>
-              ) : !coverSrc ? (
-                <>
-                  <div className="mt-8 md:hidden">{shareBlock}</div>
-                  <aside
-                    className="hidden md:flex md:absolute md:right-0 md:top-6"
-                    aria-label="Share this story"
-                  >
-                    {shareBlock}
-                  </aside>
-                </>
+              {shareUrl && shareTitle ? (
+                <StoryArticleShare
+                  shareUrl={shareUrl}
+                  shareTitle={shareTitle}
+                  tone="onDark"
+                  className="max-w-3xl"
+                />
               ) : null}
             </div>
           </ScrollReveal>

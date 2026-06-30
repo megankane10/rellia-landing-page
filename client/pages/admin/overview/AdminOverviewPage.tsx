@@ -2061,7 +2061,7 @@ const AdminOverviewPage = () => {
               <div className="flex min-w-0 items-center justify-center gap-1">
                 <button
                   onClick={() => setTrendOffset((prev) => prev + 1)}
-                  className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-border bg-card text-muted-foreground transition-colors hover:bg-muted/50 active:bg-slate-100 disabled:opacity-50 md:h-10 md:w-10"
+                  className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-border bg-card text-muted-foreground transition-colors hover:bg-muted/50 active:bg-slate-100 dark:active:bg-slate-800 disabled:opacity-50 md:h-10 md:w-10"
                   aria-label={
                     trendPeriod === "week"
                       ? "Previous week"
@@ -2083,7 +2083,7 @@ const AdminOverviewPage = () => {
                 <button
                   onClick={() => setTrendOffset((prev) => Math.max(0, prev - 1))}
                   disabled={trendOffset === 0}
-                  className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-border bg-card text-muted-foreground transition-colors hover:bg-muted/50 active:bg-slate-100 disabled:opacity-50 md:h-10 md:w-10"
+                  className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-border bg-card text-muted-foreground transition-colors hover:bg-muted/50 active:bg-slate-100 dark:active:bg-slate-800 disabled:opacity-50 md:h-10 md:w-10"
                   aria-label={
                     trendPeriod === "week"
                       ? "Next week"

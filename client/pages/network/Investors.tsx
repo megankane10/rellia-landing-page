@@ -30,6 +30,8 @@ import {
 import { CreamSection, GlassCard, GlassCardLight, LightSection, Reveal, RoleHero } from "./_shared"
 import { cn } from "@/lib/utils"
 import { useNetworkInvestorsPage } from "@/hooks/useCmsDocuments"
+import { isCmsPageContentReady } from "@/lib/cmsQueryState"
+import CmsPageLoadingShell from "@/components/cms/CmsPageLoadingShell"
 import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo"
 import { deriveHeroPageSeo } from "@/lib/cmsPageSeoDefaults"
 import { mergeNetworkInvestorsPage, DEFAULT_NETWORK_INVESTORS_PAGE } from "@shared/cms/networkPageDefaults"
@@ -397,26 +399,46 @@ function buildInvestorCharts(page: NetworkInvestorsPageContent | null | undefine
 
 export default function Investors() {
   const investorsPageQuery = useNetworkInvestorsPage()
+  const pageReady = isCmsPageContentReady(investorsPageQuery)
   const { data: page } = investorsPageQuery
-  const content = mergeNetworkInvestorsPage(page)
+  const content = useMemo(
+    () => (pageReady ? mergeNetworkInvestorsPage(page) : null),
+    [page, pageReady],
+  )
   useApplyCmsSeo(
     page?.seo,
-    deriveHeroPageSeo({
-      pageTitle: content.title ?? "Investors",
-      heroSubtitle: content.heroSubtitle,
-      pathname: "/investors",
-    }),
+    content
+      ? deriveHeroPageSeo({
+          pageTitle: content.title ?? "Investors",
+          heroSubtitle: content.heroSubtitle,
+          pathname: "/investors",
+        })
+      : undefined,
   )
 
   const [showNotifyForm, setShowNotifyForm] = useState(false)
 
   const logoMarks = useMemo(
     () =>
-      resolveLogoMarqueeMarks(content.logoMarquee, INVESTOR_LOGO_MARKS, {
-        excludeNames: PORTFOLIO_LOGO_MARKS.map((logo) => logo.name),
-      }),
-    [content.logoMarquee],
+      content
+        ? resolveLogoMarqueeMarks(content.logoMarquee, INVESTOR_LOGO_MARKS, {
+            excludeNames: PORTFOLIO_LOGO_MARKS.map((logo) => logo.name),
+          })
+        : [],
+    [content?.logoMarquee],
   )
+
+  if (!content) {
+    return (
+      <div className="min-h-screen overflow-x-hidden bg-white font-host-grotesk">
+        <Navbar />
+        <main id="main-content">
+          <CmsPageLoadingShell variant="network" />
+        </main>
+        <Footer />
+      </div>
+    )
+  }
 
   const COLOR_PALETTE = useMemo(
     () => [

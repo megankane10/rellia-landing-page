@@ -4,11 +4,11 @@ import type { AdminTableColumn } from "@/components/admin/AdminDataTable"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
 import type { AdminTeamUser } from "@/lib/adminApi"
-import { formatAdminDate, formatAdminRelativeAgo } from "@/lib/adminSubmissionStatus"
+import { formatAdminActivityAgo, formatAdminDate } from "@/lib/adminSubmissionStatus"
 import { cn } from "@/lib/utils"
 import { adminTeamCardHeaderClass, adminTeamCardTitleClass, adminTeamCardTitleIconClass } from "@/components/admin/adminThemeClasses"
 
-const RECENT_SIGN_IN_MAX = 6
+const RECENT_ACTIVITY_MAX = 6
 
 type AdminRecentSignInsCardProps = {
   members: AdminTeamUser[]
@@ -18,7 +18,10 @@ type AdminRecentSignInsCardProps = {
   fillerMessage?: string
 }
 
-const signInColumns: AdminTableColumn<AdminTeamUser>[] = [
+const memberActivityAt = (member: AdminTeamUser): string | null =>
+  member.lastActiveAt ?? member.lastSignInAt
+
+const activityColumns: AdminTableColumn<AdminTeamUser>[] = [
   {
     key: "member",
     header: "Name",
@@ -27,13 +30,14 @@ const signInColumns: AdminTableColumn<AdminTeamUser>[] = [
     ),
   },
   {
-    key: "signedIn",
-    header: "Signed in",
+    key: "activeAt",
+    header: "Last active",
     cell: (member) => {
-      const signedInAt = member.lastSignInAt!
+      const activeAt = memberActivityAt(member)
+      if (!activeAt) return <span className="text-muted-foreground">—</span>
       return (
-        <time dateTime={signedInAt} className="text-muted-foreground">
-          {formatAdminDate(signedInAt)}
+        <time dateTime={activeAt} className="text-muted-foreground">
+          {formatAdminDate(activeAt)}
         </time>
       )
     },
@@ -41,11 +45,15 @@ const signInColumns: AdminTableColumn<AdminTeamUser>[] = [
   {
     key: "when",
     header: "When",
-    cell: (member) => (
-      <span className="font-medium text-rellia-teal/90 dark:text-rellia-mint">
-        {formatAdminRelativeAgo(member.lastSignInAt!)}
-      </span>
-    ),
+    cell: (member) => {
+      const activeAt = memberActivityAt(member)
+      if (!activeAt) return <span className="text-muted-foreground">—</span>
+      return (
+        <span className="font-medium text-rellia-teal/90 dark:text-rellia-mint">
+          {formatAdminActivityAgo(activeAt)}
+        </span>
+      )
+    },
   },
 ]
 
@@ -53,17 +61,17 @@ const AdminRecentSignInsCard = ({
   members,
   loading,
   className,
-  emptyMessage = "No sign-in activity yet.",
-  fillerMessage = "No more recent sign-ins in this list.",
+  emptyMessage = "No team activity yet.",
+  fillerMessage = "No more recent activity in this list.",
 }: AdminRecentSignInsCardProps) => {
-  const showFiller = members.length < RECENT_SIGN_IN_MAX
+  const showFiller = members.length < RECENT_ACTIVITY_MAX
 
   return (
     <Card className={cn("flex h-full min-w-0 flex-col overflow-hidden rounded-2xl", className)}>
       <CardHeader className={adminTeamCardHeaderClass}>
         <CardTitle className={adminTeamCardTitleClass}>
           <LogIn className={adminTeamCardTitleIconClass} aria-hidden />
-          Recent sign-ins
+          Recent activity
         </CardTitle>
       </CardHeader>
       <CardContent className="flex flex-1 flex-col px-0 pb-0 pt-0">
@@ -80,7 +88,7 @@ const AdminRecentSignInsCard = ({
                 <AdminRecordList
                   rows={members}
                   getRowKey={(member) => member.id}
-                  columns={signInColumns}
+                  columns={activityColumns}
                   tableClassName="w-full"
                   mobileFields={[
                     {
@@ -88,20 +96,28 @@ const AdminRecentSignInsCard = ({
                       value: (member) => <span>{member.fullName?.trim() || member.email}</span>,
                     },
                     {
-                      label: "Signed in",
-                      value: (member) => (
-                        <time dateTime={member.lastSignInAt!} className="text-foreground">
-                          {formatAdminDate(member.lastSignInAt!)}
-                        </time>
-                      ),
+                      label: "Last active",
+                      value: (member) => {
+                        const activeAt = memberActivityAt(member)
+                        if (!activeAt) return <span>—</span>
+                        return (
+                          <time dateTime={activeAt} className="text-foreground">
+                            {formatAdminDate(activeAt)}
+                          </time>
+                        )
+                      },
                     },
                     {
                       label: "When",
-                      value: (member) => (
-                        <span className="font-medium text-rellia-teal/90 dark:text-rellia-mint">
-                          {formatAdminRelativeAgo(member.lastSignInAt!)}
-                        </span>
-                      ),
+                      value: (member) => {
+                        const activeAt = memberActivityAt(member)
+                        if (!activeAt) return <span>—</span>
+                        return (
+                          <span className="font-medium text-rellia-teal/90 dark:text-rellia-mint">
+                            {formatAdminActivityAgo(activeAt)}
+                          </span>
+                        )
+                      },
                     },
                   ]}
                 />

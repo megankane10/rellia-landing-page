@@ -63,32 +63,35 @@ export default function FAQ() {
                   </h2>
                   <div className="rounded-3xl border border-black/10 bg-white px-7 py-0 shadow-sm">
                     <Accordion type="single" collapsible>
-                      {faq.items.map((item, index) => (
-                        // Tighter first/last padding so the container feels balanced
-                        <AccordionItem
-                          key={item.id}
-                          value={item.id}
-                          className={index === faq.items.length - 1 ? "-mx-7 px-7 border-b-0" : "-mx-7 px-7 border-b border-black/10"}
-                        >
-                          <AccordionTrigger
-                            className={[
-                              "text-left text-base md:text-lg font-medium text-black",
-                              "py-4 md:py-5",
-                              "min-h-[64px] md:min-h-[72px]",
-                              "[&>span:first-child]:line-clamp-2 [&>span:first-child]:leading-snug",
-                            ].join(" ")}
+                      {faq.items.map((item, index) => {
+                        const itemId = item.id?.trim() || item._key || String(index);
+                        return (
+                          // Tighter first/last padding so the container feels balanced
+                          <AccordionItem
+                            key={itemId}
+                            value={itemId}
+                            className={index === faq.items.length - 1 ? "-mx-7 px-7 border-b-0" : "-mx-7 px-7 border-b border-black/10"}
                           >
-                            {cmsDisplayText(item.question)}
-                          </AccordionTrigger>
-                          <AccordionContent
-                            className={[
-                              "pb-5 text-black/70 font-urbanist text-sm md:text-base leading-relaxed",
-                            ].join(" ")}
-                          >
-                            {cmsDisplayText(item.answer)}
-                          </AccordionContent>
-                        </AccordionItem>
-                      ))}
+                            <AccordionTrigger
+                              className={[
+                                "text-left text-base md:text-lg font-medium text-black",
+                                "py-4 md:py-5",
+                                "min-h-[64px] md:min-h-[72px]",
+                                "[&>span:first-child]:line-clamp-2 [&>span:first-child]:leading-snug",
+                              ].join(" ")}
+                            >
+                              {cmsDisplayText(item.question)}
+                            </AccordionTrigger>
+                            <AccordionContent
+                              className={[
+                                "pb-5 text-black/70 font-urbanist text-sm md:text-base leading-relaxed",
+                              ].join(" ")}
+                            >
+                              {cmsDisplayText(item.answer)}
+                            </AccordionContent>
+                          </AccordionItem>
+                        );
+                      })}
                     </Accordion>
                   </div>
                 </ScrollReveal>

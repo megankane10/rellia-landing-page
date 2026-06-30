@@ -7,8 +7,8 @@ import ScrollReveal from "@/components/ScrollReveal"
 import RelliaAction from "@/components/RelliaAction"
 import RelliaCta, { optionalCtaAction } from "@/components/RelliaCta"
 import { PortableRichText } from "@/components/PortableRichText"
-import { ShareCopyLinkButton } from "@/components/share/ShareCopyLinkButton"
-import { shareIconSize } from "@/components/share/sharePageIcons"
+import { SharePageButton } from "@/components/share/SharePageButton"
+import { shareHeaderActionHeightClass } from "@/components/share/sharePageIcons"
 import PageSocialHelmet from "@/components/seo/PageSocialHelmet"
 import { CmsCareersRoleBodySkeleton } from "@/components/cms/CmsPageSkeletons"
 import { useCareersPage } from "@/hooks/useCmsDocuments"
@@ -35,7 +35,10 @@ import {
 } from "@shared/careersOpenRolesVisibility"
 import { DEFAULT_CAREERS_PAGE } from "@shared/cms/careersPageDefaults"
 import RelatedOpenRoles from "@/components/related/RelatedOpenRoles"
+import { MARKETING_PAGE_SHELL_CLASS } from "@/components/related/RelatedContentSection"
 import { cn } from "@/lib/utils"
+
+const roleArticleColumnClass = "mx-auto w-full max-w-[900px]"
 
 const roleEmploymentBadgeClass =
   "inline-flex shrink-0 items-center rounded-full border border-rellia-teal/25 bg-rellia-teal/10 px-3 py-1 font-urbanist text-sm font-semibold text-rellia-teal"
@@ -46,14 +49,9 @@ const roleLocationBadgeClass =
 const roleHighlightsBoxClass =
   "rounded-2xl border border-black/[0.06] bg-rellia-cream/30 px-3 py-4 md:px-5 md:py-5"
 
-const roleHeaderActionHeightClass = "h-[3.75rem]"
+const roleHeaderActionHeightClass = shareHeaderActionHeightClass
 
-const roleShareCopyButtonClassName = cn(
-  "border-black/10 bg-white text-black hover:border-rellia-teal hover:bg-rellia-teal hover:text-white",
-  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-teal focus-visible:ring-offset-2",
-)
-
-const roleShareCopyButtonSizeClassName = cn(roleHeaderActionHeightClass, "w-[3.75rem] shrink-0")
+const roleShareCopyButtonSizeClassName = cn(roleHeaderActionHeightClass, "w-11 shrink-0")
 
 export default function CareersRoleDetail() {
   const { roleId: roleIdParam } = useParams<{ roleId: string }>()
@@ -97,27 +95,24 @@ export default function CareersRoleDetail() {
     }
   }, [role, roleShareSeo])
 
-  const handleCopyRoleLink = () => {
-    if (!role) return
-    navigator.clipboard.writeText(buildCareersRoleShareUrl(role.id))
-  }
-
   if (isSanityConfigured() && isCmsQueryLoading(careersPageQuery)) {
     return (
       <div className="min-h-screen overflow-x-hidden bg-white font-host-grotesk">
         <Navbar />
         <main id="main-content" className="pt-24 pb-16 md:pt-32 md:pb-24">
-          <section className="px-6 md:px-10">
+          <section className={cn("relative overflow-hidden bg-rellia-cream pb-10 md:pb-14", MARKETING_PAGE_SHELL_CLASS)}>
             <ScrollReveal>
-              <Link
-                to="/careers#open-roles"
-                className="inline-flex items-center gap-2 font-host-grotesk text-sm font-semibold text-rellia-teal hover:underline hover:underline-offset-4"
-              >
-                <ChevronLeft className="h-4 w-4" aria-hidden />
-                Back to open roles
-              </Link>
+              <div className={roleArticleColumnClass}>
+                <Link
+                  to="/careers#open-roles"
+                  className="inline-flex items-center gap-2 font-host-grotesk text-sm font-semibold text-rellia-teal hover:underline hover:underline-offset-4"
+                >
+                  <ChevronLeft className="h-4 w-4" aria-hidden />
+                  Back to open roles
+                </Link>
+                <CmsCareersRoleBodySkeleton />
+              </div>
             </ScrollReveal>
-            <CmsCareersRoleBodySkeleton />
           </section>
         </main>
         <Footer />
@@ -156,8 +151,8 @@ export default function CareersRoleDetail() {
             <div className="absolute inset-0 opacity-[0.18] mix-blend-multiply [background-image:radial-gradient(circle_at_20%_10%,rgba(13,53,64,0.10),transparent_55%),radial-gradient(circle_at_80%_35%,rgba(13,53,64,0.08),transparent_52%),radial-gradient(circle_at_40%_95%,rgba(13,53,64,0.09),transparent_55%)]" />
           </div>
 
-          <div className="relative z-10 mx-auto max-w-[1300px] px-6 md:px-10">
-            <div className="w-full max-w-[900px]">
+          <div className={cn("relative z-10", MARKETING_PAGE_SHELL_CLASS)}>
+            <div className={roleArticleColumnClass}>
               <ScrollReveal>
                 <Link
                   to="/careers#open-roles"
@@ -188,7 +183,8 @@ export default function CareersRoleDetail() {
                   </span>
                 </div>
 
-                <div className="mt-7 flex w-full min-w-0 flex-nowrap items-stretch gap-3 border-t border-black/10 pt-5">
+                <div className="mt-7 w-full border-t border-black/10 pt-5">
+                  <div className="flex w-full min-w-0 flex-nowrap items-stretch gap-3">
                   {hasOpenRoleApplyButton(role) ? (
                     <RelliaAction
                       asChild
@@ -196,7 +192,7 @@ export default function CareersRoleDetail() {
                       size="compact"
                       className={cn(
                         roleHeaderActionHeightClass,
-                        "min-w-0 flex-1 cursor-pointer justify-center whitespace-normal px-4 py-0 text-sm sm:flex-none sm:min-w-[11.25rem] sm:px-7",
+                        "min-w-0 flex-1 cursor-pointer justify-center whitespace-normal px-4 py-0 text-sm sm:flex-none sm:min-w-[10.5rem] sm:px-6",
                       )}
                     >
                       <a
@@ -217,15 +213,13 @@ export default function CareersRoleDetail() {
                     </RelliaAction>
                   ) : null}
 
-                  <ShareCopyLinkButton
-                    onCopy={handleCopyRoleLink}
+                  <SharePageButton
+                    url={buildCareersRoleShareUrl(role.id)}
+                    title={roleShareMeta?.title}
+                    variant="light"
                     sizeClassName={roleShareCopyButtonSizeClassName}
-                    wrapperClassName="shrink-0"
-                    className={roleShareCopyButtonClassName}
-                    iconClassName={shareIconSize}
-                    idleLabel="Copy role link"
-                    copiedLabel="Link copied"
                   />
+                  </div>
                 </div>
               </ScrollReveal>
             </div>
@@ -233,9 +227,9 @@ export default function CareersRoleDetail() {
         </section>
 
         {/* Body uses inner gutter like EventDetail */}
-        <section className="bg-white px-6 py-10 md:px-10 md:py-14">
-          <div className="mx-auto w-full max-w-[1300px]">
-            <div className="mx-auto w-full max-w-[900px]">
+        <section className="bg-white py-10 md:py-14">
+          <div className={MARKETING_PAGE_SHELL_CLASS}>
+            <div className={roleArticleColumnClass}>
               <ScrollReveal delay={0.1}>
                 <PortableRichText
                   value={role.description}

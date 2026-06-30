@@ -183,7 +183,7 @@ export const adminSegmentedTabTriggerClass = cn(
   "data-[state=active]:border data-[state=active]:border-transparent data-[state=active]:bg-rellia-teal data-[state=active]:text-white",
   "data-[state=active]:shadow-[0_4px_12px_rgba(13,53,64,0.18)]",
   "data-[state=inactive]:border-transparent data-[state=inactive]:bg-transparent data-[state=inactive]:text-muted-foreground data-[state=inactive]:hover:text-foreground",
-  "dark:data-[state=active]:border-transparent dark:data-[state=active]:bg-rellia-teal dark:data-[state=active]:text-white",
+  "dark:data-[state=active]:border-transparent dark:data-[state=active]:bg-rellia-mint/20 dark:data-[state=active]:text-rellia-mint",
   "dark:data-[state=active]:shadow-[0_4px_14px_rgba(0,0,0,0.42)]",
   "dark:data-[state=inactive]:bg-transparent dark:data-[state=inactive]:text-slate-400 dark:data-[state=inactive]:hover:text-slate-100",
 )

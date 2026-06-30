@@ -44,8 +44,8 @@ const NotFound = () => {
           title={cmsDisplayText(copy.title)}
           body={cmsDisplayText(copy.message)}
           bodyClassName="text-xl md:text-2xl lg:text-3xl"
-          primary={ctaActionFromHref(copy.ctaLabel || "Back to home", "/")}
-          className="mt-0 flex min-h-[calc(100svh-72px)] flex-1 flex-col items-center justify-center !pt-0 !pb-0 md:min-h-[calc(100svh-86px)] md:!pt-0 md:!pb-0 lg:!pt-0 lg:!pb-0"
+          primary={ctaActionFromHref(copy.ctaLabel || "Back to home", copy.ctaPath || "/")}
+          className="mt-0 flex min-h-[calc(100svh-72px)] flex-1 flex-col items-center justify-center pt-[7.5rem] pb-[5.625rem] md:min-h-[calc(100svh-86px)] md:pt-[10.5rem] md:pb-[7.875rem] lg:pt-[13.5rem] lg:pb-[10.125rem]"
           roundedClassName="rounded-none"
         />
       </main>

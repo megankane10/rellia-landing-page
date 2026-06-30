@@ -208,6 +208,35 @@ export const getProgramsEventCardImageDateBadge = (raw: string): { month: string
   return { month: abbr, day: (match[2] ?? "").padStart(2, "0") }
 }
 
+/** Month abbreviation + day for compact event card overlay (display string or `startsAt`). */
+export const getProgramsEventCardDateBadgeFromEvent = (
+  event: ProgramsEventCard,
+): { month: string; day: string } | null => {
+  const fromDisplay = getProgramsEventCardImageDateBadge(getProgramsEventDisplayDateTime(event))
+  if (fromDisplay) return fromDisplay
+
+  const startRaw = event.startsAt?.trim()
+  if (!startRaw) return null
+
+  const startMs = Date.parse(startRaw)
+  if (!Number.isFinite(startMs)) return null
+
+  const d = new Date(startMs)
+  const monthLong = d.toLocaleDateString("en-US", {
+    month: "long",
+    timeZone: "America/New_York",
+  })
+  const abbr = IMAGE_BADGE_MONTH_TO_ABBR[monthLong.toLowerCase()]
+  if (!abbr) return null
+
+  const day = d.toLocaleDateString("en-US", {
+    day: "numeric",
+    timeZone: "America/New_York",
+  })
+
+  return { month: abbr, day: day.padStart(2, "0") }
+}
+
 const formatEasternTimeFromIso = (iso: string): string => {
   const t = Date.parse(iso)
   if (!Number.isFinite(t)) return ""

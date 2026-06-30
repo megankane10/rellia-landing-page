@@ -493,7 +493,7 @@ const AdminTeamQuickNoteCard = ({ className, members = [] }: AdminTeamQuickNoteC
                         <Button
                           type="button"
                           size="sm"
-                          className="rounded-full bg-rellia-teal text-white hover:bg-rellia-teal/90"
+                          className="rounded-full"
                           onClick={handleAddImageUrl}
                           disabled={!imageUrlDraft.trim()}
                         >
@@ -541,7 +541,7 @@ const AdminTeamQuickNoteCard = ({ className, members = [] }: AdminTeamQuickNoteC
                 <Button
                   type="button"
                   size="sm"
-                  className="rounded-full bg-rellia-teal text-white hover:bg-rellia-teal/90"
+                  className="rounded-full"
                   onClick={handlePublish}
                   disabled={publishMutation.isPending || uploadingImage}
                 >

@@ -146,6 +146,7 @@ export type CmsPageVisibility = {
 export type HomePathsCard = {
   roleId: "founder" | "advisor" | "investor" | "partner"
   tagLabel?: string
+  showBadge?: boolean
   title?: string
   subtitle?: string
   imageSrc?: string
@@ -396,6 +397,7 @@ export type CmsSectionMetricsItem = {
   label: string
   value: number | string
   suffix?: string
+  iconKey?: string
 }
 
 export type CmsSectionMetrics = {
@@ -579,6 +581,10 @@ export type NetworkFoundersPageContent = CmsSingletonPageContent &
     deeperHelpFeatures?: NetworkFeatureItem[]
     deeperHelpCtaLabel?: string
     deeperHelpCtaHref?: string
+    membershipPathTitle?: string
+    membershipPathSubtitle?: string
+    membershipPathSteps?: Array<{ title: string; description: string }>
+    deeperHelpBackgroundImageSrc?: string
     ctaTitle?: string
     ctaBody?: string
     ctaPrimaryLabel?: string
@@ -746,6 +752,7 @@ export type HomeMetric = {
   label: string
   value: number | string
   suffix?: string
+  iconKey?: string
 }
 
 export type HomeWhyFeature = {
@@ -883,6 +890,7 @@ export type AboutPageContent = {
 }
 
 export type FaqItem = {
+  _key?: string
   id: string
   question: string
   answer: string
@@ -1182,6 +1190,7 @@ export type NotFoundContent = {
   title: string
   message: string
   ctaLabel: string
+  ctaPath?: string
   iconKey?: string
   seo?: SeoContent
 }
