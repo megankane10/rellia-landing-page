@@ -38,3 +38,7 @@ export const WEBSITE_STATUS_VALUES = {
   publishedOnSite: "Published on site",
   needsUpdate: "Needs update",
 } as const
+
+/** Directory Members hub — founders & advisors intake in Airtable. */
+export const AIRTABLE_DIRECTORY_HUB_URL =
+  "https://airtable.com/appH95p8u6zW5L0RJ/tblmnSpZ9b4z1BnSl/viwykvp343Ex7etm8?blocks=hide"

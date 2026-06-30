@@ -33,6 +33,7 @@ import {
   OPERATIONS_DOC_EDIT_URL,
   OPERATIONS_DOC_EMBED_URL,
 } from "@shared/cms/operationsDocUrl"
+import { AIRTABLE_DIRECTORY_HUB_URL } from "@shared/admin/airtableConfig"
 
 const VERCEL_ENV_URL = "https://vercel.com/relliahealth/settings/environment-variables"
 
@@ -80,10 +81,10 @@ const WEBSITE_TOOLS = [
     icon: Search,
   },
   {
-    href: "https://relliahealth.com",
-    label: "Public website",
-    description: "Open the live marketing site.",
-    icon: Globe,
+    href: AIRTABLE_DIRECTORY_HUB_URL,
+    label: "Airtable directory",
+    description: "Network profiles — alumni companies and advisors source data.",
+    icon: TableProperties,
   },
 ] as const
 

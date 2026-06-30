@@ -20,6 +20,29 @@ export const AIRTABLE_TABLE_IDS = {
 
 export const WEBSITE_STATUS_FIELD = "Website status"
 
+/** Airtable multipleSelect checklist — which profile blocks may appear on the public site. */
+export const AIRTABLE_PROFILE_SECTIONS_FIELD = "Profile sections visible"
+
+export const AIRTABLE_PROFILE_SECTIONS_FOUNDER = [
+  "Company logo",
+  "Company bio",
+  "CTA box",
+  "Founder headshot",
+  "Founder bio",
+  "Social links",
+  "Directory filters",
+] as const
+
+export const AIRTABLE_PROFILE_SECTIONS_ADVISOR = [
+  "Headshot",
+  "Snapshot",
+  "About the advisor",
+  "Industry tags",
+  "Social links",
+  "Calendly link",
+  "Directory filters",
+] as const
+
 /** Read-only registry — documents how Airtable columns map to Sanity (no Airtable writes). */
 export const AIRTABLE_FOUNDER_FIELD_REGISTRY: AirtableFieldDefinition[] = [
   { airtableField: "Company Name", airtableType: "singleLineText", sanityTarget: "alumniCompany.name", syncStatus: "mapped" },
@@ -56,6 +79,13 @@ export const AIRTABLE_FOUNDER_FIELD_REGISTRY: AirtableFieldDefinition[] = [
     syncStatus: "mapped",
     notes: "Written by sync worker after first import.",
   },
+  {
+    airtableField: AIRTABLE_PROFILE_SECTIONS_FIELD,
+    airtableType: "multipleSelects",
+    sanityTarget: "section visibility gates on public profile",
+    syncStatus: "mapped",
+    notes: "Optional checklist — empty means show all sections that have data.",
+  },
 ]
 
 export const AIRTABLE_ADVISOR_FIELD_REGISTRY: AirtableFieldDefinition[] = [
@@ -85,6 +115,13 @@ export const AIRTABLE_ADVISOR_FIELD_REGISTRY: AirtableFieldDefinition[] = [
     airtableType: "singleLineText",
     sanityTarget: "stable CMS link",
     syncStatus: "mapped",
+  },
+  {
+    airtableField: AIRTABLE_PROFILE_SECTIONS_FIELD,
+    airtableType: "multipleSelects",
+    sanityTarget: "section visibility gates on public profile",
+    syncStatus: "mapped",
+    notes: "Optional checklist — empty means show all sections that have data.",
   },
 ]
 
