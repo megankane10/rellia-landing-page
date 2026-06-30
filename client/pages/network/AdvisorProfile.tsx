@@ -2,9 +2,9 @@ import { useEffect, useState } from "react";
 import { useParams, Link, useLocation } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { ArrowLeft, MapPin, Calendar, Copy, Check } from "lucide-react";
+import { ArrowLeft, MapPin, Calendar } from "lucide-react";
 import { ProfileSocialLinks } from "@/components/network/ProfileSocialLinks";
-import { ShareIconCopy } from "@/components/share/sharePageIcons";
+import { SharePageButton } from "@/components/share/SharePageButton"
 import { ADVISOR_DIRECTORY_SEED } from "@/data/advisorDirectory";
 import { allowCmsSeedFallbacks } from "@/lib/deploymentEnv";
 import NotFound from "../NotFound";
@@ -52,7 +52,6 @@ export default function AdvisorProfile() {
   const active = advisors.find((a) => a.id === id);
 
   const canonicalUrl = buildPageUrl(location.pathname);
-  const [copied, setCopied] = useState(false);
   const [activeImage, setActiveImage] = useState<{ src: string; alt: string } | null>(null);
 
   const snapshotText =
@@ -87,12 +86,6 @@ export default function AdvisorProfile() {
   }
 
   if (!active) return <NotFound />;
-
-  const handleCopyLink = () => {
-    navigator.clipboard.writeText(canonicalUrl);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
 
   const bioPortable: SanityPortableText | null = Array.isArray(active.bio)
     ? active.bio
@@ -199,28 +192,13 @@ export default function AdvisorProfile() {
                     links={active.socialLinks}
                     email={(active as { email?: string }).email}
                   />
-                  <button
-                    onClick={handleCopyLink}
-                    className={cn(
-                      "relative inline-flex h-10 w-10 items-center justify-center rounded-full border transition-all duration-300",
-                      copied
-                        ? "border-rellia-teal bg-rellia-mint/20 text-rellia-teal"
-                        : "border-black/10 bg-white text-black hover:bg-black/5"
-                    )}
-                    title={copied ? "Copied!" : "Copy profile link"}
-                    aria-label={copied ? "Copied!" : "Copy profile link"}
-                  >
-                    {copied ? (
-                      <Check className="h-4 w-4 animate-scale-in" />
-                    ) : (
-                      <ShareIconCopy className="h-4 w-4" />
-                    )}
-                    {copied && (
-                      <span className="absolute -top-10 left-1/2 -translate-x-1/2 rounded bg-black px-2 py-1 text-xs font-bold text-white shadow-md whitespace-nowrap transition-all duration-200">
-                        Copied!
-                      </span>
-                    )}
-                  </button>
+                  <SharePageButton
+                    url={canonicalUrl}
+                    title={buildAdvisorProfileSeoTitle(active.name)}
+                    variant="light"
+                    idleLabel="Copy profile link"
+                    copiedLabel="Link copied"
+                  />
                 </div>
               </div>
             </div>

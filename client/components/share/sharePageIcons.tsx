@@ -1,7 +1,27 @@
 import { LinkedInFilled, MailFilled } from "@/components/icons/SocialIcons"
 import { cn } from "@/lib/utils"
 
-const shareIconSize = "h-6 w-6 shrink-0"
+export const shareIconSize = "h-[1.125rem] w-[1.125rem] shrink-0 sm:h-5 sm:w-5"
+
+/** Compact share / social icon control — default for marketing detail pages. */
+export const shareCompactControlSizeClass = "h-9 w-9 shrink-0 sm:h-10 sm:w-10"
+
+const shareOutlineButtonBaseClass =
+  "inline-flex items-center justify-center rounded-full border transition-all duration-300 focus-visible:outline-none"
+
+/** Outline share control on light backgrounds — black icon, inverts on hover. */
+export const shareOutlineButtonClassName = cn(
+  shareOutlineButtonBaseClass,
+  shareCompactControlSizeClass,
+  "border-black/10 bg-white text-black hover:border-rellia-teal hover:bg-rellia-teal hover:text-white focus-visible:ring-2 focus-visible:ring-rellia-teal focus-visible:ring-offset-2",
+)
+
+/** Outline share control on teal/dark hero backgrounds — inverts on hover. */
+export const shareOutlineButtonClassNameOnDark = cn(
+  shareOutlineButtonBaseClass,
+  shareCompactControlSizeClass,
+  "border-white/25 bg-white/10 text-white hover:border-white hover:bg-white hover:text-rellia-teal focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-rellia-teal",
+)
 
 export const shareToolbarButtonClassName =
   "inline-flex h-12 w-12 items-center justify-center rounded-full bg-white text-rellia-teal transition-transform transition-colors hover:-translate-y-0.5 hover:bg-rellia-mint focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-rellia-cream"

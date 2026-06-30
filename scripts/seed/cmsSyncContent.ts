@@ -1150,6 +1150,98 @@ export const createWebsiteLaunchStoryBody = (
   },
 ]
 
+export const MARKETING_COMPARISON_STORY_SLUG = "digital-health-incubator-vs-accelerator-rellia"
+
+/** Rich portable blocks for the incubator vs accelerator marketing story (not the launch story). */
+export const MARKETING_COMPARISON_STORY_RICH_BLOCKS = {
+  introQuote: {
+    _type: "portableQuoteBox",
+    _key: "mkt-intro-quote",
+    quote:
+      "Healthcare founders do not fail because they lack ambition—they fail because they pick support models built for B2B SaaS, not SaMD, DTx, or regulated medtech.",
+    attribution: "Rellia Health",
+  },
+  afterTableCta: {
+    _type: "bodyCtaBox",
+    _key: "mkt-dx-cta",
+    title: "Pressure-test your regulatory path",
+    body: "Before you commit to a generic accelerator cycle, benchmark readiness across regulatory, clinical, and commercial domains.",
+    buttonLabel: "Start the diagnostic",
+    buttonHref: "/startup-diagnostic",
+  },
+  whenRelliaCarousel: {
+    _type: "portableImageCarousel",
+    _key: "mkt-when-carousel",
+    title: "Built for regulated health tech",
+    slides: [
+      {
+        _type: "portableImageCarouselSlide",
+        _key: "mkt-slide-0",
+        imageSrc: "/images/QMS-programs.webp",
+        alt: "Structured QMS program materials for health tech founders",
+        caption: "Quality-system pathways—not generic pitch-deck sprints.",
+      },
+      {
+        _type: "portableImageCarouselSlide",
+        _key: "mkt-slide-1",
+        imageSrc: "/images/advisors.jpg",
+        alt: "Healthcare advisors mentoring founders",
+        caption: "Operator mentors who have shipped in FDA and ISO environments.",
+      },
+    ],
+  },
+  programsCta: {
+    _type: "bodyCtaBox",
+    _key: "mkt-programs-cta",
+    title: "Explore healthcare-native programs",
+    body: "See structured tracks for QMS foundations, regulatory strategy, clinical validation, and investor readiness.",
+    buttonLabel: "View programs",
+    buttonHref: "/programs",
+    secondaryButtonLabel: "Meet advisors",
+    secondaryButtonHref: "/network/advisors",
+  },
+  closingCta: {
+    _type: "bodyCtaBox",
+    _key: "mkt-closing-cta",
+    title: "Compare options with Rellia",
+    body: "Apply for membership and tell us where you are on your regulatory and commercial roadmap—we will route you to the right path inside the network.",
+    buttonLabel: "Apply to join",
+    buttonHref: "/apply",
+    secondaryButtonLabel: "Explore consulting",
+    secondaryButtonHref: "/consulting",
+  },
+} as const
+
+export const enrichMarketingComparisonStoryBody = (
+  body: Array<{ _key?: string; _type?: string; [key: string]: unknown }>,
+) => {
+  const withoutClosingParagraph = body.filter((block) => block._key !== "cta-1")
+
+  const insertAfter = (
+    blocks: Array<{ _key?: string; _type?: string; [key: string]: unknown }>,
+    key: string,
+    toInsert: unknown[],
+  ) => {
+    const index = blocks.findIndex((block) => block._key === key)
+    if (index === -1) return blocks
+    return [...blocks.slice(0, index + 1), ...toInsert, ...blocks.slice(index + 1)]
+  }
+
+  let next = insertAfter(withoutClosingParagraph, "intro-1", [
+    MARKETING_COMPARISON_STORY_RICH_BLOCKS.introQuote,
+  ])
+  next = insertAfter(next, "compare-table", [MARKETING_COMPARISON_STORY_RICH_BLOCKS.afterTableCta])
+  next = insertAfter(next, "when-2", [
+    MARKETING_COMPARISON_STORY_RICH_BLOCKS.whenRelliaCarousel,
+    MARKETING_COMPARISON_STORY_RICH_BLOCKS.programsCta,
+  ])
+  next = [...next, MARKETING_COMPARISON_STORY_RICH_BLOCKS.closingCta]
+
+  return next.map((block) =>
+    block._key === "compare-table" ? { ...block, stickyFirstColumn: true } : block,
+  )
+}
+
 export const STUDIO_GUIDE_SECTIONS = [
   {
     _type: "guideSection",
@@ -1184,7 +1276,7 @@ export const STUDIO_GUIDE_SECTIONS = [
     _key: "custom_builder_fields",
     heading: "Custom page builder — block field names (custom pages only)",
     body:
-      "Page sections use these block types and key fields:\n\n• Marketing hero block — eyebrowLabel, title, accentPhrase, subtitle, imageUrl, primaryCta, secondaryCta\n• Engage band block — title/subtitle (portable text), items[] with icon, title, body, link\n• Text and icon grid — title/subtitle (portable text), items[] with icon (Lucide name), title, body; optional badge, headingTone, background\n• Eligibility bento block — title, description, items[] with text + imageUrl\n• Journey timeline block — headingTitle, subheading, steps[], optional roleLinks[], cta\n• Image grid block — title, subtitle, cards[] with title, body, imageUrl, badge, iconKey, cta, tags\n• CTA band block — title, body, primaryCta, secondaryCta, aboveSectionTone\n• Testimonial carousel block — heading, testimonials[] (quote, name, role, company, imageSrc)\n• FAQ block — title, subtitle, items[] question/answer\n• Form embed block — filloutFormUrl, layout (split/standalone), panel copy + benefits\n• Rich text (stories, events, alumni profiles) — headings, bullets, Quote box (insert block), Quote paragraph style, bodyCtaBox, portableImageCarousel, portableVideo",
+      "Page sections use these block types and key fields:\n\n• Marketing hero block — eyebrowLabel, title, accentPhrase, subtitle, imageUrl, primaryCta, secondaryCta\n• Engage band block — title/subtitle (portable text), items[] with icon, title, body, link\n• Text and icon grid — title/subtitle (portable text), items[] with icon (Lucide name), title, body; optional badge, headingTone, background\n• Eligibility bento block — title, description, items[] with text + imageUrl\n• Journey timeline block — headingTitle, subheading, steps[], optional roleLinks[], cta\n• Image grid block — title, subtitle, cards[] with title, body, imageUrl, badge, iconKey, cta, tags\n• CTA band block — title, body, primaryCta, secondaryCta, aboveSectionTone\n• Testimonial carousel block — heading, testimonials[] (quote, name, role, company, imageSrc)\n• FAQ block — title, subtitle, items[] question/answer\n• Form embed block — filloutFormUrl, layout (split/standalone), panel copy + benefits\n• Rich text (stories, events, alumni profiles) — headings, bullets, Quote box (insert block), Quote paragraph style, bodyCtaBox, portableImageCarousel, portableTable (rows[], stickyFirstColumn, highlightedColumn), portableVideo",
   },
   {
     _type: "guideSection",

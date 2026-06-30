@@ -13,7 +13,15 @@ export type StoryBodyBlock =
       title?: string
       slides: { src: string; alt: string; caption?: string }[]
     }
-  | { type: "cta"; title: string; body: string; buttonLabel: string; buttonHref: string }
+  | {
+      type: "cta"
+      title: string
+      body: string
+      buttonLabel: string
+      buttonHref: string
+      secondaryButtonLabel?: string
+      secondaryButtonHref?: string
+    }
 
 export type Story = {
   slug: string
@@ -35,13 +43,13 @@ export const STORIES: Story[] = [
     slug: "a-clearer-path-for-digital-health-founders",
     title: "A clearer path for digital health founders.",
     excerpt:
-      "Welcome to Rellia. We have redesigned our digital home to help you benchmark readiness, access specialized programs, and explore our healthcare network—all in one place.",
+      "Explore clearer paths for founders—benchmark readiness, join programs, meet advisors, and stay close to what is happening across the Rellia community.",
     tag: "Program Update",
     featured: true,
     coverImageSrc: "/images/website-launch-cartoon.png",
-    coverImageAlt: "Health tech team collaborating in a bright workspace",
+    coverImageAlt: "Cartoon illustration of a laptop and website interfaces",
     publishedAt: "2026-06-01",
-    seoTitle: "Welcome to the new Rellia website",
+    seoTitle: "Welcome to the new Rellia website — Program Update",
     seoDescription:
       "Discover Rellia Health: startup diagnostic, structured programs, live events, and network paths built for health tech founders.",
     body: [

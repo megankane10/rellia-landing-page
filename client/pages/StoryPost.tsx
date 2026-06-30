@@ -16,22 +16,14 @@ import {
 } from "@/config/seo"
 import StoryArticleJsonLd from "@/components/seo/StoryArticleJsonLd"
 import PageSocialHelmet from "@/components/seo/PageSocialHelmet"
-import { ChevronLeft, Check } from "lucide-react"
+import { ChevronLeft } from "lucide-react"
 import { RichTextImageCarousel } from "@/components/RichTextImageCarousel"
 import { PortableRichText } from "@/components/PortableRichText"
 import { useStoryBySlug } from "@/hooks/useCmsDocuments"
 import { isCmsQueryLoading, shouldShowCmsEmptyState } from "@/lib/cmsQueryState"
 import CmsPageLoadingShell from "@/components/cms/CmsPageLoadingShell"
 import { isSanityConfigured } from "@/lib/sanity"
-import {
-  ShareIconCopy,
-  ShareIconFacebook,
-  ShareIconLinkedIn,
-  ShareIconMail,
-  ShareIconX,
-} from "@/components/share/sharePageIcons"
-import { buildMailtoHref } from "@/lib/mailto"
-import { DEFAULT_GLOBAL_SETTINGS } from "@shared/cms/defaults"
+import { StoryArticleShare } from "@/components/StoryArticleShare"
 import { resolveStoryCollectionSeo } from "@shared/cms/collectionSeo"
 import { resolveStorySlugRedirect } from "@shared/cms/storySlugRedirects"
 import { StoryPostHero } from "@/components/StoryPostHero"
@@ -45,7 +37,6 @@ export default function StoryPost() {
   const storyQuery = useStoryBySlug(resolvedSlug)
   const { data: cmsStory } = storyQuery
   const story = slug && allowCmsSeedFallbacks() ? getStoryBySlug(slug) : undefined
-  const [copyState, setCopyState] = useState<"idle" | "copied">("idle")
   const [activeImage, setActiveImage] = useState<{ src: string; alt: string } | null>(null)
 
   const canonical = cmsStory?.slug
@@ -100,79 +91,13 @@ export default function StoryPost() {
   const imageUrl = resolvedOgImage.url
   const shareTitle = resolvedTitle
 
-  const handleCopyLink = async () => {
-    try {
-      await navigator.clipboard.writeText(canonical)
-      setCopyState("copied")
-      window.setTimeout(() => setCopyState("idle"), 2000)
-    } catch {
-      setCopyState("idle")
-    }
-  }
-
-  const shareToolbarButtonClassNameDark =
-    "inline-flex h-12 w-12 items-center justify-center rounded-full bg-white text-rellia-teal transition-transform transition-colors hover:-translate-y-0.5 hover:bg-rellia-mint focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-rellia-teal"
-
   const shareBlock = (
-    <div
-      className="flex flex-wrap items-center gap-3 md:flex-col md:items-center md:gap-2.5"
-      role="group"
-      aria-label="Share this story"
-    >
-      <a
-        href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(canonical)}&text=${encodeURIComponent(shareTitle)}`}
-        target="_blank"
-        rel="noopener noreferrer"
-        className={shareToolbarButtonClassNameDark}
-        aria-label="Share on X"
-      >
-        <ShareIconX />
-      </a>
-      <a
-        href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(canonical)}`}
-        target="_blank"
-        rel="noopener noreferrer"
-        className={shareToolbarButtonClassNameDark}
-        aria-label="Share on LinkedIn"
-      >
-        <ShareIconLinkedIn />
-      </a>
-      <a
-        href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(canonical)}`}
-        target="_blank"
-        rel="noopener noreferrer"
-        className={shareToolbarButtonClassNameDark}
-        aria-label="Share on Facebook"
-      >
-        <ShareIconFacebook />
-      </a>
-      <a
-        href={buildMailtoHref(DEFAULT_GLOBAL_SETTINGS.supportEmail, {
-          subject: shareTitle,
-          body: `${shareTitle}\n\n${canonical}`,
-        })}
-        className={shareToolbarButtonClassNameDark}
-        aria-label="Share by email"
-      >
-        <ShareIconMail />
-      </a>
-
-      <button
-        type="button"
-        onClick={handleCopyLink}
-        className={cn(
-          shareToolbarButtonClassNameDark,
-          copyState === "copied" && "border border-rellia-teal bg-rellia-mint text-rellia-teal shadow-md",
-        )}
-        aria-label={copyState === "copied" ? "Link copied" : "Copy story link"}
-      >
-        {copyState === "copied" ? (
-          <Check className="h-5 w-5 shrink-0 animate-scale-in" />
-        ) : (
-          <ShareIconCopy />
-        )}
-      </button>
-    </div>
+    <StoryArticleShare
+      shareUrl={canonical}
+      shareTitle={shareTitle}
+      tone="onDark"
+      className="max-w-3xl"
+    />
   )
 
   if (legacyRedirectSlug && legacyRedirectSlug !== resolvedSlug) {

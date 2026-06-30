@@ -4,6 +4,7 @@ import type { SanityPortableText } from "@shared/cms/types"
 import { cn } from "@/lib/utils"
 import { BodyCtaBox } from "@/components/BodyCtaBox"
 import { RichTextImageCarousel, type RichTextCarouselSlide } from "@/components/RichTextImageCarousel"
+import { RichTextTable } from "@/components/RichTextTable"
 import { parseBlockquoteAttribution, RichTextQuoteFigure } from "@/components/RichTextQuoteFigure"
 import ImageExpandModal from "@/components/ImageExpandModal"
 import {
@@ -128,6 +129,31 @@ const components: PortableTextComponents = {
       if (!quote) return null
       const attribution = typeof v?.attribution === "string" ? v.attribution.trim() : undefined
       return <RichTextQuoteFigure quote={quote} attribution={attribution || null} />
+    },
+    portableTable: ({ value }) => {
+      const v = value as {
+        caption?: string
+        hasHeaderRow?: boolean
+        stickyFirstColumn?: boolean
+        highlightedColumn?: number
+        highlightedRow?: number
+        rows?: Array<{ cells?: string[] }>
+      } | null
+      return (
+        <RichTextTable
+          caption={typeof v?.caption === "string" ? v.caption : undefined}
+          hasHeaderRow={v?.hasHeaderRow !== false}
+          stickyFirstColumn={v?.stickyFirstColumn !== false}
+          highlightedColumn={
+            typeof v?.highlightedColumn === "number" ? v.highlightedColumn : undefined
+          }
+          highlightedRow={
+            typeof v?.highlightedRow === "number" ? v.highlightedRow : undefined
+          }
+          rows={v?.rows}
+          className="mt-8 md:mt-10 [&:first-child]:mt-0"
+        />
+      )
     },
   },
   block: {

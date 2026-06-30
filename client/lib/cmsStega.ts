@@ -22,6 +22,9 @@ export const cmsDisplayText = (value: string | null | undefined): string => {
 export const cmsCleanText = (value: string | null | undefined): string =>
   stegaClean(value ?? "").trim()
 
+export const cmsHasDisplayText = (value: string | null | undefined): boolean =>
+  Boolean(cmsCleanText(value))
+
 /**
  * Splits a stega-encoded string into cleaned text and its encoded stega metadata.
  * Useful when stega characters interfere with layout/CSS (e.g. negative letter-spacing)

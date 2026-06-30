@@ -118,4 +118,5 @@ export const portableTextArrayMembers = [
   defineArrayMember({type: 'portableQuoteBox'}),
   defineArrayMember({type: 'bodyCtaBox'}),
   defineArrayMember({type: 'portableImageCarousel'}),
+  defineArrayMember({type: 'portableTable'}),
 ]

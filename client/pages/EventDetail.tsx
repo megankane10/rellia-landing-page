@@ -1,7 +1,8 @@
 import { useMemo, useState } from "react"
 import { Link, useLocation, useParams } from "react-router-dom"
 import { AnimatePresence, motion } from "framer-motion"
-import { Calendar, CalendarOff, ChevronLeft, ArrowLeft, History, MapPin, Ticket, Video, Check } from "lucide-react"
+import { Calendar, CalendarOff, ChevronLeft, ArrowLeft, History, MapPin, Ticket, Video } from "lucide-react"
+import { SharePageButton } from "@/components/share/SharePageButton"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
 import ScrollReveal from "@/components/ScrollReveal"
@@ -36,16 +37,6 @@ import {
   getProgramsEventDisplayDateTime,
   shortenProgramsEventDateTime,
 } from "@shared/cms/programsEventDisplay"
-import {
-  ShareIconCopy,
-  ShareIconFacebook,
-  ShareIconLinkedIn,
-  ShareIconMail,
-  ShareIconX,
-  shareToolbarButtonClassName,
-} from "@/components/share/sharePageIcons"
-import { buildMailtoHref } from "@/lib/mailto"
-import { DEFAULT_GLOBAL_SETTINGS } from "@shared/cms/defaults"
 import { EventDetailPortableText } from "@/components/EventDetailPortableText"
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet"
 import type { SanityPortableText, SeoContent } from "@shared/cms/types"
@@ -131,7 +122,6 @@ export default function EventDetail() {
     if (!fallbackMatch) return null
     return cardImageSrc ? { ...fallbackMatch, imageSrc: cardImageSrc } : fallbackMatch
   })()
-  const [copyState, setCopyState] = useState<"idle" | "copied">("idle")
   const [showForm, setShowForm] = useState(false)
 
   const eventMeta = useMemo(() => {
@@ -258,16 +248,6 @@ export default function EventDetail() {
   const ogImage = eventMeta!.ogImage
   const ogImageWidth = eventMeta!.ogImageWidth
   const ogImageHeight = eventMeta!.ogImageHeight
-
-  const handleCopyLink = async () => {
-    try {
-      await navigator.clipboard.writeText(canonical)
-      setCopyState("copied")
-      window.setTimeout(() => setCopyState("idle"), 2000)
-    } catch {
-      setCopyState("idle")
-    }
-  }
 
   const handleHeroCtaClick = () => {
     if (!showHeroEventCta || addToCalendarEnabled) return
@@ -507,82 +487,17 @@ export default function EventDetail() {
 
                 <div className="h-8 md:h-10" aria-hidden />
 
-                <div className="mt-8 flex w-full flex-col items-stretch gap-4">
+                <div className="mt-8 flex w-full items-center gap-3 border-t border-black/10 pt-5">
                   <p className="font-host-grotesk text-[12px] font-semibold uppercase tracking-[0.14em] text-black/55">
                     Share this event
                   </p>
-                  <div className="h-px w-full bg-black/10" aria-hidden />
-
-                  <div className="flex flex-wrap items-center gap-3">
-                    <a
-                      href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(canonical)}&text=${encodeURIComponent(shareTitle)}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={shareToolbarButtonClassName}
-                      aria-label="Share on X"
-                    >
-                      <ShareIconX />
-                    </a>
-                    <a
-                      href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(canonical)}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={shareToolbarButtonClassName}
-                      aria-label="Share on LinkedIn"
-                    >
-                      <ShareIconLinkedIn />
-                    </a>
-                    <a
-                      href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(canonical)}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={shareToolbarButtonClassName}
-                      aria-label="Share on Facebook"
-                    >
-                      <ShareIconFacebook />
-                    </a>
-                    <a
-                      href={buildMailtoHref(DEFAULT_GLOBAL_SETTINGS.supportEmail, {
-                        subject: shareTitle,
-                        body: `${shareTitle}\n\n${canonical}`,
-                      })}
-                      className={shareToolbarButtonClassName}
-                      aria-label="Share by email"
-                    >
-                      <ShareIconMail />
-                    </a>
-
-                    <button
-                      type="button"
-                      onClick={handleCopyLink}
-                      className={cn(
-                        shareToolbarButtonClassName,
-                        copyState === "copied" && "bg-rellia-mint text-rellia-teal border-rellia-teal shadow-md"
-                      )}
-                      aria-label={copyState === "copied" ? "Link copied" : "Copy event link"}
-                    >
-                      {copyState === "copied" ? (
-                        <Check className="h-5 w-5 shrink-0 animate-scale-in" />
-                      ) : (
-                        <ShareIconCopy />
-                      )}
-                    </button>
-
-                    <AnimatePresence mode="wait" initial={false}>
-                      {copyState === "copied" ? (
-                        <motion.span
-                          key="copied-feedback"
-                          className="font-host-grotesk text-sm font-semibold text-rellia-teal"
-                          initial={{ opacity: 0, y: 4, scale: 0.98 }}
-                          animate={{ opacity: 1, y: 0, scale: 1 }}
-                          exit={{ opacity: 0, y: -4, scale: 0.98 }}
-                          transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
-                        >
-                          Copied!
-                        </motion.span>
-                      ) : null}
-                    </AnimatePresence>
-                  </div>
+                  <SharePageButton
+                    url={canonical}
+                    title={shareTitle}
+                    variant="light"
+                    idleLabel="Share this event"
+                    copiedLabel="Link copied"
+                  />
                 </div>
               </ScrollReveal>
             </div>

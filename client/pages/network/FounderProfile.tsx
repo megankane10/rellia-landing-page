@@ -2,13 +2,12 @@ import { useEffect, useState } from "react";
 import { useParams, Link, useLocation } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { ArrowLeft, MapPin, Calendar, Copy, Check } from "lucide-react";
+import { ArrowLeft, MapPin, Calendar } from "lucide-react";
 import { ProfileSocialLinks } from "@/components/network/ProfileSocialLinks";
-import { ShareIconCopy } from "@/components/share/sharePageIcons";
+import { SharePageButton } from "@/components/share/SharePageButton"
 import { FOUNDER_DIRECTORY } from "@/data/founderDirectory";
 import { allowCmsSeedFallbacks } from "@/lib/deploymentEnv";
 import NotFound from "../NotFound";
-import { cn } from "@/lib/utils";
 import {
   buildAlumniProfileSeoTitle,
   buildPageUrl,
@@ -44,7 +43,6 @@ export default function FounderProfile() {
         : undefined;
 
   const canonicalUrl = buildPageUrl(location.pathname);
-  const [copied, setCopied] = useState(false);
   const [activeImage, setActiveImage] = useState<{ src: string; alt: string } | null>(null);
 
   useApplyCmsSeo(null, active ? {
@@ -64,12 +62,6 @@ export default function FounderProfile() {
   }
 
   if (!active) return <NotFound />;
-
-  const handleCopyLink = () => {
-    navigator.clipboard.writeText(canonicalUrl);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
 
   return (
     <div className="min-h-screen overflow-x-hidden bg-white font-host-grotesk">
@@ -164,28 +156,13 @@ export default function FounderProfile() {
                     links={(active as { socialLinks?: Array<{ platform?: string; label?: string; url?: string }> }).socialLinks}
                     email={(active as { email?: string }).email}
                   />
-                  <button
-                    onClick={handleCopyLink}
-                    className={cn(
-                      "relative inline-flex h-10 w-10 items-center justify-center rounded-full border transition-all duration-300",
-                      copied
-                        ? "border-rellia-teal bg-rellia-mint/20 text-rellia-teal"
-                        : "border-black/10 bg-white text-black hover:bg-black/5"
-                    )}
-                    title={copied ? "Copied!" : "Copy profile link"}
-                    aria-label={copied ? "Copied!" : "Copy profile link"}
-                  >
-                    {copied ? (
-                      <Check className="h-4 w-4 animate-scale-in" />
-                    ) : (
-                      <ShareIconCopy className="h-4 w-4" />
-                    )}
-                    {copied && (
-                      <span className="absolute -top-10 left-1/2 -translate-x-1/2 rounded bg-black px-2 py-1 text-xs font-bold text-white shadow-md whitespace-nowrap transition-all duration-200">
-                        Copied!
-                      </span>
-                    )}
-                  </button>
+                  <SharePageButton
+                    url={canonicalUrl}
+                    title={buildAlumniProfileSeoTitle(active.logoName)}
+                    variant="light"
+                    idleLabel="Copy profile link"
+                    copiedLabel="Link copied"
+                  />
                 </div>
               </div>
             </div>

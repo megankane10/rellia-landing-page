@@ -38,6 +38,7 @@ import {privacyPage} from './documents/privacyPage'
 import {bodyCtaBox} from './objects/bodyCtaBox'
 import {portableQuoteBox} from './objects/portableQuoteBox'
 import {portableImageCarousel} from './objects/portableImageCarousel'
+import {portableTable} from './objects/portableTable'
 import {logoMarqueeItem} from './objects/logoMarqueeItem'
 import {siteDefaultSeo} from './objects/siteDefaultSeo'
 import {studioGuide} from './documents/studioGuide'
@@ -122,6 +123,7 @@ export const schemaTypes = [
   bodyCtaBox,
   portableQuoteBox,
   portableImageCarousel,
+  portableTable,
   logoMarqueeItem,
   siteDefaultSeo,
   navItem,
