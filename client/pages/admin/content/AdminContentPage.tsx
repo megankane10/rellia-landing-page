@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react"
 import { useSearchParams } from "react-router-dom"
-import { useQuery } from "@tanstack/react-query"
+import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { FileEdit, Search, Users } from "lucide-react"
 import { useAuth } from "@/context/AuthContext"
 import AdminPageReveal from "@/components/admin/AdminPageReveal"
@@ -84,6 +84,7 @@ const sortRowsByUpdated = (rows: SanityContentRow[]) =>
 
 const AdminContentPage = () => {
   const { session } = useAuth()
+  const queryClient = useQueryClient()
   const token = session?.access_token ?? ""
   const cmsConfigured = isCmsContentEnabled()
   const [searchParams, setSearchParams] = useSearchParams()
@@ -133,9 +134,17 @@ const AdminContentPage = () => {
   const airtableQueueQuery = useQuery({
     queryKey: airtableDirectoryQueryKey,
     queryFn: () => fetchAirtableDirectoryQueue(token),
-    staleTime: 120_000,
-    enabled: cmsConfigured && Boolean(token),
+    staleTime: 600_000,
+    refetchOnWindowFocus: false,
+    enabled: cmsConfigured && Boolean(token) && sourceTab === "airtable",
   })
+
+  const handleRefreshAirtableQueue = () => {
+    void queryClient.fetchQuery({
+      queryKey: airtableDirectoryQueryKey,
+      queryFn: () => fetchAirtableDirectoryQueue(token, { refresh: true }),
+    })
+  }
 
   const draftRows = draftsQuery.data ?? []
   const publishedRows = publishedQuery.data ?? []
@@ -332,11 +341,13 @@ const AdminContentPage = () => {
               </div>
             </TabsContent>
 
-            <TabsContent value="airtable" className="mt-0" forceMount>
+            <TabsContent value="airtable" className="mt-0">
               <AdminAirtableDirectoryPanel
                 data={airtableQueueQuery.data}
                 isLoading={airtableQueueQuery.isLoading}
                 error={airtableQueueQuery.error}
+                onRefresh={handleRefreshAirtableQueue}
+                isRefreshing={airtableQueueQuery.isFetching && !airtableQueueQuery.isLoading}
               />
             </TabsContent>
           </Tabs>

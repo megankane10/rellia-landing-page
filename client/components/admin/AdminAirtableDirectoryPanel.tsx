@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react"
-import { ExternalLink, Search, Users } from "lucide-react"
+import { ExternalLink, RefreshCw, Search, Users } from "lucide-react"
 import { Link } from "react-router-dom"
 import AdminCompactEmptyState from "@/components/admin/AdminCompactEmptyState"
 import AdminRecordList from "@/components/admin/AdminRecordList"
@@ -134,9 +134,17 @@ type AdminAirtableDirectoryPanelProps = {
   data?: AirtableDirectoryQueuePayload
   isLoading: boolean
   error: Error | null
+  onRefresh?: () => void
+  isRefreshing?: boolean
 }
 
-const AdminAirtableDirectoryPanel = ({ data, isLoading, error }: AdminAirtableDirectoryPanelProps) => {
+const AdminAirtableDirectoryPanel = ({
+  data,
+  isLoading,
+  error,
+  onRefresh,
+  isRefreshing = false,
+}: AdminAirtableDirectoryPanelProps) => {
   const [kindFilter, setKindFilter] = useState<AirtableKindFilter>("all")
   const [statusFilter, setStatusFilter] = useState<AirtableStatusFilter>("all")
   const [searchQuery, setSearchQuery] = useState("")
@@ -309,6 +317,17 @@ const AdminAirtableDirectoryPanel = ({ data, isLoading, error }: AdminAirtableDi
           />
         </div>
         <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center">
+          <Button
+            type="button"
+            variant="outline"
+            className={cn(adminOutlineActionButtonClass, "h-10 px-4 text-sm")}
+            onClick={onRefresh}
+            disabled={!onRefresh || isRefreshing}
+            aria-label="Refresh network profiles from Airtable"
+          >
+            <RefreshCw className={cn("mr-2 h-4 w-4", isRefreshing && "animate-spin")} aria-hidden />
+            Refresh
+          </Button>
           <AdminSelectFilter
             value={kindFilter}
             onChange={(value) => setKindFilter(value as AirtableKindFilter)}

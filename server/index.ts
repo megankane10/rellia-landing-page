@@ -42,6 +42,12 @@ import {
 } from "./sanityPublishSync";
 import { cmsHealthHandler } from "./cmsHealth";
 import { fetchAirtableDirectoryQueue, fetchAirtableDirectoryDetail } from "./airtableDirectoryQueue";
+import {
+  getAirtableQueueCacheKey,
+  getCachedAirtableQueue,
+  invalidateAirtableQueueCache,
+} from "./airtableDirectoryCache";
+import { resolveAirtableBaseId } from "../shared/admin/airtableConfig";
 import { syncAirtableProfileToSanityDraft } from "./airtableProfileSync";
 
 type RequestLike = {
@@ -2754,14 +2760,22 @@ export function createServer() {
           return;
         }
 
-        const queue = await fetchAirtableDirectoryQueue({
-          airtableApiKey,
-          sanityProjectId: apiResolved.projectId,
-          sanityDataset: "production",
-          sanityReadToken: sanityReadToken || undefined,
-          studioBaseUrl: resolveSanityStudioUrl(),
-          publicSiteOrigin: buildSiteOrigins()[0],
-        });
+        const bypassCache = req.query.refresh === "1" || req.query.refresh === "true";
+        const cacheKey = getAirtableQueueCacheKey(resolveAirtableBaseId(), "production");
+
+        const queue = await getCachedAirtableQueue(
+          cacheKey,
+          () =>
+            fetchAirtableDirectoryQueue({
+              airtableApiKey,
+              sanityProjectId: apiResolved.projectId,
+              sanityDataset: "production",
+              sanityReadToken: sanityReadToken || undefined,
+              studioBaseUrl: resolveSanityStudioUrl(),
+              publicSiteOrigin: buildSiteOrigins()[0],
+            }),
+          bypassCache,
+        );
 
         res.setHeader("content-type", "application/json");
         res.json(queue);
@@ -2936,6 +2950,8 @@ export function createServer() {
           kind,
           recordId,
         });
+
+        invalidateAirtableQueueCache();
 
         const studioOrigin = resolveSanityStudioUrl().replace(/\/$/, "");
         const studioUrl = `${studioOrigin}${result.studioPath}`;

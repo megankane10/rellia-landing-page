@@ -5532,6 +5532,7 @@ var AIRTABLE_TABLE_IDS = {
   networkMembers: "tblmnSpZ9b4z1BnSl"
 };
 var WEBSITE_STATUS_FIELD = "Website status";
+var AIRTABLE_PROFILE_SECTIONS_FIELD = "Profile sections visible";
 var AIRTABLE_FOUNDER_FIELD_REGISTRY = [
   { airtableField: "Company Name", airtableType: "singleLineText", sanityTarget: "alumniCompany.name", syncStatus: "mapped" },
   { airtableField: "Company 1-Liner", airtableType: "singleLineText", sanityTarget: "alumniCompany.tagline + shortDescription", syncStatus: "mapped" },
@@ -5566,13 +5567,20 @@ var AIRTABLE_FOUNDER_FIELD_REGISTRY = [
     sanityTarget: "stable link back to CMS",
     syncStatus: "mapped",
     notes: "Written by sync worker after first import."
+  },
+  {
+    airtableField: AIRTABLE_PROFILE_SECTIONS_FIELD,
+    airtableType: "multipleSelects",
+    sanityTarget: "section visibility gates on public profile",
+    syncStatus: "mapped",
+    notes: "Optional checklist \u2014 empty means show all sections that have data."
   }
 ];
 var AIRTABLE_ADVISOR_FIELD_REGISTRY = [
   { airtableField: "Name", airtableType: "singleLineText", sanityTarget: "advisor.name + slug", syncStatus: "mapped" },
   { airtableField: "Job Title", airtableType: "singleLineText", sanityTarget: "advisor.role", syncStatus: "mapped" },
   { airtableField: "Company", airtableType: "singleLineText", sanityTarget: "advisor.organization", syncStatus: "mapped" },
-  { airtableField: "Short Bio", airtableType: "multilineText", sanityTarget: "advisor.snapshot", syncStatus: "mapped" },
+  { airtableField: "Short Bio", airtableType: "multilineText", sanityTarget: "advisor.snapshot OR advisor.industries (when comma-separated tags)", syncStatus: "mapped", notes: "Many rows use Short Bio as topic tags \u2014 not narrative copy." },
   { airtableField: "Long Bio", airtableType: "multilineText", sanityTarget: "advisor.bio (portable text)", syncStatus: "mapped" },
   { airtableField: "Headshot", airtableType: "multipleAttachments", sanityTarget: "advisor.photo", syncStatus: "mapped" },
   { airtableField: "Industry Tags", airtableType: "multipleSelects", sanityTarget: "advisor.industries + secondary card tags", syncStatus: "mapped" },
@@ -5595,6 +5603,13 @@ var AIRTABLE_ADVISOR_FIELD_REGISTRY = [
     airtableType: "singleLineText",
     sanityTarget: "stable CMS link",
     syncStatus: "mapped"
+  },
+  {
+    airtableField: AIRTABLE_PROFILE_SECTIONS_FIELD,
+    airtableType: "multipleSelects",
+    sanityTarget: "section visibility gates on public profile",
+    syncStatus: "mapped",
+    notes: "Optional checklist \u2014 empty means show all sections that have data."
   }
 ];
 var slugifyDirectoryName = (input) => input.toLowerCase().normalize("NFKD").replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "").slice(0, 80) || "profile";
@@ -5621,17 +5636,6 @@ var WEBSITE_STATUS_VALUES = {
 };
 
 // server/airtableDirectoryQueue.ts
-var COUNTRY_ALIASES = {
-  usa: "US",
-  "united states": "US",
-  uk: "United Kingdom",
-  ca: "Canada"
-};
-var normalizeCountry = (value) => {
-  const trimmed = value.trim();
-  const key = trimmed.toLowerCase();
-  return COUNTRY_ALIASES[key] ?? trimmed;
-};
 var isFilled = (value) => {
   if (value == null) return false;
   if (typeof value === "string") return Boolean(value.trim());
@@ -5722,6 +5726,72 @@ var buildSanityProfileIndex = async (options) => {
   }
   return { bySlug, byAirtableId };
 };
+var fetchAirtableRecord = async (apiKey, tableId, recordId) => {
+  const baseId = resolveAirtableBaseId();
+  const response = await fetch(`https://api.airtable.com/v0/${baseId}/${tableId}/${recordId}`, {
+    headers: { Authorization: `Bearer ${apiKey}` }
+  });
+  if (!response.ok) return null;
+  return await response.json();
+};
+var mapFounderRow = (record, ctx) => {
+  const fields = record.fields;
+  const companyName = String(fields["Company Name"] ?? "").trim() || "Untitled company";
+  const slug = slugifyDirectoryName(companyName);
+  const airtableHit = ctx.sanityIndex.byAirtableId.get(record.id);
+  const resolved = airtableHit ? {
+    status: airtableHit.status === "published" ? "published" : "draft",
+    sanityDocumentId: airtableHit.id
+  } : resolveSiteStatus(slug, ctx.sanityIndex);
+  const { status, sanityDocumentId } = resolved;
+  const coverage = buildFieldCoverage(AIRTABLE_FOUNDER_FIELD_REGISTRY, fields, status);
+  const tableKind = "founders";
+  return {
+    airtableRecordId: record.id,
+    kind: "founder",
+    displayName: companyName,
+    organization: companyName,
+    slugCandidate: slug,
+    imageUrl: firstAttachmentUrl(fields["Company Logo"]) ?? firstAttachmentUrl(fields["Founder Headshots"]) ?? null,
+    siteStatus: status,
+    sanityDocumentId,
+    sanityStudioUrl: sanityDocumentId ? `${ctx.studioOrigin}/structure/alumniCompany;${encodeURIComponent(sanityDocumentId.startsWith("drafts.") ? sanityDocumentId : `drafts.${sanityDocumentId}`)}` : void 0,
+    publicUrl: status === "published" ? `${ctx.siteOrigin}${publicAlumniProfilePath(slug)}` : void 0,
+    airtableRecordUrl: airtableRecordUrl(record.id, tableKind),
+    fieldCoverage: coverage,
+    missingForPublish: missingForPublish(coverage, "founder"),
+    updatedAt: record.createdTime
+  };
+};
+var mapAdvisorRow = (record, ctx) => {
+  const fields = record.fields;
+  const name = String(fields.Name ?? "").trim() || "Untitled advisor";
+  const slug = slugifyDirectoryName(name);
+  const airtableHit = ctx.sanityIndex.byAirtableId.get(record.id);
+  const resolved = airtableHit ? {
+    status: airtableHit.status === "published" ? "published" : "draft",
+    sanityDocumentId: airtableHit.id
+  } : resolveSiteStatus(slug, ctx.sanityIndex);
+  const { status, sanityDocumentId } = resolved;
+  const coverage = buildFieldCoverage(AIRTABLE_ADVISOR_FIELD_REGISTRY, fields, status);
+  const tableKind = "advisors";
+  return {
+    airtableRecordId: record.id,
+    kind: "advisor",
+    displayName: name,
+    organization: typeof fields.Company === "string" ? fields.Company : void 0,
+    slugCandidate: slug,
+    imageUrl: firstAttachmentUrl(fields.Headshot),
+    siteStatus: status,
+    sanityDocumentId,
+    sanityStudioUrl: sanityDocumentId ? `${ctx.studioOrigin}/structure/advisor;${encodeURIComponent(sanityDocumentId.startsWith("drafts.") ? sanityDocumentId : `drafts.${sanityDocumentId}`)}` : void 0,
+    publicUrl: status === "published" ? `${ctx.siteOrigin}${publicAdvisorProfilePath(slug)}` : void 0,
+    airtableRecordUrl: airtableRecordUrl(record.id, tableKind),
+    fieldCoverage: coverage,
+    missingForPublish: missingForPublish(coverage, "advisor"),
+    updatedAt: record.createdTime
+  };
+};
 var fetchAirtableDirectoryQueue = async (options) => {
   const [founderRecords, advisorRecords, sanityIndex] = await Promise.all([
     fetchAirtableTable(resolveAirtableTableId("founders"), options.airtableApiKey),
@@ -5734,57 +5804,10 @@ var fetchAirtableDirectoryQueue = async (options) => {
   ]);
   const studioOrigin = (options.studioBaseUrl ?? "https://rellia.sanity.studio").replace(/\/$/, "");
   const siteOrigin = (options.publicSiteOrigin ?? "https://www.relliahealth.com").replace(/\/$/, "");
-  const mapFounder = (record) => {
-    const fields = record.fields;
-    const companyName = String(fields["Company Name"] ?? "").trim() || "Untitled company";
-    const slug = slugifyDirectoryName(companyName);
-    const { status, sanityDocumentId } = resolveSiteStatus(slug, sanityIndex);
-    const coverage = buildFieldCoverage(AIRTABLE_FOUNDER_FIELD_REGISTRY, fields, status);
-    const tableKind = "founders";
-    return {
-      airtableRecordId: record.id,
-      kind: "founder",
-      displayName: companyName,
-      organization: companyName,
-      slugCandidate: slug,
-      imageUrl: firstAttachmentUrl(fields["Company Logo"]) ?? firstAttachmentUrl(fields["Founder Headshots"]) ?? null,
-      siteStatus: status,
-      sanityDocumentId,
-      sanityStudioUrl: sanityDocumentId ? `${studioOrigin}/structure/alumniCompany;${encodeURIComponent(sanityDocumentId.startsWith("drafts.") ? sanityDocumentId : `drafts.${sanityDocumentId}`)}` : void 0,
-      publicUrl: status === "published" ? `${siteOrigin}${publicAlumniProfilePath(slug)}` : void 0,
-      airtableRecordUrl: airtableRecordUrl(record.id, tableKind),
-      fieldCoverage: coverage,
-      missingForPublish: missingForPublish(coverage, "founder"),
-      updatedAt: record.createdTime
-    };
-  };
-  const mapAdvisor = (record) => {
-    const fields = record.fields;
-    const name = String(fields.Name ?? "").trim() || "Untitled advisor";
-    const slug = slugifyDirectoryName(name);
-    const { status, sanityDocumentId } = resolveSiteStatus(slug, sanityIndex);
-    const coverage = buildFieldCoverage(AIRTABLE_ADVISOR_FIELD_REGISTRY, fields, status);
-    const tableKind = "advisors";
-    return {
-      airtableRecordId: record.id,
-      kind: "advisor",
-      displayName: name,
-      organization: typeof fields.Company === "string" ? fields.Company : void 0,
-      slugCandidate: slug,
-      imageUrl: firstAttachmentUrl(fields.Headshot),
-      siteStatus: status,
-      sanityDocumentId,
-      sanityStudioUrl: sanityDocumentId ? `${studioOrigin}/structure/advisor;${encodeURIComponent(sanityDocumentId.startsWith("drafts.") ? sanityDocumentId : `drafts.${sanityDocumentId}`)}` : void 0,
-      publicUrl: status === "published" ? `${siteOrigin}${publicAdvisorProfilePath(slug)}` : void 0,
-      airtableRecordUrl: airtableRecordUrl(record.id, tableKind),
-      fieldCoverage: coverage,
-      missingForPublish: missingForPublish(coverage, "advisor"),
-      updatedAt: record.createdTime
-    };
-  };
+  const rowCtx = { sanityIndex, studioOrigin, siteOrigin };
   return {
-    founders: founderRecords.map(mapFounder).sort((a, b) => a.displayName.localeCompare(b.displayName)),
-    advisors: advisorRecords.map(mapAdvisor).sort((a, b) => a.displayName.localeCompare(b.displayName)),
+    founders: founderRecords.map((record) => mapFounderRow(record, rowCtx)).sort((a, b) => a.displayName.localeCompare(b.displayName)),
+    advisors: advisorRecords.map((record) => mapAdvisorRow(record, rowCtx)).sort((a, b) => a.displayName.localeCompare(b.displayName)),
     fieldRegistries: {
       founders: AIRTABLE_FOUNDER_FIELD_REGISTRY,
       advisors: AIRTABLE_ADVISOR_FIELD_REGISTRY
@@ -5912,24 +5935,21 @@ var buildAdvisorPreviewSections = (fields) => {
   ];
 };
 var fetchAirtableDirectoryDetail = async (options) => {
-  const tableId = resolveAirtableTableId(options.kind === "founder" ? "founders" : "advisors");
-  const baseId = resolveAirtableBaseId();
-  const url = `https://api.airtable.com/v0/${baseId}/${tableId}/${options.recordId}`;
-  const response = await fetch(url, {
-    headers: { Authorization: `Bearer ${options.airtableApiKey}` }
-  });
-  if (!response.ok) return null;
-  const record = await response.json();
-  const queue = await fetchAirtableDirectoryQueue({
-    airtableApiKey: options.airtableApiKey,
-    sanityProjectId: options.sanityProjectId,
-    sanityDataset: options.sanityDataset,
-    sanityReadToken: options.sanityReadToken,
-    studioBaseUrl: options.studioBaseUrl,
-    publicSiteOrigin: options.publicSiteOrigin
-  });
-  const row = options.kind === "founder" ? queue.founders.find((item) => item.airtableRecordId === options.recordId) : queue.advisors.find((item) => item.airtableRecordId === options.recordId);
-  if (!row) return null;
+  const tableKind = options.kind === "founder" ? "founders" : "advisors";
+  const tableId = resolveAirtableTableId(tableKind);
+  const [record, sanityIndex] = await Promise.all([
+    fetchAirtableRecord(options.airtableApiKey, tableId, options.recordId),
+    buildSanityProfileIndex({
+      projectId: options.sanityProjectId,
+      dataset: options.sanityDataset,
+      token: options.sanityReadToken
+    })
+  ]);
+  if (!record) return null;
+  const studioOrigin = (options.studioBaseUrl ?? "https://rellia.sanity.studio").replace(/\/$/, "");
+  const siteOrigin = (options.publicSiteOrigin ?? "https://www.relliahealth.com").replace(/\/$/, "");
+  const rowCtx = { sanityIndex, studioOrigin, siteOrigin };
+  const row = options.kind === "founder" ? mapFounderRow(record, rowCtx) : mapAdvisorRow(record, rowCtx);
   const fields = record.fields;
   const websiteStatusRaw = fields[WEBSITE_STATUS_FIELD];
   const websiteStatus = typeof websiteStatusRaw === "string" ? websiteStatusRaw : null;
@@ -5938,6 +5958,26 @@ var fetchAirtableDirectoryDetail = async (options) => {
     websiteStatus,
     previewSections: options.kind === "founder" ? buildFounderPreviewSections(fields) : buildAdvisorPreviewSections(fields)
   };
+};
+
+// server/airtableDirectoryCache.ts
+var CACHE_TTL_MS = 10 * 60 * 1e3;
+var queueCache = null;
+var queueCacheKey = "";
+var getAirtableQueueCacheKey = (baseId, dataset) => `${baseId}:${dataset}`;
+var getCachedAirtableQueue = async (cacheKey, loader, bypass = false) => {
+  const now = Date.now();
+  if (!bypass && queueCache && queueCacheKey === cacheKey && queueCache.expiresAt > now) {
+    return queueCache.value;
+  }
+  const value = await loader();
+  queueCache = { value, expiresAt: now + CACHE_TTL_MS };
+  queueCacheKey = cacheKey;
+  return value;
+};
+var invalidateAirtableQueueCache = () => {
+  queueCache = null;
+  queueCacheKey = "";
 };
 
 // server/airtableProfileSync.ts
@@ -5950,11 +5990,7 @@ var AIRTABLE_ADVISOR_EXPERTISE_OPTIONS = [
   "Healthcare Systems"
 ];
 
-// server/airtableProfileSync.ts
-var FILTER_GROUP_COUNTRY = "directoryFilterGroup-country";
-var FILTER_GROUP_EXPERTISE = "directoryFilterGroup-expertise";
-var FILTER_GROUP_SPECIALTY = "directoryFilterGroup-specialty";
-var FILTER_GROUP_BUSINESS_MODEL = "directoryFilterGroup-business-model";
+// shared/admin/airtableProfileMapping.ts
 var ptBlock = (key, text) => ({
   _type: "block",
   _key: key,
@@ -5962,12 +5998,6 @@ var ptBlock = (key, text) => ({
   markDefs: [],
   children: [{ _type: "span", _key: `${key}-span`, text, marks: [] }]
 });
-var normalizeUrl = (raw) => {
-  if (!raw?.trim()) return void 0;
-  const trimmed = raw.trim();
-  if (/^https?:\/\//i.test(trimmed)) return trimmed;
-  return `https://${trimmed.replace(/^\/\//, "")}`;
-};
 var stringField2 = (fields, key) => {
   const value = fields[key];
   return typeof value === "string" && value.trim() ? value.trim() : null;
@@ -5977,49 +6007,81 @@ var stringListField2 = (fields, key) => {
   if (!Array.isArray(value)) return [];
   return value.filter((item) => typeof item === "string" && Boolean(item.trim()));
 };
+var parseCommaSeparatedTags = (text) => text.split(/,\s*/).map((part) => part.trim()).filter(Boolean);
+var looksLikeTagList = (text) => {
+  const trimmed = text.trim();
+  if (!trimmed) return false;
+  if (/[.!?]/.test(trimmed)) return false;
+  if (trimmed.includes(",")) {
+    const parts = parseCommaSeparatedTags(trimmed);
+    return parts.length >= 2 && parts.every((part) => part.length <= 80);
+  }
+  return trimmed.length <= 48 && trimmed.split(/\s+/).length <= 5;
+};
+var uniqueStrings = (values) => [...new Set(values.map((v) => v.trim()).filter(Boolean))];
+var normalizeCountry = (value) => {
+  const trimmed = value.trim();
+  const key = trimmed.toLowerCase();
+  const aliases = {
+    usa: "US",
+    "united states": "US",
+    uk: "United Kingdom",
+    ca: "Canada"
+  };
+  return aliases[key] ?? trimmed;
+};
 var mapCountries = (fields) => stringListField2(fields, "Country").map(normalizeCountry).filter(Boolean);
-var mapExpertise = (fields) => {
+var mapAdvisorExpertise = (fields) => {
   const tags = stringListField2(fields, "Expertise Tags");
   if (tags.length > 0) {
     return tags.filter(
       (tag) => AIRTABLE_ADVISOR_EXPERTISE_OPTIONS.includes(tag)
     );
   }
+  const shortBio = stringField2(fields, "Short Bio");
+  if (shortBio) {
+    const lower = shortBio.toLowerCase();
+    if (lower.includes("regulatory") || lower.includes("quality")) return ["Regulatory & Quality"];
+    if (lower.includes("marketing")) return ["Marketing"];
+  }
   return ["Healthcare Systems"];
 };
-var fetchAirtableRecord = async (apiKey, kind, recordId) => {
-  const tableId = resolveAirtableTableId(kind === "founder" ? "founders" : "advisors");
-  const baseId = resolveAirtableBaseId();
-  const response = await fetch(`https://api.airtable.com/v0/${baseId}/${tableId}/${recordId}`, {
-    headers: { Authorization: `Bearer ${apiKey}` }
-  });
-  if (!response.ok) {
-    const body = await response.text().catch(() => "");
-    throw new Error(`Airtable record fetch failed (${response.status}): ${body.slice(0, 200)}`);
+var mapAdvisorIndustries = (fields) => {
+  const fromSelect = stringListField2(fields, "Industry Tags");
+  const shortBio = stringField2(fields, "Short Bio");
+  const fromShortBio = shortBio && looksLikeTagList(shortBio) ? parseCommaSeparatedTags(shortBio) : [];
+  return uniqueStrings([...fromSelect, ...fromShortBio]);
+};
+var mapAdvisorSnapshot = (fields, name) => {
+  const shortBio = stringField2(fields, "Short Bio");
+  const longBio = stringField2(fields, "Long Bio");
+  if (shortBio && !looksLikeTagList(shortBio)) {
+    return shortBio;
   }
-  return await response.json();
+  if (longBio) {
+    return longBio.length > 280 ? `${longBio.slice(0, 277).trim()}\u2026` : longBio;
+  }
+  return `${name} advises health tech founders through Rellia.`;
 };
-var patchAirtableRecord = async (options) => {
-  if (process.env.AIRTABLE_ALLOW_WRITES?.trim() !== "true") return;
-  const tableId = resolveAirtableTableId(options.kind === "founder" ? "founders" : "advisors");
-  const baseId = resolveAirtableBaseId();
-  await fetch(`https://api.airtable.com/v0/${baseId}/${tableId}/${options.recordId}`, {
-    method: "PATCH",
-    headers: {
-      Authorization: `Bearer ${options.apiKey}`,
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({ fields: options.fields })
-  });
+var mapAdvisorLongBio = (fields) => stringField2(fields, "Long Bio");
+var normalizeUrl = (raw) => {
+  if (!raw?.trim()) return void 0;
+  const trimmed = raw.trim();
+  if (/^https?:\/\//i.test(trimmed)) return trimmed;
+  return `https://${trimmed.replace(/^\/\//, "")}`;
 };
-var buildAdvisorDoc = (recordId, fields) => {
+var FILTER_GROUP_COUNTRY = "directoryFilterGroup-country";
+var FILTER_GROUP_EXPERTISE = "directoryFilterGroup-expertise";
+var FILTER_GROUP_SPECIALTY = "directoryFilterGroup-specialty";
+var FILTER_GROUP_BUSINESS_MODEL = "directoryFilterGroup-business-model";
+var buildAdvisorDocFromAirtable = (recordId, fields, options) => {
   const name = stringField2(fields, "Name") ?? "Untitled advisor";
   const slug = slugifyDirectoryName(name);
-  const snapshot = stringField2(fields, "Short Bio") || stringField2(fields, "Long Bio")?.slice(0, 200) || `${name} advises health tech founders through Rellia.`;
-  const longBio = stringField2(fields, "Long Bio") || snapshot;
+  const longBio = mapAdvisorLongBio(fields);
+  const snapshot = mapAdvisorSnapshot(fields, name);
+  const industries = mapAdvisorIndustries(fields);
   const countries = mapCountries(fields);
-  const expertise = mapExpertise(fields);
-  const industries = stringListField2(fields, "Industry Tags");
+  const expertise = mapAdvisorExpertise(fields);
   const socialLinks = [];
   const linkedin = stringField2(fields, "LinkedIn");
   const website = stringField2(fields, "Company URL");
@@ -6036,8 +6098,8 @@ var buildAdvisorDoc = (recordId, fields) => {
     role: stringField2(fields, "Job Title") ?? void 0,
     snapshot,
     yearJoined: (/* @__PURE__ */ new Date()).getFullYear().toString(),
-    industries,
-    photoSrc: "/images/nopicture-male.jpg",
+    industries: industries.length > 0 ? industries : void 0,
+    photoSrc: options?.photoSrc ?? "/images/nopicture-male.jpg",
     email: stringField2(fields, "Email") ?? void 0,
     socialLinks,
     directoryFilters: [
@@ -6054,11 +6116,11 @@ var buildAdvisorDoc = (recordId, fields) => {
         values: expertise
       }
     ],
-    bio: [ptBlock(`bio-${slug}`, longBio)],
+    bio: longBio ? [ptBlock(`bio-${slug}`, longBio)] : void 0,
     airtableRecordId: recordId
   };
 };
-var buildFounderDoc = (recordId, fields) => {
+var buildFounderDocFromAirtable = (recordId, fields, options) => {
   const companyName = stringField2(fields, "Company Name") ?? "Untitled company";
   const slug = slugifyDirectoryName(companyName);
   const tagline = stringField2(fields, "Company 1-Liner");
@@ -6102,6 +6164,7 @@ var buildFounderDoc = (recordId, fields) => {
     tagline: tagline ?? void 0,
     shortDescription: tagline ?? void 0,
     yearJoined,
+    logoSrc: options?.logoSrc,
     profileBody: profileBody.length ? profileBody : void 0,
     email: stringField2(fields, "Company Email") ?? void 0,
     socialLinks,
@@ -6111,14 +6174,42 @@ var buildFounderDoc = (recordId, fields) => {
         name: founderName,
         role: stringField2(fields, "Job Title") ?? void 0,
         bio: founderBio ?? void 0,
-        email: stringField2(fields, "E-mail") ?? void 0
+        email: stringField2(fields, "E-mail") ?? void 0,
+        imageSrc: options?.founderImageSrc
       }
     ] : [],
     airtableRecordId: recordId
   };
 };
+
+// server/airtableProfileSync.ts
+var fetchAirtableRecord2 = async (apiKey, kind, recordId) => {
+  const tableId = resolveAirtableTableId(kind === "founder" ? "founders" : "advisors");
+  const baseId = resolveAirtableBaseId();
+  const response = await fetch(`https://api.airtable.com/v0/${baseId}/${tableId}/${recordId}`, {
+    headers: { Authorization: `Bearer ${apiKey}` }
+  });
+  if (!response.ok) {
+    const body = await response.text().catch(() => "");
+    throw new Error(`Airtable record fetch failed (${response.status}): ${body.slice(0, 200)}`);
+  }
+  return await response.json();
+};
+var patchAirtableRecord = async (options) => {
+  if (process.env.AIRTABLE_ALLOW_WRITES?.trim() !== "true") return;
+  const tableId = resolveAirtableTableId(options.kind === "founder" ? "founders" : "advisors");
+  const baseId = resolveAirtableBaseId();
+  await fetch(`https://api.airtable.com/v0/${baseId}/${tableId}/${options.recordId}`, {
+    method: "PATCH",
+    headers: {
+      Authorization: `Bearer ${options.apiKey}`,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ fields: options.fields })
+  });
+};
 var syncAirtableProfileToSanityDraft = async (options) => {
-  const record = await fetchAirtableRecord(options.airtableApiKey, options.kind, options.recordId);
+  const record = await fetchAirtableRecord2(options.airtableApiKey, options.kind, options.recordId);
   const fields = record.fields;
   const client = createClient4({
     projectId: options.sanityProjectId,
@@ -6127,7 +6218,7 @@ var syncAirtableProfileToSanityDraft = async (options) => {
     apiVersion: "2024-01-01",
     useCdn: false
   });
-  const doc = options.kind === "founder" ? buildFounderDoc(options.recordId, fields) : buildAdvisorDoc(options.recordId, fields);
+  const doc = options.kind === "founder" ? buildFounderDocFromAirtable(options.recordId, fields) : buildAdvisorDocFromAirtable(options.recordId, fields);
   await client.createOrReplace(doc);
   await patchAirtableRecord({
     apiKey: options.airtableApiKey,
@@ -8175,14 +8266,20 @@ function createServer() {
           res.status(401).json({ error: "Invalid or expired session." });
           return;
         }
-        const queue = await fetchAirtableDirectoryQueue({
-          airtableApiKey,
-          sanityProjectId: apiResolved.projectId,
-          sanityDataset: "production",
-          sanityReadToken: sanityReadToken || void 0,
-          studioBaseUrl: resolveSanityStudioUrl(),
-          publicSiteOrigin: buildSiteOrigins()[0]
-        });
+        const bypassCache = req.query.refresh === "1" || req.query.refresh === "true";
+        const cacheKey = getAirtableQueueCacheKey(resolveAirtableBaseId(), "production");
+        const queue = await getCachedAirtableQueue(
+          cacheKey,
+          () => fetchAirtableDirectoryQueue({
+            airtableApiKey,
+            sanityProjectId: apiResolved.projectId,
+            sanityDataset: "production",
+            sanityReadToken: sanityReadToken || void 0,
+            studioBaseUrl: resolveSanityStudioUrl(),
+            publicSiteOrigin: buildSiteOrigins()[0]
+          }),
+          bypassCache
+        );
         res.setHeader("content-type", "application/json");
         res.json(queue);
       } catch (err) {
@@ -8321,6 +8418,7 @@ function createServer() {
           kind,
           recordId
         });
+        invalidateAirtableQueueCache();
         const studioOrigin2 = resolveSanityStudioUrl().replace(/\/$/, "");
         const studioUrl = `${studioOrigin2}${result.studioPath}`;
         const detail = await fetchAirtableDirectoryDetail({

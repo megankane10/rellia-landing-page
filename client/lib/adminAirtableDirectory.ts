@@ -15,8 +15,12 @@ export const airtableDirectoryDetailQueryKey = (
 
 export const fetchAirtableDirectoryQueue = async (
   accessToken: string,
+  options?: { refresh?: boolean },
 ): Promise<AirtableDirectoryQueuePayload> => {
-  const res = await fetch("/api/admin/airtable-directory-queue", {
+  const url = new URL("/api/admin/airtable-directory-queue", window.location.origin)
+  if (options?.refresh) url.searchParams.set("refresh", "1")
+
+  const res = await fetch(url.pathname + url.search, {
     headers: { Authorization: `Bearer ${accessToken}` },
     credentials: "same-origin",
   })

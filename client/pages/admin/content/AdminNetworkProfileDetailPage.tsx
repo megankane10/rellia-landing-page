@@ -56,6 +56,8 @@ const AdminNetworkProfileDetailPage = () => {
     queryKey: kind ? airtableDirectoryDetailQueryKey(kind, recordId) : ["admin-airtable-detail-invalid"],
     queryFn: () => fetchAirtableDirectoryDetail(token, kind!, recordId),
     enabled: Boolean(token && kind && recordId),
+    staleTime: 600_000,
+    refetchOnWindowFocus: false,
   })
 
   const syncMutation = useMutation({
