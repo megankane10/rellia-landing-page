@@ -266,6 +266,30 @@ export const DEFAULT_NETWORK_FOUNDERS_PAGE: NetworkFoundersPageContent = {
   ],
   deeperHelpCtaLabel: "Explore consulting",
   deeperHelpCtaHref: "/consulting",
+  membershipPathTitle: "From application to your first warm intro",
+  membershipPathSubtitle:
+    "Apply, get approved, choose your membership, join Slack, then reach out when you want introductions matched to your roadmap.",
+  membershipPathSteps: [
+    {
+      title: "Submit Application",
+      description:
+        "Complete the application. Our team reviews every submission to keep the network valuable for every member.",
+    },
+    {
+      title: "Review & Approval",
+      description:
+        "We'll review your background and goals. You'll hear from us by email within a few business days.",
+    },
+    {
+      title: "Secure Your Spot",
+      description:
+        "Once approved, you'll get a link to choose your membership and complete payment.",
+    },
+    {
+      title: "Join the Network",
+      description: "Get immediate access to the community, resources, and network benefits.",
+    },
+  ],
   ctaTitle: "Ready to join?",
   ctaBody: "Apply once—we'll follow up with fit, onboarding, and the fastest path into programs and intros.",
   ctaPrimaryLabel: "Apply to join",
@@ -594,6 +618,10 @@ export const mergeNetworkFoundersPage = (
   deeperHelpFeatures: pickList(
     cms?.deeperHelpFeatures,
     DEFAULT_NETWORK_FOUNDERS_PAGE.deeperHelpFeatures ?? [],
+  ),
+  membershipPathSteps: pickList(
+    cms?.membershipPathSteps,
+    DEFAULT_NETWORK_FOUNDERS_PAGE.membershipPathSteps ?? [],
   ),
   logoMarquee: pickList(cms?.logoMarquee, DEFAULT_NETWORK_FOUNDERS_PAGE.logoMarquee ?? []),
 })

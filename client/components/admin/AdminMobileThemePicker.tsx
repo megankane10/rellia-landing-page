@@ -6,10 +6,9 @@ import AdminTooltipContent from "@/components/admin/AdminTooltipContent"
 import { Tooltip, TooltipTrigger } from "@/components/ui/tooltip"
 import { cn } from "@/lib/utils"
 
-const MOBILE_OPTIONS: AdminThemePreference[] = ["light", "system", "dark"]
+const MOBILE_OPTIONS: AdminThemePreference[] = ["light", "dark"]
 
 const THEME_ARIA_LABELS: Record<AdminThemePreference, string> = {
-  system: "System theme",
   light: "Light theme",
   dark: "Dark theme",
 }

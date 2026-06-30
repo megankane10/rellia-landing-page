@@ -4,7 +4,7 @@ import ScrollReveal from "@/components/ScrollReveal"
 import { SectionHeadlinePortable } from "@/components/cms/SectionHeadlinePortable"
 import { CareersOpenRolesList } from "@/components/careers/CareersOpenRolesList"
 import { CmsOpenRolesListSkeleton } from "@/components/cms/CmsPageSkeletons"
-import { HEADING_SECTION } from "@/lib/typography"
+import { HEADING_SECTION, HEADING_SECTION_SUBTITLE } from "@/lib/typography"
 import { cn } from "@/lib/utils"
 import { cmsDisplayText } from "@/lib/cmsStega"
 
@@ -23,7 +23,7 @@ export const CareersOpenRolesSection = ({
   formatText,
   rolesLoading = false,
 }: CareersOpenRolesSectionProps) => (
-  <section id="open-roles" className="scroll-mt-28 bg-white pb-16 pt-10 md:pb-24 md:pt-12">
+  <section id="open-roles" className="scroll-mt-28 bg-white py-16 md:py-24 lg:py-28">
     <div className="mx-auto w-full max-w-[1300px] px-6 md:px-10">
       <ScrollReveal className="flex min-w-0 flex-col">
         <div className="max-w-2xl">
@@ -32,7 +32,7 @@ export const CareersOpenRolesSection = ({
             className={cn("font-host-grotesk font-semibold tracking-tight text-black", HEADING_SECTION)}
           />
           {subtitle ? (
-            <p className="mt-3 font-urbanist text-base leading-relaxed text-black/55 md:text-lg">
+            <p className={cn("mt-3 font-urbanist leading-relaxed text-black/55", HEADING_SECTION_SUBTITLE)}>
               {formatText ? formatText(subtitle) : subtitle}
             </p>
           ) : null}

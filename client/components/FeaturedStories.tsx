@@ -14,6 +14,7 @@ import { isSanityConfigured } from "@/lib/sanity"
 import { cmsCleanText, cmsDisplayText } from "@/lib/cmsStega"
 import { CmsFeaturedStoriesSkeleton } from "@/components/cms/CmsPageSkeletons"
 import { buildResponsiveImageProps } from "@shared/image/optimizeImageUrl"
+import { placeholderImageFromSeed } from "@/lib/placeholderImages"
 
 /** Auto-advance interval (progress bar uses same duration) */
 const ROTATE_MS = 6500
@@ -89,10 +90,12 @@ export default function FeaturedStories({
         title: s.title,
         excerpt: s.excerpt ?? "",
         tag: s.tag ?? "Story",
-        coverImageSrc: s.coverImageSrc ?? "",
+        coverImageSrc:
+          s.coverImageSrc?.trim() ||
+          placeholderImageFromSeed(cmsCleanText(s.slug || s.title), 1200, 675),
         coverImageAlt: s.coverImageAlt ?? "Featured story cover",
       }))
-      .filter((s) => s.slug && cmsCleanText(s.title) && cmsCleanText(s.coverImageSrc))
+      .filter((s) => s.slug && cmsCleanText(s.title))
 
     if (normalized.length > 0) return normalized
     return allowCmsSeedFallbacks() ? getFeaturedStories() : []
@@ -197,7 +200,7 @@ export default function FeaturedStories({
                   {activeStory ? (
                     <>
                       <div className="flex min-h-0 flex-1 w-full flex-col items-start text-left overflow-hidden">
-                        <div className="mb-5 shrink-0">
+                        <div className="mb-6 shrink-0">
                           <PillTag
                             label={cmsDisplayText(activeStory.tag)}
                             className={PILL_ON_IMAGE_BLUR_CLASS}

@@ -138,6 +138,8 @@ export type AdminSanityDraftRow = {
   _id: string
   _type: string
   title?: string
+  slug?: string
+  roleId?: string
   _updatedAt?: string
 }
 

@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { ChevronDown, ExternalLink } from "lucide-react"
+import { ArrowUpRight, ChevronDown, ExternalLink } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -15,6 +15,7 @@ import { FileEdit } from "lucide-react"
 import {
   formatCmsContentRelative,
   formatCmsDocumentTypeLabel,
+  publicWebsiteUrlForRow,
   studioUrlForRow,
   type SanityContentRow,
 } from "@/lib/adminSanityContent"
@@ -60,6 +61,28 @@ const statusBadge = (status: SanityContentRow["status"]) => {
   }
 }
 
+const ContentTitle = ({ row }: { row: SanityContentRow }) => {
+  const label = row.title || row._id
+  const publicUrl = publicWebsiteUrlForRow(row)
+
+  if (!publicUrl) {
+    return <span className="font-host-grotesk font-medium text-foreground">{label}</span>
+  }
+
+  return (
+    <a
+      href={publicUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="inline-flex items-center gap-1 font-host-grotesk font-medium text-rellia-teal underline-offset-4 hover:underline"
+      aria-label={`View ${label} on the website`}
+    >
+      <span>{label}</span>
+      <ArrowUpRight className="h-3.5 w-3.5 shrink-0" aria-hidden />
+    </a>
+  )
+}
+
 const StudioLinkButton = ({ row }: { row: SanityContentRow }) => (
   <Button
     type="button"
@@ -71,9 +94,9 @@ const StudioLinkButton = ({ row }: { row: SanityContentRow }) => (
       href={studioUrlForRow(row)}
       target="_blank"
       rel="noopener noreferrer"
-      aria-label={`Open ${row.title ?? row._type} in Sanity Studio`}
+      aria-label={`View ${row.title ?? row._type} in Sanity Studio`}
     >
-      Review in Studio
+      View in Studio
       <ExternalLink className="ml-2 h-4 w-4" aria-hidden />
     </a>
   </Button>
@@ -100,9 +123,7 @@ const draftTableColumns = (updatedColumnLabel: string): AdminTableColumn<SanityC
     key: "title",
     header: "Title",
     className: "min-w-[12rem]",
-    cell: (row) => (
-      <span className="font-host-grotesk font-medium text-foreground">{row.title || row._id}</span>
-    ),
+    cell: (row) => <ContentTitle row={row} />,
   },
   {
     key: "type",
@@ -141,9 +162,9 @@ const ContentCard = ({ row }: { row: SanityContentRow }) => {
     <li className="flex flex-col gap-3 rounded-2xl border border-border bg-card p-3.5 transition-shadow hover:shadow-[0_6px_24px_-18px_rgba(13,53,64,0.22)]">
       <div className="min-w-0">
         <div className="flex flex-wrap items-start justify-between gap-2">
-          <p className="min-w-0 flex-1 font-host-grotesk text-sm text-foreground">
-            {row.title || row._id}
-          </p>
+          <div className="min-w-0 flex-1">
+            <ContentTitle row={row} />
+          </div>
           <StatusBadge status={row.status} />
         </div>
         <p className="mt-1 font-urbanist text-xs text-muted-foreground">
@@ -266,7 +287,7 @@ const AdminContentQueueList = ({
           mobileFields={[
             {
               label: "Title",
-              value: (row) => row.title || row._id,
+              value: (row) => <ContentTitle row={row} />,
             },
             {
               label: "Type",

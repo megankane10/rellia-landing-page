@@ -41,6 +41,13 @@ export const notFoundPage = defineType({
       type: 'string',
       group: 'content',
     }),
+    defineField({
+      name: 'ctaPath',
+      title: 'Primary button link',
+      type: 'string',
+      description: 'Redirect path (e.g. / or /contact). Defaults to / if left empty.',
+      group: 'content',
+    }),
     singletonSeoField,
   ],
 })

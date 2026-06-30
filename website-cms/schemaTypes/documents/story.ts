@@ -1,7 +1,7 @@
 import {defineField, defineType} from 'sanity'
+import {GROUP_SEO} from '../shared/fieldGroups'
 import {CONTENT_SEO_FIELDSETS} from '../shared/singletonContentFields'
 import {storySeoField} from '../shared/storySeoField'
-import {GROUP_SEO} from '../shared/fieldGroups'
 
 export const story = defineType({
   name: 'story',
@@ -9,6 +9,7 @@ export const story = defineType({
   type: 'document',
   groups: [
     {name: 'content', title: 'Content', default: true},
+    {name: 'author', title: 'Author & date'},
     GROUP_SEO,
   ],
   fieldsets: CONTENT_SEO_FIELDSETS,
@@ -57,7 +58,37 @@ export const story = defineType({
       name: 'publishedAt',
       type: 'datetime',
       title: 'Published at',
-      group: 'content',
+      group: 'author',
+    }),
+    defineField({
+      name: 'hidePublishDate',
+      title: 'Hide publish date',
+      type: 'boolean',
+      initialValue: false,
+      description:
+        'Hide the publish date on this story only. Site-wide default is set on Stories page settings.',
+      group: 'author',
+    }),
+    defineField({
+      name: 'authorName',
+      title: 'Author name',
+      type: 'string',
+      description: 'Leave blank to use the default from Stories page settings (Rellia Health).',
+      group: 'author',
+    }),
+    defineField({
+      name: 'authorDescription',
+      title: 'Author description',
+      type: 'string',
+      description: 'Short line under the author name on the story page.',
+      group: 'author',
+    }),
+    defineField({
+      name: 'authorImage',
+      title: 'Author image',
+      type: 'image',
+      description: 'Square logo or avatar beside the author name. Defaults to site favicon.',
+      group: 'author',
     }),
     defineField({
       name: 'excerpt',

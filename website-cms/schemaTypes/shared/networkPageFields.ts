@@ -140,6 +140,16 @@ export const networkCtaFields = [
   defineField({name: 'ctaSecondaryHref', title: 'Secondary button link', type: 'string', group: 'content'}),
 ]
 
+export const networkMembershipPathStepMember = defineArrayMember({
+  type: 'object',
+  name: 'networkMembershipPathStep',
+  fields: [
+    defineField({name: 'title', type: 'string', validation: (Rule) => Rule.required()}),
+    defineField({name: 'description', type: 'text', rows: 3, validation: (Rule) => Rule.required()}),
+  ],
+  preview: {select: {title: 'title', subtitle: 'description'}},
+})
+
 export const networkEngageBandFields = [
   defineField({name: 'engageTitle', title: 'Engage band title', type: 'string', group: 'content'}),
   defineField({name: 'engageSubtitle', title: 'Engage band subtitle', type: 'text', rows: 2, group: 'content'}),

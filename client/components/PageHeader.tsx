@@ -13,7 +13,7 @@ export const PAGE_HEADER_SUBTITLE_SIZE_CLASS = HEADING_PAGE_SUBTITLE
 
 /** Dark hero subtitle — same rhythm as default `PageHeader` subtitle (Urbanist, relaxed, white/80). */
 export const PAGE_HEADER_DARK_SUBTITLE_CLASS =
-  "max-w-3xl font-urbanist leading-relaxed text-white/80 text-base md:text-lg"
+  cn("max-w-3xl font-urbanist leading-relaxed text-white/80", HEADING_PAGE_SUBTITLE)
 
 type PageHeaderVariant = "dark" | "light"
 

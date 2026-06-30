@@ -24,11 +24,9 @@ const AdminPageFooter = () => {
           </Link>
           <a
             href={publicWebsiteUrl}
-            target="_blank"
-            rel="noopener noreferrer"
             className="inline-flex items-center gap-1 transition-colors hover:text-rellia-teal focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded"
           >
-            Website <ArrowUpRight className="h-3.5 w-3.5 shrink-0" />
+            Website
           </a>
         </div>
       </div>

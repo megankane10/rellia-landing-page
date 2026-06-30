@@ -11,6 +11,7 @@ import {
 import type { LucideIcon } from "lucide-react"
 import ScrollReveal from "./ScrollReveal"
 import { cn } from "@/lib/utils"
+import { HEADING_SECTION, HEADING_SECTION_SUBTITLE } from "@/lib/typography"
 import { cmsDisplayText, cmsDisplayTextOr, cmsCleanText } from "@/lib/cmsStega"
 import { MarketingImage } from "@/components/MarketingImage"
 
@@ -111,7 +112,7 @@ export default function HowItWorks(props?: HowItWorksProps) {
   const showHeadingBlock = heading != null || stepsProp == null
 
   return (
-    <section className="relative flex w-full flex-col justify-center bg-rellia-teal py-16 md:py-20 overflow-hidden rounded-[2.5rem] md:rounded-[3.5rem]">
+    <section className="relative flex w-full flex-col justify-center bg-rellia-teal py-16 md:py-24 lg:py-28 overflow-hidden rounded-[2.5rem] md:rounded-[3.5rem]">
       <MarketingImage
         src="/images/hologram-logo.png"
         alt=""
@@ -150,20 +151,20 @@ export default function HowItWorks(props?: HowItWorksProps) {
         <ScrollReveal delay={0.1}>
           <div className="mb-12 md:mb-14">
             {showHeadingBlock ? (
-              <h2 className="font-host-grotesk text-2xl font-semibold leading-tight tracking-tight text-white md:text-[32px] lg:text-[36px]">
+              <h2 className={cn("font-host-grotesk font-semibold text-white", HEADING_SECTION)}>
                 {displayHeading}
               </h2>
             ) : (
-              <h2 className="font-host-grotesk text-2xl font-semibold leading-tight tracking-tight text-rellia-mint md:text-[32px] lg:text-[36px]">
+              <h2 className={cn("font-host-grotesk font-semibold text-rellia-mint", HEADING_SECTION)}>
                 Where we focus
               </h2>
             )}
             {showHeadingBlock ? (
-              <div className="mt-4 font-urbanist text-base font-medium leading-relaxed tracking-tight text-white/80 md:text-lg w-full">
+              <div className={cn("mt-4 font-urbanist font-medium leading-relaxed tracking-tight text-white/80 w-full", HEADING_SECTION_SUBTITLE)}>
                 {displaySubheading}
               </div>
             ) : (
-              <p className="mt-4 font-urbanist text-base font-medium leading-relaxed tracking-tight text-white/80 md:text-lg w-full">
+              <p className={cn("mt-4 font-urbanist font-medium leading-relaxed tracking-tight text-white/80 w-full", HEADING_SECTION_SUBTITLE)}>
                 {defaultSubheading}
               </p>
             )}

@@ -7,6 +7,7 @@ import {
   type NetworkPathRoleId,
 } from "@/lib/networkPathRoles"
 import RelliaAction from "@/components/RelliaAction"
+import { HEADING_SECTION_LARGE } from "@/lib/typography"
 import ScrollReveal from "@/components/ScrollReveal"
 import { useHomePage } from "@/hooks/useCmsDocuments"
 import { DEFAULT_HOME_PAGE } from "@shared/cms/defaults"
@@ -194,7 +195,10 @@ export default function PathsSection() {
             variants={headingContainerVariants}
             initial="hidden"
             animate={isInView ? "visible" : "hidden"}
-            className="relative z-10 flex flex-wrap justify-center gap-x-[0.22em] gap-y-2 text-balance font-host-grotesk text-2xl font-semibold leading-tight tracking-tight text-rellia-teal md:text-[44px] md:leading-[1.15]"
+            className={cn(
+              "relative z-10 flex flex-wrap justify-center gap-x-[0.22em] gap-y-2 text-balance font-host-grotesk font-semibold text-rellia-teal",
+              HEADING_SECTION_LARGE,
+            )}
           >
             {previewMode ? (
               cmsDisplayText(pathsTitleRaw)
@@ -263,10 +267,12 @@ export default function PathsSection() {
                       aria-hidden
                       className="pointer-events-none absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-black/35 to-transparent"
                     />
-                    <div className={cn("absolute right-3 top-3 inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-white sm:right-4 sm:top-4", PILL_ON_PATH_CARD_BLUR_CLASS)}>
-                      <Icon className="h-3.5 w-3.5 shrink-0 text-white" aria-hidden />
-                      {displayCardField(cmsCard?.tagLabel, card.tagLabel)}
-                    </div>
+                    {cmsCard?.showBadge !== false ? (
+                      <div className={cn("absolute right-3 top-3 inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-white sm:right-4 sm:top-4", PILL_ON_PATH_CARD_BLUR_CLASS)}>
+                        <Icon className="h-3.5 w-3.5 shrink-0 text-white" aria-hidden />
+                        {displayCardField(cmsCard?.tagLabel, card.tagLabel)}
+                      </div>
+                    ) : null}
 
                     <div className="absolute inset-x-0 bottom-0 p-5 md:p-6">
                       <h3 className="font-host-grotesk text-xl font-normal tracking-tight text-white md:text-2xl">
@@ -306,6 +312,7 @@ export default function PathsSection() {
         value: Number(cmsCleanText(String(metric.value))) || 0,
         valueText: String(metric.value ?? ""),
         suffix: metric.suffix,
+        iconKey: metric.iconKey,
       }))}
       showBadge={page.showBadge !== false}
       badgeLabel={metricsBadgeLabel}

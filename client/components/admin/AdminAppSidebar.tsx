@@ -8,7 +8,6 @@ import { ADMIN_MAIN_NAV } from "@/lib/adminNav"
 import AdminAccountMenu from "@/components/admin/AdminAccountMenu"
 import AdminMobileThemePicker from "@/components/admin/AdminMobileThemePicker"
 import AdminSidebarThemeCycle from "@/components/admin/AdminSidebarThemeCycle"
-import { AdminSidebarDateTime } from "@/components/admin/AdminSidebarDateTime"
 import {
   adminSidebarContentClass,
   adminSidebarDividerGapClass,
@@ -190,12 +189,6 @@ const AdminAppSidebar = () => {
       </SidebarHeader>
 
       <SidebarContent className={cn(adminSidebarContentClass, "flex min-h-0 flex-col")}>
-        {isMobile ? (
-          <div className="mb-6 shrink-0">
-            <AdminSidebarDateTime variant="mobile" />
-          </div>
-        ) : null}
-
         <SidebarGroup className="!p-0 shrink-0">
           <SidebarGroupContent>
             <SidebarMenu className="gap-2">

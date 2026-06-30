@@ -24,21 +24,21 @@ export const QMS_PROGRAM_STATIC_BLOCKS: ProgramPageStaticBlocks = {
       title: "Starting Frameworks",
       description:
         "Receive customized SOPs and templates that serve as your foundation - designed to be flexible enough for early-stage startups.",
-      imageSrc: "/images/qms-starting frameworks.png",
+      imageSrc: "/images/qms-starting frameworks.jpg",
     },
     {
       icon: Wrench,
       title: "Implementation Support",
       description:
         "Work through building your QMS with support and accountability at every step so nothing falls through the cracks",
-      imageSrc: "/images/qms-implementation.png",
+      imageSrc: "/images/qms-implementation.jpg",
     },
     {
       icon: UserCheck,
       title: "1-on-1 Mentorship",
       description:
         "Get personalized guidance from quality and regulatory experts who have built processes for medical device companies and who understand your constraints",
-      imageSrc: "/images/1on1oneMentorship.png",
+      imageSrc: "/images/1on1oneMentorship.jpg",
     },
   ],
   pillars: [

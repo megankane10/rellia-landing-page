@@ -16,29 +16,28 @@ type FounderDirectoryCardProps = {
 
 const cardBody = (company: FounderCompany) => {
   const cardTags = [...company.specialtyTags, ...company.businessModels]
+  const description = company.shortDescription?.trim() || company.tagline?.trim()
 
   return (
     <>
-      <div className="relative flex aspect-video w-full shrink-0 items-center justify-center border-b border-black/[0.05] bg-white">
+      <div className="relative flex aspect-video w-full shrink-0 items-center justify-center overflow-hidden border-b border-black/[0.05] bg-white p-4">
         <img
           src={company.logoSrc}
           alt=""
-          className="max-h-[72%] w-auto max-w-[72%] object-contain object-center transition duration-500 ease-out group-hover:scale-[1.02]"
+          className="max-h-full max-w-full object-contain object-center transition duration-500 ease-out group-hover:scale-[1.02]"
           loading="lazy"
         />
         <DirectoryCardTags tags={cardTags} variant="onLight" />
       </div>
-      <div className="flex flex-1 flex-col p-6 md:p-7">
-        <h3 className="font-host-grotesk text-lg font-bold tracking-tight text-black group-hover:underline decoration-2 underline-offset-4">
+      <div className="flex flex-1 flex-col p-5 md:p-6">
+        <h3 className="line-clamp-1 font-host-grotesk text-lg font-bold leading-snug tracking-tight text-black group-hover:underline decoration-2 underline-offset-4">
           {cmsDisplayText(company.logoName)}
         </h3>
-        {(company.shortDescription?.trim() || company.tagline?.trim()) && (
-          <p className="mt-1 line-clamp-3 font-urbanist text-sm font-medium leading-relaxed text-black/77">
-            {cmsDisplayText(company.shortDescription?.trim() || company.tagline)}
-          </p>
-        )}
+        <p className="mt-1.5 line-clamp-3 min-h-[4.125rem] font-urbanist text-sm font-medium leading-relaxed text-black/77">
+          {description ? cmsDisplayText(description) : "\u00A0"}
+        </p>
         {company.countries.length > 0 ? (
-          <p className="mt-2 font-urbanist text-sm leading-relaxed text-black/55">
+          <p className="mt-2 line-clamp-1 font-urbanist text-sm leading-relaxed text-black/55">
             {company.countries.join(", ")}
           </p>
         ) : null}

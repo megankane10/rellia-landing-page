@@ -1,4 +1,7 @@
 import {defineArrayMember, defineField, defineType} from 'sanity'
+import {GROUP_SEO} from '../shared/fieldGroups'
+import {CONTENT_SEO_FIELDSETS} from '../shared/singletonContentFields'
+import {seoField} from '../shared/seoField'
 
 export const advisor = defineType({
   name: 'advisor',
@@ -8,7 +11,9 @@ export const advisor = defineType({
     {name: 'profile', title: 'Profile', default: true},
     {name: 'directory', title: 'Directory filters'},
     {name: 'links', title: 'Links'},
+    GROUP_SEO,
   ],
+  fieldsets: CONTENT_SEO_FIELDSETS,
   fields: [
     defineField({name: 'name', title: 'Name', type: 'string', validation: (Rule) => Rule.required(), group: 'profile'}),
     defineField({
@@ -25,7 +30,8 @@ export const advisor = defineType({
       name: 'photo',
       title: 'Avatar',
       type: 'image',
-      options: {hotspot: true, cropAspect: 3 / 4, cropAspectPreset: 'portrait'},
+      options: {hotspot: true, cropAspect: 5 / 4, cropAspectPreset: 'landscape'},
+      description: 'Displayed in a fixed 5:4 card frame on directory listings (object-cover).',
       group: 'profile',
     }),
     defineField({
@@ -34,6 +40,7 @@ export const advisor = defineType({
       type: 'string',
       description: 'Fallback URL if no upload',
       group: 'profile',
+      hidden: ({document}) => Boolean(document?.photo?.asset),
     }),
     defineField({
       name: 'snapshot',
@@ -122,6 +129,7 @@ export const advisor = defineType({
       description: 'Optional public contact email (also addable as an Email social link above).',
       group: 'links',
     }),
+    seoField,
   ],
   preview: {
     select: {

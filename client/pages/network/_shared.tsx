@@ -7,6 +7,7 @@ import NetworkEyebrow from "@/components/network/NetworkEyebrow"
 import { ArrowRight } from "lucide-react"
 import { Link } from "react-router-dom"
 import { PAGE_HEADER_TITLE_SIZE_CLASS } from "@/components/PageHeader"
+import { HEADING_PAGE_SUBTITLE } from "@/lib/typography"
 import { cmsCleanText, cmsDisplayText } from "@/lib/cmsStega"
 
 export function Reveal({
@@ -488,7 +489,7 @@ export function RoleHero({
           >
             {title}
           </h1>
-          <div className={cn("mt-6 font-urbanist text-lg leading-relaxed text-white md:text-xl [&_span]:!text-white [&_strong]:!text-white", subtitleClassName ?? "max-w-2xl")}>
+          <div className={cn("mt-6 font-urbanist leading-relaxed text-white [&_span]:!text-white [&_strong]:!text-white", HEADING_PAGE_SUBTITLE, subtitleClassName ?? "max-w-2xl")}>
             {typeof subtitle === "string" ? cmsDisplayText(subtitle) : subtitle}
           </div>
           <div className="mt-10 flex w-full flex-col gap-3 sm:flex-row sm:flex-wrap">

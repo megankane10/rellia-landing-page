@@ -1,4 +1,4 @@
-import { Calendar, History, MapPin, Video } from "lucide-react"
+import { Calendar, History } from "lucide-react"
 import { Link } from "react-router-dom"
 import type { ProgramsEventCard } from "@shared/cms/types"
 import {
@@ -102,15 +102,12 @@ export const EventCard = ({
                 {tagLabel}
               </span>
               {dateTimeLine ? (
-                <>
-
-                  <span className="font-urbanist text-[11px] font-bold text-black/40 uppercase tracking-widest">
-                    {dateTimeLine}
-                  </span>
-                </>
+                <span className="font-urbanist text-[11px] font-bold text-black/40 uppercase tracking-widest">
+                  {dateTimeLine}
+                </span>
               ) : null}
             </div>
-            
+
             <h3 className="line-clamp-2 font-host-grotesk text-xl font-semibold leading-tight tracking-tight text-black group-hover:underline decoration-2 underline-offset-4">
               {cmsDisplayText(event.title)}
             </h3>
@@ -129,7 +126,7 @@ export const EventCard = ({
                 )}
               />
               <div className="min-w-0 flex-1">
-                <p className="font-host-grotesk text-sm font-medium leading-tight text-black truncate">{cmsDisplayText(speakerName)}</p>
+                <p className="font-host-grotesk text-sm font-normal leading-tight text-black/85 truncate">{cmsDisplayText(speakerName)}</p>
                 {speakerCompany ? (
                   <p className="mt-0.5 font-urbanist text-xs font-normal leading-tight text-black/45 truncate">
                     {cmsDisplayText(speakerCompany)}

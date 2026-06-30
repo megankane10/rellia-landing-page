@@ -27,26 +27,28 @@ const AdvisorDirectoryCard = ({
     return primary ? [primary, ...industries] : industries
   }, [advisor])
 
+  const description = [advisor.organization, advisor.role]
+    .map((part) => (typeof part === "string" ? part.trim() : ""))
+    .filter(Boolean)
+    .join(" · ")
+
   const cardBody = (
     <>
       <div className="relative aspect-[5/4] w-full shrink-0 overflow-hidden border-b border-black/[0.05] bg-white">
         <img
           src={advisor.photoSrc}
           alt=""
-          className="absolute inset-x-0 top-0 h-[calc(100%/0.72)] w-full object-cover object-top transition duration-500 ease-out group-hover:scale-[1.03] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
+          className="h-full w-full object-cover object-top transition duration-500 ease-out group-hover:scale-[1.03] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
           loading="lazy"
         />
         <DirectoryCardTags tags={cardTags} variant="onLight" />
       </div>
-      <div className="flex flex-1 flex-col p-6 md:p-7">
-        <h3 className="font-host-grotesk text-lg font-bold tracking-tight text-black group-hover:underline group-hover:underline-offset-4 decoration-2">
+      <div className="flex flex-1 flex-col p-5 md:p-6">
+        <h3 className="line-clamp-1 font-host-grotesk text-lg font-bold leading-snug tracking-tight text-black group-hover:underline group-hover:underline-offset-4 decoration-2">
           {cmsDisplayText(advisor.name)}
         </h3>
-        <p className="mt-1 font-urbanist text-sm font-medium text-black/77">
-          {cmsDisplayText(advisor.organization)}
-        </p>
-        <p className="mt-2 font-urbanist text-sm leading-relaxed text-black/55">
-          {cmsDisplayText(advisor.role)}
+        <p className="mt-1.5 line-clamp-3 min-h-[4.125rem] font-urbanist text-sm font-medium leading-relaxed text-black/70">
+          {description ? cmsDisplayText(description) : "\u00A0"}
         </p>
       </div>
     </>

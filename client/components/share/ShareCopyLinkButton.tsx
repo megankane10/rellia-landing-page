@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { Check } from "lucide-react"
-import { ShareIconCopy, shareComfortableControlSizeClass, shareIconSize } from "@/components/share/sharePageIcons"
+import { ShareIconCopy, shareCompactControlSizeClass, shareIconSize } from "@/components/share/sharePageIcons"
 import { IconTooltipWrap, type IconTooltipPosition } from "@/components/share/IconTooltipWrap"
 import { cn } from "@/lib/utils"
 
@@ -23,7 +23,7 @@ export const ShareCopyLinkButton = ({
   className,
   copiedClassName,
   iconClassName = shareIconSize,
-  sizeClassName = shareComfortableControlSizeClass,
+  sizeClassName = shareCompactControlSizeClass,
   wrapperClassName,
   idleLabel = "Copy link",
   copiedLabel = "Copied!",

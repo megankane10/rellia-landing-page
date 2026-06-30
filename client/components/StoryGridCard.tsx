@@ -38,14 +38,14 @@ const StoryGridCard = ({ story }: StoryGridCardProps) => {
         </div>
 
         <div className="flex min-h-0 flex-1 flex-col overflow-hidden px-1.5 pt-3 pb-1 md:h-[160px]">
-          <div className="inline-flex w-fit items-center gap-2">
+          <div className="mb-2 inline-flex w-fit items-center gap-2">
             <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-rellia-teal" aria-hidden />
-            <span className="font-host-grotesk text-[11px] font-semibold uppercase tracking-[0.14em] text-rellia-teal">
+            <span className="font-host-grotesk text-[11px] font-bold uppercase tracking-[0.14em] text-rellia-teal">
               {cmsDisplayText(story.tag)}
             </span>
           </div>
 
-          <h3 className="mt-1 line-clamp-2 h-auto font-host-grotesk text-[16px] font-semibold leading-snug text-black group-hover:underline group-hover:underline-offset-4 md:text-lg">
+          <h3 className="line-clamp-2 h-auto font-host-grotesk text-[16px] font-semibold leading-snug text-black group-hover:underline group-hover:underline-offset-4 md:text-lg">
             {cmsDisplayStoryTitle(story.title)}
           </h3>
 

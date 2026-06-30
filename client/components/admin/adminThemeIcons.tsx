@@ -1,42 +1,19 @@
-import { Monitor, Moon, Sun, type LucideIcon } from "lucide-react"
+import { Moon, Sun, type LucideIcon } from "lucide-react"
 import type { AdminThemePreference } from "@/context/AdminThemeContext"
 import { cn } from "@/lib/utils"
 
-export const THEME_CYCLE_ORDER: AdminThemePreference[] = ["system", "light", "dark"]
-
-export const getNextThemePreference = (current: AdminThemePreference): AdminThemePreference => {
-  const index = THEME_CYCLE_ORDER.indexOf(current)
-  return THEME_CYCLE_ORDER[(index + 1) % THEME_CYCLE_ORDER.length]
-}
-
-/** Collapsed sidebar: toggle explicit light/dark only (system maps to current resolved). */
 export const getCollapsedNextThemePreference = (
-  resolvedTheme: "light" | "dark",
+  resolvedTheme: AdminThemePreference,
 ): AdminThemePreference => (resolvedTheme === "dark" ? "light" : "dark")
 
-export const getCollapsedThemeToggleTooltip = (resolvedTheme: "light" | "dark"): string =>
+export const getCollapsedThemeToggleTooltip = (resolvedTheme: AdminThemePreference): string =>
   resolvedTheme === "dark" ? "Switch to light mode" : "Switch to dark mode"
-
-export const getThemeCycleTooltip = (current: AdminThemePreference): string => {
-  const next = getNextThemePreference(current)
-  if (next === "light") return "Switch to light mode"
-  if (next === "dark") return "Switch to dark mode"
-  return "Switch to system theme"
-}
 
 const headerIconColorClass = "text-rellia-teal dark:text-rellia-mint"
 
 const THEME_PREFERENCE_ICONS: Record<AdminThemePreference, LucideIcon> = {
-  system: Monitor,
   light: Sun,
   dark: Moon,
-}
-
-/** Sun/Moon fill cleanly; Monitor reads better as outline vs bold stroke. */
-const THEME_ICON_FILLS_WHEN_SELECTED: Record<AdminThemePreference, boolean> = {
-  system: false,
-  light: true,
-  dark: true,
 }
 
 const ThemeGlyph = ({
@@ -44,19 +21,17 @@ const ThemeGlyph = ({
   className,
   size,
   filled,
-  fillable,
 }: {
   Icon: LucideIcon
   className?: string
   size: number
   filled: boolean
-  fillable: boolean
 }) => (
   <Icon
-    className={cn(className, filled && fillable && "fill-current")}
+    className={cn(className, filled && "fill-current")}
     style={{ width: size, height: size }}
-    strokeWidth={filled ? (fillable ? 1.5 : 2.25) : 1.75}
-    fill={filled && fillable ? "currentColor" : "none"}
+    strokeWidth={filled ? 1.5 : 1.75}
+    fill={filled ? "currentColor" : "none"}
     aria-hidden
   />
 )
@@ -88,7 +63,6 @@ export const ThemePreferenceIcon = ({
       className={cn(colorClass, className)}
       size={size}
       filled={filled}
-      fillable={THEME_ICON_FILLS_WHEN_SELECTED[preference]}
     />
   )
 }

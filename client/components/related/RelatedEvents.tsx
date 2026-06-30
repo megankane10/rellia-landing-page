@@ -12,7 +12,7 @@ import {
   DEFAULT_EVENTS_RELATED_COPY,
   mergeRelatedContentCopy,
 } from "@shared/cms/relatedContentCopy"
-import { getEventStartTimestamp, getEventTemporalStatus } from "@shared/cms/eventTemporalStatus"
+import { getEventStartTimestamp } from "@shared/cms/eventTemporalStatus"
 import { resolveEventCardImageSrc } from "@shared/cms/itemCardImage"
 import type { ProgramsEventCard } from "@shared/cms/types"
 
@@ -77,10 +77,7 @@ const RelatedEvents = ({ currentSlug, onHasRelatedChange }: RelatedEventsProps) 
     >
       {related.map((event: ProgramsEventCard, index: number) => (
         <ScrollReveal key={`${event.title}-${event.dateTime}`} delay={index * 0.05} className="w-full">
-          <RelatedEventCard
-            event={event}
-            variant={getEventTemporalStatus(event) === "past" ? "past" : "upcoming"}
-          />
+          <RelatedEventCard event={event} />
         </ScrollReveal>
       ))}
     </RelatedContentSection>

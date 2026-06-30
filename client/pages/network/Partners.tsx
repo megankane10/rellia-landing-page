@@ -15,6 +15,8 @@ import RelliaCta, { optionalCtaAction } from "@/components/RelliaCta"
 import { SectionsRenderer } from "@/components/cms/PageRenderer"
 import { CreamSection, GlassCardLight, LightSection, Reveal, RoleHero } from "./_shared"
 import { useNetworkPartnersPage } from "@/hooks/useCmsDocuments"
+import { isCmsPageContentReady } from "@/lib/cmsQueryState"
+import CmsPageLoadingShell from "@/components/cms/CmsPageLoadingShell"
 import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo"
 import { deriveHeroPageSeo } from "@/lib/cmsPageSeoDefaults"
 import { mergeNetworkPartnersPage, DEFAULT_NETWORK_PARTNERS_PAGE } from "@shared/cms/networkPageDefaults"
@@ -272,16 +274,31 @@ function ExclusiveDirectorySplit({ content }: { content: NetworkPartnersPageCont
 
 export default function Partners() {
   const partnersPageQuery = useNetworkPartnersPage()
+  const pageReady = isCmsPageContentReady(partnersPageQuery)
   const { data: page } = partnersPageQuery
-  const content = mergeNetworkPartnersPage(page)
+  const content = pageReady ? mergeNetworkPartnersPage(page) : null
   useApplyCmsSeo(
     page?.seo,
-    deriveHeroPageSeo({
-      pageTitle: content.title ?? "Industry Partners",
-      heroSubtitle: content.heroSubtitle,
-      pathname: "/industry-partners",
-    }),
+    content
+      ? deriveHeroPageSeo({
+          pageTitle: content.title ?? "Industry Partners",
+          heroSubtitle: content.heroSubtitle,
+          pathname: "/industry-partners",
+        })
+      : undefined,
   )
+
+  if (!content) {
+    return (
+      <div className="min-h-screen overflow-x-hidden bg-white font-host-grotesk">
+        <Navbar />
+        <main id="main-content">
+          <CmsPageLoadingShell variant="network" />
+        </main>
+        <Footer />
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen overflow-x-hidden bg-white font-host-grotesk">

@@ -1,14 +1,21 @@
 import { LinkedInFilled, MailFilled } from "@/components/icons/SocialIcons"
 import { cn } from "@/lib/utils"
 
-export const shareIconSize = "h-6 w-6 shrink-0"
+export const shareIconSize = "h-[1.125rem] w-[1.125rem] shrink-0 sm:h-5 sm:w-5"
+
+/** Compact share / social icon control — default for marketing detail pages. */
+export const shareCompactControlSizeClass = "h-9 w-9 shrink-0 sm:h-10 sm:w-10"
+
+/** @deprecated Use shareCompactControlSizeClass */
+export const shareControlSizeClass = shareCompactControlSizeClass
 
 /**
- * Responsive circle size for share / social icon controls.
- * Slightly smaller on very small screens, matching comfortable buttons from `RelliaAction` from `sm` up.
+ * @deprecated Prefer shareCompactControlSizeClass — kept for ShareCopyLinkButton default prop compatibility.
  */
-export const shareComfortableControlSizeClass =
-  "h-12 w-12 shrink-0 sm:h-[3.25rem] sm:w-[3.25rem] md:h-[3.75rem] md:w-[3.75rem]"
+export const shareComfortableControlSizeClass = shareCompactControlSizeClass
+
+/** Header action row height (apply + share) on cream heroes. */
+export const shareHeaderActionHeightClass = "h-11"
 
 const shareOutlineButtonBaseClass =
   "inline-flex items-center justify-center rounded-full border transition-all duration-300 focus-visible:outline-none"

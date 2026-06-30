@@ -6,6 +6,7 @@ import {
   mergeProgramsLanding,
   mergeQmsProgram,
   DEFAULT_QMS_PROGRAM,
+  mergeFaqPage,
 } from "./defaults"
 import {
   fetchAboutPageForPrerender,
@@ -23,6 +24,7 @@ import {
   fetchEventsLandingPageForPrerender,
   fetchAdvisorsForPrerender,
   fetchAlumniCompaniesForPrerender,
+  fetchFaqPageForPrerender,
   fetchDirectoryFilterGroupsForPrerender,
   fetchNetworkAlumniDirectoryPageForPrerender,
   fetchNetworkAdvisorsDirectoryPageForPrerender,
@@ -126,6 +128,14 @@ export const prefetchCmsQueriesForPathname = async (
     await queryClient.prefetchQuery({
       queryKey: ["cms", "aboutPage"],
       queryFn: async () => mergeAboutPage(aboutRaw ?? undefined),
+    })
+  }
+
+  if (pathname === "/faq") {
+    const faqRaw = await fetchFaqPageForPrerender()
+    await queryClient.prefetchQuery({
+      queryKey: ["cms", "faqPage"],
+      queryFn: async () => mergeFaqPage(faqRaw ?? undefined),
     })
   }
 

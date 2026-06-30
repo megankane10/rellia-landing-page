@@ -24,7 +24,7 @@ import { mergeNetworkAlumniDirectoryPage } from "@shared/cms/directoryPageDefaul
 import { FOUNDER_DIRECTORY, type FounderCompany } from "@/data/founderDirectory"
 import { isSanityConfigured } from "@/lib/sanity"
 import { allowCmsSeedFallbacks } from "@/lib/deploymentEnv"
-import { isCmsQueryLoading } from "@/lib/cmsQueryState"
+import { isCmsQueryLoading, isCmsPageContentReady } from "@/lib/cmsQueryState"
 import { DirectoryGridSkeleton } from "@/components/cms/CmsPageLoadingShell"
 import FounderDirectoryCard from "@/components/network/FounderDirectoryCard"
 import {
@@ -78,8 +78,15 @@ const mapCmsCompany = (c: Record<string, unknown>): FounderCompany => ({
 })
 
 export default function FoundersDirectory() {
-  const { data: alumniDirectoryRaw } = useNetworkAlumniDirectoryPage()
-  const alumniDirectory = mergeNetworkAlumniDirectoryPage(alumniDirectoryRaw ?? undefined)
+  const alumniDirectoryQuery = useNetworkAlumniDirectoryPage()
+  const directoryReady = isCmsPageContentReady(alumniDirectoryQuery)
+  const alumniDirectory = useMemo(
+    () =>
+      directoryReady
+        ? mergeNetworkAlumniDirectoryPage(alumniDirectoryQuery.data ?? undefined)
+        : null,
+    [alumniDirectoryQuery.data, directoryReady],
+  )
   const reduceMotion = useReducedMotion()
   const location = useLocation()
   const companiesQuery = useAlumniCompanies()
@@ -138,10 +145,12 @@ export default function FoundersDirectory() {
   }, [companies])
 
   useApplyCmsSeo(
-    alumniDirectory.seo,
-    deriveDirectoryPageSeo(alumniDirectory, "/founders/alumni", {
-      ogImage: alumniDirectoryOgImage,
-    }),
+    alumniDirectory?.seo,
+    alumniDirectory
+      ? deriveDirectoryPageSeo(alumniDirectory, "/founders/alumni", {
+          ogImage: alumniDirectoryOgImage,
+        })
+      : undefined,
   )
 
   const filtered = useMemo(() => {
@@ -226,9 +235,17 @@ export default function FoundersDirectory() {
               <TagIcon className="h-3.5 w-3.5 shrink-0" aria-hidden />
               Founders
             </div>
-            <h1 className={DIRECTORY_TITLE_CLASS}>{alumniDirectory.directoryTitle ?? "Explore Alumni"}</h1>
+            <h1 className={DIRECTORY_TITLE_CLASS}>
+              {directoryReady && alumniDirectory
+                ? (alumniDirectory.directoryTitle ?? "Explore Alumni")
+                : <span className="inline-block h-12 w-72 max-w-full animate-pulse rounded-lg bg-black/10" aria-hidden />}
+            </h1>
             <p className="mt-4 max-w-2xl font-urbanist text-lg leading-relaxed text-black/70">
-              {alumniDirectory.directorySubtitle}
+              {directoryReady && alumniDirectory ? (
+                alumniDirectory.directorySubtitle
+              ) : (
+                <span className="block h-6 w-full max-w-xl animate-pulse rounded bg-black/10" aria-hidden />
+              )}
             </p>
           </div>
         </section>
@@ -318,7 +335,7 @@ export default function FoundersDirectory() {
                   variants={container}
                   initial="hidden"
                   animate="show"
-                  className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"
+                  className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"
                 >
                   <AnimatePresence mode="popLayout">
                     {paginated.map((c) => (
@@ -386,10 +403,11 @@ export default function FoundersDirectory() {
           </div>
         </section>
 
-        {alumniDirectory.sections?.length ? (
+        {alumniDirectory?.sections?.length ? (
           <SectionsRenderer sections={alumniDirectory.sections} />
         ) : null}
 
+        {alumniDirectory ? (
         <RelliaCta
           title={alumniDirectory.directoryCtaTitle ?? "Ready to build your network?"}
           body={alumniDirectory.directoryCtaBody}
@@ -402,6 +420,7 @@ export default function FoundersDirectory() {
             alumniDirectory.directoryCtaSecondaryHref,
           )}
         />
+        ) : null}
       </main>
 
       <Footer />

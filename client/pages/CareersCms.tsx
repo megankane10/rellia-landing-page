@@ -446,21 +446,18 @@ export default function CareersCms() {
           sectionTitle={cmsDisplayText(careersCms.whyTitle ?? "Building What Matters Most")}
           sectionDescription={cmsDisplayText(careersCms.whyDescription)}
           features={mapNetworkWhyFeatures(careersCms.whyFeatures ?? [])}
-          sectionClassName="bg-white pt-16 md:pt-20"
         />
 
-        <div className="bg-white pt-10 md:pt-12 pb-4 md:pb-6">
-          <HowItWorks
-            heading={
-              <HeroHeadlinePortable
-                value={careersCms.perksTitlePortable ?? careersCms.perksTitle ?? "How we work"}
-              />
-            }
-            subheading={cmsDisplayText(careersCms.perksDescription)}
-            steps={careersHowWeWorkSteps}
-            columns={2}
-          />
-        </div>
+        <HowItWorks
+          heading={
+            <HeroHeadlinePortable
+              value={careersCms.perksTitlePortable ?? careersCms.perksTitle ?? "How we work"}
+            />
+          }
+          subheading={cmsDisplayText(careersCms.perksDescription)}
+          steps={careersHowWeWorkSteps}
+          columns={2}
+        />
 
         {showHiringSection ? (
           <CareersOpenRolesSection

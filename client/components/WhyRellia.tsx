@@ -120,7 +120,7 @@ export default function WhyRellia({
   return (
     <section
       className={cn(
-        "w-full overflow-x-hidden bg-white px-6 py-16 md:px-10 md:py-24 lg:px-10",
+        "w-full overflow-x-hidden bg-white px-6 py-16 md:px-10 md:py-24 lg:py-28 lg:px-10",
         sectionClassName,
       )}
     >

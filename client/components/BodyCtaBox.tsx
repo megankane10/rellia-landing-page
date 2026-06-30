@@ -1,10 +1,15 @@
 import { Link } from "react-router-dom"
 import { Rocket } from "lucide-react"
-import { HEADING_CARD } from "@/lib/typography"
 import RelliaAction from "@/components/RelliaAction"
 import { cn } from "@/lib/utils"
 import { resolveLucideIcon } from "@/lib/resolveLucideIcon"
 import { cmsCleanText, cmsDisplayText, cmsHasDisplayText } from "@/lib/cmsStega"
+import {
+  RichTextTealPanel,
+  richTextTealPanelDescriptionClassName,
+  richTextTealPanelPaddingClassName,
+  richTextTealPanelQuoteClassName,
+} from "@/components/RichTextTealPanel"
 
 export type BodyCtaBoxProps = {
   title: string
@@ -19,11 +24,13 @@ export type BodyCtaBoxProps = {
 const CtaButton = ({
   label,
   href,
-  variant = "relliaCtaPrimary",
+  variant = "heroSolidOnTeal",
+  className,
 }: {
   label: string
   href: string
-  variant?: "relliaCtaPrimary" | "outlineOnWhite"
+  variant?: "heroSolidOnTeal" | "heroGhostOnTeal"
+  className?: string
 }) => {
   const trimmedHref = cmsCleanText(href) || "/"
   const displayLabel = cmsDisplayText(label)
@@ -35,7 +42,7 @@ const CtaButton = ({
         asChild
         variant={variant}
         size="comfortable"
-        className="w-full sm:w-auto"
+        className={cn("w-full sm:w-auto", className)}
         aria-label={cmsCleanText(label)}
       >
         <Link to={trimmedHref}>{displayLabel}</Link>
@@ -48,7 +55,7 @@ const CtaButton = ({
       asChild
       variant={variant}
       size="comfortable"
-      className="w-full sm:w-auto"
+      className={cn("w-full sm:w-auto", className)}
       aria-label={cmsCleanText(label)}
     >
       <a
@@ -63,7 +70,7 @@ const CtaButton = ({
 }
 
 /**
- * Call-to-action panel matching Story article CTAs — use inside portable text (`bodyCtaBox`).
+ * Call-to-action panel for portable text (`bodyCtaBox`) — matches quote box teal panel styling.
  */
 export const BodyCtaBox = ({
   title,
@@ -80,33 +87,32 @@ export const BodyCtaBox = ({
   const Icon = resolveLucideIcon(iconKey, Rocket)
 
   return (
-    <div className="my-10 rounded-3xl border border-black/10 bg-white px-7 py-7 md:my-12 md:px-10 md:py-9">
-      {cmsHasDisplayText(iconKey) ? (
-        <Icon className="mb-4 h-8 w-8 text-rellia-teal" aria-hidden />
-      ) : null}
-      <h3 className={cn("font-host-grotesk font-semibold tracking-tight text-black", HEADING_CARD)}>
-        {cmsDisplayText(title)}
-      </h3>
-      {cmsHasDisplayText(body) ? (
-        <p className="mt-3 font-urbanist text-base leading-relaxed text-black/65 md:text-lg">
-          {cmsDisplayText(body)}
-        </p>
-      ) : null}
-      <div
-        className={cn(
-          "mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center",
-          showSecondary && "sm:gap-4",
-        )}
-      >
-        <CtaButton label={buttonLabel} href={buttonHref} />
-        {showSecondary ? (
-          <CtaButton
-            label={secondaryLabel}
-            href={secondaryHref}
-            variant="outlineOnWhite"
-          />
+    <RichTextTealPanel className={cn("my-12 md:my-14", richTextTealPanelPaddingClassName)}>
+      <div className="relative z-10">
+        {cmsHasDisplayText(iconKey) ? (
+          <Icon className="mb-4 h-8 w-8 text-rellia-mint" aria-hidden />
         ) : null}
+        <p className={richTextTealPanelQuoteClassName}>{cmsDisplayText(title)}</p>
+        {cmsHasDisplayText(body) ? (
+          <p className={richTextTealPanelDescriptionClassName}>{cmsDisplayText(body)}</p>
+        ) : null}
+        <div
+          className={cn(
+            "mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center",
+            showSecondary && "sm:gap-4",
+          )}
+        >
+          <CtaButton label={buttonLabel} href={buttonHref} />
+          {showSecondary ? (
+            <CtaButton
+              label={secondaryLabel}
+              href={secondaryHref}
+              variant="heroGhostOnTeal"
+              className="border-white/45 text-white hover:border-white/80"
+            />
+          ) : null}
+        </div>
       </div>
-    </div>
+    </RichTextTealPanel>
   )
 }

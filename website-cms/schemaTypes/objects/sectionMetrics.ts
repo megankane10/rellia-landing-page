@@ -2,6 +2,7 @@ import {defineArrayMember, defineField, defineType} from 'sanity'
 import {internalLabelField, sectionListPreview} from '../shared/sectionPreview'
 import {showBadgeField} from '../shared/sectionAppearanceFields'
 import {portableHeadlineField} from '../shared/inlineHeroHeadlineField'
+import {iconKeyField} from '../shared/iconKeyField'
 
 /** Page-builder metrics — white band with stats and optional side image. */
 export const sectionMetrics = defineType({
@@ -30,6 +31,9 @@ export const sectionMetrics = defineType({
           type: 'object',
           name: 'metric',
           fields: [
+            iconKeyField({
+              description: 'Optional Lucide icon name.',
+            }),
             defineField({name: 'label', type: 'string', validation: (Rule) => Rule.required()}),
             defineField({name: 'value', type: 'number', validation: (Rule) => Rule.required().min(0)}),
             defineField({name: 'suffix', type: 'string', description: 'Optional suffix after the number (e.g. +).'}),

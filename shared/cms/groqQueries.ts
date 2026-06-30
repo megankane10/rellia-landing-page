@@ -169,6 +169,10 @@ export const storiesQuery = `*[_type == "story" && !(_id in path("drafts.**"))]
 export const storiesPageQuery = `*[_id == "storiesPage"][0]{
   headlinePortable,
   subheadline,
+  hideStoryPublishDates,
+  defaultAuthorName,
+  defaultAuthorDescription,
+  "defaultAuthorImageSrc": defaultAuthorImage.asset->url,
   relatedSectionTitle,
   relatedSectionSubheadline,
   relatedSectionEnabled,
@@ -194,6 +198,14 @@ const portableRichTextBlocksFragment = `[]{
       displayMode,
       "imageSrc": coalesce(image.asset->url, imageSrc)
     }
+  },
+  _type == "portableQuoteBox" => {
+    ...,
+    "imageSrc": coalesce(image.asset->url, imageSrc)
+  },
+  _type == "portableTable" => {
+    ...,
+    rows[]{ _key, cells[] }
   }
 }`
 
@@ -221,6 +233,10 @@ export const storyBySlugQuery = `*[_type == "story" && (slug.current == $slug ||
   "coverImageAlt": headerImageAlt,
   "tag": filters[0]->title,
   publishedAt,
+  hidePublishDate,
+  authorName,
+  authorDescription,
+  "authorImageSrc": authorImage.asset->url,
   featured,
   headerLayout,
   body${portableRichTextBlocksFragment},
@@ -233,7 +249,7 @@ const pageSectionFieldsFragment = `...,
   primaryCta{ label, href, description, badge, openInNewTab },
   secondaryCta{ label, href, description, badge, openInNewTab },
   cta{ label, actionType, href, filloutFormUrl },
-  metrics[]{ _key, label, "value": string(value), suffix },
+  metrics[]{ _key, label, "value": string(value), suffix, iconKey },
   steps[]{ _key, title, description },
   roleLinks[]{ _key, title, description, href },
   cards[]{ _key,
@@ -305,6 +321,10 @@ export const networkFoundersPageQuery = `*[_id == "networkFoundersPage"][0]{
   deeperHelpFeatures[]{ _key, title, body, iconKey },
   deeperHelpCtaLabel,
   deeperHelpCtaHref,
+  membershipPathTitle,
+  membershipPathSubtitle,
+  membershipPathSteps[]{ _key, title, description },
+  "deeperHelpBackgroundImageSrc": coalesce(deeperHelpBackgroundImage.asset->url, deeperHelpBackgroundImageUrl),
   ${networkCtaFragment},
   ${logoMarqueeFragment},
   ${pageSectionsFragment},
@@ -523,7 +543,7 @@ export const homePageQuery = `*[_id == "homePage"][0]{
   metricsBadgeLabel,
   metricsHeadingPortable,
   "metricsBackgroundImageUrl": coalesce(metricsBackgroundImage.asset->url, metricsBackgroundImageUrl),
-  metrics[]{ _key, label, "value": string(value), suffix },
+  metrics[]{ _key, label, "value": string(value), suffix, iconKey },
   howItWorksSectionTitle,
   howItWorksSectionDescription,
   howItWorksSteps[]{ _key, iconKey, title, description },
@@ -556,6 +576,7 @@ export const homePageQuery = `*[_id == "homePage"][0]{
   pathsCards[]{ _key,
     roleId,
     tagLabel,
+    showBadge,
     title,
     subtitle,
     "imageSrc": coalesce(image.asset->url, imageSrc),
@@ -806,6 +827,7 @@ export const notFoundQuery = `*[_id == "notFoundPage"][0]{
   title,
   message,
   ctaLabel,
+  ctaPath,
   iconKey,
   ${seoFragment}
 }`;
@@ -998,7 +1020,8 @@ export const advisorsQuery = `*[_type == "advisor" && !(_id in path("drafts.**")
   "photoSrc": coalesce(photo.asset->url, photoSrc),
   email,
   socialLinks[]{ _key, platform, label, url },
-  bio${portableRichTextBlocksFragment}
+  bio${portableRichTextBlocksFragment},
+  ${seoFragment}
 }`;
 
 export const alumniCompaniesQuery = `*[_type == "alumniCompany" && !(_id in path("drafts.**"))]{
@@ -1043,6 +1066,7 @@ export const alumniCompaniesQuery = `*[_type == "alumniCompany" && !(_id in path
   email,
   yearJoined,
   "logoSrc": coalesce(logo.asset->url, logoSrc),
+  ${seoFragment},
   founders[]{ _key,
     name,
     role,
@@ -1069,6 +1093,8 @@ export const sanityDraftsQuery = `*[
   _id,
   _type,
   "title": coalesce(title, name, headline, slug.current, _type),
+  "slug": slug.current,
+  "roleId": roleId.current,
   _updatedAt
 }[0...24]`
 
@@ -1081,5 +1107,7 @@ export const sanityRecentEditsQuery = `*[
   _id,
   _type,
   "title": coalesce(title, name, headline, slug.current, _type),
+  "slug": slug.current,
+  "roleId": roleId.current,
   _updatedAt
 }[0...16]`

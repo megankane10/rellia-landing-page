@@ -28,6 +28,7 @@ import {
   siteSettingsQuery,
   storiesPageQuery,
   storiesPrerenderSnapshotQuery,
+  faqPageQuery,
 } from "../shared/cms/groqQueries"
 import { resolveSanityApiConfig } from "../shared/cms/sanityEnv"
 import { cmsTextToPlain } from "../shared/cms/cmsFieldUtils"
@@ -52,6 +53,7 @@ const programsLayoutSnapshotPath = resolve(snapshotsDir, "programsLayoutPage.jso
 const programsSnapshotPath = resolve(snapshotsDir, "programs.json")
 const siteSettingsSnapshotPath = resolve(snapshotsDir, "siteSettings.json")
 const storiesPageSnapshotPath = resolve(snapshotsDir, "storiesPage.json")
+const faqPageSnapshotPath = resolve(snapshotsDir, "faqPage.json")
 
 const writeJsonSnapshot = (path: string, rows: Record<string, unknown>[]): void => {
   mkdirSync(dirname(path), { recursive: true })
@@ -93,6 +95,7 @@ const resetSingletonSnapshots = () => {
   writeJsonDocSnapshot(programsLayoutSnapshotPath, null)
   writeJsonDocSnapshot(eventsLandingSnapshotPath, null)
   writeJsonDocSnapshot(storiesPageSnapshotPath, null)
+  writeJsonDocSnapshot(faqPageSnapshotPath, null)
 }
 
 const main = async () => {
@@ -153,6 +156,7 @@ const main = async () => {
       programsLayoutDoc,
       eventsLandingDoc,
       storiesPageDoc,
+      faqPageDoc,
     ] = await Promise.all([
       client.fetch<Record<string, unknown>[]>(eventsQuery),
       client.fetch<Record<string, unknown>[]>(storiesPrerenderSnapshotQuery),
@@ -172,6 +176,7 @@ const main = async () => {
       client.fetch<Record<string, unknown> | null>(programsLayoutPageQuery),
       client.fetch<Record<string, unknown> | null>(eventsLandingQuery),
       client.fetch<Record<string, unknown> | null>(storiesPageQuery),
+      client.fetch<Record<string, unknown> | null>(faqPageQuery),
     ])
     const events = Array.isArray(eventRows) ? eventRows : []
     const stories = Array.isArray(storyRows) ? storyRows : []
@@ -196,6 +201,7 @@ const main = async () => {
     writeJsonDocSnapshot(programsLayoutSnapshotPath, programsLayoutDoc ?? null)
     writeJsonDocSnapshot(eventsLandingSnapshotPath, eventsLandingDoc ?? null)
     writeJsonDocSnapshot(storiesPageSnapshotPath, storiesPageDoc ?? null)
+    writeJsonDocSnapshot(faqPageSnapshotPath, faqPageDoc ?? null)
     console.log(
       `[cms-snapshot] Wrote ${events.length} events, ${stories.length} stories, ${openRoles.length} open roles, ${programs.length} programs, ${pages.length} custom pages + singletons (dataset=${config.dataset}).`,
     )

@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react"
 import { cn } from "@/lib/utils"
 import NetworkEyebrow from "@/components/network/NetworkEyebrow"
+import { HEADING_SECTION_SUBTITLE } from "@/lib/typography"
+import { lookupLucideIcon } from "@/lib/resolveLucideIcon"
 import {
   cmsCleanText,
   cmsDisplayText,
@@ -49,6 +51,7 @@ export type PageBuilderMetric = {
   value: number
   valueText?: string
   suffix?: string
+  iconKey?: string
 }
 
 type PageBuilderMetricsSectionProps = {
@@ -75,9 +78,13 @@ function MetricStat({
   const valueRaw = metric.valueText ?? String(metric.value)
   const numericTarget = Number(cmsCleanText(valueRaw)) || 0
   const count = useCountUp(numericTarget, entered && !previewMode, 1200 + index * 150)
+  const Icon = lookupLucideIcon(metric.iconKey)
 
   return (
     <div className="flex flex-col items-start">
+      {Icon && (
+        <Icon className="mb-4 h-8 w-8 text-rellia-teal" strokeWidth={1.35} aria-hidden />
+      )}
       <div className="font-host-grotesk text-4xl font-semibold leading-none tracking-tight text-rellia-teal md:text-5xl">
         {previewMode ? cmsDisplayText(valueRaw) : count}
         {cmsDisplayText(metric.suffix)}
@@ -142,7 +149,7 @@ export default function PageBuilderMetricsSection({
             {heading}
           </h2>
           {cmsHasDisplayText(subheading) ? (
-            <p className="mt-4 max-w-2xl font-urbanist text-base leading-relaxed text-black/70 md:text-lg">
+            <p className={cn("mt-4 max-w-2xl font-urbanist leading-relaxed text-black/70", HEADING_SECTION_SUBTITLE)}>
               {cmsDisplayText(subheading)}
             </p>
           ) : null}

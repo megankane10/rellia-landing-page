@@ -7,6 +7,7 @@ import { mapPortableBodyCtaBox } from "@/lib/bodyCtaBoxPortable"
 import { cmsDisplayText, cmsHasDisplayText } from "@/lib/cmsStega"
 import { RichTextImageCarousel, type RichTextCarouselSlide } from "@/components/RichTextImageCarousel"
 import { parseBlockquoteAttribution, RichTextQuoteFigure } from "@/components/RichTextQuoteFigure"
+import { resolvePortableQuoteBoxImage } from "@/lib/portableQuoteBox"
 import ImageExpandModal from "@/components/ImageExpandModal"
 import {
   normalizeRichTextImageDisplayMode,
@@ -111,15 +112,18 @@ const components: PortableTextComponents = {
       return <BodyCtaBox {...mapped} />
     },
     portableQuoteBox: ({ value }) => {
-      const v = value as { quote?: string; attribution?: string } | null
+      const v = value as Parameters<typeof resolvePortableQuoteBoxImage>[0] & { quote?: string; attribution?: string } | null
       if (!cmsHasDisplayText(v?.quote)) return null
       const attribution = cmsHasDisplayText(v?.attribution)
         ? cmsDisplayText(v?.attribution)
         : undefined
+      const image = resolvePortableQuoteBoxImage(v)
       return (
         <RichTextQuoteFigure
           quote={cmsDisplayText(v!.quote)}
           attribution={attribution || null}
+          imageSrc={image?.imageSrc}
+          imageAlt={image?.imageAlt}
         />
       )
     },

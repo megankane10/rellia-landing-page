@@ -5,6 +5,7 @@ import { ArrowRight } from "lucide-react"
 import { motion, useInView, useReducedMotion } from "framer-motion"
 import NetworkEyebrow from "@/components/network/NetworkEyebrow"
 import { cn } from "@/lib/utils"
+import { HEADING_SECTION_SUBTITLE } from "@/lib/typography"
 import { cmsDisplayText } from "@/lib/cmsStega"
 
 export type MembershipPathStep = {
@@ -169,7 +170,7 @@ const MembershipPathTimeline = ({
             >
               {typeof headingTitle === "string" ? cmsDisplayText(headingTitle) : headingTitle}
             </h1>
-            <p className="mt-4 font-urbanist text-base leading-relaxed text-black/70 md:text-lg md:leading-relaxed">
+            <p className={cn("mt-4 font-urbanist leading-relaxed text-black/70", HEADING_SECTION_SUBTITLE)}>
               {cmsDisplayText(subheading)}
             </p>
             {headingFooter ? (

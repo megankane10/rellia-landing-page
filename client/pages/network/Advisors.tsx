@@ -14,6 +14,8 @@ import { Link } from "react-router-dom"
 import LogoMarquee from "@/components/LogoMarquee"
 import { CreamSection, GlassCardLight, LightSection, Reveal, RoleHero } from "./_shared"
 import { useNetworkAdvisorsPage } from "@/hooks/useCmsDocuments"
+import { isCmsPageContentReady } from "@/lib/cmsQueryState"
+import CmsPageLoadingShell from "@/components/cms/CmsPageLoadingShell"
 import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo"
 import { deriveHeroPageSeo } from "@/lib/cmsPageSeoDefaults"
 import { mergeNetworkAdvisorsPage, DEFAULT_NETWORK_ADVISORS_PAGE } from "@shared/cms/networkPageDefaults"
@@ -234,16 +236,31 @@ function ScheduleSplit({ content }: { content: NetworkAdvisorsPageContent }) {
 
 export default function Advisors() {
   const advisorsPageQuery = useNetworkAdvisorsPage()
+  const pageReady = isCmsPageContentReady(advisorsPageQuery)
   const { data: page } = advisorsPageQuery
-  const content = mergeNetworkAdvisorsPage(page)
+  const content = pageReady ? mergeNetworkAdvisorsPage(page) : null
   useApplyCmsSeo(
     page?.seo,
-    deriveHeroPageSeo({
-      pageTitle: content.title ?? "Advisors",
-      heroSubtitle: content.heroSubtitle,
-      pathname: "/advisors",
-    }),
+    content
+      ? deriveHeroPageSeo({
+          pageTitle: content.title ?? "Advisors",
+          heroSubtitle: content.heroSubtitle,
+          pathname: "/advisors",
+        })
+      : undefined,
   )
+
+  if (!content) {
+    return (
+      <div className="min-h-screen overflow-x-hidden bg-white font-host-grotesk">
+        <Navbar />
+        <main id="main-content">
+          <CmsPageLoadingShell variant="network" />
+        </main>
+        <Footer />
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen overflow-x-hidden bg-white font-host-grotesk">

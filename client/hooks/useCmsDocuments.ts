@@ -35,6 +35,10 @@ import programsLandingPageBuildSnapshot from "@shared/cms/build-snapshots/progra
 import programsLayoutPageBuildSnapshot from "@shared/cms/build-snapshots/programsLayoutPage.json"
 import siteSettingsBuildSnapshot from "@shared/cms/build-snapshots/siteSettings.json"
 import storiesPageBuildSnapshot from "@shared/cms/build-snapshots/storiesPage.json"
+import eventsBuildSnapshot from "@shared/cms/build-snapshots/events.json"
+import storiesBuildSnapshot from "@shared/cms/build-snapshots/stories.json"
+import pagesBuildSnapshot from "@shared/cms/build-snapshots/pages.json"
+import faqPageBuildSnapshot from "@shared/cms/build-snapshots/faqPage.json"
 import type {
   AboutPageContent,
   ContactPageContent,
@@ -175,6 +179,10 @@ export type CmsStoryListItem = {
   coverImageAlt?: string
   tag?: string
   publishedAt?: string
+  hidePublishDate?: boolean
+  authorName?: string
+  authorDescription?: string
+  authorImageSrc?: string
   featured?: boolean
 }
 
@@ -191,6 +199,11 @@ export const useFeaturedStories = () =>
       const raw = await sanityFetch<CmsStory[]>("featuredStories")
       return Array.isArray(raw) ? raw : []
     },
+    initialData: () => {
+      const list = Array.isArray(storiesBuildSnapshot) ? (storiesBuildSnapshot as CmsStory[]) : []
+      return list.filter((s) => s.featured === true)
+    },
+    initialDataUpdatedAt: snapshotInitialDataUpdatedAt,
     staleTime: staleTimeMs,
   })
 
@@ -201,12 +214,18 @@ export const useStories = () =>
       const raw = await sanityFetch<CmsStoryListItem[]>("stories")
       return Array.isArray(raw) ? raw : []
     },
+    initialData: () => (Array.isArray(storiesBuildSnapshot) ? (storiesBuildSnapshot as CmsStoryListItem[]) : []),
+    initialDataUpdatedAt: snapshotInitialDataUpdatedAt,
     staleTime: staleTimeMs,
   })
 
 export type StoriesLandingContent = {
   headlinePortable?: SanityPortableText | null
   subheadline?: string | null
+  hideStoryPublishDates?: boolean
+  defaultAuthorName?: string
+  defaultAuthorDescription?: string
+  defaultAuthorImageSrc?: string
   relatedSectionEnabled?: boolean | null
   relatedSectionTitle?: string | null
   relatedSectionSubheadline?: string | null
@@ -225,30 +244,44 @@ export const useStoriesPage = () =>
     staleTime: staleTimeMs,
   })
 
-export const useStoryBySlug = (slug: string) =>
-  useQuery({
-    queryKey: ["cms", "story", slug],
+export const useStoryBySlug = (slug: string) => {
+  const trimmed = slug.trim()
+  return useQuery({
+    queryKey: ["cms", "story", trimmed],
     queryFn: async () => {
-      const trimmed = slug.trim()
       if (!trimmed) return null
       const raw = await sanityFetch<CmsStory>("storyBySlug", { slug: trimmed })
       return raw ?? null
     },
-    enabled: Boolean(slug.trim()),
+    enabled: Boolean(trimmed),
+    initialData: () => {
+      const list = Array.isArray(storiesBuildSnapshot) ? (storiesBuildSnapshot as CmsStory[]) : []
+      return list.find((s) => s.slug === trimmed) ?? undefined
+    },
+    initialDataUpdatedAt: snapshotInitialDataUpdatedAt,
     staleTime: staleTimeMs,
   })
+}
 
-export const useCmsPageBySlug = (slug: string) =>
-  useQuery({
-    queryKey: ["cms", "page", slug],
+export const useCmsPageBySlug = (slug: string) => {
+  const trimmed = slug.trim()
+  return useQuery({
+    queryKey: ["cms", "page", trimmed],
     queryFn: async () => {
-      const trimmed = slug.trim()
       if (!trimmed) return null
       const raw = await sanityFetch<CmsPageContent>("pageBySlug", { slug: trimmed })
       return mergeCmsPageContent(raw)
     },
+    enabled: Boolean(trimmed),
+    initialData: () => {
+      const list = Array.isArray(pagesBuildSnapshot) ? (pagesBuildSnapshot as any[]) : []
+      const found = list.find((p) => p?.slug === trimmed)
+      return found ? mergeCmsPageContent(found) : undefined
+    },
+    initialDataUpdatedAt: snapshotInitialDataUpdatedAt,
     staleTime: staleTimeMs,
   })
+}
 
 export const useAboutPage = () =>
   useQuery({
@@ -272,6 +305,11 @@ export const useFaqPage = () =>
       const raw = await sanityFetch<Partial<FaqPageContent>>("faqPage");
       return mergeFaqPage(raw ?? undefined);
     },
+    initialData: () =>
+      mergeFaqPage(
+        (snapshotSingleton(faqPageBuildSnapshot) as Partial<FaqPageContent>) ?? undefined,
+      ),
+    initialDataUpdatedAt: snapshotInitialDataUpdatedAt,
     staleTime: staleTimeMs,
   });
 
@@ -386,6 +424,8 @@ export const useEvents = () =>
       const raw = await sanityFetch<any[]>("events")
       return raw ?? []
     },
+    initialData: () => (Array.isArray(eventsBuildSnapshot) ? (eventsBuildSnapshot as any[]) : []),
+    initialDataUpdatedAt: snapshotInitialDataUpdatedAt,
     staleTime: staleTimeMs,
     refetchOnMount: "always",
   })
@@ -412,6 +452,11 @@ export const useEventBySlug = (slug: string) => {
       return fromList.find((event) => event?.slug === trimmed) ?? null
     },
     enabled: Boolean(trimmed),
+    initialData: () => {
+      const list = Array.isArray(eventsBuildSnapshot) ? (eventsBuildSnapshot as any[]) : []
+      return list.find((e) => e?.slug === trimmed) ?? undefined
+    },
+    initialDataUpdatedAt: snapshotInitialDataUpdatedAt,
     staleTime: staleTimeMs,
     refetchOnMount: "always",
     placeholderData: () => {

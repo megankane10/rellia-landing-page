@@ -47,6 +47,8 @@ import {
   useTransform,
 } from "framer-motion";
 import { useNetworkFoundersPage } from "@/hooks/useCmsDocuments";
+import { isCmsPageContentReady } from "@/lib/cmsQueryState";
+import CmsPageLoadingShell from "@/components/cms/CmsPageLoadingShell";
 import { PORTFOLIO_LOGO_MARKS } from "@/data/portfolioLogos";
 import { resolveLogoMarqueeMarks } from "@/lib/resolveLogoMarqueeMarks";
 import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo";
@@ -277,6 +279,7 @@ function DeeperHelpValuesSection({ content }: { content: NetworkFoundersPageCont
   const bgY = useTransform(scrollYProgress, [0, 1], ["-18%", "18%"]);
 
   const bgSrc =
+    content.deeperHelpBackgroundImageSrc?.trim() ||
     "https://images.pexels.com/photos/3184325/pexels-photo-3184325.jpeg?auto=compress&cs=tinysrgb&w=1600";
 
   return (
@@ -883,22 +886,40 @@ function ExploreNetworkSection({ content }: { content: NetworkFoundersPageConten
 
 export default function Founders() {
   const foundersPageQuery = useNetworkFoundersPage();
+  const pageReady = isCmsPageContentReady(foundersPageQuery);
   const { data: page } = foundersPageQuery;
-  const content = useMemo(() => mergeNetworkFoundersPage(page), [page]);
+  const content = useMemo(
+    () => (pageReady ? mergeNetworkFoundersPage(page) : null),
+    [page, pageReady],
+  );
 
   useApplyCmsSeo(
     page?.seo,
-    deriveHeroPageSeo({
-      pageTitle: content.title ?? "Founders",
-      heroSubtitle: content.heroSubtitle,
-      pathname: "/founders",
-    }),
+    content
+      ? deriveHeroPageSeo({
+          pageTitle: content.title ?? "Founders",
+          heroSubtitle: content.heroSubtitle,
+          pathname: "/founders",
+        })
+      : undefined,
   );
 
   const logoMarks = useMemo(
-    () => resolveLogoMarqueeMarks(content.logoMarquee, PORTFOLIO_LOGO_MARKS),
-    [content.logoMarquee],
+    () => (content ? resolveLogoMarqueeMarks(content.logoMarquee, PORTFOLIO_LOGO_MARKS) : []),
+    [content?.logoMarquee],
   );
+
+  if (!content) {
+    return (
+      <div className="min-h-screen overflow-x-hidden bg-white font-host-grotesk">
+        <Navbar />
+        <main id="main-content">
+          <CmsPageLoadingShell variant="network" />
+        </main>
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen overflow-x-hidden bg-white font-host-grotesk">
@@ -921,8 +942,12 @@ export default function Founders() {
           <MembershipPathTimeline
             showRoleLinks={false}
             headingId="founders-membership-path-heading"
-            headingTitle="From application to your first warm intro"
-            subheading="Apply, get approved, choose your membership, join Slack, then reach out when you want introductions matched to your roadmap."
+            headingTitle={content.membershipPathTitle ?? "From application to your first warm intro"}
+            subheading={
+              content.membershipPathSubtitle ??
+              "Apply, get approved, choose your membership, join Slack, then reach out when you want introductions matched to your roadmap."
+            }
+            steps={content.membershipPathSteps?.length ? content.membershipPathSteps : undefined}
             className="border-t border-black/10"
           />
 

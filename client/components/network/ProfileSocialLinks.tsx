@@ -1,10 +1,11 @@
+import { Fragment } from "react"
 import {
   GlobeFilled,
   InstagramFilled,
   LinkedInFilled,
 } from "@/components/icons/SocialIcons"
 import { IconTooltipWrap } from "@/components/share/IconTooltipWrap"
-import { shareComfortableControlSizeClass } from "@/components/share/sharePageIcons"
+import { shareCompactControlSizeClass } from "@/components/share/sharePageIcons"
 import { cn } from "@/lib/utils"
 import { emailToSocialLink, resolveSocialPlatform } from "@shared/cms/socialLinks"
 import { Mail } from "lucide-react"
@@ -54,19 +55,19 @@ const BUTTON_CLASS: Record<ProfileSocialLinksVariant, string> = {
 const COMFORTABLE_BUTTON_CLASS: Record<ProfileSocialLinksVariant, string> = {
   light: cn(
     "inline-flex items-center justify-center rounded-full border border-black/12 bg-white text-black transition-all duration-300 hover:border-rellia-teal hover:bg-rellia-teal hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-teal focus-visible:ring-offset-2",
-    shareComfortableControlSizeClass,
+    shareCompactControlSizeClass,
   ),
   onDark: cn(
     "inline-flex items-center justify-center rounded-full border border-white/25 bg-white/10 text-white transition-all duration-300 hover:border-white hover:bg-white hover:text-rellia-teal focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-rellia-teal",
-    shareComfortableControlSizeClass,
+    shareCompactControlSizeClass,
   ),
 }
 
 const COMPACT_BUTTON_CLASS: Record<ProfileSocialLinksVariant, string> = {
   light:
-    "inline-flex h-10 w-10 items-center justify-center rounded-full border border-black/10 bg-white text-black transition-all duration-300 hover:border-rellia-teal hover:bg-rellia-teal hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-teal focus-visible:ring-offset-2",
+    "inline-flex h-9 w-9 items-center justify-center rounded-full border border-black/10 bg-white text-black transition-all duration-300 hover:border-rellia-teal hover:bg-rellia-teal hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-teal focus-visible:ring-offset-2 sm:h-10 sm:w-10",
   onDark:
-    "inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/25 bg-white/10 text-white transition-all duration-300 hover:border-white hover:bg-white hover:text-rellia-teal focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-rellia-teal",
+    "inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/25 bg-white/10 text-white transition-all duration-300 hover:border-white hover:bg-white hover:text-rellia-teal focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rellia-mint focus-visible:ring-offset-2 focus-visible:ring-offset-rellia-teal sm:h-10 sm:w-10",
 }
 
 export const ProfileSocialLinks = ({
@@ -173,15 +174,18 @@ export const ProfileSocialLinks = ({
 
   return (
     <div className={cn("flex flex-wrap items-center gap-3", className)}>
-      {items.map((item) =>
-        showTooltips ? (
-          <IconTooltipWrap key={item.key} label={item.label}>
-            {renderLink(item)}
-          </IconTooltipWrap>
-        ) : (
-          renderLink(item)
-        ),
-      )}
+      {items.map((item) => {
+        const link = renderLink(item)
+        return (
+          <Fragment key={item.key}>
+            {showTooltips ? (
+              <IconTooltipWrap label={item.label}>{link}</IconTooltipWrap>
+            ) : (
+              link
+            )}
+          </Fragment>
+        )
+      })}
     </div>
   )
 }

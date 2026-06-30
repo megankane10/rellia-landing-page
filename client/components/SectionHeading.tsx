@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils"
-import { HEADING_SECTION } from "@/lib/typography"
+import { HEADING_SECTION, HEADING_SECTION_SUBTITLE } from "@/lib/typography"
 import ScrollReveal from "@/components/ScrollReveal"
 import WordRevealHeading from "@/components/WordRevealHeading"
 import { cmsDisplayText, isVisualEditingPreview } from "@/lib/cmsStega"
@@ -56,7 +56,7 @@ export default function SectionHeading({
           className={cn(
             "mt-4 font-urbanist font-medium leading-relaxed tracking-tight md:mt-5",
             isLight ? "text-white/80" : "text-black/70",
-            "text-base md:text-lg",
+            HEADING_SECTION_SUBTITLE,
             isCenter && "mx-auto max-w-[680px]",
             descriptionClassName,
           )}

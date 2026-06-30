@@ -37,7 +37,7 @@ import RelliaAction from "@/components/RelliaAction";
 import RouteSeo from "@/components/RouteSeo";
 import { useAdvisors, useDiagnosticSurveyContent } from "@/hooks/useCmsDocuments";
 import { mergeDiagnosticSurveySections } from "@/lib/mergeDiagnosticSurvey";
-import { ADVISOR_DIRECTORY_SEED, type AdvisorDirectoryFilter } from "@/data/advisorDirectory";
+import { ADVISOR_DIRECTORY_SEED, type DiagnosticAdvisorSpecialty } from "@/data/advisorDirectory";
 import { allowCmsSeedFallbacks } from "@/lib/deploymentEnv";
 import {
   Drawer,
@@ -104,7 +104,7 @@ type View = "intro" | "survey" | "submit" | "processing" | "report";
 
 const DATA_MAP: Record<
   string,
-  { mentor: string; program: string; programHref?: string; advisorSpecialty?: AdvisorDirectoryFilter }
+  { mentor: string; program: string; programHref?: string; advisorSpecialty?: DiagnosticAdvisorSpecialty }
 > = {
   product_design: {
     mentor: "UX & Product Design",

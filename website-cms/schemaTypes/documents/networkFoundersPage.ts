@@ -10,6 +10,7 @@ import {
   networkFeatureItemMember,
   networkHeroFields,
   networkJourneyStepMember,
+  networkMembershipPathStepMember,
   networkWhyRelliaFields,
 } from '../shared/networkPageFields'
 
@@ -99,6 +100,40 @@ export const networkFoundersPage = defineType({
     }),
     defineField({name: 'deeperHelpCtaLabel', title: 'Consulting CTA label', type: 'string', group: 'content'}),
     defineField({name: 'deeperHelpCtaHref', title: 'Consulting CTA link', type: 'string', group: 'content'}),
+    defineField({
+      name: 'membershipPathTitle',
+      title: 'Membership path heading',
+      type: 'string',
+      description: 'Heading for the “From application to your first warm intro” timeline section.',
+      group: 'content',
+    }),
+    defineField({
+      name: 'membershipPathSubtitle',
+      title: 'Membership path subheading',
+      type: 'text',
+      rows: 3,
+      group: 'content',
+    }),
+    defineField({
+      name: 'membershipPathSteps',
+      title: 'Membership path steps',
+      type: 'array',
+      of: [networkMembershipPathStepMember],
+      group: 'content',
+    }),
+    defineField({
+      name: 'deeperHelpBackgroundImage',
+      title: 'Consulting section background',
+      type: 'image',
+      options: {hotspot: true},
+      group: 'content',
+    }),
+    defineField({
+      name: 'deeperHelpBackgroundImageUrl',
+      title: 'Consulting background URL (fallback)',
+      type: 'string',
+      group: 'content',
+    }),
     ...networkCtaFields,
     {...logoMarqueeField, group: 'content'},
     modularSectionsField({

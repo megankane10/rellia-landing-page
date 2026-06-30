@@ -87,3 +87,27 @@ export const getEventTemporalStatus = (event: EventTemporalInput): "upcoming" | 
 
   return "upcoming"
 }
+
+const DEFAULT_LIVE_WINDOW_MS = 2 * 60 * 60 * 1000
+
+export type EventTemporalPhase = "past" | "live" | "upcoming"
+
+/** Past / live (in progress) / upcoming — used for event card status badges. */
+export const getEventTemporalPhase = (event: EventTemporalInput): EventTemporalPhase => {
+  const now = Date.now()
+  const startTs = getEventStartTimestamp(event)
+  const explicitEndTs = event.endsAt?.trim() ? getEventEndTimestamp(event) : Number.NaN
+  const endTs = Number.isFinite(explicitEndTs)
+    ? explicitEndTs
+    : Number.isFinite(startTs)
+      ? startTs + DEFAULT_LIVE_WINDOW_MS
+      : Number.NaN
+
+  if (Number.isFinite(endTs) && endTs < now) return "past"
+  if (Number.isFinite(startTs) && startTs <= now && Number.isFinite(endTs) && endTs >= now) {
+    return "live"
+  }
+  if (Number.isFinite(startTs) && startTs > now) return "upcoming"
+
+  return getEventTemporalStatus(event) === "past" ? "past" : "upcoming"
+}

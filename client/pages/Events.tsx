@@ -2,7 +2,8 @@ import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
 import ScrollReveal from "@/components/ScrollReveal"
 import RelliaCta, { ctaActionFromHref, optionalCtaAction } from "@/components/RelliaCta"
-import { HorizontalCard } from "@/components/cards/HorizontalCard"
+import EventCompactCard from "@/components/cards/EventCompactCard"
+import { RELATED_COMPACT_EVENTS_GRID_CLASS } from "@/components/related/relatedCompactGrid"
 import { SectionsRenderer } from "@/components/cms/PageRenderer"
 import PageHeader from "@/components/PageHeader"
 import { useEvents } from "@/hooks/useCmsDocuments"
@@ -23,7 +24,7 @@ import { DEFAULT_EVENTS_LANDING_HERO_PORTABLE } from "@shared/cms/inlineHeroHead
 import { allowCmsSeedFallbacks } from "@/lib/deploymentEnv"
 import { normalizeCmsEventForCard } from "@/lib/cmsEventList"
 import { isCmsListAwaitingData, isCmsQueryLoading, shouldShowCmsEmptyState } from "@/lib/cmsQueryState"
-import { CmsHorizontalCardListSkeleton } from "@/components/cms/CmsPageSkeletons"
+import { CmsStoryGridSkeleton } from "@/components/cms/CmsPageSkeletons"
 import { isSanityConfigured } from "@/lib/sanity"
 import { cmsDisplayText } from "@/lib/cmsStega"
 import { getEventStartTimestamp, getEventTemporalStatus } from "@shared/cms/eventTemporalStatus"
@@ -204,7 +205,7 @@ export default function Events() {
               </div>
 
               {eventsLoading ? (
-                <CmsHorizontalCardListSkeleton className="mt-12" count={4} />
+                <CmsStoryGridSkeleton className="mt-12" count={6} />
               ) : shouldShowCmsEmptyState(eventsQuery) && visibleEvents.length === 0 ? (
                 <FilteredListEmptyState
                   className="mt-12"
@@ -217,32 +218,26 @@ export default function Events() {
                   <motion.div
                     layout
                     transition={{ layout: { duration: 0.32, ease: [0.16, 1, 0.3, 1] } }}
-                    className="flex flex-col gap-8 will-change-transform"
+                    className={cn(RELATED_COMPACT_EVENTS_GRID_CLASS, "mt-2 will-change-transform")}
                   >
                     <AnimatePresence mode="sync" initial={false}>
-                      {pageEvents.map((event) => {
-                        const isPast = getEventStatus(event) === "past"
-                        return (
-                          <motion.div
-                            key={event?.slug || `${event.title}-${event.dateTime}`}
-                            layout="position"
-                            initial={{ opacity: 0, y: 14 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: 10 }}
-                            transition={{
-                              duration: 0.26,
-                              ease: [0.16, 1, 0.3, 1],
-                              layout: { duration: 0.32, ease: [0.16, 1, 0.3, 1] },
-                            }}
-                          >
-                            <HorizontalCard 
-                              type="event"
-                              item={event} 
-                              variant={isPast ? "past" : "upcoming"} 
-                            />
-                          </motion.div>
-                        )
-                      })}
+                      {pageEvents.map((event) => (
+                        <motion.div
+                          key={event?.slug || `${event.title}-${event.dateTime}`}
+                          layout="position"
+                          className="h-full"
+                          initial={{ y: 14 }}
+                          animate={{ y: 0, opacity: 1 }}
+                          exit={{ y: 10 }}
+                          transition={{
+                            duration: 0.26,
+                            ease: [0.16, 1, 0.3, 1],
+                            layout: { duration: 0.32, ease: [0.16, 1, 0.3, 1] },
+                          }}
+                        >
+                          <EventCompactCard event={event} />
+                        </motion.div>
+                      ))}
                     </AnimatePresence>
                   </motion.div>
 

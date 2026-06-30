@@ -4,17 +4,16 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { ArrowLeft, MapPin, Calendar } from "lucide-react";
 import { ProfileSocialLinks } from "@/components/network/ProfileSocialLinks";
-import { ShareCopyLinkButton } from "@/components/share/ShareCopyLinkButton";
-import { shareOutlineButtonClassName } from "@/components/share/sharePageIcons";
+import { SharePageButton } from "@/components/share/SharePageButton"
 import { FOUNDER_DIRECTORY } from "@/data/founderDirectory";
 import { allowCmsSeedFallbacks } from "@/lib/deploymentEnv";
 import NotFound from "../NotFound";
 import {
-  buildAlumniProfileSeoTitle,
   buildPageUrl,
   clampMetaDescription,
   resolveShareOgImage,
-} from "@/config/seo";
+} from "@/config/seo"
+import { resolveAlumniProfileSeo } from "@shared/cms/itemDetailSeo";
 import { useApplyCmsSeo } from "@/hooks/useApplyCmsSeo";
 import PageSocialHelmet from "@/components/seo/PageSocialHelmet";
 import { useAlumniCompanies } from "@/hooks/useCmsDocuments";
@@ -51,11 +50,23 @@ export default function FounderProfile() {
   const [activeImage, setActiveImage] = useState<{ src: string; alt: string } | null>(null);
   const [hasRelatedProfiles, setHasRelatedProfiles] = useState(false);
 
-  const founderOgImage = active ? resolveShareOgImage(active.logoSrc, { landscape: true, contain: true }) : undefined
+  const alumniSeo = active
+    ? resolveAlumniProfileSeo({
+        name: active.logoName,
+        shortDescription: active.shortDescription,
+        tagline: active.tagline,
+        logoSrc: active.logoSrc,
+        seo: (active as { seo?: import("@shared/cms/types").SeoContent }).seo,
+      })
+    : null
 
-  useApplyCmsSeo(null, active ? {
-    title: buildAlumniProfileSeoTitle(active.logoName),
-    description: clampMetaDescription(active.shortDescription),
+  const founderOgImage = alumniSeo?.ogImageSrc
+    ? resolveShareOgImage(alumniSeo.ogImageSrc, { landscape: true, contain: true })
+    : resolveShareOgImage(undefined, { landscape: true, contain: true })
+
+  useApplyCmsSeo(null, alumniSeo ? {
+    title: alumniSeo.title,
+    description: alumniSeo.description,
     ogImage: founderOgImage?.url,
   } : undefined);
 
@@ -103,8 +114,8 @@ export default function FounderProfile() {
   return (
     <div className="min-h-screen overflow-x-clip bg-white font-host-grotesk">
       <PageSocialHelmet
-        title={buildAlumniProfileSeoTitle(active.logoName)}
-        description={clampMetaDescription(active.shortDescription)}
+        title={alumniSeo?.title ?? active.logoName}
+        description={alumniSeo?.description ?? clampMetaDescription(active.shortDescription)}
         canonical={canonicalUrl}
         ogImage={founderOgImage?.url}
         ogImageWidth={founderOgImage?.width}
@@ -125,19 +136,18 @@ export default function FounderProfile() {
           </div>
           <article className="grid items-start gap-10 pb-8 lg:grid-cols-[minmax(280px,360px)_minmax(0,1fr)] lg:gap-x-14 lg:pb-12 xl:grid-cols-[400px_1fr]">
             {/* Left Sidebar - Sticky */}
-            <div className="flex flex-col gap-6 pb-4 lg:sticky lg:top-28 lg:self-start lg:pb-10">
-              <div className="flex min-h-[120px] items-center justify-start md:min-h-[140px]">
-                <img
-                  src={active.logoSrc}
-                  alt={`${active.logoName} logo`}
-                  width={280}
-                  height={120}
-                  loading="lazy"
-                  decoding="async"
-                  onClick={() => setActiveImage({ src: active.logoSrc, alt: `${active.logoName} logo` })}
-                  className="max-h-[120px] w-auto max-w-full object-contain object-left opacity-90 cursor-pointer hover:opacity-95 transition-opacity duration-200"
-                />
-              </div>
+            <div className="space-y-4 lg:sticky lg:top-28 lg:self-start">
+              <div className="rounded-3xl border border-black/10 bg-white p-6 md:p-7">
+              <img
+                src={active.logoSrc}
+                alt={`${active.logoName} logo`}
+                width={280}
+                height={120}
+                loading="lazy"
+                decoding="async"
+                onClick={() => setActiveImage({ src: active.logoSrc, alt: `${active.logoName} logo` })}
+                className="max-h-[120px] w-auto max-w-full object-contain object-left opacity-90 cursor-pointer hover:opacity-95 transition-opacity duration-200 md:max-h-[140px]"
+              />
               <div className="pt-2">
                 <h1 className="font-host-grotesk text-3xl font-bold tracking-tight text-black mb-2">
                   {active.logoName}
@@ -189,89 +199,91 @@ export default function FounderProfile() {
                     </span>
                   </div>
                 </div>
+              </div>
+            </div>
 
-                <div className="mt-6 pt-6 border-t border-black/10 flex items-center gap-3">
-                  <ProfileSocialLinks
-                    links={(active as { socialLinks?: Array<{ platform?: string; label?: string; url?: string }> }).socialLinks}
-                    email={(active as { email?: string }).email}
-                    size="comfortable"
-                  />
-                  <ShareCopyLinkButton
-                    onCopy={() => navigator.clipboard.writeText(canonicalUrl)}
-                    className={shareOutlineButtonClassName}
-                    idleLabel="Copy profile link"
-                    copiedLabel="Link copied"
-                  />
-                </div>
+              <div className="flex items-center gap-3 px-1">
+                <ProfileSocialLinks
+                  links={(active as { socialLinks?: Array<{ platform?: string; label?: string; url?: string }> }).socialLinks}
+                  email={(active as { email?: string }).email}
+                  size="comfortable"
+                />
+                <SharePageButton
+                  url={canonicalUrl}
+                  title={alumniSeo?.title}
+                  variant="light"
+                />
               </div>
             </div>
 
             {/* Right Content - Structured Layout */}
             <div className="min-w-0 space-y-10 pb-8 prose prose-lg max-w-none prose-headings:font-host-grotesk prose-headings:text-black prose-p:font-urbanist prose-p:text-black/80 prose-p:leading-relaxed">
-              
-
-
-              {/* 1. Meet the Founders */}
-              <section className="not-prose scroll-mt-28">
-                <h3 className="mb-4 text-2xl font-host-grotesk font-semibold text-black flex items-center gap-2">
-                  Meet the founders
-                </h3>
-                <div className="overflow-hidden rounded-2xl border border-black/8 bg-white divide-y divide-black/8">
-                  {active.founders.map((f, i) => {
-                    const avatarUrl = f.imageSrc || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200&h=200&fit=crop"
-                    return (
-                      <div
-                        key={i}
-                        className="group flex items-center gap-3.5 p-4 sm:gap-4"
-                      >
-                        <div
-                          onClick={() => setActiveImage({ src: avatarUrl, alt: f.name })}
-                          className="relative h-16 w-16 shrink-0 cursor-pointer overflow-hidden rounded-xl border border-black/8 bg-black/[0.02] sm:h-20 sm:w-20"
-                        >
-                          <img
-                            src={avatarUrl}
-                            alt={f.name}
-                            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                          />
-                        </div>
-                        <div className="min-w-0 flex-1">
-                          <h4 className="font-host-grotesk text-base font-bold text-black transition-colors duration-300 group-hover:text-rellia-teal sm:text-lg">
-                            {f.name}
-                          </h4>
-                          {typeof f.role === "string" && f.role.trim() ? (
-                            <p className="mt-0.5 font-urbanist text-sm font-medium text-rellia-teal">
-                              {f.role.trim()}
-                            </p>
-                          ) : null}
-                          {typeof f.bio === "string" && f.bio.trim() ? (
-                            <p className="mt-1.5 line-clamp-3 font-urbanist text-sm leading-relaxed text-black/60 sm:line-clamp-none">
-                              {f.bio.trim()}
-                            </p>
-                          ) : null}
-                        </div>
-                        <ProfileSocialLinks
-                          links={Array.isArray(f.socialLinks) ? f.socialLinks : []}
-                          email={(f as { email?: string }).email}
-                          className="shrink-0 gap-2"
-                          showTooltips={false}
-                          size="compact"
-                        />
-                      </div>
-                    )
-                  })}
-                </div>
-              </section>
-
-
               {profileBodyPortable ? (
                 <section className="scroll-mt-28">
                   <h3 className="mb-4 font-host-grotesk text-2xl font-semibold text-black not-prose">
-                    About the company
+                    About {active.logoName}
                   </h3>
                   <PortableRichText value={profileBodyPortable} />
                 </section>
               ) : null}
 
+              {/* Meet the Founders */}
+              {Array.isArray(active.founders) && active.founders.length > 0 ? (
+                <section className="not-prose scroll-mt-28">
+                  <h3 className="mb-4 text-2xl font-host-grotesk font-semibold text-black flex items-center gap-2">
+                    Meet the founders
+                  </h3>
+                  <div className="overflow-hidden rounded-2xl border border-black/8 bg-white divide-y divide-black/8">
+                    {active.founders.map((f, i) => {
+                      const avatarUrl = f.imageSrc || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200&h=200&fit=crop"
+                      const founderBio =
+                        typeof f.bio === "string" && f.bio.trim() ? f.bio.trim() : null
+
+                      return (
+                        <div key={i} className="group p-4 sm:p-5">
+                          <div className="flex items-center gap-3.5 sm:gap-4">
+                            <div
+                              onClick={() => setActiveImage({ src: avatarUrl, alt: f.name })}
+                              className="relative h-16 w-16 shrink-0 cursor-pointer overflow-hidden rounded-xl border border-black/8 bg-black/[0.02] sm:h-20 sm:w-20"
+                            >
+                              <img
+                                src={avatarUrl}
+                                alt={f.name}
+                                className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                              />
+                            </div>
+
+                            <div className="min-w-0 flex-1">
+                              <h4 className="font-host-grotesk text-base font-bold leading-snug text-black transition-colors duration-300 group-hover:text-rellia-teal sm:text-lg">
+                                {f.name}
+                              </h4>
+                              {typeof f.role === "string" && f.role.trim() ? (
+                                <p className="mt-0.5 font-urbanist text-sm font-medium leading-snug text-rellia-teal">
+                                  {f.role.trim()}
+                                </p>
+                              ) : null}
+                            </div>
+
+                            <ProfileSocialLinks
+                              links={Array.isArray(f.socialLinks) ? f.socialLinks : []}
+                              email={(f as { email?: string }).email}
+                              className="ml-auto shrink-0 gap-1.5 sm:gap-2"
+                              showTooltips={false}
+                              size="compact"
+                            />
+                          </div>
+
+                          {founderBio ? (
+                            <p className="mt-3.5 font-urbanist text-sm leading-relaxed text-black/60 sm:mt-4 sm:text-[15px]">
+                              {founderBio}
+                            </p>
+                          ) : null}
+                        </div>
+                      )
+                    })}
+                  </div>
+                </section>
+              ) : null}
             </div>
           </article>
 

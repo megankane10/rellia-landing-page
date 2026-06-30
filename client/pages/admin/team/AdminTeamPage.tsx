@@ -123,8 +123,12 @@ const AdminTeamPage = () => {
   const recentActivity = useMemo(
     () =>
       [...users]
-        .filter((u) => u.lastSignInAt)
-        .sort((a, b) => new Date(b.lastSignInAt!).getTime() - new Date(a.lastSignInAt!).getTime())
+        .filter((u) => u.lastActiveAt || u.lastSignInAt)
+        .sort((a, b) => {
+          const aTs = new Date(a.lastActiveAt ?? a.lastSignInAt ?? 0).getTime()
+          const bTs = new Date(b.lastActiveAt ?? b.lastSignInAt ?? 0).getTime()
+          return bTs - aTs
+        })
         .slice(0, 6),
     [users],
   )
@@ -254,7 +258,7 @@ const AdminTeamPage = () => {
         <AdminRecentSignInsCard
           members={recentActivity}
           loading={isLoading}
-          emptyMessage="When team members sign in to the dashboard, their recent activity will show here."
+          emptyMessage="When team members use the dashboard, their last active time will show here."
           fillerMessage="No more recent sign-ins in this list."
         />
         <AdminTeamQuickNoteCard members={users} />

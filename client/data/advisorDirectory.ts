@@ -1,4 +1,10 @@
 export type AdvisorDirectoryFilter =
+  | "Regulatory & Quality"
+  | "Marketing"
+  | "Healthcare Systems"
+
+/** Diagnostic survey mentor mapping — broader than public directory expertise filters. */
+export type DiagnosticAdvisorSpecialty =
   | "Product Design & UI/UX"
   | "Product Development"
   | "Clinical Evidence"
@@ -46,11 +52,11 @@ export const ADVISOR_DIRECTORY_SEED: AdvisorDirectoryEntry[] = [
     location: "Toronto, ON",
     countries: ["Canada"],
     yearJoined: "2026",
-    expertiseTags: ["Clinical Evidence"],
+    expertiseTags: ["Healthcare Systems"],
     industries: ["Digital Health", "Pediatrics", "Clinical Research"],
     directoryFilters: [
       { groupId: "country", groupTitle: "Country", values: ["Canada"] },
-      { groupId: "expertise", groupTitle: "Expertise", values: ["Clinical Evidence"] },
+      { groupId: "expertise", groupTitle: "Expertise", values: ["Healthcare Systems"] },
     ],
     snapshot:
       "Seeded dummy advisor for testing directory filters, snapshot copy, and the About the advisor section.",
@@ -82,16 +88,7 @@ export const ADVISOR_DIRECTORY_SEED: AdvisorDirectoryEntry[] = [
 
 export const ADVISOR_FILTER_OPTIONS: Array<{ id: "all" | AdvisorDirectoryFilter; label: string }> = [
   { id: "all", label: "All" },
-  { id: "Product Design & UI/UX", label: "Product Design & UI/UX" },
-  { id: "Product Development", label: "Product Development" },
-  { id: "Clinical Evidence", label: "Clinical Evidence" },
-  { id: "Regulatory Strategy", label: "Regulatory Strategy" },
-  { id: "Legal & Privacy", label: "Legal & Privacy" },
-  { id: "IP Strategy", label: "IP Strategy" },
-  { id: "Reimbursement", label: "Reimbursement" },
-  { id: "Fundraising", label: "Fundraising" },
-  { id: "Marketing & Branding", label: "Marketing & Branding" },
-  { id: "Go-To-Market", label: "Go-To-Market" },
-  { id: "Health System Navigation", label: "Health System Navigation" },
-  { id: "Operations & Scaling", label: "Operations & Scaling" },
+  { id: "Regulatory & Quality", label: "Regulatory & Quality" },
+  { id: "Marketing", label: "Marketing" },
+  { id: "Healthcare Systems", label: "Healthcare Systems" },
 ]

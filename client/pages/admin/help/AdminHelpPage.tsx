@@ -13,6 +13,7 @@ import {
   Search,
   DatabaseZap,
   Maximize2,
+  TableProperties,
   Tags,
 } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -163,6 +164,54 @@ const AdminHelpPage = () => {
             <h4 className="font-bold text-foreground">Collaborative Actions</h4>
             <p>
               Slack alerts include key details and quick links to view submissions, making it easy to coordinate lead follow-ups.
+            </p>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card className={cardShellClass}>
+        <CardHeader>
+          <CardTitle className={cn("flex items-center gap-2.5 text-lg", adminCardTitleClass)}>
+            <span className={cn("h-9 w-9", adminIconTileClass)}>
+              <TableProperties className="h-5 w-5" aria-hidden />
+            </span>
+            Network profiles (Airtable)
+          </CardTitle>
+          <CardDescription className="font-urbanist">
+            Alumni and advisor intake before publishing on the public site.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4 font-urbanist text-sm leading-relaxed text-muted-foreground">
+          <div className="space-y-2">
+            <h4 className="font-bold text-foreground">Where profiles live</h4>
+            <p>
+              Founders (alumni companies) and advisors are edited in Airtable. The admin{" "}
+              <strong>Content → Network profiles</strong> tab shows a read-only queue with site status,
+              missing fields, and links to Sanity Studio when a draft exists.
+            </p>
+          </div>
+          <div className="space-y-2">
+            <h4 className="font-bold text-foreground">Publishing workflow</h4>
+            <p>
+              Airtable is intake and approval; <strong>Sanity Studio</strong> is publish. When automated sync is
+              enabled, ready profiles become <strong>CMS drafts</strong> only. Slack alerts go to{" "}
+              <code className="text-xs font-semibold text-rellia-teal bg-rellia-mint/10 px-1 py-0.5 rounded">#website-inbox</code>.
+              Nothing goes live until an admin clicks <strong>Publish</strong> in Studio.
+            </p>
+          </div>
+          <div className="space-y-2">
+            <h4 className="font-bold text-foreground">Server configuration</h4>
+            <p>
+              Set <code className="text-xs font-semibold text-rellia-teal bg-rellia-mint/10 px-1 py-0.5 rounded">AIRTABLE_API_KEY</code>{" "}
+              on the server (Vercel + local <code className="text-xs">.env.local</code>) — never as a{" "}
+              <code className="text-xs">VITE_</code> variable. The key stays server-side; the browser never sees it.
+            </p>
+          </div>
+          <div className="space-y-2">
+            <h4 className="font-bold text-foreground">Safe Airtable changes</h4>
+            <p>
+              Duplicate the base before adding columns or changing select options. Tech Category on founders is not
+              wired to website filters yet — confirm with the client before mapping it.
             </p>
           </div>
         </CardContent>

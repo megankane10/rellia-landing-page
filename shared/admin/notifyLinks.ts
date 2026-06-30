@@ -80,13 +80,22 @@ const encodeIntentParams = (params: Record<string, string>): string =>
     .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
     .join(";")
 
-/** Strip drafts. prefix — Studio intent URLs use the published document id. */
-const normalizeStudioDocumentId = (documentId: string): string =>
-  documentId.replace(/^drafts\./, "").trim()
+/** Strip drafts. prefix for published intent links; keep it when opening draft documents. */
+const resolveStudioDocumentId = (documentId: string, editDraft: boolean): string => {
+  const trimmed = typeof documentId === "string" ? documentId.trim() : ""
+  if (!trimmed) return ""
+  if (editDraft) return trimmed.startsWith("drafts.") ? trimmed : `drafts.${trimmed}`
+  return trimmed.replace(/^drafts\./, "")
+}
 
-export const studioDeskUrl = (documentType: string, documentId: string): string => {
+export const studioDeskUrl = (
+  documentType: string,
+  documentId: string,
+  options?: { editDraft?: boolean },
+): string => {
   const studioBase = resolveSanityStudioOrigin()
-  const docId = typeof documentId === "string" ? normalizeStudioDocumentId(documentId) : ""
+  const editDraft = options?.editDraft ?? documentId.trim().startsWith("drafts.")
+  const docId = resolveStudioDocumentId(documentId, editDraft)
   const docType = typeof documentType === "string" ? documentType.trim() : ""
   if (!docId || !docType) return studioBase
 

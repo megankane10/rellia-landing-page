@@ -1,4 +1,7 @@
 import {defineArrayMember, defineField, defineType} from 'sanity'
+import {GROUP_SEO} from '../shared/fieldGroups'
+import {CONTENT_SEO_FIELDSETS} from '../shared/singletonContentFields'
+import {seoField} from '../shared/seoField'
 
 export const alumniCompany = defineType({
   name: 'alumniCompany',
@@ -9,7 +12,9 @@ export const alumniCompany = defineType({
     {name: 'founders', title: 'Founders'},
     {name: 'directory', title: 'Directory filters'},
     {name: 'links', title: 'Links'},
+    GROUP_SEO,
   ],
+  fieldsets: CONTENT_SEO_FIELDSETS,
   fields: [
     defineField({
       name: 'name',
@@ -26,13 +31,21 @@ export const alumniCompany = defineType({
       validation: (Rule) => Rule.required(),
       group: 'profile',
     }),
-    defineField({name: 'logo', title: 'Logo', type: 'image', options: {hotspot: true}, group: 'profile'}),
+    defineField({
+      name: 'logo',
+      title: 'Logo',
+      type: 'image',
+      options: {hotspot: true},
+      description: 'Displayed in a fixed 16:9 card frame on directory listings (object-contain).',
+      group: 'profile',
+    }),
     defineField({
       name: 'logoSrc',
       title: 'Logo URL (fallback)',
       type: 'string',
       description: 'Fallback URL if no upload',
       group: 'profile',
+      hidden: ({document}) => Boolean(document?.logo?.asset),
     }),
     defineField({name: 'tagline', title: 'Tagline', type: 'string', group: 'profile'}),
     defineField({
@@ -44,6 +57,14 @@ export const alumniCompany = defineType({
       group: 'profile',
     }),
     defineField({name: 'yearJoined', title: 'Year joined', type: 'number', group: 'profile'}),
+    defineField({
+      name: 'profileBody',
+      title: 'About the company (shown as About [Company Name] on site)',
+      type: 'portableRichText',
+      description:
+        'Company overview for the profile page (rendered under the heading "About [Company Name]").',
+      group: 'profile',
+    }),
     defineField({
       name: 'socialLinks',
       title: 'Social & professional links',
@@ -78,10 +99,11 @@ export const alumniCompany = defineType({
             }),
             defineField({
               name: 'bio',
-              title: 'Bio',
+              title: 'Description',
               type: 'text',
               rows: 3,
-              description: 'Optional short blurb under the founder subheading. Leave blank to hide.',
+              description:
+                'Optional short description under the founder subheading in Meet the founders. Leave blank to hide.',
             }),
             defineField({
               name: 'socialLinks',
@@ -100,6 +122,7 @@ export const alumniCompany = defineType({
               title: 'Photo URL (fallback)',
               type: 'string',
               description: 'Fallback URL if no upload (e.g. /images/deenasammak-team.png).',
+              hidden: ({parent}) => Boolean(parent?.image?.asset),
             }),
             defineField({
               name: 'email',
@@ -113,14 +136,6 @@ export const alumniCompany = defineType({
           },
         },
       ],
-    }),
-    defineField({
-      name: 'profileBody',
-      title: 'About the company',
-      type: 'portableRichText',
-      description:
-        'Company overview for the profile page. Block styles: Normal, H2, H3, H4, Quote. Text highlights (select words, then toolbar): Bold, Italic, Underline, Mint. You can also insert images, carousels, quote boxes, videos, and CTA boxes. Publish when ready — only published content appears on the site.',
-      group: 'founders',
     }),
     defineField({
       name: 'directoryFilters',
@@ -163,6 +178,7 @@ export const alumniCompany = defineType({
         }),
       ],
     }),
+    seoField,
   ],
   preview: {
     select: {

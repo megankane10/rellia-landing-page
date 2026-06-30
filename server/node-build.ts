@@ -1,6 +1,7 @@
 import path from "path";
 import { createServer } from "./index";
 import * as express from "express";
+import { MARKETING_FRAME_ANCESTORS_CSP } from "../shared/csp.js";
 
 const app = createServer();
 const port = process.env.PORT || 3000;
@@ -8,6 +9,18 @@ const port = process.env.PORT || 3000;
 // In production, serve the built SPA files
 const __dirname = import.meta.dirname;
 const distPath = path.join(__dirname, "../spa");
+
+const setMarketingCspHeader = (
+  _req: express.Request,
+  res: express.Response,
+  next: express.NextFunction,
+) => {
+  res.setHeader("Content-Security-Policy", MARKETING_FRAME_ANCESTORS_CSP);
+  next();
+};
+
+// Match Vercel static header on self-hosted SPA responses (Helmet only covers API paths above static).
+app.use(setMarketingCspHeader);
 
 // Serve static files
 app.use(express.static(distPath));

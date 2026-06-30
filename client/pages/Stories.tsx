@@ -21,6 +21,8 @@ import { allowCmsSeedFallbacks } from "@/lib/deploymentEnv"
 import { isCmsListAwaitingData, isCmsQueryLoading } from "@/lib/cmsQueryState"
 import { CmsStoryGridSkeleton } from "@/components/cms/CmsPageSkeletons"
 import StoryGridCard from "@/components/StoryGridCard"
+import { placeholderImageFromSeed } from "@/lib/placeholderImages"
+import { cmsCleanText } from "@/lib/cmsStega"
 
 const tags: Array<StoryTag | "All"> = ["All", ...CONFIRMED_STORY_TAGS]
 
@@ -61,12 +63,14 @@ export default function Stories() {
           slug: s.slug,
           title: s.title,
           excerpt: s.excerpt ?? "",
-          coverImageSrc: s.coverImageSrc ?? "",
+          coverImageSrc:
+            s.coverImageSrc?.trim() ||
+            placeholderImageFromSeed(cmsCleanText(s.slug || s.title), 1200, 675),
           coverImageAlt: (s.coverImageAlt ?? "Story cover").trim() || "Story cover",
           tag: (s.tag ?? "Story").trim() || "Story",
           publishedAt: typeof s.publishedAt === "string" ? s.publishedAt : "",
         }))
-        .filter((s) => s.slug && s.title && s.coverImageSrc),
+        .filter((s) => s.slug && s.title),
       allowCmsSeedFallbacks(),
     )
 
